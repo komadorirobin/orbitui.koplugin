@@ -13,6 +13,7 @@ local UI        = require("infra/sui_core")
 local Bottombar = require("screens/sui_bottombar")
 local SUISettings = require("infra/sui_store")
 local SUIStyle    = require("features/sui_style")
+local ProgressSync = require("infra/sui_progress_sync")
 
 -- Lazy: only needed on D-pad devices, inside gesture event handlers.
 local _FocusManager
@@ -4222,124 +4223,10 @@ function M.patchReloadDocument(plugin, readerui)
     readerui._simpleui_reload_patched = true
 end
 
--- Work around KOReader #15527 on Android. KOSync's automatic-progress prompt
--- invokes syncToProgress() from ConfirmBox's OK callback, before ConfirmBox has
--- closed itself. Patch the ConfirmBox constructor captured by getProgress() so
--- the callback only queues the jump. ConfirmBox then closes through KOReader's
--- normal path, and the queued jump runs after Android has released the modal
--- window. This deliberately avoids manipulating UIManager's window stack.
-local _kosync_prompt_patches = setmetatable({}, { __mode = "k" })
-
-local function _getKOSyncInstance(plugin)
-    local kosync = plugin and plugin.ui and plugin.ui.kosync
-    if kosync then return kosync end
-
-    -- External plugins are instantiated before KOReader's bundled plugins on
-    -- some installations. In that order SimpleUI's ReaderUI reference does
-    -- not contain KOSync yet, even though PluginLoader registers it later in
-    -- the same ReaderUI setup pass.
-    local ok_loader, PluginLoader = pcall(require, "pluginloader")
-    if ok_loader and PluginLoader and type(PluginLoader.getPluginInstance) == "function" then
-        return PluginLoader:getPluginInstance("kosync")
-    end
-end
-
-local function _getKOSyncPatchTarget(plugin)
-    local kosync = plugin
-    if not (kosync and type(kosync.getProgress) == "function") then
-        kosync = _getKOSyncInstance(plugin)
-    end
-    if not kosync then return end
-
-    -- Plugin instances inherit methods from the module returned by main.lua.
-    -- Patch that module when possible so the hook is installed at the source.
-    local mt = getmetatable(kosync)
-    local class = mt and mt.__index
-    if type(class) == "table" and type(class.getProgress) == "function" then
-        return class
-    end
-    return kosync
-end
-
-function M.installKOSyncAndroidProgressHook()
-    if not Device:isAndroid() or M._simpleui_kosync_hook_registered then return end
-
-    local ok_userpatch, userpatch = pcall(require, "userpatch")
-    if not (ok_userpatch and userpatch
-            and type(userpatch.registerPatchPluginFunc) == "function") then
-        logger.warn("simpleui: unable to register Android KOSync instance hook")
-        return
-    end
-
-    M._simpleui_kosync_hook_registered = true
-    userpatch.registerPatchPluginFunc("kosync", function(kosync_module)
-        if not SUISettings:nilOrTrue("simpleui_enabled") then return end
-        local ok, installed = pcall(M.patchKOSyncAndroidProgressJump, kosync_module)
-        if not ok then
-            logger.err("simpleui: Android KOSync prompt hook failed:", installed)
-        elseif not installed then
-            logger.warn("simpleui: KOSync created but prompt workaround was not installed")
-        end
-    end)
-    logger.info("simpleui: registered Android KOSync prompt hook")
-end
-
-function M.patchKOSyncAndroidProgressJump(plugin)
-    if not Device:isAndroid() then return true end
-
-    local target = _getKOSyncPatchTarget(plugin)
-    if not target then return false end
-    if _kosync_prompt_patches[target] then return true end
-
-    local get_progress = target.getProgress
-    if type(get_progress) ~= "function" then return false end
-
-    local upvalue_index, ConfirmBox
-    for i = 1, 64 do
-        local name, value = debug.getupvalue(get_progress, i)
-        if not name then break end
-        if name == "ConfirmBox" and type(value) == "table"
-                and type(value.new) == "function" then
-            upvalue_index, ConfirmBox = i, value
-            break
-        end
-    end
-    if not upvalue_index then
-        logger.warn("simpleui: KOSync getProgress ConfirmBox upvalue not found")
-        return false
-    end
-
-    local ConfirmBoxProxy = setmetatable({
-        _simpleui_android_kosync_proxy = true,
-    }, { __index = ConfirmBox })
-
-    function ConfirmBoxProxy:new(options)
-        if type(options) == "table" and type(options.ok_callback) == "function" then
-            local callback = options.ok_callback
-            options.ok_callback = function()
-                -- Returning immediately lets ConfirmBox close itself normally.
-                -- A short real-time delay is intentional: nextTick may still
-                -- execute in the same Android native-window dispatch cycle.
-                UIManager:scheduleIn(0.15, function()
-                    local ok, err = pcall(callback)
-                    if not ok then
-                        logger.err("simpleui: deferred KOSync prompt callback failed:", err)
-                    end
-                end)
-            end
-        end
-        return ConfirmBox.new(ConfirmBox, options)
-    end
-
-    debug.setupvalue(get_progress, upvalue_index, ConfirmBoxProxy)
-    _kosync_prompt_patches[target] = {
-        fn = get_progress,
-        index = upvalue_index,
-        original = ConfirmBox,
-        proxy = ConfirmBoxProxy,
-    }
-    logger.info("simpleui: installed Android KOSync prompt-callback workaround")
-    return true
+-- Both KOSync and BookOrbit navigate from ConfirmBox's OK callback. On Android
+-- defer that callback until the dialog has closed (KOReader #15527).
+function M.patchAndroidProgressJumps(plugin)
+    ProgressSync.patchAll(plugin)
 end
 
 -- ---------------------------------------------------------------------------
@@ -5268,20 +5155,13 @@ function M.installAll(plugin)
         M.wireReaderMenuFMTab(plugin, plugin.ui)
         M.patchReloadDocument(plugin, plugin.ui)
         M.wireReaderHomeKey(plugin, plugin.ui)
-        M.installKOSyncAndroidProgressHook()
-        if not M.patchKOSyncAndroidProgressJump(plugin) then
-            -- SimpleUI may be instantiated before bundled plugins such as
-            -- KOSync. By the next UI turn PluginLoader has completed the
-            -- synchronous ReaderUI plugin pass, while KOSync's automatic
-            -- pull (scheduled from ReaderReady) has not run yet.
-            UIManager:nextTick(function()
-                if not (plugin.ui and plugin.ui.tearing_down) then
-                    if not M.patchKOSyncAndroidProgressJump(plugin) then
-                        logger.warn("simpleui: KOSync unavailable; Android progress-jump workaround not installed")
-                    end
-                end
-            end)
-        end
+        ProgressSync.installHooks()
+        M.patchAndroidProgressJumps(plugin)
+        UIManager:nextTick(function()
+            if plugin.ui and not plugin.ui.tearing_down then
+                M.patchAndroidProgressJumps(plugin)
+            end
+        end)
     end
 end
 
@@ -5291,13 +5171,7 @@ function M.teardownAll(plugin)
     -- have a widget on screen or a pending auto-close timer at teardown time.
     pcall(CoverTransition.close)
 
-    for target, patch in pairs(_kosync_prompt_patches) do
-        local _, current = debug.getupvalue(patch.fn, patch.index)
-        if current == patch.proxy then
-            debug.setupvalue(patch.fn, patch.index, patch.original)
-        end
-        _kosync_prompt_patches[target] = nil
-    end
+    ProgressSync.teardown()
 
     -- Restore ffi/util.purgeDir patch.
     local ffiUtil = package.loaded["ffi/util"]

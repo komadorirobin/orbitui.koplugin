@@ -1902,9 +1902,9 @@ end
 
 function SimpleUIPlugin:onReaderReady()
     -- All document plugins have been registered by this point, regardless of
-    -- filesystem/plugin load order. Re-run the idempotent KOSync compatibility
+    -- filesystem/plugin load order. Re-run the KOSync/BookOrbit compatibility
     -- installer so Android's deferred progress jump is never missed.
-    Patches.patchKOSyncAndroidProgressJump(self)
+    Patches.patchAndroidProgressJumps(self)
 
     -- Warm the sidecar cache for the opened book as soon as it is opened,
     -- so that onCloseDocument has access to its pre-session summary state

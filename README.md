@@ -15,6 +15,7 @@ The `beta` branch tracks upstream SimpleUI through **2.7.1** and the subsequent 
 - **To Be Read cleanup** — finished books can be removed from the To Be Read module automatically
 - **Home Screen performance work** — additional fork-side optimisations around startup, stats/index usage, and expensive Home Screen rebuild paths
 - **Fork OTA source** — the built-in updater points at this fork's GitHub releases
+- **Android progress prompts** — KOSync and BookOrbit confirmations close before applying a reading-position jump, including BookOrbit's pre-upload reconciliation. A pending jump is discarded if its reader is closed or replaced.
 
 If you are comparing this fork with the original project, those are the main user-facing differences.
 
