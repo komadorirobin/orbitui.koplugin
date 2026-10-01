@@ -32,7 +32,8 @@ package.loaded["logger"] = {
     dbg = function() end,
     warn = function() end,
 }
-package.loaded["infra/sui_store"] = { get = function() return nil end }
+local settings = {}
+package.loaded["infra/sui_store"] = { get = function(_, key) return settings[key] end }
 
 local FileManager = { instance = { _simpleui_plugin = {} } }
 local ReaderUI = { instance = nil }
@@ -60,6 +61,7 @@ local function eq(actual, expected, message)
 end
 
 local function reset()
+    settings = {}
     scheduled = {}
     broadcasts = 0
     ReaderUI.instance = nil
@@ -73,6 +75,21 @@ local function fireNext()
     assert(fn, "expected a scheduled callback")
     fn()
 end
+
+test("only plain profile actions are eligible for widget reuse", function()
+    reset()
+    eq(Bridge.profileForNavigation("bookshelf_prose"), "prose")
+    eq(Bridge.profileForNavigation("open_bookshelf_comics"), "comics")
+    eq(Bridge.profileForNavigation("bookshelf_comics_menu"), nil)
+    eq(Bridge.profileForNavigation("open_bookshelf_prose_start_menu"), nil)
+    eq(Bridge.profileForNavigation("home"), nil)
+    eq(Bridge.profileForNavigation(nil), nil)
+    eq(Bridge.profileForNavigation("custom_qa_1"), nil)
+    settings.simpleui_qa_custom_qa_1 = { dispatcher_action = "open_bookshelf_prose" }
+    eq(Bridge.profileForNavigation("custom_qa_1"), "prose")
+    settings.simpleui_qa_custom_qa_1.dispatcher_action = "open_bookshelf_prose_start_menu"
+    eq(Bridge.profileForNavigation("custom_qa_1"), nil)
+end)
 
 test("latest prepareReturn request cancels older retries", function()
     reset()

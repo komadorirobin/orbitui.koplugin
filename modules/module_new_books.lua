@@ -6,74 +6,46 @@
 -- Split from module_book_rows.lua (which held Recent Books + New Books + TBR
 -- in a single file) — see moduleregistry.lua for the require_mod.
 
-local lfs    = require("libs/libkoreader-lfs")
 local _ = require("infra/sui_i18n").translate
 
 local GridRenderer = require("engines/sui_book_grid")
 local LibraryScan  = require("engines/sui_library_scan")
 
-local _BOOK_EXTS = {
-    epub = true, mobi = true, azw3 = true, azw = true, kfx = true,
-    pdf = true, djvu = true, fb2 = true, cbz = true, cbr = true,
-    doc = true, docx = true, rtf = true, txt = true,
-}
-
---- Recursively scan `dir` for book files, collecting path + mtime.
-local function collectBooks(dir, files, depth, state)
-    if depth > 5 or state.count > 5000 then return end
-    local ok, iter, dir_obj = pcall(lfs.dir, dir)
-    if not ok then return end
-    for f in iter, dir_obj do
-        state.count = state.count + 1
-        if state.count > 5000 then break end
-        if f ~= "." and f ~= ".." and not f:match("^%.") then
-            local path = dir .. "/" .. f
-            local attr = lfs.attributes(path)
-            if attr then
-                if attr.mode == "file" then
-                    local ext = f:match("%.([^%.]+)$")
-                    if ext and _BOOK_EXTS[ext:lower()] then
-                        files[#files + 1] = { path = path, mtime = attr.modification }
-                    end
-                elseif attr.mode == "directory" then
-                    collectBooks(path, files, depth + 1, state)
-                end
-            end
+-- Keep only the newest candidates rather than sorting the entire library.
+local function scanNewBooks(home, limit)
+    local newest = {}
+    local function before(a, b)
+        if a.mtime ~= b.mtime then return a.mtime > b.mtime end
+        return a.fp < b.fp
+    end
+    for _, record in ipairs(LibraryScan.getRaw(home)) do
+        if #newest < limit or before(record, newest[#newest]) then
+            local i = 1
+            while newest[i] and not before(record, newest[i]) do i = i + 1 end
+            table.insert(newest, i, record)
+            if #newest > limit then table.remove(newest) end
         end
     end
-end
-
---- Return up to `limit` file paths from home_dir, newest first by mtime.
-local function scanNewBooks(limit)
-    limit = limit or 5
-    local home = LibraryScan.resolveHomeDir()
-    if not home then return {} end
-
-    local files = {}
-    collectBooks(home, files, 1, { count = 0 })
-    table.sort(files, function(a, b) return a.mtime > b.mtime end)
-
     local result = {}
-    for i = 1, math.min(limit, #files) do
-        result[i] = files[i].path
-    end
+    for i, record in ipairs(newest) do result[i] = record.fp end
     return result
 end
 
--- Scan cache (heavy I/O — walks home_dir recursively), 5min TTL.
 local _cached_new_fps      = nil
-local _cached_new_fps_time = 0
+local _cached_home, _cached_revision
 
 --- Fetches 15 candidates (to compensate for the ones the filter will exclude), with a
---- 5-minute cache between disk scans.
+--- revision cache shared with the library index.
 local function getNewBooksCandidates()
-    local now = os.time()
-    if _cached_new_fps and (now - _cached_new_fps_time < 300) then
+    local home = LibraryScan.resolveHomeDir()
+    if not home then return {} end
+    local revision = LibraryScan.getRevision(home)
+    if _cached_new_fps and _cached_home == home and _cached_revision == revision then
         return _cached_new_fps
     end
-    local fps = scanNewBooks(15)
+    local fps = scanNewBooks(home, 15)
     _cached_new_fps      = fps
-    _cached_new_fps_time = now
+    _cached_home, _cached_revision = home, revision
     return fps
 end
 
@@ -141,7 +113,8 @@ local new_books_module = GridRenderer.makeModule{
     reset = function()
         GridRenderer.reset()
         _cached_new_fps      = nil
-        _cached_new_fps_time = 0
+        _cached_home, _cached_revision = nil, nil
+        LibraryScan.invalidate()
     end,
 }
 
@@ -149,7 +122,8 @@ local new_books_module = GridRenderer.makeModule{
 -- but other modules/future versions may want to force a rescan).
 function new_books_module.invalidateCache()
     _cached_new_fps      = nil
-    _cached_new_fps_time = 0
+    _cached_home, _cached_revision = nil, nil
+    LibraryScan.invalidate()
 end
 
 return new_books_module

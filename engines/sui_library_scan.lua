@@ -2,10 +2,7 @@
 -- Shared, cached recursive filesystem scanner for "all books in the
 -- library" style modules (module_library.lua — the "Flat Library" module).
 --
--- Note: module_new_books.lua keeps its own lighter walk (collectBooks/
--- scanNewBooks) for its capped top-15/TTL-based scan — not migrated to this
--- module, since a "show everything" scan needs different invalidation
--- (below) rather than a plain TTL.
+-- New Books uses the same directory index and selects its newest 15 entries.
 --
 -- Instead of a blind TTL, this tracks the mtime of every directory visited
 -- during a walk and only re-walks when one of those mtimes has actually
@@ -41,8 +38,7 @@ function LibraryScan.resolveHomeDir()
 end
 
 
--- Extensions KOReader can open. Single source of truth — module_new_books.lua
--- keeps its own copy today (see the note above about a future migration).
+-- Extensions used by SimpleUI's library and New Books modules.
 LibraryScan.BOOK_EXTS = {
     epub = true, mobi = true, azw3 = true, azw = true, kfx = true,
     pdf = true, djvu = true, fb2 = true, cbz = true, cbr = true,
@@ -51,7 +47,7 @@ LibraryScan.BOOK_EXTS = {
 
 local MAX_DEPTH  = 8      -- generous but bounded — no runaway recursion on odd mounts
 local MAX_FILES  = 20000  -- hard cap so a misconfigured home_dir (e.g. "/") can't OOM an e-reader
-local SAFETY_TTL = 300    -- seconds; re-walk unconditionally after this even with no detected change
+local SAFETY_TTL = 300    -- fallback when directory mtimes are unavailable
 
 -- Pseudo-filesystem directories to skip, matched on basename (the
 -- hidden-entry check below wouldn't catch these since they don't start with
@@ -66,6 +62,12 @@ local SYSTEM_DIR_NAMES = {
 
 -- _cache[home_dir] = { list = {{fp,mtime,size},...}, dirs = {[path]=mtime}, checked_at = os.time() }
 local _cache = {}
+local _revision = 0
+
+local function normalizeRoot(path)
+    local root = path:gsub("/+$", "")
+    return root == "" and "/" or root
+end
 
 local function joinPath(parent, child)
     if parent:sub(-1) == "/" then return parent .. child end
@@ -82,13 +84,22 @@ end
 -- dirsChanged below). `state.count` is a shared budget across the whole
 -- recursion (not per-directory), so MAX_FILES is a true global cap.
 local function walk(dir, depth, out, dirs, state)
-    if depth > MAX_DEPTH or state.count > MAX_FILES then return end
+    if depth > MAX_DEPTH then return end
+    if state.count > MAX_FILES then state.complete = false; return end
     local ok, iter, dir_obj = pcall(lfs.dir, dir)
-    if not ok or type(iter) ~= "function" then return end
+    if not ok or type(iter) ~= "function" then state.complete = false; return end
+
+    local found, subdirs, listing = {}, {}, {}
+    state.listings[dir] = listing
 
     for entry in iter, dir_obj do
+        listing[entry] = true
         state.count = state.count + 1
-        if state.count > MAX_FILES then break end
+        if state.count > MAX_FILES then
+            state.complete = false
+            if dir_obj then pcall(function() dir_obj:close() end) end
+            break
+        end
         -- Skip "." / ".." any hidden entry (dotfiles, .git, .calibre-cache,
         -- etc.), and known pseudo-filesystem directories (see
         -- SYSTEM_DIR_NAMES above).
@@ -103,16 +114,21 @@ local function walk(dir, depth, out, dirs, state)
                     -- into them would falsely invalidate the cache below.
                     if entry:sub(-4) ~= ".sdr" then
                         dirs[fp] = attr.modification or 0
-                        walk(fp, depth + 1, out, dirs, state)
+                        subdirs[#subdirs + 1] = fp
                     end
-                elseif attr.mode == "file" and supportedExt(entry) then
-                    -- size kept alongside mtime so "sort by file size" has
-                    -- data without a second stat per book later.
-                    out[#out + 1] = { fp = fp, mtime = attr.modification or 0, size = attr.size or 0 }
+                elseif attr.mode == "file" then
+                    found[#found + 1] = { fp = fp, mtime = attr.modification or 0, size = attr.size or 0 }
                 end
             end
         end
     end
+    -- An unpacked EPUB's chapters are not separate books.
+    if listing.mimetype and listing["META-INF"] then return end
+    for _, record in ipairs(found) do
+        state.files[#state.files + 1] = record
+        if supportedExt(record.fp) then out[#out + 1] = record end
+    end
+    for _, path in ipairs(subdirs) do walk(path, depth + 1, out, dirs, state) end
 end
 
 -- True if any tracked directory's mtime no longer matches what was
@@ -130,8 +146,17 @@ local function rescan(home_dir)
     local out, dirs = {}, {}
     local root_mtime = lfs.attributes(home_dir, "modification")
     if root_mtime then dirs[home_dir] = root_mtime end
-    walk(home_dir, 0, out, dirs, { count = 0 })
-    local entry = { list = out, dirs = dirs, checked_at = os.time() }
+    local state = { count = 0, complete = true, files = {}, listings = {} }
+    walk(home_dir, 0, out, dirs, state)
+    _revision = _revision + 1
+    local now = os.time()
+    local entry = { list = out, dirs = dirs, checked_at = now, validated_at = now,
+        revision = _revision, root = home_dir, depth = MAX_DEPTH,
+        files = state.files, listings = state.listings, complete = state.complete }
+    entry.reliable_mtimes = root_mtime ~= nil
+    for _, mtime in pairs(dirs) do
+        if mtime == 0 then entry.reliable_mtimes = false end
+    end
     _cache[home_dir] = entry
     logger.dbg("simpleui: sui_library_scan: rescanned", home_dir, "->", #out, "books")
     return entry
@@ -139,16 +164,40 @@ end
 
 -- getEntry(home_dir) -> cache entry, rescanning only when actually needed.
 local function getEntry(home_dir)
+    home_dir = normalizeRoot(home_dir)
     local entry = _cache[home_dir]
     if not entry then return rescan(home_dir) end
     local now = os.time()
-    if now - entry.checked_at >= SAFETY_TTL then return rescan(home_dir) end
+    if entry.validated_at == now then return entry end
+    if not entry.reliable_mtimes and now - entry.checked_at >= SAFETY_TTL then
+        return rescan(home_dir)
+    end
     if dirsChanged(entry.dirs) then return rescan(home_dir) end
-    -- Nothing changed — cheap stat-only check passed. Keep serving the
-    -- cached list, but bump checked_at so SAFETY_TTL counts from this
-    -- confirmed-fresh point rather than the original scan time.
-    entry.checked_at = now
+    -- Share one validation across modules building in the same second.
+    entry.validated_at = now
     return entry
+end
+
+function LibraryScan.getRevision(home_dir)
+    return home_dir and home_dir ~= "" and getEntry(home_dir).revision or nil
+end
+
+-- Optional Bookshelf bridge. Read-only and cache-only: never start a scan
+-- here. The consumer must validate directory mtimes before adopting it.
+-- All regular files are included so Bookshelf can apply its own extensions.
+function LibraryScan.peekFileIndex(root, depth)
+    if type(root) ~= "string" or root == "" or type(depth) ~= "number" then return end
+    root = normalizeRoot(root)
+    for home, entry in pairs(_cache) do
+        local prefix = home == "/" and "/" or home:gsub("/+$", "") .. "/"
+        if entry.complete and entry.reliable_mtimes and entry.dirs[root]
+                and (root == home or root:sub(1, #prefix) == prefix) then
+            local relative = root == home and "" or root:sub(#prefix + 1)
+            local levels = 0
+            for _ in relative:gmatch("[^/]+") do levels = levels + 1 end
+            if levels + depth <= entry.depth then return entry end
+        end
+    end
 end
 
 --- Raw scan results — { {fp, mtime, size}, ... }, in directory-traversal
@@ -178,7 +227,7 @@ end
 --- clears every cached home_dir.
 function LibraryScan.invalidate(home_dir)
     if home_dir then
-        _cache[home_dir] = nil
+        _cache[normalizeRoot(home_dir)] = nil
     else
         _cache = {}
     end

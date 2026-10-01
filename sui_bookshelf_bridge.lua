@@ -76,6 +76,21 @@ local PROFILE_ACTIONS = {
     },
 }
 
+-- Only plain profile navigation can retain the shelf; menu actions still
+-- need the regular SimpleUI dispatcher so their extra behaviour is preserved.
+function M.profileForNavigation(action_id)
+    if type(action_id) ~= "string" then return nil end
+    if action_id:match("^custom_qa_%d+$") then
+        local cfg = SUISettings:get("simpleui_qa_" .. action_id) or {}
+        action_id = cfg.dispatcher_action
+    end
+    if action_id == "bookshelf_prose" or action_id == "open_bookshelf_prose" then
+        return "prose"
+    elseif action_id == "bookshelf_comics" or action_id == "open_bookshelf_comics" then
+        return "comics"
+    end
+end
+
 -- Resolve the actual navbar slot for a Bookshelf profile. The slot may be a
 -- built-in Bookshelf action or a user-created Quick Action whose dispatcher
 -- target opens that profile.
