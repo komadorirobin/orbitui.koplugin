@@ -5,9 +5,15 @@
 - `sh scripts/test.sh`: LuaJIT syntax, integration tests, and original component suites.
 - `LUA=luajit sh scripts/test.sh`: the same test bodies under KOReader's Lua dialect.
 - `sh scripts/check-translations.sh`: validate catalogs with explicit baseline exceptions.
+- `python3 -m unittest discover -s tests -p 'test_upstream_watch.py' -v`: monitor,
+  error handling, real Git ancestry and idempotent reporting tests; no network.
 - `sh scripts/package.sh`: clean-commit runtime ZIP, archive integrity and layout checks.
 - CI validates both components' translation files and stores an experimental ZIP
-  artifact. It does not publish releases or modify upstream repositories.
+artifact. It does not publish releases or modify upstream repositories.
+
+`scripts/test.sh` includes the monitor tests. Python 3.9+ is a development/CI
+dependency only; it is not installed or needed on KOReader. The monitor has a
+separate workflow and cannot publish plugin packages. See `UPSTREAM.md`.
 
 Bookshelf's native SQLite tests require KOReader's runtime. Its exhaustive list
 geometry sweep remains opt-in (`BOOKSHELF_SLOW_TESTS=1`). The runner identifies

@@ -2,3 +2,4 @@
 /test-results/
 *.luac
 .DS_Store
+__pycache__/

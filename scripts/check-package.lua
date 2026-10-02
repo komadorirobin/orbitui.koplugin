@@ -24,6 +24,7 @@ for _, path in pairs(dofile("core/orbitui_module_map.lua")) do expect(path) end
 for _, path in ipairs({
     "main.lua", "_meta.lua", "LICENSE", "README.md", "sources.json",
     "docs/MIGRATION.md", "docs/TESTING.md", "docs/UPSTREAM.md",
+    "docs/INTEGRATION_CONTRACTS.md", "docs/MERGE_LOG.md",
     "components/bookshelf/main.lua", "components/bookshelf/_meta.lua",
     "components/bookshelf/LICENSE", "components/bookshelf/assets/bookshelf-logo.png",
     "components/simpleui/main.lua", "components/simpleui/_meta.lua", "components/simpleui/LICENSE",

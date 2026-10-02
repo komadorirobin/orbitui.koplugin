@@ -1,0 +1,52 @@
+name: Upstream watch
+on:
+  schedule:
+    - cron: '17 5,11,17,23 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - sources.json
+      - scripts/upstream_watch.py
+      - .github/workflows/upstream-watch.yml
+permissions:
+  contents: read
+concurrency:
+  group: orbitui-upstream-watch
+  cancel-in-progress: false
+jobs:
+  report:
+    if: github.repository == 'komadorirobin/orbitui.koplugin' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Test monitor without network access
+        run: python3 -m unittest discover -s tests -p 'test_upstream_watch.py' -v
+      - name: Collect upstream state without merging
+        id: collect
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/upstream_watch.py collect
+      - name: Update the single status issue
+        if: ${{ !cancelled() && (steps.collect.outcome == 'success' || steps.collect.outcome == 'failure') && hashFiles('test-results/upstream-watch/report.json') != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_REPOSITORY: ${{ github.repository }}
+          ISSUE_ASSIGNEE: ${{ github.repository_owner }}
+        run: python3 scripts/upstream_watch.py publish --report test-results/upstream-watch/report.json --repository "$ISSUE_REPOSITORY" --assignee "$ISSUE_ASSIGNEE"
+      - name: Record check summary
+        if: ${{ !cancelled() && hashFiles('test-results/upstream-watch/report.md') != '' }}
+        run: cat test-results/upstream-watch/report.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() && hashFiles('test-results/upstream-watch/report.json') != '' }}
+        with:
+          name: upstream-status
+          path: test-results/upstream-watch/report.*
+          retention-days: 30

@@ -30,6 +30,21 @@ The component updaters are disabled in OrbitUI; components must never update
 independently inside a combined installation. This first development build is
 installed manually. A common OTA installer is a later milestone.
 
+## Upstream monitoring
+
+[Upstream watch](https://github.com/komadorirobin/orbitui.koplugin/actions/workflows/upstream-watch.yml)
+checks Bookshelf `master` and SimpleUI `main` every six hours. The
+[status issue](https://github.com/komadorirobin/orbitui.koplugin/issues?q=label%3Aupstream-watch)
+shows missing commits, exact revisions and latest stable releases. It adds a
+comment only when the monitored state changes, not on every check.
+
+The watcher never merges, creates merge PRs, changes versions or publishes OTA
+updates. Request merges in the development conversation. Follow
+[the merge procedure](docs/UPSTREAM.md), preserve
+[the integration contracts](docs/INTEGRATION_CONTRACTS.md), and record results
+in [the merge log](docs/MERGE_LOG.md). This keeps project knowledge in the repo,
+not only in a particular chat or model's context.
+
 ## Development
 
 Run `sh scripts/test.sh` to check syntax and run the integration and component

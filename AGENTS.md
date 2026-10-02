@@ -17,3 +17,11 @@ and Bookshelf. Keep the original repositories and their update channels intact.
   tested migration. Do not globally replace `require`, `gettext` or DataStorage.
 - No automatic public release or production OTA change from CI. Device approval
   and an explicit publication request are required before a public beta release.
+- Upstream automation is monitoring only: no automatic merge, merge PR, version
+  bump, tag, release or OTA publication. A reviewed merge requires a user request.
+- Before merging, read `docs/UPSTREAM.md`, `docs/INTEGRATION_CONTRACTS.md` and
+  `docs/MERGE_LOG.md`. Preserve the contract IDs; record any deliberate change
+  and its approval rather than silently dropping a local behavior.
+- `sources.json` records original fork imports and separately the integrated
+  upstream commits/branches. Advance upstream pins only in a reviewed merge;
+  never mark an observed-but-unmerged upstream commit as integrated.

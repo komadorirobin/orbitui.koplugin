@@ -19,8 +19,8 @@ another name ending in `.koplugin` is not a safe way to disable it.
 
 ## Settings
 
-Before exposing either component, OrbitUI snapshots Bookshelf settings and link
-stores, SimpleUI settings, and the global reader settings into:
+Before exposing either component, OrbitUI snapshots Bookshelf settings (including
+Bookshelf-owned link records), SimpleUI settings, and the global reader settings into:
 
 `settings/orbitui/before-first-run/`
 
@@ -34,7 +34,8 @@ and schemas. There is no destructive settings migration. Normal UI preference
 changes therefore also remain visible to the old plugins if you roll back.
 Bookmarks, document sidecars and reading-history databases are not copied or
 rewritten by OrbitUI's backup mechanism. Normal component reading behavior is
-unchanged.
+unchanged. External BookOrbit/Hardcover plugin settings and SQLite caches are
+not part of this snapshot; retain an independent full backup before testing.
 
 ## Returning to the old plugins
 
