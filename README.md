@@ -33,8 +33,8 @@ installed manually. A common OTA installer is a later milestone.
 ## Development
 
 Run `sh scripts/test.sh` to check syntax and run the integration and component
-tests. Run `sh scripts/package.sh` to build a clean, versioned runtime ZIP from
-the working tree. The ZIP contains one `orbitui.koplugin/` directory; do not
+tests. Run `sh scripts/package.sh` to build a runtime ZIP from a clean, committed
+revision. The ZIP contains one `orbitui.koplugin/` directory; do not
 install GitHub's source archive as a plugin.
 
 See `docs/MIGRATION.md` for the opt-in installation and rollback procedure,

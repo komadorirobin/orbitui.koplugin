@@ -1,0 +1,29 @@
+name: OrbitUI checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        lua: [lua, luajit]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install test dependencies
+        run: sudo apt-get update && sudo apt-get install -y lua5.4 luajit gettext unzip
+      - name: Test integration and both components
+        env:
+          LUA: ${{ matrix.lua }}
+        run: sh scripts/test.sh
+      - name: Validate translations
+        run: sh scripts/check-translations.sh
+      - name: Build runtime package
+        run: sh scripts/package.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: orbitui-experimental-${{ matrix.lua }}
+          path: dist/orbitui.koplugin.zip

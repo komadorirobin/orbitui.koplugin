@@ -1,0 +1,14 @@
+/.github/ export-ignore
+/.gitignore export-ignore
+/.gitattributes export-ignore
+/AGENTS.md export-ignore
+/tests/ export-ignore
+/scripts/ export-ignore
+/components/*/tests/ export-ignore
+/components/*/tools/ export-ignore
+/components/*/scripts/ export-ignore
+/components/*/docs/ export-ignore
+/components/*/.github/ export-ignore
+/components/*/.gitignore export-ignore
+/components/*/.gitattributes export-ignore
+*.pot export-ignore

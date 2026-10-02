@@ -1,0 +1,9 @@
+# Unchanged SimpleUI 2.7.2-beta.5 catalogs with existing msgfmt plural-form errors.
+# Git blob hashes: a changed catalog must pass validation, not inherit the waiver.
+c736f7ab85e62ed1b79dad747780ec25b9af6f5b components/simpleui/locale/it_IT.po
+bd269a39c7cd05ebc08192c1f9a0d3c28e076336 components/simpleui/locale/ja.po
+69a437ec23dcb5e72586064b2fbfa10aaa2eb56d components/simpleui/locale/ko_KR.po
+90ba786be082b954125f6e1ebb051aeefbc13d4a components/simpleui/locale/lt_LT.po
+02f1f2cb7838484776ebeab90591a627728976d3 components/simpleui/locale/vi.po
+dbd7a2b5264640e6b27753f009f3ca5ea199f091 components/simpleui/locale/zh_CN.po
+ac0042ab05697e20358fa12bdd3362d84bcf1d7b components/simpleui/locale/zh_TW.po

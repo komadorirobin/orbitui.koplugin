@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "components": {
+    "bookshelf": {
+      "repository": "https://github.com/komadorirobin/bookshelf.koplugin.git",
+      "upstream": "https://github.com/AndyHazz/bookshelf.koplugin.git",
+      "tag": "v5.2.2.3",
+      "commit": "2d46b259028ddbebc0159effe6171abb14520868",
+      "license": "AGPL-3.0"
+    },
+    "simpleui": {
+      "repository": "https://github.com/komadorirobin/simpleui.koplugin.git",
+      "upstream": "https://github.com/doctorhetfield-cmd/simpleui.koplugin.git",
+      "tag": "2.7.2-beta.5",
+      "commit": "a8bbbdb89dcce9a4b9d86cfa321c8cecce9b030f",
+      "license": "MIT"
+    }
+  }
+}
