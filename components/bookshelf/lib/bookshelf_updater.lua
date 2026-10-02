@@ -1,0 +1,864 @@
+local ConfirmBox = require("ui/widget/confirmbox")
+local Device = require("device")
+local InfoMessage = require("ui/widget/infomessage")
+local UIManager = require("ui/uimanager")
+local _ = require("lib/bookshelf_i18n").gettext
+
+local Updater = {}
+local GITHUB_REPO = "komadorirobin/bookshelf.koplugin"
+local RELEASES_URL = "https://github.com/" .. GITHUB_REPO .. "/releases"
+local API_REPO_BASE = "https://api.github.com/repos/" .. GITHUB_REPO
+
+-- Background check state (session-only, not persisted)
+local _cached_version = nil   -- latest available version string, or nil
+local _cached_zip_url = nil   -- download URL for the latest release ZIP
+local _last_check_time = nil  -- os.time() of last successful or attempted check
+local _check_in_flight = false
+local CHECK_INTERVAL = 3600   -- 1 hour
+
+-- Unpack a downloaded .zip into `dest`, stripping the archive's single
+-- top-level directory (release/GitHub zips wrap everything in
+-- bookshelf.koplugin/ or bookshelf.koplugin-<branch>/).
+--
+-- Extract via the core ffi/archiver (libarchive) -- the API KOReader itself
+-- uses (e.g. its dictionary downloader). We used to call Device:unpackArchive,
+-- but that was only ever a thin wrapper around this same Reader; KOReader
+-- dropped the wrapper on master mid-2026 ("drop unused"), which crashed the
+-- updater (issue 254). Calling ffi/archiver directly works wherever the wrapper
+-- did (the wrapper depended on it) and keeps working after its removal.
+-- libarchive's write-to-disk auto-creates parent dirs, so extracting each entry
+-- to its stripped path is enough. A missing extractor degrades to a clean error
+-- (the caller then offers the releases page) rather than crashing.
+local function unpackStripRoot(zip_path, dest)
+    local ok_req, Archiver = pcall(require, "ffi/archiver")
+    if not (ok_req and Archiver and Archiver.Reader) then
+        return false, "archive extractor unavailable"
+    end
+    local arc = Archiver.Reader:new()
+    if not arc:open(zip_path) then
+        local e = arc.err
+        arc:close()
+        return false, e or "could not open archive"
+    end
+    local extract_err
+    for entry in arc:iterate() do
+        local rel = entry.path and entry.path:match("^[^/]+/(.+)$")
+        if rel and rel ~= "" then
+            if not arc:extractToPath(entry.path, dest .. "/" .. rel) then
+                extract_err = arc.err or "extract failed"
+                break
+            end
+        end
+    end
+    arc:close()
+    if extract_err then return false, extract_err end
+    return true
+end
+-- Test hook (same convention as CoverFetch._base64decode): the strip-root
+-- logic is pure once ffi/archiver is stubbed, and install() is too entangled
+-- with the network to exercise it any other way off-device.
+Updater._unpackStripRoot = unpackStripRoot
+
+-- pluginDir() -> the folder the RUNNING plugin was loaded from.
+--
+-- Not <data dir>/plugins/bookshelf.koplugin, which is where this used to read
+-- and write. KOReader looks for plugins in TWO places -- "plugins" under the
+-- install directory first, then <data dir>/plugins -- and loads every
+-- directory ending .koplugin that it finds in either. On a Kindle those two
+-- are usually the same folder and nothing shows. Where they are not, or where
+-- a second copy is sitting around under another *.koplugin name, the updater
+-- was reading and writing one copy while KOReader ran the other.
+--
+-- The fingerprint is a reader saying About shows one version and "check for
+-- updates" shows another, having updated successfully several times: About
+-- reads the running code's own folder, this used to read a fixed path.
+--
+-- Derived the way About derives it -- this file sits at <dir>/lib/<file>.lua
+-- -- and falling back to the old path if that ever fails to parse.
+function Updater.pluginDir()
+    local src = debug.getinfo(1, "S").source:match("@(.*)$")
+    local dir = src and src:match("^(.*)/lib/[^/]+%.lua$")
+    if dir and dir ~= "" then return dir end
+    local DataStorage = require("datastorage")
+    return DataStorage:getDataDir() .. "/plugins/bookshelf.koplugin"
+end
+
+function Updater.getInstalledVersion()
+    local ok_meta, meta = pcall(dofile, Updater.pluginDir() .. "/_meta.lua")
+    return (ok_meta and meta and meta.version) or "unknown"
+end
+
+-- otherCopies() -> paths of OTHER *.koplugin folders that look like this
+-- plugin, which KOReader will also have loaded.
+--
+-- Every directory ending .koplugin in either lookup path is loaded, with no
+-- check for a name already seen, so a leftover "bookshelf-old.koplugin" or a
+-- half-renamed "bookshelf.koplugin-master" runs alongside the real one. The
+-- About screen reports what this finds, because that is where a reader looks
+-- when the version reads wrong.
+-- Compared by IDENTITY, never by path string. KOReader's two lookup paths are
+-- "plugins", relative to its own working directory, and <datadir>/plugins --
+-- and on a Kobo, an Android install and the emulator those are THE SAME
+-- DIRECTORY reached two ways. Keyed on the strings, the scan walked it twice
+-- and the second pass reported the one true install as a second copy:
+--
+--     Another copy of Bookshelf is installed and is also being loaded
+--     ./plugins/bookshelf.koplugin
+--
+-- on a device with exactly one (Reddit, 2026-09-20; the reader had installed
+-- once and updated through the plugin for a year). pluginDir() derives our
+-- own path from debug.getinfo, which hands back whichever form the loader
+-- used, so the string compare against it was unreliable in both directions.
+--
+-- dev+ino is the same question the filesystem would answer, and it costs one
+-- stat we were already making. It also settles the symlinked install a
+-- developer runs from a working tree. Where lfs cannot supply them -- a
+-- platform without inodes -- the path stands in, which is exactly the old
+-- behaviour for that case and no worse.
+local function _identity(lfs, path)
+    local a = lfs.attributes(path)
+    if type(a) ~= "table" or a.mode ~= "directory" then return nil end
+    if a.ino and a.dev then return tostring(a.dev) .. ":" .. tostring(a.ino) end
+    return "path:" .. path
+end
+
+function Updater.otherCopies()
+    local out = {}
+    local ok = pcall(function()
+        local lfs = require("libs/libkoreader-lfs")
+        local DataStorage = require("datastorage")
+        local mine = Updater.pluginDir()
+        local mine_id = _identity(lfs, mine)
+        local seen = {}
+        local roots = { "plugins", DataStorage:getDataDir() .. "/plugins" }
+        for _i = 1, #roots do
+            local root = roots[_i]
+            local root_id = _identity(lfs, root)
+            if root_id and not seen[root_id] then
+                seen[root_id] = true
+                for entry in lfs.dir(root) do
+                    local path = root .. "/" .. entry
+                    if entry:sub(-9) == ".koplugin"
+                            and entry:lower():find("bookshelf", 1, true) then
+                        local id = _identity(lfs, path)
+                        -- A nil id is not a directory, so not a copy. An id
+                        -- equal to ours is us, however the path is spelled.
+                        if id and id ~= mine_id and not seen[id] then
+                            seen[id] = true
+                            out[#out + 1] = path
+                        end
+                    end
+                end
+            end
+        end
+    end)
+    if not ok then return {} end
+    return out
+end
+
+local function parseVersion(v)
+    local parts = {}
+    for part in tostring(v):gsub("^v", ""):gmatch("([^.]+)") do
+        table.insert(parts, tonumber(part) or 0)
+    end
+    return parts
+end
+
+local function isNewer(v1, v2)
+    local a, b = parseVersion(v1), parseVersion(v2)
+    for i = 1, math.max(#a, #b) do
+        local x, y = a[i] or 0, b[i] or 0
+        if x > y then return true end
+        if x < y then return false end
+    end
+    return false
+end
+
+local function encodeQueryValue(value)
+    return tostring(value or ""):gsub("[^%w%-_.~]", function(c)
+        return string.format("%%%02X", c:byte())
+    end)
+end
+
+local function shortSha(sha)
+    return tostring(sha or ""):sub(1, 8)
+end
+
+-- A selected channel and the source currently installed are deliberately
+-- separate. Selecting a branch must never install it implicitly.
+local function branchState(branch, installed_source, installed_commit, head_sha)
+    if installed_source ~= "branch:" .. tostring(branch) then
+        return "switch"
+    end
+    if not installed_commit or installed_commit == "" then
+        return "baseline"
+    end
+    if installed_commit == head_sha then
+        return "current"
+    end
+    return "update"
+end
+
+--- Compose the GitHub branch-archive URL for a given branch name.
+-- Branch path is URL-encoded except for alnum, dash, underscore, dot, tilde
+-- and forward slash (so feature/foo keeps its slash). Uses the public
+-- api.github.com zipball endpoint.
+-- Returns nil for a name we refuse to compose a URL from (empty, non-string,
+-- or containing ".."); callers must treat nil as "reject this branch".
+function Updater.composeBranchUrl(branch)
+    if type(branch) ~= "string" or branch == "" then return nil end
+    -- ".." would climb out of the repo path. The filter below deliberately
+    -- passes "/" and "." through so feature/v5.2-test survives, and both curl
+    -- (client-side) and api.github.com (server-side) collapse dot segments, so
+    -- "../../../owner/repo/zipball/master" retargets the download at an
+    -- arbitrary repo while every URL constant here still reads AndyHazz. git
+    -- forbids ".." anywhere in a refname, so no real branch can contain one.
+    if branch:find("..", 1, true) then return nil end
+    local encoded = branch:gsub("[^%w%-_/.~]", function(c)
+        return string.format("%%%02X", c:byte())
+    end)
+    return string.format(
+        API_REPO_BASE .. "/zipball/%s",
+        encoded)
+end
+
+--- Shared luasocket-then-curl JSON GET (lib/bookshelf_http), with the GitHub
+--- Accept header and a slightly longer curl cap for the releases payload.
+local function httpGetJSON(url, user_agent)
+    return require("lib/bookshelf_http").getJSON(url, {
+        user_agent    = user_agent,
+        accept        = "application/vnd.github.v3+json",
+        curl_max_time = 20,
+    })
+end
+
+local function fetchBranchHead(branch, user_agent)
+    local commits = httpGetJSON(
+        API_REPO_BASE .. "/commits?sha=" .. encodeQueryValue(branch) .. "&per_page=1",
+        user_agent)
+    if type(commits) ~= "table" or type(commits[1]) ~= "table" then return nil end
+    local sha = commits[1].sha
+    if type(sha) ~= "string" or sha == "" then return nil end
+    return sha
+end
+
+function Updater.offerReleasesPage(message)
+    local url = RELEASES_URL
+    if Device:canOpenLink() then
+        UIManager:show(ConfirmBox:new{
+            text = message .. "\n\n" .. _("Open the releases page in a browser?"),
+            ok_text = _("Open"),
+            ok_callback = function()
+                Device:openLink(url)
+            end,
+        })
+    else
+        UIManager:show(InfoMessage:new{
+            text = message,
+            timeout = 3,
+        })
+    end
+end
+
+--- Return the available update version and zip URL, or nil if none/not checked.
+function Updater.getAvailableUpdate()
+    return _cached_version, _cached_zip_url
+end
+
+--- Fire a silent background update check if the cache is stale (>1h or never checked).
+-- Results available via getAvailableUpdate().
+-- @param on_update_found function(version): optional callback when a new version is discovered
+function Updater.checkBackground(on_update_found)
+    if _check_in_flight then return end
+    local now = os.time()
+    if _last_check_time and (now - _last_check_time) < CHECK_INTERVAL then return end
+
+    local NetworkMgr = require("ui/network/manager")
+    if not NetworkMgr:isWifiOn() then return end
+
+    _check_in_flight = true
+    _last_check_time = now
+
+    UIManager:scheduleIn(0.1, function()
+        local installed_version = Updater.getInstalledVersion()
+        local user_agent = "KOReader-Bookshelf/" .. installed_version
+
+        -- Only fetch the latest release (lightweight)
+        local release = httpGetJSON(
+            API_REPO_BASE .. "/releases/latest",
+            user_agent)
+
+        _check_in_flight = false
+
+        if not release or not release.tag_name then return end
+        if release.draft or release.prerelease then return end
+
+        local ver = release.tag_name:gsub("^v", "")
+        if isNewer(ver, installed_version) then
+            _cached_version = ver
+            _cached_zip_url = nil
+            if release.assets then
+                for _i, asset in ipairs(release.assets) do
+                    if asset.name:match("%.zip$") then
+                        _cached_zip_url = asset.browser_download_url
+                        break
+                    end
+                end
+            end
+            if on_update_found then
+                on_update_found(ver)
+            end
+        else
+            _cached_version = nil
+            _cached_zip_url = nil
+        end
+    end)
+end
+
+--- Shared Wi-Fi gate for the user-initiated network paths (#77).
+-- Gate on isConnected rather than isOnline, because the latter is a DNS probe
+-- that may fail on otherwise working connections.
+-- @param retry function: re-invokes the caller once a connection exists
+-- @return boolean: true if the caller should return and wait, false to proceed
+function Updater.gateOnConnection(retry)
+    local NetworkMgr = require("ui/network/manager")
+    if NetworkMgr:isConnected() then return false end
+    NetworkMgr:runWhenConnected(function()
+        if NetworkMgr:isConnected() then retry() end
+    end)
+    return true
+end
+
+--- Silently compare the selected branch head with the commit recorded after
+-- the last successful branch install. A missing commit establishes a baseline
+-- instead of claiming that every check is an update.
+function Updater.checkBranchBackground(branch, installed_commit, on_update_found, on_baseline)
+    if _check_in_flight then return end
+    local now = os.time()
+    if _last_check_time and (now - _last_check_time) < CHECK_INTERVAL then return end
+
+    if not Updater.composeBranchUrl(branch) then return end
+    local NetworkMgr = require("ui/network/manager")
+    if not NetworkMgr:isConnected() then return end
+
+    _check_in_flight = true
+    _last_check_time = now
+    UIManager:scheduleIn(0.1, function()
+        local installed_version = Updater.getInstalledVersion()
+        local head_sha = fetchBranchHead(
+            branch, "KOReader-Bookshelf/" .. installed_version)
+        _check_in_flight = false
+        if not head_sha then return end
+        if not installed_commit or installed_commit == "" then
+            if on_baseline then on_baseline(head_sha) end
+        elseif installed_commit ~= head_sha and on_update_found then
+            on_update_found(head_sha)
+        end
+    end)
+end
+
+function Updater.check(on_success)
+
+    local installed_version = Updater.getInstalledVersion()
+
+    -- Bring Wi-Fi up if it is off and re-run once CONNECTED; if the user
+    -- cancels the prompt, nothing happens. See Updater.gateOnConnection for
+    -- why this gates on isConnected rather than isOnline.
+    if Updater.gateOnConnection(function() Updater.check(on_success) end) then
+        return
+    end
+    UIManager:show(InfoMessage:new{
+        text = _("Checking for updates..."),
+        timeout = 1,
+    })
+
+    UIManager:scheduleIn(0.1, function()
+        local user_agent = "KOReader-Bookshelf/" .. installed_version
+
+        -- Fetch all releases to gather notes between installed and latest
+        local releases = httpGetJSON(
+            API_REPO_BASE .. "/releases",
+            user_agent)
+        if not releases or #releases == 0 then
+            Updater.offerReleasesPage(_("Could not check for updates."))
+            return
+        end
+        -- Free seeding for the changelog viewer: this payload is exactly
+        -- what it caches, so an update check keeps past notes revisitable.
+        pcall(function()
+            require("lib/bookshelf_changelog").seed(releases)
+        end)
+
+        -- Collect releases newer than installed version
+        local new_releases = {}
+        local latest_zip_url
+        for _i, rel in ipairs(releases) do
+            if rel.draft or rel.prerelease then goto continue end
+            local ver = rel.tag_name:gsub("^v", "")
+            if isNewer(ver, installed_version) then
+                table.insert(new_releases, rel)
+                -- Find ZIP asset from the newest release
+                if not latest_zip_url and rel.assets then
+                    for _i, asset in ipairs(rel.assets) do
+                        if asset.name:match("%.zip$") then
+                            latest_zip_url = asset.browser_download_url
+                            break
+                        end
+                    end
+                end
+            end
+            ::continue::
+        end
+
+        -- Update the background cache too
+        _last_check_time = os.time()
+        if #new_releases > 0 then
+            _cached_version = new_releases[1].tag_name:gsub("^v", "")
+            _cached_zip_url = latest_zip_url
+        else
+            _cached_version = nil
+            _cached_zip_url = nil
+        end
+
+        if #new_releases == 0 then
+            UIManager:show(InfoMessage:new{
+                text = _("Bookshelf is up to date.") .. "\n\n" ..
+                    _("Version: ") .. "v" .. installed_version,
+                timeout = 3,
+            })
+            return
+        end
+
+        -- Build combined release notes (newest first)
+        local latest_version = new_releases[1].tag_name:gsub("^v", "")
+        local function stripMarkdown(text)
+            text = text:gsub("#+%s*", "")        -- strip heading markers
+            text = text:gsub("%*%*(.-)%*%*", "%1") -- strip bold
+            text = text:gsub("%*(.-)%*", "%1")     -- strip italic
+            text = text:gsub("`(.-)`", "%1")       -- strip inline code
+            return text
+        end
+        local notes = {}
+        for _i, rel in ipairs(new_releases) do
+            local header = "v" .. rel.tag_name:gsub("^v", "")
+            local body = stripMarkdown(rel.body or "")
+            table.insert(notes, header .. "\n" .. body)
+        end
+        local all_notes = table.concat(notes, "\n\n")
+
+        local TextViewer = require("ui/widget/textviewer")
+        local viewer
+        local buttons = {
+            {
+                {
+                    text = _("Close"),
+                    callback = function()
+                        UIManager:close(viewer)
+                    end,
+                },
+                {
+                    text = _("Update and restart"),
+                    callback = function()
+                        UIManager:close(viewer)
+                        if not latest_zip_url then
+                            UIManager:show(InfoMessage:new{
+                                text = _("No download available for this release."),
+                                timeout = 3,
+                            })
+                            return
+                        end
+                        Updater.install(latest_zip_url, installed_version, latest_version, on_success)
+                    end,
+                },
+            },
+        }
+        viewer = TextViewer:new{
+            title = _("Update available!"),
+            text = _("Installed: ") .. "v" .. installed_version .. "\n" ..
+                _("Latest: ") .. "v" .. latest_version .. "\n\n" ..
+                all_notes,
+            buttons_table = buttons,
+            add_default_buttons = false,
+        }
+        UIManager:show(viewer)
+    end)
+end
+
+--- Check a branch without installing it blindly.
+-- `callbacks.on_baseline(sha)` records the current head for legacy installs
+-- that predate commit tracking; `callbacks.on_success(sha)` runs only after a
+-- confirmed install succeeds.
+function Updater.checkBranch(branch, installed_source, installed_commit, callbacks)
+    callbacks = callbacks or {}
+    if Updater.gateOnConnection(function()
+        Updater.checkBranch(branch, installed_source, installed_commit, callbacks)
+    end) then
+        return
+    end
+    local zip_url = Updater.composeBranchUrl(branch)
+    if not zip_url then
+        UIManager:show(InfoMessage:new{
+            text = _("Could not check for updates."),
+            timeout = 3,
+        })
+        return
+    end
+    UIManager:show(InfoMessage:new{
+        text = _("Checking for updates..."),
+        timeout = 1,
+    })
+    UIManager:scheduleIn(0.1, function()
+            local installed_version = Updater.getInstalledVersion()
+            local head_sha = fetchBranchHead(
+                branch, "KOReader-Bookshelf/" .. installed_version)
+            if not head_sha then
+                UIManager:show(InfoMessage:new{
+                    text = _("Could not check for updates."),
+                    timeout = 3,
+                })
+                return
+            end
+
+            local state = branchState(
+                branch, installed_source, installed_commit, head_sha)
+            if state == "baseline" then
+                if callbacks.on_baseline then callbacks.on_baseline(head_sha) end
+                UIManager:show(InfoMessage:new{
+                    text = _("Bookshelf is up to date.") .. "\n\n" ..
+                        _("Branch") .. ": " .. branch .. "\n" ..
+                        _("Commit") .. ": " .. shortSha(head_sha),
+                    timeout = 4,
+                })
+                return
+            end
+            if state == "current" then
+                UIManager:show(InfoMessage:new{
+                    text = _("Bookshelf is up to date.") .. "\n\n" ..
+                        _("Branch") .. ": " .. branch .. "\n" ..
+                        _("Commit") .. ": " .. shortSha(head_sha),
+                    timeout = 4,
+                })
+                return
+            end
+
+            local switching = state == "switch"
+            local prompt
+            if switching then
+                prompt = _("The selected update channel is not currently installed.")
+                    .. "\n\n" .. _("Switch to branch") .. ": " .. branch .. "?"
+            else
+                prompt = _("A new branch revision is available.") .. "\n\n"
+                    .. _("Branch") .. ": " .. branch .. "\n"
+                    .. shortSha(installed_commit) .. " \xE2\x86\x92 " .. shortSha(head_sha)
+            end
+            UIManager:show(ConfirmBox:new{
+                text = prompt,
+                ok_text = switching and _("Switch") or _("Update and restart"),
+                ok_callback = function()
+                    Updater.installBranch(branch, head_sha, function()
+                        if callbacks.on_success then callbacks.on_success(head_sha) end
+                    end)
+                end,
+            })
+    end)
+end
+
+function Updater.install(zip_url, old_version, new_version, on_success, error_label)
+
+    local DataStorage = require("datastorage")
+    local lfs = require("libs/libkoreader-lfs")
+
+    UIManager:show(InfoMessage:new{
+        text = _("Downloading update..."),
+        timeout = 1,
+    })
+
+    UIManager:scheduleIn(0.1, function()
+        -- Download ZIP to temp location
+        local cache_dir = DataStorage:getSettingsDir() .. "/bookshelf_cache"
+        if lfs.attributes(cache_dir, "mode") ~= "directory" then
+            lfs.mkdir(cache_dir)
+        end
+        local zip_path = cache_dir .. "/bookshelf.koplugin.zip"
+
+        -- Try LuaSocket first, fall back to curl.
+        --
+        -- `reason` carries WHY a download failed, so the message can say
+        -- something better than "Download failed." Practices here follow
+        -- storefront.koplugin's installer, which handles this well: it is
+        -- another plugin that downloads plugin zips onto e-readers, so it has
+        -- met the same failure modes.
+        local downloaded, reason = false, nil
+        local ok_require, http, ltn12, socket, socketutil =
+            pcall(function()
+                return require("socket.http"),
+                       require("ltn12"),
+                       require("socket"),
+                       require("socketutil")
+            end)
+        if ok_require then
+            -- Download to a temporary name and rename on success, so an
+            -- interrupted transfer can never leave a half-written zip where
+            -- the unpack step will find it and report a corrupt archive.
+            local tmp_path = zip_path .. ".tmp"
+            pcall(os.remove, tmp_path)
+            local file = io.open(tmp_path, "wb")
+            if file then
+                local ok_dl, code, headers, status = pcall(function()
+                    -- FILE_TOTAL_TIMEOUT is 60s and it is an ABSOLUTE
+                    -- ceiling on the whole transfer (settimeout(t) in
+                    -- socketutil), not a stall timeout. The release zip is
+                    -- ~2.9MB, so 60s demanded ~50KB/s sustained - a coin flip
+                    -- on e-reader Wi-Fi, and the likely cause of the
+                    -- "Download failed" reports. 300s asks ~10KB/s instead,
+                    -- which no working connection falls under, and it matches
+                    -- what the curl fallback below already allowed.
+                    --
+                    -- NOT -1 (uncapped), tempting as that is. http.request
+                    -- blocks, and this runs on the UI loop with no Trapper
+                    -- and no cancel, so an unbounded transfer freezes
+                    -- KOReader until the user kills it. A ceiling that
+                    -- reports a failure beats a hang.
+                    --
+                    -- FILE_BLOCK_TIMEOUT is the idle timeout and still fails
+                    -- a genuinely stalled connection within 15s, but it
+                    -- RESETS on every chunk, so it alone cannot bound a
+                    -- connection that dribbles.
+                    socketutil:set_timeout(socketutil.FILE_BLOCK_TIMEOUT, 300)
+                    -- socketutil's sink rather than ltn12's: it enforces the
+                    -- total timeout above, surfacing a dribbling transfer as
+                    -- SINK_TIMEOUT_CODE. The socket timeout only covers the
+                    -- wait BEFORE data arrives; once chunks are flowing this
+                    -- sink is the only thing still counting. Note it decides
+                    -- at CONSTRUCTION time and degrades to a plain
+                    -- ltn12.sink.file when total_timeout is negative, so it
+                    -- has to be built after set_timeout, as it is here.
+                    local sink = socketutil.file_sink and socketutil.file_sink(file)
+                                 or ltn12.sink.file(file)
+                    local c, h, st = socket.skip(1, http.request({
+                        url = zip_url,
+                        method = "GET",
+                        headers = {
+                            ["User-Agent"] = "KOReader-Bookshelf/" .. old_version,
+                            ["Accept"] = "application/zip, application/octet-stream, */*",
+                        },
+                        sink = sink,
+                        redirect = true,
+                    }))
+                    socketutil:reset_timeout()
+                    return c, h, st
+                end)
+                pcall(function() file:close() end)
+                if not ok_dl then
+                    pcall(function() socketutil:reset_timeout() end)
+                    reason = _("the connection failed")
+                elseif code == socketutil.TIMEOUT_CODE
+                        or code == socketutil.SINK_TIMEOUT_CODE then
+                    reason = _("the connection timed out")
+                elseif code == socketutil.SSL_HANDSHAKE_CODE then
+                    reason = _("the secure connection failed")
+                elseif not headers then
+                    -- No response at all, as opposed to an HTTP error code.
+                    reason = _("there was no response")
+                elseif tonumber(code) ~= 200 then
+                    reason = status or ("HTTP " .. tostring(code))
+                else
+                    downloaded = true
+                end
+                if downloaded then
+                    pcall(os.remove, zip_path)
+                    if not os.rename(tmp_path, zip_path) then
+                        -- Rename can fail across filesystems; copy instead.
+                        local ok_copy = pcall(function()
+                            local i, o = io.open(tmp_path, "rb"), io.open(zip_path, "wb")
+                            if not (i and o) then error("copy failed") end
+                            o:write(i:read("*all")); i:close(); o:close()
+                        end)
+                        downloaded = ok_copy
+                        if not ok_copy then reason = _("the file could not be saved") end
+                    end
+                end
+                pcall(os.remove, tmp_path)
+            else
+                reason = _("the file could not be saved")
+            end
+        end
+        -- Fallback: curl (available on Android, desktop). The -f flag makes
+        -- curl exit non-zero on HTTP errors (e.g. 404 for a missing branch);
+        -- without it, curl would write the 404 HTML body to the zip file and
+        -- the unpack step would surface a misleading "extracting failed".
+        if not downloaded then
+            pcall(os.remove, zip_path)
+            -- shellQuote, not %q: see lib/bookshelf_http.shellQuote for why %q
+            -- is a Lua quote and lets the shell expand $ and backticks.
+            local shellQuote = require("lib/bookshelf_http").shellQuote
+            local ret = os.execute(string.format(
+                "curl -sfL --connect-timeout 10 --max-time 300 -o %s %s",
+                shellQuote(zip_path), shellQuote(zip_url)))
+            downloaded = ret == 0 or ret == true
+        end
+        if not downloaded then
+            pcall(os.remove, zip_path)
+            -- Say WHY where we know. "Download failed." on its own gives a
+            -- reporter nothing to tell us, and these fail for very different
+            -- reasons: a slow connection, a captive portal, a 404 on a
+            -- mistyped dev branch. Appended rather than replacing the label so
+            -- the existing wording still leads.
+            -- The reasons are sentence FRAGMENTS, so they continue the label
+            -- rather than following it: "Download failed. (the connection
+            -- timed out)" puts a lowercase clause after a full stop. Dropping
+            -- a trailing stop keeps both msgids intact - reworking the label
+            -- into "Download failed:" would orphan every existing translation
+            -- of it. A locale whose stop is not "." simply keeps it, which is
+            -- no worse than before.
+            local function withReason(label)
+                if not reason then return label end
+                return (tostring(label):gsub("%.%s*$", ""))
+                       .. " (" .. tostring(reason) .. ")"
+            end
+            if error_label then
+                UIManager:show(InfoMessage:new{
+                    text = withReason(error_label),
+                    timeout = 3,
+                })
+            else
+                Updater.offerReleasesPage(withReason(_("Download failed.")))
+            end
+            return
+        end
+
+        -- Extract over the RUNNING plugin's own folder, not a fixed path: if
+        -- KOReader loaded this from somewhere else, installing to the fixed
+        -- path updates a copy nobody runs (see Updater.pluginDir).
+        local plugin_path = Updater.pluginDir()
+        local ok, err = unpackStripRoot(zip_path, plugin_path)
+        pcall(os.remove, zip_path)
+
+        if not ok then
+            UIManager:show(InfoMessage:new{
+                text = error_label or (_("Installation failed: ") .. tostring(err)),
+                timeout = 5,
+            })
+            return
+        end
+
+        -- Stamp install context (e.g. last_install_source) before the restart
+        -- prompt fires; runs only when unpack succeeded.
+        if on_success then
+            local ok_cb = pcall(on_success)
+            if not ok_cb then
+                -- Don't let a misbehaving callback abort the restart prompt.
+            end
+        end
+
+        -- Restart KOReader to load the new version
+        local installed_label = tostring(new_version)
+        local branch, commit = installed_label:match("^branch:(.-)@([0-9a-fA-F]+)$")
+        if branch then
+            installed_label = _("Branch") .. ": " .. branch .. " @ " .. commit
+        else
+            installed_label = "v" .. installed_label
+        end
+        UIManager:show(ConfirmBox:new{
+            text = _("Bookshelf updated to") .. " " .. installed_label .. ".\n\n" ..
+                _("Restart KOReader now?"),
+            ok_text = _("Restart"),
+            ok_callback = function()
+                UIManager:restartKOReader()
+            end,
+        })
+    end)
+end
+
+--- Install from a GitHub branch's archive zip.
+-- Same install pipeline as the release path; just composes a different URL.
+-- @param branch string: branch name (e.g. "feature/v5.2-test")
+-- @param head_sha string or nil: known remote head; fetched when omitted
+-- @param on_success function or nil: fired after successful unpack
+function Updater.installBranch(branch, head_sha, on_success)
+    -- Backwards compatibility with the old (branch, callback) signature.
+    if type(head_sha) == "function" and on_success == nil then
+        on_success = head_sha
+        head_sha = nil
+    end
+    if Updater.gateOnConnection(function()
+        Updater.installBranch(branch, head_sha, on_success)
+    end) then
+        return
+    end
+    local zip_url = Updater.composeBranchUrl(branch)
+    local error_label = _("Could not install branch:") .. " " .. tostring(branch)
+    if not zip_url then
+        UIManager:show(InfoMessage:new{ text = error_label, timeout = 3 })
+        return
+    end
+    UIManager:scheduleIn(0.1, function()
+        local installed_version = Updater.getInstalledVersion()
+        local resolved_head = head_sha or fetchBranchHead(
+            branch, "KOReader-Bookshelf/" .. installed_version)
+        if not resolved_head then
+            UIManager:show(InfoMessage:new{
+                text = _("Could not check for updates."),
+                timeout = 3,
+            })
+            return
+        end
+        Updater.install(zip_url, installed_version,
+            "branch:" .. branch .. "@" .. shortSha(resolved_head),
+            function()
+                if on_success then on_success(resolved_head) end
+            end,
+            error_label)
+    end)
+end
+
+--- Install the latest stable (non-prerelease) release, regardless of installed version.
+-- Used by the "Reset to latest stable release" entry: even when on a branch whose
+-- _meta.lua reports a higher version than the current release, we still want to
+-- pull the release zip and re-stamp last_install_source = "release".
+-- @param on_success function or nil: fired after successful unpack
+function Updater.installLatestStable(on_success)
+    -- See Updater.gateOnConnection for why this gates on isConnected (#77).
+    if Updater.gateOnConnection(function() Updater.installLatestStable(on_success) end) then
+        return
+    end
+    UIManager:show(InfoMessage:new{
+        text = _("Downloading latest release..."),
+        timeout = 1,
+    })
+
+    UIManager:scheduleIn(0.1, function()
+        local installed_version = Updater.getInstalledVersion()
+        local user_agent = "KOReader-Bookshelf/" .. installed_version
+        local release = httpGetJSON(
+            API_REPO_BASE .. "/releases/latest",
+            user_agent)
+        if not release or not release.tag_name or release.draft or release.prerelease then
+            Updater.offerReleasesPage(_("Could not fetch latest release."))
+            return
+        end
+        local zip_url
+        if release.assets then
+            for _i, asset in ipairs(release.assets) do
+                if asset.name:match("%.zip$") then
+                    zip_url = asset.browser_download_url
+                    break
+                end
+            end
+        end
+        if not zip_url then
+            Updater.offerReleasesPage(_("Latest release has no downloadable zip."))
+            return
+        end
+        local new_version = release.tag_name:gsub("^v", "")
+        Updater.install(zip_url, installed_version, new_version, on_success)
+    end)
+end
+
+-- Exposed only for the standalone Lua tests.
+Updater._test = {
+    branchState = branchState,
+    isNewer = isNewer,
+}
+
+return Updater

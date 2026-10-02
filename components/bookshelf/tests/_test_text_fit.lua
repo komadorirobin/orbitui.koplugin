@@ -1,0 +1,310 @@
+-- tests/_test_text_fit.lua
+-- Algorithm tests for bookshelf_text_fit. The real height/width come from the
+-- font stack, so we stub the measurement layer with a deterministic model:
+--   * a char is `size` px wide; a space is `size` px wide
+--   * a TextBoxWidget greedy-wraps words to `width`, and each line is
+--     ceil(size * 1.3) px tall
+-- Both metrics rise monotonically with size, which is the property the binary
+-- search relies on -- so this pins the search boundary, the width cap, the
+-- height cap, and the "nothing fits -> floor" return without needing fonts.
+
+package.path = "./?.lua;" .. package.path
+
+local function wordWidth(w, size) return #w * size end
+local function spaceWidth(size) return size end
+
+-- Greedy word wrap -> number of lines (mirrors TextBoxWidget).
+local function lineCount(text, size, width)
+    local words = {}
+    for w in text:gmatch("%S+") do words[#words + 1] = w end
+    if #words == 0 then return 0 end
+    local lines, cur = 1, wordWidth(words[1], size)
+    for i = 2, #words do
+        local add = spaceWidth(size) + wordWidth(words[i], size)
+        if cur + add <= width then
+            cur = cur + add
+        else
+            lines = lines + 1
+            cur = wordWidth(words[i], size)
+        end
+    end
+    return lines
+end
+
+package.preload["ui/rendertext"] = function()
+    return {
+        sizeUtf8Text = function(_self, _x, _w, face, str, _kern, _bold)
+            return { x = #str * (face.size or 1) }
+        end,
+    }
+end
+package.preload["lib/bookshelf_fonts"] = function()
+    return { getFace = function(_self, _name, size) return { size = size } end }
+end
+package.preload["ui/widget/textboxwidget"] = function()
+    local TB = {}
+    TB.__index = TB
+    function TB:new(o)
+        o = setmetatable(o or {}, self)
+        local size = (o.face and o.face.size) or 1
+        local lines = lineCount(o.text or "", size, o.width or 1)
+        o._h = lines * math.ceil(size * 1.3)
+        return o
+    end
+    function TB:getSize() return { w = self.width, h = self._h } end
+    function TB:free() end
+    return TB
+end
+
+local TextFit = require("lib/bookshelf_text_fit")
+
+local pass, fail = 0, 0
+local function check(name, got, want)
+    if got == want then
+        pass = pass + 1
+    else
+        fail = fail + 1
+        print(string.format("FAIL %s: got %s want %s", name, tostring(got), tostring(want)))
+    end
+end
+
+-- A: single word, width-bound. "Ulysses" (7) at size S is 7S wide; fits
+-- width 100 iff S <= 14. Height (1 line) never binds. -> 14.
+check("width-bound single word",
+    TextFit.fitFontSize{ text = "Ulysses", width = 100, max_h = 1000, lo = 12, hi = 34, bold = true },
+    14)
+
+-- B: multi-word, height-bound. Four 2-char words, width 60: at S=12 two
+-- words/line (5S=60) = 2 lines = 32px <= max_h 40; at S=13 one word/line =
+-- 4 lines = 68 > 40. Boundary is 12, and it is between lo(8) and hi(34), so
+-- this proves a genuine search rather than a clamp.
+check("height-bound multi word",
+    TextFit.fitFontSize{ text = "aa bb cc dd", width = 60, max_h = 40, lo = 8, hi = 34 },
+    12)
+
+-- C: nothing fits the height even at the floor -> returns lo (the truncate
+-- floor; caller renders at lo and ellipsis-clamps).
+check("height floor return",
+    TextFit.fitFontSize{ text = "hello world", width = 10000, max_h = 5, lo = 8, hi = 34 },
+    8)
+
+-- D: a single word wider than the box at every size -> width rejects even lo,
+-- so the floor is returned (again the truncate case).
+check("width floor return",
+    TextFit.fitFontSize{ text = "Supercalifragilistic", width = 100, lo = 8, hi = 34 },
+    8)
+
+-- E: empty text / degenerate box -> floor, no crash.
+check("empty text", TextFit.fitFontSize{ text = "", width = 100, max_h = 100, lo = 9, hi = 30 }, 9)
+check("zero width",  TextFit.fitFontSize{ text = "x", width = 0, max_h = 100, lo = 9, hi = 30 }, 9)
+
+-- balanceLines: a title that greedy-wraps to two lines gets one manual break,
+-- and neither resulting line exceeds max_width. Face size 10, width 130:
+-- "The Odyssey of Homer" -> greedy "The Odyssey of" (fits) then "Homer";
+-- balancer keeps two lines but evens them.
+do
+    local face = { size = 10 }
+    local out = TextFit.balanceLines("The Odyssey of Homer", face, 130, true)
+    local nl = select(2, out:gsub("\n", ""))
+    check("balance inserts one break", nl, 1)
+    local RenderText = require("ui/rendertext")
+    local widest = 0
+    for line in (out .. "\n"):gmatch("(.-)\n") do
+        local w = RenderText:sizeUtf8Text(0, 130, face, line, true, true).x
+        if w > widest then widest = w end
+    end
+    check("balanced lines within width", widest <= 130, true)
+end
+
+-- balanceLines: a title that greedy-wraps to FOUR lines with a lone short
+-- word on the last line ("... 3)") gets rebalanced so the last line is no
+-- longer a widow. size 10, width 95: 40px words two-per-line, seven words ->
+-- greedy 90/90/90/10 (widow); minimising max-then-deviation prefers a config
+-- whose last line carries two words.
+do
+    local face = { size = 10 }
+    local out = TextFit.balanceLines("aaaa aaaa aaaa aaaa aaaa aaaa a", face, 95, true)
+    local nl = select(2, out:gsub("\n", ""))
+    check("4-line title balanced (3 breaks)", nl, 3)
+    local last = out:match("([^\n]*)$")
+    check("last line is not a lone word", last:find(" ") ~= nil, true)
+end
+
+-- balanceLines: a single word (or empty) is returned unchanged.
+check("balance single word", TextFit.balanceLines("Ulysses", { size = 10 }, 100, true), "Ulysses")
+check("balance empty", TextFit.balanceLines("", { size = 10 }, 100, true), "")
+
+-- The render-verify (Reddit report 2026-08-26): balanceLines measures with
+-- RenderText word sums, but the widget shapes whole lines - when they
+-- disagree, the balanced text re-wraps a hair-too-wide line at render time
+-- and the extra line ellipsises a short title. The verify probes the real
+-- widget class and falls back to the natural wrap when the balanced text
+-- renders taller than its intended line count. Pin both directions with a
+-- swappable renderer stub.
+do
+    -- "the great gatsby again" at size 10, width 120: natural wrap is 2
+    -- lines, so balancing engages.
+    local text = "the great gatsby again"
+
+    local function withRenderer(lines_reported, fn)
+        local prev = package.loaded["ui/widget/textboxwidget"]
+        package.loaded["ui/widget/textboxwidget"] = {
+            new = function(_self, o)
+                -- Unbroken text wraps as the widget would (the verify now
+                -- measures the natural wrap too, issue 457); a balanced text's
+                -- rendering is what each case below decides.
+                local txt = o.text or ""
+                local n = txt:find("\n", 1, true) and lines_reported(txt)
+                          or lineCount(txt, (o.face and o.face.size) or 10, o.width or 1)
+                local vsl = {}
+                for i = 1, n do vsl[i] = i end
+                return {
+                    vertical_string_list = vsl,
+                    getSize = function() return { w = o.width, h = n * 13 } end,
+                    free = function() end,
+                }
+            end,
+        }
+        local ok, err = pcall(fn)
+        package.loaded["ui/widget/textboxwidget"] = prev
+        assert(ok, err)
+    end
+
+    -- Renderer agrees: as many rendered lines as manual breaks imply ->
+    -- the balanced text is kept (it contains a newline).
+    withRenderer(function(t)
+        local n = 1
+        for _ in t:gmatch("\n") do n = n + 1 end
+        return n
+    end, function()
+        local out = TextFit.balanceLines(text, { size = 10 }, 120, false)
+        assert(out:find("\n", 1, true), "agreeing renderer must keep the balance")
+    end)
+
+    -- Renderer disagrees (a balanced line re-wraps): one line MORE than the
+    -- breaks imply -> fall back to the natural, unbalanced text.
+    withRenderer(function(t)
+        local n = 1
+        for _ in t:gmatch("\n") do n = n + 1 end
+        return n + 1
+    end, function()
+        local out = TextFit.balanceLines(text, { size = 10 }, 120, false)
+        assert(out == text,
+            "a taller-rendering balance must fall back to the natural wrap, got: " .. out)
+    end)
+    pass = pass + 2
+end
+
+-- ── balanceForBox: the guarded entry point the list rows use ───────────────
+--
+-- The hero learned two rules the hard way and a list row needs both, so they
+-- live here with the algorithm rather than being restated at each call site.
+
+-- 1. Delegation: with nothing to guard against, it IS balanceLines.
+do
+    local face = { size = 10 }
+    local direct = TextFit.balanceLines("The Odyssey of Homer", face, 130, true)
+    local out    = TextFit.balanceForBox("The Odyssey of Homer", face, 130, true)
+    check("balanceForBox delegates to balanceLines", out, direct)
+end
+
+-- 2. A [font=NAME] tag takes the WHOLE box, so the text is left alone:
+-- balanceLines measures in one face and could split the tag across lines,
+-- which breaks the whole-region font match (issue #144).
+do
+    local face = { size = 10 }
+    local tagged = "[font=Caveat]The Odyssey of Homer[/font]"
+    local out = TextFit.balanceForBox(tagged, face, 130, true)
+    check("a [font=] tag skips balancing entirely", out, tagged)
+    check("and no break is inserted into the tag",
+          select(2, out:gsub("\n", "")), 0)
+end
+
+-- 3. Uppercase is applied BEFORE balancing. Capitalised text is wider, so a
+-- balance measured in mixed case can re-wrap once capitalised and defeat
+-- balanceLines' own render verify. The transform is injected rather than
+-- required, so this file stays free of the font kit.
+do
+    local face = { size = 10 }
+    local calls = 0
+    local upper = function(s) calls = calls + 1; return s:upper() end
+    local out = TextFit.balanceForBox("The Odyssey of Homer", face, 130, true, upper)
+    check("the uppercase transform ran", calls, 1)
+    check("the result is uppercased", out:find("THE ODYSSEY") ~= nil, true)
+    check("and still balanced", select(2, out:gsub("\n", "")), 1)
+end
+
+-- 4. THE INVARIANT the row budget depends on: balancing evens the lines out at
+-- the SAME line count it would greedy-wrap to. If it added a line, the band
+-- ListGeom.fillRow already granted would be one line short and the last line
+-- would be clipped.
+do
+    local face = { size = 10 }
+    for _, txt in ipairs({
+        "The Odyssey of Homer",
+        "The Blue Castle a novel",
+        "The Invisible Life of Addie LaRue",
+    }) do
+        local width  = 130
+        local greedy = lineCount(txt, face.size, width)
+        local out    = TextFit.balanceForBox(txt, face, width, true)
+        local got    = select(2, out:gsub("\n", "")) + 1
+        check("line count preserved for " .. txt:sub(1, 18), got, greedy)
+    end
+end
+
+-- 5. Degenerate input is handed straight back rather than crashing.
+do
+    local face = { size = 10 }
+    check("empty text", TextFit.balanceForBox("", face, 130, true), "")
+    check("nil text", TextFit.balanceForBox(nil, face, 130, true), nil)
+end
+
+-- 6. Issue 457: the per-word estimate OVERCOUNTS the real wrap. RenderText's
+-- summed widths said three lines where the shaped layout fitted two, so the
+-- balancer evened the title out at three, the balanced text really did render
+-- in three, and the check against its own estimate let it through -- one line
+-- more than the fit loop measured, and the height cap ellipsised it ("A Hymn
+-- Of..." at a size where the title fits). Here the estimate adds 4px a word;
+-- the widget wraps on true widths.
+do
+    local real_rt, real_tb = package.loaded["ui/rendertext"], package.loaded["ui/widget/textboxwidget"]
+    package.loaded["ui/rendertext"] = {
+        sizeUtf8Text = function(_self, _x, _w, face, str, _kern, _bold)
+            local sz = face.size or 1
+            if str == " " then return { x = sz } end
+            return { x = #str * sz + 4 }
+        end,
+    }
+    local TB = {}
+    TB.__index = TB
+    function TB:new(o)
+        o = setmetatable(o or {}, self)
+        local size = (o.face and o.face.size) or 1
+        local n = 0
+        for part in ((o.text or "") .. "\n"):gmatch("(.-)\n") do
+            n = n + math.max(1, lineCount(part, size, o.width or 1))
+        end
+        o.vertical_string_list = {}
+        for i = 1, n do o.vertical_string_list[i] = {} end
+        o._h = n * math.ceil(size * 1.3)
+        return o
+    end
+    function TB:getSize() return { w = self.width, h = self._h } end
+    function TB:free() end
+    package.loaded["ui/widget/textboxwidget"] = TB
+    local face = { size = 10 }
+    -- "A Hymn Of Empire" at size 10, width 96. True widths A=10 Hymn=40 Of=20
+    -- Empire=60, space 10: greedy "A Hymn Of" (90) / "Empire" = 2 lines. The
+    -- estimate (+4 a word) makes "A Hymn Of" 102 and "Of Empire" 98, both over
+    -- 96, so it counts 3 -- and balances to "A Hymn / Of / Empire".
+    local txt, width = "A Hymn Of Empire", 96
+    local real_lines = lineCount(txt, face.size, width)
+    local out = TextFit.balanceLines(txt, face, width, true)
+    local got = TB:new{ text = out, face = face, width = width }
+    check("balancing never renders more lines than the plain text", #got.vertical_string_list <= real_lines, true)
+    package.loaded["ui/rendertext"], package.loaded["ui/widget/textboxwidget"] = real_rt, real_tb
+end
+
+print(string.format("text_fit: %d passed, %d failed", pass, fail))
+os.exit(fail == 0 and 0 or 1)
