@@ -8,6 +8,9 @@
 - `python3 -m unittest discover -s tests -p 'test_upstream_watch.py' -v`: monitor,
   error handling, real Git ancestry and idempotent reporting tests; no network.
 - `sh scripts/package.sh`: clean-commit runtime ZIP, archive integrity and layout checks.
+- OTA tests cover release channels, semantic versions, archive safety, TLS host
+  checks, deferred activation, interrupted startup and rollback. `OTA.md` records
+  the protocol and recovery limits. Package tests verify inventory and checksum bytes.
 - CI validates both components' translation files and stores an experimental ZIP
 artifact. It does not publish releases or modify upstream repositories.
 
@@ -47,6 +50,10 @@ Record KOReader version, installed patches and active plugins, plus crash.log.
 - Check MAL folder actions, badges and a completed-volume update.
 - Check manga header, volume suffix and bookmark ribbon/userpatch compatibility.
 - Confirm component update actions cannot download or install standalone plugins.
+- Install an OrbitUI preview through its common updater, cancel a download,
+  restart into the staged version and test previous-version rollback. Confirm
+  the public release is found without a GitHub token and its displayed version
+  matches the active runtime. Check cancellation and restart dialogs on Android.
 - Test rollback without resetting book progress, links or UI configuration.
 
 Record cold-start, warm Home/library switch and book-close times against the

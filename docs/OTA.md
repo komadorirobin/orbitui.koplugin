@@ -1,0 +1,105 @@
+# OrbitUI releases and OTA
+
+## First installation
+
+Download **orbitui.koplugin.zip**, not GitHub's source-code archive, from an
+OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
+standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
+The original standalone OTA channels are not redirected or modified.
+
+The first public build is `0.1.0-alpha.2`, a prerelease. It includes a common
+OTA installer, but has not been accepted on the Bigme. An alpha installation
+defaults to including preview releases; a stable installation defaults to stable
+only. This is separate from upstream monitoring, which never publishes builds.
+
+## On the reader
+
+Open **Tools > OrbitUI > OrbitUI updates > Check for updates**. The update entries
+inside the embedded components open this same OrbitUI menu, not their old
+installers. The menu also provides:
+
+- Include preview releases (alpha/beta/rc).
+- Optional daily checking when already online, disabled by default. It never
+  turns Wi-Fi on and never installs without confirmation. After enabling it,
+  checks run on a subsequent startup; manual checking is always available.
+- Restore previous OrbitUI version. This changes code only, not reading data.
+
+The updater reads the public GitHub releases API, including prereleases when
+enabled. It compares semantic versions, does not downgrade automatically and
+requires the exact release assets `orbitui.koplugin.zip` and
+`orbitui.koplugin.zip.sha256`. Branch archives are not accepted.
+
+## Installation safety
+
+The first installation is the factory fallback. `main.lua`, `_meta.lua` and
+`orbitui_bootstrap.lua` form a stable bootstrap. New code is extracted into an
+inactive version directory; it never overwrites the running modules.
+
+1. Download over CA- and hostname-verified HTTPS, restricted to GitHub and its
+   release-asset hosts. KOReader's `data/ca-bundle.crt` is preferred; a missing CA
+   bundle is an error, never a reason to disable TLS verification.
+2. Verify ZIP byte count and SHA-256. Validate safe paths, file types, size limits,
+   every file's inventory/hash and Lua syntax. No package code is executed here.
+3. Require the package's bootstrap files to match the installed bootstrap and
+   its format to use bootstrap API 1. A future incompatible bootstrap change
+   must be installed manually rather than silently ignored.
+4. Move the verified runtime into `.orbitui-versions/<zip-sha256>/`. It does not
+   end in `.koplugin` and cannot be discovered as a second plugin.
+5. The main process atomically selects the new version in `.orbitui-active`.
+   A cancelled/killed download subprocess cannot activate anything.
+6. Restart KOReader. The resolver loads all core and component modules from the
+   selected runtime. Old code continues running until this restart.
+
+Downloads, hashing and extraction run under KOReader's Trapper in a subprocess.
+UI work is deferred until after Trapper/confirmation callbacks return. ZIPs are
+bounded to 64 MiB, expanded contents to 128 MiB and individual files to 32 MiB.
+Symlinks, special files, traversal, hidden paths and case-ambiguous duplicates
+are rejected. Archive extraction copies bytes rather than filesystem metadata.
+
+The factory installation and previous code remain available. Obsolete inactive
+version slots are cleaned during a later update; current and previous slots are
+retained. `.orbitui-work` is disposable download/staging space. Allow roughly
+100 MiB free for the present package, and more as future packages grow.
+
+## Startup failure and recovery
+
+A pending version writes `.orbitui-booting` before loading its runtime. After
+component initialization succeeds, a deferred callback confirms the startup.
+If the process exits/crashes before confirmation, the next launch restores the
+previous version and reports it. This detects interrupted startup, not every
+later UI/device regression; use manual rollback for those.
+
+Manual rollback is available in the update menu. It also cancels a pending
+update. If KOReader cannot reach that menu, stop it and rename `.orbitui-active`
+to `.orbitui-active.saved` inside **orbitui.koplugin**, then restart. The original
+factory code is selected when no active record exists. Do not delete the plugin
+or its settings. Reinstalling a new factory ZIP manually also requires removing
+or renaming the old activation record while KOReader is stopped.
+
+Activation uses same-filesystem rename and flush/fsync where available. This
+does not replace a backup against storage corruption or power-loss behavior
+specific to Android's filesystem. The initial settings snapshot is limited;
+see `MIGRATION.md`. Rollback never restores older book progress or settings.
+
+## Publishing a reviewed release
+
+Publication always requires an explicit user request. There is no release job
+triggered by upstream activity or ordinary pushes. Before publishing:
+
+1. Update `VERSION`; do not change the stable bootstrap casually. Record any
+   remaining device gaps and label unaccepted builds as prereleases.
+2. Run both Lua test suites, translations, and a clean-commit package build.
+   `scripts/package.sh` adds an exact manifest and produces the checksum asset.
+3. Create a draft release for the exact reviewed commit/tag and upload both
+   assets. Download the assets and verify their checksums before publishing.
+4. Publish the draft with the correct prerelease flag. Verify anonymous API and
+   asset access, channel selection and installation of the published bytes.
+5. Never replace bytes on an existing published tag. Issue a new version for a
+   fix; report device checks separately from headless tests.
+
+The checksum detects inconsistent/truncated packages. It is not an independent
+signature: the GitHub account/release and HTTPS trust chain remain trusted.
+
+API references: [KOReader Trapper](https://github.com/koreader/koreader/blob/master/frontend/ui/trapper.lua),
+[archive reader](https://github.com/koreader/koreader-base/blob/master/ffi/archiver.lua),
+[SHA-256](https://github.com/koreader/koreader-base/blob/master/ffi/sha2.lua).

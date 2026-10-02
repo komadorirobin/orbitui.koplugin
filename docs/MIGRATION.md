@@ -51,8 +51,11 @@ restart is required before switching implementations.
 
 ## Updating this alpha
 
-Install the entire new OrbitUI runtime ZIP and restart KOReader. Both component
-updaters are replaced with an informational, non-networking adapter. Existing
-component update menu entries cannot install standalone packages. There is no
-active common OTA installer in this milestone, and no production update channel
-is redirected to OrbitUI.
+After the first manual installation, use **Tools > OrbitUI > OrbitUI updates**.
+Embedded component update entries open the same common updater; they cannot
+install standalone packages. Preview releases are included by default on an
+alpha installation. No predecessor update channel is redirected to OrbitUI.
+
+Read `OTA.md` for verified staging, restart activation and code rollback. Manual
+replacement of the factory ZIP requires stopping KOReader and renaming any
+existing `.orbitui-active` record so that it will not select an older OTA slot.

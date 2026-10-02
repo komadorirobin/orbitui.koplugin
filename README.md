@@ -6,8 +6,8 @@ behavior; it is not a rewrite of the navigation or reading engine.
 
 ## Status
 
-Development only. Do not replace a working installation until the device test
-checklist has passed. Original SimpleUI and Bookshelf installations must be
+Public preview, not yet device-accepted. Retain a working installation and its
+backups while testing. Original SimpleUI and Bookshelf installations must be
 disabled and KOReader restarted before enabling OrbitUI. Their files and user
 data must not be deleted. OrbitUI refuses to initialize its components while
 either original plugin is enabled.
@@ -18,7 +18,7 @@ are recorded in `sources.json`. Neither original repository is modified.
 
 ## Architecture
 
-- `main.lua` is the only KOReader plugin entry point.
+- `main.lua` is the only KOReader plugin entry point, backed by a stable OTA bootstrap.
 - `core/` owns component loading, compatibility checks and the host lifecycle.
 - `adapters/` contains the small component-specific embedding seams.
 - `components/` contains the two imported Git subtrees.
@@ -27,8 +27,11 @@ are recorded in `sources.json`. Neither original repository is modified.
 
 BookOrbit synchronization, MyAnimeList and Patch Manager remain separate plugins.
 The component updaters are disabled in OrbitUI; components must never update
-independently inside a combined installation. This first development build is
-installed manually. A common OTA installer is a later milestone.
+independently inside a combined installation. Install the first
+[release ZIP](https://github.com/komadorirobin/orbitui.koplugin/releases) manually.
+Subsequent updates use **Tools > OrbitUI > OrbitUI updates**. The common OTA
+installer validates a complete package, activates it on restart and retains
+rollback. See [OTA and recovery](docs/OTA.md).
 
 ## Upstream monitoring
 

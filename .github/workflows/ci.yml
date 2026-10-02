@@ -26,4 +26,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: orbitui-experimental-${{ matrix.lua }}
-          path: dist/orbitui.koplugin.zip
+          path: dist/orbitui.koplugin.zip*

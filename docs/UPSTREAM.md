@@ -5,7 +5,7 @@
 Automate observation, not integration decisions. The user explicitly chose
 reviewed merges in the development conversation. No scheduled job may merge,
 open a merge PR, advance integrated pins, bump versions or publish releases/OTA.
-Monitoring is independent of the later common OTA implementation.
+Monitoring is independent of the common OTA implementation in `OTA.md`.
 
 Read `INTEGRATION_CONTRACTS.md` before each merge. Record decisions and testing
 in `MERGE_LOG.md`, so correctness does not depend on access to one chat history
@@ -162,8 +162,8 @@ or removing runtime source files. Preload hooks retain priority for userpatches.
 1. Validate the unchanged UX on the target device and address compatibility gaps.
 2. Move navigation and reader-return ownership into one explicit coordinator,
    replacing the existing cross-plugin retry/ownership logic incrementally.
-3. Add a common, staged and recoverable OTA installer, with whole-package
-   validation, prerelease handling, interrupted-install tests and rollback.
+3. Device-test the common OTA installer, including interruption, preview channel
+   selection, startup failure and rollback. See `OTA.md`.
 4. Consolidate measured duplicate data/cache work behind stable service interfaces.
 
 Do not combine these changes with an unrelated upstream update or visual redesign.

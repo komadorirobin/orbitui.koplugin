@@ -18,7 +18,7 @@ aliases and `_simpleui_plugin` where the component supplies it. Children receive
 events once in Bookshelf/SimpleUI order. Preserve event arguments, consumption,
 and cleanup that cannot erase a newer reader's instance aliases.
 
-Source: `main.lua`, `core/orbitui_guard.lua`, `core/orbitui_host.lua`,
+Source: `main.lua`, `core/orbitui_plugin.lua`, `core/orbitui_guard.lua`, `core/orbitui_host.lua`,
 `core/orbitui_runtime.lua`. Tests: `tests/test_guard.lua`, `test_host.lua`,
 `test_entrypoint.lua`, `test_runtime.lua`.
 
@@ -152,13 +152,15 @@ Recovery procedure: `MIGRATION.md`.
 The monitor can fetch refs and update its one status issue only. It cannot merge,
 open merge PRs, advance integrated pins, tag, release or publish OTA. Publishing
 to users remains a separate explicitly approved action after reviewed changes.
-Both embedded legacy installers remain blocked; an eventual OrbitUI OTA must
-replace and validate the whole package, not update one component independently.
+Both embedded legacy installers remain blocked; OrbitUI OTA must stage and
+validate the whole package, not update one component independently. Preserve
+the stable bootstrap, deferred activation and previous-version recovery.
 
 Source: `.github/workflows/upstream-watch.yml`, `scripts/upstream_watch.py`,
-`sources.json`, `adapters/orbitui_updates.lua`.
-Tests: `tests/test_upstream_watch.py`, `test_updates.lua`, `test_runtime.lua`.
-The common OTA installer and full device acceptance are still outstanding.
+`sources.json`, `adapters/orbitui_updates.lua`, `core/orbitui_ota.lua`, `orbitui_bootstrap.lua`.
+Tests: `tests/test_upstream_watch.py`, `test_updates.lua`, `test_runtime.lua`,
+`test_bootstrap.lua`, `test_ota.lua`, `test_http.lua`, `test_release_package.py`.
+Full device acceptance, including the OTA UI, is still outstanding.
 
 ## Recording an intentional contract change
 

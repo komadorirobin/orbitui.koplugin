@@ -10,7 +10,7 @@ H.test("Bookshelf installation entry points cannot update a component", function
         updater[method]("https://unwanted.invalid/old-plugin.zip", "old", "new")
     end
     H.eq(#messages, 5)
-    assert(messages[1]:find("manually", 1, true))
+    assert(messages[1]:find("OrbitUI", 1, true))
 end)
 H.test("SimpleUI channel changes and manual checks cannot install old packages", function()
     local updater = Updates.component("simpleui", "/dummy")
@@ -30,5 +30,40 @@ H.test("automatic component update paths do nothing", function()
     s.scheduleAutoCheck()
     H.eq(s.build_update_banner_item(), nil)
     H.eq(#messages, before)
+end)
+H.test("Trapper uses its real return-value API and defers UI callbacks", function()
+    local queue, delivered = {}, 0
+    package.loaded["ui/uimanager"].scheduleIn = function(_, _, fn) queue[#queue + 1] = fn end
+    package.loaded["ui/trapper"] = {
+        isWrapped = function() return false end,
+        wrap = function(_, fn) fn() end,
+        dismissableRunInSubprocess = function(_, fn, label, simple)
+            H.eq(simple, false)
+            H.eq(label, "Checking")
+            return true, fn()
+        end,
+    }
+    Updates.runTask(function() return { value = 4 } end, "Checking", function(result)
+        assert(result.ok)
+        H.eq(result.value.value, 4)
+        delivered = delivered + 1
+    end)
+    H.eq(delivered, 0)
+    H.eq(#queue, 1)
+    queue[1]()
+    H.eq(delivered, 1)
+end)
+H.test("cancellation never invokes installation activation", function()
+    local queue, activated = {}, false
+    local Boot = require("orbitui_bootstrap")
+    local previous = Boot.activate
+    Boot.activate = function() activated = true end
+    package.loaded["ui/uimanager"].scheduleIn = function(_, _, fn) queue[#queue + 1] = fn end
+    package.loaded["ui/trapper"].dismissableRunInSubprocess = function() return false end
+    Updates.configure{ root = "/test-orbitui", slot = "factory", version = "0.1.0-alpha.2" }
+    Updates.install{ version = "0.1.0-alpha.3" }
+    queue[1]()
+    H.eq(activated, false)
+    Boot.activate = previous
 end)
 H.finish()

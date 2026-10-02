@@ -1,6 +1,2 @@
-return {
-    name = "orbitui",
-    fullname = "OrbitUI (experimental)",
-    description = "A combined SimpleUI and Bookshelf interface. Disable both standalone plugins and restart before enabling OrbitUI.",
-    version = "0.1.0-alpha.1",
-}
+local root = assert(debug.getinfo(1, "S").source:match("^@(.+)/_meta%.lua$"))
+return dofile(root .. "/orbitui_bootstrap.lua").metadata(root)
