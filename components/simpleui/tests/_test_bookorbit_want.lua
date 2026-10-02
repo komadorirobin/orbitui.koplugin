@@ -1,0 +1,381 @@
+package.path = "./?.lua;./?/init.lua;" .. package.path
+
+local existing_files = {
+    ["/books/seven.epub"] = true,
+    ["/books/three.epub"] = true,
+    ["/books/five.epub"] = true,
+    ["/books/legacy.epub"] = true,
+}
+local settings = {}
+
+package.loaded["libs/libkoreader-lfs"] = {
+    attributes = function(path, key)
+        if key == "mode" and existing_files[path] then return "file" end
+    end,
+}
+package.loaded["logger"] = { warn = function() end }
+package.loaded["ui/network/manager"] = { isConnected = function() return true end }
+package.loaded["ui/uimanager"] = {
+    scheduleIn = function(_self, _delay, fn) fn() end,
+    nextTick = function(_self, fn) fn() end,
+}
+package.loaded["infra/sui_store"] = {
+    readSetting = function(_self, key) return settings[key] end,
+    nilOrTrue = function(_self, key) return settings[key] ~= false end,
+    setNoFlush = function(_self, key, value) settings[key] = value end,
+    flush = function() end,
+}
+
+local Source = dofile("integrations/sui_bookorbit_want.lua")
+
+local passed, failed = 0, 0
+local function test(name, fn)
+    local ok, err = pcall(fn)
+    if ok then
+        passed = passed + 1
+    else
+        failed = failed + 1
+        io.stderr:write("FAIL  " .. name .. "\n  " .. tostring(err) .. "\n")
+    end
+end
+
+local function eq(actual, expected, message)
+    if actual ~= expected then
+        error((message or "") .. " expected=" .. tostring(expected)
+            .. " got=" .. tostring(actual), 2)
+    end
+end
+
+test("maps numeric and string ids in server order", function()
+    local files = Source.mapBookIdsToFiles({ "7", 3 }, {
+        [7] = "/books/seven.epub",
+        [3] = "/books/three.epub",
+    }, function() return true end)
+    eq(#files, 2)
+    eq(files[1], "/books/seven.epub")
+    eq(files[2], "/books/three.epub")
+end)
+
+test("deduplicates paths and skips missing local files", function()
+    local files = Source.mapBookIdsToFiles({ 1, 2, 3 }, {
+        [1] = "/books/same.epub",
+        [2] = "/books/same.epub",
+        [3] = "/books/missing.epub",
+    }, function(path) return path ~= "/books/missing.epub" end)
+    eq(#files, 1)
+    eq(files[1], "/books/same.epub")
+end)
+
+test("auto refreshes when BookOrbit is used only as the Cover Deck source", function()
+    settings.simpleui_bookorbit_want_auto_refresh = true
+    settings.simpleui_hs_bookorbit_want_enabled = false
+    settings.simpleui_hs_coverdeck_enabled = true
+    settings.simpleui_hs_coverdeck_source = "bookorbit_want"
+    eq(Source.shouldAutoRefreshHome("simpleui_hs_", "bookorbit_want_enabled"), true)
+
+    settings.simpleui_hs_coverdeck_source = "recent"
+    eq(Source.shouldAutoRefreshHome("simpleui_hs_", "bookorbit_want_enabled"), false)
+    settings.simpleui_hs_bookorbit_want_enabled = true
+    eq(Source.shouldAutoRefreshHome("simpleui_hs_", "bookorbit_want_enabled"), true)
+end)
+
+test("builds a BookOrbit id map from the Library Sync manifest", function()
+    local files = Source.librarySyncBookIdMap({ books = {
+        ["/books/three.epub"] = {
+            server_type = "bookorbit",
+            remote_key = "id:3",
+            refreshed_at = 10,
+        },
+        ["/books/five.epub"] = {
+            server_type = "bookorbit",
+            remote_key = "id:5",
+            refreshed_at = 20,
+        },
+        ["/books/legacy.epub"] = {
+            server_type = "bookorbit",
+            bookorbit_book_id = 11,
+            remote_key = "url:/legacy-download",
+            refreshed_at = 30,
+        },
+        ["/books/seven.epub"] = {
+            server_type = "grimmory",
+            remote_key = "id:7",
+        },
+        ["/books/missing.epub"] = {
+            server_type = "bookorbit",
+            remote_key = "id:9",
+        },
+    } }, function(path) return path ~= "/books/missing.epub" end)
+    eq(files[3], "/books/three.epub")
+    eq(files[5], "/books/five.epub")
+    eq(files[11], "/books/legacy.epub")
+    eq(files[7], nil)
+    eq(files[9], nil)
+end)
+
+test("matches an older Library Sync manifest entry by unambiguous metadata", function()
+    local _, metadata = Source.librarySyncManifestMaps({ books = {
+        ["/books/legacy.epub"] = {
+            server_type = "bookorbit",
+            remote_key = "url:/legacy-download",
+            title = "Äldre bok",
+            author = "Författare",
+        },
+    } }, function() return true end)
+    eq(metadata["aldre bok|forfattare"], "/books/legacy.epub")
+end)
+
+test("refreshes the dashboard Want to Read section into the local filepath cache", function()
+    local requested_sections = {}
+    local client = {
+        runInSubprocess = function(_self, fn)
+            local body, err = fn()
+            return true, { body = body, err = err }
+        end,
+        catalogDashboardSection = function(_self, section_type)
+            requested_sections[#requested_sections + 1] = section_type
+            return {
+                section = {
+                    type = section_type,
+                    books = { { id = 7 }, { id = 99 }, { id = 5 } },
+                },
+            }
+        end,
+    }
+    local plugin = {
+        isLoggedIn = function() return true end,
+        newClient = function() return client end,
+    }
+    local library_sync = {
+        loadManifest = function()
+            return { books = {
+                ["/books/five.epub"] = {
+                    server_type = "bookorbit",
+                    remote_key = "id:5",
+                },
+            } }
+        end,
+    }
+    package.loaded["pluginloader"] = {
+        getPluginInstance = function(_self, name)
+            if name == "bookorbit" then return plugin end
+            if name == "grimmorysync" then return library_sync end
+        end,
+    }
+    package.loaded["bookorbit_state_manager"] = {
+        hasOnDeviceMaps = function() return true end,
+        onDeviceMaps = function()
+            return { byBookId = {
+                [7] = "/books/seven.epub",
+            } }
+        end,
+    }
+    package.loaded["ui/trapper"] = { wrap = function(_self, fn) fn() end }
+
+    settings = {}
+    Source._resetForTests()
+    local result
+    local started = Source.requestRefresh{
+        delay = 0,
+        on_done = function(value) result = value end,
+    }
+
+    eq(started, true)
+    eq(#requested_sections, 1)
+    eq(requested_sections[1], "want-to-read")
+    eq(result.ok, true)
+    eq(result.changed, true)
+    eq(result.count, 2)
+    eq(result.skipped, 1)
+    local cached = Source.getCachedFiles()
+    eq(cached[1], "/books/seven.epub")
+    eq(cached[2], "/books/five.epub")
+end)
+
+test("reports an old BookOrbit plugin instead of calling the catalog filter", function()
+    local plugin = {
+        isLoggedIn = function() return true end,
+        newClient = function()
+            return {
+                runInSubprocess = function()
+                    error("must not run")
+                end,
+            }
+        end,
+    }
+    package.loaded["pluginloader"] = {
+        getPluginInstance = function(_self, name)
+            if name == "bookorbit" then return plugin end
+        end,
+    }
+    package.loaded["bookorbit_state_manager"] = {
+        hasOnDeviceMaps = function() return true end,
+    }
+
+    settings = {}
+    Source._resetForTests()
+    local result
+    Source.requestRefresh{
+        delay = 0,
+        on_done = function(value) result = value end,
+    }
+
+    eq(result.ok, false)
+    eq(result.error, "bookorbit_update_required")
+end)
+
+test("uses Library Sync filename matching for books absent from the manifest", function()
+    local client = {
+        runInSubprocess = function(_self, fn)
+            local body, err = fn()
+            return true, { body = body, err = err }
+        end,
+        catalogDashboardSection = function()
+            return { section = { books = {
+                { id = 11, title = "Legacy", authors = { "Writer" } },
+            } } }
+        end,
+    }
+    local plugin = {
+        isLoggedIn = function() return true end,
+        newClient = function() return client end,
+    }
+    local library_sync = {
+        loadManifest = function() return { books = {} } end,
+        bookApiMatchKey = function(_self, title, author)
+            return tostring(title):lower() .. "|" .. tostring(author):lower()
+        end,
+        scanLocalBooks = function()
+            return { { path = "/books/legacy.epub", filename = "Writer - Legacy.epub" } }
+        end,
+        buildLocalBookIndex = function(_self, books) return books end,
+        findLocalMatch = function(_self, remote)
+            eq(remote.title, "Legacy")
+            eq(remote.author, "Writer")
+            return { path = "/books/legacy.epub" }
+        end,
+    }
+    package.loaded["pluginloader"] = {
+        getPluginInstance = function(_self, name)
+            if name == "bookorbit" then return plugin end
+            if name == "grimmorysync" then return library_sync end
+        end,
+    }
+    package.loaded["bookorbit_state_manager"] = {
+        hasOnDeviceMaps = function() return true end,
+        onDeviceMaps = function() return { byBookId = {} } end,
+    }
+    package.loaded["ui/trapper"] = { wrap = function(_self, fn) fn() end }
+
+    settings = {}
+    Source._resetForTests()
+    local result
+    Source.requestRefresh{
+        delay = 0,
+        force_local_scan = true,
+        on_done = function(value) result = value end,
+    }
+
+    eq(result.ok, true)
+    eq(result.count, 1)
+    eq(result.skipped, 0)
+    eq(Source.getCachedFiles()[1], "/books/legacy.epub")
+end)
+
+test("sets and clears Want to Read without changing the cache before server success", function()
+    local requested = {}
+    local applied_version
+    local client = {
+        runInSubprocess = function(_self, fn)
+            local body, err = fn()
+            return true, { body = body, err = err }
+        end,
+        catalogSetReadStatus = function(_self, book_id, status)
+            requested[#requested + 1] = { id = book_id, status = status }
+            return { readStatus = status, libraryVersion = "version-2" }
+        end,
+    }
+    package.loaded["pluginloader"] = {
+        getPluginInstance = function(_self, name)
+            if name == "bookorbit" then
+                return {
+                    isLoggedIn = function() return true end,
+                    newClient = function() return client end,
+                }
+            end
+        end,
+    }
+    package.loaded["bookorbit_state_manager"] = {
+        onDeviceMaps = function() return { byBookId = {} } end,
+        applyLibraryVersion = function(version) applied_version = version end,
+    }
+    package.loaded["ui/trapper"] = { wrap = function(_self, fn) fn() end }
+
+    settings = {
+        simpleui_bookorbit_want_id_paths = { ["3"] = "/books/three.epub" },
+    }
+    Source._resetForTests()
+    local added
+    eq(Source.setWantToRead("/books/three.epub", true, {
+        delay = 0,
+        on_done = function(result) added = result end,
+    }), true)
+    eq(added.ok, true)
+    eq(added.wanted, true)
+    eq(requested[1].id, "3")
+    eq(requested[1].status, "want_to_read")
+    eq(Source.isWantToRead("/books/three.epub"), true)
+    eq(applied_version, "version-2")
+
+    local removed
+    eq(Source.setWantToRead("/books/three.epub", false, {
+        delay = 0,
+        on_done = function(result) removed = result end,
+    }), true)
+    eq(removed.ok, true)
+    eq(removed.wanted, false)
+    eq(requested[2].status, "unread")
+    eq(Source.isWantToRead("/books/three.epub"), false)
+    eq(settings.simpleui_bookorbit_want_id_paths["3"], "/books/three.epub")
+end)
+
+test("keeps the local Want to Read cache unchanged when BookOrbit rejects a write", function()
+    local client = {
+        runInSubprocess = function(_self, fn)
+            local body, err = fn()
+            return true, { body = body, err = err }
+        end,
+        catalogSetReadStatus = function() return nil, 503 end,
+    }
+    package.loaded["pluginloader"] = {
+        getPluginInstance = function(_self, name)
+            if name == "bookorbit" then
+                return {
+                    isLoggedIn = function() return true end,
+                    newClient = function() return client end,
+                }
+            end
+        end,
+    }
+    package.loaded["bookorbit_state_manager"] = {
+        onDeviceMaps = function() return { byBookId = {} } end,
+    }
+    package.loaded["ui/trapper"] = { wrap = function(_self, fn) fn() end }
+
+    settings = {
+        simpleui_bookorbit_want_id_paths = { ["5"] = "/books/five.epub" },
+    }
+    Source._resetForTests()
+    local result
+    Source.setWantToRead("/books/five.epub", true, {
+        delay = 0,
+        on_done = function(value) result = value end,
+    })
+    eq(result.ok, false)
+    eq(result.error, 503)
+    eq(Source.isWantToRead("/books/five.epub"), false)
+end)
+
+print(string.format("PASS %d  FAIL %d", passed, failed))
+if failed > 0 then os.exit(1) end
+
