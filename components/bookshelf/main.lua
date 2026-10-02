@@ -264,7 +264,7 @@ end
 -- "bookshelf_*.lua" at the koplugin root -- main.lua / _meta.lua / lib/
 -- contents / README / LICENSE are untouched.
 local _legacy_clean_done = false
-local function _cleanLegacyLayout()
+local function _cleanLegacyLayout(component_path)
     -- Once per session: init() re-runs on every FM/Reader re-instantiation
     -- (each book open and close), and the v1.1 leftovers can't reappear
     -- mid-session, so repeating the lfs.dir scan buys nothing.
@@ -273,7 +273,7 @@ local function _cleanLegacyLayout()
     local ok_lfs, lfs = pcall(require, "libs/libkoreader-lfs")
     if not ok_lfs or not lfs or not lfs.dir then return end
     local DataStorage = require("datastorage")
-    local plugin_dir = DataStorage:getDataDir() .. "/plugins/bookshelf.koplugin"
+    local plugin_dir = component_path or (DataStorage:getDataDir() .. "/plugins/bookshelf.koplugin")
     local ok, iter, dir_obj = pcall(lfs.dir, plugin_dir)
     if not ok or type(iter) ~= "function" then return end
     local removed = 0
@@ -345,7 +345,7 @@ function Bookshelf:init()
     end)
     -- Run once per init -- no settings flag needed because the clean is
     -- idempotent and cheap (one lfs.dir scan over the plugin root).
-    _cleanLegacyLayout()
+    _cleanLegacyLayout(self.path)
     _installCalibreNotice()
     -- Bundled fonts: install (best-effort, for pickers) and seed fresh-install
     -- defaults exactly once. Must run before any other settings write so the

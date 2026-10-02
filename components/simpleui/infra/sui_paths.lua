@@ -30,6 +30,13 @@ local _cached_dir
 function M.getPluginDir(level)
     if _cached_dir then return _cached_dir end
 
+    -- OrbitUI embeds this component below the outer .koplugin directory.
+    local embedded = debug.getinfo(1, "S").source:match("^@(.*/components/simpleui/)")
+    if embedded then
+        _cached_dir = embedded
+        return _cached_dir
+    end
+
     local info = debug.getinfo(level or 2, "S")
     local src  = info and info.source or ""
     local path = (src:sub(1, 1) == "@") and src:sub(2) or src

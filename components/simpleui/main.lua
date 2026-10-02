@@ -1353,7 +1353,10 @@ function SimpleUIPlugin:init()
             end
         end
     end)
-    if not ok then logger.err("simpleui: init failed:", tostring(err)) end
+    if not ok then
+        logger.err("simpleui: init failed:", tostring(err))
+        if self._orbitui_owned then error(err) end
+    end
 end
 
 -- List of all plugin-owned Lua modules that must be evicted from
