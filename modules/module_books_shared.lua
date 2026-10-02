@@ -571,6 +571,27 @@ local function getBookInfoManager()
     return _BookInfoManager
 end
 
+local _book_info_cache, _book_info_order = {}, {}
+local function cachedBookInfo(fp)
+    local now = os.time()
+    local entry = _book_info_cache[fp]
+    if entry and entry.expires_at > now then return entry.data or nil end
+    local BIM = getBookInfoManager()
+    if not BIM then return nil end
+    local ok, info = pcall(BIM.getBookInfo, BIM, fp, false)
+    if not ok then return nil end
+    if not entry then
+        if #_book_info_order >= 256 then
+            _book_info_cache[table.remove(_book_info_order, 1)] = nil
+        end
+        _book_info_order[#_book_info_order + 1] = fp
+    end
+    -- Extraction can finish without a metadata-change event. Short-lived
+    -- entries coalesce renders without freezing missing or outdated rows.
+    _book_info_cache[fp] = { data = info or false, expires_at = now + 5 }
+    return info
+end
+
 -- ---------------------------------------------------------------------------
 -- File existence cache. A short TTL coalesces the prefetch + stats-provider
 -- checks from one render without hiding external adds/removals for long.
@@ -620,6 +641,11 @@ local function _cacheGet(fp)
         return nil
     end
     local now = os.time()
+    if not e.sidecar_path then
+        if now < e.expires_at then return e.data end
+        _sidecar_cache[fp] = nil
+        return nil
+    end
     -- prefetchBooks and the stats provider commonly request the same entry
     -- back-to-back. Metadata-change events explicitly invalidate this cache,
     -- so one validation per second is sufficient and avoids duplicate stats.
@@ -645,7 +671,16 @@ end
 -- Stores a cache entry after a successful DS.open.
 -- source_candidate is ds.source_candidate (the winning sidecar path chosen by DS.open).
 local function _cachePut(fp, source_candidate, data)
-    if not source_candidate then return end
+    -- A known-absent summary differs from nil, which means a hold-dialog
+    -- action invalidated progress and getBookData must read it again.
+    if data.summary == nil then data.summary = false end
+    if not source_candidate then
+        -- Do not create a sidecar just to cache an unopened book.
+        _sidecar_cache[fp] = {
+            preferred_loc = _prefLoc(), data = data, expires_at = os.time() + 2,
+        }
+        return
+    end
     local mtime = lfs.attributes(source_candidate, "modification")
     if not mtime then return end
     -- Also record the custom_metadata.lua path and mtime so _cacheGet can
@@ -684,6 +719,7 @@ SH._cachePut = _cachePut
 
 -- or flush everything (fp == nil).
 function SH.invalidateSidecarCache(fp)
+    _book_info_cache, _book_info_order = {}, {}
     if fp then
         _sidecar_cache[fp] = nil
     else
@@ -728,7 +764,9 @@ local function _readLiveProgress(filepath)
     return nil, nil
 end
 
-function SH.getBookData(filepath, prefetched)
+function SH.getBookData(filepath, prefetched, opts)
+    opts = opts or {}
+    if prefetched == nil then prefetched = _cacheGet(filepath) end
     local meta = {}
     local percent, pages, md5, stat_pages, stat_total_time = 0, nil, nil, nil, nil
     local status, summary = nil, nil
@@ -752,8 +790,8 @@ function SH.getBookData(filepath, prefetched)
                 percent = live_pct
                 prefetched.percent = percent
             end
-            if summary == nil and live_sum ~= nil then
-                summary = live_sum
+            if summary == nil and live_pct ~= nil then
+                summary = live_sum or false
                 prefetched.summary = summary
             end
         end
@@ -777,6 +815,12 @@ function SH.getBookData(filepath, prefetched)
                 stat_total_time = rs.total_time_in_sec
                 summary         = ds:readSetting("summary")
                 if type(summary) == "table" then status = summary.status end
+                _cachePut(filepath, ds.source_candidate, {
+                    percent = percent, doc_pages = pages,
+                    partial_md5_checksum = md5, title = meta.title, authors = meta.authors,
+                    stat_pages = stat_pages, stat_total_time = stat_total_time,
+                    summary = summary or false,
+                })
             end
         end
     end
@@ -786,12 +830,17 @@ function SH.getBookData(filepath, prefetched)
     -- 2. BookInfoManager's cached page count (set once a book has been
     --    scanned, even if never opened in ReaderUI)
     -- 3. the "p(<n>)" filename token (last resort)
-    if not pages then
-        local BIM = getBookInfoManager()
-        if BIM then
-            local ok3, bi = pcall(BIM.getBookInfo, BIM, filepath, false)
-            if ok3 and bi and bi.pages then pages = bi.pages end
+    if opts.progress_only then return { percent = percent, status = status } end
+    local info, info_fetched
+    local function bookInfo()
+        if not info_fetched then
+            info, info_fetched = cachedBookInfo(filepath), true
         end
+        return info
+    end
+    if not pages then
+        local bi = bookInfo()
+        if bi then pages = bi.pages end
     end
     if not pages then
         pages = SH.pageCountFromFilename(filepath)
@@ -802,13 +851,10 @@ function SH.getBookData(filepath, prefetched)
         -- ReaderUI (e.g. a TBR entry), so KOReader never wrote real title/
         -- author metadata into the sidecar. Try BookInfoManager before
         -- falling back to the raw filename.
-        local BIM = getBookInfoManager()
-        if BIM then
-            local ok3, bi = pcall(BIM.getBookInfo, BIM, filepath, false)
-            if ok3 and bi and bi.title and bi.title ~= "" then
-                meta.title   = bi.title
-                meta.authors = meta.authors and meta.authors ~= "" and meta.authors or bi.authors
-            end
+        local bi = bookInfo()
+        if bi and bi.title and bi.title ~= "" then
+            meta.title   = bi.title
+            meta.authors = meta.authors and meta.authors ~= "" and meta.authors or bi.authors
         end
     end
 
@@ -821,13 +867,14 @@ function SH.getBookData(filepath, prefetched)
     -- independently of doc_props. Prefer the prefetched value (already
     -- resolved once by prefetchBooks for the currently-reading book) to
     -- avoid a second BookInfoManager lookup on every homescreen render.
-    if prefetched and prefetched.description ~= nil then
+    if opts.skip_description then
+        meta.description = ""
+    elseif prefetched and prefetched.description ~= nil then
         meta.description = prefetched.description
     else
-        local BIM = getBookInfoManager()
-        if BIM then
-            local ok4, bi = pcall(BIM.getBookInfo, BIM, filepath, false)
-            if ok4 and bi and bi.description and bi.description ~= "" then
+        local bi = bookInfo()
+        if bi then
+            if bi.description and bi.description ~= "" then
                 -- Description text from EPUB/OPF metadata is often HTML;
                 -- strip markup so it renders as plain text.
                 meta.description = util.htmlToPlainTextIfHtml(bi.description)
@@ -899,6 +946,7 @@ function SH.getBookSeries(filepath)
 end
 
 function SH.invalidateSeriesCache(fp)
+    _book_info_cache, _book_info_order = {}, {}
     if fp then
         _series_cache[fp] = nil
     else
@@ -1080,12 +1128,9 @@ function SH.prefetchBooks(show_currently, show_recent, max_recent, opts)
                             -- resolved once here so getBookData's fast (prefetched)
                             -- path never has to query BookInfoManager again.
                             local description = nil
-                            local BIM = getBookInfoManager()
-                            if BIM then
-                                local ok_bi, bi = pcall(BIM.getBookInfo, BIM, fp, false)
-                                if ok_bi and bi and bi.description and bi.description ~= "" then
-                                    description = util.htmlToPlainTextIfHtml(bi.description)
-                                end
+                            local bi = cachedBookInfo(fp)
+                            if bi and bi.description and bi.description ~= "" then
+                                description = util.htmlToPlainTextIfHtml(bi.description)
                             end
                             local data = {
                                 percent              = ds:readSetting("percent_finished") or 0,

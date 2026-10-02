@@ -1172,7 +1172,7 @@ function M.install()
                                 end
                             end
                         end
-                        pcall(function() ds:close() end)
+                        -- Read-only: do not create a sidecar for an unopened book.
                     end
                 end)
             end

@@ -7,7 +7,7 @@
 -- Consumers read ctx.stats.* — they contain no DB or cache logic of their own.
 --
 -- DB source: page_stat_data (base table) instead of the page_stat VIEW, so
--- SQLite can use the idx_simpleui_pagestat_time index on start_time.
+-- SQLite can use KOReader's page_stat_data_start_time index on start_time.
 --
 -- DB roundtrips per cold-cache call: 2
 --   Query 1 — one pass over page_stat_data: today/week/rolling-7-day/month/
@@ -533,6 +533,7 @@ function SP.get(db_conn, year_str, needs_books)
         result.books_year  = by
         result.books_total = bt
         _cache = result
+        _persistStaleStats(result)
         return result
     end
 
@@ -579,9 +580,11 @@ function SP.get(db_conn, year_str, needs_books)
     }
 
     -- ── DB queries ────────────────────────────────────────────────────────
+    local timeseries_ok = false
     if db_conn then
         local ts, ts_err = fetchTimeSeries(db_conn, start_today, week_start, month_start, year_start,
                                            today_str, week_date, month_date, year_date, rolling7_date)
+        timeseries_ok = ts_err == nil
         result.today_secs  = ts.today_secs
         result.today_pages = ts.today_pages
         result.week_secs   = ts.week_secs
@@ -625,9 +628,14 @@ function SP.get(db_conn, year_str, needs_books)
 
     -- ── Sidecar scan (one pass for both year + total) ─────────────────────
     if not needs_books then
-        -- No consumer needs books_year/books_total: skip the sidecar scan.
-        -- Not cached under today_str, so a later needs_books=true call on
-        -- the same day still runs the scan instead of reading zeros.
+        -- Cache partial results; _has_books lets a later caller promote
+        -- them without repeating the time-series queries.
+        result._has_books = false
+        _books_cache_valid = false
+        -- A temporarily unavailable/locked DB must be retried, not cached
+        -- as a day's worth of zero reading activity.
+        _cache, _cache_day = result, timeseries_ok and today_str or nil
+        _persistStaleStats(result)
         return result
     elseif _books_cache_valid then
         result.books_year  = (_cache and _cache.books_year)  or 0
@@ -679,12 +687,12 @@ function SP.invalidateTimeSeries()
     if _cache_day == today_str and _cache.today_secs > 0 then
         -- Same day, reading already recorded today: streak cannot change again.
         _streak_cache_valid = true
-        _books_cache_valid  = true
+        _books_cache_valid  = _cache._has_books == true
         _cache_day          = nil
     else
         -- Different day, or first session today: streak must be refetched.
         _streak_cache_valid = false
-        _books_cache_valid  = true
+        _books_cache_valid  = _cache._has_books == true
         _cache_day          = nil
     end
 end

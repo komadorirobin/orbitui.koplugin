@@ -868,7 +868,7 @@ function GridRenderer.build(w, ctx, opts)
             end
         else
 
-        local bd    = SH.getBookData(fp, ctx.prefetched and ctx.prefetched[fp])
+        local bd    = SH.getBookData(fp, ctx.prefetched and ctx.prefetched[fp], { skip_description = true })
         local cover = SH.getBookCover(fp, cw, ch) or SH.coverPlaceholder(bd.title, bd.authors, cw, ch)
 
         local cover_widget
@@ -1288,7 +1288,10 @@ function GridRenderer.updateStats(widget, ctx, opts)
     for i, fp in ipairs(page_fps) do
         local fn = widget._row_update_funcs[i]
         if fn then
-            local bd = SH.getBookData(fp, ctx.prefetched and ctx.prefetched[fp])
+            local bd = SH.getBookData(fp, ctx.prefetched and ctx.prefetched[fp], {
+                progress_only = not opts.labelForItem,
+                skip_description = true,
+            })
             fn(bd)
         end
     end
@@ -1399,7 +1402,7 @@ function GridRenderer.getBookTitle(fp)
         if ok2 and ds then
             local rp = ds:readSetting("doc_props") or {}
             if rp.title and rp.title ~= "" then title = rp.title end
-            pcall(function() ds:close() end)
+            -- Read-only: close() would rewrite the sidecar.
         end
     end)
     if #title > 48 then title = title:sub(1, 45) .. "…" end

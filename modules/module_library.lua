@@ -323,7 +323,7 @@ local mod = GridRenderer.makeModule{
                     pct = ds:readSetting("percent_finished") or 0
                     local summary = ds:readSetting("summary")
                     is_complete = type(summary) == "table" and summary.status == "complete"
-                    pcall(function() ds:close() end)
+                    -- Read-only: close() would rewrite the sidecar.
                 end
             end
         end

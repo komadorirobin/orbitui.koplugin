@@ -2137,6 +2137,7 @@ end
 
 function M.endStatsSyncGuard()
     _stats_sync_guard = false
+    _indexes_created = false -- a cloud sync may have replaced the database
 end
 
 function M.isStatsSyncGuarded()
@@ -2159,8 +2160,8 @@ function M.openStatsDB()
     if not _indexes_created then
         local idx_ok = pcall(function()
             conn:exec("CREATE INDEX IF NOT EXISTS idx_simpleui_book_md5 ON book(md5);")
-            conn:exec("CREATE INDEX IF NOT EXISTS idx_simpleui_pagestat_book ON page_stat(id_book);")
-            conn:exec("CREATE INDEX IF NOT EXISTS idx_simpleui_pagestat_time ON page_stat(start_time);")
+            -- page_stat is a view. KOReader already indexes page_stat_data
+            -- by start_time and (id_book, page, start_time).
         end)
         if idx_ok then _indexes_created = true end
     end
