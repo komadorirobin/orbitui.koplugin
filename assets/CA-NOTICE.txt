@@ -1,0 +1,9 @@
+ca-bundle.crt is the unmodified Mozilla CA bundle distributed by Certifi.
+Source: https://github.com/certifi/python-certifi
+Revision: 9d0a8f1f3a0d6b2e38d5773db7afe1a37e4527b6
+Retrieved: 2026-10-03
+License: Mozilla Public License 2.0; see CA-LICENSE.
+
+This is a fallback for KOReader installations without data/ca-bundle.crt.
+Refresh from a reviewed Certifi release during maintenance. It is not updated
+independently at runtime and must never be replaced by disabling verification.

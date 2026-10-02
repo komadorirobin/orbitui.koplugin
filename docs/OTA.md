@@ -36,8 +36,9 @@ The first installation is the factory fallback. `main.lua`, `_meta.lua` and
 inactive version directory; it never overwrites the running modules.
 
 1. Download over CA- and hostname-verified HTTPS, restricted to GitHub and its
-   release-asset hosts. KOReader's `data/ca-bundle.crt` is preferred; a missing CA
-   bundle is an error, never a reason to disable TLS verification.
+   release-asset hosts. KOReader's `data/ca-bundle.crt` is preferred; OrbitUI also
+   bundles Certifi's Mozilla roots for older installs (license/provenance under
+   `assets/`). A missing CA bundle is an error, never a reason to disable TLS.
 2. Verify ZIP byte count and SHA-256. Validate safe paths, file types, size limits,
    every file's inventory/hash and Lua syntax. No package code is executed here.
 3. Require the package's bootstrap files to match the installed bootstrap and

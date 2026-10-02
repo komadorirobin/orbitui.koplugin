@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Exercise the packaged OTA payload with real KOReader SHA/archive code.
 
-Usage: python3 scripts/smoke-ota.py ZIP KOReader-base-reference-directory
+Usage: python3 scripts/smoke-ota.py ZIP KOReader-base-reference-directory [--live]
 The reference directory must contain ffi/{archiver,libarchive_h,sha2}.lua.
 Uses system libarchive and LuaJIT; does not run KOReader UI or touch an install.
 """
@@ -42,6 +42,7 @@ with tempfile.TemporaryDirectory(prefix="orbitui-native-ota-") as directory:
         "manifest_text": manifest_text, "manifest": json.loads(manifest_text),
         "checksum": archive.with_name(archive.name + ".sha256").read_text(),
         "size": archive.stat().st_size,
+        "live": "--live" in sys.argv[3:],
     }
     fixture_path = directory / "fixture.lua"
     fixture_path.write_text("return " + lua(fixture), encoding="ascii")

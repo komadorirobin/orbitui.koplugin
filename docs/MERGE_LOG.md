@@ -31,6 +31,32 @@ The monitor's current counts, commits and releases live in the status issue and
 Actions artifacts, not in this log. Changing counts must not create fake merge
 entries or repeatedly edit source files.
 
+## 2026-10-03: Public preview and whole-package OTA
+
+The user explicitly requested a release and OTA, and approved making the OrbitUI
+repository public. This is a preview release, not device acceptance or an
+upstream merge. Both component pins and the original standalone channels remain
+unchanged. No automatic release workflow was added.
+
+Contracts C01, C08 and C09 now include a stable bootstrap and versioned runtime
+slots. Existing initialization moved to `core/orbitui_plugin.lua`. The common
+updater verifies complete packages, selects code on restart and preserves a
+previous version without rolling back settings or reading progress. The stable
+bootstrap may not be changed by OTA API 1; incompatible changes require a manual
+installation. `OTA.md` describes limits and recovery.
+
+Verification includes Lua/LuaJIT suites, package inventory/checksum tests,
+native libarchive/SHA smoke tests, interrupted-start recovery and real
+LuaSocket/LuaSec HTTPS access. Device UI, restart and suspend/resume on the Bigme
+are still unverified. Existing SQLite/slow-geometry skips and translation
+exceptions remain; no new exceptions were introduced.
+
+Before changing visibility, all 2,843 reachable commits were scanned with
+Gitleaks. Two alerts were reviewed as non-secret upstream source (column-key
+constants and the packed pinyin table); the worktree had the same pinyin-table
+false positive. No detected credential was published. This scan is not an
+absolute guarantee that all possible secret formats can be recognized.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

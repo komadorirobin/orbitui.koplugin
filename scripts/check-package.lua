@@ -26,6 +26,7 @@ for _, path in ipairs({
     "docs/MIGRATION.md", "docs/TESTING.md", "docs/UPSTREAM.md",
     "docs/INTEGRATION_CONTRACTS.md", "docs/MERGE_LOG.md",
     "docs/OTA.md",
+    "assets/ca-bundle.crt", "assets/CA-LICENSE", "assets/CA-NOTICE.txt",
     "components/bookshelf/main.lua", "components/bookshelf/_meta.lua",
     "components/bookshelf/LICENSE", "components/bookshelf/assets/bookshelf-logo.png",
     "components/simpleui/main.lua", "components/simpleui/_meta.lua", "components/simpleui/LICENSE",

@@ -167,7 +167,7 @@ function M.validate(target, files, release, install_root)
     assert(#files == #manifest.files + 1, "Incomplete package inventory")
     for _, path in ipairs({ "VERSION", "main.lua", "_meta.lua", "orbitui_bootstrap.lua", "core/orbitui_plugin.lua",
         "core/orbitui_runtime.lua", "core/orbitui_ota.lua", "adapters/orbitui_updates.lua",
-        "components/bookshelf/main.lua", "components/simpleui/main.lua", "LICENSE" }) do
+        "components/bookshelf/main.lua", "components/simpleui/main.lua", "assets/ca-bundle.crt", "LICENSE" }) do
         assert(expected[path], "Required runtime file missing: " .. path)
     end
     for _, path in ipairs({ "main.lua", "_meta.lua", "orbitui_bootstrap.lua" }) do

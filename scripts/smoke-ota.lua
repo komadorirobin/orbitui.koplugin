@@ -1,8 +1,10 @@
 local fixture = dofile(assert(arg[1]))
 package.path = "./?.lua;" .. fixture.references .. "/?.lua;" .. package.path
 local ffi = require("ffi")
-ffi.cdef[[void *malloc(size_t size); void free(void *ptr);]]
-ffi.loadlib = function(name) return ffi.load(name) end
+ffi.cdef[[typedef long time_t; void *malloc(size_t size); void free(void *ptr);]]
+ffi.loadlib = function(name, version)
+    return ffi.load(jit.os == "OSX" and name or ("lib" .. name .. ".so." .. version))
+end
 package.loaded["ffi/posix_h"] = true
 local function quote(value) return "'" .. value:gsub("'", "'\\''") .. "'" end
 local function shell(command)
@@ -54,6 +56,21 @@ local Boot = require("orbitui_bootstrap")
 local context = Boot.begin(fixture.root)
 local release = { version = fixture.manifest.version,
     zip = { url = "fixture", size = fixture.size }, checksum = { url = "fixture-checksum" } }
+local fixture_http = package.loaded["core/orbitui_http"]
+if fixture.live then
+    package.loaded["core/orbitui_http"] = nil
+    package.loaded.rapidjson = require("cjson")
+    package.loaded.socketutil = {
+        set_timeout = function(_, block)
+            require("socket.http").TIMEOUT = block
+            require("ssl.https").TIMEOUT = block
+        end,
+        reset_timeout = function() end,
+    }
+    release = assert(OTA.check(true), "No public preview release found")
+    assert(release.version == fixture.manifest.version, "Public release differs from build under test")
+    print("PASS anonymous GitHub release discovery through real LuaSocket/LuaSec TLS")
+end
 local prepared = OTA.prepare(context, release)
 assert(prepared.version == fixture.manifest.version)
 assert(Boot.state(context.root).current == "factory")
@@ -78,6 +95,7 @@ Boot = dofile("orbitui_bootstrap.lua")
 context = Boot.begin(context.root)
 Boot.healthy(context.root)
 package.loaded.orbitui_bootstrap = Boot
+package.loaded["core/orbitui_http"] = fixture_http
 corrupt_download = true
 local ok, err = pcall(OTA.prepare, context, release)
 assert(not ok and tostring(err):find("size mismatch", 1, true))

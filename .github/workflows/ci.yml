@@ -14,7 +14,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install test dependencies
-        run: sudo apt-get update && sudo apt-get install -y lua5.4 luajit gettext unzip
+        run: sudo apt-get update && sudo apt-get install -y lua5.4 luajit gettext unzip libarchive13
       - name: Test integration and both components
         env:
           LUA: ${{ matrix.lua }}
@@ -23,6 +23,14 @@ jobs:
         run: sh scripts/check-translations.sh
       - name: Build runtime package
         run: sh scripts/package.sh
+      - name: Verify packaged OTA with native archive and hash code
+        if: matrix.lua == 'luajit'
+        run: |
+          mkdir -p /tmp/orbitui-koreader-base-refs/ffi
+          for file in archiver libarchive_h sha2; do
+            curl --fail --silent --show-error --location --retry 3 "https://raw.githubusercontent.com/koreader/koreader-base/fe41d7698ad8a6a7caf794d9b601229009a34053/ffi/$file.lua" -o "/tmp/orbitui-koreader-base-refs/ffi/$file.lua"
+          done
+          python3 scripts/smoke-ota.py dist/orbitui.koplugin.zip /tmp/orbitui-koreader-base-refs
       - uses: actions/upload-artifact@v4
         with:
           name: orbitui-experimental-${{ matrix.lua }}

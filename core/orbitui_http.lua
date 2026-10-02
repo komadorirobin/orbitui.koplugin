@@ -32,11 +32,13 @@ local function verifyHost(cert, host)
 end
 
 local function caFile()
-    for _, path in ipairs({ "data/ca-bundle.crt", "/etc/ssl/certs/ca-certificates.crt", "/etc/ssl/cert.pem" }) do
+    local root = assert(debug.getinfo(1, "S").source:match("^@(.+)/core/orbitui_http%.lua$"))
+    for _, path in ipairs({ "data/ca-bundle.crt", root .. "/assets/ca-bundle.crt",
+        "/etc/ssl/certs/ca-certificates.crt", "/etc/ssl/cert.pem" }) do
         local f = io.open(path, "rb")
         if f then f:close(); return path end
     end
-    error("KOReader CA certificate bundle is missing; update KOReader before using OTA")
+    error("CA certificate bundle is missing; reinstall the complete OrbitUI package")
 end
 
 -- Called only inside Trapper's subprocess. Never disable TLS verification.

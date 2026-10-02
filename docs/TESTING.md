@@ -11,6 +11,13 @@
 - OTA tests cover release channels, semantic versions, archive safety, TLS host
   checks, deferred activation, interrupted startup and rollback. `OTA.md` records
   the protocol and recovery limits. Package tests verify inventory and checksum bytes.
+- The LuaJIT CI job tests the full packaged installer against pinned KOReader-base
+  archive/SHA modules (`fe41d7698ad8a6a7caf794d9b601229009a34053`) and system
+  libarchive. The smoke harness substitutes only the filesystem/network/JSON
+  adapters, not archive extraction or hashing. It tests activation, restart,
+  rollback, a missing runtime file and a truncated download in a temporary install.
+  `scripts/smoke-ota.py ZIP REFERENCE_DIR --live` additionally tests anonymous
+  release discovery and download with real LuaSocket/LuaSec and `lua-cjson`.
 - CI validates both components' translation files and stores an experimental ZIP
 artifact. It does not publish releases or modify upstream repositories.
 
