@@ -26,8 +26,9 @@ This patch cannot reconstruct those earlier icon choices; it only hides the
 new Material values temporarily. Do not delete `sui_settings.lua`, erase reading
 data or restore an entire old settings snapshot to fix an icon problem.
 
-The corrected working tree makes Material a per-icon catalogue only; it has
-not yet been published. In that build use **Appearance > Home appearance >
+The corrected alpha.7 makes Material a per-icon catalogue only. A working
+alpha.5 can update directly to alpha.7 and does not need this patch.
+In alpha.7 use **Appearance > Home appearance >
 Icons**, choose the one icon to edit, and then **Material Symbols Rounded...**.
 Opening the catalogue does not apply anything. Other icon packs are unchanged.
 

@@ -20,6 +20,13 @@ divider fix. Bootstrap API 1 and the preview update path remain unchanged.
 Version `0.1.0-alpha.6` adds the optional Material Symbols Rounded icon pack.
 Its font, SVGs and license notices ship in the same verified runtime package;
 existing icon choices are retained and bootstrap API 1 remains unchanged.
+Version `0.1.0-alpha.7` replaces Material text-font rendering with matching SVGs
+after a reported alpha.6 startup crash, and removes the Material whole-pack
+preset. Selection is per icon only. It can update directly from alpha.5 or
+alpha.6; bootstrap API 1 and the three bootstrap files are unchanged. No
+recovery patch is needed on an already-working alpha.5. If the temporary
+Material recovery patch was installed, disable/remove it after updating and
+restart to make saved Material choices visible again.
 An alpha installation defaults to including preview releases; a stable installation defaults to stable
 only. This is separate from upstream monitoring, which never publishes builds.
 
@@ -110,6 +117,12 @@ triggered by upstream activity or ordinary pushes. Before publishing:
    asset access, channel selection and installation of the published bytes.
 5. Never replace bytes on an existing published tag. Issue a new version for a
    fix; report device checks separately from headless tests.
+
+For an upgrade test from an actual older release, pass its runtime ZIP to
+`scripts/smoke-ota.py NEW_ZIP REFERENCE_DIR --base-zip OLD_ZIP` (add `--live`
+after publication). This loads the old installer's code from a temporary
+installation and tests discovery, validation, activation and code rollback.
+It does not run the KOReader UI or alter the user's installation.
 
 The checksum detects inconsistent/truncated packages. It is not an independent
 signature: the GitHub account/release and HTTPS trust chain remain trusted.

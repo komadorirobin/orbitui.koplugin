@@ -19,9 +19,10 @@ keep their existing behavior.
 
 The published alpha.6 still has the whole-pack preset. Do not apply that preset
 to browse icons: it immediately overwrites many icon overrides. The per-icon
-path above also exists in alpha.6, but the startup/rendering correction in this
-working tree is not yet released. If alpha.6 can no longer start after applying
-Material, see [temporary recovery](../recovery/README.md).
+path above also exists in alpha.6, but use alpha.7 for the corrected SVG rendering.
+If alpha.6 can no longer start after applying Material, see
+[temporary recovery](../recovery/README.md). An already-working alpha.5 can update
+directly to alpha.7 without the recovery patch or an intermediate alpha.6 install.
 
 Bookshelf's icon library includes a **Material** category and searchable
 Material entries for chip labels, start-menu icons and hero action cards.

@@ -66,9 +66,13 @@ There is no crash log yet; the user cannot reach the log-export menu. The exact
 crash site is unconfirmed. The old tests accepted any Font path and missed the
 native rendering risk: KOReader does not resolve bare relative custom-font paths
 like absolute or `./` paths, and a missing face can fail inside TextWidget.
-The unreleased correction removes Material font rendering and bulk application,
-with 16 focused icon tests and 6 recovery tests. Those tests and the asset checks
-do not replace physical-device startup, touch, layout and e-ink checks.
+The user restored alpha.5 and reports that KOReader starts again. That confirms
+recovery, not alpha.7 device acceptance. The alpha.7 correction removes Material
+font rendering and bulk application, with 16 focused icon tests and 6 recovery
+tests. The native OTA smoke harness also accepts the published alpha.5 archive
+via `--base-zip` to test the old installer rather than only a simulated version
+number. Those tests and the asset checks do not replace physical-device startup,
+touch, layout and e-ink checks.
 
 Use the Bigme B7 Pro at its native 1264 x 1680 resolution. Retain a recovery path.
 Record KOReader version, installed patches and active plugins, plus crash.log.

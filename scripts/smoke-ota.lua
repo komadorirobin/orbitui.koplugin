@@ -1,5 +1,6 @@
 local fixture = dofile(assert(arg[1]))
-package.path = "./?.lua;" .. fixture.references .. "/?.lua;" .. package.path
+-- Load the starting release's actual installer when --base-zip is supplied.
+package.path = fixture.root .. "/?.lua;" .. fixture.references .. "/?.lua;" .. package.path
 local ffi = require("ffi")
 ffi.cdef[[typedef long time_t; void *malloc(size_t size); void free(void *ptr);]]
 ffi.loadlib = function(name, version)
@@ -71,10 +72,13 @@ if fixture.live then
     assert(release.version == fixture.manifest.version, "Public release differs from build under test")
     print("PASS anonymous GitHub release discovery through real LuaSocket/LuaSec TLS")
 end
+assert(context.version == fixture.base_version)
+assert(OTA.newer(release.version, context.version), "No newer version to install")
+print("PASS update offered from " .. context.version .. " to " .. release.version)
 local prepared = OTA.prepare(context, release)
 assert(prepared.version == fixture.manifest.version)
 assert(Boot.state(context.root).current == "factory")
-assert(Boot.version(context.root) == "0.1.0-alpha.1")
+assert(Boot.version(context.root) == fixture.base_version)
 print("PASS native libarchive extraction and SHA-256 verification of full release inventory")
 local target = Boot.path(context.root, prepared.slot)
 local files = { "manifest.json" }
@@ -86,13 +90,14 @@ assert(os.rename(core_path .. ".saved", core_path))
 print("PASS missing runtime module is rejected before activation")
 Boot.activate(context.root, prepared.slot)
 assert(context.slot == "factory")
-Boot = dofile("orbitui_bootstrap.lua")
+Boot = dofile(fixture.root .. "/orbitui_bootstrap.lua")
 assert(Boot.begin(context.root).version == release.version)
 Boot.healthy(context.root)
 Boot.rollback(context.root)
 assert(Boot.state(context.root).current == "factory")
-Boot = dofile("orbitui_bootstrap.lua")
+Boot = dofile(fixture.root .. "/orbitui_bootstrap.lua")
 context = Boot.begin(context.root)
+assert(context.version == fixture.base_version)
 Boot.healthy(context.root)
 package.loaded.orbitui_bootstrap = Boot
 package.loaded["core/orbitui_http"] = fixture_http
