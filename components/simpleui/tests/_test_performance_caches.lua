@@ -15,6 +15,10 @@ for _, name in ipairs({
 }) do package.loaded[name] = {} end
 package.loaded.device = { screen = { scaleBySize = function(_, n) return n end } }
 package.loaded.logger = { warn = function() end }
+package.loaded["ffi/util"] = { template = function(text, ...)
+    local args = { ... }
+    return (text:gsub("%%(%d+)", function(n) return tostring(args[tonumber(n)]) end))
+end }
 package.loaded.util = { htmlToPlainTextIfHtml = function(s) return s end }
 package.loaded["infra/sui_config"] = { isFatalDbError = function() return false end }
 package.loaded["infra/sui_i18n"] = { translate = function(s) return s end }

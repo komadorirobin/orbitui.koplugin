@@ -5076,106 +5076,89 @@ msgstr "⬆ 有可用更新：%s"
 msgid "  (%d left)"
 msgid_plural "  (%d left)"
 msgstr[0] " （剩余 %d）"
-msgstr[1] " （剩余 %d）"
 
 #: modules/module_reading_goals.lua:1327
 msgid "  Set Goal  (%d book in %s)"
 msgid_plural "  Set Goal  (%d books in %s)"
 msgstr[0] "  设置目标（读 %d 本书在 %s 年）"
-msgstr[1] "  设置目标（读 %d 本书在 %s 年）"
 
 #: modules/module_reading_goals.lua:849
 msgid "%d book"
 msgid_plural "%d books"
 msgstr[0] "%d 本书"
-msgstr[1] "%d 本书"
 
 #: modules/module_reading_goals.lua:1432
 msgid "%d book in %s"
 msgid_plural "%d books in %s"
 msgstr[0] "读 %d 本书在 %s 年"
-msgstr[1] "读 %d 本书在 %s 年"
 
 #: screens/sui_stats_windows.lua:1286
 msgid "%d book read in %s"
 msgid_plural "%d books read in %s"
 msgstr[0] "已读 %d 本书在 %s 年"
-msgstr[1] "已读 %d 本书在 %s 年"
 
 #: screens/sui_stats_windows.lua:2165 screens/sui_stats_windows.lua:2167
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d 天"
-msgstr[1] "%d 天"
 
 #: modules/module_coverdeck.lua:1034 modules/module_currently.lua:921
 #: modules/module_currently.lua:922 modules/module_currently.lua:1002
 msgid "%d day of reading"
 msgid_plural "%d days of reading"
 msgstr[0] "阅读 %d 天"
-msgstr[1] "阅读 %d 天"
 
 #: screens/sui_stats_windows.lua:3410
 msgid "%d freeze available"
 msgid_plural "%d freezes available"
 msgstr[0] "%d 次冻结可用"
-msgstr[1] "%d 次冻结可用"
 
 #: modules/module_reading_goals.lua:1517
 msgid "%d in %s"
 msgid_plural "%d in %s"
 msgstr[0] "%d 本在 %s 年"
-msgstr[1] "%d 本在 %s 年"
 
 #: features/sui_quickactions.lua:1615 features/sui_quickactions.lua:3028
 #: features/sui_quickactions.lua:3049
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d 个项目"
-msgstr[1] "%d 个项目"
 
 #: screens/sui_stats_windows.lua:2185 screens/sui_stats_windows.lua:2187
 msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d 周"
-msgstr[1] "%d 周"
 
 #: modules/module_reading_goals.lua:847
 msgid "%d/%d book"
 msgid_plural "%d/%d books"
 msgstr[0] "%d/%d 本书"
-msgstr[1] "%d/%d 本书"
 
 #: modules/module_collections.lua:1579
 msgid "(%d collection)"
 msgid_plural "(%d collections)"
 msgstr[0] "（%d 个收藏夹）"
-msgstr[1] "（%d 个收藏夹）"
 
 #: modules/module_quick_actions.lua:526 modules/module_reading_stats.lua:441
 msgid "(%d/%d — %d left)"
 msgid_plural "(%d/%d — %d left)"
 msgstr[0] "（%d/%d — 剩余 %d）"
-msgstr[1] "（%d/%d — 剩余 %d）"
 
 #: features/sui_quickactions.lua:2521
 msgid "Group (%d item)"
 msgid_plural "Group (%d items)"
 msgstr[0] "分组（%d 个项目）"
-msgstr[1] "分组（%d 个项目）"
 
 #: modules/module_reading_goals.lua:1508
 msgid "Manually Tracked Books  (%d in %s)"
 msgid_plural "Manually Tracked Books  (%d in %s)"
 msgstr[0] "手动导入的书籍（%d 本在 %s 年）"
-msgstr[1] "手动导入的书籍（%d 本在 %s 年）"
 
 #: screens/sui_quicksettings_bar.lua:1108
 #: screens/sui_quicksettings_bar.lua:1194
 msgid "Maximum of %d slot reached. Remove one first."
 msgid_plural "Maximum of %d slots reached. Remove one first."
 msgstr[0] "最多 %d 个槽位，请先移除一个。"
-msgstr[1] "最多 %d 个槽位，请先移除一个。"
 
 #: screens/sui_menu.lua:644 screens/sui_menu.lua:907
 msgid ""
@@ -5187,9 +5170,6 @@ msgid_plural ""
 msgstr[0] ""
 "顶部栏中显示的文本。\n"
 "最多 %d 个字符。"
-msgstr[1] ""
-"顶部栏中显示的文本。\n"
-"最多 %d 个字符。"
 
 #: modules/module_action_list.lua:301 modules/module_action_list.lua:428
 #: modules/module_quick_actions.lua:363 modules/module_quick_actions.lua:495
@@ -5198,42 +5178,35 @@ msgid "The maximum of %d action per module has been reached. Remove one first."
 msgid_plural ""
 "The maximum of %d actions per module has been reached. Remove one first."
 msgstr[0] "每个模块最多 %d 个操作，请先移除一个。"
-msgstr[1] "每个模块最多 %d 个操作，请先移除一个。"
 
 #: features/sui_quickactions.lua:1685 features/sui_quickactions.lua:2993
 msgid "The maximum of %d quick action has been reached. Delete one first."
 msgid_plural ""
 "The maximum of %d quick actions has been reached. Delete one first."
 msgstr[0] "最多 %d 个快捷操作，请先删除一个。"
-msgstr[1] "最多 %d 个快捷操作，请先删除一个。"
 
 #: modules/module_reading_stats.lua:745 modules/module_reading_stats.lua:825
 msgid "The maximum of %d stat per row has been reached. Remove one first."
 msgid_plural ""
 "The maximum of %d stats per row has been reached. Remove one first."
 msgstr[0] "每行最多 %d 个统计项，请先移除一项。"
-msgstr[1] "每行最多 %d 个统计项，请先移除一项。"
 
 #: screens/sui_menu.lua:379 screens/sui_menu.lua:1261
 msgid "The maximum of %d tab has been reached. Remove one first."
 msgid_plural "The maximum of %d tabs has been reached. Remove one first."
 msgstr[0] "最多 %d 个标签，请先移除一个。"
-msgstr[1] "最多 %d 个标签，请先移除一个。"
 
 #: screens/sui_stats_windows.lua:1963
 msgid "day read"
 msgid_plural "days read"
 msgstr[0] "已读天数"
-msgstr[1] "已读天数"
 
 #: modules/module_reading_stats.lua:142
 msgid "day streak"
 msgid_plural "days streak"
 msgstr[0] "连续阅读天数"
-msgstr[1] "连续阅读天数"
 
 #: screens/sui_stats_windows.lua:1978
 msgid "page read"
 msgid_plural "pages read"
 msgstr[0] "已读页数"
-msgstr[1] "已读页数"

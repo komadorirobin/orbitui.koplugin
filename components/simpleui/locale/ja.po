@@ -5172,106 +5172,89 @@ msgstr "⬆ アップデートがあります: %s"
 msgid "  (%d left)"
 msgid_plural "  (%d left)"
 msgstr[0] "  (残り%d)"
-msgstr[1] "  (残り%d)"
 
 #: modules/module_reading_goals.lua:1337
 msgid "  Set Goal  (%d book in %s)"
 msgid_plural "  Set Goal  (%d books in %s)"
 msgstr[0] "  目標を設定  (%d冊 in %s)"
-msgstr[1] "  目標を設定  (%d冊 in %s)"
 
 #: modules/module_reading_goals.lua:838
 msgid "%d book"
 msgid_plural "%d books"
 msgstr[0] "%d冊"
-msgstr[1] "%d冊"
 
 #: modules/module_reading_goals.lua:1442
 msgid "%d book in %s"
 msgid_plural "%d books in %s"
 msgstr[0] "%d冊 in %s"
-msgstr[1] "%d冊 in %s"
 
 #: screens/sui_stats_windows.lua:1286
 msgid "%d book read in %s"
 msgid_plural "%d books read in %s"
 msgstr[0] "%d冊を%sで読了"
-msgstr[1] "%d冊を%sで読了"
 
 #: screens/sui_stats_windows.lua:2165 screens/sui_stats_windows.lua:2167
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d日"
-msgstr[1] "%d日"
 
 #: modules/module_coverdeck.lua:1029 modules/module_currently.lua:899
 #: modules/module_currently.lua:900 modules/module_currently.lua:980
 msgid "%d day of reading"
 msgid_plural "%d days of reading"
 msgstr[0] "%d日間の読書"
-msgstr[1] "%d日間の読書"
 
 #: screens/sui_stats_windows.lua:3410
 msgid "%d freeze available"
 msgid_plural "%d freezes available"
 msgstr[0] "利用可能な凍結: %d件"
-msgstr[1] "利用可能な凍結: %d件"
 
 #: modules/module_reading_goals.lua:1529
 msgid "%d in %s"
 msgid_plural "%d in %s"
 msgstr[0] "%d in %s"
-msgstr[1] "%d in %s"
 
 #: features/sui_quickactions.lua:1615 features/sui_quickactions.lua:3028
 #: features/sui_quickactions.lua:3049
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d件"
-msgstr[1] "%d件"
 
 #: screens/sui_stats_windows.lua:2185 screens/sui_stats_windows.lua:2187
 msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d週"
-msgstr[1] "%d週"
 
 #: modules/module_reading_goals.lua:836
 msgid "%d/%d book"
 msgid_plural "%d/%d books"
 msgstr[0] "%d/%d冊"
-msgstr[1] "%d/%d冊"
 
 #: modules/module_collections.lua:1575
 msgid "(%d collection)"
 msgid_plural "(%d collections)"
 msgstr[0] "（%d件のコレクション）"
-msgstr[1] "（%d件のコレクション）"
 
 #: modules/module_reading_stats.lua:437 modules/module_quick_actions.lua:508
 msgid "(%d/%d — %d left)"
 msgid_plural "(%d/%d — %d left)"
 msgstr[0] "(%d/%d — 残り%d)"
-msgstr[1] "(%d/%d — 残り%d)"
 
 #: features/sui_quickactions.lua:2521
 msgid "Group (%d item)"
 msgid_plural "Group (%d items)"
 msgstr[0] "グループ（%d件）"
-msgstr[1] "グループ（%d件）"
 
 #: modules/module_reading_goals.lua:1520
 msgid "Manually Tracked Books  (%d in %s)"
 msgid_plural "Manually Tracked Books  (%d in %s)"
 msgstr[0] "手動追跡の本 (%d冊 in %s)"
-msgstr[1] "手動追跡の本 (%d冊 in %s)"
 
 #: screens/sui_quicksettings_bar.lua:1107
 #: screens/sui_quicksettings_bar.lua:1193
 msgid "Maximum of %d slot reached. Remove one first."
 msgid_plural "Maximum of %d slots reached. Remove one first."
 msgstr[0] "最大%d個のスロットに達しました。先に1つ削除してください。"
-msgstr[1] "最大%d個のスロットに達しました。先に1つ削除してください。"
 
 #: screens/sui_menu.lua:644 screens/sui_menu.lua:906
 msgid ""
@@ -5283,9 +5266,6 @@ msgid_plural ""
 msgstr[0] ""
 "トップバーに表示されるテキスト。\n"
 "最大%d文字。"
-msgstr[1] ""
-"トップバーに表示されるテキスト。\n"
-"最大%d文字。"
 
 #: modules/module_action_list.lua:279 modules/module_action_list.lua:406
 #: modules/module_quick_actions.lua:345 modules/module_quick_actions.lua:477
@@ -5295,46 +5275,38 @@ msgid_plural ""
 "The maximum of %d actions per module has been reached. Remove one first."
 msgstr[0] ""
 "モジュールあたり最大%d個のアクションに達しました。先に1つ削除してください。"
-msgstr[1] ""
-"モジュールあたり最大%d個のアクションに達しました。先に1つ削除してください。"
 
 #: features/sui_quickactions.lua:1685 features/sui_quickactions.lua:2993
 msgid "The maximum of %d quick action has been reached. Delete one first."
 msgid_plural ""
 "The maximum of %d quick actions has been reached. Delete one first."
 msgstr[0] "最大%d個のクイックアクションに達しました。先に1つ削除してください。"
-msgstr[1] "最大%d個のクイックアクションに達しました。先に1つ削除してください。"
 
 #: modules/module_reading_stats.lua:737 modules/module_reading_stats.lua:817
 msgid "The maximum of %d stat per row has been reached. Remove one first."
 msgid_plural ""
 "The maximum of %d stats per row has been reached. Remove one first."
 msgstr[0] "行あたり最大%d個の統計に達しました。先に1つ削除してください。"
-msgstr[1] "行あたり最大%d個の統計に達しました。先に1つ削除してください。"
 
 #: screens/sui_menu.lua:379 screens/sui_menu.lua:1229
 msgid "The maximum of %d tab has been reached. Remove one first."
 msgid_plural "The maximum of %d tabs has been reached. Remove one first."
 msgstr[0] "最大%d個のタブに達しました。先に1つ削除してください。"
-msgstr[1] "最大%d個のタブに達しました。先に1つ削除してください。"
 
 #: screens/sui_stats_windows.lua:1963
 msgid "day read"
 msgid_plural "days read"
 msgstr[0] "読了日"
-msgstr[1] "読了日"
 
 #: modules/module_reading_stats.lua:142
 msgid "day streak"
 msgid_plural "days streak"
 msgstr[0] "日連続"
-msgstr[1] "日連続"
 
 #: screens/sui_stats_windows.lua:1978
 msgid "page read"
 msgid_plural "pages read"
 msgstr[0] "読了ページ"
-msgstr[1] "読了ページ"
 
 #~ msgid "Bookmark browser not available."
 #~ msgstr "ブックマークブラウザは利用できません。"

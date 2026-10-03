@@ -4,7 +4,10 @@ A clean, distraction-free UI plugin for KOReader that transforms your reading ex
 
 ## This fork vs. upstream
 
-The `beta` branch tracks upstream SimpleUI through **2.7.1** and the subsequent changes at `ade0df9`, plus the fork-specific additions below. Select the **beta** update channel to receive these updates.
+This embedded OrbitUI component tracks upstream `main` through `3444cc9c`, plus
+the fork-specific additions below. Install and update the complete OrbitUI
+package, not this component on its own. The upstream installation instructions
+below describe standalone SimpleUI, not OrbitUI.
 
 - **Hardcover module** — a Home Screen module that shows your active `hardcover.app` reading goal, with configurable layout and background refresh
 - **Image module** — a Home Screen module that displays images from a chosen folder, with configurable size and timed rotation
@@ -14,7 +17,7 @@ The `beta` branch tracks upstream SimpleUI through **2.7.1** and the subsequent 
 - **Custom icon action mapping** — icon packs can map custom navbar actions, including separate Books and Comics bookshelf profiles
 - **To Be Read cleanup** — finished books can be removed from the To Be Read module automatically
 - **Home Screen performance work** — additional fork-side optimisations around startup, stats/index usage, and expensive Home Screen rebuild paths
-- **Fork OTA source** — the built-in updater points at this fork's GitHub releases
+- **Combined OTA** — the component updater is disabled; OrbitUI owns updates and rollback
 - **Android progress prompts** — KOSync and BookOrbit confirmations close before applying a reading-position jump, including BookOrbit's pre-upload reconciliation. A pending jump is discarded if its reader is closed or replaced.
 
 If you are comparing this fork with the original project, those are the main user-facing differences.

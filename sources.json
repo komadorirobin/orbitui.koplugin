@@ -6,7 +6,7 @@
       "upstream": "https://github.com/AndyHazz/bookshelf.koplugin.git",
       "path": "components/bookshelf",
       "upstream_branch": "master",
-      "upstream_commit": "dc96d18848cfc8dfb543b9ae9aec77e65fd00b0a",
+      "upstream_commit": "21e005a79900c210067128f674eef745c8a545ef",
       "tag": "v5.2.2.3",
       "commit": "2d46b259028ddbebc0159effe6171abb14520868",
       "license": "AGPL-3.0"
@@ -16,7 +16,7 @@
       "upstream": "https://github.com/doctorhetfield-cmd/simpleui.koplugin.git",
       "path": "components/simpleui",
       "upstream_branch": "main",
-      "upstream_commit": "ade0df9eca195c2cf8134005025f4b971e681ac0",
+      "upstream_commit": "3444cc9c03756df1b4c7cb1847d56f517116f842",
       "tag": "2.7.2-beta.5",
       "commit": "a8bbbdb89dcce9a4b9d86cfa321c8cecce9b030f",
       "license": "MIT"

@@ -29,13 +29,12 @@ Bookshelf's native SQLite tests require KOReader's runtime. Its exhaustive list
 geometry sweep remains opt-in (`BOOKSHELF_SLOW_TESTS=1`). The runner identifies
 these skips; they must not be presented as device verification.
 
-Seven unchanged SimpleUI 2.7.2-beta.5 catalogs already fail `msgfmt --check`:
-Italian lacks a plural-form header; Japanese, Korean, Vietnamese and both
-Chinese catalogs have an extra plural translation; Lithuanian declares fewer
-plural forms than it contains. These are not caused by OrbitUI's import. Their
-exact Git blob hashes are recorded in `tests/translation-baseline.txt`. CI reports
-them as known failures, not passes. A modified catalog loses that exception and
-must validate. Header-only warnings in other catalogs remain upstream debt.
+All 41 catalogs pass `msgfmt --check` after the 2026-10-03 merge. Upstream fixed
+the Italian header; the integration removes identical extra plural forms in
+five single-form languages and corrects the Lithuanian plural rule. No failure
+exceptions remain in `tests/translation-baseline.txt`. Header-only warnings in
+some catalogs remain upstream debt; passing syntax does not verify translation
+quality or completeness.
 
 ## Before calling the alpha device-tested
 
@@ -44,6 +43,11 @@ Record KOReader version, installed patches and active plugins, plus crash.log.
 
 - Verify original-plugin conflict detection before enabling the alpha normally.
 - Confirm Home layout, dock, backgrounds, icons, custom screens, fonts and language.
+- Test new per-element fonts and module opacity alongside existing light
+  backgrounds; verify section labels and live cover/stat updates after swipes.
+- Check shelf themes, planks, ornaments and wallpaper picking at both orientations.
+- Confirm existing settings, Hardcover links and status-line preferences remain
+  in their original files after startup, edits, restart and rollback.
 - Open Fiction and Manga from the dock, and switch between them repeatedly.
 - Open books from Home, Want to Read, Currently Reading, search and a folder.
 - Verify the expected automatic reading profile for every opening path.

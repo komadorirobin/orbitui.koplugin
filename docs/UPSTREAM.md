@@ -132,7 +132,8 @@ not make semantic conflicts disappear.
    integrated SHA says its history was reviewed, not that every behavior is enabled.
 6. Update that component's `upstream_commit`. Preserve import provenance. If
    runtime module paths changed, regenerate `core/orbitui_module_map.lua` using
-   `lua scripts/module-map.lua`. Check assets and every installer entry point.
+   `lua scripts/module-map.lua > core/orbitui_module_map.lua`. Check assets and
+   every installer entry point.
 7. Run `sh scripts/test.sh`, `LUA=luajit sh scripts/test.sh`, translation checks,
    then `sh scripts/package.sh` from a clean committed candidate. Do not increase
    known-failure exceptions simply to make the new import pass.
@@ -151,11 +152,23 @@ not make semantic conflicts disappear.
   `components/simpleui/`, not the outer OrbitUI directory.
 - SimpleUI `main.lua`: initialization errors propagate to the owning OrbitUI
   host instead of being reported as a successful combined startup.
+- Bookshelf `lib/bookshelf_settings_store.lua`: an opt-in path-adapter flag
+  defers the new status-line key migration. `adapters/orbitui_bookshelf_storage.lua`
+  retains flat file/database/cache paths and keeps the three status-line keys
+  in `G_reader_settings`, readable by previous OrbitUI and external patches.
+- SimpleUI `engines/sui_screen_engine.lua`: keep content identity separately from
+  chrome wrappers, so stats/cover refreshes target mounted module content while
+  our section-label/background wrappers remain intact. Book stats are not
+  updated twice in the same refresh.
+- Upstream compatibility auto-disable is replaced by OrbitUI's read-only guard.
+  Conflicting UI plugins are reported; user plugin flags and patches are never
+  rewritten. Unsupported KOReader versions stop before either component starts.
 
-Everything else is coordinated through `core/` and `adapters/`. The generated
+Other shared integration logic is coordinated through `core/` and `adapters/`. The generated
 module map gives canonical require names and legacy `sui_*` aliases a single
-component instance. Re-generate it with `lua scripts/module-map.lua` after adding
-or removing runtime source files. Preload hooks retain priority for userpatches.
+component instance. Re-generate it with
+`lua scripts/module-map.lua > core/orbitui_module_map.lua` after adding or removing
+runtime source files. Preload hooks retain priority for userpatches.
 
 ## Next milestones
 

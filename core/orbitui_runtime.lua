@@ -41,8 +41,23 @@ function M.install(root, module_map)
                 return require("adapters/orbitui_updates").component(replacements[name], root)
             end
         end
+        if name == "lib/bookshelf_paths" or name == "lib/bookshelf_storage_move" then
+            return function()
+                local storage = require("adapters/orbitui_bookshelf_storage")
+                return name == "lib/bookshelf_paths" and storage.paths or storage.migration
+            end
+        end
+        if name == "infra/sui_compat_check" then
+            -- OrbitUI's guard reports conflicts without mutating plugin/patch choices.
+            return function() return function() return false end end
+        end
         local fn, err = loadfile(root .. "/" .. path)
         if not fn then error(err) end
+        if name == "lib/bookshelf_settings_store" then
+            return function()
+                return require("adapters/orbitui_bookshelf_storage").wrapStore(fn())
+            end
+        end
         return fn
     end
     -- Keep package.preload first so existing KOReader userpatch interceptors work.
@@ -53,6 +68,8 @@ end
 function M.classes(root)
     if component_classes then return component_classes end
     assert(installed_root == root, "OrbitUI module loader was not installed")
+    assert(not require("lib/bookshelf_version_gate").tooOld(),
+        "Update KOReader to v2025.08 or newer before using OrbitUI")
     local bookshelf = assert(dofile(root .. "/components/bookshelf/main.lua"))
     local simpleui = assert(dofile(root .. "/components/simpleui/main.lua"))
     component_classes = { bookshelf = bookshelf, simpleui = simpleui }

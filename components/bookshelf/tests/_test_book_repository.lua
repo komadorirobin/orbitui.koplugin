@@ -112,7 +112,7 @@ package.loaded["docsettings"] = {
 }
 package.loaded["libs/libkoreader-lfs"] = {
     attributes = function(fp, key)
-        if fp == "/tmp/bookshelf-test/bookshelf_hardcover.sqlite3" and key == "mode" then
+        if fp == "/tmp/bookshelf-test/bookshelf/hardcover.sqlite3" and key == "mode" then
             return "file"
         end
         if key == "modification" then
@@ -1569,7 +1569,7 @@ end)
 test("buildBookMeta: Hardcover enrichment never sticks in sticky metadata cache", function()
     local fp = "/hardcover-cache.epub"
     package.loaded["libs/libkoreader-lfs"].attributes = function(path, key)
-        if path == "/tmp/bookshelf-test/bookshelf_hardcover.sqlite3" and key == "mode" then
+        if path == "/tmp/bookshelf-test/bookshelf/hardcover.sqlite3" and key == "mode" then
             return "file"
         end
         if key == "modification" then return 0 end

@@ -67,6 +67,10 @@ _G.G_reader_settings = {
 package.loaded["ffi/blitbuffer"] = {
     new = function(w, h) return makeBB(w, h) end,
 }
+package.loaded["ffi/util"] = { template = function(text, ...)
+    local args = { ... }
+    return (text:gsub("%%(%d+)", function(n) return tostring(args[tonumber(n)]) end))
+end }
 package.loaded["datastorage"] = { getDataDir = function() return "/tmp/simpleui-test" end }
 local store_settings = {}
 package.loaded["infra/sui_store"] = {

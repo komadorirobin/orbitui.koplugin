@@ -194,6 +194,7 @@ local READER_KEYS = {
     bookshelf_reader_status_h  = "reader_status_h",
 }
 local function _moveReaderKeys(s)
+    if Paths.preserveReaderSettings then return end
     if type(G_reader_settings) ~= "table" then return end
     local moved = s:readSetting("reader_keys_moved")
     local cleared = false

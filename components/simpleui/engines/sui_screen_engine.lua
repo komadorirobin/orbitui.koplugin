@@ -2644,11 +2644,12 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
                 self._cover_mod_slots[mod.id] = { mod = mod, widget = content }
             end
             if type(mod.updateStats) == "function" then
-                self._stats_mod_slots[mod.id] = { mod = mod, widget = widget }
+                self._stats_mod_slots[mod.id] = { mod = mod, widget = widget, content = content }
             end
             -- Stash for _register_cell (widget + col_w needed by book slots).
             cell._sui_mod = mod
             cell._sui_widget = widget
+            cell._sui_content = content
             cell._sui_col_w = col_w
             cell._sui_bg_enabled = bg_enabled
             cell._sui_label_text = label_text
@@ -2676,6 +2677,7 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
                 self._book_mod_slots[mod.id] = {
                     mod      = mod,
                     widget   = widget,
+                    content  = cell._sui_content,
                     parent   = cell,
                     index    = #cell,
                     col_w    = col_w,
@@ -2686,6 +2688,7 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
             end
             cell._sui_mod = nil
             cell._sui_widget = nil
+            cell._sui_content = nil
             cell._sui_col_w = nil
             cell._sui_bg_enabled = nil
             cell._sui_label_text = nil
@@ -3121,7 +3124,7 @@ function ScreenWidget:_refresh(keep_cache, books_only, stats_only)
                         for id, slot in pairs(self._book_mod_slots or {}) do
                             local updated_in_place = false
                             if type(slot.mod.updateStats) == "function" then
-                                local ok, result = pcall(slot.mod.updateStats, slot.widget, self._ctx_cache)
+                                local ok, result = pcall(self._updateModuleStats, self, slot)
                                 updated_in_place = ok and result
                             end
 
@@ -3154,7 +3157,8 @@ function ScreenWidget:_refresh(keep_cache, books_only, stats_only)
                     -- updateStats() returns false when _changed flags show none of the
                     -- module's fields were re-fetched — skip setDirty entirely in that case.
                     for _, slot in pairs(self._stats_mod_slots or {}) do
-                        local updated = slot.mod.updateStats(slot.widget, self._ctx_cache)
+                        local updated = (stats_only or not slot.mod.is_book_mod)
+                            and self:_updateModuleStats(slot)
                         if updated then
                             -- Surgical repaint: only the stats module's region.
                             -- slot.widget.dimen may be nil if the widget hasn't been
@@ -3307,6 +3311,11 @@ function ScreenWidget:_syncBookModLabel(mod_id)
     end
 end
 
+function ScreenWidget:_updateModuleStats(slot)
+    -- Module updaters own the content, not the new outer chrome containers.
+    return slot.mod.updateStats(slot.content or slot.widget, self._ctx_cache)
+end
+
 function ScreenWidget:_refreshBookModSlot(mod_id)
     if not self._ctx_cache or not self._book_mod_slots then return false end
     local slot = self._book_mod_slots[mod_id]
@@ -3342,6 +3351,11 @@ function ScreenWidget:_refreshBookModSlot(mod_id)
         slot.widget = new_widget
         local rtype = self:_bookModRefreshType(mod_id)
         UIManager:setDirty(self, function() return rtype, display_widget.dimen, true end)
+    end
+    slot.content = new_content
+    if self._stats_mod_slots and self._stats_mod_slots[mod_id] then
+        self._stats_mod_slots[mod_id].widget = new_widget
+        self._stats_mod_slots[mod_id].content = new_content
     end
     -- Point the cover-poll slot at the currently visible widget, so covers
     -- still pending extraction get swapped into it rather than into the old,

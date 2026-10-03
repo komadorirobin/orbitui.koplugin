@@ -27,6 +27,7 @@ local lfs_shim = {
             return nil
         elseif attr == "modification" then
             local m = sh("stat -c %Y " .. q)
+            if not tonumber(m) then m = sh("stat -f %m " .. q) end
             return tonumber(m)
         end
         return nil

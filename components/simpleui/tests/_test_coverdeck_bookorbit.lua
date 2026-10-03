@@ -33,7 +33,7 @@ package.loaded["infra/sui_i18n"] = {
     ngettext = function(one, many, count) return count == 1 and one or many end,
 }
 package.loaded["logger"] = { warn = function() end, dbg = function() end }
-package.loaded["infra/sui_config"] = {}
+package.loaded["infra/sui_config"] = { declareTextVariants = function() end }
 package.loaded["infra/sui_core"] = {
     PAD = 1,
     PAD2 = 1,

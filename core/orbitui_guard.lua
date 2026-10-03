@@ -1,7 +1,17 @@
 local M = {}
+local incompatible = {
+    projecttitle = true, zenos = true, burrow = true, quickui = true,
+    ["zzz-readermenuredesign"] = true,
+}
+local sentinels = {
+    ptutil = "projecttitle", ["common/zen_logger"] = "zenos",
+    burrow_util = "burrow", qui_utils = "quickui",
+    readermenuredesign_installer = "zzz-readermenuredesign",
+}
 
 local function legacyName(plugin)
     local name = tostring(plugin.name or ""):lower()
+    if incompatible[name] then return name end
     if name:find("bookshelf", 1, true) or name:find("simpleui", 1, true) then
         return name
     end
@@ -24,6 +34,11 @@ function M.conflicts(discovered, enabled, host)
     for _, plugin in ipairs(discovered or {}) do add(plugin) end
     -- The enabled list is authoritative until restart, even if settings changed.
     for _, plugin in ipairs(enabled or {}) do add(plugin) end
+    -- Report conflicting loaded UIs, but never rewrite plugins_disabled or patches.
+    for sentinel, name in pairs(sentinels) do
+        if package.loaded[sentinel] then add({ name = name }) end
+    end
+    if rawget(_G, "__ZEN_UI_PLUGIN") then add({ name = "zenos" }) end
     for _, name in ipairs({ "bookshelf", "simpleui" }) do
         local instance = host and host[name]
         if instance and not instance._orbitui_owned then add({ name = name }) end

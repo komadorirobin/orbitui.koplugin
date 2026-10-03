@@ -50,7 +50,7 @@ H.test("userpatch preload interceptors retain priority", function()
 end)
 H.test("updaters are resolved through OrbitUI even after cache eviction", function()
     local updater = require("lib/bookshelf_updater")
-    H.eq(updater.getInstalledVersion(), "5.2.2.3")
+    H.eq(updater.getInstalledVersion(), "5.3.0")
     H.eq(updater.getAvailableUpdate(), nil)
     package.loaded["infra/sui_updater"] = nil
     local sui = require("infra/sui_updater")
@@ -63,5 +63,18 @@ H.test("same-root install is idempotent and a second root is rejected", function
     Runtime.install(root, map)
     H.eq(#(package.searchers or package.loaders), n)
     H.eq(pcall(Runtime.install, root .. "-other", map), false)
+end)
+H.test("compatibility checks never auto-disable plugins or rename patches", function()
+    G_reader_settings.saveSetting = function() error("unexpected setting mutation") end
+    H.eq(require("infra/sui_compat_check")(), false)
+end)
+H.test("unsupported KOReader stops before either component class is loaded", function()
+    package.loaded.version = {
+        getCurrentRevision = function() return "v2025.04" end,
+        getNormalizedVersion = function() return 202504000000 end,
+    }
+    local ok, err = pcall(Runtime.classes, root)
+    H.eq(ok, false)
+    assert(err:find("Update KOReader", 1, true))
 end)
 H.finish()

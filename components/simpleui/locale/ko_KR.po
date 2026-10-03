@@ -5159,106 +5159,89 @@ msgstr "⬆ 업데이트 가능: %s"
 msgid "  (%d left)"
 msgid_plural "  (%d left)"
 msgstr[0] "  (%d개 남음)"
-msgstr[1] "  (%d개 남음)"
 
 #: modules/module_reading_goals.lua:1337
 msgid "  Set Goal  (%d book in %s)"
 msgid_plural "  Set Goal  (%d books in %s)"
 msgstr[0] "  목표 정하기  (%s에 %d권)"
-msgstr[1] "  목표 정하기  (%s에 %d권)"
 
 #: modules/module_reading_goals.lua:838
 msgid "%d book"
 msgid_plural "%d books"
 msgstr[0] "%d권"
-msgstr[1] "%d권"
 
 #: modules/module_reading_goals.lua:1442
 msgid "%d book in %s"
 msgid_plural "%d books in %s"
 msgstr[0] "%s에 %d권"
-msgstr[1] "%s에 %d권"
 
 #: screens/sui_stats_windows.lua:1286
 msgid "%d book read in %s"
 msgid_plural "%d books read in %s"
 msgstr[0] "%s에 읽은 도서 %d권"
-msgstr[1] "%s에 읽은 도서 %d권"
 
 #: screens/sui_stats_windows.lua:2165 screens/sui_stats_windows.lua:2167
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d일"
-msgstr[1] "%d일"
 
 #: modules/module_coverdeck.lua:1029 modules/module_currently.lua:899
 #: modules/module_currently.lua:900 modules/module_currently.lua:980
 msgid "%d day of reading"
 msgid_plural "%d days of reading"
 msgstr[0] "%d일째 읽는 중"
-msgstr[1] "%d일째 읽는 중"
 
 #: screens/sui_stats_windows.lua:3410
 msgid "%d freeze available"
 msgid_plural "%d freezes available"
 msgstr[0] "사용 가능한 유예 %d개"
-msgstr[1] "사용 가능한 유예 %d개"
 
 #: modules/module_reading_goals.lua:1529
 msgid "%d in %s"
 msgid_plural "%d in %s"
 msgstr[0] "%s에 %d권"
-msgstr[1] "%s에 %d권"
 
 #: features/sui_quickactions.lua:1615 features/sui_quickactions.lua:3028
 #: features/sui_quickactions.lua:3049
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d개 항목"
-msgstr[1] "%d개 항목"
 
 #: screens/sui_stats_windows.lua:2185 screens/sui_stats_windows.lua:2187
 msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d주"
-msgstr[1] "%d주"
 
 #: modules/module_reading_goals.lua:836
 msgid "%d/%d book"
 msgid_plural "%d/%d books"
 msgstr[0] "%d/%d권"
-msgstr[1] "%d/%d권"
 
 #: modules/module_collections.lua:1575
 msgid "(%d collection)"
 msgid_plural "(%d collections)"
 msgstr[0] "(모음집 %d개)"
-msgstr[1] "(모음집 %d개)"
 
 #: modules/module_reading_stats.lua:437 modules/module_quick_actions.lua:508
 msgid "(%d/%d — %d left)"
 msgid_plural "(%d/%d — %d left)"
 msgstr[0] "(%d/%d — %d개 남음)"
-msgstr[1] "(%d/%d — %d개 남음)"
 
 #: features/sui_quickactions.lua:2521
 msgid "Group (%d item)"
 msgid_plural "Group (%d items)"
 msgstr[0] "그룹 (%d개 항목)"
-msgstr[1] "그룹 (%d개 항목)"
 
 #: modules/module_reading_goals.lua:1520
 msgid "Manually Tracked Books  (%d in %s)"
 msgid_plural "Manually Tracked Books  (%d in %s)"
 msgstr[0] "수동 추적 도서  (%s에 %d권)"
-msgstr[1] "수동 추적 도서  (%s에 %d권)"
 
 #: screens/sui_quicksettings_bar.lua:1107
 #: screens/sui_quicksettings_bar.lua:1193
 msgid "Maximum of %d slot reached. Remove one first."
 msgid_plural "Maximum of %d slots reached. Remove one first."
 msgstr[0] "최대 %d개 칸에 도달했습니다. 먼저 하나를 제거하세요."
-msgstr[1] "최대 %d개 칸에 도달했습니다. 먼저 하나를 제거하세요."
 
 #: screens/sui_menu.lua:644 screens/sui_menu.lua:906
 msgid ""
@@ -5270,9 +5253,6 @@ msgid_plural ""
 msgstr[0] ""
 "위쪽 막대에 표시되는 글자입니다.\n"
 "최대 %d자입니다."
-msgstr[1] ""
-"위쪽 막대에 표시되는 글자입니다.\n"
-"최대 %d자입니다."
 
 #: modules/module_action_list.lua:279 modules/module_action_list.lua:406
 #: modules/module_quick_actions.lua:345 modules/module_quick_actions.lua:477
@@ -5281,15 +5261,12 @@ msgid "The maximum of %d action per module has been reached. Remove one first."
 msgid_plural ""
 "The maximum of %d actions per module has been reached. Remove one first."
 msgstr[0] "모듈당 최대 동작 수 %d개에 도달했습니다. 먼저 하나를 제거하세요."
-msgstr[1] "모듈당 최대 동작 수 %d개에 도달했습니다. 먼저 하나를 제거하세요."
 
 #: features/sui_quickactions.lua:1685 features/sui_quickactions.lua:2993
 msgid "The maximum of %d quick action has been reached. Delete one first."
 msgid_plural ""
 "The maximum of %d quick actions has been reached. Delete one first."
 msgstr[0] ""
-"빠른 동작은 최대 %d개까지 추가할 수 있습니다. 먼저 하나를 삭제하세요."
-msgstr[1] ""
 "빠른 동작은 최대 %d개까지 추가할 수 있습니다. 먼저 하나를 삭제하세요."
 
 #: modules/module_reading_stats.lua:737 modules/module_reading_stats.lua:817
@@ -5298,32 +5275,26 @@ msgid_plural ""
 "The maximum of %d stats per row has been reached. Remove one first."
 msgstr[0] ""
 "한 줄의 통계는 최대 %d개까지 추가할 수 있습니다. 먼저 하나를 제거하세요."
-msgstr[1] ""
-"한 줄의 통계는 최대 %d개까지 추가할 수 있습니다. 먼저 하나를 제거하세요."
 
 #: screens/sui_menu.lua:379 screens/sui_menu.lua:1229
 msgid "The maximum of %d tab has been reached. Remove one first."
 msgid_plural "The maximum of %d tabs has been reached. Remove one first."
 msgstr[0] "탭은 최대 %d개까지 추가할 수 있습니다. 먼저 하나를 제거하세요."
-msgstr[1] "탭은 최대 %d개까지 추가할 수 있습니다. 먼저 하나를 제거하세요."
 
 #: screens/sui_stats_windows.lua:1963
 msgid "day read"
 msgid_plural "days read"
 msgstr[0] "읽은 일수"
-msgstr[1] "읽은 일수"
 
 #: modules/module_reading_stats.lua:142
 msgid "day streak"
 msgid_plural "days streak"
 msgstr[0] "연속 일수"
-msgstr[1] "연속 일수"
 
 #: screens/sui_stats_windows.lua:1978
 msgid "page read"
 msgid_plural "pages read"
 msgstr[0] "읽은 쪽수"
-msgstr[1] "읽은 쪽수"
 
 #~ msgid "Bookmark browser not available."
 #~ msgstr "책갈피 탐색기를 사용할 수 없습니다."

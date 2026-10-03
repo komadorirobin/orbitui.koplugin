@@ -1235,7 +1235,7 @@ msgid "Double-tap a book to open it"
 msgstr ""
 
 #: lib/bookshelf_gestures.lua:46
-msgid "Long-press the page number to change the shelf style"
+msgid "Long-press the page number to choose sorting"
 msgstr ""
 
 #: lib/bookshelf_gestures.lua:47

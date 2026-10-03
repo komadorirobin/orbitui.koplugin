@@ -5187,106 +5187,89 @@ msgstr "⬆ Có cập nhật: %s"
 msgid "  (%d left)"
 msgid_plural "  (%d left)"
 msgstr[0] "  (còn lại %d)"
-msgstr[1] "  (còn lại %d)"
 
 #: modules/module_reading_goals.lua:1337
 msgid "  Set Goal  (%d book in %s)"
 msgid_plural "  Set Goal  (%d books in %s)"
 msgstr[0] "  Đặt mục tiêu  (%d sách trong %s)"
-msgstr[1] "  Đặt mục tiêu  (%d sách trong %s)"
 
 #: modules/module_reading_goals.lua:838
 msgid "%d book"
 msgid_plural "%d books"
 msgstr[0] "%d sách"
-msgstr[1] "%d sách"
 
 #: modules/module_reading_goals.lua:1442
 msgid "%d book in %s"
 msgid_plural "%d books in %s"
 msgstr[0] "%d sách trong %s"
-msgstr[1] "%d sách trong %s"
 
 #: screens/sui_stats_windows.lua:1286
 msgid "%d book read in %s"
 msgid_plural "%d books read in %s"
 msgstr[0] "%d sách đọc trong %s"
-msgstr[1] "%d sách đọc trong %s"
 
 #: screens/sui_stats_windows.lua:2165 screens/sui_stats_windows.lua:2167
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d ngày"
-msgstr[1] "%d ngày"
 
 #: modules/module_coverdeck.lua:1029 modules/module_currently.lua:899
 #: modules/module_currently.lua:900 modules/module_currently.lua:980
 msgid "%d day of reading"
 msgid_plural "%d days of reading"
 msgstr[0] "%d ngày đọc"
-msgstr[1] "%d ngày đọc"
 
 #: screens/sui_stats_windows.lua:3410
 msgid "%d freeze available"
 msgid_plural "%d freezes available"
 msgstr[0] "%d lượt đóng băng khả dụng"
-msgstr[1] "%d lượt đóng băng khả dụng"
 
 #: modules/module_reading_goals.lua:1529
 msgid "%d in %s"
 msgid_plural "%d in %s"
 msgstr[0] "%d trong %s"
-msgstr[1] "%d trong %s"
 
 #: features/sui_quickactions.lua:1615 features/sui_quickactions.lua:3028
 #: features/sui_quickactions.lua:3049
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d mục"
-msgstr[1] "%d mục"
 
 #: screens/sui_stats_windows.lua:2185 screens/sui_stats_windows.lua:2187
 msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d tuần"
-msgstr[1] "%d tuần"
 
 #: modules/module_reading_goals.lua:836
 msgid "%d/%d book"
 msgid_plural "%d/%d books"
 msgstr[0] "%d/%d sách"
-msgstr[1] "%d/%d sách"
 
 #: modules/module_collections.lua:1575
 msgid "(%d collection)"
 msgid_plural "(%d collections)"
 msgstr[0] "(%d bộ sưu tập)"
-msgstr[1] "(%d bộ sưu tập)"
 
 #: modules/module_reading_stats.lua:437 modules/module_quick_actions.lua:508
 msgid "(%d/%d — %d left)"
 msgid_plural "(%d/%d — %d left)"
 msgstr[0] "(%d/%d — còn lại %d)"
-msgstr[1] "(%d/%d — còn lại %d)"
 
 #: features/sui_quickactions.lua:2521
 msgid "Group (%d item)"
 msgid_plural "Group (%d items)"
 msgstr[0] "Nhóm (%d mục)"
-msgstr[1] "Nhóm (%d mục)"
 
 #: modules/module_reading_goals.lua:1520
 msgid "Manually Tracked Books  (%d in %s)"
 msgid_plural "Manually Tracked Books  (%d in %s)"
 msgstr[0] "Sách theo dõi thủ công (%d trong %s)"
-msgstr[1] "Sách theo dõi thủ công (%d trong %s)"
 
 #: screens/sui_quicksettings_bar.lua:1107
 #: screens/sui_quicksettings_bar.lua:1193
 msgid "Maximum of %d slot reached. Remove one first."
 msgid_plural "Maximum of %d slots reached. Remove one first."
 msgstr[0] "Đã đạt tối đa %d ô. Vui lòng xóa bớt."
-msgstr[1] "Đã đạt tối đa %d ô. Vui lòng xóa bớt."
 
 #: screens/sui_menu.lua:644 screens/sui_menu.lua:906
 msgid ""
@@ -5298,9 +5281,6 @@ msgid_plural ""
 msgstr[0] ""
 "Chữ hiển thị trên thanh trên cùng.\n"
 "Tối đa %d ký tự."
-msgstr[1] ""
-"Chữ hiển thị trên thanh trên cùng.\n"
-"Tối đa %d ký tự."
 
 #: modules/module_action_list.lua:279 modules/module_action_list.lua:406
 #: modules/module_quick_actions.lua:345 modules/module_quick_actions.lua:477
@@ -5309,45 +5289,38 @@ msgid "The maximum of %d action per module has been reached. Remove one first."
 msgid_plural ""
 "The maximum of %d actions per module has been reached. Remove one first."
 msgstr[0] "Đã đạt tối đa %d thao tác mỗi mô-đun. Vui lòng xóa bớt."
-msgstr[1] "Đã đạt tối đa %d thao tác mỗi mô-đun. Vui lòng xóa bớt."
 
 #: features/sui_quickactions.lua:1685 features/sui_quickactions.lua:2993
 msgid "The maximum of %d quick action has been reached. Delete one first."
 msgid_plural ""
 "The maximum of %d quick actions has been reached. Delete one first."
 msgstr[0] "Đã đạt tối đa %d thao tác nhanh. Vui lòng xóa bớt."
-msgstr[1] "Đã đạt tối đa %d thao tác nhanh. Vui lòng xóa bớt."
 
 #: modules/module_reading_stats.lua:737 modules/module_reading_stats.lua:817
 msgid "The maximum of %d stat per row has been reached. Remove one first."
 msgid_plural ""
 "The maximum of %d stats per row has been reached. Remove one first."
 msgstr[0] "Đã đạt tối đa %d mục thống kê mỗi hàng. Vui lòng xóa bớt."
-msgstr[1] "Đã đạt tối đa %d mục thống kê mỗi hàng. Vui lòng xóa bớt."
 
 #: screens/sui_menu.lua:379 screens/sui_menu.lua:1229
 msgid "The maximum of %d tab has been reached. Remove one first."
 msgid_plural "The maximum of %d tabs has been reached. Remove one first."
 msgstr[0] "Đã đạt tối đa %d tab. Vui lòng xóa bớt."
-msgstr[1] "Đã đạt tối đa %d tab. Vui lòng xóa bớt."
 
 #: screens/sui_stats_windows.lua:1963
 msgid "day read"
 msgid_plural "days read"
 msgstr[0] "ngày đọc"
-msgstr[1] "ngày đọc"
 
 #: modules/module_reading_stats.lua:142
 msgid "day streak"
 msgid_plural "days streak"
 msgstr[0] "chuỗi ngày"
-msgstr[1] "chuỗi ngày"
 
 #: screens/sui_stats_windows.lua:1978
 msgid "page read"
 msgid_plural "pages read"
 msgstr[0] "trang đọc"
-msgstr[1] "trang đọc"
 
 #~ msgid "Bookmark browser not available."
 #~ msgstr "Trình duyệt dấu trang không khả dụng."

@@ -36,8 +36,9 @@ package.loaded["engines/sui_library_scan"] = {
 }
 package.loaded["bookinfomanager"] = {}
 package.loaded["features/library/sui_metadata_source"] = {
-    getMatchingFiles = function(_bim, root, filter, opts)
-        assert(root == home_dir and filter == nil and opts.recursive)
+    getMatchingFiles = function(_bim, root, filter)
+        -- Upstream queries the entire subtree without an options argument.
+        assert(root == home_dir and filter == nil)
         metadata_calls = metadata_calls + 1
         return metadata
     end,

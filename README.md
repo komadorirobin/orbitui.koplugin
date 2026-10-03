@@ -16,6 +16,12 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
+The development branch now integrates Bookshelf **5.3.0** through `21e005a7`
+and SimpleUI `main` through `3444cc9c`. This reviewed merge is not yet an OTA
+release; see [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
+KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
+OrbitUI does not run Bookshelf 5.3's automatic file move.
+
 ## Architecture
 
 - `main.lua` is the only KOReader plugin entry point, backed by a stable OTA bootstrap.

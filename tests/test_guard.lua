@@ -21,6 +21,21 @@ H.test("owned aliases and unrelated plugins do not block", function()
     H.eq(#Guard.conflicts({ { name = "orbitui" }, { name = "statistics" } }, nil,
         { bookshelf = { _orbitui_owned = true } }), 0)
 end)
+H.test("upstream UI conflicts are reported without changing user choices", function()
+    local plugins = {
+        { name = "quickui" }, { name = "burrow", disabled = true },
+        { name = "zenos" }, { name = "zzz-readermenuredesign" },
+    }
+    H.eq(table.concat(Guard.conflicts(plugins), ","), "quickui,zenos,zzz-readermenuredesign")
+    H.eq(plugins[1].disabled, nil)
+    H.eq(plugins[2].disabled, true)
+end)
+H.test("runtime UI markers still block after changing a disabled flag", function()
+    package.loaded.qui_utils = {}
+    H.eq(table.concat(Guard.conflicts({ { name = "quickui", disabled = true } }), ","), "quickui")
+    package.loaded.qui_utils = nil
+    H.eq(#Guard.conflicts({ { name = "quickui", disabled = true } }), 0)
+end)
 H.test("discovery checks future plugins before their main.lua is loaded", function()
     package.loaded.pluginloader = {
         _discover = function() return { { name = "simpleui" } } end,

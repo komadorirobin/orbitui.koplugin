@@ -35,7 +35,7 @@ local tracked = assert(io.popen("git ls-files"))
 for path in tracked:lines() do
     if path:match("^core/.*%.lua$") or path:match("^adapters/.*%.lua$")
             or path:match("^components/bookshelf/fonts/")
-            or path:match("^components/bookshelf/assets/wallpapers/")
+            or path:match("^components/bookshelf/assets/")
             or path:match("^components/simpleui/icons/")
             or path:match("^components/[^/]+/locale/.*%.po$") then
         expect(path)

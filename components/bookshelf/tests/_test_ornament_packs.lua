@@ -197,7 +197,9 @@ end)
 -- new ornaments without having to go in/out or refresh anything". The poll
 -- runs every few seconds, so this is stats only, never a listing.
 
-local function touchAt(path, secs) os.execute("touch -d @" .. secs .. " '" .. path .. "'") end
+local function touchAt(path, secs)
+    os.execute("touch -t " .. os.date("%Y%m%d%H%M.%S", secs) .. " '" .. path .. "'")
+end
 
 t.test("folderStamp: steady while nothing changes, moves when a pack or the folder does", function()
     local O = setup()
