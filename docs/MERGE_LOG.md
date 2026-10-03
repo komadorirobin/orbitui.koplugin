@@ -135,6 +135,32 @@ themes/ornaments, navigation/profile actions, existing settings/link retention,
 external patch behavior and suspend/resume need testing on the Bigme B7 Pro.
 The merge is **not published to OTA**; a separate release request is required.
 
+## 2026-10-03: OrbitUI 0.1.0-alpha.3 release preparation
+
+The user explicitly requested publication after approving the shared
+"Uppdatera OrbitUI" menu labels. This preview includes the reviewed upstream
+merge above, not any additional upstream commits. The label adapter and menu
+hooks were committed separately in `942ace5e`; the original forks are unchanged.
+
+Contracts C08/C09 retain the exact API 1 bootstrap and whole-package installer.
+Root VERSION advances to `0.1.0-alpha.3`, and the About text reflects Bookshelf
+5.3.0. Update entries still route to the same OrbitUI updater. Menu regression
+tests cover both embedded labels/routing and the standalone label fallback.
+
+Pre-release tests pass under Lua and LuaJIT: 31 Python tests, 80 OrbitUI cases,
+343 Bookshelf suites and 13 SimpleUI test files. The existing three suite skips
+and two per-case native font/UI skips remain. All 41 translation catalogs pass.
+The bootstrap, HTTP transport and OTA installer are byte-for-byte unchanged
+from the published alpha.2 tag; package and published-byte checks remain
+mandatory release gates.
+
+The user reports successful initial startup/navigation of alpha.2 on the Bigme,
+with a subjective impression of faster dock navigation. No timing benchmark,
+full device checklist or device OTA/rollback test has been completed. The new
+merged version therefore remains an alpha prerelease. Publication requires the
+checks and draft-asset verification in `OTA.md`; GitHub's release/tag and Actions
+record the final published revision and automated results.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

@@ -6,7 +6,7 @@ behavior; it is not a rewrite of the navigation or reading engine.
 
 ## Status
 
-Public preview, not yet device-accepted. Retain a working installation and its
+Public preview, not yet fully device-accepted. Retain a working installation and its
 backups while testing. Original SimpleUI and Bookshelf installations must be
 disabled and KOReader restarted before enabling OrbitUI. Their files and user
 data must not be deleted. OrbitUI refuses to initialize its components while
@@ -16,11 +16,14 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-The development branch now integrates Bookshelf **5.3.0** through `21e005a7`
-and SimpleUI `main` through `3444cc9c`. This reviewed merge is not yet an OTA
-release; see [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
+Version **0.1.0-alpha.3** integrates Bookshelf **5.3.0** through `21e005a7`
+and SimpleUI `main` through `3444cc9c`. See [the release notes](docs/releases/0.1.0-alpha.3.md)
+and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
+
+The first public build has a positive initial Bigme startup/navigation report.
+Full device acceptance and device OTA/recovery testing are still outstanding.
 
 ## Architecture
 

@@ -7,9 +7,11 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
-The first public build is `0.1.0-alpha.2`, a prerelease. It includes a common
-OTA installer, but has not been accepted on the Bigme. An alpha installation
-defaults to including preview releases; a stable installation defaults to stable
+The first public build is `0.1.0-alpha.2`, a prerelease. Its initial Bigme
+startup/navigation test was positive; full device OTA acceptance remains open.
+Version `0.1.0-alpha.3` is the next preview, using the same OTA bootstrap API 1.
+It includes the reviewed upstream merges and shared update-menu labels.
+An alpha installation defaults to including preview releases; a stable installation defaults to stable
 only. This is separate from upstream monitoring, which never publishes builds.
 
 ## On the reader

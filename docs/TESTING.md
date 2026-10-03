@@ -38,6 +38,11 @@ quality or completeness.
 
 ## Before calling the alpha device-tested
 
+The user reported successful initial startup/navigation on the Bigme with
+`0.1.0-alpha.2`, and a subjective impression of faster dock navigation. This is
+not a timing measurement, full acceptance, or a device OTA/recovery test.
+The upstream merge and renamed menus in `0.1.0-alpha.3` still need device testing.
+
 Use the Bigme B7 Pro at its native 1264 x 1680 resolution. Retain a recovery path.
 Record KOReader version, installed patches and active plugins, plus crash.log.
 
