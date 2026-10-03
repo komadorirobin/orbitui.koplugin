@@ -40,7 +40,7 @@ assert(body, "_startFilePoll moved or was renamed")
 
 -- Run the real function against stubs, so this tests behaviour rather than
 -- the shape of the source.
-local function run(existing_baseline, safe_mode)
+local function run(existing_baseline, existing_orn, safe_mode)
     local snaps = 0
     local env = {
         BookshelfWidget = {},
@@ -49,6 +49,8 @@ local function run(existing_baseline, safe_mode)
             snaps = snaps + 1
             return { ["/home"] = 2000 }   -- the state AFTER the sync
         end,
+        -- The ornament folders' stamp, baselined the same way.
+        _ornamentStamp = function() return { ["/orn"] = 2000 } end,
         UIManager = { scheduleIn = function() end },
         -- The first tick is armed through _armFilePoll at the module's active
         -- rate; neither is under test here.
@@ -63,7 +65,8 @@ local function run(existing_baseline, safe_mode)
         f = assert(load(code, "poll", "t", env))
     end
     f()
-    local self_ = { _home_dir_mtimes = existing_baseline, _armFilePoll = function() end }
+    local self_ = { _home_dir_mtimes = existing_baseline, _orn_stamp = existing_orn,
+                    _armFilePoll = function() end }
     env.EXPORT(self_)
     return self_, snaps
 end
@@ -74,6 +77,14 @@ t.test("a cold start takes a baseline", function()
     local s, snaps = run(nil)
     eq(snaps, 1, "no baseline was taken on a cold start")
     assert(s._home_dir_mtimes, "the baseline was not stored")
+end)
+
+t.test("re-arming after sleep keeps the pre-sleep ornament stamp too", function()
+    -- An ornament copied in while the device slept must still be seen.
+    local s = run({ ["/home"] = 1000 }, { ["/orn"] = 1000 })
+    eq(s._orn_stamp["/orn"], 1000, "the pre-sleep ornament stamp was overwritten")
+    local cold = run(nil, nil)
+    eq(cold._orn_stamp["/orn"], 2000, "a cold start took no ornament stamp")
 end)
 
 t.test("re-arming after sleep KEEPS the pre-sleep baseline", function()
@@ -87,7 +98,7 @@ t.test("re-arming after sleep KEEPS the pre-sleep baseline", function()
 end)
 
 t.test("Android safe mode keeps background polling disabled", function()
-    local s, snaps = run(nil, true)
+    local s, snaps = run(nil, nil, true)
     eq(snaps, 0)
     eq(s._file_poll_fn, nil)
 end)
@@ -98,6 +109,7 @@ t.test("an already-running poll is left alone", function()
     local env = {
         BookshelfWidget = {},
         _snapshotHomeDirs = function() snaps = snaps + 1; return {} end,
+        _ornamentStamp = function() return {} end,
         UIManager = { scheduleIn = function() error("rescheduled a live poll") end },
         require = function() return { ACTIVE_INTERVAL_S = 5 } end,
     }
