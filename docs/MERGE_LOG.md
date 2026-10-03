@@ -161,6 +161,75 @@ merged version therefore remains an alpha prerelease. Publication requires the
 checks and draft-asset verification in `OTA.md`; GitHub's release/tag and Actions
 record the final published revision and automated results.
 
+## 2026-10-03: Reviewed Bookshelf 5.3.1 merge
+
+Scope: the user requested "Merga upstream" for OrbitUI after the folder-pager
+divider fix. Both tracked branches were checked; only Bookshelf had new commits.
+The previous unpublished fix in `3f375ecd` remains intact. The old standalone
+forks and their update channels were not modified.
+
+- Bookshelf `master`: `21e005a79900c210067128f674eef745c8a545ef` ->
+  `9633b0319cc282ec7bcb85e7b5a400bff328d7da`, 11 previously missing commits.
+  Includes v5.3.1 plus its two README follow-ups. Unsquashed subtree merge:
+  `2ba033f36f0ba2245dc380bc1b6c23d72d2cda86`.
+- OrbitUI adaptation: `7dea52b908b420df0feb599ad013af592ae29198`.
+- SimpleUI `main`: unchanged at `3444cc9c03756df1b4c7cb1847d56f517116f842`,
+  zero missing commits. Its tracked development version remains 2.7.2-beta.5;
+  the watcher's informational stable label 2.7.1 is not a downgrade instruction.
+- `sources.json` advances only Bookshelf's integrated upstream pin. Original
+  fork provenance, module map (261 paths), root VERSION and OTA channels stay
+  unchanged. A fresh read-only check at 15:28 UTC reports zero missing commits
+  for both tracked branches.
+
+The review covered the complete commit list and net diff: key/D-pad navigation
+for the footer, book-detail tabs, cover grid, shelf editor, resizing and spine
+shelves, plus whole-group navigation from book-detail pills. No runtime modules,
+dependencies, migrations or assets were added or removed. No synchronization
+writer, installer or background network behavior changed.
+
+Conflict resolution and semantic adaptations:
+
+- C02/C07: the one textual conflict was in `_test_swap_footer_region.lua`.
+  Retain upstream's realistic outgoing row at `0,0` with `getSize`, and the
+  fork's dock case. Production footer refresh geometry now uses the same
+  dock-aware anchor as its placement, retaining upstream's focus-ring extension
+  and widget offsets. The regression test reproduces the otherwise 120-pixel
+  displacement with a 1264 x 1680 viewport and reserved dock.
+- C07: the transparent-title/footer option still suppresses the divider in
+  folder/list and full-screen module views without removing the hero, chip or
+  list panels. All 12 painter regression cases pass after the import.
+- C10: forward the new `whole` argument through the Home/shared book-panel
+  controller, and retain it in current-shelf search references. Whole groups
+  omit only the chip filter; normal groups and folders retain it, profile scope
+  is preserved, and the saved shelf filter is not mutated. New integration tests
+  failed before these adaptations and pass afterward.
+- The new upstream drill-restoration test supplies the fork's profile-scope
+  helper and verifies that scope is preserved. New footer tests supply the dock
+  helper. These are test-double adaptations, not new failure exceptions.
+- C01/C03-C06/C08/C09: shared ownership, reader-opening routes, caches, Hardcover
+  link-only behavior, external plugins/patches, settings paths and bootstrap are
+  unchanged. No upstream behavior was deliberately dropped.
+
+Verification: Lua and LuaJIT full suites pass with 31 Python tests, 123 OrbitUI
+integration cases, 350 Bookshelf suites and all 13 SimpleUI test files. The three
+existing suite skips (two native SQLite suites and the opt-in exhaustive geometry
+sweep) and two per-case native font/UI skips remain. No new waivers. All 41
+translation catalogs pass, LuaJIT verifies 681 Lua files, and `git diff --check`
+is clean.
+
+The clean committed candidate ZIP passes inventory/integrity checks: 422 entries
+and 392 runtime files. Native libarchive/SHA smoke tests pass full extraction,
+missing-module rejection, activation, restart, rollback and truncated-download
+recovery. This is a local development package, not a replacement for the already
+published alpha.4 ZIP. Do not upload it under that existing release.
+
+Device verification remains outstanding for key focus, footer refreshes above
+the dock, transparent folder pagination and whole-group navigation/search from
+Home and filtered shelves. `TESTING.md` records those checks. No Bigme performance
+or stability improvement has been measured. **Not published to OTA**; publication
+and a version bump require a separate request. Existing installation/recovery
+instructions and data paths remain applicable.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
@@ -170,7 +239,7 @@ Copy this section and replace placeholders only after performing the work.
 - Prior integrated upstream SHA:
 - Reviewed target upstream SHA / release:
 - OrbitUI merge commit and adaptation commits:
-- Affected contracts (C01-C09):
+- Affected contracts (C01-C10):
 - Conflicts and semantic decisions (including upstream changes deliberately deferred):
 - Updated upstream pin and generated module-map changes:
 - Tests passed, skipped, known baseline failures and new gaps:
