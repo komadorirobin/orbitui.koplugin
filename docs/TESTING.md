@@ -16,7 +16,10 @@
   unchanged Nerd rendering, image-only
   destinations, per-icon selection/cancellation, rejection of the legacy bulk
   preset, retained preferences and rebasing old OTA asset paths. The Font stub
-  rejects Material font loads; both pickers exercise all 110 explicit SVG files.
+  rejects Material font loads; both pickers exercise all 110 icons. Weight
+  tests round-trip all 440 qualified choices through IDs, tokens and OTA paths,
+  preview every weight, preserve search/category/page state, reopen saved
+  weights and verify cancel/no-write behavior and independent icon settings.
   Material modal construction runs in English and Swedish, portrait/landscape,
   with and without directional keys. Tests cover category labels, rendered cell
   paths, search/filter refreshes, pagination and empty results. Native painting,
@@ -25,7 +28,9 @@
   fake persistence: delayed startup loading, no writes/deletes, unrelated reads,
   idempotence, an existing preload and restoration when the patch is removed.
   `tests/test_material_assets.py` verifies the pinned asset inventory, static
-  TTF character coverage, self-contained SVGs and license notices. The build
+  TTF character coverage, self-contained SVGs and license notices. It verifies
+  the four weight inventories, distinct outlines, the weight-300 static font
+  and byte-identical legacy aliases. The build
   requires FontTools only when regenerating assets, not for tests or on-device.
 - OTA tests cover release channels, semantic versions, archive safety, TLS host
   checks, deferred activation, interrupted startup and rollback. `OTA.md` records
@@ -89,6 +94,12 @@ now construct and refresh the real modal over native widget stubs, and the
 regression fails against the old adapter. This correction is not yet a
 physical-device verification or evidence for the earlier alpha.6 startup cause.
 
+The unreleased per-icon weight control uses the same SVG rendering path, with
+300 as the requested new default. Its 23 focused icon tests pass in Lua and
+LuaJIT; the added popup, native preview appearance and touch interactions still
+need device verification. Existing unweighted Material choices intentionally
+become lighter, without changing their identity or rewriting settings.
+
 Use the Bigme B7 Pro at its native 1264 x 1680 resolution. Retain a recovery path.
 Record KOReader version, installed patches and active plugins, plus crash.log.
 
@@ -97,7 +108,10 @@ Record KOReader version, installed patches and active plugins, plus crash.log.
 - For the corrected Material picker, follow `ICONS.md`'s device checklist. Verify
   readable manga icons in the dock and shelf chips, correct resizing/dimming and
   native menu tabs, mixed old/new icons, restart and an OTA-slot change. Loading
-  the new build alone must not change an existing icon choice. Headless tests do
+  the new build alone must not change an existing icon identity. Unweighted
+  Material choices now use 300, while explicit weights and other icon sources
+  must remain unchanged. Check all four preview weights, reopen individual
+  selections and cancel both the thickness popup and the main picker. Headless tests do
   not verify native SVG rendering, e-ink contrast or real touch/layout behavior.
 - With transparent book titles/page indicator enabled, check the root shelf,
   a folder list, a nested folder and full-screen modules for a line-free pager.

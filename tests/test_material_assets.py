@@ -16,13 +16,28 @@ class MaterialAssetsTest(unittest.TestCase):
         names = [name for group in selection["groups"].values() for name in group]
         self.assertEqual(len(names), len(set(names)))
         self.assertEqual(manifest["icons"], len(names))
-        self.assertEqual(set(manifest["files"]), {"MaterialSymbolsRounded.ttf"} |
-                         {"icons/" + name + ".svg" for name in names})
+        weights = selection["weights"]
+        self.assertEqual(weights, [200, 300, 400, 500])
+        self.assertEqual(manifest["weights"], weights)
+        self.assertEqual(manifest["default_weight"], 300)
+        expected = {"MaterialSymbolsRounded.ttf"} | {"icons/" + name + ".svg" for name in names}
+        expected |= {f"icons/{weight}/{name}.svg" for weight in weights for name in names}
+        self.assertEqual(set(manifest["files"]), expected)
+        self.assertEqual({str(path.relative_to(ASSETS)) for path in (ASSETS / "icons").rglob("*.svg")},
+                         expected - {"MaterialSymbolsRounded.ttf"})
         for name, digest in manifest["files"].items():
             self.assertEqual(hashlib.sha256((ASSETS / name).read_bytes()).hexdigest(), digest, name)
         self.assertIn("Apache License", (ASSETS / "LICENSE").read_text())
         self.assertIn(selection["upstream_commit"], (ASSETS / "NOTICE.txt").read_text())
-        self.assertEqual(selection["axes"], {"FILL": 0, "GRAD": 0, "opsz": 24, "wght": 500})
+        self.assertEqual(selection["axes"], {"FILL": 0, "GRAD": 0, "opsz": 24, "wght": 300})
+
+    def test_default_aliases_and_distinct_weight_variants(self):
+        for path in (ASSETS / "icons").glob("*.svg"):
+            self.assertEqual(path.read_bytes(), (ASSETS / "icons/300" / path.name).read_bytes())
+        for name in ("manga", "home", "menu", "settings"):
+            outlines = {(ASSETS / f"icons/{weight}/{name}.svg").read_bytes()
+                        for weight in (200, 300, 400, 500)}
+            self.assertEqual(len(outlines), 4, name)
 
     def test_static_true_type_with_manga_in_cmap(self):
         data = (ASSETS / "MaterialSymbolsRounded.ttf").read_bytes()
@@ -33,6 +48,7 @@ class MaterialAssetsTest(unittest.TestCase):
             tag, _, offset, size = struct.unpack_from(">4sIII", data, 12 + i * 16)
             tables[tag] = data[offset:offset + size]
         self.assertNotIn(b"fvar", tables)
+        self.assertEqual(struct.unpack_from(">H", tables[b"OS/2"], 4)[0], 300)
         cmap = tables[b"cmap"]
         found = False
         for i in range(struct.unpack_from(">H", cmap, 2)[0]):
@@ -49,7 +65,7 @@ class MaterialAssetsTest(unittest.TestCase):
         self.assertTrue(found, "Windows Unicode cmap missing")
 
     def test_svg_outlines_are_local_monochrome_and_have_a_consistent_canvas(self):
-        for path in (ASSETS / "icons").glob("*.svg"):
+        for path in (ASSETS / "icons").rglob("*.svg"):
             svg = ET.fromstring(path.read_bytes())
             self.assertEqual(svg.attrib["viewBox"], "0 0 960 960")
             self.assertEqual(len(svg), 1)

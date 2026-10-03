@@ -38,6 +38,9 @@ for _, path in ipairs({
 }) do expect(path) end
 for _, icon in ipairs(dofile("core/orbitui_material_catalogue.lua")) do
     expect("assets/material-symbols/icons/" .. icon.name .. ".svg")
+    for _, weight in ipairs(require("core/orbitui_icons").weights) do
+        expect("assets/material-symbols/icons/" .. weight .. "/" .. icon.name .. ".svg")
+    end
 end
 local tracked = assert(io.popen("git ls-files"))
 for path in tracked:lines() do

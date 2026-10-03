@@ -2,7 +2,8 @@
   "upstream_commit": "737e3324305806514d7909874fa1818ae1808232",
   "font_sha256": "95b24392bb49efd1bc3e92cff4e2452ad094461bab7c97e7d8723fab97e330ca",
   "codepoints_sha256": "225bd09137103cb7746bc93dc08d08764c9f0c3bd04f4b958d4a3c3c19432dd6",
-  "axes": { "FILL": 0, "GRAD": 0, "opsz": 24, "wght": 500 },
+  "axes": { "FILL": 0, "GRAD": 0, "opsz": 24, "wght": 300 },
+  "weights": [200, 300, 400, 500],
   "groups": {
     "Reading": [
       "manga", "comic_bubble", "book_2", "book_3", "book_4", "book_5", "book_6",

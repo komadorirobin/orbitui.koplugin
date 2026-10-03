@@ -6,11 +6,13 @@ Source: https://github.com/google/material-design-icons
 Revision: 737e3324305806514d7909874fa1818ae1808232
 Source file: variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf
 
-Modified for OrbitUI: a 110-glyph subset, static outlines at weight 500,
-optical size 24, fill 0, grade 0. Renamed to OrbitUI Material Symbols Rounded.
-SVG icons are exported from those same modified font outlines, not a
-different version of Google's web catalogue. Original name-table copyright
-and license entries are retained. No Google endorsement is implied.
+Modified for OrbitUI: a 110-glyph subset, static SVG outlines at weights
+200, 300, 400 and 500, optical size 24, fill 0, grade 0. The default is 300.
+The static font uses weight 300 and is renamed OrbitUI Material Symbols Rounded.
+SVG icons are exported from those same subset font instances, not a different
+version of Google's web catalogue. Unweighted SVG paths alias weight 300.
+Original name-table copyright and license entries are retained.
+No Google endorsement is implied.
 
 Rebuild offline with scripts/build-material-icons.py (fonttools 4.60.1).
 selection.json pins the original inputs by SHA-256 and defines the subset.

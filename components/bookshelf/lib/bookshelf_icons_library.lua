@@ -537,6 +537,10 @@ function IconsLibrary:show(on_select, opts)
             end },
         },
     }
+    -- Optional host-owned picker controls; standalone behavior is unchanged.
+    if self.configurePicker then
+        self.configurePicker(config, opts, function() return self_ref.modal end)
+    end
     self.modal = LibraryModal:new{ config = config }
     UIManager:show(self.modal)
 end

@@ -3353,7 +3353,7 @@ function Editor:_pickIcon(draft, on_close)
     IconsLibrary:show(function(value)
         draft.icon = value and value ~= "" and value or nil
         on_close()
-    end, { dynamic = false, svg = true })
+    end, { dynamic = false, svg = true, current_icon = draft.icon })
 end
 
 -- Exposed for tests/_test_chip_editor.lua (config tables + the pure

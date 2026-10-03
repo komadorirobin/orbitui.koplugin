@@ -254,6 +254,23 @@ gates per `OTA.md`. The GitHub release/tag and Actions record the final commit
 and results. Device verification remains outstanding as listed in `TESTING.md`
 and the alpha.5 release notes; headless OTA testing is not device acceptance.
 
+## 2026-10-03: Per-icon Material weights (unreleased local change)
+
+The user explicitly requested per-icon weight selection and a default of 300.
+This intentionally updates C07/C08: unweighted Material selections use 300
+instead of 500; icon identities and other icon sources are unchanged. Explicit
+200/300/400/500 choices retain their weights through restarts and OTA-slot
+rebasing. No settings migration or variable-font rendering is introduced.
+
+The host adapter owns preview state and the weight popup. Bookshelf has only
+two additional seams: an optional pre-construction picker hook and forwarding
+the current start-menu icon. Preserve these along with all four static SVG
+inventories when merging. `ICONS.md` documents identifiers and legacy aliases;
+`TESTING.md` records the automated coverage and outstanding device checks.
+
+This is not an upstream import. Baselines, VERSION and the published alpha.8
+assets are unchanged. Publication requires a separate request; **not published**.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

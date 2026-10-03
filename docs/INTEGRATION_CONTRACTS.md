@@ -131,6 +131,10 @@ Keep existing Nerd Font and image selections, and do not change KOReader's
 global symbols/fallback face. Render Material through the existing image paths,
 not a custom text font. Preserve the small generic icon/picker seams documented
 in `ICONS.md`, including image-only destinations and live titlebar resizing.
+Material weight is a per-icon choice (200/300/400/500), saved only when an icon
+is selected. Per the user's explicit request, unweighted Material selections
+now default to 300 instead of 500; other icon sources remain unchanged. Changing
+a preview weight or cancelling must not write settings or alter another icon.
 Tests: `tests/test_icons.lua`.
 
 Source: Bookshelf `lib/bookshelf_settings_store.lua`, `lib/bookshelf_widget.lua`;
@@ -148,6 +152,9 @@ runtime archives. Legacy cleanup must never target the retained old installs.
 
 Shared Material assets resolve from the active OrbitUI runtime root. Keep named
 icon selections stable across OTA slots; rebase packaged image-only paths.
+Keep explicit weights stable too. Legacy unweighted paths/tokens use the current
+default (300); retain flat SVG aliases for older path consumers. Package all
+four weight variants and never instantiate a variable font on the reader.
 Preserve the pinned source/license, static subset and matching SVG inventory
 (`ICONS.md`, `tests/test_material_assets.py`, `scripts/check-package.lua`).
 The temporary alpha.6 Material recovery patch only masks affected icon reads

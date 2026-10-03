@@ -9,17 +9,50 @@ M.modules = {
     ["lib/bookshelf_start_menu_model"] = true,
 }
 
-function M.show(on_select, on_cancel)
+local function weightAction(get_weight, set_weight, get_modal)
+    return {
+        key = "material_weight",
+        label_func = function() return _("Line thickness") .. ": " .. get_weight() .. "..." end,
+        on_tap = function()
+            local UIManager = require("ui/uimanager")
+            local ButtonDialog = require("ui/widget/buttondialog")
+            local modal = get_modal()
+            if not modal then return end
+            modal:_dismissKeyboard()
+            local labels = { [200] = "Thin", [300] = "Light", [400] = "Regular", [500] = "Medium" }
+            local buttons, dialog = {}
+            for _i, weight in ipairs(Icons.weights) do
+                local chosen_weight = weight
+                local label = weight .. " - " .. _(labels[weight])
+                if weight == Icons.default_weight then label = label .. " (" .. _("default") .. ")" end
+                if weight == get_weight() then label = "\226\156\147 " .. label end
+                buttons[#buttons + 1] = { { text = label, callback = function()
+                    UIManager:close(dialog)
+                    set_weight(chosen_weight)
+                    modal:refresh()
+                end } }
+            end
+            buttons[#buttons + 1] = { { text = _("Cancel"), callback = function()
+                UIManager:close(dialog)
+            end } }
+            dialog = ButtonDialog:new{ title = _("Material icon line thickness"), buttons = buttons }
+            UIManager:show(dialog)
+        end,
+    }
+end
+
+function M.show(on_select, on_cancel, current)
     local UIManager = require("ui/uimanager")
     local LibraryModal = require("lib/bookshelf_library_modal")
     local Library = require("lib/bookshelf_icons_library")
     local Screen = require("device").screen
-    local state = { group = "all", query = "" }
+    local entry = Icons.entry(current)
+    local state = { group = "all", query = "", weight = entry and entry.weight or Icons.default_weight }
     local items, key, modal, selected
     local function list()
-        local next_key = state.group .. "\0" .. state.query
+        local next_key = state.group .. "\0" .. state.query .. "\0" .. state.weight
         if key ~= next_key then
-            items, key = Icons.filtered(state.group, state.query), next_key
+            items, key = Icons.filtered(state.group, state.query, state.weight), next_key
         end
         return items
     end
@@ -49,7 +82,9 @@ function M.show(on_select, on_cancel)
         end,
         footer_actions = { { key = "close", label = _("Cancel"), on_tap = function()
             UIManager:close(modal)
-        end } },
+        end }, weightAction(function() return state.weight end, function(weight)
+            state.weight = weight
+        end, function() return modal end) },
         on_closed = function()
             if not selected and on_cancel then UIManager:nextTick(on_cancel) end
         end,
@@ -79,7 +114,7 @@ function M.wrap(name, module)
         module.extraIconPickers = { {
             text = "Material Symbols Rounded...",
             show = function(current, on_select, on_cancel)
-                return M.show(on_select, on_cancel)
+                return M.show(on_select, on_cancel, current)
             end,
         } }
     elseif name == "lib/bookshelf_icons_library" then
@@ -87,6 +122,18 @@ function M.wrap(name, module)
             key = "material", label = "Material", requires_svg = true,
             items = Icons.bookshelfCells,
         } }
+        module.configurePicker = function(config, opts, get_modal)
+            if not opts.svg then return end
+            local entry = Icons.entry(opts.current_icon)
+            local weight = entry and entry.weight or Icons.default_weight
+            local item_at = config.item_at
+            config.item_at = function(i)
+                local item = item_at(i)
+                return item and (Icons.forWeight(item.icon, weight) or item)
+            end
+            config.footer_actions[#config.footer_actions + 1] = weightAction(
+                function() return weight end, function(value) weight = value end, get_modal)
+        end
     elseif name == "lib/bookshelf_start_menu_model" then
         module.imageIconFile = Icons.imageFile
     end

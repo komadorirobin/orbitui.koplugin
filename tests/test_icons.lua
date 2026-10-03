@@ -122,6 +122,30 @@ H.test("loading icon support makes no setting writes and catalogue is lazy/cache
     H.eq(Icons.catalogue(), Icons.catalogue())
     H.eq(Icons.bookshelfCells(), Icons.bookshelfCells())
 end)
+H.test("unweighted selections use 300 while each explicit weight round trips independently", function()
+    H.eq(Icons.default_weight, 300)
+    for _, value in ipairs({ "material:manga", "orbitui-material-manga", "[icon=orbitui-material-manga]",
+            "/old-slot/assets/material-symbols/icons/manga.svg" }) do
+        H.eq(Icons.entry(value).weight, 300)
+    end
+    for _, weight in ipairs({ 200, 300, 400, 500 }) do
+        local catalogue = Icons.catalogue(weight)
+        H.eq(#catalogue, 110)
+        H.eq(Icons.catalogue(weight), catalogue)
+        for _, cell in ipairs(catalogue) do
+            H.eq(cell.weight, weight)
+            for _, value in ipairs({ cell.value, cell.icon, cell.insert_value, cell.file }) do
+                H.eq(Icons.entry(value), cell)
+            end
+            local old = "/reader/.orbitui-versions/old/assets/material-symbols/icons/" .. weight .. "/" .. cell.name .. ".svg"
+            H.eq(Style.safeIconPath(old), cell.file)
+            H.eq(Icons.rebaseImage(old), cell.file)
+        end
+    end
+    H.eq(Icons.forWeight("material:manga:500", 200).weight, 200)
+    H.eq(Icons.forWeight("nerd:F02D", 300), nil)
+    H.eq(Icons.forWeight("material:manga", 999), nil)
+end)
 H.test("Material never uses font rendering and Nerd codepoints remain unchanged", function()
     H.eq(Adapter.modules["infra/sui_config"], nil)
     H.eq(Config.iconGlyph("material:manga"), nil)
@@ -134,7 +158,10 @@ H.test("Material never uses font rendering and Nerd codepoints remain unchanged"
 end)
 H.test("pack names and assets reject path traversal or unlisted glyphs", function()
     for _, bad in ipairs({ "material:../manga", "material:MANGA", "material:manga.svg", "material:manga]",
-            "orbitui-material-../manga", "nerd:F5E3", "material:missing" }) do
+            "orbitui-material-../manga", "nerd:F5E3", "material:missing", "material:manga:100",
+            "material:manga:300.5", "material:manga:0300", "orbitui-material-manga-w999",
+            "[icon=orbitui-material-manga-w300]suffix", "[icon=orbitui-material-../manga-w300]",
+            "/old/assets/material-symbols/icons/999/manga.svg", "/old/assets/material-symbols/icons/300/../manga.svg" }) do
         H.eq(Icons.entry(bad), nil, bad)
     end
     for _, item in ipairs(Icons.catalogue()) do
@@ -166,7 +193,7 @@ H.test("Bookshelf offers Material only where image tokens are supported", functi
     H.eq(#Library._itemList("all", nil, false), 1)
     H.eq(#Library._itemList("all", "manga", false), 0)
     local cell = Library._itemList("all", "manga", true)[1]
-    H.eq(cell.insert_value, "[icon=orbitui-material-manga]")
+    H.eq(cell.insert_value, "[icon=orbitui-material-manga-w300]")
     local model = Adapter.wrap("lib/bookshelf_start_menu_model", {})
     H.eq(model.imageIconFile("orbitui-material-manga"), Icons.imageFile("material:manga"))
     H.eq(model.imageIconFile("home"), nil)
@@ -179,10 +206,13 @@ H.test("native tabs register actual SVGs from names and previous OTA slots", fun
     local old = "/old-slot/assets/material-symbols/icons/settings.svg"
     H.eq(Style.registerTabIconName("sui_tab_setting", old), "simpleui_sui_tab_setting")
     H.eq(copied["/fake/icons/simpleui_sui_tab_setting.svg"], Icons.imageFile("material:settings"))
+    H.eq(Style.registerTabIconName("sui_tab_setting", Icons.imageFile("material:settings:200")), "simpleui_sui_tab_setting")
+    H.eq(copied["/fake/icons/simpleui_sui_tab_setting.svg"], Icons.imageFile("material:settings:200"))
     H.eq(Style.registerTabIconName("sui_tab_tools", "nerd:F02D"), nil)
 end)
-H.test("both pickers render every Material SVG and labels with the UI face", function()
-    for _, cells in ipairs({ Icons.catalogue(), Icons.bookshelfCells() }) do
+H.test("both pickers render every Material weight with SVG and UI-face labels", function()
+    for _, weight in ipairs(Icons.weights) do
+        local cells = Icons.bookshelfCells(weight)
         for _, cell in ipairs(cells) do
             local widget = Library._renderCell(cell, { w = 220, h = 180 })
             local stack = widget[1][1]
@@ -298,6 +328,109 @@ H.test("Material modal refreshes categories, paging, search and empty results", 
     H.eq(input:getText(), "")
     picker:onClose()
 end)
+local function weightControl(picker)
+    for i, action in ipairs(picker.config.footer_actions) do
+        if action.key == "material_weight" then return picker._footer_layout[1][i], action end
+    end
+end
+local function chooseWeight(picker, weight)
+    local control = assert(weightControl(picker))
+    control.callback()
+    local dialog = shown
+    for i, candidate in ipairs(Icons.weights) do
+        if candidate == weight then dialog.buttons[i][1].callback(); return end
+    end
+    error("Missing weight option")
+end
+local function checkPreviewWeight(widget, weight)
+    local count = 0
+    if widget.file then
+        H.eq(Icons.entry(widget.file).weight, weight)
+        widget:_render()
+        count = 1
+    end
+    for _, child in ipairs(widget) do count = count + checkPreviewWeight(child, weight) end
+    return count
+end
+H.test("weight changes refresh actual previews without changing paging, query or settings", function()
+    local before = writes
+    local picker = Adapter.show(function() error("Only previewing") end)
+    local input = picker._search_input
+    picker:onSwipeNextPage()
+    for _, weight in ipairs(Icons.weights) do
+        chooseWeight(picker, weight)
+        H.eq(picker.page, 2)
+        H.eq(checkPreviewWeight(picker, weight), 16)
+        local control = weightControl(picker)
+        H.eq(control.text, "Line thickness: " .. weight .. "...")
+    end
+    picker:_onChipTap("Reading")
+    picker:_onSearchSubmit("manga")
+    chooseWeight(picker, 200)
+    H.eq(picker.active_chip, "Reading")
+    H.eq(picker._search_input, input)
+    H.eq(input:getText(), "manga")
+    H.eq(checkPreviewWeight(picker, 200), 2)
+    H.eq(writes, before)
+    local control = weightControl(picker)
+    control.callback()
+    shown.buttons[#shown.buttons][1].callback()
+    H.eq(picker.config.item_at(1).weight, 200)
+    picker:onClose()
+    H.eq(writes, before)
+    local fresh = Adapter.show(function() end)
+    H.eq(fresh.config.item_at(1).weight, 300)
+    fresh:onClose()
+end)
+H.test("current explicit weight reopens on only that icon and survives a runtime reload", function()
+    local value
+    local picker = Adapter.show(function(v) value = v end, nil, Icons.imageFile("material:manga:400"))
+    H.eq(picker.config.item_at(1).weight, 400)
+    chooseWeight(picker, 500)
+    picker.config.on_cell_tap(picker.config.item_at(1))
+    H.eq(value, Icons.imageFile("material:manga:500"))
+    local reloaded = dofile("./core/orbitui_icons.lua")
+    H.eq(reloaded.entry(value).weight, 500)
+    H.eq(reloaded.entry("[icon=orbitui-material-manga-w500]").weight, 500)
+    H.eq(reloaded.entry("material:home").weight, 300)
+    H.eq(reloaded.entry("material:home:200").weight, 200)
+end)
+H.test("Bookshelf weights affect only Material and tokens retain their weight", function()
+    local picked
+    Library:show(function(v) picked = v end, { svg = true, current_icon = "[icon=orbitui-material-manga-w400]" })
+    local picker = Library.modal
+    H.eq(picker.config.item_at(1).weight, 400)
+    local nerd = picker.config.item_at(picker.config.item_count())
+    chooseWeight(picker, 200)
+    H.eq(picker.config.item_at(picker.config.item_count()), nerd)
+    picker:_onSearchSubmit("manga")
+    H.eq(checkPreviewWeight(picker, 200), 2)
+    picker.config.on_cell_tap(picker.config.item_at(1))
+    H.eq(picked, "[icon=orbitui-material-manga-w200]")
+    H.eq(Icons.imageFile(picked), Icons.imageFile("material:manga:200"))
+    Library:show(function() error("Cancel must not select") end, { svg = true })
+    picker = Library.modal
+    H.eq(picker.config.item_at(1).weight, 300)
+    chooseWeight(picker, 500)
+    picker.config.footer_actions[1].on_tap()
+    H.eq(picked, "[icon=orbitui-material-manga-w200]")
+    Library:show(function() end, { svg = false })
+    H.eq(weightControl(Library.modal), nil)
+    Library.modal:onClose()
+end)
+H.test("weight controls translate and the default weight is always selectable", function()
+    language = "sv"
+    local picked
+    local picker = Adapter.show(function(v) picked = v end)
+    local control = weightControl(picker)
+    H.eq(control.text, "Linjetjocklek: 300...")
+    control.callback()
+    H.eq(shown.buttons[2][1].text, "\226\156\147 300 - L\195\164tt (standard)")
+    shown.buttons[2][1].callback()
+    picker.config.on_cell_tap(picker.config.item_at(1))
+    H.eq(picked, Icons.imageFile("material:manga:300"))
+    language = "en"
+end)
 H.test("select and cancel are exclusive and all callers receive SVG", function()
     local picked, cancelled = nil, 0
     local function cancel() cancelled = cancelled + 1 end
@@ -353,7 +486,7 @@ H.test("opening the individual picker and cancelling writes nothing; selection c
     local QA = require("features/sui_quickactions")
     local before, old_search = writes, store.simpleui_sysicon_sui_search
     local function open()
-        QA.showIconPicker(nil, function(value)
+        QA.showIconPicker(QA.getDefaultActionIcon("bookshelf_comics"), function(value)
             QA.setDefaultActionIcon("bookshelf_comics", value)
         end, "Default", {}, "picker", true)
         for _, row in ipairs(shown.buttons) do
@@ -362,15 +495,22 @@ H.test("opening the individual picker and cancelling writes nothing; selection c
         error("Material picker is missing")
     end
     open()
-    shown.config.footer_actions[1].on_tap(); deferred[#deferred]()
+    local picker = shown
+    chooseWeight(picker, 200)
+    picker.config.footer_actions[1].on_tap(); deferred[#deferred]()
     H.eq(writes, before)
     open()
+    picker = shown
+    chooseWeight(picker, 500)
     H.eq(writes, before)
-    shown.config.on_search_submit("manga")
-    shown.config.on_cell_tap(shown.config.item_at(1))
+    picker:_onSearchSubmit("manga")
+    picker.config.on_cell_tap(picker.config.item_at(1))
     H.eq(writes, before + 1)
-    H.eq(store.simpleui_action_bookshelf_comics_icon, Icons.imageFile("material:manga"))
+    H.eq(store.simpleui_action_bookshelf_comics_icon, Icons.imageFile("material:manga:500"))
     H.eq(store.simpleui_sysicon_sui_search, old_search)
+    open()
+    H.eq(shown.config.item_at(1).weight, 500)
+    shown:onClose(); deferred[#deferred]()
     local row = QA.buildQARowIcon("material:manga", "Manga", function(n) return n end)
     H.eq(row[1][1].file, Icons.imageFile("material:manga"))
 end)
