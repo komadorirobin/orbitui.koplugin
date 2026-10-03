@@ -6,6 +6,10 @@
     "assets/vector-icons/custom/manga-outline.svg": {
       "sha256": "e6117559ba22156123d4f606b1905511c71ff23ceddc61b47ba21de472b39b27"
     },
+    "solar:icons/SVG/Line Duotone/Arrows Action/Download Minimalistic.svg": {
+      "git_blob": "56761ddb29350819c8f10fc469d4286918dd58dc",
+      "sha256": "0ea98c0829e963f604f2bd3f93aa6dbb62cfd5b91adee759d7ccd28602e37669"
+    },
     "solar:icons/SVG/Line Duotone/Arrows Action/Download.svg": {
       "git_blob": "8597112c4adaaf34743c6bba29175536ab078a26",
       "sha256": "2f30e26b3e11a7ab17740580fc0bb6a83110da0473d99a7a15fbf65937354d71"
@@ -93,6 +97,10 @@
     "solar:icons/SVG/Line Duotone/Essentional, UI/Copy.svg": {
       "git_blob": "51237886d8b3aad402136ca7d849f401f88b870b",
       "sha256": "f85065039653869208a096211f3a4ea68c1994f585b65f5b41f9e9adeb2bf30b"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Database.svg": {
+      "git_blob": "931f19f79256646f1da96d91aa460033aad5b2e0",
+      "sha256": "e222b3ed144a1c2afa0054026612f49881dc04c600f30c8b330321875c1dc4d1"
     },
     "solar:icons/SVG/Line Duotone/Essentional, UI/Filter.svg": {
       "git_blob": "82090baca7d10b2a6728c2969eb67165841d7724",
@@ -294,6 +302,14 @@
       "git_blob": "1eed0100dea2bafd0ac587079cbcdcbb5e7859c6",
       "sha256": "9a8636532f38474f59385392d918cfe9dcef56b975fa687990feb4ada8b6bb9d"
     },
+    "solar:icons/SVG/Line Duotone/Video, Audio, Sound/Library.svg": {
+      "git_blob": "2a7ca067c762a6507a6a1dc000be585950560cf1",
+      "sha256": "8d3e07ffef0bfd144bb8c24dd0c385d356e3b9ecfef32ba17275b6395aa1cd0e"
+    },
+    "solar:icons/SVG/Line Duotone/Weather/Cloud Download.svg": {
+      "git_blob": "de8a41802a5b152b5540b28d92bf7880f9894859",
+      "sha256": "59ef181b4caa239a0a580cf1c4ccbe981cb17ad6a887d1ed98c21da6bca0f9cc"
+    },
     "solar:icons/SVG/Line Duotone/Weather/Moon.svg": {
       "git_blob": "161f5a266589ed6ed8f8a0353bd6268c37cc934e",
       "sha256": "8a1e24b643082aea301f44fc48675520ca974144d937da95559544109566daf4"
@@ -305,6 +321,10 @@
     "solar:icons/SVG/Line Duotone/Weather/Sun.svg": {
       "git_blob": "14ad8bc13c89da067bdffdf35fef0b8994b48562",
       "sha256": "99a1e197c88b51a48021dc94cbffb5b07d5827072870ad6c2a24132fba043eef"
+    },
+    "solar:icons/SVG/Outline/Arrows Action/Download Minimalistic.svg": {
+      "git_blob": "a0aede007ab6f472b8a8570a8158aca4d280e224",
+      "sha256": "cfb1a24468ac27a7ae235fae16ebfefba677967070e4f467897741b2a462734f"
     },
     "solar:icons/SVG/Outline/Arrows Action/Download.svg": {
       "git_blob": "b29637a551a22ed4177215a103e40c29cc52ec62",
@@ -393,6 +413,10 @@
     "solar:icons/SVG/Outline/Essentional, UI/Copy.svg": {
       "git_blob": "d21e0f485903a2b85189493dea22ddd8fe10e7ae",
       "sha256": "7d783880fe4bc3d0e6b1ab2c8e6e0b7f4c917bdd2906b3c826e9958f187557bb"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Database.svg": {
+      "git_blob": "5cefab7e1227fc6b8ab0b2878f12eabee7b8173f",
+      "sha256": "4416ec732bf3ed5baf3d366145f2d034452ea2e53d83811693b44aa02eb6c04c"
     },
     "solar:icons/SVG/Outline/Essentional, UI/Filter.svg": {
       "git_blob": "5885dd8d815ed7bd204539baf44ed9f8a4fab677",
@@ -593,6 +617,14 @@
     "solar:icons/SVG/Outline/Video, Audio, Sound/Gallery.svg": {
       "git_blob": "ecfb3c3b82225a82a1121abeab40b3732196a279",
       "sha256": "4a910dfd98585e46304f026727cec46789d97c348530427bace63bb065cf4e60"
+    },
+    "solar:icons/SVG/Outline/Video, Audio, Sound/Library.svg": {
+      "git_blob": "c865c059932f51d39d785a38e09001fd4b89dedd",
+      "sha256": "4ede5e07104ab8d15ebb11177b577e96dbf87743f16f4a39033374284aea0c00"
+    },
+    "solar:icons/SVG/Outline/Weather/Cloud Download.svg": {
+      "git_blob": "1a100a4f725f17d4cd36c4317b7f97f43639e63c",
+      "sha256": "d1972abc3b0e64292f249136cf93c77e24f72aa677442742be2490c89339d263"
     },
     "solar:icons/SVG/Outline/Weather/Moon.svg": {
       "git_blob": "08383487e847c3c6f72aedd4e4a2481fb6f12d4d",
@@ -929,13 +961,16 @@
     "assets/vector-icons/solar-duotone/check-circle.svg": "aea706110df823ff70fa91fbc229ac36a17ef3982ddf93d504df3679416acd1d",
     "assets/vector-icons/solar-duotone/clock-circle.svg": "c8caa088d80e462b919024475c9fe7b4e31e1a03075fa5de0450d4a5da260c2e",
     "assets/vector-icons/solar-duotone/close-circle.svg": "180818c03347766db572c735d3f5d1806ad966a7b7a8ec468b02e84752cda3bb",
+    "assets/vector-icons/solar-duotone/cloud-download.svg": "961b31af4949e56aea3add6cf7924ca2ad8fdd6ace2e404889e1dae89d3cb732",
     "assets/vector-icons/solar-duotone/compass.svg": "738131ab52dcd85d7e8aa4a6b3f35d27c1d18cfd71abf1bc9e3adfb1b887fc06",
     "assets/vector-icons/solar-duotone/copy.svg": "26237ab3ae13fff8545b3d2fc01727a3ecc4dcfd13f60948c06bf0de7a07ae9b",
     "assets/vector-icons/solar-duotone/crop.svg": "636ce90527a5f717e6f7e0b272f3e726e62e79b91416bb26af19cf901cbafd2b",
+    "assets/vector-icons/solar-duotone/database.svg": "5af7ff10ef53648193478ae269ce6da92c53a2ae7c69e291238cfc18758e7f9b",
     "assets/vector-icons/solar-duotone/document-text.svg": "3236ffedcb3e252afcacd60e1d802bef17f3fbecfef3b2a925402918f4409ab7",
     "assets/vector-icons/solar-duotone/documents.svg": "7bd5c60c8fc5ce4bf86d6e0578c04914f332f9bcc220fd089d7558dec8d0d4c4",
     "assets/vector-icons/solar-duotone/double-alt-arrow-left.svg": "7db0e5c5c584ed0b9cf06ae06edb1a378ad64020a508d700c61fa646900cb4a5",
     "assets/vector-icons/solar-duotone/double-alt-arrow-right.svg": "5cb2f400ce0987c831938afabbfe9358315ff67e0bc87a13b1a5a0d9817fb46d",
+    "assets/vector-icons/solar-duotone/download-minimalistic.svg": "fb4645b9f911c8b8caf1c4a49be81693ed11c90de5ead7254f4e734b9671abfd",
     "assets/vector-icons/solar-duotone/download.svg": "adf232baf3fb7e679a789ec7a092574e6be821bf68f79014c61d7c23d6e81031",
     "assets/vector-icons/solar-duotone/eye-closed.svg": "cc4ab7ba05a575109e1b30b7443f4f3a256025b569651f0c9f0f7336dd84134a",
     "assets/vector-icons/solar-duotone/eye.svg": "0699b7cc2c67b3ae2cba205a1f9ff6b455447d582d5f1ffed14556bb9efc1e24",
@@ -952,6 +987,7 @@
     "assets/vector-icons/solar-duotone/home-angle.svg": "38b8e2ad3576ec885e8509ea6c8aea868cedc96b81ab5dbc019b85c69a7fae39",
     "assets/vector-icons/solar-duotone/home.svg": "241f8d59fda670e96adc5d5f96f47a0ca7a12f96d8a5073fa1754a80f2167b35",
     "assets/vector-icons/solar-duotone/info-circle.svg": "43c143224a19ef131d3630cff437480b6d2f90b5f64d7bf587f71746e1f2312d",
+    "assets/vector-icons/solar-duotone/library.svg": "c54d5a94c32cb87e5731c2b18c3fe6e4800b23a7b31b03e9a9c74d6ee12a227e",
     "assets/vector-icons/solar-duotone/link.svg": "cbd01ded518a67f38de6d282ee75ab97c975695cf9ffe46cec889e56f58d93fc",
     "assets/vector-icons/solar-duotone/list.svg": "a8757b155bd5b283a005a350fb78c57e3dc84b3bea8294f2c5a346fbb528042b",
     "assets/vector-icons/solar-duotone/lock.svg": "68ba6338c37100847068542a604c0bf59db50dfa62f4c5d469f58f91a2f91bf6",
@@ -1005,13 +1041,16 @@
     "assets/vector-icons/solar-outline/check-circle.svg": "e597bd59ca6ae27cc68a340195fbfd0871ed89ca14abacf3d12cea1ea8905181",
     "assets/vector-icons/solar-outline/clock-circle.svg": "c156f91a5482675214ec61a62b52a79f069abf3c1281ff1a9a5455523a35b755",
     "assets/vector-icons/solar-outline/close-circle.svg": "003809cdd74359ffbae9b1406e2879e330e0ae2d8e483e0d5121b05104785955",
+    "assets/vector-icons/solar-outline/cloud-download.svg": "878eedb58b259c73cdc487bbbb7b82b76c567567db63ef7e2ea2b6c2e3b4ec2f",
     "assets/vector-icons/solar-outline/compass.svg": "bd9fa57f8fe857e54134bba95b5596950c35faf373662cee31829bb8f79c82b8",
     "assets/vector-icons/solar-outline/copy.svg": "0c37da2ee317b1b838e1fd6dd0a2885d1e3958e6077e5c3c79dacdc335dca79f",
     "assets/vector-icons/solar-outline/crop.svg": "1a6e9fcc486e4f3a13ee07c56fb37bcbfed223e046b82a507098767ba7280838",
+    "assets/vector-icons/solar-outline/database.svg": "b42b79aaa8637f74abbcb77e4312da9074027f328d4ba9956c247343ff92246b",
     "assets/vector-icons/solar-outline/document-text.svg": "1833b2861a39cd6c7f6103e6cf3bc4a6e33451c23e75764fc62a30ab97a0ff78",
     "assets/vector-icons/solar-outline/documents.svg": "b0e6fa69f13c1245bbfa8b2d9d0854b51ba58d396caed962823d367e831a38dd",
     "assets/vector-icons/solar-outline/double-alt-arrow-left.svg": "6dbb0c865e4bb094d82df835dc783623c2eb670b26467f5075e4cb14b413b149",
     "assets/vector-icons/solar-outline/double-alt-arrow-right.svg": "38edd58ce11f7dcf77b3cd28c771027759317854c0f6cf14fc72332a9d568ce4",
+    "assets/vector-icons/solar-outline/download-minimalistic.svg": "b7e99667f2f93d2dbcb438bb96de6f2ccf684699a9109278cecbd6acd7b3a362",
     "assets/vector-icons/solar-outline/download.svg": "3fc7a83d38012a24dc303098af7b16fe4e818cb935422b4a4b0713e3307ea330",
     "assets/vector-icons/solar-outline/eye-closed.svg": "6e95c85db135ac4e3268ff0e38903a0cb743d60b1a3510ad53074457c3827dfc",
     "assets/vector-icons/solar-outline/eye.svg": "cb982915064336783d615e8f6bef41f33953f593e1f2ae44f41967747158b6dd",
@@ -1028,6 +1067,7 @@
     "assets/vector-icons/solar-outline/home-angle.svg": "25dad3afd42f8dd00b49ab408b812a42d6cbb78311f674d2d75d78143d239af8",
     "assets/vector-icons/solar-outline/home.svg": "b4106b795537a8e3d5bde4a786835af125593d4b91d0092ffb859d2e4adfb43a",
     "assets/vector-icons/solar-outline/info-circle.svg": "1111fc979c4f68aacad0508e0063cc4c33c2846a53077d0b250ed4513a9845d9",
+    "assets/vector-icons/solar-outline/library.svg": "04753bbf02b7be0dfd1e683df7f90e5b77e5e7e2dfa44a5a2268ed91df7d1f39",
     "assets/vector-icons/solar-outline/link.svg": "000a92d7a7d4f79b7e6cb7f2db554d5c1e02732a4fdc33fde89e4e123adb71f4",
     "assets/vector-icons/solar-outline/list.svg": "3b64caaa199d103c3fcabe299209d730f7561361f735bc4ae704d76ab7ba8f26",
     "assets/vector-icons/solar-outline/lock.svg": "1c8c5bedf251d7681a110c2c6e2522b4b0aedced39b782c40ba95fc323f1847f",
@@ -1136,8 +1176,8 @@
     "assets/vector-icons/tabler/x.svg": "f8757e9c265e0f970c29e8db41180f8ecde7a112639654de40d0b674af836c3c",
     "assets/vector-icons/tabler/zoom-in.svg": "c11c411a291aaac13f579360f99bc18938dd4eaee481a9413fec8ac343181075",
     "assets/vector-icons/tabler/zoom-out.svg": "bceb3d07cfffc84ed9536b1d4fdf624cee140a389615178691fdd6c99333d0ca",
-    "core/orbitui_solar_duotone_catalogue.lua": "a454aa56217336912063eb113f8088b7b46aa7981a82b63c68cd8eac75d402c6",
-    "core/orbitui_solar_outline_catalogue.lua": "a454aa56217336912063eb113f8088b7b46aa7981a82b63c68cd8eac75d402c6",
+    "core/orbitui_solar_duotone_catalogue.lua": "ebb7454ad0201a49402dccd672c25330d1816c4dda72f9a463313111364cc5d5",
+    "core/orbitui_solar_outline_catalogue.lua": "ebb7454ad0201a49402dccd672c25330d1816c4dda72f9a463313111364cc5d5",
     "core/orbitui_tabler_catalogue.lua": "63def9076c5fdba8c982cdbe557d534c0339fcca4c5cace9a213b79235d96890"
   },
   "sources": {

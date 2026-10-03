@@ -33,10 +33,12 @@
   and byte-identical legacy aliases. The build
   requires FontTools only when regenerating assets, not for tests or on-device.
   Solar/Tabler extend the same modal tests to all three sources, both languages,
-  orientations and key modes. All 227 new SVG identities round-trip through
+  orientations and key modes. All 235 vector SVG identities round-trip through
   values, Bookshelf tokens and old OTA paths. Material weight changes leave
   these sources unchanged. Per-icon cancellation, image-only gating, native
   tab registration and alpha-renderer routing are covered without loading fonts.
+  The additional Solar Database, Cloud Download, Download Minimalistic and
+  Library icons have focused search/category and selection coverage in both styles.
   `tests/test_vector_assets.py` checks pinned sources, exact output checksums,
   local SVG geometry, styles and attribution. The optional CairoSVG/Pillow
   contact sheet is a desktop preview, not a KOReader/e-ink rendering test.

@@ -191,7 +191,7 @@ H.test("only known bundled images rebase across OTA slots", function()
 end)
 H.test("Bookshelf offers Material only where image tokens are supported", function()
     H.eq(#Library._itemList("material", nil, true), 110)
-    H.eq(#Library._itemList("all", nil, true), 338)
+    H.eq(#Library._itemList("all", nil, true), 346)
     H.eq(#Library._itemList("all", nil, false), 1)
     H.eq(#Library._itemList("all", "manga", false), 0)
     local cell = Library._itemList("all", "manga", true)[1]
@@ -533,7 +533,7 @@ H.test("vector catalogues cache and round-trip every whitelisted identity across
     for _, source in ipairs(VectorIcons.sources) do
         local cells = VectorIcons.catalogue(source.key)
         H.eq(VectorIcons.catalogue(source.key), cells)
-        H.eq(#cells, source.key == "tabler" and 75 or 76)
+        H.eq(#cells, source.key == "tabler" and 75 or 80)
         for _, cell in ipairs(cells) do
             for _, value in ipairs({ cell.value, cell.icon, cell.insert_value, cell.file }) do
                 H.eq(VectorIcons.entry(value), cell)
@@ -568,6 +568,37 @@ H.test("vector search exposes custom manga and Tabler hiragana without font glyp
         assert(#VectorIcons.filtered(key, "Navigation", "hem") >= 2)
     end
     H.eq(VectorIcons.filtered("tabler", "Reading", "manga")[1].name, "language-hiragana")
+end)
+H.test("additional Solar icons are searchable and selectable in both styles", function()
+    local before = writes
+    local icons = {
+        { "database", "Database", "System", "databas" },
+        { "cloud-download", "Cloud Download", "System", "moln" },
+        { "download-minimalistic", "Download Minimalistic", "System", "hamta minimalistic" },
+        { "library", "Library", "Reading", "samling library" },
+    }
+    for _, key in ipairs({ "solar-outline", "solar-duotone" }) do
+        for _, icon in ipairs(icons) do
+            local cell = assert(VectorIcons.entry(key .. ":" .. icon[1]))
+            H.eq(cell.label, icon[2])
+            H.eq(cell.group, icon[3])
+            local matches = VectorIcons.filtered(key, icon[3], icon[4])
+            H.eq(#matches, 1)
+            H.eq(matches[1], cell)
+            local selected
+            local picker = Adapter.show(function(value) selected = value end, nil, nil, key)
+            picker:_onSearchSubmit(icon[2])
+            local match
+            for i = 1, picker.config.item_count() do
+                if picker.config.item_at(i) == cell then match = cell; break end
+            end
+            assert(match, "Missing picker result: " .. cell.value)
+            picker.config.on_cell_tap(match)
+            H.eq(selected, cell.file)
+            H.eq(Icons.imageFile(cell.insert_value), selected)
+        end
+    end
+    H.eq(writes, before)
 end)
 H.test("new pickers initialize real modals in both languages, orientations and input modes", function()
     local before = writes
