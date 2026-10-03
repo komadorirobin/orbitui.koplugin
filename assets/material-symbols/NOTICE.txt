@@ -1,0 +1,19 @@
+Material Symbols Rounded
+Copyright Google LLC. Licensed under the Apache License, Version 2.0.
+The full license is included in LICENSE in this directory.
+
+Source: https://github.com/google/material-design-icons
+Revision: 737e3324305806514d7909874fa1818ae1808232
+Source file: variablefont/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].ttf
+
+Modified for OrbitUI: a 110-glyph subset, static outlines at weight 500,
+optical size 24, fill 0, grade 0. Renamed to OrbitUI Material Symbols Rounded.
+SVG icons are exported from those same modified font outlines, not a
+different version of Google's web catalogue. Original name-table copyright
+and license entries are retained. No Google endorsement is implied.
+
+Rebuild offline with scripts/build-material-icons.py (fonttools 4.60.1).
+selection.json pins the original inputs by SHA-256 and defines the subset.
+generated.json lists checksums of the generated TTF and SVG files.
+No runtime downloads, global font replacement, or variable-font support is
+required. Development build tooling is not part of the runtime package.

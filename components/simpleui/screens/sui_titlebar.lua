@@ -355,22 +355,27 @@ local function _installButtonScrim(btn)
     end
 end
 
+local function _isFontReference(value)
+    -- Retain the legacy guard even for malformed stale Nerd references.
+    return Config.isFontIcon(value) or (type(value) == "string" and value:match("^nerd:"))
+end
+
 local function _resizeAndStrip(btn, new_w, keep_top_pad)
     btn.width  = new_w
     btn.height = new_w
-    if type(btn.icon) == "string" and btn.icon:match("^nerd:") then
+    if _isFontReference(btn.icon) then
         btn.icon = nil
     end
-    if type(btn.file) == "string" and btn.file:match("^nerd:") then
+    if _isFontReference(btn.file) then
         btn.file = nil
     end
     if btn.image then
         -- Safety guard: clear stale Nerd Font strings left by older plugin versions
         -- before they crash ImageWidget:getSize() during btn:update().
-        if type(btn.image.file) == "string" and btn.image.file:match("^nerd:") then
+        if _isFontReference(btn.image.file) then
             btn.image.file = nil
         end
-        if type(btn.image.icon) == "string" and btn.image.icon:match("^nerd:") then
+        if _isFontReference(btn.image.icon) then
             btn.image.icon = nil
         end
         btn.image.width  = new_w
@@ -378,15 +383,15 @@ local function _resizeAndStrip(btn, new_w, keep_top_pad)
         if btn.image.is_sui_wrapper then
             local font_size = math.floor(math.min(new_w, new_w) * 0.65)
             local Font = require("ui/font")
-            btn.image.face = Font:getFace(SUIStyle().FACE_ICONS, font_size)
+            btn.image.face = Font:getFace(btn.image.sui_icon_font or SUIStyle().FACE_ICONS, font_size)
         else
             _reloadImage(btn.image)
         end
     end
-    if btn.label_widget and type(btn.label_widget.file) == "string" and btn.label_widget.file:match("^nerd:") then
+    if btn.label_widget and _isFontReference(btn.label_widget.file) then
         btn.label_widget.file = nil
     end
-    if btn.label_widget and type(btn.label_widget.icon) == "string" and btn.label_widget.icon:match("^nerd:") then
+    if btn.label_widget and _isFontReference(btn.label_widget.icon) then
         btn.label_widget.icon = nil
     end
     if btn.label_widget then
@@ -395,7 +400,7 @@ local function _resizeAndStrip(btn, new_w, keep_top_pad)
         if btn.label_widget.is_sui_wrapper then
             local font_size = math.floor(math.min(new_w, new_w) * 0.65)
             local Font = require("ui/font")
-            btn.label_widget.face = Font:getFace(SUIStyle().FACE_ICONS, font_size)
+            btn.label_widget.face = Font:getFace(btn.label_widget.sui_icon_font or SUIStyle().FACE_ICONS, font_size)
         end
     end
     btn.padding_left   = 0

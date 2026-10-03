@@ -31,6 +31,9 @@ modules. No existing release assets are replaced.
 The first public build has a positive initial Bigme startup/navigation report.
 Full device acceptance and device OTA/recovery testing are still outstanding.
 
+Unreleased: an optional [Material Symbols Rounded pack](docs/ICONS.md) adds
+110 offline icons, including manga, without changing existing icon selections.
+
 ## Architecture
 
 - `main.lua` is the only KOReader plugin entry point, backed by a stable OTA bootstrap.

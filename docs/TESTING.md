@@ -11,6 +11,12 @@
 - `tests/test_shared_*.lua`: shared panel/controller ownership, native registered
   actions, Home pin persistence and isolation, live source resolution, scoped
   search, settings routing and native source fallback boundaries.
+- `tests/test_icons.lua` exercises the actual icon pickers/render helpers with
+  widget stubs: separate Material/Nerd faces, image-only destinations, explicit
+  pack application, retained preferences and rebasing old OTA asset paths.
+  `tests/test_material_assets.py` verifies the pinned asset inventory, static
+  TTF character coverage, self-contained SVGs and license notices. The build
+  requires FontTools only when regenerating assets, not for tests or on-device.
 - OTA tests cover release channels, semantic versions, archive safety, TLS host
   checks, deferred activation, interrupted startup and rollback. `OTA.md` records
   the protocol and recovery limits. Package tests verify inventory and checksum bytes.
@@ -55,6 +61,11 @@ Record KOReader version, installed patches and active plugins, plus crash.log.
 
 - Verify original-plugin conflict detection before enabling the alpha normally.
 - Confirm Home layout, dock, backgrounds, icons, custom screens, fonts and language.
+- For the unreleased Material pack, follow `ICONS.md`'s device checklist. Verify
+  readable manga icons in the dock and shelf chips, correct resizing/dimming and
+  native menu tabs, mixed old/new icons, restart and an OTA-slot change. Loading
+  the new build alone must not change an existing icon choice. Headless tests do
+  not verify FreeType rendering, e-ink contrast or real touch/layout behavior.
 - With transparent book titles/page indicator enabled, check the root shelf,
   a folder list, a nested folder and full-screen modules for a line-free pager.
   The hero/chip/list panels and dock separator must remain unchanged. Toggle

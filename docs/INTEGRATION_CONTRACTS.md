@@ -125,6 +125,11 @@ panel or chip bar unless those independent controls are explicitly changed.
 Keep hiding accidentally opened books distinct from deleting book files or
 resetting all reading data.
 
+Material Symbols is opt-in. Keep existing Nerd Font and image selections, and
+do not change KOReader's global symbols/fallback face. Preserve the small generic
+icon/picker seams documented in `ICONS.md`, including image-only destinations
+and live titlebar font resizing. Tests: `tests/test_icons.lua`.
+
 Source: Bookshelf `lib/bookshelf_settings_store.lua`, `lib/bookshelf_widget.lua`;
 SimpleUI `modules/module_recent.lua`, `features/library/sui_recent_hidden.lua`,
 `engines/sui_screen_engine.lua` and `infra/sui_store.lua`.
@@ -137,6 +142,11 @@ Verify Home section labels, long-press actions and retained configuration on dev
 Embedded resources resolve relative to their component, not the outer plugin
 root. Preserve fonts, icons, translations, wallpapers and license notices in
 runtime archives. Legacy cleanup must never target the retained old installs.
+
+Shared Material assets resolve from the active OrbitUI runtime root. Keep named
+icon selections stable across OTA slots; rebase packaged image-only paths.
+Preserve the pinned source/license, static subset and matching SVG inventory
+(`ICONS.md`, `tests/test_material_assets.py`, `scripts/check-package.lua`).
 
 Keep the existing settings filenames and schemas unless a separately reviewed,
 recoverable migration is required. The automatic first-run snapshot is limited

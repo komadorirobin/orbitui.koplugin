@@ -346,7 +346,7 @@ function M.safeIconPath(path, fallback, slot_id)
     end
 
     local Config = require("infra/sui_config")
-    if Config.isNerdIcon(path) then
+    if Config.isFontIcon(path) then
         return path
     end
 
@@ -476,13 +476,13 @@ function M.applyIconToBtn(id, btn)
     local path = M.safeIconPath(raw, nil, id)
     if not path then return false end
     local Config = require("infra/sui_config")
-    local is_nerd = Config.isNerdIcon(path)
+    local is_nerd = Config.isFontIcon(path)
     local function applyToWidget(w_key)
         local w = btn[w_key]
         if not w then return end
 
         if is_nerd then
-            local nerd_char = Config.nerdIconChar(path)
+            local nerd_char, icon_font = Config.iconGlyph(path)
             local Font = require("ui/font")
             local TextWidget = require("ui/widget/textwidget")
 
@@ -494,13 +494,14 @@ function M.applyIconToBtn(id, btn)
 
             local new_w = TextWidget:new{
                 text    = nerd_char,
-                face    = Font:getFace(M.FACE_ICONS, font_size),
+                face    = Font:getFace(icon_font or M.FACE_ICONS, font_size),
                 fgcolor = btn.icon_color or require("ffi/blitbuffer").COLOR_BLACK,
                 padding = 0,
             }
             new_w.width  = w_width
             new_w.height = w_height
             new_w.is_sui_wrapper = true
+            new_w.sui_icon_font = icon_font
 
             local orig_paintTo = new_w.paintTo
             new_w.paintTo = function(self_w, bb, x, y)
@@ -707,7 +708,7 @@ function M.registerTabIconName(slot_id, path)
     if type(path) ~= "string" or path == "" then return nil end
 
     local ok_cfg, Config = pcall(require, "infra/sui_config")
-    if ok_cfg and Config.isNerdIcon and Config.isNerdIcon(path) then
+    if ok_cfg and Config.isFontIcon and Config.isFontIcon(path) then
         -- Nerd-font glyph references aren't files; nothing to register.
         return nil
     end
@@ -1149,14 +1150,14 @@ function M.sui_build_system_icons(plugin, ctx_menu, ctx)
     local function makeIconPreview(icon_path, ko_native, fallback_label)
         local icon_widget
         local Config = require("infra/sui_config")
-        local is_nerd = icon_path and Config.isNerdIcon(icon_path)
+        local is_nerd = icon_path and Config.isFontIcon(icon_path)
 
         if is_nerd then
-            local nerd_char = Config.nerdIconChar(icon_path)
+            local nerd_char = Config.iconGlyph(icon_path)
             if nerd_char then
                 icon_widget = TextWidget:new{
                     text    = nerd_char,
-                    face    = Font:getFace(M.FACE_ICONS, math.floor(icon_size * 0.8)),
+                    face    = Config.iconFace(icon_path, math.floor(icon_size * 0.8), M.FACE_ICONS),
                     fgcolor = M.COLOR.text_primary,
                     padding = 0,
                 }

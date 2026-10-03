@@ -1,0 +1,52 @@
+{
+  "upstream_commit": "737e3324305806514d7909874fa1818ae1808232",
+  "font_sha256": "95b24392bb49efd1bc3e92cff4e2452ad094461bab7c97e7d8723fab97e330ca",
+  "codepoints_sha256": "225bd09137103cb7746bc93dc08d08764c9f0c3bd04f4b958d4a3c3c19432dd6",
+  "axes": { "FILL": 0, "GRAD": 0, "opsz": 24, "wght": 500 },
+  "groups": {
+    "Reading": [
+      "manga", "comic_bubble", "book_2", "book_3", "book_4", "book_5", "book_6",
+      "menu_book", "book_ribbon", "auto_stories", "library_books", "local_library",
+      "books_movies_and_music", "collections_bookmark", "bookmark", "bookmark_add",
+      "bookmark_check", "bookmark_heart", "bookmark_star", "bookmarks", "book_online",
+      "history", "schedule", "star", "star_half", "favorite", "person_book", "edit_note",
+      "headphones", "import_contacts", "new_releases"
+    ],
+    "Navigation": [
+      "home", "home_storage", "shelves", "folder", "folder_open", "folder_special",
+      "search", "manage_search", "menu", "apps", "grid_view", "view_list", "view_carousel",
+      "view_agenda", "arrow_back", "arrow_forward", "chevron_left", "chevron_right",
+      "first_page", "last_page", "arrow_upward", "arrow_downward", "expand_more",
+      "expand_less", "close", "more_horiz", "more_vert"
+    ],
+    "System": [
+      "settings", "tune", "power_settings_new", "restart_alt", "bedtime", "light_mode",
+      "dark_mode", "brightness_6", "wifi", "wifi_off", "sync", "sync_disabled", "refresh",
+      "download", "upload", "cloud_download", "cloud_sync", "battery_full", "battery_charging_full",
+      "storage", "save", "check", "check_circle", "info", "help", "warning"
+    ],
+    "Tools": [
+      "edit", "delete", "add", "remove", "sort", "filter_list", "checklist", "list_alt",
+      "collections", "photo_library", "image", "palette", "format_size", "fullscreen",
+      "fullscreen_exit", "screen_rotation", "translate", "language", "dictionary", "insights",
+      "bar_chart", "calendar_month", "flag", "extension", "link", "undo"
+    ]
+  },
+  "aliases": {
+    "manga": "comics comic anime serier serietidning",
+    "comic_bubble": "manga comics speech serier pratbubbla",
+    "home": "hem start",
+    "library_books": "library bibliotek books bocker böcker",
+    "menu_book": "reading read läsa bok",
+    "shelves": "bookshelf library bokhylla bibliotek",
+    "bookmark": "bokmärke bokmarke",
+    "bookmark_heart": "want to read vill läsa",
+    "power_settings_new": "power off shutdown ström avsluta",
+    "settings": "inställningar installningar",
+    "search": "sök sok",
+    "sync": "synk synkronisera",
+    "dark_mode": "night natt",
+    "view_carousel": "carousel snurra omslag",
+    "headphones": "audio audiobook ljudbok"
+  }
+}

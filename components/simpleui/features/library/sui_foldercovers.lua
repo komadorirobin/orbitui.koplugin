@@ -1645,7 +1645,7 @@ function M.install()
         end)
 
         local Config    = require("infra/sui_config")
-        local nerd_char = Config.nerdIconChar(actual_icon_path)
+        local nerd_char = Config.iconGlyph(actual_icon_path)
 
         if nerd_char then
             local ok_tw, tw = pcall(function()
@@ -1653,7 +1653,7 @@ function M.install()
                     dimen = Geom:new{ w = img_w, h = img_h },
                     TextWidget:new{
                         text    = nerd_char,
-                        face    = Font:getFace(SUIStyle.FACE_ICONS, math.floor(icon_size * 0.85)),
+                        face    = Config.iconFace(actual_icon_path, math.floor(icon_size * 0.85), SUIStyle.FACE_ICONS),
                         fgcolor = SUIStyle.COLOR.text_primary,
                         padding = 0,
                     },

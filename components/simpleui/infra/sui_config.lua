@@ -542,6 +542,21 @@ function M.isNerdIcon(icon_value)
     return M.nerdIconChar(icon_value) ~= nil
 end
 
+-- Optional icon packs return a glyph and their own font path here. Keep the
+-- Nerd-specific API intact for its hex-input dialog and external callers.
+function M.iconGlyph(icon_value)
+    return M.nerdIconChar(icon_value)
+end
+
+function M.isFontIcon(icon_value)
+    return M.iconGlyph(icon_value) ~= nil
+end
+
+function M.iconFace(icon_value, size, fallback)
+    local _, face = M.iconGlyph(icon_value)
+    return require("ui/font"):getFace(face or fallback or "symbols", size)
+end
+
 -- ===========================================================================
 -- 5. Scaling, Dimensions & UI Helpers
 -- ===========================================================================

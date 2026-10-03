@@ -27,10 +27,18 @@ for _, path in ipairs({
     "docs/INTEGRATION_CONTRACTS.md", "docs/MERGE_LOG.md",
     "docs/OTA.md",
     "assets/ca-bundle.crt", "assets/CA-LICENSE", "assets/CA-NOTICE.txt",
+    "assets/material-symbols/MaterialSymbolsRounded.ttf",
+    "assets/material-symbols/LICENSE", "assets/material-symbols/NOTICE.txt",
+    "assets/material-symbols/generated.json", "assets/material-symbols/selection.json",
+    "assets/material-symbols/icons/manga.svg", "assets/material-symbols/icons/comic_bubble.svg",
+    "core/orbitui_icons.lua", "core/orbitui_material_catalogue.lua", "adapters/orbitui_icons.lua",
     "components/bookshelf/main.lua", "components/bookshelf/_meta.lua",
     "components/bookshelf/LICENSE", "components/bookshelf/assets/bookshelf-logo.png",
     "components/simpleui/main.lua", "components/simpleui/_meta.lua", "components/simpleui/LICENSE",
 }) do expect(path) end
+for _, icon in ipairs(dofile("core/orbitui_material_catalogue.lua")) do
+    expect("assets/material-symbols/icons/" .. icon.name .. ".svg")
+end
 local tracked = assert(io.popen("git ls-files"))
 for path in tracked:lines() do
     if path:match("^core/.*%.lua$") or path:match("^adapters/.*%.lua$")

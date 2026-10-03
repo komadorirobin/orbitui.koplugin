@@ -58,6 +58,9 @@ function M.install(root, module_map)
                 return require("adapters/orbitui_bookshelf_storage").wrapStore(fn())
             end
         end
+        if require("adapters/orbitui_icons").modules[name] then
+            return function() return require("adapters/orbitui_icons").wrap(name, fn()) end
+        end
         if require("adapters/orbitui_ui").modules[name] then
             return function() return require("adapters/orbitui_ui").wrap(name, fn()) end
         end

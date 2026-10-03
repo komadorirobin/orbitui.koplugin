@@ -169,11 +169,11 @@ function QARenderer.buildIcon(entry, size, fgcolor, opts)
     local fallback_face  = opts.fallback_face or "cfont"
 
     local icon_widget
-    local nerd_char = Config().nerdIconChar(entry.icon)
+    local nerd_char = Config().iconGlyph(entry.icon)
     if nerd_char then
         local glyph = ui.makeColoredText{
             text    = nerd_char,
-            face    = Font():getFace(icons_face, math.floor(size * nerd_scale)),
+            face    = Config().iconFace(entry.icon, math.floor(size * nerd_scale), icons_face),
             fgcolor = fgcolor,
             padding = 0,
         }
@@ -405,14 +405,14 @@ end
 function QARenderer.buildFramedIcon(file, size, fgcolor)
     local style = SUIStyle()
 
-    if Config().isNerdIcon(file) then
-        local nerd_char = Config().nerdIconChar(file)
+    if Config().isFontIcon(file) then
+        local nerd_char = Config().iconGlyph(file)
         local widget = WidgetContainer():new{}
         widget.dimen = Geom():new{ w = size, h = size }
         widget._fg   = fgcolor
         local tw = TextWidget():new{
             text    = nerd_char,
-            face    = Font():getFace(style.FACE_ICONS or "symbols", math.floor(size * 0.75)),
+            face    = Config().iconFace(file, math.floor(size * 0.75), style.FACE_ICONS),
             fgcolor = fgcolor,
             padding = 0,
         }

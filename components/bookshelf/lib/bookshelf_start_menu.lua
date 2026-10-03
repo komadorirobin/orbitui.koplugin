@@ -562,6 +562,7 @@ function StartMenu:_buildRow(entry, w, focused, in_flyout)
         local isz = (self._icon_face and self._icon_face.size) or Screen:scaleBySize(22)
         local iw = IconWidget:new{
             icon = img_name,
+            file = Model.imageIconFile and Model.imageIconFile(img_name),
             width = isz,
             height = isz,
             alpha = true,   -- render as-is (SVG/PNG own colours honoured)

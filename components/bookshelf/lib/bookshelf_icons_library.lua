@@ -26,6 +26,16 @@ local Screen = Device.screen
 
 local IconsLibrary = {}
 
+-- Optional host-owned packs. Image tokens are offered only to callers that
+-- explicitly support them; inline text templates keep their glyph-only list.
+local function extraSources(allow_svg)
+    local out = {}
+    for _, source in ipairs(IconsLibrary.extra_sources or {}) do
+        if not source.requires_svg or allow_svg then out[#out + 1] = source end
+    end
+    return out
+end
+
 -- Catalogue tables (chip list, curated picks, pattern fill rules,
 -- per-chip excludes) live in lib/bookshelf_icons_catalogue.lua so the
 -- data stays separate from the projection/rendering code.
@@ -192,6 +202,18 @@ local function currentItemList(state)
         end
         local cells = getAllNerdFontCells()
         local items = {}
+        for _, source in ipairs(extraSources(state.allow_svg)) do
+            for _, cell in ipairs(source.items()) do
+                local match = true
+                for _, term in ipairs(terms) do
+                    if not cell.search_lc:find(term, 1, true) then match = false; break end
+                end
+                if match then
+                    items[#items + 1] = cell
+                    if #items >= 200 then return items end
+                end
+            end
+        end
         -- User SVG/PNG icons match on filename and surface first, so custom
         -- icons aren't buried under the nerd-font hits. Only when the caller
         -- can render images (start menu) -- otherwise a picked [icon=NAME]
@@ -225,6 +247,9 @@ local function currentItemList(state)
         end
         return items
     end
+    for _, source in ipairs(extraSources(state.allow_svg)) do
+        if state.active_chip == source.key then return source.items() end
+    end
     if state.active_chip == "svg" then
         return IconsLibrary._scanUserIcons()
     end
@@ -232,7 +257,14 @@ local function currentItemList(state)
         -- All: the entire Nerd Font index (~2,800 entries) for free browsing,
         -- alphabetised by cmap name. Curated category chips show smaller
         -- hand-picked lists, with cmap-name labels where applicable.
-        return getAllNerdFontCells()
+        local sources = extraSources(state.allow_svg)
+        if #sources == 0 then return getAllNerdFontCells() end
+        local out = {}
+        for _, source in ipairs(sources) do
+            for _, cell in ipairs(source.items()) do out[#out + 1] = cell end
+        end
+        for _, cell in ipairs(getAllNerdFontCells()) do out[#out + 1] = cell end
+        return out
     end
     return projectCuratedItems(state.active_chip)
 end
@@ -315,7 +347,7 @@ function IconsLibrary._renderCell(item, dimen)
     else
         glyph_w = TextWidget:new{
             text = item.glyph or "",
-            face = Font:getFace("symbols", glyph_size),
+            face = Font:getFace(item.font or "symbols", glyph_size),
             fgcolor = Blitbuffer.COLOR_BLACK,
         }
     end
@@ -383,6 +415,9 @@ function IconsLibrary:show(on_select, opts)
                   or (c.key == "svg" and not opts.svg)
         if not drop then chips[#chips + 1] = c end
     end
+    for _, source in ipairs(extraSources(opts.svg)) do
+        table.insert(chips, 2, { key = source.key, label = source.label })
+    end
     -- Captures the runtime state used by the config callbacks. This lives in
     -- a closure rather than on the modal so taps/chips/search can mutate it
     -- without going through LibraryModal's own state.
@@ -437,7 +472,9 @@ function IconsLibrary:show(on_select, opts)
         end,
         search_placeholder = function()
             local names = loadNerdFontNames()
-            return T(_("Search %1 icons by name…"), tostring(#names))
+            local count = #names
+            for _, source in ipairs(extraSources(opts.svg)) do count = count + #source.items() end
+            return T(_("Search %1 icons by name…"), tostring(count))
         end,
         on_search_submit = function(query)
             state.search_query = query

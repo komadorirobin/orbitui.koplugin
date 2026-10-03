@@ -18,7 +18,8 @@ local function buildIcon(icon_value, box, fg)
     if img then
         -- SVG/PNG: width/height are exact, so the icon fills the box precisely.
         local IconWidget = require("ui/widget/iconwidget")
-        local iw = IconWidget:new{ icon = img, width = box, height = box, alpha = true }
+        local iw = IconWidget:new{ icon = img, width = box, height = box, alpha = true,
+            file = SMModel.imageIconFile and SMModel.imageIconFile(img) }
         if iw.file and iw.file:find("icon-not-found", 1, true) then
             return nil
         end

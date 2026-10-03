@@ -189,7 +189,9 @@ local function _imageSegment(name, size, ink, inverted)
     local side = _iconSide(size)
     local IconWidget = require("ui/widget/iconwidget")
     local ok, icon = pcall(function()
-        return IconWidget:new{ icon = name, width = side, height = side, alpha = true }
+        local Model = require("lib/bookshelf_start_menu_model")
+        return IconWidget:new{ icon = name, width = side, height = side, alpha = true,
+            file = Model.imageIconFile and Model.imageIconFile(name) }
     end)
     if not ok or type(icon) ~= "table" or type(icon.file) ~= "string"
             or (icon.file:find("notice%-warning") and name ~= "notice-warning") then

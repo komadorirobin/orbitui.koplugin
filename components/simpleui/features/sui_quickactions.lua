@@ -96,7 +96,7 @@ local function _guardedSetIcon(path, on_valid, on_invalid)
         on_valid(nil)
         return
     end
-    if Config.isNerdIcon(path) then
+    if Config.isFontIcon(path) then
         on_valid(path)
         return
     end
@@ -1919,11 +1919,11 @@ function QA.sui_build_qa_icons(plugin, ctx_menu, ctx)
     local function makeIconPreview(icon_path, is_nerd, fallback_label)
         local icon_widget
         if is_nerd and icon_path then
-            local nerd_char = Config.nerdIconChar(icon_path)
+            local nerd_char = Config.iconGlyph(icon_path)
             if nerd_char and ok_ss and SUIStyle then
                 icon_widget = TextWidget:new{
                     text    = nerd_char,
-                    face    = Font:getFace(SUIStyle.FACE_ICONS, math.floor(icon_size * 0.8)),
+                    face    = Config.iconFace(icon_path, math.floor(icon_size * 0.8), SUIStyle.FACE_ICONS),
                     fgcolor = SUIStyle.COLOR.text_primary,
                     padding = 0,
                 }
@@ -2037,7 +2037,7 @@ function QA.sui_build_qa_icons(plugin, ctx_menu, ctx)
                     and c.icon ~= Config.CUSTOM_DISPATCHER_ICON
                      and c.icon ~= Config.CUSTOM_GROUP_ICON
             end
-            local is_nerd = Config.isNerdIcon(current_icon)
+            local is_nerd = Config.isFontIcon(current_icon)
             local effective_icon = current_icon
             if not effective_icon then
                 if _is_default then
@@ -2081,7 +2081,7 @@ function QA.sui_build_qa_icons(plugin, ctx_menu, ctx)
                             end
                         end
 
-                        if Config.isNerdIcon(new_icon) then
+                        if Config.isFontIcon(new_icon) then
                             if _is_default then
                                 QA.setDefaultActionIcon(_id, new_icon)
                             elseif _is_screen then
@@ -2393,7 +2393,7 @@ function QA.showIconPicker(current_icon, on_select, default_label, _picker_handl
     local icons   = _loadCustomIconList()
     local buttons = {}
     local is_nerd    = Config.isNerdIcon(current_icon)
-    local is_svg     = current_icon and not is_nerd
+    local is_svg     = current_icon and not Config.isFontIcon(current_icon)
     local default_marker = (not current_icon) and "  ✓" or ""
     buttons[#buttons + 1] = {{
         text     = (default_label or _("Default")) .. default_marker,
@@ -2414,6 +2414,19 @@ function QA.showIconPicker(current_icon, on_select, default_label, _picker_handl
                 end, function()
                     QA.showIconPicker(current_icon, on_select, default_label, _picker_handle, picker_key, allow_nerd, on_cancel)
                 end)
+            end,
+        }}
+    end
+    for _, picker in ipairs(QA.extraIconPickers or {}) do
+        local extra = picker
+        buttons[#buttons + 1] = {{
+            text = extra.text,
+            callback = function()
+                UIManager:close(_picker_handle[picker_key])
+                extra.show(current_icon, on_select, function()
+                    QA.showIconPicker(current_icon, on_select, default_label, _picker_handle,
+                        picker_key, allow_nerd, on_cancel)
+                end, allow_nerd)
             end,
         }}
     end
@@ -3433,15 +3446,15 @@ function QA.buildQARowIcon(icon_value, fallback_label, scale_fn)
     local btn_size  = SZ(Screen:scaleBySize(28))
     local icon_size = math.floor(btn_size * 0.7)
     local border_sz = ok_ss and SUIStyle.BORDER_SZ or 1
-    local is_nerd   = Config.isNerdIcon(icon_value)
+    local is_nerd   = Config.isFontIcon(icon_value)
 
     local icon_widget
     if is_nerd and icon_value then
-        local nerd_char = Config.nerdIconChar(icon_value)
+        local nerd_char = Config.iconGlyph(icon_value)
         if nerd_char and ok_ss and SUIStyle then
             icon_widget = TextWidget:new{
                 text    = nerd_char,
-                face    = Font:getFace(SUIStyle.FACE_ICONS, math.floor(icon_size * 0.8)),
+                face    = Config.iconFace(icon_value, math.floor(icon_size * 0.8), SUIStyle.FACE_ICONS),
                 fgcolor = SUIStyle.COLOR.text_primary,
                 padding = 0,
             }
