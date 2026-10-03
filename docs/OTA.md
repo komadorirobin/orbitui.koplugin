@@ -27,6 +27,9 @@ alpha.6; bootstrap API 1 and the three bootstrap files are unchanged. No
 recovery patch is needed on an already-working alpha.5. If the temporary
 Material recovery patch was installed, disable/remove it after updating and
 restart to make saved Material choices visible again.
+Version `0.1.0-alpha.8` fixes the individual Material picker's category-initialization
+crash. It retains alpha.7's per-icon SVG selection, existing settings and bootstrap
+API 1. The same preview OTA path works directly from alpha.5, alpha.6 or alpha.7.
 An alpha installation defaults to including preview releases; a stable installation defaults to stable
 only. This is separate from upstream monitoring, which never publishes builds.
 
