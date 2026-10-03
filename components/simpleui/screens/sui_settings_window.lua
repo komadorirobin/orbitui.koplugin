@@ -174,6 +174,11 @@ function LayoutService.save(layout, pfx, layout_key, screen_id)
 
     for _, mod in ipairs(Registry.list()) do
         local is_active = (active_set[mod.id] == true)
+        -- A module taken out of the layout drops its text styles, so adding
+        -- it back later starts from the defaults.
+        if not is_active and mod.text_elems and Registry.isEnabled(mod, pfx) then
+            require("infra/sui_config").resetTextStyles(mod.id, mod.text_elems, pfx)
+        end
         if type(mod.setEnabled) == "function" then
             mod.setEnabled(pfx, is_active)
         elseif mod.enabled_key then
@@ -400,7 +405,11 @@ local function buildScreens(st)
                     local plugin = getPlugin()
                     ctx.push("nested_menu", {
                         title      = _("Wallpaper"),
-                        items_func = plugin and plugin.makeWallpaperMenuItems,
+                        items_func = function()
+                            if not (plugin and plugin.makeWallpaperMenuItems) then return {} end
+                            local SUIWindow = require("engines/sui_window")
+                            return plugin.makeWallpaperMenuItems(SUIWindow.makeCtxMenu(ctx))
+                        end,
                     })
                 end,
             },

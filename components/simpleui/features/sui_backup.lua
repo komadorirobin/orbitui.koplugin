@@ -158,7 +158,7 @@ local CLASSIFY_RULES = {
     { "goals",
       prefixes = {
           "simpleui_streak_", "simpleui_reading_goal", "simpleui_daily_reading_goal_secs",
-          "simpleui_monthly_reading_goal_secs", "simpleui_tbr_sort_mode",
+          "simpleui_monthly_reading_goal_secs", "simpleui_tbr_sort_state",
           "simpleui_tbr_auto_remove_finished",
       },
       exact    = { simpleui_preserve_deleted_books_in_stats = true, simpleui_deleted_books = true },
@@ -197,6 +197,7 @@ local CLASSIFY_RULES = {
       prefixes = {
           "simpleui_bar_", "simpleui_topbar_", "simpleui_tb_", "simpleui_qs_bar_",
           "simpleui_titlebar", "simpleui_statusbar_transparent", "simpleui_bars_transparent",
+          "simpleui_statusbar_backdrop", "simpleui_navbar_backdrop", "simpleui_pagination_backdrop", "simpleui_titlebar_button_backdrop", "simpleui_module_backdrop",
           "simpleui_menu_tap", "simpleui_menu_swipe",
           "navbar_",
       },

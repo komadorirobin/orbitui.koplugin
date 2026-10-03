@@ -28,7 +28,7 @@ local AAPaint    = require("infra/sui_aa_paint")
 -- off disk. Same pattern as screens/sui_bottombar.lua and
 -- engines/sui_book_grid.lua.
 local _CenterContainer, _FrameContainer, _HorizontalGroup, _HorizontalSpan
-local _InputContainer, _LeftContainer, _RightContainer, _TextWidget
+local _InputContainer, _TextWidget
 local _ImageWidget, _VerticalGroup, _VerticalSpan, _OverlapGroup, _LineWidget
 local _Geom, _Font, _GestureRange, _WidgetContainer
 local function CenterContainer() _CenterContainer = _CenterContainer or require("ui/widget/container/centercontainer"); return _CenterContainer end
@@ -36,8 +36,6 @@ local function FrameContainer()  _FrameContainer  = _FrameContainer  or require(
 local function HorizontalGroup() _HorizontalGroup = _HorizontalGroup or require("ui/widget/horizontalgroup");           return _HorizontalGroup end
 local function HorizontalSpan()  _HorizontalSpan  = _HorizontalSpan  or require("ui/widget/horizontalspan");            return _HorizontalSpan  end
 local function InputContainer()  _InputContainer  = _InputContainer  or require("ui/widget/container/inputcontainer");  return _InputContainer  end
-local function LeftContainer()   _LeftContainer   = _LeftContainer   or require("ui/widget/container/leftcontainer");   return _LeftContainer   end
-local function RightContainer()  _RightContainer  = _RightContainer  or require("ui/widget/container/rightcontainer");  return _RightContainer  end
 local function TextWidget()      _TextWidget      = _TextWidget      or require("ui/widget/textwidget");                return _TextWidget      end
 local function ImageWidget()     _ImageWidget     = _ImageWidget     or require("ui/widget/imagewidget");               return _ImageWidget     end
 local function VerticalGroup()   _VerticalGroup   = _VerticalGroup   or require("ui/widget/verticalgroup");             return _VerticalGroup   end
@@ -229,7 +227,9 @@ end
 -- the radii this UI uses. Composited via UI.paintWithAlphaMask, once per
 -- color, so it sits transparently over whatever is beneath (a wallpaper,
 -- when bg_color is nil and only the border is drawn).
-local function _buildRoundedBackdrop(size, corner_r, border_sz, bg_color, border_color)
+-- strength: 0 skip fill, 1–99 scrim via shared backdrop painter, 100 solid AA fill.
+local function _buildRoundedBackdrop(size, corner_r, border_sz, bg_color, border_color, strength)
+    strength = require("features/sui_wallpaper").clampBackdropStrength(strength) or 100
     local widget = WidgetContainer():new{}
     widget.dimen = Geom():new{ w = size, h = size }
 
@@ -241,13 +241,20 @@ local function _buildRoundedBackdrop(size, corner_r, border_sz, bg_color, border
         self.dimen.x, self.dimen.y = x, y
         if size <= 0 then return end
 
+        if bg_color and strength > 0 and strength < 100 then
+            local ok, WP = pcall(require, "features/sui_wallpaper")
+            if ok and WP and WP.paintBackdrop then
+                WP.paintBackdrop(bb, x, y, size, size, strength, corner_r, bg_color)
+            end
+        end
+
         if not self._tmp_bb or self._tmp_bb:getWidth() ~= size then
             if self._tmp_bb then self._tmp_bb:free() end
             self._tmp_bb = Blitbuffer.new(size, size, Blitbuffer.TYPE_BB8)
         end
 
         local ui = UI()
-        if bg_color then
+        if bg_color and strength >= 100 then
             ui.paintWithAlphaMask(self, bb, x, y, size, size, bg_color, function(_w, tmp_bb)
                 AAPaint.paintRoundedRectFill(tmp_bb, 0, 0, size, size, corner_r, 0, 0, size - 1, size - 1)
             end, self._tmp_bb)
@@ -305,6 +312,12 @@ function QARenderer.buildFrame(inner_widget, size, opts)
     local bg    = opts.bg or "solid"
     local is_bare = (shape == "bare")
 
+    -- Fill opacity: explicit opts.strength, else transparent → 0, solid/flat → 100.
+    local strength = require("features/sui_wallpaper").clampBackdropStrength(opts.strength)
+    if strength == nil then
+        strength = (bg == "transparent") and 0 or 100
+    end
+
     local corner_r
     if is_bare then
         corner_r = 0
@@ -315,12 +328,16 @@ function QARenderer.buildFrame(inner_widget, size, opts)
     end
 
     local border_sz = opts.border_sz or style.BORDER_SZ
-    local current_border = (not is_bare and (bg == "solid" or bg == "transparent")) and border_sz or 0
+    -- Border for solid/transparent styles (not flat, not bare).
+    local current_border = (not is_bare and bg ~= "flat") and border_sz or 0
 
     local bg_color = nil
-    if not is_bare then
-        if bg == "flat" then bg_color = style.COLOR.surface_flat
-        elseif bg == "solid" then bg_color = style.COLOR.surface end
+    if not is_bare and strength > 0 then
+        if bg == "flat" then
+            bg_color = style.COLOR.surface_flat
+        else
+            bg_color = style.COLOR.surface
+        end
     end
 
     local content
@@ -352,7 +369,7 @@ function QARenderer.buildFrame(inner_widget, size, opts)
         return content
     end
 
-    local backdrop = _buildRoundedBackdrop(size, corner_r, current_border, bg_color, style.COLOR.gray)
+    local backdrop = _buildRoundedBackdrop(size, corner_r, current_border, bg_color, style.COLOR.gray, strength)
     local overlap = OverlapGroup():new{
         dimen = Geom():new{ w = size, h = size },
         backdrop,
@@ -376,13 +393,11 @@ function QARenderer.buildFrame(inner_widget, size, opts)
     }
 end
 
--- Builds a "framed" (color-tinted, alpha-mask painted) icon from a raw icon
--- file path, migrated as-is from sui_bottombar.lua's former _makeColoredIcon.
+-- Builds a color-tinted, alpha-mask painted icon from a raw icon file path.
 -- This is a distinct rendering technique from buildIcon+buildFrame above —
 -- it recolors the icon itself via UI.paintWithAlphaMask (or, for nerd-font
 -- glyphs, paints a colored glyph directly) rather than drawing a border/
--- background around an unmodified icon — used only by the bottom bar's
--- "framed" bar style (see buildTabCell). It keeps its own
+-- background around an unmodified icon. It keeps its own
 -- onToggleNightMode/onSetNightMode/onApplyTheme handlers and
 -- `original_in_nightmode = true` so the recolored icon is exempt from
 -- KOReader's native night-mode inversion, which would otherwise fight with
@@ -444,6 +459,12 @@ end
 -- Layer 2 — declarative per-layout builders
 -- ===========================================================================
 
+-- Label face of a cell or row: the caller's resolved face when given, else
+-- the default UI face at spec.lbl_fs.
+local function _labelFace(spec)
+    return spec.lbl_face or Font():getFace(SUIStyle().FACE_REGULAR, spec.lbl_fs or 15)
+end
+
 -- Builds one "cell": an icon inside a buildFrame, with an optional label
 -- underneath, optionally tappable. Used by the Quick Actions Row module and
 -- the Quick Settings bar, whose cells differ in sizing, whether a label is
@@ -462,7 +483,9 @@ end
 --   fgcolor                  — icon/label color (default SUIStyle.COLOR.text_primary).
 --   icon_opts                — forwarded to buildIcon (see its doc comment).
 --   show_label, lbl_sp, lbl_h, lbl_fs, lbl_face  — label row, shown below the
---     frame when show_label is true.
+--     frame when show_label is true. lbl_face is a resolved font face; without
+--     it the default UI face at lbl_fs is used. lbl_bold asks the text widget
+--     to embolden the label (the face has no bold file of its own).
 --   lbl_w                    — label CenterContainer width (default frame_sz).
 --   lbl_width                — sets TextWidget.width directly (wrapping, no
 --     truncation) — used by the Quick Settings bar.
@@ -486,6 +509,7 @@ function QARenderer.buildCell(action_id, spec)
     local frame_widget = QARenderer.buildFrame(icon_widget, frame_sz, {
         shape      = spec.shape,
         bg         = spec.bg,
+        strength   = spec.strength,
         corner_r   = spec.corner_r,
         frame_pad  = spec.frame_pad,
         border_sz  = spec.border_sz,
@@ -503,7 +527,8 @@ function QARenderer.buildCell(action_id, spec)
             dimen = Geom():new{ w = lbl_w, h = spec.lbl_h or 0 },
             TextWidget():new{
                 text                   = entry.label,
-                face                   = Font():getFace(spec.lbl_face or style.FACE_REGULAR, spec.lbl_fs or 15),
+                face                   = _labelFace(spec),
+                bold                   = spec.lbl_bold,
                 fgcolor                = fgcolor,
                 width                  = spec.lbl_width,
                 max_width              = spec.lbl_max_width,
@@ -522,15 +547,15 @@ function QARenderer.buildCell(action_id, spec)
 end
 
 -- Builds one list row: icon (optional) on the left, label on the right,
--- tappable, aligned within `spec.inner_w`. Used by the Action List module.
+-- tappable. The row is only as wide as its content (capped at `spec.inner_w`);
+-- the caller aligns rows against each other. Used by the Action List module.
 --
 -- spec fields:
 --   inner_w, row_h            — required.
 --   show_icon, icon_sz, icon_gap, icon_opts  — icon column, omitted entirely
 --     when show_icon is false.
---   lbl_fs, lbl_face          — label text.
+--   lbl_fs, lbl_face, lbl_bold — label text; same convention as buildCell.
 --   fgcolor                   — icon/label color.
---   align                     — "left" / "right" / anything else → centered.
 --   on_tap_fn, tap_event_name — tap dispatch, same convention as buildCell.
 function QARenderer.buildListRow(action_id, spec)
     spec = spec or {}
@@ -548,7 +573,8 @@ function QARenderer.buildListRow(action_id, spec)
 
     local label_tw = ui.makeColoredText{
         text    = entry.label,
-        face    = Font():getFace(spec.lbl_face or style.FACE_REGULAR, spec.lbl_fs),
+        face    = _labelFace(spec),
+        bold    = spec.lbl_bold,
         fgcolor = fgcolor,
         width   = text_w,
         padding = 0,
@@ -569,48 +595,29 @@ function QARenderer.buildListRow(action_id, spec)
         label_tw,
     }
 
-    local tappable = _buildTapContainer(hg, content_w, spec.row_h, action_id, spec, "TapALCell")
-
-    if spec.align == "left" then
-        return LeftContainer():new{
-            dimen = Geom():new{ w = spec.inner_w, h = spec.row_h },
-            tappable,
-        }
-    elseif spec.align == "right" then
-        return RightContainer():new{
-            dimen = Geom():new{ w = spec.inner_w, h = spec.row_h },
-            tappable,
-        }
-    end
-    return CenterContainer():new{
-        dimen = Geom():new{ w = spec.inner_w, h = spec.row_h },
-        tappable,
-    }
+    return _buildTapContainer(hg, content_w, spec.row_h, action_id, spec, "TapALCell")
 end
 
 -- Builds one bottom-bar tab cell: icon and/or label (per spec.mode) plus an
 -- active-tab indicator line pinned to the top. Used by sui_bottombar.lua.
 --
--- Nerd-font glyphs always render via buildIcon regardless of bar style (the
--- "framed" bar style only affects raster-image icons, via buildFramedIcon —
--- see the header comment on buildFramedIcon for why that's a separate
--- mechanism and not folded into buildFrame). A missing/invalid file always
--- falls back to a single-letter widget via buildIcon, the same guarantee
--- every other QARenderer builder gives — the bottom bar previously omitted
--- the icon entirely on failure; that gap is now filled consistently.
+-- Icons always render via buildIcon regardless of bar style: raster icons keep
+-- their original colours and a missing/invalid file falls back to a
+-- single-letter widget.
 --
 -- spec fields:
---   tab_w, bar_h, icon_sz, label_fs, icon_txt_sp, indic_h  — required sizing.
+--   tab_w, bar_h, icon_sz, icon_txt_sp, indic_h  — required sizing.
+--   lbl_face, lbl_bold — font face of the tab label and its emboldening flag;
+--     same convention as buildCell.
 --   mode        — "icons" / "text" / "both".
---   bar_style   — "default" (draws the active-indicator line) / "framed"
---     (raster icons render via buildFramedIcon) / anything else (no indicator).
+--   bar_style   — "default" draws the active-indicator line; any other value
+--     draws none.
 --   fgcolor     — icon/label color (also used as the active-indicator color).
 --   inactive_indicator_color — drawn under the bar in "default" style when
 --     the tab isn't active and the navbar isn't transparent; nil = omitted.
 function QARenderer.buildTabCell(action_id, active, spec)
     spec = spec or {}
     local style = SUIStyle()
-    local ui    = UI()
     local entry = QA().getEntry(action_id)
     local item_fg = spec.fgcolor or style.COLOR.text_primary
     local mode = spec.mode or "both"
@@ -618,27 +625,10 @@ function QARenderer.buildTabCell(action_id, active, spec)
     local vg = VerticalGroup():new{ align = "center" }
 
     if mode == "icons" or mode == "both" then
-        local icon_widget
-        local nerd_char = Config().nerdIconChar(entry.icon)
-        if not nerd_char and spec.bar_style == "framed" then
-            local safe_file = style.safeIconPath(entry.icon, nil)
-            if safe_file then
-                icon_widget = ui.wrapDimmable(
-                    QARenderer.buildFramedIcon(safe_file, spec.icon_sz, item_fg), entry.dim)
-            else
-                -- Invalid file even under the framed bar style still gets the
-                -- same letter-fallback guarantee as every other render path.
-                icon_widget = QARenderer.buildIcon(entry, spec.icon_sz, item_fg, {
-                    container_w = spec.tab_w,
-                    container_h = spec.icon_sz,
-                })
-            end
-        else
-            icon_widget = QARenderer.buildIcon(entry, spec.icon_sz, item_fg, {
-                container_w = spec.tab_w,
-                container_h = spec.icon_sz,
-            })
-        end
+        local icon_widget = QARenderer.buildIcon(entry, spec.icon_sz, item_fg, {
+            container_w = spec.tab_w,
+            container_h = spec.icon_sz,
+        })
         if icon_widget then vg[#vg + 1] = icon_widget end
     end
 
@@ -648,9 +638,9 @@ function QARenderer.buildTabCell(action_id, active, spec)
         end
         vg[#vg + 1] = TextWidget():new{
             text    = entry.label,
-            face    = Font():getFace(style.FACE_REGULAR, spec.label_fs),
+            face    = _labelFace(spec),
             fgcolor = item_fg,
-            bold    = active or false,
+            bold    = spec.lbl_bold,
         }
     end
 

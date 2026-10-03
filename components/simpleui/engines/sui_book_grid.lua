@@ -44,6 +44,7 @@ local HorizontalGroup = require("ui/widget/horizontalgroup")
 local HorizontalSpan  = require("ui/widget/horizontalspan")
 local IconWidget      = require("ui/widget/iconwidget")
 local InputContainer  = require("ui/widget/container/inputcontainer")
+local WidgetContainer = require("ui/widget/container/widgetcontainer")
 local LineWidget      = require("ui/widget/linewidget")
 local OverlapGroup    = require("ui/widget/overlapgroup")
 local CenterContainer = require("ui/widget/container/centercontainer")
@@ -68,6 +69,22 @@ local GridRenderer = {}
 -- build() below), registered by makeModule() as each module is defined.
 -- Backs GridRenderer.clearRowCaches(ctx).
 GridRenderer._known_row_cache_keys = {}
+
+-- One-shot: legacy item_label_scale → text-style scale for element "label".
+local function _migrateLabelTextScale(id, pfx)
+    local key = (pfx or "simpleui_hs_") .. id .. "_item_label_scale"
+    local raw = SUISettings:get(key)
+    if raw == nil then return end
+    local n = tonumber(raw)
+    if n then
+        local tkey = (pfx or "simpleui_hs_") .. id .. "_text_scale_label"
+        if SUISettings:get(tkey) == nil then
+            Config.setTextStyleScale(n, id, "label", pfx)
+        end
+    end
+    SUISettings:del(key)
+end
+
 
 local _SH = nil
 local function getSH()
@@ -131,7 +148,21 @@ local function _toggleDefault(mode) return mode == "on" or mode == "locked_on" e
 local function _toggleLocked(mode)  return mode == "locked_on" or mode == "locked_off" end
 
 function GridRenderer.showFrame(pfx, id) return SUISettings:isTrue(pfx .. id .. "_show_frame") end
-function GridRenderer.solidBg(pfx, id)   return SUISettings:isTrue(pfx .. id .. "_solid_bg") end
+function GridRenderer.solidBg(pfx, id)
+    local ok, WP = pcall(require, "features/sui_wallpaper")
+    if ok and WP and WP.getModuleBackdropStrength then
+        return WP.getModuleBackdropStrength(pfx, id) >= 100
+    end
+    return SUISettings:isTrue(pfx .. id .. "_solid_bg")
+end
+
+function GridRenderer.backdropStrength(pfx, id)
+    local ok, WP = pcall(require, "features/sui_wallpaper")
+    if ok and WP and WP.getModuleBackdropStrength then
+        return WP.getModuleBackdropStrength(pfx, id)
+    end
+    return SUISettings:isTrue(pfx .. id .. "_solid_bg") and 100 or 0
+end
 
 -- ---------------------------------------------------------------------------
 -- Progress style — single enum for how a cell shows reading progress.
@@ -755,19 +786,19 @@ function GridRenderer.build(w, ctx, opts)
     local lf          = ctx.landscape_factor or 1
     local scale       = Config.getModuleScale(id, pfx) * lf
     local thumb_scale = Config.getThumbScale(id, pfx) * lf
-    local lbl_scale   = Config.getItemLabelScale(id, pfx) * lf
+    _migrateLabelTextScale(id, pfx)
+    local styles      = Config.resolveTextStyles(ctx, id, { "label" })
     local D           = SH.getDims(scale, thumb_scale)
-    local pct_fs      = math.max(8, math.floor(_BASE_RB_PCT_FS * scale * lbl_scale))
+    local pct_fs      = math.max(8, math.floor(_BASE_RB_PCT_FS * scale * (styles.label.scale or 1)))
 
     -- Frame border / solid background — same optional box every other
     -- homescreen module offers (module_currently.lua, module_heatmap.lua,
     -- module_reading_goals.lua). Computed up front so inner_w below already
     -- reserves room for the border, keeping the box's real outer width
     -- equal to `w`.
-    local box = SUIStyle.computeBox(
-        GridRenderer.showFrame(pfx, id), GridRenderer.solidBg(pfx, id), scale, PAD)
-
-    local inner_w = w - box.inset_h
+    -- Module chrome (frame/background) is applied by the homescreen wrapper.
+    local box = { inset_h = 0, inset_v = 0 }
+    local inner_w = w
 
     -- Cover size: base is the auto-fit size (grid_cols covers + gaps filling
     -- inner_w). Width uses grid_cols, not the item count on this page, so a
@@ -788,7 +819,7 @@ function GridRenderer.build(w, ctx, opts)
     -- visual frame of each cover on both sides; between rows, that full
     -- distance reads as too loose, making the two rows look like one block.
     local row_gap = math.max(0, math.floor(gap / 2))
-    local pct_face = Font:getFace(SUIStyle.FACE_REGULAR, pct_fs)
+    local pct_face, pct_bold = SUIStyle.getTextFace(styles.label, pct_fs)
 
     local progress_style     = GridRenderer.getProgressStyle(pfx, id, progress_style_cfg)
     local draw_progress      = progress_style == "bar"  or progress_style == "bar_text"
@@ -796,12 +827,9 @@ function GridRenderer.build(w, ctx, opts)
     local use_overlay        = progress_style == "overlay"
     local use_progress_badge = progress_style == "badge"
 
-    -- Real line height for pct_face, measured via freetype
-    -- (face.ftsize:getHeightAndAscender(), the same API TextWidget:
-    -- updateSize() uses) rather than a fixed constant, so the row always
-    -- reserves at least as much height as the label actually needs.
-    local ok_h, face_height = pcall(function() return pct_face.ftsize:getHeightAndAscender() end)
-    local label_h = (ok_h and face_height and math.ceil(face_height)) or math.ceil(pct_fs * 1.8)
+    -- Measured line height of pct_face (not a fixed constant), so the row
+    -- always reserves at least as much height as the label needs.
+    local label_h = SUIStyle.faceHeight(pct_face)
 
     local badge_r = math.floor(cw * 0.28)
     -- draw_progress/draw_text (computed above, once, same for the whole
@@ -889,7 +917,7 @@ function GridRenderer.build(w, ctx, opts)
                     UI.makeColoredText{
                         text    = string.format(_("%d%%"), pct_int),
                         face    = pct_face,
-                        bold    = true,
+                        bold    = pct_bold,
                         fgcolor = _clr_blk,
                     },
                 },
@@ -948,7 +976,7 @@ function GridRenderer.build(w, ctx, opts)
                 text      = opts.labelForItem and opts.labelForItem(bd)
                             or string.format(_("%d%% Read"), math.floor((bd.percent or 0) * 100 + 0.5)),
                 face      = pct_face,
-                bold      = true,
+                bold      = pct_bold,
                 fgcolor   = _pct_fg,
                 max_width = cw,
                 truncate_with_ellipsis = true,
@@ -1077,25 +1105,28 @@ function GridRenderer.build(w, ctx, opts)
         -- swipe_area.dimen below), but a partial refresh only reflects
         -- what's in the framebuffer; without something repainting that
         -- area, the previous page's pixels stay there.
-        --
-        -- Only needed WITHOUT a wallpaper: in that case the module's
-        -- widgets are transparent by default (see ScreenWidget:_initLayout)
-        -- and nothing else repaints that area. An opaque layer the size of
-        -- inner_w x row_h, painted BEFORE `row` in an OverlapGroup,
-        -- guarantees that every rebuild repaints the whole area.
-        --
-        -- WITH a wallpaper, content_widget:paintTo already paints the
-        -- wallpaper behind the whole tree on every repaint (including this
-        -- partial one — see the override in _initLayout), which already
-        -- clears any stale pixels on its own; an opaque eraser here would
-        -- just cover the freshly-painted wallpaper with a solid rectangle.
+        -- Erase the row rect before painting content so partial rebuilds
+        -- (pagination / swipe) do not leave stale pixels. With a wallpaper
+        -- this restores the image sub-rect; without it, paints surface.
         local content_row = row
-        if not ctx.has_wallpaper then
-            local eraser_bg = SUIStyle.COLOR.surface
-            local eraser = LineWidget:new{
-                dimen      = Geom:new{ w = inner_w, h = row_h },
-                background = eraser_bg,
-            }
+        do
+            -- Built as a WidgetContainer instance, not a plain table, so it
+            -- inherits the full widget contract (handleEvent/propagateEvent,
+            -- free, ...) that OverlapGroup expects from every child it holds
+            -- — same pattern as sui_quickactions_render.lua's
+            -- _buildRoundedBackdrop. getSize/paintTo are overridden for this
+            -- widget's custom (non-child-based) appearance.
+            local eraser = WidgetContainer:new{}
+            eraser.dimen = Geom:new{ w = inner_w, h = row_h }
+            function eraser:getSize() return self.dimen end
+            function eraser:paintTo(bb, x, y)
+                local ok_wp, WP = pcall(require, "features/sui_wallpaper")
+                if ok_wp and WP and WP.paintEraser then
+                    WP.paintEraser(bb, x, y, self.dimen.w, self.dimen.h)
+                else
+                    bb:paintRect(x, y, self.dimen.w, self.dimen.h, SUIStyle.COLOR.surface)
+                end
+            end
             content_row = OverlapGroup:new{
                 dimen = Geom:new{ w = inner_w, h = row_h },
                 eraser,
@@ -1135,7 +1166,7 @@ function GridRenderer.build(w, ctx, opts)
         content = swipe_area
     end
 
-    local result = SUIStyle.wrapBox(content, box)
+    local result = content
     -- Seed dimen so paintTo can fill absolute x/y in place. Needed for
     -- swipe hit-testing and partial refreshes when this widget is the
     -- direct body child (no menu wrapper).
@@ -1319,7 +1350,8 @@ function GridRenderer.getHeight(_ctx, opts)
     local lf = (_ctx and _ctx.landscape_factor) or (UI.isLandscape() and UI.getLandscapeFactor() or 1)
     local scale       = Config.getModuleScale(id, pfx) * lf
     local thumb_scale = Config.getThumbScale(id, pfx) * lf
-    local lbl_scale   = Config.getItemLabelScale(id, pfx) * lf
+    _migrateLabelTextScale(id, pfx)
+    local styles      = Config.resolveTextStyles(_ctx or {}, id, { "label" })
     local SH  = getSH()
     local D   = SH.getDims(scale, thumb_scale)
 
@@ -1332,9 +1364,8 @@ function GridRenderer.getHeight(_ctx, opts)
     -- Frame border / solid background — computed up front so inner_w below
     -- mirrors build()'s own corrected value exactly (see build()'s comment
     -- on why the border must be reserved here too, not just the padding).
-    local box = SUIStyle.computeBox(
-        GridRenderer.showFrame(pfx, id), GridRenderer.solidBg(pfx, id), scale, PAD)
-    local inner_w = w - box.inset_h
+    local box = { inset_h = 0, inset_v = 0 }
+    local inner_w = w
 
     -- cs uses the raw getters — mirrors build()'s cs above.
     local cs = Config.getModuleScaleRaw(id, pfx) * Config.getThumbScaleRaw(id, pfx)
@@ -1358,10 +1389,8 @@ function GridRenderer.getHeight(_ctx, opts)
     local draw_progress  = progress_style == "bar"  or progress_style == "bar_text"
     local draw_text      = progress_style == "text" or progress_style == "bar_text"
     local use_overlay    = progress_style == "overlay"
-    local pct_fs   = math.max(8, math.floor(_BASE_RB_PCT_FS * scale * lbl_scale))
-    local pct_face = Font:getFace(SUIStyle.FACE_REGULAR, pct_fs)
-    local ok_h, face_height = pcall(function() return pct_face.ftsize:getHeightAndAscender() end)
-    local label_h  = (ok_h and face_height and math.ceil(face_height)) or math.ceil(pct_fs * 1.8)
+    local pct_fs   = math.max(8, math.floor(_BASE_RB_PCT_FS * scale * (styles.label.scale or 1)))
+    local label_h  = SUIStyle.faceHeight((SUIStyle.getTextFace(styles.label, pct_fs)))
     -- opts.getCellHeight: see the twin note in build() — must return
     -- exactly the same value for the same cw, or the height reserved here
     -- diverges from the actual drawn content.
@@ -1443,6 +1472,24 @@ function GridRenderer.listAllCollectionNames(exclude_names)
     return all
 end
 
+-- Entries of a ReadCollection in their persisted order (empty when the
+-- collection does not exist). Not calling rc:_read() — see note in
+-- listAllCollectionNames() above.
+local function orderedCollectionItems(coll_name)
+    if not coll_name then return {} end
+    local ok_rc, rc = pcall(require, "readcollection")
+    if not (ok_rc and rc) then return {} end
+    local coll = rc.coll and rc.coll[coll_name]
+    if not coll then return {} end
+    local items = {}
+    for _, item in pairs(coll) do items[#items + 1] = item end
+    table.sort(items, function(a, b)
+        if a.order ~= b.order then return (a.order or 0) < (b.order or 0) end
+        return a.file < b.file
+    end)
+    return items
+end
+
 -- ---------------------------------------------------------------------------
 -- getCollectionFileList(coll_name) → { fp, ... } sorted by RC "order"
 --
@@ -1450,22 +1497,13 @@ end
 -- collection. Filters out entries whose file no longer exists on disk.
 -- ---------------------------------------------------------------------------
 function GridRenderer.getCollectionFileList(coll_name)
-    if not coll_name then return {} end
-    local ok_rc, rc = pcall(require, "readcollection")
-    if not (ok_rc and rc) then return {} end
-    -- Not calling rc:_read() — see note in listAllCollectionNames() above.
-    local coll = rc.coll and rc.coll[coll_name]
-    if not coll then return {} end
     local lfs = require("libs/libkoreader-lfs")
-    local items = {}
-    for _, item in pairs(coll) do
+    local fps = {}
+    for _, item in ipairs(orderedCollectionItems(coll_name)) do
         if lfs.attributes(item.file, "mode") == "file" then
-            items[#items + 1] = item
+            fps[#fps + 1] = item.file
         end
     end
-    table.sort(items, function(a, b) return (a.order or 0) < (b.order or 0) end)
-    local fps = {}
-    for _, item in ipairs(items) do fps[#fps + 1] = item.file end
     return fps
 end
 
@@ -1534,6 +1572,94 @@ function GridRenderer.sortCollection(coll_name, mode)
     rc:updateCollectionOrder(coll_name, ordered)
     rc:write({ [coll_name] = true })
     return true
+end
+
+-- ---------------------------------------------------------------------------
+-- collectionOrderSignature(coll_name) → string | nil
+--
+-- Identifies a collection's current order: entry count plus a 32-bit hash of
+-- the file paths in order. nil when the collection does not exist.
+-- ---------------------------------------------------------------------------
+local function collectionOrderSignature(coll_name)
+    local items = orderedCollectionItems(coll_name)
+    if #items == 0 then return nil end
+    local h = 5381
+    for _i, item in ipairs(items) do
+        local fp = item.file
+        for i = 1, #fp do h = (h * 33 + fp:byte(i)) % 4294967296 end
+        h = (h * 33 + 10) % 4294967296
+    end
+    return #items .. ":" .. h
+end
+
+-- ---------------------------------------------------------------------------
+-- makeSortMenuItem(opts) → menu item
+--
+-- "Sort" row for modules backed by a ReadCollection. Each sub-item applies
+-- GridRenderer.sortCollection once. The applied mode is stored together with
+-- the order signature it produced and is shown (right-side value and checked
+-- radio) only while the collection still has that order, so a manual
+-- rearrangement, an added or removed book, or a restored setting never shows
+-- a mode that no longer describes the list. The row title stays static.
+--
+-- opts:
+--   _lc          function   translate function (ctx_menu._)
+--   state_key    string     settings key holding { mode, sig }
+--   getCollName  function   () → collection name | nil
+--   getCount     function   () → number of books; the row is enabled above 1
+--   refresh      function   () repaints the module
+--   onSorted     function?  () runs after a successful sort, before refresh
+--   separator    boolean?   draws a separator below the row
+-- ---------------------------------------------------------------------------
+function GridRenderer.makeSortMenuItem(opts)
+    local _lc = opts._lc
+    local modes = {
+        { "title_asc",    _lc("Title (A–Z)") },
+        { "title_desc",   _lc("Title (Z–A)") },
+        { "author_asc",   _lc("Author (A–Z)") },
+        { "percent_asc",  _lc("% Read (ascending)") },
+        { "percent_desc", _lc("% Read (descending)") },
+        { "shuffle",      _lc("Shuffle") },
+    }
+    local labels = {}
+    for _i, entry in ipairs(modes) do labels[entry[1]] = entry[2] end
+
+    local function appliedMode()
+        local state = SUISettings:readSetting(opts.state_key)
+        if type(state) ~= "table" then return nil end
+        local sig = collectionOrderSignature(opts.getCollName())
+        return sig and state.sig == sig and state.mode or nil
+    end
+
+    return {
+        text_func           = function() return _lc("Sort") end,
+        mandatory_func      = function() return labels[appliedMode()] or "" end,
+        enabled_func        = function() return opts.getCount() > 1 end,
+        separator           = opts.separator,
+        sub_item_table_func = function()
+            local sub = {}
+            for _i, entry in ipairs(modes) do
+                local mode = entry[1]
+                sub[#sub + 1] = {
+                    text           = entry[2],
+                    radio          = true,
+                    separator      = (mode == "shuffle") or nil,
+                    checked_func   = function() return appliedMode() == mode end,
+                    keep_menu_open = true,
+                    callback       = function()
+                        local name = opts.getCollName()
+                        if name and GridRenderer.sortCollection(name, mode) then
+                            SUISettings:saveSetting(opts.state_key,
+                                { mode = mode, sig = collectionOrderSignature(name) })
+                            if opts.onSorted then opts.onSorted() end
+                            opts.refresh()
+                        end
+                    end,
+                }
+            end
+            return sub
+        end,
+    }
 end
 
 -- ---------------------------------------------------------------------------
@@ -1673,6 +1799,10 @@ function GridRenderer.makeModule(spec)
     M.enabled_key = spec.enabled_key or (id .. "_enabled")
     M.default_on  = spec.default_on or false
     M.has_covers  = true
+    -- Under-cover text (progress % / custom labelForItem / collection name).
+    M.text_elems  = spec.text_elems or { "label" }
+    -- The label is bold until the user picks another variant.
+    Config.declareTextVariants(id, { label = "bold" })
     if spec.is_book_mod then M.is_book_mod = true end
     if spec.isEnabled    then M.isEnabled    = spec.isEnabled end
     if spec.reset         then M.reset         = spec.reset end
@@ -1784,14 +1914,6 @@ function GridRenderer.makeModule(spec)
             refresh      = refresh,
         }
         size_group[#size_group + 1] = Config.makeScaleItem{
-            text_func = function() return _lc("Text Size") end,
-            title     = _lc("Text Size"),
-            info      = _lc("Scale for the percentage read text.\n100% is the default size."),
-            get       = function() return Config.getItemLabelScalePct(id, pfx) end,
-            set       = function(v) Config.setItemLabelScale(v, id, pfx) end,
-            refresh   = refresh,
-        }
-        size_group[#size_group + 1] = Config.makeScaleItem{
             text_func = function() return _lc("Cover Size") end,
             separator = (spec.grid or spec.cols_choice) and true or false,
             title     = _lc("Cover Size"),
@@ -1805,7 +1927,7 @@ function GridRenderer.makeModule(spec)
             -- Lightweight sibling of the "Grid size" double-stepper below:
             -- same SpinWidget-backed single-value stepper
             -- (Config.makeStepperItem) for a consistent widget/feel across
-            -- the whole "Size" submenu, but only Columns (4-5) — no Rows —
+            -- the whole "Proportions" submenu, but only Columns (4-5) — no Rows —
             -- reusing the same GRID_COLS_MIN/MAX-backed storage. See
             -- _gridDims' doc comment above for why this doesn't also
             -- expose Rows.
@@ -1858,57 +1980,23 @@ function GridRenderer.makeModule(spec)
             }
         end
 
-        items[#items + 1] = {
-            text_func      = function() return _lc("Size") end,
-            sub_item_table = size_group,
-        }
-
-        -- Appearance: label visibility + static visual chrome (frame,
-        -- solid background). Grouped separately from Size since these are
-        -- checkboxes rather than value pickers, and touched far less often.
-        local appearance_group = {}
-
+        local appearance_extra = {}
         local lbl = spec.label_fn and spec.label_fn(pfx) or spec.label
         if lbl then
-            appearance_group[#appearance_group + 1] = Config.makeLabelToggleItem(id, lbl, refresh, _lc)
+            appearance_extra[#appearance_extra + 1] = Config.makeLabelToggleItem(id, lbl, refresh, _lc)
         end
 
-        appearance_group[#appearance_group + 1] = {
-            text           = _lc("Frame"),
-            checked_func   = function() return GridRenderer.showFrame(pfx, id) end,
-            keep_menu_open = true,
-            callback       = function()
-                SUISettings:saveSetting(pfx .. id .. "_show_frame", not GridRenderer.showFrame(pfx, id))
-                refresh()
-            end,
-        }
-        appearance_group[#appearance_group + 1] = {
-            text           = _lc("Solid Background"),
-            checked_func   = function() return GridRenderer.solidBg(pfx, id) end,
-            keep_menu_open = true,
-            callback       = function()
-                SUISettings:saveSetting(pfx .. id .. "_solid_bg", not GridRenderer.solidBg(pfx, id))
-                refresh()
-            end,
+        local behaviour_rows = {
+            Config.makeCoverHoldModeItem{
+                mod_id            = id,
+                pfx               = pfx,
+                refresh           = refresh,
+                _lc               = _lc,
+                book_dialog_label = spec.hold_dialog_label,
+            },
         }
 
-        items[#items + 1] = {
-            text_func      = function() return _lc("Appearance") end,
-            separator      = true,
-            sub_item_table = appearance_group,
-        }
-
-        -- Long Press stays a top-level row (unchanged) — it's already a
-        -- single compact row with its own submenu, so nesting it one level
-        -- deeper would gain nothing.
-        items[#items + 1] = Config.makeCoverHoldModeItem{
-            mod_id            = id,
-            pfx               = pfx,
-            refresh           = refresh,
-            _lc               = _lc,
-            book_dialog_label = spec.hold_dialog_label,
-        }
-
+        local badge_rows = nil
         if not spec.renderCell then
             local pb_group = {}
             local badge_colors_on = spec.badge_colors ~= false
@@ -2093,16 +2181,13 @@ function GridRenderer.makeModule(spec)
             end
 
             if #pb_group > 0 then
-                items[#items + 1] = {
-                    text_func      = function() return _lc("Progress and Badges") end,
-                    sub_item_table = pb_group,
-                }
+                badge_rows = pb_group
             end
         end
 
         for _, es in ipairs(spec.extra_settings or {}) do
             local skey = pfx .. id .. "_" .. es.key
-            items[#items + 1] = {
+            behaviour_rows[#behaviour_rows + 1] = {
                 text           = es.label,
                 checked_func   = function() return SUISettings:readSetting(skey) == true
                                               or (SUISettings:readSetting(skey) == nil and es.default) end,
@@ -2116,13 +2201,35 @@ function GridRenderer.makeModule(spec)
             }
         end
 
+        local content_rows = nil
         if spec.extra_menu_items_after then
+            content_rows = {}
             for _, it in ipairs(spec.extra_menu_items_after(ctx_menu)) do
-                items[#items + 1] = it
+                content_rows[#content_rows + 1] = it
             end
         end
 
-        return items
+        return Config.buildModuleMenu({
+            items   = #items > 0 and items or nil,
+            content = content_rows,
+            appearance = {
+                size  = size_group,
+                text  = {
+                    mod_id  = id,
+                    elems   = M.text_elems,
+                    labels  = {
+                        label = spec.text_label or _lc("Progress Text"),
+                    },
+                    info    = _lc("Size of this text.\n100% is the default size."),
+                    pfx     = pfx,
+                    refresh = refresh,
+                    _lc     = _lc,
+                },
+                extra = #appearance_extra > 0 and appearance_extra or nil,
+            },
+            badges    = badge_rows,
+            behaviour = behaviour_rows,
+        }, ctx_menu)
     end
 
     return M

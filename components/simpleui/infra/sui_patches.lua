@@ -182,14 +182,31 @@ local function _showHSCold(plugin_ref, HS_ref, prev_action)
 end
 
 -- Close all non-fullscreen widgets on the stack except the FM.
--- Used before restoring the homescreen so orphaned toasts/toasters are gone.
+-- True only for auto-dismissing notices (InfoMessage toasts, loading flashes).
+-- A real dialog may carry a timeout for auto-close *and* still be interactive
+-- (buttons, input). Require a positive timeout and no interactive chrome so
+-- Tools → plugin screens (achievements, Frotz, ConfirmBox, …) are never swept
+-- by the homescreen-restore path.
+local function _isTransientToast(w)
+    if not w then return false end
+    local t = w.timeout
+    if type(t) ~= "number" or t <= 0 then return false end
+    -- Interactive surfaces: button rows, movable input, or an explicit buttons table.
+    if w.buttons or w.button_table or w.movable then return false end
+    if w.textinput or w.input or w.input_dialog then return false end
+    return true
+end
+
+-- Used before restoring the homescreen so orphaned toasts are gone.
+-- Only auto-dismissing notices are swept; real dialogs stay on the stack.
 local function _closeOrphanedPopups(fm_ref, hs_inst)
     local stack    = UI.getWindowStack()
     local to_close = {}
     for _, entry in ipairs(stack) do
         local w = entry.widget
         if w and w ~= fm_ref and not w.covers_fullscreen
-                and not (hs_inst and w == hs_inst) then
+                and not (hs_inst and w == hs_inst)
+                and _isTransientToast(w) then
             to_close[#to_close + 1] = w
         end
     end
@@ -2400,19 +2417,27 @@ function M.patchUIManagerClose(plugin)
         -- call and this execution (e.g. coll_list opened by onReturn).
         local fm_mod   = package.loaded["apps/filemanager/filemanager"]
         local live_fm2 = fm_mod and fm_mod.instance
+        local current_fm = live_fm2 or fm
         for _, entry in ipairs(UI.getWindowStack()) do
             local w = entry.widget
-            if w and w ~= (live_fm2 or fm) and w.covers_fullscreen then return end
+            if w and w ~= current_fm then
+                if w.covers_fullscreen then return end
+                -- Non-fullscreen dialog still open (plugin achievement detail,
+                -- Frotz resume UI, ConfirmBox, …). The Tools/TouchMenu close
+                -- path schedules this callback after the dialog is already on
+                -- the stack — reopening the homescreen would cover or, with
+                -- the old orphan sweep, destroy that dialog.
+                if not _isTransientToast(w) then return end
+            end
         end
 
         -- Skip if an external caller navigated the FM to a folder.
-        local current_fm = live_fm2 or fm
         if current_fm and current_fm._sui_show_folder_pending then
             current_fm._sui_show_folder_pending = nil
             return
         end
 
-        -- Close any orphaned non-fullscreen widgets before showing the HS.
+        -- Close leftover auto-dismissing toasts only.
         _closeOrphanedPopups(fm, nil)
 
         local prev_action = plugin_ref.active_action
@@ -3770,6 +3795,99 @@ function M.unpatchFontGetFace(plugin)
 end
 
 -- ---------------------------------------------------------------------------
+-- Icon colours in night mode (Style ▸ Icons ▸ Don't Invert Colored Icons in Night Mode)
+-- Night mode inverts the whole frame, which also flips the hues of coloured
+-- icons. ImageWidget:paintTo is wrapped so that an alpha icon holding a
+-- coloured bitmap is composited in displayed space: the covered region is
+-- inverted, the icon is painted as usual, and the region is inverted back.
+-- Frame inversion then restores the original colours, and the alpha channel
+-- keeps blending against the real background.
+-- Monochrome icons are painted as usual so they keep following the UI colours.
+-- ---------------------------------------------------------------------------
+
+-- Minimum channel spread (0-255) for a pixel to count as coloured.
+local _ICON_COLOR_SPREAD_MIN = 32
+
+function M.patchIconNightColors(plugin)
+    local ImageWidget = require("ui/widget/imagewidget")
+    if ImageWidget._simpleui_icon_nightcolor_patched then return end
+    ImageWidget._simpleui_icon_nightcolor_patched = true
+
+    local Blitbuffer = require("ffi/blitbuffer")
+    local orig_paintTo = ImageWidget.paintTo
+    plugin._orig_imagewidget_paintTo = orig_paintTo
+
+    local function isColorType(bb_type)
+        return bb_type == Blitbuffer.TYPE_BBRGB16
+            or bb_type == Blitbuffer.TYPE_BBRGB24
+            or bb_type == Blitbuffer.TYPE_BBRGB32
+    end
+
+    -- Bitmaps are shared through ImageCache, so the scan result is cached per
+    -- bitmap and released with it.
+    local has_color = setmetatable({}, { __mode = "k" })
+    local function hasColor(icon_bb)
+        local cached = has_color[icon_bb]
+        if cached ~= nil then return cached end
+        local found = false
+        if isColorType(icon_bb:getType()) then
+            for py = 0, icon_bb:getHeight() - 1 do
+                for px = 0, icon_bb:getWidth() - 1 do
+                    local c = icon_bb:getPixel(px, py):getColorRGB32()
+                    if c.alpha > 0
+                       and math.max(c.r, c.g, c.b) - math.min(c.r, c.g, c.b) >= _ICON_COLOR_SPREAD_MIN then
+                        found = true
+                        break
+                    end
+                end
+                if found then break end
+            end
+        end
+        has_color[icon_bb] = found
+        return found
+    end
+
+    ImageWidget.paintTo = function(self, bb, x, y)
+        if not (self.is_icon and self.alpha and Screen.night_mode
+                and SUIStyle.keepIconColorsInNight()
+                and Screen:isColorEnabled() and isColorType(bb:getType())) then
+            return orig_paintTo(self, bb, x, y)
+        end
+        local size = self:getSize()  -- renders the bitmap on first use
+        if not (self._bb and hasColor(self._bb)) then
+            return orig_paintTo(self, bb, x, y)
+        end
+
+        local w, h = size.w, size.h
+        local region = Blitbuffer.new(w, h, bb:getType())
+        region:blitFrom(bb, 0, 0, x, y, w, h)
+        region:invertRect(0, 0, w, h)
+        -- Dimming is applied after the round trip so it keeps lightening the
+        -- frame rather than the displayed image.
+        local dim = self.dim
+        self.dim = nil
+        orig_paintTo(self, region, 0, 0)
+        self.dim = dim
+        region:invertRect(0, 0, w, h)
+        if dim then region:lightenRect(0, 0, w, h) end
+        bb:blitFrom(region, x, y, 0, 0, w, h)
+        region:free()
+        self.dimen.x, self.dimen.y = x, y
+    end
+end
+
+function M.unpatchIconNightColors(plugin)
+    local ImageWidget = package.loaded["ui/widget/imagewidget"]
+    if not ImageWidget or not ImageWidget._simpleui_icon_nightcolor_patched then return end
+
+    if plugin._orig_imagewidget_paintTo then
+        ImageWidget.paintTo              = plugin._orig_imagewidget_paintTo
+        plugin._orig_imagewidget_paintTo = nil
+    end
+    ImageWidget._simpleui_icon_nightcolor_patched = nil
+end
+
+-- ---------------------------------------------------------------------------
 -- installAll / teardownAll
 -- ---------------------------------------------------------------------------
 
@@ -4656,6 +4774,8 @@ function M.patchWallpaperFM(plugin)
     -- getSize()), the flag is read BEFORE the cache lookup, forcing the
     -- "...|alpha" hash and compositing with the alpha channel intact, without
     -- touching the background already painted by the wallpaper.
+    -- The same alpha is requested when icon night-mode colours are kept
+    -- (see patchIconNightColors), which composites over the real background.
     --
     -- original_in_nightmode=false: native ImageWidget/KOReader field.
     -- When alpha=true and the screen is in night mode, ImageWidget:paintTo
@@ -4677,14 +4797,47 @@ function M.patchWallpaperFM(plugin)
 
         IconWidget.init = function(iw_self, ...)
             orig_iw_init(iw_self, ...)
-            -- Only intervenes when the FM wallpaper is active and the icon does
-            -- not yet have an explicit alpha defined by the instantiating widget.
-            if _wallpaperEnabledFM() and not iw_self.alpha then
-                iw_self.alpha = true
-                iw_self.original_in_nightmode = false
+            -- Only intervenes when the icon does not yet have an explicit alpha
+            -- defined by the instantiating widget. The FM wallpaper needs the
+            -- alpha channel to show through; the night-mode colour option needs
+            -- it to composite the icon over the real background.
+            if not iw_self.alpha then
+                if _wallpaperEnabledFM() then
+                    iw_self.alpha = true
+                    iw_self.original_in_nightmode = false
+                elseif SUIStyle.keepIconColorsInNight() then
+                    iw_self.alpha = true
+                end
             end
         end
     end
+
+
+-- Reads the current pagination strength on every paint (like the title bar
+-- button scrim), so a menu created before an opacity change still reflects
+-- it, and a menu created at 0% still picks up a later increase.
+local function _applyPaginationScrim(menu_self)
+    local page_info = menu_self and menu_self.page_info
+    if not page_info or page_info._sui_pagination_scrim then return end
+    page_info._sui_pagination_scrim = true
+    local orig_paint = page_info.paintTo
+    function page_info:paintTo(bb, x, y)
+        local ok, WP = pcall(require, "features/sui_wallpaper")
+        local strength = ok and WP and WP.getPaginationBackdropStrength and WP.getPaginationBackdropStrength() or 0
+        if strength > 0 then
+            local h = (self.dimen and self.dimen.h) or 0
+            if h <= 0 then
+                local sz = self.getSize and self:getSize()
+                h = sz and sz.h or 0
+            end
+            -- Full-width scrim spanning the page bar's height.
+            if h > 0 then
+                WP.paintBackdrop(bb, 0, y, Screen:getWidth(), h, strength)
+            end
+        end
+        return orig_paint(self, bb, x, y)
+    end
+end
 
     -- -----------------------------------------------------------------------
     -- Menu.init background patch
@@ -4730,6 +4883,8 @@ function M.patchWallpaperFM(plugin)
                 if inner and inner[1] then
                     inner[1].background = nil
                 end
+                -- Optional scrim behind the native page/pagination bar.
+                pcall(_applyPaginationScrim, menu_self)
             end
         end
     end
@@ -5089,6 +5244,7 @@ function M.installAll(plugin)
     M.patchResetSettingsButton(plugin)
     M.patchFileDialogBookTitle(plugin)
     M.patchFontGetFace(plugin)
+    M.patchIconNightColors(plugin)
     -- Install the FM + Reader tab icon patches so system icon overrides
     -- survive menu rebuilds.
     local ok_ss, SUIStyle = pcall(require, "features/sui_style")
@@ -5323,6 +5479,7 @@ function M.teardownAll(plugin)
     M.unpatchResetSettingsButton(plugin)
     M.unpatchFileDialogBookTitle(plugin)
     M.unpatchFontGetFace(plugin)
+    M.unpatchIconNightColors(plugin)
 
     local FMH = package.loaded["apps/filemanager/filemanagerhistory"]
     if FMH and FMH._sui_onMenuHold_patched then

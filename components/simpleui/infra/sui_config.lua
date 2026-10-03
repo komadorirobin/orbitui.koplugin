@@ -12,6 +12,7 @@ local SUISettings       = require("infra/sui_store")
 local SUICoverCache     = require("infra/sui_cover_cache")
 local logger            = require("logger")
 local _ = require("infra/sui_i18n").translate
+local T = require("ffi/util").template
 
 local M = {}
 
@@ -162,7 +163,30 @@ function M.nextCustomQAId()          return _QA_lazy().nextCustomQAId()         
 -- 3. Topbar & Tab Configurations
 -- ===========================================================================
 
-M.TOPBAR_ITEMS = { "clock", "wifi", "brightness", "battery", "disk", "ram", "custom_text" }
+M.TOPBAR_ITEMS = { "clock", "wifi", "bluetooth", "brightness", "battery", "disk", "ram", "custom_text" }
+
+-- TOPBAR_ITEMS filtered to what this device can actually display.
+function M.getAvailableTopbarItems()
+    local list = {}
+    local bt_ok = nil
+    for _, k in ipairs(M.TOPBAR_ITEMS) do
+        if k == "bluetooth" then
+            if bt_ok == nil then
+                local ok, Topbar = pcall(require, "screens/sui_topbar")
+                bt_ok = ok and Topbar and Topbar.isBluetoothAvailable
+                    and Topbar.isBluetoothAvailable() or false
+            end
+            if not bt_ok then
+                -- skip: no Bluetooth backend on this device
+            else
+                list[#list + 1] = k
+            end
+        else
+            list[#list + 1] = k
+        end
+    end
+    return list
+end
 
 local _topbar_item_labels = nil
 function M.TOPBAR_ITEM_LABEL(k)
@@ -170,6 +194,7 @@ function M.TOPBAR_ITEM_LABEL(k)
         _topbar_item_labels = {
             clock       = _("Clock"),
             wifi        = _("WiFi"),
+            bluetooth   = _("Bluetooth"),
             brightness  = _("Brightness"),
             battery     = _("Battery"),
             disk        = _("Disk Usage"),
@@ -908,6 +933,318 @@ function M.setModuleBackgroundEnabled(mod_id, pfx, on)
     SUISettings:set(_moduleBackgroundKey(mod_id, pfx), on and true or nil)
 end
 
+-- Per-element text style: a font family, a size scale and a variant (regular,
+-- bold, italic, bold italic) for one text element (title, author, ...) of a
+-- module. An unset family means the default UI font; an unset scale means
+-- 100%; an unset variant means the element's default variant, "regular"
+-- unless the module declares otherwise (M.declareTextVariants).
+local TEXT_FONT_INFIX    = "_text_font_"
+local TEXT_SCALE_INFIX   = "_text_scale_"
+local TEXT_VARIANT_INFIX = "_text_variant_"
+local TEXT_INFIXES       = { TEXT_FONT_INFIX, TEXT_SCALE_INFIX, TEXT_VARIANT_INFIX }
+
+local function _textKey(infix, mod_id, elem, pfx)
+    return (pfx or "simpleui_hs_") .. mod_id .. infix .. elem
+end
+
+local _variant_defaults = {}   -- module id → { element id → variant }
+
+-- Declares the variant of the elements of `mod_id` that are not regular by
+-- default, e.g. { title = "bold" }.
+function M.declareTextVariants(mod_id, defaults)
+    _variant_defaults[mod_id] = defaults
+end
+
+local function _defaultVariant(mod_id, elem)
+    local defaults = _variant_defaults[mod_id]
+    return defaults and defaults[elem] or "regular"
+end
+
+function M.getTextStyle(mod_id, elem, pfx)
+    local family  = SUISettings:get(_textKey(TEXT_FONT_INFIX, mod_id, elem, pfx))
+    local n       = tonumber(SUISettings:get(_textKey(TEXT_SCALE_INFIX, mod_id, elem, pfx)))
+    local variant = SUISettings:get(_textKey(TEXT_VARIANT_INFIX, mod_id, elem, pfx))
+    if not require("features/sui_style").isVariant(variant) then
+        variant = _defaultVariant(mod_id, elem)
+    end
+    return {
+        family  = (type(family) == "string" and family ~= "") and family or nil,
+        scale   = n and _clamp(n) / 100 or 1.0,
+        variant = variant,
+    }
+end
+
+-- Text style of every element in `elems` (a list of element ids), keyed by id.
+function M.readTextStyles(mod_id, elems, pfx)
+    local styles = {}
+    for _i, elem in ipairs(elems) do
+        styles[elem] = M.getTextStyle(mod_id, elem, pfx)
+    end
+    return styles
+end
+
+-- Text styles of a module: the screen's pre-read settings bundle when `ctx`
+-- carries one, a direct settings read otherwise.
+function M.resolveTextStyles(ctx, mod_id, elems)
+    local bundle = ctx and ctx.cfg and ctx.cfg[mod_id]
+    return bundle and bundle.text or M.readTextStyles(mod_id, elems, ctx and ctx.pfx)
+end
+
+function M.getTextStyleScalePct(mod_id, elem, pfx)
+    local n = tonumber(SUISettings:get(_textKey(TEXT_SCALE_INFIX, mod_id, elem, pfx)))
+    return n and _clamp(n) or SCALE_DEF
+end
+
+function M.setTextStyleScale(pct, mod_id, elem, pfx)
+    SUISettings:set(_textKey(TEXT_SCALE_INFIX, mod_id, elem, pfx), _clamp(pct))
+end
+
+-- family == nil clears the choice.
+function M.setTextStyleFont(family, mod_id, elem, pfx)
+    local key = _textKey(TEXT_FONT_INFIX, mod_id, elem, pfx)
+    if family then SUISettings:set(key, family) else SUISettings:del(key) end
+end
+
+-- variant == nil clears the choice.
+function M.setTextStyleVariant(variant, mod_id, elem, pfx)
+    local key = _textKey(TEXT_VARIANT_INFIX, mod_id, elem, pfx)
+    if variant then SUISettings:set(key, variant) else SUISettings:del(key) end
+end
+
+-- Drops every stored text choice of the listed elements, returning them to
+-- their defaults.
+function M.resetTextStyles(mod_id, elems, pfx)
+    for _i, elem in ipairs(elems) do
+        for _j, infix in ipairs(TEXT_INFIXES) do
+            SUISettings:del(_textKey(infix, mod_id, elem, pfx))
+        end
+    end
+end
+
+-- Menu entry for one text element: "Font" and "Style" pickers (regular, bold,
+-- italic, bold italic), plus a "Size" spinner unless the size is controlled
+-- elsewhere.
+-- opts: { title, info, mod_id, elem, pfx, refresh, _lc, family_only }
+function M.makeTextStyleItem(opts)
+    local mod_id, elem, pfx, refresh = opts.mod_id, opts.elem, opts.pfx, opts.refresh
+    local _lc = opts._lc or _
+    local SUIStyle = require("features/sui_style")
+
+    local function family() return M.getTextStyle(mod_id, elem, pfx).family end
+    local function familyLabel() return family() or _lc("Default") end
+    local function familyMenuItems()
+        return SUIStyle.makeFamilyMenuItems(
+            family,
+            function(name) M.setTextStyleFont(name, mod_id, elem, pfx) end,
+            refresh)
+    end
+
+    local default_variant = _defaultVariant(mod_id, elem)
+    local function variant() return M.getTextStyle(mod_id, elem, pfx).variant end
+    local function variantMenuItems()
+        return SUIStyle.makeVariantMenuItems({
+            get     = variant,
+            -- The default is stored as "no choice", like the default font.
+            set     = function(v)
+                M.setTextStyleVariant(v ~= default_variant and v or nil, mod_id, elem, pfx)
+            end,
+            refresh = refresh,
+            family  = family,
+            default = default_variant,
+        })
+    end
+
+    local entries = {
+        { text = _lc("Font"), value_func = familyLabel, sub_item_table_func = familyMenuItems },
+        {
+            text                = _lc("Style"),
+            value_func          = function() return SUIStyle.variantLabel(variant()) end,
+            sub_item_table_func = variantMenuItems,
+        },
+    }
+    if not opts.family_only then
+        table.insert(entries, 2, M.makeScaleItem({
+            text_func = function() return _lc("Size") end,
+            title     = opts.title,
+            info      = opts.info,
+            get       = function() return M.getTextStyleScalePct(mod_id, elem, pfx) end,
+            set       = function(v) M.setTextStyleScale(v, mod_id, elem, pfx) end,
+            refresh    = refresh,
+            value_step = 5,
+        }))
+    end
+    -- The controls are independent: no value on the parent row (chevron
+    -- only), so the user is not shown a single ambiguous summary.
+    return { text = opts.title, sub_item_table = entries }
+end
+
+-- Item of one element of a text section; `opts` are the section's options.
+local function _textElementItem(opts, elem, title)
+    return M.makeTextStyleItem({
+        mod_id      = opts.mod_id,
+        elem        = elem,
+        title       = title,
+        info        = opts.info,
+        pfx         = opts.pfx,
+        refresh     = opts.refresh,
+        _lc         = opts._lc,
+        family_only = opts.family_only,
+    })
+end
+
+-- "Fonts" submenu entry: one text-style item per element of `opts.elems`.
+-- opts: { mod_id, elems, labels, pfx, refresh, _lc, info, family_only }
+--   elems   list of element ids, in menu order
+--   labels  element id → translated menu title
+function M.makeTextStyleMenu(opts)
+    local _lc = opts._lc or _
+    local items = {}
+    for _i, elem in ipairs(opts.elems) do
+        items[#items + 1] = _textElementItem(opts, elem, opts.labels[elem])
+    end
+    local title = opts.section_title or _lc("Text")
+    return {
+        text_func      = function() return title end,
+        sub_item_table = items,
+    }
+end
+
+-- Typography block: one element → a single entry (Label / element title);
+-- several elements → a "Text" submenu. Layout scales do not belong here.
+-- opts: same as makeTextStyleMenu
+function M.makeTextSection(opts)
+    local elems = opts.elems
+    if not elems or #elems == 0 then return nil end
+    if #elems == 1 then
+        local elem = elems[1]
+        local _lc = opts._lc or _
+        return _textElementItem(opts, elem, (opts.labels and opts.labels[elem]) or _lc("Label"))
+    end
+    return M.makeTextStyleMenu(opts)
+end
+
+-- Flatten a section folder when it would wrap a single child.
+local function _asSection(title, rows)
+    if not rows or #rows == 0 then return nil end
+    if #rows == 1 then return rows[1] end
+    return {
+        text_func      = function() return title end,
+        sub_item_table = rows,
+    }
+end
+
+local function _resolveRows(rows)
+    if rows == nil then return nil end
+    if type(rows) == "function" then rows = rows() end
+    if type(rows) ~= "table" or #rows == 0 then return nil end
+    return rows
+end
+
+-- Build a module settings menu in canonical order:
+--   Items → Content → Appearance → Progress and Badges → Behaviour
+-- spec fields (all optional):
+--   items, content, badges, behaviour  → list of menu rows (or function → list)
+--   appearance = {
+--     size   → layout proportion rows (Scale, Cover, Gap, …); never per-element text size
+--     text   → opts for makeTextSection (mod_id, elems, labels, …)
+--     extra  → Frame, Alignment, Button Type, Clock Style, …
+--   }
+-- ctx: { _, refresh, … }  (_ used for section titles)
+function M.buildModuleMenu(spec, ctx)
+    local _lc = (ctx and (ctx._ or ctx.translate)) or _
+    local out = {}
+
+    local function push_top(title, rows)
+        rows = _resolveRows(rows)
+        if not rows then return end
+        local entry = _asSection(title, rows)
+        if entry then out[#out + 1] = entry end
+    end
+
+    -- Master rows (e.g. Enable … on chrome bars) stay unwrapped at the top.
+    do
+        local master = _resolveRows(spec.master)
+        if master then
+            for _i, row in ipairs(master) do out[#out + 1] = row end
+        end
+    end
+
+    -- Items: a single pre-built entry (sub_item_table and/or sui_build) is
+    -- already the "Items" row — push it as-is so SUI keeps sui_build and the
+    -- classic submenu is not unwrapped into the section.
+    do
+        local rows = _resolveRows(spec.items)
+        if rows then
+            local one = rows[1]
+            if #rows == 1 and one and (one.sui_build or one.sub_item_table or one.sub_item_table_func) then
+                out[#out + 1] = one
+            else
+                local entry = _asSection(_lc("Items"), rows)
+                if entry then out[#out + 1] = entry end
+            end
+        end
+    end
+    push_top(_lc("Content"), spec.content)
+
+    do
+        local app = spec.appearance or {}
+        local rows = {}
+        local size_rows = _resolveRows(app.size)
+        if size_rows then
+            local size_entry = _asSection(_lc("Proportions"), size_rows)
+            if size_entry then rows[#rows + 1] = size_entry end
+        end
+        if app.text then
+            local text_entry = M.makeTextSection(app.text)
+            if text_entry then rows[#rows + 1] = text_entry end
+        end
+        local extra = _resolveRows(app.extra)
+        if extra then
+            for _i, row in ipairs(extra) do rows[#rows + 1] = row end
+        end
+        if #rows > 0 then
+            local entry = _asSection(_lc("Appearance"), rows)
+            if entry then out[#out + 1] = entry end
+        end
+    end
+
+    push_top(_lc("Progress and Badges"), spec.badges)
+    push_top(_lc("Behaviour"), spec.behaviour)
+
+    return out
+end
+
+-- Label text style of the global chrome bars. A bar is not tied to a screen,
+-- so its style is keyed with the global prefix and a storage id instead of a
+-- screen prefix. The ids keep the keys under each bar's own settings prefix
+-- ("simpleui_bar_", "simpleui_qs_bar_"), which the backup categories match on.
+local CHROME_PFX  = "simpleui_"
+local CHROME_ELEM = "label"
+local CHROME_BARS = { navbar = "bar", quick_settings = "qs_bar" }
+
+local function _chromeBarId(bar)
+    return assert(CHROME_BARS[bar], "unknown chrome bar: " .. tostring(bar))
+end
+
+-- Text style (family, variant) of the labels of `bar` ("navbar" | "quick_settings").
+function M.getChromeLabelStyle(bar)
+    return M.getTextStyle(_chromeBarId(bar), CHROME_ELEM, CHROME_PFX)
+end
+
+-- Font and Style picker entry for the labels of a chrome bar.
+-- opts: { bar, title, refresh, _lc }
+function M.makeChromeLabelFontItem(opts)
+    return M.makeTextStyleItem({
+        title       = opts.title,
+        mod_id      = _chromeBarId(opts.bar),
+        elem        = CHROME_ELEM,
+        pfx         = CHROME_PFX,
+        refresh     = opts.refresh,
+        _lc         = opts._lc,
+        family_only = true,
+    })
+end
+
 -- Reset Scales
 function M.resetAllScales(pfx, pfx_qa)
     SUISettings:del(MODULE_SCALE_KEY)
@@ -932,6 +1269,16 @@ function M.resetAllScales(pfx, pfx_qa)
             end
         end
     end
+    -- Per-element text sizes are scales too. Collect first: the store
+    -- forbids mutation while iterating its keys.
+    local scale_pfx, text_scales = pfx or "simpleui_hs_", {}
+    for key in SUISettings:iterateKeys() do
+        if type(key) == "string" and key:sub(1, #scale_pfx) == scale_pfx
+           and key:find(TEXT_SCALE_INFIX, #scale_pfx + 1, true) then
+            text_scales[#text_scales + 1] = key
+        end
+    end
+    for _i, key in ipairs(text_scales) do SUISettings:del(key) end
     if pfx_qa then
         for slot = 1, 3 do
             SUISettings:del(pfx_qa .. slot .. "_scale")
@@ -984,6 +1331,54 @@ function M.makeScaleItem(opts)
                 callback      = function(spin)
                     opts.set(spin.value)
                     opts.refresh()
+                end,
+            })
+        end,
+    }
+end
+
+-- Backdrop opacity entry (0–100 %, labelled Transparent / N% / Solid),
+-- shared by every surface drawn over the wallpaper. The dialog documents the
+-- semantic default, which its reset button restores.
+-- opts: {
+--   title         — entry text and dialog title
+--   get / set     — strength accessors (0–100)
+--   refresh       — called with the touch menu once a value is applied
+--   default_value — semantic default strength
+--   info          — optional dialog description (generic one otherwise)
+--   enabled_func  — optional menu enabled state
+--   value_func    — optional override of the value label
+--   _lc           — optional translator (defaults to the plugin translator)
+-- }
+function M.makeBackdropStrengthItem(opts)
+    local _lc = opts._lc or _
+    local function label(strength)
+        return require("features/sui_wallpaper").formatBackdropStrength(strength, _lc)
+    end
+    return {
+        text           = opts.title,
+        enabled_func   = opts.enabled_func,
+        keep_menu_open = true,
+        value_func     = opts.value_func or function() return label(opts.get()) end,
+        callback       = function(touchmenu)
+            local SpinWidget = require("ui/widget/spinwidget")
+            local UIManager  = require("ui/uimanager")
+            local info = opts.info
+                or _lc("0% transparent, 100% solid. Values in between add a scrim over the wallpaper.")
+            UIManager:show(SpinWidget:new{
+                title_text    = opts.title,
+                info_text     = info .. "\n" .. T(_lc("Default: %1"), label(opts.default_value)),
+                value         = opts.get(),
+                value_min     = 0,
+                value_max     = 100,
+                value_step    = 5,
+                unit          = "%",
+                ok_text       = _("Apply"),
+                cancel_text   = _("Cancel"),
+                default_value = opts.default_value,
+                callback      = function(spin)
+                    opts.set(spin.value)
+                    opts.refresh(touchmenu)
                 end,
             })
         end,
@@ -1233,6 +1628,16 @@ end
 -- ---------------------------------------------------------------------------
 function M.appendModuleChromeItems(items, opts)
     local mod, pfx, refresh, on_change = opts.mod, opts.pfx, opts.refresh, opts.on_change
+    local _lc = opts._lc or _
+
+    -- Per-module Appearance: merge Frame + Background into existing submenu
+    -- when the module already provides one; otherwise append a new one.
+    do
+        local ok, Chrome = pcall(require, "features/sui_module_chrome")
+        if ok and Chrome and mod and mod.id then
+            Chrome.mergeAppearanceIntoItems(items, pfx, mod.id, refresh, _lc)
+        end
+    end
 
     if not mod.no_top_margin then
         items[#items + 1] = M.makeGapItem({

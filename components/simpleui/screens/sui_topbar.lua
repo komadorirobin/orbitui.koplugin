@@ -30,6 +30,14 @@ local M = {}
 -- Priority: transparent > default.
 -- ---------------------------------------------------------------------------
 local function _getBarBg()
+    local ok, WP = pcall(require, "features/sui_wallpaper")
+    if ok and WP and WP.getStatusbarBackdropStrength then
+        local s = WP.getStatusbarBackdropStrength()
+        if s <= 0 then return nil end
+        if s >= 100 then return SUIStyle.COLOR.surface end
+        -- Partial scrim: no FrameContainer bg; painted in buildTopbarWidget.
+        return nil, s
+    end
     if SUISettings:isTrue("simpleui_statusbar_transparent") then return nil end
     return SUIStyle.COLOR.surface
 end
@@ -62,12 +70,57 @@ local function hwHasWifi()
     return _hw_has_wifi
 end
 
-local function hwHasBt()
-    if _hw_has_bt == nil then
-        local ok, v = pcall(function() return Device:hasBluetoothToggle() end)
-        _hw_has_bt = ok and v == true
+-- Kindle exposes BT state via LIPC (com.lab126.btfd) when the Device API
+-- has no Bluetooth helpers. Returns the integer BTstate, or nil if unavailable.
+local function readKindleBtState()
+    local is_kindle = false
+    pcall(function() is_kindle = Device:isKindle() == true end)
+    if not is_kindle then return nil end
+
+    local value
+    local ok_lipc, lipc = pcall(require, "liblipclua")
+    if ok_lipc and lipc then
+        local handle = lipc.init("com.github.koreader.simpleui.bluetooth")
+        if handle then
+            local ok, state = pcall(handle.get_int_property, handle, "com.lab126.btfd", "BTstate")
+            pcall(handle.close, handle)
+            if ok and type(state) == "number" then value = state end
+        end
     end
+    if value == nil then
+        local out = io.popen("lipc-get-prop -i com.lab126.btfd BTstate 2>/dev/null", "r")
+        if out then
+            value = out:read("*n")
+            out:close()
+        end
+    end
+    return type(value) == "number" and value or nil
+end
+
+local function hwHasBt()
+    if _hw_has_bt ~= nil then return _hw_has_bt end
+    local ok, v = pcall(function() return Device:hasBluetoothToggle() end)
+    if ok and v == true then
+        _hw_has_bt = true
+        return true
+    end
+    -- Probe the platform backend when Device does not advertise BT toggle.
+    _hw_has_bt = readKindleBtState() ~= nil
     return _hw_has_bt
+end
+
+local function isBtOn()
+    local ok, v = pcall(function() return Device:isBluetoothOn() end)
+    if ok and type(v) == "boolean" then return v end
+    if ok and v ~= nil then return not not v end
+    local state = readKindleBtState()
+    if state ~= nil then return state ~= 0 end
+    return false
+end
+
+-- True when the platform can report Bluetooth state (Device API or Kindle backend).
+function M.isBluetoothAvailable()
+    return hwHasBt()
 end
 
 -- ---------------------------------------------------------------------------
@@ -245,10 +298,11 @@ function M.getTopbarInfo()
     end
 
     if hwHasBt() then
-        local ok_b, bt = pcall(function() return Device:isBluetoothOn() end)
-        info.bluetooth = ok_b and not not bt or false
+        info.bluetooth = isBtOn()
+        info.has_bluetooth = true
     else
         info.bluetooth = false
+        info.has_bluetooth = false
     end
 
     -- Brightness: single pcall wrapping the two-step lookup.
@@ -350,6 +404,14 @@ function M.buildTopbarWidget()
                 return "\u{ECA9}", nil, true   -- wifi off icon
             end
             return nil, nil
+        end,
+        bluetooth = function()
+            if not info.has_bluetooth then return nil, nil end
+            -- Nerd Font: FA bluetooth (on). Off uses the outline-style companion glyph.
+            if info.bluetooth then
+                return "\u{F293}", nil, true
+            end
+            return "\u{F294}", nil, true
         end,
         brightness = function()
             if info.brightness then
@@ -473,12 +535,29 @@ function M.buildTopbarWidget()
         left_w, right_w, center_w,
     }
 
-    return FrameContainer:new{
+    local bar_bg, scrim_strength = _getBarBg()
+    local root = FrameContainer:new{
         bordersize    = 0, padding = 0, margin = 0,
         padding_left  = side_m, padding_right = side_m,
-        background    = _getBarBg(),
+        background    = bar_bg,
         row,
     }
+    if scrim_strength and scrim_strength > 0 and scrim_strength < 100 then
+        local orig_paint = root.paintTo
+        local strength = scrim_strength
+        function root:paintTo(bb, x, y)
+            local dimen = self.dimen or self[1] and self[1].dimen
+            local h = (dimen and dimen.h) or M.TOPBAR_H()
+            -- Full screen width: the bar content is inset with side margins,
+            -- but the backdrop should span edge to edge.
+            local ok, WP = pcall(require, "features/sui_wallpaper")
+            if ok and WP and WP.paintBackdrop then
+                WP.paintBackdrop(bb, 0, y, Screen:getWidth(), h, strength)
+            end
+            return orig_paint(self, bb, x, y)
+        end
+    end
+    return root
 end
 
 local function _showTopbarSettingsWindow(plugin)

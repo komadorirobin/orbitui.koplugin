@@ -153,7 +153,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
     -- goes through QA.allIds()/QA.getEntry() instead, so externally
     -- registered actions (Custom Screens) are included. See the QA require
     -- above.
-    local TOPBAR_ITEMS        = Config.TOPBAR_ITEMS
+    local TOPBAR_ITEMS        = Config.getAvailableTopbarItems()
     local TOPBAR_ITEM_LABEL   = Config.TOPBAR_ITEM_LABEL
     local MAX_CUSTOM_QA       = Config.MAX_CUSTOM_QA
     local CUSTOM_ICON         = Config.CUSTOM_ICON
@@ -775,7 +775,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
         }
 
         local sorted_keys = {}
-        for _i, k in ipairs(TOPBAR_ITEMS) do sorted_keys[#sorted_keys + 1] = k end
+        for _i, k in ipairs(Config.getAvailableTopbarItems()) do sorted_keys[#sorted_keys + 1] = k end
         table.sort(sorted_keys, function(a, b) return TOPBAR_ITEM_LABEL(a):lower() < TOPBAR_ITEM_LABEL(b):lower() end)
 
         for _i, key in ipairs(sorted_keys) do
@@ -832,7 +832,8 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
 
 
     local function makeTopbarMenu(ctx_menu)
-        return {
+        local Config = require("infra/sui_config")
+        local flat = {
             {
                 text_func    = function()
                     return _("Enable Status Bar")
@@ -977,7 +978,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                                 footer_text = _("Add Item"),
                                 footer_enabled = function()
                                     local cfg2 = Config.getTopbarConfigCached()
-                                    for _, k in ipairs(Config.TOPBAR_ITEMS) do
+                                    for _, k in ipairs(Config.getAvailableTopbarItems()) do
                                         if (cfg2.side[k] or "hidden") == "hidden" then return true end
                                     end
                                     return false
@@ -985,7 +986,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                                 footer_action = function(ctx2)
                                     local cfg2 = Config.getTopbarConfig()
                                     local picker_items = {}
-                                    for _, k in ipairs(Config.TOPBAR_ITEMS) do
+                                    for _, k in ipairs(Config.getAvailableTopbarItems()) do
                                         if (cfg2.side[k] or "hidden") == "hidden" then
                                             local _k = k
                                             local _label = Config.TOPBAR_ITEM_LABEL(k)
@@ -1096,6 +1097,36 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 end,
             },
         }
+        local master = { flat[1] }
+        local item_rows, size_rows, appearance_extra, behaviour = {}, {}, {}, {}
+        local size_labels = { [_("Bar Size")] = true, [_("Icon Size")] = true }
+        for i = 2, #flat do
+            local row = flat[i]
+            local label = row.text
+            if type(label) ~= "string" and row.text_func then
+                local ok, v = pcall(row.text_func)
+                if ok then label = v end
+            end
+            label = label or ""
+            if label == _("Items") then
+                item_rows[#item_rows + 1] = row
+            elseif type(label) == "string" and size_labels[label] then
+                size_rows[#size_rows + 1] = row
+            elseif label == _("Settings on Long Tap") then
+                behaviour[#behaviour + 1] = row
+            else
+                appearance_extra[#appearance_extra + 1] = row
+            end
+        end
+        return Config.buildModuleMenu({
+            master     = master,
+            items      = item_rows,
+            appearance = {
+                size  = #size_rows > 0 and size_rows or nil,
+                extra = #appearance_extra > 0 and appearance_extra or nil,
+            },
+            behaviour  = behaviour,
+        }, ctx_menu)
     end
 
     -- -----------------------------------------------------------------------
@@ -1103,7 +1134,8 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
     -- -----------------------------------------------------------------------
 
     local function makeNavbarMenu(ctx_menu)
-        return {
+        local Config = require("infra/sui_config")
+        local flat = {
             {
                 text_func    = function()
                     return _("Enable Navigation Bar")
@@ -1367,6 +1399,15 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 value_min     = Config.NAVBAR_LABEL_SCALE_MIN, value_max = Config.NAVBAR_LABEL_SCALE_MAX,
                 value_step    = Config.NAVBAR_LABEL_SCALE_STEP, default_value = Config.NAVBAR_LABEL_SCALE_DEF,
             }),
+            Config.makeChromeLabelFontItem({
+                bar     = "navbar",
+                title   = _("Label Font"),
+                _lc     = _,
+                refresh = function()
+                    UI.invalidateDimCache(); plugin:_rebuildAllNavbars()
+                    if ctx_menu and ctx_menu.refresh then ctx_menu.refresh() end
+                end,
+            }),
             Config.makeScaleItem({
                 text_func     = function() return _("Bottom Margin") end,
                 title         = _("Bottom Margin"),
@@ -1398,8 +1439,40 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 end,
             },
         }
+        -- Canonical chrome order: Master → Items → Appearance → Behaviour
+        local master = { flat[1] }
+        local items  = { flat[2] }
+        local behaviour = { flat[#flat] }
+        local size_rows, appearance_extra = {}, {}
+        local size_labels = {
+            [_("Bar Size")] = true,
+            [_("Icon Size")] = true,
+            [_("Label Size")] = true,
+            [_("Bottom Margin")] = true,
+        }
+        for i = 3, #flat - 1 do
+            local row = flat[i]
+            local label = row.text
+            if type(label) ~= "string" and row.text_func then
+                local ok, v = pcall(row.text_func)
+                if ok then label = v end
+            end
+            if type(label) == "string" and size_labels[label] then
+                size_rows[#size_rows + 1] = row
+            else
+                appearance_extra[#appearance_extra + 1] = row
+            end
+        end
+        return Config.buildModuleMenu({
+            master     = master,
+            items      = items,
+            appearance = {
+                size  = #size_rows > 0 and size_rows or nil,
+                extra = #appearance_extra > 0 and appearance_extra or nil,
+            },
+            behaviour  = behaviour,
+        }, ctx_menu)
     end
-
     plugin._makeNavbarMenu = makeNavbarMenu
     plugin._makeTopbarMenu = makeTopbarMenu
 
@@ -1760,6 +1833,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
     end
 
     local function makeTitleBarMenu(ctx_menu)
+        local Config = require("infra/sui_config")
         local function sizeItem(label, key)
             return {
                 text         = label,
@@ -1772,7 +1846,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 end,
             }
         end
-        return {
+        local flat = {
             {
                 text_func    = function()
                     return _("Enable Title Bar")
@@ -1830,6 +1904,35 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 },
             },
         }
+        -- The enable toggle is the first row and stays on top as the master row.
+        local master = { flat[1] }
+        local item_rows, size_rows, appearance_extra = {}, {}, {}
+        for i = 2, #flat do
+            local row = flat[i]
+            local label = row.text
+            if type(label) ~= "string" and row.text_func then
+                local ok, v = pcall(row.text_func)
+                if ok then label = v end
+            end
+            label = label or ""
+            if label == _("Library Buttons") or label == _("Sub-page Buttons") then
+                item_rows[#item_rows + 1] = row
+            elseif label == _("Button Size") then
+                size_rows[#size_rows + 1] = row
+            elseif row.dim or (type(label) == "string" and label:upper() == label and #label > 0) then
+                -- Section labels (e.g. APPEARANCE) are dropped; hierarchy provides structure.
+            else
+                appearance_extra[#appearance_extra + 1] = row
+            end
+        end
+        return Config.buildModuleMenu({
+            master     = master,
+            items      = item_rows,
+            appearance = {
+                size  = #size_rows > 0 and size_rows or nil,
+                extra = #appearance_extra > 0 and appearance_extra or nil,
+            },
+        }, ctx_menu)
     end
 
     plugin._makeTitleBarMenu = makeTitleBarMenu
@@ -2205,8 +2308,8 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
     end
 
     -- Helper: applies a full layout refresh after transparency / wallpaper-visibility changes.
-    -- Mirrors the equivalent helper in the stable 1.5.0 Homescreen menu.
-    local function _applyFullLayoutRefresh()
+    -- Pass `{ keep_wallpaper = true }` when the wallpaper image is unchanged.
+    local function _applyFullLayoutRefresh(opts)
         plugin:_rewrapAllWidgets()
         local Patches = package.loaded["infra/sui_patches"]
         if Patches and Patches.injectWallpaperIntoFullscreenWidget then
@@ -2222,7 +2325,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
         end
         local HS = package.loaded["screens/sui_homescreen"]
         if HS and HS.rebuildLayout then
-            HS.rebuildLayout()
+            HS.rebuildLayout(opts)
         end
         local FM = package.loaded["apps/filemanager/filemanager"]
         if FM and FM.instance then
@@ -2232,13 +2335,37 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
         end
     end
 
-    local function makeWallpaperMenuItems()
+    local function makeWallpaperMenuItems(ctx_menu)
+        local SUIWallpaper = require("features/sui_wallpaper")
+
+        -- Refreshes the UI once after a backdrop opacity change; the wallpaper
+        -- image itself is untouched.
+        local function refreshOpacity(touchmenu)
+            _applyFullLayoutRefresh({ keep_wallpaper = true })
+            if ctx_menu and ctx_menu.refresh then
+                ctx_menu.refresh()
+            elseif touchmenu and touchmenu.updateItems then
+                touchmenu:updateItems()
+            elseif ctx_menu and ctx_menu.updateItems then
+                ctx_menu:updateItems()
+            end
+        end
+
+        -- Opacity entry available only while a wallpaper is active.
+        local function opacityItem(opts)
+            local extra_enabled = opts.enabled_func
+            opts.enabled_func = function()
+                return SUIWallpaper.isWallpaperActive() and (not extra_enabled or extra_enabled())
+            end
+            opts.refresh = refreshOpacity
+            return Config.makeBackdropStrengthItem(opts)
+        end
+
         return {
             {
                 text           = _("Enable Wallpaper"),
                 checked_func = function() return SUISettings:isTrue("simpleui_style_wallpaper_enabled") end,
                 callback     = function()
-                    local SUIWallpaper = require("features/sui_wallpaper")
                     SUIWallpaper.styleSetWallpaperEnabled(not SUISettings:isTrue("simpleui_style_wallpaper_enabled"))
                     _applyFullLayoutRefresh()
                 end,
@@ -2249,7 +2376,6 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 text = _("Select Wallpaper"),
                 enabled_func = function() return SUISettings:isTrue("simpleui_style_wallpaper_enabled") end,
                 sub_item_table_func = function()
-                    local SUIWallpaper = require("features/sui_wallpaper")
                     local items = {}
                     items[#items + 1] = {
                         text = _("Browse…"),
@@ -2290,57 +2416,47 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                     return items
                 end,
             },
-            -- Transparent status bar (active only when wallpaper is enabled and selected)
-            {
-                text         = _("Transparent status bar"),
-                checked_func = function()
-                    local SUIWallpaper = require("features/sui_wallpaper")
-                    return SUIWallpaper.styleStatusbarTransparent()
+            opacityItem({
+                title         = _("Status Bar Opacity"),
+                get           = SUIWallpaper.getStatusbarBackdropStrength,
+                set           = SUIWallpaper.setStatusbarBackdropStrength,
+                default_value = SUIWallpaper.BACKDROP_DEFAULT.statusbar,
+            }),
+            opacityItem({
+                title         = _("Title Bar Button Opacity"),
+                info          = _("0% transparent, 100% solid. Rounded background behind title bar buttons (back, search, menu, …)."),
+                get           = SUIWallpaper.getTitlebarButtonBackdropStrength,
+                set           = SUIWallpaper.setTitlebarButtonBackdropStrength,
+                default_value = SUIWallpaper.BACKDROP_DEFAULT.titlebar_button,
+            }),
+            opacityItem({
+                title         = _("Navigation Bar Opacity"),
+                get           = SUIWallpaper.getNavbarBackdropStrength,
+                set           = SUIWallpaper.setNavbarBackdropStrength,
+                default_value = SUIWallpaper.BACKDROP_DEFAULT.navbar,
+                enabled_func  = function() return Bottombar.getBarStyle() ~= "bare" end,
+                value_func    = function()
+                    if Bottombar.getBarStyle() == "bare" then return "—" end
+                    return SUIWallpaper.formatBackdropStrength(SUIWallpaper.getNavbarBackdropStrength())
                 end,
-                enabled_func = function()
-                    return SUISettings:isTrue("simpleui_style_wallpaper_enabled")
-                        and require("features/sui_wallpaper").styleGetWallpaper() ~= nil
-                end,
-                callback = function()
-                    local SUIWallpaper = require("features/sui_wallpaper")
-                    SUIWallpaper.styleSetStatusbarTransparent(not SUIWallpaper.styleStatusbarTransparent())
-                    _applyFullLayoutRefresh()
-                end,
-                keep_menu_open = true,
-            },
-            -- Transparent navigation bar (active only when wallpaper is enabled and selected)
-            {
-                text         = _("Transparent navigation bar"),
-                checked_func = function()
-                    if Bottombar.getBarStyle() == "bare" then return true end
-                    local SUIWallpaper = require("features/sui_wallpaper")
-                    return SUIWallpaper.styleNavbarTransparent()
-                end,
-                enabled_func = function()
-                    return SUISettings:isTrue("simpleui_style_wallpaper_enabled")
-                        and require("features/sui_wallpaper").styleGetWallpaper() ~= nil
-                        and Bottombar.getBarStyle() ~= "bare"
-                end,
-                callback = function()
-                    local SUIWallpaper = require("features/sui_wallpaper")
-                    SUIWallpaper.styleSetNavbarTransparent(not SUIWallpaper.styleNavbarTransparent())
-                    _applyFullLayoutRefresh()
-                end,
-                keep_menu_open = true,
-            },
+            }),
+            opacityItem({
+                title         = _("Pagination Bar Opacity"),
+                info          = _("0% transparent, 100% solid. Applies to the native page bar in Library, History, Collections and similar screens."),
+                get           = SUIWallpaper.getPaginationBackdropStrength,
+                set           = SUIWallpaper.setPaginationBackdropStrength,
+                default_value = SUIWallpaper.BACKDROP_DEFAULT.pagination,
+                enabled_func  = function() return SUISettings:nilOrTrue("simpleui_bar_pagination_visible") end,
+            }),
+
             -- Show wallpaper on all FM / overlay screens
             {
                 text         = _("Show wallpaper on all screens"),
                 checked_func = function()
-                    local SUIWallpaper = require("features/sui_wallpaper")
                     return SUIWallpaper.styleGetWallpaperShowInFM()
                 end,
-                enabled_func = function()
-                    return SUISettings:isTrue("simpleui_style_wallpaper_enabled")
-                        and require("features/sui_wallpaper").styleGetWallpaper() ~= nil
-                end,
+                enabled_func = SUIWallpaper.isWallpaperActive,
                 callback = function()
-                    local SUIWallpaper = require("features/sui_wallpaper")
                     SUIWallpaper.styleSetWallpaperShowInFM(not SUIWallpaper.styleGetWallpaperShowInFM())
                     _applyFullLayoutRefresh()
                 end,
@@ -2350,10 +2466,9 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
             {
                 text = _("Stretch to fill screen"),
                 enabled_func = function() return SUISettings:isTrue("simpleui_style_wallpaper_enabled") end,
-                checked_func = function() return require("features/sui_wallpaper").styleGetWallpaperStretch() end,
+                checked_func = function() return SUIWallpaper.styleGetWallpaperStretch() end,
                 keep_menu_open = true,
                 callback = function()
-                    local SUIWallpaper = require("features/sui_wallpaper")
                     SUIWallpaper.styleSetWallpaperStretch(not SUIWallpaper.styleGetWallpaperStretch())
                     _applyFullLayoutRefresh()
                 end,
@@ -2361,10 +2476,9 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
             {
                 text = _("Auto-rotate"),
                 enabled_func = function() return SUISettings:isTrue("simpleui_style_wallpaper_enabled") end,
-                checked_func = function() return require("features/sui_wallpaper").styleGetWallpaperAutoRotate() end,
+                checked_func = function() return SUIWallpaper.styleGetWallpaperAutoRotate() end,
                 keep_menu_open = true,
                 callback = function()
-                    local SUIWallpaper = require("features/sui_wallpaper")
                     SUIWallpaper.styleSetWallpaperAutoRotate(not SUIWallpaper.styleGetWallpaperAutoRotate())
                     _applyFullLayoutRefresh()
                 end,
@@ -2372,10 +2486,9 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
             {
                 text = _("Invert in Night Mode"),
                 enabled_func = function() return SUISettings:isTrue("simpleui_style_wallpaper_enabled") end,
-                checked_func = function() return require("features/sui_wallpaper").styleGetWallpaperInvertNight() end,
+                checked_func = function() return SUIWallpaper.styleGetWallpaperInvertNight() end,
                 keep_menu_open = true,
                 callback = function()
-                    local SUIWallpaper = require("features/sui_wallpaper")
                     SUIWallpaper.styleSetWallpaperInvertNight(not SUIWallpaper.styleGetWallpaperInvertNight())
                     _applyFullLayoutRefresh()
                 end,
@@ -2385,14 +2498,12 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                     return _("Lighten")
                 end,
                 value_func = function()
-                    local SUIWallpaper = require("features/sui_wallpaper")
                     local op = SUIWallpaper.styleGetWallpaperOpacity()
                     return op .. "%"
                 end,
                 enabled_func = function() return SUISettings:isTrue("simpleui_style_wallpaper_enabled") end,
                 keep_menu_open = true,
                 callback = function()
-                    local SUIWallpaper = require("features/sui_wallpaper")
                     local SpinWidget = require("ui/widget/spinwidget")
                     UIManager:show(SpinWidget:new{
                         title_text = _("Lighten Wallpaper"),
@@ -2407,7 +2518,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                         default_value = 0,
                         callback = function(spin)
                             SUIWallpaper.styleSetWallpaperOpacity(spin.value)
-                            _applyFullLayoutRefresh()
+                            _applyFullLayoutRefresh({ keep_wallpaper = true })
                         end,
                     })
                 end,
@@ -2740,7 +2851,9 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
             -- buildHomeScreenSettings for the equivalent move in the SUIWindow tree.
             {
                 text = _("Wallpaper"),
-                sub_item_table_func = makeWallpaperMenuItems,
+                sub_item_table_func = function(tm)
+                    return makeWallpaperMenuItems(tm)
+                end,
             },
             {
                 text = _("Presets"),
@@ -4303,6 +4416,18 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                             return items
                         end,
                         separator = true,
+                    },
+                    -- ── Night mode colours ────────────────────────────────────
+                    {
+                        text         = _("Don't Invert Colored Icons in Night Mode"),
+                        help_text    = _("Icons that contain color keep their original colors in night mode instead of being inverted.\nMonochrome icons are not affected and keep following the interface colors.\nRequires a color screen."),
+                        checked_func = function() return require("features/sui_style").keepIconColorsInNight() end,
+                        keep_menu_open = true,
+                        callback = function()
+                            local SUIStyle = require("features/sui_style")
+                            SUIStyle.setKeepIconColorsInNight(not SUIStyle.keepIconColorsInNight())
+                            _applyFullLayoutRefresh()
+                        end,
                     },
                 }, -- end Icons sub_item_table
             },   -- end Icons submenu
