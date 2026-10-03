@@ -25,10 +25,14 @@ local function compile(code, env, name)
     return assert(load(code, name, "t", env))
 end
 
+local restored_scope
 local ser = compile("local self = ... ; " .. body("_serializeDrillPath()"), { ipairs = ipairs }, "ser")
 local res = compile("local self, saved = ... ; " .. body("_restoreDrillPath(saved)"), {
     ipairs = ipairs, pairs = pairs, type = type,
-    Repo = { findGroup = function(kind, label) return { kind = kind, series_name = label, books = {} } end },
+    Repo = { findGroup = function(kind, label, scope)
+        restored_scope = scope
+        return { kind = kind, series_name = label, books = {} }
+    end },
     require = function(name)
         if name == "readcollection" then
             return { coll = { ["To read"] = { ["/a.epub"] = { file = "/a.epub" } } } }
@@ -44,8 +48,10 @@ t.test("whole survives a save and restore, for groups and collections", function
     } })
     eq(saved[1].whole, true, "series saved whole")
     eq(saved[2].whole, true, "collection saved whole")
-    local w = { _drilldown_path = {} }
+    local scope = { roots = { "/manga" } }
+    local w = { _drilldown_path = {}, _profileScope = function() return scope end }
     res(w, saved)
+    eq(restored_scope, scope, "whole groups keep the profile scope")
     eq(w._drilldown_path[1].whole, true, "series restored whole")
     eq(w._drilldown_path[2].whole, true, "collection restored whole")
 end)

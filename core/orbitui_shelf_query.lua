@@ -9,7 +9,7 @@ function M.capture(widget, chip, include_drill)
         if tip and tip.kind ~= "search" then
             local payload = tip.payload or {}
             ref.drill = { kind = tip.kind, id = payload.path or payload.series_name,
-                label = tip.label }
+                label = tip.label, whole = tip.whole or nil }
         end
     end
     return ref
@@ -42,6 +42,9 @@ function M.resolve(ref)
         if not kind or not ref.drill.id then return nil, "missing" end
         source = { kind = kind, id = ref.drill.id }
         label = ref.drill.label or ref.drill.id
+        -- Book-detail pills open the whole group, but folder drills still
+        -- inherit the shelf filter. Neither changes the stored shelf or scope.
+        if ref.drill.whole and ref.drill.kind ~= "folder" then filter = nil end
     end
     return { source = source, filter = filter, sort = sort, label = label or ref.chip,
         scope = Profiles.scope(profile) }

@@ -80,7 +80,7 @@ H.test("SimpleUI About update action shows the common label and opens OrbitUI", 
 end)
 H.test("component menus retain their standalone labels without adapter metadata", function()
     bookshelf.menuLabel, simpleui.menuLabel = nil, nil
-    bookshelf.getInstalledVersion = function() return "5.3.0" end
+    bookshelf.getInstalledVersion = function() return "5.3.1" end
     H.eq(buildBookshelfEntry().text_func(), "Updates")
     assert(buildBookshelfItems(settings)[1].text_func():find("Check for updates", 1, true))
     assert(findItem(buildSimpleUIItems(), "Check for Updates").callback)

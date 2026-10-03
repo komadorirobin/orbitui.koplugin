@@ -50,7 +50,7 @@ H.test("userpatch preload interceptors retain priority", function()
 end)
 H.test("updaters are resolved through OrbitUI even after cache eviction", function()
     local updater = require("lib/bookshelf_updater")
-    H.eq(updater.getInstalledVersion(), "5.3.0")
+    H.eq(updater.getInstalledVersion(), "5.3.1")
     H.eq(updater.getAvailableUpdate(), nil)
     package.loaded["infra/sui_updater"] = nil
     local sui = require("infra/sui_updater")

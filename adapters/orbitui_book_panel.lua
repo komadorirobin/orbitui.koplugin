@@ -60,8 +60,8 @@ function M.controller(file, opts)
     end
     for _, method in ipairs({ "_expandAuthor", "_expandSeries", "_expandGenre",
             "_expandTag", "_expandFolder", "_selectChip" }) do
-        controller[method] = function(self, value)
-            Context.withShelf(self.profile_key, function(shelf) shelf[method](shelf, value) end)
+        controller[method] = function(self, value, whole)
+            Context.withShelf(self.profile_key, function(shelf) shelf[method](shelf, value, whole) end)
         end
     end
     function controller:_orbitui_file_dialog_close(id)

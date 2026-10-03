@@ -12185,6 +12185,7 @@ function BookshelfWidget:_swapFooterInPlace()
     end
     local total  = self._total_pages or 1
     local BottomContainer = require("ui/widget/container/bottomcontainer")
+    local footer_anchor_h = self.height - self:_simpleUIReservedBottom()
     -- Geometry from the OUTGOING footer, captured before the swap: the
     -- refresh must cover the footer band only. A whole-widget "ui" here
     -- repainted the hero above on every d-pad focus move / page turn --
@@ -12206,12 +12207,11 @@ function BookshelfWidget:_swapFooterInPlace()
         local over  = Screen:scaleBySize(12)
         local x0 = self.dimen and self.dimen.x or 0
         local y0 = self.dimen and self.dimen.y or 0
-        local bottom = y0 + self.height - d.FOOTER_BOTTOM_MARGIN
+        local bottom = y0 + footer_anchor_h - d.FOOTER_BOTTOM_MARGIN
         local top = math.max(y0, bottom - row_h - over)
         footer_band = Geom:new{ x = x0, y = top, w = self.width, h = bottom - top }
     end
     local new_row    = self:_buildFooterRow(d.content_w, total, d.FOOTER_H)
-    local footer_anchor_h = self.height - self:_simpleUIReservedBottom()
     local new_anchor = BottomContainer:new{
         dimen = Geom:new{ w = self.width, h = footer_anchor_h - d.FOOTER_BOTTOM_MARGIN },
         new_row,

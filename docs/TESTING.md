@@ -56,6 +56,14 @@ Record KOReader version, installed patches and active plugins, plus crash.log.
   a folder list, a nested folder and full-screen modules for a line-free pager.
   The hero/chip/list panels and dock separator must remain unchanged. Toggle
   the option off/on and check both orientations and custom pagination margins.
+- For the Bookshelf 5.3.1 import, verify pagination focus/page-turn refreshes
+  above the dock without flashing the hero or leaving an old focus ring. With
+  directional keys, reach every spine book, switch detail tabs and cover buttons,
+  navigate the shelf editor, and cancel shelf/top-panel resizing with Back.
+- From a filtered shelf and Home/search book panels, open a series, author,
+  genre and collection via their pills. Verify the whole group, return from a
+  book and search the current group; keep the prose/manga scope and the original
+  shelf filter. Ordinary shelf stacks and folder navigation retain that filter.
 - Test new per-element fonts and module opacity alongside existing light
   backgrounds; verify section labels and live cover/stat updates after swipes.
 - Check shelf themes, planks, ornaments and wallpaper picking at both orientations.

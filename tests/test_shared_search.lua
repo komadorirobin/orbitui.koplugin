@@ -79,6 +79,33 @@ H.test("current shelf captures the deepest supported drilldown", function()
     H.eq(Query.resolve(captured).source.kind, "single_series")
     H.eq(Query.resolve(captured).source.id, "Billy Bat")
 end)
+H.test("current-shelf queries preserve whole groups without changing the source filter", function()
+    records = {}
+    local filter = tabs.custom.filter
+    for _, kind in ipairs{ "series", "author", "genre", "tag" } do
+        local widget = { chip = "custom", _drilldown_path = {
+            { kind = kind, whole = true, payload = { series_name = "Group" }, label = "Group" },
+        } }
+        local captured = Query.capture(widget, nil, true)
+        H.eq(captured.drill.whole, true)
+        Query.books(captured)
+        H.eq(call.filter, nil, "book-detail group search must not inherit the chip filter")
+        H.eq(tabs.custom.filter, filter, "never erase the underlying shelf filter")
+        widget._drilldown_path[1].whole = nil
+        captured = Query.capture(widget, nil, true)
+        H.eq(captured.drill.whole, nil)
+        Query.books(captured)
+        H.eq(call.filter, filter, "ordinary shelf groups retain their filter")
+    end
+    local folder = { chip = "custom", drill = { kind = "folder", id = "/books", whole = true } }
+    Query.books(folder)
+    H.eq(call.filter, filter, "folder drills keep the shelf filter")
+    local scoped = Query.capture({ profile_key = "comics", chip = "profile_manga",
+        _drilldown_path = { { kind = "series", whole = true,
+            payload = { series_name = "Billy Bat" }, label = "Billy Bat" } } }, nil, true)
+    Query.books(scoped)
+    H.eq(call.scope.roots, Profiles.get("comics").roots, "whole groups keep the profile scope")
+end)
 H.test("search filters current-shelf membership before applying the result cap", function()
     records = { { filepath = "/b500" } }
     tabs.custom.sort_priority = nil

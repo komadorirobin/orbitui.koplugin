@@ -177,6 +177,22 @@ H.test("a genre shelf created in the panel opens in the unscoped library", funct
     controller:_rebuild(); flush()
     H.eq(actual.profile_key, nil); H.eq(actual.chip, "custom_9")
 end)
+H.test("Home group navigation preserves the upstream whole-group flag", function()
+    for _, method in ipairs{ "_expandAuthor", "_expandSeries", "_expandGenre", "_expandTag" } do
+        local group = { series_name = "Group", books = {} }
+        local passed_group, passed_whole
+        actual[method] = function(_, value, whole)
+            passed_group, passed_whole = value, whole
+        end
+        controller[method](controller, group, true)
+        flush()
+        H.eq(passed_group, group); H.eq(passed_whole, true)
+        controller[method](controller, group)
+        flush()
+        H.eq(passed_group, group); H.eq(passed_whole, nil)
+        actual[method] = nil
+    end
+end)
 H.test("profile navigation handles a shelf restored by hot reader parking", function()
     actual.profile_key = "prose"
     local called = false

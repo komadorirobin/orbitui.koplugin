@@ -121,7 +121,7 @@ end)
 t.test("the scoped repaint and anchor stay above the SimpleUI dock", function()
     local dirty, _freed, self_ = harness({ dock_h = 100 })
     eq(self_._overlap_group[3].dimen.h, 690)
-    eq(dirty[1].region, { x = 0, y = 600, w = 600, h = 80 })
+    eq(dirty[1].region, { x = 0, y = 690 - 80 - 12, w = 600, h = 80 + 12 })
 end)
 
 t.done()

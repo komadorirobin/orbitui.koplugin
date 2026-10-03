@@ -60,7 +60,8 @@ local function run(opts)
     local old_anchor = { row(opts.row_w, opts.row_h) }
     local self_tbl = {
         width = opts.width, height = opts.height,
-        dimen = Geom:new{ x = 0, y = 0, w = opts.width, h = opts.height },
+        dimen = Geom:new{ x = opts.x or 0, y = opts.y or 0, w = opts.width, h = opts.height },
+        _simpleUIReservedBottom = function() return opts.dock_h or 0 end,
         _total_pages = 3,
         _shelf_dims = { content_w = opts.row_w, FOOTER_H = opts.row_h,
                         FOOTER_BOTTOM_MARGIN = opts.margin or 0, footer_overlap_idx = 2 },
@@ -68,7 +69,7 @@ local function run(opts)
         _buildFooterRow = function() return row(opts.row_w, opts.row_h) end,
     }
     compile("local self = ... ; " .. body, env)(self_tbl)
-    return dirty
+    return dirty, self_tbl._overlap_group[2]
 end
 
 t.test("the refresh covers the footer at the bottom of the screen", function()
@@ -86,6 +87,18 @@ t.test("a bottom margin lifts the band with the footer", function()
     local r = run{ width = 1236, height = 1648, row_w = 1100, row_h = 87, margin = 10 }[1].region
     eq(r.y + r.h, 1648 - 10, "band ends at the footer's bottom")
     eq(r.y, 1648 - 10 - 87 - 24, "and starts above it")
+end)
+
+t.test("the Bigme footer repaints above the OrbitUI dock, including widget offsets", function()
+    local dirty, anchor = run{
+        width = 1264, height = 1680, row_w = 1200, row_h = 72,
+        dock_h = 120, margin = 10, x = 5, y = 7,
+    }
+    local r = dirty[1].region
+    eq(anchor.dimen.h, 1550)
+    eq(r.x, 5); eq(r.w, 1264)
+    eq(r.y, 7 + 1550 - 72 - 24)
+    eq(r.y + r.h, 7 + 1550, "refresh ends where the footer is actually anchored")
 end)
 
 t.done()

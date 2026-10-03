@@ -174,6 +174,15 @@ not make semantic conflicts disappear.
   a layout boundary, not a visible separator. Preserve the upper/list panels,
   dock and normal opaque-footer divider (C07). Regression coverage executes both
   painters in `_test_transparent_labels_footer.lua`.
+- Bookshelf 5.3.1 `_swapFooterInPlace` computes its refresh region from the actual
+  footer anchor, above the reserved OrbitUI dock, rather than the full screen
+  bottom (C02/C07). Keep upstream's focus-ring extension and widget offsets;
+  `_test_dpad_footer_refresh.lua` includes Bigme-sized dock geometry.
+- The shared book-panel adapter forwards the `whole` group flag added in
+  Bookshelf 5.3.1. Shared current-shelf queries capture it and omit the chip
+  filter for whole groups, but retain folder filters and profile scope (C10).
+  Do not mutate the source chip's saved filter. Tests cover forwarding, ordinary
+  versus whole groups, and profile-scoped restoration/search.
 
 Other shared integration logic is coordinated through `core/` and `adapters/`. The generated
 module map gives canonical require names and legacy `sui_*` aliases a single

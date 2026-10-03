@@ -23,6 +23,12 @@ and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
 
+Unreleased development now includes Bookshelf **5.3.1** through `9633b031`, with
+OrbitUI-aware footer refresh regions and whole-group navigation from shared book
+panels/search. The transparent-pagination divider fix also covers folder/list
+views and full-screen modules. SimpleUI remains at `3444cc9c`; these changes have
+not been published to OTA and do not replace the alpha.4 release above.
+
 The first public build has a positive initial Bigme startup/navigation report.
 Full device acceptance and device OTA/recovery testing are still outstanding.
 

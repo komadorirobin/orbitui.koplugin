@@ -66,7 +66,7 @@ function OrbitUI:addToMainMenu(items)
                 text = "About this experimental build",
                 callback = function()
                     self:notify("OrbitUI " .. require("orbitui_bootstrap").version(root)
-                        .. "\n\nBookshelf 5.3.0 + SimpleUI 2.7.2-beta.5"
+                        .. "\n\nBookshelf 5.3.1 + SimpleUI 2.7.2-beta.5"
                         .. "\n\nPreview build. Existing navigation is retained."
                         .. "\nSettings snapshot: settings/orbitui/before-first-run/"
                         .. (self._orbitui_error and ("\n\nStartup error: " .. self._orbitui_error) or ""))
