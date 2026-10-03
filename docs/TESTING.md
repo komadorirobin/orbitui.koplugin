@@ -55,13 +55,16 @@ The shared surfaces in `0.1.0-alpha.4` also await device acceptance.
 Version `0.1.0-alpha.5` remains a preview: its Bookshelf 5.3.1 changes and
 transparent folder-pagination fix have headless regression coverage, not a
 completed physical-device check.
+Version `0.1.0-alpha.6` adds the optional Material icon pack. Its 13 focused Lua
+tests, asset checks and rendered font previews do not replace the device checks
+for touch, layout, e-ink contrast and native KOReader rendering.
 
 Use the Bigme B7 Pro at its native 1264 x 1680 resolution. Retain a recovery path.
 Record KOReader version, installed patches and active plugins, plus crash.log.
 
 - Verify original-plugin conflict detection before enabling the alpha normally.
 - Confirm Home layout, dock, backgrounds, icons, custom screens, fonts and language.
-- For the unreleased Material pack, follow `ICONS.md`'s device checklist. Verify
+- For the alpha.6 Material pack, follow `ICONS.md`'s device checklist. Verify
   readable manga icons in the dock and shelf chips, correct resizing/dimming and
   native menu tabs, mixed old/new icons, restart and an OTA-slot change. Loading
   the new build alone must not change an existing icon choice. Headless tests do

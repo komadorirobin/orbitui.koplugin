@@ -16,9 +16,9 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.5** includes Bookshelf **5.3.1** through `9633b031` and
+Version **0.1.0-alpha.6** includes Bookshelf **5.3.1** through `9633b031` and
 SimpleUI `main` through `3444cc9c`, on top of alpha.4's shared OrbitUI surfaces.
-See [the release notes](docs/releases/0.1.0-alpha.5.md)
+See [the release notes](docs/releases/0.1.0-alpha.6.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
@@ -31,7 +31,7 @@ modules. No existing release assets are replaced.
 The first public build has a positive initial Bigme startup/navigation report.
 Full device acceptance and device OTA/recovery testing are still outstanding.
 
-Unreleased: an optional [Material Symbols Rounded pack](docs/ICONS.md) adds
+The alpha.6 preview adds an optional [Material Symbols Rounded pack](docs/ICONS.md) with
 110 offline icons, including manga, without changing existing icon selections.
 
 ## Architecture

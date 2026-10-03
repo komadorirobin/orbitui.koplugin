@@ -17,6 +17,9 @@ alpha installations can install it through the same preview OTA channel.
 Version `0.1.0-alpha.5` includes the reviewed Bookshelf 5.3.1 merge, dock-aware
 footer refreshes, shared whole-group navigation and the transparent folder-pager
 divider fix. Bootstrap API 1 and the preview update path remain unchanged.
+Version `0.1.0-alpha.6` adds the optional Material Symbols Rounded icon pack.
+Its font, SVGs and license notices ship in the same verified runtime package;
+existing icon choices are retained and bootstrap API 1 remains unchanged.
 An alpha installation defaults to including preview releases; a stable installation defaults to stable
 only. This is separate from upstream monitoring, which never publishes builds.
 
