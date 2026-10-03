@@ -10962,7 +10962,9 @@ function BookshelfWidget:_attachTopPanel(vgroup, opts)
             if fx then
                 px, w2 = fx, fw
                 h2 = (fy + fh) - py
-                rule_y = fy
+                -- A zero-height boundary keeps the list panel above a
+                -- transparent footer; it must not add a line across it.
+                if fh > 0 then rule_y = fy end
             end
         end
         -- Clamp rather than trust the blitter: it bounds the rect it is

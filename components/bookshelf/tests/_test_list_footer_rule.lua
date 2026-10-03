@@ -13,6 +13,8 @@
 --
 -- Geometry comes from footerPanelRect, the same source the panel itself uses,
 -- so the rule cannot drift from the edge it is standing in for.
+-- OrbitUI's transparent-footer option retains a zero-height layout boundary,
+-- not a visible rule; _test_transparent_labels_footer executes both painters.
 --
 -- Usage (from plugin root): lua tests/_test_list_footer_rule.lua
 package.path = "./?.lua;./?/init.lua;" .. package.path

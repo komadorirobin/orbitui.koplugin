@@ -445,8 +445,9 @@ function MicroFullscreen:_build()
     --
     -- Shelf context only. Under the reader there is no footer bar to define --
     -- just the launcher's own glyphs, which the user can move to either edge.
+    -- A zero-height panel boundary denotes an explicitly transparent footer.
     local footer_rule
-    if not launcher then
+    if not launcher and fp_h ~= 0 then
         local ry = fp_y or (sh - self.footer_h)
         local rh = Size.line.medium
         if ry > 0 and ry + rh <= sh then

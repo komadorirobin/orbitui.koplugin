@@ -52,6 +52,10 @@ Record KOReader version, installed patches and active plugins, plus crash.log.
 
 - Verify original-plugin conflict detection before enabling the alpha normally.
 - Confirm Home layout, dock, backgrounds, icons, custom screens, fonts and language.
+- With transparent book titles/page indicator enabled, check the root shelf,
+  a folder list, a nested folder and full-screen modules for a line-free pager.
+  The hero/chip/list panels and dock separator must remain unchanged. Toggle
+  the option off/on and check both orientations and custom pagination margins.
 - Test new per-element fonts and module opacity alongside existing light
   backgrounds; verify section labels and live cover/stat updates after swipes.
 - Check shelf themes, planks, ornaments and wallpaper picking at both orientations.

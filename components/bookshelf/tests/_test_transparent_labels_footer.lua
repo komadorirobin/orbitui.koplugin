@@ -127,10 +127,13 @@ local function capturePanel()
 end
 local function paintTopPanel(w, list)
     local panels = capturePanel()
+    local rules = {}
     local group = { paintTo = function() end }
     assert(w:_attachTopPanel(group, { PAD = 32, content_w = 1200, band_h = 600, list_full = list }))
-    group:paintTo({ paintRect = function() end }, 32, 32)
-    return panels[1]
+    group:paintTo({ paintRect = function(_, x, y, width, height, color)
+        rules[#rules + 1] = { x = x, y = y, w = width, h = height, color = color }
+    end }, 32, 32)
+    return panels[1], rules
 end
 local fs_src = read("lib/bookshelf_micro_fullscreen.lua")
 local boundary = assert(fs_src:match("(    local fp_x, fp_y.-)    if fp_y then"))
@@ -139,6 +142,11 @@ local fs_env = setmetatable({ Widget = frame, Geom = frame }, { __index = common
 local buildFullscreenPanel = compile("return function(self)\n"
     .. "local sw, sh, PAD, top, status_h, grid_top = 1264, 1680, 32, 32, 20, 64\n"
     .. boundary .. shared_panel .. "\nreturn panel\nend", fs_env)
+local footer_rule = assert(fs_src:match("(    local footer_rule\n.-)    local children ="))
+local buildFullscreenRule = compile("return function(self, launcher)\n"
+    .. "local sw, sh, margin, content_w = 1264, 1680, 32, 1200\n"
+    .. boundary .. footer_rule .. "\nreturn footer_rule\nend",
+    setmetatable({ Widget = frame, Geom = frame }, { __index = widget_env }))
 
 local settings_src = read("lib/bookshelf_settings.lua")
 local settings_env = setmetatable({
@@ -214,6 +222,21 @@ t.test("list mode keeps its row panel but stops it before the footer", function(
     eq(paintTopPanel(w, true), before)
 end)
 
+t.test("folder list pagination has no rule when its background is transparent", function()
+    reset()
+    local w = shelf()
+    for _, enabled in ipairs{ false, true, false } do
+        store.save(KEY, enabled)
+        local panel, rules = paintTopPanel(w, true)
+        eq(panel.y + panel.h, enabled and 1488 or 1548,
+            "removing the rule must preserve the list panel's lower boundary")
+        eq(rules, enabled and {} or {
+            { x = 32, y = 1488, w = 1200, h = 2, color = 0.4 },
+        })
+        eq(select(2, paintTopPanel(w, false)), {}, "the grid still has no list rule")
+    end
+end)
+
 t.test("full-screen modules keep their shared panel above the transparent footer", function()
     reset()
     local w = shelf()
@@ -226,6 +249,27 @@ t.test("full-screen modules keep their shared panel above the transparent footer
         eq(panels[1].y + panels[1].h, enabled and 1488 or 1548)
         eq(panels[1].strength, 0.85)
     end
+end)
+
+t.test("full-screen module pagination honors the same transparent boundary", function()
+    reset()
+    local context = { bw = shelf(), footer_h = 72 }
+    for _, enabled in ipairs{ false, true, false } do
+        store.save(KEY, enabled)
+        local rule = buildFullscreenRule(context)
+        if enabled then
+            eq(rule, nil, "a zero-height boundary must not draw a footer rule")
+        else
+            local draws = {}
+            assert(rule):paintTo({ paintRect = function(_, ...)
+                draws[#draws + 1] = { ... }
+            end })
+            eq(draws, { { 32, 1488, 1200, 2, 0.4 } })
+        end
+        eq(buildFullscreenRule(context, true), nil, "reader launchers have no footer rule")
+    end
+    eq(buildFullscreenRule({ footer_h = 72 }) ~= nil, true,
+        "standalone modules retain their fallback footer rule")
 end)
 
 t.test("legacy global transparency is not changed by the new choice", function()

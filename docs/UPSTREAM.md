@@ -168,6 +168,12 @@ not make semantic conflicts disappear.
   component hooks and their tests are listed in `SHARED_UI.md`; review C10 when
   importing changes to those modules. Home shelf references live in the existing
   SimpleUI store, not in a second library index.
+- Bookshelf `lib/bookshelf_widget.lua` and `lib/bookshelf_micro_fullscreen.lua`:
+  the transparent-title/page-indicator option suppresses the footer divider in
+  folder/list views and full-screen modules too. A zero-height footer panel is
+  a layout boundary, not a visible separator. Preserve the upper/list panels,
+  dock and normal opaque-footer divider (C07). Regression coverage executes both
+  painters in `_test_transparent_labels_footer.lua`.
 
 Other shared integration logic is coordinated through `core/` and `adapters/`. The generated
 module map gives canonical require names and legacy `sui_*` aliases a single
