@@ -340,6 +340,7 @@ function IconsLibrary._renderCell(item, dimen)
         local IconWidget = require("ui/widget/iconwidget")
         glyph_w = IconWidget:new{
             icon = item.icon,
+            file = item.file,
             width = glyph_size,
             height = glyph_size,
             alpha = true,   -- render as-is (SVG/PNG own colours honoured)

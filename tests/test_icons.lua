@@ -16,6 +16,16 @@ local manager = {
 }
 local store, writes = {}, 0
 local copied = {}
+local Image = Widget:extend{}
+function Image:init()
+    if self.file then
+        assert(not self.file:match("^material:"), "Unresolved Material image reference")
+    end
+end
+function Image:_render()
+    local f = assert(io.open(self.file, "rb"), "Image must resolve to an existing file")
+    f:close()
+end
 package.loaded["infra/sui_store"] = {
     get = function(_, k) return store[k] end,
     set = function(_, k, v) store[k] = v; writes = writes + 1 end,
@@ -49,7 +59,10 @@ local screen = { scaleBySize = function(_, v) return v end,
     getWidth = function() return 1264 end, getHeight = function() return 1680 end }
 package.loaded["device"] = { screen = screen }
 package.loaded["ui/uimanager"] = manager
-package.loaded["ui/font"] = { getFace = function(_, name, size) return { name = name, size = size } end }
+package.loaded["ui/font"] = { getFace = function(_, name, size)
+    assert(not name:lower():find("material", 1, true), "Material must never load as a text font")
+    return { name = name, size = size }
+end }
 package.loaded["ui/geometry"] = { new = function(_, opts) return opts end }
 package.loaded["ui/size"] = { border = { thin = 1 } }
 for _, name in ipairs({ "container/centercontainer", "container/framecontainer", "container/widgetcontainer",
@@ -57,6 +70,8 @@ for _, name in ipairs({ "container/centercontainer", "container/framecontainer",
         "verticalgroup", "verticalspan" }) do
     package.loaded["ui/widget/" .. name] = Widget
 end
+package.loaded["ui/widget/imagewidget"] = Image
+package.loaded["ui/widget/iconwidget"] = Image
 package.loaded["ui/event"] = Widget
 package.loaded["lib/bookshelf_library_modal"] = Widget
 package.loaded["lib/bookshelf_colour_text"] = Widget
@@ -71,6 +86,9 @@ package.loaded["infra/sui_aa_paint"] = {}
 package.loaded["infra/sui_core"] = {
     makeColoredText = function(opts) return Widget:new(opts) end,
     wrapDimmable = function(w, dim) w.dim = dim; return w end,
+    makeAlphaMaskWidget = function(inner, fg, dimen)
+        return Widget:new{ _inner = inner, _fg = fg, dimen = dimen }
+    end,
 }
 G_reader_settings = { readSetting = function() end }
 local Config = Adapter.wrap("infra/sui_config", dofile("components/simpleui/infra/sui_config.lua"))
@@ -86,15 +104,13 @@ H.test("loading icon support makes no setting writes and catalogue is lazy/cache
     H.eq(Icons.catalogue(), Icons.catalogue())
     H.eq(Icons.bookshelfCells(), Icons.bookshelfCells())
 end)
-H.test("Material names select their own face without changing Nerd codepoints", function()
-    local char, face = Config.iconGlyph("material:manga")
-    H.eq(char, string.char(0xEF, 0x97, 0xA3))
-    assert(face:match("MaterialSymbolsRounded.ttf$"))
+H.test("Material never uses font rendering and Nerd codepoints remain unchanged", function()
+    H.eq(Adapter.modules["infra/sui_config"], nil)
+    H.eq(Config.iconGlyph("material:manga"), nil)
     H.eq(Config.isNerdIcon("material:manga"), false)
-    H.eq(Config.isFontIcon("material:manga"), true)
-    H.eq(Config.nerdIconChar("nerd:F5E3"), char)
+    H.eq(Config.isFontIcon("material:manga"), false)
+    H.eq(Config.nerdIconChar("nerd:F5E3"), string.char(0xEF, 0x97, 0xA3))
     H.eq(Config.iconFace("nerd:F5E3", 24).name, "symbols")
-    H.eq(Config.iconFace("material:manga", 24).name, face)
     H.eq(Config.iconGlyph("material:missing"), nil)
     H.eq(Config.isFontIcon(nil), false)
 end)
@@ -104,9 +120,9 @@ H.test("pack names and assets reject path traversal or unlisted glyphs", functio
         H.eq(Icons.entry(bad), nil, bad)
     end
     for _, item in ipairs(Icons.catalogue()) do
-        for _, path in ipairs({ item.font, item.file }) do
-            local f = assert(io.open(path, "rb")); f:close()
-        end
+        local f = assert(io.open(item.file, "rb")); f:close()
+        H.eq(item.font, nil)
+        H.eq(item.is_image, true)
         H.eq(Icons.entry(item.value), item)
     end
 end)
@@ -120,7 +136,7 @@ end)
 H.test("only known bundled images rebase across OTA slots", function()
     local old = "/reader/plugins/orbitui.koplugin/.orbitui-versions/old/assets/material-symbols/icons/manga.svg"
     H.eq(Style.safeIconPath(old), Icons.imageFile("material:manga"))
-    H.eq(Style.safeIconPath("material:manga"), "material:manga")
+    H.eq(Style.safeIconPath("material:manga"), Icons.imageFile("material:manga"))
     H.eq(Style.safeIconPath("nerd:F02D"), "nerd:F02D")
     H.eq(Style.safeIconPath("/missing.svg", "fallback"), "fallback")
     H.eq(Icons.rebaseImage("/custom/manga.svg"), nil)
@@ -147,31 +163,38 @@ H.test("native tabs register actual SVGs from names and previous OTA slots", fun
     H.eq(copied["/fake/icons/simpleui_sui_tab_setting.svg"], Icons.imageFile("material:settings"))
     H.eq(Style.registerTabIconName("sui_tab_tools", "nerd:F02D"), nil)
 end)
-H.test("picker renders Material with its own face and labels with the UI face", function()
-    local widget = Library._renderCell(Icons.catalogue()[1], { w = 220, h = 180 })
-    local stack = widget[1][1]
-    assert(stack[1].face.name:match("MaterialSymbolsRounded.ttf$"))
-    H.eq(stack[3].face.name, "cfont")
+H.test("both pickers render every Material SVG and labels with the UI face", function()
+    for _, cells in ipairs({ Icons.catalogue(), Icons.bookshelfCells() }) do
+        for _, cell in ipairs(cells) do
+            local widget = Library._renderCell(cell, { w = 220, h = 180 })
+            local stack = widget[1][1]
+            H.eq(stack[1].file, cell.file)
+            stack[1]:_render()
+            H.eq(stack[1].face, nil)
+            H.eq(stack[3].face.name, "cfont")
+        end
+    end
 end)
-H.test("dock and quick-action primitives preserve colors, dimming and separate faces", function()
+H.test("dock and quick actions use the existing image and alpha-mask paths", function()
     local Renderer = dofile("components/simpleui/engines/sui_quickactions_render.lua")
     local w = Renderer.buildIcon({ icon = "material:manga", label = "Manga", dim = true }, 64, "white")
-    assert(w[1].face.name:match("MaterialSymbolsRounded.ttf$"))
-    H.eq(w[1].fgcolor, "white"); H.eq(w.dim, true)
+    H.eq(w.file, Icons.imageFile("material:manga"))
+    H.eq(w.alpha, true); H.eq(w.dim, true)
     local nerd = Renderer.buildIcon({ icon = "nerd:F5E3" }, 64, "black")
     H.eq(nerd[1].face.name, "symbols")
     local framed = Renderer.buildFramedIcon("material:manga", 64, "white")
-    assert(framed._inner.face.name:match("MaterialSymbolsRounded.ttf$"))
-    framed:onToggleNightMode(); H.eq(dirty, 1)
+    H.eq(framed._inner.file, Icons.imageFile("material:manga"))
+    H.eq(framed._inner.original_in_nightmode, true)
+    H.eq(framed._fg, "white")
 end)
-H.test("system button wrappers retain the Material face for later resizing", function()
+H.test("system buttons stay image widgets and resize without loading a new font", function()
     Style.setIcon("sui_search", "material:manga")
-    local old = Widget:new{ width = 40, height = 40 }
+    local old = Image:new{ width = 40, height = 40 }
     local btn = { image = old, width = 40, height = 40, horizontal_group = { {}, old }, icon_color = "white" }
     assert(Style.applyIconToBtn("sui_search", btn))
-    assert(btn.image.sui_icon_font:match("MaterialSymbolsRounded.ttf$"))
-    H.eq(btn.image.face.name, btn.image.sui_icon_font)
-    H.eq(btn.image.fgcolor, "white")
+    H.eq(btn.image, old)
+    H.eq(btn.image.file, Icons.imageFile("material:manga"))
+    H.eq(btn.image.face, nil)
     H.eq(btn.horizontal_group[2], btn.image)
     local titlebar = dofile("components/simpleui/screens/sui_titlebar.lua")
     local resize
@@ -181,23 +204,20 @@ H.test("system button wrappers retain the Material face for later resizing", fun
         if name == "_resizeAndStrip" then resize = value; break end
     end
     assert(resize, "actual titlebar resizing helper not found")
-    btn.icon, btn.file, btn.update = "material:manga", "nerd:invalid", function() end
+    btn.update = function() end
     resize(btn, 80)
-    H.eq(btn.image.face.name, btn.image.sui_icon_font)
-    H.eq(btn.image.face.size, 52)
-    H.eq(btn.icon, nil); H.eq(btn.file, nil)
+    H.eq(btn.image.file, Icons.imageFile("material:manga"))
+    H.eq(btn.image.face, nil)
+    H.eq(btn.image.width, 80); H.eq(btn.image.height, 80)
 end)
-H.test("select and cancel are exclusive and image-only callers receive SVG", function()
+H.test("select and cancel are exclusive and all callers receive SVG", function()
     local picked, cancelled = nil, 0
     local function cancel() cancelled = cancelled + 1 end
     local picker = Adapter.show(function(v) picked = v end, cancel)
     picker.config.on_search_submit("manga")
     local cell = picker.config.item_at(1)
     picker.config.on_cell_tap(cell)
-    H.eq(picked, "material:manga"); H.eq(cancelled, 0)
-    picker = Adapter.show(function(v) picked = v end, cancel, true)
-    picker.config.on_cell_tap(picker.config.item_at(1))
-    H.eq(picked, Icons.imageFile("material:manga"))
+    H.eq(picked, Icons.imageFile("material:manga")); H.eq(cancelled, 0)
     picker = Adapter.show(function() error("cancel selected an icon") end, cancel)
     picker.config.footer_actions[1].on_tap()
     H.eq(cancelled, 0); deferred[#deferred](); H.eq(cancelled, 1)
@@ -217,18 +237,64 @@ H.test("existing picker exposes Material and returns to the same picker on cance
     assert(shown ~= original and shown.buttons)
     H.eq(handle.picker, shown)
 end)
-H.test("pack listing is read-only; applying changes only mapped icon settings", function()
+H.test("Material is not a pack and legacy apply requests never overwrite settings", function()
     local before = writes
-    H.eq(Style.listPacks()[1].path, Icons.pack_id)
-    H.eq(writes, before)
+    for _, pack in ipairs(Style.listPacks()) do assert(pack.path ~= Icons.legacy_pack_id) end
     store.unrelated = "keep"
     store.simpleui_custom_qa = { "keep this custom action" }
     local old = store.simpleui_custom_qa
-    local result = Style.applyPack(Icons.pack_id)
-    assert(result.applied > 40)
+    local result = Style.applyPack(Icons.legacy_pack_id)
+    H.eq(result.applied, 0)
+    H.eq(result.errors, 1)
+    H.eq(writes, before)
     H.eq(store.unrelated, "keep"); H.eq(store.simpleui_custom_qa, old)
-    H.eq(Style.getIcon("sui_menu"), "material:menu")
-    H.eq(Style.getIcon("sui_tab_main"), Icons.imageFile("material:menu"))
+end)
+H.test("external pack operations are unchanged", function()
+    local calls = 0
+    local module = Adapter.wrap("features/sui_style", {
+        applyPack = function(path) calls = calls + 1; return path end,
+        listPacks = function() return "external-pack-list" end,
+    })
+    H.eq(module.listPacks(), "external-pack-list")
+    H.eq(module.applyPack("/my-custom-pack"), "/my-custom-pack")
+    H.eq(calls, 1)
+    module.applyPack(Icons.legacy_pack_id)
+    H.eq(calls, 1)
+end)
+H.test("opening the individual picker and cancelling writes nothing; selection changes one icon", function()
+    local QA = require("features/sui_quickactions")
+    local before, old_search = writes, store.simpleui_sysicon_sui_search
+    local function open()
+        QA.showIconPicker(nil, function(value)
+            QA.setDefaultActionIcon("bookshelf_comics", value)
+        end, "Default", {}, "picker", true)
+        for _, row in ipairs(shown.buttons) do
+            if row[1].text == "Material Symbols Rounded..." then row[1].callback(); return end
+        end
+        error("Material picker is missing")
+    end
+    open()
+    shown.config.footer_actions[1].on_tap(); deferred[#deferred]()
+    H.eq(writes, before)
+    open()
+    H.eq(writes, before)
+    shown.config.on_search_submit("manga")
+    shown.config.on_cell_tap(shown.config.item_at(1))
+    H.eq(writes, before + 1)
+    H.eq(store.simpleui_action_bookshelf_comics_icon, Icons.imageFile("material:manga"))
+    H.eq(store.simpleui_sysicon_sui_search, old_search)
+    local row = QA.buildQARowIcon("material:manga", "Manga", function(n) return n end)
+    H.eq(row[1][1].file, Icons.imageFile("material:manga"))
+end)
+H.test("legacy Material overrides are readable at startup without setting writes", function()
+    local before = writes
+    store.simpleui_sysicon_sui_menu = "material:menu"
+    store.simpleui_action_bookshelf_comics_icon = "material:manga"
+    local btn = { image = Image:new{ width = 40, height = 40 }, width = 40, height = 40 }
+    assert(Style.applyIconToBtn("sui_menu", btn))
+    H.eq(btn.image.file, Icons.imageFile("material:menu"))
     H.eq(require("features/sui_quickactions").getDefaultActionIcon("bookshelf_comics"), "material:manga")
+    H.eq(writes, before)
+    H.eq(store.simpleui_sysicon_sui_menu, "material:menu")
 end)
 H.finish()

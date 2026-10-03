@@ -125,10 +125,13 @@ panel or chip bar unless those independent controls are explicitly changed.
 Keep hiding accidentally opened books distinct from deleting book files or
 resetting all reading data.
 
-Material Symbols is opt-in. Keep existing Nerd Font and image selections, and
-do not change KOReader's global symbols/fallback face. Preserve the small generic
-icon/picker seams documented in `ICONS.md`, including image-only destinations
-and live titlebar font resizing. Tests: `tests/test_icons.lua`.
+Material Symbols is opt-in **per icon**, never a whole-pack preset. This corrects
+alpha.6's bulk replacement per the user's startup-crash report and request.
+Keep existing Nerd Font and image selections, and do not change KOReader's
+global symbols/fallback face. Render Material through the existing image paths,
+not a custom text font. Preserve the small generic icon/picker seams documented
+in `ICONS.md`, including image-only destinations and live titlebar resizing.
+Tests: `tests/test_icons.lua`.
 
 Source: Bookshelf `lib/bookshelf_settings_store.lua`, `lib/bookshelf_widget.lua`;
 SimpleUI `modules/module_recent.lua`, `features/library/sui_recent_hidden.lua`,
@@ -147,6 +150,10 @@ Shared Material assets resolve from the active OrbitUI runtime root. Keep named
 icon selections stable across OTA slots; rebase packaged image-only paths.
 Preserve the pinned source/license, static subset and matching SVG inventory
 (`ICONS.md`, `tests/test_material_assets.py`, `scripts/check-package.lua`).
+The temporary alpha.6 Material recovery patch only masks affected icon reads
+in memory. It must not delete or flush settings, restore a whole old snapshot,
+replace global `require`, or bypass the user's existing preload interceptors.
+See `recovery/README.md` and `tests/test_icon_recovery.lua`.
 
 Keep the existing settings filenames and schemas unless a separately reviewed,
 recoverable migration is required. The automatic first-run snapshot is limited

@@ -12,8 +12,13 @@
   actions, Home pin persistence and isolation, live source resolution, scoped
   search, settings routing and native source fallback boundaries.
 - `tests/test_icons.lua` exercises the actual icon pickers/render helpers with
-  widget stubs: separate Material/Nerd faces, image-only destinations, explicit
-  pack application, retained preferences and rebasing old OTA asset paths.
+  widget stubs: Material SVG paths, unchanged Nerd rendering, image-only
+  destinations, per-icon selection/cancellation, rejection of the legacy bulk
+  preset, retained preferences and rebasing old OTA asset paths. The Font stub
+  rejects Material font loads; both pickers exercise all 110 explicit SVG files.
+  `tests/test_icon_recovery.lua` covers the real module resolver/store with
+  fake persistence: delayed startup loading, no writes/deletes, unrelated reads,
+  idempotence, an existing preload and restoration when the patch is removed.
   `tests/test_material_assets.py` verifies the pinned asset inventory, static
   TTF character coverage, self-contained SVGs and license notices. The build
   requires FontTools only when regenerating assets, not for tests or on-device.
@@ -55,20 +60,26 @@ The shared surfaces in `0.1.0-alpha.4` also await device acceptance.
 Version `0.1.0-alpha.5` remains a preview: its Bookshelf 5.3.1 changes and
 transparent folder-pagination fix have headless regression coverage, not a
 completed physical-device check.
-Version `0.1.0-alpha.6` adds the optional Material icon pack. Its 13 focused Lua
-tests, asset checks and rendered font previews do not replace the device checks
-for touch, layout, e-ink contrast and native KOReader rendering.
+Version `0.1.0-alpha.6` added the optional Material icon pack. The user reports
+that choosing its bulk preset causes repeated startup crashes on the Bigme.
+There is no crash log yet; the user cannot reach the log-export menu. The exact
+crash site is unconfirmed. The old tests accepted any Font path and missed the
+native rendering risk: KOReader does not resolve bare relative custom-font paths
+like absolute or `./` paths, and a missing face can fail inside TextWidget.
+The unreleased correction removes Material font rendering and bulk application,
+with 16 focused icon tests and 6 recovery tests. Those tests and the asset checks
+do not replace physical-device startup, touch, layout and e-ink checks.
 
 Use the Bigme B7 Pro at its native 1264 x 1680 resolution. Retain a recovery path.
 Record KOReader version, installed patches and active plugins, plus crash.log.
 
 - Verify original-plugin conflict detection before enabling the alpha normally.
 - Confirm Home layout, dock, backgrounds, icons, custom screens, fonts and language.
-- For the alpha.6 Material pack, follow `ICONS.md`'s device checklist. Verify
+- For the corrected Material picker, follow `ICONS.md`'s device checklist. Verify
   readable manga icons in the dock and shelf chips, correct resizing/dimming and
   native menu tabs, mixed old/new icons, restart and an OTA-slot change. Loading
   the new build alone must not change an existing icon choice. Headless tests do
-  not verify FreeType rendering, e-ink contrast or real touch/layout behavior.
+  not verify native SVG rendering, e-ink contrast or real touch/layout behavior.
 - With transparent book titles/page indicator enabled, check the root shelf,
   a folder list, a nested folder and full-screen modules for a line-free pager.
   The hero/chip/list panels and dock separator must remain unchanged. Toggle

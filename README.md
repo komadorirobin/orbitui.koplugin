@@ -31,8 +31,11 @@ modules. No existing release assets are replaced.
 The first public build has a positive initial Bigme startup/navigation report.
 Full device acceptance and device OTA/recovery testing are still outstanding.
 
-The alpha.6 preview adds an optional [Material Symbols Rounded pack](docs/ICONS.md) with
-110 offline icons, including manga, without changing existing icon selections.
+The alpha.6 preview added 110 offline Material Symbols Rounded icons, including
+manga. A Bigme startup crash was reported after applying its whole-pack preset.
+If that prevents startup, see the non-destructive [recovery patch](recovery/README.md).
+The unreleased correction makes Material a [per-icon picker](docs/ICONS.md) only
+and uses SVGs instead of a separate text font. Existing choices are not reset.
 
 ## Architecture
 

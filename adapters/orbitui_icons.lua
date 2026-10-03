@@ -3,14 +3,13 @@ local Icons = require("core/orbitui_icons")
 local _ = require("core/orbitui_i18n")
 
 M.modules = {
-    ["infra/sui_config"] = true,
     ["features/sui_style"] = true,
     ["features/sui_quickactions"] = true,
     ["lib/bookshelf_icons_library"] = true,
     ["lib/bookshelf_start_menu_model"] = true,
 }
 
-function M.show(on_select, on_cancel, image_only)
+function M.show(on_select, on_cancel)
     local UIManager = require("ui/uimanager")
     local LibraryModal = require("lib/bookshelf_library_modal")
     local Library = require("lib/bookshelf_icons_library")
@@ -46,7 +45,7 @@ function M.show(on_select, on_cancel, image_only)
         on_cell_tap = function(item)
             selected = true
             UIManager:close(modal)
-            on_select(image_only and item.file or item.value)
+            on_select(item.file)
         end,
         footer_actions = { { key = "close", label = _("Cancel"), on_tap = function()
             UIManager:close(modal)
@@ -60,51 +59,27 @@ function M.show(on_select, on_cancel, image_only)
 end
 
 function M.wrap(name, module)
-    if name == "infra/sui_config" then
-        local glyph = module.iconGlyph
-        module.iconGlyph = function(value)
-            local char, font = Icons.glyph(value)
-            if char then return char, font end
-            return glyph(value)
-        end
-    elseif name == "features/sui_style" then
+    if name == "features/sui_style" then
         local safe, register = module.safeIconPath, module.registerTabIconName
         module.safeIconPath = function(path, fallback, slot)
-            return safe(Icons.rebaseImage(path) or path, fallback, slot)
+            return safe(Icons.imageFile(path) or Icons.rebaseImage(path) or path, fallback, slot)
         end
         module.registerTabIconName = function(slot, path)
             return register(slot, Icons.imageFile(path) or Icons.rebaseImage(path) or path)
         end
-        local list, apply = module.listPacks, module.applyPack
-        module.listPacks = function()
-            local packs = list()
-            table.insert(packs, 1, { name = "Material Symbols Rounded", path = Icons.pack_id, is_zip = false })
-            return packs
-        end
+        local apply = module.applyPack
         module.applyPack = function(path)
-            if path ~= Icons.pack_id then return apply(path) end
-            local QA = require("features/sui_quickactions")
-            local result = { applied = 0, skipped = 0, errors = 0 }
-            for id, icon in pairs(Icons.actions) do
-                QA.setDefaultActionIcon(id, "material:" .. icon)
-                result.applied = result.applied + 1
+            -- Reject stale callers too: Material is a picker source, never a preset.
+            if path == Icons.legacy_pack_id then
+                return { applied = 0, skipped = 0, errors = 1 }
             end
-            for _, slot in ipairs(module.SLOTS) do
-                local icon = Icons.slots[slot.id]
-                if icon then
-                    local value = "material:" .. icon
-                    module.setIcon(slot.id, slot.group == "sui_tabbar_icons" and Icons.imageFile(value) or value)
-                    result.applied = result.applied + 1
-                end
-            end
-            if module.refreshLiveTabBars then module.refreshLiveTabBars() end
-            return result
+            return apply(path)
         end
     elseif name == "features/sui_quickactions" then
         module.extraIconPickers = { {
             text = "Material Symbols Rounded...",
-            show = function(current, on_select, on_cancel, allow_font)
-                return M.show(on_select, on_cancel, not allow_font)
+            show = function(current, on_select, on_cancel)
+                return M.show(on_select, on_cancel)
             end,
         } }
     elseif name == "lib/bookshelf_icons_library" then
