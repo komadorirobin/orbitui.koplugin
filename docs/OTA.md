@@ -30,6 +30,11 @@ restart to make saved Material choices visible again.
 Version `0.1.0-alpha.8` fixes the individual Material picker's category-initialization
 crash. It retains alpha.7's per-icon SVG selection, existing settings and bootstrap
 API 1. The same preview OTA path works directly from alpha.5, alpha.6 or alpha.7.
+Version `0.1.0-alpha.9` adds independent Material icon weights of 200/300/400/500,
+with 300 as the requested default. Legacy unweighted Material choices become
+lighter; explicitly selected weights are retained across OTA slots. Other icon
+sources and the bootstrap remain unchanged. It uses the same preview channel
+and can be installed directly from alpha.8 or the earlier alpha releases.
 An alpha installation defaults to including preview releases; a stable installation defaults to stable
 only. This is separate from upstream monitoring, which never publishes builds.
 

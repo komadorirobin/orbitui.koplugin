@@ -271,6 +271,26 @@ inventories when merging. `ICONS.md` documents identifiers and legacy aliases;
 This is not an upstream import. Baselines, VERSION and the published alpha.8
 assets are unchanged. Publication requires a separate request; **not published**.
 
+## 2026-10-03: OrbitUI 0.1.0-alpha.9 release preparation
+
+The user explicitly requested publication of the per-icon weight feature above.
+Root VERSION advances to `0.1.0-alpha.9`; all earlier published assets remain
+immutable. No upstream commits are imported and neither integrated pin changes.
+
+C07/C08 retain the approved default change to 300 and independent explicit
+weights. All four static SVG inventories and the backward-compatible flat aliases
+ship in the runtime ZIP. Bootstrap API 1, all three bootstrap files, the HTTP
+transport and installer are unchanged from alpha.8. This is a prerelease in the
+existing preview OTA channel, not a stable or device-accepted release.
+
+Publication gates are the complete Lua/LuaJIT suites, 41 translation catalogs,
+a clean-commit runtime ZIP, native archive/hash installation using the published
+alpha.8 installer, downloaded draft-asset verification and anonymous published
+release discovery/installation. `docs/releases/0.1.0-alpha.9.md` records the scope
+and remaining device gaps; `TESTING.md` retains the Bigme checklist. No changes
+to books, reading progress, synchronization ownership or stored preferences are
+part of this release.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

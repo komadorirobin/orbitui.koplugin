@@ -16,9 +16,9 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.8** includes Bookshelf **5.3.1** through `9633b031` and
+Version **0.1.0-alpha.9** includes Bookshelf **5.3.1** through `9633b031` and
 SimpleUI `main` through `3444cc9c`, on top of alpha.4's shared OrbitUI surfaces.
-See [the release notes](docs/releases/0.1.0-alpha.8.md)
+See [the release notes](docs/releases/0.1.0-alpha.9.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
@@ -41,6 +41,10 @@ Alpha.8 fixes a separate crash when opening the Material picker: the category
 loop shadowed the translation function. Regression tests now construct and
 refresh the real shared modal over native widget stubs. Device testing remains
 outstanding; no saved icon choices are changed.
+Alpha.9 adds a Material line-thickness preview and per-icon weights of 200, 300,
+400 or 500. The requested new default is 300, also for older unweighted Material
+selections. Explicit weights remain independent; Nerd Font and custom image
+choices are unchanged. All variants remain offline SVGs, not variable fonts.
 
 ## Architecture
 

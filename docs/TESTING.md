@@ -94,7 +94,7 @@ now construct and refresh the real modal over native widget stubs, and the
 regression fails against the old adapter. This correction is not yet a
 physical-device verification or evidence for the earlier alpha.6 startup cause.
 
-The unreleased per-icon weight control uses the same SVG rendering path, with
+The alpha.9 per-icon weight control uses the same SVG rendering path, with
 300 as the requested new default. Its 23 focused icon tests pass in Lua and
 LuaJIT; the added popup, native preview appearance and touch interactions still
 need device verification. Existing unweighted Material choices intentionally

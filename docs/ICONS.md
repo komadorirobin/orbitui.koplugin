@@ -25,7 +25,7 @@ to save that icon and its weight. Choosing a thickness alone does not save
 anything; cancelling the picker leaves the previous choice intact. Reopening
 an existing icon starts at its saved weight, while a new Material choice starts
 at 300. This control affects only Material icons, not Nerd Font or custom images.
-The per-icon weight control is currently unreleased.
+The per-icon weight control is available in `0.1.0-alpha.9`.
 
 The published alpha.6 still has the whole-pack preset. Do not apply that preset
 to browse icons: it immediately overwrites many icon overrides. The per-icon
