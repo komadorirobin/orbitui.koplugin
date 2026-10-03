@@ -14,6 +14,9 @@ It includes the reviewed upstream merges and shared update-menu labels.
 Version `0.1.0-alpha.4` adds the shared book panel, Home shelf modules, scoped
 search and settings hub. It also keeps bootstrap API 1 unchanged, so existing
 alpha installations can install it through the same preview OTA channel.
+Version `0.1.0-alpha.5` includes the reviewed Bookshelf 5.3.1 merge, dock-aware
+footer refreshes, shared whole-group navigation and the transparent folder-pager
+divider fix. Bootstrap API 1 and the preview update path remain unchanged.
 An alpha installation defaults to including preview releases; a stable installation defaults to stable
 only. This is separate from upstream monitoring, which never publishes builds.
 

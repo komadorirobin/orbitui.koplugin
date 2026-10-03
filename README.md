@@ -16,18 +16,17 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.4** adds shared OrbitUI surfaces on top of Bookshelf **5.3.0**
-through `21e005a7` and SimpleUI `main` through `3444cc9c`.
-See [the release notes](docs/releases/0.1.0-alpha.4.md)
+Version **0.1.0-alpha.5** includes Bookshelf **5.3.1** through `9633b031` and
+SimpleUI `main` through `3444cc9c`, on top of alpha.4's shared OrbitUI surfaces.
+See [the release notes](docs/releases/0.1.0-alpha.5.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
 
-Unreleased development now includes Bookshelf **5.3.1** through `9633b031`, with
-OrbitUI-aware footer refresh regions and whole-group navigation from shared book
-panels/search. The transparent-pagination divider fix also covers folder/list
-views and full-screen modules. SimpleUI remains at `3444cc9c`; these changes have
-not been published to OTA and do not replace the alpha.4 release above.
+The alpha.5 preview adapts upstream's footer refresh regions to the OrbitUI dock
+and retains whole-group navigation through shared book panels/search. The
+transparent-pagination divider fix also covers folder/list views and full-screen
+modules. No existing release assets are replaced.
 
 The first public build has a positive initial Bigme startup/navigation report.
 Full device acceptance and device OTA/recovery testing are still outstanding.

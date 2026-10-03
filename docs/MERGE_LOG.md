@@ -230,6 +230,30 @@ or stability improvement has been measured. **Not published to OTA**; publicatio
 and a version bump require a separate request. Existing installation/recovery
 instructions and data paths remain applicable.
 
+## 2026-10-03: OrbitUI 0.1.0-alpha.5 release preparation
+
+The user explicitly requested publication of the reviewed merge above. The
+release also includes the unpublished transparent folder/full-screen pagination
+fix in `3f375ecd`; it does not import additional upstream commits. Bookshelf is
+5.3.1 through `9633b031`, and SimpleUI remains at `3444cc9c`.
+
+Root VERSION advances to `0.1.0-alpha.5`. Bootstrap API 1, the bootstrap files,
+HTTP transport and installer are byte-for-byte unchanged from alpha.4. Keep this
+a prerelease in the existing preview OTA channel, with both ZIP and SHA-256
+assets. Never overwrite the previously published alpha.4 package.
+
+Both local Lua/LuaJIT runs pass: 31 Python tests, 123 OrbitUI integration cases,
+350 Bookshelf suites and all 13 SimpleUI test files. The three existing suite
+skips and two per-case native font/UI skips remain; no new waivers. All 41
+translation catalogs pass. Anonymous HTTPS access also passes with the actual
+LuaSocket/LuaSec transport in an isolated Linux test environment.
+
+Clean-commit packaging, native archive/hash installation, draft-asset download
+verification and anonymous published-release installation remain publication
+gates per `OTA.md`. The GitHub release/tag and Actions record the final commit
+and results. Device verification remains outstanding as listed in `TESTING.md`
+and the alpha.5 release notes; headless OTA testing is not device acceptance.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
