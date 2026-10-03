@@ -40,6 +40,10 @@ per-icon SVG sources, including the custom manga icon in both Solar styles.
 Existing selections and Material weights are unchanged. The stable bootstrap,
 API 1 and preview OTA path are unchanged; alpha.9 and earlier alpha releases
 can update directly. The new sources are not whole-pack presets.
+Version `0.1.0-alpha.11` adds four icons to both Solar sources: Database, Cloud
+Download, Download Minimalistic and Library. Existing choices, the stable
+bootstrap and API 1 remain unchanged. Alpha.10 and earlier alpha releases can
+update directly through the same preview channel.
 An alpha installation defaults to including preview releases; a stable installation defaults to stable
 only. This is separate from upstream monitoring, which never publishes builds.
 

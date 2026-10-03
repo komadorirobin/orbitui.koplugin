@@ -116,6 +116,12 @@ custom source SVGs. Its real-modal tests still stub native widgets. Device
 startup, touch selection, sizing, night mode and duotone contrast remain to be
 verified. No existing icon choice or Material weight changes in this release.
 
+Alpha.11 adds eight packaged SVGs (four icons in two Solar styles) and one
+focused search/category/selection test, for 30 icon tests and 235 vector icons.
+All eight additions were previewed at 144 and 40 pixels on desktop. The native
+OTA smoke test uses the published alpha.10 installer; physical-device rendering
+and selection still need verification. No renderer or bootstrap changes are made.
+
 Use the Bigme B7 Pro at its native 1264 x 1680 resolution. Retain a recovery path.
 Record KOReader version, installed patches and active plugins, plus crash.log.
 

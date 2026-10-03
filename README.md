@@ -16,9 +16,9 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.10** includes Bookshelf **5.3.1** through `9633b031` and
+Version **0.1.0-alpha.11** includes Bookshelf **5.3.1** through `9633b031` and
 SimpleUI `main` through `3444cc9c`, on top of alpha.4's shared OrbitUI surfaces.
-See [the release notes](docs/releases/0.1.0-alpha.10.md)
+See [the release notes](docs/releases/0.1.0-alpha.11.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
@@ -35,6 +35,9 @@ Alpha.10 adds per-icon Solar Outline, Solar Line Duotone and Tabler
 sources, including an OrbitUI manga icon in both Solar styles. Existing choices
 are unchanged; these are not bulk icon-pack presets. See [icons](docs/ICONS.md)
 for previews and selection instructions.
+Alpha.11 adds Database, Cloud Download, Download Minimalistic and Library in
+both Solar styles, bringing each selection to 80 icons. Selection remains
+per-icon only; no existing choice is replaced.
 
 The alpha.6 preview added 110 offline Material Symbols Rounded icons, including
 manga. A Bigme startup crash was reported after applying its whole-pack preset.

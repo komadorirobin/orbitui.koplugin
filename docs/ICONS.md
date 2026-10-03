@@ -7,7 +7,7 @@ upstream libraries: 80 icons in each Solar style and 75 Tabler icons.
 The sources and custom manga icons were introduced in `0.1.0-alpha.10`.
 They do not appear under Icon Packs and never replace other icons automatically.
 
-The current unreleased selection adds **Database**, **Cloud Download**,
+Version `0.1.0-alpha.11` adds **Database**, **Cloud Download**,
 **Download Minimalistic** and **Library** in both Solar styles. Search by these
 names; Library is under Reading and the other three are under System.
 
