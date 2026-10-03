@@ -1454,7 +1454,7 @@ function BookshelfWidget:_serializeDrillPath()
                 or e.kind == "genre" or e.kind == "tag"
                 or e.kind == "format" or e.kind == "rating"
                 or e.kind == "language" then
-            out[#out + 1] = { kind = e.kind, label = e.label }
+            out[#out + 1] = { kind = e.kind, label = e.label, whole = e.whole or nil }
         elseif e.kind == "opds_nav" then
             -- A drilled subcatalog, by identity: the pair that addresses its
             -- window, so the restore can ask whether it has anything cached
@@ -1590,7 +1590,7 @@ function BookshelfWidget:_restoreDrillPath(saved)
             local g = Repo.findGroup(e.kind, e.label, self:_profileScope())
             if g then
                 self._drilldown_path[#self._drilldown_path + 1] = {
-                    kind = e.kind, label = e.label, payload = g,
+                    kind = e.kind, label = e.label, payload = g, whole = e.whole,
                 }
             end
         elseif e.kind == "opds_nav" and e.server_key and e.feed_url then
@@ -1628,7 +1628,7 @@ function BookshelfWidget:_restoreDrillPath(saved)
                 end
                 if #books > 0 then
                     self._drilldown_path[#self._drilldown_path + 1] = {
-                        kind = "tag", label = e.label,
+                        kind = "tag", label = e.label, whole = e.whole,
                         payload = { kind = "tag", series_name = e.label, books = books },
                     }
                 end
@@ -4245,7 +4245,10 @@ function BookshelfWidget:_fetchChipItems(n, want_all)
         -- On a copy: the payload stays the group, the filter only what shows.
         local chip_tab = require("lib/bookshelf_tab_model").getById(self.chip)
         local books = tip.payload.books or {}
-        if chip_tab and chip_tab.filter and Repo.applyFilter then
+        -- Not for a group opened from book details (`whole`): that asks for
+        -- the whole series, tag or collection, whichever shelf is underneath
+        -- (GitHub issue 480).
+        if chip_tab and chip_tab.filter and Repo.applyFilter and not tip.whole then
             books = Repo.applyFilter(books, chip_tab.filter)
         end
         local total = #books
@@ -8657,7 +8660,9 @@ function BookshelfWidget:_jumpScanList()
         -- Filtered as _fetchChipItems filters what shows (issue 479), so the
         -- jump list names only books that are on the shelf.
         local books = tip.payload.books
-        if tab and tab.filter and Repo.applyFilter then books = Repo.applyFilter(books, tab.filter) end
+        if tab and tab.filter and Repo.applyFilter and not tip.whole then
+            books = Repo.applyFilter(books, tab.filter)
+        end
         return books, within_key or chip_key, "drilldown-payload"
     end
 
@@ -12066,11 +12071,67 @@ function BookshelfWidget:_chipKeyNeighbour(key, direction)
     return keys[((idx - 1 + direction) % n) + 1]
 end
 
+-- _spineItemRows() -> rows, n | nil
+-- On a spine shelf, which row each book on THIS page sits on (rows[i] for
+-- _page_items[i]) and how many books the page shows. The D-pad's grid arms
+-- otherwise work in cover-grid terms, _nShelves() * _nCols() slots with rows
+-- _nCols() apart, and a spine page holds far more books than that in rows of
+-- varying length: Right from the 8th spine turned the page and Down jumped 4
+-- books, so most of each shelf could not be reached (Reddit report). A spine
+-- page's items run on to the end of the chip; the render notes which of them
+-- it laid out (_noteSpineRows), and only rows noted for this very page and
+-- shelf are trusted. nil off spine mode, or before this page has rendered.
+function BookshelfWidget:_spineItemRows()
+    if not self:_isSpineMode() then return nil end
+    local sr = self._spine_rows
+    if not (sr and sr.row_of and sr.chip == self.chip and sr.c == self._cursor
+            and sr.s == self:_spineSkip()) then
+        return nil
+    end
+    local rows, n = {}, 0
+    for i, it in ipairs(self._page_items or {}) do
+        local r = it.filepath and sr.row_of[it.filepath]
+        if not r and type(it.books) == "table" then
+            -- A flattened group spans spines: it sits where it starts.
+            for _j, b in ipairs(it.books) do
+                r = b.filepath and sr.row_of[b.filepath]
+                if r then break end
+            end
+        end
+        if not r then break end
+        rows[i] = r
+        n = i
+    end
+    if n == 0 then return nil end
+    return rows, n
+end
+
+-- _spineRowStep(rows, n, cur, dir) -> the book on the row above (dir -1) or
+-- below (+1) at the same place along it, clamped to that row's length; nil
+-- when there is no such row on the page.
+function BookshelfWidget._spineRowStep(rows, n, cur, dir)
+    local r = rows[cur]
+    if not r then return nil end
+    local start = cur
+    while start > 1 and rows[start - 1] == r do start = start - 1 end
+    local first, last
+    for i = 1, n do
+        if rows[i] == r + dir then
+            first = first or i
+            last = i
+        end
+    end
+    if not first then return nil end
+    return math.min(first + (cur - start), last)
+end
+
 function BookshelfWidget:_moveCursor(delta)
     local items = self._page_items
     if not items or #items == 0 then return true end
     local n_cols    = self:_nCols()
-    local view_size = self:_nShelves() * n_cols
+    -- A spine page's own book count, not the cover grid's slot count.
+    local _rows, spine_n = self:_spineItemRows()
+    local view_size = spine_n or (self:_nShelves() * n_cols)
     local cur       = self._cursor_idx or 1
     local new_idx   = cur + delta
 
@@ -12079,8 +12140,17 @@ function BookshelfWidget:_moveCursor(delta)
             self:_markOpdsNav()
             self:_advanceCursor(-1)
             self:_syncPageFromCursor()
-            self._cursor_idx = view_size
+            -- A spine page's length is known only once it is laid out: land on
+            -- its first book, then move to its last now that the rows exist.
+            self._cursor_idx = spine_n and 1 or view_size
             self:_swapShelvesInPlace()
+            if spine_n then
+                local _r, prev_n = self:_spineItemRows()
+                if prev_n and prev_n > 1 then
+                    self._cursor_idx = prev_n
+                    self:_swapShelvesInPlace()
+                end
+            end
         end
         return true
     end
@@ -12119,9 +12189,27 @@ function BookshelfWidget:_swapFooterInPlace()
     -- refresh must cover the footer band only. A whole-widget "ui" here
     -- repainted the hero above on every d-pad focus move / page turn --
     -- the same flash class as issue #124.
+    --
+    -- Placed on the screen here, not copied from the row's dimen: the
+    -- BottomContainer paints the row without writing its position back, so
+    -- that dimen sat at 0,0 and every footer focus move refreshed a band
+    -- across the TOP of the screen. On e-ink the focus ring never showed
+    -- (GitHub issue 361). Full width: the row is centred inside it. Taller
+    -- by the buttons' hit extension: centring the grown buttons lifts the
+    -- focus ring a few px above the row (4 px on a PW5), and a ring edge
+    -- left unrefreshed reads as a stray line.
     local old = self._overlap_group[d.footer_overlap_idx]
     local old_row = old and old[1]
-    local footer_band = old_row and old_row.dimen and old_row.dimen:copy() or nil
+    local footer_band
+    if old_row and old_row.getSize then
+        local row_h = old_row:getSize().h
+        local over  = Screen:scaleBySize(12)
+        local x0 = self.dimen and self.dimen.x or 0
+        local y0 = self.dimen and self.dimen.y or 0
+        local bottom = y0 + self.height - d.FOOTER_BOTTOM_MARGIN
+        local top = math.max(y0, bottom - row_h - over)
+        footer_band = Geom:new{ x = x0, y = top, w = self.width, h = bottom - top }
+    end
     local new_row    = self:_buildFooterRow(d.content_w, total, d.FOOTER_H)
     local footer_anchor_h = self.height - self:_simpleUIReservedBottom()
     local new_anchor = BottomContainer:new{
@@ -12157,7 +12245,16 @@ function BookshelfWidget:onBSFocusUp()
 
     if self._focus_zone == "grid" then
         local n_cols = self:_nCols()
-        if self._cursor_idx and self._cursor_idx <= n_cols then
+        -- On a spine shelf the top row is the noted first row, however many
+        -- books it holds (see _spineItemRows).
+        local spine_rows, spine_n = self:_spineItemRows()
+        local on_top
+        if spine_rows then
+            on_top = (spine_rows[self._cursor_idx or 1] or 1) <= 1
+        else
+            on_top = self._cursor_idx and self._cursor_idx <= n_cols
+        end
+        if self._cursor_idx and on_top then
             if not self._chip_bar_hidden then
                 self._focus_zone = "chips"
                 if #self._drilldown_path > 0 then
@@ -12186,6 +12283,14 @@ function BookshelfWidget:onBSFocusUp()
                 self._cursor_idx = nil
                 self:_swapShelvesInPlace()   -- clear cursor border from grid
                 self:_swapHeroInPlace()
+            end
+            return true
+        end
+        if spine_rows then
+            local target = self._spineRowStep(spine_rows, spine_n, self._cursor_idx, -1)
+            if target then
+                self._cursor_idx = target
+                self:_swapShelvesInPlace()
             end
             return true
         end
@@ -12320,7 +12425,11 @@ function BookshelfWidget:onBSFocusDown()
         -- the bottom row `below` is past view_size, so target stays nil.
         local target
         local below = cur + n_cols
-        if below <= view_size then
+        -- A spine shelf steps by its noted rows (see _spineItemRows).
+        local spine_rows, spine_n = self:_spineItemRows()
+        if spine_rows then
+            target = self._spineRowStep(spine_rows, spine_n, cur, 1)
+        elseif below <= view_size then
             if items[below] then
                 target = below
             else
@@ -20341,7 +20450,9 @@ function BookshelfWidget:_buildPillSpecs(book, collection_set, close_cb, filter)
                                       books = { book }, latest = 0 }
                         end
                         _navResetAndClose()
-                        bw:_expandAuthor(group)
+                        -- `whole`: the pill asks for all of it, not the
+                        -- shelf's filtered slice (GitHub issue 480).
+                        bw:_expandAuthor(group, true)
                     end),
                 }
             end
@@ -20368,7 +20479,7 @@ function BookshelfWidget:_buildPillSpecs(book, collection_set, close_cb, filter)
                               books = { book }, latest = 0 }
                 end
                 _navResetAndClose()
-                bw:_expandSeries(group)
+                bw:_expandSeries(group, true)
             end),
         }
     end
@@ -20404,7 +20515,7 @@ function BookshelfWidget:_buildPillSpecs(book, collection_set, close_cb, filter)
                 end
                 _navResetAndClose()
                 bw:_expandTag({ kind = "tag", series_name = coll_name,
-                                books = books, latest = 0 })
+                                books = books, latest = 0 }, true)
             end),
         }
     end
@@ -20440,7 +20551,7 @@ function BookshelfWidget:_buildPillSpecs(book, collection_set, close_cb, filter)
                                       books = { book }, latest = 0 }
                         end
                         _navResetAndClose()
-                        bw:_expandGenre(group)
+                        bw:_expandGenre(group, true)
                     end),
                 }
             end
@@ -22384,7 +22495,10 @@ function BookshelfWidget:_buildBookCoverTab(book, show_parent, avail_w, avail_h,
     col[#col + 1] = toolbar_row
     col[#col + 1] = VerticalSpan:new{ width = tb_gap }
 
-    local focus_tables = {}
+    -- D-pad rows, top to bottom: the two buttons, then each grid row. focusRow
+    -- takes a list of ROWS: a flat list made every cover cell a row of its own,
+    -- so focus sat on an unpainted child and Press crashed (GitHub issue 361).
+    local focus_tables = { focusRow({ { device_btn, online_btn } }) }
     if total == 0 then
         col[#col + 1] = CenterContainer:new{
             dimen = Geom:new{ w = content_w, h = math.max(cell_h, Screen:scaleBySize(80)) },
@@ -22431,7 +22545,7 @@ function BookshelfWidget:_buildBookCoverTab(book, show_parent, avail_w, avail_h,
                 grid[#grid + 1] = VerticalSpan:new{ width = gap }; grid_h = grid_h + gap
             end
             grid[#grid + 1] = row_group; grid_h = grid_h + cell_h
-            if #row_layout > 0 then focus_tables[#focus_tables + 1] = focusRow(row_layout) end
+            if #row_layout > 0 then focus_tables[#focus_tables + 1] = focusRow({ row_layout }) end
         end
         local grid_block_h = rows * cell_h + (rows - 1) * gap
         if grid_h < grid_block_h then
@@ -23239,7 +23353,7 @@ function BookshelfWidget:_showBookDetail(book, opts)
                                             or { kind = "genre", series_name = gname,
                                                  books = { book }, latest = 0 }
                                         self._drilldown_path = {}
-                                        self:_expandGenre(group)
+                                        self:_expandGenre(group, true)
                                     end,
                                     on_hold = function() holdMenu(gname) end,
                                 }
@@ -24983,41 +25097,45 @@ end
 -- field (they predate it), which is what the fallback is for -- and any kind
 -- added later that falls through the same way is recorded correctly by
 -- default rather than silently becoming a series.
-function BookshelfWidget:_expandSeries(series)
+function BookshelfWidget:_expandSeries(series, whole)
     if not series or not series.series_name then return end
     self:_applyWithinGroupSort(series)
     self:_drillInto{
         kind    = series.kind or "series",
+        whole   = whole or nil,
         label   = series.series_name,
         payload = series,
     }
 end
 
-function BookshelfWidget:_expandAuthor(group)
+function BookshelfWidget:_expandAuthor(group, whole)
     if not group or not group.series_name then return end
     self:_applyWithinGroupSort(group)
     self:_drillInto{
         kind    = "author",
+        whole   = whole or nil,
         label   = group.series_name,
         payload = group,
     }
 end
 
-function BookshelfWidget:_expandGenre(group)
+function BookshelfWidget:_expandGenre(group, whole)
     if not group or not group.series_name then return end
     self:_applyWithinGroupSort(group)
     self:_drillInto{
         kind    = "genre",
+        whole   = whole or nil,
         label   = group.series_name,
         payload = group,
     }
 end
 
-function BookshelfWidget:_expandTag(group)
+function BookshelfWidget:_expandTag(group, whole)
     if not group or not group.series_name then return end
     self:_applyWithinGroupSort(group)
     self:_drillInto{
         kind    = "tag",
+        whole   = whole or nil,
         label   = group.series_name,
         payload = group,
     }
