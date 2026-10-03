@@ -108,6 +108,12 @@ LuaJIT; the added popup, native preview appearance and touch interactions still
 need device verification. Existing unweighted Material choices intentionally
 become lighter, without changing their identity or rewriting settings.
 
+The alpha.10 Solar/Tabler sources have 29 focused icon tests and 4 additional
+asset tests, plus desktop rendering checks for all 227 packaged SVGs and both
+custom source SVGs. Its real-modal tests still stub native widgets. Device
+startup, touch selection, sizing, night mode and duotone contrast remain to be
+verified. No existing icon choice or Material weight changes in this release.
+
 Use the Bigme B7 Pro at its native 1264 x 1680 resolution. Retain a recovery path.
 Record KOReader version, installed patches and active plugins, plus crash.log.
 

@@ -35,6 +35,11 @@ with 300 as the requested default. Legacy unweighted Material choices become
 lighter; explicitly selected weights are retained across OTA slots. Other icon
 sources and the bootstrap remain unchanged. It uses the same preview channel
 and can be installed directly from alpha.8 or the earlier alpha releases.
+Version `0.1.0-alpha.10` adds Solar Outline, Solar Line Duotone and Tabler as
+per-icon SVG sources, including the custom manga icon in both Solar styles.
+Existing selections and Material weights are unchanged. The stable bootstrap,
+API 1 and preview OTA path are unchanged; alpha.9 and earlier alpha releases
+can update directly. The new sources are not whole-pack presets.
 An alpha installation defaults to including preview releases; a stable installation defaults to stable
 only. This is separate from upstream monitoring, which never publishes builds.
 

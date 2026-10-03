@@ -4,6 +4,7 @@ OrbitUI offers Solar Outline, Solar Line Duotone and Tabler as additional
 **per-icon sources**, alongside Material Symbols Rounded and the existing
 Nerd Font and custom images. These are curated offline selections, not the full
 upstream libraries: 76 icons in each Solar style and 75 Tabler icons.
+The additional sources and custom manga icons are available in `0.1.0-alpha.10`.
 They do not appear under Icon Packs and never replace other icons automatically.
 
 Choose the button/action you want to edit, then **Solar Outline...**,
