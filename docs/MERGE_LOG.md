@@ -57,6 +57,84 @@ constants and the packed pinyin table); the worktree had the same pinyin-table
 false positive. No detected credential was published. This scan is not an
 absolute guarantee that all possible secret formats can be recognized.
 
+## 2026-10-03: Reviewed Bookshelf and SimpleUI upstream merge
+
+Scope: the user requested "Merga upstream" for OrbitUI. Both tracked branches
+were reviewed and merged, without a release or any change to the old forks.
+
+- Bookshelf `master`: `dc96d18848cfc8dfb543b9ae9aec77e65fd00b0a` ->
+  `21e005a79900c210067128f674eef745c8a545ef`, 176 previously missing commits.
+  Includes v5.3.0 and the fixes through that tip. Unsquashed subtree merge:
+  `af71336f4b9d81cf28dac6fe7f39a254137afd59`.
+- SimpleUI `main`: `ade0df9eca195c2cf8134005025f4b971e681ac0` ->
+  `3444cc9c03756df1b4c7cb1847d56f517116f842`, 21 previously missing commits.
+  This is the tracked development branch, not a downgrade to the watcher's
+  latest stable label 2.7.1. Unsquashed subtree merge:
+  `5d40154e838840ee854d92a60b5c284c831cba3e`.
+- Main adaptation commit: `4cda52779ab0a7e8b2eb2dd64c1084394ae0cc45`;
+  the following documentation/package-check commit records this review.
+  `sources.json` advances only the integrated upstream pins; original fork
+  provenance remains unchanged. Module map regenerated: 261 canonical paths.
+
+Review covered contracts C01-C09. Notable incoming changes: Bookshelf themes,
+planks, ornament packs, wallpaper management, gesture switches, drilldown filter
+retention, reading-goal/stat corrections and scoped page-count scans with
+suspend protection. SimpleUI adds per-element font controls, module opacity and
+frames, live collection folders, resolved metadata-query caching, night icons,
+quick-settings fixes and mounted-cover refresh fixes. No performance improvement
+has been measured on the Bigme.
+
+Conflict and integration decisions:
+
+- C01/C06: OrbitUI remains the sole plugin owner. The new SimpleUI checker must
+  not auto-disable plugins or rename user patches. OrbitUI reports incompatible
+  active UI plugins through its read-only guard instead. KOReader older than
+  v2025.08 is rejected before either component initializes, rather than loading
+  half of the combined UI. Existing preload-hook priority is unchanged.
+- C02/C03/C07: preserve the Home/prose/manga dock, its gesture priority, native
+  reader/profile lifecycle, page-number long-press sorting, transparent
+  title/footer option, BookOrbit Cover Deck source, dynamic section labels and
+  custom-action icon mapping. Bookshelf's gesture switch for the page-number
+  hold is named for sorting rather than claiming it cycles styles.
+- C04/C07: keep Android-safe extraction/poll policy. After SimpleUI's chrome
+  change, book/stat slots now retain both mounted wrapper and module-content
+  references. Stats update the content, rebuilds retarget both stats and cover
+  polling, and book modules are not updated twice in one refresh. Existing
+  light-background/label wrappers remain independent of upstream chrome.
+- C05: Hardcover remains link/enrichment-only on the KOReader side; BookOrbit
+  is still the intended progress writer. Sync-prompt sequencing and external
+  BookOrbit/MAL/Patch Manager integrations were not replaced.
+- C08: explicitly defer Bookshelf 5.3's automatic settings/database/cache and
+  ornament moves. The path adapter keeps existing flat filenames; three
+  status-line keys stay authoritative in `G_reader_settings`. Reads and writes
+  therefore remain visible to earlier OrbitUI and external header patches.
+  New content folders still work, and ornaments in both old/new folders are
+  read without moving the user's files. The two added book-facts highlight
+  columns are additive; old queries remain compatible. Do not manually run the
+  upstream migration while this adapter is active.
+- C09: bootstrap API 1 files, root VERSION, release tags and OTA channel are
+  unchanged. New plank/shadow assets are explicitly checked in runtime archives;
+  upstream README-only logos/screenshots remain excluded.
+
+Verification: 31 Python tests, 75 OrbitUI integration cases, 343 Bookshelf suites
+and all 13 SimpleUI test files pass under Lua and LuaJIT. The three existing
+SQLite/slow-geometry suite skips remain, as do the two per-case native font/UI
+skips. No new failure waivers. All 41 translation catalogs pass after fixing
+redundant plural forms and the Lithuanian rule; the old seven hash-bound
+translation exceptions were removed. Updated test doubles follow upstream API
+changes, and ornament filesystem tests now support both GNU and BSD stat/touch.
+
+The clean candidate package passes inventory checks and native libarchive/SHA
+OTA smoke tests: complete extraction, missing-file rejection, activation,
+restart, rollback and truncated-download recovery. This is an unpublished test
+package, not a replacement asset for the existing alpha. A fresh watcher check
+at 06:34 UTC reports zero missing commits for both tracked branches.
+
+Device acceptance remains outstanding: Home module chrome/fonts/labels, shelf
+themes/ornaments, navigation/profile actions, existing settings/link retention,
+external patch behavior and suspend/resume need testing on the Bigme B7 Pro.
+The merge is **not published to OTA**; a separate release request is required.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
