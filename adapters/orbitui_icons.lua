@@ -27,7 +27,7 @@ function M.show(on_select, on_cancel)
         title = "Material Symbols Rounded",
         chip_strip = function()
             local out = {}
-            for _, group in ipairs({ "all", "Reading", "Navigation", "System", "Tools" }) do
+            for _i, group in ipairs({ "all", "Reading", "Navigation", "System", "Tools" }) do
                 out[#out + 1] = { key = group, label = _(group == "all" and "All" or group),
                     is_active = state.group == group }
             end

@@ -11,11 +11,16 @@
 - `tests/test_shared_*.lua`: shared panel/controller ownership, native registered
   actions, Home pin persistence and isolation, live source resolution, scoped
   search, settings routing and native source fallback boundaries.
-- `tests/test_icons.lua` exercises the actual icon pickers/render helpers with
-  widget stubs: Material SVG paths, unchanged Nerd rendering, image-only
+- `tests/test_icons.lua` exercises the actual icon pickers/render helpers and
+  shared modal init/refresh with native widget stubs: Material SVG paths,
+  unchanged Nerd rendering, image-only
   destinations, per-icon selection/cancellation, rejection of the legacy bulk
   preset, retained preferences and rebasing old OTA asset paths. The Font stub
   rejects Material font loads; both pickers exercise all 110 explicit SVG files.
+  Material modal construction runs in English and Swedish, portrait/landscape,
+  with and without directional keys. Tests cover category labels, rendered cell
+  paths, search/filter refreshes, pagination and empty results. Native painting,
+  text measurement and keyboard behavior are still not simulated.
   `tests/test_icon_recovery.lua` covers the real module resolver/store with
   fake persistence: delayed startup loading, no writes/deletes, unrelated reads,
   idempotence, an existing preload and restoration when the patch is removed.
@@ -73,6 +78,16 @@ tests. The native OTA smoke harness also accepts the published alpha.5 archive
 via `--base-zip` to test the old installer rather than only a simulated version
 number. Those tests and the asset checks do not replace physical-device startup,
 touch, layout and e-ink checks.
+
+After alpha.7, the user reported a crash on opening Material from the individual
+icon picker. This is reproduced in Lua and traced to the adapter's category loop:
+its numeric `_` index shadowed the translation function, failing in real modal
+initialization before any SVG was rendered. Renaming that index fixes this
+specific crash without changing saved icons. The original tests replaced the
+whole modal with a passive widget, so never called its category callback. They
+now construct and refresh the real modal over native widget stubs, and the
+regression fails against the old adapter. This correction is not yet a
+physical-device verification or evidence for the earlier alpha.6 startup cause.
 
 Use the Bigme B7 Pro at its native 1264 x 1680 resolution. Retain a recovery path.
 Record KOReader version, installed patches and active plugins, plus crash.log.
