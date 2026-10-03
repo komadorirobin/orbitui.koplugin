@@ -11,6 +11,9 @@ The first public build is `0.1.0-alpha.2`, a prerelease. Its initial Bigme
 startup/navigation test was positive; full device OTA acceptance remains open.
 Version `0.1.0-alpha.3` is the next preview, using the same OTA bootstrap API 1.
 It includes the reviewed upstream merges and shared update-menu labels.
+Version `0.1.0-alpha.4` adds the shared book panel, Home shelf modules, scoped
+search and settings hub. It also keeps bootstrap API 1 unchanged, so existing
+alpha installations can install it through the same preview OTA channel.
 An alpha installation defaults to including preview releases; a stable installation defaults to stable
 only. This is separate from upstream monitoring, which never publishes builds.
 

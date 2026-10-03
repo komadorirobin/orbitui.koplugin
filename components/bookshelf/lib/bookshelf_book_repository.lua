@@ -7498,7 +7498,7 @@ end
 -- Returns { folders, authors, series, genres, books } for a query string.
 -- All matching is case-insensitive substring. Returns empty lists immediately
 -- for a blank query.
-function Repo.searchAll(query, scope)
+function Repo.searchAll(query, scope, opts)
     local empty = { folders = {}, authors = {}, series = {}, genres = {}, books = {} }
     if not query or query == "" then return empty end
     local q = query:lower()
@@ -7564,7 +7564,7 @@ function Repo.searchAll(query, scope)
     local genres  = _searchIncludesGenres() and matchGroups(_genres_cache) or {}
 
     -- ── books ──
-    local books = Repo.searchBooks(query, 200, scope) or {}
+    local books = Repo.searchBooks(query, opts and opts.book_limit or 200, scope) or {}
 
     return { folders = folders, authors = authors, series = series, genres = genres, books = books }
 end
@@ -7609,7 +7609,7 @@ function Repo.findGroup(kind, name, scope)
     return nil
 end
 
-function Repo.getNextUnreadInSeries(limit, offset, scope)
+function Repo.getNextUnreadInSeries(limit, offset, scope, opts)
     local _t0 = _gettime()
     local home  = G_reader_settings:readSetting("home_dir") or "/"
     local depth = BookshelfSettings.read("latest_walk_depth") or 3
@@ -7716,7 +7716,8 @@ function Repo.getNextUnreadInSeries(limit, offset, scope)
     local out = {}
     local stop = math.min(offset + (limit or 8), total)
     for i = offset + 1, stop do
-        local b = Repo.buildBookMeta(picks[i].filepath)
+        local b = opts and opts.light_only and picks[i]
+            or Repo.buildBookMeta(picks[i].filepath)
         if b then out[#out + 1] = b end
     end
     logger.dbg(string.format("[bookshelf perf] getNextUnreadInSeries: %.0fms cands=%d picks=%d/%d",

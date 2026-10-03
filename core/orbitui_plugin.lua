@@ -59,6 +59,10 @@ function OrbitUI:addToMainMenu(items)
         text = "OrbitUI",
         sub_item_table = {
             {
+                text = require("core/orbitui_i18n")("OrbitUI settings"),
+                callback = function() require("adapters/orbitui_settings").show() end,
+            },
+            {
                 text = "About this experimental build",
                 callback = function()
                     self:notify("OrbitUI " .. require("orbitui_bootstrap").version(root)

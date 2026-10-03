@@ -2613,6 +2613,10 @@ function BookshelfWidget:_rebuild()
                 self:_showModulesOptions()
                 return
             end
+            if self.orbitui_shelf_menu then
+                self:orbitui_shelf_menu(key)
+                return
+            end
             if self.profile then
                 self:_showProfileShelfStyle(key)
                 return
@@ -21332,6 +21336,11 @@ function BookshelfWidget:_buildBookEditTab(book, modal, avail_w, avail_h)
             return
         end
         closeModal()
+        local function showBookInfo(info)
+            if bw._orbitui_before_book_info then bw:_orbitui_before_book_info() end
+            info:show(book.filepath)
+            if bw._orbitui_after_book_info then bw:_orbitui_after_book_info(info.kvp_widget) end
+        end
         -- Book info needs a live FileManager: its bookinfo module carries
         -- the `ui` context getDocProps reads (self.ui.coverbrowser). While a
         -- reader is parked there is no FileManager, so finish the park first
@@ -21341,12 +21350,12 @@ function BookshelfWidget:_buildBookEditTab(book, modal, avail_w, avail_h)
         require("lib/bookshelf_reader_park").runInFileManager(function(fm)
             fm = fm or require("apps/filemanager/filemanager").instance
             if fm and fm.bookinfo then
-                fm.bookinfo:show(book.filepath)
+                showBookInfo(fm.bookinfo)
             else
                 -- Last resort (no FM at all -- shouldn't happen once the park
                 -- has finished): a stub ui keeps getDocProps from indexing
                 -- nil, so at least the info opens rather than crashing.
-                require("apps/filemanager/filemanagerbookinfo"):new{ ui = {} }:show(book.filepath)
+                showBookInfo(require("apps/filemanager/filemanagerbookinfo"):new{ ui = {} })
             end
         end)
     end }
@@ -21962,7 +21971,10 @@ function BookshelfWidget:_buildBookEditTab(book, modal, avail_w, avail_h)
             for _si, spec in ipairs(specs) do
                 local label = (spec.text_func and spec.text_func()) or spec.text or ""
                 local chip = ChipButton.build{
-                    text = label, face = edit_face, height = chip_h, on_tap = spec.callback,
+                    text = label, face = edit_face, height = chip_h, on_tap = function()
+                        if spec.enabled == false or (spec.enabled_func and not spec.enabled_func()) then return end
+                        if spec.callback then spec.callback() end
+                    end,
                 }
                 local cw = chip:getSize().w
                 if #line_focus > 0 and (line_w + chip_gap + cw) > avail then
@@ -23482,6 +23494,7 @@ function BookshelfWidget:_showBookDetail(book, opts)
     local args = {
         tabs       = tabs,
         bw         = self,
+        _sui_keep_homescreen = self._orbitui_detail_only or nil,
         active_tab = active_tab,
         -- Flush the deferred genre-source invalidation (see
         -- genre_source_changed above) before the caller's own on_close --
@@ -23523,6 +23536,7 @@ function BookshelfWidget:_showBookDetail(book, opts)
     -- No fetch on open: reviews load only when the user taps Refresh on the
     -- Reviews tab (see refreshReviews / issue 253). Cached reviews, if any,
     -- are already shown from the cache_only peek above.
+    return modal
 end
 
 -- Hardcover reviews now live as a tab in the unified book-detail popup, so this
@@ -23891,7 +23905,8 @@ function BookshelfWidget:_fileDialogPluginRows(file)
     for _i = 1, #added do
         local id = id_at[_i]
         if not (type(id) == "string" and id:find("^coverbrowser")) then
-            local ok, row = pcall(added[_i], file, true, book_props)
+            local close_cb = self._orbitui_file_dialog_close and self:_orbitui_file_dialog_close(id)
+            local ok, row = pcall(added[_i], file, true, book_props, close_cb)
             if ok and type(row) == "table" and #row > 0 then
                 rows[#rows + 1] = row
             end
@@ -25044,6 +25059,7 @@ end
 -- whatever I was on" affordance and the existing east-swipe / chip-pill
 -- tap clears the search.
 function BookshelfWidget:_openSearchDialog(prefill)
+    if self.orbitui_search then return self:orbitui_search(prefill) end
     local InputDialog = require("ui/widget/inputdialog")
     local dlg
     dlg = InputDialog:new{

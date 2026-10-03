@@ -8,6 +8,9 @@
 - `python3 -m unittest discover -s tests -p 'test_upstream_watch.py' -v`: monitor,
   error handling, real Git ancestry and idempotent reporting tests; no network.
 - `sh scripts/package.sh`: clean-commit runtime ZIP, archive integrity and layout checks.
+- `tests/test_shared_*.lua`: shared panel/controller ownership, native registered
+  actions, Home pin persistence and isolation, live source resolution, scoped
+  search, settings routing and native source fallback boundaries.
 - OTA tests cover release channels, semantic versions, archive safety, TLS host
   checks, deferred activation, interrupted startup and rollback. `OTA.md` records
   the protocol and recovery limits. Package tests verify inventory and checksum bytes.
@@ -42,6 +45,7 @@ The user reported successful initial startup/navigation on the Bigme with
 `0.1.0-alpha.2`, and a subjective impression of faster dock navigation. This is
 not a timing measurement, full acceptance, or a device OTA/recovery test.
 The upstream merge and renamed menus in `0.1.0-alpha.3` still need device testing.
+The shared surfaces in `0.1.0-alpha.4` also await device acceptance.
 
 Use the Bigme B7 Pro at its native 1264 x 1680 resolution. Retain a recovery path.
 Record KOReader version, installed patches and active plugins, plus crash.log.
@@ -59,6 +63,9 @@ Record KOReader version, installed patches and active plugins, plus crash.log.
 - Close using the custom gesture, native menu and end-of-book dialog; confirm the
   intended destination and no unintended reopening or duplicate menu layer.
 - Verify rotations, overlays, menus, long-press actions and exit/restart.
+- For the shared UI work in `0.1.0-alpha.4`, execute the focused device checklist in
+  `SHARED_UI.md`. Headless widget stubs do not verify fonts, layout, touch hit
+  regions or the complete real FileManager/ReaderUI transition.
 - Suspend and resume on Home, in each library view and inside a book. Repeat
   several cycles, including an overnight resume.
 - Confirm BookOrbit progression prompts actually move the reading position.

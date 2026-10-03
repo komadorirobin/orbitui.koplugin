@@ -851,6 +851,9 @@ local function openBook(filepath, pos0, page)
     end
 end
 
+-- OrbitUI search and book panels share this native opening path.
+ScreenEngine.openBook = openBook
+
 -- ---------------------------------------------------------------------------
 -- _deferredFreeOldTree(old_tree) — releases a discarded widget subtree
 -- (module covers, badges, wallpaper widgets, etc.) without risking a

@@ -119,7 +119,7 @@ not make semantic conflicts disappear.
 2. Fetch the tracked branch and pin the target's full SHA for this review. Read
    the complete new commit list and the net diff; check release notes, removed
    files, dependencies, settings migrations and changed native KOReader hooks.
-3. Map changed behavior to contracts C01-C09. Pay particular attention to
+3. Map changed behavior to contracts C01-C10. Pay particular attention to
    navigation callbacks, plugin/patch compatibility checks, cache invalidation,
    background timers, i18n, reader profiles and synchronization ownership.
 4. Merge that exact commit with `git subtree merge --prefix=components/bookshelf
@@ -163,6 +163,11 @@ not make semantic conflicts disappear.
 - Upstream compatibility auto-disable is replaced by OrbitUI's read-only guard.
   Conflicting UI plugins are reported; user plugin flags and patches are never
   rewritten. Unsupported KOReader versions stop before either component starts.
+- Shared UI seams in `adapters/orbitui_ui.lua` redirect book panels, search and
+  settings while retaining native actions and opening paths. The small optional
+  component hooks and their tests are listed in `SHARED_UI.md`; review C10 when
+  importing changes to those modules. Home shelf references live in the existing
+  SimpleUI store, not in a second library index.
 
 Other shared integration logic is coordinated through `core/` and `adapters/`. The generated
 module map gives canonical require names and legacy `sui_*` aliases a single

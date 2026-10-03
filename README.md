@@ -16,8 +16,9 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.3** integrates Bookshelf **5.3.0** through `21e005a7`
-and SimpleUI `main` through `3444cc9c`. See [the release notes](docs/releases/0.1.0-alpha.3.md)
+Version **0.1.0-alpha.4** adds shared OrbitUI surfaces on top of Bookshelf **5.3.0**
+through `21e005a7` and SimpleUI `main` through `3444cc9c`.
+See [the release notes](docs/releases/0.1.0-alpha.4.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
@@ -33,6 +34,11 @@ Full device acceptance and device OTA/recovery testing are still outstanding.
 - `components/` contains the two imported Git subtrees.
 - `tests/` exercises OrbitUI's integration contracts in addition to the original
   component suites.
+
+Version `0.1.0-alpha.4` adds shared book panels, searchable library scopes,
+live Home shelf modules and an OrbitUI settings hub.
+See [shared UI features](docs/SHARED_UI.md) for controls,
+compatibility boundaries and the pending device checks.
 
 BookOrbit synchronization, MyAnimeList and Patch Manager remain separate plugins.
 The component updaters are disabled in OrbitUI; components must never update

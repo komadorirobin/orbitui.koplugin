@@ -200,6 +200,8 @@ local function _keepHomescreenAliveForNextShow()
     UIManager:nextTick(restore)
 end
 
+M.keepHomescreenAliveForNextShow = _keepHomescreenAliveForNextShow
+
 function M.show(file, opts)
     opts = opts or {}
     local dialog

@@ -72,6 +72,7 @@ local SettingsWindow = {}
 -- ===========================================================================
 
 local LayoutService = {}
+SettingsWindow.LayoutService = LayoutService
 
 -- Normalize layout module entries to plain ids. Legacy { id, width } tables
 -- (brief experimental schema) migrate width into Config bento settings and
@@ -1130,7 +1131,7 @@ end
 -- 4. Entry point
 -- ===========================================================================
 
-function SettingsWindow:show(on_close)
+function SettingsWindow:show(on_close, initial_screen)
     local st = {
         layout            = LayoutService.load(),
         current_page      = nil,
@@ -1249,7 +1250,11 @@ function SettingsWindow:show(on_close)
         },
     }
 
+    if initial_screen and screens[initial_screen] then
+        win._nav_stack[#win._nav_stack + 1] = { id = initial_screen, params = {} }
+    end
     win:show()
+    return win
 end
 
 return SettingsWindow

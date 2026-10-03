@@ -1,0 +1,45 @@
+-- OrbitUI-owned strings, independent of the two upstream translation catalogs.
+local sv = {
+    ["OrbitUI settings"] = "OrbitUI-inställningar",
+    ["Home"] = "Hem",
+    ["Library"] = "Bibliotek",
+    ["Manga & comics"] = "Manga och serier",
+    ["Appearance"] = "Utseende",
+    ["Home appearance"] = "Hemvyns utseende",
+    ["Library appearance"] = "Bibliotekets utseende",
+    ["Navigation & bars"] = "Navigering och menyrader",
+    ["All settings"] = "Alla inställningar",
+    ["Search OrbitUI"] = "Sök i OrbitUI",
+    ["Search in"] = "Sök i",
+    ["Entire library"] = "Hela biblioteket",
+    ["Current shelf"] = "Aktuell hylla",
+    ["Search"] = "Sök",
+    ["Cancel"] = "Avbryt",
+    ["Close"] = "Stäng",
+    ["Open"] = "Öppna",
+    ["No matches."] = "Inga träffar.",
+    ["Search results"] = "Sökresultat",
+    ["Show this shelf on Home"] = "Visa den här hyllan på Hem",
+    ["Home shelves"] = "Hyllor på Hem",
+    ["Book row"] = "Bokrad",
+    ["Cover carousel"] = "Omslagssnurra",
+    ["Edit shelf"] = "Redigera hylla",
+    ["Open shelf"] = "Öppna hylla",
+    ["Open module settings"] = "Öppna modulinställningar",
+    ["Remove from Home"] = "Ta bort från Hem",
+    ["No shelves added yet. Long-press a library shelf to add it."] = "Inga hyllor tillagda ännu. Långtryck på ett hyllchip i biblioteket för att lägga till det.",
+    ["Added on a new Home page. Move it using Home layout settings."] = "Tillagd på en ny Hem-sida. Du kan flytta den i Hemvyns layoutinställningar.",
+    ["Shelf updated on Home."] = "Hyllan på Hem har uppdaterats.",
+    ["This shelf is no longer available."] = "Den här hyllan finns inte längre.",
+    ["This shelf has no books."] = "Den här hyllan innehåller inga böcker.",
+    ["Remote catalogs cannot be added as local Home shelves."] = "Fjärrkataloger kan inte läggas till som lokala Hem-hyllor.",
+    ["Could not open the library. Try again from the library view."] = "Kunde inte öppna biblioteket. Försök igen från biblioteksvyn.",
+    ["Could not load books."] = "Kunde inte hämta böckerna.",
+    ["Showing the first 400 matches. Narrow your search for more specific results."] = "Visar de första 400 träffarna. Precisera sökningen för ett mer avgränsat resultat.",
+}
+
+return function(text)
+    local lang = G_reader_settings and G_reader_settings:readSetting("language") or "en"
+    if type(lang) == "string" and lang:match("^sv") then return sv[text] or text end
+    return text
+end

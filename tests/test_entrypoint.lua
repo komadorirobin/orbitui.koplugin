@@ -62,7 +62,7 @@ H.test("OrbitUI menu uses the shared update label and updater", function()
     local fm = instantiate(dofile(root .. "/main.lua"))
     local items = {}
     fm:addToMainMenu(items)
-    local update_item = items.orbitui.sub_item_table[2]
+    local update_item = items.orbitui.sub_item_table[#items.orbitui.sub_item_table]
     H.eq(update_item.text, "Uppdatera OrbitUI")
     H.eq(update_item.callback, require("adapters/orbitui_updates").show)
 end)

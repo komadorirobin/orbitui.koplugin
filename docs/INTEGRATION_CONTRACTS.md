@@ -162,6 +162,38 @@ Tests: `tests/test_upstream_watch.py`, `test_updates.lua`, `test_runtime.lua`,
 `test_bootstrap.lua`, `test_ota.lua`, `test_http.lua`, `test_release_package.py`.
 Full device acceptance, including the OTA UI, is still outstanding.
 
+## C10: Shared panels, search, settings and Home shelves
+
+Home book actions and search results reuse the real Bookshelf detail panel.
+Its detail-only controller must not initialize a hidden shelf, claim the live
+widget, register shelf timers or replace repository callbacks. Keep registered
+file-dialog actions, their close/navigation callbacks and module-specific actions.
+Opening the panel reads cached Hardcover data only; C05 still governs all writes.
+
+Home shelf modules persist profile/chip references, not copied file lists. Resolve
+current source/filter/sort through Bookshelf. Missing or empty sources must never
+fall back to unrelated recent books. New modules get a new Home page, leaving the
+existing arrangement intact. Each carousel has its own context/index/settings.
+Removing from Home must preserve placements on Custom Screens and book files.
+
+Search uses the repository's metadata and explicit all/prose/comics/current
+scopes. Apply current-shelf membership before the result limit. Preserve group
+results, the typed query when switching scope, and the caller's reader-opening
+path. Remote OPDS catalog search remains separate.
+
+The settings hub delegates to existing component controls and storage. Both
+native Tools settings entries use one shared menu key. Keep legacy dispatcher
+actions, the advanced SimpleUI window and the single OrbitUI updater available.
+No silent settings reset, new sync owner or automatic release accompanies these
+UI changes.
+
+Source: `core/orbitui_context.lua`, `orbitui_shelf_query.lua`,
+`orbitui_search.lua`, `orbitui_i18n.lua`; adapters `orbitui_ui.lua`,
+`orbitui_book_panel.lua`, `orbitui_home_shelves.lua`, `orbitui_settings.lua`.
+Tests: `tests/test_shared_book_panel.lua`, `test_shared_home.lua`,
+`test_shared_search.lua`, `test_shared_settings.lua`.
+See `SHARED_UI.md` for the minimal component seams and device checklist.
+
 ## Recording an intentional contract change
 
 Name the contract, explain why the old behavior is no longer required, record

@@ -58,6 +58,9 @@ function M.install(root, module_map)
                 return require("adapters/orbitui_bookshelf_storage").wrapStore(fn())
             end
         end
+        if require("adapters/orbitui_ui").modules[name] then
+            return function() return require("adapters/orbitui_ui").wrap(name, fn()) end
+        end
         return fn
     end
     -- Keep package.preload first so existing KOReader userpatch interceptors work.
@@ -72,6 +75,7 @@ function M.classes(root)
         "Update KOReader to v2025.08 or newer before using OrbitUI")
     local bookshelf = assert(dofile(root .. "/components/bookshelf/main.lua"))
     local simpleui = assert(dofile(root .. "/components/simpleui/main.lua"))
+    require("adapters/orbitui_ui").classes(bookshelf, simpleui)
     component_classes = { bookshelf = bookshelf, simpleui = simpleui }
     return component_classes
 end

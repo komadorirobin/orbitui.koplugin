@@ -562,6 +562,7 @@ local function buildFavoritesFps(ctx)
 end
 
 local function getFps(source, ctx)
+    if ctx.orbitui_files then return ctx.orbitui_files() or {} end
     local fps
     if source == "tbr" then
         fps = buildTBRFps(ctx)
@@ -712,7 +713,7 @@ function M.build(w, ctx)
     -- Use pre-read settings bundle from ctx when available (normal HS path).
     local c = ctx.cfg and ctx.cfg.coverdeck
     local source = c and c.source or getSource(pfx)
-    Config.applyLabelToggle(M, getSourceLabel(source))
+    if not ctx.orbitui_files then Config.applyLabelToggle(M, getSourceLabel(source)) end
 
     logger.dbg("coverdeck: build source=" .. tostring(source)
         .. " current_fp=" .. tostring(ctx.current_fp)
@@ -888,7 +889,9 @@ function M.build(w, ctx)
         else
             self._cur = (self._cur - 2 + self._count) % self._count + 1
         end
-        if self._screen then
+        if ctx.orbitui_set_index then
+            ctx.orbitui_set_index(self._cur)
+        elseif self._screen then
             self._screen:_setCoverdeckIdx(self._cur)
             _navigateRefresh(self._screen)
         end
@@ -947,7 +950,7 @@ function M.build(w, ctx)
         end
         function tappable:onHoldDeckRelease()
             if self._hold_on_center and ctx.hold_fn then
-                ctx.hold_fn(self._fps[self._cur], "coverdeck")
+                ctx.hold_fn(self._fps[self._cur], ctx.orbitui_module_id or "coverdeck")
             end
             return self._hold_on_center or nil
         end
