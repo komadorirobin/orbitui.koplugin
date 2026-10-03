@@ -68,7 +68,7 @@ function OrbitUI:addToMainMenu(items)
                         .. (self._orbitui_error and ("\n\nStartup error: " .. self._orbitui_error) or ""))
                 end,
             },
-            { text = "OrbitUI updates", callback = Updates.show },
+            { text = Updates.menuLabel, callback = Updates.show },
         },
     }
 end

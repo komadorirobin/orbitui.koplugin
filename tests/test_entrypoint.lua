@@ -57,6 +57,15 @@ H.test("FileManager and reader each receive one component pair", function()
     fm:handleEvent{ handler = "onTeardown" }
     H.eq(loader.loaded_plugins.bookshelf, reader.ui.bookshelf)
 end)
+H.test("OrbitUI menu uses the shared update label and updater", function()
+    fixture()
+    local fm = instantiate(dofile(root .. "/main.lua"))
+    local items = {}
+    fm:addToMainMenu(items)
+    local update_item = items.orbitui.sub_item_table[2]
+    H.eq(update_item.text, "Uppdatera OrbitUI")
+    H.eq(update_item.callback, require("adapters/orbitui_updates").show)
+end)
 H.test("conflicting installs neither back up nor load components", function()
     fixture()
     discovered = { { name = "simpleui" } }

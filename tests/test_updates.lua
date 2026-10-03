@@ -4,6 +4,12 @@ local Updates = require("adapters/orbitui_updates")
 local messages = {}
 package.loaded["ui/uimanager"] = { show = function(_, msg) messages[#messages + 1] = msg.text end }
 package.loaded["ui/widget/infomessage"] = { new = function(_, msg) return msg end }
+H.test("both components use the shared OrbitUI update label", function()
+    H.eq(Updates.menuLabel, "Uppdatera OrbitUI")
+    for _, name in ipairs({ "bookshelf", "simpleui" }) do
+        H.eq(Updates.component(name, "/dummy").menuLabel, Updates.menuLabel)
+    end
+end)
 H.test("Bookshelf installation entry points cannot update a component", function()
     local updater = Updates.component("bookshelf", "/dummy")
     for _, method in ipairs({ "check", "checkBranch", "install", "installBranch", "installLatestStable" }) do

@@ -4647,7 +4647,10 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 sub_item_table_func = makeUpdateChannelItems,
             },
             {
-                text      = _("Check for Updates"),
+                text_func = function()
+                    local Updater = updaterModule()
+                    return Updater and Updater.menuLabel or _("Check for Updates")
+                end,
                 callback  = function()
                     local ok_upd, Updater = pcall(require, "infra/sui_updater")
                     if not ok_upd then

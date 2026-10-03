@@ -914,6 +914,9 @@ function Bookshelf:buildMenuItems(menu_items)
         -- known-available update invisible until the submenu was opened.
         text_func = function()
             local ok_u, Updater = pcall(require, "lib/bookshelf_updater")
+            if ok_u and Updater.menuLabel then
+                return MenuIcons.label(MenuIcons.UPDATES, Updater.menuLabel)
+            end
             local available = ok_u and Updater.getAvailableUpdate()
             if available then
                 return MenuIcons.label(MenuIcons.UPDATES,

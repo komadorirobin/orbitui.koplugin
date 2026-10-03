@@ -35,7 +35,8 @@ BookOrbit synchronization, MyAnimeList and Patch Manager remain separate plugins
 The component updaters are disabled in OrbitUI; components must never update
 independently inside a combined installation. Install the first
 [release ZIP](https://github.com/komadorirobin/orbitui.koplugin/releases) manually.
-Subsequent updates use **Tools > OrbitUI > OrbitUI updates**. The common OTA
+Subsequent updates use **Tools > OrbitUI > Uppdatera OrbitUI**. The same label
+appears in the embedded SimpleUI and Bookshelf update menus. The common OTA
 installer validates a complete package, activates it on restart and retains
 rollback. See [OTA and recovery](docs/OTA.md).
 

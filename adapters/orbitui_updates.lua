@@ -1,4 +1,4 @@
-local M = {}
+local M = { menuLabel = "Uppdatera OrbitUI" }
 local context, busy, started, available
 
 function M.configure(value)
@@ -168,6 +168,7 @@ function M.component(name, root)
     end
     if name == "simpleui" then
         return {
+            menuLabel = M.menuLabel,
             hasUpdate = function() return false end,
             latestVersion = noop,
             selectedBranch = function() return "Managed by OrbitUI" end,
@@ -183,6 +184,7 @@ function M.component(name, root)
     end
     assert(name == "bookshelf", "Unknown component")
     return {
+        menuLabel = M.menuLabel,
         pluginDir = function() return root .. "/components/bookshelf" end,
         getInstalledVersion = currentVersion,
         otherCopies = function() return {} end,

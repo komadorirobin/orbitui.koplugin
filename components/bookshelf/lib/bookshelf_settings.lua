@@ -6086,6 +6086,7 @@ function Settings:_updateSubItems()
             -- said the row was tappable, and users routinely missed that
             -- checking was possible at all.
             text_func = function()
+                if Updater.menuLabel then return Updater.menuLabel end
                 local current   = Updater.getInstalledVersion()
                 local available = Updater.getAvailableUpdate()
                 if available then

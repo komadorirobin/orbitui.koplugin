@@ -14,9 +14,11 @@ only. This is separate from upstream monitoring, which never publishes builds.
 
 ## On the reader
 
-Open **Tools > OrbitUI > OrbitUI updates > Check for updates**. The update entries
-inside the embedded components open this same OrbitUI menu, not their old
-installers. The menu also provides:
+Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries
+inside the embedded components are also named **Uppdatera OrbitUI** and open this
+same OrbitUI menu, not their old installers. The label is supplied by the common
+updater adapter; retain the components' optional `menuLabel` hooks during merges.
+The menu also provides:
 
 - Include preview releases (alpha/beta/rc).
 - Optional daily checking when already online, disabled by default. It never
