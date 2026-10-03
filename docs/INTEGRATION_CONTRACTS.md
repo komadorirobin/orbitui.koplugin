@@ -135,6 +135,10 @@ Material weight is a per-icon choice (200/300/400/500), saved only when an icon
 is selected. Per the user's explicit request, unweighted Material selections
 now default to 300 instead of 500; other icon sources remain unchanged. Changing
 a preview weight or cancelling must not write settings or alter another icon.
+Solar Outline, Solar Line Duotone and Tabler are additional SVG-only per-icon
+sources, not presets. Their native shapes/opacity stay independent of Material
+weights. Keep the custom manga adaptations, attribution, lazy catalogues and
+OTA-safe SVG identities. No global font changes or automatic icon substitution.
 Tests: `tests/test_icons.lua`.
 
 Source: Bookshelf `lib/bookshelf_settings_store.lua`, `lib/bookshelf_widget.lua`;

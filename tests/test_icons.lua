@@ -1,6 +1,7 @@
 package.path = "./?.lua;" .. package.path
 local H = require("tests/helpers")
 local Icons = require("core/orbitui_icons")
+local VectorIcons = require("core/orbitui_vector_icons")
 local Adapter = require("adapters/orbitui_icons")
 local Widget = H.widget()
 function Widget:getSize() return { w = self.width or 24, h = self.height or 24 } end
@@ -118,6 +119,7 @@ package.loaded["lib/bookshelf_icons_library"] = Library
 
 H.test("loading icon support makes no setting writes and catalogue is lazy/cached", function()
     H.eq(writes, 0)
+    for _, source in ipairs(VectorIcons.sources) do H.eq(package.loaded[source.module], nil) end
     H.eq(#Icons.catalogue(), 110)
     H.eq(Icons.catalogue(), Icons.catalogue())
     H.eq(Icons.bookshelfCells(), Icons.bookshelfCells())
@@ -189,7 +191,7 @@ H.test("only known bundled images rebase across OTA slots", function()
 end)
 H.test("Bookshelf offers Material only where image tokens are supported", function()
     H.eq(#Library._itemList("material", nil, true), 110)
-    H.eq(#Library._itemList("all", nil, true), 111)
+    H.eq(#Library._itemList("all", nil, true), 338)
     H.eq(#Library._itemList("all", nil, false), 1)
     H.eq(#Library._itemList("all", "manga", false), 0)
     local cell = Library._itemList("all", "manga", true)[1]
@@ -198,7 +200,9 @@ H.test("Bookshelf offers Material only where image tokens are supported", functi
     H.eq(model.imageIconFile("orbitui-material-manga"), Icons.imageFile("material:manga"))
     H.eq(model.imageIconFile("home"), nil)
     Library:show(function() end, { svg = true })
-    H.eq(shown.config.chip_strip()[2].key, "material")
+    local chips = {}
+    for _, chip in ipairs(shown.config.chip_strip()) do chips[chip.key] = true end
+    assert(chips.material and chips["solar-outline"] and chips["solar-duotone"] and chips.tabler)
 end)
 H.test("native tabs register actual SVGs from names and previous OTA slots", function()
     H.eq(Style.registerTabIconName("sui_tab_main", "material:manga"), "simpleui_sui_tab_main")
@@ -344,7 +348,7 @@ local function chooseWeight(picker, weight)
 end
 local function checkPreviewWeight(widget, weight)
     local count = 0
-    if widget.file then
+    if widget.file and Icons.entry(widget.file) then
         H.eq(Icons.entry(widget.file).weight, weight)
         widget:_render()
         count = 1
@@ -524,5 +528,151 @@ H.test("legacy Material overrides are readable at startup without setting writes
     H.eq(require("features/sui_quickactions").getDefaultActionIcon("bookshelf_comics"), "material:manga")
     H.eq(writes, before)
     H.eq(store.simpleui_sysicon_sui_menu, "material:menu")
+end)
+H.test("vector catalogues cache and round-trip every whitelisted identity across OTA slots", function()
+    for _, source in ipairs(VectorIcons.sources) do
+        local cells = VectorIcons.catalogue(source.key)
+        H.eq(VectorIcons.catalogue(source.key), cells)
+        H.eq(#cells, source.key == "tabler" and 75 or 76)
+        for _, cell in ipairs(cells) do
+            for _, value in ipairs({ cell.value, cell.icon, cell.insert_value, cell.file }) do
+                H.eq(VectorIcons.entry(value), cell)
+                H.eq(Icons.imageFile(value), cell.file)
+                H.eq(Icons.forWeight(value, 500), nil)
+            end
+            local old = "/reader/.orbitui-versions/old/assets/vector-icons/" .. source.key .. "/" .. cell.name .. ".svg"
+            H.eq(Icons.rebaseImage(old), cell.file)
+            H.eq(Style.safeIconPath(old), cell.file)
+            H.eq(Config.isFontIcon(cell.value), false)
+            local widget = Library._renderCell(cell, { w = 220, h = 180 })
+            widget[1][1][1]:_render()
+            H.eq(widget[1][1][1].file, cell.file)
+            H.eq(widget[1][1][3].face.name, "cfont")
+        end
+    end
+    for _, bad in ipairs({ "solar-outline:../manga", "solar-outline:missing", "solar-outline:Manga",
+            "[icon=orbitui-solar-outline-manga]extra", "tabler:language-hiragana:300", "tabler:../book",
+            "/old/assets/vector-icons/solar-outline/../manga.svg", "solar:book", "[icon=orbitui-tabler-missing]" }) do
+        H.eq(VectorIcons.entry(bad), nil, bad)
+        H.eq(Icons.imageFile(bad), nil, bad)
+    end
+end)
+H.test("vector search exposes custom manga and Tabler hiragana without font glyphs", function()
+    for _, key in ipairs({ "solar-outline", "solar-duotone" }) do
+        local cell = VectorIcons.filtered(key, "Reading", "manga")[1]
+        H.eq(cell.name, "manga")
+        H.eq(cell.label, "Manga (OrbitUI)")
+        H.eq(#VectorIcons.filtered(key, "Navigation", "manga"), 0)
+        H.eq(#VectorIcons.filtered(key, "all", "[."), 0)
+        H.eq(#VectorIcons.filtered(key, "Reading", "manga hiragana"), 1)
+        assert(#VectorIcons.filtered(key, "Navigation", "hem") >= 2)
+    end
+    H.eq(VectorIcons.filtered("tabler", "Reading", "manga")[1].name, "language-hiragana")
+end)
+H.test("new pickers initialize real modals in both languages, orientations and input modes", function()
+    local before = writes
+    for _, source in ipairs(VectorIcons.sources) do
+        for _, lang in ipairs({ "en", "sv" }) do
+            language = lang
+            for _, landscape in ipairs({ false, true }) do
+                screen.width, screen.height = landscape and 1680 or 1264, landscape and 1264 or 1680
+                for _, keys in ipairs({ false, true }) do
+                    has_keys = keys
+                    local picker = Adapter.show(function() error("Opening must not select") end, nil, nil, source.key)
+                    H.eq(picker.config.title, source.title or source.label)
+                    H.eq(weightControl(picker), nil)
+                    H.eq(picker.config.item_count(), #VectorIcons.catalogue(source.key))
+                    picker:onSwipeNextPage()
+                    H.eq(picker.page, 2)
+                    for _, group in ipairs({ "Reading", "Navigation", "System", "Tools", "all" }) do
+                        picker:_onChipTap(group)
+                        H.eq(picker.page, 1)
+                        H.eq(picker.config.item_count(), #VectorIcons.filtered(source.key, group))
+                    end
+                    picker:_onSearchSubmit("manga")
+                    H.eq(picker.config.item_count(), 1)
+                    H.eq(picker.config.item_at(1).source, source.key)
+                    picker:_onChipTap("Navigation")
+                    H.eq(picker.config.item_count(), 0)
+                    picker:_onSearchSubmit("")
+                    H.eq(picker.config.item_count(), #VectorIcons.filtered(source.key, "Navigation"))
+                    picker:onClose()
+                end
+            end
+        end
+    end
+    language, has_keys = "en", false
+    screen.width, screen.height = 1264, 1680
+    H.eq(writes, before)
+end)
+H.test("Bookshelf source selection and image tokens do not inherit Material weights", function()
+    for _, source in ipairs(VectorIcons.sources) do
+        local picked
+        Library:show(function(v) picked = v end, { svg = true })
+        local picker = Library.modal
+        picker:_onChipTap(source.key)
+        H.eq(picker.config.item_count(), #VectorIcons.catalogue(source.key))
+        local cell = picker.config.item_at(1)
+        chooseWeight(picker, 500)
+        H.eq(picker.config.item_at(1), cell)
+        picker.config.on_cell_tap(cell)
+        H.eq(picked, cell.insert_value)
+        H.eq(Icons.imageFile(picked), cell.file)
+        H.eq(Adapter.wrap("lib/bookshelf_start_menu_model", {}).imageIconFile(cell.icon), cell.file)
+        H.eq(#Library._itemList(source.key, nil, false), 0)
+    end
+    Library:show(function() end, { svg = false })
+    for _, chip in ipairs(Library.modal.config.chip_strip()) do
+        H.eq(VectorIcons.source(chip.key), nil)
+    end
+    Library.modal:onClose()
+end)
+H.test("new sources are per-icon choices only and cancelling never saves", function()
+    local QA = require("features/sui_quickactions")
+    for _, source in ipairs(VectorIcons.sources) do
+        local before, old_search = writes, store.simpleui_sysicon_sui_search
+        local function open()
+            QA.showIconPicker(QA.getDefaultActionIcon("bookshelf_comics"), function(value)
+                QA.setDefaultActionIcon("bookshelf_comics", value)
+            end, "Default", {}, "picker", true)
+            for _, row in ipairs(shown.buttons) do
+                if row[1].text == (source.title or source.label) .. "..." then row[1].callback(); return end
+            end
+            error("Source missing: " .. source.key)
+        end
+        open()
+        shown.config.footer_actions[1].on_tap(); deferred[#deferred]()
+        H.eq(writes, before)
+        open()
+        shown:_onSearchSubmit("manga")
+        local cell = shown.config.item_at(1)
+        shown.config.on_cell_tap(cell)
+        H.eq(writes, before + 1)
+        H.eq(store.simpleui_action_bookshelf_comics_icon, cell.file)
+        H.eq(store.simpleui_sysicon_sui_search, old_search)
+        local after = writes
+        open(); shown:onClose(); deferred[#deferred]()
+        H.eq(writes, after)
+        for _, pack in ipairs(Style.listPacks()) do assert(pack.path ~= source.key) end
+    end
+end)
+H.test("Solar and Tabler use dock alpha rendering and native menu SVG registration", function()
+    local Renderer = dofile("components/simpleui/engines/sui_quickactions_render.lua")
+    for _, value in ipairs({ "solar-outline:manga", "solar-duotone:manga", "tabler:language-hiragana" }) do
+        local cell = VectorIcons.entry(value)
+        local w = Renderer.buildIcon({ icon = value, label = "Manga" }, 64, "black")
+        H.eq(w.file, cell.file); H.eq(w.alpha, true); w:_render()
+        local framed = Renderer.buildFramedIcon(value, 64, "white")
+        H.eq(framed._inner.file, cell.file)
+        H.eq(framed._inner.original_in_nightmode, true)
+        H.eq(framed._fg, "white")
+        H.eq(Style.registerTabIconName("sui_tab_main", value), "simpleui_sui_tab_main")
+        H.eq(copied["/fake/icons/simpleui_sui_tab_main.svg"], cell.file)
+        local btn = { image = Image:new{ width = 40, height = 40 }, width = 40, height = 40 }
+        store.simpleui_sysicon_sui_search = value
+        assert(Style.applyIconToBtn("sui_search", btn))
+        H.eq(btn.image.file, cell.file)
+        H.eq(btn.image.face, nil)
+    end
 end)
 H.finish()

@@ -1,0 +1,28 @@
+Solar Outline and Solar Line Duotone
+Artwork by 480 Design / Solar Icon Set.
+https://github.com/480-Design/Solar-Icon-Set
+https://www.figma.com/community/file/1166831539721848736
+Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0).
+https://creativecommons.org/licenses/by/4.0/
+See SOLAR-LICENSE.txt. OrbitUI selects icons and normalizes SVG serialization;
+the original geometry and opacity are preserved.
+
+Tabler Icons
+Copyright (c) 2020-2026 Pawel Kuna.
+https://github.com/tabler/tabler-icons
+MIT License; see TABLER-LICENSE.txt for the original notice and license.
+OrbitUI selects icons, removes metadata comments and uses explicit black in
+place of currentColor. Geometry and native stroke width are preserved.
+
+Manga (OrbitUI), outline and duotone variants
+An OrbitUI adaptation, not an official Solar or Tabler icon. Combines the book
+silhouette and page lines from Solar Book 2 with the hiragana strokes from
+Tabler language-hiragana. The Latin letter is removed, the Japanese mark is
+rescaled/repositioned on the cover, strokes are matched to Solar, and the
+duotone version uses a half-opacity book with a solid mark. No font is needed.
+The adaptation is distributed under CC BY 4.0, with the Tabler MIT notice also
+retained. Please credit Solar / 480 Design, Tabler / Pawel Kuna and OrbitUI.
+No endorsement by the original authors is implied.
+
+selection.json pins both upstream revisions. generated.json records each
+original Git blob, SHA-256 and output checksum, including the custom inputs.

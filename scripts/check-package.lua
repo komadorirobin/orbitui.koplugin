@@ -32,6 +32,10 @@ for _, path in ipairs({
     "assets/material-symbols/generated.json", "assets/material-symbols/selection.json",
     "assets/material-symbols/icons/manga.svg", "assets/material-symbols/icons/comic_bubble.svg",
     "core/orbitui_icons.lua", "core/orbitui_material_catalogue.lua", "adapters/orbitui_icons.lua",
+    "core/orbitui_vector_icons.lua",
+    "assets/vector-icons/selection.json", "assets/vector-icons/generated.json", "assets/vector-icons/NOTICE.txt",
+    "assets/vector-icons/SOLAR-LICENSE.txt", "assets/vector-icons/TABLER-LICENSE.txt",
+    "assets/vector-icons/custom/manga-outline.svg", "assets/vector-icons/custom/manga-duotone.svg",
     "components/bookshelf/main.lua", "components/bookshelf/_meta.lua",
     "components/bookshelf/LICENSE", "components/bookshelf/assets/bookshelf-logo.png",
     "components/simpleui/main.lua", "components/simpleui/_meta.lua", "components/simpleui/LICENSE",
@@ -40,6 +44,12 @@ for _, icon in ipairs(dofile("core/orbitui_material_catalogue.lua")) do
     expect("assets/material-symbols/icons/" .. icon.name .. ".svg")
     for _, weight in ipairs(require("core/orbitui_icons").weights) do
         expect("assets/material-symbols/icons/" .. weight .. "/" .. icon.name .. ".svg")
+    end
+end
+for _, source in ipairs(require("core/orbitui_vector_icons").sources) do
+    expect(source.module .. ".lua")
+    for _, icon in ipairs(require("core/orbitui_vector_icons").catalogue(source.key)) do
+        expect("assets/vector-icons/" .. source.key .. "/" .. icon.name .. ".svg")
     end
 end
 local tracked = assert(io.popen("git ls-files"))

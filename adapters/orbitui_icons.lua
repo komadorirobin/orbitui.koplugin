@@ -1,5 +1,6 @@
 local M = {}
 local Icons = require("core/orbitui_icons")
+local VectorIcons = require("core/orbitui_vector_icons")
 local _ = require("core/orbitui_i18n")
 
 M.modules = {
@@ -9,10 +10,12 @@ M.modules = {
     ["lib/bookshelf_start_menu_model"] = true,
 }
 
-local function weightAction(get_weight, set_weight, get_modal)
+local function weightAction(get_weight, set_weight, get_modal, shared_picker)
     return {
         key = "material_weight",
-        label_func = function() return _("Line thickness") .. ": " .. get_weight() .. "..." end,
+        label_func = function()
+            return (shared_picker and "Material: " or (_("Line thickness") .. ": ")) .. get_weight() .. "..."
+        end,
         on_tap = function()
             local UIManager = require("ui/uimanager")
             local ButtonDialog = require("ui/widget/buttondialog")
@@ -41,23 +44,34 @@ local function weightAction(get_weight, set_weight, get_modal)
     }
 end
 
-function M.show(on_select, on_cancel, current)
+function M.show(on_select, on_cancel, current, source_key)
     local UIManager = require("ui/uimanager")
     local LibraryModal = require("lib/bookshelf_library_modal")
     local Library = require("lib/bookshelf_icons_library")
     local Screen = require("device").screen
+    local source = source_key and assert(VectorIcons.source(source_key), "Unknown icon picker source")
     local entry = Icons.entry(current)
     local state = { group = "all", query = "", weight = entry and entry.weight or Icons.default_weight }
     local items, key, modal, selected
     local function list()
         local next_key = state.group .. "\0" .. state.query .. "\0" .. state.weight
         if key ~= next_key then
-            items, key = Icons.filtered(state.group, state.query, state.weight), next_key
+            items = source and VectorIcons.filtered(source.key, state.group, state.query)
+                or Icons.filtered(state.group, state.query, state.weight)
+            key = next_key
         end
         return items
     end
+    local actions = { { key = "close", label = _("Cancel"), on_tap = function()
+        UIManager:close(modal)
+    end } }
+    if not source then
+        actions[#actions + 1] = weightAction(function() return state.weight end, function(weight)
+            state.weight = weight
+        end, function() return modal end)
+    end
     modal = LibraryModal:new{ config = {
-        title = "Material Symbols Rounded",
+        title = source and (source.title or source.label) or "Material Symbols Rounded",
         chip_strip = function()
             local out = {}
             for _i, group in ipairs({ "all", "Reading", "Navigation", "System", "Tools" }) do
@@ -80,11 +94,7 @@ function M.show(on_select, on_cancel, current)
             UIManager:close(modal)
             on_select(item.file)
         end,
-        footer_actions = { { key = "close", label = _("Cancel"), on_tap = function()
-            UIManager:close(modal)
-        end }, weightAction(function() return state.weight end, function(weight)
-            state.weight = weight
-        end, function() return modal end) },
+        footer_actions = actions,
         on_closed = function()
             if not selected and on_cancel then UIManager:nextTick(on_cancel) end
         end,
@@ -117,11 +127,27 @@ function M.wrap(name, module)
                 return M.show(on_select, on_cancel, current)
             end,
         } }
+        for _, source in ipairs(VectorIcons.sources) do
+            local key = source.key
+            module.extraIconPickers[#module.extraIconPickers + 1] = {
+                text = (source.title or source.label) .. "...",
+                show = function(current, on_select, on_cancel)
+                    return M.show(on_select, on_cancel, current, key)
+                end,
+            }
+        end
     elseif name == "lib/bookshelf_icons_library" then
         module.extra_sources = { {
             key = "material", label = "Material", requires_svg = true,
             items = Icons.bookshelfCells,
         } }
+        for _, source in ipairs(VectorIcons.sources) do
+            local key = source.key
+            module.extra_sources[#module.extra_sources + 1] = {
+                key = key, label = source.label, requires_svg = true,
+                items = function() return VectorIcons.catalogue(key) end,
+            }
+        end
         module.configurePicker = function(config, opts, get_modal)
             if not opts.svg then return end
             local entry = Icons.entry(opts.current_icon)
@@ -132,7 +158,7 @@ function M.wrap(name, module)
                 return item and (Icons.forWeight(item.icon, weight) or item)
             end
             config.footer_actions[#config.footer_actions + 1] = weightAction(
-                function() return weight end, function(value) weight = value end, get_modal)
+                function() return weight end, function(value) weight = value end, get_modal, true)
         end
     elseif name == "lib/bookshelf_start_menu_model" then
         module.imageIconFile = Icons.imageFile

@@ -31,6 +31,11 @@ modules. No existing release assets are replaced.
 The first public build has a positive initial Bigme startup/navigation report.
 Full device acceptance and device OTA/recovery testing are still outstanding.
 
+The working tree also adds per-icon Solar Outline, Solar Line Duotone and Tabler
+sources, including an OrbitUI manga icon in both Solar styles. Existing choices
+are unchanged; these are not bulk icon-pack presets. See [icons](docs/ICONS.md)
+for previews and selection instructions. Not yet published.
+
 The alpha.6 preview added 110 offline Material Symbols Rounded icons, including
 manga. A Bigme startup crash was reported after applying its whole-pack preset.
 If that prevents startup, see the non-destructive [recovery patch](recovery/README.md).

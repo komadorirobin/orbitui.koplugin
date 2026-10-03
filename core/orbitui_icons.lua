@@ -1,6 +1,7 @@
 -- Material names resolve to SVGs, not a text font inside native buttons.
 -- Legacy names and OTA-slot image paths remain readable without rewriting settings.
 local M = {}
+local VectorIcons = require("core/orbitui_vector_icons")
 local root = assert(debug.getinfo(1, "S").source:match("^@(.+)/core/orbitui_icons%.lua$"))
 local base = root .. "/assets/material-symbols/"
 local catalogues, by_name = {}, {}
@@ -64,14 +65,15 @@ function M.forWeight(value, weight)
 end
 
 function M.imageFile(value)
-    local entry = M.entry(value)
+    local entry = M.entry(value) or VectorIcons.entry(value)
     if entry then return entry.file end
 end
 
 -- Image-only SimpleUI slots may store a validated absolute SVG path. Rebase
 -- only our exact asset suffix, including old OTA slots, never arbitrary files.
 function M.rebaseImage(path)
-    if type(path) ~= "string" or not path:find("/assets/material-symbols/icons/", 1, true) then return nil end
+    if type(path) ~= "string" or not (path:find("/assets/material-symbols/icons/", 1, true)
+        or path:find("/assets/vector-icons/", 1, true)) then return nil end
     return M.imageFile(path)
 end
 

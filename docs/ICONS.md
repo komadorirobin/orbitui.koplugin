@@ -1,4 +1,30 @@
-# Material Symbols Rounded
+# Per-icon sources
+
+OrbitUI offers Solar Outline, Solar Line Duotone and Tabler as additional
+**per-icon sources**, alongside Material Symbols Rounded and the existing
+Nerd Font and custom images. These are curated offline selections, not the full
+upstream libraries: 76 icons in each Solar style and 75 Tabler icons.
+They do not appear under Icon Packs and never replace other icons automatically.
+
+Choose the button/action you want to edit, then **Solar Outline...**,
+**Solar Line Duotone...** or **Tabler...**. Search, categories and pagination
+work the same way as in the Material picker. Bookshelf's image-capable icon
+library also offers all three sources. Existing icon selections are untouched.
+
+**Manga (OrbitUI)** is first in both Solar lists; searching for `manga` finds it.
+It combines a softly rounded book with hiragana on the cover, in monochrome and
+line-duotone variants. It is a credited adaptation of Solar and Tabler artwork,
+not an official icon from either project. Tabler's `language-hiragana` is also
+available. The shapes are SVG paths and need no Japanese or icon font.
+
+![Manga icon variants and 48-pixel navigation previews](assets/manga-icons.png)
+
+Solar retains its original outlines/opacity and Tabler its native 2-unit stroke.
+These new sources do not use Material's 200/300/400/500 weight scale. In the
+combined Bookshelf picker, **Material: 300...** controls only Material previews.
+Mix styles freely by selecting each icon individually.
+
+## Material Symbols Rounded
 
 OrbitUI bundles an optional, offline catalogue of 110 Material Symbols Rounded
 icons, including `manga` and `comic_bubble`, at weights 200, 300, 400 and 500.
@@ -44,6 +70,7 @@ cannot render a different icon font or image token without further changes.
 ## Integration
 
 `core/orbitui_icons.lua` owns names, paths and cached catalogue/search data.
+`core/orbitui_vector_icons.lua` adds three lazy, whitelisted SVG catalogues.
 `adapters/orbitui_icons.lua` supplies optional component
 hooks through the existing runtime module resolver. No global Font or
 IconWidget replacement, fallback-face mutation, or copied icon directory.
@@ -74,6 +101,11 @@ sources/explicit preview file and three image-token rendering paths. The optiona
 `configurePicker` hook adds the weight control before modal construction;
 the start-menu icon editor passes `current_icon` to restore its saved weight.
 These seams are kept small and must be preserved in future imports (C07/C08).
+The new sources use these same seams without changing component code. Named
+identities such as `solar-outline:manga`, `solar-duotone:manga` and
+`tabler:language-hiragana` resolve to current runtime files; Bookshelf tokens
+use `[icon=orbitui-solar-outline-manga]`, etc. Absolute packaged paths also
+rebase on OTA. Material parsing and weight selection remain independent.
 
 ## Rebuilding and verification
 
@@ -90,6 +122,33 @@ The script checks the inputs before generating the static subset, SVGs,
 Lua catalogue and output checksums. License and modification notices are
 included in runtime archives. No generation or network access occurs on the
 reader. Run `sh scripts/test.sh` and validate a runtime ZIP before release.
+
+Solar and Tabler revisions/selections are pinned in
+`assets/vector-icons/selection.json`. Clone each repository and fetch the pinned
+commit, then run (Python 3.9+ standard library only):
+
+```sh
+python3 scripts/build-vector-icons.py /path/to/Solar-Icon-Set /path/to/tabler-icons
+```
+
+The builder reads Git blobs at the exact pinned revisions, rather than checkout
+files or a moving branch. Generated SVGs are restricted to local geometry and
+attributes, with explicit black instead of `currentColor`; original opacity is
+retained. Input blob IDs/SHA-256s and output checksums live in `generated.json`.
+The manga source artwork lives in `assets/vector-icons/custom/`. Edit those
+SVGs and regenerate, not the generated copies. CC BY 4.0, MIT and modification
+notices are bundled alongside the assets. Solar's CC license text comes from
+`https://creativecommons.org/licenses/by/4.0/legalcode.txt`.
+
+For the optional preview, install `cairosvg` and `Pillow` in a development venv:
+
+```sh
+python scripts/preview-vector-icons.py docs/assets/manga-icons.png
+```
+
+Check Solar mono/duotone and Tabler on the actual e-reader at small sizes and in
+night mode. Desktop SVG previews and native-widget stubs do not establish
+contrast, rendering compatibility or stability on the Bigme.
 
 Device checklist (not replaced by headless tests): select manga for a dock
 action and a shelf chip; check large/small sizes, light/dark themes, dimming,

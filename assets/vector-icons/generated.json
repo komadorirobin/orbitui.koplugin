@@ -1,0 +1,1153 @@
+{
+  "inputs": {
+    "assets/vector-icons/custom/manga-duotone.svg": {
+      "sha256": "4e6c9f01632981f4e07e120e4bb3ec69f42c3c013d658f91870d922f05d8e052"
+    },
+    "assets/vector-icons/custom/manga-outline.svg": {
+      "sha256": "e6117559ba22156123d4f606b1905511c71ff23ceddc61b47ba21de472b39b27"
+    },
+    "solar:icons/SVG/Line Duotone/Arrows Action/Download.svg": {
+      "git_blob": "8597112c4adaaf34743c6bba29175536ab078a26",
+      "sha256": "2f30e26b3e11a7ab17740580fc0bb6a83110da0473d99a7a15fbf65937354d71"
+    },
+    "solar:icons/SVG/Line Duotone/Arrows Action/Undo Left.svg": {
+      "git_blob": "3c6b9f0f7a8692f948493fc94d6e8425bc42aff8",
+      "sha256": "93cafa3d7acccb80305d8870debc24fb91b79524a016524df8218c8b4d56725b"
+    },
+    "solar:icons/SVG/Line Duotone/Arrows Action/Upload.svg": {
+      "git_blob": "76b072dc4a96005194d076358c82efa7dfda2770",
+      "sha256": "d8784b2cb43f29de76c62674bf1471a5263ed5c31d5d9737a77db7aaf584bc86"
+    },
+    "solar:icons/SVG/Line Duotone/Arrows/Alt Arrow Down.svg": {
+      "git_blob": "8718e57d8fac80fc9d3a7b4d332985ab602e1dba",
+      "sha256": "2dda427f7bdc678eff266c39087884c2b9e11e3d09889987e9635aee78641bbb"
+    },
+    "solar:icons/SVG/Line Duotone/Arrows/Alt Arrow Left.svg": {
+      "git_blob": "2fd70c85f909153dbd34e2e497ea4b383ddd4223",
+      "sha256": "c92eb916a4aebe5185ea7602312d024ee5de785b1f079a4604be0122fd30e4fb"
+    },
+    "solar:icons/SVG/Line Duotone/Arrows/Alt Arrow Right.svg": {
+      "git_blob": "0d1da4403a94413c9124210f14bd602c44b7b5f6",
+      "sha256": "b8eb007bdc2bb988162c81bb2be1471c3ea386515322bb587b7850b918d2f648"
+    },
+    "solar:icons/SVG/Line Duotone/Arrows/Alt Arrow Up.svg": {
+      "git_blob": "81bb7a553a29fb8cf49c11b0b33880f565d26c2c",
+      "sha256": "454079b037323fd024bb405078744fee1dabb97aa31e3abb5197e4470b0d6e20"
+    },
+    "solar:icons/SVG/Line Duotone/Arrows/Double Alt Arrow Left.svg": {
+      "git_blob": "541cbab669fb5c05aa5c8f677f3bc3061cd13c2f",
+      "sha256": "7e2198619bc073e29ca4e113a5177c2101561e849ac8dfc19c1f92fbaaf6d951"
+    },
+    "solar:icons/SVG/Line Duotone/Arrows/Double Alt Arrow Right.svg": {
+      "git_blob": "7728fdd89ca4b7743e2150a018e94fa8de06ad97",
+      "sha256": "6c0e077e2b1ee5d913b993ff4197122daa52ae6c4aa4a02b33f5371bebbc7671"
+    },
+    "solar:icons/SVG/Line Duotone/Arrows/Refresh.svg": {
+      "git_blob": "c44b694d0f478896ffd4a110d89c5a0e8d9919dd",
+      "sha256": "8f658f7b4c26b8cca2205cd44a5a83aaf466373051fea57b15d81b0fee136a2f"
+    },
+    "solar:icons/SVG/Line Duotone/Astronomy/Star.svg": {
+      "git_blob": "2670e100082c9a65f4e6d3ee3e173f20a5380340",
+      "sha256": "9a04dbc5f67323cb989aa655034eb0957d84e70df914bf17e70011a215697d81"
+    },
+    "solar:icons/SVG/Line Duotone/Business, Statistic/Chart.svg": {
+      "git_blob": "397e7e007bb6001fa700ae9992b711f1488c3747",
+      "sha256": "ba4d99792671f9b200feadeb6b3bb77654bff3f3af65ef10a401a1f2624b214c"
+    },
+    "solar:icons/SVG/Line Duotone/Design, Tools/Crop.svg": {
+      "git_blob": "51951ab73ed2d1e7e1565469cd998465bdafafc5",
+      "sha256": "54baf49765aafcb168e8e89e45a30630745c3da3f1e25f9428d763f92caa0d37"
+    },
+    "solar:icons/SVG/Line Duotone/Design, Tools/Palette.svg": {
+      "git_blob": "51ee352314b0a195cc026c576fb5c227ecc268be",
+      "sha256": "693c6a3bf416da978849c5d7f446889aa196225a3387a761700c321a139cf942"
+    },
+    "solar:icons/SVG/Line Duotone/Electronic, Devices/Bluetooth.svg": {
+      "git_blob": "bce748cfa17eb406e3194769255900bb0631fedf",
+      "sha256": "44cec3a4c938e8ddc033b4c63617f0ce96a9666a0fca3c04788e1b209a4505be"
+    },
+    "solar:icons/SVG/Line Duotone/Electronic, Devices/Headphones Round.svg": {
+      "git_blob": "dc1f1ba06671dec3e6724ddf2c8976e2b6118add",
+      "sha256": "a8296a429414bbb3cd544d522e5e58bf9b671d31092f586c8d2ed8c1efecac57"
+    },
+    "solar:icons/SVG/Line Duotone/Electronic, Devices/Tablet.svg": {
+      "git_blob": "7dcac9f730a307c36d71ae8cea933c51d47a85c1",
+      "sha256": "9442f41f9ae74ca2d81e24f3486101c3ec15d24993c2621e407b30cb7ad2bd89"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Add Circle.svg": {
+      "git_blob": "75656cb47c669d342d7dc445c3932a59415e2015",
+      "sha256": "8865d414a4e27696cd68fc68b55b91e0bdc979ea081f6496235a49b5d0977d8b"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Battery Full.svg": {
+      "git_blob": "23fbc4533dced7fbe654e17c718f20b52998fbf2",
+      "sha256": "9f0a67a5cd3f48ec33718c8a1efc910655b34f94a744179f12a3756ca2bc65d0"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Check Circle.svg": {
+      "git_blob": "8bc2439b237311b856baf74a835b709f79b16b5c",
+      "sha256": "4e4c32447c333a0a60020dd510dc361f826b1a05540c404d5f28a5f1adf49c4f"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Close Circle.svg": {
+      "git_blob": "a68f0bb0e462e49db448c84f596dff5842cbf62e",
+      "sha256": "bcb35a195e1df25f8742e0a0a86b34596ee88af74dcc08a960b4044dcb17127b"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Copy.svg": {
+      "git_blob": "51237886d8b3aad402136ca7d849f401f88b870b",
+      "sha256": "f85065039653869208a096211f3a4ea68c1994f585b65f5b41f9e9adeb2bf30b"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Filter.svg": {
+      "git_blob": "82090baca7d10b2a6728c2969eb67165841d7724",
+      "sha256": "2a747415b78a5c1b79ad2e311ffaa3f189c50c5c1967aa16d3b48e268165d3ef"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Hamburger Menu.svg": {
+      "git_blob": "432b9c860e12b10a45328d90abe56e835c23f67d",
+      "sha256": "9c41ed0acd646a4d40b6599aed1ff06dd10e904948c6c21f5666778f66b17cae"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Home 2.svg": {
+      "git_blob": "15c034d757b28e1d28f34089c5805df20b935272",
+      "sha256": "4393265b943f8bf60c5980f6ee099b1c44edd5797ce861585e105eb261ccbd89"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Home Angle.svg": {
+      "git_blob": "ddf0629b11e80086ddf1a32ac44236cf229acf97",
+      "sha256": "a3877488604854be3c40606b3c26680fe297062c349f1382647640b771a8b74a"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Home.svg": {
+      "git_blob": "87d6c38799b412c42849dbc15f757799da4cd03a",
+      "sha256": "2abbe0e84b2c0b73d8752a4a0e60ecc81129db86f0eb7182901471546aa17013"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Info Circle.svg": {
+      "git_blob": "d39b2b684844f88b1ff3fb9a25438d5dcec0fbe5",
+      "sha256": "c3c4b04864c3c71c9db2d342ddb7a04b33269c80148e2de104cc41e73a7b6972"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Menu Dots.svg": {
+      "git_blob": "1769f07d222d77fffd818889b2cbbd5621c2891a",
+      "sha256": "38f830c7fa61ed13323e2e312fb09d3a2383d23d764daada9e883d9b03c1410c"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Minus Circle.svg": {
+      "git_blob": "317b0ca0fa3777606e8b00c4bfbfc87953e4cb20",
+      "sha256": "d329d019b0751f6cf52b665746640a6b15f9a3cb2b5e08a642bdb5d91fc12010"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Power.svg": {
+      "git_blob": "c400556094ef5dbfc4db80c149de482753a408dc",
+      "sha256": "02de99f5378e00219dc5b27bda2c04ae9d9a6696572e43af49c41988711a91f4"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Question Circle.svg": {
+      "git_blob": "b754483e5bb10b138fca10f6a8f11a662ff34556",
+      "sha256": "9416055dc871368e4d0360b56209b4ab23b94044ac41542ee89323fe0f3cdb45"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Share.svg": {
+      "git_blob": "1e5c5ddef7993ac1d9d5c4ab2f24756442914390",
+      "sha256": "5b9285cd94064b513b6ad572c26886905835251e47aa5ce0ccbbe68a3beb534d"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Sort.svg": {
+      "git_blob": "a0cec76a2eb0365456d6dbff684e55a41bb4aa46",
+      "sha256": "0874fc4bf5bc5016eef301d191a86f303655548cacf7eccddc609e4860ab894a"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Target.svg": {
+      "git_blob": "c8e9a9701901cf585dcd0f7b1d768c5660ebdb9e",
+      "sha256": "0cb113ade0141476aa6bc028570d2a23fbf1f6d2d3711dc6d427ee738e70c56a"
+    },
+    "solar:icons/SVG/Line Duotone/Essentional, UI/Trash Bin Minimalistic.svg": {
+      "git_blob": "35b351935b34759208a303af32840953dbc734d8",
+      "sha256": "a9aa710d154b0c3bb9601f937fff53a5ebef9377899bdea6a824db7b367fe39f"
+    },
+    "solar:icons/SVG/Line Duotone/Folders/Folder Open.svg": {
+      "git_blob": "cc55b54dec352a5c79db3818015bd964e1c741e1",
+      "sha256": "9c44b86a619294d5ad1622a852c7b29919cacca82e98513a5a12f0b4051c20ef"
+    },
+    "solar:icons/SVG/Line Duotone/Folders/Folder With Files.svg": {
+      "git_blob": "fa9288e23ee4f4ca02feca4457c2cef1e09b0d5b",
+      "sha256": "779814abc94442bee4cff1839faa33dde2b82120e3102618cc6e013158d751e3"
+    },
+    "solar:icons/SVG/Line Duotone/Folders/Folder.svg": {
+      "git_blob": "e03707c3ede80ccb339c34c68337a04d5cc5ee7f",
+      "sha256": "27ca9e93c45e4514272baa5e9e727d2a4b8c68c5c6cab6c58abf0b155e2f65df"
+    },
+    "solar:icons/SVG/Line Duotone/Like/Heart.svg": {
+      "git_blob": "985e337d4e63094cfcdf93c6685769c359366e12",
+      "sha256": "d6755064411f7071b23c3ceef06751ef7a47ebbdd6a1fd17891fdeeb34c40249"
+    },
+    "solar:icons/SVG/Line Duotone/List/List.svg": {
+      "git_blob": "5a992c0899e7dea66cefb83b32bae8b88793a324",
+      "sha256": "9d1ad6be5a2d40d37cc97de3ac481ac6c9f37f065474d3dde07be36d00244416"
+    },
+    "solar:icons/SVG/Line Duotone/Map & Location/Compass.svg": {
+      "git_blob": "b7bdb3aaa343663d76af832b770a74b967d95052",
+      "sha256": "0fe138b3ceb2f7b6d36a7a3a695f63cfb1debbc38983078aabb322b7f124b8a5"
+    },
+    "solar:icons/SVG/Line Duotone/Network, IT, Programming/Wi-Fi Router.svg": {
+      "git_blob": "0640367dd4f947232594d669670c60d8e947d16d",
+      "sha256": "66427cf4d68c1ec218e688981cf0ab162251ef3eb5197a8c31d99bf3b415b624"
+    },
+    "solar:icons/SVG/Line Duotone/Notes/Document Text.svg": {
+      "git_blob": "e6cd681b7aae77cc352d9015d5b190145a26c584",
+      "sha256": "78d0e21f8f8217c81958e64bcfdde97954c2e54a28a545c2c00aa630b9bff938"
+    },
+    "solar:icons/SVG/Line Duotone/Notes/Documents.svg": {
+      "git_blob": "9e587437cd217176b7ecc07e1667ef22a03f8463",
+      "sha256": "c6cd6e73a29e7d1c6e12ef31ee5e24da23a91594835d9b8c9f14128a2a61b280"
+    },
+    "solar:icons/SVG/Line Duotone/Notifications/Bell.svg": {
+      "git_blob": "7b9e20e642efe515d11ec1e969e5ad8ee03f3af7",
+      "sha256": "c1b6968b7a20d35ca27b82b358f12cd25ed72bb30b0db307f8656c2543d3f356"
+    },
+    "solar:icons/SVG/Line Duotone/School/Book 2.svg": {
+      "git_blob": "77d8493165b8d759f6dc08f81ea5eb3782709639",
+      "sha256": "cec1b04c086c168fb804c3f8f000d0e2914fabe47df562a45c37ac9efbeec673"
+    },
+    "solar:icons/SVG/Line Duotone/School/Book Bookmark Minimalistic.svg": {
+      "git_blob": "1298cfa6810a9c58afc57ef1961b296606f89064",
+      "sha256": "cdd3fcdcdcbf1f238c6144bc92650a9fab5f223ac3db99a58f9ecaef722f144e"
+    },
+    "solar:icons/SVG/Line Duotone/School/Book Bookmark.svg": {
+      "git_blob": "6758b8dc7f18481a31fd737bc180481b6126e892",
+      "sha256": "6270b9170437eb65273cd337f886016a38b325c772562f01e11bf1bf612f93e8"
+    },
+    "solar:icons/SVG/Line Duotone/School/Book Minimalistic.svg": {
+      "git_blob": "aea23a2ee26cd91694d43b2c17d897990c0ee463",
+      "sha256": "0bcacb299bfdfa9f4efd8b44c8ff13ef5678236f03eb667e5a907b608547e463"
+    },
+    "solar:icons/SVG/Line Duotone/School/Book.svg": {
+      "git_blob": "bf3637c1cec21966c001b7c3b4ca5a10c6d9b512",
+      "sha256": "45cf22fdc0a0d861fdc44b2b14167b3a32429d3c3702b88115d5fb9d087cb5e1"
+    },
+    "solar:icons/SVG/Line Duotone/School/Bookmark Opened.svg": {
+      "git_blob": "248353e9353fdad6665da7d64b605b946f9c4f5a",
+      "sha256": "10eff7744a3f8b839917b0bef2ef364de184644e32fefac370000996596d78aa"
+    },
+    "solar:icons/SVG/Line Duotone/School/Bookmark.svg": {
+      "git_blob": "da4a55ec69629b1593e28e37e7411d75880f7081",
+      "sha256": "a0ab5757878351981debb1dcf7c03ab45c4d4949b680a3d17d6b36d955957f16"
+    },
+    "solar:icons/SVG/Line Duotone/School/Notebook.svg": {
+      "git_blob": "05ebbdda469a156f93919d24d36905d8be817c5c",
+      "sha256": "7e132822cf140716269364af45c744da457f6bfb67f736c5dfb63ba4a5ba29be"
+    },
+    "solar:icons/SVG/Line Duotone/Search/Magnifer Zoom In.svg": {
+      "git_blob": "07f2bc475c790ef91e45d0d0280b71d25193fd9c",
+      "sha256": "83e2a1bec53b7f0996ca40749741db4af3614ae62aacd6d02f55388b2ceb295f"
+    },
+    "solar:icons/SVG/Line Duotone/Search/Magnifer Zoom Out.svg": {
+      "git_blob": "3e765a442eb25de8240baace6c64f6e5852d5153",
+      "sha256": "863cf834550aed3146148b8a8f702a600c4a055a1f93730716f39fbd4a275a5b"
+    },
+    "solar:icons/SVG/Line Duotone/Search/Rounded Magnifer.svg": {
+      "git_blob": "4ad6d7dfb45326c04a29d08fdd910491b3fe5103",
+      "sha256": "791f919f1c1a8faf55f3ae7bce524236f5353af172e7855f223fa7d3e4f4a7f0"
+    },
+    "solar:icons/SVG/Line Duotone/Security/Eye Closed.svg": {
+      "git_blob": "56b679b1387729a248458658fe171d2c09605463",
+      "sha256": "a2b265802fbf9d12e6fe79272f334f2763591c003a9843c3be763c99f9140505"
+    },
+    "solar:icons/SVG/Line Duotone/Security/Eye.svg": {
+      "git_blob": "f21b8a68fa94a7fd7b9ce0f2e111b08ca9147049",
+      "sha256": "87862f68cbcb9d433a72c283b42d902afa8defcbd8e3333763b19ef7f633527e"
+    },
+    "solar:icons/SVG/Line Duotone/Security/Lock.svg": {
+      "git_blob": "6e94570071e10e6058bacc82bac25147f0497f54",
+      "sha256": "714c0710c2f96752984dd2fd70a218fd98e751bc6198480f525213dbb73c1f73"
+    },
+    "solar:icons/SVG/Line Duotone/Settings, Fine Tuning/Settings Minimalistic.svg": {
+      "git_blob": "3ca27d2f7b4b7aadb104d275625ac3fbb6a01816",
+      "sha256": "2018cc7ad11a70abf1a2477efa307363eef76dd6bb16751b3cb240708bdd92d3"
+    },
+    "solar:icons/SVG/Line Duotone/Settings, Fine Tuning/Settings.svg": {
+      "git_blob": "092ed8197afdb1e80e43227a3769bd1fcf1be3e7",
+      "sha256": "13b60358bd4560e520ae6971f4c2bf09d92145ad2bd7eca30ca81745be25276a"
+    },
+    "solar:icons/SVG/Line Duotone/Settings, Fine Tuning/Tuning 2.svg": {
+      "git_blob": "1d2d72cd9fd9d30b64803df15d747506e3f9245d",
+      "sha256": "8496bc67989ad97fa5cfb70846aa8ce36fd0d74cdf986c5f96dc2af265ae3530"
+    },
+    "solar:icons/SVG/Line Duotone/Settings, Fine Tuning/Widget.svg": {
+      "git_blob": "b8e1d561f63118307caf101e2edc9a2b1e106201",
+      "sha256": "bf372f23e22cc3ec1b0492a20bb281dc0f4ebaac65538a62a9b457fdd55e3cfc"
+    },
+    "solar:icons/SVG/Line Duotone/Text Formatting/Link.svg": {
+      "git_blob": "d29c7e710ee76547e98f4734b5651a56d1b6388f",
+      "sha256": "1eb5fe90f50bbe65651a0a227cf9deee55631dd89366d567caad30428e508ea7"
+    },
+    "solar:icons/SVG/Line Duotone/Text Formatting/Text.svg": {
+      "git_blob": "23f900d5cc59de545a4969c084bbd6f895f88d9d",
+      "sha256": "1cdfcac8f45c38bdfc900d8cab7f2df488cfff5c5e21df0dd1bde5f27911767a"
+    },
+    "solar:icons/SVG/Line Duotone/Time/Calendar.svg": {
+      "git_blob": "9ddea757979c02e9c7a2c1fd88f12f70117de98d",
+      "sha256": "464b53d9894dc474d372cf65d488f55fff1f4123179709a8df11a3604c172dd6"
+    },
+    "solar:icons/SVG/Line Duotone/Time/Clock Circle.svg": {
+      "git_blob": "74e9826517209f184e8c63e1fd640934773a480d",
+      "sha256": "baeb014ab6818c03975de78b8b70f5184f0755035bc0e10c8449dc18e726fd02"
+    },
+    "solar:icons/SVG/Line Duotone/Time/History.svg": {
+      "git_blob": "36877da764d74925ac6afe1a5893ab21e1acae31",
+      "sha256": "73d620852af91afc0898ac1d9f65734ae1bdb8322125a78710fb4d43be1acf40"
+    },
+    "solar:icons/SVG/Line Duotone/Users/User Rounded.svg": {
+      "git_blob": "f4e1344b8fbe0e4c39524221e2b1a4045cce00e4",
+      "sha256": "0d3361a55da11fd980c51c6823160067bb696c213b0a9ce8cac9f6ba1d53eb88"
+    },
+    "solar:icons/SVG/Line Duotone/Users/Users Group Rounded.svg": {
+      "git_blob": "fc00786410b43e2f9804c0872d5a65f6f5f71b21",
+      "sha256": "825c75bdd70a0109e5469697dacc7a678cb4914447819340b4aedba159b32998"
+    },
+    "solar:icons/SVG/Line Duotone/Video, Audio, Sound/Gallery.svg": {
+      "git_blob": "1eed0100dea2bafd0ac587079cbcdcbb5e7859c6",
+      "sha256": "9a8636532f38474f59385392d918cfe9dcef56b975fa687990feb4ada8b6bb9d"
+    },
+    "solar:icons/SVG/Line Duotone/Weather/Moon.svg": {
+      "git_blob": "161f5a266589ed6ed8f8a0353bd6268c37cc934e",
+      "sha256": "8a1e24b643082aea301f44fc48675520ca974144d937da95559544109566daf4"
+    },
+    "solar:icons/SVG/Line Duotone/Weather/Sun 2.svg": {
+      "git_blob": "57f16e6f48129e206e27b39e25665131554ce289",
+      "sha256": "3efbaca381954a8de4688314020c752abaf195513e2ecb8dc6d9f6c84700c6a0"
+    },
+    "solar:icons/SVG/Line Duotone/Weather/Sun.svg": {
+      "git_blob": "14ad8bc13c89da067bdffdf35fef0b8994b48562",
+      "sha256": "99a1e197c88b51a48021dc94cbffb5b07d5827072870ad6c2a24132fba043eef"
+    },
+    "solar:icons/SVG/Outline/Arrows Action/Download.svg": {
+      "git_blob": "b29637a551a22ed4177215a103e40c29cc52ec62",
+      "sha256": "537775b0d74fb0d3c591a7cfcfaa96c16c3b3a53c5c388a062e5f7d1056bedb6"
+    },
+    "solar:icons/SVG/Outline/Arrows Action/Undo Left.svg": {
+      "git_blob": "db06f07e7f6c01eb5f6a23df736ba3567d3e97e0",
+      "sha256": "c35c560cc9774637bd3ca9149c53da72d06fc4a4727b912ef78ae94f02730f26"
+    },
+    "solar:icons/SVG/Outline/Arrows Action/Upload.svg": {
+      "git_blob": "f77b8d076634ae4195e4cf52b71ef75a948bfddb",
+      "sha256": "cd4a5acd852a3960e2e221f4faffff16208741e044964d452d7b3a509a4cd6bd"
+    },
+    "solar:icons/SVG/Outline/Arrows/Alt Arrow Down.svg": {
+      "git_blob": "16a90c737cf7c2b871d3dd4065d135c4a887cd90",
+      "sha256": "0019f90847ccd6ce5a6c84a6998d2d02f10aa58961e23dc19e48fe3cbf9ab2fa"
+    },
+    "solar:icons/SVG/Outline/Arrows/Alt Arrow Left.svg": {
+      "git_blob": "9341a4f5405e8d826be268b416db4c5834fe627a",
+      "sha256": "0fe6ace99f4597296ec9adfb0c6c6008549cfd65c04745d435d87fec96cfeb84"
+    },
+    "solar:icons/SVG/Outline/Arrows/Alt Arrow Right.svg": {
+      "git_blob": "bb5470e546bec38002b1b9e6d8f0b9e31a3d2e03",
+      "sha256": "eeb8445c7c94bfd15b367c835d219c54c294c29bf72109030b74aa37dc7fab36"
+    },
+    "solar:icons/SVG/Outline/Arrows/Alt Arrow Up.svg": {
+      "git_blob": "cb203443cae196d7a0ef48255c6c37e1edd0adb0",
+      "sha256": "0c0076d83584be5a955ab0179ecbb8121cd962193592cb8e392ebfe50e575e0b"
+    },
+    "solar:icons/SVG/Outline/Arrows/Double Alt Arrow Left.svg": {
+      "git_blob": "0a9ee3f7336ce9f7c404cb3cd4a212afadf995c6",
+      "sha256": "1d0241ef588497a16ee3f942b629741d6be4e9d5b041ddbbcd82d116b9880021"
+    },
+    "solar:icons/SVG/Outline/Arrows/Double Alt Arrow Right.svg": {
+      "git_blob": "0cd4be1f8765a99c49e5fade877b0886ee1fb820",
+      "sha256": "e26e72eac11fd9f1eab30785d7ed557bbaefadd832d00ea70ebdbaead420c9e6"
+    },
+    "solar:icons/SVG/Outline/Arrows/Refresh.svg": {
+      "git_blob": "d10ac0cfda8c8b15abde00c1a9e8db0a56eb5512",
+      "sha256": "0ea2cfe26ed1b204c26eb26abb95615b22ec3c5e4957dfd7e30d01d29e61e28b"
+    },
+    "solar:icons/SVG/Outline/Astronomy/Star.svg": {
+      "git_blob": "b34f5f49ce85347d424bc130fb4b77013bdf4715",
+      "sha256": "47a662abe3595248bef723b1fba18ed3f368293a6e08e0d51d5d2afd1eb3e41c"
+    },
+    "solar:icons/SVG/Outline/Business, Statistic/Chart.svg": {
+      "git_blob": "6d6ff05712f1b4562ae67f8457e858bb0644b494",
+      "sha256": "d42785df57a6bff0b36c72eadd97074143a497ae1545fdf686eb2c194fd78616"
+    },
+    "solar:icons/SVG/Outline/Design, Tools/Crop.svg": {
+      "git_blob": "e200868c732900598471f56865c7ffcf85a41049",
+      "sha256": "e5c92639d4628ce12ba12fda16c5b84760566cb61e469acafe04e2f5299919ba"
+    },
+    "solar:icons/SVG/Outline/Design, Tools/Palette.svg": {
+      "git_blob": "bec86b40d8dadb450a37f29ac3f709d7f936e402",
+      "sha256": "dbf775b9266dc8f9b50b87e6fec617a66c8fe471a8fec01694ce530e782f2135"
+    },
+    "solar:icons/SVG/Outline/Electronic, Devices/Bluetooth.svg": {
+      "git_blob": "9c16b8bc8e52451906c78f4a52bd230109fc038d",
+      "sha256": "8254b81de34b570fa1a67c62e56893cff1ee37ef98a65f62a893436ad96559da"
+    },
+    "solar:icons/SVG/Outline/Electronic, Devices/Headphones Round.svg": {
+      "git_blob": "be3bcc3b202bc7f7ab9647d36d584b6d343e32b3",
+      "sha256": "1225cf6c05935fc2a2ceefaca023ed968afd09bc680eedd3e209b8ffa59f23f0"
+    },
+    "solar:icons/SVG/Outline/Electronic, Devices/Tablet.svg": {
+      "git_blob": "f04c66ee7d1cab13ce99200b0d2f531558426ce0",
+      "sha256": "d0b0b89231d514cfacfef4b9ef7bea20c91ce703f8d86e3a341d119da07579ba"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Add Circle.svg": {
+      "git_blob": "4524338f9f5e9c8cdb788bc688d8549cd1f61fce",
+      "sha256": "e1b2e506a2bee4e30b8594304125b64eb2cb104abc0b078eeea1cf4c252a5a42"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Battery Full.svg": {
+      "git_blob": "68642f2a4ac5baa4c5a573f91565965fdaa9b3ee",
+      "sha256": "5f422e25167305225d8a8691c910fdb41ef6250b9a80b4de10f297a11c50361a"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Check Circle.svg": {
+      "git_blob": "431bd69a980352d4bcb97a604d30958904db6f27",
+      "sha256": "4c4301c1d9f8fd648cd233f739e71b12ee5b2f194c00f13c319ba4dd2a0f51c1"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Close Circle.svg": {
+      "git_blob": "01dd70334135371558801aa5c2112102308a3f52",
+      "sha256": "88632439c6db1a9d7ee230bdad0a2bb261f7f52a84173b87a610be4542cd2795"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Copy.svg": {
+      "git_blob": "d21e0f485903a2b85189493dea22ddd8fe10e7ae",
+      "sha256": "7d783880fe4bc3d0e6b1ab2c8e6e0b7f4c917bdd2906b3c826e9958f187557bb"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Filter.svg": {
+      "git_blob": "5885dd8d815ed7bd204539baf44ed9f8a4fab677",
+      "sha256": "787745d43432945fcd46664068b338e6cbcd5f57cb7f0a3e4941530307b939d2"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Hamburger Menu.svg": {
+      "git_blob": "3a907f1a5f5078a7f101df4d6b0f0d7d35529e91",
+      "sha256": "7a1a6265ce90a5f771105093a2d166a8544c45440058367a056c0b7eecaac6be"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Home 2.svg": {
+      "git_blob": "7016d969fa64026d90e750562ba0bc1e654bec34",
+      "sha256": "cf8f62264c8fa40f99448cfa9ebcfd91b3e62b78cff030e26ce1bce417015fb6"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Home Angle.svg": {
+      "git_blob": "66d73ded679e3a6e349e0133b045cec619a8c269",
+      "sha256": "651d89bedd3fcadb953b7561a9a230a0f52e6f3e4b74a1d5b15baa8ee0796ca0"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Home.svg": {
+      "git_blob": "834b8de14496a35d7cd65b384bec4f2d8ac4d22b",
+      "sha256": "f33e0b1a394a9882af8e051d72882d2aed8a850f0be7dddc1896d0d0449be4c1"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Info Circle.svg": {
+      "git_blob": "a1bcc58e2826d9d712e915791dcdcf365da121c4",
+      "sha256": "5cc2b42eab9eb15469e42cc7f50f17ca8077e4305114ab18cb5711507bb811c1"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Menu Dots.svg": {
+      "git_blob": "9b1ce140fc1bb954d2b5721a0360ef20b38b31b5",
+      "sha256": "ba91225e7a49e6cac29b129c39edd84e9a1225e1882f11f51fbe3db9b23f6484"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Minus Circle.svg": {
+      "git_blob": "3869bbc14fbabe16066f54aab33d05b25b2d5ea6",
+      "sha256": "0d17f751525c36941560f029a88ae57b305a10c327e2e3c418fbc26092a965aa"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Power.svg": {
+      "git_blob": "e914d9a2384d7215372fa389858d28b0316d06ec",
+      "sha256": "8bb93e51f38ab3acc6bab459cc97d83e73d5d5336ddf4002bb935c0aa4265b5c"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Question Circle.svg": {
+      "git_blob": "1c0f35946d33d512d53fe9bbded89510bd9e5ee8",
+      "sha256": "7987ebf026c9e2617b531d1d8165f63696664b3796f4a61c96bf08a090acfcb7"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Share.svg": {
+      "git_blob": "90bda05adfef02725e7854454e9cf1113a28e109",
+      "sha256": "a571e0f0bdc6b3950fd753bf9b22ca76cc6b40820ffa1d9433beebe0b51152d4"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Sort.svg": {
+      "git_blob": "db272e3e30fd68c1d5ae62b587df5d97b5925002",
+      "sha256": "2f1a5c7f60603787310f32ab91637dd87fa6b3ea61dc1e017d76b5ae8494242a"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Target.svg": {
+      "git_blob": "6e9a94b3dc3e001fbbf008e80d126a46fe00a1c9",
+      "sha256": "bf76360159dbb9d0adbaf87447760c8acdb0e3dc91f701d305fa95b15fa2fdba"
+    },
+    "solar:icons/SVG/Outline/Essentional, UI/Trash Bin Minimalistic.svg": {
+      "git_blob": "e4a12478168da9f1161735d3d73d4601640f9ff0",
+      "sha256": "8d0876464bb9f2fd85a6e80ae76ebf8ad0b299573bc29086cfeeef6b8e03b76d"
+    },
+    "solar:icons/SVG/Outline/Folders/Folder Open.svg": {
+      "git_blob": "648181b656031cddd21d1c3defde4012a35e71bb",
+      "sha256": "d732ffcca72250e76959dcd8bd7ccc0d46b03a42fb88666fa0677fe34772598f"
+    },
+    "solar:icons/SVG/Outline/Folders/Folder With Files.svg": {
+      "git_blob": "2d309aef21f06138ed131abc82111b8ac08886f3",
+      "sha256": "02612ac1fe80584d384ca905fda4d32a416559aef47ef66e476a11a36709cd74"
+    },
+    "solar:icons/SVG/Outline/Folders/Folder.svg": {
+      "git_blob": "17f25778c713aeb506b7373a1d4cb23982feee02",
+      "sha256": "23f57c3a90312baa0bcbb2728b6bc9e4d6e05839ecd186e2e22b677238144cfe"
+    },
+    "solar:icons/SVG/Outline/Like/Heart.svg": {
+      "git_blob": "5a0adfd1276a69492996999027cebbcc6fe4c124",
+      "sha256": "ee46e1a85a61b77a61974e98ff3f8c40738ddefbcac6dad32de3bc233557a9e3"
+    },
+    "solar:icons/SVG/Outline/List/List.svg": {
+      "git_blob": "bdfa4cec51793c2f1c53884e33ec1e82e80cb0bd",
+      "sha256": "2c199146943e30ff3fd579de8323135903ebdc19cfc1403db35756ae4d68b263"
+    },
+    "solar:icons/SVG/Outline/Map & Location/Compass.svg": {
+      "git_blob": "2e94e9816f9f5907dd6fa0d9bd61208614cc07e3",
+      "sha256": "099c559126003c63b1fef231f9c73ecdf58e4704b88b48e8d02cecb28cdc6325"
+    },
+    "solar:icons/SVG/Outline/Network, IT, Programming/Wi-Fi Router.svg": {
+      "git_blob": "ac0ce901fb45aa67dd53b517367f397be8e80a98",
+      "sha256": "82f1ab1e2e6c83ec0b199805db59fb70cce0ea8f35ef9f0b38aa72a2c3f0159e"
+    },
+    "solar:icons/SVG/Outline/Notes/Document Text.svg": {
+      "git_blob": "03bb2ebd9b8853327d00860c4ff4a6c6cdeb761d",
+      "sha256": "eb79fffe1c1db2810ada65ee3c04e1fd8c27c0456e1bd98eb5ec2afac0472f74"
+    },
+    "solar:icons/SVG/Outline/Notes/Documents.svg": {
+      "git_blob": "d24814bfafe2d41727c04c0147852401e3c72d10",
+      "sha256": "19f647f2150e782dbd9ceb63582f45931997ac561a5489def9daf48d38f5c354"
+    },
+    "solar:icons/SVG/Outline/Notifications/Bell.svg": {
+      "git_blob": "01e7d038a99946d8bff8e3751d68d0345b93e18e",
+      "sha256": "f8a53685496e90898c46bd737ef45662aa6bc0fa8ecc8de70212d80b3174a00c"
+    },
+    "solar:icons/SVG/Outline/School/Book 2.svg": {
+      "git_blob": "eb8aa514e79aa1d689d854ec05a902b06c43582c",
+      "sha256": "6d34648df5e0641d3c36b36b7fefcfe312cc14dceb5b5bc1c1b27e6447a7e554"
+    },
+    "solar:icons/SVG/Outline/School/Book Bookmark Minimalistic.svg": {
+      "git_blob": "a101b80681a9f17139a9357ac364be24328cde0e",
+      "sha256": "577f6c5f13dd7f6601c03ff18e4e9920340390d175a323ac38cbca3e6f706436"
+    },
+    "solar:icons/SVG/Outline/School/Book Bookmark.svg": {
+      "git_blob": "cdb66ae38bf0e2fb75f4276ccd5bb3488aa1240a",
+      "sha256": "5b2d26dc18b24aadf3ae9ee9cf22472f6a563d5f53dd801074ae090fc78c64da"
+    },
+    "solar:icons/SVG/Outline/School/Book Minimalistic.svg": {
+      "git_blob": "1e3a8331fed70c17d5abdc2e20b0f8a6bdd3e216",
+      "sha256": "0e2239e1cee291d2b0d74c94edf14bdf5c4c61c1d94067668a774afa7c832989"
+    },
+    "solar:icons/SVG/Outline/School/Book.svg": {
+      "git_blob": "37006bfd5c80efd1023000c53b0621f23538a264",
+      "sha256": "a46372845fad9c677584d82d949e5e91c5f2a7afa0e48d8dc20b57bc24552f7f"
+    },
+    "solar:icons/SVG/Outline/School/Bookmark Opened.svg": {
+      "git_blob": "732a574b62bd8d63e568b1dcbfe62e11a23d2e98",
+      "sha256": "36f552976b652dc34dbc2ec97cee83871495a35d6f5f6986e9f6e3e8b170fa4f"
+    },
+    "solar:icons/SVG/Outline/School/Bookmark.svg": {
+      "git_blob": "a683a612784f00f17d94adb9832aabd978c154ee",
+      "sha256": "7a328e72d432fc7a01a69ccbf149bce5827a4be3c26e145da0df0fab288b33be"
+    },
+    "solar:icons/SVG/Outline/School/Notebook.svg": {
+      "git_blob": "2d6c4a8e98b9836aeda49a085a5b74ebdc272f7b",
+      "sha256": "8af0cbe730e4d8cd6c9b78df9e496457a36a839a57da791139b4af25c006c227"
+    },
+    "solar:icons/SVG/Outline/Search/Magnifer Zoom In.svg": {
+      "git_blob": "27c699019b9016cbbd4ccf8a06c3f59ab4945e4f",
+      "sha256": "7d69185df38b61a84b08a7b3ad8d6d8bc28e9192e2908b6861d867dec7a172c1"
+    },
+    "solar:icons/SVG/Outline/Search/Magnifer Zoom Out.svg": {
+      "git_blob": "0ce238895890701cabf1aa7f0867bf216be86c92",
+      "sha256": "1120bfae8d6f9366bd8d671e401bff4bccfcb36cf18b052301ad80bf0dadb97b"
+    },
+    "solar:icons/SVG/Outline/Search/Rounded Magnifer.svg": {
+      "git_blob": "27c4886a2d57b5fba309bdb44f1c91843ed6fd55",
+      "sha256": "2d8fc08368b0743d7dda637e6b8ac00fb746b21d885b4d41dc086d98d8242967"
+    },
+    "solar:icons/SVG/Outline/Security/Eye Closed.svg": {
+      "git_blob": "646495dce97e34e2824172e635c743430804afea",
+      "sha256": "e4ab5e5bdc28a34d6b7735d91568e13c907c6177947151c3442137e1cfe9099a"
+    },
+    "solar:icons/SVG/Outline/Security/Eye.svg": {
+      "git_blob": "ad0623ed60e1968e8b997f69f2ae1da38306922d",
+      "sha256": "bad1f5e80a9f591cd54bf80fd6b559f0b107b6a69d9c6362752d33549d919f76"
+    },
+    "solar:icons/SVG/Outline/Security/Lock.svg": {
+      "git_blob": "472e296de7eeee568d16b84be5ba224f44562676",
+      "sha256": "6709cce714090c7b1d1f32c5dca077a353dd180a5d4648934fd9cd2c57e50428"
+    },
+    "solar:icons/SVG/Outline/Settings, Fine Tuning/Settings Minimalistic.svg": {
+      "git_blob": "16441e73ed7bc139d49c342bc1ba1e39c30acb23",
+      "sha256": "c98997f21ce0c8e6b7909644926577c09029b20543bdc2fb607f826c725f0685"
+    },
+    "solar:icons/SVG/Outline/Settings, Fine Tuning/Settings.svg": {
+      "git_blob": "3813c9db8e1b0d9a35e2f86609257dee8e142f04",
+      "sha256": "682b48f84f61084729d5fc13a7a651a0d1a7d9be9e913efdf0e5c02c697371a4"
+    },
+    "solar:icons/SVG/Outline/Settings, Fine Tuning/Tuning 2.svg": {
+      "git_blob": "100144442e0700f80ed5b693f702bded4e36495d",
+      "sha256": "961e784087dcd2b94adf160a68cf6e1c3fa2f231d2012edfea9f10f5bbe23e6e"
+    },
+    "solar:icons/SVG/Outline/Settings, Fine Tuning/Widget.svg": {
+      "git_blob": "dca56cc16bf73865520097cfdf56f8a7c93c280a",
+      "sha256": "47479cb2ac7fa416a5c3b486713e367e45476cb0162f0df871d8409fb7d5c7b7"
+    },
+    "solar:icons/SVG/Outline/Text Formatting/Link.svg": {
+      "git_blob": "2c4c02b73c0f244d249d4a5991831fe31d673284",
+      "sha256": "c65780bb05434a015a0ddd7dd6a3782121e968cdb7bd228b5485ec0c686c89d9"
+    },
+    "solar:icons/SVG/Outline/Text Formatting/Text.svg": {
+      "git_blob": "41207b1a0dbf1916a4497966c553772429906dab",
+      "sha256": "60dbc585401f1198535147bb132a22b87041aa4aafb07884688b72e62eb84f07"
+    },
+    "solar:icons/SVG/Outline/Time/Calendar.svg": {
+      "git_blob": "0ad3a972a36cc5e0b6b91a053a058fa8553658f4",
+      "sha256": "4bba19a06ed7538dd4251075f292ba68910e5d2cd56d6a0c17638f211129a2a0"
+    },
+    "solar:icons/SVG/Outline/Time/Clock Circle.svg": {
+      "git_blob": "444591afcac578b58d97c8589e6a1a0b79612320",
+      "sha256": "b37b9a291d3addc263b36096b8a1f91f6931d21030a9920b6866b36c7c4c43ca"
+    },
+    "solar:icons/SVG/Outline/Time/History.svg": {
+      "git_blob": "e8be33ef3b4c80c78fe3b9e6bcc807003a4c225d",
+      "sha256": "55e9117097e912b27170a5033450aac3faf19de7104459dd6597b738613d4777"
+    },
+    "solar:icons/SVG/Outline/Users/User Rounded.svg": {
+      "git_blob": "3bfe093a82426cb71dc503ee61f22f444ad89b7d",
+      "sha256": "204312a298e3538e0ef442708e84a39c93f3e5e22b2e60de65cfafe24eb1edd1"
+    },
+    "solar:icons/SVG/Outline/Users/Users Group Rounded.svg": {
+      "git_blob": "2cfb890edae24bd353fbc2c7a3a7362ad7a1ec1a",
+      "sha256": "df6f5d70a765ba838a4452a647923c2466c04e5dc899e003e9ada3a194260295"
+    },
+    "solar:icons/SVG/Outline/Video, Audio, Sound/Gallery.svg": {
+      "git_blob": "ecfb3c3b82225a82a1121abeab40b3732196a279",
+      "sha256": "4a910dfd98585e46304f026727cec46789d97c348530427bace63bb065cf4e60"
+    },
+    "solar:icons/SVG/Outline/Weather/Moon.svg": {
+      "git_blob": "08383487e847c3c6f72aedd4e4a2481fb6f12d4d",
+      "sha256": "c28e3c9e42553e9b3dd1b32598ba492443678c7cff8b1409aac3483c336b7dea"
+    },
+    "solar:icons/SVG/Outline/Weather/Sun 2.svg": {
+      "git_blob": "4dc41891431b6b3d74afe7fd1c716f0d3b1acec7",
+      "sha256": "31a88989ba79888009523cd720e4a837597a10ecc111afc9023004c2b7e1bc05"
+    },
+    "solar:icons/SVG/Outline/Weather/Sun.svg": {
+      "git_blob": "587d02fdd508801a77b917db6d13e28997810f87",
+      "sha256": "1badceb02c81e0e94124c92c1a06f2da3711669c25246baa1cc1aa3c46262af6"
+    },
+    "tabler:icons/outline/adjustments-horizontal.svg": {
+      "git_blob": "ccc771d335093d300e8d50de3f4a65b21a6784ca",
+      "sha256": "66b3be63d0ae4f75c6707ac802ef2bad9eb5f9c0af9ab77c7a1f9c7f1694a178"
+    },
+    "tabler:icons/outline/arrow-back-up.svg": {
+      "git_blob": "da5166f0652c0962295b59ed856950eb41a414c5",
+      "sha256": "064b1b29a6cff3f83ea064ae76f37177f934d3d58244f8b7d28922aeeb948286"
+    },
+    "tabler:icons/outline/battery-4.svg": {
+      "git_blob": "2f77c0c2bc5092fcdf55e20b38231157f6aa3537",
+      "sha256": "460cc136c849831368b24c88cf9e6f523829ff015ecfbfcc0b6700e1ab5e0a57"
+    },
+    "tabler:icons/outline/bell.svg": {
+      "git_blob": "fdf276bc77139bca51b0d3da4dcaa78e5affb55b",
+      "sha256": "470d39082cfbf44f0b4b0588d8f9f1fd2c211b09dc60d0304e91a24a3aeef32e"
+    },
+    "tabler:icons/outline/bluetooth.svg": {
+      "git_blob": "55e57e0c265ecf55e6671b1c6f51bc304bc9c20e",
+      "sha256": "9e580e6b5b6c8af8408f841bf48c594ecfbd50a95c2130971c21876a84cd4d26"
+    },
+    "tabler:icons/outline/book-2.svg": {
+      "git_blob": "d3464f1b83a349b4220cd4795a3ca81a8beb7f81",
+      "sha256": "1f03d3e6df24ba50d7d9007d344430fe96fd80a3e4e5da92ecdd4dcf024f7a3a"
+    },
+    "tabler:icons/outline/book-download.svg": {
+      "git_blob": "021677f8e6e633396bc216757fd0b94f3539ce9b",
+      "sha256": "f2b2ccf4a515c8fbb37c65befb5488b4dd951bc657320232f5b7d43b1cbbfc98"
+    },
+    "tabler:icons/outline/book-upload.svg": {
+      "git_blob": "f302baf4df3ad37e3be22e79fa6841ca0bb20045",
+      "sha256": "27555c26e0018fe7563ea2d9411b9a7902128221fd9523d439a7114b6a209990"
+    },
+    "tabler:icons/outline/book.svg": {
+      "git_blob": "825ef4f4b2ff24f5712f1e68b570bae20cbcfb65",
+      "sha256": "cbfd5cbdc16bbab2bf4123dfe815538e343f4f4ddcd15d56841944a4c3535a47"
+    },
+    "tabler:icons/outline/bookmark.svg": {
+      "git_blob": "5cc562ce9d2a5e3e69767d5ddb572e44bfa16fec",
+      "sha256": "eedc8578c04204c43d7af788a7c79833e2bde6c9267d54d1fb057e5fab7f7f68"
+    },
+    "tabler:icons/outline/bookmarks.svg": {
+      "git_blob": "6515314d428e7b1ff74d5c2fb97d203b3dd04038",
+      "sha256": "b4037b661788600526acf4af68d51734fc9df725c58cb5d57f19224fdb08874d"
+    },
+    "tabler:icons/outline/books.svg": {
+      "git_blob": "13f40f8c5e2db25de9b9c9476704e92fdf7345d6",
+      "sha256": "2233a0d65ee61671830faea76c341a6c655c433d89b76209bc0ac5abdd3b5657"
+    },
+    "tabler:icons/outline/building-bank.svg": {
+      "git_blob": "637c32a8f6e91e814fd57f7ba78cebc47fc36181",
+      "sha256": "ba532c2d12e97465ee586d59cb824fd2ecfa351cbfc055d87df4ef775a1e17e4"
+    },
+    "tabler:icons/outline/calendar.svg": {
+      "git_blob": "20d6753df03e82ab02b592920398cc928d89b96b",
+      "sha256": "97faa5ae97a558ba4a427b3ec576b11670cc0d1dbcc128c44507fa54e831451f"
+    },
+    "tabler:icons/outline/chart-bar.svg": {
+      "git_blob": "0e55695eb2401fc676b19ec2275292ea37b8f9f7",
+      "sha256": "5fbe60a66fbebaf0a06d4b5bede3af05301d9f580c4f8f7bd65a39077389e4ae"
+    },
+    "tabler:icons/outline/check.svg": {
+      "git_blob": "6e9114c4255cc68b82c6193418d1f02297edb8bf",
+      "sha256": "fe359b27c74ed0f4f72bfabbe5ca969a8bb13a5f39648bae63f9e798034ebed3"
+    },
+    "tabler:icons/outline/chevron-down.svg": {
+      "git_blob": "8650685dc264b07d6a93c11c3efa40ac2a39c327",
+      "sha256": "06bd20b8cbe565b97046c5d0ec917f11ed6b29c0e4885a82ae057325c972bf9a"
+    },
+    "tabler:icons/outline/chevron-left.svg": {
+      "git_blob": "137fa6eb84748d69715b242f74d49b0e0a492cb5",
+      "sha256": "a31fa17fbe7b3bfbe7951d55ca91933722af60372182a7ab95e0681b04662fdd"
+    },
+    "tabler:icons/outline/chevron-right.svg": {
+      "git_blob": "39d16186b3f460595cc5301682a185def3e56a1e",
+      "sha256": "26b321e42c7c7ed5d5161d9af061033df1d49ef33b5d2fc2309e2f6ee3d4c81a"
+    },
+    "tabler:icons/outline/chevron-up.svg": {
+      "git_blob": "194897aea5092cde42532d7984e3bbd56a588edc",
+      "sha256": "bfe732786b05d90a0e4840eb6d6a36fabd8a67ad6258170f09e2883b3b5a1851"
+    },
+    "tabler:icons/outline/chevrons-left.svg": {
+      "git_blob": "17acfb17e8f7b1333ef6fd57eaa2fe1dcee6e9a3",
+      "sha256": "de17ef650fd718664817544a282671ad52bac849cc97519a2b201f7f043249e8"
+    },
+    "tabler:icons/outline/chevrons-right.svg": {
+      "git_blob": "c7932929fc90ccde5c83508d8fa4b10d973ef943",
+      "sha256": "3ef2b9fce3e866df5698626b0d8c8a39e105ef8df7fca09b92294a78cc215daf"
+    },
+    "tabler:icons/outline/clock.svg": {
+      "git_blob": "e4814fa227d2d9f9af12d02c9cc5a78b5167d9bf",
+      "sha256": "bb582eb2c9d6709d285623bea586e1f532872a9db3d2391308360636e93d199d"
+    },
+    "tabler:icons/outline/cloud.svg": {
+      "git_blob": "7d505534425e608de176ea6346a4a80352af0689",
+      "sha256": "9b0f459e678245c64a1fb312f9f59109fb00f6dda15a36ea39a25a0bfa1d4f8b"
+    },
+    "tabler:icons/outline/compass.svg": {
+      "git_blob": "61d1353efdf7bd8ee301dc70e6a9495786518b0e",
+      "sha256": "eafd654df183a65093927782834e3900cdb7c5d4d8b898fe25ef15bb06dee8a8"
+    },
+    "tabler:icons/outline/copy.svg": {
+      "git_blob": "663b079e72cda8f56b3595bfeed29b97c466a684",
+      "sha256": "b38a178d5ee74073f95b57ea33e7dab0624e314c1cc835c85ff35f1d1e5517e1"
+    },
+    "tabler:icons/outline/crop.svg": {
+      "git_blob": "ee76a0eb9c9653e2a913899c6204478b6e10bde6",
+      "sha256": "893cb1652614e3744b888731d86b35517b19ddb8b8dccb5510fcb32e156f7106"
+    },
+    "tabler:icons/outline/device-tablet.svg": {
+      "git_blob": "f76857ab5925e93ccff2d84bf4cb6139f066835c",
+      "sha256": "a2d8769ed0db304c79b16a8ed21c8f1ee847aa7e7b70adea3c3469ee1c3cad04"
+    },
+    "tabler:icons/outline/dots.svg": {
+      "git_blob": "31b06e34185cb308b8f27a356ef24a3ce2c9739d",
+      "sha256": "e0a3f950691ef2e3a4c5c35200eabded201eeb9980b61beab84dcb345c630d9a"
+    },
+    "tabler:icons/outline/download.svg": {
+      "git_blob": "9c77265233534ec76f163d533a0d1b538acc97d8",
+      "sha256": "4c3498b4dc4e7f007db234f293b396ae1b23f18646e1d36f8bc4e08a31bf97b1"
+    },
+    "tabler:icons/outline/eye-off.svg": {
+      "git_blob": "c101887e75ce20e6111e0bb8ce4e05af9ee0b429",
+      "sha256": "4d84bc5601058a0374312c6f4c4fcd9b29433f4d2014149af63583373a74cea4"
+    },
+    "tabler:icons/outline/eye.svg": {
+      "git_blob": "7b1a18d8c7dc4701c4e605fc44003aaf256e1617",
+      "sha256": "49dc6603fb775c31b004431972b66075b1a239dc98489f638db73c66386702e4"
+    },
+    "tabler:icons/outline/filter.svg": {
+      "git_blob": "09bd52661d0f80027af33e241d9a07dae44c11f3",
+      "sha256": "0fdfd8d8d0789191c5e7bcc46efa2ace3f02244c5d9dd3ab195181e3d5869b06"
+    },
+    "tabler:icons/outline/folder-open.svg": {
+      "git_blob": "2b57fb8fcebc0583d09eadfa74024438c7d930b0",
+      "sha256": "891d9a1f6309ca6ad1731be7b0cb12e5d6c678ec04c84808ecb98a4706b3a891"
+    },
+    "tabler:icons/outline/folder.svg": {
+      "git_blob": "32d051b6073b53955fb20a10e71015265ce0b42f",
+      "sha256": "2dff6b74080049d05c695f75a443ffafa88fd7d3c94728f02d64451b2d9181eb"
+    },
+    "tabler:icons/outline/folders.svg": {
+      "git_blob": "b42f0ad23ffa634cf3cdbe17813021b011e66bcb",
+      "sha256": "b4cd9cbc2eedd27fcd02be2201983123912c6c3f9371a881f5b4ed6d0f39d94e"
+    },
+    "tabler:icons/outline/headphones.svg": {
+      "git_blob": "6586205fc84f60bb4d4be47466e76eba4292f425",
+      "sha256": "bc9aea3b2e97e91f280bdc9e37c5cda72d3eed2a1d32c97e219177e154eeae97"
+    },
+    "tabler:icons/outline/heart.svg": {
+      "git_blob": "6b8cdce533ba5a77b578947a054d3e3aa90e5283",
+      "sha256": "f9f42a4d4ae0aca8f01dde4a7a255eff7af26ed0ee133b1458e9d3ff257464d6"
+    },
+    "tabler:icons/outline/help-circle.svg": {
+      "git_blob": "dc625de9a4a353814b219542a65d033dc0d28862",
+      "sha256": "0149afb36ec5442f4ab3fc4e37cd0639af9f794665bbce19a57de583bcb6bf24"
+    },
+    "tabler:icons/outline/history.svg": {
+      "git_blob": "863cac6d579628cd7b69e447d95ee76575323860",
+      "sha256": "0db058f1c196fb1a515998e5814168df3d5300fce746ed90fcf5d7227a0b594d"
+    },
+    "tabler:icons/outline/home-2.svg": {
+      "git_blob": "582c8c3b3933d7379b4188315cc76bfa03568882",
+      "sha256": "5be51a9e9072ca804da8404e168d1ad8ce4d2616c662c10ede2e1f9d7ec439b7"
+    },
+    "tabler:icons/outline/home.svg": {
+      "git_blob": "d5fa9e3ab95348adfea995721d3b726fa3c44d44",
+      "sha256": "6edebd7f9ac62a73e882f1bad7a4816fd4799e29bab2b27cf626b0f1708a9a20"
+    },
+    "tabler:icons/outline/info-circle.svg": {
+      "git_blob": "c035ec3167aa32154d540d02b04ea20bae8e24b9",
+      "sha256": "8bb2ea8aa6e56cab6137f44a0b1a1eabeab526b7f96ea8be36d583868a737562"
+    },
+    "tabler:icons/outline/language-hiragana.svg": {
+      "git_blob": "bf2cc8c3083192d3f32248d9c21a5f723d7641f5",
+      "sha256": "ab8a5c30b56aa44437321d28b6c284ecfd601aeece6005b3bd21781606704df5"
+    },
+    "tabler:icons/outline/layout-grid.svg": {
+      "git_blob": "15f833819ec7ba5615a640b18a191a468c2c2bc5",
+      "sha256": "234f17d3e6212587c7a97a4fb1a68f824adf13365a9ac330dbae42e624488794"
+    },
+    "tabler:icons/outline/link.svg": {
+      "git_blob": "38b43c5e7aac6706cca13b56e171f131b3948e70",
+      "sha256": "0c1448dddf85857b80da2c51ddb5a27399013d3830eb756654cce2eef93fff33"
+    },
+    "tabler:icons/outline/list.svg": {
+      "git_blob": "cb39c91be1cddc9c6e6dbee3151c501bb866daf2",
+      "sha256": "73171ba9d67fa605159c6b094f22d26509c9335278b4dad3ab0777bd098911dd"
+    },
+    "tabler:icons/outline/lock.svg": {
+      "git_blob": "984acce66d197b0c929e618ff86a543d825c6ffc",
+      "sha256": "19ef0a4888688ea415b611b7c9e085134683a7fbdce5517be1f722a65e28928d"
+    },
+    "tabler:icons/outline/menu-2.svg": {
+      "git_blob": "277dd841bddb1b972a32186a2740079375cb7358",
+      "sha256": "a0080a4db00a4168cfea54a74724e4147cbd9d003f65e70fa367ae797b9cfed8"
+    },
+    "tabler:icons/outline/message-circle.svg": {
+      "git_blob": "e712c74c29efd9d575374db5adc92f27d067f352",
+      "sha256": "9aa5a223a418736c972ff2f6759dceed9f4c73830d20e504a8c7228d74995a3d"
+    },
+    "tabler:icons/outline/minus.svg": {
+      "git_blob": "5d6501f99dcde26e343360a52cba0e443dbb55fa",
+      "sha256": "41b4d0e2e81757c0d8b8611208621aa0190280d5cffb25436f558a362474d0da"
+    },
+    "tabler:icons/outline/moon.svg": {
+      "git_blob": "232c171f12aac5e4de25e733a0605e3582c2374a",
+      "sha256": "921d27bb214f2ec714ff4deeffa8a5efc4bb989e367df47f9f58351d2effee00"
+    },
+    "tabler:icons/outline/notebook.svg": {
+      "git_blob": "2746b1da9a32547354345f61b5cd4ba87679dcdc",
+      "sha256": "c00d2c085c55edc9e517aa9329f6cdecdae990afc0a4fe20d3b001e500b5ab5f"
+    },
+    "tabler:icons/outline/palette.svg": {
+      "git_blob": "24a69f49e90464caa4fb4e8ab9c12ce5be5a4873",
+      "sha256": "27a5a19ae4b0f73ff4089b7f5a6c8fdf17f19ecc853e19fa04494f083943e778"
+    },
+    "tabler:icons/outline/photo.svg": {
+      "git_blob": "cb045412beb98ac94cdd1cd4e958f5904c13157e",
+      "sha256": "2f0a835916079838ea1e8d1934562f3def335ec55540d8fef058f877f34ebc25"
+    },
+    "tabler:icons/outline/plug.svg": {
+      "git_blob": "44dc214a6471b955c0b1382a19e2dbe10f0b1309",
+      "sha256": "73603bbe07c146c952a94788cf455f40dd8cbfccd3e9d59eae41413e3f7a9898"
+    },
+    "tabler:icons/outline/plus.svg": {
+      "git_blob": "c50a5b0ffa0165177ba2a9e96e08c44c99c61931",
+      "sha256": "ea2630f3d4b4800ed9e1f2818b7064bb62b27943c482e739d76bd2320f82632d"
+    },
+    "tabler:icons/outline/power.svg": {
+      "git_blob": "0b94decfa7bc2416cfa3d50f0d7b711f99c36b5f",
+      "sha256": "2219766eddc754bcf2a21ff4f9170323a01db70d65e9af69851390d9d3db4fff"
+    },
+    "tabler:icons/outline/refresh.svg": {
+      "git_blob": "a4f10bd3dcb34ba35011878f7f8b04725afc100d",
+      "sha256": "12927e445fd886d0e0fd538ba60fbea56ff8a456204481e233f77ad322e65062"
+    },
+    "tabler:icons/outline/search.svg": {
+      "git_blob": "3498a25ec6df6406654a85d6b2d86d7103c5a572",
+      "sha256": "e579b69a4b978f702908a48b1bef74d9ac73df4679cb1a6074c567bec2748c41"
+    },
+    "tabler:icons/outline/settings.svg": {
+      "git_blob": "68704930426e4778aded56a8ce37daab88f14ea6",
+      "sha256": "d71136dfd83ad19efe1777d01768a5d23d7b295de5dde3b1fccc50806809a423"
+    },
+    "tabler:icons/outline/share.svg": {
+      "git_blob": "6a2ff8da34d900ce005da4072367ca82c3b88d0b",
+      "sha256": "e156e3233dedc6b4e94e7b4ed6b516e21220f94c6ca2f904cec20a0c3005c738"
+    },
+    "tabler:icons/outline/sort-ascending.svg": {
+      "git_blob": "88f290570a1ac89cc39ab51c97216d8719fefb3a",
+      "sha256": "3ea1b2d279153af929ec0bd4693d8b1de2f0ca8d17f9118819a0e723263c9779"
+    },
+    "tabler:icons/outline/star.svg": {
+      "git_blob": "38eecdb234ebcac3e258ee3233c5938e8f78a8e4",
+      "sha256": "33727ef0a469dbe7147e5cfe5a875a28b97809b0eac99a2e6886679369d43934"
+    },
+    "tabler:icons/outline/sun.svg": {
+      "git_blob": "d1fc6f20934e274f46a3e2c09731be7124fad8cc",
+      "sha256": "6d4dc625a54dea6c696e8320c35fcf7e235dc039f512ef2c30af9b0663a7ab3f"
+    },
+    "tabler:icons/outline/target.svg": {
+      "git_blob": "a58e6992ae4e148cd4532b22978ce0b99c819fd3",
+      "sha256": "86aeb93cca8fdd443836de446a3fc565c45f5af5e7312171c1d054f14da1388e"
+    },
+    "tabler:icons/outline/trash.svg": {
+      "git_blob": "ab4c2e17298714fa1593cb38fc24d9c75484465d",
+      "sha256": "28587eb685afab185034d3fe0e192000a38a4f384e5de8c5c6da2512991d89ff"
+    },
+    "tabler:icons/outline/typography.svg": {
+      "git_blob": "d808a4266a8812eaa0566a70029062c280e08442",
+      "sha256": "77d1000f8ce07f43430055765193643dcba3d8c12d95afad964f29f23f0cdc8f"
+    },
+    "tabler:icons/outline/upload.svg": {
+      "git_blob": "34a0cd546d759bc5c0ef6970c17ddc9586082f75",
+      "sha256": "b6d9fe0e24b1c889d1edba29268ba8e3759792a381b43fb9268f603caaea98f1"
+    },
+    "tabler:icons/outline/user.svg": {
+      "git_blob": "52fc7eaf36844d3e27ddf25ebba339684ee397ae",
+      "sha256": "4aeefe49af9decdd7b348ada73d9ef410b39f3599a2f2d38abb9e9eb3967e272"
+    },
+    "tabler:icons/outline/users.svg": {
+      "git_blob": "1eca1af7d9a6a1d9ebfa1332a5df79c1711e21f7",
+      "sha256": "ee1ec96e17087cbcb5663d84d2e5e1e46d56356c19d88bc42f8100154c1e298f"
+    },
+    "tabler:icons/outline/wifi.svg": {
+      "git_blob": "d5f1451726846861713b0b889ab6d0c00bcf24b6",
+      "sha256": "de89c60aaeeb7282d90a45a75fa1d134376deceb7f12945dfdd42686bd999a19"
+    },
+    "tabler:icons/outline/x.svg": {
+      "git_blob": "40a873cca11b30a96cd3925b467dacc6a7bd2a60",
+      "sha256": "6b97b0d51512b84eee04c0644fd07059a9c21d537886cdb40ef48485d874abc3"
+    },
+    "tabler:icons/outline/zoom-in.svg": {
+      "git_blob": "c6f3ee1cb278defeb755aada01a75a93b2660ca1",
+      "sha256": "508b84af65bcc58a049bcfaba8b6b08641c0279a93c0b3c1b515cb8aae892d95"
+    },
+    "tabler:icons/outline/zoom-out.svg": {
+      "git_blob": "0c07bbad7179471ea130ca62bc4042ee228b9d88",
+      "sha256": "440dcfc5c67034dca8273a7747baba91802f14ebad026f22f44791858ed128de"
+    }
+  },
+  "outputs": {
+    "assets/vector-icons/TABLER-LICENSE.txt": "b740a1d46122672da62833e97f7e7c8a13fa85cbc7445b584b297cc00dde93db",
+    "assets/vector-icons/solar-duotone/add-circle.svg": "4852e89c63eef436c051028a1b1ff5b3c33b0ed707c4455d80d481d5966d145d",
+    "assets/vector-icons/solar-duotone/alt-arrow-down.svg": "8cfbe5446f25e70b262be6d45718c89b3c94e78dd3237dd6fd499939bee31cf6",
+    "assets/vector-icons/solar-duotone/alt-arrow-left.svg": "5a4b6c62733e1238e4419fb3d335fbb8b8898488c47dc525ef9bf1c40f10eb54",
+    "assets/vector-icons/solar-duotone/alt-arrow-right.svg": "cf3d0b907193104f1d70544f3004faeff2e599d68ee7c91ac13084df460e5a43",
+    "assets/vector-icons/solar-duotone/alt-arrow-up.svg": "2636191c8bbb415996fbf332f287976c16636579be4117834aed8cdcc4c5b04d",
+    "assets/vector-icons/solar-duotone/battery-full.svg": "fc13dc052cc258ba6450b2826c9d536f1ecfa9a918bf26e41d9b327ef145b9ac",
+    "assets/vector-icons/solar-duotone/bell.svg": "5210f8ef9b6999abfb791e43159b7979d2eae0582ad200bd1a7123ae50adcf44",
+    "assets/vector-icons/solar-duotone/bluetooth.svg": "802a5123ea2d8b9a96c4781920f28ed2589e97ec43583b6ec0d7e492e152105a",
+    "assets/vector-icons/solar-duotone/book-2.svg": "2271239b472e9bda94f7870da660b3ff7e0559e1ee597b8a612c1ce1c7ea73fd",
+    "assets/vector-icons/solar-duotone/book-bookmark-minimalistic.svg": "267693b5aff09e2271f9f36399d3bb6fac563e10065708a6a9cb40a906cfce5d",
+    "assets/vector-icons/solar-duotone/book-bookmark.svg": "60b0d41f771d2531778cced9cee2099d3fa359e90445d8c61e37958dbe3d3758",
+    "assets/vector-icons/solar-duotone/book-minimalistic.svg": "f03dca916a309ed370ba66347b65875e395ee46c1bcf7b030ec3b9282636773f",
+    "assets/vector-icons/solar-duotone/book.svg": "2b328f11b3b45f0abb5af583f69d9958c7338a63f9ec3b00c7850fab022da7ad",
+    "assets/vector-icons/solar-duotone/bookmark-opened.svg": "c0ea7ed42090f15c7938351b7bece5a92d82df18cca8ed683afab29af7b5be12",
+    "assets/vector-icons/solar-duotone/bookmark.svg": "a6affa9ff9808e69b7172e513d9b2bbefb2020aa86acdde326f17911ab51f9c0",
+    "assets/vector-icons/solar-duotone/calendar.svg": "ade0197e17ea95117c88c23b2ff00b641242f17f2220607558b47bb9c8e498c6",
+    "assets/vector-icons/solar-duotone/chart.svg": "59de0082266684803fff4cc8d1afdd3533315bb944357a69ba8564182e43f352",
+    "assets/vector-icons/solar-duotone/check-circle.svg": "aea706110df823ff70fa91fbc229ac36a17ef3982ddf93d504df3679416acd1d",
+    "assets/vector-icons/solar-duotone/clock-circle.svg": "c8caa088d80e462b919024475c9fe7b4e31e1a03075fa5de0450d4a5da260c2e",
+    "assets/vector-icons/solar-duotone/close-circle.svg": "180818c03347766db572c735d3f5d1806ad966a7b7a8ec468b02e84752cda3bb",
+    "assets/vector-icons/solar-duotone/compass.svg": "738131ab52dcd85d7e8aa4a6b3f35d27c1d18cfd71abf1bc9e3adfb1b887fc06",
+    "assets/vector-icons/solar-duotone/copy.svg": "26237ab3ae13fff8545b3d2fc01727a3ecc4dcfd13f60948c06bf0de7a07ae9b",
+    "assets/vector-icons/solar-duotone/crop.svg": "636ce90527a5f717e6f7e0b272f3e726e62e79b91416bb26af19cf901cbafd2b",
+    "assets/vector-icons/solar-duotone/document-text.svg": "3236ffedcb3e252afcacd60e1d802bef17f3fbecfef3b2a925402918f4409ab7",
+    "assets/vector-icons/solar-duotone/documents.svg": "7bd5c60c8fc5ce4bf86d6e0578c04914f332f9bcc220fd089d7558dec8d0d4c4",
+    "assets/vector-icons/solar-duotone/double-alt-arrow-left.svg": "7db0e5c5c584ed0b9cf06ae06edb1a378ad64020a508d700c61fa646900cb4a5",
+    "assets/vector-icons/solar-duotone/double-alt-arrow-right.svg": "5cb2f400ce0987c831938afabbfe9358315ff67e0bc87a13b1a5a0d9817fb46d",
+    "assets/vector-icons/solar-duotone/download.svg": "adf232baf3fb7e679a789ec7a092574e6be821bf68f79014c61d7c23d6e81031",
+    "assets/vector-icons/solar-duotone/eye-closed.svg": "cc4ab7ba05a575109e1b30b7443f4f3a256025b569651f0c9f0f7336dd84134a",
+    "assets/vector-icons/solar-duotone/eye.svg": "0699b7cc2c67b3ae2cba205a1f9ff6b455447d582d5f1ffed14556bb9efc1e24",
+    "assets/vector-icons/solar-duotone/filter.svg": "4237606838798978a1c77256540bf897c3954ac9f44723b05087fd8ba17110fd",
+    "assets/vector-icons/solar-duotone/folder-open.svg": "33d43e881cb1bb754e78d128808633b5de54a37489188fa8f40ab6e6482704a7",
+    "assets/vector-icons/solar-duotone/folder-with-files.svg": "3f6f5440fe0f06da128f0357ffc24133efa01cb6cf501c42115ba0c83e427d49",
+    "assets/vector-icons/solar-duotone/folder.svg": "ef5b80c5977dfea9f807b739f1d214bed3965f50ca915a68bfc6128279dc61f1",
+    "assets/vector-icons/solar-duotone/gallery.svg": "c9c677fe40d7797ca42d1f2872d75ed0f1cdd1251fc7b2e9179d27cc788975ae",
+    "assets/vector-icons/solar-duotone/hamburger-menu.svg": "e0df4c80494e55f907bcd51e0ff27e6a4f2cbf6cc4f38dd213d5b81db92a5793",
+    "assets/vector-icons/solar-duotone/headphones-round.svg": "2fea37c3faf040b7569f5c54d9d4112e68b2d8f9366d2e9d1ac0744e5bb1e1f3",
+    "assets/vector-icons/solar-duotone/heart.svg": "48e95edf8a394b533d369992ef795d6d0a131624869981e8e1815743dbc83206",
+    "assets/vector-icons/solar-duotone/history.svg": "acffc8f9c285a5db4795ce5fa3ff69e0290c9cd2ea996076bab72dc15067944e",
+    "assets/vector-icons/solar-duotone/home-2.svg": "bade015e5b2e8014650fc25c5ddd2b701bab8583a6688d1c298378f02cd9f78c",
+    "assets/vector-icons/solar-duotone/home-angle.svg": "38b8e2ad3576ec885e8509ea6c8aea868cedc96b81ab5dbc019b85c69a7fae39",
+    "assets/vector-icons/solar-duotone/home.svg": "241f8d59fda670e96adc5d5f96f47a0ca7a12f96d8a5073fa1754a80f2167b35",
+    "assets/vector-icons/solar-duotone/info-circle.svg": "43c143224a19ef131d3630cff437480b6d2f90b5f64d7bf587f71746e1f2312d",
+    "assets/vector-icons/solar-duotone/link.svg": "cbd01ded518a67f38de6d282ee75ab97c975695cf9ffe46cec889e56f58d93fc",
+    "assets/vector-icons/solar-duotone/list.svg": "a8757b155bd5b283a005a350fb78c57e3dc84b3bea8294f2c5a346fbb528042b",
+    "assets/vector-icons/solar-duotone/lock.svg": "68ba6338c37100847068542a604c0bf59db50dfa62f4c5d469f58f91a2f91bf6",
+    "assets/vector-icons/solar-duotone/magnifer-zoom-in.svg": "f0e653245e2ec08af1faf14de6f7e4dd3ab63c6b0e58817a07e75c06ce70a084",
+    "assets/vector-icons/solar-duotone/magnifer-zoom-out.svg": "c5615a941f9eeea1512a2eb0d4a281bf0733976d91b68a0c54e3d69da9023368",
+    "assets/vector-icons/solar-duotone/manga.svg": "ada2404da27fa8bb99b0f317f71ab2727fd246997185be88b61da5c2c22f27b6",
+    "assets/vector-icons/solar-duotone/menu-dots.svg": "5b3224c008c96043bf86c493be663dc1f5960baaecd0c192304671560b5ab607",
+    "assets/vector-icons/solar-duotone/minus-circle.svg": "d010a364f6af28a398ba3633144353cb5f0e156688d80ea2176ed70c9fd19d09",
+    "assets/vector-icons/solar-duotone/moon.svg": "2fea9ae8758993ad21b2d5df99245e314f8c476e6e3b56646b03024c802760ff",
+    "assets/vector-icons/solar-duotone/notebook.svg": "eeb7d58f9541456867b0e61e9e7c57e3d70a7b0458d422451450a2171a9fee85",
+    "assets/vector-icons/solar-duotone/palette.svg": "df8f0d54b50516f3f767e262e8138ab3882c69a2e2014382c5bd6e42b9872396",
+    "assets/vector-icons/solar-duotone/power.svg": "1370bbb7c457cb9eaee1acbd17e87b16e44fa3ac68e50499c634f5d372fcad60",
+    "assets/vector-icons/solar-duotone/question-circle.svg": "8ccd3bcb1d72b38808199423355a62a2b96c76f4aef6d343c5fc73b5b8e0f1de",
+    "assets/vector-icons/solar-duotone/refresh.svg": "0112e4d5cc819c0c0aeb861ab7548529aa3d15cf8365233d4bd3ed0f54213c3d",
+    "assets/vector-icons/solar-duotone/rounded-magnifer.svg": "a09c33776c3d79410070038de6107e5a83c8f07d3f2b2fc76b80798b92891047",
+    "assets/vector-icons/solar-duotone/settings-minimalistic.svg": "5cad22c95ebbb0b58f318dfa8a9d7e923ddf9065eb78ea507982605e87032909",
+    "assets/vector-icons/solar-duotone/settings.svg": "b50d0c59ba754a7bd976f2ddaef44cb253e382ec61d8636464ab265a34c0f202",
+    "assets/vector-icons/solar-duotone/share.svg": "8866c2428954bba0ce156bac076eb7b371d1a1d8a13280bdc9566bf04318b67d",
+    "assets/vector-icons/solar-duotone/sort.svg": "e5f302fb9a0cd5dab151cf516ae12452ed9e5d1f674b2e7b2c9b654c96ae2836",
+    "assets/vector-icons/solar-duotone/star.svg": "7453a29ae91af469f970b5a6b02c1b8fd1c3c6374d2ccb4c2bcd82aefb3e5136",
+    "assets/vector-icons/solar-duotone/sun-2.svg": "61a7814f9238d7484c9295a7bce49f56536669605afbbd3dfdf43e5de82d8667",
+    "assets/vector-icons/solar-duotone/sun.svg": "643466197b61f7c4b51e922f65d3be378a08623d43d369c4cdb218c03ca38010",
+    "assets/vector-icons/solar-duotone/tablet.svg": "3eec1df707c6bf374db8b5c798f5640a57f98cdbbf7f032f51b8e22952116268",
+    "assets/vector-icons/solar-duotone/target.svg": "ec66e82216cb556fc8580a2f31d8ca05925d8efa546040dd2e73fe2f3f66bc34",
+    "assets/vector-icons/solar-duotone/text.svg": "d05b88555eb33b4ecca87254b1079fffabce905386758fa79b51dafbd703e712",
+    "assets/vector-icons/solar-duotone/trash-bin-minimalistic.svg": "4235d5517d543e8dc02880a8d00711db571cdc5c259c66cacdba536e87bbf860",
+    "assets/vector-icons/solar-duotone/tuning-2.svg": "20de7d21ff5cc3ac2c3206dd82128c49cfb8561333272139e589a1e1b508d111",
+    "assets/vector-icons/solar-duotone/undo-left.svg": "ed079d192583e74bde7229d77d4c25a7c8cf758793b69f21e0eb477adf5c80bb",
+    "assets/vector-icons/solar-duotone/upload.svg": "a27433e72f7c183491626b30d3de788f60be9ace0d33a1640d90834b41bef746",
+    "assets/vector-icons/solar-duotone/user-rounded.svg": "a7ad79303f1fc583b6def12cf9d14f0b16055ce5cbf2ee9bc89657fe9e5727df",
+    "assets/vector-icons/solar-duotone/users-group-rounded.svg": "47686c2f82bebf2009c38ea264d02b0113e2fc450ece54e2a566760f623281ed",
+    "assets/vector-icons/solar-duotone/wi-fi-router.svg": "476735c98fec5150567fc4b2bf99fc4b60c187d4285fd59c2edc003eded53450",
+    "assets/vector-icons/solar-duotone/widget.svg": "27a1ec09bb9043187ec2ca1b73c9f2d37036f4698403aa007eb82f1ac2e1f5ad",
+    "assets/vector-icons/solar-outline/add-circle.svg": "d84cdc10737c73f356308f2ee922218ab2b044c0954a3a91791f4498b64e27d7",
+    "assets/vector-icons/solar-outline/alt-arrow-down.svg": "50e9fbd1450b8cea63ce21be5c920926ab69bb9c1d78441da595d3dfbabe755a",
+    "assets/vector-icons/solar-outline/alt-arrow-left.svg": "d4371a319df598949c5b348be0ceb5a8db4343fb012115861a5a281e786f2932",
+    "assets/vector-icons/solar-outline/alt-arrow-right.svg": "2c971e85bcc740d12d1cd3b1cbc330f93c60a867c87aba2be5f29907d59c9e72",
+    "assets/vector-icons/solar-outline/alt-arrow-up.svg": "a613d4449b7c5ecab37c611dca2ed5150dd2acff02947f7b2bddaa2d586553e8",
+    "assets/vector-icons/solar-outline/battery-full.svg": "60c379204c8626cef241e55a90c30484cf15146de906cb9f860faf7d1194d2e7",
+    "assets/vector-icons/solar-outline/bell.svg": "f33e19e714ecf90c71f74ea04f9e39f2603610745f8f1d8e4fd1270c6bb44967",
+    "assets/vector-icons/solar-outline/bluetooth.svg": "49d102ed975daaf38493f756d562e931a37904d61df032b2a1da5fba13baf1e2",
+    "assets/vector-icons/solar-outline/book-2.svg": "58f782aae796acbadcc0d85488a4b897cb60253c6ba6b956865e52bb21ddd531",
+    "assets/vector-icons/solar-outline/book-bookmark-minimalistic.svg": "0e8a66b9252b2e2df8b74d7da221d038e2b389255dac3e2e0fae39359f6faa58",
+    "assets/vector-icons/solar-outline/book-bookmark.svg": "b37f2283019cf460e2ebcac50bc3e44af0cba179a121c43f2c9edd1bb4d6bcf9",
+    "assets/vector-icons/solar-outline/book-minimalistic.svg": "604d7b59c0b5487d5edae3209cf1ee8d4a63c3263ac191571ce520a5933b221d",
+    "assets/vector-icons/solar-outline/book.svg": "32d72346704910b871d3e54203cea89d56ae49a190eb7ac6538f3263020d35aa",
+    "assets/vector-icons/solar-outline/bookmark-opened.svg": "71b7d28fb846c22d37f2911afca304e53501e7ee971ffc8050804ca82b32a21a",
+    "assets/vector-icons/solar-outline/bookmark.svg": "a1e4f54f433c9cbdda2f7a8991e5a14d62db1896a59a819e663856defe38dc59",
+    "assets/vector-icons/solar-outline/calendar.svg": "be0660b57d2342595c3834cf2a5196d7e49c00428d6106d805b0a32f6dfa88eb",
+    "assets/vector-icons/solar-outline/chart.svg": "4f2bd40682d76eab157a7b5609f3c2263df9e68147c6e7a4138f0678450ff4f0",
+    "assets/vector-icons/solar-outline/check-circle.svg": "e597bd59ca6ae27cc68a340195fbfd0871ed89ca14abacf3d12cea1ea8905181",
+    "assets/vector-icons/solar-outline/clock-circle.svg": "c156f91a5482675214ec61a62b52a79f069abf3c1281ff1a9a5455523a35b755",
+    "assets/vector-icons/solar-outline/close-circle.svg": "003809cdd74359ffbae9b1406e2879e330e0ae2d8e483e0d5121b05104785955",
+    "assets/vector-icons/solar-outline/compass.svg": "bd9fa57f8fe857e54134bba95b5596950c35faf373662cee31829bb8f79c82b8",
+    "assets/vector-icons/solar-outline/copy.svg": "0c37da2ee317b1b838e1fd6dd0a2885d1e3958e6077e5c3c79dacdc335dca79f",
+    "assets/vector-icons/solar-outline/crop.svg": "1a6e9fcc486e4f3a13ee07c56fb37bcbfed223e046b82a507098767ba7280838",
+    "assets/vector-icons/solar-outline/document-text.svg": "1833b2861a39cd6c7f6103e6cf3bc4a6e33451c23e75764fc62a30ab97a0ff78",
+    "assets/vector-icons/solar-outline/documents.svg": "b0e6fa69f13c1245bbfa8b2d9d0854b51ba58d396caed962823d367e831a38dd",
+    "assets/vector-icons/solar-outline/double-alt-arrow-left.svg": "6dbb0c865e4bb094d82df835dc783623c2eb670b26467f5075e4cb14b413b149",
+    "assets/vector-icons/solar-outline/double-alt-arrow-right.svg": "38edd58ce11f7dcf77b3cd28c771027759317854c0f6cf14fc72332a9d568ce4",
+    "assets/vector-icons/solar-outline/download.svg": "3fc7a83d38012a24dc303098af7b16fe4e818cb935422b4a4b0713e3307ea330",
+    "assets/vector-icons/solar-outline/eye-closed.svg": "6e95c85db135ac4e3268ff0e38903a0cb743d60b1a3510ad53074457c3827dfc",
+    "assets/vector-icons/solar-outline/eye.svg": "cb982915064336783d615e8f6bef41f33953f593e1f2ae44f41967747158b6dd",
+    "assets/vector-icons/solar-outline/filter.svg": "fb892f2da34e1ffcbc1ee93fb3908f2a3ae7a3d0124a2f024df127e681b6d9ba",
+    "assets/vector-icons/solar-outline/folder-open.svg": "f607adf2d29ba46818231482a470e86476902edcfc650f758987dc203f9696ae",
+    "assets/vector-icons/solar-outline/folder-with-files.svg": "4581480dfb63cd6088d9104f6f5aa5effeabc73f6e1fa141db13f0cf0c5cb20d",
+    "assets/vector-icons/solar-outline/folder.svg": "4de77b3b3d2832e6f8dad02662b9078e5a099f91256b857d202b58a7afec047c",
+    "assets/vector-icons/solar-outline/gallery.svg": "5c7f11cb971326c6b8745cec95a4e1fcdf91ecc4cc0d9564bf0b5666a38ad5db",
+    "assets/vector-icons/solar-outline/hamburger-menu.svg": "d1d89944891fa87168415d4e765140e85fae406d6d314a26e6075b6ec722104b",
+    "assets/vector-icons/solar-outline/headphones-round.svg": "fefc83d28127dff227a8dbb060796e6d7011ddfaed5b5a6c2e6fafeeb0ed0973",
+    "assets/vector-icons/solar-outline/heart.svg": "2d49525909479ce6f80cb42d3c47bd89b601f16c256f34016881b607d42f87ab",
+    "assets/vector-icons/solar-outline/history.svg": "8a72fe072a8d295a94e6d4e82d5672a35a5df7fc633aa7b39a858f7ac6a86713",
+    "assets/vector-icons/solar-outline/home-2.svg": "f789364400c0dcec721071a21f127b326f23df379018f0d1bb5fb675a4558f26",
+    "assets/vector-icons/solar-outline/home-angle.svg": "25dad3afd42f8dd00b49ab408b812a42d6cbb78311f674d2d75d78143d239af8",
+    "assets/vector-icons/solar-outline/home.svg": "b4106b795537a8e3d5bde4a786835af125593d4b91d0092ffb859d2e4adfb43a",
+    "assets/vector-icons/solar-outline/info-circle.svg": "1111fc979c4f68aacad0508e0063cc4c33c2846a53077d0b250ed4513a9845d9",
+    "assets/vector-icons/solar-outline/link.svg": "000a92d7a7d4f79b7e6cb7f2db554d5c1e02732a4fdc33fde89e4e123adb71f4",
+    "assets/vector-icons/solar-outline/list.svg": "3b64caaa199d103c3fcabe299209d730f7561361f735bc4ae704d76ab7ba8f26",
+    "assets/vector-icons/solar-outline/lock.svg": "1c8c5bedf251d7681a110c2c6e2522b4b0aedced39b782c40ba95fc323f1847f",
+    "assets/vector-icons/solar-outline/magnifer-zoom-in.svg": "f4a5c713bf944384cd1af792c1345dd2d537058ff6e3dcaf2b963e49d9362df5",
+    "assets/vector-icons/solar-outline/magnifer-zoom-out.svg": "873db94b487b052df3096ce7638b83ccc05cc53e161e6a36c96dc42d09916c07",
+    "assets/vector-icons/solar-outline/manga.svg": "072317bce04da7a5bc7d12cc67869e3e924807e63e0f6dd777311e7023ea9195",
+    "assets/vector-icons/solar-outline/menu-dots.svg": "e6c43b58d96d75f08d5a8f85062e59234d23a0bcc58d7dcbaaa5d293fd42651b",
+    "assets/vector-icons/solar-outline/minus-circle.svg": "be4a3384896a6088be331a566492a285ea49cdef1b80a1b0db7abd8191094230",
+    "assets/vector-icons/solar-outline/moon.svg": "9da972c1ff2222af0d0cae16b0dccdd07abc320ebf7610906ab7251e8b364244",
+    "assets/vector-icons/solar-outline/notebook.svg": "7dba42b77deee6a7f60ad1a5a6ec4f648272e2510cc92040b56f45ee29ef705e",
+    "assets/vector-icons/solar-outline/palette.svg": "a959a173cf9a85c84cbe316d5e763729e5c7d277447142ab343f7d44bec5a344",
+    "assets/vector-icons/solar-outline/power.svg": "7b8b173121154991a70e8c38130022e5f465f48bb79ab0a9b506f88f14ecf9f8",
+    "assets/vector-icons/solar-outline/question-circle.svg": "590e6b035055b7498f1c8fdb0cb048b94d9cc4ae154bd0050da048f3d1d77ecd",
+    "assets/vector-icons/solar-outline/refresh.svg": "cb9cd34e68c3e7f727b65c308be253502059c40a50d6fcfdeffc1b45aac93425",
+    "assets/vector-icons/solar-outline/rounded-magnifer.svg": "b03827f91fe17a698693b5e79e694337f9945bd22c24ecf3b2c64ae62908b8a9",
+    "assets/vector-icons/solar-outline/settings-minimalistic.svg": "196cd6052a23dfca09b2c9cd57ce8005a486d708d183ae3de9767a786be3e6d3",
+    "assets/vector-icons/solar-outline/settings.svg": "d861f79755c20213196c2efee6c48591f96962ab679606b6a2b5ac970b763038",
+    "assets/vector-icons/solar-outline/share.svg": "4500233005ea84170a02964eae6944c625084d29cd53e1aae219b701fb712b1d",
+    "assets/vector-icons/solar-outline/sort.svg": "c0116208c4253a3ab8369d1ff909584ad7716311c95c6c8ddc739899646e6a94",
+    "assets/vector-icons/solar-outline/star.svg": "4bb58c0f0cbc18ea752541ba4b76dcf944603ee8939e9518f2ee88b6f1a7aabf",
+    "assets/vector-icons/solar-outline/sun-2.svg": "1a2e5c15e51a185b58e37d2529d3c059687036308b0d80385d5e8326e80a45af",
+    "assets/vector-icons/solar-outline/sun.svg": "64de32ed42c4afea8cb800abd2505e8439026b09af99f3d514375815114273af",
+    "assets/vector-icons/solar-outline/tablet.svg": "9171ba5eb3d4eccf455a78ea1bdfcc8eb2a131dd1fb7159280b25f5b1f2e27c6",
+    "assets/vector-icons/solar-outline/target.svg": "2c34d5d4cc04119b536b91675d2273fcb3ba3d49af060b87bb274d9e3e2d343c",
+    "assets/vector-icons/solar-outline/text.svg": "a2b3094069989cbd14ae8f09d03aeb7c9e253b4f0fa076ec5d2e7cbe21390d00",
+    "assets/vector-icons/solar-outline/trash-bin-minimalistic.svg": "cbfb4b9aabd220275321d08f9c996c191c07b77c3ca88e5b6e26975ef77cea61",
+    "assets/vector-icons/solar-outline/tuning-2.svg": "6dcb4e907aaa0ea916880701ef4b1b12f2c592e0192d461f4e78169536412744",
+    "assets/vector-icons/solar-outline/undo-left.svg": "eb84b158ef6cb00fff3176f967f06712056b7b5910ed78f0980924f076340a51",
+    "assets/vector-icons/solar-outline/upload.svg": "496f98fba592ad7e9fb72fb4f9f55afdc0914e96971aac7908f778a07abd671a",
+    "assets/vector-icons/solar-outline/user-rounded.svg": "fa69beabda7aae75c33ac27735648a0e18265c9eb62a0499291a21d0a7f1dca0",
+    "assets/vector-icons/solar-outline/users-group-rounded.svg": "815e55a875aef79a075d379a0c7f9e5a49758ae9285d8ff847c34e61f26cbdcf",
+    "assets/vector-icons/solar-outline/wi-fi-router.svg": "84c73d0ed752445e410b9507efe0bb23c1e704624aafebbd1240bfae1f13ef1f",
+    "assets/vector-icons/solar-outline/widget.svg": "32e8315b4b2ae8316e6923624859ba4e2db338e8222ff7b29b3786303b304f6f",
+    "assets/vector-icons/tabler/adjustments-horizontal.svg": "16998accf937d760582d142dacde27fa9c5ab34077af55ea30955991ef4f8647",
+    "assets/vector-icons/tabler/arrow-back-up.svg": "310b9722d0425059d847109fce864394f65097266be2ad5df6886a9f53acf439",
+    "assets/vector-icons/tabler/battery-4.svg": "3753bbd580648d5925fc8dac1b2c774373a1e8e3fbb06cdeaa193ad703616135",
+    "assets/vector-icons/tabler/bell.svg": "5390a85f7d2b3be15f088e38cf28f18cb17d5381308e8e0de162063d5badfcdd",
+    "assets/vector-icons/tabler/bluetooth.svg": "0b14b837fa07c07ef9110d048d3a3480067121322feab8a586237b0521823a57",
+    "assets/vector-icons/tabler/book-2.svg": "ace7b9afe30ea768ef096e537bcfb36ec1335bd968824a2a33db9be1644ddd28",
+    "assets/vector-icons/tabler/book-download.svg": "878b6d714b509df40cdc6bcb0a0ad1325c676ea4d25d2c66cac6b4b7e4c6139d",
+    "assets/vector-icons/tabler/book-upload.svg": "a4afc8d2bcab14034aa7fc8fe504d167efeea07b9591f610e1fbe67b81241f8e",
+    "assets/vector-icons/tabler/book.svg": "247a3ba9fc440a5575bb377bbe8b86dffd074ab4fae039c857e6aa0031e11e15",
+    "assets/vector-icons/tabler/bookmark.svg": "3a8301986697ccba0b3a7310b9456ff54b316a7ec8ac4910265ab8300b88648c",
+    "assets/vector-icons/tabler/bookmarks.svg": "fa77230fd88d7f4624470d5fd2a263a9e5e379a5633aac9a1bde9cca53210b71",
+    "assets/vector-icons/tabler/books.svg": "3534ef190aca1f053f3e1683d3d60afd09190386a6c6fed5bfe252e1859d4438",
+    "assets/vector-icons/tabler/building-bank.svg": "63042f070fb66050d0d0e98dc6d84c3fde40250f85c11c07ba8c290f501e1331",
+    "assets/vector-icons/tabler/calendar.svg": "c098a5bde09da22826c86bfe62d56135c3c997b552be85cf1c29a44b3483d24a",
+    "assets/vector-icons/tabler/chart-bar.svg": "e61ab651cd0b98afbfef6055e08ede68522f092ebc13779a3f1c1a46fff2a6f7",
+    "assets/vector-icons/tabler/check.svg": "2b239ad2e297f639b580033e5de1389ae76adfcde9a3920be57001a7be960425",
+    "assets/vector-icons/tabler/chevron-down.svg": "bcaceeae2922f92f03bdd3d270b711c1bc6cf5b0661376a873e6d467df6859fb",
+    "assets/vector-icons/tabler/chevron-left.svg": "869b7f17d81d0a09440cb8300fd2b3ff56f427dfca7c284c1a651bf4b50d3a76",
+    "assets/vector-icons/tabler/chevron-right.svg": "320bc712558f2bd82c88c98f3bc626e0d0fb87f329e64ddfaa47fc00ddc92392",
+    "assets/vector-icons/tabler/chevron-up.svg": "a70f217a14408965f5ab568dde3fc5f8a81db26234039a557e3f07feb44ccd9e",
+    "assets/vector-icons/tabler/chevrons-left.svg": "a480d3d447bdc76f8468f364d4cd573e261cc949dec0f3b39ce2d0cf0b49d531",
+    "assets/vector-icons/tabler/chevrons-right.svg": "3372592ac68060590d108255d926edcca5ec437f43b53344b347fc2df9c126ab",
+    "assets/vector-icons/tabler/clock.svg": "673e676c2cabe87fbdd9d33d5c6749e9fd128f2aa4d313aea8086318b0cf372a",
+    "assets/vector-icons/tabler/cloud.svg": "6285ab7e72524ce4aef1f994319a66ef5dc502949393bca1a238d170101d26f9",
+    "assets/vector-icons/tabler/compass.svg": "76cf0b4d585b32d1c1919b8a48b2ee1d63b470dee99992419f587c144276bdef",
+    "assets/vector-icons/tabler/copy.svg": "af38daad417dc2e98b791b3c9c18666dbc8ab7ce4a7c9377d92dafc6e4fe2952",
+    "assets/vector-icons/tabler/crop.svg": "7df6e12ab6f31ee8b87aa99e304b06faf1dfbb832b30120a22e5291b1a2017cc",
+    "assets/vector-icons/tabler/device-tablet.svg": "d69f40baca98a1a8f6881e8220e7c95ccf7b5660603d1e9ab1d64d11c1a7cf67",
+    "assets/vector-icons/tabler/dots.svg": "dc5882a4625ea9728f3417338c0a417c90838e73d2097547cb26efc084afdf4c",
+    "assets/vector-icons/tabler/download.svg": "b0f4179b477db9c2ce0406a210953c4460bdd39deca8771cda32273b94a89da7",
+    "assets/vector-icons/tabler/eye-off.svg": "b614ffb13face602da82357372dbffe5742e89991f8bb103ad995af5b17861fb",
+    "assets/vector-icons/tabler/eye.svg": "804cd90cc962daaa2a72fcf13530d337bb2c990aa10707ebf3733542dcbbf242",
+    "assets/vector-icons/tabler/filter.svg": "7d49eb2ae547c965865feece76aa4e833a34b3f55c94f4f639967cd5bb0cc0e6",
+    "assets/vector-icons/tabler/folder-open.svg": "e062051f8176d7bfac2f83af7bb2f438026cafeab07c482aee6bfadd02a1dc7e",
+    "assets/vector-icons/tabler/folder.svg": "a8e8497ade0c091a5cdee2ae2d27c0556906817068dfa9730ce93e03de3d73c5",
+    "assets/vector-icons/tabler/folders.svg": "4e19da8b73ed2b15c634484db3e88cca1d9ee0fb545f0c84636f38c65ab64516",
+    "assets/vector-icons/tabler/headphones.svg": "ac2cf14746d3b70208cef7727568596efbc01615495fd1a0bbafca54c1fdea37",
+    "assets/vector-icons/tabler/heart.svg": "92fd2d12d0c9fc5ccafc46310b14e1304a6be332c620ec6c9c8ab25c132f248b",
+    "assets/vector-icons/tabler/help-circle.svg": "2990bc7e2582a49b3152a3a9e5ff11ccb9c0486c5e163f9c878479e05382e4cc",
+    "assets/vector-icons/tabler/history.svg": "8f2cd24f66a795df04b15687a76484cb1c5c557362944ee1eab06ed0f1013c66",
+    "assets/vector-icons/tabler/home-2.svg": "d89f12e556460fa5729ea78387cb09c5879cad307bbc0255169c9587b6889a0d",
+    "assets/vector-icons/tabler/home.svg": "95c56462925805a1f167e21b45cabf89c7d4f4b34d9b00cacc2e380a9a94ec57",
+    "assets/vector-icons/tabler/info-circle.svg": "d575e41a35a6a1b532bea181ce639ad3c2c9fde6c8ea452b6daacb13fc7defee",
+    "assets/vector-icons/tabler/language-hiragana.svg": "6e32bc16f7ef61e8b556beb4c3f784a26e55a5fc00c4c15444cbf8820ff9689f",
+    "assets/vector-icons/tabler/layout-grid.svg": "2051d9ab901d1b3b0e02cd2fe36b9336ea73ec8164f99e377443c1b6b245d301",
+    "assets/vector-icons/tabler/link.svg": "eb7ab59449befa636edb30c78a5e4b4bc8d78ed03e59f00b76e6e034ae273725",
+    "assets/vector-icons/tabler/list.svg": "c8bf157a870ceae4126eb1f0c95b1d36d0cb958a152c02f465280708d28c3c41",
+    "assets/vector-icons/tabler/lock.svg": "37f583e5978319188c542374c21c54ecc28936c2cc31215b5b53e0a37530cfd7",
+    "assets/vector-icons/tabler/menu-2.svg": "0b6327c4d920af71b31a5777381154cc0de4c060133c46f37f8dc12a37485409",
+    "assets/vector-icons/tabler/message-circle.svg": "7261d153d03dc9aee515a3bbf3f89cea0f4088f9edec8f13802d3e064120ea4c",
+    "assets/vector-icons/tabler/minus.svg": "6796eeea9ce8b9cf3a8766736db3a9bad6e410756dbdaa41599de645f193da6b",
+    "assets/vector-icons/tabler/moon.svg": "e78d638c68622bbbe3ec0bc9ba53db4d0e1c67f634781f91417f30fffd6ac280",
+    "assets/vector-icons/tabler/notebook.svg": "0d62d0a543967abd5250b1749838313ad546b49f0b08a8490aa85bec532f9db6",
+    "assets/vector-icons/tabler/palette.svg": "6a4ba93388afbc46a377de568507371831952d7c0c1f6e78aa9d9f7c9b9aa558",
+    "assets/vector-icons/tabler/photo.svg": "2e19c542d79addee043ddd48952e627374f33de3c371987e84c13dad7cdf1980",
+    "assets/vector-icons/tabler/plug.svg": "8afc41777d828a6ef7c76976815aae69cd2c96fb21402b043050003cb8bf4071",
+    "assets/vector-icons/tabler/plus.svg": "03aef7d35552c6216de298be8c622899ac8b2f2a3ed296f245672486c100f6f2",
+    "assets/vector-icons/tabler/power.svg": "6ceaf07d1d3a54899ec2fa7535b3570e70283ecc8314a86c0d127eb5df20c1c1",
+    "assets/vector-icons/tabler/refresh.svg": "2ec58e4cdbf5f7dc08029de380c690cafd1df15afa9328f8eea647f2b5afc640",
+    "assets/vector-icons/tabler/search.svg": "f3be1339a3c4d297d407cd5a97a938ea021b7dfb659c16923200be6452e1fdfb",
+    "assets/vector-icons/tabler/settings.svg": "d7b455d7abba3ee53d832392fcca37e3604968be872c46f3d5c63769a1289c32",
+    "assets/vector-icons/tabler/share.svg": "7e1b8178245362b9b6d05303b7c32dff65fe8b02f3faa821c306aee30a368d66",
+    "assets/vector-icons/tabler/sort-ascending.svg": "1209a76e9b323317c22dece8315a90be1c6cfd8985aaa27ab9e20ac8d9175532",
+    "assets/vector-icons/tabler/star.svg": "cc250a986594ad783cceeaa58cdd4bdc199442d3aa1e7609d916eceb4b939bcd",
+    "assets/vector-icons/tabler/sun.svg": "95b2dd5b61672e9df45f097312e88cbb4e775d8027a54f85aff2b8ce1710f84b",
+    "assets/vector-icons/tabler/target.svg": "a24575be1e1815f65e00504726c8a5657a8557d4b1c1df12445c3267b17cc700",
+    "assets/vector-icons/tabler/trash.svg": "b6059e9f49b92f123deb9ff35367105cddd8edda0d4d83d83d738cff5c1ce179",
+    "assets/vector-icons/tabler/typography.svg": "c6e4f2801fed685f6bbd1f0280d68247dc8b042c1c40d74f75d74672c0eaba3a",
+    "assets/vector-icons/tabler/upload.svg": "3ae87a7857076705634fa9952e32f7be6f6c37cf088882fb4cc91b1e1ec4d0df",
+    "assets/vector-icons/tabler/user.svg": "bd79dafaa3292aeccfe9b732ad4386335a848ca904070c4df6ed26d567003bea",
+    "assets/vector-icons/tabler/users.svg": "a38aec112e61b5e659bdb3e4d1cb905dc47f3e1140ae55882148acdc0e443f63",
+    "assets/vector-icons/tabler/wifi.svg": "3818ab9fc40c421ddb9ab6c2486db44d40fea34b8e66f870d782ae57165646b6",
+    "assets/vector-icons/tabler/x.svg": "f8757e9c265e0f970c29e8db41180f8ecde7a112639654de40d0b674af836c3c",
+    "assets/vector-icons/tabler/zoom-in.svg": "c11c411a291aaac13f579360f99bc18938dd4eaee481a9413fec8ac343181075",
+    "assets/vector-icons/tabler/zoom-out.svg": "bceb3d07cfffc84ed9536b1d4fdf624cee140a389615178691fdd6c99333d0ca",
+    "core/orbitui_solar_duotone_catalogue.lua": "a454aa56217336912063eb113f8088b7b46aa7981a82b63c68cd8eac75d402c6",
+    "core/orbitui_solar_outline_catalogue.lua": "a454aa56217336912063eb113f8088b7b46aa7981a82b63c68cd8eac75d402c6",
+    "core/orbitui_tabler_catalogue.lua": "63def9076c5fdba8c982cdbe557d534c0339fcca4c5cace9a213b79235d96890"
+  },
+  "sources": {
+    "solar": {
+      "commit": "44017167688b49109d88ae6a98979b23d8950db0",
+      "repository": "https://github.com/480-Design/Solar-Icon-Set"
+    },
+    "tabler": {
+      "commit": "74929e50416e2b7c0abb8368cdc74bdcb2560ab6",
+      "repository": "https://github.com/tabler/tabler-icons"
+    }
+  }
+}

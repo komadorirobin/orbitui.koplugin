@@ -32,6 +32,14 @@
   the four weight inventories, distinct outlines, the weight-300 static font
   and byte-identical legacy aliases. The build
   requires FontTools only when regenerating assets, not for tests or on-device.
+  Solar/Tabler extend the same modal tests to all three sources, both languages,
+  orientations and key modes. All 227 new SVG identities round-trip through
+  values, Bookshelf tokens and old OTA paths. Material weight changes leave
+  these sources unchanged. Per-icon cancellation, image-only gating, native
+  tab registration and alpha-renderer routing are covered without loading fonts.
+  `tests/test_vector_assets.py` checks pinned sources, exact output checksums,
+  local SVG geometry, styles and attribution. The optional CairoSVG/Pillow
+  contact sheet is a desktop preview, not a KOReader/e-ink rendering test.
 - OTA tests cover release channels, semantic versions, archive safety, TLS host
   checks, deferred activation, interrupted startup and rollback. `OTA.md` records
   the protocol and recovery limits. Package tests verify inventory and checksum bytes.
