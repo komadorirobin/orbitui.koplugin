@@ -44,6 +44,11 @@ Version `0.1.0-alpha.11` adds four icons to both Solar sources: Database, Cloud
 Download, Download Minimalistic and Library. Existing choices, the stable
 bootstrap and API 1 remain unchanged. Alpha.10 and earlier alpha releases can
 update directly through the same preview channel.
+Version `0.1.0-alpha.12` faces every book cover-forward in the shelf/spines
+style, including existing Library and Manga shelves. Native pagination handles
+the wider covers; saved orientation preferences remain intact for rollback.
+The stable bootstrap and API 1 are unchanged. Alpha.11 and earlier alpha
+releases can update directly through the same preview channel.
 An alpha installation defaults to including preview releases; a stable installation defaults to stable
 only. This is separate from upstream monitoring, which never publishes builds.
 

@@ -315,6 +315,20 @@ integrity checks; the published alpha.11 archive remains byte-identical.
 Device checks are recorded in `SHARED_UI.md`; physical Bigme rendering has not
 been verified. VERSION and the public OTA package are unchanged. Not published.
 
+## 2026-10-04: OrbitUI 0.1.0-alpha.12 release preparation
+
+The user explicitly requested publication of the all-cover shelf change above.
+Root VERSION advances to `0.1.0-alpha.12`; earlier published releases remain
+immutable. There is no upstream import or pin change. The intentional C07
+orientation policy and C08 settings-preservation contract remain as documented.
+
+Publication gates are both full Lua suites, translations, a clean-commit runtime
+ZIP, native OTA installation/rollback using the published alpha.11 installer,
+downloaded draft-asset verification and anonymous public discovery/installation.
+The three bootstrap files, bootstrap API 1 and installer are unchanged. This
+release stays in the preview channel; headless checks are not Bigme acceptance.
+See `docs/releases/0.1.0-alpha.12.md` for scope and remaining device checks.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

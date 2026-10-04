@@ -56,7 +56,7 @@ changes delegate to the existing native action; OrbitUI adds UI invalidation,
 not another Hardcover status/progress writer. The external undo patch and
 BookOrbit server continue to own server rollback behavior.
 
-## Cover-facing shelves (unreleased)
+## Cover-facing shelves (0.1.0-alpha.12)
 
 The shelf/spines style now displays every book cover-forward, as requested on
 2026-10-04. Existing Library and Manga shelves are included. Native shelves,

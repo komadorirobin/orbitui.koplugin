@@ -128,6 +128,12 @@ All eight additions were previewed at 144 and 40 pixels on desktop. The native
 OTA smoke test uses the published alpha.10 installer; physical-device rendering
 and selection still need verification. No renderer or bootstrap changes are made.
 
+Alpha.12 makes all books cover-forward in the shelf/spines style. Five focused
+tests exercise the integration policy and real native geometry/editor helpers;
+the existing component suites retain planning and pagination coverage. Native
+OTA checks use the published alpha.11 installer. Bigme shelf rendering, page
+turns, rotation and tap/hold targets still need the checks in `SHARED_UI.md`.
+
 Use the Bigme B7 Pro at its native 1264 x 1680 resolution. Retain a recovery path.
 Record KOReader version, installed patches and active plugins, plus crash.log.
 
