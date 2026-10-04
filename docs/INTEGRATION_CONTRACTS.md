@@ -189,6 +189,15 @@ and retain screen identity in the primitive label signature. Upstream 2.7.5's
 cache-key fix is represented without restoring its widget cache.
 Regression coverage: `tests/test_simpleui_upstream.lua`.
 
+Bento Top Margin is per module, including the first module of each column and
+later modules stacked in that column. Align columns to the row's top edge;
+do not reintroduce the leading column's shared gap or vertical centring that
+moves neighbours when one margin changes. Preserve the extra first-row padding
+when the topbar is off, full-width spacing and horizontal centring of narrow
+rows. Cached layout fingerprints include gaps as well as widths/order. Labels,
+backgrounds and clock/book refresh slots stay attached to their own cells.
+No settings migration. Regression coverage: `tests/test_simpleui_bento_margins.lua`.
+
 ## C08: Assets, data and recovery
 
 Embedded resources resolve relative to their component, not the outer plugin

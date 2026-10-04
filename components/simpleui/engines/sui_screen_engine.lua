@@ -2428,7 +2428,8 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
                     table.insert(page_ids, mod_id)
                     local bw = Config.getBentoWidth(mod_id, self._pfx)
                     mod_col_width[mod_id] = bw
-                    layout_fingerprint = layout_fingerprint .. mod_id .. ":" .. tostring(bw) .. ","
+                    layout_fingerprint = layout_fingerprint .. mod_id .. ":" .. tostring(bw)
+                        .. ":" .. tostring(Config.getModuleGapPx(mod_id, self._pfx, MOD_GAP)) .. ","
                 end
             end
             layout_fingerprint = layout_fingerprint .. "|"
@@ -2440,7 +2441,8 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
             if mod_id ~= "__page_break__" then
                 local bw = Config.getBentoWidth(mod_id, self._pfx)
                 mod_col_width[mod_id] = bw
-                layout_fingerprint = layout_fingerprint .. mod_id .. ":" .. tostring(bw) .. ","
+                layout_fingerprint = layout_fingerprint .. mod_id .. ":" .. tostring(bw)
+                    .. ":" .. tostring(Config.getModuleGapPx(mod_id, self._pfx, MOD_GAP)) .. ","
             else
                 layout_fingerprint = layout_fingerprint .. "|"
             end
@@ -2705,14 +2707,11 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
         local function _pack_bento(mods, parent_body, container_w, first)
             local function _flush_row(row_cols)
                 if not row_cols or #row_cols == 0 then return end
-                local lead_mod = row_cols[1].mods[1]
-                local gap_px = mod_gaps[lead_mod.id] or MOD_GAP
                 if first[1] then
                     first[1] = false
-                    local initial_pad = topbar_on and gap_px or (gap_px + MOD_GAP)
-                    parent_body[#parent_body+1] = self:_vspan(initial_pad)
-                else
-                    parent_body[#parent_body+1] = self:_vspan(gap_px)
+                    if not topbar_on then
+                        parent_body[#parent_body+1] = self:_vspan(MOD_GAP)
+                    end
                 end
 
                 local n = #row_cols
@@ -2734,16 +2733,16 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
                     end
                 end
 
-                local h_row = HorizontalGroup:new{ align = "center" }
+                -- Margins belong to individual modules, not the leading column.
+                -- Top alignment prevents a taller neighbour from offsetting them.
+                local h_row = HorizontalGroup:new{ align = "top" }
                 for i, col in ipairs(row_cols) do
                     local slot_w = target[i]
                     local v_col = VerticalGroup:new{ align = "left" }
-                    for mi, mod in ipairs(col.mods) do
-                        if mi > 1 then
-                            v_col[#v_col+1] = self:_vspan(mod_gaps[mod.id] or MOD_GAP)
-                        end
+                    for _, mod in ipairs(col.mods) do
                         local cell = _emit_mod(mod, slot_w)
                         if cell then
+                            v_col[#v_col+1] = self:_vspan(mod_gaps[mod.id] or MOD_GAP)
                             _register_cell(cell)
                             v_col[#v_col+1] = cell
                         end

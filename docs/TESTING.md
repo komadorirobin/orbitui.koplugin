@@ -2,6 +2,16 @@
 
 ## Automated
 
+The unreleased Bento margin fix adds 12 OrbitUI cases executing the real page
+builder over geometry-only widget stubs. It covers independent column/stack
+margins, a warm layout cache, legacy module order, full-width/three-column rows,
+topbar-off padding, narrow-row horizontal centring, landscape, custom screens,
+labels/backgrounds and clock/book slot ownership. These are layout calculations,
+not native painting or Bigme touch verification.
+Both full Lua/LuaJIT runs pass with 275 OrbitUI cases, 46 Python checks,
+351 Bookshelf suites (two native SQLite skips) and 13 SimpleUI test files.
+All 41 translation catalogs pass. No version bump or public OTA release.
+
 The ordinary-ornament row limit adds ten OrbitUI regressions and strengthens
 the 27 author-placement pagination configurations. Tests cover bust priority,
 multiple author busts sharing a row, book/bust carry-over, group/end slot
@@ -205,6 +215,14 @@ Record KOReader version, installed patches and active plugins, plus crash.log.
   shelf filter. Ordinary shelf stacks and folder navigation retain that filter.
 - Test new per-element fonts and module opacity alongside existing light
   backgrounds; verify section labels and live cover/stat updates after swipes.
+- For Bento margins, put a 55% Want to Read carousel beside 45% Recent Books
+  and 45% New Books stacked on the right. Change New Books' Top Margin through
+  0%, 100% and 300% from both module settings entry points. Only that module
+  should move within the row; its label must move with its covers. Check the
+  first right-column module independently, change pages and return, restart,
+  and repeat in landscape/a Custom Screen with labels/backgrounds toggled.
+  Columns now start at the row's top rather than being vertically centred;
+  retain saved settings and verify full-width spacing is unchanged.
 - Check shelf themes, planks, ornaments and wallpaper picking at both orientations.
 - Confirm existing settings, Hardcover links and status-line preferences remain
   in their original files after startup, edits, restart and rollback.

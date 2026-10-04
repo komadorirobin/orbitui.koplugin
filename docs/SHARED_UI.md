@@ -56,6 +56,17 @@ changes delegate to the existing native action; OrbitUI adds UI invalidation,
 not another Hardcover status/progress writer. The external undo patch and
 BookOrbit server continue to own server rollback behavior.
 
+## Bento module margins (unreleased)
+
+Top Margin now belongs to each module, including modules in the right-hand
+column and those stacked below another module. The margin sits above the label
+and content, not between the label and its covers. Columns are top-aligned so
+one module's changed margin does not vertically recenter its neighbours.
+Full-width spacing, row widths and topbar-off padding remain unchanged.
+Existing saved margins are used without migration; old layouts that relied on
+vertical centring may need their individual margins adjusted. Headless coverage
+is in `tests/test_simpleui_bento_margins.lua`; Bigme verification is pending.
+
 ## Cover-facing shelves (0.1.0-alpha.12)
 
 The shelf/spines style now displays every book cover-forward, as requested on
