@@ -353,6 +353,22 @@ private candidate ZIP passes inventory/layout and archive integrity checks.
 Physical rendering still needs the follow-up documented in `SHARED_UI.md`.
 Not published; VERSION and the public alpha.12 assets remain unchanged.
 
+## 2026-10-04: Prepare 0.1.0-alpha.13 preview publication
+
+The user explicitly requested publication of the dock-aware bookcase height
+correction. Advance the root VERSION and add alpha.13 release notes without
+changing upstream pins, the stable bootstrap, API 1 or the installer. Retain
+saved row counts, normal hero size, all-cover orientation and reading data.
+
+Release gates: both Lua runtimes, translations, clean-commit packaging and sealed
+inventory checks; native OTA from the actual published alpha.12 ZIP, then draft
+asset download/checksum verification and both CI jobs. After publishing, verify
+anonymous public downloads and live discovery/installation with the alpha.12
+installer, including restart, rollback and rejected incomplete packages.
+This stays a preview: the reported overlap has headless regression coverage,
+but the corrected rendering still needs the user's follow-up device check.
+See `docs/releases/0.1.0-alpha.13.md` for scope and update instructions.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

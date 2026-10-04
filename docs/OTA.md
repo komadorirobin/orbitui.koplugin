@@ -49,6 +49,11 @@ style, including existing Library and Manga shelves. Native pagination handles
 the wider covers; saved orientation preferences remain intact for rollback.
 The stable bootstrap and API 1 are unchanged. Alpha.11 and earlier alpha
 releases can update directly through the same preview channel.
+Version `0.1.0-alpha.13` corrects bookcase height allocation to exclude the
+persistent dock and reserve the visible pagination controls. Cover-forward
+shelves and saved layout preferences are retained. The stable bootstrap and
+API 1 are unchanged. Alpha.12 and earlier alpha releases can update directly
+through the same preview channel; restart KOReader after installation.
 An alpha installation defaults to including preview releases; a stable installation defaults to stable
 only. This is separate from upstream monitoring, which never publishes builds.
 

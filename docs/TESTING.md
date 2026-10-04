@@ -65,6 +65,10 @@ artifact. It does not publish releases or modify upstream repositories.
 dependency only; it is not installed or needed on KOReader. The monitor has a
 separate workflow and cannot publish plugin packages. See `UPSTREAM.md`.
 
+Run the two full suites sequentially on the same host. Some upstream tests
+use hard-coded, second-resolution `/tmp` paths (for example the start-menu
+module fixture), so separate `TMPDIR` values alone do not prevent collisions.
+
 Bookshelf's native SQLite tests require KOReader's runtime. Its exhaustive list
 geometry sweep remains opt-in (`BOOKSHELF_SLOW_TESTS=1`). The runner identifies
 these skips; they must not be presented as device verification.
@@ -135,13 +139,15 @@ OTA checks use the published alpha.11 installer. Bigme shelf rendering, page
 turns, rotation and tap/hold targets still need the checks in `SHARED_UI.md`.
 
 The user confirms alpha.12's cover-facing appearance but reports its lower shelf
-overlapping pagination and the dock. The unreleased height correction adds seven
+overlapping pagination and the dock. The alpha.13 height correction adds seven
 tests to Bookshelf's `_test_tall_screen.lua`: the 1264 x 1680 case, live dock and
 footer sizing, retained hero height, expanded viewport behavior and a 432-case
 portrait/landscape, row-count, chip-visibility and footer-settings matrix.
 Five of these tests fail against alpha.12, including a 160px dock overlap in the
 two-row fixture; the corrected geometry passes. The tests load the real widget
 over native stubs, not a painted KOReader screen. Device verification is pending.
+Native OTA checks use the published alpha.12 installer, including activation,
+restart, rollback and incomplete-package rejection.
 
 Use the Bigme B7 Pro at its native 1264 x 1680 resolution. Retain a recovery path.
 Record KOReader version, installed patches and active plugins, plus crash.log.

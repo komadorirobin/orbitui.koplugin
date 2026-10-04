@@ -69,7 +69,7 @@ The style editor reports **Face out: All books** as a read-only row. Stored
 chip/profile/global face-out choices remain intact but inactive, allowing a
 code rollback without a settings migration. Other layout controls remain native.
 
-Unreleased correction after the alpha.12 device report: the bookcase's collapsed
+Alpha.13 correction after the alpha.12 device report: the bookcase's collapsed
 row-height calculation now excludes the live dock height, like the other view
 modes. It shares the visible pagination reserve, and the rebuild uses that same
 reserve even when a negative footer margin moves controls above their outer box.
