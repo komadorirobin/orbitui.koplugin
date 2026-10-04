@@ -61,6 +61,9 @@ function M.install(root, module_map)
         if require("adapters/orbitui_icons").modules[name] then
             return function() return require("adapters/orbitui_icons").wrap(name, fn()) end
         end
+        if require("adapters/orbitui_ornaments").modules[name] then
+            return function() return require("adapters/orbitui_ornaments").wrap(name, fn(), root) end
+        end
         if require("adapters/orbitui_ui").modules[name] then
             return function() return require("adapters/orbitui_ui").wrap(name, fn()) end
         end

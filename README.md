@@ -16,9 +16,9 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.11** includes Bookshelf **5.3.1** through `9633b031` and
+Version **0.1.0-alpha.14** includes Bookshelf **5.3.1** through `9633b031` and
 SimpleUI `main` through `3444cc9c`, on top of alpha.4's shared OrbitUI surfaces.
-See [the release notes](docs/releases/0.1.0-alpha.11.md)
+See [the release notes](docs/releases/0.1.0-alpha.14.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
@@ -38,6 +38,12 @@ for previews and selection instructions.
 Alpha.11 adds Database, Cloud Download, Download Minimalistic and Library in
 both Solar styles, bringing each selection to 80 icons. Selection remains
 per-icon only; no existing choice is replaced.
+
+Alpha.14 bundles James Joyce and Virginia Woolf busts in the **Modernists**
+ornament pack. They stand next to books by the matching author, not randomly
+among other books. Installation is automatic on first opening the shelf or
+ornament collection after updating; existing settings/files are preserved.
+See [author ornaments](docs/ORNAMENTS.md) for matching, controls and artwork licenses.
 
 The alpha.6 preview added 110 offline Material Symbols Rounded icons, including
 manga. A Bigme startup crash was reported after applying its whole-pack preset.
@@ -111,3 +117,8 @@ OrbitUI's original code is licensed under AGPL-3.0. The complete license is in
 notice are preserved in their component directories. Bundled assets retain
 their original notices. OrbitUI is an independent integration, not an official
 release of either upstream project.
+
+The Modernists artwork is separately licensed: Joyce under CC BY-SA 4.0 and
+Woolf under **CC BY-NC-SA 4.0 (non-commercial only)**. The AGPL code license
+does not grant additional rights to those images. Sources, adaptations and
+license links accompany the assets in `assets/ornaments/Modernists/ATTRIBUTION.txt`.

@@ -119,7 +119,7 @@ not make semantic conflicts disappear.
 2. Fetch the tracked branch and pin the target's full SHA for this review. Read
    the complete new commit list and the net diff; check release notes, removed
    files, dependencies, settings migrations and changed native KOReader hooks.
-3. Map changed behavior to contracts C01-C10. Pay particular attention to
+3. Map changed behavior to contracts C01-C11. Pay particular attention to
    navigation callbacks, plugin/patch compatibility checks, cache invalidation,
    background timers, i18n, reader profiles and synchronization ownership.
 4. Merge that exact commit with `git subtree merge --prefix=components/bookshelf
@@ -183,6 +183,13 @@ not make semantic conflicts disappear.
   filter for whole groups, but retain folder filters and profile scope (C10).
   Do not mutate the source chip's saved filter. Tests cover forwarding, ordinary
   versus whole groups, and profile-scoped restoration/search.
+- Author ornaments wrap `lib/bookshelf_ornament_deck.fillHooks` and the first
+  `lib/bookshelf_ornaments.listAll` through `adapters/orbitui_ornaments.lua` (C11).
+  No component source edits are needed. Review the planner hooks, balancing
+  constraints, enabled-card filtering and entry author metadata on future merges.
+  Keep whole-library pagination consistent with separate page rendering; author
+  pieces must never fall back to the ordinary random deck. Preserve one-time
+  installation and the separate artwork licenses. See `ORNAMENTS.md`.
 
 Other shared integration logic is coordinated through `core/` and `adapters/`. The generated
 module map gives canonical require names and legacy `sui_*` aliases a single

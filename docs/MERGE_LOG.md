@@ -369,6 +369,40 @@ This stays a preview: the reported overlap has headless regression coverage,
 but the corrected rendering still needs the user's follow-up device check.
 See `docs/releases/0.1.0-alpha.13.md` for scope and update instructions.
 
+## 2026-10-04: Author-matched ornaments and alpha.14 publication preparation
+
+The user requested bundling the prepared Joyce and Woolf busts, placing them
+beside the correct authors' books, and publishing the next release. This is an
+OrbitUI-only addition under C11, not an upstream import. Component source and
+both upstream pins remain unchanged. Root VERSION advances to alpha.14; the
+stable bootstrap, API 1 and existing update channels are unchanged.
+
+The runtime adapter seeds the Modernists pack once without replacing existing
+files, settings or deleted artwork. It filters author busts out of the ordinary
+deck, then wraps native fill hooks to reserve a bust beside each matching run.
+Native balancing keeps the pair together. Author metadata is matched exactly
+after normalization, including inverted names; folder covers and titles do not
+imply authorship. Off/disabled settings are respected. Keep page-boundary resets
+and the author-lead empty-row rule together: ordinary row-end ornaments yield
+to a book/bust pair so full pagination matches isolated page rendering.
+
+The two images retain their distinct derivative-art licenses and notices:
+Joyce CC BY-SA 4.0; Woolf CC BY-NC-SA 4.0 (non-commercial only). They are not
+relicensed under the software's AGPL. The earlier manual preview pack is also
+matched, with released pieces taking priority to avoid duplicates. Code rollback
+does not remove the installed pack; pre-alpha.14 versions need it disabled if
+random placement is unwanted.
+
+Both full Lua runtimes pass, including 23 new Lua cases, 41 Python tests (two
+new asset checks), and 350 Bookshelf suites with 0 failures and the same three
+known native-SQLite/opt-in geometry skips. Author placement includes 27 complete
+pagination/page-render combinations. All 41 translation catalogs pass. Release
+gates also require a clean-commit sealed package, native OTA from the actual
+published alpha.13 ZIP, verified draft downloads, both CI jobs, then anonymous
+public discovery/download/installation. Keep this a preview: physical Bigme
+rendering and touch checks are outstanding. See `ORNAMENTS.md` and the alpha.14
+release notes for controls, recovery and device follow-up.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
@@ -378,7 +412,7 @@ Copy this section and replace placeholders only after performing the work.
 - Prior integrated upstream SHA:
 - Reviewed target upstream SHA / release:
 - OrbitUI merge commit and adaptation commits:
-- Affected contracts (C01-C10):
+- Affected contracts (C01-C11):
 - Conflicts and semantic decisions (including upstream changes deliberately deferred):
 - Updated upstream pin and generated module-map changes:
 - Tests passed, skipped, known baseline failures and new gaps:

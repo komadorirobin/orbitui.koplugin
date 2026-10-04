@@ -238,6 +238,31 @@ Tests: `tests/test_shared_book_panel.lua`, `test_shared_home.lua`,
 `test_shared_search.lua`, `test_shared_settings.lua`.
 See `SHARED_UI.md` for the minimal component seams and device checklist.
 
+## C11: Author-bound ornaments
+
+Bundled author busts and their trial copies must never enter the ordinary deck.
+Match full author metadata, not filename/title substrings or multi-book folder
+representatives. Keep each bust adjacent to its book through fill, page planning
+and balancing; disabled shelves, packs and pieces must stay disabled. Native
+ordinary ornaments keep their order and frequency. Author runs reset on page
+boundaries identically in the pagination and display passes.
+
+The adapter wraps `bookshelf_ornament_deck.fillHooks`, preserving `avail`, `lead`,
+`gaps`, `placed`, `empty_ok`, `squeeze`, `stop`, `final`, state and bare-row behavior.
+Native `final()` must continue pinning lead placements and retaining mid-row
+book/ornament pairs. Changes to these hooks or the entry's author metadata need
+review during future upstream merges. No component source is modified here.
+
+Seed assets from the selected OTA runtime once, with attribution and notices.
+Never overwrite existing artwork or placement files, resurrect deleted packs,
+or mark a failed copy complete. An installation error must not crash startup.
+The software license must not obscure the separate artwork licenses.
+
+Source: `core/orbitui_author_ornaments.lua`, `adapters/orbitui_ornaments.lua`,
+`core/orbitui_runtime.lua`, `assets/ornaments/Modernists/`.
+Tests: `tests/test_author_ornaments.lua`, `test_ornament_seed.lua`,
+`test_ornament_assets.py`; `scripts/check-package.lua` requires all pack files.
+
 ## Recording an intentional contract change
 
 Name the contract, explain why the old behavior is no longer required, record

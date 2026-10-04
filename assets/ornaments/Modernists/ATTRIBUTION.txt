@@ -1,0 +1,48 @@
+MODERNISTS v1 - SOURCES AND ATTRIBUTION
+Created 2026-10-04. Bundled separately from OrbitUI's AGPL code.
+The code license does not relicense these artwork assets.
+
+JAMES JOYCE
+File: James Joyce.png
+Reference photograph:
+"Marjorie Fitzgibbon - Bust of James Joyce (1982) closer.jpg"
+Photographer: Illustratedjc
+Sculpture: Marjorie Fitzgibbon, Bust of James Joyce, 1982.
+Source:
+https://commons.wikimedia.org/wiki/File:Marjorie_Fitzgibbon_-_Bust_of_James_Joyce_(1982)_closer.jpg
+Reference license: Creative Commons Attribution-ShareAlike 4.0 International.
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Changes: AI-assisted reinterpretation into a matte ivory plaster ornament;
+background and tall monument removed, low plinth added, lighting and surface
+appearance changed. The image is not a documentary reproduction.
+Adapted by OpenAI's image generation tool at the user's direction.
+The adapted image is distributed under CC BY-SA 4.0, to the extent applicable.
+No endorsement by the source photographer or sculptor is implied.
+
+VIRGINIA WOOLF
+File: Virginia Woolf.png
+Reference dataset: "Bust of Virginia Woolf"
+Creator: Scan-the-World
+Repository: Zenodo, record 20236358
+https://zenodo.org/records/20236358
+https://doi.org/10.5281/zenodo.20236358
+Reference views:
+de89cdb17547302c2f825f138975a9c3_r270.png
+de89cdb17547302c2f825f138975a9c3_r000.png
+Reference license: Creative Commons Attribution-NonCommercial-ShareAlike
+4.0 International.
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+Changes: AI-assisted reinterpretation into a matte ivory plaster ornament;
+viewpoint, material, lighting and plinth changed; background removed.
+The image is not a documentary reproduction or an exact render of the scan.
+Adapted by OpenAI's image generation tool at the user's direction.
+The adapted image is distributed under CC BY-NC-SA 4.0, to the extent
+applicable. Non-commercial use only.
+No endorsement by Scan-the-World is implied.
+
+COLLECTION
+The two ornaments are separate adaptations with the licenses stated above.
+Keep this attribution file with the images when redistributing the pack.
+No commercial redistribution of the Woolf ornament is granted here.

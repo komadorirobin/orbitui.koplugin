@@ -1,0 +1,213 @@
+package.path = "./?.lua;./components/bookshelf/?.lua;" .. package.path
+local H = require("tests/helpers")
+local Authors = require("core/orbitui_author_ornaments")
+local Adapter = require("adapters/orbitui_ornaments")
+local Deck = require("lib/bookshelf_ornament_deck")
+local Layout = require("lib/bookshelf_spine_layout")
+local native = Deck.fillHooks
+local joyce = { name = "Modernists/James Joyce.png", pack = "Modernists", w = 54 }
+local woolf = { name = "Modernists/Virginia Woolf.png", pack = "Modernists", w = 60 }
+local plant = { name = "plant.svg", w = 30 }
+
+local function entry(id, name, width, group)
+    return { id = id, author = name, book = { filepath = "/book" .. id .. ".epub" },
+        w = width or 90, gap_base = 8, orn_seed = group and "group" or nil }
+end
+local function clone(es, first)
+    local out = {}
+    for i = first or 1, #es do
+        local e = {}; for k, v in pairs(es[i]) do e[k] = v end
+        out[#out + 1] = e
+    end
+    return out
+end
+local function fixture(es, options)
+    local o = options or {}
+    local env = { entries = es, dealer = Deck.dealer(Deck.copyState(o.state), o.cards or { joyce, plant, woolf }),
+        level = o.level or "always", content_w = o.width or 320,
+        paginating = o.paginating or false, per_page = o.per_page or 2,
+        n_rows = o.n_rows or 2, pageKey = function(i) return tostring(es[i].id) end,
+        size = function(_, piece, _, cap)
+            return { entry = piece, w = math.min(piece.w, cap or math.huge) }
+        end,
+        space = function(kind, pl) return pl.w + (kind == "lead" and 6 or 12) end,
+    }
+    local hooks = o.native and native(env) or Authors.fillHooks(native, env)
+    local widths = {}; for i, e in ipairs(es) do widths[i] = e.w end
+    local rows = Layout.fillRows(widths, hooks.avail, hooks.gaps, hooks.empty_ok, hooks)
+    while #rows > env.n_rows do table.remove(rows) end
+    hooks.stop()
+    return hooks, rows, env, widths
+end
+local function bust(e) return e.lead_ornament or e.ornament end
+local function assertFits(es, rows, hooks, env)
+    for r, range in ipairs(rows) do
+        local used = 0
+        for i = range.first, range.last do
+            local e = es[i]
+            used = used + e.w
+            if i == range.first then
+                if e.lead_ornament then used = used + env.space("lead", e.lead_ornament) end
+            else used = used + e.gap_before end
+            local pl = bust(e)
+            if pl and Authors.pieces[pl.entry.name] then
+                H.eq(Authors.pieces[pl.entry.name], Authors.authorOf(e), "Wrong author beside book")
+            end
+        end
+        assert(used <= hooks.avail(r), "Book/ornament pair exceeds row budget")
+    end
+end
+
+H.test("metadata matches full author names and inverted names without substring guesses", function()
+    for _, name in ipairs({ "James Joyce", " JOYCE , James ", "JAMES  JOYCE", "James Joyce\nTranslator" }) do
+        H.eq(Authors.authorOf(entry(1, name)), "james joyce")
+    end
+    for _, name in ipairs({ "Virginia Woolf", "Woolf, Virginia", "Adeline Virginia Woolf" }) do
+        H.eq(Authors.authorOf(entry(1, name)), "virginia woolf")
+    end
+    for _, name in ipairs({ "Joyce Carol Oates", "Leonard Woolf", "About James Joyce", "Joyce", "" }) do
+        H.eq(Authors.authorOf(entry(1, name)), nil)
+    end
+    H.eq(Authors.authorOf({ book = { authors = { "Translator", { name = "Virginia Woolf" } } } }), "virginia woolf")
+    H.eq(Authors.authorOf({ book = { author = "James Joyce" } }), "james joyce")
+    H.eq(Authors.authorOf({ label = "James Joyce", book = { filepath = "/James Joyce.epub" } }), nil)
+end)
+
+H.test("a multi-book folder is not attributed to its representative's author", function()
+    local e = { author = "James Joyce", book = { kind = "folder" } }
+    H.eq(Authors.authorOf(e), nil)
+    e.book._spine_single = true
+    H.eq(Authors.authorOf(e), "james joyce")
+end)
+
+H.test("busts stand next to matching books only and never on bare shelves", function()
+    local es = { entry(1, "Other"), entry(2, "James Joyce"), entry(3, "Virginia Woolf"), entry(4, "Other") }
+    local h, rows, env = fixture(es, { n_rows = 5 })
+    H.eq(bust(es[1]), nil); H.eq(bust(es[4]), nil)
+    H.eq(bust(es[2]).entry, joyce); H.eq(bust(es[3]).entry, woolf)
+    for _, pl in pairs(h.row_orn) do H.eq(pl.entry, plant) end
+    for _, pl in pairs(h.bare(#rows + 1, 7)) do H.eq(pl.entry, plant) end
+    assertFits(es, rows, h, env)
+end)
+
+H.test("a contiguous author's run receives one bust, not one per volume", function()
+    local es = { entry(1, "James Joyce"), entry(2, "Joyce, James"), entry(3, "Other"), entry(4, "James Joyce") }
+    fixture(es, { cards = { joyce }, n_rows = 4, width = 700 })
+    H.eq(bust(es[1]).entry, joyce); H.eq(bust(es[2]), nil); H.eq(bust(es[3]), nil)
+    H.eq(bust(es[4]).entry, joyce)
+end)
+
+H.test("a matching book at a page start gets its own lead ornament", function()
+    local es = { entry(1, "Virginia Woolf"), entry(2, "Virginia Woolf") }
+    fixture(es, { cards = { woolf } })
+    H.eq(es[1].lead_ornament.entry, woolf)
+    H.eq(es[1].ornament, nil); H.eq(bust(es[2]), nil)
+end)
+
+H.test("off shelves and disabled pieces never force an author ornament", function()
+    local es = { entry(1, "James Joyce"), entry(2, "Virginia Woolf") }
+    local h = fixture(es, { level = "off" })
+    H.eq(bust(es[1]), nil); H.eq(bust(es[2]), nil); H.eq(next(h.row_orn), nil)
+    es = { entry(1, "James Joyce"), entry(2, "Virginia Woolf") }
+    fixture(es, { cards = { plant } })
+    H.eq(bust(es[1]), nil); H.eq(bust(es[2]), nil)
+end)
+
+H.test("rare ornament frequency still places a matching bust at its book", function()
+    local es = { entry(1, "James Joyce") }
+    fixture(es, { cards = { joyce }, level = "rarely" })
+    H.eq(bust(es[1]).entry, joyce)
+end)
+
+H.test("the released pack takes priority over an enabled trial copy", function()
+    local preview = { name = "Modernists-Preview/James Joyce.png", pack = "Modernists-Preview", w = 54 }
+    for _, cards in ipairs({ { preview, joyce }, { joyce, preview }, { preview } }) do
+        local es = { entry(1, "James Joyce") }
+        local h = fixture(es, { cards = cards })
+        H.eq(#h.dealer.cards, 0)
+        H.eq(bust(es[1]).entry, #cards == 1 and preview or joyce)
+    end
+end)
+
+H.test("existing random ornament placement is identical away from matching authors", function()
+    local es = {}; for i = 1, 30 do es[i] = entry(i, "Other", 85, i % 2 == 0) end
+    local a = clone(es); local b = clone(es)
+    local ha, ra = fixture(a, { cards = { plant }, native = true, n_rows = 6 })
+    local hb, rb = fixture(b, { cards = { joyce, plant, woolf }, n_rows = 6 })
+    H.eq(#ra, #rb); H.eq(ha.state().n, hb.state().n)
+    for r, range in ipairs(ra) do H.eq(range.first, rb[r].first); H.eq(range.last, rb[r].last) end
+    for i = 1, #a do
+        H.eq(a[i].gap_before, b[i].gap_before)
+        H.eq(bust(a[i]) and bust(a[i]).entry, bust(b[i]) and bust(b[i]).entry)
+    end
+end)
+
+H.test("narrow rows shrink or omit the bust rather than overlap its book", function()
+    for _, w in ipairs({ 100, 130, 150, 170, 240 }) do
+        local es = { entry(1, "James Joyce", 100), entry(2, "Virginia Woolf", 100) }
+        local h, rows, env = fixture(es, { width = w, n_rows = 8 })
+        assertFits(es, rows, h, env)
+        if w == 100 then H.eq(bust(es[1]), nil); H.eq(bust(es[2]), nil) end
+    end
+end)
+
+H.test("native row balancing preserves book-bust adjacency and reserved width", function()
+    local es = { entry(1, "Other", 100), entry(2, "James Joyce", 100, true),
+        entry(3, "Other", 90), entry(4, "Virginia Woolf", 90, true), entry(5, "Other", 80) }
+    local h, rows, env, widths = fixture(es, { width = 330, n_rows = 4, cards = { joyce, woolf } })
+    local gaps, lead, no_break, fixed = h.final()
+    for i, e in ipairs(es) do
+        if e.lead_ornament then H.eq(fixed[i], true) end
+        if e.ornament then H.eq(no_break[i], true) end
+    end
+    local even = Layout.balanceRows(widths, h.avail, gaps, rows[#rows].last, #rows,
+        { lead = lead, no_break = no_break, fixed = fixed })
+    assertFits(es, even or rows, h, env)
+end)
+
+H.test("whole-library pagination and page renders agree across author and page boundaries", function()
+    for _, width in ipairs({ 200, 320, 480 }) do
+        for per_page = 1, 3 do
+            for _, level in ipairs({ "rarely", "often", "always" }) do
+                local es = {}
+                for i = 1, 48 do
+                    local names = { "James Joyce", "Virginia Woolf", "Other", "James Joyce" }
+                    es[i] = entry(i, names[(math.floor((i - 1) / 5) % 4) + 1], 75 + i % 3 * 15, i % 5 == 1)
+                end
+                local h, rows, env = fixture(es, { width = width, per_page = per_page,
+                    n_rows = math.huge, paginating = true, level = level })
+                assertFits(es, rows, h, env)
+                local state, first, page = nil, 1, 1
+                while first <= #es do
+                    local slice = clone(es, first)
+                    local ph, pr, pe = fixture(slice, { width = width, n_rows = per_page,
+                        per_page = per_page, state = state, level = level })
+                    assertFits(slice, pr, ph, pe)
+                    local page_last = rows[math.min(page * per_page, #rows)].last
+                    H.eq(first + pr[#pr].last - 1, page_last, "Page boundary drift: "
+                        .. width .. "/" .. per_page .. "/" .. level .. "/page " .. page .. "/first " .. first)
+                    for i = 1, pr[#pr].last do
+                        local full = es[first + i - 1]
+                        H.eq(bust(slice[i]) and bust(slice[i]).entry, bust(full) and bust(full).entry)
+                        H.eq(slice[i].gap_before, full.gap_before)
+                    end
+                    state, first, page = Deck.copyState(ph.state()), page_last + 1, page + 1
+                end
+            end
+        end
+    end
+end)
+
+H.test("runtime adapter wraps the original native dealer rather than modifying upstream", function()
+    H.eq(Adapter.modules["lib/bookshelf_ornament_deck"], true)
+    local wrapped = Adapter.wrap("lib/bookshelf_ornament_deck", { fillHooks = native }, "/active-slot")
+    local es = { entry(1, "James Joyce") }
+    local env = { entries = es, dealer = Deck.dealer(nil, { joyce }), level = "always",
+        content_w = 320, n_rows = 1, per_page = 1, size = function(_, p) return { w = p.w, entry = p } end,
+        space = function(_, p) return p.w + 8 end }
+    local h = wrapped.fillHooks(env)
+    Layout.fillRows({ 90 }, h.avail, h.gaps, h.empty_ok, h)
+    H.eq(bust(es[1]).entry, joyce)
+    H.eq(Deck.fillHooks, native)
+end)
+H.finish()

@@ -1,0 +1,22 @@
+{
+  "James Joyce.png": {
+    "scale": 1,
+    "anchor": "bottom",
+    "lift": -0.009,
+    "pad": 0.035,
+    "night": "off",
+    "mirror": "off",
+    "tap": "zoom",
+    "info": "James Joyce\nAI-adapted light-plaster ornament after Marjorie Fitzgibbon's 1982 bust. Reference photograph by Illustratedjc, Wikimedia Commons, CC BY-SA 4.0. Adaptation: background removed, material and plinth changed, proportions and lighting reinterpreted. Not a documentary image of the sculpture.\nSource: https://commons.wikimedia.org/wiki/File:Marjorie_Fitzgibbon_-_Bust_of_James_Joyce_(1982)_closer.jpg\nLicense: https://creativecommons.org/licenses/by-sa/4.0/"
+  },
+  "Virginia Woolf.png": {
+    "scale": 1.1,
+    "anchor": "bottom",
+    "lift": -0.067,
+    "pad": 0.035,
+    "night": "off",
+    "mirror": "off",
+    "tap": "zoom",
+    "info": "Virginia Woolf\nAI-adapted light-plaster ornament based on Scan-the-World's Bust of Virginia Woolf, Zenodo record 20236358, CC BY-NC-SA 4.0. Adaptation: new viewpoint, background removed, material, lighting and plinth changed. Not a documentary image of the sculpture. Non-commercial use only.\nSource: https://doi.org/10.5281/zenodo.20236358\nLicense: https://creativecommons.org/licenses/by-nc-sa/4.0/"
+  }
+}

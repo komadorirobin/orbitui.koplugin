@@ -2,6 +2,13 @@
 
 ## Automated
 
+Alpha.14 adds 23 Lua tests for author-bound busts, native fill/balancing and safe
+one-time asset installation, plus two Python checks for the reviewed PNG bytes,
+alpha format, placement metadata, prompts and separate artwork notices.
+Pagination/render parity is checked in 27 combinations of width, row count and
+ornament frequency. The native OTA upgrade uses the published alpha.13 installer.
+Physical e-ink appearance and native touch/zoom remain device checks.
+
 - `sh scripts/test.sh`: LuaJIT syntax, integration tests, and original component suites.
 - `LUA=luajit sh scripts/test.sh`: the same test bodies under KOReader's Lua dialect.
 - `sh scripts/check-translations.sh`: validate catalogs with explicit baseline exceptions.

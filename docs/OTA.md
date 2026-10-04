@@ -54,6 +54,11 @@ persistent dock and reserve the visible pagination controls. Cover-forward
 shelves and saved layout preferences are retained. The stable bootstrap and
 API 1 are unchanged. Alpha.12 and earlier alpha releases can update directly
 through the same preview channel; restart KOReader after installation.
+Version `0.1.0-alpha.14` bundles the Modernists author ornaments and adds
+book-adjacent author matching. The pack is seeded once from the active runtime;
+user artwork and settings are not overwritten. Bootstrap API 1 is unchanged,
+and alpha.13 or earlier alpha releases can update directly. Code rollback keeps
+the installed images, but older runtimes do not apply the new author matching.
 An alpha installation defaults to including preview releases; a stable installation defaults to stable
 only. This is separate from upstream monitoring, which never publishes builds.
 
