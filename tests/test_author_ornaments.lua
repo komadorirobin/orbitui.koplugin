@@ -8,6 +8,18 @@ local native = Deck.fillHooks
 local joyce = { name = "Modernists/James Joyce.png", pack = "Modernists", w = 54 }
 local woolf = { name = "Modernists/Virginia Woolf.png", pack = "Modernists", w = 60 }
 local plant = { name = "plant.svg", w = 30 }
+local added = {
+    { file = "August Strindberg", id = "august strindberg", names = { "August Strindberg", "Johan August Strindberg" } },
+    { file = "Stanislaw Lem", id = "stanislaw lem", names = { "Stanis\197\130aw Lem", "STANIS\197\129AW LEM", "Stanislaw Lem" } },
+    { file = "Dylan Thomas", id = "dylan thomas", names = { "Dylan Thomas" } },
+    { file = "Thomas Mann", id = "thomas mann", names = { "Thomas Mann" } },
+    { file = "Fyodor Dostoevsky", id = "fyodor dostoevsky", names = {
+        "Fjodor Dostojevskij", "Fjodor Michajlovitj Dostojevskij", "Fyodor Dostoevsky", "Fyodor Dostoyevsky",
+        "Fyodor Mikhailovich Dostoyevsky", "Fedor Dostoevsky", "Feodor Dostoevsky", "Fiodor Dostoievski" } },
+    { file = "Knut Hamsun", id = "knut hamsun", names = { "Knut Hamsun" } },
+    { file = "Clarice Lispector", id = "clarice lispector", names = { "Clarice Lispector" } },
+    { file = "Robert Musil", id = "robert musil", names = { "Robert Musil" } },
+}
 
 local function entry(id, name, width, group)
     return { id = id, author = name, book = { filepath = "/book" .. id .. ".epub" },
@@ -78,6 +90,32 @@ H.test("a multi-book folder is not attributed to its representative's author", f
     H.eq(Authors.authorOf(e), nil)
     e.book._spine_single = true
     H.eq(Authors.authorOf(e), "james joyce")
+end)
+
+for _, subject in ipairs(added) do
+    H.test("new bust matches full and inverted names: " .. subject.file, function()
+        local piece = { name = "Authors/" .. subject.file .. ".png", pack = "Authors", w = 60 }
+        H.eq(Authors.pieces[piece.name], subject.id)
+        for _, name in ipairs(subject.names) do
+            local given, surname = name:match("^(.+) (%S+)$")
+            local inverted = surname .. ", " .. given
+            for _, variant in ipairs({ name, inverted, name:upper(), "  " .. inverted .. "  " }) do
+                H.eq(Authors.authorOf(entry(1, variant)), subject.id)
+            end
+        end
+        local es = { entry(1, subject.names[1]), entry(2, subject.names[#subject.names]), entry(3, "Other") }
+        local h, rows, env = fixture(es, { cards = { piece, plant }, width = 650 })
+        H.eq(bust(es[1]).entry, piece); H.eq(bust(es[2]), nil); H.eq(bust(es[3]), nil)
+        for _, pl in pairs(h.bare(#rows + 1, 7)) do H.eq(pl.entry, plant) end
+        assertFits(es, rows, h, env)
+    end)
+end
+
+H.test("new matches never use surnames, title mentions or similar family names", function()
+    for _, name in ipairs({ "Heinrich Mann", "Klaus Mann", "Caitlin Thomas", "Thomas", "Mann", "Lem",
+        "About Clarice Lispector", "Robert Musil Foundation", "Translator of Fjodor Dostojevskij" }) do
+        H.eq(Authors.authorOf(entry(1, name)), nil)
+    end
 end)
 
 H.test("busts stand next to matching books only and never on bare shelves", function()
@@ -166,22 +204,27 @@ H.test("native row balancing preserves book-bust adjacency and reserved width", 
 end)
 
 H.test("whole-library pagination and page renders agree across author and page boundaries", function()
+    local cards = { joyce, plant, woolf }
+    local names = { "James Joyce", "Virginia Woolf", "Other", "James Joyce" }
+    for _, subject in ipairs(added) do
+        cards[#cards + 1] = { name = "Authors/" .. subject.file .. ".png", pack = "Authors", w = 60 }
+        names[#names + 1] = subject.names[1]
+    end
     for _, width in ipairs({ 200, 320, 480 }) do
         for per_page = 1, 3 do
             for _, level in ipairs({ "rarely", "often", "always" }) do
                 local es = {}
-                for i = 1, 48 do
-                    local names = { "James Joyce", "Virginia Woolf", "Other", "James Joyce" }
-                    es[i] = entry(i, names[(math.floor((i - 1) / 5) % 4) + 1], 75 + i % 3 * 15, i % 5 == 1)
+                for i = 1, 72 do
+                    es[i] = entry(i, names[(math.floor((i - 1) / 5) % #names) + 1], 75 + i % 3 * 15, i % 5 == 1)
                 end
                 local h, rows, env = fixture(es, { width = width, per_page = per_page,
-                    n_rows = math.huge, paginating = true, level = level })
+                    n_rows = math.huge, paginating = true, level = level, cards = cards })
                 assertFits(es, rows, h, env)
                 local state, first, page = nil, 1, 1
                 while first <= #es do
                     local slice = clone(es, first)
                     local ph, pr, pe = fixture(slice, { width = width, n_rows = per_page,
-                        per_page = per_page, state = state, level = level })
+                        per_page = per_page, state = state, level = level, cards = cards })
                     assertFits(slice, pr, ph, pe)
                     local page_last = rows[math.min(page * per_page, #rows)].last
                     H.eq(first + pr[#pr].last - 1, page_last, "Page boundary drift: "

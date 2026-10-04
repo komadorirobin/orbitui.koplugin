@@ -41,8 +41,10 @@ for _, path in ipairs({
     "components/bookshelf/LICENSE", "components/bookshelf/assets/bookshelf-logo.png",
     "components/simpleui/main.lua", "components/simpleui/_meta.lua", "components/simpleui/LICENSE",
 }) do expect(path) end
-for _, file in ipairs(require("core/orbitui_author_ornaments").files) do
-    expect("assets/ornaments/Modernists/" .. file)
+for _, pack in ipairs(require("core/orbitui_author_ornaments").packs) do
+    for _, file in ipairs(pack.files) do
+        expect("assets/ornaments/" .. pack.name .. "/" .. file)
+    end
 end
 for _, icon in ipairs(dofile("core/orbitui_material_catalogue.lua")) do
     expect("assets/material-symbols/icons/" .. icon.name .. ".svg")

@@ -257,9 +257,12 @@ Seed assets from the selected OTA runtime once, with attribution and notices.
 Never overwrite existing artwork or placement files, resurrect deleted packs,
 or mark a failed copy complete. An installation error must not crash startup.
 The software license must not obscure the separate artwork licenses.
+New bundled packs use independent install markers: adding Authors must not
+invalidate the Modernists marker or rewrite its user-editable metadata. Name
+aliases may cover known transliterations but must still match full names.
 
 Source: `core/orbitui_author_ornaments.lua`, `adapters/orbitui_ornaments.lua`,
-`core/orbitui_runtime.lua`, `assets/ornaments/Modernists/`.
+`core/orbitui_runtime.lua`, `assets/ornaments/Modernists/`, `assets/ornaments/Authors/`.
 Tests: `tests/test_author_ornaments.lua`, `test_ornament_seed.lua`,
 `test_ornament_assets.py`; `scripts/check-package.lua` requires all pack files.
 

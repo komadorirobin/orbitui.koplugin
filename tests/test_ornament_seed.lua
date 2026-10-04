@@ -6,9 +6,15 @@ local original_open, original_rename, original_remove = io.open, os.rename, os.r
 local files, fail_write, fail_read, fail_close, fail_rename, no_space
 local source, dest = "/slot/assets/ornaments/Modernists/", "/settings/bookshelf/ornaments/Modernists/"
 local marker = "/settings/orbitui/ornament-modernists-v1.installed"
+local new_source, new_dest = "/slot/assets/ornaments/Authors/", "/settings/bookshelf/ornaments/Authors/"
+local new_marker = "/settings/orbitui/ornament-authors-v1.installed"
 local function fixture()
     files = {}
-    for _, file in ipairs(Authors.files) do files[source .. file] = string.rep(file, 7000) end
+    for _, pack in ipairs(Authors.packs) do
+        for _, file in ipairs(pack.files) do
+            files["/slot/assets/ornaments/" .. pack.name .. "/" .. file] = string.rep(file, 7000)
+        end
+    end
     fail_write, fail_read, fail_close, fail_rename, no_space = false, false, false, false, false
 end
 package.loaded.datastorage = { getSettingsDir = function() return "/settings" end }
@@ -46,8 +52,13 @@ local function seed() return Authors.seed("/slot", "/settings/bookshelf/ornament
 
 H.test("the active runtime seeds all artwork and notices byte-for-byte", function()
     fixture(); H.eq(seed(), true)
-    for _, file in ipairs(Authors.files) do H.eq(files[dest .. file], files[source .. file]) end
-    assert(files[marker])
+    for _, pack in ipairs(Authors.packs) do
+        for _, file in ipairs(pack.files) do
+            H.eq(files["/settings/bookshelf/ornaments/" .. pack.name .. "/" .. file],
+                files["/slot/assets/ornaments/" .. pack.name .. "/" .. file])
+        end
+        assert(files["/settings/orbitui/" .. pack.marker])
+    end
 end)
 H.test("a completed seed never overwrites edits or resurrects deleted ornaments", function()
     files[dest .. "James Joyce.png"] = "user edit"
@@ -65,6 +76,51 @@ H.test("pre-existing same-name pack files and metadata are preserved", function(
     H.eq(files[dest .. "ornaments.json"], "custom placement")
     H.eq(files[dest .. "James Joyce.png"], "custom image")
     H.eq(files[dest .. "Virginia Woolf.png"], files[source .. "Virginia Woolf.png"])
+end)
+H.test("alpha.14 upgrades add Authors without restoring or changing Modernists", function()
+    fixture()
+    files[marker] = "alpha.14 installed"
+    files[dest .. "James Joyce.png"] = "custom Joyce"
+    files[dest .. "ornaments.json"] = "disabled Woolf and custom sizes"
+    H.eq(seed(), true)
+    H.eq(files[marker], "alpha.14 installed")
+    H.eq(files[dest .. "James Joyce.png"], "custom Joyce")
+    H.eq(files[dest .. "Virginia Woolf.png"], nil)
+    H.eq(files[dest .. "ornaments.json"], "disabled Woolf and custom sizes")
+    H.eq(files[new_dest .. "Clarice Lispector.png"], files[new_source .. "Clarice Lispector.png"])
+    assert(files[new_marker])
+end)
+H.test("a deleted old pack stays deleted when the new pack is installed", function()
+    fixture(); files[marker] = "old pack removed by user"
+    H.eq(seed(), true)
+    for _, file in ipairs(Authors.files) do H.eq(files[dest .. file], nil) end
+    assert(files[new_dest .. "Thomas Mann.png"])
+end)
+H.test("new pack custom files and later deletions are preserved independently", function()
+    fixture(); files[marker] = "old installed"
+    files[new_dest .. "ornaments.json"] = "user metadata"
+    files[new_dest .. "Robert Musil.png"] = "custom Musil"
+    H.eq(seed(), true)
+    H.eq(files[new_dest .. "ornaments.json"], "user metadata")
+    H.eq(files[new_dest .. "Robert Musil.png"], "custom Musil")
+    files[new_dest .. "August Strindberg.png"] = nil
+    H.eq(seed(), false); H.eq(files[new_dest .. "August Strindberg.png"], nil)
+    for _, file in ipairs(Authors.packs[2].files) do files[new_dest .. file] = nil end
+    H.eq(seed(), false); H.eq(files[new_dest .. "Clarice Lispector.png"], nil)
+end)
+H.test("an interrupted new pack installation does not roll back the old marker", function()
+    fixture(); files[marker] = "old installed"
+    files[dest .. "James Joyce.png"] = "user Joyce"
+    files[new_source .. "Clarice Lispector.png"] = nil
+    H.eq(pcall(seed), false)
+    H.eq(files[marker], "old installed"); H.eq(files[new_marker], nil)
+    H.eq(files[dest .. "James Joyce.png"], "user Joyce")
+    files[new_source .. "Clarice Lispector.png"] = "complete retry image"
+    files[new_dest .. "August Strindberg.png"] = "customized during partial install"
+    H.eq(seed(), true)
+    H.eq(files[new_dest .. "August Strindberg.png"], "customized during partial install")
+    H.eq(files[new_dest .. "Clarice Lispector.png"], "complete retry image")
+    assert(files[new_marker])
 end)
 for _, kind in ipairs({ "write", "read", "close", "rename", "directory", "missing" }) do
     H.test("failed " .. kind .. " cannot complete or truncate an installed file", function()

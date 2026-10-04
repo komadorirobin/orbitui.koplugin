@@ -10,6 +10,16 @@ HASHES = {
     "James Joyce.png": "fd0e35430db5fcb70dcbe5de222c50b448b8ffbc73e22cb5e7a2eb59fbd2e5b4",
     "Virginia Woolf.png": "8b8a1a3d57d2df298bf7896b770d941b34682fab81ed1823f69075af46a992fb",
 }
+AUTHOR_HASHES = {
+    "August Strindberg.png": "719e860c41d8baddde7c91b6486e9500e713706a1e630a6c1a442947a50e96a8",
+    "Stanislaw Lem.png": "6bca32b5582a15019fbefdddbb7bda1e11bac86458d7f34ba5aff10a544ad398",
+    "Dylan Thomas.png": "5527a7d26c3210d95d3f2316f0766219b6c8f99f72a9a54c802a1069bb66ec3a",
+    "Thomas Mann.png": "e584052943e66f9edc23622a48fc7f4f1c7482d306c4d8a080c74a896e6e68a7",
+    "Fyodor Dostoevsky.png": "04c917132a05343545dc1f08d856f68e1b022c9fd2fbff5cb17f6f6df76f310a",
+    "Knut Hamsun.png": "8559aafafe6dbe0010d361805ab65798d2e2d0a254960c71f196b7891ec0d7e7",
+    "Clarice Lispector.png": "bee7a3d24770d1931d4144b3e5ad1c8b71beaac0d10b5acbf9f43d317524343a",
+    "Robert Musil.png": "0c6d0b652b5e3405e4a4804900726b5aa3c1179d439d7d70d7e9288055590d44",
+}
 
 
 class OrnamentAssetsTests(unittest.TestCase):
@@ -37,6 +47,48 @@ class OrnamentAssetsTests(unittest.TestCase):
             self.assertIn(required, notices)
         prompts = json.loads((PACK / "prompts.json").read_text())
         self.assertEqual({asset["file"] for asset in prompts["assets"]}, set(HASHES))
+
+    def test_all_additional_busts_retain_reviewed_rgba_and_provenance(self):
+        folder = ROOT / "assets/ornaments/Authors"
+        self.assertEqual({p.name for p in folder.glob("*.png")}, set(AUTHOR_HASHES))
+        for name, digest in AUTHOR_HASHES.items():
+            with self.subTest(name=name):
+                data = (folder / name).read_bytes()
+                self.assertEqual(hashlib.sha256(data).hexdigest(), digest)
+                self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
+                self.assertEqual(struct.unpack(">IIBB", data[16:26]), (1024, 1536, 8, 6))
+                self.assertIn(b"c2pa", data)
+
+    def test_additional_busts_have_placement_prompts_and_per_asset_licenses(self):
+        folder = ROOT / "assets/ornaments/Authors"
+        metadata = json.loads((folder / "ornaments.json").read_text())
+        prompts = json.loads((folder / "prompts.json").read_text())
+        notices = (folder / "ATTRIBUTION.txt").read_text()
+        self.assertEqual(set(metadata), set(AUTHOR_HASHES))
+        self.assertEqual({a["file"] for a in prompts["assets"]}, set(AUTHOR_HASHES))
+        originals = {"Thomas Mann.png", "Knut Hamsun.png", "Clarice Lispector.png", "Robert Musil.png"}
+        for asset in prompts["assets"]:
+            name = asset["file"]
+            with self.subTest(name=name):
+                self.assertEqual(asset["sha256"], AUTHOR_HASHES[name])
+                self.assertEqual(asset["references"] == [], name in originals)
+                self.assertIn("transparent", asset["prompt"])
+                entry = metadata[name]
+                self.assertEqual(entry["anchor"], "bottom")
+                self.assertEqual(entry["tap"], "zoom")
+                self.assertEqual(entry["night"], "off")
+                self.assertEqual(entry["mirror"], "off")
+                self.assertTrue(.95 <= entry["scale"] <= 1.1)
+                self.assertTrue(-.05 < entry["lift"] <= 0)
+                self.assertLess(len(entry["info"]), 4000)
+                self.assertIn(asset["artwork_license"], entry["info"])
+                self.assertIn("https://creativecommons.org/licenses/", entry["info"])
+                self.assertIn(name.upper(), notices.upper())
+        self.assertIn("Non-commercial use only", metadata["Fyodor Dostoevsky.png"]["info"])
+        self.assertIn("CC BY-SA 4.0", metadata["Stanislaw Lem.png"]["info"])
+        for required in ("nicolasdiolez", "Staszek Szybki Jest", "AndyScott", "Scan-the-World",
+                         "No third-party sculpture or photograph was supplied", "NonCommercial-ShareAlike"):
+            self.assertIn(required, notices)
 
 
 if __name__ == "__main__":

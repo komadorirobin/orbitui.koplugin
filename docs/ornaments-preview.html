@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OrbitUI / Authors</title>
+<style>
+:root { color-scheme:light; --paper:#eee9de; --ink:#292824; --muted:#69675f; --plank:#ab9170; --shadow:#564a36; }
+* { box-sizing:border-box; }
+body { margin:0; color:var(--ink); background:var(--paper); font-family:Georgia,serif; }
+body.dark { --paper:#242520; --ink:#eee9de; --muted:#b5b2a7; --plank:#7a6951; --shadow:#070907; color-scheme:dark; }
+header { max-width:1180px; margin:0 auto; padding:30px 24px 24px; border-bottom:1px solid var(--muted); }
+.eyebrow { font:12px/1.5 monospace; letter-spacing:.18em; }
+h1 { font-size:38px; font-weight:normal; margin:8px 0; }
+p { max-width:760px; line-height:1.5; color:var(--muted); margin:8px 0 14px; }
+button { padding:8px 13px; border:1px solid var(--muted); border-radius:3px; font:14px Georgia,serif; background:transparent; color:inherit; cursor:pointer; margin-right:7px; }
+main { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:28px 25px; max-width:1180px; padding:34px 24px; margin:auto; }
+figure { margin:0; min-width:0; }
+.shelf { height:240px; position:relative; display:flex; justify-content:center; align-items:flex-end; border-bottom:10px solid var(--plank); box-shadow:0 3px 4px -2px var(--shadow); }
+.shelf:after { content:""; position:absolute; bottom:0; left:0; right:0; height:3px; background:#9d8d72; opacity:.6; }
+.shelf img { height:calc(220px * var(--scale)); max-width:100%; object-fit:contain; position:relative; bottom:calc(220px * var(--scale) * var(--lift)); }
+body.patterned .shelf { background-image:repeating-linear-gradient(135deg,transparent 0px,transparent 17px,#88888830 18px,transparent 19px,transparent 37px); }
+figcaption { padding-top:13px; }
+strong { display:block; font-size:19px; font-weight:normal; }
+span,small { display:block; font:12px/1.6 monospace; color:var(--muted); }
+footer { max-width:1180px; margin:auto; padding:12px 24px 30px; color:var(--muted); font:12px/1.6 monospace; }
+@media(max-width:800px) { main { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:400px) { .shelf { height:210px; } .shelf img { height:calc(190px * var(--scale)); bottom:calc(190px * var(--scale) * var(--lift)); } h1 { font-size:30px; } }
+</style>
+</head>
+<body>
+<header>
+<div class="eyebrow">ORBITUI / AUTHORS COLLECTION</div>
+<h1>Eight more voices on the shelf.</h1>
+<p>Production PNGs at bookshelf scale, with their original generated transparency. Each bust belongs next to its author's books. This is an artwork preview, not a KOReader emulator.</p>
+<button id="theme" type="button" aria-pressed="false">Dark background</button>
+<button id="pattern" type="button" aria-pressed="false">Patterned background</button>
+</header>
+<main>
+    <figure style="--scale:1.002;--lift:-0.01">
+      <div class="shelf"><img src="../assets/ornaments/Authors/August%20Strindberg.png" alt="August Strindberg"></div>
+      <figcaption><strong>August Strindberg</strong><span>Adapted from a sculpture reference</span><small>CC BY 4.0</small></figcaption>
+    </figure>
+    <figure style="--scale:1.027;--lift:-0.023">
+      <div class="shelf"><img src="../assets/ornaments/Authors/Stanislaw%20Lem.png" alt="Stanislaw Lem"></div>
+      <figcaption><strong>Stanislaw Lem</strong><span>Adapted from a sculpture reference</span><small>CC BY-SA 4.0</small></figcaption>
+    </figure>
+    <figure style="--scale:1.006;--lift:-0.012">
+      <div class="shelf"><img src="../assets/ornaments/Authors/Dylan%20Thomas.png" alt="Dylan Thomas"></div>
+      <figcaption><strong>Dylan Thomas</strong><span>Adapted from a sculpture reference</span><small>CC BY 4.0</small></figcaption>
+    </figure>
+    <figure style="--scale:0.996;--lift:-0.01">
+      <div class="shelf"><img src="../assets/ornaments/Authors/Thomas%20Mann.png" alt="Thomas Mann"></div>
+      <figcaption><strong>Thomas Mann</strong><span>Original portrait interpretation</span><small>CC BY 4.0</small></figcaption>
+    </figure>
+    <figure style="--scale:1.044;--lift:-0.027">
+      <div class="shelf"><img src="../assets/ornaments/Authors/Fyodor%20Dostoevsky.png" alt="Fyodor Dostoevsky"></div>
+      <figcaption><strong>Fyodor Dostoevsky</strong><span>Adapted from a sculpture reference</span><small>CC BY-NC-SA 4.0</small></figcaption>
+    </figure>
+    <figure style="--scale:1.004;--lift:-0.015">
+      <div class="shelf"><img src="../assets/ornaments/Authors/Knut%20Hamsun.png" alt="Knut Hamsun"></div>
+      <figcaption><strong>Knut Hamsun</strong><span>Original portrait interpretation</span><small>CC BY 4.0</small></figcaption>
+    </figure>
+    <figure style="--scale:0.998;--lift:-0.012">
+      <div class="shelf"><img src="../assets/ornaments/Authors/Clarice%20Lispector.png" alt="Clarice Lispector"></div>
+      <figcaption><strong>Clarice Lispector</strong><span>Original portrait interpretation</span><small>CC BY 4.0</small></figcaption>
+    </figure>
+    <figure style="--scale:1.001;--lift:-0.011">
+      <div class="shelf"><img src="../assets/ornaments/Authors/Robert%20Musil.png" alt="Robert Musil"></div>
+      <figcaption><strong>Robert Musil</strong><span>Original portrait interpretation</span><small>CC BY 4.0</small></figcaption>
+    </figure>
+</main>
+<footer>AI-assisted portrait interpretations, not documentary reproductions. Separate artwork licenses apply; Dostoevsky is non-commercial only. See each pack's ATTRIBUTION.txt and prompts.json.</footer>
+<script>
+document.getElementById("theme").addEventListener("click", function() {
+ const enabled = document.body.classList.toggle("dark"); this.setAttribute("aria-pressed",String(enabled)); this.textContent = enabled ? "Light background" : "Dark background";
+});
+document.getElementById("pattern").addEventListener("click", function() {
+ const enabled = document.body.classList.toggle("patterned"); this.setAttribute("aria-pressed",String(enabled));
+});
+</script>
+</body>
+</html>

@@ -3,20 +3,51 @@ local M = {}
 M.pack = "Modernists"
 M.files = { "ATTRIBUTION.txt", "README.txt", "prompts.json", "ornaments.json",
     "James Joyce.png", "Virginia Woolf.png" }
+M.packs = {
+    { name = M.pack, marker = "ornament-modernists-v1.installed", files = M.files },
+    { name = "Authors", marker = "ornament-authors-v1.installed", files = {
+        "ATTRIBUTION.txt", "README.txt", "prompts.json", "ornaments.json",
+        "August Strindberg.png", "Stanislaw Lem.png", "Dylan Thomas.png",
+        "Thomas Mann.png", "Fyodor Dostoevsky.png", "Knut Hamsun.png",
+        "Clarice Lispector.png", "Robert Musil.png",
+    } },
+}
 M.pieces = {
     ["Modernists/James Joyce.png"] = "james joyce",
     ["Modernists/Virginia Woolf.png"] = "virginia woolf",
     -- The earlier manually installed trial pack uses these same pictures.
     ["Modernists-Preview/James Joyce.png"] = "james joyce",
     ["Modernists-Preview/Virginia Woolf.png"] = "virginia woolf",
+    ["Authors/August Strindberg.png"] = "august strindberg",
+    ["Authors/Stanislaw Lem.png"] = "stanislaw lem",
+    ["Authors/Dylan Thomas.png"] = "dylan thomas",
+    ["Authors/Thomas Mann.png"] = "thomas mann",
+    ["Authors/Fyodor Dostoevsky.png"] = "fyodor dostoevsky",
+    ["Authors/Knut Hamsun.png"] = "knut hamsun",
+    ["Authors/Clarice Lispector.png"] = "clarice lispector",
+    ["Authors/Robert Musil.png"] = "robert musil",
 }
 
-local aliases = {
-    ["james joyce"] = "james joyce", ["joyce, james"] = "james joyce",
-    ["virginia woolf"] = "virginia woolf", ["woolf, virginia"] = "virginia woolf",
-    ["adeline virginia woolf"] = "virginia woolf",
-    ["woolf, adeline virginia"] = "virginia woolf",
-}
+local function normalize(name)
+    -- Lua's lower() only folds ASCII; also fold the L-with-stroke in Lem's name.
+    return name:gsub("\197\129", "\197\130"):lower():gsub("%s+", " ")
+        :gsub("%s*,%s*", ", "):gsub("^%s+", ""):gsub("%s+$", "")
+end
+local aliases = {}
+local function alias(id, name)
+    aliases[normalize(name)] = id
+    local given, surname = name:match("^(.+) (%S+)$")
+    if given then aliases[normalize(surname .. ", " .. given)] = id end
+end
+for _, id in pairs(M.pieces) do alias(id, id) end
+alias("virginia woolf", "Adeline Virginia Woolf")
+alias("august strindberg", "Johan August Strindberg")
+alias("stanislaw lem", "Stanis\197\130aw Lem")
+for _, name in ipairs({
+    "Fjodor Dostojevskij", "Fjodor Michajlovitj Dostojevskij", "Fjodor Dostojevsky",
+    "Fyodor Dostoyevsky", "Fyodor Mikhailovich Dostoevsky", "Fyodor Mikhailovich Dostoyevsky",
+    "Fedor Dostoevsky", "Feodor Dostoevsky", "Fiodor Dostoievski",
+}) do alias("fyodor dostoevsky", name) end
 local function author(value)
     if type(value) == "table" then
         if value.name then return author(value.name) end
@@ -26,8 +57,7 @@ local function author(value)
         end
     elseif type(value) == "string" then
         for part in value:gmatch("[^\n;|&]+") do
-            local name = part:lower():gsub("%s+", " "):gsub("%s*,%s*", ", ")
-                :gsub("^%s+", ""):gsub("%s+$", "")
+            local name = normalize(part)
             if aliases[name] then return aliases[name] end
         end
     end
@@ -60,24 +90,30 @@ local function copy(source, target)
     if not ok then os.remove(temporary); error(err) end
 end
 
--- Install once, from the active OTA runtime. Never replace user files or
--- resurrect a deleted piece/pack. A partial first install can retry safely.
+-- Each additive pack installs once from the active OTA runtime. Independent
+-- markers allow new packs without overwriting or resurrecting older artwork.
 function M.seed(root, ornaments_dir)
     local fs = require("libs/libkoreader-lfs")
     local settings = require("datastorage"):getSettingsDir() .. "/orbitui"
-    local marker = settings .. "/ornament-modernists-v1.installed"
-    if fs.attributes(marker, "mode") == "file" then return false end
-    local target = ornaments_dir .. "/" .. M.pack
     local ensure = require("lib/bookshelf_fs").ensureDir
-    assert(ensure(settings) and ensure(target), "Cannot create ornament pack folder")
-    for _, file in ipairs(M.files) do
-        if not fs.attributes(target .. "/" .. file, "mode") then
-            copy(root .. "/assets/ornaments/" .. M.pack .. "/" .. file, target .. "/" .. file)
+    local changed = false
+    for _, pack in ipairs(M.packs) do
+        local marker = settings .. "/" .. pack.marker
+        if fs.attributes(marker, "mode") ~= "file" then
+            local target = ornaments_dir .. "/" .. pack.name
+            local source = root .. "/assets/ornaments/" .. pack.name .. "/"
+            assert(ensure(settings) and ensure(target), "Cannot create ornament pack folder")
+            for _, file in ipairs(pack.files) do
+                if not fs.attributes(target .. "/" .. file, "mode") then
+                    copy(source .. file, target .. "/" .. file)
+                end
+            end
+            -- Commit only after all artwork and notices reached this pack.
+            copy(source .. "README.txt", marker)
+            changed = true
         end
     end
-    -- Commit only after all files and notices have reached their destination.
-    copy(root .. "/assets/ornaments/" .. M.pack .. "/README.txt", marker)
-    return true
+    return changed
 end
 
 function M.fillHooks(native, env)

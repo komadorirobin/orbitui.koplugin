@@ -44,6 +44,9 @@ ornament pack. They stand next to books by the matching author, not randomly
 among other books. Installation is automatic on first opening the shelf or
 ornament collection after updating; existing settings/files are preserved.
 See [author ornaments](docs/ORNAMENTS.md) for matching, controls and artwork licenses.
+The next release also includes the **Authors** pack: Strindberg, Lem, Dylan
+Thomas, Thomas Mann, Dostoevsky, Hamsun, Lispector and Musil. It installs
+independently without replacing Modernists artwork or user adjustments.
 
 The alpha.6 preview added 110 offline Material Symbols Rounded icons, including
 manga. A Bigme startup crash was reported after applying its whole-pack preset.
@@ -122,3 +125,8 @@ The Modernists artwork is separately licensed: Joyce under CC BY-SA 4.0 and
 Woolf under **CC BY-NC-SA 4.0 (non-commercial only)**. The AGPL code license
 does not grant additional rights to those images. Sources, adaptations and
 license links accompany the assets in `assets/ornaments/Modernists/ATTRIBUTION.txt`.
+The additional Authors collection has its own per-image notices in
+`assets/ornaments/Authors/ATTRIBUTION.txt`: Lem is CC BY-SA 4.0, Dostoevsky is
+**CC BY-NC-SA 4.0 (non-commercial only)**, and the other six are CC BY 4.0
+to the extent applicable. Original portrait interpretations are distinguished
+from adaptations of source photographs or scans.
