@@ -2,6 +2,8 @@ package.path = "./?.lua;./components/bookshelf/?.lua;" .. package.path
 local H = require("tests/helpers")
 local Authors = require("core/orbitui_author_ornaments")
 local Adapter = require("adapters/orbitui_ornaments")
+-- Session ordering is exercised with the native deck in test_ornament_session.
+package.loaded["lib/bookshelf_ornament_deck"] = { sync = function() end, shuffle = function() end }
 local original_open, original_rename, original_remove = io.open, os.rename, os.remove
 local files, fail_write, fail_read, fail_close, fail_rename, no_space
 local source, dest = "/slot/assets/ornaments/Modernists/", "/settings/bookshelf/ornaments/Modernists/"

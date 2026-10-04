@@ -4,6 +4,9 @@ Five original colour ornaments: a pine bonsai, red maple bonsai, sleeping
 calico cat, maneki-neko and daruma. Intended for colour e-ink shelves.
 
 These pieces join the normal ornament rotation; they are not author-bound.
+OrbitUI shuffles that rotation once per KOReader start, then keeps it stable
+while browsing, reading and resuming from sleep. Long-press > Shuffle all
+can mix again manually; swaps and moves last until the next restart.
 Use the existing ornament browser to enable/disable pieces or the whole pack.
 Tap to zoom; long-press for native size, height and spacing controls.
 The pack retains its colours in night mode. Existing ornament frequency and

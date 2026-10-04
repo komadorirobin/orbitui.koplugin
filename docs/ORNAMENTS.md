@@ -35,7 +35,7 @@ Missing/ambiguous metadata does not match. A multi-book folder tile is not
 attributed to the author of its representative cover.
 
 These pieces never enter the general ornament rotation or decorate bare shelves.
-Other ornaments keep the native deck/order and frequency pattern. On a shelf
+Other ornaments use a session-shuffled native deck and its frequency pattern. On a shelf
 with ornaments enabled, the author match takes precedence over that pattern.
 **None** disables all ornaments, including author busts. Disabling a piece or
 its pack also prevents author matching from selecting it.
@@ -67,12 +67,40 @@ pack when rolling back if random placement is unwanted.
 Disable **Authors** when rolling back to alpha.14 or earlier, since those
 versions do not know the nine new author-bound filenames.
 
+## Session shuffle (next release)
+
+Ordinary ornaments are automatically shuffled once per KOReader process, at the
+first nonempty ornament listing. Bundled packs are installed and the full
+catalogue is reconciled before shuffling, so newly installed pieces participate.
+This happens before page-layout signatures are captured: page planning and
+rendering use the same order, without moving pieces on the next repaint.
+
+Paging, switching prose/manga, returning from a book, cache refreshes and normal
+suspend/resume do not shuffle again. Closing and restarting KOReader does;
+an Android process restart after background termination also counts as a new
+start. Empty/unavailable catalogues defer until a nonempty listing. A failed
+shuffle is logged once and skipped for that session, not retried on every paint.
+
+Long-press an ornament and choose **Shuffle all** to mix again immediately.
+Manual swaps and Earlier/Later moves remain in force for the current session,
+then the next restart randomizes the order again. Newly added mid-session pieces
+use the native New ornaments first/last preference until the next shuffle.
+Disabled pieces/packs, frequencies, scale/position metadata and author matching
+are not changed. Busts still stand beside their matching authors, never in the
+ordinary rotation. This is an OrbitUI adapter policy, not an upstream source edit.
+
+Device check: compare a page before/after paging away and back, closing a book,
+switching profiles and waking from sleep; its ordinary ornaments should stay
+stable. Restart KOReader and check the newly shuffled order, then verify manual
+Shuffle all, disabled pieces and Joyce/Woolf adjacency. A one-piece pool cannot
+show a different order; a random shuffle may also repeat a previous permutation.
+
 ## Japan collection (next release)
 
 The **Japan** pack adds five original, transparent colour ornaments: a green
 pine bonsai in a jade pot, a red maple bonsai in an indigo pot, a sleeping calico
 cat, a maneki-neko and a red daruma. They use the ordinary ornament rotation,
-not author matching. The frequency, order, profile preferences and all busts
+not author matching. The frequency, profile preferences and all busts
 remain unchanged. **None** still hides every ornament.
 
 On first installation, the user's requested replacement turns off only exact
@@ -145,6 +173,9 @@ and retries. Asset checks cover all nine new PNGs without changing their bytes.
 Japan checks cover all five RGBA files, metadata, safe stock replacement, custom
 and legacy-root plants, re-enablement, disabled packs and failed/retried copies
 or settings writes. The author-placement tests still cover the unchanged busts.
+Session-shuffle tests run the native deck, enabled-pool cache and page-signature
+methods, including process restarts, empty/one-piece catalogues, manual changes,
+failed shuffles and author placement after shuffling.
 The [artwork preview](ornaments-preview.html) uses the production assets on
 light, dark and patterned backgrounds; it is not a KOReader emulator.
 Rendering and touch behavior still need a physical Bigme B7 Pro test, especially

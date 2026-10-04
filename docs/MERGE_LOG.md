@@ -522,6 +522,26 @@ re-enabling the old plants still need device confirmation. See ORNAMENTS.md and
 final packaging gate. No component source, upstream pins, VERSION, bootstrap or
 public OTA changes. Not published; rollback retains user-side art and off settings.
 
+## 2026-10-04: Shuffle ordinary ornaments once per KOReader session
+
+The user approved a fresh random ordinary-ornament order at startup, stable
+throughout browsing and normal suspend/resume. This deliberately changes C11's
+cross-restart fixed deck order; author binding and frequency remain unchanged.
+Use the existing native deck shuffle in the canonical ornament adapter, once
+after seeding and the first nonempty catalogue, before list/page signatures
+are captured. Empty catalogues defer the attempt; failures log once. Keep the
+guard module-local, not per widget or profile. Native manual swaps and shuffles
+remain stable until another explicit shuffle or the next process startup.
+
+No component source, bootstrap, upstream pin, asset bytes or enablement changes.
+Thirteen new tests exercise native deck/cache/layout code, session lifetime,
+insertion, off settings, failure handling, page signatures and author adjacency.
+Both complete Lua and LuaJIT logs pass: 240 OrbitUI cases, 46 Python checks,
+350 Bookshelf suites (0 failures, the same three SQLite/opt-in geometry skips)
+and all 13 SimpleUI test files. All 41 translation catalogs pass. Physical
+Bigme checks remain outstanding; see ORNAMENTS.md. The subsequent user request
+authorizes publishing this feature together with the accumulated local work.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

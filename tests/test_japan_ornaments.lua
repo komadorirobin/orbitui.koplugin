@@ -3,6 +3,7 @@ local H = require("tests/helpers")
 local Japan = require("core/orbitui_japan_ornaments")
 local Authors = require("core/orbitui_author_ornaments")
 local Adapter = require("adapters/orbitui_ornaments")
+package.loaded["lib/bookshelf_ornament_deck"] = { sync = function() end, shuffle = function() end }
 local open, rename, remove = io.open, os.rename, os.remove
 local files, settings, saves, invalidations, warnings, fail_save, unreadable
 local root = "/settings/bookshelf/ornaments/"

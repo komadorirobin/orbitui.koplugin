@@ -266,8 +266,20 @@ Bundled author busts and their trial copies must never enter the ordinary deck.
 Match full author metadata, not filename/title substrings or multi-book folder
 representatives. Keep each bust adjacent to its book through fill, page planning
 and balancing; disabled shelves, packs and pieces must stay disabled. Native
-ordinary ornaments keep their order and frequency. Author runs reset on page
+ordinary ornaments keep their frequency and their order within a session. Author runs reset on page
 boundaries identically in the pagination and display passes.
+
+Per the user's 2026-10-04 approval, the ordinary deck now shuffles once per
+KOReader process. Run native `Deck.sync(all)` and `Deck.shuffle()` after bundled
+seeding and the first nonempty `listAll`, before returning to `list()` and
+capturing page signatures. The adapter's guard belongs to the canonical module,
+not a shelf widget/profile. Never reshuffle on redraws, reader returns, directory
+polls or normal resume. Empty catalogues defer the first shuffle; an exception
+logs once and cannot repeatedly stall rendering. Preserve native generation/epoch
+updates, cached list identities and manual shuffle/swap behavior for the rest of
+the session. Automatic shuffling does not enable disabled pieces/packs or place
+author busts randomly. Keep this explicit user-approved exception to upstream's
+cross-restart fixed order in future merges. See `tests/test_ornament_session.lua`.
 
 The adapter wraps `bookshelf_ornament_deck.fillHooks`, preserving `avail`, `lead`,
 `gaps`, `placed`, `empty_ok`, `squeeze`, `stop`, `final`, state and bare-row behavior.
@@ -294,7 +306,7 @@ Source: `core/orbitui_author_ornaments.lua`, `adapters/orbitui_ornaments.lua`,
 `core/orbitui_ornament_install.lua`, `assets/ornaments/Modernists/`,
 `assets/ornaments/Authors/`, `assets/ornaments/Japan/`.
 Tests: `tests/test_author_ornaments.lua`, `test_ornament_seed.lua`,
-`test_japan_ornaments.lua`, `test_ornament_assets.py`;
+`test_japan_ornaments.lua`, `test_ornament_session.lua`, `test_ornament_assets.py`;
 `scripts/check-package.lua` requires all pack files.
 
 ## Recording an intentional contract change
