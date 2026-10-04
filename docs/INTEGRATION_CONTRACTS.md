@@ -277,8 +277,18 @@ Bundled author busts and their trial copies must never enter the ordinary deck.
 Match full author metadata, not filename/title substrings or multi-book folder
 representatives. Keep each bust adjacent to its book through fill, page planning
 and balancing; disabled shelves, packs and pieces must stay disabled. Native
-ordinary ornaments keep their frequency and their order within a session. Author runs reset on page
-boundaries identically in the pagination and display passes.
+ordinary ornaments keep their frequency setting and their order within a session.
+Author runs reset on page boundaries identically in the pagination and display passes.
+
+The user's subsequent 2026-10-04 request limits each physical shelf row to at
+most one ordinary ornament. Their follow-up explicitly exempts author busts:
+several can stand together at their matching books, without an additional
+ordinary piece on that row. Never move busts to unrelated books or rewrite
+user settings. Reserve before filling, apply the same rule in pagination and
+display, and constrain balancing as well. A book/bust pair too wide for the
+remaining room moves to the next row, not to a detached decorative slot.
+Keep ordinary gap/end choices when a slot is free, zero for None, and at most
+one ordinary piece on bare rows. Suppressed slots do not consume deck cards.
 
 Per the user's 2026-10-04 approval, the ordinary deck now shuffles once per
 KOReader process. Run native `Deck.sync(all)` and `Deck.shuffle()` after bundled
@@ -296,7 +306,12 @@ The adapter wraps `bookshelf_ornament_deck.fillHooks`, preserving `avail`, `lead
 `gaps`, `placed`, `empty_ok`, `squeeze`, `stop`, `final`, state and bare-row behavior.
 Native `final()` must continue pinning lead placements and retaining mid-row
 book/ornament pairs. Changes to these hooks or the entry's author metadata need
-review during future upstream merges. No component source is modified here.
+review during future upstream merges. The row cap uses two opt-in component
+seams: `fillHooks(env.max_per_row)` exposes `row_count` for a row's author
+reservation (one reserved native slot regardless of how many matching busts);
+`hooks.final()` may return a fifth row-acceptance callback. `SpineShelf.plan`
+forwards it as `opts.row_accept` to `SpineLayout.balanceRows`. Preserve those
+optional hooks without imposing OrbitUI's limit on standalone Bookshelf.
 
 Seed assets from the selected OTA runtime once, with attribution and notices.
 Never overwrite existing artwork or placement files, resurrect deleted packs,

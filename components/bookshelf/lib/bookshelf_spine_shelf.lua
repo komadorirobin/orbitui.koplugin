@@ -4121,15 +4121,17 @@ function SpineShelf.plan(items, opts)
         -- mid-row piece's boundary may not start a row (its width is only
         -- right mid-row), a lead piece's book must.
         local fin_gaps, fin_lead, fin_nb, fin_fixed = {}, nil, nil, nil
+        local fin_accept
         if hk then
-            fin_gaps, fin_lead, fin_nb, fin_fixed = hk.final()
+            fin_gaps, fin_lead, fin_nb, fin_fixed, fin_accept = hk.final()
         else
             for i = 1, #entries do fin_gaps[i] = entries[i].gap_before or 0 end
         end
         local even = SpineLayout.balanceRows(widths, hk and hk.avail or content_w_books, fin_gaps,
                                              rows[#rows].last, #rows,
                                              { runs = runs,
-                                               lead = fin_lead, no_break = fin_nb, fixed = fin_fixed })
+                                               lead = fin_lead, no_break = fin_nb, fixed = fin_fixed,
+                                               row_accept = fin_accept })
         _t_balance = _gettime() - _tb
         if even then rows = even end
     end

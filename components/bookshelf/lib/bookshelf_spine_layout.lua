@@ -273,6 +273,8 @@ SpineLayout.RUN_BREAK_BOOKS = 2
 -- a rule -- a break that would strand a book still wins. Sections too wide to
 -- stand on one row are exempt: they get cut wherever the breaks land, so
 -- charging for it would only buy a lopsided shelf.
+-- opts.row_accept(r, first, last), when supplied, constrains a candidate row
+-- without changing the page's books (e.g. a host's ornament-count limit).
 --
 -- Returns nil when there is nothing to do -- fewer than two rows or two
 -- books, or no partition fits -- and the caller keeps the greedy rows.
@@ -303,6 +305,7 @@ function SpineLayout.balanceRows(widths, avail_w, gap, count, n_rows, opts)
     local lead     = opts and opts.lead or {}
     local no_break = opts and opts.no_break or {}
     local fixed    = opts and opts.fixed or {}
+    local row_accept = opts and opts.row_accept
     -- A row a..b also carries book a's lead piece, when it has one.
     local function rowWidth(a, b) return sliceWidth(a, b) + (lead[a] or 0) end
     -- crossesFixed(a, b): a row a..b would swallow a fixed break (a lead
@@ -348,7 +351,8 @@ function SpineLayout.balanceRows(widths, avail_w, gap, count, n_rows, opts)
                 local w = rowWidth(a, i)
                 if w > avail_r and a ~= i then break end
                 local prev = cost[r - 1][j]
-                if prev and not no_break[a] then
+                if prev and not no_break[a]
+                        and (not row_accept or row_accept(r, a, i)) then
                     local slack = avail_r - w
                     if slack < 0 then slack = 0 end
                     local c = prev + slack * slack + breakCost(a)

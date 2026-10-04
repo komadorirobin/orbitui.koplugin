@@ -89,24 +89,27 @@ function M.fillHooks(native, env)
         end
     end
     env.dealer.cards = regular
+    env.max_per_row = 1
     local hooks = native(env)
-    if env.level == "off" or not next(targeted) then return hooks end
+    if env.level == "off" then return hooks end
 
+    local has_authors = next(targeted) ~= nil
     local avail, lead, placed, stop = hooks.avail, hooks.lead, hooks.placed, hooks.stop
-    local empty_ok, author_lead = hooks.empty_ok, false
+    local final = hooks.final
     local gaps, active, row, previous = hooks.gaps, true, 0, nil
+    local selected = {}
     local identities = {}
     local function identity(i)
         if identities[i] == nil then identities[i] = M.authorOf(env.entries[i]) or false end
         return identities[i]
     end
     local function allowed()
-        return active and (env.paginating or row <= (env.n_rows or 1))
+        return active and env.level ~= "off" and (env.paginating or row <= (env.n_rows or 1))
     end
-    local function pieceFor(kind, i)
+    local function pieceFor(kind, i, preceding)
         if not allowed() then return nil end
         local id = identity(i)
-        local piece = id ~= previous and targeted[id] or nil
+        local piece = id ~= preceding and targeted[id] or nil
         if not piece then return nil end
         local entry = env.entries[i]
         local room = env.content_w - entry.w - (kind == "gap" and (entry.gap_base or 0) or 0)
@@ -120,6 +123,30 @@ function M.fillHooks(native, env)
         end
         return pl
     end
+    local function selectAuthor(first)
+        selected = {}
+        if not first or not allowed() or not has_authors then return end
+        -- Reserve author pieces before ordinary dealing. Several busts may
+        -- share a row, but together occupy its only decorative slot.
+        local used, preceding = 0, previous
+        for i = first, #env.entries do
+            local entry = env.entries[i]
+            if i > first then used = used + (entry.gap_base or 0) end
+            used = used + entry.w
+            if used > env.content_w then return end
+            local kind = i == first and "lead" or "gap"
+            local pl = pieceFor(kind, i, preceding)
+            if pl then
+                selected[i] = pl
+                used = used + env.space(kind, pl)
+                -- Keep the proposal: fillRows will move this book/bust pair
+                -- to the next row rather than silently dropping its bust.
+                if used > env.content_w then return end
+                hooks.row_count[row] = 1
+            end
+            preceding = identity(i)
+        end
+    end
     function hooks.avail(r, i)
         if active and r and r > row then
             row = r
@@ -128,28 +155,21 @@ function M.fillHooks(native, env)
             if r == 1 or (env.paginating and (r - 1) % math.max(1, env.per_page or 1) == 0) then
                 previous = nil
             end
+            selectAuthor(i)
         end
         return avail(r, i)
     end
     hooks.gaps = setmetatable({}, { __index = function(_, i)
-        local pl = pieceFor("gap", i)
+        local pl = selected[i]
         if pl then return (env.entries[i].gap_base or 0) + env.space("gap", pl) end
         return gaps[i]
     end })
     function hooks.lead(i)
-        local pl = pieceFor("lead", i)
-        author_lead = pl ~= nil
+        local pl = selected[i]
         return pl and env.space("lead", pl) or lead(i)
     end
-    function hooks.empty_ok(r)
-        -- Prefer the book and its bust to a decorative row-end piece. Apart
-        -- from wasting rows, skipping them can carry MAX_EMPTY_RUN across a
-        -- page boundary, which a separate page render cannot reproduce.
-        return not author_lead and empty_ok(r)
-    end
     function hooks.placed(i, r, starts_row)
-        local kind = starts_row and "lead" or "gap"
-        local pl = pieceFor(kind, i)
+        local pl = selected[i]
         local entry = env.entries[i]
         local seed = entry.orn_seed
         if pl then entry.orn_seed = nil end
@@ -162,11 +182,29 @@ function M.fillHooks(native, env)
                 entry.gap_before = (entry.gap_base or 0) + env.space("gap", pl)
             end
         end
-        previous = identity(i)
+        previous = has_authors and identity(i) or nil
     end
     function hooks.stop() active = false; stop() end
-    -- Native final() pins lead books to row starts and keeps mid-row pairs
-    -- together during balancing. Bare shelves only draw from regular cards.
+    function hooks.final()
+        local fin_gaps, fin_lead, no_break, fixed = final()
+        local ordinary, authors = { [0] = 0 }, { [0] = 0 }
+        for i, e in ipairs(env.entries) do
+            ordinary[i], authors[i] = ordinary[i - 1], authors[i - 1]
+            local pl = e.ornament or e.lead_ornament
+            if pl then
+                local counts = M.pieces[pl.entry.name] and authors or ordinary
+                counts[i] = counts[i] + 1
+            end
+        end
+        -- Keep ordinary rows sparse. Author rows may hold several matching
+        -- busts, but cannot acquire ordinary decorations during balancing.
+        local function accept(r, first, last)
+            local n = ordinary[last] - ordinary[first - 1] + (hooks.row_orn[r] and 1 or 0)
+            return n <= 1 and (n == 0 or authors[last] == authors[first - 1])
+        end
+        return fin_gaps, fin_lead, no_break, fixed, accept
+    end
+    -- Native final() retains book/bust pairs; bare rows use only regular cards.
     return hooks
 end
 

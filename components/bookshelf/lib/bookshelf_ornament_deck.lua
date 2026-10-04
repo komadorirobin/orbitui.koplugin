@@ -276,7 +276,11 @@ end
 function M.fillHooks(env)
     local d, level, es = env.dealer, env.level, env.entries
     local per_page = math.max(1, tonumber(env.per_page) or 1)
-    local h = { row_orn = {}, row_deal = {}, page_orn = {}, dealer = d }
+    local h = { row_orn = {}, row_deal = {}, page_orn = {}, dealer = d, row_count = {} }
+    -- Optional host policy; reservations may include a book-adjacent piece.
+    local function hasRoom(r)
+        return not env.max_per_row or (h.row_count[r] or 0) < env.max_per_row
+    end
     local started, dealing = 0, true
     local page_has_book = {}
     for _i, e in ipairs(es) do
@@ -297,13 +301,14 @@ function M.fillHooks(env)
         end
         if not allowed(r) then return end
         d.st.shelf = d.st.shelf + 1
-        if M.shelfSlot(level, d.st.shelf) then
+        if M.shelfSlot(level, d.st.shelf) and hasRoom(r) then
             local e, no = d:take()
             if e then
                 local pl = env.size("rowend", e, no)
                 if pl then
                     pl.side = M.side(level, d.st.shelf); h.row_orn[r] = pl
                     h.row_deal[r] = { e, no }
+                    h.row_count[r] = (h.row_count[r] or 0) + 1
                 end
             end
         end
@@ -339,6 +344,8 @@ function M.fillHooks(env)
             return env.content_w - env.space("rowend", small)
         end
         h.row_orn[r] = nil
+        -- Keep the slot spent: lead() was measured before squeezing. Freeing
+        -- it now could deal a new piece that fillRows never budgeted for.
         return env.content_w
     end
     -- isBoundary(i, r): a group boundary that counts. Not on the first book a
@@ -349,7 +356,7 @@ function M.fillHooks(env)
         return page_has_book[(pageOf(r))] == true
     end
     local function peekPiece(kind, r)
-        if not allowed(r) then return nil end
+        if not allowed(r) or not hasRoom(r) then return nil end
         if not M.gapSlot(level, d.st.bnd + 1) then return nil end
         local e, no = d:peek()
         return e and env.size(kind, e, no) or nil
@@ -376,6 +383,7 @@ function M.fillHooks(env)
         if not counts then return end
         d.st.bnd = d.st.bnd + 1
         if not M.gapSlot(level, d.st.bnd) then return end
+        if not hasRoom(r) then return end
         local e, no = d:take()
         if not e then return end
         local ent = es[i]
@@ -385,6 +393,9 @@ function M.fillHooks(env)
             local pl = env.size("gap", e, no)
             ent.ornament = pl
             if pl then ent.gap_before = (ent.gap_base or 0) + env.space("gap", pl) end
+        end
+        if ent.lead_ornament or ent.ornament then
+            h.row_count[r] = (h.row_count[r] or 0) + 1
         end
     end
     -- A row may stand as its piece alone, but a page's LAST row may not when

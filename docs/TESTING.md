@@ -2,6 +2,13 @@
 
 ## Automated
 
+The ordinary-ornament row limit adds ten OrbitUI regressions and strengthens
+the 27 author-placement pagination configurations. Tests cover bust priority,
+multiple author busts sharing a row, book/bust carry-over, group/end slot
+competition, optional native defaults,
+empty/oversized pieces, balanced row constraints, saved page-start deck state
+and the real planner's constraint wiring. Device checklist: `ORNAMENTS.md`.
+
 The 2026-10-04 upstream merge adds 13 focused OrbitUI cases for SimpleUI's
 Android zlib fallback, fresh header/callback ownership, streak mutators and
 live-stat refresh routing. Four more component cache tests cover streak-only

@@ -632,6 +632,42 @@ zlib tests simulate missing FFI symbols, not the device's binary libraries.
 VERSION remains alpha.17 and published release bytes are untouched. This is
 a reviewed merge, **not published to OTA**; publication needs a separate request.
 
+## 2026-10-04: One ordinary ornament per row, with an author-bust exception
+
+The user requested at most one ornament per physical shelf row, then explicitly
+exempted author busts while the change was in progress. Final policy: at most
+one ordinary decoration, or several correctly matched author busts without an
+additional ordinary decoration on that row. This intentionally updates C11;
+None, disabled pieces/packs, author aliases, session shuffle, asset seeding and
+saved settings remain unchanged. This is not an upstream import or release.
+
+Reserve busts before ordinary row-end dealing, so they have priority without
+leaving a hidden row-end width reservation. Several author runs can share a
+row. Keep each bust/book pair together if it needs the next row. Use two small,
+opt-in Bookshelf seams: the deck's max_per_row/row_count reservation and a fifth
+final() result forwarded to balanceRows as row_accept. The predicate uses
+prefix counts, allows several busts and rejects extra/mixed ordinary pieces.
+Standalone default density and balancing remain unchanged without these hooks.
+
+The regression matrix also exposed a squeeze edge case: releasing a removed
+row-end slot after lead measurement allowed an unbudgeted lead decoration when
+the book was placed. Keep that slot spent for this row. Update the native
+wiring assertion to cover the optional fifth result rather than weakening it.
+
+Ten added OrbitUI cases cover two/three author busts, ordinary gap/end competition,
+bare/oversized rows, squeeze safety, optional native defaults, balancing,
+book/bust carry-over and real planner wiring. The existing 27 pagination
+configurations now compare page-start deck states, row ornaments and balanced
+output as well as page boundaries and author adjacency. Both Lua and LuaJIT pass:
+263 OrbitUI cases, 46 Python checks, 351 Bookshelf suites (zero failures, the
+same two native-SQLite skips), all 13 SimpleUI test files. All 41 translation
+catalogs pass. Clean-commit package validation is the final installation gate.
+
+Physical Bigme rendering/touch is not tested. Device checks are recorded in
+ORNAMENTS.md; especially inspect rows with several authors and the partly empty
+last page, in both orientations. No VERSION, source pin, bootstrap, artwork,
+settings schema or public OTA changes. Publication requires a separate request.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

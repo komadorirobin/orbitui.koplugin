@@ -14,11 +14,20 @@ network fetch is needed; the artwork is bundled as static transparent PNGs.
 
 ## Placement
 
+**At most one ordinary ornament per physical shelf row. Author busts are an
+exception:** two, three or more may share a row when their matching books fit
+there. A row with busts does not receive an additional ordinary decoration.
+This is automatic in OrbitUI, not an additional setting. Busts are never placed
+beside unrelated books or moved to an empty shelf.
+
 An enabled bust stands immediately before the first matching book in a
-contiguous author run. A run continuing on the next page gets a bust there too.
-The same planner reserves the space for pagination and display; row balancing
-keeps a bust with its book. If space is scarce, an ordinary row-end ornament
-gives way first. The bust shrinks or is omitted rather than overlapping a book.
+contiguous author run. A run continuing on the next page is eligible again.
+The same planner reserves the space for pagination and
+display; row balancing keeps busts with their books, permits several author
+pieces together, and cannot add ordinary decorations to that row. Selected
+busts replace the ordinary row-end reservation before filling books, rather
+than leaving hidden blank space. The bust shrinks
+or is omitted rather than overlapping a book.
 
 Matching uses existing book author metadata, not titles, filenames or a guess
 based on the open folder. Supported full names include `James Joyce`,
@@ -35,8 +44,9 @@ Missing/ambiguous metadata does not match. A multi-book folder tile is not
 attributed to the author of its representative cover.
 
 These pieces never enter the general ornament rotation or decorate bare shelves.
-Other ornaments use a session-shuffled native deck and its frequency pattern. On a shelf
-with ornaments enabled, the author match takes precedence over that pattern.
+Other ornaments use a session-shuffled native deck and its frequency pattern,
+limited to one ordinary slot per row. Bare shelves also have at most one piece.
+On a shelf with ornaments enabled, the author match takes precedence over that pattern.
 **None** disables all ornaments, including author busts. Disabling a piece or
 its pack also prevents author matching from selecting it.
 
@@ -86,7 +96,8 @@ Manual swaps and Earlier/Later moves remain in force for the current session,
 then the next restart randomizes the order again. Newly added mid-session pieces
 use the native New ornaments first/last preference until the next shuffle.
 Disabled pieces/packs, frequencies, scale/position metadata and author matching
-are not changed. Busts still stand beside their matching authors, never in the
+are not rewritten. Placement is subject to the ordinary-ornament row limit.
+Busts still stand beside their matching authors, never in the
 ordinary rotation. This is an OrbitUI adapter policy, not an upstream source edit.
 
 Device check: compare a page before/after paging away and back, closing a book,
@@ -172,7 +183,15 @@ cover alpha.14 upgrades, deleted old/new packs, custom metadata, partial copies
 and retries. Asset checks cover all nine new PNGs without changing their bytes.
 Japan checks cover all five RGBA files, metadata, safe stock replacement, custom
 and legacy-root plants, re-enablement, disabled packs and failed/retried copies
-or settings writes. The author-placement tests still cover the unchanged busts.
+or settings writes. The author-placement tests still cover the unchanged artwork
+and matching. The row-limit tests include two/three authors sharing a row, ordinary group gaps
+versus row ends, empty and squeezed rows, unchanged standalone defaults and the
+native balancer. The 27 pagination configurations also compare saved deck state,
+row-end placements and balanced output. Physical device check: inspect a shelf
+with several matching authors, an ordinary series/group shelf and the final
+partly empty page in portrait and landscape. Ordinary rows have zero or one
+decoration; author rows may have several correctly matched busts but no ordinary
+piece. Check again after paging away/back; books remain above the dock.
 Session-shuffle tests run the native deck, enabled-pool cache and page-signature
 methods, including process restarts, empty/one-piece catalogues, manual changes,
 failed shuffles and author placement after shuffling.

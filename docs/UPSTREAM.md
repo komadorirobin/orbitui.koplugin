@@ -193,11 +193,22 @@ not make semantic conflicts disappear.
   versus whole groups, and profile-scoped restoration/search.
 - Author ornaments wrap `lib/bookshelf_ornament_deck.fillHooks` and the first
   `lib/bookshelf_ornaments.listAll` through `adapters/orbitui_ornaments.lua` (C11).
-  No component source edits are needed. Review the planner hooks, balancing
+  Review the planner hooks, balancing
   constraints, enabled-card filtering and entry author metadata on future merges.
   Keep whole-library pagination consistent with separate page rendering; author
   pieces must never fall back to the ordinary random deck. Preserve one-time
   installation and the separate artwork licenses. See `ORNAMENTS.md`.
+- The approved ordinary-ornament row limit uses minimal opt-in Bookshelf hooks:
+  `bookshelf_ornament_deck.fillHooks` accepts `env.max_per_row` and exposes
+  `row_count` for the adapter's author reservation before row-end dealing.
+  A row-end slot removed by squeeze remains spent: releasing it after lead
+  measurement would permit an unbudgeted replacement at placement time.
+  The adapter returns a fifth value from `final()`; `bookshelf_spine_shelf`
+  forwards it to `bookshelf_spine_layout.balanceRows` as `opts.row_accept`.
+  The predicate allows several matching busts together, but prevents combining
+  ordinary ornaments or mixing them with busts. Keep default native density
+  and balancing unchanged
+  when these options are absent. Tests: `tests/test_author_ornaments.lua` (C11).
 
 Other shared integration logic is coordinated through `core/` and `adapters/`. The generated
 module map gives canonical require names and legacy `sui_*` aliases a single

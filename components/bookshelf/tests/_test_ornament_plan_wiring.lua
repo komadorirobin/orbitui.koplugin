@@ -19,8 +19,9 @@ t.test("plan builds the hooks from the deck and hands them to the fill", functio
 end)
 
 t.test("the balancer gets the committed widths and the lead constraints", function()
-    assert(plan:find("fin_gaps, fin_lead, fin_nb, fin_fixed = hk.final()", 1, true))
+    assert(plan:find("fin_gaps, fin_lead, fin_nb, fin_fixed, fin_accept = hk.final()", 1, true))
     assert(plan:find("lead = fin_lead, no_break = fin_nb, fixed = fin_fixed", 1, true))
+    assert(plan:find("row_accept = fin_accept", 1, true))
 end)
 
 t.test("plan returns the end state, the page states and the bare planks", function()
