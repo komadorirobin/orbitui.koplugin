@@ -1,4 +1,6 @@
-# Author ornaments
+# Ornaments
+
+## Author busts
 
 OrbitUI alpha.14 includes two AI-adapted light-plaster busts: James Joyce and
 Virginia Woolf. No additional download or manual file installation is required.
@@ -65,6 +67,40 @@ pack when rolling back if random placement is unwanted.
 Disable **Authors** when rolling back to alpha.14 or earlier, since those
 versions do not know the nine new author-bound filenames.
 
+## Japan collection (next release)
+
+The **Japan** pack adds five original, transparent colour ornaments: a green
+pine bonsai in a jade pot, a red maple bonsai in an indigo pot, a sleeping calico
+cat, a maneki-neko and a red daruma. They use the ordinary ornament rotation,
+not author matching. The frequency, order, profile preferences and all busts
+remain unchanged. **None** still hides every ornament.
+
+On first installation, the user's requested replacement turns off only exact
+copies of the two native stock plants, `cactus.svg` and `template.svg`. Their
+files are not deleted. Custom drawings with the same names, other packs and
+existing disabled entries are preserved. An already disabled Japan pack does
+not switch off the old plants. The change is recorded separately from the
+artwork installation, so a failed settings save can retry without recopying art.
+
+Find the pack under **Wallpaper, ornaments and colours > Ornament collection
+> Japan**. Each piece can be disabled, resized or moved with native controls;
+the original plants can be re-enabled there too, including after a rollback.
+That choice survives later startups. PNG colours stay intact in night mode
+(`night: off`); no greyscale conversion or new rendering pipeline is introduced.
+
+Files are seeded additively to `koreader/settings/bookshelf/ornaments/Japan/`,
+using `ornament-japan-v1.installed` and `ornament-japan-defaults-v1.applied` in
+`settings/orbitui/`. Existing artwork and metadata are not overwritten; completed
+installs never resurrect deleted pieces. No runtime network request or image
+generation is involved. Modernists, Authors and Japan all use the same atomic
+copy helper, but each retains its independent install marker.
+
+The [Japan artwork preview](japan-ornaments-preview.html) uses the production
+images and placement defaults with light/dark, patterned and smaller-size
+controls. This preview could not be browser-rendered in the current environment.
+The PNGs and real alpha were inspected directly; physical colour-e-ink rendering,
+shelf contact when width-constrained, and touch behavior still need device testing.
+
 ## Artwork licenses
 
 The images are separate from OrbitUI's AGPL-licensed software. They are a
@@ -86,6 +122,9 @@ collection of separately licensed adaptations, not one combined derivative.
   interpretations, CC BY 4.0 to the extent applicable. No third-party reference
   image was supplied. They do not reproduce the commercial/museum sculptures
   found during research, and must not be attributed to those sculptors.
+- Japan collection: original AI-generated ornaments, CC BY 4.0 to the extent
+  applicable. No third-party reference image was supplied. Exact prompts,
+  generated-byte hashes and attribution ship in the Japan pack.
 
 Complete attribution, change descriptions and license links ship with the images,
 including in the device-side pack. Preserve those notices on redistribution.
@@ -103,6 +142,9 @@ one-time installation. The packaged PNG bytes and notices are also checked.
 The pagination test now includes all eleven authors. Additive-pack migration tests
 cover alpha.14 upgrades, deleted old/new packs, custom metadata, partial copies
 and retries. Asset checks cover all nine new PNGs without changing their bytes.
+Japan checks cover all five RGBA files, metadata, safe stock replacement, custom
+and legacy-root plants, re-enablement, disabled packs and failed/retried copies
+or settings writes. The author-placement tests still cover the unchanged busts.
 The [artwork preview](ornaments-preview.html) uses the production assets on
 light, dark and patterned backgrounds; it is not a KOReader emulator.
 Rendering and touch behavior still need a physical Bigme B7 Pro test, especially

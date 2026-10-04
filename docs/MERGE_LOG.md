@@ -485,6 +485,43 @@ unpublished with the author-bust additions. Validate the clean-commit runtime
 ZIP before device testing; Bigme layout, book selection, letter jumps and bust
 placement still require the checklist in SHARED_UI.md.
 
+## 2026-10-04: Colour Japan ornaments replace stock plants (unreleased)
+
+The user requested bonsai, cats and Japanese shelf decorations instead of the
+stock cacti, and confirmed a colour screen. Add five original AI-generated
+transparent PNGs in a separate Japan pack: pine bonsai, red maple bonsai,
+sleeping calico, maneki-neko and daruma. Retain the exact generated RGBA and
+provenance bytes, with prompts, hashes, separate CC BY 4.0 notices (to the extent
+applicable) and native placement metadata. These are normal deck ornaments,
+not author-bound pieces. C11's eleven author busts and matching stay unchanged.
+
+Extract the existing atomic additive copy code to `core/orbitui_ornament_install.lua`;
+Modernists, Authors and Japan keep independent markers. The adapter attempts
+Japan separately, so either pack family can fail without breaking the browser
+or the other installation. The user-approved C08 exception is a one-time,
+reversible switch-off of only byte-identical native cactus.svg/template.svg in
+their effective root. Do not delete artwork, overwrite custom same-name files,
+change ornament frequency or enable a disabled Japan pack. A new-root custom or
+unreadable file must not fall through to a legacy stock file. Persist the defaults
+marker only after the settings write succeeds, and never repeat the switch-off
+after a user re-enables a plant. Existing off entries and deleted artwork survive.
+
+Both full Lua and LuaJIT runs pass: 227 OrbitUI cases (13 Japan regressions),
+46 Python tests, 350 Bookshelf suites with 0 failures and the same three known
+SQLite/opt-in geometry skips, and all 13 SimpleUI test files. All 41 translation
+catalogs pass. Asset tests cover PNG colour/alpha format, generated-byte hashes,
+provenance, notices and the matching preview references/defaults. The packaged
+inventory check now requires every file in all three ornament packs.
+
+The individual images and real alpha were inspected. The new desktop preview
+could not be browser-rendered because browser control was unavailable; do not
+claim a browser or physical-device visual pass. Bigme colour rendering, small
+and width-constrained placement, light/dark backgrounds, touch controls and
+re-enabling the old plants still need device confirmation. See ORNAMENTS.md and
+`docs/japan-ornaments-preview.html`. Validate the clean-commit sealed ZIP as the
+final packaging gate. No component source, upstream pins, VERSION, bootstrap or
+public OTA changes. Not published; rollback retains user-side art and off settings.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

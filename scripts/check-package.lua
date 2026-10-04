@@ -33,7 +33,8 @@ for _, path in ipairs({
     "assets/material-symbols/icons/manga.svg", "assets/material-symbols/icons/comic_bubble.svg",
     "core/orbitui_icons.lua", "core/orbitui_material_catalogue.lua", "adapters/orbitui_icons.lua",
     "core/orbitui_vector_icons.lua",
-    "core/orbitui_author_ornaments.lua", "adapters/orbitui_ornaments.lua",
+    "core/orbitui_author_ornaments.lua", "core/orbitui_japan_ornaments.lua",
+    "core/orbitui_ornament_install.lua", "adapters/orbitui_ornaments.lua",
     "assets/vector-icons/selection.json", "assets/vector-icons/generated.json", "assets/vector-icons/NOTICE.txt",
     "assets/vector-icons/SOLAR-LICENSE.txt", "assets/vector-icons/TABLER-LICENSE.txt",
     "assets/vector-icons/custom/manga-outline.svg", "assets/vector-icons/custom/manga-duotone.svg",
@@ -41,9 +42,11 @@ for _, path in ipairs({
     "components/bookshelf/LICENSE", "components/bookshelf/assets/bookshelf-logo.png",
     "components/simpleui/main.lua", "components/simpleui/_meta.lua", "components/simpleui/LICENSE",
 }) do expect(path) end
-for _, pack in ipairs(require("core/orbitui_author_ornaments").packs) do
-    for _, file in ipairs(pack.files) do
-        expect("assets/ornaments/" .. pack.name .. "/" .. file)
+for _, module in ipairs({ "core/orbitui_author_ornaments", "core/orbitui_japan_ornaments" }) do
+    for _, pack in ipairs(require(module).packs) do
+        for _, file in ipairs(pack.files) do
+            expect("assets/ornaments/" .. pack.name .. "/" .. file)
+        end
     end
 end
 for _, icon in ipairs(dofile("core/orbitui_material_catalogue.lua")) do

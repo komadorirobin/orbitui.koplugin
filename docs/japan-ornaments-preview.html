@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OrbitUI / Japan ornaments</title>
+<style>
+:root { color-scheme:light; --paper:#eee9de; --ink:#292824; --muted:#69675f; --plank:#ab9170; --shadow:#564a36; --stand:230px; }
+* { box-sizing:border-box; }
+body { margin:0; color:var(--ink); background:var(--paper); font-family:Georgia,serif; }
+body.dark { --paper:#242520; --ink:#eee9de; --muted:#b5b2a7; --plank:#7a6951; --shadow:#070907; color-scheme:dark; }
+body.small { --stand:130px; }
+header,footer { max-width:1180px; margin:auto; padding:30px 24px 24px; }
+header { border-bottom:1px solid var(--muted); }
+.eyebrow { font:12px/1.5 monospace; letter-spacing:.18em; }
+h1 { font-size:clamp(30px,4vw,44px); font-weight:normal; margin:8px 0; }
+p { max-width:760px; line-height:1.5; color:var(--muted); margin:8px 0 18px; }
+button { padding:8px 13px; border:1px solid var(--muted); border-radius:3px; font:14px Georgia,serif; background:transparent; color:inherit; cursor:pointer; margin:0 7px 8px 0; }
+button[aria-pressed=true] { color:var(--paper); background:var(--ink); }
+main { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:32px 28px; max-width:1180px; padding:34px 24px; margin:auto; }
+figure { margin:0; min-width:0; }
+.shelf { height:260px; position:relative; display:flex; justify-content:center; align-items:flex-end; border-bottom:10px solid var(--plank); box-shadow:0 3px 4px -2px var(--shadow); }
+.shelf:after { content:""; position:absolute; bottom:-2px; left:0; right:0; height:3px; background:#9d8d72; opacity:.6; }
+.shelf img { height:calc(var(--stand) * .8 * var(--scale)); width:auto; max-width:100%; object-fit:contain; position:relative; bottom:calc(var(--stand) * var(--lift)); }
+body.patterned .shelf { background-image:repeating-linear-gradient(135deg,transparent 0px,transparent 17px,#88888830 18px,transparent 19px,transparent 37px); }
+figcaption { padding-top:15px; }
+strong { display:block; font-size:21px; font-weight:normal; }
+span,footer { font:12px/1.6 monospace; color:var(--muted); }
+@media(max-width:800px) { main { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:540px) { main { grid-template-columns:1fr; } .shelf { height:230px; } }
+</style>
+</head>
+<body>
+<header>
+<div class="eyebrow">ORBITUI / JAPAN COLLECTION</div>
+<h1>Japan, on the shelf.</h1>
+<p>Two bonsai, two cats, one daruma. Original transparent colour artwork shown at shelf scale.
+The native renderer keeps these colours in night mode. This is an artwork preview, not a KOReader emulator.</p>
+<button data-class="dark" type="button" aria-pressed="false">Dark background</button>
+<button data-class="patterned" type="button" aria-pressed="false">Patterned background</button>
+<button data-class="small" type="button" aria-pressed="false">Small ornaments</button>
+</header>
+<main>
+  <figure style="--scale:0.92;--lift:-0.018">
+    <div class="shelf"><img src="../assets/ornaments/Japan/Pine%20Bonsai.png" alt="Pine bonsai" width="1254" height="1254"></div>
+    <figcaption><strong>Pine bonsai</strong><span>Jade ceramic / green foliage</span></figcaption>
+  </figure>
+  <figure style="--scale:0.92;--lift:-0.014">
+    <div class="shelf"><img src="../assets/ornaments/Japan/Maple%20Bonsai.png" alt="Japanese maple" width="1254" height="1254"></div>
+    <figcaption><strong>Japanese maple</strong><span>Indigo ceramic / autumn red</span></figcaption>
+  </figure>
+  <figure style="--scale:0.65;--lift:-0.063">
+    <div class="shelf"><img src="../assets/ornaments/Japan/Sleeping%20Calico.png" alt="Sleeping calico" width="1536" height="1024"></div>
+    <figcaption><strong>Sleeping calico</strong><span>A quiet shelf companion</span></figcaption>
+  </figure>
+  <figure style="--scale:0.8;--lift:-0.039">
+    <div class="shelf"><img src="../assets/ornaments/Japan/Maneki%20Neko.png" alt="Maneki-neko" width="1024" height="1536"></div>
+    <figcaption><strong>Maneki-neko</strong><span>Ivory, ginger, red and gold</span></figcaption>
+  </figure>
+  <figure style="--scale:0.68;--lift:-0.016">
+    <div class="shelf"><img src="../assets/ornaments/Japan/Daruma.png" alt="Daruma" width="1254" height="1254"></div>
+    <figcaption><strong>Daruma</strong><span>Vermilion / ivory / gold</span></figcaption>
+  </figure>
+</main>
+<footer>Original AI-generated miniatures, made with OpenAI image_gen. No third-party reference images.
+CC BY 4.0 to the extent applicable. See Japan/ATTRIBUTION.txt and prompts.json for provenance and exact prompts.</footer>
+<script>
+document.querySelectorAll("button[data-class]").forEach(function(button) {
+ button.addEventListener("click", function() {
+  var enabled = document.body.classList.toggle(button.dataset.class);
+  button.setAttribute("aria-pressed",String(enabled));
+ });
+});
+</script>
+</body>
+</html>

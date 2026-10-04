@@ -1,0 +1,52 @@
+{
+  "Pine Bonsai.png": {
+    "scale": 0.92,
+    "anchor": "bottom",
+    "lift": -0.018,
+    "pad": 0.025,
+    "night": "off",
+    "mirror": "off",
+    "tap": "zoom",
+    "info": "Japanese black pine bonsai in a jade-blue ceramic pot.\nOriginal AI-generated ornament made for OrbitUI. Designed in colour with transparent background. No third-party photograph or sculpture was supplied as a reference.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+  },
+  "Maple Bonsai.png": {
+    "scale": 0.92,
+    "anchor": "bottom",
+    "lift": -0.014,
+    "pad": 0.025,
+    "night": "off",
+    "mirror": "off",
+    "tap": "zoom",
+    "info": "Red Japanese maple bonsai in an indigo ceramic pot.\nOriginal AI-generated ornament made for OrbitUI. Designed in colour with transparent background. No third-party photograph or sculpture was supplied as a reference.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+  },
+  "Sleeping Calico.png": {
+    "scale": 0.65,
+    "anchor": "bottom",
+    "lift": -0.063,
+    "pad": 0.025,
+    "night": "off",
+    "mirror": "off",
+    "tap": "zoom",
+    "info": "Sleeping calico cat, interpreted as a hand-painted ceramic miniature.\nOriginal AI-generated ornament made for OrbitUI. Designed in colour with transparent background. No third-party photograph or sculpture was supplied as a reference.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+  },
+  "Maneki Neko.png": {
+    "scale": 0.8,
+    "anchor": "bottom",
+    "lift": -0.039,
+    "pad": 0.025,
+    "night": "off",
+    "mirror": "off",
+    "tap": "zoom",
+    "info": "Calico maneki-neko with a red collar and gold bell.\nOriginal AI-generated ornament made for OrbitUI. Designed in colour with transparent background. No third-party photograph or sculpture was supplied as a reference.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+  },
+  "Daruma.png": {
+    "scale": 0.68,
+    "anchor": "bottom",
+    "lift": -0.016,
+    "pad": 0.025,
+    "night": "off",
+    "mirror": "off",
+    "tap": "zoom",
+    "info": "Red daruma with ivory, black and gold painted details.\nOriginal AI-generated ornament made for OrbitUI. Designed in colour with transparent background. No third-party photograph or sculpture was supplied as a reference.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+  }
+}

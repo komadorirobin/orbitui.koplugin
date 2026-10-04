@@ -1,0 +1,22 @@
+JAPAN / ORBITUI ORNAMENTS
+
+Pine Bonsai.png
+Maple Bonsai.png
+Sleeping Calico.png
+Maneki Neko.png
+Daruma.png
+
+Original AI-generated artwork created for OrbitUI, 2026-10-04, using OpenAI's
+built-in image_gen tool. No third-party image, model or sculpture was supplied
+as a reference. These are invented ornamental interpretations, not images
+of a named artist's physical objects. Exact prompts are in prompts.json.
+
+Artwork: Creative Commons Attribution 4.0 International (CC BY 4.0), to the
+extent copyright applies. https://creativecommons.org/licenses/by/4.0/
+Suggested attribution: "OrbitUI Japan ornaments, AI-generated with OpenAI,
+CC BY 4.0 to the extent applicable."
+
+Changes: none. Original generated PNG bytes, alpha and provenance retained.
+Placement size and vertical offset are settings in ornaments.json, not edits
+to the images. This notice applies only to the artwork in this directory,
+not to the separately licensed OrbitUI software or other ornament packs.

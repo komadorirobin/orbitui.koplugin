@@ -71,50 +71,10 @@ function M.authorOf(entry)
     return author(entry.author) or author(book.author) or author(book.authors)
 end
 
-local function copy(source, target)
-    local input = assert(io.open(source, "rb"))
-    local temporary, output = target .. ".orbitui-tmp"
-    local ok, err = pcall(function()
-        output = assert(io.open(temporary, "wb"))
-        while true do
-            local bytes, read_error = input:read(65536)
-            assert(not read_error, read_error)
-            if not bytes then break end
-            assert(output:write(bytes))
-        end
-        assert(output:close())
-        output = nil
-        assert(os.rename(temporary, target))
-    end)
-    input:close()
-    if output then pcall(output.close, output) end
-    if not ok then os.remove(temporary); error(err) end
-end
-
 -- Each additive pack installs once from the active OTA runtime. Independent
 -- markers allow new packs without overwriting or resurrecting older artwork.
 function M.seed(root, ornaments_dir)
-    local fs = require("libs/libkoreader-lfs")
-    local settings = require("datastorage"):getSettingsDir() .. "/orbitui"
-    local ensure = require("lib/bookshelf_fs").ensureDir
-    local changed = false
-    for _, pack in ipairs(M.packs) do
-        local marker = settings .. "/" .. pack.marker
-        if fs.attributes(marker, "mode") ~= "file" then
-            local target = ornaments_dir .. "/" .. pack.name
-            local source = root .. "/assets/ornaments/" .. pack.name .. "/"
-            assert(ensure(settings) and ensure(target), "Cannot create ornament pack folder")
-            for _, file in ipairs(pack.files) do
-                if not fs.attributes(target .. "/" .. file, "mode") then
-                    copy(source .. file, target .. "/" .. file)
-                end
-            end
-            -- Commit only after all artwork and notices reached this pack.
-            copy(source .. "README.txt", marker)
-            changed = true
-        end
-    end
-    return changed
+    return require("core/orbitui_ornament_install").seed(root, ornaments_dir, M.packs)
 end
 
 function M.fillHooks(native, env)

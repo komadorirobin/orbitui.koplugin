@@ -201,6 +201,14 @@ recoverable migration is required. The automatic first-run snapshot is limited
 to UI settings and Bookshelf-owned links; it is not a full device backup.
 Never overwrite a completed snapshot or erase sidecars/progress to roll back UI.
 
+The 2026-10-04 Japan ornament request permits one narrow, reversible presentation
+migration: disable exact copies of the two bundled stock plants after the Japan
+pack has installed successfully. Keep the SVG files, all custom drawings, pack
+enablement and frequency settings. Use an independent one-time defaults marker;
+never repeat the disable after the user re-enables a plant. Failed copies or
+settings writes must not commit that marker. See `ORNAMENTS.md` and
+`tests/test_japan_ornaments.lua` for legacy-root and interrupted-install cases.
+
 Source: `core/orbitui_backup.lua`, component embedding changes in `UPSTREAM.md`.
 Tests: `tests/test_backup.lua`, `test_runtime.lua`, `scripts/check-package.lua`.
 Recovery procedure: `MIGRATION.md`.
@@ -275,10 +283,19 @@ New bundled packs use independent install markers: adding Authors must not
 invalidate the Modernists marker or rewrite its user-editable metadata. Name
 aliases may cover known transliterations but must still match full names.
 
+The Japan pack uses ordinary native ornament placement, never author binding.
+Keep its install and defaults markers independent of the author packs. All
+three packs share `core/orbitui_ornament_install.lua` for additive atomic copies;
+an error installing Japan must not prevent author installation or native listing.
+The five colour PNGs must retain their alpha/provenance and separate notices.
+
 Source: `core/orbitui_author_ornaments.lua`, `adapters/orbitui_ornaments.lua`,
-`core/orbitui_runtime.lua`, `assets/ornaments/Modernists/`, `assets/ornaments/Authors/`.
+`core/orbitui_runtime.lua`, `core/orbitui_japan_ornaments.lua`,
+`core/orbitui_ornament_install.lua`, `assets/ornaments/Modernists/`,
+`assets/ornaments/Authors/`, `assets/ornaments/Japan/`.
 Tests: `tests/test_author_ornaments.lua`, `test_ornament_seed.lua`,
-`test_ornament_assets.py`; `scripts/check-package.lua` requires all pack files.
+`test_japan_ornaments.lua`, `test_ornament_assets.py`;
+`scripts/check-package.lua` requires all pack files.
 
 ## Recording an intentional contract change
 

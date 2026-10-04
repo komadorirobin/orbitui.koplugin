@@ -16,6 +16,12 @@ function M.wrap(name, module, root)
                 attempted = true
                 local ok, err = pcall(Authors.seed, root, module.dir())
                 if not ok then require("logger").warn("[OrbitUI] Could not install author ornaments:", err) end
+                local japan_ok, japan_err = pcall(function()
+                    return require("core/orbitui_japan_ornaments").seed(root, module)
+                end)
+                if not japan_ok then
+                    require("logger").warn("[OrbitUI] Could not install Japan ornaments:", japan_err)
+                end
             end
             return list(...)
         end

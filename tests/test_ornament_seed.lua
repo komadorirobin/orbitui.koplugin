@@ -155,7 +155,7 @@ H.test("an installation error cannot crash or repeatedly stall the ornament brow
         local all, packs = module.listAll()
         H.eq(all[1], "existing"); H.eq(packs[1], "old pack")
     end
-    H.eq(calls, 3); H.eq(warnings, 1); H.eq(files[marker], nil)
+    H.eq(calls, 3); H.eq(warnings, 2); H.eq(files[marker], nil)
 end)
 io.open, os.rename, os.remove = original_open, original_rename, original_remove
 H.finish()
