@@ -19,6 +19,7 @@ local added = {
     { file = "Knut Hamsun", id = "knut hamsun", names = { "Knut Hamsun" } },
     { file = "Clarice Lispector", id = "clarice lispector", names = { "Clarice Lispector" } },
     { file = "Robert Musil", id = "robert musil", names = { "Robert Musil" } },
+    { file = "Franz Kafka", id = "franz kafka", names = { "Franz Kafka" } },
 }
 
 local function entry(id, name, width, group)
@@ -113,7 +114,8 @@ end
 
 H.test("new matches never use surnames, title mentions or similar family names", function()
     for _, name in ipairs({ "Heinrich Mann", "Klaus Mann", "Caitlin Thomas", "Thomas", "Mann", "Lem",
-        "About Clarice Lispector", "Robert Musil Foundation", "Translator of Fjodor Dostojevskij" }) do
+        "About Clarice Lispector", "Robert Musil Foundation", "Translator of Fjodor Dostojevskij",
+        "Kafka", "Franz Kafka Society", "Hermann Kafka", "About Franz Kafka" }) do
         H.eq(Authors.authorOf(entry(1, name)), nil)
     end
 end)

@@ -2,7 +2,7 @@ AUTHORS v1 - SOURCES AND ATTRIBUTION
 Created 2026-10-04. Separate from OrbitUI's AGPL-licensed code.
 This is a collection of separately licensed images, not a single combined work.
 
-All eight PNGs were made with OpenAI's built-in image generation tool at the
+All nine PNGs were made with OpenAI's built-in image generation tool at the
 user's direction. They retain the original generated alpha and provenance.
 They are interpreted portraits, not documentary photographs, exact scan
 renders, verified museum reproductions or endorsements by the people depicted.
@@ -50,8 +50,9 @@ Thomas Mann.png
 Knut Hamsun.png
 Clarice Lispector.png
 Robert Musil.png
+Franz Kafka.png
 No third-party sculpture or photograph was supplied to the generator for
-these four images. They are original AI-assisted interpretations of the
+these five images. They are original AI-assisted interpretations of the
 authors' general historical appearance. In particular, the Lispector piece
 does not reproduce the Intelectus commercial bust, the Musil piece does not
 reproduce Wotruba's portrait head or Belvedere's photograph, the Mann piece

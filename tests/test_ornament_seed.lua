@@ -88,6 +88,7 @@ H.test("alpha.14 upgrades add Authors without restoring or changing Modernists",
     H.eq(files[dest .. "Virginia Woolf.png"], nil)
     H.eq(files[dest .. "ornaments.json"], "disabled Woolf and custom sizes")
     H.eq(files[new_dest .. "Clarice Lispector.png"], files[new_source .. "Clarice Lispector.png"])
+    H.eq(files[new_dest .. "Franz Kafka.png"], files[new_source .. "Franz Kafka.png"])
     assert(files[new_marker])
 end)
 H.test("a deleted old pack stays deleted when the new pack is installed", function()
@@ -104,7 +105,9 @@ H.test("new pack custom files and later deletions are preserved independently", 
     H.eq(files[new_dest .. "ornaments.json"], "user metadata")
     H.eq(files[new_dest .. "Robert Musil.png"], "custom Musil")
     files[new_dest .. "August Strindberg.png"] = nil
+    files[new_dest .. "Franz Kafka.png"] = nil
     H.eq(seed(), false); H.eq(files[new_dest .. "August Strindberg.png"], nil)
+    H.eq(files[new_dest .. "Franz Kafka.png"], nil)
     for _, file in ipairs(Authors.packs[2].files) do files[new_dest .. file] = nil end
     H.eq(seed(), false); H.eq(files[new_dest .. "Clarice Lispector.png"], nil)
 end)

@@ -45,7 +45,7 @@ among other books. Installation is automatic on first opening the shelf or
 ornament collection after updating; existing settings/files are preserved.
 See [author ornaments](docs/ORNAMENTS.md) for matching, controls and artwork licenses.
 The next release also includes the **Authors** pack: Strindberg, Lem, Dylan
-Thomas, Thomas Mann, Dostoevsky, Hamsun, Lispector and Musil. It installs
+Thomas, Thomas Mann, Dostoevsky, Hamsun, Lispector, Musil and Kafka. It installs
 independently without replacing Modernists artwork or user adjustments.
 
 The alpha.6 preview added 110 offline Material Symbols Rounded icons, including

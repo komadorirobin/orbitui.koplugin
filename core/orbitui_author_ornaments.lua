@@ -9,7 +9,7 @@ M.packs = {
         "ATTRIBUTION.txt", "README.txt", "prompts.json", "ornaments.json",
         "August Strindberg.png", "Stanislaw Lem.png", "Dylan Thomas.png",
         "Thomas Mann.png", "Fyodor Dostoevsky.png", "Knut Hamsun.png",
-        "Clarice Lispector.png", "Robert Musil.png",
+        "Clarice Lispector.png", "Robert Musil.png", "Franz Kafka.png",
     } },
 }
 M.pieces = {
@@ -26,6 +26,7 @@ M.pieces = {
     ["Authors/Knut Hamsun.png"] = "knut hamsun",
     ["Authors/Clarice Lispector.png"] = "clarice lispector",
     ["Authors/Robert Musil.png"] = "robert musil",
+    ["Authors/Franz Kafka.png"] = "franz kafka",
 }
 
 local function normalize(name)

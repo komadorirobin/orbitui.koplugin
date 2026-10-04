@@ -430,6 +430,26 @@ No component source, upstream pin, VERSION, bootstrap or public OTA change.
 Not published. Rollback keeps copied artwork; disable Authors on alpha.14 or
 older versions if unrelated-author placement is unwanted. See ORNAMENTS.md.
 
+## 2026-10-04: Include Kafka in the unpublished Authors pack
+
+The user identified Kafka's omission and requested his inclusion. Add an
+original AI-assisted light-plaster portrait with retained RGBA/provenance bytes,
+exact prompt and attribution. Register `Authors/Franz Kafka.png` for both seeding
+and C11 placement; exact `Franz Kafka` and `Kafka, Franz` metadata matches use the
+existing planner. Surname-only, family-name and title mentions do not match.
+The Authors pack now has nine pieces; with Modernists there are eleven authors.
+
+Authors has not been publicly released, so this completes its existing v1
+manifest rather than migrating a deployed pack. No existing artwork, user
+settings, upstream pins, component source or VERSION changes. Both full Lua and
+LuaJIT suites pass, including 23 author tests, 14 seed tests, 43 Python tests and
+350 Bookshelf suites with no failures and the same three known skips. All
+eleven authors participate in the 27 pagination combinations. The visual
+preview loads all nine Authors images on light/dark backgrounds, with no
+mobile horizontal overflow. Validate the clean-commit sealed runtime ZIP as
+the final packaging gate before considering this candidate ready for device testing.
+Bigme rendering/touch confirmation remains outstanding. Not published.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

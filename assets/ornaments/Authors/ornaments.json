@@ -69,6 +69,16 @@
     "tap": "zoom",
     "info": "Clarice Lispector\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
   },
+  "Franz Kafka.png": {
+    "scale": 0.996,
+    "anchor": "bottom",
+    "lift": -0.01,
+    "pad": 0.035,
+    "night": "off",
+    "mirror": "off",
+    "tap": "zoom",
+    "info": "Franz Kafka\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+  },
   "Robert Musil.png": {
     "scale": 1.001,
     "anchor": "bottom",

@@ -4,6 +4,15 @@
   "tool": "image_gen.imagegen",
   "assets": [
     {
+      "file": "Franz Kafka.png",
+      "kind": "original portrait interpretation",
+      "references": [],
+      "reference_credit": "Original AI-generated portrait interpretation, OrbitUI contributors. No reference image supplied; not copied from a named sculpture.",
+      "artwork_license": "CC BY 4.0",
+      "sha256": "cf92760b445de7cca2ae7aaf44fabf745f6f9f25268ac8025397fd556a7969c9",
+      "prompt": "Use case: stylized-concept. Create an original recognizable portrait bust of the writer FRANZ KAFKA in his thirties: very lean long angular face, high forehead, large prominent ears, short thick straight dark hair with a simple side part, deep-set expressive eyes under strong straight brows, long straight nose, narrow closed lips, clean-shaven face with no moustache or beard. Restrained serious, thoughtful expression, slender neck, compact early-20th-century suit lapels, white-shirt collar and simple narrow tie. Base it on his general historical appearance, NOT a copy of any existing sculpture or particular photograph. This is an independent portrait interpretation, not a documentary museum object. No surreal rotating head, no insects or other symbolic objects.\nAsset type: one production ornament for an e-ink ebook bookshelf UI. A refined small matte warm-ivory plaster portrait bust on one low plain rectangular pale-stone plinth with a beveled top edge, the plinth about 10 percent of the object's height. Restrained sculpted planes, lightly textured plaster, readable medium-gray recesses, natural adult proportions. Nearly front-facing with a subtle three-quarter angle, camera about 10 degrees above shelf level. Soft diffuse upper-left light, quiet museum-object style, enough contrast to recognize the face at 180-240 pixels tall. No shiny material, no cartoon outline. Portrait canvas 1024 by 1536 pixels, ONE centered complete object occupying nearly all of the height. Keep all hair, ears, shoulders and the whole plinth visible, with very little padding below its flat bottom. No letters or inscription anywhere. CRITICAL: genuinely transparent RGBA PNG background, no opaque white or black background, no checkerboard, no gradient halo, no floor or cast floor shadow. No shelf, scene, UI, collage or second bust. Deliver only the standalone production PNG."
+    },
+    {
       "file": "August Strindberg.png",
       "kind": "reference adaptation",
       "references": [
