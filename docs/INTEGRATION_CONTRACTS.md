@@ -134,6 +134,13 @@ orientation choices for rollback rather than migrating preferences. The chip
 editor's optional `face_out_override` makes its row read-only and report All
 books, without changing the draft. Tests: `tests/test_face_out_shelves.lua`.
 
+Shelf row sizing must subtract the live SimpleUI dock height before splitting
+the remaining viewport. Use the shared visible pagination reserve, not just its
+outer box: negative top margins can paint controls above that box. Keep this
+consistent in `_collapsedSpineSplit`, `_layoutPrimitives` and `_rebuild`; do not
+fix overlap by clipping books or changing stored row counts. Tests: Bookshelf
+`_test_tall_screen.lua` and `_test_pagination_footer_reserve.lua`.
+
 Material Symbols is opt-in **per icon**, never a whole-pack preset. This corrects
 alpha.6's bulk replacement per the user's startup-crash report and request.
 Keep existing Nerd Font and image selections, and do not change KOReader's

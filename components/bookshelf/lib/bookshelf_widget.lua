@@ -1942,11 +1942,10 @@ function BookshelfWidget:_rebuild()
     --   outer = chev_size + 2*focus_border + hit_extension
     local FOOTER_H             = self:_paginationFooterHeight()
     local FOOTER_BOTTOM_MARGIN = 0
-    local footer_h             = FOOTER_H + FOOTER_BOTTOM_MARGIN
     local show_footer_row      = (not self._simpleui_bar_ctx)
                                  or self._selection:isActive()
                                  or SIMPLEUI_USE_OFFICIAL_FOOTER
-    local label_h              = show_footer_row and footer_h or 0
+    local label_h              = self:_paginationFooterReserveHeight()
 
     -- Detect "all chips disabled" early so the hero can grow into the
     -- chip strip's vertical footprint when it would otherwise be empty.
@@ -3277,8 +3276,9 @@ function BookshelfWidget:_rebuild()
     -- the inner_content (where the screen-anchored footer is reserved).
     --
     -- The footer is NOT in inner_vgroup any more. Reserved bottom space
-    -- = label_h (= FOOTER_H + FOOTER_BOTTOM_MARGIN). PAD is the outer
-    -- top margin. inner_vgroup must fit in (screen_h - PAD - label_h).
+    -- = label_h (the visible reserve, including shifted footer controls).
+    -- PAD is the outer top margin; inner_vgroup must fit above the footer
+    -- within usable_h, which already excludes SimpleUI's dock.
     local layout_sum = PAD + label_h           -- top margin + reserved bottom
                      + hero_h
                      + hero_chip_pad
@@ -13541,8 +13541,10 @@ end
 -- clamp. Spine rows are shelves, not cover slots -- they take everything the
 -- hero's target share leaves, evenly, so one row means one tall shelf.
 function BookshelfWidget:_collapsedSpineSplit(hide_chip_bar, n_shelves)
-    local PAD, _content_w, chip_h = self:_layoutPrimitives()
-    local label_h      = _footerReserveH()
+    local PAD, _content_w, chip_h, label_h = self:_layoutPrimitives()
+    -- Use the same dock-free viewport and visible footer reserve as the grid
+    -- and _rebuild; the full widget still includes the persistent bottom bar.
+    local usable_h    = self.height - self:_simpleUIReservedBottom()
     local chip_contrib = hide_chip_bar and 0 or chip_h
     if not n_shelves or n_shelves < 1 then n_shelves = 1 end
     -- The hero is the COVER GRID's hero -- the same number regardless of the
@@ -13555,12 +13557,12 @@ function BookshelfWidget:_collapsedSpineSplit(hide_chip_bar, n_shelves)
         return h
     end)
     if type(hero_h) ~= "number" then
-        hero_h = math.floor(self.height * HERO_MIN_FRAC)
+        hero_h = math.floor(usable_h * HERO_MIN_FRAC)
     end
     local total_pad = PAD + PAD                    -- outer top + hero->chips
                     + ((not hide_chip_bar) and PAD or 0)
                     + n_shelves * PAD              -- after each row
-    local available = self.height - chip_contrib - label_h - total_pad
+    local available = usable_h - chip_contrib - label_h - total_pad
     -- The hero must still leave every row something to stand in.
     local min_band = n_shelves * Screen:scaleBySize(60)
     if hero_h > available - min_band then

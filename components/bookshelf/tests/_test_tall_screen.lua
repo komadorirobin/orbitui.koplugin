@@ -66,11 +66,13 @@ package.loaded["device"]         = {
 package.loaded["logger"]          = { dbg  = function() end, warn = function() end,
                                       err  = function() end, info = function() end }
 local bookshelf_rows_setting = nil
+local pagination_settings = {}
 -- BookshelfSettings stub: defaults apply except where a test explicitly sets
 -- the user-facing row count.
 package.loaded["lib/bookshelf_settings_store"] = {
     read   = function(key, default)
         if key == "bookshelf_rows" then return bookshelf_rows_setting end
+        if pagination_settings[key] ~= nil then return pagination_settings[key] end
         return default
     end,
     save   = function() end,
@@ -222,6 +224,122 @@ test("_collapsedGridSplit reserves the SimpleUI dock", function()
     local shelf_b, hero_b = embedded:_collapsedGridSplit(false, 1, 200)
     eq((shelf_a + hero_a) - (shelf_b + hero_b), 160,
         "collapsed cover grid must not allocate rows inside the dock")
+end)
+
+local function spineShelf(width, height, dock_h)
+    local shelf = bw(width, height, false, dock_h)
+    shelf._chipViewMode = function() return "spines" end
+    shelf._selection = { isActive = function() return false end }
+    return shelf
+end
+
+local function spineBudget(shelf, rows, hidden)
+    local pad, _, chip_h, footer_h = shelf:_layoutPrimitives()
+    local row_h, hero_h = shelf:_collapsedSpineSplit(hidden, rows)
+    local bottom = pad + hero_h + pad + (hidden and 0 or (chip_h + pad))
+        + rows * (row_h + pad)
+    local limit = shelf.height - shelf:_simpleUIReservedBottom() - footer_h
+    return bottom, limit, row_h, hero_h
+end
+
+test("Bigme two-row bookcase clears both pagination and the dock", function()
+    local shelf = spineShelf(1264, 1680, 160)
+    local bottom, limit = spineBudget(shelf, 2, false)
+    assert(bottom <= limit, "shelves overlap bottom controls by " .. (bottom - limit) .. "px")
+    assert(limit - bottom < 2, "only the integer row-height remainder should be unused")
+end)
+
+test("bookcase reserves a changed dock height exactly once", function()
+    local a = spineShelf(1264, 1680, 120)
+    local b = spineShelf(1264, 1680, 240)
+    local bottom_a = spineBudget(a, 2, false)
+    local bottom_b = spineBudget(b, 2, false)
+    assert(math.abs((bottom_a - bottom_b) - 120) <= 1,
+        "changing dock height must change the shelf budget, not be ignored or counted twice")
+end)
+
+test("bookcase keeps the cover grid's hero when there is room", function()
+    local shelf = spineShelf(1264, 1680, 160)
+    local _, grid_hero = shelf:_collapsedGridSplit(false)
+    local _, spine_hero = shelf:_collapsedSpineSplit(false, 2)
+    eq(spine_hero, grid_hero, "fixing the row budget must not resize the hero")
+end)
+
+test("bookcase uses the live footer reservation rather than a separate estimate", function()
+    local shelf = spineShelf(1264, 1680, 160)
+    shelf._paginationFooterReserveHeight = function() return 140 end
+    local bottom, limit = spineBudget(shelf, 2, false)
+    assert(bottom <= limit, "bookcase ignored the live footer height")
+    assert(limit - bottom < 2, "footer reservation was counted twice")
+end)
+
+test("bookcase geometry fits after rotation, row-count and footer changes", function()
+    local previous = pagination_settings
+    local ok, err = pcall(function()
+        for _, footer in ipairs({ {},
+            { pagination_footer_font_scale = 200 },
+            { pagination_footer_font_scale = 50 },
+            { pagination_footer_top_margin = -60 },
+            { pagination_footer_top_margin = 20, pagination_footer_bottom_margin = 15 },
+            { pagination_footer_top_margin = -60, pagination_footer_bottom_margin = -10 },
+        }) do
+            pagination_settings = footer
+            for _, size in ipairs({ { 1264, 1680 }, { 1680, 1264 } }) do
+                for _, dock_h in ipairs({ 0, 120, 240 }) do
+                    for rows = 1, 6 do
+                        for _, hidden in ipairs({ false, true }) do
+                            local shelf = spineShelf(size[1], size[2], dock_h)
+                            local bottom, limit, row_h, hero_h = spineBudget(shelf, rows, hidden)
+                            assert(bottom <= limit, string.format(
+                                "%dx%d, dock %d, %d rows, hidden %s: overflow %dpx",
+                                size[1], size[2], dock_h, rows, tostring(hidden), bottom - limit))
+                            assert(limit - bottom < rows, "unused space beyond floor remainder")
+                            assert(row_h >= 1 and hero_h >= 1, "nonpositive geometry")
+                        end
+                    end
+                end
+            end
+        end
+    end)
+    pagination_settings = previous
+    assert(ok, err)
+end)
+
+test("expanded bookcase budget also responds to the current dock height", function()
+    local shelf = spineShelf(1264, 1680, 120)
+    local pad, content_w, chip_h, footer_h = shelf:_layoutPrimitives()
+    local before = shelf:_expandedBand(pad, content_w, chip_h, footer_h)
+    shelf._simpleui_bar_ctx.total_h = 240
+    local after = shelf:_expandedBand(pad, content_w, chip_h, footer_h)
+    eq(before - after, 120)
+end)
+
+test("rebuild reserves the painted footer even with a negative top margin", function()
+    local file = assert(io.open("lib/bookshelf_widget.lua"))
+    local src = file:read("*a")
+    file:close()
+    local chunk = assert(src:match("(local FOOTER_H%s*=.-local label_h[^\n]*\n)"),
+        "native rebuild footer sizing moved")
+    local previous = pagination_settings
+    local ok, err = pcall(function()
+        local shelf = spineShelf(1264, 1680, 160)
+        local env = { self = shelf, SIMPLEUI_USE_OFFICIAL_FOOTER = true }
+        local code = chunk .. "return FOOTER_H, label_h"
+        local run
+        if setfenv then
+            run = assert(loadstring(code)); setfenv(run, env)
+        else
+            run = assert(load(code, "rebuild footer sizing", "t", env))
+        end
+        for _, top_margin in ipairs({ -60, -20, 0, 20 }) do
+            pagination_settings = { pagination_footer_top_margin = top_margin }
+            local outer, reserve = run()
+            eq(outer, shelf:_paginationFooterHeight(), "keep the footer's own anchored box")
+            eq(reserve, shelf:_paginationFooterReserveHeight(), "content must clear painted controls")
+        end
+    end)
+    pagination_settings = previous
+    assert(ok, err)
 end)
 
 test("top-level comics folders skip an empty embedded-name label strip", function()

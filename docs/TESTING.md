@@ -134,6 +134,15 @@ the existing component suites retain planning and pagination coverage. Native
 OTA checks use the published alpha.11 installer. Bigme shelf rendering, page
 turns, rotation and tap/hold targets still need the checks in `SHARED_UI.md`.
 
+The user confirms alpha.12's cover-facing appearance but reports its lower shelf
+overlapping pagination and the dock. The unreleased height correction adds seven
+tests to Bookshelf's `_test_tall_screen.lua`: the 1264 x 1680 case, live dock and
+footer sizing, retained hero height, expanded viewport behavior and a 432-case
+portrait/landscape, row-count, chip-visibility and footer-settings matrix.
+Five of these tests fail against alpha.12, including a 160px dock overlap in the
+two-row fixture; the corrected geometry passes. The tests load the real widget
+over native stubs, not a painted KOReader screen. Device verification is pending.
+
 Use the Bigme B7 Pro at its native 1264 x 1680 resolution. Retain a recovery path.
 Record KOReader version, installed patches and active plugins, plus crash.log.
 

@@ -329,6 +329,30 @@ The three bootstrap files, bootstrap API 1 and installer are unchanged. This
 release stays in the preview channel; headless checks are not Bigme acceptance.
 See `docs/releases/0.1.0-alpha.12.md` for scope and remaining device checks.
 
+## 2026-10-04: Dock-aware bookcase height (unreleased local correction)
+
+After installing alpha.12, the user confirmed the cover-facing style but reported
+the lower shelf under the pagination controls and dock. `_collapsedSpineSplit`
+still used the full widget height; the grid, list and expanded paths already
+subtracted `_simpleUIReservedBottom()`. Its independent footer estimate also
+ignored the live shared reservation. Correct both inputs instead of clipping
+the books or changing saved density/hero preferences. `_rebuild` now uses the
+visible footer reserve rather than only its outer box, so negative top margins
+cannot give those pixels back to the rows through gap redistribution.
+
+This repairs C07's viewport boundary without changing C02 navigation, C08
+settings, orientation policy, sync ownership or upstream pins. Preserve the
+small component geometry fix during future merges. Seven new tests in
+`_test_tall_screen.lua` exercise native methods and the rebuild's footer sizing;
+five reproduce the old failure in both Lua and LuaJIT. The fixture's two-row
+Bigme layout overran by exactly its 160px dock height. The corrected 40-test
+suite passes, including 432 viewport combinations. Full Lua and LuaJIT suites
+also pass: 350 Bookshelf suites, 0 failures and the same 3 known skips (native
+SQLite and opt-in exhaustive geometry). All 41 translation catalogs pass. A
+private candidate ZIP passes inventory/layout and archive integrity checks.
+Physical rendering still needs the follow-up documented in `SHARED_UI.md`.
+Not published; VERSION and the public alpha.12 assets remain unchanged.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
