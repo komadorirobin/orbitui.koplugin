@@ -26,8 +26,7 @@ local lfs_shim = {
             if sh("test -e " .. q .. " && echo f"):match("f") then return "file" end
             return nil
         elseif attr == "modification" then
-            local m = sh("stat -c %Y " .. q)
-            if not tonumber(m) then m = sh("stat -f %m " .. q) end
+            local m = sh(dofile("tests/_helpers.lua").statCmd("mtime", q))
             return tonumber(m)
         end
         return nil

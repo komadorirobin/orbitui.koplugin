@@ -24,8 +24,7 @@ local lfs_shim = {
             if sh("test -e " .. q .. " && echo f"):match("f") then return "file" end
             return nil
         elseif attr == "modification" then
-            local m = sh("stat -c %Y " .. q)
-            if not tonumber(m) then m = sh("stat -f %m " .. q) end
+            local m = sh(dofile("tests/_helpers.lua").statCmd("mtime", q))
             return tonumber(m)
         end
         return nil
@@ -57,11 +56,6 @@ local function scratch()
     return d
 end
 local function exists(p) local f = io.open(p, "r"); if f then f:close() return true end return false end
-
-local function setMtime(path, timestamp)
-    local stamp = os.date("%Y%m%d%H%M.%S", timestamp)
-    assert(os.execute(string.format("touch -t %s '%s'", stamp, path)))
-end
 
 t.test("parseHeader reads aspect and overhang", function()
     local O = fresh()
@@ -298,7 +292,7 @@ t.test("cache: a removal is noticed even when the mtime does not move", function
     os.remove(O.dir() .. "/doomed.svg")
     -- Pin the directory mtime back where it was: this is what that filesystem
     -- leaves behind, and the whole point of the test.
-    setMtime(O.dir(), mt)
+    os.execute(dofile("tests/_helpers.lua").touchAtCmd(mt, "'" .. O.dir() .. "'") .. " 2>/dev/null")
     eq(lfs_shim.attributes(O.dir(), "modification"), mt,
        "the test's own premise: the mtime must be unchanged")
     eq(#O.list(), 2, "the removed ornament has to leave the pool")
@@ -317,7 +311,7 @@ t.test("cache: two files added within one second are both seen", function()
         f:write('<svg viewBox="0 0 10 10"></svg>'); f:close()
     end
     -- Whole-second mtimes: both writes can land in the same tick as the read.
-    setMtime(O.dir(), mt)
+    os.execute(dofile("tests/_helpers.lua").touchAtCmd(mt, "'" .. O.dir() .. "'") .. " 2>/dev/null")
     eq(#O.list(), 4, "both newcomers must be seen")
     os.execute("rm -rf '" .. d .. "'")
 end)
@@ -841,7 +835,7 @@ t.test("seeds: an outdated seed file is rewritten, a current one is left alone",
     eq(now, O2.TEMPLATE_SVG, "an unmarked (v1) seed must be refreshed to the shipped text")
     -- and a current one is not touched
     local before = lfs_shim.attributes(path, "modification")
-    setMtime(path, before - 100)
+    os.execute(dofile("tests/_helpers.lua").touchAtCmd(before - 100, "'" .. path .. "'") .. " 2>/dev/null")
     local O3 = fresh(); O3._data_dir = d; O3._lfs = lfs_shim
     O3.ensureTemplate()
     eq(lfs_shim.attributes(path, "modification"), before - 100, "a current seed was rewritten for nothing")

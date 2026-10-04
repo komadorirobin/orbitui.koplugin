@@ -23,8 +23,7 @@ local lfs_shim = {
             if sh("test -e " .. q .. " && echo f"):match("f") then return "file" end
             return nil
         elseif attr == "modification" then
-            local m = sh("stat -c %Y " .. q)
-            if not tonumber(m) then m = sh("stat -f %m " .. q) end
+            local m = sh(dofile("tests/_helpers.lua").statCmd("mtime", q))
             return tonumber(m)
         end
         return nil
@@ -198,7 +197,7 @@ end)
 -- runs every few seconds, so this is stats only, never a listing.
 
 local function touchAt(path, secs)
-    os.execute("touch -t " .. os.date("%Y%m%d%H%M.%S", secs) .. " '" .. path .. "'")
+    os.execute(dofile("tests/_helpers.lua").touchAtCmd(secs, "'" .. path .. "'") .. " 2>/dev/null")
 end
 
 t.test("folderStamp: steady while nothing changes, moves when a pack or the folder does", function()
