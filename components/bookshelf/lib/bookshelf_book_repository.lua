@@ -5721,7 +5721,11 @@ local function _seriesReadout(group_shapes, standalone_shapes, filter,
             end
         end
     end
-    table.sort(sorted, _groupShapeCmp(sk))
+    -- OrbitUI bookcase ordering compares series titles and standalone titles
+    -- together, without changing the cached shapes or other display modes.
+    local shelf_keys = Repo.spine_light and Repo.orderShelfSeries
+        and Repo.orderShelfSeries(sorted, sk)
+    if not shelf_keys then table.sort(sorted, _groupShapeCmp(sk)) end
     local total = #sorted
     local out   = {}
     offset      = offset or 0
@@ -5730,6 +5734,7 @@ local function _seriesReadout(group_shapes, standalone_shapes, filter,
                                  light_only or Repo.spine_light)
     for i = offset + 1, stop do
         local s = sorted[i]
+        local before = #out
         if s.standalone then
             if light_only then
                 -- Letter-jump index: sort-key fields only, never rendered.
@@ -5754,6 +5759,9 @@ local function _seriesReadout(group_shapes, standalone_shapes, filter,
             end
         else
             out[#out + 1] = hydrateSeriesShape(s, filter, light_only)
+        end
+        if shelf_keys and #out > before then
+            out[#out]._orbitui_shelf_sort = shelf_keys[s]
         end
     end
     return out, total
@@ -6780,6 +6788,9 @@ function Repo.getFolderSections(limit, offset, sort_priority_override, scope_or_
         end
     end
 
+    -- Optional integration policy; native Bookshelf keeps tree order.
+    -- Run before slicing so page boundaries and full-library scans agree.
+    if Repo.orderShelfSections then ordered = Repo.orderShelfSections(ordered, sp) end
     local total = #ordered
     offset = offset or 0
     local stop = _hydrationStop(offset, limit, total, 8, "getFolderSections",
@@ -6795,6 +6806,7 @@ function Repo.getFolderSections(limit, offset, sort_priority_override, scope_or_
         for k, v in pairs(e.rec) do b[k] = v end
         b.shelf_section      = e.section.label
         b.shelf_section_path = e.section.path
+        b._orbitui_shelf_sort = e.sort_record
         out[#out + 1] = b
     end
     logger.dbg(string.format(

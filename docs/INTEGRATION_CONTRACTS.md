@@ -134,6 +134,20 @@ orientation choices for rollback rather than migrating preferences. The chip
 editor's optional `face_out_override` makes its row read-only and report All
 books, without changing the draft. Tests: `tests/test_face_out_shelves.lua`.
 
+Per the user's 2026-10-04 approval, alphabetical bookcase ordering interleaves
+series/folder blocks with standalone books. Use the series name as the block's
+title, falling back to its first volume's title; author order uses member author
+metadata. Keep volumes in ascending numeric order even when reversing the block
+alphabet. Sort before slicing, preserve section labels/paths and member metadata
+(including C11 ornament matching), and use the same producer/keys for letter
+jumps. This policy applies to title/author/series-primary sorts only; date,
+status, filename and manual ordering, and grid/list modes, stay native. Never
+rewrite stored priorities. The repository's optional `orderShelfSections` and
+`orderShelfSeries` hooks are installed by `adapters/orbitui_shelf_sort.lua` via
+the UI adapter; the pure policy is in `core/orbitui_shelf_sort.lua`. Reuse the
+native SortEngine and existing light metadata, not new I/O or cached covers.
+Tests: `tests/test_shelf_sort.lua`; device cases in `SHARED_UI.md`.
+
 Shelf row sizing must subtract the live SimpleUI dock height before splitting
 the remaining viewport. Use the shared visible pagination reserve, not just its
 outer box: negative top margins can paint controls above that box. Keep this

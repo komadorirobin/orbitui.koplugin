@@ -78,6 +78,28 @@ the normal hero size. The user confirmed alpha.12's cover-facing appearance,
 but its bottom row overlapped the pager/dock; the correction needs a new device
 check in portrait/landscape, after paging and after collapsing/expanding the hero.
 
+## Series ordering on bookcases (unreleased)
+
+When sorting the bookcase by title, author or series, series blocks now share
+the alphabet with standalone books instead of remaining in filesystem order
+or sinking to the end because group records have no title. The series name
+decides its position; without usable series metadata, the first volume's title
+is the fallback. Author sorts use the members' author metadata. For example,
+Moberg's `Rid i natt` precedes the `Utvandrarna` block, whose members remain
+`Utvandrarna`, `Invandrarna`, `Nybyggarna`, `Sista brevet till Sverige`.
+
+Existing folder sections remain grouped and retain their labels. Loose books
+with matching series metadata within a section also stay together. Volume
+numbers sort numerically (including decimals); missing/tied numbers fall back
+to native natural filename order. Reverse alphabet changes block placement,
+not reading order inside a block. The reorder happens before page slicing,
+and letter scans use the same scoped bookcase producer and block keys.
+
+There is no settings migration or new switch. Grid/list views and sorts whose
+primary key is date, status, filename, count or manual collection order retain
+their native behavior. No additional disk walk, cover decode or network request
+is introduced. The policy uses batched light records and native sort keys.
+
 ## Component seams to preserve during merges
 
 - Bookshelf Widget: optional chip-hold/search callbacks; return the created
@@ -92,6 +114,12 @@ check in portrait/landscape, after paging and after collapsing/expanding the her
   helper for native Book Information opened from the shared detail panel.
 - Bookshelf Repository: optional search book limit (default still 200) and
   light-only next-volume records (default still full native records).
+  Preserve `orderShelfSections` before the folder window and `orderShelfSeries`
+  in the spine-only series readout, plus transient `_orbitui_shelf_sort` keys
+  on output copies. Cached metadata/shapes must not inherit these render keys.
+  The sort adapter wraps canonical SortEngine letter keys and the widget's
+  `_jumpScanList`; folder scans must match profile scope, filter and full
+  priority, with temporary native spine flags restored after errors.
 - SimpleUI ScreenEngine: export its existing native openBook function unchanged.
 - SimpleUI SettingsWindow: expose its existing LayoutService and allow opening
   a known settings subsection, while retaining the original default entry.
@@ -131,6 +159,13 @@ Not yet performed on the Bigme. Use the existing recovery procedure.
    and books without cover images. Page forward/back in portrait and landscape;
    check there are no skipped/duplicated books and tap/hold still selects the
    right book. Confirm switching back to grid/list/Auto retains its old layout.
+8. Mix standalone books and multi-volume series on a bookcase. Sort by surname,
+   then title/series, and by title alone; verify the Moberg example above and a
+   series whose name differs from volume one's title. Reverse the alphabet and
+   check that volume order stays ascending. Page forward/back across a long
+   series, filter out finished books, drill into a folder and jump by letter.
+   Check the correct book opens and author busts remain adjacent. Switch to
+   date order and grid/list to confirm their behavior and saved sorts are intact.
 
 The headless tests cover logic and extracted native factories, not native font
 metrics, image rendering, touch interaction or complete device lifecycle.

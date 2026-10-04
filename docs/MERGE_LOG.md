@@ -450,6 +450,41 @@ mobile horizontal overflow. Validate the clean-commit sealed runtime ZIP as
 the final packaging gate before considering this candidate ready for device testing.
 Bigme rendering/touch confirmation remains outstanding. Not published.
 
+## 2026-10-04: Alphabetical series blocks on bookcases (unreleased)
+
+The user approved keeping series together while interleaving them with single
+books by series name (first volume title as fallback). This deliberately changes
+C07's bookcase ordering, not saved sort preferences or grid/list ordering.
+
+Two paths needed correction: folder sections kept filesystem order and only
+sorted their own members, while mixed Series-source shapes lacked a title and
+therefore sorted after standalone books under the Title key. Install small
+optional repository hooks before either window is sliced. The pure policy and
+canonical-module adapters live in `core/orbitui_shelf_sort.lua` and
+`adapters/orbitui_shelf_sort.lua`; preserve these seams in future imports.
+
+Title/author/series-primary sorts compare entire blocks using native sort keys.
+Reverse affects the block alphabet, not ascending volume order. Keep folder
+labels, paths and author metadata for navigation and C11 ornaments. Letter
+scans use the same scoped folder producer and transient block keys on output
+copies; temporary spine flags are restored even after a scan error. Cached
+source records/shapes, persisted priorities and reader progress are unchanged.
+No new walk, cover hydration or network request is added. Nonalphabetical and
+grid/list behavior remains native.
+
+Verification: both full Lua and LuaJIT runs pass, including 214 OrbitUI cases
+(13 new sort tests), 43 Python tests, 350 Bookshelf suites and all 13 SimpleUI
+test files. Bookshelf has 0 failures and the same three known suite skips
+(SQLite and opt-in exhaustive geometry). Tests execute the actual folder
+producer and series readout as well as the adapters: Moberg order, different
+first-title/series-title, reverse, missing/decimal indices, title fallbacks,
+scoped/filtered pagination, warm reads and error-safe letter scans.
+
+No upstream import/pin, VERSION, bootstrap or public OTA change. This remains
+unpublished with the author-bust additions. Validate the clean-commit runtime
+ZIP before device testing; Bigme layout, book selection, letter jumps and bust
+placement still require the checklist in SHARED_UI.md.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
