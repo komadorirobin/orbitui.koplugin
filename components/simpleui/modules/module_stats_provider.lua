@@ -706,7 +706,11 @@ end
 function SP.invalidateStreak()
     if not _cache then return end
     _streak_cache_valid = false
-    _books_cache_valid  = true
+    -- OrbitUI may have partial/stale stats or a pending full invalidation.
+    -- Preserve only counts already known complete and still valid.
+    local today = os.date("%Y-%m-%d", os.time())
+    _books_cache_valid = _cache._has_books == true
+        and (_cache_day == today or _books_cache_valid)
     _cache_day          = nil
 end
 

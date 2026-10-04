@@ -565,6 +565,69 @@ publish and test anonymous discovery/download/activation with the old installer.
 This remains a prerelease, not a claim of new physical-device acceptance. See
 `docs/releases/0.1.0-alpha.17.md` for exact scope and rollback considerations.
 
+## 2026-10-04: Reviewed Bookshelf and SimpleUI upstream merge after alpha.17
+
+The user requested another upstream merge. Start from published alpha.17
+(`5bdb66ca107f307c2334e19718215c1dedfd6cf6`) on the dedicated
+`maintenance/upstream-2026-10-04` branch. Review all three missing Bookshelf
+commits and all five missing SimpleUI commits, including their net diffs and
+the current release notes; no branch or source repository changes.
+
+- Bookshelf `master`: `9633b0319cc282ec7bcb85e7b5a400bff328d7da` to
+  `74b825bb20aa5560129384910ad414bd2bebad75`; unsquashed subtree merge
+  `8d5bcb0f`. Latest tagged release remains 5.3.1. New changes are test-only:
+  portable GNU/BSD stat/touch helpers and a memoised row-budget source match.
+  The exhaustive geometry sweep now runs by default, not only when opted in.
+- SimpleUI `main`: `3444cc9c03756df1b4c7cb1847d56f517116f842` to
+  `19874b3b8f02af34d849caee2ee13e7f6b8ecd94`; unsquashed subtree merge
+  `ae110441`. Embedded metadata advances to 2.7.5. New runtime behavior covers
+  safe Android zlib symbol probing/fallback, pagination callback lifetime and
+  immediate streak refresh after spending a freeze.
+
+Bookshelf's six textual conflicts are overlapping local macOS test fixes.
+Replace the duplicate inline helpers with upstream's shared statCmd/touchAtCmd;
+retain all tests and production code. SimpleUI conflicts are its version and
+section-label implementation. Use the 2.7.5 component version, but preserve
+OrbitUI's fresh label widgets, per-module styling and background wrappers.
+Reintroducing upstream's widget cache would regress freed label text and
+callback ownership. Keep the new page-nav screen_id, propagate it into the
+primitive label signature, and retain the no-op close-lifecycle hook.
+
+Semantic adaptation (C04/C07): upstream invalidateStreak unconditionally marked
+book counts valid. A new regression reproduces false complete/zero counts when
+OrbitUI has only partial stats. Require complete, still-valid counts before
+carrying them over, without overriding full invalidation or directly reusing
+previous-day snapshots. Valid counts still avoid another sidecar scan. Preserve
+the upstream live-stats refresh and safe no-op when the provider is not loaded.
+The Android loader probes all three inflate symbols inside pcall, tries native
+32/64-bit system paths and caches unavailability rather than crashing/retrying
+on every book.
+
+Affected contracts: C02/C03 screen lifetime, C04 cache validity, C06 Android and
+canonical module compatibility, C07 labels, C09 source provenance. C01/C05/C08/
+C10/C11 remain unchanged: single updater/plugin ownership, BookOrbit-only
+progress writes, fonts/icons/settings, cover-facing shelves and dock clearance,
+series blocks, author matching, Japan seeding and session-stable shuffling.
+Upstream's previously reviewed auto-disable behavior remains blocked by the
+read-only OrbitUI guard. No new assets, dependencies or runtime module names;
+the 261-path module map remains unchanged. Advance only the two upstream_commit
+pins; retain the original fork provenance and stable bootstrap/API 1.
+
+Verification: complete Lua/LuaJIT suites after the Bookshelf merge, then both
+again after SimpleUI and the adaptation. The final suites contain 253 OrbitUI
+cases (13 new focused merge regressions), 46 Python checks, 351 Bookshelf suites
+and all 13 SimpleUI test files (four additional cache tests). The two remaining
+Bookshelf skips require KOReader's native SQLite runtime; the exhaustive
+geometry sweep is no longer skipped. All 41 translation catalogs pass.
+Clean-commit sealed packaging remains the final candidate gate.
+
+No physical-device test performed: verify Android CBZ metadata browsing,
+Home/custom-screen pagination after reader return/reopen, freeze display and
+unchanged book counts on the Bigme. Automated label tests use widget stubs;
+zlib tests simulate missing FFI symbols, not the device's binary libraries.
+VERSION remains alpha.17 and published release bytes are untouched. This is
+a reviewed merge, **not published to OTA**; publication needs a separate request.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

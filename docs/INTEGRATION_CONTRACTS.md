@@ -65,6 +65,11 @@ the baseline does, but invalidate it on status, metadata, file or day changes.
 An unavailable/busy database must not turn a temporary miss into permanent zero
 statistics. Normal shelf rendering must not initiate Hardcover network work.
 
+Streak-only invalidation must not promote partial or disk-stale book counts,
+undo a pending full invalidation, or reuse previous-day counts. Preserve valid
+same-day counts without another sidecar scan. This adapts SimpleUI 2.7.5's new
+freeze invalidation to the partial-cache contract; tests cover both paths.
+
 Source: Bookshelf `lib/bookshelf_book_repository.lua`, `lib/bookshelf_hardcover.lua`,
 `main.lua`; SimpleUI `modules/module_stats_provider.lua`,
 `features/library/sui_metadata_source.lua` and the bridge.
@@ -177,6 +182,12 @@ SimpleUI `modules/module_recent.lua`, `features/library/sui_recent_hidden.lua`,
 Tests: Bookshelf `_test_transparent_labels_footer.lua`, `_test_background_menu.lua`,
 `_test_grid_labels.lua`; SimpleUI `_test_recent_hidden.lua`, `_test_progress_badge.lua`.
 Verify Home section labels, long-press actions and retained configuration on device.
+
+Section labels are fresh widget instances, not cached widgets which KOReader
+may already have freed. Keep pagination callbacks bound to their own screen
+and retain screen identity in the primitive label signature. Upstream 2.7.5's
+cache-key fix is represented without restoring its widget cache.
+Regression coverage: `tests/test_simpleui_upstream.lua`.
 
 ## C08: Assets, data and recovery
 

@@ -160,6 +160,14 @@ not make semantic conflicts disappear.
   chrome wrappers, so stats/cover refreshes target mounted module content while
   our section-label/background wrappers remain intact. Book stats are not
   updated twice in the same refresh.
+- SimpleUI 2.7.5's pagination-cache fix must not reintroduce cached label widgets.
+  OrbitUI builds fresh labels to prevent both freed text and stale callbacks.
+  Keep upstream's screen identity in page navigation and the primitive label
+  signature, and retain the close-lifecycle compatibility hook.
+- SimpleUI `modules/module_stats_provider.lua`: the new `invalidateStreak()`
+  must preserve only complete, still-valid book counts. Upstream's unconditional
+  carry-over is incompatible with OrbitUI's partial/stale cache and pending full
+  invalidation. Keep the completeness/day/validity guard and its tests.
 - Upstream compatibility auto-disable is replaced by OrbitUI's read-only guard.
   Conflicting UI plugins are reported; user plugin flags and patches are never
   rewritten. Unsupported KOReader versions stop before either component starts.

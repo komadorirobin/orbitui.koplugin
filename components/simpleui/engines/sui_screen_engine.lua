@@ -454,6 +454,7 @@ local function sectionLabelSignature(text, w, mod_id, right_text, page_nav,
         tostring(scale), tostring(right_text or ""), tostring(pfx or ""),
     }
     if page_nav then
+        parts[#parts + 1] = tostring(page_nav.screen_id or "")
         parts[#parts + 1] = tostring(page_nav.mod_id or "")
         parts[#parts + 1] = tostring(page_nav.page or "")
         parts[#parts + 1] = tostring(page_nav.npages or "")
@@ -3994,8 +3995,7 @@ function ScreenWidget:onCloseWidget()
     -- module_collections's stack/quad builders) -- audited 2026-08-08.
     self:free()
 
-    -- Header chevrons close over this instance; drop the cached headers so a
-    -- reopened screen builds its own.
+    -- Retain the upstream lifecycle hook; OrbitUI never caches label widgets.
     invalidateLabelCache()
     if self._cover_poll_timer then
         UIManager:unschedule(self._cover_poll_timer)

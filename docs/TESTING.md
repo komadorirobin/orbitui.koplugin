@@ -2,6 +2,12 @@
 
 ## Automated
 
+The 2026-10-04 upstream merge adds 13 focused OrbitUI cases for SimpleUI's
+Android zlib fallback, fresh header/callback ownership, streak mutators and
+live-stat refresh routing. Four more component cache tests cover streak-only
+invalidation of partial, valid, fully invalidated and previous-day book counts.
+Bookshelf's optimized exhaustive row-budget suite now runs by default.
+
 Alpha.17 extends coverage to 240 OrbitUI cases and 46 Python checks. New cases
 cover eleven authors, independent/additive pack installation, native alphabetical
 series-block sorting, five colour Japan ornaments and a session-stable startup
@@ -84,9 +90,10 @@ Run the two full suites sequentially on the same host. Some upstream tests
 use hard-coded, second-resolution `/tmp` paths (for example the start-menu
 module fixture), so separate `TMPDIR` values alone do not prevent collisions.
 
-Bookshelf's native SQLite tests require KOReader's runtime. Its exhaustive list
-geometry sweep remains opt-in (`BOOKSHELF_SLOW_TESTS=1`). The runner identifies
-these skips; they must not be presented as device verification.
+Bookshelf's two native SQLite suites require KOReader's runtime and remain
+explicit skips. Since the 2026-10-04 upstream merge, its exhaustive list geometry
+sweep runs by default after upstream memoised the repeated source matching.
+These headless checks must not be presented as device verification.
 
 All 41 catalogs pass `msgfmt --check` after the 2026-10-03 merge. Upstream fixed
 the Italian header; the integration removes identical extra plural forms in
