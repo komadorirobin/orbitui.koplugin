@@ -668,6 +668,27 @@ ORNAMENTS.md; especially inspect rows with several authors and the partly empty
 last page, in both orientations. No VERSION, source pin, bootstrap, artwork,
 settings schema or public OTA changes. Publication requires a separate request.
 
+## 2026-10-04: Prepare alpha.18 for explicit publication
+
+The user requested publication after the Bento margin correction (`501f57a9`).
+Bundle that correction with `447ee60b`'s ordinary-ornament row cap and the
+previously reviewed post-alpha.17 upstream merge. No additional fetch-and-merge,
+source-pin advancement, stable-bootstrap/API change or settings migration.
+
+Bento Top Margin now sits above each module's complete cell, including the
+first module in every column. Top-align columns instead of sharing the first
+column's margin and vertically centring their different heights. Gaps join the
+cached layout fingerprint so warm pages respect updated values. Full-width
+spacing, topbar-off padding, horizontal width allocation and live clock/book
+slot ownership remain unchanged. Contract C07 and the device checklist document
+the deliberate alignment change; twelve geometry regressions cover it.
+
+Release as 0.1.0-alpha.18, not replacement bytes for alpha.17. Required gates:
+both full runtimes, translations, clean-commit sealed package, native OTA using
+the published alpha.17 installer, downloaded draft-asset verification, both CI
+jobs and anonymous public OTA. Physical Bigme layout/touch testing remains open.
+See `docs/releases/0.1.0-alpha.18.md` for scope and recovery.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

@@ -73,6 +73,14 @@ and frequency settings remain unchanged. Rollback retains artwork and settings:
 disable Authors on alpha.16 or earlier to prevent unrelated-author placement.
 See `ORNAMENTS.md` for startup shuffle behavior and the original plants' controls.
 
+Version `0.1.0-alpha.18` fixes independent Bento top margins, limits ordinary
+ornaments to one per shelf row (with multiple matched author busts allowed),
+and includes the reviewed Bookshelf/SimpleUI merge documented in `MERGE_LOG.md`.
+Columns now align to the row's top rather than vertically centring one another;
+saved margins are retained and can be adjusted individually. Alpha.17 and
+earlier alpha releases can update directly through the same preview channel.
+No bootstrap/API change, new artwork, settings migration or reading-data change.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

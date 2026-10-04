@@ -56,7 +56,7 @@ changes delegate to the existing native action; OrbitUI adds UI invalidation,
 not another Hardcover status/progress writer. The external undo patch and
 BookOrbit server continue to own server rollback behavior.
 
-## Bento module margins (unreleased)
+## Bento module margins (0.1.0-alpha.18)
 
 Top Margin now belongs to each module, including modules in the right-hand
 column and those stacked below another module. The margin sits above the label
@@ -89,7 +89,7 @@ the normal hero size. The user confirmed alpha.12's cover-facing appearance,
 but its bottom row overlapped the pager/dock; the correction needs a new device
 check in portrait/landscape, after paging and after collapsing/expanding the hero.
 
-## Series ordering on bookcases (unreleased)
+## Series ordering on bookcases (0.1.0-alpha.17)
 
 When sorting the bookcase by title, author or series, series blocks now share
 the alphabet with standalone books instead of remaining in filesystem order

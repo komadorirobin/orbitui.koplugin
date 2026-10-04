@@ -2,7 +2,7 @@
 
 ## Automated
 
-The unreleased Bento margin fix adds 12 OrbitUI cases executing the real page
+Alpha.18's Bento margin fix adds 12 OrbitUI cases executing the real page
 builder over geometry-only widget stubs. It covers independent column/stack
 margins, a warm layout cache, legacy module order, full-width/three-column rows,
 topbar-off padding, narrow-row horizontal centring, landscape, custom screens,
@@ -10,7 +10,12 @@ labels/backgrounds and clock/book slot ownership. These are layout calculations,
 not native painting or Bigme touch verification.
 Both full Lua/LuaJIT runs pass with 275 OrbitUI cases, 46 Python checks,
 351 Bookshelf suites (two native SQLite skips) and 13 SimpleUI test files.
-All 41 translation catalogs pass. No version bump or public OTA release.
+All 41 translation catalogs pass. The alpha.18 publication request adds the
+release gates: rerun both suites/translations on the versioned tree, sealed ZIP
+checks, native OTA from the published alpha.17 installer, draft-asset byte
+verification, both CI jobs and anonymous public discovery/install/rollback.
+The stable bootstrap/API 1 and the previously reviewed upstream pins remain
+unchanged; new physical-device verification is still pending.
 
 The ordinary-ornament row limit adds ten OrbitUI regressions and strengthens
 the 27 author-placement pagination configurations. Tests cover bust priority,

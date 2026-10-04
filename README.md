@@ -16,9 +16,11 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.14** includes Bookshelf **5.3.1** through `9633b031` and
-SimpleUI `main` through `3444cc9c`, on top of alpha.4's shared OrbitUI surfaces.
-See [the release notes](docs/releases/0.1.0-alpha.14.md)
+Version **0.1.0-alpha.18** includes Bookshelf **5.3.1** through `74b825bb` and
+SimpleUI **2.7.5** through `19874b3b`, on top of alpha.4's shared OrbitUI surfaces.
+It fixes per-module Bento top margins and limits ordinary shelf ornaments to
+one per row while allowing several matching author busts together.
+See [the release notes](docs/releases/0.1.0-alpha.18.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
@@ -44,7 +46,7 @@ ornament pack. They stand next to books by the matching author, not randomly
 among other books. Installation is automatic on first opening the shelf or
 ornament collection after updating; existing settings/files are preserved.
 See [author ornaments](docs/ORNAMENTS.md) for matching, controls and artwork licenses.
-The next release also includes the **Authors** pack: Strindberg, Lem, Dylan
+Alpha.17 also includes the **Authors** pack: Strindberg, Lem, Dylan
 Thomas, Thomas Mann, Dostoevsky, Hamsun, Lispector, Musil and Kafka. It installs
 independently without replacing Modernists artwork or user adjustments.
 
