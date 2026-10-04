@@ -289,7 +289,7 @@ local function invalidateLabelCache()
     return true
 end
 
--- page_nav (optional): { mod_id, page, npages, turnPageFn } — see
+-- page_nav (optional): { screen_id, mod_id, page, npages, turnPageFn } — see
 -- pageNavFor below. When present, a pair of chevrons is drawn flanking
 -- right_text, tappable to move to the previous/next page.
 -- landscape_factor (optional): scale multiplier for the label; defaults to 1.
@@ -473,6 +473,7 @@ local function pageNavFor(self, mod, ctx)
     if not npages or npages <= 1 then return nil end
     local page = ctx["_row_page_" .. mod.id] or 1
     return {
+        screen_id     = self._id,
         mod_id        = mod.id,
         page          = page,
         npages        = npages,
@@ -3992,6 +3993,10 @@ function ScreenWidget:onCloseWidget()
     -- SUICoverCache/_bim_ref_cache (SH.getBookCover, SH.getCroppedBookCover,
     -- module_collections's stack/quad builders) -- audited 2026-08-08.
     self:free()
+
+    -- Header chevrons close over this instance; drop the cached headers so a
+    -- reopened screen builds its own.
+    invalidateLabelCache()
     if self._cover_poll_timer then
         UIManager:unschedule(self._cover_poll_timer)
         self._cover_poll_timer = nil
@@ -4430,6 +4435,13 @@ local function _liveScreenIds()
 end
 
 ScreenEngine.liveScreenIds = _liveScreenIds
+
+--- Re-fetches stats for every live screen without touching book data.
+function ScreenEngine.refreshAllLiveStats()
+    for _, id in ipairs(_liveScreenIds()) do
+        ScreenEngine.refreshScreen(id, false, false, true)
+    end
+end
 
 --- Full layout rebuild for every screen that currently has a live widget
 --- instance (the built-in Homescreen plus any Custom Screen left open in
