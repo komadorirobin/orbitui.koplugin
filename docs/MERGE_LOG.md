@@ -619,7 +619,11 @@ cases (13 new focused merge regressions), 46 Python checks, 351 Bookshelf suites
 and all 13 SimpleUI test files (four additional cache tests). The two remaining
 Bookshelf skips require KOReader's native SQLite runtime; the exhaustive
 geometry sweep is no longer skipped. All 41 translation catalogs pass.
-Clean-commit sealed packaging remains the final candidate gate.
+Adaptation commit `59b2b920` passes clean-commit sealed packaging: 1249 runtime
+files, 1296 archive entries, all 261 module paths and asset/license/recovery
+checks. Read-only upstream collection reports zero missing commits for both
+components at 18:09 UTC. The candidate ZIP is local only, not a replacement for
+the published alpha.17 asset.
 
 No physical-device test performed: verify Android CBZ metadata browsing,
 Home/custom-screen pagination after reader return/reopen, freeze display and
