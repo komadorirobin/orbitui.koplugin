@@ -542,6 +542,29 @@ and all 13 SimpleUI test files. All 41 translation catalogs pass. Physical
 Bigme checks remain outstanding; see ORNAMENTS.md. The subsequent user request
 authorizes publishing this feature together with the accumulated local work.
 
+## 2026-10-04: Prepare alpha.17 after publication interruption
+
+The user explicitly requested publication, then asked to resume after the usage
+interruption. Fetching origin found alpha.15 and alpha.16 published meanwhile:
+alpha.15 tags the alpha.14 source; alpha.16 changes only VERSION and release
+notes. Its downloaded, checksum-verified runtime has the old author-only adapter
+and does not contain the additional ornaments or series-sort work named in its
+notes. Merge origin's two non-conflicting commits without rewriting history,
+published tags or assets, and use a new version, 0.1.0-alpha.17.
+
+This release includes the four accumulated feature commits (additional busts,
+Kafka, series blocks, Japan) plus the session shuffle above. Upstream pins,
+stable bootstrap files, API 1 and existing component update routing stay intact.
+Preserve the independent install markers, attribution/non-commercial notices,
+one-time reversible stock-plant setting and session-only deck stability.
+
+Release gates: rerun both full runtimes and translations on the reconciled
+release tree, seal the clean-commit runtime package, test native OTA using the
+published alpha.16 ZIP, verify downloaded draft assets and both CI jobs, then
+publish and test anonymous discovery/download/activation with the old installer.
+This remains a prerelease, not a claim of new physical-device acceptance. See
+`docs/releases/0.1.0-alpha.17.md` for exact scope and rollback considerations.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

@@ -62,6 +62,17 @@ the installed images, but older runtimes do not apply the new author matching.
 An alpha installation defaults to including preview releases; a stable installation defaults to stable
 only. This is separate from upstream monitoring, which never publishes builds.
 
+Version `0.1.0-alpha.17` adds nine more author busts, five colour Japan ornaments,
+alphabetical series blocks on bookcases and a once-per-start ordinary-ornament
+shuffle. These changes were absent from the alpha.16 runtime despite its release
+notes. Alpha.17 preserves the intervening history rather than replacing published
+assets. Alpha.16 and earlier alpha installations can update directly with the
+same bootstrap/API 1. New artwork is copied once without overwriting user files.
+Only byte-identical stock plants are disabled once, reversibly; other enablement
+and frequency settings remain unchanged. Rollback retains artwork and settings:
+disable Authors on alpha.16 or earlier to prevent unrelated-author placement.
+See `ORNAMENTS.md` for startup shuffle behavior and the original plants' controls.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

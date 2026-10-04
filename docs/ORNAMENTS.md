@@ -6,7 +6,7 @@ OrbitUI alpha.14 includes two AI-adapted light-plaster busts: James Joyce and
 Virginia Woolf. No additional download or manual file installation is required.
 The original PNGs keep their generated alpha and provenance metadata.
 
-The next release adds the separate **Authors** pack with nine more busts:
+OrbitUI alpha.17 adds the separate **Authors** pack with nine more busts:
 August Strindberg, Stanislaw Lem, Dylan Thomas, Thomas Mann, Fyodor Dostoevsky,
 Knut Hamsun, Clarice Lispector, Robert Musil and Franz Kafka. They follow the
 same placement rules. No runtime rendering of 3D models, image generation or
@@ -64,10 +64,10 @@ Future artwork revisions must use a reviewed migration or new names rather than
 silently replacing edited files. Code rollback retains these user-side assets:
 versions before alpha.14 do not know author matching, so disable the Modernists
 pack when rolling back if random placement is unwanted.
-Disable **Authors** when rolling back to alpha.14 or earlier, since those
+Disable **Authors** when rolling back to alpha.16 or earlier, since those
 versions do not know the nine new author-bound filenames.
 
-## Session shuffle (next release)
+## Session shuffle (alpha.17)
 
 Ordinary ornaments are automatically shuffled once per KOReader process, at the
 first nonempty ornament listing. Bundled packs are installed and the full
@@ -95,7 +95,7 @@ stable. Restart KOReader and check the newly shuffled order, then verify manual
 Shuffle all, disabled pieces and Joyce/Woolf adjacency. A one-piece pool cannot
 show a different order; a random shuffle may also repeat a previous permutation.
 
-## Japan collection (next release)
+## Japan collection (alpha.17)
 
 The **Japan** pack adds five original, transparent colour ornaments: a green
 pine bonsai in a jade pot, a red maple bonsai in an indigo pot, a sleeping calico

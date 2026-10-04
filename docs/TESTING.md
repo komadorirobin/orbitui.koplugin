@@ -2,6 +2,14 @@
 
 ## Automated
 
+Alpha.17 extends coverage to 240 OrbitUI cases and 46 Python checks. New cases
+cover eleven authors, independent/additive pack installation, native alphabetical
+series-block sorting, five colour Japan ornaments and a session-stable startup
+shuffle. The release OTA smoke test uses the actual published alpha.16 installer.
+The complete component suites and translation checks remain required. Physical
+Bigme rendering, touch, series navigation and sleep/restart behavior still need
+the checklists in `ORNAMENTS.md` and `SHARED_UI.md`.
+
 Alpha.14 adds 23 Lua tests for author-bound busts, native fill/balancing and safe
 one-time asset installation, plus two Python checks for the reviewed PNG bytes,
 alpha format, placement metadata, prompts and separate artwork notices.
