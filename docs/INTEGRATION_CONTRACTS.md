@@ -125,6 +125,15 @@ panel or chip bar unless those independent controls are explicitly changed.
 Keep hiding accidentally opened books distinct from deleting book files or
 resetting all reading data.
 
+Per the user's 2026-10-04 request, the shelf/spines view faces **all books**
+cover-forward, including existing prose/manga chips and profile overrides.
+`adapters/orbitui_ui.lua` sets the widget's native face-out policy to `all`;
+rendering and pagination must continue to share the native geometry. Ordinary
+grid/list/Auto modes and shelf decorations remain unchanged. Retain saved
+orientation choices for rollback rather than migrating preferences. The chip
+editor's optional `face_out_override` makes its row read-only and report All
+books, without changing the draft. Tests: `tests/test_face_out_shelves.lua`.
+
 Material Symbols is opt-in **per icon**, never a whole-pack preset. This corrects
 alpha.6's bulk replacement per the user's startup-crash report and request.
 Keep existing Nerd Font and image selections, and do not change KOReader's

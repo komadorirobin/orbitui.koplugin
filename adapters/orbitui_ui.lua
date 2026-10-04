@@ -1,10 +1,12 @@
 -- Explicit integration points. Module wrappers run after the original module
 -- has loaded; package.preload userpatches still have priority in the resolver.
 local M = {}
+local SHELF_FACE_OUT = "all"
 M.modules = {
     ["features/library/sui_book_hold_dialog"] = true,
     ["features/library/sui_library_search"] = true,
     ["lib/bookshelf_widget"] = true,
+    ["lib/bookshelf_chip_editor"] = true,
     ["modules/moduleregistry"] = true,
     ["screens/sui_menu"] = true,
 }
@@ -23,6 +25,9 @@ function M.wrap(name, module)
     elseif name == "features/library/sui_library_search" then
         module.show = function(opts) return require("core/orbitui_search").show(opts) end
     elseif name == "lib/bookshelf_widget" then
+        -- Use the native face-out geometry for both render and pagination.
+        -- Saved chip/profile/global choices stay intact for code rollback.
+        module._spineFaceOut = function() return SHELF_FACE_OUT end
         module.orbitui_shelf_menu = function(self, chip)
             return require("adapters/orbitui_home_shelves").shelfMenu(self, chip)
         end
@@ -37,6 +42,8 @@ function M.wrap(name, module)
             commit(self, book, status)
             require("core/orbitui_context").refresh(book and book.filepath)
         end
+    elseif name == "lib/bookshelf_chip_editor" then
+        module.face_out_override = SHELF_FACE_OUT
     elseif name == "modules/moduleregistry" then
         require("adapters/orbitui_home_shelves").install(module)
     elseif name == "screens/sui_menu" then

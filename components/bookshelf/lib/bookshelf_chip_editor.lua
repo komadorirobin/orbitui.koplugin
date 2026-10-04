@@ -1869,7 +1869,11 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
             -- to share a line with the rest of the editor.
             local SS = require("lib/bookshelf_spine_shelf")
             local function faceOutSpec()
-                return SS.faceOutSpec(draft.spine_face_out)
+                -- An embedding host may fix orientation without rewriting
+                -- the saved draft. Keep the displayed value in agreement.
+                local value = self.face_out_override
+                if value == nil then value = draft.spine_face_out end
+                return SS.faceOutSpec(value)
             end
             local function faceOutShown()
                 local spec = faceOutSpec()
@@ -1912,7 +1916,9 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
             end
             rows[#rows + 1] = {{
                 text_func = faceOutShown,
+                enabled = self.face_out_override == nil,
                 callback = function()
+                    if self.face_out_override ~= nil then return end
                     UIManager:close(d)
                     -- A picker that stays open and REDRAWS ITSELF IN PLACE. It
                     -- used to close and reopen after every toggle; KOReader's

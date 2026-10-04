@@ -56,11 +56,27 @@ changes delegate to the existing native action; OrbitUI adds UI invalidation,
 not another Hardcover status/progress writer. The external undo patch and
 BookOrbit server continue to own server rollback behavior.
 
+## Cover-facing shelves (unreleased)
+
+The shelf/spines style now displays every book cover-forward, as requested on
+2026-10-04. Existing Library and Manga shelves are included. Native shelves,
+ornaments and aspect-aware cover geometry are retained; wider covers can mean
+fewer books per page, with native pagination using the same layout. Missing
+covers use the native face-out placeholder. Ordinary cover grids, lists and
+Auto's folder behavior are unchanged.
+
+The style editor reports **Face out: All books** as a read-only row. Stored
+chip/profile/global face-out choices remain intact but inactive, allowing a
+code rollback without a settings migration. Other layout controls remain native.
+
 ## Component seams to preserve during merges
 
 - Bookshelf Widget: optional chip-hold/search callbacks; return the created
   detail modal; preserve Home underneath detail-only panels; supply the optional
   registered-action close callback; honor action enabled state.
+- Bookshelf Chip Editor: optional `face_out_override` reports the host's fixed
+  orientation and disables only the face-out picker, without rewriting drafts.
+  OrbitUI wraps both the widget's `_spineFaceOut` and this editor field.
 - SimpleUI book-hold helper: export its existing one-shot Home-preservation
   helper for native Book Information opened from the shared detail panel.
 - Bookshelf Repository: optional search book limit (default still 200) and
@@ -99,6 +115,11 @@ Not yet performed on the Bigme. Use the existing recovery procedure.
    existing preferences remain intact. Check the sole OrbitUI update target.
 6. Repeat navigation after a parked reader, rotation and suspend/resume.
    Verify one Hardcover read record, MAL behavior and external patches.
+7. In the shelf/spines style, verify all covers face forward in Library and
+   Manga, including previously customized shelves, folder drills, large series
+   and books without cover images. Page forward/back in portrait and landscape;
+   check there are no skipped/duplicated books and tap/hold still selects the
+   right book. Confirm switching back to grid/list/Auto retains its old layout.
 
 The headless tests cover logic and extracted native factories, not native font
 metrics, image rendering, touch interaction or complete device lifecycle.

@@ -11,6 +11,12 @@
 - `tests/test_shared_*.lua`: shared panel/controller ownership, native registered
   actions, Home pin persistence and isolation, live source resolution, scoped
   search, settings routing and native source fallback boundaries.
+- `tests/test_face_out_shelves.lua`: all-cover shelf policy for existing Library
+  and Manga settings, native shared render/pagination options, no recent-book
+  scan, read-only native style row and untouched saved drafts. Standalone
+  Bookshelf configuration and grid/list/Auto/OPDS behavior remain native.
+  Physical rendering, page turns, rotation and tap targets still require the
+  shelf check in `SHARED_UI.md`; these tests do not simulate native painting.
 - `tests/test_icons.lua` exercises the actual icon pickers/render helpers and
   shared modal init/refresh with native widget stubs: Material SVG paths,
   unchanged Nerd rendering, image-only

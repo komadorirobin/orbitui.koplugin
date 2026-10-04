@@ -291,6 +291,30 @@ and remaining device gaps; `TESTING.md` retains the Bigme checklist. No changes
 to books, reading progress, synchronization ownership or stored preferences are
 part of this release.
 
+## 2026-10-04: Cover-facing shelves (unreleased local change)
+
+The user requested that every book face cover-forward in the shelf/spines
+display instead of mixing front covers and spines. This is an intentional C07
+presentation change, not an upstream import; neither component pin advances.
+
+The OrbitUI UI adapter fixes `_spineFaceOut()` to the native `all` policy for
+existing/new Library and Manga shelves. Keep both render and pagination on
+`_spinePlanBase` so they agree about the wider covers. The chip editor's optional
+`face_out_override` displays All books read-only instead of offering ignored
+choices. Preserve both adapter hooks and this small component seam on merges.
+No custom renderer, new layout algorithm or settings migration is introduced.
+Saved face-out choices remain intact for C08 rollback; grid/list/Auto modes,
+book data, sync ownership, shelves and ornaments remain native.
+
+Five focused regression tests cover the policy, shared plan options, no recent
+scan, native editor behavior and saved-draft preservation. Full Lua and LuaJIT
+suites pass, including 350 Bookshelf suites (0 failed, 3 known skips: two native
+SQLite suites and the optional exhaustive geometry sweep). All 41 translation
+catalogs pass. A private candidate ZIP passes runtime layout/inventory and ZIP
+integrity checks; the published alpha.11 archive remains byte-identical.
+Device checks are recorded in `SHARED_UI.md`; physical Bigme rendering has not
+been verified. VERSION and the public OTA package are unchanged. Not published.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
