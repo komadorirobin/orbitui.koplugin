@@ -16,11 +16,11 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.18** includes Bookshelf **5.3.1** through `74b825bb` and
+Version **0.1.0-alpha.19** includes Bookshelf **5.3.1** through `74b825bb` and
 SimpleUI **2.7.5** through `19874b3b`, on top of alpha.4's shared OrbitUI surfaces.
-It fixes per-module Bento top margins and limits ordinary shelf ornaments to
-one per row while allowing several matching author busts together.
-See [the release notes](docs/releases/0.1.0-alpha.18.md)
+It adds the Ukiyo-e Gallery, retaining alpha.18's per-module Bento top margins
+and one ordinary ornament per row, with several matching author busts allowed.
+See [the release notes](docs/releases/0.1.0-alpha.19.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
@@ -50,10 +50,10 @@ Alpha.17 also includes the **Authors** pack: Strindberg, Lem, Dylan
 Thomas, Thomas Mann, Dostoevsky, Hamsun, Lispector, Musil and Kafka. It installs
 independently without replacing Modernists artwork or user adjustments.
 
-Unreleased: **Ukiyo-e Gallery** adds 27 genuine CC0 museum prints in original
+Alpha.19: **Ukiyo-e Gallery** adds 27 genuine CC0 museum prints in original
 frames, native zoom/info cards and an optional washi/Hinoki-style theme. No
 existing theme is activated or replaced. See [the gallery preview](docs/ukiyoe-gallery-preview.html)
-and [installation/source notes](docs/ORNAMENTS.md#ukiyo-e-gallery-unreleased).
+and [installation/source notes](docs/ORNAMENTS.md#ukiyo-e-gallery-alpha19).
 
 The alpha.6 preview added 110 offline Material Symbols Rounded icons, including
 manga. A Bigme startup crash was reported after applying its whole-pack preset.

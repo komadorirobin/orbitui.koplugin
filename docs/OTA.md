@@ -81,6 +81,14 @@ saved margins are retained and can be adjusted individually. Alpha.17 and
 earlier alpha releases can update directly through the same preview channel.
 No bootstrap/API change, new artwork, settings migration or reading-data change.
 
+Version `0.1.0-alpha.19` bundles the independent Ukiyo-e Gallery: 27 museum
+prints, native zoom/info cards and an optional washi/Hinoki-style shelf theme.
+The new pack is seeded once, additively, including its nested theme files.
+Existing artwork, settings and reading data are preserved; no theme is
+automatically activated. Alpha.18 and earlier alpha releases can update
+directly with the same stable bootstrap/API 1. Code rollback retains installed
+artwork. The optional standalone gallery ZIP is not required for an OTA update.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries
@@ -131,7 +139,9 @@ are rejected. Archive extraction copies bytes rather than filesystem metadata.
 The factory installation and previous code remain available. Obsolete inactive
 version slots are cleaned during a later update; current and previous slots are
 retained. `.orbitui-work` is disposable download/staging space. Allow roughly
-100 MiB free for the present package, and more as future packages grow.
+250 MiB free for the current package's download, staging and one-time artwork
+installation, in addition to existing installed versions. Allow more as future
+packages grow.
 
 ## Startup failure and recovery
 

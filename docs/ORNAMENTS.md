@@ -1,6 +1,6 @@
 # Ornaments
 
-## Ukiyo-e Gallery (unreleased)
+## Ukiyo-e Gallery (alpha.19)
 
 The independent **Ukiyo-e Gallery** pack contains 27 actual Japanese woodblock
 prints: Hokusai (8), Hiroshige (12), Utamaro (3), Sharaku (2) and Kuniyoshi (2).
