@@ -3,8 +3,10 @@ local H = require("tests/helpers")
 local Adapter = require("adapters/orbitui_ornaments")
 local Authors = require("core/orbitui_author_ornaments")
 local Japan = require("core/orbitui_japan_ornaments")
+local Gallery = require("core/orbitui_ukiyoe_ornaments")
 local Layout = require("lib/bookshelf_spine_layout")
 local author_seed, japan_seed = Authors.seed, Japan.seed
+local gallery_seed = Gallery.seed
 package.loaded["ui/widget/widget"] = H.widget()
 
 local function piece(name, pack, width)
@@ -26,7 +28,7 @@ local function fixture(all, saved)
     if not saved then
         for i, entry in ipairs(all) do memory.ornament_deck[i] = entry.name end
     end
-    local stats = { writes = 0, shuffles = 0, warnings = 0, authors = 0, japan = 0,
+    local stats = { writes = 0, shuffles = 0, warnings = 0, authors = 0, japan = 0, gallery = 0,
         scans = 0, all = all, packs = { "Japan", "Modernists" } }
     local store = {
         read = function(key) return memory[key] end,
@@ -51,6 +53,10 @@ local function fixture(all, saved)
     Japan.seed = function()
         stats.japan = stats.japan + 1
         if stats.new_piece then stats.all[#stats.all + 1] = stats.new_piece end
+    end
+    Gallery.seed = function()
+        stats.gallery = stats.gallery + 1
+        if stats.new_print then stats.all[#stats.all + 1] = stats.new_print end
     end
     local orn = dofile("components/bookshelf/lib/bookshelf_ornaments.lua")
     orn._store, orn._clock = store, function() return 1 end
@@ -91,6 +97,16 @@ H.test("newly seeded pieces are reconciled before the startup shuffle", function
     assert(result:find(cat.name, 1, true)); assert(not result:find("deleted.svg", 1, true))
     H.eq(#deck.names(), 3); H.eq(stats.shuffles, 1)
     H.eq(names(deck.order(orn.list())), result)
+end)
+
+H.test("new gallery prints join the same one-time native startup shuffle", function()
+    local orn, deck, stats = fixture({ joyce, cat })
+    stats.new_print = piece("Ukiyo-e Gallery/Hokusai - Great Wave.png", "Ukiyo-e Gallery")
+    H.eq(stats.gallery, 0)
+    orn.listAll()
+    assert(table.concat(deck.names(), "|"):find(stats.new_print.name, 1, true))
+    orn.invalidate(); orn.listAll()
+    H.eq(stats.gallery, 1); H.eq(stats.shuffles, 1); H.eq(stats.warnings, 0)
 end)
 
 H.test("paging, new widgets, invalidation and new scan tables do not reshuffle", function()
@@ -237,4 +253,5 @@ H.test("the shuffled native deck still binds busts only to matching authors", fu
 end)
 
 Authors.seed, Japan.seed = author_seed, japan_seed
+Gallery.seed = gallery_seed
 H.finish()

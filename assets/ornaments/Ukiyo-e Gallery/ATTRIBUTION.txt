@@ -1,0 +1,283 @@
+UKIYO-E GALLERY - INDEPENDENT ORBITUI COLLECTION
+
+All 27 museum images and their collection metadata are public domain / CC0 1.0.
+https://creativecommons.org/publicdomain/zero/1.0/
+Rights were checked per object via each museum's API; evidence, URLs and source hashes are in provenance.json.
+Museum names identify sources, not endorsements. No museum logos are included.
+This is not AndyHazz's Ko-fi pack. No files, frames, textures or descriptions from that pack were used.
+The short Swedish viewing notes and frames are original OrbitUI additions.
+Washi and wood materials were originally generated with the built-in image_gen tool; details in texture-prompts.json.
+Original frames, notes and generated materials: CC0 1.0 to the extent rights exist.
+
+The Cleveland Museum of Art: https://www.clevelandart.org/open-access
+The Metropolitan Museum of Art: https://www.metmuseum.org/hubs/open-access
+
+Hokusai - Great Wave.png
+Katsushika Hokusai
+Under the Wave off Kanagawa (Kanagawa oki nami ura), also known as The Great Wave, from the series Thirty-six Views of Mount Fuji (Fugaku sanjūrokkei)
+ca. 1830–32
+Woodblock print; ink and color on paper
+The Metropolitan Museum of Art, JP1847
+H. O. Havemeyer Collection, Bequest of Mrs. H. O. Havemeyer, 1929
+https://www.metmuseum.org/art/collection/search/45434
+CC0 1.0
+
+Hokusai - Red Fuji.png
+Katsushika Hokusai (Japanese, 1760–1849)
+South Wind, Clear Sky, from Thirty-Six Views of Mount Fuji
+early 1830s
+color woodblock print
+The Cleveland Museum of Art, 1930.189
+Bequest of Edward L. Whittemore
+https://clevelandart.org/art/1930.189
+CC0 1.0
+
+Hokusai - Rain Below the Mountain.png
+Katsushika Hokusai (Japanese, 1760–1849)
+Rain Below the Mountain (from the series Thirty-six Views of Mt. Fuji)
+early 1830s
+color woodblock print
+The Cleveland Museum of Art, 1940.1002
+Bequest of James Parmelee
+https://clevelandart.org/art/1940.1002
+CC0 1.0
+
+Hokusai - Ono Waterfall.png
+Katsushika Hokusai (Japanese, 1760–1849)
+Ono Waterfall on the Kiso Road (from the series a Tour of Waterfalls in the Provinces)
+early 1830s
+color woodblock print
+The Cleveland Museum of Art, 1916.1137
+Gift of Mr. and Mrs. J. H. Wade
+https://clevelandart.org/art/1916.1137
+CC0 1.0
+
+Hokusai - Lake Misaka.png
+Katsushika Hokusai (Japanese, 1760–1849)
+Thirty-Six Views of Mt. Fuji:  The Surface of Lake Misaka in Kai Province
+early 1830s
+color woodblock print
+The Cleveland Museum of Art, 1985.325
+The Kelvin Smith Collection, given by Mrs. Kelvin Smith
+https://clevelandart.org/art/1985.325
+CC0 1.0
+
+Hokusai - Brocade Bridge.png
+Katsushika Hokusai (Japanese, 1760–1849)
+The Brocade Bridge in Suo Province (from the series Curious Views of Famous Bridges in the Provinces)
+early 1830s
+color woodblock print
+The Cleveland Museum of Art, 1924.965
+Gift of Mrs. Francis F. Prentiss for the Dudley P. Allen Collection
+https://clevelandart.org/art/1924.965
+CC0 1.0
+
+Hokusai - Rush Gatherer.png
+Katsushika Hokusai (Japanese, 1760–1849)
+The Rush Gatherer, from the series A True Mirror of Chinese and Japanese Poetry
+1834–35
+color woodblock print
+The Cleveland Museum of Art, 1916.1145
+Gift of Mr. and Mrs. J. H. Wade
+https://clevelandart.org/art/1916.1145
+CC0 1.0
+
+Hokusai - Boat Bridge at Sano.png
+Katsushika Hokusai (Japanese, 1760–1849)
+An Ancient Picture of the Boat Bridge at Sano in Kozuke Province from the series Curious Views of Famous Bridges in the Provinces
+early 1830s
+color woodblock print
+The Cleveland Museum of Art, 1940.1001
+Bequest of James Parmelee
+https://clevelandart.org/art/1940.1001
+CC0 1.0
+
+Hiroshige - Rain at Shono.png
+Utagawa Hiroshige (Japanese, 1797–1858)
+Driving Rain at Shōno, from Fifty-Three Stations of the Tokaidō
+1833
+color woodblock print
+The Cleveland Museum of Art, 1948.306
+Gift of Mrs. T. Wingate Todd from the Collection of Dr. T. Wingate Todd
+https://clevelandart.org/art/1948.306
+CC0 1.0
+
+Hiroshige - Sudden Shower.png
+Utagawa Hiroshige (Japanese, 1797–1858)
+Sudden Shower over Shin-Ōhashi Bridge and Atake, from One Hundred Famous Views of Edo
+1857
+color woodblock print
+The Cleveland Museum of Art, 1921.318
+Gift from J. H. Wade
+https://clevelandart.org/art/1921.318
+CC0 1.0
+
+Hiroshige - Snow at Kambara.png
+Utagawa Hiroshige (Japanese, 1797–1858)
+Evening Snow at Kambara (number sixteen of the series Fifty-three Stations of the Tokaido)
+1833
+color woodblock print
+The Cleveland Museum of Art, 1985.317
+The Kelvin Smith Collection, given by Mrs. Kelvin Smith
+https://clevelandart.org/art/1985.317
+CC0 1.0
+
+Hiroshige - Night Rain at Karasaki.png
+Utagawa Hiroshige (Japanese, 1797–1858)
+Night Rain at Karasaki, from Eight Views of Ōmi
+c. 1835
+color woodblock print
+The Cleveland Museum of Art, 1985.312
+The Kelvin Smith Collection, given by Mrs. Kelvin Smith
+https://clevelandart.org/art/1985.312
+CC0 1.0
+
+Hiroshige - Meguro Bridge.png
+Utagawa Hiroshige (Japanese, 1797–1858)
+Meguro Drum Bridge and Sunset Hill, from One Hundred Views of Famous Places in Edo
+1857
+color woodblock print
+The Cleveland Museum of Art, 1924.971
+Gift of Mrs. Francis F. Prentiss for the Dudley P. Allen Collection
+https://clevelandart.org/art/1924.971
+CC0 1.0
+
+Hiroshige - Moon Viewing.png
+Utagawa Hiroshige (Japanese, 1797–1858)
+The Moon-Viewing Promontory, from One Hundred Views of Famous Places in Edo
+1857
+color woodblock print
+The Cleveland Museum of Art, 1985.320
+The Kelvin Smith Collection, given by Mrs. Kelvin Smith
+https://clevelandart.org/art/1985.320
+CC0 1.0
+
+Hiroshige - Fireworks.png
+Utagawa Hiroshige (Japanese, 1797–1858)
+Fireworks at Ryōgoku, from the series One Hundred Views of Famous Places in Edo
+1858
+color woodblock print
+The Cleveland Museum of Art, 1940.986
+Bequest of James Parmelee
+https://clevelandart.org/art/1940.986
+CC0 1.0
+
+Hiroshige - Mandarin Ducks.png
+Utagawa Hiroshige (Japanese, 1797–1858)
+Mandarin Ducks and Flowering Plants
+early or mid-1830s
+color woodblock print
+The Cleveland Museum of Art, 1985.314
+The Kelvin Smith Collection, given by Mrs. Kelvin Smith
+https://clevelandart.org/art/1985.314
+CC0 1.0
+
+Hiroshige - Kingfisher.png
+Utagawa Hiroshige (Japanese, 1797–1858)
+Kingfisher and Chinese Bellflowers
+early or mid-1830s
+color woodblock print
+The Cleveland Museum of Art, 1920.164
+Purchase from the J. H. Wade Fund
+https://clevelandart.org/art/1920.164
+CC0 1.0
+
+Hiroshige - Lake Hakone.png
+Utagawa Hiroshige (Japanese, 1797–1858)
+Picture of the Lake at Hakone, from the series 53 Stations of the Tokaido
+1833
+color woodblock print
+The Cleveland Museum of Art, 1940.982
+Bequest of James Parmelee
+https://clevelandart.org/art/1940.982
+CC0 1.0
+
+Hiroshige - Canary and Wisteria.png
+Utagawa Hiroshige (Japanese, 1797–1858)
+Canary and Wisteria
+mid-1840s
+color woodblock print
+The Cleveland Museum of Art, 1920.161
+Purchase from the J. H. Wade Fund
+https://clevelandart.org/art/1920.161
+CC0 1.0
+
+Hiroshige - Pines of Miho.png
+Utagawa Hiroshige (Japanese, 1797–1858)
+Pine Groves of Miho in Suruga, from the series Thirty-six Views of Mount Fuji
+1858
+Color woodblock print, ink and color on paper
+The Cleveland Museum of Art, 1985.319
+The Kelvin Smith Collection, given by Mrs. Kelvin Smith
+https://clevelandart.org/art/1985.319
+CC0 1.0
+
+Utamaro - The Flirtatious Type.png
+Kitagawa Utamaro (Japanese, c. 1754–1806)
+The Flirtatious Type, from Ten Types in the Physiognomy of Women
+c. 1793
+color woodblock print
+The Cleveland Museum of Art, 1930.218
+Bequest of Edward L. Whittemore
+https://clevelandart.org/art/1930.218
+CC0 1.0
+
+Utamaro - Cleaning Combs.png
+Kitagawa Utamaro (Japanese, c. 1754–1806)
+Cleaning Combs
+c. late 1790s
+color woodblock print
+The Cleveland Museum of Art, 1930.216
+Bequest of Edward L. Whittemore
+https://clevelandart.org/art/1930.216
+CC0 1.0
+
+Utamaro - Calligraphy Lesson.png
+Kitagawa Utamaro (Japanese, c. 1754–1806)
+Mother Teaching her Daughter Calligraphy, from the series, Twelve Occupations of Women
+c. 1798
+color woodblock print
+The Cleveland Museum of Art, 1921.337
+Gift from J. H. Wade
+https://clevelandart.org/art/1921.337
+CC0 1.0
+
+Sharaku - Ichikawa Ebizo.png
+Tōshūsai Sharaku (Japanese, active 1794–95)
+Ichikawa Ebizō IV (Danjurō) as Takemura Sadanoshin in The Loving Wife's Parti-Colored Reins
+1794
+color woodblock print
+The Cleveland Museum of Art, 1930.205
+Bequest of Edward L. Whittemore
+https://clevelandart.org/art/1930.205
+CC0 1.0
+
+Sharaku - Fish Seller.png
+Tōshūsai Sharaku (Japanese, active 1794–95)
+Matsumoto Koshiro IV as Gorobei, the Fish Seller from Sanya
+1794
+color woodblock print
+The Cleveland Museum of Art, 1974.78
+Gift of Jeptha H. Wade in honor of Emily V. Wade
+https://clevelandart.org/art/1974.78
+CC0 1.0
+
+Kuniyoshi - Omori.png
+Utagawa Kuniyoshi (Japanese, 1797–1861)
+Ōmori, from the series Famous Places in the Eastern Capital
+early 1830s
+Color woodblock print
+The Cleveland Museum of Art, 1985.335
+The Kelvin Smith Collection, given by Mrs. Kelvin Smith
+https://clevelandart.org/art/1985.335
+CC0 1.0
+
+Kuniyoshi - New Yoshiwara.png
+Utagawa Kuniyoshi (Japanese, 1797–1861)
+New Yoshiwara (Shin Yoshiwara), from the series Famous Places in the Eastern Capital
+early 1830s
+color woodblock print
+The Cleveland Museum of Art, 1930.202
+Bequest of Edward L. Whittemore
+https://clevelandart.org/art/1930.202
+CC0 1.0

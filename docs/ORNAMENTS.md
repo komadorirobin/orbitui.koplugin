@@ -1,5 +1,68 @@
 # Ornaments
 
+## Ukiyo-e Gallery (unreleased)
+
+The independent **Ukiyo-e Gallery** pack contains 27 actual Japanese woodblock
+prints: Hokusai (8), Hiroshige (12), Utamaro (3), Sharaku (2) and Kuniyoshi (2).
+Each object's image is explicitly CC0 in the Cleveland Museum of Art API or
+public domain in The Met API under its CC0 Open Access policy. Individual
+source URLs, rights evidence, credits and SHA-256 hashes accompany the pack.
+This is not AndyHazz's Ko-fi collection; no paid-pack files or descriptions
+were used. The selection, frames and Swedish viewing notes are independent.
+
+The museum art is only reduced proportionally with LANCZOS, preserving the
+complete image, colour and orientation. No cropping, quantization, recolouring
+or AI reinterpretation. Warm dark frames have a light mat, subtle bevel and
+transparent exterior; the frame meets the shelf with zero lift. Native tap to
+zoom shows title, artist, date, viewing note, museum credit and source. Artwork
+does not mirror or invert at night. Only the washi/wood **material textures**
+are AI-generated; prompts and original source-image hashes are supplied.
+
+The pack also contains one quiet washi wallpaper and a named Hinoki-style plank
+using Bookshelf's native three-band, 80/20 surface/face template. The repeated
+wood tile has matching edges and needs no end caps. There are no global colour
+overrides. Installation does not activate a theme or modify existing choices.
+
+- **Ornament collection > Ukiyo-e Gallery** controls individual prints.
+- **Shelf theme > Ukiyo-e Gallery** activates the full theme, using its
+  ornaments in place of the other packs, per upstream theme behavior.
+- To retain the author busts and other ornaments, select the pack's wallpaper
+  and **Shelf plank > Hinoki** independently rather than choosing a full theme.
+
+Frames use the same session shuffle, one-ordinary-piece-per-row cap and author
+bust priority as other ordinary ornaments. Nested theme files are seeded once
+to `koreader/settings/bookshelf/ornaments/Ukiyo-e Gallery/`, with their own
+`ornament-ukiyoe-gallery-v1.installed` marker. Copies are additive and atomic;
+existing files are not overwritten, completed installs do not restore deletions,
+and a failure cannot crash the browser or commit an incomplete installation.
+
+### Rebuilding and verifying
+
+`scripts/build-ukiyoe.py` is maintainer-only (Pillow required). Network access is
+opt-in; never fetch or generate art on a reader. Source images/records go to an
+external cache, and are SHA-256 checked on subsequent builds. If a museum
+changes bytes or metadata, stop and review the provenance change explicitly.
+Generated material originals live under `scripts/artwork/` and are excluded
+from release archives, as is the build script.
+
+```sh
+python3 scripts/build-ukiyoe.py --cache /tmp/orbitui-ukiyoe-sources --fetch --washi scripts/artwork/ukiyoe-washi.png --hinoki scripts/artwork/ukiyoe-hinoki.png
+UKIYOE_SOURCE_CACHE=/tmp/orbitui-ukiyoe-sources python3 -m unittest discover -s tests -p test_ukiyoe_assets.py -v
+```
+
+Omit `--fetch` for an offline, cache-only rebuild. See the [gallery preview](ukiyoe-gallery-preview.html)
+and colour/grayscale contact sheets generated in `dist/`. The source-cache
+audit compares the art rectangle of all 27 shipped PNGs pixel-for-pixel against
+the proportionally scaled museum originals. Theme/seeding tests execute the
+native theme scanner and installation failure paths. Desktop previews and
+grayscale conversion are not a native KOReader or physical e-ink test.
+
+Device acceptance still required: check colour/grayscale clarity, tall/wide
+frame placement, tap-to-zoom and info scrolling, native theme/individual-part
+selection, author-bust priority, paging/restart stability and upgrades retaining
+customized or deleted artwork. The single-pack install ZIP, if used manually,
+must contain **Ukiyo-e Gallery**, not the unrelated Halloween folder name.
+
 ## Author busts
 
 OrbitUI alpha.14 includes two AI-adapted light-plaster busts: James Joyce and

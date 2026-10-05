@@ -1,0 +1,1077 @@
+{
+  "schema": 1,
+  "artworks": [
+    {
+      "title": "Under the Wave off Kanagawa (Kanagawa oki nami ura), also known as The Great Wave, from the series Thirty-six Views of Mount Fuji (Fugaku sanjūrokkei)",
+      "artist": "Katsushika Hokusai",
+      "date": "ca. 1830–32",
+      "medium": "Woodblock print; ink and color on paper",
+      "accession": "JP1847",
+      "credit": "H. O. Havemeyer Collection, Bequest of Mrs. H. O. Havemeyer, 1929",
+      "object_url": "https://www.metmuseum.org/art/collection/search/45434",
+      "image_url": "https://images.metmuseum.org/CRDImages/as/original/DP130155.jpg",
+      "rights_evidence": {
+        "isPublicDomain": true
+      },
+      "museum": "met",
+      "id": 45434,
+      "file": "Hokusai - Great Wave.png",
+      "note": "Tre smala båtar möter en stor våg. Berget Fuji syns litet i bakgrunden.",
+      "museum_name": "The Metropolitan Museum of Art",
+      "policy_url": "https://www.metmuseum.org/hubs/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://collectionapi.metmuseum.org/public/collection/v1/objects/45434",
+      "source_sha256": "cbb9988f2f18b9180a1cc0cf5dbb0e3bbf8f2e85d17930cf6ca9ab36fac36303",
+      "record_sha256": "eddd9f43c0d80b176c53a895ef2776f8d77010ce5ac945a3bdeb043a2bc8d72e",
+      "source_dimensions": [
+        3859,
+        2594
+      ],
+      "sha256": "ba0076561e62d325f702591b971c2ff8747ab3a06fefc24fab5d38991b6077bb",
+      "dimensions": [
+        836,
+        580
+      ],
+      "art_box": [
+        34,
+        34,
+        768,
+        516
+      ]
+    },
+    {
+      "title": "South Wind, Clear Sky, from Thirty-Six Views of Mount Fuji",
+      "artist": "Katsushika Hokusai (Japanese, 1760–1849)",
+      "date": "early 1830s",
+      "medium": "color woodblock print",
+      "accession": "1930.189",
+      "credit": "Bequest of Edward L. Whittemore",
+      "object_url": "https://clevelandart.org/art/1930.189",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1930.189/1930.189_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 111654,
+      "file": "Hokusai - Red Fuji.png",
+      "note": "Fuji i rött mot en blå himmel, med små moln och en mörk skog vid bergets fot.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/111654",
+      "source_sha256": "b0f546cc1972fb8e7ef84d21eb7d30805de189297a22a248b1ecaf11c5b5468d",
+      "record_sha256": "c43948cada7517c7775eefb80515b131b4cd4f68235da11fc33c1f97334f618a",
+      "source_dimensions": [
+        900,
+        617
+      ],
+      "sha256": "6bafc75de771262ab9a32f763fbb47a862b9db350a71d854db1a76718c510706",
+      "dimensions": [
+        836,
+        591
+      ],
+      "art_box": [
+        34,
+        34,
+        768,
+        527
+      ]
+    },
+    {
+      "title": "Rain Below the Mountain (from the series Thirty-six Views of Mt. Fuji)",
+      "artist": "Katsushika Hokusai (Japanese, 1760–1849)",
+      "date": "early 1830s",
+      "medium": "color woodblock print",
+      "accession": "1940.1002",
+      "credit": "Bequest of James Parmelee",
+      "object_url": "https://clevelandart.org/art/1940.1002",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1940.1002/1940.1002_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 118800,
+      "file": "Hokusai - Rain Below the Mountain.png",
+      "note": "Mörka moln och blixtar samlas nedanför Fujis lugna topp.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/118800",
+      "source_sha256": "cf8c01bdc069c8d8dd79028fc55e74c58032eb09e7982fd95d38b7d3fd8ddbe9",
+      "record_sha256": "7961c6890688ad532d3a893859946a4486ca67ec9a3093336cc2c071656e23bd",
+      "source_dimensions": [
+        1263,
+        852
+      ],
+      "sha256": "248542191b76d3951d2ff147a3dc6ca8ee634e61813a72abe78e5c8df39cc3a9",
+      "dimensions": [
+        836,
+        582
+      ],
+      "art_box": [
+        34,
+        34,
+        768,
+        518
+      ]
+    },
+    {
+      "title": "Ono Waterfall on the Kiso Road (from the series a Tour of Waterfalls in the Provinces)",
+      "artist": "Katsushika Hokusai (Japanese, 1760–1849)",
+      "date": "early 1830s",
+      "medium": "color woodblock print",
+      "accession": "1916.1137",
+      "credit": "Gift of Mr. and Mrs. J. H. Wade",
+      "object_url": "https://clevelandart.org/art/1916.1137",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1916.1137/1916.1137_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 95381,
+      "file": "Hokusai - Ono Waterfall.png",
+      "note": "Ett vattenfall löper som ett ljust band mellan berg och grönska.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/95381",
+      "source_sha256": "852183ea65b12393fa5f1a6075cadc321b657380f4f65bb3a8aba2cd13d894c8",
+      "record_sha256": "767515a7a35f70e2becf0fe22565ba350bdc4c645681ffec3dae71e817deeafe",
+      "source_dimensions": [
+        628,
+        900
+      ],
+      "sha256": "c52fe8832cfd872ad18ddba94355f0deaf727d2172bf74f715289e81799e0a6d",
+      "dimensions": [
+        604,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        536,
+        768
+      ]
+    },
+    {
+      "title": "Thirty-Six Views of Mt. Fuji:  The Surface of Lake Misaka in Kai Province",
+      "artist": "Katsushika Hokusai (Japanese, 1760–1849)",
+      "date": "early 1830s",
+      "medium": "color woodblock print",
+      "accession": "1985.325",
+      "credit": "The Kelvin Smith Collection, given by Mrs. Kelvin Smith",
+      "object_url": "https://clevelandart.org/art/1985.325",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1985.325/1985.325_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 152504,
+      "file": "Hokusai - Lake Misaka.png",
+      "note": "Berget Fuji och dess spegelbild möter varandra över sjöns stilla vatten.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/152504",
+      "source_sha256": "db6ef3bf2986eb28b26a58125bea3af224bcbb405d4c691e4958afc381be646e",
+      "record_sha256": "bbd1bac308aaef2a879fdcbbb30aac19c4efce9fc271a0fdf4038347dc751f9d",
+      "source_dimensions": [
+        1224,
+        893
+      ],
+      "sha256": "efa99f0525068792d018aa530db0fb581c54c456c53fba0fd13ecac9a66a8ef4",
+      "dimensions": [
+        836,
+        624
+      ],
+      "art_box": [
+        34,
+        34,
+        768,
+        560
+      ]
+    },
+    {
+      "title": "The Brocade Bridge in Suo Province (from the series Curious Views of Famous Bridges in the Provinces)",
+      "artist": "Katsushika Hokusai (Japanese, 1760–1849)",
+      "date": "early 1830s",
+      "medium": "color woodblock print",
+      "accession": "1924.965",
+      "credit": "Gift of Mrs. Francis F. Prentiss for the Dudley P. Allen Collection",
+      "object_url": "https://clevelandart.org/art/1924.965",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1924.965/1924.965_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 106960,
+      "file": "Hokusai - Brocade Bridge.png",
+      "note": "Brons upprepade bågar bildar en rytm genom landskapet.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/106960",
+      "source_sha256": "a8a2b0c023ddc5b8266434fa572de6f1be5dad37aae2b3ee6e400613f48cf9b0",
+      "record_sha256": "3162a401e1fceb2b6522fbcf1be95b9c29b5e5b39430aa5ee85c8b6a893b97b5",
+      "source_dimensions": [
+        900,
+        613
+      ],
+      "sha256": "84e5f537a6fee2168d2869add9f0e89787509e0e4ca983ae91ff25c495f00269",
+      "dimensions": [
+        836,
+        587
+      ],
+      "art_box": [
+        34,
+        34,
+        768,
+        523
+      ]
+    },
+    {
+      "title": "The Rush Gatherer, from the series A True Mirror of Chinese and Japanese Poetry",
+      "artist": "Katsushika Hokusai (Japanese, 1760–1849)",
+      "date": "1834–35",
+      "medium": "color woodblock print",
+      "accession": "1916.1145",
+      "credit": "Gift of Mr. and Mrs. J. H. Wade",
+      "object_url": "https://clevelandart.org/art/1916.1145",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1916.1145/1916.1145_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 95392,
+      "file": "Hokusai - Rush Gatherer.png",
+      "note": "En liten mänsklig figur omges av landskapets stora former.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/95392",
+      "source_sha256": "1b92192c7a363099719d939deed2011965f97f8abd3e3464a522969c665d967d",
+      "record_sha256": "56fb1eda748cfdc6ba7265c47023c4d9118e43305a22a3a3444be0095ceb161f",
+      "source_dimensions": [
+        408,
+        900
+      ],
+      "sha256": "62d7461671092ed947ee7f1d7604dc890da2aea6385b7f4a0a7942642c5072bd",
+      "dimensions": [
+        416,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        348,
+        768
+      ]
+    },
+    {
+      "title": "An Ancient Picture of the Boat Bridge at Sano in Kozuke Province from the series Curious Views of Famous Bridges in the Provinces",
+      "artist": "Katsushika Hokusai (Japanese, 1760–1849)",
+      "date": "early 1830s",
+      "medium": "color woodblock print",
+      "accession": "1940.1001",
+      "credit": "Bequest of James Parmelee",
+      "object_url": "https://clevelandart.org/art/1940.1001",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1940.1001/1940.1001_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 118799,
+      "file": "Hokusai - Boat Bridge at Sano.png",
+      "note": "En lång båtbro slingrar sig över vattnet i ett snötäckt landskap.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/118799",
+      "source_sha256": "b5aa2f0541a847e815fe0e89818fd5e0121ec8b90ab0bed673c69b80dace4b17",
+      "record_sha256": "c6d0f7800ce18d680202976c583776cbbde8cf1bf6dd5389ee867973da79c50f",
+      "source_dimensions": [
+        900,
+        609
+      ],
+      "sha256": "f3d5ea3c1ca9bfa827dad893aa9400683f159e6edba422677f98e6a727009ad7",
+      "dimensions": [
+        836,
+        584
+      ],
+      "art_box": [
+        34,
+        34,
+        768,
+        520
+      ]
+    },
+    {
+      "title": "Driving Rain at Shōno, from Fifty-Three Stations of the Tokaidō",
+      "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
+      "date": "1833",
+      "medium": "color woodblock print",
+      "accession": "1948.306",
+      "credit": "Gift of Mrs. T. Wingate Todd from the Collection of Dr. T. Wingate Todd",
+      "object_url": "https://clevelandart.org/art/1948.306",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1948.306/1948.306_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 126086,
+      "file": "Hiroshige - Rain at Shono.png",
+      "note": "Resande skyndar uppför en sluttning genom täta sneda regnstreck.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/126086",
+      "source_sha256": "7c73441354a2c00bbd4eb869819e7cc0d342bdc1bb5dacae95dd60a4bf610802",
+      "record_sha256": "47bda85197ed93bdaf82b0e952d8d0c4c190c26494cf1839421e6f497d50b9d1",
+      "source_dimensions": [
+        900,
+        601
+      ],
+      "sha256": "0eec8b36a649c4b694b2761cb7d8ac6324227f4fac6c526967e4a378df30d93d",
+      "dimensions": [
+        836,
+        577
+      ],
+      "art_box": [
+        34,
+        34,
+        768,
+        513
+      ]
+    },
+    {
+      "title": "Sudden Shower over Shin-Ōhashi Bridge and Atake, from One Hundred Famous Views of Edo",
+      "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
+      "date": "1857",
+      "medium": "color woodblock print",
+      "accession": "1921.318",
+      "credit": "Gift from J. H. Wade",
+      "object_url": "https://clevelandart.org/art/1921.318",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1921.318/1921.318_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 103244,
+      "file": "Hiroshige - Sudden Shower.png",
+      "note": "Människor på en bro söker skydd mot en plötslig regnskur.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/103244",
+      "source_sha256": "cade35ac7118eb78787b5b639d82f6087c1658ab1bfbfbd3af0654799ba38018",
+      "record_sha256": "816f383598cad4278c8a0f093daf30d49ba312bb333d82f2881edb86c131e554",
+      "source_dimensions": [
+        605,
+        900
+      ],
+      "sha256": "621610991d9b34404fdfe5d09633c23cbf8e5cedc54ef979b34f99c2245e14ac",
+      "dimensions": [
+        584,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        516,
+        768
+      ]
+    },
+    {
+      "title": "Evening Snow at Kambara (number sixteen of the series Fifty-three Stations of the Tokaido)",
+      "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
+      "date": "1833",
+      "medium": "color woodblock print",
+      "accession": "1985.317",
+      "credit": "The Kelvin Smith Collection, given by Mrs. Kelvin Smith",
+      "object_url": "https://clevelandart.org/art/1985.317",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1985.317/1985.317_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 152495,
+      "file": "Hiroshige - Snow at Kambara.png",
+      "note": "Några vandrare rör sig genom ett snötäckt landskap under en mörk himmel.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/152495",
+      "source_sha256": "21429099c8ff413a41364347401ba15bcaa51e36f9ef5b829bf2315884c4f1a4",
+      "record_sha256": "a864729c11f05ecc403a9a7ee275cf0fa6225ea8386b0000f2842cc074d9d3c7",
+      "source_dimensions": [
+        900,
+        600
+      ],
+      "sha256": "53f91357ac2dbd968a09981e50beda3f397af9807910f84b525e84737c5235aa",
+      "dimensions": [
+        836,
+        576
+      ],
+      "art_box": [
+        34,
+        34,
+        768,
+        512
+      ]
+    },
+    {
+      "title": "Night Rain at Karasaki, from Eight Views of Ōmi",
+      "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
+      "date": "c. 1835",
+      "medium": "color woodblock print",
+      "accession": "1985.312",
+      "credit": "The Kelvin Smith Collection, given by Mrs. Kelvin Smith",
+      "object_url": "https://clevelandart.org/art/1985.312",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1985.312/1985.312_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 152490,
+      "file": "Hiroshige - Night Rain at Karasaki.png",
+      "note": "Ett stort träd framträder som en mörk silhuett genom regnet.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/152490",
+      "source_sha256": "7c21facb89dab0200ec82bc013ef9df0080e74af844a87b5556db1334d36fc8b",
+      "record_sha256": "cc41e7406fe82afe0ab853e468eab1ae9bf10f28c16b65fb9c75ab0e47d9d620",
+      "source_dimensions": [
+        900,
+        606
+      ],
+      "sha256": "e14f509b68777f2476a87b8bd7cdc200103acb87bff576b08a93045548c0f99c",
+      "dimensions": [
+        836,
+        581
+      ],
+      "art_box": [
+        34,
+        34,
+        768,
+        517
+      ]
+    },
+    {
+      "title": "Meguro Drum Bridge and Sunset Hill, from One Hundred Views of Famous Places in Edo",
+      "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
+      "date": "1857",
+      "medium": "color woodblock print",
+      "accession": "1924.971",
+      "credit": "Gift of Mrs. Francis F. Prentiss for the Dudley P. Allen Collection",
+      "object_url": "https://clevelandart.org/art/1924.971",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1924.971/1924.971_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 106968,
+      "file": "Hiroshige - Meguro Bridge.png",
+      "note": "En välvd bro och snötyngda träd ger landskapet tydliga ljusa och mörka former.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/106968",
+      "source_sha256": "00d8ab86655f1310d495840243576e4941fe7448da9933966c71e4767d6cda62",
+      "record_sha256": "20215bf064db9c3cbb272cf04921a4da4e41895ee144ec3f1966d0520abe53c4",
+      "source_dimensions": [
+        587,
+        900
+      ],
+      "sha256": "3051d862568e3b22c6b7897493cb5008f4322c2a6c1410835e6f890b7b6d80af",
+      "dimensions": [
+        569,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        501,
+        768
+      ]
+    },
+    {
+      "title": "The Moon-Viewing Promontory, from One Hundred Views of Famous Places in Edo",
+      "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
+      "date": "1857",
+      "medium": "color woodblock print",
+      "accession": "1985.320",
+      "credit": "The Kelvin Smith Collection, given by Mrs. Kelvin Smith",
+      "object_url": "https://clevelandart.org/art/1985.320",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1985.320/1985.320_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 152499,
+      "file": "Hiroshige - Moon Viewing.png",
+      "note": "En stillsam plats för månbetraktelse, med vatten och en vid himmel.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/152499",
+      "source_sha256": "9330ce9c099a78d892c638ddc0dcf3194f94805c01b77d271b04feeacadd0042",
+      "record_sha256": "df3a6c0ed915823b2d43a4a6bd7afa2efcbb6a01c53e1a25c98ffa7453cb8783",
+      "source_dimensions": [
+        613,
+        900
+      ],
+      "sha256": "a87b09a79fb9b381fe6717b5464d8f238690ef298e8133cf80d31cf66154cfa6",
+      "dimensions": [
+        591,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        523,
+        768
+      ]
+    },
+    {
+      "title": "Fireworks at Ryōgoku, from the series One Hundred Views of Famous Places in Edo",
+      "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
+      "date": "1858",
+      "medium": "color woodblock print",
+      "accession": "1940.986",
+      "credit": "Bequest of James Parmelee",
+      "object_url": "https://clevelandart.org/art/1940.986",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1940.986/1940.986_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 120225,
+      "file": "Hiroshige - Fireworks.png",
+      "note": "Fyrverkerier tecknar ljusa spår över floden och båtarna.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/120225",
+      "source_sha256": "addbffb114846a94e3ba8cf763f7abca5f8d64092d71eb70d6ab04d49497e671",
+      "record_sha256": "fd056484e393d6882f7fbf06dc440eff2daa5a2afa6b7e2ddef3b88a7d2738ff",
+      "source_dimensions": [
+        594,
+        900
+      ],
+      "sha256": "9a64041c24f2352c9216ab1a33f1e87b0a2334a0faf83e267a705346cc5bf246",
+      "dimensions": [
+        575,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        507,
+        768
+      ]
+    },
+    {
+      "title": "Mandarin Ducks and Flowering Plants",
+      "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
+      "date": "early or mid-1830s",
+      "medium": "color woodblock print",
+      "accession": "1985.314",
+      "credit": "The Kelvin Smith Collection, given by Mrs. Kelvin Smith",
+      "object_url": "https://clevelandart.org/art/1985.314",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1985.314/1985.314_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 152492,
+      "file": "Hiroshige - Mandarin Ducks.png",
+      "note": "Mandarinänder och blommande växter samsas i en smal, upprätt komposition.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/152492",
+      "source_sha256": "216abd065ae470c39e17d914d4e5262247cc4d42db247185e4b9b080513fed54",
+      "record_sha256": "e13ea413534c153ebd2226459ff39056178da37d61714c341bea033904bb7eb8",
+      "source_dimensions": [
+        420,
+        900
+      ],
+      "sha256": "700a5d947ee9d98443964e92f88c963adf5fd57dc3e7e276c0e346c95046789a",
+      "dimensions": [
+        426,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        358,
+        768
+      ]
+    },
+    {
+      "title": "Kingfisher and Chinese Bellflowers",
+      "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
+      "date": "early or mid-1830s",
+      "medium": "color woodblock print",
+      "accession": "1920.164",
+      "credit": "Purchase from the J. H. Wade Fund",
+      "object_url": "https://clevelandart.org/art/1920.164",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1920.164/1920.164_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 101257,
+      "file": "Hiroshige - Kingfisher.png",
+      "note": "En kungsfiskare och klockformade blommor bildar ett litet naturstudium.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/101257",
+      "source_sha256": "3d8d59558bc29e437d0fd8584870c0810403d04e81568aebb1f13f76849ffd58",
+      "record_sha256": "162764d75836dbc792a5235dd7f07cca27274f51c75c91d52056302d7e80cdf6",
+      "source_dimensions": [
+        458,
+        900
+      ],
+      "sha256": "c942e1a619e27b82083bce0772ef3086c63b6a5232d7f121e6481c9f3192e817",
+      "dimensions": [
+        459,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        391,
+        768
+      ]
+    },
+    {
+      "title": "Picture of the Lake at Hakone, from the series 53 Stations of the Tokaido",
+      "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
+      "date": "1833",
+      "medium": "color woodblock print",
+      "accession": "1940.982",
+      "credit": "Bequest of James Parmelee",
+      "object_url": "https://clevelandart.org/art/1940.982",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1940.982/1940.982_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 120221,
+      "file": "Hiroshige - Lake Hakone.png",
+      "note": "Sjön och de kraftiga bergsformerna delar upp landskapet i tydliga färgfält.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/120221",
+      "source_sha256": "027aff61caa524996e791f96439e9825a96b8374424783896f3d3064df585ef3",
+      "record_sha256": "dcabb5f7ef629675128fe95cd696d7985bf7e64ebd5f8a902677feb488719dc4",
+      "source_dimensions": [
+        900,
+        600
+      ],
+      "sha256": "6a0b5409a159c4284553f4578756d4af80c432783fb042a526c7078cae5860a2",
+      "dimensions": [
+        836,
+        576
+      ],
+      "art_box": [
+        34,
+        34,
+        768,
+        512
+      ]
+    },
+    {
+      "title": "Canary and Wisteria",
+      "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
+      "date": "mid-1840s",
+      "medium": "color woodblock print",
+      "accession": "1920.161",
+      "credit": "Purchase from the J. H. Wade Fund",
+      "object_url": "https://clevelandart.org/art/1920.161",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1920.161/1920.161_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 101234,
+      "file": "Hiroshige - Canary and Wisteria.png",
+      "note": "En liten fågel sitter bland hängande klasar av blåregn.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/101234",
+      "source_sha256": "5a3be94a5bb82bc9175fbf5957739f7d4db24ed53eb3adaab061f110a5f570cc",
+      "record_sha256": "1bc7b80e58d4ff3b500a39f38de0e5ac999af2ea5a2f7267490720e8b8e903e1",
+      "source_dimensions": [
+        310,
+        900
+      ],
+      "sha256": "83f56c85e8c35abd358c505bd6821ca71b1afb53ee7c18bf22de1631a0a3e6d9",
+      "dimensions": [
+        333,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        265,
+        768
+      ]
+    },
+    {
+      "title": "Pine Groves of Miho in Suruga, from the series Thirty-six Views of Mount Fuji",
+      "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
+      "date": "1858",
+      "medium": "Color woodblock print, ink and color on paper",
+      "accession": "1985.319",
+      "credit": "The Kelvin Smith Collection, given by Mrs. Kelvin Smith",
+      "object_url": "https://clevelandart.org/art/1985.319",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1985.319/1985.319_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 152497,
+      "file": "Hiroshige - Pines of Miho.png",
+      "note": "Tallarna vid kusten ramar in en avlägsen vy av Fuji.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/152497",
+      "source_sha256": "769fc5a33b4d431be68da6df1b1325f7ca95681b87bbf9a1f6eb6c8b61e724e6",
+      "record_sha256": "f774f9d6aee816c9f74498fb4559030955c7117d7ee4418b79c7254a5d1e23de",
+      "source_dimensions": [
+        615,
+        900
+      ],
+      "sha256": "832b9e16fdd2f6d1b3b0990c8d8a42604f208e063fdf94237699e8abdcfbcaa1",
+      "dimensions": [
+        593,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        525,
+        768
+      ]
+    },
+    {
+      "title": "The Flirtatious Type, from Ten Types in the Physiognomy of Women",
+      "artist": "Kitagawa Utamaro (Japanese, c. 1754–1806)",
+      "date": "c. 1793",
+      "medium": "color woodblock print",
+      "accession": "1930.218",
+      "credit": "Bequest of Edward L. Whittemore",
+      "object_url": "https://clevelandart.org/art/1930.218",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1930.218/1930.218_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 111689,
+      "file": "Utamaro - The Flirtatious Type.png",
+      "note": "Ett porträtt där ansikte, hår och dräkt bildar stora, tydliga ytor.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/111689",
+      "source_sha256": "f83f9c145e03e3dbc30801c0308060f9ec41375716d92029a12e4407e1f53629",
+      "record_sha256": "7c7781bc63f4c495d22d47061dd3c0f5c6684415e5785f13b371ea955dc8eb77",
+      "source_dimensions": [
+        602,
+        900
+      ],
+      "sha256": "ce092c973334ed39e5ea150013643866debf31170e9f25adaa3a6292358e82e0",
+      "dimensions": [
+        582,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        514,
+        768
+      ]
+    },
+    {
+      "title": "Cleaning Combs",
+      "artist": "Kitagawa Utamaro (Japanese, c. 1754–1806)",
+      "date": "c. late 1790s",
+      "medium": "color woodblock print",
+      "accession": "1930.216",
+      "credit": "Bequest of Edward L. Whittemore",
+      "object_url": "https://clevelandart.org/art/1930.216",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1930.216/1930.216_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 111687,
+      "file": "Utamaro - Cleaning Combs.png",
+      "note": "En vardaglig syssla blir bildens huvudmotiv, med händer och kammar i centrum.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/111687",
+      "source_sha256": "5e5ce5895546c5fe5c74bd232ea2079167112fc2428fdc3b3477c2b7be220aa6",
+      "record_sha256": "50957b6148b94384a91e72e7c048d6a0f399609e697e4a88f56198d4435063fa",
+      "source_dimensions": [
+        621,
+        900
+      ],
+      "sha256": "1d34eb5817ad1831095328f48c2432cc413ef605dda379a7396767c236c72154",
+      "dimensions": [
+        598,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        530,
+        768
+      ]
+    },
+    {
+      "title": "Mother Teaching her Daughter Calligraphy, from the series, Twelve Occupations of Women",
+      "artist": "Kitagawa Utamaro (Japanese, c. 1754–1806)",
+      "date": "c. 1798",
+      "medium": "color woodblock print",
+      "accession": "1921.337",
+      "credit": "Gift from J. H. Wade",
+      "object_url": "https://clevelandart.org/art/1921.337",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1921.337/1921.337_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 103265,
+      "file": "Utamaro - Calligraphy Lesson.png",
+      "note": "En mor visar sin dotter kalligrafi: en stilla bild av lärande och koncentration.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/103265",
+      "source_sha256": "1c3f20832e96e5f004563fb42c728d33e26b255ffaa8923623adcc286a3c166f",
+      "record_sha256": "af98c234e90fdcb562c11b5cc50f7376c4a5bc6b1915a49545cb0cfeb7b54466",
+      "source_dimensions": [
+        593,
+        900
+      ],
+      "sha256": "3aaf94d9061abffa5c8b336bfa4885d3552d9a2b4bd46f20a8d54c539bfdc6fa",
+      "dimensions": [
+        574,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        506,
+        768
+      ]
+    },
+    {
+      "title": "Ichikawa Ebizō IV (Danjurō) as Takemura Sadanoshin in The Loving Wife's Parti-Colored Reins",
+      "artist": "Tōshūsai Sharaku (Japanese, active 1794–95)",
+      "date": "1794",
+      "medium": "color woodblock print",
+      "accession": "1930.205",
+      "credit": "Bequest of Edward L. Whittemore",
+      "object_url": "https://clevelandart.org/art/1930.205",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1930.205/1930.205_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 111675,
+      "file": "Sharaku - Ichikawa Ebizo.png",
+      "note": "Ett skådespelarporträtt där ansiktsdragen och dräkten får starkt uttryck.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/111675",
+      "source_sha256": "958737d0c70526fcc10dbbe863f40f0ce6d4006744e5db61bb696a28cc73fc1c",
+      "record_sha256": "9920eca726ad313c18b6c59ab2c7ce361fad33d226bcffd04fbe9b6d96c71165",
+      "source_dimensions": [
+        602,
+        900
+      ],
+      "sha256": "1b0f046381eab2ebe6b5ea7d8a26e6c5ad56e62d96e96a04b396442d77cd9410",
+      "dimensions": [
+        582,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        514,
+        768
+      ]
+    },
+    {
+      "title": "Matsumoto Koshiro IV as Gorobei, the Fish Seller from Sanya",
+      "artist": "Tōshūsai Sharaku (Japanese, active 1794–95)",
+      "date": "1794",
+      "medium": "color woodblock print",
+      "accession": "1974.78",
+      "credit": "Gift of Jeptha H. Wade in honor of Emily V. Wade",
+      "object_url": "https://clevelandart.org/art/1974.78",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1974.78/1974.78_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 147982,
+      "file": "Sharaku - Fish Seller.png",
+      "note": "Ett uttrycksfullt teaterporträtt av Matsumoto Koshiro IV i rollen som fiskförsäljaren Gorobei.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/147982",
+      "source_sha256": "ae2b067bf323826e8415e7c31782095d1a4e5e536c0b51a7b9ecbb6f659f1761",
+      "record_sha256": "6f79e585ee144469fdb6a12bcdf431a2b3831d24d83bb366b134a1bed3c4e2a8",
+      "source_dimensions": [
+        583,
+        900
+      ],
+      "sha256": "53992611e9471ffb9a142ef9b3ab2dede8117abbaeb5d23c5f5b318b5e96db9d",
+      "dimensions": [
+        565,
+        832
+      ],
+      "art_box": [
+        34,
+        34,
+        497,
+        768
+      ]
+    },
+    {
+      "title": "Ōmori, from the series Famous Places in the Eastern Capital",
+      "artist": "Utagawa Kuniyoshi (Japanese, 1797–1861)",
+      "date": "early 1830s",
+      "medium": "Color woodblock print",
+      "accession": "1985.335",
+      "credit": "The Kelvin Smith Collection, given by Mrs. Kelvin Smith",
+      "object_url": "https://clevelandart.org/art/1985.335",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1985.335/1985.335_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 152515,
+      "file": "Kuniyoshi - Omori.png",
+      "note": "En vy från Omori i serien med berömda platser i den östra huvudstaden.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/152515",
+      "source_sha256": "1017f1b44ce231ac1547085ade0e63d49eaa95cf9da1d7ca897a6629622fb78b",
+      "record_sha256": "3aa8848cb585692d787c4dd51139227b10599d68a2d328d1482c86124a622139",
+      "source_dimensions": [
+        900,
+        638
+      ],
+      "sha256": "bd57a8e3d7cb468003822d4f1605a06ec4c52cecb55bb61e8e11858ab394fb9b",
+      "dimensions": [
+        836,
+        608
+      ],
+      "art_box": [
+        34,
+        34,
+        768,
+        544
+      ]
+    },
+    {
+      "title": "New Yoshiwara (Shin Yoshiwara), from the series Famous Places in the Eastern Capital",
+      "artist": "Utagawa Kuniyoshi (Japanese, 1797–1861)",
+      "date": "early 1830s",
+      "medium": "color woodblock print",
+      "accession": "1930.202",
+      "credit": "Bequest of Edward L. Whittemore",
+      "object_url": "https://clevelandart.org/art/1930.202",
+      "image_url": "https://openaccess-cdn.clevelandart.org/1930.202/1930.202_web.jpg",
+      "rights_evidence": {
+        "share_license_status": "CC0"
+      },
+      "museum": "cma",
+      "id": 111672,
+      "file": "Kuniyoshi - New Yoshiwara.png",
+      "note": "En vy av Shin Yoshiwara från Kuniyoshis serie med platser i Edo.",
+      "museum_name": "The Cleveland Museum of Art",
+      "policy_url": "https://www.clevelandart.org/open-access",
+      "license": "CC0 1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "api_url": "https://openaccess-api.clevelandart.org/api/artworks/111672",
+      "source_sha256": "dae3b205a64f089d79f8491638c7d55e4ffb1d535d897a37fd0e9aed1d787814",
+      "record_sha256": "965b13b57a7a80d0b982b50075d42c870dfa444da19b57f076eecbc8323cf77b",
+      "source_dimensions": [
+        900,
+        602
+      ],
+      "sha256": "4aa4202924dc1adbff6434494db2dced4d4c9d303c5b62bcc2ae111fb39d640e",
+      "dimensions": [
+        836,
+        578
+      ],
+      "art_box": [
+        34,
+        34,
+        768,
+        514
+      ]
+    }
+  ],
+  "processing": "Proportional LANCZOS reduction only; RGB preserved, no crop, no AI edits of artworks. Original deterministic OrbitUI frames.",
+  "theme_assets": [
+    {
+      "file": "theme/plank.Hinoki.middle.png",
+      "sha256": "793393b8a30f711166b361dcb4f89de123daf5c9d5256e4dba50e6f9cf09f9dc"
+    },
+    {
+      "file": "theme/theme.json",
+      "sha256": "15ee151d2b6265f4828c14cb2508686f1bbcb6de15c2b5b9fed402111099b233"
+    },
+    {
+      "file": "theme/wallpaper.jpg",
+      "sha256": "dbef3a8349d1e316df481fafb971181e1afbb23676d7a3f1e6133c3c08873e6d"
+    }
+  ],
+  "texture_sources": {
+    "washi_sha256": "00477b217e8af57463f5aa7630f418efc2f92a6663781c17ccd8d6197ae93ef8",
+    "hinoki_sha256": "8537d2c77b896b766cbcadae4a5f2f71519a97cbec13dde46e3c27aa44fca93e"
+  }
+}

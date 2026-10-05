@@ -1,6 +1,8 @@
 package.path = "./?.lua;./components/bookshelf/?.lua;" .. package.path
 local H = require("tests/helpers")
 local Japan = require("core/orbitui_japan_ornaments")
+-- This suite owns Japan installation; the new gallery has its own IO suite.
+package.loaded["core/orbitui_ukiyoe_ornaments"] = { seed = function() end }
 local Authors = require("core/orbitui_author_ornaments")
 local Adapter = require("adapters/orbitui_ornaments")
 package.loaded["lib/bookshelf_ornament_deck"] = { sync = function() end, shuffle = function() end }

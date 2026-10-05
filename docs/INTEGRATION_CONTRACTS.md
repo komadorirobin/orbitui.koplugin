@@ -332,16 +332,30 @@ aliases may cover known transliterations but must still match full names.
 
 The Japan pack uses ordinary native ornament placement, never author binding.
 Keep its install and defaults markers independent of the author packs. All
-three packs share `core/orbitui_ornament_install.lua` for additive atomic copies;
+bundled packs share `core/orbitui_ornament_install.lua` for additive atomic copies;
 an error installing Japan must not prevent author installation or native listing.
 The five colour PNGs must retain their alpha/provenance and separate notices.
+
+The 2026-10-05 Ukiyo-e Gallery request adds a fourth independent pack. Use
+native theme discovery, wallpaper/plank selection and zoom/info cards without
+changing component code. Seed nested `theme/` files additively too, committing
+the marker only after the entire pack arrives. Never auto-select the theme or
+rewrite ornament enablement/colours/wallpapers; its frames join the ordinary
+session deck before the startup shuffle, not the author-matched pool. Keep
+each museum image's CC0 evidence and provenance. Museum works are scaled
+proportionally, never cropped, recoloured, mirrored or AI-reinterpreted. The
+generated washi/wood materials are separately identified. No third-party paid
+ornament-pack assets or text are bundled. Source materials/build tooling stay
+out of OTA packages; the runtime needs no network or image-processing tools.
 
 Source: `core/orbitui_author_ornaments.lua`, `adapters/orbitui_ornaments.lua`,
 `core/orbitui_runtime.lua`, `core/orbitui_japan_ornaments.lua`,
 `core/orbitui_ornament_install.lua`, `assets/ornaments/Modernists/`,
-`assets/ornaments/Authors/`, `assets/ornaments/Japan/`.
+`assets/ornaments/Authors/`, `assets/ornaments/Japan/`,
+`core/orbitui_ukiyoe_ornaments.lua`, `assets/ornaments/Ukiyo-e Gallery/`.
 Tests: `tests/test_author_ornaments.lua`, `test_ornament_seed.lua`,
-`test_japan_ornaments.lua`, `test_ornament_session.lua`, `test_ornament_assets.py`;
+`test_japan_ornaments.lua`, `test_ornament_session.lua`, `test_ornament_assets.py`,
+`test_ukiyoe_ornaments.lua`, `test_ukiyoe_assets.py`;
 `scripts/check-package.lua` requires all pack files.
 
 ## Recording an intentional contract change

@@ -22,6 +22,12 @@ function M.wrap(name, module, root)
                 if not japan_ok then
                     require("logger").warn("[OrbitUI] Could not install Japan ornaments:", japan_err)
                 end
+                local gallery_ok, gallery_err = pcall(function()
+                    return require("core/orbitui_ukiyoe_ornaments").seed(root, module)
+                end)
+                if not gallery_ok then
+                    require("logger").warn("[OrbitUI] Could not install Ukiyo-e Gallery:", gallery_err)
+                end
             end
             local all, packs = list(...)
             if not shuffled and all and #all > 0 then

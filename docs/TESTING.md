@@ -2,6 +2,18 @@
 
 ## Automated
 
+The unreleased Ukiyo-e Gallery adds 8 installer/native-theme cases, one session
+shuffle regression and 10 asset/build checks. The museum source-cache pixel
+audit is enabled with `UKIYOE_SOURCE_CACHE=/tmp/orbitui-ukiyoe-sources` (Pillow
+required). It checks actual source hashes and unchanged art pixels in all 27
+frames. CI can run metadata/hash/format checks without Pillow or networking;
+optional pixel audits clearly skip when their build-time inputs are absent.
+Both complete Lua/LuaJIT suites pass with 284 OrbitUI cases, 56 Python checks
+(including the source-cache pixel audit), 351 Bookshelf suites (two native
+SQLite skips), and 13 SimpleUI test files. All 41 translation catalogs pass.
+Repeat the release gates and sealed archive checks before publishing.
+Visual proof sheets are not physical e-ink acceptance; see `ORNAMENTS.md`.
+
 Alpha.18's Bento margin fix adds 12 OrbitUI cases executing the real page
 builder over geometry-only widget stubs. It covers independent column/stack
 margins, a warm layout cache, legacy module order, full-width/three-column rows,

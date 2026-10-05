@@ -1,0 +1,17 @@
+{
+  "tool": "built-in image_gen",
+  "license": "CC0 1.0 to the extent rights exist",
+  "note": "No historic artwork was given to an image-generation model. These are original material textures only. Source PNGs are preserved under scripts/artwork for reproducible builds, not shipped to readers.",
+  "textures": [
+    {
+      "source": "scripts/artwork/ukiyoe-washi.png",
+      "output": "theme/wallpaper.jpg",
+      "prompt": "Asset type: production background texture for a KOReader bookshelf theme, portrait 3:4. Generate one original blank Japanese washi paper texture, straight-on flat scan, filling the entire image edge to edge. Warm ivory very near white (#f4f1e7), barely visible fine mulberry fibres and subtle irregular paper grain, extremely low contrast so black small text remains legible on a colour e-ink display. Even diffuse flat illumination. No edges of the sheet, no shadows, no gradient vignette, no frame, no writing, no kanji, no art, no stains, no symbols, no objects. This is a quiet reading interface background, not an illustration. Output only the seamless-feeling paper surface."
+    },
+    {
+      "source": "scripts/artwork/ukiyoe-hinoki.png",
+      "output": "theme/plank.Hinoki.middle.png",
+      "prompt": "Asset type: original seamless-feeling material texture for a Japanese hinoki wood bookshelf in a colour e-ink reading interface. Generate a close-up straight-on flat scan of pale, finely sanded, unfinished Japanese cypress wood. Horizontal long fine grain, subtle restrained warm honey and cream colours, a few very gentle flowing grain lines, no big knots, no cracks. Fill the entire wide 3:1 rectangular image edge to edge with the wood surface. Uniform flat illumination, no perspective, no shading, no shadows, no border, no bevels, no surrounding wall, no objects, no books, no text. Low-contrast natural grain that stays quiet at tiny UI shelf sizes. This is a source wood material swatch; the shelf shape is composed separately in code."
+    }
+  ]
+}

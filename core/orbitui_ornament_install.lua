@@ -46,6 +46,10 @@ function M.seed(root, ornaments_dir, packs)
             assert(ensure(settingsDir()) and ensure(target), "Cannot create ornament pack folder")
             for _, file in ipairs(pack.files) do
                 if not fs.attributes(target .. "/" .. file, "mode") then
+                    local parent = file:match("^(.+)/[^/]+$")
+                    if parent then
+                        assert(ensure(target .. "/" .. parent), "Cannot create ornament theme folder")
+                    end
                     copy(source .. file, target .. "/" .. file)
                 end
             end
