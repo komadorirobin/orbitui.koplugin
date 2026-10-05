@@ -3,8 +3,11 @@ UKIYO-E GALLERY
 An independent OrbitUI pack: 27 public-domain museum prints, original frames,
 one washi wallpaper and one hinoki-style shelf material. Not the Ko-fi pack.
 
-Automatic OrbitUI installation only adds files. It does not activate a theme
-or replace your wallpaper, shelf material, colours, or ornament preferences.
+Automatic OrbitUI installation adds the pack without activating a theme or
+replacing your wallpaper, shelf material, colours, or ornament preferences.
+The reviewed v2 metadata upgrade raises untouched frames 12% of the shelf's
+stand height above the plank and expands their information cards. It preserves
+edited fields, explicit reader positioning, deleted files and all image bytes.
 
 Use Wallpaper, ornaments and colours > Ornament collection > Ukiyo-e Gallery
 to enable or disable individual prints. Tap a print on the shelf to zoom and
@@ -17,6 +20,13 @@ separately instead of selecting the complete Shelf theme.
 
 Ordinary frames follow OrbitUI's one-decoration-per-row and session shuffle
 rules; author busts keep their matching priority. No runtime museum downloads.
+
+Catalogue details (title, artist, date, medium, measurements and credit) come
+from the image's museum record. Swedish commentary is an AI-assisted OrbitUI
+editorial summary of the museum sources listed in each card, not a verbatim
+museum text or text from the paid ornament pack. Visual interpretations are
+identified where used. Supplementary sources may describe another impression
+or a related work; measurements always refer to the pictured museum copy.
 
 Manual installation: extract the entire "Ukiyo-e Gallery" folder into
 koreader/settings/bookshelf/ornaments/. Keep its theme/ subfolder intact.

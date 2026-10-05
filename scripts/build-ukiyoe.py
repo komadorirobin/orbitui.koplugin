@@ -22,6 +22,9 @@ ART_EDGE = 768
 FRAME = 14
 MAT = 16
 PAD = 4
+WALL_LIFT = .12
+BASELINE_COMMIT = "17b3970c70985c3777d8552ac89b28a48d7129a9"
+BASELINE = ROOT / "assets/ornament-updates/ukiyoe-gallery-v1.json"
 MUSEUMS = {
     "cma": ("The Cleveland Museum of Art", "https://www.clevelandart.org/open-access"),
     "met": ("The Metropolitan Museum of Art", "https://www.metmuseum.org/hubs/open-access"),
@@ -67,7 +70,7 @@ def museum_record(selection, cache, online):
         assert "woodblock" in item["technique"].lower(), item["technique"]
         data = dict(title=item["title"], artist="; ".join(
             c["description"] for c in item["creators"] if c["role"] == "artist"),
-            date=item["creation_date"], medium=item["technique"],
+            date=item["creation_date"], medium=item["technique"], measurements=item["measurements"],
             accession=item["accession_number"], credit=item["creditline"],
             object_url=item["url"], image_url=item["images"]["web"]["url"],
             rights_evidence={"share_license_status": "CC0"})
@@ -75,7 +78,7 @@ def museum_record(selection, cache, online):
         assert doc["objectID"] == oid and doc["isPublicDomain"] is True
         assert "woodblock" in doc["medium"].lower(), doc["medium"]
         data = dict(title=doc["title"], artist=doc["artistDisplayName"],
-            date=doc["objectDate"], medium=doc["medium"], accession=doc["accessionNumber"],
+            date=doc["objectDate"], medium=doc["medium"], measurements=doc["dimensions"], accession=doc["accessionNumber"],
             credit=doc["creditLine"], object_url=doc["objectURL"],
             image_url=doc["primaryImage"], rights_evidence={"isPublicDomain": True})
     original = cache / f"{museum}-{oid}.jpg"
@@ -94,7 +97,7 @@ def framed(original):
     w, h = art.width + 2 * margin, art.height + 2 * margin
     out = Image.new("RGBA", (w + PAD * 2, h + PAD), (0, 0, 0, 0))
     draw = ImageDraw.Draw(out)
-    # The frame touches the bottom edge; no transparent pedestal or floating gap.
+    # Keep the PNG flush at the bottom; native lift supplies the wall clearance.
     draw.rectangle((PAD + 2, PAD + 2, w + PAD + 2, h + PAD - 1), fill=(30, 25, 20, 40))
     x, y = PAD, PAD
     draw.rectangle((x, y, x + w - 1, y + h - 1), fill="#292820")
@@ -153,8 +156,8 @@ def preview(assets):
 *{box-sizing:border-box}body{margin:0;background:#f4f0e6 url('../assets/ornaments/Ukiyo-e%20Gallery/theme/wallpaper.jpg');color:#262923;font:18px Georgia,serif;padding:40px}
 header{max-width:880px;margin:0 auto 40px}h1{font-size:44px;font-weight:400;margin-bottom:12px}p{line-height:1.6}button{padding:12px 18px;border:1px solid #797365;background:#f4f0e6;font:inherit;cursor:pointer}
 main{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:36px 24px;max-width:1400px;margin:auto}figure{margin:0;text-align:center;min-width:0}.art{height:230px;display:flex;align-items:end;justify-content:center;border-bottom:12px solid #cdb187;box-shadow:0 5px 5px #493d3322}
-img{max-width:96%;max-height:220px;object-fit:contain}figcaption{font-size:15px;line-height:1.3;padding:12px 0}small{display:block;font-size:12px;margin-top:5px}body.bw main{filter:grayscale(1)}
-@media(max-width:900px){main{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:540px){body{padding:18px}main{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}.art{height:190px}img{max-height:180px}h1{font-size:32px}}
+img{max-width:96%;max-height:190px;margin-bottom:28px;object-fit:contain}figcaption{font-size:15px;line-height:1.3;padding:12px 0}small{display:block;font-size:12px;margin-top:5px}body.bw main{filter:grayscale(1)}
+@media(max-width:900px){main{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:540px){body{padding:18px}main{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}.art{height:190px}img{max-height:150px}h1{font-size:32px}}
 </style><header><h1>Ukiyo-e Gallery</h1><p>27 museum originals. Own frames, washi and hinoki-style shelf. This is an asset contact sheet, not a KOReader emulator. Click a print's museum link in provenance.json for the original.</p><button onclick="document.body.classList.toggle('bw')">Colour / grayscale preview</button></header><main>'''
     (ROOT / "docs/ukiyoe-gallery-preview.html").write_text(text + "\n".join(images) + "</main></html>\n", encoding="utf-8")
 
@@ -168,8 +171,8 @@ def contact_sheet(assets):
         x, y = (index % 5) * 300, (index // 5) * 280
         with Image.open(PACK / a["file"]) as source:
             thumb = source.copy()
-            thumb.thumbnail((260, 235), Image.Resampling.LANCZOS)
-        sheet.paste(thumb, (x + (300-thumb.width)//2, y + 240-thumb.height), thumb)
+            thumb.thumbnail((260, 205), Image.Resampling.LANCZOS)
+        sheet.paste(thumb, (x + (300-thumb.width)//2, y + 211-thumb.height), thumb)
         draw.rectangle((x+10, y+240, x+290, y+250), fill="#c3a67b")
         draw.text((x+12, y+258), a["file"][:-4], fill="#202020", font=font)
     output = ROOT / "dist"
@@ -180,12 +183,25 @@ def contact_sheet(assets):
 
 def build(args):
     selection = json.loads((ROOT / "scripts/artwork/ukiyoe-selection.json").read_text())
+    context = json.loads((ROOT / "scripts/artwork/ukiyoe-context.json").read_text())
+    assert set(context) == {pick["file"] for pick in selection}
+    # Frozen alpha.19 defaults for a field-wise, non-destructive reader upgrade.
+    # Generated only once; ordinary rebuilds never require historical Git data.
+    if not BASELINE.exists():
+        old_files = {name: subprocess.check_output([
+            "git", "show", f"{BASELINE_COMMIT}:assets/ornaments/{PACK_NAME}/{name}"
+        ], cwd=ROOT).decode("utf-8") for name in
+            ("ornaments.json", "provenance.json", "ATTRIBUTION.txt", "README.txt")}
+        write_json(BASELINE, dict(source_commit=BASELINE_COMMIT, files=old_files))
     PACK.mkdir(parents=True, exist_ok=True)
     previous = PACK / "provenance.json"
     locked = {a["file"]: a for a in json.loads(previous.read_text())["artworks"]} if previous.exists() else {}
     assets, settings = [], {}
     for pick in selection:
         data, original = museum_record(pick, args.cache, args.fetch)
+        data["note"] = context[pick["file"]]["summary"]
+        data["note_sources"] = list(dict.fromkeys([data["object_url"], *context[pick["file"]]["sources"]]))
+        data["note_credit"] = "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext."
         if pick["file"] in locked:
             assert data["source_sha256"] == locked[pick["file"]]["source_sha256"], "Museum source changed; review before rebuilding"
             assert data["record_sha256"] == locked[pick["file"]]["record_sha256"], "Museum metadata changed; review before rebuilding"
@@ -198,12 +214,15 @@ def build(args):
         image.save(PACK / pick["file"], optimize=True, pnginfo=pnginfo)
         data.update(sha256=digest(PACK / pick["file"]), dimensions=list(image.size), art_box=list(box))
         assets.append(data)
-        settings[pick["file"]] = dict(scale=.95, anchor="bottom", lift=0, pad=.02,
+        settings[pick["file"]] = dict(scale=.95, anchor="bottom", lift=WALL_LIFT, pad=.02,
             night="off", mirror="off", tap="zoom", info="\n\n".join([
-                data["title"], data["artist"] + " | " + data["date"], pick["note"],
-                data["medium"], data["museum_name"] + " | " + data["accession"], data["credit"],
+                data["title"], data["artist"] + " | " + data["date"],
+                data["medium"] + "\nMått (museets exemplar): " + data["measurements"],
+                data["note"], data["note_credit"],
+                data["museum_name"] + " | " + data["accession"], data["credit"],
                 "Museibild: public domain / CC0 1.0. Originalet är proportionerligt förminskat, inte beskuret eller AI-bearbetat. Inramning: OrbitUI.",
-                data["object_url"], CC0]))
+                "Källor till kataloguppgifter och kommentar:\n" + "\n".join(data["note_sources"]), CC0]))
+        assert len(settings[pick["file"]]["info"].encode("utf-8")) <= 4000, "Native info card byte limit exceeded"
         print(pick["file"], data["dimensions"], flush=True)
     write_json(PACK / "ornaments.json", settings)
     theme(args.washi, args.hinoki)
@@ -218,13 +237,15 @@ def build(args):
         "Rights were checked per object via each museum's API; evidence, URLs and source hashes are in provenance.json.",
         "Museum names identify sources, not endorsements. No museum logos are included.",
         "This is not AndyHazz's Ko-fi pack. No files, frames, textures or descriptions from that pack were used.",
-        "The short Swedish viewing notes and frames are original OrbitUI additions.",
+        "The Swedish commentaries are AI-assisted OrbitUI editorial summaries of the cited museum sources, not verbatim museum texts.",
+        "Supplementary sources may describe another impression or a related work; dimensions and dates always belong to the image's own museum record.",
         "Washi and wood materials were originally generated with the built-in image_gen tool; details in texture-prompts.json.",
         "Original frames, notes and generated materials: CC0 1.0 to the extent rights exist.", "",
         *[f"{name}: {policy}" for name, policy in MUSEUMS.values()], ""]
     for a in assets:
         notices += [a["file"], a["artist"], a["title"], a["date"], a["medium"],
-                    a["museum_name"] + ", " + a["accession"], a["credit"], a["object_url"], "CC0 1.0", ""]
+                    a["measurements"], a["museum_name"] + ", " + a["accession"], a["credit"], a["object_url"],
+                    "Commentary sources: " + "; ".join(a["note_sources"]), "CC0 1.0 (museum image); original OrbitUI summary", ""]
     (PACK / "ATTRIBUTION.txt").write_text("\n".join(notices), encoding="utf-8")
     preview(assets)
     contact_sheet(assets)
@@ -234,7 +255,9 @@ def build(args):
              "local M = {}", f'M.pack = "{PACK_NAME}"', "M.packs = {", "    { name = M.pack, marker = \"ornament-ukiyoe-gallery-v1.installed\", files = {"]
     lines += ["        " + json.dumps(name) + "," for name in files]
     lines += ["    } },", "}", "", "function M.seed(root, ornaments)",
-              '    return require("core/orbitui_ornament_install").seed(root, ornaments.dir(), M.packs)', "end", "", "return M", ""]
+              '    local changed = require("core/orbitui_ornament_install").seed(root, ornaments.dir(), M.packs)',
+              '    local updated = require("core/orbitui_ukiyoe_update").apply(root, ornaments.dir())',
+              '    return changed or updated', "end", "", "return M", ""]
     (ROOT / "core/orbitui_ukiyoe_ornaments.lua").write_text("\n".join(lines))
 
 

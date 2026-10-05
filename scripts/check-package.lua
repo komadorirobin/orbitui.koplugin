@@ -35,6 +35,7 @@ for _, path in ipairs({
     "core/orbitui_vector_icons.lua",
     "core/orbitui_author_ornaments.lua", "core/orbitui_japan_ornaments.lua",
     "core/orbitui_ukiyoe_ornaments.lua",
+    "core/orbitui_ukiyoe_update.lua", "assets/ornament-updates/ukiyoe-gallery-v1.json",
     "core/orbitui_ornament_install.lua", "adapters/orbitui_ornaments.lua",
     "assets/vector-icons/selection.json", "assets/vector-icons/generated.json", "assets/vector-icons/NOTICE.txt",
     "assets/vector-icons/SOLAR-LICENSE.txt", "assets/vector-icons/TABLER-LICENSE.txt",

@@ -2,6 +2,8 @@ package.path = "./?.lua;./components/bookshelf/?.lua;" .. package.path
 local H = require("tests/helpers")
 local Gallery = require("core/orbitui_ukiyoe_ornaments")
 local Adapter = require("adapters/orbitui_ornaments")
+-- Upgrade behavior has its own suite; keep these installation fixtures opaque.
+package.loaded["core/orbitui_ukiyoe_update"] = { apply = function() return false end }
 local original_open, original_rename, original_remove = io.open, os.rename, os.remove
 local pack = Gallery.packs[1]
 local source = "/slot/assets/ornaments/" .. pack.name .. "/"

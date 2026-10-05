@@ -55,6 +55,11 @@ frames, native zoom/info cards and an optional washi/Hinoki-style theme. No
 existing theme is activated or replaced. See [the gallery preview](docs/ukiyoe-gallery-preview.html)
 and [installation/source notes](docs/ORNAMENTS.md#ukiyo-e-gallery-alpha19).
 
+Unreleased gallery correction: frames hang above the plank rather than stand
+on it. Expanded Swedish, source-linked commentary and museum measurements replace
+the short visual notes. A guarded metadata upgrade reaches existing alpha.19
+installations without replacing artwork, user captions or manual positioning.
+
 The alpha.6 preview added 110 offline Material Symbols Rounded icons, including
 manga. A Bigme startup crash was reported after applying its whole-pack preset.
 If that prevents startup, see the non-destructive [recovery patch](recovery/README.md).
@@ -139,7 +144,7 @@ to the extent applicable. Original portrait interpretations are distinguished
 from adaptations of source photographs or scans.
 
 Ukiyo-e Gallery uses individually verified CC0 museum images, with independent
-frames/Swedish viewing notes and separately identified AI-generated material
+frames/AI-assisted Swedish commentary and separately identified AI-generated material
 textures. Its provenance and credits are in
 `assets/ornaments/Ukiyo-e Gallery/ATTRIBUTION.txt` and `provenance.json`.
 No assets or descriptions from a paid ornament pack are redistributed.

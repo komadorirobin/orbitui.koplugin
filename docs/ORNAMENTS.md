@@ -8,15 +8,25 @@ Each object's image is explicitly CC0 in the Cleveland Museum of Art API or
 public domain in The Met API under its CC0 Open Access policy. Individual
 source URLs, rights evidence, credits and SHA-256 hashes accompany the pack.
 This is not AndyHazz's Ko-fi collection; no paid-pack files or descriptions
-were used. The selection, frames and Swedish viewing notes are independent.
+were used. The selection, frames and Swedish commentaries are independent.
 
 The museum art is only reduced proportionally with LANCZOS, preserving the
 complete image, colour and orientation. No cropping, quantization, recolouring
 or AI reinterpretation. Warm dark frames have a light mat, subtle bevel and
-transparent exterior; the frame meets the shelf with zero lift. Native tap to
-zoom shows title, artist, date, viewing note, museum credit and source. Artwork
+transparent exterior. The unreleased correction raises frames 12% of the
+shelf's stand height above the plank (alpha.19 used zero lift). Native tap to
+zoom shows title, artist, date, measurements, commentary, museum credit and sources. Artwork
 does not mirror or invert at night. Only the washi/wood **material textures**
-are AI-generated; prompts and original source-image hashes are supplied.
+are AI-generated images; prompts and original source-image hashes are supplied.
+
+Alpha.19's short visual notes were written for OrbitUI, not copied from museum
+wall labels. The unreleased expanded Swedish texts are AI-assisted editorial
+summaries of museum catalogue/curatorial sources, explicitly labelled as such.
+They are not direct translations or museum-authored Swedish texts. Cards link
+all their sources and retain uncertainties in the museum's interpretations.
+Additional sources sometimes discuss a related work or another impression;
+dimensions, date and credit always come from the pictured object's own record.
+The editable source text lives in `scripts/artwork/ukiyoe-context.json`.
 
 The pack also contains one quiet washi wallpaper and a named Hinoki-style plank
 using Bookshelf's native three-band, 80/20 surface/face template. The repeated
@@ -33,8 +43,18 @@ Frames use the same session shuffle, one-ordinary-piece-per-row cap and author
 bust priority as other ordinary ornaments. Nested theme files are seeded once
 to `koreader/settings/bookshelf/ornaments/Ukiyo-e Gallery/`, with their own
 `ornament-ukiyoe-gallery-v1.installed` marker. Copies are additive and atomic;
-existing files are not overwritten, completed installs do not restore deletions,
+initial copies do not overwrite existing files, completed installs do not restore deletions,
 and a failure cannot crash the browser or commit an incomplete installation.
+
+The wall/info correction adds the independent `ornament-ukiyoe-gallery-v2.updated`
+marker. It compares installed metadata against a frozen alpha.19 baseline and
+changes only untouched `lift` and `info` fields. Explicit reader height, anchor
+or size adjustments prevent automatic repositioning; pack size/anchor edits do
+too. The reader's own settings file is never written. Deleted entries, images
+and packs stay deleted. Default notices/provenance update only if byte-identical
+to their old versions; edited copies survive. Writes are atomic and interrupted
+upgrades retry on the next process. Image bytes, active themes and author-bust
+placement remain unchanged.
 
 ### Rebuilding and verifying
 
@@ -57,7 +77,8 @@ the proportionally scaled museum originals. Theme/seeding tests execute the
 native theme scanner and installation failure paths. Desktop previews and
 grayscale conversion are not a native KOReader or physical e-ink test.
 
-Device acceptance still required: check colour/grayscale clarity, tall/wide
+Device acceptance still required: check colour/grayscale clarity, the visible
+wall gap at several shelf sizes, tall/wide
 frame placement, tap-to-zoom and info scrolling, native theme/individual-part
 selection, author-bust priority, paging/restart stability and upgrades retaining
 customized or deleted artwork. The single-pack install ZIP, if used manually,

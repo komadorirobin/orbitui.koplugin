@@ -2,6 +2,18 @@
 
 ## Automated
 
+The unreleased gallery wall/info correction adds 10 Lua/LuaJIT cases for the
+v1-to-v2 metadata migration and native placement calculations across 60
+height/aspect/width combinations. Tests preserve reader/pack overrides, images,
+theme files and deletions, and exercise corrupt JSON, failed writes/renames and
+partial-upgrade retries. A Python regression locks unchanged PNG/theme bytes
+against alpha.19 and checks that only lift/info defaults change. Info cards
+remain below the native 4000-byte (not character) limit and label their sources.
+Full Lua and LuaJIT runs passed: 294 OrbitUI cases, 57 Python checks (including
+the museum-original pixel audit), 351 Bookshelf suites (two native SQLite skips)
+and all 13 SimpleUI test files. Translation validation passed all 41 checks.
+The full release gates remain required; none of these tests simulate Bigme UI.
+
 Alpha.19's Ukiyo-e Gallery adds 8 installer/native-theme cases, one session
 shuffle regression and 10 asset/build checks. The museum source-cache pixel
 audit is enabled with `UKIYOE_SOURCE_CACHE=/tmp/orbitui-ukiyoe-sources` (Pillow

@@ -323,7 +323,7 @@ forwards it as `opts.row_accept` to `SpineLayout.balanceRows`. Preserve those
 optional hooks without imposing OrbitUI's limit on standalone Bookshelf.
 
 Seed assets from the selected OTA runtime once, with attribution and notices.
-Never overwrite existing artwork or placement files, resurrect deleted packs,
+Never overwrite existing artwork or user-customized placement fields, resurrect deleted packs,
 or mark a failed copy complete. An installation error must not crash startup.
 The software license must not obscure the separate artwork licenses.
 New bundled packs use independent install markers: adding Authors must not
@@ -348,14 +348,24 @@ generated washi/wood materials are separately identified. No third-party paid
 ornament-pack assets or text are bundled. Source materials/build tooling stay
 out of OTA packages; the runtime needs no network or image-processing tools.
 
+The user's subsequent wall-placement/info correction permits a narrow v2
+metadata migration, not a new seed or general overwrite policy. Compare against
+frozen alpha.19 defaults: change untouched `lift` (0 to 0.12) and `info` only.
+Preserve explicit reader positioning, edited fields and deleted records/files;
+never rewrite reader settings or PNGs. Untouched notices/provenance may follow
+the new metadata. Commit the independent update marker only after all atomic
+writes succeed. Keep museum catalogue facts separate from labelled AI-assisted
+Swedish editorial summaries and retain each summary's primary-source URLs.
+
 Source: `core/orbitui_author_ornaments.lua`, `adapters/orbitui_ornaments.lua`,
 `core/orbitui_runtime.lua`, `core/orbitui_japan_ornaments.lua`,
 `core/orbitui_ornament_install.lua`, `assets/ornaments/Modernists/`,
 `assets/ornaments/Authors/`, `assets/ornaments/Japan/`,
-`core/orbitui_ukiyoe_ornaments.lua`, `assets/ornaments/Ukiyo-e Gallery/`.
+`core/orbitui_ukiyoe_ornaments.lua`, `core/orbitui_ukiyoe_update.lua`,
+`assets/ornaments/Ukiyo-e Gallery/`, `assets/ornament-updates/ukiyoe-gallery-v1.json`.
 Tests: `tests/test_author_ornaments.lua`, `test_ornament_seed.lua`,
 `test_japan_ornaments.lua`, `test_ornament_session.lua`, `test_ornament_assets.py`,
-`test_ukiyoe_ornaments.lua`, `test_ukiyoe_assets.py`;
+`test_ukiyoe_ornaments.lua`, `test_ukiyoe_update.lua`, `test_ukiyoe_assets.py`;
 `scripts/check-package.lua` requires all pack files.
 
 ## Recording an intentional contract change

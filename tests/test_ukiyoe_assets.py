@@ -77,13 +77,37 @@ class UkiyoeAssetsTests(unittest.TestCase):
             self.assertEqual(entry["night"], "off")
             self.assertEqual(entry["tap"], "zoom")
             self.assertEqual(entry["anchor"], "bottom")
-            self.assertEqual(entry["lift"], 0)
+            self.assertEqual(entry["lift"], .12)
             self.assertTrue(.5 <= entry["scale"] <= 1)
             self.assertTrue(0 <= entry["pad"] <= .05)
-            self.assertLess(len(entry["info"]), 4000)
+            self.assertLessEqual(len(entry["info"].encode("utf-8")), 4000)
             for value in (a["title"], a["artist"], a["date"], a["credit"],
-                          a["object_url"], a["license_url"], a["note"]):
+                          a["object_url"], a["license_url"], a["note"], a["measurements"], a["note_credit"]):
                 self.assertIn(value, entry["info"])
+            self.assertIn("inte museets originaltext", entry["info"])
+            self.assertGreater(len(a["note"].split()), 45)
+            for url in a["note_sources"]:
+                self.assertIn(url, entry["info"])
+                self.assertIn(urlparse(url).hostname,
+                              {"clevelandart.org", "www.clevelandart.org", "www.metmuseum.org",
+                               "exhibitions.bristolmuseums.org.uk"})
+
+    def test_update_baseline_is_the_published_pack_and_artwork_is_unchanged(self):
+        baseline = json.loads((ROOT / "assets/ornament-updates/ukiyoe-gallery-v1.json").read_text())
+        self.assertEqual(baseline["source_commit"], "17b3970c70985c3777d8552ac89b28a48d7129a9")
+        self.assertEqual(set(baseline["files"]), {"ornaments.json", "provenance.json", "README.txt", "ATTRIBUTION.txt"})
+        before = json.loads(baseline["files"]["ornaments.json"])
+        after = json.loads((PACK / "ornaments.json").read_text())
+        for name in before:
+            self.assertEqual(before[name]["lift"], 0)
+            self.assertEqual(after[name]["lift"], .12)
+            self.assertNotEqual(before[name]["info"], after[name]["info"])
+            self.assertEqual({k: v for k, v in before[name].items() if k not in ("lift", "info")},
+                             {k: v for k, v in after[name].items() if k not in ("lift", "info")})
+        old_provenance = json.loads(baseline["files"]["provenance.json"])
+        self.assertEqual({a["file"]: a["sha256"] for a in old_provenance["artworks"]},
+                         {a["file"]: a["sha256"] for a in ARTWORKS})
+        self.assertEqual(old_provenance["theme_assets"], PROVENANCE["theme_assets"])
 
     def test_theme_has_one_wallpaper_one_native_named_plank_and_no_forced_colours(self):
         theme = PACK / "theme"

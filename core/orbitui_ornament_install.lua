@@ -34,6 +34,20 @@ function M.mark(source, marker)
     copy(source, settingsDir() .. "/" .. marker)
 end
 
+-- Metadata upgrades must leave the previous file intact if writing fails.
+function M.write(target, text)
+    local temporary, output = target .. ".orbitui-tmp"
+    local ok, err = pcall(function()
+        output = assert(io.open(temporary, "wb"))
+        assert(output:write(text))
+        assert(output:close())
+        output = nil
+        assert(os.rename(temporary, target))
+    end)
+    if output then pcall(output.close, output) end
+    if not ok then os.remove(temporary); error(err) end
+end
+
 -- Independent markers avoid overwriting edits or resurrecting deleted packs.
 function M.seed(root, ornaments_dir, packs)
     local fs = require("libs/libkoreader-lfs")

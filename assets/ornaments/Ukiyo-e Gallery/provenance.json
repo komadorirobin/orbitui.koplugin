@@ -6,6 +6,7 @@
       "artist": "Katsushika Hokusai",
       "date": "ca. 1830–32",
       "medium": "Woodblock print; ink and color on paper",
+      "measurements": "10 1/8 x 14 15/16 in. (25.7 x 37.9 cm)",
       "accession": "JP1847",
       "credit": "H. O. Havemeyer Collection, Bequest of Mrs. H. O. Havemeyer, 1929",
       "object_url": "https://www.metmuseum.org/art/collection/search/45434",
@@ -16,7 +17,7 @@
       "museum": "met",
       "id": 45434,
       "file": "Hokusai - Great Wave.png",
-      "note": "Tre smala båtar möter en stor våg. Berget Fuji syns litet i bakgrunden.",
+      "note": "Den stora vågen ingår i Hokusais Trettiosex vyer av berget Fuji. Perspektivet gör Japans högsta berg till en liten triangel i öppningen under vågkammen: det beständiga berget ställs mot vattnets våldsamma rörelse. The Met framhåller också hur Hokusais landskap blev kända för en palett med indigo och importerat preussiskt blått. Fuji är alltså inte bara en bakgrundsdetalj utan det återkommande motiv som binder ihop hela serien.",
       "museum_name": "The Metropolitan Museum of Art",
       "policy_url": "https://www.metmuseum.org/hubs/open-access",
       "license": "CC0 1.0",
@@ -24,6 +25,10 @@
       "api_url": "https://collectionapi.metmuseum.org/public/collection/v1/objects/45434",
       "source_sha256": "cbb9988f2f18b9180a1cc0cf5dbb0e3bbf8f2e85d17930cf6ca9ab36fac36303",
       "record_sha256": "eddd9f43c0d80b176c53a895ef2776f8d77010ce5ac945a3bdeb043a2bc8d72e",
+      "note_sources": [
+        "https://www.metmuseum.org/art/collection/search/45434"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         3859,
         2594
@@ -45,6 +50,7 @@
       "artist": "Katsushika Hokusai (Japanese, 1760–1849)",
       "date": "early 1830s",
       "medium": "color woodblock print",
+      "measurements": "25.6 x 37.5 cm (10 1/16 x 14 3/4 in.)",
       "accession": "1930.189",
       "credit": "Bequest of Edward L. Whittemore",
       "object_url": "https://clevelandart.org/art/1930.189",
@@ -55,7 +61,7 @@
       "museum": "cma",
       "id": 111654,
       "file": "Hokusai - Red Fuji.png",
-      "note": "Fuji i rött mot en blå himmel, med små moln och en mörk skog vid bergets fot.",
+      "note": "Detta blad ur Trettiosex vyer av berget Fuji kallas ofta Röda Fuji. Cleveland Museum of Art kopplar den röda bergssidan till tiden mellan sensommar och tidig höst. Fuji förekom ofta i 1800-talets japanska reselitteratur; kartor kunde markera både berget och platser med särskilt bra utsikt. Serien visar därför inte bara ett berg, utan också ett landskap som resenärer kände igen och sökte upp.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -63,6 +69,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/111654",
       "source_sha256": "b0f546cc1972fb8e7ef84d21eb7d30805de189297a22a248b1ecaf11c5b5468d",
       "record_sha256": "c43948cada7517c7775eefb80515b131b4cd4f68235da11fc33c1f97334f618a",
+      "note_sources": [
+        "https://clevelandart.org/art/1930.189"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         900,
         617
@@ -84,6 +94,7 @@
       "artist": "Katsushika Hokusai (Japanese, 1760–1849)",
       "date": "early 1830s",
       "medium": "color woodblock print",
+      "measurements": "Overall: 25.4 x 38.4 cm (10 x 15 1/8 in.)",
       "accession": "1940.1002",
       "credit": "Bequest of James Parmelee",
       "object_url": "https://clevelandart.org/art/1940.1002",
@@ -94,7 +105,7 @@
       "museum": "cma",
       "id": 118800,
       "file": "Hokusai - Rain Below the Mountain.png",
-      "note": "Mörka moln och blixtar samlas nedanför Fujis lugna topp.",
+      "note": "Museet menar att Hokusai sannolikt utformade detta blad som en pendang till Röda Fuji. Där den andra bilden visar klart väder låter han här en plötslig skur och mörka moln omsluta bergets nedre delar. Kontrasten mellan den lugna toppen och ovädret nedanför visar samma berg under helt andra förhållanden. Båda bladen ingår i Trettiosex vyer av berget Fuji.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -102,6 +113,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/118800",
       "source_sha256": "cf8c01bdc069c8d8dd79028fc55e74c58032eb09e7982fd95d38b7d3fd8ddbe9",
       "record_sha256": "7961c6890688ad532d3a893859946a4486ca67ec9a3093336cc2c071656e23bd",
+      "note_sources": [
+        "https://clevelandart.org/art/1940.1002"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         1263,
         852
@@ -123,6 +138,7 @@
       "artist": "Katsushika Hokusai (Japanese, 1760–1849)",
       "date": "early 1830s",
       "medium": "color woodblock print",
+      "measurements": "Sheet: 38.3 x 26.4 cm (15 1/16 x 10 3/8 in.)",
       "accession": "1916.1137",
       "credit": "Gift of Mr. and Mrs. J. H. Wade",
       "object_url": "https://clevelandart.org/art/1916.1137",
@@ -133,7 +149,7 @@
       "museum": "cma",
       "id": 95381,
       "file": "Hokusai - Ono Waterfall.png",
-      "note": "Ett vattenfall löper som ett ljust band mellan berg och grönska.",
+      "note": "Bladet hör till Hokusais En rundtur till vattenfallen i provinserna, inte till hans mer kända serie med Fuji-vyer. Titeln placerar Ono-vattenfallet vid Kiso-vägen. Det höga formatet låter vattenfallet löpa nästan genom hela bilden, medan vägen och de små figurerna visar landskapets skala. Motivets geografiska namn och serietillhörighet kommer från museets katalog; iakttagelsen om kompositionen är OrbitUIs bildläsning.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -141,6 +157,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/95381",
       "source_sha256": "852183ea65b12393fa5f1a6075cadc321b657380f4f65bb3a8aba2cd13d894c8",
       "record_sha256": "767515a7a35f70e2becf0fe22565ba350bdc4c645681ffec3dae71e817deeafe",
+      "note_sources": [
+        "https://clevelandart.org/art/1916.1137"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         628,
         900
@@ -162,6 +182,7 @@
       "artist": "Katsushika Hokusai (Japanese, 1760–1849)",
       "date": "early 1830s",
       "medium": "color woodblock print",
+      "measurements": "Overall: 25.6 x 37.6 cm (10 1/16 x 14 13/16 in.)",
       "accession": "1985.325",
       "credit": "The Kelvin Smith Collection, given by Mrs. Kelvin Smith",
       "object_url": "https://clevelandart.org/art/1985.325",
@@ -172,7 +193,7 @@
       "museum": "cma",
       "id": 152504,
       "file": "Hokusai - Lake Misaka.png",
-      "note": "Berget Fuji och dess spegelbild möter varandra över sjöns stilla vatten.",
+      "note": "Det finns en avsiktlig överraskning i sjön: Fujis spegelbild har en snötäckt topp trots att berget ovanför vattnet saknar snön. The Met beskriver detta som ett möjligt möte mellan två årstider. Berget och spegelbilden ligger dessutom något förskjutna åt var sitt håll, vilket balanserar kompositionen och drar blicken mot vattnet. Den ensamma fiskebåten förstärker stillheten i denna vy från Trettiosex vyer av berget Fuji.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -180,6 +201,11 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/152504",
       "source_sha256": "db6ef3bf2986eb28b26a58125bea3af224bcbb405d4c691e4958afc381be646e",
       "record_sha256": "bbd1bac308aaef2a879fdcbbb30aac19c4efce9fc271a0fdf4038347dc751f9d",
+      "note_sources": [
+        "https://clevelandart.org/art/1985.325",
+        "https://www.metmuseum.org/art/collection/search/54868"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         1224,
         893
@@ -201,6 +227,7 @@
       "artist": "Katsushika Hokusai (Japanese, 1760–1849)",
       "date": "early 1830s",
       "medium": "color woodblock print",
+      "measurements": "Overall: 38 x 25.6 cm (14 15/16 x 10 1/16 in.)",
       "accession": "1924.965",
       "credit": "Gift of Mrs. Francis F. Prentiss for the Dudley P. Allen Collection",
       "object_url": "https://clevelandart.org/art/1924.965",
@@ -211,7 +238,7 @@
       "museum": "cma",
       "id": 106960,
       "file": "Hokusai - Brocade Bridge.png",
-      "note": "Brons upprepade bågar bildar en rytm genom landskapet.",
+      "note": "Kintai betyder ungefär brokadbälte: brons eleganta bågar har liknats vid ett böljande tygstycke över floden. Bristol Museums beskriver landmärket som en bro av sten och trä, uppförd 1673 på en lokal länsherres order. Hokusai tog med den i sin serie med märkvärdiga broar från olika provinser. Bågarna gör själva byggnadsverket till landskapets huvudmotiv snarare än bara en väg genom det.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -219,6 +246,11 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/106960",
       "source_sha256": "a8a2b0c023ddc5b8266434fa572de6f1be5dad37aae2b3ee6e400613f48cf9b0",
       "record_sha256": "3162a401e1fceb2b6522fbcf1be95b9c29b5e5b39430aa5ee85c8b6a893b97b5",
+      "note_sources": [
+        "https://clevelandart.org/art/1924.965",
+        "https://exhibitions.bristolmuseums.org.uk/japanese-prints/hokusai-hiroshige-landscapes/"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         900,
         613
@@ -240,6 +272,7 @@
       "artist": "Katsushika Hokusai (Japanese, 1760–1849)",
       "date": "1834–35",
       "medium": "color woodblock print",
+      "measurements": "Sheet: 52.1 x 23 cm (20 1/2 x 9 1/16 in.)",
       "accession": "1916.1145",
       "credit": "Gift of Mr. and Mrs. J. H. Wade",
       "object_url": "https://clevelandart.org/art/1916.1145",
@@ -250,7 +283,7 @@
       "museum": "cma",
       "id": 95392,
       "file": "Hokusai - Rush Gatherer.png",
-      "note": "En liten mänsklig figur omges av landskapets stora former.",
+      "note": "Bilden ingår i En sann spegel av kinesisk och japansk poesi. Cleveland Museum of Art föreslår, men slår inte fast, en koppling till en dikt från 1309 där höstmånen framträder genom träden på berget Sonahara medan diktjaget skär växter. Den lilla människan i landskapet kan alltså läsas i ett litterärt sammanhang, inte enbart som en skildring av arbete. Här återges museets tolkning i sammanfattning, inte någon modern översättning av själva dikten.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -258,6 +291,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/95392",
       "source_sha256": "1b92192c7a363099719d939deed2011965f97f8abd3e3464a522969c665d967d",
       "record_sha256": "56fb1eda748cfdc6ba7265c47023c4d9118e43305a22a3a3444be0095ceb161f",
+      "note_sources": [
+        "https://clevelandart.org/art/1916.1145"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         408,
         900
@@ -279,6 +316,7 @@
       "artist": "Katsushika Hokusai (Japanese, 1760–1849)",
       "date": "early 1830s",
       "medium": "color woodblock print",
+      "measurements": "Overall: 25.4 x 37.8 cm (10 x 14 7/8 in.)",
       "accession": "1940.1001",
       "credit": "Bequest of James Parmelee",
       "object_url": "https://clevelandart.org/art/1940.1001",
@@ -289,7 +327,7 @@
       "museum": "cma",
       "id": 118799,
       "file": "Hokusai - Boat Bridge at Sano.png",
-      "note": "En lång båtbro slingrar sig över vattnet i ett snötäckt landskap.",
+      "note": "Det som ser ut som en lång låg bro är en pontonbro: träplankor har lagts över en rad sammanbundna båtar. Bristol Museums framhåller hur brons diagonaler för blicken genom landskapet, nästan som om betraktaren själv vore en av resenärerna. Bladet tillhör Hokusais serie med märkvärdiga broar i olika provinser. Clevelandmuseets titel beskriver motivet som en äldre vy av bron vid Sano i provinsen Kōzuke.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -297,6 +335,11 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/118799",
       "source_sha256": "b5aa2f0541a847e815fe0e89818fd5e0121ec8b90ab0bed673c69b80dace4b17",
       "record_sha256": "c6d0f7800ce18d680202976c583776cbbde8cf1bf6dd5389ee867973da79c50f",
+      "note_sources": [
+        "https://clevelandart.org/art/1940.1001",
+        "https://exhibitions.bristolmuseums.org.uk/japanese-prints/hokusai-hiroshige-landscapes/"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         900,
         609
@@ -318,6 +361,7 @@
       "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
       "date": "1833",
       "medium": "color woodblock print",
+      "measurements": "38 x 25.4 cm (14 15/16 x 10 in.)",
       "accession": "1948.306",
       "credit": "Gift of Mrs. T. Wingate Todd from the Collection of Dr. T. Wingate Todd",
       "object_url": "https://clevelandart.org/art/1948.306",
@@ -328,7 +372,7 @@
       "museum": "cma",
       "id": 126086,
       "file": "Hiroshige - Rain at Shono.png",
-      "note": "Resande skyndar uppför en sluttning genom täta sneda regnstreck.",
+      "note": "Tre tryckblock behövdes för de tre gråtoner som skapar djup i bakgrundens bambusnår. På en resandes paraply står förläggarnamnet Takenouchi och en del av seriens titel. Shōno var en mindre raststation längs Tōkaidō, vägen mellan Kyoto och Edo, dagens Tokyo. Hiroshige gör vädret till bildens drivkraft: regnets sneda linjer och resenärernas rörelser berättar tillsammans om den plötsliga skuren.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -336,6 +380,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/126086",
       "source_sha256": "7c73441354a2c00bbd4eb869819e7cc0d342bdc1bb5dacae95dd60a4bf610802",
       "record_sha256": "47bda85197ed93bdaf82b0e952d8d0c4c190c26494cf1839421e6f497d50b9d1",
+      "note_sources": [
+        "https://clevelandart.org/art/1948.306"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         900,
         601
@@ -357,6 +405,7 @@
       "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
       "date": "1857",
       "medium": "color woodblock print",
+      "measurements": "35.3 x 23.2 cm (13 7/8 x 9 1/8 in.)",
       "accession": "1921.318",
       "credit": "Gift from J. H. Wade",
       "object_url": "https://clevelandart.org/art/1921.318",
@@ -367,7 +416,7 @@
       "museum": "cma",
       "id": 103244,
       "file": "Hiroshige - Sudden Shower.png",
-      "note": "Människor på en bro söker skydd mot en plötslig regnskur.",
+      "note": "Trycket publicerades två år efter jordbävningen och branden 1855 och visar enligt museet den återuppbyggda stora bron över Sumidafloden i Edo. Människor som går åt motsatta håll försöker skydda sig mot regnskuren; stadsdelen Atake skymtar på avstånd. Bilden ingår i Hundra berömda vyer av Edo. Ett vardagligt väderomslag blir samtidigt en bild av en stad som nyligen hade behövt byggas upp igen.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -375,6 +424,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/103244",
       "source_sha256": "cade35ac7118eb78787b5b639d82f6087c1658ab1bfbfbd3af0654799ba38018",
       "record_sha256": "816f383598cad4278c8a0f093daf30d49ba312bb333d82f2881edb86c131e554",
+      "note_sources": [
+        "https://clevelandart.org/art/1921.318"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         605,
         900
@@ -396,6 +449,7 @@
       "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
       "date": "1833",
       "medium": "color woodblock print",
+      "measurements": "Sheet: 22.6 x 35.5 cm (8 7/8 x 14 in.)",
       "accession": "1985.317",
       "credit": "The Kelvin Smith Collection, given by Mrs. Kelvin Smith",
       "object_url": "https://clevelandart.org/art/1985.317",
@@ -406,7 +460,7 @@
       "museum": "cma",
       "id": 152495,
       "file": "Hiroshige - Snow at Kambara.png",
-      "note": "Några vandrare rör sig genom ett snötäckt landskap under en mörk himmel.",
+      "note": "Kambara är en kustort där snö enligt museet är sällsynt. Snöflingorna visar samtidigt en särskild möjlighet hos träsnittet: former skärs bort ur blocket och lämnar därmed papperet vitt när den infärgade ytan trycks. Cleveland Museum of Art anger att detta kan vara Hiroshiges första tryck med fallande snö. Bladet är nummer sexton i serien Femtiotre stationer längs Tōkaidō.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -414,6 +468,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/152495",
       "source_sha256": "21429099c8ff413a41364347401ba15bcaa51e36f9ef5b829bf2315884c4f1a4",
       "record_sha256": "a864729c11f05ecc403a9a7ee275cf0fa6225ea8386b0000f2842cc074d9d3c7",
+      "note_sources": [
+        "https://clevelandart.org/art/1985.317"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         900,
         600
@@ -435,6 +493,7 @@
       "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
       "date": "c. 1835",
       "medium": "color woodblock print",
+      "measurements": "24.4 x 36.8 cm (9 5/8 x 14 1/2 in.)",
       "accession": "1985.312",
       "credit": "The Kelvin Smith Collection, given by Mrs. Kelvin Smith",
       "object_url": "https://clevelandart.org/art/1985.312",
@@ -445,7 +504,7 @@
       "museum": "cma",
       "id": 152490,
       "file": "Hiroshige - Night Rain at Karasaki.png",
-      "note": "Ett stort träd framträder som en mörk silhuett genom regnet.",
+      "note": "Karasakis heliga tall var en berömd sevärdhet vid Biwasjön. Grenarna bars upp av bambustöttor och skyddade en helgedom under trädet. Trycket ingår i Åtta vyer av Ōmi och innehåller också en dikt som förbinder tallen med kvällsregn och kvällsvind. Den mörka, breda trädkronan är alltså både ett konkret landmärke och ett motiv med poetiska associationer.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -453,6 +512,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/152490",
       "source_sha256": "7c21facb89dab0200ec82bc013ef9df0080e74af844a87b5556db1334d36fc8b",
       "record_sha256": "cc41e7406fe82afe0ab853e468eab1ae9bf10f28c16b65fb9c75ab0e47d9d620",
+      "note_sources": [
+        "https://clevelandart.org/art/1985.312"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         900,
         606
@@ -474,6 +537,7 @@
       "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
       "date": "1857",
       "medium": "color woodblock print",
+      "measurements": "Sheet: 23.2 x 36.1 cm (9 1/8 x 14 3/16 in.)",
       "accession": "1924.971",
       "credit": "Gift of Mrs. Francis F. Prentiss for the Dudley P. Allen Collection",
       "object_url": "https://clevelandart.org/art/1924.971",
@@ -484,7 +548,7 @@
       "museum": "cma",
       "id": 106968,
       "file": "Hiroshige - Meguro Bridge.png",
-      "note": "En välvd bro och snötyngda träd ger landskapet tydliga ljusa och mörka former.",
+      "note": "Den välvda stenbron över Megurofloden kallades Trumbron eftersom formen påminde om en trumma. Längst ned till höger, bakom konstnärens signatur, syns enligt museet taket till Shōgatsu-ya, som serverade varm söt röd bönsoppa med riskakor. På andra sidan bron ligger Solnedgångskullen, en plats som var känd för sina röda lönnlöv på hösten. Här har Hiroshige i stället klätt både bron och landskapet i snö.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -492,6 +556,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/106968",
       "source_sha256": "00d8ab86655f1310d495840243576e4941fe7448da9933966c71e4767d6cda62",
       "record_sha256": "20215bf064db9c3cbb272cf04921a4da4e41895ee144ec3f1966d0520abe53c4",
+      "note_sources": [
+        "https://clevelandart.org/art/1924.971"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         587,
         900
@@ -513,6 +581,7 @@
       "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
       "date": "1857",
       "medium": "color woodblock print",
+      "measurements": "33.9 x 22.8 cm (13 3/8 x 9 in.)",
       "accession": "1985.320",
       "credit": "The Kelvin Smith Collection, given by Mrs. Kelvin Smith",
       "object_url": "https://clevelandart.org/art/1985.320",
@@ -523,7 +592,7 @@
       "museum": "cma",
       "id": 152499,
       "file": "Hiroshige - Moon Viewing.png",
-      "note": "En stillsam plats för månbetraktelse, med vatten och en vid himmel.",
+      "note": "Betraktaren ser förbi tallarna in mot slutet av en månskådningsfest. En gestalt med en avancerad frisyr avtecknar sig genom en genomskinlig pappersdörr, medan bara fållen syns direkt. En annan person sitter kvar nära ett musikinstrument och en bricka med blåvit keramik. Museet föreslår att personen ännu beundrar höstmånen över fartygen på Edobukten; scenen berättar därför lika mycket genom det som döljs som genom det som visas.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -531,6 +600,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/152499",
       "source_sha256": "9330ce9c099a78d892c638ddc0dcf3194f94805c01b77d271b04feeacadd0042",
       "record_sha256": "df3a6c0ed915823b2d43a4a6bd7afa2efcbb6a01c53e1a25c98ffa7453cb8783",
+      "note_sources": [
+        "https://clevelandart.org/art/1985.320"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         613,
         900
@@ -552,6 +625,7 @@
       "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
       "date": "1858",
       "medium": "color woodblock print",
+      "measurements": "Sheet: 33.7 x 22 cm (13 1/4 x 8 11/16 in.)",
       "accession": "1940.986",
       "credit": "Bequest of James Parmelee",
       "object_url": "https://clevelandart.org/art/1940.986",
@@ -562,7 +636,7 @@
       "museum": "cma",
       "id": 120225,
       "file": "Hiroshige - Fireworks.png",
-      "note": "Fyrverkerier tecknar ljusa spår över floden och båtarna.",
+      "note": "Under 1850-talet sponsrade restauranger och andra verksamheter längs Sumidafloden ofta fyrverkerier. Åskådare samlades på Ryōgokubron, vid stränderna, i tehus och i hyrda nöjesbåtar. Hiroshige använder nästan halva kompositionen till den mörka himlen, vilket ger ljusspåren stort utrymme. Trycket hör till Hundra berömda vyer av Edo och skildrar ett offentligt nöje som band samman floden, handeln och stadens folkliv.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -570,6 +644,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/120225",
       "source_sha256": "addbffb114846a94e3ba8cf763f7abca5f8d64092d71eb70d6ab04d49497e671",
       "record_sha256": "fd056484e393d6882f7fbf06dc440eff2daa5a2afa6b7e2ddef3b88a7d2738ff",
+      "note_sources": [
+        "https://clevelandart.org/art/1940.986"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         594,
         900
@@ -591,6 +669,7 @@
       "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
       "date": "early or mid-1830s",
       "medium": "color woodblock print",
+      "measurements": "Overall: 38.2 x 17.1 cm (15 1/16 x 6 3/4 in.)",
       "accession": "1985.314",
       "credit": "The Kelvin Smith Collection, given by Mrs. Kelvin Smith",
       "object_url": "https://clevelandart.org/art/1985.314",
@@ -601,7 +680,7 @@
       "museum": "cma",
       "id": 152492,
       "file": "Hiroshige - Mandarin Ducks.png",
-      "note": "Mandarinänder och blommande växter samsas i en smal, upprätt komposition.",
+      "note": "I den bildtradition museet beskriver förknippas mandarinänder med trohet och stillhet. Här antyder fågelns huvudrörelse en partner utanför bilden. Verket hör till fågel- och blombilderna, kachōga, en genre som enligt Cleveland Museum of Art blev populär bland japanska samlare under 1800-talet delvis tack vare Hiroshige. Hans intresse för naturen omfattade alltså långt mer än de berömda landskapen.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -609,6 +688,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/152492",
       "source_sha256": "216abd065ae470c39e17d914d4e5262247cc4d42db247185e4b9b080513fed54",
       "record_sha256": "e13ea413534c153ebd2226459ff39056178da37d61714c341bea033904bb7eb8",
+      "note_sources": [
+        "https://clevelandart.org/art/1985.314"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         420,
         900
@@ -630,6 +713,7 @@
       "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
       "date": "early or mid-1830s",
       "medium": "color woodblock print",
+      "measurements": "Overall: 25.2 x 12.4 cm (9 15/16 x 4 7/8 in.)",
       "accession": "1920.164",
       "credit": "Purchase from the J. H. Wade Fund",
       "object_url": "https://clevelandart.org/art/1920.164",
@@ -640,7 +724,7 @@
       "museum": "cma",
       "id": 101257,
       "file": "Hiroshige - Kingfisher.png",
-      "note": "En kungsfiskare och klockformade blommor bildar ett litet naturstudium.",
+      "note": "Katalogen identifierar fågeln som en kungsfiskare och växterna som kinesiska klockblommor. Motivet kan ses i samma fågel- och blomtradition, kachōga, som museet beskriver i samband med Hiroshiges mandarinand. Den smala bilden koncentrerar sig på några få former i stället för en vid landskapsvy. Jämförelsen gäller genren, inte att de två bladen skulle tillhöra samma namngivna serie.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -648,6 +732,11 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/101257",
       "source_sha256": "3d8d59558bc29e437d0fd8584870c0810403d04e81568aebb1f13f76849ffd58",
       "record_sha256": "162764d75836dbc792a5235dd7f07cca27274f51c75c91d52056302d7e80cdf6",
+      "note_sources": [
+        "https://clevelandart.org/art/1920.164",
+        "https://www.clevelandart.org/art/1985.314"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         458,
         900
@@ -669,6 +758,7 @@
       "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
       "date": "1833",
       "medium": "color woodblock print",
+      "measurements": "Sheet: 22.6 x 35.3 cm (8 7/8 x 13 7/8 in.)",
       "accession": "1940.982",
       "credit": "Bequest of James Parmelee",
       "object_url": "https://clevelandart.org/art/1940.982",
@@ -679,7 +769,7 @@
       "museum": "cma",
       "id": 120221,
       "file": "Hiroshige - Lake Hakone.png",
-      "note": "Sjön och de kraftiga bergsformerna delar upp landskapet i tydliga färgfält.",
+      "note": "Hakone-bladet ingår i Femtiotre stationer längs Tōkaidō, Hiroshiges serie om vägen mellan Kyoto och Edo. Här förskjuts uppmärksamheten från resenärernas vardag till sjön och de stora bergsformerna. Som jämförelse visar seriens Shōno-blad hur människor överraskas av regn. Tillsammans visar de hur en resväg kunde bli utgångspunkt för mycket olika landskapsbilder.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -687,6 +777,11 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/120221",
       "source_sha256": "027aff61caa524996e791f96439e9825a96b8374424783896f3d3064df585ef3",
       "record_sha256": "dcabb5f7ef629675128fe95cd696d7985bf7e64ebd5f8a902677feb488719dc4",
+      "note_sources": [
+        "https://clevelandart.org/art/1940.982",
+        "https://www.clevelandart.org/art/1948.306"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         900,
         600
@@ -708,6 +803,7 @@
       "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
       "date": "mid-1840s",
       "medium": "color woodblock print",
+      "measurements": "Overall: 33.7 x 11.5 cm (13 1/4 x 4 1/2 in.)",
       "accession": "1920.161",
       "credit": "Purchase from the J. H. Wade Fund",
       "object_url": "https://clevelandart.org/art/1920.161",
@@ -718,7 +814,7 @@
       "museum": "cma",
       "id": 101234,
       "file": "Hiroshige - Canary and Wisteria.png",
-      "note": "En liten fågel sitter bland hängande klasar av blåregn.",
+      "note": "Cleveland Museum of Art identifierar motivet som en kanariefågel med blåregn och daterar bladet till mitten av 1840-talet. Bildens ovanligt smala format skiljer sig från Hiroshiges breda reselandskap. Fågel- och blombilder, kachōga, var samtidigt en viktig del av hans verksamhet; museet framhåller hans betydelse för genrens popularitet bland samlare. Formatbeskrivningen är OrbitUIs iakttagelse, medan artbestämning och datering följer katalogen.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -726,6 +822,11 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/101234",
       "source_sha256": "5a3be94a5bb82bc9175fbf5957739f7d4db24ed53eb3adaab061f110a5f570cc",
       "record_sha256": "1bc7b80e58d4ff3b500a39f38de0e5ac999af2ea5a2f7267490720e8b8e903e1",
+      "note_sources": [
+        "https://clevelandart.org/art/1920.161",
+        "https://www.clevelandart.org/art/1985.314"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         310,
         900
@@ -747,6 +848,7 @@
       "artist": "Utagawa Hiroshige (Japanese, 1797–1858)",
       "date": "1858",
       "medium": "Color woodblock print, ink and color on paper",
+      "measurements": "Overall: 33.9 x 22.3 cm (13 3/8 x 8 3/4 in.)",
       "accession": "1985.319",
       "credit": "The Kelvin Smith Collection, given by Mrs. Kelvin Smith",
       "object_url": "https://clevelandart.org/art/1985.319",
@@ -757,7 +859,7 @@
       "museum": "cma",
       "id": 152497,
       "file": "Hiroshige - Pines of Miho.png",
-      "note": "Tallarna vid kusten ramar in en avlägsen vy av Fuji.",
+      "note": "Detta är Hiroshiges, inte Hokusais, Trettiosex vyer av berget Fuji. Clevelandmuseet daterar bladet till 1858 och identifierar platsen som tallundarna vid Miho i Suruga. De kustnära tallarna ger här en inramning åt det avlägsna berget. De båda konstnärernas likalydande serietitlar är lätta att blanda ihop, men detta tryck är en del av Hiroshiges egen följd av Fuji-vyer.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -765,6 +867,11 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/152497",
       "source_sha256": "769fc5a33b4d431be68da6df1b1325f7ca95681b87bbf9a1f6eb6c8b61e724e6",
       "record_sha256": "f774f9d6aee816c9f74498fb4559030955c7117d7ee4418b79c7254a5d1e23de",
+      "note_sources": [
+        "https://clevelandart.org/art/1985.319",
+        "https://www.metmuseum.org/art/collection/search/45434"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         615,
         900
@@ -786,6 +893,7 @@
       "artist": "Kitagawa Utamaro (Japanese, c. 1754–1806)",
       "date": "c. 1793",
       "medium": "color woodblock print",
+      "measurements": "36.9 x 25.4 cm (14 1/2 x 10 in.)",
       "accession": "1930.218",
       "credit": "Bequest of Edward L. Whittemore",
       "object_url": "https://clevelandart.org/art/1930.218",
@@ -796,7 +904,7 @@
       "museum": "cma",
       "id": 111689,
       "file": "Utamaro - The Flirtatious Type.png",
-      "note": "Ett porträtt där ansikte, hår och dräkt bildar stora, tydliga ytor.",
+      "note": "Utamaro blev känd för närgångna porträtt inom genren bijinga, bilder av vackra människor. Denna serie tillskriver kvinnor olika personlighetsdrag utifrån deras utseende och uppmuntrar jämförelser mellan gestalterna. Titeln Den flirtiga typen bör därför läsas som en del av seriens historiska sätt att kategorisera kvinnor, inte som ett påstående om en identifierad persons faktiska karaktär. Museet placerar trycket omkring 1793.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -804,6 +912,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/111689",
       "source_sha256": "f83f9c145e03e3dbc30801c0308060f9ec41375716d92029a12e4407e1f53629",
       "record_sha256": "7c7781bc63f4c495d22d47061dd3c0f5c6684415e5785f13b371ea955dc8eb77",
+      "note_sources": [
+        "https://clevelandart.org/art/1930.218"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         602,
         900
@@ -825,6 +937,7 @@
       "artist": "Kitagawa Utamaro (Japanese, c. 1754–1806)",
       "date": "c. late 1790s",
       "medium": "color woodblock print",
+      "measurements": "Sheet: 38.2 x 25.4 cm (15 1/16 x 10 in.)",
       "accession": "1930.216",
       "credit": "Bequest of Edward L. Whittemore",
       "object_url": "https://clevelandart.org/art/1930.216",
@@ -835,7 +948,7 @@
       "museum": "cma",
       "id": 111687,
       "file": "Utamaro - Cleaning Combs.png",
-      "note": "En vardaglig syssla blir bildens huvudmotiv, med händer och kammar i centrum.",
+      "note": "Modern har satt upp barnets hår i en prydlig knut och rengör nu kammen. Under senare delen av Kansei-eran, 1789–1801, tog Utamaro enligt museet allt oftare med vardagliga sysslor i sina kvinnobilder. Trycken kunde både visa bandet mellan mor och barn och betrakta hemmets aktiviteter med en viss distans. Bilden är därför mer än ett porträtt: en liten handling bär en hel vardagssituation.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -843,6 +956,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/111687",
       "source_sha256": "5e5ce5895546c5fe5c74bd232ea2079167112fc2428fdc3b3477c2b7be220aa6",
       "record_sha256": "50957b6148b94384a91e72e7c048d6a0f399609e697e4a88f56198d4435063fa",
+      "note_sources": [
+        "https://clevelandart.org/art/1930.216"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         621,
         900
@@ -864,6 +981,7 @@
       "artist": "Kitagawa Utamaro (Japanese, c. 1754–1806)",
       "date": "c. 1798",
       "medium": "color woodblock print",
+      "measurements": "Sheet: 38.8 x 25.2 cm (15 1/4 x 9 15/16 in.)",
       "accession": "1921.337",
       "credit": "Gift from J. H. Wade",
       "object_url": "https://clevelandart.org/art/1921.337",
@@ -874,7 +992,7 @@
       "museum": "cma",
       "id": 103265,
       "file": "Utamaro - Calligraphy Lesson.png",
-      "note": "En mor visar sin dotter kalligrafi: en stilla bild av lärande och koncentration.",
+      "note": "Titeln beskriver en mor som undervisar sin dotter i kalligrafi. Bladet hör till serien Tolv kvinnliga sysselsättningar och dateras av museet till omkring 1798. Motivet kan jämföras med Rengöring av kammar, där samma museum beskriver hur Utamaro under denna tid tog in vardagsliv och relationen mellan mor och barn i sina bilder. Jämförelsen gäller motivkretsen; Rengöring av kammar tillskrivs inte här denna serie.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -882,6 +1000,11 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/103265",
       "source_sha256": "1c3f20832e96e5f004563fb42c728d33e26b255ffaa8923623adcc286a3c166f",
       "record_sha256": "af98c234e90fdcb562c11b5cc50f7376c4a5bc6b1915a49545cb0cfeb7b54466",
+      "note_sources": [
+        "https://clevelandart.org/art/1921.337",
+        "https://www.clevelandart.org/art/1930.216"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         593,
         900
@@ -903,6 +1026,7 @@
       "artist": "Tōshūsai Sharaku (Japanese, active 1794–95)",
       "date": "1794",
       "medium": "color woodblock print",
+      "measurements": "36 x 23.6 cm (14 3/16 x 9 5/16 in.)",
       "accession": "1930.205",
       "credit": "Bequest of Edward L. Whittemore",
       "object_url": "https://clevelandart.org/art/1930.205",
@@ -913,7 +1037,7 @@
       "museum": "cma",
       "id": 111675,
       "file": "Sharaku - Ichikawa Ebizo.png",
-      "note": "Ett skådespelarporträtt där ansiktsdragen och dräkten får starkt uttryck.",
+      "note": "Ichikawa Ebizō IV gestaltar Takemura Sadanoshin, en skådespelare som får uppträda med sin dotter en sista gång innan hon förvisas för en förbjuden kärleksaffär. Bilden hör till yakusha-e, skådespelarbilder som samlades av kabukiteaterns beundrare. Dräkter, kraftig sminkning och dramatiska poser var viktiga uttrycksmedel i kabuki. Det är alltså både en bild av en känd aktör och av den roll som publiken såg honom spela.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -921,6 +1045,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/111675",
       "source_sha256": "958737d0c70526fcc10dbbe863f40f0ce6d4006744e5db61bb696a28cc73fc1c",
       "record_sha256": "9920eca726ad313c18b6c59ab2c7ce361fad33d226bcffd04fbe9b6d96c71165",
+      "note_sources": [
+        "https://clevelandart.org/art/1930.205"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         602,
         900
@@ -942,6 +1070,7 @@
       "artist": "Tōshūsai Sharaku (Japanese, active 1794–95)",
       "date": "1794",
       "medium": "color woodblock print",
+      "measurements": "Sheet: 38.4 x 25.1 cm (15 1/8 x 9 7/8 in.)",
       "accession": "1974.78",
       "credit": "Gift of Jeptha H. Wade in honor of Emily V. Wade",
       "object_url": "https://clevelandart.org/art/1974.78",
@@ -952,7 +1081,7 @@
       "museum": "cma",
       "id": 147982,
       "file": "Sharaku - Fish Seller.png",
-      "note": "Ett uttrycksfullt teaterporträtt av Matsumoto Koshiro IV i rollen som fiskförsäljaren Gorobei.",
+      "note": "Matsumoto Kōshirō IV spelar fiskhandlaren Gorobei i en pjäs som gavs på Kiriteatern i juni 1794. Figuren hjälper två systrar att hämnas mordet på deras far. Enligt museet gjorde Sharaku porträtt av sju skådespelare ur uppsättningen och sammanlagt omkring 150 tryckmotiv under en karriär på bara tio månader. Många porträtt fick grå glimmerbakgrund, en lyxig tryckteknik som förbjöds 1794 i tidens försök att begränsa köpmannaklassens konsumtion.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -960,6 +1089,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/147982",
       "source_sha256": "ae2b067bf323826e8415e7c31782095d1a4e5e536c0b51a7b9ecbb6f659f1761",
       "record_sha256": "6f79e585ee144469fdb6a12bcdf431a2b3831d24d83bb366b134a1bed3c4e2a8",
+      "note_sources": [
+        "https://clevelandart.org/art/1974.78"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         583,
         900
@@ -981,6 +1114,7 @@
       "artist": "Utagawa Kuniyoshi (Japanese, 1797–1861)",
       "date": "early 1830s",
       "medium": "Color woodblock print",
+      "measurements": "Overall: 23.9 x 34.2 cm (9 7/16 x 13 7/16 in.)",
       "accession": "1985.335",
       "credit": "The Kelvin Smith Collection, given by Mrs. Kelvin Smith",
       "object_url": "https://clevelandart.org/art/1985.335",
@@ -991,7 +1125,7 @@
       "museum": "cma",
       "id": 152515,
       "file": "Kuniyoshi - Omori.png",
-      "note": "En vy från Omori i serien med berömda platser i den östra huvudstaden.",
+      "note": "Ōmori vid Edobukten var känt för odling av nori, tången som används kring bland annat risbollar och sushi. Kuniyoshi visar två kvinnor som skördar från odlingsbäddarna: den ena använder pinnar, den andra samlar försiktigt tång i korgar i båten. Fler odlingar i fjärran antyder verksamhetens omfattning. Den röda cirkelns text uppe till höger anger seriens namn, Berömda platser i den östra huvudstaden.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -999,6 +1133,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/152515",
       "source_sha256": "1017f1b44ce231ac1547085ade0e63d49eaa95cf9da1d7ca897a6629622fb78b",
       "record_sha256": "3aa8848cb585692d787c4dd51139227b10599d68a2d328d1482c86124a622139",
+      "note_sources": [
+        "https://clevelandart.org/art/1985.335"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         900,
         638
@@ -1020,6 +1158,7 @@
       "artist": "Utagawa Kuniyoshi (Japanese, 1797–1861)",
       "date": "early 1830s",
       "medium": "color woodblock print",
+      "measurements": "Sheet: 24.5 x 36.9 cm (9 5/8 x 14 1/2 in.)",
       "accession": "1930.202",
       "credit": "Bequest of Edward L. Whittemore",
       "object_url": "https://clevelandart.org/art/1930.202",
@@ -1030,7 +1169,7 @@
       "museum": "cma",
       "id": 111672,
       "file": "Kuniyoshi - New Yoshiwara.png",
-      "note": "En vy av Shin Yoshiwara från Kuniyoshis serie med platser i Edo.",
+      "note": "Månen och dess stora ljusgård dominerar nattbilden. Museet uppmärksammar skuggorna under figurerna och bärstolen som ett västerländskt drag i bildspråket. Mannen i mitten sjunger med öppen mun och är kanske på väg hem efter ett besök i nöjeskvarteret Yoshiwara. Kvarteret självt syns bara som låga tak bortom risfälten, medan andra resenärer möjligen är på väg dit. Dessa färdriktningar är museets tolkning, inte säkert identifierade händelser.",
       "museum_name": "The Cleveland Museum of Art",
       "policy_url": "https://www.clevelandart.org/open-access",
       "license": "CC0 1.0",
@@ -1038,6 +1177,10 @@
       "api_url": "https://openaccess-api.clevelandart.org/api/artworks/111672",
       "source_sha256": "dae3b205a64f089d79f8491638c7d55e4ffb1d535d897a37fd0e9aed1d787814",
       "record_sha256": "965b13b57a7a80d0b982b50075d42c870dfa444da19b57f076eecbc8323cf77b",
+      "note_sources": [
+        "https://clevelandart.org/art/1930.202"
+      ],
+      "note_credit": "OrbitUI: AI-assisterad svensk sammanfattning av angivna museikällor, inte museets originaltext.",
       "source_dimensions": [
         900,
         602

@@ -42,7 +42,9 @@ M.packs = {
 }
 
 function M.seed(root, ornaments)
-    return require("core/orbitui_ornament_install").seed(root, ornaments.dir(), M.packs)
+    local changed = require("core/orbitui_ornament_install").seed(root, ornaments.dir(), M.packs)
+    local updated = require("core/orbitui_ukiyoe_update").apply(root, ornaments.dir())
+    return changed or updated
 end
 
 return M

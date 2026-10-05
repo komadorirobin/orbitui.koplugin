@@ -689,6 +689,30 @@ the published alpha.17 installer, downloaded draft-asset verification, both CI
 jobs and anonymous public OTA. Physical Bigme layout/touch testing remains open.
 See `docs/releases/0.1.0-alpha.18.md` for scope and recovery.
 
+## 2026-10-05: Gallery wall placement and source-linked information (unreleased)
+
+The user reported that the new frames stand on the plank and requested the
+appearance of wall-mounted pictures, while asking for richer information and
+its provenance. No upstream merge or new publication was requested.
+
+C11's narrow metadata-upgrade exception corrects untouched alpha.19 lift/info
+defaults, using a frozen snapshot from `17b3970c`. Explicit reader positioning,
+custom pack fields, deleted records/files, image bytes, themes, and other packs
+remain intact. Updates are atomic per file and retry after interruption; the
+new marker is separate from the original additive install marker. The stand
+height determines the 12% wall gap, without resizing artwork or altering native
+layout, pagination, taps or ornament frequency.
+
+All 27 info cards now include measurements and longer Swedish AI-assisted
+summaries tied to primary museum sources, labelled as OrbitUI commentary rather
+than museum-authored text. Original artwork and texture bytes are unchanged.
+Tests cover 10 new migration/native-geometry cases and an alpha.19 metadata/
+image-baseline check. Full Lua/LuaJIT suites, original-museum pixel audits and
+all 41 translation checks passed; see TESTING.md for coverage and skips.
+Physical Bigme wall spacing and scroll/zoom still need
+testing. Keep the current published alpha.19 assets intact; publish corrections
+only as a new release on a separate explicit request.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
