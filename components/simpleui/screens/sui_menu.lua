@@ -2532,13 +2532,10 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
         local items = {
             {
                 text           = _("Start with Home Screen"),
-                checked_func   = function()
-                    return G_reader_settings:readSetting("start_with") == "homescreen_simpleui"
-                end,
+                checked_func   = Config.isStartWithHomescreen,
                 keep_menu_open = true,
                 callback       = function()
-                    local is_hs = G_reader_settings:readSetting("start_with") == "homescreen_simpleui"
-                    G_reader_settings:saveSetting("start_with", is_hs and "filemanager" or "homescreen_simpleui")
+                    Config.setStartWithHomescreen(not Config.isStartWithHomescreen())
                 end,
             },
             {
@@ -4689,9 +4686,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                             end
                             SUISettings:flush()
 
-                            if G_reader_settings:readSetting("start_with") == "homescreen_simpleui" then
-                                G_reader_settings:saveSetting("start_with", "filemanager")
-                            end
+                            Config.setStartWithHomescreen(false)
                             UIM:restartKOReader()
                         end,
                     })
@@ -4773,9 +4768,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                     -- When disabling SimpleUI, reset "Start with Homescreen" if active,
                     -- because "homescreen_simpleui" is not a value the base KOReader
                     -- understands — leaving it set would cause a blank screen on next boot.
-                    if on and G_reader_settings:readSetting("start_with") == "homescreen_simpleui" then
-                        G_reader_settings:saveSetting("start_with", "filemanager")
-                    end
+                    if on then Config.setStartWithHomescreen(false) end
                     -- Flush immediately so a hard reboot / crash cannot leave the
                     -- setting unsaved, which would cause a white-screen boot loop
                     -- the next time KOReader starts with the plugin installed.
