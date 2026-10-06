@@ -22,9 +22,12 @@ ART_EDGE = 768
 FRAME = 14
 MAT = 16
 PAD = 4
-WALL_LIFT = .12
+# Clear the plank's receding top surface as well as the books' foot line.
+WALL_LIFT = .20
 BASELINE_COMMIT = "17b3970c70985c3777d8552ac89b28a48d7129a9"
 BASELINE = ROOT / "assets/ornament-updates/ukiyoe-gallery-v1.json"
+V2_COMMIT = "d224901dcddbcc0d457a801058437cd20d2c0217"
+V2_BASELINE = ROOT / "assets/ornament-updates/ukiyoe-gallery-v2.json"
 MUSEUMS = {
     "cma": ("The Cleveland Museum of Art", "https://www.clevelandart.org/open-access"),
     "met": ("The Metropolitan Museum of Art", "https://www.metmuseum.org/hubs/open-access"),
@@ -155,10 +158,11 @@ def preview(assets):
 <title>OrbitUI | Ukiyo-e Gallery</title><style>
 *{box-sizing:border-box}body{margin:0;background:#f4f0e6 url('../assets/ornaments/Ukiyo-e%20Gallery/theme/wallpaper.jpg');color:#262923;font:18px Georgia,serif;padding:40px}
 header{max-width:880px;margin:0 auto 40px}h1{font-size:44px;font-weight:400;margin-bottom:12px}p{line-height:1.6}button{padding:12px 18px;border:1px solid #797365;background:#f4f0e6;font:inherit;cursor:pointer}
-main{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:36px 24px;max-width:1400px;margin:auto}figure{margin:0;text-align:center;min-width:0}.art{height:230px;display:flex;align-items:end;justify-content:center;border-bottom:12px solid #cdb187;box-shadow:0 5px 5px #493d3322}
-img{max-width:96%;max-height:190px;margin-bottom:28px;object-fit:contain}figcaption{font-size:15px;line-height:1.3;padding:12px 0}small{display:block;font-size:12px;margin-top:5px}body.bw main{filter:grayscale(1)}
-@media(max-width:900px){main{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:540px){body{padding:18px}main{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}.art{height:190px}img{max-height:150px}h1{font-size:32px}}
+main{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:36px 24px;max-width:1400px;margin:auto}figure{margin:0;text-align:center;min-width:0}.art{--stand:218px;height:calc(var(--stand) + 12px);display:flex;align-items:end;justify-content:center;border-bottom:12px solid #cdb187;box-shadow:0 5px 5px #493d3322}
+img{max-width:96%;max-height:calc(var(--stand) * .76);margin-bottom:calc(var(--stand) * WALL_LIFT);object-fit:contain}figcaption{font-size:15px;line-height:1.3;padding:12px 0}small{display:block;font-size:12px;margin-top:5px}body.bw main{filter:grayscale(1)}
+@media(max-width:900px){main{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:540px){body{padding:18px}main{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px}.art{--stand:178px}h1{font-size:32px}}
 </style><header><h1>Ukiyo-e Gallery</h1><p>27 museum originals. Own frames, washi and hinoki-style shelf. This is an asset contact sheet, not a KOReader emulator. Click a print's museum link in provenance.json for the original.</p><button onclick="document.body.classList.toggle('bw')">Colour / grayscale preview</button></header><main>'''
+    text = text.replace("WALL_LIFT", str(WALL_LIFT))
     (ROOT / "docs/ukiyoe-gallery-preview.html").write_text(text + "\n".join(images) + "</main></html>\n", encoding="utf-8")
 
 
@@ -171,8 +175,9 @@ def contact_sheet(assets):
         x, y = (index % 5) * 300, (index // 5) * 280
         with Image.open(PACK / a["file"]) as source:
             thumb = source.copy()
-            thumb.thumbnail((260, 205), Image.Resampling.LANCZOS)
-        sheet.paste(thumb, (x + (300-thumb.width)//2, y + 211-thumb.height), thumb)
+            thumb.thumbnail((260, round(240 * .76)), Image.Resampling.LANCZOS)
+        bottom = y + 240 - round(240 * WALL_LIFT)
+        sheet.paste(thumb, (x + (300-thumb.width)//2, bottom-thumb.height), thumb)
         draw.rectangle((x+10, y+240, x+290, y+250), fill="#c3a67b")
         draw.text((x+12, y+258), a["file"][:-4], fill="#202020", font=font)
     output = ROOT / "dist"
@@ -193,6 +198,14 @@ def build(args):
         ], cwd=ROOT).decode("utf-8") for name in
             ("ornaments.json", "provenance.json", "ATTRIBUTION.txt", "README.txt")}
         write_json(BASELINE, dict(source_commit=BASELINE_COMMIT, files=old_files))
+    if not V2_BASELINE.exists():
+        old_files = {name: subprocess.check_output([
+            "git", "show", f"{V2_COMMIT}:assets/ornaments/{PACK_NAME}/{name}"
+        ], cwd=ROOT).decode("utf-8") for name in ("ornaments.json", "README.txt")}
+        # Only placement and the pack notice changed after alpha.20.
+        placement = {name: {k: e[k] for k in ("lift", "scale", "anchor")}
+                     for name, e in json.loads(old_files.pop("ornaments.json")).items()}
+        write_json(V2_BASELINE, dict(source_commit=V2_COMMIT, placement=placement, files=old_files))
     PACK.mkdir(parents=True, exist_ok=True)
     previous = PACK / "provenance.json"
     locked = {a["file"]: a for a in json.loads(previous.read_text())["artworks"]} if previous.exists() else {}

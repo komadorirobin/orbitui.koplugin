@@ -5,9 +5,10 @@ one washi wallpaper and one hinoki-style shelf material. Not the Ko-fi pack.
 
 Automatic OrbitUI installation adds the pack without activating a theme or
 replacing your wallpaper, shelf material, colours, or ornament preferences.
-The reviewed v2 metadata upgrade raises untouched frames 12% of the shelf's
-stand height above the plank and expands their information cards. It preserves
-edited fields, explicit reader positioning, deleted files and all image bytes.
+The reviewed metadata upgrades raise untouched frames by 20% of the shelf's
+stand height, clearing its receding top surface, and expand their information
+cards. The v3 height correction also applies to alpha.20's 12% placement. Edits,
+explicit reader positioning, deleted files and all image bytes are preserved.
 
 Use Wallpaper, ornaments and colours > Ornament collection > Ukiyo-e Gallery
 to enable or disable individual prints. Tap a print on the shelf to zoom and

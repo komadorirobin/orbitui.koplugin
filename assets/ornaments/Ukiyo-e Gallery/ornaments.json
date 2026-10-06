@@ -2,7 +2,7 @@
   "Hokusai - Great Wave.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -12,7 +12,7 @@
   "Hokusai - Red Fuji.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -22,7 +22,7 @@
   "Hokusai - Rain Below the Mountain.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -32,7 +32,7 @@
   "Hokusai - Ono Waterfall.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -42,7 +42,7 @@
   "Hokusai - Lake Misaka.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -52,7 +52,7 @@
   "Hokusai - Brocade Bridge.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -62,7 +62,7 @@
   "Hokusai - Rush Gatherer.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -72,7 +72,7 @@
   "Hokusai - Boat Bridge at Sano.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -82,7 +82,7 @@
   "Hiroshige - Rain at Shono.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -92,7 +92,7 @@
   "Hiroshige - Sudden Shower.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -102,7 +102,7 @@
   "Hiroshige - Snow at Kambara.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -112,7 +112,7 @@
   "Hiroshige - Night Rain at Karasaki.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -122,7 +122,7 @@
   "Hiroshige - Meguro Bridge.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -132,7 +132,7 @@
   "Hiroshige - Moon Viewing.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -142,7 +142,7 @@
   "Hiroshige - Fireworks.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -152,7 +152,7 @@
   "Hiroshige - Mandarin Ducks.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -162,7 +162,7 @@
   "Hiroshige - Kingfisher.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -172,7 +172,7 @@
   "Hiroshige - Lake Hakone.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -182,7 +182,7 @@
   "Hiroshige - Canary and Wisteria.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -192,7 +192,7 @@
   "Hiroshige - Pines of Miho.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -202,7 +202,7 @@
   "Utamaro - The Flirtatious Type.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -212,7 +212,7 @@
   "Utamaro - Cleaning Combs.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -222,7 +222,7 @@
   "Utamaro - Calligraphy Lesson.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -232,7 +232,7 @@
   "Sharaku - Ichikawa Ebizo.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -242,7 +242,7 @@
   "Sharaku - Fish Seller.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -252,7 +252,7 @@
   "Kuniyoshi - Omori.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",
@@ -262,7 +262,7 @@
   "Kuniyoshi - New Yoshiwara.png": {
     "scale": 0.95,
     "anchor": "bottom",
-    "lift": 0.12,
+    "lift": 0.2,
     "pad": 0.02,
     "night": "off",
     "mirror": "off",

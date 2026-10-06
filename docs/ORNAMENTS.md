@@ -13,8 +13,10 @@ were used. The selection, frames and Swedish commentaries are independent.
 The museum art is only reduced proportionally with LANCZOS, preserving the
 complete image, colour and orientation. No cropping, quantization, recolouring
 or AI reinterpretation. Warm dark frames have a light mat, subtle bevel and
-transparent exterior. The alpha.20 correction raises frames 12% of the
-shelf's stand height above the plank (alpha.19 used zero lift). Native tap to
+transparent exterior. The unreleased height correction raises frames by 20%
+of the shelf's stand height from the books' foot line. Alpha.20's 12% lift
+could still touch the plank's receding top surface; alpha.19 used zero lift.
+The new placement clears that surface without resizing the pictures. Native tap to
 zoom shows title, artist, date, measurements, commentary, museum credit and sources. Artwork
 does not mirror or invert at night. Only the washi/wood **material textures**
 are AI-generated images; prompts and original source-image hashes are supplied.
@@ -55,6 +57,15 @@ and packs stay deleted. Default notices/provenance update only if byte-identical
 to their old versions; edited copies survive. Writes are atomic and interrupted
 upgrades retry on the next process. Image bytes, active themes and author-bust
 placement remain unchanged.
+
+The subsequent height correction uses `ornament-ukiyoe-gallery-v3.updated` so
+it also reaches alpha.20 installs that already completed v2. Only recognized
+12% placement defaults move to 20%; the v2 pass still handles direct alpha.19
+upgrades. An existing v2 marker prevents replaying its info/zero-lift update.
+The compact alpha.20 baseline records placement fields and the old README;
+only an unedited README follows the new defaults. The same explicit reader
+and pack-position exclusions apply, including a saved zero-height override.
+No PNGs, info cards, themes or other ornaments change in v3.
 
 ### Rebuilding and verifying
 

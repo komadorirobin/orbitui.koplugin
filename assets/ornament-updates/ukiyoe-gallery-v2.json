@@ -1,0 +1,143 @@
+{
+  "source_commit": "d224901dcddbcc0d457a801058437cd20d2c0217",
+  "placement": {
+    "Hokusai - Great Wave.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hokusai - Red Fuji.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hokusai - Rain Below the Mountain.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hokusai - Ono Waterfall.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hokusai - Lake Misaka.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hokusai - Brocade Bridge.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hokusai - Rush Gatherer.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hokusai - Boat Bridge at Sano.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hiroshige - Rain at Shono.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hiroshige - Sudden Shower.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hiroshige - Snow at Kambara.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hiroshige - Night Rain at Karasaki.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hiroshige - Meguro Bridge.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hiroshige - Moon Viewing.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hiroshige - Fireworks.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hiroshige - Mandarin Ducks.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hiroshige - Kingfisher.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hiroshige - Lake Hakone.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hiroshige - Canary and Wisteria.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Hiroshige - Pines of Miho.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Utamaro - The Flirtatious Type.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Utamaro - Cleaning Combs.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Utamaro - Calligraphy Lesson.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Sharaku - Ichikawa Ebizo.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Sharaku - Fish Seller.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Kuniyoshi - Omori.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    },
+    "Kuniyoshi - New Yoshiwara.png": {
+      "lift": 0.12,
+      "scale": 0.95,
+      "anchor": "bottom"
+    }
+  },
+  "files": {
+    "README.txt": "UKIYO-E GALLERY\n\nAn independent OrbitUI pack: 27 public-domain museum prints, original frames,\none washi wallpaper and one hinoki-style shelf material. Not the Ko-fi pack.\n\nAutomatic OrbitUI installation adds the pack without activating a theme or\nreplacing your wallpaper, shelf material, colours, or ornament preferences.\nThe reviewed v2 metadata upgrade raises untouched frames 12% of the shelf's\nstand height above the plank and expands their information cards. It preserves\nedited fields, explicit reader positioning, deleted files and all image bytes.\n\nUse Wallpaper, ornaments and colours > Ornament collection > Ukiyo-e Gallery\nto enable or disable individual prints. Tap a print on the shelf to zoom and\nread its information card. Long-press to adjust the native placement controls.\n\nShelf theme > Ukiyo-e Gallery selects the full theme. Native theme selection\nuses this pack's ornaments instead of other packs. If you want to keep author\nbusts and Japan ornaments mixed in, choose the wallpaper and Hinoki plank\nseparately instead of selecting the complete Shelf theme.\n\nOrdinary frames follow OrbitUI's one-decoration-per-row and session shuffle\nrules; author busts keep their matching priority. No runtime museum downloads.\n\nCatalogue details (title, artist, date, medium, measurements and credit) come\nfrom the image's museum record. Swedish commentary is an AI-assisted OrbitUI\neditorial summary of the museum sources listed in each card, not a verbatim\nmuseum text or text from the paid ornament pack. Visual interpretations are\nidentified where used. Supplementary sources may describe another impression\nor a related work; measurements always refer to the pictured museum copy.\n\nManual installation: extract the entire \"Ukiyo-e Gallery\" folder into\nkoreader/settings/bookshelf/ornaments/. Keep its theme/ subfolder intact.\nDo not rename it to Halloween. OrbitUI with Bookshelf 5.3+ is required for\ntheme selection and tap-to-zoom information cards.\n\nSource records, CC0 evidence and SHA-256 checksums: provenance.json.\nMuseum credits and independent-work notice: ATTRIBUTION.txt.\nOnly the two material textures are AI-generated, not the historic prints.\nGenerated material prompts: texture-prompts.json.\n"
+  }
+}

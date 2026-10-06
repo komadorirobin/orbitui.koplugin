@@ -77,7 +77,7 @@ class UkiyoeAssetsTests(unittest.TestCase):
             self.assertEqual(entry["night"], "off")
             self.assertEqual(entry["tap"], "zoom")
             self.assertEqual(entry["anchor"], "bottom")
-            self.assertEqual(entry["lift"], .12)
+            self.assertEqual(entry["lift"], .20)
             self.assertTrue(.5 <= entry["scale"] <= 1)
             self.assertTrue(0 <= entry["pad"] <= .05)
             self.assertLessEqual(len(entry["info"].encode("utf-8")), 4000)
@@ -100,7 +100,7 @@ class UkiyoeAssetsTests(unittest.TestCase):
         after = json.loads((PACK / "ornaments.json").read_text())
         for name in before:
             self.assertEqual(before[name]["lift"], 0)
-            self.assertEqual(after[name]["lift"], .12)
+            self.assertEqual(after[name]["lift"], .20)
             self.assertNotEqual(before[name]["info"], after[name]["info"])
             self.assertEqual({k: v for k, v in before[name].items() if k not in ("lift", "info")},
                              {k: v for k, v in after[name].items() if k not in ("lift", "info")})
@@ -108,6 +108,20 @@ class UkiyoeAssetsTests(unittest.TestCase):
         self.assertEqual({a["file"]: a["sha256"] for a in old_provenance["artworks"]},
                          {a["file"]: a["sha256"] for a in ARTWORKS})
         self.assertEqual(old_provenance["theme_assets"], PROVENANCE["theme_assets"])
+
+    def test_v2_placement_baseline_matches_alpha20_and_all_frames_gain_clearance(self):
+        baseline = json.loads((ROOT / "assets/ornament-updates/ukiyoe-gallery-v2.json").read_text())
+        self.assertEqual(baseline["source_commit"], "d224901dcddbcc0d457a801058437cd20d2c0217")
+        metadata = json.loads((PACK / "ornaments.json").read_text())
+        self.assertEqual(set(baseline["placement"]), set(metadata))
+        for name, entry in baseline["placement"].items():
+            self.assertEqual(entry, dict(lift=.12, scale=.95, anchor="bottom"))
+            self.assertEqual(metadata[name]["lift"], .20)
+            self.assertEqual(metadata[name]["scale"], entry["scale"])
+            self.assertEqual(metadata[name]["anchor"], entry["anchor"])
+        self.assertEqual(set(baseline["files"]), {"README.txt"})
+        self.assertIn("frames 12%", baseline["files"]["README.txt"])
+        self.assertIn("by 20%", (PACK / "README.txt").read_text())
 
     def test_theme_has_one_wallpaper_one_native_named_plank_and_no_forced_colours(self):
         theme = PACK / "theme"

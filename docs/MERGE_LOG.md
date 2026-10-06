@@ -784,6 +784,32 @@ Bigme wall spacing, native text/layout rendering, touch and device recovery
 checks remain outstanding. See `docs/releases/0.1.0-alpha.20.md` for scope and
 user-preserving metadata migration/rollback notes.
 
+## 2026-10-06: More wall clearance for gallery frames (unreleased)
+
+The user reports that alpha.20's frames still touch the shelf and requests a
+slightly higher position. Its 12% lift was measured from the book-foot line,
+not the receding plank surface. Raise the pack defaults to 20%, leaving their
+95% scale, image bytes, museum texts, tap-to-zoom and all other packs unchanged.
+This is a C11 placement correction, not an upstream import or publication.
+
+A separately marked v3 migration recognizes untouched alpha.20 placements
+from a compact frozen baseline at `d224901d`. Preserve reader height/anchor/
+size overrides (even zero), custom pack positions, edits and deletions. Direct
+alpha.19 upgrades still receive the expanded information and new lift, but an
+existing v2 marker prevents replaying the old update. Only an unedited README
+is replaced; metadata/marker writes remain atomic and retryable. No component
+source, upstream pins, bootstrap/API, VERSION or published release is changed.
+
+The geometry regression exercises native sizing/placement/plank calculations
+across 240 combinations, proves the old overlap and requires clearance above
+the actual back edge without crossing the upper row. The expanded 15-case
+Lua/LuaJIT suite covers fresh/v1/v2 installs and migration failure recovery.
+Both full Lua and LuaJIT runs passed: 312 OrbitUI cases, 58 Python checks
+(including all museum-source pixel comparisons), 351 Bookshelf suites with two
+native SQLite skips, and all 13 SimpleUI test files. All 41 translation checks
+pass. Clean-commit packaging remains a separate final gate, not device
+acceptance. Physical Bigme confirmation is still required; not published.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

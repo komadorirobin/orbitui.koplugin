@@ -1,7 +1,9 @@
--- Upgrade only recognized alpha.19 defaults, never reader overrides or images.
+-- Upgrade only recognized published defaults, never reader overrides or images.
 local M = {
-    marker = "ornament-ukiyoe-gallery-v2.updated",
+    marker = "ornament-ukiyoe-gallery-v3.updated",
+    previous_marker = "ornament-ukiyoe-gallery-v2.updated",
     baseline = "assets/ornament-updates/ukiyoe-gallery-v1.json",
+    previous_baseline = "assets/ornament-updates/ukiyoe-gallery-v2.json",
 }
 
 local function read(path)
@@ -27,6 +29,7 @@ end
 function M.apply(root, ornaments_dir)
     local Install = require("core/orbitui_ornament_install")
     if Install.installed(M.marker) then return false end
+    local needs_v2 = not Install.installed(M.previous_marker)
     local fs = require("libs/libkoreader-lfs")
     local source = root .. "/assets/ornaments/Ukiyo-e Gallery/"
     local target = ornaments_dir .. "/Ukiyo-e Gallery/"
@@ -34,6 +37,9 @@ function M.apply(root, ornaments_dir)
     local function exists(path) return fs.attributes(path, "mode") == "file" end
     local baseline = decode(read(root .. "/" .. M.baseline)).files
     assert(type(baseline) == "table", "Missing Ukiyo-e update baseline")
+    local previous = decode(read(root .. "/" .. M.previous_baseline))
+    assert(type(previous.placement) == "table" and type(previous.files) == "table",
+        "Missing Ukiyo-e v2 baseline")
 
     if exists(target .. "ornaments.json") then
         local current = decode(read(target .. "ornaments.json"))
@@ -43,13 +49,17 @@ function M.apply(root, ornaments_dir)
         for name, before in pairs(old) do
             local entry, after = current[name], new[name]
             if type(entry) == "table" and type(after) == "table" then
-                for _, field in ipairs({ "lift", "info" }) do
-                    if entry[field] == before[field] and after[field] ~= before[field]
-                        and not (field == "lift" and customPosition(entry, before,
-                            reader["Ukiyo-e Gallery/" .. name])) then
-                        entry[field] = after[field]
-                        changed = true
-                    end
+                local prior = previous.placement[name]
+                local position = needs_v2 and entry.lift == before.lift and before
+                    or (type(prior) == "table" and entry.lift == prior.lift and prior)
+                if position and entry.lift ~= after.lift
+                    and not customPosition(entry, position, reader["Ukiyo-e Gallery/" .. name]) then
+                    entry.lift = after.lift
+                    changed = true
+                end
+                if needs_v2 and entry.info == before.info and after.info ~= before.info then
+                    entry.info = after.info
+                    changed = true
                 end
             end
         end
@@ -61,9 +71,11 @@ function M.apply(root, ornaments_dir)
 
     -- Default notices/provenance follow the new content; edited/deleted files stay.
     for _, name in ipairs({ "provenance.json", "ATTRIBUTION.txt", "README.txt" }) do
-        if exists(target .. name) and read(target .. name) == baseline[name] then
+        if exists(target .. name) then
+            local current = read(target .. name)
             local bytes = read(source .. name)
-            if bytes ~= baseline[name] then
+            if bytes ~= current and ((needs_v2 and current == baseline[name])
+                or current == previous.files[name]) then
                 Install.write(target .. name, bytes)
                 changed = true
             end
@@ -71,6 +83,7 @@ function M.apply(root, ornaments_dir)
     end
     -- A failed partial upgrade is retried next process; completed/deleted packs
     -- are never resurrected and no image, reader settings or theme is written.
+    if needs_v2 then Install.mark(source .. "README.txt", M.previous_marker) end
     Install.mark(source .. "README.txt", M.marker)
     return changed
 end

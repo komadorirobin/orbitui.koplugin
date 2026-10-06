@@ -2,6 +2,19 @@
 
 ## Automated
 
+The unreleased gallery height follow-up extends the native placement regression
+to 240 DPI/row-height/aspect/width combinations using the actual plank geometry.
+It reproduces alpha.20's overlap and requires at least 5% of the stand height
+as clear wall above the plank's back edge at the new 20% lift, without crossing
+the upper row. Five additional Lua/LuaJIT cases cover v2-to-v3 migration,
+zero-valued reader overrides, custom positions, deletions, no replay of v2,
+atomic failures and interrupted notice/marker writes. A Python check locks the
+compact alpha.20 baseline and all 27 new defaults. Physical Bigme spacing still
+needs confirmation; the gallery preview is only an asset contact sheet.
+Both full Lua/LuaJIT runs passed with 312 OrbitUI cases, 58 Python checks
+(museum-source pixel audit included), 351 Bookshelf suites (two native SQLite
+skips) and all 13 SimpleUI files. All 41 translation checks passed.
+
 Alpha.20 packages the reviewed October 6 import and the gallery correction below.
 Publication gates rerun the full Lua/LuaJIT suites, translations and clean-commit
 sealed packaging, then exercise native OTA from the actual published alpha.19

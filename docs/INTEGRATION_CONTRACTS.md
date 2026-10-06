@@ -366,12 +366,24 @@ the new metadata. Commit the independent update marker only after all atomic
 writes succeed. Keep museum catalogue facts separate from labelled AI-assisted
 Swedish editorial summaries and retain each summary's primary-source URLs.
 
+The user's 2026-10-06 follow-up requests more wall clearance: v3 raises the
+default lift to 0.20, measured from the book-foot line, to clear the painted
+plank's receding top surface. Use a separate v3 marker and frozen alpha.20
+placement baseline to update untouched 0.12 placements even after v2 completed.
+Direct alpha.19 upgrades still receive the info correction and the new lift;
+an existing v2 marker must prevent replaying that older migration. Preserve
+all reader/pack placement overrides, deletions and image bytes as above. Only
+the byte-identical alpha.20 README may follow this placement-only correction;
+its info cards and provenance are not changed. Test against the painted plank
+surface, not merely the book-foot line, including DPI and row-size variations.
+
 Source: `core/orbitui_author_ornaments.lua`, `adapters/orbitui_ornaments.lua`,
 `core/orbitui_runtime.lua`, `core/orbitui_japan_ornaments.lua`,
 `core/orbitui_ornament_install.lua`, `assets/ornaments/Modernists/`,
 `assets/ornaments/Authors/`, `assets/ornaments/Japan/`,
 `core/orbitui_ukiyoe_ornaments.lua`, `core/orbitui_ukiyoe_update.lua`,
-`assets/ornaments/Ukiyo-e Gallery/`, `assets/ornament-updates/ukiyoe-gallery-v1.json`.
+`assets/ornaments/Ukiyo-e Gallery/`, `assets/ornament-updates/ukiyoe-gallery-v1.json`,
+`assets/ornament-updates/ukiyoe-gallery-v2.json`.
 Tests: `tests/test_author_ornaments.lua`, `test_ornament_seed.lua`,
 `test_japan_ornaments.lua`, `test_ornament_session.lua`, `test_ornament_assets.py`,
 `test_ukiyoe_ornaments.lua`, `test_ukiyoe_update.lua`, `test_ukiyoe_assets.py`;
