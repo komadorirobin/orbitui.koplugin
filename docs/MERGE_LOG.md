@@ -872,6 +872,22 @@ validation follows a clean commit; no VERSION bump, push, tag or OTA release.
 Physical Bigme appearance, zoom/info and installed alpha.20 migration still
 require user acceptance. Code rollback retains the copied artwork and credits.
 
+## 2026-10-06: Prepare alpha.21 for explicit publication
+
+The user requests publication after the approved Kafka replacement. Prepare
+`0.1.0-alpha.21` from `ffaab470`, including the preceding unreleased gallery
+clearance and author-biography commits. No new upstream import, pin changes,
+bootstrap/API changes or reading-data migration. Keep it a prerelease until
+physical-device acceptance is complete. CI now explicitly installs Pillow for
+the mandatory Kafka colour/alpha checks, rather than relying on runner packages.
+
+Publication gates rerun complete Lua/LuaJIT tests, translations and clean-commit
+sealed packaging. Test discovery/install/activation/rollback using the actual
+published alpha.20 installer, verify downloaded draft assets and both CI jobs,
+then publish and verify anonymous API/download/preview OTA. No existing tag's
+bytes are replaced. Gallery spacing and Bigme bust appearance/touch remain
+device checks. See `docs/releases/0.1.0-alpha.21.md` for scope and rollback limits.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

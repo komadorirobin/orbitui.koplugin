@@ -98,6 +98,14 @@ modules. Alpha.19 and earlier alpha releases can update directly with the same
 bootstrap/API 1. No theme, reading-data or sync setting changes. Code rollback
 retains the updated ornament metadata as well as artwork.
 
+Version `0.1.0-alpha.21` increases the gallery's default wall clearance, adds
+Swedish author biographies to the eleven busts and replaces the default Kafka
+image with the licensed Kielce bronze adaptation. Narrow, independently marked
+updates preserve custom artwork, captions, positioning, native overrides and
+deletions. Alpha.20 and earlier releases can update directly using the same
+bootstrap/API 1 and preview channel. Code rollback retains updated artwork,
+credits and captions; it does not restore the old Kafka image.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

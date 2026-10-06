@@ -14,7 +14,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install test dependencies
-        run: sudo apt-get update && sudo apt-get install -y lua5.4 luajit gettext unzip libarchive13
+        run: sudo apt-get update && sudo apt-get install -y lua5.4 luajit gettext unzip libarchive13 python3-pil
       - name: Test integration and both components
         env:
           LUA: ${{ matrix.lua }}

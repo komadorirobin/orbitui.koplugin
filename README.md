@@ -16,12 +16,13 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.20** includes Bookshelf **5.3.1** through `74b825bb` and
+Version **0.1.0-alpha.21** includes Bookshelf **5.3.1** through `74b825bb` and
 SimpleUI **2.7.5** through `b58dfefb`, on top of alpha.4's shared OrbitUI surfaces.
-It corrects Ukiyo-e Gallery placement/information and Home layout saves,
+It raises gallery frames further above the shelf, adds sourced Swedish author
+biographies and replaces Kafka with the approved Kielce bronze adaptation,
 retaining alpha.18's per-module Bento top margins
 and one ordinary ornament per row, with several matching author busts allowed.
-See [the release notes](docs/releases/0.1.0-alpha.20.md)
+See [the release notes](docs/releases/0.1.0-alpha.21.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
