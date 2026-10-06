@@ -758,7 +758,10 @@ Both full Lua and LuaJIT runs pass: 307 OrbitUI cases (13 new), 57 Python checks
 including museum-source pixel audits, 351 Bookshelf suites (zero failures, the
 same two native SQLite skips), and all 13 SimpleUI test files. All 41 translation
 catalogs pass. Read-only collection at 04:05 UTC reports zero missing commits
-for both components. Clean-commit sealed packaging remains the final gate.
+for both components. Adaptation commit `710a38db` passes clean-commit sealed
+packaging: 1290 runtime files, 1340 archive entries, all 261 module paths and
+asset/license/recovery checks. The candidate is an unpublished development ZIP
+with VERSION still alpha.19, not replacement bytes for the published release.
 Physical Bigme checks are not performed: layout editing/clock visibility,
 custom screens, native startup selection and quote/clock/action-list margins
 still need the checklist in TESTING.md. This is not an OTA publication; the
