@@ -130,6 +130,13 @@ and settings remain untouched. Other ornaments and the bootstrap/API 1 are
 unchanged. Alpha.23 and earlier alpha releases can update directly through the
 preview channel. Code rollback retains the new image and updated credits.
 
+Version `0.1.0-alpha.25` adds per-chip cover sizing in the physical shelf view
+and fixes bottom-bar margin refreshes in Home and Library/Manga. Existing cover
+sizes remain at 100% until changed. Alpha.24 and earlier alpha releases can
+update directly through the same preview channel and unchanged bootstrap/API 1.
+No artwork migration, upstream merge or reading-data change. Code rollback
+retains the new size preferences, which older runtimes ignore.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

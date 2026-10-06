@@ -42,6 +42,16 @@ Bookshelf tests: `_test_close_keeps_shelf.lua`, `_test_close_raise_on_show.lua`,
 `_test_onshow_takeover.lua`, `_test_safe_show_takeover.lua`,
 `_test_profile_navigation_reuse.lua`. SimpleUI test: `_test_bookshelf_bridge.lua`.
 
+Global navbar geometry changes also refresh Bookshelf's independently embedded dock.
+An on-stack shelf (including one beneath settings) reflows immediately; a warm
+off-stack shelf defers until its normal return. Preserve the current profile,
+chip, folder and reading lifecycle, and never raise a hidden shelf to refresh
+chrome. Home/custom-screen content and pagination must reflow to the new
+available height after a bottom-margin change, without discarding book caches.
+Ordinary icon-only rebuilds (including Wi-Fi changes) must not rebuild shelves.
+Source: `adapters/orbitui_navbar.lua`, SimpleUI `ScreenWidget:_refreshImmediate`.
+Regression coverage: `tests/test_navbar_margin.lua`.
+
 ## C03: All book-opening routes
 
 A book opened from Home, Want to Read, Currently Reading, search, quick actions
@@ -138,6 +148,16 @@ grid/list/Auto modes and shelf decorations remain unchanged. Retain saved
 orientation choices for rollback rather than migrating preferences. The chip
 editor's optional `face_out_override` makes its row read-only and report All
 books, without changing the draft. Tests: `tests/test_face_out_shelves.lua`.
+
+The shelf-style picker also exposes `spine_cover_size_pct` (50-150%, default
+100%) for each chip, including independent prose/manga profile chips. Only
+face-out covers scale: preserve their aspect ratio, the hero, row count,
+ornaments and dock/footer reserves. Cap enlargement at the renderer's standing
+height above the plank; the shared `_spinePlanBase` must carry the size into
+both painting and pagination so wider covers repack rather than overlap.
+Retain the preview/cancel semantics of ordinary chips and immediate persistence
+of profile chips. Tests: `tests/test_shelf_cover_size.lua` and
+`tests/test_face_out_shelves.lua`.
 
 Per the user's 2026-10-04 approval, alphabetical bookcase ordering interleaves
 series/folder blocks with standalone books. Use the series name as the block's

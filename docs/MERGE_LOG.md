@@ -1139,6 +1139,26 @@ check, native OTA from the real alpha.23 installer, draft download verification,
 CI and anonymous live OTA. Physical reader appearance and migration remain
 device checks, separate from the automated release tests.
 
+## 2026-10-06: Publish alpha.25 cover sizing and bottom-bar margins
+
+The user explicitly requests publication of the cover-size setting and the
+preceding bottom-bar margin fix. Prepare alpha.25 as a prerelease, not a
+device-accepted beta. No upstream merge: retain Bookshelf `74b825bb`, SimpleUI
+`b58dfefb`, sources.json, the stable bootstrap/API 1 and all artwork.
+
+Contracts C02/C07: reflow Home after navigation chrome changes, rebuild a shown
+Bookshelf dock and defer hidden/warm shelves until return. Ordinary icon/status
+refreshes must not trigger a full shelf rebuild. Add a per-chip 50-150% cover-size
+control in the physical bookcase style, shared by render and pagination. Preserve
+aspect ratio, 100% legacy geometry, ornaments and dock/footer reserves; clear
+old back-page boundaries on resizing without moving the current book.
+
+Publication gates: complete Lua/LuaJIT suites, translations, clean-commit runtime
+ZIP, held-bitmap ancestry exclusion, native OTA from the actual alpha.24
+installer, downloaded draft-asset hashes, CI and anonymous live OTA. Physical
+reader appearance, live margin changes and device OTA remain manual checks.
+Keep the old Mann bitmap's local archive branch unpublished.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

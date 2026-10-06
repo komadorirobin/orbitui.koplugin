@@ -3438,6 +3438,12 @@ function ScreenWidget:_refreshImmediate(keep_cache)
         end
     end
     if not self._navbar_container then return end
+    -- Rewrapping chrome updates the available height, but the body and footer
+    -- still belong to the old layout. Reflow them before refreshing modules.
+    if self._navbar_content_h and self._layout_content_h ~= self._navbar_content_h then
+        local overlap = self:_initLayout()
+        self:_swapLayoutTree(overlap)
+    end
     self:_updatePage(keep_cache or false)
     UIManager:setDirty(self, "ui")
 end

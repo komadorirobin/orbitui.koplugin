@@ -3906,6 +3906,13 @@ function SpineShelf.plan(items, opts)
             -- cover width.
             face_h = h - SpineLayout.topEdgeHeight(h, aspect, Screen:scaleBySize(5))
             if face_h < Screen:scaleBySize(24) then face_h = Screen:scaleBySize(24) end
+            -- Match rowWidget's face-out standing budget, including its push
+            -- back on the plank. Enlarging the cover must also enlarge its slot.
+            h, face_h, depth = SpineLayout.scaleFaceOut(h, face_h, depth, aspect,
+                opts.cover_size_pct,
+                budget - SpineShelf.plankFace(budget)
+                    - 2 * SpineShelf.plankInset(SpineShelf.plankUnit(budget)),
+                opts.content_w)
             -- Width from the COVER height, so the cover stays aspect-true.
             w = SpineLayout.faceOutWidth(face_h, aspect)
             w_dp = math.floor(w / (Screen:scaleBySize(100) / 100) + 0.5)

@@ -11,6 +11,7 @@ M.modules = {
     ["lib/bookshelf_sort_engine"] = true,
     ["modules/moduleregistry"] = true,
     ["screens/sui_menu"] = true,
+    ["screens/sui_bottombar"] = true,
 }
 
 local function settingsEntry(items, old_key)
@@ -31,6 +32,7 @@ function M.wrap(name, module)
         -- Saved chip/profile/global choices stay intact for code rollback.
         module._spineFaceOut = function() return SHELF_FACE_OUT end
         require("adapters/orbitui_shelf_sort").widget(module)
+        require("adapters/orbitui_navbar").widget(module)
         module.orbitui_shelf_menu = function(self, chip)
             return require("adapters/orbitui_home_shelves").shelfMenu(self, chip)
         end
@@ -53,6 +55,8 @@ function M.wrap(name, module)
         require("adapters/orbitui_shelf_sort").engine(module)
     elseif name == "modules/moduleregistry" then
         require("adapters/orbitui_home_shelves").install(module)
+    elseif name == "screens/sui_bottombar" then
+        require("adapters/orbitui_navbar").bottombar(module)
     elseif name == "screens/sui_menu" then
         return function(plugin)
             module(plugin)

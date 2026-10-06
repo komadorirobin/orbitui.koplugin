@@ -42,6 +42,7 @@ local Widget = Integration.wrap("lib/bookshelf_widget", {
     _spineFaceRecent = widgetMethod("_spineFaceRecent"),
     _spinePlanBase = widgetMethod("_spinePlanBase"),
     _chipListValue = function(_, key)
+        if key == "spine_cover_size_pct" then return 130 end
         H.eq(key, "spine_thickness_pct"); return 120
     end,
 })
@@ -74,6 +75,7 @@ H.test("shared render/pagination options keep margins and density but use all co
     H.eq(opts.gap, 0)
     H.eq(opts.group_gap, 24)
     H.eq(opts.thickness_pct, 120)
+    H.eq(opts.cover_size_pct, 130)
     for _, name in ipairs({ "_buildSpineRows", "_spinePageFirsts" }) do
         local _, body = widget_source:match(
             "\nfunction BookshelfWidget:" .. name .. "%((.-)%)\n(.-)\nend\n")
@@ -153,5 +155,41 @@ H.test("normal grid/list/auto modes and remote catalogue restrictions stay uncha
     end
     H.eq(openStyle({ [ViewMode.CHIP_KEY] = ViewMode.SPINES }, { is_opds = true }), nil)
     H.eq(#shown.buttons[2], 3)
+end)
+
+local function sizeRow(draft, chrome)
+    openStyle(draft, chrome)
+    for _, row in ipairs(shown.buttons) do
+        local button = row[2]
+        if button and button.text_func
+                and button.text_func():match("^Cover size:") then return row end
+    end
+end
+
+H.test("cover size defaults to 100 percent and previews each ten-percent step", function()
+    local draft = { [ViewMode.CHIP_KEY] = ViewMode.SPINES, spine_rows = 2 }
+    local row = sizeRow(draft)
+    H.eq(row[2].text_func(), "Cover size: 100%")
+    local before = changes
+    row[3].callback()
+    H.eq(draft.spine_cover_size_pct, 110)
+    H.eq(changes, before + 1)
+    H.eq(sizeRow(draft)[2].text_func(), "Cover size: 110%")
+    sizeRow(draft)[1].callback()
+    H.eq(draft.spine_cover_size_pct, nil)
+    H.eq(sizeRow(draft)[2].text_func(), "Cover size: 100%")
+    for _ = 1, 12 do sizeRow(draft)[1].callback() end
+    H.eq(draft.spine_cover_size_pct, 50)
+    for _ = 1, 12 do sizeRow(draft)[3].callback() end
+    H.eq(draft.spine_cover_size_pct, 150)
+    H.eq(draft.spine_rows, 2)
+    H.eq(draft.spine_thickness_pct, nil)
+end)
+
+H.test("only physical bookshelves expose the size control", function()
+    for _, mode in ipairs({ ViewMode.AUTO, ViewMode.COVERS, ViewMode.LIST }) do
+        H.eq(sizeRow({ [ViewMode.CHIP_KEY] = mode }), nil)
+    end
+    H.eq(sizeRow({ [ViewMode.CHIP_KEY] = ViewMode.SPINES }, { is_opds = true }), nil)
 end)
 H.finish()

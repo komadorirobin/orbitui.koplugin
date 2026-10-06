@@ -34,6 +34,7 @@ for _, path in ipairs({
     "assets/material-symbols/generated.json", "assets/material-symbols/selection.json",
     "assets/material-symbols/icons/manga.svg", "assets/material-symbols/icons/comic_bubble.svg",
     "core/orbitui_icons.lua", "core/orbitui_material_catalogue.lua", "adapters/orbitui_icons.lua",
+    "adapters/orbitui_navbar.lua",
     "core/orbitui_vector_icons.lua",
     "core/orbitui_author_ornaments.lua", "core/orbitui_japan_ornaments.lua",
     "core/orbitui_author_info.lua", "assets/ornament-updates/author-info-v1.json",

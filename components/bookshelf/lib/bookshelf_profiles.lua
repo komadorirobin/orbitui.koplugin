@@ -14,6 +14,7 @@ local SHELF_FIELDS = {
     "spine_rows",
     "spine_rows_expanded",
     "spine_thickness_pct",
+    "spine_cover_size_pct",
     "spine_face_out",
     "spine_show_author",
     "ornament_frequency",

@@ -660,6 +660,7 @@ function Editor:editTab(tab_id, opts)
         -- is the one tri-state: nil = the default (yes), false = no.
         override.spine_rows          = draft.spine_rows
         override.spine_thickness_pct = draft.spine_thickness_pct
+        override.spine_cover_size_pct = draft.spine_cover_size_pct
         override.spine_face_out      = draft.spine_face_out
         override.spine_show_author   = draft.spine_show_author
         -- Same nil-means-default semantics. There is no library setting
@@ -1820,10 +1821,10 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
             -- Percent rows step by 10 and treat auto_value as the stored
             -- absence (nil = "follow the default"), so both settings keep
             -- the dialog's nil-means-default semantics.
-            local function pctRow(label, key, lo, hi, auto_value)
+            local function pctRow(label, key, lo, hi, auto_value, show_default)
                 local step_sz = 10
                 local function shown()
-                    local v = draft[key]
+                    local v = draft[key] or (show_default and auto_value)
                     return label .. ": "
                            .. (v and (tostring(v) .. "%") or _("Auto"))
                 end
@@ -1843,9 +1844,9 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
                     { text = "+", callback = step(1) },
                 }
             end
+            rows[#rows + 1] = pctRow(_("Cover size"), "spine_cover_size_pct",
+                                     50, 150, 100, true)
             -- Spine thickness: a multiplier on the page-count width.
-            -- (No height row: book height IS rows over available space,
-            -- with the hero pinned to the cover grid's standard size.)
             rows[#rows + 1] = pctRow(_("Spine thickness"), "spine_thickness_pct",
                                      60, 200, 100)
             -- Face out (front cover, bookstore style): WHICH books stand

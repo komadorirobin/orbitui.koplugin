@@ -148,6 +148,22 @@ function SpineLayout.faceOutWidth(spine_h, aspect)
     return w
 end
 
+-- Scale covers within the existing row, leaving the plank and ornaments alone.
+-- The default returns the original geometry unchanged for existing layouts.
+function SpineLayout.scaleFaceOut(h, face_h, depth, aspect, pct, max_h, max_w)
+    pct = tonumber(pct) or 100
+    if pct ~= pct then pct = 100 end
+    pct = math.max(50, math.min(150, pct))
+    if pct == 100 then return h, face_h, depth end
+    aspect = tonumber(aspect)
+    if not aspect or aspect <= 0 then aspect = SpineLayout.DEFAULT_ASPECT end
+    max_h = math.max(1, math.floor(max_h))
+    depth = math.min(depth, math.max(0, max_h - 10))
+    face_h = math.max(1, math.min(math.floor(face_h * pct / 100 + 0.5),
+        max_h - depth, math.floor(math.max(1, max_w) * aspect)))
+    return face_h + depth, face_h, depth
+end
+
 -- fillRows(widths, avail_w, gap, empty_ok) -> { {first=i, last=j}, ... }
 --
 -- Greedy left-to-right fill. A row normally holds at least one book even when

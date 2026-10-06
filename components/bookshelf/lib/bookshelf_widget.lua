@@ -6958,6 +6958,7 @@ function BookshelfWidget:_spinePlanBase(content_w, shelf_h, all_items)
         face_out        = self:_spineFaceOut(),
         face_recent_set = self:_spineFaceRecent(all_items),
         thickness_pct   = self:_chipListValue("spine_thickness_pct"),
+        cover_size_pct  = self:_chipListValue("spine_cover_size_pct"),
     }
 end
 
@@ -7119,10 +7120,12 @@ function BookshelfWidget:_buildSpineRows(items, content_w, shelf_h, PAD, n_rows)
     end
     self._spine_page_books = page_books
     -- Page history is per chip: stepping back retraces the pages the reader
-    -- actually saw. A chip switch invalidates it.
-    if self._spine_hist_chip ~= self.chip then
+    -- actually saw. A chip switch or cover resize invalidates old boundaries.
+    if self._spine_hist_chip ~= self.chip
+            or self._spine_hist_cover_size ~= (opts.cover_size_pct or 100) then
         self._spine_hist = {}
         self._spine_hist_chip = self.chip
+        self._spine_hist_cover_size = opts.cover_size_pct or 100
     end
     -- The empty strip above each row, which a selected book may rise into
     -- rather than shrinking to fit its own slot (user ruling: "we can go

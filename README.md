@@ -16,15 +16,14 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.24** includes Bookshelf **5.3.1** through `74b825bb` and
+Version **0.1.0-alpha.25** includes Bookshelf **5.3.1** through `74b825bb` and
 SimpleUI **2.7.5** through `b58dfefb`, on top of alpha.4's shared OrbitUI surfaces.
-It replaces Mann with a frontal, non-generative cutout of Pauline Ahrens's
-original photograph, retaining alpha.23's Hemingway refinement and alpha.22's
-photographic replacements, added Svevo/Hemingway and retired Lispector default. Swedish
-biographies, author matching, zoom and custom artwork are preserved,
-along with alpha.18's per-module Bento top margins
-and one ordinary ornament per row, with several matching author busts allowed.
-See [the release notes](docs/releases/0.1.0-alpha.24.md)
+It adds per-shelf cover sizing (50-150%, default 100%) to the physical bookcase
+view and refreshes bottom-bar geometry when its margins change in Home and
+Library/Manga. Larger covers repack within the existing shelf area; hero,
+ornaments and footer space remain independent. All previously published artwork,
+biographies, author matching, custom settings and reading data are preserved.
+See [the release notes](docs/releases/0.1.0-alpha.25.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
