@@ -1,0 +1,30 @@
+{
+  "old_sha256": "e584052943e66f9edc23622a48fc7f4f1c7482d306c4d8a080c74a896e6e68a7",
+  "new_sha256": "fc6d71bd1538bee9a569a9838b7a00c5374469f0cc8efad3c70674a20c286bb9",
+  "old_info": [
+    "Thomas Mann\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/",
+    "Thomas Mann (1875-1955)\n\nThomas Mann föddes i Lübeck och blev en av den tyskspråkiga litteraturens stora romanförfattare. Genombrottet Buddenbrooks utkom 1901, och Nobelpriset i litteratur 1929 motiverades framför allt med just denna roman. Spänningen mellan ett ordnat borgerligt liv och konstnärens avvikande känslor och ambitioner är ett återkommande ämne, tydligt redan i berättelsen Tonio Kröger.\n\nManns författarskap rör sig mellan noveller, stora romanbyggen och essäer. Till de centrala verken hör Der Zauberberg och Doktor Faustus, vid sidan av Buddenbrooks. Hans liv fick också en uttalat politisk riktning: efter 1933 levde han i exil, först i Schweiz och senare i USA. Under kriget sände han radiotal till tyska lyssnare. Den långa karriären spänner därmed över både det sena kejsardömets borgerliga kultur och den europeiska katastrof som tvingade honom och familjen bort från Tyskland.\n\nCentrala verk:\nBuddenbrooks (1901); Tonio Kröger (1903); Der Zauberberg (1924); Doktor Faustus (1947).\n\nText: OrbitUI, AI-assisterad svensk sammanfattning av källorna nedan. Inte källornas originaltext.\n\nKällor:\nS. Fischer: Thomas Manns liv:\nhttps://www.thomasmann.de/leben/lebenslauf\nS. Fischer: konstnären och det borgerliga livet:\nhttps://www.thomasmann.de/leben/stationen/kuenstler\nNobelPrize.org: litteraturpriset 1929:\nhttps://www.nobelprize.org/prizes/lists/all-nobel-prizes-in-literature/all/\n\nOm bysten / bildkrediter:\nThomas Mann\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+  ],
+  "old_placement": {
+    "scale": 0.996,
+    "anchor": "bottom",
+    "lift": -0.01
+  },
+  "documents": {
+    "README.txt": [
+      "3b5ddac5eeb2a0a79624f411398b6450b9fc346daa3a60f915dca1658eaf059e",
+      "dd2c91d971b78ab89987f45e5d504629eef85f081f6924a0bde442da07df2503",
+      "4a0ca94b1b954fea514c8e548d73b33a3de26f808b66aee15c06cc21348c0ae3"
+    ],
+    "ATTRIBUTION.txt": [
+      "2cc621717575f2362df5474c672c81c15933544dc7ab0fd73152c06044b6a183",
+      "baa16ac7896cf7a6fbc3df7d366bf6b3eb871e34443b3d6913f34de9bad9036b",
+      "cd18f53bcbc3c0f9f674c0bd7468f2c627f9307597582c61a4ec144df34a4993"
+    ],
+    "prompts.json": [
+      "feca6933aadf0b9ce5692429bdec1cded9824bfd58dff4a179f614d2b379b892",
+      "c39b9cea8dd37fde3ea30cf26e8ff4b68c681f37423564102eb2c883a9fbb9b4",
+      "a224c69417733c32ef6c51dac2672aa52dc7699c7b959667652025fcebf09dae"
+    ]
+  }
+}

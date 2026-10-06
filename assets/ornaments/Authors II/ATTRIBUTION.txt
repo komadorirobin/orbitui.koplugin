@@ -1,0 +1,36 @@
+AUTHORS II - PHOTOGRAPHIC CUTOUTS
+
+These credits apply ONLY to the PNG SHA-256 values below, not to custom replacements.
+
+Original photo pixels: background masking and proportional resizing only. No AI-generated sculpture details or colour changes.
+
+Photographs and sculptures have separate rights. No endorsement or worldwide sculpture-rights waiver is implied.
+
+Public redistribution review is still required; see the per-image rights basis. The existing Mann release hold also remains.
+
+ShareAlike applies to the Svevo adaptation, not the entire collection. Source photographs are not bundled.
+
+Ernest Hemingway.png
+Fernando Boada, Ernest Hemingway, bronze, Cojimar, Cuba, 1962. Photograph: Carol M. Highsmith, 2010. The Carol M. Highsmith Archive, Library of Congress, Prints and Photographs Division, LC-DIG-highsm-06293 / LCCN2010638901.
+Photograph/adaptation: Library of Congress: No known restrictions on publication (photograph)
+https://www.loc.gov/rr/print/res/482_high.html
+Separate rights basis: Highsmith photograph: Library of Congress rights advisory. Separate sculpture basis: Cuba Law 154/2022, Article 86.2(d), reproduction of publicly accessible artwork with creator credit. This is not a worldwide sculpture-rights waiver; destination-country rights remain a public-release review item.
+https://www.loc.gov/item/2010638901/
+https://www.loc.gov/rr/print/res/482_high.html
+https://cvc.cervantes.es/el_rinconete/anteriores/mayo_06/09052006_01.htm
+https://www.wipo.int/wipolex/en/legislation/details/21621
+Original photograph: https://cdn.loc.gov/master/pnp/highsm/06200/06293a.tif
+Source SHA-256: bd313b965e0bfe2038cb106d86b62e1253a43080246432c9b492478434905306
+PNG SHA-256: 91253f8227ca3d6a3e59ebaf23ce4288618e739e9cc7b56591e4d465bcf41a81
+
+Italo Svevo.png
+Giovanni Mayer, Italo Svevo, bronze, 1929, Giardino Pubblico de Tommasini, Trieste; unveiled 1931. Photograph: Amrei-Marie, 22 February 2025, CC BY-SA 4.0.
+Photograph/adaptation: CC BY-SA 4.0
+https://creativecommons.org/licenses/by-sa/4.0/
+Separate rights basis: Photograph/adaptation: CC BY-SA 4.0. Mayer died in 1943; the ordinary Italian life-plus-70 sculpture term has expired. Public release still needs review of Italian cultural-property reproduction rules and destination-country rights; the photograph license is not a blanket clearance.
+https://commons.wikimedia.org/wiki/File:Italo_Svevo_(Schriftsteller).jpg
+https://catalogomusei.comune.trieste.it/samira/data/architettura/documenti/D261/D26159.PDF
+https://www.museosveviano.it/wp-content/uploads/2020/04/SvevoENG_13_9.pdf
+Original photograph: https://upload.wikimedia.org/wikipedia/commons/3/35/Italo_Svevo_%28Schriftsteller%29.jpg
+Source SHA-256: e681d87fa11c37a3aed855596655f1f362344e67edb08bcd524bc01b8ade42f3
+PNG SHA-256: 7731efb3408a5e757e30c3a1940270fb8da252fb71741b627c6192277b596e36

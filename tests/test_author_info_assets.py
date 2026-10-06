@@ -37,8 +37,11 @@ class AuthorInfoAssetsTests(unittest.TestCase):
         self.assertEqual(self.baseline["source_commit"], builder.SOURCE_COMMIT)
         for pack, old in self.baseline["packs"].items():
             current = json.loads((ROOT / "assets/ornaments" / pack / "ornaments.json").read_text())
-            self.assertEqual(set(current), set(old["metadata"]))
+            retired = builder.RETIRED.get(pack, set())
+            self.assertEqual(set(current), set(old["metadata"]) - retired)
             for name, before in old["metadata"].items():
+                if name in retired:
+                    continue
                 with self.subTest(pack=pack, name=name):
                     after = current[name]
                     credit = builder.artwork_credit(name, before["info"])
@@ -49,6 +52,11 @@ class AuthorInfoAssetsTests(unittest.TestCase):
                     expected = {k: v for k, v in before.items() if k != "info"}
                     if name == "Franz Kafka.png":
                         expected.update(json.loads(builder.KAFKA.read_text())["placement"])
+                    elif name == "Thomas Mann.png":
+                        expected.update(json.loads(builder.MANN.read_text())["placement"])
+                    for asset in json.loads(builder.SCULPTURES.read_text()):
+                        if name == asset["file"]:
+                            expected.update(asset["placement"])
                     self.assertEqual({k: v for k, v in after.items() if k != "info"}, expected)
                     self.assertEqual(after["tap"], "zoom")
 
@@ -59,6 +67,19 @@ class AuthorInfoAssetsTests(unittest.TestCase):
             for required in ("life", "major works", "Swedish", "source links", "offline",
                              "Custom captions", "Image bytes", "ATTRIBUTION.txt"):
                 self.assertIn(required, text)
+
+    def test_retired_lispector_keeps_source_biography_but_no_runtime_artwork_or_card(self):
+        name = "Clarice Lispector.png"
+        self.assertEqual(builder.RETIRED, {"Authors": {name}})
+        self.assertIn(name, self.bios)
+        self.assertIn(name, self.baseline["packs"]["Authors"]["metadata"])
+        folder = ROOT / "assets/ornaments/Authors"
+        self.assertFalse((folder / name).exists())
+        self.assertNotIn(name, json.loads((folder / "ornaments.json").read_text()))
+        prompts = json.loads((folder / "prompts.json").read_text())
+        self.assertNotIn(name, {a["file"] for a in prompts["assets"]})
+        retirement = (ROOT / "core/orbitui_lispector_retirement.lua").read_text()
+        self.assertIn("bee7a3d24770d1931d4144b3e5ad1c8b71beaac0d10b5acbf9f43d317524343a", retirement)
 
 
 if __name__ == "__main__":

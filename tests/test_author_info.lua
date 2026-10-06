@@ -122,19 +122,23 @@ H.test("custom captions including blank and deleted info are not overwritten", f
         H.eq(current(first)["two.png"].info, "Biography\n\nother image credits")
     end
 end)
-H.test("generic biography migration leaves Kafka to the artwork-aware upgrade", function()
-    fixture()
-    local prior = current(second)
-    prior["Franz Kafka.png"] = { info = "old Kafka caption" }
-    files[target(second) .. "ornaments.json"] = encode(prior)
-    local base = decode(files[root .. "/" .. Update.baseline])
-    base.packs.Authors.metadata["Franz Kafka.png"] = clone(prior["Franz Kafka.png"])
-    files[root .. "/" .. Update.baseline] = encode(base)
-    local new = decode(files[source(second) .. "ornaments.json"])
-    new["Franz Kafka.png"] = { info = "Kielce biography and credits" }
-    files[source(second) .. "ornaments.json"] = encode(new)
-    apply()
-    H.eq(current(second)["Franz Kafka.png"].info, "old Kafka caption")
+H.test("generic biography migration leaves replaced art to artwork-aware upgrades", function()
+    for _, name in ipairs({ "Franz Kafka.png", "Thomas Mann.png", "August Strindberg.png",
+        "Knut Hamsun.png", "Fyodor Dostoevsky.png", "Dylan Thomas.png",
+        "Stanislaw Lem.png", "Robert Musil.png" }) do
+        fixture()
+        local prior = current(second)
+        prior[name] = { info = "old artwork caption" }
+        files[target(second) .. "ornaments.json"] = encode(prior)
+        local base = decode(files[root .. "/" .. Update.baseline])
+        base.packs.Authors.metadata[name] = clone(prior[name])
+        files[root .. "/" .. Update.baseline] = encode(base)
+        local new = decode(files[source(second) .. "ornaments.json"])
+        new[name] = { info = "new artwork biography and credits" }
+        files[source(second) .. "ornaments.json"] = encode(new)
+        apply()
+        H.eq(current(second)[name].info, "old artwork caption")
+    end
 end)
 H.test("caption-only changes preserve custom placement taps disables and foreign records", function()
     fixture()
@@ -149,6 +153,19 @@ H.test("caption-only changes preserve custom placement taps disables and foreign
     end
     H.eq(current(first)["foreign.png"].info, "my art")
     H.eq(files[folder .. "/ornaments.json"], "CUSTOM READER OVERRIDES")
+end)
+H.test("retired Lispector keeps its old metadata without requiring a bundled replacement", function()
+    fixture()
+    local prior = current(second)
+    prior["Clarice Lispector.png"] = { info = "old Lispector caption", lift = .3 }
+    files[target(second) .. "ornaments.json"] = encode(prior)
+    local base = decode(files[root .. "/" .. Update.baseline])
+    base.packs.Authors.metadata["Clarice Lispector.png"] = clone(prior["Clarice Lispector.png"])
+    files[root .. "/" .. Update.baseline] = encode(base)
+    H.eq(apply(), true)
+    H.eq(current(second)["Clarice Lispector.png"].info, "old Lispector caption")
+    H.eq(current(second)["Clarice Lispector.png"].lift, .3)
+    H.eq(current(second)["one.png"].info, "Biography\n\noriginal image credits")
 end)
 H.test("removed records edited notices and deleted files stay removed or edited", function()
     fixture()
@@ -240,25 +257,43 @@ H.test("interrupted README or marker writes retry safely after an intervening ca
 end)
 io.open, os.rename, os.remove = real_open, real_rename, real_remove
 
-H.test("author startup seeds before applying captions even when seeding reports a change", function()
+H.test("author startup always runs retirement between artwork and caption updates", function()
     local Authors = require("core/orbitui_author_ornaments")
     for _, seeded in ipairs({ true, false }) do
         for _, updated in ipairs({ true, false }) do
-            local called = {}
-            package.loaded["core/orbitui_kafka_update"] = { apply = function(r, dir)
-                H.eq(r, root); H.eq(dir, folder)
-                called[#called+1] = "artwork"; return false
-            end }
-            package.loaded["core/orbitui_ornament_install"] = { seed = function(r, dir, packs)
-                H.eq(r, root); H.eq(dir, folder); H.eq(packs, Authors.packs)
-                called[#called+1] = "seed"; return seeded
-            end }
-            package.loaded["core/orbitui_author_info"] = { apply = function(r, dir)
-                H.eq(r, root); H.eq(dir, folder)
-                called[#called+1] = "info"; return updated
-            end }
-            H.eq(Authors.seed(root, folder), seeded or updated)
-            H.eq(table.concat(called, ","), "seed,artwork,info")
+            for _, retired in ipairs({ true, false }) do
+                for _, mann in ipairs({ true, false }) do
+                  for _, sculptures in ipairs({ true, false }) do
+                    local called = {}
+                    package.loaded["core/orbitui_kafka_update"] = { apply = function(r, dir)
+                        H.eq(r, root); H.eq(dir, folder)
+                        called[#called+1] = "artwork"; return false
+                    end }
+                    package.loaded["core/orbitui_lispector_retirement"] = { apply = function(r, dir)
+                        H.eq(r, root); H.eq(dir, folder)
+                        called[#called+1] = "retire"; return retired
+                    end }
+                    package.loaded["core/orbitui_mann_update"] = { apply = function(r, dir)
+                        H.eq(r, root); H.eq(dir, folder)
+                        called[#called+1] = "mann"; return mann
+                    end }
+                    package.loaded["core/orbitui_sculpture_updates"] = { apply = function(r, dir)
+                        H.eq(r, root); H.eq(dir, folder)
+                        called[#called+1] = "sculptures"; return sculptures
+                    end }
+                    package.loaded["core/orbitui_ornament_install"] = { seed = function(r, dir, packs)
+                        H.eq(r, root); H.eq(dir, folder); H.eq(packs, Authors.packs)
+                        called[#called+1] = "seed"; return seeded
+                    end }
+                    package.loaded["core/orbitui_author_info"] = { apply = function(r, dir)
+                        H.eq(r, root); H.eq(dir, folder)
+                        called[#called+1] = "info"; return updated
+                    end }
+                    H.eq(Authors.seed(root, folder), seeded or updated or retired or mann or sculptures)
+                    H.eq(table.concat(called, ","), "seed,artwork,mann,sculptures,retire,info")
+                  end
+                end
+            end
         end
     end
 end)

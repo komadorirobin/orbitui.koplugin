@@ -39,17 +39,24 @@ function M.apply(root, ornaments_dir)
                 local new = decode(read(source .. "ornaments.json"))
                 local dirty = false
                 for name, before in pairs(old.metadata) do
-                    local entry, after = current[name], new[name]
-                    assert(type(before.info) == "string" and type(after) == "table"
-                        and type(after.info) == "string" and #after.info > 0
-                        and #after.info <= 4000, "Invalid bundled author info")
-                    -- Kafka's caption belongs to its checksum-guarded image
-                    -- migration: never attach Kielce credits to a custom image.
-                    if not (pack.name == "Authors" and name == "Franz Kafka.png")
-                        and type(entry) == "table" and entry.info == before.info
-                        and entry.info ~= after.info then
-                        entry.info = after.info
-                        dirty = true
+                    -- Retired Lispector metadata is left intact for custom art.
+                    if not (pack.name == "Authors" and name == "Clarice Lispector.png") then
+                        local entry, after = current[name], new[name]
+                        assert(type(before.info) == "string" and type(after) == "table"
+                            and type(after.info) == "string" and #after.info > 0
+                            and #after.info <= 4000, "Invalid bundled author info")
+                        -- Changed artwork owns its captions: never attach new
+                        -- sculpture credits to a reader's custom image.
+                        if not (pack.name == "Authors" and
+                            (name == "Franz Kafka.png" or name == "Thomas Mann.png"
+                            or name == "August Strindberg.png" or name == "Knut Hamsun.png"
+                            or name == "Fyodor Dostoevsky.png" or name == "Dylan Thomas.png"
+                            or name == "Stanislaw Lem.png" or name == "Robert Musil.png"))
+                            and type(entry) == "table" and entry.info == before.info
+                            and entry.info ~= after.info then
+                            entry.info = after.info
+                            dirty = true
+                        end
                     end
                 end
                 if dirty then

@@ -20,6 +20,10 @@ local added = {
     { file = "Clarice Lispector", id = "clarice lispector", names = { "Clarice Lispector" } },
     { file = "Robert Musil", id = "robert musil", names = { "Robert Musil" } },
     { file = "Franz Kafka", id = "franz kafka", names = { "Franz Kafka" } },
+    { pack = "Authors II", file = "Ernest Hemingway", id = "ernest hemingway",
+        names = { "Ernest Hemingway", "Ernest Miller Hemingway" } },
+    { pack = "Authors II", file = "Italo Svevo", id = "italo svevo",
+        names = { "Italo Svevo", "Ettore Schmitz", "Aron Hector Schmitz", "Hector Aaron Schmitz" } },
 }
 
 local function entry(id, name, width, group)
@@ -103,7 +107,8 @@ end)
 
 for _, subject in ipairs(added) do
     H.test("new bust matches full and inverted names: " .. subject.file, function()
-        local piece = { name = "Authors/" .. subject.file .. ".png", pack = "Authors", w = 60 }
+        local pack = subject.pack or "Authors"
+        local piece = { name = pack .. "/" .. subject.file .. ".png", pack = pack, w = 60 }
         H.eq(Authors.pieces[piece.name], subject.id)
         for _, name in ipairs(subject.names) do
             local given, surname = name:match("^(.+) (%S+)$")
@@ -123,7 +128,9 @@ end
 H.test("new matches never use surnames, title mentions or similar family names", function()
     for _, name in ipairs({ "Heinrich Mann", "Klaus Mann", "Caitlin Thomas", "Thomas", "Mann", "Lem",
         "About Clarice Lispector", "Robert Musil Foundation", "Translator of Fjodor Dostojevskij",
-        "Kafka", "Franz Kafka Society", "Hermann Kafka", "About Franz Kafka" }) do
+        "Kafka", "Franz Kafka Society", "Hermann Kafka", "About Franz Kafka",
+        "Hemingway", "Mary Hemingway", "Ernest Hemingway Society", "Italo Calvino",
+        "Svevo", "About Italo Svevo", "Schmitz" }) do
         H.eq(Authors.authorOf(entry(1, name)), nil)
     end
 end)
@@ -324,7 +331,8 @@ H.test("whole-library pagination and page renders agree across author and page b
     local cards = { joyce, plant, woolf }
     local names = { "James Joyce", "Virginia Woolf", "Other", "James Joyce" }
     for _, subject in ipairs(added) do
-        cards[#cards + 1] = { name = "Authors/" .. subject.file .. ".png", pack = "Authors", w = 60 }
+        local pack = subject.pack or "Authors"
+        cards[#cards + 1] = { name = pack .. "/" .. subject.file .. ".png", pack = pack, w = 60 }
         names[#names + 1] = subject.names[1]
     end
     for _, width in ipairs({ 200, 320, 480 }) do

@@ -17,6 +17,8 @@ for path in listing:lines() do
     count = count + 1
 end
 assert(listing:close(), "Could not list runtime archive")
+assert(not entries[prefix .. "assets/ornaments/Authors/Clarice Lispector.png"],
+    "Retired Lispector artwork must not be packaged")
 local function expect(path)
     assert(entries[prefix .. path], "Missing runtime file: " .. path)
 end
@@ -36,6 +38,11 @@ for _, path in ipairs({
     "core/orbitui_author_ornaments.lua", "core/orbitui_japan_ornaments.lua",
     "core/orbitui_author_info.lua", "assets/ornament-updates/author-info-v1.json",
     "core/orbitui_kafka_update.lua", "assets/ornament-updates/kafka-kielce-v1.json",
+    "core/orbitui_lispector_retirement.lua",
+    "core/orbitui_mann_update.lua", "assets/ornament-updates/mann-photo-v2.json",
+    "assets/ornaments/Authors/THOMAS-MANN-SEITZ.txt",
+    "core/orbitui_sculpture_updates.lua", "assets/ornament-updates/author-sculptures-v1.json",
+    "assets/ornaments/Authors/AUTHOR-SCULPTURES.txt",
     "assets/ornaments/Authors/KAFKA-KIELCE.txt",
     "core/orbitui_ukiyoe_ornaments.lua",
     "core/orbitui_ukiyoe_update.lua", "assets/ornament-updates/ukiyoe-gallery-v1.json",

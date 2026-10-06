@@ -16,13 +16,14 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.21** includes Bookshelf **5.3.1** through `74b825bb` and
+Version **0.1.0-alpha.22** includes Bookshelf **5.3.1** through `74b825bb` and
 SimpleUI **2.7.5** through `b58dfefb`, on top of alpha.4's shared OrbitUI surfaces.
-It raises gallery frames further above the shelf, adds sourced Swedish author
-biographies and replaces Kafka with the approved Kielce bronze adaptation,
-retaining alpha.18's per-module Bento top margins
+It replaces seven author ornaments with masked sculpture photographs, adds
+Svevo and Hemingway, and retires the generated Lispector default. Swedish
+biographies, author matching, zoom and custom artwork are preserved,
+along with alpha.18's per-module Bento top margins
 and one ordinary ornament per row, with several matching author busts allowed.
-See [the release notes](docs/releases/0.1.0-alpha.21.md)
+See [the release notes](docs/releases/0.1.0-alpha.22.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
@@ -51,6 +52,10 @@ See [author ornaments](docs/ORNAMENTS.md) for matching, controls and artwork lic
 Alpha.17 also includes the **Authors** pack: Strindberg, Lem, Dylan
 Thomas, Thomas Mann, Dostoevsky, Hamsun, Lispector, Musil and Kafka. It installs
 independently without replacing Modernists artwork or user adjustments.
+Alpha.22: the generated Lispector portrait is retired. Only the exact old
+default is removed on upgrade; custom replacements and settings stay intact.
+The Authors pack now contains eight busts. No Rio replacement is bundled yet.
+The new **Authors II** pack adds photographic Svevo and Hemingway ornaments.
 
 Alpha.19: **Ukiyo-e Gallery** adds 27 genuine CC0 museum prints in original
 frames, native zoom/info cards and an optional washi/Hinoki-style theme. No

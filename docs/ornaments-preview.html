@@ -18,6 +18,7 @@ main { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:28px 25p
 figure { margin:0; min-width:0; }
 .shelf { height:240px; position:relative; display:flex; justify-content:center; align-items:flex-end; border-bottom:10px solid var(--plank); box-shadow:0 3px 4px -2px var(--shadow); }
 .shelf:after { content:""; position:absolute; bottom:0; left:0; right:0; height:3px; background:#9d8d72; opacity:.6; }
+.shelf > a { display:contents; }
 .shelf img { height:calc(220px * var(--scale)); max-width:100%; object-fit:contain; position:relative; bottom:calc(275px * var(--lift)); }
 body.patterned .shelf { background-image:repeating-linear-gradient(135deg,transparent 0px,transparent 17px,#88888830 18px,transparent 19px,transparent 37px); }
 figcaption { padding-top:13px; }
@@ -31,51 +32,59 @@ footer { max-width:1180px; margin:auto; padding:12px 24px 30px; color:var(--mute
 <body>
 <header>
 <div class="eyebrow">ORBITUI / AUTHORS COLLECTION</div>
-<h1>Nine more voices on the shelf.</h1>
-<p>Production PNGs at bookshelf scale, with their original generated transparency. Each bust belongs next to its author's books. This is an artwork preview, not a KOReader emulator.</p>
+<h1>Ten more voices on the shelf.</h1>
+<p>Nine original photographs with transparent background masks; only Kafka retains an AI-assisted cutout. Mann now uses Molgreen's 2024 photograph. Hemingway and Svevo are new in Authors II. Each bust belongs next to its author's books. Click an image for the full-size PNG. This is an artwork preview, not a KOReader emulator.</p>
 <button id="theme" type="button" aria-pressed="false">Dark background</button>
 <button id="pattern" type="button" aria-pressed="false">Patterned background</button>
 </header>
 <main>
-    <figure style="--scale:1.002;--lift:-0.01">
+    <figure style="--scale:1.0;--lift:-0.023">
       <div class="shelf"><img src="../assets/ornaments/Authors/August%20Strindberg.png" alt="August Strindberg"></div>
-      <figcaption><strong>August Strindberg</strong><span>Adapted from a sculpture reference</span><small>CC BY 4.0</small></figcaption>
+      <figcaption><strong>August Strindberg</strong><span>Carl Eldh, bronze, Waldemarsudde</span><small>Photo: Gotogo / CC0</small></figcaption>
     </figure>
-    <figure style="--scale:1.027;--lift:-0.023">
+    <figure style="--scale:1.0;--lift:-0.0235">
       <div class="shelf"><img src="../assets/ornaments/Authors/Stanislaw%20Lem.png" alt="Stanislaw Lem"></div>
-      <figcaption><strong>Stanislaw Lem</strong><span>Adapted from a sculpture reference</span><small>CC BY-SA 4.0</small></figcaption>
+      <figcaption><strong>Stanislaw Lem</strong><span>Leszek Kurkowski, bronze, Kielce</span><small>Photo: Pawel Ciesla / CC BY-SA 4.0</small></figcaption>
     </figure>
-    <figure style="--scale:1.006;--lift:-0.012">
+    <figure style="--scale:1.0;--lift:-0.023">
       <div class="shelf"><img src="../assets/ornaments/Authors/Dylan%20Thomas.png" alt="Dylan Thomas"></div>
-      <figcaption><strong>Dylan Thomas</strong><span>Adapted from a sculpture reference</span><small>CC BY 4.0</small></figcaption>
+      <figcaption><strong>Dylan Thomas</strong><span>Hugh Oloff de Wet, National Poetry Library</span><small>Photo: AndyScott / CC0; UK panorama provision</small></figcaption>
     </figure>
-    <figure style="--scale:0.996;--lift:-0.01">
+    <figure style="--scale:1.0;--lift:-0.0235">
       <div class="shelf"><img src="../assets/ornaments/Authors/Thomas%20Mann.png" alt="Thomas Mann"></div>
-      <figcaption><strong>Thomas Mann</strong><span>Original portrait interpretation</span><small>CC BY 4.0</small></figcaption>
+      <figcaption><strong>Thomas Mann</strong><span>Gustav Seitz, bronze, Berlin: original photo cutout</span><small>Photo: Molgreen / CC BY-SA 4.0; German panorama provision</small></figcaption>
     </figure>
-    <figure style="--scale:1.044;--lift:-0.027">
+    <figure style="--scale:1.0;--lift:-0.0235">
       <div class="shelf"><img src="../assets/ornaments/Authors/Fyodor%20Dostoevsky.png" alt="Fyodor Dostoevsky"></div>
-      <figcaption><strong>Fyodor Dostoevsky</strong><span>Adapted from a sculpture reference</span><small>CC BY-NC-SA 4.0</small></figcaption>
+      <figcaption><strong>Fyodor Dostoevsky</strong><span>Nikolai Laveretsky, grave bust, 1883</span><small>Photo: Paramecium / CC BY-SA 3.0</small></figcaption>
     </figure>
-    <figure style="--scale:1.004;--lift:-0.015">
+    <figure style="--scale:1.0;--lift:-0.0235">
       <div class="shelf"><img src="../assets/ornaments/Authors/Knut%20Hamsun.png" alt="Knut Hamsun"></div>
-      <figcaption><strong>Knut Hamsun</strong><span>Original portrait interpretation</span><small>CC BY 4.0</small></figcaption>
+      <figcaption><strong>Knut Hamsun</strong><span>Fin Haakon Frolich, plaster, Nasjonalmuseet</span><small>SNL: Public domain; museum photo credit: Annar Bjorgli</small></figcaption>
     </figure>
-    <figure style="--scale:0.998;--lift:-0.012">
-      <div class="shelf"><img src="../assets/ornaments/Authors/Clarice%20Lispector.png" alt="Clarice Lispector"></div>
-      <figcaption><strong>Clarice Lispector</strong><span>Original portrait interpretation</span><small>CC BY 4.0</small></figcaption>
-    </figure>
-    <figure style="--scale:1.001;--lift:-0.011">
+    <figure style="--scale:1.0;--lift:-0.0235">
       <div class="shelf"><img src="../assets/ornaments/Authors/Robert%20Musil.png" alt="Robert Musil"></div>
-      <figcaption><strong>Robert Musil</strong><span>Original portrait interpretation</span><small>CC BY 4.0</small></figcaption>
+      <figcaption><strong>Robert Musil</strong><span>Bernard Bavaud, bronze, Geneva</span><small>Photo: Fanny Schertzer; crop: Lewenstein / CC BY 3.0</small></figcaption>
     </figure>
     <figure style="--scale:0.996;--lift:-0.043">
       <div class="shelf"><img src="../assets/ornaments/Authors/Franz%20Kafka.png" alt="Franz Kafka"></div>
       <figcaption><strong>Franz Kafka</strong><span>Kielce bronze: AI-assisted photo cutout</span><small>CC BY-SA 4.0; see KAFKA-KIELCE.txt</small></figcaption>
     </figure>
+    <figure style="--scale:1.0;--lift:-0.0235">
+      <div class="shelf"><img src="../assets/ornaments/Authors%20II/Ernest%20Hemingway.png" alt="Ernest Hemingway"></div>
+      <figcaption><strong>Ernest Hemingway</strong><span>Fernando Boada, bronze, Cojimar</span><small>Photo: Carol M. Highsmith / Library of Congress; Cuban panorama provision</small></figcaption>
+    </figure>
+    <figure style="--scale:1.0;--lift:-0.0235">
+      <div class="shelf"><img src="../assets/ornaments/Authors%20II/Italo%20Svevo.png" alt="Italo Svevo"></div>
+      <figcaption><strong>Italo Svevo</strong><span>Giovanni Mayer, bronze, Trieste</span><small>Photo: Amrei-Marie / CC BY-SA 4.0; public redistribution review pending</small></figcaption>
+    </figure>
 </main>
-<footer>AI-assisted portrait interpretations, not documentary reproductions. Separate artwork licenses apply; Dostoevsky is non-commercial only. See each pack's ATTRIBUTION.txt and prompts.json.</footer>
+<footer>Photograph and sculpture rights are separate. See AUTHOR-SCULPTURES.txt, THOMAS-MANN-SEITZ.txt, ATTRIBUTION.txt and prompts.json. The retired AI-assisted Mann bitmap remains excluded from public distribution. Joyce and Woolf are unchanged in Modernists.</footer>
 <script>
+document.querySelectorAll('.shelf img').forEach(function(img) {
+ const link = document.createElement('a'); link.href = img.src; link.title = 'View full-size image';
+ img.replaceWith(link); link.appendChild(img);
+});
 document.getElementById("theme").addEventListener("click", function() {
  const enabled = document.body.classList.toggle("dark"); this.setAttribute("aria-pressed",String(enabled)); this.textContent = enabled ? "Light background" : "Dark background";
 });

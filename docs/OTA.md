@@ -106,6 +106,14 @@ deletions. Alpha.20 and earlier releases can update directly using the same
 bootstrap/API 1 and preview channel. Code rollback retains updated artwork,
 credits and captions; it does not restore the old Kafka image.
 
+Version `0.1.0-alpha.22` replaces seven stock author ornaments with photographic
+cutouts and adds Svevo/Hemingway in the independent Authors II pack. It removes
+only the exact generated Lispector default. Image-aware migrations preserve
+custom/deleted/linked artwork, captions, manual positioning and native overrides.
+Alpha.21 and earlier alpha releases can update directly through the same preview
+channel and bootstrap/API 1. Code rollback retains copied artwork and metadata;
+it does not resurrect removed images or restore earlier ornament versions.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

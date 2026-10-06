@@ -888,6 +888,182 @@ then publish and verify anonymous API/download/preview OTA. No existing tag's
 bytes are replaced. Gallery spacing and Bigme bust appearance/touch remain
 device checks. See `docs/releases/0.1.0-alpha.21.md` for scope and rollback limits.
 
+## 2026-10-06: Retire the generated Lispector portrait (unreleased)
+
+The user explicitly requests removing the old Lispector bust while researching
+real sculptures for the other authors. C11 gains a narrow deletion exception:
+remove the old runtime PNG, current pack metadata/provenance and preview card,
+but retain the researched biography source and frozen historical baselines.
+The separate Rio preview remains outside this repository and all OTA packages.
+Authors now ships eight PNGs (ten busts together with Modernists).
+
+Before native listing, `core/orbitui_lispector_retirement.lua` removes only the
+exact published SHA-256 at the canonical Authors filename. Keep custom images,
+file/pack symlinks, other packs, metadata, reader settings and notices. Preserve
+the author binding for future reader-supplied artwork. The biography builder
+and generic migration skip the retired entry. A separate completion marker
+avoids recurring hashes; hash/deletion/marker failures retry without resurrecting
+the portrait or deleting intervening custom replacements. No seed-marker reset,
+upstream changes, new artwork, version bump, push, tag or OTA release.
+
+Both full Lua/LuaJIT runs passed: 346 OrbitUI cases, 351 Bookshelf suites
+(two native SQLite skips) and all 13 SimpleUI files. Python checks total 66;
+the additional retirement asset check was also rerun separately after the Lua
+run. All 41 translation checks pass. Ten retirement regressions cover exact
+deletion, preservation, non-regular files, failures/retries and one-time cost;
+biography integration covers the missing runtime entry and startup ordering.
+The old hash was verified against the published source, and building author
+cards does not restore the retired entry. Package validation explicitly rejects
+any bundled `Authors/Clarice Lispector.png`. Clean-commit packaging is the final
+local check. The physical-device removal and appearance of remaining ornaments
+are still user tests. Code rollback does not restore the removed default.
+
+## 2026-10-06: Replace Mann locally and research real sculpture alternatives
+
+The user requests replacing Mann and looking up real busts/statues for the
+remaining interpreted authors, explicitly excluding Joyce and Woolf. Integrate
+the previously prepared AI-assisted cutout of Gustav Seitz's bronze portrait,
+photographed by Pauline Ahrens. Preserve the photograph-derived PNG, canonical
+filename, matching and biography; adjust the default base offset for its alpha
+margin. The image is not presented as a pixel-identical extraction.
+
+C11 now includes an independent Mann migration, before generic biography
+updates. Replace only the old default checksum and recognized captions/default
+placement; keep custom/deleted art, records, captions, overrides and linked paths.
+Copy the dedicated notice and replace shared notices only on known checksums.
+Old/current hashes support interrupted writes/retries; a completed marker avoids
+future hashing. The generic updater skips Mann, as it already does Kafka.
+
+The photograph is CC BY 4.0, but the sculpture/adaptation rights review remains
+unresolved. AGENTS and the bundled Seitz notice explicitly prohibit public
+push/OTA publication until resolved. This is a local integration, not a rights
+clearance or public release. No permission requests were sent. No upstream
+code/pins, version, settings or other author images changed. Source findings for
+Strindberg, Hamsun, Dostoevsky, Dylan Thomas, Lem and Musil are recorded in
+`docs/AUTHOR_SCULPTURE_RESEARCH.md`; no additional replacements are made.
+
+Full Lua and LuaJIT suites pass: 359 OrbitUI cases, 351 Bookshelf suites
+(two native SQLite skips) and all 13 SimpleUI files. Thirteen new migration
+cases and five Python asset checks cover preservation, retry, symlinks, source
+hashes, alpha/colour, base alignment, caption provenance and the release hold.
+The Python suite has 71 checks; its museum-source pixel audit is rerun separately
+with the local source cache. All 41 translation checks pass. Final packaging
+uses a clean local commit, with no tag/push/OTA. Physical-device appearance,
+zoom/info and migration from an installed old default remain user checks.
+
+## 2026-10-06: Six original-photo sculpture replacements (unreleased)
+
+The user approves the six remaining replacements and specifically selects
+Bavaud's Geneva Musil photo instead of the private-use Belvedere candidate.
+Integrate hand-masked original photographs of Eldh's Strindberg, Frolich's
+Hamsun, Laveretsky's Dostoevsky, de Wet's Dylan Thomas, Kurkowski's Lem and
+Bavaud's Musil. Preserve real surfaces, material colours and anatomy; no imagegen
+redrawing, colourization or invented plinths. Hamsun remains monochrome.
+
+C11 adds a checksum-guarded batch migration before generic author biographies,
+with exact old/current hashes, independent marker, dedicated hash-scoped credits,
+recognized caption/placement changes and resumable partial writes. Preserve
+custom art, captions, reader overrides, links and deletions. The generic updater
+skips all six to avoid assigning photo credits to user replacements. Existing
+author matching, shelf placement policy and tap-to-zoom are unchanged.
+
+Record source/mask/output hashes and separate photograph/sculpture terms.
+Dostoevsky uses a new BY-SA photograph, not a relicensing of the old NC-derived
+PNG. Original source photos stay outside repo/runtime; masks and reproducible
+build scripts are checked in. Joyce, Woolf, Kafka and Mann PNG bytes are
+unchanged. Mann's existing public-release hold remains; no version bump,
+upstream merge/pin change, push, tag or OTA publication.
+
+Full Lua/LuaJIT runs pass 366 OrbitUI cases, 75 Python checks (museum and sculpture
+source-pixel audits included), 351 Bookshelf suites (two SQLite suite skips),
+all 13 SimpleUI files and 41 translation checks. The six light/dark cutouts were
+visually reviewed. Local clean-commit packaging validates the ZIP and manifest;
+actual device migration, colour rendering and zoom/info remain user checks.
+
+## 2026-10-06: Add photographic Svevo and Hemingway; research Dazai (unreleased)
+
+The user approves adding Mayer's Svevo and Boada's Hemingway, and suggests
+Nakamura's Dazai statue in Ashino Park. Add the first two as `Authors II` using
+the existing seed/planner/zoom paths, with their own install marker and exact
+full-name aliases. Do not rewrite older packs, reset markers/settings or alter
+frozen replacement baselines. C11 records the additive behavior.
+
+Svevo uses Amrei-Marie's CC BY-SA 4.0 photo from Trieste. Hemingway uses Carol M.
+Highsmith's Library of Congress 06293 photograph of Cojimar, selected after the
+previously suggested 06294 view proved too distant. A documented source crop
+retains detail before deterministic masking. Preserve material colour, anatomy
+and source pixels; no generative redraw or invented base. Provenance includes
+source/mask/output hashes, photo licenses and separate sculpture-rights notes.
+Offline Swedish biographies use institutional sources and native tap-to-zoom.
+
+The Ashino Park statue is confirmed as Shinya Nakamura's, unveiled 19 June 2009.
+No suitable photo with verified redistribution terms was found. Record the
+city/foundry evidence and defer Dazai rather than bundling a stock photo or
+inventing a substitute. No image purchase or rights request was sent.
+
+Full Lua/LuaJIT suites pass: 370 OrbitUI cases, 80 Python checks including source
+pixel audits, 351 Bookshelf suites (two native SQLite suite skips), all 13
+SimpleUI files and 41 translation checks. The new masks were visually reviewed.
+New tests cover alias/placement integration, old-pack preservation, partial
+installation retry, provenance, native info limits and reproducible builds.
+Existing Modernists/Authors image bytes and migrations are unchanged. Package
+validation follows from a clean local commit. Device appearance and touch
+behavior remain unverified. No upstream change, version bump, push, tag or OTA;
+Mann's release hold and the new per-artwork redistribution review notes remain.
+
+## 2026-10-06: Replace Mann with Molgreen's original photograph (unreleased)
+
+The user approves the Wikimedia photograph of Gustav Seitz's Mann bust by
+Molgreen (11 April 2024). Replace the local AI-assisted portrait with a reviewed
+deterministic alpha cutout of that photograph. Retain the bronze surface, head,
+neck, mounting block and thin bronze plinth; mask the background and separate
+granite column. No generative reconstruction, retouching or invented anatomy.
+Keep the Swedish biography, author binding, canonical filename and native zoom.
+
+C11 advances Mann to an independent v2 marker/baseline, recognizing both previous
+stock image hashes and default placements. A completed v1 marker cannot prevent
+this upgrade. Preserve custom/deleted/linked artwork, captions, placements and
+notices; retry partial writes safely. The frozen v1 baseline stays unchanged.
+The new photograph and cutout use CC BY-SA 4.0 with Molgreen/Seitz attribution;
+the separate sculpture review basis is documented in the dedicated notice.
+This is not blanket rights-holder permission. The old AI-assisted bitmap remains
+under its existing release hold, including unpublished Git ancestors. Do not
+push those ancestors; preserve local history and prepare a public history without
+that bitmap before any later release. No history rewrite is performed here.
+
+Full Lua/LuaJIT runs pass 372 OrbitUI cases, 82 Python checks (including exact
+source-photo/mask reproduction), 351 Bookshelf suites (two native SQLite suite
+skips), all 13 SimpleUI files and 41 translation checks. Existing font-dependent
+cases remain skipped. Fifteen targeted migration cases cover both old images,
+the v1 marker, preservation and retries; seven asset checks cover provenance,
+pixel identity, credits, placement and unchanged Joyce/Woolf/Kafka. Light/dark
+previews were visually reviewed. Clean-commit ZIP/manifest validation is the
+final local gate; actual reader appearance, zoom and migration remain untested.
+No upstream code/pin changes, version bump, push, tag or OTA publication.
+
+## 2026-10-06: Publish alpha.22 photographic author ornaments
+
+The user explicitly requests publication after approving the Molgreen Mann
+replacement. Prepare alpha.22 as a prerelease, not a device-accepted beta.
+It includes the seven photographic replacements, additive Svevo/Hemingway pack
+and checksum-only retirement of the generated Lispector image described above.
+Joyce/Woolf/Kafka, upstream pins and stable bootstrap files remain unchanged.
+
+Preserve all five unpublished commits at local branch
+`local/author-artwork-pre-alpha22` (tip `6f0889ec`). The public change is a squash
+of their final tree on alpha.21, not a merge of their ancestry. This keeps the
+uncleared intermediate Mann bitmap out of GitHub without deleting local work,
+rewriting published history or force-pushing. Never publish the archive branch.
+The sculpture-image test now compares unchanged old defaults against the public
+alpha.21 tag rather than a local-only commit. Frozen migration baselines remain
+unchanged and retain their historical provenance records.
+
+Publication gates: complete Lua/LuaJIT suites with external original-photo
+audits, translations, clean-commit sealed package, forbidden-blob ancestry check,
+actual alpha.21 installer smoke test, downloaded draft checksums, both CI jobs
+and anonymous live OTA. Physical Bigme appearance, native touch/zoom and device
+migration remain unverified. See the release notes for update/rollback behavior.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

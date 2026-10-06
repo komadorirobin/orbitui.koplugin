@@ -1,0 +1,47 @@
+{
+  "old_sha256": [
+    "e584052943e66f9edc23622a48fc7f4f1c7482d306c4d8a080c74a896e6e68a7",
+    "fc6d71bd1538bee9a569a9838b7a00c5374469f0cc8efad3c70674a20c286bb9"
+  ],
+  "new_sha256": "04b38c71eab6150fa45643de6b09264ec442556369057f8cbd39d2a895d8d233",
+  "old_info": [
+    "Thomas Mann\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/",
+    "Thomas Mann (1875-1955)\n\nThomas Mann föddes i Lübeck och blev en av den tyskspråkiga litteraturens stora romanförfattare. Genombrottet Buddenbrooks utkom 1901, och Nobelpriset i litteratur 1929 motiverades framför allt med just denna roman. Spänningen mellan ett ordnat borgerligt liv och konstnärens avvikande känslor och ambitioner är ett återkommande ämne, tydligt redan i berättelsen Tonio Kröger.\n\nManns författarskap rör sig mellan noveller, stora romanbyggen och essäer. Till de centrala verken hör Der Zauberberg och Doktor Faustus, vid sidan av Buddenbrooks. Hans liv fick också en uttalat politisk riktning: efter 1933 levde han i exil, först i Schweiz och senare i USA. Under kriget sände han radiotal till tyska lyssnare. Den långa karriären spänner därmed över både det sena kejsardömets borgerliga kultur och den europeiska katastrof som tvingade honom och familjen bort från Tyskland.\n\nCentrala verk:\nBuddenbrooks (1901); Tonio Kröger (1903); Der Zauberberg (1924); Doktor Faustus (1947).\n\nText: OrbitUI, AI-assisterad svensk sammanfattning av källorna nedan. Inte källornas originaltext.\n\nKällor:\nS. Fischer: Thomas Manns liv:\nhttps://www.thomasmann.de/leben/lebenslauf\nS. Fischer: konstnären och det borgerliga livet:\nhttps://www.thomasmann.de/leben/stationen/kuenstler\nNobelPrize.org: litteraturpriset 1929:\nhttps://www.nobelprize.org/prizes/lists/all-nobel-prizes-in-literature/all/\n\nOm bysten / bildkrediter:\nThomas Mann\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/",
+    "Thomas Mann (1875-1955)\n\nThomas Mann föddes i Lübeck och blev en av den tyskspråkiga litteraturens stora romanförfattare. Genombrottet Buddenbrooks utkom 1901, och Nobelpriset i litteratur 1929 motiverades framför allt med just denna roman. Spänningen mellan ett ordnat borgerligt liv och konstnärens avvikande känslor och ambitioner är ett återkommande ämne, tydligt redan i berättelsen Tonio Kröger.\n\nManns författarskap rör sig mellan noveller, stora romanbyggen och essäer. Till de centrala verken hör Der Zauberberg och Doktor Faustus, vid sidan av Buddenbrooks. Hans liv fick också en uttalat politisk riktning: efter 1933 levde han i exil, först i Schweiz och senare i USA. Under kriget sände han radiotal till tyska lyssnare. Den långa karriären spänner därmed över både det sena kejsardömets borgerliga kultur och den europeiska katastrof som tvingade honom och familjen bort från Tyskland.\n\nCentrala verk:\nBuddenbrooks (1901); Tonio Kröger (1903); Der Zauberberg (1924); Doktor Faustus (1947).\n\nText: OrbitUI, AI-assisterad svensk sammanfattning av källorna nedan. Inte källornas originaltext.\n\nKällor:\nS. Fischer: Thomas Manns liv:\nhttps://www.thomasmann.de/leben/lebenslauf\nS. Fischer: konstnären och det borgerliga livet:\nhttps://www.thomasmann.de/leben/stationen/kuenstler\nNobelPrize.org: litteraturpriset 1929:\nhttps://www.nobelprize.org/prizes/lists/all-nobel-prizes-in-literature/all/\n\nOm bysten / bildkrediter:\nThomas Mann: Gustav Seitzs bronsporträtt från 1954, avgjutning uppställd 2007 i Straße der Erinnerung, Berlin-Moabit.\nFoto: Pauline Ahrens, 2022, CC BY 4.0.\nhttps://bildhauerei-in-berlin.de/bildwerk/portraet-thomas-mann-10198/\nhttps://creativecommons.org/licenses/by/4.0/\nOrbitUI: AI-assisterad friläggning med OpenAI image_gen. Omgivning och granitpelare borttagna; huvud, hals och befintlig bronssockel behållna. Inte en pixelidentisk reproduktion; detaljavvikelser kan förekomma.\nFoto och våra bearbetningsbidrag: CC BY 4.0 i tillämpliga delar. Fotografens licens omfattar inte själva skulpturen. Offentlig distribution av detta ornament återstår att klarlägga. Se THOMAS-MANN-SEITZ.txt."
+  ],
+  "old_placements": [
+    {
+      "scale": 0.996,
+      "anchor": "bottom",
+      "lift": -0.01
+    },
+    {
+      "scale": 0.996,
+      "anchor": "bottom",
+      "lift": -0.018
+    }
+  ],
+  "documents": {
+    "README.txt": [
+      "3b5ddac5eeb2a0a79624f411398b6450b9fc346daa3a60f915dca1658eaf059e",
+      "dd2c91d971b78ab89987f45e5d504629eef85f081f6924a0bde442da07df2503",
+      "4a0ca94b1b954fea514c8e548d73b33a3de26f808b66aee15c06cc21348c0ae3",
+      "983cb62d3fa6f3e1d60b32b931c33c1a8b3ea268c4f0d711c05a1500ab9ef824"
+    ],
+    "ATTRIBUTION.txt": [
+      "2cc621717575f2362df5474c672c81c15933544dc7ab0fd73152c06044b6a183",
+      "baa16ac7896cf7a6fbc3df7d366bf6b3eb871e34443b3d6913f34de9bad9036b",
+      "cd18f53bcbc3c0f9f674c0bd7468f2c627f9307597582c61a4ec144df34a4993",
+      "2607c9d1d350acb9a91423ba116e4d086aa98885fc8d7272b2c710562f2300dc"
+    ],
+    "prompts.json": [
+      "feca6933aadf0b9ce5692429bdec1cded9824bfd58dff4a179f614d2b379b892",
+      "c39b9cea8dd37fde3ea30cf26e8ff4b68c681f37423564102eb2c883a9fbb9b4",
+      "a224c69417733c32ef6c51dac2672aa52dc7699c7b959667652025fcebf09dae",
+      "02df8eca870d17c8c5d5545f241efbce38fd8a44c9684e83cf61b8bdab39b537"
+    ],
+    "THOMAS-MANN-SEITZ.txt": [
+      "ed027c88f330b279b629a3d337dc7cbb7863fd6e588175d8aca1461cd05b6ce9"
+    ]
+  }
+}

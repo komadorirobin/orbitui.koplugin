@@ -365,6 +365,73 @@ overrides, enablement and other busts. Add the dedicated license notice and
 update shared notices only on exact old checksums. Never reset seed markers.
 Do not hash images again after the independent completion marker is present.
 
+The explicit "Ersatt Mann" request adds a second, independent artwork-aware
+migration with the same preservation contract. Use the reviewed Seitz portrait
+photo cutout, retain the canonical name and author biography, and update only
+the exact old PNG, known captions/default lift and checksum-recognized notices.
+Skip linked Authors directories, images, metadata and notices. The generic
+biography updater must skip Mann too. Record the photographer's CC BY license
+separately from sculpture rights: this local replacement is NOT cleared for
+public distribution. Do not push or publish it before the review in
+`THOMAS-MANN-SEITZ.txt` is resolved. Joyce, Woolf, Kafka and other images stay
+unchanged by that Mann-only change.
+
+The subsequent approval of Molgreen's Wikimedia photo replaces that held
+AI-assisted Mann bitmap, not its rights status. Preserve source pixels and
+bronze colour via a reviewed alpha mask and proportional scaling. Keep the
+CC BY-SA 4.0 photo/adaptation terms separate from the German panorama basis.
+Use `mann-photo-v2.json` and an independent v2 marker to recognize both prior
+exact PNGs and current PNG for retry, all known captions, both default placement
+triples and old notice hashes. A completed v1 marker must not block v2. Keep
+the v1 baseline frozen, preserve custom/deleted/linked files and native settings,
+and never attach new photo credits to unrelated custom artwork. No other author
+bitmap changes. The retired bitmap remains held in local history too; do not
+push ancestor commits containing it. Current source licensing does not clear
+the retired adaptation. Tests: `test_mann_update.lua`, `test_mann_assets.py`.
+
+The subsequent explicit "Kor, och ersatt de andra" approval authorizes the six
+photographic replacements: Strindberg/Eldh, Hamsun/Frolich, Dostoevsky/Laveretsky,
+Dylan Thomas/de Wet, Lem/Kurkowski and Musil/Bavaud (Geneva, not Belvedere).
+Preserve photographic surfaces and material colours using alpha masks and
+proportional resizing, not generative redrawing. The independent
+`orbitui_sculpture_updates` migration and `author-sculptures-v1.json` baseline
+replace only exact old defaults, known captions and unchanged placement triples.
+New hashes support resumed partial batches; copy the hash-scoped dedicated
+AUTHOR-SCULPTURES notice, replace shared notices only on recognized old hashes,
+and preserve custom/deleted/linked images and metadata. Generic author-info
+migration must skip all six too. Run seeding, Kafka, Mann, this batch, Lispector
+retirement, then generic biographies. Never reset previous markers.
+Source photos stay outside runtime/repo; checked-in masks/provenance reproduce
+the images offline. Keep photo licenses separate from sculpture rights; the
+Mann release hold remains. Tests: `test_sculpture_updates.lua` and
+`test_sculpture_assets.py`, plus seed, biography and package checks.
+
+The subsequent Svevo/Hemingway approval adds `Authors II` with an independent
+`ornament-authors-ii-v1.installed` marker. Do not enlarge or reset older pack
+markers, rewrite their metadata or change the frozen replacement baselines.
+Match Hemingway (including Ernest Miller Hemingway) and Svevo (including his
+full Schmitz names) via the same author-bound planner, never surname substrings.
+Use Mayer's Trieste bust and Boada's Cojimar bust with deterministic photo masks,
+offline Swedish biographies, separate credits and native tap-to-zoom. The
+Highsmith source is 06293: its recorded pre-mask crop avoids downsampling the
+small sculpture inside the large original. Keep source/mask/PNG hashes and
+original pixels reproducible. No Dazai asset is bundled without a suitable
+licensed photo of Nakamura's Ashino Park statue. Public redistribution reviews
+and Mann's existing release hold remain; no automatic OTA follows this addition.
+Tests: `test_author_addition_assets.py`, seed and author-planner regressions.
+
+The user's 2026-10-06 request to remove the old Lispector portrait is a narrow
+exception to additive-only artwork installation. Omit its PNG and current pack
+metadata/provenance from new runtimes. A separate one-time retirement removes
+only the exact published SHA-256 at `Authors/Clarice Lispector.png`; never follow
+file/pack symlinks or remove custom replacements, metadata, notices, settings or
+other packs. Preserve the author binding for reader-provided images. Skip the
+retired entry in generic biography updates/builds, keeping its researched source
+and historical migration baselines. Mark only after successful deletion; retries
+must preserve later reader edits and completed markers prevent rehashing. No Rio
+image is bundled. Do not reset seed markers, restore the old image or alter any
+other author's artwork. Test the retirement and inclusion/exclusion in packages.
+
 The Japan pack uses ordinary native ornament placement, never author binding.
 Keep its install and defaults markers independent of the author packs. All
 bundled packs share `core/orbitui_ornament_install.lua` for additive atomic copies;
@@ -408,6 +475,7 @@ Source: `core/orbitui_author_ornaments.lua`, `adapters/orbitui_ornaments.lua`,
 `core/orbitui_ornament_install.lua`, `assets/ornaments/Modernists/`,
 `core/orbitui_author_info.lua`, `assets/ornament-updates/author-info-v1.json`,
 `core/orbitui_kafka_update.lua`, `assets/ornament-updates/kafka-kielce-v1.json`,
+`core/orbitui_lispector_retirement.lua`,
 `assets/ornaments/Authors/`, `assets/ornaments/Japan/`,
 `core/orbitui_ukiyoe_ornaments.lua`, `core/orbitui_ukiyoe_update.lua`,
 `assets/ornaments/Ukiyo-e Gallery/`, `assets/ornament-updates/ukiyoe-gallery-v1.json`,
@@ -415,6 +483,7 @@ Source: `core/orbitui_author_ornaments.lua`, `adapters/orbitui_ornaments.lua`,
 Tests: `tests/test_author_ornaments.lua`, `test_ornament_seed.lua`,
 `test_author_info.lua`, `test_author_info_assets.py`,
 `test_kafka_update.lua`, `test_kafka_assets.py`,
+`test_lispector_retirement.lua`,
 `test_japan_ornaments.lua`, `test_ornament_session.lua`, `test_ornament_assets.py`,
 `test_ukiyoe_ornaments.lua`, `test_ukiyoe_update.lua`, `test_ukiyoe_assets.py`;
 `scripts/check-package.lua` requires all pack files.

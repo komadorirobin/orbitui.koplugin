@@ -9,7 +9,12 @@ M.packs = {
         "ATTRIBUTION.txt", "README.txt", "prompts.json", "ornaments.json",
         "August Strindberg.png", "Stanislaw Lem.png", "Dylan Thomas.png",
         "Thomas Mann.png", "Fyodor Dostoevsky.png", "Knut Hamsun.png",
-        "Clarice Lispector.png", "Robert Musil.png", "Franz Kafka.png", "KAFKA-KIELCE.txt",
+        "Robert Musil.png", "Franz Kafka.png", "KAFKA-KIELCE.txt", "THOMAS-MANN-SEITZ.txt",
+        "AUTHOR-SCULPTURES.txt",
+    } },
+    { name = "Authors II", marker = "ornament-authors-ii-v1.installed", files = {
+        "ATTRIBUTION.txt", "README.txt", "prompts.json", "ornaments.json",
+        "Ernest Hemingway.png", "Italo Svevo.png",
     } },
 }
 M.pieces = {
@@ -24,9 +29,12 @@ M.pieces = {
     ["Authors/Thomas Mann.png"] = "thomas mann",
     ["Authors/Fyodor Dostoevsky.png"] = "fyodor dostoevsky",
     ["Authors/Knut Hamsun.png"] = "knut hamsun",
+    -- Keep matching for reader-supplied replacements of the retired portrait.
     ["Authors/Clarice Lispector.png"] = "clarice lispector",
     ["Authors/Robert Musil.png"] = "robert musil",
     ["Authors/Franz Kafka.png"] = "franz kafka",
+    ["Authors II/Ernest Hemingway.png"] = "ernest hemingway",
+    ["Authors II/Italo Svevo.png"] = "italo svevo",
 }
 
 local function normalize(name)
@@ -43,6 +51,10 @@ end
 for _, id in pairs(M.pieces) do alias(id, id) end
 alias("virginia woolf", "Adeline Virginia Woolf")
 alias("august strindberg", "Johan August Strindberg")
+alias("ernest hemingway", "Ernest Miller Hemingway")
+alias("italo svevo", "Ettore Schmitz")
+alias("italo svevo", "Aron Hector Schmitz")
+alias("italo svevo", "Hector Aaron Schmitz")
 alias("stanislaw lem", "Stanis\197\130aw Lem")
 for _, name in ipairs({
     "Fjodor Dostojevskij", "Fjodor Michajlovitj Dostojevskij", "Fjodor Dostojevsky",
@@ -76,8 +88,11 @@ end
 function M.seed(root, ornaments_dir)
     local seeded = require("core/orbitui_ornament_install").seed(root, ornaments_dir, M.packs)
     local artwork = require("core/orbitui_kafka_update").apply(root, ornaments_dir)
+    local mann = require("core/orbitui_mann_update").apply(root, ornaments_dir)
+    local sculptures = require("core/orbitui_sculpture_updates").apply(root, ornaments_dir)
+    local retired = require("core/orbitui_lispector_retirement").apply(root, ornaments_dir)
     local updated = require("core/orbitui_author_info").apply(root, ornaments_dir)
-    return seeded or artwork or updated
+    return seeded or artwork or mann or sculptures or retired or updated
 end
 
 function M.fillHooks(native, env)

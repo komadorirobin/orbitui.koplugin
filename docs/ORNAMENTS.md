@@ -107,6 +107,25 @@ Knut Hamsun, Clarice Lispector, Robert Musil and Franz Kafka. They follow the
 same placement rules. No runtime rendering of 3D models, image generation or
 network fetch is needed; the artwork is bundled as static transparent PNGs.
 
+### Lispector portrait retired (unreleased)
+
+The user requested removal of the original generated Lispector portrait. The
+current Authors pack contains eight busts, ten together with Modernists. Remove
+the old PNG from the runtime, pack metadata, provenance list and visual preview;
+do not bundle the separate Rio proposal while its sculpture rights remain unclear.
+Keep her researched biography source and the frozen historical migration baselines.
+
+`core/orbitui_lispector_retirement.lua` runs before the first native listing.
+It removes only the SHA-256-matching published PNG in the canonical Authors pack.
+Custom replacements, symlinks, other packs, existing metadata, notices, placement
+and enablement settings remain untouched. The canonical author binding remains
+available to reader-supplied artwork. The generic biography updater skips the
+retired entry rather than requiring a new default caption or changing its credits.
+Deletion or marker failures retry; a completed marker avoids further image hashing.
+No seed marker is reset and deleted artwork is never reinstalled by this version.
+Rolling back code does not restore the retired image. Device verification of the
+old default disappearing and custom artwork remaining is still required.
+
 ## Placement
 
 **At most one ordinary ornament per physical shelf row. Author busts are an
@@ -152,7 +171,7 @@ The pack appears under **Wallpaper, ornaments and colours > Ornament collection
 long-press for native size, height and padding controls. Shuffle/ordering do not
 move an author bust to an unrelated author. The earlier `Modernists-Preview`
 trial pieces are matched as well; the released pack wins if both are enabled.
-The nine additions appear in the same browser under **Authors**.
+The eight remaining additions appear in the same browser under **Authors**.
 
 The first ornament listing copies the bundled files from the active runtime to
 `koreader/settings/bookshelf/ornaments/Modernists/`. A separate install marker
@@ -174,11 +193,11 @@ versions do not know the nine new author-bound filenames.
 
 ### Author information (unreleased)
 
-All eleven bundled busts now have Swedish introductions to the author's life,
+All ten remaining bundled busts have Swedish introductions to the author's life,
 literary style, themes and major works. Tap a bust for the existing enlarged
 image and scrollable info card. Source links follow the biography, with the
 image credits and artwork licences at the bottom (unchanged except for the
-explicitly requested Kafka image replacement described below).
+explicitly requested image replacements described below).
 The text is available offline; opening its source websites requires a browser
 and network. These are labelled AI-assisted OrbitUI summaries, not verbatim
 museum/author-centre/publisher text or statements from the original sculptors.
@@ -223,6 +242,61 @@ Maintain source/provenance/prompt in `scripts/artwork/kafka-kielce.json` and
 regenerate metadata with the existing author-info builder. The frozen
 `assets/ornament-updates/kafka-kielce-v1.json` records both alpha.20 and the
 unpublished old biography, never a duplicate of the old bitmap.
+
+### Thomas Mann / Gustav Seitz (Molgreen photograph, unreleased)
+
+The user approved Molgreen's 11 April 2024 Wikimedia photograph of Seitz's
+Berlin bronze. The current cutout preserves original photo pixels, colour,
+head/neck and the visible bronze mounting block/plinth. Only surroundings and
+the separate granite column are masked away; scaling is proportional. It is
+not an AI redraw. The Swedish biography, author matching and native zoom remain.
+
+Source, mask, output hashes and credits are in `scripts/artwork/mann-seitz.json`.
+Reproduce with `build-sculpture-cutouts.py --spec scripts/artwork/mann-photo-cutout.json
+--sources <photo-cache> --output <out>`, then `build-mann-photo.py --cutouts <out>`
+and `build-author-info.py`. Reviewed masks avoid a runtime/image-generation cost.
+
+Photo and adaptation: CC BY-SA 4.0. The sculpture's separate documented basis
+is German UrhG section 59 (permanent public art), with sections 62 and 63 for
+alterations and attribution. No sculpture-rights waiver or Foundation approval
+is claimed. `THOMAS-MANN-SEITZ.txt` records the exact scope and sources.
+**The retired Ahrens/image_gen bitmap remains held, including in unpublished
+Git history. Do not push ancestors containing it.** This replacement does not
+clear that older adaptation. Keep a local backup and prepare a public history
+without the held bitmap before publishing; no history is rewritten here.
+
+`core/orbitui_mann_update.lua` now uses the independent `mann-photo-v2` marker
+and frozen baseline. It recognizes both the original published generated PNG
+and the earlier local Seitz cutout, including a completed v1 marker. Known
+captions, full default placement triples and unchanged notices are upgraded;
+custom/deleted/linked artwork, captions, reader overrides and other busts survive.
+Retries recognize the new hash; completed starts do not rehash. Rollback keeps
+the image, and the old updater ignores its unknown new hash. No upstream,
+version, push, tag or OTA change is part of this replacement.
+
+### Six photographic replacements (local, unreleased)
+
+The user approved replacing Strindberg, Hamsun, Dostoevsky, Dylan Thomas, Lem
+and Musil. Musil uses Bernard Bavaud's Geneva bronze from the user-selected
+Commons photo, not Wotruba/Belvedere. See [research notes](AUTHOR_SCULPTURE_RESEARCH.md).
+Their images now use masked original photographs, not AI redraws. Actual
+surfaces, colours and silhouettes are retained; Hamsun remains monochrome.
+
+`scripts/build-sculpture-cutouts.py --sources <photo-cache> --output <out>` uses
+the checked-in alpha masks. Pillow is needed; `--refine` also requires NumPy and
+OpenCV and requires fresh edge review. The reviewed masks used Pillow 12.3.0,
+NumPy 2.5.3 and opencv-python-headless 5.0.0.93. `--previews` writes light/dark QA
+images. Source URLs/hashes and final hashes live in `scripts/artwork/author-sculptures.json`.
+Only resulting RGBA files and notices enter the runtime; no online processing.
+
+The checksum-guarded `orbitui_sculpture_updates` batch runs after Mann and before
+generic biographies. It preserves custom/deleted/linked images, captions,
+native overrides and nondefault placement; partial updates resume from either
+old or new image hashes. A completion marker prevents repeat startup hashing.
+Biographies, author matching and tap-to-zoom stay unchanged. The old NC-derived
+Dostoevsky file is replaced with an independent BY-SA photograph, not relicensed.
+Those six replacements left Joyce, Woolf, Kafka and Mann unchanged. Mann was
+subsequently replaced separately with the Molgreen photograph described above.
 
 ## Session shuffle (alpha.17)
 
@@ -296,38 +370,73 @@ collection of separately licensed adaptations, not one combined derivative.
   Fitzgibbon's bust. [Source](https://commons.wikimedia.org/wiki/File:Marjorie_Fitzgibbon_-_Bust_of_James_Joyce_(1982)_closer.jpg).
 - Woolf: **CC BY-NC-SA 4.0, non-commercial use only**, based on Scan-the-World's
   bust views. [Source](https://doi.org/10.5281/zenodo.20236358).
-- Strindberg: CC BY 4.0, adapted from nicolasdiolez's
-  [bronze bust scan](https://zenodo.org/records/10336453).
+- Strindberg: Gotogo's CC0 photograph of Carl Eldh's bronze at Waldemarsudde.
+  [Source](https://commons.wikimedia.org/wiki/File:Portrait_bust_of_August_Strindberg_by_Carl_Eldh.jpg).
 - Lem: CC BY-SA 4.0, adapted from Pawel Ciesla (Staszek Szybki Jest)'s
   [Kielce bust photograph](https://commons.wikimedia.org/wiki/File:Popiersie_Stanis%C5%82aw_Lem_ssj_20110627.jpg).
-- Dylan Thomas: CC BY 4.0 adaptation of AndyScott's CC0
+- Dylan Thomas: masked AndyScott CC0
   [photograph of Hugh Oloff de Wet's bust](https://commons.wikimedia.org/wiki/File:Royal_Festival_Hall,_National_Poetry_Library,_bust_of_Dylan_Thomas_by_Hugh_Oloff_de_Wet.jpg).
-- Dostoevsky: **CC BY-NC-SA 4.0, non-commercial use only**, adapted from
-  [Scan-the-World's gravestone bust](https://zenodo.org/records/21671389).
-- Thomas Mann, Hamsun, Lispector, Musil and Kafka: original AI-generated portrait
-  interpretations, CC BY 4.0 to the extent applicable. No third-party reference
-  image was supplied. They do not reproduce the commercial/museum sculptures
-  found during research, and must not be attributed to those sculptors.
+- Dostoevsky: CC BY-SA 3.0, Paramecium's photograph of Laveretsky's grave bust.
+  [Source](https://commons.wikimedia.org/wiki/File:Grab_Dostojewskys.jpg).
+- Hamsun: Frolich's plaster, photograph distributed by SNL as Public domain;
+  Nasjonalmuseet credits Annar Bjorgli. [Source](https://snl.no/Fin_Haakon_Fr%C3%B8lich).
+- Musil: CC BY 3.0 photograph by Fanny Schertzer, crop by Lewenstein, of Bavaud's
+  Geneva bronze. [Source](https://commons.wikimedia.org/wiki/File:Robert_Musil_-_Cimetiere_des_Rois_II.jpg).
+- Thomas Mann: Molgreen's CC BY-SA 4.0 photograph of Seitz's Berlin bronze,
+  masked without generative changes; separate German panorama basis above.
+- Kafka: the CC BY-SA 4.0 Kielce photo adaptation described above, not the retired
+  invented ivory portrait. Lispector's old portrait is no longer bundled.
 - Japan collection: original AI-generated ornaments, CC BY 4.0 to the extent
   applicable. No third-party reference image was supplied. Exact prompts,
   generated-byte hashes and attribution ship in the Japan pack.
 
 Complete attribution, change descriptions and license links ship with the images,
 including in the device-side pack. Preserve those notices on redistribution.
-These are AI-reinterpreted ornaments, not documentary reproductions or endorsements.
+Six Authors images are photographic masks; the others retain their documented
+AI-assisted provenance. None implies endorsement.
 The photo/model source licenses are recorded separately from the adaptations;
 they do not imply blanket permission for all uses of underlying sculptures.
 Exact prompts, inputs, asset hashes and changes are recorded with each pack.
 
 ## Verification
 
+### Additional photographic authors (local, unreleased)
+
+`Authors II` adds Giovanni Mayer's Italo Svevo bust in Trieste and Fernando
+Boada's Ernest Hemingway bust in Cojimar. The pack seeds once, independently
+of Authors/Modernists, without resetting settings or resurrecting older packs.
+Hemingway also matches Ernest Miller Hemingway; Svevo matches Ettore Schmitz
+and the documented full-name variants. Both use the existing matching and
+multi-author row behavior, native zoom and Swedish author information cards.
+
+Svevo's photo is by Amrei-Marie (CC BY-SA 4.0); Hemingway's is Carol M.
+Highsmith's Library of Congress image LC-DIG-highsm-06293 (not the distant
+06294 view). The masks preserve colour and photographic texture. Source
+photographs remain outside the repo/runtime. Rebuild from those sources with:
+
+```sh
+python3 scripts/build-sculpture-cutouts.py --spec scripts/artwork/sculpture-additions.json \
+  --sources /path/to/sculpture-research --output /path/to/sculpture-additions
+python3 scripts/build-author-additions.py --cutouts /path/to/sculpture-additions
+```
+
+Committed masks avoid needing OpenCV unless deliberately regenerating them
+with `--refine`. The card builder also runs without arguments to regenerate
+metadata/notices from committed provenance. It never changes historical packs
+or migration baselines. Per-photo and separate sculpture-rights notes are in
+the pack's `ATTRIBUTION.txt`; public redistribution review is still needed.
+Dazai's Ashino Park statue is confirmed, but no suitably licensed photo has
+been selected. No placeholder or generated substitute is installed.
+
+### Checks
+
 The desktop prototypes were checked on light and dark backgrounds. Headless
 tests cover metadata matching, book-adjacent placement, narrow rows, balancing,
 27 pagination configurations, on/off behavior, duplicate trial packs and safe
 one-time installation. The packaged PNG bytes and notices are also checked.
-The pagination test now includes all eleven authors. Additive-pack migration tests
+The pagination test includes the ten bundled authors and custom Lispector replacements. Additive-pack migration tests
 cover alpha.14 upgrades, deleted old/new packs, custom metadata, partial copies
-and retries. Asset checks cover all nine new PNGs without changing their bytes.
+and retries. Asset checks cover all eight remaining Authors PNGs without changing their bytes.
 Japan checks cover all five RGBA files, metadata, safe stock replacement, custom
 and legacy-root plants, re-enablement, disabled packs and failed/retried copies
 or settings writes. The author-placement tests still cover the unchanged artwork

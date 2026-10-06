@@ -1,0 +1,81 @@
+AUTHOR SCULPTURES - PHOTOGRAPHIC CUTOUTS
+
+These credits apply ONLY to the PNG SHA-256 values listed below, not to custom replacements.
+
+Photographs and sculptures have separate rights. No endorsement or worldwide sculpture-rights waiver is implied.
+
+Changes by OrbitUI: background alpha masks and proportional resizing only; no generated anatomy, recolouring or invented plinths.
+
+Source photos are not bundled. Reviewed masks and source hashes are in scripts/artwork/.
+
+ShareAlike applies to the adapted images where specified, not to the entire collection.
+
+August Strindberg.png
+Carl Eldh, August Strindberg, 1905, bronze, Waldemarsudde W 144. Photograph: Gotogo, 20 September 2025, CC0.
+Photograph/adaptation: CC0 1.0
+https://creativecommons.org/publicdomain/zero/1.0/
+Separate rights basis: Photographer's CC0 dedication; Eldh died in 1954, sculpture term expired in Sweden. Not Nationalmuseum's plaster photograph.
+https://commons.wikimedia.org/wiki/File:Portrait_bust_of_August_Strindberg_by_Carl_Eldh.jpg
+https://collection-pew.zetcom.net/sv/collection/item/80472/
+Original photograph: https://upload.wikimedia.org/wikipedia/commons/e/e1/Portrait_bust_of_August_Strindberg_by_Carl_Eldh.jpg
+Source SHA-256: a019d29187a823ec4fa7d3cd248a20f7cd0ac8a6e656269387c3295c34d08dcf
+PNG SHA-256: 9deebd26afb9fd7c47d2247d138f5a70e9c24b0833469eb19d0f9511c473bdfa
+
+Knut Hamsun.png
+Fin Haakon Frolich, Knut Hamsun, 1893-1896, plaster, Nasjonalmuseet NG.S.01072. Photograph distributed by SNL as Public domain; museum credits Annar Bjorgli.
+Photograph/adaptation: Public domain
+https://creativecommons.org/publicdomain/mark/1.0/
+Separate rights basis: SNL explicitly labels this photograph Public domain. Preserve its monochrome appearance; no invented material colour.
+https://snl.no/Fin_Haakon_Fr%C3%B8lich
+https://www.nasjonalmuseet.no/samlingen/objekt/NG.S.01072
+Original photograph: https://media.snl.no/media/322493/standard_compressed_Fr__lich_Fin_Haakon_Forfatteren_Knut_Hamsun___1893___1896__.jpg
+Source SHA-256: 8293a0bacf7ccb542e3eeb7678ee82aff150d41ba316467611f5f83c00f199fa
+PNG SHA-256: 5d8b2268e01c3d8845421e110d3169d2a2bb38d8392c4730196501cafee0873f
+
+Fyodor Dostoevsky.png
+Nikolai Laveretsky, 1883, bronze grave bust, Tikhvin Cemetery. Photograph: Paramecium, 17 March 2010, CC BY-SA 3.0.
+Photograph/adaptation: CC BY-SA 3.0
+https://creativecommons.org/licenses/by-sa/3.0/
+Separate rights basis: Independent 2010 photograph, not the previous NC scan adaptation. Sculpture by Laveretsky (died 1907); photograph adaptation retains ShareAlike.
+https://commons.wikimedia.org/wiki/File:Grab_Dostojewskys.jpg
+https://lavraspb.ru/nekropol/view/item/id/186/catid/3
+Original photograph: https://upload.wikimedia.org/wikipedia/commons/8/8c/Grab_Dostojewskys.jpg
+Source SHA-256: 4b2ffea27c4f97c9d6f5eca9520a3c4b96b9a0dec8bf7aedb6f98ef19f28a00b
+PNG SHA-256: 0c41e5d7d645e53f3163a70a865eba2d446ec12765910548e7ace7345f2a7fec
+
+Dylan Thomas.png
+Hugh Oloff de Wet, Dylan Thomas, circa 1951, National Poetry Library, Royal Festival Hall. Photograph: AndyScott, 2 January 2024, CC0.
+Photograph/adaptation: CC0 1.0
+https://creativecommons.org/publicdomain/zero/1.0/
+Separate rights basis: CC0 photograph; Commons records UK freedom of panorama separately for the sculpture (CDPA section 62). Not a claim the sculpture is public domain worldwide.
+https://commons.wikimedia.org/wiki/File:Royal_Festival_Hall,_National_Poetry_Library,_bust_of_Dylan_Thomas_by_Hugh_Oloff_de_Wet.jpg
+Original photograph: https://upload.wikimedia.org/wikipedia/commons/1/13/Royal_Festival_Hall%2C_National_Poetry_Library%2C_bust_of_Dylan_Thomas_by_Hugh_Oloff_de_Wet.jpg
+Source SHA-256: 0d17efd0d2ec4a505101c28c70847a768d0ee9b728c30fa6b69b6e702b50b1fb
+PNG SHA-256: 2faba2fd29aa121b35c57dce8ee94e5ced64220f3ebdfd8bd55b786a6b25598f
+
+Stanislaw Lem.png
+Leszek Kurkowski, Stanislaw Lem, April 2009, bronze, Kielce. Photograph: Pawel Ciesla (Staszek Szybki Jest), 27 June 2011, CC BY-SA 4.0.
+Photograph/adaptation: CC BY-SA 4.0
+https://creativecommons.org/licenses/by-sa/4.0/
+Separate rights basis: CC BY-SA 4.0 photograph; Commons records Polish freedom of panorama separately for the public sculpture. No invented plaster finish.
+https://commons.wikimedia.org/wiki/File:Popiersie_Stanis%C5%82aw_Lem_ssj_20110627.jpg
+https://pik.kielce.pl/atrakcje-turystyczne/pomniki-i-popiersia/13128-popiersie-stanislawa-lema.html
+Original photograph: https://upload.wikimedia.org/wikipedia/commons/3/35/Popiersie_Stanis%C5%82aw_Lem_ssj_20110627.jpg
+Source SHA-256: a99ee5d781baf3b09293dbad75fea28aace0d501cd9289c6dadaf6ce891ca6dd
+PNG SHA-256: 5e7c351d18dbb091826a26e101c9daf5785e2087e31a271e32b4c0af19e1440f
+
+Robert Musil.png
+Bernard Bavaud, Robert Musil, bronze, Cimetiere des Rois, Geneva. Photograph: Fanny Schertzer, 20 September 2012; crop: Christoph Waghubinger (Lewenstein), CC BY 3.0.
+Photograph/adaptation: CC BY 3.0
+https://creativecommons.org/licenses/by/3.0/
+Separate rights basis: CC BY 3.0 photograph; Swiss freedom of panorama for two-dimensional depictions of permanently installed public sculpture. Distinct from Wotruba/Belvedere's private-use-only photograph; not a worldwide sculpture copyright waiver.
+https://commons.wikimedia.org/wiki/File:Robert_Musil_-_Cimetiere_des_Rois_II.jpg
+https://www.geneve.ch/sites/default/files/fileadmin/public/Departement_0/Publications/vivre-geneve-magazine-40.pdf
+Original photograph: https://upload.wikimedia.org/wikipedia/commons/f/f3/Robert_Musil_-_Cimetiere_des_Rois_II.jpg
+Source SHA-256: a5317b8ffaad9b1ff445708f583476fb42adc64918533cb88babb997d14a87ee
+PNG SHA-256: 4b59d2e332a6ad9a253ed1032a38e84fdfaf3a58f2a19b5fecbfcc347977ac25
+
+Sculpture-rights references (not additional photograph licenses):
+UK CDPA section 62: https://www.legislation.gov.uk/ukpga/1988/48/section/62
+Poland: https://commons.wikimedia.org/wiki/Commons:Copyright_rules_by_territory/Poland#Freedom_of_panorama
+Switzerland: https://www.ige.ch/fileadmin/user_upload/schuetzen/urheberrecht/e/Public_Domain_Fact_Sheet_EN_04.2020.pdf

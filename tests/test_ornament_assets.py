@@ -12,14 +12,13 @@ HASHES = {
     "Virginia Woolf.png": "8b8a1a3d57d2df298bf7896b770d941b34682fab81ed1823f69075af46a992fb",
 }
 AUTHOR_HASHES = {
-    "August Strindberg.png": "719e860c41d8baddde7c91b6486e9500e713706a1e630a6c1a442947a50e96a8",
-    "Stanislaw Lem.png": "6bca32b5582a15019fbefdddbb7bda1e11bac86458d7f34ba5aff10a544ad398",
-    "Dylan Thomas.png": "5527a7d26c3210d95d3f2316f0766219b6c8f99f72a9a54c802a1069bb66ec3a",
-    "Thomas Mann.png": "e584052943e66f9edc23622a48fc7f4f1c7482d306c4d8a080c74a896e6e68a7",
-    "Fyodor Dostoevsky.png": "04c917132a05343545dc1f08d856f68e1b022c9fd2fbff5cb17f6f6df76f310a",
-    "Knut Hamsun.png": "8559aafafe6dbe0010d361805ab65798d2e2d0a254960c71f196b7891ec0d7e7",
-    "Clarice Lispector.png": "bee7a3d24770d1931d4144b3e5ad1c8b71beaac0d10b5acbf9f43d317524343a",
-    "Robert Musil.png": "0c6d0b652b5e3405e4a4804900726b5aa3c1179d439d7d70d7e9288055590d44",
+    "August Strindberg.png": "9deebd26afb9fd7c47d2247d138f5a70e9c24b0833469eb19d0f9511c473bdfa",
+    "Stanislaw Lem.png": "5e7c351d18dbb091826a26e101c9daf5785e2087e31a271e32b4c0af19e1440f",
+    "Dylan Thomas.png": "2faba2fd29aa121b35c57dce8ee94e5ced64220f3ebdfd8bd55b786a6b25598f",
+    "Thomas Mann.png": "04b38c71eab6150fa45643de6b09264ec442556369057f8cbd39d2a895d8d233",
+    "Fyodor Dostoevsky.png": "0c41e5d7d645e53f3163a70a865eba2d446ec12765910548e7ace7345f2a7fec",
+    "Knut Hamsun.png": "5d8b2268e01c3d8845421e110d3169d2a2bb38d8392c4730196501cafee0873f",
+    "Robert Musil.png": "4b59d2e332a6ad9a253ed1032a38e84fdfaf3a58f2a19b5fecbfcc347977ac25",
     "Franz Kafka.png": "1eb6d88d1c00f2b7ecb932146798e056e02bf5e2ed54b77dee702d2056a6202e",
 }
 JAPAN_HASHES = {
@@ -66,7 +65,8 @@ class OrnamentAssetsTests(unittest.TestCase):
                 self.assertEqual(hashlib.sha256(data).hexdigest(), digest)
                 self.assertEqual(data[:8], b"\x89PNG\r\n\x1a\n")
                 self.assertEqual(struct.unpack(">IIBB", data[16:26]), (1024, 1536, 8, 6))
-                self.assertIn(b"c2pa", data)
+                if name == "Franz Kafka.png":
+                    self.assertIn(b"c2pa", data)
 
     def test_additional_busts_have_placement_prompts_and_per_asset_licenses(self):
         folder = ROOT / "assets/ornaments/Authors"
@@ -75,13 +75,16 @@ class OrnamentAssetsTests(unittest.TestCase):
         notices = (folder / "ATTRIBUTION.txt").read_text()
         self.assertEqual(set(metadata), set(AUTHOR_HASHES))
         self.assertEqual({a["file"] for a in prompts["assets"]}, set(AUTHOR_HASHES))
-        originals = {"Thomas Mann.png", "Knut Hamsun.png", "Clarice Lispector.png", "Robert Musil.png"}
         for asset in prompts["assets"]:
             name = asset["file"]
             with self.subTest(name=name):
                 self.assertEqual(asset["sha256"], AUTHOR_HASHES[name])
-                self.assertEqual(asset["references"] == [], name in originals)
-                self.assertIn("transparent", asset["prompt"])
+                self.assertTrue(asset["references"])
+                if name == "Franz Kafka.png":
+                    self.assertIn("transparent", asset["prompt"])
+                else:
+                    self.assertIn("alpha masking", asset["method"])
+                    self.assertNotIn("prompt", asset)
                 entry = metadata[name]
                 self.assertEqual(entry["anchor"], "bottom")
                 self.assertEqual(entry["tap"], "zoom")
@@ -91,12 +94,12 @@ class OrnamentAssetsTests(unittest.TestCase):
                 self.assertTrue(-.05 < entry["lift"] <= 0)
                 self.assertLessEqual(len(entry["info"].encode("utf-8")), 4000)
                 self.assertIn(asset["artwork_license"], entry["info"])
-                self.assertIn("https://creativecommons.org/licenses/", entry["info"])
+                self.assertIn("https://creativecommons.org/", entry["info"])
                 self.assertIn(name.upper(), notices.upper())
-        self.assertIn("Non-commercial use only", metadata["Fyodor Dostoevsky.png"]["info"])
+        self.assertIn("CC BY-SA 3.0", metadata["Fyodor Dostoevsky.png"]["info"])
         self.assertIn("CC BY-SA 4.0", metadata["Stanislaw Lem.png"]["info"])
-        for required in ("nicolasdiolez", "Staszek Szybki Jest", "AndyScott", "Scan-the-World",
-                         "No third-party sculpture or photograph was supplied", "NonCommercial-ShareAlike"):
+        for required in ("Gotogo", "Staszek Szybki Jest", "AndyScott", "Paramecium",
+                         "Bernard Bavaud", "Fin Haakon Frolich", "ShareAlike"):
             self.assertIn(required, notices)
 
     def test_japan_pngs_keep_reviewed_colour_alpha_and_generated_bytes(self):

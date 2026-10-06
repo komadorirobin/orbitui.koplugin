@@ -1,0 +1,43 @@
+{
+  "method": "Original photograph pixels, hand-traced silhouette with GrabCut edge refinement; alpha masking and proportional Lanczos resizing only. No generative reconstruction, recolouring or invented anatomy.",
+  "assets": [
+    {
+      "file": "Ernest Hemingway.png",
+      "source_file": "hemingway-highsmith-06293.tif",
+      "source_crop": [2600,550,3560,1250],
+      "references": [
+        "https://www.loc.gov/item/2010638901/",
+        "https://www.loc.gov/rr/print/res/482_high.html",
+        "https://cvc.cervantes.es/el_rinconete/anteriores/mayo_06/09052006_01.htm",
+        "https://www.wipo.int/wipolex/en/legislation/details/21621"
+      ],
+      "source_image": "https://cdn.loc.gov/master/pnp/highsm/06200/06293a.tif",
+      "reference_credit": "Fernando Boada, Ernest Hemingway, bronze, Cojimar, Cuba, 1962. Photograph: Carol M. Highsmith, 2010. The Carol M. Highsmith Archive, Library of Congress, Prints and Photographs Division, LC-DIG-highsm-06293 / LCCN2010638901.",
+      "artwork_license": "Library of Congress: No known restrictions on publication (photograph)",
+      "license_url": "https://www.loc.gov/rr/print/res/482_high.html",
+      "rights_basis": "Highsmith photograph: Library of Congress rights advisory. Separate sculpture basis: Cuba Law 154/2022, Article 86.2(d), reproduction of publicly accessible artwork with creator credit. This is not a worldwide sculpture-rights waiver; destination-country rights remain a public-release review item.",
+      "info": "Fernando Boadas bronsbyst i Cojímar, Kuba (1962). Foto: Carol M. Highsmith, 2010. The Carol M. Highsmith Archive, Library of Congress, Prints and Photographs Division, LC-DIG-highsm-06293. Bibliotekets fotoangivelse: No known restrictions on publication. Skulpturrättigheter är en separat fråga; Kubas lag 154/2022, artikel 86.2(d), medger avbildning av offentlig konst med konstnärskredit.\nhttps://www.loc.gov/item/2010638901/\nhttps://www.loc.gov/rr/print/res/482_high.html",
+      "reference_size": [960,700],
+      "edge_band": 6,
+      "outline": [[102,650],[104,493],[110,485],[169,475],[205,460],[239,453],[264,439],[308,428],[351,417],[397,399],[431,389],[450,389],[455,366],[463,344],[473,332],[462,318],[454,296],[451,276],[456,255],[455,233],[460,222],[465,219],[467,187],[475,157],[484,135],[499,117],[520,96],[545,82],[570,74],[595,74],[617,84],[637,97],[650,114],[663,142],[673,177],[675,202],[671,218],[676,227],[674,241],[666,250],[675,257],[675,274],[664,298],[650,315],[628,331],[626,351],[645,364],[663,383],[677,405],[682,423],[682,442],[678,450],[690,462],[711,480],[739,497],[765,513],[794,520],[823,528],[849,536],[857,542],[856,581],[864,589],[869,601],[866,630],[866,644],[883,656],[884,671],[857,667],[830,665],[801,661],[768,657],[730,656],[689,655],[646,653],[600,652],[550,651],[500,650],[450,649],[400,647],[353,650],[310,647],[268,650],[220,652],[175,654],[140,659],[102,666]]
+    },
+    {
+      "file": "Italo Svevo.png",
+      "source_file": "svevo-mayer.jpg",
+      "references": [
+        "https://commons.wikimedia.org/wiki/File:Italo_Svevo_(Schriftsteller).jpg",
+        "https://catalogomusei.comune.trieste.it/samira/data/architettura/documenti/D261/D26159.PDF",
+        "https://www.museosveviano.it/wp-content/uploads/2020/04/SvevoENG_13_9.pdf"
+      ],
+      "source_image": "https://upload.wikimedia.org/wikipedia/commons/3/35/Italo_Svevo_%28Schriftsteller%29.jpg",
+      "reference_credit": "Giovanni Mayer, Italo Svevo, bronze, 1929, Giardino Pubblico de Tommasini, Trieste; unveiled 1931. Photograph: Amrei-Marie, 22 February 2025, CC BY-SA 4.0.",
+      "artwork_license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "rights_basis": "Photograph/adaptation: CC BY-SA 4.0. Mayer died in 1943; the ordinary Italian life-plus-70 sculpture term has expired. Public release still needs review of Italian cultural-property reproduction rules and destination-country rights; the photograph license is not a blanket clearance.",
+      "info": "Giovanni Mayers bronsbyst i Giardino Pubblico de Tommasini, Trieste. Daterad 1929, invigd 1931. Foto: Amrei-Marie, 2025, CC BY-SA 4.0. Bildlicensen gäller fotografiet och bearbetningen, inte automatiskt alla rättigheter till monumentet.\nhttps://commons.wikimedia.org/wiki/File:Italo_Svevo_(Schriftsteller).jpg\nhttps://creativecommons.org/licenses/by-sa/4.0/",
+      "reference_size": [1368,1824],
+      "edge_band": 10,
+      "outline": [[311,737],[438,698],[505,678],[550,643],[562,613],[589,584],[588,563],[580,491],[570,476],[551,473],[542,449],[537,429],[535,402],[529,375],[526,334],[529,284],[537,237],[555,211],[598,180],[635,163],[661,148],[683,140],[719,144],[750,152],[783,165],[820,191],[842,219],[855,260],[860,286],[857,309],[847,330],[850,351],[858,375],[857,408],[850,421],[852,451],[841,493],[839,548],[838,590],[865,620],[905,647],[946,663],[1000,678],[1060,695],[1119,704],[1155,711],[1155,736],[1144,760],[1130,782],[1116,799],[1074,821],[1062,850],[1059,891],[1034,918],[991,936],[939,954],[887,967],[888,1008],[530,1008],[511,972],[478,956],[439,949],[419,935],[392,922],[360,905],[354,878],[353,846],[348,822],[332,805],[318,779]]
+    }
+  ]
+}

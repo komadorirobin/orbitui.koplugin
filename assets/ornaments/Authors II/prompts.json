@@ -1,0 +1,79 @@
+{
+  "mode": "Masked original photographs; no generative image prompts.",
+  "tool": "scripts/build-sculpture-cutouts.py --spec scripts/artwork/sculpture-additions.json",
+  "assets": [
+    {
+      "file": "Ernest Hemingway.png",
+      "source_file": "hemingway-highsmith-06293.tif",
+      "source_crop": [
+        2600,
+        550,
+        3560,
+        1250
+      ],
+      "references": [
+        "https://www.loc.gov/item/2010638901/",
+        "https://www.loc.gov/rr/print/res/482_high.html",
+        "https://cvc.cervantes.es/el_rinconete/anteriores/mayo_06/09052006_01.htm",
+        "https://www.wipo.int/wipolex/en/legislation/details/21621"
+      ],
+      "source_image": "https://cdn.loc.gov/master/pnp/highsm/06200/06293a.tif",
+      "reference_credit": "Fernando Boada, Ernest Hemingway, bronze, Cojimar, Cuba, 1962. Photograph: Carol M. Highsmith, 2010. The Carol M. Highsmith Archive, Library of Congress, Prints and Photographs Division, LC-DIG-highsm-06293 / LCCN2010638901.",
+      "artwork_license": "Library of Congress: No known restrictions on publication (photograph)",
+      "license_url": "https://www.loc.gov/rr/print/res/482_high.html",
+      "rights_basis": "Highsmith photograph: Library of Congress rights advisory. Separate sculpture basis: Cuba Law 154/2022, Article 86.2(d), reproduction of publicly accessible artwork with creator credit. This is not a worldwide sculpture-rights waiver; destination-country rights remain a public-release review item.",
+      "info": "Fernando Boadas bronsbyst i Cojímar, Kuba (1962). Foto: Carol M. Highsmith, 2010. The Carol M. Highsmith Archive, Library of Congress, Prints and Photographs Division, LC-DIG-highsm-06293. Bibliotekets fotoangivelse: No known restrictions on publication. Skulpturrättigheter är en separat fråga; Kubas lag 154/2022, artikel 86.2(d), medger avbildning av offentlig konst med konstnärskredit.\nhttps://www.loc.gov/item/2010638901/\nhttps://www.loc.gov/rr/print/res/482_high.html\nOrbitUI: bakgrunden bortmaskad och bilden proportionellt skalad. Inga genererade skulpturdetaljer eller färgändringar.",
+      "kind": "Masked original photograph",
+      "method": "Original photograph pixels, hand-traced silhouette with GrabCut edge refinement; alpha masking and proportional Lanczos resizing only. No generative reconstruction, recolouring or invented anatomy.",
+      "sha256": "91253f8227ca3d6a3e59ebaf23ce4288618e739e9cc7b56591e4d465bcf41a81",
+      "source_sha256": "bd313b965e0bfe2038cb106d86b62e1253a43080246432c9b492478434905306",
+      "mask_sha256": "654371685ee9b29330451ae7da3f516d4227b94a80adbf52966c1fc08a350b36",
+      "width": 1024,
+      "height": 1536,
+      "alpha_bbox_at_24": [
+        48,
+        777,
+        976,
+        1487
+      ],
+      "placement": {
+        "scale": 1.0,
+        "anchor": "bottom",
+        "lift": -0.0235
+      }
+    },
+    {
+      "file": "Italo Svevo.png",
+      "source_file": "svevo-mayer.jpg",
+      "references": [
+        "https://commons.wikimedia.org/wiki/File:Italo_Svevo_(Schriftsteller).jpg",
+        "https://catalogomusei.comune.trieste.it/samira/data/architettura/documenti/D261/D26159.PDF",
+        "https://www.museosveviano.it/wp-content/uploads/2020/04/SvevoENG_13_9.pdf"
+      ],
+      "source_image": "https://upload.wikimedia.org/wikipedia/commons/3/35/Italo_Svevo_%28Schriftsteller%29.jpg",
+      "reference_credit": "Giovanni Mayer, Italo Svevo, bronze, 1929, Giardino Pubblico de Tommasini, Trieste; unveiled 1931. Photograph: Amrei-Marie, 22 February 2025, CC BY-SA 4.0.",
+      "artwork_license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "rights_basis": "Photograph/adaptation: CC BY-SA 4.0. Mayer died in 1943; the ordinary Italian life-plus-70 sculpture term has expired. Public release still needs review of Italian cultural-property reproduction rules and destination-country rights; the photograph license is not a blanket clearance.",
+      "info": "Giovanni Mayers bronsbyst i Giardino Pubblico de Tommasini, Trieste. Daterad 1929, invigd 1931. Foto: Amrei-Marie, 2025, CC BY-SA 4.0. Bildlicensen gäller fotografiet och bearbetningen, inte automatiskt alla rättigheter till monumentet.\nhttps://commons.wikimedia.org/wiki/File:Italo_Svevo_(Schriftsteller).jpg\nhttps://creativecommons.org/licenses/by-sa/4.0/\nOrbitUI: bakgrunden bortmaskad och bilden proportionellt skalad. Inga genererade skulpturdetaljer eller färgändringar.",
+      "kind": "Masked original photograph",
+      "method": "Original photograph pixels, hand-traced silhouette with GrabCut edge refinement; alpha masking and proportional Lanczos resizing only. No generative reconstruction, recolouring or invented anatomy.",
+      "sha256": "7731efb3408a5e757e30c3a1940270fb8da252fb71741b627c6192277b596e36",
+      "source_sha256": "e681d87fa11c37a3aed855596655f1f362344e67edb08bcd524bc01b8ade42f3",
+      "mask_sha256": "b6ac1b4f1ab334a80bb17a1e23d08492cc35967ff8da679091a7bb526a1ec17d",
+      "width": 1024,
+      "height": 1536,
+      "alpha_bbox_at_24": [
+        49,
+        531,
+        975,
+        1487
+      ],
+      "placement": {
+        "scale": 1.0,
+        "anchor": "bottom",
+        "lift": -0.0235
+      }
+    }
+  ]
+}

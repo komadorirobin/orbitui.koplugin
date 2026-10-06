@@ -5,6 +5,9 @@ local Adapter = require("adapters/orbitui_ornaments")
 -- Default-caption migration uses JSON fixtures in test_author_info.
 package.loaded["core/orbitui_author_info"] = { apply = function() return false end }
 package.loaded["core/orbitui_kafka_update"] = { apply = function() return false end }
+package.loaded["core/orbitui_mann_update"] = { apply = function() return false end }
+package.loaded["core/orbitui_sculpture_updates"] = { apply = function() return false end }
+package.loaded["core/orbitui_lispector_retirement"] = { apply = function() return false end }
 -- Session ordering is exercised with the native deck in test_ornament_session.
 package.loaded["lib/bookshelf_ornament_deck"] = { sync = function() end, shuffle = function() end }
 local original_open, original_rename, original_remove = io.open, os.rename, os.remove
@@ -92,7 +95,8 @@ H.test("alpha.14 upgrades add Authors without restoring or changing Modernists",
     H.eq(files[dest .. "James Joyce.png"], "custom Joyce")
     H.eq(files[dest .. "Virginia Woolf.png"], nil)
     H.eq(files[dest .. "ornaments.json"], "disabled Woolf and custom sizes")
-    H.eq(files[new_dest .. "Clarice Lispector.png"], files[new_source .. "Clarice Lispector.png"])
+    H.eq(files[new_dest .. "Robert Musil.png"], files[new_source .. "Robert Musil.png"])
+    H.eq(files[new_dest .. "Clarice Lispector.png"], nil)
     H.eq(files[new_dest .. "Franz Kafka.png"], files[new_source .. "Franz Kafka.png"])
     assert(files[new_marker])
 end)
@@ -119,16 +123,57 @@ end)
 H.test("an interrupted new pack installation does not roll back the old marker", function()
     fixture(); files[marker] = "old installed"
     files[dest .. "James Joyce.png"] = "user Joyce"
-    files[new_source .. "Clarice Lispector.png"] = nil
+    files[new_source .. "Robert Musil.png"] = nil
     H.eq(pcall(seed), false)
     H.eq(files[marker], "old installed"); H.eq(files[new_marker], nil)
     H.eq(files[dest .. "James Joyce.png"], "user Joyce")
-    files[new_source .. "Clarice Lispector.png"] = "complete retry image"
+    files[new_source .. "Robert Musil.png"] = "complete retry image"
     files[new_dest .. "August Strindberg.png"] = "customized during partial install"
     H.eq(seed(), true)
     H.eq(files[new_dest .. "August Strindberg.png"], "customized during partial install")
-    H.eq(files[new_dest .. "Clarice Lispector.png"], "complete retry image")
+    H.eq(files[new_dest .. "Robert Musil.png"], "complete retry image")
     assert(files[new_marker])
+end)
+H.test("Authors II is additive with independent marker and preserves older edits and deletions", function()
+    fixture()
+    files[marker], files[new_marker] = "old Modernists", "old Authors"
+    files[dest .. "James Joyce.png"] = "custom Joyce"
+    files[new_dest .. "ornaments.json"] = "custom sizes and captions"
+    local extra = "/settings/bookshelf/ornaments/Authors II/"
+    local extra_source = "/slot/assets/ornaments/Authors II/"
+    local extra_marker = "/settings/orbitui/ornament-authors-ii-v1.installed"
+    H.eq(seed(), true)
+    H.eq(files[dest .. "James Joyce.png"], "custom Joyce")
+    H.eq(files[dest .. "Virginia Woolf.png"], nil)
+    H.eq(files[new_dest .. "Thomas Mann.png"], nil)
+    H.eq(files[new_dest .. "ornaments.json"], "custom sizes and captions")
+    H.eq(files[extra .. "Ernest Hemingway.png"], files[extra_source .. "Ernest Hemingway.png"])
+    H.eq(files[extra .. "Italo Svevo.png"], files[extra_source .. "Italo Svevo.png"])
+    assert(files[extra_marker])
+    files[extra .. "Italo Svevo.png"] = nil
+    files[extra .. "Ernest Hemingway.png"] = "custom Hemingway"
+    files[extra .. "ornaments.json"] = "custom new metadata"
+    H.eq(seed(), false)
+    H.eq(files[extra .. "Italo Svevo.png"], nil)
+    H.eq(files[extra .. "Ernest Hemingway.png"], "custom Hemingway")
+    H.eq(files[extra .. "ornaments.json"], "custom new metadata")
+end)
+H.test("an interrupted Authors II seed retries without rewriting either older pack", function()
+    fixture()
+    files[marker], files[new_marker] = "old Modernists", "old Authors"
+    local extra = "/settings/bookshelf/ornaments/Authors II/"
+    local input = "/slot/assets/ornaments/Authors II/Italo Svevo.png"
+    local extra_marker = "/settings/orbitui/ornament-authors-ii-v1.installed"
+    files[input] = nil
+    H.eq(pcall(seed), false)
+    H.eq(files[extra_marker], nil)
+    H.eq(files[marker], "old Modernists"); H.eq(files[new_marker], "old Authors")
+    files[extra .. "Ernest Hemingway.png"] = "edited during failed copy"
+    files[input] = "retry Svevo"
+    H.eq(seed(), true)
+    H.eq(files[extra .. "Ernest Hemingway.png"], "edited during failed copy")
+    H.eq(files[extra .. "Italo Svevo.png"], "retry Svevo")
+    assert(files[extra_marker])
 end)
 for _, kind in ipairs({ "write", "read", "close", "rename", "directory", "missing" }) do
     H.test("failed " .. kind .. " cannot complete or truncate an installed file", function()

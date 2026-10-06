@@ -1,0 +1,26 @@
+THOMAS MANN / GUSTAV SEITZ - MOLGREEN PHOTOGRAPHIC CUTOUT
+
+These credits apply ONLY to PNG SHA-256 04b38c71eab6150fa45643de6b09264ec442556369057f8cbd39d2a895d8d233. They do not license custom artwork or the retired AI-assisted image.
+
+Gustav Seitz, Portrat Thomas Mann, bronze portrait 1954; Berlin cast unveiled 2007, Strasse der Erinnerung, Berlin-Moabit. Photograph: Molgreen, 11 April 2024, CC BY-SA 4.0.
+
+Photograph and adapted photograph: CC BY-SA 4.0
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Changes by OrbitUI contributors: background and granite column masked out; the visible bronze head, neck, mounting block and thin bronze plinth remain. Proportional resizing only. Original photo colours and sculptural details are preserved; no generative reconstruction or retouching. ShareAlike applies to this adapted photograph, not the whole collection. No endorsement is implied.
+
+Sources:
+https://commons.wikimedia.org/wiki/File:20240411_xl_0704-Thomas_Mann_B%C3%BCste_3.jpg
+https://www.gesetze-im-internet.de/urhg/__59.html
+https://www.gesetze-im-internet.de/urhg/__62.html
+https://www.gesetze-im-internet.de/urhg/__63.html
+Original photograph: https://upload.wikimedia.org/wikipedia/commons/8/8f/20240411_xl_0704-Thomas_Mann_B%C3%BCste_3.jpg
+
+Source SHA-256: 9a27675ece86024e0475371f45f1f9bf054abb669f80d1530929533fc8d2a8fc
+Reviewed mask SHA-256: f3f587132578d32650cc17767bd262d3844820ed1e2ddf184d146023fe617568
+
+SCULPTURE RIGHTS / REVIEW BASIS (2026-10-06)
+Photograph and cutout: CC BY-SA 4.0. Separate sculpture basis: German UrhG section 59 for a two-dimensional photograph of permanently installed public art, with sections 62 and 63 on alterations and attribution. Masking removes surroundings, not sculptural features; scaling is proportional. This is not a license from the sculptor or a worldwide sculpture-rights waiver. The former AI-assisted image remains excluded from public distribution. This is the project's documented basis for this photographic depiction, not legal advice or confirmation of permission from the Gustav Seitz Foundation. The photo license does not extinguish sculpture rights.
+
+RETIRED IMAGE - RELEASE HOLD REMAINS
+The superseded Pauline Ahrens/image_gen adaptation (PNG SHA-256 fc6d71bd1538bee9a569a9838b7a00c5374469f0cc8efad3c70674a20c286bb9) remains uncleared. It is not bundled in the current tree. Do not push that bitmap, including commits containing it, or publish an OTA with it. Replacing the tip's image does not sanitize earlier Git history. Keep any necessary historical backup local; prepare a public history without the held bitmap before releasing. No rights-holder permission has been requested or obtained for that adaptation.

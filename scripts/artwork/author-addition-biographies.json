@@ -1,0 +1,28 @@
+{
+  "Ernest Hemingway.png": {
+    "name": "Ernest Hemingway",
+    "years": "1899-1961",
+    "paragraphs": [
+      "Ernest Hemingway var en amerikansk roman- och novellförfattare, född i Oak Park utanför Chicago. Han började som journalist och tjänstgjorde under första världskriget som frivillig ambulansförare i Italien, där han sårades. Under 1920-talet levde han bland amerikanska författare och konstnärer i Paris. Erfarenheter från krig, resor och journalistik återkom i hans prosa, men omformades till koncentrerade berättelser snarare än raka självbiografier.",
+      "Hemingways återhållna stil har haft stort inflytande på senare berättarkonst. I stället för långa förklaringar får handlingar, repliker och det outsagda bära känslorna. Och solen har sin gång skildrar en desillusionerad generation efter kriget, medan Farväl till vapnen förenar kärlek med krigets meningslöshet. Erfarenheter från spanska inbördeskriget ligger bakom Klockan klämtar för dig. I Den gamle och havet blir en fiskares ensamma kamp till en berättelse om uthållighet och nederlag. Hemingway fick Nobelpriset i litteratur 1954, med särskild hänvisning till denna kortroman och hans inflytande på den moderna prosastilen."
+    ],
+    "works": "Och solen har sin gång (1926); Farväl till vapnen (1929); Klockan klämtar för dig (1940); Den gamle och havet (1952).",
+    "sources": [
+      {"title": "Nobelprize.org: biografi", "url": "https://www.nobelprize.org/prizes/literature/1954/hemingway/biographical/"},
+      {"title": "Nobelprize.org: priset 1954", "url": "https://www.nobelprize.org/prizes/literature/1954/summary/"}
+    ]
+  },
+  "Italo Svevo.png": {
+    "name": "Italo Svevo",
+    "years": "1861-1928",
+    "paragraphs": [
+      "Italo Svevo var pseudonym för Ettore Schmitz, en italienskspråkig författare från Trieste. Stadens möte mellan språk och kulturer hör till bakgrunden för hans författarskap. Han arbetade länge på bank och senare i familjen Venezianis företag för fartygsfärg. De tidiga romanerna Una vita och Senilità gav han ut på egen bekostnad, utan större framgång. Affärslivet tog därefter mycket av hans tid, men skrivandet försvann inte helt.",
+      "Behovet av engelska i arbetet förde honom samman med James Joyce, som blev både språklärare och en viktig litterär uppmuntrare. Svevos intresse för psykoanalysen blev en annan impuls till Zenos bekännelser. Där blir självförklaringen osäker: Zeno söker förstå sina besvär och vanor, men hans berättande är också fullt av motsägelser och undanflykter. Ironi och psykologisk iakttagelse gör att läsaren inte kan ta varje förklaring för given. Erkännandet kom sent, med hjälp av bland andra franska kritiker och italienska författare. Svevo dog 1928 av skador efter en bilolycka."
+    ],
+    "works": "Una vita (1892); Senilità (1898); La coscienza di Zeno / Zenos bekännelser (1923).",
+    "sources": [
+      {"title": "Museo Sveviano: liv och författarskap", "url": "https://www.museosveviano.it/en/italo-svevo-2/"},
+      {"title": "Museo Sveviano: Zeno, psykoanalys och ironi", "url": "https://www.museosveviano.it/la-coscienza-dello-zen-italo-svevo-e-larte-di-smettere-di-fumare/"}
+    ]
+  }
+}

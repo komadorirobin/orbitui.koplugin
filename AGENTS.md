@@ -1,5 +1,14 @@
 # OrbitUI
 
+Artwork release hold: the superseded AI-assisted Seitz/Mann PNG with SHA-256
+`fc6d71bd1538bee9a569a9838b7a00c5374469f0cc8efad3c70674a20c286bb9` remains
+uncleared. Do not push that bitmap, including Git history containing it, or
+publish an OTA containing it. The current Molgreen photographic cutout is a
+different asset with its own documented source/license/panorama basis in
+`assets/ornaments/Authors/THOMAS-MANN-SEITZ.txt`. Replacing the tip's image does
+not sanitize unpublished ancestors; preserve local work and prepare a public
+history without the held bitmap before releasing.
+
 Experimental KOReader Lua plugin combining the published user forks of SimpleUI
 and Bookshelf. Keep the original repositories and their update channels intact.
 

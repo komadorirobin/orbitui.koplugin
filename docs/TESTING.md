@@ -2,6 +2,70 @@
 
 ## Automated
 
+Mann/Molgreen replacement (local, unreleased): fifteen targeted Lua cases
+cover both old image hashes, a completed v1 marker, current-image retries,
+old versus custom notices, default placement triples, custom/deleted/linked
+artwork and byte-limited captions. Seven Python cases include source/mask/PNG
+provenance, exact reproduction from the original photo, repeatable credit
+generation, native zoom/colour/base alignment and unchanged Joyce/Woolf/Kafka.
+The clean contour was visually reviewed on light/dark backgrounds. Full Lua and
+LuaJIT runs pass 372 OrbitUI cases, 82 Python checks (museum and sculpture source
+audits included), 351 Bookshelf suites (two native SQLite suite skips) and all
+13 SimpleUI test files. The existing font-dependent cases remain skipped.
+All 41 translation checks pass. Clean-commit runtime packaging is the final
+local gate; no version bump or public artifact replacement is authorized here.
+Physical-device appearance and migration remain untested. No release or public
+push is implied; the retired Mann bitmap remains held in unpublished history.
+
+Earlier checkpoints (before the Molgreen replacement):
+
+Authors II (local, unreleased): full Lua/LuaJIT runs pass 370 OrbitUI cases,
+80 Python checks, 351 Bookshelf suites (two native SQLite suite skips), all
+13 SimpleUI files and 41 translation checks. The two new author bindings are
+included in name/alias, row-placement and 27 pagination configurations; two seed
+regressions cover additive installation and retries without rewriting old packs.
+Five asset checks cover photo/mask/PNG provenance, byte-for-byte reproduction,
+colour/alpha, native base offsets, zoom/info, caption limits and reproducible
+metadata generation. All original-photo audits ran with the external source
+cache. Both cutouts were visually reviewed on light/dark backgrounds.
+Existing Modernists/Authors images and frozen migration baselines are unchanged.
+The clean-commit runtime ZIP is checked separately. Physical-device placement,
+native zoom/info and colour display still need user testing; Hemingway's large
+zoom is limited by source detail. Dazai is deferred, not bundled. No public
+release or claim that Mann's existing rights hold has been resolved.
+
+Six photographic author replacements (local, unreleased): full Lua and LuaJIT
+runs pass 366 OrbitUI cases, 75 Python checks, 351 Bookshelf suites (two native
+SQLite suite skips), and all 13 SimpleUI files. All 41 translation checks pass.
+The Python run includes both the museum-original audit and the six source-photo
+pixel audits. New tests cover resumable checksum-only upgrades, custom/removed/
+linked artwork and captions, frozen old hashes, source/mask provenance, RGBA,
+base alignment, biography limits and startup ordering. Light/dark cutouts were
+visually reviewed; Joyce/Woolf/Kafka/Mann PNG hashes are unchanged.
+
+Run the extra source audit with `SCULPTURE_SOURCE_CACHE=<downloaded-photo-dir>`.
+Without the cache, that single audit is skipped, not silently claimed complete.
+The installed-device upgrade, colour-screen appearance and native zoom/info
+still need physical-device testing. Dostoevsky's enlarged image is source-detail
+limited. No public release; Mann's separate sculpture-rights hold remains.
+
+Mann replacement (local only): thirteen Lua/LuaJIT cases cover exact-checksum
+replacement, custom/deleted artwork and metadata, linked paths, one-time cost,
+corruption, byte-limited captions and interrupted writes/retries. Five Python
+checks verify provenance, transparent colour output, native base alignment,
+frozen old credits, release hold and unchanged other authors. Integration tests
+cover migration ordering and the generic biography updater's Mann exclusion.
+Physical-device appearance, touch/zoom/info and installed-default migration
+remain manual checks. Public redistribution is on hold; see the Seitz notice.
+
+Lispector retirement (unreleased): ten Lua/LuaJIT cases cover exact-checksum
+deletion, custom replacements, absent images/packs/metadata, symlinks, hash/remove
+failures, interrupted markers, intervening edits, one-time cost and retained
+custom-image author binding. Biography tests cover the missing retired runtime
+entry and startup ordering. Pack validation must reject a bundled Lispector PNG;
+the old biography source and frozen historical baselines remain available.
+No device test or OTA publication is implied by these headless checks.
+
 The unreleased Kafka replacement adds ten Lua/LuaJIT migration cases and four
 Python asset checks. Cover old/current image checksums, caption/notice migration,
 custom and deleted files, custom positioning/enablement/native overrides,

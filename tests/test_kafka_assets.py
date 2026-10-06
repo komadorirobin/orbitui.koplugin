@@ -56,7 +56,8 @@ class KafkaAssetsTests(unittest.TestCase):
                       "supersedes older Kafka-only credits", self.art["sha256"]):
             self.assertIn(value, notice)
         attribution = (PACK / "ATTRIBUTION.txt").read_text()
-        self.assertNotIn("Franz Kafka.png", attribution.split("ORIGINAL PORTRAIT INTERPRETATIONS")[1])
+        self.assertNotIn("ORIGINAL PORTRAIT INTERPRETATIONS", attribution)
+        self.assertIn("FRANZ KAFKA.PNG", attribution)
         self.assertIn("KAFKA-KIELCE.txt", attribution)
 
     def test_frozen_old_captions_are_not_rewritten_to_claim_kielce_credits(self):

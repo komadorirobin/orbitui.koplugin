@@ -1,0 +1,112 @@
+{
+  "source_commits": [
+    "d224901dcddbcc0d457a801058437cd20d2c0217",
+    "67c4219f",
+    "568fc943",
+    "d9e27ea8"
+  ],
+  "assets": [
+    {
+      "file": "August Strindberg.png",
+      "old_sha256": "719e860c41d8baddde7c91b6486e9500e713706a1e630a6c1a442947a50e96a8",
+      "new_sha256": "9deebd26afb9fd7c47d2247d138f5a70e9c24b0833469eb19d0f9511c473bdfa",
+      "old_info": [
+        "August Strindberg\nAI-adapted light-plaster ornament. Reference: nicolasdiolez, Bronze bust of August Strindberg, Zenodo 10336453 (CC BY 4.0). New material, lighting, plinth and background; pose or shoulders may be reinterpreted. Not a documentary reproduction.\nSource: https://zenodo.org/records/10336453\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/",
+        "August Strindberg (1849-1912)\n\nAugust Strindberg var en svensk dramatiker och prosaförfattare vars arbete sträckte sig från samtidssatir och självbiografiska berättelser till radikala experiment med teaterns form. Röda rummet blev hans stora genombrott 1879. Med dess levande Stockholmsmiljöer och angrepp på samtidens institutioner bidrog han till att förändra den svenska romanens språk och ämnen.\n\nInternationellt fick han särskild betydelse som dramatiker. Fadren, Fröken Julie och Fordringsägare driver konflikter om makt, kön och äktenskap till sin spets. Senare, i bland annat Till Damaskus och Ett drömspel, övergav han den strikt realistiska scenen: tid, rum och gestalter kunde förändras som i en dröm. Denna dramatik fick betydelse för både expressionismen och senare teater. Strindbergs självbiografiska böcker är samtidigt litterära konstruktioner, inte neutrala protokoll över hans liv; i Tjänstekvinnans son låter han exempelvis en gestalt vid namn Johan bära berättelsen.\n\nCentrala verk:\nRöda rummet; Tjänstekvinnans son; Fröken Julie; Inferno; Ett drömspel; Spöksonaten.\n\nText: OrbitUI, AI-assisterad svensk sammanfattning av källorna nedan. Inte källornas originaltext.\n\nKällor:\nStrindbergsmuseet: liv:\nhttps://www.strindbergsmuseet.se/om-strindberg/strindbergs-liv/\nStrindbergsmuseet: verk:\nhttps://www.strindbergsmuseet.se/om-strindberg/strindbergs-verk/\nStrindbergsmuseet: dramatik:\nhttps://www.strindbergsmuseet.se/om-strindberg/strindbergs-verk/dramatik/\nStrindbergsmuseet: självbiografiska verk:\nhttps://www.strindbergsmuseet.se/om-strindberg/strindbergs-verk/sjalvbiografiska-verk/\n\nOm bysten / bildkrediter:\nAugust Strindberg\nAI-adapted light-plaster ornament. Reference: nicolasdiolez, Bronze bust of August Strindberg, Zenodo 10336453 (CC BY 4.0). New material, lighting, plinth and background; pose or shoulders may be reinterpreted. Not a documentary reproduction.\nSource: https://zenodo.org/records/10336453\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+      ],
+      "old_placement": {
+        "scale": 1.002,
+        "anchor": "bottom",
+        "lift": -0.01
+      }
+    },
+    {
+      "file": "Knut Hamsun.png",
+      "old_sha256": "8559aafafe6dbe0010d361805ab65798d2e2d0a254960c71f196b7891ec0d7e7",
+      "new_sha256": "5d8b2268e01c3d8845421e110d3169d2a2bb38d8392c4730196501cafee0873f",
+      "old_info": [
+        "Knut Hamsun\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/",
+        "Knut Hamsun (1859-1952)\n\nKnut Hamsun var en norsk författare som växte upp under fattiga förhållanden i Nordland och prövade många yrken innan han fick sitt litterära genombrott. Sult och Pan hör till hans tidiga huvudverk. Den ensamma människan, ofta en vandrare eller outsider i konflikt med sin omgivning, står i centrum för mycket av denna prosa. Hans senare författarskap vidgar perspektivet mot samhällen och en stark kritik av den moderna civilisationen.\n\nMarkens grøde från 1917 gestaltar hans idealisering av jordbruket och ett liv nära marken. För denna roman fick han Nobelpriset i litteratur 1920. Hamsuns litterära eftermäle är samtidigt förbundet med hans politiska ställningstaganden: han stödde Nazityskland och ställde sig positiv till den tyska invasionen av Norge. Hans stöd för nazismen präglade starkt hans ställning i Norge efter kriget.\n\nCentrala verk:\nSult (1890); Pan (1894); Markens grøde (1917); Landstrykere (1927).\n\nText: OrbitUI, AI-assisterad svensk sammanfattning av källorna nedan. Inte källornas originaltext.\n\nKällor:\nNobelPrize.org: biografi:\nhttps://www.nobelprize.org/prizes/literature/1920/hamsun/biographical/?print=1\nNobelPrize.org: litteraturpriset 1920:\nhttps://www.nobelprize.org/prizes/lists/all-nobel-prizes/1929-1920/?gallery_style=page\n\nOm bysten / bildkrediter:\nKnut Hamsun\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+      ],
+      "old_placement": {
+        "scale": 1.004,
+        "anchor": "bottom",
+        "lift": -0.015
+      }
+    },
+    {
+      "file": "Fyodor Dostoevsky.png",
+      "old_sha256": "04c917132a05343545dc1f08d856f68e1b022c9fd2fbff5cb17f6f6df76f310a",
+      "new_sha256": "0c41e5d7d645e53f3163a70a865eba2d446ec12765910548e7ace7345f2a7fec",
+      "old_info": [
+        "Fyodor Dostoevsky\nAI-adapted light-plaster ornament. Reference: Scan-the-World, Gravestone of Fyodor Dostoyevsky, Zenodo 21671389 (CC BY-NC-SA 4.0). New material, lighting, plinth and background; pose or shoulders may be reinterpreted. Not a documentary reproduction.\nSource: https://zenodo.org/records/21671389\nArtwork: CC BY-NC-SA 4.0, to the extent applicable. https://creativecommons.org/licenses/by-nc-sa/4.0/ Non-commercial use only.",
+        "Fjodor Dostojevskij (1821-1881)\n\nFjodor Dostojevskij var en rysk romanförfattare, född i Moskva och utbildad till ingenjör i Sankt Petersburg. År 1849 dömdes han till döden efter sitt deltagande i Petrasjevskijkretsen. Straffet omvandlades till straffarbete i Sibirien, följt av militärtjänst. Efter återkomsten skrev han de romaner som framför allt kom att ge honom en internationell ställning.\n\nHos Dostojevskij är idéer sällan enbart abstrakta resonemang: de blir krafter som sliter i människor. I Brott och straff ställs Raskolnikovs föreställning om att stå över vanliga moraliska regler mot skuld och samvete. Idioten prövar medkänsla och godtrogenhet i en hård social värld, medan Bröderna Karamazov förenar familjekonflikt med en kamp om tro och tvivel. Berättelsernas intensitet kommer ur att gestalterna både argumenterar och motsäger sig själva. Författarskapet rymmer också kortare former, från den ensamma längtan i Vita nätter till den stridbare berättaren i Anteckningar från källarhålet.\n\nCentrala verk:\nVita nätter; Anteckningar från källarhålet; Brott och straff; Idioten; Bröderna Karamazov.\n\nText: OrbitUI, AI-assisterad svensk sammanfattning av källorna nedan. Inte källornas originaltext.\n\nKällor:\nCambridge University Library: The Man:\nhttps://exhibitions.lib.cam.ac.uk/crimeandpunishment/artifacts/the-man/\nPenguin: författarskap och centrala verk:\nhttps://www.penguin.co.uk/discover/articles/where-to-start-reading-fyodor-dostoyevsky\n\nOm bysten / bildkrediter:\nFyodor Dostoevsky\nAI-adapted light-plaster ornament. Reference: Scan-the-World, Gravestone of Fyodor Dostoyevsky, Zenodo 21671389 (CC BY-NC-SA 4.0). New material, lighting, plinth and background; pose or shoulders may be reinterpreted. Not a documentary reproduction.\nSource: https://zenodo.org/records/21671389\nArtwork: CC BY-NC-SA 4.0, to the extent applicable. https://creativecommons.org/licenses/by-nc-sa/4.0/ Non-commercial use only."
+      ],
+      "old_placement": {
+        "scale": 1.044,
+        "anchor": "bottom",
+        "lift": -0.027
+      }
+    },
+    {
+      "file": "Dylan Thomas.png",
+      "old_sha256": "5527a7d26c3210d95d3f2316f0766219b6c8f99f72a9a54c802a1069bb66ec3a",
+      "new_sha256": "2faba2fd29aa121b35c57dce8ee94e5ced64220f3ebdfd8bd55b786a6b25598f",
+      "old_info": [
+        "Dylan Thomas\nAI-adapted light-plaster ornament. Reference: AndyScott, photograph of Hugh Oloff de Wet's Dylan Thomas bust at the National Poetry Library (CC0 1.0 for the photograph). New material, lighting, plinth and background; pose or shoulders may be reinterpreted. Not a documentary reproduction.\nSource: https://commons.wikimedia.org/wiki/File:Royal_Festival_Hall,_National_Poetry_Library,_bust_of_Dylan_Thomas_by_Hugh_Oloff_de_Wet.jpg\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/",
+        "Dylan Thomas (1914-1953)\n\nDylan Thomas var en walesisk poet och prosaförfattare, född i Swansea. Till hans mest kända dikter hör Fern Hill och Do not go gentle into that good night. Barndomens miljöer i Wales återkommer i hans verk; gården som gav Fern Hill dess namn hör samman med diktens minnen av barndom och förlorad oskuld. Han skrev också novellsamlingen Portrait of the Artist as a Young Dog.\n\nUnder Milk Wood är ett hörspel byggt av många röster. Under ett dygn i den påhittade kuststaden Llareggub får invånarnas drömmar, begär, minnen och vardag ta plats sida vid sida. Den lyriska formen rymmer både humor och ömhet inför gestalterna. Thomas arbetade länge med materialet och medverkade i de första scenframförandena i New York 1953. BBC:s första brittiska radiosändning kom 1954, efter hans död. Verket visar hur hans författarskap också är en konst för örat, inte bara för den tysta läsningen.\n\nCentrala verk:\nFern Hill; Do not go gentle into that good night; Portrait of the Artist as a Young Dog; Under Milk Wood.\n\nText: OrbitUI, AI-assisterad svensk sammanfattning av källorna nedan. Inte källornas originaltext.\n\nKällor:\nDylan Thomas Centre: About Dylan:\nhttps://www.dylanthomas.com/dylan/\nDylan Thomas Centre: Under Milk Wood:\nhttps://www.dylanthomas.com/dylan/dylans-work/milk-wood-chronology/\nDylan Thomas Centre: landskap och barndom:\nhttps://www.dylanthomas.com/dylan-thomas-trails/\n\nOm bysten / bildkrediter:\nDylan Thomas\nAI-adapted light-plaster ornament. Reference: AndyScott, photograph of Hugh Oloff de Wet's Dylan Thomas bust at the National Poetry Library (CC0 1.0 for the photograph). New material, lighting, plinth and background; pose or shoulders may be reinterpreted. Not a documentary reproduction.\nSource: https://commons.wikimedia.org/wiki/File:Royal_Festival_Hall,_National_Poetry_Library,_bust_of_Dylan_Thomas_by_Hugh_Oloff_de_Wet.jpg\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+      ],
+      "old_placement": {
+        "scale": 1.006,
+        "anchor": "bottom",
+        "lift": -0.012
+      }
+    },
+    {
+      "file": "Stanislaw Lem.png",
+      "old_sha256": "6bca32b5582a15019fbefdddbb7bda1e11bac86458d7f34ba5aff10a544ad398",
+      "new_sha256": "5e7c351d18dbb091826a26e101c9daf5785e2087e31a271e32b4c0af19e1440f",
+      "old_info": [
+        "Stanislaw Lem\nAI-adapted light-plaster ornament. Reference: Pawel Ciesla (Staszek Szybki Jest), photograph of the Stanislaw Lem bust in Kielce (CC BY-SA 4.0). New material, lighting, plinth and background; pose or shoulders may be reinterpreted. Not a documentary reproduction.\nSource: https://commons.wikimedia.org/wiki/File:Popiersie_Stanis%C5%82aw_Lem_ssj_20110627.jpg\nArtwork: CC BY-SA 4.0, to the extent applicable. https://creativecommons.org/licenses/by-sa/4.0/",
+        "Stanisław Lem (1921-2006)\n\nStanisław Lem var en polsk författare som använde science fiction för att pröva frågor om kunskap, teknik och människans begränsningar. Han föddes i Lwów, dagens Lviv, studerade medicin och arbetade under den tyska ockupationen som mekaniker och svetsare. Efter kriget fortsatte han sina studier i Kraków, men det var litteraturen och det vetenskapliga tänkandet som kom att forma hans yrkesliv.\n\nI Solaris blir mötet med en främmande intelligens inte ett enkelt äventyr om att upptäcka och erövra, utan ett problem för själva förståelsen: hur kan människor begripa något som inte liknar dem? En annan sida av Lem syns i Cyberiaden, där robotkonstruktörer och sagolika världar bär satir över makt, moral och tron på tekniska universallösningar. Han skrev också essäer och framtidsspekulationer. Allvarliga kunskapsproblem och komiska tankeexperiment hör därför till samma författarskap, snarare än till två helt skilda sidor av det.\n\nCentrala verk:\nSolaris; Cyberiaden; Stjärndagböckerna; Summa technologiae.\n\nText: OrbitUI, AI-assisterad svensk sammanfattning av källorna nedan. Inte källornas originaltext.\n\nKällor:\nLems officiella webbplats: biografi:\nhttps://english.lem.pl/index.php/home/biography/abouthimself\nLems officiella webbplats: Solaris:\nhttps://english.lem.pl/works/novels/solaris\nLems officiella webbplats: The Cyberiad:\nhttps://english.lem.pl/works/novels/the-cyberiad\n\nOm bysten / bildkrediter:\nStanislaw Lem\nAI-adapted light-plaster ornament. Reference: Pawel Ciesla (Staszek Szybki Jest), photograph of the Stanislaw Lem bust in Kielce (CC BY-SA 4.0). New material, lighting, plinth and background; pose or shoulders may be reinterpreted. Not a documentary reproduction.\nSource: https://commons.wikimedia.org/wiki/File:Popiersie_Stanis%C5%82aw_Lem_ssj_20110627.jpg\nArtwork: CC BY-SA 4.0, to the extent applicable. https://creativecommons.org/licenses/by-sa/4.0/"
+      ],
+      "old_placement": {
+        "scale": 1.027,
+        "anchor": "bottom",
+        "lift": -0.023
+      }
+    },
+    {
+      "file": "Robert Musil.png",
+      "old_sha256": "0c6d0b652b5e3405e4a4804900726b5aa3c1179d439d7d70d7e9288055590d44",
+      "new_sha256": "4b59d2e332a6ad9a253ed1032a38e84fdfaf3a58f2a19b5fecbfcc347977ac25",
+      "old_info": [
+        "Robert Musil\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/",
+        "Robert Musil (1880-1942)\n\nRobert Musil var en österrikisk författare med en ovanligt bred vetenskaplig bakgrund. Han utbildade sig till ingenjör och studerade därefter filosofi och experimentell psykologi i Berlin. Debutromanen Die Verwirrungen des Zöglings Törleß utkom 1906. Han arbetade också som teaterkritiker och essäist, men kom att ägna en stor del av sitt liv åt Der Mann ohne Eigenschaften, på svenska Mannen utan egenskaper.\n\nDen stora, ofullbordade romanen betraktar det centraleuropeiska samhället före första världskriget genom huvudpersonen Ulrich. Musils litterära arbete och hans vetenskapliga intressen gör honom till en författare som närmar sig människan från flera håll, inte bara genom en enda berättartradition. Efter nazismens maktövertagande lämnade han Berlin för Wien och hamnade senare i schweizisk exil. Han dog i Genève innan romanprojektet var avslutat. År 1943 gav Martha Musil ut en del av det efterlämnade materialet, som hon också arbetade för att bevara och göra känt.\n\nCentrala verk:\nDie Verwirrungen des Zöglings Törleß; Drei Frauen; Der Mann ohne Eigenschaften; Nachlaß zu Lebzeiten.\n\nText: OrbitUI, AI-assisterad svensk sammanfattning av källorna nedan. Inte källornas originaltext.\n\nKällor:\nRobert Musil Literatur Museum: biografi och verk:\nhttps://www.musilmuseum.at/robert-musil/\nRobert Musil Literatur Museum: romanen och Musil Online:\nhttps://www.musilmuseum.at/2020/robert-musil\n\nOm bysten / bildkrediter:\nRobert Musil\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+      ],
+      "old_placement": {
+        "scale": 1.001,
+        "anchor": "bottom",
+        "lift": -0.011
+      }
+    }
+  ],
+  "documents": {
+    "README.txt": [
+      "3b5ddac5eeb2a0a79624f411398b6450b9fc346daa3a60f915dca1658eaf059e",
+      "c6359c9d77de7c88573bd4098df27529a47c26c53d818eaacc404b58f2a2576c",
+      "4a0ca94b1b954fea514c8e548d73b33a3de26f808b66aee15c06cc21348c0ae3",
+      "f3a0cf1cfbab99f3d8a56d5960c961ee07e9af3731ee23eeada426d4ae039820"
+    ],
+    "ATTRIBUTION.txt": [
+      "2cc621717575f2362df5474c672c81c15933544dc7ab0fd73152c06044b6a183",
+      "cd18f53bcbc3c0f9f674c0bd7468f2c627f9307597582c61a4ec144df34a4993",
+      "7253b0a5df1f46d1f55fbc430d7657b6a7af230d78717d598997b24fc76a40a5"
+    ],
+    "prompts.json": [
+      "feca6933aadf0b9ce5692429bdec1cded9824bfd58dff4a179f614d2b379b892",
+      "a224c69417733c32ef6c51dac2672aa52dc7699c7b959667652025fcebf09dae",
+      "b77e9d7d009178889fd285f102b954dc97dc6f9e6b757cd96758fecb86f7c3e1"
+    ]
+  }
+}

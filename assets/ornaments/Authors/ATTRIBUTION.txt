@@ -1,12 +1,55 @@
-AUTHORS v1 - SOURCES AND ATTRIBUTION
-Created 2026-10-04. Separate from OrbitUI's AGPL-licensed code.
-This is a collection of separately licensed images, not a single combined work.
+AUTHORS - SOURCES AND ATTRIBUTION
+Separate from OrbitUI's AGPL-licensed code. Each image has its own terms.
 
-All nine PNGs were made with OpenAI's built-in image generation tool at the
-user's direction. They retain the original generated alpha and provenance.
-Eight are interpreted portraits; Kafka is now an AI-assisted extraction from
-a photograph of the Kielce bronze bust, not a pixel-identical reproduction.
-None is an exact scan render or an endorsement by the people depicted.
+Seven images are photographic cutouts, with only background alpha masking and
+proportional scaling. No AI-rendered anatomy, material or plinth was added.
+See AUTHOR-SCULPTURES.txt and THOMAS-MANN-SEITZ.txt for source links, photograph and
+output hashes, changes, licenses and the separate sculpture-rights basis.
+Those notices apply to the listed hashes, never to user-supplied replacements.
+
+AUGUST STRINDBERG.PNG
+Carl Eldh, 1905 bronze, Waldemarsudde W 144.
+Photograph: Gotogo, 2025, CC0 1.0.
+https://commons.wikimedia.org/wiki/File:Portrait_bust_of_August_Strindberg_by_Carl_Eldh.jpg
+https://creativecommons.org/publicdomain/zero/1.0/
+
+KNUT HAMSUN.PNG
+Fin Haakon Frolich, 1893-1896 plaster, Nasjonalmuseet NG.S.01072.
+Photograph distributed by Store norske leksikon as Public domain;
+museum credits Annar Bjorgli. Monochrome preserved, not colourized.
+https://snl.no/Fin_Haakon_Fr%C3%B8lich
+https://www.nasjonalmuseet.no/samlingen/objekt/NG.S.01072
+
+FYODOR DOSTOEVSKY.PNG
+Nikolai Laveretsky, 1883 bronze grave bust, Tikhvin Cemetery.
+Photograph: Paramecium, 2010. Photograph and cutout: CC BY-SA 3.0.
+https://commons.wikimedia.org/wiki/File:Grab_Dostojewskys.jpg
+https://creativecommons.org/licenses/by-sa/3.0/
+Independent new photo, not a relicensing of the former NC scan adaptation.
+
+DYLAN THOMAS.PNG
+Hugh Oloff de Wet, circa 1951, National Poetry Library, Royal Festival Hall.
+Photograph: AndyScott, 2024, CC0 1.0. Separate UK freedom-of-panorama basis
+for the permanently displayed sculpture, not a worldwide public-domain claim.
+https://commons.wikimedia.org/wiki/File:Royal_Festival_Hall,_National_Poetry_Library,_bust_of_Dylan_Thomas_by_Hugh_Oloff_de_Wet.jpg
+https://creativecommons.org/publicdomain/zero/1.0/
+
+STANISLAW LEM.PNG
+Leszek Kurkowski, 2009 bronze, Kielce.
+Photograph: Pawel Ciesla (Staszek Szybki Jest), 2011.
+Photograph and cutout: CC BY-SA 4.0. Separate Polish panorama provision
+for the permanently installed public sculpture.
+https://commons.wikimedia.org/wiki/File:Popiersie_Stanis%C5%82aw_Lem_ssj_20110627.jpg
+https://creativecommons.org/licenses/by-sa/4.0/
+
+ROBERT MUSIL.PNG
+Bernard Bavaud, bronze, Cimetiere des Rois, Geneva.
+Photograph: Fanny Schertzer, 2012; crop: Christoph Waghubinger (Lewenstein).
+Photograph and cutout: CC BY 3.0. Separate Swiss freedom-of-panorama basis
+for two-dimensional depictions of permanent public sculpture.
+Not Wotruba's portrait and not Belvedere's private-use-only photograph.
+https://commons.wikimedia.org/wiki/File:Robert_Musil_-_Cimetiere_des_Rois_II.jpg
+https://creativecommons.org/licenses/by/3.0/
 
 FRANZ KAFKA.PNG
 Photo: Pawel Ciesla (Staszek Szybki Jest), 14 September 2006, CC BY-SA 4.0.
@@ -19,64 +62,23 @@ https://creativecommons.org/licenses/by-sa/4.0/
 Retain attribution and distribute adaptations under the same license.
 See KAFKA-KIELCE.txt for the sculpture's separate rights basis and limits.
 
-REFERENCE ADAPTATIONS
-Changes include matte ivory plaster, simplified surface, lighting, plain low
-plinth, transparent background, and sometimes viewpoint or shoulders.
-Credits and source licenses do not imply endorsement or blanket permission
-for every use of an underlying sculpture in every jurisdiction.
-
-AUGUST STRINDBERG.PNG
-Reference: nicolasdiolez, Bronze bust of August Strindberg, Zenodo 10336453 (CC BY 4.0).
-Source: https://zenodo.org/records/10336453
-Adaptation by OrbitUI contributors, with OpenAI image generation.
-Adapted image: CC BY 4.0, to the extent applicable.
-https://creativecommons.org/licenses/by/4.0/
-Retain attribution, license and change notices.
-
-STANISLAW LEM.PNG
-Reference: Pawel Ciesla (Staszek Szybki Jest), photograph of the Stanislaw Lem bust in Kielce (CC BY-SA 4.0).
-Source: https://commons.wikimedia.org/wiki/File:Popiersie_Stanis%C5%82aw_Lem_ssj_20110627.jpg
-Adaptation by OrbitUI contributors, with OpenAI image generation.
-Adapted image: CC BY-SA 4.0, to the extent applicable.
+THOMAS MANN.PNG - MOLGREEN PHOTOGRAPHIC CUTOUT
+Photo: Molgreen, 11 April 2024, CC BY-SA 4.0.
+Sculpture: Gustav Seitz, original portrait 1954, Berlin cast unveiled 2007.
+Source: https://commons.wikimedia.org/wiki/File:20240411_xl_0704-Thomas_Mann_B%C3%BCste_3.jpg
+Background alpha masking and proportional scaling by OrbitUI contributors.
+Surroundings and granite column removed; existing bronze head/neck/base retained.
+No generated details, retouching or recolouring. Photograph/cutout: CC BY-SA 4.0.
 https://creativecommons.org/licenses/by-sa/4.0/
-Retain attribution and distribute adaptations under the same license.
-
-DYLAN THOMAS.PNG
-Reference: AndyScott, photograph of Hugh Oloff de Wet's Dylan Thomas bust at the National Poetry Library (CC0 1.0 for the photograph).
-Source: https://commons.wikimedia.org/wiki/File:Royal_Festival_Hall,_National_Poetry_Library,_bust_of_Dylan_Thomas_by_Hugh_Oloff_de_Wet.jpg
-Adaptation by OrbitUI contributors, with OpenAI image generation.
-Adapted image: CC BY 4.0, to the extent applicable.
-https://creativecommons.org/licenses/by/4.0/
-Retain attribution, license and change notices.
-
-FYODOR DOSTOEVSKY.PNG
-Reference: Scan-the-World, Gravestone of Fyodor Dostoyevsky, Zenodo 21671389 (CC BY-NC-SA 4.0).
-Source: https://zenodo.org/records/21671389
-Adaptation by OrbitUI contributors, with OpenAI image generation.
-Adapted image: CC BY-NC-SA 4.0, to the extent applicable.
-https://creativecommons.org/licenses/by-nc-sa/4.0/
-Non-commercial use only. Retain attribution, license and change notices.
-
-ORIGINAL PORTRAIT INTERPRETATIONS
-Thomas Mann.png
-Knut Hamsun.png
-Clarice Lispector.png
-Robert Musil.png
-No third-party sculpture or photograph was supplied to the generator for
-these four images. They are original AI-assisted interpretations of the
-authors' general historical appearance. In particular, the Lispector piece
-does not reproduce the Intelectus commercial bust, the Musil piece does not
-reproduce Wotruba's portrait head or Belvedere's photograph, the Mann piece
-does not reproduce Seitz's sculpture, and the Hamsun piece does not reproduce
-Frolich's bust or the archived photograph. No permission from those parties
-is claimed or implied.
-Credit: OrbitUI contributors, with OpenAI image generation.
-Artwork license: CC BY 4.0, to the extent copyright applies.
-https://creativecommons.org/licenses/by/4.0/
-Do not misattribute these new interpretations to historical sculptors.
+The sculpture's separate rights are NOT licensed by the photographer.
+Separate basis: German UrhG section 59 for permanent public sculpture;
+sections 62 and 63 address alterations and attribution.
+See THOMAS-MANN-SEITZ.txt for exact hashes and the retired adaptation's hold.
 
 REDISTRIBUTION
-Keep this notice, ornaments.json and prompts.json with the images.
-The code license does not relicense these assets or override the Lem/Kafka
-ShareAlike or Dostoevsky NonCommercial-ShareAlike conditions.
-No commercial redistribution of the Dostoevsky ornament is granted here.
+Keep this notice, AUTHOR-SCULPTURES.txt, ornaments.json and prompts.json.
+The code license does not relicense these assets. ShareAlike applies to the
+relevant adapted images, not the whole collection. No endorsement is implied.
+The replaced Ahrens/image_gen Mann bitmap remains excluded from public
+distribution, including old Git commits containing it. This cutout does not
+clear or relicense that older asset.
