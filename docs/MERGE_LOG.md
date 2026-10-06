@@ -810,6 +810,33 @@ native SQLite skips, and all 13 SimpleUI test files. All 41 translation checks
 pass. Clean-commit packaging remains a separate final gate, not device
 acceptance. Physical Bigme confirmation is still required; not published.
 
+## 2026-10-06: Informative author bust captions (unreleased)
+
+The user requests author information, not just sculpture credits, for the busts.
+Add Swedish, source-linked life/writing/major-works cards to all eleven bundled
+Modernists/Authors busts. Label the original summaries as AI-assisted OrbitUI
+text, retain old artwork credits verbatim below them, and keep the complete
+cards below the native 4000-byte UTF-8 limit. The build script is offline after
+capturing a frozen alpha.20 baseline; no image processing or runtime network.
+Native tap-to-zoom and its scrollable info panel already support the content.
+
+C11 gains a narrowly scoped default-caption migration before native listing.
+Each pack has its own update marker, separate from initial seeding. Replace
+only recognized old info and an unchanged README. Preserve empty/removed/custom
+captions, reader overrides, placements, tap settings, enablement, deleted
+entries/files/packs and trial packs. Never rewrite PNGs, attribution notices or
+prompts. Atomic failures leave the current file intact and unmarked work can
+retry without replaying the completed pack or replacing later edits.
+
+Twelve Lua/LuaJIT regressions and three Python asset checks cover this behavior,
+source coverage, reproducible text, exact credit retention and byte limits.
+Both full Lua/LuaJIT suites pass: 324 OrbitUI cases, 61 Python checks including
+museum-source pixel auditing, 351 Bookshelf suites (two native SQLite skips)
+and all 13 SimpleUI files. All 41 translation checks pass. Clean-commit sealed
+packaging remains the final local gate; it is not device acceptance.
+No component source, upstream pin, VERSION, bootstrap/API or public OTA change.
+Not published; native Bigme appearance and scrolling still need confirmation.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

@@ -1,0 +1,125 @@
+{
+  "source_commit": "d224901dcddbcc0d457a801058437cd20d2c0217",
+  "packs": {
+    "Modernists": {
+      "metadata": {
+        "James Joyce.png": {
+          "scale": 1,
+          "anchor": "bottom",
+          "lift": -0.009,
+          "pad": 0.035,
+          "night": "off",
+          "mirror": "off",
+          "tap": "zoom",
+          "info": "James Joyce\nAI-adapted light-plaster ornament after Marjorie Fitzgibbon's 1982 bust. Reference photograph by Illustratedjc, Wikimedia Commons, CC BY-SA 4.0. Adaptation: background removed, material and plinth changed, proportions and lighting reinterpreted. Not a documentary image of the sculpture.\nSource: https://commons.wikimedia.org/wiki/File:Marjorie_Fitzgibbon_-_Bust_of_James_Joyce_(1982)_closer.jpg\nLicense: https://creativecommons.org/licenses/by-sa/4.0/"
+        },
+        "Virginia Woolf.png": {
+          "scale": 1.1,
+          "anchor": "bottom",
+          "lift": -0.067,
+          "pad": 0.035,
+          "night": "off",
+          "mirror": "off",
+          "tap": "zoom",
+          "info": "Virginia Woolf\nAI-adapted light-plaster ornament based on Scan-the-World's Bust of Virginia Woolf, Zenodo record 20236358, CC BY-NC-SA 4.0. Adaptation: new viewpoint, background removed, material, lighting and plinth changed. Not a documentary image of the sculpture. Non-commercial use only.\nSource: https://doi.org/10.5281/zenodo.20236358\nLicense: https://creativecommons.org/licenses/by-nc-sa/4.0/"
+        }
+      },
+      "readme": "MODERNISTS v1 - AUTHOR ORNAMENTS\nJames Joyce and Virginia Woolf, bundled with OrbitUI from alpha.14.\n\nOrbitUI installs this folder once into:\nkoreader/settings/bookshelf/ornaments/Modernists/\n\nThe enabled busts stand immediately before a matching author's book or run\nof books. A run continuing onto a new page gets its bust there too. They\nare never placed randomly among other authors or on an empty shelf.\nMatching uses book author metadata, not filenames or title substrings.\nBoth \"James Joyce\" and \"Joyce, James\" work (likewise Virginia Woolf).\nMissing or ambiguous metadata is not guessed. Narrow shelves may omit a\nbust when there is not enough room for the bust and its book together.\n\nThe Ornament collection browser has a Modernists tab. Existing per-piece,\npack and shelf on/off choices are respected. Setting the shelf's ornament\nfrequency to None also disables these busts. Otherwise a matching run gets\none bust, independently of the frequency pattern for ordinary ornaments.\nTap a bust on a shelf to zoom and see its source information; long-press to\nchange size, padding or height. Existing user files are not overwritten,\nand deleted ornaments or packs are not automatically restored.\n\nIf you installed the earlier Modernists-Preview trial pack, its two busts\nare also author-matched. The released pack wins when both copies are on,\nso the same author is not decorated twice.\n\nTwo 1024 x 1536 RGBA PNGs, with original generated alpha and provenance.\nScale/lift defaults align their visible heights and compensate for bottom\npadding. If you change the scale, you may need to adjust height as well.\nThese are AI-adapted prototypes, not documentary photos or museum scans.\nGenerated with Codex's built-in image generation tool; prompts.json records\nthe inputs. Sources and attribution are in ATTRIBUTION.txt.\n\nARTWORK LICENSES (separate from OrbitUI's code license):\nJames Joyce.png: CC BY-SA 4.0.\nVirginia Woolf.png: CC BY-NC-SA 4.0, non-commercial use only.\nKeep the attribution and license notices when redistributing the images.\nThe two separately licensed images form a collection, not a combined work.\n"
+    },
+    "Authors": {
+      "metadata": {
+        "August Strindberg.png": {
+          "scale": 1.002,
+          "anchor": "bottom",
+          "lift": -0.01,
+          "pad": 0.035,
+          "night": "off",
+          "mirror": "off",
+          "tap": "zoom",
+          "info": "August Strindberg\nAI-adapted light-plaster ornament. Reference: nicolasdiolez, Bronze bust of August Strindberg, Zenodo 10336453 (CC BY 4.0). New material, lighting, plinth and background; pose or shoulders may be reinterpreted. Not a documentary reproduction.\nSource: https://zenodo.org/records/10336453\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+        },
+        "Stanislaw Lem.png": {
+          "scale": 1.027,
+          "anchor": "bottom",
+          "lift": -0.023,
+          "pad": 0.035,
+          "night": "off",
+          "mirror": "off",
+          "tap": "zoom",
+          "info": "Stanislaw Lem\nAI-adapted light-plaster ornament. Reference: Pawel Ciesla (Staszek Szybki Jest), photograph of the Stanislaw Lem bust in Kielce (CC BY-SA 4.0). New material, lighting, plinth and background; pose or shoulders may be reinterpreted. Not a documentary reproduction.\nSource: https://commons.wikimedia.org/wiki/File:Popiersie_Stanis%C5%82aw_Lem_ssj_20110627.jpg\nArtwork: CC BY-SA 4.0, to the extent applicable. https://creativecommons.org/licenses/by-sa/4.0/"
+        },
+        "Dylan Thomas.png": {
+          "scale": 1.006,
+          "anchor": "bottom",
+          "lift": -0.012,
+          "pad": 0.035,
+          "night": "off",
+          "mirror": "off",
+          "tap": "zoom",
+          "info": "Dylan Thomas\nAI-adapted light-plaster ornament. Reference: AndyScott, photograph of Hugh Oloff de Wet's Dylan Thomas bust at the National Poetry Library (CC0 1.0 for the photograph). New material, lighting, plinth and background; pose or shoulders may be reinterpreted. Not a documentary reproduction.\nSource: https://commons.wikimedia.org/wiki/File:Royal_Festival_Hall,_National_Poetry_Library,_bust_of_Dylan_Thomas_by_Hugh_Oloff_de_Wet.jpg\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+        },
+        "Thomas Mann.png": {
+          "scale": 0.996,
+          "anchor": "bottom",
+          "lift": -0.01,
+          "pad": 0.035,
+          "night": "off",
+          "mirror": "off",
+          "tap": "zoom",
+          "info": "Thomas Mann\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+        },
+        "Fyodor Dostoevsky.png": {
+          "scale": 1.044,
+          "anchor": "bottom",
+          "lift": -0.027,
+          "pad": 0.035,
+          "night": "off",
+          "mirror": "off",
+          "tap": "zoom",
+          "info": "Fyodor Dostoevsky\nAI-adapted light-plaster ornament. Reference: Scan-the-World, Gravestone of Fyodor Dostoyevsky, Zenodo 21671389 (CC BY-NC-SA 4.0). New material, lighting, plinth and background; pose or shoulders may be reinterpreted. Not a documentary reproduction.\nSource: https://zenodo.org/records/21671389\nArtwork: CC BY-NC-SA 4.0, to the extent applicable. https://creativecommons.org/licenses/by-nc-sa/4.0/ Non-commercial use only."
+        },
+        "Knut Hamsun.png": {
+          "scale": 1.004,
+          "anchor": "bottom",
+          "lift": -0.015,
+          "pad": 0.035,
+          "night": "off",
+          "mirror": "off",
+          "tap": "zoom",
+          "info": "Knut Hamsun\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+        },
+        "Clarice Lispector.png": {
+          "scale": 0.998,
+          "anchor": "bottom",
+          "lift": -0.012,
+          "pad": 0.035,
+          "night": "off",
+          "mirror": "off",
+          "tap": "zoom",
+          "info": "Clarice Lispector\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+        },
+        "Franz Kafka.png": {
+          "scale": 0.996,
+          "anchor": "bottom",
+          "lift": -0.01,
+          "pad": 0.035,
+          "night": "off",
+          "mirror": "off",
+          "tap": "zoom",
+          "info": "Franz Kafka\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+        },
+        "Robert Musil.png": {
+          "scale": 1.001,
+          "anchor": "bottom",
+          "lift": -0.011,
+          "pad": 0.035,
+          "night": "off",
+          "mirror": "off",
+          "tap": "zoom",
+          "info": "Robert Musil\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+        }
+      },
+      "readme": "AUTHORS v1 - AUTHOR-MATCHED SHELF ORNAMENTS\nNine additional busts for OrbitUI:\nAugust Strindberg, Stanislaw Lem, Dylan Thomas, Thomas Mann, Fyodor Dostoevsky,\nKnut Hamsun, Clarice Lispector, Robert Musil and Franz Kafka.\n\nInstalled once from the bundled runtime into:\nkoreader/settings/bookshelf/ornaments/Authors/\n\nThis separate pack adds to Modernists without changing the Joyce/Woolf images,\nuser adjustments, disabled pieces, or previously deleted files/packs.\nEach pack has its own one-time installation marker. Interrupted copies retry\non next startup; existing files are not overwritten. Deleting this pack after\ninstallation does not cause a later startup to restore it.\n\nEnabled busts appear before the first book in the matching author's run,\nincluding page starts. They never enter the ordinary random ornament deck.\nMatching uses full author metadata, including inverted surnames, not titles or\nfilenames. Lem's accented and ASCII spellings both work. Swedish Dostojevskij\nand common English Dostoevsky/Dostoyevsky forms are also supported.\nNo match is guessed from a multi-book folder's representative.\n\nFind the pack in Wallpaper, ornaments and colours > Ornament collection > Authors.\nTap a bust to zoom and read its origin. Long-press for scale, padding and height.\nShelf frequency None, pack disable and per-piece disable remain effective.\nA narrow row shrinks or omits the bust rather than separating it from its book.\n\nNine 1024 x 1536 RGBA PNGs. Original generated bytes, alpha and provenance\nare preserved. Small scale/lift adjustments align their visible heights and\nplinths; no per-page network calls or image generation are involved.\nprompts.json contains the exact prompts and source metadata.\nATTRIBUTION.txt records the separate image licenses and modifications.\nDostoevsky is NON-COMMERCIAL ONLY (CC BY-NC-SA 4.0); Lem is CC BY-SA 4.0.\nThe remaining adaptations/original interpretations are CC BY 4.0 to the extent\napplicable, not documentary reproductions or endorsements.\n\nOlder OrbitUI versions that do not know this pack may place it randomly.\nDisable Authors before rolling back to alpha.14 or earlier if that is unwanted.\n"
+    }
+  }
+}

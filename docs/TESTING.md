@@ -2,6 +2,19 @@
 
 ## Automated
 
+The unreleased author-info addition has 12 Lua/LuaJIT regressions for caption-only
+updates, independent markers, startup ordering, custom/empty/deleted fields,
+unchanged placement/enablement, reader overrides, deleted packs, bad JSON,
+UTF-8 byte limits, atomic write/close/rename failures and partial-update retries.
+Three Python checks cover all eleven sourced biographies, reproducible cards,
+verbatim artwork credits, default README updates and unchanged metadata fields.
+Existing PNG/provenance hash checks remain in force. The native zoom/info panel
+is reused without changes. Physical Bigme scrolling, Swedish text and taps are
+still device checks; automated tests do not render its native widgets.
+Both full Lua/LuaJIT runs pass with 324 OrbitUI cases, 61 Python checks including
+museum-source pixel auditing, 351 Bookshelf suites (two native SQLite skips)
+and all 13 SimpleUI files. All 41 translation checks pass.
+
 The unreleased gallery height follow-up extends the native placement regression
 to 240 DPI/row-height/aspect/width combinations using the actual plank geometry.
 It reproduces alpha.20's overlap and requires at least 5% of the stand height

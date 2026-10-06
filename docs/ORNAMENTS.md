@@ -148,7 +148,7 @@ its pack also prevents author matching from selecting it.
 ## Controls and installation
 
 The pack appears under **Wallpaper, ornaments and colours > Ornament collection
-> Modernists**. Tap a bust on a shelf to zoom and read its source information;
+> Modernists**. Tap a bust on a shelf to zoom and read about the author;
 long-press for native size, height and padding controls. Shuffle/ordering do not
 move an author bust to an unrelated author. The earlier `Modernists-Preview`
 trial pieces are matched as well; the released pack wins if both are enabled.
@@ -157,7 +157,7 @@ The nine additions appear in the same browser under **Authors**.
 The first ornament listing copies the bundled files from the active runtime to
 `koreader/settings/bookshelf/ornaments/Modernists/`. A separate install marker
 under `settings/orbitui/` prevents a later startup from restoring deleted files.
-Existing same-name files and user placement metadata are never overwritten.
+Initial seeding never overwrites same-name files or user placement metadata.
 An interrupted initial copy can retry on the next start; an installation error
 is logged without aborting the browser or KOReader startup.
 `Authors/` is installed alongside `Modernists/`, with its own install marker.
@@ -171,6 +171,29 @@ versions before alpha.14 do not know author matching, so disable the Modernists
 pack when rolling back if random placement is unwanted.
 Disable **Authors** when rolling back to alpha.16 or earlier, since those
 versions do not know the nine new author-bound filenames.
+
+### Author information (unreleased)
+
+All eleven bundled busts now have Swedish introductions to the author's life,
+literary style, themes and major works. Tap a bust for the existing enlarged
+image and scrollable info card. Source links follow the biography, with the
+original image credits and artwork licences retained verbatim at the bottom.
+The text is available offline; opening its source websites requires a browser
+and network. These are labelled AI-assisted OrbitUI summaries, not verbatim
+museum/author-centre/publisher text or statements from the original sculptors.
+
+Maintain the copy in `scripts/artwork/author-biographies.json` and regenerate
+pack metadata with `python3 scripts/build-author-info.py`. No image is processed.
+Every complete card fits the native 4000-byte UTF-8 limit, including credits.
+
+Existing installations receive a one-time, info-only default update before the
+first native ornament listing. The frozen alpha.20 baseline allows replacing
+only byte-identical old captions and READMEs. Custom captions (including empty
+or removed info), reader overrides, positions, disabled pieces, deleted files
+and the Modernists-Preview trial pack stay intact. No prompts, attribution
+notices, image bytes or enablement settings change. Each pack has an independent
+update marker, written only after successful atomic writes. Interrupted updates
+retry at the next process start. Rolling back code retains the new captions.
 
 ## Session shuffle (alpha.17)
 

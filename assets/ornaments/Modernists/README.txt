@@ -16,9 +16,15 @@ The Ornament collection browser has a Modernists tab. Existing per-piece,
 pack and shelf on/off choices are respected. Setting the shelf's ornament
 frequency to None also disables these busts. Otherwise a matching run gets
 one bust, independently of the frequency pattern for ordinary ornaments.
-Tap a bust on a shelf to zoom and see its source information; long-press to
-change size, padding or height. Existing user files are not overwritten,
-and deleted ornaments or packs are not automatically restored.
+Tap a bust on a shelf to zoom and read about the author's life, writing and
+major works. These Swedish, AI-assisted OrbitUI summaries include source links
+and retain the separate artwork credits below the biography. All text is
+available offline. Long-press to change size, padding or height.
+A one-time caption update replaces only unchanged published info fields and
+this default README. Custom captions, native reader overrides, placements,
+disabled pieces, deleted entries and files are preserved. Image bytes, prompts
+and attribution notices are not changed. The source text is maintained in
+scripts/artwork/author-biographies.json in the OrbitUI source repository.
 
 If you installed the earlier Modernists-Preview trial pack, its two busts
 are also author-matched. The released pack wins when both copies are on,

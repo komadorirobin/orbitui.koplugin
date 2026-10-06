@@ -74,7 +74,9 @@ end
 -- Each additive pack installs once from the active OTA runtime. Independent
 -- markers allow new packs without overwriting or resurrecting older artwork.
 function M.seed(root, ornaments_dir)
-    return require("core/orbitui_ornament_install").seed(root, ornaments_dir, M.packs)
+    local seeded = require("core/orbitui_ornament_install").seed(root, ornaments_dir, M.packs)
+    local updated = require("core/orbitui_author_info").apply(root, ornaments_dir)
+    return seeded or updated
 end
 
 function M.fillHooks(native, env)

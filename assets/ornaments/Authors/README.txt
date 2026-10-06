@@ -20,7 +20,10 @@ and common English Dostoevsky/Dostoyevsky forms are also supported.
 No match is guessed from a multi-book folder's representative.
 
 Find the pack in Wallpaper, ornaments and colours > Ornament collection > Authors.
-Tap a bust to zoom and read its origin. Long-press for scale, padding and height.
+Tap a bust to zoom and read about the author's life, writing and major works.
+These Swedish, AI-assisted OrbitUI summaries include source links and retain
+the separate artwork credits below the biography. All text is available offline.
+Long-press for scale, padding and height.
 Shelf frequency None, pack disable and per-piece disable remain effective.
 A narrow row shrinks or omits the bust rather than separating it from its book.
 
@@ -32,6 +35,12 @@ ATTRIBUTION.txt records the separate image licenses and modifications.
 Dostoevsky is NON-COMMERCIAL ONLY (CC BY-NC-SA 4.0); Lem is CC BY-SA 4.0.
 The remaining adaptations/original interpretations are CC BY 4.0 to the extent
 applicable, not documentary reproductions or endorsements.
+
+A one-time caption update replaces only unchanged published info fields and
+this default README. Custom captions, native reader overrides, placements,
+disabled pieces, deleted entries and files are preserved. Image bytes, prompts
+and attribution notices are not changed. The source text is maintained in
+scripts/artwork/author-biographies.json in the OrbitUI source repository.
 
 Older OrbitUI versions that do not know this pack may place it randomly.
 Disable Authors before rolling back to alpha.14 or earlier if that is unwanted.

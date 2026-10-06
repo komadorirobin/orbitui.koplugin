@@ -48,7 +48,7 @@ class OrnamentAssetsTests(unittest.TestCase):
             self.assertEqual(entry["tap"], "zoom")
             self.assertEqual(entry["night"], "off")
             self.assertGreater(entry["scale"], 0)
-            self.assertLess(len(entry["info"]), 4000)
+            self.assertLessEqual(len(entry["info"].encode("utf-8")), 4000)
             self.assertIn("https://", entry["info"])
         notices = (PACK / "ATTRIBUTION.txt").read_text()
         for required in ("Illustratedjc", "Marjorie Fitzgibbon", "Scan-the-World",
@@ -90,7 +90,7 @@ class OrnamentAssetsTests(unittest.TestCase):
                 self.assertEqual(entry["mirror"], "off")
                 self.assertTrue(.95 <= entry["scale"] <= 1.1)
                 self.assertTrue(-.05 < entry["lift"] <= 0)
-                self.assertLess(len(entry["info"]), 4000)
+                self.assertLessEqual(len(entry["info"].encode("utf-8")), 4000)
                 self.assertIn(asset["artwork_license"], entry["info"])
                 self.assertIn("https://creativecommons.org/licenses/", entry["info"])
                 self.assertIn(name.upper(), notices.upper())

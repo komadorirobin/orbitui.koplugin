@@ -339,6 +339,19 @@ New bundled packs use independent install markers: adding Authors must not
 invalidate the Modernists marker or rewrite its user-editable metadata. Name
 aliases may cover known transliterations but must still match full names.
 
+The user's 2026-10-06 author-info request adds offline Swedish biographies for
+all eleven bundled busts, using the native tap-to-zoom/info panel. Keep the
+life/writing/major-works text and its primary-source links distinct from the
+artwork credits, which remain verbatim below it. Label the biographies as
+AI-assisted OrbitUI summaries, not copied institutional text. Enforce the native
+4000-byte UTF-8 info cap. No new UI, image, matching or placement logic is needed.
+A caption-only migration compares each existing info field with the frozen
+published alpha.20 baseline. Update only exact defaults plus unedited READMEs;
+preserve edited/empty/deleted info, native reader overrides, other metadata,
+images, notices, deletions and the preview trial pack. Independent per-pack
+update markers follow successful atomic writes; failed updates retry without
+replacing later edits or replaying a completed pack. Do not reset seed markers.
+
 The Japan pack uses ordinary native ornament placement, never author binding.
 Keep its install and defaults markers independent of the author packs. All
 bundled packs share `core/orbitui_ornament_install.lua` for additive atomic copies;
@@ -380,11 +393,13 @@ surface, not merely the book-foot line, including DPI and row-size variations.
 Source: `core/orbitui_author_ornaments.lua`, `adapters/orbitui_ornaments.lua`,
 `core/orbitui_runtime.lua`, `core/orbitui_japan_ornaments.lua`,
 `core/orbitui_ornament_install.lua`, `assets/ornaments/Modernists/`,
+`core/orbitui_author_info.lua`, `assets/ornament-updates/author-info-v1.json`,
 `assets/ornaments/Authors/`, `assets/ornaments/Japan/`,
 `core/orbitui_ukiyoe_ornaments.lua`, `core/orbitui_ukiyoe_update.lua`,
 `assets/ornaments/Ukiyo-e Gallery/`, `assets/ornament-updates/ukiyoe-gallery-v1.json`,
 `assets/ornament-updates/ukiyoe-gallery-v2.json`.
 Tests: `tests/test_author_ornaments.lua`, `test_ornament_seed.lua`,
+`test_author_info.lua`, `test_author_info_assets.py`,
 `test_japan_ornaments.lua`, `test_ornament_session.lua`, `test_ornament_assets.py`,
 `test_ukiyoe_ornaments.lua`, `test_ukiyoe_update.lua`, `test_ukiyoe_assets.py`;
 `scripts/check-package.lua` requires all pack files.
