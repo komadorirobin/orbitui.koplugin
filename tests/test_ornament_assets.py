@@ -15,7 +15,7 @@ AUTHOR_HASHES = {
     "August Strindberg.png": "9deebd26afb9fd7c47d2247d138f5a70e9c24b0833469eb19d0f9511c473bdfa",
     "Stanislaw Lem.png": "5e7c351d18dbb091826a26e101c9daf5785e2087e31a271e32b4c0af19e1440f",
     "Dylan Thomas.png": "2faba2fd29aa121b35c57dce8ee94e5ced64220f3ebdfd8bd55b786a6b25598f",
-    "Thomas Mann.png": "04b38c71eab6150fa45643de6b09264ec442556369057f8cbd39d2a895d8d233",
+    "Thomas Mann.png": "6ddaa5478909617f7cc59c31f406393d2bd18654af2714317979a21b1e1999a4",
     "Fyodor Dostoevsky.png": "0c41e5d7d645e53f3163a70a865eba2d446ec12765910548e7ace7345f2a7fec",
     "Knut Hamsun.png": "5d8b2268e01c3d8845421e110d3169d2a2bb38d8392c4730196501cafee0873f",
     "Robert Musil.png": "4b59d2e332a6ad9a253ed1032a38e84fdfaf3a58f2a19b5fecbfcc347977ac25",
@@ -90,7 +90,10 @@ class OrnamentAssetsTests(unittest.TestCase):
                 self.assertEqual(entry["tap"], "zoom")
                 self.assertEqual(entry["night"], "off")
                 self.assertEqual(entry["mirror"], "off")
-                self.assertTrue(.95 <= entry["scale"] <= 1.1)
+                if name == "Thomas Mann.png":
+                    self.assertEqual(entry["scale"], .85)
+                else:
+                    self.assertTrue(.95 <= entry["scale"] <= 1.1)
                 self.assertTrue(-.05 < entry["lift"] <= 0)
                 self.assertLessEqual(len(entry["info"].encode("utf-8")), 4000)
                 self.assertIn(asset["artwork_license"], entry["info"])

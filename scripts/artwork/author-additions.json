@@ -20,23 +20,24 @@
     "license_url": "https://www.loc.gov/rr/print/res/482_high.html",
     "rights_basis": "Highsmith photograph: Library of Congress rights advisory. Separate sculpture basis: Cuba Law 154/2022, Article 86.2(d), reproduction of publicly accessible artwork with creator credit. This is not a worldwide sculpture-rights waiver; destination-country rights remain a public-release review item.",
     "info": "Fernando Boadas bronsbyst i Cojímar, Kuba (1962). Foto: Carol M. Highsmith, 2010. The Carol M. Highsmith Archive, Library of Congress, Prints and Photographs Division, LC-DIG-highsm-06293. Bibliotekets fotoangivelse: No known restrictions on publication. Skulpturrättigheter är en separat fråga; Kubas lag 154/2022, artikel 86.2(d), medger avbildning av offentlig konst med konstnärskredit.\nhttps://www.loc.gov/item/2010638901/\nhttps://www.loc.gov/rr/print/res/482_high.html\nOrbitUI: bakgrunden bortmaskad och bilden proportionellt skalad. Inga genererade skulpturdetaljer eller färgändringar.",
+    "framing": "A level crop through the photographed stone pedestal retains a thin support below the complete bronze bust. Original shoulder proportions and photo colours are unchanged; no new base is drawn.",
     "kind": "Masked original photograph",
     "method": "Original photograph pixels, hand-traced silhouette with GrabCut edge refinement; alpha masking and proportional Lanczos resizing only. No generative reconstruction, recolouring or invented anatomy.",
-    "sha256": "91253f8227ca3d6a3e59ebaf23ce4288618e739e9cc7b56591e4d465bcf41a81",
+    "sha256": "81f7e49ac56827e14bc2f2316a057dfc085eb0d39a3cb0e5b1416ed5fe0abe8b",
     "source_sha256": "bd313b965e0bfe2038cb106d86b62e1253a43080246432c9b492478434905306",
-    "mask_sha256": "654371685ee9b29330451ae7da3f516d4227b94a80adbf52966c1fc08a350b36",
+    "mask_sha256": "f423b8f2f4795695234409379f6bc1708c5d45640812a4baa5f0d5ed616ba17d",
     "width": 1024,
-    "height": 1536,
+    "height": 896,
     "alpha_bbox_at_24": [
       48,
-      777,
+      156,
       976,
-      1487
+      848
     ],
     "placement": {
       "scale": 1.0,
       "anchor": "bottom",
-      "lift": -0.0235
+      "lift": -0.0409
     }
   },
   {

@@ -389,6 +389,20 @@ bitmap changes. The retired bitmap remains held in local history too; do not
 push ancestor commits containing it. Current source licensing does not clear
 the retired adaptation. Tests: `test_mann_update.lua`, `test_mann_assets.py`.
 
+The subsequent shelf-photo feedback authorizes a compact Mann base and a more
+legible Hemingway, still using original photo pixels without invented anatomy.
+Mann v3 excludes the wide mounting plate and adjusts default scale. Hemingway's
+level pedestal crop and shorter canvas remove excessive transparent headroom
+without stretching shoulders or enlarging the image beyond row height. Keep all
+published baselines frozen. Independent Mann v3 / Hemingway v1 markers and
+`orbitui_single_ornament_update` retain the same exact-checksum, retry, symlink,
+custom-caption/placement and deletion protections. Alpha.22's completed markers
+must not block either refinement. Seed Hemingway's dedicated hash-scoped notice
+and run its migration after Mann, before the other author migrations. No changes
+to upstream layout code or other authors. `test_bust_refinements.py` locks the
+published baselines, unchanged authors, geometry and upgrade source hashes;
+`test_mann_update.lua` exercises both concrete updater definitions.
+
 The subsequent explicit "Kor, och ersatt de andra" approval authorizes the six
 photographic replacements: Strindberg/Eldh, Hamsun/Frolich, Dostoevsky/Laveretsky,
 Dylan Thomas/de Wet, Lem/Kurkowski and Musil/Bavaud (Geneva, not Belvedere).

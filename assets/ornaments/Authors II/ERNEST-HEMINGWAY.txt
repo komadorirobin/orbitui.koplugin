@@ -1,0 +1,17 @@
+ERNEST HEMINGWAY / FERNANDO BOADA - PHOTOGRAPHIC CUTOUT
+
+These credits apply only to the PNG SHA-256 below, not custom replacements.
+
+Ernest Hemingway.png
+Fernando Boada, Ernest Hemingway, bronze, Cojimar, Cuba, 1962. Photograph: Carol M. Highsmith, 2010. The Carol M. Highsmith Archive, Library of Congress, Prints and Photographs Division, LC-DIG-highsm-06293 / LCCN2010638901.
+Photograph/adaptation: Library of Congress: No known restrictions on publication (photograph)
+https://www.loc.gov/rr/print/res/482_high.html
+Separate rights basis: Highsmith photograph: Library of Congress rights advisory. Separate sculpture basis: Cuba Law 154/2022, Article 86.2(d), reproduction of publicly accessible artwork with creator credit. This is not a worldwide sculpture-rights waiver; destination-country rights remain a public-release review item.
+https://www.loc.gov/item/2010638901/
+https://www.loc.gov/rr/print/res/482_high.html
+https://cvc.cervantes.es/el_rinconete/anteriores/mayo_06/09052006_01.htm
+https://www.wipo.int/wipolex/en/legislation/details/21621
+Original photograph: https://cdn.loc.gov/master/pnp/highsm/06200/06293a.tif
+Source SHA-256: bd313b965e0bfe2038cb106d86b62e1253a43080246432c9b492478434905306
+PNG SHA-256: 81f7e49ac56827e14bc2f2316a057dfc085eb0d39a3cb0e5b1416ed5fe0abe8b
+Changes by OrbitUI: A level crop through the photographed stone pedestal retains a thin support below the complete bronze bust. Original shoulder proportions and photo colours are unchanged; no new base is drawn.

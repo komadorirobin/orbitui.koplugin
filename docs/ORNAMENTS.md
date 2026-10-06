@@ -243,12 +243,12 @@ regenerate metadata with the existing author-info builder. The frozen
 `assets/ornament-updates/kafka-kielce-v1.json` records both alpha.20 and the
 unpublished old biography, never a duplicate of the old bitmap.
 
-### Thomas Mann / Gustav Seitz (Molgreen photograph, unreleased)
+### Thomas Mann / Gustav Seitz (Molgreen photograph)
 
 The user approved Molgreen's 11 April 2024 Wikimedia photograph of Seitz's
 Berlin bronze. The current cutout preserves original photo pixels, colour,
-head/neck and the visible bronze mounting block/plinth. Only surroundings and
-the separate granite column are masked away; scaling is proportional. It is
+head/neck and compact mounting block. The wide plate, surroundings and separate
+granite column are masked away; scaling is proportional. It is
 not an AI redraw. The Swedish biography, author matching and native zoom remain.
 
 Source, mask, output hashes and credits are in `scripts/artwork/mann-seitz.json`.
@@ -265,14 +265,25 @@ Git history. Do not push ancestors containing it.** This replacement does not
 clear that older adaptation. Keep a local backup and prepare a public history
 without the held bitmap before publishing; no history is rewritten here.
 
-`core/orbitui_mann_update.lua` now uses the independent `mann-photo-v2` marker
-and frozen baseline. It recognizes both the original published generated PNG
-and the earlier local Seitz cutout, including a completed v1 marker. Known
+`core/orbitui_mann_update.lua` now uses the independent `mann-photo-v3` marker
+and frozen baseline. It recognizes the original published generated PNG,
+the earlier local Seitz cutout and alpha.22's wide-base cutout, including
+completed v1/v2 markers. Known
 captions, full default placement triples and unchanged notices are upgraded;
 custom/deleted/linked artwork, captions, reader overrides and other busts survive.
 Retries recognize the new hash; completed starts do not rehash. Rollback keeps
 the image, and the old updater ignores its unknown new hash. No upstream,
 version, push, tag or OTA change is part of this replacement.
+
+Hemingway's matching refinement retains the real broad-shouldered Cojimar bust
+and a thin band of its photographed stone pedestal, cropped to a level lower
+edge. A 1024 x 896 canvas removes unused transparent headroom: the visible bust
+is about 67% taller at the same default scale without phantom overhang into the
+row above. The original photo pixels, colours, aspect ratio and biography are
+preserved. `hemingway-photo-v1.json` recognizes only the published alpha.22 PNG
+and its own current PNG for retry. Its independent marker shares the tested
+single-artwork updater with Mann. Custom artwork, captions and full placement
+triples remain untouched. ERNEST-HEMINGWAY.txt carries hash-scoped credits.
 
 ### Six photographic replacements (local, unreleased)
 

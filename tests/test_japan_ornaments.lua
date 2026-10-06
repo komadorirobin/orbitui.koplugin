@@ -7,6 +7,7 @@ package.loaded["core/orbitui_ukiyoe_ornaments"] = { seed = function() end }
 package.loaded["core/orbitui_author_info"] = { apply = function() return false end }
 package.loaded["core/orbitui_kafka_update"] = { apply = function() return false end }
 package.loaded["core/orbitui_mann_update"] = { apply = function() return false end }
+package.loaded["core/orbitui_hemingway_update"] = { apply = function() return false end }
 package.loaded["core/orbitui_sculpture_updates"] = { apply = function() return false end }
 package.loaded["core/orbitui_lispector_retirement"] = { apply = function() return false end }
 local Authors = require("core/orbitui_author_ornaments")

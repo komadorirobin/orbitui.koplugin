@@ -1,9 +1,10 @@
 package.path = "./?.lua;" .. package.path
 local H = require("tests/helpers")
-local Update = require("core/orbitui_mann_update")
+for _, module in ipairs({ "core/orbitui_mann_update", "core/orbitui_hemingway_update" }) do
+local Update = require(module)
 local real_open, real_rename, real_remove = io.open, os.rename, os.remove
 local root, dir = "/slot", "/settings/bookshelf/ornaments"
-local source, target = root .. "/assets/ornaments/Authors/", dir .. "/Authors/"
+local source, target = root .. "/assets/ornaments/" .. Update.pack .. "/", dir .. "/" .. Update.pack .. "/"
 local marker = "/settings/orbitui/" .. Update.marker
 local files, documents, sequence, failure, hashes, modes
 local function clone(value)
@@ -19,7 +20,7 @@ local function decode(bytes) return clone(assert(documents[bytes], "invalid JSON
 local function current() return decode(files[target .. "ornaments.json"]) end
 local function fixture()
     files, documents, sequence, failure, hashes = {}, {}, 0, nil, 0
-    modes = { [dir .. "/Authors"] = "directory" }
+    modes = { [dir .. "/" .. Update.pack] = "directory" }
     local old = { info = "old short caption", scale = .996, anchor = "bottom", lift = -.01,
         night = "off", mirror = "off", tap = "zoom", pad = .035 }
     local new = clone(old); new.info = "Mann biography / Seitz photo credits"
@@ -34,12 +35,12 @@ local function fixture()
             { scale = .996, anchor = "bottom", lift = -.018 } },
         documents = { ["README.txt"] = { "old README", "unpublished README" },
             ["ATTRIBUTION.txt"] = { "old credits" }, ["prompts.json"] = { "old prompts" },
-            ["THOMAS-MANN-SEITZ.txt"] = { "old AI notice" } },
+            [Update.notice] = { "old AI notice" } },
     })
     for _, pair in ipairs({ {"README.txt", "README"}, {"ATTRIBUTION.txt", "credits"}, {"prompts.json", "prompts"} }) do
         files[target .. pair[1]], files[source .. pair[1]] = "old " .. pair[2], "new " .. pair[2]
     end
-    files[source .. "THOMAS-MANN-SEITZ.txt"] = "licensed photo notice"
+    files[source .. Update.notice] = "licensed photo notice"
     files[dir .. "/ornaments.json"] = "native reader overrides"
     files[target .. "other.png"] = "other artwork"
 end
@@ -86,7 +87,7 @@ H.test("old Mann image captions default base offset and credits upgrade together
         H.eq(files[target .. "ATTRIBUTION.txt"], "new credits")
         H.eq(files[target .. "prompts.json"], "new prompts")
         H.eq(files[target .. "README.txt"], "new README")
-        H.eq(files[target .. "THOMAS-MANN-SEITZ.txt"], "licensed photo notice")
+        H.eq(files[target .. Update.notice], "licensed photo notice")
         H.eq(current()["other.png"].info, "untouched")
         H.eq(files[target .. "other.png"], "other artwork")
         H.eq(files[dir .. "/ornaments.json"], "native reader overrides")
@@ -123,12 +124,22 @@ H.test("interrupted local v1 replacement finishes its credits on retry", functio
     H.eq(files[target .. Update.notice], "licensed photo notice")
     assert(files[marker])
 end)
+H.test("alpha22 completion markers do not block new artwork migrations", function()
+    fixture()
+    files["/settings/orbitui/ornament-mann-photo-v2.updated"] = "complete"
+    files["/settings/orbitui/ornament-authors-ii-v1.installed"] = "complete"
+    H.eq(apply(), true)
+    H.eq(files[target .. Update.file], "new image")
+    H.eq(files["/settings/orbitui/ornament-mann-photo-v2.updated"], "complete")
+    H.eq(files["/settings/orbitui/ornament-authors-ii-v1.installed"], "complete")
+    assert(files[marker])
+end)
 H.test("custom artwork retains its captions placements and notices", function()
     fixture(); files[target .. Update.file] = "custom artwork"
     local before = clone(files)
     H.eq(apply(), false)
     for path, bytes in pairs(before) do H.eq(files[path], bytes, path) end
-    H.eq(files[target .. "THOMAS-MANN-SEITZ.txt"], nil)
+    H.eq(files[target .. Update.notice], nil)
     assert(files[marker])
 end)
 H.test("custom or blank captions and all custom placement values are preserved", function()
@@ -144,7 +155,7 @@ H.test("custom or blank captions and all custom placement values are preserved",
         H.eq(current()[Update.file].info, value or nil)
         H.eq(files[target .. "ATTRIBUTION.txt"], "my credits")
         H.eq(files[target .. "prompts.json"], "my provenance")
-        H.eq(files[target .. "THOMAS-MANN-SEITZ.txt"], "licensed photo notice")
+        H.eq(files[target .. Update.notice], "licensed photo notice")
     end
 end)
 H.test("a custom scale or anchor prevents changing even the old default lift", function()
@@ -179,7 +190,7 @@ H.test("completed marker avoids hashing or opening any artwork on later starts",
 end)
 H.test("freshly seeded current defaults are not rewritten", function()
     fixture()
-    for _, name in ipairs({ Update.file, "ornaments.json", "README.txt", "ATTRIBUTION.txt", "prompts.json", "THOMAS-MANN-SEITZ.txt" }) do
+    for _, name in ipairs({ Update.file, "ornaments.json", "README.txt", "ATTRIBUTION.txt", "prompts.json", Update.notice }) do
         files[target .. name] = files[source .. name]
     end
     local before = clone(files); H.eq(apply(), false)
@@ -192,13 +203,13 @@ H.test("wrong source checksum invalid JSON or oversized caption fail before imag
         elseif kind == "json" then files[source .. "ornaments.json"] = "invalid"
         elseif kind == "caption" then
             files[source .. "ornaments.json"] = encode({ [Update.file] = { info = string.rep("x", 4001) } })
-        else files[source .. "THOMAS-MANN-SEITZ.txt"] = nil end
+        else files[source .. Update.notice] = nil end
         H.eq(pcall(apply), false); H.eq(files[marker], nil)
         H.eq(files[target .. Update.file], "old image")
     end
 end)
 H.test("interrupted notice image metadata documentation and marker writes retry safely", function()
-    for _, name in ipairs({ "THOMAS-MANN-SEITZ.txt", Update.file, "ornaments.json", "ATTRIBUTION.txt", "prompts.json", "README.txt", "marker" }) do
+    for _, name in ipairs({ Update.notice, Update.file, "ornaments.json", "ATTRIBUTION.txt", "prompts.json", "README.txt", "marker" }) do
         fixture(); failure = name == "marker" and marker or target .. name
         H.eq(pcall(apply), false); H.eq(files[marker], nil)
         H.eq(files[failure .. ".orbitui-tmp"], nil)
@@ -214,14 +225,14 @@ H.test("edits made after an interrupted upgrade survive its retry", function()
     local metadata = current(); metadata[Update.file].info = "revised notes"
     metadata[Update.file].lift = .4
     files[target .. "ornaments.json"] = encode(metadata)
-    files[target .. "THOMAS-MANN-SEITZ.txt"] = "annotated notice"
+    files[target .. Update.notice] = "annotated notice"
     failure = nil; apply()
     H.eq(current()[Update.file].info, "revised notes")
     H.eq(current()[Update.file].lift, .4)
-    H.eq(files[target .. "THOMAS-MANN-SEITZ.txt"], "annotated notice")
+    H.eq(files[target .. Update.notice], "annotated notice")
 end)
 H.test("linked pack image or metadata is never followed or replaced", function()
-    for _, path in ipairs({ dir .. "/Authors", target .. Update.file, target .. "ornaments.json" }) do
+    for _, path in ipairs({ dir .. "/" .. Update.pack, target .. Update.file, target .. "ornaments.json" }) do
         fixture(); modes[path] = "link"
         local before = clone(files)
         H.eq(apply(), false); H.eq(hashes, 0)
@@ -250,4 +261,5 @@ H.test("UTF8 caption limit counts bytes and malformed entries do not overwrite a
     end
 end)
 io.open, os.rename, os.remove = real_open, real_rename, real_remove
+end
 H.finish()

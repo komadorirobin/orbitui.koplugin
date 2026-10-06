@@ -21,7 +21,8 @@ https://cvc.cervantes.es/el_rinconete/anteriores/mayo_06/09052006_01.htm
 https://www.wipo.int/wipolex/en/legislation/details/21621
 Original photograph: https://cdn.loc.gov/master/pnp/highsm/06200/06293a.tif
 Source SHA-256: bd313b965e0bfe2038cb106d86b62e1253a43080246432c9b492478434905306
-PNG SHA-256: 91253f8227ca3d6a3e59ebaf23ce4288618e739e9cc7b56591e4d465bcf41a81
+PNG SHA-256: 81f7e49ac56827e14bc2f2316a057dfc085eb0d39a3cb0e5b1416ed5fe0abe8b
+Changes by OrbitUI: A level crop through the photographed stone pedestal retains a thin support below the complete bronze bust. Original shoulder proportions and photo colours are unchanged; no new base is drawn.
 
 Italo Svevo.png
 Giovanni Mayer, Italo Svevo, bronze, 1929, Giardino Pubblico de Tommasini, Trieste; unveiled 1931. Photograph: Amrei-Marie, 22 February 2025, CC BY-SA 4.0.

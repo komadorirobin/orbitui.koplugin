@@ -54,7 +54,7 @@ class AuthorAdditionAssetsTests(unittest.TestCase):
             name = asset["file"]
             with self.subTest(name=name), Image.open(PACK / name) as img:
                 self.assertEqual(img.mode, "RGBA")
-                self.assertEqual(img.size, (1024, 1536))
+                self.assertEqual(img.size, (asset["width"], asset["height"]))
                 self.assertNotEqual(img.getchannel("R").tobytes(), img.getchannel("B").tobytes())
                 alpha = img.getchannel("A")
                 self.assertEqual(alpha.getextrema(), (0, 255))
@@ -66,7 +66,7 @@ class AuthorAdditionAssetsTests(unittest.TestCase):
                 self.assertLessEqual(len(entry["info"].encode()), 4000)
                 self.assertGreater(len(" ".join(self.bios[name]["paragraphs"]).split()), 100)
                 self.assertGreaterEqual(len(self.bios[name]["sources"]), 2)
-                gap = .8 * entry["scale"] * (1-asset["alpha_bbox_at_24"][3]/1536) + entry["lift"]
+                gap = .8 * entry["scale"] * (1-asset["alpha_bbox_at_24"][3]/asset["height"]) + entry["lift"]
                 self.assertTrue(0 <= gap <= .006)
                 self.assertIn('../assets/ornaments/Authors%20II/' + quote(name), preview)
 

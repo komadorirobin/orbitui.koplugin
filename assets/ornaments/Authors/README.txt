@@ -63,9 +63,11 @@ Mann now uses Molgreen's 2024 Wikimedia photograph of Gustav Seitz's bronze
 portrait, masked without AI redrawing. THOMAS-MANN-SEITZ.txt records the
 CC BY-SA 4.0 photo/cutout license and separate German panorama basis. The
 superseded AI-assisted Mann image remains excluded from public distribution.
-A separate v2 checksum-guarded migration recognizes both the original generated
-default and the local AI-assisted cutout, plus known captions, placement triples
-and notices. The older v1 completion marker does not block this replacement.
+A separate v3 checksum-guarded migration recognizes the original generated
+default, the local AI-assisted cutout and the alpha.22 photographic cutout, plus
+known captions, placement triples and notices. Older v1/v2 completion markers
+do not block this replacement. The wide plate is now excluded, retaining only
+the compact mounting block under the portrait; default size is adjusted to fit.
 Custom artwork, captions, settings, linked files and deleted pieces remain
 untouched. The original author's biography, matching and tap-to-zoom remain.
 

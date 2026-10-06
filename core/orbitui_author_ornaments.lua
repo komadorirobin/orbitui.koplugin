@@ -14,7 +14,7 @@ M.packs = {
     } },
     { name = "Authors II", marker = "ornament-authors-ii-v1.installed", files = {
         "ATTRIBUTION.txt", "README.txt", "prompts.json", "ornaments.json",
-        "Ernest Hemingway.png", "Italo Svevo.png",
+        "Ernest Hemingway.png", "Italo Svevo.png", "ERNEST-HEMINGWAY.txt",
     } },
 }
 M.pieces = {
@@ -89,10 +89,11 @@ function M.seed(root, ornaments_dir)
     local seeded = require("core/orbitui_ornament_install").seed(root, ornaments_dir, M.packs)
     local artwork = require("core/orbitui_kafka_update").apply(root, ornaments_dir)
     local mann = require("core/orbitui_mann_update").apply(root, ornaments_dir)
+    local hemingway = require("core/orbitui_hemingway_update").apply(root, ornaments_dir)
     local sculptures = require("core/orbitui_sculpture_updates").apply(root, ornaments_dir)
     local retired = require("core/orbitui_lispector_retirement").apply(root, ornaments_dir)
     local updated = require("core/orbitui_author_info").apply(root, ornaments_dir)
-    return seeded or artwork or mann or sculptures or retired or updated
+    return seeded or artwork or mann or hemingway or sculptures or retired or updated
 end
 
 function M.fillHooks(native, env)

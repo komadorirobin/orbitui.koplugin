@@ -141,23 +141,24 @@
       "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
       "rights_basis": "Photograph and cutout: CC BY-SA 4.0. Separate sculpture basis: German UrhG section 59 for a two-dimensional photograph of permanently installed public art, with sections 62 and 63 on alterations and attribution. Masking removes surroundings, not sculptural features; scaling is proportional. This is not a license from the sculptor or a worldwide sculpture-rights waiver. The former AI-assisted image remains excluded from public distribution.",
       "info": "Gustav Seitzs bronsporträtt av Thomas Mann (1954), avgjutning uppställd 2007 i Straße der Erinnerung, Berlin-Moabit. Foto: Molgreen, 11 april 2024. Foto och friläggning: CC BY-SA 4.0. Skulpturen avbildas med stöd av tysk panoramafrihet (UrhG § 59); fotografens licens är inte en separat licens till skulpturen.\nhttps://commons.wikimedia.org/wiki/File:20240411_xl_0704-Thomas_Mann_B%C3%BCste_3.jpg\nhttps://creativecommons.org/licenses/by-sa/4.0/\nOrbitUI: bakgrunden bortmaskad och bilden proportionellt skalad. Inga genererade skulpturdetaljer eller färgändringar.",
+      "framing": "The bronze head, neck and compact mounting block are retained. The wide mounting plate and granite column are excluded; no new base is drawn.",
       "kind": "Masked original photograph",
       "method": "Original photograph pixels, hand-traced silhouette with GrabCut edge refinement; alpha masking and proportional Lanczos resizing only. No generative reconstruction, recolouring or invented anatomy.",
-      "sha256": "04b38c71eab6150fa45643de6b09264ec442556369057f8cbd39d2a895d8d233",
+      "sha256": "6ddaa5478909617f7cc59c31f406393d2bd18654af2714317979a21b1e1999a4",
       "source_sha256": "9a27675ece86024e0475371f45f1f9bf054abb669f80d1530929533fc8d2a8fc",
-      "mask_sha256": "f3f587132578d32650cc17767bd262d3844820ed1e2ddf184d146023fe617568",
+      "mask_sha256": "ba6b829f022b518c727755f1ed1b1181e3fb526966097473907d81c5ed786a70",
       "width": 1024,
       "height": 1536,
       "alpha_bbox_at_24": [
-        49,
-        398,
-        975,
+        99,
+        81,
+        924,
         1487
       ],
       "placement": {
-        "scale": 1.0,
+        "scale": 0.85,
         "anchor": "bottom",
-        "lift": -0.0235
+        "lift": -0.0197
       }
     },
     {

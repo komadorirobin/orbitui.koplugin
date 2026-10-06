@@ -17,9 +17,11 @@
       "rights_basis": "Photograph and cutout: CC BY-SA 4.0. Separate sculpture basis: German UrhG section 59 for a two-dimensional photograph of permanently installed public art, with sections 62 and 63 on alterations and attribution. Masking removes surroundings, not sculptural features; scaling is proportional. This is not a license from the sculptor or a worldwide sculpture-rights waiver. The former AI-assisted image remains excluded from public distribution.",
       "info": "Gustav Seitzs bronsporträtt av Thomas Mann (1954), avgjutning uppställd 2007 i Straße der Erinnerung, Berlin-Moabit. Foto: Molgreen, 11 april 2024. Foto och friläggning: CC BY-SA 4.0. Skulpturen avbildas med stöd av tysk panoramafrihet (UrhG § 59); fotografens licens är inte en separat licens till skulpturen.\nhttps://commons.wikimedia.org/wiki/File:20240411_xl_0704-Thomas_Mann_B%C3%BCste_3.jpg\nhttps://creativecommons.org/licenses/by-sa/4.0/",
       "reference_size": [900,1195],
+      "display_scale": 0.85,
+      "framing": "The bronze head, neck and compact mounting block are retained. The wide mounting plate and granite column are excluded; no new base is drawn.",
       "edge_band": 2,
       "outline": [[235,511],[235,488],[353,468],[353,420],[440,401],[443,394],[435,382],[431,370],[423,360],[419,352],[416,342],[417,331],[419,318],[421,306],[421,295],[420,283],[417,273],[405,276],[396,272],[389,269],[379,257],[372,240],[367,223],[367,206],[372,194],[384,187],[385,169],[386,153],[390,137],[396,120],[405,104],[417,90],[433,79],[452,70],[470,64],[490,63],[509,66],[530,73],[538,84],[552,94],[564,104],[573,117],[576,133],[578,145],[581,155],[585,157],[589,159],[590,164],[589,173],[587,181],[584,189],[582,199],[580,210],[579,215],[580,223],[581,229],[580,236],[579,243],[577,248],[578,256],[579,262],[579,273],[578,284],[578,289],[577,299],[575,310],[571,319],[563,326],[550,331],[535,335],[525,343],[519,352],[514,362],[513,373],[513,386],[510,398],[507,407],[572,414],[573,470],[614,477],[615,498],[433,486]],
-      "exclude": [[[230,511],[433,486],[615,498],[640,530],[230,530]]]
+      "exclude": [[[230,511],[433,486],[615,498],[640,530],[230,530]], [[0,466],[352,466],[433,459],[572,471],[572,414],[900,414],[900,1195],[0,1195]]]
     }
   ]
 }

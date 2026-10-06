@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Import a reviewed Molgreen cutout and build its hash-scoped credits.
 
-Use --cutouts with build-sculpture-cutouts.py's output. The v2 migration
+Use --cutouts with build-sculpture-cutouts.py's output. The v3 migration
 baseline is frozen before replacing the old local asset; later builds retain it.
 """
 import argparse
@@ -13,7 +13,7 @@ import shutil
 ROOT = Path(__file__).resolve().parents[1]
 PACK = ROOT / "assets/ornaments/Authors"
 ART = ROOT / "scripts/artwork/mann-seitz.json"
-MIGRATION = ROOT / "assets/ornament-updates/mann-photo-v2.json"
+MIGRATION = ROOT / "assets/ornament-updates/mann-photo-v3.json"
 NOTICE = "THOMAS-MANN-SEITZ.txt"
 RETIRED_HASH = "fc6d71bd1538bee9a569a9838b7a00c5374469f0cc8efad3c70674a20c286bb9"
 
@@ -36,11 +36,11 @@ def main():
         art = assets[0]
         assert digest(args.cutouts / art["file"]) == art["sha256"]
         if not MIGRATION.exists():
-            old = json.loads((ROOT / "assets/ornament-updates/mann-seitz-v1.json").read_text())
+            old = json.loads((ROOT / "assets/ornament-updates/mann-photo-v2.json").read_text())
             previous_art = json.loads(ART.read_text())
             previous = json.loads((PACK / "ornaments.json").read_text())[art["file"]]
-            assert previous_art["sha256"] == RETIRED_HASH
-            assert digest(PACK / art["file"]) == RETIRED_HASH
+            assert previous_art["sha256"] == old["new_sha256"]
+            assert digest(PACK / art["file"]) == old["new_sha256"]
             documents = old["documents"]
             for name in (*documents, NOTICE):
                 values = documents.setdefault(name, [])
@@ -48,10 +48,10 @@ def main():
                 if value not in values:
                     values.append(value)
             write_json(MIGRATION, {
-                "old_sha256": [old["old_sha256"], RETIRED_HASH],
+                "old_sha256": old["old_sha256"] + [old["new_sha256"]],
                 "new_sha256": art["sha256"],
                 "old_info": old["old_info"] + [previous["info"]],
-                "old_placements": [old["old_placement"], previous_art["placement"]],
+                "old_placements": old["old_placements"] + [previous_art["placement"]],
                 "documents": documents,
             })
         assert json.loads(MIGRATION.read_text())["new_sha256"] == art["sha256"]
@@ -66,7 +66,7 @@ def main():
         + ". They do not license custom artwork or the retired AI-assisted image.",
         art["reference_credit"],
         "Photograph and adapted photograph: " + art["artwork_license"] + "\n" + art["license_url"],
-        "Changes by OrbitUI contributors: background and granite column masked out; the visible bronze head, neck, mounting block and thin bronze plinth remain. Proportional resizing only. Original photo colours and sculptural details are preserved; no generative reconstruction or retouching. ShareAlike applies to this adapted photograph, not the whole collection. No endorsement is implied.",
+        "Changes by OrbitUI contributors: background masked out. " + art["framing"] + " Proportional resizing only. Original photo colours and portrait details are preserved; no generative reconstruction or retouching. ShareAlike applies to this adapted photograph, not the whole collection. No endorsement is implied.",
         "Sources:\n" + "\n".join(art["references"])
         + "\nOriginal photograph: " + art["source_image"],
         "Source SHA-256: " + art["source_sha256"]

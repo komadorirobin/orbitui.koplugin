@@ -1,0 +1,27 @@
+{
+  "old_sha256": [
+    "91253f8227ca3d6a3e59ebaf23ce4288618e739e9cc7b56591e4d465bcf41a81"
+  ],
+  "new_sha256": "81f7e49ac56827e14bc2f2316a057dfc085eb0d39a3cb0e5b1416ed5fe0abe8b",
+  "old_info": [
+    "Ernest Hemingway (1899-1961)\n\nErnest Hemingway var en amerikansk roman- och novellförfattare, född i Oak Park utanför Chicago. Han började som journalist och tjänstgjorde under första världskriget som frivillig ambulansförare i Italien, där han sårades. Under 1920-talet levde han bland amerikanska författare och konstnärer i Paris. Erfarenheter från krig, resor och journalistik återkom i hans prosa, men omformades till koncentrerade berättelser snarare än raka självbiografier.\n\nHemingways återhållna stil har haft stort inflytande på senare berättarkonst. I stället för långa förklaringar får handlingar, repliker och det outsagda bära känslorna. Och solen har sin gång skildrar en desillusionerad generation efter kriget, medan Farväl till vapnen förenar kärlek med krigets meningslöshet. Erfarenheter från spanska inbördeskriget ligger bakom Klockan klämtar för dig. I Den gamle och havet blir en fiskares ensamma kamp till en berättelse om uthållighet och nederlag. Hemingway fick Nobelpriset i litteratur 1954, med särskild hänvisning till denna kortroman och hans inflytande på den moderna prosastilen.\n\nCentrala verk:\nOch solen har sin gång (1926); Farväl till vapnen (1929); Klockan klämtar för dig (1940); Den gamle och havet (1952).\n\nText: OrbitUI, AI-assisterad svensk sammanfattning av källorna nedan. Inte källornas originaltext.\n\nKällor:\nNobelprize.org: biografi:\nhttps://www.nobelprize.org/prizes/literature/1954/hemingway/biographical/\nNobelprize.org: priset 1954:\nhttps://www.nobelprize.org/prizes/literature/1954/summary/\n\nOm bysten / bildkrediter:\nFernando Boadas bronsbyst i Cojímar, Kuba (1962). Foto: Carol M. Highsmith, 2010. The Carol M. Highsmith Archive, Library of Congress, Prints and Photographs Division, LC-DIG-highsm-06293. Bibliotekets fotoangivelse: No known restrictions on publication. Skulpturrättigheter är en separat fråga; Kubas lag 154/2022, artikel 86.2(d), medger avbildning av offentlig konst med konstnärskredit.\nhttps://www.loc.gov/item/2010638901/\nhttps://www.loc.gov/rr/print/res/482_high.html\nOrbitUI: bakgrunden bortmaskad och bilden proportionellt skalad. Inga genererade skulpturdetaljer eller färgändringar."
+  ],
+  "old_placements": [
+    {
+      "scale": 1.0,
+      "anchor": "bottom",
+      "lift": -0.0235
+    }
+  ],
+  "documents": {
+    "ATTRIBUTION.txt": [
+      "56cb37a8d2645b1cccd63ed6bb8d81c78b35e58657f1415cfe77d13603e76ccc"
+    ],
+    "prompts.json": [
+      "7a6acaf3cfc05816f7a5309385d570a3de8d50080fbd5a1c453a56bbea2504ac"
+    ],
+    "README.txt": [
+      "37920a96e6460e788348217ca2ff2c01d4873580d00d37bee2a1b52810c49c00"
+    ]
+  }
+}

@@ -14,7 +14,7 @@ PACK = ROOT / "assets/ornaments/Authors"
 class MannAssetsTests(unittest.TestCase):
     def setUp(self):
         self.art = json.loads((ROOT / "scripts/artwork/mann-seitz.json").read_text())
-        self.migration = json.loads((ROOT / "assets/ornament-updates/mann-photo-v2.json").read_text())
+        self.migration = json.loads((ROOT / "assets/ornament-updates/mann-photo-v3.json").read_text())
 
     def test_reviewed_png_provenance_and_frozen_upgrade_hashes_agree(self):
         data = (PACK / self.art["file"]).read_bytes()
@@ -22,7 +22,8 @@ class MannAssetsTests(unittest.TestCase):
         self.assertEqual(self.migration["new_sha256"], self.art["sha256"])
         self.assertEqual(self.migration["old_sha256"], [
             "e584052943e66f9edc23622a48fc7f4f1c7482d306c4d8a080c74a896e6e68a7",
-            "fc6d71bd1538bee9a569a9838b7a00c5374469f0cc8efad3c70674a20c286bb9"])
+            "fc6d71bd1538bee9a569a9838b7a00c5374469f0cc8efad3c70674a20c286bb9",
+            "04b38c71eab6150fa45643de6b09264ec442556369057f8cbd39d2a895d8d233"])
         prompt = next(a for a in json.loads((PACK / "prompts.json").read_text())["assets"]
                       if a["file"] == self.art["file"])
         self.assertEqual(prompt, self.art)
@@ -70,10 +71,11 @@ class MannAssetsTests(unittest.TestCase):
         baseline = json.loads((ROOT / "assets/ornament-updates/author-info-v1.json").read_text())
         self.assertIn(baseline["packs"]["Authors"]["metadata"][self.art["file"]]["info"],
                       self.migration["old_info"])
-        self.assertEqual(len(self.migration["old_info"]), 3)
+        self.assertEqual(len(self.migration["old_info"]), 4)
         for text in self.migration["old_info"][:2]:
             self.assertIn("Original AI-generated", text)
         self.assertIn("Pauline Ahrens", self.migration["old_info"][2])
+        self.assertIn("Molgreen", self.migration["old_info"][3])
         entry = json.loads((PACK / "ornaments.json").read_text())[self.art["file"]]
         self.assertIn(self.art["info"], entry["info"])
         self.assertNotIn("Original AI-generated", entry["info"])
@@ -107,7 +109,8 @@ class MannAssetsTests(unittest.TestCase):
 
     def test_notice_builder_preserves_the_frozen_migration_and_provenance(self):
         paths = [PACK / "THOMAS-MANN-SEITZ.txt", ROOT / "scripts/artwork/mann-seitz.json",
-                 ROOT / "assets/ornament-updates/mann-photo-v2.json"]
+                 ROOT / "assets/ornament-updates/mann-photo-v2.json",
+                 ROOT / "assets/ornament-updates/mann-photo-v3.json"]
         before = [p.read_bytes() for p in paths]
         subprocess.run(["python3", "scripts/build-mann-photo.py"], cwd=ROOT, check=True)
         self.assertEqual(before, [p.read_bytes() for p in paths])

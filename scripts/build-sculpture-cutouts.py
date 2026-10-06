@@ -60,14 +60,16 @@ def cutout(photo, spec, mask_path, refine):
     rgba.putalpha(mask)
     bounds = mask.point(lambda v: 255 if v >= 24 else 0).getbbox()
     assert bounds
+    width, height = spec.get("canvas_size", (1024, 1536))
+    fit_width, fit_height = width - 96, height - 128
     crop = rgba.crop(bounds)
-    crop.thumbnail((928, 1408), Image.Resampling.LANCZOS)
+    crop.thumbnail((fit_width, fit_height), Image.Resampling.LANCZOS)
     # Upscale only by proportional interpolation, never generative superresolution.
-    ratio = min(928 / crop.width, 1408 / crop.height)
+    ratio = min(fit_width / crop.width, fit_height / crop.height)
     if ratio > 1:
         crop = crop.resize((round(crop.width * ratio), round(crop.height * ratio)), Image.Resampling.LANCZOS)
-    canvas = Image.new("RGBA", (1024, 1536))
-    canvas.paste(crop, ((1024 - crop.width) // 2, 1488 - crop.height))
+    canvas = Image.new("RGBA", (width, height))
+    canvas.paste(crop, ((width - crop.width) // 2, height - 48 - crop.height))
     return canvas
 
 
@@ -108,18 +110,20 @@ def main():
             grid.save(args.output / (spec["file"] + ".grid.jpg"))
             preview = Image.new("RGB", (800, 600), "#eee9de")
             ImageDraw.Draw(preview).rectangle((400, 0, 800, 600), fill="#252620")
-            small = result.resize((400, 600), Image.Resampling.LANCZOS)
-            preview.paste(small, (0, 0), small)
-            preview.paste(small, (400, 0), small)
+            small = result.copy()
+            small.thumbnail((400, 600), Image.Resampling.LANCZOS)
+            preview.paste(small, ((400-small.width)//2, 600-small.height), small)
+            preview.paste(small, (400+(400-small.width)//2, 600-small.height), small)
             preview.save(args.output / (spec["file"] + ".preview.jpg"))
         bbox = result.getchannel("A").point(lambda v: 255 if v >= 24 else 0).getbbox()
-        record = {k: v for k, v in spec.items() if k not in ("reference_size", "edge_band", "outline", "exclude_reference_size", "exclude")}
+        record = {k: v for k, v in spec.items() if k not in ("reference_size", "edge_band", "outline", "exclude_reference_size", "exclude", "display_scale", "canvas_size")}
+        scale = spec.get("display_scale", 1.0)
         record.update(kind="Masked original photograph", method=config["method"],
                       sha256=hashlib.sha256(target.read_bytes()).hexdigest(),
                       source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
                       mask_sha256=hashlib.sha256(mask.read_bytes()).hexdigest(),
-                      width=1024, height=1536, alpha_bbox_at_24=list(bbox),
-                      placement={"scale": 1.0, "anchor": "bottom", "lift": round(-.8 * (1-bbox[3]/1536)+.002, 4)})
+                      width=result.width, height=result.height, alpha_bbox_at_24=list(bbox),
+                      placement={"scale": scale, "anchor": "bottom", "lift": round(-.8 * scale * (1-bbox[3]/result.height)+.002, 4)})
         record["info"] += "\nOrbitUI: bakgrunden bortmaskad och bilden proportionellt skalad. Inga genererade skulpturdetaljer eller färgändringar."
         records.append(record)
         print(spec["file"], bbox, record["sha256"])

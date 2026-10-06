@@ -1064,6 +1064,32 @@ actual alpha.21 installer smoke test, downloaded draft checksums, both CI jobs
 and anonymous live OTA. Physical Bigme appearance, native touch/zoom and device
 migration remain unverified. See the release notes for update/rollback behavior.
 
+## 2026-10-06: Refine Hemingway and Mann bases (local, unpublished)
+
+The user's device photos show Hemingway too small/low and Mann's wide mounting
+plate protruding sideways. Retain the existing original photographs and their
+rights notices; do not generate anatomy, retouch colours or narrow shoulders.
+Mask Mann's wide plate, keep the compact mounting block, use scale 0.85. Crop
+Hemingway's real stone support to a level lower edge and use a shorter 1024 x 896
+canvas at scale 1.0. Removing transparent headroom increases visible height by
+about 67% without creating a taller-than-row transparent widget. Other images,
+author matching, biographies and upstream sources/pins remain unchanged.
+
+Extract the existing Mann updater to a shared single-artwork implementation.
+Mann v3 and Hemingway v1 have independent markers, frozen exact old/new hashes,
+known metadata/default-placement values and checksum-scoped notices. Completed
+alpha.22 markers do not block these refinements. Keep custom/deleted/linked
+artwork, captions, placement overrides and pack settings. Interrupted updates
+retry safely; completed starts do not rehash images. Older published migration
+baselines are byte-for-byte unchanged. No version bump, push, tag or OTA release.
+
+Validation: 87 Python checks with external original-photo/museum audits, 389
+OrbitUI integration cases on both Lua and LuaJIT, Bookshelf's 351 passing suites
+(2 SQLite suites skipped; native-font cases also skipped), all 13 SimpleUI test
+files, and 41 translation checks. Light/dark before/after previews reviewed.
+Clean-commit runtime ZIP validation is the final local gate. Physical device
+appearance and migration still need testing.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

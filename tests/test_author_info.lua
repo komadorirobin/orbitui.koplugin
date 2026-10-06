@@ -264,6 +264,7 @@ H.test("author startup always runs retirement between artwork and caption update
             for _, retired in ipairs({ true, false }) do
                 for _, mann in ipairs({ true, false }) do
                   for _, sculptures in ipairs({ true, false }) do
+                   for _, hemingway in ipairs({ true, false }) do
                     local called = {}
                     package.loaded["core/orbitui_kafka_update"] = { apply = function(r, dir)
                         H.eq(r, root); H.eq(dir, folder)
@@ -281,6 +282,10 @@ H.test("author startup always runs retirement between artwork and caption update
                         H.eq(r, root); H.eq(dir, folder)
                         called[#called+1] = "sculptures"; return sculptures
                     end }
+                    package.loaded["core/orbitui_hemingway_update"] = { apply = function(r, dir)
+                        H.eq(r, root); H.eq(dir, folder)
+                        called[#called+1] = "hemingway"; return hemingway
+                    end }
                     package.loaded["core/orbitui_ornament_install"] = { seed = function(r, dir, packs)
                         H.eq(r, root); H.eq(dir, folder); H.eq(packs, Authors.packs)
                         called[#called+1] = "seed"; return seeded
@@ -289,8 +294,9 @@ H.test("author startup always runs retirement between artwork and caption update
                         H.eq(r, root); H.eq(dir, folder)
                         called[#called+1] = "info"; return updated
                     end }
-                    H.eq(Authors.seed(root, folder), seeded or updated or retired or mann or sculptures)
-                    H.eq(table.concat(called, ","), "seed,artwork,mann,sculptures,retire,info")
+                    H.eq(Authors.seed(root, folder), seeded or updated or retired or mann or sculptures or hemingway)
+                    H.eq(table.concat(called, ","), "seed,artwork,mann,hemingway,sculptures,retire,info")
+                   end
                   end
                 end
             end

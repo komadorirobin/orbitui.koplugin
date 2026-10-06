@@ -6,6 +6,7 @@ local Adapter = require("adapters/orbitui_ornaments")
 package.loaded["core/orbitui_author_info"] = { apply = function() return false end }
 package.loaded["core/orbitui_kafka_update"] = { apply = function() return false end }
 package.loaded["core/orbitui_mann_update"] = { apply = function() return false end }
+package.loaded["core/orbitui_hemingway_update"] = { apply = function() return false end }
 package.loaded["core/orbitui_sculpture_updates"] = { apply = function() return false end }
 package.loaded["core/orbitui_lispector_retirement"] = { apply = function() return false end }
 -- Session ordering is exercised with the native deck in test_ornament_session.

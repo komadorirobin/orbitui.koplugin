@@ -16,6 +16,13 @@ major works and source links. The text is an AI-assisted OrbitUI summary,
 separate from the sculptor/photographer credit. Custom captions and placements
 are not overwritten by installing this pack. Image bytes are photographic masks.
 
+The Hemingway refinement crops the real stone support to a level lower edge
+and removes unused transparent headroom (1024 x 896 canvas). The shoulders are
+not narrowed or redrawn. An independent checksum-guarded update replaces only
+the alpha.22 default image and its unchanged base offset; custom artwork,
+placements, captions, deletions and links are preserved. ERNEST-HEMINGWAY.txt
+keeps hash-scoped credits even when the shared notices have been customized.
+
 Osamu Dazai is not bundled: Nakamura's 2009 Ashino Park statue is confirmed,
 but no suitable photograph with verified redistribution terms has been selected.
 This local pack does not lift the existing public-release hold on the Mann image.

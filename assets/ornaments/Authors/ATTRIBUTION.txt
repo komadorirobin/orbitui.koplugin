@@ -67,7 +67,8 @@ Photo: Molgreen, 11 April 2024, CC BY-SA 4.0.
 Sculpture: Gustav Seitz, original portrait 1954, Berlin cast unveiled 2007.
 Source: https://commons.wikimedia.org/wiki/File:20240411_xl_0704-Thomas_Mann_B%C3%BCste_3.jpg
 Background alpha masking and proportional scaling by OrbitUI contributors.
-Surroundings and granite column removed; existing bronze head/neck/base retained.
+Surroundings, wide mounting plate and granite column removed; existing bronze
+head, neck and compact mounting block retained. No new base is drawn.
 No generated details, retouching or recolouring. Photograph/cutout: CC BY-SA 4.0.
 https://creativecommons.org/licenses/by-sa/4.0/
 The sculpture's separate rights are NOT licensed by the photographer.
