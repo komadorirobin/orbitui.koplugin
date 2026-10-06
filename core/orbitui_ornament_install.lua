@@ -21,6 +21,8 @@ local function copy(source, target)
     if not ok then os.remove(temporary); error(err) end
 end
 
+M.copy = copy
+
 local function settingsDir()
     return require("datastorage"):getSettingsDir() .. "/orbitui"
 end

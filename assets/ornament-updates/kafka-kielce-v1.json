@@ -1,0 +1,25 @@
+{
+  "old_sha256": "cf92760b445de7cca2ae7aaf44fabf745f6f9f25268ac8025397fd556a7969c9",
+  "new_sha256": "1eb6d88d1c00f2b7ecb932146798e056e02bf5e2ed54b77dee702d2056a6202e",
+  "old_info": [
+    "Franz Kafka\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/",
+    "Franz Kafka (1883-1924)\n\nFranz Kafka var en tyskspråkig judisk författare från Prag. Han utbildade sig till jurist och arbetade inom försäkringsbranschen, samtidigt som han betraktade skrivandet som sin viktigaste uppgift. Under sin livstid publicerade han bara en mindre del av sitt författarskap, däribland Die Verwandlung, på svenska Förvandlingen. Många manuskript blev kända först efter hans död, när vännen Max Brod valde att bevara dem trots Kafkas önskan att de skulle förstöras.\n\nPrag var en avgörande livsmiljö, men Kafka förvandlade den i sina berättelser snarare än att helt enkelt avbilda den. Stadens kontor, domstolar och byggnader blir hos honom en främmande litterär geografi. Franz Kafka-museet framhåller hur sådana platser fungerar som metaforer, inte som adresser som måste identifieras. Vid sidan av berättelserna och de stora romanprojekten ger dagböcker och brev en ingång till hans arbete, relationer och stränga självkritik. Författarskapet hör till 1900-talets viktigaste försök att skapa en egen, oroande form för människans möte med omvärlden.\n\nCentrala verk:\nFörvandlingen; Domen; I straffkolonin; Processen; Amerika (Den försvunne).\n\nText: OrbitUI, AI-assisterad svensk sammanfattning av källorna nedan. Inte källornas originaltext.\n\nKällor:\nFranz Kafka Museum: biografi:\nhttps://kafkamuseum.cz/en/biography\nFranz Kafka Museum: tidslinje:\nhttps://kafkamuseum.cz/en/timeline\nFranz Kafka Museum: utställningens litterära perspektiv:\nhttps://kafkamuseum.cz/en/exhibition\n\nOm bysten / bildkrediter:\nFranz Kafka\nOriginal AI-generated light-plaster portrait interpretation. No third-party sculpture or photograph supplied as a reference. Not a documentary image or a verified historical sculpture.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+  ],
+  "old_placement": {
+    "scale": 0.996,
+    "anchor": "bottom",
+    "lift": -0.01
+  },
+  "documents": {
+    "README.txt": [
+      "3b5ddac5eeb2a0a79624f411398b6450b9fc346daa3a60f915dca1658eaf059e",
+      "c6359c9d77de7c88573bd4098df27529a47c26c53d818eaacc404b58f2a2576c"
+    ],
+    "ATTRIBUTION.txt": [
+      "2cc621717575f2362df5474c672c81c15933544dc7ab0fd73152c06044b6a183"
+    ],
+    "prompts.json": [
+      "feca6933aadf0b9ce5692429bdec1cded9824bfd58dff4a179f614d2b379b892"
+    ]
+  }
+}

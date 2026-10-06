@@ -32,7 +32,7 @@ are preserved. Small scale/lift adjustments align their visible heights and
 plinths; no per-page network calls or image generation are involved.
 prompts.json contains the exact prompts and source metadata.
 ATTRIBUTION.txt records the separate image licenses and modifications.
-Dostoevsky is NON-COMMERCIAL ONLY (CC BY-NC-SA 4.0); Lem is CC BY-SA 4.0.
+Dostoevsky is NON-COMMERCIAL ONLY (CC BY-NC-SA 4.0); Lem/Kafka are CC BY-SA 4.0.
 The remaining adaptations/original interpretations are CC BY 4.0 to the extent
 applicable, not documentary reproductions or endorsements.
 
@@ -41,6 +41,13 @@ this default README. Custom captions, native reader overrides, placements,
 disabled pieces, deleted entries and files are preserved. Image bytes, prompts
 and attribution notices are not changed. The source text is maintained in
 scripts/artwork/author-biographies.json in the OrbitUI source repository.
+
+Kafka now uses an AI-assisted cutout of the bronze Kielce bust, with its hat
+and bronze colour retained. KAFKA-KIELCE.txt identifies the photographer,
+sculptor, license, modifications and the separate sculpture rights basis.
+A separately marked update replaces only the checksum-recognized old default
+Kafka PNG. It updates recognized captions/placement and unedited notices,
+without resetting native overrides, custom images or deleted pieces/packs.
 
 Older OrbitUI versions that do not know this pack may place it randomly.
 Disable Authors before rolling back to alpha.14 or earlier if that is unwanted.

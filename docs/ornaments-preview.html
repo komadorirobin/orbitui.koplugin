@@ -18,14 +18,14 @@ main { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:28px 25p
 figure { margin:0; min-width:0; }
 .shelf { height:240px; position:relative; display:flex; justify-content:center; align-items:flex-end; border-bottom:10px solid var(--plank); box-shadow:0 3px 4px -2px var(--shadow); }
 .shelf:after { content:""; position:absolute; bottom:0; left:0; right:0; height:3px; background:#9d8d72; opacity:.6; }
-.shelf img { height:calc(220px * var(--scale)); max-width:100%; object-fit:contain; position:relative; bottom:calc(220px * var(--scale) * var(--lift)); }
+.shelf img { height:calc(220px * var(--scale)); max-width:100%; object-fit:contain; position:relative; bottom:calc(275px * var(--lift)); }
 body.patterned .shelf { background-image:repeating-linear-gradient(135deg,transparent 0px,transparent 17px,#88888830 18px,transparent 19px,transparent 37px); }
 figcaption { padding-top:13px; }
 strong { display:block; font-size:19px; font-weight:normal; }
 span,small { display:block; font:12px/1.6 monospace; color:var(--muted); }
 footer { max-width:1180px; margin:auto; padding:12px 24px 30px; color:var(--muted); font:12px/1.6 monospace; }
 @media(max-width:800px) { main { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-@media(max-width:400px) { .shelf { height:210px; } .shelf img { height:calc(190px * var(--scale)); bottom:calc(190px * var(--scale) * var(--lift)); } h1 { font-size:30px; } }
+@media(max-width:400px) { .shelf { height:210px; } .shelf img { height:calc(190px * var(--scale)); bottom:calc(237.5px * var(--lift)); } h1 { font-size:30px; } }
 </style>
 </head>
 <body>
@@ -69,9 +69,9 @@ footer { max-width:1180px; margin:auto; padding:12px 24px 30px; color:var(--mute
       <div class="shelf"><img src="../assets/ornaments/Authors/Robert%20Musil.png" alt="Robert Musil"></div>
       <figcaption><strong>Robert Musil</strong><span>Original portrait interpretation</span><small>CC BY 4.0</small></figcaption>
     </figure>
-    <figure style="--scale:0.996;--lift:-0.01">
+    <figure style="--scale:0.996;--lift:-0.043">
       <div class="shelf"><img src="../assets/ornaments/Authors/Franz%20Kafka.png" alt="Franz Kafka"></div>
-      <figcaption><strong>Franz Kafka</strong><span>Original portrait interpretation</span><small>CC BY 4.0</small></figcaption>
+      <figcaption><strong>Franz Kafka</strong><span>Kielce bronze: AI-assisted photo cutout</span><small>CC BY-SA 4.0; see KAFKA-KIELCE.txt</small></figcaption>
     </figure>
 </main>
 <footer>AI-assisted portrait interpretations, not documentary reproductions. Separate artwork licenses apply; Dostoevsky is non-commercial only. See each pack's ATTRIBUTION.txt and prompts.json.</footer>

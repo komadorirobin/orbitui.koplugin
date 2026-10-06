@@ -41,12 +41,15 @@ class AuthorInfoAssetsTests(unittest.TestCase):
             for name, before in old["metadata"].items():
                 with self.subTest(pack=pack, name=name):
                     after = current[name]
-                    self.assertEqual(after["info"], builder.info_text(self.bios[name], before["info"]))
+                    credit = builder.artwork_credit(name, before["info"])
+                    self.assertEqual(after["info"], builder.info_text(self.bios[name], credit))
                     self.assertLessEqual(len(after["info"].encode("utf-8")), 4000)
-                    self.assertEqual(after["info"].split(builder.ART_HEADING + "\n", 1)[1], before["info"])
+                    self.assertEqual(after["info"].split(builder.ART_HEADING + "\n", 1)[1], credit)
                     self.assertIn(builder.CREDIT, after["info"])
-                    self.assertEqual({k: v for k, v in after.items() if k != "info"},
-                                     {k: v for k, v in before.items() if k != "info"})
+                    expected = {k: v for k, v in before.items() if k != "info"}
+                    if name == "Franz Kafka.png":
+                        expected.update(json.loads(builder.KAFKA.read_text())["placement"])
+                    self.assertEqual({k: v for k, v in after.items() if k != "info"}, expected)
                     self.assertEqual(after["tap"], "zoom")
 
     def test_default_readmes_describe_biographies_separately_from_artwork(self):

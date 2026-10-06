@@ -837,6 +837,41 @@ packaging remains the final local gate; it is not device acceptance.
 No component source, upstream pin, VERSION, bootstrap/API or public OTA change.
 Not published; native Bigme appearance and scrolling still need confirmation.
 
+## 2026-10-06: Replace Kafka with the approved Kielce bronze (unreleased)
+
+The user explicitly selected the Kielce bust after rejecting the commercial
+product-photo candidate. Replace only `Authors/Franz Kafka.png`, retaining its
+canonical author binding, biography, zoom and colour behaviour. The new bitmap
+is a built-in image_gen background-extraction edit of Pawel Ciesla's 2006
+CC BY-SA 4.0 photograph of Anna Wierzchowska-Grabiwoda's 2005 bronze. Preserve
+the bowler hat, bronze colour and rough modelling, not the old ivory portrait.
+Document the AI-assisted edit honestly: it is not a pixel-identical photograph.
+Record the photographer/sculptor separately, original URL/hash, exact prompt,
+output hash, change notice, ShareAlike terms and the Polish panorama rights
+basis/limits. No commercial product photograph or private preview is bundled.
+
+C11 deliberately gains a narrow reviewed image-upgrade exception. A separate
+marker and frozen alpha.20/unpublished-biography baseline replace only the
+known old image checksum, then recognized caption/default base-offset fields
+and byte-identical shared notices. The new image checksum supports retries
+after metadata/documentation failure. An additive dedicated license notice
+also covers cases where shared pack notices were customized. Custom/deleted
+images and records, custom captions, scale/lift/anchor, native reader overrides,
+enablement and all other busts remain untouched. The generic author-info
+migration skips Kafka, so it cannot give a custom image the new photo credits.
+The update runs before first native listing and never hashes artwork again
+after its completion marker. No component source or upstream pins changed.
+
+Ten Lua/LuaJIT migration regressions, one additional biography integration
+case and four Python asset checks cover upgrade/retry, preservation, corruption,
+RGBA/provenance, bronze colour, base alignment and license/source distinctions.
+Both full Lua/LuaJIT suites pass: 335 OrbitUI cases, 65 Python checks including
+museum-source pixel auditing, 351 Bookshelf suites (two native SQLite skips)
+and all 13 SimpleUI files. All 41 translation checks pass. Local sealed package
+validation follows a clean commit; no VERSION bump, push, tag or OTA release.
+Physical Bigme appearance, zoom/info and installed alpha.20 migration still
+require user acceptance. Code rollback retains the copied artwork and credits.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

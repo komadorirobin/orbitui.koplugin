@@ -122,6 +122,20 @@ H.test("custom captions including blank and deleted info are not overwritten", f
         H.eq(current(first)["two.png"].info, "Biography\n\nother image credits")
     end
 end)
+H.test("generic biography migration leaves Kafka to the artwork-aware upgrade", function()
+    fixture()
+    local prior = current(second)
+    prior["Franz Kafka.png"] = { info = "old Kafka caption" }
+    files[target(second) .. "ornaments.json"] = encode(prior)
+    local base = decode(files[root .. "/" .. Update.baseline])
+    base.packs.Authors.metadata["Franz Kafka.png"] = clone(prior["Franz Kafka.png"])
+    files[root .. "/" .. Update.baseline] = encode(base)
+    local new = decode(files[source(second) .. "ornaments.json"])
+    new["Franz Kafka.png"] = { info = "Kielce biography and credits" }
+    files[source(second) .. "ornaments.json"] = encode(new)
+    apply()
+    H.eq(current(second)["Franz Kafka.png"].info, "old Kafka caption")
+end)
 H.test("caption-only changes preserve custom placement taps disables and foreign records", function()
     fixture()
     local prior = current(first)
@@ -231,6 +245,10 @@ H.test("author startup seeds before applying captions even when seeding reports 
     for _, seeded in ipairs({ true, false }) do
         for _, updated in ipairs({ true, false }) do
             local called = {}
+            package.loaded["core/orbitui_kafka_update"] = { apply = function(r, dir)
+                H.eq(r, root); H.eq(dir, folder)
+                called[#called+1] = "artwork"; return false
+            end }
             package.loaded["core/orbitui_ornament_install"] = { seed = function(r, dir, packs)
                 H.eq(r, root); H.eq(dir, folder); H.eq(packs, Authors.packs)
                 called[#called+1] = "seed"; return seeded
@@ -240,7 +258,7 @@ H.test("author startup seeds before applying captions even when seeding reports 
                 called[#called+1] = "info"; return updated
             end }
             H.eq(Authors.seed(root, folder), seeded or updated)
-            H.eq(table.concat(called, ","), "seed,info")
+            H.eq(table.concat(called, ","), "seed,artwork,info")
         end
     end
 end)

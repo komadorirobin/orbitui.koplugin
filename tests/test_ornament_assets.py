@@ -20,7 +20,7 @@ AUTHOR_HASHES = {
     "Knut Hamsun.png": "8559aafafe6dbe0010d361805ab65798d2e2d0a254960c71f196b7891ec0d7e7",
     "Clarice Lispector.png": "bee7a3d24770d1931d4144b3e5ad1c8b71beaac0d10b5acbf9f43d317524343a",
     "Robert Musil.png": "0c6d0b652b5e3405e4a4804900726b5aa3c1179d439d7d70d7e9288055590d44",
-    "Franz Kafka.png": "cf92760b445de7cca2ae7aaf44fabf745f6f9f25268ac8025397fd556a7969c9",
+    "Franz Kafka.png": "1eb6d88d1c00f2b7ecb932146798e056e02bf5e2ed54b77dee702d2056a6202e",
 }
 JAPAN_HASHES = {
     "Pine Bonsai.png": "d51e17110d5eb4e5d6e297493c44a497d82d79f7991afe5ffa864a2e7821419f",
@@ -75,8 +75,7 @@ class OrnamentAssetsTests(unittest.TestCase):
         notices = (folder / "ATTRIBUTION.txt").read_text()
         self.assertEqual(set(metadata), set(AUTHOR_HASHES))
         self.assertEqual({a["file"] for a in prompts["assets"]}, set(AUTHOR_HASHES))
-        originals = {"Thomas Mann.png", "Knut Hamsun.png", "Clarice Lispector.png", "Robert Musil.png",
-                     "Franz Kafka.png"}
+        originals = {"Thomas Mann.png", "Knut Hamsun.png", "Clarice Lispector.png", "Robert Musil.png"}
         for asset in prompts["assets"]:
             name = asset["file"]
             with self.subTest(name=name):

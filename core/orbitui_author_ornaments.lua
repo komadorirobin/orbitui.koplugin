@@ -9,7 +9,7 @@ M.packs = {
         "ATTRIBUTION.txt", "README.txt", "prompts.json", "ornaments.json",
         "August Strindberg.png", "Stanislaw Lem.png", "Dylan Thomas.png",
         "Thomas Mann.png", "Fyodor Dostoevsky.png", "Knut Hamsun.png",
-        "Clarice Lispector.png", "Robert Musil.png", "Franz Kafka.png",
+        "Clarice Lispector.png", "Robert Musil.png", "Franz Kafka.png", "KAFKA-KIELCE.txt",
     } },
 }
 M.pieces = {
@@ -75,8 +75,9 @@ end
 -- markers allow new packs without overwriting or resurrecting older artwork.
 function M.seed(root, ornaments_dir)
     local seeded = require("core/orbitui_ornament_install").seed(root, ornaments_dir, M.packs)
+    local artwork = require("core/orbitui_kafka_update").apply(root, ornaments_dir)
     local updated = require("core/orbitui_author_info").apply(root, ornaments_dir)
-    return seeded or updated
+    return seeded or artwork or updated
 end
 
 function M.fillHooks(native, env)

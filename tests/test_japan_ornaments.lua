@@ -5,6 +5,7 @@ local Japan = require("core/orbitui_japan_ornaments")
 package.loaded["core/orbitui_ukiyoe_ornaments"] = { seed = function() end }
 -- Author-caption migration has separate JSON/atomic-write coverage.
 package.loaded["core/orbitui_author_info"] = { apply = function() return false end }
+package.loaded["core/orbitui_kafka_update"] = { apply = function() return false end }
 local Authors = require("core/orbitui_author_ornaments")
 local Adapter = require("adapters/orbitui_ornaments")
 package.loaded["lib/bookshelf_ornament_deck"] = { sync = function() end, shuffle = function() end }

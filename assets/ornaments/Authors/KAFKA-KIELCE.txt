@@ -1,0 +1,40 @@
+FRANZ KAFKA.PNG - KIELCE PHOTOGRAPH ADAPTATION
+Updated 2026-10-06. This notice supersedes older Kafka-only credits that
+describe an original ivory/plaster portrait, when the Kielce PNG is installed.
+SHA-256: 1eb6d88d1c00f2b7ecb932146798e056e02bf5e2ed54b77dee702d2056a6202e
+
+Photograph: Pawel Ciesla (Staszek Szybki Jest), 14 September 2006.
+Title: Popiersie Franz Kafka ssj 20060914.jpg
+https://commons.wikimedia.org/wiki/File:Popiersie_Franz_Kafka_ssj_20060914.jpg
+Photo license: Creative Commons Attribution-ShareAlike 4.0 International.
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Sculpture: Anna Wierzchowska-Grabiwoda, 2005, bronze bust of Franz Kafka,
+permanently installed in Aleja Slaw on Skwer Harcerski in Kielce, Poland.
+Sculptor/year source: regional cultural information portal, Kafka entry:
+https://pik.kielce.pl/atrakcje-turystyczne/pomniki-i-popiersia
+
+Adaptation: OrbitUI contributors, using OpenAI's built-in image_gen tool.
+AI-assisted background extraction, cropped/reframed, surrounding vegetation
+and granite pedestal removed. Bronze colour, hat and sculptural character
+retained; generated detail is not a pixel-identical documentary reproduction.
+Original generated PNG bytes, transparency and provenance retained.
+Adapted photograph: CC BY-SA 4.0 to the extent applicable. Attribute the
+photographer, identify the sculpture, retain this change notice and license,
+and distribute further adaptations under the same license. No endorsement.
+The exact edit prompt and source/output hashes are in prompts.json in the
+bundled pack and scripts/artwork/kafka-kielce.json in the source repository.
+
+RIGHTS BASIS AND LIMITS
+The photographer's license covers the photograph, not ownership of the
+underlying sculpture. This two-dimensional ornament relies on Poland's
+freedom of panorama for permanently displayed works in public outdoor places,
+not on a claim that the sculpture is public domain or CC-licensed.
+Polish Patent Office explanation (Freedom of panorama):
+https://uprp.gov.pl/sites/default/files/2020-11/Get%20familiar%20with%20intellectual%20property%20-%20broszura.pdf
+Act on Copyright and Related Rights, Article 33(1), WIPO Lex:
+https://www.wipo.int/wipolex/en/legislation/details/20377
+This is not a license to reproduce a physical/3D sculpture. Other uses and
+jurisdictions may require additional permission. No worldwide clearance or
+permission from the sculptor is claimed. The code's AGPL does not relicense
+this separately licensed image. Keep this notice with the PNG.

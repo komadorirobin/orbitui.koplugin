@@ -43,7 +43,10 @@ function M.apply(root, ornaments_dir)
                     assert(type(before.info) == "string" and type(after) == "table"
                         and type(after.info) == "string" and #after.info > 0
                         and #after.info <= 4000, "Invalid bundled author info")
-                    if type(entry) == "table" and entry.info == before.info
+                    -- Kafka's caption belongs to its checksum-guarded image
+                    -- migration: never attach Kielce credits to a custom image.
+                    if not (pack.name == "Authors" and name == "Franz Kafka.png")
+                        and type(entry) == "table" and entry.info == before.info
                         and entry.info ~= after.info then
                         entry.info = after.info
                         dirty = true

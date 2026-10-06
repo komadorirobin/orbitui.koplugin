@@ -177,7 +177,8 @@ versions do not know the nine new author-bound filenames.
 All eleven bundled busts now have Swedish introductions to the author's life,
 literary style, themes and major works. Tap a bust for the existing enlarged
 image and scrollable info card. Source links follow the biography, with the
-original image credits and artwork licences retained verbatim at the bottom.
+image credits and artwork licences at the bottom (unchanged except for the
+explicitly requested Kafka image replacement described below).
 The text is available offline; opening its source websites requires a browser
 and network. These are labelled AI-assisted OrbitUI summaries, not verbatim
 museum/author-centre/publisher text or statements from the original sculptors.
@@ -194,6 +195,34 @@ and the Modernists-Preview trial pack stay intact. No prompts, attribution
 notices, image bytes or enablement settings change. Each pack has an independent
 update marker, written only after successful atomic writes. Interrupted updates
 retry at the next process start. Rolling back code retains the new captions.
+
+### Kafka in Kielce (unreleased)
+
+The user selected the real bronze bust by Anna Wierzchowska-Grabiwoda (2005)
+in Kielce. `Authors/Franz Kafka.png` now uses an AI-assisted cutout of
+[Pawel Ciesla's photograph](https://commons.wikimedia.org/wiki/File:Popiersie_Franz_Kafka_ssj_20060914.jpg),
+retaining bronze colour, bowler hat and rough sculptural modelling instead of
+the old invented ivory portrait. This is not a pixel-identical photo extraction;
+the generated PNG retains its original alpha/provenance. The photograph and
+adaptation are CC BY-SA 4.0. `KAFKA-KIELCE.txt` identifies the sculptor, distinguishes
+the photo license from the sculpture rights, and records the Polish freedom of
+panorama basis and limits. It is not a worldwide rights-clearance statement.
+
+The filename, author match and author biography stay stable. The native base
+offset changes only to compensate for the new image's transparent bottom margin.
+`core/orbitui_kafka_update.lua` runs before the generic biography updater, which
+deliberately skips Kafka. It replaces only the SHA-256-recognized old default;
+the new hash permits retry after a partially completed update. Custom/deleted
+images and deleted metadata records are untouched. Recognized captions and
+unedited shared notices follow the new image; an additional license notice
+is installed without replacing reader annotations. Custom placement, captions,
+native overrides and enablement remain authoritative. The separate completed
+marker avoids image hashing on subsequent starts. No upstream code changes.
+
+Maintain source/provenance/prompt in `scripts/artwork/kafka-kielce.json` and
+regenerate metadata with the existing author-info builder. The frozen
+`assets/ornament-updates/kafka-kielce-v1.json` records both alpha.20 and the
+unpublished old biography, never a duplicate of the old bitmap.
 
 ## Session shuffle (alpha.17)
 

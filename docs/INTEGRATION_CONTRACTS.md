@@ -352,6 +352,19 @@ images, notices, deletions and the preview trial pack. Independent per-pack
 update markers follow successful atomic writes; failed updates retry without
 replacing later edits or replaying a completed pack. Do not reset seed markers.
 
+The subsequent explicit "Ta Kielce-bysten" request permits replacing Kafka's
+default image only. Keep its canonical filename, author matching and biography.
+Use the licensed Kielce photo adaptation, with bronze colour/hat retained,
+separate photographer/sculptor credit and rights basis. Do not present the
+AI-assisted cutout as an unmodified photo. A separate checksum-guarded migration
+owns Kafka's image, default caption and base-offset change; the generic info
+updater skips Kafka to avoid adding new credits to custom artwork. Recognize
+old/current image hashes for resumable atomic writes. Preserve edited/deleted
+artwork, deleted metadata records, custom captions and placement, reader
+overrides, enablement and other busts. Add the dedicated license notice and
+update shared notices only on exact old checksums. Never reset seed markers.
+Do not hash images again after the independent completion marker is present.
+
 The Japan pack uses ordinary native ornament placement, never author binding.
 Keep its install and defaults markers independent of the author packs. All
 bundled packs share `core/orbitui_ornament_install.lua` for additive atomic copies;
@@ -394,12 +407,14 @@ Source: `core/orbitui_author_ornaments.lua`, `adapters/orbitui_ornaments.lua`,
 `core/orbitui_runtime.lua`, `core/orbitui_japan_ornaments.lua`,
 `core/orbitui_ornament_install.lua`, `assets/ornaments/Modernists/`,
 `core/orbitui_author_info.lua`, `assets/ornament-updates/author-info-v1.json`,
+`core/orbitui_kafka_update.lua`, `assets/ornament-updates/kafka-kielce-v1.json`,
 `assets/ornaments/Authors/`, `assets/ornaments/Japan/`,
 `core/orbitui_ukiyoe_ornaments.lua`, `core/orbitui_ukiyoe_update.lua`,
 `assets/ornaments/Ukiyo-e Gallery/`, `assets/ornament-updates/ukiyoe-gallery-v1.json`,
 `assets/ornament-updates/ukiyoe-gallery-v2.json`.
 Tests: `tests/test_author_ornaments.lua`, `test_ornament_seed.lua`,
 `test_author_info.lua`, `test_author_info_assets.py`,
+`test_kafka_update.lua`, `test_kafka_assets.py`,
 `test_japan_ornaments.lua`, `test_ornament_session.lua`, `test_ornament_assets.py`,
 `test_ukiyoe_ornaments.lua`, `test_ukiyoe_update.lua`, `test_ukiyoe_assets.py`;
 `scripts/check-package.lua` requires all pack files.

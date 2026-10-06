@@ -1,0 +1,19 @@
+{
+  "file": "Franz Kafka.png",
+  "kind": "AI-assisted background extraction from a licensed photograph",
+  "updated": "2026-10-06",
+  "references": [
+    "https://commons.wikimedia.org/wiki/File:Popiersie_Franz_Kafka_ssj_20060914.jpg"
+  ],
+  "source_image": "https://upload.wikimedia.org/wikipedia/commons/8/81/Popiersie_Franz_Kafka_ssj_20060914.jpg",
+  "source_sha256": "8be8782410e2c8d733761b3b74946e07739560979c35e551adb04abd8edb5f60",
+  "reference_credit": "Paweł Cieśla (Staszek Szybki Jest), 14 September 2006, CC BY-SA 4.0. Bronze bust by Anna Wierzchowska-Grabiwoda, 2005, Aleja Sław, Kielce, Poland.",
+  "artwork_license": "CC BY-SA 4.0",
+  "sha256": "1eb6d88d1c00f2b7ecb932146798e056e02bf5e2ed54b77dee702d2056a6202e",
+  "width": 1024,
+  "height": 1536,
+  "alpha_bbox_at_24": [169, 29, 863, 1449],
+  "placement": {"scale": 0.996, "anchor": "bottom", "lift": -0.043},
+  "info": "Franz Kafka: bronsbyst i Aleja Sław, Kielce, Polen. Skulptör: Anna Wierzchowska-Grabiwoda, 2005.\nFoto: Paweł Cieśla (Staszek Szybki Jest), 14 september 2006.\nhttps://commons.wikimedia.org/wiki/File:Popiersie_Franz_Kafka_ssj_20060914.jpg\nOrbitUI: AI-assisterad friläggning med OpenAI image_gen; omgivning och granitsockel borttagna. Bronsfärg, hatt och skulpterat uttryck behållna. Inte en pixelidentisk dokumentär reproduktion.\nFoto och bildbearbetning: CC BY-SA 4.0.\nhttps://creativecommons.org/licenses/by-sa/4.0/\nSkulpturen är inte licensierad av fotografen. Denna tvådimensionella avbildning bygger på polsk panoramafrihet; se KAFKA-KIELCE.txt för källor och avgränsning.",
+  "prompt": "Use case: background-extraction. Edit target: the supplied photograph of the actual bronze Franz Kafka bust in Kielce. Make a faithful transparent-background cutout of ONLY the bronze sculpture from the top of its bowler hat through its existing short flat-bottomed neck/bow tie base. Remove the trees, grass, granite pedestal and all lettering. Preserve the original photographic sculptural identity, asymmetrical angular face, entire round bowler hat, bronze brown/grey patina, rough hand-modelled texture, proportions, frontal viewpoint and original lighting. Do not invent a different portrait, reinterpret the sculpture, smooth the bronze, add shoulders or a new pedestal, change materials to ivory, or add graphic flourishes. Output a genuine RGBA PNG with transparent pixels outside the sculpture, no background or fake checkerboard, no cast shadow. Portrait canvas 1024x1536; fit the complete sculpture proportionately, centered horizontally, roughly 3% transparent space above and 2% below. No clipping of hat edges. This is a source-photo extraction for a bookshelf ornament, NOT a newly designed bust."
+}

@@ -2,6 +2,19 @@
 
 ## Automated
 
+The unreleased Kafka replacement adds ten Lua/LuaJIT migration cases and four
+Python asset checks. Cover old/current image checksums, caption/notice migration,
+custom and deleted files, custom positioning/enablement/native overrides,
+interrupted atomic writes through marker completion, retry after intervening
+edits, corrupt input and no hashing after completion. The biography suite also
+checks that Kafka's credits are owned by the artwork-aware migration. Check
+RGBA transparency, retained bronze colour/provenance, native base alignment and
+the distinct photo/sculpture rights notice. Physical Bigme appearance, scale,
+tap-to-zoom/info and migration from an actual alpha.20 install remain device checks.
+Full Lua/LuaJIT verification passes 335 OrbitUI cases, 65 Python checks (museum
+pixel audit included), 351 Bookshelf suites (two native SQLite skips), all 13
+SimpleUI files and all 41 translation catalogs.
+
 The unreleased author-info addition has 12 Lua/LuaJIT regressions for caption-only
 updates, independent markers, startup ordering, custom/empty/deleted fields,
 unchanged placement/enablement, reader overrides, deleted packs, bad JSON,
