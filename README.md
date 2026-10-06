@@ -16,11 +16,12 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.19** includes Bookshelf **5.3.1** through `74b825bb` and
-SimpleUI **2.7.5** through `19874b3b`, on top of alpha.4's shared OrbitUI surfaces.
-It adds the Ukiyo-e Gallery, retaining alpha.18's per-module Bento top margins
+Version **0.1.0-alpha.20** includes Bookshelf **5.3.1** through `74b825bb` and
+SimpleUI **2.7.5** through `b58dfefb`, on top of alpha.4's shared OrbitUI surfaces.
+It corrects Ukiyo-e Gallery placement/information and Home layout saves,
+retaining alpha.18's per-module Bento top margins
 and one ordinary ornament per row, with several matching author busts allowed.
-See [the release notes](docs/releases/0.1.0-alpha.19.md)
+See [the release notes](docs/releases/0.1.0-alpha.20.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
@@ -55,7 +56,7 @@ frames, native zoom/info cards and an optional washi/Hinoki-style theme. No
 existing theme is activated or replaced. See [the gallery preview](docs/ukiyoe-gallery-preview.html)
 and [installation/source notes](docs/ORNAMENTS.md#ukiyo-e-gallery-alpha19).
 
-Unreleased gallery correction: frames hang above the plank rather than stand
+Alpha.20 gallery correction: frames hang above the plank rather than stand
 on it. Expanded Swedish, source-linked commentary and museum measurements replace
 the short visual notes. A guarded metadata upgrade reaches existing alpha.19
 installations without replacing artwork, user captions or manual positioning.

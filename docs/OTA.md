@@ -89,6 +89,15 @@ automatically activated. Alpha.18 and earlier alpha releases can update
 directly with the same stable bootstrap/API 1. Code rollback retains installed
 artwork. The optional standalone gallery ZIP is not required for an OTA update.
 
+Version `0.1.0-alpha.20` raises untouched gallery frames above the shelf and
+adds richer source-linked Swedish commentary and museum measurements. A narrow
+metadata upgrade preserves custom captions, manual positioning and deleted
+ornaments. It also includes the reviewed SimpleUI merge and a layout-snapshot
+fix that preserves clock visibility while correctly handling added/removed
+modules. Alpha.19 and earlier alpha releases can update directly with the same
+bootstrap/API 1. No theme, reading-data or sync setting changes. Code rollback
+retains the updated ornament metadata as well as artwork.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

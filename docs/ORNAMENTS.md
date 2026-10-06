@@ -13,14 +13,14 @@ were used. The selection, frames and Swedish commentaries are independent.
 The museum art is only reduced proportionally with LANCZOS, preserving the
 complete image, colour and orientation. No cropping, quantization, recolouring
 or AI reinterpretation. Warm dark frames have a light mat, subtle bevel and
-transparent exterior. The unreleased correction raises frames 12% of the
+transparent exterior. The alpha.20 correction raises frames 12% of the
 shelf's stand height above the plank (alpha.19 used zero lift). Native tap to
 zoom shows title, artist, date, measurements, commentary, museum credit and sources. Artwork
 does not mirror or invert at night. Only the washi/wood **material textures**
 are AI-generated images; prompts and original source-image hashes are supplied.
 
 Alpha.19's short visual notes were written for OrbitUI, not copied from museum
-wall labels. The unreleased expanded Swedish texts are AI-assisted editorial
+wall labels. Alpha.20's expanded Swedish texts are AI-assisted editorial
 summaries of museum catalogue/curatorial sources, explicitly labelled as such.
 They are not direct translations or museum-authored Swedish texts. Cards link
 all their sources and retain uncertainties in the museum's interpretations.

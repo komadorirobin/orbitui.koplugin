@@ -767,6 +767,23 @@ custom screens, native startup selection and quote/clock/action-list margins
 still need the checklist in TESTING.md. This is not an OTA publication; the
 merge and the gallery correction remain local pending a separate request.
 
+## 2026-10-06: Prepare alpha.20 for explicit publication
+
+The user explicitly requested publication after the reviewed merge. Release
+`0.1.0-alpha.20` from `2ca9ac8d` plus version/release documentation, including
+`acff89ac`'s gallery wall/info correction and the reviewed SimpleUI import
+(`42a1c351`) with isolated layout snapshots (`710a38db`). No additional upstream
+merge or pin advance. Preserve the stable bootstrap/API 1 and all published
+alpha.19 bytes; the new optional gallery ZIP includes the corrected defaults.
+
+Required gates: full Lua/LuaJIT suites and translations on the versioned tree,
+clean-commit runtime inventory/checksum, native OTA from the published alpha.19
+installer, both CI jobs, downloaded draft-asset verification, and anonymous
+discovery/download/install/rollback after publication. Keep this a prerelease:
+Bigme wall spacing, native text/layout rendering, touch and device recovery
+checks remain outstanding. See `docs/releases/0.1.0-alpha.20.md` for scope and
+user-preserving metadata migration/rollback notes.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

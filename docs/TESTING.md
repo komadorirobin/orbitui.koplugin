@@ -2,6 +2,12 @@
 
 ## Automated
 
+Alpha.20 packages the reviewed October 6 import and the gallery correction below.
+Publication gates rerun the full Lua/LuaJIT suites, translations and clean-commit
+sealed packaging, then exercise native OTA from the actual published alpha.19
+installer. Downloaded draft assets, both CI jobs and anonymous public OTA must
+pass before closing publication. These are headless checks, not Bigme acceptance.
+
 The 2026-10-06 reviewed SimpleUI import adds 13 regressions covering isolated
 layout drafts, repeated saves, module removal/re-addition, preserved clock
 visibility, custom screens, legacy layout normalization, live start-view settings,
@@ -12,7 +18,7 @@ checks with source-cache pixel auditing, 351 Bookshelf suites (two native SQLite
 skips) and all 13 SimpleUI test files. All 41 translation catalogs pass.
 See MERGE_LOG.md for the reviewed revisions and final packaging gate.
 
-The unreleased gallery wall/info correction adds 10 Lua/LuaJIT cases for the
+The alpha.20 gallery wall/info correction adds 10 Lua/LuaJIT cases for the
 v1-to-v2 metadata migration and native placement calculations across 60
 height/aspect/width combinations. Tests preserve reader/pack overrides, images,
 theme files and deletions, and exercise corrupt JSON, failed writes/renames and
