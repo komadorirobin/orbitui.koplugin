@@ -1090,6 +1090,19 @@ files, and 41 translation checks. Light/dark before/after previews reviewed.
 Clean-commit runtime ZIP validation is the final local gate. Physical device
 appearance and migration still need testing.
 
+## 2026-10-06: Publish alpha.23 bust refinements
+
+The user explicitly requests publication of the reviewed Hemingway/Mann
+refinements at `4431a382`. Prepare alpha.23 as a prerelease, not a device-accepted
+beta. Bump VERSION and release documentation only; retain upstream pins, stable
+bootstrap/API 1, all other artwork, biographies and settings behavior.
+
+Publication gates: both complete Lua/LuaJIT test runs with source-pixel audits,
+translations, clean-commit runtime package, held-blob ancestry exclusion, native
+OTA from the real alpha.22 installer, draft-asset byte verification, both CI jobs
+and anonymous live OTA. Device appearance and migration still need user testing.
+Do not publish the local archive branch containing the held earlier Mann bitmap.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

@@ -114,6 +114,14 @@ Alpha.21 and earlier alpha releases can update directly through the same preview
 channel and bootstrap/API 1. Code rollback retains copied artwork and metadata;
 it does not resurrect removed images or restore earlier ornament versions.
 
+Version `0.1.0-alpha.23` improves Hemingway's visible size and level base crop,
+and gives Mann a compact mounting block without the wide plate. Independent
+checksum-guarded migrations update the known defaults even when alpha.22's
+installation markers are complete. Custom images, captions, placements, native
+overrides, links and deletions are preserved. Alpha.22 and earlier alpha releases
+can update directly using the same preview channel and unchanged bootstrap/API 1.
+Code rollback retains the refined artwork and metadata.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries
