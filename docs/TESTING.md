@@ -2,6 +2,16 @@
 
 ## Automated
 
+The 2026-10-06 reviewed SimpleUI import adds 13 regressions covering isolated
+layout drafts, repeated saves, module removal/re-addition, preserved clock
+visibility, custom screens, legacy layout normalization, live start-view settings,
+native radio callbacks, Unicode fallback, quote line-break rules and action-list
+widths. These tests execute native functions with settings/widget stubs, not a
+physical reader. Both full Lua/LuaJIT suites pass: 307 OrbitUI cases, 57 Python
+checks with source-cache pixel auditing, 351 Bookshelf suites (two native SQLite
+skips) and all 13 SimpleUI test files. All 41 translation catalogs pass.
+See MERGE_LOG.md for the reviewed revisions and final packaging gate.
+
 The unreleased gallery wall/info correction adds 10 Lua/LuaJIT cases for the
 v1-to-v2 metadata migration and native placement calculations across 60
 height/aspect/width combinations. Tests preserve reader/pack overrides, images,
@@ -221,6 +231,14 @@ Native OTA checks use the published alpha.12 installer, including activation,
 restart, rollback and incomplete-package rejection.
 
 Use the Bigme B7 Pro at its native 1264 x 1680 resolution. Retain a recovery path.
+
+- For the 2026-10-06 import, hide the clock face but keep date/battery visible;
+  save/reorder other modules repeatedly, then remove and re-add the clock on
+  Home and a custom screen. Confirm the expected visibility and style resets.
+- Switch the start view through both native and OrbitUI menus, restart, and
+  check that the selected destination opens. Inspect quote, clock and action-list
+  horizontal margins with/without module backgrounds in narrow Bento columns;
+  check quote wrapping on the reader's native text engine.
 Record KOReader version, installed patches and active plugins, plus crash.log.
 
 - Verify original-plugin conflict detection before enabling the alpha normally.

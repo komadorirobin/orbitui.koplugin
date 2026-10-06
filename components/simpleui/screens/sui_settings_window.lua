@@ -113,14 +113,23 @@ end
 local _DEFAULT_PFX        = "simpleui_hs_"
 local _DEFAULT_LAYOUT_KEY = "simpleui_layout"
 
+-- LuaSettings retains table references. Keep editor drafts separate from the
+-- stored snapshot so save() can detect membership changes on every edit.
+local function copyLayout(value)
+    if type(value) ~= "table" then return value end
+    local out = {}
+    for key, item in pairs(value) do out[key] = copyLayout(item) end
+    return out
+end
+
 function LayoutService.load(pfx, layout_key)
     pfx        = pfx or _DEFAULT_PFX
     layout_key = layout_key or _DEFAULT_LAYOUT_KEY
 
-    local saved = SUISettings:readSetting(layout_key)
+    local saved = copyLayout(SUISettings:readSetting(layout_key))
     if type(saved) == "table" and saved.pages then
         local _, changed = _normalizeLayoutModules(saved, pfx)
-        if changed then SUISettings:saveSetting(layout_key, saved) end
+        if changed then SUISettings:saveSetting(layout_key, copyLayout(saved)) end
         return saved
     end
 
@@ -166,7 +175,7 @@ function LayoutService.save(layout, pfx, layout_key, screen_id)
     -- modules that were actually added to or removed from the layout.
     local previous_set = _activeSet(LayoutService.load(pfx, layout_key))
 
-    SUISettings:saveSetting(layout_key, layout)
+    SUISettings:saveSetting(layout_key, copyLayout(layout))
 
     local active_set = _activeSet(layout)
     local flat_order = {}

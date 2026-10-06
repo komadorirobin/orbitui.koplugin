@@ -713,6 +713,57 @@ Physical Bigme wall spacing and scroll/zoom still need
 testing. Keep the current published alpha.19 assets intact; publish corrections
 only as a new release on a separate explicit request.
 
+## 2026-10-06: Reviewed SimpleUI upstream merge after the gallery correction
+
+The user requested an upstream merge. Read-only collection found Bookshelf
+`master` already integrated at `74b825bb20aa5560129384910ad414bd2bebad75`
+(latest release 5.3.1) and five missing SimpleUI `main` commits. Start from
+`acff89ac` on `maintenance/upstream-2026-10-06`, retaining the unpublished
+gallery wall/info correction. No Bookshelf subtree or original-fork changes.
+
+SimpleUI advances from `19874b3b8f02af34d849caee2ee13e7f6b8ecd94` to
+`b58dfefb26012e44b5b9c96d61d646466ca53b46`, imported unsquashed in
+`42a1c351`. Reviewed the complete five-commit list and net 12-file diff:
+`a26d8066` preserves clock visibility on layout saves; `3282e42f` adds a Unicode
+lowercase fallback; `6817c91a` unifies start-view access; `b30e9190` reorganizes
+the bundled quote catalogue and revises attributions; `b58dfefb` removes duplicate
+horizontal module padding and improves quote line breaks. The latest tagged
+SimpleUI release remains 2.7.5; no module paths, dependencies or assets are added.
+
+The sole textual conflict is the menu reset's start-view write: use upstream's
+`Config.setStartWithHomescreen(false)`, which preserves a different active native
+choice. The actual setting key/value and first-run behavior are unchanged.
+Accept the live accessor instead of stale cached startup state. Preserve the
+OrbitUI guard, which still prevents upstream's previously reviewed automatic
+plugin/patch disabling from changing the user's integrations.
+
+Semantic adaptation: a failing regression demonstrated that native layout
+load/save shares tables with LuaSettings. Upstream's membership comparison then
+sees the already-edited table and misses removals/additions, including after a
+first successful save. Copy serializable layout data at both boundaries instead
+of restoring unconditional enablement, so hidden clock elements survive reorder
+and unrelated saves while actual membership changes still apply. This is a
+small component adaptation in a separate commit, not a settings migration.
+
+Affected contracts: C02 live startup choice, C06 older-reader Unicode helpers,
+C07 module margins/visibility and quote wrapping, C08 layout snapshot isolation,
+C09 tracked history. C01/C03/C04/C05/C10/C11 and their adapters remain intact:
+one plugin/updater, normal reader routes, BookOrbit progress ownership, Bento top
+margins, shared panels/Home shelves, all-cover bookcases, series ordering,
+author-bound busts, ordinary ornament limits/shuffling and gallery v2 migration.
+Advance only SimpleUI's upstream_commit; preserve import provenance, all 261
+module paths, stable bootstrap/API 1, VERSION and published release bytes.
+
+Both full Lua and LuaJIT runs pass: 307 OrbitUI cases (13 new), 57 Python checks
+including museum-source pixel audits, 351 Bookshelf suites (zero failures, the
+same two native SQLite skips), and all 13 SimpleUI test files. All 41 translation
+catalogs pass. Read-only collection at 04:05 UTC reports zero missing commits
+for both components. Clean-commit sealed packaging remains the final gate.
+Physical Bigme checks are not performed: layout editing/clock visibility,
+custom screens, native startup selection and quote/clock/action-list margins
+still need the checklist in TESTING.md. This is not an OTA publication; the
+merge and the gallery correction remain local pending a separate request.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

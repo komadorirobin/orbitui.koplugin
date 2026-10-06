@@ -198,6 +198,15 @@ rows. Cached layout fingerprints include gaps as well as widths/order. Labels,
 backgrounds and clock/book refresh slots stay attached to their own cells.
 No settings migration. Regression coverage: `tests/test_simpleui_bento_margins.lua`.
 
+Layout saves preserve per-item visibility for modules that remain placed,
+including a hidden clock face with the date/battery still visible. Apply module
+enable/disable and text-style resets only to changed membership, not a reorder
+or page move. Keep editor drafts and persisted layout tables separate on both
+load and save: LuaSettings retains references, so aliasing silently defeats the
+upstream membership comparison after the first edit/save. Home and custom
+screens keep independent layouts and refresh targets. Regression coverage:
+`tests/test_simpleui_upstream_20261006.lua`.
+
 ## C08: Assets, data and recovery
 
 Embedded resources resolve relative to their component, not the outer plugin

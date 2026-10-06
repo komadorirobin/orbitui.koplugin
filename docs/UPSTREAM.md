@@ -168,6 +168,12 @@ not make semantic conflicts disappear.
   must preserve only complete, still-valid book counts. Upstream's unconditional
   carry-over is incompatible with OrbitUI's partial/stale cache and pending full
   invalidation. Keep the completeness/day/validity guard and its tests.
+- SimpleUI `screens/sui_settings_window.lua`: preserve upstream's membership-only
+  enable/disable policy, but copy layouts across both load and save boundaries.
+  Otherwise editor mutations also change the stored previous membership and
+  removing/adding modules stops updating their flags. Keep clock element choices
+  intact on reorder/unrelated saves and preserve custom-screen prefixes (C07/C08).
+  Coverage: `tests/test_simpleui_upstream_20261006.lua`.
 - Upstream compatibility auto-disable is replaced by OrbitUI's read-only guard.
   Conflicting UI plugins are reported; user plugin flags and patches are never
   rewritten. Unsupported KOReader versions stop before either component starts.
