@@ -137,7 +137,32 @@ No generated stand-in, Dazai asset or runtime matching entry is added.
 - The earlier Wotruba/Belvedere candidate is NOT used. Its Johannes Stoll photo
   permits private use only; no publication permission was requested.
 
-## Mann: Molgreen photographic replacement (2026-10-06)
+## Mann: frontal Ahrens photograph (2026-10-06, current)
+
+The user prefers the frontal composition of the earlier Ahrens/image_gen
+preview and approves returning to its original photograph without generative
+processing. The [Bildhauerei in Berlin catalogue](https://bildhauerei-in-berlin.de/bildwerk/portraet-thomas-mann-10198/)
+explicitly credits Pauline Ahrens, 2022, CC BY 4.0 (checked 2026-10-06).
+Use `TIE_259_2_Pauline_Ahrens_2022.jpg`, source SHA-256
+`8222438aaf9122f0ffa6cb40bb216859b223642a95f2b6865bd959e695c012e9`.
+Keep the 1500 x 2250 source in the external photo cache as
+`mann-ahrens-2022.jpg`, not in runtime packages.
+
+The new mask retains the photographed head, neck, rectangular bronze block
+and thin plinth. Only sky/surroundings and the separate granite column are
+excluded. Preserve photographed surface, colour, angle and proportions;
+no redrawing, straightening or generative enhancement. The reviewed mask and
+build specification reproduce the bundled RGBA image exactly. This is a new
+CC BY 4.0 photographic cutout with the separately documented German panorama
+basis, not a relicensing of the Molgreen image or clearance of the held AI
+adaptation. That older image and its unpublished Git ancestry remain excluded.
+
+The v4 checksum migration recognizes both published Molgreen images and older
+defaults while retaining edited images, captions, native placements and
+deletions. Source/mask/output hashes and scoped credits live in
+`scripts/artwork/mann-seitz.json` and `THOMAS-MANN-SEITZ.txt`.
+
+## Mann: Molgreen photographic replacement (2026-10-06, superseded)
 
 The user approved [Molgreen's close view from 11 April 2024](https://commons.wikimedia.org/wiki/File:20240411_xl_0704-Thomas_Mann_B%C3%BCste_3.jpg),
 3072 x 4080, CC BY-SA 4.0. It has better usable detail than the wider Molgreen

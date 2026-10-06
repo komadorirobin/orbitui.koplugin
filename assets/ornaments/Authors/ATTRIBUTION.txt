@@ -62,15 +62,17 @@ https://creativecommons.org/licenses/by-sa/4.0/
 Retain attribution and distribute adaptations under the same license.
 See KAFKA-KIELCE.txt for the sculpture's separate rights basis and limits.
 
-THOMAS MANN.PNG - MOLGREEN PHOTOGRAPHIC CUTOUT
-Photo: Molgreen, 11 April 2024, CC BY-SA 4.0.
+THOMAS MANN.PNG - PAULINE AHRENS PHOTOGRAPHIC CUTOUT
+Photo: Pauline Ahrens, 2022, CC BY 4.0 (accessed 6 October 2026).
 Sculpture: Gustav Seitz, original portrait 1954, Berlin cast unveiled 2007.
-Source: https://commons.wikimedia.org/wiki/File:20240411_xl_0704-Thomas_Mann_B%C3%BCste_3.jpg
+Source: https://bildhauerei-in-berlin.de/bildwerk/portraet-thomas-mann-10198/
 Background alpha masking and proportional scaling by OrbitUI contributors.
-Surroundings, wide mounting plate and granite column removed; existing bronze
-head, neck and compact mounting block retained. No new base is drawn.
-No generated details, retouching or recolouring. Photograph/cutout: CC BY-SA 4.0.
-https://creativecommons.org/licenses/by-sa/4.0/
+Surroundings and granite column removed; original frontal bronze head, neck,
+mounting block and thin bronze plinth retained. No new base is drawn or straightened.
+No generated details, retouching or recolouring. Photograph/cutout: CC BY 4.0.
+https://creativecommons.org/licenses/by/4.0/
+Independent new cutout, not a relicensing of the old Molgreen photograph or
+the held Ahrens/image_gen adaptation.
 The sculpture's separate rights are NOT licensed by the photographer.
 Separate basis: German UrhG section 59 for permanent public sculpture;
 sections 62 and 63 address alterations and attribution.

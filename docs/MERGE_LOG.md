@@ -1103,6 +1103,42 @@ OTA from the real alpha.22 installer, draft-asset byte verification, both CI job
 and anonymous live OTA. Device appearance and migration still need user testing.
 Do not publish the local archive branch containing the held earlier Mann bitmap.
 
+## 2026-10-06: Frontal Mann photograph (local, unpublished)
+
+The user prefers the composition of the previous Ahrens/image_gen preview and
+approves a fresh mask of its original photograph without generative redrawing.
+Use Pauline Ahrens's 2022 frontal photograph, CC BY 4.0, verified against the
+Bildhauerei in Berlin source. Retain its head, neck, bronze mounting block and
+thin plinth; exclude only the surroundings and granite column. Preserve colour,
+camera angle, facial detail and proportions. The new PNG is independently
+reproducible from the original photograph and checked-in mask. The held
+image_gen bitmap remains excluded from distribution, including Git history.
+
+Contract C11: use a separate Mann v4 marker and frozen alpha.23 baseline.
+Recognize all earlier standard images and default metadata, even after v3;
+preserve customized/deleted/linked files, native placements and edited captions.
+Retain the Swedish author biography, matching and zoom. Only Mann's PNG changes;
+all other ornaments and previously published migration baselines remain exact.
+Update hash-scoped attribution, source records and the light/dark preview.
+No component code, upstream pin, bootstrap, version, push, tag or OTA changes.
+
+Validation is recorded in TESTING.md. The physical reader's colour display,
+tap/zoom and real installed-default migration still require device acceptance.
+
+## 2026-10-06: Publish alpha.24 frontal Mann photograph
+
+The user explicitly requests publication after reviewing the non-generative
+Ahrens replacement. Prepare alpha.24 as a prerelease, not a device-accepted beta.
+Keep upstream pins, the stable bootstrap/API 1, all other artwork and reading
+data unchanged. Retain the old AI-assisted bitmap's release hold and keep its
+local archive branch unpublished.
+
+Publication gates: full Lua/LuaJIT suites with external source-pixel audits,
+translations, a clean-commit sealed runtime package, forbidden-blob ancestry
+check, native OTA from the real alpha.23 installer, draft download verification,
+CI and anonymous live OTA. Physical reader appearance and migration remain
+device checks, separate from the automated release tests.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

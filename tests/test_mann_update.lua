@@ -124,13 +124,15 @@ H.test("interrupted local v1 replacement finishes its credits on retry", functio
     H.eq(files[target .. Update.notice], "licensed photo notice")
     assert(files[marker])
 end)
-H.test("alpha22 completion markers do not block new artwork migrations", function()
+H.test("alpha22 and alpha23 completion markers do not block new artwork migrations", function()
     fixture()
     files["/settings/orbitui/ornament-mann-photo-v2.updated"] = "complete"
+    files["/settings/orbitui/ornament-mann-photo-v3.updated"] = "complete"
     files["/settings/orbitui/ornament-authors-ii-v1.installed"] = "complete"
     H.eq(apply(), true)
     H.eq(files[target .. Update.file], "new image")
     H.eq(files["/settings/orbitui/ornament-mann-photo-v2.updated"], "complete")
+    H.eq(files["/settings/orbitui/ornament-mann-photo-v3.updated"], "complete")
     H.eq(files["/settings/orbitui/ornament-authors-ii-v1.installed"], "complete")
     assert(files[marker])
 end)

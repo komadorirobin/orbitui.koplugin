@@ -59,15 +59,16 @@ A separately marked update replaces only the checksum-recognized old default
 Kafka PNG. It updates recognized captions/placement and unedited notices,
 without resetting native overrides, custom images or deleted pieces/packs.
 
-Mann now uses Molgreen's 2024 Wikimedia photograph of Gustav Seitz's bronze
+Mann now uses Pauline Ahrens's frontal 2022 photograph of Gustav Seitz's bronze
 portrait, masked without AI redrawing. THOMAS-MANN-SEITZ.txt records the
-CC BY-SA 4.0 photo/cutout license and separate German panorama basis. The
+CC BY 4.0 photo/cutout license and separate German panorama basis. The
 superseded AI-assisted Mann image remains excluded from public distribution.
-A separate v3 checksum-guarded migration recognizes the original generated
-default, the local AI-assisted cutout and the alpha.22 photographic cutout, plus
-known captions, placement triples and notices. Older v1/v2 completion markers
-do not block this replacement. The wide plate is now excluded, retaining only
-the compact mounting block under the portrait; default size is adjusted to fit.
+A separate v4 checksum-guarded migration recognizes the original generated
+default, the local AI-assisted cutout and the alpha.22/23 Molgreen cutouts, plus
+known captions, placement triples and notices. Older v1/v2/v3 completion markers
+do not block this replacement. The existing bronze head, neck, mounting block
+and thin bronze plinth are retained; only surroundings and the granite column
+are masked out. The original camera angle, colours and proportions are retained.
 Custom artwork, captions, settings, linked files and deleted pieces remain
 untouched. The original author's biography, matching and tap-to-zoom remain.
 

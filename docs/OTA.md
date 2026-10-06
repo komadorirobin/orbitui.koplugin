@@ -122,6 +122,14 @@ overrides, links and deletions are preserved. Alpha.22 and earlier alpha release
 can update directly using the same preview channel and unchanged bootstrap/API 1.
 Code rollback retains the refined artwork and metadata.
 
+Version `0.1.0-alpha.24` replaces Mann with the frontal Pauline Ahrens photograph,
+masked without generative redrawing. Its independent v4 migration recognizes
+exact prior defaults, including alpha.23, even after older update markers were
+completed. Custom/deleted/linked artwork, edited captions, native placements
+and settings remain untouched. Other ornaments and the bootstrap/API 1 are
+unchanged. Alpha.23 and earlier alpha releases can update directly through the
+preview channel. Code rollback retains the new image and updated credits.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

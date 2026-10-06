@@ -1,7 +1,7 @@
 local M = {
     pack = "Authors",
-    marker = "ornament-mann-photo-v3.updated",
-    baseline = "assets/ornament-updates/mann-photo-v3.json",
+    marker = "ornament-mann-photo-v4.updated",
+    baseline = "assets/ornament-updates/mann-photo-v4.json",
     file = "Thomas Mann.png",
     notice = "THOMAS-MANN-SEITZ.txt",
 }

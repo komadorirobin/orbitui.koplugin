@@ -243,12 +243,13 @@ regenerate metadata with the existing author-info builder. The frozen
 `assets/ornament-updates/kafka-kielce-v1.json` records both alpha.20 and the
 unpublished old biography, never a duplicate of the old bitmap.
 
-### Thomas Mann / Gustav Seitz (Molgreen photograph)
+### Thomas Mann / Gustav Seitz (Ahrens photograph)
 
-The user approved Molgreen's 11 April 2024 Wikimedia photograph of Seitz's
-Berlin bronze. The current cutout preserves original photo pixels, colour,
-head/neck and compact mounting block. The wide plate, surroundings and separate
-granite column are masked away; scaling is proportional. It is
+The user approved a new non-generative cutout of Pauline Ahrens's frontal 2022
+photograph of Seitz's Berlin bronze, replacing the alpha.22/23 Molgreen view.
+The current cutout preserves original photo pixels, colour, head/neck,
+rectangular mounting block and thin bronze plinth. Only the surroundings and
+separate granite column are masked away; scaling is proportional. It is
 not an AI redraw. The Swedish biography, author matching and native zoom remain.
 
 Source, mask, output hashes and credits are in `scripts/artwork/mann-seitz.json`.
@@ -256,7 +257,7 @@ Reproduce with `build-sculpture-cutouts.py --spec scripts/artwork/mann-photo-cut
 --sources <photo-cache> --output <out>`, then `build-mann-photo.py --cutouts <out>`
 and `build-author-info.py`. Reviewed masks avoid a runtime/image-generation cost.
 
-Photo and adaptation: CC BY-SA 4.0. The sculpture's separate documented basis
+Photo and adaptation: CC BY 4.0. The sculpture's separate documented basis
 is German UrhG section 59 (permanent public art), with sections 62 and 63 for
 alterations and attribution. No sculpture-rights waiver or Foundation approval
 is claimed. `THOMAS-MANN-SEITZ.txt` records the exact scope and sources.
@@ -265,10 +266,10 @@ Git history. Do not push ancestors containing it.** This replacement does not
 clear that older adaptation. Keep a local backup and prepare a public history
 without the held bitmap before publishing; no history is rewritten here.
 
-`core/orbitui_mann_update.lua` now uses the independent `mann-photo-v3` marker
+`core/orbitui_mann_update.lua` now uses the independent `mann-photo-v4` marker
 and frozen baseline. It recognizes the original published generated PNG,
-the earlier local Seitz cutout and alpha.22's wide-base cutout, including
-completed v1/v2 markers. Known
+the earlier local Seitz cutout and both alpha.22/23 Molgreen cutouts, including
+completed v1/v2/v3 markers. Known
 captions, full default placement triples and unchanged notices are upgraded;
 custom/deleted/linked artwork, captions, reader overrides and other busts survive.
 Retries recognize the new hash; completed starts do not rehash. Rollback keeps
@@ -393,7 +394,7 @@ collection of separately licensed adaptations, not one combined derivative.
   Nasjonalmuseet credits Annar Bjorgli. [Source](https://snl.no/Fin_Haakon_Fr%C3%B8lich).
 - Musil: CC BY 3.0 photograph by Fanny Schertzer, crop by Lewenstein, of Bavaud's
   Geneva bronze. [Source](https://commons.wikimedia.org/wiki/File:Robert_Musil_-_Cimetiere_des_Rois_II.jpg).
-- Thomas Mann: Molgreen's CC BY-SA 4.0 photograph of Seitz's Berlin bronze,
+- Thomas Mann: Pauline Ahrens's CC BY 4.0 photograph of Seitz's Berlin bronze,
   masked without generative changes; separate German panorama basis above.
 - Kafka: the CC BY-SA 4.0 Kielce photo adaptation described above, not the retired
   invented ivory portrait. Lispector's old portrait is no longer bundled.

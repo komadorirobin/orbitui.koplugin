@@ -14,7 +14,7 @@ PACK = ROOT / "assets/ornaments/Authors"
 class MannAssetsTests(unittest.TestCase):
     def setUp(self):
         self.art = json.loads((ROOT / "scripts/artwork/mann-seitz.json").read_text())
-        self.migration = json.loads((ROOT / "assets/ornament-updates/mann-photo-v3.json").read_text())
+        self.migration = json.loads((ROOT / "assets/ornament-updates/mann-photo-v4.json").read_text())
 
     def test_reviewed_png_provenance_and_frozen_upgrade_hashes_agree(self):
         data = (PACK / self.art["file"]).read_bytes()
@@ -23,11 +23,14 @@ class MannAssetsTests(unittest.TestCase):
         self.assertEqual(self.migration["old_sha256"], [
             "e584052943e66f9edc23622a48fc7f4f1c7482d306c4d8a080c74a896e6e68a7",
             "fc6d71bd1538bee9a569a9838b7a00c5374469f0cc8efad3c70674a20c286bb9",
-            "04b38c71eab6150fa45643de6b09264ec442556369057f8cbd39d2a895d8d233"])
+            "04b38c71eab6150fa45643de6b09264ec442556369057f8cbd39d2a895d8d233",
+            "6ddaa5478909617f7cc59c31f406393d2bd18654af2714317979a21b1e1999a4"])
         prompt = next(a for a in json.loads((PACK / "prompts.json").read_text())["assets"]
                       if a["file"] == self.art["file"])
         self.assertEqual(prompt, self.art)
-        self.assertIn("20240411_xl_0704-Thomas_Mann_B%C3%BCste_3.jpg", self.art["source_image"])
+        self.assertIn("TIE_259_2_Pauline_Ahrens_2022.jpg", self.art["source_image"])
+        self.assertEqual(self.art["source_sha256"],
+                         "8222438aaf9122f0ffa6cb40bb216859b223642a95f2b6865bd959e695c012e9")
         self.assertNotIn(b"c2pa", data)
         self.assertNotIn("prompt", self.art)
         self.assertIn("No generative reconstruction", self.art["method"])
@@ -54,7 +57,7 @@ class MannAssetsTests(unittest.TestCase):
 
     def test_notice_separates_current_photo_basis_from_retired_image_hold(self):
         notice = (PACK / "THOMAS-MANN-SEITZ.txt").read_text()
-        for value in ("Molgreen", "Gustav Seitz", "1954", "2007", "CC BY-SA 4.0",
+        for value in ("Pauline Ahrens", "Gustav Seitz", "1954", "2007", "CC BY 4.0",
                       "RETIRED IMAGE - RELEASE HOLD REMAINS", "no generative reconstruction",
                       "Do not push", self.art["sha256"], self.art["source_sha256"],
                       self.art["rights_basis"], self.art["mask_sha256"],
@@ -64,7 +67,7 @@ class MannAssetsTests(unittest.TestCase):
         for path in (ROOT / "core/orbitui_author_ornaments.lua", ROOT / "scripts/check-package.lua"):
             self.assertIn("THOMAS-MANN-SEITZ.txt", path.read_text())
         notice = (PACK / "ATTRIBUTION.txt").read_text()
-        self.assertIn("THOMAS MANN.PNG - MOLGREEN PHOTOGRAPHIC CUTOUT", notice)
+        self.assertIn("THOMAS MANN.PNG - PAULINE AHRENS PHOTOGRAPHIC CUTOUT", notice)
         self.assertNotIn("ORIGINAL PORTRAIT INTERPRETATIONS", notice)
 
     def test_old_info_is_frozen_and_new_info_describes_the_actual_image(self):
@@ -79,7 +82,9 @@ class MannAssetsTests(unittest.TestCase):
         entry = json.loads((PACK / "ornaments.json").read_text())[self.art["file"]]
         self.assertIn(self.art["info"], entry["info"])
         self.assertNotIn("Original AI-generated", entry["info"])
-        self.assertNotIn("Pauline Ahrens", entry["info"])
+        self.assertIn("Pauline Ahrens", entry["info"])
+        self.assertNotIn("Molgreen", entry["info"])
+        self.assertNotIn("CC BY-SA", entry["info"])
         self.assertNotIn("image_gen", entry["info"])
         for name, hashes in self.migration["documents"].items():
             self.assertNotIn(hashlib.sha256((PACK / name).read_bytes()).hexdigest(), hashes)
@@ -110,10 +115,37 @@ class MannAssetsTests(unittest.TestCase):
     def test_notice_builder_preserves_the_frozen_migration_and_provenance(self):
         paths = [PACK / "THOMAS-MANN-SEITZ.txt", ROOT / "scripts/artwork/mann-seitz.json",
                  ROOT / "assets/ornament-updates/mann-photo-v2.json",
-                 ROOT / "assets/ornament-updates/mann-photo-v3.json"]
+                 ROOT / "assets/ornament-updates/mann-photo-v3.json",
+                 ROOT / "assets/ornament-updates/mann-photo-v4.json"]
         before = [p.read_bytes() for p in paths]
         subprocess.run(["python3", "scripts/build-mann-photo.py"], cwd=ROOT, check=True)
         self.assertEqual(before, [p.read_bytes() for p in paths])
+
+    def test_alpha23_upgrade_preserves_biography_other_images_and_published_baselines(self):
+        def published(path):
+            return subprocess.check_output(["git", "show", f"v0.1.0-alpha.23:{path}"], cwd=ROOT)
+
+        for path in (ROOT / "assets/ornament-updates").glob("*.json"):
+            if path.name != "mann-photo-v4.json":
+                self.assertEqual(path.read_bytes(), published(path.relative_to(ROOT).as_posix()))
+        for path in (ROOT / "assets/ornaments").rglob("*.png"):
+            if path != PACK / self.art["file"]:
+                self.assertEqual(path.read_bytes(), published(path.relative_to(ROOT).as_posix()))
+        old = json.loads(published("assets/ornaments/Authors/ornaments.json"))
+        new = json.loads((PACK / "ornaments.json").read_text())
+        for name in old:
+            if name != self.art["file"]:
+                self.assertEqual(old[name], new[name])
+        previous, current = old[self.art["file"]], new[self.art["file"]]
+        heading = "Om bysten / bildkrediter:"
+        self.assertEqual(previous["info"].split(heading)[0], current["info"].split(heading)[0])
+        self.assertIn(previous["info"], self.migration["old_info"])
+        self.assertIn({key: previous[key] for key in ("scale", "anchor", "lift")},
+                      self.migration["old_placements"])
+        for key in ("night", "tap", "mirror", "pad"):
+            self.assertEqual(previous[key], current[key])
+        for name, hashes in self.migration["documents"].items():
+            self.assertIn(hashlib.sha256(published(f"assets/ornaments/Authors/{name}")).hexdigest(), hashes)
 
 
 if __name__ == "__main__":

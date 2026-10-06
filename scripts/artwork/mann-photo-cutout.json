@@ -3,25 +3,25 @@
   "assets": [
     {
       "file": "Thomas Mann.png",
-      "source_file": "mann-molgreen-3.jpg",
+      "source_file": "mann-ahrens-2022.jpg",
       "references": [
-        "https://commons.wikimedia.org/wiki/File:20240411_xl_0704-Thomas_Mann_B%C3%BCste_3.jpg",
+        "https://bildhauerei-in-berlin.de/bildwerk/portraet-thomas-mann-10198/",
         "https://www.gesetze-im-internet.de/urhg/__59.html",
         "https://www.gesetze-im-internet.de/urhg/__62.html",
         "https://www.gesetze-im-internet.de/urhg/__63.html"
       ],
-      "source_image": "https://upload.wikimedia.org/wikipedia/commons/8/8f/20240411_xl_0704-Thomas_Mann_B%C3%BCste_3.jpg",
-      "reference_credit": "Gustav Seitz, Portrat Thomas Mann, bronze portrait 1954; Berlin cast unveiled 2007, Strasse der Erinnerung, Berlin-Moabit. Photograph: Molgreen, 11 April 2024, CC BY-SA 4.0.",
-      "artwork_license": "CC BY-SA 4.0",
-      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
-      "rights_basis": "Photograph and cutout: CC BY-SA 4.0. Separate sculpture basis: German UrhG section 59 for a two-dimensional photograph of permanently installed public art, with sections 62 and 63 on alterations and attribution. Masking removes surroundings, not sculptural features; scaling is proportional. This is not a license from the sculptor or a worldwide sculpture-rights waiver. The former AI-assisted image remains excluded from public distribution.",
-      "info": "Gustav Seitzs bronsporträtt av Thomas Mann (1954), avgjutning uppställd 2007 i Straße der Erinnerung, Berlin-Moabit. Foto: Molgreen, 11 april 2024. Foto och friläggning: CC BY-SA 4.0. Skulpturen avbildas med stöd av tysk panoramafrihet (UrhG § 59); fotografens licens är inte en separat licens till skulpturen.\nhttps://commons.wikimedia.org/wiki/File:20240411_xl_0704-Thomas_Mann_B%C3%BCste_3.jpg\nhttps://creativecommons.org/licenses/by-sa/4.0/",
-      "reference_size": [900,1195],
-      "display_scale": 0.85,
-      "framing": "The bronze head, neck and compact mounting block are retained. The wide mounting plate and granite column are excluded; no new base is drawn.",
-      "edge_band": 2,
-      "outline": [[235,511],[235,488],[353,468],[353,420],[440,401],[443,394],[435,382],[431,370],[423,360],[419,352],[416,342],[417,331],[419,318],[421,306],[421,295],[420,283],[417,273],[405,276],[396,272],[389,269],[379,257],[372,240],[367,223],[367,206],[372,194],[384,187],[385,169],[386,153],[390,137],[396,120],[405,104],[417,90],[433,79],[452,70],[470,64],[490,63],[509,66],[530,73],[538,84],[552,94],[564,104],[573,117],[576,133],[578,145],[581,155],[585,157],[589,159],[590,164],[589,173],[587,181],[584,189],[582,199],[580,210],[579,215],[580,223],[581,229],[580,236],[579,243],[577,248],[578,256],[579,262],[579,273],[578,284],[578,289],[577,299],[575,310],[571,319],[563,326],[550,331],[535,335],[525,343],[519,352],[514,362],[513,373],[513,386],[510,398],[507,407],[572,414],[573,470],[614,477],[615,498],[433,486]],
-      "exclude": [[[230,511],[433,486],[615,498],[640,530],[230,530]], [[0,466],[352,466],[433,459],[572,471],[572,414],[900,414],[900,1195],[0,1195]]]
+      "source_image": "https://bildhauerei-in-berlin.de/wp-content/uploads/TIE_259_2_Pauline_Ahrens_2022.jpg",
+      "reference_credit": "Gustav Seitz, Portrat Thomas Mann, bronze portrait 1954; Berlin cast unveiled 2007, Strasse der Erinnerung, Berlin-Moabit. Photograph: Pauline Ahrens, 2022, CC BY 4.0 (Bildhauerei in Berlin; accessed 2026-10-06).",
+      "artwork_license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "rights_basis": "Photograph and cutout: CC BY 4.0. Separate sculpture basis: German UrhG section 59 for a two-dimensional photograph of permanently installed public art, with sections 62 and 63 on alterations and attribution. Masking removes surroundings and the granite column; the bronze portrait, mounting block and thin bronze plinth are retained. Scaling is proportional. This is not a license from the sculptor or a worldwide sculpture-rights waiver. The former AI-assisted image remains excluded from public distribution.",
+      "info": "Gustav Seitzs bronsporträtt av Thomas Mann (1954), avgjutning uppställd 2007 i Straße der Erinnerung, Berlin-Moabit. Foto: Pauline Ahrens, 2022, Bildhauerei in Berlin. Foto och friläggning: CC BY 4.0. Separat grund för skulpturavbildningen: tysk panoramafrihet (UrhG § 59); fotografens licens omfattar inte själva skulpturen.\nhttps://bildhauerei-in-berlin.de/bildwerk/portraet-thomas-mann-10198/\nhttps://creativecommons.org/licenses/by/4.0/",
+      "reference_size": [1280,1920],
+      "display_scale": 1.0,
+      "framing": "The frontal bronze head, neck, rectangular mounting block and thin bronze plinth are retained. Only the surroundings and granite column are masked out; no new base is drawn or straightened.",
+      "edge_band": 4,
+      "outline": [[220,1485],[226,1430],[333,1427],[342,1263],[487,1258],[471,1239],[449,1219],[437,1194],[431,1170],[433,1148],[431,1117],[426,1084],[426,1043],[401,1006],[382,973],[366,950],[349,962],[330,958],[318,943],[311,919],[307,894],[300,870],[296,838],[295,806],[299,780],[309,763],[323,758],[335,774],[338,741],[335,722],[336,684],[340,643],[342,610],[349,571],[361,533],[377,499],[397,466],[423,441],[452,418],[479,399],[512,385],[548,373],[578,366],[602,360],[629,361],[651,364],[665,369],[675,378],[707,392],[738,411],[764,435],[786,464],[807,496],[824,532],[836,569],[843,609],[848,650],[850,681],[854,695],[850,717],[850,742],[866,741],[880,746],[892,759],[898,782],[896,809],[892,839],[889,868],[884,898],[875,922],[860,942],[840,954],[819,958],[806,981],[791,1003],[777,1026],[774,1063],[775,1102],[772,1139],[767,1173],[754,1196],[734,1204],[731,1229],[719,1255],[855,1253],[871,1420],[977,1418],[988,1473]],
+      "exclude": [[[0,1490],[220,1485],[988,1473],[1280,1468],[1280,1920],[0,1920]]]
     }
   ]
 }

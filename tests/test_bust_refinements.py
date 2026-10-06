@@ -37,7 +37,7 @@ class BustRefinementTests(unittest.TestCase):
 
     def test_new_migrations_recognize_exact_alpha22_defaults_and_keep_biographies(self):
         for pack, name, baseline in (
-            ("Authors", "Thomas Mann.png", "mann-photo-v3"),
+            ("Authors", "Thomas Mann.png", "mann-photo-v4"),
             ("Authors II", "Ernest Hemingway.png", "hemingway-photo-v1"),
         ):
             prefix = f"assets/ornaments/{pack}/"
@@ -48,7 +48,8 @@ class BustRefinementTests(unittest.TestCase):
             self.assertEqual(hashlib.sha256((ROOT / prefix / name).read_bytes()).hexdigest(), migration["new_sha256"])
             self.assertIn(old["info"], migration["old_info"])
             self.assertIn({key: old[key] for key in ("scale", "anchor", "lift")}, migration["old_placements"])
-            self.assertEqual(new["info"], old["info"])
+            heading = "Om bysten / bildkrediter:"
+            self.assertEqual(new["info"].split(heading)[0], old["info"].split(heading)[0])
             for key in ("night", "tap", "mirror", "pad"):
                 self.assertEqual(new[key], old[key])
             for document, hashes in migration["documents"].items():
@@ -73,14 +74,14 @@ class BustRefinementTests(unittest.TestCase):
             self.assertLessEqual(max(bases) - min(bases), 4)
             self.assertLessEqual(bottom - 1 - max(bases), 1)
 
-    def test_mann_has_compact_mounting_block_and_preserves_original_photo(self):
+    def test_mann_has_frontal_mounting_block_and_plinth_from_original_photo(self):
         art = load("scripts/artwork/mann-seitz.json")
         old = json.loads(published("scripts/artwork/mann-seitz.json"))
-        self.assertEqual(art["source_sha256"], old["source_sha256"])
-        self.assertEqual(art["source_image"], old["source_image"])
-        self.assertIn("wide mounting plate", art["framing"])
-        self.assertEqual(art["placement"]["scale"], .85)
-        self.assertLess(art["alpha_bbox_at_24"][1] / art["height"], .06)
+        self.assertNotEqual(art["source_sha256"], old["source_sha256"])
+        self.assertIn("Pauline_Ahrens_2022.jpg", art["source_image"])
+        self.assertIn("thin bronze plinth", art["framing"])
+        self.assertEqual(art["placement"]["scale"], 1)
+        self.assertLess(art["alpha_bbox_at_24"][1] / art["height"], .09)
 
 
 if __name__ == "__main__":

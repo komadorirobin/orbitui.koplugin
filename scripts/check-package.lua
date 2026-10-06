@@ -39,7 +39,7 @@ for _, path in ipairs({
     "core/orbitui_author_info.lua", "assets/ornament-updates/author-info-v1.json",
     "core/orbitui_kafka_update.lua", "assets/ornament-updates/kafka-kielce-v1.json",
     "core/orbitui_lispector_retirement.lua",
-    "core/orbitui_mann_update.lua", "assets/ornament-updates/mann-photo-v3.json",
+    "core/orbitui_mann_update.lua", "assets/ornament-updates/mann-photo-v4.json",
     "core/orbitui_single_ornament_update.lua", "core/orbitui_hemingway_update.lua",
     "assets/ornament-updates/hemingway-photo-v1.json",
     "assets/ornaments/Authors II/ERNEST-HEMINGWAY.txt",

@@ -446,6 +446,17 @@ must preserve later reader edits and completed markers prevent rehashing. No Rio
 image is bundled. Do not reset seed markers, restore the old image or alter any
 other author's artwork. Test the retirement and inclusion/exclusion in packages.
 
+The subsequent approval of the frontal Ahrens photograph authorizes a new
+non-generative mask of that original, not reuse of the held image_gen output.
+Retain the original bronze head, neck, block and thin plinth, without changes
+to colour, facial detail, proportions or camera angle. The granite column and
+surroundings are excluded. Photo/cutout terms are CC BY 4.0, documented separately
+from sculpture rights. Mann v4 adds exact alpha.23 defaults to its frozen
+baseline; completed v1/v2/v3 markers must not block it. Preserve all earlier
+baselines, the biography before artwork credits, other author assets and the
+same custom/deleted/linked image and setting protections. No version bump,
+release or change to the held bitmap's status is implied by this approval.
+
 The Japan pack uses ordinary native ornament placement, never author binding.
 Keep its install and defaults markers independent of the author packs. All
 bundled packs share `core/orbitui_ornament_install.lua` for additive atomic copies;

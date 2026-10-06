@@ -2,6 +2,22 @@
 
 ## Automated
 
+Frontal Ahrens/Mann replacement (local, unpublished): eight Python asset checks
+cover exact source-photo/mask reproduction, hashes and licenses, unchanged
+author biography and other ornament PNGs, frozen published baselines, and
+recognition of the real alpha.23 metadata/notices. The shared artwork updater's
+32 Lua cases include completed alpha.23 markers, custom/deleted/linked artwork,
+native placements, interrupted writes and retry. The full source-audited Python
+suite passes 88 checks; full Lua and LuaJIT runs pass 389 OrbitUI cases, 351 Bookshelf
+suites (two SQLite suite skips; existing native-font cases also skipped), all
+13 SimpleUI files, and all 41 translation checks. The light/dark shelf comparison
+was visually reviewed; it is not a screenshot from a reader. An isolated-index
+runtime ZIP passes inventory and archive integrity checks (1320 manifest files,
+1371 entries); its embedded Mann PNG matches the reviewed SHA-256. This is an
+unpublished working-tree package, not a replacement alpha.23 release or a
+clean-commit release build. Physical-device appearance and migration remain
+untested. No publication requested.
+
 Mann/Molgreen replacement (local, unreleased): fifteen targeted Lua cases
 cover both old image hashes, a completed v1 marker, current-image retries,
 old versus custom notices, default placement triples, custom/deleted/linked

@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
-"""Import a reviewed Molgreen cutout and build its hash-scoped credits.
+"""Import the reviewed Ahrens photographic cutout and hash-scoped credits.
 
-Use --cutouts with build-sculpture-cutouts.py's output. The v3 migration
-baseline is frozen before replacing the old local asset; later builds retain it.
+Use --cutouts with build-sculpture-cutouts.py's output. The v4 migration
+baseline includes published alpha.23 defaults; later builds retain it.
 """
 import argparse
 import hashlib
 import json
 from pathlib import Path
 import shutil
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 PACK = ROOT / "assets/ornaments/Authors"
 ART = ROOT / "scripts/artwork/mann-seitz.json"
-MIGRATION = ROOT / "assets/ornament-updates/mann-photo-v3.json"
+MIGRATION = ROOT / "assets/ornament-updates/mann-photo-v4.json"
+PREVIOUS_RELEASE = "v0.1.0-alpha.23"
 NOTICE = "THOMAS-MANN-SEITZ.txt"
 RETIRED_HASH = "fc6d71bd1538bee9a569a9838b7a00c5374469f0cc8efad3c70674a20c286bb9"
 
@@ -36,21 +38,25 @@ def main():
         art = assets[0]
         assert digest(args.cutouts / art["file"]) == art["sha256"]
         if not MIGRATION.exists():
-            old = json.loads((ROOT / "assets/ornament-updates/mann-photo-v2.json").read_text())
-            previous_art = json.loads(ART.read_text())
-            previous = json.loads((PACK / "ornaments.json").read_text())[art["file"]]
+            def published(path):
+                return subprocess.check_output([
+                    "git", "show", f"{PREVIOUS_RELEASE}:{path.relative_to(ROOT).as_posix()}"
+                ], cwd=ROOT)
+            old = json.loads(published(ROOT / "assets/ornament-updates/mann-photo-v3.json"))
+            previous_art = json.loads(published(ART))
+            previous = json.loads(published(PACK / "ornaments.json"))[art["file"]]
             assert previous_art["sha256"] == old["new_sha256"]
-            assert digest(PACK / art["file"]) == old["new_sha256"]
+            assert hashlib.sha256(published(PACK / art["file"])).hexdigest() == old["new_sha256"]
             documents = old["documents"]
             for name in (*documents, NOTICE):
                 values = documents.setdefault(name, [])
-                value = digest(PACK / name)
+                value = hashlib.sha256(published(PACK / name)).hexdigest()
                 if value not in values:
                     values.append(value)
             write_json(MIGRATION, {
                 "old_sha256": old["old_sha256"] + [old["new_sha256"]],
                 "new_sha256": art["sha256"],
-                "old_info": old["old_info"] + [previous["info"]],
+                "old_info": list(dict.fromkeys(old["old_info"] + [previous["info"]])),
                 "old_placements": old["old_placements"] + [previous_art["placement"]],
                 "documents": documents,
             })
@@ -61,12 +67,12 @@ def main():
     assert art["kind"] == "Masked original photograph"
     assert digest(PACK / art["file"]) == art["sha256"]
     sections = [
-        "THOMAS MANN / GUSTAV SEITZ - MOLGREEN PHOTOGRAPHIC CUTOUT",
+        "THOMAS MANN / GUSTAV SEITZ - PAULINE AHRENS PHOTOGRAPHIC CUTOUT",
         "These credits apply ONLY to PNG SHA-256 " + art["sha256"]
         + ". They do not license custom artwork or the retired AI-assisted image.",
         art["reference_credit"],
         "Photograph and adapted photograph: " + art["artwork_license"] + "\n" + art["license_url"],
-        "Changes by OrbitUI contributors: background masked out. " + art["framing"] + " Proportional resizing only. Original photo colours and portrait details are preserved; no generative reconstruction or retouching. ShareAlike applies to this adapted photograph, not the whole collection. No endorsement is implied.",
+        "Changes by OrbitUI contributors: background masked out. " + art["framing"] + " Proportional resizing only. Original photo colours and portrait details are preserved; no generative reconstruction or retouching. This is a new photographic cutout, not a relicensing of the previous Molgreen photograph or the held image_gen adaptation. No endorsement is implied.",
         "Sources:\n" + "\n".join(art["references"])
         + "\nOriginal photograph: " + art["source_image"],
         "Source SHA-256: " + art["source_sha256"]
