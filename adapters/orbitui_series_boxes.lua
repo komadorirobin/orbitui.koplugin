@@ -29,6 +29,11 @@ function M.shelf(shelf)
             callbacks=opts.callbacks, book_look=shelf.bookLook,
         }
     end
+    local recess_columns = shelf.recessColumns
+    shelf.recessColumns = function(entry, x, inset)
+        if entry.series_box then return Boxes.shadowColumns(entry.series_box, x, inset) end
+        return recess_columns(entry, x, inset)
+    end
 end
 
 function M.widget(widget)

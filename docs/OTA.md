@@ -175,6 +175,16 @@ preview channel and unchanged bootstrap/API 1. No settings migration, reading
 data, artwork or upstream baseline changes are included. Code rollback restores
 the earlier presentation. Device visual acceptance remains open.
 
+Version `0.1.0-alpha.30` fixes alpha.29's crash when a fully finished series box
+is displayed, including after a restart. The completed-mark compositor now
+receives an explicitly sized blank card. Slipcase fills preserve cover hues
+on colour screens, with lighter boards and rims, and contact shadows follow
+the sloping side instead of a rectangular footprint. Alpha.29 and earlier
+alpha releases can update directly through the same preview channel and
+unchanged bootstrap/API 1. No settings migration, reading-data, artwork or
+upstream baseline changes are included. Device visual acceptance remains open.
+Code rollback to alpha.29 also restores its completed-box crash.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

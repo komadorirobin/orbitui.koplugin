@@ -135,4 +135,38 @@ function M.spineSlots(shape, stroke)
     return slots
 end
 
+-- Recess heights are measured from the row's baseline, not the book's foot.
+-- Describe the painted silhouette as joined strips so native shadows follow
+-- both sloping edges instead of leaving a rectangular stamp below the side.
+function M.shadowColumns(p, x, inset)
+    local cols = {}
+    inset = inset or 0
+    local function add(first, last, h, foot)
+        if last <= first then return end
+        local prev = cols[#cols]
+        if prev and prev.h == h and prev.foot == foot then
+            prev.w = prev.w + last-first
+        else
+            cols[#cols+1] = {x=x+first, w=last-first, h=h, foot=foot}
+        end
+    end
+    local dx = 0
+    while dx < p.cover_w do
+        local rise = math.min(p.depth, math.floor(dx*p.depth/p.side))
+        local next_dx = rise < p.depth
+            and math.min(p.cover_w, math.ceil((rise+1)*p.side/p.depth)) or p.cover_w
+        add(dx, next_dx, p.face_h+inset+rise, inset)
+        dx = next_dx
+    end
+    dx = 0
+    while dx < p.side do
+        local rise = math.floor((dx+1)*p.depth/p.side)
+        local next_dx = p.depth > 0
+            and math.min(p.side, math.ceil((rise+1)*p.side/p.depth)-1) or p.side
+        add(p.cover_w+dx, p.cover_w+next_dx, p.h+inset, inset+rise)
+        dx = next_dx
+    end
+    return cols
+end
+
 return M

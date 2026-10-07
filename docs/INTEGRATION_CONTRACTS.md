@@ -181,6 +181,12 @@ look and sample at most five additional visible members through the native
 persistent colour cache, at construction only. Never decode all members or
 retain their cover buffers. Missing covers use native stable fallback tones.
 No preferences or metadata are migrated.
+All procedural sleeve fills use `paintRectRGB32`, not `paintRect` (whose C
+fast path discards RGB hue). The case board and rim keep a lighter version of
+the cached first-cover colour, which is already luminance-capped for native
+spine lettering; do not compound that clamp into a nearly black case. Only
+the recessed opening and the contrasting title band are deliberately dark.
+Night pre-inversion and native greyscale conversion still apply.
 Its top and right side share the same `(side, -depth)` projection: the side's
 lower edge recedes just like its upper edge, while the front sits level on the
 plank. Preserve wallpaper in the unpainted front-left/rear-right corners;
@@ -188,6 +194,13 @@ never flatten these into a rectangular top strip or side foot. Rounded spines,
 gaps, end highlights and the outer lip stay inside both rims and share that
 projection. Use bounded drawing strips, not per-volume buffers, and make
 pagination consume the revised widths while preserving the height budget.
+The native `SpineShelf.recessColumns` seam returns one shadow column for an
+ordinary book, preserving its existing geometry. The series adapter instead
+uses `Boxes.shadowColumns`: joined strips matching both sloping edges and the
+actual inset from the row baseline. Both asset and fallback shadow painters
+must consume them. In particular, the contact shadow must rise with the rear
+foot, not leave a flat rectangular band under the side. Build these bounded
+strips only for visible boxes, not per frame or per series member.
 The front's slim dark title band shows the series name only, without a volume-count
 line. Its top-right read/total badge uses the native `bookshelf_count_badge`
 renderer (including badge scale, colours and night-mode recolouring) and counts
@@ -214,6 +227,10 @@ strips rather than allocating another cover buffer. Reuse the read-count sweep;
 partial/unknown/empty membership has no completed treatment, and a rebuild
 after reverting a member's status must remove it. Source book status is never
 changed. The helper does not alter ordinary book rendering.
+The factory's blank synthetic card MUST have explicit dimensions: KOReader's
+`OverlapGroup:init` queries every child's size even with an explicit group
+size, while bare `Widget:getSize` returns nil. The completion tests deliberately
+model this strict contract so a fully read box cannot reintroduce the crash.
 Inside a series drill, or a `single_series` chip with no deeper drill, omit
 the redundant black section badges below the planks; retain the series heading
 and all individual books. `spineShowSectionBadges` in the series-box adapter

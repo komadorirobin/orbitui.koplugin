@@ -1889,6 +1889,17 @@ end
 function SpineShelf.shadowAssets()
     return BookshelfSettings.read("spine_shadow_assets", true) ~= false
 end
+
+-- A render-time seam for nonrectangular shelf items. Ordinary books keep
+-- their native shadow reservation; adapters may return joined silhouettes.
+function SpineShelf.recessColumns(entry, x, inset)
+    return {{
+        x = x, w = entry.w,
+        h = entry._drawn_h or entry.h or 0,
+        foot = entry.face_out and inset or 0,
+        fp = entry.book and entry.book.filepath or nil,
+    }}
+end
 -- paintShadowAssets(bb, x, y, cols, opts) -> true when the masks painted
 -- the row's recess; false (masks missing, or a paint error) leaves it to the
 -- banded painter.
@@ -4810,12 +4821,9 @@ function SpineShelf.rowWidget(opts)
             -- a selection flip does not rebuild it, so anything in here that
             -- depended on which book was selected had to be kept in step by
             -- hand, and twice was not.
-            recess_cols[#recess_cols + 1] = {
-                x = cursor, w = e.w,
-                h = (e._drawn_h or e.h or 0),
-                foot = (e.face_out and inset or 0),
-                fp = e.book and e.book.filepath or nil,
-            }
+            for _, col in ipairs(SpineShelf.recessColumns(e, cursor, inset)) do
+                recess_cols[#recess_cols + 1] = col
+            end
             cursor = cursor + e.w
         end
     end

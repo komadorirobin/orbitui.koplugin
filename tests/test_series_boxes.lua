@@ -21,6 +21,8 @@ end
 local shelf_source, widget_source = source("bookshelf_spine_shelf"), source("bookshelf_widget")
 local flat_body = assert(shelf_source:match("function SpineShelf%._flattenItems%(items%)\n(.-)\nend"))
 local native_flatten = compile("return function(items)\n" .. flat_body .. "\nend", {})()
+local recess_args,recess_body=shelf_source:match("function SpineShelf%.recessColumns%((.-)%)\n(.-)\nend")
+local native_recess=compile("return function("..recess_args..")\n"..recess_body.."\nend",{})()
 local function nativeMethod(name, env)
     local args, body = widget_source:match("function BookshelfWidget:" .. name .. "%((.-)%)\n(.-)\nend")
     assert(body, name)
@@ -227,6 +229,7 @@ H.test("native row builds omit repeated series badges and restore them on naviga
     end
     local plan={entries=entries,rows={{first=1,last=3},{first=4,last=6}},shown=6}
     local shelf={
+        recessColumns=native_recess,
         plan=function() return plan end,
         faceOutSpec=function() return {all=true} end,
         plankUnit=function() return 10 end, plankFace=function() return 20 end,
@@ -378,7 +381,19 @@ package.loaded["ffi/util"]={template=function(s,n) return (s:gsub("%%1",tostring
 -- Real native compositor/factory and preference decision, with only the
 -- drawing primitives and font metrics replaced. No cover is loaded here.
 local Spine=W:extend{}
+local BareWidget=H.widget()
+function BareWidget:getSize() return self.dimen end
 local Group=W:extend{}
+function Group:init()
+    -- KOReader's OverlapGroup measures EVERY child at construction, even
+    -- when the group has explicit dimensions. Widget:getSize returns nil
+    -- without dimen; the old permissive zero-size mock hid a device crash.
+    for _,child in ipairs(self) do
+        local size=child:getSize()
+        assert(size and type(size.w)=="number" and type(size.h)=="number",
+            "OverlapGroup child has no dimensions")
+    end
+end
 function Group:paintTo(bb,x,y)
     for _,child in ipairs(self) do
         local offset=child.overlap_offset or {0,0}
@@ -391,7 +406,7 @@ local Vertical=W:extend{}
 package.loaded["ui/widget/verticalgroup"]=Vertical
 package.loaded["ui/widget/verticalspan"]=W
 local CP=package.loaded["lib/bookshelf_cover_progress"]
-local env={SpineWidget=Spine,Widget=W,FrameContainer=Frame,ColorSafeFrame=Frame,
+local env={SpineWidget=Spine,Widget=BareWidget,FrameContainer=Frame,ColorSafeFrame=Frame,
     unpack=unpack or table.unpack,
     CenterContainer=Center,OverlapGroup=Group,Geom=W,Screen=package.loaded.device.screen,
     Size=package.loaded["ui/size"],Space=package.loaded["lib/bookshelf_space"],
@@ -435,6 +450,32 @@ CP.buildHaloShadowedGlyphWidget=function(_,size,halo,sx,sy)
 end
 package.loaded["lib/bookshelf_spine_widget"]=Spine
 local BoxWidget=require("core/orbitui_series_box_widget")
+local function surface(bb)
+    bb.paintRectRGB32=bb.paintRectRGB32 or bb.paintRect
+    return bb
+end
+
+H.test("cover-tinted sleeve inks use the RGB blitter and remain visible rather than near-black", function()
+    local box=Boxes.box(members(3,"Saga"),"Saga")
+    local shape=Boxes.geometry(box,{w=160,face_h=240,depth=8,h=248},{content_w=800})
+    for _,look in ipairs({{r=65,g=120,b=95},{r=150,g=80,b=50},{r=40,g=60,b=160}}) do
+        local w=BoxWidget:new{entry={book=box,series_box=shape,look=look},
+            width=shape.w,height=300,inset=10}
+        local fills,board=0
+        w:paintTo({paintRect=function(_,_,_,_,_,c)
+            assert(type(c)~="table","RGB ink was sent through the greyscale fast path")
+        end,paintRectRGB32=function(_,x,y,rw,rh,c)
+            fills=fills+1
+            if x==0 and y==w.top+shape.depth and rw==shape.cover_w and rh==shape.face_h then
+                board=c
+            end
+        end},0,0)
+        assert(fills>0 and board)
+        for _,k in ipairs({"r","g","b"}) do assert(board[k]>=look[k]) end
+        assert(board.r~=board.g and board.g~=board.b,"cover hue must survive")
+        H.eq(w[2].fgcolor.r,246) -- Title retains its contrasting ink.
+    end
+end)
 
 H.test("only visible bindings sample cover colours, reusing the first look and never on paint", function()
     local calls={}
@@ -458,7 +499,7 @@ H.test("only visible bindings sample cover colours, reusing the first look and n
     for _,night in ipairs({false,true}) do
         G_reader_settings={isTrue=function() return night end}
         local index=0
-        w:paintTo({paintRect=function(_,x,y,rw,rh,c)
+        w:paintTo(surface{paintRect=function(_,x,y,rw,rh,c)
             if type(c)=="table" then
                 index=index+1
                 for _,k in ipairs({"r","g","b"}) do
@@ -509,7 +550,7 @@ H.test("read-total badges use live cached status only for visible deduplicated b
     for _,b in ipairs(box.books) do H.eq(calls[b.filepath],1) end
     local reads=0; for _ in pairs(calls) do reads=reads+1 end
     H.eq(reads,16)
-    local bb={paintRect=function() end}
+    local bb=surface{paintRect=function() end}
     w:paintTo(bb,0,0); w:paintTo(bb,0,0)
     for _,b in ipairs(box.books) do H.eq(calls[b.filepath],1) end
     statuses[box.books[13].filepath]="finished"
@@ -653,7 +694,7 @@ H.test("fade touches each silhouette pixel once; labels and native marks stay cl
                         assert(rw>0 and rh>0)
                         for py=y,y+rh-1 do for px=x,x+rw-1 do fn(py*1000+px) end end
                     end
-                    local bb={paintRect=function(_,x,y,rw,rh,c)
+                    local bb=surface{paintRect=function(_,x,y,rw,rh,c)
                         if c=="badge-day" or (type(c)=="string" and c:match("^text:"))
                                 or c=="completion-tick" or c=="completion-bookmark" then decoration=true end
                         pixels(x,y,rw,rh,function(k) if not decoration then painted[k]=true end end)
@@ -694,7 +735,7 @@ H.test("read badges stay on the front, clear of the title, including small faces
             local w=BoxWidget:new{entry={book=box,series_box=shape,look={r=90,g=120,b=80}},
                 width=shape.w,height=410,inset=10}
             local badge_rect,title_rect
-            local bb={paintRect=function(_,x,y,rw,rh,c)
+            local bb=surface{paintRect=function(_,x,y,rw,rh,c)
                 assert(x>=0 and x+rw<=shape.w and y>=0 and y+rh<=400)
                 if c=="badge-day" then badge_rect={x=x,y=y,w=rw,h=rh} end
                 if c=="text:Saga" then title_rect={x=x,y=y,w=rw,h=rh} end
@@ -724,7 +765,7 @@ H.test("top and side share one projection with a sloping lower side edge", funct
                 local w=BoxWidget:new{entry={book=box,series_box=shape,look={r=90,g=120,b=80}},
                     width=shape.w,height=410,inset=10}
                 local first,last,side_top={},{},{}
-                local bb={paintRect=function(_,x,y,rw,rh)
+                local bb=surface{paintRect=function(_,x,y,rw,rh)
                     if rh<=0 then return end
                     for px=x,x+rw-1 do
                         first[px]=math.min(first[px] or math.huge,y-w.top)
@@ -733,6 +774,18 @@ H.test("top and side share one projection with a sloping lower side edge", funct
                     end
                 end}
                 w:paintTo(bb,0,0)
+                local columns=Boxes.shadowColumns(shape,13,10)
+                assert(#columns<=2*depth+3,"shadow geometry must be bounded by projection depth")
+                local cursor=13
+                for _,col in ipairs(columns) do
+                    H.eq(col.x,cursor); assert(col.w>0)
+                    for px=col.x-13,col.x-13+col.w-1 do
+                        H.eq(410-col.h,w.top+first[px],"shadow top must meet the actual box")
+                        H.eq(410-col.foot,w.top+last[px]+1,"contact shadow must follow the diagonal foot")
+                    end
+                    cursor=cursor+col.w
+                end
+                H.eq(cursor,13+shape.w)
                 for x=0,shape.cover_w-1 do
                     local top=math.max(0,depth-math.floor(x*depth/shape.side))
                     H.eq(first[x],top,"top plane must recede instead of painting a flat strip")
@@ -751,6 +804,41 @@ H.test("top and side share one projection with a sloping lower side edge", funct
     end
 end)
 
+H.test("native row shadows consume box silhouettes without changing ordinary book shadows", function()
+    assert(shelf_source:find("ipairs(SpineShelf.recessColumns(e, cursor, inset))",1,true),
+        "row builder must pass projected columns to both shadow painters")
+    local shelf={_flattenItems=native_flatten,recessColumns=native_recess}
+    Adapter.shelf(shelf)
+    for _,face_out in ipairs({false,true}) do
+        local e={book=book(1),w=100,h=180,_drawn_h=160,face_out=face_out}
+        local c=shelf.recessColumns(e,30,10)
+        H.eq(#c,1); H.eq(c[1].x,30); H.eq(c[1].w,100); H.eq(c[1].h,160)
+        H.eq(c[1].foot,face_out and 10 or 0); H.eq(c[1].fp,e.book.filepath)
+    end
+    local box=Boxes.box(members(3,"Saga"),"Saga")
+    local shape=Boxes.geometry(box,{w=160,face_h=240,depth=8,h=248},{content_w=800})
+    local columns=shelf.recessColumns({book=box,series_box=shape},30,10)
+    package.loaded.logger=package.loaded.logger or {warn=function() end}
+    local shadows=require("lib/bookshelf_shadow_assets")
+    local old={get=shadows.get,top=shadows.top,side=shadows.side,foot=shadows.foot}
+    shadows.get=function() return {} end
+    shadows.top=function() end
+    shadows.side=function() end
+    local contact={}
+    shadows.foot=function(_,_,x0,x1,y)
+        for x=x0,x1-1 do
+            assert(not contact[x],"overlapping contact bands")
+            contact[x]=y
+        end
+    end
+    assert(shadows.paintRow({},0,0,columns,{stand_h=300,width=600,below=10,wall=20}))
+    for x=0,shape.w-1 do
+        local rise=x<shape.cover_w and 0 or math.floor((x-shape.cover_w+1)*shape.depth/shape.side)
+        H.eq(contact[30+x],290-rise,"no flat rectangular shadow under the sloping side")
+    end
+    for k,v in pairs(old) do shadows[k]=v end
+end)
+
 H.test("box painting stays inside its planned width and above the plank at every size", function()
     for _,size in ipairs({.5,1,1.5}) do
         for _,n in ipairs({1,4,40}) do
@@ -761,7 +849,7 @@ H.test("box painting stays inside its planned width and above the plank at every
                 G_reader_settings={isTrue=function() return night end,readSetting=function() return "sv" end}
                 local w=BoxWidget:new{entry=entry,width=shape.w,height=410,inset=10}
                 local texts,rects={},0
-                local bb={paintRect=function(_,x,y,rw,rh,c)
+                local bb=surface{paintRect=function(_,x,y,rw,rh,c)
                     assert(x>=20 and x+rw<=20+shape.w and y>=30 and y+rh<=430,
                         "paint overflow: "..table.concat({x,y,rw,rh},","))
                     assert(rw>0 and rh>=0)

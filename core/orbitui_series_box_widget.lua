@@ -100,6 +100,9 @@ function Box:paintTo(bb, x, y)
     self.dimen.x, self.dimen.y = x, y
     local p, look = self.shape, self.look
     local top, stroke = y+self.top, self.stroke
+    -- paintRect's C fast path reduces RGB inks to grey. The RGB entry point
+    -- preserves cover hues on colour devices and converts on grey devices.
+    local fill = bb.paintRectRGB32
     local night = G_reader_settings and G_reader_settings:isTrue("night_mode")
     local function colour(r, g, b)
         r, g, b = math.min(255, math.max(0, r)), math.min(255, math.max(0, g)), math.min(255, math.max(0, b))
@@ -108,16 +111,18 @@ function Box:paintTo(bb, x, y)
         return BB.ColorRGB32(r, g, b, 255)
     end
     local r, g, b = look.r, look.g, look.b
-    local board = colour(r*.55, g*.55, b*.55)
+    -- Native spine samples already cap luminance for light spine lettering.
+    -- Do not darken them a second time into an almost-black sleeve.
+    local board = colour(r*1.15+8, g*1.15+8, b*1.15+8)
     local cavity = colour(r*.23, g*.23, b*.23)
-    local upper = colour(r*.78+18, g*.78+18, b*.78+18)
-    local rim = colour(r*.8+38, g*.8+38, b*.8+38)
-    local foot = colour(r*.32, g*.32, b*.32)
+    local upper = colour(r*1.3+22, g*1.3+22, b*1.3+22)
+    local rim = colour(r*1.35+35, g*1.35+35, b*1.35+35)
+    local foot = colour(r*.75, g*.75, b*.75)
     -- Both planes recede by the same (side, -depth) vector. Leave the
     -- triangles above the front-left and below the rear-right untouched.
     for dy = 0, p.depth-1 do
         local dx = math.ceil(p.side*(p.depth-dy)/p.depth)
-        bb:paintRect(x+dx, top+dy, p.cover_w, 1, dy<stroke and rim or upper)
+        fill(bb, x+dx, top+dy, p.cover_w, 1, dy<stroke and rim or upper)
     end
     -- Every binding, rim and highlight follows the same receding plane.
     -- Coalesce equal-rise columns, so cost is bounded by depth and six spines.
@@ -128,7 +133,7 @@ function Box:paintTo(bb, x, y)
             local rise = math.floor((dx+1)*p.depth/p.side)
             local next_dx = p.depth>0
                 and math.min(last, math.ceil((rise+1)*p.side/p.depth)-1) or last
-            bb:paintRect(x+p.cover_w+dx, top+p.depth-rise+inset, next_dx-dx, height, ink)
+            fill(bb, x+p.cover_w+dx, top+p.depth-rise+inset, next_dx-dx, height, ink)
             dx = next_dx
         end
     end
@@ -161,7 +166,7 @@ function Box:paintTo(bb, x, y)
     sideStrip(0, p.side, 0, edge, rim)
     sideStrip(0, p.side, p.face_h-edge, edge, foot)
     sideStrip(math.max(0, p.side-stroke), p.side, 0, p.face_h, board)
-    bb:paintRect(x, top+p.depth, p.cover_w, p.face_h, board)
+    fill(bb, x, top+p.depth, p.cover_w, p.face_h, board)
     self[1]:paintTo(bb, x+stroke, top+p.depth+stroke)
     if self.fade_amount then
         -- Fade only the painted silhouette, before the labels/mark. A single
@@ -192,8 +197,8 @@ function Box:paintTo(bb, x, y)
     if self.show_title then
         local lx = x+2*stroke
         local ly = top+p.h-self.label_h-2*stroke
-        local label_colour = colour(r*.30, g*.30, b*.30)
-        bb:paintRect(lx, ly, self.label_w, self.label_h, label_colour)
+        local label_colour = colour(r*.65, g*.65, b*.65)
+        fill(bb, lx, ly, self.label_w, self.label_h, label_colour)
         local size = self[2]:getSize()
         self[2].fgcolor = night and colour(217, 211, 196) or colour(246, 239, 219)
         self[2]:paintTo(bb, lx+math.floor((self.label_w-size.w)/2), ly+stroke)

@@ -2028,7 +2028,9 @@ function SpineWidget.finishedDecoration(card_w)
         suppress_favorite_badge = true, suppress_number_badges = true,
     }
     local indicators = proxy:_statusIndicators()
-    local layer = proxy:_renderShadowedCard(Widget:new{})
+    -- OverlapGroup measures all children at init, including this blank card.
+    -- A bare Widget has no size, even if its parent has an explicit dimen.
+    local layer = proxy:_renderShadowedCard(Widget:new{dimen = Geom:new{w = card_w, h = card_w}})
     -- Flat/status-only composition: the empty card, then one glyph frame.
     -- Discard its cover-relative padding; the caller positions the mark.
     local mark = layer[2] and layer[2][1]

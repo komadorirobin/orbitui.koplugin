@@ -135,6 +135,12 @@ There is no count cap: a 120-volume series still displays 120. Only the front
 cover is retained for rendering; sampling is bounded to five additional
 members on visible boxes and never performed during paint. The revised width
 is shared with pagination; box height and plank/dock clearance are unchanged.
+The case itself now retains the first cover's colour, with lighter rims and
+a darker opening/title strip, rather than flattening to an almost-black grey.
+Its contact shadow follows the sloping bottom edge instead of a rectangular
+slot footprint. These are procedural fills over the real shelf, not a pasted
+background image. Fully read boxes also provide an explicitly sized blank
+card to KOReader's completed-mark compositor, avoiding a nil-size crash.
 
 Tap opens the series and shows its individual volumes. Long-press retains the
 native series menu. The box is a display-only record: source membership, status,
