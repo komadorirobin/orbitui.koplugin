@@ -159,6 +159,24 @@ Retain the preview/cancel semantics of ordinary chips and immediate persistence
 of profile chips. Tests: `tests/test_shelf_cover_size.lua` and
 `tests/test_face_out_shelves.lua`.
 
+Series in the physical bookshelf are now one front-facing slipcase per series,
+per the user's concept-B approval. Group the full filtered light list before
+the page cache and planner, never a page-sized slice or an open remote feed.
+Metadata-free folders must not be guessed to be series. A box retains its full
+member list for native drill/bulk actions; author/genre groups keep their raw
+members and a separate compact display list. Count display slots in the footer,
+and use the same grouping for letter jumps. Opening a series exposes every
+volume to the local planner and must not box it again. Preserve the box's member
+scope across native drill restoration using identifiers, never cover buffers.
+The first volume supplies the cover. Side depth grows from 8% of cover width
+by 2.5 percentage points per additional volume, capped at 30%; the count always
+shows the actual membership. Plan and paint share this geometry. Cover sizing,
+author busts, plank/dock clearance and other view modes must remain intact.
+The box is drawn procedurally, using one visible cover and at most five edge
+lines, not an image or buffer per volume. No preferences or metadata are migrated.
+Sources: `core/orbitui_series_boxes.lua`, `core/orbitui_series_box_widget.lua`,
+`adapters/orbitui_series_boxes.lua`. Tests: `tests/test_series_boxes.lua`.
+
 Per the user's 2026-10-04 approval, alphabetical bookcase ordering interleaves
 series/folder blocks with standalone books. Use the series name as the block's
 title, falling back to its first volume's title; author order uses member author
@@ -327,6 +345,18 @@ display, and constrain balancing as well. A book/bust pair too wide for the
 remaining room moves to the next row, not to a detached decorative slot.
 Keep ordinary gap/end choices when a slot is free, zero for None, and at most
 one ordinary piece on bare rows. Suppressed slots do not consume deck cards.
+
+For ordinary end ornaments, distribute unused room evenly between the ornament
+and its two slot boundaries (shelf end and adjacent book). The optional
+`SpineShelf.positionOrnamentX` seam is installed by `adapters/orbitui_ornaments.lua`
+and also handles a section's ordinary leading piece. This is paint-time alignment
+only: preserve book coordinates, reserved widths, paging, deck order, vertical
+placement and the ornament widget's tap/hold area. Never center a leading piece
+over a separate left-end piece. Keep author busts adjacent to their books and
+honor explicit negative padding/overlap; tight slots retain native placement.
+Standalone Bookshelf, middle gaps, bare shelves and the pack editor retain their
+native layout. See `core/orbitui_ornament_spacing.lua` and
+`tests/test_ornament_spacing.lua` when merging row-rendering changes.
 
 Per the user's 2026-10-04 approval, the ordinary deck now shuffles once per
 KOReader process. Run native `Deck.sync(all)` and `Deck.shuffle()` after bundled

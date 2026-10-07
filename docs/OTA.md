@@ -137,6 +137,14 @@ update directly through the same preview channel and unchanged bootstrap/API 1.
 No artwork migration, upstream merge or reading-data change. Code rollback
 retains the new size preferences, which older runtimes ignore.
 
+Version `0.1.0-alpha.26` displays identified series as compact dynamic boxes in
+the physical shelf view and balances ordinary shelf-end ornament spacing.
+Boxes are display-only: tapping opens their members, and existing book files,
+metadata, reading data, artwork and settings are preserved. Alpha.25 and earlier
+alpha releases can update directly through the same preview channel and
+unchanged bootstrap/API 1. No upstream merge or artwork migration is included.
+Code rollback returns to the expanded series presentation.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

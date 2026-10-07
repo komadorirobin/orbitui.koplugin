@@ -7315,6 +7315,7 @@ function BookshelfWidget:_spineCachedFetch(n)
     -- The ornament deal states (see _ornStartState) depend only on the list:
     -- a refetch that brings back the same list keeps them, or every page
     -- turn after the TTL would rebuild the whole page map to find its start.
+    if self.prepareSpineItems then items = self:prepareSpineItems(items, hint) end
     local sig = self:_spineItemsSig(items)
     local keep = (c and c.key == key and c.items_sig == sig) and c or nil
     -- A CHANGED list (a book just closed: its status, its progress) drops the
@@ -7421,7 +7422,8 @@ function BookshelfWidget:_spineUpdateBookCounts(all_items, total_hint)
     for i = 1, #all_items do
         local it = all_items[i]
         if it then
-            local n = (it.books and #it.books > 0) and #it.books or 1
+            local n = self.spineItemCount and self:spineItemCount(it)
+                or ((it.books and #it.books > 0) and #it.books or 1)
             total = total + n
             if i < (self._cursor or 1) then before = before + n end
         end

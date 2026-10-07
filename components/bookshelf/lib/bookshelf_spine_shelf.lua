@@ -3845,7 +3845,7 @@ function SpineShelf.plan(items, opts)
         -- favourite and newly added is not more face-out than one that is
         -- only a favourite, it simply qualifies twice.
         local face_out = false
-        if src.filepath then
+        if src.filepath or (SpineShelf.isSeriesBox and SpineShelf.isSeriesBox(bk)) then
             if face_spec.all then
                 face_out = true
             else
@@ -3929,6 +3929,12 @@ function SpineShelf.plan(items, opts)
             w_dp = math.max(8, w_dp)
             w = Screen:scaleBySize(w_dp)
         end
+        local series_box = SpineShelf.seriesBoxGeometry and SpineShelf.seriesBoxGeometry(bk,
+            {w=w, h=h, face_h=face_h, depth=depth}, opts)
+        if series_box then
+            w, h, face_h, depth = series_box.w, series_box.h, series_box.face_h, series_box.depth
+            w_dp = math.floor(w / (Screen:scaleBySize(100) / 100) + 0.5)
+        end
         local series_num = nil
         if src.series_num and tostring(src.series_num) ~= "" then
             series_num = tostring(src.series_num)
@@ -4002,7 +4008,7 @@ function SpineShelf.plan(items, opts)
             book = bk, item = f.item, item_idx = f.item_idx,
             run_idx = f.run_idx, section_label = f.section_label,
             w = w, h = h, w_dp = w_dp, ref_w_dp = ref_w_dp,
-            look = look, depth = depth, face_h = face_h,
+            look = look, depth = depth, face_h = face_h, series_box = series_box,
             face_out = face_out, favourite = fav, label = label,
             author = src.author or (src.authors and src.authors[1]) or nil,
             series_num = series_num, gap_before = gap_before,
@@ -4468,8 +4474,16 @@ function SpineShelf.rowWidget(opts)
             if i == opts.row.first and lead_pl then
                 pcall(function()
                     local Orn = require("lib/bookshelf_ornaments")
+                    local x = cursor
+                    -- Optional integration alignment; never share a left-end piece's slot.
+                    if SpineShelf.positionOrnamentX
+                            and not (opts.row.ornament and opts.row.ornament.side == "left") then
+                        local pad = SpineShelf.ornPad(lead_pad, lead_pl)
+                        x = SpineShelf.positionOrnamentX(lead_pl, x,
+                            SpineShelf.endMargin(opts.height), cursor + lead_pl.w + pad, pad)
+                    end
                     local w_ = Orn.Ornament:new{ placement = lead_pl, night = _nightMode() }
-                    w_.overlap_offset = { cursor, SpineShelf.ornamentY(lead_pl, stand_h, opts) }
+                    w_.overlap_offset = { x, SpineShelf.ornamentY(lead_pl, stand_h, opts) }
                     local part
                     if SpineShelf.behindAbove(lead_pl, w_.overlap_offset[2], opts) then
                         hanging[#hanging + 1] = w_
@@ -4514,7 +4528,7 @@ function SpineShelf.rowWidget(opts)
                 cursor = cursor + gap_w
                 if gap_w > 0 then block_x0 = cursor end
             end
-            if (e.item and e.item.books) or e.section_label then
+            if not e.series_box and ((e.item and e.item.books) or e.section_label) then
                 -- Every GROUP gets a badge, single-member ones included --
                 -- on a grouping chip each item is a section, and an
                 -- unbadged lone book reads as a stray (user report: the
@@ -4563,9 +4577,9 @@ function SpineShelf.rowWidget(opts)
                 end)
                 is_bulk = ok_b and hit or false
             end
-            local tile
             local _tile_t0 = e.face_out and _gettime() or nil
-            if e.face_out then
+            local tile = SpineShelf.seriesBoxWidget and SpineShelf.seriesBoxWidget(e, opts, stand_h, inset)
+            if not tile and e.face_out then
                 -- A face-out favourite IS a cover-grid book: reuse the cover
                 -- tile wholesale (user ruling) so it carries every glyph,
                 -- badge and pill the grid gives it -- bottom-aligned so it
@@ -4819,6 +4833,11 @@ function SpineShelf.rowWidget(opts)
             x = lead - SpineShelf.ornPad(pad, pl) - pl.w
         else
             x = lead + content_w + SpineShelf.ornPad(pad, pl)
+        end
+        if SpineShelf.positionOrnamentX then
+            local left = pl.side == "left" and margin or (lead + content_w)
+            local right = pl.side == "left" and lead or (opts.width - margin)
+            x = SpineShelf.positionOrnamentX(pl, x, left, right, SpineShelf.ornPad(pad, pl))
         end
         x = math.max(margin, math.min(x, opts.width - margin - pl.w))
         local w_ = Orn.Ornament:new{ placement = pl, night = _nightMode() }

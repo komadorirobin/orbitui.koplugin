@@ -32,6 +32,7 @@ function M.wrap(name, module)
         -- Saved chip/profile/global choices stay intact for code rollback.
         module._spineFaceOut = function() return SHELF_FACE_OUT end
         require("adapters/orbitui_shelf_sort").widget(module)
+        require("adapters/orbitui_series_boxes").widget(module)
         require("adapters/orbitui_navbar").widget(module)
         module.orbitui_shelf_menu = function(self, chip)
             return require("adapters/orbitui_home_shelves").shelfMenu(self, chip)

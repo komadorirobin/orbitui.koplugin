@@ -16,14 +16,15 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.25** includes Bookshelf **5.3.1** through `74b825bb` and
+Version **0.1.0-alpha.26** includes Bookshelf **5.3.1** through `74b825bb` and
 SimpleUI **2.7.5** through `b58dfefb`, on top of alpha.4's shared OrbitUI surfaces.
-It adds per-shelf cover sizing (50-150%, default 100%) to the physical bookcase
-view and refreshes bottom-bar geometry when its margins change in Home and
-Library/Manga. Larger covers repack within the existing shelf area; hero,
-ornaments and footer space remain independent. All previously published artwork,
-biographies, author matching, custom settings and reading data are preserved.
-See [the release notes](docs/releases/0.1.0-alpha.25.md)
+It displays identified series as compact cover-facing boxes in the physical
+bookcase. Their thickness grows with the volume count up to a cap; tapping a
+box opens its individual books. Ordinary shelf-end ornaments are centred in
+their available space instead of crowding the neighboring book. Per-shelf
+cover sizing, author matching, custom settings, artwork and reading data are
+preserved. Grid/list views remain unchanged.
+See [the release notes](docs/releases/0.1.0-alpha.26.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.

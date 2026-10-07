@@ -111,6 +111,28 @@ primary key is date, status, filename, count or manual collection order retain
 their native behavior. No additional disk walk, cover decode or network request
 is introduced. The policy uses batched light records and native sort keys.
 
+## Compact series boxes (0.1.0-alpha.26)
+
+In the physical shelf/spines view, identified series now occupy one cover-facing
+slipcase each. The front uses the first available volume in numeric reading order;
+the label shows the series name and actual local member count. The side adds 8%
+of cover width for one volume, then 2.5 percentage points per additional volume,
+capped at 30% (ten or more volumes). There is no count cap: a 120-volume series
+still displays 120. Only the visible front cover is loaded, not every member.
+
+Tap opens the series and shows its individual volumes. Long-press retains the
+native series menu. The box is a display-only record: source membership, status,
+metadata and saved sorting settings are not rewritten. Filtered boxes contain
+only eligible members; restoring one after restart cannot widen it to another
+section/profile. Arbitrary folders without series metadata are not guessed to
+be series. Grid/list views and remote catalogues remain unchanged.
+
+Grouping precedes page planning, so boxes count as single displayed items in
+the shelf pager and letter navigation. Author groups preserve their complete
+native membership separately from the compacted display list. The new policy
+is in `core/orbitui_series_boxes.lua` and `adapters/orbitui_series_boxes.lua`,
+with bounded procedural drawing in `core/orbitui_series_box_widget.lua`.
+
 ## Component seams to preserve during merges
 
 - Bookshelf Widget: optional chip-hold/search callbacks; return the created
@@ -118,6 +140,11 @@ is introduced. The policy uses batched light records and native sort keys.
   registered-action close callback; honor action enabled state.
   Preserve the dock-free shelf viewport and visible footer reservation in both
   the shared geometry and the rebuild; the full widget height includes the dock.
+  Preserve `prepareSpineItems` before pagination/cache signatures and
+  `spineItemCount` for compact series display counts.
+- Bookshelf SpineShelf: optional `isSeriesBox`, `seriesBoxGeometry` and
+  `seriesBoxWidget` seams share one measured width between planning and drawing.
+  Box entries must not receive the expanded-series badge beneath the shelf.
 - Bookshelf Chip Editor: optional `face_out_override` reports the host's fixed
   orientation and disables only the face-out picker, without rewriting drafts.
   OrbitUI wraps both the widget's `_spineFaceOut` and this editor field.
@@ -177,6 +204,13 @@ Not yet performed on the Bigme. Use the existing recovery procedure.
    series, filter out finished books, drill into a folder and jump by letter.
    Check the correct book opens and author busts remain adjacent. Switch to
    date order and grid/list to confirm their behavior and saved sorts are intact.
+9. With compact series boxes, compare series with two, four, ten and more than
+   ten volumes. Verify increasing then capped depth, the actual count and first
+   cover, portrait/landscape fit, and no overlap with neighboring books, ornaments,
+   plank or pager. Tap/double-tap opens all eligible members; long-press opens the
+   series menu. Check filtered shelves, author drills, an empty/restored filtered
+   series, letter navigation and return after reading or restarting. Check both
+   day/night mode and small/large cover sizes. Grid/list views must be unchanged.
 
 The headless tests cover logic and extracted native factories, not native font
 metrics, image rendering, touch interaction or complete device lifecycle.

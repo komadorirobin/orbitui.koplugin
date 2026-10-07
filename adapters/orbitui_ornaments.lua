@@ -2,6 +2,7 @@ local M = {}
 M.modules = {
     ["lib/bookshelf_ornaments"] = true,
     ["lib/bookshelf_ornament_deck"] = true,
+    ["lib/bookshelf_spine_shelf"] = true,
 }
 
 function M.wrap(name, module, root)
@@ -9,6 +10,9 @@ function M.wrap(name, module, root)
     if name == "lib/bookshelf_ornament_deck" then
         local fill = module.fillHooks
         module.fillHooks = function(env) return Authors.fillHooks(fill, env) end
+    elseif name == "lib/bookshelf_spine_shelf" then
+        module.positionOrnamentX = require("core/orbitui_ornament_spacing").positionX
+        require("adapters/orbitui_series_boxes").shelf(module)
     else
         local list, attempted, shuffled = module.listAll, false, false
         module.listAll = function(...)
