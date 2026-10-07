@@ -115,10 +115,26 @@ is introduced. The policy uses batched light records and native sort keys.
 
 In the physical shelf/spines view, identified series now occupy one cover-facing
 slipcase each. The front uses the first available volume in numeric reading order;
-the label shows the series name and actual local member count. The side adds 8%
-of cover width for one volume, then 2.5 percentage points per additional volume,
-capped at 30% (ten or more volumes). There is no count cap: a 120-volume series
-still displays 120. Only the visible front cover is loaded, not every member.
+the slim dark title band shows the series name, with a separate top-right read/total
+badge (for example, `12/16`) matching the manga stacks. There is no separate
+"N volumes" line. Finished status, not percentage or merely opening a book,
+determines the numerator; the denominator is the box's actual scoped membership.
+The badge shares cover-badge size, colours and night-mode handling. Status reads
+use the native cache when a visible box is built, never during painting.
+When all members are finished, a box also gets the ordinary completed-book
+mark and fade, following the existing badge-style and finished-book fade
+settings. The mark sits above the series-name label; the count, name and mark
+stay crisp. Empty or partly finished boxes are not marked complete. Changing
+any member back to unfinished removes the treatment on the next shelf rebuild.
+The open side adds 20% of cover width for one volume, then 5 percentage points
+per additional volume, capped at 45% (six or more volumes). Up to six separate
+bindings sit inside a shaded opening with thin top, bottom and outer rims.
+Their colours come from the native cached cover samples, not invented spine
+artwork. Tiny faces show fewer bindings rather than unreadably narrow stripes.
+There is no count cap: a 120-volume series still displays 120. Only the front
+cover is retained for rendering; sampling is bounded to five additional
+members on visible boxes and never performed during paint. The revised width
+is shared with pagination; box height and plank/dock clearance are unchanged.
 
 Tap opens the series and shows its individual volumes. Long-press retains the
 native series menu. The box is a display-only record: source membership, status,

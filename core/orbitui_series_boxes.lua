@@ -103,7 +103,7 @@ end
 function M.geometry(book, base, opts)
     if not M.isBox(book) then return nil end
     local count = math.max(1, #book.books)
-    local ratio = math.min(.30, .08 + .025 * (count - 1))
+    local ratio = math.min(.45, .20 + .05 * (count - 1))
     local cover_w = base.w
     local side = math.max(1, math.floor(cover_w * ratio + .5))
     local max_w = math.max(2, (opts.content_w or (cover_w + side))
@@ -116,6 +116,23 @@ function M.geometry(book, base, opts)
     local face_h = math.max(1, math.floor((base.face_h or base.h) * scale))
     return {w=cover_w+side, cover_w=cover_w, side=side, count=count,
         face_h=face_h, depth=base.depth, h=face_h+base.depth}
+end
+
+-- A bounded set of illustrative bindings, not miniature cover bitmaps. Reduce
+-- their number on tiny faces rather than drawing subpixel stripes.
+function M.spineSlots(shape, stroke)
+    local slots = {}
+    local gap = math.max(1, stroke)
+    local room = shape.side - 2 * stroke
+    local count = math.min(6, shape.count, math.floor((room + gap) / (3 + gap)))
+    if count < 1 then return slots end
+    local usable = room - (count - 1) * gap
+    for i = 1, count do
+        local start = math.floor((i - 1) * usable / count)
+        local finish = math.floor(i * usable / count)
+        slots[i] = { x = stroke + start + (i - 1) * gap, w = finish - start, member = i }
+    end
+    return slots
 end
 
 return M

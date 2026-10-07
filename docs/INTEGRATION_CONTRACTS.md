@@ -168,18 +168,52 @@ members and a separate compact display list. Count display slots in the footer,
 and use the same grouping for letter jumps. Opening a series exposes every
 volume to the local planner and must not box it again. Preserve the box's member
 scope across native drill restoration using identifiers, never cover buffers.
-The first volume supplies the cover. Side depth grows from 8% of cover width
-by 2.5 percentage points per additional volume, capped at 30%; the count always
+The first volume supplies the cover. Per the user's open-slipcase revision,
+side width grows from 20% of cover width by 5 percentage points per additional
+volume, capped at 45% (six or more volumes); the count always
 shows the actual membership. Plan and paint share this geometry. Cover sizing,
 author busts, plank/dock clearance and other view modes must remain intact.
-The box is drawn procedurally, using one visible cover and at most five edge
-lines, not an image or buffer per volume. No preferences or metadata are migrated.
+The box is drawn procedurally, with an inset dark opening and up to six
+separate rounded bindings, not an image or buffer per volume. `spineSlots`
+reduces the visible binding count when there is too little room for proper
+gaps. The adapter supplies native `bookLook`: reuse the first volume's planned
+look and sample at most five additional visible members through the native
+persistent colour cache, at construction only. Never decode all members or
+retain their cover buffers. Missing covers use native stable fallback tones.
+No preferences or metadata are migrated.
 Its top and right side share the same `(side, -depth)` projection: the side's
 lower edge recedes just like its upper edge, while the front sits level on the
 plank. Preserve wallpaper in the unpainted front-left/rear-right corners;
-never flatten these into a rectangular top strip or side foot. Side dividers
-stay inside both rims. Use bounded drawing strips, not per-volume buffers,
-and retain the existing slot dimensions and pagination.
+never flatten these into a rectangular top strip or side foot. Rounded spines,
+gaps, end highlights and the outer lip stay inside both rims and share that
+projection. Use bounded drawing strips, not per-volume buffers, and make
+pagination consume the revised widths while preserving the height budget.
+The front's slim dark title band shows the series name only, without a volume-count
+line. Its top-right read/total badge uses the native `bookshelf_count_badge`
+renderer (including badge scale, colours and night-mode recolouring) and counts
+only canonical `finished` statuses from `Repo.readProgress`, like manga stacks.
+Count the box's deduplicated, scoped membership, never a stale group aggregate
+or percent read. Sweep members only when building a visible box, using the
+native progress cache/invalidation; no status reads during planning or paint,
+and no extra persistent count cache. Keep the badge inside the front face and
+clear of the title. If a face is too small to fit it, omit it rather than
+overflowing the slot. This does not change other views' badge preferences.
+When every member of a nonempty box is finished, add the native completed mark
+and the ordinary finished-book fade. `SpineWidget.finishedDecoration` is an
+optional, render-only factory: it composes a synthetic finished record with no
+filepath/cover, returning the native tickbox/bookmark, its real painted bounds
+and the existing fade amount. Preserve `progress_badge_style`, the legacy badge
+toggle, badge size/colours/night recolouring, and the independent
+`fade_finished_books` / `finished_fade_enabled` choices (recessed fade wins).
+Do not use the folder fade preference or the representative volume's status.
+Place the mark above the title label; paint the silhouette fade before labels
+and the mark, with no double-blended edges or wallpaper/plank wash. Keep the
+title's explicit contrasting ink and binding colours safe on night-mode flips
+and greyscale screens. Use bounded
+strips rather than allocating another cover buffer. Reuse the read-count sweep;
+partial/unknown/empty membership has no completed treatment, and a rebuild
+after reverting a member's status must remove it. Source book status is never
+changed. The helper does not alter ordinary book rendering.
 Inside a series drill, or a `single_series` chip with no deeper drill, omit
 the redundant black section badges below the planks; retain the series heading
 and all individual books. `spineShowSectionBadges` in the series-box adapter

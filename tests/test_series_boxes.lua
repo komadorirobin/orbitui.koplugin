@@ -2,7 +2,11 @@ package.path = "./?.lua;./components/bookshelf/?.lua;" .. package.path
 local H = require("tests/helpers")
 local Boxes = require("core/orbitui_series_boxes")
 local Adapter = require("adapters/orbitui_series_boxes")
-package.loaded["lib/bookshelf_settings_store"] = {read=function() end, generation=function() return 0 end}
+local settings={}
+package.loaded["lib/bookshelf_settings_store"] = {
+    read=function(k) return settings[k] end, isTrue=function(k) return settings[k]==true end,
+    generation=function() return 0 end,
+}
 package.loaded["lib/bookshelf_i18n"] = {gettext=function(s) return s end}
 
 local function source(file)
@@ -28,8 +32,8 @@ local function book(n, series, dir)
         title="Book "..n, series_name=series, series_num=tostring(n), author="Vilhelm Moberg",
         has_cover=true, shelf_section_path=dir}
 end
-local function members(n, name)
-    local out={}; for i=1,n do out[i]=book(i,name) end; return out
+local function members(n, name, dir)
+    local out={}; for i=1,n do out[i]=book(i,name,dir) end; return out
 end
 
 H.test("loose metadata series become one box in place without changing source records", function()
@@ -91,13 +95,36 @@ H.test("depth grows monotonically, is capped, and preserves the true volume coun
     for _, n in ipairs({1,2,4,6,10,40,500}) do
         local box=Boxes.box(members(n,"Saga"),"Saga")
         local g=Boxes.geometry(box,{w=200,h=290,face_h=280,depth=10},{content_w=1000})
-        assert(g.side>=previous and g.side<=60)
+        assert(g.side>=previous and g.side<=90)
         H.eq(g.cover_w,200); H.eq(g.w,g.cover_w+g.side); H.eq(g.count,n)
         H.eq(g.face_h,280); H.eq(g.h,290)
-        if n>=10 then H.eq(g.side,60) end
+        if n>=6 then H.eq(g.side,90) end
         previous=g.side
     end
     H.eq(Boxes.geometry(book(1),{},{content_w=1000}),nil)
+end)
+
+H.test("open sleeves give every visible binding a gap and cap the illustration at six", function()
+    for _,n in ipairs({1,2,3,6,16,120}) do
+        local box=Boxes.box(members(n,"Saga"),"Saga")
+        for _,width in ipairs({1,5,20,80,160,240,480}) do
+            for _,stroke in ipairs({1,2,3}) do
+                local g=Boxes.geometry(box,{w=width,face_h=width*1.5,depth=8,h=width*1.5+8},
+                    {content_w=1000})
+                local slots=Boxes.spineSlots(g,stroke)
+                assert(#slots<=6 and #slots<=n)
+                if width>=160 then H.eq(#slots,math.min(6,n)) end
+                local last=0
+                for i,s in ipairs(slots) do
+                    assert(s.x>=last+stroke and s.x+s.w<=g.side-stroke)
+                    assert(s.w>=3)
+                    H.eq(s.member,i)
+                    last=s.x+s.w
+                end
+                H.eq(g.count,n)
+            end
+        end
+    end
 end)
 
 H.test("narrow screens and cover-size changes share bounded aspect-preserving geometry", function()
@@ -116,7 +143,7 @@ end)
 
 local tab
 package.loaded["lib/bookshelf_tab_model"]={getById=function() return tab end}
-local repo={lightMetaFor=function() return nil end,
+local repo={lightMetaFor=function() return nil end, readProgress=function() end,
     applyFilter=function(books) local out={} for _,b in ipairs(books) do
         if tonumber(b.series_num)%2==0 then out[#out+1]=b end
     end return out end}
@@ -306,21 +333,386 @@ end)
 local W=H.widget()
 function W:getSize() return self.dimen or {w=self.width or 0,h=self.height or 0} end
 function W:paintTo(bb,x,y) bb:paintRect(x,y,self.width,self.height,"cover") end
+local HAIR="\xe2\x80\x8a"
 local Text=W:extend{}
 function Text:init()
-    self.dimen={w=math.max(1,math.min(self.max_width or 100,#self.text*5)),h=12}
+    local text=self.text:gsub(HAIR,"")
+    local size=self.face.size or 12
+    self.dimen={w=math.max(1,math.min(self.max_width or math.huge,math.ceil(#text*size*.5))),h=size}
 end
 function Text:paintTo(bb,x,y) bb:paintRect(x,y,self.dimen.w,self.dimen.h,"text:"..self.text) end
+local Frame=W:extend{}
+function Frame:init()
+    for _,side in ipairs({"left","right","top","bottom"}) do
+        self["padding_"..side]=self["padding_"..side] or self.padding or 0
+    end
+    self.bordersize=self.bordersize or 0
+    local size=self[1]:getSize()
+    self.dimen={w=size.w+self.padding_left+self.padding_right+2*self.bordersize,
+        h=size.h+self.padding_top+self.padding_bottom+2*self.bordersize}
+end
+function Frame:paintTo(bb,x,y)
+    if self.background then bb:paintRect(x,y,self.dimen.w,self.dimen.h,self.background) end
+    self[1]:paintTo(bb,x+self.padding_left+self.bordersize,y+self.padding_top+self.bordersize)
+end
 for _,name in ipairs({"ui/widget/container/inputcontainer","ui/geometry","ui/gesturerange"}) do
     package.loaded[name]=W
 end
 package.loaded["ui/widget/textwidget"]=Text
+package.loaded["lib/bookshelf_colour_text"]=Text
+package.loaded["ui/widget/container/framecontainer"]=Frame
+package.loaded["ui/size"]={border={thin=1}}
+package.loaded["ui/font"]={}
+package.loaded["lib/bookshelf_space"]={px=function(n) return n end,padding={default=4,small=2}}
 package.loaded["device"]={screen={scaleBySize=function(_,n) return n end}}
 package.loaded["ffi/blitbuffer"]={ColorRGB32=function(r,g,b,a) return {r=r,g=g,b=b,a=a} end}
-package.loaded["lib/bookshelf_fonts"]={getFace=function() return {} end}
+package.loaded["lib/bookshelf_fonts"]={getFace=function(_,_,size) return {size=size},true end}
+local badge_scale, badge_colors, recolours=1,{badge_bg="badge-day",badge_fg="ink-day",
+    border="border-day",complete_bookmark="mark-day",shadow="shadow-day"},{}
+package.loaded["lib/bookshelf_cover_progress"]={
+    badgeSize=function(n) return math.floor(n*badge_scale+.5) end,
+    resolvedColors=function() return badge_colors end,
+    registerRecolour=function(w,pick) recolours[w]=pick end,
+}
 package.loaded["ffi/util"]={template=function(s,n) return (s:gsub("%%1",tostring(n))) end}
-package.loaded["lib/bookshelf_spine_widget"]=W
+-- Real native compositor/factory and preference decision, with only the
+-- drawing primitives and font metrics replaced. No cover is loaded here.
+local Spine=W:extend{}
+local Group=W:extend{}
+function Group:paintTo(bb,x,y)
+    for _,child in ipairs(self) do
+        local offset=child.overlap_offset or {0,0}
+        child:paintTo(bb,x+offset[1],y+offset[2])
+    end
+end
+local Center=W:extend{}
+function Center:paintTo(bb,x,y) bb:paintRect(x,y,self.dimen.w,self.dimen.h,"completion-tick") end
+local Vertical=W:extend{}
+package.loaded["ui/widget/verticalgroup"]=Vertical
+package.loaded["ui/widget/verticalspan"]=W
+local CP=package.loaded["lib/bookshelf_cover_progress"]
+local env={SpineWidget=Spine,Widget=W,FrameContainer=Frame,ColorSafeFrame=Frame,
+    unpack=unpack or table.unpack,
+    CenterContainer=Center,OverlapGroup=Group,Geom=W,Screen=package.loaded.device.screen,
+    Size=package.loaded["ui/size"],Space=package.loaded["lib/bookshelf_space"],
+    BFont=package.loaded["lib/bookshelf_fonts"],CoverProgress=CP,
+    BookshelfSettings=package.loaded["lib/bookshelf_settings_store"],
+    CARD_BORDER=1,ON_HOLD_FADE=.6,FADED_FINISHED_AMOUNT=.5,
+    fadeFinishedBooksEnabled=function() return settings.fade_finished_books==true end,
+    _toggle=function(k) return settings[k]~=false end,
+    _badgeSize=CP.badgeSize,_pagePillRefH=function(size) return size end,
+    _barBottomPadding=function() return 4 end,_barSideMargin=function() return 3 end,
+    _glyphSize=function(w) return math.max(9,math.floor(w*.132)) end,
+    _glyphTopLift=function() return .5 end,_glyphLeftInset=function() return 2 end,
+    _baseGlyphRenderedH=function(_,base) return math.ceil(base*1.4) end,
+    GLYPH_DANGLE_GROWTH_SHARE=.5,LIST_BADGE_CLEARANCE=.12,
+}
+local spine_source=source("bookshelf_spine_widget")
+local function spineMethod(name,dot)
+    local args,body=spine_source:match("function SpineWidget"..(dot and "%." or ":")..name.."%((.-)%)\n(.-)\nend")
+    assert(body,name)
+    local params=dot and args or "self"..(args~="" and ","..args or "")
+    return compile("return function("..params..")\n"..body.."\nend",env)()
+end
+for _,name in ipairs({"_statusIndicators","_renderShadowedCard","_glyphWidth","_listBadgeClearance"}) do
+    Spine[name]=spineMethod(name)
+end
+function Spine:_cardDimensions() return self.width,self.height end
+Spine.finishedDecoration=spineMethod("finishedDecoration",true)
+local decision=assert(source("bookshelf_cover_progress"):match("function M%.decide%(book%)\n(.-)\nend"))
+CP.decide=compile("return function(book)\n"..decision.."\nend",env)()
+CP.GLYPH_BOOKMARK_CHECK="completion-bookmark"
+CP.glyphRenderedH=function(_,size) return math.ceil(size*1.4) end
+CP.buildHaloShadowedGlyphWidget=function(_,size,halo,sx,sy)
+    local mark=Group:new{dimen={w=size+halo+sx,h=size+halo+sy}}
+    mark[1]=Frame:new{padding_left=halo+sx,padding_top=halo+sy,
+        W:new{dimen={w=size,h=math.ceil(size*1.4)},width=size,height=math.ceil(size*1.4)}}
+    function mark:paintTo(bb,x,y)
+        local s=self[1]:getSize()
+        bb:paintRect(x,y,s.w,s.h,"completion-bookmark")
+    end
+    return mark
+end
+package.loaded["lib/bookshelf_spine_widget"]=Spine
 local BoxWidget=require("core/orbitui_series_box_widget")
+
+H.test("only visible bindings sample cover colours, reusing the first look and never on paint", function()
+    local calls={}
+    local colors={{r=190,g=70,b=55},{r=40,g=135,b=110},{r=255,g=225,b=20},
+        {r=90,g=80,b=180},{r=20,g=75,b=180},{r=225,g=225,b=225}}
+    local shelf={_flattenItems=native_flatten,bookLook=function(b)
+        local i=tonumber(b.series_num)
+        calls[#calls+1]=i
+        return colors[i]
+    end}
+    Adapter.shelf(shelf)
+    local box=Boxes.box(members(120,"Saga"),"Saga")
+    local g=shelf.seriesBoxGeometry(box,{w=180,face_h=270,depth=10,h=280},{content_w=1000})
+    H.eq(#calls,0,"planning must not sample every member")
+    local entry={book=box,w=g.w,series_box=g,look=colors[1]}
+    local w=shelf.seriesBoxWidget(entry,{},320,10)
+    H.eq(#w.spines,6); H.eq(#calls,5)
+    for i,s in ipairs(w.spines) do H.eq(s.look,colors[i]) end
+    for i,n in ipairs(calls) do H.eq(n,i+1) end
+    local day={}
+    for _,night in ipairs({false,true}) do
+        G_reader_settings={isTrue=function() return night end}
+        local index=0
+        w:paintTo({paintRect=function(_,x,y,rw,rh,c)
+            if type(c)=="table" then
+                index=index+1
+                for _,k in ipairs({"r","g","b"}) do
+                    assert(c[k]>=0 and c[k]<=255,"RGB overflow")
+                    if night then H.eq(c[k]+day[index][k],255,"material colour changes on night flip") end
+                end
+                if not night then day[index]=c end
+            end
+        end},0,0)
+        H.eq(#calls,5)
+        assert(w[2].fgcolor,"printed title needs contrasting foreground colour")
+    end
+    G_reader_settings=nil
+    -- Missing or still-unextracted covers retain a valid binding, not a crash.
+    shelf.bookLook=function() return nil end
+    w=shelf.seriesBoxWidget(entry,{},320,10)
+    for _,s in ipairs(w.spines) do H.eq(s.look,colors[1]) end
+end)
+
+local function countText(finished,total)
+    return finished..HAIR.."/"..HAIR..total
+end
+
+H.test("read-total badges use live cached status only for visible deduplicated box members", function()
+    local original=repo.readProgress
+    local statuses,calls={},{}
+    local raw=members(16,"Saga")
+    for i,b in ipairs(raw) do
+        b.status="finished" -- Stale light metadata must not supply the count.
+        statuses[b.filepath]=i<=12 and "finished" or i==13 and "reading" or i==14 and "on_hold" or nil
+    end
+    raw[#raw+1]=raw[1]
+    repo.readProgress=function(fp)
+        calls[fp]=(calls[fp] or 0)+1
+        return 1,statuses[fp] -- Even 100% alone is not "finished".
+    end
+    local items=Boxes.prepare({{series_name="Saga",books=raw,finished_count_total=99,book_count=99},
+        {series_name="Offscreen",books=members(100,"Offscreen","/elsewhere")}})
+    local box=items[1]
+    local shape=Boxes.geometry(box,{w=160,face_h=240,depth=8,h=248},{content_w=800})
+    H.eq(next(calls),nil) -- Grouping and planning must not scan progress.
+    local function build()
+        return BoxWidget:new{entry={book=box,series_box=shape,look={r=90,g=120,b=80}},
+            width=shape.w,height=300,inset=10}
+    end
+    local w=build()
+    H.eq(w[3][1].text,countText(12,16)); H.eq(w[2].text,"Saga")
+    for _,b in ipairs(box.books) do H.eq(calls[b.filepath],1) end
+    local reads=0; for _ in pairs(calls) do reads=reads+1 end
+    H.eq(reads,16)
+    local bb={paintRect=function() end}
+    w:paintTo(bb,0,0); w:paintTo(bb,0,0)
+    for _,b in ipairs(box.books) do H.eq(calls[b.filepath],1) end
+    statuses[box.books[13].filepath]="finished"
+    H.eq(build()[3][1].text,countText(13,16))
+    statuses[box.books[1].filepath]="reading"
+    H.eq(build()[3][1].text,countText(12,16))
+    H.eq(#raw,17); H.eq(raw[1].status,"finished")
+    H.eq(box.finished_count_total,99) -- No writes to source aggregates.
+    repo.readProgress=original
+end)
+
+H.test("zero, complete, single and filtered counts use actual membership without a count cap", function()
+    local original=repo.readProgress
+    for _,n in ipairs({1,4,120}) do
+        for _,finished in ipairs({0,n}) do
+            repo.readProgress=function() return nil,finished>0 and "finished" or nil end
+            local box=Boxes.box(members(n,"Saga"),"Saga",{finished_count_total=999,book_count=999})
+            local shape=Boxes.geometry(box,{w=160,face_h=240,depth=8,h=248},{content_w=800})
+            local w=BoxWidget:new{entry={book=box,series_box=shape},width=shape.w,height=300,inset=10}
+            H.eq(w[3][1].text,countText(finished,n)); H.eq(w.show_badge,true)
+        end
+    end
+    local scoped={book(2,"Saga"),book(4,"Saga")}
+    local box=Boxes.box(scoped,"Saga",{finished_count_total=8,book_count=10})
+    repo.readProgress=function(fp) return nil,fp==scoped[1].filepath and "finished" or "reading" end
+    local shape=Boxes.geometry(box,{w=160,face_h=240,depth=8,h=248},{content_w=800})
+    local w=BoxWidget:new{entry={book=box,series_box=shape},width=shape.w,height=300,inset=10}
+    H.eq(w[3][1].text,countText(1,2))
+    repo.readProgress=original
+end)
+
+H.test("native badges share font scaling and recolour in place when night mode changes", function()
+    local box=Boxes.box(members(16,"Saga"),"Saga")
+    local shape=Boxes.geometry(box,{w=160,face_h=240,depth=8,h=248},{content_w=800})
+    for _,scale in ipairs({.75,1,1.5}) do
+        badge_scale=scale
+        local w=BoxWidget:new{entry={book=box,series_box=shape},width=shape.w,height=300,inset=10}
+        H.eq(w[3][1].face.size,math.floor(12*scale+.5))
+        H.eq(w[3].background,"badge-day"); H.eq(w[3][1].fgcolor,"ink-day")
+        assert(recolours[w[3]])
+        w[3]:_bs_recolour(recolours[w[3]]({badge_bg="badge-night",badge_fg="ink-night"}))
+        H.eq(w[3].background,"badge-night"); H.eq(w[3].color,"ink-night")
+        H.eq(w[3][1].fgcolor,"ink-night")
+        H.eq(w[3][1].text,countText(0,16))
+    end
+    badge_scale=1
+end)
+
+H.test("completion uses the whole nonempty box, not its cover or percentage, and reverses on rebuild", function()
+    local original=repo.readProgress
+    local raw=members(3,"Saga")
+    raw[1].status="finished"
+    local box=Boxes.box(raw,"Saga")
+    local shape=Boxes.geometry(box,{w=160,face_h=240,depth=8,h=248},{content_w=800})
+    local statuses={"finished","reading",nil}
+    local reads=0
+    repo.readProgress=function(fp)
+        reads=reads+1
+        return 1,statuses[tonumber(fp:match("(%d+)%.epub"))]
+    end
+    settings.fade_finished_books=true
+    local function build()
+        return BoxWidget:new{entry={book=box,series_box=shape},width=shape.w,height=300,inset=10}
+    end
+    local w=build()
+    H.eq(w.all_read,false); H.eq(w[4],nil); H.eq(w.fade_amount,nil)
+    H.eq(reads,3)
+    statuses[2],statuses[3]="finished","finished"
+    w=build()
+    H.eq(w.all_read,true); H.eq(w.show_mark,true); H.eq(w.fade_amount,.5)
+    H.eq(w[3][1].text,countText(3,3)); H.eq(reads,6)
+    H.eq(w[1].show_progress,false); H.eq(w[1].show_status,false) -- No double fade.
+    statuses[3]="new"
+    w=build()
+    H.eq(w.all_read,false); H.eq(w[4],nil); H.eq(w.fade_amount,nil)
+    H.eq(w[3][1].text,countText(2,3)); H.eq(reads,9)
+    local empty=Boxes.copy(box); empty.books={}
+    w=BoxWidget:new{entry={book=empty,series_box=shape},width=shape.w,height=300,inset=10}
+    H.eq(w.all_read,false); H.eq(w[4],nil); H.eq(w.fade_amount,nil); H.eq(reads,9)
+    H.eq(raw[1].status,"finished"); H.eq(raw[2].status,nil); H.eq(box.status,nil)
+    settings.fade_finished_books=nil
+    repo.readProgress=original
+end)
+
+H.test("completed boxes reuse native tick/bookmark/off preferences and independent fade settings", function()
+    local original=repo.readProgress
+    repo.readProgress=function() return 1,"finished" end
+    local box=Boxes.box(members(1,"Saga"),"Saga")
+    local shape=Boxes.geometry(box,{w=160,face_h=240,depth=8,h=248},{content_w=800})
+    for _,style in ipairs({"default","tickbox","bookmark","none","legacy-off"}) do
+        settings.progress_badge_style=(style~="default" and style~="legacy-off") and style or nil
+        settings.progress_badge_enabled=nil
+        if style=="legacy-off" then settings.progress_badge_enabled=false end
+        -- The folders' switch must not change the ordinary-books policy.
+        settings.fade_finished_folders=true
+        for _,fade in ipairs({"off","books","recessed","both"}) do
+            settings.fade_finished_books=fade=="books" or fade=="both"
+            settings.finished_fade_enabled=fade=="recessed" or fade=="both"
+            local w=BoxWidget:new{entry={book=box,series_box=shape},width=shape.w,height=300,inset=10}
+            H.eq(not not w.show_mark,style~="none" and style~="legacy-off")
+            H.eq(w.fade_amount,settings.finished_fade_enabled and .6
+                or (settings.fade_finished_books and .5) or nil)
+            if w[4] and style~="bookmark" then
+                local mark=w[4]
+                H.eq(mark[1][1][2].text,"\xEF\x90\xAE")
+                H.eq(mark.background,"badge-day"); H.eq(mark.color,"border-day")
+                mark:_bs_recolour(recolours[mark]({badge_bg="night-bg",badge_fg="night-fg",border="night-border"}))
+                H.eq(mark.background,"night-bg"); H.eq(mark.color,"night-border")
+                H.eq(mark[1][1][2].fgcolor,"night-fg")
+            elseif w[4] then
+                assert(w.mark_size.h>w[4]:getSize().h,"must measure the real halo/shadow footprint")
+                assert(recolours[w[4]],"native bookmark must keep its recolour registration")
+            end
+        end
+    end
+    for k in pairs(settings) do settings[k]=nil end
+    repo.readProgress=original
+end)
+
+H.test("fade touches each silhouette pixel once; labels and native marks stay clear in both modes", function()
+    local original=repo.readProgress
+    local reads=0
+    repo.readProgress=function() reads=reads+1; return 1,"finished" end
+    settings.fade_finished_books=true
+    for _,style in ipairs({"tickbox","bookmark"}) do
+        settings.progress_badge_style=style
+        for _,width in ipairs({20,80,160,240}) do
+            for _,depth in ipairs({0,1,8,17}) do
+                for _,night in ipairs({false,true}) do
+                    badge_scale=width==20 and 2 or 1
+                    G_reader_settings={isTrue=function() return night end}
+                    local box=Boxes.box(members(6,"Saga"),"Saga")
+                    local shape=Boxes.geometry(box,{w=width,face_h=width*1.5,depth=depth,h=width*1.5+depth},
+                        {content_w=800})
+                    local w=BoxWidget:new{entry={book=box,series_box=shape,look={r=90,g=120,b=80}},
+                        width=shape.w,height=410,inset=10}
+                    local painted,faded={},{}
+                    local decoration=false
+                    local function pixels(x,y,rw,rh,fn)
+                        assert(x>=0 and x+rw<=shape.w and y>=0 and y+rh<=400)
+                        assert(rw>0 and rh>0)
+                        for py=y,y+rh-1 do for px=x,x+rw-1 do fn(py*1000+px) end end
+                    end
+                    local bb={paintRect=function(_,x,y,rw,rh,c)
+                        if c=="badge-day" or (type(c)=="string" and c:match("^text:"))
+                                or c=="completion-tick" or c=="completion-bookmark" then decoration=true end
+                        pixels(x,y,rw,rh,function(k) if not decoration then painted[k]=true end end)
+                    end,lightenRect=function(_,x,y,rw,rh,amount)
+                        H.eq(amount,.5); H.eq(decoration,false,"decorations must be painted after fade")
+                        pixels(x,y,rw,rh,function(k)
+                            assert(painted[k],"fade spilled onto wallpaper")
+                            assert(not faded[k],"double fade darkens/lightens an edge twice")
+                            faded[k]=true
+                        end)
+                    end}
+                    local before=reads
+                    w:paintTo(bb,0,0)
+                    H.eq(reads,before,"paint must not query progress")
+                    for k in pairs(painted) do assert(faded[k],"unfaded part of the box: "
+                        ..table.concat({style,width,depth,k%1000,math.floor(k/1000)},",")) end
+                    if w.show_mark then
+                        assert(w.mark_y>=2*w.stroke and w.mark_y+w.mark_size.h<shape.face_h)
+                        if w.show_title then
+                            assert(w.mark_y+w.mark_size.h<shape.face_h-w.label_h-2*w.stroke)
+                        end
+                    end
+                end
+            end
+        end
+    end
+    for k in pairs(settings) do settings[k]=nil end
+    repo.readProgress=original; badge_scale=1; G_reader_settings=nil
+end)
+
+H.test("read badges stay on the front, clear of the title, including small faces", function()
+    local box=Boxes.box(members(120,"Saga"),"Saga")
+    for _,width in ipairs({20,60,80,160,240}) do
+        for _,scale in ipairs({.75,1,1.5,2}) do
+            badge_scale=scale
+            local shape=Boxes.geometry(box,{w=width,face_h=width*1.5,depth=8,h=width*1.5+8},
+                {content_w=800})
+            local w=BoxWidget:new{entry={book=box,series_box=shape,look={r=90,g=120,b=80}},
+                width=shape.w,height=410,inset=10}
+            local badge_rect,title_rect
+            local bb={paintRect=function(_,x,y,rw,rh,c)
+                assert(x>=0 and x+rw<=shape.w and y>=0 and y+rh<=400)
+                if c=="badge-day" then badge_rect={x=x,y=y,w=rw,h=rh} end
+                if c=="text:Saga" then title_rect={x=x,y=y,w=rw,h=rh} end
+            end}
+            w:paintTo(bb,0,0)
+            if w.show_badge then
+                assert(badge_rect)
+                H.eq(badge_rect.x+badge_rect.w,shape.cover_w-2*w.stroke)
+                H.eq(badge_rect.y,w.top+shape.depth+2*w.stroke)
+                if title_rect then assert(badge_rect.y+badge_rect.h<title_rect.y) end
+            else
+                H.eq(badge_rect,nil)
+                assert(w.badge_size.w>w.label_w or w.badge_size.h>shape.face_h-4*w.stroke)
+            end
+        end
+    end
+    badge_scale=1
+end)
 
 H.test("top and side share one projection with a sloping lower side edge", function()
     for _, size in ipairs({.5,1,1.5}) do
@@ -378,8 +770,11 @@ H.test("box painting stays inside its planned width and above the plank at every
                 end}
                 w:paintTo(bb,20,30)
                 H.eq(w.dimen.x,20); H.eq(w.dimen.y,30)
-                assert(texts["text:"..n..(n==1 and " del" or " delar")])
-                assert(rects<=4*shape.depth+25)
+                assert(texts["text:"..countText(0,n)])
+                assert(texts["text:Saga"])
+                H.eq(texts["text:"..n..(n==1 and " del" or " delar")],nil)
+                H.eq(texts["text:"..n..(n==1 and " volume" or " volumes")],nil)
+                assert(rects<=12*shape.depth+130,"bounded cost, not proportional to series length")
                 H.eq(entry._drawn_h,shape.h)
                 H.eq(w.ges_events.Tap[1].range,w.dimen)
             end

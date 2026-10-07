@@ -164,6 +164,17 @@ data, ornament artwork or upstream baseline changes are included. Code rollback
 preserves settings; the new icon sources require alpha.28 or later. Device
 visual acceptance remains open.
 
+Version `0.1.0-alpha.29` redraws physical-shelf series boxes as open slipcases
+with up to six cover-coloured bindings and a slim dark title band. Box width
+grows with membership, up to a cap; native pagination uses that width and the
+existing height budget is preserved. A read/total badge replaces the volume
+count line. Fully finished boxes follow the ordinary book checkmark/bookmark
+and fading preferences, with clear labels and no changes to member statuses.
+Alpha.28 and earlier alpha releases can update directly through the same
+preview channel and unchanged bootstrap/API 1. No settings migration, reading
+data, artwork or upstream baseline changes are included. Code rollback restores
+the earlier presentation. Device visual acceptance remains open.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

@@ -26,7 +26,7 @@ function M.shelf(shelf)
         if not entry.series_box then return nil end
         return require("core/orbitui_series_box_widget"):new{
             entry=entry, width=entry.w, height=stand_h, inset=inset,
-            callbacks=opts.callbacks,
+            callbacks=opts.callbacks, book_look=shelf.bookLook,
         }
     end
 end
