@@ -14,7 +14,21 @@ names; Library is under Reading and the other three are under System.
 Choose the button/action you want to edit, then **Solar Outline...**,
 **Solar Line Duotone...** or **Tabler...**. Search, categories and pagination
 work the same way as in the Material picker. Bookshelf's image-capable icon
-library also offers all three sources. Existing icon selections are untouched.
+library also offers these sources. Existing icon selections are untouched.
+
+**Solar Colour** and **Solar Mono** are additional per-icon sources from
+[pxlflux's Solar Icon Pack](https://github.com/pxlflux/solariconpack.koplugin),
+separate from the existing Solar Outline/Line Duotone selections. Each contains
+all 160 SVGs: 34 SimpleUI icons, 24 supplementary icons and 102 KOReader icons.
+Colour keeps the pastel fills and native thin strokes; Mono keeps the original
+unfilled outlines. Both use the same picker, categories and search. Try
+`rakuyomi` or `manga`, `bookshelf`, `library`, `syncthing` or `appbar.settings`.
+Labels identify the SimpleUI, Extra and KOReader variants where names overlap.
+Select **Solar Colour...** or **Solar Mono...** when editing one icon; there is
+no whole-pack apply action. Opening or cancelling writes nothing. No separate
+plugin, installer, self-updater or `pack.lua` preset is installed, and KOReader's
+global icons are not replaced. Colour assets follow the native colour-preserving
+image path in the current quick-action rows/lists and all dock styles.
 
 **Manga (OrbitUI)** is first in both Solar lists; searching for `manga` finds it.
 It combines a softly rounded book with hiragana on the cover, in monochrome and
@@ -75,7 +89,7 @@ cannot render a different icon font or image token without further changes.
 ## Integration
 
 `core/orbitui_icons.lua` owns names, paths and cached catalogue/search data.
-`core/orbitui_vector_icons.lua` adds three lazy, whitelisted SVG catalogues.
+`core/orbitui_vector_icons.lua` adds lazy, whitelisted SVG catalogues.
 `adapters/orbitui_icons.lua` supplies optional component
 hooks through the existing runtime module resolver. No global Font or
 IconWidget replacement, fallback-face mutation, or copied icon directory.
@@ -111,6 +125,9 @@ identities such as `solar-outline:manga`, `solar-duotone:manga` and
 `tabler:language-hiragana` resolve to current runtime files; Bookshelf tokens
 use `[icon=orbitui-solar-outline-manga]`, etc. Absolute packaged paths also
 rebase on OTA. Material parsing and weight selection remain independent.
+The pxlflux sources use distinct identities such as `solar-colour:pack-library`
+and `solar-mono:extra-rakuyomi`; their Bookshelf tokens are
+`[icon=orbitui-solar-colour-pack-library]`, etc. No previous identities change.
 
 ## Rebuilding and verification
 
@@ -145,7 +162,21 @@ SVGs and regenerate, not the generated copies. CC BY 4.0, MIT and modification
 notices are bundled alongside the assets. Solar's CC license text comes from
 `https://creativecommons.org/licenses/by/4.0/legalcode.txt`.
 
-For the optional preview, install `cairosvg` and `Pillow` in a development venv:
+The additional pxlflux source is pinned separately in
+`assets/vector-icons/pxlflux-source.json`. To rebuild all 320 SVGs and both
+catalogues, run:
+
+```sh
+python3 scripts/build-solar-pack.py /path/to/solariconpack.koplugin
+```
+
+Only pinned Git blobs are read, never executable upstream code. Geometry,
+palette, stroke widths and opacity are retained; filenames are namespaced and
+serialization normalized. `pxlflux-generated.json` records the full input/output
+inventory and hashes. The original upstream license notice, CC BY 4.0 legal
+text and attribution to pxlflux and 480 Design ship in the runtime ZIP.
+
+For the existing manga preview (`cairosvg` and `Pillow` required):
 
 ```sh
 python scripts/preview-vector-icons.py docs/assets/manga-icons.png

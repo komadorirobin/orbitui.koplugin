@@ -180,6 +180,14 @@ plank. Preserve wallpaper in the unpainted front-left/rear-right corners;
 never flatten these into a rectangular top strip or side foot. Side dividers
 stay inside both rims. Use bounded drawing strips, not per-volume buffers,
 and retain the existing slot dimensions and pagination.
+Inside a series drill, or a `single_series` chip with no deeper drill, omit
+the redundant black section badges below the planks; retain the series heading
+and all individual books. `spineShowSectionBadges` in the series-box adapter
+supplies the optional `rowWidget.show_section_badges` render policy. Do not
+change planning, section metadata, settings or other views. Recompute it for
+each row build, including in-place swaps, so leaving the series restores normal
+badges and the deferred overlay cannot retain stale labels. Without the hook,
+standalone Bookshelf retains its original badges.
 Sources: `core/orbitui_series_boxes.lua`, `core/orbitui_series_box_widget.lua`,
 `adapters/orbitui_series_boxes.lua`. Tests: `tests/test_series_boxes.lua`.
 
@@ -219,6 +227,19 @@ sources, not presets. Their native shapes/opacity stay independent of Material
 weights. Keep the custom manga adaptations, attribution, lazy catalogues and
 OTA-safe SVG identities. No global font changes or automatic icon substitution.
 Tests: `tests/test_icons.lua`.
+
+Solar Colour and Solar Mono add all 160 SVGs per style from the separately
+pinned pxlflux Solar Icon Pack. Keep these sources distinct from Solar Outline
+and Line Duotone. Import artwork and license notices only, never the upstream
+installer, `pack.lua` or updater. Preserve colours, strokes, opacity and geometry;
+use the native colour-preserving image route for Home quick actions and dock
+styles, not a recoloured alpha mask. Selection is per icon with no whole-pack
+application or startup setting writes. Preserve whitelisted identities and OTA
+rebasing (`solar-colour:pack-library`, `solar-mono:extra-rakuyomi`). The builder
+and full source/hash inventory are `scripts/build-solar-pack.py` and
+`assets/vector-icons/pxlflux-{source,generated}.json`. Tests also cover all icons,
+both styles, categories, search, cancellation, native menu registration and
+palette preservation (`tests/test_solar_pack_assets.py`, `tests/test_icons.lua`).
 
 The built-in SimpleUI `night_mode` quick action retains full icon contrast in
 both day and night mode. Its off-state must not look unavailable, regardless of

@@ -4528,7 +4528,8 @@ function SpineShelf.rowWidget(opts)
                 cursor = cursor + gap_w
                 if gap_w > 0 then block_x0 = cursor end
             end
-            if not e.series_box and ((e.item and e.item.books) or e.section_label) then
+            if opts.show_section_badges ~= false and not e.series_box
+                    and ((e.item and e.item.books) or e.section_label) then
                 -- Every GROUP gets a badge, single-member ones included --
                 -- on a grouping chip each item is a section, and an
                 -- unbadged lone book reads as a stray (user report: the

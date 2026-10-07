@@ -6,6 +6,8 @@ M.sources = {
     { key = "solar-outline", label = "Solar Outline", module = "core/orbitui_solar_outline_catalogue" },
     { key = "solar-duotone", label = "Solar Duotone", title = "Solar Line Duotone", module = "core/orbitui_solar_duotone_catalogue" },
     { key = "tabler", label = "Tabler", module = "core/orbitui_tabler_catalogue" },
+    { key = "solar-colour", label = "Solar Colour", module = "core/orbitui_solar_colour_catalogue" },
+    { key = "solar-mono", label = "Solar Mono", module = "core/orbitui_solar_mono_catalogue" },
 }
 
 function M.source(key)

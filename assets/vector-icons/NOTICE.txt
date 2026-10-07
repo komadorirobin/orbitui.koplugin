@@ -26,3 +26,19 @@ No endorsement by the original authors is implied.
 
 selection.json pins both upstream revisions. generated.json records each
 original Git blob, SHA-256 and output checksum, including the custom inputs.
+
+Solar Colour and Solar Mono (Solar Icon Pack for KOReader)
+Copyright (C) 2026 pxlflux; based on Solar Icon Set by 480 Design.
+https://github.com/pxlflux/solariconpack.koplugin
+https://www.figma.com/community/file/1166831539721848736
+All included SVG artwork is licensed under CC BY 4.0.
+https://creativecommons.org/licenses/by/4.0/
+See PXLFLUX-LICENSE.txt for the upstream notice and SOLAR-LICENSE.txt for the
+CC BY 4.0 legal text. pxlflux redrew/adapted Solar icons, added new icons and
+created the Colour palette and Mono outlines. OrbitUI normalizes SVG
+serialization, namespaces filenames and supplies searchable catalogues;
+geometry, colours, opacity and stroke widths are preserved. The installer,
+updater, pack.lua presets and overview images are not included or executed.
+No endorsement by pxlflux, 480 Design, KOReader or SimpleUI is implied.
+pxlflux-source.json pins the source revision; pxlflux-generated.json records
+the original Git blobs, input SHA-256s and generated output checksums.

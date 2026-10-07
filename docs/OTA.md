@@ -153,6 +153,17 @@ Alpha.26 and earlier alpha releases can update directly through the same
 preview channel and unchanged bootstrap/API 1. No settings, reading data,
 artwork or upstream baselines are changed. Device visual acceptance remains open.
 
+Version `0.1.0-alpha.28` adds pxlflux's Solar Colour and Solar Mono as per-icon
+chooser sources, with 160 SVGs each. Existing icon choices are unchanged; no
+whole-pack installer or global icon replacement is included. Redundant black
+section badges are hidden inside an opened series or a single-series tab in
+the physical shelf view, while other shelf contexts keep their badges.
+Alpha.27 and earlier alpha releases can update directly through the same
+preview channel and unchanged bootstrap/API 1. No settings migration, reading
+data, ornament artwork or upstream baseline changes are included. Code rollback
+preserves settings; the new icon sources require alpha.28 or later. Device
+visual acceptance remains open.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

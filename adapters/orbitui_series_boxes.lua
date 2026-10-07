@@ -32,6 +32,12 @@ function M.shelf(shelf)
 end
 
 function M.widget(widget)
+    widget.spineShowSectionBadges = function(self)
+        local last = tip(self)
+        if last then return last.kind ~= "series" end
+        local tab = require("lib/bookshelf_tab_model").getById(self.chip)
+        return not (tab and tab.source and tab.source.kind == "single_series")
+    end
     widget.prepareSpineItems = function(self, items, total)
         -- Never group a partial window, especially a remote catalogue. The
         -- full light list is fetched/cached natively before this seam runs.

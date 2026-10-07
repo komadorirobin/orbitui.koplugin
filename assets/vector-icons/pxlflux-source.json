@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/pxlflux/solariconpack.koplugin",
+  "commit": "d4f4799c7a48e8e341163e7b7edb07ddd777614f",
+  "styles": {"solar-colour": "Colour", "solar-mono": "Mono"},
+  "sections": [
+    {"directory": "Pack Icons", "prefix": "pack", "label": "SimpleUI", "count": 34},
+    {"directory": "Supplementary Icons", "prefix": "extra", "label": "Extra", "count": 24},
+    {"directory": "KOReader Icons", "prefix": "koreader", "label": "KOReader", "count": 102}
+  ]
+}

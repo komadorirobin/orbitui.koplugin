@@ -172,6 +172,97 @@ H.test("a series drill exposes every volume without immediately boxing them agai
     tab=nil
 end)
 
+H.test("section badges are hidden only in a single-series context", function()
+    local w=widget({})
+    H.eq(w:spineShowSectionBadges(),true)
+    for _,kind in ipairs({"series","author","folder","genre","search","opds_nav"}) do
+        w._drilldown_path={{kind="series"},{kind=kind}}
+        H.eq(w:spineShowSectionBadges(),kind~="series")
+    end
+    w._drilldown_path={}
+    tab={source={kind="single_series"}}
+    H.eq(w:spineShowSectionBadges(),false)
+    w._drilldown_path={{kind="author"}}
+    H.eq(w:spineShowSectionBadges(),true)
+    w._drilldown_path={}
+    tab={source={kind="series"}}
+    H.eq(w:spineShowSectionBadges(),true)
+    tab=nil
+end)
+
+H.test("native row builds omit repeated series badges and restore them on navigation", function()
+    local W=H.widget()
+    local screen={scaleBySize=function(_,n) return n end}
+    local entries={}
+    for i,b in ipairs(members(6,"Saga")) do
+        entries[i]={book=b,item=b,w=120,h=200,run_idx=1,
+            section_label="Moberg, Vilhelm - Saga"}
+    end
+    local plan={entries=entries,rows={{first=1,last=3},{first=4,last=6}},shown=6}
+    local shelf={
+        plan=function() return plan end,
+        faceOutSpec=function() return {all=true} end,
+        plankUnit=function() return 10 end, plankFace=function() return 20 end,
+        plankInset=function() return 5 end, plankSurface=function() return 10 end,
+        plankDesignWidget=function() end, endMargin=function() return 10 end,
+        shadowsEnabled=function() return false end,
+    }
+    local row=assert(shelf_source:match("function SpineShelf%.rowWidget%(opts%)\n(.-)\nend\n"))
+    shelf.rowWidget=compile("return function(opts)\n"..row.."\nend",{
+        SpineShelf=shelf,Geom=W,ShelfPlank=W,ShelfBadges=W,SpineBookSlot=W,Screen=screen,
+        require=function(name)
+            if name=="lib/bookshelf_wallpaper" then return {} end
+            if name=="ui/widget/horizontalgroup" or name=="ui/widget/horizontalspan"
+                    or name=="ui/widget/overlapgroup" then return W end
+            error("Unexpected row dependency: "..name)
+        end,
+    })()
+    local w=widget({})
+    local build=nativeMethod("_buildSpineRows",{Screen=screen,require=function(name)
+        H.eq(name,"lib/bookshelf_spine_shelf"); return shelf
+    end})
+    w._shelfCallbacks=function() return {} end
+    w._spinePlanBase=function() return {gap=20} end
+    w._spineSkip=function() return 0 end
+    w._ornStartState=function() end
+    w._noteSpineRows=function() end
+    w._layoutPrimitives=function() return 10 end
+    w._rowGap=function() return 20 end
+    w._spineShowAuthor=function() return true end
+    local function check(count)
+        local rows=build(w,{},800,300,20,3) -- Includes one empty plank.
+        H.eq(#w._spine_badges,count)
+        H.eq(rows[3]._shelf_badges,nil)
+        for r=1,2 do
+            local badge=rows[r]._shelf_badges
+            H.eq(badge~=nil,count>0)
+            if badge then
+                H.eq(#badge.spans,1); H.eq(badge.deferred,true)
+                H.eq(badge.spans[1].label,"Moberg, Vilhelm - Saga")
+            end
+            for i=plan.rows[r].first,plan.rows[r].last do
+                H.eq(rows[r]._slots_by_fp[entries[i].book.filepath].entry,entries[i])
+            end
+        end
+        H.eq(w._spine_books_shown,6); H.eq(#w._spine_page_books,6)
+        H.eq(entries[1].section_label,"Moberg, Vilhelm - Saga")
+    end
+    check(2)
+    w._drilldown_path={{kind="series",label="Saga"}}
+    check(0); check(0) -- Rebuild/page swap cannot revive the overlay.
+    H.eq(w._drilldown_path[1].label,"Saga")
+    w._drilldown_path={{kind="author"}}
+    check(2)
+    w._drilldown_path={}
+    tab={source={kind="single_series"}}
+    check(0)
+    tab=nil
+    check(2)
+    w.spineShowSectionBadges=nil -- Standalone Bookshelf keeps its default.
+    w._drilldown_path={{kind="series"}}
+    check(2)
+end)
+
 H.test("grid, search, remote feeds and incomplete windows are not compacted", function()
     local raw={book(1,"Saga"),book(2,"Saga")}
     local w=widget(raw)

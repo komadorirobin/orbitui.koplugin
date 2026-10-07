@@ -57,6 +57,8 @@ for _, path in ipairs({
     "core/orbitui_ornament_install.lua", "adapters/orbitui_ornaments.lua",
     "assets/vector-icons/selection.json", "assets/vector-icons/generated.json", "assets/vector-icons/NOTICE.txt",
     "assets/vector-icons/SOLAR-LICENSE.txt", "assets/vector-icons/TABLER-LICENSE.txt",
+    "assets/vector-icons/PXLFLUX-LICENSE.txt", "assets/vector-icons/pxlflux-source.json",
+    "assets/vector-icons/pxlflux-generated.json",
     "assets/vector-icons/custom/manga-outline.svg", "assets/vector-icons/custom/manga-duotone.svg",
     "components/bookshelf/main.lua", "components/bookshelf/_meta.lua",
     "components/bookshelf/LICENSE", "components/bookshelf/assets/bookshelf-logo.png",

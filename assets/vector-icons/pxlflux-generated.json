@@ -1,0 +1,1640 @@
+{
+  "inputs": {
+    "LICENSE": {
+      "sha256": "82ce2fa40d8eae1ee18f29aec521deda85677b08fb58e644db7835239c73cc81"
+    },
+    "Solar Colour/KOReader Icons (Colour)/align.auto.svg": {
+      "git_blob": "f74384617620a06c40156a99d75c92f570b600c3",
+      "sha256": "73c1cda2bb65ad6b97d7d297a26f47636d4e4a0496d151bd106287f6ef868a5f"
+    },
+    "Solar Colour/KOReader Icons (Colour)/align.center.svg": {
+      "git_blob": "bc36c6acc63dc915f3085c0ee7fe4ed756e58c4e",
+      "sha256": "7dc015dc4149b7dc6ee8aa9fe8c89cb1589a24fef3b042d50ac4cf18f7e132b9"
+    },
+    "Solar Colour/KOReader Icons (Colour)/align.justify.svg": {
+      "git_blob": "829669d5c45cb2b82cd58da9b1cbb0086a2f3d69",
+      "sha256": "b30e935c69dfcf7edcf7e3dd00f498288263673a0843b8b0c5e1e3700ce11530"
+    },
+    "Solar Colour/KOReader Icons (Colour)/align.left.svg": {
+      "git_blob": "20eae0eda2a7b3162aa8a91b39ba988b1232dc79",
+      "sha256": "d96ef01508e186dd9dc344c0b73126f24b7a2bb37f96b68102f8c010494a7d51"
+    },
+    "Solar Colour/KOReader Icons (Colour)/align.right.svg": {
+      "git_blob": "d1cbf5e8cdbe2f0899e080b25aeb92d5ce66eb48",
+      "sha256": "f5ccdb2e675035f998c55c062085691bc07b723dab925700d153cc00388f6a73"
+    },
+    "Solar Colour/KOReader Icons (Colour)/appbar.contrast.svg": {
+      "git_blob": "d70759857d26510f7f3268997d65d9781f2719c2",
+      "sha256": "f361d8b0556f5ab807dc67f9f2c0f026612b68e648d414a7c08a41b6cc255acc"
+    },
+    "Solar Colour/KOReader Icons (Colour)/appbar.crop.svg": {
+      "git_blob": "45a33ee7bd251eb8cbfb7a637a8988b92c512832",
+      "sha256": "86135d658e8d97645018d01b66ed3ad017c08ef8b3c307ebef2808fb0c8c069d"
+    },
+    "Solar Colour/KOReader Icons (Colour)/appbar.filebrowser.svg": {
+      "git_blob": "152c30bff96ece9663f6092d5df75caa76bd7fe5",
+      "sha256": "2197a86913ba19c47a484015cb7ccea390e2c2819d4eb0b4bb870d18dde523a0"
+    },
+    "Solar Colour/KOReader Icons (Colour)/appbar.menu.svg": {
+      "git_blob": "bffadc31c5749280ce5b16333c00a6f36c53cdc9",
+      "sha256": "d8475a2afa321dbabf2c582f63b0ca285a6a60899a9c2770e90639650eaee42e"
+    },
+    "Solar Colour/KOReader Icons (Colour)/appbar.navigation.svg": {
+      "git_blob": "307974fc39e0ecc63c07a183f3580ee94a6e3e9d",
+      "sha256": "9e021f6f356527a75585e5dbd67789a8f67001d7c434947bf497bf67e71ac6a6"
+    },
+    "Solar Colour/KOReader Icons (Colour)/appbar.pagefit.svg": {
+      "git_blob": "1d8ba8ab544d5837e9f90d93f4a2f6f810b4f86c",
+      "sha256": "f7294159270a5c3dd43dd2fb8c2dc3d704d455b04d5add22cbbfa0260b3293a8"
+    },
+    "Solar Colour/KOReader Icons (Colour)/appbar.pageview.svg": {
+      "git_blob": "5322df5a575e7fb83b388d4c4776ac8da1a7f134",
+      "sha256": "6be3c2ba10f1939d427f36a58ec4859d998b8e15647f38a34569df8eed269b3a"
+    },
+    "Solar Colour/KOReader Icons (Colour)/appbar.pokeball.svg": {
+      "git_blob": "5ea14ec23eba95610b3c242da00c68614f274208",
+      "sha256": "e81af81513f575c223694f96e827c283ff903e2a9cef57ee090693e3a916aed8"
+    },
+    "Solar Colour/KOReader Icons (Colour)/appbar.rotation.svg": {
+      "git_blob": "123ca21df97c2504d18579685acdc8c532c7513d",
+      "sha256": "125fbfb84a9cf89feb5040acdc291af8e6b3fb505a1066250235ce82ab745f12"
+    },
+    "Solar Colour/KOReader Icons (Colour)/appbar.search.svg": {
+      "git_blob": "ced8a4273cabce4dea8504627ab85ab27ca82b32",
+      "sha256": "a23cae558ecac79e2a28d5403c2797219005b3d67c67a71b2cfc23ad77799da2"
+    },
+    "Solar Colour/KOReader Icons (Colour)/appbar.settings.svg": {
+      "git_blob": "d59bec8fae451d105a96638fcf1d1ab2ef4014bc",
+      "sha256": "9764056d429a92c117b78cf4aec888271c36da285368caa85ea0f283e250c287"
+    },
+    "Solar Colour/KOReader Icons (Colour)/appbar.textsize.svg": {
+      "git_blob": "4a47f3db087766bb991f334be60d186693649d02",
+      "sha256": "952c8f7afbd388ace7236e35ef78d42c302c384fb6bd854e587b6e6a6fd7e450"
+    },
+    "Solar Colour/KOReader Icons (Colour)/appbar.tools.svg": {
+      "git_blob": "07a180fb4606520591ea147b3b8ac7adadc6cbe6",
+      "sha256": "0222fc10cae057d7e96945049f02e3d0ad3dd99ab235950ad17898f728ed2da7"
+    },
+    "Solar Colour/KOReader Icons (Colour)/appbar.typeset.svg": {
+      "git_blob": "f84e78eb5785be98c2bf42e8bed8b58da537ebcc",
+      "sha256": "ac692de79bacf4b56c958f36e9290bcc58cd33b2d6a5b76e0a608dc58ef7ebaa"
+    },
+    "Solar Colour/KOReader Icons (Colour)/back.top.rtl.svg": {
+      "git_blob": "be4c734417fbd2f38210e7f4c45defc2b410d2e0",
+      "sha256": "3e804c7d11fd2889252e1ea63b95bb7d6ca926dff594d9f0d2d304f79ab51e9c"
+    },
+    "Solar Colour/KOReader Icons (Colour)/back.top.svg": {
+      "git_blob": "833a18fd677ff1e69490218b2bcb5cabfd6d3fe9",
+      "sha256": "c2443971bd1c9b17f85345c9e29af60f71f4259250759e33fddfcb12afc38389"
+    },
+    "Solar Colour/KOReader Icons (Colour)/book.opened.svg": {
+      "git_blob": "229f361ea4a09c2a1a13b824016dc2986c35b4e7",
+      "sha256": "fa33f53ff256040c5142202f671b0a5b0c9ecc1512041e8489c988b9ef329f30"
+    },
+    "Solar Colour/KOReader Icons (Colour)/bookmark.svg": {
+      "git_blob": "4f49f41436b5cd09e82fa3a5a6d74b87561d6866",
+      "sha256": "f545cd5cb92d23a297231c6e8f7189e1090ae551fd3c4873712ad281644325ba"
+    },
+    "Solar Colour/KOReader Icons (Colour)/cancel.svg": {
+      "git_blob": "90719895e98d8d36cd10a272325f011cd2d91091",
+      "sha256": "07a5f5a519fd6ecf4b284dd86566055aca2e6ef16104025a0c33d4b32dced67c"
+    },
+    "Solar Colour/KOReader Icons (Colour)/check.svg": {
+      "git_blob": "00a60a16da5b0c1360225f1b8823296ad383b49a",
+      "sha256": "9562d9309f18d0454b8ab369a5d7c416592633ddcca3f0f64a8aafed5f16ce4c"
+    },
+    "Solar Colour/KOReader Icons (Colour)/chevron.first.svg": {
+      "git_blob": "9e7cfe4ad666f890977cd0e2a13d7805107034e3",
+      "sha256": "68ca61abeb67c7fb0072e0f1ce7d19fccea187029621bf89b69d4392a076656a"
+    },
+    "Solar Colour/KOReader Icons (Colour)/chevron.last.svg": {
+      "git_blob": "d6062a2ca103439b3b59696a5c6511cd9435e55f",
+      "sha256": "7bfbd7e3fd46ac38b3aa44b8fa30509455057bea0c173f0e2067407a6905f354"
+    },
+    "Solar Colour/KOReader Icons (Colour)/chevron.left.svg": {
+      "git_blob": "d10041db4b428eb9b394f8ced118cf0fe2037b9b",
+      "sha256": "1f3edffe51d7c0f4cf3dd9c4d3bacb1bfb8185abf257d86b7d700f93fac3246a"
+    },
+    "Solar Colour/KOReader Icons (Colour)/chevron.right.svg": {
+      "git_blob": "195ac134fe7d451a84cf569096845582b9613a3d",
+      "sha256": "6b98479994cdf40e7bc4bccab2a381ca8df594fe548862307bdbc6b5d679360f"
+    },
+    "Solar Colour/KOReader Icons (Colour)/chevron.up.svg": {
+      "git_blob": "82a8540f5d3bfbcd91ddd6bcdcab7c8b6c246a3c",
+      "sha256": "470b0f644735d6d445fd78923c693bb0afa001a98bd8839c21872ebd5e1b5f99"
+    },
+    "Solar Colour/KOReader Icons (Colour)/close.svg": {
+      "git_blob": "b7441f194fbf75839a949efda99cdb5964449a88",
+      "sha256": "9a4a72fcc86e7c71acdd41256bec80b608f84fe7b2bdfc8fa9628bdf07605afe"
+    },
+    "Solar Colour/KOReader Icons (Colour)/column.one.svg": {
+      "git_blob": "829669d5c45cb2b82cd58da9b1cbb0086a2f3d69",
+      "sha256": "b30e935c69dfcf7edcf7e3dd00f498288263673a0843b8b0c5e1e3700ce11530"
+    },
+    "Solar Colour/KOReader Icons (Colour)/column.three.svg": {
+      "git_blob": "046855e598b668ea687dbd26a8559460f076ac5d",
+      "sha256": "20773ec21f97277236c68daecdb7cf4b1b90896578f77304e679918c088a8e5c"
+    },
+    "Solar Colour/KOReader Icons (Colour)/column.two.svg": {
+      "git_blob": "51d62f89122d23b0523b7e93ad244d8e85a8193e",
+      "sha256": "7e50ac9559c2fab93f4bd2fc1b3407aa5cbfe5ba44cf586925ae226591590da7"
+    },
+    "Solar Colour/KOReader Icons (Colour)/control.collapse.svg": {
+      "git_blob": "8aa5a9caeaa4cd7a4eadbbe57a8dda520bafb83f",
+      "sha256": "4b258ddc875061c2da220f576e020375dfddd3a076782df1c091b44dfff007e8"
+    },
+    "Solar Colour/KOReader Icons (Colour)/control.expand.alpha.svg": {
+      "git_blob": "9d1887702745fbdb909a0f73f1b3456368d1d61b",
+      "sha256": "21548a1c135be8c0478f4c4fb5e8c99574e893b930322a7883628b44f4d61aab"
+    },
+    "Solar Colour/KOReader Icons (Colour)/control.expand.svg": {
+      "git_blob": "a27698be03eb4a3871b4409204f1611af444c69c",
+      "sha256": "9f5fc2c5f377fb38a550a9b65c263ed3d2b2fe1000ea74312bcdef5189b49ea7"
+    },
+    "Solar Colour/KOReader Icons (Colour)/cre.render.partial.svg": {
+      "git_blob": "ab668a3143860f0db23124750aa8a9469100779f",
+      "sha256": "31dfd0c82a6658083ba61eb89b34eaa0918ef7c744c723e6fa77f0bc5b2aafca"
+    },
+    "Solar Colour/KOReader Icons (Colour)/cre.render.ready.svg": {
+      "git_blob": "434f129ea0a33571da906e4533b8a8443e0a3c91",
+      "sha256": "123c31e59d7bdd949256bceddaf5873f39e739ad879d5ccf0a36179efa81c173"
+    },
+    "Solar Colour/KOReader Icons (Colour)/cre.render.reload.alpha.svg": {
+      "git_blob": "d8a566677e5277a0da087a563d59d7c74edc7fe6",
+      "sha256": "d23fe44d021e82da39c23abf3917b399762d57c9053e8294352a9f5d0a8e6a3e"
+    },
+    "Solar Colour/KOReader Icons (Colour)/cre.render.reload.svg": {
+      "git_blob": "e8268251ac947c69b4ae4b96d6f0b8cb39524431",
+      "sha256": "05b7d1ed2dd86307cf20f2888dd0a770515095313e3344880d77dd91c4d9a848"
+    },
+    "Solar Colour/KOReader Icons (Colour)/cre.render.working.svg": {
+      "git_blob": "d6697615232d0f0048e48830d19af758f7ac02b2",
+      "sha256": "a909838ade681c11b7dd320845ab028c7d49d2bfce0d250f43bcdc6ca4b60efa"
+    },
+    "Solar Colour/KOReader Icons (Colour)/direction.BTLR.svg": {
+      "git_blob": "853e529989a8204ca7720f50d8ea66793201a45b",
+      "sha256": "5e3bcea1163e8203e0175cfa57e2ad0119dadeb88d1198b87ec5bb9a0d2ec18d"
+    },
+    "Solar Colour/KOReader Icons (Colour)/direction.BTRL.svg": {
+      "git_blob": "c9763cb247f09cdce9828365f8cab92d51153f53",
+      "sha256": "33a3f1f853b94c6e21a0a562986a9654ff47e14258b1f2c0388579f27b85dbfe"
+    },
+    "Solar Colour/KOReader Icons (Colour)/direction.LRBT.svg": {
+      "git_blob": "2d23da235abbeb8abc025482f7a8ffcb8aa6e8e9",
+      "sha256": "1c252437f2d8146cdabade33f13bedeba87976a9b09a4d3e829f41f8046e0fdb"
+    },
+    "Solar Colour/KOReader Icons (Colour)/direction.LRTB.svg": {
+      "git_blob": "eeae7ebe4854c63df3044b8c4b57b340c19caa69",
+      "sha256": "de0587920662f05d7be8425abf0b93c876170f1c7e9f821caffc29fb50ca1989"
+    },
+    "Solar Colour/KOReader Icons (Colour)/direction.RLBT.svg": {
+      "git_blob": "8964ee722b73ccf2992e961d32cdf8d568dc0639",
+      "sha256": "6db3ac39bcedc01e45dc4e0eafc924ac1d57af52767a544f17d4e3e3fd51af98"
+    },
+    "Solar Colour/KOReader Icons (Colour)/direction.RLTB.svg": {
+      "git_blob": "45881f3eb063fb3147c080245a036f060051355f",
+      "sha256": "948865280001fd5bdf8addcb3e15793101318316c5e6a189a4975ed84a61ad5f"
+    },
+    "Solar Colour/KOReader Icons (Colour)/direction.TBLR.svg": {
+      "git_blob": "f417fc5c10774f94f75216d0d5283fe87dd23189",
+      "sha256": "ef91394c283a10f9a5b85680953eeb4e7a485476b1a3b72dc85497cc3ac3eef8"
+    },
+    "Solar Colour/KOReader Icons (Colour)/direction.TBRL.svg": {
+      "git_blob": "b09012cf14c089b98ff8db9cd458248663db4c0c",
+      "sha256": "6f3cc59f5a6f7434881ab135808c1cb50867d255e20cb3c0bf7e0acaff71a7f6"
+    },
+    "Solar Colour/KOReader Icons (Colour)/dogear.abandoned.rtl.svg": {
+      "git_blob": "a794d8821e44c61e74a32710043d97e3f11042df",
+      "sha256": "9381c93475cbd9f8955b4b3f3b693e11d8b76d13cfbee647e2178c1e7f35acb4"
+    },
+    "Solar Colour/KOReader Icons (Colour)/dogear.abandoned.svg": {
+      "git_blob": "8eb43c14473446ed56fb431f0ec015643c791b79",
+      "sha256": "e3e37a169eee1d524b2d325caab4e2c17b398d86b648e964019a44cba54ef339"
+    },
+    "Solar Colour/KOReader Icons (Colour)/dogear.alpha.svg": {
+      "git_blob": "e46565a52da6ecef3e518353b65c6d01757e03ba",
+      "sha256": "cbf7e66c7f08f31f9e7a23a87b2a0b2fb741f834ff0ebe243bcff4bfb10a8283"
+    },
+    "Solar Colour/KOReader Icons (Colour)/dogear.complete.rtl.svg": {
+      "git_blob": "1fed8eba590a87fdb80f4a147f5706cc68643e0b",
+      "sha256": "6391029149b918d51e189f99b3bb7175e524f382b941b0db63059008a792daa3"
+    },
+    "Solar Colour/KOReader Icons (Colour)/dogear.complete.svg": {
+      "git_blob": "0f55f0b7635a8bd7ea9c9639c6c3c767ff269755",
+      "sha256": "c452e4f2e622674f6c97c3af96f8b06fd08b24f830ebc83bc4fb2bbfd6e751db"
+    },
+    "Solar Colour/KOReader Icons (Colour)/dogear.opaque.svg": {
+      "git_blob": "8e4ceb952206c651284f561ae3f4c8b5c30bf016",
+      "sha256": "58b9d9388eb93d131b3f7f6c9b47b91442bde83a1a87e0fa1b4a8ee9bfa114fe"
+    },
+    "Solar Colour/KOReader Icons (Colour)/dogear.reading.svg": {
+      "git_blob": "264d1cce01886170daf7abc2b8b72e9c0c14351c",
+      "sha256": "5cd0bb0ef02cad3c077a1eafd655831cd31182af6185506e44d91d48a6f9908f"
+    },
+    "Solar Colour/KOReader Icons (Colour)/edit.svg": {
+      "git_blob": "ff108658d560497b2b061f587ce472c5d9757563",
+      "sha256": "14a04005629eddd71f18ba8d2499bdd4f5e47b6e3d1e7ece723c9944a957ce65"
+    },
+    "Solar Colour/KOReader Icons (Colour)/exit.svg": {
+      "git_blob": "b7441f194fbf75839a949efda99cdb5964449a88",
+      "sha256": "9a4a72fcc86e7c71acdd41256bec80b608f84fe7b2bdfc8fa9628bdf07605afe"
+    },
+    "Solar Colour/KOReader Icons (Colour)/home.svg": {
+      "git_blob": "5021ac6e5e6400307eaba6dc94ade72d10149d27",
+      "sha256": "f7100056dc68988bab3a27a3ab1f39cdddbc1ddfb8a1113f044514037e6b65ad"
+    },
+    "Solar Colour/KOReader Icons (Colour)/info.svg": {
+      "git_blob": "e31bec42eff2dac77857231b9112fa517a774c1a",
+      "sha256": "9c384f1f06a0fefde6b03fff01aefd1550fb7d87bd4ec36ed2e8c1adcd1b64c3"
+    },
+    "Solar Colour/KOReader Icons (Colour)/move.down.svg": {
+      "git_blob": "8aa5a9caeaa4cd7a4eadbbe57a8dda520bafb83f",
+      "sha256": "4b258ddc875061c2da220f576e020375dfddd3a076782df1c091b44dfff007e8"
+    },
+    "Solar Colour/KOReader Icons (Colour)/move.up.svg": {
+      "git_blob": "fb83c91396712b10fce294ab892b559687c96eb0",
+      "sha256": "9469c7519e4351c9b037104bbce8e6e40f85b281adbdbee2fb68024060bb0fa4"
+    },
+    "Solar Colour/KOReader Icons (Colour)/notice-info.svg": {
+      "git_blob": "e31bec42eff2dac77857231b9112fa517a774c1a",
+      "sha256": "9c384f1f06a0fefde6b03fff01aefd1550fb7d87bd4ec36ed2e8c1adcd1b64c3"
+    },
+    "Solar Colour/KOReader Icons (Colour)/notice-question.svg": {
+      "git_blob": "43afed948526d6871ac7c47f10efde51cfeb75f8",
+      "sha256": "8cb1201154375622b96c8cc170fc1fc0a2023a4f5a418751dfa98028c46d6f06"
+    },
+    "Solar Colour/KOReader Icons (Colour)/notice-warning.svg": {
+      "git_blob": "f44dd3eaa7188a441e1f6e0ba847faea8193cfad",
+      "sha256": "382ee744395a059d1fb30896f9715ce72634bc8234a1ae26947ecb188f819282"
+    },
+    "Solar Colour/KOReader Icons (Colour)/plus.svg": {
+      "git_blob": "41d11538385a8d248fbd35994a1945397c8308fb",
+      "sha256": "b47943501c584e3cc95b9c75cca6fc050115d09f125a4312467686bf022db220"
+    },
+    "Solar Colour/KOReader Icons (Colour)/position.marker.svg": {
+      "git_blob": "4858fd7360723f31f3e3f8813b2e5ea9c517345e",
+      "sha256": "9c81b8784842008cdd5814d370d58347cae0bcd97f2b756ec6c69da23562b948"
+    },
+    "Solar Colour/KOReader Icons (Colour)/position.marker.top.svg": {
+      "git_blob": "012dc2c61c9d767b62d8fe489160f20c27ad2a26",
+      "sha256": "d0221457549f847954796516423c516f26df25d0e5ead265884a6762e7f6073b"
+    },
+    "Solar Colour/KOReader Icons (Colour)/rotation.0UR.svg": {
+      "git_blob": "f95c569ce13cf9395ec60895de3158a3f35abfa2",
+      "sha256": "acdce4dfdbadf5eb127c9e676dab07f24802ee2f9d157e146ded6472e51595ae"
+    },
+    "Solar Colour/KOReader Icons (Colour)/rotation.180UD.svg": {
+      "git_blob": "41446918ffc45997ad9b3ae458675557e39016ea",
+      "sha256": "ac4c704127a337339458e3ad0b045fa8e0d0b3b59a426aefa96cdcaa8173cd3d"
+    },
+    "Solar Colour/KOReader Icons (Colour)/rotation.90CCW.svg": {
+      "git_blob": "b6c6c1dda3bc84d14d0e12efa1195468b05a1e24",
+      "sha256": "9b0fcaea787067d96e3bc48a3f0e715351de463bbaedaac37c9f528ace283d8a"
+    },
+    "Solar Colour/KOReader Icons (Colour)/rotation.90CW.svg": {
+      "git_blob": "2dccfe9aa67573757299de1badcc3260f5432e68",
+      "sha256": "156c7757ff64a6e6de6d84972327a5db6bdfac3b654624e77f8a8bdc0acd4f01"
+    },
+    "Solar Colour/KOReader Icons (Colour)/rotation.L.0UR.svg": {
+      "git_blob": "790987e9054d215ea480866ef565138fbe34163c",
+      "sha256": "5d5c8b9644a7c2e8795e1d0d4d3139dc1772b10af7966592c94a64ba4614fff2"
+    },
+    "Solar Colour/KOReader Icons (Colour)/rotation.L.180UD.svg": {
+      "git_blob": "2b1aa907b4600c0daffa2752812f9bb78d4cc7f9",
+      "sha256": "e2dedf3e07e21fb572e289183c2af22e33ef0e6372d8d3b38bb138296cbd36f0"
+    },
+    "Solar Colour/KOReader Icons (Colour)/rotation.L.90CCW.svg": {
+      "git_blob": "6ac02411be601e12d8c671fb465e57d509cb1882",
+      "sha256": "a1b8f105c13a079f1905452581dc4f812c819f74ece500acda073c608d9f65c1"
+    },
+    "Solar Colour/KOReader Icons (Colour)/rotation.L.90CW.svg": {
+      "git_blob": "2b0ad5ab59b51c2df16eff7dbebf40c0f68c7fce",
+      "sha256": "7791465f3bbfce874e4cdf216f37f241b86280b1bf401cc50fa64b6ec85e6286"
+    },
+    "Solar Colour/KOReader Icons (Colour)/rotation.P.0UR.svg": {
+      "git_blob": "8f63447433edeb247e6c59783e96f378777e1dbe",
+      "sha256": "1a76a66003d75f122d1d8f4a25a0bb37cb7746d664bc41449a209ced6a8f653d"
+    },
+    "Solar Colour/KOReader Icons (Colour)/rotation.P.180UD.svg": {
+      "git_blob": "2af26ea4e590a41a944826297e1fa3dac3af4983",
+      "sha256": "f040c2200ef881fdc9b8e28942c80a41899da7aba5ef2b15a38421d535cd802a"
+    },
+    "Solar Colour/KOReader Icons (Colour)/rotation.P.90CCW.svg": {
+      "git_blob": "dc7a7b61cc43546119fa31fafcadda83e0debe5d",
+      "sha256": "4bf16d3780faf332a8a9a1379de54c2cb4eaa8eef8ae968f72cc8b33deac929f"
+    },
+    "Solar Colour/KOReader Icons (Colour)/rotation.P.90CW.svg": {
+      "git_blob": "e4338e400395e98725c6ad9c06c13348d6f7c914",
+      "sha256": "d821e6e03c6a408840ebb375a7fe49c520f7bdb36229d8063d995f149719c9ed"
+    },
+    "Solar Colour/KOReader Icons (Colour)/star.empty.svg": {
+      "git_blob": "573f64bb55dd6bba396ceeb5700da5398a8ce245",
+      "sha256": "eb74337c9e2a724e64857b578c7879c1c8499565d2bacdd64285c1e7f268c6be"
+    },
+    "Solar Colour/KOReader Icons (Colour)/star.full.svg": {
+      "git_blob": "aace72faf421c78cbdf401034a235ec095910295",
+      "sha256": "fd72685e0231987d9c9e38029fe6e156a376cd2c363b7a94d5b56af8c79c0170"
+    },
+    "Solar Colour/KOReader Icons (Colour)/star.white.svg": {
+      "git_blob": "b9001931ce051fbcd3ab1c0d6d1058ccf567088e",
+      "sha256": "8bcb1e7b31b6b8280c335e782f84edc7729c404bf1d3a6775ff2df7738c41f6c"
+    },
+    "Solar Colour/KOReader Icons (Colour)/texture-box.svg": {
+      "git_blob": "90f585eb2ca036ea60185b6b509a7f4dbd59a532",
+      "sha256": "fdd9458b8469a7337498a22b5e4e171c35420a0a650d56c964c03588a3dbc97a"
+    },
+    "Solar Colour/KOReader Icons (Colour)/triangle.svg": {
+      "git_blob": "0a11845cdfe8a6b941e00c6f8f87d9ecdac2b742",
+      "sha256": "349b4f77fd7fb67a5c0a10c1296cc275616b0a596a7f1c5d8535d53080ad4ea3"
+    },
+    "Solar Colour/KOReader Icons (Colour)/wifi.open.0.svg": {
+      "git_blob": "d49918d98479333484626434aabe37173a077c99",
+      "sha256": "9a9eb96ecc11c83a4cd93038fbfae32d792838752e88f951f2a9bd0e12cd0e91"
+    },
+    "Solar Colour/KOReader Icons (Colour)/wifi.open.100.svg": {
+      "git_blob": "5d9e41753ca954286df0a217079a6491ccd2fefd",
+      "sha256": "24b19b559339eef4f32beb18a7eb620cb77d6da88669373a656639e3ce8e1505"
+    },
+    "Solar Colour/KOReader Icons (Colour)/wifi.open.25.svg": {
+      "git_blob": "39e99c512e1426087818f862da278e9e515bde53",
+      "sha256": "8cf64cbfb0e478b7da8a4cc6135f2aeaaed920ee18eb9f2f94d77cd733eb2f59"
+    },
+    "Solar Colour/KOReader Icons (Colour)/wifi.open.50.svg": {
+      "git_blob": "544672f739ec616aa75e3caea098af270bbd458e",
+      "sha256": "a62a90621c352f9b72e96df0e349916bc8092ef37bc7469c46681100e015415b"
+    },
+    "Solar Colour/KOReader Icons (Colour)/wifi.open.75.svg": {
+      "git_blob": "0ac15731eba691bfad0a7367b65e81bc6a0d2ce4",
+      "sha256": "4a8a5ab1d650427f19df48b5dd83edd2c700908b63b259d80c72afe211aa8739"
+    },
+    "Solar Colour/KOReader Icons (Colour)/wifi.secure.0.svg": {
+      "git_blob": "c45af20bbc215743368724a1e3ea7bee3a84f4a3",
+      "sha256": "3ca6af0b599ae41351e5b14300f47341d65204f1a5efa557a76a84a64093fd40"
+    },
+    "Solar Colour/KOReader Icons (Colour)/wifi.secure.100.svg": {
+      "git_blob": "02e3adb3c6cc023d2ad9299ddd9797ec6dd02619",
+      "sha256": "0b297bc412870f5a5aff1f31034a2fa9fe0dc8b43faeb679a90aa83b38b71ad6"
+    },
+    "Solar Colour/KOReader Icons (Colour)/wifi.secure.25.svg": {
+      "git_blob": "536f70f5e92dca14aa66d6abd9a611b8f2f75550",
+      "sha256": "e174a33ceaede76d897f67ce078eac057c31c25be5fd4d822ef3f5bc3d6ec741"
+    },
+    "Solar Colour/KOReader Icons (Colour)/wifi.secure.50.svg": {
+      "git_blob": "46c405680a5e51e7ce1c8d06e1397182662f20ea",
+      "sha256": "13ca94ee0256bee125d4fc4fccd280d8ded3a7662c64207c221fc513576a3fd7"
+    },
+    "Solar Colour/KOReader Icons (Colour)/wifi.secure.75.svg": {
+      "git_blob": "21b11db1b6e93c9f5112f938d7df1dc4d470fe54",
+      "sha256": "e8137ecbbd127b94f7aefd0daa00bf7f4f4c692f2da02dacab578d503d3317e8"
+    },
+    "Solar Colour/KOReader Icons (Colour)/wifi.svg": {
+      "git_blob": "5d9e41753ca954286df0a217079a6491ccd2fefd",
+      "sha256": "24b19b559339eef4f32beb18a7eb620cb77d6da88669373a656639e3ce8e1505"
+    },
+    "Solar Colour/KOReader Icons (Colour)/zoom.column.svg": {
+      "git_blob": "6b1f9b56b794f426814ee8077a3ff200a9fba132",
+      "sha256": "ca3a187c0bae7d451b8a1a14ffc6d04c98f019f8957656ed62272e0abe411d0f"
+    },
+    "Solar Colour/KOReader Icons (Colour)/zoom.content.svg": {
+      "git_blob": "09fe8bf1901bc1378838695d77a88a377d9fb17b",
+      "sha256": "62ce6c66162a8c87ea1c54893a0f9e3966cf803774d2ddf731e4c8cc0b4c41f4"
+    },
+    "Solar Colour/KOReader Icons (Colour)/zoom.manual.svg": {
+      "git_blob": "d86964f7df7dbd317e2172bbba196f3d11119116",
+      "sha256": "5e900feaf3cf33c8b09d286111086147d5f8783b54f41df388dc1645a76589d4"
+    },
+    "Solar Colour/KOReader Icons (Colour)/zoom.page.svg": {
+      "git_blob": "1f0ac2368c8b7ca17f8d68864b78f69bd210e422",
+      "sha256": "eef80fea1f76383447890964d738f4577a067e6b219a070789169bec04504f4e"
+    },
+    "Solar Colour/KOReader Icons (Colour)/zoom.row.svg": {
+      "git_blob": "469bfaeb34308c50a20bc01d1ed3c8e10ecbe5ba",
+      "sha256": "bb3630a32e50f37bbdbda38078b5b9787a67ddd9b97a21e4b33b4b003b3c96ec"
+    },
+    "Solar Colour/Pack Icons (Colour)/authors.svg": {
+      "git_blob": "d7d884dbc46cfeb9352032b933d13b1a72380dfb",
+      "sha256": "b7b471a032c330b7cdf661f625d9c06eb5ad5d82cd0d1ff7b82acdc8320f7258"
+    },
+    "Solar Colour/Pack Icons (Colour)/bookmark_browser.svg": {
+      "git_blob": "4f49f41436b5cd09e82fa3a5a6d74b87561d6866",
+      "sha256": "f545cd5cb92d23a297231c6e8f7189e1090ae551fd3c4873712ad281644325ba"
+    },
+    "Solar Colour/Pack Icons (Colour)/chevron_left.svg": {
+      "git_blob": "d10041db4b428eb9b394f8ced118cf0fe2037b9b",
+      "sha256": "1f3edffe51d7c0f4cf3dd9c4d3bacb1bfb8185abf257d86b7d700f93fac3246a"
+    },
+    "Solar Colour/Pack Icons (Colour)/chevron_right.svg": {
+      "git_blob": "195ac134fe7d451a84cf569096845582b9613a3d",
+      "sha256": "6b98479994cdf40e7bc4bccab2a381ca8df594fe548862307bdbc6b5d679360f"
+    },
+    "Solar Colour/Pack Icons (Colour)/coll_back.svg": {
+      "git_blob": "833a18fd677ff1e69490218b2bcb5cabfd6d3fe9",
+      "sha256": "c2443971bd1c9b17f85345c9e29af60f71f4259250759e33fddfcb12afc38389"
+    },
+    "Solar Colour/Pack Icons (Colour)/collections.svg": {
+      "git_blob": "67c898720f404505aa410c1e31e0123a94f55166",
+      "sha256": "5f50859f8ad701635393e779cd8051a1542cb56c9f12dcdbb6a254da0669f4b3"
+    },
+    "Solar Colour/Pack Icons (Colour)/continue.svg": {
+      "git_blob": "229f361ea4a09c2a1a13b824016dc2986c35b4e7",
+      "sha256": "fa33f53ff256040c5142202f671b0a5b0c9ecc1512041e8489c988b9ef329f30"
+    },
+    "Solar Colour/Pack Icons (Colour)/favorites.svg": {
+      "git_blob": "d172a57fd25d93738aaa1392dfed066cc8da39d3",
+      "sha256": "b91cd72ff9128ed388d9248a5b575ed3b74f6397e691ff44e63da9e18930c2d1"
+    },
+    "Solar Colour/Pack Icons (Colour)/folder.svg": {
+      "git_blob": "8c4ece5b945b7ad16a7e44098084c3207b728989",
+      "sha256": "221f7acad1a59f6c795356bb93249d19c9943371d2f6fa1243901581672d531d"
+    },
+    "Solar Colour/Pack Icons (Colour)/frontlight.svg": {
+      "git_blob": "78d210ecf95dcb7908e14c6e96a7051ad7746525",
+      "sha256": "3cf4f15781d2debdf230a775b544fecb3889e5e2290b75ed5cd1b2431a7cbec1"
+    },
+    "Solar Colour/Pack Icons (Colour)/history.svg": {
+      "git_blob": "c9709e5806e626ed2b7a13b9c9669a4596e9d9fe",
+      "sha256": "ed13c24d827b586add43d81729360c96cb07a7b341c9c74ed8dd5ae9fd1c55cf"
+    },
+    "Solar Colour/Pack Icons (Colour)/homescreen.svg": {
+      "git_blob": "5021ac6e5e6400307eaba6dc94ade72d10149d27",
+      "sha256": "f7100056dc68988bab3a27a3ab1f39cdddbc1ddfb8a1113f044514037e6b65ad"
+    },
+    "Solar Colour/Pack Icons (Colour)/library.svg": {
+      "git_blob": "fb34e5c8556c35477c33030078d2e05a82952847",
+      "sha256": "b83d50af02dd7c5219d04b3a11091f375562ad2cc09249000f33e7f213a01242"
+    },
+    "Solar Colour/Pack Icons (Colour)/menu.svg": {
+      "git_blob": "bffadc31c5749280ce5b16333c00a6f36c53cdc9",
+      "sha256": "d8475a2afa321dbabf2c582f63b0ca285a6a60899a9c2770e90639650eaee42e"
+    },
+    "Solar Colour/Pack Icons (Colour)/night_mode.svg": {
+      "git_blob": "bc7c6edaf423895d8ee8f86046f0ef7215d26eab",
+      "sha256": "151f4bf41365bc848f1c7447550b1c48ee22b7e4c3c6174143fb3399eb581838"
+    },
+    "Solar Colour/Pack Icons (Colour)/pager_first.svg": {
+      "git_blob": "9e7cfe4ad666f890977cd0e2a13d7805107034e3",
+      "sha256": "68ca61abeb67c7fb0072e0f1ce7d19fccea187029621bf89b69d4392a076656a"
+    },
+    "Solar Colour/Pack Icons (Colour)/pager_last.svg": {
+      "git_blob": "d6062a2ca103439b3b59696a5c6511cd9435e55f",
+      "sha256": "7bfbd7e3fd46ac38b3aa44b8fa30509455057bea0c173f0e2067407a6905f354"
+    },
+    "Solar Colour/Pack Icons (Colour)/power.svg": {
+      "git_blob": "7b4a8749276732ddb6ebe6c360522ce155255244",
+      "sha256": "cc979c53863f75fa417794075cf354b25d4f2ae9831a6d2898f60c6fcf2d4355"
+    },
+    "Solar Colour/Pack Icons (Colour)/qa_group.svg": {
+      "git_blob": "c8c6b01252cf08026df92c4063df4df7e76d912f",
+      "sha256": "6bc7c7395f17a5c48abd837c5184207a670946344e8b761017d123f65d242e56"
+    },
+    "Solar Colour/Pack Icons (Colour)/qa_plugin.svg": {
+      "git_blob": "3e8d638121638123a09e40b6d516fed983d6ad45",
+      "sha256": "3cb8f49be377177c06673fee1488ec0723238da5a012c8d639c5501748d55961"
+    },
+    "Solar Colour/Pack Icons (Colour)/random_document.svg": {
+      "git_blob": "380c3ecb2f1941666ef02d1906c60adc366a3106",
+      "sha256": "ec2298e6339dba569a75dbdb1d58da0cd78b87e32c87e5c37efc7e05ea89c77b"
+    },
+    "Solar Colour/Pack Icons (Colour)/recent.svg": {
+      "git_blob": "4dc09bbdefc7f2f2c227242a7358e19bcf0dd142",
+      "sha256": "054cbc4c0592063846c97daf74fad19fdc039273373233cf1c0a459b516f923a"
+    },
+    "Solar Colour/Pack Icons (Colour)/search.svg": {
+      "git_blob": "ced8a4273cabce4dea8504627ab85ab27ca82b32",
+      "sha256": "a23cae558ecac79e2a28d5403c2797219005b3d67c67a71b2cfc23ad77799da2"
+    },
+    "Solar Colour/Pack Icons (Colour)/series.svg": {
+      "git_blob": "ebe1114459936762cdf0c4eeb2b2729c1f1a5529",
+      "sha256": "cdd5fe5c42fd5af405ca812bc0af0b1220db4264173463f8a6aa281f3a80d198"
+    },
+    "Solar Colour/Pack Icons (Colour)/settings.svg": {
+      "git_blob": "d59bec8fae451d105a96638fcf1d1ab2ef4014bc",
+      "sha256": "9764056d429a92c117b78cf4aec888271c36da285368caa85ea0f283e250c287"
+    },
+    "Solar Colour/Pack Icons (Colour)/stats_calendar.svg": {
+      "git_blob": "01cbfe5fb27d40c8e36183b64a8c1b0f44d6e261",
+      "sha256": "531178a50caad90839415b5be8b3f7a5d22510737fc696b2e9f5bb1a62ab6d21"
+    },
+    "Solar Colour/Pack Icons (Colour)/tab_filebrowser.svg": {
+      "git_blob": "e1769ab86d894e5c0aff7d8e531b5f71a5f3dd5f",
+      "sha256": "9430db465a1addf4d59f7be69a75a0c1eba7732974f7a4447977776be09459dc"
+    },
+    "Solar Colour/Pack Icons (Colour)/tab_fm_settings.svg": {
+      "git_blob": "152c30bff96ece9663f6092d5df75caa76bd7fe5",
+      "sha256": "2197a86913ba19c47a484015cb7ccea390e2c2819d4eb0b4bb870d18dde523a0"
+    },
+    "Solar Colour/Pack Icons (Colour)/tab_navigation.svg": {
+      "git_blob": "307974fc39e0ecc63c07a183f3580ee94a6e3e9d",
+      "sha256": "9e021f6f356527a75585e5dbd67789a8f67001d7c434947bf497bf67e71ac6a6"
+    },
+    "Solar Colour/Pack Icons (Colour)/tab_qs_panel.svg": {
+      "git_blob": "f61926d65c7d539fb9fdb355c59989a7f7102b3b",
+      "sha256": "aa383d68fdfe9817028583aa080859e7ef9a26bad900c659461860f841a63145"
+    },
+    "Solar Colour/Pack Icons (Colour)/tab_tools.svg": {
+      "git_blob": "07a180fb4606520591ea147b3b8ac7adadc6cbe6",
+      "sha256": "0222fc10cae057d7e96945049f02e3d0ad3dd99ab235950ad17898f728ed2da7"
+    },
+    "Solar Colour/Pack Icons (Colour)/tab_typeset.svg": {
+      "git_blob": "f84e78eb5785be98c2bf42e8bed8b58da537ebcc",
+      "sha256": "ac692de79bacf4b56c958f36e9290bcc58cd33b2d6a5b76e0a608dc58ef7ebaa"
+    },
+    "Solar Colour/Pack Icons (Colour)/tags.svg": {
+      "git_blob": "e930f0742390b6693a3d3c89f40acde13434dc9d",
+      "sha256": "190b7abd7307f35409b58ba21d0b8666cca70b56492b75d87af641f6416c00f4"
+    },
+    "Solar Colour/Pack Icons (Colour)/wifi_toggle.svg": {
+      "git_blob": "5d9e41753ca954286df0a217079a6491ccd2fefd",
+      "sha256": "24b19b559339eef4f32beb18a7eb620cb77d6da88669373a656639e3ce8e1505"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/ai_assistant.svg": {
+      "git_blob": "4ff33ed18c4e89b8b9a200962bb4690dbfeb94fd",
+      "sha256": "8efa2a93988f92dfb995f47c94eb1665f66e3b9ff6c5277f9773ef041fc842b1"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/annotations_viewer.svg": {
+      "git_blob": "6c805b586ac18943b0b6a8315e8291be32b89d44",
+      "sha256": "5099d4cfa3c25e2857333135466f2d41939c1c62766f020a243e9241997b506a"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/backup.svg": {
+      "git_blob": "d1ad7e44b67b5315f848003b22f744cceea3106a",
+      "sha256": "1ddf649e6d4a738d515a3c76b0f982a8a66cf0c2c90880e6833f420c72911875"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/battery_statistics.svg": {
+      "git_blob": "3ae308e9fa5c273f912ea5c99aedef2a76c6adce",
+      "sha256": "89ffe77208d9f309a617772ffbfebb40b912cedbeba1e093f7636ec0f24277f8"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/bookshelf.svg": {
+      "git_blob": "d66ad316e9788eee35bc03ece79a74a656d0ae13",
+      "sha256": "e1bbcfaee9575b061d0b1abd866ef9e30f1217b6eb5563a2b35c2a83cfd0a2dd"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/calendar_view.svg": {
+      "git_blob": "f6397d84c57e48ef604e60901410d5c808e71269",
+      "sha256": "59ad8b355e5df826c03b9d4888e0213e43c276a9f4e192fa66b9b3abb97b5f76"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/cloud_storage.svg": {
+      "git_blob": "decf8460371cf923db598d813c762d615b2b0bbe",
+      "sha256": "887a48bae72fe22fca8dbdebd201b634dfee36553bcc1c56688459313a03aacb"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/crossword.svg": {
+      "git_blob": "3d607613eed2acd251ca06aa4e2fff360c6e24af",
+      "sha256": "2d011d54196a207cbff8317b8ba8ab690a8ba5bbd985a65b00a8ae20b5b87fd2"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/filebrowserplus.svg": {
+      "git_blob": "522d676826faec53b4229b84fd0ffd06ed41f048",
+      "sha256": "8f5d2c9cc6c1b578e169e422107a19f9f84dd4f89d605461d81d1a0d22454f99"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/instapaper.svg": {
+      "git_blob": "f84e78eb5785be98c2bf42e8bed8b58da537ebcc",
+      "sha256": "ac692de79bacf4b56c958f36e9290bcc58cd33b2d6a5b76e0a608dc58ef7ebaa"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/localsend.svg": {
+      "git_blob": "6448a80abecc9acd30eb6389abb1ae1614375fed",
+      "sha256": "e0beb0c233f73df6b4a29c423e7d1fcd60ed4893d8291b7ab3b83f7b12c7bc9a"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/rakuyomi.svg": {
+      "git_blob": "a221d490ec22859e79167eb93cf1f98900068e7e",
+      "sha256": "e724d0b9a7a262c79981e09f919776276ad793372f6e445ed253c9baba41ca3d"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/records.svg": {
+      "git_blob": "1b79a456b65ca3915128b8593642240471923ce1",
+      "sha256": "f361d0e70b110a4e9d769e446bcf8f1272399619603cd2c366a687a1800cb40a"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/rotate.svg": {
+      "git_blob": "123ca21df97c2504d18579685acdc8c532c7513d",
+      "sha256": "125fbfb84a9cf89feb5040acdc291af8e6b3fb505a1066250235ce82ab745f12"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/screenshots.svg": {
+      "git_blob": "2319da139e0dc0ae62ce155922b56769fcad79e1",
+      "sha256": "2b473042c1a36256b5369782c0949e84fce43fc5f23f265a5c77be4d6abe81c5"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/sleep.svg": {
+      "git_blob": "216f404357ebec94dde3ea2a22d2a3c38d1a700b",
+      "sha256": "73c8d85944e540339770980491a74d8e8207ce4c53db724b9c9a3e82dc711f76"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/storefront.svg": {
+      "git_blob": "f067b6f62e766b9f1f7f418982a7ad4f34872201",
+      "sha256": "39ece9aa3ba5f71ce025e04d4df72aae92ecbf7a8af91c56f811775cc4c99e06"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/streak.svg": {
+      "git_blob": "e0b91b7a74e2f22f336fb0ee9e504565e51b4ca1",
+      "sha256": "1439776b7cc36d23d2dc1cce0b78da0bc7fc58ff9e0110c8a39b2418a5fa1915"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/sudoku.svg": {
+      "git_blob": "5a31c788d7a72c636f85ea46d37e84ce76c3bc32",
+      "sha256": "6a191f6f37d73d94ea1032dd52ea789eec9774a185e73b246c6f65c2b8015092"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/syncthing.svg": {
+      "git_blob": "556f2a50226d459b680f5d4518e631d5274c99a3",
+      "sha256": "0aa841054e8267be1887b49bb20a886da9818f8685f09089099fbec5f262e649"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/time.svg": {
+      "git_blob": "db975a4e7845923fafaaecde774e1956d885674a",
+      "sha256": "d597167d3dd094b611fd44a30773872c7d3ee9c73cf804ea7c5aa2ae397da47c"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/usb_storage.svg": {
+      "git_blob": "38307d356e70edde64d4669059a5a90fc97f644c",
+      "sha256": "5dcb624ef87ad50d0976747578063d9a34b111591de4eb9f44f7302de256a387"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/vocabulary_builder.svg": {
+      "git_blob": "f882e59afd4de8f15d0999036e99845553240790",
+      "sha256": "376aeb436d92d0ef302487d643aaf246317c9ad845531e620f650afc22fdb4ee"
+    },
+    "Solar Colour/Supplementary Icons (Colour)/zlibrary.svg": {
+      "git_blob": "97663515e1961657eecd61acb4b62ce3ddc0545e",
+      "sha256": "d3f449e7b524a5b9c1d9d7b4720fc7adc6d33894b373f5224149e581c41f9413"
+    },
+    "Solar Mono/KOReader Icons (Mono)/align.auto.svg": {
+      "git_blob": "430cb1202d198771902519b7cf3d5b20e0880b84",
+      "sha256": "c17e55cef0815bbbf68b384255504deb91b25f73bbb54f36c7b14a71ad6021b0"
+    },
+    "Solar Mono/KOReader Icons (Mono)/align.center.svg": {
+      "git_blob": "6a932ebb9ee216f0d748879c31155a80a9fa4aea",
+      "sha256": "4bb988208fac4485ee1cdfba994f2ce24b18abf3bb390fb0eb591d376bbeb122"
+    },
+    "Solar Mono/KOReader Icons (Mono)/align.justify.svg": {
+      "git_blob": "e58b1cfdce6449f742d25c68226a76418ce34863",
+      "sha256": "0ff36ced6a6c7df1b0db03c09fad4558434ecb1797b45408d63f1a0d45ec6f31"
+    },
+    "Solar Mono/KOReader Icons (Mono)/align.left.svg": {
+      "git_blob": "c3795885a9278502f0926e484376ac755c1737bc",
+      "sha256": "05d037b43523af90ea1362149672a140c1dd6a2e16225c7e79797f0be53beb00"
+    },
+    "Solar Mono/KOReader Icons (Mono)/align.right.svg": {
+      "git_blob": "0687d554453a27c4495f6a71f67521e102ab7320",
+      "sha256": "30a9e3efe8d5d4d59e0e24fb8f36c94c06ebf31c826f869d84691df8c5e0f2b7"
+    },
+    "Solar Mono/KOReader Icons (Mono)/appbar.contrast.svg": {
+      "git_blob": "3e99a20e91e916eb9f31294ecb46d38885ea4b93",
+      "sha256": "1255891122bd7b2d8b3daf2abe7cc497f3386a38feb5e5cfd3603d23880b1cd5"
+    },
+    "Solar Mono/KOReader Icons (Mono)/appbar.crop.svg": {
+      "git_blob": "89ca44b1ce97ba1ba81cd1198d1e0b9e6b7b3658",
+      "sha256": "1ea8ce562473d83005dcf6b34d6880e5f89f4cc79d2dc790bc34b7efbb5e3e86"
+    },
+    "Solar Mono/KOReader Icons (Mono)/appbar.filebrowser.svg": {
+      "git_blob": "a3b8b0b838e8c4d70c6c4832f18d24aab50caae3",
+      "sha256": "54172e0c10b0d0b5b60eba05947ce282b9d01801710f6fa2a40dacdb901d6b0f"
+    },
+    "Solar Mono/KOReader Icons (Mono)/appbar.menu.svg": {
+      "git_blob": "ec7fec59c4e0935193923703ff2c9ed62c57872a",
+      "sha256": "1bdc55e7969c3c403cfc0dce0ea8147d42a363599d1f762cc39200d1fe4fdf14"
+    },
+    "Solar Mono/KOReader Icons (Mono)/appbar.navigation.svg": {
+      "git_blob": "c77e202a71d98c568c29b13ccf3c331ecbf4e6b0",
+      "sha256": "f11ad70728ccbb525f046abb28b3f3059def9f112f628e9c75f8ae458b12158b"
+    },
+    "Solar Mono/KOReader Icons (Mono)/appbar.pagefit.svg": {
+      "git_blob": "0e14bc97370a7efd0c33b30f4d03779d8efaeb7e",
+      "sha256": "795c6fa4e25e137b92d8205fccba11f157fc1eb322c7a4e2b9ee03af36744b96"
+    },
+    "Solar Mono/KOReader Icons (Mono)/appbar.pageview.svg": {
+      "git_blob": "be68c0658582756ac6930d1e30b46af2a2201973",
+      "sha256": "5e43cc00998b8808172538ff06f3c35a2e94f79c25a9f202bf7a87e5ae68e9d2"
+    },
+    "Solar Mono/KOReader Icons (Mono)/appbar.pokeball.svg": {
+      "git_blob": "03dbb0e813fcccfdb000f68ca5964450361c0458",
+      "sha256": "2db0115c607671c32b227185b72290e6965c92731c41356e5a6c1f5cb475f044"
+    },
+    "Solar Mono/KOReader Icons (Mono)/appbar.rotation.svg": {
+      "git_blob": "5c832e5cc1cfda7f2f06896954bac8042283398e",
+      "sha256": "2a5115fb63272c62285ff55250bbd69b27b95b642f9cc940ec37bc0fe0509a24"
+    },
+    "Solar Mono/KOReader Icons (Mono)/appbar.search.svg": {
+      "git_blob": "867cd0c1b9004876107e9f3a599678cf18fb6dab",
+      "sha256": "387ee2e76afa8c4f429ebc4a68f3bb386a89c06757220b9a044493e8e12d035c"
+    },
+    "Solar Mono/KOReader Icons (Mono)/appbar.settings.svg": {
+      "git_blob": "b1977fe628b471644a414e9f2794aa881ceacd5b",
+      "sha256": "745309c352fba55bf951a5c020456e0aa50d9635e1c9a35cda96e8227780dc94"
+    },
+    "Solar Mono/KOReader Icons (Mono)/appbar.textsize.svg": {
+      "git_blob": "a7dc17ca78e1ba2bc089f3a38646c0d5055ce628",
+      "sha256": "d5365c20b38429e328068497866c1abc7b87d603abd229dcdd88ecc5d7dffd76"
+    },
+    "Solar Mono/KOReader Icons (Mono)/appbar.tools.svg": {
+      "git_blob": "ddd350ed89c5e2e9c843af9e915517c712cedc61",
+      "sha256": "b02427d6e8c88013b0f40f33cb8810f06a91e04a52e2289e69a1afa6657aabde"
+    },
+    "Solar Mono/KOReader Icons (Mono)/appbar.typeset.svg": {
+      "git_blob": "9cf809f3490a745c0f08e1fbde3114f624a56bea",
+      "sha256": "4dc791cf92ac1e39d94a11565dc5d25598ccfd5dd673b7540759a4d66997b9dd"
+    },
+    "Solar Mono/KOReader Icons (Mono)/back.top.rtl.svg": {
+      "git_blob": "ca3643b532c1ecaba189297ed8896217c24c7ded",
+      "sha256": "bcd51a69e6052315c4d7e8ffdfee54c4d00542ea62327d5e9036bbfcf56313b8"
+    },
+    "Solar Mono/KOReader Icons (Mono)/back.top.svg": {
+      "git_blob": "2575c812fdb846222958ace221e54633c5a04496",
+      "sha256": "6cecc4da26c7cfbd1988be9a955e1694357a614d836e93e62b0c919e700a8f9e"
+    },
+    "Solar Mono/KOReader Icons (Mono)/book.opened.svg": {
+      "git_blob": "d15f377c8fe87c066ffe38de812896237ab1e763",
+      "sha256": "63b8124c8cb716927a5cb3539e2bf7500a686fbe61be7d031126967ae93f791a"
+    },
+    "Solar Mono/KOReader Icons (Mono)/bookmark.svg": {
+      "git_blob": "88ee3984385f8bcd574f16580cb74515350e954a",
+      "sha256": "094b2931b2325f83af92a2e4d23da3c810eb18d8bbbb8eb60be9445cacecf06d"
+    },
+    "Solar Mono/KOReader Icons (Mono)/cancel.svg": {
+      "git_blob": "8e121486d5512d6125149ab09cba62b6c41563c6",
+      "sha256": "4c6fc1fb3d7ffc4310053f6c035b2ffb5ac636763227331ba9d111fc6f33c170"
+    },
+    "Solar Mono/KOReader Icons (Mono)/check.svg": {
+      "git_blob": "4c424751ec4ab926967afab2f64100f2975968ea",
+      "sha256": "e94a29a1b2bc78aa1a8c027f7d1ae66cd7d2151db2e98a50a311bc288a76ad95"
+    },
+    "Solar Mono/KOReader Icons (Mono)/chevron.first.svg": {
+      "git_blob": "def41f4e56f21e5ba157e3d2689892b932cd463d",
+      "sha256": "8e779e35566a75dbd405295a9007b0435beaa8a9197158fb77402dd510883192"
+    },
+    "Solar Mono/KOReader Icons (Mono)/chevron.last.svg": {
+      "git_blob": "6d75bb74ef6191f2b6bc70c532e3947d8bf36f65",
+      "sha256": "d34f5d25767011e1166426d7ea78b33b396082332194b09d5bb3b5ee5cf30761"
+    },
+    "Solar Mono/KOReader Icons (Mono)/chevron.left.svg": {
+      "git_blob": "c65ff2449047d331171b49e71d0a9642330800d2",
+      "sha256": "ed2b701c9c56f456c974dbedd7694fe80eed9cf36d107551f8e5018c5deb3875"
+    },
+    "Solar Mono/KOReader Icons (Mono)/chevron.right.svg": {
+      "git_blob": "4e7caa9af2252775436d8d8ff1eb2fa80a4b53e4",
+      "sha256": "132207ccdb7224515959064e344ac237c893643bec72fc518e372e291885644d"
+    },
+    "Solar Mono/KOReader Icons (Mono)/chevron.up.svg": {
+      "git_blob": "ab7af4081a913701c57fd5f7f846f450a0a3b362",
+      "sha256": "762350629c5885ec24c8c6ef96d978b29870902377f7aadc9828becc45c246d1"
+    },
+    "Solar Mono/KOReader Icons (Mono)/close.svg": {
+      "git_blob": "12ee9e0fa3b97e417e43f3e0301f220bf8fe7a52",
+      "sha256": "6311eef208b71b6f787d61f501ad0e8a56bfa2afeedc1b28af5404f450b1b562"
+    },
+    "Solar Mono/KOReader Icons (Mono)/column.one.svg": {
+      "git_blob": "e58b1cfdce6449f742d25c68226a76418ce34863",
+      "sha256": "0ff36ced6a6c7df1b0db03c09fad4558434ecb1797b45408d63f1a0d45ec6f31"
+    },
+    "Solar Mono/KOReader Icons (Mono)/column.three.svg": {
+      "git_blob": "e8f319651cada707702870cfb3a58645c11fca1c",
+      "sha256": "7c5c8e520b7d94f73952de5c77bd33651bfee6e959849cfef13d1663c6713f93"
+    },
+    "Solar Mono/KOReader Icons (Mono)/column.two.svg": {
+      "git_blob": "12a77a534be462182bfbf7ceb5f0efccb8bbe050",
+      "sha256": "134b22e1f44618edce47b4a12926e283d2d88902623008c824cd003f5ba8e9f0"
+    },
+    "Solar Mono/KOReader Icons (Mono)/control.collapse.svg": {
+      "git_blob": "8aa5a9caeaa4cd7a4eadbbe57a8dda520bafb83f",
+      "sha256": "4b258ddc875061c2da220f576e020375dfddd3a076782df1c091b44dfff007e8"
+    },
+    "Solar Mono/KOReader Icons (Mono)/control.expand.alpha.svg": {
+      "git_blob": "9d1887702745fbdb909a0f73f1b3456368d1d61b",
+      "sha256": "21548a1c135be8c0478f4c4fb5e8c99574e893b930322a7883628b44f4d61aab"
+    },
+    "Solar Mono/KOReader Icons (Mono)/control.expand.svg": {
+      "git_blob": "a27698be03eb4a3871b4409204f1611af444c69c",
+      "sha256": "9f5fc2c5f377fb38a550a9b65c263ed3d2b2fe1000ea74312bcdef5189b49ea7"
+    },
+    "Solar Mono/KOReader Icons (Mono)/cre.render.partial.svg": {
+      "git_blob": "a2184bdc8b2893fed54c857c7c6826b110e41fbf",
+      "sha256": "56924c637bc7453683d4775e856a494e3f7ed6e449e6b5865d25f4a04d558227"
+    },
+    "Solar Mono/KOReader Icons (Mono)/cre.render.ready.svg": {
+      "git_blob": "0ef40344ddfc4402b8a93f10aa01ab98fa627173",
+      "sha256": "16e96e0ee6ce316bbaead0c6bbebd85e22cba34dbb5017dfc10ff34b5773378f"
+    },
+    "Solar Mono/KOReader Icons (Mono)/cre.render.reload.alpha.svg": {
+      "git_blob": "d0f382d4522480fe1b0e6839a9121b60532b1858",
+      "sha256": "67a6dd379787e77e5b8601fc8e010eb0132a88a8cfdd1d3f2a3c4cf9061c96a7"
+    },
+    "Solar Mono/KOReader Icons (Mono)/cre.render.reload.svg": {
+      "git_blob": "405e5e0d474d243835fc92a271ffcb2d5c3d1993",
+      "sha256": "9fa9d1ecfefd1c8f0667c0c0d7a4b8404d2861f0b3c484b6a208faef31863439"
+    },
+    "Solar Mono/KOReader Icons (Mono)/cre.render.working.svg": {
+      "git_blob": "7ba2cc5cdf0ca2390056429032fd856d2fcd7f3b",
+      "sha256": "ff93ec7c798158a567e038bacc111ef8c465dbbfa434245a99566f7c9c1f57cf"
+    },
+    "Solar Mono/KOReader Icons (Mono)/direction.BTLR.svg": {
+      "git_blob": "8cb1d132fb34429a68a1f5dedbf381fc25ff27ab",
+      "sha256": "67f931983559927f121a95bef76071c0918b9b361f8e1a67767b30a1d5ab5eaf"
+    },
+    "Solar Mono/KOReader Icons (Mono)/direction.BTRL.svg": {
+      "git_blob": "52a515c6fa57cff7044e476c0d2d4ac699447041",
+      "sha256": "e8660f3070d0d214291ad0fc8ab06bd46217260a06695fe4f56bd0dc31c1f6c7"
+    },
+    "Solar Mono/KOReader Icons (Mono)/direction.LRBT.svg": {
+      "git_blob": "607e11877707f71ff73af0111ac4b1604e611e48",
+      "sha256": "c71a4e126e4ea79d798214c8329d3a23f2e91facb65792dcf963b25aa49c683b"
+    },
+    "Solar Mono/KOReader Icons (Mono)/direction.LRTB.svg": {
+      "git_blob": "50ed31b2fc09666b5f63ee4c1946248fb9ac6eb5",
+      "sha256": "bc957053be2141e1415cc4b8334447de91721ad3d846564be91abf81691d25f1"
+    },
+    "Solar Mono/KOReader Icons (Mono)/direction.RLBT.svg": {
+      "git_blob": "a5e21eae7c9a02ed916d634c1c64f0faa489e135",
+      "sha256": "fde94e3ef4e54e5c52824b86a07fe3312f03ac1ac2d21a66007b6e5c3cc20004"
+    },
+    "Solar Mono/KOReader Icons (Mono)/direction.RLTB.svg": {
+      "git_blob": "f8ecb6fbb95f8a16fdee52c5a8124d9b2a5ac0fa",
+      "sha256": "8955fb8303398a337f1b455531d1701c6af2f89b25f836a996be5a23d535ba34"
+    },
+    "Solar Mono/KOReader Icons (Mono)/direction.TBLR.svg": {
+      "git_blob": "6436f800a764cf9eb474120a94a8101dcbca088f",
+      "sha256": "34dd1526068d688471ac6303b7b2a5a1d2edfa6ff51658e2bfacbafa224f819f"
+    },
+    "Solar Mono/KOReader Icons (Mono)/direction.TBRL.svg": {
+      "git_blob": "0c929cc9d54c350904f932bf0b401cee4e9a14da",
+      "sha256": "71fcea68b0358029fb9e1d304c34e171d8fcc993448e8278503ae12bbb90fda6"
+    },
+    "Solar Mono/KOReader Icons (Mono)/dogear.abandoned.rtl.svg": {
+      "git_blob": "68ca79aba86b07f998657b7741b6da58c53613a8",
+      "sha256": "8289a123ecbe148ca25f5e7344de0ce5e5b9fa5860970a4fae98966c523db482"
+    },
+    "Solar Mono/KOReader Icons (Mono)/dogear.abandoned.svg": {
+      "git_blob": "38597c4fa4a56b43033cb7ff36585b24ef30a889",
+      "sha256": "ebf7b0834ca703fc37b85b8c014fb5fc9365931692f10cde982244d7e7c909b8"
+    },
+    "Solar Mono/KOReader Icons (Mono)/dogear.alpha.svg": {
+      "git_blob": "e80b956d26d9300c673fbe1056f96e7233dcc21a",
+      "sha256": "e22869ccfb6d8442b9f41fa5a69e2cb816a8d516a4887a893504fac6f18478ca"
+    },
+    "Solar Mono/KOReader Icons (Mono)/dogear.complete.rtl.svg": {
+      "git_blob": "f6ef20ec4601efa09d3ea36d2bfbeb7ed3b53b51",
+      "sha256": "f9008e59c0306b3a0a2186bcd3c6eab015c8b3918d12b93ddd819cf23aff3df2"
+    },
+    "Solar Mono/KOReader Icons (Mono)/dogear.complete.svg": {
+      "git_blob": "f02b2c780c8a10879a6daa02cfdaea75d2347e1e",
+      "sha256": "c2274ab326f53326e4fc787787fb415cb0a541cc2ad7b6808569b37fb38ac116"
+    },
+    "Solar Mono/KOReader Icons (Mono)/dogear.opaque.svg": {
+      "git_blob": "9e6b3a126a4201ee0ab80129e4b9862a288b2e32",
+      "sha256": "42868b696862cff1f2c189671d9b1c50d3cf8c892b783d823b99ddedc22bdd9c"
+    },
+    "Solar Mono/KOReader Icons (Mono)/dogear.reading.svg": {
+      "git_blob": "9fc8fb291b2f8104d82954a11733be77795133a3",
+      "sha256": "c87266d30b306af36ce1e896c5428513493ce02ed6dd9791473f9ff06d4be56d"
+    },
+    "Solar Mono/KOReader Icons (Mono)/edit.svg": {
+      "git_blob": "d5ffa9c4bc89895761330656777787fc2cfd4df5",
+      "sha256": "63e68b415c887ae7f6d919d76f1422ae29e710bec05a4e554262e4145b5dc3fc"
+    },
+    "Solar Mono/KOReader Icons (Mono)/exit.svg": {
+      "git_blob": "12ee9e0fa3b97e417e43f3e0301f220bf8fe7a52",
+      "sha256": "6311eef208b71b6f787d61f501ad0e8a56bfa2afeedc1b28af5404f450b1b562"
+    },
+    "Solar Mono/KOReader Icons (Mono)/home.svg": {
+      "git_blob": "6aa91f64e42bd4e9405dd402a9a5ef5cdc047d38",
+      "sha256": "9445ab77f6508d0c84b47781c0be36473d03d6e34024911547358e2184c8fc16"
+    },
+    "Solar Mono/KOReader Icons (Mono)/info.svg": {
+      "git_blob": "f9a22a37a9e4a62c6f7a4bc2aef2b1742565533f",
+      "sha256": "35a2d5cb963809ac8e3915c26eee64ddb6aaed111dc05135694b045479a6d39e"
+    },
+    "Solar Mono/KOReader Icons (Mono)/move.down.svg": {
+      "git_blob": "8aa5a9caeaa4cd7a4eadbbe57a8dda520bafb83f",
+      "sha256": "4b258ddc875061c2da220f576e020375dfddd3a076782df1c091b44dfff007e8"
+    },
+    "Solar Mono/KOReader Icons (Mono)/move.up.svg": {
+      "git_blob": "fb83c91396712b10fce294ab892b559687c96eb0",
+      "sha256": "9469c7519e4351c9b037104bbce8e6e40f85b281adbdbee2fb68024060bb0fa4"
+    },
+    "Solar Mono/KOReader Icons (Mono)/notice-info.svg": {
+      "git_blob": "f9a22a37a9e4a62c6f7a4bc2aef2b1742565533f",
+      "sha256": "35a2d5cb963809ac8e3915c26eee64ddb6aaed111dc05135694b045479a6d39e"
+    },
+    "Solar Mono/KOReader Icons (Mono)/notice-question.svg": {
+      "git_blob": "93e5d35f18e34cd02b7006dc1d98738746618db6",
+      "sha256": "d40f72dd0e899a681b5445723779f8e60cdce437d1d5011ae8595c9db55981db"
+    },
+    "Solar Mono/KOReader Icons (Mono)/notice-warning.svg": {
+      "git_blob": "e6ea6377b453f405755bb41e30585f6ff012a144",
+      "sha256": "4b8fe0253c68c940def0b0db9f2f2253b40e399d8f191e215c855f57d26c3f07"
+    },
+    "Solar Mono/KOReader Icons (Mono)/plus.svg": {
+      "git_blob": "14ae5963565eaabfa3b15d0ff1d57a5759da6c64",
+      "sha256": "dfdc9070666e428e710695de0e8165095b44c1d449d29a9b332c38d2273f7f95"
+    },
+    "Solar Mono/KOReader Icons (Mono)/position.marker.svg": {
+      "git_blob": "4858fd7360723f31f3e3f8813b2e5ea9c517345e",
+      "sha256": "9c81b8784842008cdd5814d370d58347cae0bcd97f2b756ec6c69da23562b948"
+    },
+    "Solar Mono/KOReader Icons (Mono)/position.marker.top.svg": {
+      "git_blob": "012dc2c61c9d767b62d8fe489160f20c27ad2a26",
+      "sha256": "d0221457549f847954796516423c516f26df25d0e5ead265884a6762e7f6073b"
+    },
+    "Solar Mono/KOReader Icons (Mono)/rotation.0UR.svg": {
+      "git_blob": "6a58efd958e09297cfbf034e69c9b02af4f4158b",
+      "sha256": "81e3543dc1d24226a21c95d24d5084472e7d0429ea71fc81a407a79fd2832d5a"
+    },
+    "Solar Mono/KOReader Icons (Mono)/rotation.180UD.svg": {
+      "git_blob": "65c69c59e1467742ceff00ed086a7d203822d264",
+      "sha256": "46abf65bb084842bf0affe0c0c2b3af44104e54f9c7670b78486216dd9fa7e1a"
+    },
+    "Solar Mono/KOReader Icons (Mono)/rotation.90CCW.svg": {
+      "git_blob": "b0116ba437278d598d80f7e5b95eb5354bfe70d8",
+      "sha256": "4d76c3c347b4a74d987c1233adf879a73fa6917a491bc8da1cacfc92c1775574"
+    },
+    "Solar Mono/KOReader Icons (Mono)/rotation.90CW.svg": {
+      "git_blob": "0481162f6988b3c59f5fff8c77463bebe7841075",
+      "sha256": "865b0b3b1bdc45a4412fad0d144835028416de97b48d06b65469f25d2e762088"
+    },
+    "Solar Mono/KOReader Icons (Mono)/rotation.L.0UR.svg": {
+      "git_blob": "2c36fd5edefc750f2e4b7983586b9602fc19a755",
+      "sha256": "c153b144a8b3c3d5c84120ed566375c4ae78ac659d93b759a3f712935e3b9d25"
+    },
+    "Solar Mono/KOReader Icons (Mono)/rotation.L.180UD.svg": {
+      "git_blob": "a0af4f06edc61512acfba7b2ce0404baaba832d7",
+      "sha256": "83ab8f1bc03c93191b5cfc53127796a2be04c338524d4b1a942c58218fd7cbbf"
+    },
+    "Solar Mono/KOReader Icons (Mono)/rotation.L.90CCW.svg": {
+      "git_blob": "b0409dcc112ddba2d17c27192c18b7152378f579",
+      "sha256": "ea35c467f2a73adf5ecb01fa53c691087af88329bd73a96c11b8ce0d559ec760"
+    },
+    "Solar Mono/KOReader Icons (Mono)/rotation.L.90CW.svg": {
+      "git_blob": "28a8522629118c30bf2c4ba6ff5e29cc1b988a60",
+      "sha256": "1024599d72f6d949cb9d0960b59f92574507fd8df7bb23aa4216412cdb485cc5"
+    },
+    "Solar Mono/KOReader Icons (Mono)/rotation.P.0UR.svg": {
+      "git_blob": "c9c1ff1decedc48b9ed121c2c57f7246635657e5",
+      "sha256": "fe873e2759e51b2e90567afeea4a079f9782c5e993e701f756489b7e7c4f041e"
+    },
+    "Solar Mono/KOReader Icons (Mono)/rotation.P.180UD.svg": {
+      "git_blob": "cb3d96f1401d8fb46a963a89b440aea73d2ca432",
+      "sha256": "8dbc8d15204b201910cc9a40f01fedcbe970894aa879306c556efa12e511f240"
+    },
+    "Solar Mono/KOReader Icons (Mono)/rotation.P.90CCW.svg": {
+      "git_blob": "d67d528af6bd8e12c16f3394e10756ac4073d121",
+      "sha256": "eecc3162a54e612df220a593e781621ee2c0b190d7d9d0404b6da67172249846"
+    },
+    "Solar Mono/KOReader Icons (Mono)/rotation.P.90CW.svg": {
+      "git_blob": "4aac35dfc755b8951c6308f005efd45cde25d021",
+      "sha256": "05f8b4045e9fd734c163df406dc4ce6efb9a021d1c587e4debd2d997d524ceb3"
+    },
+    "Solar Mono/KOReader Icons (Mono)/star.empty.svg": {
+      "git_blob": "016e4db6e64ebdcbf9867931fd660a68a3faaa93",
+      "sha256": "5fd86a802803af5b84a8c9343e2f8c393bf5b6d3b4071fcc789dc0ca67c50bfd"
+    },
+    "Solar Mono/KOReader Icons (Mono)/star.full.svg": {
+      "git_blob": "4d04be0871ae1f889b538010cbd857a418e20556",
+      "sha256": "78535376dcb2548dc60975384d14d229a66e63cd56e5b749523eb74036afbe48"
+    },
+    "Solar Mono/KOReader Icons (Mono)/star.white.svg": {
+      "git_blob": "14e8a872de3f427e21f1c42f3efe848106ae6221",
+      "sha256": "c581add45404c3539d6c731aeff4b702efc4e9846c08f3d381153f76fc7c9bed"
+    },
+    "Solar Mono/KOReader Icons (Mono)/texture-box.svg": {
+      "git_blob": "d323eb9417ded7d4e858927e204d802cbacd2661",
+      "sha256": "764d828dd25055c912be8cdf088ac33341e112cf5e9fbcea97b904a120f50289"
+    },
+    "Solar Mono/KOReader Icons (Mono)/triangle.svg": {
+      "git_blob": "debf14c836975b0ba7d4a030d73c3c65aa3fc217",
+      "sha256": "565bc2c9a7767398b59466a9d651fed0c56014c5dc74b47cd561bb9dffe1af0c"
+    },
+    "Solar Mono/KOReader Icons (Mono)/wifi.open.0.svg": {
+      "git_blob": "3add1410f64844872726360c5bf8b4a237585aea",
+      "sha256": "df335ef49e0ab242a5906edc0b21479411caac7329b0ed8901bd99110d962b2d"
+    },
+    "Solar Mono/KOReader Icons (Mono)/wifi.open.100.svg": {
+      "git_blob": "a1e4ec3c21b628a841c6b66af02b0c792055130e",
+      "sha256": "2fdcd21b6d43eff83b94bb10f1277262b4a58867ecbd43daa8cb26eb1d9e7d88"
+    },
+    "Solar Mono/KOReader Icons (Mono)/wifi.open.25.svg": {
+      "git_blob": "637fd530fb0909bdb54a2edb591333a2029e26ef",
+      "sha256": "67c24c4ebc90620a679d9857c3e32c669fd29b6ffb84864a3cf64bf343c9dbe0"
+    },
+    "Solar Mono/KOReader Icons (Mono)/wifi.open.50.svg": {
+      "git_blob": "8490196de1dbe801bfadfb31c707801bcfbbe14f",
+      "sha256": "5ca911f4e569a2b3e43272dd71315c7713a1dccab3c55fb7d6ae2e832c09e714"
+    },
+    "Solar Mono/KOReader Icons (Mono)/wifi.open.75.svg": {
+      "git_blob": "f6d5da0f894efed991c5a96aceb5964a9e38f879",
+      "sha256": "c4d2dccf86e77e8462a86a65bea699b54d94bd8dd6697915f8aa6acb25a7b2b0"
+    },
+    "Solar Mono/KOReader Icons (Mono)/wifi.secure.0.svg": {
+      "git_blob": "c533f37a530962bc0ab56ca933fd2c314fed7cb7",
+      "sha256": "1936b9902cc558f27b86073078cb6425f55e71f0f9493190a5877047b5643d8e"
+    },
+    "Solar Mono/KOReader Icons (Mono)/wifi.secure.100.svg": {
+      "git_blob": "2a1f3c4111d72ae6af7ba9ad9d071ff435deea5b",
+      "sha256": "1c1f815e73cad894a391d20054ff4c0b09608693a4cc21ccf403c70db0e4b403"
+    },
+    "Solar Mono/KOReader Icons (Mono)/wifi.secure.25.svg": {
+      "git_blob": "d862948b9af4027dc77bd75355445d04c5cc8e1f",
+      "sha256": "2dae3ac9c1762f73b755ff0a7a2573fab3cf83fb0a804b6000068abebaca7b54"
+    },
+    "Solar Mono/KOReader Icons (Mono)/wifi.secure.50.svg": {
+      "git_blob": "dcd8f1c439b2848ce5e92c3eabd984dad56d316b",
+      "sha256": "034a273aee076d01056ed3597d84badbeda0beacf5b191a6a62d9de949c37744"
+    },
+    "Solar Mono/KOReader Icons (Mono)/wifi.secure.75.svg": {
+      "git_blob": "4402e87b49e9f472dcc1152d9d555e2bad9e542b",
+      "sha256": "5d23cb6dfbdcca0bfbbfbf7370bccb979048f1a4d3e62ec95d78a1c30040ab6e"
+    },
+    "Solar Mono/KOReader Icons (Mono)/wifi.svg": {
+      "git_blob": "a1e4ec3c21b628a841c6b66af02b0c792055130e",
+      "sha256": "2fdcd21b6d43eff83b94bb10f1277262b4a58867ecbd43daa8cb26eb1d9e7d88"
+    },
+    "Solar Mono/KOReader Icons (Mono)/zoom.column.svg": {
+      "git_blob": "ba328ac489818acbd4020e94d66ccc6995b80f7d",
+      "sha256": "4ca3985a1d9674fdd58ac01ee8f934af3f066b10bada89b3c13acda3b9b1faca"
+    },
+    "Solar Mono/KOReader Icons (Mono)/zoom.content.svg": {
+      "git_blob": "18cb7b7a62f2848f11ef059b3b9aa11391d7bf4e",
+      "sha256": "0574c65bb070b1e9521c5ab90daee9aff9cc7bbd8dd3fc1c457a6847423e741c"
+    },
+    "Solar Mono/KOReader Icons (Mono)/zoom.manual.svg": {
+      "git_blob": "68e837922fbdd1f850d0086732f8402dc61ebf40",
+      "sha256": "8aeefda017510cb3ad9d12cef2b22e00721cddb36a12b0bedca805b8026051d2"
+    },
+    "Solar Mono/KOReader Icons (Mono)/zoom.page.svg": {
+      "git_blob": "66df735eae251d8968ede3407838a7d16dd3a68f",
+      "sha256": "e5537d3e942919274fdf55ea2f8dbfba9d9357c398d29915f4dbb7364ac19f91"
+    },
+    "Solar Mono/KOReader Icons (Mono)/zoom.row.svg": {
+      "git_blob": "646a87353a5182dc00147f4eeb6da2539adf8eac",
+      "sha256": "63b88dea0a97254b3f2f91fd329f879aff05abe71cf6bb841cf3a045784ee484"
+    },
+    "Solar Mono/Pack Icons (Mono)/authors.svg": {
+      "git_blob": "f6519c714f9c455fd1d506f93dabc2ed5d4f47d6",
+      "sha256": "60a874b674a6ee1cca8cf3b29b6a15d9014e41e82ab038437d34d1d95a689d97"
+    },
+    "Solar Mono/Pack Icons (Mono)/bookmark_browser.svg": {
+      "git_blob": "88ee3984385f8bcd574f16580cb74515350e954a",
+      "sha256": "094b2931b2325f83af92a2e4d23da3c810eb18d8bbbb8eb60be9445cacecf06d"
+    },
+    "Solar Mono/Pack Icons (Mono)/chevron_left.svg": {
+      "git_blob": "c65ff2449047d331171b49e71d0a9642330800d2",
+      "sha256": "ed2b701c9c56f456c974dbedd7694fe80eed9cf36d107551f8e5018c5deb3875"
+    },
+    "Solar Mono/Pack Icons (Mono)/chevron_right.svg": {
+      "git_blob": "4e7caa9af2252775436d8d8ff1eb2fa80a4b53e4",
+      "sha256": "132207ccdb7224515959064e344ac237c893643bec72fc518e372e291885644d"
+    },
+    "Solar Mono/Pack Icons (Mono)/coll_back.svg": {
+      "git_blob": "2575c812fdb846222958ace221e54633c5a04496",
+      "sha256": "6cecc4da26c7cfbd1988be9a955e1694357a614d836e93e62b0c919e700a8f9e"
+    },
+    "Solar Mono/Pack Icons (Mono)/collections.svg": {
+      "git_blob": "8cfe534c41f3cda52700d826aee32dfbf19f1706",
+      "sha256": "732797fbdafc055dcb1655046cf48c5ae92ef154efc53f195818ae08dfeaca7a"
+    },
+    "Solar Mono/Pack Icons (Mono)/continue.svg": {
+      "git_blob": "d15f377c8fe87c066ffe38de812896237ab1e763",
+      "sha256": "63b8124c8cb716927a5cb3539e2bf7500a686fbe61be7d031126967ae93f791a"
+    },
+    "Solar Mono/Pack Icons (Mono)/favorites.svg": {
+      "git_blob": "8d27d1f5eba5fc42918ced52e2fb5cbe21af62e2",
+      "sha256": "f27156a89c36d8737328ff6e816e08a576adee47e64d3af1f851c1437c54ab22"
+    },
+    "Solar Mono/Pack Icons (Mono)/folder.svg": {
+      "git_blob": "975700414980588ffdab8c2193487b4d40c1c37c",
+      "sha256": "56caa192bc530015b5540ef1c3d1e6858d5bdd753c5f67840edbb829e763c49e"
+    },
+    "Solar Mono/Pack Icons (Mono)/frontlight.svg": {
+      "git_blob": "8450ca15b0a48b0d59347cc7780bc636dc1f2033",
+      "sha256": "9955684b600c60972f91d363979f79b396598ba0426442831f8ebace53558fbb"
+    },
+    "Solar Mono/Pack Icons (Mono)/history.svg": {
+      "git_blob": "47c68ec9dea5fb46417ef3e06df006f525eca82e",
+      "sha256": "34f11d392750ea3a23984e8913adb6b632ab3a35c9cc58cd8d3b33e953b4a842"
+    },
+    "Solar Mono/Pack Icons (Mono)/homescreen.svg": {
+      "git_blob": "e9cba69531451f8331a7d21e1b552be5a1af2794",
+      "sha256": "f15a5a2cb8c8b725b63e60d0ccee8bd438f1cf8fe2100192e9fc8fc266094f1d"
+    },
+    "Solar Mono/Pack Icons (Mono)/library.svg": {
+      "git_blob": "4c2292a8dbc86e44fb7f5df8b71d707a2eebdf6d",
+      "sha256": "65933077bfee8312c39618f1974c4e0538d3bec2eb57a7448972191bd2ecab5d"
+    },
+    "Solar Mono/Pack Icons (Mono)/menu.svg": {
+      "git_blob": "ec7fec59c4e0935193923703ff2c9ed62c57872a",
+      "sha256": "1bdc55e7969c3c403cfc0dce0ea8147d42a363599d1f762cc39200d1fe4fdf14"
+    },
+    "Solar Mono/Pack Icons (Mono)/night_mode.svg": {
+      "git_blob": "f64e1cad4ed8b695c8404c8a2f6e45d2167f79ad",
+      "sha256": "f9cf46e9a39b2c08d01fe4d392c6e0bb28c4368105dd5ac2b9fa8ab9d89e54d5"
+    },
+    "Solar Mono/Pack Icons (Mono)/pager_first.svg": {
+      "git_blob": "def41f4e56f21e5ba157e3d2689892b932cd463d",
+      "sha256": "8e779e35566a75dbd405295a9007b0435beaa8a9197158fb77402dd510883192"
+    },
+    "Solar Mono/Pack Icons (Mono)/pager_last.svg": {
+      "git_blob": "6d75bb74ef6191f2b6bc70c532e3947d8bf36f65",
+      "sha256": "d34f5d25767011e1166426d7ea78b33b396082332194b09d5bb3b5ee5cf30761"
+    },
+    "Solar Mono/Pack Icons (Mono)/power.svg": {
+      "git_blob": "7f53b4f65835f3f44a2fb3e65a9c6080f60c5c1a",
+      "sha256": "233d7adb63eacbae9119aa9e0a337485a1c70b04c5a016ff279ee11b94e7db45"
+    },
+    "Solar Mono/Pack Icons (Mono)/qa_group.svg": {
+      "git_blob": "eb9749362d66768832233fb2f04968a4745bb113",
+      "sha256": "1623cf2c645364dc3315395b71db18f27598fe14339ed54016b33f993d39d720"
+    },
+    "Solar Mono/Pack Icons (Mono)/qa_plugin.svg": {
+      "git_blob": "4d769d41d6fadf708d8b49691127e13f8ab6dc9d",
+      "sha256": "6a8e3a924cd51e94295f6255658fe8a4da33e5abbbff6467d157d534ea090fe3"
+    },
+    "Solar Mono/Pack Icons (Mono)/random_document.svg": {
+      "git_blob": "11723a78f4fdbf346ba755aa45d713076da7edc2",
+      "sha256": "fc585c56dc78e1a948deb08d5e7732a9a74766313163f617d88d655e267cf1a0"
+    },
+    "Solar Mono/Pack Icons (Mono)/recent.svg": {
+      "git_blob": "d2cdca24d7cd8705fe9ff150ec0f5bcd36b05b69",
+      "sha256": "42e6fdead805add5501adf0a57f802ebd6bd90ce306ae1dfde82387720dc6d34"
+    },
+    "Solar Mono/Pack Icons (Mono)/search.svg": {
+      "git_blob": "ebd8f334fa94a1a476368f79535a0ddaebaa53cc",
+      "sha256": "db547ae8f9afe16a5ed870f5fe8d45c64457a0c67c985e54e373bf878a342706"
+    },
+    "Solar Mono/Pack Icons (Mono)/series.svg": {
+      "git_blob": "dad69a92f4a41acb6443399510cc9c22187ecad0",
+      "sha256": "03ccc4f4184338e627ed2564dd5bee4922a91bb3403827d9e5561caadd41341f"
+    },
+    "Solar Mono/Pack Icons (Mono)/settings.svg": {
+      "git_blob": "b1977fe628b471644a414e9f2794aa881ceacd5b",
+      "sha256": "745309c352fba55bf951a5c020456e0aa50d9635e1c9a35cda96e8227780dc94"
+    },
+    "Solar Mono/Pack Icons (Mono)/stats_calendar.svg": {
+      "git_blob": "c03da3d709a97856e1a59dcf45910c51b9914391",
+      "sha256": "090805c5e28c8dc8ae6d8cb9f43975d42da4441e9c570058c58d79eb56974228"
+    },
+    "Solar Mono/Pack Icons (Mono)/tab_filebrowser.svg": {
+      "git_blob": "fe8170070df62629e4ce70b27c69227dab975af8",
+      "sha256": "37baeea57baed2c74cee752b96e920027676290cfae9befd922882d8fd13796c"
+    },
+    "Solar Mono/Pack Icons (Mono)/tab_fm_settings.svg": {
+      "git_blob": "a3b8b0b838e8c4d70c6c4832f18d24aab50caae3",
+      "sha256": "54172e0c10b0d0b5b60eba05947ce282b9d01801710f6fa2a40dacdb901d6b0f"
+    },
+    "Solar Mono/Pack Icons (Mono)/tab_navigation.svg": {
+      "git_blob": "c77e202a71d98c568c29b13ccf3c331ecbf4e6b0",
+      "sha256": "f11ad70728ccbb525f046abb28b3f3059def9f112f628e9c75f8ae458b12158b"
+    },
+    "Solar Mono/Pack Icons (Mono)/tab_qs_panel.svg": {
+      "git_blob": "638c05ae62a7357a3ebed15f17936940d7f757a2",
+      "sha256": "a0ccfcdb1ac136298af8fcf74a489d94969e2753b0a37e9206e21ba01cb5c9cb"
+    },
+    "Solar Mono/Pack Icons (Mono)/tab_tools.svg": {
+      "git_blob": "5385d8185e9e57c0fbcddb50cbf6bc66b2f52eaa",
+      "sha256": "6b4a73f9920eae6e7742517f12ab998c979e41a1aa319018c04dc392bfd8fefb"
+    },
+    "Solar Mono/Pack Icons (Mono)/tab_typeset.svg": {
+      "git_blob": "9cf809f3490a745c0f08e1fbde3114f624a56bea",
+      "sha256": "4dc791cf92ac1e39d94a11565dc5d25598ccfd5dd673b7540759a4d66997b9dd"
+    },
+    "Solar Mono/Pack Icons (Mono)/tags.svg": {
+      "git_blob": "0521cacc7cf4995f54fee2a7ac118347dc75493f",
+      "sha256": "7f9a53f5c8cfe74e36891b92a2094bdbb8d0e34d7aadc8130ba9bf5261bc287e"
+    },
+    "Solar Mono/Pack Icons (Mono)/wifi_toggle.svg": {
+      "git_blob": "3add1410f64844872726360c5bf8b4a237585aea",
+      "sha256": "df335ef49e0ab242a5906edc0b21479411caac7329b0ed8901bd99110d962b2d"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/ai_assistant.svg": {
+      "git_blob": "0e721b623ca0a9cb99eda7eb72c0914d6a80d218",
+      "sha256": "f84e0fbe7ee7840e728b6f9002f33ed1659b1194cf1abceb3dff4a05dc1e8469"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/annotations_viewer.svg": {
+      "git_blob": "9e9e6d118b6c02a470f48cc90cba3c586b0268db",
+      "sha256": "f376556447e4e9580ccdfe6f655238644b62ad755056d75bf94d61bbaeef703b"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/backup.svg": {
+      "git_blob": "8657ef2d2034edcb84487e0b565be720cce5a417",
+      "sha256": "8928cf609fc77987ba92f779a88b754f800f57c6bf102e67963535c717344f12"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/battery_statistics.svg": {
+      "git_blob": "f22725ce659a90bf0ec712e550c381a7c8ace085",
+      "sha256": "b482aa9faa63ab4e1f7c40cdd7217d318937937e3d75db41557736e772dde119"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/bookshelf.svg": {
+      "git_blob": "2dddfd05b511aab4e286817602def9557b868913",
+      "sha256": "7b21a8a1da97d59f3edbb40d87418723721ec223c69a82584263e962f8fc2c14"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/calendar_view.svg": {
+      "git_blob": "6a36904e67fbd03426f22704950ae7f32f60e9b7",
+      "sha256": "c31919527fb1d2663d93412aef4b3aec909b0d982c95e0d52dbe3c910fcf938d"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/cloud_storage.svg": {
+      "git_blob": "0ef3f269690c61f448d21158f79860d0a5d0a1c8",
+      "sha256": "6419099f2e623f5165a0bad395fa1511ed9ea96cde054a04986320d131354068"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/crossword.svg": {
+      "git_blob": "6bc9d3b5e865ecc7edcab92db98b0e73200b8d33",
+      "sha256": "e9a8f085be92210bad12474fc3be38ec5e02e827d8c64f5b4e472d511d65dee8"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/filebrowserplus.svg": {
+      "git_blob": "28210e28d1b8897c5a34c0d8421a6b75af4a396f",
+      "sha256": "047b6315aad25d4336c21b1d8f74263ab7cb9880c10730efac4fad53089a7fb8"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/instapaper.svg": {
+      "git_blob": "9cf809f3490a745c0f08e1fbde3114f624a56bea",
+      "sha256": "4dc791cf92ac1e39d94a11565dc5d25598ccfd5dd673b7540759a4d66997b9dd"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/localsend.svg": {
+      "git_blob": "c2911d70bf8151a69686a11341289b0f6ccc03e8",
+      "sha256": "c640dd0bc97627861117ef1a91f97dc63abccf2e3b769969cf2d448bd430cb73"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/rakuyomi.svg": {
+      "git_blob": "27b59bc6ae49ea7866776149c2488739327ec3e7",
+      "sha256": "04aab20f7041520cd5bf09c994a74fd3664585f67ec96996ec2f5c13fa3f43d1"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/records.svg": {
+      "git_blob": "4b105fe9c3e974f84376e48b39b55648f3d9112d",
+      "sha256": "2d6c5b571a2ec38731b9fd83ababd8642ea3bd71253f50bd63e3404bc5ac32c5"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/rotate.svg": {
+      "git_blob": "8a0832febe8980b2baaa03ba9b15725c1478b497",
+      "sha256": "edbd18446dce84bef6e6a06d786d921e0bb76dcd3ec1d15f2d87477706c669ae"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/screenshots.svg": {
+      "git_blob": "42b6f4cedecd072936d4e3b42f8b1e8bdf87d873",
+      "sha256": "234d835031fe145d7fce9f6c3c1768735166d8f5fd213bd60bce03fba4587711"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/sleep.svg": {
+      "git_blob": "a4b8a3d6338c2a7049f064cf1e2aff8dc1408d81",
+      "sha256": "d6790289e06022839ba8ca5e66dbf4b0ec08b17ef4a36d09ed5acf10797f8a14"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/storefront.svg": {
+      "git_blob": "671c43d613b683759cdb3e46627a163f25ca4648",
+      "sha256": "61f36103cb8d8d438d5fc3d6e9d0ca9fe69a3a2f0d44156b838439ab5547fe63"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/streak.svg": {
+      "git_blob": "8cc4b422484bbea6d5ae00a10c791880a11d0199",
+      "sha256": "46fb140f40ebea1fe3b4b85166898a12acf5cdd73bb0e2451244841156f425f0"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/sudoku.svg": {
+      "git_blob": "d5bc84e914448f87fad6e9b67069e54869d714c4",
+      "sha256": "484a814a1f6abd24dc1c3a8127e5e393c5f487c4b140f060f40bf6eeee8dea44"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/syncthing.svg": {
+      "git_blob": "676cc06e98fcefbe9eaaf5d09e5a1bfb6c8d9faf",
+      "sha256": "f9a7399b680eee2774ee94b1d0ca3109dcaf6bdbf34ee7f65d71f3608b4ceb4f"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/time.svg": {
+      "git_blob": "3335567b16dbd6c182d3f22b1c9e84397ec41c46",
+      "sha256": "1737e839ff10ed53a7daa0659053c8c9055ad0bfd2020747fb15aa9313693651"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/usb_storage.svg": {
+      "git_blob": "b893b08891b9415e95d5ce5b59895ea3c3fcfd07",
+      "sha256": "9da5f97b37a455ea1f9377f733824da50061b18d95068e85d01fa87cfdaa1365"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/vocabulary_builder.svg": {
+      "git_blob": "41ebd1afe7f9b660d16dfa108c28888818da99f5",
+      "sha256": "7a868bc3055b6af4aa324c72818f5058b3a0f785c4070a96502eca4107e03dd5"
+    },
+    "Solar Mono/Supplementary Icons (Mono)/zlibrary.svg": {
+      "git_blob": "dad69a92f4a41acb6443399510cc9c22187ecad0",
+      "sha256": "03ccc4f4184338e627ed2564dd5bee4922a91bb3403827d9e5561caadd41341f"
+    }
+  },
+  "outputs": {
+    "assets/vector-icons/PXLFLUX-LICENSE.txt": "82ce2fa40d8eae1ee18f29aec521deda85677b08fb58e644db7835239c73cc81",
+    "assets/vector-icons/solar-colour/extra-ai-assistant.svg": "e4b93ebf69af241b865a8b90b80c90a3c7075d6632550b921ba2ca969a1c9a5c",
+    "assets/vector-icons/solar-colour/extra-annotations-viewer.svg": "e55b03e9aee41b490b5ae8fa24f26b604127a39d8fe52a8513fcb4174ccce841",
+    "assets/vector-icons/solar-colour/extra-backup.svg": "673965f3c12d673ef16f72ebae6da6b8bdb711a2251b7a492b3788cbaf2eff05",
+    "assets/vector-icons/solar-colour/extra-battery-statistics.svg": "4f0c5b1e1e4defdb94aad555b0bd570e3aa45f89c996d417323685ef6f4d4e91",
+    "assets/vector-icons/solar-colour/extra-bookshelf.svg": "d66d592a4c0d6dc59df2c7ba7c08a5dc5ba6fb36d8c36d1d1737bcc710ee737f",
+    "assets/vector-icons/solar-colour/extra-calendar-view.svg": "737022e65b1125c057d760ae21f10202f2411556ed0e8ed22714c6303391f4db",
+    "assets/vector-icons/solar-colour/extra-cloud-storage.svg": "3356b60b18f048378921ee360eb5ca9796ac835fd0bfaed223dfb5fade55c179",
+    "assets/vector-icons/solar-colour/extra-crossword.svg": "87c867793850f93ff716d25eff14e2aaae1959fe80a7834ddb751b6714eb929e",
+    "assets/vector-icons/solar-colour/extra-filebrowserplus.svg": "35e4a66a696f4ece2accd348dd861c77cedfab884fe6ba326e46abf8b967447d",
+    "assets/vector-icons/solar-colour/extra-instapaper.svg": "61806d07f4d7cf62eb66c7053b7aae87a1c4ce9f6b684e379cb879bfc89f2646",
+    "assets/vector-icons/solar-colour/extra-localsend.svg": "9072571d966161ca047bdb635691a01c76fc8bfbdb746b098543733c0f6c2f03",
+    "assets/vector-icons/solar-colour/extra-rakuyomi.svg": "6b53e77b5d8e831d71df9a1de59f33717fed941f9cf93c285e38d5605b7e2bec",
+    "assets/vector-icons/solar-colour/extra-records.svg": "1da7862a7d9369c06bf5ef1323f0ea09475f955c8790eceeeacaeb297fc1e6f0",
+    "assets/vector-icons/solar-colour/extra-rotate.svg": "6b67b4d6a200582079ad35ac45ed842fd6fcf01ba21b27215215c51282ad1302",
+    "assets/vector-icons/solar-colour/extra-screenshots.svg": "ab3e60f4cba2c8d7e49390149fc7dea913b5bf948e2acafad435b30eb079858e",
+    "assets/vector-icons/solar-colour/extra-sleep.svg": "606baa0d41140bca2c2e8a94a5fadb0d2ec599245eff0dd34f4d0abfb73615dc",
+    "assets/vector-icons/solar-colour/extra-storefront.svg": "33e66aa11b5eb3965c1540dd6fdf1bea96cdc9018daf8c2688811f51d2913055",
+    "assets/vector-icons/solar-colour/extra-streak.svg": "fabe98770e57f3c63fb3c3e4870805f46cc6df4221ed79eb27cbac058cdf858e",
+    "assets/vector-icons/solar-colour/extra-sudoku.svg": "a574dc9f0ada3da6fe3bfa33b27bff6ac1acfbf8416554cbd9f1c55bffa70a06",
+    "assets/vector-icons/solar-colour/extra-syncthing.svg": "eb61971f38e8780b6efafcb562f368eba2665a8830b608cf2c76764a51208e8b",
+    "assets/vector-icons/solar-colour/extra-time.svg": "84a5b178334f5f5c592ce233faba1db36a9bde68e3e90c550b9f8b6e7105889e",
+    "assets/vector-icons/solar-colour/extra-usb-storage.svg": "909bfe5ce92f1d4f33680357e08a83eeb788cb54a8b039e4f302d6434529b22d",
+    "assets/vector-icons/solar-colour/extra-vocabulary-builder.svg": "ff1a2a2258670c2d62df9bf1d7d78a34a25ca917b014b20c35bb98aaa36e922b",
+    "assets/vector-icons/solar-colour/extra-zlibrary.svg": "e0344e9a708b1a1caf7528303a7b52abc0e80ab3391d41d58c3714b3fd87229c",
+    "assets/vector-icons/solar-colour/koreader-align-auto.svg": "42daa866eef2bb5e4358a4eee24c7df63af449312804f81b9279d9992c5d96cb",
+    "assets/vector-icons/solar-colour/koreader-align-center.svg": "4ecef02960961bf0e0efb519f13e31f8e7f3e5a5a90b6c90ef77c94efba8317a",
+    "assets/vector-icons/solar-colour/koreader-align-justify.svg": "f55e7e0cac81f97d54894b7be38031d8a9aef379381389adb129edd586949c90",
+    "assets/vector-icons/solar-colour/koreader-align-left.svg": "a62f26ed78c09bb0a1ae7091f620f5cdd99a9c6587667b5907760c0ee8b4bc13",
+    "assets/vector-icons/solar-colour/koreader-align-right.svg": "8d5602804a2da2a9961ec056a5edf7e69e4ce71d36329fe684f8c6458d26411d",
+    "assets/vector-icons/solar-colour/koreader-appbar-contrast.svg": "a4f6a28dfadf13bbdfabf2798f333c41ad5621e0df6cc4ebe65f930f5f2a63d6",
+    "assets/vector-icons/solar-colour/koreader-appbar-crop.svg": "6dbfaf6b4a51c7c327b2a46cfeb193c989a254c3a81e9e2086fd04e07b37acd4",
+    "assets/vector-icons/solar-colour/koreader-appbar-filebrowser.svg": "2fde5fbe9b4aa7b9433dc155856a310320244f8710de4108ad282b14375dc3b6",
+    "assets/vector-icons/solar-colour/koreader-appbar-menu.svg": "9a6abcc23ce7be9f85b02d98f531e922bf9f10ac5497dd1682f8464a71f2cc75",
+    "assets/vector-icons/solar-colour/koreader-appbar-navigation.svg": "2870d663a987a549a49fa82bd3c7631f148d702211f02d6ef82c40b78b841eee",
+    "assets/vector-icons/solar-colour/koreader-appbar-pagefit.svg": "ef7beabca86f6449856157957b0a027093eb42d5a6ff141af3cb5682c0218652",
+    "assets/vector-icons/solar-colour/koreader-appbar-pageview.svg": "a41af835d1d2e26a1927e858ec3d97d329409e977655ddd509b2fe6b9f1cbfc5",
+    "assets/vector-icons/solar-colour/koreader-appbar-pokeball.svg": "fad77f8af49397a189901eccc0b2be6f18af3b1348a36ecb8f1a22c5793c7356",
+    "assets/vector-icons/solar-colour/koreader-appbar-rotation.svg": "6b67b4d6a200582079ad35ac45ed842fd6fcf01ba21b27215215c51282ad1302",
+    "assets/vector-icons/solar-colour/koreader-appbar-search.svg": "b51b91292ab04e54e7daeb890b275c4e412d6b5bfa7443d01fce4fd7e1e65f61",
+    "assets/vector-icons/solar-colour/koreader-appbar-settings.svg": "95ee46f64ae68787092bbbc90fc4e42c650c543c507695e9b18b2d8a6affd4a5",
+    "assets/vector-icons/solar-colour/koreader-appbar-textsize.svg": "2e67b6e3c98f500bc65492e9a14cc1f4e958223d638144139d801a66588e19bf",
+    "assets/vector-icons/solar-colour/koreader-appbar-tools.svg": "4d06bcea443253daebd95e04836fed9a807e2d3163b454f996a0266391367e52",
+    "assets/vector-icons/solar-colour/koreader-appbar-typeset.svg": "61806d07f4d7cf62eb66c7053b7aae87a1c4ce9f6b684e379cb879bfc89f2646",
+    "assets/vector-icons/solar-colour/koreader-back-top-rtl.svg": "133c0267d81f144ef5a212978540834fa9a76d3dc1cb5a5443aa531f3fa1cf2a",
+    "assets/vector-icons/solar-colour/koreader-back-top.svg": "788ade04226610caa85ae626020dde75355edbae11e2d1a8799796866e4c81b2",
+    "assets/vector-icons/solar-colour/koreader-book-opened.svg": "3613e8f3138dfbe726a236d5fab15950eaad5b0341967a640da25ed4bbd0b7f9",
+    "assets/vector-icons/solar-colour/koreader-bookmark.svg": "a483df098467c9e1d4c22d890e091dfa1486fdf6788abbabae18df5e63542144",
+    "assets/vector-icons/solar-colour/koreader-cancel.svg": "ac62e6139e77334a01170f2e999dc6e04e889367ad9730f677c76ad70fc701cc",
+    "assets/vector-icons/solar-colour/koreader-check.svg": "92ee1f95d81d1cacddffe79730980b2c00b8afcdcf47c0e9dd3b6ad43c70930e",
+    "assets/vector-icons/solar-colour/koreader-chevron-first.svg": "0169317f1587a4406cec025570f6a36d985fcd56c7a2f9a8b17f303a01deda1e",
+    "assets/vector-icons/solar-colour/koreader-chevron-last.svg": "9af9f43a9e2372edc1b63dbf5128bcc8b873f4553303a7818c2ff0bbcbb1c52a",
+    "assets/vector-icons/solar-colour/koreader-chevron-left.svg": "22493adc110b307380c25df62bd128be4469feab56f6d1ad3d66cf6e3489ef20",
+    "assets/vector-icons/solar-colour/koreader-chevron-right.svg": "68fc6043a3d61c38389d7a0ad9b5b40ac70d51e9810d1884eb49bd9c13ee5499",
+    "assets/vector-icons/solar-colour/koreader-chevron-up.svg": "34a26f053f73da4ca4afec8ef01ead63e08c4a09256bad0062d3a3f9212ccee2",
+    "assets/vector-icons/solar-colour/koreader-close.svg": "8eb53af5b245ad8c9f8d1c35de2f1781fab6e3b125e9b2b29d08ea9141f70354",
+    "assets/vector-icons/solar-colour/koreader-column-one.svg": "f55e7e0cac81f97d54894b7be38031d8a9aef379381389adb129edd586949c90",
+    "assets/vector-icons/solar-colour/koreader-column-three.svg": "05c947e7cec672e17cbcdd7ee15c533bcfd07df2286b522cbec3945b019c77fd",
+    "assets/vector-icons/solar-colour/koreader-column-two.svg": "aa4aa3505f19883b3170582fef37d7445982992e1285ccef02171915d1c343b4",
+    "assets/vector-icons/solar-colour/koreader-control-collapse.svg": "3410cb5e1d89a24cfd7617ec8cfe74d54338d4d1661d43b022b2e87cfbf51f62",
+    "assets/vector-icons/solar-colour/koreader-control-expand-alpha.svg": "6410a38f4830625c4114169a7d67e08409bbcd114f3b552c2122f3da8dcdb1da",
+    "assets/vector-icons/solar-colour/koreader-control-expand.svg": "dd450c3912b582c37a49571cde382c345dd1e41d876368ea9c554e7af7679056",
+    "assets/vector-icons/solar-colour/koreader-cre-render-partial.svg": "8a7f578dcc7bd1433d4fa11de798dca6e799ea46651f3170d8353cfdcd5f344c",
+    "assets/vector-icons/solar-colour/koreader-cre-render-ready.svg": "ce163bf62ff43b627d7c3499635e10117e6c88f0ca9ed5136ad577e66917dcd3",
+    "assets/vector-icons/solar-colour/koreader-cre-render-reload-alpha.svg": "d30e6af63cc67f29eb97e3a8954294ecd1205c8764dba6dbe08c9ad1d0bedd72",
+    "assets/vector-icons/solar-colour/koreader-cre-render-reload.svg": "3e162bf0a52d34fda9863237333141da6a8494933fbaf2efb6658b7e5afdd919",
+    "assets/vector-icons/solar-colour/koreader-cre-render-working.svg": "604e6cebb0e6292d86d9dd3b4d6cf0315e8af9a58d0c038a3cac421b78cd74de",
+    "assets/vector-icons/solar-colour/koreader-direction-btlr.svg": "fad55fefeb59e56f0b50b4801688b6c70f52c9c7b714297ced31f9a0ce2b94ce",
+    "assets/vector-icons/solar-colour/koreader-direction-btrl.svg": "1297040b1f61cdefdc5283a3ee4141ccdb6b01ed4e755c440d0497f37edeedc7",
+    "assets/vector-icons/solar-colour/koreader-direction-lrbt.svg": "285e9a3680f393b782ca6b25eb59818a3006803dd5a1f9b4001942a27dc1b71d",
+    "assets/vector-icons/solar-colour/koreader-direction-lrtb.svg": "011cd1b853bf67a4f36de11fd60dedaa0f0a5c699fccef1ac31d4c92c95fe212",
+    "assets/vector-icons/solar-colour/koreader-direction-rlbt.svg": "fa704c489958c51a2fa8b1e159cf48bd6ca7570ed89aca9a352fefaa772f37b7",
+    "assets/vector-icons/solar-colour/koreader-direction-rltb.svg": "875d97db10f9f4f0f5390c8b755f55b0f97a678c0b9ea445bddfa307f9291f03",
+    "assets/vector-icons/solar-colour/koreader-direction-tblr.svg": "5d9a329e2caacf3c78e87e5a2f3c7dc6981e5723d9ab8fa307079c3e02e0313c",
+    "assets/vector-icons/solar-colour/koreader-direction-tbrl.svg": "5e7b85c8e70b2a43c24c4aa7a401214467c2cdd63e8cf619036d2f444af311f8",
+    "assets/vector-icons/solar-colour/koreader-dogear-abandoned-rtl.svg": "d5e6b1dbd6d8a93017721058dfc706ec875c8794c167dedbbb19b194623b71bf",
+    "assets/vector-icons/solar-colour/koreader-dogear-abandoned.svg": "9eab7d39db39edad59396fda673dbfefd751163f0b8ab21453f251eb1f054a09",
+    "assets/vector-icons/solar-colour/koreader-dogear-alpha.svg": "09c9bf94c3a3a056f8000be23414087e3f41d318a66501f734f7284e4b72c7de",
+    "assets/vector-icons/solar-colour/koreader-dogear-complete-rtl.svg": "171287eae5b8f107b655b5ff669d9462ffea139f390ae5f42b8ecd974f22588c",
+    "assets/vector-icons/solar-colour/koreader-dogear-complete.svg": "577712fbd1620a456d634dcd7851843bb00339973e0802e5bf192f27436a8849",
+    "assets/vector-icons/solar-colour/koreader-dogear-opaque.svg": "5e7f340ca47df8b375beaf516e2c2597cd3c1f25669fd59b28413947a268e7d2",
+    "assets/vector-icons/solar-colour/koreader-dogear-reading.svg": "ff8b770d360490915d07ec7dc118140adedee6e3c84bb9eb91fe470c6981fe5c",
+    "assets/vector-icons/solar-colour/koreader-edit.svg": "ec8992bdab5e2d746d6722d49bfb6229462127ea4d30aa6ee3d96c0f19953d35",
+    "assets/vector-icons/solar-colour/koreader-exit.svg": "8eb53af5b245ad8c9f8d1c35de2f1781fab6e3b125e9b2b29d08ea9141f70354",
+    "assets/vector-icons/solar-colour/koreader-home.svg": "3660ba123ed068f0e66895737449c8b6dd6824a52477172bf85642425b1a9c84",
+    "assets/vector-icons/solar-colour/koreader-info.svg": "2ca7d07548e489cba83414d9385e06bd0d4e553fc429e7302a1c67fefb4d25fa",
+    "assets/vector-icons/solar-colour/koreader-move-down.svg": "3410cb5e1d89a24cfd7617ec8cfe74d54338d4d1661d43b022b2e87cfbf51f62",
+    "assets/vector-icons/solar-colour/koreader-move-up.svg": "28811a78874fbaa412c64c4aaa26a181ecf5ae31c9344b0aa09ee36e0468f050",
+    "assets/vector-icons/solar-colour/koreader-notice-info.svg": "2ca7d07548e489cba83414d9385e06bd0d4e553fc429e7302a1c67fefb4d25fa",
+    "assets/vector-icons/solar-colour/koreader-notice-question.svg": "5039616d896eb584fd211f6c9548ab8d76bb32b68f0c48100dae0e8f21a7915b",
+    "assets/vector-icons/solar-colour/koreader-notice-warning.svg": "a7a426008f6f90c9352c96e9dee88f64bddc714056a29108051a51399078fb44",
+    "assets/vector-icons/solar-colour/koreader-plus.svg": "aceefae6fa7bb3c4eebf52a0d3e12a59f449c3cbc1debb6c8c4edfbb9e9f40a7",
+    "assets/vector-icons/solar-colour/koreader-position-marker-top.svg": "12e9ed528f341be7f1574597fa47db3d012a404fbf67dadb77afe1b11e1701b2",
+    "assets/vector-icons/solar-colour/koreader-position-marker.svg": "672af3d4b5e6ae88b8a3f9e91b1f68471fb5aec0abad952f15047cc86e990530",
+    "assets/vector-icons/solar-colour/koreader-rotation-0ur.svg": "b57927b55758b6252bda49fbbb51932033ca957feb11cdaefd0166a81af4d01a",
+    "assets/vector-icons/solar-colour/koreader-rotation-180ud.svg": "71c26eda04e5b584a3873bf0e2b06cb4f49db0c710b0ecf9f220ff1d54752811",
+    "assets/vector-icons/solar-colour/koreader-rotation-90ccw.svg": "4abaa9596acbe380b95097619cedc40cda4f8aad5471cbea4b5f927634edb8b1",
+    "assets/vector-icons/solar-colour/koreader-rotation-90cw.svg": "6ed63ad0ca8ba76e3dc250e747a7a0ecb2ed0837569e5d5392d21b6172c050ec",
+    "assets/vector-icons/solar-colour/koreader-rotation-l-0ur.svg": "ada696147762afd5c73aac17a000cf384dcf37f226af4257b047f9e45ccb1c37",
+    "assets/vector-icons/solar-colour/koreader-rotation-l-180ud.svg": "6b1c32506e786fae23b07fec174eb6161eb659f494eab9402a28e43b9cac9ab1",
+    "assets/vector-icons/solar-colour/koreader-rotation-l-90ccw.svg": "37139ce3915b96c80b3b0fb14b6e993862d1f47f5008f8bc0302439580f0984b",
+    "assets/vector-icons/solar-colour/koreader-rotation-l-90cw.svg": "50bb33834ab953bf3cff04c567868894f2459360bba57305fe5497d9e92212ea",
+    "assets/vector-icons/solar-colour/koreader-rotation-p-0ur.svg": "889e34baca3ed0850539dfc3bfd77944508b6a808edcbbcd7c22c1c7e1ea0f72",
+    "assets/vector-icons/solar-colour/koreader-rotation-p-180ud.svg": "73772f17b0997ba9a4eaaab3bf3c55bf9498d63524825b696bfa5362dbcdea07",
+    "assets/vector-icons/solar-colour/koreader-rotation-p-90ccw.svg": "8bc4faa667120151dc255607e74fb6a85f91322e6d6b6147c72138c2284fc119",
+    "assets/vector-icons/solar-colour/koreader-rotation-p-90cw.svg": "9774935941038101f68c188ed75e2d17c3e4337303dda7ba7cd3c3f6bef4170c",
+    "assets/vector-icons/solar-colour/koreader-star-empty.svg": "b66e759bf142406d7a3b3f0001a3cdcb1eb251186f24f66ced482281c76679bc",
+    "assets/vector-icons/solar-colour/koreader-star-full.svg": "d114fe24ebe2709cf9512c0d3ed6ca6202cd53285ce09bf4ae4d55b8fb4cca46",
+    "assets/vector-icons/solar-colour/koreader-star-white.svg": "63153cdaf4b74636a0ee7467e16f1c1d5cc2b0d12a66b732785ec66aef58d0a8",
+    "assets/vector-icons/solar-colour/koreader-texture-box.svg": "7bbb32b6e3058ff554a4ae2ac6916b5c703a561f3391e967cb1d7bb5d3e1dd46",
+    "assets/vector-icons/solar-colour/koreader-triangle.svg": "f72415dff66ace8c420465d12b3e8fd229706677abf0e6b374e35f415f7eeb5f",
+    "assets/vector-icons/solar-colour/koreader-wifi-open-0.svg": "cf7c1e6a27e4a19fcdb0e0914db1643d978b44df4f7386f9a904cf250fbca2ca",
+    "assets/vector-icons/solar-colour/koreader-wifi-open-100.svg": "402a3dc51c45523b075bc38e25f310da047f867773fff1dc25bf3d6bf02e5569",
+    "assets/vector-icons/solar-colour/koreader-wifi-open-25.svg": "d3360c4a28be9681137e27d6ee146a0af01c5603908f2ea871da8bd24afdeadd",
+    "assets/vector-icons/solar-colour/koreader-wifi-open-50.svg": "a8ef33c28f374ca6974087a32471dfb45182d21c544562b60edc8007469df9f9",
+    "assets/vector-icons/solar-colour/koreader-wifi-open-75.svg": "8b08742e1cff91dcfa42bcddd3a92c12780ac00b6ec9e8adf40e74018095cb68",
+    "assets/vector-icons/solar-colour/koreader-wifi-secure-0.svg": "54caaa642e7d6f5f1c1e3ab136bb3b30f8c6791698958bf6387d24399ca4a12d",
+    "assets/vector-icons/solar-colour/koreader-wifi-secure-100.svg": "7d70c2a01a9fe13a81cc24f25fef359291123f157948bc07f42cffc21f1a80ff",
+    "assets/vector-icons/solar-colour/koreader-wifi-secure-25.svg": "f1a56a1dfc75d8751c28626b052f9026fa864a3c2a48950065b02411886ba4ed",
+    "assets/vector-icons/solar-colour/koreader-wifi-secure-50.svg": "d571cb342a3d12e5f17799367b475b7e21594092611ba586d4a76f2a95c46011",
+    "assets/vector-icons/solar-colour/koreader-wifi-secure-75.svg": "1e0c324932437cdb4b10c10f619e8118f6916bb2d1c8124494966165cd2357af",
+    "assets/vector-icons/solar-colour/koreader-wifi.svg": "402a3dc51c45523b075bc38e25f310da047f867773fff1dc25bf3d6bf02e5569",
+    "assets/vector-icons/solar-colour/koreader-zoom-column.svg": "5f3e75f663407c23e3c0ad44717b10d3934c1a81def341857c73c12742efcf17",
+    "assets/vector-icons/solar-colour/koreader-zoom-content.svg": "90401f52291d8eff20de7c699c475c322216b6ae8b4eb9a7e59e89423c339e0f",
+    "assets/vector-icons/solar-colour/koreader-zoom-manual.svg": "5dc8db3c4991ba73ce96dbe602837ad805f5b4f049b32238298be6e7cd137843",
+    "assets/vector-icons/solar-colour/koreader-zoom-page.svg": "cb985c08f1736a57d0267f916dc3a2b4aa3a8cf49a8f3594e5fda26c672ead5d",
+    "assets/vector-icons/solar-colour/koreader-zoom-row.svg": "fff11a703cc5ed0decdc5d8813bb26b82177bd94563a35f785c77555b4239f68",
+    "assets/vector-icons/solar-colour/pack-authors.svg": "6d6d0237e4feaf2d7f8c479bb92223d377271bf951b8839069f2165d7d810a0a",
+    "assets/vector-icons/solar-colour/pack-bookmark-browser.svg": "a483df098467c9e1d4c22d890e091dfa1486fdf6788abbabae18df5e63542144",
+    "assets/vector-icons/solar-colour/pack-chevron-left.svg": "22493adc110b307380c25df62bd128be4469feab56f6d1ad3d66cf6e3489ef20",
+    "assets/vector-icons/solar-colour/pack-chevron-right.svg": "68fc6043a3d61c38389d7a0ad9b5b40ac70d51e9810d1884eb49bd9c13ee5499",
+    "assets/vector-icons/solar-colour/pack-coll-back.svg": "788ade04226610caa85ae626020dde75355edbae11e2d1a8799796866e4c81b2",
+    "assets/vector-icons/solar-colour/pack-collections.svg": "414f78f9d65e43372c83d7b1641e9ce2c97066e4f1040f1e84de0d87cfdb9fb5",
+    "assets/vector-icons/solar-colour/pack-continue.svg": "3613e8f3138dfbe726a236d5fab15950eaad5b0341967a640da25ed4bbd0b7f9",
+    "assets/vector-icons/solar-colour/pack-favorites.svg": "942b6f656754c3d26e31e796d8a0375f2ff5ce66eac3c1c0145a53262484a061",
+    "assets/vector-icons/solar-colour/pack-folder.svg": "02ebeedd50bab00d84f13ff6de6526553d9b87d4246de9777ccf7620bd26c668",
+    "assets/vector-icons/solar-colour/pack-frontlight.svg": "594aaf8a5e5176dff15cf216d6c9a5ced09275d0df4864b6449fc4c7d156d843",
+    "assets/vector-icons/solar-colour/pack-history.svg": "8cf42b4c7bbbb42e6d3d9a608008e23b476c563b55d9a045d64fb1e20b701a20",
+    "assets/vector-icons/solar-colour/pack-homescreen.svg": "3660ba123ed068f0e66895737449c8b6dd6824a52477172bf85642425b1a9c84",
+    "assets/vector-icons/solar-colour/pack-library.svg": "0326c6645e44e261a0c0f54fcf5c8fe3950c47d9521ee7ab2e51925cf3b9e1d5",
+    "assets/vector-icons/solar-colour/pack-menu.svg": "9a6abcc23ce7be9f85b02d98f531e922bf9f10ac5497dd1682f8464a71f2cc75",
+    "assets/vector-icons/solar-colour/pack-night-mode.svg": "8e8472cae8a06b171b15562e87aebf161e75649af022bbeaec2787b5d440ac62",
+    "assets/vector-icons/solar-colour/pack-pager-first.svg": "0169317f1587a4406cec025570f6a36d985fcd56c7a2f9a8b17f303a01deda1e",
+    "assets/vector-icons/solar-colour/pack-pager-last.svg": "9af9f43a9e2372edc1b63dbf5128bcc8b873f4553303a7818c2ff0bbcbb1c52a",
+    "assets/vector-icons/solar-colour/pack-power.svg": "9c89b29150789bfbc1236ab15c2bbfb7fbd570a7bf241d21c11542906ccb8815",
+    "assets/vector-icons/solar-colour/pack-qa-group.svg": "cef038b82e89c9945112e50a0bf0293b33e092a78fffb2defbdaa36509321068",
+    "assets/vector-icons/solar-colour/pack-qa-plugin.svg": "d4915ed4c7e7a432ac6e8610952479a0875137e2446df7472ec2bd62c7ea7ac1",
+    "assets/vector-icons/solar-colour/pack-random-document.svg": "542c4b555274f64d93be871ccc637dacfd3a7c9704947e33a5baedb715912b5b",
+    "assets/vector-icons/solar-colour/pack-recent.svg": "957b82ac7be7a8c58a60fbdb633bf399c75c9bb815aa79076d4a66b68ba9e811",
+    "assets/vector-icons/solar-colour/pack-search.svg": "b51b91292ab04e54e7daeb890b275c4e412d6b5bfa7443d01fce4fd7e1e65f61",
+    "assets/vector-icons/solar-colour/pack-series.svg": "5bded6d959076ce27cec8191f2ea74d102de06ab01e3699f44bb9462a24109c8",
+    "assets/vector-icons/solar-colour/pack-settings.svg": "95ee46f64ae68787092bbbc90fc4e42c650c543c507695e9b18b2d8a6affd4a5",
+    "assets/vector-icons/solar-colour/pack-stats-calendar.svg": "dcd51f8784d8a9f26f8371d621e8b76463e19cd527b84ca940369df75f90b652",
+    "assets/vector-icons/solar-colour/pack-tab-filebrowser.svg": "84e142a7b83d1e25ac1cdbe6bba6d0d4d9e0c2817bc9e802a0db8177e97fc4a7",
+    "assets/vector-icons/solar-colour/pack-tab-fm-settings.svg": "2fde5fbe9b4aa7b9433dc155856a310320244f8710de4108ad282b14375dc3b6",
+    "assets/vector-icons/solar-colour/pack-tab-navigation.svg": "2870d663a987a549a49fa82bd3c7631f148d702211f02d6ef82c40b78b841eee",
+    "assets/vector-icons/solar-colour/pack-tab-qs-panel.svg": "c58b012feafb0f5f9f21e2bd88b18b58efe9c3981c344c77e67fc7a93d5f6a26",
+    "assets/vector-icons/solar-colour/pack-tab-tools.svg": "4d06bcea443253daebd95e04836fed9a807e2d3163b454f996a0266391367e52",
+    "assets/vector-icons/solar-colour/pack-tab-typeset.svg": "61806d07f4d7cf62eb66c7053b7aae87a1c4ce9f6b684e379cb879bfc89f2646",
+    "assets/vector-icons/solar-colour/pack-tags.svg": "37f55edd8e43c0ca62f88c192af4f29eb185bd4eac10a11fcf2aca87104f5dda",
+    "assets/vector-icons/solar-colour/pack-wifi-toggle.svg": "402a3dc51c45523b075bc38e25f310da047f867773fff1dc25bf3d6bf02e5569",
+    "assets/vector-icons/solar-mono/extra-ai-assistant.svg": "b3d1cb85eff1600270235b9e8c372d6c25d3d22516cb1bf6f17eabf7ce9caf9c",
+    "assets/vector-icons/solar-mono/extra-annotations-viewer.svg": "c4fe63b9ef5d1df6d60b56b647cb009f1e5dbdc30c1a8aede91252d292ed719e",
+    "assets/vector-icons/solar-mono/extra-backup.svg": "355faef8e590aefede5b27e5dc33d8c1ed2f3f6dbb3846c0e5ccd34ab227a551",
+    "assets/vector-icons/solar-mono/extra-battery-statistics.svg": "f9388968d60e0d2cf35fdf347e4e19c7340d0b7acd853a0bafed787949147a90",
+    "assets/vector-icons/solar-mono/extra-bookshelf.svg": "d81c9ecf77e54e537cf863367726964ea2487f56bb601ee936240ef488310049",
+    "assets/vector-icons/solar-mono/extra-calendar-view.svg": "141f8a61014a7c90e11be605de4b669c1e1096bb3d640628dc8a0fb1649d6dec",
+    "assets/vector-icons/solar-mono/extra-cloud-storage.svg": "3c175d3af3e106c9d3770ec764f379b6953848ad84dd126e37971d2c9fbf71df",
+    "assets/vector-icons/solar-mono/extra-crossword.svg": "ce700d37d51d2d4c16018fa560b57ba94a58b7a872ec8e125c84d698ca765f3b",
+    "assets/vector-icons/solar-mono/extra-filebrowserplus.svg": "3b610b4cdc17ec46390b6356f5bc29fba62fa74926625a6daac9e609933c3863",
+    "assets/vector-icons/solar-mono/extra-instapaper.svg": "c137598bf3a6a1cf762f36132756f526ce6cd46858a2921e82e561b1e0435fd3",
+    "assets/vector-icons/solar-mono/extra-localsend.svg": "42384a38154b309da4edc84bd757944fe335e725bbcadc4bc101950be16481ee",
+    "assets/vector-icons/solar-mono/extra-rakuyomi.svg": "1acbe41efacb8b80e3af9fe558663de14fc8c139bbf8ec56a2c465733e8d298c",
+    "assets/vector-icons/solar-mono/extra-records.svg": "f3aa7261c5d8631a85f2d58288e9e57c1e488cd418c895f3d01315a80f30bfd9",
+    "assets/vector-icons/solar-mono/extra-rotate.svg": "fd8a27644463bc0417ade83a49885377a7c062a2fcd52dce7a0f88bf410a69a8",
+    "assets/vector-icons/solar-mono/extra-screenshots.svg": "ff780c628962b29a33114be7b14a112d1212f9b82f7ce81cd8b58c05d70105a2",
+    "assets/vector-icons/solar-mono/extra-sleep.svg": "d3db4054cd74acf4446a707919a29c6a5cee9ed2497829cc081046e23dc6245b",
+    "assets/vector-icons/solar-mono/extra-storefront.svg": "cf2bceb0a758f66056c1a8f2a0d001a95b8c5933f46f377828f8ed07284ef29a",
+    "assets/vector-icons/solar-mono/extra-streak.svg": "d03bf1097c640c65ad979af170058c5087dda4b799bdea4ab5cb1da4061bac9d",
+    "assets/vector-icons/solar-mono/extra-sudoku.svg": "9d2dc438188f8da250c10fc8d1334035b1623da2bfd6c4c22a15bb7b7715143d",
+    "assets/vector-icons/solar-mono/extra-syncthing.svg": "5c73b393b99bfcd89a091314394e8ec4b15b76d96f74f5b698b358a800534e7d",
+    "assets/vector-icons/solar-mono/extra-time.svg": "9423bb494f4273b703d6ef21a166873c85e6211e21b55eac3b431c49ccdbe557",
+    "assets/vector-icons/solar-mono/extra-usb-storage.svg": "316ae6c7399b40f04586d01f35f05acc086ebba993f977b905541194580e2a44",
+    "assets/vector-icons/solar-mono/extra-vocabulary-builder.svg": "7f950ae1e8342d73bd3a7c97e23c4e6fb3de904f67e6a56d63079179a427e11e",
+    "assets/vector-icons/solar-mono/extra-zlibrary.svg": "511dbf68c9e79dbc37c87e26270958468f077491c847b64485b619a77c373179",
+    "assets/vector-icons/solar-mono/koreader-align-auto.svg": "835a6fcb52c3c235d425e191385a8359ca1cfd08ff5de1c1bbb2d93258961845",
+    "assets/vector-icons/solar-mono/koreader-align-center.svg": "fb4904fdad2f757417acef1c67592ca377925e3619503ed8df304f01becb82b8",
+    "assets/vector-icons/solar-mono/koreader-align-justify.svg": "a9190068efc624b22a0d0a8dda360f5abe72ab0b5b9b7d7542187191c1970aff",
+    "assets/vector-icons/solar-mono/koreader-align-left.svg": "c206d77c8656071cd98f740cfc9abd13565bd3f87c6d10d26696a681cfafd053",
+    "assets/vector-icons/solar-mono/koreader-align-right.svg": "fac78ec623efea39b5422fc666d74654c8283374e6c4cce575645a9a95196817",
+    "assets/vector-icons/solar-mono/koreader-appbar-contrast.svg": "3ae26ca769e06bc828a90fe365ef51c5683b603a5318c2c81132d7f6c0d55749",
+    "assets/vector-icons/solar-mono/koreader-appbar-crop.svg": "51d66b92baa1f635f7405b342bb0c28974ec9b9412010882fe2489cb5871c0ba",
+    "assets/vector-icons/solar-mono/koreader-appbar-filebrowser.svg": "dd62c477192378224a61e59dabeeff94f25cbe65b9fa3627155021b236690b2d",
+    "assets/vector-icons/solar-mono/koreader-appbar-menu.svg": "0d35b8ef75663148c8198170058255acba26fc981f4ad2308ada61be783d3f7b",
+    "assets/vector-icons/solar-mono/koreader-appbar-navigation.svg": "26ada154fdbe1b259fbbddb1a3002da7d7b6aa4df38eedb2ec2d4614746ca838",
+    "assets/vector-icons/solar-mono/koreader-appbar-pagefit.svg": "df56ed688f735a462d95067652b64b871e98e52ada169930109c02eb8e99242b",
+    "assets/vector-icons/solar-mono/koreader-appbar-pageview.svg": "d1d24b1fbb6a147ef090d481a6359cf3086a9e13dcc18e424f9489b14cb10d52",
+    "assets/vector-icons/solar-mono/koreader-appbar-pokeball.svg": "b13ccf27b4401ecdcb8e44ee9cdcde5d1d9dd7118b0fbb6dc0a53eeba98b084d",
+    "assets/vector-icons/solar-mono/koreader-appbar-rotation.svg": "3be13e611d3c391cf89af030eef2b74360b451d815a93838dc1991e6117b8ce4",
+    "assets/vector-icons/solar-mono/koreader-appbar-search.svg": "5ffa3feee3f5388b7cd1a4fcce6705aba638a5bd2acaebeb877ed75040f303b9",
+    "assets/vector-icons/solar-mono/koreader-appbar-settings.svg": "aeca30ad76c78b2347281fab023d090995fd36a30f969facf6d73d81dc4faea9",
+    "assets/vector-icons/solar-mono/koreader-appbar-textsize.svg": "db6d3d0b654b61e87c7ee9bee32c5226c735d9dc70621d81a0569cdcd249bd6f",
+    "assets/vector-icons/solar-mono/koreader-appbar-tools.svg": "eb7e1f7f12786d7562522d5ab6cb2bc32edc7f1b5be1ab66c708727404ff287f",
+    "assets/vector-icons/solar-mono/koreader-appbar-typeset.svg": "c137598bf3a6a1cf762f36132756f526ce6cd46858a2921e82e561b1e0435fd3",
+    "assets/vector-icons/solar-mono/koreader-back-top-rtl.svg": "6290b7bec2bcd64433e271367d1ce612373d2304a5c2c3556897d358ec8d6dea",
+    "assets/vector-icons/solar-mono/koreader-back-top.svg": "0d7f93fae51740bdd7fa9c5a5f6a16c5fdc51242d7d63430eafcf54a5558d58f",
+    "assets/vector-icons/solar-mono/koreader-book-opened.svg": "dae1cd4dc9809ceda9961ce85b291a7982e700b539d35f9f58cc8cc81897fa49",
+    "assets/vector-icons/solar-mono/koreader-bookmark.svg": "fb292c2c6d2eb97f1ce9b1bc32d1daf3f880f009d18861862449e87ad7624164",
+    "assets/vector-icons/solar-mono/koreader-cancel.svg": "ca539567981eb3af1e3d6c2d1e3b2225791b254fc43cd22e17f60719c899a2bc",
+    "assets/vector-icons/solar-mono/koreader-check.svg": "af3155a3de24e4c74121f362e6c9dd3783e9c8a648e2a2ece3dfcaea0d4d97cd",
+    "assets/vector-icons/solar-mono/koreader-chevron-first.svg": "7c5bfb8f36c5c55f7505e79384b7bc2a5844a3c83fe41adb9a7f68881dd021d7",
+    "assets/vector-icons/solar-mono/koreader-chevron-last.svg": "574d26a530f660cd5673650633eaf085953ffc8caaf065a9e325c1572e911f3f",
+    "assets/vector-icons/solar-mono/koreader-chevron-left.svg": "86924ba18597df92ebd61c202dad9d97721a055c198b2db3f1214978ddd58867",
+    "assets/vector-icons/solar-mono/koreader-chevron-right.svg": "19eae0f1a6ea248f211794e479b1c53e11c4f0f26f181d53401c0826c96d62ab",
+    "assets/vector-icons/solar-mono/koreader-chevron-up.svg": "82787bdb7834eb0d1a64a21411511735298050fafbdc6dac0649522ba4c44c6d",
+    "assets/vector-icons/solar-mono/koreader-close.svg": "57d26fd9500d6046231e9eaa1be765d2a69bc389616f7cfff8e098dc6b2a556a",
+    "assets/vector-icons/solar-mono/koreader-column-one.svg": "a9190068efc624b22a0d0a8dda360f5abe72ab0b5b9b7d7542187191c1970aff",
+    "assets/vector-icons/solar-mono/koreader-column-three.svg": "5e3dd2243af4ae26c3f519409035be974d0e737c6a69bf139b731fc64a338728",
+    "assets/vector-icons/solar-mono/koreader-column-two.svg": "d2ea747f3fc0a1ee315a71f20bc12026e40badfc959416c36c5a9a9d1b98573a",
+    "assets/vector-icons/solar-mono/koreader-control-collapse.svg": "3410cb5e1d89a24cfd7617ec8cfe74d54338d4d1661d43b022b2e87cfbf51f62",
+    "assets/vector-icons/solar-mono/koreader-control-expand-alpha.svg": "6410a38f4830625c4114169a7d67e08409bbcd114f3b552c2122f3da8dcdb1da",
+    "assets/vector-icons/solar-mono/koreader-control-expand.svg": "dd450c3912b582c37a49571cde382c345dd1e41d876368ea9c554e7af7679056",
+    "assets/vector-icons/solar-mono/koreader-cre-render-partial.svg": "f04220866d840d7879d340682dd25716e21b1e4c20ff23f80ecda01c693dfea4",
+    "assets/vector-icons/solar-mono/koreader-cre-render-ready.svg": "02aef9d0c643f56ba76558d031b4de37bbe841ad03a34d9f5f081760e73b096c",
+    "assets/vector-icons/solar-mono/koreader-cre-render-reload-alpha.svg": "963a30ef3e869d255b2d6969443bb306d253a2d4797c159fd33a4424fcb1953e",
+    "assets/vector-icons/solar-mono/koreader-cre-render-reload.svg": "a96777887009dadf140843a8b2d3b5e481dc9aa5c7371fa9bcc33e4e192ee2d0",
+    "assets/vector-icons/solar-mono/koreader-cre-render-working.svg": "dc44295225d5d7b4e581767636a7991ba274f4070570ddf3dde96d5ec559f606",
+    "assets/vector-icons/solar-mono/koreader-direction-btlr.svg": "22b725491319a75cc40cdac28cc87c3b89c6b4793d06b6a80f91b1b13437509a",
+    "assets/vector-icons/solar-mono/koreader-direction-btrl.svg": "36cfa02ba30e8efabb90aa616b0ad9e50bbec094e362fdbdfd7d557f2cc188cd",
+    "assets/vector-icons/solar-mono/koreader-direction-lrbt.svg": "751b4dd47354c324553547452958adbc27ee7ba8b5e2fdfa8d2a98f16c27ba0d",
+    "assets/vector-icons/solar-mono/koreader-direction-lrtb.svg": "211a763bdddeb9d683977f5007dd178971003d62bdb9f7a025f18fef57b669e3",
+    "assets/vector-icons/solar-mono/koreader-direction-rlbt.svg": "435709c8c81eecd6ff67e563f7a6841589ca81a811eeceb490ee3b19ed1a86da",
+    "assets/vector-icons/solar-mono/koreader-direction-rltb.svg": "b0261163248b8f63ac83333df745216ff4cb2d3085be8bfc0cb9ea367632960a",
+    "assets/vector-icons/solar-mono/koreader-direction-tblr.svg": "2a008776389453c01e516761a8e26c90eda8b1784e210cd0664dff7708f498de",
+    "assets/vector-icons/solar-mono/koreader-direction-tbrl.svg": "87629546ca7c750a17201f109594923939463c3143eb19801449c24dd3054ae3",
+    "assets/vector-icons/solar-mono/koreader-dogear-abandoned-rtl.svg": "49db655ddc1ddf631282a6a0cf7b1ec25d6484b6229ef2622d68713233357d89",
+    "assets/vector-icons/solar-mono/koreader-dogear-abandoned.svg": "66738921e7a105d8ff0dacf0454ec8e0b12305336c203fef496b213b03b8c4c6",
+    "assets/vector-icons/solar-mono/koreader-dogear-alpha.svg": "8f8948de23a20260372363461bde68c80fd3a3d931a6e0e9c71dbd857c1eb90e",
+    "assets/vector-icons/solar-mono/koreader-dogear-complete-rtl.svg": "f0a18e37310ae76e6a5320a638e30711a2006b9c728dea8eb0e028d29e7baab1",
+    "assets/vector-icons/solar-mono/koreader-dogear-complete.svg": "a830ad877b692abea633a79b9c7886c55e1370ef463796676032c77904581d5e",
+    "assets/vector-icons/solar-mono/koreader-dogear-opaque.svg": "371d35d29261c6746fbfcb63001069627623cb8aad3a26cdb0fdb0da107a871e",
+    "assets/vector-icons/solar-mono/koreader-dogear-reading.svg": "e6bc0a7f7979a12dfb8efb097c43d8b19bca2773fec529bec5b52e2c29a8d97d",
+    "assets/vector-icons/solar-mono/koreader-edit.svg": "0ba3a2c8f8e8b66412ec2a3cd2cbc3928435a364f157400cc57bd6d3bac6f460",
+    "assets/vector-icons/solar-mono/koreader-exit.svg": "57d26fd9500d6046231e9eaa1be765d2a69bc389616f7cfff8e098dc6b2a556a",
+    "assets/vector-icons/solar-mono/koreader-home.svg": "d6b141308d217604c0c57b5f8b73c7ea837a3b3ed935388bf6b74029b70b1974",
+    "assets/vector-icons/solar-mono/koreader-info.svg": "9dbbdb6a67a4ab37cdf95ea908fbd08b7d47dba8857feea43126f6de8e498b7d",
+    "assets/vector-icons/solar-mono/koreader-move-down.svg": "3410cb5e1d89a24cfd7617ec8cfe74d54338d4d1661d43b022b2e87cfbf51f62",
+    "assets/vector-icons/solar-mono/koreader-move-up.svg": "28811a78874fbaa412c64c4aaa26a181ecf5ae31c9344b0aa09ee36e0468f050",
+    "assets/vector-icons/solar-mono/koreader-notice-info.svg": "9dbbdb6a67a4ab37cdf95ea908fbd08b7d47dba8857feea43126f6de8e498b7d",
+    "assets/vector-icons/solar-mono/koreader-notice-question.svg": "1409d942397c1957c700336311899db59860a7e4590191d0c1abc056975921ee",
+    "assets/vector-icons/solar-mono/koreader-notice-warning.svg": "4285390b86e804689bc00131cf3d9f72cf041b4f563b56cacc45e4a44c85ac04",
+    "assets/vector-icons/solar-mono/koreader-plus.svg": "bc8b8da6b6965a0fc9da341480ab7fbc998b484a48cbe3205c0480d86b4e8d54",
+    "assets/vector-icons/solar-mono/koreader-position-marker-top.svg": "12e9ed528f341be7f1574597fa47db3d012a404fbf67dadb77afe1b11e1701b2",
+    "assets/vector-icons/solar-mono/koreader-position-marker.svg": "672af3d4b5e6ae88b8a3f9e91b1f68471fb5aec0abad952f15047cc86e990530",
+    "assets/vector-icons/solar-mono/koreader-rotation-0ur.svg": "7f1aeb69caad12cbf6d290c07ec7936acd4ae1f2975fe736b5847a29162f33ce",
+    "assets/vector-icons/solar-mono/koreader-rotation-180ud.svg": "da161a02d07b4f426744394b281421f5a6f23dae02cd5f62ebd8dcc8e75e45bd",
+    "assets/vector-icons/solar-mono/koreader-rotation-90ccw.svg": "509ea7446e9bc3df635bd44228d4748201fc38d7490f56f0e235ca84c95b30f7",
+    "assets/vector-icons/solar-mono/koreader-rotation-90cw.svg": "11ee016741626439383bd952484a3d62df57b6080710d7e90ff64f182222658b",
+    "assets/vector-icons/solar-mono/koreader-rotation-l-0ur.svg": "c7e00a7c77f9284eab8f76107ff49b75324ae015898da34ff9161b556474ed20",
+    "assets/vector-icons/solar-mono/koreader-rotation-l-180ud.svg": "9dc6832eeeebbfa83b368e8b39538183af089ed6c73c021eeedaf9899761dab8",
+    "assets/vector-icons/solar-mono/koreader-rotation-l-90ccw.svg": "ff88a3916f59d3e33f305b0065d6866ed27e3284b0528802777b7f20c9c6200e",
+    "assets/vector-icons/solar-mono/koreader-rotation-l-90cw.svg": "64cfb43c6250e7d8842981c0a41444a0ee6431108f70c7395fa4900372561502",
+    "assets/vector-icons/solar-mono/koreader-rotation-p-0ur.svg": "079753f023c1ccec8d4f56290b416e010f7afe6a4d13eeacba1a6e858133788c",
+    "assets/vector-icons/solar-mono/koreader-rotation-p-180ud.svg": "bcee1175498b303bd922c398314a94f12b7d8ca82eab9e3f911f98b4e7f1caed",
+    "assets/vector-icons/solar-mono/koreader-rotation-p-90ccw.svg": "fb727c740b8a13b9370b5cd7ece69d6446beba694ccdee9bef0821ac6e4a7fef",
+    "assets/vector-icons/solar-mono/koreader-rotation-p-90cw.svg": "6be04057f2ca75a483896bd5cc4e83c4903d2c84413e0bda86e8ec809cd18431",
+    "assets/vector-icons/solar-mono/koreader-star-empty.svg": "e2714ddb0aa2f1a8ffc39ad1efc37a0d8dd9dc012a3c4a685c20f9155bcc2038",
+    "assets/vector-icons/solar-mono/koreader-star-full.svg": "e0f962400e8d06ff553e7efec9d289090571f8a895e4ba6591713ac1c17e38f5",
+    "assets/vector-icons/solar-mono/koreader-star-white.svg": "87894e378d3bdadac3bfc55d974bcd4c266c6f2665b0d896126e5853f5df8259",
+    "assets/vector-icons/solar-mono/koreader-texture-box.svg": "390d3780a99d2699461714b26b26a880111509bdd3f9b31e8fc78b6d248b1f6d",
+    "assets/vector-icons/solar-mono/koreader-triangle.svg": "3aad12296d017a31760552aa4167a262e06ac5a8687bdaa5c46ef1ca01b48d39",
+    "assets/vector-icons/solar-mono/koreader-wifi-open-0.svg": "3048b2a28efbea02c1d3f21afc2c9000a0ac88fbddd9ec56c62d645446db76e0",
+    "assets/vector-icons/solar-mono/koreader-wifi-open-100.svg": "062603f3eb4aee4e8f72d53e89309cba518f0e64b78432757a17295a4bfcd282",
+    "assets/vector-icons/solar-mono/koreader-wifi-open-25.svg": "95d593d983ddd16868d128a6d7381abe7f9516f680f212add8b9b462eb073c50",
+    "assets/vector-icons/solar-mono/koreader-wifi-open-50.svg": "4c091f1225fd7374808dde05d44ac5cd57a843049abcd15c223c8780144bc55f",
+    "assets/vector-icons/solar-mono/koreader-wifi-open-75.svg": "cfb1696aada57aed751e20a1da2e0390d03bfdb3352bfbb8a7a16f8aca87ebd7",
+    "assets/vector-icons/solar-mono/koreader-wifi-secure-0.svg": "0b5324ee6137a10dfa1dc0390f1761bcdc6f8aad2ac51e67eaf948e0796ec97f",
+    "assets/vector-icons/solar-mono/koreader-wifi-secure-100.svg": "728cbd2850dd84e33aa97dee206e01c01f94df5e0c8e6a82bfb095a89d7259d2",
+    "assets/vector-icons/solar-mono/koreader-wifi-secure-25.svg": "5afb5b9fee8ea6aa0b19903e36be919ae472b70a1df764d5918acc99f5f8be97",
+    "assets/vector-icons/solar-mono/koreader-wifi-secure-50.svg": "fe0249381aa704837851b72eea2473985139c4dadd16054d9e1be6766d572558",
+    "assets/vector-icons/solar-mono/koreader-wifi-secure-75.svg": "96bc1554cf2ee7e5b06d6e705ed18ba449f278bebf1f12f0e05305793be5f1ff",
+    "assets/vector-icons/solar-mono/koreader-wifi.svg": "062603f3eb4aee4e8f72d53e89309cba518f0e64b78432757a17295a4bfcd282",
+    "assets/vector-icons/solar-mono/koreader-zoom-column.svg": "ac77d6413993a7d4edc083597f81ef70a9d932745df8134d063c9f302abe4739",
+    "assets/vector-icons/solar-mono/koreader-zoom-content.svg": "c26dfe432103afe1675b2b129c323defcc19fd472897b0a55b05332bdb9d9fbd",
+    "assets/vector-icons/solar-mono/koreader-zoom-manual.svg": "f07202163f190344899a6dfb79a9dd09d24f5c38b490d206e5fd2ea812ab056b",
+    "assets/vector-icons/solar-mono/koreader-zoom-page.svg": "a7ecf1e0385025573deb934dd8f5ddcafa2367b4d09280e486d93ffc41c61e48",
+    "assets/vector-icons/solar-mono/koreader-zoom-row.svg": "9ebba71383b1cbaf7f2d16ecdd6c7a961fc34020ed22394747cf0dcfccdde2de",
+    "assets/vector-icons/solar-mono/pack-authors.svg": "bef74bbd647173b1871e4fe1c643a0df02f4f577f6d294c18f7a34d7e77b0f1a",
+    "assets/vector-icons/solar-mono/pack-bookmark-browser.svg": "fb292c2c6d2eb97f1ce9b1bc32d1daf3f880f009d18861862449e87ad7624164",
+    "assets/vector-icons/solar-mono/pack-chevron-left.svg": "86924ba18597df92ebd61c202dad9d97721a055c198b2db3f1214978ddd58867",
+    "assets/vector-icons/solar-mono/pack-chevron-right.svg": "19eae0f1a6ea248f211794e479b1c53e11c4f0f26f181d53401c0826c96d62ab",
+    "assets/vector-icons/solar-mono/pack-coll-back.svg": "0d7f93fae51740bdd7fa9c5a5f6a16c5fdc51242d7d63430eafcf54a5558d58f",
+    "assets/vector-icons/solar-mono/pack-collections.svg": "9bf770462b130eede4f229298364d9726c4cb1c2cab5b318457a5cdc495d0979",
+    "assets/vector-icons/solar-mono/pack-continue.svg": "dae1cd4dc9809ceda9961ce85b291a7982e700b539d35f9f58cc8cc81897fa49",
+    "assets/vector-icons/solar-mono/pack-favorites.svg": "97e82bfe5b3cc6a8fb24a1040a0809c996c8b75c83a0978c0d31df1dcecb5431",
+    "assets/vector-icons/solar-mono/pack-folder.svg": "42c305f2c148cc928c92938ff94a5439f8ea456649e67056f82ae84b51f6ef62",
+    "assets/vector-icons/solar-mono/pack-frontlight.svg": "6a806699b1e855c498658f760d3d18b3bd3128715788b0946d85eb882056e037",
+    "assets/vector-icons/solar-mono/pack-history.svg": "a166b61b47fbb671b4567bd1bc892da702637ee28dc94f50a03d229fbad26e3e",
+    "assets/vector-icons/solar-mono/pack-homescreen.svg": "47d965ff17b57d45362241903a812b9b11bf096187a67cc7d9d070f20abc0cac",
+    "assets/vector-icons/solar-mono/pack-library.svg": "97db6e2f8afb1d2658fcea503e4216863bb2293f2db1c3725416a2d56a36cd86",
+    "assets/vector-icons/solar-mono/pack-menu.svg": "0d35b8ef75663148c8198170058255acba26fc981f4ad2308ada61be783d3f7b",
+    "assets/vector-icons/solar-mono/pack-night-mode.svg": "7a7d08fa3829d40e81c3cffe7a8bb6c920ee03f847035cc3465d4b8350889a19",
+    "assets/vector-icons/solar-mono/pack-pager-first.svg": "7c5bfb8f36c5c55f7505e79384b7bc2a5844a3c83fe41adb9a7f68881dd021d7",
+    "assets/vector-icons/solar-mono/pack-pager-last.svg": "574d26a530f660cd5673650633eaf085953ffc8caaf065a9e325c1572e911f3f",
+    "assets/vector-icons/solar-mono/pack-power.svg": "3cb8f6a8e85ceada9fc584a05a076a3585e32da2ded5964082c225aaee8b6dec",
+    "assets/vector-icons/solar-mono/pack-qa-group.svg": "fcf94d108c25f78f1d71d9ddf1c8edc166a64ac489bdb0d65ba39295f7fc96d5",
+    "assets/vector-icons/solar-mono/pack-qa-plugin.svg": "c58d1833caf69ea4db2e1cb22d10c7cd0b7dc85a0531b1fafbdcdef9db317534",
+    "assets/vector-icons/solar-mono/pack-random-document.svg": "8abd3853e01d6e4061e8bfef930b111c1f2b37bbb9215dcc42c70b435a7e0b89",
+    "assets/vector-icons/solar-mono/pack-recent.svg": "3dbc8551a51a67623d9f3c9ab63f4a22f57cb5c6978f874f980133ae96765343",
+    "assets/vector-icons/solar-mono/pack-search.svg": "e1aff1d921f5e317cc1d519acfba58d6207237d23644a50c2604b0ef71781197",
+    "assets/vector-icons/solar-mono/pack-series.svg": "511dbf68c9e79dbc37c87e26270958468f077491c847b64485b619a77c373179",
+    "assets/vector-icons/solar-mono/pack-settings.svg": "aeca30ad76c78b2347281fab023d090995fd36a30f969facf6d73d81dc4faea9",
+    "assets/vector-icons/solar-mono/pack-stats-calendar.svg": "136470c74162684e3ed160668f74a5ea614cb193717af555d464ee777f641fcd",
+    "assets/vector-icons/solar-mono/pack-tab-filebrowser.svg": "7d4fa4271156eef5d2d718fc07050092844a1f6a2eb7c55df8a956b113590486",
+    "assets/vector-icons/solar-mono/pack-tab-fm-settings.svg": "dd62c477192378224a61e59dabeeff94f25cbe65b9fa3627155021b236690b2d",
+    "assets/vector-icons/solar-mono/pack-tab-navigation.svg": "26ada154fdbe1b259fbbddb1a3002da7d7b6aa4df38eedb2ec2d4614746ca838",
+    "assets/vector-icons/solar-mono/pack-tab-qs-panel.svg": "460034a688cee3f5b0ea82c777c51d396aeac0c5510ca6584001bbf693f7c330",
+    "assets/vector-icons/solar-mono/pack-tab-tools.svg": "241d1cd9089b04b9c98e4f79903be0fea7a7d299edd882c441e5aa0ccd3d5c7f",
+    "assets/vector-icons/solar-mono/pack-tab-typeset.svg": "c137598bf3a6a1cf762f36132756f526ce6cd46858a2921e82e561b1e0435fd3",
+    "assets/vector-icons/solar-mono/pack-tags.svg": "240e6b516ee7d7924048ffd855226bbb3e562295ea3fbbb3edc4418ca713c1d5",
+    "assets/vector-icons/solar-mono/pack-wifi-toggle.svg": "3048b2a28efbea02c1d3f21afc2c9000a0ac88fbddd9ec56c62d645446db76e0",
+    "core/orbitui_solar_colour_catalogue.lua": "8a1e021e3f23f4e018b83b3902a619c6247d275d352b5812808c4df1989928df",
+    "core/orbitui_solar_mono_catalogue.lua": "8a1e021e3f23f4e018b83b3902a619c6247d275d352b5812808c4df1989928df"
+  },
+  "source": {
+    "commit": "d4f4799c7a48e8e341163e7b7edb07ddd777614f",
+    "repository": "https://github.com/pxlflux/solariconpack.koplugin",
+    "sections": [
+      {
+        "count": 34,
+        "directory": "Pack Icons",
+        "label": "SimpleUI",
+        "prefix": "pack"
+      },
+      {
+        "count": 24,
+        "directory": "Supplementary Icons",
+        "label": "Extra",
+        "prefix": "extra"
+      },
+      {
+        "count": 102,
+        "directory": "KOReader Icons",
+        "label": "KOReader",
+        "prefix": "koreader"
+      }
+    ],
+    "styles": {
+      "solar-colour": "Colour",
+      "solar-mono": "Mono"
+    }
+  }
+}

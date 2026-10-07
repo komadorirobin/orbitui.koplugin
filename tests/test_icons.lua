@@ -191,7 +191,7 @@ H.test("only known bundled images rebase across OTA slots", function()
 end)
 H.test("Bookshelf offers Material only where image tokens are supported", function()
     H.eq(#Library._itemList("material", nil, true), 110)
-    H.eq(#Library._itemList("all", nil, true), 346)
+    H.eq(#Library._itemList("all", nil, true), 666)
     H.eq(#Library._itemList("all", nil, false), 1)
     H.eq(#Library._itemList("all", "manga", false), 0)
     local cell = Library._itemList("all", "manga", true)[1]
@@ -202,7 +202,8 @@ H.test("Bookshelf offers Material only where image tokens are supported", functi
     Library:show(function() end, { svg = true })
     local chips = {}
     for _, chip in ipairs(shown.config.chip_strip()) do chips[chip.key] = true end
-    assert(chips.material and chips["solar-outline"] and chips["solar-duotone"] and chips.tabler)
+    assert(chips.material and chips["solar-outline"] and chips["solar-duotone"] and chips.tabler
+        and chips["solar-colour"] and chips["solar-mono"])
 end)
 H.test("native tabs register actual SVGs from names and previous OTA slots", function()
     H.eq(Style.registerTabIconName("sui_tab_main", "material:manga"), "simpleui_sui_tab_main")
@@ -530,10 +531,12 @@ H.test("legacy Material overrides are readable at startup without setting writes
     H.eq(store.simpleui_sysicon_sui_menu, "material:menu")
 end)
 H.test("vector catalogues cache and round-trip every whitelisted identity across OTA slots", function()
+    local counts = { ["solar-outline"]=80, ["solar-duotone"]=80, tabler=75,
+        ["solar-colour"]=160, ["solar-mono"]=160 }
     for _, source in ipairs(VectorIcons.sources) do
         local cells = VectorIcons.catalogue(source.key)
         H.eq(VectorIcons.catalogue(source.key), cells)
-        H.eq(#cells, source.key == "tabler" and 75 or 80)
+        H.eq(#cells, counts[source.key])
         for _, cell in ipairs(cells) do
             for _, value in ipairs({ cell.value, cell.icon, cell.insert_value, cell.file }) do
                 H.eq(VectorIcons.entry(value), cell)
@@ -552,10 +555,35 @@ H.test("vector catalogues cache and round-trip every whitelisted identity across
     end
     for _, bad in ipairs({ "solar-outline:../manga", "solar-outline:missing", "solar-outline:Manga",
             "[icon=orbitui-solar-outline-manga]extra", "tabler:language-hiragana:300", "tabler:../book",
-            "/old/assets/vector-icons/solar-outline/../manga.svg", "solar:book", "[icon=orbitui-tabler-missing]" }) do
+            "/old/assets/vector-icons/solar-outline/../manga.svg", "solar:book", "[icon=orbitui-tabler-missing]",
+            "solar-colour:../pack-library", "solar-mono:pack-library:300", "solar-colour:pack.lua",
+            "/old/assets/vector-icons/solar-mono/../pack-library.svg" }) do
         H.eq(VectorIcons.entry(bad), nil, bad)
         H.eq(Icons.imageFile(bad), nil, bad)
     end
+end)
+H.test("pxlflux catalogues include pack, supplementary and KOReader icons in both styles", function()
+    for _, key in ipairs({ "solar-colour", "solar-mono" }) do
+        for _, icon in ipairs({
+            {"pack-library", "Reading", "bibliotek"},
+            {"extra-rakuyomi", "Reading", "manga"},
+            {"extra-bookshelf", "Reading", "bokhylla"},
+            {"extra-syncthing", "Tools", "synk"},
+            {"koreader-appbar-settings", "System", "appbar.settings"},
+        }) do
+            local cell = assert(VectorIcons.entry(key .. ":" .. icon[1]))
+            H.eq(cell.group, icon[2])
+            local found = false
+            for _, match in ipairs(VectorIcons.filtered(key, icon[2], icon[3])) do
+                if match == cell then found = true end
+            end
+            assert(found, cell.value)
+        end
+        local value = key .. ":koreader-appbar-settings"
+        H.eq(Style.registerTabIconName("sui_tab_setting", value), "simpleui_sui_tab_setting")
+        H.eq(copied["/fake/icons/simpleui_sui_tab_setting.svg"], Icons.imageFile(value))
+    end
+    assert(Icons.imageFile("solar-colour:pack-library") ~= Icons.imageFile("solar-mono:pack-library"))
 end)
 H.test("vector search exposes custom manga and Tabler hiragana without font glyphs", function()
     for _, key in ipairs({ "solar-outline", "solar-duotone" }) do
@@ -705,6 +733,38 @@ H.test("Solar and Tabler use dock alpha rendering and native menu SVG registrati
         H.eq(btn.image.file, cell.file)
         H.eq(btn.image.face, nil)
     end
+end)
+H.test("colour and mono icons use original SVGs in all live quick-action and dock styles", function()
+    local Renderer = dofile("components/simpleui/engines/sui_quickactions_render.lua")
+    local old_wallpaper = package.loaded["features/sui_wallpaper"]
+    package.loaded["features/sui_wallpaper"] = { clampBackdropStrength=function(n) return n end }
+    local old_icon, before, rendered = store.simpleui_action_night_mode_icon, writes, 0
+    local build = Renderer.buildIcon
+    Renderer.buildFramedIcon = function() error("The live dock must not tint the SVG as a mask") end
+    Renderer.buildIcon = function(entry, ...)
+        local image = build(entry, ...)
+        H.eq(image.file, Icons.imageFile(entry.icon))
+        H.eq(image.alpha, true); H.eq(image.dim, false)
+        H.eq(image._inner, nil); H.eq(image._fg, nil)
+        rendered = rendered + 1
+        return image
+    end
+    for _, key in ipairs({ "solar-colour", "solar-mono" }) do
+        store.simpleui_action_night_mode_icon = key .. ":pack-night-mode"
+        for _, night in ipairs({ false, true }) do
+            screen.night_mode = night
+            Renderer.buildCell("night_mode", {icon_sz=48, shape="bare", show_label=true})
+            Renderer.buildListRow("night_mode", {icon_sz=48, show_icon=true, inner_w=240,
+                row_h=64, icon_gap=8})
+            for _, style in ipairs({"default", "framed", "simple"}) do
+                Renderer.buildTabCell("night_mode", true, {icon_sz=48, tab_w=120,
+                    bar_h=80, indic_h=2, bar_style=style})
+            end
+        end
+    end
+    H.eq(rendered, 20); H.eq(writes, before)
+    store.simpleui_action_night_mode_icon, screen.night_mode = old_icon, nil
+    package.loaded["features/sui_wallpaper"] = old_wallpaper
 end)
 H.test("night-mode contrast preserves the selected icon without changing the shared native entry", function()
     local QA = dofile("components/simpleui/features/sui_quickactions.lua")
