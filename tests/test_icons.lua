@@ -73,7 +73,7 @@ package.loaded["ui/geometry"] = { new = function(_, opts) return opts end }
 package.loaded["ui/size"] = { border = { thin = 1, default = 2, window = 3 }, line = { thin = 1 } }
 for _, name in ipairs({ "container/centercontainer", "container/framecontainer", "container/widgetcontainer",
         "container/inputcontainer", "container/leftcontainer", "container/topcontainer", "button", "linewidget",
-        "textwidget", "imagewidget", "buttondialog", "notification", "horizontalgroup", "horizontalspan",
+        "textwidget", "imagewidget", "buttondialog", "notification", "horizontalgroup", "horizontalspan", "overlapgroup",
         "verticalgroup", "verticalspan" }) do
     package.loaded["ui/widget/" .. name] = Widget
 end
@@ -705,5 +705,90 @@ H.test("Solar and Tabler use dock alpha rendering and native menu SVG registrati
         H.eq(btn.image.file, cell.file)
         H.eq(btn.image.face, nil)
     end
+end)
+H.test("night-mode contrast preserves the selected icon without changing the shared native entry", function()
+    local QA = dofile("components/simpleui/features/sui_quickactions.lua")
+    local native = QA.getEntry
+    Adapter.wrap("features/sui_quickactions", QA)
+    local old_icon, old_label = store.simpleui_action_night_mode_icon, store.simpleui_action_night_mode_label
+    local before = writes
+    for _, on in ipairs({ false, true }) do
+        screen.night_mode = on
+        for _, icon in ipairs({ false, "nerd:F5E3", "material:manga:300", "solar-outline:manga",
+                "solar-duotone:manga", "tabler:language-hiragana", "/custom/moon.png" }) do
+            store.simpleui_action_night_mode_icon = icon or nil
+            store.simpleui_action_night_mode_label = "My night toggle"
+            local raw = native("night_mode")
+            local resolved = QA.getEntry("night_mode")
+            H.eq(raw.dim, not on)
+            H.eq(resolved.dim, false)
+            H.eq(resolved.icon, raw.icon)
+            H.eq(resolved.label, "My night toggle")
+            assert(resolved ~= raw, "Native dynamic entry is shared with other toggles")
+            native("power")
+            H.eq(resolved.label, "My night toggle")
+        end
+    end
+    screen.night_mode = nil
+    H.eq(QA.getEntry("night_mode").dim, false)
+    H.eq(writes, before)
+    store.simpleui_action_night_mode_icon, store.simpleui_action_night_mode_label = old_icon, old_label
+end)
+H.test("Wi-Fi and external toggle dimming and the native night-mode event remain intact", function()
+    local QA = require("features/sui_quickactions")
+    local old_wifi, old_broadcast = Config.wifiOn, manager.broadcastEvent
+    local old_event = package.loaded["ui/event"]
+    package.loaded["ui/event"] = { new=function(_, name) return { name=name } end }
+    local before, broadcasts = writes, 0
+    manager.broadcastEvent = function(_, event)
+        H.eq(event.name, "ToggleNightMode")
+        broadcasts = broadcasts + 1
+    end
+    local active = false
+    QA.register{ id="contrast_test", label="External toggle", icon="nerd:F02D",
+        is_active=function() return active end, execute=function() end }
+    for _, on in ipairs({ false, true }) do
+        Config.wifiOn = function() return on end
+        active, screen.night_mode = on, on
+        H.eq(QA.getEntry("night_mode").dim, false)
+        H.eq(QA.getEntry("wifi_toggle").dim, not on)
+        H.eq(QA.getEntry("contrast_test").dim, not on)
+        QA.execute("night_mode")
+        H.eq(screen.night_mode, on, "Presentation must not alter the actual state")
+    end
+    H.eq(broadcasts, 2)
+    H.eq(QA.isInPlace("night_mode"), true)
+    H.eq(writes, before)
+    QA.unregister("contrast_test")
+    Config.wifiOn, manager.broadcastEvent, screen.night_mode = old_wifi, old_broadcast, nil
+    package.loaded["ui/event"] = old_event
+end)
+H.test("quick settings, action lists and dock render night icons at full contrast", function()
+    local Renderer = dofile("components/simpleui/engines/sui_quickactions_render.lua")
+    local old_wallpaper = package.loaded["features/sui_wallpaper"]
+    package.loaded["features/sui_wallpaper"] = { clampBackdropStrength=function(n) return n end }
+    local build, rendered = Renderer.buildIcon, 0
+    Renderer.buildIcon = function(entry, ...)
+        local icon = build(entry, ...)
+        H.eq(icon.dim, false)
+        rendered = rendered + 1
+        return icon
+    end
+    local old_icon = store.simpleui_action_night_mode_icon
+    for _, on in ipairs({ false, true }) do
+        screen.night_mode = on
+        for _, value in ipairs({ "nerd:F5E3", "material:manga:300", "solar-outline:manga",
+                "solar-duotone:manga", "tabler:language-hiragana", "/missing.svg" }) do
+            store.simpleui_action_night_mode_icon = value
+            Renderer.buildCell("night_mode", { icon_sz=48, shape="bare", show_label=true })
+            Renderer.buildListRow("night_mode", { icon_sz=48, show_icon=true, inner_w=240,
+                row_h=64, icon_gap=8 })
+            Renderer.buildTabCell("night_mode", on, { icon_sz=48, tab_w=120,
+                bar_h=80, indic_h=2, bar_style="default" })
+        end
+    end
+    H.eq(rendered, 36)
+    store.simpleui_action_night_mode_icon, screen.night_mode = old_icon, nil
+    package.loaded["features/sui_wallpaper"] = old_wallpaper
 end)
 H.finish()

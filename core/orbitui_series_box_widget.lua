@@ -73,22 +73,40 @@ function Box:paintTo(bb, x, y)
     end
     local r, g, b = look.r, look.g, look.b
     local board = colour(r*.55, g*.55, b*.55)
-    local paper = colour(213, 204, 179)
-    -- Fill the side once, then its shallow diagonal cap; work is bounded by
-    -- the existing top-edge height, never the number of volumes.
-    bb:paintRect(x+p.cover_w, top+p.depth, p.side, p.face_h, board)
-    for rise = 1, p.depth do
-        local dx = math.ceil(rise * (p.side-1) / math.max(1, p.depth))
-        bb:paintRect(x+p.cover_w+dx, top+p.depth-rise, p.side-dx, 1, board)
+    local side = colour(r*.42, g*.42, b*.42)
+    local upper = colour(r*.85, g*.85, b*.85)
+    local rim = colour(r*.7+45, g*.7+45, b*.7+45)
+    local foot = colour(r*.3, g*.3, b*.3)
+    local paper = colour(r*.6+213*.25, g*.6+204*.25, b*.6+179*.25)
+    -- Both planes recede by the same (side, -depth) vector. Leave the
+    -- triangles above the front-left and below the rear-right untouched.
+    for dy = 0, p.depth-1 do
+        local dx = math.ceil(p.side*(p.depth-dy)/p.depth)
+        bb:paintRect(x+dx, top+dy, p.cover_w, 1, dy<stroke and rim or upper)
     end
-    local layers = math.min(5, p.count)
+    -- Coalesce columns with equal rise: at most depth+1 strips, not one
+    -- polygon/buffer per volume or per cover pixel.
+    local dx, edge = 0, math.min(stroke, p.face_h)
+    while dx < p.side do
+        local rise = math.floor((dx+1)*p.depth/p.side)
+        local next_dx = p.depth>0
+            and math.min(p.side, math.ceil((rise+1)*p.side/p.depth)-1) or p.side
+        local sy, width = top+p.depth-rise, next_dx-dx
+        bb:paintRect(x+p.cover_w+dx, sy, width, p.face_h, side)
+        bb:paintRect(x+p.cover_w+dx, sy, width, edge, upper)
+        bb:paintRect(x+p.cover_w+dx, sy+p.face_h-edge, width, edge, foot)
+        dx = next_dx
+    end
+    local layers = math.min(5, math.max(0,p.count-1),
+        math.max(0,math.floor((p.side-2*stroke)/3)))
     for i = 1, layers do
-        local dx = math.floor(i*p.side/(layers+1))
-        local rise = math.floor(dx*p.depth/math.max(1, p.side))
-        bb:paintRect(x+p.cover_w+dx, top+p.depth-rise+stroke,
-            1, math.max(1, p.face_h+rise-2*stroke), paper)
+        if p.face_h>2*stroke then
+            local column = math.floor(i*p.side/(layers+1))
+            local rise = math.floor((column+1)*p.depth/p.side)
+            bb:paintRect(x+p.cover_w+column, top+p.depth-rise+stroke,
+                1, p.face_h-2*stroke, paper)
+        end
     end
-    bb:paintRect(x, top, p.cover_w, p.depth, colour(r*.85, g*.85, b*.85))
     bb:paintRect(x, top+p.depth, p.cover_w, p.face_h, board)
     self[1]:paintTo(bb, x+stroke, top+p.depth+stroke)
     -- A paper label belongs to the box itself, never below the shelf plank.

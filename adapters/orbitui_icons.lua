@@ -121,6 +121,17 @@ function M.wrap(name, module)
             return apply(path)
         end
     elseif name == "features/sui_quickactions" then
+        local get_entry = module.getEntry
+        module.getEntry = function(id)
+            local entry = get_entry(id)
+            if id ~= "night_mode" then return entry end
+            -- "Off" is not "unavailable" for the night-mode button. Copy the
+            -- shared dynamic entry so Wi-Fi and other toggles keep their state.
+            local visible = {}
+            for k, v in pairs(entry) do visible[k] = v end
+            visible.dim = false
+            return visible
+        end
         module.extraIconPickers = { {
             text = "Material Symbols Rounded...",
             show = function(current, on_select, on_cancel)

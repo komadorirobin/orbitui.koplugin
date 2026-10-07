@@ -145,6 +145,14 @@ alpha releases can update directly through the same preview channel and
 unchanged bootstrap/API 1. No upstream merge or artwork migration is included.
 Code rollback returns to the expanded series presentation.
 
+Version `0.1.0-alpha.27` gives series boxes a consistent receding top and side,
+including the lower side edge, without changing their dimensions or pagination.
+The night-mode quick action now retains full icon contrast in both states;
+chosen icons, toggle behavior and other actions' dimming are preserved.
+Alpha.26 and earlier alpha releases can update directly through the same
+preview channel and unchanged bootstrap/API 1. No settings, reading data,
+artwork or upstream baselines are changed. Device visual acceptance remains open.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

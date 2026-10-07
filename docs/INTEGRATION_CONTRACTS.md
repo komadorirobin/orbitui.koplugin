@@ -174,6 +174,12 @@ shows the actual membership. Plan and paint share this geometry. Cover sizing,
 author busts, plank/dock clearance and other view modes must remain intact.
 The box is drawn procedurally, using one visible cover and at most five edge
 lines, not an image or buffer per volume. No preferences or metadata are migrated.
+Its top and right side share the same `(side, -depth)` projection: the side's
+lower edge recedes just like its upper edge, while the front sits level on the
+plank. Preserve wallpaper in the unpainted front-left/rear-right corners;
+never flatten these into a rectangular top strip or side foot. Side dividers
+stay inside both rims. Use bounded drawing strips, not per-volume buffers,
+and retain the existing slot dimensions and pagination.
 Sources: `core/orbitui_series_boxes.lua`, `core/orbitui_series_box_widget.lua`,
 `adapters/orbitui_series_boxes.lua`. Tests: `tests/test_series_boxes.lua`.
 
@@ -213,6 +219,15 @@ sources, not presets. Their native shapes/opacity stay independent of Material
 weights. Keep the custom manga adaptations, attribution, lazy catalogues and
 OTA-safe SVG identities. No global font changes or automatic icon substitution.
 Tests: `tests/test_icons.lua`.
+
+The built-in SimpleUI `night_mode` quick action retains full icon contrast in
+both day and night mode. Its off-state must not look unavailable, regardless of
+the chosen SVG, bitmap or font glyph. `adapters/orbitui_icons.lua` wraps the
+canonical `getEntry` and copies the shared dynamic entry before clearing only
+its `dim` flag. Keep native toggle execution, real screen state, labels, icon
+overrides and other actions' dimming unchanged. This applies to quick settings,
+Home quick-action rows/lists and the dock; it writes no settings. Regression
+coverage is in `tests/test_icons.lua`.
 
 Source: Bookshelf `lib/bookshelf_settings_store.lua`, `lib/bookshelf_widget.lua`;
 SimpleUI `modules/module_recent.lua`, `features/library/sui_recent_hidden.lua`,

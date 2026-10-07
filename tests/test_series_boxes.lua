@@ -231,6 +231,43 @@ package.loaded["ffi/util"]={template=function(s,n) return (s:gsub("%%1",tostring
 package.loaded["lib/bookshelf_spine_widget"]=W
 local BoxWidget=require("core/orbitui_series_box_widget")
 
+H.test("top and side share one projection with a sloping lower side edge", function()
+    for _, size in ipairs({.5,1,1.5}) do
+        for _, n in ipairs({1,6,40}) do
+            for _, depth in ipairs({0,1,8,17}) do
+                local box=Boxes.box(members(n,"Saga"),"Saga")
+                local shape=Boxes.geometry(box,{w=160*size,face_h=240*size,
+                    depth=depth,h=240*size+depth},{content_w=800})
+                local w=BoxWidget:new{entry={book=box,series_box=shape,look={r=90,g=120,b=80}},
+                    width=shape.w,height=410,inset=10}
+                local first,last,side_top={},{},{}
+                local bb={paintRect=function(_,x,y,rw,rh)
+                    if rh<=0 then return end
+                    for px=x,x+rw-1 do
+                        first[px]=math.min(first[px] or math.huge,y-w.top)
+                        last[px]=math.max(last[px] or -math.huge,y-w.top+rh-1)
+                        if x>=shape.cover_w and rh==shape.face_h then side_top[px]=y-w.top end
+                    end
+                end}
+                w:paintTo(bb,0,0)
+                for x=0,shape.cover_w-1 do
+                    local top=math.max(0,depth-math.floor(x*depth/shape.side))
+                    H.eq(first[x],top,"top plane must recede instead of painting a flat strip")
+                    H.eq(last[x],shape.h-1,"front still stands level on the plank")
+                end
+                for dx=0,shape.side-1 do
+                    local rise=math.floor((dx+1)*depth/shape.side)
+                    H.eq(first[shape.cover_w+dx],0,"top plane meets the rear edge")
+                    H.eq(side_top[shape.cover_w+dx],depth-rise,"upper side edge")
+                    H.eq(last[shape.cover_w+dx],shape.h-rise-1,"lower side edge")
+                    H.eq(last[shape.cover_w+dx]-side_top[shape.cover_w+dx]+1,shape.face_h)
+                end
+                H.eq(first[-1],nil); H.eq(first[shape.w],nil)
+            end
+        end
+    end
+end)
+
 H.test("box painting stays inside its planned width and above the plank at every size", function()
     for _,size in ipairs({.5,1,1.5}) do
         for _,n in ipairs({1,4,40}) do
@@ -251,7 +288,7 @@ H.test("box painting stays inside its planned width and above the plank at every
                 w:paintTo(bb,20,30)
                 H.eq(w.dimen.x,20); H.eq(w.dimen.y,30)
                 assert(texts["text:"..n..(n==1 and " del" or " delar")])
-                assert(rects<shape.side+15)
+                assert(rects<=4*shape.depth+25)
                 H.eq(entry._drawn_h,shape.h)
                 H.eq(w.ges_events.Tap[1].range,w.dimen)
             end
