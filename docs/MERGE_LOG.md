@@ -1241,6 +1241,59 @@ the actual published alpha.30 installer, downloaded draft-asset verification,
 both CI jobs and anonymous live OTA. Physical reader checks remain outstanding
 as listed in TESTING.md and the release notes. No modularization is included.
 
+## 2026-10-09: Second reviewed SimpleUI upstream merge after alpha.31
+
+Scope: "Merga upstream igen", not publication. Start from clean main
+`8af873836a2a12f79bd3015494b735b626dbe943` on
+`maintenance/upstream-2026-10-09-2`. Read-only collection at 12:37 UTC reports
+Bookshelf master unchanged at `74b825bb20aa5560129384910ad414bd2bebad75`.
+SimpleUI main advances from `6f34fb76a137c86e30f4eaf7caa290e927803982` to fixed
+review target `f14507afdc2cabd36a2ec20a6c3c5dfe0c98a211` (latest stable 2.7.5).
+Unsquashed subtree import: `5e9ec1af52160fab6ee1dd96d70fd279cbef7c06`.
+The nine new commits, including two merge commits, are:
+
+- `efdf7998`, `314fd1ec`, `feffaf82`: French translation updates.
+- `b29e64b9`: cover-strip/bar backdrop controls and softer cover shadows.
+- `5cb66db9`, `6a9627a3`: upstream branch/PR merges.
+- `901e948d`: shared generated cover placeholders, cropped Cover Deck sides.
+- `2c673888`: default/classic folder and collection book-stack styles.
+- `f14507af`: shared radio/alignment menus, lazy submenu construction.
+
+Resolve seven conflicted files: wallpaper keeps both the local button-only
+backdrop and the new cover-strip API; Cover Deck uses the shared radio helper
+while retaining BookOrbit Want to Read and unsaved native collections; wallpaper
+menus retain button opacity alongside the new shared bar controls. Merge PO/POT
+catalogs by message identity rather than stale line references: preserve local
+Swedish/custom strings and corrected single-plural Chinese entries while adding
+upstream messages. Translation validation has no exception or new failure.
+
+Advance only the SimpleUI upstream pin. Regenerate the module map for
+`engines/sui_cover_placeholder.lua` (265 canonical paths). Keep the remaining
+compatibility adaptations separate from the import. C01/C06: placeholder
+teardown restores only the owned upvalue in the captured native function, so
+later third-party patches survive. C04: cap shadow masks at 64 size tuples,
+free buffers when clearing and avoid arithmetic cache-key collisions.
+C07/C08: preserve transparent titlebar/pagination/cover-strip defaults, opt-in
+4px shadows, detailed Currently Reading stats and left description alignment.
+Explicit user settings still win. Include the new strip-opacity key in native
+library backups and appearance presets; no settings migration is required.
+
+The new stack styles and opacity/alignment choices remain available. Native
+test doubles gain the new placeholder module's UI dependencies; no assertions
+or suites are removed. C02/C03 navigation and reader flow, C05 BookOrbit sync
+ownership, C10 shared panels and C11 ornaments are unchanged. Bookshelf code,
+artwork, VERSION alpha.31, bootstrap/API 1 and published archives are untouched.
+The held Mann bitmap remains excluded and its local archive branch is not pushed.
+
+Full Lua and LuaJIT verification passes 475 OrbitUI cases across 40 files, 351 Bookshelf suites
+(two existing SQLite suite skips) and all 13 SimpleUI files. Python runs 91
+tests with four existing source-cache audit skips. All 42 catalogs pass. The
+clean-commit package check is recorded below before local integration.
+Physical-device checks remain outstanding:
+placeholder sizing/cropping, default/classic folder stacks, day/night shadows
+and opacity, repeated native menu opens and external placeholder patches.
+Keep the previous installation for rollback; no OTA or release is published.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

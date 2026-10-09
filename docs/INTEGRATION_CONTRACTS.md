@@ -334,6 +334,13 @@ screens keep independent layouts and refresh targets. Regression coverage:
 
 ## C08: Assets, data and recovery
 
+SimpleUI visual defaults remain stable across merges: titlebar, pagination and
+cover-title strips are transparent over wallpaper unless explicitly configured;
+cover shadows remain opt-in at the existing 4px base. Currently Reading retains
+detailed stats and left-aligned descriptions by default. New appearance choices
+must not rewrite existing settings. The new placeholder hook and bounded shadow
+cache follow C01/C04/C06 ownership rules; see the October 9 follow-up tests.
+
 Embedded resources resolve relative to their component, not the outer plugin
 root. Preserve fonts, icons, translations, wallpapers and license notices in
 runtime archives. Legacy cleanup must never target the retained old installs.

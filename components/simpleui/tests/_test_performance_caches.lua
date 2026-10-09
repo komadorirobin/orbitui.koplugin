@@ -11,7 +11,7 @@ for _, name in ipairs({
     "ui/font", "ui/widget/container/framecontainer", "ui/geometry",
     "ui/widget/linewidget", "ui/widget/overlapgroup", "ui/size",
     "ui/widget/textboxwidget", "ui/widget/textwidget", "ui/widget/verticalgroup",
-    "ui/widget/verticalspan", "features/sui_style",
+    "ui/widget/verticalspan", "features/sui_style", "ui/widget/imagewidget", "ui/rendertext",
 }) do package.loaded[name] = {} end
 package.loaded.device = { screen = { scaleBySize = function(_, n) return n end } }
 package.loaded.logger = { warn = function() end }

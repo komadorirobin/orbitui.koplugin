@@ -2,6 +2,7 @@
 return {
     ["engines/sui_asset_browser"] = "components/simpleui/engines/sui_asset_browser.lua",
     ["engines/sui_book_grid"] = "components/simpleui/engines/sui_book_grid.lua",
+    ["engines/sui_cover_placeholder"] = "components/simpleui/engines/sui_cover_placeholder.lua",
     ["engines/sui_heatmap_data"] = "components/simpleui/engines/sui_heatmap_data.lua",
     ["engines/sui_heatmap_widgets"] = "components/simpleui/engines/sui_heatmap_widgets.lua",
     ["engines/sui_library_scan"] = "components/simpleui/engines/sui_library_scan.lua",

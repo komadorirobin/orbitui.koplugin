@@ -1053,7 +1053,10 @@ function M.installPlaceholder()
     local native, idx = userpatch.getUpValue(update, "FakeCover")
     if not native then return end
 
-    debug.setupvalue(update, idx, _placeholderClass())
+    local replacement = _placeholderClass()
+    debug.setupvalue(update, idx, replacement)
+    MosaicMenuItem._simpleui_placeholder_update = update
+    MosaicMenuItem._simpleui_placeholder_class = replacement
     MosaicMenuItem._simpleui_placeholder_n    = idx
     MosaicMenuItem._simpleui_placeholder_orig = native
 end
@@ -1062,10 +1065,20 @@ function M.uninstallPlaceholder()
     local MosaicMenuItem = _getMosaicMenuItemAndPatch()
     if not (MosaicMenuItem and MosaicMenuItem._simpleui_placeholder_n) then return end
 
-    debug.setupvalue(_nativeUpdate(MosaicMenuItem),
-        MosaicMenuItem._simpleui_placeholder_n, MosaicMenuItem._simpleui_placeholder_orig)
+    -- Restore the exact function we patched, and only while we still own its
+    -- upvalue. Another plugin may have wrapped update or replaced FakeCover.
+    local update = MosaicMenuItem._simpleui_placeholder_update
+    local idx = MosaicMenuItem._simpleui_placeholder_n
+    if update then
+        local name, value = debug.getupvalue(update, idx)
+        if name == "FakeCover" and value == MosaicMenuItem._simpleui_placeholder_class then
+            debug.setupvalue(update, idx, MosaicMenuItem._simpleui_placeholder_orig)
+        end
+    end
     MosaicMenuItem._simpleui_placeholder_n    = nil
     MosaicMenuItem._simpleui_placeholder_orig = nil
+    MosaicMenuItem._simpleui_placeholder_update = nil
+    MosaicMenuItem._simpleui_placeholder_class = nil
 end
 
 function M.install()

@@ -60,6 +60,7 @@ local HS_EXACT = {
     ["simpleui_titlebar_backdrop"]            = true,
     ["simpleui_titlebar_button_backdrop"]     = true,
     ["simpleui_module_backdrop"]              = true,
+    ["simpleui_cover_strip_backdrop"]         = true,
     ["simpleui_wallpaper_show_in_fm"]         = true,  -- "show wallpaper in file manager" toggle
     ["simpleui_reading_goals_show_annual"]    = true,
     ["simpleui_reading_goals_show_monthly"]   = true,

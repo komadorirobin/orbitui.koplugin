@@ -337,10 +337,10 @@ M.SHADOW_LIBRARY = "library"   -- the Library grid
 M.SHADOW_MODULES = "modules"   -- the Home Screen modules
 
 local _COVER_SHADOW_KEY_PREFIX = "simpleui_style_cover_shadow_"
-local _COVER_SHADOW_BASE       = math.max(2, Screen:scaleBySize(7))
+local _COVER_SHADOW_BASE       = math.max(2, Screen:scaleBySize(4))
 
 function M.coverShadowEnabled(scope)
-    return SUISettings:nilOrTrue(_COVER_SHADOW_KEY_PREFIX .. scope)
+    return SUISettings:isTrue(_COVER_SHADOW_KEY_PREFIX .. scope)
 end
 
 function M.setCoverShadowEnabled(scope, on)

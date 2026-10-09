@@ -1,12 +1,14 @@
 package.path = "./?.lua;./?/init.lua;" .. package.path
 
 local function widget(_self, opts) return opts end
+package.loaded["infra/sui_i18n"] = { translate = function(s) return s end }
 for _, name in ipairs({
     "ui/bidi", "ffi/blitbuffer", "ui/widget/container/centercontainer",
     "ui/font", "ui/widget/container/framecontainer", "ui/geometry",
     "ui/widget/linewidget", "ui/widget/overlapgroup", "ui/size",
     "ui/widget/textboxwidget", "ui/widget/textwidget", "ui/widget/verticalgroup",
     "ui/widget/verticalspan", "libs/libkoreader-lfs", "util", "infra/sui_config",
+    "ui/widget/imagewidget", "ui/rendertext",
 }) do
     package.loaded[name] = { new = widget }
 end

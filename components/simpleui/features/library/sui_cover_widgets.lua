@@ -694,6 +694,8 @@ end
 -- past the card, bottom band `d` the row `d` px below it, and the corner
 -- belongs to whichever band is farther along its own axis.
 local _shadow_masks = {}
+local _shadow_mask_count = 0
+local _SHADOW_CACHE_LIMIT = 64
 
 function CoverWidgets.clearShadowCache()
     for k, masks in pairs(_shadow_masks) do
@@ -701,6 +703,7 @@ function CoverWidgets.clearShadowCache()
         masks.bottom:free()
         _shadow_masks[k] = nil
     end
+    _shadow_mask_count = 0
 end
 
 local function buildShadowMasks(w, h, offset)
@@ -724,11 +727,14 @@ end
 -- so blending towards white is what darkens the shadow on screen.
 function CoverWidgets.paintShadow(bb, x, y, w, h, offset)
     if offset <= 0 then return end
-    local key   = (w * 4096 + h) * 64 + offset
+    local key   = table.concat({ w, h, offset }, ":")
     local masks = _shadow_masks[key]
     if not masks then
+        -- Native buffers otherwise accumulate for every cover size/scale.
+        if _shadow_mask_count >= _SHADOW_CACHE_LIMIT then CoverWidgets.clearShadowCache() end
         masks = buildShadowMasks(w, h, offset)
         _shadow_masks[key] = masks
+        _shadow_mask_count = _shadow_mask_count + 1
     end
     local color = Screen.night_mode and Blitbuffer.COLOR_WHITE or Blitbuffer.COLOR_BLACK
     bb:colorblitFromRGB32(masks.right,  x + w,      y + offset, 0, 0, offset, h,      color)

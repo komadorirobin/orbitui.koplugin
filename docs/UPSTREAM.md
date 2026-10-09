@@ -196,6 +196,21 @@ not make semantic conflicts disappear.
   Preserve stats completeness guards with the faster reader-return pipeline.
   Coverage for these merge seams: `tests/test_simpleui_upstream_20261009.lua`,
   `tests/test_navbar_margin.lua` and native `_test_config_cover_cache.lua`.
+- The second October 9 import (`f14507af`) adds generated cover placeholders,
+  per-bar/cover-strip opacity, folder-stack styles and shared choice menus.
+  Keep `bookorbit_want` in Cover Deck's new radio options/current label and do
+  not reload native collections merely to populate a menu. Retain transparent
+  titlebar/pagination/cover-strip defaults, opt-in 4px cover shadows, detailed
+  Currently Reading stats and left-aligned descriptions. Explicit saved choices
+  win; no settings rewrite is needed. The new cover-strip key participates in
+  library backups and appearance presets.
+- Keep the new shadow-mask cache bounded (64 dimension tuples, native buffers
+  freed on reset), with collision-free dimension keys. Placeholder teardown
+  restores only its own FakeCover upvalue on the exact function it patched;
+  never overwrite a later plugin replacement or an unrelated wrapper upvalue.
+  Tests: `tests/test_simpleui_upstream_20261009_followup.lua` (choice-menu
+  laziness, BookOrbit/collection sources, defaults, hook ownership, bounded
+  buffers and cropped placeholder ownership).
 - Upstream compatibility auto-disable is replaced by OrbitUI's read-only guard.
   Conflicting UI plugins are reported; user plugin flags and patches are never
   rewritten. Unsupported KOReader versions stop before either component starts.

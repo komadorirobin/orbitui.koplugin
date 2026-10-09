@@ -5279,4 +5279,3 @@ msgstr[0] "連續閱讀天數"
 msgid "page read"
 msgid_plural "pages read"
 msgstr[0] "頁已讀"
-

@@ -16,7 +16,7 @@
       "upstream": "https://github.com/doctorhetfield-cmd/simpleui.koplugin.git",
       "path": "components/simpleui",
       "upstream_branch": "main",
-      "upstream_commit": "6f34fb76a137c86e30f4eaf7caa290e927803982",
+      "upstream_commit": "f14507afdc2cabd36a2ec20a6c3c5dfe0c98a211",
       "tag": "2.7.2-beta.5",
       "commit": "a8bbbdb89dcce9a4b9d86cfa321c8cecce9b030f",
       "license": "MIT"

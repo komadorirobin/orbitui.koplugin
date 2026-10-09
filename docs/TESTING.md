@@ -2,6 +2,27 @@
 
 ## Automated
 
+2026-10-09 second upstream merge (local, unpublished, VERSION still alpha.31):
+both complete Lua and LuaJIT runs pass 475 OrbitUI cases across 40 files, 351
+Bookshelf suites (zero failures, two existing native SQLite suite skips), and
+all 13 SimpleUI test files. Two existing font-dependent cases remain skipped.
+Python runs 91 tests successfully with the same four external source-photo /
+museum-cache audit skips; no artwork changes. All 42 translation catalogs pass,
+265 module-map paths verify and 739 Lua files pass LuaJIT syntax validation.
+No assertion, test suite or known-failure gate was removed to accept the merge.
+
+The new follow-up suite exercises lazy radio/alignment menus, per-instance
+settings, retained BookOrbit Want to Read and unsaved collection sources,
+unchanged visual defaults, placeholder hook ownership across later third-party
+patches, bounded shadow buffers with collision-free keys, and disposal of
+off-screen placeholder sheets while cropped widgets own their slice buffers.
+Existing series-box, completed-box, dock, Bento and ornament tests still pass.
+The clean-commit package result is recorded with the merge's validation below.
+Physical Bigme checks still required: no-cover book rendering/cropping in native
+grids and Cover Deck, default/classic folder stacks, repeated native menus,
+day/night shadows/backdrops and coexistence with external placeholder patches.
+No device test, speedup, public push or OTA publication is claimed.
+
 2026-10-09 upstream merge (local, unpublished, VERSION still alpha.30): both
 complete Lua and LuaJIT runs pass 468 OrbitUI cases across 39 files, 351
 Bookshelf suites (zero failures, two native SQLite suite skips) and all 13

@@ -94,7 +94,7 @@ local DESC_MAX_LINES = 8
 -- line and keeps the last line of every paragraph left-aligned.
 local DESC_ALIGN_KEY     = "currently_description_align"
 local DESC_ALIGN_VALUES  = { "left", "right", "justify" }
-local DESC_ALIGN_DEFAULT = "justify"
+local DESC_ALIGN_DEFAULT = "left"
 
 local function resolveDescAlign(stored)
     return Config.resolveChoice(stored, DESC_ALIGN_VALUES, DESC_ALIGN_DEFAULT)
@@ -141,7 +141,7 @@ end
 local STATS_STYLE_KEY = "currently_stats_style"
 
 local function getStatsStyle(pfx)
-    return SUISettings:readSetting(pfx .. STATS_STYLE_KEY) or "compact"
+    return SUISettings:readSetting(pfx .. STATS_STYLE_KEY) or "default"
 end
 
 local COVER_GAP_KEY = "currently_cover_gap"

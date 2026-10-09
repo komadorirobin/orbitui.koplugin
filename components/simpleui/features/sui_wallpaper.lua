@@ -478,15 +478,14 @@ end
 -- ---------------------------------------------------------------------------
 local _BACKDROP_MIN, _BACKDROP_MAX = 0, 100
 
--- Bars keep the solid look of a plain UI; cards, buttons and the cover strip
--- start solid; modules start transparent over the wallpaper.
+-- Preserve OrbitUI's transparent title/pagination/cover-strip defaults.
 M.BACKDROP_DEFAULT = {
     statusbar       = 100,
     navbar          = 100,
-    pagination      = 100,
-    titlebar        = 100,
+    pagination      = 0,
+    titlebar        = 0,
     module          = 0,
-    cover_strip     = 100,
+    cover_strip     = 0,
     card            = 100,
     button          = 100,
 }
