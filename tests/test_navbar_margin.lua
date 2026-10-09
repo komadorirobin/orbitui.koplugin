@@ -32,7 +32,7 @@ local Store = {
 local sw, sh, dpi = 1264, 1680, 2
 local Screen = { getWidth = function() return sw end, getHeight = function() return sh end,
     scaleBySize = function(_, n) return n * dpi end }
-run(assert(config_source:match("(%-%- Bottom Margin.-)\n%-%- Reading Stats Text Scale")), {
+run(assert(config_source:match("(%-%- Bottom Margin.-)\n%-%- Bar and style scales")), {
     M = Config, SUISettings = Store, math_max = math.max, math_min = math.min, math_floor = math.floor,
 })
 Config.getBarSizePct = function() return 100 end
@@ -44,6 +44,7 @@ run(assert(bar_source:match("(local _dim = {}.-)\n%-%- Pagination bar helpers"))
 })
 local Box = { new = function(_, args) return args end }
 local UI, dirty, shown, stack = {}, {}, {}, {}
+UI.SIDE_M = function() return Screen:scaleBySize(24) - 3 end
 local UIManager = {
     isWidgetShown = function(_, w) return shown[w] == true end,
     setDirty = function(_, w) dirty[w] = (dirty[w] or 0) + 1 end,
@@ -55,6 +56,7 @@ BB.sepColor = function() return "gray" end
 BB.resizePaginationButtons, BB.getPaginationIconSize = noop, function() return 24 end
 UI.getContentHeight = function() return sh - BB.TOTAL_H() end
 UI.getContentTop = function() return 0 end
+UI.getTopInset = function() return 0 end
 UI.getWindowStack = function() return stack end
 method(core_source, "M.wrapWithNavbar", {
     M = UI, _TB = function() return Topbar end, _BB = function() return BB end,
@@ -70,7 +72,8 @@ package.loaded["infra/sui_patches"] = {}
 package.loaded["ui/uimanager"] = UIManager
 package.loaded["ui/widget/linewidget"] = Box
 method(bar_source, "M.rewrapAllWidgets", {
-    M = BB, Config = Config, UIManager = UIManager, logger = { warn = error },
+    M = BB, Config = Config, UIManager = UIManager,
+    logger = { warn = function(...) error(table.concat({...}, " ")) end },
 })
 Integration.wrap("screens/sui_bottombar", BB)
 

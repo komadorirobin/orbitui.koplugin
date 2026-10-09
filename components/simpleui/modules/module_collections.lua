@@ -261,7 +261,6 @@ local function getCoverStyle()
     -- Persisted legacy id for "single".
     if style == "stack" then
         style = "single"
-        SUISettings:saveSetting(COVER_STYLE_KEY, style)
     end
     return style or "single"
 end

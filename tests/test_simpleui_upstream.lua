@@ -144,7 +144,10 @@ package.loaded["engines/sui_book_grid"] = {
     end,
 }
 local section = compile(method(screen, "local function sectionLabel(") .. "\nreturn sectionLabel", env)
-local pageNav = compile(method(screen, "local function pageNavFor(") .. "\nreturn pageNavFor")
+local PageState = compile(read("engines/sui_section_label.lua"):match(
+    "(local PageState = {}.-)\n%-%- %-%-%-%-" ) .. "\nreturn PageState", { M = {} })
+local pageNav = compile(method(screen, "local function pageNavFor(") .. "\nreturn pageNavFor",
+    { SectionLabel = { PageState = PageState } })
 local signature = compile(method(screen, "local function sectionLabelSignature(")
     .. "\nreturn sectionLabelSignature", env)
 H.test("fresh header widgets keep pagination callbacks bound to the owning screen", function()

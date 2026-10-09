@@ -425,6 +425,11 @@ function M.styleSetWallpaperDarken(val)
     _saveTint(KEY_DARKEN, val)
 end
 
+-- Legacy callers and rollback retain the original lighten-only API/key.
+M.styleGetWallpaperOpacityValue = M.styleGetWallpaperLighten
+M.styleGetWallpaperOpacity = M.styleGetWallpaperLighten
+M.styleSetWallpaperOpacity = M.styleSetWallpaperLighten
+
 --- Frees the internal wallpaper widget cache.
 --- Must be called after changing the simpleui_style_* keys directly
 --- in SUISettings (e.g. after applying a preset), so that the next paint
@@ -579,6 +584,15 @@ end
 
 function M.setTitlebarBackdropStrength(n)
     M.saveBackdropStrength(KEY_TITLEBAR, n)
+end
+
+-- Keep button-only chrome distinct from the new full-width backdrop.
+function M.getTitlebarButtonBackdropStrength()
+    if not M.isWallpaperActive() then return _BACKDROP_MIN end
+    return M.readBackdropStrength("simpleui_titlebar_button_backdrop", 0)
+end
+function M.setTitlebarButtonBackdropStrength(n)
+    M.saveBackdropStrength("simpleui_titlebar_button_backdrop", n)
 end
 
 -- Module backdrop strength.

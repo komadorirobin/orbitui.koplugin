@@ -123,8 +123,7 @@ local function copyLayout(value)
 end
 
 -- Module membership of each layout as of its last load/save, keyed by layout
--- key. The editor mutates the stored layout table in place, so membership
--- changes can only be detected against this independent snapshot.
+-- key. Keep it independent from mutable editor drafts and stored table refs.
 local _committed_sets = {}
 
 -- Returns the set of module ids placed in a layout.
@@ -179,6 +178,7 @@ function LayoutService.save(layout, pfx, layout_key, screen_id)
     layout_key = layout_key or _DEFAULT_LAYOUT_KEY
     screen_id  = screen_id or "hs"
 
+    if not _committed_sets[layout_key] then LayoutService.load(pfx, layout_key) end
     SUISettings:saveSetting(layout_key, copyLayout(layout))
 
     local active_set = _activeSet(layout)

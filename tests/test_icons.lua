@@ -65,6 +65,7 @@ local has_keys = false
 package.loaded["device"] = { screen = screen, input = { group = { Back = { "Back" } } },
     hasKeys = function() return has_keys end, hasDPad = function() return has_keys end }
 package.loaded["ui/uimanager"] = manager
+package.loaded["ui/rendertext"] = {}
 package.loaded["ui/font"] = { getFace = function(_, name, size)
     assert(not name:lower():find("material", 1, true), "Material must never load as a text font")
     return { name = name, size = size }
@@ -250,12 +251,21 @@ H.test("system buttons stay image widgets and resize without loading a new font"
     H.eq(btn.image.face, nil)
     H.eq(btn.horizontal_group[2], btn.image)
     local titlebar = dofile("components/simpleui/screens/sui_titlebar.lua")
-    local resize
-    for i = 1, 100 do
-        local name, value = debug.getupvalue(titlebar.apply, i)
-        if not name then break end
-        if name == "_resizeAndStrip" then resize = value; break end
+    local function findUpvalue(fn, target, seen)
+        seen = seen or {}
+        if seen[fn] then return end
+        seen[fn] = true
+        for i = 1, 100 do
+            local name, value = debug.getupvalue(fn, i)
+            if not name then break end
+            if name == target then return value end
+            if type(value) == "function" then
+                local found = findUpvalue(value, target, seen)
+                if found then return found end
+            end
+        end
     end
+    local resize = findUpvalue(titlebar.apply, "_resizeAndStrip")
     assert(resize, "actual titlebar resizing helper not found")
     btn.update = function() end
     resize(btn, 80)

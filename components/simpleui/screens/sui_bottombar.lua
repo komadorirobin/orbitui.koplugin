@@ -312,6 +312,8 @@ function M.INDIC_H()     return _cached("indic_h", function() return math.floor(
 -- Structural dimensions — not affected by the size setting.
 function M.TOP_SP()      return _cached("top_sp",  function() return Screen:scaleBySize(2)  end) end
 function M.BOT_SP()      return _cached("bot_sp",  function() return math.floor(Screen:scaleBySize(12) * _getBottomMarginPct() / 100) end) end
+-- Bookshelf's embedded dock still consumes this public geometry accessor.
+function M.SIDE_M() return require("infra/sui_core").SIDE_M() end
 function M.SEP_H()
     return _cached("sep_h", function()
         local style = M.getBarStyle()

@@ -85,6 +85,7 @@ M.ICON = {
     ko_home        = _KO .. "home.svg",
     ko_star        = _KO .. "star.empty.svg",
     ko_wifi        = _KO .. "wifi.open.100.svg",
+    ko_menu        = _KO .. "appbar.menu.svg",
     ko_settings    = _KO .. "appbar.settings.svg",
     ko_search      = _KO .. "appbar.search.svg",
     ko_bookmark    = _KO .. "bookmark.svg",
@@ -815,7 +816,12 @@ function M.badgeScaleKey(mod_id, pfx)
 end
 
 function M.getBadgeScalePct(mod_id, pfx)
-    return _readPct(M.badgeScaleKey(mod_id, pfx))
+    local key = M.badgeScaleKey(mod_id, pfx)
+    if SUISettings:get(key) == nil and mod_id ~= "currently" and mod_id ~= "coverdeck" then
+        local legacy = tonumber(SUISettings:get("simpleui_bookgrid_badge_scale"))
+        if legacy then return _clamp(legacy / 1.1) end
+    end
+    return _readPct(key)
 end
 
 function M.setBadgeScale(pct, mod_id, pfx)
@@ -2397,7 +2403,7 @@ function M.getStretchedCoverBB(filepath, w, h)
         return cached
     end
     local raw_bb = _loadCoverBB(bim, filepath)
-    if not raw_bb then return _noCover(filepath) end
+    if not raw_bb then return nil end -- A decode/DB failure is not a missing cover.
     return SUICoverCache:put(filepath, _stretchBBToSize(raw_bb, w, h))
 end
 
@@ -2426,7 +2432,7 @@ function M.getCroppedCoverBB(filepath, w, h, align)
     local ref_bb = _cachedRefCoverBB(filepath)
     if not ref_bb then
         local raw_bb = _loadCoverBB(bim, filepath)
-        if not raw_bb then return _noCover(filepath) end
+        if not raw_bb then return nil end
         ref_bb = _getRefCoverBB(filepath, raw_bb)
     end
     return _scaleBBToSlot(ref_bb, w, h, align)

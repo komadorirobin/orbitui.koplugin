@@ -2,6 +2,33 @@
 
 ## Automated
 
+2026-10-09 upstream merge (local, unpublished, VERSION still alpha.30): both
+complete Lua and LuaJIT runs pass 468 OrbitUI cases across 39 files, 351
+Bookshelf suites (zero failures, two native SQLite suite skips) and all 13
+SimpleUI test files. The existing font-dependent cases remain skipped. Python
+runs 91 tests successfully with four original-photo/museum pixel audits skipped
+because their external source caches are unavailable; artwork is unchanged.
+All 42 translation checks pass with no baseline exceptions or new failures.
+The generated module map verifies 264 paths and syntax checks cover 737 runtime
+Lua files. No skip or known-failure allowance was added for this merge.
+
+The new October 9 suite exercises legacy/new page state, non-destructive close
+target migration, legacy badge scales, classic versus opt-in tab icons, shared
+hook lifetime and exception-safe margins, retryable SQL/cover failures, DB/WAL
+cache invalidation, native reader close targets and day/night wallpaper erasers.
+Additional regressions cover direct layout saves and transient decoded-cover
+failures without losing warm-cache reuse. Existing icon, navbar, Bento, reading
+sync, statistics, series-box and ornament tests remain green. Read-only upstream
+collection at 05:11 UTC reports zero missing commits for both components.
+
+Still needs physical Bigme verification: closing books to each configured
+destination, repeated menu/reader opens without shrinking margins, Bento and
+custom-screen spacing, live bottom-margin changes on Home and Bookshelf, optional
+titlebar tabs with custom icons, paginated backdrop opacity and night mode.
+No device test or measured speedup is claimed. Clean-commit ZIP validation is the
+remaining local gate; this task does not publish, tag, change OTA or modularize
+the UI. The older checkpoints below describe their own historical candidates.
+
 Frontal Ahrens/Mann replacement (local, unpublished): eight Python asset checks
 cover exact source-photo/mask reproduction, hashes and licenses, unchanged
 author biography and other ornament PNGs, frozen published baselines, and

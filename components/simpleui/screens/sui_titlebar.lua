@@ -361,6 +361,34 @@ local function _installBarScrim(tb)
     end
 end
 
+local function _installButtonScrim(btn)
+    if not btn or btn._sui_tb_btn_scrim then return end
+    btn._sui_tb_btn_scrim = true
+    local orig = btn.paintTo
+    if type(orig) ~= "function" then return end
+    function btn:paintTo(bb, x, y)
+        local ok, WP = pcall(require, "features/sui_wallpaper")
+        if ok and WP and WP.getTitlebarButtonBackdropStrength then
+            local strength = WP.getTitlebarButtonBackdropStrength()
+            if strength > 0 and WP.paintBackdrop then
+                local d = self.dimen
+                local bw = (d and d.w) or self.width or 0
+                local bh = (d and d.h) or self.height or 0
+                if bw <= 0 or bh <= 0 then
+                    local sz = self.getSize and self:getSize()
+                    if sz then bw, bh = sz.w, sz.h end
+                end
+                if bw > 0 and bh > 0 then
+                    local Device = require("device")
+                    local radius = math.floor(Device.screen:scaleBySize(12))
+                    WP.paintBackdrop(bb, x, y, bw, bh, strength, radius)
+                end
+            end
+        end
+        return orig(self, bb, x, y)
+    end
+end
+
 local function _isFontReference(value)
     -- Retain the legacy guard even for malformed stale Nerd references.
     return Config.isFontIcon(value) or (type(value) == "string" and value:match("^nerd:"))
@@ -420,6 +448,7 @@ local function _resizeAndStrip(btn, new_w, keep_top_pad)
     btn.padding_bottom = 0
     if not keep_top_pad then btn.padding_top = 0 end
     btn:update()
+    _installButtonScrim(btn)
 end
 
 -- Snapshots a button's current geometry and optional state into a plain table.
@@ -580,7 +609,8 @@ local function _backIcon()
     local mirrored = false
     pcall(function() mirrored = require("ui/bidi").mirroredUILayout() end)
     if mirrored then return { icon = "chevron.right" } end
-    return { file = Config.ICON.back }
+    if M.getStyle() == M.STYLE_TABS then return { file = Config.ICON.back } end
+    return { icon = "chevron.left" }
 end
 
 -- Shows the back icon: the SUIStyle override when set, `back_icon` (see
@@ -603,11 +633,12 @@ end
 local function _applyMenuIcon(btn)
     local _ss = SUIStyle()
     if _ss and _ss.applyIconToBtn("sui_menu", btn) then return end
+    local file = M.getStyle() == M.STYLE_TABS and Config.ICON.menu or Config.ICON.ko_menu
     if _ss and _ss.restoreDefaultIcon then
-        _ss.restoreDefaultIcon(btn, nil, Config.ICON.menu)
+        _ss.restoreDefaultIcon(btn, nil, file)
     elseif btn.image then
         btn.image.icon = nil
-        btn.image.file = Config.ICON.menu
+        btn.image.file = file
         _reloadImage(btn.image)
     end
 end
@@ -1404,7 +1435,8 @@ function M.restore(fm_self)
         local btn = fm_self[key]
         if btn then
             -- Free the C/FFI image memory
-            if btn.image then pcall(btn.image.free, btn.image) end
+            if btn.image then pcall(btn.image.free, btn.image)
+            elseif btn.free then pcall(btn.free, btn) end
             -- Remove from the visual table (OverlapGroup)
             for i = #tb, 1, -1 do
                 if tb[i] == btn then

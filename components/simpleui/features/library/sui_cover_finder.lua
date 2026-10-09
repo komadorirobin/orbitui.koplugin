@@ -183,13 +183,16 @@ end
 -- The cached cover of the book at `path` as { data, w, h }, or nil when it is
 -- not extracted (or, when cover_specs is given, no longer valid for them).
 local function cachedCover(BookInfoManager, path, cover_specs)
-    local bi = BookInfoManager:getBookInfo(path, true)
+    local ok, bi = pcall(BookInfoManager.getBookInfo, BookInfoManager, path, true)
+    if not ok then return nil, false end
     if bi and bi.cover_bb and bi.has_cover and bi.cover_fetched
             and not bi.ignore_cover
             and not (cover_specs and BookInfoManager.isCachedCoverInvalid(bi, cover_specs))
     then
         return { data = bi.cover_bb, w = bi.cover_w, h = bi.cover_h }
     end
+    -- A metadata-confirmed cover whose decoder failed should be retried.
+    return nil, not (bi and bi.has_cover and bi.cover_fetched and not bi.cover_bb)
 end
 
 -- A lookup that found nothing is remembered per (directory, kind of lookup)
@@ -198,7 +201,8 @@ end
 -- mtime to validate against and are never remembered.
 local function missStamp(dir_path)
     local mtime = lfs.attributes(dir_path, "modification")
-    return mtime and (mtime .. "\0" .. (BimStamp.get() or ""))
+    local stamp = BimStamp.get()
+    return mtime and stamp and (mtime .. "\0" .. stamp)
 end
 
 local function isKnownMiss(dir_path, kind)
@@ -217,11 +221,13 @@ end
 function CoverFinder.findFirstCover(menu, dir_path, BookInfoManager)
     local summary = CoverFinder.getDirSummary(menu, dir_path)
     if isKnownMiss(dir_path, "first") then return nil, summary end
+    local complete = true
     for _, path in ipairs(summary.books) do
-        local cover = cachedCover(BookInfoManager, path, menu.cover_specs)
+        local cover, valid = cachedCover(BookInfoManager, path, menu.cover_specs)
+        if valid == false then complete = false end
         if cover then return cover, summary end
     end
-    if #summary.books > 0 then recordMiss(dir_path, "first") end
+    if complete and #summary.books > 0 then recordMiss(dir_path, "first") end
     return nil, summary
 end
 
@@ -231,8 +237,10 @@ local function collectCoversRecursive(menu, dir_path, depth, max_depth, needed, 
     if depth > max_depth or needed <= 0 then return {} end
     local summary = CoverFinder.getDirSummary(menu, dir_path)
     local covers  = {}
+    local complete = true
     for _, path in ipairs(summary.books) do
-        local cover = cachedCover(BookInfoManager, path, menu.cover_specs)
+        local cover, valid = cachedCover(BookInfoManager, path, menu.cover_specs)
+        if valid == false then complete = false end
         if cover then
             covers[#covers + 1] = cover
             if #covers >= needed then return covers end
@@ -240,22 +248,24 @@ local function collectCoversRecursive(menu, dir_path, depth, max_depth, needed, 
     end
     for _, sub_path in ipairs(summary.dirs) do
         if #covers >= needed then break end
-        local sub = collectCoversRecursive(
+        local sub, valid = collectCoversRecursive(
             menu, sub_path, depth + 1, max_depth, needed - #covers, BookInfoManager)
+        if valid == false then complete = false end
         for _, c in ipairs(sub) do
             covers[#covers + 1] = c
             if #covers >= needed then break end
         end
     end
-    return covers
+    return covers, complete
 end
 CoverFinder._collectCoversRecursive = collectCoversRecursive -- exposed for style resolution (quad vs single)
 
 -- Find exactly one cover recursively (used on the bookless-folder path).
 function CoverFinder.findCoverRecursive(menu, dir_path, depth, max_depth, BookInfoManager)
     if isKnownMiss(dir_path, "recursive") then return nil end
-    local cover = collectCoversRecursive(menu, dir_path, depth, max_depth, 1, BookInfoManager)[1]
-    if not cover then recordMiss(dir_path, "recursive") end
+    local covers, complete = collectCoversRecursive(menu, dir_path, depth, max_depth, 1, BookInfoManager)
+    local cover = covers[1]
+    if not cover and complete ~= false then recordMiss(dir_path, "recursive") end
     return cover
 end
 
@@ -267,24 +277,27 @@ function CoverFinder.collectCovers(menu, dir_path, max_count, BookInfoManager, r
     if isKnownMiss(dir_path, kind) then return {} end
 
     local covers  = {}
+    local complete = true
     local summary = CoverFinder.getDirSummary(menu, dir_path)
     for _, path in ipairs(summary.books) do
         if #covers >= max_count then break end
-        local cover = cachedCover(BookInfoManager, path)
+        local cover, valid = cachedCover(BookInfoManager, path)
+        if valid == false then complete = false end
         if cover then covers[#covers + 1] = cover end
     end
     if #covers < max_count and recursive_enabled then
         for _, sub_path in ipairs(summary.dirs) do
             if #covers >= max_count then break end
-            local sub = collectCoversRecursive(
+            local sub, valid = collectCoversRecursive(
                 menu, sub_path, 1, 3, max_count - #covers, BookInfoManager)
+            if valid == false then complete = false end
             for _, c in ipairs(sub) do
                 covers[#covers + 1] = c
                 if #covers >= max_count then break end
             end
         end
     end
-    if #covers == 0 then recordMiss(dir_path, kind) end
+    if complete and #covers == 0 then recordMiss(dir_path, kind) end
     return covers
 end
 

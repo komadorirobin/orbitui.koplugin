@@ -50,7 +50,8 @@ local function pageEntry(ctx, id)
     end
     local entry = pages[id]
     if not entry then
-        entry = { page = 1, npages = 1 }
+        entry = { page = ctx["_row_page_" .. id] or 1,
+            npages = ctx["_row_npages_" .. id] or 1 }
         pages[id] = entry
     end
     return entry

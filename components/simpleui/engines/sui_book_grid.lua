@@ -338,6 +338,10 @@ end
 -- Each module instance keeps its own value (Config.badgeScaleKey).
 -- ---------------------------------------------------------------------------
 local _BG_BADGE_NATIVE_BOOST = 1.1 -- default module-badge boost over the Library baseline
+GridRenderer.BADGE_SCALE_MIN, GridRenderer.BADGE_SCALE_MAX = 50, 200
+GridRenderer.BADGE_SCALE_DEF, GridRenderer.BADGE_SCALE_STEP = 100, 10
+function GridRenderer.getBadgeScalePct(pfx, id) return Config.getBadgeScalePct(id, pfx) end
+function GridRenderer.setBadgeScale(pfx, id, pct) Config.setBadgeScale(pct, id, pfx) end
 
 function GridRenderer.buildPageNavButtons(page, npages, row_h, callback, wallpaper)
     if npages <= 1 then return nil, nil end

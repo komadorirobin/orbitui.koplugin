@@ -198,5 +198,33 @@ test("disabling shared safe mode allows BIM extraction", function()
     eq(extract_calls, 1)
 end)
 
+test("decode failures never become permanent no-cover markers", function()
+    local original = BIM.getBookInfo
+    package.loaded["ui/renderimage"] = {
+        scaleBlitBuffer = function(_, _, w, h) return makeBB(w, h) end,
+    }
+    for _, name in ipairs({ "getStretchedCoverBB", "getCroppedCoverBB" }) do
+        local broken, decodes = true, 0
+        local fp = "/book/" .. name .. ".epub"
+        BIM.getBookInfo = function(_, path, decode)
+            eq(path, fp)
+            if decode then
+                decodes = decodes + 1
+                if broken then error("temporary SQLite lock") end
+            end
+            return { cover_fetched = true, has_cover = true,
+                cover_bb = decode and makeBB(1000, 1000) or nil }
+        end
+        eq(Config[name](fp, 10, 10), nil)
+        eq(Config.isCoverMissing(fp), false)
+        broken = false
+        assert(Config[name](fp, 10, 10), "must retry without cache reset")
+        eq(decodes, 2)
+        assert(Config[name](fp, 10, 10))
+        eq(decodes, 2, "warm hits must use metadata-only lookup")
+    end
+    BIM.getBookInfo = original
+end)
+
 print(string.format("PASS %d  FAIL %d", passed, failed))
 if failed > 0 then os.exit(1) end

@@ -11,7 +11,8 @@ for _, name in ipairs({
     package.loaded[name] = { new = widget }
 end
 package.loaded["device"] = { screen = { scaleBySize = function(_self, value) return value end } }
-package.loaded["features/sui_style"] = { BADGE_BORDER_SZ = 2 }
+package.loaded["features/sui_style"] = { BADGE_BORDER_SZ = 2,
+    coverShadowOffset = function() return 0 end }
 local library_color = "dark"
 local calls, last_desc = 0, nil
 package.loaded["features/library/sui_foldercovers"] = {

@@ -174,6 +174,28 @@ not make semantic conflicts disappear.
   removing/adding modules stops updating their flags. Keep clock element choices
   intact on reorder/unrelated saves and preserve custom-screen prefixes (C07/C08).
   Coverage: `tests/test_simpleui_upstream_20261006.lua`.
+- SimpleUI's October 9 titlebar tabs are opt-in. Do not reinstate its automatic
+  tabs migration or first-run CoverBrowser layout overwrite. Classic icons,
+  custom font-icon guards, hidden-statusbar height, independent Bento top gaps
+  and top alignment remain unchanged. Keep the legacy button-only backdrop
+  setting alongside the new full-width titlebar backdrop, including backup and
+  presets. The old wallpaper opacity API aliases the new lighten API.
+- The shared navbar geometry must retain `Bottombar.SIDE_M()` for Bookshelf's
+  embedded dock and `_navbar_topbar_h` for immediate margin reflow. New shared
+  menu hooks are installed once across hosts, reference-counted on teardown,
+  and restore temporarily narrowed widths even after exceptions.
+- New `sui_section_label.PageState` mirrors legacy `_row_page_*`/`_row_npages_*`
+  fields and initializes from them. Keep OrbitUI's fresh label widgets, custom
+  screen prefixes and per-module label scales rather than mounting upstream's
+  cached widgets. Retain grid badge API aliases and the saved legacy scale
+  fallback, without applying it to the newly scalable Currently Reading and
+  Coverdeck badges. A saved collection `stack` remains readable without rewrite.
+- The October 9 metadata/cover caches must not persist transient SQL or decode
+  failures as empty results. Retry without requiring a database timestamp
+  change; confirmed misses may remain cached until the DB/WAL stamp changes.
+  Preserve stats completeness guards with the faster reader-return pipeline.
+  Coverage for these merge seams: `tests/test_simpleui_upstream_20261009.lua`,
+  `tests/test_navbar_margin.lua` and native `_test_config_cover_cache.lua`.
 - Upstream compatibility auto-disable is replaced by OrbitUI's read-only guard.
   Conflicting UI plugins are reported; user plugin flags and patches are never
   rewritten. Unsupported KOReader versions stop before either component starts.

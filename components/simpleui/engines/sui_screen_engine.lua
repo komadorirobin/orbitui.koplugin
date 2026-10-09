@@ -2064,6 +2064,7 @@ function ScreenWidget:_buildCtx()
         prefetched             = bs.prefetched_data,
         current_fp             = bs.current_fp,
         recent_fps             = bs.recent_fps,
+        sectionLabel           = sectionLabel,
         _screen_widget         = self,
         _show_c                = show_c,
         _show_r                = show_r,
@@ -2547,6 +2548,8 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
 
     body:clear()
 
+    local topbar_on = SUISettings:nilOrTrue("simpleui_topbar_enabled")
+
     self._clock_body_idx    = nil
     self._clock_body_ref    = body
     self._stats_mod_slots   = {}
@@ -2842,7 +2845,7 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
             if #left_group > 0 or #right_group > 0 then
                 first_mod = false
                 body[#body+1] = HorizontalGroup:new{
-                    align = "center",
+                    align = "top",
                     left_group,
                     HorizontalSpan:new{ width = H_COL_GAP },
                     right_group,
@@ -2864,7 +2867,7 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
 
     if empty_widget then
         if first_mod then
-            body[#body+1] = self:_vspan(MOD_GAP)
+            body[#body+1] = self:_vspan(topbar_on and MOD_GAP or MOD_GAP * 2)
         end
         body[#body+1] = empty_widget
     end
@@ -4363,6 +4366,7 @@ function ScreenEngine.closeScreen(id)
     _sset(id, "_cfg_cache", nil)
 end
 
+ScreenEngine.invalidateLabelCache = invalidateLabelCache
 ScreenEngine.PAGE_BREAK_ID = PAGE_BREAK_ID
 
 -- ---------------------------------------------------------------------------

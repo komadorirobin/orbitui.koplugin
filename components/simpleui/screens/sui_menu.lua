@@ -2615,6 +2615,13 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 enabled_func  = function() return require("screens/sui_titlebar").isEnabled() end,
             }),
             strengthItem({
+                title         = _("Title Bar Button Opacity"),
+                get           = SUIWallpaper.getTitlebarButtonBackdropStrength,
+                set           = SUIWallpaper.setTitlebarButtonBackdropStrength,
+                default_value = 0,
+                enabled_func  = function() return require("screens/sui_titlebar").isEnabled() end,
+            }),
+            strengthItem({
                 title         = _("Pagination Bar Opacity"),
                 info          = _("0% transparent, 100% solid. Applies to the native page bar in Library, History, Collections and similar screens."),
                 get           = SUIWallpaper.getPaginationBackdropStrength,

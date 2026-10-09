@@ -89,7 +89,6 @@ M.SLOTS = {
         label     = function() return _("Search Button") end,
         group     = "sui_titlebar",
         default_ko = "appbar.search",
-        default_icon = "nerd:EA48",
     },
     {
         id        = "sui_back",

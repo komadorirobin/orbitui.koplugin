@@ -272,7 +272,7 @@ end
 -- (directory, filename) order, then Calibre-only books in path order.
 local function fetchScopeRows(bim, base_dir)
     local rows = queryBookInfo(bim, base_dir)
-    if not rows then return {} end
+    if not rows then return nil end
 
     local cal_index = loadCalibreIndex(base_dir)
     local seen = {}
@@ -328,6 +328,7 @@ local function matchingRows(bim, base_dir, filter_state)
     if cached then return cached end
 
     local rows = getScopeRows(bim, base_dir)
+    if not rows then return {}, false end
     local trail = filter_state and filter_state.trail
     if trail and #trail > 0 then
         local matches = FilterState.matcher(trail)
@@ -405,9 +406,10 @@ function MetadataSource.getFacetValues(bim, base_dir, dimension, filter_state)
     local key = cacheKey(base_dir, filter_state) .. "\31" .. dimension
     local cached = _facet_values_cache[key]
     if not cached then
-        cached = computeFacetValues(matchingRows(bim, base_dir, filter_state),
+        local rows, complete = matchingRows(bim, base_dir, filter_state)
+        cached = computeFacetValues(rows,
                                     FilterState.DIMENSIONS[dimension])
-        _facet_values_cache[key] = cached
+        if complete ~= false then _facet_values_cache[key] = cached end
     end
     -- Return a shallow copy: cheap (copies entry refs, not rows), and keeps
     -- callers free to sort/mutate what they receive without corrupting the
@@ -432,9 +434,11 @@ function MetadataSource.getValidRows(bim, base_dir, filter_state, variant, accep
     local valid = _valid_rows_cache[key]
     if not valid then
         valid = {}
-        for _, row in ipairs(matchingRows(bim, base_dir, filter_state)) do
+        local rows, complete = matchingRows(bim, base_dir, filter_state)
+        for _, row in ipairs(rows) do
             if accept(row) then valid[#valid + 1] = row end
         end
+        if complete == false then return valid, false end
         _valid_rows_cache[key] = valid
     end
     return valid
@@ -445,7 +449,8 @@ end
 function MetadataSource.getValidFacetCounts(bim, base_dir, dimension, filter_state, variant, accept)
     if not FilterState.isDimension(dimension) then return {}, {} end
 
-    local rows = MetadataSource.getValidRows(bim, base_dir, filter_state, variant, accept)
+    local rows, complete = MetadataSource.getValidRows(bim, base_dir, filter_state, variant, accept)
+    if complete == false then return {}, {} end
     local key = cacheKey(base_dir, filter_state) .. "\31" .. dimension .. "\29" .. variant
     local cached = _valid_facets_cache[key]
     if not cached then

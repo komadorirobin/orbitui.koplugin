@@ -391,11 +391,9 @@ end
 -- Content area dimensions
 -- ---------------------------------------------------------------------------
 
--- Height of the band reserved at the top of every screen. It is reserved
--- whether or not the status bar is shown, so content keeps the same top limit
--- when the bar is toggled. It follows the status bar size setting.
+-- Hidden status bars retain OrbitUI's full-height content area.
 function M.getTopInset()
-    return _TB().TOTAL_TOP_H()
+    return SUISettings:nilOrTrue("simpleui_topbar_enabled") and _TB().TOTAL_TOP_H() or 0
 end
 
 -- Top edge of the content area.
@@ -523,6 +521,7 @@ function M.applyNavbarState(widget, container, bar, topbar, bar_idx, topbar_on, 
     widget._navbar_bar_idx           = bar_idx
     widget._navbar_bar_idx_topbar_on = topbar_on
     widget._navbar_content_h         = M.getContentHeight()
+    widget._navbar_topbar_h          = M.getTopInset()
 end
 
 -- ---------------------------------------------------------------------------

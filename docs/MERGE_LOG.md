@@ -1159,6 +1159,68 @@ installer, downloaded draft-asset hashes, CI and anonymous live OTA. Physical
 reader appearance, live margin changes and device OTA remain manual checks.
 Keep the old Mann bitmap's local archive branch unpublished.
 
+## 2026-10-09: Reviewed SimpleUI upstream merge after alpha.30
+
+The user deferred modularization and requested an upstream merge only. Start
+from clean main `93cd76c9ca893ff36aed9ac19920357ef33566f9` on
+`maintenance/upstream-2026-10-09`. Bookshelf master remains fully integrated at
+`74b825bb20aa5560129384910ad414bd2bebad75`; its subtree is unchanged.
+
+SimpleUI main advances from `b58dfefb26012e44b5b9c96d61d646466ca53b46` to
+the reviewed, fixed target `6f34fb76a137c86e30f4eaf7caa290e927803982`.
+Import commit `ea116e65` retains the complete unsquashed ancestry. The latest
+tagged upstream release remains 2.7.5. The 16 reviewed commits are:
+
+- `b115c645`: wallpaper darken and live lighten control.
+- `53e294fa`, `f822ca1a`: independent book-close target and native startup menu.
+- `778070a6`, `dfbf718a`, `39d0f2fc`: paginated backdrop and night-mode tint fixes.
+- `e36ee29d`: digital clock glyph alignment.
+- `c0f16812`: translation catalog refresh.
+- `b51d902b`, `e4ed85e1`: independent progress badge sizes and scale accessors.
+- `3956c079`: shared section-label/page state.
+- `01f50fc1`, `434318f6`: optional titlebar tabs, ordering and search.
+- `661b85c8`: unified book-stack naming.
+- `9f3ed4fc`: install shared menu hooks only once.
+- `6f34fb76`: faster reader return, prefetch, statistics and metadata/cover caches.
+
+Resolve 17 textual conflicts semantically, preserving OrbitUI's startup guard,
+Android sync workaround, BookOrbit refresh, fresh section labels, local label
+scales, Bento padding and independent layout snapshots. Keep local Swedish
+translations while incorporating new strings; fix the imported Chinese plural
+entries to match their existing nplurals=1. Rebuild the module map for three new
+runtime modules: `sui_section_label`, `sui_tab_strip` and `sui_bim_stamp` (264
+canonical modules). Advance only the SimpleUI upstream pin, not fork provenance.
+
+Some conflict resolutions necessarily adapt code in the import commit; the
+following compatibility/test/documentation commit isolates the remaining work.
+Do not automatically switch existing users to tabs or overwrite native library
+layout defaults on first run. Keep classic/custom icons, button-only backdrops,
+legacy wallpaper/grid scale accessors, collection stack settings and hidden
+statusbar geometry. Preserve top-aligned Bento cells with per-module margins.
+New PageState mirrors and initializes from legacy pagination fields. Retain
+fresh labels rather than cached widgets that could be freed or retain callbacks.
+
+Regression tests caught the removed `Bottombar.SIDE_M` API used by Bookshelf;
+restore it via the new shared geometry, together with the topbar height used by
+live dock reflow. Preserve copied layout drafts and initialize membership before
+a save without a prior load. Transient SQL/cover-decode failures must retry rather
+than populate permanent empty-result caches. Confirmed missing covers still use
+the new directory/DB/WAL invalidation. Free injected tab strips on teardown.
+
+Affected contracts: C01 shared hook lifetime, C02 close targets/dock reflow,
+C04 bounded caches and transient failure handling, C06 legacy APIs, C07 layout,
+icons and margins, C08 nondestructive settings, C09 reviewed history. C03 normal
+reader opening, C05 BookOrbit sync ownership, C10 shared panels and C11 ornaments
+remain unchanged. VERSION, root bootstrap, artwork and public release bytes are
+unchanged. The held Mann bitmap remains excluded; no archive branch is pushed.
+
+Validation results are recorded in TESTING.md. Device checks remain outstanding:
+reader return to each destination, repeated native menu opens, Bento/custom
+screens, live dock margin changes, optional tabs/icons and paginated wallpaper
+backdrops in day/night mode. Retain the existing rollback installation and
+settings; no new destructive migration or modularization is part of this merge.
+No push, version bump, tag, release or OTA publication is authorized/performed.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

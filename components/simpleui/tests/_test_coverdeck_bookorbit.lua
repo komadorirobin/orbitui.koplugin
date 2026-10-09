@@ -38,6 +38,7 @@ package.loaded["infra/sui_core"] = {
     PAD = 1,
     PAD2 = 1,
     SIDE_PAD = 0,
+    getInnerW = function() return 1000 end,
     CLR_TEXT_SUB = 0,
 }
 package.loaded["infra/sui_store"] = {

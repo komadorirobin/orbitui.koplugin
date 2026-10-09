@@ -999,7 +999,7 @@ function SimpleUIPlugin:init()
         if _sui_first_run then
             Config.setStartWithHomescreen(true)
             Config.setBookCloseTarget(Config.BOOK_CLOSE_TARGET.HOMESCREEN)
-            Config.applyFirstRunLibraryDefaults()
+            -- Keep the user's existing native CoverBrowser layout on first install.
         end
         logger.info("simpleui[diag]: init first_run=", _sui_first_run,
             "onboarding_done=", SUISettings:get("simpleui_onboarding_done"),
