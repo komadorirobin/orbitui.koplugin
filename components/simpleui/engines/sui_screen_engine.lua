@@ -55,6 +55,7 @@ local Screen           = Device.screen
 local UI               = require("infra/sui_core")
 local Bottombar        = require("screens/sui_bottombar")
 local SUIStyle         = require("features/sui_style")
+local SectionLabel     = require("engines/sui_section_label")
 local ImageWidget      = require("ui/widget/imagewidget")
 local lfs              = require("libs/libkoreader-lfs")
 local SUIWallpaper     = require("features/sui_wallpaper")
@@ -124,7 +125,6 @@ local _cold_boot_pending = true
 -- Layout constants sourced from sui_core (single source of truth).
 local PAD                = UI.PAD
 local MOD_GAP            = UI.MOD_GAP
-local SIDE_PAD           = UI.SIDE_PAD
 
 -- Static color defaults.
 
@@ -421,9 +421,8 @@ end
 -- active pagination (a single page) or the module isn't of that type.
 local function pageIndicatorFor(mod, ctx)
     if not ctx then return nil end
-    local npages = ctx["_row_npages_" .. mod.id]
+    local page, npages = SectionLabel.PageState.get(ctx, mod.id)
     if not npages or npages <= 1 then return nil end
-    local page = ctx["_row_page_" .. mod.id] or 1
     return string.format("%d/%d", page, npages)
 end
 
@@ -470,9 +469,8 @@ end
 -- local function, not a ScreenWidget method, called from inside one.
 local function pageNavFor(self, mod, ctx)
     if not ctx then return nil end
-    local npages = ctx["_row_npages_" .. mod.id]
+    local page, npages = SectionLabel.PageState.get(ctx, mod.id)
     if not npages or npages <= 1 then return nil end
-    local page = ctx["_row_page_" .. mod.id] or 1
     return {
         screen_id     = self._id,
         mod_id        = mod.id,
@@ -1651,9 +1649,9 @@ function ScreenWidget:_initLayout()
     -- of the raw, bar-covering Screen height means that if injection is ever
     -- skipped or runs late for some reason, content still stops above the
     -- bar instead of silently extending underneath it.
-    local content_h = self._navbar_content_h or UI.getContentHeight() or sh
-    local side_off  = SIDE_PAD
-    local inner_w   = sw - side_off * 2
+    local content_h = self._navbar_content_h or UI.getContentHeight()
+    local side_off  = UI.SIDE_PAD()
+    local inner_w   = UI.getInnerW(sw)
 
     self._navbar_content_h = content_h
     self._layout_sw        = sw
@@ -1740,10 +1738,7 @@ function ScreenWidget:_initLayout()
             bb:paintRect(x, 0, Screen:getWidth(), Screen:getHeight(), Blitbuffer.COLOR_WHITE)
             if _bg then
                 _bg:paintTo(bb, x, 0)
-                local opacity = SUIWallpaper.styleGetWallpaperOpacityValue()
-                if opacity and opacity > 0 then
-                    bb:lightenRect(x, 0, Screen:getWidth(), Screen:getHeight(), opacity / 100)
-                end
+                SUIWallpaper.paintTint(bb, x, 0, Screen:getWidth(), Screen:getHeight())
             end
             _orig_paintTo(self, bb, x, y)
         end
@@ -1774,11 +1769,31 @@ function ScreenWidget:_swapLayoutTree(overlap)
     _deferredFreeOldTree(old)
 end
 
+-- Resolves the current and recent books for the book modules enabled on this
+-- screen. Returns nil when the shared book module is unavailable.
+--
+-- Show-finished filtering is not applied here: each module (module_recent,
+-- module_coverdeck) filters finished books at render time using its own
+-- setting. 15 entries are fetched so that at least 5 unfinished books remain
+-- after that filtering.
+function ScreenWidget:_prefetchBooks()
+    local SH = _getBookShared()
+    if not SH then return nil end
+    local mod_r  = Registry.get("recent")
+    local mod_cd = Registry.get("coverdeck")
+    local show_c = Registry.isEnabled(Registry.get("currently"), self._pfx)
+    local show_r = (mod_r and Registry.isEnabled(mod_r, self._pfx))
+        or (mod_cd and Registry.isEnabled(mod_cd, self._pfx))
+    local excl = SUISettings:readSetting(self._pfx .. "recent_exclude_currently")
+    if excl == nil then excl = true end
+    return SH.prefetchBooks(show_c, show_r, 15, { exclude_current = excl })
+end
+
 -- ---------------------------------------------------------------------------
 -- _buildCtx — constructs the module build context for the current render.
 -- ---------------------------------------------------------------------------
 function ScreenWidget:_buildCtx()
-    local inner_w = self._layout_inner_w or (Screen:getWidth() - SIDE_PAD * 2)
+    local inner_w = self._layout_inner_w or UI.getInnerW()
 
     -- Provisional; _updatePage() overwrites it with the column-width-derived
     -- factor before modules build. 1 in portrait.
@@ -1856,18 +1871,7 @@ function ScreenWidget:_buildCtx()
         local SH = _getBookShared()
         if SH then
             if show_c or show_r then
-                local max_recent = 15
-                -- show_finished is no longer computed here: each module
-                -- (module_recent, module_coverdeck) filters finished books
-                -- independently at render time using its own setting.
-                -- max_recent is set to 15 so that after each module filters
-                -- finished books at render time, at least 5 unfinished entries
-                -- remain available for display.
-                local excl = SUISettings:readSetting(self._pfx .. "recent_exclude_currently")
-                if excl == nil then excl = true end
-                self._cached_books_state = SH.prefetchBooks(show_c, show_r, max_recent, {
-                    exclude_current = excl,
-                })
+                self._cached_books_state = self:_prefetchBooks()
                 if Config.cover_extraction_pending then
                     self:_scheduleCoverPoll()
                 end
@@ -1923,7 +1927,7 @@ function ScreenWidget:_buildCtx()
         self._db_conn = Config.openStatsDB()
     end
 
-    -- Pre-fetch numeric stats via the shared provider (at most 2 DB roundtrips).
+    -- Pre-fetch numeric stats via the shared provider (a few window-bounded queries).
     -- needs_books: true only when reading_goals is active, OR reading_stats is
     -- active and "total_books" is among the selected stat items.  When false,
     -- SP.get() skips the sidecar scan (up to 200 DS.open calls) entirely.
@@ -2060,7 +2064,6 @@ function ScreenWidget:_buildCtx()
         prefetched             = bs.prefetched_data,
         current_fp             = bs.current_fp,
         recent_fps             = bs.recent_fps,
-        sectionLabel           = sectionLabel,
         _screen_widget         = self,
         _show_c                = show_c,
         _show_r                = show_r,
@@ -2073,7 +2076,7 @@ end
 -- ---------------------------------------------------------------------------
 -- _updateFooter — mutates the persistent footer in-place (zero allocation).
 -- ---------------------------------------------------------------------------
-function ScreenWidget:_updateFooter(current_page, total_pages, topbar_on)
+function ScreenWidget:_updateFooter(current_page, total_pages)
     local footer_bc = self._footer_bc
     if not footer_bc then return end
 
@@ -2397,7 +2400,7 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
     -- Landscape scale factor; refined below once the real column width is known.
     local _landscape_factor = ctx.landscape_factor or 1
 
-    local inner_w = self._layout_inner_w or (Screen:getWidth() - SIDE_PAD * 2)
+    local inner_w = self._layout_inner_w or UI.getInnerW()
     local body    = self._body
     if not body then return end
 
@@ -2543,8 +2546,6 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
     end
 
     body:clear()
-
-    local topbar_on = SUISettings:nilOrTrue("simpleui_topbar_enabled")
 
     self._clock_body_idx    = nil
     self._clock_body_ref    = body
@@ -2702,8 +2703,8 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
         end
 
         -- Packs mods into parent_body. container_w is the full available
-        -- width for a 100% module. first is a one-element table toggled so
-        -- the first row can apply top-of-page padding.
+        -- width for a 100% module. first is a one-element table cleared once
+        -- a row has been placed.
         local function _pack_bento(mods, parent_body, container_w, first)
             local function _flush_row(row_cols)
                 if not row_cols or #row_cols == 0 then return end
@@ -2747,11 +2748,6 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
                             v_col[#v_col+1] = cell
                         end
                     end
-                    -- Pin the column to the allocated slot width. Without this,
-                    -- VerticalGroup reports content width (which can exceed
-                    -- slot_w); neighbouring columns then overlap the
-                    -- HorizontalSpan and the inter-column gap never changes
-                    -- no matter what H_COL_GAP is set to.
                     local col_h = v_col:getSize().h
                     h_row[#h_row+1] = LeftContainer:new{
                         dimen = Geom:new{ w = slot_w, h = col_h },
@@ -2846,7 +2842,7 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
             if #left_group > 0 or #right_group > 0 then
                 first_mod = false
                 body[#body+1] = HorizontalGroup:new{
-                    align = "top",
+                    align = "center",
                     left_group,
                     HorizontalSpan:new{ width = H_COL_GAP },
                     right_group,
@@ -2868,8 +2864,7 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
 
     if empty_widget then
         if first_mod then
-            local top_pad = topbar_on and MOD_GAP or (MOD_GAP * 2)
-            body[#body+1] = self:_vspan(top_pad)
+            body[#body+1] = self:_vspan(MOD_GAP)
         end
         body[#body+1] = empty_widget
     end
@@ -2888,7 +2883,7 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
         footer_page  = self._current_page
     end
 
-    self:_updateFooter(footer_page, footer_total, topbar_on)
+    self:_updateFooter(footer_page, footer_total)
     _updateNavpager(self, footer_page, footer_total)
 
     -- Reschedule the clock tick when the clock module is on the current page,
@@ -3005,26 +3000,19 @@ function ScreenWidget:_refresh(keep_cache, books_only, stats_only)
                 -- Read live rather than the closed-over parameter: a later
                 -- caller may have upgraded this pending refresh (see above).
                 local stats_only = self._refresh_pending_stats_only
+                local books_fresh = self._books_fresh
+                self._books_fresh = nil
 
                 if not self._db_conn then
                     self._db_conn = Config.openStatsDB()
                 end
 
                 if self._ctx_cache then
-                    -- 1. Get new book metadata (prefetchBooks)
-                    if not stats_only then
-                        local SH = _getBookShared()
-                        if SH then
-                            local mod_r  = Registry.get("recent")
-                            local mod_cd = Registry.get("coverdeck")
-                            local show_c = Registry.isEnabled(Registry.get("currently"), self._pfx)
-                            local show_r = (mod_r and Registry.isEnabled(mod_r, self._pfx)) or (mod_cd and Registry.isEnabled(mod_cd, self._pfx))
-                            -- show_finished removed: each module filters independently at render time.
-                            local excl = SUISettings:readSetting(self._pfx .. "recent_exclude_currently")
-                            if excl == nil then excl = true end
-                            local new_bs = SH.prefetchBooks(show_c, show_r, 15, {
-                                exclude_current = excl,
-                            })
+                    -- 1. Get new book metadata (prefetchBooks). Skipped when
+                    -- onShow() already resolved it for this open.
+                    if not stats_only and not (books_fresh and self._cached_books_state) then
+                        local new_bs = self:_prefetchBooks()
+                        if new_bs then
                             self._cached_books_state = new_bs
                             self._ctx_cache.prefetched = new_bs.prefetched_data
                             self._ctx_cache.current_fp = new_bs.current_fp
@@ -3249,7 +3237,7 @@ function ScreenWidget:_bookModRefreshType(mod_id)
 end
 
 -- Single entry point for "move this paginated book module by one page",
--- shared by the section-label chevrons (see pageNavFor above) and the
+-- shared by the section-label chevrons (see _labelFor) and the
 -- swipe gesture on the row/grid itself (engines/sui_book_grid.lua's
 -- swipe_area:onSwipe). Clamped (no wraparound — page 1 has no previous,
 -- the last page has no next): GridRenderer.turnPage returns nil at either
@@ -3258,21 +3246,17 @@ function ScreenWidget:_turnBookModPage(mod_id, delta)
     if not self._ctx_cache then return false end
     local ok_gr, GridRenderer = pcall(require, "engines/sui_book_grid")
     if not ok_gr or not GridRenderer then return false end
-    local page_key   = "_row_page_" .. mod_id
-    local npages_key = "_row_npages_" .. mod_id
-    local npages  = self._ctx_cache[npages_key] or 1
-    local page    = self._ctx_cache[page_key] or 1
+    local page, npages = SectionLabel.PageState.get(self._ctx_cache, mod_id)
     local new_page = GridRenderer.turnPage(page, npages, delta)
     if not new_page then return false end
-    self._ctx_cache[page_key] = new_page
+    SectionLabel.PageState.setPage(self._ctx_cache, mod_id, new_page)
     if self._refreshBookModSlot and self:_refreshBookModSlot(mod_id) then return true end
     if self._refreshImmediate then self:_refreshImmediate(true) end
     return true
 end
 
 -- ---------------------------------------------------------------------------
--- _syncBookModLabel(mod_id) — surgical repaint of a paginated book module's
--- section-title header: the "x/y" page indicator and its chevrons.
+-- Section label
 --
 -- A book module's grid content and its header live in separate widgets
 -- (see _book_mod_slots vs _book_mod_label_slots) — updating the former never
@@ -3288,6 +3272,26 @@ end
 -- speculatively: its primitive render signature avoids rebuilding the owned
 -- widget when none of the visible label state changed.
 -- ---------------------------------------------------------------------------
+function ScreenWidget:_labelFor(mod, col_w, ctx)
+    local desc = SectionLabel.describe(mod, ctx)
+    if not desc then return nil end
+    self._label_cache = self._label_cache or {}
+    self._turn_page_fn = self._turn_page_fn or function(mod_id, delta)
+        return self:_turnBookModPage(mod_id, delta)
+    end
+    return SectionLabel.get(self._label_cache, mod.id, desc, col_w,
+        ctx.landscape_factor, ctx.has_wallpaper, self._turn_page_fn)
+end
+
+-- Surgical repaint of a paginated book module's section title: the "x/y"
+-- page indicator and its chevrons.
+--
+-- A book module's grid content and its title live in separate widgets (see
+-- _book_mod_slots vs _book_mod_label_slots), so every caller that changes a
+-- paginated module's content (page turn, background stats refresh, status or
+-- collection change, ...) must call this afterwards. The label is recomputed
+-- from ctx, so this is always safe to call: it is a no-op (no setDirty) when
+-- the label is identical to the one already mounted.
 function ScreenWidget:_syncBookModLabel(mod_id)
     local label_slot = self._book_mod_label_slots and self._book_mod_label_slots[mod_id]
     if not (label_slot and label_slot.parent and label_slot.mod) then return end
@@ -3587,28 +3591,16 @@ function ScreenWidget:onShow()
     end
 
     if not self._cached_books_state then
-        if is_app_cold_boot then
-            -- App startup: fetch the real book state synchronously instead
-            -- of seeding from SH.getStaleBooks(). Mirrors the prefetchBooks()
-            -- call the deferred tick in _refresh() makes further below in
-            -- this file — same show_c/show_r resolution, same count — so the
-            -- very first paint already has authoritative data and needs no
-            -- follow-up correction.
-            local SH = _getBookShared()
-            if SH then
-                local mod_r  = Registry.get("recent")
-                local mod_cd = Registry.get("coverdeck")
-                local show_c = Registry.isEnabled(Registry.get("currently"), self._pfx)
-                local show_r = (mod_r and Registry.isEnabled(mod_r, self._pfx))
-                    or (mod_cd and Registry.isEnabled(mod_cd, self._pfx))
-                local excl = SUISettings:readSetting(self._pfx .. "recent_exclude_currently")
-                if excl == nil then excl = true end
-                self._cached_books_state = SH.prefetchBooks(show_c, show_r, 15, {
-                    exclude_current = excl,
-                })
-            end
-            self._cached_books_state = self._cached_books_state
-                or { current_fp = nil, recent_fps = {}, prefetched_data = {} }
+        -- App startup, or a screen flagged stale by a reading session: resolve
+        -- the book list synchronously so the first paint already has
+        -- authoritative data. Only the sidecar that changed misses the cache,
+        -- so this stays cheap, and the deferred pass below skips repeating it.
+        local books = (is_app_cold_boot or need_async) and self:_prefetchBooks()
+        if books then
+            self._cached_books_state = books
+            self._books_fresh = need_async and not is_app_cold_boot
+        elseif is_app_cold_boot then
+            self._cached_books_state = { current_fp = nil, recent_fps = {}, prefetched_data = {} }
         else
             -- Cold-open path: _cached_books_state is nil, so _buildCtx would
             -- otherwise call prefetchBooks() (sidecar I/O for every recent
@@ -4066,13 +4058,9 @@ function ScreenWidget:onCloseWidget()
     self._clock_label      = nil
     self._overflow_warn_key = nil
 
-    -- Clear cover cache only when the FM file browser was visited since the
-    -- last homescreen open (CoverBrowser replaces BIM covers with scaled
-    -- thumbnails, making our cached bitmaps stale).
-    if ScreenEngine._library_was_visited then
-        ScreenEngine._library_was_visited = nil
-        Config.clearCoverCache()
-    end
+    -- Consumes the "file browser visited" marker; the series grouping module
+    -- reads it to decide when to flush its folder cover lookups.
+    ScreenEngine._library_was_visited = nil
 
     -- Free header module quotes if the header is not in quote mode.
     local ok_mh, MH = pcall(require, "modules/module_header")
@@ -4119,7 +4107,7 @@ end
 -- _raiseParkedScreen (infra/sui_patches.lua) promotes the parked instance
 -- back to the foreground with a scoped partial refresh instead of a full
 -- rebuild; any reader-close path that will not show the Homescreen this
--- time (e.g. "Return to Book Folder") closes the parked instance for real
+-- time (e.g. the Library or Book Folder close targets) closes the parked instance for real
 -- instead of leaving it dangling with increasingly stale data.
 --
 -- _navbar_closing_intentionally makes onCloseWidget (above) treat a real
@@ -4374,10 +4362,6 @@ function ScreenEngine.closeScreen(id)
     _sset(id, "_cached_books_state", nil)
     _sset(id, "_cfg_cache", nil)
 end
-
--- Clears the section-label widget cache. Must be called after a screen
--- resize or rotation so labels are rebuilt at the new inner_w.
-ScreenEngine.invalidateLabelCache = invalidateLabelCache
 
 ScreenEngine.PAGE_BREAK_ID = PAGE_BREAK_ID
 

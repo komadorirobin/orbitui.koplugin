@@ -78,12 +78,13 @@ M.ICON = {
     author         = _P .. "author.svg",
     series         = _P .. "series.svg",
     tags           = _P .. "tags.svg",
+    back           = _P .. "back.svg",
+    menu           = _P .. "more-options.svg",
     nav_prev       = _KO .. "chevron.left.svg",
     nav_next       = _KO .. "chevron.right.svg",
     ko_home        = _KO .. "home.svg",
     ko_star        = _KO .. "star.empty.svg",
     ko_wifi        = _KO .. "wifi.open.100.svg",
-    ko_menu        = _KO .. "appbar.menu.svg",
     ko_settings    = _KO .. "appbar.settings.svg",
     ko_search      = _KO .. "appbar.search.svg",
     ko_bookmark    = _KO .. "bookmark.svg",
@@ -421,6 +422,29 @@ function M.setStartWithHomescreen(on)
     end
 end
 
+-- Destination shown after closing a book. Independent of the launch screen.
+local KEY_CLOSE_TARGET = "simpleui_hs_book_close_target"
+M.BOOK_CLOSE_TARGET = {
+    HOMESCREEN  = "homescreen",
+    LIBRARY     = "library",      -- file browser at the home folder
+    BOOK_FOLDER = "book_folder",  -- file browser at the folder of the closed book
+}
+local _CLOSE_TARGETS = {}
+for _k, id in pairs(M.BOOK_CLOSE_TARGET) do _CLOSE_TARGETS[id] = true end
+
+function M.getBookCloseTarget()
+    local target = SUISettings:readSetting(KEY_CLOSE_TARGET)
+    return _CLOSE_TARGETS[target] and target or M.BOOK_CLOSE_TARGET.HOMESCREEN
+end
+
+function M.setBookCloseTarget(target)
+    if _CLOSE_TARGETS[target] then SUISettings:saveSetting(KEY_CLOSE_TARGET, target) end
+end
+
+function M.returnsToBookFolder()
+    return M.getBookCloseTarget() == M.BOOK_CLOSE_TARGET.BOOK_FOLDER
+end
+
 function M.homeLabel()
     return _("Library")
 end
@@ -589,7 +613,19 @@ local ITEM_LABEL_SCALE_SUFFIX = "_item_label_scale"
 local SECTION_LABEL_SCALE_SUFFIX = "_section_label_scale"
 local MODULE_BACKGROUND_SUFFIX = "_module_background"
 
-local function _clamp(n) return math_max(SCALE_MIN, math_min(SCALE_MAX, math_floor(n))) end
+local function _clamp(n, max) return math_max(SCALE_MIN, math_min(max or SCALE_MAX, math_floor(n))) end
+
+-- Percent scale stored under `key`: clamped (to `max`, default SCALE_MAX) on read
+-- and write, SCALE_DEF when unset.
+local function _readPct(key, max)
+    local n = tonumber(SUISettings:get(key))
+    return n and _clamp(n, max) or SCALE_DEF
+end
+local function _writePct(pct, key, max) SUISettings:set(key, _clamp(pct, max)) end
+
+-- Same accessors for settings that live outside the per-module key scheme.
+M.getScalePctByKey = _readPct
+M.setScaleByKey    = _writePct
 local function _modKey(mod_id, pfx) return (pfx or "simpleui_hs_") .. (mod_id or "") .. "_scale" end
 local function _itemLabelKey(mod_id, pfx) return (pfx or "simpleui_hs_") .. (mod_id or "") .. ITEM_LABEL_SCALE_SUFFIX end
 local function _sectionLabelKey(mod_id, pfx) return (pfx or "simpleui_hs_") .. (mod_id or "") .. SECTION_LABEL_SCALE_SUFFIX end
@@ -665,101 +701,47 @@ M.BOT_MARGIN_MIN  = BOT_MARGIN_MIN
 M.BOT_MARGIN_MAX  = BOT_MARGIN_MAX
 M.BOT_MARGIN_STEP = BOT_MARGIN_STEP
 
--- Reading Stats Text Scale
-local RS_TEXT_SCALE_KEY  = "simpleui_bar_rs_text_scale_pct"
-local RS_TEXT_SCALE_DEF  = 100
-local RS_TEXT_SCALE_MIN  = 50
-local RS_TEXT_SCALE_MAX  = 200
-
-function M.getRSTextScalePct()
-    local v = SUISettings:get(RS_TEXT_SCALE_KEY)
-    local n = tonumber(v)
-    if not n then return RS_TEXT_SCALE_DEF end
-    return math_max(RS_TEXT_SCALE_MIN, math_min(RS_TEXT_SCALE_MAX, math_floor(n)))
+-- Bar and style scales: fixed-key percent settings exposed as getter/setter pairs.
+local function _pctAccessors(key, max)
+    return function() return _readPct(key, max) end,
+           function(pct) _writePct(pct, key, max) end
 end
 
-function M.setRSTextScalePct(pct)
-    SUISettings:set(RS_TEXT_SCALE_KEY,
-        math_max(RS_TEXT_SCALE_MIN, math_min(RS_TEXT_SCALE_MAX, math_floor(pct))))
-end
-
-M.RS_TEXT_SCALE_DEF  = RS_TEXT_SCALE_DEF
-M.RS_TEXT_SCALE_MIN  = RS_TEXT_SCALE_MIN
-M.RS_TEXT_SCALE_MAX  = RS_TEXT_SCALE_MAX
-M.RS_TEXT_SCALE_STEP = SCALE_STEP
-
--- Navbar Icon Scale
-local ICON_SCALE_KEY  = "simpleui_bar_icon_scale_pct"
-local ICON_SCALE_DEF  = 100
-local ICON_SCALE_MIN  = 50
-local ICON_SCALE_MAX  = 200
-
-function M.getIconScalePct()
-    local v = SUISettings:get(ICON_SCALE_KEY)
-    local n = tonumber(v)
-    if not n then return ICON_SCALE_DEF end
-    return math_max(ICON_SCALE_MIN, math_min(ICON_SCALE_MAX, math_floor(n)))
-end
-
-function M.setIconScalePct(pct)
-    SUISettings:set(ICON_SCALE_KEY,
-        math_max(ICON_SCALE_MIN, math_min(ICON_SCALE_MAX, math_floor(pct))))
-end
-
-M.ICON_SCALE_DEF  = ICON_SCALE_DEF
-M.ICON_SCALE_MIN  = ICON_SCALE_MIN
-M.ICON_SCALE_MAX  = ICON_SCALE_MAX
-M.ICON_SCALE_STEP = SCALE_STEP
-
--- Navbar Label Scale
-local NAVBAR_LABEL_SCALE_KEY  = "simpleui_bar_label_scale_pct"
-local NAVBAR_LABEL_SCALE_DEF  = 100
-local NAVBAR_LABEL_SCALE_MIN  = 50
-local NAVBAR_LABEL_SCALE_MAX  = 200
-
-function M.getNavbarLabelScalePct()
-    local v = SUISettings:get(NAVBAR_LABEL_SCALE_KEY)
-    local n = tonumber(v)
-    if not n then return NAVBAR_LABEL_SCALE_DEF end
-    return math_max(NAVBAR_LABEL_SCALE_MIN, math_min(NAVBAR_LABEL_SCALE_MAX, math_floor(n)))
-end
-
-function M.setNavbarLabelScalePct(pct)
-    SUISettings:set(NAVBAR_LABEL_SCALE_KEY,
-        math_max(NAVBAR_LABEL_SCALE_MIN, math_min(NAVBAR_LABEL_SCALE_MAX, math_floor(pct))))
-end
-
-M.NAVBAR_LABEL_SCALE_DEF  = NAVBAR_LABEL_SCALE_DEF
-M.NAVBAR_LABEL_SCALE_MIN  = NAVBAR_LABEL_SCALE_MIN
-M.NAVBAR_LABEL_SCALE_MAX  = NAVBAR_LABEL_SCALE_MAX
-M.NAVBAR_LABEL_SCALE_STEP = SCALE_STEP
+-- Navbar Icon Scale / Navbar Label Scale
+local ICON_SCALE_KEY         = "simpleui_bar_icon_scale_pct"
+local NAVBAR_LABEL_SCALE_KEY = "simpleui_bar_label_scale_pct"
+M.getIconScalePct,        M.setIconScalePct        = _pctAccessors(ICON_SCALE_KEY)
+M.getNavbarLabelScalePct, M.setNavbarLabelScalePct = _pctAccessors(NAVBAR_LABEL_SCALE_KEY)
 
 -- Global Font Scale (Style ▸ Text Size)
 -- Multiplies SUIStyle's five FS_* typographic levels (title/subtitle/body/
 -- detail/caption). Unlike the per-bar scales above, FS_* is baked into
 -- module-level constants at sui_style.lua load time, so a change here only
 -- takes full effect after a restart — mirrors the UI Font picker.
-local FONT_SCALE_KEY  = "simpleui_style_font_scale_pct"
-local FONT_SCALE_DEF  = 100
-local FONT_SCALE_MIN  = 50
-local FONT_SCALE_MAX  = 150
+local FONT_SCALE_MAX = 150
+M.getFontScalePct, M.setFontScalePct = _pctAccessors("simpleui_style_font_scale_pct", FONT_SCALE_MAX)
 
-function M.getFontScalePct()
-    local v = SUISettings:get(FONT_SCALE_KEY)
-    local n = tonumber(v)
-    if not n then return FONT_SCALE_DEF end
-    return math_max(FONT_SCALE_MIN, math_min(FONT_SCALE_MAX, math_floor(n)))
-end
-
-function M.setFontScalePct(pct)
-    SUISettings:set(FONT_SCALE_KEY,
-        math_max(FONT_SCALE_MIN, math_min(FONT_SCALE_MAX, math_floor(pct))))
-end
-
-M.FONT_SCALE_DEF  = FONT_SCALE_DEF
-M.FONT_SCALE_MIN  = FONT_SCALE_MIN
+M.FONT_SCALE_MIN  = SCALE_MIN
 M.FONT_SCALE_MAX  = FONT_SCALE_MAX
 M.FONT_SCALE_STEP = SCALE_STEP
+M.FONT_SCALE_DEF  = SCALE_DEF
+
+-- Saved ids that are in `defaults` (deduplicated, saved order kept), followed
+-- by the defaults missing from `saved`.
+function M.mergeOrder(saved, defaults)
+    local is_default, seen, order = {}, {}, {}
+    for _i, id in ipairs(defaults) do is_default[id] = true end
+    for _i, id in ipairs(type(saved) == "table" and saved or {}) do
+        if is_default[id] and not seen[id] then
+            seen[id] = true
+            order[#order + 1] = id
+        end
+    end
+    for _i, id in ipairs(defaults) do
+        if not seen[id] then order[#order + 1] = id end
+    end
+    return order
+end
 
 -- Link Scale
 function M.isScaleLinked()
@@ -772,45 +754,23 @@ function M.setScaleLinked(on)
 end
 
 -- Module Scale
-function M.getModuleScale(mod_id, pfx)
+-- The module's own value, unless scales are linked or unset; otherwise the global one.
+local function _modulePct(mod_id, pfx)
     if mod_id and pfx and not M.isScaleLinked() then
-        local v = SUISettings:get(_modKey(mod_id, pfx))
-        local n = tonumber(v)
-        if n then return _clamp(n) / 100 end
+        local n = tonumber(SUISettings:get(_modKey(mod_id, pfx)))
+        if n then return _clamp(n) end
     end
-    local v = SUISettings:get(MODULE_SCALE_KEY)
-    local n = tonumber(v)
-    if not n then return 1.0 end
-    return _clamp(n) / 100
+    return _readPct(MODULE_SCALE_KEY)
 end
+
+function M.getModuleScalePct(mod_id, pfx) return _modulePct(mod_id, pfx) end
+function M.getModuleScale(mod_id, pfx)    return _modulePct(mod_id, pfx) / 100 end
 
 -- Reads the user's saved percentage directly, ignoring ctx.landscape_factor
 -- (callers of getModuleScale apply that themselves). See GridRenderer.build's
 -- `cs` (engines/sui_book_grid.lua): its column width is already narrowed for
 -- landscape, so applying landscape_factor to `cs` too would double-shrink it.
-function M.getModuleScaleRaw(mod_id, pfx)
-    if mod_id and pfx and not M.isScaleLinked() then
-        local v = SUISettings:get(_modKey(mod_id, pfx))
-        local n = tonumber(v)
-        if n then return _clamp(n) / 100 end
-    end
-    local v = SUISettings:get(MODULE_SCALE_KEY)
-    local n = tonumber(v)
-    if not n then return 1.0 end
-    return _clamp(n) / 100
-end
-
-function M.getModuleScalePct(mod_id, pfx)
-    if mod_id and pfx and not M.isScaleLinked() then
-        local v = SUISettings:get(_modKey(mod_id, pfx))
-        local n = tonumber(v)
-        if n then return _clamp(n) end
-    end
-    local v = SUISettings:get(MODULE_SCALE_KEY)
-    local n = tonumber(v)
-    if not n then return SCALE_DEF end
-    return _clamp(n)
-end
+M.getModuleScaleRaw = M.getModuleScale
 
 function M.setModuleScale(pct, mod_id, pfx)
     pct = _clamp(pct)
@@ -832,29 +792,34 @@ local function _thumbKey(mod_id, pfx)
 end
 
 function M.getThumbScale(mod_id, pfx)
-    local v = SUISettings:get(_thumbKey(mod_id, pfx))
-    local n = tonumber(v)
-    if not n then return 1.0 end
-    return _clamp(n) / 100
+    return _readPct(_thumbKey(mod_id, pfx)) / 100
 end
 
 -- Same as getModuleScaleRaw, for the thumb scale setting.
-function M.getThumbScaleRaw(mod_id, pfx)
-    local v = SUISettings:get(_thumbKey(mod_id, pfx))
-    local n = tonumber(v)
-    if not n then return 1.0 end
-    return _clamp(n) / 100
-end
+M.getThumbScaleRaw = M.getThumbScale
 
 function M.getThumbScalePct(mod_id, pfx)
-    local v = SUISettings:get(_thumbKey(mod_id, pfx))
-    local n = tonumber(v)
-    if not n then return SCALE_DEF end
-    return _clamp(n)
+    return _readPct(_thumbKey(mod_id, pfx))
 end
 
 function M.setThumbScale(pct, mod_id, pfx)
-    SUISettings:set(_thumbKey(mod_id, pfx), _clamp(pct))
+    _writePct(pct, _thumbKey(mod_id, pfx))
+end
+
+-- Badge Scale — size of a corner badge as a percent of its base size. The
+-- per-module form shares its key shape with the book-grid modules.
+local BADGE_SCALE_KEY_SUFFIX = "_badge_scale"
+
+function M.badgeScaleKey(mod_id, pfx)
+    return (pfx or "simpleui_hs_") .. (mod_id or "") .. BADGE_SCALE_KEY_SUFFIX
+end
+
+function M.getBadgeScalePct(mod_id, pfx)
+    return _readPct(M.badgeScaleKey(mod_id, pfx))
+end
+
+function M.setBadgeScale(pct, mod_id, pfx)
+    _writePct(pct, M.badgeScaleKey(mod_id, pfx))
 end
 
 -- Element Scale — like Thumb Scale, but keyed by an extra `elem` name, for
@@ -867,40 +832,28 @@ local function _elemKey(mod_id, elem, pfx)
 end
 
 function M.getElemScale(mod_id, elem, pfx)
-    local v = SUISettings:get(_elemKey(mod_id, elem, pfx))
-    local n = tonumber(v)
-    if not n then return 1.0 end
-    return _clamp(n) / 100
+    return _readPct(_elemKey(mod_id, elem, pfx)) / 100
 end
 
 function M.getElemScalePct(mod_id, elem, pfx)
-    local v = SUISettings:get(_elemKey(mod_id, elem, pfx))
-    local n = tonumber(v)
-    if not n then return SCALE_DEF end
-    return _clamp(n)
+    return _readPct(_elemKey(mod_id, elem, pfx))
 end
 
 function M.setElemScale(pct, mod_id, elem, pfx)
-    SUISettings:set(_elemKey(mod_id, elem, pfx), _clamp(pct))
+    _writePct(pct, _elemKey(mod_id, elem, pfx))
 end
 
 -- Label Scale
 function M.getLabelScale()
-    local v = SUISettings:get(LABEL_SCALE_KEY)
-    local n = tonumber(v)
-    if not n then return 1.0 end
-    return _clamp(n) / 100
+    return _readPct(LABEL_SCALE_KEY) / 100
 end
 
 function M.getLabelScalePct()
-    local v = SUISettings:get(LABEL_SCALE_KEY)
-    local n = tonumber(v)
-    if not n then return SCALE_DEF end
-    return _clamp(n)
+    return _readPct(LABEL_SCALE_KEY)
 end
 
 function M.setLabelScale(pct)
-    SUISettings:set(LABEL_SCALE_KEY, _clamp(pct))
+    _writePct(pct, LABEL_SCALE_KEY)
 end
 
 function M.getSectionLabelScale(mod_id, pfx)
@@ -928,34 +881,31 @@ function M.setSectionLabelScale(pct, mod_id, pfx)
 end
 
 local _BASE_LABEL_TEXT_H = nil
-function M.getScaledLabelH(mod_id, pfx)
+function M.getScaledLabelH(mod_id, pfx, landscape_factor)
+    if type(mod_id) == "number" then
+        landscape_factor, mod_id = mod_id, nil
+    end
     if not _BASE_LABEL_TEXT_H then
         local ok, SUIStyle = pcall(require, "features/sui_style")
         local base_fs = (ok and SUIStyle and SUIStyle.FS_BODY) or 18  -- FS_BODY (18)
         _BASE_LABEL_TEXT_H = require("device").screen:scaleBySize(base_fs)
     end
     local PAD2  = require("infra/sui_core").PAD2
-    local scale = M.getSectionLabelScale(mod_id, pfx)
+    local scale = M.getSectionLabelScale(mod_id, pfx) * (landscape_factor or 1)
     return PAD2 + math_max(8, math_floor(_BASE_LABEL_TEXT_H * scale))
 end
 
 -- Item Label Scale
 function M.getItemLabelScale(mod_id, pfx)
-    local v = SUISettings:get(_itemLabelKey(mod_id, pfx))
-    local n = tonumber(v)
-    if not n then return 1.0 end
-    return _clamp(n) / 100
+    return _readPct(_itemLabelKey(mod_id, pfx)) / 100
 end
 
 function M.getItemLabelScalePct(mod_id, pfx)
-    local v = SUISettings:get(_itemLabelKey(mod_id, pfx))
-    local n = tonumber(v)
-    if not n then return SCALE_DEF end
-    return _clamp(n)
+    return _readPct(_itemLabelKey(mod_id, pfx))
 end
 
 function M.setItemLabelScale(pct, mod_id, pfx)
-    SUISettings:set(_itemLabelKey(mod_id, pfx), _clamp(pct))
+    _writePct(pct, _itemLabelKey(mod_id, pfx))
 end
 
 function M.isModuleBackgroundEnabled(mod_id, pfx)
@@ -1031,7 +981,7 @@ function M.getTextStyleScalePct(mod_id, elem, pfx)
 end
 
 function M.setTextStyleScale(pct, mod_id, elem, pfx)
-    SUISettings:set(_textKey(TEXT_SCALE_INFIX, mod_id, elem, pfx), _clamp(pct))
+    _writePct(pct, _textKey(TEXT_SCALE_INFIX, mod_id, elem, pfx))
 end
 
 -- family == nil clears the choice.
@@ -1288,7 +1238,7 @@ function M.resetAllScales(pfx, pfx_qa)
     SUISettings:del(BAR_SIZE_KEY)
     SUISettings:del(TOPBAR_SIZE_KEY)
     SUISettings:del(NAVBAR_LABEL_SCALE_KEY)
-    SUISettings:del("simpleui_bar_icon_scale_pct")
+    SUISettings:del(ICON_SCALE_KEY)
     SUISettings:del("simpleui_bar_rs_text_scale_pct")
     local Registry = require("modules/moduleregistry")
     for _, mod in ipairs(Registry.list()) do
@@ -1304,16 +1254,18 @@ function M.resetAllScales(pfx, pfx_qa)
             end
         end
     end
-    -- Per-element text sizes are scales too. Collect first: the store
-    -- forbids mutation while iterating its keys.
-    local scale_pfx, text_scales = pfx or "simpleui_hs_", {}
+    -- Per-element text sizes and badge sizes are scales too. Badge sizes are
+    -- matched by suffix: they live under per-module and fixed keys alike.
+    -- Collect first: the store forbids mutation while iterating its keys.
+    local scale_pfx, stale = pfx or "simpleui_hs_", {}
     for key in SUISettings:iterateKeys() do
-        if type(key) == "string" and key:sub(1, #scale_pfx) == scale_pfx
-           and key:find(TEXT_SCALE_INFIX, #scale_pfx + 1, true) then
-            text_scales[#text_scales + 1] = key
+        if type(key) == "string"
+           and ((key:sub(1, #scale_pfx) == scale_pfx and key:find(TEXT_SCALE_INFIX, #scale_pfx + 1, true))
+                or key:sub(-#BADGE_SCALE_KEY_SUFFIX) == BADGE_SCALE_KEY_SUFFIX) then
+            stale[#stale + 1] = key
         end
     end
-    for _i, key in ipairs(text_scales) do SUISettings:del(key) end
+    for _i, key in ipairs(stale) do SUISettings:del(key) end
     if pfx_qa then
         for slot = 1, 3 do
             SUISettings:del(pfx_qa .. slot .. "_scale")
@@ -1372,9 +1324,26 @@ function M.makeScaleItem(opts)
     }
 end
 
--- Backdrop opacity entry (0–100 %, labelled Transparent / N% / Solid),
--- shared by every surface drawn over the wallpaper. The dialog documents the
--- semantic default, which its reset button restores.
+-- "Badge Size" spinner for a corner badge.
+-- opts: { get, set, refresh, info, text_func, separator, enabled_func, _lc }
+function M.makeBadgeSizeItem(opts)
+    local _lc  = opts._lc or _
+    local item = M.makeScaleItem{
+        text_func = opts.text_func or function() return _lc("Badge Size") end,
+        separator = opts.separator,
+        title     = _lc("Badge Size"),
+        info      = opts.info,
+        get       = opts.get,
+        set       = opts.set,
+        refresh   = opts.refresh,
+    }
+    item.enabled_func = opts.enabled_func
+    return item
+end
+
+-- Wallpaper strength entry (0–100 %, labelled Transparent / N% / Solid by
+-- default), shared by every surface and tint drawn over the wallpaper. The
+-- dialog documents the semantic default, which its reset button restores.
 -- opts: {
 --   title         — entry text and dialog title
 --   get / set     — strength accessors (0–100)
@@ -1383,11 +1352,15 @@ end
 --   info          — optional dialog description (generic one otherwise)
 --   enabled_func  — optional menu enabled state
 --   value_func    — optional override of the value label
+--   value_max     — optional upper bound (defaults to 100)
+--   format        — optional strength → label formatter (defaults to
+--                   Transparent / N% / Solid)
 --   _lc           — optional translator (defaults to the plugin translator)
 -- }
 function M.makeBackdropStrengthItem(opts)
     local _lc = opts._lc or _
     local function label(strength)
+        if opts.format then return opts.format(strength) end
         return require("features/sui_wallpaper").formatBackdropStrength(strength, _lc)
     end
     return {
@@ -1405,7 +1378,7 @@ function M.makeBackdropStrengthItem(opts)
                 info_text     = info .. "\n" .. T(_lc("Default: %1"), label(opts.default_value)),
                 value         = opts.get(),
                 value_min     = 0,
-                value_max     = 100,
+                value_max     = opts.value_max or 100,
                 value_step    = 5,
                 unit          = "%",
                 ok_text       = _("Apply"),
@@ -1722,13 +1695,16 @@ end
 
 function M.getModuleSectionLabel(mod, ctx)
     if not mod or M.isLabelHidden(mod.id) then return nil end
+    if type(mod.getLabel) == "function" then
+        local desc = mod.getLabel(ctx)
+        return desc and desc.text
+    end
     if type(mod.label_func) == "function" then
         local label = mod.label_func(ctx)
         if label ~= nil then return label end
     end
     return mod._section_label or mod.label
 end
-
 -- ===========================================================================
 -- Cover Hold Mode — long-press behaviour for modules with book covers.
 -- "book_dialog" (default) opens a per-book action dialog
@@ -1804,15 +1780,20 @@ function M.makeCoverHoldModeItem(opts)
     }
 end
 
--- Generic N-way radio submenu ("Type: X →" row that opens a list of radio
--- choices), extracted from the get/set/refresh shape already used above by
+-- Generic N-way radio submenu: a row with a static label and the current
+-- choice shown as its right-side value, opening a list of radio choices.
+-- Extracted from the get/set/refresh shape already used above by
 -- makeCoverHoldModeItem. Any settings-menu consumer with more than an on/off
 -- toggle (a style/type/color picker) can reuse this instead of hand-rolling
 -- its own sub_item_table_func.
 --
+-- The label never embeds the current choice (no "Type: X"); the choice is
+-- exposed only through value_func / mandatory_func.
+--
 -- opts:
 --   text          string    static row label (ignored if text_func given)
 --   text_func     function? () -> string, overrides `text`
+--   help_text     string?   long-press help for the row
 --   options       { { value = any, label = string }, ... }  (required,
 --                 ordered — this order is also the menu order)
 --   get           function() -> current value (required)
@@ -1838,6 +1819,7 @@ function M.makeRadioSubmenuItem(opts)
         text_func      = opts.text_func or function() return opts.text end,
         value_func     = function() return _labelFor(get()) end,
         mandatory_func = function() return _labelFor(get()) end,
+        help_text      = opts.help_text,
         enabled_func   = opts.enabled_func,
         separator      = opts.separator,
         sub_item_table_func = function()
@@ -1859,7 +1841,8 @@ function M.makeRadioSubmenuItem(opts)
     }
 end
 
-function M.makeLabelToggleItem(mod_id, default_label, refresh, _lc)
+function M.makeLabelToggleItem(mod_id, refresh, _lc, legacy_lc)
+    if type(refresh) == "string" then refresh, _lc = _lc, legacy_lc end
     return {
         _sui_section_label_toggle = true,
         text           = _lc("Show section label"),
@@ -1965,15 +1948,29 @@ M._cover_extract_specs   = {}
 
 local _BookInfoManager = nil
 
+-- Makes the book info store drop this module's cached cover state for a book
+-- whenever it forgets that book (cover or metadata changes, manual refresh).
+-- Wrapped from the store's original method, so repeated calls never stack.
+local function _hookBookInfoDeletion(bim)
+    local orig = bim._sui_orig_deleteBookInfo or bim.deleteBookInfo
+    if type(orig) ~= "function" then return bim end
+    bim._sui_orig_deleteBookInfo = orig
+    bim.deleteBookInfo = function(self, filepath)
+        if filepath then M.dropCoverCaches(filepath) end
+        return orig(self, filepath)
+    end
+    return bim
+end
+
 function M.getBookInfoManager()
     if _BookInfoManager then return _BookInfoManager end
     local ok, bim = pcall(require, "bookinfomanager")
-    if ok and bim and type(bim) == "table" and bim.getBookInfo then
-        _BookInfoManager = bim; return bim
+    if not (ok and bim and type(bim) == "table" and bim.getBookInfo) then
+        ok, bim = pcall(require, "plugins/coverbrowser.koplugin/bookinfomanager")
     end
-    ok, bim = pcall(require, "plugins/coverbrowser.koplugin/bookinfomanager")
     if ok and bim and type(bim) == "table" and bim.getBookInfo then
-        _BookInfoManager = bim; return bim
+        _BookInfoManager = _hookBookInfoDeletion(bim)
+        return _BookInfoManager
     end
     return nil
 end
@@ -2044,6 +2041,14 @@ local function _markNoCover(filepath)
     end
 end
 
+local function _unmarkNoCover(filepath)
+    if not _no_cover_probe[filepath] then return end
+    _no_cover_probe[filepath] = nil
+    for i, k in ipairs(_no_cover_order) do
+        if k == filepath then table.remove(_no_cover_order, i); break end
+    end
+end
+
 -- ---------------------------------------------------------------------------
 -- Reference-cover cache — the crop-to-fill counterpart to
 -- infra/sui_cover_cache.lua's stretch-only one. Backs
@@ -2104,18 +2109,24 @@ local function _ensureRenderImage()
     return _RenderImage
 end
 
+-- Returns the cached reference bb for `filepath` (refreshing its LRU
+-- position), or nil on a miss.
+local function _cachedRefCoverBB(filepath)
+    local cached = _bim_ref_cache[filepath]
+    if not cached then return nil end
+    _removeRefOrderKey(filepath)
+    _bim_ref_order[#_bim_ref_order + 1] = filepath
+    return cached.bb
+end
+
 -- Returns a bb that's safe to use as _scaleBBToSlot's source for `filepath`:
 -- the raw bb itself when it's already small (no point caching a second copy
 -- no bigger than the reference would be), or a cached downscaled copy
 -- otherwise. Never crops -- only ever a uniform scale-to-fit within
 -- _REF_MAX_DIM -- so the result stays a valid source for ANY target shape.
 local function _getRefCoverBB(filepath, raw_bb)
-    local cached = _bim_ref_cache[filepath]
-    if cached then
-        _removeRefOrderKey(filepath)
-        _bim_ref_order[#_bim_ref_order + 1] = filepath
-        return cached.bb
-    end
+    local cached = _cachedRefCoverBB(filepath)
+    if cached then return cached end
 
     local src_w, src_h = raw_bb:getWidth(), raw_bb:getHeight()
     if src_w <= 0 or src_h <= 0 or (src_w <= _REF_MAX_DIM and src_h <= _REF_MAX_DIM) then
@@ -2291,6 +2302,14 @@ local function _dropLocalCoverCaches(filepath)
     if _bim_ref_bytes < 0 then _bim_ref_bytes = 0 end
 end
 
+-- Forgets all locally cached cover state for one book (stretched bitmap,
+-- reference bitmap and no-cover marker). The next request rebuilds it from
+-- the current book info.
+function M.dropCoverCaches(filepath)
+    _dropLocalCoverCaches(filepath)
+    _unmarkNoCover(filepath)
+end
+
 -- Stretches `raw_bb` (bookinfo.cover_bb — BookInfoManager's own persistent
 -- entry for this file, shared with KOReader core) to exactly
 -- target_w x target_h, aspect NOT preserved. Never hands raw_bb itself to
@@ -2320,87 +2339,97 @@ local function _stretchBBToSize(raw_bb, target_w, target_h)
     return stretched_bb
 end
 
+-- Decodes the cover bitmap held by the book info store. The decode is
+-- comparatively expensive, so callers first validate through metadata-only
+-- lookups and call this only when no local cache entry can serve the request.
+local function _loadCoverBB(bim, filepath)
+    local ok, bookinfo = pcall(bim.getBookInfo, bim, filepath, true)
+    return ok and bookinfo and bookinfo.cover_bb or nil
+end
+
+local function _noCover(filepath)
+    M._cover_extract_pending[filepath] = nil
+    _markNoCover(filepath)
+    return nil
+end
+
+-- Returns the book's metadata-only info (no cover decode), or nil after
+-- queueing an extraction when the info is missing or the lookup failed.
+local function _getCoverInfo(bim, filepath, w, h)
+    local ok, bookinfo = pcall(bim.getBookInfo, bim, filepath, false)
+    if ok and bookinfo and bookinfo.cover_fetched then return bookinfo end
+    _enqueueCoverExtract(filepath, w, h)
+    M.cover_extraction_pending = true
+    return nil
+end
+
 function M.getStretchedCoverBB(filepath, w, h)
     if M.isCoverMissing(filepath) then return nil end
 
     -- Reject non-regular-file paths before the extractor (can segfault).
-    if _lfsMode(filepath) ~= "file" then _markNoCover(filepath); return nil end
+    if _lfsMode(filepath) ~= "file" then return _noCover(filepath) end
 
     local bim = M.getBookInfoManager()
     if not bim then return nil end
-    local ok, bookinfo = pcall(bim.getBookInfo, bim, filepath, true)
+    local bookinfo = _getCoverInfo(bim, filepath, w, h)
+    if not bookinfo then return nil end
+    if not bookinfo.has_cover then return _noCover(filepath) end
 
-    if not ok then
+    -- Undersized book info thumbnail: serve a stretched placeholder and
+    -- re-extract larger. Local caches are dropped so the upgraded bitmap can
+    -- replace a same-size upscale (prefer-larger is pixel-count only).
+    if _coverTooSmall(bim, bookinfo, w, h) then
+        local placeholder = SUICoverCache:get(filepath)
+        _dropLocalCoverCaches(filepath)
         _enqueueCoverExtract(filepath, w, h)
         M.cover_extraction_pending = true
-        return nil
-    end
-    if bookinfo and bookinfo.cover_fetched then
-        if bookinfo.has_cover and bookinfo.cover_bb then
-            -- List-mode / undersized BIM thumbnail: show stretched placeholder
-            -- and re-extract larger. Drop local caches so the upgraded bb can
-            -- replace a same-size upscale (prefer-larger is pixel-count only).
-            if _coverTooSmall(bim, bookinfo, w, h) then
-                local placeholder = SUICoverCache:get(filepath)
-                _dropLocalCoverCaches(filepath)
-                _enqueueCoverExtract(filepath, w, h)
-                M.cover_extraction_pending = true
-                if placeholder and placeholder:getWidth() >= w
-                        and placeholder:getHeight() >= h then
-                    return placeholder
-                end
-                return _stretchBBToSize(bookinfo.cover_bb, w, h)
-            end
-            M._cover_extract_pending[filepath] = nil
-            local cached = SUICoverCache:get(filepath)
-            if cached and cached:getWidth() >= w and cached:getHeight() >= h then
-                return cached
-            end
-            local bb = _stretchBBToSize(bookinfo.cover_bb, w, h)
-            return SUICoverCache:put(filepath, bb)
-        else
-            M._cover_extract_pending[filepath] = nil; _markNoCover(filepath); return nil
+        if placeholder and placeholder:getWidth() >= w
+                and placeholder:getHeight() >= h then
+            return placeholder
         end
+        local raw_bb = _loadCoverBB(bim, filepath)
+        return raw_bb and _stretchBBToSize(raw_bb, w, h) or nil
     end
-    _enqueueCoverExtract(filepath, w, h)
-    if M._cover_extract_pending[filepath] then M.cover_extraction_pending = true end
-    return nil
+
+    M._cover_extract_pending[filepath] = nil
+    local cached = SUICoverCache:get(filepath)
+    if cached and cached:getWidth() >= w and cached:getHeight() >= h then
+        return cached
+    end
+    local raw_bb = _loadCoverBB(bim, filepath)
+    if not raw_bb then return _noCover(filepath) end
+    return SUICoverCache:put(filepath, _stretchBBToSize(raw_bb, w, h))
 end
 
 function M.getCroppedCoverBB(filepath, w, h, align)
     if M.isCoverMissing(filepath) then return nil end
 
-    if _lfsMode(filepath) ~= "file" then _markNoCover(filepath); return nil end
+    if _lfsMode(filepath) ~= "file" then return _noCover(filepath) end
 
     local bim = M.getBookInfoManager()
     if not bim then return nil end
-    local ok, bookinfo = pcall(bim.getBookInfo, bim, filepath, true)
+    local bookinfo = _getCoverInfo(bim, filepath, w, h)
+    if not bookinfo then return nil end
+    if not bookinfo.has_cover then return _noCover(filepath) end
 
-    if not ok then
+    if _coverTooSmall(bim, bookinfo, w, h) then
+        _dropLocalCoverCaches(filepath)
         _enqueueCoverExtract(filepath, w, h)
         M.cover_extraction_pending = true
-        return nil
+        -- Crop placeholder from the small source (no ref cache).
+        local raw_bb = _loadCoverBB(bim, filepath)
+        return raw_bb and _scaleBBToSlot(raw_bb, w, h, align) or nil
     end
-    if bookinfo and bookinfo.cover_fetched then
-        if bookinfo.has_cover and bookinfo.cover_bb then
-            if _coverTooSmall(bim, bookinfo, w, h) then
-                _dropLocalCoverCaches(filepath)
-                _enqueueCoverExtract(filepath, w, h)
-                M.cover_extraction_pending = true
-                -- Crop placeholder from the small source (no ref cache).
-                return _scaleBBToSlot(bookinfo.cover_bb, w, h, align)
-            end
-            M._cover_extract_pending[filepath] = nil
-            -- Shared uncropped ref; crop fresh so callers can differ on align.
-            local ref_bb = _getRefCoverBB(filepath, bookinfo.cover_bb)
-            return _scaleBBToSlot(ref_bb, w, h, align)
-        else
-            M._cover_extract_pending[filepath] = nil; _markNoCover(filepath); return nil
-        end
+
+    M._cover_extract_pending[filepath] = nil
+    -- Shared uncropped ref; crop fresh so callers can differ on align.
+    local ref_bb = _cachedRefCoverBB(filepath)
+    if not ref_bb then
+        local raw_bb = _loadCoverBB(bim, filepath)
+        if not raw_bb then return _noCover(filepath) end
+        ref_bb = _getRefCoverBB(filepath, raw_bb)
     end
-    _enqueueCoverExtract(filepath, w, h)
-    if M._cover_extract_pending[filepath] then M.cover_extraction_pending = true end
-    return nil
+    return _scaleBBToSlot(ref_bb, w, h, align)
 end
 
 function M.clearCoverCache()
@@ -2597,13 +2626,15 @@ function M.openStatsDB()
     if not (ok and conn) then return nil end
     -- Retry briefly when the Statistics plugin is mid-write.
     pcall(function() conn:exec("PRAGMA busy_timeout = 3000;") end)
+    -- Per-book lookups resolve book.id from md5, which the reading-stats schema
+    -- does not index. page_stat is a view (not indexable); its base table
+    -- page_stat_data already carries indexes on (id_book, ...) and start_time.
     if not _indexes_created then
-        local idx_ok = pcall(function()
+        _indexes_created = pcall(function()
             conn:exec("CREATE INDEX IF NOT EXISTS idx_simpleui_book_md5 ON book(md5);")
             -- page_stat is a view. KOReader already indexes page_stat_data
             -- by start_time and (id_book, page, start_time).
         end)
-        if idx_ok then _indexes_created = true end
     end
     return conn
 end
@@ -2772,10 +2803,18 @@ function M.applyFirstRunDefaults()
     local function def(k, v)
         if SUISettings:get(k) == nil then SUISettings:set(k, v) end
     end
-    local function gdef(k, v)
-        if G_reader_settings:readSetting(k) == nil then
-            G_reader_settings:saveSetting(k, v)
+
+    -- Book-close destination. Existing installs keep their current behaviour:
+    -- the legacy "return to book folder" toggle wins, otherwise the Home
+    -- Screen was only shown on close when it was also the launch screen.
+    if SUISettings:get(KEY_CLOSE_TARGET) == nil then
+        local target = M.BOOK_CLOSE_TARGET.HOMESCREEN
+        if SUISettings:isTrue("simpleui_hs_return_to_book_folder") then
+            target = M.BOOK_CLOSE_TARGET.BOOK_FOLDER
+        elseif SUISettings:get("simpleui_onboarding_done") and not M.isStartWithHomescreen() then
+            target = M.BOOK_CLOSE_TARGET.LIBRARY
         end
+        SUISettings:set(KEY_CLOSE_TARGET, target)
     end
 
     -- Navbar
@@ -2889,10 +2928,38 @@ function M.applyFirstRunDefaults()
     def("simpleui_qs_bar_settings_on_hold", true)
     def("simpleui_qs_bar_slots",            { "wifi_toggle", "bookmark_browser", "frontlight", "night_mode", "power", "sui_settings" })
 
-    -- KOReader global: open homescreen on launch (only set once on fresh install)
-    gdef(START_WITH_KEY, START_WITH_HOMESCREEN)
-
     SUISettings:flush()
+end
+
+-- Library defaults for a fresh install, applied once: mosaic with covers,
+-- 3 columns × 2 rows in portrait, and title and author under each cover.
+-- The display mode and grid live in the cover browser's own store, so they are
+-- written there and then applied to the file manager that is already built.
+function M.applyFirstRunLibraryDefaults()
+    if SUISettings:get("simpleui_library_defaults_applied") ~= nil then return end
+    SUISettings:set("simpleui_library_defaults_applied", true)
+    SUISettings:set("simpleui_fc_show_title_strip",  true)
+    SUISettings:set("simpleui_fc_show_author_strip", true)
+    SUISettings:flush()
+
+    local bim = M.getBookInfoManager()
+    if not bim then return end
+    local COLS, ROWS, MODE = 3, 2, "mosaic_image"
+    bim:saveSetting("filemanager_display_mode", MODE)
+    bim:saveSetting("nb_cols_portrait", COLS)
+    bim:saveSetting("nb_rows_portrait", ROWS)
+
+    require("ui/uimanager"):scheduleIn(0, function()
+        local FileChooser = require("ui/widget/filechooser")
+        FileChooser.nb_cols_portrait, FileChooser.nb_rows_portrait = COLS, ROWS
+        local FM = package.loaded["apps/filemanager/filemanager"]
+        local fm = FM and FM.instance
+        if not fm then return end
+        if fm.file_chooser then
+            fm.file_chooser.nb_cols_portrait, fm.file_chooser.nb_rows_portrait = COLS, ROWS
+        end
+        if fm.coverbrowser then fm.coverbrowser:setupFileManagerDisplayMode(MODE) end
+    end)
 end
 
 function M.reset()

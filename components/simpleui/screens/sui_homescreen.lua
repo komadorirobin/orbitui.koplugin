@@ -34,9 +34,9 @@ BUILTIN_INSTANCE_CFG = {
         if ok_bow and BookOrbitWant and BookOrbitWant.scheduleAutoRefresh then
             BookOrbitWant.scheduleAutoRefresh(widget, BUILTIN_INSTANCE_CFG.pfx)
         end
-
         if SUISettings:get("simpleui_onboarding_done") then return end
         local ok, Onboarding = pcall(require, "screens/sui_onboarding")
+        logger.info("simpleui[diag]: onboarding require ok=", ok, ok and "" or tostring(Onboarding))
         if ok and Onboarding then
             Onboarding.show(function()
                 ScreenEngine.rebuildLayout()

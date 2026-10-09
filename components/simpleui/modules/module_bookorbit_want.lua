@@ -24,7 +24,7 @@ local function _refreshScreen(screen)
 
     if screen._ctx_cache then
         screen._ctx_cache[CACHE_KEY] = nil
-        screen._ctx_cache["_row_page_" .. ID] = 1
+        require("engines/sui_section_label").PageState.setPage(screen._ctx_cache, ID, 1)
         screen._ctx_cache._bookorbit_want_coverdeck_fps = nil
     end
     local refreshed = false
