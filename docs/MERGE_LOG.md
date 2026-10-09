@@ -1301,6 +1301,21 @@ Bookshelf and all artwork/bootstrap/version files are byte-identical to alpha.31
 The local package still identifies as alpha.31 for development only and must
 never replace that published release's assets. No push, tag or version change.
 
+## 2026-10-09: Prepare alpha.32 for explicit publication
+
+The user explicitly requests publication after the reviewed merge at `0c04c08c`.
+Prepare alpha.32 as a prerelease, not a device-accepted beta. Include the
+unsquashed import `5e9ec1af` and compatibility adaptations `67f00890`, keeping
+the exact reviewed upstream pins. Preserve bootstrap/API 1, all artwork,
+reading/sync data and the held-bitmap exclusion. Do not push the local artwork
+archive branch or replace any previously published release assets.
+
+Publication gates: full Lua/LuaJIT suites, translations, a clean-commit sealed
+runtime ZIP, outgoing-history/runtime held-bitmap audit, native OTA from the
+published alpha.31 installer, downloaded draft-asset checksums, both CI jobs
+and anonymous live OTA. Device-only visual checks remain listed in TESTING.md
+and the release notes; there is no modularization or new upstream merge here.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

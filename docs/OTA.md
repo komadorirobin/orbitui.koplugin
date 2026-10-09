@@ -195,6 +195,16 @@ bootstrap/API 1. No artwork or reading-data changes, new Bookshelf baseline or
 general modularization are included. Code rollback retains settings; older
 runtimes ignore new options. Physical-device acceptance remains open.
 
+Version `0.1.0-alpha.32` includes nine further reviewed SimpleUI commits through
+`f14507af`, with generated cover placeholders, cropped Cover Deck sides,
+folder-stack styles, backdrop controls and shared choice menus. OrbitUI keeps
+its existing visual defaults and BookOrbit source. Shadow buffers are bounded
+and placeholder teardown respects later third-party patches. Alpha.31 and
+earlier alpha releases can update directly through the same preview channel
+and unchanged bootstrap/API 1. No settings migration, artwork, reading-data,
+Bookshelf baseline or general modularization changes. Device acceptance remains
+open; code rollback preserves settings and earlier runtimes ignore new options.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries
