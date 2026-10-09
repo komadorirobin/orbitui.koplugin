@@ -1214,7 +1214,12 @@ reader opening, C05 BookOrbit sync ownership, C10 shared panels and C11 ornament
 remain unchanged. VERSION, root bootstrap, artwork and public release bytes are
 unchanged. The held Mann bitmap remains excluded; no archive branch is pushed.
 
-Validation results are recorded in TESTING.md. Device checks remain outstanding:
+Adaptation commit `bf5ea7b2` passes full Lua/LuaJIT, translations and clean-commit
+sealed ZIP validation (1661 runtime files, 1714 archive entries, 264 modules).
+Detailed counts and unchanged skip reasons are recorded in TESTING.md. Read-only
+collection at 05:11 UTC confirms zero missing commits for both upstreams.
+The local candidate retains VERSION alpha.30 and never replaces the published
+release archive. Device checks remain outstanding:
 reader return to each destination, repeated native menu opens, Bento/custom
 screens, live dock margin changes, optional tabs/icons and paginated wallpaper
 backdrops in day/night mode. Retain the existing rollback installation and

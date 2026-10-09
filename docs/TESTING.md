@@ -25,9 +25,12 @@ Still needs physical Bigme verification: closing books to each configured
 destination, repeated menu/reader opens without shrinking margins, Bento and
 custom-screen spacing, live bottom-margin changes on Home and Bookshelf, optional
 titlebar tabs with custom icons, paginated backdrop opacity and night mode.
-No device test or measured speedup is claimed. Clean-commit ZIP validation is the
-remaining local gate; this task does not publish, tag, change OTA or modularize
-the UI. The older checkpoints below describe their own historical candidates.
+No device test or measured speedup is claimed. Adaptation commit `bf5ea7b2`
+passes clean-commit sealed ZIP validation: 1661 runtime files, 1714 archive
+entries, all module/asset/license/recovery checks. This is a local development
+package, not replacement bytes for the published alpha.30 release. This task
+does not publish, tag, change OTA or modularize the UI. The older checkpoints
+below describe their own historical candidates.
 
 Frontal Ahrens/Mann replacement (local, unpublished): eight Python asset checks
 cover exact source-photo/mask reproduction, hashes and licenses, unchanged
