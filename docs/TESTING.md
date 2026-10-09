@@ -17,7 +17,9 @@ unchanged visual defaults, placeholder hook ownership across later third-party
 patches, bounded shadow buffers with collision-free keys, and disposal of
 off-screen placeholder sheets while cropped widgets own their slice buffers.
 Existing series-box, completed-box, dock, Bento and ornament tests still pass.
-The clean-commit package result is recorded with the merge's validation below.
+Adaptation commit `67f00890` passes clean-commit sealed ZIP validation: 1663
+manifest files and 1716 archive entries, including module/asset/license/recovery
+checks. The local development ZIP does not replace the published alpha.31 asset.
 Physical Bigme checks still required: no-cover book rendering/cropping in native
 grids and Cover Deck, default/classic folder stacks, repeated native menus,
 day/night shadows/backdrops and coexistence with external placeholder patches.

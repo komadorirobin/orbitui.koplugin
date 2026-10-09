@@ -1294,6 +1294,13 @@ placeholder sizing/cropping, default/classic folder stacks, day/night shadows
 and opacity, repeated native menu opens and external placeholder patches.
 Keep the previous installation for rollback; no OTA or release is published.
 
+Validation: adaptation commit `67f00890` passes clean-commit sealed runtime
+packaging: 1663 manifest files, 1716 archive entries and all module, asset,
+license and recovery checks. The reviewed SimpleUI target is fully in ancestry;
+Bookshelf and all artwork/bootstrap/version files are byte-identical to alpha.31.
+The local package still identifies as alpha.31 for development only and must
+never replace that published release's assets. No push, tag or version change.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
