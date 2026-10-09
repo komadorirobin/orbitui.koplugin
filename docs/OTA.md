@@ -185,6 +185,16 @@ unchanged bootstrap/API 1. No settings migration, reading-data, artwork or
 upstream baseline changes are included. Device visual acceptance remains open.
 Code rollback to alpha.29 also restores its completed-box crash.
 
+Version `0.1.0-alpha.31` includes the reviewed 16-commit SimpleUI upstream merge,
+with reader-return/cache improvements, optional titlebar tabs, an independent
+book-close destination, wallpaper darkening and badge sizing. OrbitUI keeps the
+current titlebar/icons, Bento margins, embedded dock geometry and legacy settings.
+Transient database/cover failures remain retryable. Alpha.30 and earlier alpha
+releases can update directly through the same preview channel and unchanged
+bootstrap/API 1. No artwork or reading-data changes, new Bookshelf baseline or
+general modularization are included. Code rollback retains settings; older
+runtimes ignore new options. Physical-device acceptance remains open.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

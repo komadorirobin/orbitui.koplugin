@@ -1226,6 +1226,21 @@ backdrops in day/night mode. Retain the existing rollback installation and
 settings; no new destructive migration or modularization is part of this merge.
 No push, version bump, tag, release or OTA publication is authorized/performed.
 
+## 2026-10-09: Prepare alpha.31 for explicit publication
+
+The user explicitly requests publication of the reviewed upstream merge at
+`451f29d3`. Prepare alpha.31 as a prerelease, not a device-accepted beta. Include
+the unsquashed import `ea116e65` and compatibility adaptations `bf5ea7b2` without
+following newer upstream revisions. Preserve bootstrap/API 1, all artwork,
+existing reading/sync data and the held-bitmap exclusion. Never push the local
+artwork archive branch or replace already published release assets.
+
+Publication gates: full Lua/LuaJIT suites, translations, clean-commit sealed
+runtime package, outgoing-history/runtime held-bitmap audit, native OTA from
+the actual published alpha.30 installer, downloaded draft-asset verification,
+both CI jobs and anonymous live OTA. Physical reader checks remain outstanding
+as listed in TESTING.md and the release notes. No modularization is included.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
