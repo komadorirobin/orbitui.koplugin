@@ -1483,6 +1483,22 @@ grid/full-screen/bookcase views, and the series-author toggle on native stacks.
 Keep the existing installation and settings backup. No push, version bump,
 tag, release or OTA publication is part of this merge.
 
+## 2026-10-11: Prepare alpha.36 for explicit publication
+
+The user explicitly requests publication of the reviewed Bookshelf 5.4.1 merge
+at `966252a1`. Prepare alpha.36 as a prerelease with no further upstream changes.
+Include subtree import `f7f567e4` and compatibility work `c4552ed9`. Preserve
+bootstrap/API 1, SimpleUI, artwork, per-chip caption preferences and external
+sync ownership. Do not push any local artwork archive branch or replace earlier
+published release bytes.
+
+Publication gates: full sequential Lua/LuaJIT suites, translations, clean-commit
+sealed packaging, outgoing-history/runtime held-bitmap audit, native OTA from
+the published alpha.35 installer, downloaded draft checksums, CI and anonymous
+live OTA. These are headless tests, not reader acceptance. Nested themes and
+all caption views/placements still need reader checks; retain a settings backup.
+Upgrades from before alpha.33 retain the theme-migration rollback caveat.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

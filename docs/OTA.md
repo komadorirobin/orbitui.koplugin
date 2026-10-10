@@ -236,6 +236,17 @@ channel and unchanged bootstrap/API 1. No artwork, reading data, sync settings
 or upstream baselines are changed. Code rollback retains the new preference;
 earlier runtimes ignore it. Device visual acceptance remains open.
 
+Alpha.36 integrates the reviewed Bookshelf 5.4.1 update. Nested shelves can
+choose independent themes or restore parent inheritance. OrbitUI's existing
+per-chip cover-text menu, custom text and above/bottom placement remain the
+single owner of caption preferences in all supported views; the duplicate
+native grid-only picker is hidden. The native grid-stack group setting is now
+Show author below series, without changing physical series-box labels. Alpha.35
+can update directly through the preview channel and unchanged bootstrap/API 1.
+SimpleUI, artwork, reading data and sync ownership are unchanged. No new
+settings migration is introduced; older upgrades still carry the alpha.33
+theme-storage migration. Device acceptance remains open.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries
