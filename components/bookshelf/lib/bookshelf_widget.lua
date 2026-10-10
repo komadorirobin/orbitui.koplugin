@@ -6124,8 +6124,11 @@ end
 -- "custom" is the reader's own token template (lib/bookshelf_cover_label.lua).
 -- While its editor is open the draft outranks the saved mode, so choosing
 -- Custom from Title or None previews the strip before anything is saved.
+--
+-- The shelf on screen may choose its own (Shelf style, after 5.4), so this
+-- asks CoverLabel for the chip's, which falls back to the setting.
 function BookshelfWidget:_bookLabelMode()
-    local mode = BookshelfSettings.read("expanded_shelf_label")
+    local mode = require("lib/bookshelf_cover_label").modeFor(self.chip)
     if self._cover_label_preview then mode = "custom" end
     return mode
 end
@@ -6172,27 +6175,10 @@ function BookshelfWidget:_shelfLabelStripVisible()
     return true
 end
 
--- _groupLabelMode() -> "author" / "custom", or nil for None: Cover display >
--- Show text below groups (issue 486). While the groups' editor is open its
--- draft outranks the saved choice, as the books' does.
+-- _groupLabelMode() -> "author", or nil when off: Cover display > Show
+-- author below series (issue 486).
 function BookshelfWidget:_groupLabelMode()
-    if self._group_label_preview then return "custom" end
     return require("lib/bookshelf_cover_label").groupMode()
-end
-
--- _groupLabelLine() -> the groups' Custom line in effect (the draft while its
--- editor is open, else the saved one).
-function BookshelfWidget:_groupLabelLine()
-    if self._group_label_preview then return self._group_label_preview end
-    return require("lib/bookshelf_cover_label").groupLine()
-end
-
--- _previewGroupLabel(line) -- the groups' editor preview: draw `line` under
--- the group tiles, or drop the override when nil.
-function BookshelfWidget:_previewGroupLabel(line)
-    self._group_label_preview = line
-    self:_rebuild()
-    UIManager:setDirty(self, "ui")
 end
 
 -- _coverLabelLine() -> the Custom label in effect: the editor's draft while it
@@ -6200,7 +6186,7 @@ end
 -- cannot disagree about which template they are drawing.
 function BookshelfWidget:_coverLabelLine()
     if self._cover_label_preview then return self._cover_label_preview end
-    return require("lib/bookshelf_cover_label").line()
+    return require("lib/bookshelf_cover_label").lineFor(self.chip)
 end
 
 -- _previewCoverLabel(line) -- draw `line` as the Custom label instead of the
@@ -6210,6 +6196,12 @@ function BookshelfWidget:_previewCoverLabel(line)
     self._cover_label_preview = line
     self:_rebuild()
     UIManager:setDirty(self, "ui")
+end
+
+-- _booksLabelNone() -> the books on this shelf print no label (None, the
+-- shelf's own or the default), and no Custom draft is being previewed.
+function BookshelfWidget:_booksLabelNone()
+    return self:_bookLabelMode() == "none"
 end
 
 -- _gridLabelsKey() -> string
@@ -6228,7 +6220,7 @@ function BookshelfWidget:_gridLabelsKey()
         .. "|" .. tostring(require("lib/bookshelf_stack_display").resolve(self:_groupDisplayMode()))
         -- And the two label choices that decide it: books on None print
         -- nothing, and a group's text can need the strip on its own.
-        .. "|" .. tostring(self:_bookLabelMode() == "none")
+        .. "|" .. tostring(self:_booksLabelNone())
         .. "|" .. tostring(self:_groupLabelMode())
 end
 
@@ -6259,7 +6251,7 @@ end
 -- the footer.
 function BookshelfWidget:_noteGridLabels(items, windowed)
     local StackDisplay = require("lib/bookshelf_stack_display")
-    local books_none = self:_bookLabelMode() == "none"
+    local books_none = self:_booksLabelNone()
     local v = StackDisplay.anyExternalLabel(items, self:_groupDisplayMode(),
         { books = not books_none, groups = self:_groupLabelMode() }) and true or false
     if not v and windowed then
@@ -7210,9 +7202,8 @@ function BookshelfWidget:_buildShelfRows(items, content_w, shelf_h, PAD, n_rows)
         label_mode        = label_mode,
         label_line        = (label_mode == "custom") and self:_coverLabelLine() or nil,
         label_position    = self.coverLabelPosition and self:coverLabelPosition(),
-        -- Text below groups (issue 486): false = None.
+        -- Author below series (issue 486): false = off.
         group_label_mode  = self:_groupLabelMode() or false,
-        group_label_line  = (self:_groupLabelMode() == "custom") and self:_groupLabelLine() or nil,
         in_series         = in_series,
         group_display     = self:_groupDisplayMode(),
     }

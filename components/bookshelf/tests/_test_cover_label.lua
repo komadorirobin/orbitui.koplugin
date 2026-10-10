@@ -56,6 +56,7 @@ package.loaded["lib/bookshelf_line_editor"] = { edit = function(spec) SPEC = spe
 local scheduled = {}
 package.loaded["ui/uimanager"] = {
     scheduleIn = function(_self, _s, fn) scheduled[#scheduled + 1] = fn end,
+    nextTick   = function(_self, fn) scheduled[#scheduled + 1] = fn end,
     unschedule = function(_self, fn)
         for i = #scheduled, 1, -1 do if scheduled[i] == fn then table.remove(scheduled, i) end end
     end,
@@ -261,55 +262,30 @@ end)
 
 -- ── Text below groups (issue 486) ──────────────────────────────────────────
 
-t.test("groups start on None, apart from the books", function()
+t.test("author below series: off by default, apart from the books; 5.4's Custom reads as on", function()
     fresh()
     eq(CoverLabel.groupMode(), nil, "a reader who never chose must see no change")
     stored.group_label = "none";   eq(CoverLabel.groupMode(), nil)
     stored.group_label = "title";  eq(CoverLabel.groupMode(), nil, "groups have no Title")
     stored.group_label = "author"; eq(CoverLabel.groupMode(), "author")
-    eq(CoverLabel.groupLine().template, "%author")
-    eq(CoverLabel.groupDefaultLine().template, "%author")
+    -- Custom only ever had a series' author to print (maintainer, 2026-10-10).
+    stored.group_label = "custom"; eq(CoverLabel.groupMode(), "author")
+    assert(CoverLabel.groupResolver == nil and CoverLabel.groupLine == nil and CoverLabel.saveGroup == nil,
+        "the groups' Custom template is still there")
 end)
 
-t.test("the groups' Save and choice never touch the books'", function()
+t.test("the switch never touches the books' choice", function()
     fresh()
     stored.expanded_shelf_label = "title"
     stored.expanded_shelf_label_custom = { template = "%title · %author" }
     local f0 = flushed
-    CoverLabel.saveGroup({ template = "%series", bold = true, font_size = 30 })
-    eq(stored.group_label, "custom")
-    eq(stored.group_label_custom.template, "%series")
-    eq(stored.group_label_custom.bold, true)
-    eq(stored.group_label_custom.font_size, nil)
+    CoverLabel.saveGroupMode(true)
+    eq(stored.group_label, "author"); eq(flushed, f0 + 1)
+    CoverLabel.saveGroupMode(false)
+    eq(stored.group_label, "none"); eq(CoverLabel.groupMode(), nil)
+    CoverLabel.saveGroupMode("author"); eq(CoverLabel.groupMode(), "author", "5.4's string form")
     eq(stored.expanded_shelf_label, "title", "the books' mode moved")
     eq(stored.expanded_shelf_label_custom.template, "%title · %author", "the books' line moved")
-    eq(flushed, f0 + 1)
-    CoverLabel.saveGroupMode("author")
-    eq(stored.group_label, "author")
-    CoverLabel.saveGroupMode("none")
-    eq(CoverLabel.groupMode(), nil)
-    eq(stored.group_label_custom.template, "%series", "None threw the template away")
-end)
-
-t.test("a group's Custom line reads the group, not its first book", function()
-    fresh()
-    local r = CoverLabel.groupResolver({ template = "%author · %title" })
-    local series = { series_name = "Long Earth", label = "Long Earth", stack_author = "Stephen Baxter",
-                     books = { { filepath = "/le1.epub", title = "LE1", author = "Terry Pratchett" } } }
-    eq(r(series), "Stephen Baxter · Long Earth")
-    eq(r({ kind = "author", series_name = "Ann Leckie", books = {} }), "Ann Leckie · Ann Leckie")
-    eq(CoverLabel.groupResolver({ template = "%author" })({ kind = "genre", series_name = "Horror", books = {} }), "",
-        "a genre has no author: empty, never 'nil'")
-end)
-
-t.test("the groups' line leaves the books' cache alone", function()
-    fresh()
-    local rb = CoverLabel.resolver({ template = "%title" })
-    rb(book("/b/1.epub"))
-    CoverLabel.takeStats()
-    CoverLabel.groupResolver({ template = "%author" })({ series_name = "S", books = {} })
-    CoverLabel.resolver({ template = "%title" })(book("/b/1.epub"))
-    eq(CoverLabel.takeStats().hits, 1, "asking for the groups' line emptied the books' cache")
 end)
 
 -- ── The token picker ───────────────────────────────────────────────────────
@@ -343,7 +319,7 @@ end
 t.test("the editor offers only what a label can honour", function()
     fresh()
     local spec = openEditor()
-    eq(spec.size, false, "Size offered: the strip's size is the Cover labels setting")
+    eq(spec.size, false, "Size offered: the strip's size is the Cover captions setting")
     eq(spec.font, false, "Font offered: the strip has its own face")
     eq(spec.alignment, false, "alignment offered: a label is centred")
     eq(spec.italic, false, "the style cycle offered italic")
@@ -368,25 +344,8 @@ t.test("keystrokes preview debounced, button taps at once", function()
     eq(previews[2].bold, true)
 end)
 
-t.test("the groups' editor edits the groups' line and previews on the groups' override", function()
-    fresh()
-    stored.expanded_shelf_label = "title"
-    SPEC, scheduled = nil, {}
-    local book_previews, group_previews = {}, {}
-    local bw = { _previewCoverLabel = function(_s, l) book_previews[#book_previews + 1] = l or false end,
-                 _previewGroupLabel = function(_s, l) group_previews[#group_previews + 1] = l or false end }
-    require("lib/bookshelf_cover_label_editor").show(bw, { name = "settings" }, nil, true)
-    assert(SPEC, "the groups' editor did not open")
-    eq(SPEC.line.template, "%author")
-    eq(SPEC.defaults.template, "%author")
-    SPEC.on_preview({ template = "%author", bold = true })
-    eq(#group_previews, 1); eq(#book_previews, 0, "the groups' draft previewed on the books")
-    SPEC.on_save({ template = "%series" })
-    eq(stored.group_label, "custom")
-    eq(stored.group_label_custom.template, "%series")
-    eq(stored.expanded_shelf_label, "title", "the groups' Save changed the books' mode")
-    eq(stored.expanded_shelf_label_custom, nil)
-    eq(group_previews[#group_previews], false)
+t.test("the editor has no groups' line any more", function()
+    eq(require("lib/bookshelf_cover_label_editor")._targets.groups, nil)
 end)
 
 t.test("Save writes and drops the preview; Cancel writes nothing", function()
@@ -458,9 +417,14 @@ t.test("the shelf reads Custom from the setting and from an open editor", functi
         return assert(load(src, "_shelfLabelMode", "t", env))
     end
     local mode, groups
-    local env = { BookshelfSettings = { read = function() return mode end } }
+    -- The mode comes from CoverLabel.modeFor(self.chip): the shelf's own,
+    -- else the setting (its own test above).
+    local env = { require = function(m)
+        assert(m == "lib/bookshelf_cover_label", m)
+        return { modeFor = function(chip) assert(chip == "c", "not the chip on screen"); return mode end }
+    end }
     local f = compile("local self = ... ; " .. body, env)
-    local shelf = { _gridDrawsLabels = function() return true end,
+    local shelf = { chip = "c", _gridDrawsLabels = function() return true end,
                     _groupLabelMode = function() return groups end }
     local read = assert(widget_src:match("\nfunction BookshelfWidget:_bookLabelMode%(%)\n(.-)\nend\n"))
     shelf._bookLabelMode = compile("local self = ... ; " .. read, env)
@@ -519,6 +483,73 @@ t.test("the per-book key reads fields the shelf's record builder really emits", 
     for _i, f in ipairs({ "title", "author", "series", "series_num", "page_count" }) do
         assert(body:find("\n%s+" .. f .. "%s+=") , "buildBookMeta no longer sets " .. f)
     end
+end)
+
+-- ── Per shelf (Shelf style, after 5.4) ──────────────────────────────────────
+
+t.test("a shelf's own text below covers wins; a sub-shelf follows its shelf of shelves", function()
+    for k in pairs(stored) do stored[k] = nil end
+    local tabs = {
+        series = { id = "series", label = "Series", cover_text = "series" },
+        sub    = { id = "sub", label = "Sub", parent = "series" },
+        home   = { id = "home", label = "Home" },
+        mine   = { id = "mine", label = "Mine", cover_text = "custom",
+                   cover_text_line = { template = "%author" } },
+        kid    = { id = "kid", label = "Kid", parent = "mine", cover_text = "none" },
+    }
+    CoverLabel._tab = function(id) return tabs[id] end
+    -- Unset everywhere: the setting, as before (nil = Title).
+    eq(CoverLabel.modeFor("home"), nil)
+    stored[CoverLabel.MODE_SETTING] = "author"
+    eq(CoverLabel.modeFor("home"), "author")
+    -- The series shelf's own, and its sub-shelf's by inheritance.
+    eq(CoverLabel.modeFor("series"), "series")
+    eq(CoverLabel.modeFor("sub"), "series", "a sub-shelf does not follow its shelf of shelves")
+    -- Custom with the shelf's own template, not the global one.
+    stored[CoverLabel.LINE_SETTING] = { template = "%title" }
+    eq(CoverLabel.modeFor("mine"), "custom")
+    eq(CoverLabel.lineFor("mine").template, "%author", "the shelf's own line is not used")
+    eq(CoverLabel.lineFor("home").template, "%title")
+    -- The sub-shelf's own None outranks its parent's Custom.
+    eq(CoverLabel.modeFor("kid"), "none")
+    CoverLabel._tab = nil
+end)
+
+t.test("one shelf's editor edits the shelf's line, not the settings, and hands back", function()
+    for k in pairs(stored) do stored[k] = nil end
+    package.loaded["lib/bookshelf_settings"] = { _pickToken = function() end }
+    local saved, closed = nil, 0
+    SPEC = nil
+    require("lib/bookshelf_cover_label_editor").showForShelf(nil, {
+        line = { template = "%author %series" },
+        save = function(l) saved = l end,
+        on_closed = function() closed = closed + 1 end,
+    })
+    assert(SPEC, "the editor did not open")
+    eq(SPEC.line.template, "%author %series", "the shelf's line is not what it opens on")
+    eq(SPEC.title, "Cover captions")
+    assert(SPEC.settings_module and SPEC.settings_module._pickToken, "no token picker")
+    SPEC.on_save({ template = "%series" })
+    eq(saved and saved.template, "%series")
+    eq(stored[CoverLabel.LINE_SETTING], nil, "the shelf's Save wrote the settings")
+    eq(stored[CoverLabel.MODE_SETTING], nil, "the shelf's Save wrote the settings")
+    runTimers()
+    eq(closed, 1, "Shelf style is not brought back after Save")
+    SPEC.on_cancel(); runTimers()
+    eq(closed, 2, "Shelf style is not brought back after Cancel")
+    package.loaded["lib/bookshelf_settings"] = nil
+end)
+
+t.test("the shelf reads the books' label choice for the chip on screen", function()
+    local w = io.open("lib/bookshelf_widget.lua"):read("*a")
+    for _i, pat in ipairs({
+        'require%("lib/bookshelf_cover_label"%)%.modeFor%(self%.chip%)',
+        'require%("lib/bookshelf_cover_label"%)%.lineFor%(self%.chip%)',
+    }) do
+        assert(w:find(pat), "the shelf does not ask for the chip's own: " .. pat)
+    end
+    assert(not w:find('BookshelfSettings.read("expanded_shelf_label")', 1, true),
+        "the shelf still reads the global label mode directly, past the shelf's own")
 end)
 
 t.done()
