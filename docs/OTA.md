@@ -226,6 +226,16 @@ No artwork, reading data, sync settings or upstream baselines are changed.
 Code rollback preserves the per-shelf preferences; older runtimes ignore them.
 Device visual acceptance remains open.
 
+Version `0.1.0-alpha.35` adds Cover text > Placement > Above the cover to each
+chip's long-press menu. The choice applies to both cover grids and physical
+bookcases, independently of the text content. Existing placement remains the
+default. Physical labels use headroom first and proportionally reduce the cover
+only when needed, keeping row height, book feet and pagination unchanged.
+Alpha.34 and earlier alpha releases can update directly through the same preview
+channel and unchanged bootstrap/API 1. No artwork, reading data, sync settings
+or upstream baselines are changed. Code rollback retains the new preference;
+earlier runtimes ignore it. Device visual acceptance remains open.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

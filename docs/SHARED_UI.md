@@ -102,7 +102,7 @@ Save and Cancel. Saving updates only that chip's mode/template. A chip's folders
 and series drills inherit its text; actual nested shelf chips have their own
 choice. These controls do not replace the separate list-view line configuration.
 
-Unreleased: **Cover text > Placement > Above the cover** moves the book label
+Since alpha.35, **Cover text > Placement > Above the cover** moves the book label
 above the cover on this chip, in both grid modes and the physical bookcase.
 **Bottom (default)** keeps the previous below-cover/grid or in-cover/bookcase
 placement. The position is saved separately from the content and custom template;
@@ -111,8 +111,8 @@ and nested chips remain independent; drills inherit their chip's position.
 Grid slots reuse their existing text-strip budget. Physical labels sit above the
 page block, using headroom first and scaling the cover down proportionally only
 when needed to stay inside the same row. Its page block, feet and shadow follow
-the narrower cover without changing packing. Tiny rows omit a label that cannot fit. Text can be
-tapped/held like its book, and shares finished/on-hold fading. The real card,
+the narrower cover without changing packing. Tiny rows omit a label that cannot
+fit. Text can be tapped/held like its book, and shares finished/on-hold fading. The real card,
 status indicators and opening target are not replaced. Group labels, series-box
 labels and ornaments are unchanged. Device rendering still needs verification.
 
