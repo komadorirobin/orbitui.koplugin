@@ -1374,8 +1374,21 @@ unchanged. No credentials, reading data, external plugins or device files were
 touched. Upstream's versioned theme migration is retained and tested natively;
 it translates applied-theme/piece choices, not a reset of all preferences.
 
-Verification and the clean-commit package result are recorded below after the
-final gates. Device checks still required: first launch with the existing
+Validation: adaptation commit `77a347c1` passes both complete Lua and LuaJIT
+runs: 485 OrbitUI cases in 41 files, 379 Bookshelf suites (zero failures, two
+existing native SQLite suite skips), all 13 SimpleUI files and 91 Python tests
+(four existing external source-cache audit skips). Native-font skips remain;
+Bookends parity helpers have no adjacent checkout and check no files/regions.
+All 42 translation catalogs, 277 module-map paths and 781 Lua syntax checks
+pass. No skip or known-failure gate was added by the adaptations. Clean-commit
+sealed packaging verifies 1678 manifest files and 1731 archive entries,
+including modules/assets/licenses/recovery files. Local development ZIP SHA-256:
+`4b132c174575a0be0567f67e602eff7cecf8b71673c68f521edbad0f4c33f57b`.
+Never replace published alpha.32 bytes with this unpublished development ZIP.
+Both frozen upstream targets are ancestors, with zero missing commits to those
+targets; SimpleUI, artwork, VERSION and bootstrap files match the starting tip.
+
+Device checks still required: first launch with the existing
 custom look, separate Library/Manga themes and return navigation, ornament
 placement/revisits/shuffle, completed boxes, live shelf editor, blur in colour/
 night mode and opening poses at screen edges. No measured speedup or physical

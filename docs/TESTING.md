@@ -2,6 +2,33 @@
 
 ## Automated
 
+2026-10-10 Bookshelf 5.4 upstream merge (local, unpublished, VERSION still
+alpha.32): both complete Lua and LuaJIT runs pass 485 OrbitUI cases across
+41 files, 379 Bookshelf suites (zero failures, two existing native SQLite suite
+skips), and all 13 SimpleUI test files. Existing native-font skips remain.
+Python runs 91 tests successfully with the same four external source-photo /
+museum-cache audit skips; artwork is unchanged. All 42 translation catalogs
+pass, 277 module-map paths verify and 781 Lua files pass LuaJIT syntax checks.
+No new skip or known-failure allowance was added by the compatibility work.
+Bookends parity helpers have no adjacent checkout and check no files/regions.
+
+New regressions cover profile-qualified theme/deck isolation, legacy deck
+migration, deferred persistence, same-chip cross-profile navigation, stable
+session ornament choices, pagination/dock hit boundaries and clipped 3D pose
+writes. Existing series-box completion, cover-size, dock and sync tests pass.
+Adaptation commit `77a347c1` passes clean-commit sealed ZIP validation: 1678
+manifest files and 1731 archive entries, including module/asset/license/recovery
+checks. ZIP SHA-256:
+`4b132c174575a0be0567f67e602eff7cecf8b71673c68f521edbad0f4c33f57b`.
+This local development package must not replace the published alpha.32 asset.
+
+Physical Bigme checks remain: first launch preserving the current appearance,
+separate Library/Manga themes and return navigation, ornament placement and
+revisits/shuffle, completed boxes, live shelf editor, blur in colour/night mode
+and opening poses at screen edges. Keep the previous install and a settings
+backup: native theme storage migration cannot be undone by code-only rollback.
+No device test, measured speedup, public push or OTA publication is claimed.
+
 2026-10-09 second upstream merge (local, unpublished, VERSION still alpha.31):
 both complete Lua and LuaJIT runs pass 475 OrbitUI cases across 40 files, 351
 Bookshelf suites (zero failures, two existing native SQLite suite skips), and
