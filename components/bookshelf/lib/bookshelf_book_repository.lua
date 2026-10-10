@@ -781,7 +781,10 @@ end
 -- per session to ask the wrapper, remembered per file. Only when getBookInfo
 -- really is wrapped: an unpatched BIM pays nothing, and a library whose
 -- books all have covers pays nothing either.
+local CoverHooks = {}
+do
 local _hook_cover_memo = {}
+function CoverHooks.reset() _hook_cover_memo = {} end
 local _hook_fn, _hook_fn_wrapped
 -- Set when a coverless book was built while getBookInfo was NOT wrapped. The
 -- fallback patch wraps it on KOReader's first UI tick, after our startup
@@ -799,7 +802,7 @@ local function _getBookInfoIsWrapped(bim)
     return _hook_fn_wrapped
 end
 
-local function _hookedCoverFor(bim, filepath, info)
+function CoverHooks.forMeta(bim, filepath, info)
     -- The fallback patch's own preconditions, so a "no" is final for the
     -- session: anything that could change it changes these fields too.
     if info.has_meta ~= "Y" or info.cover_fetched ~= "Y" or info.ignore_cover then
@@ -829,6 +832,7 @@ function Repo.coverHookArrived()
     if not (bim and _getBookInfoIsWrapped(bim)) then return false end
     _hook_missed = false
     return true
+end
 end
 
 local _hardcover_cache
@@ -1384,9 +1388,9 @@ function Repo.buildBookMeta(filepath, opts)
         return cached
     end
     -- A cover only a getBookInfo wrapper knows about (issue 500): see
-    -- _hookedCoverFor. A want_cover read already went through the wrapper.
+    -- CoverHooks.forMeta. A want_cover read already went through the wrapper.
     local has_cover = info.has_cover
-    if has_cover ~= "Y" and not want_cover and _hookedCoverFor(bim, filepath, info) then
+    if has_cover ~= "Y" and not want_cover and CoverHooks.forMeta(bim, filepath, info) then
         has_cover = "Y"
     end
     -- Calibre is the PRIMARY source for textual metadata when a
@@ -2630,7 +2634,7 @@ function Repo.invalidateWalkCache()
     -- this repository has, so clear them here rather than let them grow
     -- for the life of the process.
     _meta_record_cache = {}
-    _hook_cover_memo   = {}
+    CoverHooks.reset()
     -- Sidecar dirs may have appeared/vanished (sideload, new books), so the
     -- custom-metadata fast gate must re-list on the next derive.
     _invalidateCustomMetaGate()
@@ -7776,7 +7780,7 @@ end
 
 function Repo.getNextUnreadInSeries(limit, offset, scope, opts)
     local _t0 = _gettime()
-    local home  = G_reader_settings:readSetting("home_dir") or "/"
+    local home  = HomeDir.get() or "/"
     local depth = BookshelfSettings.read("latest_walk_depth") or 3
     local cands = candidatesForScope(home, depth, scope)
     local light_cache = _getLightMetaCache(home, depth)

@@ -767,7 +767,8 @@ function BookshelfWidget:init()
             -- A piece never takes a gesture in the footer's band: its
             -- buttons (the start menu, page turns) are under it.
             blocked = function(pos)
-                return pos.y >= shelf.height - _footerReserveH()
+                return pos.y >= shelf.height - shelf:_simpleUIReservedBottom()
+                    - shelf:_paginationFooterReserveHeight()
             end,
             hold = function(entry, _placement, piece)
                 if not Gestures.on("ornament_hold") then return false end
@@ -1732,7 +1733,7 @@ end
 function BookshelfWidget:_syncShelfTheme()
     local ok, TP = pcall(require, "lib/bookshelf_theme_pack")
     if not (ok and TP and TP.setShelf) then return false end
-    local changed = TP.setShelf(self.chip)
+    local changed = TP.setShelf(self.themeShelfId and self:themeShelfId() or self.chip)
     if changed and self._shelf_theme_seen then
         self._ground_memo = nil
         UIManager:setDirty("all", "full")
@@ -7322,7 +7323,7 @@ function BookshelfWidget:_spinePlanBase(content_w, shelf_h, all_items)
         -- Whose ornament deck the pieces are dealt from: every shelf has its
         -- own (lib/bookshelf_ornament_deck). Here, so the render and the
         -- page map deal from the same one.
-        orn_shelf       = self.chip,
+        orn_shelf       = self.themeShelfId and self:themeShelfId() or self.chip,
         -- The strip above a row, which a hanging piece's room includes
         -- (plan's hang_room); the same gap _buildSpineRows' lift_headroom is
         -- measured from.
@@ -7901,6 +7902,10 @@ end
 function BookshelfWidget:_ornSig()
     local ok, Orn = pcall(require, "lib/bookshelf_ornaments")
     local Deck = require("lib/bookshelf_ornament_deck")
+    -- Reconcile and perform the session shuffle before recording page states.
+    if ok and Orn and Orn.listAll then
+        Deck.sync(Orn.listAll(), self.themeShelfId and self:themeShelfId() or self.chip)
+    end
     -- The pool by identity: Orn.list() hands out the same table while
     -- nothing is switched, a new one when anything is (a count alone missed
     -- one piece off and another on).
@@ -16252,7 +16257,7 @@ function BookshelfWidget:onBookshelfShuffleOrnaments()
     -- deck, and the page map (the pieces' widths decide where pages break),
     -- are re-learnt. The page on screen keeps its first book; what follows it
     -- may move. Other shelves keep theirs.
-    require("lib/bookshelf_ornament_deck").shuffle(self.chip)
+    require("lib/bookshelf_ornament_deck").shuffle(self.themeShelfId and self:themeShelfId() or self.chip)
     self:_dropOrnPages(false)
     self:_rebuild()
     UIManager:setDirty(self, "ui")

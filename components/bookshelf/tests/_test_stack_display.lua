@@ -660,8 +660,8 @@ do
         eq(SD.anyExternalLabel({ { series_name = "S", books = {} } }, SD.STACK, none), true,
             "a stack-style series still prints its name")
     end
-    
-    
+
+
     -- ── the layer body is never seen, except through a seam ────────────────────
     do -- a layer's body takes the colour of the shadow that will cover it
         -- A layer is a page-white card behind the card in front of it, and on

@@ -5895,6 +5895,8 @@ function SpineShelf.paintFaceOutTilt(tile)
     local gap = math.floor(Screen:scaleBySize(SpineShelf.FACE_GAP_DP) * 0.8)
     local P, info = Pose.pose(W, H, T, { x = rect.x, base_y = rect.y + rect.h, gap = gap })
     local rx, ry, rw, rh = row._screen_x, row._screen_y, row.dimen.w, row.dimen.h
+    local clip = { w = bb:getWidth(), h = bb:getHeight() }
+    local src
     local function pt(x, y, z) local a, b = P(x, y, z); return { a, b } end
     local function tone(v)
         if night then v = 255 - v end
@@ -5902,7 +5904,7 @@ function SpineShelf.paintFaceOutTilt(tile)
     end
     local ok, err = pcall(function()
         -- 1. The cover alone.
-        local src = Blitbuffer.new(W, H, bb:getType())
+        src = Blitbuffer.new(W, H, bb:getType())
         src:blitFrom(bb, 0, 0, rect.x, rect.y, W, H)
         local cx0, cy0 = card.dimen.x, card.dimen.y
         pcall(function() card:paintTo(src, 0, 0) end)
@@ -5961,7 +5963,7 @@ function SpineShelf.paintFaceOutTilt(tile)
                         run_y, run_c = y, c
                     end
                 end
-            end)
+            end, clip)
         end
         local tones = {}
         local function cached(v)
@@ -6014,9 +6016,9 @@ function SpineShelf.paintFaceOutTilt(tile)
                     _shadeRect(bb, x, by0, 1, by1 - by0, 0.10 + 0.22 * ((k + 0.5) / 4), night)
                 end
             end
-        end)
-        src:free()
+        end, clip)
     end)
+    if src then src:free() end
     if not ok then
         logger.dbg("[bookshelf] face-out opening pose failed, tipping instead:", err)
         return SpineShelf._paintFaceOutTip(tile)

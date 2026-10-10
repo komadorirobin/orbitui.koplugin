@@ -173,6 +173,7 @@ local function widgetMethods()
             getTopmostVisibleWidget = function() return state.topmost end,
         },
     }
+    env.flushOpenPickers = function() state.pickers_flushed = true end
     for _, name in ipairs({ "_startStatusTimer", "_stopStatusTimer", "onSuspend", "onResume" }) do
         local body = assert(widget_source:match("\n(function BookshelfWidget:" .. name .. "%(.-\nend)\n"))
         local fn
@@ -193,6 +194,7 @@ t.test("widget suspend/resume pauses both maintenance jobs", function()
     assert(state.metadata and state.covers)
     w:onSuspend()
     assert(not state.metadata and not state.covers)
+    assert(state.pickers_flushed)
     state.topmost = w
     w:onResume()
     assert(state.metadata and state.covers)

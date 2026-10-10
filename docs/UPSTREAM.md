@@ -146,6 +146,24 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
+- Bookshelf 5.4 (`a0bc7e37`, October 10 review): preserve the new layered,
+  editable Theme library and native live-apply chip editor. The small theme-menu
+  lookup/activation seams delegate fixed profiles to `orbitui_shelf_themes`;
+  profile-qualified theme/deck IDs prevent shared Authors/Latest IDs from mixing
+  Library and Manga. Themes use existing profile settings and deferred writes.
+  Keep the independent transparency override outside the theme layer. Do not
+  reintroduce Save/Cancel assumptions into cover-size tests.
+- The 5.4 deck is per shelf. The session-shuffle adapter wraps `Deck.sync`;
+  `_ornSig` synchronizes before recording page states, and all swap/shuffle/
+  planning paths use `themeShelfId`. Include profiles in the deck-pruning
+  inventory without adding navigation tabs. Ornament gesture blocking uses the
+  actual pagination reserve above the embedded dock, not native screen bottom.
+- `bookshelf_book_repository` scopes fallback-cover-hook locals in a private
+  `CoverHooks` block to stay under LuaJIT's 200-local chunk limit. Preserve memo
+  reset on rescans and the patch detection/probe behavior. The custom Next shelf
+  uses native `HomeDir` resolution. The new face-out pose clips raster columns
+  before raw framebuffer writes and releases its source buffer on errors; do
+  not lose either safety fix when importing the painter.
 - Bookshelf `main.lua`: legacy flat-file cleanup uses the component instance's
   actual path, never the retained standalone installation directory.
 - SimpleUI `infra/sui_paths.lua`: embedded assets and translations resolve from
@@ -223,7 +241,8 @@ not make semantic conflicts disappear.
   the transparent-title/page-indicator option suppresses the footer divider in
   folder/list views and full-screen modules too. A zero-height footer panel is
   a layout boundary, not a visible separator. Preserve the upper/list panels,
-  dock and normal opaque-footer divider (C07). Regression coverage executes both
+  dock and the 5.4 native one-pixel bare-panel gap instead of a dark divider
+  (C07). Regression coverage executes both
   painters in `_test_transparent_labels_footer.lua`.
 - Bookshelf 5.3.1 `_swapFooterInPlace` computes its refresh region from the actual
   footer anchor, above the reserved OrbitUI dock, rather than the full screen

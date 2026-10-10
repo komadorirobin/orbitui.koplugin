@@ -46,6 +46,9 @@ local function dependency(name)
     if name == "lib/bookshelf_cover_progress" then
         return { resolvedColors = function() return palette end }
     end
+    if name == "lib/bookshelf_theme_pack" then
+        return { partRead = store.read, partSave = store.save }
+    end
     error("Unexpected require: " .. name)
 end
 local common = { BookshelfSettings = store, Screen = Screen, Space = Space, require = dependency }
@@ -105,6 +108,7 @@ local function shelf()
     return setmetatable({
         width = 1264, height = 1680,
         _wallpaperWidget = function() return W.isShowing() and {} or nil end,
+        hasWallpaper = function() return W.isShowing() end,
         _themeFlipsRaw = function() return false end,
         _pageColourStored = function() return W.ground() ~= nil end,
         _pageGroundColor = function() return "ground" end,
@@ -122,6 +126,8 @@ local function capturePanel()
     W.scrim = function(_, x, y, w, h, color, strength)
         panels[#panels + 1] = { x = x, y = y, w = w, h = h, color = color, strength = strength }
     end
+    W.panel = W.scrim
+    W.restoreBare = function() end
     W.setPanel = function() end
     return panels
 end
@@ -137,16 +143,11 @@ local function paintTopPanel(w, list)
 end
 local fs_src = read("lib/bookshelf_micro_fullscreen.lua")
 local boundary = assert(fs_src:match("(    local fp_x, fp_y.-)    if fp_y then"))
-local shared_panel = assert(fs_src:match("(    local panel\n.-)    %-%- A hairline along the top"))
+local shared_panel = assert(fs_src:match("(    local panel\n.-)    local children ="))
 local fs_env = setmetatable({ Widget = frame, Geom = frame }, { __index = common })
-local buildFullscreenPanel = compile("return function(self)\n"
+local buildFullscreenPanel = compile("return function(self, launcher)\n"
     .. "local sw, sh, PAD, top, status_h, grid_top = 1264, 1680, 32, 32, 20, 64\n"
     .. boundary .. shared_panel .. "\nreturn panel\nend", fs_env)
-local footer_rule = assert(fs_src:match("(    local footer_rule\n.-)    local children ="))
-local buildFullscreenRule = compile("return function(self, launcher)\n"
-    .. "local sw, sh, margin, content_w = 1264, 1680, 32, 1200\n"
-    .. boundary .. footer_rule .. "\nreturn footer_rule\nend",
-    setmetatable({ Widget = frame, Geom = frame }, { __index = widget_env }))
 
 local settings_src = read("lib/bookshelf_settings.lua")
 local settings_env = setmetatable({
@@ -154,13 +155,13 @@ local settings_env = setmetatable({
     T = function(s, value) return (s:gsub("%%1", function() return tostring(value) end)) end,
     UIManager = { setDirty = function(_, _, mode) repaints[#repaints + 1] = mode end },
 }, { __index = common })
-compile(method(settings_src, "Settings", "_wallpaperMenu") .. "\n"
+compile(method(settings_src, "Settings", "_panelRows") .. "\n"
     .. method(settings_src, "Settings", "_markDirty"), settings_env)
 local function menu()
     local settings = setmetatable({
         _bw = { _rebuild = function() rebuilt = rebuilt + 1 end },
     }, { __index = settings_env.Settings })
-    for _, item in ipairs(settings:_wallpaperMenu()) do
+    for _, item in ipairs(settings:_panelRows()) do
         if item.text == TITLE then return item end
     end
     error("Missing transparency option")
@@ -230,9 +231,7 @@ t.test("folder list pagination has no rule when its background is transparent", 
         local panel, rules = paintTopPanel(w, true)
         eq(panel.y + panel.h, enabled and 1488 or 1548,
             "removing the rule must preserve the list panel's lower boundary")
-        eq(rules, enabled and {} or {
-            { x = 32, y = 1488, w = 1200, h = 2, color = 0.4 },
-        })
+        eq(rules, {}, "5.4 replaces the hairline with bare wallpaper, not a painted rule")
         eq(select(2, paintTopPanel(w, false)), {}, "the grid still has no list rule")
     end
 end)
@@ -251,25 +250,21 @@ t.test("full-screen modules keep their shared panel above the transparent footer
     end
 end)
 
-t.test("full-screen module pagination honors the same transparent boundary", function()
+t.test("full-screen module pagination uses the upstream bare gap, never a dark rule", function()
     reset()
     local context = { bw = shelf(), footer_h = 72 }
     for _, enabled in ipairs{ false, true, false } do
         store.save(KEY, enabled)
-        local rule = buildFullscreenRule(context)
-        if enabled then
-            eq(rule, nil, "a zero-height boundary must not draw a footer rule")
-        else
-            local draws = {}
-            assert(rule):paintTo({ paintRect = function(_, ...)
-                draws[#draws + 1] = { ... }
-            end })
-            eq(draws, { { 32, 1488, 1200, 2, 0.4 } })
-        end
-        eq(buildFullscreenRule(context, true), nil, "reader launchers have no footer rule")
+        capturePanel()
+        local gaps = {}
+        W.restoreBare = function(_, ...) gaps[#gaps + 1] = { ... } end
+        assert(buildFullscreenPanel(context)):paintTo({})
+        eq(gaps, { { 16, 1488, 1232, 1 } })
+        gaps = {}
+        assert(buildFullscreenPanel(context, true)):paintTo({})
+        eq(gaps, {}, "reader launchers have no footer gap")
     end
-    eq(buildFullscreenRule({ footer_h = 72 }) ~= nil, true,
-        "standalone modules retain their fallback footer rule")
+    assert(not fs_src:find("local footer_rule", 1, true), "old dark hairline reintroduced")
 end)
 
 t.test("legacy global transparency is not changed by the new choice", function()

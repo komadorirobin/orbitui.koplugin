@@ -9,6 +9,8 @@ M.modules = {
     ["lib/bookshelf_chip_editor"] = true,
     ["lib/bookshelf_book_repository"] = true,
     ["lib/bookshelf_sort_engine"] = true,
+    ["lib/bookshelf_theme_pack"] = true,
+    ["lib/bookshelf_theme_menu"] = true,
     ["modules/moduleregistry"] = true,
     ["screens/sui_menu"] = true,
     ["screens/sui_bottombar"] = true,
@@ -31,6 +33,7 @@ function M.wrap(name, module)
         -- Use the native face-out geometry for both render and pagination.
         -- Saved chip/profile/global choices stay intact for code rollback.
         module._spineFaceOut = function() return SHELF_FACE_OUT end
+        require("adapters/orbitui_shelf_themes").widget(module)
         require("adapters/orbitui_shelf_sort").widget(module)
         require("adapters/orbitui_series_boxes").widget(module)
         require("adapters/orbitui_navbar").widget(module)
@@ -54,6 +57,10 @@ function M.wrap(name, module)
         require("adapters/orbitui_shelf_sort").repository(module)
     elseif name == "lib/bookshelf_sort_engine" then
         require("adapters/orbitui_shelf_sort").engine(module)
+    elseif name == "lib/bookshelf_theme_pack" then
+        require("adapters/orbitui_shelf_themes").theme(module)
+    elseif name == "lib/bookshelf_theme_menu" then
+        require("adapters/orbitui_shelf_themes").menu(module)
     elseif name == "modules/moduleregistry" then
         require("adapters/orbitui_home_shelves").install(module)
     elseif name == "screens/sui_bottombar" then

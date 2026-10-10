@@ -26,6 +26,13 @@ end
 
 local M = {}
 
+function M.tabs() return require("lib/bookshelf_tab_model").getActive() end
+function M.tab(id) return require("lib/bookshelf_tab_model").getById(id) end
+function M.activateShelf(S, id)
+    local bw = S._bw
+    if bw and bw.chip ~= id and bw._setActiveChip then bw:_setActiveChip(id) end
+end
+
 -- The Theme menu, ONE top-level menu named for the theme of the shelf on
 -- screen, "Theme (Macabre)" (maintainer, 2026-10-09, after Bookends' "Preset
 -- (Name)"): it replaced a Theme menu that chose themes and a My theme menu
@@ -148,11 +155,10 @@ end
 -- Greyed with no other shelf. The shelf on screen is not counted or listed:
 -- This shelf is its row.
 function M.otherShelvesRow(S)
-    local TabModel = require("lib/bookshelf_tab_model")
     local TP = require("lib/bookshelf_theme_pack")
     local function others()
         local skip, out = M.shelfOnScreen(S), {}
-        for _i, t in ipairs(TabModel.getActive() or {}) do
+        for _i, t in ipairs(M.tabs(S) or {}) do
             if t.id ~= skip then out[#out + 1] = t end
         end
         return out
@@ -180,14 +186,13 @@ end
 -- on screen, which This shelf sets), "Home: Default theme" or "Manga:
 -- Ukiyo-e", each opening that shelf's Theme library. Other shelves' rows.
 function M.shelfRows(S, skip)
-    local TabModel = require("lib/bookshelf_tab_model")
     local items = {}
-    for _i, t in ipairs(TabModel.getActive() or {}) do
+    for _i, t in ipairs(M.tabs(S) or {}) do
         local id = t.id
         if id ~= skip then
             items[#items + 1] = {
                 text_func = function()
-                    return M.shelfLabel(TabModel.getById(id) or t)
+                    return M.shelfLabel(M.tab(id) or t)
                 end,
                 keep_menu_open = true,
                 callback = function(touchmenu_instance)
@@ -198,8 +203,7 @@ function M.shelfRows(S, skip)
                     -- one just shown stays in it, rather than the rows moving
                     -- under the finger; the menu comes back with their names
                     -- refreshed.
-                    local bw = S._bw
-                    if bw and bw.chip ~= id and bw._setActiveChip then bw:_setActiveChip(id) end
+                    M.activateShelf(S, id)
                     M.openLibrary(S, id, touchmenu_instance)
                 end,
             }
@@ -251,7 +255,7 @@ function M.openLibrary(S, id, touchmenu_instance, after)
     local restore = S:_hidePickerMenu(touchmenu_instance)
     local opts = { on_closed = function() restore(); if after then after() end end }
     if id then
-        local tab = require("lib/bookshelf_tab_model").getById(id)
+        local tab = M.tab(id)
         opts.shelf = (tab and tab.label) or id
         opts.current = function() return TP.ownChoice(id) end
         opts.choose = function(value) M.setShelfTheme(id, value) end

@@ -20,7 +20,7 @@ local function compile(code, env)
 end
 
 local shelf_source = source("bookshelf_spine_shelf")
-local block = assert(shelf_source:match("(        local w_dp, w, depth, face_h\n.-)\n        local series_num"))
+local block = assert(shelf_source:match("(        local w_dp, w, depth, face_h[^\n]*\n.-)\n        local series_num"))
 local plank_source = assert(shelf_source:match("(function SpineShelf.plankUnit.-)\n%-%- badgeDrop"))
 local inset_source = assert(shelf_source:match("(function SpineShelf.plankInset.-\nend)"))
 
@@ -143,17 +143,25 @@ H.test("size persists independently for Library and Manga and survives reloading
     H.eq(Profiles.shelfSettings(Profiles.get("prose"), "profile_fiction").spine_cover_size_pct, nil)
 end)
 
-H.test("ordinary chip previews carry and clear the size override", function()
+H.test("the live chip editor commits and clears the size without losing other fields", function()
     local editor = source("bookshelf_chip_editor")
-    local statement = assert(editor:match("override%.spine_cover_size_pct%s*=%s*draft%.spine_cover_size_pct"))
-    local env = { override = {spine_cover_size_pct=80}, draft = {spine_cover_size_pct=120} }
-    compile(statement, env)()
-    H.eq(env.override.spine_cover_size_pct, 120)
+    local statement = assert(editor:match("(    local function commit%(drop_shelves%).-\n    end)"))
+    local tabs = { {id="fiction", spine_cover_size_pct=80} }
+    local previews = 0
+    local function copy(t) local o = {}; for k, v in pairs(t) do o[k]=v end; return o end
+    local env = { tab_id="fiction", draft={id="fiction", spine_cover_size_pct=120, theme="plain"},
+        owed_info={}, Editor={_sameValue=function(a,b) return a==b end, _deepCopy=copy},
+        TabModel={load=function() return tabs end, saveDeferred=function(v) tabs=v end},
+        schedulePreview=function() previews=previews+1 end }
+    local commit = compile(statement .. "\nreturn commit", env)()
+    commit()
+    H.eq(tabs[1].spine_cover_size_pct, 120)
     env.draft.spine_cover_size_pct = nil
-    compile(statement, env)()
-    H.eq(env.override.spine_cover_size_pct, nil)
+    commit()
+    H.eq(tabs[1].spine_cover_size_pct, nil)
+    H.eq(tabs[1].theme, "plain"); H.eq(previews, 2)
     local widget = source("bookshelf_widget")
-    local callback = assert(widget:match("function BookshelfWidget:_afterChipEdit%(%)\n(.-)\nend"))
+    local callback = assert(widget:match("function BookshelfWidget:_afterChipEdit%(info%)\n(.-)\nend"))
     local shelf = { _spine_fetch_cache = {page_firsts={1,5,9}}, _markOpdsNav=function() end,
         _rebuild=function(self) H.eq(self._spine_fetch_cache, nil) end }
     compile("return function(self)\n" .. callback .. "\nend",

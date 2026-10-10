@@ -193,15 +193,15 @@ end)
 t.test("the shelf id reaches the deck from every place that deals or edits", function()
     local w = io.open("lib/bookshelf_widget.lua"):read("*a")
     local base = w:match("\nfunction BookshelfWidget:_spinePlanBase%(content_w, shelf_h, all_items%)\n(.-)\nend\n")
-    assert(base and base:find("orn_shelf       = self.chip,", 1, true), "_spinePlanBase does not name the shelf")
-    assert(w:find('require("lib/bookshelf_ornament_deck").shuffle(self.chip)', 1, true),
+    assert(base and base:find("orn_shelf       = self.themeShelfId and self:themeShelfId() or self.chip,", 1, true), "_spinePlanBase does not name the shelf")
+    assert(w:find('require("lib/bookshelf_ornament_deck").shuffle(self.themeShelfId and self:themeShelfId() or self.chip)', 1, true),
         "the shuffle action does not shuffle the shelf on screen")
     local sp = io.open("lib/bookshelf_spine_shelf.lua"):read("*a")
     assert(sp:find("Deck.sync(orn.mod.listAll(), opts.orn_shelf)", 1, true)
         and sp:find("orn.mod.listFor(TP.ornamentsFor(opts.orn_shelf))", 1, true), "plan deals from the shared deck")
     assert(sp:find('and k ~= "orn_shelf"', 1, true), "the shelf id splits the entry cache")
     local m = io.open("lib/bookshelf_ornament_menu.lua"):read("*a")
-    assert(m:find("local shelf = bw and bw.chip", 1, true), "the long-press menu does not know its shelf")
+    assert(m:find("local shelf = bw and (bw.themeShelfId and bw:themeShelfId() or bw.chip)", 1, true), "the long-press menu does not know its shelf")
     for _i, call in ipairs({ "Deck.sync(Orn.listAll(), shelf)", "Deck.order(Orn.listFor(TP.ornamentsFor(shelf)), shelf)",
                              "Deck.move(entry.name, delta, onNames(), shelf)",
                              "Deck.swap(entry.name, chosen.name, shelf)" }) do

@@ -312,19 +312,23 @@ subsequently replaced separately with the Molgreen photograph described above.
 
 ## Session shuffle (alpha.17)
 
-Ordinary ornaments are automatically shuffled once per KOReader process, at the
-first nonempty ornament listing. Bundled packs are installed and the full
+Ordinary ornaments are automatically shuffled once per KOReader process for
+each shelf's deck (Bookshelf 5.4), at its first nonempty deal, not on listing.
+Bundled packs are installed and the full
 catalogue is reconciled before shuffling, so newly installed pieces participate.
 This happens before page-layout signatures are captured: page planning and
 rendering use the same order, without moving pieces on the next repaint.
 
-Paging, switching prose/manga, returning from a book, cache refreshes and normal
-suspend/resume do not shuffle again. Closing and restarting KOReader does;
+Paging, returning to an already visited prose/manga shelf, returning from a
+book, cache refreshes and normal suspend/resume do not shuffle it again.
+Fixed profile chips have qualified IDs, so Authors/Latest in Library and Manga
+do not share an order, and native pruning retains both decks. Choosing Shuffle
+now changes only the current shelf. Closing and restarting KOReader shuffles again;
 an Android process restart after background termination also counts as a new
 start. Empty/unavailable catalogues defer until a nonempty listing. A failed
 shuffle is logged once and skipped for that session, not retried on every paint.
 
-Long-press an ornament and choose **Shuffle all** to mix again immediately.
+Long-press an ornament and choose **Shuffle this shelf** to mix it again.
 Manual swaps and Earlier/Later moves remain in force for the current session,
 then the next restart randomizes the order again. Newly added mid-session pieces
 use the native New ornaments first/last preference until the next shuffle.

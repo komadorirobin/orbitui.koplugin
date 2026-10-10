@@ -268,7 +268,7 @@ function M.show(entry, bw, piece)
     -- The pieces that are on, in this shelf's saved order: what "place"
     -- counts and what Earlier / Later step through. Every shelf has its own
     -- deck, and the one held is the one on screen.
-    local shelf = bw and bw.chip
+    local shelf = bw and (bw.themeShelfId and bw:themeShelfId() or bw.chip)
     local function onNames()
         Deck.sync(Orn.listAll(), shelf)
         local names = {}

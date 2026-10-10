@@ -1316,6 +1316,73 @@ published alpha.31 installer, downloaded draft-asset checksums, both CI jobs
 and anonymous live OTA. Device-only visual checks remain listed in TESTING.md
 and the release notes; there is no modularization or new upstream merge here.
 
+## 2026-10-10: Reviewed Bookshelf 5.4 upstream merge after alpha.32
+
+Scope: "Merga upstream igen" and explain relevant changes, not publication.
+Start from clean main `fd61b010c02c7ef7e9226c76f50cd76e3262d38f` on
+`maintenance/upstream-2026-10-10`. Read-only collection fixes the review target
+to Bookshelf master `a0bc7e37ae8ca444026d980c1820e0cf0f052131`, version 5.4.0:
+166 commits / 148 changed files since `74b825bb20aa5560129384910ad414bd2bebad75`.
+SimpleUI main remains `f14507afdc2cabd36a2ec20a6c3c5dfe0c98a211`; no import there.
+Unsquashed subtree merge: `c9f1bcc5`. Original fork provenance is unchanged.
+
+The full commit range, net diff, changed migrations/dependencies and new native
+source API were reviewed. Main additions: layered/editable per-shelf themes and
+four-card Theme library; shelf-of-shelves sources; independent group/custom
+cover labels; an opening pose for face-out books; native progress-bar styles;
+wallpaper blur/cover panels; per-shelf ornament decks/placement; fallback-cover,
+font, series-recent-read sorting, search and OPDS fixes. The 3D opening painter
+does not replace OrbitUI's custom slipcase painter. The new source API is an
+extension point, not a newly implemented BookOrbit integration.
+
+Resolve 13 conflicts individually in README, repository, chip editor, image
+source, full-screen modules, ornament deck, settings, shelf row, spine shelf,
+widget, POT, grid-label tests and stack-display tests. Retain scoped candidate
+caches/Next shelves, hidden metadata alias paths, series boxes/completion,
+cover size, dock reserves, incremental Hardcover linking and transparent label/
+footer controls. Adopt the native live-apply ordinary-chip editor, including
+pending-tab cleanup and flush-on-close/suspend; the old Save/Cancel semantics
+are deliberately replaced as part of the requested upstream feature update.
+Preserve native one-pixel bare-panel gaps, not the old opaque-footer hairline.
+
+Post-import compatibility adaptations (separate commit):
+
+- C04/C06: scope cover-wrapper memo locals to fit LuaJIT's 200-local limit;
+  retain patch detection, one-time probes and invalidation. The custom Next
+  shelf resolves the library through the new native HomeDir helper.
+- C02/C07/C08: profile themes use `orbitui:<profile>:<chip>` and existing
+  `profile_shelf_*` records. Theme menu lookup/activation hooks enumerate fixed
+  profiles without creating tabs, preserve visual overrides, and honor deferred
+  saves. Same-chip cross-profile activation still rebuilds. Native tabs and
+  nested-shelf inheritance remain available; profile roots stay fixed.
+- C07/C11: synchronize/shuffle each shelf's deck before its first page signature,
+  once per process; prune against native plus profile IDs. Manual changes stay
+  stable on revisits and restarts randomize again. All author reservations and
+  the one-ordinary-ornament rule remain. Block ornament gestures above the dock
+  at the actual pagination boundary. No artwork/asset changes.
+- C07: clip new 3D pose columns before raw framebuffer writes, including a
+  lifted cover extending above the screen; free its temporary buffer on errors.
+- Update source-pattern/test doubles for changed native APIs and menu rows,
+  retaining behavioral coverage. Add theme/deck isolation, migration, deferred
+  persistence, same-chip navigation, dock hit-boundary and pose-boundary cases.
+
+Advance only the Bookshelf upstream pin; regenerate 277 module-map entries.
+C01/C03 normal host/reader ownership, C05 external BookOrbit sync ownership,
+C06 read-only compatibility guard, C10 shared services and C11 artwork/license
+holds remain. VERSION alpha.32, bootstrap/API 1, SimpleUI and all artwork are
+unchanged. No credentials, reading data, external plugins or device files were
+touched. Upstream's versioned theme migration is retained and tested natively;
+it translates applied-theme/piece choices, not a reset of all preferences.
+
+Verification and the clean-commit package result are recorded below after the
+final gates. Device checks still required: first launch with the existing
+custom look, separate Library/Manga themes and return navigation, ornament
+placement/revisits/shuffle, completed boxes, live shelf editor, blur in colour/
+night mode and opening poses at screen edges. No measured speedup or physical
+Bigme test is claimed. Retain the previous install and a settings backup before
+device acceptance; theme storage changes mean a code-only rollback is not an
+inverse migration. No push, version bump, tag, release or OTA publication.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

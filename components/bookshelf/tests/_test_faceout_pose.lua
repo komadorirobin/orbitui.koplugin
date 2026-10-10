@@ -70,4 +70,32 @@ t.test("stripes are never finer than about 3px; the boards end the pages", funct
     assert(type(Pose.page(0.5, 10, 0.08)) == "number")
 end)
 
+t.test("clipped spans never address pixels outside any framebuffer edge", function()
+    local n = 0
+    Pose.spansV({ {-10,-20}, {30,-20}, {30,40}, {-10,40} }, function(x,y0,y1)
+        assert(x >= 0 and x < 20 and y0 >= 0 and y1 <= 25)
+        eq(y0,0); eq(y1,25); n=n+1
+    end, {w=20,h=25})
+    eq(n,20)
+    Pose.spansV({ {30,30}, {40,30}, {40,40}, {30,40} }, function()
+        error("fully offscreen quad wrote a column")
+    end, {w=20,h=25})
+end)
+
+t.test("a lifted book at the screen top cannot write negative pixel pointers", function()
+    local P, bounds = Pose.pose(200,300,30,{x=0,base_y=300,gap=12})
+    assert(bounds.miny < 0, "fixture must exercise the offscreen pose")
+    local function pt(x,y,z) return {P(x,y,z)} end
+    local n=0
+    Pose.spansV({pt(0,0,0),pt(200,0,0),pt(200,300,0),pt(0,300,0)},function(x,y0,y1)
+        assert(x>=0 and x<200 and y0>=0 and y1<=300); n=n+1
+    end,{w=200,h=300})
+    assert(n>0)
+    local src=io.open("lib/bookshelf_spine_shelf.lua"):read("*a")
+    local body=assert(src:match("function SpineShelf.paintFaceOutTilt%b()(.-)\nend"))
+    local _, count=body:gsub("end, clip%)", "")
+    eq(count,2,"both shaded faces and direct cover pixels must be clipped")
+    assert(body:find("if src then src:free() end",1,true),"temporary cover must be freed after failed poses too")
+end)
+
 t.done()

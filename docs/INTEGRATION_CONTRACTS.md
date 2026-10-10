@@ -155,9 +155,28 @@ face-out covers scale: preserve their aspect ratio, the hero, row count,
 ornaments and dock/footer reserves. Cap enlargement at the renderer's standing
 height above the plank; the shared `_spinePlanBase` must carry the size into
 both painting and pagination so wider covers repack rather than overlap.
-Retain the preview/cancel semantics of ordinary chips and immediate persistence
-of profile chips. Tests: `tests/test_shelf_cover_size.lua` and
+The reviewed Bookshelf 5.4 merge (2026-10-10) adopts upstream's live-apply
+ordinary-chip editor: changes save in memory on selection, deferred/coalesced
+preview rebuilds follow, and Close flushes. It no longer offers Save/Cancel.
+Profile-chip changes remain immediate. Clearing the size must remove only its
+override, preserving other fields. Tests: `tests/test_shelf_cover_size.lua` and
 `tests/test_face_out_shelves.lua`.
+
+Bookshelf 5.4 themes also work on the fixed profiles. Theme/deck identity is
+`orbitui:<profile>:<chip>` for a fixed chip, never just `authors`/`latest`, which
+both profiles share with native tabs. Keep theme choices in the existing
+`profile_shelf_*` records, not synthetic navigation tabs. `themeShelfId` feeds
+the theme resolver, planner, manual shuffle and ornament menu. Preserve profile
+decks during native pruning and other visual fields during theme edits. Switching
+profiles through Other shelves must rebuild even when the restored chip ID is
+unchanged. Native tabs and nested shelves retain their own inheritance.
+The independent transparent-title/footer override remains global, outside the
+new theme parts; theme switching must not reset it. Native one-pixel bare-panel
+gaps replace the old dark footer rule, including full-screen modules. Tests:
+`tests/test_shelf_themes.lua`, `test_ornament_session.lua`, native
+`_test_transparent_labels_footer.lua`. Opening-pose raster columns are clipped
+to framebuffer bounds before raw pixel writes; temporary buffers are freed
+even after a failed pose (`_test_faceout_pose.lua`).
 
 Series in the physical bookshelf are now one front-facing slipcase per series,
 per the user's concept-B approval. Group the full filtered light list before
@@ -453,10 +472,12 @@ native layout. See `core/orbitui_ornament_spacing.lua` and
 `tests/test_ornament_spacing.lua` when merging row-rendering changes.
 
 Per the user's 2026-10-04 approval, the ordinary deck now shuffles once per
-KOReader process. Run native `Deck.sync(all)` and `Deck.shuffle()` after bundled
-seeding and the first nonempty `listAll`, before returning to `list()` and
-capturing page signatures. The adapter's guard belongs to the canonical module,
-not a shelf widget/profile. Never reshuffle on redraws, reader returns, directory
+KOReader process. With the reviewed 5.4 per-shelf decks, this means once per
+shelf identity, on its first nonempty `Deck.sync(all, shelf)`, after bundled
+seeding. `_ornSig` synchronizes before capturing the first page signature;
+listing alone must not create an anonymous shuffled deck. The adapter's guard
+belongs to the canonical deck module, not a widget, and uses the qualified
+profile ID from C07. Never reshuffle a visited shelf on redraws, reader returns, directory
 polls or normal resume. Empty catalogues defer the first shuffle; an exception
 logs once and cannot repeatedly stall rendering. Preserve native generation/epoch
 updates, cached list identities and manual shuffle/swap behavior for the rest of

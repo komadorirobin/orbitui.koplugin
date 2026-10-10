@@ -226,6 +226,8 @@ H.test("native paint and gesture ranges follow the repositioned ornament", funct
         assert(name == "ui/geometry" or name == "ui/gesturerange")
         return H.widget()
     end}
+    setmetatable(env, { __index = _G })
+    compile(assert(orn_source:match("(function M%.hits%b()\n.-\nend)")), env)()
     for _, name in ipairs({"init", "paintTo", "onTapOrnament", "onHoldOrnament"}) do
         compile(assert(orn_source:match("(function M%.Ornament:" .. name .. "%b()\n.-\nend)")), env)()
     end
@@ -243,6 +245,18 @@ H.test("native paint and gesture ranges follow the repositioned ornament", funct
     end
     H.eq(widget:onTapOrnament(), true); H.eq(tapped, pl.entry)
     H.eq(widget:onHoldOrnament(), true); H.eq(held, widget.dimen)
+end)
+
+H.test("ornament taps cannot cover pagination above the embedded dock", function()
+    local f = assert(io.open("components/bookshelf/lib/bookshelf_widget.lua"))
+    local source = f:read("*a"); f:close()
+    local body = assert(source:match("blocked = function%(pos%)\n(.-)\n            end,"))
+    local shelf = {height=1680, _simpleUIReservedBottom=function() return 120 end,
+        _paginationFooterReserveHeight=function() return 72 end}
+    local blocked = compile("return function(pos)\n" .. body .. "\nend", {shelf=shelf})()
+    H.eq(blocked({y=1487}),false)
+    H.eq(blocked({y=1488}),true)
+    H.eq(blocked({y=1600}),true)
 end)
 
 H.finish()

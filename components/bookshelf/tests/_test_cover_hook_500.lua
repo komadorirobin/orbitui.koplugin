@@ -14,8 +14,8 @@ local repo = io.open("lib/bookshelf_book_repository.lua"):read("*a")
 local widget = io.open("lib/bookshelf_widget.lua"):read("*a")
 
 t.test("a coverless complete row asks the wrapper once, only when getBookInfo is wrapped", function()
-    local fn = repo:match("\nlocal function _hookedCoverFor%(bim, filepath, info%)\n(.-)\nend\n")
-    assert(fn, "_hookedCoverFor moved")
+    local fn = repo:match("\nfunction CoverHooks%.forMeta%(bim, filepath, info%)\n(.-)\nend\n")
+    assert(fn, "CoverHooks.forMeta moved")
     assert(fn:find('info.has_meta ~= "Y" or info.cover_fetched ~= "Y" or info.ignore_cover', 1, true),
         "rows the patch would not cover are probed")
     assert(fn:find("if not _getBookInfoIsWrapped(bim) then", 1, true), "an unpatched BIM is probed")
@@ -26,7 +26,7 @@ t.test("a coverless complete row asks the wrapper once, only when getBookInfo is
 end)
 
 t.test("buildBookMeta trusts the wrapper's cover on a get_cover=false read", function()
-    assert(repo:find('if has_cover ~= "Y" and not want_cover and _hookedCoverFor(bim, filepath, info) then', 1, true),
+    assert(repo:find('if has_cover ~= "Y" and not want_cover and CoverHooks.forMeta(bim, filepath, info) then', 1, true),
         "a cached-cover build still reads the database's no cover")
     assert(repo:find("has_cover   = has_cover and not info.ignore_cover,", 1, true),
         "the record does not carry the wrapper's answer")
@@ -36,7 +36,9 @@ t.test("the batched rows carry cover_fetched, and the memo goes with the walk ca
     assert(repo:find('"pages, description, has_meta, has_cover, ignore_cover, ignore_meta, cover_sizetag, " ..\n                "cover_fetched "', 1, true),
         "the batch SELECT does not read cover_fetched")
     assert(repo:find("cover_fetched = col(16, i),", 1, true), "cover_fetched is not kept on the row")
-    assert(repo:find("_hook_cover_memo   = {}", 1, true), "the per-file answers outlive a rescan")
+    assert(repo:find("function CoverHooks.reset() _hook_cover_memo = {} end", 1, true))
+    local invalidate = assert(repo:match("function Repo.invalidateWalkCache%b()(.-)\nend"))
+    assert(invalidate:find("CoverHooks.reset()", 1, true), "the per-file answers outlive a rescan")
 end)
 
 t.test("a wrapper installed after the first build gets one rebuild", function()

@@ -58,19 +58,20 @@ local function panelMenu(store)
     return env.Settings._panelRows(self), seen, self
 end
 
-t.test("three panel rows: Panel shading (its levels), then Blur, then the Covers checkbox", function()
+t.test("four panel rows retain the independent OrbitUI transparency override", function()
     local store = {}
     local rows = panelMenu(store)
-    eq(#rows, 3)
+    eq(#rows, 4)
     eq(rows[1].text_func(), "Panel shading: Heavy")
     local levels = rows[1].sub_item_table_func()
     eq(#levels, 5, "the submenu is not the five levels alone")
     for _i, r in ipairs(levels) do eq(r.radio, true, "a level is not a radio button") end
-    eq(rows[2].text, "Blur wallpaper behind panels", "the blur row moved")
-    eq(rows[3].text, "Panel behind Covers shelves")
-    eq(rows[3].radio, nil, "it is a radio button, not a checkbox")
-    eq(rows[3].checked_func(), false, "on by default")
-    for i = 1, 3 do
+    eq(rows[2].text, "Transparent book titles and page indicator")
+    eq(rows[3].text, "Blur wallpaper behind panels", "the blur row moved")
+    eq(rows[4].text, "Panel behind Covers shelves")
+    eq(rows[4].radio, nil, "it is a radio button, not a checkbox")
+    eq(rows[4].checked_func(), false, "on by default")
+    for _, i in ipairs({ 1, 3, 4 }) do
         local h = rows[i].help_text or ""
         assert(h:find("Part of the theme", 1, true), "row " .. i .. "'s help does not say it is part of the theme")
     end
@@ -89,7 +90,7 @@ end)
 t.test("ticking Covers saves the part and rebuilds the shelf; unticking clears it", function()
     local store = {}
     local rows, seen = panelMenu(store)
-    local last = rows[3]
+    local last = rows[4]
     last.callback(nil)
     eq(store.covers_full_panel, true); eq(last.checked_func(), true); eq(seen.dirty, 1)
     last.callback(nil)
@@ -101,7 +102,7 @@ end)
 t.test("the blur row: off by default, ticking saves and rebuilds, unticking clears", function()
     local store = {}
     local rows, seen = panelMenu(store)        -- its self answers Heavy, 0.85
-    local row = rows[2]
+    local row = rows[3]
     eq(row.radio, nil, "a checkbox, not one of the levels")
     eq(row.checked_func(), false, "on by default")
     eq(row.enabled_func(), true, "greyed at Heavy, where the picture still shows through")

@@ -130,9 +130,10 @@ H.test("the actual upstream theme scanner discovers the gallery and named plank"
         H.eq(bytes, "source:theme/theme.json")
         return { name = "Ukiyo-e Gallery", shelf = "light", plank = "Hinoki" }
     end
-    local themes = Theme.themePacks()
-    H.eq(#themes, 1); H.eq(themes[1].pack, pack.name); H.eq(themes[1].plank, "Hinoki")
+    local themes = Theme.allThemes()
+    H.eq(#themes, 1); H.eq(themes[1].pack, pack.name)
     local theme = Theme.theme(pack.name)
+    H.eq(theme.manifest.plank, "Hinoki")
     H.eq(theme.wallpaper.base, "wallpaper.jpg")
     H.eq(#theme.planks, 1); H.eq(theme.planks[1].name, "Hinoki")
     H.eq(theme.planks[1].middle, target .. "theme/plank.Hinoki.middle.png")

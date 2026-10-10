@@ -934,7 +934,7 @@ t.test("shuffle is a KOReader action the shelf answers", function()
     assert(main:find('event    = "BookshelfShuffleOrnaments"', 1, true), "the action sends no event")
     local w = io.open("lib/bookshelf_widget.lua"):read("*a")
     local h = w:match("function BookshelfWidget:onBookshelfShuffleOrnaments%(%)(.-)\nend\n")
-    assert(h and h:find('require("lib/bookshelf_ornament_deck").shuffle(self.chip)', 1, true), "the shelf does not shuffle its own deck")
+    assert(h and h:find('require("lib/bookshelf_ornament_deck").shuffle(self.themeShelfId and self:themeShelfId() or self.chip)', 1, true), "the shelf does not shuffle its own deck")
     assert(h:find("self:_dropOrnPages(false)", 1, true), "the page map and page states survive a shuffle")
     assert(h:find("_rebuild()", 1, true), "the shelf is not rebuilt")
 end)
@@ -1199,7 +1199,7 @@ t.test("a piece takes gestures only on its drawing, and never in the footer (sta
             ev .. " still takes gestures on the piece's whole box")
     end
     local w = io.open("lib/bookshelf_widget.lua"):read("*a")
-    assert(w:find("pos.y >= shelf.height - _footerReserveH()", 1, true), "the shelf does not block the footer band")
+    assert(w:find("pos.y >= shelf.height - shelf:_simpleUIReservedBottom()\n                    - shelf:_paginationFooterReserveHeight()", 1, true), "the shelf does not block the footer above the dock")
 end)
 
 t.done()

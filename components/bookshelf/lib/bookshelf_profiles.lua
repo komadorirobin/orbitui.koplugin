@@ -6,6 +6,7 @@ local Profiles = {}
 -- Keep their visual overrides in the Bookshelf settings store so profile
 -- shelves can still use the same Shelf style picker as ordinary chips.
 local SHELF_FIELDS = {
+    "theme",
     "view_mode",
     "group_display",
     "list_rows",
@@ -129,7 +130,7 @@ function Profiles.shelfSettings(profile, chip_key)
     return out
 end
 
-function Profiles.saveShelfSettings(profile, chip_key, values)
+function Profiles.saveShelfSettings(profile, chip_key, values, deferred)
     local store = settingsStore()
     local key = shelfSettingsKey(profile, chip_key)
     if not (store and key) then return end
@@ -138,7 +139,9 @@ function Profiles.saveShelfSettings(profile, chip_key, values)
     for _, field in ipairs(SHELF_FIELDS) do
         if values[field] ~= nil then saved[field] = values[field] end
     end
-    if next(saved) then
+    if deferred and store.saveDeferred then
+        store.saveDeferred(key, next(saved) and saved or nil)
+    elseif next(saved) then
         store.save(key, saved)
     else
         store.delete(key)

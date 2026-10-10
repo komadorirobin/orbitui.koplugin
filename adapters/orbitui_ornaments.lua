@@ -10,11 +10,24 @@ function M.wrap(name, module, root)
     if name == "lib/bookshelf_ornament_deck" then
         local fill = module.fillHooks
         module.fillHooks = function(env) return Authors.fillHooks(fill, env) end
+        module._tabs = function() return require("adapters/orbitui_shelf_themes").tabs(true) end
+        local sync, shuffled = module.sync, {}
+        module.sync = function(all, shelf)
+            sync(all, shelf)
+            local key = tostring(shelf or module.NO_SHELF)
+            if not shuffled[key] and all and #all > 0 then
+                shuffled[key] = true
+                local ok, err = pcall(module.shuffle, shelf)
+                if not ok then
+                    require("logger").warn("[OrbitUI] Could not shuffle ornaments for this session:", err)
+                end
+            end
+        end
     elseif name == "lib/bookshelf_spine_shelf" then
         module.positionOrnamentX = require("core/orbitui_ornament_spacing").positionX
         require("adapters/orbitui_series_boxes").shelf(module)
     else
-        local list, attempted, shuffled = module.listAll, false, false
+        local list, attempted = module.listAll, false
         module.listAll = function(...)
             if not attempted then
                 attempted = true
@@ -34,20 +47,6 @@ function M.wrap(name, module, root)
                 end
             end
             local all, packs = list(...)
-            if not shuffled and all and #all > 0 then
-                -- This module lives for the KOReader process, not the widget.
-                -- Shuffle after seeding, before list()/page signatures return,
-                -- so pagination and display see the same order from the start.
-                shuffled = true
-                local ok, err = pcall(function()
-                    local Deck = require("lib/bookshelf_ornament_deck")
-                    Deck.sync(all)
-                    Deck.shuffle()
-                end)
-                if not ok then
-                    require("logger").warn("[OrbitUI] Could not shuffle ornaments for this session:", err)
-                end
-            end
             return all, packs
         end
     end

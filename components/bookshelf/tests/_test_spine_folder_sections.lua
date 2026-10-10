@@ -76,7 +76,8 @@ local function dispatch(profile, spine, drilled)
         Profiles = { folderSortPriority = function() return priority end },
         require = function(name)
             assert(name == "lib/bookshelf_tab_model")
-            return { getById = function() return { sort_priority = tab_priority, filter = filter } end }
+            return { getById = function() return { sort_priority = tab_priority, filter = filter } end,
+                isShelves = function() return false end }
         end,
     }, { __index = _G })
     local code = "return function(self, want_all, tip, fetch_opts)\n" .. dispatch_body .. "\nend"

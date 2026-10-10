@@ -41,6 +41,8 @@ local Widget = Integration.wrap("lib/bookshelf_widget", {
     _spineFaceOut = function() error("Legacy face-out rules must not apply") end,
     _spineFaceRecent = widgetMethod("_spineFaceRecent"),
     _spinePlanBase = widgetMethod("_spinePlanBase"),
+    _layoutPrimitives = function() return {} end,
+    _rowGap = function() return 12 end,
     _chipListValue = function(_, key)
         if key == "spine_cover_size_pct" then return 130 end
         H.eq(key, "spine_thickness_pct"); return 120
@@ -154,7 +156,11 @@ H.test("normal grid/list/auto modes and remote catalogue restrictions stay uncha
         H.eq(draft.spine_face_out, false)
     end
     H.eq(openStyle({ [ViewMode.CHIP_KEY] = ViewMode.SPINES }, { is_opds = true }), nil)
-    H.eq(#shown.buttons[2], 3)
+    local modes
+    for _, row in ipairs(shown.buttons) do
+        if row[1] and row[1].text == "Auto" then modes = row end
+    end
+    H.eq(#assert(modes), 3)
 end)
 
 local function sizeRow(draft, chrome)
