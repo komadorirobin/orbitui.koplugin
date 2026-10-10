@@ -798,6 +798,7 @@ function Settings:_coverDisplaySubItems()
     return {
         -- ── layout: what a cover row is made of ──
         {
+            id = "book_cover_label",
             text_func = function()
                 return _("Show text below covers") .. ": " .. label_labels[readLabelMode()]
             end,

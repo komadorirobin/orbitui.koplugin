@@ -9,6 +9,8 @@ local SHELF_FIELDS = {
     "theme",
     "view_mode",
     "group_display",
+    "cover_label_mode",
+    "cover_label_custom",
     "list_rows",
     "list_rows_expanded",
     "list_columns",

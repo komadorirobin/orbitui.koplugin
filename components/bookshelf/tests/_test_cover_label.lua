@@ -462,6 +462,8 @@ t.test("the shelf reads Custom from the setting and from an open editor", functi
     local f = compile("local self = ... ; " .. body, env)
     local shelf = { _gridDrawsLabels = function() return true end,
                     _groupLabelMode = function() return groups end }
+    local read = assert(widget_src:match("\nfunction BookshelfWidget:_bookLabelMode%(%)\n(.-)\nend\n"))
+    shelf._bookLabelMode = compile("local self = ... ; " .. read, env)
     mode = "custom"; eq(f(shelf), "custom")
     mode = "none";   eq(f(shelf), nil)
     groups = "author"

@@ -233,6 +233,10 @@ function M.shelfMenu(widget, chip)
         title = (Query.resolve(ref) or {}).label or chip,
         buttons = {
             {{ text = _("Show this shelf on Home"), callback = function() close(); M.choose(ref) end }},
+            {{ text = _("Cover text"), callback = function()
+                close()
+                require("adapters/orbitui_cover_labels").show(widget, chip)
+            end }},
             {{ text = _("Edit shelf"), callback = function()
                 close()
                 if widget.profile then widget:_showProfileShelfStyle(chip)

@@ -6,6 +6,8 @@ M.modules = {
     ["features/library/sui_book_hold_dialog"] = true,
     ["features/library/sui_library_search"] = true,
     ["lib/bookshelf_widget"] = true,
+    ["lib/bookshelf_spine_widget"] = true,
+    ["lib/bookshelf_settings"] = true,
     ["lib/bookshelf_chip_editor"] = true,
     ["lib/bookshelf_book_repository"] = true,
     ["lib/bookshelf_sort_engine"] = true,
@@ -34,6 +36,7 @@ function M.wrap(name, module)
         -- Saved chip/profile/global choices stay intact for code rollback.
         module._spineFaceOut = function() return SHELF_FACE_OUT end
         require("adapters/orbitui_shelf_themes").widget(module)
+        require("adapters/orbitui_cover_labels").widget(module)
         require("adapters/orbitui_shelf_sort").widget(module)
         require("adapters/orbitui_series_boxes").widget(module)
         require("adapters/orbitui_navbar").widget(module)
@@ -51,6 +54,10 @@ function M.wrap(name, module)
             commit(self, book, status)
             require("core/orbitui_context").refresh(book and book.filepath)
         end
+    elseif name == "lib/bookshelf_spine_widget" then
+        require("adapters/orbitui_cover_labels").cover(module)
+    elseif name == "lib/bookshelf_settings" then
+        require("adapters/orbitui_cover_labels").settings(module)
     elseif name == "lib/bookshelf_chip_editor" then
         module.face_out_override = SHELF_FACE_OUT
     elseif name == "lib/bookshelf_book_repository" then

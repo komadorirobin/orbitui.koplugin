@@ -63,6 +63,7 @@ local env = {
     end,
 }
 local shelfLabelMode  = bind(env, "_shelfLabelMode")
+local bookLabelMode   = bind(env, "_bookLabelMode")
 local gridDrawsLabels = bind(env, "_gridDrawsLabels")
 local gridLabelsKey   = bind(env, "_gridLabelsKey")
 local noteGridLabels  = bind(env, "_noteGridLabels")
@@ -70,6 +71,7 @@ local noteGridLabels  = bind(env, "_noteGridLabels")
 -- The bodies call each other through self, so the fake shelf carries them.
 local function shelf()
     return { chip = "home", _drilldown_path = {},
+             _bookLabelMode = bookLabelMode,
              _groupDisplayMode = function() return nil end,
              _groupLabelMode = function() return group_mode end,
              _gridDrawsLabels = gridDrawsLabels, _gridLabelsKey = gridLabelsKey,

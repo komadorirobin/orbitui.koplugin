@@ -6124,9 +6124,14 @@ end
 -- "custom" is the reader's own token template (lib/bookshelf_cover_label.lua).
 -- While its editor is open the draft outranks the saved mode, so choosing
 -- Custom from Title or None previews the strip before anything is saved.
-function BookshelfWidget:_shelfLabelMode()
+function BookshelfWidget:_bookLabelMode()
     local mode = BookshelfSettings.read("expanded_shelf_label")
     if self._cover_label_preview then mode = "custom" end
+    return mode
+end
+
+function BookshelfWidget:_shelfLabelMode()
+    local mode = self:_bookLabelMode()
     -- Books on None, groups on (Show text below groups, issue 486): the strip
     -- is still there, for the groups. "none" says so to ShelfRow (no book
     -- labels) while the layout, which only asks whether there IS a strip,
@@ -6223,8 +6228,7 @@ function BookshelfWidget:_gridLabelsKey()
         .. "|" .. tostring(require("lib/bookshelf_stack_display").resolve(self:_groupDisplayMode()))
         -- And the two label choices that decide it: books on None print
         -- nothing, and a group's text can need the strip on its own.
-        .. "|" .. tostring(BookshelfSettings.read("expanded_shelf_label") == "none"
-                           and not self._cover_label_preview)
+        .. "|" .. tostring(self:_bookLabelMode() == "none")
         .. "|" .. tostring(self:_groupLabelMode())
 end
 
@@ -6255,8 +6259,7 @@ end
 -- the footer.
 function BookshelfWidget:_noteGridLabels(items, windowed)
     local StackDisplay = require("lib/bookshelf_stack_display")
-    local books_none = BookshelfSettings.read("expanded_shelf_label") == "none"
-                       and not self._cover_label_preview
+    local books_none = self:_bookLabelMode() == "none"
     local v = StackDisplay.anyExternalLabel(items, self:_groupDisplayMode(),
         { books = not books_none, groups = self:_groupLabelMode() }) and true or false
     if not v and windowed then
@@ -7511,6 +7514,7 @@ function BookshelfWidget:_buildSpineRows(items, content_w, shelf_h, PAD, n_rows)
     self._spine_lift_headroom = lift_head
     -- Optional integration policy; standalone shelves retain section badges.
     local show_section_badges = not self.spineShowSectionBadges or self:spineShowSectionBadges()
+    local cover_label = self.spineCoverLabel and self:spineCoverLabel()
     local rows = {}
     for r = 1, n_rows do
         rows[r] = SpineShelf.rowWidget{
@@ -7521,6 +7525,7 @@ function BookshelfWidget:_buildSpineRows(items, content_w, shelf_h, PAD, n_rows)
             -- over by the next row's books and by the footer.
             defer_badges      = true,
             show_section_badges = show_section_badges,
+            cover_label       = cover_label,
             lift_headroom     = lift_head,
             row_index         = r,
             -- An empty plank's piece, dealt by the plan after the books.

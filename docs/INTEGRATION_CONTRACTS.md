@@ -162,6 +162,23 @@ Profile-chip changes remain immediate. Clearing the size must remove only its
 override, preserving other fields. Tests: `tests/test_shelf_cover_size.lua` and
 `tests/test_face_out_shelves.lua`.
 
+Cover text is chosen from each chip's long-press menu, not the global Cover
+display menu. `cover_label_mode` and `cover_label_custom` live on native tabs
+(including nested shelves) or their profile-qualified `profile_shelf_*` record.
+The same explicit Title/Author/Series/Custom/None choice drives ordinary and
+expanded cover grids and physical shelves, including drills within that chip.
+Unconfigured grids retain the legacy global default; unconfigured physical
+shelves remain bare. Do not rewrite old settings or automatically enable bands.
+Custom editing retains native tokens, debounce, Save/Cancel and a preview scoped
+to the original chip/profile; other style edits must survive the save.
+The widget's `_bookLabelMode` also drives grid label-strip/cache decisions.
+`spineCoverLabel` passes a resolver to face-out covers only, never series boxes,
+ornaments or the hero. The physical text band stays inside the existing card,
+above progress, with bounded single-line text; retain native fade, status glyphs,
+opening effects and bitmap ownership. It must not change packing or row height.
+The settings row's `book_cover_label` ID and the custom editor's optional scoped
+target are explicit upstream seams. Tests: `tests/test_shelf_cover_labels.lua`.
+
 Bookshelf 5.4 themes also work on the fixed profiles. Theme/deck identity is
 `orbitui:<profile>:<chip>` for a fixed chip, never just `authors`/`latest`, which
 both profiles share with native tabs. Keep theme choices in the existing

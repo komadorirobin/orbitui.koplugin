@@ -13,6 +13,10 @@ change. Device acceptance is still pending.
 - Long-press a library/manga shelf chip and select **Show this shelf on Home**
   (Swedish: **Visa den här hyllan på Hem**). Choose **Book row** or **Cover
   carousel**. Edit shelf still opens the existing shelf editor/style picker.
+- In that same chip menu, **Cover text** (**Omslagstext**) selects Title, Author,
+  Series, Custom text or None for this shelf only. Library and Manga choices
+  are independent, even on identically named chips. The former global book-text
+  row is removed; the separate group-text control is unchanged.
 - Each newly pinned shelf starts on a new Home page. Move it into the desired
   Home/Bento layout with the existing layout editor. Pinning it again changes
   its display type instead of adding a duplicate. The settings hub's **Home
@@ -79,6 +83,24 @@ Auto's folder behavior are unchanged.
 The style editor reports **Face out: All books** as a read-only row. Stored
 chip/profile/global face-out choices remain intact but inactive, allowing a
 code rollback without a settings migration. Other layout controls remain native.
+
+### Per-shelf cover text (unreleased)
+
+Long-press the desired chip, choose **Cover text**, then select the label content.
+An explicit choice applies to both regular/full-screen cover grids (text under
+the cover) and the physical bookcase (a single-line dark band inside the bottom
+of the cover). The band avoids the progress bar; native status badges, finished
+fading and opening animation remain in place. Long labels truncate to fit and
+very small covers omit a band that cannot safely fit. Series boxes retain their
+own series-name band and read-count badge; opening them shows the chosen text on
+individual volumes. Ornament geometry, pagination and the dock are unchanged.
+
+Existing untouched shelves keep their old appearance. Grids fall back to the old
+global label choice; physical shelves stay unlabelled until explicitly enabled.
+Custom text uses the native token editor, including bold, uppercase, live preview,
+Save and Cancel. Saving updates only that chip's mode/template. A chip's folders
+and series drills inherit its text; actual nested shelf chips have their own
+choice. These controls do not replace the separate list-view line configuration.
 
 Alpha.13 correction after the alpha.12 device report: the bookcase's collapsed
 row-height calculation now excludes the live dock height, like the other view
@@ -164,12 +186,19 @@ with bounded procedural drawing in `core/orbitui_series_box_widget.lua`.
   the shared geometry and the rebuild; the full widget height includes the dock.
   Preserve `prepareSpineItems` before pagination/cache signatures and
   `spineItemCount` for compact series display counts.
+  Preserve `_bookLabelMode` in all grid label-budget/cache decisions and
+  `spineCoverLabel` forwarding through row options to face-out covers.
 - Bookshelf SpineShelf: optional `isSeriesBox`, `seriesBoxGeometry` and
   `seriesBoxWidget` seams share one measured width between planning and drawing.
   Box entries must not receive the expanded-series badge beneath the shelf.
 - Bookshelf Chip Editor: optional `face_out_override` reports the host's fixed
   orientation and disables only the face-out picker, without rewriting drafts.
   OrbitUI wraps both the widget's `_spineFaceOut` and this editor field.
+- Bookshelf cover-text editor accepts an optional scoped target; vanilla book
+  and group targets stay unchanged. Keep the `book_cover_label` menu-row ID for
+  removing only the old global book control, and both cover-label fields in the
+  profile shelf whitelist. The adapter decorates the existing card before native
+  status overlays, retaining its dimensions, disposal and opening-effect identity.
 - SimpleUI book-hold helper: export its existing one-shot Home-preservation
   helper for native Book Information opened from the shared detail panel.
 - Bookshelf Repository: optional search book limit (default still 200) and
@@ -233,6 +262,13 @@ Not yet performed on the Bigme. Use the existing recovery procedure.
    series menu. Check filtered shelves, author drills, an empty/restored filtered
    series, letter navigation and return after reading or restarting. Check both
    day/night mode and small/large cover sizes. Grid/list views must be unchanged.
+10. Long-press Fiktion and enable Title in Cover text; leave Manga on None.
+    Switch chips, drill into a series, return, restart and change between grid,
+    physical and full-screen views. Compare same-named Authors chips in both
+    profiles. Edit Custom text, cancel a pending preview, then save a new one.
+    Check long titles, missing covers, small/large cover sizes, colour/night mode,
+    progress bars and completed marks. Ensure no label crosses the plank and a
+    series box does not acquire a second title band.
 
 The headless tests cover logic and extracted native factories, not native font
 metrics, image rendering, touch interaction or complete device lifecycle.

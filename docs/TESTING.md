@@ -2,6 +2,23 @@
 
 ## Automated
 
+2026-10-10 per-shelf cover text (local, unpublished, VERSION still alpha.33):
+complete Lua/LuaJIT regression runs pass, with final adapter-suite reruns passing
+499 OrbitUI cases across 42 files on both interpreters. Fourteen new cases cover
+native/nested/profile chip isolation, persistence without losing themes/layout,
+custom token editing and delayed preview cancellation, label budget/cache keys,
+light-metadata fallbacks, per-chip menus and bounded physical-card painting/freeing.
+Bookshelf passes 379 suites with the same two native SQLite skips; all 13 SimpleUI
+test files pass. Python passes 91 checks with the four existing external artwork
+audit skips. Artwork is unchanged. All 42 translation catalogs pass, 277 module
+paths verify, and 784 Lua files pass LuaJIT syntax checks. No new skip allowances.
+
+Physical labels reuse the existing card and opening/status layers, without cover
+decodes or additional shelf height. Device font metrics, colour/night appearance,
+touch interaction and completed-cover/box rendering still need Bigme acceptance
+(see SHARED_UI.md). No device result, version bump, public push or OTA change is
+claimed. A local preview ZIP must not replace the published alpha.33 artifact.
+
 2026-10-10 Bookshelf 5.4 upstream merge (local, unpublished, VERSION still
 alpha.32): both complete Lua and LuaJIT runs pass 485 OrbitUI cases across
 41 files, 379 Bookshelf suites (zero failures, two existing native SQLite suite

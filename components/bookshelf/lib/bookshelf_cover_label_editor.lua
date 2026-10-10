@@ -78,14 +78,16 @@ CoverLabelEditor._targets = { books = BOOKS, groups = GROUPS }
 --
 -- `bw` is the live BookshelfWidget and may be nil (no preview then, everything
 -- else works). `groups` true edits the groups' line instead of the books'.
-function CoverLabelEditor.show(bw, settings_module, touchmenu_instance, groups)
-    local target = groups and GROUPS or BOOKS
+function CoverLabelEditor.show(bw, settings_module, touchmenu_instance, groups, scoped_target)
+    -- Optional integration target keeps storage and preview local to a shelf.
+    local target = scoped_target or (groups and GROUPS or BOOKS)
     -- The fields the preview hands the shelf: a COPY, never the editor's live
     -- draft, so the override the widget holds cannot change under it.
     local function snapshot(draft)
         return CoverLabel.normalise(draft, target.template)
     end
     local function preview(line)
+        if type(target.preview) == "function" then return target.preview(line) end
         local fn = bw and bw[target.preview]
         if fn then fn(bw, line); return true end
         return false

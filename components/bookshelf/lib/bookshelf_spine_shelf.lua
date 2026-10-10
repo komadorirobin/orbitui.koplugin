@@ -4940,6 +4940,7 @@ function SpineShelf.rowWidget(opts)
                         -- opening effect and gets the flat squash; a shelf
                         -- face-out opens with the tilt instead (below).
                         spine_face_out = true,
+                        cover_label = opts.cover_label and opts.cover_label(e.book),
                     }
                     -- Geometry the opening tilt needs (paintFaceOutTilt):
                     -- the page block sits directly above the cover card and
