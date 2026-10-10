@@ -205,6 +205,16 @@ and unchanged bootstrap/API 1. No settings migration, artwork, reading-data,
 Bookshelf baseline or general modularization changes. Device acceptance remains
 open; code rollback preserves settings and earlier runtimes ignore new options.
 
+Version `0.1.0-alpha.33` includes the reviewed 166-commit Bookshelf 5.4.0 merge
+through `a0bc7e37`, with layered per-shelf themes, a Theme library, nested shelves,
+custom cover/group labels and per-shelf ornament decks. OrbitUI's profile roots,
+series slipcases, completion badges, artwork, icons and BookOrbit sync ownership
+are retained. Alpha.32 and earlier alpha releases can update directly through
+the same preview channel and unchanged bootstrap/API 1. Back up settings before
+updating: native theme storage is migrated, and code-only rollback does not
+reverse it. Keep the previous install and settings backup together. Physical
+device acceptance remains open; no general UI modularization is included.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

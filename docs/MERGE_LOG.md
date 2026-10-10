@@ -1396,6 +1396,22 @@ Bigme test is claimed. Retain the previous install and a settings backup before
 device acceptance; theme storage changes mean a code-only rollback is not an
 inverse migration. No push, version bump, tag, release or OTA publication.
 
+## 2026-10-10: Prepare alpha.33 for explicit publication
+
+The user explicitly requests publication after the reviewed merge at `86cc1ee0`.
+Prepare alpha.33 as a prerelease, not a device-accepted beta. Include the
+unsquashed Bookshelf import `c9f1bcc5` and adaptations `77a347c1`, keeping the
+reviewed Bookshelf/SimpleUI pins. Preserve bootstrap/API 1, all artwork and
+external BookOrbit sync ownership. Do not push the local artwork archive branch
+or replace any previously published release assets.
+
+Publication gates: both full Lua/LuaJIT suites, translations, clean-commit
+sealed packaging, outgoing-history/runtime held-bitmap audit, native OTA from
+the published alpha.32 installer, downloaded draft checksums, both CI jobs and
+anonymous live OTA. Device checks remain outstanding in TESTING.md and release
+notes. Native theme migration requires a settings backup for full rollback;
+the isolated OTA smoke test validates code rollback, not UI/theme acceptance.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
