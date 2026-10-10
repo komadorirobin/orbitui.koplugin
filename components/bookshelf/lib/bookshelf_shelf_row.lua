@@ -71,6 +71,8 @@ end
 --   label_mode    string   "title" / "author" / "series" / "custom" / "none"
 --   label_line    table    the Custom label ({ template, bold, uppercase });
 --                          read only when label_mode is "custom"
+--   label_position string "above" moves book text before the cover, within
+--                          the same strip budget; group text stays below
 -- }
 function ShelfRow.new(opts)
     local n_slots = opts.n_slots or 4
@@ -951,13 +953,14 @@ function ShelfRow.new(opts)
                 local slot_dimen = Geom:new{ w = slot_w, h = slot_h }
                 local stack = VerticalGroup:new{ align = "center" }
                 -- True-aspect: push a shorter cover DOWN within the cover area
-                -- so its bottom meets the common shelf line (and its title,
-                -- appended below, aligns with the others). The three parts
+                -- so its bottom meets the common book line. The title strip
+                -- can sit above or below the book. The three parts
                 -- (headroom + cover + title strip) still sum to slot_h.
                 if true_aspect and spine_h < cover_h then
                     stack[#stack + 1] = VerticalSpan:new{ width = cover_h - spine_h }
                 end
-                stack[#stack + 1] = spine
+                local label_above = opts.label_position == "above"
+                if not label_above then stack[#stack + 1] = spine end
                 -- Never a label under a PLACEHOLDER cover: the fallback card
                 -- already shows the title (and author) larger and centred, so a
                 -- line below would just repeat it. Reserve the strip height
@@ -978,11 +981,17 @@ function ShelfRow.new(opts)
                         fgcolor   = label_ink,
                         max_width = plateTextWidth(slot_w),
                     })
-                    stack[#stack + 1] = VerticalSpan:new{ width = label_gap }
-                    stack[#stack + 1] = title_widget
+                    if label_above then
+                        stack[#stack + 1] = title_widget
+                        stack[#stack + 1] = VerticalSpan:new{ width = label_gap }
+                    else
+                        stack[#stack + 1] = VerticalSpan:new{ width = label_gap }
+                        stack[#stack + 1] = title_widget
+                    end
                 else
                     stack[#stack + 1] = VerticalSpan:new{ width = title_block_h }
                 end
+                if label_above then stack[#stack + 1] = spine end
                 local slot = InputContainer:new{ dimen = slot_dimen, stack }
                 -- The ribbon and the tick hang half their height below the
                 -- cover, into the label strip. The label used to be bare text
@@ -990,7 +999,7 @@ function ShelfRow.new(opts)
                 -- after the cover and cropped the glyphs. The plate stays where
                 -- it is and the glyphs go back on top of it, the overlap the
                 -- maintainer chose ("the dangle can appear over the plate").
-                if plate_fill and title_text ~= "" then
+                if plate_fill and title_text ~= "" and not label_above then
                     local base_paint = slot.paintTo
                     slot.paintTo = function(s, bb, x, y)
                         base_paint(s, bb, x, y)

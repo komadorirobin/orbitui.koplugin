@@ -163,7 +163,7 @@ override, preserving other fields. Tests: `tests/test_shelf_cover_size.lua` and
 `tests/test_face_out_shelves.lua`.
 
 Cover text is chosen from each chip's long-press menu, not the global Cover
-display menu. `cover_label_mode` and `cover_label_custom` live on native tabs
+display menu. `cover_label_mode`, `cover_label_custom` and `cover_label_position` live on native tabs
 (including nested shelves) or their profile-qualified `profile_shelf_*` record.
 The same explicit Title/Author/Series/Custom/None choice drives ordinary and
 expanded cover grids and physical shelves, including drills within that chip.
@@ -173,9 +173,18 @@ Custom editing retains native tokens, debounce, Save/Cancel and a preview scoped
 to the original chip/profile; other style edits must survive the save.
 The widget's `_bookLabelMode` also drives grid label-strip/cache decisions.
 `spineCoverLabel` passes a resolver to face-out covers only, never series boxes,
-ornaments or the hero. The physical text band stays inside the existing card,
-above progress, with bounded single-line text; retain native fade, status glyphs,
-opening effects and bitmap ownership. It must not change packing or row height.
+ornaments or the hero. Default placement stays inside the physical card, above
+progress, or below grid covers. The optional `above` placement moves the grid's
+existing strip before the book; group text remains unchanged. Physical labels
+are separate widgets above the page block, budgeted from existing headroom and,
+only if needed, proportional cover downsizing. Page-block, feet and shadow widths
+must follow the smaller cover. Never paint outside the row or move the book's foot.
+Keep the actual cover-card identity, bounded single-line text, native fade,
+status glyphs, opening effects and bitmap ownership; label gestures forward to
+that cover. Packing and row height must not change. An undersized row omits the
+label instead of overflowing. Placement does not enable text or replace its mode.
+The row's optional `label_position` and physical label's `above` builder are
+explicit native seams; standalone Bookshelf without these options is unchanged.
 The settings row's `book_cover_label` ID and the custom editor's optional scoped
 target are explicit upstream seams. Tests: `tests/test_shelf_cover_labels.lua`.
 

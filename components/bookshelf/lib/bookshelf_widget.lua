@@ -7209,6 +7209,7 @@ function BookshelfWidget:_buildShelfRows(items, content_w, shelf_h, PAD, n_rows)
         show_titles       = self:_shelfLabelStripVisible(),
         label_mode        = label_mode,
         label_line        = (label_mode == "custom") and self:_coverLabelLine() or nil,
+        label_position    = self.coverLabelPosition and self:coverLabelPosition(),
         -- Text below groups (issue 486): false = None.
         group_label_mode  = self:_groupLabelMode() or false,
         group_label_line  = (self:_groupLabelMode() == "custom") and self:_groupLabelLine() or nil,

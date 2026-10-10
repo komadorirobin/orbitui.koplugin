@@ -222,7 +222,7 @@ H.test("chip menu edits the held chip, not the previously active chip", function
     local w = widget()
     M.save("home", "none")
     M.show(w, "child")
-    H.eq(w.chip, "child"); H.eq(#menu.item_table, 5)
+    H.eq(w.chip, "child"); H.eq(#menu.item_table, 6)
     menu.item_table[1].callback()
     H.eq(M.mode("child", true), "title"); H.eq(M.mode("home", true), "none")
     H.eq(menu.item_table[1].checked_func(), true)
@@ -232,6 +232,50 @@ H.test("chip menu edits the held chip, not the previously active chip", function
     H.eq(type(edit.settings_module._pickToken), "function")
     edit.on_save({template="child text"})
     H.eq(M.mode("child", true), "custom")
+end)
+
+H.test("placement persists per native, nested and profile chip without changing content", function()
+    H.eq(M.position("home"), "bottom")
+    H.eq(M.position("missing"), "bottom")
+    H.eq(M.savePosition("missing", "above"), false)
+    H.eq(M.savePosition("home", "invalid"), false)
+    local mode = M.mode("home", true)
+    local template = M.line("child").template
+    for _, id in ipairs({"home", "child", "orbitui:prose:authors"}) do
+        H.eq(M.savePosition(id, "above"), true)
+    end
+    H.eq(M.position("authors"), "bottom")
+    H.eq(M.position("orbitui:comics:authors"), "bottom")
+    H.eq(M.mode("home", true), mode)
+    H.eq(M.line("child").template, template)
+    M.save("child", "title")
+    H.eq(M.position("child"), "above")
+    package.loaded["lib/bookshelf_profiles"] = nil
+    P = require("lib/bookshelf_profiles")
+    H.eq(M.position("orbitui:prose:authors"), "above")
+    H.eq(P.shelfSettings(P.get("prose"), "authors").theme, "fresh-theme")
+    local w = widget("authors", "prose")
+    w._drilldown_path = {{kind="series", payload={name="Series"}}}
+    H.eq(w:coverLabelPosition(), "above")
+    w.profile = P.get("comics")
+    H.eq(w:coverLabelPosition(), "bottom")
+    for _, id in ipairs({"home", "child", "orbitui:prose:authors"}) do M.savePosition(id, "bottom") end
+end)
+
+H.test("placement menu applies to the held chip without enabling text or leaking after navigation", function()
+    local w = widget()
+    M.save("child", "none")
+    M.show(w, "child")
+    local choices = menu.item_table[6].sub_item_table_func()
+    H.eq(#choices, 2); H.eq(choices[1].checked_func(), true)
+    local builds = w.builds
+    choices[2].callback()
+    H.eq(w.builds, builds+1); H.eq(choices[2].checked_func(), true)
+    H.eq(M.mode("child", true), "none"); H.eq(w:spineCoverLabel(), nil)
+    w.chip = "home"
+    builds = w.builds
+    choices[1].callback()
+    H.eq(w.builds, builds); H.eq(M.position("child"), "bottom")
 end)
 
 H.test("only the old global book-label row is removed, not group labels", function()
@@ -304,13 +348,181 @@ H.test("only opted-in physical cards are decorated, before native badges", funct
     local c = card(); paint=c.paintTo; w._cover_card=c
     H.eq(w:_renderShadowedCard(c),c); assert(c.paintTo~=paint)
     H.eq(w._cover_card,c); H.eq(seen,2); c:free()
+    w.cover_label.position = "above"
+    c = card(); paint=c.paintTo
+    H.eq(w:_renderShadowedCard(c),c); H.eq(c.paintTo,paint)
+end)
+
+local function primitive(_, o) return o end
+local Geom = {new=primitive}
+local Input = {new=function(_, o)
+    function o:getSize() return self.dimen end
+    function o:free() for _, child in ipairs(self) do if child.free then child:free() end end end
+    return o
+end}
+local Group = {new=function(_, o)
+    function o:getSize()
+        local w, h = 0, 0
+        for _, child in ipairs(self) do local s=child:getSize(); w=math.max(w,s.w); h=h+s.h end
+        return {w=w,h=h}
+    end
+    function o:free() for _, child in ipairs(self) do if child.free then child:free() end end end
+    return o
+end}
+local Span = {new=function(_, o) return {getSize=function() return {w=0,h=o.width} end} end}
+package.loaded["ui/geometry"] = Geom
+package.loaded["ui/gesturerange"] = {new=primitive}
+package.loaded["ui/widget/container/inputcontainer"] = Input
+package.loaded["ui/widget/verticalgroup"] = Group
+package.loaded["ui/widget/verticalspan"] = Span
+
+H.test("above-label geometry uses headroom, bounds shrinking and releases its text", function()
+    local Above = require("adapters/orbitui_cover_label_above")
+    for _, d in ipairs({1,2,3}) do
+        dpi = d
+        for _, scale in ipairs({50,100,200}) do
+            saved.expanded_shelf_font_scale = scale
+            for _, dims in ipairs({{20,20}, {55,80}, {120,180}, {250,350}}) do
+                for _, slack in ipairs({0,50}) do
+                    local w,h = dims[1]*d,dims[2]*d
+                    local made,freed = text_count,text_frees
+                    local label,ch = Above.new({text=string.rep("Long title ",40),bold=true},w,h+slack*d,h)
+                    if label then
+                        local s = label:getSize()
+                        assert(ch>0 and ch<=h and ch+s.h<=h+slack*d)
+                        if slack>0 then H.eq(ch,h) end
+                        label.cover = {_cover_card={fade_by=.4}}
+                        local bb = {paintRect=function(_,x,y,rw,rh)
+                            H.eq(x,10); H.eq(y,20); H.eq(rw,w); H.eq(rh,s.h-3*d)
+                        end, lightenRect=function(_,x,y,rw,rh,amount) H.eq(amount,.4) end}
+                        label:paintTo(bb,10,20)
+                        assert(bb.text and bb.text.opts.bold)
+                        assert(bb.text.x>=10 and bb.text.y>=20)
+                        H.eq(label.ges_events.Tap[1].range.x,10)
+                        label:free()
+                    else H.eq(ch,h) end
+                    H.eq(text_count-made,text_frees-freed)
+                end
+            end
+        end
+    end
+    dpi=1; saved.expanded_shelf_font_scale=nil
+end)
+
+H.test("above labels share the cover's tap, hold and opening target", function()
+    M.save("home", "title"); M.savePosition("home", "above")
+    local w = widget()
+    local resolve = w:spineCoverLabel()
+    H.eq(resolve({filepath="group",books={}}),nil)
+    local spec = resolve({filepath="book",title="Title"})
+    H.eq(spec.position,"above")
+    local label = spec:above(100,180,150)
+    local tapped,held,opened = 0,0,0
+    label.cover = {
+        onTap=function(self,_,ges) tapped=tapped+1; H.eq(self,label.cover); H.eq(ges,"tap"); return true end,
+        onHold=function(self) held=held+1; H.eq(self,label.cover); return true end,
+        onDoubleTap=function(self) opened=opened+1; H.eq(self,label.cover); return true end,
+    }
+    H.eq(label:onTap(nil,"tap"),true); H.eq(label:onHold(),true); H.eq(label:onDoubleTap(),true)
+    H.eq(tapped,1); H.eq(held,1); H.eq(opened,1)
+    label:free()
+    M.savePosition("home","bottom")
+end)
+
+H.test("native physical row puts the label above the page block without moving the foot", function()
+    local src = source("components/bookshelf/lib/bookshelf_spine_shelf.lua")
+    local body = assert(src:match("elseif not tile and e.face_out then(.-)\n            end\n            if _tile_t0"))
+    local block = {new=function(_,o) o.getSize=function(self) return self.dimen end; return o end}
+    package.loaded["lib/bookshelf_spine_widget"] = {new=function(_,o)
+        o.dimen={w=o.width,h=o.height}; o.getSize=function(self) return self.dimen end
+        return o
+    end}
+    local render = compile("return function(e, opts, is_sel)\n"
+        .."local stand_h,inset,b,fh,surf = 200,5,10,4,16\nlocal tile,fx_here\n"..body
+        .."\nreturn tile, fx_here end", {
+            Screen=package.loaded["device"].screen, Space={px=function(n) return n end}, Geom=Geom,
+            SpineShelf={plankLift=function() return 20 end}, FaceOutTopBlock=block,
+            OverlapGroup=block, FaceOutFeet=block, LiftShadow=block,
+        })()
+    local columns = compile("local SpineShelf={}\n" .. assert(src:match(
+        "(function SpineShelf.recessColumns.-)\n%-%- paintShadowAssets"))
+        .. "\nreturn SpineShelf.recessColumns",{})()
+    for _, selected in ipairs({false,true}) do
+        for _, h in ipairs({100,190}) do
+            local function entry() return {w=100,h=195,face_h=h,depth=5,face_out=true,book={filepath="x"}} end
+            local plain,fx = render(entry(),{},selected)
+            local e=entry()
+            local labelled = render(e,{cover_label=function() return {
+                text="Title",above=require("adapters/orbitui_cover_label_above").new,position="above"}
+            end},selected)
+            H.eq(labelled:getSize().h,plain:getSize().h)
+            local label, label_y, cover_y, cover, y = nil,nil,nil,nil,0
+            for _, child in ipairs(labelled) do
+                if child.cover then label=child; label_y=y end
+                if child[1] and child[1].spine_face_out then cover=child[1]; cover_y=y end
+                y=y+child:getSize().h
+            end
+            assert(label and cover); H.eq(label.cover,cover)
+            H.eq(label_y+label:getSize().h+5,cover_y)
+            H.eq(e._drawn_h,cover.height+5)
+            local original_h = math.min(h,190)
+            if selected and original_h+26>195 then original_h=169 end
+            H.eq(cover.width,math.floor(100*cover.height/original_h))
+            local col=columns(e,30,5)[1]
+            H.eq(col.w,cover.width); H.eq(col.x,30+math.floor((100-cover.width)/2))
+            H.eq(col.h,cover.height+5)
+            H.eq(cover_y+cover.height,195-(selected and 21 or 0))
+            H.eq(cover.faceout_fx.below,fx.below)
+            assert(label_y>=0); label:free()
+        end
+    end
+end)
+
+H.test("grid and expanded slots reorder the same strip above the cover, including true aspect", function()
+    local row_src = source("components/bookshelf/lib/bookshelf_shelf_row.lua")
+    local body = assert(row_src:match("(local slot_dimen = Geom:new.-row%[#row %+ 1%] = slot)"))
+    local SW = {repaintOverhangGlyphs=function() error("Above label must not repaint bottom glyphs") end}
+    local render = compile("return function(position, spine_h, title, fallback)\n"
+        .."local opts={label_position=position}; local item={filepath='book'}\n"
+        .."local slot_w,slot_h,cover_h,label_gap,title_block_h = 100,180,156,4,24\n"
+        .."local spine={is_fallback=fallback,getSize=function() return {w=100,h=spine_h} end}\n"
+        .."local row={}; local true_aspect,draw_label=true,true\n"
+        .."local function _labelFor() return title end\n"
+        .."local function plated(w) return w end\nlocal function plateTextWidth(w) return w end\n"
+        ..body.."\nreturn row[1],spine end",{
+            Geom=Geom,VerticalGroup=Group,VerticalSpan=Span,InputContainer=Input,SpineWidget=SW,
+            GestureRange={new=primitive}, TextWidget={new=function(_,o)
+                o.getSize=function() return {w=90,h=20} end; return o end},
+        })()
+    for _, h in ipairs({100,156}) do
+        for _, title in ipairs({"Title",""}) do
+            for _, fallback in ipairs({false,true}) do
+                for _, pos in ipairs({"above","bottom"}) do
+                    local slot,spine = render(pos,h,title,fallback)
+                    H.eq(slot[1]:getSize().h,180)
+                    local y,cover_y,label_y=0,nil,nil
+                    for _, child in ipairs(slot[1]) do
+                        if child==spine then cover_y=y elseif child.text then label_y=y end
+                        y=y+child:getSize().h
+                    end
+                    H.eq(cover_y+h,pos=="above" and 180 or 156)
+                    if title~="" and not fallback then
+                        assert(label_y); H.eq(pos=="above",label_y<cover_y)
+                    else H.eq(label_y,nil) end
+                    slot:onTap(); H.eq(SW.last_tapped,spine)
+                    slot:onDoubleTap(); H.eq(SW.last_tapped,spine)
+                end
+            end
+        end
+    end
 end)
 
 H.test("native seams route labels only to face-outs; series boxes retain their own labels", function()
     local row = source("components/bookshelf/lib/bookshelf_spine_shelf.lua")
-    assert(row:find("cover_label = opts.cover_label and opts.cover_label(e.book)",1,true))
+    assert(row:find("local cover_label = opts.cover_label and opts.cover_label(e.book)",1,true))
     assert(row:find("elseif not tile and e.face_out then",1,true))
     assert(widget_src:find("local cover_label = self.spineCoverLabel and self:spineCoverLabel()",1,true))
+    assert(widget_src:find("label_position    = self.coverLabelPosition and self:coverLabelPosition()",1,true))
     local hold = source("adapters/orbitui_home_shelves.lua")
     assert(hold:find('require("adapters/orbitui_cover_labels").show(widget, chip)',1,true))
     local UI = require("adapters/orbitui_ui")
@@ -318,6 +530,7 @@ H.test("native seams route labels only to face-outs; series boxes retain their o
     H.eq(UI.modules["lib/bookshelf_spine_widget"],true)
     G_reader_settings = {readSetting=function() return "sv_SE" end}
     H.eq(require("core/orbitui_i18n")("Cover text"),"Omslagstext")
+    H.eq(require("core/orbitui_i18n")("Above the cover"),"Ovanför omslaget")
 end)
 
 H.finish()

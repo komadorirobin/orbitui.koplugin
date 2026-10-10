@@ -1894,7 +1894,7 @@ end
 -- their native shadow reservation; adapters may return joined silhouettes.
 function SpineShelf.recessColumns(entry, x, inset)
     return {{
-        x = x, w = entry.w,
+        x = x + (entry._drawn_x or 0), w = entry._drawn_w or entry.w,
         h = entry._drawn_h or entry.h or 0,
         foot = entry.face_out and inset or 0,
         fp = entry.book and entry.book.filepath or nil,
@@ -4898,6 +4898,18 @@ function SpineShelf.rowWidget(opts)
                         cover_h = math.max(Screen:scaleBySize(40),
                                            fo_stand - depth - lift)
                     end
+                    local cover_label = opts.cover_label and opts.cover_label(e.book)
+                    local above_label
+                    local original_cover_h = cover_h
+                    if cover_label and cover_label.above then
+                        above_label, cover_h = cover_label:above(e.w,
+                            fo_stand - depth - lift, cover_h)
+                    end
+                    -- Reserve label space without squashing the cover. Keep
+                    -- the planned slot, but centre the smaller book within it.
+                    local cover_w = cover_h < original_cover_h
+                        and math.max(1, math.floor(e.w * cover_h / original_cover_h)) or e.w
+                    e._drawn_w, e._drawn_x = cover_w, math.floor((e.w - cover_w) / 2)
                     -- The silhouette this actually draws, recorded for the
                     -- recess. A face-out is SHORTER than its slot -- it shows
                     -- only its thickness up top where a spine shows its full
@@ -4909,7 +4921,7 @@ function SpineShelf.rowWidget(opts)
                     e._drawn_h = cover_h + depth
                     local cover = CoverTile:new{
                         book          = e.book,
-                        width         = e.w,
+                        width         = cover_w,
                         height        = cover_h,
                         on_tap        = opts.callbacks and opts.callbacks.on_book_tap,
                         on_hold       = opts.callbacks and opts.callbacks.on_book_hold,
@@ -4940,7 +4952,7 @@ function SpineShelf.rowWidget(opts)
                         -- opening effect and gets the flat squash; a shelf
                         -- face-out opens with the tilt instead (below).
                         spine_face_out = true,
-                        cover_label = opts.cover_label and opts.cover_label(e.book),
+                        cover_label = cover_label,
                     }
                     -- Geometry the opening tilt needs (paintFaceOutTilt):
                     -- the page block sits directly above the cover card and
@@ -4972,13 +4984,18 @@ function SpineShelf.rowWidget(opts)
                                          thick = e.thick }
                     fx_here = cover.faceout_fx
                     local stack = VerticalGroup:new{ align = "center" }
-                    local head = fo_stand - cover_h - depth - lift
+                    local label_h = above_label and above_label:getSize().h or 0
+                    local head = fo_stand - cover_h - depth - lift - label_h
                     if head > 0 then
                         stack[#stack + 1] = VerticalSpan:new{ width = head }
                     end
+                    if above_label then
+                        above_label.cover = cover
+                        stack[#stack + 1] = above_label
+                    end
                     if depth > 0 then
                         stack[#stack + 1] = FaceOutTopBlock:new{
-                            dimen = Geom:new{ w = e.w, h = depth },
+                            dimen = Geom:new{ w = cover_w, h = depth },
                             look  = e.look,
                         }
                     end
@@ -4986,10 +5003,10 @@ function SpineShelf.rowWidget(opts)
                     -- do, standing OR lifted: the cut copies what is behind,
                     -- so it is the plank on the shelf and the page off it.
                     stack[#stack + 1] = OverlapGroup:new{
-                        dimen = Geom:new{ w = e.w, h = cover_h },
+                        dimen = Geom:new{ w = cover_w, h = cover_h },
                         cover,
                         FaceOutFeet:new{
-                            dimen  = Geom:new{ w = e.w, h = cover_h },
+                            dimen  = Geom:new{ w = cover_w, h = cover_h },
                             -- `lip` is the cover's foot to the plank's front edge:
                             -- a face-out is pushed back by `push`, and
                             -- then every book stands one inset behind
@@ -5005,7 +5022,7 @@ function SpineShelf.rowWidget(opts)
                         if lift > 0 then
                             -- The lifted book's shadow where it stood.
                             stack[#stack + 1] = LiftShadow:new{
-                                dimen    = Geom:new{ w = e.w, h = push + lift },
+                                dimen    = Geom:new{ w = cover_w, h = push + lift },
                                 shadow_h = lift,
                                 plank    = { b = b, inset = inset, surf = surf },
                             }

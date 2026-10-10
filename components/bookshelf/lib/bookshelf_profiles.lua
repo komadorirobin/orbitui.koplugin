@@ -11,6 +11,7 @@ local SHELF_FIELDS = {
     "group_display",
     "cover_label_mode",
     "cover_label_custom",
+    "cover_label_position",
     "list_rows",
     "list_rows_expanded",
     "list_columns",

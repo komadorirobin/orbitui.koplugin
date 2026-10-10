@@ -3,6 +3,7 @@ local M = {}
 local Themes = require("adapters/orbitui_shelf_themes")
 local _ = require("core/orbitui_i18n")
 local modes = { title = true, author = true, series = true, custom = true, none = true }
+local positions = { bottom = true, above = true }
 
 function M.id(widget, chip)
     chip = chip or widget.chip
@@ -30,14 +31,7 @@ function M.line(id)
     return CL.line()
 end
 
-function M.save(id, mode, line)
-    if not modes[mode] then return false end
-    local function update(tab)
-        tab.cover_label_mode = mode
-        if line ~= nil then
-            tab.cover_label_custom = require("lib/bookshelf_cover_label").normalise(line)
-        end
-    end
+local function updateShelf(id, update)
     local profile, chip = Themes.profile(id)
     if profile then
         local P = require("lib/bookshelf_profiles")
@@ -57,6 +51,26 @@ function M.save(id, mode, line)
         end
     end
     return false
+end
+
+function M.save(id, mode, line)
+    if not modes[mode] then return false end
+    return updateShelf(id, function(tab)
+        tab.cover_label_mode = mode
+        if line ~= nil then
+            tab.cover_label_custom = require("lib/bookshelf_cover_label").normalise(line)
+        end
+    end)
+end
+
+function M.position(id)
+    local position = (Themes.tab(id) or {}).cover_label_position
+    return positions[position] and position or "bottom"
+end
+
+function M.savePosition(id, position)
+    if not positions[position] then return false end
+    return updateShelf(id, function(tab) tab.cover_label_position = position end)
 end
 
 local function draft(widget)
@@ -115,6 +129,25 @@ function M.show(widget, chip)
             end,
         }
     end
+    items[#items].separator = true
+    items[#items + 1] = {
+        text = _("Placement"),
+        sub_item_table_func = function()
+            local choices = {}
+            for _i, choice in ipairs({ {"bottom", "Bottom (default)"}, {"above", "Above the cover"} }) do
+                local position = choice[1]
+                choices[#choices + 1] = {
+                    text = _(choice[2]), radio = true, keep_menu_open = true,
+                    checked_func = function() return M.position(id) == position end,
+                    callback = function(menu)
+                        if M.savePosition(id, position) then refresh(widget, id) end
+                        if menu and menu.updateItems then menu:updateItems() end
+                    end,
+                }
+            end
+            return choices
+        end,
+    }
     host = Host.show{ title = _("Cover text") .. ": " .. (tab.label or chip), item_table = items }
     return host
 end
@@ -124,12 +157,15 @@ function M.widget(widget)
         return draft(self) and "custom" or M.mode(M.id(self), false)
     end
     widget._coverLabelLine = function(self) return draft(self) or M.line(M.id(self)) end
+    widget.coverLabelPosition = function(self) return M.position(M.id(self)) end
     local key = widget._gridLabelsKey
     widget._gridLabelsKey = function(self) return tostring(M.id(self)) .. "|" .. key(self) end
     widget.spineCoverLabel = function(self)
         local line = draft(self)
         local mode = line and "custom" or M.mode(M.id(self), true)
         if mode == "none" then return nil end
+        local position = M.position(M.id(self))
+        local above = position == "above" and require("adapters/orbitui_cover_label_above").new or nil
         line = line or (mode == "custom" and M.line(M.id(self))) or { template = "%" .. mode }
         local CL = require("lib/bookshelf_cover_label")
         local resolve = mode == "custom" and CL.resolver(line) or function(book)
@@ -161,7 +197,9 @@ function M.widget(widget)
                 return nil
             end
             local text = CL.utf8Cut(tostring(resolve(book)):gsub("%s+", " "), CL.MAX_BYTES)
-            if text ~= "" then return { text = text, bold = line.bold } end
+            if text ~= "" then
+                return { text = text, bold = line.bold, position = position, above = above }
+            end
         end
     end
 end
@@ -181,7 +219,7 @@ end
 function M.cover(cover)
     local render = cover._renderShadowedCard
     cover._renderShadowedCard = function(self, card)
-        if self.spine_face_out and self.cover_label then
+        if self.spine_face_out and self.cover_label and self.cover_label.position ~= "above" then
             require("adapters/orbitui_cover_label_band").decorate(card, self.cover_label,
                 self:_statusIndicators().bar)
         end

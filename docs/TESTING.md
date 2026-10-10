@@ -371,6 +371,15 @@ Run the two full suites sequentially on the same host. Some upstream tests
 use hard-coded, second-resolution `/tmp` paths (for example the start-menu
 module fixture), so separate `TMPDIR` values alone do not prevent collisions.
 
+`tests/test_shelf_cover_labels.lua` also covers per-chip text placement, its
+menu callbacks and persistence across profile reloads. It executes the native
+grid-slot and physical face-out layout branches with widget doubles to verify
+above-label ordering, fixed row budgets, selected-book lift and unchanged book
+feet. The above-label helper is tested at multiple DPI/font scales, including
+tiny rows, long labels, disposal, fading and forwarding tap/hold/double-tap to
+the actual cover. These geometry checks are not a substitute for checking the
+fonts, dark plates, night mode and opening animation on the reader.
+
 Bookshelf's two native SQLite suites require KOReader's runtime and remain
 explicit skips. Since the 2026-10-04 upstream merge, its exhaustive list geometry
 sweep runs by default after upstream memoised the repeated source matching.

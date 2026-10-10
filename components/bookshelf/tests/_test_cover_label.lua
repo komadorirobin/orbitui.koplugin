@@ -493,7 +493,7 @@ function()
         "_labelFor does not route Custom to the resolver")
     assert(row_src:find('if title_text ~= "" then', 1, true),
         "an empty label would still draw a plate")
-    assert(row_src:find('if plate_fill and title_text ~= "" then', 1, true),
+    assert(row_src:find('if plate_fill and title_text ~= "" and not label_above then', 1, true),
         "the overhang repaint is not gated on there being a label")
 end)
 
