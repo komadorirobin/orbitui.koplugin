@@ -84,7 +84,7 @@ The style editor reports **Face out: All books** as a read-only row. Stored
 chip/profile/global face-out choices remain intact but inactive, allowing a
 code rollback without a settings migration. Other layout controls remain native.
 
-### Per-shelf cover text (unreleased)
+### Per-shelf cover text (0.1.0-alpha.34)
 
 Long-press the desired chip, choose **Cover text**, then select the label content.
 An explicit choice applies to both regular/full-screen cover grids (text under

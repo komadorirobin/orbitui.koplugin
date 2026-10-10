@@ -215,6 +215,17 @@ updating: native theme storage is migrated, and code-only rollback does not
 reverse it. Keep the previous install and settings backup together. Physical
 device acceptance remains open; no general UI modularization is included.
 
+Version `0.1.0-alpha.34` moves book-cover text to each chip's long-press menu.
+Title/Author/Series/Custom/None is stored independently per shelf, including
+Library and Manga chips with the same name. Physical shelves draw a bounded
+text band inside each cover, while grids retain their below-cover labels.
+Untouched shelves keep their previous appearance; series boxes retain their
+own labels and counters. Alpha.33 and earlier alpha releases can update
+directly through the same preview channel and unchanged bootstrap/API 1.
+No artwork, reading data, sync settings or upstream baselines are changed.
+Code rollback preserves the per-shelf preferences; older runtimes ignore them.
+Device visual acceptance remains open.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries
