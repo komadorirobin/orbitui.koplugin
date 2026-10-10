@@ -196,7 +196,7 @@ end
 -- ---------------------------------------------------------------------
 
 local function _homeDir()
-    local home = G_reader_settings and G_reader_settings:readSetting("home_dir")
+    local home = require("lib/bookshelf_home_dir").get()
     if type(home) ~= "string" or home == "" then return nil end
     return home:gsub("/+$", "")
 end
