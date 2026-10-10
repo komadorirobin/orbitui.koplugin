@@ -2,6 +2,28 @@
 
 ## Automated
 
+2026-10-11 Bookshelf 5.4.1 upstream merge (local, unpublished, VERSION still
+alpha.35): both full Lua and LuaJIT runs pass 508 OrbitUI cases across 42 files,
+380 Bookshelf suites (zero failures, two existing native SQLite suite skips),
+all 13 SimpleUI test files and 91 Python checks (four existing external artwork
+source-audit skips). Native-font skips remain. No skip/known-failure allowance
+was added. All 42 catalogs, 277 module-map paths and 786 syntax checks pass.
+
+Added regression coverage exercises the actual child-theme resolver/menu with
+both profile namespaces, native versus OrbitUI caption-menu ownership and the
+new grid-strip helper respecting scoped text/placement even when native caption
+fields disagree. Existing above-cover geometry, preview/cancel, gestures,
+bookcase, series-box and ornament suites remain green. Upstream's new native
+per-shelf caption tests run as well; standalone behavior is not disabled.
+
+Adaptation commit `c4552ed9` passes clean-commit sealed packaging: 1684 manifest
+files and 1737 archive entries, including module/asset/license/recovery checks.
+Do not replace published alpha.35 with this local development package. No
+device rendering, public push, version bump, tag or OTA publication is claimed.
+Check nested-theme selection and clearing, the series-author switch, and all
+per-chip caption modes/placements in grid, full-screen and physical shelves
+on the Bigme. Existing appearance and both profile settings must remain intact.
+
 2026-10-10 per-shelf cover text (local, unpublished, VERSION still alpha.33):
 complete Lua/LuaJIT regression runs pass, with final adapter-suite reruns passing
 499 OrbitUI cases across 42 files on both interpreters. Fourteen new cases cover

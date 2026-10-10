@@ -1461,7 +1461,22 @@ bootstrap/API 1, SimpleUI and artwork are byte-identical to the starting tip.
 No device files, credentials or reading data are touched. The held Mann bitmap
 and its unpublished archive branch remain excluded.
 
-Validation and clean-commit packaging results are recorded after the gates below.
+Validation: adaptation commit `c4552ed9` passes both complete Lua and LuaJIT
+runs: 508 OrbitUI cases across 42 files, 380 Bookshelf suites (zero failures,
+two existing native SQLite suite skips), all 13 SimpleUI files and 91 Python
+tests (four existing external artwork-source audit skips). Existing native-font
+skips and absent adjacent Bookends parity checkout remain. All 42 translation
+catalogs, 277 module-map entries and 786 Lua syntax checks pass. No skip or
+known-failure exception was added. The version-identity test is updated to
+5.4.1; no behavioral assertion was removed to accept the merge.
+
+The clean-commit sealed package validates 1684 manifest files and 1737 archive
+entries, including modules, assets, licenses and recovery documentation. This
+unpublished alpha.35 development ZIP has SHA-256
+`aa506b5a27c9efb106ccf6adfb6905cff8d72e5a31b6326c7b2142997bc4d7a5`;
+it must never replace the published alpha.35 artifact. Read-only collection at
+23:02 UTC confirms zero missing commits for both tracked upstream branches.
+
 Device checks remain outstanding: nested theme selection/return to inheritance,
 both library profiles, title/author/series/custom captions above and below in
 grid/full-screen/bookcase views, and the series-author toggle on native stacks.
