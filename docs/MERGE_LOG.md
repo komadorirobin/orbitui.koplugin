@@ -1412,6 +1412,62 @@ anonymous live OTA. Device checks remain outstanding in TESTING.md and release
 notes. Native theme migration requires a settings backup for full rollback;
 the isolated OTA smoke test validates code rollback, not UI/theme acceptance.
 
+## 2026-10-11: Reviewed Bookshelf 5.4.1 upstream merge after alpha.35
+
+Scope: "Merga upstream igen", not publication. Start from clean main
+`f3f48f1ae54cbc6ff36db72ce7b124b4f002ec48` on
+`maintenance/upstream-2026-10-11`. Read-only collection at October 10 22:56 UTC
+(October 11 locally) fixes Bookshelf master to
+`7c4c5da6f0668c8f73ee7a791b0c25f149f72a1d`, release 5.4.1: ten commits and
+42 changed files since `a0bc7e37ae8ca444026d980c1820e0cf0f052131`.
+SimpleUI main remains `f14507afdc2cabd36a2ec20a6c3c5dfe0c98a211`; no import there.
+Unsquashed subtree import: `f7f567e4`. The reviewed commits are:
+
+- `09f418b7`: allow a nested shelf to choose its own theme.
+- `54066344`, `d5eafa8e`, `514a123e`, `b1d40006`: per-shelf cover captions,
+  compact picker layout, meaningful group-author controls and library-wide groups.
+- `fa5b963c`: simplify group captions to Show author below series.
+- `eadf7027`, `1319eaa6`, `27c184e8`, `7c4c5da6`: caption terminology,
+  font-size dialog naming, translations and release metadata.
+
+Review the full commit list, net code/test/catalog diff and removed group APIs.
+There are no new runtime modules, dependencies, artwork or settings migrations.
+Resolve three conflicts in the custom-caption editor, shelf widget and POT.
+Keep OrbitUI's scoped target/function preview through the editor's new `_open`;
+retain `_bookLabelMode` and route `_booksLabelNone` through it. Preserve the
+Manga folder-strip policy, above-cover position, card geometry and local
+transparent-label strings. Regenerated upstream catalogs retain local additions.
+
+Separate compatibility work suppresses the new native grid-only caption picker
+through `Editor.cover_text_external` while embedded. OrbitUI already has one
+chip-level menu for grids, physical books and placement; using both would split
+preferences between `cover_text*` and `cover_label_*`. Keep the existing local
+storage, independent child-chip defaults and profile-qualified IDs; do not
+migrate preferences or opt chips into native parent-caption inheritance.
+Standalone Bookshelf retains its new picker and inheritance. Tests cover both.
+Advance only the Bookshelf upstream pin; keep original fork provenance.
+
+C07 intentionally adopts upstream's library-wide group-caption simplification:
+Show author below series replaces None/Author/Custom. An old Custom selection
+reads as Author without deleting its stored template, so code rollback retains
+the old value. This does not affect individual book captions or OrbitUI's
+physical series-box titles/count badges. C07/C08 nested-theme pickers now target
+the actual child and can restore parent inheritance without modifying the parent
+or either profile's theme. C06 editor callback compatibility is retained.
+
+C01-C05 host/navigation/cache/sync ownership, C09 explicit release policy,
+C10 shared services and C11 ornaments remain unchanged. VERSION alpha.35,
+bootstrap/API 1, SimpleUI and artwork are byte-identical to the starting tip.
+No device files, credentials or reading data are touched. The held Mann bitmap
+and its unpublished archive branch remain excluded.
+
+Validation and clean-commit packaging results are recorded after the gates below.
+Device checks remain outstanding: nested theme selection/return to inheritance,
+both library profiles, title/author/series/custom captions above and below in
+grid/full-screen/bookcase views, and the series-author toggle on native stacks.
+Keep the existing installation and settings backup. No push, version bump,
+tag, release or OTA publication is part of this merge.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

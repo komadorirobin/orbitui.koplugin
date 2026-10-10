@@ -188,6 +188,19 @@ explicit native seams; standalone Bookshelf without these options is unchanged.
 The settings row's `book_cover_label` ID and the custom editor's optional scoped
 target are explicit upstream seams. Tests: `tests/test_shelf_cover_labels.lua`.
 
+The reviewed 5.4.1 import also has native `cover_text*` settings and a grid-only
+caption picker. While embedded, `Editor.cover_text_external` hides that picker
+in favour of OrbitUI's existing chip menu. Do not split storage across the two
+systems or silently inherit parent captions: native/nested/profile `cover_label_*`
+preferences stay independent and unchanged. `_booksLabelNone` must delegate to
+the overridable `_bookLabelMode`, not read the native settings directly.
+The shared custom editor's `_open` preserves the scoped target and function
+preview callback despite the removal of its old group-editing mode.
+The 5.4.1 global group-text control intentionally follows upstream: Show author
+below series is an on/off switch; a stored Custom group mode reads as Author.
+Retain the old custom template on disk for rollback. Book captions, physical
+series-box labels and their completion badges are not group-text settings.
+
 Bookshelf 5.4 themes also work on the fixed profiles. Theme/deck identity is
 `orbitui:<profile>:<chip>` for a fixed chip, never just `authors`/`latest`, which
 both profiles share with native tabs. Keep theme choices in the existing
@@ -196,6 +209,9 @@ the theme resolver, planner, manual shuffle and ornament menu. Preserve profile
 decks during native pruning and other visual fields during theme edits. Switching
 profiles through Other shelves must rebuild even when the restored chip ID is
 unchanged. Native tabs and nested shelves retain their own inheritance.
+Since the reviewed 5.4.1 import, theme pickers target the actual nested shelf;
+choosing its own theme must not modify its parent's or a fixed profile's theme.
+Clearing the child's choice restores inheritance and the picker names its parent.
 The independent transparent-title/footer override remains global, outside the
 new theme parts; theme switching must not reset it. Native one-pixel bare-panel
 gaps replace the old dark footer rule, including full-screen modules. Tests:

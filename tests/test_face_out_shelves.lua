@@ -130,6 +130,22 @@ H.test("the standalone component keeps its native configurable orientation", fun
     H.eq(Editor.face_out_override, nil)
 end)
 
+local function hasNativeCaptions()
+    for _, row in ipairs(shown.buttons) do
+        for _, b in ipairs(row) do
+            local text = b.text_func and b.text_func() or b.text
+            if text and text:match("^Cover captions:") then return true end
+        end
+    end
+    return false
+end
+
+H.test("standalone grid style retains the upstream per-shelf caption picker", function()
+    openStyle({id="home", [ViewMode.CHIP_KEY]=ViewMode.COVERS})
+    H.eq(hasNativeCaptions(), true)
+    H.eq(Editor.cover_text_external, nil)
+end)
+
 H.test("OrbitUI style editor reflects the override without changing saved drafts", function()
     H.eq(Integration.modules["lib/bookshelf_chip_editor"], true)
     H.eq(Integration.wrap("lib/bookshelf_chip_editor", Editor), Editor)
@@ -152,6 +168,7 @@ H.test("normal grid/list/auto modes and remote catalogue restrictions stay uncha
     for _, mode in ipairs({ ViewMode.AUTO, ViewMode.COVERS, ViewMode.LIST }) do
         local draft = { [ViewMode.CHIP_KEY] = mode, spine_face_out = false }
         H.eq(openStyle(draft), nil)
+        H.eq(hasNativeCaptions(), false, "OrbitUI already owns the chip's caption menu")
         H.eq(draft[ViewMode.CHIP_KEY], mode)
         H.eq(draft.spine_face_out, false)
     end

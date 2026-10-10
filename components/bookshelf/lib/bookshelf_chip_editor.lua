@@ -2272,7 +2272,8 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
         -- "Same as Fiction" accordingly. Covers only: a list or spine shelf
         -- has no label strip. Text below GROUPS stays library-wide: the only
         -- group text with anything to print is a series stack's author.
-        if show_covers then
+        -- An embedding may own a unified caption menu for grid and bookcase.
+        if show_covers and not self.cover_text_external then
             local text_row = self:_coverTextRow(draft, function()
                 if on_change then on_change() end
             end, function() UIManager:close(d) end, show, bw)

@@ -102,4 +102,25 @@ H.test("switching profiles on the same restored chip still rebuilds the visible 
     H.eq(w.profile,P.get("comics")); H.eq(rebuilds,1); H.eq(paints,1)
 end)
 
+H.test("a nested shelf's theme targets the child without changing its parent or profiles", function()
+    native[#native+1] = {id="child", label="Child", parent="authors"}
+    local TP = dofile("components/bookshelf/lib/bookshelf_theme_pack.lua")
+    TP._store = store
+    Adapter.theme(TP)
+    local child = widget(nil,"child")
+    H.eq(menu.shelfOnScreen({_bw=child}), "child")
+    H.eq(TP.followOf("child").shows, "mine")
+    H.eq(TP.themeFor("child"), "mine")
+    menu.setShelfTheme("child", "plain")
+    H.eq(TP.ownChoice("child"), "plain")
+    H.eq(TP.themeFor("child"), "plain")
+    H.eq(TP.ownChoice("authors"), "mine")
+    H.eq(TP.ownChoice("orbitui:prose:authors"), "plain")
+    H.eq(TP.ownChoice("orbitui:comics:authors"), "mine")
+    H.eq(TP.followOf("orbitui:comics:authors"), nil)
+    menu.setShelfTheme("child", nil)
+    H.eq(TP.themeFor("child"), "mine")
+    H.eq(TP.ownChoice("child"), nil)
+end)
+
 H.finish()

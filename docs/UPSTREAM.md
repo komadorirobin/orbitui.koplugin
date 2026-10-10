@@ -146,6 +146,22 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
+- Bookshelf 5.4.1 (`7c4c5da6`, October 11 review): nested shelves can choose
+  their own theme; the theme menu targets the actual child, not its root.
+  Preserve profile-qualified IDs and inherited themes until a child opts in.
+  OrbitUI already owns per-chip captions (including physical books and Above),
+  so `Editor.cover_text_external` suppresses the redundant native grid-only
+  picker. Keep `cover_label_*` storage and independent nested-chip defaults;
+  do not migrate to upstream's `cover_text*` fields or enable parent-caption
+  inheritance in OrbitUI. `_booksLabelNone` delegates to `_bookLabelMode`, so
+  the native grid budget still sees the adapter's scoped mode and preview.
+  The native custom editor's new `_open` retains the optional scoped target
+  and callback-based preview; token Save/Cancel must not become global writes.
+  Adopt upstream's library-wide Show author below series switch: old Custom
+  group mode reads as Author, with its old settings retained for code rollback.
+  This does not change OrbitUI's physical series-box labels. Tests:
+  `test_shelf_cover_labels`, `test_face_out_shelves`, `test_shelf_themes` and
+  the native caption/theme suites.
 - Bookshelf 5.4 (`a0bc7e37`, October 10 review): preserve the new layered,
   editable Theme library and native live-apply chip editor. The small theme-menu
   lookup/activation seams delegate fixed profiles to `orbitui_shelf_themes`;

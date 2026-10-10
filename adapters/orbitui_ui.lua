@@ -60,6 +60,7 @@ function M.wrap(name, module)
         require("adapters/orbitui_cover_labels").settings(module)
     elseif name == "lib/bookshelf_chip_editor" then
         module.face_out_override = SHELF_FACE_OUT
+        module.cover_text_external = true
     elseif name == "lib/bookshelf_book_repository" then
         require("adapters/orbitui_shelf_sort").repository(module)
     elseif name == "lib/bookshelf_sort_engine" then

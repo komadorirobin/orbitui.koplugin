@@ -59,6 +59,7 @@ local function method(name)
         { BookshelfSettings = package.loaded["lib/bookshelf_settings_store"] })()
 end
 local Class = { _gridLabelsKey = method("_gridLabelsKey"),
+    _booksLabelNone = method("_booksLabelNone"),
     _shelfLabelMode = method("_shelfLabelMode"), _gridDrawsLabels = method("_gridDrawsLabels"),
     _noteGridLabels = method("_noteGridLabels"), _groupLabelMode = function() return nil end,
     _groupDisplayMode = function() return "none" end,
@@ -135,6 +136,27 @@ H.test("native grid strip and label cache obey scoped modes, including after a d
     local prose, comics = widget("authors", "prose"), widget("authors", "comics")
     M.save(M.id(comics), "title")
     assert(prose:_gridLabelsKey() ~= comics:_gridLabelsKey())
+end)
+
+H.test("5.4.1 native caption keys cannot override OrbitUI text or placement", function()
+    tabs[1].cover_text = "none"
+    tabs[1].cover_text_line = {template="native template"}
+    M.save("home", "custom", {template="%title - scoped"})
+    M.savePosition("home", "above")
+    local w = widget()
+    H.eq(w:_booksLabelNone(), false)
+    H.eq(w:_shelfLabelMode(), "custom")
+    H.eq(w:_coverLabelLine().template, "%title - scoped")
+    H.eq(w:coverLabelPosition(), "above")
+    H.eq(w:spineCoverLabel()({filepath="x",title="Book"}).text, "Book - scoped")
+    M.save("home", "none")
+    tabs[1].cover_text = "title"
+    H.eq(w:_booksLabelNone(), true)
+    H.eq(w:_noteGridLabels({{filepath="x"}}), false)
+    H.eq(w:spineCoverLabel(), nil)
+    H.eq(tabs[1].cover_text_line.template, "native template")
+    tabs[1].cover_text, tabs[1].cover_text_line = nil, nil
+    M.savePosition("home", "bottom")
 end)
 
 H.test("physical covers get the selected label; empty templates and group proxies get none", function()

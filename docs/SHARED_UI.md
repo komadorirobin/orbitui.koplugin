@@ -116,6 +116,15 @@ fit. Text can be tapped/held like its book, and shares finished/on-hold fading. 
 status indicators and opening target are not replaced. Group labels, series-box
 labels and ornaments are unchanged. Device rendering still needs verification.
 
+The October 11 Bookshelf 5.4.1 import retains this menu and its saved choices.
+Its overlapping native grid-only caption picker is hidden in OrbitUI, so there
+is still one caption setting per chip, including physical shelves and placement.
+No caption settings are migrated and nested chips do not start inheriting a
+parent's captions. The native Text size row is now named **Cover captions**.
+The separate library-wide group-text control is now **Show author below series**;
+upstream interprets a previous Custom group choice as Author but retains its
+stored template. This does not alter the physical series boxes.
+
 Alpha.13 correction after the alpha.12 device report: the bookcase's collapsed
 row-height calculation now excludes the live dock height, like the other view
 modes. It shares the visible pagination reserve, and the rebuild uses that same
