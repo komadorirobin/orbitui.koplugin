@@ -247,6 +247,17 @@ SimpleUI, artwork, reading data and sync ownership are unchanged. No new
 settings migration is introduced; older upgrades still carry the alpha.33
 theme-storage migration. Device acceptance remains open.
 
+Alpha.37 integrates Bookshelf 5.4.3 and the reviewed October 12 SimpleUI update.
+Explicit Auto view modes have independent top/drill styles; existing unset
+choices retain their behavior. Caption-aware hero height, stable per-drill
+ornament deals, wallpaper-safe opening effects and bounded in-place clock/status
+refreshes preserve OrbitUI's profiles, series boxes, dock and per-chip captions.
+Alpha.36 and earlier alpha installations can update directly through the same
+preview channel and unchanged bootstrap/API 1. No new settings migration,
+artwork, reading-data or sync-ownership change is included. Earlier upgrades
+still carry alpha.33's theme-storage migration. Code rollback keeps preferences;
+older code ignores the new Auto levels. Physical-device acceptance remains open.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

@@ -1588,6 +1588,22 @@ rasters and metadata browsing's Uncategorized toggle. Keep the prior install
 and settings backup. No physical Bigme test or measured speedup is claimed.
 No push, version bump, tag, release or OTA publication belongs to this merge.
 
+## 2026-10-12: Prepare alpha.37 for explicit publication
+
+User explicitly requested publication after the reviewed upstream merge at
+`527e35aa`. Prepare alpha.37 as a prerelease, without further upstream changes.
+The Bookshelf 5.4.3 and SimpleUI October 12 pins above are the release baselines.
+Bootstrap/API 1 and artwork remain unchanged. Do not publish the held Mann
+bitmap or push the local artwork archive branch.
+
+Release gates: sequential full Lua/LuaJIT tests, translations, clean-commit
+sealed packaging, outgoing-history/runtime held-bitmap audit, native OTA
+upgrade/rollback using the published alpha.36 installer, downloaded draft-asset
+checksums, CI and anonymous live release/OTA verification. Do not overwrite any
+existing release's assets. Device acceptance remains open for the cases above;
+no measured performance improvement is claimed. Keep the prior installation and
+settings backup, including the pre-alpha.33 theme-migration rollback caveat.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

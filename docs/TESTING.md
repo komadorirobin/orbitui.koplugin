@@ -2,6 +2,13 @@
 
 ## Automated
 
+2026-10-12 alpha.37 release preparation: both full suites rerun sequentially
+after the version/documentation change and pass with the same counts and
+existing skips documented below. All 42 translation catalogs pass. Release
+packaging and upgrade/rollback gates use the actual public alpha.36 installer;
+the prerelease notes retain the physical-reader acceptance gaps. Artwork and
+the stable bootstrap files are unchanged from alpha.36.
+
 2026-10-12 Bookshelf 5.4.3 / SimpleUI October 12 upstream merge (local,
 unpublished; VERSION stays alpha.36): full Lua/LuaJIT runs pass 515 OrbitUI
 cases across 43 files, 380 Bookshelf suites (zero failures, two existing native
