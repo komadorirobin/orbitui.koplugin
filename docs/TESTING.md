@@ -2,6 +2,17 @@
 
 ## Automated
 
+2026-10-12 alpha.38 release preparation: both full suites rerun sequentially
+after the version/documentation change and pass with 522 OrbitUI cases across
+44 files, 382 Bookshelf suites (zero failures, two existing native SQLite
+skips), all 13 SimpleUI files and 91 Python checks (four existing artwork-source
+audit skips). Native-font skips and the absent adjacent Bookends checkout
+remain. All 42 catalogues, 278 module paths and 791 Lua syntax checks pass.
+Sealed clean-commit packaging and upgrade/rollback gates use the actual public
+alpha.37 installer, followed by anonymous live discovery/download after
+publication. Preserve the physical Bigme checks below; no new device
+acceptance is claimed. Artwork and the stable bootstrap remain unchanged.
+
 2026-10-12 Bookshelf 5.4.4 follow-up (local, unpublished; VERSION stays
 alpha.37): complete sequential Lua/LuaJIT runs pass 522 OrbitUI cases across
 44 files, 382 Bookshelf suites (zero failures, two existing native SQLite

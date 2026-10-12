@@ -1685,6 +1685,23 @@ with read marks and above/below labels in day/night mode. No device test or
 measured performance improvement is claimed. Keep the prior installation and
 settings backup. No push, version bump, tag, release or OTA publication.
 
+## 2026-10-12: Prepare alpha.38 for explicit publication
+
+User request: "Publicera" after the tested follow-up merge recorded at
+`f72ba3cf`. Prepare alpha.38 as a prerelease without further upstream changes.
+Keep Bookshelf `2c8bfd8e` / 5.4.4 and SimpleUI `5bddc5bb` / 2.7.5 pinned.
+Only VERSION and release documentation change. Stable bootstrap/API 1,
+artwork, settings and reading data remain unchanged. The native series-box
+PR #508 is not part of this release; OrbitUI's adapter remains the owner.
+
+Release gates: sequential full Lua/LuaJIT tests, translations, clean-commit
+sealed packaging, outgoing-history/runtime held-bitmap audit, native OTA
+upgrade/rollback using the published alpha.37 installer, downloaded draft-asset
+checksums, CI and anonymous live release/OTA verification. Do not overwrite any
+existing release's assets. Device acceptance remains open for the cases above;
+no measured performance improvement is claimed. Keep the prior installation
+and settings backup, including the pre-alpha.33 theme-migration rollback caveat.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

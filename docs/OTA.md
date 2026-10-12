@@ -258,6 +258,16 @@ artwork, reading-data or sync-ownership change is included. Earlier upgrades
 still carry alpha.33's theme-storage migration. Code rollback keeps preferences;
 older code ignores the new Auto levels. Physical-device acceptance remains open.
 
+Alpha.38 integrates Bookshelf 5.4.4 and SimpleUI's reviewed Czech/Chinese
+translation updates. Explicit Auto/List supports independent per-level density
+within each Library/Manga profile; face-out favourite markers use the top-right
+corner. The all-face-out policy and existing shelf customizations remain.
+Alpha.37 and earlier alpha installations can update directly through the same
+preview channel and unchanged bootstrap/API 1. No new migration, artwork,
+reading-data or sync change. Code rollback retains the new level preferences;
+older code ignores unsupported preferences. The pre-alpha.33 theme-migration
+caveat and physical-device acceptance gaps still apply.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries
