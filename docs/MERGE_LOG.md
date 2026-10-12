@@ -1570,6 +1570,16 @@ exercise real Auto/profile persistence, caption ownership, shared raster evictio
 clock refresh/backgrounds, isolated topbars and metadata/status invalidation.
 Read-only collection at 04:23 UTC reports zero missing commits for both branches.
 
+Compatibility commit `1e280cda` passes clean-commit sealed packaging: 1686
+manifest files and 1739 archive entries, including the new raster module,
+assets, licenses and recovery documentation. That unpublished alpha.36
+development ZIP has SHA-256
+`2ae2106a16ad76e19f63de69a5fa55dc695c6294270142944061affc77745046`.
+It must never replace the published alpha.36 release artifact. Both frozen
+upstream tips are ancestors; VERSION, bootstrap files and artwork are identical
+to the starting tip. The maintenance branch is fast-forwarded into local main
+after recording this validation.
+
 Device checks remain outstanding: Auto levels on both profiles and native/
 nested shelves; hero consistency with labels above/below/none; drill ornament
 revisits and manual shuffle; selected-cover opening over wallpaper; Home clock

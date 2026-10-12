@@ -26,6 +26,10 @@ with Show Uncategorized Items off/on. No measured speedup or reader acceptance
 is claimed. Keep the previous installation/settings backup. No publication or
 replacement of published alpha.36 bytes is part of this merge.
 
+The clean-commit package at `1e280cda` verifies 1686 manifest files and 1739
+archive entries, including the new raster-cache module and all asset/license/
+recovery entries. It is a development build, not a public OTA update.
+
 2026-10-11 Bookshelf 5.4.1 upstream merge (local, unpublished, VERSION still
 alpha.35): both full Lua and LuaJIT runs pass 508 OrbitUI cases across 42 files,
 380 Bookshelf suites (zero failures, two existing native SQLite suite skips),
