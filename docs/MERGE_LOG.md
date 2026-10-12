@@ -1668,7 +1668,16 @@ external artwork-source audit skips). Two native-font case skips and absent
 adjacent Bookends parity checkout remain. All 42 translation catalogues, 278
 module paths and 791 Lua syntax checks pass. No skip or known-failure allowance
 was added. Read-only upstream collection at 08:43 UTC reports zero missing
-commits for both tracked branches. Clean-commit packaging is the remaining gate.
+commits for both tracked branches.
+
+Clean-commit candidate `67436938` passes sealed ZIP validation: 1687 manifest
+files and 1740 archive entries, with modules, assets, licenses and recovery docs
+verified. Its unpublished alpha.37 development ZIP has SHA-256
+`556c40da370786e155d41fe799942ac5badcd97e0b6ebfb54148235474862006`.
+It must never replace the published alpha.37 artifact. Both reviewed upstream
+tips are ancestors; bootstrap/API, VERSION, shared core/adapters and artwork
+are unchanged from the starting tip. Fast-forward the reviewed maintenance
+branch into local main after recording these results.
 
 Physical Bigme checks remain: Auto/List on both levels, different row/column
 counts in Library and Manga, pinch then back/restart, and favourite heart/star

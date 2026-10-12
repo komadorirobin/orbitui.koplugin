@@ -17,6 +17,9 @@ geometry. The new native density and finished/favourite tests run too. Existing
 all-face-out, labels, series-box completion, ornaments and dock tests stay green.
 SimpleUI changes only its Czech and Chinese catalogues; retain the corrected
 single Chinese plural form. Both tracked branches are caught up at 08:43 UTC.
+Clean-commit candidate `67436938` passes sealed ZIP validation: 1687 manifest
+files and 1740 archive entries, including modules, assets, licenses and recovery
+docs. This is a local development package, not a public update.
 
 Physical Bigme checks remain: Auto/List at both levels with different rows and
 columns, Library/Manga independence after pinch/back/restart, and favourite
