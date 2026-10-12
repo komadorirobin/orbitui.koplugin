@@ -409,9 +409,13 @@ local function chipValue(self_tbl, chip_own, default, profile_own)
         end,
         BookshelfSettings = { read = function() return default end },
         type = type,
+        ViewMode = ViewMode,
     }
     local f = methodWithArgs("_chipListValue", env)
     self_tbl._profileShelfSettings = function() return profile_own end
+    -- Level 1: the per-level split has its own suite
+    -- (_test_list_density_levels.lua).
+    self_tbl._autoLevel = self_tbl._autoLevel or function() return 1 end
     return f(self_tbl, "list_columns")
 end
 
