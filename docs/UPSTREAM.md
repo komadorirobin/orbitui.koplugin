@@ -146,8 +146,9 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
-- October 12 follow-up: Bookshelf 5.4.4 `2c8bfd8e` and SimpleUI `24eb65f7`
-  (Czech translations only) are reviewed imports. Auto with List on both levels
+- October 12 follow-up: Bookshelf 5.4.4 `2c8bfd8e` and SimpleUI `5bddc5bb`
+  (Czech/Chinese translations only) are reviewed imports. Retain the corrected
+  single Chinese plural form while importing the new strings. Auto with List on both levels
   supports independent `list_rows_l2`, `list_columns_l2` and expanded zoom in
   profile records too; profile gestures must resolve the target key before
   saving. Preserve first-level fallback, profile isolation and the legacy unset

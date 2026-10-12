@@ -1629,11 +1629,12 @@ Resolve Bookshelf's three conflict files individually: README keeps the local
 unset-style and footer-hold semantics while describing the new levels;
 `_chipListValue` keeps the profile-first lookup and adds native level resolution;
 the extracted-method gesture fixture retains both profile and level stubs.
-SimpleUI merges cleanly. Separate compatibility work adds the three new density
+The Czech update merges cleanly. Separate compatibility work adds the three new density
 keys to the existing profile whitelist and resolves the profile gesture's key
 before save. A regression first reproduced lost Level 2 settings, then passes
 with independent prose/comics reloads, reads, writes, clears and native-name
-isolation. New upstream tests run, with only a profile-method fixture added.
+isolation. New upstream tests retain their assertions with the profile-method
+stub and cover-constructor source locator adapted to the embedded component.
 
 C07 adopts the new list-level controls and top-right favourite mark, preserving
 all-face-out books, labels above/below covers, series-box geometry/completion,
@@ -1646,7 +1647,29 @@ alongside OrbitUI's adapter. VERSION alpha.37, bootstrap/API 1 and artwork are
 unchanged. No device files, reading data or credentials are accessed. The held
 Mann bitmap and its unpublished archive branch remain excluded.
 
-Validation and sealed-package results will be recorded after the full runs.
+At 08:36 UTC, the read-only watcher found two additional SimpleUI commits:
+`9503ffc2` Chinese catalogue updates and merge `5bddc5bb`. Review their two-file,
+translation-only diff and import exact target
+`5bddc5bb7858c2e75a1047b5adfc9c9bbc8e2f1f` in subtree commit `02e72c24`.
+Keep the existing single-plural-form corrections in both Chinese catalogues,
+while adopting the new translations; all 42 catalogues validate. The final
+SimpleUI pin includes this follow-up. Runtime code is unchanged by it.
+
+Compatibility commit `48778414` contains the profile change and seven new
+integration cases. The native favourite test's source locator is adjusted to
+find the real cover constructor despite OrbitUI's series-box branch; all
+favourite-placement assertions remain. Update the existing version/Reading
+label assertions to match upstream; do not add failure/skip allowances.
+
+Validation: complete sequential Lua and LuaJIT runs both pass 522 OrbitUI
+cases across 44 files, 382 Bookshelf suites (zero failures, two existing native
+SQLite suite skips), all 13 SimpleUI files and 91 Python tests (four existing
+external artwork-source audit skips). Two native-font case skips and absent
+adjacent Bookends parity checkout remain. All 42 translation catalogues, 278
+module paths and 791 Lua syntax checks pass. No skip or known-failure allowance
+was added. Read-only upstream collection at 08:43 UTC reports zero missing
+commits for both tracked branches. Clean-commit packaging is the remaining gate.
+
 Physical Bigme checks remain: Auto/List on both levels, different row/column
 counts in Library and Manga, pinch then back/restart, and favourite heart/star
 with read marks and above/below labels in day/night mode. No device test or

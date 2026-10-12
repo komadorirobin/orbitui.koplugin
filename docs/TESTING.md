@@ -2,6 +2,28 @@
 
 ## Automated
 
+2026-10-12 Bookshelf 5.4.4 follow-up (local, unpublished; VERSION stays
+alpha.37): complete sequential Lua/LuaJIT runs pass 522 OrbitUI cases across
+44 files, 382 Bookshelf suites (zero failures, two existing native SQLite
+skips), all 13 SimpleUI files and 91 Python checks (four existing external
+artwork-source audit skips). Two native-font case skips and absent adjacent
+Bookends parity checkout remain. All 42 catalogues, 278 module-map entries
+and 791 Lua syntax checks pass, with no new skip or known-failure allowance.
+
+Seven new cases cover per-level list density in both profiles, reloads,
+pinch writes/clears, inherited rows versus independent expanded zoom, native
+namesake isolation, legacy/search/non-list behavior and favourite-glyph corner
+geometry. The new native density and finished/favourite tests run too. Existing
+all-face-out, labels, series-box completion, ornaments and dock tests stay green.
+SimpleUI changes only its Czech and Chinese catalogues; retain the corrected
+single Chinese plural form. Both tracked branches are caught up at 08:43 UTC.
+
+Physical Bigme checks remain: Auto/List at both levels with different rows and
+columns, Library/Manga independence after pinch/back/restart, and favourite
+heart/star alongside finished marks and above/below labels in day/night mode.
+No device acceptance or performance gain is claimed. Keep the existing install
+and settings backup. This merge does not publish or replace alpha.37 assets.
+
 2026-10-12 alpha.37 release preparation: both full suites rerun sequentially
 after the version/documentation change and pass with the same counts and
 existing skips documented below. All 42 translation catalogs pass. Release
