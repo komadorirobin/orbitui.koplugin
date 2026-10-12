@@ -15,9 +15,11 @@
 local RasterCache = {}
 
 local BYTE_BUDGET = 3 * 1024 * 1024
+local MAX_ENTRIES = 64 -- bounds tiny font metrics and zero-byte records too
 
 local _kinds       = {}   -- kind name -> { [key] = { value, bytes, tick } }
 local _total_bytes = 0
+local _entry_count = 0
 local _tick        = 0
 
 -- Resident byte size of a Blitbuffer. `stride` is the bytes per row of the
@@ -37,25 +39,32 @@ function RasterCache.bbBytes(bb)
     return (ok and bytes) or 0
 end
 
+local function isBuffer(field)
+    return type(field) == "cdata"
+        or (type(field) == "table" and type(field.free) == "function"
+            and type(field.getHeight) == "function")
+end
+
 local function entryBytes(value)
     local bytes = 0
     for _, field in pairs(value) do
-        if type(field) == "cdata" then bytes = bytes + RasterCache.bbBytes(field) end
+        if isBuffer(field) then bytes = bytes + RasterCache.bbBytes(field) end
     end
     return bytes
 end
 
 local function freeEntry(record)
     for _, field in pairs(record.value) do
-        if type(field) == "cdata" then field:free() end
+        if isBuffer(field) then field:free() end
     end
     _total_bytes = _total_bytes - record.bytes
+    _entry_count = _entry_count - 1
 end
 
 -- Drops least recently used entries until the budget holds again. `keep` is
 -- the record that was just inserted and is never evicted.
 local function evictOverBudget(keep)
-    while _total_bytes > BYTE_BUDGET do
+    while _total_bytes > BYTE_BUDGET or _entry_count > MAX_ENTRIES do
         local oldest_kind, oldest_key, oldest
         for kind_name, entries in pairs(_kinds) do
             for key, record in pairs(entries) do
@@ -88,6 +97,7 @@ function RasterCache.get(kind, key, build, ...)
     record = { value = value, bytes = entryBytes(value), tick = _tick }
     entries[key] = record
     _total_bytes = _total_bytes + record.bytes
+    _entry_count = _entry_count + 1
     evictOverBudget(record)
     return value
 end

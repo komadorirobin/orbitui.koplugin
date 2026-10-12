@@ -20,7 +20,12 @@ package.loaded["ffi/util"] = { template = function(text, ...)
     return (text:gsub("%%(%d+)", function(n) return tostring(args[tonumber(n)]) end))
 end }
 package.loaded.util = { htmlToPlainTextIfHtml = function(s) return s end }
-package.loaded["infra/sui_config"] = { isFatalDbError = function() return false end }
+local info_listeners = {}
+package.loaded["infra/sui_config"] = {
+    isFatalDbError = function() return false end,
+    getBookInfoManager = function() return package.loaded.bookinfomanager end,
+    onBookInfoChanged = function(fn) info_listeners[#info_listeners + 1] = fn end,
+}
 package.loaded["infra/sui_i18n"] = { translate = function(s) return s end }
 G_reader_settings = { readSetting = function(_, _, default) return default end }
 
@@ -95,6 +100,17 @@ test("missing BIM results expire and the cache stays bounded", function()
     assert(bim_reads == before + 1, "oldest entry must have been evicted")
 end)
 
+test("BIM change listeners refresh indexed fields and series without waiting for expiry", function()
+    local fp = "/books/event.epub"
+    book_info = {title="Before", pages=42, series="Old", series_index=1}
+    assert(SH.getBookData(fp, false).title == "Before")
+    assert(SH.getBookSeries(fp).series == "Old")
+    book_info = {title="After", pages=43, series="New", series_index=2}
+    for _, listener in ipairs(info_listeners) do listener(fp) end
+    assert(SH.getBookData(fp, false).title == "After")
+    assert(SH.getBookSeries(fp).series == "New")
+end)
+
 local persisted = {}
 package.loaded["infra/sui_store"] = {
     readSetting = function(_, k)
@@ -145,6 +161,10 @@ test("prefetch and render share metadata but a status edit is read immediately",
     local after_reset = opens
     SH.getBookData(fp, pre)
     assert(opens == after_reset and closes == 0)
+    pre.summary, pre.percent = nil, nil
+    settings = {summary={status="complete"}, percent_finished=1}
+    b = SH.getBookData(fp, nil, {progress_only=true})
+    assert(b.percent == 1 and b.status == "complete", "direct cached reads also refresh live progress")
 end)
 
 settings = { summary = { status = "complete", date_finished = os.date("%Y-%m-%d", now) } }

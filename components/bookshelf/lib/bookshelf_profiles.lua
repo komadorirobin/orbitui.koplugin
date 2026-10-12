@@ -6,6 +6,7 @@ local Profiles = {}
 -- Keep their visual overrides in the Bookshelf settings store so profile
 -- shelves can still use the same Shelf style picker as ordinary chips.
 local SHELF_FIELDS = {
+    "view_level1", "view_level2",
     "theme",
     "view_mode",
     "group_display",

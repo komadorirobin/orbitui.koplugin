@@ -423,26 +423,6 @@ end
 -- getBookData
 -- ---------------------------------------------------------------------------
 
-local _book_info_cache, _book_info_order = {}, {}
-local function cachedBookInfo(fp)
-    local now = os.time()
-    local entry = _book_info_cache[fp]
-    if entry and entry.expires_at > now then return entry.data or nil end
-    local BIM = getBookInfoManager()
-    if not BIM then return nil end
-    local ok, info = pcall(BIM.getBookInfo, BIM, fp, false)
-    if not ok then return nil end
-    if not entry then
-        if #_book_info_order >= 256 then
-            _book_info_cache[table.remove(_book_info_order, 1)] = nil
-        end
-        _book_info_order[#_book_info_order + 1] = fp
-    end
-    -- Extraction can finish without a metadata-change event. Short-lived
-    -- entries coalesce renders without freezing missing or outdated rows.
-    _book_info_cache[fp] = { data = info or false, expires_at = now + 5 }
-    return info
-end
 
 -- ---------------------------------------------------------------------------
 -- File existence cache. A short TTL coalesces the prefetch + stats-provider
@@ -482,6 +462,15 @@ end
 -- ---------------------------------------------------------------------------
 local _sidecar_cache = {}
 local _bim_fields    = {}   -- fp -> fields resolved from its BookInfoManager record
+local _bim_order = {}
+
+local function dropBimFields(fp)
+    if not fp then _bim_fields, _bim_order = {}, {}; return end
+    _bim_fields[fp] = nil
+    for i = #_bim_order, 1, -1 do
+        if _bim_order[i] == fp then table.remove(_bim_order, i) end
+    end
+end
 
 -- Returns the preferred_location string used as part of cache validation.
 -- Reading G_reader_settings is a table lookup — no IO.
@@ -519,12 +508,19 @@ end
 local function _cacheGet(fp)
     local entry = _sidecar_cache[fp]
     if not entry then return nil end
-    if entry.preferred_loc ~= _prefLoc()
+    local now = os.time()
+    if entry.preferred_loc ~= _prefLoc() then
+        _sidecar_cache[fp] = nil
+        return nil
+    end
+    if entry.validated_at == now then return entry.data end
+    if not entry.sidecar_path and now >= entry.expires_at
             or _sidecarChanged(entry, fp)
             or _customMetadataChanged(entry, fp) then
         _sidecar_cache[fp] = nil
         return nil
     end
+    entry.validated_at = now
     return entry.data
 end
 
@@ -556,6 +552,7 @@ local function _cachePut(fp, source_candidate, data)
         custom_path   = custom_path,
         custom_mtime  = custom_mtime,
         validated_at  = os.time(),
+        expires_at    = os.time() + 2,
         data          = data,
     }
 end
@@ -606,11 +603,11 @@ SH._cachePut = _cachePut
 -- Drops everything cached for fp — sidecar data and BookInfoManager fields —
 -- or flushes everything (fp == nil).
 function SH.invalidateSidecarCache(fp)
-    _book_info_cache, _book_info_order = {}, {}
+    dropBimFields(fp)
     if fp then
-        _sidecar_cache[fp], _bim_fields[fp] = nil, nil
+        _sidecar_cache[fp] = nil
     else
-        _sidecar_cache, _bim_fields = {}, {}
+        _sidecar_cache = {}
     end
 end
 
@@ -657,7 +654,7 @@ local function _refreshLiveProgress(filepath, data)
     if data.percent ~= nil and data.summary ~= nil then return end
     local live_pct, live_sum = _readLiveProgress(filepath)
     if data.percent == nil then data.percent = live_pct end
-    if data.summary == nil then data.summary = live_sum end
+    if data.summary == nil and live_pct ~= nil then data.summary = live_sum or false end
 end
 
 -- Title, authors, page count and plain-text description from the book's
@@ -665,9 +662,9 @@ end
 -- resolved once per book and dropped when the record changes in this process
 -- (Config.onBookInfoChanged) or on invalidateSidecarCache. Records written by
 -- background extraction are not reported, so the fields also expire.
-local _BIM_FIELDS_TTL = 60   -- seconds
+local _BIM_FIELDS_TTL = 5   -- also catches background extraction without events
 
-Config.onBookInfoChanged(function(fp) _bim_fields[fp] = nil end)
+Config.onBookInfoChanged(dropBimFields)
 
 local function _bimFields(fp)
     local fields = _bim_fields[fp]
@@ -675,7 +672,8 @@ local function _bimFields(fp)
     local BIM = Config.getBookInfoManager()
     if not BIM then return nil end
     local ok, info = pcall(BIM.getBookInfo, BIM, fp, false)
-    if not (ok and info) then return nil end
+    if not ok then return nil end
+    info = info or {}
     local description = info.description
     if description and description ~= "" then
         -- EPUB/OPF descriptions are often HTML.
@@ -687,6 +685,12 @@ local function _bimFields(fp)
         title = info.title, authors = info.authors, pages = info.pages,
         description = description, resolved_at = os.time(),
     }
+    if not _bim_fields[fp] then
+        if #_bim_order >= 256 then
+            _bim_fields[table.remove(_bim_order, 1)] = nil
+        end
+        _bim_order[#_bim_order + 1] = fp
+    end
     _bim_fields[fp] = fields
     return fields
 end
@@ -714,16 +718,25 @@ end
 -- `prefetched` is the entry prefetchBooks stored for the book: `false` when it
 -- could not open the sidecar (defaults apply), nil when the caller did not
 -- prefetch (the cached sidecar data is used).
-function SH.getBookData(filepath, prefetched)
+function SH.getBookData(filepath, prefetched, opts)
+    opts = opts or {}
     local data = prefetched
     if data == nil then
         data = _sidecarData(filepath, true)
-    elseif data then
+    end
+    if data then
         _refreshLiveProgress(filepath, data)
     end
     data = data or {}
 
-    local bim = _bimFields(filepath)
+    local summary = data.summary
+    local status = type(summary) == "table" and summary.status or nil
+    if opts.progress_only then return { percent = data.percent or 0, status = status } end
+    local needs_description = not opts.skip_description and data.description == nil
+    local bim
+    if not data.doc_pages or not data.title or data.title == "" or needs_description then
+        bim = _bimFields(filepath)
+    end
     local title, authors = data.title, data.authors
     if (not title or title == "") and bim and bim.title and bim.title ~= "" then
         title   = bim.title
@@ -736,13 +749,16 @@ function SH.getBookData(filepath, prefetched)
     -- Page count: the rendered/stable count, then BookInfoManager's, then the
     -- "p(<n>)" filename token.
     local pages = data.doc_pages or (bim and bim.pages) or SH.pageCountFromFilename(filepath)
-    local summary = data.summary
+    local description = ""
+    if not opts.skip_description then
+        description = data.description or (bim and bim.description) or ""
+    end
 
     return {
         percent     = data.percent or 0,
         title       = title,
         authors     = authors or "",
-        description = bim and bim.description or "",
+        description = description,
         pages       = pages,
         avg_time    = _avgPageTime(filepath, data),
         status      = type(summary) == "table" and summary.status or nil, -- "complete" | "abandoned" | nil
@@ -777,13 +793,15 @@ function SH.getBookSeries(filepath)
 end
 
 function SH.invalidateSeriesCache(fp)
-    _book_info_cache, _book_info_order = {}, {}
+    dropBimFields(fp)
     if fp then
         _series_cache[fp] = nil
     else
         _series_cache = {}
     end
 end
+
+Config.onBookInfoChanged(SH.invalidateSeriesCache)
 
 -- ---------------------------------------------------------------------------
 -- prefetchBooks — reads history, pre-extracts book metadata.

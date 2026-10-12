@@ -42,6 +42,7 @@ return {
     ["infra/sui_patches"] = "components/simpleui/infra/sui_patches.lua",
     ["infra/sui_paths"] = "components/simpleui/infra/sui_paths.lua",
     ["infra/sui_progress_sync"] = "components/simpleui/infra/sui_progress_sync.lua",
+    ["infra/sui_raster_cache"] = "components/simpleui/infra/sui_raster_cache.lua",
     ["infra/sui_store"] = "components/simpleui/infra/sui_store.lua",
     ["infra/sui_streak"] = "components/simpleui/infra/sui_streak.lua",
     ["infra/sui_updater"] = "components/simpleui/infra/sui_updater.lua",

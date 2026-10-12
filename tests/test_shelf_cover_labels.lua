@@ -555,4 +555,27 @@ H.test("native seams route labels only to face-outs; series boxes retain their o
     H.eq(require("core/orbitui_i18n")("Above the cover"),"Ovanför omslaget")
 end)
 
+H.test("hero caption reserve reads scoped native and profile labels, not upstream keys", function()
+    saved.expanded_shelf_label = "none"
+    saved.expanded_group_label = "none"
+    for _, tab in ipairs(tabs) do
+        tab.cover_label_mode, tab.cover_text_mode = "none", "title"
+    end
+    for _, key in ipairs({"prose", "comics"}) do
+        local profile = P.get(key)
+        for _, chip in ipairs(profile.chips) do
+            M.save("orbitui:" .. key .. ":" .. chip.key, "none")
+        end
+    end
+    local w = widget()
+    H.eq(w:_anyShelfShowsCaptions(), false)
+    M.save("orbitui:comics:authors", "title")
+    H.eq(w:_anyShelfShowsCaptions(), true)
+    M.save("orbitui:comics:authors", "none")
+    M.save("child", "author")
+    H.eq(w:_anyShelfShowsCaptions(), true)
+    tabs[3].enabled = false
+    H.eq(w:_anyShelfShowsCaptions(), false)
+end)
+
 H.finish()

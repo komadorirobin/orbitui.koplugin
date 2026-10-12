@@ -31,6 +31,7 @@ package.loaded["features/library/sui_cover_widgets"] = {
     end,
 }
 
+package.loaded["infra/sui_config"].onBookInfoChanged = function() end
 local Shared = dofile("modules/module_books_shared.lua")
 local cover = {}
 assert(Shared.applyProgressBadge(cover, { percent = 0 }, 100, 150) == cover)

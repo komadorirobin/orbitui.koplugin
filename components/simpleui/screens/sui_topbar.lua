@@ -772,8 +772,7 @@ function M.refresh(plugin)
     -- A bar whose layout is unchanged only has its label texts swapped, and
     -- only the boxes of the labels that changed are refreshed (nothing at all
     -- when no text changed). Otherwise the bar is replaced by a new one, built
-    -- once and shared by every widget that needs it, and refreshed as a whole.
-    local new_topbar
+    -- independently for each window: widget geometry must never be shared.
     local patched = {}  -- topbar instance -> changed label widgets, or false when it needs a rebuild
     local seen = {}
     local function refreshWidget(w)
@@ -789,7 +788,7 @@ function M.refresh(plugin)
             UI.refreshBoxes(w, changed)
             return
         end
-        new_topbar = new_topbar or M.buildTopbarWidget(bar)
+        local new_topbar = M.buildTopbarWidget(bar)
         UI.replaceTopbar(w, new_topbar)
         -- Scope the e-ink refresh to the topbar's own region instead of the
         -- whole screen (same convention as module_clock.lua's surgical clock

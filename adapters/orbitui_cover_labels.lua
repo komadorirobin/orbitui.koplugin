@@ -153,6 +153,15 @@ function M.show(widget, chip)
 end
 
 function M.widget(widget)
+    widget._anyShelfShowsCaptions = function(self)
+        if require("lib/bookshelf_cover_label").groupMode() then return true end
+        local tabs = Themes.tabs(true)
+        if #tabs == 0 then return self:_bookLabelMode() ~= "none" end
+        for _, tab in ipairs(tabs) do
+            if tab.enabled ~= false and M.mode(tab.id, false) ~= "none" then return true end
+        end
+        return false
+    end
     widget._bookLabelMode = function(self)
         return draft(self) and "custom" or M.mode(M.id(self), false)
     end

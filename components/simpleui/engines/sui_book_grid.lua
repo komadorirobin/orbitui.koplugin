@@ -485,7 +485,12 @@ function GridRenderer.resolveBadgeConfig(badges_cfg, pfx, id, show_progress_badg
     return cfg
 end
 
-function GridRenderer.applyBadges(cover_widget, bd, fp, cw, ch, cfg)
+function GridRenderer.applyBadges(cover_widget, bd, fp, cw, ch, cfg, pfx, id, show_progress)
+    -- Keep the pre-resolved-config API for external callers and older modules.
+    if cfg and not cfg.CW then
+        cfg = GridRenderer.resolveBadgeConfig(cfg, pfx, id, show_progress)
+    end
+    if not cfg then return cover_widget end
     local CW = cfg.CW
     local badge_scale, corner_badge_scale = cfg.badge_scale, cfg.corner_badge_scale
     local overlap = OverlapGroup:new{ dimen = Geom:new{ w = cw, h = ch }, cover_widget }

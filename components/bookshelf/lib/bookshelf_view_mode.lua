@@ -7,44 +7,22 @@
 --
 -- ── THE MODEL: a chip pin, defaulting to AUTO ──────────────────────────────
 --
--- A chip is pinned to LIST, pinned to COVERS, or set to AUTO. In this fork,
--- UNSET also means AUTO so existing profiles retain their established
--- behaviour when upstream changes its default: covers at the top level and a
--- list after drilling into a folder or stack. Auto may also be stored
--- explicitly, and its policy is fixed:
---
---     expanded, or drilled into a folder / series / author / tag  ->  LIST
---     collapsed at a chip's top level                             ->  COVERS
---
--- (That fixed policy is now Auto's DEFAULT per level and is still what search
--- results' own Auto uses; a chip's Auto is chosen per level, see AUTO BY LEVEL.)
---
--- This replaces the three independent booleans (list_when_expanded /
--- _collapsed / _in_folder) on the maintainer's ruling: "I think we can move
--- the 'show as list ...' options from the main menu into the per chip
--- settings ... as part of the show as 'list / covers / auto: list when
--- expanded or lists inside folders'". The policy Auto encodes is that quote,
--- verbatim. The old keys stay on disk, ignored -- list mode never shipped, so
--- nothing is owed to them.
---
--- Why that split earns being the ONE automatic behaviour: collapsed under the
--- hero there are two rows, where covers say more per item than text; expanded
--- and inside folders the reader is scanning MANY items, which is what a table
--- is for.
+-- Unset retains OrbitUI's legacy policy: covers collapsed at the top level,
+-- list when expanded or drilled in. Explicit Auto uses the 5.4.3 drill-level
+-- choices below, including at the expanded top level. Explicit covers/list/
+-- spines pins apply at every depth. No stored preference is migrated.
 
 local ViewMode = {}
 
 ViewMode.COVERS = "covers"
 ViewMode.LIST   = "list"
 ViewMode.AUTO   = "auto"
--- The third presentation: books edge-on, like a real bookcase. Never chosen
--- by the Auto policy -- it is a deliberate, per-chip aesthetic (the opposite
--- of the utilitarian list), so it exists only as an explicit pin.
+-- Physical bookcase style, explicitly pinned or chosen for an Auto level.
 ViewMode.SPINES = "spines"
 
 -- effective(expanded, in_folder) -> ViewMode.COVERS | ViewMode.LIST
 --
--- The Auto policy, whole: a list wherever the reader is scanning many items
+-- The legacy unset/search policy: a list wherever the reader is scanning many items
 -- (expanded, or drilled into anything), covers on the two rows under the
 -- hero. A pinned chip never reaches this -- the caller checks the pin first.
 function ViewMode.effective(expanded, in_folder)
@@ -60,7 +38,8 @@ end
 -- series inside an author). Each is covers, list or spines, cycled from two
 -- buttons in Shelf style as the sort levels are. Unset is today's Auto: covers
 -- on top, a list inside. Expanded at the top level now follows Level 1, so an
--- untouched Auto shelf shows covers expanded where it showed a list.
+-- explicitly saved Auto shelf shows covers expanded where it showed a list.
+-- OrbitUI's unset shelves still use effective(), not this level policy.
 --
 -- A shelf of shelves has only Level 1: opening a sub-shelf switches to it
 -- (its own Show as and levels), so nothing in it is ever drilled into.
@@ -142,6 +121,8 @@ function ViewMode.chipOverride(value)
 end
 
 -- chipPin(value) -> COVERS | LIST | AUTO | SPINES
+-- Native helper: OrbitUI's widget and editor handle the legacy unset policy
+-- before using this Covers-default resolver.
 --
 -- chipOverride answers "is there a recognised value stored?" and returns nil
 -- for absence. chipPin answers the question the CALLER usually has -- "which

@@ -2,6 +2,30 @@
 
 ## Automated
 
+2026-10-12 Bookshelf 5.4.3 / SimpleUI October 12 upstream merge (local,
+unpublished; VERSION stays alpha.36): full Lua/LuaJIT runs pass 515 OrbitUI
+cases across 43 files, 380 Bookshelf suites (zero failures, two existing native
+SQLite skips), all 13 SimpleUI files and 91 Python tests (four existing external
+artwork source-audit skips). Existing native-font skips remain. Final profile
+OPDS isolation is also covered by rerunning all integration tests and native
+view/row-budget suites on both interpreters. All 42 catalogs, 278 module paths
+and 788 Lua syntax checks pass; no additional skip allowance.
+
+New cases exercise profile-specific Auto level persistence, the legacy unset
+policy, scoped caption hero reserves, byte/count-bounded raster reuse and freeing,
+same-size clock updates, isolated topbar rebuilds, clock backgrounds and live
+metadata/status invalidation. Existing boxes, ornaments, dock, Bento, custom
+icons, hidden Recent books and synchronization tests still pass.
+
+Bigme checks remain: Auto Level 1/2 on Library, Manga and native/nested chips;
+switch between labels above/below/none without a jumping hero or dock overlap;
+revisit author/folder ornaments and manually shuffle; open the selected cover
+over wallpaper; change read status and return Home; clock ticks and suspend/
+resume on Home/custom screens; colour/night rasters; native metadata browsing
+with Show Uncategorized Items off/on. No measured speedup or reader acceptance
+is claimed. Keep the previous installation/settings backup. No publication or
+replacement of published alpha.36 bytes is part of this merge.
+
 2026-10-11 Bookshelf 5.4.1 upstream merge (local, unpublished, VERSION still
 alpha.35): both full Lua and LuaJIT runs pass 508 OrbitUI cases across 42 files,
 380 Bookshelf suites (zero failures, two existing native SQLite suite skips),

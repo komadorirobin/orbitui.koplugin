@@ -146,6 +146,24 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
+- October 12: Bookshelf 5.4.3 `ed135103` and SimpleUI `213a3c70`
+  (still versioned 2.7.5) are reviewed imports. Bookshelf's new Auto levels are
+  persisted in profile records as well as native tabs. Unset OrbitUI shelves
+  keep their legacy policy; only explicit Auto uses the new level choices.
+  The cross-shelf caption reserve reads OrbitUI's independent labels through
+  the adapter, preserving Manga strips and dock geometry. The whole-bookcase
+  fetch no longer shares Select all's 5000-item ceiling. Drill-ins seed their
+  own ornament deal while keeping profile deck IDs and session shuffle rules.
+- SimpleUI's in-place clock/stat refresh retains content-versus-wrapper
+  ownership, module backgrounds and fresh topbar widgets per window when a
+  rebuild is needed. The new shared raster cache stays byte- and count-bounded;
+  keep legacy clear methods and the older `applyBadges` signature usable.
+  Its shared sidecar/metadata refactor retains local short TTLs, 256 metadata
+  rows, hidden Recent books, live status refresh, prefetched descriptions and
+  progress-only rendering. `sui_raster_cache` is in the generated module map.
+  The new hide-Uncategorized default affects native metadata browsing, not
+  the separate Bookshelf profiles or actual book membership.
+
 - Bookshelf 5.4.1 (`7c4c5da6`, October 11 review): nested shelves can choose
   their own theme; the theme menu targets the actual child, not its root.
   Preserve profile-qualified IDs and inherited themes until a child opts in.

@@ -43,6 +43,7 @@ local Widget = Integration.wrap("lib/bookshelf_widget", {
     _spinePlanBase = widgetMethod("_spinePlanBase"),
     _layoutPrimitives = function() return {} end,
     _rowGap = function() return 12 end,
+    _ornDrill = function() return nil end,
     _chipListValue = function(_, key)
         if key == "spine_cover_size_pct" then return 130 end
         H.eq(key, "spine_thickness_pct"); return 120
@@ -96,6 +97,7 @@ for _, name in ipairs({ "ui/widget/confirmbox", "ui/geometry", "ui/size",
     "lib/bookshelf_tab_model", "lib/bookshelf_filter", "logger" }) do
     package.loaded[name] = {}
 end
+package.loaded["lib/bookshelf_tab_model"] = { isShelves = function() return false end }
 package.loaded["device"] = { screen = {} }
 package.loaded["lib/bookshelf_i18n"] = { gettext = function(s) return s end }
 package.loaded["lib/bookshelf_gettime"] = os.clock

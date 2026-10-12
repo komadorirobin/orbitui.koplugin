@@ -128,7 +128,7 @@ end
 -- Paints a filled AA pentagon of size (bw × bh) in `color` at (bx, by) on `bb`.
 local function pentagonPaintRect(bb, bx, by, bw, bh, color)
     if bw <= 0 or bh <= 0 then return end
-    local mask = RasterCache.get("pentagon", bw * 4096 + bh, buildPentagonMask, bw, bh).bb
+    local mask = RasterCache.get("pentagon", bw .. ":" .. bh, buildPentagonMask, bw, bh).bb
     bb:colorblitFromRGB32(mask, bx, by, 0, 0, bw, bh, color)
 end
 
@@ -686,6 +686,15 @@ end
 -- belongs to whichever band is farther along its own axis.
 function CoverWidgets.clearShadowCache()
     RasterCache.clear("shadow")
+end
+
+function CoverWidgets.clearRibbonCache()
+    RasterCache.clear("ribbon")
+end
+
+function CoverWidgets.clearPentagonMaskCache()
+    RasterCache.clear("pentagon")
+    RasterCache.clear("check")
 end
 local function buildShadowMasks(w, h, offset)
     local right  = Blitbuffer.new(offset, h, Blitbuffer.TYPE_BB8)

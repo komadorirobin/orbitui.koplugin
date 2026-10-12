@@ -1783,19 +1783,17 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
         -- columns and rows divide nothing but the shelf band, which is what
         -- makes them safe to vary per chip.
         --
-        -- chipPin, not `mode`: Covers is stored as ABSENCE, so mode is nil for
-        -- a Covers chip and every `mode ~= COVERS` test silently passed. That
-        -- is how a Covers chip came to be offered List columns and List rows,
-        -- controls for a view it is pinned away from. These three lines were
-        -- written when nil meant Auto and were not revisited when the default
-        -- flipped (cf885a1); the radios above were.
-        local pin = ViewMode.chipPin(mode)
+        -- Unset OrbitUI shelves retain the legacy covers/list policy. Level
+        -- controls appear only after explicitly choosing the new Auto mode.
+        local pin = (mode == nil and not is_shelves) and ViewMode.AUTO or ViewMode.chipPin(mode)
         local no_spines  = (chrome and chrome.is_opds) and true or false
         -- The styles this shelf can show: its pin, or under Auto each level's
         -- (ViewMode.auto). The density rows below follow them, so Auto set to
         -- List then Covers offers list rows and folder tiles, and no spine rows.
         local shows = {}
-        if pin == ViewMode.AUTO then
+        if mode == nil and not is_shelves then
+            shows[ViewMode.COVERS], shows[ViewMode.LIST] = true, true
+        elseif pin == ViewMode.AUTO then
             shows[ViewMode.auto(draft, false)] = true
             shows[ViewMode.auto(draft, true)] = true
         else
@@ -1806,7 +1804,7 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
         local show_spines = shows[ViewMode.SPINES] == true and not no_spines
         -- Auto's levels, as buttons in the place of the note that used to
         -- explain its fixed policy (maintainer, 2026-10-11).
-        local show_levels = (pin == ViewMode.AUTO)
+        local show_levels = (mode == ViewMode.AUTO)
         local bw = chrome and chrome.bw
 
         -- nudgeRow: [-]  Label: value  [+], writing draft[key].

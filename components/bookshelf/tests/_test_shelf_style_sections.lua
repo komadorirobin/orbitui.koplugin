@@ -74,13 +74,13 @@ local function check(name, stored, want)
     end)
 end
 
--- Covers: folder tiles yes (they are the tiles it draws), list nudges NO.
-check("sections: Covers, stored as absence, offers no list controls",
-      nil, { covers = true, list = false, spines = false , auto_note = false })
+-- OrbitUI leaves unset shelves on the legacy covers/list automatic policy.
+check("sections: unset legacy Auto offers covers and list controls without new levels",
+      nil, { covers = true, list = true, spines = false , auto_note = false })
 
 -- The same chip written explicitly, e.g. by an older build that stored the
 -- string before the default flipped. Must read identically.
-check("sections: Covers stored explicitly behaves the same as absence",
+check("sections: explicit Covers offers no list controls",
       ViewMode.COVERS, { covers = true, list = false, spines = false , auto_note = false })
 
 -- List: the list nudges, and no folder tiles -- a list's group rows draw a
@@ -129,13 +129,13 @@ t.test("sections: a catalogue is never offered the spine block", function()
     assert(got.spines == false, "an OPDS chip was offered spine density")
 end)
 
-t.test("sections: an unrecognised stored value falls back to Covers", function()
+t.test("sections: an unrecognised stored value falls back to legacy Auto", function()
     -- A chip written by a later release, or hand-edited. chipOverride maps it
-    -- to nil, and nil must read as Covers here exactly as it does in the
+    -- to nil, and nil must read as legacy Auto here exactly as it does in the
     -- renderer.
     local got = sections("teleportation")
-    assert(got.covers == true and got.list == false,
-        "an unknown mode should degrade to the covers default")
+    assert(got.covers == true and got.list == true and got.auto_note == false,
+        "an unknown mode should degrade to the legacy automatic default")
 end)
 
 -- ── The row order, which is a maintainer ruling ────────────────────────────

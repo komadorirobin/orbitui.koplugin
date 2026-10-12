@@ -170,10 +170,13 @@ H.test("shadow masks are reused, bounded and freed exactly once with collision-f
     BB.new = function(w, h)
         live = live + 1; allocated = allocated + 1
         return { w = w, h = h, fill = noop, paintRect = noop,
+            getHeight = function(self) return self.h end,
+            getWidth = function(self) return self.w end,
             free = function(self) assert(not self.freed); self.freed = true; live = live - 1 end }
     end
     local CW, screen = {}, { night_mode = false }
-    run(section(read("features/library/sui_cover_widgets.lua"), "local _shadow_masks", "local ShadowWidget"), {
+    run(section(read("features/library/sui_cover_widgets.lua"), "function CoverWidgets.clearShadowCache", "local ShadowWidget"), {
+        RasterCache = dofile("components/simpleui/infra/sui_raster_cache.lua"),
         CoverWidgets = CW, Blitbuffer = BB, Screen = screen, _SHADOW_MIN_STRENGTH = 0,
         shadowBandStrength = function() return .2 end,
     })

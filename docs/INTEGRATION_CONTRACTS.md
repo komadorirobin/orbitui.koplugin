@@ -88,6 +88,19 @@ Tests: Bookshelf `_test_home_prewarm.lua`, `_test_progress_cache_writers.lua`,
 `_test_performance_caches.lua`, `_test_new_books_index.lua`, `_test_config_cover_cache.lua`.
 Measure warm/cold navigation and memory on the Bigme before claiming a speedup.
 
+The October 12 SimpleUI refresh/cache import keeps live module content separate
+from decorated wrappers. Same-size clock/topbar labels update in place; size
+changes rebuild with the existing module background and hold wrapper. Each
+window owns its own topbar tree and geometry, including the fallback path.
+Shared raster masks have a 3 MiB LRU budget and a 64-entry ceiling (also for
+zero-byte metrics); the just-built oversized raster survives until a later
+request. Preserve collision-free geometry keys and legacy cache-clear/badge
+APIs. Metadata rows retain the 256-entry/five-second bound, retryable failures,
+progress-only/skip-description paths and immediate live-status invalidation.
+Read-only sidecar probes must not close/write handles. No-cover probes expire.
+Tests: `test_upstream_20261012`, `test_simpleui_upstream_20261009_followup`,
+and native `_test_performance_caches`.
+
 ## C05: Synchronization has explicit owners
 
 BookOrbit remains an external plugin/service, not an OrbitUI component. In this
@@ -149,6 +162,14 @@ orientation choices for rollback rather than migrating preferences. The chip
 editor's optional `face_out_override` makes its row read-only and report All
 books, without changing the draft. Tests: `tests/test_face_out_shelves.lua`.
 
+Bookshelf 5.4.3 explicit Auto is per drill level: `view_level1` governs the
+chip's top level (collapsed or expanded), `view_level2` all its drills.
+Defaults are Covers then List. Persist both keys independently in native and
+profile-chip records. An unset mode retains OrbitUI's legacy collapsed-covers,
+expanded/drilled-list policy; do not silently opt existing shelves into new
+level controls. Explicit Covers remains stored, not erased. OPDS cannot use
+physical shelves and falls back to Covers, including a drilled Auto choice.
+
 The shelf-style picker also exposes `spine_cover_size_pct` (50-150%, default
 100%) for each chip, including independent prose/manga profile chips. Only
 face-out covers scale: preserve their aspect ratio, the hero, row count,
@@ -200,6 +221,13 @@ The 5.4.1 global group-text control intentionally follows upstream: Show author
 below series is an on/off switch; a stored Custom group mode reads as Author.
 Retain the old custom template on disk for rollback. Book captions, physical
 series-box labels and their completion badges are not group-text settings.
+
+The 5.4.3 cross-shelf hero-height reference must query the adapter's scoped
+`cover_label_*` modes across native/nested/profile shelves, not `cover_text*`.
+Retain the Manga folder-strip exception and the live dock/footer reserve.
+Do not change per-chip text placement, series-box captions or stored preferences
+to make the new height arithmetic work. Tests: `test_shelf_cover_labels`,
+`test_upstream_20261012` and native `_test_list_row_budget`.
 
 Bookshelf 5.4 themes also work on the fixed profiles. Theme/deck identity is
 `orbitui:<profile>:<chip>` for a fixed chip, never just `authors`/`latest`, which
@@ -526,6 +554,12 @@ updates, cached list identities and manual shuffle/swap behavior for the rest of
 the session. Automatic shuffling does not enable disabled pieces/packs or place
 author busts randomly. Keep this explicit user-approved exception to upstream's
 cross-restart fixed order in future merges. See `tests/test_ornament_session.lua`.
+
+The reviewed 5.4.3 import varies the initial deal and placement seed by drill
+identity, without creating another shuffled deck. Both the page-map plan and
+page-one renderer must use `_ornFirstState`; revisiting the same author/folder
+keeps its deal during the session. Profile deck namespaces, author matching and
+the per-row ordinary-piece limit still apply inside drills.
 
 The adapter wraps `bookshelf_ornament_deck.fillHooks`, preserving `avail`, `lead`,
 `gaps`, `placed`, `empty_ok`, `squeeze`, `stop`, `final`, state and bare-row behavior.

@@ -6393,7 +6393,8 @@ function BookshelfWidget:_viewMode()
     -- before the catalogue check below, so a level set to Spines degrades to
     -- covers there as a Spines pin does.
     if chip_mode == ViewMode.AUTO then
-        local tab = require("lib/bookshelf_tab_model").getById(self.chip)
+        local tab = self._profileShelfSettings and self:_profileShelfSettings()
+        tab = tab or require("lib/bookshelf_tab_model").getById(self.chip)
         chip_mode = ViewMode.auto(tab, self:_isDrilledIn())
     end
     -- Spines never apply to an OPDS catalogue: remote records have no local
@@ -6401,11 +6402,12 @@ function BookshelfWidget:_viewMode()
     -- to stand on (user ruling). A stored pin -- e.g. a chip re-pointed at a
     -- catalogue after choosing Spines -- degrades to the covers default.
     if chip_mode == ViewMode.SPINES then
-        local tab = require("lib/bookshelf_tab_model").getById(self.chip)
+        local tab = self._profileShelfSettings and self:_profileShelfSettings()
+        tab = tab or require("lib/bookshelf_tab_model").getById(self.chip)
         -- A fetch-mode registered source (a server catalogue) is the same case.
         if tab and tab.source and (tab.source.kind == "opds"
                 or require("lib/bookshelf_sources").isPaged(tab.source.kind)) then
-            chip_mode = nil
+            chip_mode = ViewMode.COVERS
         end
     end
     if chip_mode then return chip_mode end
@@ -13972,7 +13974,7 @@ function BookshelfWidget:_collapsedGridSplit(hide_chip_bar, n_shelves, slot_h_na
     -- 2026-10-11). A strip-less shelf's rows keep their own height and the
     -- spare goes to the row gaps instead, as list mode's margins take its
     -- leftover.
-    local own_strip = self:_shelfLabelMode() and strip_h or 0
+    local own_strip = self:_shelfLabelStripVisible() and strip_h or 0
     local ref_strip = (own_strip > 0 or self:_anyShelfShowsCaptions()) and strip_h or 0
     local lo  = math.floor(slot_h_natural * SHELF_PACK_FLOOR) + ref_strip
     local hi  = math.floor(slot_h_natural * 1.0) + ref_strip

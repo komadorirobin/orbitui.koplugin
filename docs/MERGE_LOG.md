@@ -1499,6 +1499,85 @@ live OTA. These are headless tests, not reader acceptance. Nested themes and
 all caption views/placements still need reader checks; retain a settings backup.
 Upgrades from before alpha.33 retain the theme-migration rollback caveat.
 
+## 2026-10-12: Reviewed Bookshelf 5.4.3 and SimpleUI upstream merge
+
+Scope: "Merga upstream igen", not publication. Start from clean main
+`68a9fa0b83301e6d95f05cc1b58cb3be8e5d1c1e` (published alpha.36) on
+`maintenance/upstream-2026-10-12`. Read-only collection at 04:08 UTC freezes:
+
+- Bookshelf master: `7c4c5da6f0668c8f73ee7a791b0c25f149f72a1d` ->
+  `ed135103c687a09e0443ec8c3119033adf579b0f`, release 5.4.3, seven commits,
+  35 files. Unsquashed subtree import `687e42ab`.
+- SimpleUI main: `f14507afdc2cabd36a2ec20a6c3c5dfe0c98a211` ->
+  `213a3c70f4e8670394c4ac6db63baaea1660ba3a`, still labelled 2.7.5,
+  four commits, 24 files. Unsquashed subtree import `1df2426e`.
+
+Reviewed Bookshelf changes: `4b7ab709` whole-bookcase fetch and wallpaper-only
+themes, `822a3742` 5.4.2 release, `6ea5ef0b` fixed hero height across caption
+choices, `e3b2c19b` Auto by drill level, `5ae4e248` distinct ornament deals
+inside groups, `c8c8fb6e` wallpaper-safe opening-ring erase, `ed135103` 5.4.3.
+SimpleUI: `8a63906b` D-pad focus cells, `97301e17` content-aware module
+updates, `79b56a7d` in-place clock/status refresh and raster/metadata reuse,
+`213a3c70` hide Uncategorized by default with a toggle.
+
+Review includes the net runtime/test/catalog diff, settings and removed APIs.
+One new runtime module, `infra/sui_raster_cache.lua`, is added to the generated
+map. No dependency, artwork or data migration is introduced. Original fork
+provenance remains unchanged; only the reviewed upstream pins advance.
+
+Resolve four Bookshelf and six SimpleUI conflict files individually, retaining
+the profile filter, explicit Covers pin, legacy unset Auto, scoped labels,
+Manga strips, hidden Recent books, live read status, bounded caches and local
+module decorations. Separate compatibility work records these semantic choices:
+
+- C07: explicit Auto adopts Level 1/Level 2 even when the top level is expanded.
+  Profile records persist the two keys independently. Unset remains the old
+  automatic policy; no settings are rewritten. Remote Spines falls back to
+  Covers rather than inadvertently falling through to the local list default.
+- C07: hero height uses our `cover_label_*` adapter across native/nested/profile
+  shelves, not upstream's separate `cover_text*` preferences. Per-chip text,
+  Above placement, all-face-out policy, series boxes and dock reserves remain.
+- C04/C06: accept the shared raster LRU but retain a 64-entry bound alongside
+  3 MiB, including tiny/zero-byte entries, colour-aware byte counts, tuple
+  geometry keys and existing clear/badge APIs. Metadata stays bounded to 256
+  rows/five seconds, with short negative probes, cheap progress-only reads,
+  prefetched descriptions and immediate live-status refresh. Sidecar reads
+  never close/write. New BIM change events also clear stale series metadata.
+- C02/C04/C07: live text updates repaint only changed boxes; changed geometry
+  rebuilds the appropriate widget. Preserve separate topbar instances per window,
+  clock module backgrounds/hold wrappers, and content passed to stats updates.
+- C08/C11: wallpaper-only packs may be themes; each drill-in gets a stable seed
+  in its existing profile-qualified deck. Native page maps start from the same
+  deal as page one. Keep session shuffling, manual choices, ordinary ornament
+  limits and author-bound bust rules. Opening selected covers restores wallpaper.
+
+The native Uncategorized default is adopted for SimpleUI metadata browsing;
+it neither deletes books nor changes OrbitUI's fiction/manga membership.
+C01/C03/C05 host, opening and synchronization ownership remain unchanged;
+C09 still requires a separate publication request. VERSION alpha.36,
+bootstrap/API 1 and artwork are unchanged. No device files or credentials
+are accessed. Held Mann artwork and its archive branch remain unpublished.
+
+Validation: full Lua and LuaJIT runs pass 515 OrbitUI cases across 43 files,
+380 Bookshelf suites (zero failures, two existing native SQLite suite skips),
+all 13 SimpleUI files and 91 Python tests (four existing external artwork
+source-audit skips). Both interpreters also rerun all integration tests and the
+native view/row-budget suites after the final profile-versus-native OPDS lookup
+guard. Existing native-font skips and absent adjacent Bookends parity checkout
+remain. All 42 translation catalogs, 278 module-map paths and 788 Lua syntax
+checks pass. No skip or known-failure allowance was added. The new regressions
+exercise real Auto/profile persistence, caption ownership, shared raster eviction,
+clock refresh/backgrounds, isolated topbars and metadata/status invalidation.
+Read-only collection at 04:23 UTC reports zero missing commits for both branches.
+
+Device checks remain outstanding: Auto levels on both profiles and native/
+nested shelves; hero consistency with labels above/below/none; drill ornament
+revisits and manual shuffle; selected-cover opening over wallpaper; Home clock
+ticks, suspend/resume, custom screens and live status changes; colour/night
+rasters and metadata browsing's Uncategorized toggle. Keep the prior install
+and settings backup. No physical Bigme test or measured speedup is claimed.
+No push, version bump, tag, release or OTA publication belongs to this merge.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
