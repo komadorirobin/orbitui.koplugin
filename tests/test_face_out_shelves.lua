@@ -127,7 +127,7 @@ end
 H.test("the standalone component keeps its native configurable orientation", function()
     local button, text = openStyle({ [ViewMode.CHIP_KEY] = ViewMode.SPINES,
         spine_face_out = "reading" })
-    H.eq(text, "Face out: Currently reading")
+    H.eq(text, "Face out: Reading")
     H.eq(button.enabled, true)
     H.eq(Editor.face_out_override, nil)
 end)

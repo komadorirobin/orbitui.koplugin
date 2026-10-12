@@ -170,6 +170,17 @@ expanded/drilled-list policy; do not silently opt existing shelves into new
 level controls. Explicit Covers remains stored, not erased. OPDS cannot use
 physical shelves and falls back to Covers, including a drilled Auto choice.
 
+Bookshelf 5.4.4 splits list density only when explicit Auto uses List at both
+levels. Preserve `list_rows_l2`, `list_columns_l2` and `list_rows_expanded_l2`
+in fixed-profile records as well as native tabs. Level 2 inherits Level 1's
+rows/columns until overridden, but never its expanded zoom. Pinch writes and
+clears only the visible level's key; non-list geometry and searches keep their
+existing keys. Do not leak a namesake native tab into either profile or change
+legacy unset/one-list-level behavior. Face-out favourites retain their native
+heart/star at the top right; the new Finished/On hold orientation reasons do
+not change OrbitUI's all-face-out policy or stored choices. Tests:
+`test_upstream_20261012_followup` and native list-density/favourite suites.
+
 The shelf-style picker also exposes `spine_cover_size_pct` (50-150%, default
 100%) for each chip, including independent prose/manga profile chips. Only
 face-out covers scale: preserve their aspect ratio, the hero, row count,

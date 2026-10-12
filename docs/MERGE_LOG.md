@@ -1604,6 +1604,55 @@ existing release's assets. Device acceptance remains open for the cases above;
 no measured performance improvement is claimed. Keep the prior installation and
 settings backup, including the pre-alpha.33 theme-migration rollback caveat.
 
+## 2026-10-12: Reviewed Bookshelf 5.4.4 follow-up merge
+
+Scope: "Merga upstream igen", not publication. Start from clean main
+`a97246c9cb6171bc92f0b67eefdbc21327dc3b7a` (published alpha.37) on
+`maintenance/upstream-2026-10-12-followup`. Freeze the two tracked targets:
+
+- Bookshelf master: `ed135103c687a09e0443ec8c3119033adf579b0f` ->
+  `2c8bfd8e53b73b24232e674e12ebc6168963aef5`, release 5.4.4, three commits,
+  28 files. Unsquashed subtree import `c3a0f5b0`.
+- SimpleUI main: `213a3c70f4e8670394c4ac6db63baaea1660ba3a` ->
+  `24eb65f77be5d82e27ffe4f44bacd70db9677ed1`, still versioned 2.7.5,
+  two commits (including merge), Czech catalogue only. Subtree import `2a9799c5`.
+
+Review covers the full commit list, runtime/test changes, release notes and
+catalogue changes. Bookshelf `bbcd3799` adds per-level list density, `70a3c642`
+adds Finished/On hold orientation reasons and fixes favourite markers, and
+`2c8bfd8e` updates version/catalogues. SimpleUI merges Czech translations
+`49b3db31` via `24eb65f7`. No dependency, artwork, removed runtime module or
+settings migration. Original fork provenance remains; only integrated pins
+advance. No module-map regeneration is needed.
+
+Resolve Bookshelf's three conflict files individually: README keeps the local
+unset-style and footer-hold semantics while describing the new levels;
+`_chipListValue` keeps the profile-first lookup and adds native level resolution;
+the extracted-method gesture fixture retains both profile and level stubs.
+SimpleUI merges cleanly. Separate compatibility work adds the three new density
+keys to the existing profile whitelist and resolves the profile gesture's key
+before save. A regression first reproduced lost Level 2 settings, then passes
+with independent prose/comics reloads, reads, writes, clears and native-name
+isolation. New upstream tests run, with only a profile-method fixture added.
+
+C07 adopts the new list-level controls and top-right favourite mark, preserving
+all-face-out books, labels above/below covers, series-box geometry/completion,
+ornaments and dock clearance. Standalone Bookshelf retains its new orientation
+reasons; they cannot undo OrbitUI's all-face-out override or rewrite preferences.
+C08 retains settings paths and unrelated profile fields. C01-C06 and C10-C11
+ownership rules remain unchanged. C09 requires separate publication approval.
+PR #508 is still open, not merged; do not duplicate its series-box implementation
+alongside OrbitUI's adapter. VERSION alpha.37, bootstrap/API 1 and artwork are
+unchanged. No device files, reading data or credentials are accessed. The held
+Mann bitmap and its unpublished archive branch remain excluded.
+
+Validation and sealed-package results will be recorded after the full runs.
+Physical Bigme checks remain: Auto/List on both levels, different row/column
+counts in Library and Manga, pinch then back/restart, and favourite heart/star
+with read marks and above/below labels in day/night mode. No device test or
+measured performance improvement is claimed. Keep the prior installation and
+settings backup. No push, version bump, tag, release or OTA publication.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

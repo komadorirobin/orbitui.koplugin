@@ -146,6 +146,17 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
+- October 12 follow-up: Bookshelf 5.4.4 `2c8bfd8e` and SimpleUI `24eb65f7`
+  (Czech translations only) are reviewed imports. Auto with List on both levels
+  supports independent `list_rows_l2`, `list_columns_l2` and expanded zoom in
+  profile records too; profile gestures must resolve the target key before
+  saving. Preserve first-level fallback, profile isolation and the legacy unset
+  style. Physical favourite covers now retain their native heart/star at the
+  top right. The new Finished/On hold orientation reasons do not override
+  OrbitUI's all-face-out policy. No native series-box code is imported: PR #508
+  was still open at review, and OrbitUI's existing adapter remains the owner.
+  Tests: `test_upstream_20261012_followup`, `test_face_out_shelves` and native
+  `_test_list_density_levels` / `_test_face_out_finished_heart`.
 - October 12: Bookshelf 5.4.3 `ed135103` and SimpleUI `213a3c70`
   (still versioned 2.7.5) are reviewed imports. Bookshelf's new Auto levels are
   persisted in profile records as well as native tabs. Unset OrbitUI shelves

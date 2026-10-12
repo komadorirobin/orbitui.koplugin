@@ -62,7 +62,9 @@ t.test("the picker labels it, beside the other reading states", function()
 end)
 
 t.test("a face-out favourite keeps its heart, top-right", function()
-    local tile = shelf:match("elseif e%.face_out then(.-)glyphs_top_left = true")
+    -- OrbitUI adds the series-box exclusion to the branch condition; inspect
+    -- the actual ordinary cover's constructor rather than that condition.
+    local tile = shelf:match("local cover = CoverTile:new{(.-)glyphs_top_left = true")
     assert(tile, "could not find the face-out tile")
     assert(not tile:find("suppress_favorite_badge", 1, true),
         "the face-out tile hides the heart again")

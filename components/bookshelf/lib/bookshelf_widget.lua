@@ -6864,6 +6864,7 @@ end
 function BookshelfWidget:_setChipDensity(key, n)
     if self.profile then
         local settings = self:_profileShelfSettings() or {}
+        key = ViewMode.densityKeys(settings, key, self:_autoLevel())
         settings[key] = n
         Profiles.saveShelfSettings(self.profile, self.chip, settings)
         return

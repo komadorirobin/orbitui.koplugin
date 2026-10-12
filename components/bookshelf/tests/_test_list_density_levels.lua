@@ -82,6 +82,7 @@ local setDensity = method("_setChipDensity", "key, n", env)
 
 local function shelf(drilled)
     local w = { chip = "authors" }
+    w._profileShelfSettings = function() return nil end
     w._isDrilledIn = function() return drilled end
     w._chipViewMode = function()
         local tb = env.require("lib/bookshelf_tab_model").getById(w.chip)
