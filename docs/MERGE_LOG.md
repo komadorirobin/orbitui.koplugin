@@ -1770,6 +1770,17 @@ checkout remain. All 43 catalogues, 289 module paths and 806 Lua syntax checks
 pass. No skip or known-failure allowance was added. Read-only collection at
 19:02 UTC reports zero missing commits for both tracked branches.
 
+Compatibility commit `05e49ac3` passes clean-source sealed packaging: 1700
+manifest files and 1753 archive entries, including all new module paths,
+assets, licenses and recovery documentation. The unpublished development ZIP
+(still labelled alpha.38) has SHA-256
+`fe8a350caa9089f21f372710b6f910c65025bf59657927deca091d02b7c30aa5`.
+Never replace the published alpha.38 assets with this development build. The
+previous local archive/checksum is preserved under ignored test-results.
+Both reviewed upstream tips are ancestors; VERSION, bootstrap/API, adapters
+and artwork are unchanged from the starting tip. Fast-forward local main to
+the reviewed branch after recording this result; do not push it in this task.
+
 Device checks still required: finished/manual totals through restart and
 BookOrbit status edits; hide/show/fade and external file filters; per-view groups;
 Flow carousel swipes/zoom/close with colour/night-mode covers; Home clock,
