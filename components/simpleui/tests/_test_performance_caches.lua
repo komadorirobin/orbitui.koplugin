@@ -1,4 +1,6 @@
 package.path = "./?.lua;./?/init.lua;" .. package.path
+package.loaded["features/library/sui_finished_books"] = { isHidden = function() return false end }
+package.loaded["infra/sui_backdrop"] = {}
 
 local passed = 0
 local function test(name, fn)
@@ -19,18 +21,21 @@ package.loaded["ffi/util"] = { template = function(text, ...)
     local args = { ... }
     return (text:gsub("%%(%d+)", function(n) return tostring(args[tonumber(n)]) end))
 end }
-package.loaded.util = { htmlToPlainTextIfHtml = function(s) return s end }
+package.loaded.util = { htmlToPlainTextIfHtml = function(s) return s end,
+    partialMD5 = function(fp) return "md5:" .. fp end }
 local info_listeners = {}
 package.loaded["infra/sui_config"] = {
     isFatalDbError = function() return false end,
+    getStatsDbStamp = function() return "db:1" end,
     getBookInfoManager = function() return package.loaded.bookinfomanager end,
     onBookInfoChanged = function(fn) info_listeners[#info_listeners + 1] = fn end,
 }
 package.loaded["infra/sui_i18n"] = { translate = function(s) return s end }
 G_reader_settings = { readSetting = function(_, _, default) return default end }
 
-local real_time, now = os.time, os.time()
+local real_time, real_date, now = os.time, os.date, os.time()
 os.time = function(t) if t then return real_time(t) end; return now end
+os.date = function(format, timestamp) return real_date(format, timestamp or now) end
 local opens, closes, bim_reads = 0, 0, 0
 local sidecar, mtime
 local settings = {}
@@ -112,7 +117,14 @@ test("BIM change listeners refresh indexed fields and series without waiting for
 end)
 
 local persisted = {}
+local ledger = { books = {} }
 package.loaded["infra/sui_store"] = {
+    FinishedBooks = {
+        load = function() return ledger end,
+        save = function(value) ledger = value end,
+        preserveGone = function() return true end,
+        manualInAllTime = function() return true end,
+    },
     readSetting = function(_, k)
         if k:match("show_finished$") then return false end
         return persisted[k]
@@ -231,7 +243,9 @@ test("streak invalidation cannot reuse previous-day book counts", function()
     SP.get(conn, nil, true)
     now = now + 86400
     SP.invalidateStreak()
-    assert(SP.get(conn, nil, true)._changed.books)
+    local before = opens
+    local stats = SP.get(conn, nil, true)
+    assert(stats._has_books and opens > before, "new day must reconcile the ledger")
 end)
 test("day rollover and full invalidation still refresh partial stats", function()
     local before = queries
@@ -277,4 +291,5 @@ test("statistics indexes are installed once, and renewed after cloud sync", func
     assert(Config.openStatsDB() and indexes == 2)
 end)
 os.time = real_time
+os.date = real_date
 print("PASS " .. passed .. " performance cache tests")

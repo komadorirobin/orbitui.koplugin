@@ -77,8 +77,10 @@ end
 -- `_changed`/`_has_books` describe a transition relative to in-memory state
 -- that a fresh process has no baseline for, so they are not persisted.
 local function _persistStaleStats(state)
+    if state.db_conn_fatal then return end
     local SUIStore = _getSUIStore()
     if not SUIStore or not SUIStore.setNoFlush then return end
+    local previous = SUIStore:readSetting(_STALE_STATS_SETTING_KEY) or {}
     local snapshot = {
         today_secs    = state.today_secs,
         today_pages   = state.today_pages,
@@ -91,8 +93,8 @@ local function _persistStaleStats(state)
         year_secs     = state.year_secs,
         total_secs    = state.total_secs,
         streak        = state.streak,
-        books_year    = state.books_year,
-        books_total   = state.books_total,
+        books_year    = state._has_books and state.books_year or previous.books_year,
+        books_total   = state._has_books and state.books_total or previous.books_total,
         db_conn_fatal = state.db_conn_fatal,
     }
     pcall(SUIStore.setNoFlush, SUIStore, _STALE_STATS_SETTING_KEY, snapshot)
@@ -436,19 +438,40 @@ local function _reconcile(ledger)
         return false, false
     end
 
-    local changed = not ledger.initialised
+    -- Reconcile transactionally: a transient sidecar/stat failure must not
+    -- commit a partial ledger or suppress retries until tomorrow.
+    local draft = { books = {} }
+    for key, entry in pairs(ledger.books) do
+        local copy = {}
+        for k, v in pairs(entry) do copy[k] = v end
+        draft.books[key] = copy
+    end
+    local changed, complete = not ledger.initialised, true
     for i = 1, math.min(#ReadHistory.hist, _HISTORY_SCAN_LIMIT) do
         local fp   = ReadHistory.hist[i] and ReadHistory.hist[i].file
-        local view = fp and SH.sidecarData(fp, true)
-        if view then changed = _applyBook(ledger, fp, view) or changed end
-    end
-    for _, entry in pairs(ledger.books) do
-        if not entry.gone and entry.path and lfs.attributes(entry.path, "mode") ~= "file" then
-            entry.gone = true
-            changed    = true
+        if fp then
+            local mode, _, errno = lfs.attributes(fp, "mode")
+            if mode == "file" then
+                local ok, view = pcall(SH.sidecarData, fp, true)
+                if ok and view then changed = _applyBook(draft, fp, view) or changed
+                else complete = false end
+            elseif mode == nil and errno ~= 2 and errno ~= 20 then
+                complete = false
+            end
         end
     end
-
+    for _, entry in pairs(draft.books) do
+        if not entry.gone and entry.path then
+            local mode, _, errno = lfs.attributes(entry.path, "mode")
+            if mode == nil and (errno == 2 or errno == 20) then
+                entry.gone, changed = true, true
+            elseif mode == nil then
+                complete = false
+            end
+        end
+    end
+    if not complete then return false, false end
+    ledger.books       = draft.books
     ledger.initialised = true
     _reconciled_day    = os.date("%Y-%m-%d")
     return true, changed
@@ -588,7 +611,7 @@ local function countFinishedBooks(year_str)
             if _storedYear(entry) == year then in_year = in_year + count end
         end
     end
-    return in_year, total
+    return in_year, total, _reconciled_day == os.date("%Y-%m-%d")
 end
 
 --- Completion date a book's summary should carry. A book that is not
@@ -827,18 +850,18 @@ function SP.getStatusCounts()
     local home = ok_scan and LibraryScan and LibraryScan.resolveHomeDir()
     local SH   = package.loaded["modules/module_books_shared"]
     if not (home and SH and SH.sidecarData) then
-        _status_cache = counts
         return counts
     end
-
+    local complete = true
     for _, fp in ipairs(LibraryScan.getFileList(home)) do
         local data    = SH.sidecarData(fp, true)
+        if not data then complete = false end
         local percent = data and data.percent
         local status  = data and type(data.summary) == "table" and data.summary.status or nil
         _classifyStatusEntry(counts, percent, status)
     end
 
-    _status_cache = counts
+    if complete then _status_cache = counts end
     return counts
 end
 
@@ -958,10 +981,10 @@ function SP.get(db_conn, year_str, needs_books)
             _has_books    = true,
             _changed      = { timeseries = false, streak = false, books = true },
         }
-        local by, bt = countFinishedBooks(year_str or tostring(t.year))
+        local by, bt, complete = countFinishedBooks(year_str or tostring(t.year))
         result.books_year  = by
         result.books_total = bt
-        _books_dirty = false
+        result._has_books, _books_dirty = complete, not complete
         _cache = result
         _persistStaleStats(result)
         return result
@@ -1067,22 +1090,22 @@ function SP.get(db_conn, year_str, needs_books)
         -- as a day's worth of zero reading activity.
         _cache, _cache_day = result, timeseries_ok and today_str or nil
         if timeseries_ok then _db_stamp = db_stamp end
-        _persistStaleStats(result)
+        if timeseries_ok then _persistStaleStats(result) end
         return result
     end
-    local by, bt = countFinishedBooks(year_str or tostring(t.year))
+    local by, bt, complete = countFinishedBooks(year_str or tostring(t.year))
     local previous = _cache
     result.books_year  = by
     result.books_total = bt
     result._changed.books = not (previous and previous._has_books
         and previous.books_year == by and previous.books_total == bt)
-    _books_dirty = false
+    _books_dirty = not complete
 
-    result._has_books = true
+    result._has_books = complete
     _cache     = result
-    _cache_day = today_str
+    _cache_day = timeseries_ok and today_str or nil
     _db_stamp  = timeseries_ok and db_stamp or nil
-    _persistStaleStats(result)
+    if timeseries_ok then _persistStaleStats(result) end
     return result
 end
 
@@ -1095,6 +1118,7 @@ end
 -- _stats_need_refresh is set), module_reading_goals dialogs.
 -- ---------------------------------------------------------------------------
 function SP.invalidate(keep_status_counts)
+    _reconciled_day, _books_dirty = nil, true
     _cache_day          = nil
     _streak_cache_valid = false
     if not keep_status_counts then SP.invalidateStatusCounts() end

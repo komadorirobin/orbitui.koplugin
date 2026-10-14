@@ -204,6 +204,9 @@ local Finder = run(read("features/library/sui_cover_finder.lua"), {
         if name == "libs/libkoreader-lfs" then return { attributes = function() return 1 end } end
         if name == "features/library/sui_bim_stamp" then return { get = function() return stamp end } end
         if name == "ui/widget/filechooser" then return {} end
+        if name == "features/library/sui_finished_books" then
+            return { getMode = function() return "fade" end, isHidden = function() return false end }
+        end
         error(name)
     end,
 })
@@ -216,9 +219,9 @@ local covers = { getBookInfo = function()
 end }
 H.test("folder cover searches retry DB failures without restart or stamp changes", function()
     for _, fetch in ipairs({
-        function() return Finder.findFirstCover(menu, "/books", covers) end,
-        function() return Finder.collectCovers(menu, "/books", 4, covers, true)[1] end,
-        function() return Finder.findCoverRecursive(menu, "/books", 0, 3, covers) end,
+        function() return Finder.planDir(menu, "/books", 1, 0, covers).covers[1] end,
+        function() return Finder.planDir(menu, "/books", 4, 3, covers).covers[1] end,
+        function() return Finder.planDir(menu, "/books", 1, 3, covers).covers[1] end,
     }) do
         Finder.clearCache(); cover_fail = true
         H.eq(fetch(), nil)
@@ -228,11 +231,11 @@ H.test("folder cover searches retry DB failures without restart or stamp changes
 end)
 H.test("confirmed missing folder covers remain cached until database changes", function()
     Finder.clearCache(); cover_exists = false
-    H.eq(Finder.findFirstCover(menu, "/books", covers), nil)
+    H.eq(Finder.planDir(menu, "/books", 1, 0, covers).covers[1], nil)
     local n = reads
-    H.eq(Finder.findFirstCover(menu, "/books", covers), nil); H.eq(reads, n)
+    H.eq(Finder.planDir(menu, "/books", 1, 0, covers).covers[1], nil); H.eq(reads, n)
     stamp = "db:1/wal:3"; cover_exists = true
-    assert(Finder.findFirstCover(menu, "/books", covers)); H.eq(reads, n + 1)
+    assert(Finder.planDir(menu, "/books", 1, 0, covers).covers[1]); H.eq(reads, n + 1)
 end)
 
 H.test("native reader menu honors all close targets without changing explicit Home routes", function()
@@ -284,7 +287,8 @@ H.test("paginated grid erasers restore module backdrop over the wallpaper", func
             calls[#calls + 1] = "backdrop:" .. strength
         end }
     run(method(wallpaper, "function M.paintEraser("), {
-        M = M, _clampBackdrop = function(n) return n end,
+        M = M, STRENGTH_MIN = 0, STRENGTH_MAX = 100,
+        Backdrop = { clampBackdropStrength = function(n) return n end, paintBackdrop = M.paintBackdrop },
         _style_bg_cache_bb = { getWidth = function() return 100 end, getHeight = function() return 100 end },
     })
     local bb = { blitFrom = function() calls[#calls + 1] = "wallpaper" end }

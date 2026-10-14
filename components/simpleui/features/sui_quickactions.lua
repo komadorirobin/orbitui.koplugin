@@ -1940,9 +1940,9 @@ function QA.sui_build_qa_icons(plugin, ctx_menu, ctx)
                     and c.icon ~= Config.CUSTOM_ICON
                     and c.icon ~= Config.CUSTOM_PLUGIN_ICON
                     and c.icon ~= Config.CUSTOM_DISPATCHER_ICON
-                     and c.icon ~= Config.CUSTOM_GROUP_ICON
+                    and c.icon ~= Config.CUSTOM_GROUP_ICON
             end
-                    
+
             local effective_icon = current_icon
             if not effective_icon then
                 if _is_default then

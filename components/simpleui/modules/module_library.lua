@@ -275,6 +275,9 @@ local mod = GridRenderer.makeModule{
     -- Recent, the open book stays listed: the Library is the complete
     -- catalogue.
     filterItem = function(fp, ctx)
+        local pfx = (ctx and ctx.pfx) or ""
+        local legacy = SUISettings:readSetting(pfx .. "flat_library_show_finished")
+        if legacy ~= nil then return legacy or not SH.isFinished(fp, ctx and ctx.prefetched) end
         return not Finished.isHidden() or not SH.isFinished(fp, ctx and ctx.prefetched)
     end,
 
@@ -290,6 +293,9 @@ local mod = GridRenderer.makeModule{
     badges = { pages = "off", series = "off", new = "off" },
 
     extra_menu_items_before = extraMenuItemsBefore,
+    extra_settings = {
+        { key = "show_finished", label = _("Show finished books"), default = true },
+    },
 
     -- Configurable grid (Rows 1-3 × Columns 4-5) + swipe pagination —
     -- the whole library rarely fits on a single row.

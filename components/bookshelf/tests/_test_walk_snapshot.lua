@@ -498,7 +498,7 @@ t.test("enabling a plugin format makes the restart walk again and list its files
     local out = freshRepo().getLatest(10)
     assert(dir_reads > 0, "a snapshot from before the plugin was enabled was accepted")
     assert(#out == 3, "the plugin's book is still hidden: got " .. #out)
-    assert(disk.data.formats == "meguru", "the snapshot does not record its format set")
+    assert(disk.data.value.formats == "meguru", "the snapshot does not record its format set")
     setPluginFormats(false)
 end)
 
@@ -528,7 +528,7 @@ t.test("a snapshot from before format sets were recorded is accepted when there 
     setup()
     setPluginFormats(false)
     freshRepo().getLatest(10)
-    disk.data.formats = nil   -- written by the previous Bookshelf version
+    disk.data.value.formats = nil   -- written by the previous Bookshelf version
     dir_reads = 0
     freshRepo().getLatest(10)
     assert(dir_reads == 0, "an upgrade without plugin formats paid for a walk")

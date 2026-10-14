@@ -112,6 +112,8 @@ package.loaded["infra/sui_core"] = {
 local language = "en"
 G_reader_settings = { readSetting = function(_, key) if key == "language" then return language end end }
 package.loaded["infra/sui_raster_cache"] = dofile("components/simpleui/infra/sui_raster_cache.lua")
+package.loaded["ui/widget/widget"] = Widget
+package.loaded["infra/sui_backdrop"] = dofile("components/simpleui/infra/sui_backdrop.lua")
 local Config = Adapter.wrap("infra/sui_config", dofile("components/simpleui/infra/sui_config.lua"))
 package.loaded["infra/sui_config"] = Config
 local Style = Adapter.wrap("features/sui_style", dofile("components/simpleui/features/sui_style.lua"))

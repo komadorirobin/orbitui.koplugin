@@ -957,7 +957,7 @@ function SimpleUIPlugin:init()
         -- Settings migration v11:
         -- Series grouping becomes a per-view setting. An enabled global flag
         -- enables it in every view that supported it, keeping the previous
-        -- behaviour; the global flag is then dropped.
+        -- behaviour; retain the global flag for code rollback.
         if not defer_defaults_until_settings_migrated
                 and not SUISettings:isTrue("simpleui_settings_migrated_v11") then
             pcall(function()

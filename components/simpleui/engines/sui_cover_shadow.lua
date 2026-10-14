@@ -86,7 +86,7 @@ end
 -- `offset`, minus the card itself.
 function Shadow.paintRect(bb, x, y, w, h, offset)
     if offset <= 0 then return end
-    local masks = RasterCache.get("shadow", (w * 4096 + h) * 64 + offset, buildRectMasks, w, h, offset)
+    local masks = RasterCache.get("shadow", table.concat({ w, h, offset }, ":"), buildRectMasks, w, h, offset)
     local color = shadowColor()
     bb:colorblitFromRGB32(masks.right,  x + w,      y + offset, 0, 0, offset, h,      color)
     bb:colorblitFromRGB32(masks.bottom, x + offset, y + h,      0, 0, w,      offset, color)

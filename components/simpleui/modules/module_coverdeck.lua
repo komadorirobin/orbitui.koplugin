@@ -191,7 +191,7 @@ local _MAIN_ELEM_LABELS = {
 --   kind       "crop": the outer slice of each cover.
 --              "tilt": the whole cover in perspective; `tilt` is the ratio of
 --              its inner edge height to its outer edge height.
-local DEFAULT_STYLE = "flow"
+local DEFAULT_STYLE = "classic" -- OrbitUI: new perspective layout is opt-in.
 local STYLE_ORDER   = { "classic", "flow" }
 local CAROUSEL_STYLES = {
     classic = {

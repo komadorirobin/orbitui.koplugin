@@ -3147,7 +3147,7 @@ function ScreenWidget:_scheduleDataRefresh(stats_only)
                 for id, slot in pairs(self._book_mod_slots or {}) do
                     local updated_in_place = false
                     if type(slot.mod.updateStats) == "function" then
-                        local ok, result = pcall(slot.mod.updateStats, slot.content, self._ctx_cache)
+                        local ok, result = pcall(self._updateModuleStats, self, slot)
                         updated_in_place = ok and result
                     end
 
@@ -3174,7 +3174,8 @@ function ScreenWidget:_scheduleDataRefresh(stats_only)
             -- updateStats() returns false when _changed flags show none of the
             -- module's fields were re-fetched — skip setDirty entirely in that case.
             for id, slot in pairs(self._stats_mod_slots or {}) do
-                if slot.mod.updateStats(slot.content, self._ctx_cache) then
+                if (pending_stats_only or not slot.mod.is_book_mod)
+                        and self:_updateModuleStats(slot) then
                     self:_setSlotDirty(id, slot)
                 end
             end

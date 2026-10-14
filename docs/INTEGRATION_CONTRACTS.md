@@ -103,6 +103,20 @@ and native `_test_performance_caches`.
 
 ## C05: Synchronization has explicit owners
 
+The October 14 finished-book ledger is local statistics state, not a new
+external synchronization owner. Read-only reconciliation must not write book
+sidecars; completion dates are aligned only on explicit status-change events.
+Reconciliation is atomic across the bounded history scan: transient stat or
+sidecar failures neither remove known entries nor suppress retries for the day.
+Partial counts and unavailable/locked DB activity cannot overwrite the last
+valid persisted totals. Full invalidation resets ledger reconciliation too;
+streak-only invalidation keeps valid same-day counts. Retain legacy deleted-book
+records and manual-count keys for rollback, with an idempotent migration marker
+inside the new ledger. The new format-aware Bookshelf walk cannot adopt a
+core-only SimpleUI index when plugin formats are present (C04).
+Tests: `test_upstream_20261014`, native `_test_performance_caches` and
+`_test_walk_snapshot`.
+
 BookOrbit remains an external plugin/service, not an OrbitUI component. In this
 user's setup, BookOrbit should remain the intended Hardcover reading-progress
 writer. Do not introduce an additional automatic Hardcover completion/status

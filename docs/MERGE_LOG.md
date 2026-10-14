@@ -1702,6 +1702,84 @@ existing release's assets. Device acceptance remains open for the cases above;
 no measured performance improvement is claimed. Keep the prior installation
 and settings backup, including the pre-alpha.33 theme-migration rollback caveat.
 
+## 2026-10-14: Reviewed tracked-branch merge, series-box PR deferred
+
+User: "Da avvaktar vi med det sa lange. Merga upstream igen."
+Start from clean published alpha.38 main
+`0154a5586eb8dab4dd3f5835dd4fca8dbde1a1b5`, on
+`maintenance/upstream-2026-10-14`. Freeze and review these exact targets:
+
+- Bookshelf master: `2c8bfd8e53b73b24232e674e12ebc6168963aef5` ->
+  `aeada050f90921b748dcef0ae2f88367bd0e1b69`, 12 commits / 19 changed files.
+  Unsquashed subtree import `4a9acfa6`.
+- SimpleUI main: `5bddc5bb7858c2e75a1047b5adfc9c9bbc8e2f1f` ->
+  `84a9c0e96152c81c9879b484840ad4cd22ab1580`, 16 commits / 84 changed files.
+  Unsquashed subtree import `34c09970`.
+
+The read-only watcher captured the targets at 18:43 UTC. Upstream metadata
+still says 5.4.4 and 2.7.5 respectively. Bookshelf PR #508 was merged into
+`feat/series-boxes` (merge `3a8b2e2a5d6ef7341de10a01197cc84c78490cbc`),
+not tracked master. Per the user's deferral, do not import that branch or
+replace OrbitUI's series-box adapter. Original fork provenance is unchanged.
+
+Bookshelf adds Favourite first sorting, plugin-registered document formats
+(excluding images), format-aware walk caches, extraction guards for formats
+that may need network access, and OPDS-PSE stream/resume plus an optional record
+action API. Keep the keyed multi-root snapshots, cancellable validation and
+post-invalidation generation capture. Skip SimpleUI's shared core-format index
+when plugin formats are registered. Scope the extension helpers to avoid the
+LuaJIT 200-local limit exposed by the first syntax run; no format is dropped.
+
+SimpleUI adds a persistent finished-book ledger, manual-book/goal controls,
+Stats menu, finished visibility modes, per-view series grouping, smarter folder
+cover planning, opt-in Flow carousel, shared backdrop/shadow rendering, extracted
+ScreenWidget methods and Dutch translations. Resolve individual conflicts across
+27 files rather than applying a blanket side. Keep fresh label widgets and
+per-module scaling/prefixes, independent Bento gaps, local icon fonts and Classic
+titlebar defaults, BookOrbit carousel sources/index callbacks, warm/docked
+navigation and refresh token/instance guards. Stats updates still target mounted
+content, not decorators, and book modules are not updated twice. The shared
+shadow retains collision-free keys and legacy clear/badge APIs. Preserve wallpaper
+aliases and zero default backdrop strengths. Unloading uses reset-aware eviction.
+
+Separate compatibility work preserves old fade/grouping/deleted-book/manual-count
+keys and explicit flat-library visibility. Migrations v10/v11 honor embedded
+deferral and do not overwrite explicit per-view choices. Manual-count migration
+is marked inside the ledger so retained legacy values cannot resurrect removed
+entries. Finished-file-filter teardown disables its owned gate without erasing
+later patch wrappers. Ledger reconciliation is transactional and retryable on
+sidecar/stat errors; incomplete counts cannot erase stored totals. Missing/locked
+DBs retry even for full stats, without persisting zero activity. No read-only
+sidecar probe flushes metadata. No additional BookOrbit/Hardcover writer.
+
+Affected contracts C01-C08 and C10-C11 remain intact; C09 forbids publication
+without a separate request. Module map grows from 278 to 289 paths. Update
+fixtures for relocated renderers and new directory-cover plans while retaining
+behavioral assertions. Keep single-form plural repairs in ja/ko/vi/zh catalogues;
+all 43 catalogues validate without new baseline exceptions. The new focused
+suite covers real migrations, ledger retry/rollback, wrapper ownership, shared
+walk guards, perspective geometry and guarded grayscale/RGB framebuffer writes
+under LuaJIT. Full-suite and package validation results follow below.
+
+Validation: complete sequential Lua and LuaJIT runs pass 534 / 535 OrbitUI
+cases across 45 files (the extra case exercises actual FFI buffers), 385
+Bookshelf suites (zero failures, two existing SQLite suite skips), all 13
+SimpleUI files and 91 Python checks (four existing external-artwork audit
+skips). Two native-font case skips and the absent adjacent Bookends parity
+checkout remain. All 43 catalogues, 289 module paths and 806 Lua syntax checks
+pass. No skip or known-failure allowance was added. Read-only collection at
+19:02 UTC reports zero missing commits for both tracked branches.
+
+Device checks still required: finished/manual totals through restart and
+BookOrbit status edits; hide/show/fade and external file filters; per-view groups;
+Flow carousel swipes/zoom/close with colour/night-mode covers; Home clock,
+Bento, custom icons, module labels and dock reflow; Favourite first sorting;
+optional plugin formats and OPDS-PSE resume with the relevant plugins installed.
+No Bigme test or measured speedup is claimed. Keep installation/settings backup:
+old keys survive rollback, but new ledger edits are not mirrored to older code.
+VERSION, bootstrap/API and artwork are unchanged. No push, tag, release or OTA
+publication is part of this task; the held Mann bitmap remains excluded.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

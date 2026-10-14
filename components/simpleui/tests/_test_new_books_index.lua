@@ -1,4 +1,5 @@
 package.path = "./?.lua;" .. package.path
+package.loaded["modules/module_books_shared"] = {}
 local now, reads, tree, mtimes = 1000, 0, {}, {}
 local realTime = os.time
 os.time = function() return now end

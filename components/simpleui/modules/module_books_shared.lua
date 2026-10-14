@@ -395,6 +395,7 @@ function SH.progressBadgeDesc(bd, eff_size, color)
 end
 
 local function badgeWidget(desc)
+    if not desc then return nil end
     local CW = getCoverWidgets()
     return CW and CW.buildProgressBadgeWidget(desc)
 end
@@ -415,7 +416,11 @@ function SH.coverBadgeDesc(bd, cw, ch, opts)
     return SH.progressBadgeDesc(bd, eff_size, opts.color), edge_margin
 end
 
-function SH.applyProgressBadge(cover_widget, bd, cw, ch, opts)
+function SH.applyProgressBadge(cover_widget, bd, cw, ch, opts, ref_w, ref_h, scale_pct)
+    -- Retain the positional API used by older modules and external patches.
+    if type(opts) ~= "table" or ref_w ~= nil or ref_h ~= nil or scale_pct ~= nil then
+        opts = { color = opts, ref_w = ref_w, ref_h = ref_h, scale_pct = scale_pct }
+    end
     local desc, edge_margin = SH.coverBadgeDesc(bd, cw, ch, opts)
     local wg = badgeWidget(desc)
     if not wg then return cover_widget end

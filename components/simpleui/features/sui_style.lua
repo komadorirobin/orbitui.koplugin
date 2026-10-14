@@ -1515,11 +1515,11 @@ function M.buildIconPreview(size, opts)
     local inner     = size - M.BORDER_SZ * 2
     local content
 
-    local glyph = Config.nerdIconChar(icon)
+    local glyph = Config.iconGlyph(icon)
     if glyph then
         content = TextWidget:new{
             text    = glyph,
-            face    = M.glyphFace(icon_size),
+            face    = Config.iconFace(icon, math.floor(icon_size * M.GLYPH_RATIO), M.FACE_ICONS),
             fgcolor = M.COLOR.text_primary,
             padding = 0,
         }

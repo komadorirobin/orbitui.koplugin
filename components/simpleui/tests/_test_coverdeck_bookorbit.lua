@@ -1,4 +1,9 @@
 package.path = "./?.lua;./?/init.lua;" .. package.path
+package.loaded["ui/uimanager"] = {}
+package.loaded["engines/sui_cover_warp"] = {}
+package.loaded["engines/sui_cover_shadow"] = {}
+package.loaded["engines/sui_cover_placeholder"] = {}
+package.loaded["features/library/sui_cover_widgets"] = {}
 
 local files = {
     "/books/one.epub",

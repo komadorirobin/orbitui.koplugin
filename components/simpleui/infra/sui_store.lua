@@ -280,18 +280,21 @@ local function _migrateLegacy(books)
 end
 
 -- Folds the legacy plain count of manually tracked books into the ledger as
--- the bulk entry of the current year, then drops the legacy key.
+-- the bulk entry of the current year. Retain legacy values for rollback.
 local function _foldLegacyCount(ledger)
+    if ledger.legacy_count_migrated then return end
     local legacy = SUISettings:get(LEGACY_PHYSICAL_KEY)
-    if legacy == nil then return end
 
     local count = math.floor(tonumber(legacy) or 0)
     if count > 0 then
         local year = os.date("%Y")
-        ledger.books["manual:bulk:" .. year] = { manual = true, count = count, finished = year }
-        SUISettings:set(LEDGER_KEY, ledger)
+        local key = "manual:bulk:" .. year
+        if not ledger.books[key] then
+            ledger.books[key] = { manual = true, count = count, finished = year }
+        end
     end
-    SUISettings:del(LEGACY_PHYSICAL_KEY)
+    ledger.legacy_count_migrated = true
+    SUISettings:set(LEDGER_KEY, ledger)
 end
 
 --- Returns the ledger, creating it (and migrating legacy data) on first use.
@@ -302,7 +305,6 @@ function FinishedBooks.load()
         ledger = { books = {} }
         _migrateLegacy(ledger.books)
         SUISettings:set(LEDGER_KEY, ledger)
-        SUISettings:del(LEGACY_KEY)
     end
     _foldLegacyCount(ledger)
     return ledger

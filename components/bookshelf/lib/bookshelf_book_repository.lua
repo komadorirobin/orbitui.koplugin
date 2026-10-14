@@ -579,6 +579,8 @@ end
 -- openable but aren't shelf books and would surface cover/sidecar files.
 -- Compound ".zip" forms (fb2.zip etc.) are handled by _supportedExt; a bare
 -- ".zip"/".tar" archive is intentionally NOT a book.
+local _supportedExt, _pluginFormatsFingerprint
+do
 local SUPPORTED_EXT = {
     -- ebooks
     epub=true, epub3=true, fb2=true, fb3=true, mobi=true, azw=true,
@@ -596,6 +598,8 @@ local SUPPORTED_EXT = {
 
 -- Formats other plugins register document providers for
 -- See lib/bookshelf_plugin_formats for the rules.
+local _isPluginFormat
+do
 local _plugin_formats
 local function _pluginFormats()
     if _plugin_formats == nil then
@@ -604,16 +608,17 @@ local function _pluginFormats()
     end
     return _plugin_formats or nil
 end
-local function _isPluginFormat(ext)
+_isPluginFormat = function(ext)
     local PF = _pluginFormats()
     return PF and PF.isPluginFormat(ext) or false
 end
 
 -- The plugin format set as a string, for the walk cache's validity check (see
 -- cachedWalk). "" when no plugin adds a format, or the module is unavailable.
-local function _pluginFormatsFingerprint()
+_pluginFormatsFingerprint = function()
     local PF = _pluginFormats()
     return PF and PF.fingerprint() or ""
+end
 end
 
 -- _supportedExt(name): the supported book extension for a filename (lowercased,
@@ -621,7 +626,7 @@ end
 -- ".zip" book forms KOReader registers (fb2.zip, html.zip, ...) without
 -- treating a bare/unknown ".zip" archive as a book. Formats a plugin registers
 -- a document provider for count too.
-local function _supportedExt(name)
+_supportedExt = function(name)
     if not name then return nil end
     local last = name:match("%.([^.]+)$")
     if not last then return nil end
@@ -651,6 +656,7 @@ end
 function Repo.isPluginFormatFile(path)
     local ext = _supportedExt(path)
     return ext ~= nil and not SUPPORTED_EXT[ext]
+end
 end
 
 -- _formatLabel(fp): uppercase format label for display/grouping. Collapses a
@@ -3404,6 +3410,8 @@ _dropWalkSnapshot = function()
 end
 
 local function _simpleUIWalk(home, depth, work)
+    -- SimpleUI's shared index covers core formats only.
+    if _pluginFormatsFingerprint() ~= "" then return end
     local scan = package.loaded["engines/sui_library_scan"]
     if type(scan) ~= "table" or type(scan.peekFileIndex) ~= "function" then return end
     local ok, index = pcall(scan.peekFileIndex, home, depth)

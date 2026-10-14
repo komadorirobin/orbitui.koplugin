@@ -86,7 +86,7 @@ local EXCLUDED_EXACT = {
     ["simpleui_library_defaults_applied"] = true,
 }
 
-for _i = 2, 9 do
+for _i = 2, 11 do
     EXCLUDED_EXACT["simpleui_settings_migrated_v" .. _i] = true
 end
 

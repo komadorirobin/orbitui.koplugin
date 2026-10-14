@@ -110,7 +110,7 @@ end)
 
 H.test("wallpaper, cover shadow and currently-reading defaults remain opt-in and unchanged", function()
     local WP = {}
-    run(section(read("features/sui_wallpaper.lua"), "M.BACKDROP_DEFAULT =", "local KEY_STATUSBAR"), { M = WP })
+    run(section(read("infra/sui_backdrop.lua"), "M.BACKDROP_DEFAULT =", "-- Rounds and clamps"), { M = WP })
     H.eq(WP.BACKDROP_DEFAULT.pagination, 0); H.eq(WP.BACKDROP_DEFAULT.titlebar, 0)
     H.eq(WP.BACKDROP_DEFAULT.cover_strip, 0)
     local active = true
@@ -118,7 +118,7 @@ H.test("wallpaper, cover shadow and currently-reading defaults remain opt-in and
     WP.readBackdropStrength = function(k, default) return settings[k] or default end
     WP.saveBackdropStrength = function(k, v) settings[k] = v end
     run(section(read("features/sui_wallpaper.lua"), "function M.getCoverStripBackdropStrength", "-- Module backdrop"),
-        { M = WP, KEY_COVER_STRIP = "strip", _BACKDROP_MAX = 100 })
+        { M = WP, Backdrop = WP, KEY_COVER_STRIP = "strip", STRENGTH_MAX = 100 })
     settings = {}; H.eq(WP.getCoverStripBackdropStrength(), 0)
     WP.setCoverStripBackdropStrength(35); H.eq(WP.getCoverStripBackdropStrength(), 35)
     active = false; H.eq(WP.getCoverStripBackdropStrength(), 100); H.eq(settings.strip, 35)
@@ -175,10 +175,16 @@ H.test("shadow masks are reused, bounded and freed exactly once with collision-f
             free = function(self) assert(not self.freed); self.freed = true; live = live - 1 end }
     end
     local CW, screen = {}, { night_mode = false }
-    run(section(read("features/library/sui_cover_widgets.lua"), "function CoverWidgets.clearShadowCache", "local ShadowWidget"), {
-        RasterCache = dofile("components/simpleui/infra/sui_raster_cache.lua"),
-        CoverWidgets = CW, Blitbuffer = BB, Screen = screen, _SHADOW_MIN_STRENGTH = 0,
-        shadowBandStrength = function() return .2 end,
+    local cache = dofile("components/simpleui/infra/sui_raster_cache.lua")
+    local Shadow = run(read("engines/sui_cover_shadow.lua"), { require = function(name)
+        if name == "ffi/blitbuffer" then return BB end
+        if name == "device" then return { screen = screen } end
+        if name == "ui/geometry" then return { new = function(_, p) return p end } end
+        if name == "infra/sui_raster_cache" then return cache end
+        error(name)
+    end })
+    run(section(read("features/library/sui_cover_widgets.lua"), "function CoverWidgets.clearShadowCache", "-- Widget casting"), {
+        RasterCache = cache, CoverWidgets = CW, CoverShadow = Shadow,
     })
     local calls = {}
     local bb = { colorblitFromRGB32 = function(_, mask, _, _, _, _, w, h, color)

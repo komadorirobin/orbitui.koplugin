@@ -2,6 +2,7 @@
 -- Android background-extraction policy.
 
 package.path = "./?.lua;./?/init.lua;" .. package.path
+package.loaded["infra/sui_backdrop"] = {}
 
 local passed, failed = 0, 0
 local function test(name, fn)

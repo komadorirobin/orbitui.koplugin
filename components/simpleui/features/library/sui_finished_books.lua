@@ -90,6 +90,7 @@ end
 -- ---------------------------------------------------------------------------
 
 local _orig_show_file = nil
+local _show_file_wrapper, _gate
 
 -- Leaves finished books out of the file manager's listings while the mode is
 -- "hide". Like the built-in status filter, it only applies when the full
@@ -97,19 +98,24 @@ local _orig_show_file = nil
 function Finished.install()
     if _orig_show_file then return end
     _orig_show_file = FileChooser.show_file
-
-    FileChooser.show_file = function(fc, filename, fullpath)
-        if not _orig_show_file(fc, filename, fullpath) then return false end
-        if fullpath == nil or fc.name ~= "filemanager" or not Finished.isHidden() then
+    local original, gate = _orig_show_file, { active = true }
+    _gate = gate
+    _show_file_wrapper = function(fc, filename, fullpath)
+        if not original(fc, filename, fullpath) then return false end
+        if not gate.active or fullpath == nil or fc.name ~= "filemanager" or not Finished.isHidden() then
             return true
         end
         return BookList.getBookStatus(fullpath) ~= "complete"
     end
+    FileChooser.show_file = _show_file_wrapper
 end
 
 function Finished.uninstall()
     if not _orig_show_file then return end
-    FileChooser.show_file = _orig_show_file
+    _gate.active = false
+    if FileChooser.show_file == _show_file_wrapper then
+        FileChooser.show_file = _orig_show_file
+    end
     _orig_show_file = nil
 end
 

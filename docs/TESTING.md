@@ -2,6 +2,33 @@
 
 ## Automated
 
+2026-10-14 reviewed upstream merge (local, unpublished; VERSION remains
+alpha.38): complete sequential Lua / LuaJIT runs pass 534 / 535 OrbitUI cases
+across 45 files, 385 Bookshelf suites (zero failures, two existing SQLite suite
+skips), all 13 SimpleUI files and 91 Python checks (four existing external-artwork
+source skips). Two native-font case skips and absent adjacent Bookends parity
+checkout remain. All 43 translation catalogues, 289 module paths and 806 Lua
+syntax checks pass. No new failure/skip allowance. `test_upstream_20261014`
+adds migration/ledger rollback, transient failure retries, wrapper ownership,
+format-index isolation and perspective-geometry cases; LuaJIT additionally
+checks real guarded 8/24/32-bit framebuffer writes. Existing native tests use
+the new renderer/planner modules without removing behavioral assertions.
+
+Targets are Bookshelf `aeada050` and SimpleUI `84a9c0e9`, with no missing
+tracked-branch commits at 19:02 UTC. PR #508 remains excluded; OrbitUI's
+series-box, completion, ornament and profile tests remain green. The new Flow
+carousel is opt-in. Legacy settings survive copy-only migrations, but new ledger
+edits are not backported to old code during rollback. Clean-candidate packaging
+is recorded in `MERGE_LOG.md`; this is not a new alpha.38 release artifact.
+
+Physical Bigme verification remains: Home statistics/manual entries and
+BookOrbit completion through restart; finished visibility and patch filters;
+per-view series grouping; optional Flow swipes/zoom/close in colour/night mode;
+custom icons, Bento gaps, labels and dock reflow; Favourite first sorting;
+plugin-format discovery and OPDS-PSE resume with those plugins installed.
+Keep the prior installation/settings backup. No measured speedup or new device
+acceptance is claimed, and no public release is authorized by this merge.
+
 2026-10-12 alpha.38 release preparation: both full suites rerun sequentially
 after the version/documentation change and pass with 522 OrbitUI cases across
 44 files, 382 Bookshelf suites (zero failures, two existing native SQLite

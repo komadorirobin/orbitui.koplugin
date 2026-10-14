@@ -60,9 +60,10 @@ result = Shared.applyProgressBadge(cover, progress, 30, 120, nil, 100, 150)
 assert(last_desc.size == 11, "peek badge uses full cover dimensions, not its narrow crop")
 assert(result[2].overlap_offset[1] == 13 and result[2].overlap_offset[2] == 0)
 
-local real_builder = Shared.buildProgressBadgeWidget
-Shared.buildProgressBadgeWidget = function() return nil end
+local CW = package.loaded["features/library/sui_cover_widgets"]
+local real_builder = CW.buildProgressBadgeWidget
+CW.buildProgressBadgeWidget = function() return nil end
 assert(Shared.applyProgressBadge(cover, progress, 100, 150) == cover)
-Shared.buildProgressBadgeWidget = real_builder
+CW.buildProgressBadgeWidget = real_builder
 
 print("PASS shared progress badges")

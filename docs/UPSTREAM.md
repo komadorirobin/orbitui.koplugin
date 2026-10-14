@@ -146,6 +146,33 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
+- October 14: Bookshelf master `aeada050` and SimpleUI main `84a9c0e9`
+  are reviewed imports (still versioned 5.4.4 / 2.7.5). PR #508 remains
+  excluded: its series boxes are on `feat/series-boxes`, not tracked master.
+  Keep OrbitUI's series-box adapter, completion badges and colour rendering.
+- Bookshelf now discovers plugin-registered formats. Include the format
+  fingerprint in the keyed walk snapshot, and bypass SimpleUI's core-only
+  shared index whenever plugin formats are registered. Preserve cancellation,
+  generation checks and directory validation. Scope extension helpers inside
+  a private block to keep the repository chunk below LuaJIT's 200-local limit.
+  Upstream's plugin-format cover guards avoid incidental network requests;
+  OPDS-PSE resume/stream actions remain delegated to their external owner.
+- SimpleUI's new finished-book ledger reconciles transactionally. Incomplete
+  sidecar/filesystem reads cannot delete records or seal a day's counts, and
+  missing/locked DB results cannot replace the saved activity snapshot. Keep
+  partial-to-full cache promotion and full/streak invalidation semantics.
+  Legacy deleted-book and manual-count settings are retained; a ledger marker
+  prevents reimporting an old manual count after the user edits/removes it.
+- Copy-only migrations v10/v11 retain fade/grouping settings and respect the
+  embedding deferral guard. Explicit flat-library finished visibility stays
+  authoritative. The new file filter uses ownership-safe teardown so external
+  patch wrappers survive. Flow carousel remains opt-in (Classic default), with
+  BookOrbit/custom-shelf index callbacks intact. Shared shadow/backdrop helpers
+  retain collision-free cache keys, legacy aliases, zero default backdrop
+  strength, custom icon fonts and per-instance label sizes/Bento gaps.
+  Module unloading passes through the existing reset-aware eviction callback.
+  Regression coverage: `test_upstream_20261014`, the older integration suites,
+  native `_test_walk_snapshot` and `_test_performance_caches`.
 - October 12 follow-up: Bookshelf 5.4.4 `2c8bfd8e` and SimpleUI `5bddc5bb`
   (Czech/Chinese translations only) are reviewed imports. Retain the corrected
   single Chinese plural form while importing the new strings. Auto with List on both levels

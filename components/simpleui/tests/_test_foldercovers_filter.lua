@@ -3,6 +3,7 @@
 -- the rest of the KOReader session.
 
 package.path = "./?.lua;./?/init.lua;" .. package.path
+package.loaded["features/library/sui_finished_books"] = { isHidden = function() return false end }
 
 local original = { status = "reading" }
 local FileChooser = { show_filter = original }
