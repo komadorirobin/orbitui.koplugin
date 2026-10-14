@@ -12,7 +12,7 @@
 -- system and the monkeypatch machinery.
 --
 -- Cached state kept here: the raster cache (AA pentagon, checkmark, rotated
--- ribbon and shadow strips, built once per shape and blitted on every paint)
+-- ribbon sprites, built once per shape and blitted on every paint)
 -- and the label line-height memo. Both are cleared via the public clear*Cache()
 -- functions, which sui_foldercovers.lua calls from M.invalidateCache().
 --
@@ -20,6 +20,10 @@
 -- ----------
 --   CoverWidgets.buildProgressBadgeDesc(eff_size, status, percent_finished, border, dark)
 --   CoverWidgets.drawProgressBadge(bb, ox, oy, desc)
+--   CoverWidgets.progressBadgeSize(desc)  -- outer width, height (border included)
+--   CoverWidgets.progressBadgeKey(desc)
+--       -- Identifies the pixels drawProgressBadge paints, for caches that
+--       -- bake the badge into a bitmap.
 --   CoverWidgets.buildProgressBadgeWidget(desc)
 --       -- Widget wrapper (getSize/paintTo) around drawProgressBadge, for
 --       -- consumers that need it embedded in an OverlapGroup rather than
@@ -50,7 +54,7 @@
 --       -- The widget for that backing (nil when there is nothing to draw).
 --   CoverWidgets.buildFolderNameWidget(item, available_w, font_size, fgcolor, bgcolor)
 --   CoverWidgets.buildLabel(item, size, border, display)
---       -- display: { label_mode, show_name, label_style, label_pos, label_color, label_scale }
+--       -- display: { label_mode, show_name, label_opacity, label_layout, label_pos, label_color, label_scale }
 --   CoverWidgets.buildBadge(mandatory, cover_dimen, cv_scale, cell_dimen, opts)
 --       -- opts: { hidden, scale, dark, position }  ("bottom" | anything else = top)
 --   CoverWidgets.computeCellGeometry(item, hide_stack)
@@ -60,7 +64,7 @@
 --       -- outside the library's mosaic context (e.g. module_collections.lua).
 --   CoverWidgets.buildQuadCover(item, img_list, border, backing, max_img_w, max_img_h, display)
 --       -- Wraps buildQuadGrid with assembleCoverWidget (mosaic's pile/label/badge).
---   CoverWidgets.installWidget(item, widget)
+--   CoverWidgets.installWidget(item, widget, complete)
 --   CoverWidgets.clearLabelMetricsCache()
 
 local _  = require("infra/sui_i18n").translate
@@ -79,15 +83,17 @@ local Screen          = require("device").screen
 local TextBoxWidget   = require("ui/widget/textboxwidget")
 local TextWidget      = require("ui/widget/textwidget")
 local RenderText     = require("ui/rendertext")
-local AlphaContainer  = require("ui/widget/container/alphacontainer")
 local BottomContainer = require("ui/widget/container/bottomcontainer")
 local TopContainer    = require("ui/widget/container/topcontainer")
 local RightContainer  = require("ui/widget/container/rightcontainer")
 local VerticalGroup   = require("ui/widget/verticalgroup")
 local VerticalSpan    = require("ui/widget/verticalspan")
 local SUIStyle        = require("features/sui_style")
+local UI              = require("infra/sui_core")
 local AAPaint         = require("infra/sui_aa_paint")
 local RasterCache     = require("infra/sui_raster_cache")
+local Backdrop        = require("infra/sui_backdrop")
+local CoverShadow     = require("engines/sui_cover_shadow")
 
 local CoverWidgets = {}
 
@@ -105,10 +111,20 @@ local _BADGE_MARGIN_R_BASE = Screen:scaleBySize(4)
 
 -- Folder-name label band: at most two lines, never thinner than this
 -- fraction of the cover, and (at the bottom) lifted off the cover edge.
-local _LABEL_ALPHA      = 0.75
 local _LABEL_MAX_LINES  = 2
 local _LABEL_MIN_H_FRAC = 0.18
 local _LABEL_GAP_FRAC   = 0.07
+
+-- Label shapes (both framed like the cover):
+--   band     — strap across the full cover width, flush with the top edge.
+--   floating — square-cornered box inset from both sides and kept clear of
+--              every edge.
+-- inset_frac is the side margin as a fraction of the cover width.
+local _LABEL_LAYOUTS = {
+    band     = { inset_frac = 0,    lift_top = false },
+    floating = { inset_frac = 0.05, lift_top = true  },
+}
+local _DEFAULT_LABEL_LAYOUT = "floating"
 
 -- ── Progress pentagon badge ──────────────────────────────────────────────────
 -- Shape: downward-pointing pentagon (rectangle body + triangular tip).
@@ -273,6 +289,22 @@ function CoverWidgets.drawProgressBadge(bb, ox, oy, desc)
     -- "not started": bare pentagon, no content drawn.
 end
 
+-- Outer size of the badge `desc` describes: its body plus the border all round.
+function CoverWidgets.progressBadgeSize(desc)
+    local border2 = 2 * desc.border
+    return desc.bw + border2, desc.bh + border2
+end
+
+-- Key of everything drawProgressBadge paints for `desc`: size, border, colour
+-- and the content shown (an end state, or the rounded percentage).
+function CoverWidgets.progressBadgeKey(desc)
+    local content = desc.status == "complete" and "complete"
+        or desc.status == "abandoned" and "abandoned"
+        or desc.percent_finished and math.floor(desc.percent_finished * 100 + 0.5)
+        or ""
+    return table.concat({ desc.eff_size, desc.border, desc.dark and 1 or 0, content }, "|")
+end
+
 -- Widget wrapper around buildProgressBadgeDesc/drawProgressBadge, for
 -- consumers that build a widget tree (OverlapGroup) instead of overriding
 -- MosaicMenuItem:paintTo() directly (e.g. engines/sui_book_grid.lua's
@@ -288,8 +320,8 @@ local ProgressBadgeWidget = {}
 ProgressBadgeWidget.__index = ProgressBadgeWidget
 
 function ProgressBadgeWidget:getSize()
-    local fr = self.desc.border
-    return Geom:new{ w = self.desc.bw + 2 * fr, h = self.desc.bh + 2 * fr }
+    local w, h = CoverWidgets.progressBadgeSize(self.desc)
+    return Geom:new{ w = w, h = h }
 end
 
 function ProgressBadgeWidget:paintTo(bb, x, y)
@@ -666,24 +698,6 @@ end
 
 -- ── Cover shadow ──────────────────────────────────────────────────────────────
 
--- A shadow is built from one-pixel bands that fade with their distance from
--- the card, which approximates a blurred edge. The bands are coverage masks
--- blended in black, which shades what is already painted instead of laying a
--- fixed grey, so the shadow reads on any background.
-local _SHADOW_PEAK         = 0.22   -- shading of the band touching the card
-local _SHADOW_MIN_STRENGTH = 0.02   -- fainter bands are not visible: skipped
-
--- Shading of the band `d` px away from the card (0 = touching it) in a shadow
--- `reach` px deep: a smoothstep from the peak down to nothing.
-local function shadowBandStrength(d, reach)
-    local t = 1 - d / reach
-    return _SHADOW_PEAK * t * t * (3 - 2 * t)
-end
-
--- Coverage masks of a shadow's right and bottom strips, cached by card size
--- and depth. The strips never overlap: right band `d` is the column `d` px
--- past the card, bottom band `d` the row `d` px below it, and the corner
--- belongs to whichever band is farther along its own axis.
 function CoverWidgets.clearShadowCache()
     RasterCache.clear("shadow")
 end
@@ -696,61 +710,17 @@ function CoverWidgets.clearPentagonMaskCache()
     RasterCache.clear("pentagon")
     RasterCache.clear("check")
 end
-local function buildShadowMasks(w, h, offset)
-    local right  = Blitbuffer.new(offset, h, Blitbuffer.TYPE_BB8)
-    local bottom = Blitbuffer.new(w, offset, Blitbuffer.TYPE_BB8)
-    right:fill(Blitbuffer.Color8(0))
-    bottom:fill(Blitbuffer.Color8(0))
-    for d = 0, offset - 1 do
-        local strength = shadowBandStrength(d, offset)
-        if strength < _SHADOW_MIN_STRENGTH then break end
-        local coverage = Blitbuffer.Color8(math.floor(strength * 255 + 0.5))
-        right:paintRect(d, 0, 1, h - offset + d, coverage)
-        bottom:paintRect(0, d, w - offset + d + 1, 1, coverage)
-    end
-    return { right = right, bottom = bottom }
-end
-
--- Paints the part of a soft shadow that shows around a w × h card at (x, y),
--- `offset` px deep. The shadow is the card's rectangle shifted down-right by
--- `offset`, minus the card itself. Night frames are inverted after painting,
--- so blending towards white is what darkens the shadow on screen.
+-- Soft shadow around a w × h card at (x, y), cast down and to the right. The
+-- shadow itself lives in engines/sui_cover_shadow.
 function CoverWidgets.paintShadow(bb, x, y, w, h, offset)
-    if offset <= 0 then return end
-    local key = table.concat({ w, h, offset }, ":")
-    local masks = RasterCache.get("shadow", key, buildShadowMasks, w, h, offset)
-    local color = Screen.night_mode and Blitbuffer.COLOR_WHITE or Blitbuffer.COLOR_BLACK
-    bb:colorblitFromRGB32(masks.right,  x + w,      y + offset, 0, 0, offset, h,      color)
-    bb:colorblitFromRGB32(masks.bottom, x + offset, y + h,      0, 0, w,      offset, color)
-end
-
-local ShadowWidget = {}
-ShadowWidget.__index = ShadowWidget
-
-function ShadowWidget:getSize()
-    return Geom:new{ w = self.w, h = self.h }
-end
-
-function ShadowWidget:paintTo(bb, x, y)
-    CoverWidgets.paintShadow(bb, x, y, self.card_w, self.card_h, self.offset)
-end
-
--- See ProgressBadgeWidget:handleEvent() above for why this is required —
--- same crash, same fix, same reasoning.
-function ShadowWidget:handleEvent()
-    return false
+    CoverShadow.paintRect(bb, x, y, w, h, offset)
 end
 
 -- Widget casting the shadow of a card_w × card_h card, `offset` px deep; nil
 -- when `offset` is 0. The card sits at the widget's top-left corner and the
 -- shadow falls down-right.
 function CoverWidgets.buildShadow(card_w, card_h, offset)
-    if offset <= 0 then return nil end
-    return setmetatable({
-        w = card_w + offset, h = card_h + offset,
-        card_w = card_w,     card_h = card_h,
-        offset = offset,
-    }, ShadowWidget)
+    return CoverShadow.buildWidget(card_w, card_h, offset)
 end
 
 -- What sits behind a cover and the room it takes, as
@@ -807,6 +777,8 @@ end
 
 -- Folder name as centred bold text at a fixed `font_size`, capitalised per
 -- word. Names longer than _LABEL_MAX_LINES lines are cut with an ellipsis.
+-- Without a `bgcolor` the text is drawn over whatever is already painted;
+-- with one it sits on that opaque background.
 -- `item` needs only `.text` and a writable `._fc_display_text` cache slot
 -- (any table works — sui_foldercovers.lua passes the MosaicMenuItem instance
 -- so the capitalised/bidi-wrapped text is computed once per item, not once
@@ -826,66 +798,85 @@ function CoverWidgets.buildFolderNameWidget(item, available_w, font_size, fgcolo
         alignment = "center",
         bold      = true,
         fgcolor   = fgcolor or SUIStyle.COLOR.text_primary,
-        bgcolor   = bgcolor or SUIStyle.COLOR.surface,
+        bgcolor   = bgcolor,
     }
+    local function build()
+        if bgcolor then return TextBoxWidget:new(opts) end
+        return UI.makeAlphaTextBox(opts)
+    end
     local max_h = _LABEL_MAX_LINES * labelLineHeight(face, font_size)
-    local name  = TextBoxWidget:new(opts)
+    local name  = build()
     if name:getSize().h <= max_h then return name end
 
     name:free(true)
     opts.height                        = max_h
     opts.height_adjust                 = true
     opts.height_overflow_show_ellipsis = true
-    return TextBoxWidget:new(opts)
+    return build()
 end
 
--- Returns the label band laid over the cover (offset to its position), or nil
--- when disabled. The band spans the cover's width, centres the name in it and
--- is never thinner than _LABEL_MIN_H_FRAC of the cover; at the bottom it is
--- lifted off the edge so it reads as a strap around the book.
+-- Returns the label laid over the cover (offset to its position), or nil when
+-- disabled. The name is centred in a box that is never thinner than
+-- _LABEL_MIN_H_FRAC of the cover; its shape follows the layout (see
+-- _LABEL_LAYOUTS). At the bottom it is lifted off the edge so it reads as a
+-- strap around the book.
 -- `display` is the pre-read settings table:
---   { label_mode, show_name, label_style, label_pos, label_color, label_scale }
+--   { label_mode, show_name, label_opacity, label_layout, label_pos, label_color, label_scale }
 function CoverWidgets.buildLabel(item, size, border, display)
     if display.label_mode ~= "overlay" then return nil end
     if not display.show_name            then return nil end
+    local layout   = _LABEL_LAYOUTS[display.label_layout] or _LABEL_LAYOUTS[_DEFAULT_LABEL_LAYOUT]
     local dark     = display.label_color == "dark"
     local bg_color = dark and SUIStyle.COLOR.text_primary or SUIStyle.COLOR.surface
     local fg_color = dark and SUIStyle.COLOR.surface or SUIStyle.COLOR.text_primary
 
-    local font_size = math.max(8, math.floor(_BASE_DIR_FS * (display.label_scale or 1.0)))
-    local name      = CoverWidgets.buildFolderNameWidget(item, size.w - _LATERAL_PAD * 2,
-        font_size, fg_color, bg_color)
+    local cover_w  = size.w + border * 2
+    local cover_h  = size.h + border * 2
+    local inset    = math.floor(cover_w * layout.inset_frac)
+    local band_w   = cover_w - inset * 2
+    local inner_w  = band_w - border * 2
+    local strength = display.label_opacity
 
-    local cover_w = size.w + border * 2
-    local cover_h = size.h + border * 2
+    -- Text stays solid while only the background takes the opacity; a fully
+    -- opaque background lets the text paint its own.
+    local font_size = math.max(8, math.floor(_BASE_DIR_FS * (display.label_scale or 1.0)))
+    local name      = CoverWidgets.buildFolderNameWidget(item, inner_w - _LATERAL_PAD * 2,
+        font_size, fg_color, strength >= 100 and bg_color or nil)
+
     local band_h  = math.max(name:getSize().h + (_VERTICAL_PAD + border) * 2,
                              math.floor(cover_h * _LABEL_MIN_H_FRAC))
-    local band = FrameContainer:new{
-        width      = cover_w,
+    local inner_h = band_h - border * 2
+    local label = FrameContainer:new{
+        width      = band_w,
         height     = band_h,
         padding    = 0,
         bordersize = border,
-        background = bg_color,
-        CenterContainer:new{
-            dimen = Geom:new{ w = cover_w - border * 2, h = band_h - border * 2 },
-            name,
+        OverlapGroup:new{
+            dimen = Geom:new{ w = inner_w, h = inner_h },
+            Backdrop.BackdropFill:new{
+                width = inner_w, height = inner_h, strength = strength, color = bg_color,
+            },
+            CenterContainer:new{
+                dimen = Geom:new{ w = inner_w, h = inner_h },
+                name,
+            },
         },
     }
-    if display.label_style == "alpha" then
-        band = AlphaContainer:new{ alpha = _LABEL_ALPHA, band }
+    if inset > 0 then
+        label = FrameContainer:new{ padding = 0, bordersize = 0, padding_left = inset, label }
     end
 
+    local gap = math.max(Screen:scaleBySize(3), math.floor(cover_h * _LABEL_GAP_FRAC))
     local y
     if display.label_pos == "top" then
-        y = 0
+        y = layout.lift_top and gap or 0
     elseif display.label_pos == "center" then
         y = math.floor((cover_h - band_h) / 2)
     else
-        local gap = math.max(Screen:scaleBySize(3), math.floor(cover_h * _LABEL_GAP_FRAC))
         y = cover_h - band_h - gap
     end
-    band.overlap_offset = { 0, math.max(0, y) }
-    return band
+    label.overlap_offset = { 0, math.max(0, y) }
+    return label
 end
 
 -- ── Folder book-count badge (circle) ─────────────────────────────────────────
@@ -1028,9 +1019,13 @@ function CoverWidgets.assembleCoverWidget(item, content_widget, size, border, ba
     return OverlapGroup:new{ dimen = cell_dimen, overlap }
 end
 
--- Mark the cell as processed, free the previous widget, and assign the new one.
-function CoverWidgets.installWidget(item, widget)
-    item._foldercover_processed = true
+-- Free the previous widget and assign the new one. A cell is processed once
+-- its cover is `complete` (the default); an incomplete one stays in the menu's
+-- periodic update pass, which only drops items reporting their info as found.
+function CoverWidgets.installWidget(item, widget, complete)
+    complete = complete ~= false
+    item._foldercover_processed = complete
+    item.bookinfo_found = complete
     if item._underline_container[1] then item._underline_container[1]:free() end
     item._underline_container[1] = widget
 end

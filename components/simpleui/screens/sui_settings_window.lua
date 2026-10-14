@@ -12,7 +12,8 @@
 -- Screen map (all keys registered in SUIWindow.screens):
 --   __root__               — top-level settings menu
 --   home_screen_settings   — Home Screen section (layout, "Extra Custom Screens",
---                             "Wallpaper" (nested_menu sub-item), presets, behaviour)
+--                             "Wallpaper" and "Stats" (nested_menu sub-items), presets,
+--                             behaviour)
 --   custom_screens          — Custom Screens list (reached via Home Screen ▸
 --                              "Extra Custom Screens", not linked from __root__)
 --   bars_settings           — Bars section
@@ -411,6 +412,31 @@ local function buildScreens(st)
         }
     end
 
+    -- Stats menu screen. Opening a statistics window closes this window; the
+    -- statistics window's back button reopens it on the same screen.
+    local function statsMenuParams()
+        return {
+            title      = _("Stats"),
+            items_func = function(ctx)
+                local plugin = getPlugin()
+                if not (plugin and plugin.makeStatsMenuItems) then return {} end
+                return plugin.makeStatsMenuItems{
+                    open_window = function(id)
+                        ctx.close()
+                        require("screens/sui_stats_launcher").open(id, {
+                            on_back = function()
+                                SettingsWindow:show(nil, {
+                                    { id = "home_screen_settings" },
+                                    { id = "nested_menu", params = statsMenuParams() },
+                                })
+                            end,
+                        })
+                    end,
+                }
+            end,
+        }
+    end
+
     -- ── 2.2. Home Screen ─────────────────────────────────────────────────────
     local function buildHomeScreenSettings(ctx)
         local iw = ctx.inner_w
@@ -453,6 +479,12 @@ local function buildScreens(st)
                 inner_w      = iw,
                 show_chevron = true,
                 on_tap       = function() ctx.push("presets") end,
+            },
+            SUI.ListRow{
+                title        = _("Stats"),
+                inner_w      = iw,
+                show_chevron = true,
+                on_tap       = function() ctx.push("nested_menu", statsMenuParams()) end,
             },
             SUI.ListRow{
                 title        = _("Behaviour"),
@@ -999,7 +1031,7 @@ local function buildScreens(st)
         local params = cur and cur.params or {}
         local items  = params.items or {}
         if type(params.items_func) == "function" then
-            items = params.items_func()
+            items = params.items_func(ctx)
         end
         return makeMenuTable(ctx, items)
     end
@@ -1168,7 +1200,11 @@ end
 -- 4. Entry point
 -- ===========================================================================
 
-function SettingsWindow:show(on_close, initial_screen)
+--- Opens the settings window. `nav_path` optionally lists screens ({ id, params })
+--- to open on top of the root, e.g. to return to a nested menu.
+function SettingsWindow:show(on_close, nav_path)
+    local initial_screen = type(nav_path) == "string" and nav_path or nil
+    if initial_screen then nav_path = nil end
     local st = {
         layout            = LayoutService.load(),
         layout_loaded_key = "simpleui_layout",
@@ -1199,6 +1235,7 @@ function SettingsWindow:show(on_close, initial_screen)
         screen_titles  = titles,
         navpager_mode  = Config.isNavpagerEnabled(),
         on_close       = wrapped_on_close,
+        nav_path       = nav_path,
         position       = "bottom",
         screen_footers = {
             custom_screens = function(ctx)

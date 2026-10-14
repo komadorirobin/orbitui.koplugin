@@ -26,6 +26,7 @@ local Config    = require("infra/sui_config")
 local UI        = require("infra/sui_core")
 local Bottombar = require("screens/sui_bottombar")
 local SUISettings = require("infra/sui_store")
+local Backdrop    = require("infra/sui_backdrop")
 -- Single source of truth for the *full* action set (built-ins + externally
 -- registered actions, e.g. Custom Screens' "open_custom_screen:<id>" QAs —
 -- see infra/sui_custom_screens.lua). Config.ALL_ACTIONS only ever mirrors the
@@ -262,18 +263,18 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
             return {
                 get           = WP.getStatusbarBackdropStrength,
                 set           = WP.setStatusbarBackdropStrength,
-                default_value = WP.BACKDROP_DEFAULT.statusbar,
+                default_value = Backdrop.BACKDROP_DEFAULT.statusbar,
             }
         end,
         navbar = function(WP)
             return {
                 get           = WP.getNavbarBackdropStrength,
                 set           = WP.setNavbarBackdropStrength,
-                default_value = WP.BACKDROP_DEFAULT.navbar,
+                default_value = Backdrop.BACKDROP_DEFAULT.navbar,
                 enabled_func  = function() return Bottombar.getBarStyle() ~= "bare" end,
                 value_func    = function()
                     if Bottombar.getBarStyle() == "bare" then return "—" end
-                    return WP.formatBackdropStrength(WP.getNavbarBackdropStrength())
+                    return Backdrop.formatBackdropStrength(WP.getNavbarBackdropStrength())
                 end,
             }
         end,
@@ -282,7 +283,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 info          = _("0% transparent, 100% solid. Applies across the full width of the title bar."),
                 get           = WP.getTitlebarBackdropStrength,
                 set           = WP.setTitlebarBackdropStrength,
-                default_value = WP.BACKDROP_DEFAULT.titlebar,
+                default_value = Backdrop.BACKDROP_DEFAULT.titlebar,
                 enabled_func  = function() return require("screens/sui_titlebar").isEnabled() end,
             }
         end,
@@ -291,7 +292,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 info          = _("0% transparent, 100% solid. Applies to the native page bar in Library, History, Collections and similar screens."),
                 get           = WP.getPaginationBackdropStrength,
                 set           = WP.setPaginationBackdropStrength,
-                default_value = WP.BACKDROP_DEFAULT.pagination,
+                default_value = Backdrop.BACKDROP_DEFAULT.pagination,
                 enabled_func  = function() return SUISettings:nilOrTrue("simpleui_bar_pagination_visible") end,
             }
         end,
@@ -1994,21 +1995,15 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
         local function arrangeItems(ctx)
             local items = {}
             for _i, e in ipairs(Titlebar.getTabsEntries()) do
-                local id   = e.id
-                local item = { text = e.label, orig_item = id }
-                local function sync()
-                    local visible = Titlebar.isItemVisible(id)
-                    item.dim_row     = not visible or nil
-                    item.toggle_icon = visible and "show" or "hide"
-                end
-                item.on_toggle = function()
-                    if toggleEntry(id) then
-                        sync()
-                        ctx.repaint()
-                    end
-                end
-                sync()
-                items[#items + 1] = item
+                local id = e.id
+                items[#items + 1] = Config.applyVisibilityToggle({
+                    text      = e.label,
+                    orig_item = id,
+                }, {
+                    is_visible  = function() return Titlebar.isItemVisible(id) end,
+                    set_visible = function() return toggleEntry(id) end,
+                    repaint     = ctx.repaint,
+                })
             end
             return items
         end
@@ -2084,13 +2079,6 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 end,
             }
         end
-        local function sizeItem(label, key)
-            return radioItem(label, key,
-                function() return titlebar().getSizeKey() end,
-                function(v) titlebar().setSizeKey(v) end,
-                _reapplyAllTitlebars)
-        end
-
         -- Offers a restart; changes that alter the Library layout need a rebuild.
         local function askRestart(text)
             SUISettings:flush()
@@ -2108,6 +2096,26 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 function() askRestart(_("The title bar style will change after restart.\n\nRestart now?")) end)
         end
         local function isEnabled() return titlebar().isEnabled() end
+
+        -- Size row shared by both styles. The classic bar rescales in place; the
+        -- tabs bar is built at startup and rescales after a restart.
+        local size_row = Config.makeScaleItem{
+            text_func     = function() return _("Size") end,
+            title         = _("Title Bar Size"),
+            info          = _("Size of the title bar buttons and tabs.\n100% is the default size."),
+            get           = function() return titlebar().getSizePct() end,
+            set           = function(pct) titlebar().setSizePct(pct) end,
+            value_max     = titlebar().SIZE_MAX_PCT,
+            refresh       = function()
+                if titlebar().isTabsStyle() then
+                    askRestart(_("A restart is required to apply the new bar size across all layouts.\n\nRestart now?"))
+                else
+                    _reapplyAllTitlebars()
+                end
+                if ctx_menu and ctx_menu.refresh then ctx_menu.refresh() end
+            end,
+        }
+        size_row.enabled_func = isEnabled
 
         -- The enable toggle is the first row and stays on top as the master row.
         local master = {
@@ -2139,7 +2147,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
 
         -- The classic style offers the full item and size customization; the
         -- tabs style the arrangement of its tabs and search button.
-        local items, size
+        local items
         if titlebar().getStyle() == titlebar().STYLE_TABS then
             items = makeTitleBarTabsItems(ctx_menu)
         else
@@ -2158,24 +2166,13 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                     sui_build = makeTitleBarSUIBuild(ctx_menu, _("Sub-page Buttons"), "sub", Titlebar.getSubConfig, Titlebar.saveSubConfig),
                 },
             }
-            size = {
-                {
-                    text      = _("Button Size"),
-                    enabled_func = isEnabled,
-                    sub_item_table = {
-                        sizeItem(_("Compact"), "compact"),
-                        sizeItem(_("Default"), "default"),
-                        sizeItem(_("Large"),   "large"),
-                    },
-                },
-            }
         end
 
         return Config.buildModuleMenu({
             master     = master,
             items      = items,
             appearance = {
-                size  = size,
+                size  = { size_row },
                 extra = appendWhenWallpaperActive({ style_row }, makeBarBackdropItem("titlebar", ctx_menu)),
             },
         }, ctx_menu)
@@ -2223,8 +2220,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
     -- _goalTapCallback: shown when the user taps the Reading Goals widget on
     -- the Homescreen. Lets them set the annual goal.
     self._goalTapCallback = function()
-        local ok_rg, RG = pcall(require, "readinggoals")
-        if ok_rg and RG then RG.showAnnualGoalDialog(function() refreshHomescreen() end) end
+        require("infra/sui_goals").showDialog("annual", refreshHomescreen)
     end
 
     -- -----------------------------------------------------------------------
@@ -2941,18 +2937,6 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 },
             },
             {
-                text           = _("Statistics Loading Notice"),
-                help_text      = _("Show a brief \"Loading statistics…\" notice when opening a statistics window, preventing accidental double-taps while e-ink refreshes."),
-                checked_func   = function()
-                    return SUISettings:nilOrTrue("simpleui_stats_loading_notice")
-                end,
-                keep_menu_open = true,
-                callback       = function()
-                    local on = SUISettings:nilOrTrue("simpleui_stats_loading_notice")
-                    SUISettings:saveSetting("simpleui_stats_loading_notice", not on)
-                end,
-            },
-            {
                 text           = _("Overflow Warning"),
                 help_text      = _("Warn when modules on a page exceed the available screen height."),
                 checked_func   = function()
@@ -2974,21 +2958,6 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 callback       = function()
                     local on = SUISettings:nilOrTrue("simpleui_hs_settings_on_hold")
                     SUISettings:saveSetting("simpleui_hs_settings_on_hold", not on)
-                    refreshHomescreen()
-                end,
-            },
-            {
-                text           = _("Preserve Deleted Books in Statistics"),
-                help_text      = _("When a finished book is deleted from the device (file or folder), keep it counted in the Books Read statistics on the Home Screen.\n\nBooks changed back to Reading or Abandoned are automatically removed from this list."),
-                checked_func   = function()
-                    return SUISettings:nilOrTrue("simpleui_preserve_deleted_books_in_stats")
-                end,
-                keep_menu_open = true,
-                callback       = function()
-                    local on = SUISettings:nilOrTrue("simpleui_preserve_deleted_books_in_stats")
-                    SUISettings:saveSetting("simpleui_preserve_deleted_books_in_stats", not on)
-                    local SP = package.loaded["modules/module_stats_provider"]
-                    if SP and SP.invalidate then pcall(SP.invalidate) end
                     refreshHomescreen()
                 end,
             },
@@ -3018,6 +2987,13 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
         return items
     end
     plugin.makeBehaviourMenuItems = makeBehaviourMenuItems
+
+    function plugin.makeStatsMenuItems(opts)
+        return require("features/sui_stats_menu").makeMenuItems{
+            refresh     = refreshHomescreen,
+            open_window = opts and opts.open_window,
+        }
+    end
 
     local function makeHomescreenMenu(ctx_menu)
         return {
@@ -3049,6 +3025,10 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                         unlock_overlay = ctx_menu and ctx_menu.unlock_overlay,
                     }
                 end,
+            },
+            {
+                text = _("Stats"),
+                sub_item_table_func = function() return plugin.makeStatsMenuItems() end,
             },
             {
                 text = _("Behaviour"),
@@ -3084,6 +3064,88 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
             fm.file_chooser:refreshPath()
             fm._navbar_suppress_path_change = nil
         end
+    end
+
+    local Finished = require("features/library/sui_finished_books")
+
+    -- "Finished Books": the display mode shared by every library view, plus
+    -- the fade intensity, which only applies in the fade mode.
+    local function makeFinishedBooksItem(FC)
+        local function refresh()
+            _refreshFC()
+            refreshHomescreen()
+        end
+        local item = Finished.makeSubmenuItem(refresh)
+        item.sub_item_table_func = function()
+            local items = Finished.appendRadioItems({}, refresh)
+            items[#items].separator = true
+            items[#items + 1] = {
+                text_func      = function() return _("Intensity") end,
+                value_func     = function() return FC.getFadeAmountPct() .. "%" end,
+                enabled_func   = function() return Finished.isFaded() end,
+                keep_menu_open = true,
+                callback = function()
+                    local SpinWidget = require("ui/widget/spinwidget")
+                    UIManager:show(SpinWidget:new{
+                        title_text    = _("Fade Intensity"),
+                        info_text     = _("Fades finished book covers towards white.\n50% is the default."),
+                        value         = FC.getFadeAmountPct(),
+                        value_min     = FC.FADE_AMOUNT_MIN,
+                        value_max     = FC.FADE_AMOUNT_MAX,
+                        value_step    = FC.FADE_AMOUNT_STEP,
+                        unit          = "%",
+                        ok_text       = _("Apply"),
+                        cancel_text   = _("Cancel"),
+                        default_value = FC.FADE_AMOUNT_DEF,
+                        callback = function(spin)
+                            FC.setFadeAmountPct(spin.value)
+                            _refreshFC()
+                        end,
+                    })
+                end,
+            }
+            return items
+        end
+        return item
+    end
+
+    -- "Group by Book Series": one checkbox per view whose lists can be grouped.
+    local function makeSeriesGroupingItem(FC)
+        local BM = require("features/library/sui_library_browse")
+
+        local function activeViews()
+            local labels = {}
+            for _i, mode in ipairs(BM.SERIES_GROUPING_MODES) do
+                if FC.getSeriesGrouping(mode) then labels[#labels + 1] = BM.getModeLabel(mode) end
+            end
+            return #labels > 0 and table.concat(labels, ", ") or _("Off")
+        end
+
+        local function viewItems()
+            local items = {}
+            for _i, mode in ipairs(BM.SERIES_GROUPING_MODES) do
+                items[#items + 1] = {
+                    text           = BM.getModeLabel(mode),
+                    checked_func   = function() return FC.getSeriesGrouping(mode) end,
+                    enabled_func   = function() return mode == "normal" or BM.isEnabled() end,
+                    keep_menu_open = true,
+                    callback       = function()
+                        FC.setSeriesGrouping(mode, not FC.getSeriesGrouping(mode))
+                        FC.invalidateCache()
+                        _refreshFC()
+                    end,
+                }
+            end
+            return items
+        end
+
+        return {
+            text                = _("Group by Book Series"),
+            value_func          = activeViews,
+            separator           = true,
+            enabled_func        = function() return FC.isEnabled() end,
+            sub_item_table_func = viewItems,
+        }
     end
 
     local function makeLibraryMenuItems(ctx_menu)
@@ -3168,18 +3230,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 end,
             },
             -- ── Group by Book Series ──────────────────────────────────────────
-            {
-                text           = _("Group by Book Series"),
-                checked_func   = function() return FC.getSeriesGrouping() end,
-                keep_menu_open = true,
-                separator      = true,
-                enabled_func   = function() return FC.isEnabled() end,
-                callback       = function()
-                    FC.setSeriesGrouping(not FC.getSeriesGrouping())
-                    FC.invalidateCache()
-                    _refreshFC()
-                end,
-            },
+            makeSeriesGroupingItem(FC),
             -- ── Cover Settings ───────────────────────────────────
             {
                 text         = _("Cover Settings"),
@@ -3563,50 +3614,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                                     },
                                 },
                             },
-                            -- ── Finished Books ────────────────────────────────────────────────
-                            {
-                                text_func  = function() return _("Finished Books") end,
-                                value_func = function()
-                                    if not FC.getFadeFinished() then return _("Off") end
-                                    return FC.getFadeAmountPct() .. "%"
-                                end,
-                                sub_item_table = {
-                                    {
-                                        text           = _("Fade Finished Books"),
-                                        checked_func   = function() return FC.getFadeFinished() end,
-                                        keep_menu_open = true,
-                                        callback       = function()
-                                            FC.setFadeFinished(not FC.getFadeFinished())
-                                            _refreshFC()
-                                        end,
-                                    },
-                                    {
-                                        text_func    = function() return _("Intensity") end,
-                                        value_func   = function() return FC.getFadeAmountPct() .. "%" end,
-                                        enabled_func = function() return FC.getFadeFinished() end,
-                                        keep_menu_open = true,
-                                        callback = function()
-                                            local SpinWidget = require("ui/widget/spinwidget")
-                                            UIManager:show(SpinWidget:new{
-                                                title_text    = _("Fade Intensity"),
-                                                info_text     = _("Fades finished book covers towards white.\n50% is the default."),
-                                                value         = FC.getFadeAmountPct(),
-                                                value_min     = FC.FADE_AMOUNT_MIN,
-                                                value_max     = FC.FADE_AMOUNT_MAX,
-                                                value_step    = FC.FADE_AMOUNT_STEP,
-                                                unit          = "%",
-                                                ok_text       = _("Apply"),
-                                                cancel_text   = _("Cancel"),
-                                                default_value = FC.FADE_AMOUNT_DEF,
-                                                callback = function(spin)
-                                                    FC.setFadeAmountPct(spin.value)
-                                                    _refreshFC()
-                                                end,
-                                            })
-                                        end,
-                                    },
-                                },
-                            },
+                            makeFinishedBooksItem(FC),
                             -- ── Folder Name ───────────────────────────────────────────────────
                             {
                                 text         = _("Folder Name"),
@@ -3615,45 +3623,45 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                                     {
                                         text_func  = function() return _("Visibility") end,
                                         value_func = function()
-                                            if FC.getLabelMode() == "hidden" then return _("Hidden") end
-                                            return FC.getLabelStyle() == "alpha" and _("Transparent") or _("Solid")
+                                            return FC.getLabelMode() == "hidden" and _("Hidden") or _("Visible")
                                         end,
                                         sub_item_table = {
                                             {
-                                                text           = _("Solid"),
+                                                text           = _("Visible"),
                                                 radio          = true,
-                                                checked_func   = function()
-                                                    return FC.getLabelMode() ~= "hidden" and FC.getLabelStyle() == "solid"
-                                                end,
+                                                checked_func   = function() return FC.getLabelMode() ~= "hidden" end,
                                                 keep_menu_open = true,
-                                                callback       = function()
-                                                    FC.setLabelMode("overlay")
-                                                    FC.setLabelStyle("solid")
-                                                    _refreshFC()
-                                                end,
-                                            },
-                                            {
-                                                text           = _("Transparent"),
-                                                radio          = true,
-                                                checked_func   = function()
-                                                    return FC.getLabelMode() ~= "hidden" and FC.getLabelStyle() == "alpha"
-                                                end,
-                                                keep_menu_open = true,
-                                                callback       = function()
-                                                    FC.setLabelMode("overlay")
-                                                    FC.setLabelStyle("alpha")
-                                                    _refreshFC()
-                                                end,
+                                                callback       = function() FC.setLabelMode("overlay"); _refreshFC() end,
                                             },
                                             {
                                                 text           = _("Hidden"),
                                                 radio          = true,
                                                 checked_func   = function() return FC.getLabelMode() == "hidden" end,
                                                 keep_menu_open = true,
-                                                callback       = function()
-                                                    FC.setLabelMode("hidden")
-                                                    _refreshFC()
-                                                end,
+                                                callback       = function() FC.setLabelMode("hidden"); _refreshFC() end,
+                                            },
+                                        },
+                                    },
+                                    {
+                                        text_func  = function() return _("Layout") end,
+                                        value_func = function()
+                                            return FC.getLabelLayout() == "band" and _("Full Width") or _("Floating")
+                                        end,
+                                        enabled_func = function() return FC.getLabelMode() ~= "hidden" end,
+                                        sub_item_table = {
+                                            {
+                                                text           = _("Floating"),
+                                                radio          = true,
+                                                checked_func   = function() return FC.getLabelLayout() ~= "band" end,
+                                                keep_menu_open = true,
+                                                callback       = function() FC.setLabelLayout("floating"); _refreshFC() end,
+                                            },
+                                            {
+                                                text           = _("Full Width"),
+                                                radio          = true,
+                                                checked_func   = function() return FC.getLabelLayout() == "band" end,
+                                                keep_menu_open = true,
+                                                callback       = function() FC.setLabelLayout("band"); _refreshFC() end,
                                             },
                                         },
                                     },
@@ -3713,6 +3721,15 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                                             },
                                         },
                                     },
+                                    Config.makeBackdropStrengthItem({
+                                        title         = _("Background Opacity"),
+                                        info          = _("0% transparent, 100% solid. Only the background changes; the text stays solid."),
+                                        get           = FC.getLabelOpacity,
+                                        set           = FC.setLabelOpacity,
+                                        default_value = Backdrop.BACKDROP_DEFAULT.folder_label,
+                                        enabled_func  = function() return FC.getLabelMode() ~= "hidden" end,
+                                        refresh       = function() FC.invalidateCache(); _refreshFC() end,
+                                    }),
                                     (function()
                                         local Config = require("infra/sui_config")
                                         return Config.makeScaleItem({
@@ -3803,7 +3820,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                                     title         = _("Background Opacity"),
                                     get           = SUIWallpaper.getCoverStripBackdropStrength,
                                     set           = SUIWallpaper.setCoverStripBackdropStrength,
-                                    default_value = SUIWallpaper.BACKDROP_DEFAULT.cover_strip,
+                                    default_value = Backdrop.BACKDROP_DEFAULT.cover_strip,
                                     enabled_func  = function()
                                         return SUIWallpaper.styleGetWallpaperShowInFM()
                                             and (FC.getShowTitleStrip() or FC.getShowAuthorStrip())

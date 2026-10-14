@@ -1,10 +1,12 @@
 -- sui_cover_placeholder.lua — Simple UI
 -- Generated cover for books without a cover image: a thin frame, the title,
--- a small divider and the author, centred.
+-- and, when the author is known, a small divider and the author, centred.
 --
 --   Placeholder.build(w, h, title, authors)               → widget of exactly w × h
 --   Placeholder.buildCropped(w, h, title, authors, align) → a w × h slice of the
 --       full 2:3 cover, cut from its "left" or "right" edge
+--   Placeholder.render(w, h, title, authors)              → the w × h cover painted
+--       into a new RGB32 buffer owned by the caller
 --   Placeholder.fitSize(max_w, max_h)                     → w, h of the largest
 --       2:3 box that fits the given bounds
 
@@ -142,23 +144,31 @@ function Placeholder.build(w, h, title, authors)
     local inner_w = w - 2 * border
     local inner_h = h - 2 * border
 
-    title   = (title   and title   ~= "") and title              or _("Unknown")
-    authors = (authors and authors ~= "") and firstLine(authors) or _("Unknown Author")
+    local has_author = authors ~= nil and authors ~= ""
+    title   = (title and title ~= "") and title or _("Unknown")
+    authors = has_author and firstLine(authors) or nil
 
     local text_w   = inner_w - 2 * math_floor(inner_w * TEXT_MARGIN)
-    local title_h  = math_floor(inner_h * TITLE_HEIGHT)
-    local author_h = math_floor(inner_h * AUTHOR_HEIGHT)
+    local title_top = math_floor(inner_h * TITLE_TOP)
+    local title_h   = math_floor(inner_h * TITLE_HEIGHT)
+    local author_h  = math_floor(inner_h * AUTHOR_HEIGHT)
+    -- Without an author the title is centred over the whole text area.
+    if not has_author then
+        title_h = math_floor(inner_h * (AUTHOR_TOP + AUTHOR_HEIGHT)) - title_top
+    end
 
     local content = OverlapGroup:new{ dimen = Geom:new{ w = inner_w, h = inner_h } }
     addFrame(content, inner_w, inner_h)
     if text_w >= 1 and title_h >= 1 and author_h >= 1 then
         content[#content + 1] = placeCentered(
             fitText(BD.auto(title), text_w, title_h, TITLE_SIZE_MAX, TITLE_SIZE_MIN),
-            inner_w, math_floor(inner_h * TITLE_TOP), title_h)
-        addDivider(content, inner_w, inner_h)
-        content[#content + 1] = placeCentered(
-            fitText(BD.auto(authors), text_w, author_h, AUTHOR_SIZE_MAX, AUTHOR_SIZE_MIN),
-            inner_w, math_floor(inner_h * AUTHOR_TOP), author_h)
+            inner_w, title_top, title_h)
+        if has_author then
+            addDivider(content, inner_w, inner_h)
+            content[#content + 1] = placeCentered(
+                fitText(BD.auto(authors), text_w, author_h, AUTHOR_SIZE_MAX, AUTHOR_SIZE_MIN),
+                inner_w, math_floor(inner_h * AUTHOR_TOP), author_h)
+        end
     end
 
     return FrameContainer:new{
@@ -173,16 +183,21 @@ function Placeholder.build(w, h, title, authors)
     }
 end
 
+function Placeholder.render(w, h, title, authors)
+    local cover = Placeholder.build(w, h, title, authors)
+    local sheet = Blitbuffer.new(w, h, Blitbuffer.TYPE_BBRGB32)
+    sheet:fill(Blitbuffer.COLOR_WHITE)
+    cover:paintTo(sheet, 0, 0)
+    cover:free()
+    return sheet
+end
+
 function Placeholder.buildCropped(w, h, title, authors, align)
     local full_w = Placeholder.fitSize(math.huge, h)
     if full_w <= w then return Placeholder.build(w, h, title, authors) end
 
     -- Render the whole cover off-screen, then keep only the requested slice.
-    local cover = Placeholder.build(full_w, h, title, authors)
-    local sheet = Blitbuffer.new(full_w, h, Blitbuffer.TYPE_BBRGB32)
-    sheet:fill(Blitbuffer.COLOR_WHITE)
-    cover:paintTo(sheet, 0, 0)
-    cover:free()
+    local sheet = Placeholder.render(full_w, h, title, authors)
 
     local slice = Blitbuffer.new(w, h, Blitbuffer.TYPE_BBRGB32)
     slice:blitFrom(sheet, 0, 0, align == "right" and (full_w - w) or 0, 0, w, h)

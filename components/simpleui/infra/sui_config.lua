@@ -11,6 +11,7 @@ local DataStorage       = require("datastorage")
 local SUISettings       = require("infra/sui_store")
 local SUICoverCache     = require("infra/sui_cover_cache")
 local RasterCache       = require("infra/sui_raster_cache")
+local Backdrop          = require("infra/sui_backdrop")
 local logger            = require("logger")
 local _ = require("infra/sui_i18n").translate
 local T = require("ffi/util").template
@@ -1368,7 +1369,7 @@ function M.makeBackdropStrengthItem(opts)
     local _lc = opts._lc or _
     local function label(strength)
         if opts.format then return opts.format(strength) end
-        return require("features/sui_wallpaper").formatBackdropStrength(strength, _lc)
+        return Backdrop.formatBackdropStrength(strength, _lc)
     end
     return {
         text           = opts.title,
@@ -1384,8 +1385,8 @@ function M.makeBackdropStrengthItem(opts)
                 title_text    = opts.title,
                 info_text     = info .. "\n" .. T(_lc("Default: %1"), label(opts.default_value)),
                 value         = opts.get(),
-                value_min     = 0,
-                value_max     = opts.value_max or 100,
+                value_min     = Backdrop.STRENGTH_MIN,
+                value_max     = opts.value_max or Backdrop.STRENGTH_MAX,
                 value_step    = 5,
                 unit          = "%",
                 ok_text       = _("Apply"),
@@ -1427,7 +1428,7 @@ function M.makeStepperItem(opts)
                 default_value = opts.default_value,
                 callback      = function(spin)
                     opts.set(spin.value)
-                    opts.refresh()
+                    if opts.refresh then opts.refresh() end
                 end,
             })
         end,
@@ -2052,6 +2053,29 @@ function M.appendModuleAppearanceItems(items, mod_id, pfx, refresh, _lc)
     return M.appendSectionLabelScaleItem(items, mod_id, pfx, refresh, _lc)
 end
 
+-- Turns an Arrange-screen item into a show/hide row. The eye icon reflects
+-- the current state and flips it in place; a hidden row is dimmed and keeps
+-- its position in the list.
+--   opts.is_visible   function() -> bool
+--   opts.set_visible  function(visible) -> false|nil   (false vetoes the change)
+--   opts.on_change    function|nil   runs after an accepted change
+--   opts.repaint      function       redraws the Arrange screen
+function M.applyVisibilityToggle(item, opts)
+    local function sync()
+        local visible = opts.is_visible()
+        item.dim_row     = not visible or nil
+        item.toggle_icon = visible and "show" or "hide"
+    end
+    item.on_toggle = function()
+        if opts.set_visible(not opts.is_visible()) == false then return end
+        sync()
+        if opts.on_change then opts.on_change() end
+        opts.repaint()
+    end
+    sync()
+    return item
+end
+
 -- ===========================================================================
 -- 6. Cover Management & Caching
 -- ===========================================================================
@@ -2516,6 +2540,12 @@ local function _stretchBBToSize(raw_bb, target_w, target_h)
     return stretched_bb
 end
 
+-- Stretches `bb` to exactly w x h, aspect not preserved, for consumers that
+-- reshape a cover themselves. Returns a new buffer owned by the caller, or
+-- `bb` itself when it could not be scaled; callers free the result only when
+-- it differs from `bb`.
+M.stretchBBToSize = _stretchBBToSize
+
 -- Decodes the cover bitmap held by the book info store. The decode is
 -- comparatively expensive, so callers first validate through metadata-only
 -- lookups and call this only when no local cache entry can serve the request.
@@ -2784,6 +2814,23 @@ function M.checkpointStatsDB()
         conn:exec("PRAGMA wal_checkpoint(TRUNCATE);")
         conn:close()
     end)
+end
+
+-- Cheap change token for the statistics database: size and mtime of the main
+-- file and its WAL. Returns nil when the database cannot be inspected or was
+-- written within the last two seconds — mtime has one-second resolution, so
+-- an unchanged token that fresh could still hide a later write.
+function M.getStatsDbStamp()
+    if not _ensureSqlite() then return nil end
+    local path = M.getStatsDbPath()
+    local main = _lfs_mod.attributes(path)
+    if not main then return nil end
+    local wal      = _lfs_mod.attributes(path .. "-wal")
+    local newest   = math.max(main.modification, wal and wal.modification or 0)
+    if os.time() - newest < 2 then return nil end
+    return string.format("%d:%d|%d:%d",
+        main.size, main.modification,
+        wal and wal.size or 0, wal and wal.modification or 0)
 end
 
 function M.beginStatsSyncGuard()
