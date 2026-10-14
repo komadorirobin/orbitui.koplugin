@@ -16,15 +16,15 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.26** includes Bookshelf **5.3.1** through `74b825bb` and
-SimpleUI **2.7.5** through `b58dfefb`, on top of alpha.4's shared OrbitUI surfaces.
-It displays identified series as compact cover-facing boxes in the physical
-bookcase. Their thickness grows with the volume count up to a cap; tapping a
-box opens its individual books. Ordinary shelf-end ornaments are centred in
-their available space instead of crowding the neighboring book. Per-shelf
-cover sizing, author matching, custom settings, artwork and reading data are
-preserved. Grid/list views remain unchanged.
-See [the release notes](docs/releases/0.1.0-alpha.26.md)
+Version **0.1.0-alpha.39** includes the reviewed Bookshelf **5.4.4** branch
+through `aeada050` and SimpleUI **2.7.5** branch through `84a9c0e9`.
+It adds Favourite first sorting, plugin-format support, a persistent finished-book
+ledger and optional Flow carousel. Existing Library/Manga profiles, series
+slipcases, per-chip cover labels/sizes, author ornaments, custom icons and
+dock/Bento layout are retained. Bookshelf PR #508 remains deferred. Back up
+settings before updating: the new ledger retains legacy values for rollback,
+but edits made in it are not mirrored to older code.
+See [the release notes](docs/releases/0.1.0-alpha.39.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.

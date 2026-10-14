@@ -1791,6 +1791,23 @@ old keys survive rollback, but new ledger edits are not mirrored to older code.
 VERSION, bootstrap/API and artwork are unchanged. No push, tag, release or OTA
 publication is part of this task; the held Mann bitmap remains excluded.
 
+## 2026-10-14: Prepare alpha.39 for explicit publication
+
+User request: "Publicera" after the tested merge at `50c04c57`. Prepare a new
+alpha.39 prerelease without further upstream imports. Retain Bookshelf
+`aeada050` and SimpleUI `84a9c0e9`; PR #508 remains deferred. VERSION and
+release documentation change, not runtime logic, bootstrap/API or artwork.
+The held Mann bitmap and any history containing it must remain unpublished.
+
+Release gates: full Lua and LuaJIT suites sequentially, translations, sealed
+clean-commit packaging, outgoing-history/runtime held-bitmap audit, upgrade and
+rollback using the published alpha.38 installer, downloaded draft-asset hash
+verification, both CI jobs, and anonymous public discovery/download through
+the old installer's OTA path. Never replace an existing release's assets.
+Physical Bigme acceptance remains open as documented above. Keep installation
+and settings backups: new ledger edits are not mirrored to older code, and
+pre-alpha.33 upgrades retain their theme-storage migration caveat.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

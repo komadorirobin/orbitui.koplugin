@@ -268,6 +268,17 @@ reading-data or sync change. Code rollback retains the new level preferences;
 older code ignores unsupported preferences. The pre-alpha.33 theme-migration
 caveat and physical-device acceptance gaps still apply.
 
+Alpha.39 integrates the reviewed October 14 Bookshelf and SimpleUI branch
+updates: Favourite first sorting, plugin formats/OPDS-PSE actions, finished-book
+ledger/manual entries, per-view grouping and an opt-in Flow carousel. OrbitUI's
+existing profiles, series boxes, icons and layout choices are preserved; PR #508
+is not included. Alpha.38 and earlier alpha installations can update directly
+through the same preview channel and unchanged bootstrap/API 1. Copy-only
+migrations retain old settings and counts, but new ledger edits are not mirrored
+to older code on rollback. Keep the prior installation and settings backup,
+including the pre-alpha.33 theme-migration caveat. Artwork and external sync
+ownership are unchanged. Physical-device acceptance remains open.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

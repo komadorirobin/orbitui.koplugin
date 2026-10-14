@@ -2,6 +2,23 @@
 
 ## Automated
 
+2026-10-14 alpha.39 release preparation: both full suites rerun sequentially
+after the version/documentation change and pass 534 / 535 OrbitUI cases in
+Lua / LuaJIT across 45 files, 385 Bookshelf suites (zero failures, two existing
+SQLite skips), all 13 SimpleUI files and 91 Python checks (four existing
+external-artwork source skips). Native-font skips and absent adjacent Bookends
+parity checkout remain. All 43 catalogues, 289 module paths and 806 Lua syntax
+checks pass. No new skip or failure allowance. The extra LuaJIT case verifies
+guarded writes to real 8/24/32-bit framebuffers.
+
+Release gates use sealed clean-commit packaging, both CI matrix jobs, the actual
+published alpha.38 installer for native upgrade/rollback and corrupt-download
+rejection, downloaded draft-asset hashes, and anonymous live discovery/download
+after publication. Bundled artwork and bootstrap/API 1 remain unchanged; the
+held Mann bitmap is excluded from outgoing history and the runtime archive.
+Physical Bigme checks and rollback caveats below still apply. This explicit
+publication request does not claim new device acceptance or a measured speedup.
+
 2026-10-14 reviewed upstream merge (local, unpublished; VERSION remains
 alpha.38): complete sequential Lua / LuaJIT runs pass 534 / 535 OrbitUI cases
 across 45 files, 385 Bookshelf suites (zero failures, two existing SQLite suite
