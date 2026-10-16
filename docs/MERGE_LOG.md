@@ -1854,7 +1854,17 @@ artwork-source skips). Two native-font case skips and the absent adjacent
 Bookends parity checkout remain. All 43 catalogues, 306 module paths and 824
 Lua syntax checks pass. No new skip or known-failure allowance. Read-only
 collection at 19:22 UTC reports zero missing commits on both tracked branches.
-Clean-candidate package results are recorded below after completion.
+Compatibility commit `0066a6c4` passes sealed clean-source packaging: 1718
+manifest files and 1771 archive entries, all 306 mapped modules present.
+All manifest sizes/hashes and bootstrap/API 1 are verified; the held bitmap
+is absent. The unpublished development ZIP, still labelled alpha.39, has SHA-256
+`47931e9c3d4e516938fe7426852311402b74b668316a31c83e867c68ddf372a0`.
+Never replace the published alpha.39 assets with this development build.
+The previous local ZIP/checksum is preserved in ignored
+`test-results/upstream-20261016/previous-dist/`. Both reviewed upstream tips
+are ancestors. This result-recording commit changes documentation only;
+fast-forward local main after recording it, without pushing.
+
 Physical Bigme checks remain: optional Tabbed Grid paging/tab switches, empty
 and group sources in Bento/custom screens; existing hidden Recent/BookOrbit
 sources; optional Reader Book panel, sliders and stats; colour/night-mode text,

@@ -15,6 +15,8 @@ tab selection/empty states/stable height and preserved default/order settings.
 SimpleUI is pinned to `36e7430f`; Bookshelf is unchanged at `aeada050`. Both
 tracked branches have zero missing commits at the 19:22 UTC collection.
 PR #508 remains deferred. Clean-candidate package details are in `MERGE_LOG.md`.
+Candidate `0066a6c4` passes sealed ZIP validation (1718 manifest files / 1771
+archive entries), including every file hash and held-bitmap exclusion.
 Existing physical shelves, series boxes, artwork, bootstrap/API and adapters
 are unchanged. Tabbed Grid and Reader Book quick settings are opt-in.
 
