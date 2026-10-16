@@ -146,7 +146,32 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
-- October 16: SimpleUI main `36e7430f` is reviewed (still 2.7.5);
+- October 16, Bookshelf 5.5 follow-up: master `048ab4ba` is reviewed, including
+  release `v5.5.0` and the formerly deferred PR #508 now merged into master.
+  SimpleUI remains at `36e7430f`. The native series-box implementation is
+  imported but OrbitUI's adapter still owns embedded grouping and rendering:
+  `_seriesBoxesEnabled` is disabled by the adapter, and the chip editor's
+  `series_boxes_external` seam hides the redundant native toggle. Saved native
+  choices remain intact. The native standalone implementation remains usable.
+  Preserve cover-tinted bindings, read/total badges, completion/fade, scoped
+  membership, all-face-out books, per-chip labels and ornament placement.
+- Import author-photo discovery (explicit online action only), page/percentage
+  badges and printed-count preference, Added or opened sorting, Recently read
+  micro-module, token/placeholder APIs and scan-memory/crash guards. Author
+  images remain separate from author bust ornaments. Discover both image-library
+  roots and both author-name orders. Install a new photo before removing other
+  extensions, so a failed rename preserves the old image. Keep Hardcover
+  per-book choices from either link store. Redirects retain credentials only
+  for the same origin or same-host default-port HTTP-to-HTTPS upgrade.
+- Scope the printed-page constants to stay within LuaJIT's 200-local limit.
+  Positive progress with no explicit status now reads as Reading, but imported
+  zero-progress sidecars stay unopened; an explicit Reading status still wins.
+  Regenerate the map (nine added modules). Root tests explicitly enable
+  `BOOKSHELF_SLOW_TESTS=1`: 5.5's new fast default must not silently drop the
+  seven pre-existing filesystem/theme suites from our full gate. Series-box
+  tests cover the embedding ownership boundary; native author-photo tests
+  include failed-replacement preservation. No version/OTA change is implied.
+- Earlier October 16: SimpleUI main `36e7430f` is reviewed (still 2.7.5);
   Bookshelf master is unchanged at `aeada050`. PR #508 remains deferred.
   The new Tabbed Grid is an optional Home/custom-screen module, not a
   replacement for Bookshelf's Library/Manga chips. Its tab sources retain

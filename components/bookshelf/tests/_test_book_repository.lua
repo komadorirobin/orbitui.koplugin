@@ -7439,6 +7439,8 @@ end)
 -- "new" status (bookshelf's Mark as unread) and no sidecar stay unread.
 test("readProgress: progress without a status reads as reading (issue 524)", function()
     _G._test_docsettings_data = {
+        ["/books/zero.epub"] = { percent_finished = 0 },
+        ["/books/explicit_reading.epub"] = { percent_finished = 0, summary = { status = "reading" } },
         ["/books/nostatus.epub"] = { percent_finished = 0.12 },
         ["/books/marked_new.epub"] = { summary = { status = "new" } },
         ["/books/rated_only.epub"] = { summary = { rating = 4 } },
@@ -7453,6 +7455,12 @@ test("readProgress: progress without a status reads as reading (issue 524)", fun
     assert(s3 == nil, "rated, never opened: no progress, no status: " .. tostring(s3))
     local _p4, s4 = Repo.readProgress("/books/finished.epub")
     assert(s4 == "finished", tostring(s4))
+    local _p5, s5 = Repo.readProgress("/books/zero.epub")
+    assert(s5 == nil, "zero progress without a status stays unopened")
+    assert(Repo.buildBook("/books/zero.epub", { want_cover = false }).status == nil)
+    local _p6, s6 = Repo.readProgress("/books/explicit_reading.epub")
+    assert(s6 == "reading", "explicit reading status survives zero progress")
+    assert(Repo.buildBook("/books/explicit_reading.epub", { want_cover = false }).status == "reading")
     _G._test_docsettings_data = nil
     Repo.invalidateProgressCache()
 end)

@@ -23,7 +23,7 @@ function M.shelf(shelf)
         return Boxes.geometry(book, base, opts)
     end
     shelf.seriesBoxWidget = function(entry, opts, stand_h, inset)
-        if not entry.series_box then return nil end
+        if not entry.series_box or not Boxes.isBox(entry.book) then return nil end
         return require("core/orbitui_series_box_widget"):new{
             entry=entry, width=entry.w, height=stand_h, inset=inset,
             callbacks=opts.callbacks, book_look=shelf.bookLook,
@@ -31,12 +31,17 @@ function M.shelf(shelf)
     end
     local recess_columns = shelf.recessColumns
     shelf.recessColumns = function(entry, x, inset)
-        if entry.series_box then return Boxes.shadowColumns(entry.series_box, x, inset) end
+        if entry.series_box and Boxes.isBox(entry.book) then
+            return Boxes.shadowColumns(entry.series_box, x, inset)
+        end
         return recess_columns(entry, x, inset)
     end
 end
 
 function M.widget(widget)
+    -- OrbitUI owns grouping and rendering; the native 5.5 option must not
+    -- compact the same list a second time, even with a saved native setting.
+    widget._seriesBoxesEnabled = function() return false end
     widget.spineShowSectionBadges = function(self)
         local last = tip(self)
         if last then return last.kind ~= "series" end

@@ -1873,6 +1873,7 @@ Repo.pageCountFromFilename = pageCountFromFilename
 -- what Extract page counts found from a publisher page list, a Hardcover
 -- edition or the Calibre column, then a p(N) in the file name. What the cover
 -- badge shows under Page count > Printed page counts first.
+do -- Keep this helper's constants out of the repository chunk's local budget.
 local PRINTED_TAGS = { print = true, calibre = true, filename = true }
 function Repo.printedPageCount(fp)
     if type(fp) ~= "string" then return nil end
@@ -1884,6 +1885,7 @@ function Repo.printedPageCount(fp)
         if pp and PRINTED_TAGS[psrc] then return tonumber(pp) end
     end
     return pageCountFromFilename(fp)
+end
 end
 
 -- Issue 405: a page count from a Calibre custom column, for the page-count
@@ -2038,7 +2040,7 @@ function Repo.buildBook(filepath, opts)
     elseif book.status == "abandoned" then book.status = "on_hold"
     end
     -- Progress but no status: reading, as in Repo.readProgress (issue 524).
-    if book.status == nil and book.book_pct then book.status = "reading" end
+    if book.status == nil and (tonumber(book.book_pct) or 0) > 0 then book.status = "reading" end
     -- 1-5 stars (or nil for unrated). Stored under summary.rating by KOReader's
     -- Reader Status dialog. Exposed for the hero card's rating region and for
     -- the rating sort key.
@@ -3045,7 +3047,8 @@ function Repo.readProgress(filepath)
     -- status on every open -- and the shelf drew it as unread, with no bar
     -- (issue 524). Not "new": that is bookshelf's own Mark as unread, which
     -- also clears the percentage.
-    if status == nil and pct then status = "reading" end
+    -- Imported zero-progress sidecars are not proof the reader opened a book.
+    if status == nil and (tonumber(pct) or 0) > 0 then status = "reading" end
     -- Third rung, mirroring buildBook: synthesise the page from how far in the
     -- reader is. Approximate for a reflowable book, and the honest answer when
     -- neither exact source exists -- an EPUB without stable page numbers has no

@@ -34,6 +34,8 @@ end
 local shelf_source = source("bookshelf_spine_shelf")
 local flat_body = assert(shelf_source:match("function SpineShelf%._flattenItems%(items%)\n(.-)\nend"))
 local native_flatten = compile("return function(items)\n" .. flat_body .. "\nend", {})()
+local recess_args, recess_body = shelf_source:match("function SpineShelf%.recessColumns%((.-)%)\n(.-)\nend")
+local native_recess = compile("return function(" .. recess_args .. ")\n" .. recess_body .. "\nend", {})()
 local function book(n, series, dir)
     return {filepath=(dir or "/books") .. "/" .. tostring(n) .. ".epub", filename=tostring(n)..".epub",
         title="Book "..n, series_name=series, series_num=tostring(n), author="Vilhelm Moberg",
@@ -285,6 +287,8 @@ end)
 H.test("the native planner paginates boxes as single slots and resumes inside compacted groups", function()
     local SL=require("lib/bookshelf_spine_layout")
     local shelf={_flattenItems=native_flatten,VIEW_SIN=.2,FACE_GAP_DP=8,
+        plankUnit=function() return 10 end,plankFace=function() return 20 end,
+        plankInset=function() return 5 end,
         faceOutSpec=function() return {all=true} end,recentSet=function() end,
         cachedProgress=function() return nil,nil,true end,
         persistProgress=function() end,prefetchFacts=function() end,
@@ -340,6 +344,7 @@ H.test("native row construction routes taps and projected shadows through the se
     local entry={book=box,item=box,w=shape.w,h=shape.h,series_box=shape,face_out=true}
     local columns
     local shelf={bookLook=function() return {r=90,g=120,b=80} end,
+        recessColumns=native_recess,
         plankUnit=function() return 10 end,plankFace=function() return 20 end,
         plankInset=function() return 5 end,plankSurface=function() return 10 end,
         plankDesignWidget=function() end,endMargin=function() return 10 end,

@@ -300,6 +300,14 @@ gaps replace the old dark footer rule, including full-screen modules. Tests:
 to framebuffer bounds before raw pixel writes; temporary buffers are freed
 even after a failed pose (`_test_faceout_pose.lua`).
 
+Bookshelf 5.5 imports native series boxes (including the previously deferred
+PR #508), but does not replace OrbitUI's approved implementation. The adapter
+disables native `_seriesBoxesEnabled` before whole-list preparation; the editor
+hides its native toggle via `series_boxes_external`, without erasing saved
+choices. Geometry, widgets and shadows must dispatch to the matching box owner,
+never feed a native shape into OrbitUI's painter or group a list twice.
+Standalone component tests continue exercising the upstream implementation.
+
 Series in the physical bookshelf are now one front-facing slipcase per series,
 per the user's concept-B approval. Group the full filtered light list before
 the page cache and planner, never a page-sized slice or an open remote feed.
@@ -474,6 +482,15 @@ screens keep independent layouts and refresh targets. Regression coverage:
 `tests/test_simpleui_upstream_20261006.lua`.
 
 ## C08: Assets, data and recovery
+
+Bookshelf 5.5's author-photo lookup is explicit and separate from the bundled
+bust ornaments. Bulk discovery keeps existing/manual images; a failed install
+must keep prior files in every format. Rename the completed replacement before
+removing obsolete extensions. Photo discovery still recognizes both image-library
+roots and both author-name orders. The page-count crash quarantine is separate
+from reading progress, and its memory limit is applied only in the render child.
+The metadata scanner's temporary nil-count plural guard is restored on success
+and error; it must not become a permanent global gettext replacement (C06).
 
 SimpleUI visual defaults remain stable across merges: titlebar, pagination and
 cover-title strips are transparent over wallpaper unless explicitly configured;

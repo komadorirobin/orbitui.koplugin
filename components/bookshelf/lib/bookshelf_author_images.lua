@@ -409,13 +409,14 @@ local function _save(url, dir, stem)
     -- Only what a tile needs, in the format that holds it smallest.
     local ok_c, new_ext = pcall(_compact, tmp, ext)
     if ok_c and new_ext then ext = new_ext end
-    for _i, e in ipairs(OTHER_EXTS) do
-        pcall(os.remove, dir .. "/" .. stem .. "." .. e)
-    end
     local dest = dir .. "/" .. stem .. "." .. ext
     if not os.rename(tmp, dest) then
         pcall(os.remove, tmp)
         return nil
+    end
+    -- Keep the previous image intact if the replacement cannot be installed.
+    for _i, e in ipairs(OTHER_EXTS) do
+        if e ~= ext then pcall(os.remove, dir .. "/" .. stem .. "." .. e) end
     end
     return dest
 end

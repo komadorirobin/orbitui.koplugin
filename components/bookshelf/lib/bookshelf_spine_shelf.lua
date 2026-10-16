@@ -1897,6 +1897,9 @@ end
 -- A render-time seam for nonrectangular shelf items. Ordinary books keep
 -- their native shadow reservation; adapters may return joined silhouettes.
 function SpineShelf.recessColumns(entry, x, inset)
+    if entry.series_box and entry.book and entry.book._series_box then
+        return require("lib/bookshelf_series_boxes").shadowColumns(entry.series_box, x, inset)
+    end
     return {{
         x = x + (entry._drawn_x or 0), w = entry._drawn_w or entry.w,
         h = entry._drawn_h or entry.h or 0,
@@ -5163,13 +5166,7 @@ function SpineShelf.rowWidget(opts)
             -- a selection flip does not rebuild it, so anything in here that
             -- depended on which book was selected had to be kept in step by
             -- hand, and twice was not.
-            local columns
-            if e.book and e.book._series_box then
-                columns = require("lib/bookshelf_series_boxes").shadowColumns(e.series_box, cursor, inset)
-            else
-                columns = SpineShelf.recessColumns(e, cursor, inset)
-            end
-            for _, col in ipairs(columns) do
+            for _, col in ipairs(SpineShelf.recessColumns(e, cursor, inset)) do
                 recess_cols[#recess_cols + 1] = col
             end
             -- The opening pose draws the shelf as if this book were gone:

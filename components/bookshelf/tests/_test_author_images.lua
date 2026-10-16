@@ -184,6 +184,26 @@ t.test("a new photo replaces the old one in any format", function()
     eq(exists(DIR .. "/Ann Leckie.png"), false)
 end)
 
+t.test("a failed replacement keeps existing images in every format", function()
+    reset()
+    for _, ext in ipairs({"jpg", "png"}) do
+        local f = assert(io.open(DIR .. "/Ann Leckie." .. ext, "wb"))
+        f:write("original-" .. ext); f:close()
+    end
+    json[OL] = { docs = { { key = "OL5A", name = "Ann Leckie", work_count = 26 } } }
+    files[olPhoto("OL5A")] = JPEG
+    local rename = os.rename
+    os.rename = function() return nil, "read-only destination" end
+    local ok, result = pcall(AI.fetch, "Ann Leckie", { dir = DIR })
+    os.rename = rename
+    assert(ok); eq(result, nil)
+    for _, ext in ipairs({"jpg", "png"}) do
+        local f = assert(io.open(DIR .. "/Ann Leckie." .. ext, "rb"))
+        eq(f:read("*a"), "original-" .. ext); f:close()
+    end
+    eq(exists(DIR .. "/.Ann Leckie.download"), false)
+end)
+
 t.test("a failed lookup keeps the image already there", function()
     reset()
     local old = assert(io.open(DIR .. "/Emily Tesh.jpg", "wb")); old:write(JPEG); old:close()

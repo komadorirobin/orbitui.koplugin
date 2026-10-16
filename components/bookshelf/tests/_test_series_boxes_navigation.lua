@@ -42,6 +42,7 @@ local function book(n, series, title)
 end
 local function widget(raw)
     local w = {chip="home",_drilldown_path={},_cursor=1,
+        _profileScope=function() end,
         _isSpineMode=function() return true end, _opdsEffectiveTab=function() end,
         _viewSize=function() return 4 end, _spineSkip=function() return 0 end,
         _clearDpadFocus=function() end, _syncPageFromCursor=function() end,
@@ -198,7 +199,7 @@ t.test("the editor toggle changes only its own draft and uses the existing live-
     local function toggle(draft)
         local changes=0
         local rows={}
-        compile(body,{rows=rows,draft=draft,_=function(s) return s end,
+        compile(body,{self={},rows=rows,draft=draft,_=function(s) return s end,
             T=function(s,v) return (s:gsub("%%1",v)) end,
             pick=function(fn) return function() fn(); changes=changes+1 end end})()
         local old=rows[1][1].text_func()
@@ -215,7 +216,11 @@ end)
 t.test("inside a drilled box set every book faces out; elsewhere the shelf's choice holds", function()
     local fenv=setmetatable({BookshelfSettings={read=function() return nil end},
         _faceOutModes=function() return {none=true,all=true,favorites=true} end},{__index=env})
-    local faceOut=method("_spineFaceOut",fenv)
+    local nativeFaceOut=method("_spineFaceOut",fenv)
+    local function faceOut(w)
+        w._profileShelfSettings=function() end
+        return nativeFaceOut(w)
+    end
     tab.spine_face_out="none"
     local box=Boxes.box({book(1,"Saga"),book(2,"Saga")},"Saga")
     eq(faceOut({_drilldown_path={{kind="series",payload=box,label="Saga"}}}),"all")

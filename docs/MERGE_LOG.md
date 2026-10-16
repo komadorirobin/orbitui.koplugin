@@ -1875,6 +1875,63 @@ new grouped-order edits and new module settings are not reflected in old code.
 VERSION, bootstrap/API, adapters and artwork are unchanged. No push, version
 bump, tag, release or OTA publication is part of this merge.
 
+## 2026-10-16: Reviewed Bookshelf 5.5 merge
+
+User request: merge the newly released Bookshelf 5.5. Start from
+clean local main `e3442fd3`, including the earlier unpublished SimpleUI merge,
+on `maintenance/bookshelf-5.5-2026-10-16`. Read-only collection at 20:58 UTC
+froze Bookshelf master `048ab4bad8993ebc713800d884fc485e54753343`, advancing
+from `aeada050f90921b748dcef0ae2f88367bd0e1b69`: 75 commits, 88 upstream files.
+This includes `v5.5.0` (`a0224c75a43ced03c013c0a98cf3daa1089d60ee`), published
+19:51 UTC, and its README follow-up. SimpleUI remains at reviewed
+`36e7430f6379693266d1082ae0b9d88de62cb877`, with no new commits to import.
+Unsquashed subtree merge `c6387e77` resolves 12 conflicts individually;
+adaptations and regenerated module map are separate from that import.
+
+PR #508 is no longer an unmerged feature branch: its series boxes are part
+of this explicitly requested 5.5 master release. Import the native code and
+tests, but retain OrbitUI's series-box owner, approved coloured slipcase design,
+completion/fade/count badges, member scope and physical labels. The adapter
+disables the native preparation pass and the editor hides its redundant switch,
+without deleting any stored native choice. Widgets and shadow geometry dispatch
+by box identity; standalone Bookshelf still uses the new native implementation.
+Profile scope and all-face-out behavior survive the overlapping navigation
+changes. Existing ornament/session-deck rules and dock reserves stay intact.
+
+Other imported features: explicit author-photo lookup via Open Library/Wikipedia,
+aspect-preserving author cards, page/percentage/printed-count badges, Added or
+opened sorting, Recently read micro-module, token/placeholder registration,
+temporary nil-count plural guard, page-scan memory limits/crash quarantine,
+source-change cache invalidation and offline-aware micro-modules. Keep both
+image-library roots and both author-name orders. Photo installation renames the
+new file before deleting other extensions, protecting prior images on failure.
+Hardcover re-linking preserves enrichment choices from either link store.
+The merged redirect tests retain cross-origin credential isolation and add the
+same-host default-port HTTP-to-HTTPS exception and response-memory caps.
+
+Compatibility checks found the combined repository exceeding LuaJIT's 200-local
+limit: scope the new printed-page constants without changing the API. Infer
+reading status for positive unclassified progress, but preserve OrbitUI's
+unopened interpretation of imported zero-progress sidecars; explicit reading
+at zero stays reading. Native test fixtures now supply existing profile/layout
+seams instead of removing assertions. The root runner explicitly enables the
+seven slow filesystem/theme suites newly skipped by upstream's default runner.
+No new skip/failure allowance. Module map grows from 306 to 315 paths.
+
+C01-C11 remain intact, with the native/embedded box boundary clarified in C07
+and image/quarantine preservation documented in C08. VERSION stays alpha.39;
+bootstrap/API, artwork and original source provenance are unchanged. This is a
+local merge only: no push, version bump, tag, release or OTA change is authorized.
+
+Validation and clean-candidate package results are recorded below after the
+complete sequential Lua/LuaJIT gates. Physical Bigme checks remain: author-photo
+single/bulk lookup, Stop/offline/restart, both image-library locations; page and
+percentage badges in colour/night mode; same-origin/upgrade OPDS access; page
+scan cancellation/quarantine; nested-chip refresh, captions, dock and existing
+series-box completion/ornaments. No device acceptance or speedup is claimed.
+Keep installation/settings backups; old keys survive rollback, but new 5.5
+preferences and downloaded author photos are not backported to older code.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

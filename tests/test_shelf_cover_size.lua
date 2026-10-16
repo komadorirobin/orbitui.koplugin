@@ -32,7 +32,7 @@ local function geometry(pct, aspect, row_h, width, dpi, face_out)
         PLANK_INSET_UNITS = tonumber(assert(shelf_source:match("SpineShelf%.PLANK_INSET_UNITS%s*=%s*([%d.]+)"))) }
     compile(plank_source .. "\n" .. inset_source, { SpineShelf = SS, Screen = Screen })()
     local h = Layout.spineHeight(row_h, aspect)
-    local env = { h = h, aspect = aspect, budget = row_h,
+    local env = { h = h, aspect = aspect, budget = row_h, bk = {},
         face_out = face_out ~= false, SpineLayout = Layout, SpineShelf = SS,
         Screen = Screen, auto_thick = Layout.autoThickness(row_h / dpi),
         opts = { cover_size_pct = pct, content_w = width } }

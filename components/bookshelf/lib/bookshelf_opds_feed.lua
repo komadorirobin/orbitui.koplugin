@@ -1165,10 +1165,8 @@ end
 function M.fetch(url, username, password, opts, redirect_depth)
     local Http = require("lib/bookshelf_http")
     local http = require("socket.http")
-    local ltn12 = require("ltn12")
     local socket = require("socket")
     local socketutil = require("socketutil")
-    local Http = require("lib/bookshelf_http")
     local sink = {}
     -- socketutil's timeouts are GLOBAL state. http.request can raise (a bad
     -- URL, an SSL failure) rather than return nil+err, and an unwound stack

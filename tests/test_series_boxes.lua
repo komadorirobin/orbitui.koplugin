@@ -152,6 +152,7 @@ local repo={lightMetaFor=function() return nil end, readProgress=function() end,
 package.loaded["lib/bookshelf_book_repository"]=repo
 local function widget(raw)
     local w={_isSpineMode=function() return true end,_drilldown_path={},_cursor=1,
+        _prepareSpineItems=nativeMethod("_prepareSpineItems",{Repo=repo}),
         _fetchChipItems=function() return raw,#raw end,
         _applyWithinGroupSort=function() end,
         _jumpScanList=function() return raw,"title","native" end,
@@ -161,6 +162,31 @@ local function widget(raw)
     Adapter.widget(w)
     return w
 end
+
+H.test("native 5.5 settings never double-box OrbitUI series or expose an ineffective switch", function()
+    tab={series_boxes=true}
+    local raw={book(0),book(1,"Saga"),book(2,"Saga")}
+    local w=widget(raw)
+    H.eq(w:_seriesBoxesEnabled(),false)
+    H.eq(w:_prepareSpineItems(raw,#raw),raw)
+    local out=w:prepareSpineItems(raw,#raw)
+    H.eq(#out,2); assert(Boxes.isBox(out[2])); H.eq(out[2]._series_box,nil)
+    H.eq(tab.series_boxes,true) -- Retain the saved preference for rollback.
+    local editor={}
+    require("adapters/orbitui_ui").wrap("lib/bookshelf_chip_editor",editor)
+    H.eq(editor.series_boxes_external,true)
+    assert(source("bookshelf_chip_editor"):find("if not self.series_boxes_external then",1,true))
+    tab=nil
+end)
+
+H.test("native box rendering and shadows are not claimed by OrbitUI's adapter", function()
+    local marker={}
+    local shelf={_flattenItems=native_flatten,recessColumns=function() return marker end}
+    Adapter.shelf(shelf)
+    local native={book={_series_box=true},series_box={}}
+    H.eq(shelf.seriesBoxWidget(native,{},300,10),nil)
+    H.eq(shelf.recessColumns(native,0,10),marker)
+end)
 
 H.test("full-list grouping, jump indices and footer count the same visible slots", function()
     local raw={book(0),book(1,"Saga"),book(2,"Saga"),book(3,"Saga"),book(5)}
