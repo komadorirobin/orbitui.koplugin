@@ -1868,6 +1868,24 @@ end
 -- as their own (free) category before probing anything heavier.
 Repo.pageCountFromFilename = pageCountFromFilename
 
+-- Repo.printedPageCount(fp) -> a count that does not depend on how the book
+-- is laid out for reading, or nil: the book's own stable page numbers, then
+-- what Extract page counts found from a publisher page list, a Hardcover
+-- edition or the Calibre column, then a p(N) in the file name. What the cover
+-- badge shows under Page count > Printed page counts first.
+local PRINTED_TAGS = { print = true, calibre = true, filename = true }
+function Repo.printedPageCount(fp)
+    if type(fp) ~= "string" then return nil end
+    local _p, _s, _r, pages, _n, src = Repo.readProgress(fp)
+    if src == "stable" and pages then return pages end
+    local ok, SS = pcall(require, "lib/bookshelf_spine_shelf")
+    if ok and SS and SS.cachedProgress then
+        local pp, _s2, _k, psrc = SS.cachedProgress(fp)
+        if pp and PRINTED_TAGS[psrc] then return tonumber(pp) end
+    end
+    return pageCountFromFilename(fp)
+end
+
 -- Issue 405: a page count from a Calibre custom column, for the page-count
 -- scan. The Count Pages plugin for Calibre fills one in (usually #pages), and
 -- a reader who already keeps it may prefer it to the scan's own render.
@@ -2019,6 +2037,8 @@ function Repo.buildBook(filepath, opts)
     if     book.status == "complete"  then book.status = "finished"
     elseif book.status == "abandoned" then book.status = "on_hold"
     end
+    -- Progress but no status: reading, as in Repo.readProgress (issue 524).
+    if book.status == nil and book.book_pct then book.status = "reading" end
     -- 1-5 stars (or nil for unrated). Stored under summary.rating by KOReader's
     -- Reader Status dialog. Exposed for the hero card's rating region and for
     -- the rating sort key.
@@ -2788,6 +2808,7 @@ end
 -- touched by reading, so chips sorted on them keep their cache.
 local READ_STATE_SORT_TOKENS = {
     "s:last_opened:", "s:percent_read:", "s:read_status", "s:rating:",
+    "s:added_or_opened:",
 }
 function Repo.invalidateReadStateCache()
     for k in pairs(_bySource_cache) do
@@ -3018,6 +3039,13 @@ function Repo.readProgress(filepath)
     if     status == "complete"  then status = "finished"
     elseif status == "abandoned" then status = "on_hold"
     end
+    -- A sidecar with progress but no status is a book being read, as KOReader
+    -- counts it (BookList.setBookInfoCache: opened, no valid status ->
+    -- "reading"). Such a sidecar comes from elsewhere -- KOReader writes the
+    -- status on every open -- and the shelf drew it as unread, with no bar
+    -- (issue 524). Not "new": that is bookshelf's own Mark as unread, which
+    -- also clears the percentage.
+    if status == nil and pct then status = "reading" end
     -- Third rung, mirroring buildBook: synthesise the page from how far in the
     -- reader is. Approximate for a reflowable book, and the honest answer when
     -- neither exact source exists -- an EPUB without stable page numbers has no
@@ -4949,7 +4977,7 @@ function Repo.getAll(path, limit, offset, sort_priority, filter, opts)
         if k == "series_or_title" then needs.series = true; needs.title = true end
         if k == "percent_read" then needs.percent  = true end
         if k == "read_status" or k == "read_status_active" then needs.status = true end
-        if k == "last_opened"  then needs.last_opened = true end
+        if k == "last_opened" or k == "added_or_opened" then needs.last_opened = true end
         -- rating / page_count are NOT on the light shelf record (rating is
         -- never set by buildBookMeta; page_count is nil for EPUBs), so a sort
         -- by either is a no-op unless we hydrate them from the sidecar here.

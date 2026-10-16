@@ -101,7 +101,7 @@ local function _requestString(url, accept)
                 ["User-Agent"] = "KOReader-Bookshelf",
                 ["Accept"] = accept or "*/*",
             },
-            sink = ltn12.sink.table(chunks),
+            sink = require("lib/bookshelf_http").cappedSink(chunks),
             redirect = true,
         }))
         socketutil:reset_timeout()
@@ -168,10 +168,15 @@ end
 -- non-OPDS callers) leaves the request exactly as it was.
 --
 -- opts (OPTIONAL) = { block_timeout = n, total_timeout = n } overrides the
--- socketutil LARGE pair for this one request. The cover picker's download is a
+-- socketutil LARGE pair for this one request. opts.user_agent replaces the
+-- default User-Agent (author photos name the plugin's homepage, as Open
+-- Library and Wikimedia ask). The cover picker's download is a
 -- single, user-initiated, progress-backed fetch and keeps the generous default;
 -- the OPDS thumbnail fill is a serial batch on the main loop and asks for a
 -- much tighter budget so an unresponsive server cannot freeze the shelf.
+--
+-- redirect_depth is internal: redirects are followed here, one hop per call,
+-- so the credentials only go along to the same origin.
 function CoverFetch.download(url, dest_path, user, password, opts, redirect_depth)
     if type(url) ~= "string" or url == "" or type(dest_path) ~= "string" then
         return nil, "bad args"
@@ -226,12 +231,21 @@ function CoverFetch.download(url, dest_path, user, password, opts, redirect_dept
     if not file then return nil, "cannot open temp file" end
     local block_t = (opts and opts.block_timeout) or socketutil.LARGE_BLOCK_TIMEOUT
     local total_t = (opts and opts.total_timeout) or socketutil.LARGE_TOTAL_TIMEOUT
-    local response_headers
+    local resp_headers
     local Http = require("lib/bookshelf_http")
     local ok_req2, code = pcall(function()
         socketutil:set_timeout(block_t, total_t)
-        local headers = { ["User-Agent"] = "KOReader-Bookshelf" }
-        -- Authentication survives same-origin redirects, never foreign ones.
+        local headers = { ["User-Agent"] = (opts and opts.user_agent) or "KOReader-Bookshelf" }
+        -- Set explicitly, because luasocket LOSES IT ON A REDIRECT: it builds
+        -- the header into a table adjustheaders creates, then rebuilds a 3xx
+        -- follow-up from the ORIGINAL request's headers, passing neither user
+        -- nor password. The second hop goes out unauthenticated and the
+        -- server answers 401. Same defect the feed fetch had, fixed there in
+        -- 12ba447; a cover url that redirects (a CDN, a signed-url handoff,
+        -- a trailing-slash tidy-up) hits it here. Confusing to debug from the
+        -- outside, because the shelf populates and only the pictures go
+        -- missing. And because luasocket would forward this header to ANY
+        -- host, redirects are followed below rather than by luasocket.
         local a = Http.basicAuthHeader(auth_user, auth_pass)
         if a then headers["Authorization"] = a end
         local c, h = socket.skip(1, http.request({
@@ -242,22 +256,25 @@ function CoverFetch.download(url, dest_path, user, password, opts, redirect_dept
             user = auth_user,
             password = auth_pass,
         }))
-        response_headers = h
+        resp_headers = h
         socketutil:reset_timeout()
         return c
     end)
     pcall(function() socketutil:reset_timeout() end)
+    -- The sink closes the file at the end of a body; a request that raised
+    -- part way through never got there.
     pcall(function() file:close() end)
     if ok_req2 and Http.isRedirect(code) then
+        -- The tmp file holds the redirect's own body, never the cover.
         pcall(os.remove, tmp)
         if (redirect_depth or 0) >= Http.MAX_REDIRECTS then
             return nil, "too many redirects"
         end
-        local target, same = Http.redirectTarget(url,
-            type(response_headers) == "table" and response_headers.location)
+        local target, keep = Http.redirectTarget(url,
+            type(resp_headers) == "table" and resp_headers.location)
         if not target then return nil, "unsafe redirect" end
         return CoverFetch.download(target, dest_path,
-            same and auth_user or nil, same and auth_pass or nil,
+            keep and auth_user or nil, keep and auth_pass or nil,
             opts, (redirect_depth or 0) + 1)
     end
     if not ok_req2 or code ~= 200 then

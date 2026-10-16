@@ -2318,8 +2318,7 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
     -- Thin spines still shrink below the cap as before.
     local run = bottom - cur_top
     if run > 0 and e.label and e.label ~= "" then
-        local tcap  = math.max(8, math.min(18,
-                          math.floor((e.ref_w_dp or 22) * 0.5)))
+        local tcap  = SpineShelf.titleSize(e.ref_w_dp)
         local tsize = math.max(8, math.min(tcap, math.floor(w_dp * 0.5)))
         local author = (self.show_author ~= false) and e.author or nil
         _paintRotatedTitle(bb, x, cur_top, run, spine_w, e.label, tsize,
@@ -2756,13 +2755,8 @@ end
 -- clear it by luck, and the balanced gap split trimmed the last gap under it
 -- (maintainer: "at least 1px separation"). The text height is measured once
 -- per face size, since it depends on the font, not on the row.
-function SpineShelf.badgeDrop(row_h)
-    local scale = 100
-    pcall(function()
-        local BookshelfSettings = require("lib/bookshelf_settings_store")
-        scale = BookshelfSettings.read("stack_label_font_scale", 100) or 100
-    end)
-    local size = math.max(8, math.floor(14 * scale / 100 + 0.5))
+-- A face's text height, measured once per size.
+function SpineShelf.textHeight(size)
     SpineShelf._badge_text_h = SpineShelf._badge_text_h or {}
     local text_h = SpineShelf._badge_text_h[size]
     if not text_h then
@@ -2775,6 +2769,22 @@ function SpineShelf.badgeDrop(row_h)
         if not ok or not text_h then text_h = math.floor(size * 1.9) end
         SpineShelf._badge_text_h[size] = text_h
     end
+    return text_h
+end
+
+-- The title face an average book's spine gets on this shelf (the cap thicker
+-- spines stop at); a series box's name strip uses it too.
+function SpineShelf.titleSize(ref_w_dp)
+    return math.max(8, math.min(18, math.floor((ref_w_dp or 22) * 0.5)))
+end
+
+function SpineShelf.badgeDrop(row_h)
+    local scale = 100
+    pcall(function()
+        local BookshelfSettings = require("lib/bookshelf_settings_store")
+        scale = BookshelfSettings.read("stack_label_font_scale", 100) or 100
+    end)
+    local text_h = SpineShelf.textHeight(math.max(8, math.floor(14 * scale / 100 + 0.5)))
     local pad_y = Space.px(2)
     local drop  = text_h + 2 * pad_y - SpineShelf.plankFace(row_h) - 2
     return math.max(0, drop)
@@ -3540,7 +3550,8 @@ function SpineShelf._flattenItems(items)
         local it = items[i]
         if it then
             n_items = n_items + 1
-            local members = it.books
+            local members = it._series_display_books or it.books
+            if it._series_box then members = nil end
             if members and #members > 0 then
                 run_n = run_n + 1
                 -- A group is its own run whatever stands next to it.
@@ -3815,6 +3826,9 @@ function SpineShelf.plan(items, opts)
         local it = items[i]
         ids[i] = tostring(it and (it.filepath or it.key or it.id or it.label) or "?")
                  .. ":" .. tostring(it and it.books and #it.books or 0)
+        if it and (it._series_box or it._series_display_books) then
+            ids[i] = ids[i] .. ":" .. require("lib/bookshelf_series_boxes").signature(it)
+        end
     end
     local cache_key = _optsKey(opts) .. "|n=" .. #flat .. "|" .. table.concat(ids, ",")
     local cached = _plan_cache
@@ -4096,7 +4110,7 @@ function SpineShelf.plan(items, opts)
         end
         -- A shelf of shelves' "+ Add shelf" takes a face-out cover's place
         -- and size, as a dashed outline (see the tile branch below).
-        if bk.add_subshelf then face_out = true end
+        if bk.add_subshelf or bk._series_box then face_out = true end
         if face_out and src.has_cover == nil and src.filepath
                 and ok_repo and Repo and Repo.buildBookMeta then
             -- Light page records carry no has_cover, and the cover tile
@@ -4170,6 +4184,11 @@ function SpineShelf.plan(items, opts)
         end
         local series_box = SpineShelf.seriesBoxGeometry and SpineShelf.seriesBoxGeometry(bk,
             {w=w, h=h, face_h=face_h, depth=depth}, opts)
+        if not series_box and bk._series_box then
+            series_box = require("lib/bookshelf_series_boxes").geometry(bk,
+                { w = w, h = h, face_h = face_h, depth = depth, aspect = aspect,
+                  ref_w_dp = ref_w_dp }, opts)
+        end
         if series_box then
             w, h, face_h, depth = series_box.w, series_box.h, series_box.face_h, series_box.depth
             w_dp = math.floor(w / (Screen:scaleBySize(100) / 100) + 0.5)
@@ -4247,7 +4266,8 @@ function SpineShelf.plan(items, opts)
             book = bk, item = f.item, item_idx = f.item_idx,
             run_idx = f.run_idx, section_label = f.section_label,
             w = w, h = h, w_dp = w_dp, ref_w_dp = ref_w_dp,
-            look = look, depth = depth, face_h = face_h, thick = true_thick, series_box = series_box,
+            look = look, depth = depth, face_h = face_h, thick = true_thick,
+            series_box = series_box,
             face_out = face_out, favourite = fav, label = label,
             author = src.author or (src.authors and src.authors[1]) or nil,
             series_num = series_num, gap_before = gap_before,
@@ -4842,6 +4862,12 @@ function SpineShelf.rowWidget(opts)
             end
             local _tile_t0 = e.face_out and _gettime() or nil
             local tile = SpineShelf.seriesBoxWidget and SpineShelf.seriesBoxWidget(e, opts, stand_h, inset)
+            if not tile and e.series_box then
+                tile = require("lib/bookshelf_series_box_widget"):new{
+                    entry = e, width = e.w, height = stand_h, inset = inset,
+                    callbacks = opts.callbacks, book_look = SpineShelf.bookLook,
+                }
+            end
             if not tile and e.face_out and e.book and e.book.add_subshelf then
                 -- A shelf of shelves' "+ Add shelf": a face-out cover's width,
                 -- drawn as a dashed outline over the panel shading
@@ -5002,6 +5028,10 @@ function SpineShelf.rowWidget(opts)
                                          -- when that was what it meant.
                                          plank_surf = surf,
                                          lift = tilt_lift,
+                                         -- How far a selection has already
+                                         -- raised it: `below` is measured
+                                         -- from the STANDING foot.
+                                         raised = lift,
                                          -- the true thickness (the pose)
                                          thick = e.thick }
                     fx_here = cover.faceout_fx
@@ -5133,7 +5163,13 @@ function SpineShelf.rowWidget(opts)
             -- a selection flip does not rebuild it, so anything in here that
             -- depended on which book was selected had to be kept in step by
             -- hand, and twice was not.
-            for _, col in ipairs(SpineShelf.recessColumns(e, cursor, inset)) do
+            local columns
+            if e.book and e.book._series_box then
+                columns = require("lib/bookshelf_series_boxes").shadowColumns(e.series_box, cursor, inset)
+            else
+                columns = SpineShelf.recessColumns(e, cursor, inset)
+            end
+            for _, col in ipairs(columns) do
                 recess_cols[#recess_cols + 1] = col
             end
             -- The opening pose draws the shelf as if this book were gone:
@@ -5965,17 +6001,22 @@ function SpineShelf.paintFaceOutTilt(tile)
         col.h = saved_h
         if not ok_r then error(err_r, 0) end
         -- 3. The contact shadow on the plank surface, under the footprint.
+        -- From where the book STANDS: a selected one is already raised, and
+        -- `below` is measured from the standing foot, so measuring from the
+        -- raised one put the shadow's top on the wall, its darkest edge a
+        -- hard line where the lifted foot had been.
         do
             local pb = fx.plank_b or Screen:scaleBySize(6)
             local pf = fx.plank_face or pb
             local ps = fx.plank_surf or (3 * pb)
-            local surf_top = rect.y + rect.h + (fx.below or 0) - (ps + pf)
+            local foot = rect.y + rect.h + (fx.raised or 0)
+            local surf_top = foot + (fx.below or 0) - (ps + pf)
             local bl, br = P(0, 0, 0), P(W, 0, 0)
             local bbl, bbr = P(0, 0, -T), P(W, 0, -T)
             local xl = math.floor(math.min(bl, bbl)) - 2
             local xr = math.ceil(math.max(br, bbr)) + 2
             local mid, hw = (xl + xr) / 2, math.max(1, (xr - xl) / 2)
-            local y_top, y_bot = surf_top + 1, rect.y + rect.h + math.floor(pf * 0.6)
+            local y_top, y_bot = surf_top + 1, foot + math.floor(pf * 0.6)
             local rows = math.max(1, y_bot - y_top)
             for yy = y_top, y_bot - 1, 2 do
                 local fy = 1 - ((yy - y_top) / rows) ^ 1.5
@@ -6088,6 +6129,7 @@ function SpineShelf.drainRenderStats()
     return n, ms, samples
 end
 
-SpineShelf._SpineBookSlot = SpineBookSlot  -- for tests
+SpineShelf._SpineBookSlot = SpineBookSlot  -- for tests and series boxes
+SpineShelf.boardColor = _boardColor
 
 return SpineShelf

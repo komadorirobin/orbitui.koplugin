@@ -173,6 +173,10 @@ Tap a spine and the book lifts off the shelf (and shows in the top panel); tap i
 
 **Grouping.** On a grouped shelf (series, authors, genres) there are no folders to drill into -- the groups are flattened onto the shelf and each run gets a label at the shelf's edge. Everything is out where you can see it.
 
+**Series boxes (optional).** Long-press a shelf, open **Shelf style**, and turn **Series boxes** on (it sits with the Spines settings). Each series on the shelf then stands as an open slipcase holding its books, spine out, with the first book's cover on the front as a sticker, the series name printed below it, and how many you have read out of how many it holds ("2 / 8") in the corner. A slipcase shows up to eight books; the count says how many there really are. A series with only one book on the shelf stays an ordinary book.
+
+Tap a slipcase to open the series: its books stand face-out, in series order. Back returns to the shelf where you left it. A box stands where its first book falls in the shelf's sort, separate folder sections keep separate boxes, and the shelf's filters decide which books are in each. It is off by default and only changes that shelf's Spines view; covers, lists, series shelves, search results and online catalogues are unchanged.
+
 **Spine text direction.** Which way a title runs down a spine: **Top to bottom** (the default, how British and American books are printed) or **Bottom to top** (Continental European). Set it once for the whole library under **menu > Settings > Library & search**.
 
 **Ornaments.** Drop PNG or SVG files into the `koreader/settings/bookshelf/ornaments` folder (beside the wallpapers) and they turn up in the gaps, standing on the plank like the books. A potted plant and a cactus are seeded there to start you off; delete them if you would rather not see them and they stay deleted. Ornaments from before 5.3, in `koreader/icons/bookshelf.ornaments`, move here by themselves on the first start.
@@ -275,7 +279,8 @@ Micro-modules are small live panels. Add them to the start menu through **Add ne
 - **Random book** -- rolls an unread book from the current shelf (or your whole library) into the top panel card; tap the dice for another.
 - **Shelf count** -- how many books are on the current shelf.
 - **Countdown** -- "N days until <your label>" for a date you pick; counts up ("N days since…") once the date has passed. Add it more than once for several dates, each with its own label.
-- **Weather**, **On this day**, **Trivia**, **Daily fun** (jokes, facts and riddles) -- live content from the internet.
+- **Recently read** -- the covers of the books you opened last; tap one to open it. Works offline, from your reading history.
+- **Weather**, **On this day**, **Trivia**, **Daily fun** (jokes, facts and riddles) -- live content from the internet. They fetch on their own only when Wi-Fi is already on; offline they say **Tap to fetch**, and a tap asks to connect.
 - **Action** -- a launcher card that runs a plugin, a KOReader action, or a Bookshelf action, with your own icon and an optional label.
 
 Each module can carry its own settings (reached via **Module settings…** when you long-press it). Modules that need the internet show their data source in the picker rather than fetching while you browse. Modules are a small self-contained format: if you write a little Lua you can add your own by dropping a file into the plugin's `micromodules/` folder, or into `koreader/settings/bookshelf/micromodules/` to have it survive plugin updates. A bad one is skipped rather than breaking the menu. See `micromodules/README.md` for the contract.
@@ -350,6 +355,8 @@ To find the real end, tap the **last-page** chevron. It walks the whole category
 **Offline, and coming back.** Everything a catalogue has shown you is kept on the device, so a catalogue you've browsed opens straight away and keeps working with no connection. By default it only goes back to the server when you ask it to, with a swipe down -- so paging deep into a category is work you keep. If you'd rather a catalogue went stale on its own, long-press its shelf and use **Catalog settings > Refresh** to pick an age (five minutes through a week, or every time you open it). The same dialog has **Saves to** for where that catalogue's downloads land.
 
 Where you were is remembered: restart KOReader inside a drilled category and you come back to it, on the page you left, provided it's still cached. If it isn't, you land on the catalogue's front page rather than on an empty shelf -- getting there would mean a download you didn't ask for.
+
+**Streaming comics and manga.** Books a server offers page by page (OPDS page streaming, as Komga, Kavita and Suwayomi do) get KOReader's own **Page stream**, **Stream from page** and **Resume stream from page** buttons in their download view, so you can read them without downloading the file. They use the viewer from KOReader's own OPDS plugin, which comes with KOReader; it does not need to be switched on.
 
 Catalogues that only *lend* DRM-protected books (library loans) can't be used -- KOReader has no DRM support -- so lending-only categories show "No downloadable titles" rather than books that wouldn't open.
 
@@ -474,7 +481,7 @@ Each cover can show small badges and bars at the corners. Configure them under *
 - **Show reading bookmarks** -- a bookmark mark on books you're partway through.
 - **Show completed book badge** -- a check-mark pill at the bottom-left of finished books.
 - **Show progress bars** -- a thin progress bar above the bottom edge for in-progress books.
-- **Show page count** -- a page-count pill in the bottom-right ("123 p"). An EPUB you have never opened has no count until you run [Extract page counts](#page-counts).
+- **Page badge** -- a pill in the bottom-right. Show **Pages** ("123 p"), **Percent read** ("42%", for books you are reading or have on hold), or **Percent read and pages** ("42% · 123 p"; other books show their pages). **Number only** leaves out the "p". **Count** picks which page count it shows: **your reading settings** (KOReader's count once you have opened a book, the default) or **printed pages first** (publisher page numbers, Hardcover editions, the Calibre column or a count in the file name, where a book has one). An EPUB you have never opened has no count until you run [Extract page counts](#page-counts), which the same menu links to.
 - **Show series #** -- a "#3" badge on covers in a series. Tri-state: Always, Within series folder (so mixed shelves stay clean), or Never.
 
 The colours of these elements are set separately under **menu > Theme > Colors** (see [Colors](#colors) below).
@@ -531,7 +538,7 @@ You can also choose a shelf's theme where you set its style: long-press the shel
 - **Blur wallpaper behind panels** -- blurs the picture behind the top panel and the footer before the shading goes over it, like frosted glass. Greyed out at Transparent and Solid, where there is nothing to blur.
 - **Panel behind Covers shelves** -- Covers shelves get one panel behind the top panel, the covers and the footer, as list shelves have, in place of a plate under each title.
 
-Like everything else in the Theme menu, these are part of the theme. **Extra wallpaper folder**, under **menu > Settings**, is not: it is a folder of your own to take pictures from as well, for wallpapers you already keep somewhere else. Its pictures are listed alongside the standard folder's, and nothing in it is changed. Long-press the row to stop using it.
+Like everything else in the Theme menu, these are part of the theme. **Extra wallpaper folder**, the last row of the same menu, is not: it is a folder of your own to take pictures from as well, for wallpapers you already keep somewhere else. Its pictures are listed alongside the standard folder's, and nothing in it is changed. Long-press the row to stop using it.
 
 ### Colors
 
@@ -565,6 +572,8 @@ Bookshelf can replace the default folder cover (cardboard card with the first bo
 - **Drop named images into an image library** for authors, series, genres, and collections. The default location is `<your-library>/.bookshelf-images/` with subfolders `authors/`, `series/`, `genres/`, and `collections/`. Name each file after the exact stack name (e.g. `authors/Asimov, Isaac.jpg`) or use a slugified form as a fallback. The slug lowercases the name and turns runs of punctuation / whitespace into single dashes, preserving the original order -- so `Asimov, Isaac` matches `asimov-isaac.jpg`, and `Isaac Asimov` matches `isaac-asimov.jpg`. Extensions tried in order: `jpg`, `jpeg`, `png`, `gif`, `bmp`, `webp`, `tiff`.
 
 Pick a different image-library location under **menu > Settings > Library & search > Image library**.
+
+**Author photos can be found for you.** **menu > Settings > Library & search > Find author images online…** looks up a photo of every author on your shelves that has no image yet and saves it into the image library's `authors/` folder, as if you had put it there yourself. Photos come from [Open Library](https://openlibrary.org), or from the author's Wikipedia page when Open Library has none; where several people share a name, Open Library's pick is the one with the most books, and a Wikipedia page counts only when it describes a writer. Images you already have are kept and names like *Anonymous* and *Various* are skipped. Progress shows in the top panel's status line with a **Stop** button, and the shelf stays usable while it runs. Each photo is saved as a JPEG sized for the largest tile it will be drawn on (half the screen's long side), so a few hundred authors take a few megabytes. On the shelf, an author's photo sits in a frame of the folder card's colour at its own shape, rather than being stretched to a book's. Nothing is downloaded until you ask. To fetch (or replace) one author's photo, long-press the author and choose **Find author image online**. A wrong person is one long-press away from *Clear author image*, or delete the file. An author's image is found whichever way round the name is written, so switching **Author name formatting** between *First Last* and *Last, First* keeps it.
 
 Long-press an image-set folder or stack and tap *Clear … image* to revert to the cardboard default.
 
@@ -834,6 +843,7 @@ Up to three levels per shelf. Available sort keys:
 - **Series, else title** -- a series sorts under its name and a standalone book under its title, so both share one alphabetical order, with series books kept in order
 - **Last opened** (most-recent-first by default)
 - **Date added** (most-recent-first by default)
+- **Added or opened** (whichever is later, most recent first: new books and the book you just opened both go to the front)
 - **Percent read** (most progress first by default)
 - **Rating** (highest first by default; unrated last)
 - **Unread/Reading/Finished** or **Reading/Unread/Finished** (status orderings)
@@ -1095,6 +1105,14 @@ Until 5.3 these files sat loose in `koreader/settings/` (`bookshelf.lua` and `bo
 ## For plugin authors
 
 Another plugin can add its own shelf source (a server's catalogue, a store's library) through a small registration interface, the same one Bookshelf's Kindle and Kobo library shelves use. See [SOURCE_API.md](SOURCE_API.md).
+
+A plugin, or a user patch, can also extend Bookshelf through `ui.bookshelf`:
+
+- `registerTokens(id, defs)` adds tokens of its own to every template (the top panel, cover captions, list lines). The spec is at `Tokens.register` in `lib/bookshelf_tokens.lua`.
+- `registerPlaceholder(id, fn)` draws the card for books without a cover, in place of Bookshelf's lettering. The contract, and how a user patch registers before the plugin has loaded, are at the top of `lib/bookshelf_placeholders.lua`.
+- `registerRecordActions(id, fn)` adds buttons to an OPDS book's details. The contract is at the top of `lib/bookshelf_record_actions.lua`.
+
+Book formats that another plugin registers with KOReader (Meguru's `.meguru` files, say) show on your shelves like any other book. Bookshelf does not fetch covers for them on its own, since that can mean a network request per book; a cover the file browser has already made still shows.
 
 ---
 

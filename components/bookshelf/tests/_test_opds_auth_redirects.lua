@@ -1,34 +1,53 @@
--- Exercise feed and cover redirects through their real download functions.
--- Optionally run with LuaSocket's url.lua via BOOKSHELF_SOCKET_URL; the normal
--- standalone suite uses fixed parser fixtures rather than requiring LuaSocket.
+-- OPDS feed and cover redirects, through the real fetch functions: Basic auth
+-- follows a redirect to the same origin (and the same host's http -> https
+-- upgrade), never to another host or port, and unsafe targets are refused.
+--
+-- socket.url is KOReader's real url.lua when it can be found (BOOKSHELF_SOCKET_URL,
+-- or a desktop KOReader install), so parse/absolute are the ones the device
+-- runs; otherwise fixed fixtures stand in for them.
+--
+-- Adapted from the test in Robin Bolinsson's fork (komadorirobin).
 package.path = "./?.lua;./?/init.lua;" .. package.path
 local helpers = dofile("tests/_helpers.lua")
 local t, eq = helpers.runner(), helpers.eq
 local root = "https://catalog.test/opds"
 local same = "https://catalog.test/opds/"
 local foreign = "https://cdn.test/cover"
+local plain_root = "http://catalog.test/opds"
+local upgraded = "https://catalog.test/opds/"
 local dest = "/cache/cover.jpg"
 local requests, responses, files, resets, timeouts
 
-package.loaded["socket"] = { skip = function(n, ...) return select(n + 1, ...) end }
+package.loaded["socket"] = {
+    skip = function(n, ...) return select(n + 1, ...) end,
+    url = {},
+}
 local fixtures = {
     [root] = { scheme = "https", host = "catalog.test" },
     [same] = { scheme = "https", host = "catalog.test" },
     [foreign] = { scheme = "https", host = "cdn.test" },
+    [plain_root] = { scheme = "http", host = "catalog.test" },
     ["https://CATALOG.test:443/opds/"] = { scheme = "https", host = "CATALOG.test", port = "443" },
     ["https://catalog.test:8443/opds/"] = { scheme = "https", host = "catalog.test", port = "8443" },
+    ["https://catalog.test:8443/x"] = { scheme = "https", host = "catalog.test", port = "8443" },
     ["http://catalog.test/opds/"] = { scheme = "http", host = "catalog.test" },
+    ["http://catalog.test:8080/opds"] = { scheme = "http", host = "catalog.test", port = "8080" },
+    ["https://evil.test/opds/"] = { scheme = "https", host = "evil.test" },
     ["ftp://catalog.test/opds/"] = { scheme = "ftp", host = "catalog.test" },
     ["file:///etc/passwd"] = { scheme = "file" },
     ["https://other:secret@catalog.test/opds/"] = {
         scheme = "https", host = "catalog.test", userinfo = "other:secret",
     },
 }
-local real_url_path = os.getenv("BOOKSHELF_SOCKET_URL")
-package.loaded["socket.url"] = real_url_path and dofile(real_url_path) or {
+local url_path = os.getenv("BOOKSHELF_SOCKET_URL")
+if not url_path then
+    local f = io.open("/usr/lib/koreader/common/socket/url.lua", "r")
+    if f then f:close(); url_path = "/usr/lib/koreader/common/socket/url.lua" end
+end
+package.loaded["socket.url"] = url_path and dofile(url_path) or {
     parse = function(url) return fixtures[url] end,
     absolute = function(base, location)
-        if location == "/opds/" then return same end
+        if location == "/opds/" then return (base:gsub("^(%a+://[^/]+).*$", "%1")) .. "/opds/" end
         if location == "//cdn.test/cover" then return foreign end
         if location == "../opds/" then return same end
         return location
@@ -37,9 +56,10 @@ package.loaded["socket.url"] = real_url_path and dofile(real_url_path) or {
         return (s:gsub("%%(%x%x)", function(h) return string.char(tonumber(h, 16)) end))
     end,
 }
+print("socket.url: " .. (url_path or "fixtures"))
 package.loaded["mime"] = { b64 = function(s) return "encoded:" .. s end }
 package.loaded["datastorage"] = { getSettingsDir = function() return "/cache" end }
-package.loaded["logger"] = { dbg = function() end, warn = function() end }
+package.loaded["logger"] = { dbg = function() end, warn = function() end, info = function() end }
 package.loaded["libs/libkoreader-lfs"] = {
     attributes = function(path, key)
         if path == "/cache" then return key and "directory" or { mode = "directory" } end
@@ -76,7 +96,10 @@ io.open = function(path, mode)
             files[path] = files[path] .. chunk
             return 1
         end,
-        close = function() assert(not closed); closed = true end,
+        close = function()
+            if closed then error("file already closed") end
+            closed = true
+        end,
     }
 end
 os.remove = function(path) files[path] = nil; return true end
@@ -103,9 +126,10 @@ local function reset()
     requests, responses, files, resets, timeouts = {}, {}, { [dest] = "previous" }, 0, {}
     Feed.clearPacing()
 end
-local function fetch(kind)
-    if kind == "feed" then return Feed.fetch(root, "user", "p%40ss", opts) end
-    return Cover.download(root, dest, "user", "p%40ss", opts)
+local function fetch(kind, from)
+    from = from or root
+    if kind == "feed" then return Feed.fetch(from, "user", "p%40ss", opts) end
+    return Cover.download(from, dest, "user", "p%40ss", opts)
 end
 local function auth(index, expected)
     local req = assert(requests[index])
@@ -135,6 +159,21 @@ for _, kind in ipairs({ "feed", "cover" }) do
             eq(#requests, 2); auth(1, true); auth(2, true)
         end)
     end
+    t.test(kind .. " keeps auth on the same host's http -> https upgrade", function()
+        reset()
+        responses[plain_root] = { code = 301, location = upgraded }
+        responses[upgraded] = { body = "payload" }
+        success(kind, fetch(kind, plain_root))
+        auth(1, true); auth(2, true)
+    end)
+    t.test(kind .. " drops auth on an upgrade from a non-default port", function()
+        reset()
+        local from = "http://catalog.test:8080/opds"
+        responses[from] = { code = 301, location = upgraded }
+        responses[upgraded] = { body = "payload" }
+        success(kind, fetch(kind, from))
+        auth(1, true); auth(2, false)
+    end)
     t.test(kind .. " drops auth across origins, including a return hop", function()
         reset()
         responses[root] = { code = 302, location = "//cdn.test/cover" }
@@ -143,20 +182,27 @@ for _, kind in ipairs({ "feed", "cover" }) do
         success(kind, fetch(kind))
         auth(1, true); auth(2, false); auth(3, false)
     end)
-    t.test(kind .. " strips auth on a port change", function()
+    t.test(kind .. " drops auth on an https host change", function()
+        reset()
+        local target = "https://evil.test/opds/"
+        responses[root] = { code = 302, location = target }
+        responses[target] = { body = "payload" }
+        success(kind, fetch(kind)); auth(2, false)
+    end)
+    t.test(kind .. " drops auth on a port change", function()
         reset()
         local target = "https://catalog.test:8443/opds/"
         responses[root] = { code = 302, location = target }
         responses[target] = { body = "payload" }
         success(kind, fetch(kind)); auth(2, false)
     end)
-    t.test(kind .. " rejects unsafe redirect targets", function()
+    t.test(kind .. " refuses unsafe redirect targets", function()
         for _, target in ipairs({ "http://catalog.test/opds/", "ftp://catalog.test/opds/",
                 "file:///etc/passwd", "https://other:secret@catalog.test/opds/", "\n", "" }) do
             reset()
             responses[root] = { code = 302, location = target }
             local result, err = fetch(kind)
-            eq(result, nil); eq(err, "unsafe redirect"); eq(#requests, 1)
+            eq(result, nil); eq(err, "unsafe redirect", target); eq(#requests, 1)
             eq(files[dest], "previous"); eq(files[dest .. ".tmp"], nil)
         end
     end)
@@ -168,7 +214,7 @@ for _, kind in ipairs({ "feed", "cover" }) do
         eq(#requests, Http.MAX_REDIRECTS + 1)
         eq(files[dest], "previous"); eq(files[dest .. ".tmp"], nil)
     end)
-    t.test(kind .. " preserves rate-limit handling after a redirect", function()
+    t.test(kind .. " keeps rate-limit handling after a redirect", function()
         reset()
         responses[root] = { code = 302, location = same }
         responses[same] = { code = 429 }
@@ -192,5 +238,9 @@ t.test("default ports and host case preserve the origin", function()
     eq(target, "https://CATALOG.test:443/opds/"); eq(keep, true)
     target, keep = Http.redirectTarget(root, "../opds/")
     eq(target, same); eq(keep, true)
+end)
+t.test("an upgrade to a non-default https port is not the same origin", function()
+    local target, keep = Http.redirectTarget(plain_root, "https://catalog.test:8443/x")
+    eq(target, "https://catalog.test:8443/x"); eq(keep, false)
 end)
 t.done()
