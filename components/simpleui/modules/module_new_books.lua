@@ -3,108 +3,48 @@
 -- (by file date), built on top of GridRenderer.makeModule
 -- (engines/sui_book_grid.lua). Not instantiable.
 --
--- Split from module_book_rows.lua (which held Recent Books + New Books + TBR
--- in a single file) — see moduleregistry.lua for the require_mod.
+-- The book list comes from the "new_books" source (engines/sui_book_sources.lua).
 
 local _ = require("infra/sui_i18n").translate
 
 local GridRenderer = require("engines/sui_book_grid")
-local LibraryScan  = require("engines/sui_library_scan")
-local SH           = require("modules/module_books_shared")
+local Sources      = require("engines/sui_book_sources")
 
--- Keep only the newest candidates rather than sorting the entire library.
-local function scanNewBooks(home, limit)
-    local newest = {}
-    local function before(a, b)
-        if a.mtime ~= b.mtime then return a.mtime > b.mtime end
-        return a.fp < b.fp
-    end
-    for _, record in ipairs(LibraryScan.getRaw(home)) do
-        if #newest < limit or before(record, newest[#newest]) then
-            local i = 1
-            while newest[i] and not before(record, newest[i]) do i = i + 1 end
-            table.insert(newest, i, record)
-            if #newest > limit then table.remove(newest) end
-        end
-    end
-    local result = {}
-    for i, record in ipairs(newest) do result[i] = record.fp end
-    return result
-end
-
-local _cached_new_fps      = nil
-local _cached_home, _cached_revision
-
---- Fetches 15 candidates (to compensate for the ones the filter will exclude), with a
---- revision cache shared with the library index.
-local function getNewBooksCandidates()
-    local home = LibraryScan.resolveHomeDir()
-    if not home then return {} end
-    local revision = LibraryScan.getRevision(home)
-    if _cached_new_fps and _cached_home == home and _cached_revision == revision then
-        return _cached_new_fps
-    end
-    local fps = scanNewBooks(home, 15)
-    _cached_new_fps      = fps
-    _cached_home, _cached_revision = home, revision
-    return fps
-end
+local source = Sources.bind("new_books")
 
 local new_books_module = GridRenderer.makeModule{
     id          = "new_books",
     name        = _("New Books"),
-    label       = _("New Books"),
+    label       = Sources.label("new_books"),
     default_on  = false,  -- opt-in; users enable via Arrange Modules
     max_items   = 5,
     -- Lets the user pick 4 or 5 visible covers (see GridRenderer.makeModule's
-    -- doc comment). getNewBooksCandidates() already fetches 15 candidates,
-    -- well above either choice, so no change needed there.
+    -- doc comment). The source provides more candidates than either choice.
     cols_choice = true,
 
-    getFileList = function(_ctx) return getNewBooksCandidates() end,
-
-    -- Excludes finished books. Unlike module_recent.lua, does NOT exclude the
-    -- currently open book: "New Books" tracks recency of acquisition, not
-    -- reading progress, so a freshly added book you've already started
-    -- stays listed here until it's finished.
-    filterItem = function(fp, ctx)
-        return not SH.isFinished(fp, ctx.prefetched)
-    end,
+    getFileList  = source.getFileList,
+    filterItem   = source.filterItem,
+    labelForItem = source.labelForItem,
 
     -- Same defaults as Recent Books/Library/TBR: progress bar + "% Read"
-    -- label by default, but user-editable via the "Progress Style" picker
-    -- (see engines/sui_book_grid.lua's getMenuItems). Previously locked here
-    -- with no equivalent reason in any other book-grid module — labelForItem
-    -- below ("New"/"X% Read") only depends on draw_text being active
-    -- (text/bar_text styles), same mechanism Recent already relies on.
+    -- label by default, user-editable via the "Progress Style" picker
+    -- (see engines/sui_book_grid.lua's getMenuItems).
     progress_style = { default = "bar_text" },
 
-    -- All three off by default. "New" is user-editable (not locked) even
-    -- though every cover in this module is already a new book — the badge
-    -- would be redundant against labelForItem's own "New" text above, but
-    -- some users like the extra visual marker on the cover itself, so it's
-    -- left as a choice rather than forced off.
+    -- All three off by default. "New" stays user-editable even though every
+    -- cover here is a new book: some users want the marker on the cover
+    -- itself in addition to the under-cover text.
     badges = { pages = "off", series = "off", new = "off" },
-
-    labelForItem = function(bd)
-        if (bd.percent or 0) < 0.01 then return _("New") end
-        return string.format(_("%d%% Read"), math.floor((bd.percent or 0) * 100 + 0.5))
-    end,
 
     reset = function()
         GridRenderer.reset()
-        _cached_new_fps      = nil
-        _cached_home, _cached_revision = nil, nil
-        LibraryScan.invalidate()
+        Sources.invalidate("new_books")
     end,
 }
 
--- Preserved as a public API (not called internally by this file,
--- but other modules/future versions may want to force a rescan).
+--- Forces the next build to re-rank the library.
 function new_books_module.invalidateCache()
-    _cached_new_fps      = nil
-    _cached_home, _cached_revision = nil, nil
-    LibraryScan.invalidate()
+    Sources.invalidate("new_books")
 end
 
 return new_books_module

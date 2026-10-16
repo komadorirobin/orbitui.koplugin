@@ -6,6 +6,7 @@ local UIManager = require("ui/uimanager")
 local Device    = require("device")
 local Screen    = Device.screen
 local logger    = require("logger")
+local T         = require("ffi/util").template
 local _         = require("infra/sui_i18n").translate
 
 local Config    = require("infra/sui_config")
@@ -5037,8 +5038,8 @@ end
     -- the FM when the wallpaper is active.
     --
     -- Reuses the same technique as UI.makeAlphaTextBox (sui_core.lua):
-    --   1. renders the TBW into an 8-bit tmp_bb with bgcolor=white (normal)
-    --   2. inverts the tmp_bb (text=white/mask, background=black/transparent)
+    --   1. renders the TBW into a shared 8-bit scratch buffer with bgcolor=white (normal)
+    --   2. inverts the scratch buffer (text=white/mask, background=black/transparent)
     --   3. colorblitFromRGB32 composites with the original fgcolor over the
     --      destination bb (which already has the wallpaper painted underneath)
     --
@@ -5047,7 +5048,6 @@ end
     -- -----------------------------------------------------------------------
     local ok_tbw, TextBoxWidget = pcall(require, "ui/widget/textboxwidget")
     if ok_tbw and TextBoxWidget then
-        local Blitbuffer = require("ffi/blitbuffer")
         local orig_tbw_pt = TextBoxWidget.paintTo
         installed[#installed + 1] = { TextBoxWidget, "paintTo", orig_tbw_pt }
 
@@ -5063,22 +5063,8 @@ end
                 return orig_tbw_pt(tbw_self, bb, x, y)
             end
 
-            if not tbw_self._sui_tmp_bb or tbw_self._sui_tmp_bb:getWidth() ~= w or tbw_self._sui_tmp_bb:getHeight() ~= h then
-                if tbw_self._sui_tmp_bb then tbw_self._sui_tmp_bb:free() end
-                tbw_self._sui_tmp_bb = Blitbuffer.new(w, h, Blitbuffer.TYPE_BB8)
-            end
-
             local fgcolor = tbw_self.fgcolor or SUIStyle.COLOR.text_primary
-            UI.paintWithAlphaMask(tbw_self, bb, x, y, w, h, fgcolor, orig_tbw_pt, tbw_self._sui_tmp_bb)
-        end
-
-        local orig_tbw_free = TextBoxWidget.free
-        installed[#installed + 1] = { TextBoxWidget, "free", orig_tbw_free }
-        TextBoxWidget.free = function(tbw_self, full)
-            if tbw_self._sui_tmp_bb and full ~= false then
-                tbw_self._sui_tmp_bb:free(); tbw_self._sui_tmp_bb = nil
-            end
-            if orig_tbw_free then orig_tbw_free(tbw_self, full) end
+            UI.paintWithAlphaMask(tbw_self, bb, x, y, w, h, fgcolor, orig_tbw_pt)
         end
     end
 
@@ -5346,12 +5332,11 @@ function M.installAll(plugin)
     M.patchFileDialogBookTitle(plugin)
     M.patchFontGetFace(plugin)
     M.patchIconNightColors(plugin)
-    -- Install the FM + Reader tab icon patches so system icon overrides
-    -- survive menu rebuilds.
+    -- Register the tab icon step in the shared menu hooks so system icon
+    -- overrides survive menu rebuilds (FM and Reader).
     local ok_ss, SUIStyle = pcall(require, "features/sui_style")
     if ok_ss and SUIStyle then
-        pcall(SUIStyle.installTabIconPatch, plugin)
-        pcall(SUIStyle.installReaderTabIconPatch, plugin)
+        pcall(SUIStyle.installTabIconPatch)
     end
     -- Install button-bounds overlay when the debug setting is on at startup.
     if SUISettings:isTrue("simpleui_debug_button_bounds") then
@@ -5583,18 +5568,9 @@ function M.teardownAll(plugin)
         FileManagerMenu._simpleui_startwith_orig    = nil
         FileManagerMenu._simpleui_startwith_patched = nil
     end
-    -- Remove the FM tab icon patch installed by SUIStyle.
-    if plugin._sysicon_fmmenu_patched then
-        local ok_ss, SUIStyle = pcall(require, "features/sui_style")
-        if ok_ss and SUIStyle then pcall(SUIStyle.removeTabIconPatch) end
-        plugin._sysicon_fmmenu_patched = nil
-    end
-    -- Remove the Reader tab icon patch installed by SUIStyle.
-    if plugin._sysicon_rdmenu_patched then
-        local ok_ss, SUIStyle = pcall(require, "features/sui_style")
-        if ok_ss and SUIStyle then pcall(SUIStyle.removeReaderTabIconPatch) end
-        plugin._sysicon_rdmenu_patched = nil
-    end
+    -- Restore the FM and Reader menu methods and drop every registered step.
+    local MenuHooks = package.loaded["infra/sui_menu_hooks"]
+    if MenuHooks then MenuHooks.uninstall() end
 
     local Dispatcher = package.loaded["dispatcher"]
     if Dispatcher and Dispatcher._simpleui_execute_patched then

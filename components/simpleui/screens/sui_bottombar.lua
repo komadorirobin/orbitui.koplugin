@@ -6,7 +6,7 @@
 -- Each accessor caches its result in a module-local upvalue; subsequent calls
 -- are a single nil-check + table field read, with zero I/O.
 local _FrameContainer, _CenterContainer, _HorizontalGroup, _VerticalGroup
-local _VerticalSpan, _LineWidget, _OverlapGroup, _TextWidget, _ImageWidget
+local _VerticalSpan, _LineWidget, _OverlapGroup, _ImageWidget
 local _Geom
 local function FrameContainer()  _FrameContainer  = _FrameContainer  or require("ui/widget/container/framecontainer");  return _FrameContainer  end
 local function CenterContainer() _CenterContainer = _CenterContainer or require("ui/widget/container/centercontainer"); return _CenterContainer end
@@ -15,7 +15,6 @@ local function VerticalGroup()   _VerticalGroup   = _VerticalGroup   or require(
 local function VerticalSpan()    _VerticalSpan    = _VerticalSpan    or require("ui/widget/verticalspan");              return _VerticalSpan    end
 local function LineWidget()      _LineWidget      = _LineWidget      or require("ui/widget/linewidget");                return _LineWidget      end
 local function OverlapGroup()    _OverlapGroup    = _OverlapGroup    or require("ui/widget/overlapgroup");              return _OverlapGroup    end
-local function TextWidget()      _TextWidget      = _TextWidget      or require("ui/widget/textwidget");                return _TextWidget      end
 local function ImageWidget()     _ImageWidget     = _ImageWidget     or require("ui/widget/imagewidget");               return _ImageWidget     end
 local function Geom()            _Geom            = _Geom            or require("ui/geometry");                         return _Geom            end
 local Blitbuffer      = require("ffi/blitbuffer")
@@ -337,17 +336,12 @@ function M.patchDimmedIcon(btn)
     if not lw or lw._sui_dim_patched then return end
     lw._sui_dim_patched = true
     local orig_lw_pt = lw.paintTo
-    local Blitbuffer = require("ffi/blitbuffer")
     local UI_core    = require("infra/sui_core")
     lw.paintTo = function(self_lw, bb, x, y)
         if not btn.enabled then
             local sz = self_lw:getSize()
             local w, h = sz.w, sz.h
             if w > 0 and h > 0 then
-                if not self_lw._sui_tmp_bb or self_lw._sui_tmp_bb:getWidth() ~= w or self_lw._sui_tmp_bb:getHeight() ~= h then
-                    if self_lw._sui_tmp_bb then self_lw._sui_tmp_bb:free() end
-                    self_lw._sui_tmp_bb = Blitbuffer.new(w, h, Blitbuffer.TYPE_BB8)
-                end
                 local saved_dim = self_lw.dim
                 local saved_orig_nm = self_lw.original_in_nightmode
                 local saved_alpha = self_lw.alpha
@@ -367,7 +361,7 @@ function M.patchDimmedIcon(btn)
                 self_lw.alpha = true
 
                 local fg = _getInactiveColor()
-                UI_core.paintWithAlphaMask(self_lw, bb, x, y, w, h, fg, orig_lw_pt, self_lw._sui_tmp_bb)
+                UI_core.paintWithAlphaMask(self_lw, bb, x, y, w, h, fg, orig_lw_pt)
 
                 self_lw.dim = saved_dim
                 self_lw.original_in_nightmode = saved_orig_nm
@@ -376,11 +370,6 @@ function M.patchDimmedIcon(btn)
             end
         end
         orig_lw_pt(self_lw, bb, x, y)
-    end
-    local orig_lw_free = lw.free
-    lw.free = function(self_lw)
-        if self_lw._sui_tmp_bb then self_lw._sui_tmp_bb:free(); self_lw._sui_tmp_bb = nil end
-        if orig_lw_free then orig_lw_free(self_lw) end
     end
 end
 
@@ -579,11 +568,12 @@ function M.buildNavpagerArrowCell(is_prev, enabled, tab_w, mode)
             vg[#vg + 1] = _vspan_icon_txt
         end
         local lbl_face, lbl_bold = M.LABEL_FONT(false)
-        tw = TextWidget():new{
-            text    = label,
-            face    = lbl_face,
-            bold    = lbl_bold,
-            fgcolor = color,
+        tw = _QARenderer().buildLabel{
+            text      = label,
+            face      = lbl_face,
+            bold      = lbl_bold,
+            fgcolor   = color,
+            max_width = _QARenderer().tabLabelMaxWidth(tab_w),
         }
         vg[#vg + 1] = tw
     end
@@ -1390,7 +1380,7 @@ end
 -- ---------------------------------------------------------------------------
 
 local function showUnavailable(msg)
-    UI.Notify.toast(msg)
+    _UI().Notify.toast(msg)
 end
 
 local function setActiveAndRefreshFM(plugin, action_id, tabs)
@@ -2091,7 +2081,7 @@ end
 -- window if called directly from somewhere else.
 function M.showFloatingBarWindow(fm)
     if M.isBarInjectedOnCurrentScreen() then
-        UI.Notify.toast(_("The navigation bar is already available on this screen."), 2)
+        _UI().Notify.toast(_("The navigation bar is already available on this screen."), 2)
         return
     end
 

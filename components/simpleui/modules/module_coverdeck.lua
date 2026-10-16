@@ -25,13 +25,15 @@ local CoverWarp        = require("engines/sui_cover_warp")
 local CoverWidgets     = require("features/library/sui_cover_widgets")
 local Screen           = Device.screen
 local _ = require("infra/sui_i18n").translate
-local N_ = require("infra/sui_i18n").ngettext
 local logger         = require("logger")
 
 local Config       = require("infra/sui_config")
 local UI           = require("infra/sui_core")
 local SUISettings  = require("infra/sui_store")
 local SUIStyle     = require("features/sui_style")
+local BookStats    = require("infra/sui_book_stats")
+local LRU          = require("infra/sui_lru")
+local Memory       = require("infra/sui_memory")
 local PAD          = UI.PAD
 local PAD2         = UI.PAD2
 local CLR_TEXT_SUB = UI.CLR_TEXT_SUB
@@ -41,8 +43,6 @@ local CLR_TEXT_SUB = UI.CLR_TEXT_SUB
 -- ---------------------------------------------------------------------------
 
 local MAX_RECENT_FPS   = 10
-local MAX_SEC_PER_PAGE = 120  -- matches KOReader statistics query cap
-local BSTATS_CACHE_MAX = 20   -- max md5 entries kept in the stats LRU cache
 local TILT_CACHE_MAX   = 16   -- max tilted covers kept: visible slots plus those of both neighbours
 local WARMUP_DELAY     = 0.3  -- s from a build to the first warm-up step, once its repaint is under way
 local WARMUP_TICK      = 0.05 -- s between warm-up steps, leaving the event loop free for input
@@ -132,7 +132,7 @@ end
 local SETTING_SOURCE        = "coverdeck_source"          -- pfx .. this; "recent"|"tbr"|"bookorbit_want"
 local SETTING_STYLE         = "coverdeck_style"           -- pfx .. this; "classic"|"flow"
 local SETTING_SHOW_FINISHED = "coverdeck_show_finished"   -- pfx .. this; default OFF
-local ELEM_ORDER_KEY        = "coverdeck_stats_order"     -- pfx .. this
+local STATS_ORDER_KEY       = "coverdeck_stats_order"     -- pfx .. this
 local MAIN_ORDER_KEY        = "coverdeck_main_order"      -- pfx .. this
 
 -- Progress badge (pentagon overlay on the centre cover, same drawing
@@ -161,25 +161,21 @@ local function collectionNameOf(source)
     end
 end
 
-local _ELEM_DEFAULT_ORDER = { "percent", "book_days", "book_time", "book_remaining" }
-local _ELEM_LABELS = {
-    percent        = _("Percentage read"),
-    book_days      = _("Days of reading"),
-    book_time      = _("Time read"),
-    book_remaining = _("Time remaining"),
-}
+-- Statistics of the stats line, in default order.
+local STAT_IDS = { "percent", "book_days", "book_time", "book_remaining" }
 
--- Main list: the top-level arrangeable elements. "covers" is a fixed anchor
--- (always present, never removable — renders as a divider in the arrange
--- screen); the rest can be freely reordered and toggled around it.
-local _MAIN_ELEM_DEFAULT_ORDER = { "covers", "title", "author", "progress", "stats" }
-local _MAIN_ELEM_LABELS = {
-    covers   = _("Covers"),
-    title    = _("Title"),
-    author   = _("Author"),
-    progress = _("Progress bar"),
-    stats    = _("Statistics"),
-}
+-- Top-level items, in default order. "covers" is the carousel itself: a fixed
+-- anchor that can be moved but never hidden.
+local MAIN_IDS     = { "covers", "title", "author", "progress", "stats" }
+local MAIN_ANCHORS = { covers = true }
+
+local function mainLabel(id)
+    if id == "covers"   then return _("Covers") end
+    if id == "title"    then return _("Title") end
+    if id == "author"   then return _("Author") end
+    if id == "progress" then return _("Progress bar") end
+    return _("Statistics")
+end
 
 -- ---------------------------------------------------------------------------
 -- Carousel styles
@@ -290,50 +286,22 @@ local function _invalidateCfgCache(_pfx)
     end
 end
 
-local function _toggleElem(pfx, key)
-    SUISettings:saveSetting(pfx .. "coverdeck_show_" .. key, not _showElem(pfx, key))
-    _invalidateCfgCache(pfx)
+local function _setElemVisible(pfx, key, visible)
+    SUISettings:saveSetting(pfx .. "coverdeck_show_" .. key, visible)
 end
 
--- Resolves an ordered key list against a set of valid keys: keeps only
--- known keys (deduped, in saved order), then appends any default keys not
--- already present. force_first, when given, is guaranteed to end up at
--- position 1 (used for "covers", which can be reordered but never removed).
-local function _resolveOrder(saved, valid_keys, default_order, force_first)
-    local seen, result = {}, {}
-    if type(saved) == "table" then
-        for _i, key in ipairs(saved) do
-            if valid_keys[key] and not seen[key] then
-                seen[key] = true
-                result[#result+1] = key
-            end
-        end
-    end
-    for _i, key in ipairs(default_order) do
-        if not seen[key] then
-            seen[key] = true
-            result[#result+1] = key
-        end
-    end
-    if force_first and not seen[force_first] then
-        table.insert(result, 1, force_first)
-    end
-    return result
-end
-
--- bundle (ctx.cfg.coverdeck), when given, supplies elem_order/main_order
--- from the pre-read settings snapshot instead of a fresh SUISettings read.
--- A live read only happens when no bundle at all is given.
-local function _getElemOrder(pfx, bundle)
+-- bundle (ctx.cfg.coverdeck), when given, supplies the saved orders from the
+-- pre-read settings snapshot instead of a fresh SUISettings read.
+local function _getStatsOrder(pfx, bundle)
     local saved = bundle and bundle.elem_order
-    if not bundle then saved = SUISettings:readSetting(pfx .. ELEM_ORDER_KEY) end
-    return _resolveOrder(saved, _ELEM_LABELS, _ELEM_DEFAULT_ORDER)
+    if not bundle then saved = SUISettings:readSetting(pfx .. STATS_ORDER_KEY) end
+    return Config.mergeOrder(saved, STAT_IDS)
 end
 
 local function _getMainOrder(pfx, bundle)
     local saved = bundle and bundle.main_order
     if not bundle then saved = SUISettings:readSetting(pfx .. MAIN_ORDER_KEY) end
-    return _resolveOrder(saved, _MAIN_ELEM_LABELS, _MAIN_ELEM_DEFAULT_ORDER, "covers")
+    return Config.mergeOrder(saved, MAIN_IDS)
 end
 
 -- Resolves a single element's visibility from the pre-read bundle when
@@ -352,7 +320,7 @@ end
 -- (ctx.cfg.coverdeck); when omitted, everything is read live from settings.
 -- ---------------------------------------------------------------------------
 local function getVisibleElements(pfx, bundle)
-    local stats_order = _getElemOrder(pfx, bundle)
+    local stats_order = _getStatsOrder(pfx, bundle)
     local has_stat     = false
     for _i, key in ipairs(stats_order) do
         if _showElemFrom(bundle, pfx, key) then has_stat = true; break end
@@ -412,59 +380,7 @@ local function applyProgressBadge(cover_widget, bd, slot, pfx)
     return SH.applyProgressBadge(cover_widget, bd, slot.w, slot.h, opts)
 end
 
--- ---------------------------------------------------------------------------
--- LRU cache — capped at `max_entries` keyed values. Eviction scans the small
--- table for the least recently used entry, which keeps RAM bounded even when
--- the user browses a large TBR list across a long session. Evicted values are
--- only dereferenced, never freed, so a widget still holding one stays valid.
--- ---------------------------------------------------------------------------
-
-local function newLru(max_entries)
-    return { max = max_entries, count = 0, tick = 0, entries = {} }
-end
-
-local function lruGet(lru, key)
-    local entry = lru.entries[key]
-    if not entry then return nil end
-    lru.tick = lru.tick + 1
-    entry.tick = lru.tick
-    return entry.value
-end
-
-local function lruRemove(lru, key)
-    if lru.entries[key] then
-        lru.entries[key] = nil
-        lru.count = lru.count - 1
-    end
-end
-
-local function lruPut(lru, key, value)
-    if not lru.entries[key] then
-        if lru.count >= lru.max then
-            local oldest_key, oldest_tick = nil, math.huge
-            for k, entry in pairs(lru.entries) do
-                if entry.tick < oldest_tick then oldest_key, oldest_tick = k, entry.tick end
-            end
-            lruRemove(lru, oldest_key)
-        end
-        lru.count = lru.count + 1
-    end
-    lru.tick = lru.tick + 1
-    lru.entries[key] = { value = value, tick = lru.tick }
-end
-
--- Per-book reading statistics, keyed by md5.
-local _bstats = newLru(BSTATS_CACHE_MAX)
-
-local function fmtTime(secs)
-    secs = math.floor(secs or 0)
-    if secs <= 0 then return "0m" end
-    local h = math.floor(secs / 3600)
-    local m = math.floor((secs % 3600) / 60)
-    if h > 0 and m > 0 then return string.format("%dh %dm", h, m)
-    elseif h > 0        then return string.format("%dh", h)
-    else                     return string.format("%dm", m) end
-end
+local fetchBookStats = BookStats.fetch
 
 -- Resolves a book's partial_md5_checksum: prefers the prefetched entry,
 -- falling back to opening its docsettings sidecar.
@@ -478,63 +394,6 @@ local function _resolveMd5(fp, prefetched_entry)
         pcall(function() ds:close() end)
     end
     return md5
-end
-
-local function fetchBookStats(md5, shared_conn, ctx, force)
-    if not md5 then return nil end
-    if not force then
-        local cached = lruGet(_bstats, md5)
-        if cached then return cached end
-    end
-
-    local conn     = shared_conn or Config.openStatsDB()
-    local own_conn = not shared_conn
-    if not conn then return nil end
-
-    local result
-    local ok, err = pcall(function()
-        local row = conn:exec(string.format([[
-            WITH b AS (
-                %s
-            ),
-            ps_agg AS (
-                SELECT ps.page,
-                       sum(ps.duration)   AS page_dur,
-                       min(ps.start_time) AS first_start
-                FROM page_stat ps
-                WHERE ps.id_book = (SELECT id FROM b)
-                GROUP BY ps.page
-            )
-            SELECT
-                count(DISTINCT date(first_start, 'unixepoch', 'localtime')),
-                sum(page_dur),
-                count(*),
-                sum(min(page_dur, %d))
-            FROM ps_agg;
-        ]], string.format(Config.BOOK_ID_BY_MD5_SQL, md5), MAX_SEC_PER_PAGE))
-
-        if row and row[1] and row[1][1] then
-            local days   = tonumber(row[1][1]) or 0
-            local secs   = tonumber(row[2] and row[2][1]) or 0
-            local pages  = tonumber(row[3] and row[3][1]) or 0
-            local capped = tonumber(row[4] and row[4][1]) or 0
-            result = {
-                days       = days,
-                total_secs = secs,
-                avg_time   = (pages > 0 and capped > 0) and (capped / pages) or nil,
-            }
-        end
-    end)
-
-    if not ok then
-        logger.warn("coverdeck: fetchBookStats failed: " .. tostring(err))
-        if shared_conn and ctx and Config.isFatalDbError(err) then
-            ctx.db_conn_fatal = true
-        end
-    end
-    if own_conn then pcall(function() conn:close() end) end
-    if result then lruPut(_bstats, md5, result) end
-    return result
 end
 
 -- ---------------------------------------------------------------------------
@@ -629,10 +488,10 @@ end
 -- Perspective warp lives in engines/sui_cover_warp. This section owns the
 -- widget, the LRU of warped buffers, and the glue to the cover cache.
 
--- Widget painting a warped cover. The buffer belongs to the tilt cache; the
--- widget only borrows it. allow_mirroring is off so OverlapGroup does not
--- flip the trapezoid orientation in RTL — side and align are resolved by
--- the module in logical coordinates.
+-- Widget painting a warped cover. The buffer is shared between the tilt cache
+-- and the widgets showing it: whichever lets go last releases it. allow_mirroring
+-- is off so OverlapGroup does not flip the trapezoid orientation in RTL — side
+-- and align are resolved by the module in logical coordinates.
 local TiltedCover = {
     allow_mirroring = false,
 }
@@ -644,7 +503,6 @@ end
 
 function TiltedCover:paintTo(bb, x, y)
     local entry = self.entry
-    if not entry or not entry.bb then return end
     local tops, heights = entry.tops, entry.heights
     local col = 0
     while col < self.w do
@@ -671,50 +529,21 @@ function TiltedCover:handleEvent()
     return false
 end
 
-local function freeTiltEntry(entry)
-    if entry and entry.bb then
-        pcall(entry.bb.free, entry.bb)
-        entry.bb = nil
-    end
-end
-
--- Warped covers keyed by book, side and size. Evicted entries free their
--- blitbuffers. An entry made from a cover bitmap remembers the source
--- identity weakly and is rebuilt once the cover cache replaces it.
-local _tilt_cache = newLru(TILT_CACHE_MAX)
-local WEAK_VALUES = { __mode = "v" }
-
-local function tiltCachePut(key, value)
-    local lru = _tilt_cache
-    if not lru.entries[key] then
-        if lru.count >= lru.max then
-            local oldest_key, oldest_tick = nil, math.huge
-            for k, e in pairs(lru.entries) do
-                if e.tick < oldest_tick then
-                    oldest_key, oldest_tick = k, e.tick
-                end
-            end
-            if oldest_key then
-                freeTiltEntry(lru.entries[oldest_key].value)
-                lruRemove(lru, oldest_key)
-            end
-        end
-        lru.count = lru.count + 1
-    else
-        freeTiltEntry(lru.entries[key].value)
-    end
-    lru.tick = lru.tick + 1
-    lru.entries[key] = { value = value, tick = lru.tick }
-end
+-- Warped covers keyed by book, side and size, bounded by count and bytes.
+-- Evicted or replaced entries are only dereferenced: a widget on screen may
+-- still be painting one, and its buffer is reclaimed by the Blitbuffer
+-- finalizer once the last widget drops it. An entry made from a cover bitmap
+-- records the cover's revision and is rebuilt once another cover replaces it;
+-- enlarging the same cover keeps it.
+local _tilt_cache = LRU.new{ max_entries = TILT_CACHE_MAX, max_bytes = Memory.budgets().tilt }
 
 -- Warped entry of `slot` stored under `key`. `source` is a cover-cache bitmap
--- (must not be freed here). When nil, `render` returns a newly allocated
--- bitmap that this function frees after warping.
-local function tiltEntry(slot, key, source, render)
-    local entry = lruGet(_tilt_cache, key)
-    if entry and (not source or (entry.source and entry.source[1] == source)) then
-        return entry
-    end
+-- (must not be freed here) and `revision` identifies the cover it holds. When
+-- `source` is nil, `render` returns a newly allocated bitmap that this
+-- function frees after warping.
+local function tiltEntry(slot, key, source, revision, render)
+    local entry = _tilt_cache:get(key)
+    if entry and entry.revision == revision then return entry end
 
     local w, h = math.floor(slot.w), math.floor(slot.h)
     if w < 2 or h < 2 then return nil end
@@ -768,8 +597,8 @@ local function tiltEntry(slot, key, source, render)
         return nil
     end
 
-    warped.source = source and setmetatable({ source }, WEAK_VALUES) or nil
-    tiltCachePut(key, warped)
+    warped.revision = revision
+    _tilt_cache:put(key, warped, Memory.bbBytes(warped))
     return warped
 end
 
@@ -794,7 +623,7 @@ local function tiltedCover(slot)
     if w < 2 or h < 2 then return nil end
     local src = Config.getStretchedCoverBB(slot.fp, slot.flat_w, h)
     if not src then return nil end
-    local entry = tiltEntry(slot, tiltedKey(slot, "cover"), src)
+    local entry = tiltEntry(slot, tiltedKey(slot, "cover"), src, Config.getCoverRevision(slot.fp))
     return entry and newTiltedCover(slot, entry)
 end
 
@@ -802,7 +631,7 @@ end
 local function tiltedPlaceholder(slot, bd)
     local w, h = math.floor(slot.w), math.floor(slot.h)
     if w < 2 or h < 2 then return nil end
-    local entry = tiltEntry(slot, tiltedKey(slot, "generated"), nil, function()
+    local entry = tiltEntry(slot, tiltedKey(slot, "generated"), nil, nil, function()
         return CoverPlaceholder.render(slot.flat_w, h, bd.title, bd.authors)
     end)
     return entry and newTiltedCover(slot, entry)
@@ -1089,6 +918,7 @@ M.enabled_key = "coverdeck_enabled"
 M.default_on  = false
 M.has_covers  = true   -- activates e-ink dithering and cover poll
 M.is_book_mod = true   -- suppresses empty-state when active
+M.needs       = require("engines/sui_book_sources").get("recent").needs
 
 -- Text elements with a user-selectable font family and size.
 M.text_elems  = { "title", "author", "info" }
@@ -1099,13 +929,8 @@ Config.declareTextVariants(M.id, { title = "bold" })
 function M.reset()
     cancelWarmup()
     _SH = nil
-    _bstats = newLru(BSTATS_CACHE_MAX)
-    if _tilt_cache then
-        for _, e in pairs(_tilt_cache.entries) do
-            freeTiltEntry(e.value)
-        end
-    end
-    _tilt_cache = newLru(TILT_CACHE_MAX)
+    BookStats.invalidate()
+    _tilt_cache:clear()
 end
 
 -- No-op: called from main.lua:onCloseDocument as a fallback when the closed
@@ -1123,7 +948,7 @@ end
 -- intact. Called after closing a document so the centre cover's stats are
 -- fresh without discarding stats cached for every other book.
 function M.invalidateCacheForMd5(md5)
-    if md5 then lruRemove(_bstats, md5) end
+    if md5 then BookStats.invalidate(md5) end
 end
 
 -- Exposed for pre-computation from outside the module (see _buildCtx).
@@ -1421,7 +1246,7 @@ function M.build(w, ctx)
     local bd        = bookData(fps[curIdx])
     local styles    = Config.resolveTextStyles(ctx, M.id, M.text_elems)
     local title_fs, author_fs, info_fs = fontSizes(scale, lbl_scale, styles)
-    local bar_h     = math.max(1, math.floor(Screen:scaleBySize(8) * scale))
+    local bar_h     = math.max(1, math.floor(SUIStyle.PROGRESS_BAR_H * scale))
     local face_title, bold_title = SUIStyle.getTextFace(styles.title, title_fs)
     local face_info,  bold_info  = SUIStyle.getTextFace(styles.info,  info_fs)
 
@@ -1520,32 +1345,10 @@ function M.build(w, ctx)
             alignment = "center",
         }
         local function _update(nb, nd)
-            local stats_parts = {}
-            for _i, key in ipairs(stats_order) do
-                if _showElemFrom(c, pfx, key) then
-                    local text
-                    if key == "percent" then
-                        text = string.format(_("%d%% Read"), math.floor((nd.percent or 0) * 100 + 0.5))
-                    elseif nb then
-                        if key == "book_days" and nb.days and nb.days > 0 then
-                            text = string.format(N_("%d day of reading", "%d days of reading", nb.days), nb.days)
-                        elseif key == "book_time" and nb.total_secs and nb.total_secs > 0 then
-                            text = string.format(_("%s read"), fmtTime(nb.total_secs))
-                        elseif key == "book_remaining" then
-                            local avg_t = (nb.avg_time and nb.avg_time > 0) and nb.avg_time or nd.avg_time
-                            if avg_t and avg_t > 0 and nd.pages and nd.pages > 0 then
-                                local secs_left = math.floor(avg_t * nd.pages * (1 - (nd.percent or 0)))
-                                if secs_left > 0 then
-                                    text = string.format(_("%s remaining"), fmtTime(secs_left))
-                                end
-                            end
-                        end
-                    end
-                    if text then stats_parts[#stats_parts+1] = text end
-                end
-            end
-            local final_text = #stats_parts > 0 and table.concat(stats_parts, " · ") or ""
-            _updateColoredText(stats_w, truncateToWidth(final_text, face_info, stats_max_w), CLR_TEXT_SUB_EFF)
+            local line = BookStats.line(stats_order,
+                function(key) return _showElemFrom(c, pfx, key) end,
+                function(key) return BookStats.textFor(key, nb, nd) end)
+            _updateColoredText(stats_w, truncateToWidth(line, face_info, stats_max_w), CLR_TEXT_SUB_EFF)
         end
         _update(bstats, bd)
         table.insert(_cd_update_funcs, _update)
@@ -1732,7 +1535,7 @@ function M.getHeight(ctx)
     local has_meta = false
     if vis.progress then
         has_meta = true
-        h = h + math.floor(Screen:scaleBySize(8) * scale)   -- matches bar_h in build()
+        h = h + math.floor(SUIStyle.PROGRESS_BAR_H * scale)   -- matches bar_h in build()
     end
 
     if vis.has_stat and vis.show_stats ~= false then
@@ -1755,22 +1558,6 @@ function M.getMenuItems(ctx_menu)
     local pfx        = ctx_menu.pfx
     local refresh    = ctx_menu.refresh
     local _lc        = ctx_menu._
-    local _UIManager = ctx_menu.UIManager
-    local SortWidget = ctx_menu.SortWidget
-
-    -- hide_in_sui should only be true for items that have an equivalent
-    -- control inside items_item.sui_build (currently: the 4 stats). Title
-    -- and Progress bar have no SUI-native replacement, so hiding them here
-    -- would leave the user with no way to toggle them from the SUI window.
-    local function toggle_item(label, key, hide_in_sui)
-        return {
-            text           = _lc(label),
-            checked_func   = function() return _showElem(pfx, key) end,
-            keep_menu_open = true,
-            callback       = function() _toggleElem(pfx, key); refresh() end,
-            sui_hidden     = (hide_in_sui and ctx_menu.is_sui) or nil,
-        }
-    end
 
     local scale_items = {
         Config.makeScaleItem({
@@ -1879,235 +1666,46 @@ function M.getMenuItems(ctx_menu)
         refresh = refresh,
     }
 
-    -- True if any key in `keys` is currently hidden — used to enable the
-    -- "Add Item" footer action only when there's something left to add.
-    local function _anyHidden(keys)
-        for _, key in ipairs(keys) do
-            if not _showElem(pfx, key) then return true end
-        end
-        return false
-    end
-
-    -- Builds "Add Item" picker entries for the hidden keys in `candidate_keys`.
-    -- Each entry's on_tap makes the key visible, hands it to `reorder_fn` to
-    -- place it in the saved order and persist that, then refreshes the menu
-    -- and closes the picker. Reordering differs between the stats list and
-    -- the main items list, so it stays the caller's responsibility.
-    local function _makeAddItemPicker(candidate_keys, labels, reorder_fn, ctx2)
-        local picker_items = {}
-        for _, key in ipairs(candidate_keys) do
-            if not _showElem(pfx, key) then
-                local _key, _label = key, _lc(labels[key])
-                picker_items[#picker_items + 1] = {
-                    text   = _label,
-                    on_tap = function(picker_ctx)
-                        _toggleElem(pfx, _key)
-                        reorder_fn(_key)
-                        refresh()
-                        picker_ctx.pop()
-                        ctx2.repaint()
-                    end,
-                }
-            end
-        end
-        return picker_items
-    end
-
-    -- Pushes the nested "Statistics" arrange screen (percent / days / time /
-    -- remaining), reachable either by tapping the "Statistics" row inside the
-    -- main arrange list (SUI) or via the "Statistics" submenu (native).
-    local function _pushStatsArrange()
-        local function _statsSortItems()
-            local sort_items = {}
-            for _i, key in ipairs(_getElemOrder(pfx)) do
-                if _showElem(pfx, key) then
-                    sort_items[#sort_items+1] = { text = _lc(_ELEM_LABELS[key]), orig_item = key }
-                end
-            end
-            return sort_items
-        end
-        local function _saveStatsOrder(items_to_save)
-            local new_order, active_set = {}, {}
-            for _i, it in ipairs(items_to_save) do
-                new_order[#new_order+1] = it.orig_item
-                active_set[it.orig_item] = true
-            end
-            for _i, k in ipairs(_getElemOrder(pfx)) do
-                if not active_set[k] then new_order[#new_order+1] = k end
-            end
-            SUISettings:saveSetting(pfx .. ELEM_ORDER_KEY, new_order)
-            _invalidateCfgCache(pfx)
-            refresh()
-        end
-        if ctx_menu.show_arrange then
-            ctx_menu.show_arrange({
-                title      = _lc("Statistics"),
-                items_func = _statsSortItems,
-                empty_text = _lc("No statistics selected."),
-                on_delete  = function(item) _toggleElem(pfx, item.orig_item) end,
-                on_change  = _saveStatsOrder,
-                footer_text = _lc("Add Item"),
-                footer_enabled = function() return _anyHidden(_getElemOrder(pfx)) end,
-                footer_action = function(ctx2)
-                    local items = _makeAddItemPicker(_getElemOrder(pfx), _ELEM_LABELS, function(added_key)
-                        -- Reorder: shown keys first (excluding added_key),
-                        -- then added_key, then the remaining hidden keys.
-                        local new_order, active_set = {}, {}
-                        for _i2, k in ipairs(_getElemOrder(pfx)) do
-                            if _showElem(pfx, k) and k ~= added_key then
-                                new_order[#new_order+1] = k
-                                active_set[k] = true
-                            end
-                        end
-                        new_order[#new_order+1] = added_key
-                        active_set[added_key] = true
-                        for _i2, k in ipairs(_getElemOrder(pfx)) do
-                            if not active_set[k] then new_order[#new_order+1] = k end
-                        end
-                        SUISettings:saveSetting(pfx .. "coverdeck_show_" .. added_key, true)
-                        SUISettings:saveSetting(pfx .. ELEM_ORDER_KEY, new_order)
-                        _invalidateCfgCache(pfx)
-                    end, ctx2)
-                    ctx2.push("item_picker", { title = _lc("Add Item"), items = items })
-                end,
-            })
-        else
-            local sort_items = _statsSortItems()
-            _UIManager:show(SortWidget:new{
-                title             = _lc("Statistics"),
-                item_table        = sort_items,
-                covers_fullscreen = true,
-                callback          = function() _saveStatsOrder(sort_items) end,
-            })
-        end
-    end
-
-    -- Main arrange list: "Covers" (fixed anchor, divider — never removable)
-    -- plus Title / Author / Progress bar / Statistics, freely reorderable
-    -- and toggleable around it. Tapping "Statistics" opens the nested
-    -- per-statistic arrange screen above.
-    local function _mainSortItems()
-        local sort_items = {}
-        for _i, key in ipairs(_getMainOrder(pfx)) do
-            if key == "covers" then
-                sort_items[#sort_items+1] = {
-                    text = _lc(_MAIN_ELEM_LABELS.covers):upper(), orig_item = "covers", is_divider = true,
-                }
-            elseif _showElem(pfx, key) then
-                local entry = { text = _lc(_MAIN_ELEM_LABELS[key]), orig_item = key }
-                if key == "stats" then
-                    entry.show_chevron = true
-                    entry.on_tap       = _pushStatsArrange
-                end
-                sort_items[#sort_items+1] = entry
-            end
-        end
-        return sort_items
-    end
-
-    local function _saveMainOrder(items_to_save)
-        local new_order, active_set = {}, {}
-        for _i, it in ipairs(items_to_save) do
-            new_order[#new_order+1] = it.orig_item
-            active_set[it.orig_item] = true
-        end
-        for _i, k in ipairs(_getMainOrder(pfx)) do
-            if not active_set[k] then new_order[#new_order+1] = k end
-        end
-        SUISettings:saveSetting(pfx .. MAIN_ORDER_KEY, new_order)
+    -- Items and statistics share one visibility and order model. Changes also
+    -- drop the settings snapshot the screens build from.
+    local function refreshItems()
         _invalidateCfgCache(pfx)
         refresh()
     end
-
-    local items_item = {
-        text = _lc("Items"),
-        sub_item_table = {
-            {
-                text      = _lc("Arrange Items"),
-                separator = true,
-                keep_menu_open = true,
-                callback  = function()
-                    local sort_items = _mainSortItems()
-                    _UIManager:show(SortWidget:new{
-                        title             = _lc("Arrange Items"),
-                        item_table        = sort_items,
-                        covers_fullscreen = true,
-                        callback          = function() _saveMainOrder(sort_items) end,
-                    })
-                end,
-            },
-            toggle_item("Title",        "title",    true),
-            toggle_item("Author",       "author",   true),
-            toggle_item("Progress bar", "progress", true),
-            toggle_item("Statistics",   "stats",    true),
-            {
-                text = _lc("Statistics"),
-                sub_item_table = {
-                    {
-                        text      = _lc("Arrange Statistics"),
-                        separator = true,
-                        keep_menu_open = true,
-                        callback  = _pushStatsArrange,
-                    },
-                    toggle_item("Percentage read",  "percent",        true),
-                    toggle_item("Days of reading",  "book_days",      true),
-                    toggle_item("Time read",        "book_time",      true),
-                    toggle_item("Time remaining",   "book_remaining", true),
-                },
-                sui_hidden = ctx_menu.is_sui or nil,
-            },
-        },
-        sui_build = ctx_menu.is_sui and function(ctx, _item)
-            local SUIWindow = require("engines/sui_window")
-            return SUIWindow.ListRow{
-                title        = _lc("Items"),
-                subtitle     = function()
-                    local names = {}
-                    for _, key in ipairs(_getMainOrder(pfx)) do
-                        if key ~= "covers" and _showElem(pfx, key) then
-                            names[#names + 1] = _lc(_MAIN_ELEM_LABELS[key])
-                        end
-                    end
-                    return #names > 0 and table.concat(names, "  ·  ") or _lc("No items selected.")
-                end,
-                inner_w      = ctx.inner_w,
-                show_chevron = true,
-                on_tap       = function()
-                    ctx.push("arrange", {
-                        title       = _lc("Items"),
-                        items_func  = _mainSortItems,
-                        empty_text  = _lc("No items selected."),
-                        on_delete   = function(item)
-                            if item.orig_item ~= "covers" then
-                                _toggleElem(pfx, item.orig_item)
-                            end
-                        end,
-                        on_change   = _saveMainOrder,
-                        footer_text = _lc("Add Item"),
-                        footer_enabled = function()
-                            return _anyHidden({ "title", "author", "progress", "stats" })
-                        end,
-                        footer_action = function(ctx2)
-                            local items = _makeAddItemPicker(
-                                { "title", "author", "progress", "stats" }, _MAIN_ELEM_LABELS,
-                                function(added_key)
-                                    local cur = _getMainOrder(pfx)
-                                    local new_order = {}
-                                    for _, k in ipairs(cur) do
-                                        if k ~= added_key then new_order[#new_order + 1] = k end
-                                    end
-                                    new_order[#new_order + 1] = added_key
-                                    SUISettings:saveSetting(pfx .. "coverdeck_show_" .. added_key, true)
-                                    SUISettings:saveSetting(pfx .. MAIN_ORDER_KEY, new_order)
-                                    _invalidateCfgCache(pfx)
-                                end, ctx2)
-                            ctx2.push("item_picker", { title = _lc("Add Item"), items = items })
-                        end,
-                    })
-                end,
-            }
-        end or nil,
+    local function itemList(opts)
+        opts.ctx         = ctx_menu
+        opts.refresh     = refreshItems
+        opts.is_visible  = function(key) return _showElem(pfx, key) end
+        opts.set_visible = function(key, visible) _setElemVisible(pfx, key, visible) end
+        return Config.makeOrderedItems(opts)
+    end
+    local stats_list = itemList{
+        ids        = STAT_IDS,
+        order_key  = pfx .. STATS_ORDER_KEY,
+        label      = BookStats.statLabel,
+        title      = _lc("Statistics"),
+        text       = _lc("Arrange Statistics"),
+        empty_text = _lc("No statistics selected."),
     }
+    local main_list = itemList{
+        ids       = MAIN_IDS,
+        anchors   = MAIN_ANCHORS,
+        order_key = pfx .. MAIN_ORDER_KEY,
+        label     = mainLabel,
+        title     = _lc("Items"),
+        text      = _lc("Arrange Items"),
+        nested    = { stats = stats_list },
+    }
+
+    -- The SUI menu reaches the statistics from the Items screen; the classic
+    -- menu lists them in a submenu of their own.
+    local rows = main_list.rows()
+    local items_item = rows[1]
+    if not ctx_menu.is_sui then
+        rows[1].separator = true
+        rows[#rows + 1] = { text = _lc("Statistics"), sub_item_table = stats_list.rows() }
+        items_item = { text = _lc("Items"), sub_item_table = rows }
+    end
 
     local text_opts = {
         mod_id  = M.id,
@@ -2222,5 +1820,7 @@ function M.getMenuItems(ctx_menu)
         },
     }, ctx_menu)
 end
+
+Memory.onReset(M.reset)
 
 return M

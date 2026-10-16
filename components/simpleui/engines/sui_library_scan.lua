@@ -1,8 +1,7 @@
 -- sui_library_scan.lua — Simple UI
 -- Shared, cached recursive filesystem scanner for "all books in the
--- library" style modules (module_library.lua — the "Flat Library" module).
---
--- New Books uses the same directory index and selects its newest 15 entries.
+-- library" style consumers (module_library.lua — the "Flat Library" module,
+-- the "new_books" source in sui_book_sources.lua, library search).
 --
 -- Instead of a blind TTL, this tracks the mtime of every directory visited
 -- during a walk and only re-walks when one of those mtimes has actually
@@ -31,7 +30,7 @@ local LibraryScan = {}
 --- Resolves the current library home directory: the user-configured
 --- "home_dir" setting, falling back to the device default when unset or
 --- empty. Single source of truth — module_stats_provider.lua,
---- module_library.lua and module_new_books.lua all need this.
+--- module_library.lua and sui_book_sources.lua all need this.
 function LibraryScan.resolveHomeDir()
     local home = G_reader_settings:readSetting("home_dir")
     if not home or home == "" then home = Device.home_dir end
@@ -39,7 +38,7 @@ function LibraryScan.resolveHomeDir()
 end
 
 
--- Extensions used by SimpleUI's library and New Books modules.
+-- Extensions KOReader can open. Single source of truth.
 LibraryScan.BOOK_EXTS = {
     epub = true, mobi = true, azw3 = true, azw = true, kfx = true,
     pdf = true, djvu = true, fb2 = true, cbz = true, cbr = true,

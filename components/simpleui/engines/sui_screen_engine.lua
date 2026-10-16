@@ -48,6 +48,7 @@ local _                = require("infra/sui_i18n").translate
 local N_               = require("infra/sui_i18n").ngettext
 local T                = require("ffi/util").template
 local Config           = require("infra/sui_config")
+local Memory           = require("infra/sui_memory")
 local Registry         = require("modules/moduleregistry")
 local SUISettings = require("infra/sui_store")
 local Event            = require("ui/event")
@@ -852,8 +853,8 @@ ScreenEngine.openBook = openBook
 -- ---------------------------------------------------------------------------
 -- _deferredFreeOldTree(old_tree) — releases a discarded widget subtree
 -- (module covers, badges, wallpaper widgets, etc.) without risking a
--- use-after-free, and nudges LuaJIT's GC to actually reclaim the underlying
--- blitbuffers in reasonable time.
+-- use-after-free, then asks for a collection so the underlying blitbuffers
+-- are actually reclaimed.
 --
 -- Why deferred: calling :free() synchronously, right when the new tree is
 -- being swapped in, can tear down an ImageWidget's bb while a paint that
@@ -861,15 +862,10 @@ ScreenEngine.openBook = openBook
 -- a native segfault. UIManager:nextTick lets the current event handler
 -- (and any paint it triggered) finish before we reap the old tree.
 --
--- Why collectgarbage at all: LuaJIT's incremental GC step size is tuned for
--- steady-state allocation, not the burst of many blitbuffers created and
--- dropped on every screen rebuild (rotation, settings change, page swipe
--- across pages with different module sets). Left alone, freed-but-not-yet-
--- collected bbs accumulate and RSS climbs with every rebuild even though
--- nothing is actually leaked. A cheap incremental "step" after every
--- rebuild, plus an occasional full "collect", keeps actual RSS close to
--- live-object size without a visible pause.
-local _screen_rebuild_count = 0
+-- Why a collection: blitbuffers are C memory the GC cannot size, so the
+-- freed-but-uncollected ones would accumulate across rebuilds. Memory runs
+-- one collection once the UI is idle.
+-- ---------------------------------------------------------------------------
 local function _deferredFreeOldTree(old_tree)
     if not (old_tree and old_tree.free) then return end
     UIManager:nextTick(function()
@@ -877,12 +873,7 @@ local function _deferredFreeOldTree(old_tree)
         if not ok then
             logger.warn("simpleui[screen_engine]: old tree free failed:", err)
         end
-        collectgarbage("step", 200)
-        _screen_rebuild_count = _screen_rebuild_count + 1
-        if _screen_rebuild_count >= 4 then
-            _screen_rebuild_count = 0
-            collectgarbage("collect")
-        end
+        Memory.requestCollect()
     end)
 end
 
@@ -1794,21 +1785,17 @@ end
 -- Resolves the current and recent books for the book modules enabled on this
 -- screen. Returns nil when the shared book module is unavailable.
 --
--- Show-finished filtering is not applied here: each module (module_recent,
--- module_coverdeck) filters finished books at render time using its own
--- setting. 15 entries are fetched so that at least 5 unfinished books remain
--- after that filtering.
+-- Show-finished filtering is not applied here: each module filters finished
+-- books at render time using its own setting. The number of recent books
+-- comes from the enabled modules' M.needs.recent (Registry.getRecentDemand),
+-- which leaves headroom for that filtering.
 function ScreenWidget:_prefetchBooks()
     local SH = _getBookShared()
     if not SH then return nil end
-    local mod_r  = Registry.get("recent")
-    local mod_cd = Registry.get("coverdeck")
     local show_c = Registry.isEnabled(Registry.get("currently"), self._pfx)
-    local show_r = (mod_r and Registry.isEnabled(mod_r, self._pfx))
-        or (mod_cd and Registry.isEnabled(mod_cd, self._pfx))
-    local excl = SUISettings:readSetting(self._pfx .. "recent_exclude_currently")
-    if excl == nil then excl = true end
-    return SH.prefetchBooks(show_c, show_r, 15, { exclude_current = excl })
+    local recent_demand = Registry.getRecentDemand(self._pfx)
+    return SH.prefetchBooks(show_c, recent_demand > 0, recent_demand,
+        { exclude_current = SH.isCurrentExcluded(self._pfx) })
 end
 
 -- ---------------------------------------------------------------------------
@@ -1836,18 +1823,20 @@ function ScreenWidget:_buildCtx()
                 bar_style   = SUISettings:readSetting(self._pfx .. "currently_bar_style"),
                 stats_style = SUISettings:readSetting(self._pfx .. "currently_stats_style"),
                 layout      = SUISettings:readSetting(self._pfx .. "currently_layout") == "dynamic" and "dynamic" or "default",
-                elem_order  = SUISettings:readSetting(self._pfx .. "currently_elem_order"),
+                main_order  = SUISettings:readSetting(self._pfx .. "currently_main_order"),
+                stats_order = SUISettings:readSetting(self._pfx .. "currently_stats_order"),
                 desc_align  = SUISettings:readSetting(self._pfx .. "currently_description_align"),
                 show = {
-                    title    = SUISettings:nilOrTrue(self._pfx .. "currently_show_title"),
-                    author   = SUISettings:nilOrTrue(self._pfx .. "currently_show_author"),
-                    progress = SUISettings:nilOrTrue(self._pfx .. "currently_show_progress"),
-                    percent  = SUISettings:nilOrTrue(self._pfx .. "currently_show_percent"),
-                    days     = SUISettings:nilOrTrue(self._pfx .. "currently_show_book_days"),
-                    time     = SUISettings:nilOrTrue(self._pfx .. "currently_show_book_time"),
-                    remain   = SUISettings:nilOrTrue(self._pfx .. "currently_show_book_remaining"),
+                    title       = SUISettings:nilOrTrue(self._pfx .. "currently_show_title"),
+                    author      = SUISettings:nilOrTrue(self._pfx .. "currently_show_author"),
                     series      = SUISettings:nilOrTrue(self._pfx .. "currently_show_series"),
                     description = SUISettings:nilOrTrue(self._pfx .. "currently_show_description"),
+                    progress    = SUISettings:nilOrTrue(self._pfx .. "currently_show_progress"),
+                    stats       = SUISettings:nilOrTrue(self._pfx .. "currently_show_stats"),
+                    percent        = SUISettings:nilOrTrue(self._pfx .. "currently_show_percent"),
+                    book_days      = SUISettings:nilOrTrue(self._pfx .. "currently_show_book_days"),
+                    book_time      = SUISettings:nilOrTrue(self._pfx .. "currently_show_book_time"),
+                    book_remaining = SUISettings:nilOrTrue(self._pfx .. "currently_show_book_remaining"),
                 },
             },
             coverdeck = {
@@ -1883,13 +1872,9 @@ function ScreenWidget:_buildCtx()
     end
 
     local mod_c  = Registry.get("currently")
-    local mod_r  = Registry.get("recent")
     local mod_cd = Registry.get("coverdeck")
     local show_c = mod_c and Registry.isEnabled(mod_c, self._pfx)
-    local coverdeck_uses_recent = mod_cd and Registry.isEnabled(mod_cd, self._pfx)
-        and cfg.coverdeck.source == "recent"
-    local show_r = (mod_r and Registry.isEnabled(mod_r, self._pfx))
-                or coverdeck_uses_recent
+    local show_r = Registry.getRecentDemand(self._pfx) > 0
 
     if not self._cached_books_state then
         local SH = _getBookShared()
@@ -1943,7 +1928,7 @@ function ScreenWidget:_buildCtx()
             SUISettings:nilOrTrue(self._pfx .. "coverdeck_show_book_remaining"))))
 
     -- "currently" always needs the DB when active (all its stats are DB-backed).
-    -- The "recent" module (mod_r) shows no DB-backed stats, so it is excluded.
+    -- The "recent" module shows no DB-backed stats, so it is excluded.
     local wants_db = show_c or coverdeck_needs_db or wants_stats or ext_needs_db
 
     if wants_db and not self._db_conn and not self._defer_stats then
@@ -2035,13 +2020,7 @@ function ScreenWidget:_buildCtx()
     -- hot paint path (md5 is already in prefetched_data — no extra IO).
     local currently_book_stats = nil
     if mod_c and Registry.isEnabled(mod_c, self._pfx) and self._db_conn and bs.current_fp then
-        local c_cfg = cfg and cfg.currently
-        local needs_bstats = (c_cfg and (c_cfg.show.days or c_cfg.show.time or c_cfg.show.remain))
-            or (not c_cfg and (
-                SUISettings:nilOrTrue(self._pfx .. "currently_show_book_days") or
-                SUISettings:nilOrTrue(self._pfx .. "currently_show_book_time") or
-                SUISettings:nilOrTrue(self._pfx .. "currently_show_book_remaining")))
-        if needs_bstats then
+        if mod_c.needsDbStats(cfg.currently.show) then
             local pe_c  = bs.prefetched_data and bs.prefetched_data[bs.current_fp]
             local c_md5 = type(pe_c) == "table" and pe_c.partial_md5_checksum
             if c_md5 then
@@ -2335,11 +2314,17 @@ end
 -- ---------------------------------------------------------------------------
 -- Returns the chrome-wrapped widget to mount and the module's own widget as
 -- returned by mod.build() (the one per-module updaters operate on). On a build
--- error returns nil plus the error message.
+-- error returns nil plus the error message. A module with `owns_chrome` is
+-- built at the full column width and mounted as it is: it draws its own boxes.
 function ScreenWidget:_buildModWidget(mod, col_w, ctx)
     local ModuleChrome = require("features/sui_module_chrome")
-    local chrome = ModuleChrome.resolve(self._pfx, mod.id)
-    local build_w = ModuleChrome.contentWidth(col_w, chrome)
+    local chrome, build_w
+    if mod.owns_chrome then
+        build_w = col_w
+    else
+        chrome  = ModuleChrome.resolve(self._pfx, mod.id)
+        build_w = ModuleChrome.contentWidth(col_w, chrome)
+    end
     -- Expose the full column width so modules that re-wrap later (clock tick)
     -- can recover the same chrome geometry the page build used.
     if ctx then ctx.col_w = col_w end
@@ -2348,6 +2333,7 @@ function ScreenWidget:_buildModWidget(mod, col_w, ctx)
         return nil, widget
     end
     if not widget then return nil end
+    if not chrome then return widget, widget end
     return ModuleChrome.wrap(widget, chrome, col_w, (ctx and ctx.landscape_factor) or 1), widget
 end
 
@@ -3283,9 +3269,16 @@ function ScreenWidget:_turnBookModPage(mod_id, delta)
     local new_page = GridRenderer.turnPage(page, npages, delta)
     if not new_page then return false end
     SectionLabel.PageState.setPage(self._ctx_cache, mod_id, new_page)
-    if self._refreshBookModSlot and self:_refreshBookModSlot(mod_id) then return true end
-    if self._refreshImmediate then self:_refreshImmediate(true) end
+    self:_repaintBookMod(mod_id)
     return true
+end
+
+-- Repaints one book module after its state changed (page turn, tab change):
+-- the surgical slot repaint, or a full rebuild that keeps the ctx cache when
+-- the slot cannot be repainted in place.
+function ScreenWidget:_repaintBookMod(mod_id)
+    if self._refreshBookModSlot and self:_refreshBookModSlot(mod_id) then return end
+    if self._refreshImmediate then self:_refreshImmediate(true) end
 end
 
 -- ---------------------------------------------------------------------------
@@ -4110,12 +4103,9 @@ function ScreenWidget:onCloseWidget()
         MH.freeQuotesIfUnused()
     end
 
-    -- Nudge the incremental GC after tearing down the full tree above (see
-    -- the self:free() rationale at the top of this handler): without this,
-    -- freed-but-uncollected blitbuffers accumulate faster than LuaJIT's
-    -- steady-state GC step reclaims them. Deferred to nextTick so it never
-    -- delays the reader/homescreen transition itself.
-    UIManager:nextTick(function() collectgarbage("step", 200) end)
+    -- The tree freed above leaves native buffers waiting for the GC; collect
+    -- once the UI is idle so the reader/homescreen transition is not delayed.
+    Memory.requestCollect()
 
     if _sget(self._id, "_instance") == self then
         _sset(self._id, "_instance", nil)
