@@ -165,10 +165,13 @@ at `1ae66bd0`, not included as a second runtime renderer.
 
 Series occupy one physical shelf slot, except a series with just one local
 volume, which remains an ordinary book. Up to eight member spines show above
-the front board, with their native status marks. The first cover fills a
-rounded sticker on the front; the read/total count is printed in its notch,
-with the series name below. The native geometry sizes the box from its members
-and name, capped at a face-out cover's width. The count is never capped.
+the front board, with their native status marks. Following the October 17
+correction, the first cover fits a centered rounded sticker without stretching;
+unused space shows the board's existing cover-derived colour. The read/total
+count is printed above the image instead of in a notch over it, with the
+series name below. The native geometry sizes the box from its members and
+name, with a 70% minimum and a face-out cover's width as its maximum (subject
+to available shelf space). The count is never capped and shrinks to fit.
 It reads canonical finished status for the visible box's scoped membership,
 not a stale aggregate or percentage. The trial intentionally omits our old
 whole-box checkmark/fade and separate manga-style badge. Preferences and book
@@ -190,6 +193,9 @@ native membership separately from the compacted display list. Native code in
 `bookshelf_series_box_widget.lua` owns preparation and rendering; the thin
 `adapters/orbitui_series_boxes.lua` keeps the host's all-series policy, profile
 isolation, letter navigation and rollback-compatible restoration.
+`orbitui_ui` opts into the 70% minimum and the native painter's aspect-preserving
+cover policy; standalone Bookshelf retains its default layout. The fitted
+cover is copied without a second stretch, with only its tile border removed.
 
 ## Component seams to preserve during merges
 

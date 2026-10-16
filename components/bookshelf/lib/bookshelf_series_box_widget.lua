@@ -39,7 +39,11 @@ end
 -- The name shrinks this far below the spine-title size before it is cut.
 local NAME_MIN_SIZE = 8
 
-local Box = InputContainer:extend{}
+local Box = InputContainer:extend{
+    -- Optional host policy: fit the complete cover and print the count on
+    -- the board above it. Standalone Bookshelf keeps its original sticker.
+    preserve_cover_aspect = false,
+}
 
 -- memberEntry(member, w, h, SpineShelf) -> the entry a member's spine slot
 -- paints from: its own look, number and status, no title (a slipcase's
@@ -165,13 +169,20 @@ function Box:_initSlipcase()
     end
     -- The front's picture: the first cover as a sticker in the space above
     -- the name.
-    local B = shape.border
     self.inset = math.max(2, Screen:scaleBySize(STICKER_INSET_DP))
     self.art_w = math.max(1, shape.w - 2 * self.inset)
     self.art_h = math.max(1, shape.front_h - 2 * self.inset - shape.strip_h)
+    local font = BFont.getUIFontFace() or "cfont"
+    self.count = TextWidget:new{ text = string.format(COUNT_FORMAT,
+        finishedCount(entry.book.books), #entry.book.books),
+        face = countFace(shape.label_size, font), padding = 0 }
     -- The whole cover, stretched or squashed to fill the space above the
     -- name exactly: drawn at its own proportions, then scaled to the space.
     local aspect = (self.first_look and self.first_look.aspect) or 1.5
+    if self.preserve_cover_aspect
+            and (type(aspect) ~= "number" or aspect ~= aspect or aspect <= 0 or aspect == math.huge) then
+        aspect = 1.5
+    end
     self.st_w, self.st_h = self.art_w, self.art_h
     self.st_full_h = math.max(1, math.floor(self.st_w * aspect + 0.5))
     self.st_dx, self.st_dy = 0, 0
@@ -179,17 +190,40 @@ function Box:_initSlipcase()
     -- tile carries a hairline frame, which showed as a black line down each
     -- side of the sticker.
     self.art_crop = math.max(2, Screen:scaleBySize(2))
-    self.art_cover = require("lib/bookshelf_spine_widget"):new{
-        book = first, width = self.st_w + 2 * self.art_crop,
-        height = self.st_full_h + 2 * self.art_crop, flat_thumb = true,
+    local SpineWidget = require("lib/bookshelf_spine_widget")
+    local cover_w, cover_h = self.st_w, self.st_full_h
+    if self.preserve_cover_aspect then
+        local count_size = shape.label_size
+        while self.count:getSize().w > self.art_w and count_size > 1 do
+            local text = self.count.text
+            self.count:free()
+            count_size = count_size - 1
+            self.count = TextWidget:new{ text = text, face = countFace(count_size, font), padding = 0 }
+        end
+        local E = STICKER_EDGE_PX
+        self.count_band_h = math.min(math.max(0, self.art_h - 2 * E - 1),
+            self.count:getSize().h + math.max(2, Screen:scaleBySize(3)))
+        local room_w = math.max(1, self.art_w - 2 * E)
+        local room_h = math.max(1, self.art_h - self.count_band_h - 2 * E)
+        if room_w * aspect <= room_h then
+            cover_w, cover_h = room_w, math.max(1, math.floor(room_w * aspect + 0.5))
+        else
+            cover_w, cover_h = math.max(1, math.floor(room_h / aspect + 0.5)), room_h
+        end
+        self.st_w, self.st_h = cover_w + 2 * E, cover_h + 2 * E
+        self.st_full_h = self.st_h
+        self.st_dx = math.floor((self.art_w - self.st_w) / 2)
+        self.st_dy = self.count_band_h
+            + math.floor((self.art_h - self.count_band_h - self.st_h) / 2)
+        -- Remove only the native tile's border, not pixels from the cover.
+        self.art_crop = SpineWidget.CARD_BORDER
+    end
+    self.art_cover = SpineWidget:new{
+        book = first, width = cover_w + 2 * self.art_crop,
+        height = cover_h + 2 * self.art_crop, flat_thumb = true,
         show_progress = false, show_status = false, suppress_favorite_badge = true,
         suppress_number_badges = true,
     }
-    local font = BFont.getUIFontFace() or "cfont"
-    -- The bundled bold, at the name's size: both are printed on the box.
-    self.count = TextWidget:new{ text = string.format(COUNT_FORMAT,
-        finishedCount(entry.book.books), #entry.book.books),
-        face = countFace(shape.label_size, font), padding = 0 }
     local room = math.max(1, self.art_w - 2 * shape.pad)
     if shape.name_lines then
         -- Two lines, broken where the geometry chose (the box was sized to
@@ -268,23 +302,36 @@ function Box:_paintSlipcase(bb, x, y)
     local g = math.max(2, Screen:scaleBySize(3))
     local nw = math.max(0, math.min(SW - 2 * R, cs.w + 2 * g))
     local nh = math.max(0, math.min(SH - 2 * R, cs.h + g))
+    if self.preserve_cover_aspect then
+        R = math.min(R, math.floor(math.min(SW, SH) / 2))
+        nw, nh = 0, 0
+    end
+    local tmp, inner, fit
     pcall(function()
         local c = self.art_crop
         local FH = self.st_full_h
         local tw_, th_ = SW + 2 * c, FH + 2 * c
-        local tmp = BB.new(tw_, th_, bb:getType())
+        if self.preserve_cover_aspect then
+            tw_, th_ = self.art_cover.width, self.art_cover.height
+        end
+        tmp = BB.new(tw_, th_, bb:getType())
         tmp:paintRectRGB32(0, 0, tw_, th_, BB.ColorRGB32(255,255,255,255))
         self.art_cover:paintTo(tmp, 0, 0)
-        -- Off with the tile's frame, then to the space inside the edge.
-        local inner = BB.new(SW, FH, bb:getType())
-        inner:blitFrom(tmp, 0, 0, c, c, SW, FH)
-        tmp:free()
         local iw, ih = math.max(1, SW - 2 * E), math.max(1, SH - 2 * E)
-        local fit = inner:scale(iw, ih)
+        if self.preserve_cover_aspect then
+            -- The tile is already at the final, aspect-true image size.
+            bb:blitFrom(tmp, sx + E, sy + E, c, c, iw, ih)
+            return
+        end
+        -- Off with the tile's frame, then to the space inside the edge.
+        inner = BB.new(SW, FH, bb:getType())
+        inner:blitFrom(tmp, 0, 0, c, c, SW, FH)
+        fit = inner:scale(iw, ih)
         bb:blitFrom(fit, sx + E, sy + E, 0, 0, iw, ih)
-        fit:free()
-        inner:free()
     end)
+    if fit then fit:free() end
+    if inner then inner:free() end
+    if tmp then tmp:free() end
     -- Row by row: board outside the sticker's outline, the edge between it
     -- and the outline drawn E inside it, the cover within that.
     -- Halfway between the box and white, as it shows: in night mode the
@@ -312,15 +359,21 @@ function Box:_paintSlipcase(bb, x, y)
             if r_ > ir_ then bb:paintRectRGB32(sx + ir_, yy, r_ - ir_, 1, edge) end
         end
     end
-    -- The read count, printed on the box in the notch.
+    -- Keep the count on the board, outside an aspect-preserved cover.
     do
         local nx, ny = sx + SW - nw, sy
         self.count.fgcolor = name_ink_for(night)
-        -- Never past the box's own edges, however narrow the sticker.
-        local cx = nx + math.floor((nw - cs.w + g) / 2)
-        cx = math.max(x, math.min(cx, x + p.w - cs.w))
-        if cs.w <= p.w then
-            self.count:paintTo(bb, cx, ny + math.max(0, math.floor((nh - cs.h) / 2)))
+        if self.preserve_cover_aspect then
+            if cs.w <= self.art_w and cs.h <= self.count_band_h then
+                self.count:paintTo(bb, x + I + self.art_w - cs.w, front_y + I)
+            end
+        else
+            -- Never past the box's own edges, however narrow the sticker.
+            local cx = nx + math.floor((nw - cs.w + g) / 2)
+            cx = math.max(x, math.min(cx, x + p.w - cs.w))
+            if cs.w <= p.w then
+                self.count:paintTo(bb, cx, ny + math.max(0, math.floor((nh - cs.h) / 2)))
+            end
         end
     end
     local stripy = front_y + p.front_h - p.strip_h
@@ -332,7 +385,7 @@ function Box:_paintSlipcase(bb, x, y)
     for _, ln in ipairs(lines) do
         local sz = ln:getSize()
         ln.fgcolor = name_ink
-        ln:paintTo(bb, sx + math.max(p.pad, math.floor((self.art_w - sz.w)/2)), ly)
+        ln:paintTo(bb, x + I + math.max(p.pad, math.floor((self.art_w - sz.w)/2)), ly)
         ly = ly + sz.h
     end
 end

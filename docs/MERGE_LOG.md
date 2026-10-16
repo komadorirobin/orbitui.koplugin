@@ -2033,6 +2033,38 @@ and 840 LuaJIT syntax checks pass. No new skip/failure allowance. The published
 alpha.39 runtime and checksum are downloaded and match their GitHub asset
 digests, ready for upgrade/rollback testing after clean release packaging.
 
+## 2026-10-17: Preserve cover proportions on upstream slipcases
+
+User request: "Testa detta" after accepting the upstream perspective but
+reporting distorted covers on small/large collections. Start from published
+alpha.40 `a66719ff`. Keep the native box, spines, completion marks, grouping,
+navigation and maximum width; opt into a 70% minimum width and an aspect-true
+centered cover sticker. The count moves to the board above the picture and
+shrinks to fit; names stay centered on the entire board. Unused picture area
+retains the existing board colour. Crop only the native cover tile border and
+copy at final resolution, without the old second anisotropic scale.
+
+The `orbitui_ui` wrapper enables the optional `preserve_cover_aspect` policy
+and the existing geometry constant. Native standalone defaults are unchanged;
+no duplicate renderer or settings migration is added. Scratch buffers are
+freed on success and failure. C07 is deliberately refined; upstream pins,
+VERSION, bootstrap/API, artwork and reading state are unchanged. The archived
+old-design branch remains intact. No publication is requested.
+
+Eight added host tests cover opt-in/standalone boundaries, width limits,
+portrait/square/landscape aspect and centered fitting, read-count/name
+separation, fallback metadata, large counts at small sizes, scaled borders
+and cleanup/retry after cover-paint failure. The original live completion,
+night-mode, scoped navigation and gesture cases remain. Complete sequential
+Lua / LuaJIT runs pass 541 / 542 OrbitUI cases across 46 files, 394 Bookshelf
+suites (zero failures, two existing SQLite skips), all 13 SimpleUI files and
+91 Python checks (four existing external artwork-source audit skips). Existing
+native-font skips and absent Bookends parity checkout remain. All seven slow
+suites run; all 43 translation catalogues, 315 module paths and 840 LuaJIT
+syntax checks pass. No new skip or failure allowance. Clean-commit package
+checks follow; device appearance still needs Bigme testing, especially
+two-volume and long-series boxes at cover-size extremes in colour/night mode.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

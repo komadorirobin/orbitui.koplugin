@@ -215,9 +215,14 @@ end)
 -- primitives stubbed. This deliberately does not reinstate our old whole-box
 -- completion overlay: upstream owns the marks on the exposed member spines.
 local W = H.widget()
+local fail_cover = false
+W.CARD_BORDER = 1
 function W:getSize() return self.dimen or {w = self.width or 0, h = self.height or 0} end
 function W:free() end
-function W:paintTo(bb, x, y) bb:paintRectRGB32(x, y, self.width, self.height, "cover") end
+function W:paintTo(bb, x, y)
+    if fail_cover then error("cover unavailable") end
+    bb:paintRectRGB32(x, y, self.width, self.height, "cover")
+end
 for _, name in ipairs({"ui/widget/container/inputcontainer", "ui/geometry", "ui/gesturerange"}) do
     package.loaded[name] = W
 end
@@ -226,9 +231,13 @@ function Text:init()
     self.dimen = {w = math.min(self.max_width or math.huge,
         #(self.text:gsub("[\128-\191]", "")) * self.face.size / 2), h = self.face.size}
 end
-function Text:paintTo(bb, x, y) bb:paintRectRGB32(x, y, self.dimen.w, self.dimen.h, "text") end
+function Text:paintTo(bb, x, y)
+    bb:paintRectRGB32(x, y, self.dimen.w, self.dimen.h, "text")
+    bb.texts[#bb.texts + 1] = {text = self.text, x = x, y = y, w = self.dimen.w, h = self.dimen.h}
+end
+local allocated, scaled = {}, 0
 local function surface(w, h)
-    local bb = {w = w, h = h, blits = 0}
+    local bb = {w = w, h = h, blits = 0, texts = {}, copies = {}}
     function bb:paintRectRGB32(x, y, rw, rh)
         assert(x >= 0 and y >= 0 and rw >= 0 and rh >= 0
             and x + rw <= self.w and y + rh <= self.h, "paint outside buffer")
@@ -237,16 +246,23 @@ local function surface(w, h)
         self:paintRectRGB32(x, y, rw, rh)
         srcbb:paintRectRGB32(sx, sy, rw, rh)
         self.blits = self.blits + 1
+        self.copies[#self.copies + 1] = {x = x, y = y, sx = sx, sy = sy,
+            w = rw, h = rh, source = srcbb}
     end
-    function bb:scale(sw, sh) return surface(sw, sh) end
+    function bb:scale(sw, sh)
+        scaled = scaled + 1
+        local next = surface(sw, sh); allocated[#allocated + 1] = next; return next
+    end
     function bb:getType() return 1 end
-    function bb:free() self.freed = true end
+    function bb:free() assert(not self.freed, "double free"); self.freed = true end
     return bb
 end
-local night, painted_slots = false, 0
-package.loaded["device"] = {screen = {scaleBySize = function(_, n) return n end}}
+local night, painted_slots, cover_aspect, dpi = false, 0, 1.5, 1
+package.loaded["device"] = {screen = {scaleBySize = function(_, n) return math.floor(n * dpi + .5) end}}
 package.loaded["lib/bookshelf_space"] = {px = function(n) return n end}
-package.loaded["ffi/blitbuffer"] = {new = surface,
+package.loaded["ffi/blitbuffer"] = {new = function(w, h)
+        local bb = surface(w, h); allocated[#allocated + 1] = bb; return bb
+    end,
     ColorRGB32 = function(r, g, b, a) return {r = r, g = g, b = b, a = a} end}
 package.loaded["lib/bookshelf_colour_text"] = Text
 package.loaded["lib/bookshelf_fonts"] = {getFace = function(_, _, size) return {size = size} end,
@@ -265,19 +281,145 @@ end
 package.loaded["lib/bookshelf_spine_shelf"] = {
     titleSize = function() return 12 end, textHeight = function(size) return size end,
     cachedProgress = function() return nil end, _SpineBookSlot = Slot,
-    bookLook = function() return {r = 90, g = 120, b = 80, aspect = 1.5} end,
+    bookLook = function() return {r = 90, g = 120, b = 80, aspect = cover_aspect} end,
     boardColor = function() return {r = 90, g = 120, b = 80} end,
 }
 local Painter = require("lib/bookshelf_series_box_widget")
-local function visibleBox(raw, scale)
+local function visibleBox(raw, scale, name)
     scale = scale or 1
-    local box = Boxes.box(raw, "Saga")
+    local box = Boxes.box(raw, name or "Saga")
     local shape = Boxes.geometry(box, {w = 160 * scale, h = 248 * scale,
         face_h = 240 * scale, depth = 8 * scale}, {content_w = 800})
     local w = Painter:new{entry = {book = box, series_box = shape}, width = shape.w, height = 400}
     return w, box, shape
 end
 local function count(done, total) return done .. "\xE2\x80\x8A/\xE2\x80\x8A" .. total end
+
+H.test("aspect fit and wider minimum are host opt-ins, not standalone changes", function()
+    H.eq(Boxes.SLIPCASE_MIN_SHARE, .5); H.eq(Painter.preserve_cover_aspect, false)
+    local old = visibleBox(members(2))
+    H.eq(old.st_w, old.art_w); H.eq(old.st_h, old.art_h)
+    H.eq(old.count_band_h, nil)
+    local UI = require("adapters/orbitui_ui")
+    H.eq(UI.modules["lib/bookshelf_series_boxes"], true)
+    H.eq(UI.modules["lib/bookshelf_series_box_widget"], true)
+    UI.wrap("lib/bookshelf_series_boxes", Boxes)
+    UI.wrap("lib/bookshelf_series_box_widget", Painter)
+    H.eq(Boxes.SLIPCASE_MIN_SHARE, .7); H.eq(Painter.preserve_cover_aspect, true)
+end)
+
+H.test("box width stays between seventy percent and the existing cover cap", function()
+    local previous = 0
+    for _, n in ipairs({2, 3, 8, 120}) do
+        local _, _, shape = visibleBox(members(n))
+        assert(shape.w >= math.floor(160 * .7) and shape.w <= 160)
+        assert(shape.w >= previous); previous = shape.w
+    end
+    local _, _, short = visibleBox(members(2))
+    assert(short.w < 160, "a small collection should still have a narrower box")
+    local _, _, long = visibleBox(members(2), 1, ("Long name "):rep(20))
+    H.eq(long.w, 160)
+    local shape = Boxes.geometry(Boxes.box(members(2), "Saga"),
+        {w = 160, h = 248}, {content_w = 110, end_margin = 10})
+    assert(shape.w <= 90, "minimum width must not override available shelf space")
+end)
+
+H.test("portrait square and landscape stickers fit and center without a second scale", function()
+    for _, aspect in ipairs({.5, 1, 1.5, 2.4, 4}) do
+        cover_aspect = aspect
+        for _, n in ipairs({2, 3, 8, 120}) do
+            for _, scale in ipairs({.5, 1, 1.5}) do
+                local w, _, shape = visibleBox(members(n), scale)
+                local iw, ih = w.st_w - 2, w.st_h - 2
+                assert(math.min(math.abs(ih - iw * aspect), math.abs(iw - ih / aspect)) <= .5)
+                assert(w.st_dx >= 0 and w.st_dx + w.st_w <= w.art_w)
+                assert(w.st_dy >= w.count_band_h and w.st_dy + w.st_h <= w.art_h)
+                assert(math.abs(w.st_dx * 2 + w.st_w - w.art_w) <= 1)
+                assert(math.abs((w.st_dy - w.count_band_h) * 2 + w.st_h
+                    - (w.art_h - w.count_band_h)) <= 1)
+                H.eq(w.art_cover.width - 2 * W.CARD_BORDER, iw)
+                H.eq(w.art_cover.height - 2 * W.CARD_BORDER, ih)
+                allocated, scaled = {}, 0
+                local bb = surface(shape.w, 400); w:paintTo(bb, 0, 0)
+                H.eq(bb.blits, 1); H.eq(scaled, 0); H.eq(#allocated, 1)
+                assert(allocated[1].freed)
+                local copy = bb.copies[1]
+                H.eq(copy.sx, W.CARD_BORDER); H.eq(copy.sy, W.CARD_BORDER)
+                H.eq(copy.w, iw); H.eq(copy.h, ih)
+            end
+        end
+    end
+    cover_aspect = 1.5
+end)
+
+H.test("counts stay above the image and two-line names stay centered on the board", function()
+    for _, aspect in ipairs({.5, 1.5, 3}) do
+        cover_aspect = aspect
+        local w, _, shape = visibleBox(members(120), 1, ("Twelvechar Lettersmore "):rep(8))
+        assert(w.name_lines)
+        local bb = surface(shape.w + 40, 420); w:paintTo(bb, 20, 10)
+        local cover = bb.copies[1]; assert(cover)
+        local count_rect = bb.texts[1]
+        H.eq(count_rect.text, w.count.text)
+        assert(count_rect.y + count_rect.h < cover.y)
+        H.eq(count_rect.x + count_rect.w, 20 + shape.w - w.inset)
+        for i = 2, #bb.texts do
+            local name = bb.texts[i]
+            assert(cover.y + cover.h < name.y)
+            assert(math.abs(name.x + name.w / 2 - (20 + shape.w / 2)) <= .5)
+        end
+        H.eq(#bb.texts, 3)
+    end
+    cover_aspect = 1.5
+end)
+
+H.test("missing or invalid aspect uses a finite portrait fallback", function()
+    for _, aspect in ipairs({false, 0, -1, math.huge, 0/0, "invalid"}) do
+        cover_aspect = aspect
+        local w = visibleBox(members(2))
+        local iw, ih = w.st_w - 2, w.st_h - 2
+        assert(math.min(math.abs(ih - iw * 1.5), math.abs(iw - ih / 1.5)) <= .5)
+        local bb = surface(w.width, 400); w:paintTo(bb, 0, 0); H.eq(bb.blits, 1)
+    end
+    cover_aspect = 1.5
+end)
+
+H.test("large read totals shrink to fit a small box without dropping digits", function()
+    local raw = members(120)
+    statuses = {}; for _, b in ipairs(raw) do statuses[b.filepath] = "finished" end
+    local w = visibleBox(raw, .5)
+    local bb = surface(w.width, 400); w:paintTo(bb, 0, 0)
+    H.eq(bb.texts[1].text, count(120, 120))
+    assert(bb.texts[1].w <= w.art_w)
+    assert(bb.texts[1].y + bb.texts[1].h < bb.copies[1].y)
+    statuses = {}
+end)
+
+H.test("high DPI borders are removed exactly without cropping the image", function()
+    for _, factor in ipairs({1.5, 2}) do
+        dpi = factor; W.CARD_BORDER = math.floor(dpi + .5)
+        for _, dark in ipairs({false, true}) do
+            night = dark
+            local w = visibleBox(members(8))
+            local bb = surface(w.width, 400); w:paintTo(bb, 0, 0)
+            H.eq(bb.blits, 1)
+            local copy = bb.copies[1]
+            H.eq(copy.sx, W.CARD_BORDER); H.eq(copy.sy, W.CARD_BORDER)
+            H.eq(copy.w, w.art_cover.width - 2 * W.CARD_BORDER)
+            H.eq(copy.h, w.art_cover.height - 2 * W.CARD_BORDER)
+        end
+    end
+    dpi, W.CARD_BORDER, night = 1, 1, false
+end)
+
+H.test("failed cover painting frees its scratch buffer and retries on redraw", function()
+    local w = visibleBox(members(3)); local bb = surface(w.width, 400)
+    allocated, fail_cover = {}, true
+    w:paintTo(bb, 0, 0); H.eq(bb.blits, 0); H.eq(#allocated, 1)
+    assert(allocated[1].freed)
+    fail_cover = false
+    w:paintTo(bb, 0, 0); H.eq(bb.blits, 1); assert(allocated[2].freed)
+end)
 
 H.test("upstream read count follows live completion and reverting the final volume", function()
     local raw = members(3)

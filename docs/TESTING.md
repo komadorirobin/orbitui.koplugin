@@ -2,6 +2,23 @@
 
 ## Automated
 
+2026-10-17 aspect-preserving slipcase follow-up: eight added host cases cover
+the opt-in boundary, 70%-to-native-max width range, full-image proportions and
+centered fitting across portrait/square/landscape art, small and large series,
+count/name placement, invalid aspect fallback, large read totals at small
+sizes, high-DPI tile-border removal and scratch cleanup/retry. Existing box
+completion/reversal, day/night drawing and scoped navigation cases still run.
+The focused host file passes 23 cases in Lua and LuaJIT; the standalone native
+box suite retains its original defaults. Complete sequential Lua / LuaJIT runs
+pass 541 / 542 OrbitUI cases across 46 files, 394 Bookshelf suites (zero failures,
+two existing SQLite skips), all 13 SimpleUI files and 91 Python checks (four
+existing external artwork-source audit skips). Existing native-font skips and
+absent adjacent Bookends parity checkout remain. All seven slow suites run;
+all 43 translation catalogues, 315 module paths and 840 LuaJIT syntax checks
+pass. No new skip or failure allowance. Clean-commit packaging follows; this
+is an unpublished development change, not replacement alpha.40 release bytes.
+Physical Bigme rendering is not established by these bounded-surface tests.
+
 2026-10-16 alpha.40 publication preparation, explicitly requested after the
 upstream slipcase trial: both full suites rerun sequentially on the versioned
 tree and pass 533 / 534 OrbitUI cases in Lua / LuaJIT across 46 files,

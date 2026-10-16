@@ -324,6 +324,20 @@ former whole-box completed mark/fade or manga-style badge. Stored status and
 badge/fade preferences remain intact. Keep the all-face-out policy for ordinary
 books and opened series, per-chip cover sizing/labels, dock and ornament rules.
 
+The approved 2026-10-17 follow-up preserves the first cover's actual aspect
+ratio (portrait, square or landscape), fitting and centering it inside the
+front board instead of stretching it. Keep the native box/height/spines and
+maximum width; the host raises `SLIPCASE_MIN_SHARE` from 0.5 to 0.7. Leave
+unused image space as the existing cover-coloured board. The count occupies a
+separate band above the image, shrinking to fit rather than losing digits;
+the name stays centered on the whole board, not the narrower sticker. The
+ordinary rounded sticker edge remains, but no count notch masks the image.
+Crop only the cover widget's `CARD_BORDER` and copy its already fitted image
+1:1, with no second anisotropic scale. Free scratch buffers even after paint
+errors so the next redraw can retry. `orbitui_ui` enables the new optional
+`preserve_cover_aspect` seam; standalone Bookshelf keeps its old default.
+This is a small adaptation of the native painter, not a restored second one.
+
 Compact once before page planning and cache signatures; letter jumps use that
 same native preparation. Use native full-group fetching, scoped restoration
 and numeric series order. The adapter reads legacy `orbitui_series_files` into

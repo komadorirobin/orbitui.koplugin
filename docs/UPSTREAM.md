@@ -146,6 +146,16 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
+- October 17, user-approved slipcase correction: preserve cover aspect and
+  center the sticker with visible cover-coloured board around it; minimum width
+  is 70% of the usual cover width, with the native maximum unchanged. The
+  `orbitui_ui` wrapper sets `SLIPCASE_MIN_SHARE` and enables the native painter's
+  optional `preserve_cover_aspect` policy. It reserves a count band above the
+  picture (no image-cutting notch), keeps names centered on the board and
+  removes only `SpineWidget.CARD_BORDER` before a 1:1 copy. Standalone defaults
+  stay unchanged. Preserve this small seam, scratch-buffer cleanup and its
+  host tests during merges; do not reintroduce stretching or the archived
+  renderer. No upstream pin, preference or reading-state migration. See C07.
 - October 16, Bookshelf 5.5 follow-up: master `048ab4ba` is reviewed, including
   release `v5.5.0` and the formerly deferred PR #508 now merged into master.
   SimpleUI remains at `36e7430f`. Initially the merge kept OrbitUI's own boxes;
