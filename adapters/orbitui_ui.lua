@@ -61,6 +61,7 @@ function M.wrap(name, module)
     elseif name == "lib/bookshelf_chip_editor" then
         module.face_out_override = SHELF_FACE_OUT
         module.cover_text_external = true
+        -- OrbitUI still boxes all eligible series; only the design changed.
         module.series_boxes_external = true
     elseif name == "lib/bookshelf_book_repository" then
         require("adapters/orbitui_shelf_sort").repository(module)

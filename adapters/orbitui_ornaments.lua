@@ -25,7 +25,6 @@ function M.wrap(name, module, root)
         end
     elseif name == "lib/bookshelf_spine_shelf" then
         module.positionOrnamentX = require("core/orbitui_ornament_spacing").positionX
-        require("adapters/orbitui_series_boxes").shelf(module)
     else
         local list, attempted = module.listAll, false
         module.listAll = function(...)

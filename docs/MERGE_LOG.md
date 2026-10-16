@@ -1950,6 +1950,43 @@ series-box completion/ornaments. No device acceptance or speedup is claimed.
 Keep installation/settings backups; old keys survive rollback, but new 5.5
 preferences and downloaded author photos are not backported to older code.
 
+## 2026-10-16: User-approved upstream series-box design trial
+
+User request: preserve the existing OrbitUI box design on a branch and use
+AndyHazz's design for testing. Before edits, save clean main `1ae66bd0` as
+local `design/orbitui-series-boxes`. That branch retains the old adapter, two
+core box modules and all 30 original regression cases. No remote branch is
+created or pushed. Main now uses the already reviewed Bookshelf 5.5 renderer;
+component source and upstream pins are unchanged by this trial.
+
+C07 deliberately changes the box appearance: native open-topped slipcase,
+up to eight exposed member spines, first-cover sticker, printed name/read-total
+and individual spine status marks. The old perspective shape, separate badge
+and whole-box finished mark/fade are not applied. Lone volumes remain books.
+No reading state or display preference is erased. All ordinary books still
+face out; per-chip sizing/text, ornaments and dock are unchanged.
+
+The smaller adapter retains all-series enablement in prose/comics and ordinary
+physical shelves, suppresses redundant section labels inside series, and makes
+letter jumps use native preparation. Profile IDs cannot inherit an unrelated
+native single-series tab. Native fetching/counting/planning/restoration replace
+the old parallel paths. Read legacy `orbitui_series_files` on a copy; save both
+it and `series_box_files` for identifier-only scoped rollback. Native rendering
+is not monkey-patched. Package validation requires the native modules instead
+of the retired core modules. Fifteen replacement host tests cover these seams,
+live completion/reversal and bounded day/night drawing; native box/status
+suites cover the upstream implementation. The retired tests stay with their
+renderer, rather than being skipped or weakened on main.
+
+Full validation and clean-candidate package results follow after both sequential
+test gates. Device acceptance remains pending: compare two/large-volume boxes,
+change the last volume's read status, restart inside a scoped series, letter
+jump/back/page, cover sizing, colour/night mode and ornament/dock clearance.
+Keep installation/settings backups. To restore the old design after later
+work lands, revert this trial's changes rather than rolling back unrelated
+upstream merges to the snapshot branch. No version bump, release or OTA change
+is requested or performed.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

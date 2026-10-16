@@ -158,47 +158,38 @@ is introduced. The policy uses batched light records and native sort keys.
 
 ## Compact series boxes (0.1.0-alpha.26)
 
-In the physical shelf/spines view, identified series now occupy one cover-facing
-slipcase each. The front uses the first available volume in numeric reading order;
-the slim dark title band shows the series name, with a separate top-right read/total
-badge (for example, `12/16`) matching the manga stacks. There is no separate
-"N volumes" line. Finished status, not percentage or merely opening a book,
-determines the numerator; the denominator is the box's actual scoped membership.
-The badge shares cover-badge size, colours and night-mode handling. Status reads
-use the native cache when a visible box is built, never during painting.
-When all members are finished, a box also gets the ordinary completed-book
-mark and fade, following the existing badge-style and finished-book fade
-settings. The mark sits above the series-name label; the count, name and mark
-stay crisp. Empty or partly finished boxes are not marked complete. Changing
-any member back to unfinished removes the treatment on the next shelf rebuild.
-The open side adds 20% of cover width for one volume, then 5 percentage points
-per additional volume, capped at 45% (six or more volumes). Up to six separate
-bindings sit inside a shaded opening with thin top, bottom and outer rims.
-Their colours come from the native cached cover samples, not invented spine
-artwork. Tiny faces show fewer bindings rather than unreadably narrow stripes.
-There is no count cap: a 120-volume series still displays 120. Only the front
-cover is retained for rendering; sampling is bounded to five additional
-members on visible boxes and never performed during paint. The revised width
-is shared with pagination; box height and plank/dock clearance are unchanged.
-The case itself now retains the first cover's colour, with lighter rims and
-a darker opening/title strip, rather than flattening to an almost-black grey.
-Its contact shadow follows the sloping bottom edge instead of a rectangular
-slot footprint. These are procedural fills over the real shelf, not a pasted
-background image. Fully read boxes also provide an explicitly sized blank
-card to KOReader's completed-mark compositor, avoiding a nil-size crash.
+The 2026-10-16 user-approved trial uses Bookshelf 5.5's native open-topped
+slipcase in place of OrbitUI's former perspective box. The previous design
+and regression tests are preserved on local branch `design/orbitui-series-boxes`
+at `1ae66bd0`, not included as a second runtime renderer.
+
+Series occupy one physical shelf slot, except a series with just one local
+volume, which remains an ordinary book. Up to eight member spines show above
+the front board, with their native status marks. The first cover fills a
+rounded sticker on the front; the read/total count is printed in its notch,
+with the series name below. The native geometry sizes the box from its members
+and name, capped at a face-out cover's width. The count is never capped.
+It reads canonical finished status for the visible box's scoped membership,
+not a stale aggregate or percentage. The trial intentionally omits our old
+whole-box checkmark/fade and separate manga-style badge. Preferences and book
+status remain stored unchanged for rollback.
 
 Tap opens the series and shows its individual volumes. Long-press retains the
 native series menu. The box is a display-only record: source membership, status,
 metadata and saved sorting settings are not rewritten. Filtered boxes contain
 only eligible members; restoring one after restart cannot widen it to another
-section/profile. Arbitrary folders without series metadata are not guessed to
+section/profile. The adapter accepts both old and native scope keys and writes
+both identifier-only spellings on new saves for rollback. Arbitrary folders
+without series metadata are not guessed to
 be series. Grid/list views and remote catalogues remain unchanged.
 
 Grouping precedes page planning, so boxes count as single displayed items in
 the shelf pager and letter navigation. Author groups preserve their complete
-native membership separately from the compacted display list. The new policy
-is in `core/orbitui_series_boxes.lua` and `adapters/orbitui_series_boxes.lua`,
-with bounded procedural drawing in `core/orbitui_series_box_widget.lua`.
+native membership separately from the compacted display list. Native code in
+`components/bookshelf/lib/bookshelf_series_boxes.lua` and
+`bookshelf_series_box_widget.lua` owns preparation and rendering; the thin
+`adapters/orbitui_series_boxes.lua` keeps the host's all-series policy, profile
+isolation, letter navigation and rollback-compatible restoration.
 
 ## Component seams to preserve during merges
 
@@ -207,12 +198,13 @@ with bounded procedural drawing in `core/orbitui_series_box_widget.lua`.
   registered-action close callback; honor action enabled state.
   Preserve the dock-free shelf viewport and visible footer reservation in both
   the shared geometry and the rebuild; the full widget height includes the dock.
-  Preserve `prepareSpineItems` before pagination/cache signatures and
-  `spineItemCount` for compact series display counts.
+  Native `_prepareSpineItems` runs once before pagination/cache signatures;
+  the old optional `prepareSpineItems` / `spineItemCount` seams are no longer
+  installed by the host's box adapter.
   Preserve `_bookLabelMode` in all grid label-budget/cache decisions and
   `spineCoverLabel` forwarding through row options to face-out covers.
-- Bookshelf SpineShelf: optional `isSeriesBox`, `seriesBoxGeometry` and
-  `seriesBoxWidget` seams share one measured width between planning and drawing.
+- Bookshelf SpineShelf: native box geometry, widget and shadow paths share one
+  measured width. The old optional external renderer seams remain uninstalled.
   Box entries must not receive the expanded-series badge beneath the shelf.
 - Bookshelf Chip Editor: optional `face_out_override` reports the host's fixed
   orientation and disables only the face-out picker, without rewriting drafts.

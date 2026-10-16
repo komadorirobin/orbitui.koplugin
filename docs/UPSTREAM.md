@@ -148,13 +148,18 @@ not make semantic conflicts disappear.
 
 - October 16, Bookshelf 5.5 follow-up: master `048ab4ba` is reviewed, including
   release `v5.5.0` and the formerly deferred PR #508 now merged into master.
-  SimpleUI remains at `36e7430f`. The native series-box implementation is
-  imported but OrbitUI's adapter still owns embedded grouping and rendering:
-  `_seriesBoxesEnabled` is disabled by the adapter, and the chip editor's
-  `series_boxes_external` seam hides the redundant native toggle. Saved native
-  choices remain intact. The native standalone implementation remains usable.
-  Preserve cover-tinted bindings, read/total badges, completion/fade, scoped
-  membership, all-face-out books, per-chip labels and ornament placement.
+  SimpleUI remains at `36e7430f`. Initially the merge kept OrbitUI's own boxes;
+  the user's subsequent explicit trial request switches main to the native
+  5.5 slipcase, with the old design/tests retained on local branch
+  `design/orbitui-series-boxes` at `1ae66bd0`. Preserve native rendering rather
+  than reinstating the archived painter during a future merge. OrbitUI's thin
+  adapter keeps boxes enabled in both profiles, consistent letter jumps,
+  hidden redundant series labels and old/new identifier-only restore keys.
+  The native switch stays hidden because all eligible series are still boxed;
+  no saved setting is rewritten. The trial uses upstream's printed read/total
+  and individual spine status marks, not the old whole-box mark/fade. See C07.
+  Preserve scoped membership, all-face-out ordinary books, per-chip labels and
+  ornament placement.
 - Import author-photo discovery (explicit online action only), page/percentage
   badges and printed-count preference, Added or opened sorting, Recently read
   micro-module, token/placeholder APIs and scan-memory/crash guards. Author

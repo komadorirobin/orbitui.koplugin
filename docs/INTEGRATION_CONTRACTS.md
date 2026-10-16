@@ -300,13 +300,44 @@ gaps replace the old dark footer rule, including full-screen modules. Tests:
 to framebuffer bounds before raw pixel writes; temporary buffers are freed
 even after a failed pose (`_test_faceout_pose.lua`).
 
-Bookshelf 5.5 imports native series boxes (including the previously deferred
-PR #508), but does not replace OrbitUI's approved implementation. The adapter
-disables native `_seriesBoxesEnabled` before whole-list preparation; the editor
-hides its native toggle via `series_boxes_external`, without erasing saved
-choices. Geometry, widgets and shadows must dispatch to the matching box owner,
-never feed a native shape into OrbitUI's painter or group a list twice.
-Standalone component tests continue exercising the upstream implementation.
+### Active series-box design: upstream 5.5 trial
+
+The user's subsequent 2026-10-16 request explicitly replaces OrbitUI's box
+design with Bookshelf 5.5's native slipcase for testing. The previous design
+and its tests are preserved on local branch `design/orbitui-series-boxes` at
+`1ae66bd0`; the old two core modules are no longer shipped on main. This is an
+approved C07 presentation change, not an upstream pin change or publication.
+
+Native `bookshelf_series_boxes` and `bookshelf_series_box_widget` now own the
+grouping, geometry, shadows and painter. OrbitUI keeps boxes enabled on all
+eligible physical shelves, including both fixed profiles, without writing
+settings or exposing a redundant native on/off switch. Grid/list, remote feeds,
+search, opened series and native single-series chips remain unboxed. A lone
+volume is an ordinary book as upstream intends. Fixed profile IDs must not
+inherit an unrelated native tab's source or box preference.
+
+The open-topped box shows up to eight native member spines above a first-cover
+sticker, with its name and full read/total count printed on the front. Its
+width follows the native member-width/name-fit cap. Completion marks belong
+to the individual exposed spines: this trial intentionally does not apply our
+former whole-box completed mark/fade or manga-style badge. Stored status and
+badge/fade preferences remain intact. Keep the all-face-out policy for ordinary
+books and opened series, per-chip cover sizing/labels, dock and ornament rules.
+
+Compact once before page planning and cache signatures; letter jumps use that
+same native preparation. Use native full-group fetching, scoped restoration
+and numeric series order. The adapter reads legacy `orbitui_series_files` into
+the native `series_box_files` field on a copy, and writes both identifier-only
+keys on new saves for rollback. Never widen a restored box to another filter
+or profile or erase its old saved navigation. Redundant section badges remain
+hidden inside series. Tests: `tests/test_upstream_series_boxes.lua`, native
+`_test_series_boxes` / `_test_series_boxes_navigation` and existing status suites.
+
+### Archived series-box design
+
+The following specifies the old design retained on `design/orbitui-series-boxes`,
+not the active upstream trial. Restore it deliberately, not during an upstream
+merge; keep its original tests with it.
 
 Series in the physical bookshelf are now one front-facing slipcase per series,
 per the user's concept-B approval. Group the full filtered light list before
@@ -390,6 +421,8 @@ badges and the deferred overlay cannot retain stale labels. Without the hook,
 standalone Bookshelf retains its original badges.
 Sources: `core/orbitui_series_boxes.lua`, `core/orbitui_series_box_widget.lua`,
 `adapters/orbitui_series_boxes.lua`. Tests: `tests/test_series_boxes.lua`.
+
+### Other presentation contracts
 
 Per the user's 2026-10-04 approval, alphabetical bookcase ordering interleaves
 series/folder blocks with standalone books. Use the series name as the block's
