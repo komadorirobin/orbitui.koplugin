@@ -2,6 +2,23 @@
 
 ## Automated
 
+2026-10-16 alpha.40 publication preparation, explicitly requested after the
+upstream slipcase trial: both full suites rerun sequentially on the versioned
+tree and pass 533 / 534 OrbitUI cases in Lua / LuaJIT across 46 files,
+394 Bookshelf suites (zero failures, two existing SQLite suite skips), all 13
+SimpleUI files and 91 Python checks (four existing external artwork-source
+skips). Existing native-font skips and absent adjacent Bookends parity checkout
+remain. All 43 translation catalogues, 315 module paths and 840 LuaJIT syntax
+checks pass. No new skip or failure allowance; all seven slow suites run.
+
+Gate publication on sealed clean-commit packaging, the actual published
+alpha.39 installer's upgrade/rollback and corrupt-download
+checks, both CI jobs, downloaded draft-asset hashes and anonymous live discovery
+and download. Audit outgoing Git objects and runtime bytes for the held Mann
+bitmap. No additional upstream import, bootstrap/API or artwork change is
+included. The trial and broader physical checklists below remain outstanding;
+this is a prerelease, not a claim of Bigme acceptance or improved performance.
+
 2026-10-16 upstream slipcase trial, explicitly requested after the 5.5 merge:
 old design and all 30 associated host tests retained on local branch
 `design/orbitui-series-boxes` at `1ae66bd0`. Main uses the native renderer with

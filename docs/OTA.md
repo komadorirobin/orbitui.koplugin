@@ -279,6 +279,19 @@ to older code on rollback. Keep the prior installation and settings backup,
 including the pre-alpha.33 theme-migration caveat. Artwork and external sync
 ownership are unchanged. Physical-device acceptance remains open.
 
+Alpha.40 includes the reviewed October 16 SimpleUI update, Bookshelf 5.5 and
+the explicitly requested upstream series-slipcase trial. The old OrbitUI box
+design is preserved on a local branch, not offered as an in-app switch. Native
+read-total and member-spine marks replace the separate box badge and whole-box
+finished fade/mark. Existing series scopes remain readable and new scopes keep
+rollback-compatible member IDs. All ordinary books remain face out. Author
+photos, optional Tabbed Grid/Reader Book layouts and new page badges do not
+replace ornaments or change external sync ownership. Alpha.39 can update
+directly via the same preview channel and bootstrap/API 1. Keep installation
+and settings backups: new grouped-order, ledger and module edits are not
+backported on code rollback, nor are new photo/preferences removed. The
+pre-alpha.33 theme-migration caveat and physical-device acceptance gaps remain.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

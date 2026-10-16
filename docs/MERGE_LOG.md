@@ -2005,6 +2005,34 @@ work lands, revert this trial's changes rather than rolling back unrelated
 upstream merges to the snapshot branch. No version bump, release or OTA change
 is requested or performed.
 
+## 2026-10-16: Prepare alpha.40 for explicit publication
+
+User request: "Publicera" after upstream series-box trial `2368cd46` and result
+recording `0a8a410c`. Publish a new prerelease with both reviewed October 16
+merges and the native slipcase trial. Keep the old design on local branch
+`design/orbitui-series-boxes`; do not publish that branch or new upstream
+changes. Pins remain Bookshelf `048ab4ba` and SimpleUI `36e7430f`. The version
+and documentation change, not runtime code, bootstrap/API or artwork.
+
+Fresh origin/release inspection confirms alpha.39 is the latest published
+release and main remains a fast-forward. Initial outgoing-history audit covers
+815 objects / 462 blobs (60,952,291 blob bytes); the held bitmap is absent.
+Repeat the audit for the final release commit and sealed runtime. Release
+gates: full sequential Lua/LuaJIT runs, translations, clean packaging, actual
+published alpha.39 installer upgrade/rollback and corrupt-download rejection,
+both CI jobs, downloaded draft-asset hash verification, then anonymous live
+discovery/download. Device gaps and rollback limitations remain as documented
+above. Explicit publication approval does not establish physical acceptance.
+
+Versioned-tree gates pass sequentially: Lua / LuaJIT 533 / 534 OrbitUI cases
+across 46 files, 394 Bookshelf suites (zero failures, two existing SQLite suite
+skips), all 13 SimpleUI files and 91 Python checks (four existing external
+artwork-source audit skips). Native-font skips and absent Bookends parity
+checkout remain. All seven slow suites run; all 43 catalogues, 315 module paths
+and 840 LuaJIT syntax checks pass. No new skip/failure allowance. The published
+alpha.39 runtime and checksum are downloaded and match their GitHub asset
+digests, ready for upgrade/rollback testing after clean release packaging.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
