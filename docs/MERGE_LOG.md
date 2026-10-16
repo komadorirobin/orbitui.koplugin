@@ -2061,9 +2061,20 @@ suites (zero failures, two existing SQLite skips), all 13 SimpleUI files and
 91 Python checks (four existing external artwork-source audit skips). Existing
 native-font skips and absent Bookends parity checkout remain. All seven slow
 suites run; all 43 translation catalogues, 315 module paths and 840 LuaJIT
-syntax checks pass. No new skip or failure allowance. Clean-commit package
-checks follow; device appearance still needs Bigme testing, especially
+syntax checks pass. No new skip or failure allowance. Device appearance still
+needs Bigme testing, especially
 two-volume and long-series boxes at cover-size extremes in colour/night mode.
+
+Clean candidate `d1b1f74f8ece65064bb8fcece8e152368fe8ec57` is sealed and
+validated: 1726 manifest files / 1779 entries, 54,286,450 ZIP bytes and
+71,067,945 inventoried bytes. SHA-256:
+`40a6391a0f89d69f1dfe119b05c270b627b8f0c2afb0e999848169cd990a67b1`.
+Every inventory size/hash matches. Bootstrap/API, VERSION and sources.json
+match public alpha.40; the old core renderer and held bitmap are absent.
+The preview must not replace the existing public alpha.40 assets. Original
+release bytes and validation logs are retained in ignored
+`test-results/box-aspect-20261017/`. No push, tag, release or OTA update is made.
+The old-design branch still points to `1ae66bd09a1e8b609974a3b1e58d5ab46cba6183`.
 
 ## Template for the next approved merge
 

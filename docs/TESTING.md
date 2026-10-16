@@ -15,8 +15,11 @@ two existing SQLite skips), all 13 SimpleUI files and 91 Python checks (four
 existing external artwork-source audit skips). Existing native-font skips and
 absent adjacent Bookends parity checkout remain. All seven slow suites run;
 all 43 translation catalogues, 315 module paths and 840 LuaJIT syntax checks
-pass. No new skip or failure allowance. Clean-commit packaging follows; this
-is an unpublished development change, not replacement alpha.40 release bytes.
+pass. No new skip or failure allowance. Clean candidate `d1b1f74f` passes sealed
+ZIP validation (1726 manifest files / 1779 entries), every inventory size/hash,
+unchanged bootstrap/API and upstream pins, and exclusion of the held bitmap
+and old core renderer. This is an unpublished development change, not
+replacement alpha.40 release bytes; package details are in `MERGE_LOG.md`.
 Physical Bigme rendering is not established by these bounded-surface tests.
 
 2026-10-16 alpha.40 publication preparation, explicitly requested after the
