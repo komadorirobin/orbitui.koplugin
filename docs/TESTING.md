@@ -2,7 +2,31 @@
 
 ## Automated
 
-2026-10-16 reviewed SimpleUI merge (local, unpublished; VERSION stays
+2026-10-16 reviewed Bookshelf 5.5 merge (local, unpublished; VERSION stays
+alpha.39): complete sequential Lua / LuaJIT gates pass 548 / 549 OrbitUI cases
+across 46 files, 394 Bookshelf suites (zero failures, two existing SQLite suite
+skips), all 13 SimpleUI files and 91 Python checks (four existing artwork-source
+audit skips). Native-font case skips and absent adjacent Bookends parity
+checkout remain. All 43 catalogues, 315 module paths and 842 LuaJIT syntax
+checks pass. The runner enables all seven slow filesystem/theme suites; no new
+skip or failure allowance is introduced.
+
+Bookshelf is pinned to `048ab4ba` (v5.5.0 plus README follow-up); SimpleUI stays
+at `36e7430f`. Native PR #508 is now merged upstream, but OrbitUI retains its
+own series-box renderer, badges, completion/fade and settings without a second
+native preparation pass. Clean candidate `d65badec` passes sealed ZIP validation
+(1727 manifest files / 1780 entries), including every file hash, upstream pins,
+bootstrap/API and held-bitmap exclusion. Package hash and recovery details are
+in `MERGE_LOG.md`. This development ZIP must not replace public alpha.39.
+
+Physical Bigme checks remain: explicit author-photo lookup/bulk Stop and both
+image-library roots; page/percentage badges in colour/night mode; OPDS redirect
+access; scan cancellation/quarantine; nested-chip refresh, captions, dock and
+existing series-box completion/ornaments. Author photos are separate from bust
+ornaments. No device acceptance or measured speedup is claimed. Preserve the
+earlier SimpleUI device checklist below and installation/settings backups.
+
+Earlier 2026-10-16 reviewed SimpleUI merge (local, unpublished; VERSION stays
 alpha.39): complete sequential Lua / LuaJIT runs pass 546 / 547 OrbitUI cases
 across 46 files, 385 Bookshelf suites (zero failures, two existing SQLite suite
 skips), all 13 SimpleUI files and 91 Python checks (four existing artwork-source

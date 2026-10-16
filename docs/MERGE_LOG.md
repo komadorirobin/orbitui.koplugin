@@ -1923,8 +1923,26 @@ and image/quarantine preservation documented in C08. VERSION stays alpha.39;
 bootstrap/API, artwork and original source provenance are unchanged. This is a
 local merge only: no push, version bump, tag, release or OTA change is authorized.
 
-Validation and clean-candidate package results are recorded below after the
-complete sequential Lua/LuaJIT gates. Physical Bigme checks remain: author-photo
+Adaptation candidate `d65badec` passes complete sequential Lua / LuaJIT gates:
+548 / 549 OrbitUI cases across 46 files, 394 Bookshelf suites (zero failures,
+two existing SQLite suite skips), all 13 SimpleUI files and 91 Python checks
+(four existing artwork-source audit skips). Existing native-font case skips
+and absent adjacent Bookends parity checkout remain. All 43 translation
+catalogues, 315 module paths and 842 LuaJIT syntax checks pass. No new skip or
+failure allowance; slow filesystem/theme tests run in both full gates.
+
+Clean-candidate packaging at `d65badec` verifies 1727 manifest files / 1780 ZIP
+entries, every file size/hash, exact upstream pins, bootstrap/API 1 and held
+bitmap exclusion. ZIP SHA-256:
+`19f3d511601e62e704d78a1db53960b12345e6f8aa47c059420092b18c938358`.
+The previous local development archive/checksum is retained under ignored
+`test-results/bookshelf-5.5-20261016/previous-dist/`; validation logs are in the
+parent directory. The new archive still identifies as alpha.39 for local
+development only: it must not replace the published alpha.39 asset. Final
+result recording is documentation-only; local main is fast-forwarded without
+any remote push or publication.
+
+Physical Bigme checks remain: author-photo
 single/bulk lookup, Stop/offline/restart, both image-library locations; page and
 percentage badges in colour/night mode; same-origin/upgrade OPDS access; page
 scan cancellation/quarantine; nested-chip refresh, captions, dock and existing
