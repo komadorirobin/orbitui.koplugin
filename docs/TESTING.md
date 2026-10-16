@@ -2,6 +2,29 @@
 
 ## Automated
 
+2026-10-16 upstream slipcase trial, explicitly requested after the 5.5 merge:
+old design and all 30 associated host tests retained on local branch
+`design/orbitui-series-boxes` at `1ae66bd0`. Main uses the native renderer with
+15 replacement integration tests; the decrease in host cases is deliberate,
+not a new skip or relaxed failure allowance. Component source remains unchanged.
+
+Complete sequential Lua / LuaJIT runs pass 533 / 534 OrbitUI cases across
+46 files, 394 Bookshelf suites (zero failures, two existing SQLite suite skips),
+all 13 SimpleUI files and 91 Python checks (four existing artwork-source audit
+skips). Existing native-font case skips and absent Bookends parity checkout
+remain. All 43 catalogues, 315 module paths and 840 LuaJIT syntax checks pass.
+Clean candidate `2368cd46` passes sealed ZIP checks (1725 manifest files / 1778
+entries), plus every file size/hash and absence of the old core box modules
+and held artwork. Details are in `MERGE_LOG.md`; alpha.39 is not republished.
+
+Physical trial checklist: two-volume/large-series slipcases, read-total after
+marking/reverting the final volume, restart inside an old scoped series,
+letter/page/back navigation, cover-size extremes, colour/night rendering and
+ornament/plank/dock clearance. The new count and exposed member-spine marks
+replace the old separate badge and whole-box completion mark/fade on purpose.
+Ordinary books still face out. No device acceptance or speedup is claimed.
+Keep install/settings backups and the broader upstream device checks below.
+
 2026-10-16 reviewed Bookshelf 5.5 merge (local, unpublished; VERSION stays
 alpha.39): complete sequential Lua / LuaJIT gates pass 548 / 549 OrbitUI cases
 across 46 files, 394 Bookshelf suites (zero failures, two existing SQLite suite

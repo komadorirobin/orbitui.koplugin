@@ -1978,8 +1978,26 @@ live completion/reversal and bounded day/night drawing; native box/status
 suites cover the upstream implementation. The retired tests stay with their
 renderer, rather than being skipped or weakened on main.
 
-Full validation and clean-candidate package results follow after both sequential
-test gates. Device acceptance remains pending: compare two/large-volume boxes,
+Trial implementation `2368cd46` passes complete sequential Lua / LuaJIT runs:
+533 / 534 OrbitUI cases across 46 files, 394 Bookshelf suites (zero failures,
+two existing SQLite suite skips), all 13 SimpleUI files and 91 Python checks
+(four existing artwork-source audit skips). Native-font case skips and absent
+adjacent Bookends parity checkout remain. All 43 catalogues, 315 module paths
+and 840 LuaJIT syntax checks pass. The host case count is 15 lower because 30
+archived renderer cases are replaced by 15 native-integration cases; no new
+skip or failure allowance is added. All native box/status suites still run.
+
+Clean-candidate packaging at `2368cd46` verifies 1725 manifest files / 1778 ZIP
+entries. Additional archive inspection verifies every size/hash, bootstrap
+API 1, native modules present, both retired core modules absent and held-bitmap
+exclusion. SHA-256:
+`781b5621d4931c94d428db4a8cc2b49463bb3313bbabe0bb71792a85a265098e`.
+Validation logs and the previous local ZIP/checksum are retained under ignored
+`test-results/upstream-boxes-20261016/`. VERSION remains alpha.39; this is a
+local development ZIP, not a replacement for the public alpha.39 release.
+Final validation recording is documentation-only.
+
+Device acceptance remains pending: compare two/large-volume boxes,
 change the last volume's read status, restart inside a scoped series, letter
 jump/back/page, cover sizing, colour/night mode and ornament/dock clearance.
 Keep installation/settings backups. To restore the old design after later
