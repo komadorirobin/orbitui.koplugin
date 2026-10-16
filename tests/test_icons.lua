@@ -1,5 +1,6 @@
 package.path = "./?.lua;" .. package.path
 local H = require("tests/helpers")
+H.simpleuiMemory()
 local Icons = require("core/orbitui_icons")
 local VectorIcons = require("core/orbitui_vector_icons")
 local Adapter = require("adapters/orbitui_icons")
@@ -16,6 +17,8 @@ local manager = {
         elseif w.config and w.config.on_closed then w.config.on_closed() end
     end,
     nextTick = function(_, fn) deferred[#deferred + 1] = fn end,
+    scheduleIn = function(_, _, fn) deferred[#deferred + 1] = fn end,
+    unschedule = function() end,
     setDirty = function() dirty = dirty + 1 end,
 }
 local store, writes = {}, 0
@@ -109,6 +112,8 @@ package.loaded["infra/sui_core"] = {
         return Widget:new{ _inner = inner, _fg = fg, dimen = dimen }
     end,
 }
+package.preload["infra/sui_menu_hooks"] = function() return dofile("components/simpleui/infra/sui_menu_hooks.lua") end
+package.preload["infra/sui_icon_registry"] = function() return dofile("components/simpleui/infra/sui_icon_registry.lua") end
 local language = "en"
 G_reader_settings = { readSetting = function(_, key) if key == "language" then return language end end }
 package.loaded["infra/sui_raster_cache"] = dofile("components/simpleui/infra/sui_raster_cache.lua")

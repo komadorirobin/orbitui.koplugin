@@ -1808,6 +1808,63 @@ Physical Bigme acceptance remains open as documented above. Keep installation
 and settings backups: new ledger edits are not mirrored to older code, and
 pre-alpha.33 upgrades retain their theme-storage migration caveat.
 
+## 2026-10-16: Reviewed SimpleUI upstream merge
+
+User request: "Merga upstream". Start from clean published alpha.39 main
+`a6c399a25db93c0e68daad379ae769808f12e1e0` on
+`maintenance/upstream-2026-10-16`. Reviewed exact SimpleUI main
+`84a9c0e96152c81c9879b484840ad4cd22ab1580` ->
+`36e7430f6379693266d1082ae0b9d88de62cb877`: five commits, 91 changed files.
+Unsquashed subtree import `b02528bb`, with individual conflict resolutions in
+26 files. Separate adaptations preserve OrbitUI's contracts. Bookshelf master
+is already current at `aeada050f90921b748dcef0ae2f88367bd0e1b69`; no new import.
+Versions remain upstream 2.7.5 / 5.4.4. PR #508 remains explicitly deferred.
+
+Relevant upstream additions are an optional Tabbed Grid Home/custom-screen
+module, optional Reader Book quick-settings layout, draggable sliders, shared
+book sources/group cells, centralized book statistics, LRU/memory/menu hooks,
+and updated Chinese translations. Import the architecture rather than retaining
+duplicate old implementations, but preserve the existing source/UI defaults.
+
+Semantic decisions: keep hidden Recent filtering/restore, bounded root/revision
+New Books ranking and BookOrbit file-dialog actions/source isolation. Preserve
+per-prefix label sizing, independent Bento gaps, custom icons, Classic menus,
+detailed Currently Reading stats, left-aligned descriptions, metadata retry
+guards, 300-second no-cover expiry and the raster count/byte caps. Copy old
+Currently Reading ordering into unset main/stat orders, keep old settings, and
+place the new stats group at the first old statistic position. Explicit new
+orders win. New Tabbed Grid and Reader Book layouts do not activate themselves.
+The shared menu hooks retain multi-host ownership and later patch wrappers.
+Reset cancels GC work rescheduled by cache clears; scratch-buffer failures
+cannot leave freed buffers or poison the nesting depth. No new sync writer.
+
+C01-C08/C10 remain preserved; Bookshelf/ornaments/series-box behavior (C11) is
+unchanged. C09 still requires separate publication approval. Source provenance
+is unchanged, SimpleUI's integrated pin advances, and the generated map adds
+17 module paths (289 -> 306). Tests follow moved functions/real new cache helpers
+without deleting behavioral assertions. The new 12-case integration file covers
+cache ownership/failure recovery, menu hooks, source filtering/ranking, per-tab
+settings and selection/height/empty states, stats-order migration and defaults.
+Correct Chinese single-plural entries without changing validation exceptions.
+
+Validation: full sequential Lua / LuaJIT suites pass 546 / 547 OrbitUI cases
+across 46 files, 385 Bookshelf suites (zero failures, two existing native SQLite
+suite skips), all 13 SimpleUI files and 91 Python checks (four existing external
+artwork-source skips). Two native-font case skips and the absent adjacent
+Bookends parity checkout remain. All 43 catalogues, 306 module paths and 824
+Lua syntax checks pass. No new skip or known-failure allowance. Read-only
+collection at 19:22 UTC reports zero missing commits on both tracked branches.
+Clean-candidate package results are recorded below after completion.
+Physical Bigme checks remain: optional Tabbed Grid paging/tab switches, empty
+and group sources in Bento/custom screens; existing hidden Recent/BookOrbit
+sources; optional Reader Book panel, sliders and stats; colour/night-mode text,
+custom icons and patch toggles; Home/Library/Manga navigation and memory across
+repeated reader returns. No device acceptance or measured speedup is claimed.
+Keep installation/settings backups. Old preference keys survive rollback, but
+new grouped-order edits and new module settings are not reflected in old code.
+VERSION, bootstrap/API, adapters and artwork are unchanged. No push, version
+bump, tag, release or OTA publication is part of this merge.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

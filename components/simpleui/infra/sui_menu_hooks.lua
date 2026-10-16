@@ -67,37 +67,64 @@ end
 
 local function hook(target)
     local Menu = loadMenuClass(target)
-    if not Menu or rawget(Menu, ORIG_FIELD) then return end
+    if not Menu then return end
+    local installed = rawget(Menu, ORIG_FIELD)
+    if installed then
+        installed.runSteps = runSteps
+        return installed
+    end
 
     local orig = {
         setUpdateItemTable = Menu.setUpdateItemTable,
         onShowMenu         = Menu.onShowMenu,
+        active            = true,
+        users             = {},
+        runSteps          = runSteps,
     }
     Menu[ORIG_FIELD] = orig
 
     function Menu:setUpdateItemTable(...)
         local ret = orig.setUpdateItemTable(self, ...)
-        runSteps("prepare", self, target)
+        if orig.active then orig.runSteps("prepare", self, target) end
         return ret
     end
 
     function Menu:onShowMenu(tab_index, do_not_show)
+        if not orig.active then return orig.onShowMenu(self, tab_index, do_not_show) end
         if self.tab_item_table == nil then self:setUpdateItemTable() end
-        runSteps("prepare", self, target)
+        orig.runSteps("prepare", self, target)
         if not do_not_show then
-            tab_index = runSteps("resolve", self, target, tab_index)
+            tab_index = orig.runSteps("resolve", self, target, tab_index)
         end
         return orig.onShowMenu(self, tab_index, do_not_show)
     end
+    orig.update_wrapper, orig.show_wrapper = Menu.setUpdateItemTable, Menu.onShowMenu
+    return orig
 end
 
-local function unhook(target)
+local function unhook(target, owner)
     local Menu = package.loaded[MENU_MODULES[target]]
     local orig = Menu and rawget(Menu, ORIG_FIELD)
     if not orig then return end
-    Menu.setUpdateItemTable = orig.setUpdateItemTable
-    Menu.onShowMenu         = orig.onShowMenu
+    if owner then
+        orig.users[owner] = nil
+        if next(orig.users) then return true end
+    end
+    -- A patch installed later may wrap us. Leave it in place, but turn our
+    -- captured wrapper into a pass-through so re-enabling cannot stack effects.
+    orig.active = false
+    if Menu.setUpdateItemTable == orig.update_wrapper then
+        Menu.setUpdateItemTable = orig.setUpdateItemTable
+    end
+    if Menu.onShowMenu == orig.show_wrapper then Menu.onShowMenu = orig.onShowMenu end
     Menu[ORIG_FIELD]        = nil
+end
+
+function M.acquire(owner)
+    for _, target in pairs(M.TARGET) do
+        local state = hook(target)
+        if state then state.users[owner] = true end
+    end
 end
 
 --- Registers a step (replacing any step with the same id) and makes sure the
@@ -122,9 +149,12 @@ function M.register(step)
 end
 
 --- Restores the original menu methods and drops every registered step.
-function M.uninstall()
-    for _, target in pairs(M.TARGET) do unhook(target) end
-    _steps = {}
+function M.uninstall(owner)
+    local retained = false
+    for _, target in pairs(M.TARGET) do
+        if unhook(target, owner) then retained = true end
+    end
+    if not retained then _steps = {} end
 end
 
 return M

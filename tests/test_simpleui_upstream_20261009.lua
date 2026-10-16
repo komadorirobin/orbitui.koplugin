@@ -1,5 +1,6 @@
 package.path = "./?.lua;" .. package.path
 local H = require("tests/helpers")
+H.simpleuiMemory()
 local function read(path)
     local f = assert(io.open("components/simpleui/" .. path))
     local src = f:read("*a"); f:close(); return src
@@ -157,6 +158,7 @@ local filter = {
     eachFacetValue = function(r, key, add) add(r[key], r[key]) end,
 }
 local Metadata = run(read("features/library/sui_metadata_source.lua"), { require = function(name)
+    if name == "infra/sui_lru" or name == "infra/sui_memory" then return require(name) end
     if name == "features/library/sui_bim_stamp" then return { get = function() return stamp end } end
     if name == "features/library/sui_filter_state" then return filter end
     if name == "ffi/util" then return { strcoll = function(a, b) return a < b end } end

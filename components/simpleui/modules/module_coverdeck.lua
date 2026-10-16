@@ -918,7 +918,9 @@ M.enabled_key = "coverdeck_enabled"
 M.default_on  = false
 M.has_covers  = true   -- activates e-ink dithering and cover poll
 M.is_book_mod = true   -- suppresses empty-state when active
-M.needs       = require("engines/sui_book_sources").get("recent").needs
+M.needs = { recent = function(pfx)
+    return (SUISettings:readSetting(pfx .. "coverdeck_source") or "recent") == "recent" and 15 or 0
+end }
 
 -- Text elements with a user-selectable font family and size.
 M.text_elems  = { "title", "author", "info" }

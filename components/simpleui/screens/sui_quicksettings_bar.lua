@@ -34,7 +34,7 @@
 --   "simpleui_qs_bar_enabled" → bool (default true)
 --   "simpleui_qs_bar_open_reader" / "simpleui_qs_bar_open_fm"
 --                            → bool (default true): open that menu on the panel
---   "simpleui_qs_bar_reader_layout" → "classic" | "book" (default "book")
+--   "simpleui_qs_bar_reader_layout" → "classic" | "book" (default "classic")
 --   "simpleui_qs_bar_slider_style"  → "classic" | "minimal" (default "minimal"): look
 --                            of the frontlight and warmth sliders
 --   "simpleui_qs_bar_book_sliders"  → bool (default false): show the sliders in the
@@ -177,7 +177,7 @@ local function showBookSliders()
 end
 
 local function getReaderLayout()
-    return _Config().readChoice(READER_LAYOUT_KEY, LAYOUT_IDS, LAYOUT.BOOK)
+    return _Config().readChoice(READER_LAYOUT_KEY, LAYOUT_IDS, LAYOUT.CLASSIC)
 end
 
 local function isBookItemVisible(id)

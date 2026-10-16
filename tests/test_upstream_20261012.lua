@@ -1,5 +1,6 @@
 package.path = "./?.lua;./components/bookshelf/?.lua;" .. package.path
 local H = require("tests/helpers")
+H.simpleuiMemory()
 local function read(path)
     local f = assert(io.open(path)); local s = f:read("*a"); f:close(); return s
 end

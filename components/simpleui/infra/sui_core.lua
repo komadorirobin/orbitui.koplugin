@@ -687,16 +687,20 @@ local _scratch_depth = 0
 
 -- Returns an exactly w×h view of the scratch buffer of the next nesting level.
 local function _acquireMask(w, h)
-    _scratch_depth = _scratch_depth + 1
-    local bb = _scratch[_scratch_depth]
+    local depth = _scratch_depth + 1
+    local bb = _scratch[depth]
     if not bb or bb:getWidth() < w or bb:getHeight() < h then
         local grown_w = bb and math.max(bb:getWidth(), w) or w
         local grown_h = bb and math.max(bb:getHeight(), h) or h
+        -- Keep the old buffer valid if a larger allocation fails.
+        local grown = Blitbuffer.new(grown_w, grown_h, Blitbuffer.TYPE_BB8)
         if bb then bb:free() end
-        bb = Blitbuffer.new(grown_w, grown_h, Blitbuffer.TYPE_BB8)
-        _scratch[_scratch_depth] = bb
+        bb = grown
+        _scratch[depth] = bb
     end
-    return bb:viewport(0, 0, w, h)
+    local mask = bb:viewport(0, 0, w, h)
+    _scratch_depth = depth
+    return mask
 end
 
 local function _paintMasked(widget, mask, target_bb, x, y, w, h, fgcolor, custom_paint_fn)

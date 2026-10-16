@@ -15,7 +15,9 @@ for _, name in ipairs({
     "ui/widget/textboxwidget", "ui/widget/textwidget", "ui/widget/verticalgroup",
     "ui/widget/verticalspan", "features/sui_style", "ui/widget/imagewidget", "ui/rendertext",
 }) do package.loaded[name] = {} end
-package.loaded.device = { screen = { scaleBySize = function(_, n) return n end } }
+package.loaded.device = { screen = { scaleBySize = function(_, n) return n end,
+    getWidth = function() return 1072 end, getHeight = function() return 1448 end } }
+package.loaded["ui/uimanager"] = { scheduleIn = function() end, unschedule = function() end }
 package.loaded.logger = { warn = function() end }
 package.loaded["ffi/util"] = { template = function(text, ...)
     local args = { ... }

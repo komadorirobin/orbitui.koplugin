@@ -267,7 +267,33 @@ local STATS_STYLE_KEY = "currently_stats_style"  -- pfx .. this; "compact" | "de
 
 -- "compact" joins the statistics into one line; "default" gives each its own.
 local function getStatsStyle(pfx)
-    return SUISettings:readSetting(pfx .. STATS_STYLE_KEY) == "default" and "default" or "compact"
+    return SUISettings:readSetting(pfx .. STATS_STYLE_KEY) == "compact" and "compact" or "default"
+end
+
+-- Copy the legacy order into the new grouped model, without removing the old
+-- preference or overwriting an order the user already set in the new UI.
+local function migrateOrders(pfx)
+    local legacy = SUISettings:readSetting(pfx .. "currently_elem_order")
+    if type(legacy) ~= "table" then return end
+    local main, stats, seen = {}, {}, {}
+    local stat_ids = {}
+    for _, id in ipairs(STAT_IDS) do stat_ids[id] = true end
+    for _, id in ipairs(legacy) do
+        if stat_ids[id] then
+            if not seen[id] then stats[#stats + 1] = id; seen[id] = true end
+            id = "stats"
+        end
+        if not seen["main:" .. tostring(id)] then
+            main[#main + 1] = id
+            seen["main:" .. tostring(id)] = true
+        end
+    end
+    if SUISettings:readSetting(pfx .. MAIN_ORDER_KEY) == nil then
+        SUISettings:saveSetting(pfx .. MAIN_ORDER_KEY, Config.mergeOrder(main, ITEM_IDS))
+    end
+    if SUISettings:readSetting(pfx .. STATS_ORDER_KEY) == nil then
+        SUISettings:saveSetting(pfx .. STATS_ORDER_KEY, Config.mergeOrder(stats, STAT_IDS))
+    end
 end
 
 local function itemLabel(id)
@@ -516,6 +542,7 @@ end
 -- Builds the module widget: cover on the left, text column on the right.
 -- Elements in the text column are rendered in user-configured order.
 function M.build(w, ctx)
+    migrateOrders(ctx.pfx or "")
     if not ctx.current_fp then
         return _emptyPlaceholder(w, M.getHeight(ctx), ctx.has_wallpaper)
     end
@@ -1353,6 +1380,7 @@ end
 
 -- Returns the settings menu items for this module.
 function M.getMenuItems(ctx_menu)
+    migrateOrders(ctx_menu.pfx or "")
     local pfx     = ctx_menu.pfx
     local refresh = ctx_menu.refresh
     local _lc     = ctx_menu._

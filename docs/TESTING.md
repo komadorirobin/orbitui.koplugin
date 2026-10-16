@@ -2,6 +2,31 @@
 
 ## Automated
 
+2026-10-16 reviewed SimpleUI merge (local, unpublished; VERSION stays
+alpha.39): complete sequential Lua / LuaJIT runs pass 546 / 547 OrbitUI cases
+across 46 files, 385 Bookshelf suites (zero failures, two existing SQLite suite
+skips), all 13 SimpleUI files and 91 Python checks (four existing artwork-source
+skips). Two native-font case skips and the absent adjacent Bookends parity
+checkout remain. All 43 catalogues, 306 module paths and 824 Lua syntax checks
+pass; no new skip/failure allowance. The 12 new cases cover central hook
+ownership, LRU/reset/scratch-buffer failure recovery, source filtering/ranking,
+tab selection/empty states/stable height and preserved default/order settings.
+
+SimpleUI is pinned to `36e7430f`; Bookshelf is unchanged at `aeada050`. Both
+tracked branches have zero missing commits at the 19:22 UTC collection.
+PR #508 remains deferred. Clean-candidate package details are in `MERGE_LOG.md`.
+Existing physical shelves, series boxes, artwork, bootstrap/API and adapters
+are unchanged. Tabbed Grid and Reader Book quick settings are opt-in.
+
+Device checks still required: Tabbed Grid with book/group/empty sources and
+paging in Home/Bento/custom screens; hidden Recent and BookOrbit sources;
+Reader Book panel, dragging sliders and reading statistics; colour/night-mode
+text, custom icons and patch enable/disable; repeated reader returns and
+Home/Library/Manga navigation. No Bigme acceptance or speedup is claimed.
+Keep installation/settings backups; old ordering keys remain readable for
+rollback, but new grouped-order/module edits are not mirrored to old code.
+No publication or replacement of the public alpha.39 archive is authorized.
+
 2026-10-14 alpha.39 release preparation: both full suites rerun sequentially
 after the version/documentation change and pass 534 / 535 OrbitUI cases in
 Lua / LuaJIT across 45 files, 385 Bookshelf suites (zero failures, two existing

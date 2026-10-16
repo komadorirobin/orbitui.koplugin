@@ -5308,6 +5308,7 @@ end
 
 
 function M.installAll(plugin)
+    require("infra/sui_menu_hooks").acquire(plugin)
     UIManager._simpleui_exiting = nil
     M.patchPurgeDir(plugin)
     local ok_fm, FileManager = pcall(require, "apps/filemanager/filemanager")
@@ -5570,7 +5571,7 @@ function M.teardownAll(plugin)
     end
     -- Restore the FM and Reader menu methods and drop every registered step.
     local MenuHooks = package.loaded["infra/sui_menu_hooks"]
-    if MenuHooks then MenuHooks.uninstall() end
+    if MenuHooks then MenuHooks.uninstall(plugin) end
 
     local Dispatcher = package.loaded["dispatcher"]
     if Dispatcher and Dispatcher._simpleui_execute_patched then

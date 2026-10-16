@@ -101,6 +101,15 @@ Read-only sidecar probes must not close/write handles. No-cover probes expire.
 Tests: `test_upstream_20261012`, `test_simpleui_upstream_20261009_followup`,
 and native `_test_performance_caches`.
 
+The October 16 shared LRU/memory helpers retain these bounds and retry rules.
+New Books ranking is capped at 15 candidates and keyed by the shared index's
+root/revision; it must not sort the shared records or cache a root switch away.
+Recent demand follows active module sources, not unrelated BookOrbit/TBR grids.
+Reset cancels collections scheduled by reset hooks as well as earlier work.
+Nested alpha-mask scratch buffers are reused and freed on reset; allocation,
+viewport and paint failures must not poison their ownership or nesting depth.
+Tests: `test_upstream_20261016` and the native cache/index suites.
+
 ## C05: Synchronization has explicit owners
 
 The October 14 finished-book ledger is local statistics state, not a new
@@ -148,6 +157,13 @@ Preserve the canonical `lib/bookshelf_*`, `infra/sui_*` and legacy `sui_*`
 module identities and package.preload priority. Do not globally replace require,
 gettext or DataStorage. External plugins may load helpers before OrbitUI init.
 
+The October 16 central menu hooks acquire each host once and release it once.
+They remain installed while another host owns them. Last-owner teardown only
+restores methods still equal to our wrappers; later external wrappers survive
+with our captured inner functions disabled. Reinstall must not stack effects.
+Keep canonical module identity and reset-aware unload when moving hook code.
+Tests: `test_upstream_20261016` (including out-of-order teardown/reinstall).
+
 Do not import a future upstream "disable incompatible plugins/patches" feature
 without reviewing exactly which local integrations it would disable. A clean
 Git merge is insufficient approval to change the user's enabled integrations.
@@ -166,6 +182,17 @@ Transparent book-title/page-indicator backgrounds must not also erase the hero
 panel or chip bar unless those independent controls are explicitly changed.
 Keep hiding accidentally opened books distinct from deleting book files or
 resetting all reading data.
+
+October 16's Tabbed Grid is opt-in, scoped by module instance and screen prefix.
+Unavailable source tabs remain stored, tab changes reset only their own page
+and book-list cache, and the module reserves a stable height across tabs.
+Keep hidden-Recent filtering and its restore action in the shared source.
+Reader Quick Settings stays Classic until Book is explicitly selected, including
+fresh installs. Currently Reading stays detailed/left-aligned by default.
+Copy legacy item order into unset main/stat orders only, retaining the old key;
+statistics are grouped at their first old position in relative order. New
+choices do not overwrite old preferences, nor roll back into them automatically.
+Tests: `test_upstream_20261016` and the prior layout/label/cache suites.
 
 Per the user's 2026-10-04 request, the shelf/spines view faces **all books**
 cover-forward, including existing prose/manga chips and profile overrides.

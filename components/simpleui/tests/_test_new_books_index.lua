@@ -1,5 +1,7 @@
 package.path = "./?.lua;" .. package.path
 package.loaded["modules/module_books_shared"] = {}
+package.loaded["features/library/sui_filter_state"] = {}
+package.loaded["infra/sui_store"] = {}
 local now, reads, tree, mtimes = 1000, 0, {}, {}
 local realTime = os.time
 os.time = function() return now end

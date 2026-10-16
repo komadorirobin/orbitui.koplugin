@@ -158,8 +158,7 @@ end)
 test("LRU eviction drops cache ownership without freeing live buffers", function()
     freed = 0
     CoverCache:clear()
-    CoverCache:setCapacity(2)
-    CoverCache:setByteBudget(1024 * 1024)
+    CoverCache._lru = require("infra/sui_lru").new{ max_entries = 2, max_bytes = 1024 * 1024 }
 
     local first = makeBB(10, 10)
     CoverCache:put("/book/1.epub", first)
@@ -173,8 +172,7 @@ test("LRU eviction drops cache ownership without freeing live buffers", function
     eq(first.freed, nil)
 
     CoverCache:clear()
-    CoverCache:setCapacity(512)
-    CoverCache:setByteBudget(20 * 1024 * 1024)
+    CoverCache._lru = require("infra/sui_lru").new{ max_entries = 512, max_bytes = 20 * 1024 * 1024 }
 end)
 
 test("Bookshelf Android safe mode suppresses SimpleUI BIM forks", function()

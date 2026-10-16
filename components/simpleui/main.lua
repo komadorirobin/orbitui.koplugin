@@ -1633,7 +1633,7 @@ function SimpleUIPlugin:onTeardown()
         end
         FS._sui_onMenuHold_patched = nil
     end
-    for _, button_id in ipairs({ "sui_tbr", "sui_browse_author", "sui_book_stats" }) do
+    for _, button_id in ipairs({ "sui_tbr", "sui_bookorbit_want", "sui_browse_author", "sui_book_stats" }) do
         _removeFileDialogButton(button_id, FM, FS)
     end
     -- Evict all plugin modules from the Lua module cache so that a hot update

@@ -1,5 +1,6 @@
 package.path = "./?.lua;" .. package.path
 local H = require("tests/helpers")
+H.simpleuiMemory()
 local function read(path)
     local f = assert(io.open("components/simpleui/" .. path))
     local src = f:read("*a"); f:close(); return src
@@ -83,7 +84,7 @@ end)
 H.test("BookOrbit source and unsaved native collections survive the new menu helper", function()
     local src = read("modules/module_coverdeck.lua")
     local source = "bookorbit_want"
-    local row = run(section(src, "    local fixed_sources =", "    -- True if any key") ..
+    local row = run(section(src, "    local fixed_sources =", "    -- Items and statistics") ..
         "\nreturn source_item", {
             Config = Config, _lc = identity, refresh = noop, pfx = "custom_",
             SETTING_SOURCE = "source", COLLECTION_PREFIX = "collection:",
@@ -130,7 +131,7 @@ H.test("wallpaper, cover shadow and currently-reading defaults remain opt-in and
     H.eq(style.coverShadowOffset("currently"), 4)
     local currently = read("modules/module_currently.lua")
     local align, stats = run(section(currently, "local DESC_ALIGN_KEY", "-- Setting key for progress bar") ..
-        section(currently, 'local STATS_STYLE_KEY', 'local COVER_GAP_KEY') ..
+        section(currently, 'local STATS_STYLE_KEY', 'local function itemLabel') ..
         "\nreturn resolveDescAlign, getStatsStyle", { Config = Config, SUISettings = store })
     H.eq(align(nil), "left"); H.eq(align("justify"), "justify")
     H.eq(stats("custom_"), "default")

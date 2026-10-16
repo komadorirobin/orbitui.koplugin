@@ -16,6 +16,16 @@ function M.finish()
     print("OrbitUI suite: " .. M.count .. " tests passed")
 end
 
+-- Exercise the real shared caches while keeping native KOReader services stubbed.
+function M.simpleuiMemory()
+    package.preload["infra/sui_lru"] = function() return dofile("components/simpleui/infra/sui_lru.lua") end
+    package.preload["infra/sui_memory"] = function() return dofile("components/simpleui/infra/sui_memory.lua") end
+    package.loaded.logger = package.loaded.logger or { warn = function() end }
+    package.loaded["ui/uimanager"] = package.loaded["ui/uimanager"] or {
+        unschedule = function() end, scheduleIn = function() end,
+    }
+end
+
 function M.root()
     local f = assert(io.popen("pwd"))
     local dir = assert(f:read("*l"))

@@ -20,6 +20,7 @@ package.loaded["ui/bidi"] = {}
 package.loaded["device"] = {
     screen = {
         getWidth = function() return 1000 end,
+        getHeight = function() return 1400 end,
         scaleBySize = function(_self, value) return value end,
     },
 }

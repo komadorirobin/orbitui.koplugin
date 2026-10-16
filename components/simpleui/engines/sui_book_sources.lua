@@ -115,6 +115,7 @@ local GridRenderer = require("engines/sui_book_grid")
 local LibraryScan  = require("engines/sui_library_scan")
 local FilterState  = require("features/library/sui_filter_state")
 local SH           = require("modules/module_books_shared")
+local RecentHidden = require("features/library/sui_recent_hidden")
 
 local Sources = {}
 
@@ -280,11 +281,24 @@ Sources.register{
         return { exclude_current = SH.isCurrentExcluded(pfx) }
     end,
 
-    menu_items = function(ctx_menu) return sourceMenu().excludeCurrentItems(ctx_menu) end,
+    menu_items = function(ctx_menu)
+        local items = sourceMenu().excludeCurrentItems(ctx_menu)
+        if RecentHidden.count() > 0 then
+            items[#items + 1] = {
+                text = ctx_menu._("Show hidden books again"),
+                callback = function()
+                    RecentHidden.clear()
+                    ctx_menu.refresh()
+                end,
+            }
+        end
+        return items
+    end,
 
     getFileList = function(ctx) return ctx.recent_fps or {} end,
 
     filterItem = function(fp, ctx, params)
+        if RecentHidden.isHidden(fp) then return false end
         if params.exclude_current ~= false and ctx.current_fp and fp == ctx.current_fp then
             return false
         end
@@ -299,16 +313,23 @@ Sources.register{
 -- More candidates than any grid shows, to compensate for the finished books
 -- the filter drops.
 local NEW_BOOKS_CANDIDATES = 15
-local NEW_BOOKS_TTL        = 300  -- seconds between refreshes of the ranking
+local _new_books_cache
 
-local _new_books_cache = nil      -- { fps = { fp, ... }, time = os.time() }
-
-local function scanNewestBooks()
-    local books = LibraryScan.getRaw(LibraryScan.resolveHomeDir())
-    table.sort(books, function(a, b)
+-- Rank only the bounded candidate set; never sort the shared library index.
+local function scanNewestBooks(home)
+    local books = {}
+    local function before(a, b)
         if a.mtime ~= b.mtime then return a.mtime > b.mtime end
         return a.fp < b.fp
-    end)
+    end
+    for _, record in ipairs(LibraryScan.getRaw(home)) do
+        if #books < NEW_BOOKS_CANDIDATES or before(record, books[#books]) then
+            local i = 1
+            while books[i] and not before(record, books[i]) do i = i + 1 end
+            table.insert(books, i, record)
+            if #books > NEW_BOOKS_CANDIDATES then table.remove(books) end
+        end
+    end
     local fps = {}
     for i = 1, math.min(NEW_BOOKS_CANDIDATES, #books) do
         fps[i] = books[i].fp
@@ -321,9 +342,12 @@ Sources.register{
     label = function() return _("New Books") end,
 
     getFileList = function()
-        local now = os.time()
-        if not _new_books_cache or now - _new_books_cache.time >= NEW_BOOKS_TTL then
-            _new_books_cache = { fps = scanNewestBooks(), time = now }
+        local home = LibraryScan.resolveHomeDir()
+        if not home then return {} end
+        local revision = LibraryScan.getRevision(home)
+        if not _new_books_cache or _new_books_cache.home ~= home
+                or _new_books_cache.revision ~= revision then
+            _new_books_cache = { fps = scanNewestBooks(home), home = home, revision = revision }
         end
         return _new_books_cache.fps
     end,
@@ -336,7 +360,10 @@ Sources.register{
         if (bd.percent or 0) < 0.01 then return _("New") end
     end,
 
-    invalidate = function() _new_books_cache = nil end,
+    invalidate = function()
+        _new_books_cache = nil
+        LibraryScan.invalidate()
+    end,
 }
 
 -- ---------------------------------------------------------------------------

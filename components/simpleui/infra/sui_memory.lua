@@ -158,6 +158,9 @@ function Memory.reset()
         local ok, err = pcall(fn)
         if not ok then logger.warn("simpleui[memory]: reset hook failed:", err) end
     end
+    -- Cache resets can themselves report releases; no old callback may survive teardown.
+    UIManager:unschedule(_collect)
+    _pending_bytes = 0
 end
 
 return Memory

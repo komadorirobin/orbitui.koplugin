@@ -146,6 +146,30 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
+- October 16: SimpleUI main `36e7430f` is reviewed (still 2.7.5);
+  Bookshelf master is unchanged at `aeada050`. PR #508 remains deferred.
+  The new Tabbed Grid is an optional Home/custom-screen module, not a
+  replacement for Bookshelf's Library/Manga chips. Its tab sources retain
+  hidden Recent books and screen-scoped current/finished choices. New Books
+  ranks at most 15 candidates from the shared index, keyed by root/revision,
+  without sorting or mutating that index. Cover Deck only requests history
+  when using its Recent source; BookOrbit and other sources remain independent.
+- The optional Reader Book quick-settings layout does not replace Classic by
+  default (including first run). Keep detailed Currently Reading statistics
+  and left-aligned descriptions. Copy legacy `currently_elem_order` to the
+  new main/stat orders only if those are unset; retain the old key for rollback.
+  Statistics now form one group at the first legacy statistic position, with
+  their relative order retained. Explicit new orders always win.
+- The new LRU/memory/menu-hook helpers retain bounded metadata/raster caches,
+  retryable incomplete reads, expiring no-cover probes and reset-aware unload.
+  Alpha-mask scratch buffers are reused per nesting level, released on reset,
+  and keep valid ownership/depth after allocation, viewport or paint failures.
+  Cancel reset-hook-scheduled collections too. Central menu hooks acquire an
+  owner per host; last-owner teardown only restores methods still owned by us
+  and leaves later patch wrappers as pass-throughs. Keep BookOrbit file-dialog
+  cleanup. The module map adds 17 paths. Coverage: `test_upstream_20261016`,
+  prior integration suites and all native SimpleUI tests. Fix the new duplicate
+  plural forms in the single-form Chinese catalogues without extra exceptions.
 - October 14: Bookshelf master `aeada050` and SimpleUI main `84a9c0e9`
   are reviewed imports (still versioned 5.4.4 / 2.7.5). PR #508 remains
   excluded: its series boxes are on `feat/series-boxes`, not tracked master.
