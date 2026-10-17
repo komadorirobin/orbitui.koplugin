@@ -23451,18 +23451,13 @@ end
 -- _pickFolderImage; routes through _applyCoverCandidate so refresh/reopen match.
 function BookshelfWidget:_pickBookCoverFromDevice(book, modal, state)
     if not (book and book.filepath) then return end
-    local PathChooser = require("ui/widget/pathchooser")
-    local ImageSource = require("lib/bookshelf_image_source")
+    local ImagePicker = require("lib/bookshelf_image_picker")
     local bw = self
     local start_path = require("lib/bookshelf_home_dir").get()
         or (book.filepath:match("^(.*)/[^/]+$")) or "/"
-    UIManager:show(PathChooser:new{
+    UIManager:show(ImagePicker.new{
         title            = _("Choose cover image"),
         path             = start_path,
-        select_directory = false,
-        select_file      = true,
-        show_files       = true,
-        file_filter      = function(file) return ImageSource.isImageFile(file) end,
         onConfirm        = function(image_path)
             bw:_applyCoverCandidate(book,
                 { kind = "device", local_path = image_path, source_label = _("Device") },
@@ -25576,18 +25571,14 @@ end
 -- file selection is exactly long-press-to-choose).
 function BookshelfWidget:_pickFolderImage(folder_path)
     if type(folder_path) ~= "string" or folder_path == "" then return end
-    local PathChooser = require("ui/widget/pathchooser")
+    local ImagePicker = require("lib/bookshelf_image_picker")
     local ImageSource = require("lib/bookshelf_image_source")
     local bw = self
     local start_path = require("lib/bookshelf_home_dir").get() or folder_path
     local chooser
-    chooser = PathChooser:new{
+    chooser = ImagePicker.new{
         title            = _("Choose folder image"),
         path             = start_path,
-        select_directory = false,
-        select_file      = true,
-        show_files       = true,
-        file_filter      = function(file) return ImageSource.isImageFile(file) end,
         onConfirm        = function(image_path)
             ImageSource.setFolderImage(folder_path, image_path)
             -- Invalidate so the next paint loads from the new path
@@ -25612,7 +25603,7 @@ function BookshelfWidget:_pickStackImage(kind, name)
     if type(kind) ~= "string" or type(name) ~= "string" or name == "" then
         return
     end
-    local PathChooser = require("ui/widget/pathchooser")
+    local ImagePicker = require("lib/bookshelf_image_picker")
     local ImageSource = require("lib/bookshelf_image_source")
     local bw = self
     -- Open the picker rooted at the image library so the user lands
@@ -25620,13 +25611,9 @@ function BookshelfWidget:_pickStackImage(kind, name)
     local start_path = ImageSource.getImageLibraryPath()
         or require("lib/bookshelf_home_dir").get() or "/"
     local chooser
-    chooser = PathChooser:new{
+    chooser = ImagePicker.new{
         title            = _("Choose image"),
         path             = start_path,
-        select_directory = false,
-        select_file      = true,
-        show_files       = true,
-        file_filter      = function(file) return ImageSource.isImageFile(file) end,
         onConfirm        = function(image_path)
             ImageSource.setStackImage(kind, name, image_path)
             ImageSource.invalidateCache()

@@ -171,7 +171,7 @@ end
 function Box:_makeArtCover(w, h)
     if self.art_cover then self.art_cover:free() end
     self.art_cover = require("lib/bookshelf_spine_widget"):new{
-        book = self.entry.book.books[1], width = w + 2 * self.art_crop,
+        book = self.art_book, width = w + 2 * self.art_crop,
         height = h + 2 * self.art_crop, flat_thumb = true,
         show_progress = false, show_status = false, suppress_favorite_badge = true,
         suppress_number_badges = true,
@@ -189,6 +189,9 @@ function Box:_initSlipcase()
         local meta = Repo.buildBookMeta(first.filepath, {want_cover=false})
         for k, v in pairs(meta or {}) do if k ~= "cover_bb" then first[k] = v end end
     end
+    -- Group members may contain only light metadata. The cover widget needs
+    -- this hydrated copy too, not the member whose has_cover is still nil.
+    self.art_book = first
     self.first_look = SpineShelf.bookLook(first)
     local Slot = SpineShelf._SpineBookSlot
     self.slots = {}

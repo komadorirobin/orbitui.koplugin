@@ -2193,6 +2193,42 @@ alpha.41 installer upgrade/rollback and corrupt-download rejection, both CI jobs
 downloaded draft-byte checks and anonymous live discovery/download/install.
 The existing device-acceptance gaps and settings-backup caveats remain.
 
+## 2026-10-17: Fix light-member box covers and bound image-picker work
+
+User report on public alpha.42: Manga series boxes show placeholders, and
+"Set series image" stays unresponsive until KOReader is force-closed.
+This is a local follow-up, not another upstream import. Source pins, VERSION,
+stable bootstrap/API, artwork, profiles and stored image choices are unchanged.
+
+The slipcase hydrated a private copy of its first member for its colour/aspect,
+but gave the original light member to SpineWidget. That record lacks has_cover,
+so the actual cover-selection gate renders the placeholder even when a cover
+exists. Reuse the hydrated, buffer-free copy for the image and subsequent
+fallback resizing. Regression test fails on the original code.
+
+Use a small shared Bookshelf image-picker helper for series/author/group,
+folder and book image actions: validate the initial directory, fall back to
+an existing home/cwd, use filename sorting and plain entries, and avoid
+inherited book-status filtering and eager subfolder counts. Do not create an
+image-library directory or rewrite settings just to open the chooser. SimpleUI
+series grouping now leaves PathChooser choices alone instead of querying them
+as books. The module map includes the new helper. Contracts C02/C04/C07 remain;
+native navigation, long-press confirmation and existing save callbacks remain.
+
+The device hang itself still needs confirmation after updating: no device log
+was available, so eliminated synchronous work is a concrete risk correction,
+not proof of the only cause of the reported lock-up. Test evidence is retained
+under test-results/series-image-fix-20261017/. No publication is requested in
+this turn; do not replace alpha.42's public assets.
+
+Full sequential Lua/LuaJIT gates pass 561/562 root cases in 48 files,
+395 Bookshelf suites, all 13 SimpleUI files and 91 Python checks, with the
+same existing SQLite/native-font/external-artwork/Bookends-checkout skips.
+All 43 translation catalogues, 317 module paths and 845 syntax files pass.
+Real KOReader FileChooser/PathChooser methods with a simulated 500-folder
+filesystem reduce initial directory scans from 501 to 1 and preserve native
+selection/confirmation/close. This is not a physical Bigme timing measurement.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

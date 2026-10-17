@@ -151,6 +151,7 @@ return {
     ["lib/bookshelf_i18n"] = "components/bookshelf/lib/bookshelf_i18n.lua",
     ["lib/bookshelf_icons_catalogue"] = "components/bookshelf/lib/bookshelf_icons_catalogue.lua",
     ["lib/bookshelf_icons_library"] = "components/bookshelf/lib/bookshelf_icons_library.lua",
+    ["lib/bookshelf_image_picker"] = "components/bookshelf/lib/bookshelf_image_picker.lua",
     ["lib/bookshelf_image_source"] = "components/bookshelf/lib/bookshelf_image_source.lua",
     ["lib/bookshelf_inline_style"] = "components/bookshelf/lib/bookshelf_inline_style.lua",
     ["lib/bookshelf_keyed_cache"] = "components/bookshelf/lib/bookshelf_keyed_cache.lua",

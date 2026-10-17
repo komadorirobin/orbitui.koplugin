@@ -2,6 +2,30 @@
 
 ## Automated
 
+2026-10-17 alpha.42 device-report follow-up (not yet published): the series-box
+test now executes SpineWidget's real init/cover-selection gate with light
+members. It reproduces the placeholder regression before the fix and covers
+embedded, external and absent covers, fallback resizing, and borrowed-buffer
+exclusion without mutating group members. Seven image-picker cases cover
+missing/deleted image-library paths, bounded path fallback, image filtering,
+500 folders without descendant-count/metadata queries, all three apply
+callbacks, and isolation from SimpleUI's virtual series grouping.
+The new picker keeps native PathChooser navigation/confirmation but uses
+filename sorting and plain entries rather than book metadata and folder counts.
+Device validation is still required: open/cancel/select a series image in the
+large Manga library, then verify automatic first-book covers after paging and
+restart. No device log was provided; these tests do not establish that the
+observed forced-exit hang was caused solely by the removed synchronous work.
+Full sequential Lua/LuaJIT runs pass 561/562 root cases in 48 files,
+395 Bookshelf suites (zero failures, two existing SQLite skips), all 13
+SimpleUI test files, and 91 Python checks (four existing external-image skips).
+All 43 translation catalogues, 317 module paths and 845 LuaJIT syntax files
+pass; existing native-font and absent Bookends-checkout skips are unchanged.
+An additional smoke test loads KOReader's actual FileChooser/PathChooser code
+against a simulated 500-folder directory: the original picker scans 501
+directories and queries book metadata; the corrected picker scans one and
+does no book-metadata work. Native long-press confirmation and close pass.
+
 2026-10-17 alpha.42 publication preparation: explicitly requested after the
 reviewed Bookshelf 5.5.2 / SimpleUI merge. Re-run full sequential Lua/LuaJIT
 gates and translations on the versioned tree, then seal a clean-commit package.

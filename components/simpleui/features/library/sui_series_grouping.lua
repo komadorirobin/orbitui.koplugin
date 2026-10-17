@@ -145,6 +145,9 @@ end
 local function sgProcessItemTable(item_table, file_chooser)
     if not SeriesGrouping.isEnabled() then return end
     if not file_chooser or not item_table then return end
+    -- PathChooser inherits FileChooser too, but its images/files are choices,
+    -- not library books to query and replace with virtual series folders.
+    if file_chooser.select_file ~= nil or file_chooser.select_directory ~= nil then return end
     if item_table._sg_is_series_view then return end
     if file_chooser.show_current_dir_for_hold then return end
     if VirtualPath.isVirtual(file_chooser.path) then return end

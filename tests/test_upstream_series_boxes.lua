@@ -297,6 +297,37 @@ local function visibleBox(raw, scale, name)
 end
 local function count(done, total) return done .. "\xE2\x80\x8A/\xE2\x80\x8A" .. total end
 
+H.test("light series members use hydrated metadata in the real cover-selection gate", function()
+    local body = assert(source("bookshelf_spine_widget"):match("function SpineWidget:init%(%)\n(.-)\nend"))
+    local Cover = W:extend{}
+    Cover.init = compile("return function(self)\n" .. body .. "\nend", {
+        Geom = W, GestureRange = W, _draft_mode = false,
+    })()
+    function Cover:_renderCover(bb)
+        H.eq(bb, nil, "the box must not borrow a shared cover buffer")
+        return {kind = "cover", filepath = self.book.filepath}
+    end
+    function Cover:_renderFallback() return {kind = "placeholder"} end
+    package.loaded["lib/bookshelf_spine_widget"] = Cover
+    for _, kind in ipairs({"embedded", "external", "absent"}) do
+        local raw = members(3)
+        for _, b in ipairs(raw) do b.has_cover = nil end
+        metas[raw[1].filepath] = {filepath = raw[1].filepath,
+            has_cover = kind == "embedded", cover_bb = "shared-do-not-use",
+            cover_image_path = kind == "external" and "/custom-cover.jpg" or nil}
+        local w, box = visibleBox(raw)
+        H.eq(w.art_cover[1].kind, kind == "absent" and "placeholder" or "cover")
+        H.eq(w.art_cover.book.cover_image_path, metas[raw[1].filepath].cover_image_path)
+        H.eq(w.art_cover.book.cover_bb, nil)
+        H.eq(raw[1].has_cover, nil); H.eq(box.books[1].has_cover, nil)
+        w:_makeArtCover(30, 45) -- A custom-image failure may resize the fallback.
+        H.eq(w.art_cover[1].kind, kind == "absent" and "placeholder" or "cover")
+        H.eq(metas[raw[1].filepath].cover_bb, "shared-do-not-use")
+    end
+    package.loaded["lib/bookshelf_spine_widget"] = W
+    metas = {}
+end)
+
 H.test("aspect fit and wider minimum are host opt-ins, not standalone changes", function()
     H.eq(Boxes.SLIPCASE_MIN_SHARE, .5); H.eq(Painter.preserve_cover_aspect, false)
     local old = visibleBox(members(2))
