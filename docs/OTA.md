@@ -292,6 +292,15 @@ and settings backups: new grouped-order, ledger and module edits are not
 backported on code rollback, nor are new photo/preferences removed. The
 pre-alpha.33 theme-migration caveat and physical-device acceptance gaps remain.
 
+Alpha.41 preserves the first cover's proportions on native series slipcases,
+centers it with visible board around unused space, and moves the read-total
+above the image. The minimum box width is 70% of a normal cover, with the native
+maximum retained. Alpha.40 and earlier alpha installations can update via the
+same preview channel and unchanged bootstrap/API 1. No upstream import, artwork,
+settings migration or reading-data change is included. Code rollback restores
+the prior box appearance; the earlier settings-backup and migration caveats
+still apply. Physical Bigme rendering of this refinement remains unverified.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

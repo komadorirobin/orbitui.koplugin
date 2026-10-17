@@ -2,6 +2,21 @@
 
 ## Automated
 
+2026-10-17 alpha.41 publication preparation, explicitly requested after the
+aspect-preserving slipcase refinement. Complete sequential Lua / LuaJIT runs
+on the versioned tree pass 541 / 542 OrbitUI cases across 46 files, 394 Bookshelf
+suites (zero failures, two existing SQLite suite skips), all 13 SimpleUI files
+and 91 Python checks (four existing external artwork-source skips). Existing
+native-font skips and absent adjacent Bookends parity checkout remain. All seven
+slow suites run; all 43 translation catalogues, 315 module paths and 840 LuaJIT
+syntax checks pass. Clean-commit packaging is the next gate.
+Validate the published alpha.40 installer's upgrade/rollback and corrupt-download
+recovery, outgoing Git/runtime artwork exclusion, both CI jobs, downloaded draft
+hashes and anonymous live discovery/download before completing publication.
+No new skip/failure allowance, upstream import, stable-bootstrap/API or artwork
+change. Existing physical-device gaps and rollback caveats remain; the request
+authorizes a prerelease, not a claim of Bigme visual acceptance.
+
 2026-10-17 aspect-preserving slipcase follow-up: eight added host cases cover
 the opt-in boundary, 70%-to-native-max width range, full-image proportions and
 centered fitting across portrait/square/landscape art, small and large series,

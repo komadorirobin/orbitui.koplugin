@@ -2076,6 +2076,33 @@ release bytes and validation logs are retained in ignored
 `test-results/box-aspect-20261017/`. No push, tag, release or OTA update is made.
 The old-design branch still points to `1ae66bd09a1e8b609974a3b1e58d5ab46cba6183`.
 
+## 2026-10-17: Prepare alpha.41 for explicit publication
+
+User request: "Publicera" after the aspect-preserving slipcase implementation
+`d1b1f74f` and verification record `8c0e95b6`. Origin/main and the latest public
+prerelease remain alpha.40 at `a66719ff`; publish a new version, never replace
+its assets. No additional runtime changes or upstream imports are included.
+Bookshelf remains at `048ab4ba`, SimpleUI at `36e7430f`; artwork and the stable
+bootstrap/API 1 remain unchanged. The old-design branch remains local.
+
+Publication gates: complete sequential Lua/LuaJIT runs on the versioned tree,
+translations, a sealed clean-commit package, actual published alpha.40 installer
+upgrade/rollback and corrupt-download rejection, outgoing-history/runtime held
+artwork audit, both CI jobs, downloaded draft hashes, then anonymous live OTA
+discovery/download. Physical Bigme acceptance and performance are not established
+by these checks. Earlier rollback limitations and install/settings backups apply.
+
+Versioned-tree gates pass sequentially: Lua / LuaJIT 541 / 542 OrbitUI cases
+across 46 files, 394 Bookshelf suites (zero failures, two existing SQLite suite
+skips), all 13 SimpleUI files and 91 Python checks (four existing external
+artwork-source audit skips). Native-font skips and absent Bookends parity
+checkout remain. All seven slow suites run; all 43 translation catalogues,
+315 module paths and 840 LuaJIT syntax checks pass. No new skip/failure allowance.
+The actual published alpha.40 ZIP and checksum have been downloaded and verified
+against their checksums and GitHub asset digests for upgrade/rollback testing.
+The initial outgoing-history audit covers 21 objects / 10 blobs / 527,281 blob
+bytes and excludes the held bitmap; repeat after the release commit.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
