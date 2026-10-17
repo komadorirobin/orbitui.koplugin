@@ -2105,7 +2105,7 @@ bytes and excludes the held bitmap; repeat after the release commit.
 
 ## 2026-10-17: Reviewed Bookshelf 5.5.2 and SimpleUI surface merge
 
-User request: "Merga upstream och sammanfatta andringarna". Start from clean
+User request: "Merga upstream och sammanfatta ändringarna". Start from clean
 published alpha.41 `a33eda9cbbdcc8cdee6ed7758069934d640c84ce` on a dedicated
 `maintenance/upstream-2026-10-17` branch. Review both tracked branches, not
 unmerged feature branches; no publication or version bump is requested.
@@ -2150,11 +2150,32 @@ conflicts keep one plural entry, with no new exceptions. Update test fixtures
 for real `sui_text`/KOReader `util.trim` and the new resolved-surface API;
 do not stub away the native bottom-bar separator API. No assets are replaced.
 
-Validation results and clean-candidate package audit are recorded below after
-completion. Physical Bigme checks in TESTING.md remain outstanding. The old
-renderer archive branch remains unchanged. Keep alpha.41 public ZIP bytes in
-`test-results/upstream-20261017/public-alpha.41.zip`; a local package is not a
-replacement release. No push, tag, release or OTA update is authorized.
+Adaptation candidate `157ecc2102bf9dec2f245367e0186ddd262e7f8e` passes complete
+sequential Lua / LuaJIT gates: 553 / 554 OrbitUI cases across 47 files, 395
+Bookshelf suites (zero failures, two existing SQLite suite skips), all 13
+SimpleUI files and 91 Python checks (four existing artwork-source audit skips).
+Existing native-font skips and absent adjacent Bookends parity checkout remain.
+All seven slow suites run; all 43 translation catalogues, 316 module paths and
+843 LuaJIT syntax checks pass. No new skip or failure allowance. The final Lua
+rerun also includes the last preset-field compatibility change.
+
+The same clean candidate passes sealed package validation: 1728 inventoried
+files / 1781 ZIP entries, 54,302,981 ZIP bytes and 71,119,849 inventoried bytes.
+Every file size/hash, exact source pins and imported ancestry are verified.
+Bootstrap/API 1 and VERSION are byte-identical to public alpha.41. The old core
+box renderer and held Mann bitmap are absent. SHA-256:
+`968e211ca946174a109d8fb349b2c5976cc42fe24cfeca85037291d7a675ae42`.
+Use the native-size image loader before fitting custom art: the ordinary loader
+stretches to the requested rectangle, so a later fit cannot recover its shape.
+Regression tests distinguish both APIs. Presets also retain the new cover-strip
+tone/frame choices alongside the old opacity and titlebar-button fields.
+
+Physical Bigme checks in TESTING.md remain outstanding. The old renderer archive
+branch remains at `1ae66bd09a1e8b609974a3b1e58d5ab46cba6183`. Logs/audits and
+the unchanged alpha.41 public ZIP are retained in `test-results/upstream-20261017/`.
+This local preview must not replace the public release assets. Final verification
+recording is documentation-only; fast-forward local main after recording it.
+No push, tag, release, version bump or OTA update is performed.
 
 ## Template for the next approved merge
 

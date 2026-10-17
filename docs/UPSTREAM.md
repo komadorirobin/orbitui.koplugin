@@ -149,7 +149,8 @@ not make semantic conflicts disappear.
 - October 17 reviewed merge: Bookshelf master `c7a9db2c` (5.5.2) and
   SimpleUI main `7eb80f9e` (still 2.7.5). Import separately, then adapt.
   A custom series image now supplies slipcase art; apply the same aspect-true
-  fit and count band as for the first cover. Use actual decoded dimensions,
+  fit and count band as for the first cover. Use `loadImageNative` and actual
+  decoded dimensions (the ordinary loader stretches to its target rectangle),
   retry/fall back to the first cover after missing or unreadable art, free
   scaled scratch on errors, and never free the cache-owned source image.
   Random Book gains optional direct opening (preview remains the default).

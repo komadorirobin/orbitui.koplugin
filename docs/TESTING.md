@@ -9,8 +9,15 @@ Home/custom-screen restoration versus Library/Manga navigation. Three added
 box cases cover custom-art aspect, stale tags, lookup/probe/decode failure
 fallback, retry and scaled-buffer cleanup. The full box file now has 26 cases.
 Native SimpleUI fixtures supply `util.trim` for the new shared text helper;
-no tests or failure allowances are removed. Full-run/package results are
-recorded in the matching `MERGE_LOG.md` entry.
+no tests or failure allowances are removed. Clean adaptation `157ecc21` passes
+complete sequential Lua / LuaJIT gates: 553 / 554 OrbitUI cases in 47 files,
+395 Bookshelf suites (zero failures, two existing SQLite skips), all 13 SimpleUI
+files and 91 Python checks (four existing source-image skips). Existing native
+font skips and absent Bookends parity checkout remain. All seven slow suites,
+43 translation catalogues, 316 module paths and 843 LuaJIT syntax checks pass.
+Sealed clean-commit packaging verifies all 1728 manifest files / 1781 entries,
+every size/hash, exact pins/ancestry, unchanged bootstrap/API and held-artwork
+exclusion. Package hash and details are in the matching MERGE_LOG.md entry.
 
 Device checks still required: custom portrait/landscape series images and
 missing-image fallback at cover-size extremes; last-volume completion/reversal;
