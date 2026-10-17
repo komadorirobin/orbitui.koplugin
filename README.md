@@ -37,6 +37,14 @@ and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
 
+Local, unpublished follow-up: slipcase artwork uses more of the height while
+keeping its proportions; the read-total moves into the compact exposed head.
+Long-press a shelf chip > **Book binding** to choose Hardcover, Paperback or
+Manga / tankobon. Long-press a series box > **Book binding** for an override
+that follows that series across shelves, or choose **Follow shelf** to clear it.
+Untouched shelves retain Hardcover. Choices affect physical books and box
+member spines, not book metadata, cover-grid/list views or reading progress.
+
 The alpha.5 preview adapts upstream's footer refresh regions to the OrbitUI dock
 and retains whole-group navigation through shared book panels/search. The
 transparent-pagination divider fix also covers folder/list views and full-screen

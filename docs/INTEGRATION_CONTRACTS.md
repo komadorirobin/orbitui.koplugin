@@ -325,19 +325,23 @@ volume is an ordinary book as upstream intends. Fixed profile IDs must not
 inherit an unrelated native tab's source or box preference.
 
 The open-topped box shows up to eight native member spines above a first-cover
-sticker, with its name and full read/total count printed on the front. Its
-width follows the native member-width/name-fit cap. Completion marks belong
-to the individual exposed spines: this trial intentionally does not apply our
+sticker, with its name and full read/total count. Its width follows the native
+member-width/name-fit cap. This trial intentionally does not apply our
 former whole-box completed mark/fade or manga-style badge. Stored status and
 badge/fade preferences remain intact. Keep the all-face-out policy for ordinary
 books and opened series, per-chip cover sizing/labels, dock and ornament rules.
 
 The approved 2026-10-17 follow-up preserves the first cover's actual aspect
 ratio (portrait, square or landscape), fitting and centering it inside the
-front board instead of stretching it. Keep the native box/height/spines and
-maximum width; the host raises `SLIPCASE_MIN_SHARE` from 0.5 to 0.7. Leave
-unused image space as the existing cover-coloured board. The count occupies a
-separate band above the image, shrinking to fit rather than losing digits;
+front board instead of stretching it. Keep the native box height and maximum
+width. The later approved height/binding refinement raises the host minimum
+from 70% to 85% of a cover width, still within the native maximum and available
+shelf space. `SLIPCASE_COMPACT_HEADS` reduces the exposed member heads and
+places the aggregate count there instead of reserving a band inside the front
+board. Hide member glyphs in that compact head, avoiding half-visible or
+count-obscured status marks; the full read/total still reflects all members.
+Leave unused image space as the existing cover-coloured board. The count
+shrinks to fit rather than losing digits;
 the name stays centered on the whole board, not the narrower sticker. The
 ordinary rounded sticker edge remains, but no count notch masks the image.
 Crop only the cover widget's `CARD_BORDER` and copy its already fitted image
@@ -345,6 +349,21 @@ Crop only the cover widget's `CARD_BORDER` and copy its already fitted image
 errors so the next redraw can retry. `orbitui_ui` enables the new optional
 `preserve_cover_aspect` seam; standalone Bookshelf keeps its old default.
 This is a small adaptation of the native painter, not a restored second one.
+
+Physical book binding is opt-in per shelf: Hardcover (unchanged default),
+Paperback (thin, flush soft covers), or Manga/tankobon (thin pale jacket with
+dark text). The latter is a visual style, not a claim to know printed spine
+art or physical trim dimensions. Per-series overrides, keyed by the same series
+identity as the native menu, win on every shelf and in opened/pinned series;
+Follow shelf removes only that override. Profile-qualified shelf IDs must not
+collide with native or other profile chips. Store choices separately under
+`orbitui_book_bindings`, preserving all existing settings and book metadata.
+Pass the same choices through page planning and rendering; key both the plan
+and spine bitmap cache by them. Face-out top blocks and opening poses must
+retain the binding. Apply all matching runtime adapters so ornament spacing
+and binding skins coexist. The standalone component remains hardcover unless
+the host installs the optional binding hooks. Covered by `test_book_bindings`
+and the real-loader composition case in `test_runtime`.
 
 Bookshelf 5.5.2 may use an explicit series image instead of the first cover.
 Apply the same aspect-preserving fit to either source, using decoded image

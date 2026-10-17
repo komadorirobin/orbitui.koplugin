@@ -814,7 +814,10 @@ end
 
 -- ── Paint helpers ───────────────────────────────────────────────────────────
 
-local function _textColor(night)
+local function _textColor(night, look)
+    if look and look.binding_skin and look.binding_skin.lighten > 0 then
+        return night and Blitbuffer.COLOR_WHITE or Blitbuffer.COLOR_BLACK
+    end
     -- Painted pre-inverted in night mode so it always DISPLAYS white.
     return night and Blitbuffer.COLOR_BLACK or Blitbuffer.COLOR_WHITE
 end
@@ -948,7 +951,17 @@ local function _paintBorderRGB32(bb, x, y, w, h, bw, c)
     end
 end
 
+local function _bindingTint(look, f, night, skin)
+    local function channel(v)
+        v = math.min(255, (v + (255 - v) * skin.lighten) * f)
+        return math.floor((night and (255 - v) or v) + 0.5)
+    end
+    return Blitbuffer.ColorRGB32(channel(look.r), channel(look.g), channel(look.b), 255)
+end
+
 local function _tintColor(look, f, night)
+    local skin = look.binding_skin
+    if skin then return _bindingTint(look, 1 - skin.shade + skin.shade * f, night, skin) end
     local r = math.floor(math.min(255, look.r * f) + 0.5)
     local g = math.floor(math.min(255, look.g * f) + 0.5)
     local b = math.floor(math.min(255, look.b * f) + 0.5)
@@ -1486,7 +1499,7 @@ local function _paintVerticalCJK(bb, x, y, run_len, band_w, text, face_size, loo
 
     local face_name = BFont.getUIFontFace() or "cfont"
     local base_face = BFont:getFace(face_name, sol.size)
-    local fg   = _textColor(night)
+    local fg   = _textColor(night, look)
     local n    = math.min(sol.n, #runs)
     local total = (n + (sol.cut and 1 or 0)) * sol.cell
     local cy    = y + math.max(0, math.floor((run_len - total) / 2))
@@ -1598,7 +1611,7 @@ local function _paintRotatedTitle(bb, x, y, run_len, band_w, text, face_size, lo
             tw = TextWidget:new{
                 text      = text,
                 face      = BFont:getFace(face_name, size),
-                fgcolor   = _textColor(night),
+                fgcolor   = _textColor(night, look),
                 max_width = run_len,
                 padding   = 0,
             }
@@ -1639,7 +1652,7 @@ local function _paintRotatedTitle(bb, x, y, run_len, band_w, text, face_size, lo
                     lines[i] = TextWidget:new{
                         text      = str,
                         face      = BFont:getFace(face_name, size),
-                        fgcolor   = _textColor(night),
+                        fgcolor   = _textColor(night, look),
                         max_width = run_len,
                         padding   = 0,
                     }
@@ -1663,7 +1676,7 @@ local function _paintRotatedTitle(bb, x, y, run_len, band_w, text, face_size, lo
                 atw = TextWidget:new{
                     text      = author,
                     face      = BFont:getFace(face_name, asize),
-                    fgcolor   = _textColor(night),
+                    fgcolor   = _textColor(night, look),
                     max_width = avail,
                     padding   = 0,
                 }
@@ -1726,13 +1739,13 @@ local function _paintRotatedTitle(bb, x, y, run_len, band_w, text, face_size, lo
 end
 
 -- Level (unrotated) single line centred in the given box; returns height used.
-local function _paintLevelText(bb, x, y, box_w, text, face, night)
+local function _paintLevelText(bb, x, y, box_w, text, face, night, look)
     local used = 0
     pcall(function()
         local tw = TextWidget:new{
             text      = text,
             face      = face,
-            fgcolor   = _textColor(night),
+            fgcolor   = _textColor(night, look),
             max_width = box_w,
             padding   = 0,
         }
@@ -1980,6 +1993,9 @@ function SpineBookSlot:_renderKey(night)
         -- The title run's direction is baked in too: without this the shelf
         -- keeps painting the old rotation until something else evicts it.
         SpineShelf.titleRotation(),
+        e.binding or "hardcover",
+        self.show_status == false and "no-status" or "status",
+        self.top_edge_cap or "full-top",
     }, "|")
 end
 
@@ -2129,6 +2145,11 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
     -- ── The spine proper ────────────────────────────────────────────────
     local hairline = Screen:scaleBySize(1)
     if hairline < 1 then hairline = 1 end
+    local skin = SpineShelf.bindingStyle and SpineShelf.bindingStyle(e.binding)
+    local look = e.look
+    if skin then
+        look = { r = look.r, g = look.g, b = look.b, aspect = look.aspect, binding_skin = skin }
+    end
     -- Top edge: the sliver of page block you see looking at a real shelf.
     -- Cover boards (spine colour) run up the sides and past the paper by a
     -- lip; between them, fine vertical stripes alternate paper tones. Lives
@@ -2146,6 +2167,7 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
         local aspect = (e.look and e.look.aspect) or SpineLayout.DEFAULT_ASPECT
         edge_h = SpineLayout.topEdgeHeight(spine_h, aspect, Screen:scaleBySize(5))
     end
+    if self.top_edge_cap then edge_h = math.min(edge_h, self.top_edge_cap) end
     -- Where the book landed in this render, for the tilt painter's shading
     -- pass (the face below the page block darkens as it tips away from the
     -- light; the block itself faces up and stays lit).
@@ -2155,10 +2177,15 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
     local body_h = spine_h - edge_h
     for i = 0, spine_w - 1 do
         bb:paintRectRGB32(x + i, body_top, 1, body_h,
-                          _tintColor(e.look, _rampF(i, spine_w), night))
+                          _tintColor(look, _rampF(i, spine_w), night))
     end
     _paintBorderRGB32(bb, x, body_top, spine_w, spine_h - edge_h, hairline,
-                      _boardColor(e.look, night))
+                      skin and _bindingTint(e.look, 0.8, night, skin) or _boardColor(e.look, night))
+    if skin and skin.accent then
+        -- A plain jacket with a small cover-coloured headband, not raised ribs.
+        bb:paintRectRGB32(x, body_top, spine_w, math.min(body_h, hairline * 2),
+                          _tintColor(e.look, 1, night))
+    end
     -- The FOOT NICK -- a pixel square off each bottom corner, the softening
     -- where a book meets the shelf -- is not cut here. It takes the colour of
     -- the shelf directly BELOW the foot (maintainer's rule: "with or without
@@ -2195,7 +2222,8 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
         -- filled hollow. A fraction of the edge was wrong twice over -- it
         -- grew with the book's thickness, so a fat book wore ears.
         local lip     = hairline
-        local board_w = math.max(2, math.min(Screen:scaleBySize(3),
+        if skin then lip = 0 end
+        local board_w = skin and hairline or math.max(2, math.min(Screen:scaleBySize(3),
                                              math.floor(spine_w * 0.1)))
         local function tone(v)
             if night then v = 255 - v end
@@ -2213,11 +2241,11 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
             -- widths that VARY per line (1px up to the pitch) so the block
             -- reads as pressed paper rather than a printed pattern.
             local sp = math.max(2, math.floor(Screen:scaleBySize(1.4)))
-            bb:paintRectRGB32(sx0, sy0, sw_edge, sh_edge, tone(0xF0))
+            bb:paintRectRGB32(sx0, sy0, sw_edge, sh_edge, tone(skin and skin.paper or 0xF0))
             for cx = sx0 + 1, sx0 + sw_edge - 1, sp + 1 do
                 local lw = 1 + ((cx * 73 + 41) % sp)
                 lw = math.min(lw, sx0 + sw_edge - cx)
-                bb:paintRectRGB32(cx, sy0, lw, sh_edge, tone(0xA8))
+                bb:paintRectRGB32(cx, sy0, lw, sh_edge, tone(skin and skin.page_line or 0xA8))
             end
         end
         -- The boards, rising the lip above the paper, in the board shade --
@@ -2238,7 +2266,7 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
         -- transparent, so an unpainted pixel shows whatever is behind; with
         -- no ground the buffer was pre-filled with page white, so it shows
         -- the page. Either way the corner is the thing behind the book.
-        local bc = _boardColor(e.look, night)
+        local bc = skin and _bindingTint(e.look, 0.8, night, skin) or _boardColor(e.look, night)
         local rx = x + spine_w - board_w
         -- Row two down: both boards, full width, beside the paper.
         bb:paintRectRGB32(x,  top + lip, board_w, edge_h - lip, bc)
@@ -2251,7 +2279,7 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
         -- recess painter). Painting a flat tone here instead was far too dark
         -- and did not match that gradient (maintainer).
         local nick = hairline
-        if board_w > nick then
+        if lip > 0 and board_w > nick then
             bb:paintRectRGB32(x + nick, top, board_w - nick, lip, bc)
             bb:paintRectRGB32(rx,       top, board_w - nick, lip, bc)
         end
@@ -2259,7 +2287,7 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
         -- along their length, so the page block's bottom inside corners take
         -- a pixel of board. One pixel each side is enough to read as the
         -- binding turning in rather than as paper meeting a clean edge.
-        if sw_edge > 2 and sh_edge > 1 then
+        if not skin and sw_edge > 2 and sh_edge > 1 then
             local jy = sy0 + sh_edge - hairline
             bb:paintRectRGB32(sx0, jy, hairline, hairline, bc)
             bb:paintRectRGB32(sx0 + sw_edge - hairline, jy, hairline, hairline, bc)
@@ -2270,12 +2298,12 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
     local bottom = top + spine_h - pad
 
     -- Status glyph (reading / finished / on hold), level, at the head.
-    local glyph = _statusGlyph(self.book)
+    local glyph = self.show_status ~= false and _statusGlyph(self.book)
     local w_dp = e.w_dp or 20
     if glyph then
         local gsize = _glyphSizeDp(w_dp, e.ref_w_dp, GLYPH_STATUS)
         local face = BFont:getFace("symbols", gsize)
-        local used = _paintLevelText(bb, x, cur_top, spine_w, glyph, face, night)
+        local used = _paintLevelText(bb, x, cur_top, spine_w, glyph, face, night, look)
         if used > 0 then cur_top = cur_top + used + math.floor(pad / 2) end
     end
     -- Favourite star under it (face-out favourites show the cover instead).
@@ -2287,7 +2315,7 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
         local fav_glyph = CoverProgress.favoriteIcon() == "star"
             and CoverProgress.FAV_GLYPH_STAR or CoverProgress.FAV_GLYPH_HEART
         local used = _paintLevelText(bb, x, cur_top, spine_w,
-                                     fav_glyph, face, night)
+                                     fav_glyph, face, night, look)
         if used > 0 then cur_top = cur_top + used + math.floor(pad / 2) end
     end
 
@@ -2301,7 +2329,7 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
         pcall(function()
             local tw = TextWidget:new{
                 text = e.series_num, face = face,
-                fgcolor = _textColor(night),
+                fgcolor = _textColor(night, look),
                 max_width = spine_w, padding = 0,
             }
             local sz = tw:getSize()
@@ -2325,7 +2353,7 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
         local tsize = math.max(8, math.min(tcap, math.floor(w_dp * 0.5)))
         local author = (self.show_author ~= false) and e.author or nil
         _paintRotatedTitle(bb, x, cur_top, run, spine_w, e.label, tsize,
-                           e.look, night, author)
+                           look, night, author)
     end
 
     -- Bulk selection: the cover grid's corner flag at FULL spine width,
@@ -2415,7 +2443,8 @@ function FaceOutTopBlock:paintTo(bb, x, y)
     local w, h = self.dimen.w, self.dimen.h
     if w < 6 or h < 3 then return end
     local night = _nightMode()
-    local board = math.max(2, math.min(Screen:scaleBySize(3),
+    local skin = SpineShelf.bindingStyle and SpineShelf.bindingStyle(self.binding)
+    local board = skin and math.max(1, Screen:scaleBySize(1)) or math.max(2, math.min(Screen:scaleBySize(3),
                                        math.floor(h * 0.3)))
     local function tone(v)
         if night then v = 255 - v end
@@ -2430,21 +2459,21 @@ function FaceOutTopBlock:paintTo(bb, x, y)
     local sw, sh = w - board - rb, h - board
     if sw > 2 and sh > 1 then
         local sp = math.max(2, math.floor(Screen:scaleBySize(1.4)))
-        bb:paintRectRGB32(sx0, sy0, sw, sh, tone(0xF0))
+        bb:paintRectRGB32(sx0, sy0, sw, sh, tone(skin and skin.paper or 0xF0))
         for cy = sy0 + 1, sy0 + sh - 1, sp + 1 do
             local lh = 1 + ((cy * 73 + 41) % sp)
             lh = math.min(lh, sy0 + sh - cy)
-            bb:paintRectRGB32(sx0, cy, sw, lh, tone(0xA8))
+            bb:paintRectRGB32(sx0, cy, sw, lh, tone(skin and skin.page_line or 0xA8))
         end
     end
-    local fill = _boardColor(self.look, night)
+    local fill = skin and _bindingTint(self.look, 0.8, night, skin) or _boardColor(self.look, night)
     -- The TOP-LEFT corner pixel comes off, the same chamfer the spine feet get
     -- where they meet the plank. The left only: this block was briefly notched
     -- at both ends, and the right one read wrong, because the right side is
     -- the board standing slightly PROUD of the page edges it wraps -- a cut
     -- there takes the corner off the wrong thing (user ruling, reversing the
     -- earlier both-ends one).
-    local ch = math.max(2, Screen:scaleBySize(1))
+    local ch = skin and 0 or math.max(2, Screen:scaleBySize(1))
     bb:paintRectRGB32(x, y + ch, board, h - ch, fill)     -- left board, below the chamfer
     bb:paintRectRGB32(x + ch, y, w - ch, board, fill)     -- top board, notched at the left
     bb:paintRectRGB32(x + w - rb, y + board, rb, h - board, fill)  -- right sliver
@@ -4271,6 +4300,7 @@ function SpineShelf.plan(items, opts)
             w = w, h = h, w_dp = w_dp, ref_w_dp = ref_w_dp,
             look = look, depth = depth, face_h = face_h, thick = true_thick,
             series_box = series_box,
+            binding = SpineShelf.bookBinding and SpineShelf.bookBinding(bk, src, opts),
             face_out = face_out, favourite = fav, label = label,
             author = src.author or (src.authors and src.authors[1]) or nil,
             series_num = series_num, gap_before = gap_before,
@@ -5022,7 +5052,7 @@ function SpineShelf.rowWidget(opts)
                         tilt_lift = math.max(0, SpineShelf.plankLift(b) - push)
                                     + Screen:scaleBySize(6)
                     end
-                    cover.faceout_fx = { depth = depth, look = e.look,
+                    cover.faceout_fx = { depth = depth, look = e.look, binding = e.binding,
                                          below = push + inset + b,
                                          plank_b = b, plank_face = fh,
                                          -- The board's real depth. It used to
@@ -5052,6 +5082,7 @@ function SpineShelf.rowWidget(opts)
                         stack[#stack + 1] = FaceOutTopBlock:new{
                             dimen = Geom:new{ w = cover_w, h = depth },
                             look  = e.look,
+                            binding = e.binding,
                         }
                     end
                     -- The cover's corners come off the same way a spine's
@@ -5868,6 +5899,7 @@ function SpineShelf._paintFaceOutTip(tile)
         local block = FaceOutTopBlock:new{
             dimen = Geom:new{ w = rect.w, h = depth + grow },
             look  = fx.look,
+            binding = fx.binding,
         }
         block:paintTo(bb, rect.x, block_y)
         -- The strip the rising foot vacates: the plank's own banded
@@ -6025,8 +6057,10 @@ function SpineShelf.paintFaceOutTilt(tile)
             end
         end
         -- 4. The faces.
-        local board = fx.look and _boardColor(fx.look, night) or tone(0x55)
-        local bfrac = math.max(2 / T, 0.08)
+        local skin = SpineShelf.bindingStyle and SpineShelf.bindingStyle(fx.binding)
+        local board = fx.look and (skin and _bindingTint(fx.look, 0.8, night, skin)
+            or _boardColor(fx.look, night)) or tone(0x55)
+        local bfrac = skin and math.max(1 / T, 0.025) or math.max(2 / T, 0.08)
         local function shadeFace(q, inv, colourAt)
             Pose.spansV(q, function(x, y0, y1)
                 local run_y, run_c = y0, nil

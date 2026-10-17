@@ -25533,6 +25533,10 @@ function BookshelfWidget:_openGroupMenu(group, kind)
         end
     end
 
+    if kind == "series" and self.seriesBindingButton then
+        buttons[#buttons + 1] = { self:seriesBindingButton(source_id, close_dialog) }
+    end
+
     -- Page counts for just this stack's books (issue 459): the same dialog as
     -- the settings menu's, scoped. A folder counts every book under it.
     table.insert(buttons, {

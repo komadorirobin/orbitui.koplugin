@@ -1,6 +1,8 @@
 package.path = "./?.lua;./components/bookshelf/?.lua;" .. package.path
 local H = require("tests/helpers")
 local Integration = require("adapters/orbitui_ui")
+package.loaded["lib/bookshelf_settings_store"] = {read = function() end}
+package.loaded["lib/bookshelf_tab_model"] = {getById = function() end}
 
 local function source(path)
     local f = assert(io.open("components/bookshelf/lib/" .. path .. ".lua"))

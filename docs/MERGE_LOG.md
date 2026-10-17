@@ -2229,6 +2229,48 @@ Real KOReader FileChooser/PathChooser methods with a simulated 500-folder
 filesystem reduce initial directory scans from 501 to 1 and preserve native
 selection/confirmation/close. This is not a physical Bigme timing measurement.
 
+## 2026-10-17: Larger slipcase artwork and shelf/series book bindings
+
+User approved increasing cover area without skewing proportions, and requested
+modern pocket/manga spine choices per shelf and per series. Interpret the manga
+format as tankobon. This is a local C07 presentation change, not an upstream
+merge or publication. Keep VERSION alpha.42, exact source pins, bootstrap/API,
+artwork and the archived box-design branch unchanged. Preserve unpublished
+`b3849c5d` (light cover metadata and bounded image picker).
+
+Raise only the host minimum width from 70% to 85% of the existing cover cap.
+Compact the exposed heads, retaining paper tops, and move the full read/total
+there instead of reserving a separate band inside the front. Suppress member
+glyphs in the compact head to prevent overlaps; the aggregate remains complete.
+The whole cover, including custom art, is still fitted without anisotropic
+scaling or image-pixel cropping. Name and count stay outside the picture.
+
+New OrbitUI-owned Book binding menus on chip hold and series hold offer
+Hardcover, Paperback and Manga/tankobon; series overrides win across shelves,
+and Follow shelf clears just that override. Qualified profile shelf identities
+cannot collide with each other or native tabs. Persist only presentation
+choices, copy-on-write, in `orbitui_book_bindings`; no status/metadata/cache
+files or existing preferences are rewritten. Hardcovers remain the default.
+The native renderer gets small optional resolver/skin seams: flush thin covers,
+subtler paper lines, flatter spine shading, and a pale manga jacket with dark
+text. Share the skin with rotated/CJK text backgrounds and opening poses.
+Keep natural aspect, page-count thickness, sizing and pagination geometry.
+
+The runtime loader previously returned after the first matching adapter;
+the spine shelf already belonged to the ornament adapter. Compose all matching
+adapters in fixed icon/ornament/UI order after one module load, preserving
+userpatch preload priority. A real-loader regression test verifies both hooks.
+The older face-out fixture now supplies the settings/tab services used by the
+binding resolver; no test is skipped. Tests/logs and physical acceptance gaps
+are recorded in TESTING.md. No push, tag, version bump or OTA publication.
+
+Both complete suites pass sequentially: Lua 575 and LuaJIT 576 root cases in
+49 files, 395 Bookshelf suites, all 13 SimpleUI files, 91 Python checks, 43
+translation catalogues, 317 module paths and 847 syntax files. Existing
+SQLite/native-font/external-source/Bookends-checkout skips remain unchanged.
+The sealed preview and its audit are local only; do not replace public
+alpha.42 assets. Physical-device acceptance remains outstanding.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

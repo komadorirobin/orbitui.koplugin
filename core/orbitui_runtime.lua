@@ -58,14 +58,19 @@ function M.install(root, module_map)
                 return require("adapters/orbitui_bookshelf_storage").wrapStore(fn())
             end
         end
-        if require("adapters/orbitui_icons").modules[name] then
-            return function() return require("adapters/orbitui_icons").wrap(name, fn()) end
-        end
-        if require("adapters/orbitui_ornaments").modules[name] then
-            return function() return require("adapters/orbitui_ornaments").wrap(name, fn(), root) end
-        end
-        if require("adapters/orbitui_ui").modules[name] then
-            return function() return require("adapters/orbitui_ui").wrap(name, fn()) end
+        local icons = require("adapters/orbitui_icons")
+        local ornaments = require("adapters/orbitui_ornaments")
+        local ui = require("adapters/orbitui_ui")
+        if icons.modules[name] or ornaments.modules[name] or ui.modules[name] then
+            -- A renderer can have both ornament and book-presentation hooks.
+            -- Load it once, then apply every matching adapter in a fixed order.
+            return function()
+                local module = fn()
+                if icons.modules[name] then module = icons.wrap(name, module) end
+                if ornaments.modules[name] then module = ornaments.wrap(name, module, root) end
+                if ui.modules[name] then module = ui.wrap(name, module) end
+                return module
+            end
         end
         return fn
     end

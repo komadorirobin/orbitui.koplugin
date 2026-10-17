@@ -165,17 +165,19 @@ at `1ae66bd0`, not included as a second runtime renderer.
 
 Series occupy one physical shelf slot, except a series with just one local
 volume, which remains an ordinary book. Up to eight member spines show above
-the front board, with their native status marks. Following the October 17
+the front board. Following the October 17
 correction, the first cover fits a centered rounded sticker without stretching;
 unused space shows the board's existing cover-derived colour. The read/total
-count is printed above the image instead of in a notch over it, with the
+count is printed in the compact exposed head instead of taking a band from
+the picture or obscuring it with a notch, with the
 series name below. The native geometry sizes the box from its members and
-name, with a 70% minimum and a face-out cover's width as its maximum (subject
+name, with an 85% minimum and a face-out cover's width as its maximum (subject
 to available shelf space). The count is never capped and shrinks to fit.
 It reads canonical finished status for the visible box's scoped membership,
 not a stale aggregate or percentage. The trial intentionally omits our old
 whole-box checkmark/fade and separate manga-style badge. Preferences and book
-status remain stored unchanged for rollback.
+status remain stored unchanged for rollback. The aggregate count replaces
+individual head glyphs in the compact layout, where they would overlap it.
 
 Tap opens the series and shows its individual volumes. Long-press retains the
 native series menu. The box is a display-only record: source membership, status,
@@ -193,9 +195,19 @@ native membership separately from the compacted display list. Native code in
 `bookshelf_series_box_widget.lua` owns preparation and rendering; the thin
 `adapters/orbitui_series_boxes.lua` keeps the host's all-series policy, profile
 isolation, letter navigation and rollback-compatible restoration.
-`orbitui_ui` opts into the 70% minimum and the native painter's aspect-preserving
+`orbitui_ui` opts into the 85% minimum, compact head and the native painter's aspect-preserving
 cover policy; standalone Bookshelf retains its default layout. The fitted
 cover is copied without a second stretch, with only its tile border removed.
+
+Long-press a chip > Book binding sets the physical shelf's default: Hardcover,
+Paperback or Manga / tankobon. Long-press a box > Book binding sets a series
+override across shelves, including its opened volumes; Follow shelf removes
+only that override. Existing shelves stay Hardcover until changed. Pocket and
+manga styles use thin flush covers rather than protruding boards. The manga
+jacket is pale with contrasting dark lettering and a cover-coloured accent.
+These are generated visual treatments, not reconstructed printed spine art.
+Cover proportions, page-count thickness and the separate cover-size control
+are unchanged. The choices live in the normal settings backup, not metadata.
 
 ## Component seams to preserve during merges
 

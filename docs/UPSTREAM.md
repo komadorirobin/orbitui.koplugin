@@ -174,6 +174,14 @@ not make semantic conflicts disappear.
   and existing Swedish fork strings; correct duplicate single-form plural
   entries without extending translation exceptions. See C02/C07/C08 and
   `test_upstream_20261017` / `test_upstream_series_boxes`.
+- October 17, later approved larger-art/binding follow-up: retain the native
+  maximum but raise the host minimum to 85%; compact the exposed heads and put
+  the count there, removing the in-front count band and overlapping member
+  glyphs. Preserve aspect-fitting, first-member hydration and bounded picker
+  fixes. `orbitui_book_bindings` owns per-shelf/per-series preferences and the
+  optional renderer skin/resolver hooks; no upstream pin or metadata migration.
+  Apply every matching runtime adapter, not just the first, so bindings do not
+  bypass ornament spacing. See C07 and `test_book_bindings` / `test_runtime`.
 - October 17, user-approved slipcase correction: preserve cover aspect and
   center the sticker with visible cover-coloured board around it; minimum width
   is 70% of the usual cover width, with the native maximum unchanged. The

@@ -199,8 +199,13 @@ function Box:_initSlipcase()
         if sp.member then
             local m = entry.book.books[sp.member]
             local e = memberEntry(m, sp.w, shape.h, SpineShelf)
+            e.binding = entry.binding
             self.slots[#self.slots + 1] = { slot = Slot:new{ book = m, entry = e,
-                width = sp.w, height = shape.h, show_author = false }, x = sp.x }
+                width = sp.w, height = shape.h, show_author = false,
+                -- The compact head uses one aggregate count instead of
+                -- partially hidden status glyphs on each member spine.
+                show_status = not shape.count_in_heads,
+                top_edge_cap = shape.count_in_heads and shape.wall_top or nil }, x = sp.x }
         end
     end
     -- The front's picture: the first cover as a sticker in the space above
@@ -246,14 +251,16 @@ function Box:_initSlipcase()
     local cover_w, cover_h = self.st_w, self.st_full_h
     if self.preserve_cover_aspect then
         local count_size = shape.label_size
-        while self.count:getSize().w > self.art_w and count_size > 1 do
+        local head_room = shape.rise - shape.wall_top
+        while (self.count:getSize().w > self.art_w
+                or (shape.count_in_heads and self.count:getSize().h > head_room - 2)) and count_size > 1 do
             local text = self.count.text
             self.count:free()
             count_size = count_size - 1
             self.count = TextWidget:new{ text = text, face = countFace(count_size, font), padding = 0 }
         end
         local E = STICKER_EDGE_PX
-        self.count_band_h = math.min(math.max(0, self.art_h - 2 * E - 1),
+        self.count_band_h = shape.count_in_heads and 0 or math.min(math.max(0, self.art_h - 2 * E - 1),
             self.count:getSize().h + math.max(2, Screen:scaleBySize(3)))
         cover_w, cover_h = self:_fitSticker(aspect)
         -- Remove only the native tile's border, not pixels from the cover.
@@ -433,7 +440,11 @@ function Box:_paintSlipcase(bb, x, y)
         local nx, ny = sx + SW - nw, sy
         self.count.fgcolor = name_ink_for(night)
         if self.preserve_cover_aspect then
-            if cs.w <= self.art_w and cs.h <= self.count_band_h then
+            if p.count_in_heads and cs.w <= self.art_w and cs.h + 2 <= p.rise then
+                local cx, cy = x + I + self.art_w - cs.w, front_y - cs.h - 1
+                bb:paintRectRGB32(cx - 1, cy - 1, cs.w + 2, cs.h + 2, board)
+                self.count:paintTo(bb, cx, cy)
+            elseif cs.w <= self.art_w and cs.h <= self.count_band_h then
                 self.count:paintTo(bb, x + I + self.art_w - cs.w, front_y + I)
             end
         else

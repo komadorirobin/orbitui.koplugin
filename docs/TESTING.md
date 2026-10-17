@@ -2,6 +2,33 @@
 
 ## Automated
 
+2026-10-17 larger slipcase art and scoped bindings (unpublished): focused tests
+cover independent native/child/profile shelf choices, series precedence and
+reset, reload, invalid settings, pinned/drilled light-member fallbacks, live
+menu saves, real plan-cache refresh, real spine/top-block drawing at multiple
+DPI and in night mode, contrasting Latin/Japanese jacket text, bitmap cache
+keys, and propagation into real box member slots. A loader test verifies that
+ornament and binding adapters both run. Aspect tests compare the old/new art
+area for small/large series and portrait/square/landscape images; count and name
+remain outside the image. Existing completion, hydration and picker cases stay.
+Logs and generated shape-only preview: `test-results/book-bindings-20261017/`.
+
+Device checks still required: long-press Fiction and Manga chips > Book binding;
+change each independently. Override one box, open it, switch shelves and
+restart; choose Follow shelf and confirm inheritance returns. Check thin
+pocket boards and the light manga jacket in colour and night mode, opening
+animation, and 2/8/120-volume boxes at small/large cover sizes. Confirm covers
+are larger without stretching, read totals remain legible after completion,
+and ornaments, taps, paging and series order are unchanged. The generated
+preview exercises shape paint calls, not real cover art, fonts or Bigme output.
+Complete sequential Lua/LuaJIT runs pass 575/576 root cases in 49 files,
+395 Bookshelf suites (zero failures, two existing SQLite skips), all 13 SimpleUI
+files and 91 Python checks (four existing source-artwork skips). All 43
+translation catalogues, 317 module paths and 847 LuaJIT syntax files pass.
+Existing native-font/absent Bookends-checkout skips are unchanged; no new
+failure allowance. Clean-commit package validation is recorded separately in
+the same evidence directory's `package.log`.
+
 2026-10-17 alpha.42 device-report follow-up (not yet published): the series-box
 test now executes SpineWidget's real init/cover-selection gate with light
 members. It reproduces the placeholder regression before the fix and covers

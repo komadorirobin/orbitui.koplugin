@@ -182,6 +182,13 @@ function M.slipcaseGeometry(book, base, opts)
     local label_size = SpineShelf.titleSize(base.ref_w_dp)
     local strip_h = SpineShelf.textHeight(label_size) + 2 * math.max(1, Screen:scaleBySize(2))
     local rise = math.max(Screen:scaleBySize(48), math.floor(h * 0.27))
+    if M.SLIPCASE_COMPACT_HEADS then
+        -- Fit the aggregate count above the rim, not above the cover. Keep a
+        -- visible paper top, but reserve most of the box for its artwork.
+        rise = math.min(math.floor(h * 0.35), math.max(math.floor(h * 0.18),
+            SpineLayout.topEdgeHeight(h, base.aspect, Screen:scaleBySize(5))
+                + SpineShelf.textHeight(label_size) + 2 * math.max(1, Screen:scaleBySize(2))))
+    end
     local n = math.min(count, M.SLIPCASE_SPINES)
     -- The side boards stand the full height either side of the books, a
     -- little thicker than the front's frame so they read as walls.
@@ -257,6 +264,7 @@ function M.slipcaseGeometry(book, base, opts)
     return { style = "slipcase", w = w, h = h, face_h = base.face_h or h, wall_top = wall_top,
              depth = base.depth, lid = 0, border = border, wall = wall, strip_h = strip_h,
              label_size = label_size, rise = rise, front_h = h - rise,
+             count_in_heads = M.SLIPCASE_COMPACT_HEADS or nil,
              pad = pad, spines = spines, name_lines = name_lines,
              count = count }
 end

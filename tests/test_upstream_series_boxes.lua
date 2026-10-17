@@ -213,7 +213,7 @@ end)
 
 -- Exercise the real upstream painter, with bounded surfaces and native UI
 -- primitives stubbed. This deliberately does not reinstate our old whole-box
--- completion overlay: upstream owns the marks on the exposed member spines.
+-- completion overlay: the compact head carries the aggregate read count.
 local W = H.widget()
 local fail_cover = false
 W.CARD_BORDER = 1
@@ -338,14 +338,19 @@ H.test("aspect fit and wider minimum are host opt-ins, not standalone changes", 
     H.eq(UI.modules["lib/bookshelf_series_box_widget"], true)
     UI.wrap("lib/bookshelf_series_boxes", Boxes)
     UI.wrap("lib/bookshelf_series_box_widget", Painter)
-    H.eq(Boxes.SLIPCASE_MIN_SHARE, .7); H.eq(Painter.preserve_cover_aspect, true)
+    H.eq(Boxes.SLIPCASE_MIN_SHARE, .85); H.eq(Painter.preserve_cover_aspect, true)
+    H.eq(Boxes.SLIPCASE_COMPACT_HEADS, true)
+    local larger = visibleBox(members(2))
+    assert(larger.shape.rise < old.shape.rise)
+    H.eq(larger.count_band_h, 0)
+    assert(larger.st_h > old.st_h)
 end)
 
-H.test("box width stays between seventy percent and the existing cover cap", function()
+H.test("box width stays between eighty-five percent and the existing cover cap", function()
     local previous = 0
     for _, n in ipairs({2, 3, 8, 120}) do
         local _, _, shape = visibleBox(members(n))
-        assert(shape.w >= math.floor(160 * .7) and shape.w <= 160)
+        assert(shape.w >= math.floor(160 * .85) and shape.w <= 160)
         assert(shape.w >= previous); previous = shape.w
     end
     local _, _, short = visibleBox(members(2))
@@ -355,6 +360,24 @@ H.test("box width stays between seventy percent and the existing cover cap", fun
     local shape = Boxes.geometry(Boxes.box(members(2), "Saga"),
         {w = 160, h = 248}, {content_w = 110, end_margin = 10})
     assert(shape.w <= 90, "minimum width must not override available shelf space")
+end)
+
+H.test("compact heads give covers more height than the previous aspect-preserving layout", function()
+    for _,aspect in ipairs({.5,1,1.5,2.4}) do
+        cover_aspect=aspect
+        for _,n in ipairs({2,3,8,120}) do
+            Boxes.SLIPCASE_MIN_SHARE,Boxes.SLIPCASE_COMPACT_HEADS=.7,false
+            local before=visibleBox(members(n))
+            Boxes.SLIPCASE_MIN_SHARE,Boxes.SLIPCASE_COMPACT_HEADS=.85,true
+            local after=visibleBox(members(n))
+            assert(after.st_h>=before.st_h)
+            assert(after.st_w>=before.st_w)
+            assert(after.art_h>before.art_h)
+            H.eq(after.count_band_h,0)
+            assert(after.shape.rise<before.shape.rise)
+        end
+    end
+    cover_aspect=1.5
 end)
 
 H.test("portrait square and landscape stickers fit and center without a second scale", function()

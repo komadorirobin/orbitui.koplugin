@@ -49,6 +49,25 @@ H.test("userpatch preload interceptors retain priority", function()
     package.preload["modules/module_quote"] = function() return { patched = true } end
     H.eq(require("modules/module_quote").patched, true)
 end)
+H.test("spine renderer receives both ornament and binding adapters through the real loader", function()
+    local load, calls = loadfile, 0
+    _G.loadfile = function(path)
+        if path == root .. "/components/bookshelf/lib/bookshelf_spine_shelf.lua" then
+            return function() calls = calls + 1; return {} end
+        end
+        return load(path)
+    end
+    local ok, shelf = pcall(require, "lib/bookshelf_spine_shelf")
+    _G.loadfile = load
+    assert(ok, shelf)
+    H.eq(calls, 1)
+    H.eq(shelf.positionOrnamentX, require("core/orbitui_ornament_spacing").positionX)
+    H.eq(shelf.bookBinding, require("adapters/orbitui_book_bindings").resolve)
+    H.eq(shelf.bindingStyle("hardcover"), nil)
+    assert(shelf.bindingStyle("paperback"))
+    H.eq(require("lib/bookshelf_spine_shelf"), shelf)
+    H.eq(calls, 1)
+end)
 H.test("updaters are resolved through OrbitUI even after cache eviction", function()
     local updater = require("lib/bookshelf_updater")
     H.eq(updater.getInstalledVersion(), "5.5.2")

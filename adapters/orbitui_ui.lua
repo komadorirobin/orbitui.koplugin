@@ -7,6 +7,7 @@ M.modules = {
     ["features/library/sui_library_search"] = true,
     ["lib/bookshelf_widget"] = true,
     ["lib/bookshelf_spine_widget"] = true,
+    ["lib/bookshelf_spine_shelf"] = true,
     ["lib/bookshelf_series_boxes"] = true,
     ["lib/bookshelf_series_box_widget"] = true,
     ["lib/bookshelf_settings"] = true,
@@ -47,6 +48,7 @@ function M.wrap(name, module)
         require("adapters/orbitui_cover_labels").widget(module)
         require("adapters/orbitui_shelf_sort").widget(module)
         require("adapters/orbitui_series_boxes").widget(module)
+        require("adapters/orbitui_book_bindings").widget(module)
         require("adapters/orbitui_navbar").widget(module)
         module.orbitui_shelf_menu = function(self, chip)
             return require("adapters/orbitui_home_shelves").shelfMenu(self, chip)
@@ -64,8 +66,11 @@ function M.wrap(name, module)
         end
     elseif name == "lib/bookshelf_spine_widget" then
         require("adapters/orbitui_cover_labels").cover(module)
+    elseif name == "lib/bookshelf_spine_shelf" then
+        require("adapters/orbitui_book_bindings").renderer(module)
     elseif name == "lib/bookshelf_series_boxes" then
-        module.SLIPCASE_MIN_SHARE = 0.7
+        module.SLIPCASE_MIN_SHARE = 0.85
+        module.SLIPCASE_COMPACT_HEADS = true
     elseif name == "lib/bookshelf_series_box_widget" then
         module.preserve_cover_aspect = true
     elseif name == "lib/bookshelf_settings" then
