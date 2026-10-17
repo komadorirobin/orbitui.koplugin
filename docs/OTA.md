@@ -301,6 +301,17 @@ settings migration or reading-data change is included. Code rollback restores
 the prior box appearance; the earlier settings-backup and migration caveats
 still apply. Physical Bigme rendering of this refinement remains unverified.
 
+Alpha.42 integrates Bookshelf 5.5.2 and SimpleUI `7eb80f9e`. Custom series art
+uses the aspect-preserving slipcase fit, Random Book gains optional direct
+opening, and SimpleUI adds shared surface controls and Home/menu/metadata fixes.
+Copy-only appearance migrations retain old keys and explicit new choices;
+legacy dock and wallpaper APIs remain available. Alpha.41 and earlier alpha
+installations can update through the same preview channel and bootstrap/API 1.
+No artwork, reading-data or external sync changes. Keep installation/settings
+backups: code rollback does not mirror new surface edits into older appearance
+keys, and all earlier migration caveats remain. Physical Bigme acceptance of
+the merged changes remains outstanding.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

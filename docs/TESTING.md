@@ -2,6 +2,15 @@
 
 ## Automated
 
+2026-10-17 alpha.42 publication preparation: explicitly requested after the
+reviewed Bookshelf 5.5.2 / SimpleUI merge. Re-run full sequential Lua/LuaJIT
+gates and translations on the versioned tree, then seal a clean-commit package.
+Verify outgoing history and runtime exclude the held artwork, both CI jobs,
+the published alpha.41 installer's upgrade/rollback and corrupt-download
+rejection, downloaded draft hashes and anonymous live discovery/download.
+No additional runtime, upstream, bootstrap/API or artwork changes are included.
+Physical-device gaps and rollback caveats remain; this is a prerelease.
+
 2026-10-17 reviewed Bookshelf 5.5.2 / SimpleUI `7eb80f9e` merge: nine new
 integration cases cover surface defaults, copy-only legacy migrations,
 quick-settings opacity, UTF-8 metadata bounds, main-menu ownership and deferred

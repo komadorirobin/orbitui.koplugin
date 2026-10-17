@@ -16,10 +16,14 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.41** preserves cover proportions on series slipcases:
-the full cover is fitted and centered on the board, with the read-total above
-the picture. Minimum width is 70% of a normal cover; the native maximum remains.
-Bookshelf **5.5.0** stays at `048ab4ba` and SimpleUI **2.7.5** at `36e7430f`.
+Version **0.1.0-alpha.42** integrates Bookshelf **5.5.2** (`c7a9db2c`) and
+the reviewed SimpleUI **2.7.5** update (`7eb80f9e`). Custom series images now
+appear on slipcases with the same aspect-preserving fit as book covers.
+Random Book can optionally open directly. SimpleUI gains shared background,
+frame and opacity controls, safer Home/menu restoration and bounded author
+labels. Existing appearance choices are retained through copy-only migrations.
+The read-total remains above the picture, minimum box width stays at 70% of a
+normal cover and the native maximum remains.
 The requested upstream series-box trial keeps native open-topped slipcases and
 individual spine marks instead of OrbitUI's old whole-box completion mark/fade.
 The old design remains on local branch `design/orbitui-series-boxes`, not as an
@@ -27,8 +31,8 @@ in-app switch. Existing Library/Manga profiles, face-out books, per-chip cover
 labels/sizes, ornaments,
 custom icons and dock/Bento layout are retained. Back up settings before
 updating: new grouped-order, ledger and module edits are not mirrored to older
-code on rollback.
-See [the release notes](docs/releases/0.1.0-alpha.41.md)
+code on rollback. New surface choices are likewise not mirrored to older code.
+See [the release notes](docs/releases/0.1.0-alpha.42.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.

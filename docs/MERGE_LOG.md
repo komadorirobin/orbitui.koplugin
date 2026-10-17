@@ -2177,6 +2177,22 @@ This local preview must not replace the public release assets. Final verificatio
 recording is documentation-only; fast-forward local main after recording it.
 No push, tag, release, version bump or OTA update is performed.
 
+## 2026-10-17: Prepare alpha.42 for explicit publication
+
+User request: "Publicera" after reviewed imports/adaptations `157ecc21` and
+verification record `0bfa9f24`. Origin/main and the latest public release remain
+alpha.41 at `a33eda9c`. Publish the reviewed merge as a new prerelease; do not
+replace old release assets or include new upstream changes. Pins stay Bookshelf
+`c7a9db2c` and SimpleUI `7eb80f9e`. Only VERSION and release documentation change;
+stable bootstrap/API 1, runtime code and artwork are unchanged from the merge.
+The archived old box design remains local and untouched.
+
+Gates: complete sequential Lua/LuaJIT runs on the versioned tree, translations,
+clean sealed packaging, outgoing-history/runtime held-artwork audit, real public
+alpha.41 installer upgrade/rollback and corrupt-download rejection, both CI jobs,
+downloaded draft-byte checks and anonymous live discovery/download/install.
+The existing device-acceptance gaps and settings-backup caveats remain.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
