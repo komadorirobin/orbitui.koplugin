@@ -199,7 +199,7 @@ function M.slipcaseGeometry(book, base, opts)
     -- to share it.
     local nat, sum = {}, 0
     for i = 1, n do
-        nat[i] = math.max(1, spinePx(book.books[i], auto_thick))
+        nat[i] = math.max(1, (M.memberSpineWidth or spinePx)(book.books[i], auto_thick, opts))
         sum = sum + nat[i]
     end
     -- Never so thin the series cannot be told: at least SLIPCASE_MIN_SHARE of
@@ -250,11 +250,18 @@ function M.slipcaseGeometry(book, base, opts)
     end
     local inner_w = w - 2 * wall
     local spines, x = {}, 0
-    for i = 1, n do
-        local sw = (i == n) and (inner_w - x)
-                   or math.max(1, math.floor(inner_w * nat[i] / sum + 0.5))
-        spines[i] = { member = i, x = x, w = sw }
-        x = x + sw
+    local occupied_w
+    if M.packSpines then
+        -- Optional host policy: a bounded prefix at natural widths, with air
+        -- left inside the box instead of stretching or squeezing its books.
+        spines, occupied_w = M.packSpines(nat, inner_w)
+    else
+        for i = 1, n do
+            local sw = (i == n) and (inner_w - x)
+                       or math.max(1, math.floor(inner_w * nat[i] / sum + 0.5))
+            spines[i] = { member = i, x = x, w = sw }
+            x = x + sw
+        end
     end
     -- The box is as deep as its books, so its side walls show above the rim
     -- by the band a book's page top takes (its depth, foreshortened), and
@@ -265,6 +272,8 @@ function M.slipcaseGeometry(book, base, opts)
              depth = base.depth, lid = 0, border = border, wall = wall, strip_h = strip_h,
              label_size = label_size, rise = rise, front_h = h - rise,
              count_in_heads = M.SLIPCASE_COMPACT_HEADS or nil,
+             occupied_w = occupied_w,
+             hidden_count = occupied_w and count - #spines or nil,
              pad = pad, spines = spines, name_lines = name_lines,
              count = count }
 end
@@ -283,6 +292,18 @@ function M.shadowColumns(p, x, _inset)
     -- walls only as high as their tops. One rectangle cast the books' shadow
     -- from the box's outer edge, a wall's width off them.
     local wall_h = p.front_h + p.wall_top
+    if p.occupied_w then
+        local cols = { { x = x, w = p.wall, h = wall_h, foot = 0 } }
+        if p.occupied_w > 0 then
+            cols[#cols + 1] = { x = x + p.wall, w = p.occupied_w, h = p.h, foot = 0 }
+        end
+        local empty_w = p.w - 2 * p.wall - p.occupied_w
+        if empty_w > 0 then
+            cols[#cols + 1] = { x = x + p.wall + p.occupied_w, w = empty_w, h = wall_h, foot = 0 }
+        end
+        cols[#cols + 1] = { x = x + p.w - p.wall, w = p.wall, h = wall_h, foot = 0 }
+        return cols
+    end
     return { { x = x, w = p.wall, h = wall_h, foot = 0 },
              { x = x + p.wall, w = p.w - 2 * p.wall, h = p.h, foot = 0 },
              { x = x + p.w - p.wall, w = p.wall, h = wall_h, foot = 0 } }

@@ -2,6 +2,34 @@
 
 ## Automated
 
+2026-10-17 partial box fill (unpublished follow-up to alpha.43): thirteen new
+geometry/cache cases cover host-only hooks, consistent widths across series
+lengths and title-fit widths, whole-prefix packing, eight-member work bound,
+page-count provenance/fallback, invalid counts, status independence,
+DPI/row/shelf thickness, too-narrow boxes and low empty-space shadows.
+Two additional real-painter cases cover all three bindings, colour/night
+interior shades, untouched air above the gap, and separate `+N` / read-total
+labels. Existing aspect, hydration, completion, opening and navigation cases
+remain enabled. Logs and shape-only preview live in
+`test-results/series-box-fill-20261017/`; the preview uses placeholder covers
+and approximate fonts, not device rendering.
+
+Complete sequential Lua/LuaJIT runs pass 590/591 root cases in 50 files,
+395 Bookshelf suites (zero failures, two existing SQLite skips), all 13
+SimpleUI files and 91 Python checks (four existing source-artwork skips).
+All 43 translation catalogues, 317 module paths and 848 LuaJIT syntax files
+pass. Existing native-font/absent Bookends-checkout skips remain unchanged.
+Clean-commit package validation and an inventory/hash comparison with public
+alpha.43 are recorded separately in the same evidence directory. This is an
+unpublished preview, not replacement alpha.43 release assets.
+
+Device checks still required: compare two short and long Manga series with
+similarly sized volumes; verify the short box has a contiguous empty right
+interior and matching shadows. Check known thicker/thinner volumes, unknown
+page counts, small/large cover sizes, all binding overrides and night mode.
+Confirm `+N` means undrawn volumes while read/total and opening still include
+all members, including after marking the final volume finished and restarting.
+
 2026-10-17 alpha.43 publication preparation: explicitly requested after
 `b3849c5d` and `5104eff4`. Re-run complete sequential Lua/LuaJIT gates and
 translations on the versioned tree, then seal a clean-commit package. Verify

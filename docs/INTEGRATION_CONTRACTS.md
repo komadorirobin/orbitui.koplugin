@@ -350,6 +350,24 @@ errors so the next redraw can retry. `orbitui_ui` enables the new optional
 `preserve_cover_aspect` seam; standalone Bookshelf keeps its old default.
 This is a small adaptation of the native painter, not a restored second one.
 
+The next approved October 17 refinement stops normalizing member widths to the
+box interior. Optional `memberSpineWidth` / `packSpines` hooks use the native
+page-to-width curve, row-height/DPI calibration and shelf thickness percentage,
+then pack a whole prefix left without stretching, squeezing or skipping books.
+Use cached print/stable/calibre/filename counts, explicit filename markers or
+fixed-layout PDF/CBZ/CBR/DJVU counts. Unknown and reflowable render/legacy counts
+use the same neutral fallback; do not hydrate members or read their sidecars
+for width. `cachedPageCount` reads facts without validating reading status, so
+a changed status/mtime cannot temporarily discard a known width.
+Keep the existing cover/outer-width bounds. Leave one contiguous shaded low
+interior to the right and match its shadow silhouette; no phantom full-height
+volume slots. At most eight whole members are shown, with `+N` for the hidden
+remainder separate from the uncapped read/total. Extremely narrow interiors
+may show no member instead of clipping its width. All series membership and
+navigation remain complete. Standalone Bookshelf keeps fill-to-width unless
+the host installs these hooks. Tests: `test_series_box_fill`,
+`test_book_bindings`, and `test_upstream_series_boxes`.
+
 Physical book binding is opt-in per shelf: Hardcover (unchanged default),
 Paperback (thin, flush soft covers), or Manga/tankobon (thin pale jacket with
 dark text). The latter is a visual style, not a claim to know printed spine

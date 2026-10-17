@@ -217,6 +217,11 @@ function Box:_initSlipcase()
     self.count = TextWidget:new{ text = string.format(COUNT_FORMAT,
         finishedCount(entry.book.books), #entry.book.books),
         face = countFace(shape.label_size, font), padding = 0 }
+    local more_text = shape.hidden_count and shape.hidden_count > 0 and ("+" .. shape.hidden_count)
+    if more_text then
+        self.more = TextWidget:new{ text = more_text,
+            face = countFace(shape.label_size, font), padding = 0 }
+    end
     -- The series' own image, when it has one (set from its long-press menu,
     -- or found in the image library's series/ folder), in place of the first
     -- cover: the box set's front, as on its stack in covers view.
@@ -252,12 +257,17 @@ function Box:_initSlipcase()
     if self.preserve_cover_aspect then
         local count_size = shape.label_size
         local head_room = shape.rise - shape.wall_top
-        while (self.count:getSize().w > self.art_w
+        local label_gap = math.max(2, Screen:scaleBySize(3))
+        while (self.count:getSize().w + (self.more and self.more:getSize().w + label_gap or 0) > self.art_w
                 or (shape.count_in_heads and self.count:getSize().h > head_room - 2)) and count_size > 1 do
             local text = self.count.text
             self.count:free()
             count_size = count_size - 1
             self.count = TextWidget:new{ text = text, face = countFace(count_size, font), padding = 0 }
+            if self.more then
+                self.more:free()
+                self.more = TextWidget:new{ text = more_text, face = countFace(count_size, font), padding = 0 }
+            end
         end
         local E = STICKER_EDGE_PX
         self.count_band_h = shape.count_in_heads and 0 or math.min(math.max(0, self.art_h - 2 * E - 1),
@@ -294,6 +304,20 @@ function Box:_paintSlipcase(bb, x, y)
     end
     local ix = x + p.wall
     local front_y = top + p.rise
+    local wall_y = math.max(top, front_y - p.wall_top)
+    if p.occupied_w then
+        local gap_x, gap_w = ix + p.occupied_w, p.w - 2 * p.wall - p.occupied_w
+        local depth = front_y - wall_y
+        -- A recessed interior, below the book heads. No full-height blank
+        -- slots or copied wallpaper that could look like missing volumes.
+        if gap_w > 0 then
+            for row = 0, depth - 1 do
+                bb:paintRectRGB32(gap_x, wall_y + row, gap_w, 1,
+                    lit(.8 - .25 * row / math.max(1, depth - 1)))
+            end
+            bb:paintRectRGB32(gap_x, wall_y, gap_w, math.min(depth, math.max(1, math.floor(B/2))), lit(1.05))
+        end
+    end
     -- The books, whole: the front goes over their lower part.
     for _, s in ipairs(self.slots) do
         s.slot:_renderIntoAt(bb, ix + s.x, top, night)
@@ -314,7 +338,6 @@ function Box:_paintSlipcase(bb, x, y)
     -- what it holds. Lit like the lid, since they face up.
     local board = SpineShelf.boardColor(l, night)
     local rim = math.max(1, math.floor(B/2))
-    local wall_y = math.max(top, front_y - p.wall_top)
     -- The back corners rounded off, the outer one of each wall, as the
     -- spine-out box's lid is.
     local ch = math.min(p.wall - 1, math.max(2, Screen:scaleBySize(1)))
@@ -444,6 +467,12 @@ function Box:_paintSlipcase(bb, x, y)
                 local cx, cy = x + I + self.art_w - cs.w, front_y - cs.h - 1
                 bb:paintRectRGB32(cx - 1, cy - 1, cs.w + 2, cs.h + 2, board)
                 self.count:paintTo(bb, cx, cy)
+                if self.more and self.more:getSize().w + cs.w + g <= self.art_w then
+                    local mx, ms = x + I, self.more:getSize()
+                    bb:paintRectRGB32(mx - 1, cy - 1, ms.w + 2, cs.h + 2, board)
+                    self.more.fgcolor = name_ink_for(night)
+                    self.more:paintTo(bb, mx, cy)
+                end
             elseif cs.w <= self.art_w and cs.h <= self.count_band_h then
                 self.count:paintTo(bb, x + I + self.art_w - cs.w, front_y + I)
             end

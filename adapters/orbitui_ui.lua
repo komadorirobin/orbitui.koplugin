@@ -71,6 +71,7 @@ function M.wrap(name, module)
     elseif name == "lib/bookshelf_series_boxes" then
         module.SLIPCASE_MIN_SHARE = 0.85
         module.SLIPCASE_COMPACT_HEADS = true
+        require("adapters/orbitui_series_boxes").geometry(module)
     elseif name == "lib/bookshelf_series_box_widget" then
         module.preserve_cover_aspect = true
     elseif name == "lib/bookshelf_settings" then

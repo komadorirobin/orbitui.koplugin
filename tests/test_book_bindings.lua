@@ -115,7 +115,8 @@ function Text:init()
 end
 function Text:getSize() return self.dimen end
 function Text:paintTo(_bb, x, y)
-    texts[#texts+1]={text=self.text, ink=self.fgcolor, x=x, y=y}
+    texts[#texts+1]={text=self.text, ink=self.fgcolor, x=x, y=y,
+        size=self.face.size,w=self.dimen.w,h=self.dimen.h}
 end
 function Text:free() end
 package.loaded["lib/bookshelf_colour_text"] = Text
@@ -130,7 +131,10 @@ local function surface(w,h)
         assert(x>=0 and y>=0 and rw>=0 and rh>=0 and x+rw<=w and y+rh<=h, "out of bounds")
         self.rects[#self.rects+1]={x=x,y=y,w=rw,h=rh,c=c}
     end
-    function bb:blitFrom(_,x,y,_,_,rw,rh) self:paintRectRGB32(x,y,rw,rh,{}); self.blits=self.blits+1 end
+    function bb:blitFrom(src,x,y,_,_,rw,rh)
+        local last=src.rects and src.rects[#src.rects]
+        self:paintRectRGB32(x,y,rw,rh,last and last.c or {}); self.blits=self.blits+1
+    end
     function bb:getWidth() return w end
     function bb:getHeight() return h end
     function bb:getType() return 5 end
@@ -153,6 +157,7 @@ local look={r=90,g=115,b=145,aspect=1.5}
 Shelf.bookLook=function() return look end
 Shelf.prefetchFacts=function() end
 Shelf.cachedProgress=function() return nil,nil,true end
+Shelf.cachedPageCount=function() return nil end
 Shelf.persistProgress=function() end
 
 H.test("shelf and series radios persist, rebuild immediately and allow inheritance", function()
@@ -295,6 +300,78 @@ H.test("real box member spines inherit the series binding without mutating share
     end
 end)
 
+local function packedBox(n,style,scale)
+    local Boxes=require("lib/bookshelf_series_boxes")
+    local Box=require("lib/bookshelf_series_box_widget")
+    local members={}
+    for i=1,n do members[i]={filepath="member"..i..".cbz",page_count=200,
+        has_cover=true,series_name="Saga",series_num=i} end
+    local book=Boxes.box(members,"Saga")
+    scale=scale or 1
+    local shape=Boxes.geometry(book,{w=160*scale,h=248*scale,aspect=1.5},
+        {row_h=300*scale,content_w=800*scale})
+    return Box:new{entry={book=book,series_box=shape,binding=style},width=shape.w,height=300*scale}
+end
+
+local function pixel(bb,x,y)
+    local colour
+    for _,r in ipairs(bb.rects) do
+        if r.x<=x and r.y<=y and r.x+r.w>x and r.y+r.h>y then colour=r.c end
+    end
+    return colour
+end
+
+H.test("real book heads leave a recessed continuous interior and untouched air above", function()
+    local interior={}
+    for _,dark in ipairs({false,true}) do
+        night=dark
+        for _,style in ipairs({"hardcover","paperback","tankobon"}) do
+            local box=packedBox(2,style)
+            local g=box.shape
+            H.eq(#box.slots,2); H.eq(box.more,nil)
+            assert(g.occupied_w<g.w-2*g.wall)
+            local bb=surface(box.width,box.height); texts={}; box:paintTo(bb,0,0)
+            local gx=g.wall+g.occupied_w+2
+            local wy=box.top+g.rise-g.wall_top
+            H.eq(pixel(bb,gx,wy-1),nil,"air above the empty box was filled")
+            local c=pixel(bb,gx,wy+1); assert(c and c.r)
+            interior[dark and "night" or "day"]=c
+            H.eq(bb.blits,1)
+        end
+    end
+    assert(math.abs(interior.day.r+interior.night.r-255)<=1)
+    assert(math.abs(interior.day.g+interior.night.g-255)<=1)
+    assert(math.abs(interior.day.b+interior.night.b-255)<=1)
+    night=false
+end)
+
+H.test("overflow and read labels remain separate above real bound spines at small sizes", function()
+    for _,factor in ipairs({1,1.5,2}) do
+        dpi=factor
+        for _,scale in ipairs({.5,1,1.5}) do
+            for _,dark in ipairs({false,true}) do
+                night=dark
+                local box=packedBox(120,"tankobon",scale)
+                H.eq(box.more.text,"+"..(120-#box.slots))
+                local bb=surface(box.width+40,box.height+20)
+                texts={}; box:paintTo(bb,20,10)
+                local count,more
+                for _,t in ipairs(texts) do
+                    if t.text==box.count.text then count=t end
+                    if t.text==box.more.text then more=t end
+                end
+                assert(count and more,"a label was silently lost")
+                assert(more.x+more.w<count.x)
+                H.eq(more.y,count.y)
+                assert(count.x+count.w<=20+box.width)
+                assert(count.y+count.h<10+box.top+box.shape.rise)
+                H.eq(bb.blits,1)
+            end
+        end
+    end
+    dpi,night=1,false
+end)
+
 -- Optional generated shape preview from the real paint calls (not device fonts).
 local preview=os.getenv("ORBITUI_BINDING_PREVIEW")
 if preview then
@@ -316,6 +393,41 @@ if preview then
         out:write('</g>')
         out:write(string.format('<text x="%d" y="400" font-size="22" fill="#202830">%s</text>',
             (i-1)*245+20,style))
+    end
+    out:write('</svg>'); out:close()
+end
+
+local box_preview=os.getenv("ORBITUI_BOX_FILL_PREVIEW")
+if box_preview then
+    local out=assert(io.open(box_preview,"w"))
+    local function esc(s) return s:gsub("&","&amp;"):gsub("<","&lt;"):gsub(">","&gt;") end
+    out:write('<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="780" viewBox="0 0 1000 780">')
+    out:write('<rect width="1000" height="780" fill="#f1ede4"/>')
+    out:write('<text x="30" y="30" font-size="18" fill="#202830">Native paint calls; placeholder covers and approximate fonts</text>')
+    for row,style in ipairs({"tankobon","paperback"}) do
+        for col,n in ipairs({2,6,12,120}) do
+            local box=packedBox(n,style)
+            local bb=surface(box.width,box.height)
+            texts={}; box:paintTo(bb,0,0)
+            local x,y=(col-1)*240+30,(row-1)*360+50
+            out:write(string.format('<g transform="translate(%d,%d)">',x,y))
+            out:write('<rect x="-12" y="300" width="210" height="12" fill="#b1a08a"/>')
+            for _,r in ipairs(bb.rects) do
+                if r.c.r then
+                    out:write(string.format('<rect x="%g" y="%g" width="%g" height="%g" fill="rgb(%d,%d,%d)"/>',
+                        r.x,r.y,r.w,r.h,r.c.r,r.c.g,r.c.b))
+                end
+            end
+            for _,t in ipairs(texts) do
+                if t.text==box.count.text or (box.more and t.text==box.more.text) or t.text=="Saga" then
+                    local c=t.ink
+                    out:write(string.format('<text x="%g" y="%g" font-size="%g" textLength="%g" lengthAdjust="spacingAndGlyphs" fill="rgb(%d,%d,%d)">%s</text>',
+                        t.x,t.y+t.size*.8,t.size,t.w,c.r,c.g,c.b,esc(t.text)))
+                end
+            end
+            out:write(string.format('<text x="0" y="340" font-size="17" fill="#202830">%s / %d volumes</text>',style,n))
+            out:write('</g>')
+        end
     end
     out:write('</svg>'); out:close()
 end

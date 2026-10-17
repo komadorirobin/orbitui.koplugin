@@ -2288,6 +2288,32 @@ upgrade/rollback and corrupt-download rejection, both CI jobs, downloaded draft
 hashes and anonymous live discovery/download/installation. Device rendering,
 binding appearance and the reported chooser hang still require confirmation.
 
+## 2026-10-17: Consistent member thickness and partially filled boxes
+
+User approved the partial-fill proposal with "Kör!" after testing alpha.43.
+Start at public `c9a163ff`; this is a local C07 presentation change, not a
+merge or publication. VERSION remains alpha.43 and upstream pins remain
+Bookshelf `c7a9db2c` / SimpleUI `7eb80f9e`. Bootstrap/API, assets, existing
+preferences, reading data and the archived design branch are unchanged.
+
+Keep the larger aspect-true cover and outer width bounds, but stop scaling
+all member widths to fill the interior. The host's two small geometry hooks
+use the native page-width curve, common row/DPI/shelf-thickness calibration,
+and reliable print or fixed-layout counts. Unknown/reflowable render counts
+use a neutral fallback. A read-only cached-page seam avoids sidecar scans and
+status-mtime invalidation affecting width. Pack a whole left-aligned prefix,
+up to eight members, without squeezing, clipping or skipping ahead. Shade the
+remaining low interior and adapt its shadow; show `+N` for undrawn members
+beside the complete read/total. Membership, order and opening remain unchanged.
+Standalone Bookshelf retains its old policy without host hooks.
+
+Tests cover geometry, count provenance, invalid values, different series
+lengths, DPI/row/thickness settings, very narrow boxes, status independence,
+binding inheritance, colour/night drawing, shadows and count-label separation.
+Full gates and remaining device checks are recorded in TESTING.md; evidence
+is in `test-results/series-box-fill-20261017/`. No push, tag or release.
+Any sealed alpha.43 preview is local only and must not replace public assets.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

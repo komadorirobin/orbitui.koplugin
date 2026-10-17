@@ -146,6 +146,14 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
+- October 17, user-approved partial box fill: host `memberSpineWidth` and
+  `packSpines` hooks retain calibrated natural widths and show a bounded whole
+  prefix. Keep the low shaded empty interior, matching shadow columns and `+N`
+  beside the full read/total. `cachedPageCount` reads page facts without status
+  validation or sidecar I/O. Reflowable reader-layout counts must not drive
+  physical thickness. Preserve native standalone fill-to-width and the prior
+  aspect, compact-head, binding and navigation seams. C07 coverage:
+  `test_series_box_fill`, `test_book_bindings`, `test_upstream_series_boxes`.
 - October 17 reviewed merge: Bookshelf master `c7a9db2c` (5.5.2) and
   SimpleUI main `7eb80f9e` (still 2.7.5). Import separately, then adapt.
   A custom series image now supplies slipcase art; apply the same aspect-true

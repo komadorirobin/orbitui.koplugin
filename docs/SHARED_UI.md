@@ -179,6 +179,15 @@ whole-box checkmark/fade and separate manga-style badge. Preferences and book
 status remain stored unchanged for rollback. The aggregate count replaces
 individual head glyphs in the compact layout, where they would overlap it.
 
+The later October 17 partial-fill refinement keeps the cover area but stops
+stretching member spines to fill it. Comparable page counts determine thickness
+on one shared scale; unknown or reflowable reader-layout counts use a neutral
+fallback. Members pack left and leave a shaded interior on the right. Only a
+whole prefix that fits is shown, up to eight members. `+N` means additional
+local volumes not drawn, not missing or unread volumes; the separate read/total
+still counts the complete group. This applies to all physical series boxes
+without a new setting, and retains all shelf/series binding choices.
+
 Tap opens the series and shows its individual volumes. Long-press retains the
 native series menu. The box is a display-only record: source membership, status,
 metadata and saved sorting settings are not rewritten. Filtered boxes contain

@@ -541,6 +541,14 @@ function SpineShelf.cachedProgress(fp)
     return e.p, e.s, e.sk == true, e.psrc, (tonumber(e.m) or 0) > 0
 end
 
+-- Width-only consumers need no status validation or sidecar reads. In
+-- particular, a changed read status must not briefly hide a stored page count.
+function SpineShelf.cachedPageCount(fp)
+    local F = fp and _facts()
+    local e = F and F.get(fp)
+    return e and e.p or nil, e and e.psrc or nil
+end
+
 -- persistProgress(fp, pages, status, src)
 --
 -- src says where `pages` came from, and the spine's THICKNESS reads it

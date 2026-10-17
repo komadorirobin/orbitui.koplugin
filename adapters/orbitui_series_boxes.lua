@@ -1,5 +1,52 @@
 local M = {}
 
+local page_sources = { print = true, stable = true, calibre = true, filename = true }
+local fixed_formats = { pdf = true, cbz = true, cbr = true, djvu = true }
+
+local function positive(value)
+    local n = tonumber(value)
+    return n and n > 0 and n < math.huge and n or nil
+end
+
+function M.memberSpineWidth(member, auto_thick, opts)
+    local Shelf = require("lib/bookshelf_spine_shelf")
+    local Layout = require("lib/bookshelf_spine_layout")
+    local pp, source = Shelf.cachedPageCount(member.filepath)
+    local pages = page_sources[source] and positive(pp) or nil
+    if not pages and page_sources[member._page_src] then
+        pages = positive(member.page_count) or positive(member.pages)
+    end
+    -- Never turn a reflowable's reader-layout count into physical thickness.
+    -- Fixed-layout page counts and explicit filename markers are comparable.
+    local ext = (member.filepath or ""):match("%.([^./]+)$")
+    if not pages and ext and fixed_formats[ext:lower()] then
+        pages = positive(member.page_count) or positive(member.pages) or positive(pp)
+    end
+    if not pages and member.filepath then
+        local Repo = require("lib/bookshelf_book_repository")
+        if Repo.pageCountFromFilename then pages = positive(Repo.pageCountFromFilename(member.filepath)) end
+    end
+    local width = Layout.spineWidthDp(pages) * auto_thick
+    local pct = tonumber(opts.thickness_pct)
+    if pct and pct >= 40 and pct <= 300 then width = width * pct / 100 end
+    return require("device").screen:scaleBySize(math.max(8, width))
+end
+
+function M.packSpines(widths, room)
+    local spines, used = {}, 0
+    for i, width in ipairs(widths) do
+        if used + width > room then break end
+        spines[#spines + 1] = { member = i, x = used, w = width }
+        used = used + width
+    end
+    return spines, used
+end
+
+function M.geometry(boxes)
+    boxes.memberSpineWidth = M.memberSpineWidth
+    boxes.packSpines = M.packSpines
+end
+
 local function tip(self)
     local path = self._drilldown_path or {}
     return path[#path]

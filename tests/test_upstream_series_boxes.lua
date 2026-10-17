@@ -282,7 +282,8 @@ function Slot:_renderIntoAt(bb, x, y)
 end
 package.loaded["lib/bookshelf_spine_shelf"] = {
     titleSize = function() return 12 end, textHeight = function(size) return size end,
-    cachedProgress = function() return nil end, _SpineBookSlot = Slot,
+    cachedProgress = function() return nil end, cachedPageCount = function() return nil end,
+    _SpineBookSlot = Slot,
     bookLook = function() return {r = 90, g = 120, b = 80, aspect = cover_aspect} end,
     boardColor = function() return {r = 90, g = 120, b = 80} end,
 }
@@ -419,12 +420,19 @@ H.test("counts stay above the image and two-line names stay centered on the boar
         H.eq(count_rect.text, w.count.text)
         assert(count_rect.y + count_rect.h < cover.y)
         H.eq(count_rect.x + count_rect.w, 20 + shape.w - w.inset)
-        for i = 2, #bb.texts do
+        local first_name = w.more and 3 or 2
+        if w.more then
+            local more = bb.texts[2]
+            H.eq(more.text, "+" .. shape.hidden_count)
+            assert(more.x + more.w < count_rect.x)
+            H.eq(more.y, count_rect.y)
+        end
+        for i = first_name, #bb.texts do
             local name = bb.texts[i]
             assert(cover.y + cover.h < name.y)
             assert(math.abs(name.x + name.w / 2 - (20 + shape.w / 2)) <= .5)
         end
-        H.eq(#bb.texts, 3)
+        H.eq(#bb.texts, first_name + 1)
     end
     cover_aspect = 1.5
 end)
@@ -501,12 +509,14 @@ H.test("complete native boxes paint safely in day and night after a fresh build"
                 local before = reads
                 local w, box, shape = visibleBox(raw, scale)
                 H.eq(reads - before, n); H.eq(w.count.text, count(n, n))
-                H.eq(shape.style, "slipcase"); H.eq(#shape.spines, math.min(n, 8))
+                H.eq(shape.style, "slipcase")
+                assert(#shape.spines > 0 and #shape.spines <= math.min(n, 8))
+                H.eq(shape.hidden_count, n - #shape.spines)
                 H.eq(#box.books, n); H.eq(w.all_read, nil); H.eq(w.fade_amount, nil)
                 painted_slots = 0; before = reads
                 local bb = surface(shape.w, 400)
                 w:paintTo(bb, 0, 0); w:paintTo(bb, 0, 0)
-                H.eq(bb.blits, 2); H.eq(painted_slots, 2 * math.min(n, 8))
+                H.eq(bb.blits, 2); H.eq(painted_slots, 2 * #shape.spines)
                 H.eq(reads, before)
             end
         end

@@ -43,6 +43,13 @@ that follows that series across shelves, or choose **Follow shelf** to clear it.
 Untouched shelves retain Hardcover. Choices affect physical books and box
 member spines, not book metadata, cover-grid/list views or reading progress.
 
+Local follow-up (not yet published): box members keep a consistent page-based
+thickness instead of expanding or shrinking to fill the box. Short series leave
+a shaded interior on the right; long series show the first volumes that fit,
+up to eight, plus a separate `+N` for the rest. The full read/total and all books
+remain available. Unknown or reader-layout-dependent counts use a neutral
+thickness. Cover area, proportions and binding choices are retained.
+
 The alpha.5 preview adapts upstream's footer refresh regions to the OrbitUI dock
 and retains whole-group navigation through shared book panels/search. The
 transparent-pagination divider fix also covers folder/list views and full-screen
