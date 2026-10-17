@@ -2314,6 +2314,23 @@ Full gates and remaining device checks are recorded in TESTING.md; evidence
 is in `test-results/series-box-fill-20261017/`. No push, tag or release.
 Any sealed alpha.43 preview is local only and must not replace public assets.
 
+## 2026-10-17: Prepare alpha.44 for explicit publication
+
+User request: "Publicera" after partial series-box fill `e1ce48bb` and
+confirmation of Swedish/English binding-label fallback. Fresh origin/main
+and the latest public release are alpha.43 at `c9a163ff`. Publish the reviewed
+change as a new prerelease, never replace alpha.43 assets. This step changes
+only VERSION and release documentation. Bookshelf `c7a9db2c`, SimpleUI
+`7eb80f9e`, bootstrap/API 1, artwork and the archived design remain unchanged.
+
+Gates: complete sequential Lua/LuaJIT runs, translations, clean sealed package,
+outgoing-history/runtime held-artwork audits, published alpha.43 installer
+upgrade/rollback and corrupt-download rejection, both CI jobs, downloaded draft
+hashes and anonymous live discovery/download/installation. Physical Bigme
+rendering of partial interiors, thickness and labels still needs confirmation.
+Keep evidence in `test-results/alpha44-20261017/`; do not publish the archived
+design branch or any held-artwork history.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

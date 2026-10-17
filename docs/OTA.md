@@ -312,6 +312,17 @@ backups: code rollback does not mirror new surface edits into older appearance
 keys, and all earlier migration caveats remain. Physical Bigme acceptance of
 the merged changes remains outstanding.
 
+Alpha.44 stops stretching or squeezing member spines to fill series boxes.
+Reliable page counts set comparable widths; unknown/reflowable reader counts
+use a neutral fallback. Short series leave a shaded interior on the right,
+while a separate `+N` identifies undrawn members in long series. The complete
+read/total, aspect-true cover area and alpha.43's shelf/series binding choices
+remain. Alpha.43 and earlier alpha installations can update through the same
+preview channel and unchanged bootstrap/API 1. No new upstream import, artwork,
+settings migration or reading-data change is included. Code rollback restores
+the earlier fill-to-width presentation without changing data. Earlier settings
+backup/migration caveats and physical-device acceptance gaps still apply.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

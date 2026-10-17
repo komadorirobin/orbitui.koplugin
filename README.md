@@ -16,10 +16,12 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.43** adds larger, aspect-preserving slipcase artwork and
-Hardcover, Paperback and Manga / tankobon binding choices per shelf or series.
-It fixes automatic first-book covers on light series records and reduces
-synchronous work in the image picker. Bookshelf **5.5.2** (`c7a9db2c`) and
+Version **0.1.0-alpha.44** gives series-box members consistent page-based
+thickness instead of stretching them to fill the box. Short series leave a
+shaded interior; long series show the first volumes that fit and `+N` for the
+rest. The full read/total, cover area and proportions are retained, along with
+alpha.43's per-shelf/per-series Hardcover, Paperback and Manga / tankobon choices,
+automatic-cover fix and bounded image picker. Bookshelf **5.5.2** (`c7a9db2c`) and
 SimpleUI **2.7.5** (`7eb80f9e`) remain the reviewed upstream baselines.
 The read-total sits in the compact exposed head, above the picture; minimum
 box width is 85% of a normal cover, with the existing maximum/space cap.
@@ -32,7 +34,7 @@ labels/sizes, ornaments,
 custom icons and dock/Bento layout are retained. Back up settings before
 updating: new grouped-order, ledger and module edits are not mirrored to older
 code on rollback. New surface choices are likewise not mirrored to older code.
-See [the release notes](docs/releases/0.1.0-alpha.43.md)
+See [the release notes](docs/releases/0.1.0-alpha.44.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
@@ -43,12 +45,10 @@ that follows that series across shelves, or choose **Follow shelf** to clear it.
 Untouched shelves retain Hardcover. Choices affect physical books and box
 member spines, not book metadata, cover-grid/list views or reading progress.
 
-Local follow-up (not yet published): box members keep a consistent page-based
-thickness instead of expanding or shrinking to fill the box. Short series leave
-a shaded interior on the right; long series show the first volumes that fit,
-up to eight, plus a separate `+N` for the rest. The full read/total and all books
-remain available. Unknown or reader-layout-dependent counts use a neutral
-thickness. Cover area, proportions and binding choices are retained.
+Box members pack left at natural widths, up to eight visible volumes; `+N`
+counts additional local volumes not drawn, not missing or unread books.
+Unknown or reader-layout-dependent page counts use a neutral thickness.
+Binding labels use Swedish when selected in KOReader and English otherwise.
 
 The alpha.5 preview adapts upstream's footer refresh regions to the OrbitUI dock
 and retains whole-group navigation through shared book panels/search. The

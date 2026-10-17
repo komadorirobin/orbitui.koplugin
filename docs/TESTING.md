@@ -2,6 +2,18 @@
 
 ## Automated
 
+2026-10-17 alpha.44 publication preparation: explicitly requested after
+partial-fill implementation `e1ce48bb`. Re-run complete sequential Lua/LuaJIT
+gates and translations on the versioned tree, then seal a clean-commit package.
+Audit runtime/outgoing history for held artwork and compare stable bootstrap,
+upstream pins and assets with public alpha.43. Exercise the published alpha.43
+installer's upgrade/rollback and corrupt-download rejection; verify both CI
+jobs, downloaded draft hashes and anonymous public discovery/download/install.
+Evidence belongs in `test-results/alpha44-20261017/`. This step changes only
+VERSION and release documentation. The partial-fill device checks below remain
+open; this is a prerelease. Binding-label smoke checks confirm sv/sv_SE use
+Swedish and en/en_US/de/fr/unset use the English fallback.
+
 2026-10-17 partial box fill (unpublished follow-up to alpha.43): thirteen new
 geometry/cache cases cover host-only hooks, consistent widths across series
 lengths and title-fit widths, whole-prefix packing, eight-member work bound,
