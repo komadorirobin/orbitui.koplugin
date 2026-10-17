@@ -143,6 +143,16 @@ local function _isFullWidth()
     return M.getBarLayout() == "full"
 end
 
+-- Legacy consumers, including Bookshelf's embedded dock.
+function M.sepColor()
+    return _SUIStyle().COLOR.gray
+end
+
+function M.getBarStyle()
+    if _isFullWidth() then return "default" end
+    return _navbarSurface().frame and "framed" or "bare"
+end
+
 
 -- Bar colors — derived from the shared style catalog, cached on first
 -- access (kept lazy, via _SUIStyle(), so requiring this module doesn't

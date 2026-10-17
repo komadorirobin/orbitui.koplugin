@@ -279,8 +279,8 @@ H.test("tab grid rebuilds only its selected source without changing module heigh
         requestPageTurn = function(ctx, id, delta) pages[id] = pages[id] + delta end,
         progressDrawsText = function() return false end,
         getProgressStyle = function() return "none" end,
-        makeEraser = function(w, h, pfx, id, strength)
-            H.eq(pfx, "home_"); H.eq(id, "tab_grid_1"); H.eq(strength, 0)
+        makeEraser = function(w, h, surface)
+            H.eq(surface.strength, 0); H.eq(surface.border_sz, 0)
             return W:new{ dimen = { w = w, h = h }, eraser = true }
         end,
         makeModule = function(opts)
@@ -307,7 +307,7 @@ H.test("tab grid rebuilds only its selected source without changing module heigh
         getAlignment = function(_, _, default) return default end,
     }
     local chrome = {
-        NO_CHROME = {}, resolve = function() return {} end,
+        NO_CHROME = { strength = 0, border_sz = 0 }, resolve = function() return {} end,
         contentWidth = function(w) return w - 20 end,
         boxInset = function() return 4 end,
         inset = function(w) return w end,

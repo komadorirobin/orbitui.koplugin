@@ -146,6 +146,33 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
+- October 17 reviewed merge: Bookshelf master `c7a9db2c` (5.5.2) and
+  SimpleUI main `7eb80f9e` (still 2.7.5). Import separately, then adapt.
+  A custom series image now supplies slipcase art; apply the same aspect-true
+  fit and count band as for the first cover. Use actual decoded dimensions,
+  retry/fall back to the first cover after missing or unreadable art, free
+  scaled scratch on errors, and never free the cache-owned source image.
+  Random Book gains optional direct opening (preview remains the default).
+  Include Bookshelf's software wallpaper-overlay fallback for devices without
+  the C blitter and its new tests. No claim of a Bigme-specific speedup.
+- SimpleUI's shared surface model adds white/gray tone, optional frames and
+  opacity; navigation layout becomes Full-width/Floating. Preserve transparent
+  titlebar/pagination/cover-strip/module defaults and independent titlebar
+  button opacity. Keep old wallpaper APIs and bottom-bar `sepColor`, `SIDE_M`,
+  `SEP_H` and `getBarStyle` for embedded/legacy callers. Copy old look/style/bar
+  flags into unset new fields only, retaining the old keys for rollback. Keep
+  quick-setting button opacity effective and editable rather than forcing 100.
+  Backups/presets retain legacy titlebar-button fields and new surface keys.
+- Keep Home alive beneath its own KOReader menu and restore the displaced
+  Home/custom screen after temporary plugin fullscreens. The `orbitui_ui` seam
+  identifies Bookshelf/Home/Reader destinations: do not transfer Home restoration
+  to them, and invalidate deferred restoration when navigation has advanced.
+  Import shared UTF-8 metadata helpers and bounded multi-author list context;
+  regenerate the map for `infra/sui_text`. Adapt native test fixtures to supply
+  KOReader's `util.trim`, without skipping tests. Preserve lazy native gettext
+  and existing Swedish fork strings; correct duplicate single-form plural
+  entries without extending translation exceptions. See C02/C07/C08 and
+  `test_upstream_20261017` / `test_upstream_series_boxes`.
 - October 17, user-approved slipcase correction: preserve cover aspect and
   center the sticker with visible cover-coloured board around it; minimum width
   is 70% of the usual cover width, with the native maximum unchanged. The

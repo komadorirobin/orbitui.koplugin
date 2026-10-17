@@ -35,6 +35,14 @@ exit. Closing a book via gesture, menu or end-of-book dialog must reach the
 intended destination without a second menu layer or prolonged input blocking.
 These are historical regressions, not merely cosmetic preferences.
 
+SimpleUI's October 17 displaced-screen restoration keeps Home/custom screens
+alive beneath their own main menu. Temporary plugin fullscreens may inherit
+the displaced screen ID, but Bookshelf, Home and ReaderUI are navigation
+destinations with their own return ownership. They must not inherit a Home
+restore marker. A navigation-generation guard cancels stale deferred restores,
+even if the newer destination closes before the callback runs. Regression
+coverage: `tests/test_upstream_20261017.lua` and the `orbitui_ui` patch seam.
+
 Source: `components/bookshelf/main.lua`,
 `components/simpleui/sui_bookshelf_bridge.lua`, SimpleUI `infra/sui_patches.lua`
 and `engines/sui_screen_engine.lua`.
@@ -338,6 +346,13 @@ errors so the next redraw can retry. `orbitui_ui` enables the new optional
 `preserve_cover_aspect` seam; standalone Bookshelf keeps its old default.
 This is a small adaptation of the native painter, not a restored second one.
 
+Bookshelf 5.5.2 may use an explicit series image instead of the first cover.
+Apply the same aspect-preserving fit to either source, using decoded image
+dimensions rather than trusting stale file-size metadata. A missing/undecodable
+custom image falls back to the first cover and may retry on a later redraw.
+Keep cached source buffers owned by the image cache; free only owned scaled
+scratch, including after blit failures. Do not move the count onto the picture.
+
 Compact once before page planning and cache signatures; letter jumps use that
 same native preparation. Use native full-group fetching, scoped restoration
 and numeric series order. The adapter reads legacy `orbitui_series_files` into
@@ -545,6 +560,14 @@ cover shadows remain opt-in at the existing 4px base. Currently Reading retains
 detailed stats and left-aligned descriptions by default. New appearance choices
 must not rewrite existing settings. The new placeholder hook and bounded shadow
 cache follow C01/C04/C06 ownership rules; see the October 9 follow-up tests.
+
+The October 17 surface migration splits old looks into tone/frame/opacity and
+old navigation styles into Full-width/Floating. Copy only into unset fields;
+retain old look/style/transparent flags for rollback, and respect explicit new
+choices. Preserve legacy bar getters/setters and titlebar-button opacity as an
+independent field. Quick-setting button opacity must still render and remain
+editable. Backup/preset schemas retain old fields as well as the new ones.
+Tests: `tests/test_upstream_20261017.lua`, `tests/test_navbar_margin.lua`.
 
 Embedded resources resolve relative to their component, not the outer plugin
 root. Preserve fonts, icons, translations, wallpapers and license notices in

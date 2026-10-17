@@ -1,4 +1,5 @@
 package.path = "./?.lua;./?/init.lua;" .. package.path
+package.loaded["util"] = { trim = function(s) return (s:gsub("^%s+", ""):gsub("%s+$", "")) end }
 
 package.loaded["logger"] = { info = function() end }
 package.loaded["infra/sui_paths"] = { getPluginDir = function() return "./" end }

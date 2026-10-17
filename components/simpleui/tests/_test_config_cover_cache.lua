@@ -83,6 +83,7 @@ package.loaded["infra/sui_store"] = {
 }
 package.loaded["logger"] = { dbg = function() end }
 package.loaded["infra/sui_i18n"] = { translate = function(s) return s end }
+package.loaded["util"] = { trim = function(s) return (s:gsub("^%s+", ""):gsub("%s+$", "")) end }
 package.loaded["libs/libkoreader-lfs"] = {
     attributes = function(path, field)
         if path:match("^/book/") then

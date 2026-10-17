@@ -451,16 +451,16 @@ end
 --
 -- Split into two independent settings (status bar / navigation bar).
 -- Migration: if the old unified "simpleui_bars_transparent" key is present
--- we copy its value to both new keys once, then delete the legacy key so
--- it doesn't interfere on subsequent launches.
+-- copy into unset bar choices only, retaining the legacy key for rollback.
 -- ---------------------------------------------------------------------------
 do
     local legacy = "simpleui_bars_transparent"
     if SUISettings:get(legacy) ~= nil then
         local v = SUISettings:isTrue(legacy)
-        SUISettings:saveSetting("simpleui_statusbar_transparent", v)
-        SUISettings:saveSetting("simpleui_navbar_transparent",    v)
-        SUISettings:del(legacy)
+        for _, key in ipairs({"simpleui_statusbar_transparent", "simpleui_navbar_transparent"}) do
+            if SUISettings:get(key) == nil then SUISettings:saveSetting(key, v) end
+        end
+        -- Retain the legacy flag for older OrbitUI versions and patches.
     end
 end
 
@@ -525,13 +525,15 @@ function M.getBarStrength(kind)
         if SUISettings:get(surface.keys.strength) == nil and SUISettings:isTrue(legacy) then
             Backdrop.saveStrength(surface, STRENGTH_MIN)
         end
-        SUISettings:del(legacy)
+        -- Retain the old flag; the explicit opacity now takes precedence.
     end
     return Backdrop.readStrength(surface)
 end
 
 function M.setBarStrength(kind, n)
-    Backdrop.saveStrength(BAR_SURFACE[kind], n)
+    local v = Backdrop.saveStrength(BAR_SURFACE[kind], n)
+    local legacy = BARS[kind].legacy_transparent
+    if v and legacy then SUISettings:saveSetting(legacy, v <= STRENGTH_MIN) end
 end
 
 -- Look of a bar as it is painted (see Backdrop.resolve). Without a wallpaper
@@ -574,14 +576,16 @@ function M.getNavbarLayout()
     local surface = BAR_SURFACE.navbar
     local layout = style == "default" and M.NAVBAR_LAYOUT.FULL or M.NAVBAR_LAYOUT.FLOATING
     if style == "bare" then
-        Backdrop.saveStrength(surface, STRENGTH_MIN)
-        Backdrop.saveFrame(surface, false)
+        if SUISettings:get(surface.keys.strength) == nil then
+            Backdrop.saveStrength(surface, STRENGTH_MIN)
+        end
+        if SUISettings:get(surface.keys.frame) == nil then Backdrop.saveFrame(surface, false) end
     elseif style == "default" and M.getBarStrength("navbar") <= STRENGTH_MIN
             and SUISettings:get(surface.keys.frame) == nil then
         Backdrop.saveFrame(surface, false)
     end
     SUISettings:saveSetting(KEY_NAVBAR_LAYOUT, layout)
-    SUISettings:del(KEY_NAVBAR_STYLE)
+    -- Copy-only migration; explicit surface choices and rollback survive.
     return layout
 end
 

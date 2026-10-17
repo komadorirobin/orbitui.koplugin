@@ -331,6 +331,14 @@ local function _mainMenuOpenAbove(stack, from, fm)
     return false
 end
 
+-- An embedded navigation destination owns its return path. Temporary plugin
+-- screens may inherit restoration, but Library/Manga must never inherit Home.
+local function _carryDisplacedScreen(widget, screen_id)
+    if screen_id and not (M.isNavigationDestination and M.isNavigationDestination(widget)) then
+        widget._sui_displaced_screen = widget._sui_displaced_screen or screen_id
+    end
+end
+
 -- ---------------------------------------------------------------------------
 -- FileManager class patches
 -- Patches setupLayout, initGesListener, FileChooser.init, and FileChooser.changeToPath.
@@ -1968,6 +1976,10 @@ function M.patchUIManagerShow(plugin)
             return orig_show(um_self, widget, ...)
         end
 
+        if M.isNavigationDestination and M.isNavigationDestination(widget) then
+            UIManager._simpleui_navigation_generation = (UIManager._simpleui_navigation_generation or 0) + 1
+        end
+
         -- Wire the native "File browser" menu tab to use our flash-free
         -- close path every time a ReaderUI is shown (guard inside the fn).
         if widget.name == "ReaderUI" then
@@ -2393,7 +2405,7 @@ function M.patchUIManagerShow(plugin)
                     if _mainMenuOpenAbove(stack, i, plugin.ui) then
                         break
                     end
-                    widget._sui_displaced_screen    = w._id
+                    _carryDisplacedScreen(widget, w._id or "hs")
                     w._navbar_closing_intentionally = true
                     w._navbar_closing_from_module   = true
                     UIManager:close(w)
@@ -2445,8 +2457,10 @@ function M.patchUIManagerClose(plugin)
     -- Show the homescreen after any fullscreen widget closes, if conditions allow.
     -- Defined once at patch-install time so it is not recreated on every close().
     -- Shows screen `screen_id` (the built-in Homescreen when nil) again.
-    local function _doShowHS(fm, plugin_ref, screen_id)
+    local function _doShowHS(fm, plugin_ref, screen_id, navigation_generation)
         if isAppExiting() then return end
+        if navigation_generation ~= nil
+                and navigation_generation ~= (UIManager._simpleui_navigation_generation or 0) then return end
         local HS = liveHS()
         if not HS then return end
         local is_builtin = screen_id == nil or screen_id == "hs"
@@ -2467,7 +2481,7 @@ function M.patchUIManagerClose(plugin)
             if w and w ~= current_fm then
                 if w.covers_fullscreen then
                     -- The screen comes back when that widget closes instead.
-                    w._sui_displaced_screen = w._sui_displaced_screen or screen_id or "hs"
+                    _carryDisplacedScreen(w, screen_id or "hs")
                     return
                 end
                 -- Non-fullscreen dialog still open (plugin achievement detail,
@@ -2687,7 +2701,7 @@ function M.patchUIManagerClose(plugin)
                 if w and w ~= fm and w ~= widget and w.covers_fullscreen then
                     other_open = true
                     -- The screen comes back when that widget closes instead.
-                    w._sui_displaced_screen = w._sui_displaced_screen or widget._sui_displaced_screen
+                    _carryDisplacedScreen(w, widget._sui_displaced_screen)
                     break
                 end
             end
@@ -2746,13 +2760,14 @@ function M.patchUIManagerClose(plugin)
                         end
                     end
                 else
+                    local navigation_generation = UIManager._simpleui_navigation_generation or 0
                     UIManager:scheduleIn(0, function()
                         if isAppExiting() then return end
                         local fm2 = liveFM()
                         if not fm2 then return end  -- FM gone = app is exiting
                         local RUI = package.loaded["apps/reader/readerui"]
                         if RUI and RUI.instance then return end
-                        _doShowHS(fm2, active_plugin, widget._sui_displaced_screen)
+                        _doShowHS(fm2, active_plugin, widget._sui_displaced_screen, navigation_generation)
                     end)
                 end
             end

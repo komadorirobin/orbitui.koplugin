@@ -2103,6 +2103,59 @@ against their checksums and GitHub asset digests for upgrade/rollback testing.
 The initial outgoing-history audit covers 21 objects / 10 blobs / 527,281 blob
 bytes and excludes the held bitmap; repeat after the release commit.
 
+## 2026-10-17: Reviewed Bookshelf 5.5.2 and SimpleUI surface merge
+
+User request: "Merga upstream och sammanfatta andringarna". Start from clean
+published alpha.41 `a33eda9cbbdcc8cdee6ed7758069934d640c84ce` on a dedicated
+`maintenance/upstream-2026-10-17` branch. Review both tracked branches, not
+unmerged feature branches; no publication or version bump is requested.
+
+- Bookshelf master: `048ab4bad8993ebc713800d884fc485e54753343` to
+  `c7a9db2ca1c21ef6a38715e74306fe7f514ba807` (eight commits; release 5.5.2),
+  unsquashed subtree import `f0b2862d`.
+- SimpleUI main: `36e7430f6379693266d1082ae0b9d88de62cb877` to
+  `7eb80f9e570e6351c55f501f91e1a29c1442b756` (two commits; still 2.7.5),
+  unsquashed subtree import `3ee64740`.
+
+Review includes complete commit lists/net runtime diffs, release metadata,
+removed APIs, settings migrations, dependencies and UIManager hooks. Preserve
+original fork provenance in sources.json and advance only integrated pins.
+The generated map adds `infra/sui_text`.
+
+C07: custom series images now reach the slipcase. Preserve alpha.41's actual
+aspect, minimum-width policy, count band and native design. Read actual decoded
+dimensions, retain cache ownership, and fall back/retry on missing or unreadable
+art. Free owned scratch even on blit failure. Random Book adds explicit direct
+opening while retaining preview as default (C03). Include the native software
+wallpaper overlay fallback and its tests; no hardware-performance claim.
+
+C02/C06: keep Home under its own main menu and retain the displaced custom
+screen for temporary fullscreens. Add a narrow optional destination seam so
+Bookshelf/Home/Reader do not inherit a Home-return marker. A generation check
+invalidates delayed restores after navigation. Retain legacy bottom-bar and
+wallpaper APIs used by the embedded dock and existing patches.
+
+C08: import the new surface model, white/gray tones, frame controls and
+Full-width/Floating navbar layout. Preserve transparent titlebar/pagination/
+cover-strip/module defaults, separate titlebar-button opacity and legacy
+quick-setting button transparency. Keep opacity editable. Migrate by copying
+only into unset fields; do not erase old look/style/transparent keys. Preserve
+legacy and new fields in presets/backups. C01/C04/C05/C10/C11 ownership, cache,
+BookOrbit and ornament contracts are unchanged.
+
+Textual conflicts were resolved individually in the box painter, wallpaper/
+backdrop/navbar compatibility, backup/presets and i18n. Keep lazy native gettext
+and Swedish fork strings. Single-form Japanese/Korean/Vietnamese catalogue
+conflicts keep one plural entry, with no new exceptions. Update test fixtures
+for real `sui_text`/KOReader `util.trim` and the new resolved-surface API;
+do not stub away the native bottom-bar separator API. No assets are replaced.
+
+Validation results and clean-candidate package audit are recorded below after
+completion. Physical Bigme checks in TESTING.md remain outstanding. The old
+renderer archive branch remains unchanged. Keep alpha.41 public ZIP bytes in
+`test-results/upstream-20261017/public-alpha.41.zip`; a local package is not a
+replacement release. No push, tag, release or OTA update is authorized.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

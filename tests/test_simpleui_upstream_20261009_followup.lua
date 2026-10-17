@@ -118,7 +118,10 @@ H.test("wallpaper, cover shadow and currently-reading defaults remain opt-in and
     WP.isWallpaperActive = function() return active end
     WP.readBackdropStrength = function(k, default) return settings[k] or default end
     WP.saveBackdropStrength = function(k, v) settings[k] = v end
-    run(section(read("features/sui_wallpaper.lua"), "function M.getCoverStripBackdropStrength", "-- Module backdrop"),
+    WP.COVER_STRIP = { keys = { strength = "strip" }, defaults = { strength = 0 } }
+    WP.readStrength = function(s) return WP.readBackdropStrength(s.keys.strength, s.defaults.strength) end
+    WP.saveStrength = function(s, v) WP.saveBackdropStrength(s.keys.strength, v) end
+    run(section(read("features/sui_wallpaper.lua"), "function M.getCoverStripBackdropStrength", "-- Module opacity"),
         { M = WP, Backdrop = WP, KEY_COVER_STRIP = "strip", STRENGTH_MAX = 100 })
     settings = {}; H.eq(WP.getCoverStripBackdropStrength(), 0)
     WP.setCoverStripBackdropStrength(35); H.eq(WP.getCoverStripBackdropStrength(), 35)

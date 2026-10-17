@@ -2,6 +2,26 @@
 
 ## Automated
 
+2026-10-17 reviewed Bookshelf 5.5.2 / SimpleUI `7eb80f9e` merge: nine new
+integration cases cover surface defaults, copy-only legacy migrations,
+quick-settings opacity, UTF-8 metadata bounds, main-menu ownership and deferred
+Home/custom-screen restoration versus Library/Manga navigation. Three added
+box cases cover custom-art aspect, stale tags, lookup/probe/decode failure
+fallback, retry and scaled-buffer cleanup. The full box file now has 26 cases.
+Native SimpleUI fixtures supply `util.trim` for the new shared text helper;
+no tests or failure allowances are removed. Full-run/package results are
+recorded in the matching `MERGE_LOG.md` entry.
+
+Device checks still required: custom portrait/landscape series images and
+missing-image fallback at cover-size extremes; last-volume completion/reversal;
+Random Book's default preview versus direct opening with path-based profiles;
+old wallpaper/navbar/quick-setting appearance before/after migration; live dock
+margin changes in Home/Library/Manga; main menu over Home, temporary plugin
+fullscreen return, and navigation away before a scheduled restore. Check colour
+and night mode. The software overlay fallback primarily targets devices without
+the C blitter; host tests do not establish Bigme rendering or performance.
+This merge is local, unpublished and leaves VERSION at alpha.41.
+
 2026-10-17 alpha.41 publication preparation, explicitly requested after the
 aspect-preserving slipcase refinement. Complete sequential Lua / LuaJIT runs
 on the versioned tree pass 541 / 542 OrbitUI cases across 46 files, 394 Bookshelf

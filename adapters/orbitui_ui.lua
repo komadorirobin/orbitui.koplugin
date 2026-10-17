@@ -18,6 +18,7 @@ M.modules = {
     ["modules/moduleregistry"] = true,
     ["screens/sui_menu"] = true,
     ["screens/sui_bottombar"] = true,
+    ["infra/sui_patches"] = true,
 }
 
 local function settingsEntry(items, old_key)
@@ -29,7 +30,12 @@ local function settingsEntry(items, old_key)
 end
 
 function M.wrap(name, module)
-    if name == "features/library/sui_book_hold_dialog" then
+    if name == "infra/sui_patches" then
+        module.isNavigationDestination = function(widget)
+            return widget and (widget.name == "bookshelf" or widget.name == "homescreen"
+                or widget.name == "ReaderUI")
+        end
+    elseif name == "features/library/sui_book_hold_dialog" then
         module.show = function(file, opts) return require("adapters/orbitui_book_panel").show(file, opts) end
     elseif name == "features/library/sui_library_search" then
         module.show = function(opts) return require("core/orbitui_search").show(opts) end

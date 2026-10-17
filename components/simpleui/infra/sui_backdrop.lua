@@ -46,9 +46,7 @@ end
 local STRENGTH_MIN, STRENGTH_MAX = 0, 100
 M.STRENGTH_MIN, M.STRENGTH_MAX = STRENGTH_MIN, STRENGTH_MAX
 
--- Semantic default strength of every surface. Bars keep the solid look of a
--- plain UI; cards, buttons, the cover strip and tab bars start solid; modules
--- start transparent over the wallpaper.
+-- Legacy opacity API; keep these in step with SURFACE_DEFAULT below.
 M.BACKDROP_DEFAULT = {
     statusbar    = 100,
     navbar       = 100,
@@ -116,8 +114,8 @@ end
 -- Semantic defaults of every kind of surface, as { strength, tone, frame }.
 -- Bars keep the solid look of a plain UI; the navigation bar starts with its
 -- frame on (a rule along its top edge, or a border while floating). Cards,
--- buttons, the cover strip and tab bars start solid; modules start
--- transparent over the wallpaper.
+-- buttons and tab bars start solid. OrbitUI keeps native control bars,
+-- cover strips and modules transparent unless explicitly configured.
 M.SURFACE_DEFAULT = {
     statusbar      = { strength = 100, tone = WHITE, frame = false },
     navbar         = { strength = 100, tone = WHITE, frame = true  },
@@ -209,7 +207,7 @@ local LEGACY_LOOK = {
 }
 
 -- Converts the single-choice look stored under `look_key` into the tone,
--- frame and strength settings of `surface`, then removes it. Settings the
+-- frame and strength settings of `surface`, retaining it for rollback. Settings the
 -- user already stored are kept. `aliases` maps other stored values onto
 -- "flat" | "solid" | "transparent"; values that name no look are left alone.
 function M.migrateLook(surface, look_key, aliases)
@@ -222,7 +220,7 @@ function M.migrateLook(surface, look_key, aliases)
     if look.strength and SUISettings:get(keys.strength) == nil then
         SUISettings:saveSetting(keys.strength, look.strength)
     end
-    SUISettings:del(look_key)
+    -- Keep the legacy choice; populated surface fields prevent re-migration.
 end
 
 -- ---------------------------------------------------------------------------

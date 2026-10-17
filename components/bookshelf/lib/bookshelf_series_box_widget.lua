@@ -145,6 +145,39 @@ local function stickerSpan(w, h, r, nw, nh, row)
     return left, math.max(left, right)
 end
 
+local function safeAspect(aspect)
+    if type(aspect) ~= "number" or aspect ~= aspect or aspect <= 0 or aspect == math.huge then return 1.5 end
+    return aspect
+end
+
+function Box:_fitSticker(aspect)
+    local E = STICKER_EDGE_PX
+    aspect = safeAspect(aspect)
+    local room_w = math.max(1, self.art_w - 2 * E)
+    local room_h = math.max(1, self.art_h - self.count_band_h - 2 * E)
+    local w, h
+    if room_w * aspect <= room_h then
+        w, h = room_w, math.max(1, math.floor(room_w * aspect + 0.5))
+    else
+        w, h = math.max(1, math.floor(room_h / aspect + 0.5)), room_h
+    end
+    self.st_w, self.st_h = w + 2 * E, h + 2 * E
+    self.st_full_h = self.st_h
+    self.st_dx = math.floor((self.art_w - self.st_w) / 2)
+    self.st_dy = self.count_band_h + math.floor((self.art_h - self.count_band_h - self.st_h) / 2)
+    return w, h
+end
+
+function Box:_makeArtCover(w, h)
+    if self.art_cover then self.art_cover:free() end
+    self.art_cover = require("lib/bookshelf_spine_widget"):new{
+        book = self.entry.book.books[1], width = w + 2 * self.art_crop,
+        height = h + 2 * self.art_crop, flat_thumb = true,
+        show_progress = false, show_status = false, suppress_favorite_badge = true,
+        suppress_number_badges = true,
+    }
+end
+
 function Box:_initSlipcase()
     local entry, shape = self.entry, self.entry.series_box
     local SpineShelf = require("lib/bookshelf_spine_shelf")
@@ -189,19 +222,16 @@ function Box:_initSlipcase()
     end
     local custom_aspect
     if self.custom_path then
-        local tag = ImageSource.imageSizeTag and ImageSource.imageSizeTag(self.custom_path)
+        local ok_tag, tag = pcall(function() return ImageSource.imageSizeTag(self.custom_path) end)
         local iw, ih
-        if tag then iw, ih = tag:match("^(%d+)x(%d+)$") end
+        if ok_tag and type(tag) == "string" then iw, ih = tag:match("^(%d+)x(%d+)$") end
         iw, ih = tonumber(iw), tonumber(ih)
-        if iw and ih and iw > 0 then custom_aspect = ih / iw end
+        if iw and ih and iw > 0 and ih > 0 then custom_aspect = ih / iw end
     end
     -- The whole cover, stretched or squashed to fill the space above the
     -- name exactly: drawn at its own proportions, then scaled to the space.
     local aspect = custom_aspect or (self.first_look and self.first_look.aspect) or 1.5
-    if self.preserve_cover_aspect
-            and (type(aspect) ~= "number" or aspect ~= aspect or aspect <= 0 or aspect == math.huge) then
-        aspect = 1.5
-    end
+    if self.preserve_cover_aspect then aspect = safeAspect(aspect) end
     self.st_w, self.st_h = self.art_w, self.art_h
     self.st_full_h = math.max(1, math.floor(self.st_w * aspect + 0.5))
     self.st_dx, self.st_dy = 0, 0
@@ -222,27 +252,11 @@ function Box:_initSlipcase()
         local E = STICKER_EDGE_PX
         self.count_band_h = math.min(math.max(0, self.art_h - 2 * E - 1),
             self.count:getSize().h + math.max(2, Screen:scaleBySize(3)))
-        local room_w = math.max(1, self.art_w - 2 * E)
-        local room_h = math.max(1, self.art_h - self.count_band_h - 2 * E)
-        if room_w * aspect <= room_h then
-            cover_w, cover_h = room_w, math.max(1, math.floor(room_w * aspect + 0.5))
-        else
-            cover_w, cover_h = math.max(1, math.floor(room_h / aspect + 0.5)), room_h
-        end
-        self.st_w, self.st_h = cover_w + 2 * E, cover_h + 2 * E
-        self.st_full_h = self.st_h
-        self.st_dx = math.floor((self.art_w - self.st_w) / 2)
-        self.st_dy = self.count_band_h
-            + math.floor((self.art_h - self.count_band_h - self.st_h) / 2)
+        cover_w, cover_h = self:_fitSticker(aspect)
         -- Remove only the native tile's border, not pixels from the cover.
         self.art_crop = SpineWidget.CARD_BORDER
     end
-    self.art_cover = SpineWidget:new{
-        book = first, width = cover_w + 2 * self.art_crop,
-        height = cover_h + 2 * self.art_crop, flat_thumb = true,
-        show_progress = false, show_status = false, suppress_favorite_badge = true,
-        suppress_number_badges = true,
-    }
+    self:_makeArtCover(cover_w, cover_h)
     local room = math.max(1, self.art_w - 2 * shape.pad)
     if shape.name_lines then
         -- Two lines, broken where the geometry chose (the box was sized to
@@ -310,6 +324,32 @@ function Box:_paintSlipcase(bb, x, y)
     -- series name printed on the board below.
     bb:paintRectRGB32(x, front_y, p.w, p.front_h, board)
     bb:paintRectRGB32(x, front_y, p.w, math.max(1, math.floor(B/2)), lit(1.6))
+    -- Probe/decode failures fall back to the book. The decoded buffer remains
+    -- cache-owned; use its actual dimensions rather than a stale size tag.
+    local custom
+    if self.custom_path then
+        local ok, image = pcall(function()
+            local source = require("lib/bookshelf_image_source")
+            if self.preserve_cover_aspect then
+                -- loadImage stretches to the requested rectangle before we can fit it.
+                return source.loadImageNative(self.custom_path)
+            end
+            return source.loadImage(self.custom_path, self.st_w, self.st_full_h)
+        end)
+        if ok then custom = image end
+    end
+    if self.preserve_cover_aspect then
+        local aspect = self.first_look and self.first_look.aspect
+        if custom then
+            local ok, ratio = pcall(function() return custom:getHeight() / custom:getWidth() end)
+            if ok then aspect = ratio else custom = nil end
+        end
+        local w, h = self:_fitSticker(aspect)
+        if not custom and (self.art_cover.width ~= w + 2 * self.art_crop
+                or self.art_cover.height ~= h + 2 * self.art_crop) then
+            self:_makeArtCover(w, h)
+        end
+    end
     local I = self.inset
     local sx, sy = x + I + self.st_dx, front_y + I + self.st_dy
     local SW, SH = self.st_w, self.st_h
@@ -332,12 +372,9 @@ function Box:_paintSlipcase(bb, x, y)
         local iw, ih = math.max(1, SW - 2 * E), math.max(1, SH - 2 * E)
         -- The series' own image: no tile frame to crop. Cache-owned, so it is
         -- scaled from and never freed here.
-        local custom = self.custom_path
-            and require("lib/bookshelf_image_source").loadImage(self.custom_path, SW, FH)
         if custom then
-            local fit = custom:scale(iw, ih)
+            fit = custom:scale(iw, ih)
             bb:blitFrom(fit, sx + E, sy + E, 0, 0, iw, ih)
-            fit:free()
             return
         end
         local tw_, th_ = SW + 2 * c, FH + 2 * c

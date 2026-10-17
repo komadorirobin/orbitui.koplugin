@@ -17,6 +17,7 @@ end
 local last_chrome, last_content
 package.loaded["features/sui_module_chrome"] = {
     resolve = function(pfx, id) return { pfx = pfx, id = id } end,
+    hasFill = function() return false end,
     contentWidth = function(w) return w - 20 end,
     wrap = function(content, chrome, w)
         H.eq(chrome.pfx, "simpleui_hs_")

@@ -69,6 +69,7 @@ return {
     ["infra/sui_screen_nav"] = "components/simpleui/infra/sui_screen_nav.lua",
     ["infra/sui_store"] = "components/simpleui/infra/sui_store.lua",
     ["infra/sui_streak"] = "components/simpleui/infra/sui_streak.lua",
+    ["infra/sui_text"] = "components/simpleui/infra/sui_text.lua",
     ["infra/sui_updater"] = "components/simpleui/infra/sui_updater.lua",
     ["integrations/sui_bookorbit_want"] = "components/simpleui/integrations/sui_bookorbit_want.lua",
     ["lib/bookshelf_action_chooser"] = "components/bookshelf/lib/bookshelf_action_chooser.lua",

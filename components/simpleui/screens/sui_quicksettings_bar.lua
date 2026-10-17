@@ -376,7 +376,7 @@ local function buttonSpec(btn_size, label_w)
         frame_sz   = btn_size,
         fixed_size = true,
         shape      = getShape(),
-        surface    = Backdrop.resolve(buttonSurface(), Backdrop.STRENGTH_MAX),
+        surface    = Backdrop.resolve(buttonSurface()),
         fgcolor    = SUIStyle.COLOR.text_primary,
         show_label = label_w ~= nil,
     }
@@ -1680,7 +1680,7 @@ function QSBar.makeMenuItems(ctx_menu)
         Config.makeSurfaceMenu{
             surface       = buttonSurface(),
             enabled_func  = function() return getShape() ~= "bare" end,
-            with_strength = false,
+            with_strength = function() return true end,
             refresh       = refresh,
             _lc          = _,
         },

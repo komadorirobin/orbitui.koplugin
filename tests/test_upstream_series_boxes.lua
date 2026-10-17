@@ -254,6 +254,8 @@ local function surface(w, h)
         local next = surface(sw, sh); allocated[#allocated + 1] = next; return next
     end
     function bb:getType() return 1 end
+    function bb:getWidth() return self.w end
+    function bb:getHeight() return self.h end
     function bb:free() assert(not self.freed, "double free"); self.freed = true end
     return bb
 end
@@ -465,6 +467,78 @@ H.test("native box gestures still open the group rather than its first volume", 
         on_series_hold = function(g) H.eq(g, box); holds = holds + 1 end}
     H.eq(w:onTap(), true); H.eq(w:onDoubleTap(), true); H.eq(w:onHold(), true)
     H.eq(taps, 2); H.eq(holds, 1)
+end)
+
+H.test("custom series images fit their decoded aspect and keep cache ownership", function()
+    for _, aspect in ipairs({.5, 1, 1.5, 3}) do
+        local cached = surface(200, 200 * aspect)
+        package.loaded["lib/bookshelf_image_source"] = {
+            resolveStackImage = function(kind, name) H.eq(kind, "series"); H.eq(name, "Saga"); return "/series.png" end,
+            imageSizeTag = function() return "100x150" end, -- stale metadata
+            loadImage = function(_, width, height) return surface(width, height) end,
+            loadImageNative = function(path) H.eq(path, "/series.png"); return cached end,
+        }
+        local w = visibleBox(members(3)); local bb = surface(w.width, 400)
+        allocated = {}; w:paintTo(bb, 0, 0)
+        H.eq(bb.blits, 1); H.eq(#allocated, 1); assert(allocated[1].freed)
+        H.eq(cached.freed, nil)
+        local c = bb.copies[1]
+        assert(math.min(math.abs(c.h - c.w * aspect), math.abs(c.w - c.h / aspect)) <= .5)
+        H.eq(c.sx, 0); H.eq(c.sy, 0)
+        assert(bb.texts[1].y + bb.texts[1].h < c.y)
+    end
+    package.loaded["lib/bookshelf_image_source"] = nil
+end)
+
+H.test("broken custom lookups and decodes fall back without stretching the book", function()
+    for _, failure in ipairs({"lookup", "size", "decode", "missing"}) do
+        local ready = false
+        local cached = surface(200, 100)
+        package.loaded["lib/bookshelf_image_source"] = {
+            resolveStackImage = function()
+                if failure == "lookup" then error("lookup failed") end
+                return "/series.png"
+            end,
+            imageSizeTag = function()
+                if failure == "size" then error("bad header") end
+                return "200x100"
+            end,
+            loadImageNative = function()
+                if ready then return cached end
+                if failure == "decode" then error("decode failed") end
+                return nil
+            end,
+        }
+        local w = visibleBox(members(3)); local bb = surface(w.width, 400)
+        w:paintTo(bb, 0, 0); H.eq(bb.blits, 1)
+        local c = bb.copies[1]
+        assert(math.min(math.abs(c.h - c.w * cover_aspect), math.abs(c.w - c.h / cover_aspect)) <= .5)
+        H.eq(c.sx, W.CARD_BORDER)
+        if failure ~= "lookup" then
+            ready = true; w:paintTo(bb, 0, 0); H.eq(bb.blits, 2)
+            c = bb.copies[2]; assert(math.abs(c.h - c.w * .5) <= .5)
+            ready = false; w:paintTo(bb, 0, 0); H.eq(bb.blits, 3)
+        end
+        H.eq(cached.freed, nil)
+    end
+    package.loaded["lib/bookshelf_image_source"] = nil
+end)
+
+H.test("custom image paint errors release the scaled copy but not the cached source", function()
+    local cached = surface(100, 150)
+    package.loaded["lib/bookshelf_image_source"] = {
+        resolveStackImage = function() return "/series.png" end,
+        imageSizeTag = function() return "100x150" end,
+        loadImageNative = function() return cached end,
+    }
+    local w = visibleBox(members(3)); local bb = surface(w.width, 400)
+    local blit = bb.blitFrom
+    bb.blitFrom = function() error("framebuffer blit failed") end
+    allocated = {}; w:paintTo(bb, 0, 0)
+    H.eq(#allocated, 1); assert(allocated[1].freed); H.eq(cached.freed, nil)
+    bb.blitFrom = blit; w:paintTo(bb, 0, 0); H.eq(bb.blits, 1)
+    assert(allocated[2].freed); H.eq(cached.freed, nil)
+    package.loaded["lib/bookshelf_image_source"] = nil
 end)
 
 H.finish()

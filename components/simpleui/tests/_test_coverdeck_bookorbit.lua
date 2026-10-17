@@ -1,4 +1,5 @@
 package.path = "./?.lua;./?/init.lua;" .. package.path
+package.loaded["util"] = { trim = function(s) return (s:gsub("^%s+", ""):gsub("%s+$", "")) end }
 package.loaded["ui/uimanager"] = {}
 package.loaded["engines/sui_cover_warp"] = {}
 package.loaded["engines/sui_cover_shadow"] = {}

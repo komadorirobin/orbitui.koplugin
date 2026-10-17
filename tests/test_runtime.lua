@@ -3,6 +3,7 @@ local H = require("tests/helpers")
 local root = H.root()
 local Runtime = require("core/orbitui_runtime")
 local map = require("core/orbitui_module_map")
+package.loaded.util = { trim = function(s) return (s:gsub("^%s*(.-)%s*$", "%1")) end }
 package.loaded.logger = { dbg = function() end, info = function() end, warn = function() end }
 package.loaded.gettext = function(value) return value end
 G_reader_settings = { readSetting = function(_, key) if key == "language" then return "sv" end end }
@@ -50,7 +51,7 @@ H.test("userpatch preload interceptors retain priority", function()
 end)
 H.test("updaters are resolved through OrbitUI even after cache eviction", function()
     local updater = require("lib/bookshelf_updater")
-    H.eq(updater.getInstalledVersion(), "5.5.0")
+    H.eq(updater.getInstalledVersion(), "5.5.2")
     H.eq(updater.getAvailableUpdate(), nil)
     package.loaded["infra/sui_updater"] = nil
     local sui = require("infra/sui_updater")

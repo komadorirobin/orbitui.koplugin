@@ -41,6 +41,8 @@ Config.getIconScalePct = function() return 100 end
 Config.getNavbarLabelScalePct = function() return 100 end
 run(assert(bar_source:match("(local _dim = {}.-)\n%-%- Pagination bar helpers")), {
     M = BB, Config = Config, Screen = Screen, SUISettings = Store,
+    _isFullWidth = function() return true end,
+    _navbarSurface = function() return { border_sz = dpi } end,
 })
 local Box = { new = function(_, args) return args end }
 local UI, dirty, shown, stack = {}, {}, {}, {}
@@ -52,7 +54,9 @@ local UIManager = {
 local Topbar = { TOTAL_TOP_H = function() return 0 end }
 settings.simpleui_topbar_enabled = false
 BB.buildBarWidget = function() return {} end
-BB.sepColor = function() return "gray" end
+method(bar_source, "M.sepColor", {
+    M = BB, _SUIStyle = function() return {COLOR = {gray = "gray"}} end,
+})
 BB.resizePaginationButtons, BB.getPaginationIconSize = noop, function() return 24 end
 UI.getContentHeight = function() return sh - BB.TOTAL_H() end
 UI.getContentTop = function() return 0 end
@@ -68,6 +72,7 @@ method(core_source, "M.applyNavbarState", { M = UI, _TB = function() return Topb
 local calls = 0
 BB.rebuildAllNavbars = function() calls = calls + 1; BB.invalidateDimCache() end
 package.loaded["infra/sui_core"] = UI
+package.loaded["features/sui_wallpaper"] = { resolveBar = function() return { strength = 100 } end }
 package.loaded["infra/sui_patches"] = {}
 package.loaded["ui/uimanager"] = UIManager
 package.loaded["ui/widget/linewidget"] = Box
