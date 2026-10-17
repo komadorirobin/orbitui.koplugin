@@ -16,29 +16,27 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.42** integrates Bookshelf **5.5.2** (`c7a9db2c`) and
-the reviewed SimpleUI **2.7.5** update (`7eb80f9e`). Custom series images now
-appear on slipcases with the same aspect-preserving fit as book covers.
-Random Book can optionally open directly. SimpleUI gains shared background,
-frame and opacity controls, safer Home/menu restoration and bounded author
-labels. Existing appearance choices are retained through copy-only migrations.
-The read-total remains above the picture, minimum box width stays at 70% of a
-normal cover and the native maximum remains.
-The requested upstream series-box trial keeps native open-topped slipcases and
-individual spine marks instead of OrbitUI's old whole-box completion mark/fade.
+Version **0.1.0-alpha.43** adds larger, aspect-preserving slipcase artwork and
+Hardcover, Paperback and Manga / tankobon binding choices per shelf or series.
+It fixes automatic first-book covers on light series records and reduces
+synchronous work in the image picker. Bookshelf **5.5.2** (`c7a9db2c`) and
+SimpleUI **2.7.5** (`7eb80f9e`) remain the reviewed upstream baselines.
+The read-total sits in the compact exposed head, above the picture; minimum
+box width is 85% of a normal cover, with the existing maximum/space cap.
+The requested upstream series-box trial keeps native open-topped slipcases
+instead of OrbitUI's old whole-box completion mark/fade. The compact head shows
+the aggregate read-total rather than individual member marks.
 The old design remains on local branch `design/orbitui-series-boxes`, not as an
 in-app switch. Existing Library/Manga profiles, face-out books, per-chip cover
 labels/sizes, ornaments,
 custom icons and dock/Bento layout are retained. Back up settings before
 updating: new grouped-order, ledger and module edits are not mirrored to older
 code on rollback. New surface choices are likewise not mirrored to older code.
-See [the release notes](docs/releases/0.1.0-alpha.42.md)
+See [the release notes](docs/releases/0.1.0-alpha.43.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
 
-Local, unpublished follow-up: slipcase artwork uses more of the height while
-keeping its proportions; the read-total moves into the compact exposed head.
 Long-press a shelf chip > **Book binding** to choose Hardcover, Paperback or
 Manga / tankobon. Long-press a series box > **Book binding** for an override
 that follows that series across shelves, or choose **Follow shelf** to clear it.

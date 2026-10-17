@@ -2271,6 +2271,23 @@ SQLite/native-font/external-source/Bookends-checkout skips remain unchanged.
 The sealed preview and its audit are local only; do not replace public
 alpha.42 assets. Physical-device acceptance remains outstanding.
 
+## 2026-10-17: Prepare alpha.43 for explicit publication
+
+User request: "Publicera" after the light-member cover/image-picker fix
+`b3849c5d` and larger slipcase/scoped binding work `5104eff4`. Fresh origin/main
+and the latest public release are alpha.42 at `dcb01c50`. Publish both reviewed
+commits as a new prerelease, not replacement alpha.42 assets. No additional
+upstream import is requested: pins stay Bookshelf `c7a9db2c` and SimpleUI
+`7eb80f9e`. This step changes only VERSION and release documentation.
+Stable bootstrap/API 1 and artwork remain unchanged. The archived old box
+design and held-artwork history stay local and untouched.
+
+Gates: complete sequential Lua/LuaJIT runs, translations, clean sealed package,
+outgoing-history/runtime held-artwork audits, real published alpha.42 installer
+upgrade/rollback and corrupt-download rejection, both CI jobs, downloaded draft
+hashes and anonymous live discovery/download/installation. Device rendering,
+binding appearance and the reported chooser hang still require confirmation.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

@@ -2,6 +2,23 @@
 
 ## Automated
 
+2026-10-17 alpha.43 publication preparation: explicitly requested after
+`b3849c5d` and `5104eff4`. Re-run complete sequential Lua/LuaJIT gates and
+translations on the versioned tree, then seal a clean-commit package. Verify
+runtime and outgoing history exclude the held artwork, the public alpha.42
+installer upgrades/rolls back and rejects corrupt downloads, both CI jobs,
+downloaded draft hashes and anonymous live discovery/download/installation.
+Evidence belongs in `test-results/alpha43-20261017/`. Only VERSION and release
+documentation change in this step; upstream pins, bootstrap/API and artwork
+stay unchanged. The device checks below remain open; this is a prerelease.
+
+The versioned tree passes both complete suites sequentially: 575 Lua / 576
+LuaJIT root cases in 49 files, 395 Bookshelf suites, all 13 SimpleUI files and
+91 Python checks. All 43 translations, 317 module paths and 847 syntax files
+pass. Existing SQLite/native-font/external-artwork/Bookends-checkout skips are
+unchanged. Final package, public-byte and OTA evidence is retained separately
+in the release evidence directory, not claimed as physical-device acceptance.
+
 2026-10-17 larger slipcase art and scoped bindings (unpublished): focused tests
 cover independent native/child/profile shelf choices, series precedence and
 reset, reload, invalid settings, pinned/drilled light-member fallbacks, live
