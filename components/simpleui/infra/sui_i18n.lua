@@ -31,6 +31,7 @@
 
 local logger = require("logger")
 local _native_gettext = nil
+local util   = require("util")
 
 -- Locate the plugin directory from this file's path.
 local _dir = require("infra/sui_paths").getPluginDir()
@@ -146,7 +147,7 @@ local function parsePO(path)
     end
 
     for line in f:lines() do
-        local text = line:match("^%s*(.-)%s*$")
+        local text = util.trim(line)
         if text == "" then
             flush()
         elseif text:match("^#") then
