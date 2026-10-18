@@ -2,6 +2,32 @@
 
 ## Automated
 
+2026-10-18 MAL series-box rating (unpublished follow-up to Kanzenban): 13 new
+provider/lifecycle cases exercise shared folder links, common-directory
+resolution, cached refresh/relink/unlink, missing/invalid/failing providers,
+late plugin registration, shared badge typography/palette, font scale/DPI,
+tiny-cover omission and explicit text ownership. A new real native box-paint
+case covers 2/8/120-member completed series, portrait/square/landscape covers,
+1/1.5/2/3x DPI, day/night, and separation from read-total, `+N` and the title.
+Existing custom-image, cover-aspect, binding and navigation cases remain on.
+
+Complete sequential Lua/LuaJIT runs pass 610/611 root cases in 51 files,
+395 Bookshelf suites, all 13 SimpleUI files and 91 Python checks. All 43
+translation catalogues, 317 module paths and 850 LuaJIT syntax files pass.
+Existing SQLite/native-font/external-artwork/absent-Bookends skips are unchanged.
+Nine additional fixture-only probes execute the actual MAL 1.5.2 cached
+provider methods from local revision `f6b4dff6`, on both runtimes, without
+plugin initialization or network. They cover custom Manga roots, Android
+aliases, explicit links, normalized series names, missing/zero scores and
+personal-score isolation. No external plugin source was changed.
+Logs and clean-package audits: `test-results/series-rating-20261018/`.
+
+Device checks still required: compare the same linked series' folder badge
+and physical box (`star + score`); test long and fully read series, first/custom
+covers, Paperback/Kanzenban, day/night and smaller/larger cover and badge sizes.
+Confirm no label collision, unchanged tap/hold, and refresh/unlink after repaint.
+No Bigme/device acceptance or public release is implied by headless checks.
+
 2026-10-18 Kanzenban replacement (unpublished follow-up to alpha.44): the 20
 binding cases cover Swedish/English menus, read-only legacy Tankobon-to-Paperback
 resolution, scoped choices, warm plan invalidation, 12% growth with unchanged

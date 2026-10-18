@@ -146,6 +146,12 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
+- October 18, approved MAL rating on physical series boxes: an OrbitUI-only
+  post-paint overlay reuses the folder provider and CountBadge renderer for
+  `star + score`, inset inside the aspect-fitted cover. Keep native geometry,
+  head counts, title and gestures untouched. Read cached links/ratings only;
+  tolerate missing providers, updates and unlinking. C06/C07 coverage:
+  `test_series_rating`, `test_upstream_series_boxes`; no component/pin changes.
 - October 18, user-approved Kanzenban replacement: replace the pale Tankobon
   jacket option with a 12%-taller Paperback-style format. The optional
   `bindingGeometry` seam sizes before packing and slipcase construction, with

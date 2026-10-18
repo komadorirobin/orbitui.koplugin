@@ -605,4 +605,70 @@ H.test("custom image paint errors release the scaled copy but not the cached sou
     package.loaded["lib/bookshelf_image_source"] = nil
 end)
 
+H.test("MAL stars fit native boxes without colliding with read-total, hidden count or title", function()
+    local Frame = W:extend{}
+    function Frame:init()
+        local ts = self[1]:getSize()
+        self.width = ts.w + self.padding_left + self.padding_right + 2 * self.bordersize
+        self.height = ts.h + self.padding_top + self.padding_bottom + 2 * self.bordersize
+    end
+    function Frame:paintTo(bb, x, y)
+        bb:paintRectRGB32(x, y, self.width, self.height)
+        self[1]:paintTo(bb, x + self.padding_left + self.bordersize, y + self.padding_top + self.bordersize)
+        bb.badge = {x = x, y = y, w = self.width, h = self.height}
+    end
+    package.loaded["ui/widget/container/framecontainer"] = Frame
+    package.loaded["ui/size"] = {border = {thin = 1}}
+    package.loaded["lib/bookshelf_space"].padding = {default = 5, small = 2}
+    package.loaded["lib/bookshelf_cover_progress"] = {
+        badgeSize = function(n) return n * dpi end,
+        resolvedColors = function() return {badge_bg = "white", badge_fg = "black"} end,
+    }
+    local STAR = "\xE2\x98\x85"
+    package.loaded.bookshelf_folder_badge_providers = {myanimelist = function(folder)
+        H.eq(folder.path, "/Manga/Saga"); H.eq(folder.label, "Saga")
+        return {text = STAR .. "8.72"}
+    end}
+    for _, factor in ipairs({1, 1.5, 2, 3}) do
+        dpi = factor
+        for _, n in ipairs({2, 8, 120}) do
+            local raw = members(n)
+            statuses = {}
+            for _, b in ipairs(raw) do
+                b.filepath = "/Manga/Saga/" .. b.filename
+                statuses[b.filepath] = "finished"
+            end
+            for _, dark in ipairs({false, true}) do
+                night = dark
+                for _, aspect in ipairs({.5, 1, 1.5, 3}) do
+                    cover_aspect = aspect
+                    local w, box, shape = visibleBox(raw, .75)
+                    local sw, sh, bw, bh = w.st_w, w.st_h, shape.w, shape.h
+                    local bb = surface(w.width + 40, 420); w:paintTo(bb, 20, 10)
+                    H.eq(w.st_w, sw); H.eq(w.st_h, sh); H.eq(shape.w, bw); H.eq(shape.h, bh)
+                    H.eq(#box.books, n); H.eq(bb.texts[1].text, count(n, n))
+                    local badge, cover = bb.badge, bb.copies[1]
+                    assert(cover, "rating must not suppress a completed series' cover")
+                    if badge then
+                        H.eq(bb.texts[#bb.texts].text, STAR .. "8.72")
+                        assert(badge.x >= cover.x and badge.y >= cover.y)
+                        assert(badge.x + badge.w <= cover.x + cover.w)
+                        assert(badge.y + badge.h <= cover.y + cover.h)
+                        for i = 1, #bb.texts - 1 do
+                            local t = bb.texts[i]
+                            assert(t.y + t.h <= badge.y or t.y >= badge.y + badge.h,
+                                "rating collided with existing label")
+                        end
+                    elseif dpi == 1 and aspect == 1.5 then
+                        error("ordinary box should have room for its rating")
+                    end
+                    w:free()
+                end
+            end
+        end
+    end
+    dpi, night, cover_aspect, statuses = 1, false, 1.5, {}
+    package.loaded.bookshelf_folder_badge_providers = nil
+end)
+
 H.finish()

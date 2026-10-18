@@ -74,6 +74,7 @@ function M.wrap(name, module)
         require("adapters/orbitui_series_boxes").geometry(module)
     elseif name == "lib/bookshelf_series_box_widget" then
         module.preserve_cover_aspect = true
+        require("adapters/orbitui_series_rating").widget(module)
     elseif name == "lib/bookshelf_settings" then
         require("adapters/orbitui_cover_labels").settings(module)
     elseif name == "lib/bookshelf_chip_editor" then

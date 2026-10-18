@@ -182,6 +182,17 @@ folder actions/rating badges/completion, manga volume suffix and bookmark ribbon
 patch updates and undo-opening behavior. Their external code/server state must
 be inspected separately before changing their contracts.
 
+The approved October 18 box-rating overlay uses only the existing
+`bookshelf_folder_badge_providers.myanimelist` cached callback (inspected in
+myanimelist.koplugin 1.5.2), with the series label and the common parent of its
+local member files. The provider still owns Manga scope and explicit-folder
+link precedence; do not guess a first member's folder for mixed directories.
+Do not fetch ratings, hydrate metadata, read private plugin settings or change
+links while painting. Missing/disabled/erroring providers and absent/invalid
+scores produce no badge. Read the live callback on repaint so cached refreshes,
+relinks and removal do not leave a stale score. No MAL plugin update required.
+Tests: `test_series_rating`, `test_upstream_series_boxes`.
+
 ## C07: Presentation and preferences
 
 Retain the user's independent prose/manga configurations, backgrounds, fonts,
@@ -349,6 +360,17 @@ Crop only the cover widget's `CARD_BORDER` and copy its already fitted image
 errors so the next redraw can retry. `orbitui_ui` enables the new optional
 `preserve_cover_aspect` seam; standalone Bookshelf keeps its old default.
 This is a small adaptation of the native painter, not a restored second one.
+
+The approved October 18 rating sticker paints after that aspect fit, inset at
+the cover's upper-left below the exposed heads. Use the folder cards' shared
+CountBadge renderer, normal text font, star-plus-two-decimal format, font scale
+and day/night palette. Keep `+N` and read/total in the head, the series name
+below the image and all native box/cover geometry unchanged. If the complete
+badge cannot fit inside a tiny sticker, omit it; never clip the digits or draw
+over another label. Own/free only the added badge, including replacement,
+widget reinit and teardown. Repeated adapter installation must not stack draws
+or alter tap/hold navigation. This is an OrbitUI adapter, not a new native
+Bookshelf dependency on MAL. See C06 for provider ownership.
 
 The next approved October 17 refinement stops normalizing member widths to the
 box interior. Optional `memberSpineWidth` / `packSpines` hooks use the native

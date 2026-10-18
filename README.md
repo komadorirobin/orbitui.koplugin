@@ -45,6 +45,13 @@ where shelf space permits. Covers retain their proportions, and page-derived
 spine widths do not grow. Saved Tankobon choices display as Paperback without
 rewriting those preferences; existing Paperback/Hardcover choices are unchanged.
 
+Also unpublished: physical series boxes show the linked MyAnimeList community
+rating as a small star badge (for example `★8.72`) at the upper-left of the
+cover. It uses the same cached provider and badge style as folder cards, not a
+personal score or a new network request. The read/total and `+N` stay above
+the cover; the series name stays below. Unlinked/unrated series have no badge,
+and exceptionally small covers omit it instead of clipping text.
+
 Long-press a shelf chip > **Book binding** to choose Hardcover, Paperback or
 Kanzenban / large format. Long-press a series box > **Book binding** for an override
 that follows that series across shelves, or choose **Follow shelf** to clear it.

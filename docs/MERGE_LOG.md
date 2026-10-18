@@ -2357,6 +2357,32 @@ gates and clean-commit package evidence belong in
 No push, tag, release, artwork or bootstrap changes. Any sealed alpha.44
 preview is local only and must not replace the public alpha.44 assets.
 
+## 2026-10-18: Cached MAL star rating on physical series boxes
+
+User approved the upper-left front-cover sticker and requested the same star
+format as folder cards, not a MAL prefix. Start at local `a8dd8f45` (unpublished
+Kanzenban follow-up); this is a C06/C07 adaptation, not a merge or publication.
+VERSION stays alpha.44; upstream pins, artwork and bootstrap stay unchanged.
+
+The new OrbitUI adapter wraps the native box painter, then draws the shared
+CountBadge inside the fitted cover. Keep read/total and `+N` above, the series
+name below, and all geometry, buffers, binding choices and gestures intact.
+Too-small images omit the badge instead of clipping text. Reuse the normal
+text face and shared font scale/day-night palette. Own and free added text
+on updates, reinit and teardown; installation is idempotent.
+
+Inspected myanimelist.koplugin 1.5.2's cached folder hook. Pass the common member
+directory and series name, leaving Manga scope and explicit-folder matching
+with the external plugin. No new API, credential reads, link changes, metadata
+hydration, sidecar access or network operations. Absent/invalid/erroring ratings
+are hidden. Query the live cached callback on paints for refreshes/unlinking.
+
+Focused provider/lifecycle tests and real native geometry/paint tests cover
+complete series, DPI, aspect ratios, native head/title separation and cached
+badge ownership. Full sequential gates and clean-package evidence belong in
+`test-results/series-rating-20261018/`, with results/device gaps in TESTING.md.
+No push, tag or release; any local alpha.44 ZIP must not replace public assets.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
