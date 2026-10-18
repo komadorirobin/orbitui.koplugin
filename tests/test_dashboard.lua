@@ -121,7 +121,10 @@ local UI = { MOD_GAP = 12, getContentHeight = function() return 800 end,
 }
 local function makeText(args)
     args.kind = "text"
-    args.dimen = { w = args.width, h = args.height or math.ceil(args.face.size * 1.2) }
+    local _, glyphs = tostring(args.text):gsub("[^\128-\191]", "")
+    local text_w = math.min(args.width, math.ceil(glyphs * args.face.size * .55))
+    args.dimen = { w = args.max_lines and args.width or text_w,
+        h = args.height or math.ceil(args.face.size * 1.2) }
     return Widget:new(args)
 end
 UI.makeTextBox, UI.makeColoredText = makeText, makeText
@@ -292,19 +295,113 @@ H.test("cover and progress refresh free only the replaced tree and do not change
     local old_image = second[widget._cover_slots[1].index]
     H.eq(Dashboard.updateCovers(widget), true); H.eq(second.freed, nil)
     H.eq(old_image.freed, true); H.eq(widget[1], second)
+    widget:free()
 end)
 
-H.test("shelf pagination is independent, bounded and does not move Home's page", function()
-    local p = Model.plan(600, 730)
-    widget.dimen.x, widget.dimen.y = 0, 0
-    widget:onDashboardTap(nil, { pos = { x = p.want.x + p.want.w - 15, y = p.want.y + 15 } })
-    H.eq(ctx._screen_widget._orbitui_dashboard_pages.want, 2); H.eq(dirtied, 1)
-    H.eq(ctx._screen_widget._orbitui_dashboard_pages.new, nil)
-    H.eq(ctx._screen_widget._current_page, 1)
-    local found = false
-    for _, child in ipairs(widget[1]) do if child.fp == "/fourth" then found = true end end
-    assert(found)
-    widget:free()
+local function shelfItem(current, key, value)
+    local area = Model.plan(current.dimen.w, current.dimen.h)[key]
+    for _, child in ipairs(current[1]) do
+        local xy = child.overlap_offset
+        if (child.text == value or child.fp == value)
+                and xy[1] >= area.x and xy[1] < area.x + area.w
+                and xy[2] >= area.y and xy[2] < area.y + area.h then return child end
+    end
+end
+
+local function tapArrow(current, key, direction)
+    local arrow = assert(shelfItem(current, key, direction))
+    local xy, sz = arrow.overlap_offset, arrow:getSize()
+    return current:onDashboardTap(nil, { pos = {
+        x = current.dimen.x + xy[1] + math.floor(sz.w / 2),
+        y = current.dimen.y + xy[2] + math.floor(sz.h / 2),
+    } })
+end
+
+local function pagedWidget()
+    local page_ctx = {}
+    for k, v in pairs(ctx) do page_ctx[k] = v end
+    page_ctx._screen_widget = { _current_page = 4 }
+    local page_data = Dashboard.readData(page_ctx)
+    page_data.want = { "/want1", "/want2", "/want3", "/want4", "/want5", "/want6", "/want7" }
+    page_data.new = { "/new1", "/new2", "/new3", "/new4" }
+    local current = View.build(600, 730, page_ctx, page_data)
+    current.dimen.x, current.dimen.y = 17, 30
+    return current, page_ctx, page_data
+end
+
+H.test("both book rows page forwards and backwards independently of the Home page", function()
+    local current, page_ctx = pagedWidget()
+    local pages = page_ctx._screen_widget._orbitui_dashboard_pages
+    assert(shelfItem(current, "want", "1/3")); assert(shelfItem(current, "new", "1/2"))
+    local counter = shelfItem(current, "want", "1/3")
+    local area = Model.plan(current.dimen.w, current.dimen.h).want
+    assert(math.abs(counter.overlap_offset[1] + counter:getSize().w / 2 - area.x - area.w / 2) <= 1)
+    local before = dirtied
+    H.eq(tapArrow(current, "want", ">"), true)
+    H.eq(pages.want, 2); H.eq(pages.new, 1); H.eq(dirtied, before + 1)
+    assert(shelfItem(current, "want", "/want4")); assert(not shelfItem(current, "want", "/want1"))
+    tapArrow(current, "new", ">")
+    H.eq(pages.want, 2); H.eq(pages.new, 2)
+    assert(shelfItem(current, "new", "/new4")); assert(shelfItem(current, "new", "2/2"))
+    tapArrow(current, "want", "<")
+    H.eq(pages.want, 1); H.eq(pages.new, 2)
+    tapArrow(current, "new", "<")
+    H.eq(pages.new, 1); H.eq(page_ctx._screen_widget._current_page, 4)
+    current:free()
+end)
+
+H.test("first and last page arrows are dimmed and do not wrap or repaint", function()
+    local current, page_ctx = pagedWidget()
+    local before = dirtied
+    H.eq(shelfItem(current, "want", "<").fgcolor, "#ddd")
+    H.eq(tapArrow(current, "want", "<"), true)
+    H.eq(dirtied, before); H.eq(page_ctx._screen_widget._orbitui_dashboard_pages.want, 1)
+    tapArrow(current, "want", ">"); tapArrow(current, "want", ">")
+    assert(shelfItem(current, "want", "3/3")); assert(shelfItem(current, "want", "/want7"))
+    assert(not shelfItem(current, "want", "/want6"))
+    H.eq(shelfItem(current, "want", ">").fgcolor, "#ddd")
+    before = dirtied
+    tapArrow(current, "want", ">")
+    H.eq(dirtied, before); H.eq(page_ctx._screen_widget._orbitui_dashboard_pages.want, 3)
+    tapArrow(current, "want", "<")
+    H.eq(shelfItem(current, "want", ">").fgcolor, "black")
+    current:free()
+end)
+
+H.test("page refresh preserves selection, clamps shorter lists and hides single-page controls", function()
+    local current, page_ctx, page_data = pagedWidget()
+    local pages = page_ctx._screen_widget._orbitui_dashboard_pages
+    tapArrow(current, "want", ">"); tapArrow(current, "want", ">")
+    tapArrow(current, "new", ">")
+    current:replaceContent(page_ctx, page_data)
+    H.eq(pages.want, 3); H.eq(pages.new, 2)
+    local files = page_data.want
+    page_data.want = { "/want1", "/want2", "/want3", "/want4" }
+    current:replaceContent(page_ctx, page_data)
+    H.eq(pages.want, 2); assert(shelfItem(current, "want", "2/2"))
+    page_data.want, page_data.new = { "/want1" }, {}
+    current:replaceContent(page_ctx, page_data)
+    H.eq(pages.want, 1); H.eq(pages.new, 1)
+    assert(not shelfItem(current, "want", "<")); assert(not shelfItem(current, "new", ">"))
+    page_data.want = files
+    current:replaceContent(page_ctx, page_data)
+    H.eq(pages.want, 1); assert(shelfItem(current, "want", "/want1"))
+    current:free()
+end)
+
+H.test("book actions after paging use the displayed book and stay outside the arrow row", function()
+    local current = pagedWidget()
+    tapArrow(current, "new", ">")
+    local book = assert(shelfItem(current, "new", "/new4"))
+    local xy, sz = book.overlap_offset, book:getSize()
+    local nav_y = shelfItem(current, "new", ">").overlap_offset[2]
+    assert(xy[2] + sz.h < nav_y)
+    local ges = { pos = { x = current.dimen.x + xy[1] + 2, y = current.dimen.y + xy[2] + 2 } }
+    current:onDashboardTap(nil, ges); H.eq(opened, "/new4")
+    current:onDashboardHold(nil, ges); current:onDashboardHoldRelease(); H.eq(held, "/new4")
+    H.eq(Dashboard.updateCovers(current), true)
+    assert(shelfItem(current, "new", "2/2")); assert(shelfItem(current, "new", "/new4"))
+    current:free()
 end)
 
 H.test("Swedish dashboard strings translate while other locales retain English", function()
@@ -324,7 +421,7 @@ if preview_path then
     data = Dashboard.readData(ctx)
     data.goal = { title = "Läsmål för 2026", target = 300, value = 201, metric = "book", source = "Hardcover" }
     data.stats = { today_pages = 0, today_secs = 0, week_secs = 7 * 3600 + 13 * 60, streak = 12 }
-    data.new = { "/third", "/first", "/second" }
+    data.new = { "/third", "/first", "/second", "/fourth" }
     ctx._screen_widget._orbitui_dashboard_pages = {}
     local preview = View.build(720, 876, ctx, data)
     require("tests/dashboard_preview")(preview, preview_path)

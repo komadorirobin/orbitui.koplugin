@@ -756,10 +756,13 @@ an additive first Home page, never a migration of the user's existing Bento
 layout. Disabling it removes only that module and empty generated pages;
 later user edits, other Home/Custom Screen pages, wallpaper, fonts and dock
 preferences survive. Preserve native open/hold handlers, independent cover-row
-pagination, cover-cache ownership and stats/cover refresh slots. Its height
-reserves the dock-adjusted content bounds, module margin and pager; font sizes
-must not double-apply device DPI. It owns its individual card chrome, so native
-whole-module background controls must not be offered as if they affected it.
+pagination, cover-cache ownership and stats/cover refresh slots. Each cover row
+has its own previous/next arrows and page counter below the covers, with no
+wraparound at either end. Hide controls for a single page, clamp saved positions
+when a source shrinks, and never change the Home page when paging a book row.
+Its height reserves the dock-adjusted content bounds, module margin and pager;
+font sizes must not double-apply device DPI. It owns its individual card chrome,
+so native whole-module background controls must not be offered as if they affected it.
 
 Reuse native recent-book filtering/metadata, the New Books source, the cached
 BookOrbit Want to Read list and StatsProvider. Ongoing rows omit the hero,

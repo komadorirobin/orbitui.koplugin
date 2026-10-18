@@ -2486,6 +2486,23 @@ performance remain to be checked. Preserve the previous unpublished title-on-
 cover commit. No upstream merge, VERSION bump, push, tag or release; a locally
 rebuilt alpha.46 ZIP must never replace the already-public alpha.46 asset.
 
+## 2026-10-18: Two-way dashboard book-row paging (not published)
+
+User requested the tab module's arrow-paging behavior for BookOrbit Want to Read
+and New Books in the dashboard. Replace each row's forward-only wrapping arrow
+with previous/next controls and a page counter beneath the covers. Keep three
+books per page and independent row positions, hide controls for single-page
+lists, dim/disable end arrows and clamp saved positions after source changes.
+The full-width titles and book open/hold areas remain separate from the controls.
+
+No component edits, data-provider changes, upstream import or release. Focused
+tests exercise both directions, independent Home/row state, partial last pages,
+disabled arrows, shrinking lists and book actions after paging. Re-run Lua,
+LuaJIT and clean-commit package gates; evidence under
+`test-results/dashboard-paging-20261018/`. Physical-device touch/render checks
+remain pending. Any local alpha.46 ZIP is unpublished and must not overwrite
+the existing public release asset.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

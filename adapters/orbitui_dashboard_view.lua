@@ -245,15 +245,35 @@ function M.content(widget, p, ctx, data)
         local count = 3
         local pages = math.max(1, math.ceil(#files / count))
         local page = math.min(pages, math.max(1, owner._orbitui_dashboard_pages[key] or 1))
-        local more_w = pages > 1 and px(30) or 0
-        text(label, area.x + p.pad, area.y + p.pad, area.w - 2 * p.pad - more_w, 13, true)
+        owner._orbitui_dashboard_pages[key] = page
+        local nav_h = pages > 1 and px(32) or 0
+        text(label, area.x + p.pad, area.y + p.pad, area.w - 2 * p.pad, 13, true)
         if pages > 1 then
-            text(">", area.x + area.w - p.pad - px(20), area.y + p.pad, px(20), 15, true)
-            action(rect(area.x + area.w - px(45), area.y, px(45), px(39)), function()
-                owner._orbitui_dashboard_pages[key] = page % pages + 1
+            local button_w = px(36)
+            local indicator_w = math.min(px(76), area.w - 2 * p.pad - 2 * button_w)
+            local nav_x = area.x + math.floor((area.w - 2 * button_w - indicator_w) / 2)
+            local nav_y = area.y + area.h - p.pad - nav_h
+            local function centered(value, x, width, size, color)
+                local label_widget = text(value, x, nav_y, width, size, false, color)
+                local label_size = label_widget:getSize()
+                label_widget.overlap_offset = {
+                    x + math.floor((width - label_size.w) / 2),
+                    nav_y + math.floor((nav_h - label_size.h) / 2),
+                }
+            end
+            local function turn(delta)
+                local next_page = math.max(1, math.min(pages, page + delta))
+                if next_page == page then return end
+                owner._orbitui_dashboard_pages[key] = next_page
                 widget:replaceContent(ctx, data)
                 require("ui/uimanager"):setDirty(ctx._screen_widget or widget, "ui", widget.dimen)
-            end)
+            end
+            centered("<", nav_x, button_w, 18, page > 1 and ink or BB.COLOR_LIGHT_GRAY)
+            centered(string.format("%d/%d", page, pages), nav_x + button_w, indicator_w, 11, muted)
+            centered(">", nav_x + button_w + indicator_w, button_w, 18,
+                page < pages and ink or BB.COLOR_LIGHT_GRAY)
+            action(rect(nav_x, nav_y, button_w, nav_h), function() turn(-1) end)
+            action(rect(nav_x + button_w + indicator_w, nav_y, button_w, nav_h), function() turn(1) end)
         end
         if #files == 0 then
             text(failed and _("Could not load books.") or _("No books to show yet."),
@@ -262,7 +282,7 @@ function M.content(widget, p, ctx, data)
             return
         end
         local slot_w = math.floor((area.w - 2 * p.pad - 2 * p.gap) / count)
-        local max_h = area.h - 2 * p.pad - px(34)
+        local max_h = area.h - 2 * p.pad - px(34) - nav_h
         local cw = math.floor(math.min(slot_w, max_h * 2 / 3))
         local ch = math.floor(cw * 3 / 2)
         for i = 1, count do

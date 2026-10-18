@@ -72,7 +72,8 @@ Unpublished Home option: **OrbitUI settings > Reading dashboard > Show dashboard
 as first Home page** adds a BookOrbit-inspired card layout without replacing
 any existing pages. It combines a larger continue-reading card, daily/week/streak
 statistics, three in-progress books, the existing reading goal, and three-cover
-BookOrbit Want to Read / Recently added rows. Arrows page those rows independently.
+BookOrbit Want to Read / Recently added rows. Each row has previous/next arrows
+and a page counter when needed, independent of the other row and the Home page.
 Tap books to open, hold them for the existing book panel; tap the goal/statistics
 cards for their settings. The dark hero can be switched off. Disabling the page
 preserves edits to other pages and never resets data, wallpaper or dock choices.

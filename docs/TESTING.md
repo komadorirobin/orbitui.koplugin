@@ -7,8 +7,9 @@ checks additive enable/disable and later user edits, duplicate/finished/abandone
 book filtering, existing cached goal/source selection, no-cache/offline handling,
 auto-refresh opt-out, card chrome ownership, footer/margin reservation, five
 screen geometries at three DPI factors, native book/hold actions, independent
-cover pagination, progress refresh and borrowed-cover replacement. Shared-menu
-tests cover its registration and entry point. The optional
+two-way cover pagination, disabled end arrows, partial last pages, changed lists,
+progress refresh and borrowed-cover replacement. Shared-menu tests cover its
+registration and entry point. The optional
 `ORBITUI_DASHBOARD_PREVIEW=/path/preview.svg lua tests/test_dashboard.lua`
 renders a schematic of those widget positions with illustrative data/cover art
 and approximate fonts; it is not a native raster/font test. Full evidence lives
@@ -953,8 +954,10 @@ quality or completeness.
 - Open and hold the hero, each ongoing book and both cover rows. Change progress
   and completion status, return from the reader, switch pages and sleep/resume;
   check updated counts/bars and no stale/freed covers. Page Want to Read and New
-  Books independently. Verify BookOrbit auto-refresh opt-out, offline cached
-  data, missing cover/goal states and Hardcover/local annual goal selection.
+  Books independently with both arrows; check the counters and first/last-page
+  stops, and that the controls never cover a book. Verify BookOrbit auto-refresh
+  opt-out, offline cached data, missing cover/goal states and Hardcover/local
+  annual goal selection.
 
 The user reported successful initial startup/navigation on the Bigme with
 `0.1.0-alpha.2`, and a subjective impression of faster dock navigation. This is
