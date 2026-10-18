@@ -2383,6 +2383,22 @@ badge ownership. Full sequential gates and clean-package evidence belong in
 `test-results/series-rating-20261018/`, with results/device gaps in TESTING.md.
 No push, tag or release; any local alpha.44 ZIP must not replace public assets.
 
+## 2026-10-18: Prepare alpha.45 for explicit publication
+
+User requested "Publicera" after the Kanzenban and cached MAL star-rating
+implementations. Include local `a8dd8f45` and `f15f666e`; bump VERSION to
+0.1.0-alpha.45 and update release/OTA documentation. Do not import upstream,
+change bootstrap/API 1, modify artwork, rewrite preferences or reading data,
+publish the preserved box-design branch, or replace any existing release asset.
+
+Re-run sequential full Lua/LuaJIT suites and translation checks, then seal a
+clean-commit package and audit the runtime/outgoing history. Check alpha.44's
+actual installer offline and against public release bytes, with both CI jobs
+and downloaded draft/public hashes verified before declaring publication done.
+Store release evidence in `test-results/alpha45-20261018/`. Physical Bigme
+Kanzenban height, star-label legibility, night mode and interaction still need
+confirmation; publish as a prerelease, not latest stable.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

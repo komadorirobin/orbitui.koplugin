@@ -2,6 +2,24 @@
 
 ## Automated
 
+2026-10-18 alpha.45 publication preparation: explicitly requested after the
+Kanzenban (`a8dd8f45`) and MAL star-rating (`f15f666e`) follow-ups. Re-run complete
+sequential Lua/LuaJIT gates and translations on the versioned tree, then build
+from a clean commit. Audit runtime and outgoing history for held artwork;
+compare bootstrap/API, upstream pins and assets with public alpha.44. Exercise
+alpha.44's real installer for upgrade/rollback and truncated-download recovery,
+both CI jobs, downloaded draft hashes and anonymous public discovery/install.
+Evidence belongs in `test-results/alpha45-20261018/`. Only VERSION and release
+documentation change in this step. This remains a prerelease; the physical
+Bigme height/rating/interaction checks below remain outstanding.
+
+The versioned tree passes 610/611 Lua/LuaJIT root cases in 51 files, 395
+Bookshelf suites, all 13 SimpleUI files and 91 Python checks. Translation
+validation passes all 43 catalogues; module/syntax checks cover 317 paths and
+850 Lua files. Existing skips are unchanged. The nine actual MAL-provider
+fixture probes also pass on both runtimes, without plugin initialization or
+network access. Final package, CI and publication receipts live with the logs.
+
 2026-10-18 MAL series-box rating (unpublished follow-up to Kanzenban): 13 new
 provider/lifecycle cases exercise shared folder links, common-directory
 resolution, cached refresh/relink/unlink, missing/invalid/failing providers,

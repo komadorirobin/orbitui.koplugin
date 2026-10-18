@@ -16,13 +16,12 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.44** gives series-box members consistent page-based
-thickness instead of stretching them to fill the box. Short series leave a
-shaded interior; long series show the first volumes that fit and `+N` for the
-rest. The full read/total, cover area and proportions are retained, along with
-alpha.43's per-shelf/per-series Hardcover, Paperback and Manga / tankobon choices,
-automatic-cover fix and bounded image picker. Bookshelf **5.5.2** (`c7a9db2c`) and
-SimpleUI **2.7.5** (`7eb80f9e`) remain the reviewed upstream baselines.
+Version **0.1.0-alpha.45** adds a taller Kanzenban binding option and cached MAL
+star ratings on physical series-box covers. Alpha.44's natural spine widths,
+partial filling and `+N` remain, along with complete read/total counts,
+aspect-true covers, scoped binding choices, the automatic-cover fix and bounded
+image picker. Bookshelf **5.5.2** (`c7a9db2c`) and SimpleUI **2.7.5** (`7eb80f9e`)
+remain the reviewed upstream baselines.
 The read-total sits in the compact exposed head, above the picture; minimum
 box width is 85% of a normal cover, with the existing maximum/space cap.
 The requested upstream series-box trial keeps native open-topped slipcases
@@ -34,18 +33,18 @@ labels/sizes, ornaments,
 custom icons and dock/Bento layout are retained. Back up settings before
 updating: new grouped-order, ledger and module edits are not mirrored to older
 code on rollback. New surface choices are likewise not mirrored to older code.
-See [the release notes](docs/releases/0.1.0-alpha.44.md)
+See [the release notes](docs/releases/0.1.0-alpha.45.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
 
-Unpublished follow-up: Tankobon is replaced by **Kanzenban / large format**.
+Tankobon is replaced by **Kanzenban / large format**.
 It uses Paperback's cover-derived colours and thin boards, about 12% taller
 where shelf space permits. Covers retain their proportions, and page-derived
 spine widths do not grow. Saved Tankobon choices display as Paperback without
 rewriting those preferences; existing Paperback/Hardcover choices are unchanged.
 
-Also unpublished: physical series boxes show the linked MyAnimeList community
+Physical series boxes show the linked MyAnimeList community
 rating as a small star badge (for example `★8.72`) at the upper-left of the
 cover. It uses the same cached provider and badge style as folder cards, not a
 personal score or a new network request. The read/total and `+N` stay above

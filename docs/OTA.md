@@ -323,6 +323,18 @@ settings migration or reading-data change is included. Code rollback restores
 the earlier fill-to-width presentation without changing data. Earlier settings
 backup/migration caveats and physical-device acceptance gaps still apply.
 
+Alpha.45 replaces Tankobon with the taller Kanzenban / large format option and
+adds a cached MAL star-rating sticker to physical series-box covers. Legacy
+Tankobon choices resolve to Paperback without rewriting saved preferences;
+select Kanzenban explicitly per shelf or series to use the taller format.
+Rating stickers reuse the existing MAL folder provider; no MAL plugin update
+or network fetch while painting is required. Alpha.44 and earlier alpha
+installations can update through the same preview channel and bootstrap/API 1.
+No upstream import, artwork, settings migration or reading-data change is
+included. Code rollback retains preferences but older runtimes do not implement
+Kanzenban or the new box badge. Earlier backup/migration caveats and physical
+device-acceptance gaps still apply.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries
