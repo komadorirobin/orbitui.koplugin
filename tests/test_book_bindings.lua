@@ -37,15 +37,15 @@ end)
 
 H.test("native, nested, prose and manga shelves remain independent across reloads", function()
     M.save("shelves", "authors", "paperback")
-    M.save("shelves", "child", "tankobon")
+    M.save("shelves", "child", "kanzenban")
     local prose, manga = widget("prose"), widget("comics")
     M.save("shelves", Labels.id(prose), "hardcover")
-    M.save("shelves", Labels.id(manga), "tankobon")
+    M.save("shelves", Labels.id(manga), "kanzenban")
     package.loaded["adapters/orbitui_book_bindings"] = nil
     M = require("adapters/orbitui_book_bindings")
-    H.eq(M.shelf("authors"), "paperback"); H.eq(M.shelf("child"), "tankobon")
+    H.eq(M.shelf("authors"), "paperback"); H.eq(M.shelf("child"), "kanzenban")
     H.eq(M.shelf(Labels.id(prose)), "hardcover")
-    H.eq(M.shelf(Labels.id(manga)), "tankobon")
+    H.eq(M.shelf(Labels.id(manga)), "kanzenban")
     H.eq(tabs.authors.binding, nil)
 end)
 
@@ -60,7 +60,7 @@ H.test("series overrides win everywhere and following the shelf removes only tha
     H.eq(raw.binding, nil); H.eq(raw.cover_bb, "borrowed")
     M.save("series", "Saga", nil)
     H.eq(M.resolve(raw, raw, a:_spinePlanBase(800, 300)), "hardcover")
-    H.eq(M.resolve(raw, raw, b:_spinePlanBase(800, 300)), "tankobon")
+    H.eq(M.resolve(raw, raw, b:_spinePlanBase(800, 300)), "kanzenban")
     H.eq(M.series("Another"), "hardcover")
 end)
 
@@ -91,8 +91,36 @@ H.test("drills and pinned series supply the name when a light member lacks metad
     local pinned = widget(nil, "child")
     H.eq(M.resolve({}, {}, pinned:_spinePlanBase(800, 300)), "paperback")
     w._drilldown_path = {{kind="author", label="Saga"}}
-    H.eq(M.resolve({}, {}, w:_spinePlanBase(800, 300)), "tankobon")
+    H.eq(M.resolve({}, {}, w:_spinePlanBase(800, 300)), "kanzenban")
     H.eq(M.resolve({series_name="Another"}, {}, w:_spinePlanBase(800, 300)), "hardcover")
+end)
+
+H.test("retired tankobon settings resolve to paperback without rewriting saved preferences", function()
+    local data = saved.orbitui_book_bindings
+    data.shelves.legacy, data.series.Legacy = "tankobon", "tankobon"
+    local n = flushes
+    H.eq(M.shelf("legacy"), "paperback")
+    H.eq(M.series("Legacy"), "paperback")
+    H.eq(M.resolve({}, {}, {binding_shelf="tankobon"}), "paperback")
+    H.eq(M.resolve({series_name="Legacy"}, {}, {
+        binding_shelf="kanzenban", binding_series=data.series}), "paperback")
+    H.eq(M.save("series", "Legacy", "tankobon"), false)
+    H.eq(data.shelves.legacy, "tankobon"); H.eq(data.series.Legacy, "tankobon")
+    H.eq(flushes, n)
+end)
+
+H.test("binding labels are Swedish only for Swedish and otherwise English", function()
+    local old = G_reader_settings
+    for _,lang in ipairs({"sv", "sv_SE", "en", "de", "ja"}) do
+        G_reader_settings = {readSetting=function() return lang end}
+        local swedish = lang:sub(1, 2) == "sv"
+        H.eq(M.label("kanzenban"), swedish and "Kanzenban / storformat" or "Kanzenban / large format")
+        H.eq(M.label("paperback"), swedish and "Pocket" or "Paperback")
+        H.eq(M.label("tankobon"), M.label("paperback"))
+        M.showShelf(widget(nil, "legacy"), "authors")
+        H.eq(menu.item_table[3].text, M.label("kanzenban"))
+    end
+    G_reader_settings = old
 end)
 
 -- Load the real planner and painters, only replacing native display services.
@@ -174,25 +202,85 @@ H.test("shelf and series radios persist, rebuild immediately and allow inheritan
     H.eq(closed,true); H.eq(#menu.item_table,4)
     H.eq(menu.item_table[3].checked_func(),true)
     menu.item_table[4].callback()
-    H.eq(M.series("Saga"),"tankobon")
+    H.eq(M.series("Saga"),"kanzenban")
     button.callback(); menu.item_table[1].callback()
     H.eq(M.series("Saga"),nil)
     H.eq(M.resolve({series_name="Saga"},{},w:_spinePlanBase(800,300)),"paperback")
 end)
 
-H.test("real page plans change binding on warm cache hits without changing book geometry", function()
+H.test("legacy menu choices select Paperback, never Kanzenban, without a settings write", function()
+    tabs.legacy={id="legacy",label="Legacy"}
+    local w=widget(nil,"legacy")
+    local n=flushes
+    M.showShelf(w,"legacy")
+    H.eq(menu.item_table[2].checked_func(),true)
+    H.eq(menu.item_table[3].checked_func(),false)
+    w:seriesBindingButton("Legacy",function() end).callback()
+    H.eq(menu.item_table[3].checked_func(),true)
+    H.eq(menu.item_table[4].checked_func(),false)
+    H.eq(flushes,n)
+end)
+
+H.test("warm page plans grow kanzenban but preserve paperback, hardcover and legacy geometry", function()
     local books={{filepath="one.epub",title="One",has_cover=false,series_name="Saga",page_count=250}}
     local opts={content_w=800,row_h=300,n_rows=2,face_out="all",binding_shelf="hardcover",binding_series={}}
     local hard=Shelf.plan(books,opts)
     H.eq(hard.entries[1].binding,"hardcover")
-    opts.binding_series.Saga="tankobon"
+    opts.binding_series.Saga="kanzenban"
     local manga=Shelf.plan(books,opts)
-    H.eq(manga.entries[1].binding,"tankobon")
-    H.eq(manga.entries[1].w,hard.entries[1].w); H.eq(manga.entries[1].h,hard.entries[1].h)
+    H.eq(manga.entries[1].binding,"kanzenban")
+    assert(manga.entries[1].w>hard.entries[1].w and manga.entries[1].h>hard.entries[1].h)
     opts.binding_series.Saga=nil; opts.binding_shelf="paperback"
     local pocket=Shelf.plan(books,opts)
     H.eq(pocket.entries[1].binding,"paperback")
+    H.eq(pocket.entries[1].w,hard.entries[1].w); H.eq(pocket.entries[1].h,hard.entries[1].h)
+    opts.binding_shelf="tankobon"
+    local legacy=Shelf.plan(books,opts)
+    H.eq(legacy.entries[1].binding,"paperback")
+    H.eq(legacy.entries[1].w,pocket.entries[1].w); H.eq(legacy.entries[1].h,pocket.entries[1].h)
     H.eq(books[1].binding,nil)
+end)
+
+H.test("kanzenban grows twelve percent with room; page-derived spine thickness stays fixed", function()
+    local books={{filepath="one.cbz",has_cover=false,page_count=200}}
+    for _,mode in ipairs({"all", "none"}) do
+        local opts={content_w=800,row_h=300,n_rows=2,face_out=mode,binding_shelf="paperback"}
+        local pocket=Shelf.plan(books,opts).entries[1]
+        opts.binding_shelf="kanzenban"
+        local large=Shelf.plan(books,opts).entries[1]
+        H.eq(large.h,math.floor(pocket.h*1.12+.5))
+        if mode=="all" then
+            H.eq(large.face_h,math.floor(pocket.face_h*1.12+.5))
+            H.eq(large.depth,pocket.depth); H.eq(large.thick,pocket.thick)
+            H.eq(large.w,math.floor(large.face_h/look.aspect+.5))
+        else
+            H.eq(large.w,pocket.w); H.eq(large.w_dp,pocket.w_dp)
+        end
+    end
+end)
+
+H.test("kanzenban cover sizing respects row limits and aspect across DPI and cover settings", function()
+    local books={{filepath="sized.cbz",has_cover=false,page_count=200}}
+    for _,scale in ipairs({1,1.5,2,3}) do
+        dpi=scale
+        for _,aspect in ipairs({.6,1,1.5,2,3}) do
+            look.aspect=aspect
+            for _,pct in ipairs({50,100,150}) do
+                for _,width in ipairs({90,800}) do
+                    Shelf.dropPlanCache()
+                    local opts={content_w=width*dpi,row_h=300*dpi,n_rows=2,face_out="all",
+                        binding_shelf="kanzenban",cover_size_pct=pct}
+                    local e=Shelf.plan(books,opts).entries[1]
+                    local limit=opts.row_h-Shelf.plankFace(opts.row_h)
+                        -2*Shelf.plankInset(Shelf.plankUnit(opts.row_h))
+                    assert(e.h<=limit and e.face_h+e.depth<=e.h)
+                    assert(e.w<=opts.content_w and math.abs(e.w-e.face_h/aspect)<=.5)
+                end
+            end
+        end
+    end
+    dpi,look.aspect=1,1.5
+    Shelf.dropPlanCache()
 end)
 
 local function slot(style, title)
@@ -216,7 +304,7 @@ H.test("soft spines and face-out page blocks paint within bounds at multiple DPI
         dpi=scale
         for _,dark in ipairs({false,true}) do
             night=dark
-            for _,style in ipairs({"hardcover","paperback","tankobon"}) do
+            for _,style in ipairs({"hardcover","paperback","kanzenban","tankobon"}) do
                 local s=slot(style)
                 local bb=surface(s.width,s.height)
                 s:_renderIntoAt(bb,0,0,night)
@@ -230,33 +318,41 @@ H.test("soft spines and face-out page blocks paint within bounds at multiple DPI
     dpi,night=1,false
 end)
 
-H.test("paperback has no board overhang; manga has a light jacket and dark legible text", function()
+H.test("kanzenban and legacy tankobon use paperback's cover colours and flush boards", function()
     local renders={}
-    for _,style in ipairs({"hardcover","paperback","tankobon"}) do
+    for _,style in ipairs({"hardcover","paperback","kanzenban","tankobon"}) do
         local s=slot(style); local bb=surface(s.width,s.height)
         texts={}; s:_renderIntoAt(bb,0,0,false)
         renders[style]=bb
-        H.eq(texts[1].ink,style=="tankobon" and "black" or "white")
+        H.eq(texts[1].ink,"white")
         local head_paper=false
         for _,rect in ipairs(bb.rects) do
             if rect.y==0 and rect.w>5 then head_paper=true end
         end
         H.eq(head_paper,style~="hardcover")
     end
-    local hard,pocket,manga=renders.hardcover,renders.paperback,renders.tankobon
-    assert(manga.rects[1].c.r>pocket.rects[1].c.r)
+    local hard,pocket=renders.hardcover,renders.paperback
+    for _,style in ipairs({"kanzenban","tankobon"}) do
+        local other=renders[style]
+        H.eq(#other.rects,#pocket.rects)
+        for i,r in ipairs(pocket.rects) do
+            local o=other.rects[i]
+            for _,key in ipairs({"x","y","w","h"}) do H.eq(o[key],r[key]) end
+            for _,key in ipairs({"r","g","b"}) do H.eq(o.c[key],r.c[key]) end
+        end
+    end
     assert(math.abs(pocket.rects[30].c.r-pocket.rects[1].c.r)
         < math.abs(hard.rects[30].c.r-hard.rects[1].c.r))
-    local s=slot("tankobon"); texts={}; s:_renderIntoAt(surface(s.width,s.height),0,0,true)
-    H.eq(texts[1].ink,"white") -- pre-inverted, still dark on the displayed jacket
+    local s=slot("kanzenban"); texts={}; s:_renderIntoAt(surface(s.width,s.height),0,0,true)
+    H.eq(texts[1].ink,"black") -- pre-inverted, white on the displayed cover colour
 end)
 
 H.test("Latin and Japanese spine titles use the matching jacket background and ink", function()
     for _,title in ipairs({"A modern book", "\227\129\178\227\130\137\227\129\140\227\129\170"}) do
-        local s=slot("tankobon",title); texts={}
+        local s=slot("kanzenban",title); texts={}
         local bb=surface(s.width,s.height); s:_renderIntoAt(bb,0,0,false)
         assert(#texts>1, "title painting failed")
-        for _,text in ipairs(texts) do H.eq(text.ink,"black") end
+        for _,text in ipairs(texts) do H.eq(text.ink,"white") end
     end
 end)
 
@@ -280,7 +376,7 @@ H.test("real box member spines inherit the series binding without mutating share
     local adapter=require("adapters/orbitui_ui")
     adapter.wrap("lib/bookshelf_series_boxes",Boxes)
     adapter.wrap("lib/bookshelf_series_box_widget",Box)
-    for _,style in ipairs({"hardcover","paperback","tankobon"}) do
+    for _,style in ipairs({"hardcover","paperback","kanzenban","tankobon"}) do
         for _,n in ipairs({2,3,8,120}) do
             local members={}
             for i=1,n do members[i]={filepath="member"..i,has_cover=true,series_name="Saga",series_num=i} end
@@ -313,6 +409,57 @@ local function packedBox(n,style,scale)
     return Box:new{entry={book=book,series_box=shape,binding=style},width=shape.w,height=300*scale}
 end
 
+local function plannedBox(n,style,pct,width)
+    local Boxes=require("lib/bookshelf_series_boxes")
+    local Box=require("lib/bookshelf_series_box_widget")
+    local members={}
+    for i=1,n do members[i]={filepath="planned"..i..".cbz",page_count=100+i*50,
+        has_cover=true,series_name="Saga",series_num=i} end
+    local book=Boxes.box(members,"Saga")
+    local opts={row_h=300*dpi,content_w=(width or 800)*dpi,n_rows=2,face_out="all",
+        binding_shelf="paperback",binding_series={Saga=style},cover_size_pct=pct}
+    local e=Shelf.plan({book},opts).entries[1]
+    local stand_h=opts.row_h-Shelf.plankFace(opts.row_h)
+        -Shelf.plankInset(Shelf.plankUnit(opts.row_h))
+    return Box:new{entry=e,width=e.w,height=stand_h},e,opts
+end
+
+H.test("planned kanzenban boxes grow with natural member widths and capped row height", function()
+    for _,scale in ipairs({1,1.5,2,3}) do
+        dpi=scale
+        for _,aspect in ipairs({.6,1,1.5,2,3}) do
+            look.aspect=aspect
+            for _,pct in ipairs({50,100,150}) do
+                for _,n in ipairs({2,6,12,120}) do
+                    Shelf.dropPlanCache()
+                    local pocket=plannedBox(n,"paperback",pct)
+                    local large,e,opts=plannedBox(n,"kanzenban",pct)
+                    H.eq(e.binding,"kanzenban")
+                    assert(large.top>=0 and e.h<=large.height)
+                    H.eq(e.h,math.min(math.floor(pocket.shape.h*1.12+.5),large.height))
+                    for i,sp in ipairs(pocket.shape.spines) do
+                        H.eq(large.shape.spines[i].w,sp.w)
+                    end
+                    H.eq(large.shape.hidden_count,n-#large.slots)
+                    for _,member in ipairs(large.slots) do
+                        H.eq(member.slot.entry.binding,"kanzenban")
+                        H.eq(member.slot.height,e.h)
+                    end
+                    texts={}; large:paintTo(surface(large.width,large.height),0,0)
+                    assert(#texts>=2)
+                    local shadow=require("lib/bookshelf_series_boxes").shadowColumns(large.shape,0,0)
+                    for _,column in ipairs(shadow) do assert(column.h<=large.height) end
+                    H.eq(#e.book.books,n)
+                    for _,member in ipairs(e.book.books) do H.eq(member.binding,nil) end
+                    H.eq(opts.binding_shelf,"paperback")
+                end
+            end
+        end
+    end
+    dpi,look.aspect=1,1.5
+    Shelf.dropPlanCache()
+end)
+
 local function pixel(bb,x,y)
     local colour
     for _,r in ipairs(bb.rects) do
@@ -325,7 +472,7 @@ H.test("real book heads leave a recessed continuous interior and untouched air a
     local interior={}
     for _,dark in ipairs({false,true}) do
         night=dark
-        for _,style in ipairs({"hardcover","paperback","tankobon"}) do
+        for _,style in ipairs({"hardcover","paperback","kanzenban"}) do
             local box=packedBox(2,style)
             local g=box.shape
             H.eq(#box.slots,2); H.eq(box.more,nil)
@@ -351,7 +498,7 @@ H.test("overflow and read labels remain separate above real bound spines at smal
         for _,scale in ipairs({.5,1,1.5}) do
             for _,dark in ipairs({false,true}) do
                 night=dark
-                local box=packedBox(120,"tankobon",scale)
+                local box=packedBox(120,"kanzenban",scale)
                 H.eq(box.more.text,"+"..(120-#box.slots))
                 local bb=surface(box.width+40,box.height+20)
                 texts={}; box:paintTo(bb,20,10)
@@ -378,7 +525,7 @@ if preview then
     local out=assert(io.open(preview,"w"))
     out:write('<svg xmlns="http://www.w3.org/2000/svg" width="750" height="550" viewBox="0 0 750 550">')
     out:write('<rect width="750" height="550" fill="#f1ede4"/>')
-    for i,style in ipairs({"hardcover","paperback","tankobon"}) do
+    for i,style in ipairs({"hardcover","paperback","kanzenban"}) do
         local bb=surface(180,230)
         slot(style):_renderIntoAt(bb,10,20,false)
         Top:new{dimen={w=120,h=14},look=look,binding=style}:paintTo(bb,55,20)
@@ -404,14 +551,14 @@ if box_preview then
     out:write('<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="780" viewBox="0 0 1000 780">')
     out:write('<rect width="1000" height="780" fill="#f1ede4"/>')
     out:write('<text x="30" y="30" font-size="18" fill="#202830">Native paint calls; placeholder covers and approximate fonts</text>')
-    for row,style in ipairs({"tankobon","paperback"}) do
+    for row,style in ipairs({"kanzenban","paperback"}) do
         for col,n in ipairs({2,6,12,120}) do
-            local box=packedBox(n,style)
+            local box=plannedBox(n,style)
             local bb=surface(box.width,box.height)
             texts={}; box:paintTo(bb,0,0)
             local x,y=(col-1)*240+30,(row-1)*360+50
             out:write(string.format('<g transform="translate(%d,%d)">',x,y))
-            out:write('<rect x="-12" y="300" width="210" height="12" fill="#b1a08a"/>')
+            out:write(string.format('<rect x="-12" y="%g" width="210" height="12" fill="#b1a08a"/>',box.height))
             for _,r in ipairs(bb.rects) do
                 if r.c.r then
                     out:write(string.format('<rect x="%g" y="%g" width="%g" height="%g" fill="rgb(%d,%d,%d)"/>',

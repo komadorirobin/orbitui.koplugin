@@ -4222,12 +4222,25 @@ function SpineShelf.plan(items, opts)
             w_dp = math.max(8, w_dp)
             w = Screen:scaleBySize(w_dp)
         end
-        local series_box = SpineShelf.seriesBoxGeometry and SpineShelf.seriesBoxGeometry(bk,
-            {w=w, h=h, face_h=face_h, depth=depth}, opts)
+        local binding = SpineShelf.bookBinding and SpineShelf.bookBinding(bk, src, opts)
+        local base = { w = w, h = h, face_h = face_h, depth = depth, aspect = aspect,
+                       ref_w_dp = ref_w_dp }
+        if SpineShelf.bindingGeometry and not bk.add_subshelf then
+            -- Size before packing, within the same standing room as rowWidget.
+            local inset = SpineShelf.plankInset(SpineShelf.plankUnit(budget))
+            local push = face_out and not bk._series_box and inset or 0
+            SpineShelf.bindingGeometry(binding, base, {
+                max_h = budget - SpineShelf.plankFace(budget) - inset - push,
+                max_w = opts.content_w,
+            })
+            if base.w ~= w then
+                w_dp = math.floor(base.w / (Screen:scaleBySize(100) / 100) + 0.5)
+            end
+            w, h, face_h, depth = base.w, base.h, base.face_h, base.depth
+        end
+        local series_box = SpineShelf.seriesBoxGeometry and SpineShelf.seriesBoxGeometry(bk, base, opts)
         if not series_box and bk._series_box then
-            series_box = require("lib/bookshelf_series_boxes").geometry(bk,
-                { w = w, h = h, face_h = face_h, depth = depth, aspect = aspect,
-                  ref_w_dp = ref_w_dp }, opts)
+            series_box = require("lib/bookshelf_series_boxes").geometry(bk, base, opts)
         end
         if series_box then
             w, h, face_h, depth = series_box.w, series_box.h, series_box.face_h, series_box.depth
@@ -4308,7 +4321,7 @@ function SpineShelf.plan(items, opts)
             w = w, h = h, w_dp = w_dp, ref_w_dp = ref_w_dp,
             look = look, depth = depth, face_h = face_h, thick = true_thick,
             series_box = series_box,
-            binding = SpineShelf.bookBinding and SpineShelf.bookBinding(bk, src, opts),
+            binding = binding,
             face_out = face_out, favourite = fav, label = label,
             author = src.author or (src.authors and src.authors[1]) or nil,
             series_num = series_num, gap_before = gap_before,

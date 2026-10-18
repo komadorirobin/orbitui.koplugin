@@ -39,8 +39,14 @@ and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
 
+Unpublished follow-up: Tankobon is replaced by **Kanzenban / large format**.
+It uses Paperback's cover-derived colours and thin boards, about 12% taller
+where shelf space permits. Covers retain their proportions, and page-derived
+spine widths do not grow. Saved Tankobon choices display as Paperback without
+rewriting those preferences; existing Paperback/Hardcover choices are unchanged.
+
 Long-press a shelf chip > **Book binding** to choose Hardcover, Paperback or
-Manga / tankobon. Long-press a series box > **Book binding** for an override
+Kanzenban / large format. Long-press a series box > **Book binding** for an override
 that follows that series across shelves, or choose **Follow shelf** to clear it.
 Untouched shelves retain Hardcover. Choices affect physical books and box
 member spines, not book metadata, cover-grid/list views or reading progress.

@@ -146,6 +146,13 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
+- October 18, user-approved Kanzenban replacement: replace the pale Tankobon
+  jacket option with a 12%-taller Paperback-style format. The optional
+  `bindingGeometry` seam sizes before packing and slipcase construction, with
+  row/push/width limits and aspect-true covers; retain page-derived thickness.
+  Legacy `tankobon` values resolve read-only to Paperback, not Kanzenban.
+  Keep scoped choices, partial fill, cache keys and standalone defaults.
+  C07 coverage: `test_book_bindings`; upstream pins remain unchanged.
 - October 17, user-approved partial box fill: host `memberSpineWidth` and
   `packSpines` hooks retain calibrated natural widths and show a bounded whole
   prefix. Keep the low shaded empty interior, matching shadow columns and `+N`

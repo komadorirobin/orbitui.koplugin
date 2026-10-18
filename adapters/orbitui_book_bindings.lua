@@ -2,12 +2,18 @@
 local M = {}
 local _ = require("core/orbitui_i18n")
 local KEY = "orbitui_book_bindings"
-local valid = { hardcover = true, paperback = true, tankobon = true }
-local styles = { "hardcover", "paperback", "tankobon" }
+local valid = { hardcover = true, paperback = true, kanzenban = true }
+local styles = { "hardcover", "paperback", "kanzenban" }
 local skins = {
     paperback = { lighten = 0, shade = 0.14, paper = 248, page_line = 210 },
-    tankobon = { lighten = 0.55, shade = 0.05, paper = 252, page_line = 224, accent = true },
 }
+skins.kanzenban = skins.paperback
+
+local function normalize(style)
+    -- Keep old settings intact for rollback; the retired jacket now uses Pocket.
+    if style == "tankobon" then return "paperback" end
+    return valid[style] and style or nil
+end
 
 local function tableOrEmpty(v) return type(v) == "table" and v or {} end
 local function copy(v)
@@ -21,19 +27,20 @@ local function choices(scope)
 end
 
 function M.label(style)
+    style = normalize(style)
     if style == "paperback" then return _("Paperback") end
-    if style == "tankobon" then return _("Manga / tankobon") end
+    if style == "kanzenban" then return _("Kanzenban / large format") end
     return _("Hardcover")
 end
 
 function M.shelf(id)
     local value = choices("shelves")[id]
-    return valid[value] and value or "hardcover"
+    return normalize(value) or "hardcover"
 end
 
 function M.series(name)
     local value = choices("series")[name]
-    return valid[value] and value or nil
+    return normalize(value)
 end
 
 function M.save(scope, id, style)
@@ -52,13 +59,27 @@ end
 function M.resolve(book, source, opts)
     local name = book.series_name or (source and source.series_name) or opts.binding_series_name
     local value = name and tableOrEmpty(opts.binding_series)[name]
-    if valid[value] then return value end
-    return valid[opts.binding_shelf] and opts.binding_shelf or "hardcover"
+    return normalize(value) or normalize(opts.binding_shelf) or "hardcover"
+end
+
+function M.geometry(style, base, limits)
+    if normalize(style) ~= "kanzenban" then return end
+    local max_h = math.max(1, math.floor(limits.max_h))
+    base.h = math.min(math.floor(base.h * 1.12 + 0.5), max_h)
+    if base.face_h then
+        -- Grow the cover in both dimensions, not the page-derived thickness.
+        base.depth = math.min(base.depth or 0, math.max(0, max_h - 1))
+        base.face_h = math.max(1, math.min(math.floor(base.face_h * 1.12 + 0.5),
+            max_h - base.depth, math.floor(math.max(1, limits.max_w) * base.aspect)))
+        base.w = require("lib/bookshelf_spine_layout").faceOutWidth(base.face_h, base.aspect)
+        base.h = math.max(base.h, base.face_h + base.depth)
+    end
 end
 
 function M.renderer(shelf)
     shelf.bookBinding = M.resolve
-    shelf.bindingStyle = function(style) return skins[style] end
+    shelf.bindingStyle = function(style) return skins[normalize(style)] end
+    shelf.bindingGeometry = M.geometry
 end
 
 local function shelfId(widget, chip)

@@ -2331,6 +2331,32 @@ rendering of partial interiors, thickness and labels still needs confirmation.
 Keep evidence in `test-results/alpha44-20261017/`; do not publish the archived
 design branch or any held-artwork history.
 
+## 2026-10-18: Kanzenban replaces the Tankobon binding option
+
+User approved with "Kor pa det!" after preferring Paperback and proposing a
+taller Kanzenban alternative. Start at public alpha.44 `6671b2ca`. This is a
+local C07 change, not a merge or publication; VERSION stays alpha.44 and the
+reviewed Bookshelf `c7a9db2c` / SimpleUI `7eb80f9e` pins are unchanged.
+
+Kanzenban / large format shares Paperback's colours and thin soft boards,
+with 12% extra height where shelf space allows. A small optional native
+planner hook applies host geometry before row packing and slipcase building.
+Cover width follows height, respecting row/push/width limits. Page-derived
+thickness and partial box filling are unchanged. Per-series overrides still
+win across shelves, drills and pinned series. Swedish uses
+"Kanzenban / storformat"; every other language uses the English label.
+Legacy `tankobon` settings resolve to Paperback without rewriting them, so
+existing selections do not unexpectedly grow and rollback retains the old
+preference. Paperback, Hardcover and standalone component defaults are intact.
+
+Focused tests cover legacy menus/no writes, translations, warm plan caches,
+height/aspect limits across DPI and cover sizes, natural member widths,
+native box painting/shadows, and unchanged source records. Full sequential
+gates and clean-commit package evidence belong in
+`test-results/kanzenban-20261018/`, with results and device gaps in TESTING.md.
+No push, tag, release, artwork or bootstrap changes. Any sealed alpha.44
+preview is local only and must not replace the public alpha.44 assets.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

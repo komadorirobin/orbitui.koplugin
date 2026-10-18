@@ -2,6 +2,32 @@
 
 ## Automated
 
+2026-10-18 Kanzenban replacement (unpublished follow-up to alpha.44): the 20
+binding cases cover Swedish/English menus, read-only legacy Tankobon-to-Paperback
+resolution, scoped choices, warm plan invalidation, 12% growth with unchanged
+page-derived widths, and actual planner/painter box bounds. Exercise portrait,
+square and landscape cover aspects, 1/1.5/2/3x DPI, 50/100/150% cover sizes,
+2/6/12/120-member boxes, partial interiors, shadows, count/overflow separation,
+colour/night rendering and unchanged source metadata. Existing navigation,
+opening, completed-series and first-cover fallback cases remain enabled.
+Logs and the shape-only comparison live in `test-results/kanzenban-20261018/`;
+the comparison uses placeholder covers and approximate fonts, not device pixels.
+
+Complete sequential Lua/LuaJIT runs pass 596/597 root cases in 50 files,
+395 Bookshelf suites, all 13 SimpleUI files and 91 Python checks. All 43
+translation catalogues, 317 module paths and 848 LuaJIT syntax files pass.
+Existing SQLite/native-font/external-artwork/absent-Bookends skips are unchanged;
+no new failure allowance. Clean-commit package and held-artwork/stable-asset
+audits are recorded in the same evidence directory, not as a public release.
+
+Device checks still required: compare Paperback and Kanzenban on the same
+Manga series, including small/large covers and tall covers at the height cap.
+Verify chip defaults, series overrides, opened/pinned series and restart.
+An old Tankobon choice must show Pocket/Paperback without selecting Kanzenban.
+Check row clearances, colour/night mode, opening, and complete/partial boxes;
+read totals and navigation must still include all volumes. No public release
+or physical Bigme test is implied by these headless checks.
+
 2026-10-17 alpha.44 publication preparation: explicitly requested after
 partial-fill implementation `e1ce48bb`. Re-run complete sequential Lua/LuaJIT
 gates and translations on the versioned tree, then seal a clean-commit package.

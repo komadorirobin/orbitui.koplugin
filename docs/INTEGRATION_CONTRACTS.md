@@ -369,10 +369,19 @@ the host installs these hooks. Tests: `test_series_box_fill`,
 `test_book_bindings`, and `test_upstream_series_boxes`.
 
 Physical book binding is opt-in per shelf: Hardcover (unchanged default),
-Paperback (thin, flush soft covers), or Manga/tankobon (thin pale jacket with
-dark text). The latter is a visual style, not a claim to know printed spine
-art or physical trim dimensions. Per-series overrides, keyed by the same series
-identity as the native menu, win on every shelf and in opened/pinned series;
+Paperback (thin, flush soft covers), or Kanzenban / large format. The approved
+October 18 refinement replaces the former pale Manga/tankobon jacket with
+Kanzenban: the same cover-derived colours and soft boards as Paperback,
+12% taller where room permits. The optional `bindingGeometry` hook applies
+before row packing and slipcase geometry, bounded by the actual standing
+height (including face-out push) and content width. Grow cover width with its
+height, never stretch its aspect or change page-derived member/spine thickness.
+Keep partial filling, count labels and silhouette shadows. The styles are
+presentation choices, not claims to know printed spine art or trim dimensions.
+Legacy `tankobon` settings resolve to Paperback without rewriting preferences;
+they must not silently select the taller Kanzenban style. Per-series overrides,
+keyed by the same series identity as the native menu, win on every shelf and
+in opened/pinned series;
 Follow shelf removes only that override. Profile-qualified shelf IDs must not
 collide with native or other profile chips. Store choices separately under
 `orbitui_book_bindings`, preserving all existing settings and book metadata.
