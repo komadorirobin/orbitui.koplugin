@@ -799,13 +799,26 @@ remaining room moves to the next row, not to a detached decorative slot.
 Keep ordinary gap/end choices when a slot is free, zero for None, and at most
 one ordinary piece on bare rows. Suppressed slots do not consume deck cards.
 
+The user's 2026-10-18 approval adds the Manga miniature pack: Kaneda's motorcycle
+for Akira, the Walking Mushroom for Dungeon Meshi / Delicious in Dungeon, and
+the mortar for The Apothecary Diaries. Match exact series metadata aliases via
+`core/orbitui_manga_ornaments.lua`, including compact series boxes and explicit
+series-group members. Never infer a series from a title, author, filename or a
+multi-book folder's representative. Exclude these pieces from random dealing
+and bare shelves, just like busts, but count them as ordinary decorations:
+at most one per row, and author busts keep priority. Reserve before the native
+dealer, preserve adjacency during balancing, and reset series runs at the same
+page boundaries in pagination and display. Disabled packs/pieces and None stay
+disabled. The new pack has its own additive installer marker; it must not reset
+older art, placement or theme selections. Zoom uses the native tap/info fields.
+
 For ordinary end ornaments, distribute unused room evenly between the ornament
 and its two slot boundaries (shelf end and adjacent book). The optional
 `SpineShelf.positionOrnamentX` seam is installed by `adapters/orbitui_ornaments.lua`
 and also handles a section's ordinary leading piece. This is paint-time alignment
 only: preserve book coordinates, reserved widths, paging, deck order, vertical
 placement and the ornament widget's tap/hold area. Never center a leading piece
-over a separate left-end piece. Keep author busts adjacent to their books and
+over a separate left-end piece. Keep author busts and series miniatures adjacent to their books and
 honor explicit negative padding/overlap; tight slots retain native placement.
 Standalone Bookshelf, middle gaps, bare shelves and the pack editor retain their
 native layout. See `core/orbitui_ornament_spacing.lua` and

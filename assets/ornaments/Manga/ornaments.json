@@ -1,0 +1,32 @@
+{
+  "Kaneda Motorcycle.png": {
+    "scale": 0.85,
+    "anchor": "bottom",
+    "lift": -0.041,
+    "pad": 0.025,
+    "night": "off",
+    "mirror": "off",
+    "tap": "zoom",
+    "info": "Kaneda's motorcycle / Akira\n\nA red futuristic motorcycle interpreted as a hand-painted collectible miniature. The low body, broad wheels and dark seat keep its silhouette legible beside the books, even at shelf size.\n\nOriginal AI-generated unofficial fan art made for OrbitUI. No commercial product photograph or other image was supplied as a reference. Not official or endorsed artwork; no blanket license to the underlying character/design is asserted. See Manga/ATTRIBUTION.txt for provenance and rights notes."
+  },
+  "Walking Mushroom.png": {
+    "scale": 0.7,
+    "anchor": "bottom",
+    "lift": -0.039,
+    "pad": 0.025,
+    "night": "off",
+    "mirror": "off",
+    "tap": "zoom",
+    "info": "Walking Mushroom / Dungeon Meshi (Delicious in Dungeon)\n\nA small mushroom monster with a russet cap, pale gills and two short legs, interpreted as a matte ceramic miniature. Its simple silhouette is designed to stay readable on both colour and monochrome e-ink screens.\n\nOriginal AI-generated unofficial fan art made for OrbitUI. No commercial figure photograph or other image was supplied as a reference. Not official or endorsed artwork; no blanket license to the underlying character/design is asserted. See Manga/ATTRIBUTION.txt for provenance and rights notes."
+  },
+  "Apothecary Mortar.png": {
+    "scale": 0.7,
+    "anchor": "bottom",
+    "lift": -0.03,
+    "pad": 0.025,
+    "night": "off",
+    "mirror": "off",
+    "tap": "zoom",
+    "info": "Apothecary still life / The Apothecary Diaries\n\nA celadon-green mortar and wooden pestle with two herb jars and a sprig of herbs. This original still life evokes an apothecary's workbench without depicting a particular character or copying a prop from the manga.\n\nOriginal AI-generated ornament made for OrbitUI. No third-party photograph or model was supplied as a reference. The series association is an OrbitUI feature, not an official endorsement.\nArtwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/"
+  }
+}

@@ -1081,6 +1081,14 @@ Record KOReader version, installed patches and active plugins, plus crash.log.
   Columns now start at the row's top rather than being vertically centred;
   retain saved settings and verify full-width spacing is unchanged.
 - Check shelf themes, planks, ornaments and wallpaper picking at both orientations.
+- For the Manga ornament pack, check Akira's motorcycle, Dungeon Meshi's mushroom
+  and The Apothecary Diaries' mortar beside both series boxes and individual
+  volumes. Browse forward/back, return from a book and restart: no miniature
+  may migrate to an unrelated series or an empty shelf. Verify at most one per
+  row, author-bust priority and several busts still sharing a row. Check the
+  pack/individual off switches and None frequency, tap-to-zoom info, colour and
+  monochrome, foot alignment, tight widths and custom size/height adjustments.
+  Confirm an edited or deleted PNG stays edited/deleted after another startup.
 - Confirm existing settings, Hardcover links and status-line preferences remain
   in their original files after startup, edits, restart and rollback.
 - Open Fiction and Manga from the dock, and switch between them repeatedly.

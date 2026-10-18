@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OrbitUI / Mangaornament</title>
+<style>
+:root { color-scheme:light; --paper:#eee9de; --ink:#292824; --muted:#69675f; --plank:#ab9170; --stand:240px; }
+* { box-sizing:border-box; }
+body { margin:0; color:var(--ink); background:var(--paper); font-family:Georgia,serif; }
+body.dark { --paper:#252623; --ink:#eee9de; --muted:#b5b2a7; --plank:#7a6951; color-scheme:dark; }
+body.small { --stand:140px; }
+header,footer { max-width:1180px; margin:auto; padding:28px 24px; }
+header { border-bottom:1px solid var(--muted); }
+.eyebrow { font:12px/1.5 monospace; letter-spacing:.18em; }
+h1 { font-size:clamp(30px,4vw,44px); font-weight:normal; margin:8px 0; }
+p { max-width:760px; line-height:1.5; color:var(--muted); }
+button { padding:8px 13px; border:1px solid var(--muted); background:transparent; color:inherit; font:14px Georgia,serif; cursor:pointer; margin:0 7px 8px 0; }
+button[aria-pressed=true] { color:var(--paper); background:var(--ink); }
+main { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px; max-width:1180px; padding:28px 24px; margin:auto; }
+figure { margin:0; min-width:0; }
+.shelf { height:270px; position:relative; border-bottom:12px solid var(--plank); display:flex; align-items:flex-end; justify-content:center; }
+.shelf img { position:relative; bottom:calc(var(--stand) * var(--lift)); max-width:100%; }
+body.patterned .shelf { background-image:repeating-linear-gradient(135deg,transparent 0px,transparent 17px,#88888840 18px,transparent 19px,transparent 37px); }
+body.mono .shelf img { filter:grayscale(1); }
+figcaption { padding-top:20px; }
+strong { display:block; font-size:22px; font-weight:normal; }
+span,footer { font:12px/1.6 monospace; color:var(--muted); }
+a { color:inherit; }
+@media(max-width:850px) { main { grid-template-columns:1fr; max-width:520px; } .shelf { height:250px; } }
+</style>
+</head>
+<body>
+<header>
+<div class="eyebrow">ORBITUI / MANGA COLLECTION</div>
+<h1>Tre små världar på hyllan.</h1>
+<p>De riktiga PNG-filerna i ungefärlig hyllstorlek, med transparent bakgrund och bevarade färger.
+Detta är en bildförhandsvisning, inte en KOReader-emulator.</p>
+<button data-class="dark" type="button" aria-pressed="false">Mörk bakgrund</button>
+<button data-class="patterned" type="button" aria-pressed="false">Mönstrad bakgrund</button>
+<button data-class="small" type="button" aria-pressed="false">Mindre hylla</button>
+<button data-class="mono" type="button" aria-pressed="false">Gråskala</button>
+</header>
+<main>
+<figure data-scale="0.85" style="--lift:-0.041">
+<div class="shelf"><img src="../assets/ornaments/Manga/Kaneda%20Motorcycle.png" alt="Röd futuristisk motorcykel"></div>
+<figcaption><strong>Kanedas motorcykel</strong><span>Akira / inofficiell, AI-genererad fan art</span></figcaption>
+</figure>
+<figure data-scale="0.7" style="--lift:-0.039">
+<div class="shelf"><img src="../assets/ornaments/Manga/Walking%20Mushroom.png" alt="Gående svamp med rödbrun hatt"></div>
+<figcaption><strong>Walking Mushroom</strong><span>Dungeon Meshi / Delicious in Dungeon<br>Inofficiell, AI-genererad fan art</span></figcaption>
+</figure>
+<figure data-scale="0.7" style="--lift:-0.03">
+<div class="shelf"><img src="../assets/ornaments/Manga/Apothecary%20Mortar.png" alt="Grön mortel med stöt och örtburkar"></div>
+<figcaption><strong>Mortel och örtburkar</strong><span>The Apothecary Diaries / eget AI-genererat stilleben</span></figcaption>
+</figure>
+</main>
+<footer>Skapade med OpenAI image_gen, utan referensbilder.
+<a href="../assets/ornaments/Manga/prompts.json">Prompter och bilddata</a> /
+<a href="../assets/ornaments/Manga/ATTRIBUTION.txt">Bildkrediter och rättighetsnoteringar</a>.</footer>
+<script>
+function sizeImages() {
+  const stand = parseFloat(getComputedStyle(document.body).getPropertyValue("--stand"));
+  document.querySelectorAll("figure").forEach(function(figure) {
+    const img = figure.querySelector("img");
+    if (!img.naturalWidth) return;
+    const scale = Number(figure.dataset.scale), aspect = img.naturalWidth / img.naturalHeight;
+    let height = Math.floor(stand * .8 * scale), width = Math.floor(height * aspect);
+    const cap = Math.floor(stand * scale);
+    if (width > cap) { width = cap; height = Math.floor(width / aspect); }
+    img.style.width = width + "px"; img.style.height = height + "px";
+  });
+}
+document.querySelectorAll("img").forEach(function(img) { img.addEventListener("load", sizeImages); });
+document.querySelectorAll("button[data-class]").forEach(function(button) {
+  button.addEventListener("click", function() {
+    const enabled = document.body.classList.toggle(button.dataset.class);
+    button.setAttribute("aria-pressed",String(enabled)); sizeImages();
+  });
+});
+sizeImages();
+</script>
+</body>
+</html>

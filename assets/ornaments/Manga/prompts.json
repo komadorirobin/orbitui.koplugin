@@ -1,0 +1,52 @@
+{
+  "tool": "built-in image_gen (OpenAI)",
+  "created": "2026-10-18",
+  "method": "Original generation, transparent_background=true. Unmodified output bytes; no reference images.",
+  "assets": [
+    {
+      "file": "Kaneda Motorcycle.png",
+      "width": 1774,
+      "height": 887,
+      "sha256": "84228bbb148dcbfa254ee1fbb5a4cb55ea2d9372cdf5a468b6ee40b16a94b169",
+      "alpha_bbox_at_24": [
+        32,
+        103,
+        1754,
+        798
+      ],
+      "references": [],
+      "artwork_license": "Unofficial fan art; no blanket underlying character/design license asserted",
+      "prompt": "Use case: stylized-concept. Asset type: transparent PNG ornament for a skeuomorphic manga bookshelf on a color e-ink reader. Create one original fan-art illustration of Kaneda's iconic red futuristic motorcycle from AKIRA, depicted as a tasteful realistic hand-painted resin collectible miniature, not a photo of an existing commercial toy. No rider. Low elongated aerodynamic crimson-red body, two large dark wheels, enclosed sculptural front fairing, low black seat, restrained steel mechanical details. Camera at shelf eye level in a near-side view facing left with just a slight front three-quarter angle; both wheels rest on exactly the same horizontal baseline. Soft upper-left studio lighting, matte/satin materials, readable red shapes and bold clean silhouette at small size; avoid tiny busy mechanical detail. Only the motorcycle, all of it visible, centered and tightly framed, with a small clear margin around every edge. Wide landscape image. Genuinely transparent background including between wheels and handlebars. No shelf, floor, backdrop, pedestal, base plate, contact-shadow rectangle, cast shadow outside silhouette, text, labels, brand marks, decals or watermark. Do not add any other object. Retain rich but natural red color; do not grayscale."
+    },
+    {
+      "file": "Walking Mushroom.png",
+      "width": 1261,
+      "height": 1247,
+      "sha256": "2538c61741cd32657e180d91c79e19af354c9a5a96a9df63fdca2ee93ff34b5a",
+      "alpha_bbox_at_24": [
+        78,
+        88,
+        1210,
+        1156
+      ],
+      "references": [],
+      "artwork_license": "Unofficial fan art; no blanket underlying character/design license asserted",
+      "prompt": "Use case: stylized-concept. Asset type: transparent PNG ornament for a skeuomorphic manga bookshelf on a color e-ink reader. Create one original fan-art illustration of the small Walking Mushroom from Dungeon Meshi (Delicious in Dungeon), depicted as a tasteful realistic hand-painted ceramic/resin miniature, not a photograph of an existing commercial figure. Recognizable simple mushroom monster: a broad gently domed muted russet-red mushroom cap with a softly irregular rim, ivory gills underneath, a short thick creamy stem dividing into two short stubby legs with simple rounded feet. No face, eyes, mouth or arms; no extra mushroom. Quiet planted standing pose with both feet on the same horizontal baseline, slight three-quarter front view at shelf eye level. Soft upper-left studio lighting; matte hand-painted surface with subtle natural texture, warm russet and cream colors with readable clean silhouette at small size. Only the complete miniature, centered and tightly framed with a small transparent margin around every edge. Genuinely transparent background and negative space between the legs. No shelf, floor, backdrop, pedestal, base plate, cast shadow outside silhouette, scenery, text, labels, logos or watermark. Keep it charming but not cartoon-eyed, and do not grayscale."
+    },
+    {
+      "file": "Apothecary Mortar.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "7390228f5552cdfebb8c48bc24b66bce072e20096a09e3ff3dd3d17bb0ea17e1",
+      "alpha_bbox_at_24": [
+        91,
+        70,
+        1449,
+        955
+      ],
+      "references": [],
+      "artwork_license": "CC BY 4.0, to the extent applicable",
+      "prompt": "Use case: stylized-concept. Asset type: transparent PNG ornament for a skeuomorphic manga bookshelf on a color e-ink reader. Create one original small apothecary still life, designed as tasteful realistic hand-painted ceramic miniatures to sit beside The Apothecary Diaries manga. Foreground: a sturdy jade-green celadon mortar bowl with thick rim and short foot, holding a pale natural wooden pestle that leans gently up to the left. Behind it on the right, one small muted amber-brown ceramic herb jar with a simple ivory cloth lid tied by a thin cord; a second much shorter dark teal lidded jar nestles immediately beside it. A small restrained sprig of dried green herbs at the mortar rim. Keep the group compact and cohesive, with the mortar dominant and every object resting on the same horizontal shelf baseline. No person or recognizable character, no borrowed commercial product design. Shelf-eye-level view with a very slight three-quarter angle so the mortar opening is visible. Soft upper-left lighting, tactile matte glazes, jade/ochre/wood colors, clean simple silhouettes and sufficient contrast at small size. Tightly framed complete group with a small transparent margin on all sides, no cropped objects. Genuinely transparent background and gaps. No shelf, floor, backdrop, tray, pedestal, ground shadow, text, writing, labels, symbols, logos, watermark or unrelated props. Preserve natural color, do not grayscale."
+    }
+  ]
+}

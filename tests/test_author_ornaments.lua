@@ -1,6 +1,7 @@
 package.path = "./?.lua;./components/bookshelf/?.lua;" .. package.path
 local H = require("tests/helpers")
 local Authors = require("core/orbitui_author_ornaments")
+local Manga = require("core/orbitui_manga_ornaments")
 local Adapter = require("adapters/orbitui_ornaments")
 local Deck = require("lib/bookshelf_ornament_deck")
 local Layout = require("lib/bookshelf_spine_layout")
@@ -8,6 +9,9 @@ local native = Deck.fillHooks
 local joyce = { name = "Modernists/James Joyce.png", pack = "Modernists", w = 54 }
 local woolf = { name = "Modernists/Virginia Woolf.png", pack = "Modernists", w = 60 }
 local plant = { name = "plant.svg", w = 30 }
+local bike = { name = "Manga/Kaneda Motorcycle.png", pack = "Manga", w = 110 }
+local mushroom = { name = "Manga/Walking Mushroom.png", pack = "Manga", w = 60 }
+local mortar = { name = "Manga/Apothecary Mortar.png", pack = "Manga", w = 85 }
 local added = {
     { file = "August Strindberg", id = "august strindberg", names = { "August Strindberg", "Johan August Strindberg" } },
     { file = "Stanislaw Lem", id = "stanislaw lem", names = { "Stanis\197\130aw Lem", "STANIS\197\129AW LEM", "Stanislaw Lem" } },
@@ -37,6 +41,11 @@ local function clone(es, first)
         out[#out + 1] = e
     end
     return out
+end
+local function volume(id, series, width)
+    local e = entry(id, "Other", width, true)
+    e.book.series_name = series
+    return e
 end
 local function fixture(es, options)
     local o = options or {}
@@ -75,6 +84,9 @@ local function assertFits(es, rows, hooks, env)
                 H.eq(Authors.pieces[pl.entry.name], Authors.authorOf(e), "Wrong author beside book")
             elseif pl then
                 ornaments = ornaments + 1
+                if Manga.pieces[pl.entry.name] then
+                    H.eq(Manga.pieces[pl.entry.name], Manga.seriesOf(e), "Wrong series beside book")
+                end
             end
         end
         assert(range.empty or used <= hooks.avail(r), "Book/ornament pair exceeds row budget")
@@ -82,6 +94,89 @@ local function assertFits(es, rows, hooks, env)
         assert(authors == 0 or ornaments == 0, "Ordinary decoration mixed with busts on row " .. r)
     end
 end
+
+H.test("manga matching uses exact series metadata and known language aliases", function()
+    for _, subject in ipairs({
+        { bike, { "Akira", " AKIRA ", "アキラ" } },
+        { mushroom, { "Dungeon Meshi", "Delicious in Dungeon", "ダンジョン飯" } },
+        { mortar, { "The Apothecary Diaries", "Apothecary Diaries", "Kusuriya no Hitorigoto", "薬屋のひとりごと" } },
+    }) do
+        local piece, names = subject[1], subject[2]
+        for _, name in ipairs(names) do
+            local e = volume(1, name)
+            H.eq(Manga.seriesOf(e), Manga.pieces[piece.name])
+            e.book.kind, e.book._series_box = "series", true
+            H.eq(Manga.seriesOf(e), Manga.pieces[piece.name])
+        end
+    end
+    for _, name in ipairs({ "Akira Toriyama", "About Akira", "Akira Club", "Dungeon", "Apothecary", "" }) do
+        H.eq(Manga.seriesOf(volume(1, name)), nil)
+    end
+    H.eq(Manga.seriesOf({ author="Akira", book={title="Akira",filepath="/Akira.epub"} }), nil)
+    H.eq(Manga.seriesOf({ book={kind="book",series="Akira"} }), "series:akira")
+    for _, kind in ipairs({ "folder", "author", "tag", "genre" }) do
+        H.eq(Manga.seriesOf({book={kind=kind,series_name="Akira",first_book={series_name="Akira"}}}), nil)
+    end
+    H.eq(Manga.seriesOf({book={kind="folder",_spine_single=true,first_book={series_name="Akira"}}}), "series:akira")
+    H.eq(Manga.seriesOf({book={},item={kind="series",series_name="Akira"}}), "series:akira")
+    H.eq(Manga.seriesOf({book={},item={kind="author",series_name="Akira"}}), nil)
+    H.eq(Manga.seriesOf({book={series_name="Other"},item={kind="series",series_name="Akira"}}), nil)
+end)
+
+H.test("series miniatures never enter the random or bare-shelf deck", function()
+    local cards = { bike, plant, mushroom, mortar }
+    local es = { volume(1, "Akira"), volume(2, "Akira"), volume(3, "Other") }
+    local h, rows, env = fixture(es, { cards=cards, width=600 })
+    H.eq(#h.dealer.cards, 1); H.eq(h.dealer.cards[1], plant)
+    H.eq(bust(es[1]).entry, bike); H.eq(bust(es[2]), nil); H.eq(bust(es[3]), nil)
+    H.eq(h.row_orn[1], nil); H.eq(h.state().n, 0)
+    assertFits(es, rows, h, env)
+    for _, pl in pairs(h.bare(2, 10)) do H.eq(pl.entry, plant) end
+    local unrelated = { volume(1, "Other"), volume(2, "Other") }
+    h = fixture(unrelated, { cards={bike,mushroom,mortar} })
+    H.eq(next(h.row_orn), nil); H.eq(next(h.bare(2, 10)), nil)
+    H.eq(bust(unrelated[1]), nil); H.eq(bust(unrelated[2]), nil)
+end)
+
+H.test("only one series miniature fits a row even if several matching series do", function()
+    local es = {volume(1,"Akira"),volume(2,"Dungeon Meshi"),volume(3,"The Apothecary Diaries")}
+    local h, rows, env = fixture(es, {cards={bike,mushroom,mortar,plant},width=650})
+    H.eq(#rows, 1); H.eq(bust(es[1]).entry, bike)
+    H.eq(bust(es[2]), nil); H.eq(bust(es[3]), nil); H.eq(h.row_orn[1], nil)
+    assertFits(es, rows, h, env)
+end)
+
+H.test("multiple author busts retain priority over a series miniature on the same row", function()
+    local es = {volume(1,"Akira"),entry(2,"James Joyce"),entry(3,"Virginia Woolf")}
+    local h, rows, env = fixture(es, {cards={bike,joyce,woolf,plant},width=700})
+    H.eq(#rows, 1); H.eq(bust(es[1]), nil)
+    H.eq(bust(es[2]).entry, joyce); H.eq(bust(es[3]).entry, woolf)
+    assertFits(es, rows, h, env)
+end)
+
+H.test("series matching respects off shelves and filtered-out packs or individual pieces", function()
+    for _, options in ipairs({{level="off",cards={bike}}, {cards={mushroom,mortar}}}) do
+        local es = {volume(1,"Akira")}
+        local h = fixture(es, options)
+        H.eq(bust(es[1]), nil); H.eq(next(h.row_orn), nil)
+    end
+    local es = {volume(1,"Akira")}
+    fixture(es, {cards={bike},level="rarely"})
+    H.eq(bust(es[1]).entry, bike)
+end)
+
+H.test("series miniatures shrink or disappear safely on very narrow shelves", function()
+    for _, width in ipairs({90,110,150,200,320,700}) do
+        local es = {volume(1,"Akira"),volume(2,"Dungeon Meshi"),volume(3,"The Apothecary Diaries")}
+        local h, rows, env, widths = fixture(es, {cards={bike,mushroom,mortar},width=width,n_rows=8})
+        H.eq(rows[#rows].last, #es)
+        assertFits(es, rows, h, env)
+        local g, l, nb, fixed, accept = h.final()
+        local even = Layout.balanceRows(widths,h.avail,g,#es,#rows,
+            {lead=l,no_break=nb,fixed=fixed,row_accept=accept})
+        assertFits(es, even or rows, h, env)
+    end
+end)
 
 H.test("metadata matches full author names and inverted names without substring guesses", function()
     for _, name in ipairs({ "James Joyce", " JOYCE , James ", "JAMES  JOYCE", "James Joyce\nTranslator" }) do
@@ -327,8 +422,8 @@ H.test("a second bust that does not fit moves with its book instead of disappear
     assertFits(es, rows, h, env)
 end)
 
-H.test("whole-library pagination and page renders agree across author and page boundaries", function()
-    local cards = { joyce, plant, woolf }
+local function checkPagination(with_manga)
+    local cards = { joyce, plant, woolf, bike, mushroom, mortar }
     local names = { "James Joyce", "Virginia Woolf", "Other", "James Joyce" }
     for _, subject in ipairs(added) do
         local pack = subject.pack or "Authors"
@@ -341,6 +436,10 @@ H.test("whole-library pagination and page renders agree across author and page b
                 local es = {}
                 for i = 1, 72 do
                     es[i] = entry(i, names[(math.floor((i - 1) / 5) % #names) + 1], 75 + i % 3 * 15, i % 5 == 1)
+                    if with_manga and i % 12 < 8 then
+                        es[i].author = "Other"
+                        es[i].book.series_name = ({"Akira","Dungeon Meshi","The Apothecary Diaries"})[math.floor(i/8)%3+1]
+                    end
                 end
                 local h, rows, env = fixture(es, { width = width, per_page = per_page,
                     n_rows = math.huge, paginating = true, level = level, cards = cards })
@@ -383,6 +482,12 @@ H.test("whole-library pagination and page renders agree across author and page b
             end
         end
     end
+end
+H.test("whole-library pagination and page renders agree across author boundaries", function()
+    checkPagination(false)
+end)
+H.test("whole-library pagination and page renders agree across mixed series and author boundaries", function()
+    checkPagination(true)
 end)
 
 H.test("runtime adapter enables the optional limit on the canonical native dealer", function()

@@ -1,5 +1,33 @@
 # Ornaments
 
+## Manga miniatures (unreleased)
+
+The **Manga** pack adds three transparent colour miniatures: Kaneda's red
+motorcycle for **Akira**, a Walking Mushroom for **Dungeon Meshi / Delicious
+in Dungeon**, and a mortar with herb jars for **The Apothecary Diaries**.
+English, romanized Japanese and Japanese series-name aliases are supported.
+Matching uses series metadata on boxes or volumes, never filename/title guesses.
+
+They stand immediately before an eligible matching series, not randomly or on
+empty shelves. At most one series miniature appears on a physical row; author
+busts retain priority and their multiple-bust exception. A run continuing onto
+another page is eligible again. None, pack and individual off switches still
+apply. A theme that selects specific packs must include **Manga** to show them.
+Tap for zoom and an English info card; long-press for native placement controls.
+
+Installation is additive, atomic and one-time, with its own
+`ornament-manga-v1.installed` marker. It preserves existing theme selections,
+other packs, edited files and later deletions. Disable this pack before rolling
+back to a version without series matching, to prevent random placement there.
+
+The motorcycle and mushroom are **unofficial AI-generated fan art**, not
+commercial product photos or official artwork. No blanket license to the
+underlying character/design is asserted. The mortar is an original generic
+still life. Full prompts, original-byte hashes and per-asset rights notes ship
+in `assets/ornaments/Manga/`. No reference bitmaps were supplied to image_gen.
+See the [artwork preview](manga-ornaments-preview.html), checked on light/dark
+and patterned backgrounds at two sizes. Native device acceptance is outstanding.
+
 ## Ukiyo-e Gallery (alpha.19)
 
 The independent **Ukiyo-e Gallery** pack contains 27 actual Japanese woodblock

@@ -37,6 +37,7 @@ for _, path in ipairs({
     "adapters/orbitui_navbar.lua",
     "core/orbitui_vector_icons.lua",
     "core/orbitui_author_ornaments.lua", "core/orbitui_japan_ornaments.lua",
+    "core/orbitui_manga_ornaments.lua",
     "core/orbitui_ornament_spacing.lua",
     "components/bookshelf/lib/bookshelf_series_boxes.lua",
     "components/bookshelf/lib/bookshelf_series_box_widget.lua",
@@ -66,7 +67,7 @@ for _, path in ipairs({
     "components/simpleui/main.lua", "components/simpleui/_meta.lua", "components/simpleui/LICENSE",
 }) do expect(path) end
 for _, module in ipairs({ "core/orbitui_author_ornaments", "core/orbitui_japan_ornaments",
-                         "core/orbitui_ukiyoe_ornaments" }) do
+                         "core/orbitui_ukiyoe_ornaments", "core/orbitui_manga_ornaments" }) do
     for _, pack in ipairs(require(module).packs) do
         for _, file in ipairs(pack.files) do
             expect("assets/ornaments/" .. pack.name .. "/" .. file)

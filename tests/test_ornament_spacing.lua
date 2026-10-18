@@ -3,6 +3,7 @@ local H = require("tests/helpers")
 local Adapter = require("adapters/orbitui_ornaments")
 local Spacing = require("core/orbitui_ornament_spacing")
 local Authors = require("core/orbitui_author_ornaments")
+local Manga = require("core/orbitui_manga_ornaments")
 
 local f = assert(io.open("components/bookshelf/lib/bookshelf_spine_shelf.lua"))
 local source = f:read("*a")
@@ -162,8 +163,11 @@ H.test("a leading piece cannot move over a separate left-end ornament", function
     assert(new.ending.overlap_offset[1]+100+20 <= new.leading.overlap_offset[1])
 end)
 
-H.test("all author busts stay book-adjacent and keep their native padding", function()
-    for name in pairs(Authors.pieces) do
+H.test("all targeted pieces stay book-adjacent and keep their native padding", function()
+    local pieces = {}
+    for name in pairs(Authors.pieces) do pieces[name] = true end
+    for name in pairs(Manga.pieces) do pieces[name] = true end
+    for name in pairs(pieces) do
         local opts = options(nil, {180}, nil, nil, nil, placement("left", 150, name))
         local old, new = render(opts, false), render(opts, true)
         H.eq(new.leading.overlap_offset[1], old.leading.overlap_offset[1], name)

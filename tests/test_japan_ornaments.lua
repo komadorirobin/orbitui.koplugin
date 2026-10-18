@@ -3,6 +3,7 @@ local H = require("tests/helpers")
 local Japan = require("core/orbitui_japan_ornaments")
 -- This suite owns Japan installation; the new gallery has its own IO suite.
 package.loaded["core/orbitui_ukiyoe_ornaments"] = { seed = function() end }
+package.loaded["core/orbitui_manga_ornaments"] = { pieces = {}, seed = function() end }
 -- Author-caption migration has separate JSON/atomic-write coverage.
 package.loaded["core/orbitui_author_info"] = { apply = function() return false end }
 package.loaded["core/orbitui_kafka_update"] = { apply = function() return false end }

@@ -1,0 +1,31 @@
+MANGA MINIATURES / ORBITUI
+Generated with the built-in OpenAI image_gen tool, 2026-10-18.
+Exact prompts, hashes, image sizes and alpha bounds: prompts.json.
+All three files are unchanged generated colour PNGs with transparent alpha.
+No third-party product photographs, 3D models or reference bitmaps were used.
+
+Kaneda Motorcycle.png
+Unofficial fan-art interpretation of Kaneda's red motorcycle from AKIRA.
+Character/design inspiration belongs to the respective original rights holders.
+Not official or endorsed merchandise artwork. No blanket character/design
+license is asserted by this pack; review the intended public distribution
+separately. This file is not being offered as CC0 or unrestricted official art.
+
+Walking Mushroom.png
+Unofficial fan-art interpretation of the Walking Mushroom from Dungeon Meshi
+(Delicious in Dungeon). Character/design inspiration belongs to the respective
+original rights holders. Not official or endorsed merchandise artwork.
+No blanket character/design license is asserted by this pack; review the
+intended public distribution separately. Not CC0 or unrestricted official art.
+
+Apothecary Mortar.png
+Original generic still life of a celadon mortar, wooden pestle, herb jars and
+herbs, associated with The Apothecary Diaries by OrbitUI's series matching.
+No character likeness, logo or existing product photograph is reproduced.
+OrbitUI makes any copyright it holds in this original asset available under
+CC BY 4.0, to the extent applicable:
+https://creativecommons.org/licenses/by/4.0/
+Suggested attribution: OrbitUI, AI-generated apothecary miniature (2026).
+
+These artwork notes are separate from the source code license. Generating an
+image does not establish ownership or clearance of underlying third-party IP.

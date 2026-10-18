@@ -1,4 +1,5 @@
--- Author ornaments are book-adjacent pieces, never cards in the general deck.
+-- Targeted ornaments are book-adjacent pieces, never cards in the general deck.
+local Manga = require("core/orbitui_manga_ornaments")
 local M = {}
 M.pack = "Modernists"
 M.files = { "ATTRIBUTION.txt", "README.txt", "prompts.json", "ornaments.json",
@@ -99,7 +100,7 @@ end
 function M.fillHooks(native, env)
     local regular, targeted = {}, {}
     for _, piece in ipairs(env.dealer.cards) do
-        local id = M.pieces[piece.name]
+        local id = M.pieces[piece.name] or Manga.pieces[piece.name]
         if id then
             -- Prefer the released pack over an enabled copy of the trial pack.
             if not targeted[id] or piece.pack == M.pack then targeted[id] = piece end
@@ -112,22 +113,27 @@ function M.fillHooks(native, env)
     local hooks = native(env)
     if env.level == "off" then return hooks end
 
-    local has_authors = next(targeted) ~= nil
+    local has_targets = next(targeted) ~= nil
     local avail, lead, placed, stop = hooks.avail, hooks.lead, hooks.placed, hooks.stop
     local final = hooks.final
-    local gaps, active, row, previous = hooks.gaps, true, 0, nil
+    local gaps, active, row = hooks.gaps, true, 0
+    local previous = {}
     local selected = {}
-    local identities = {}
-    local function identity(i)
-        if identities[i] == nil then identities[i] = M.authorOf(env.entries[i]) or false end
-        return identities[i]
+    local identities = { author = {}, series = {} }
+    local function identity(i, category)
+        local cache = identities[category]
+        if cache[i] == nil then
+            local match = category == "author" and M.authorOf or Manga.seriesOf
+            cache[i] = match(env.entries[i]) or false
+        end
+        return cache[i]
     end
     local function allowed()
         return active and env.level ~= "off" and (env.paginating or row <= (env.n_rows or 1))
     end
-    local function pieceFor(kind, i, preceding)
+    local function pieceFor(kind, i, preceding, category)
         if not allowed() then return nil end
-        local id = identity(i)
+        local id = identity(i, category)
         local piece = id ~= preceding and targeted[id] or nil
         if not piece then return nil end
         local entry = env.entries[i]
@@ -142,19 +148,15 @@ function M.fillHooks(native, env)
         end
         return pl
     end
-    local function selectAuthor(first)
-        selected = {}
-        if not first or not allowed() or not has_authors then return end
-        -- Reserve author pieces before ordinary dealing. Several busts may
-        -- share a row, but together occupy its only decorative slot.
-        local used, preceding = 0, previous
+    local function selectCategory(first, category)
+        local used, preceding = 0, previous[category]
         for i = first, #env.entries do
             local entry = env.entries[i]
             if i > first then used = used + (entry.gap_base or 0) end
             used = used + entry.w
             if used > env.content_w then return end
             local kind = i == first and "lead" or "gap"
-            local pl = pieceFor(kind, i, preceding)
+            local pl = pieceFor(kind, i, preceding, category)
             if pl then
                 selected[i] = pl
                 used = used + env.space(kind, pl)
@@ -162,9 +164,18 @@ function M.fillHooks(native, env)
                 -- to the next row rather than silently dropping its bust.
                 if used > env.content_w then return end
                 hooks.row_count[row] = 1
+                if category == "series" then return end
             end
-            preceding = identity(i)
+            preceding = identity(i, category)
         end
+    end
+    local function selectTarget(first)
+        selected = {}
+        if not first or not allowed() or not has_targets then return end
+        -- Busts retain priority and may share a row. A series miniature uses
+        -- the row's single ordinary slot, before the random dealer runs.
+        selectCategory(first, "author")
+        if not next(selected) then selectCategory(first, "series") end
     end
     function hooks.avail(r, i)
         if active and r and r > row then
@@ -172,9 +183,9 @@ function M.fillHooks(native, env)
             -- A page render starts without the preceding book. Reset at the
             -- same boundaries in whole-library pagination to reserve equal room.
             if r == 1 or (env.paginating and (r - 1) % math.max(1, env.per_page or 1) == 0) then
-                previous = nil
+                previous = {}
             end
-            selectAuthor(i)
+            selectTarget(i)
         end
         return avail(r, i)
     end
@@ -201,7 +212,9 @@ function M.fillHooks(native, env)
                 entry.gap_before = (entry.gap_base or 0) + env.space("gap", pl)
             end
         end
-        previous = has_authors and identity(i) or nil
+        if has_targets then
+            previous.author, previous.series = identity(i, "author"), identity(i, "series")
+        end
     end
     function hooks.stop() active = false; stop() end
     function hooks.final()

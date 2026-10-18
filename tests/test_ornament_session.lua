@@ -4,9 +4,11 @@ local Adapter = require("adapters/orbitui_ornaments")
 local Authors = require("core/orbitui_author_ornaments")
 local Japan = require("core/orbitui_japan_ornaments")
 local Gallery = require("core/orbitui_ukiyoe_ornaments")
+local Manga = require("core/orbitui_manga_ornaments")
 local Layout = require("lib/bookshelf_spine_layout")
 local author_seed, japan_seed = Authors.seed, Japan.seed
 local gallery_seed = Gallery.seed
+local manga_seed = Manga.seed
 package.loaded["ui/widget/widget"] = H.widget()
 
 local function piece(name, pack, width)
@@ -60,6 +62,7 @@ local function fixture(all, saved)
         stats.gallery = stats.gallery + 1
         if stats.new_print then stats.all[#stats.all + 1] = stats.new_print end
     end
+    Manga.seed = function() end
     local orn = dofile("components/bookshelf/lib/bookshelf_ornaments.lua")
     orn._store, orn._clock = store, function() return 1 end
     orn.dir = function() return "/settings/bookshelf/ornaments" end
@@ -298,4 +301,5 @@ end)
 
 Authors.seed, Japan.seed = author_seed, japan_seed
 Gallery.seed = gallery_seed
+Manga.seed = manga_seed
 H.finish()

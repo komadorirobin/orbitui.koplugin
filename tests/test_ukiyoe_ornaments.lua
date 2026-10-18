@@ -40,6 +40,7 @@ end }
 package.loaded.logger = { warn = function() warnings = warnings + 1 end }
 package.loaded["core/orbitui_author_ornaments"] = { seed = function() end }
 package.loaded["core/orbitui_japan_ornaments"] = { seed = function() end }
+package.loaded["core/orbitui_manga_ornaments"] = { pieces = {}, seed = function() end }
 package.loaded["lib/bookshelf_ornament_deck"] = { sync = function() end, shuffle = function() end }
 -- Installation must not read, enable, disable or activate any theme preference.
 package.loaded["lib/bookshelf_settings_store"] = setmetatable({}, {

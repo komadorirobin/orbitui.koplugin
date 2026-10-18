@@ -44,6 +44,12 @@ function M.wrap(name, module, root)
                 if not gallery_ok then
                     require("logger").warn("[OrbitUI] Could not install Ukiyo-e Gallery:", gallery_err)
                 end
+                local manga_ok, manga_err = pcall(function()
+                    return require("core/orbitui_manga_ornaments").seed(root, module.dir())
+                end)
+                if not manga_ok then
+                    require("logger").warn("[OrbitUI] Could not install Manga ornaments:", manga_err)
+                end
             end
             local all, packs = list(...)
             return all, packs

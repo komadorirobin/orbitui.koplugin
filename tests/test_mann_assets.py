@@ -128,9 +128,16 @@ class MannAssetsTests(unittest.TestCase):
         for path in (ROOT / "assets/ornament-updates").glob("*.json"):
             if path.name != "mann-photo-v4.json":
                 self.assertEqual(path.read_bytes(), published(path.relative_to(ROOT).as_posix()))
-        for path in (ROOT / "assets/ornaments").rglob("*.png"):
-            if path != PACK / self.art["file"]:
-                self.assertEqual(path.read_bytes(), published(path.relative_to(ROOT).as_posix()))
+        # Freeze the artwork that existed at the migration baseline, not later
+        # additive packs (which cannot exist in the older release tag).
+        baseline = subprocess.check_output(
+            ["git", "ls-tree", "-r", "--name-only", "v0.1.0-alpha.23", "--", "assets/ornaments"],
+            cwd=ROOT, text=True,
+        ).splitlines()
+        for name in baseline:
+            path = ROOT / name
+            if path.suffix == ".png" and path != PACK / self.art["file"]:
+                self.assertEqual(path.read_bytes(), published(name))
         old = json.loads(published("assets/ornaments/Authors/ornaments.json"))
         new = json.loads((PACK / "ornaments.json").read_text())
         for name in old:

@@ -1,6 +1,7 @@
 package.path = "./?.lua;./components/bookshelf/?.lua;" .. package.path
 local H = require("tests/helpers")
 local Authors = require("core/orbitui_author_ornaments")
+local Manga = require("core/orbitui_manga_ornaments")
 local Adapter = require("adapters/orbitui_ornaments")
 -- Default-caption migration uses JSON fixtures in test_author_info.
 package.loaded["core/orbitui_author_info"] = { apply = function() return false end }
@@ -22,6 +23,11 @@ local function fixture()
     for _, pack in ipairs(Authors.packs) do
         for _, file in ipairs(pack.files) do
             files["/slot/assets/ornaments/" .. pack.name .. "/" .. file] = string.rep(file, 7000)
+        end
+    end
+    for _, pack in ipairs(Manga.packs) do
+        for _, file in ipairs(pack.files) do
+            files["/slot/assets/ornaments/" .. pack.name .. "/" .. file] = "manga " .. file
         end
     end
     fail_write, fail_read, fail_close, fail_rename, no_space = false, false, false, false, false
@@ -206,7 +212,48 @@ H.test("an installation error cannot crash or repeatedly stall the ornament brow
         local all, packs = module.listAll()
         H.eq(all[1], "existing"); H.eq(packs[1], "old pack")
     end
-    H.eq(calls, 3); H.eq(warnings, 3); H.eq(files[marker], nil)
+    H.eq(calls, 3); H.eq(warnings, 4); H.eq(files[marker], nil)
+end)
+H.test("Manga is an independent additive pack with preserved edits and deletions", function()
+    fixture()
+    local pack = Manga.packs[1]
+    local target = "/settings/bookshelf/ornaments/Manga/"
+    local mark = "/settings/orbitui/" .. pack.marker
+    local function install() return Manga.seed("/slot", "/settings/bookshelf/ornaments") end
+    files[marker] = "old authors"
+    files[dest .. "James Joyce.png"] = "custom Joyce"
+    files[target .. "ornaments.json"] = "custom manga defaults"
+    H.eq(install(), true)
+    for _, name in ipairs({ "Kaneda Motorcycle.png", "Walking Mushroom.png", "Apothecary Mortar.png" }) do
+        H.eq(files[target .. name], files["/slot/assets/ornaments/Manga/" .. name])
+    end
+    H.eq(files[target .. "ornaments.json"], "custom manga defaults")
+    H.eq(files[dest .. "James Joyce.png"], "custom Joyce")
+    H.eq(files[dest .. "Virginia Woolf.png"], nil)
+    H.eq(files[marker], "old authors"); assert(files[mark])
+    files[target .. "Kaneda Motorcycle.png"] = "custom bike"
+    files[target .. "Walking Mushroom.png"] = nil
+    H.eq(install(), false)
+    H.eq(files[target .. "Kaneda Motorcycle.png"], "custom bike")
+    H.eq(files[target .. "Walking Mushroom.png"], nil)
+    for _, file in ipairs(pack.files) do files[target .. file] = nil end
+    H.eq(install(), false)
+    for _, file in ipairs(pack.files) do H.eq(files[target .. file], nil) end
+end)
+H.test("Manga failures retry without overwriting completed files or marking success early", function()
+    fixture()
+    local input = "/slot/assets/ornaments/Manga/Apothecary Mortar.png"
+    local target = "/settings/bookshelf/ornaments/Manga/"
+    local mark = "/settings/orbitui/" .. Manga.packs[1].marker
+    local function install() return Manga.seed("/slot", "/settings/bookshelf/ornaments") end
+    files[input] = nil
+    H.eq(pcall(install), false); H.eq(files[mark], nil)
+    files[target .. "Walking Mushroom.png"] = "user mushroom"
+    files[input] = "complete mortar"
+    H.eq(install(), true)
+    H.eq(files[target .. "Walking Mushroom.png"], "user mushroom")
+    H.eq(files[target .. "Apothecary Mortar.png"], "complete mortar")
+    assert(files[mark])
 end)
 io.open, os.rename, os.remove = original_open, original_rename, original_remove
 H.finish()
