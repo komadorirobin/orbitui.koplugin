@@ -10,6 +10,11 @@ import zipfile
 
 PREFIX = "orbitui.koplugin/"
 ASSET = "orbitui.koplugin.zip"
+MAX_ZIP = 64 * 1024 * 1024
+MAX_TOTAL = 128 * 1024 * 1024
+MAX_FILE = 32 * 1024 * 1024
+MAX_FILES = 2000
+MAX_MANIFEST = 1024 * 1024
 
 
 def seal(path):
@@ -26,6 +31,7 @@ def seal(path):
             seen.add(identity)
             mode = (item.external_attr >> 16) & 0o170000
             assert mode in (0, 0o040000, 0o100000), "Links/special files are not allowed"
+            assert item.file_size <= MAX_FILE, "Archive file exceeds OTA size limit"
             records.append((item, source.read(item)))
     files = {item.filename[len(PREFIX):]: data for item, data in records if not item.is_dir()}
     version = files["VERSION"].decode("ascii").strip()
@@ -36,6 +42,10 @@ def seal(path):
         "files": [{"path": name, "size": len(data), "sha256": hashlib.sha256(data).hexdigest()}
                   for name, data in sorted(files.items())],
     }
+    manifest_bytes = (json.dumps(manifest, sort_keys=True, indent=2) + "\n").encode("utf-8")
+    assert len(files) + 1 <= MAX_FILES, "Archive exceeds OTA file count limit"
+    assert len(manifest_bytes) <= MAX_MANIFEST, "Manifest exceeds OTA size limit"
+    assert sum(map(len, files.values())) + len(manifest_bytes) <= MAX_TOTAL, "Archive exceeds OTA extraction limit"
     temporary = path.with_suffix(".tmp")
     with zipfile.ZipFile(temporary, "w", compression=zipfile.ZIP_DEFLATED) as output:
         for item, data in records:
@@ -43,7 +53,10 @@ def seal(path):
         entry = zipfile.ZipInfo(PREFIX + "manifest.json", records[0][0].date_time)
         entry.compress_type = zipfile.ZIP_DEFLATED
         entry.external_attr = 0o100644 << 16
-        output.writestr(entry, json.dumps(manifest, sort_keys=True, indent=2) + "\n")
+        output.writestr(entry, manifest_bytes)
+    if temporary.stat().st_size > MAX_ZIP:
+        temporary.unlink()
+        raise AssertionError("Runtime ZIP exceeds the installed OTA updater's 64 MiB limit")
     temporary.replace(path)
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
     path.with_name(path.name + ".sha256").write_text(f"{digest}  {ASSET}\n", encoding="ascii")

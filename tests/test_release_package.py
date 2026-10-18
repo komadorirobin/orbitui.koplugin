@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -43,6 +44,25 @@ class PackageTests(unittest.TestCase):
                     archive.writestr(item, "bad")
                 with self.assertRaises(AssertionError):
                     package.seal(path)
+
+    def test_ota_limits_reject_uninstallable_archives_before_sealing(self):
+        for limit in ("MAX_ZIP", "MAX_TOTAL", "MAX_FILE", "MAX_FILES", "MAX_MANIFEST"):
+            with self.subTest(limit=limit), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / package.ASSET
+                with zipfile.ZipFile(path, "w") as archive:
+                    archive.writestr(package.PREFIX + "VERSION", "0.1.0-alpha.2\n")
+                    archive.writestr(package.PREFIX + "main.lua", "return {}\n")
+                original = path.read_bytes()
+                with patch.object(package, limit, 1), self.assertRaises(AssertionError):
+                    package.seal(path)
+                self.assertEqual(path.read_bytes(), original)
+                self.assertFalse(path.with_name(path.name + ".sha256").exists())
+                self.assertFalse(path.with_suffix(".tmp").exists())
+
+    def test_build_limits_match_the_installed_ota_contract(self):
+        self.assertEqual((package.MAX_ZIP, package.MAX_TOTAL, package.MAX_FILE),
+                         (64 * 1024**2, 128 * 1024**2, 32 * 1024**2))
+        self.assertEqual((package.MAX_FILES, package.MAX_MANIFEST), (2000, 1024**2))
 
 
 if __name__ == "__main__":
