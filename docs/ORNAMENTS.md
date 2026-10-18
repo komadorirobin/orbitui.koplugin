@@ -1,6 +1,6 @@
 # Ornaments
 
-## Manga miniatures (unreleased)
+## Manga miniatures (alpha.49)
 
 The **Manga** pack adds three transparent colour miniatures: Kaneda's red
 motorcycle for **Akira**, a Walking Mushroom for **Dungeon Meshi / Delicious
@@ -27,6 +27,14 @@ still life. Full prompts, original-byte hashes and per-asset rights notes ship
 in `assets/ornaments/Manga/`. No reference bitmaps were supplied to image_gen.
 See the [artwork preview](manga-ornaments-preview.html), checked on light/dark
 and patterned backgrounds at two sizes. Native device acceptance is outstanding.
+
+**Manga II** adds eleven more series-matched pieces: Nyanko Sensei, Brushbuddy,
+Ohmu, a mimic chest, Pochita, Turbo Granny, a transponder snail, a Kettenkrad,
+a camping tent, an armillary sphere and Cafe Alpha. It follows the same
+placement rules, with its independent `ornament-manga-ii-v1.installed` marker,
+native zoom/info cards and per-piece provenance. Enable Manga II as well when
+your shelf theme selects specific packs. Disable both packs before rolling
+back to alpha.48 or earlier, which does not know their series bindings.
 
 ## Ukiyo-e Gallery (alpha.19)
 

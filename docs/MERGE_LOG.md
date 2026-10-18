@@ -2586,6 +2586,27 @@ without publishing the pending manga/Solar commits. Do not reuse alpha.48's tag
 or assets for that combined tree. Wait for the user to confirm installing the
 bridge and restarting KOReader, then prepare a separately versioned successor.
 
+## 2026-10-18: Prepare alpha.49 artwork publication after the OTA bridge
+
+The user confirmed completing the alpha.48 installation and KOReader restart.
+Proceed with their pending full-publication request: Manga/Manga II from
+`b22e9e35` / `8c96aa84`, Solar Icon Pack v1.1.0 from `eb4ab1d3`, the package
+guardrails and alpha.48 updater merged back in `d74d2681`. This is a new
+version and asset, never a replacement for the public alpha.48 bridge.
+
+Only VERSION and release documentation change in preparation. Preserve all
+fourteen original transparent ornament PNGs, their provenance/notices and all
+Solar SVGs. No resizing, new generation, component merge, source-pin change,
+settings rewrite or reading-data migration. The separate design branch and
+held Mann artwork must remain unpublished, including their history.
+
+Gate the release on complete Lua/LuaJIT and translation suites, a sealed runtime
+within alpha.48's bounds, original asset and outgoing-history audits, the actual
+public alpha.48 installer's native upgrade/restart/rollback, green CI and exact
+downloaded draft/public bytes. Save evidence in `test-results/alpha49-20261018/`.
+Publish as a prerelease; physical Bigme rendering/touch checks remain open.
+Disable Manga/Manga II before rolling back to a runtime without series matching.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

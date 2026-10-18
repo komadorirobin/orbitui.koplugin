@@ -367,6 +367,16 @@ the 32 MiB per-file, 2,000-file and 1 MiB manifest limits, checksums, path check
 and bootstrap/API 1. Large file downloads get up to ten minutes; API requests
 retain their three-minute limit. Nothing is resized or removed from user data.
 
+Alpha.49 publishes the 14 series-bound Manga/Manga II ornaments and Solar Icon
+Pack v1.1.0 after the user confirmed installing the alpha.48 bridge and restarting.
+The runtime exceeds 64 MiB: use alpha.48 or later for OTA. Alpha.47 and earlier
+must install the small alpha.48 release separately; their selector does not
+skip the oversized latest release to offer an intermediate version. The stable
+bootstrap/API 1 and upstream pins are unchanged. Existing settings and icon
+choices survive. Before rolling back to alpha.48 or earlier, disable Manga and
+Manga II: copied artwork remains but the older planner lacks series matching.
+New Solar icons require alpha.49 or later. Earlier rollback caveats still apply.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

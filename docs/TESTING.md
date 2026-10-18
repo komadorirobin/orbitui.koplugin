@@ -2,6 +2,17 @@
 
 ## Automated
 
+2026-10-18 alpha.49 publication: the user confirmed the alpha.48 installation
+and restart, satisfying the bridge prerequisite. Publish the pending Manga /
+Manga II ornaments and Solar v1.1.0 icons with the already-reviewed updater.
+Re-run sequential full Lua/LuaJIT suites, translations, clean-commit packaging,
+original-artwork/outgoing-history audits, native alpha.48 upgrade/rollback,
+CI and downloaded draft/public bytes. Evidence belongs in
+`test-results/alpha49-20261018/`. Keep bootstrap files and upstream pins intact,
+and preserve the unpushed design branch. No physical-device acceptance of the
+new artwork is claimed; check series adjacency, enabled-pack selections,
+tap-to-zoom and icon rendering on the Bigme after installation.
+
 2026-10-18 alpha.48 bridge preparation: the user chose an OTA-compatible small
 intermediate release before publishing the larger artwork bundle. Build from
 public alpha.47 only; keep all assets, bootstrap files and upstream pins
