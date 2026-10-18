@@ -18,17 +18,24 @@ READING = {
     "authors", "bookmark_browser", "collections", "continue", "favorites", "history",
     "library", "random_document", "recent", "series", "tags", "annotations_viewer",
     "bookshelf", "instapaper", "rakuyomi", "records", "streak", "vocabulary_builder", "zlibrary",
+    "anki", "annas_archive", "audiobook", "bookends", "bookends_alt", "bookshelf_alt",
+    "calibre", "continue_alt", "dictionary", "good_reads", "hardcover", "highlight",
+    "news", "opds", "rakuyomi_alt", "readeck", "readest", "reading_insights", "rss",
+    "storygraph", "wallabag", "weread", "wikipedia", "x_ray", "zotero",
 }
 NAVIGATION = {
     "chevron_left", "chevron_right", "coll_back", "folder", "homescreen", "menu",
     "pager_first", "pager_last", "search", "tab_filebrowser", "tab_navigation",
     "filebrowserplus", "home", "cancel", "close", "exit", "appbar.filebrowser",
     "appbar.menu", "appbar.navigation", "appbar.search",
+    "browser", "folder_open", "launcher",
 }
 SYSTEM = {
     "frontlight", "night_mode", "power", "settings", "tab_fm_settings", "tab_qs_panel",
     "wifi_toggle", "battery_statistics", "sleep", "time", "usb_storage", "appbar.settings",
     "appbar.contrast", "appbar.rotation", "rotate",
+    "airplane_mode", "appearance", "bluetooth", "brightness", "customisable_sleep_screen",
+    "device", "lock", "quit", "restart", "toggle", "volume", "warmth",
 }
 ALIASES = {
     "authors": "forfattare", "bookmark_browser": "bokmarken", "collections": "samlingar",
@@ -42,6 +49,23 @@ ALIASES = {
     "settings": "installningar", "wifi_toggle": "natverk", "tab_tools": "verktyg",
     "backup": "sakerhetskopia", "cloud_storage": "moln lagring", "syncthing": "synk sync",
     "ai_assistant": "ai assistent", "stats_calendar": "statistik kalender",
+    "airplane_mode": "flygplanslage", "appearance": "utseende tema",
+    "archive": "arkiv", "audiobook": "ljudbok", "bin": "papperskorg radera",
+    "bookends": "bokstod", "bookends_alt": "bokstod alternativ",
+    "bookshelf_alt": "bokhylla bibliotek alternativ", "brightness": "ljusstyrka ljus",
+    "browser": "webblasare", "calculator": "kalkylator", "chess": "schack",
+    "continue_alt": "fortsatt lasa alternativ", "customisable_sleep_screen": "vilobild sovskarm",
+    "device": "enhet lasplatta", "dictionary": "ordbok", "downloads": "nedladdningar hamta",
+    "folder_open": "oppen mapp", "gallery": "galleri bilder", "games": "spel",
+    "good_reads": "goodreads", "highlight": "markering", "home_assistant": "hemassistent",
+    "launcher": "starta program", "lock": "las last", "news": "nyheter",
+    "opds": "katalog bibliotek", "pencil": "penna", "quit": "avsluta",
+    "rakuyomi_alt": "manga japanese japanska serier comics alternativ",
+    "reading_insights": "lasning statistik", "restart": "starta om",
+    "share": "dela", "sync": "synk synkronisera", "timer": "tidtagare",
+    "toggle": "vaxla", "translate": "oversatt", "volume": "volym ljud",
+    "warmth": "varme ljustemperatur", "weather": "vader", "weread": "we read",
+    "word_search": "ordsok", "x_ray": "xray",
 }
 
 

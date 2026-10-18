@@ -19,7 +19,10 @@ library also offers these sources. Existing icon selections are untouched.
 **Solar Colour** and **Solar Mono** are additional per-icon sources from
 [pxlflux's Solar Icon Pack](https://github.com/pxlflux/solariconpack.koplugin),
 separate from the existing Solar Outline/Line Duotone selections. Each contains
-all 160 SVGs: 34 SimpleUI icons, 24 supplementary icons and 102 KOReader icons.
+all 220 SVGs from v1.1.0: 34 SimpleUI icons, 84 supplementary icons and
+102 KOReader icons. This update adds 60 motifs in each style, including bookends,
+audiobooks, Calibre, Goodreads, Readest, Zotero and an alternative Rakuyomi icon.
+Instapaper and Z-Library use upstream's revised artwork with their existing IDs.
 Colour keeps the pastel fills and native thin strokes; Mono keeps the original
 unfilled outlines. Both use the same picker, categories and search. Try
 `rakuyomi` or `manga`, `bookshelf`, `library`, `syncthing` or `appbar.settings`.
@@ -163,7 +166,7 @@ notices are bundled alongside the assets. Solar's CC license text comes from
 `https://creativecommons.org/licenses/by/4.0/legalcode.txt`.
 
 The additional pxlflux source is pinned separately in
-`assets/vector-icons/pxlflux-source.json`. To rebuild all 320 SVGs and both
+`assets/vector-icons/pxlflux-source.json`. To rebuild all 440 SVGs and both
 catalogues, run:
 
 ```sh

@@ -592,7 +592,7 @@ weights. Keep the custom manga adaptations, attribution, lazy catalogues and
 OTA-safe SVG identities. No global font changes or automatic icon substitution.
 Tests: `tests/test_icons.lua`.
 
-Solar Colour and Solar Mono add all 160 SVGs per style from the separately
+Solar Colour and Solar Mono add all 220 SVGs per style from the separately
 pinned pxlflux Solar Icon Pack. Keep these sources distinct from Solar Outline
 and Line Duotone. Import artwork and license notices only, never the upstream
 installer, `pack.lua` or updater. Preserve colours, strokes, opacity and geometry;
@@ -604,6 +604,8 @@ and full source/hash inventory are `scripts/build-solar-pack.py` and
 `assets/vector-icons/pxlflux-{source,generated}.json`. Tests also cover all icons,
 both styles, categories, search, cancellation, native menu registration and
 palette preservation (`tests/test_solar_pack_assets.py`, `tests/test_icons.lua`).
+The v1.1.0 artwork update adds 60 supplementary icons per style and refreshes
+Instapaper/Z-Library without renaming existing identities or rewriting choices.
 
 The built-in SimpleUI `night_mode` quick action retains full icon contrast in
 both day and night mode. Its off-state must not look unavailable, regardless of

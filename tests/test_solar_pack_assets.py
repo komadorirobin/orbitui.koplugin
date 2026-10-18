@@ -35,7 +35,7 @@ class SolarPackTest(unittest.TestCase):
                     self.assertRegex(manifest["inputs"][path]["git_blob"], r"^[0-9a-f]{40}$")
                     self.assertRegex(manifest["inputs"][path]["sha256"], r"^[0-9a-f]{64}$")
                     seen_inputs.add(path)
-            self.assertEqual(len(names), 160)
+            self.assertEqual(len(names), 220)
             self.assertEqual({p.name for p in (BASE / pack).iterdir()}, {n + ".svg" for n in names})
             expected.update(f"assets/vector-icons/{pack}/{n}.svg" for n in names)
             catalogue = f"core/orbitui_{pack.replace('-', '_')}_catalogue.lua"
@@ -45,7 +45,24 @@ class SolarPackTest(unittest.TestCase):
         self.assertEqual(set(manifest["outputs"]), expected)
         for path, digest in manifest["outputs"].items():
             self.assertEqual(hashlib.sha256((ROOT / path).read_bytes()).hexdigest(), digest, path)
-        self.assertLess(sum((ROOT / path).stat().st_size for path in expected), 650_000)
+        self.assertLess(sum((ROOT / path).stat().st_size for path in expected), 750_000)
+
+    def test_v11_additions_have_matching_stable_names_in_both_styles(self):
+        additions = """
+            airplane-mode anki annas-archive appearance archive audiobook bin bluetooth
+            bookends bookends-alt bookshelf-alt brightness browser calculator calibre chess
+            continue-alt customisable-sleep-screen device dictionary downloads folder-open
+            gallery games glimpse good-reads hardcover highlight home-assistant ink-away
+            launcher lock news notion obsidian opds pencil quit rakuyomi-alt readeck readest
+            reading-insights restart rss share storygraph sync terminal timer toggle translate
+            volume wallabag warmth weather weread wikipedia word-search x-ray zotero
+        """.split()
+        self.assertEqual(len(set(additions)), 60)
+        colour = {p.name for p in (BASE / "solar-colour").glob("*.svg")}
+        mono = {p.name for p in (BASE / "solar-mono").glob("*.svg")}
+        self.assertEqual(colour, mono)
+        self.assertTrue({f"extra-{name}.svg" for name in additions} <= colour)
+        self.assertTrue({"extra-instapaper.svg", "extra-zlibrary.svg"} <= colour)
 
     def test_static_svg_only_with_distinct_colour_and_mono_styles(self):
         for style, stroke in (("colour", "0.75"), ("mono", "1")):

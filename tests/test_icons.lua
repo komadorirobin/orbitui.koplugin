@@ -200,7 +200,7 @@ H.test("only known bundled images rebase across OTA slots", function()
 end)
 H.test("Bookshelf offers Material only where image tokens are supported", function()
     H.eq(#Library._itemList("material", nil, true), 110)
-    H.eq(#Library._itemList("all", nil, true), 666)
+    H.eq(#Library._itemList("all", nil, true), 786)
     H.eq(#Library._itemList("all", nil, false), 1)
     H.eq(#Library._itemList("all", "manga", false), 0)
     local cell = Library._itemList("all", "manga", true)[1]
@@ -550,7 +550,7 @@ H.test("legacy Material overrides are readable at startup without setting writes
 end)
 H.test("vector catalogues cache and round-trip every whitelisted identity across OTA slots", function()
     local counts = { ["solar-outline"]=80, ["solar-duotone"]=80, tabler=75,
-        ["solar-colour"]=160, ["solar-mono"]=160 }
+        ["solar-colour"]=220, ["solar-mono"]=220 }
     for _, source in ipairs(VectorIcons.sources) do
         local cells = VectorIcons.catalogue(source.key)
         H.eq(VectorIcons.catalogue(source.key), cells)
@@ -587,6 +587,15 @@ H.test("pxlflux catalogues include pack, supplementary and KOReader icons in bot
             {"extra-rakuyomi", "Reading", "manga"},
             {"extra-bookshelf", "Reading", "bokhylla"},
             {"extra-syncthing", "Tools", "synk"},
+            {"extra-bookends", "Reading", "bokstod"},
+            {"extra-audiobook", "Reading", "ljudbok"},
+            {"extra-rakuyomi-alt", "Reading", "manga alternativ"},
+            {"extra-good-reads", "Reading", "goodreads"},
+            {"extra-calibre", "Reading", "calibre"},
+            {"extra-zotero", "Reading", "zotero"},
+            {"extra-warmth", "System", "ljustemperatur"},
+            {"extra-folder-open", "Navigation", "oppen mapp"},
+            {"extra-word-search", "Tools", "ordsok"},
             {"koreader-appbar-settings", "System", "appbar.settings"},
         }) do
             local cell = assert(VectorIcons.entry(key .. ":" .. icon[1]))
@@ -602,6 +611,21 @@ H.test("pxlflux catalogues include pack, supplementary and KOReader icons in bot
         H.eq(copied["/fake/icons/simpleui_sui_tab_setting.svg"], Icons.imageFile(value))
     end
     assert(Icons.imageFile("solar-colour:pack-library") ~= Icons.imageFile("solar-mono:pack-library"))
+end)
+H.test("new pxlflux icons are selectable without changing other saved icons", function()
+    local before = writes
+    for _, key in ipairs({ "solar-colour", "solar-mono" }) do
+        local selected
+        local picker = Adapter.show(function(value) selected = value end, nil, nil, key)
+        picker:_onSearchSubmit("manga alternativ")
+        H.eq(picker.config.item_count(), 1)
+        local cell = picker.config.item_at(1)
+        H.eq(cell.value, key .. ":extra-rakuyomi-alt")
+        picker.config.on_cell_tap(cell)
+        H.eq(selected, cell.file)
+        H.eq(Icons.imageFile(cell.insert_value), selected)
+    end
+    H.eq(writes, before)
 end)
 H.test("vector search exposes custom manga and Tabler hiragana without font glyphs", function()
     for _, key in ipairs({ "solar-outline", "solar-duotone" }) do
@@ -667,7 +691,8 @@ H.test("new pickers initialize real modals in both languages, orientations and i
                         H.eq(picker.config.item_count(), #VectorIcons.filtered(source.key, group))
                     end
                     picker:_onSearchSubmit("manga")
-                    H.eq(picker.config.item_count(), 1)
+                    local has_alternative = source.key == "solar-colour" or source.key == "solar-mono"
+                    H.eq(picker.config.item_count(), has_alternative and 2 or 1)
                     H.eq(picker.config.item_at(1).source, source.key)
                     picker:_onChipTap("Navigation")
                     H.eq(picker.config.item_count(), 0)

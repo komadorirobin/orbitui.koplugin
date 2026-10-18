@@ -2521,6 +2521,36 @@ Publish as a prerelease; physical-device validation remains open. Never replace
 the previously published alpha.46 asset. Disable the dashboard before code-only
 rollback so the older runtime is not presented with its unsupported page.
 
+## 2026-10-18: Solar Icon Pack v1.1.0 artwork update (not published)
+
+User requested the new icons from pxlflux's Solar Icon Pack. Advance only the
+artwork pin from `d4f4799c7a48e8e341163e7b7edb07ddd777614f` to the reviewed
+v1.1.0 commit `8182c4e6e89c7e74e02e5fa566774a3441fe299a`. Bookshelf/SimpleUI
+baselines, VERSION and runtime settings remain unchanged (C07/C08).
+
+Import all 60 new supplementary motifs in both Colour and Mono, bringing each
+catalogue to 220 icons. Retain all 320 previous identities and catalogue rows;
+only Instapaper and Z-Library receive revised upstream artwork. Add categories
+and search aliases for the new entries. Preserve the original SVG geometry,
+palette, strokes and CC BY 4.0 attribution. Do not import or execute upstream's
+installer, updater, pack.lua presets or overview images.
+
+Focused asset and picker tests cover the full inventory, checksums, static SVG
+allowlist, search, both styles, selection and OTA path rebasing. An independent
+rebuild reproduced all 443 generated outputs byte-for-byte. The runtime
+candidate's ZIP integrity and all 443 Solar files pass verification. Full Lua
+and LuaJIT runs pass: 103 Python tests (four existing source-artwork audit skips),
+36 icon tests, 317 module paths, 858 syntax checks, 395 Bookshelf suites (two
+existing SQLite-environment skips) and the SimpleUI suites. All 43 translation
+checks pass. Logs are in `test-results/solar-v1.1.0-20261018/`; device rendering
+and touch checks remain outstanding.
+
+The prior manga publication is still blocked: the candidate is about 76 MiB,
+above the installed OTA updater's 64 MiB limit. The sealer correctly rejects it;
+no limit is bypassed and no artwork is resized without the pending approval.
+Keep the earlier package-safety changes separate. No push, version bump, tag,
+GitHub release or OTA publication accompanies this icon update.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
