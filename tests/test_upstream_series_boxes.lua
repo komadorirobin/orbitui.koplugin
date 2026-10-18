@@ -233,17 +233,19 @@ function Text:init()
 end
 function Text:paintTo(bb, x, y)
     bb:paintRectRGB32(x, y, self.dimen.w, self.dimen.h, "text")
-    bb.texts[#bb.texts + 1] = {text = self.text, x = x, y = y, w = self.dimen.w, h = self.dimen.h}
+    bb.texts[#bb.texts + 1] = {text = self.text, x = x, y = y, w = self.dimen.w, h = self.dimen.h,
+        ink = self.fgcolor}
 end
 local allocated, scaled = {}, 0
 local function surface(w, h)
-    local bb = {w = w, h = h, blits = 0, texts = {}, copies = {}}
-    function bb:paintRectRGB32(x, y, rw, rh)
+    local bb = {w = w, h = h, blits = 0, texts = {}, copies = {}, rects = {}}
+    function bb:paintRectRGB32(x, y, rw, rh, color)
         assert(x >= 0 and y >= 0 and rw >= 0 and rh >= 0
             and x + rw <= self.w and y + rh <= self.h, "paint outside buffer")
+        self.rects[#self.rects + 1] = {x = x, y = y, w = rw, h = rh, color = color}
     end
     function bb:blitFrom(srcbb, x, y, sx, sy, rw, rh)
-        self:paintRectRGB32(x, y, rw, rh)
+        self:paintRectRGB32(x, y, rw, rh, "cover")
         srcbb:paintRectRGB32(sx, sy, rw, rh)
         self.blits = self.blits + 1
         self.copies[#self.copies + 1] = {x = x, y = y, sx = sx, sy = sy,
@@ -257,6 +259,14 @@ local function surface(w, h)
     function bb:getWidth() return self.w end
     function bb:getHeight() return self.h end
     function bb:free() assert(not self.freed, "double free"); self.freed = true end
+    function bb:colorAt(x, y)
+        for i = #self.rects, 1, -1 do
+            local r = self.rects[i]
+            if r.color ~= "text" and x >= r.x and y >= r.y and x < r.x + r.w and y < r.y + r.h then
+                return r.color
+            end
+        end
+    end
     return bb
 end
 local night, painted_slots, cover_aspect, dpi = false, 0, 1.5, 1
@@ -605,30 +615,31 @@ H.test("custom image paint errors release the scaled copy but not the cached sou
     package.loaded["lib/bookshelf_image_source"] = nil
 end)
 
-H.test("MAL stars fit native boxes without colliding with read-total, hidden count or title", function()
-    local Frame = W:extend{}
-    function Frame:init()
-        local ts = self[1]:getSize()
-        self.width = ts.w + self.padding_left + self.padding_right + 2 * self.bordersize
-        self.height = ts.h + self.padding_top + self.padding_bottom + 2 * self.bordersize
-    end
-    function Frame:paintTo(bb, x, y)
-        bb:paintRectRGB32(x, y, self.width, self.height)
-        self[1]:paintTo(bb, x + self.padding_left + self.bordersize, y + self.padding_top + self.bordersize)
-        bb.badge = {x = x, y = y, w = self.width, h = self.height}
-    end
-    package.loaded["ui/widget/container/framecontainer"] = Frame
-    package.loaded["ui/size"] = {border = {thin = 1}}
-    package.loaded["lib/bookshelf_space"].padding = {default = 5, small = 2}
+local STAR, REGISTRY = "\xE2\x98\x85", "bookshelf_folder_badge_providers"
+local function ratedBox(n, scale)
+    local raw = members(n or 3)
+    for _, b in ipairs(raw) do b.filepath = "/Manga/Saga/" .. b.filename end
+    return visibleBox(raw, scale)
+end
+local function ratingProvider(text)
     package.loaded["lib/bookshelf_cover_progress"] = {
         badgeSize = function(n) return n * dpi end,
-        resolvedColors = function() return {badge_bg = "white", badge_fg = "black"} end,
     }
-    local STAR = "\xE2\x98\x85"
-    package.loaded.bookshelf_folder_badge_providers = {myanimelist = function(folder)
+    package.loaded[REGISTRY] = {myanimelist = function(folder)
         H.eq(folder.path, "/Manga/Saga"); H.eq(folder.label, "Saga")
-        return {text = STAR .. "8.72"}
+        return {text = text or STAR .. "8.72"}
     end}
+end
+local function ratingRect(bb)
+    for _, t in ipairs(bb.texts) do if t.text:sub(1, #STAR) == STAR then return t end end
+end
+local function sameColor(a, b)
+    if type(a) ~= "table" or type(b) ~= "table" then return a == b end
+    return a.r == b.r and a.g == b.g and a.b == b.b
+end
+
+H.test("MAL notch fits native boxes without colliding with read-total, hidden count or title", function()
+    ratingProvider()
     for _, factor in ipairs({1, 1.5, 2, 3}) do
         dpi = factor
         for _, n in ipairs({2, 8, 120}) do
@@ -647,10 +658,11 @@ H.test("MAL stars fit native boxes without colliding with read-total, hidden cou
                     local bb = surface(w.width + 40, 420); w:paintTo(bb, 20, 10)
                     H.eq(w.st_w, sw); H.eq(w.st_h, sh); H.eq(shape.w, bw); H.eq(shape.h, bh)
                     H.eq(#box.books, n); H.eq(bb.texts[1].text, count(n, n))
-                    local badge, cover = bb.badge, bb.copies[1]
+                    local badge, cover = ratingRect(bb), bb.copies[1]
                     assert(cover, "rating must not suppress a completed series' cover")
                     if badge then
                         H.eq(bb.texts[#bb.texts].text, STAR .. "8.72")
+                        assert(sameColor(badge.ink, bb.texts[1].ink), "rating must use the box's native ink")
                         assert(badge.x >= cover.x and badge.y >= cover.y)
                         assert(badge.x + badge.w <= cover.x + cover.w)
                         assert(badge.y + badge.h <= cover.y + cover.h)
@@ -658,6 +670,12 @@ H.test("MAL stars fit native boxes without colliding with read-total, hidden cou
                             local t = bb.texts[i]
                             assert(t.y + t.h <= badge.y or t.y >= badge.y + badge.h,
                                 "rating collided with existing label")
+                        end
+                        local board = package.loaded["lib/bookshelf_spine_shelf"].boardColor()
+                        for row = 0, badge.h - 1 do
+                            assert(sameColor(bb:colorAt(badge.x, badge.y + row), board))
+                            assert(sameColor(bb:colorAt(badge.x + badge.w - 1, badge.y + row), board),
+                                "rating reaches the curved cover edge")
                         end
                     elseif dpi == 1 and aspect == 1.5 then
                         error("ordinary box should have room for its rating")
@@ -668,7 +686,158 @@ H.test("MAL stars fit native boxes without colliding with read-total, hidden cou
         end
     end
     dpi, night, cover_aspect, statuses = 1, false, 1.5, {}
-    package.loaded.bookshelf_folder_badge_providers = nil
+    package.loaded[REGISTRY] = nil
 end)
+
+H.test("the left cutout mirrors the upstream right count notch including its light edge", function()
+    package.loaded[REGISTRY] = nil
+    Painter.preserve_cover_aspect = false
+    local w = visibleBox(members(8))
+    Painter.preserve_cover_aspect = true
+    w.preserve_cover_aspect = false
+    w.stickerLeftLabel = function() return w.count end
+    local bb = surface(w.width, 400); w:paintTo(bb, 0, 0)
+    local sx, sy = w.inset, w.top + w.shape.rise + w.inset
+    for row = 0, w.st_h - 1 do
+        for col = 0, w.st_w - 1 do
+            assert(sameColor(bb:colorAt(sx + col, sy + row), bb:colorAt(sx + w.st_w - 1 - col, sy + row)),
+                "left notch is not the mirrored upstream stencil")
+        end
+    end
+    w:free()
+end)
+
+H.test("rounded notch follows text width and restores cover pixels when a score disappears", function()
+    local w = ratedBox()
+    local sx, sy = w.inset + w.st_dx, w.top + w.shape.rise + w.inset + w.st_dy
+    ratingProvider()
+    local rated = surface(w.width, 400); w:paintTo(rated, 0, 0)
+    local label = assert(ratingRect(rated))
+    local gap = 3
+    local nw, nh = label.w + 2 * gap, label.h + gap
+    local board = rated:colorAt(sx, sy)
+    assert(sameColor(rated:colorAt(sx + nw + 1, sy), board))
+    assert(not sameColor(rated:colorAt(sx + nw + 1, sy + 5), board), "top transition is not rounded")
+    assert(sameColor(rated:colorAt(sx + nw - 2, sy + nh - 5), board))
+    assert(not sameColor(rated:colorAt(sx + nw - 2, sy + nh - 1), board), "inner transition is not rounded")
+    H.eq(rated:colorAt(sx + gap, sy + nh + 6), "cover", "mask should end below the notch")
+
+    ratingProvider(STAR .. "10.00")
+    local perfect = surface(w.width, 400); w:paintTo(perfect, 0, 0)
+    local wider = assert(ratingRect(perfect)); assert(wider.w > label.w)
+    assert(sameColor(perfect:colorAt(sx + nw + 2, sy + 5), board))
+    H.eq(w.st_h, rated.copies[1].h + 2); H.eq(w.st_w, rated.copies[1].w + 2)
+
+    package.loaded[REGISTRY] = nil
+    local plain = surface(w.width, 400); w:paintTo(plain, 0, 0)
+    H.eq(ratingRect(plain), nil); H.eq(w._orbitui_rating_label, nil)
+    H.eq(plain:colorAt(label.x + 1, label.y + 2), "cover")
+    H.eq(#plain.copies, 1); H.eq(#rated.copies, 1)
+    w:free()
+end)
+
+H.test("small covers omit both text and notch without reducing the image", function()
+    for _, aspect in ipairs({.08, 1.5, 8}) do
+        cover_aspect = aspect
+        local w = ratedBox(3, .5)
+        package.loaded[REGISTRY] = nil
+        local plain = surface(w.width, 400); w:paintTo(plain, 0, 0)
+        ratingProvider()
+        package.loaded["lib/bookshelf_cover_progress"].badgeSize = function() return 50 end
+        local tiny = surface(w.width, 400); w:paintTo(tiny, 0, 0)
+        H.eq(ratingRect(tiny), nil); H.eq(#tiny.rects, #plain.rects)
+        for i, rect in ipairs(plain.rects) do
+            local actual = tiny.rects[i]
+            H.eq(actual.x, rect.x); H.eq(actual.y, rect.y); H.eq(actual.w, rect.w); H.eq(actual.h, rect.h)
+            assert(sameColor(actual.color, rect.color))
+        end
+        w:free()
+    end
+    cover_aspect = 1.5
+    package.loaded[REGISTRY] = nil
+end)
+
+H.test("night-mode changes reuse the label with the same ink as the series name and count", function()
+    ratingProvider()
+    local w = ratedBox(); local cached
+    for _, dark in ipairs({false, true, false}) do
+        night = dark
+        local bb = surface(w.width, 400); w:paintTo(bb, 0, 0)
+        local label = assert(ratingRect(bb))
+        cached = cached or w._orbitui_rating_label
+        H.eq(w._orbitui_rating_label, cached)
+        for _, t in ipairs(bb.texts) do assert(sameColor(t.ink, label.ink)) end
+        H.eq(label.ink.r, dark and 30 or 246)
+    end
+    w:free(); night = false; package.loaded[REGISTRY] = nil
+end)
+
+H.test("custom-image refits and missing images move the notch with the current fitted cover", function()
+    ratingProvider()
+    local cached = surface(300, 150)
+    package.loaded["lib/bookshelf_image_source"] = {
+        resolveStackImage = function() return "/series.png" end,
+        imageSizeTag = function() return "100x150" end,
+        loadImageNative = function() return cached end,
+    }
+    local w = ratedBox()
+    for _, aspect in ipairs({.5, 1.5, 3, 1}) do
+        cached = surface(200, 200 * aspect)
+        local bb = surface(w.width + 40, 420); w:paintTo(bb, 20, 10)
+        local label = assert(ratingRect(bb))
+        H.eq(label.x, 20 + w.inset + w.st_dx + 3)
+        H.eq(label.y, 10 + w.top + w.shape.rise + w.inset + w.st_dy + 1)
+        local cover = bb.copies[1]
+        assert(math.min(math.abs(cover.h - cover.w * aspect), math.abs(cover.w - cover.h / aspect)) <= .5)
+        H.eq(cached.freed, nil)
+    end
+    cached = nil
+    local bb = surface(w.width, 400); w:paintTo(bb, 0, 0)
+    H.eq(bb.blits, 1); assert(ratingRect(bb)); H.eq(bb.copies[1].sx, W.CARD_BORDER)
+    H.eq(w.st_h, w.art_cover.height)
+    w:free(); package.loaded[REGISTRY] = nil
+    package.loaded["lib/bookshelf_image_source"] = nil
+end)
+
+-- Optional shape-only preview from the real stencil, not device fonts/covers.
+local preview = os.getenv("ORBITUI_RATING_PREVIEW")
+if preview then
+    local out = assert(io.open(preview, "w"))
+    local function color(c)
+        if c == "cover" then return "url(#cover)" end
+        if type(c) == "table" then return string.format("rgb(%d,%d,%d)", c.r, c.g, c.b) end
+        return "#353b42"
+    end
+    local function esc(s) return s:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;") end
+    out:write('<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="600" viewBox="0 0 1400 600">')
+    out:write('<defs><pattern id="cover" width="30" height="30" patternUnits="userSpaceOnUse">')
+    out:write('<rect width="30" height="30" fill="#dec9a1"/><path d="M0 0L30 30M-15 0L15 30M15 0L45 30" stroke="#b99666" stroke-width="2"/>')
+    out:write('</pattern></defs><rect width="1400" height="600" fill="#f1ede4"/>')
+    out:write('<text x="25" y="30" font-size="18" fill="#202830">Native paint calls; placeholder artwork and approximate fonts</text>')
+    for i, spec in ipairs({{title = "No rating"}, {title = "Rating 8.72", score = "8.72"},
+            {title = "Rating 10.00", score = "10.00"}, {title = "Landscape cover", score = "8.72", aspect = .6}}) do
+        cover_aspect = spec.aspect or 1.5
+        if spec.score then ratingProvider(STAR .. spec.score) else package.loaded[REGISTRY] = nil end
+        local w = ratedBox()
+        local bb = surface(w.width, 400); w:paintTo(bb, 0, 0)
+        local x = (i - 1) * 345 + 25
+        out:write(string.format('<text x="%d" y="65" font-size="20" fill="#202830">%s</text>', x, spec.title))
+        out:write(string.format('<g transform="translate(%d,90) scale(2)"><g transform="translate(0,%g)">', x, -w.top))
+        for _, rect in ipairs(bb.rects) do
+            if rect.color ~= "text" then
+                out:write(string.format('<rect x="%g" y="%g" width="%g" height="%g" fill="%s"/>',
+                    rect.x, rect.y, rect.w, rect.h, color(rect.color)))
+            end
+        end
+        for _, t in ipairs(bb.texts) do
+            out:write(string.format('<text x="%g" y="%g" font-size="%g" font-family="sans-serif" font-weight="600" textLength="%g" lengthAdjust="spacingAndGlyphs" fill="%s">%s</text>',
+                t.x, t.y + t.h * .8, t.h, t.w, color(t.ink), esc(t.text)))
+        end
+        out:write('</g></g>')
+        w:free()
+    end
+    out:write('</svg>'); out:close()
+    cover_aspect = 1.5; package.loaded[REGISTRY] = nil
+end
 
 H.finish()

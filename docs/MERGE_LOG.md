@@ -2399,6 +2399,29 @@ Store release evidence in `test-results/alpha45-20261018/`. Physical Bigme
 Kanzenban height, star-label legibility, night mode and interaction still need
 confirmation; publish as a prerelease, not latest stable.
 
+## 2026-10-18: Rounded cutout for the physical box rating
+
+User approved replacing the upper-left MAL badge with an upstream-style rounded
+cutout. Start at public alpha.45 `daa16ca1`. This is a C06/C07 presentation
+follow-up, not an upstream merge or publication; VERSION and pins stay put.
+
+The native stencil mirrors its right-hand count notch for an optional
+host-owned left label. OrbitUI supplies unframed cached star-plus-score text;
+the box uses its own name/count ink and rounds both notch transitions, with
+the original light sticker edge. Fit after actual first/custom-image sizing,
+with no cover scaling, band, box geometry or count/overflow/title movement.
+Too-small images omit text and cutout together. Missing/removed scores restore
+the cover on repaint; cached refreshes, text sizing and lifecycle remain local.
+The standalone no-hook outline and folder-card badges do not change.
+
+Retain the cached MAL provider contract, shared font scaling and explicit text
+ownership. No new queries, settings or reading-data writes, artwork changes,
+bootstrap changes, pushes, tags or OTA releases. Provider/lifecycle, real native
+stencil/paint and custom-image tests are extended. Full sequential test/package
+evidence belongs in `test-results/rating-notch-20261018/`; device checks remain
+explicit in TESTING.md. Any local alpha.45 package must not replace the public
+alpha.45 release asset.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

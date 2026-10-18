@@ -2,6 +2,28 @@
 
 ## Automated
 
+2026-10-18 rounded MAL cutout (unpublished follow-up to alpha.45): the rating
+uses the native stencil, mirrored to the top-left, instead of an overlay frame.
+Focused checks cover mirrored light edges/curves, text-dependent notch widths,
+unchanged aspect/geometry, label/count/title separation, tiny-cover omission,
+score removal/restored pixels, day/night ink, custom-image refits/fallbacks,
+provider isolation and text lifecycle. Complete sequential Lua/LuaJIT gates
+pass 615/616 root cases in 51 files, 395 Bookshelf suites, all 13 SimpleUI files
+and 91 Python checks. All 43 translation catalogues, 317 module paths and 850
+LuaJIT syntax files pass. Existing SQLite/native-font/external-artwork/absent-
+Bookends skips are unchanged. Nine actual MAL-provider fixture probes also
+pass on each runtime without plugin initialization or network access.
+Logs, the shape-only preview and clean-commit package audit belong in
+`test-results/rating-notch-20261018/`; no device acceptance or publication is
+implied. The package comparison allows only the two renderer/adapter files
+and four documentation files to differ from published alpha.45.
+
+Device checks still required: inspect the corner on actual colour and greyscale
+e-ink, particularly Paperback/Kanzenban, small covers, large badge fonts, night
+mode and fully read series. Confirm rating refresh/unlink, count/overflow/name
+clearance and unchanged tap/hold behavior. The preview uses schematic artwork
+and approximate fonts, not native device pixels.
+
 2026-10-18 alpha.45 publication preparation: explicitly requested after the
 Kanzenban (`a8dd8f45`) and MAL star-rating (`f15f666e`) follow-ups. Re-run complete
 sequential Lua/LuaJIT gates and translations on the versioned tree, then build

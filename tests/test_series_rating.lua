@@ -82,43 +82,23 @@ H.test("existing folder links win, with series-name fallback and no matching pro
 end)
 
 local Widget = H.widget()
-local dpi, font_scale, night = 1, 100, false
-local frames, recolourables = {}, setmetatable({}, {__mode = "k"})
+local dpi, font_scale = 1, 100
+local labels = {}
 local function px(n) return math.floor(n * dpi + .5) end
 local Text = Widget:extend{}
+function Text:init() labels[#labels + 1] = self end
 function Text:getSize()
     return {w = px((#self.text - 2) * self.face.size * .55), h = px(self.face.size)}
 end
 function Text:free() assert(not self.freed); self.freed = true end
-local Frame = Widget:extend{}
-function Frame:init() frames[#frames + 1] = self end
-function Frame:getSize()
-    local ts = self[1]:getSize()
-    return {w = ts.w + self.padding_left + self.padding_right + 2 * self.bordersize,
-        h = ts.h + self.padding_top + self.padding_bottom + 2 * self.bordersize}
-end
-function Frame:paintTo(bb, x, y)
-    assert(bb.native_painted, "badge must follow the native cover fit")
-    local size = self:getSize()
-    bb.badges[#bb.badges + 1] = {x = x, y = y, w = size.w, h = size.h,
-        text = self[1].text, bg = self.background, fg = self[1].fgcolor}
-end
-function Frame:free() assert(not self.freed); self.freed = true; self[1]:free() end
-local colors = function() return {badge_bg = night and "black" or "white", badge_fg = night and "white" or "black"} end
 package.loaded["device"] = {screen = {scaleBySize = function(_, n) return px(n) end}}
-package.loaded["ui/size"] = {border = {thin = 1}}
-package.loaded["lib/bookshelf_space"] = {px = px, padding = {default = 5, small = 2}}
 package.loaded["lib/bookshelf_colour_text"] = Text
-package.loaded["ui/widget/container/framecontainer"] = Frame
-package.loaded["ui/font"] = {}
 package.loaded["lib/bookshelf_fonts"] = {getFace = function(_, face, size, opts)
     H.eq(face, "smallinfofont"); H.eq(opts.bold, true) -- Never put Unicode stars into symbols.ttf.
     return {size = size}, true
 end}
 package.loaded["lib/bookshelf_cover_progress"] = {
     badgeSize = function(base) return math.floor(base * font_scale / 100 + .5) end,
-    resolvedColors = colors,
-    registerRecolour = function(widget, pick) recolourables[widget] = pick end,
 }
 
 local Box = Widget:extend{}
@@ -130,19 +110,15 @@ function Box:init()
     self.shape = {w = self.width, h = 230, rise = 14, front_h = 216, strip_h = 20}
     return "init"
 end
-function Box:paintTo(bb)
-    bb.native_painted = true
-    if bb.refit then self.st_dx, self.st_dy, self.st_w, self.st_h = 0, 45, 128, 80 end
-    return "paint"
-end
+function Box:paintTo() return "paint" end
 function Box:free() self.native_frees = (self.native_frees or 0) + 1; return "free" end
 function Box:onTap() return "open series" end
 function Box:onHold() return "series menu" end
 local UI = require("adapters/orbitui_ui")
+local original_draw = Box.paintTo
 UI.wrap("lib/bookshelf_series_box_widget", Box)
-local function surface() return {badges = {}} end
 local function reset()
-    dpi, font_scale, night, calls = 1, 100, false, 0
+    dpi, font_scale, calls = 1, 100, 0
     mappings = {saga = {mal_mean = 8.72}}
     package.loaded[REGISTRY] = {myanimelist = provider}
 end
@@ -151,99 +127,94 @@ H.test("wrapper is idempotent and leaves native lifecycle and gestures intact", 
     reset()
     local draw = Box.paintTo
     UI.wrap("lib/bookshelf_series_box_widget", Box)
-    H.eq(Box.paintTo, draw)
+    H.eq(Box.paintTo, draw); H.eq(draw, original_draw)
     local w = Box:new(); H.eq(w:init(), "init")
-    H.eq(w:paintTo(surface(), 0, 0), "paint"); H.eq(calls, 1)
+    H.eq(w:paintTo({}, 0, 0), "paint")
+    H.eq(w:stickerLeftLabel().text, STAR .. "8.72"); H.eq(calls, 1)
     H.eq(w:onTap(), "open series"); H.eq(w:onHold(), "series menu")
     H.eq(w:free(), "free"); H.eq(w.native_frees, 1)
 end)
 
-H.test("native badge renderer overlays the cover below heads without resizing the box", function()
+H.test("host supplies unframed bold text at the folder badge font scale", function()
     reset()
-    local w = Box:new(); local bb = surface()
-    w:paintTo(bb, 20, 10)
-    local badge = bb.badges[1]; H.eq(badge.text, STAR .. "8.72")
-    H.eq(badge.x, 20 + 4 + 3 + 3); H.eq(badge.y, 10 + 170 + 14 + 4 + 3)
-    assert(badge.x + badge.w <= 20 + w.inset + w.st_dx + w.st_w)
-    assert(badge.y + badge.h < 10 + w.top + w.shape.h - w.shape.strip_h)
+    local w = Box:new(); local label = w:stickerLeftLabel()
+    H.eq(label.text, STAR .. "8.72"); H.eq(label.padding, 0)
+    H.eq(label.bold, true); H.eq(label.face.size, 12)
+    H.eq(label.background, nil); H.eq(label.fgcolor, nil)
+    H.eq(label[1], nil) -- No separate badge/frame; the native box owns the ink.
     H.eq(w.width, 136); H.eq(w.height, 400); H.eq(w.shape.rise, 14)
     H.eq(w.st_h, 180); H.eq(w.st_w, 122)
     w:free()
 end)
 
-H.test("a custom image refit uses current sticker bounds, with no stale coordinates", function()
+H.test("label lookup does not change cover fit or add a reserved band", function()
     reset()
-    local w = Box:new(); local bb = surface(); bb.refit = true
-    w:paintTo(bb, 20, 10)
-    H.eq(bb.badges[1].x, 27); H.eq(bb.badges[1].y, 246)
-    assert(bb.badges[1].y + bb.badges[1].h <= 10 + w.top + w.shape.rise + w.inset + w.st_dy + w.st_h)
+    local w = Box:new(); local label = w:stickerLeftLabel()
+    w.st_dx, w.st_dy, w.st_w, w.st_h = 0, 45, 128, 80
+    H.eq(w:stickerLeftLabel(), label)
+    H.eq(w.st_dx, 0); H.eq(w.st_dy, 45); H.eq(w.st_w, 128); H.eq(w.st_h, 80)
+    H.eq(w.count_band_h, nil)
     w:free()
 end)
 
-H.test("tiny covers omit rather than clip ratings, and recover when space returns", function()
+H.test("disabling the host aspect policy clears only the added label", function()
     reset()
-    local w = Box:new(); w.st_w = 20
-    local bb = surface(); w:paintTo(bb, 0, 0); H.eq(#bb.badges, 0)
-    w.st_w, w.st_h = 122, 10
-    w:paintTo(bb, 0, 0); H.eq(#bb.badges, 0)
-    w.st_h = 180
-    w:paintTo(bb, 0, 0); H.eq(#bb.badges, 1)
+    local w = Box:new(); local label = w:stickerLeftLabel()
+    w.preserve_cover_aspect = false
+    H.eq(w:stickerLeftLabel(), nil); H.eq(label.freed, true)
+    H.eq(w.book, manga); H.eq(calls, 1)
+    w.preserve_cover_aspect = true
+    H.eq(w:stickerLeftLabel().text, STAR .. "8.72")
     w:free()
 end)
 
-H.test("rating refresh, relinking and unlinking discard only the owned badge", function()
+H.test("rating refresh, relinking and unlinking discard only the owned label", function()
     reset()
-    local w = Box:new(); local bb = surface()
-    w:paintTo(bb, 0, 0); local old = w._orbitui_rating_badge
-    w:paintTo(bb, 0, 0); H.eq(w._orbitui_rating_badge, old)
+    local w = Box:new(); local old = w:stickerLeftLabel()
+    H.eq(w:stickerLeftLabel(), old)
     mappings.saga.mal_mean = 9.13
-    w:paintTo(bb, 0, 0); H.eq(old.freed, true); H.eq(bb.badges[3].text, STAR .. "9.13")
-    old = w._orbitui_rating_badge
+    H.eq(w:stickerLeftLabel().text, STAR .. "9.13"); H.eq(old.freed, true)
+    old = w._orbitui_rating_label
     mappings = {linked = {local_folder = "/Manga/Saga", mal_mean = 7.2}}
-    w:paintTo(bb, 0, 0); H.eq(old.freed, true); H.eq(bb.badges[4].text, STAR .. "7.20")
-    old = w._orbitui_rating_badge; mappings = {}
-    w:paintTo(bb, 0, 0); H.eq(old.freed, true); H.eq(#bb.badges, 4)
-    H.eq(w._orbitui_rating_badge, nil); H.eq(w.book, manga)
+    H.eq(w:stickerLeftLabel().text, STAR .. "7.20"); H.eq(old.freed, true)
+    old = w._orbitui_rating_label; mappings = {}
+    H.eq(w:stickerLeftLabel(), nil); H.eq(old.freed, true)
+    H.eq(w._orbitui_rating_label, nil); H.eq(w.book, manga)
     w:free()
 end)
 
 H.test("late plugin registration and removal work on an existing box", function()
     reset(); package.loaded[REGISTRY] = nil
-    local w = Box:new(); local bb = surface()
-    w:paintTo(bb, 0, 0); H.eq(#bb.badges, 0)
+    local w = Box:new()
+    H.eq(w:stickerLeftLabel(), nil)
     package.loaded[REGISTRY] = {myanimelist = provider}
-    w:paintTo(bb, 0, 0); H.eq(#bb.badges, 1)
-    local old = w._orbitui_rating_badge
+    local old = w:stickerLeftLabel(); H.eq(old.text, STAR .. "8.72")
     package.loaded[REGISTRY] = nil
-    w:paintTo(bb, 0, 0); H.eq(old.freed, true); H.eq(#bb.badges, 1)
+    H.eq(w:stickerLeftLabel(), nil); H.eq(old.freed, true)
     w:free()
 end)
 
-H.test("night recolouring uses the shared badge palette without rebuilding", function()
+H.test("provider errors remove an existing label and can recover on the next paint", function()
     reset()
-    local w = Box:new(); local bb = surface(); w:paintTo(bb, 0, 0)
-    H.eq(bb.badges[1].bg, "white"); H.eq(bb.badges[1].fg, "black")
-    local old = w._orbitui_rating_badge; night = true
-    old:_bs_recolour(recolourables[old](colors()))
-    w:paintTo(bb, 0, 0)
-    H.eq(w._orbitui_rating_badge, old)
-    H.eq(bb.badges[2].bg, "black"); H.eq(bb.badges[2].fg, "white")
+    local w = Box:new(); local old = w:stickerLeftLabel()
+    package.loaded[REGISTRY].myanimelist = function() error("unavailable") end
+    H.eq(w:stickerLeftLabel(), nil); H.eq(old.freed, true)
+    package.loaded[REGISTRY].myanimelist = provider
+    H.eq(w:stickerLeftLabel().text, STAR .. "8.72")
     w:free()
 end)
 
 H.test("font scale and DPI replace cached text; reinit and repeated free are safe", function()
     reset()
-    local w = Box:new(); local bb = surface(); w:paintTo(bb, 0, 0)
-    local old = w._orbitui_rating_badge; font_scale = 150
-    w:paintTo(bb, 0, 0); H.eq(old.freed, true)
-    H.eq(w._orbitui_rating_badge[1].face.size, 18)
-    old = w._orbitui_rating_badge; dpi = 1.5
-    w:paintTo(bb, 0, 0); H.eq(old.freed, true)
-    old = w._orbitui_rating_badge; w:init(); H.eq(old.freed, true)
+    local w = Box:new(); local old = w:stickerLeftLabel(); font_scale = 150
+    H.eq(w:stickerLeftLabel().face.size, 18); H.eq(old.freed, true)
+    old = w._orbitui_rating_label; dpi = 1.5
+    w:stickerLeftLabel(); H.eq(old.freed, true)
+    old = w._orbitui_rating_label; w:init(); H.eq(old.freed, true)
     H.eq(w._orbitui_rating_folder, nil)
-    w:paintTo(bb, 0, 0); old = w._orbitui_rating_badge
+    old = w:stickerLeftLabel()
     w:free(); w:free(); H.eq(old.freed, true)
-    for _, frame in ipairs(frames) do H.eq(frame.freed, true, "owned badge leaked") end
+    for _, label in ipairs(labels) do H.eq(label.freed, true, "owned label leaked") end
 end)
 
 package.loaded[REGISTRY] = nil

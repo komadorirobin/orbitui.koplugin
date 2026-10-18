@@ -37,11 +37,11 @@ function M.cachedRating(folder)
 end
 
 local function clear(self)
-    if self._orbitui_rating_badge then self._orbitui_rating_badge:free() end
-    self._orbitui_rating_badge, self._orbitui_rating_key = nil, nil
+    if self._orbitui_rating_label then self._orbitui_rating_label:free() end
+    self._orbitui_rating_label, self._orbitui_rating_key = nil, nil
 end
 
-local function paint(self, bb, x, y)
+local function label(self)
     local registry = package.loaded[REGISTRY]
     if not self.preserve_cover_aspect or type(registry) ~= "table"
             or type(registry.myanimelist) ~= "function" then
@@ -59,33 +59,27 @@ local function paint(self, bb, x, y)
     local key = text .. ":" .. Progress.badgeSize(12) .. ":" .. Screen:scaleBySize(100)
     if self._orbitui_rating_key ~= key then
         clear(self)
-        self._orbitui_rating_badge = require("lib/bookshelf_count_badge").renderText(text)
+        local face, bold = require("lib/bookshelf_fonts"):getFace("smallinfofont",
+            Progress.badgeSize(12), { bold = true })
+        self._orbitui_rating_label = require("lib/bookshelf_colour_text"):new{
+            text = text, face = face, bold = bold, padding = 0,
+        }
         self._orbitui_rating_key = key
     end
-    local badge = self._orbitui_rating_badge
-    if not badge then return end
-    local size = badge:getSize()
-    local gap = math.max(2, require("lib/bookshelf_space").px(3))
-    -- Paint after the native cover fit, entirely inside the sticker. An
-    -- exceptionally tiny image omits the badge rather than clipping digits.
-    if size.w + 2 * gap > self.st_w or size.h + 2 * gap > self.st_h then return end
-    badge:paintTo(bb, x + self.inset + self.st_dx + gap,
-        y + self.top + self.shape.rise + self.inset + self.st_dy + gap)
+    -- The native painter fits the notch to the current cover, colours the
+    -- text like the box's other labels, and omits it if the image is too small.
+    return self._orbitui_rating_label
 end
 
 function M.widget(widget)
     if widget._orbitui_series_rating_wrapped then return end
     widget._orbitui_series_rating_wrapped = true
-    local init, draw, free = widget.init, widget.paintTo, widget.free
+    local init, free = widget.init, widget.free
+    widget.stickerLeftLabel = label
     widget.init = function(self, ...)
         clear(self)
         self._orbitui_rating_folder = nil
         return init(self, ...)
-    end
-    widget.paintTo = function(self, bb, x, y)
-        local result = draw(self, bb, x, y)
-        paint(self, bb, x, y)
-        return result
     end
     widget.free = function(self, ...)
         clear(self)

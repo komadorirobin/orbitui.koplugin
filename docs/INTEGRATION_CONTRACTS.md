@@ -182,7 +182,7 @@ folder actions/rating badges/completion, manga volume suffix and bookmark ribbon
 patch updates and undo-opening behavior. Their external code/server state must
 be inspected separately before changing their contracts.
 
-The approved October 18 box-rating overlay uses only the existing
+The approved October 18 box-rating integration uses only the existing
 `bookshelf_folder_badge_providers.myanimelist` cached callback (inspected in
 myanimelist.koplugin 1.5.2), with the series label and the common parent of its
 local member files. The provider still owns Manga scope and explicit-folder
@@ -361,16 +361,26 @@ errors so the next redraw can retry. `orbitui_ui` enables the new optional
 `preserve_cover_aspect` seam; standalone Bookshelf keeps its old default.
 This is a small adaptation of the native painter, not a restored second one.
 
-The approved October 18 rating sticker paints after that aspect fit, inset at
-the cover's upper-left below the exposed heads. Use the folder cards' shared
-CountBadge renderer, normal text font, star-plus-two-decimal format, font scale
-and day/night palette. Keep `+N` and read/total in the head, the series name
-below the image and all native box/cover geometry unchanged. If the complete
-badge cannot fit inside a tiny sticker, omit it; never clip the digits or draw
-over another label. Own/free only the added badge, including replacement,
-widget reinit and teardown. Repeated adapter installation must not stack draws
-or alter tap/hold navigation. This is an OrbitUI adapter, not a new native
-Bookshelf dependency on MAL. See C06 for provider ownership.
+The initial October 18 rating sticker used the folder cards' CountBadge
+renderer. The user's subsequent approved follow-up replaces that overlay with
+a rounded top-left cutout in the cover, mirroring upstream's count-notch
+stencil and its light edge. Keep the normal bold text font, shared badge font
+scale and star-plus-two-decimal format, but use the box's name/count ink instead
+of the folder-badge background/palette. A small optional `stickerLeftLabel`
+hook returns host-owned text; the native painter fits it after image decoding,
+without resizing the cover or reserving a new band. This masks only the corner,
+not a new anisotropic fit or permanent edit of the artwork.
+
+Keep `+N` and read/total in the head, the series name below the image and all
+native box/cover geometry unchanged. Omit both cutout and text if the complete
+label plus rounded transitions cannot fit; never clip digits or collide with
+another label. Missing/removed ratings restore the original corner on repaint.
+Own/free only the added text on replacement, widget reinit and teardown.
+Repeated adapter installation must not stack effects or alter tap/hold.
+The optional hook is not a native Bookshelf dependency on MAL; standalone
+rendering without it and folder-card badges are unchanged. See C06 for provider
+ownership. Tests exercise the real stencil, including mirrored edges, fit,
+repaint, day/night and custom-image refits.
 
 The next approved October 17 refinement stops normalizing member widths to the
 box interior. Optional `memberSpineWidth` / `packSpines` hooks use the native

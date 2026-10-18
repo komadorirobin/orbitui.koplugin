@@ -51,6 +51,12 @@ personal score or a new network request. The read/total and `+N` stay above
 the cover; the series name stays below. Unlinked/unrated series have no badge,
 and exceptionally small covers omit it instead of clipping text.
 
+Unpublished follow-up: the physical box rating now sits directly on the board
+in a rounded cutout at the cover's upper-left, instead of a separate badge.
+Only that small corner is masked; cover size, proportions, head counts and
+series names are unchanged. The cutout follows the text's width and disappears
+with the rating. Folder-card badges keep their existing appearance.
+
 Long-press a shelf chip > **Book binding** to choose Hardcover, Paperback or
 Kanzenban / large format. Long-press a series box > **Book binding** for an override
 that follows that series across shelves, or choose **Follow shelf** to clear it.

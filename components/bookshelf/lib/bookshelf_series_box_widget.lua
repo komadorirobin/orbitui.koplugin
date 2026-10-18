@@ -125,14 +125,8 @@ local function cornerCut(r, dy)
     return math.floor(r - math.sqrt(math.max(0, r * r - dist * dist)) + 0.5)
 end
 
--- stickerSpan(w, h, r, nw, nh, row) -> left, right: the columns [left, right)
--- that row of a w x h sticker covers. Its four corners are rounded by r and
--- an nw x nh notch is cut from its top-right corner, the notch's inner
--- corner rounded too, and the sticker's corners either side of it.
-local function stickerSpan(w, h, r, nw, nh, row)
-    local left, right = 0, w
-    if row < r then left = cornerCut(r, row) end
-    if h - 1 - row < r then left = math.max(left, cornerCut(r, h - 1 - row)) end
+local function stickerRightEdge(w, h, r, nw, nh, row)
+    local right = w
     if nw > 0 and row < nh then
         right = w - nw
         if row < r then right = right - cornerCut(r, row) end
@@ -142,7 +136,14 @@ local function stickerSpan(w, h, r, nw, nh, row)
         if below < r then right = w - cornerCut(r, below) end
         if h - 1 - row < r then right = math.min(right, w - cornerCut(r, h - 1 - row)) end
     end
-    return left, math.max(left, right)
+    return right
+end
+
+-- Mirror the native rounded count notch for an optional host-owned label
+-- at the top-left. With no label, the original sticker outline is unchanged.
+local function stickerSpan(w, h, r, nw, nh, row, lnw, lnh)
+    local left = w - stickerRightEdge(w, h, r, lnw, lnh, row)
+    return left, math.max(left, stickerRightEdge(w, h, r, nw, nh, row))
 end
 
 local function safeAspect(aspect)
@@ -398,6 +399,19 @@ function Box:_paintSlipcase(bb, x, y)
         R = math.min(R, math.floor(math.min(SW, SH) / 2))
         nw, nh = 0, 0
     end
+    -- stickerLeftLabel is optional; its owner handles lookup and lifecycle.
+    -- Fit after custom-image decoding, without resizing the cover or box.
+    local left_label = self.stickerLeftLabel and self:stickerLeftLabel()
+    local ls, lnw, lnh = nil, 0, 0
+    if left_label then
+        ls = left_label:getSize()
+        local want_w, want_h = ls.w + 2 * g, ls.h + g
+        if want_w + nw + 2 * R <= SW and want_h + 2 * R <= SH then
+            lnw, lnh = want_w, want_h
+        else
+            left_label = nil
+        end
+    end
     local tmp, inner, fit
     pcall(function()
         local c = self.art_crop
@@ -444,7 +458,7 @@ function Box:_paintSlipcase(bb, x, y)
     edge = edge or lit(1.6)
     local ir = math.max(1, R - E)
     for row = 0, SH - 1 do
-        local l, r_ = stickerSpan(SW, SH, R, nw, nh, row)
+        local l, r_ = stickerSpan(SW, SH, R, nw, nh, row, lnw, lnh)
         local yy = sy + row
         if l > 0 then bb:paintRectRGB32(sx, yy, l, 1, board) end
         if r_ < SW then bb:paintRectRGB32(sx + r_, yy, SW - r_, 1, board) end
@@ -452,7 +466,7 @@ function Box:_paintSlipcase(bb, x, y)
         if irow < 0 or irow >= SH - 2 * E then
             if r_ > l then bb:paintRectRGB32(sx + l, yy, r_ - l, 1, edge) end
         else
-            local il, ir_ = stickerSpan(SW - 2 * E, SH - 2 * E, ir, nw, nh, irow)
+            local il, ir_ = stickerSpan(SW - 2 * E, SH - 2 * E, ir, nw, nh, irow, lnw, lnh)
             il, ir_ = il + E, ir_ + E
             if il > l then bb:paintRectRGB32(sx + l, yy, il - l, 1, edge) end
             if r_ > ir_ then bb:paintRectRGB32(sx + ir_, yy, r_ - ir_, 1, edge) end
@@ -496,6 +510,10 @@ function Box:_paintSlipcase(bb, x, y)
         ln.fgcolor = name_ink
         ln:paintTo(bb, x + I + math.max(p.pad, math.floor((self.art_w - sz.w)/2)), ly)
         ly = ly + sz.h
+    end
+    if left_label then
+        left_label.fgcolor = name_ink
+        left_label:paintTo(bb, sx + g, sy + math.floor((lnh - ls.h) / 2))
     end
 end
 
