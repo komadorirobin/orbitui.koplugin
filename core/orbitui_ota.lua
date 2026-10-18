@@ -1,6 +1,6 @@
 local M = { REPO = "komadorirobin/orbitui.koplugin", ASSET = "orbitui.koplugin.zip" }
 local Boot = require("orbitui_bootstrap")
-local MAX_ZIP, MAX_TOTAL, MAX_FILE = 64 * 1024 * 1024, 128 * 1024 * 1024, 32 * 1024 * 1024
+local MAX_ZIP, MAX_TOTAL, MAX_FILE = 128 * 1024 * 1024, 256 * 1024 * 1024, 32 * 1024 * 1024
 
 function M.version(value)
     if type(value) ~= "string" then return nil end

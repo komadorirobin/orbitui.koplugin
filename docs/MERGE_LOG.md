@@ -2521,6 +2521,31 @@ Publish as a prerelease; physical-device validation remains open. Never replace
 the previously published alpha.46 asset. Disable the dashboard before code-only
 rollback so the older runtime is not presented with its unsupported page.
 
+## 2026-10-18: Prepare alpha.48 OTA size-limit bridge
+
+User explicitly requested a larger updater limit and publication, then chose
+a small OTA intermediate release rather than a one-off manual installation.
+Base this bridge on public alpha.47 (`36745592`), isolated from the pending
+manga/Solar work. Preserve that work for the later full release; no art is
+resized, deleted or imported here. The bridge itself must remain below 64 MiB.
+
+Raise download/extraction budgets to 128/256 MiB. Keep individual files at
+32 MiB, the 2,000-file cap, 1 MiB manifest, strict paths, TLS/hash validation,
+staging/rollback and unchanged bootstrap/API 1. File downloads get ten minutes
+while small in-memory requests retain three minutes and socket blocking stays
+at 15 seconds. The packager now rejects payloads outside these limits without
+replacing the candidate archive; its test checks agreement with runtime bounds.
+The native smoke harness calls the starting runtime's real release selector so
+the older 64 MiB discovery failure can no longer escape the upgrade test.
+
+Only updater, packaging/tests, VERSION and release documentation change. Gate
+publication on Lua/LuaJIT, translations, a sealed sub-64-MiB runtime, actual
+alpha.47 upgrade/rollback, a private larger fixture with alpha.48, outgoing
+history/assets, CI and downloaded draft/public bytes. Evidence:
+`test-results/alpha48-bridge-20261018/`. Physical-device acceptance remains open.
+The larger successor requires the user to install this bridge and restart
+before it is published; do not immediately supersede the bridge with it.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

@@ -2,6 +2,22 @@
 
 ## Automated
 
+2026-10-18 alpha.48 bridge preparation: the user chose an OTA-compatible small
+intermediate release before publishing the larger artwork bundle. Build from
+public alpha.47 only; keep all assets, bootstrap files and upstream pins
+byte-identical. Test 128 MiB ZIP / 256 MiB expanded bounds, retained per-file,
+file-count and manifest limits, and the longer bounded file-download timeout.
+The package sealer enforces the same limits and the native smoke harness now
+executes release selection before download/extraction.
+
+Gates: full sequential Lua/LuaJIT suites, translations, a clean sealed ZIP under
+64 MiB, actual alpha.47-to-alpha.48 native OTA/rollback, a private over-64-MiB
+fixture accepted by alpha.48 but rejected by alpha.47, outgoing-history/artwork
+audits, both CI jobs, draft download hashes and anonymous public OTA. Evidence
+belongs in `test-results/alpha48-bridge-20261018/`. Headless checks are not Bigme
+device acceptance. Do not publish the large successor until the user confirms
+alpha.48 has been installed and KOReader restarted.
+
 2026-10-18 alpha.47 publication preparation: requested after `31f5fdfc`, including
 the opt-in Reading dashboard, independent two-way book-row paging and the earlier
 per-shelf title-on-cover option. Re-run complete sequential Lua/LuaJIT suites,

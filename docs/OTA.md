@@ -358,6 +358,15 @@ Home pages remain intact. Code rollback retains the series-title preference,
 which older code ignores. Earlier backup/migration caveats and physical-device
 acceptance gaps still apply.
 
+Alpha.48 is a small **OTA compatibility bridge**, built on alpha.47 without the
+pending manga ornaments or Solar v1.1.0 artwork. Its ZIP stays below the older
+64 MiB limit, so alpha.47 and earlier can install it normally. Install alpha.48
+and restart KOReader before the subsequent larger artwork release. Alpha.48
+raises the ZIP limit to 128 MiB and expanded-content limit to 256 MiB, retaining
+the 32 MiB per-file, 2,000-file and 1 MiB manifest limits, checksums, path checks
+and bootstrap/API 1. Large file downloads get up to ten minutes; API requests
+retain their three-minute limit. Nothing is resized or removed from user data.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries
@@ -400,15 +409,19 @@ inactive version directory; it never overwrites the running modules.
    selected runtime. Old code continues running until this restart.
 
 Downloads, hashing and extraction run under KOReader's Trapper in a subprocess.
-UI work is deferred until after Trapper/confirmation callbacks return. ZIPs are
-bounded to 64 MiB, expanded contents to 128 MiB and individual files to 32 MiB.
+UI work is deferred until after Trapper/confirmation callbacks return. Starting
+with alpha.48, ZIPs are bounded to 128 MiB, expanded contents to 256 MiB and
+individual files to 32 MiB (at most 2,000 files and a 1 MiB manifest). Older
+installers retain 64/128 MiB limits and must install the small alpha.48 bridge
+before a larger payload. Downloaded files have a ten-minute deadline; API and
+checksum requests retain three minutes, with the same 15-second socket timeout.
 Symlinks, special files, traversal, hidden paths and case-ambiguous duplicates
 are rejected. Archive extraction copies bytes rather than filesystem metadata.
 
 The factory installation and previous code remain available. Obsolete inactive
 version slots are cleaned during a later update; current and previous slots are
 retained. `.orbitui-work` is disposable download/staging space. Allow roughly
-250 MiB free for the current package's download, staging and one-time artwork
+350 MiB free for the upcoming artwork package's download, staging and one-time artwork
 installation, in addition to existing installed versions. Allow more as future
 packages grow.
 

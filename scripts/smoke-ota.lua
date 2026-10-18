@@ -55,8 +55,17 @@ end }
 local OTA = require("core/orbitui_ota")
 local Boot = require("orbitui_bootstrap")
 local context = Boot.begin(fixture.root)
-local release = { version = fixture.manifest.version,
-    zip = { url = "fixture", size = fixture.size }, checksum = { url = "fixture-checksum" } }
+local tag = "v" .. fixture.manifest.version
+local asset_base = "https://github.com/" .. OTA.REPO .. "/releases/download/" .. tag .. "/"
+-- Exercise the starting installer's discovery limits too, not only extraction.
+local release = assert(OTA.select({ {
+    tag_name = tag, draft = false, prerelease = true,
+    assets = {
+        { name = OTA.ASSET, size = fixture.size, browser_download_url = asset_base .. OTA.ASSET },
+        { name = OTA.ASSET .. ".sha256", size = #fixture.checksum,
+          browser_download_url = asset_base .. OTA.ASSET .. ".sha256" },
+    },
+} }, true))
 local fixture_http = package.loaded["core/orbitui_http"]
 if fixture.live then
     package.loaded["core/orbitui_http"] = nil
