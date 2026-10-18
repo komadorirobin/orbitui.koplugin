@@ -2439,6 +2439,28 @@ public release discovery/download/install. Evidence belongs in
 and interaction acceptance remains outstanding; use a prerelease, not latest
 stable. No additional runtime changes are part of this publication step.
 
+## 2026-10-18: Optional series title inside the cover (not published)
+
+User asked for a title at the foot of the series cover with a legible
+background so the image can extend to the bottom. Add a per-chip **Series box
+title** choice, defaulting to the current below-cover strip. Store the opt-in
+in OrbitUI settings with profile-qualified shelf IDs; no metadata or migration.
+
+`orbitui_series_titles` owns menus, translation selection, plan policy, fitted
+title text and its lifecycle. A small generic seam in the native box painter
+reclaims the strip height, bottom-aligns the proportional image and paints
+the host caption before the rounded stencil. Keep the normal inset/light edge,
+the MAL notch, counts, spines, box footprint and pagination unchanged. Custom
+image refits adapt the title, and tiny covers omit it instead of overlapping.
+
+Tests cover shelf isolation/reload, English/Swedish labels, immediate cache
+invalidation, unchanged warm pagination, long/CJK titles, completed series,
+custom images, day/night, DPI/aspect ranges and resource ownership. Evidence
+belongs in `test-results/series-title-20261018/`. The preview records actual
+paint calls but uses placeholder artwork and approximate fonts, not a device.
+No upstream import, VERSION bump, push, tag, GitHub release or OTA publication.
+Any local alpha.46 package must not replace the existing public alpha.46 asset.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

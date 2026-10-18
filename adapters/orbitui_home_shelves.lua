@@ -241,6 +241,10 @@ function M.shelfMenu(widget, chip)
                 close()
                 require("adapters/orbitui_book_bindings").showShelf(widget, chip)
             end }},
+            {{ text = _("Series box title"), callback = function()
+                close()
+                require("adapters/orbitui_series_titles").show(widget, chip)
+            end }},
             {{ text = _("Edit shelf"), callback = function()
                 close()
                 if widget.profile then widget:_showProfileShelfStyle(chip)

@@ -55,6 +55,13 @@ width and disappears with the rating. Unlinked/unrated series have no cutout;
 exceptionally small covers omit it instead of clipping text. Folder-card badges
 keep their existing appearance.
 
+Unpublished follow-up: long-press a shelf chip > **Series box title** >
+**On the cover (bottom)** to put series names on an opaque, box-coloured plate
+inside the image. This reclaims the separate title strip for the full,
+aspect-preserved cover and aligns it with the bottom inset. The choice is
+independent per shelf in Library/Manga; **Below the cover (default)** restores
+the previous layout. It does not change individual-book captions or folder cards.
+
 Long-press a shelf chip > **Book binding** to choose Hardcover, Paperback or
 Kanzenban / large format. Long-press a series box > **Book binding** for an override
 that follows that series across shelves, or choose **Follow shelf** to clear it.

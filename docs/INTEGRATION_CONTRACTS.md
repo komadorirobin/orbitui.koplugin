@@ -371,8 +371,9 @@ hook returns host-owned text; the native painter fits it after image decoding,
 without resizing the cover or reserving a new band. This masks only the corner,
 not a new anisotropic fit or permanent edit of the artwork.
 
-Keep `+N` and read/total in the head, the series name below the image and all
-native box/cover geometry unchanged. Omit both cutout and text if the complete
+Keep `+N` and read/total in the head, with the series name below the image by
+default. Rating lookup alone leaves native box/cover geometry unchanged.
+Omit both cutout and text if the complete
 label plus rounded transitions cannot fit; never clip digits or collide with
 another label. Missing/removed ratings restore the original corner on repaint.
 Own/free only the added text on replacement, widget reinit and teardown.
@@ -381,6 +382,29 @@ The optional hook is not a native Bookshelf dependency on MAL; standalone
 rendering without it and folder-card badges are unchanged. See C06 for provider
 ownership. Tests exercise the real stencil, including mirrored edges, fit,
 repaint, day/night and custom-image refits.
+
+The approved October 18 title-placement follow-up adds **Series box title**
+to each shelf chip's hold menu. `orbitui_series_title_positions` stores only
+explicit per-shelf choices (`below` or `overlay`), using the same native/nested
+and profile-qualified IDs as other chip presentation settings. Default to the
+old below-image strip without writing preferences; preserve unrelated/unknown
+values and all book metadata. Keep this independent of individual-book cover
+captions, folder cards, bindings and theme changes. Translate the new choices
+to Swedish for Swedish locales and otherwise use English.
+
+Pass `series_title_position` through the shared plan options/cache key. The
+host geometry wrapper sets optional `title_on_cover` only on box shapes; outer
+geometry, member widths, shadows, pagination and counts are unchanged. With
+the flag, the native painter no longer reserves the title strip, bottom-aligns
+the aspect-fitted image inside the normal inset and calls `paintStickerTitle`
+before applying its rounded-edge stencil. The host paints an opaque
+board-coloured band with the normal day/night name ink inside that image.
+Use at most two bounded lines, re-fit after decoded custom-image dimensions
+change, and keep clear of the MAL notch. Omit text on exceptionally tiny images
+rather than overrun the cover. No image crop/stretch, source-artwork edit,
+network lookup or new image-cache ownership. Own/free only the added title
+text on refit, widget reinit and teardown; repeated installation is idempotent.
+Untouched shelves and standalone Bookshelf retain their prior layout.
 
 The next approved October 17 refinement stops normalizing member widths to the
 box interior. Optional `memberSpineWidth` / `packSpines` hooks use the native

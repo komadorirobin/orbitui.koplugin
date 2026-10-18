@@ -424,6 +424,31 @@ local function plannedBox(n,style,pct,width)
     return Box:new{entry=e,width=e.w,height=stand_h},e,opts
 end
 
+H.test("title placement invalidates warm plans without changing box size or pagination", function()
+    local Boxes=require("lib/bookshelf_series_boxes")
+    local members={}
+    for i=1,8 do members[i]={filepath="title"..i..".cbz",has_cover=true,series_name="Saga"} end
+    local items={Boxes.box(members,"Saga")}
+    local opts={content_w=800,row_h=300,n_rows=2,face_out="all",series_title_position="below"}
+    local plain=Shelf.plan(items,opts)
+    local before=plain.entries[1].series_box
+    H.eq(before.title_on_cover,nil)
+    opts.series_title_position="overlay"
+    local overlay=Shelf.plan(items,opts)
+    local after=overlay.entries[1].series_box
+    H.eq(after.title_on_cover,true)
+    assert(after~=before)
+    for _,k in ipairs({"w","h","rise","front_h","strip_h","hidden_count","occupied_w"}) do
+        H.eq(after[k],before[k])
+    end
+    H.eq(overlay.next_item,plain.next_item)
+    H.eq(overlay.next_skip,plain.next_skip)
+    opts.n_rows=math.huge; opts.balance=false
+    H.eq(Shelf.plan(items,opts).entries[1].series_box,after)
+    opts.series_title_position="below"
+    H.eq(Shelf.plan(items,opts).entries[1].series_box.title_on_cover,nil)
+end)
+
 H.test("planned kanzenban boxes grow with natural member widths and capped row height", function()
     for _,scale in ipairs({1,1.5,2,3}) do
         dpi=scale

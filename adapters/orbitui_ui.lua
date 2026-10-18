@@ -49,6 +49,7 @@ function M.wrap(name, module)
         require("adapters/orbitui_shelf_sort").widget(module)
         require("adapters/orbitui_series_boxes").widget(module)
         require("adapters/orbitui_book_bindings").widget(module)
+        require("adapters/orbitui_series_titles").widget(module)
         require("adapters/orbitui_navbar").widget(module)
         module.orbitui_shelf_menu = function(self, chip)
             return require("adapters/orbitui_home_shelves").shelfMenu(self, chip)
@@ -72,9 +73,11 @@ function M.wrap(name, module)
         module.SLIPCASE_MIN_SHARE = 0.85
         module.SLIPCASE_COMPACT_HEADS = true
         require("adapters/orbitui_series_boxes").geometry(module)
+        require("adapters/orbitui_series_titles").geometry(module)
     elseif name == "lib/bookshelf_series_box_widget" then
         module.preserve_cover_aspect = true
         require("adapters/orbitui_series_rating").widget(module)
+        require("adapters/orbitui_series_titles").boxWidget(module)
     elseif name == "lib/bookshelf_settings" then
         require("adapters/orbitui_cover_labels").settings(module)
     elseif name == "lib/bookshelf_chip_editor" then

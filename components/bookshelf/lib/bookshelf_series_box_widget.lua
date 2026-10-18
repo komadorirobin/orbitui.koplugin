@@ -166,6 +166,9 @@ function Box:_fitSticker(aspect)
     self.st_full_h = self.st_h
     self.st_dx = math.floor((self.art_w - self.st_w) / 2)
     self.st_dy = self.count_band_h + math.floor((self.art_h - self.count_band_h - self.st_h) / 2)
+    if self.shape.title_on_cover then
+        self.st_dy = self.count_band_h + math.max(0, self.art_h - self.count_band_h - self.st_h)
+    end
     return w, h
 end
 
@@ -213,7 +216,7 @@ function Box:_initSlipcase()
     -- the name.
     self.inset = math.max(2, Screen:scaleBySize(STICKER_INSET_DP))
     self.art_w = math.max(1, shape.w - 2 * self.inset)
-    self.art_h = math.max(1, shape.front_h - 2 * self.inset - shape.strip_h)
+    self.art_h = math.max(1, shape.front_h - 2 * self.inset - (shape.title_on_cover and 0 or shape.strip_h))
     local font = BFont.getUIFontFace() or "cfont"
     self.count = TextWidget:new{ text = string.format(COUNT_FORMAT,
         finishedCount(entry.book.books), #entry.book.books),
@@ -278,6 +281,7 @@ function Box:_initSlipcase()
         self.art_crop = SpineWidget.CARD_BORDER
     end
     self:_makeArtCover(cover_w, cover_h)
+    if shape.title_on_cover then return end -- An optional host painter owns the inset title.
     local room = math.max(1, self.art_w - 2 * shape.pad)
     if shape.name_lines then
         -- Two lines, broken where the geometry chose (the box was sized to
@@ -445,6 +449,10 @@ function Box:_paintSlipcase(bb, x, y)
     if fit then fit:free() end
     if inner then inner:free() end
     if tmp then tmp:free() end
+    if p.title_on_cover and self.paintStickerTitle then
+        self:paintStickerTitle(bb, {x=sx, y=sy, w=SW, h=SH, border=E,
+            radius=R, notch_h=math.max(nh, lnh)}, board, name_ink_for(night))
+    end
     -- Row by row: board outside the sticker's outline, the edge between it
     -- and the outline drawn E inside it, the cover within that.
     -- Halfway between the box and white, as it shows: in night mode the
@@ -501,7 +509,7 @@ function Box:_paintSlipcase(bb, x, y)
     end
     local stripy = front_y + p.front_h - p.strip_h
     local name_ink = name_ink_for(night)
-    local lines = self.name_lines or { self.name }
+    local lines = p.title_on_cover and {} or self.name_lines or { self.name }
     local total = 0
     for _, ln in ipairs(lines) do total = total + ln:getSize().h end
     local ly = stripy + math.floor((p.strip_h - total) / 2)

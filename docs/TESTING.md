@@ -2,6 +2,26 @@
 
 ## Automated
 
+2026-10-18 per-shelf series-title placement (unpublished follow-up to alpha.46):
+complete sequential Lua/LuaJIT runs passed with 626/627 root cases in 52 files,
+395 Bookshelf suites, all 13 SimpleUI files and 91 Python checks. All 43
+translation catalogues pass; 317 module paths and 852 LuaJIT syntax files pass.
+Existing SQLite/native-font/absent-Bookends and four external artwork-source
+audit skips remain; no new failure allowances. Evidence is under
+`test-results/series-title-20261018/`.
+
+Focused tests cover independent native/nested/prose/manga shelf choices,
+reload and invalid preferences, English/Swedish menus, immediate invalidation,
+warm planner/pagination parity, full-height aspect-true bottom fitting, long
+and CJK titles, tiny images, completed boxes, MAL/count separation, changing
+custom-image dimensions, day/night/DPI and text reinit/free ownership. A
+schematic preview from native paint calls was inspected; it is not a device
+screenshot and uses placeholder art, stubbed spines and approximate fonts.
+Package only a clean commit and compare its complete inventory to published
+alpha.46; never replace the published asset. VERSION remains alpha.46, with
+no push, tag, release or OTA change. Physical Bigme font legibility, colour/night,
+small/large boxes, Paperback/Kanzenban and tap/hold still need device acceptance.
+
 2026-10-18 alpha.46 publication preparation: explicitly requested after the
 rounded rating-notch follow-up `fdc7958d`. Complete sequential Lua/LuaJIT gates
 passed on the versioned tree: 615/616 root cases in 51 files, 395 Bookshelf

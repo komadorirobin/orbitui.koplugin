@@ -298,11 +298,11 @@ package.loaded["lib/bookshelf_spine_shelf"] = {
     boardColor = function() return {r = 90, g = 120, b = 80} end,
 }
 local Painter = require("lib/bookshelf_series_box_widget")
-local function visibleBox(raw, scale, name)
+local function visibleBox(raw, scale, name, position)
     scale = scale or 1
     local box = Boxes.box(raw, name or "Saga")
     local shape = Boxes.geometry(box, {w = 160 * scale, h = 248 * scale,
-        face_h = 240 * scale, depth = 8 * scale}, {content_w = 800})
+        face_h = 240 * scale, depth = 8 * scale}, {content_w = 800, series_title_position = position})
     local w = Painter:new{entry = {book = box, series_box = shape}, width = shape.w, height = 400}
     return w, box, shape
 end
@@ -616,10 +616,10 @@ H.test("custom image paint errors release the scaled copy but not the cached sou
 end)
 
 local STAR, REGISTRY = "\xE2\x98\x85", "bookshelf_folder_badge_providers"
-local function ratedBox(n, scale)
+local function ratedBox(n, scale, name, position)
     local raw = members(n or 3)
     for _, b in ipairs(raw) do b.filepath = "/Manga/Saga/" .. b.filename end
-    return visibleBox(raw, scale)
+    return visibleBox(raw, scale, name, position)
 end
 local function ratingProvider(text)
     package.loaded["lib/bookshelf_cover_progress"] = {
@@ -799,8 +799,127 @@ H.test("custom-image refits and missing images move the notch with the current f
     package.loaded["lib/bookshelf_image_source"] = nil
 end)
 
+H.test("overlay titles reclaim the name strip and anchor aspect-true covers at the foot", function()
+    for _, factor in ipairs({1,1.5,2,3}) do
+        dpi=factor
+        for _, aspect in ipairs({.5,1,1.5,3}) do
+            cover_aspect=aspect
+            for _, n in ipairs({2,8,120}) do
+                local plain=visibleBox(members(n))
+                local w,_,shape=visibleBox(members(n),1,nil,"overlay")
+                H.eq(shape.w,plain.shape.w); H.eq(shape.h,plain.shape.h)
+                H.eq(#shape.spines,#plain.shape.spines); H.eq(shape.hidden_count,plain.shape.hidden_count)
+                H.eq(w.art_h,plain.art_h+shape.strip_h)
+                H.eq(w.st_dy+w.st_h,w.art_h)
+                local bb=surface(w.width+40,420); w:paintTo(bb,20,10)
+                local c=assert(bb.copies[1]); H.eq(bb.blits,1)
+                assert(c.h>=plain.st_h-2, "removing the name strip must not shrink the image")
+                assert(math.min(math.abs(c.h-c.w*aspect),math.abs(c.w-c.h/aspect))<=.5)
+                H.eq(c.y+c.h,10+w.top+shape.rise+shape.front_h-w.inset-1)
+                for _, t in ipairs(bb.texts) do
+                    if t.text=="Saga" then
+                        assert(t.x>=c.x and t.x+t.w<=c.x+c.w)
+                        assert(t.y>=c.y and t.y+t.h<=c.y+c.h)
+                        H.eq(bb:colorAt(t.x,t.y).r,90)
+                    end
+                end
+                plain:free(); w:free()
+            end
+        end
+    end
+    dpi,cover_aspect=1,1.5
+end)
+
+H.test("long overlay titles fit on a plate without obscuring counts or MAL notches", function()
+    local titles={"Saga", "Om utr\195\164kning av omf\195\165ng",
+        "A very long series name that needs two lines and may be truncated",
+        "\230\151\165\230\156\172\232\170\158\227\129\174\227\130\191\227\130\164\227\131\136\227\131\171"}
+    for _, title in ipairs(titles) do
+        for _, dark in ipairs({false,true}) do
+            night=dark
+            for _, scale in ipairs({.5,1,1.5}) do
+                local raw=members(120)
+                statuses={}; for _, b in ipairs(raw) do statuses[b.filepath]="finished" end
+                local w=visibleBox(raw,scale,title,"overlay")
+                package.loaded["lib/bookshelf_cover_progress"]={badgeSize=function(n) return n end}
+                package.loaded[REGISTRY]={myanimelist=function() return {text=STAR.."8.72"} end}
+                local bb=surface(w.width,400); w:paintTo(bb,0,0)
+                local c=assert(bb.copies[1]); local badge=ratingRect(bb)
+                local count_seen, title_seen=false,false
+                for _, t in ipairs(bb.texts) do
+                    if t.text==count(120,120) then
+                        count_seen=true; assert(t.y+t.h<c.y)
+                    elseif t.text~="+"..w.shape.hidden_count and t~=badge then
+                        title_seen=true
+                        assert(t.x>=c.x and t.x+t.w<=c.x+c.w)
+                        assert(t.y>=c.y and t.y+t.h<=c.y+c.h)
+                        if badge then assert(t.y>=badge.y+badge.h) end
+                        H.eq(t.ink.r,dark and 30 or 246)
+                    end
+                end
+                assert(count_seen); assert(title_seen,"ordinary boxes need a visible title")
+                local edge=bb:colorAt(c.x+math.floor(c.w/2),c.y+c.h)
+                assert(not sameColor(edge,bb:colorAt(c.x+math.floor(c.w/2),c.y+c.h-1)),
+                    "the title band must preserve the light bottom border")
+                w:free()
+            end
+        end
+    end
+    statuses,night={},false; package.loaded[REGISTRY]=nil
+end)
+
+H.test("custom-image refits rebuild cached title text and tiny images omit it safely", function()
+    local cached=surface(200,300)
+    package.loaded["lib/bookshelf_image_source"]={
+        resolveStackImage=function() return "/custom.png" end,
+        imageSizeTag=function() return "200x300" end,
+        loadImageNative=function() return cached end,
+    }
+    local w=visibleBox(members(3),1,"Long series name","overlay")
+    local previous
+    for _, aspect in ipairs({1.5,.5,3,.05,1.5}) do
+        cached=surface(200,200*aspect)
+        local bb=surface(w.width,400); w:paintTo(bb,0,0)
+        H.eq(bb.blits,1); H.eq(cached.freed,nil)
+        local c=bb.copies[1]
+        H.eq(c.y+c.h,w.top+w.shape.rise+w.shape.front_h-w.inset-1)
+        local lines=w._orbitui_series_title_lines
+        if aspect==.05 then H.eq(lines,nil) else assert(lines); assert(lines~=previous) end
+        previous=lines
+    end
+    local lines=w._orbitui_series_title_lines
+    local bb=surface(w.width,400); w:paintTo(bb,0,0)
+    H.eq(w._orbitui_series_title_lines,lines)
+    night=true; w:paintTo(bb,0,0); H.eq(w._orbitui_series_title_lines,lines)
+    for _, ln in ipairs(lines) do H.eq(ln.fgcolor.r,30) end
+    night=false; w:free(); H.eq(w._orbitui_series_title_lines,nil)
+    package.loaded["lib/bookshelf_image_source"]=nil
+end)
+
+H.test("overlay text resources are released once on refit reinit and teardown", function()
+    local free=Text.free
+    Text.free=function(self) self.free_count=(self.free_count or 0)+1 end
+    local w=visibleBox(members(3),1,"Saga","overlay")
+    local bb=surface(w.width,400); w:paintTo(bb,0,0)
+    local first=w._orbitui_series_title_lines
+    assert(first)
+    require("adapters/orbitui_series_titles").boxWidget(Painter)
+    w:paintTo(bb,0,0); H.eq(w._orbitui_series_title_lines,first)
+    H.eq(first[1].free_count,nil)
+    w:init(); for _,ln in ipairs(first) do H.eq(ln.free_count,1,"reinit frees old title") end
+    w:paintTo(bb,0,0)
+    local second=w._orbitui_series_title_lines; assert(second~=first)
+    w.first_look.aspect=.5; w:paintTo(bb,0,0)
+    for _,ln in ipairs(second) do H.eq(ln.free_count,1,"refit frees old title") end
+    local third=w._orbitui_series_title_lines; assert(third~=second)
+    w:free(); for _,ln in ipairs(third) do H.eq(ln.free_count,1,"teardown frees title") end
+    w:free(); for _,ln in ipairs(third) do H.eq(ln.free_count,1,"teardown must not double free") end
+    Text.free,cover_aspect=free,1.5
+end)
+
 -- Optional shape-only preview from the real stencil, not device fonts/covers.
-local preview = os.getenv("ORBITUI_RATING_PREVIEW")
+local title_preview = os.getenv("ORBITUI_SERIES_TITLE_PREVIEW")
+local preview = title_preview or os.getenv("ORBITUI_RATING_PREVIEW")
 if preview then
     local out = assert(io.open(preview, "w"))
     local function color(c)
@@ -809,20 +928,28 @@ if preview then
         return "#353b42"
     end
     local function esc(s) return s:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;") end
-    out:write('<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="600" viewBox="0 0 1400 600">')
+    local preview_h = title_preview and 1400 or 600
+    out:write(string.format('<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="%d" viewBox="0 0 1400 %d">', preview_h, preview_h))
     out:write('<defs><pattern id="cover" width="30" height="30" patternUnits="userSpaceOnUse">')
     out:write('<rect width="30" height="30" fill="#dec9a1"/><path d="M0 0L30 30M-15 0L15 30M15 0L45 30" stroke="#b99666" stroke-width="2"/>')
-    out:write('</pattern></defs><rect width="1400" height="600" fill="#f1ede4"/>')
+    out:write(string.format('</pattern></defs><rect width="1400" height="%d" fill="#f1ede4"/>', preview_h))
     out:write('<text x="25" y="30" font-size="18" fill="#202830">Native paint calls; placeholder artwork and approximate fonts</text>')
-    for i, spec in ipairs({{title = "No rating"}, {title = "Rating 8.72", score = "8.72"},
-            {title = "Rating 10.00", score = "10.00"}, {title = "Landscape cover", score = "8.72", aspect = .6}}) do
+    local samples = title_preview and {
+        {title="Below (existing)",score="8.72"},
+        {title="On cover",score="8.72",position="overlay"},
+        {title="Long series title",name="A very long series title",position="overlay"},
+        {title="Landscape cover",aspect=.6,position="overlay"},
+    } or {{title = "No rating"}, {title = "Rating 8.72", score = "8.72"},
+        {title = "Rating 10.00", score = "10.00"}, {title = "Landscape cover", score = "8.72", aspect = .6}}
+    for i, spec in ipairs(samples) do
         cover_aspect = spec.aspect or 1.5
         if spec.score then ratingProvider(STAR .. spec.score) else package.loaded[REGISTRY] = nil end
-        local w = ratedBox()
+        local w = ratedBox(nil, nil, spec.name, spec.position)
         local bb = surface(w.width, 400); w:paintTo(bb, 0, 0)
-        local x = (i - 1) * 345 + 25
-        out:write(string.format('<text x="%d" y="65" font-size="20" fill="#202830">%s</text>', x, spec.title))
-        out:write(string.format('<g transform="translate(%d,90) scale(2)"><g transform="translate(0,%g)">', x, -w.top))
+        local x = title_preview and ((i - 1) % 2 * 690 + 40) or ((i - 1) * 345 + 25)
+        local y = title_preview and (math.floor((i - 1) / 2) * 650 + 90) or 90
+        out:write(string.format('<text x="%d" y="%d" font-size="20" fill="#202830">%s</text>', x, y - 25, spec.title))
+        out:write(string.format('<g transform="translate(%d,%d) scale(2)"><g transform="translate(0,%g)">', x, y, -w.top))
         for _, rect in ipairs(bb.rects) do
             if rect.color ~= "text" then
                 out:write(string.format('<rect x="%g" y="%g" width="%g" height="%g" fill="%s"/>',
