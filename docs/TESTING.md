@@ -2,6 +2,24 @@
 
 ## Automated
 
+2026-10-18 alpha.46 publication preparation: explicitly requested after the
+rounded rating-notch follow-up `fdc7958d`. Complete sequential Lua/LuaJIT gates
+passed on the versioned tree: 615/616 root cases in 51 files, 395 Bookshelf
+suites, all 13 SimpleUI files, 91 Python checks, 43 translation catalogues,
+317 module paths and 850 syntax files. Nine actual MAL provider probes also
+passed on each runtime, using fixture settings without plugin initialization
+or network. Existing SQLite/native-font, absent-Bookends and four external
+artwork-source skips remain; no failure allowances were added.
+
+The remaining publication gates seal a clean-commit package.
+Audit the full inventory and outgoing history, including held artwork; compare
+bootstrap/API, upstream pins and assets with public alpha.45. Exercise the
+actual alpha.45 installer for upgrade/rollback and truncated-download recovery,
+both CI jobs, downloaded draft hashes and anonymous public discovery/install.
+Store evidence in `test-results/alpha46-20261018/`. Only VERSION and release
+documentation change during publication preparation. Physical-device corner,
+colour/night, typography and interaction checks remain open; this is a prerelease.
+
 2026-10-18 rounded MAL cutout (unpublished follow-up to alpha.45): the rating
 uses the native stencil, mirrored to the top-left, instead of an overlay frame.
 Focused checks cover mirrored light edges/curves, text-dependent notch widths,

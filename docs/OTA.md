@@ -335,6 +335,16 @@ included. Code rollback retains preferences but older runtimes do not implement
 Kanzenban or the new box badge. Earlier backup/migration caveats and physical
 device-acceptance gaps still apply.
 
+Alpha.46 replaces the physical series-box rating sticker with a rounded
+top-left cover cutout. The cached star-plus-score text uses the box's own ink;
+the cover's size/proportions and the count/overflow/name placements are unchanged.
+Folder badges retain their appearance. Alpha.45 and earlier alpha installations
+can update through the same preview channel and unchanged bootstrap/API 1.
+No upstream import, artwork, settings migration, reading-data or external sync
+change is included. Code rollback to alpha.45 restores the separate rating
+sticker without changing data. Earlier backup/migration caveats and physical
+device-acceptance gaps still apply.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

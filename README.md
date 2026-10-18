@@ -16,9 +16,10 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.45** adds a taller Kanzenban binding option and cached MAL
-star ratings on physical series-box covers. Alpha.44's natural spine widths,
-partial filling and `+N` remain, along with complete read/total counts,
+Version **0.1.0-alpha.46** places physical series-box MAL ratings in a rounded
+cover-corner cutout instead of a separate badge. Alpha.45's Kanzenban option
+and cached ratings remain, along with alpha.44's natural spine widths,
+partial filling and `+N`, complete read/total counts,
 aspect-true covers, scoped binding choices, the automatic-cover fix and bounded
 image picker. Bookshelf **5.5.2** (`c7a9db2c`) and SimpleUI **2.7.5** (`7eb80f9e`)
 remain the reviewed upstream baselines.
@@ -33,7 +34,7 @@ labels/sizes, ornaments,
 custom icons and dock/Bento layout are retained. Back up settings before
 updating: new grouped-order, ledger and module edits are not mirrored to older
 code on rollback. New surface choices are likewise not mirrored to older code.
-See [the release notes](docs/releases/0.1.0-alpha.45.md)
+See [the release notes](docs/releases/0.1.0-alpha.46.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
@@ -44,18 +45,15 @@ where shelf space permits. Covers retain their proportions, and page-derived
 spine widths do not grow. Saved Tankobon choices display as Paperback without
 rewriting those preferences; existing Paperback/Hardcover choices are unchanged.
 
-Physical series boxes show the linked MyAnimeList community
-rating as a small star badge (for example `★8.72`) at the upper-left of the
-cover. It uses the same cached provider and badge style as folder cards, not a
-personal score or a new network request. The read/total and `+N` stay above
-the cover; the series name stays below. Unlinked/unrated series have no badge,
-and exceptionally small covers omit it instead of clipping text.
-
-Unpublished follow-up: the physical box rating now sits directly on the board
-in a rounded cutout at the cover's upper-left, instead of a separate badge.
-Only that small corner is masked; cover size, proportions, head counts and
-series names are unchanged. The cutout follows the text's width and disappears
-with the rating. Folder-card badges keep their existing appearance.
+Physical series boxes show the linked MyAnimeList community rating (for example
+`★8.72`) directly on the board in a rounded cutout at the cover's upper-left.
+It uses the same cached provider and font scale as folder cards, not a personal
+score or a new network request, with the box's own text colour. Only that small
+corner is masked; cover size and proportions are unchanged. Read/total and `+N`
+stay above the cover, with the series name below. The cutout follows the text's
+width and disappears with the rating. Unlinked/unrated series have no cutout;
+exceptionally small covers omit it instead of clipping text. Folder-card badges
+keep their existing appearance.
 
 Long-press a shelf chip > **Book binding** to choose Hardcover, Paperback or
 Kanzenban / large format. Long-press a series box > **Book binding** for an override

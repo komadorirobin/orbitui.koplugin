@@ -2422,6 +2422,23 @@ evidence belongs in `test-results/rating-notch-20261018/`; device checks remain
 explicit in TESTING.md. Any local alpha.45 package must not replace the public
 alpha.45 release asset.
 
+## 2026-10-18: Prepare alpha.46 for explicit publication
+
+User requested "Publicera" after the rounded MAL-notch implementation at
+`fdc7958d`. Include that follow-up and bump VERSION to 0.1.0-alpha.46, with
+release/OTA documentation. Do not import upstream, modify artwork or bootstrap,
+rewrite preferences or reading data, publish the archived box-design branch,
+or replace any previously published asset. Bootstrap API stays at 1.
+
+Re-run sequential full Lua/LuaJIT suites and translations on the versioned
+tree, build from a clean commit, audit runtime/outgoing history, and exercise
+the actual alpha.45 installer's offline upgrade/rollback and recovery. Verify
+both CI jobs and downloaded draft hashes before publication, then anonymous
+public release discovery/download/install. Evidence belongs in
+`test-results/alpha46-20261018/`. Physical Bigme corner/colour/night typography
+and interaction acceptance remains outstanding; use a prerelease, not latest
+stable. No additional runtime changes are part of this publication step.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
