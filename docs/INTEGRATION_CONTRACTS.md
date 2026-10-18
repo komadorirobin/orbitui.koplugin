@@ -751,6 +751,32 @@ Tests: `tests/test_shared_book_panel.lua`, `test_shared_home.lua`,
 `test_shared_search.lua`, `test_shared_settings.lua`.
 See `SHARED_UI.md` for the minimal component seams and device checklist.
 
+The 2026-10-18 **Reading dashboard** is an opt-in external SimpleUI module and
+an additive first Home page, never a migration of the user's existing Bento
+layout. Disabling it removes only that module and empty generated pages;
+later user edits, other Home/Custom Screen pages, wallpaper, fonts and dock
+preferences survive. Preserve native open/hold handlers, independent cover-row
+pagination, cover-cache ownership and stats/cover refresh slots. Its height
+reserves the dock-adjusted content bounds, module margin and pager; font sizes
+must not double-apply device DPI. It owns its individual card chrome, so native
+whole-module background controls must not be offered as if they affected it.
+
+Reuse native recent-book filtering/metadata, the New Books source, the cached
+BookOrbit Want to Read list and StatsProvider. Ongoing rows omit the hero,
+duplicates, unread, abandoned and finished entries. Use the configured
+Hardcover goal when that module is enabled, otherwise the local annual goal;
+an unavailable remote goal must not be silently replaced with unrelated local
+numbers. The dashboard participates in the existing Want to Read auto-refresh
+gate, respecting its opt-out, without introducing a sync writer, network paint
+work or a remote-download action. It does not import the future BookOrbit UI.
+
+Source: `core/orbitui_dashboard.lua`, `adapters/orbitui_dashboard.lua`,
+`adapters/orbitui_dashboard_view.lua`, explicit UI loader/settings seams.
+Tests: `tests/test_dashboard.lua`, `test_shared_settings.lua`; optional schematic
+from `tests/dashboard_preview.lua` uses synthetic covers/approximate text, not
+real-device output. Check native fonts/touch, offline cache, rotation, night
+mode, sleep/resume and book-close updates on the Bigme before device acceptance.
+
 ## C11: Author-bound ornaments
 
 Bundled author busts and their trial copies must never enter the ordinary deck.

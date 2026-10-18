@@ -42,6 +42,9 @@ function M.items(close)
     end
     return {
         { text = _("Home"), callback = navigate(function() home("home_screen_settings") end) },
+        { text = _("Reading dashboard"), sub_item_table_func = function()
+            return require("adapters/orbitui_dashboard").menuItems()
+        end },
         { text = _("Library"), callback = navigate(function() M.library("prose") end) },
         { text = _("Manga & comics"), callback = navigate(function() M.library("comics") end) },
         { text = _("Home shelves"), sub_item_table_func = function()

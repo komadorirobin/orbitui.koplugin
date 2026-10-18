@@ -23,7 +23,7 @@ package.loaded["lib/bookshelf_menu_host"] = {
 package.loaded["adapters/orbitui_updates"] = {
     menuLabel = "Uppdatera OrbitUI", show = function() updates = updates + 1 end,
 }
-local search_opts, panel_args, shelf_menu, installed
+local search_opts, panel_args, shelf_menu, installed, dashboard_installed
 package.loaded["core/orbitui_search"] = { show = function(opts) search_opts = opts or true end }
 package.loaded["core/orbitui_shelf_query"] = { capture = function(w)
     return { chip = w.chip, profile = w.profile_key }
@@ -35,22 +35,28 @@ package.loaded["adapters/orbitui_home_shelves"] = {
     install = function(registry) installed = registry end,
     menuItems = function() return {} end,
 }
+package.loaded["adapters/orbitui_dashboard"] = {
+    install = function(registry) dashboard_installed = registry end,
+    menuItems = function() return { { text = "Dashboard toggle" } } end,
+}
 local Settings = require("adapters/orbitui_settings")
 local Integration = require("adapters/orbitui_ui")
 H.test("shared settings expose Home, Library, Manga, appearance and the sole updater", function()
     local host = Settings.show()
     H.eq(host.title, "OrbitUI settings")
-    H.eq(#host.item_table, 8)
+    H.eq(#host.item_table, 9)
     host.item_table[1].callback()
     H.eq(host.closed, true); H.eq(opened_screen, "home_screen_settings")
-    host.item_table[2].callback(); H.eq(profile, "prose")
+    H.eq(host.item_table[2].text, "Reading dashboard")
+    H.eq(host.item_table[2].sub_item_table_func()[1].text, "Dashboard toggle")
+    host.item_table[3].callback(); H.eq(profile, "prose")
     H.eq(shown.item_table[#shown.item_table].text, "Existing native setting")
-    host.item_table[3].callback(); H.eq(profile, "comics")
+    host.item_table[4].callback(); H.eq(profile, "comics")
     H.eq(package.loaded["lib/bookshelf_settings"]._plugin, plugin)
-    host.item_table[5].sub_item_table[1].callback(); H.eq(opened_screen, "style_settings")
-    host.item_table[5].sub_item_table[3].callback(); H.eq(opened_screen, "bars_settings")
-    host.item_table[7].callback(); H.eq(updates, 1)
-    host.item_table[8].callback(); H.eq(opened_screen, "__root__")
+    host.item_table[6].sub_item_table[1].callback(); H.eq(opened_screen, "style_settings")
+    host.item_table[6].sub_item_table[3].callback(); H.eq(opened_screen, "bars_settings")
+    host.item_table[8].callback(); H.eq(updates, 1)
+    host.item_table[9].callback(); H.eq(opened_screen, "__root__")
 end)
 H.test("native component settings entries converge on one shared menu key", function()
     local bs = { buildMenuItems = function(_, items)
@@ -99,6 +105,7 @@ H.test("saved Home modules register via the component loader seam", function()
     local registry = {}
     H.eq(Integration.wrap("modules/moduleregistry", registry), registry)
     H.eq(installed, registry)
+    H.eq(dashboard_installed, registry)
 end)
 H.test("owned labels follow Swedish locale without replacing component translators", function()
     G_reader_settings = { readSetting = function() return "sv_SE" end }

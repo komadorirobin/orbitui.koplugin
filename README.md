@@ -68,6 +68,19 @@ that follows that series across shelves, or choose **Follow shelf** to clear it.
 Untouched shelves retain Hardcover. Choices affect physical books and box
 member spines, not book metadata, cover-grid/list views or reading progress.
 
+Unpublished Home option: **OrbitUI settings > Reading dashboard > Show dashboard
+as first Home page** adds a BookOrbit-inspired card layout without replacing
+any existing pages. It combines a larger continue-reading card, daily/week/streak
+statistics, three in-progress books, the existing reading goal, and three-cover
+BookOrbit Want to Read / Recently added rows. Arrows page those rows independently.
+Tap books to open, hold them for the existing book panel; tap the goal/statistics
+cards for their settings. The dark hero can be switched off. Disabling the page
+preserves edits to other pages and never resets data, wallpaper or dock choices.
+The existing Hardcover goal is used when that module is enabled, otherwise the
+local annual KOReader goal. This is a local-book view, not a new BookOrbit sync
+client: unavailable remote covers/books are not downloaded, no library totals
+are invented, and no pet/remote-download feature is copied from the reference.
+
 Box members pack left at natural widths, up to eight visible volumes; `+N`
 counts additional local volumes not drawn, not missing or unread books.
 Unknown or reader-layout-dependent page counts use a neutral thickness.

@@ -2461,6 +2461,31 @@ paint calls but uses placeholder artwork and approximate fonts, not a device.
 No upstream import, VERSION bump, push, tag, GitHub release or OTA publication.
 Any local alpha.46 package must not replace the existing public alpha.46 asset.
 
+## 2026-10-18: Optional BookOrbit-inspired Home dashboard (not published)
+
+User supplied their SimpleUI Home and an upcoming BookOrbit dashboard as visual
+references. Add an opt-in **Reading dashboard** under OrbitUI settings, as a
+new first Home page rather than overwriting the existing layout. Reuse existing
+reading, statistics, goal, Want to Read and New Books providers. Keep the dock
+and book open/hold routes, and preserve the reader's older pages on disable.
+
+The adapter owns native rounded cards, a dark/light hero option, independent
+three-cover pagers and bounded responsive geometry. Stats update its tree;
+cover completion replaces only its borrowed cover widgets, not text or data.
+DPI is applied exactly once to fonts. Native module chrome settings are skipped
+because this module draws multiple cards itself. Explicit loader seams register
+the module and include its enabled state in BookOrbit's existing auto-refresh
+gate. There are no component edits, new sync owners, remote download buttons,
+invented summary counts or imported artwork.
+
+Evidence belongs in `test-results/dashboard-20261018/`: sequential Lua/LuaJIT
+suites, translations and clean-commit package checks. The optional SVG/PNG
+schematic comes from the real widget positions with synthetic cover art and
+approximate fonts; it is not a device screenshot. Bigme rendering, touches and
+performance remain to be checked. Preserve the previous unpublished title-on-
+cover commit. No upstream merge, VERSION bump, push, tag or release; a locally
+rebuilt alpha.46 ZIP must never replace the already-public alpha.46 asset.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

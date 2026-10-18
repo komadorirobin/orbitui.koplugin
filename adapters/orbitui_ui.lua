@@ -17,6 +17,8 @@ M.modules = {
     ["lib/bookshelf_theme_pack"] = true,
     ["lib/bookshelf_theme_menu"] = true,
     ["modules/moduleregistry"] = true,
+    ["integrations/sui_bookorbit_want"] = true,
+    ["features/sui_module_chrome"] = true,
     ["screens/sui_menu"] = true,
     ["screens/sui_bottombar"] = true,
     ["infra/sui_patches"] = true,
@@ -95,6 +97,11 @@ function M.wrap(name, module)
         require("adapters/orbitui_shelf_themes").menu(module)
     elseif name == "modules/moduleregistry" then
         require("adapters/orbitui_home_shelves").install(module)
+        require("adapters/orbitui_dashboard").install(module)
+    elseif name == "integrations/sui_bookorbit_want" then
+        require("adapters/orbitui_dashboard").wrapWantProvider(module)
+    elseif name == "features/sui_module_chrome" then
+        require("adapters/orbitui_dashboard").wrapChrome(module)
     elseif name == "screens/sui_bottombar" then
         require("adapters/orbitui_navbar").bottombar(module)
     elseif name == "screens/sui_menu" then
