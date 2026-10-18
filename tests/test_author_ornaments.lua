@@ -12,6 +12,22 @@ local plant = { name = "plant.svg", w = 30 }
 local bike = { name = "Manga/Kaneda Motorcycle.png", pack = "Manga", w = 110 }
 local mushroom = { name = "Manga/Walking Mushroom.png", pack = "Manga", w = 60 }
 local mortar = { name = "Manga/Apothecary Mortar.png", pack = "Manga", w = 85 }
+local manga_added = {
+    { "Nyanko Sensei", "series:natsume", { "Natsume’s Book of Friends", "NATSUME'S BOOK OF FRIENDS", "夏目友人帳" } },
+    { "Brushbuddy", "series:witch-hat-atelier", { "Witch Hat Atelier", "Tongari Boushi no Atelier", "とんがり帽子のアトリエ" } },
+    { "Ohmu", "series:nausicaa", { "Nausicaä of the Valley of the Wind", "NAUSICAÄ OF THE VALLEY OF THE WIND", "風の谷のナウシカ" } },
+    { "Mimic Chest", "series:frieren", { "Frieren: Beyond Journey’s End", "Frieren: Beyond Journey's End", "葬送のフリーレン" } },
+    { "Pochita", "series:chainsaw-man", { "Chainsaw Man", "CHAINSAW MAN", "チェンソーマン" } },
+    { "Turbo Granny", "series:dandadan", { "Dandadan", "Dan Da Dan", "ダンダダン" } },
+    { "Transponder Snail", "series:one-piece", { "One Piece", " ONE  PIECE ", "ワンピース" } },
+    { "Kettenkrad", "series:girls-last-tour", { "Girls' Last Tour", "Girls’ Last Tour", "少女終末旅行" } },
+    { "Camp Tent", "series:laid-back-camp", { "Laid-Back Camp", "Yuru Camp", "ゆるキャン△" } },
+    { "Armillary Sphere", "series:orb", { "Orb: On the Movements of the Earth (Omnibus)", "Orb: On the Movements of the Earth", "Chi: On the Movements of the Earth" } },
+    { "Cafe Alpha", "series:yokohama-kaidashi-kikou", { "Yokohama Kaidashi Kikou: Deluxe Edition", "Yokohama Kaidashi Kikou", "ヨコハマ買い出し紀行" } },
+}
+for _, subject in ipairs(manga_added) do
+    subject.piece = { name = "Manga II/" .. subject[1] .. ".png", pack = "Manga II", w = 75 }
+end
 local added = {
     { file = "August Strindberg", id = "august strindberg", names = { "August Strindberg", "Johan August Strindberg" } },
     { file = "Stanislaw Lem", id = "stanislaw lem", names = { "Stanis\197\130aw Lem", "STANIS\197\129AW LEM", "Stanislaw Lem" } },
@@ -136,6 +152,70 @@ H.test("series miniatures never enter the random or bare-shelf deck", function()
     h = fixture(unrelated, { cards={bike,mushroom,mortar} })
     H.eq(next(h.row_orn), nil); H.eq(next(h.bare(2, 10)), nil)
     H.eq(bust(unrelated[1]), nil); H.eq(bust(unrelated[2]), nil)
+end)
+
+H.test("all eleven additions match actual library names and preserve exact-series boundaries", function()
+    for _, subject in ipairs(manga_added) do
+        local piece, id, names = subject.piece, subject[2], subject[3]
+        H.eq(Manga.pieces[piece.name], id)
+        for _, name in ipairs(names) do
+            local e = volume(1, name)
+            H.eq(Manga.seriesOf(e), id)
+            e.book.kind, e.book._series_box = "series", true
+            H.eq(Manga.seriesOf(e), id)
+            H.eq(Manga.seriesOf({book={},item={kind="series",series_name=name}}), id)
+            H.eq(Manga.seriesOf(volume(1, name .. " Art Book")), nil)
+            H.eq(Manga.seriesOf(volume(1, "About " .. name)), nil)
+            H.eq(Manga.seriesOf({book={title=name,filepath="/"..name..".epub"}}), nil)
+        end
+    end
+    for _, name in ipairs({"Witch Hat Atelier Kitchen", "One Piece Novel A", "Orb", "Natsume", "Girls"}) do
+        H.eq(Manga.seriesOf(volume(1, name)), nil)
+    end
+end)
+
+H.test("every new miniature stays with its own series and out of the random deck", function()
+    local cards = {plant, bike, mushroom, mortar}
+    for _, subject in ipairs(manga_added) do cards[#cards+1] = subject.piece end
+    for _, subject in ipairs(manga_added) do
+        local es = {volume(1,subject[3][1]),volume(2,subject[3][1]),volume(3,"Unrelated")}
+        local h, rows, env = fixture(es, {cards=cards,width=700})
+        H.eq(#rows, 1); H.eq(bust(es[1]).entry, subject.piece)
+        H.eq(bust(es[2]), nil); H.eq(bust(es[3]), nil)
+        H.eq(#h.dealer.cards, 1); H.eq(h.dealer.cards[1], plant)
+        for _, pl in pairs(h.bare(2, 10)) do H.eq(pl.entry, plant) end
+        assertFits(es, rows, h, env)
+        for _, options in ipairs({{cards=cards,level="off"}, {cards={plant,bike}}}) do
+            local disabled = {volume(1,subject[3][1])}
+            fixture(disabled, options)
+            H.eq(bust(disabled[1]), nil)
+        end
+    end
+end)
+
+H.test("new series pieces fit narrow rows, balance safely and yield to author busts", function()
+    local cards, entries = {plant, joyce, woolf}, {}
+    for i, subject in ipairs(manga_added) do
+        cards[#cards+1] = subject.piece
+        entries[#entries+1] = volume(i,subject[3][1])
+    end
+    for _, width in ipairs({90,150,200,320,700}) do
+        local es = clone(entries)
+        -- At the narrowest width, ordinary pieces can occupy empty rows before each book.
+        local max_rows = #es * (Layout.MAX_EMPTY_RUN + 1)
+        local h, rows, env, widths = fixture(es, {cards=cards,width=width,n_rows=max_rows})
+        H.eq(rows[#rows].last,#es)
+        assertFits(es, rows, h, env)
+        local g,l,nb,fixed,accept = h.final()
+        local balanced = Layout.balanceRows(widths,h.avail,g,#es,#rows,
+            {lead=l,no_break=nb,fixed=fixed,row_accept=accept})
+        assertFits(es, balanced or rows, h, env)
+    end
+    local es = {volume(1,manga_added[1][3][1]),entry(2,"James Joyce"),entry(3,"Virginia Woolf")}
+    local h, rows, env = fixture(es, {cards=cards,width=700})
+    H.eq(#rows,1); H.eq(bust(es[1]),nil)
+    H.eq(bust(es[2]).entry,joyce); H.eq(bust(es[3]).entry,woolf)
+    assertFits(es, rows, h, env)
 end)
 
 H.test("only one series miniature fits a row even if several matching series do", function()
@@ -424,6 +504,11 @@ end)
 
 local function checkPagination(with_manga)
     local cards = { joyce, plant, woolf, bike, mushroom, mortar }
+    local series = {"Akira", "Dungeon Meshi", "The Apothecary Diaries"}
+    for _, subject in ipairs(manga_added) do
+        cards[#cards+1] = subject.piece
+        series[#series+1] = subject[3][1]
+    end
     local names = { "James Joyce", "Virginia Woolf", "Other", "James Joyce" }
     for _, subject in ipairs(added) do
         local pack = subject.pack or "Authors"
@@ -434,11 +519,11 @@ local function checkPagination(with_manga)
         for per_page = 1, 3 do
             for _, level in ipairs({ "rarely", "often", "always" }) do
                 local es = {}
-                for i = 1, 72 do
+                for i = 1, 144 do
                     es[i] = entry(i, names[(math.floor((i - 1) / 5) % #names) + 1], 75 + i % 3 * 15, i % 5 == 1)
                     if with_manga and i % 12 < 8 then
                         es[i].author = "Other"
-                        es[i].book.series_name = ({"Akira","Dungeon Meshi","The Apothecary Diaries"})[math.floor(i/8)%3+1]
+                        es[i].book.series_name = series[math.floor(i/8)%#series+1]
                     end
                 end
                 local h, rows, env = fixture(es, { width = width, per_page = per_page,

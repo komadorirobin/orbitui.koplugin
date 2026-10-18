@@ -255,5 +255,56 @@ H.test("Manga failures retry without overwriting completed files or marking succ
     H.eq(files[target .. "Apothecary Mortar.png"], "complete mortar")
     assert(files[mark])
 end)
+H.test("Manga II upgrades preserve the original pack and use an independent marker", function()
+    fixture()
+    local old = "/settings/bookshelf/ornaments/Manga/"
+    local target = "/settings/bookshelf/ornaments/Manga II/"
+    local pack = Manga.packs[2]
+    local mark = "/settings/orbitui/" .. pack.marker
+    local old_mark = "/settings/orbitui/" .. Manga.packs[1].marker
+    local function install() return Manga.seed("/slot", "/settings/bookshelf/ornaments") end
+    files[old_mark] = "old pack already installed"
+    files[old .. "ornaments.json"] = "user placement and disabled mushroom"
+    files[old .. "Kaneda Motorcycle.png"] = "user bike"
+    files[target .. "ornaments.json"] = "custom new metadata"
+    files[target .. "Pochita.png"] = "custom Pochita"
+    H.eq(install(), true)
+    H.eq(files[old .. "ornaments.json"], "user placement and disabled mushroom")
+    H.eq(files[old .. "Kaneda Motorcycle.png"], "user bike")
+    H.eq(files[old .. "Walking Mushroom.png"], nil)
+    H.eq(files[old_mark], "old pack already installed")
+    H.eq(files[target .. "ornaments.json"], "custom new metadata")
+    H.eq(files[target .. "Pochita.png"], "custom Pochita")
+    for _, name in ipairs(pack.files) do
+        if name ~= "ornaments.json" and name ~= "Pochita.png" then
+            H.eq(files[target .. name], files["/slot/assets/ornaments/Manga II/" .. name])
+        end
+    end
+    assert(files[mark])
+    files[target .. "Brushbuddy.png"] = nil
+    H.eq(install(), false); H.eq(files[target .. "Brushbuddy.png"], nil)
+    for _, name in ipairs(pack.files) do files[target .. name] = nil end
+    H.eq(install(), false)
+    for _, name in ipairs(pack.files) do H.eq(files[target .. name], nil) end
+end)
+H.test("failed Manga II copies retry without resetting earlier files or either pack", function()
+    fixture()
+    local target = "/settings/bookshelf/ornaments/Manga II/"
+    local input = "/slot/assets/ornaments/Manga II/Cafe Alpha.png"
+    local mark = "/settings/orbitui/" .. Manga.packs[2].marker
+    local old_mark = "/settings/orbitui/" .. Manga.packs[1].marker
+    local function install() return Manga.seed("/slot", "/settings/bookshelf/ornaments") end
+    files[old_mark] = "old pack deliberately removed"
+    files[input] = nil
+    H.eq(pcall(install), false); H.eq(files[mark], nil)
+    H.eq(files[old_mark], "old pack deliberately removed")
+    H.eq(files["/settings/bookshelf/ornaments/Manga/Walking Mushroom.png"], nil)
+    files[target .. "Ohmu.png"] = "user edit during partial install"
+    files[input] = "retry cafe"
+    H.eq(install(), true)
+    H.eq(files[target .. "Ohmu.png"], "user edit during partial install")
+    H.eq(files[target .. "Cafe Alpha.png"], "retry cafe")
+    assert(files[mark])
+end)
 io.open, os.rename, os.remove = original_open, original_rename, original_remove
 H.finish()

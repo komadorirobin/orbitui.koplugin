@@ -1,0 +1,43 @@
+MANGA MINIATURES II / ORBITUI
+Generated with the built-in OpenAI image_gen tool, 2026-10-18.
+Exact prompts, SHA-256 hashes, dimensions, alpha bounds and research links:
+prompts.json. All eleven PNGs are unmodified generated colour images with alpha.
+Research links informed subject identification and original context captions;
+no third-party product photo, artwork bitmap or 3D model was supplied as image
+input to the generator. No reference-site images are bundled or redistributed.
+
+UNOFFICIAL FAN ART
+
+Nyanko Sensei.png: Nyanko-sensei / Natsume's Book of Friends.
+Brushbuddy.png: Brushbuddy (Fudemushi) / Witch Hat Atelier, with an ink bottle.
+Ohmu.png: Ohmu / Nausicaa of the Valley of the Wind.
+Mimic Chest.png: the mimic treasure chest / Frieren: Beyond Journey's End.
+Pochita.png: Pochita / Chainsaw Man.
+Turbo Granny.png: Turbo Granny's beckoning-cat form / Dandadan.
+Transponder Snail.png: Den Den Mushi / One Piece.
+Kettenkrad.png: the travellers' vehicle / Girls' Last Tour.
+
+These are original AI-generated unofficial fan-art interpretations, not photos
+of licensed figures and not official or endorsed merchandise artwork. The
+underlying characters/story-specific designs belong to their respective rights
+holders. No blanket character/design license is asserted by this pack. Review
+the intended public distribution separately; these files are not offered as
+CC0, unrestricted official art, or licensed copies of existing figure designs.
+
+ORIGINAL THEMATIC STILL LIFES
+
+Camp Tent.png: a generic tent, cooking pot and stove, associated with Laid-Back
+Camp. No specific commercial tent design or manga panel is reproduced.
+Armillary Sphere.png: generic brass astronomical rings on a wooden foot,
+associated with Orb: On the Movements of the Earth. Not a replica of a prop.
+Cafe Alpha.png: a generic coffee cup, saucer and enamel pot, associated with
+Yokohama Kaidashi Kikou. Not a reproduction of the manga's exact tableware.
+
+OrbitUI makes any copyright it holds in these three original assets available
+under CC BY 4.0, to the extent applicable:
+https://creativecommons.org/licenses/by/4.0/
+Suggested attribution: OrbitUI, AI-generated thematic manga miniatures (2026).
+Their series associations are an OrbitUI feature, not an official endorsement.
+
+These artwork notes are separate from the source code license. Generating an
+image does not establish ownership or clearance of underlying third-party IP.

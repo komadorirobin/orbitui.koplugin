@@ -1,0 +1,206 @@
+{
+  "tool": "built-in image_gen (OpenAI)",
+  "created": "2026-10-18",
+  "method": "Original text-prompt generation, transparent_background=true. Unmodified output bytes; no input/reference bitmaps. Research links identify the subjects, not assets cleared for copying.",
+  "assets": [
+    {
+      "file": "Nyanko Sensei.png",
+      "width": 1322,
+      "height": 1190,
+      "sha256": "f031b3f5d484a849e2ed0af96128a7bceeabc46722d1b4a2ebc8820eaf113f3f",
+      "alpha_bbox_at_24": [
+        71,
+        75,
+        1258,
+        1138
+      ],
+      "references": [],
+      "research_sources": [
+        "https://www.goodsmile.info/en/product/9009/Nendoroid+Takashi+Natsume+Nyanko+Sensei.html"
+      ],
+      "artwork_license": "Unofficial fan art; no blanket underlying character/design license asserted",
+      "prompt": "Use case: stylized-concept. Asset type: one transparent PNG ornament for a skeuomorphic manga bookshelf on a color e-ink reader. Create an original illustration rendered as a tasteful realistic hand-painted resin or ceramic collectible miniature, not a photograph of an existing commercial product. Original unofficial fan-art interpretation of Nyanko-sensei from Natsume's Book of Friends: the familiar very plump round white calico beckoning-cat form, tiny triangular ears, gray and ochre patches on the forehead, narrow relaxed dark eyes and distinctive red cheek markings, small content mouth, little paws tucked under the round body, red collar and small golden bell. A single seated cat with the pose and finish of an understated Japanese ceramic lucky-cat ornament. No raised arm, no other cat, no pedestal. Shelf-eye-level view with a slight front three-quarter angle, stable resting pose on one horizontal baseline. Soft upper-left studio light, tactile matte/satin surfaces, rich but natural colors, strong clear silhouette readable at a displayed height of 100 pixels. Keep all parts visible and tightly framed with a small transparent margin on all sides. Genuinely transparent background and internal gaps. No shelf, floor, backdrop, display plinth unless explicitly part of the subject, ground shadow, external cast shadow, text, lettering, logos, watermark or unrelated props. No people. Do not grayscale."
+    },
+    {
+      "file": "Brushbuddy.png",
+      "width": 1402,
+      "height": 1122,
+      "sha256": "e50919295fc03edc5ce8fceac9d7ab89f0d5700f4b322026e11a40a1f34c7782",
+      "alpha_bbox_at_24": [
+        141,
+        95,
+        1299,
+        1052
+      ],
+      "references": [],
+      "research_sources": [
+        "https://tongari-anime.com/en/character/detail/?chara=08"
+      ],
+      "artwork_license": "Unofficial fan art; no blanket underlying character/design license asserted",
+      "prompt": "Use case: stylized-concept. Make one original unofficial fan-art ornament of Brushbuddy (Fudemushi) from Witch Hat Atelier, rendered as a finely hand-painted matte ivory resin miniature. It is NOT a cat, fox, dog, squirrel or bird. Its defining silhouette is a long soft furry worm/ferret-like creature: a smooth blunt upright rounded head with just TWO LARGE ROUND DARK EYES set in pale circular rims, no visible ears, no nose, no muzzle, no mouth. The upright head connects directly to a low elongated white body and one very long thick fluffy tail that curls gently around the FRONT of the body in a broad C shape on the ground. Tiny paws are mostly hidden by the low body. Fur is subtly sculpted in soft shallow tufts, not elaborate feather layers or spikes. Tail stays LOW, not a huge upward plume. Beside the curled tail at the right sits one small plain indigo ceramic closed ink bottle. Creature dominant. Make an original composition, not a copy of a commercial figurine. Shelf-eye-level front three-quarter view. All contact points on the same horizontal baseline. Warm ivory with gentle natural shadow, soft upper-left studio lighting. Crisp readable outline at 100 pixels tall. The complete compact group is centered with small clear margins. True transparent alpha background and gaps; no visible backdrop, no light halo, no glow, no floor, no external shadow, no scenic base, no text, logos, watermark or other props. Preserve color."
+    },
+    {
+      "file": "Ohmu.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "6d0239dd7b8c46b84791265c6c0d46c259cebe0aff27a9b014c9103c4dd2494e",
+      "alpha_bbox_at_24": [
+        28,
+        128,
+        1509,
+        891
+      ],
+      "references": [],
+      "research_sources": [
+        "https://gkids.com/films/nausicaa-of-the-valley-of-the-wind/"
+      ],
+      "artwork_license": "Unofficial fan art; no blanket underlying character/design license asserted",
+      "prompt": "Use case: stylized-concept. Asset type: one transparent PNG ornament for a skeuomorphic manga bookshelf on a color e-ink reader. Create an original illustration rendered as a tasteful realistic hand-painted resin or ceramic collectible miniature, not a photograph of an existing commercial product. Original unofficial fan-art interpretation of an Ohmu from Nausicaa of the Valley of the Wind: a single peaceful miniature of the great armored insect. Low elongated domed body composed of overlapping olive-gray patinated shell segments, a rounded front studded with fourteen smooth turquoise-blue eye domes, and small closely spaced legs tucked under the body. All eyes calm blue, not red. The shell should read like a finely sculpted aged bronze/painted resin collectible, visibly segmented but not overly detailed. Broad near-side view with the head angled slightly toward viewer. No Nausicaa, no scenic base, no plants. Shelf-eye-level view with a slight front three-quarter angle, stable resting pose on one horizontal baseline. Soft upper-left studio light, tactile matte/satin surfaces, rich but natural colors, strong clear silhouette readable at a displayed height of 100 pixels. Keep all parts visible and tightly framed with a small transparent margin on all sides. Genuinely transparent background and internal gaps. No shelf, floor, backdrop, display plinth unless explicitly part of the subject, ground shadow, external cast shadow, text, lettering, logos, watermark or unrelated props. No people. Do not grayscale."
+    },
+    {
+      "file": "Mimic Chest.png",
+      "width": 1402,
+      "height": 1122,
+      "sha256": "29fb1c53c90f5c97eb693b791189c2d582fce4668fd2eb59759eaadc5a93de65",
+      "alpha_bbox_at_24": [
+        200,
+        69,
+        1214,
+        1064
+      ],
+      "references": [],
+      "research_sources": [
+        "https://www.goodsmile.com/en/product/60956/Nendoroid+Mimic"
+      ],
+      "artwork_license": "Unofficial fan art; no blanket underlying character/design license asserted",
+      "prompt": "Use case: stylized-concept. Asset type: one transparent PNG ornament for a skeuomorphic manga bookshelf on a color e-ink reader. Create an original illustration rendered as a tasteful realistic hand-painted resin or ceramic collectible miniature, not a photograph of an existing commercial product. Original unofficial fan-art interpretation of the mimic treasure chest from Frieren: Beyond Journey's End. One compact dark reddish-brown wooden chest with broad dark forged-iron bands and a domed lid held half open, revealing a dark mouth, simple pointed ivory teeth along both rims, and a short curled dusty pink tongue inside. The whole chest rests firmly on its flat lower corners. Read first as a lovely miniature old treasure chest and then as a mischievous monster. No eyes, no arms, no legs or human body sticking out, no Frieren figure, no gold coins, no pedestal. Shelf-eye-level view with a slight front three-quarter angle, stable resting pose on one horizontal baseline. Soft upper-left studio light, tactile matte/satin surfaces, rich but natural colors, strong clear silhouette readable at a displayed height of 100 pixels. Keep all parts visible and tightly framed with a small transparent margin on all sides. Genuinely transparent background and internal gaps. No shelf, floor, backdrop, display plinth unless explicitly part of the subject, ground shadow, external cast shadow, text, lettering, logos, watermark or unrelated props. No people. Do not grayscale."
+    },
+    {
+      "file": "Pochita.png",
+      "width": 1292,
+      "height": 1217,
+      "sha256": "d9a96fec067bbae190024559ed1155f8584c9a786b503a84c13bf6289b160776",
+      "alpha_bbox_at_24": [
+        49,
+        101,
+        1250,
+        1122
+      ],
+      "references": [],
+      "research_sources": [
+        "https://www.goodsmile.com/en/product/12562/PLAMAX+Pochita"
+      ],
+      "artwork_license": "Unofficial fan art; no blanket underlying character/design license asserted",
+      "prompt": "Use case: stylized-concept. Asset type: one transparent PNG ornament for a skeuomorphic manga bookshelf on a color e-ink reader. Create an original illustration rendered as a tasteful realistic hand-painted resin or ceramic collectible miniature, not a photograph of an existing commercial product. Original unofficial fan-art interpretation of Pochita from Chainsaw Man: a single small plump orange doglike chainsaw devil with four stubby legs, expressive dark eyes, a tiny friendly mouth, a short gray toothed chainsaw blade projecting from the forehead, a thick black arched carry handle on top of the orange back, and a little pull-cord tail. Peaceful standing pose, all paws on baseline, blade safely contained inside the canvas. Smooth matte hand-painted resin, strong orange body silhouette, dark blade edge and handle. No blood, no gore, no other character, no pedestal. Shelf-eye-level view with a slight front three-quarter angle, stable resting pose on one horizontal baseline. Soft upper-left studio light, tactile matte/satin surfaces, rich but natural colors, strong clear silhouette readable at a displayed height of 100 pixels. Keep all parts visible and tightly framed with a small transparent margin on all sides. Genuinely transparent background and internal gaps. No shelf, floor, backdrop, display plinth unless explicitly part of the subject, ground shadow, external cast shadow, text, lettering, logos, watermark or unrelated props. No people. Do not grayscale."
+    },
+    {
+      "file": "Turbo Granny.png",
+      "width": 1215,
+      "height": 1295,
+      "sha256": "4ae7c69392606ff03c75eab635449eab0e63a2f88f291c320f7bbd26be12e400",
+      "alpha_bbox_at_24": [
+        189,
+        13,
+        1051,
+        1270
+      ],
+      "references": [],
+      "research_sources": [
+        "https://www.goodsmile.com/en/product/1139021/Nendoroid+Turbo+Granny+Beckoning+Cat+"
+      ],
+      "artwork_license": "Unofficial fan art; no blanket underlying character/design license asserted",
+      "prompt": "Use case: stylized-concept. Create one original unofficial fan-art miniature of Turbo Granny in the beckoning-cat form from Dandadan. It must not resemble Nyanko-sensei: no red cheek stripes and no narrowed slanted fox eyes. Distinctive design: smooth white cat with a large round head, small pointed ears with RED inner surfaces, one dark red circular patch on the TOP between the ears; large round black/dark-blue eyes outlined in black with just a few upward lashes; three thin BLACK straight whisker lines on each cheek; tiny black triangular nose and a simple downturned mouth with a deadpan expression. Red thin neck collar, GREEN little neck bib, a small gold bell and an oval gold coin on the belly. Leave the coin UNLETTERED. Short white body seated naturally with one forepaw raised in the beckoning gesture and two compact feet touching the same horizontal baseline. Render as a beautifully crafted modest matte ceramic ornament with subtle tactile glaze, not a photograph or exact replica of any commercial toy. Shelf-eye-level slight three-quarter frontal view, soft upper-left lighting, strong white/green/red/gold shapes readable at small e-ink shelf size. Entire figure visible and tightly framed with a small transparent margin. Genuinely transparent background and gaps; no base, stand, floor, external shadows, scenery, lettering, logo, gold ball, human figure, watermark or other object."
+    },
+    {
+      "file": "Transponder Snail.png",
+      "width": 1318,
+      "height": 1193,
+      "sha256": "0211f561223e2fe2240bbdd4f8b8f08cc5f297a7e9625c3a043acd12f474b918",
+      "alpha_bbox_at_24": [
+        104,
+        58,
+        1282,
+        1144
+      ],
+      "references": [],
+      "research_sources": [
+        "https://one-piece.com/greg/o20141105_0287/index.html"
+      ],
+      "artwork_license": "Unofficial fan art; no blanket underlying character/design license asserted",
+      "prompt": "Use case: stylized-concept. Asset type: one transparent PNG ornament for a skeuomorphic manga bookshelf on a color e-ink reader. Create an original illustration rendered as a tasteful realistic hand-painted resin or ceramic collectible miniature, not a photograph of an existing commercial product. Original unofficial fan-art interpretation of a classic Den Den Mushi transponder snail telephone from One Piece. A single friendly squat pale warm-ochre snail with two upright short eye stalks and round sleepy eyes, a large muted lavender spiral shell, and an old-fashioned black telephone receiver nestled across the top of the shell on a small saddle. A short thick coiled dark cord connects the receiver to a little simple dial on the shell. Make it charming as a hand-painted collectible, clear silhouette, pastel shell and warm body. Compact and stable low base, no character costume or insignia, no lettering or numbers, no pedestal. Shelf-eye-level view with a slight front three-quarter angle, stable resting pose on one horizontal baseline. Soft upper-left studio light, tactile matte/satin surfaces, rich but natural colors, strong clear silhouette readable at a displayed height of 100 pixels. Keep all parts visible and tightly framed with a small transparent margin on all sides. Genuinely transparent background and internal gaps. No shelf, floor, backdrop, display plinth unless explicitly part of the subject, ground shadow, external cast shadow, text, lettering, logos, watermark or unrelated props. No people. Do not grayscale."
+    },
+    {
+      "file": "Kettenkrad.png",
+      "width": 1672,
+      "height": 941,
+      "sha256": "09edaa3d25fa88280b3adf0b3aadaa3efe1a4bb5bfff7b0af89e239c4693325d",
+      "alpha_bbox_at_24": [
+        44,
+        116,
+        1656,
+        865
+      ],
+      "references": [],
+      "research_sources": [
+        "https://goodsmileshop.com/en/CATEGORY-ROOT/Nendoroid-More/Nendoroid-More--Kettenkrad/p/FCV_WD_00006"
+      ],
+      "artwork_license": "Unofficial fan art; no blanket underlying character/design license asserted",
+      "prompt": "Use case: stylized-concept. Asset type: one transparent PNG ornament for a skeuomorphic manga bookshelf on a color e-ink reader. Create an original illustration rendered as a tasteful realistic hand-painted resin or ceramic collectible miniature, not a photograph of an existing commercial product. Original unofficial fan-art interpretation of Chito and Yuuri's Kettenkrad from Girls' Last Tour, as one weathered olive-green scale-model half-track motorcycle with no riders. A single front motorcycle wheel and handlebars at the left, a low rectangular rear body riding on a pair of rubber caterpillar tracks, an empty open driving seat, restrained rolled canvas baggage and a cylindrical storage drum on the back. Near-side view showing front wheel and the closest full track, slightly looking toward its front. Front tire and tracks rest on exactly the same baseline. Restrained steel/rubber details and chipped olive paint readable at small size. No weapons, flags, military emblems, numbers, people, scenery or pedestal. Wide landscape composition. Shelf-eye-level view with a slight front three-quarter angle, stable resting pose on one horizontal baseline. Soft upper-left studio light, tactile matte/satin surfaces, rich but natural colors, strong clear silhouette readable at a displayed height of 100 pixels. Keep all parts visible and tightly framed with a small transparent margin on all sides. Genuinely transparent background and internal gaps. No shelf, floor, backdrop, display plinth unless explicitly part of the subject, ground shadow, external cast shadow, text, lettering, logos, watermark or unrelated props. No people. Do not grayscale."
+    },
+    {
+      "file": "Camp Tent.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "bf922620eb14bee3968b4834aa1de38c9ce358fc64401b0c9ff1d55cdf177d4f",
+      "alpha_bbox_at_24": [
+        74,
+        104,
+        1492,
+        919
+      ],
+      "references": [],
+      "research_sources": [
+        "https://www.goodsmile.info/en/product/7607/"
+      ],
+      "artwork_license": "CC BY 4.0, to the extent applicable",
+      "prompt": "Use case: stylized-concept. Asset type: one transparent PNG ornament for a skeuomorphic manga bookshelf on a color e-ink reader. Create an original illustration rendered as a tasteful realistic hand-painted resin or ceramic collectible miniature, not a photograph of an existing commercial product. One original generic compact camping still life evoking the quiet atmosphere of Laid-Back Camp, without copying a specific commercial tent design. A low two-person dome tent in muted teal with warm ivory/tan fabric panels, partly open front entrance revealing only a dark cozy empty interior, and one small brushed-aluminum lidded cooking pot on a short dark camping burner beside the entrance. Simple broad shapes, understated fabric seams, no guy lines sprawling outside the grouping. All parts in one cohesive small tabletop miniature with tent dominant and pot clearly secondary. No person, campfire, smoke, scenery, tray or pedestal. Shelf-eye-level view with a slight front three-quarter angle, stable resting pose on one horizontal baseline. Soft upper-left studio light, tactile matte/satin surfaces, rich but natural colors, strong clear silhouette readable at a displayed height of 100 pixels. Keep all parts visible and tightly framed with a small transparent margin on all sides. Genuinely transparent background and internal gaps. No shelf, floor, backdrop, display plinth unless explicitly part of the subject, ground shadow, external cast shadow, text, lettering, logos, watermark or unrelated props. No people. Do not grayscale."
+    },
+    {
+      "file": "Armillary Sphere.png",
+      "width": 1230,
+      "height": 1278,
+      "sha256": "ac4c6365beb07837ff6ebb0ad170e346907edf3d4681d6eb5c26865b12eac016",
+      "alpha_bbox_at_24": [
+        160,
+        11,
+        1070,
+        1236
+      ],
+      "references": [],
+      "research_sources": [
+        "https://sevenseasentertainment.com/series/orb-on-the-movements-of-the-earth-omnibus/"
+      ],
+      "artwork_license": "CC BY 4.0, to the extent applicable",
+      "prompt": "Use case: stylized-concept. Asset type: one transparent PNG ornament for a skeuomorphic manga bookshelf on a color e-ink reader. Create an original illustration rendered as a tasteful realistic hand-painted resin or ceramic collectible miniature, not a photograph of an existing commercial product. One original generic antique armillary sphere, a thematic astronomical ornament for Orb: On the Movements of the Earth, not a claimed replica of a specific story prop. A small polished aged brass sphere made of a restrained arrangement of five substantial interlocking circular metal rings tilted on a central axis, with a small golden ball at the center. Supported by a short brass stem on a small dark walnut circular foot which is an integral part of the object. The rings must be thick enough to remain visible at small e-ink shelf size and have real transparent open spaces between them. Warm brass with dark patina and restrained highlights. No engraved letters or numbers, no extra objects. Shelf-eye-level view with a slight front three-quarter angle, stable resting pose on one horizontal baseline. Soft upper-left studio light, tactile matte/satin surfaces, rich but natural colors, strong clear silhouette readable at a displayed height of 100 pixels. Keep all parts visible and tightly framed with a small transparent margin on all sides. Genuinely transparent background and internal gaps. No shelf, floor, backdrop, display plinth unless explicitly part of the subject, ground shadow, external cast shadow, text, lettering, logos, watermark or unrelated props. No people. Do not grayscale."
+    },
+    {
+      "file": "Cafe Alpha.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "b740cdc329d3d92d4011b276ef378f4a5dcb80f756d0f3cc609268cf1e91e2c4",
+      "alpha_bbox_at_24": [
+        138,
+        82,
+        1513,
+        936
+      ],
+      "references": [],
+      "research_sources": [
+        "https://sevenseasentertainment.com/books/yokohama-kaidashi-kikou-deluxe-edition-1/"
+      ],
+      "artwork_license": "CC BY 4.0, to the extent applicable",
+      "prompt": "Use case: stylized-concept. Asset type: one transparent PNG ornament for a skeuomorphic manga bookshelf on a color e-ink reader. Create an original illustration rendered as a tasteful realistic hand-painted resin or ceramic collectible miniature, not a photograph of an existing commercial product. One original generic quiet cafe still life evoking Alpha's cafe in Yokohama Kaidashi Kikou, not a reproduction of a specific manga prop. A small warm ivory porcelain coffee cup filled with dark coffee on its shallow matching saucer in front, and a modest sage-green enamel coffee pot with rounded body, short curved spout and dark wooden handle immediately behind to the right. Compact cohesive grouping with both resting on same baseline. Hand-painted miniature feel, subtle worn glaze, calm ivory, muted sage and walnut colors. No writing, lettering, branded pattern, steam, cafe sign, table, tray or display base. Shelf-eye-level view with a slight front three-quarter angle, stable resting pose on one horizontal baseline. Soft upper-left studio light, tactile matte/satin surfaces, rich but natural colors, strong clear silhouette readable at a displayed height of 100 pixels. Keep all parts visible and tightly framed with a small transparent margin on all sides. Genuinely transparent background and internal gaps. No shelf, floor, backdrop, display plinth unless explicitly part of the subject, ground shadow, external cast shadow, text, lettering, logos, watermark or unrelated props. No people. Do not grayscale."
+    }
+  ]
+}
+

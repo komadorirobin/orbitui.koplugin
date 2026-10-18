@@ -812,6 +812,16 @@ page boundaries in pagination and display. Disabled packs/pieces and None stay
 disabled. The new pack has its own additive installer marker; it must not reset
 older art, placement or theme selections. Zoom uses the native tap/info fields.
 
+The same day's follow-up adds eleven series-bound pieces in the independent
+Manga II pack: Natsume, Witch Hat Atelier, Nausicaa, Frieren, Chainsaw Man,
+Dandadan, One Piece, Girls' Last Tour, Laid-Back Camp, Orb and Yokohama Kaidashi
+Kikou. Keep the separate installer marker so adding this pack cannot overwrite
+Manga metadata or resurrect its deleted files. Known Omnibus/Deluxe series
+aliases and typographic apostrophes must match without substring inference.
+The same adjacency, row limit, author priority, disabled-state and zoom rules
+apply to both packs. Captions distinguish thematic still lifes from fan art;
+source/provenance notices and unmodified generated PNGs ship with each pack.
+
 For ordinary end ornaments, distribute unused room evenly between the ornament
 and its two slot boundaries (shelf end and adjacent book). The optional
 `SpineShelf.positionOrnamentX` seam is installed by `adapters/orbitui_ornaments.lua`
