@@ -2,6 +2,17 @@
 
 ## Automated
 
+2026-10-18 alpha.47 publication preparation: requested after `31f5fdfc`, including
+the opt-in Reading dashboard, independent two-way book-row paging and the earlier
+per-shelf title-on-cover option. Re-run complete sequential Lua/LuaJIT suites,
+translations and a clean-commit package. Audit all outgoing history/runtime
+assets against published alpha.46, retain stable bootstrap/API 1, and test the
+actual alpha.46 installer's upgrade/rollback and failed-download recovery.
+Verify both CI jobs, downloaded draft assets and anonymous public discovery,
+download and installation. Evidence belongs in `test-results/alpha47-20261018/`.
+No device acceptance is inferred from these gates: physical Bigme typography,
+touches, night mode, rotation and reading-return behavior remain to be checked.
+
 2026-10-18 optional Reading dashboard (unpublished): `tests/test_dashboard.lua`
 checks additive enable/disable and later user edits, duplicate/finished/abandoned
 book filtering, existing cached goal/source selection, no-cache/offline handling,

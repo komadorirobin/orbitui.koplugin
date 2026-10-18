@@ -16,9 +16,11 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.46** places physical series-box MAL ratings in a rounded
-cover-corner cutout instead of a separate badge. Alpha.45's Kanzenban option
-and cached ratings remain, along with alpha.44's natural spine widths,
+Version **0.1.0-alpha.47** adds an optional Reading dashboard with independent
+book-row paging, plus per-shelf titles over series covers. The dashboard adds
+a first Home page without replacing the existing layout. Alpha.46's rounded
+MAL cover-corner cutout, alpha.45's Kanzenban option and cached ratings remain,
+along with alpha.44's natural spine widths,
 partial filling and `+N`, complete read/total counts,
 aspect-true covers, scoped binding choices, the automatic-cover fix and bounded
 image picker. Bookshelf **5.5.2** (`c7a9db2c`) and SimpleUI **2.7.5** (`7eb80f9e`)
@@ -34,7 +36,7 @@ labels/sizes, ornaments,
 custom icons and dock/Bento layout are retained. Back up settings before
 updating: new grouped-order, ledger and module edits are not mirrored to older
 code on rollback. New surface choices are likewise not mirrored to older code.
-See [the release notes](docs/releases/0.1.0-alpha.46.md)
+See [the release notes](docs/releases/0.1.0-alpha.47.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
@@ -50,12 +52,12 @@ Physical series boxes show the linked MyAnimeList community rating (for example
 It uses the same cached provider and font scale as folder cards, not a personal
 score or a new network request, with the box's own text colour. Only that small
 corner is masked; cover size and proportions are unchanged. Read/total and `+N`
-stay above the cover, with the series name below. The cutout follows the text's
+stay above the cover, with the series name below by default. The cutout follows the text's
 width and disappears with the rating. Unlinked/unrated series have no cutout;
 exceptionally small covers omit it instead of clipping text. Folder-card badges
 keep their existing appearance.
 
-Unpublished follow-up: long-press a shelf chip > **Series box title** >
+Long-press a shelf chip > **Series box title** >
 **On the cover (bottom)** to put series names on an opaque, box-coloured plate
 inside the image. This reclaims the separate title strip for the full,
 aspect-preserved cover and aligns it with the bottom inset. The choice is
@@ -68,7 +70,7 @@ that follows that series across shelves, or choose **Follow shelf** to clear it.
 Untouched shelves retain Hardcover. Choices affect physical books and box
 member spines, not book metadata, cover-grid/list views or reading progress.
 
-Unpublished Home option: **OrbitUI settings > Reading dashboard > Show dashboard
+Optional Home layout: **OrbitUI settings > Reading dashboard > Show dashboard
 as first Home page** adds a BookOrbit-inspired card layout without replacing
 any existing pages. It combines a larger continue-reading card, daily/week/streak
 statistics, three in-progress books, the existing reading goal, and three-cover

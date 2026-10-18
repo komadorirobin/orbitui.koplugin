@@ -345,6 +345,19 @@ change is included. Code rollback to alpha.45 restores the separate rating
 sticker without changing data. Earlier backup/migration caveats and physical
 device-acceptance gaps still apply.
 
+Alpha.47 adds an opt-in Reading dashboard as an additional first Home page,
+with independent previous/next paging for Want to Read and New Books. It also
+offers per-shelf series titles on the bottom of the cover, freeing the separate
+title strip for aspect-preserved cover art. Existing layouts and title placement
+stay unchanged until selected. Alpha.46 and earlier alpha installations can
+update through the same preview channel and unchanged bootstrap/API 1. No
+upstream import, artwork change, reading-data migration or new sync owner is
+included. Disable the dashboard before rolling back to alpha.46 or earlier,
+so an older runtime is not left with an unsupported dashboard page; the older
+Home pages remain intact. Code rollback retains the series-title preference,
+which older code ignores. Earlier backup/migration caveats and physical-device
+acceptance gaps still apply.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

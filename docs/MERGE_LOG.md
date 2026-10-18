@@ -2503,6 +2503,24 @@ LuaJIT and clean-commit package gates; evidence under
 remain pending. Any local alpha.46 ZIP is unpublished and must not overwrite
 the existing public release asset.
 
+## 2026-10-18: Prepare 0.1.0-alpha.47 publication
+
+Explicit publication request after `31f5fdfc`. Release the three reviewed local
+changes together: `83fc014b` (series titles over covers), `c36c3a47` (optional
+Reading dashboard) and `31f5fdfc` (two-way book-row paging). Only VERSION and
+release documentation change during preparation. Existing Home layout remains
+the default; enabling the new page is a separate user action.
+
+Keep bootstrap/API 1, upstream pins, artwork and external sync ownership
+unchanged. Preserve the unpushed `design/orbitui-series-boxes` branch and do not
+publish the held artwork or history containing it. Gate publication on full
+Lua/LuaJIT and translation checks, a sealed runtime, outgoing-history/asset
+audits, the actual alpha.46 installer's upgrade/rollback, green CI and verified
+draft/public bytes. Store evidence under `test-results/alpha47-20261018/`.
+Publish as a prerelease; physical-device validation remains open. Never replace
+the previously published alpha.46 asset. Disable the dashboard before code-only
+rollback so the older runtime is not presented with its unsupported page.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
