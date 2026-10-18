@@ -10,8 +10,8 @@ import zipfile
 
 PREFIX = "orbitui.koplugin/"
 ASSET = "orbitui.koplugin.zip"
-MAX_ZIP = 64 * 1024 * 1024
-MAX_TOTAL = 128 * 1024 * 1024
+MAX_ZIP = 128 * 1024 * 1024
+MAX_TOTAL = 256 * 1024 * 1024
 MAX_FILE = 32 * 1024 * 1024
 MAX_FILES = 2000
 MAX_MANIFEST = 1024 * 1024
@@ -56,7 +56,7 @@ def seal(path):
         output.writestr(entry, manifest_bytes)
     if temporary.stat().st_size > MAX_ZIP:
         temporary.unlink()
-        raise AssertionError("Runtime ZIP exceeds the installed OTA updater's 64 MiB limit")
+        raise AssertionError(f"Runtime ZIP exceeds the OTA updater's {MAX_ZIP // (1024 * 1024)} MiB limit")
     temporary.replace(path)
     digest = hashlib.sha256(path.read_bytes()).hexdigest()
     path.with_name(path.name + ".sha256").write_text(f"{digest}  {ASSET}\n", encoding="ascii")

@@ -59,10 +59,14 @@ class PackageTests(unittest.TestCase):
                 self.assertFalse(path.with_name(path.name + ".sha256").exists())
                 self.assertFalse(path.with_suffix(".tmp").exists())
 
-    def test_build_limits_match_the_installed_ota_contract(self):
+    def test_build_limits_match_the_runtime_ota_contract(self):
         self.assertEqual((package.MAX_ZIP, package.MAX_TOTAL, package.MAX_FILE),
-                         (64 * 1024**2, 128 * 1024**2, 32 * 1024**2))
+                         (128 * 1024**2, 256 * 1024**2, 32 * 1024**2))
         self.assertEqual((package.MAX_FILES, package.MAX_MANIFEST), (2000, 1024**2))
+        limits = ", ".join(f"{value // 1024**2} * 1024 * 1024" for value in
+                           (package.MAX_ZIP, package.MAX_TOTAL, package.MAX_FILE))
+        self.assertIn("local MAX_ZIP, MAX_TOTAL, MAX_FILE = " + limits,
+                      (ROOT / "core/orbitui_ota.lua").read_text())
 
 
 if __name__ == "__main__":

@@ -2551,6 +2551,41 @@ no limit is bypassed and no artwork is resized without the pending approval.
 Keep the earlier package-safety changes separate. No push, version bump, tag,
 GitHub release or OTA publication accompanies this icon update.
 
+## 2026-10-18: Prepare alpha.48 OTA size-limit bridge
+
+User explicitly requested a larger updater limit and publication, then chose
+a small OTA intermediate release rather than a one-off manual installation.
+Base this bridge on public alpha.47 (`36745592`), isolated from the pending
+manga/Solar work. Preserve that work for the later full release; no art is
+resized, deleted or imported here. The bridge itself must remain below 64 MiB.
+
+Raise download/extraction budgets to 128/256 MiB. Keep individual files at
+32 MiB, the 2,000-file cap, 1 MiB manifest, strict paths, TLS/hash validation,
+staging/rollback and unchanged bootstrap/API 1. File downloads get ten minutes
+while small in-memory requests retain three minutes and socket blocking stays
+at 15 seconds. The packager now rejects payloads outside these limits without
+replacing the candidate archive; its test checks agreement with runtime bounds.
+The native smoke harness calls the starting runtime's real release selector so
+the older 64 MiB discovery failure can no longer escape the upgrade test.
+
+Only updater, packaging/tests, VERSION and release documentation change. Gate
+publication on Lua/LuaJIT, translations, a sealed sub-64-MiB runtime, actual
+alpha.47 upgrade/rollback, a private larger fixture with alpha.48, outgoing
+history/assets, CI and downloaded draft/public bytes. Evidence:
+`test-results/alpha48-bridge-20261018/`. Physical-device acceptance remains open.
+The larger successor requires the user to install this bridge and restart
+before it is published; do not immediately supersede the bridge with it.
+
+The bridge was published from `2c707ec0` as `v0.1.0-alpha.48`, with an unchanged
+alpha.47 artwork inventory. Both GitHub CI runs passed, and the downloaded
+draft/public ZIPs match the tested 54,356,479-byte runtime. The complete Lua,
+LuaJIT and translation gates passed, as did native alpha.47 upgrade/rollback
+and an alpha.48-only private 79.5 MB test payload; alpha.47 rejects that larger
+payload as expected. The updater changes are merged back into local development
+without publishing the pending manga/Solar commits. Do not reuse alpha.48's tag
+or assets for that combined tree. Wait for the user to confirm installing the
+bridge and restarting KOReader, then prepare a separately versioned successor.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

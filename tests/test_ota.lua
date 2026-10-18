@@ -39,6 +39,17 @@ H.test("release assets must belong to the exact OrbitUI release", function()
     value.assets[1].browser_download_url = "https://github.com/other/repo/releases/download/v0.1.0/orbitui.koplugin.zip"
     assert(not pcall(OTA.select, { value }, true))
 end)
+H.test("larger release ZIPs are accepted only up to the new bounded limit", function()
+    local value = release("0.1.0-alpha.49", true)
+    for _, size in ipairs({ 64 * 1024 * 1024 + 1, 80 * 1024 * 1024, 128 * 1024 * 1024 }) do
+        value.assets[1].size = size
+        H.eq(OTA.select({ value }, true).zip.size, size)
+    end
+    for _, size in ipairs({ 0, -1, 128 * 1024 * 1024 + 1 }) do
+        value.assets[1].size = size
+        assert(not pcall(OTA.select, { value }, true))
+    end
+end)
 H.test("archive paths cannot traverse or create hidden/nested plugins", function()
     for _, path in ipairs({ "../x", "core/../../x", "/root/x", "x\\evil", "x/./y", "x//y",
         "x:y", "x\0y", ".orbitui-active", "components/x.koplugin/main.lua", "x./y" }) do
@@ -101,6 +112,13 @@ H.test("late archive errors are not lost when the reader closes", function()
     assert(not pcall(OTA.extract, "unused", base))
     assert(closed)
     extraction_error = nil
+end)
+H.test("larger packages do not relax the per-file extraction limit", function()
+    entries = {{ path = "orbitui.koplugin/oversized.png", mode = "file", size = 32 * 1024 * 1024 + 1 }}
+    closed = false
+    local ok, err = pcall(OTA.extract, "unused", base)
+    assert(not ok and tostring(err):find("Archive file too large", 1, true))
+    assert(closed)
 end)
 assert(os.execute("rm -rf " .. base))
 H.finish()

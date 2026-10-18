@@ -57,7 +57,7 @@ local Boot = require("orbitui_bootstrap")
 local context = Boot.begin(fixture.root)
 local tag = "v" .. fixture.manifest.version
 local asset_base = "https://github.com/" .. OTA.REPO .. "/releases/download/" .. tag .. "/"
--- Exercise the old installer's discovery limits too, not only extraction.
+-- Exercise the starting installer's discovery limits too, not only extraction.
 local release = assert(OTA.select({ {
     tag_name = tag, draft = false, prerelease = true,
     assets = {

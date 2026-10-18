@@ -47,9 +47,10 @@ function M.get(url, target, limit)
     local https = require("ssl.https")
     local socketutil = require("socketutil")
     local ca = caFile()
+    local timeout = target and 600 or 180
     local output
     local ok, result = pcall(function()
-        socketutil:set_timeout(15, 180)
+        socketutil:set_timeout(15, timeout)
         for _hop = 1, 6 do
             local host = M.host(url)
             local parts, count, started = {}, 0, os.time()
@@ -59,7 +60,7 @@ function M.get(url, target, limit)
                 if not chunk then return 1 end
                 count = count + #chunk
                 if count > limit then return nil, "Download exceeds size limit" end
-                if os.time() - started > 180 then return nil, "Download timed out" end
+                if os.time() - started > timeout then return nil, "Download timed out" end
                 if output then return output:write(chunk) end
                 parts[#parts + 1] = chunk
                 return 1

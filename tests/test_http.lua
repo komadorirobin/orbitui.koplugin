@@ -1,14 +1,14 @@
 package.path = "./?.lua;" .. package.path
 local H = require("tests/helpers")
 local HTTP = require("core/orbitui_http")
-local responses, request_index, timeout_reset, cert_name, observed, closed
+local responses, request_index, timeout_reset, cert_name, observed, closed, timeout
 local old_open = io.open
 io.open = function(path, mode)
     if path == "data/ca-bundle.crt" then return { close = function() end } end
     return old_open(path, mode)
 end
 package.loaded.socketutil = {
-    set_timeout = function() end,
+    set_timeout = function(_, block, total) H.eq(block, 15); timeout = total end,
     reset_timeout = function() timeout_reset = true end,
 }
 package.loaded["ssl.https"] = { tcp = function(params)
@@ -43,7 +43,30 @@ H.test("HTTPS verifies CA and hostname and restores socket timeouts", function()
     fixture()
     responses = {{ code = 200, body = "[]" }}
     H.eq(HTTP.get("https://api.github.com/releases", nil, 10), "[]")
+    H.eq(timeout, 180)
     assert(timeout_reset)
+end)
+H.test("file downloads get a longer bounded timeout without loosening byte limits", function()
+    local path = os.tmpname()
+    local old_time, now = os.time, 0
+    os.time = function() now = now + 200; return now end
+    fixture()
+    responses = {{ code = 200, body = "data" }}
+    H.eq(HTTP.get("https://api.github.com/file", path, 4), 4)
+    H.eq(timeout, 600)
+    assert(timeout_reset)
+    fixture()
+    responses = {{ code = 200, body = "data" }}
+    assert(not pcall(HTTP.get, "https://api.github.com/file", path, 3))
+    assert(timeout_reset)
+    fixture()
+    os.time = function() now = now + 601; return now end
+    responses = {{ code = 200, body = "data" }}
+    local ok, err = pcall(HTTP.get, "https://api.github.com/file", path, 4)
+    assert(not ok and tostring(err):find("Download timed out", 1, true))
+    assert(timeout_reset)
+    os.time = old_time
+    assert(os.remove(path))
 end)
 H.test("hostname mismatch fails even for a CA-verified certificate", function()
     fixture()
