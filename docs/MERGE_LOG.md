@@ -2766,6 +2766,23 @@ Both full runtimes passed: 694 Lua / 695 LuaJIT root cases in 54 files,
 103 Python tests (four existing external-source skips). All 43 translation
 catalogues, 318 module paths and 874 syntax files passed. No new exceptions.
 
+## 2026-10-19: alpha.51 publication preparation
+
+The user explicitly requested publication after the Oneshots/singleton-box
+change. Release the three reviewed local commits: independent dashboard card
+headings, larger pagination controls with card-local swipes, and folder-backed
+Oneshots/single-volume series boxes. Preparation changes only VERSION and
+release documentation. Bookshelf stays at `982375a7`, SimpleUI at `7eb80f9e`;
+there is no new import, artwork migration, bootstrap change or book-data write.
+
+Run full sequential Lua/LuaJIT, translations and clean-commit packaging; audit
+outgoing history and the exact runtime for held artwork/secrets. Verify native
+OTA from public alpha.50, both CI refs and downloaded draft/public bytes. Keep
+the release a prerelease, preserve the unpushed alternate design branch and
+report Bigme rendering/touch acceptance separately. Alpha.48 or later is still
+required for OTA of this larger bundle. Evidence belongs in
+`test-results/alpha51-20261019/`; earlier rollback caveats remain applicable.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

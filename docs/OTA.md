@@ -388,6 +388,19 @@ older installers still require the small alpha.48 bridge because this ZIP
 exceeds 64 MiB. No settings or reading-state migration is introduced. Existing
 rollback caveats and physical-device acceptance gaps remain in effect.
 
+Alpha.51 adds independent Reading dashboard card headings and larger paging
+controls with horizontal swipes for Want to Read and New Books. On the physical
+shelves, named series with one local volume now keep a box; Oneshots directories
+on the Manga/Serier folder chips become folder-backed boxes, including nested
+title folders. Tapping opens the current folder contents; counts and folder
+image/hold actions remain available without inventing series metadata or a
+shared MAL rating. Existing grid/list views, upstream pins, assets, stable
+bootstrap and API 1 are unchanged. Alpha.48 or later can update directly;
+earlier installers still need the alpha.48 bridge. Code rollback retains new
+dashboard headings but older code ignores them, and restores the earlier
+grouping/paging presentation without changing book files or reading state.
+Earlier backup/migration caveats and physical-device acceptance gaps still apply.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

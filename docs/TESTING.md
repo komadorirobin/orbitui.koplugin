@@ -2,6 +2,18 @@
 
 ## Automated
 
+2026-10-19 alpha.51 publication preparation: explicitly requested after the
+Oneshots/singleton boxes, enlarged dashboard pagination/swipes and editable
+card headings. Only VERSION and release documentation change during preparation.
+Re-run full sequential Lua/LuaJIT suites, translations, clean-commit packaging,
+outgoing-history/artwork/secret audits and both CI refs. Compare all runtime
+changes with public alpha.50; bootstrap, assets and upstream pins must remain
+identical. Exercise alpha.50's native installer before publication and against
+anonymous published bytes, including activation, restart, rollback and failed
+download recovery. Verify downloaded draft/public hashes. Evidence belongs in
+`test-results/alpha51-20261019/`. Keep prerelease status; no physical Bigme
+acceptance is inferred from these headless tests.
+
 2026-10-19 Oneshots and singleton boxes (unpublished): exercise exact local
 directory matching, nested title folders, duplicate files, separate same-named
 directories, real series named Oneshots, cached metadata, grouped stubs and
