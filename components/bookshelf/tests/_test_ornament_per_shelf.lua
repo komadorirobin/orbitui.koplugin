@@ -146,14 +146,48 @@ t.test("the author switch is a tick, the same mark the face-out picker uses", fu
         "the Yes/No row helper is dead once nothing calls it")
 end)
 
+local function dial(owner, draft)
+    local definitions = assert(editor:match("(local ORN_STOPS = {.-)\n            rows%[#rows %+ 1%] ="))
+    local row = assert(editor:match('({ text_func = function%(%)%s+return _%("Ornaments"%).-\n                  end })'))
+    local picked = 0
+    local env = { self = owner, draft = draft, Orn = { FREQ_DEFAULT = 1 },
+        math = math, ipairs = ipairs, _ = function(s) return s end,
+        pick = function(change)
+            return function() change(); picked = picked + 1 end
+        end }
+    return assert(load(definitions .. "\nreturn " .. row, "ornament-dial", "t", env))(),
+        function() return picked end
+end
+
 t.test("the pin reaches the shelf behind as it is picked, like the other spine pins", function()
-    -- pick() hands every Shelf style change to on_change, which commits the
-    -- whole working copy (see _test_chip_editor_live_apply).
-    assert(editor:find("draft.ornament_frequency = ORN_STOPS[(ornAt() % #ORN_STOPS) + 1].value", 1, true)
-        and editor:find("callback = pick(function()\n                      draft.ornament_frequency", 1, true),
-        "the ornament dial is not a pick() that reaches the shelf")
+    -- Run the actual row: pick() must still hand the change to live apply,
+    -- even when a host adds a guard before it.
+    local draft = { ornament_frequency = 0.5 }
+    local row, picked = dial({}, draft)
+    eq(row.enabled, true)
+    eq(row.text_func(), "Ornaments: Rarely")
+    row.callback()
+    eq(draft.ornament_frequency, 1)
+    eq(picked(), 1, "the tap did not invoke live apply")
     assert(editor:find("save_tabs[i] = Editor._deepCopy(draft)", 1, true),
         "a change is not written onto the saved shelf whole")
+end)
+
+t.test("a host override is read-only and preserves the saved frequency when removed", function()
+    local owner, draft = { ornament_frequency_override = 0 }, { ornament_frequency = 2 }
+    local row, picked = dial(owner, draft)
+    eq(row.enabled, false)
+    eq(row.text_func(), "Ornaments: None")
+    row.callback()
+    eq(picked(), 0)
+    eq(draft.ornament_frequency, 2)
+    owner.ornament_frequency_override = nil
+    row, picked = dial(owner, draft)
+    eq(row.enabled, true)
+    eq(row.text_func(), "Ornaments: Always")
+    row.callback()
+    eq(draft.ornament_frequency, 0)
+    eq(picked(), 1)
 end)
 
 t.done()

@@ -342,14 +342,14 @@ test("rebuild reserves the painted footer even with a negative top margin", func
     assert(ok, err)
 end)
 
-test("top-level comics folders skip an empty embedded-name label strip", function()
+test("configured folder shelves skip an empty embedded-name label strip", function()
     local widget = bw(750, 1024, false)
-    widget.profile = { key = "comics" }
+    widget.profile = { key = "custom_library" }
     widget.chip = "profile_manga"
     widget._drilldown_path = {}
     widget._shelfLabelMode = function() return "title" end
     widget._profileChip = function()
-        return { kind = "folder", path = "/storage/emulated/0/ePubs/Manga" }
+        return { kind = "folder", path = "/storage/emulated/0/ePubs/Manga", folders_only = true }
     end
     widget._groupDisplayMode = function() return "divider" end
     eq(widget:_shelfLabelStripVisible(), false,
@@ -365,9 +365,10 @@ test("top-level comics folders skip an empty embedded-name label strip", functio
         "drilled shelves may contain books and keep normal labels")
 end)
 
-test("drilled comics folders show at most three list rows", function()
+test("configured drilled folders show at most three list rows", function()
     local widget = bw(750, 1024, false)
-    widget.profile = { key = "comics" }
+    widget.profile = { key = "custom_library" }
+    widget._profileChip = function() return { folder_list_max = 3 } end
     widget._drilldown_path = { { kind = "folder" } }
     widget._chipListValue = function() return 4 end
     eq(widget:_listRows(8), 3, "an existing four-row choice must be capped")

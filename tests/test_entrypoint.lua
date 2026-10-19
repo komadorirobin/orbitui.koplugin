@@ -2,7 +2,7 @@ package.path = "./?.lua;" .. package.path
 local H = require("tests/helpers")
 local root = H.root()
 local Widget = H.widget()
-local messages, deferred, calls, classes, discovered, backup_failure
+local messages, deferred, calls, classes, discovered, backup_failure, setup_failure
 local loader = { loaded_plugins = {}, enabled_plugins = {} }
 loader._discover = function() return discovered end
 package.loaded.pluginloader = loader
@@ -17,6 +17,14 @@ package.loaded["core/orbitui_backup"] = { ensure = function()
     if backup_failure then error("cannot create backup") end
     calls[#calls + 1] = "backup"
 end }
+package.loaded["adapters/orbitui_setup"] = {
+    prepare = function()
+        if setup_failure then error("unsupported setup state") end
+        calls[#calls + 1] = "setup:prepare"
+    end,
+    started = function() calls[#calls + 1] = "setup:started" end,
+    stopped = function() calls[#calls + 1] = "setup:stopped" end,
+}
 package.loaded["core/orbitui_runtime"] = {
     install = function() calls[#calls + 1] = "resolver" end,
     classes = function() return classes end,
@@ -25,6 +33,7 @@ local function fixture()
     messages, deferred, calls, discovered = {}, {}, {}, {}
     loader.loaded_plugins = {}
     backup_failure = false
+    setup_failure = false
     classes = {}
     for _, name in ipairs({ "bookshelf", "simpleui" }) do
         local id = name
@@ -37,16 +46,16 @@ end
 local function instantiate(class, document)
     return class:new{ ui = { document = document, menu = { registerToMainMenu = function() end } } }
 end
-H.test("discovery prepares backup and resolver before component initialization", function()
+H.test("discovery snapshots settings then detects setup before loading components; guide starts only after attach", function()
     fixture()
     local class = dofile(root .. "/main.lua")
-    H.eq(table.concat(calls, ","), "backup,resolver")
+    H.eq(table.concat(calls, ","), "backup,setup:prepare,resolver")
     local fm = instantiate(class)
-    H.eq(table.concat(calls, ","), "backup,resolver,init:bookshelf,init:simpleui")
+    H.eq(table.concat(calls, ","), "backup,setup:prepare,resolver,init:bookshelf,init:simpleui,setup:started")
     H.eq(fm._orbitui_error, nil)
     fm:handleEvent{ handler = "onCloseDocument" }
-    H.eq(calls[5], "close:bookshelf")
-    H.eq(calls[6], "close:simpleui")
+    H.eq(calls[7], "close:bookshelf")
+    H.eq(calls[8], "close:simpleui")
 end)
 H.test("FileManager and reader each receive one component pair", function()
     fixture()
@@ -94,5 +103,13 @@ H.test("partial initialization failure removes aliases and reports a restart", f
     H.eq(loader.loaded_plugins.simpleui, nil)
     deferred[1]()
     assert(messages[1]:find("restart", 1, true))
+    assert(not table.concat(calls, ","):find("setup:started", 1, true))
+end)
+H.test("unknown setup state blocks initialization before component defaults or a guide", function()
+    fixture(); setup_failure = true
+    local fm = instantiate(dofile(root .. "/main.lua"))
+    H.eq(table.concat(calls, ","), "backup")
+    H.eq(#fm, 0)
+    assert(fm._orbitui_error:find("unsupported setup", 1, true))
 end)
 H.finish()

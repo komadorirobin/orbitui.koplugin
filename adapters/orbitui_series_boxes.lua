@@ -59,7 +59,7 @@ local function localPath(path)
     return path ~= "" and path or "/"
 end
 
-function M.oneshotsPath(filepath, root)
+function M.oneshotsPath(filepath, root, folder_name)
     filepath, root = localPath(filepath), localPath(root)
     if not filepath or not root then return end
     local prefix = root == "/" and root or root .. "/"
@@ -68,23 +68,25 @@ function M.oneshotsPath(filepath, root)
     -- Only directory components count, never a book named Oneshots.epub.
     for part in filepath:sub(#prefix + 1):gmatch("([^/]+)/") do
         parent = parent .. "/" .. part
-        if part:lower() == "oneshots" then return parent end
+        if part:lower() == (folder_name or "Oneshots"):lower() then return parent end
     end
 end
 
 local function folderRoot(self)
-    if not self.profile or self.profile.key ~= "comics" then return end
+    if not self.profile then return end
     local last = tip(self)
     if last and last.kind ~= "folder" then return end
     local chip = require("lib/bookshelf_profiles").chip(self.profile, self.chip)
-    if chip and chip.kind == "folder" then return chip.path end
+    if chip and chip.kind == "folder" and chip.group_folder_name then
+        return chip.path, chip.group_folder_name
+    end
 end
 
-function M.folderBoxes(items, root, light_meta)
+function M.folderBoxes(items, root, light_meta, folder_name)
     local Boxes = require("lib/bookshelf_series_boxes")
     local out, groups = {}, {}
     for _, item in ipairs(items) do
-        local folder = not item.is_remote and not item.books and M.oneshotsPath(item.filepath, root)
+        local folder = not item.is_remote and not item.books and M.oneshotsPath(item.filepath, root, folder_name)
         if folder then
             local group = groups[folder]
             if not group then
@@ -120,14 +122,19 @@ local function nativeTab(self)
 end
 
 function M.widget(widget)
-    -- Keep OrbitUI's existing all-series policy, but let Bookshelf own the
-    -- compaction, geometry, painting, counts and member status marks.
+    -- Presets change policy, never the saved per-shelf choices or box design.
     widget._seriesBoxesEnabled = function(self)
         local last, tab = tip(self), nativeTab(self)
-        local root = folderRoot(self)
+        local policy = require("adapters/orbitui_appearance").policy().boxes
+        if policy == "off" then return false end
+        if policy == "native" then
+            local saved = self.profile and require("lib/bookshelf_profiles").shelfSettings(self.profile, self.chip) or tab
+            if not (saved and saved.series_boxes) then return false end
+        end
+        local root, folder_name = folderRoot(self)
         local folder = last and last.kind == "folder" and last.payload and localPath(last.payload.path)
         return self:_isSpineMode()
-            and not (folder and root and M.oneshotsPath(folder .. "/_", root))
+            and not (folder and root and M.oneshotsPath(folder .. "/_", root, folder_name))
             and not (tab and tab.source and tab.source.kind == "single_series")
             and not (last and (last.kind == "series" or last.kind == "search"
                 or last.kind == "opds_nav"))
@@ -136,9 +143,11 @@ function M.widget(widget)
     widget._prepareSpineItems = function(self, items, total)
         if not self:_seriesBoxesEnabled() or (total and total > #items) then return items end
         local light_meta = require("lib/bookshelf_book_repository").lightMetaFor
-        local root = folderRoot(self)
-        if root then items = M.folderBoxes(items, root, light_meta) end
-        return require("lib/bookshelf_series_boxes").prepare(items, light_meta, { include_singletons = true })
+        local root, folder_name = folderRoot(self)
+        if root then items = M.folderBoxes(items, root, light_meta, folder_name) end
+        return require("lib/bookshelf_series_boxes").prepare(items, light_meta, {
+            include_singletons = require("adapters/orbitui_appearance").policy().boxes == "all",
+        })
     end
     widget.spineShowSectionBadges = function(self)
         local last = tip(self)

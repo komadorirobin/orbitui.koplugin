@@ -88,6 +88,18 @@ H.test("legacy grid badge scale remains readable without changing other badge de
     H.eq(Config.getBadgeScalePct("recent"), 150)
     H.eq(memory.simpleui_bookgrid_badge_scale, 165)
 end)
+H.test("hosted SimpleUI does not choose startup or book-close targets before OrbitUI setup", function()
+    local block = section(read("main.lua"), "        local _sui_first_run =", '        logger.info("simpleui[diag]: init first_run=')
+    for _, hosted in ipairs({ true, false }) do
+        local start, close
+        run(block, { self = { _orbitui_owned = hosted }, SUISettings = { get = function() return nil end },
+            Config = { BOOK_CLOSE_TARGET = { HOMESCREEN = "homescreen" },
+                setStartWithHomescreen = function(value) start = value end,
+                setBookCloseTarget = function(value) close = value end } })
+        H.eq(start, not hosted and true or nil)
+        H.eq(close, not hosted and "homescreen" or nil)
+    end
+end)
 
 local titlebar = read("screens/sui_titlebar.lua")
 H.test("classic titlebar retains old menu and back icons while tabs is opt-in", function()

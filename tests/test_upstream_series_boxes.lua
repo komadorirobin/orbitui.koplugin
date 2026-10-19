@@ -258,6 +258,20 @@ H.test("opening and restoring an Oneshots box use the native folder path without
     restored._drilldown_path = {}; H.eq(restored:_seriesBoxesEnabled(), true)
 end)
 
+H.test("custom folder grouping works in any library and does not rebox its contents", function()
+    local raw = { mangaBook("Short stories/A.epub"), mangaBook("Short stories/B.epub") }
+    local w = widget(raw)
+    w.profile = { key = "section_7", roots = { manga_root }, chips = {
+        { key = "books", kind = "folder", path = manga_root, group_folder_name = "Short stories" },
+    } }
+    w.chip = "books"
+    local boxes = w:_prepareSpineItems(raw, #raw)
+    H.eq(#boxes, 1); H.eq(boxes[1].book_count, 2); H.eq(boxes[1].label, "Short stories")
+    w._drilldown_path = { { kind = "folder", payload = { path = manga_root .. "/Short stories" } } }
+    H.eq(w:_seriesBoxesEnabled(), false)
+    H.eq(w:_prepareSpineItems(raw, #raw), raw)
+end)
+
 H.test("author groups retain members, bust identity and native box signatures", function()
     local raw = {kind = "author", series_name = "Joyce", books = members(3)}
     for _, b in ipairs(raw.books) do b.author = "James Joyce" end
@@ -1155,5 +1169,28 @@ if preview then
     out:write('</svg>'); out:close()
     cover_aspect = 1.5; package.loaded[REGISTRY] = nil
 end
+
+H.test("preset switches repaginate real native box lists and restore singleton and per-chip choices", function()
+    local A = require("adapters/orbitui_appearance")
+    local policy = { version = 1, preset = "classic" }
+    A.prepare({ readSetting = function() return policy end }, false)
+    metas = {}
+    tab = { source = { kind = "folder" }, series_boxes = true }
+    local raw = { book(100), book(101, "Solo"), book(102, "Pair"), book(103, "Pair") }
+    local w = widget(raw)
+    A.widget(w)
+    local items = w:_spineCachedFetch(100)
+    H.eq(#items, 3); H.eq(Boxes.isBox(items[2]), true); H.eq(items[2].book_count, 1)
+    policy.preset = "native"
+    items = w:_spineCachedFetch(100)
+    H.eq(#items, 3); H.eq(items[2], raw[2]); H.eq(Boxes.isBox(items[3]), true)
+    local jumped = w:_jumpScanList(); H.eq(#jumped, 3); H.eq(jumped[2], raw[2])
+    policy.preset = "minimal"
+    H.eq(w:_spineCachedFetch(100), raw); H.eq(w:_jumpScanList(), raw)
+    policy.preset = "native"; tab.series_boxes = false
+    H.eq(w:_spineCachedFetch(100), raw)
+    policy.preset = "classic"; H.eq(#w:_spineCachedFetch(100), 3)
+    H.eq(tab.series_boxes, false); H.eq(raw[2]._series_box, nil)
+end)
 
 H.finish()

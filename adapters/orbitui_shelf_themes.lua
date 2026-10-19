@@ -32,8 +32,8 @@ function M.tabs(all)
     local out = {}
     local TM = require("lib/bookshelf_tab_model")
     for _, tab in ipairs(all and TM.load() or TM.getActive()) do out[#out + 1] = tab end
-    for _, key in ipairs({ "prose", "comics" }) do
-        local profile = profiles().get(key)
+    for _, profile in ipairs(profiles().list()) do
+        local key = profile.key
         for _, chip in ipairs(profile.chips) do
             out[#out + 1] = M.tab("orbitui:" .. key .. ":" .. chip.key)
         end

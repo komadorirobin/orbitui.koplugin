@@ -31,7 +31,7 @@ function M.ensure()
     local parent = settings .. "/orbitui"
     local backup = parent .. "/before-first-run"
     local marker = backup .. "/COMPLETE"
-    if lfs.attributes(marker, "mode") == "file" then return backup end
+    if lfs.attributes(marker, "mode") == "file" then return backup, true end
     for _, dir in ipairs({ parent, backup }) do
         if lfs.attributes(dir, "mode") ~= "directory" then
             assert(lfs.mkdir(dir))
@@ -76,7 +76,7 @@ function M.ensure()
     assert(ok, err)
     assert(closed, close_err)
     assert(os.rename(marker .. ".tmp", marker))
-    return backup
+    return backup, false
 end
 
 return M

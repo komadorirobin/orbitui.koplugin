@@ -24,11 +24,41 @@ Source: `main.lua`, `core/orbitui_plugin.lua`, `core/orbitui_guard.lua`, `core/o
 
 ## C02: Navigation and close ownership
 
-Home belongs to SimpleUI; prose and manga library views belong to Bookshelf.
+Home belongs to SimpleUI; configured library sections belong to Bookshelf.
 Keep the dock's active item, profile roots and current drilldown consistent.
 Do not let a generic Show/PathChanged event steal a destination already chosen
 by another component. A stale deferred callback must not reopen the previous
 book or raise the wrong screen.
+
+User-approved generalisation, stage 1 (October 19, 2026): runtime sections are
+stored in `orbitui_libraries` (version 1) in the Bookshelf settings store. Import
+the old prose/comics definitions only when profile-specific settings prove that
+they were used, not merely because a stock Bookshelf settings file exists. Keep
+the old profile and chip IDs, settings keys, themes, binding overrides, Home
+references and dispatcher aliases. Never move books or rewrite reading data.
+A clean install seeds a local Library from KOReader's chosen home directory;
+without one, it offers section creation instead of guessing device paths.
+
+Section names, icons, roots, order and shelves are editable. Folder sources use
+the native source-descriptor shape; Bookshelf still owns query/render engines.
+Disable sections without deleting their settings. Disabled/stale Home and search
+references fail closed; do not silently display the entire library. Dock actions,
+search scopes, theme inventories, reader-return matching and Home prewarming
+must resolve the same saved inventory. Longest-root matching is deterministic.
+Changing a root updates descendant folder sources, not shelf IDs or actual files.
+
+The old comics-only presentation choices (folder-label strip and three-row
+folder-list cap) are now explicit shelf options. The Oneshots grouping rule is
+an optional subfolder-name rule on any folder shelf; migrating the old Manga
+and Comics shelves preserves their original choices. The legacy definitions in
+the component remain a migration fixture, not OrbitUI's live source of truth.
+
+Source: `core/orbitui_libraries.lua`, `adapters/orbitui_libraries.lua`,
+`adapters/orbitui_library_settings.lua`. Regression coverage:
+`tests/test_libraries.lua`, `tests/test_library_settings.lua`, shared settings,
+search, themes and component navigation suites. Device acceptance still needed:
+rename/move a library root, add a dock destination, switch from Home and reader,
+then restart and verify existing profile-specific appearance and Home pins.
 
 Preserve the warm shelf on an ordinary reader return, but drain windows on
 exit. Closing a book via gesture, menu or end-of-book dialog must reach the
@@ -216,13 +246,30 @@ choices do not overwrite old preferences, nor roll back into them automatically.
 Tests: `test_upstream_20261016` and the prior layout/label/cache suites.
 
 Per the user's 2026-10-04 request, the shelf/spines view faces **all books**
-cover-forward, including existing prose/manga chips and profile overrides.
-`adapters/orbitui_ui.lua` sets the widget's native face-out policy to `all`;
+cover-forward in **Classic OrbitUI**, including existing prose/manga chips and profile overrides.
+`adapters/orbitui_appearance.lua` sets the widget's native face-out policy to `all`;
 rendering and pagination must continue to share the native geometry. Ordinary
 grid/list/Auto modes and shelf decorations remain unchanged. Retain saved
 orientation choices for rollback rather than migrating preferences. The chip
 editor's optional `face_out_override` makes its row read-only and report All
 books, without changing the draft. Tests: `tests/test_face_out_shelves.lua`.
+
+User-approved standalone stage 4 (2026-10-19) makes that policy selectable.
+Existing OrbitUI hosts retain Classic; new hosts (including first-time OrbitUI
+over standalone components) default to native Shelf settings. Minimal forces
+face-out without boxes or any ornaments. Store the versioned policy separately
+from native preferences; never erase per-shelf orientation, box toggles or pack
+choices. Profile `series_boxes` must use the qualified style record, not a
+same-named native tab. Classic alone installs the optional packs and performs
+the additional once-per-session shuffle; matching/spacing for already-installed
+artwork is retained in other decorated presets. No policy switch deletes files.
+Guide changes are draft-only until review/confirmation, standalone selection
+also confirms, and both preserve Home/wallpaper/icons/accounts/reading state.
+Clear prepared spine lists on switching, including parked widgets before their
+next fetch/rebuild, so render and pagination use the same new policy. Earlier
+all-face-out/all-series descriptions below refer to the Classic preset.
+Tests: `test_appearance`, `test_setup_ui`, `test_backup`, the existing face-out,
+series-box and ornament suites. Device acceptance remains a separate gate.
 
 Bookshelf 5.4.3 explicit Auto is per drill level: `view_level1` governs the
 chip's top level (collapsed or expanded), `view_level2` all its drills.
@@ -722,6 +769,20 @@ recoverable migration is required. The automatic first-run snapshot is limited
 to UI settings and Bookshelf-owned links; it is not a full device backup.
 Never overwrite a completed snapshot or erase sidecars/progress to roll back UI.
 
+The approved standalone-configuration work adds a host-owned setup guide
+(`core/orbitui_setup.lua`, `adapters/orbitui_setup.lua`). Detect fresh versus
+existing configuration before component initialization and persist that decision
+in the versioned `settings/orbitui/setup.lua`, never in credential/history files.
+Existing installations are not automatically reconfigured. Draft edits and
+cancellation must not write UI choices; save only on reviewed confirmation.
+Keep existing Home pages, scope IDs, book-close target and accounts. Suppress
+embedded SimpleUI onboarding and its automatic first-run startup override only
+when OrbitUI owns the instance. Reader-first startup defers automatic setup;
+teardown invalidates pending UI callbacks. Optional-integration inspection is
+local/read-only and must not call providers or expose tokens.
+Tests: `test_setup.lua`, `test_setup_ui.lua`, `test_runtime.lua`,
+`test_simpleui_upstream_20261009.lua`. Device acceptance remains required.
+
 The 2026-10-04 Japan ornament request permits one narrow, reversible presentation
 migration: disable exact copies of the two bundled stock plants after the Japan
 pack has installed successfully. Keep the SVG files, all custom drawings, pack
@@ -819,9 +880,30 @@ numbers. The dashboard participates in the existing Want to Read auto-refresh
 gate, respecting its opt-out, without introducing a sync writer, network paint
 work or a remote-download action. It does not import the future BookOrbit UI.
 
+The user-approved standalone stage 2 (2026-10-19) makes these cards configurable
+per Home/Custom Screen prefix. Preserve the original default geometry and old
+BookOrbit choice on existing installations; new screens default to local TBR.
+Use stable card IDs, a versioned config, separate headings, six reorderable main
+blocks and four separately hideable/reorderable statistics within their group.
+Hidden blocks leave no holes. The view must rebuild touch/swipe/cover regions
+from current geometry, keeping cards and controls inside the dock-safe body.
+An entirely hidden dashboard has a settings affordance. Layout restoration is
+confirmed and affects only visibility/order, never sources/headings/other pages.
+
+Both cover rows bind read-only to native TBR/new/recent/collection producers or
+saved Bookshelf references through `core/orbitui_shelf_query`, including current
+scope/filter/sort and flattened series membership. Missing, disabled or deleted
+sources fail closed; unsupported schemas are not overwritten. Only the changed
+source resets its pager; reordering preserves independent pagination. Hidden
+cards do not load their book/goal providers. Extend the existing BookOrbit
+auto-refresh gate only for visible BookOrbit-backed rows, without overriding
+other modules or the global opt-out. Goal source may explicitly select local or
+Hardcover while the automatic mode retains existing behavior.
+
 Source: `core/orbitui_dashboard.lua`, `adapters/orbitui_dashboard.lua`,
-`adapters/orbitui_dashboard_view.lua`, explicit UI loader/settings seams.
-Tests: `tests/test_dashboard.lua`, `test_shared_settings.lua`; optional schematic
+`adapters/orbitui_dashboard_view.lua`, `adapters/orbitui_dashboard_sources.lua`,
+`adapters/orbitui_dashboard_settings.lua`, explicit UI loader/settings seams.
+Tests: `tests/test_dashboard.lua`, `test_dashboard_config.lua`, `test_shared_settings.lua`; optional schematic
 from `tests/dashboard_preview.lua` uses synthetic covers/approximate text, not
 real-device output. Check native fonts/touch, offline cache, rotation, night
 mode, sleep/resume and book-close updates on the Bigme before device acceptance.

@@ -6,9 +6,10 @@ local Context = require("core/orbitui_context")
 function M.scopes(ref)
     local scopes = {
         { id = "all", text = _("Entire library") },
-        { id = "prose", text = _("Library") },
-        { id = "comics", text = _("Manga & comics") },
     }
+    for _i, section in ipairs(require("lib/bookshelf_profiles").list()) do
+        scopes[#scopes + 1] = { id = section.key, text = _(section.label) }
+    end
     if ref and Query.resolve(ref) then
         scopes[#scopes + 1] = { id = "current", text = _("Current shelf") }
     end
@@ -29,7 +30,7 @@ function M.search(text, scope_id, ref)
         if failure then return {}, false, failure end
         allowed = {}
         for _i, fp in ipairs(files) do allowed[fp] = true end
-    elseif scope_id == "prose" or scope_id == "comics" then
+    elseif Profiles.get(scope_id) then
         scope = Profiles.scope(Profiles.get(scope_id))
     elseif scope_id ~= "all" then
         return {}, false, "missing"

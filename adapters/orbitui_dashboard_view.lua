@@ -78,7 +78,7 @@ function Dashboard:replaceContent(ctx, data)
     self._dashboard_ctx, self._dashboard_data = ctx, data
     self._actions, self._cover_slots, self._held = {}, {}, nil
     self._swipe_areas = {}
-    self[1] = M.content(self, Model.plan(self.dimen.w, self.dimen.h), ctx, data)
+    self[1] = M.content(self, Model.plan(self.dimen.w, self.dimen.h, data.config), ctx, data)
     if old then old:free() end
 end
 
@@ -171,6 +171,7 @@ function M.content(widget, p, ctx, data)
 
     -- Hero: covers stay in colour; only the surrounding card is dark.
     local r, dark = p.hero, data.dark
+    if r then
     box(r, dark and ink or paper, dark and ink or nil)
     local label = data.current and data.current.data.status == "complete" and "Last opened" or "Continue reading"
     title(heading("hero", _(label)), r, dark)
@@ -195,6 +196,7 @@ function M.content(widget, p, ctx, data)
         text(_("Open a book to start reading."), r.x + p.pad, r.y + px(60),
             r.w - p.pad * 2, 17, false, dark and paper or ink, 3)
     end
+    end
 
     local stats = data.stats
     local tiles = {
@@ -205,14 +207,17 @@ function M.content(widget, p, ctx, data)
     }
     for i, tile in ipairs(tiles) do
         r = p.stats[i]
+        if r then
         box(r)
         title(heading(tile[4], _(tile[1])), r)
         text(tile[2], r.x + p.pad, r.y + math.floor(r.h * 0.40), r.w - p.pad * 2, 23, true)
         text(_(tile[3]), r.x + p.pad, r.y + r.h - p.pad - px(15), r.w - p.pad * 2, 11, false, muted)
         action(r, settings("reading_stats"))
+        end
     end
 
     r = p.ongoing
+    if r then
     box(r)
     title(heading("ongoing", _("Also reading")), r)
     if #data.ongoing == 0 then
@@ -233,8 +238,10 @@ function M.content(widget, p, ctx, data)
             bookAction(rect(tx, y, tw, rh), book.file)
         end
     end
+    end
 
     r = p.goal
+    if r then
     box(r)
     local goal = data.goal
     title(heading("goal", goal and goal.title and goal.title ~= "" and goal.title
@@ -255,11 +262,22 @@ function M.content(widget, p, ctx, data)
             r.w - p.pad * 2, 14, false, muted, 3)
     end
     action(r, settings(goal and goal.module or "hardcover"))
+    end
 
     local owner = ctx._screen_widget or widget
     owner._orbitui_dashboard_pages = owner._orbitui_dashboard_pages or {}
+    owner._orbitui_dashboard_sources = owner._orbitui_dashboard_sources or {}
     local function shelf(key, label, files, failed, module)
         local area = p[key]
+        if not area then return end
+        local source = data.config and data.config.sources[key]
+        if source then
+            local identity = Model.sourceKey(source)
+            if owner._orbitui_dashboard_sources[key] ~= identity then
+                owner._orbitui_dashboard_pages[key] = 1
+                owner._orbitui_dashboard_sources[key] = identity
+            end
+        end
         box(area)
         local count = 3
         local pages = math.max(1, math.ceil(#files / count))
@@ -301,7 +319,7 @@ function M.content(widget, p, ctx, data)
         if #files == 0 then
             text(failed and _("Could not load books.") or _("No books to show yet."),
                 area.x + p.pad, area.y + px(50), area.w - p.pad * 2, 14, false, muted, 3)
-            action(area, settings(module))
+            action(area, settings(data.config and Model.id or module))
             return
         end
         local slot_w = math.floor((area.w - 2 * p.pad - 2 * p.gap) / count)
@@ -316,8 +334,14 @@ function M.content(widget, p, ctx, data)
             end
         end
     end
-    shelf("want", _("BookOrbit Want to Read"), data.want, data.want_error, "bookorbit_want")
-    shelf("new", _("Recently added"), data.new, data.new_error, "new_books")
+    shelf("want", data.source_labels and data.source_labels.want or _("BookOrbit Want to Read"), data.want, data.want_error, "bookorbit_want")
+    shelf("new", data.source_labels and data.source_labels.new or _("Recently added"), data.new, data.new_error, "new_books")
+    if p.cards and not next(p.cards) then
+        text(_(data.config.unsupported and "This dashboard needs a newer OrbitUI version."
+            or "No cards selected. Tap to configure."), p.pad, p.header_h + p.gap,
+            p.w - 2 * p.pad, 16, false, muted, 3)
+        action(rect(0, p.header_h, p.w, p.h - p.header_h), settings(Model.id))
+    end
     return root
 end
 

@@ -38,6 +38,7 @@ local scopes = {
     comics = { roots = { "/books/comics" } },
 }
 package.loaded["lib/bookshelf_profiles"] = {
+    list = function() return { scopes.prose, scopes.comics } end,
     get = function(key) return { key = key, roots = scopes[key].roots } end,
     scope = function(profile) return scopes[profile.key] end,
 }

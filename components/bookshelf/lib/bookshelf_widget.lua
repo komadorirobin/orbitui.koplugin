@@ -824,6 +824,7 @@ function BookshelfWidget:init()
         self.chip = BookshelfSettings.read("active_chip_" .. self.profile.key)
             or Profiles.defaultChip(self.profile)
             or "latest"
+        if not Profiles.chip(self.profile, self.chip) then self.chip = Profiles.defaultChip(self.profile) end
         self._cursor = 1
     else
         -- Fresh installs have no reading history; saved and profile-specific
@@ -1213,6 +1214,7 @@ function BookshelfWidget:setProfile(profile_key, defer_rebuild)
         self.chip = BookshelfSettings.read("active_chip_" .. profile.key)
             or Profiles.defaultChip(profile)
             or "latest"
+        if not Profiles.chip(profile, self.chip) then self.chip = Profiles.defaultChip(profile) end
     else
         self.chip = BookshelfSettings.read("active_chip") or "all"
     end
@@ -4529,6 +4531,10 @@ function BookshelfWidget:_fetchChipItems(n, want_all)
     if profile_chip and profile_chip.kind == "authors" then
         return Repo.getAuthors(LIMIT, offset, nil, profile_scope)
     end
+    if profile_chip and profile_chip.source then
+        return Repo.getBySource(profile_chip.source, profile_chip.filter, profile_chip.sort_priority,
+            offset, LIMIT, profile_scope, fetch_opts)
+    end
     if tab then
         return Repo.getBySource(tab.source, tab.filter, tab.sort_priority, offset, LIMIT, profile_scope, fetch_opts)
     end
@@ -6208,7 +6214,7 @@ function BookshelfWidget:_shelfLabelStripVisible()
     if not self:_shelfLabelMode() then return false end
     local profile_chip = self:_profileChip(self.chip)
     local top_level_comics_folders = self.profile
-        and self.profile.key == "comics"
+        and profile_chip and profile_chip.folders_only
         and profile_chip and profile_chip.kind == "folder"
         and #(self._drilldown_path or {}) == 0
     if top_level_comics_folders then
@@ -6762,8 +6768,9 @@ function BookshelfWidget:_listRows(max_rows)
     -- Keep this profile-specific rather than lowering list density for prose,
     -- authors, search results, or upstream's regular library.
     local tip = self._drilldown_path and self._drilldown_path[#self._drilldown_path]
-    local comics_folder_limit = self.profile and self.profile.key == "comics"
-        and tip and tip.kind == "folder" and 3 or nil
+    local profile_chip = self:_profileChip(self.chip)
+    local comics_folder_limit = profile_chip and profile_chip.folder_list_max
+        and tip and tip.kind == "folder" and profile_chip.folder_list_max or nil
     if comics_folder_limit
         and (not max_rows or max_rows > comics_folder_limit) then
         max_rows = comics_folder_limit

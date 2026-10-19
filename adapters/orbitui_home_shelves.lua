@@ -247,7 +247,7 @@ function M.shelfMenu(widget, chip)
             end }},
             {{ text = _("Edit shelf"), callback = function()
                 close()
-                if widget.profile then widget:_showProfileShelfStyle(chip)
+                if widget.profile then require("adapters/orbitui_library_settings").shelf(widget.profile.key, chip)
                 else
                     if widget.chip ~= chip then widget:_selectChip(chip) end
                     require("lib/bookshelf_chip_editor"):editTab(chip, {

@@ -1044,7 +1044,8 @@ function SimpleUIPlugin:init()
         -- handles everything.
         -- -------------------------------------------------------------------
         local _sui_first_run = not SUISettings:get("simpleui_onboarding_done")
-        if _sui_first_run then
+        -- The host's setup guide owns these choices in an OrbitUI installation.
+        if _sui_first_run and not self._orbitui_owned then
             Config.setStartWithHomescreen(true)
             Config.setBookCloseTarget(Config.BOOK_CLOSE_TARGET.HOMESCREEN)
             -- Keep the user's existing native CoverBrowser layout on first install.

@@ -88,6 +88,10 @@ H.test("compatibility checks never auto-disable plugins or rename patches", func
     G_reader_settings.saveSetting = function() error("unexpected setting mutation") end
     H.eq(require("infra/sui_compat_check")(), false)
 end)
+H.test("OrbitUI replaces only the embedded onboarding, without applying native presets", function()
+    G_reader_settings.saveSetting = function() error("unexpected onboarding write") end
+    require("screens/sui_onboarding").show(function() error("native guide ran") end)
+end)
 H.test("unsupported KOReader stops before either component class is loaded", function()
     package.loaded.version = {
         getCurrentRevision = function() return "v2025.04" end,

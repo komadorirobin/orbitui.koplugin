@@ -2279,7 +2279,8 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
             -- lands on its default's word and a value written by an older
             -- build cannot fall off the end of the list.
             local function ornAt()
-                local v = draft.ornament_frequency
+                local v = self.ornament_frequency_override
+                if v == nil then v = draft.ornament_frequency end
                 if v == nil then v = Orn.FREQ_DEFAULT end
                 local best, dist = 1, math.huge
                 for i, stop in ipairs(ORN_STOPS) do
@@ -2307,9 +2308,13 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
                 { text_func = function()
                       return _("Ornaments") .. ": " .. ORN_STOPS[ornAt()].label()
                   end,
-                  callback = pick(function()
-                      draft.ornament_frequency = ORN_STOPS[(ornAt() % #ORN_STOPS) + 1].value
-                  end) },
+                  enabled = self.ornament_frequency_override == nil,
+                  callback = function()
+                      if self.ornament_frequency_override ~= nil then return end
+                      pick(function()
+                          draft.ornament_frequency = ORN_STOPS[(ornAt() % #ORN_STOPS) + 1].value
+                      end)()
+                  end },
             }
         end
 

@@ -51,6 +51,10 @@ function M.install(root, module_map)
             -- OrbitUI's guard reports conflicts without mutating plugin/patch choices.
             return function() return function() return false end end
         end
+        if name == "screens/sui_onboarding" then
+            -- OrbitUI owns onboarding, including FileManager-only first launches.
+            return function() return { show = function() end } end
+        end
         local fn, err = loadfile(root .. "/" .. path)
         if not fn then error(err) end
         if name == "lib/bookshelf_settings_store" then

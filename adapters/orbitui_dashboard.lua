@@ -1,5 +1,6 @@
 -- Opt-in Home page. It reads the existing providers, never replaces their data.
 local Model = require("core/orbitui_dashboard")
+local Sources = require("adapters/orbitui_dashboard_sources")
 local _ = require("core/orbitui_i18n")
 local M = {
     id = Model.id, name = _("Reading dashboard"), default_on = false,
@@ -9,6 +10,28 @@ local M = {
 }
 
 local function store() return require("infra/sui_store") end
+
+function M.readConfig(pfx)
+    pfx = pfx or "simpleui_hs_"
+    local key = pfx .. "orbitui_dashboard_config"
+    local raw = store():readSetting(key)
+    local legacy = store():readSetting("simpleui_orbitui_dashboard_config_ready") ~= true
+        and store():readSetting(pfx .. M.enabled_key) ~= nil
+    local config = Model.config(raw, legacy)
+    if raw == nil then store():saveSetting(key, config) end
+    return config
+end
+
+function M.editConfig(pfx, edit, refresh)
+    local config = M.readConfig(pfx)
+    if config.unsupported then return false end
+    edit(config)
+    store():saveSetting((pfx or "simpleui_hs_") .. "orbitui_dashboard_config", Model.config(config))
+    if refresh then refresh() else
+        require("screens/sui_homescreen").rebuildLayout({ keep_wallpaper = true })
+    end
+    return true
+end
 
 local function headingKey(pfx, key)
     return (pfx or "simpleui_hs_") .. "orbitui_dashboard_heading_" .. key
@@ -20,6 +43,13 @@ function M.readHeadings(pfx)
         headings[card.key] = Model.normalizeHeading(store():readSetting(headingKey(pfx, card.key)))
     end
     return headings
+end
+
+local function headingLabel(card, pfx)
+    if card.key == "want" or card.key == "new" then
+        return Sources.label(M.readConfig(pfx).sources[card.key])
+    end
+    return _(card.label)
 end
 
 local function editHeading(card, refresh, pfx)
@@ -35,10 +65,10 @@ local function editHeading(card, refresh, pfx)
         end
     end
     dialog = InputDialog:new{
-        title = _("Edit heading") .. ": " .. _(card.label),
+        title = _("Edit heading") .. ": " .. headingLabel(card, pfx),
         description = _("Only changes this dashboard card. Leave empty to use its automatic heading."),
         input = Model.normalizeHeading(store():readSetting(key)) or "",
-        input_hint = _(card.label),
+        input_hint = headingLabel(card, pfx),
         buttons = {
             { { text = _("Restore default"), callback = function() save(nil) end } },
             {
@@ -59,7 +89,7 @@ function M.headingItems(refresh, pfx)
         items[i] = {
             text_func = function()
                 local value = Model.normalizeHeading(store():readSetting(headingKey(pfx, entry.key)))
-                return _(entry.label) .. ": " .. (value or _("Automatic"))
+                return headingLabel(entry, pfx) .. ": " .. (value or _("Automatic"))
             end,
             keep_menu_open = false,
             callback = function() editHeading(entry, refresh, pfx) end,
@@ -73,10 +103,19 @@ function M.isEnabled(pfx)
 end
 
 function M.install(registry)
+    -- Snapshot old defaults before a newly enabled module can look like an upgrade.
+    M.readConfig("simpleui_hs_")
+    for _, screen in ipairs(store():readSetting("simpleui_custom_screens") or {}) do
+        M.readConfig(screen.pfx)
+    end
+    if store():readSetting("simpleui_orbitui_dashboard_config_ready") ~= true then
+        store():saveSetting("simpleui_orbitui_dashboard_config_ready", true)
+    end
     registry.register(M)
 end
 
 function M.setHomeEnabled(enabled)
+    M.readConfig("simpleui_hs_")
     local Layout = require("screens/sui_settings_window").LayoutService
     local layout = Model.withPage(Layout.load(), enabled)
     -- Also handles a page added through the native module picker.
@@ -88,7 +127,7 @@ function M.setHomeEnabled(enabled)
     if HS and HS.rebuildLayout then HS.rebuildLayout({ keep_wallpaper = true }) end
 end
 
-function M.menuItems(refresh, pfx)
+function M.menuItems(refresh, pfx, ctx_menu)
     pfx = pfx or "simpleui_hs_"
     return {
         { text = _("Show dashboard as first Home page"),
@@ -107,11 +146,14 @@ function M.menuItems(refresh, pfx)
         { text = _("Headings"), sub_item_table_func = function()
             return M.headingItems(refresh, pfx)
         end },
+        { text = _("Cards and content"), sub_item_table_func = function()
+            return require("adapters/orbitui_dashboard_settings").items(refresh, pfx, ctx_menu)
+        end },
     }
 end
 
 function M.getMenuItems(ctx)
-    local items = M.menuItems(ctx.refresh, ctx.pfx)
+    local items = M.menuItems(ctx.refresh, ctx.pfx, ctx)
     table.remove(items, 1) -- Native layout editing owns this module's membership.
     return items
 end
@@ -121,8 +163,13 @@ function M.wrapWantProvider(provider)
     provider._orbitui_dashboard_wrapped = true
     local original = provider.shouldAutoRefreshHome
     provider.shouldAutoRefreshHome = function(pfx, key)
-        return original(pfx, key) or (M.isEnabled(pfx)
-            and store():readSetting("simpleui_bookorbit_want_auto_refresh") ~= false)
+        if original(pfx, key) then return true end
+        if not M.isEnabled(pfx) or store():readSetting("simpleui_bookorbit_want_auto_refresh") == false then return false end
+        local config = M.readConfig(pfx)
+        for _, card in ipairs({ "want", "new" }) do
+            if Model.visible(config, card) and Sources.usesBookOrbit(config.sources[card]) then return true end
+        end
+        return false
     end
 end
 
@@ -135,33 +182,21 @@ function M.wrapChrome(chrome)
     end
 end
 
-local function safeList(fn)
-    local ok, files = pcall(fn)
-    if ok and type(files) == "table" then return files end
-    require("logger").warn("OrbitUI dashboard: book source unavailable")
-    return {}, true
-end
-
 function M.readData(ctx)
+    local config = M.readConfig(ctx.pfx)
+    local function visible(id) return Model.visible(config, id) end
     local SH = require("modules/module_books_shared")
     local function read(fp)
         return SH.getBookData(fp, ctx.prefetched and ctx.prefetched[fp], { skip_description = true })
     end
     local fp = ctx.current_fp or (ctx.recent_fps or {})[1]
-    local want, want_error = safeList(function()
-        return require("integrations/sui_bookorbit_want").getCachedFiles()
-    end)
-    local new, new_error = safeList(function()
-        local source = require("engines/sui_book_sources").bind("new_books")
-        local result = {}
-        for _, file in ipairs(source.getFileList(ctx)) do
-            if not source.filterItem or source.filterItem(file, ctx) then result[#result + 1] = file end
-        end
-        return result
-    end)
+    local want, want_error, new, new_error = {}, nil, {}, nil
+    if visible("want") then want, want_error = Sources.files(config.sources.want, ctx) end
+    if visible("new") then new, new_error = Sources.files(config.sources.new, ctx) end
     local goal
-    local hc_enabled = store():readSetting((ctx.pfx or "simpleui_hs_") .. "hardcover") == true
-    if hc_enabled then
+    local hc_enabled = config.goal == "hardcover" or config.goal == "auto"
+        and store():readSetting((ctx.pfx or "simpleui_hs_") .. "hardcover") == true
+    if visible("goal") and hc_enabled then
         local HC = require("modules/module_hardcover")
         local cached = HC._getCached()
         if cached then
@@ -170,15 +205,17 @@ function M.readData(ctx)
                 module = "hardcover", metric = cached.metric or "book" }
         end
         HC.ensureFresh()
-    else
+    elseif visible("goal") then
         goal = { value = (ctx.stats or {}).books_year or 0,
             target = require("infra/sui_goals").get("annual"),
             module = "reading_goals", metric = "book", source = "KOReader" }
     end
     return {
-        current = fp and { file = fp, data = read(fp) } or nil,
-        ongoing = Model.ongoing(fp, ctx.recent_fps, read, 3),
+        current = visible("hero") and fp and { file = fp, data = read(fp) } or nil,
+        ongoing = visible("ongoing") and Model.ongoing(visible("hero") and fp or nil, ctx.recent_fps, read, 3) or {},
         want = want, new = new, want_error = want_error, new_error = new_error,
+        config = config,
+        source_labels = { want = Sources.label(config.sources.want), new = Sources.label(config.sources.new) },
         stats = ctx.stats or {}, goal = goal, hardcover = hc_enabled,
         dark = store():readSetting((ctx.pfx or "simpleui_hs_") .. "orbitui_dashboard_dark") ~= false,
         headings = M.readHeadings(ctx.pfx),

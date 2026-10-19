@@ -1,8 +1,10 @@
 -- Explicit integration points. Module wrappers run after the original module
 -- has loaded; package.preload userpatches still have priority in the resolver.
 local M = {}
-local SHELF_FACE_OUT = "all"
 M.modules = {
+    ["lib/bookshelf_profiles"] = true,
+    ["features/sui_quickactions"] = true,
+    ["sui_bookshelf_bridge"] = true,
     ["features/library/sui_book_hold_dialog"] = true,
     ["features/library/sui_library_search"] = true,
     ["lib/bookshelf_widget"] = true,
@@ -33,7 +35,13 @@ local function settingsEntry(items, old_key)
 end
 
 function M.wrap(name, module)
-    if name == "infra/sui_patches" then
+    if name == "lib/bookshelf_profiles" then
+        require("adapters/orbitui_libraries").profiles(module)
+    elseif name == "features/sui_quickactions" then
+        require("adapters/orbitui_libraries").actions(module)
+    elseif name == "sui_bookshelf_bridge" then
+        require("adapters/orbitui_libraries").bridge(module)
+    elseif name == "infra/sui_patches" then
         module.isNavigationDestination = function(widget)
             return widget and (widget.name == "bookshelf" or widget.name == "homescreen"
                 or widget.name == "ReaderUI")
@@ -43,9 +51,7 @@ function M.wrap(name, module)
     elseif name == "features/library/sui_library_search" then
         module.show = function(opts) return require("core/orbitui_search").show(opts) end
     elseif name == "lib/bookshelf_widget" then
-        -- Use the native face-out geometry for both render and pagination.
-        -- Saved chip/profile/global choices stay intact for code rollback.
-        module._spineFaceOut = function() return SHELF_FACE_OUT end
+        require("adapters/orbitui_appearance").widget(module)
         require("adapters/orbitui_shelf_themes").widget(module)
         require("adapters/orbitui_cover_labels").widget(module)
         require("adapters/orbitui_shelf_sort").widget(module)
@@ -83,12 +89,10 @@ function M.wrap(name, module)
     elseif name == "lib/bookshelf_settings" then
         require("adapters/orbitui_cover_labels").settings(module)
     elseif name == "lib/bookshelf_chip_editor" then
-        module.face_out_override = SHELF_FACE_OUT
+        require("adapters/orbitui_appearance").editor(module)
         module.cover_text_external = true
         -- The host owns profile-qualified bindings, including Kanzenban.
         module.book_binding_external = true
-        -- OrbitUI still boxes all eligible series; only the design changed.
-        module.series_boxes_external = true
     elseif name == "lib/bookshelf_book_repository" then
         require("adapters/orbitui_shelf_sort").repository(module)
     elseif name == "lib/bookshelf_sort_engine" then

@@ -182,17 +182,22 @@ local function _closeHomescreenForBookshelf()
     homescreen._navbar_closing_intentionally = nil
 end
 
-local function _broadcastBookshelfEvent(event_name, ctx)
+local function _broadcastBookshelfEvent(event_name, ctx, profile_key)
     local su = (ctx and ctx.show_unavailable) or _unavailToast
     _closeHomescreenForBookshelf()
     local ok, err = pcall(function()
-        UIManager:broadcastEvent(require("ui/event"):new(event_name))
+        UIManager:broadcastEvent(require("ui/event"):new(event_name, profile_key))
     end)
     if not ok then
         logger.warn("simpleui: bookshelf event failed:", tostring(event_name), tostring(err))
         su(_("Bookshelf not available."))
     end
     return ok
+end
+
+function QA.openBookshelfProfile(key, ctx, menu)
+    return _broadcastBookshelfEvent(menu and "OpenBookshelfProfileStartMenu"
+        or "OpenBookshelfProfile", ctx, key)
 end
 
 -- These dispatcher actions replace the current navigation surface; they are

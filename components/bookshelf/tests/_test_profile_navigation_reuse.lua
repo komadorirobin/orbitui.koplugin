@@ -12,6 +12,7 @@ local env = setmetatable({
     Screen = { getWidth = function() return 1264 end, getHeight = function() return 1680 end },
     Profiles = {
         get = function(key) return profiles[key] end,
+        chip = function(_, key) return { key = key } end,
         defaultChip = function(profile) return profile.key == "comics" and "manga" or "fiction" end,
         locationForFile = function() return location end,
         folderSortPriority = function() return priority end,

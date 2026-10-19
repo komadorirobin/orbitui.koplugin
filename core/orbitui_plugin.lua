@@ -15,7 +15,8 @@ local startup_error
 local ok, err = pcall(function()
     local allowed, reason = Guard.check()
     assert(allowed, reason)
-    require("core/orbitui_backup").ensure()
+    local _backup, existing_host = require("core/orbitui_backup").ensure()
+    require("adapters/orbitui_setup").prepare(existing_host)
     Runtime.install(root)
 end)
 if not ok then startup_error = tostring(err) end
@@ -31,6 +32,7 @@ function OrbitUI:init()
         local allowed, reason = Guard.check(self.ui)
         assert(allowed, reason)
         Host.attach(self, Runtime.classes(root), require("pluginloader"), root)
+        require("adapters/orbitui_setup").started(self)
         UIManager:nextTick(function() Updates.started() end)
     end)
     if not ready then
@@ -51,6 +53,7 @@ function OrbitUI:propagateEvent(event)
 end
 
 function OrbitUI:onTeardown()
+    require("adapters/orbitui_setup").stopped(self)
     Host.detach(self, require("pluginloader"))
 end
 
@@ -66,7 +69,7 @@ function OrbitUI:addToMainMenu(items)
                 text = "About this experimental build",
                 callback = function()
                     self:notify("OrbitUI " .. require("orbitui_bootstrap").version(root)
-                        .. "\n\nBookshelf 5.3.1 + SimpleUI 2.7.2-beta.5"
+                        .. "\n\nBookshelf 5.5.4 + SimpleUI 2.7.5"
                         .. "\n\nPreview build. Existing navigation is retained."
                         .. "\nSettings snapshot: settings/orbitui/before-first-run/"
                         .. (self._orbitui_error and ("\n\nStartup error: " .. self._orbitui_error) or ""))

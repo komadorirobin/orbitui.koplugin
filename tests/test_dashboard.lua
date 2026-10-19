@@ -75,6 +75,8 @@ H.test("ongoing books are unique and genuinely in progress, excluding the hero",
 end)
 
 local saved, fresh, refresh = {}, 0, 0
+-- Existing dashboard installations retain their BookOrbit row.
+saved.simpleui_hs_orbitui_dashboard_config = Model.config(nil, true)
 local Store = {
     readSetting = function(_, k) return saved[k] end,
     saveSetting = function(_, k, v) saved[k] = v end,
@@ -784,6 +786,58 @@ H.test("Swedish dashboard strings translate while other locales retain English",
     current:free()
     G_reader_settings.readSetting = function() return "en" end
 end)
+H.test("reordered and partially hidden cards keep text covers and actions inside their own cards", function()
+    for _, mask in ipairs({ 0, 1, 3, 15, 27, 56, 85, 127, 255, 341, 510, 511 }) do
+    for shift = 0, 5 do
+    for _, size in ipairs({ { 600, 730 }, { 300, 400 }, { 800, 480 } }) do
+        local custom_data = Dashboard.readData(ctx)
+        local config = custom_data.config
+        for i, card in ipairs(Model.heading_cards) do config.hidden[card.key] = math.floor(mask / 2 ^ (i - 1)) % 2 == 1 end
+        for i = 1, 6 do config.order[i] = Model.block_order[(i + shift - 1) % 6 + 1] end
+        config.stats_order = { "week", "streak", "reading_today", "pages_today" }
+        local current = View.build(size[1], size[2], ctx, custom_data)
+        local plan = Model.plan(size[1], size[2], config)
+        local function check(r, name)
+            assert(r.x >= 0 and r.y >= 0 and r.w > 0 and r.h > 0, name .. " invalid dimensions")
+            assert(r.x + r.w <= size[1] and r.y + r.h <= size[2], name .. " overflow")
+            if r.y < plan.header_h or not next(plan.cards) then return end
+            for _, card in pairs(plan.cards) do
+                if r.x >= card.x and r.y >= card.y and r.x + r.w <= card.x + card.w
+                        and r.y + r.h <= card.y + card.h then return end
+            end
+            error(name .. " outside card; mask=" .. mask .. ", shift=" .. shift .. ", width=" .. size[1])
+        end
+        for _, child in ipairs(current[1]) do
+            local xy, sz = child.overlap_offset, child:getSize()
+            if sz.w > 0 then check({ x = xy[1], y = xy[2], w = sz.w, h = sz.h }, child.text or child.kind or "frame") end
+        end
+        for _, action in ipairs(current._actions) do check(action, "action") end
+        for _, area in ipairs(current._swipe_areas) do check(area, "swipe") end
+        current:free()
+    end
+    end
+    end
+end)
+
+H.test("source changes reset only that card's pager while reordering preserves its position", function()
+    local current, page_ctx, page_data = pagedWidget()
+    tapArrow(current, "want", ">"); tapArrow(current, "new", ">")
+    local pages = page_ctx._screen_widget._orbitui_dashboard_pages
+    page_data.config.order = { "want", "new", "hero", "stats", "goal", "ongoing" }
+    current:replaceContent(page_ctx, page_data)
+    H.eq(pages.want, 2); H.eq(pages.new, 2)
+    page_data.config.sources.want = { kind = "native", id = "tbr" }
+    current:replaceContent(page_ctx, page_data)
+    H.eq(pages.want, 1); H.eq(pages.new, 2)
+    page_data.config.hidden.want = true
+    current:replaceContent(page_ctx, page_data)
+    H.eq(#current._swipe_areas, 1)
+    local plan = Model.plan(600, 730, page_data.config)
+    current:onSwipe(nil, { direction = "east", pos = { x = current.dimen.x + plan.new.x + 5, y = current.dimen.y + plan.new.y + 5 } })
+    H.eq(pages.new, 1)
+    current:free()
+end)
+
 local preview_path = os.getenv("ORBITUI_DASHBOARD_PREVIEW")
 if preview_path then
     G_reader_settings.readSetting = function() return "sv_SE" end
@@ -796,6 +850,12 @@ if preview_path then
     ctx._screen_widget._orbitui_dashboard_pages = {}
     local preview = View.build(720, 876, ctx, data)
     require("tests/dashboard_preview")(preview, preview_path)
+    preview:free()
+    data.config.order = { "want", "new", "ongoing", "hero", "stats", "goal" }
+    data.config.hidden = { week = true, reading_today = true, goal = true }
+    data.source_labels.want = "Min lokala samling"
+    preview = View.build(720, 876, ctx, data)
+    require("tests/dashboard_preview")(preview, preview_path:gsub("%.svg$", "-configured.svg"))
     preview:free()
 end
 H.finish()

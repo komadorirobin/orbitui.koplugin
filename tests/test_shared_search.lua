@@ -161,7 +161,7 @@ H.test("scope picker preserves typed query and opens the keyboard", function()
     picker.buttons[3][1].callback()
     local next_input = shown[#shown]
     H.eq(next_input.input, "Hikaru")
-    assert(next_input.buttons[1][1].text:find("Manga", 1, true))
+    assert(next_input.buttons[1][1].text:find(Profiles.get("comics").label, 1, true))
     H.eq(input.closed, true)
 end)
 local Window = H.widget()

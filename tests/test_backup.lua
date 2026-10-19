@@ -65,7 +65,8 @@ H.test("settings are copied before startup without changing originals", function
     fixture()
     local before = {}
     for k, v in pairs(files) do before[k] = v end
-    H.eq(Backup.ensure(), base)
+    local path, existing = Backup.ensure()
+    H.eq(path, base); H.eq(existing, false)
     local marker = assert(files[base .. "/COMPLETE"])
     local attempt = assert(marker:match("\n([^\n]+)\n"))
     H.eq(files[base .. "/" .. attempt .. "/bookshelf.lua"], "shelf-settings")
@@ -78,7 +79,7 @@ end)
 H.test("a completed snapshot is never overwritten", function()
     local marker = files[base .. "/COMPLETE"]
     files["/data/settings/bookshelf.lua"] = "new-settings"
-    Backup.ensure()
+    local _path, existing = Backup.ensure(); H.eq(existing, true)
     H.eq(files[base .. "/COMPLETE"], marker)
     local attempt = marker:match("\n([^\n]+)\n")
     H.eq(files[base .. "/" .. attempt .. "/bookshelf.lua"], "shelf-settings")

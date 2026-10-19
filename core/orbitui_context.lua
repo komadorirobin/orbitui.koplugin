@@ -35,7 +35,7 @@ function M.withShelf(profile, action)
     if not plugin then unavailable(); return false end
     navigation = navigation + 1
     local request = navigation
-    plugin:onOpenBookshelfProfile(profile)
+    if plugin:onOpenBookshelfProfile(profile) == false then unavailable(); return false end
     local UIManager = require("ui/uimanager")
     local attempts = 0
     local function ready()

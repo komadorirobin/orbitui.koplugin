@@ -24,6 +24,7 @@ local SHELF_FIELDS = {
     "spine_thickness_pct",
     "spine_cover_size_pct",
     "spine_face_out",
+    "series_boxes",
     "spine_show_author",
     "ornament_frequency",
 }
@@ -42,6 +43,7 @@ local PROFILE_DEFS = {
     prose = {
         key = "prose",
         label = "Books",
+        icon = "nerd:F02D",
         folder_sort = {
             { key = "author_surname", reverse = false },
             { key = "title", reverse = false },
@@ -78,6 +80,7 @@ local PROFILE_DEFS = {
     comics = {
         key = "comics",
         label = "Comics",
+        icon = "nerd:F5DB",
         folder_sort = {
             { key = "series_name", reverse = false },
             { key = "series_index", reverse = false },
@@ -93,12 +96,18 @@ local PROFILE_DEFS = {
                 label = "Manga",
                 kind = "folder",
                 path = "/storage/emulated/0/ePubs/Manga",
+                group_folder_name = "Oneshots",
+                folders_only = true,
+                folder_list_max = 3,
             },
             {
                 key = "profile_comics",
                 label = "Serier",
                 kind = "folder",
                 path = "/storage/emulated/0/ePubs/Serier",
+                group_folder_name = "Oneshots",
+                folders_only = true,
+                folder_list_max = 3,
             },
             { key = "next", label = "Next", kind = "next" },
             { key = "bookorbit_tbr", label = "TBR", kind = "bookorbit_want" },
@@ -110,6 +119,12 @@ local PROFILE_DEFS = {
 
 function Profiles.get(key)
     return key and PROFILE_DEFS[key] or nil
+end
+
+-- OrbitUI replaces this inventory with saved library sections. Keep the old
+-- definitions as the migration seed and for standalone component callers.
+function Profiles.list()
+    return { PROFILE_DEFS.prose, PROFILE_DEFS.comics }
 end
 
 function Profiles.defaultChip(profile)
@@ -195,23 +210,23 @@ local function pathInRoot(filepath, root)
     local fp = normalizePath(filepath)
     root = normalizePath(root)
     if not fp or not root then return false end
-    return fp == root or fp:sub(1, #root + 1) == (root .. "/")
+    return root == "/" or fp == root or fp:sub(1, #root + 1) == (root .. "/")
 end
 
 function Profiles.matchFile(filepath)
     local best_key, best_len
-    for key, profile in pairs(PROFILE_DEFS) do
+    for _, profile in ipairs(Profiles.list()) do
         for _, root in ipairs(profile.roots or {}) do
             if pathInRoot(filepath, root) then
                 local len = #normalizePath(root)
                 if not best_len or len > best_len then
-                    best_key = key
+                    best_key = profile.key
                     best_len = len
                 end
             end
         end
     end
-    return best_key and PROFILE_DEFS[best_key] and best_key or nil
+    return best_key
 end
 
 -- Resolve the profile folder chip and concrete parent folder that contain a

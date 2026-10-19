@@ -2143,12 +2143,12 @@ function Bookshelf:onPrepareBookshelfHome(payload)
     end
     if self._cancel_home_prewarm then self._cancel_home_prewarm() end
     local roots = {}
-    for _, profile_key in ipairs({ "prose", "comics" }) do
-        local profile = Profiles.get(profile_key)
+    for _, profile in ipairs(Profiles.list()) do
         for _, root in ipairs(profile and profile.roots or {}) do
             roots[#roots + 1] = root
         end
     end
+    if #roots == 0 then return false end
     self._cancel_home_prewarm = Repo.prewarmFilepaths(roots, payload)
     return true
 end
@@ -2529,8 +2529,14 @@ function Bookshelf:onSetBookshelf(visible)
 end
 
 function Bookshelf:onOpenBookshelfProfile(profile_key)
+    if profile_key and not Profiles.get(profile_key) then return false end
     self:_safeShow(profile_key)
     return true
+end
+
+function Bookshelf:onOpenBookshelfProfileStartMenu(profile_key)
+    if profile_key and not Profiles.get(profile_key) then return false end
+    return self:_openStartMenuForProfile(profile_key)
 end
 
 function Bookshelf:_openStartMenuForProfile(profile_key)
@@ -2564,21 +2570,19 @@ function Bookshelf:_openStartMenuForProfile(profile_key)
 end
 
 function Bookshelf:onOpenBookshelfProse()
-    self:_safeShow("prose")
-    return true
+    return self:onOpenBookshelfProfile("prose")
 end
 
 function Bookshelf:onOpenBookshelfComics()
-    self:_safeShow("comics")
-    return true
+    return self:onOpenBookshelfProfile("comics")
 end
 
 function Bookshelf:onOpenBookshelfProseStartMenu()
-    return self:_openStartMenuForProfile("prose")
+    return self:onOpenBookshelfProfileStartMenu("prose")
 end
 
 function Bookshelf:onOpenBookshelfComicsStartMenu()
-    return self:_openStartMenuForProfile("comics")
+    return self:onOpenBookshelfProfileStartMenu("comics")
 end
 
 function Bookshelf:_currentDocumentFile()

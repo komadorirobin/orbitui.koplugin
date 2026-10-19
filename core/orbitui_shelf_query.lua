@@ -24,9 +24,10 @@ function M.resolve(ref)
         local chip = Profiles.chip(profile, ref.chip)
         if not chip then return nil, "missing" end
         label = chip.label
-        source = { kind = chip.kind, id = chip.path }
+        source = chip.source or { kind = chip.kind, id = chip.path }
+        filter, sort = chip.filter, chip.sort_priority
         if chip.kind == "folder" or chip.kind == "bookorbit_want" then
-            sort = Profiles.folderSortPriority(profile)
+            sort = sort or Profiles.folderSortPriority(profile)
         end
     else
         local tab = require("lib/bookshelf_tab_model").getById(ref.chip)

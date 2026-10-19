@@ -219,4 +219,18 @@ H.test("only physical bookshelves expose the size control", function()
     end
     H.eq(sizeRow({ [ViewMode.CHIP_KEY] = ViewMode.SPINES }, { is_opds = true }), nil)
 end)
+H.test("minimal preset reports ornaments off without changing the saved shelf frequency", function()
+    local draft = { [ViewMode.CHIP_KEY] = ViewMode.SPINES, ornament_frequency = 3 }
+    Editor.ornament_frequency_override = 0
+    openStyle(draft)
+    local found
+    for _, row in ipairs(shown.buttons) do
+        for _, button in ipairs(row) do
+            if button.text_func and button.text_func():match("^Ornaments:") then found = button end
+        end
+    end
+    H.eq(assert(found).text_func(), "Ornaments: None"); H.eq(found.enabled, false)
+    local before = changes; found.callback(); H.eq(changes, before); H.eq(draft.ornament_frequency, 3)
+    Editor.ornament_frequency_override = nil
+end)
 H.finish()

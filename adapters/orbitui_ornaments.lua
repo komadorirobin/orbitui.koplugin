@@ -7,15 +7,19 @@ M.modules = {
 
 function M.wrap(name, module, root)
     local Authors = require("core/orbitui_author_ornaments")
+    local Appearance = require("adapters/orbitui_appearance")
     if name == "lib/bookshelf_ornament_deck" then
         local fill = module.fillHooks
-        module.fillHooks = function(env) return Authors.fillHooks(fill, env) end
+        module.fillHooks = function(env)
+            if Appearance.policy().hide_ornaments then env.level = "off" end
+            return Authors.fillHooks(fill, env)
+        end
         module._tabs = function() return require("adapters/orbitui_shelf_themes").tabs(true) end
         local sync, shuffled = module.sync, {}
         module.sync = function(all, shelf)
             sync(all, shelf)
             local key = tostring(shelf or module.NO_SHELF)
-            if not shuffled[key] and all and #all > 0 then
+            if Appearance.current() == "classic" and not shuffled[key] and all and #all > 0 then
                 shuffled[key] = true
                 local ok, err = pcall(module.shuffle, shelf)
                 if not ok then
@@ -26,9 +30,14 @@ function M.wrap(name, module, root)
     elseif name == "lib/bookshelf_spine_shelf" then
         module.positionOrnamentX = require("core/orbitui_ornament_spacing").positionX
     else
+        local frequency = module.frequency
+        module.frequency = function(...)
+            if Appearance.policy().hide_ornaments then return 0 end
+            return frequency(...)
+        end
         local list, attempted = module.listAll, false
         module.listAll = function(...)
-            if not attempted then
+            if not attempted and Appearance.policy().bundles then
                 attempted = true
                 local ok, err = pcall(Authors.seed, root, module.dir())
                 if not ok then require("logger").warn("[OrbitUI] Could not install author ornaments:", err) end
