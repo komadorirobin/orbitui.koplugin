@@ -161,7 +161,8 @@ function Browser:_items()
     for _i, e in ipairs(all) do
         -- opts.pool: the pieces a shelf deals from (Swap on a shelf that
         -- wears a pack offers only those).
-        local keep = (self.chip == ALL or (e.pack ~= nil and e.pack == self.chip))
+        local group = Orn.packGroup and Orn.packGroup(e.pack) or e.pack
+        local keep = (self.chip == ALL or (group ~= nil and group == self.chip))
                      and (not self.opts.pool or self.opts.pool(e))
         if keep then
             out[#out + 1] = { entry = e, off = sw.isOff(e.name),
@@ -223,12 +224,21 @@ function Browser:_chips()
     local has = {}
     for _i, e in ipairs(all or {}) do if e.pack then has[e.pack] = true end end
     local chips = { { key = ALL, label = _("All"), is_active = self.chip == ALL } }
+    local added = {}
     for _i, pack in ipairs(packs) do
-        if has[pack] then chips[#chips + 1] = {
-            key = pack,
-            label = sw.isPackOff(pack) and T(_("%1 (off)"), pack) or pack,
-            is_active = self.chip == pack,
-        } end
+        local group = Orn.packGroup and Orn.packGroup(pack) or pack
+        if has[pack] and not added[group] then
+            added[group] = true
+            local off = true
+            for _, member in ipairs(packs) do
+                if (Orn.packGroup and Orn.packGroup(member) or member) == group and not sw.isPackOff(member) then off = false end
+            end
+            chips[#chips + 1] = {
+                key = group,
+                label = off and T(_("%1 (off)"), group) or group,
+                is_active = self.chip == group,
+            }
+        end
     end
     return chips
 end

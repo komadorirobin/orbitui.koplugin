@@ -41,6 +41,17 @@ local function normalize(name)
         :lower():gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
 end
 local aliases = {}
+local extra_aliases, extra_pieces = {}, {}
+function M.setBindings(bindings)
+    extra_aliases, extra_pieces = {}, {}
+    for path, binding in pairs(bindings) do
+        if binding.kind == "series" then
+            extra_pieces[path] = binding.id
+            for _, name in ipairs(binding.names) do extra_aliases[normalize(name)] = binding.id end
+        end
+    end
+end
+function M.piece(name) return extra_pieces[name] or M.pieces[name] end
 for id, names in pairs({
     ["series:akira"] = { "Akira", "アキラ" },
     ["series:dungeon-meshi"] = { "Dungeon Meshi", "Delicious in Dungeon", "ダンジョン飯" },
@@ -86,7 +97,7 @@ function M.seriesOf(entry)
         local group = entry.item
         if group and group.kind == "series" then name = group.series_name or group.series end
     end
-    return type(name) == "string" and aliases[normalize(name)] or nil
+    return type(name) == "string" and (extra_aliases[normalize(name)] or aliases[normalize(name)]) or nil
 end
 
 function M.seed(root, ornaments_dir)

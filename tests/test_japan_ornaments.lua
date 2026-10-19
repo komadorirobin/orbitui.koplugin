@@ -197,7 +197,7 @@ H.test("an explicit failed save does not commit defaults or mutate live settings
     H.eq(invalidations, 0)
 end)
 
-H.test("the guarded adapter installs both kinds of packs and keeps normal list caching", function()
+H.test("the adapter leaves legacy seed helpers unused and keeps normal list caching", function()
     fixture()
     local calls = 0
     local all, packs = { "native entries" }, { "Japan", "Authors" }
@@ -209,23 +209,23 @@ H.test("the guarded adapter installs both kinds of packs and keeps normal list c
         local actual, actual_packs = module.listAll()
         H.eq(actual, all); H.eq(actual_packs, packs)
     end
-    H.eq(calls, 3); H.eq(warnings, 0); H.eq(saves, 1)
-    assert(files[marker] and files[defaults])
-    assert(files[root .. "Authors/Franz Kafka.png"])
-    assert(files[root .. "Modernists/James Joyce.png"])
+    H.eq(calls, 3); H.eq(warnings, 0); H.eq(saves, 0)
+    H.eq(files[marker], nil); H.eq(files[defaults], nil)
+    H.eq(files[root .. "Authors/Franz Kafka.png"], nil)
+    H.eq(files[root .. "Modernists/James Joyce.png"], nil)
     for _, file in ipairs(Japan.packs[1].files) do H.eq(Authors.pieces["Japan/" .. file], nil) end
 end)
 
-H.test("a failed Japan install leaves author ornaments and the browser working", function()
+H.test("missing bundled artwork does not affect the browser or trigger installation", function()
     fixture(); files[source .. "Daruma.png"] = nil
     local module = {}
     for key, value in pairs(ornament) do module[key] = value end
     module.listAll = function() return { "existing" }, { "existing pack" } end
     Adapter.wrap("lib/bookshelf_ornaments", module, "/slot")
     for _ = 1, 3 do H.eq(module.listAll()[1], "existing") end
-    H.eq(warnings, 1); H.eq(files[marker], nil)
+    H.eq(warnings, 0); H.eq(files[marker], nil)
     H.eq(settings.ornaments_off["cactus.svg"], nil)
-    assert(files[root .. "Modernists/James Joyce.png"])
+    H.eq(files[root .. "Modernists/James Joyce.png"], nil)
 end)
 
 io.open, os.rename, os.remove = open, rename, remove

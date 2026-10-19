@@ -260,8 +260,8 @@ over standalone components) default to native Shelf settings. Minimal forces
 face-out without boxes or any ornaments. Store the versioned policy separately
 from native preferences; never erase per-shelf orientation, box toggles or pack
 choices. Profile `series_boxes` must use the qualified style record, not a
-same-named native tab. Classic alone installs the optional packs and performs
-the additional once-per-session shuffle; matching/spacing for already-installed
+same-named native tab. Classic performs the additional once-per-session shuffle;
+optional packs are installed separately through Add-ons (C11). Matching/spacing for already-installed
 artwork is retained in other decorated presets. No policy switch deletes files.
 Guide changes are draft-only until review/confirmation, standalone selection
 also confirms, and both preserve Home/wallpaper/icons/accounts/reading state.
@@ -910,7 +910,43 @@ mode, sleep/resume and book-close updates on the Bigme before device acceptance.
 
 ## C11: Author-bound ornaments
 
-Bundled author busts and their trial copies must never enter the ordinary deck.
+User-approved change, October 19, 2026: optional data-only add-ons supersede the
+automatic pack seeding described in the historical notes below. No preset seeds
+artwork. `adapters/orbitui_addons.lua` owns install/update/disable/uninstall and
+bridges managed roots through the native optional `acceptFile` seam. The optional
+browser `packGroup` seam presents old Manga folders as one pack without changing
+their stable identities. Preserve these hooks during subtree merges; standalone
+Bookshelf keeps its original behavior when hooks are absent. Dynamic manifest
+bindings extend the author/series matches without replacing existing aliases.
+`docs/ADDONS.md` defines the independent release channel, preservation rules and
+tests. Never erase old folders or reading/theme data to migrate the add-ons.
+
+Information cards are bilingual data carried by each add-on. Preserve the optional
+`bookshelf_ornaments.resolveInfo(record)` seam inside native layer resolution:
+Swedish locales select `info_sv`; every other language selects `info_en`.
+`info_source` must equal `info` before translation is applied, so a reader-edited
+caption still wins. Reader-level overrides must not inherit translations from a
+lower pack layer. The builder checks source hashes, full translation coverage,
+source/licence links and the native 4000-byte caption limit. The frozen legacy
+inventory remains unchanged; old local packs gain translations on explicit
+add-on installation/update, not through automatic settings rewrites.
+
+User-approved placement choice: each installed logical pack may opt into random
+placement, applying across its enabled shelves/themes. Missing/unknown settings
+mean matching (the default) without migration writes. Persist the local choice
+through independent updates/reinstalls; never take it from remote metadata.
+Random pieces, including busts, join the ordinary deck and its one-per-row cap,
+balanced spacing, frequency, disabled-state and bare-row rules. Matching author
+busts keep priority and the multiple-bust exception. Do not reshuffle or rewrite
+saved decks on a mode change; invalidate row/page caches, including parked widgets.
+Ordinary boundary pieces must fit alongside their book in both measurement and
+placement; shrink/omit oversized pieces as for targeted ornaments. The rules
+below about author/series adjacency and excluding bound pieces from the ordinary
+deck apply in default matching mode. Tests: `test_addons`, `test_addon_ui`,
+`test_author_ornaments`, `test_ornament_spacing`, `test_ornament_session`,
+`test_appearance`.
+
+In matching mode, author busts and trial copies never enter the ordinary deck.
 Match full author metadata, not filename/title substrings or multi-book folder
 representatives. Keep each bust adjacent to its book through fill, page planning
 and balancing; disabled shelves, packs and pieces must stay disabled. Native

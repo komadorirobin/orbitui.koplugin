@@ -1,5 +1,7 @@
 package.path = "./?.lua;./components/bookshelf/?.lua;" .. package.path
 local H = require("tests/helpers")
+-- Add-on filesystem/activation is covered by test_addons and test_addon_ui.
+package.loaded["adapters/orbitui_addons"] = { ornaments = function() end }
 local Adapter = require("adapters/orbitui_ornaments")
 local Authors = require("core/orbitui_author_ornaments")
 local Japan = require("core/orbitui_japan_ornaments")
@@ -96,13 +98,14 @@ H.test("listing is read-only; the first deal shuffles once and preserves list id
     assert(table.concat(memory.ornament_decks._, "|") ~= before)
     H.eq(#memory.ornament_decks._, #all); H.eq(deck.epoch(), 1)
     H.eq(stats.shuffles, 1); H.eq(stats.writes, 1)
-    H.eq(stats.authors, 1); H.eq(stats.japan, 1)
+    H.eq(stats.authors, 0); H.eq(stats.japan, 0)
     H.eq(names(orn.list()), names(orn.list()), "native enabled-pool caching remains stable")
 end)
 
-H.test("newly seeded pieces are reconciled before the startup shuffle", function()
+H.test("newly installed pieces are reconciled before the startup shuffle", function()
     local orn, deck, stats, memory = fixture({ joyce, maple })
     stats.new_piece = cat
+    stats.all[#stats.all + 1] = cat
     memory.ornament_decks._[#memory.ornament_decks._ + 1] = "deleted.svg"
     scan(orn, deck)
     local result = table.concat(deck.names(), "|")
@@ -114,11 +117,12 @@ end)
 H.test("new gallery prints join the same one-time native startup shuffle", function()
     local orn, deck, stats = fixture({ joyce, cat })
     stats.new_print = piece("Ukiyo-e Gallery/Hokusai - Great Wave.png", "Ukiyo-e Gallery")
+    stats.all[#stats.all + 1] = stats.new_print
     H.eq(stats.gallery, 0)
     scan(orn, deck)
     assert(table.concat(deck.names(), "|"):find(stats.new_print.name, 1, true))
     orn.invalidate(); scan(orn, deck)
-    H.eq(stats.gallery, 1); H.eq(stats.shuffles, 1); H.eq(stats.warnings, 0)
+    H.eq(stats.gallery, 0); H.eq(stats.shuffles, 1); H.eq(stats.warnings, 0)
 end)
 
 H.test("paging, new widgets, invalidation and new scan tables do not reshuffle", function()
@@ -135,7 +139,7 @@ H.test("paging, new widgets, invalidation and new scan tables do not reshuffle",
     end
     H.eq(stats.shuffles, 1); H.eq(stats.writes, writes)
     H.eq(deck.generation(), generation); H.eq(deck.epoch(), epoch)
-    H.eq(stats.authors, 1); H.eq(stats.japan, 1)
+    H.eq(stats.authors, 0); H.eq(stats.japan, 0)
 end)
 
 H.test("a fresh process module shuffles again against the same persisted settings", function()
@@ -170,6 +174,23 @@ H.test("manual swaps and explicit shuffles remain stable for the rest of the ses
     local manual = table.concat(deck.names(), "|")
     for _ = 1, 3 do orn.invalidate(); scan(orn, deck); H.eq(table.concat(deck.names(), "|"), manual) end
     H.eq(stats.shuffles, 2); H.eq(deck.epoch(), 2)
+end)
+
+H.test("placement switches and subsequent paging preserve manual deck order without reshuffling", function()
+    local orn, deck, stats, memory = fixture()
+    scan(orn, deck); assert(deck.swap(pine.name, joyce.name))
+    local saved = table.concat(memory.ornament_decks._, "|")
+    local writes, shuffles = stats.writes, stats.shuffles
+    for _, mode in ipairs({ "random", "matched", "random" }) do
+        Authors.setPlacements({ Modernists = mode })
+        for _ = 1, 4 do
+            orn.invalidate(); scan(orn, deck)
+            H.eq(table.concat(memory.ornament_decks._, "|"), saved)
+            H.eq(names(deck.order(orn.list())), saved)
+        end
+        H.eq(stats.writes, writes); H.eq(stats.shuffles, shuffles)
+    end
+    Authors.setPlacements({})
 end)
 
 H.test("disabled pieces, disabled packs and frequency are never enabled by a shuffle", function()

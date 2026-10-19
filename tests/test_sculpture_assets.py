@@ -76,7 +76,7 @@ class SculptureAssetsTests(unittest.TestCase):
             for value in (asset["file"], asset["sha256"], asset["source_sha256"],
                           asset["reference_credit"], asset["license_url"], asset["rights_basis"]):
                 self.assertIn(value, text)
-        for path in ("core/orbitui_author_ornaments.lua", "scripts/check-package.lua"):
+        for path in ("core/orbitui_author_ornaments.lua", "scripts/build-ornament-addons.py"):
             self.assertIn("AUTHOR-SCULPTURES.txt", (ROOT / path).read_text())
 
     @unittest.skipUnless(os.environ.get("SCULPTURE_SOURCE_CACHE"), "Set SCULPTURE_SOURCE_CACHE for source-pixel audit")

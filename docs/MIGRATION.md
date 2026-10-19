@@ -140,8 +140,8 @@ in the setup guide, controls only the physical bookshelf:
   No extra OrbitUI artwork is automatically copied. Native series grouping
   excludes single-volume series, unlike Classic.
 - **Classic OrbitUI**: retain all-face-out covers, boxes for all eligible series
-  including singletons and explicitly configured grouped folders, additive
-  bundled ornament installation and the existing session shuffle. Author and
+  including singletons and explicitly configured grouped folders, and the
+  existing session shuffle. Optional packs are installed through Add-ons. Author and
   manga affiliations remain intact.
 - **Minimal bookshelf**: all covers forward, no series compaction and no
   ornaments, including targeted author busts and manga miniatures.
@@ -160,8 +160,10 @@ disabled packs, manually edited artwork, reading data and credentials stay intac
 Switching away from Classic does not uninstall artwork it already installed;
 disable individual installed packs in Shelf theme or select Minimal to hide all.
 Existing matching and spacing improvements apply to any installed ornaments.
-The stock-cactus replacement remains part of the explicitly selected Classic
-pack's one-time installer, not a new-install default.
+No preset runs the old one-time installers, including stock-cactus replacement.
+The [add-on migration](ADDONS.md) is explicit, preserves old folders and uses
+stable relative image paths. Manga, Manga II and Manga III appear as one Manga
+pack; no existing preference/placement keys are renamed.
 
 Selection asks for confirmation, saves with rollback on detected errors and
 invalidates prepared box/ornament pagination. Parked shelves rebuild on return.

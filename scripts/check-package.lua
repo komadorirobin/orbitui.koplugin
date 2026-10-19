@@ -27,7 +27,7 @@ for _, path in ipairs({
     "main.lua", "_meta.lua", "orbitui_bootstrap.lua", "VERSION", "manifest.json", "LICENSE", "README.md", "sources.json",
     "docs/MIGRATION.md", "docs/TESTING.md", "docs/UPSTREAM.md",
     "docs/INTEGRATION_CONTRACTS.md", "docs/MERGE_LOG.md",
-    "docs/OTA.md",
+    "docs/OTA.md", "docs/ADDONS.md",
     "assets/ca-bundle.crt", "assets/CA-LICENSE", "assets/CA-NOTICE.txt",
     "assets/material-symbols/MaterialSymbolsRounded.ttf",
     "assets/material-symbols/LICENSE", "assets/material-symbols/NOTICE.txt",
@@ -53,15 +53,14 @@ for _, path in ipairs({
     "core/orbitui_mann_update.lua", "assets/ornament-updates/mann-photo-v4.json",
     "core/orbitui_single_ornament_update.lua", "core/orbitui_hemingway_update.lua",
     "assets/ornament-updates/hemingway-photo-v1.json",
-    "assets/ornaments/Authors II/ERNEST-HEMINGWAY.txt",
-    "assets/ornaments/Authors/THOMAS-MANN-SEITZ.txt",
     "core/orbitui_sculpture_updates.lua", "assets/ornament-updates/author-sculptures-v1.json",
-    "assets/ornaments/Authors/AUTHOR-SCULPTURES.txt",
-    "assets/ornaments/Authors/KAFKA-KIELCE.txt",
     "core/orbitui_ukiyoe_ornaments.lua",
     "core/orbitui_ukiyoe_update.lua", "assets/ornament-updates/ukiyoe-gallery-v1.json",
     "assets/ornament-updates/ukiyoe-gallery-v2.json",
     "core/orbitui_ornament_install.lua", "adapters/orbitui_ornaments.lua",
+    "core/orbitui_addons.lua", "core/orbitui_addon_files.lua", "adapters/orbitui_addons.lua",
+    "core/orbitui_ornament_text.lua",
+    "assets/addons/catalog.json", "assets/addons/legacy-v1.json",
     "assets/vector-icons/selection.json", "assets/vector-icons/generated.json", "assets/vector-icons/NOTICE.txt",
     "assets/vector-icons/SOLAR-LICENSE.txt", "assets/vector-icons/TABLER-LICENSE.txt",
     "assets/vector-icons/PXLFLUX-LICENSE.txt", "assets/vector-icons/pxlflux-source.json",
@@ -71,13 +70,9 @@ for _, path in ipairs({
     "components/bookshelf/LICENSE", "components/bookshelf/assets/bookshelf-logo.png",
     "components/simpleui/main.lua", "components/simpleui/_meta.lua", "components/simpleui/LICENSE",
 }) do expect(path) end
-for _, module in ipairs({ "core/orbitui_author_ornaments", "core/orbitui_japan_ornaments",
-                         "core/orbitui_ukiyoe_ornaments", "core/orbitui_manga_ornaments" }) do
-    for _, pack in ipairs(require(module).packs) do
-        for _, file in ipairs(pack.files) do
-            expect("assets/ornaments/" .. pack.name .. "/" .. file)
-        end
-    end
+for path in pairs(entries) do
+    assert(not path:find(prefix .. "assets/ornaments/", 1, true), "Ornament images must be separate add-ons")
+    assert(not path:find(prefix .. "addons/", 1, true), "Ornament translations belong in add-on packs")
 end
 for _, icon in ipairs(dofile("core/orbitui_material_catalogue.lua")) do
     expect("assets/material-symbols/icons/" .. icon.name .. ".svg")

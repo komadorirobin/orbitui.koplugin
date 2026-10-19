@@ -2,6 +2,27 @@
 
 ## Automated
 
+2026-10-19 ornament placement (unpublished): test the read-only matching default,
+per-pack random choices, disabled-state preservation, failed atomic writes,
+restart, stale update plans and preference retention across update/reinstall.
+Use the real native dealer/planner for mixed modes, ordinary bust row limits,
+targeted author priority, broad/narrow rows, bare shelves and pagination/render
+agreement. Check default spacing vs random spacing, dynamic bindings, saved
+manual deck order and parked page-cache invalidation. Exercise the translated
+menu's selection/cancel path. Device acceptance still needs mode switching,
+paging, restart and updating a pack in both Library and Manga; headless tests
+do not prove native touch-menu layout or e-ink rendering.
+
+2026-10-19 ornament languages (unpublished): every information card in all six
+add-on packages must carry Swedish and English text, identical source/licence
+links, and captions no longer than the native 4000-byte limit. Changed source
+text requires reviewed translations. Exercise Swedish locale variants, English
+fallback for other/missing languages, native caption-layer precedence, custom
+text preservation and three-way metadata updates with Lua and LuaJIT. Check the
+actual built ZIPs, not only the translation source. On-device acceptance still
+needs installing/updating a pack, opening zoom cards in both languages after
+restart, and verifying a reader-edited caption remains unchanged.
+
 2026-10-19 alpha.53 publication preparation: the user explicitly chose one final
 OTA test alpha because the standalone build has not been tested on the reader.
 Release all four configuration stages together; do not label this beta. Re-run
@@ -23,7 +44,7 @@ before component seeding, existing OrbitUI defaults, first-time adoption over
 standalone component settings, persistence, unknown schemas and failed writes.
 Exercise native per-chip/profile/global orientations and series toggles, reversible
 Classic/Minimal overrides, singleton grouping, active/parked pagination caches,
-targeted and ordinary ornament suppression, deferred additive pack installation,
+targeted and ordinary ornament suppression, optional independent pack installation,
 session shuffling, confirmation/cancel and setup drafts. Both runtimes must pass
 the existing geometry, ornament, settings, integration and upstream suites.
 Evidence: `test-results/appearance-presets-20261019/`.
@@ -32,7 +53,7 @@ Device acceptance additionally needs all three presets on physical shelves in
 Library and Manga, after paging, opening/returning from a series, restart and
 changing a native chip style. Test a fresh settings copy without integrations,
 and an existing setup with custom packs/backgrounds/icons. Confirm no artwork
-is installed on neutral first launch or cancelled setup; choosing Classic offers
+is installed on any first launch or preset selection; Add-ons explicitly installs
 the packs, Minimal hides every ornament, and returning to Shelf settings restores
 saved choices. Test profile chips sharing IDs with native tabs. Verify touch-menu
 refresh and Home/back navigation. Do not infer device acceptance from headless tests.

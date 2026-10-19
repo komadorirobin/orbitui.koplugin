@@ -1,11 +1,9 @@
 local Authors = require("core/orbitui_author_ornaments")
-local Manga = require("core/orbitui_manga_ornaments")
 local M = {}
 
 -- Balance unused end space without moving books or changing the plan's reserve.
 function M.positionX(pl, x, left, right, pad)
-    if Authors.pieces[pl.entry and pl.entry.name]
-            or Manga.pieces[pl.entry and pl.entry.name]
+    if Authors.target(pl.entry)
             or (pl.pad_px or 0) < 0 or pad < 0 then
         return x
     end

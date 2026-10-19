@@ -52,6 +52,7 @@ if setfenv then loader = assert(loadstring(code)); setfenv(loader, env)
 else loader = assert(load(code, "native face-out", "t", env)) end
 local Widget = { _spineFaceOut = loader(), _isSpineMode = function() return true end,
     _spineCachedFetch = function(self) return self._spine_fetch_cache end,
+    _spinePageFirsts = function(self) return self._spine_fetch_cache end,
     _rebuild = function(self) return self._spine_fetch_cache end,
     _profileShelfSettings = function(self) if self.profile then return Profiles.shelfSettings(self.profile, self.chip) end end,
 }
@@ -119,6 +120,21 @@ H.test("cached boxed lists are discarded on active and parked shelves without cl
     A.select("minimal"); H.eq(parked:_rebuild(), nil)
     package.loaded["lib/bookshelf_widget"] = nil
 end)
+H.test("placement changes discard parked page maps once without changing navigation or deck order", function()
+    reset(false)
+    local Ornaments = require("core/orbitui_author_ornaments")
+    local w = shelf(); w:_rebuild()
+    w._cursor, w._drilldown_path = 20, { { kind = "series" } }
+    w._spine_fetch_cache = { page_firsts = { 1, 12, 20 }, page_orn = { old = true } }
+    Ornaments.setPlacements({ Manga = "random" })
+    H.eq(w:_spinePageFirsts(), nil)
+    H.eq(w._cursor, 20); H.eq(w._drilldown_path[1].kind, "series")
+    local cached = { page_firsts = { 1, 10, 20 } }; w._spine_fetch_cache = cached
+    Ornaments.setPlacements({ Manga = "random", Authors = "matched" })
+    H.eq(w:_spinePageFirsts(), cached); H.eq(w:_spineCachedFetch(), cached)
+    Ornaments.setPlacements({})
+    H.eq(w:_rebuild(), nil)
+end)
 H.test("failed changes roll back and do not refresh; settings selection requires confirmation", function()
     reset(true)
     local before = refreshes
@@ -148,7 +164,8 @@ for _, name in ipairs({ "japan", "ukiyoe", "manga" }) do
     package.loaded["core/orbitui_" .. name .. "_ornaments"] = { seed = function() seed_calls = seed_calls + 1 end }
 end
 local Ornaments = require("adapters/orbitui_ornaments")
-H.test("extra packs install only after classic opt-in, once per session, without deleting existing packs", function()
+package.loaded["adapters/orbitui_addons"] = { ornaments = function() end }
+H.test("no preset automatically installs artwork or deletes existing packs", function()
     reset(true)
     local existing = { { name = "User artwork" } }
     local orn = Ornaments.wrap("lib/bookshelf_ornaments", {
@@ -157,10 +174,10 @@ H.test("extra packs install only after classic opt-in, once per session, without
     }, "/plugin")
     H.eq(orn.listAll(), existing); H.eq(seed_calls, 0); H.eq(orn.frequency(), 3)
     A.select("minimal"); H.eq(orn.frequency(), 0); orn.listAll(); H.eq(seed_calls, 0)
-    A.select("classic"); H.eq(orn.listAll(), existing); H.eq(seed_calls, 4)
-    orn.listAll(); H.eq(seed_calls, 4)
+    A.select("classic"); H.eq(orn.listAll(), existing); H.eq(seed_calls, 0)
+    orn.listAll(); H.eq(seed_calls, 0)
     A.select("native"); H.eq(orn.listAll(), existing); H.eq(orn.frequency(), 3)
-    A.select("classic"); orn.listAll(); H.eq(seed_calls, 4)
+    A.select("classic"); orn.listAll(); H.eq(seed_calls, 0)
 end)
 H.test("minimal mode disables targeted ornaments too, while only classic shuffles once per session", function()
     reset(true)

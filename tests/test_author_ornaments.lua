@@ -101,21 +101,72 @@ local function assertFits(es, rows, hooks, env)
                 if e.lead_ornament then used = used + env.space("lead", e.lead_ornament) end
             else used = used + e.gap_before end
             local pl = bust(e)
-            if pl and Authors.pieces[pl.entry.name] then
+            local id, category = Authors.target(pl and pl.entry)
+            if category == "author" then
                 authors = authors + 1
-                H.eq(Authors.pieces[pl.entry.name], Authors.authorOf(e), "Wrong author beside book")
+                H.eq(id, Authors.authorOf(e), "Wrong author beside book")
             elseif pl then
                 ornaments = ornaments + 1
-                if Manga.pieces[pl.entry.name] then
-                    H.eq(Manga.pieces[pl.entry.name], Manga.seriesOf(e), "Wrong series beside book")
+                if category == "series" then
+                    H.eq(id, Manga.seriesOf(e), "Wrong series beside book")
                 end
             end
         end
-        assert(range.empty or used <= hooks.avail(r), "Book/ornament pair exceeds row budget")
+        assert(range.empty or used <= hooks.avail(r), "Book/ornament pair exceeds row budget: "
+            .. used .. "/" .. hooks.avail(r) .. " row " .. r .. " entries " .. range.first .. "-" .. range.last
+            .. " width " .. env.content_w .. " per_page " .. env.per_page .. " level " .. env.level
+            .. " paginating " .. tostring(env.paginating))
         assert(ornaments <= 1, "More than one ordinary ornament on row " .. r)
         assert(authors == 0 or ornaments == 0, "Ordinary decoration mixed with busts on row " .. r)
     end
 end
+
+H.test("random packs join the native deck without metadata, extra bust slots or mutated cards", function()
+    local modes = { Modernists = "random", Manga = "random" }
+    Authors.setPlacements(modes); modes.Modernists = "matched"
+    H.eq(Authors.target(joyce), nil)
+    local cards = { joyce, bike, woolf, mushroom }
+    local es = {}; for i = 1, 40 do es[i] = entry(i, "Unrelated", 75, true) end
+    for _, level in ipairs({ "off", "rarely", "often", "always" }) do
+        local a, b = clone(es), clone(es)
+        local ha, ra, ea = fixture(a, { cards = cards, level = level, n_rows = 20 })
+        local hb, rb = fixture(b, { cards = cards, level = level, n_rows = 20, native = true, limit = 1 })
+        H.eq(#ha.dealer.cards, #cards); H.eq(ha.state().n, hb.state().n)
+        H.eq(#ra, #rb); assertFits(a, ra, ha, ea)
+        for r, row in ipairs(ra) do
+            H.eq(row.last, rb[r].last)
+            H.eq(ha.row_orn[r] and ha.row_orn[r].entry, hb.row_orn[r] and hb.row_orn[r].entry)
+        end
+        for i in ipairs(a) do
+            H.eq(bust(a[i]) and bust(a[i]).entry, bust(b[i]) and bust(b[i]).entry)
+        end
+        local g, l, nb, fixed, accept = ha.final()
+        local widths = {}; for i, e in ipairs(a) do widths[i] = e.w end
+        local balanced = Layout.balanceRows(widths, ha.avail, g, ra[#ra].last, #ra,
+            { lead = l, no_break = nb, fixed = fixed, row_accept = accept })
+        assertFits(a, balanced or ra, ha, ea)
+    end
+    H.eq(cards[1], joyce); H.eq(cards[2], bike); H.eq(#cards, 4)
+    local h = fixture({ entry(1, "Other") }, { cards = { joyce }, n_rows = 1 })
+    assert(next(h.bare(2, 6)), "Random busts should also be available on bare shelves")
+    Authors.setPlacements({})
+end)
+H.test("per-pack modes retain matched-author priority and can restore targeting without losing bindings", function()
+    Authors.setPlacements({ Manga = "random" })
+    local es = { entry(1, "James Joyce"), entry(2, "Virginia Woolf"), volume(3, "Akira") }
+    local h, rows, env = fixture(es, { width = 700, cards = { bike, joyce, woolf } })
+    H.eq(#h.dealer.cards, 1); H.eq(h.dealer.cards[1], bike)
+    H.eq(bust(es[1]).entry, joyce); H.eq(bust(es[2]).entry, woolf)
+    H.eq(bust(es[3]), nil); H.eq(h.row_orn[1], nil); assertFits(es, rows, h, env)
+    Manga.setBindings({ ["Manga/New.png"] = { kind = "series", id = "series:new", names = { "New Series" } } })
+    H.eq(Authors.target({ name = "Manga/New.png" }), nil)
+    Authors.setPlacements({ Manga = "matched", Modernists = "invalid" })
+    H.eq(Authors.target({ name = "Manga/New.png" }), "series:new")
+    H.eq(Authors.target(joyce), "james joyce")
+    es = { volume(1, "Akira") }
+    fixture(es, { cards = { bike } }); H.eq(bust(es[1]).entry, bike)
+    Manga.setBindings({}); Authors.setPlacements({})
+end)
 
 H.test("manga matching uses exact series metadata and known language aliases", function()
     for _, subject in ipairs({
@@ -580,6 +631,13 @@ H.test("whole-library pagination and page renders agree across author boundaries
 end)
 H.test("whole-library pagination and page renders agree across mixed series and author boundaries", function()
     checkPagination(true)
+end)
+H.test("pagination and page renders agree for random and mixed placement modes", function()
+    for _, modes in ipairs({ { Modernists = "random", Manga = "random" }, { Manga = "random" } }) do
+        Authors.setPlacements(modes)
+        checkPagination(true)
+    end
+    Authors.setPlacements({})
 end)
 
 H.test("runtime adapter enables the optional limit on the canonical native dealer", function()

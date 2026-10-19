@@ -200,7 +200,7 @@ for _, kind in ipairs({ "write", "read", "close", "rename", "directory", "missin
         H.eq(files[dest .. "James Joyce.png"], "complete retry image")
     end)
 end
-H.test("an installation error cannot crash or repeatedly stall the ornament browser", function()
+H.test("the browser does not invoke legacy automatic installers", function()
     fixture(); fail_write = true
     local warnings, calls = 0, 0
     package.loaded.logger = { warn = function() warnings = warnings + 1 end }
@@ -212,7 +212,7 @@ H.test("an installation error cannot crash or repeatedly stall the ornament brow
         local all, packs = module.listAll()
         H.eq(all[1], "existing"); H.eq(packs[1], "old pack")
     end
-    H.eq(calls, 3); H.eq(warnings, 4); H.eq(files[marker], nil)
+    H.eq(calls, 3); H.eq(warnings, 0); H.eq(files[marker], nil)
 end)
 H.test("Manga is an independent additive pack with preserved edits and deletions", function()
     fixture()

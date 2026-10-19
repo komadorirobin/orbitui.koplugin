@@ -769,7 +769,9 @@ local function applyLayers(e, layers)
         local layer = layers[i]
         local rec = layer and layer[e.lookup and e.lookup[i] or e.name]
         if type(rec) == "table" and rec[name] ~= nil then
-            local v = M.cleanField(name, rec[name])
+            local value = rec[name]
+            if name == "info" and M.resolveInfo then value = M.resolveInfo(rec) end
+            local v = M.cleanField(name, value)
             if v ~= nil then return v end
             logger.warn("[bookshelf] ornaments: ignoring", name, "=", tostring(rec[name]), "for", e.name)
         end
@@ -1030,7 +1032,9 @@ function M.listAll()
             key_parts[#key_parts + 1] = d .. "\3" .. tostring(mtime) .. "|" .. table.concat(names, "\0")
                 .. "\5" .. tostring(fs.attributes(d .. "/" .. M.JSON_NAME, "modification"))
             for _i, n in ipairs(names) do
-                if not loose[n] then loose[n], loose_root[n] = true, d end
+                if not loose[n] and (not M.acceptFile or M.acceptFile(d .. "/" .. n, n, d)) then
+                    loose[n], loose_root[n] = true, d
+                end
             end
             for _i, pack in ipairs(packs) do
                 watch[#watch + 1] = d .. "/" .. pack
@@ -1040,7 +1044,11 @@ function M.listAll()
                 pack_set[pack] = true
                 pack_files[pack] = pack_files[pack] or {}
                 for _j, file in ipairs(pn or {}) do
-                    if not pack_files[pack][file] then pack_files[pack][file] = d end
+                    if not pack_files[pack][file] and (not M.acceptFile
+                            or M.acceptFile(d .. "/" .. pack .. "/" .. file, pack .. "/" .. file, d)) then
+                        pack_files[pack][file] = d
+                        if M.acceptFile then key_parts[#key_parts + 1] = d .. "/" .. pack .. "/" .. file end
+                    end
                 end
             end
         end

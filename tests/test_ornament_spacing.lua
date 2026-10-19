@@ -176,6 +176,22 @@ H.test("all targeted pieces stay book-adjacent and keep their native padding", f
     end
 end)
 
+H.test("random busts and manga pieces use balanced ordinary spacing; switching back restores adjacency", function()
+    for _, name in ipairs({ "Modernists/James Joyce.png", "Manga/Kaneda Motorcycle.png" }) do
+        Authors.setPlacements({ Modernists = "random", Manga = "random" })
+        local opts = options(nil, {180}, nil, nil, nil, placement("left", 150, name))
+        local old, new = render(opts, false), render(opts, true)
+        balanced(new.leading, new.margin, new.first, 20)
+        H.eq(new.first, old.first)
+        H.eq(Spacing.positionX(placement("right", 150, name), 30, 0, 1000, 20), 425)
+        Authors.setPlacements({})
+        H.eq(render(opts, true).leading.overlap_offset[1], old.leading.overlap_offset[1])
+    end
+    Authors.setBindings({ ["New/Author.png"] = { kind = "author", id = "new", names = { "New Author" } } })
+    H.eq(Spacing.positionX(placement("right", 150, "New/Author.png"), 30, 0, 1000, 20), 30)
+    Authors.setBindings({})
+end)
+
 H.test("explicit tight or overlapping padding is not overridden", function()
     for _, pad in ipairs({-1, -10, -30, -1000}) do
         for _, side in ipairs({"left", "right"}) do

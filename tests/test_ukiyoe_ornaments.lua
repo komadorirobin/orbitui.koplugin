@@ -115,13 +115,13 @@ H.test("theme directory failures cannot commit an incomplete pack", function()
     for path in pairs(files) do assert(not path:match("%.orbitui%-tmp$")) end
     failed_dir = nil; H.eq(seed(), true); assert(files[marker])
 end)
-H.test("a gallery failure is guarded and only attempted once per process", function()
+H.test("the browser does not automatically seed the optional gallery", function()
     fixture(); files[source .. "Hokusai - Great Wave.png"] = nil
     local module = Adapter.wrap("lib/bookshelf_ornaments", {
         dir = orn.dir, listAll = function() scans = scans+1; return { "existing" }, { "Authors" } end,
     }, "/slot")
     for _ = 1, 4 do H.eq(module.listAll()[1], "existing") end
-    H.eq(scans, 4); H.eq(warnings, 1); H.eq(files[marker], nil)
+    H.eq(scans, 4); H.eq(warnings, 0); H.eq(files[marker], nil)
 end)
 H.test("the actual upstream theme scanner discovers the gallery and named plank", function()
     fixture(); seed()

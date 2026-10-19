@@ -67,6 +67,11 @@ function M.items(close)
         { text = _("Optional integrations"), sub_item_table_func = function()
             return require("adapters/orbitui_integrations").items()
         end },
+        { text = _("Add-ons"), sub_item_table = {
+            { text = _("Ornament add-ons"), callback = navigate(function()
+                require("adapters/orbitui_addons").show()
+            end) },
+        } },
     }
     local sections = require("lib/bookshelf_profiles").list()
     for i, section in ipairs(sections) do

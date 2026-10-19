@@ -433,6 +433,23 @@ upgrade tests, or restore its affected preferences separately if rolling back.
 Do not delete new settings or restore old reading progress. Physical restart,
 setup-guide and shelf-preset acceptance remain mandatory before the first beta.
 
+Alpha.54 is the optional-add-ons **test alpha**, still not beta. The main runtime
+contains no ornament artwork; six packs are independently installed/updated via
+OrbitUI settings > Add-ons > Ornament add-ons, using catalog `ornaments-1`.
+Existing native artwork, themes, local edits and deletions are retained. New
+packs start disabled. Matching authors/series remains the default, with optional
+random placement per pack. Info cards are Swedish for Swedish locales and English
+otherwise; custom captions take precedence. Explicitly install/adopt old packs
+to receive managed updates and translated cards. Manga has one visible version.
+
+The bootstrap/API and upstream pins remain unchanged. Alpha.53 can update
+directly through the preview channel. Add-on state lives outside code slots, so
+code rollback does not roll it back: alpha.53 ignores the managed pack directory
+and newly downloaded artwork may not appear there. Old native folders remain.
+Keep a separate settings backup; do not restore old reading progress. Fresh
+setup and add-on device acceptance are required before beta; see the
+[alpha.54 checklist](releases/0.1.0-alpha.54.md).
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

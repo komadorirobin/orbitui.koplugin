@@ -1,4 +1,4 @@
--- Targeted ornaments are book-adjacent pieces, never cards in the general deck.
+-- Match ornaments to books by default; opted-in packs use the ordinary deck.
 local Manga = require("core/orbitui_manga_ornaments")
 local M = {}
 M.pack = "Modernists"
@@ -44,6 +44,46 @@ local function normalize(name)
         :gsub("%s*,%s*", ", "):gsub("^%s+", ""):gsub("%s+$", "")
 end
 local aliases = {}
+local extra_aliases, extra_pieces = {}, {}
+function M.setBindings(bindings)
+    extra_aliases, extra_pieces = {}, {}
+    for path, binding in pairs(bindings) do
+        if binding.kind == "author" then
+            extra_pieces[path] = binding.id
+            for _, name in ipairs(binding.names) do
+                extra_aliases[normalize(name)] = binding.id
+                local given, surname = name:match("^(.+) (%S+)$")
+                if given then extra_aliases[normalize(surname .. ", " .. given)] = binding.id end
+            end
+        end
+    end
+end
+function M.piece(name) return extra_pieces[name] or M.pieces[name] end
+local placements = {}
+local placement_generation = 0
+function M.placementGeneration() return placement_generation end
+function M.setPlacements(modes)
+    local previous = placements
+    placements = {}
+    for folder, mode in pairs(modes) do
+        if mode == "random" then placements[folder] = mode end
+    end
+    for folder in pairs(previous) do
+        if not placements[folder] then placement_generation = placement_generation + 1; return end
+    end
+    for folder in pairs(placements) do
+        if not previous[folder] then placement_generation = placement_generation + 1; return end
+    end
+end
+function M.target(piece)
+    if not piece then return nil end
+    local folder = piece.pack or (piece.name or ""):match("^([^/]+)/")
+    if placements[folder] == "random" then return nil end
+    local id = M.piece(piece.name)
+    if id then return id, "author" end
+    id = Manga.piece(piece.name)
+    if id then return id, "series" end
+end
 local function alias(id, name)
     aliases[normalize(name)] = id
     local given, surname = name:match("^(.+) (%S+)$")
@@ -72,7 +112,7 @@ local function author(value)
     elseif type(value) == "string" then
         for part in value:gmatch("[^\n;|&]+") do
             local name = normalize(part)
-            if aliases[name] then return aliases[name] end
+            if extra_aliases[name] or aliases[name] then return extra_aliases[name] or aliases[name] end
         end
     end
 end
@@ -100,7 +140,7 @@ end
 function M.fillHooks(native, env)
     local regular, targeted = {}, {}
     for _, piece in ipairs(env.dealer.cards) do
-        local id = M.pieces[piece.name] or Manga.pieces[piece.name]
+        local id = M.target(piece)
         if id then
             -- Prefer the released pack over an enabled copy of the trial pack.
             if not targeted[id] or piece.pack == M.pack then targeted[id] = piece end
@@ -110,7 +150,30 @@ function M.fillHooks(native, env)
     end
     env.dealer.cards = regular
     env.max_per_row = 1
-    local hooks = native(env)
+    local function sizeForBook(kind, piece, no, entry)
+        local room = env.content_w - entry.w - (kind == "gap" and (entry.gap_base or 0) or 0)
+        local pl = env.size(kind, piece, no)
+        if not pl or room <= 0 then return nil end
+        if env.space(kind, pl) > room then
+            local cap = room - (env.space(kind, pl) - pl.w)
+            local small = cap > 0 and env.size(kind, piece, no, cap) or nil
+            if not small or small.w * 4 < pl.w or env.space(kind, small) > room then return nil end
+            pl = small
+        end
+        return pl
+    end
+    -- Native squeeze handles row ends, not a boundary's leading ornament.
+    -- Use identical bounds when previewing and dealing that book's piece.
+    local sizing_index
+    local native_env = {}
+    for key, value in pairs(env) do native_env[key] = value end
+    native_env.size = function(kind, piece, no, cap)
+        if sizing_index and (kind == "lead" or kind == "gap") then
+            return sizeForBook(kind, piece, no, env.entries[sizing_index])
+        end
+        return env.size(kind, piece, no, cap)
+    end
+    local hooks = native(native_env)
     if env.level == "off" then return hooks end
 
     local has_targets = next(targeted) ~= nil
@@ -136,17 +199,7 @@ function M.fillHooks(native, env)
         local id = identity(i, category)
         local piece = id ~= preceding and targeted[id] or nil
         if not piece then return nil end
-        local entry = env.entries[i]
-        local room = env.content_w - entry.w - (kind == "gap" and (entry.gap_base or 0) or 0)
-        local pl = env.size(kind, piece, 1)
-        if not pl or room <= 0 then return nil end
-        if env.space(kind, pl) > room then
-            local cap = room - (env.space(kind, pl) - pl.w)
-            local small = cap > 0 and env.size(kind, piece, 1, cap) or nil
-            if not small or small.w * 4 < pl.w or env.space(kind, small) > room then return nil end
-            pl = small
-        end
-        return pl
+        return sizeForBook(kind, piece, 1, env.entries[i])
     end
     local function selectCategory(first, category)
         local used, preceding = 0, previous[category]
@@ -192,18 +245,27 @@ function M.fillHooks(native, env)
     hooks.gaps = setmetatable({}, { __index = function(_, i)
         local pl = selected[i]
         if pl then return (env.entries[i].gap_base or 0) + env.space("gap", pl) end
-        return gaps[i]
+        sizing_index = i
+        local gap = gaps[i]
+        sizing_index = nil
+        return gap
     end })
     function hooks.lead(i)
         local pl = selected[i]
-        return pl and env.space("lead", pl) or lead(i)
+        if pl then return env.space("lead", pl) end
+        sizing_index = i
+        local width = lead(i)
+        sizing_index = nil
+        return width
     end
     function hooks.placed(i, r, starts_row)
         local pl = selected[i]
         local entry = env.entries[i]
         local seed = entry.orn_seed
         if pl then entry.orn_seed = nil end
+        sizing_index = i
         placed(i, r, starts_row)
+        sizing_index = nil
         entry.orn_seed = seed
         if pl then
             if starts_row then entry.lead_ornament = pl
@@ -224,7 +286,8 @@ function M.fillHooks(native, env)
             ordinary[i], authors[i] = ordinary[i - 1], authors[i - 1]
             local pl = e.ornament or e.lead_ornament
             if pl then
-                local counts = M.pieces[pl.entry.name] and authors or ordinary
+                local _, category = M.target(pl.entry)
+                local counts = category == "author" and authors or ordinary
                 counts[i] = counts[i] + 1
             end
         end

@@ -3,8 +3,8 @@ local M = { key = "appearance", order = { "native", "classic", "minimal" } }
 local presets = {
     native = { label = "Shelf settings", boxes = "native",
         description = "Use each shelf's cover orientation, series boxes and ornaments. No extra ornament packs are installed automatically." },
-    classic = { label = "Classic OrbitUI", face_out = "all", boxes = "all", bundles = true,
-        description = "All covers face forward and eligible series become boxes, including single volumes. Install OrbitUI's extra ornament packs and keep author and manga matching." },
+    classic = { label = "Classic OrbitUI", face_out = "all", boxes = "all",
+        description = "All covers face forward and eligible series become boxes, including single volumes. Optional ornament add-ons keep author and manga matching; nothing is installed automatically." },
     minimal = { label = "Minimal bookshelf", face_out = "all", boxes = "off", hide_ornaments = true,
         description = "All covers face forward, without series boxes or ornaments. Saved shelf choices and installed artwork are kept." },
 }

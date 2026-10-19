@@ -3,12 +3,15 @@ M.modules = {
     ["lib/bookshelf_ornaments"] = true,
     ["lib/bookshelf_ornament_deck"] = true,
     ["lib/bookshelf_spine_shelf"] = true,
+    ["lib/bookshelf_ornament_browser"] = true,
 }
 
 function M.wrap(name, module, root)
     local Authors = require("core/orbitui_author_ornaments")
     local Appearance = require("adapters/orbitui_appearance")
-    if name == "lib/bookshelf_ornament_deck" then
+    if name == "lib/bookshelf_ornament_browser" then
+        require("adapters/orbitui_addons").browser(module, root)
+    elseif name == "lib/bookshelf_ornament_deck" then
         local fill = module.fillHooks
         module.fillHooks = function(env)
             if Appearance.policy().hide_ornaments then env.level = "off" end
@@ -35,34 +38,7 @@ function M.wrap(name, module, root)
             if Appearance.policy().hide_ornaments then return 0 end
             return frequency(...)
         end
-        local list, attempted = module.listAll, false
-        module.listAll = function(...)
-            if not attempted and Appearance.policy().bundles then
-                attempted = true
-                local ok, err = pcall(Authors.seed, root, module.dir())
-                if not ok then require("logger").warn("[OrbitUI] Could not install author ornaments:", err) end
-                local japan_ok, japan_err = pcall(function()
-                    return require("core/orbitui_japan_ornaments").seed(root, module)
-                end)
-                if not japan_ok then
-                    require("logger").warn("[OrbitUI] Could not install Japan ornaments:", japan_err)
-                end
-                local gallery_ok, gallery_err = pcall(function()
-                    return require("core/orbitui_ukiyoe_ornaments").seed(root, module)
-                end)
-                if not gallery_ok then
-                    require("logger").warn("[OrbitUI] Could not install Ukiyo-e Gallery:", gallery_err)
-                end
-                local manga_ok, manga_err = pcall(function()
-                    return require("core/orbitui_manga_ornaments").seed(root, module.dir())
-                end)
-                if not manga_ok then
-                    require("logger").warn("[OrbitUI] Could not install Manga ornaments:", manga_err)
-                end
-            end
-            local all, packs = list(...)
-            return all, packs
-        end
+        require("adapters/orbitui_addons").ornaments(module, root)
     end
     return module
 end

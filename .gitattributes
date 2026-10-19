@@ -4,6 +4,8 @@
 /AGENTS.md export-ignore
 /tests/ export-ignore
 /scripts/ export-ignore
+/addons/ export-ignore
+/assets/ornaments/ export-ignore
 /components/*/tests/ export-ignore
 /components/*/tools/ export-ignore
 /components/*/scripts/ export-ignore

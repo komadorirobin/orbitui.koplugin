@@ -64,7 +64,7 @@ class MannAssetsTests(unittest.TestCase):
                       "including commits containing it"):
             self.assertIn(value, notice)
         self.assertIn("THOMAS-MANN-SEITZ.txt", (ROOT / "AGENTS.md").read_text())
-        for path in (ROOT / "core/orbitui_author_ornaments.lua", ROOT / "scripts/check-package.lua"):
+        for path in (ROOT / "core/orbitui_author_ornaments.lua", ROOT / "scripts/build-ornament-addons.py"):
             self.assertIn("THOMAS-MANN-SEITZ.txt", path.read_text())
         notice = (PACK / "ATTRIBUTION.txt").read_text()
         self.assertIn("THOMAS MANN.PNG - PAULINE AHRENS PHOTOGRAPHIC CUTOUT", notice)

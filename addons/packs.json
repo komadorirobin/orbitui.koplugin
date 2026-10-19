@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "packs": [
+    {"id":"manga","name":"Manga","version":1,"folders":["Manga","Manga II","Manga III"],"description":"Series-matched manga miniatures, including all previous Manga packs.","preview":"Manga III/Stargazing Telescope.png"},
+    {"id":"japan","name":"Japan","version":1,"folders":["Japan"],"description":"Bonsai, cats and Japanese-inspired shelf decorations.","preview":""},
+    {"id":"ukiyoe","name":"Ukiyo-e Gallery","version":1,"folders":["Ukiyo-e Gallery"],"description":"27 museum prints with information cards, plus a washi wall and hinoki plank.","preview":""},
+    {"id":"modernists","name":"Modernists","version":1,"folders":["Modernists"],"description":"James Joyce and Virginia Woolf, placed beside their books.","preview":""},
+    {"id":"authors","name":"Authors","version":1,"folders":["Authors"],"description":"Author sculptures with biographies and author matching.","preview":""},
+    {"id":"authors-ii","name":"Authors II","version":1,"folders":["Authors II"],"description":"Hemingway and Svevo sculptures with biographies and author matching.","preview":""}
+  ]
+}

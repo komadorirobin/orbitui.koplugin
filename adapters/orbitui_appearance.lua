@@ -111,14 +111,18 @@ function M.widget(widget)
     end
     -- A cached list may already contain compacted boxes. Invalidate at the
     -- consumer too, including parked widgets and next/previous-page fetches.
-    for _, name in ipairs({ "_spineCachedFetch", "_rebuild" }) do
+    -- Matched/random ornaments change row widths and deal states as well.
+    local Ornaments = require("core/orbitui_author_ornaments")
+    for _, name in ipairs({ "_spineCachedFetch", "_spinePageFirsts", "_rebuild" }) do
         local original = widget[name]
         if original then
             widget[name] = function(self, ...)
                 local id = M.current()
-                if self._orbitui_appearance_seen ~= id then
+                local placement = Ornaments.placementGeneration()
+                if self._orbitui_appearance_seen ~= id or self._orbitui_placement_seen ~= placement then
                     self._spine_fetch_cache = nil
                     self._orbitui_appearance_seen = id
+                    self._orbitui_placement_seen = placement
                 end
                 return original(self, ...)
             end
