@@ -1,6 +1,6 @@
 # Experimental installation and rollback
 
-This is the first integration milestone, not a stable replacement. It keeps the
+Alpha.53 is a standalone-configuration test preview, not a stable replacement. It keeps the
 two component implementations and existing navigation behavior behind one
 KOReader plugin. The navigation state machine and shared data services have not
 yet been consolidated. Headless tests do not establish device stability.
@@ -18,6 +18,160 @@ the ZIP does not automatically disable anything. Renaming a backup directory to
 another name ending in `.koplugin` is not a safe way to disable it.
 
 ## Settings
+
+### Configurable library sections (stage 1)
+
+OrbitUI settings > Library sections edits saved library names, icons, folder
+roots, order and shelves. The same sections are available as bottom-bar actions
+under Navigation & bars. Long-press a shelf > Edit shelf edits its name and
+folder-grouping options; Appearance keeps the existing Bookshelf style picker.
+Adding a folder shelf outside a section's current roots extends that section's
+scope. Changing a root repoints its descendant folder shelves but never moves
+files. Removing a shelf removes only its reference, not books or saved styling.
+Disabling a section is reversible and retains its settings and action identity.
+
+On first use, version 1 of `orbitui_libraries` is added to bookshelf.lua. Existing
+profile-specific settings trigger an additive import of the former prose/comics
+definitions with the same IDs and folder choices. No other preference keys,
+Home layouts, credentials or document sidecars are changed. A stock Bookshelf
+file by itself does not trigger that import. With no earlier profile usage, the
+initial section uses KOReader's selected home directory, or remains unconfigured
+if no absolute home directory is set. Invalid/future schemas are not overwritten.
+
+This is the configuration foundation, not a stable public onboarding release.
+The stage 3 guide below still needs physical-device acceptance.
+Older OrbitUI versions ignore the new section registry and retain their former
+fixed profiles; new sections and edited paths therefore require this build.
+
+### Configurable Reading dashboard (stage 2)
+
+OrbitUI settings > Reading dashboard > Cards and content can show/hide each of
+the nine cards, reorder the six main blocks and reorder the four statistics
+inside their block. Visible blocks fill rows left to right; an unpaired block
+uses the full width. Statistics remain a compact group, not a free-form canvas.
+The same settings are available in the dashboard module's Custom Screen menu,
+scoped to that screen. Existing heading overrides and dark-card preference stay
+separate and unchanged. Restore card layout shows all cards in the original
+order, without resetting sources, headings or other Home pages.
+
+Both book rows can use local To Be Read, New Books, recent history, a named
+KOReader collection, a saved library shelf, or cached BookOrbit Want to Read.
+Shelf references follow current scope/filter/sort settings. A deleted collection
+or disabled/deleted shelf shows an unavailable/empty state, never unrelated
+books. Changing sources resets only that card's paging; moving cards keeps its
+page. Hidden book/goal cards do not read their source or request goal refreshes.
+Goal source can be automatic (the previous behavior), local annual goal, or
+Hardcover. BookOrbit and Hardcover remain optional and own their data/sync.
+
+The versioned `<screen-prefix>orbitui_dashboard_config` is added to SimpleUI's
+existing store. At registration, existing Home/Custom Screen dashboard settings
+(including a previously disabled dashboard) retain the old BookOrbit default.
+New dashboards use local To Be Read. The one-time marker prevents subsequently
+created screens from being mistaken for old installations. Other layout pages,
+wallpaper, navigation, credentials and reading data are not rewritten. Unknown
+config versions are preserved and shown as unsupported, not silently reset.
+
+Device checks before release: existing layout unchanged after upgrade; hide,
+reorder and restore cards; change each row's source; swipe/paging after rotation;
+delete a chosen collection/disable its section; offline optional integrations;
+independent Custom Screen settings; night mode and book-close refresh. Headless
+geometry/interaction tests and schematic previews are not device approval.
+
+### Setup guide and optional integrations (stage 3, alpha.53)
+
+**OrbitUI settings > Setup guide** edits a draft of library sections/folders,
+the launch screen and bottom-bar buttons. Review and apply shows the choices
+before saving. Cancel discards the draft; no books are moved, no `home_dir` or
+folder-lock preference is changed, and no credentials, reading data, existing
+Home pages or book-close target are reset. Section IDs remain stable when a
+folder or label changes. Newly selected folders must exist; temporarily absent
+old roots (for example on removable storage) may remain unchanged.
+
+The guide appears automatically only on a fresh installation, in FileManager,
+not while a book is opening. It offers the local Reading dashboard and a small
+Home/library/power bar, applied only after confirmation. The dashboard is an
+additional page, not a replacement layout. Existing Home pages and File browser
+are alternative launch targets. Bar buttons appear in selection order and obey
+the native bar limit (including navigation-pager mode); two buttons are required
+when building a bar with this guide. More advanced choices remain in Navigation
+& bars. Adding a library section does not silently add a button to an existing
+bar: select it in the guide's Bottom bar step.
+
+Before components create defaults, `settings/orbitui/setup.lua` records version 1
+and a `pending` or `kept` status. Existing Bookshelf/SimpleUI files (including
+`.old`) or legacy global preferences select `kept`: upgrades are not prompted
+and their choices are left alone. The user can open the guide manually, with
+all choices initially set to Keep existing. On a fresh install, Cancel leaves
+setup pending for the next launch; Skip automatic setup stops automatic prompts
+but does not prevent opening the guide from settings. A reader-first launch
+defers the prompt until FileManager is available. Unknown setup schemas block
+initialization rather than being overwritten. Normal component defaults and
+additive stage 1/2 migrations still run independently of the guide.
+
+OrbitUI suppresses the embedded SimpleUI onboarding and its pre-guide startup
+override. Standalone SimpleUI behavior is unchanged. Draft callbacks stop after
+the owning host is torn down. Stale drafts are rejected before saving. Detected
+write failures attempt to restore only touched keys and leave setup incomplete;
+this is not a power-loss-atomic transaction across three settings files.
+
+**OrbitUI settings > Optional integrations** explains BookOrbit, Hardcover and
+MyAnimeList and shows local detection only, not a connection test. Opening it
+does not load a provider, scan books, make network requests, display tokens or
+enable another plugin. Accounts remain configured in their owning plugin/module.
+Local books, TBR, reading goals and series boxes work without these integrations.
+Existing configured integrations continue to work; this guide does not disable
+them or rewrite old dashboard sources.
+
+Still required before general release: test fresh/upgrade installs on devices,
+folder picker/back/cancel in portrait and landscape, ReaderUI-first startup,
+Home/library/bar transitions after restart, missing integrations/offline use,
+and OTA/rollback. Shelf appearance presets are covered in stage 4 below.
+Legacy action aliases remain supported, not forcibly renamed. Artwork/license
+and public documentation review are separate release gates. Alpha.53 publishes
+the four stages together for OTA/device testing, not as an accepted public beta.
+
+### Shelf presets (stage 4, alpha.53)
+
+**OrbitUI settings > Appearance > Shelf preset**, also available as a draft choice
+in the setup guide, controls only the physical bookshelf:
+
+- **Shelf settings**: native cover-facing rules and series-box toggle per chip,
+  including profile-qualified chips, with the existing ornament selection.
+  No extra OrbitUI artwork is automatically copied. Native series grouping
+  excludes single-volume series, unlike Classic.
+- **Classic OrbitUI**: retain all-face-out covers, boxes for all eligible series
+  including singletons and explicitly configured grouped folders, additive
+  bundled ornament installation and the existing session shuffle. Author and
+  manga affiliations remain intact.
+- **Minimal bookshelf**: all covers forward, no series compaction and no
+  ornaments, including targeted author busts and manga miniatures.
+
+Preset choice is a versioned `appearance` entry in `settings/orbitui/setup.lua`.
+Detection runs after the backup but before components/ornament installers load.
+A pre-existing completed OrbitUI first-run snapshot preserves Classic. A first
+OrbitUI launch, even over standalone Bookshelf/SimpleUI settings, uses Shelf
+settings. An already-pending fresh setup remains neutral after restarts. Once a
+preset is stored, neither detection nor completing/skipping the guide changes it.
+Unknown schemas block startup rather than being reset.
+
+These are reversible runtime policies, not bulk writes into Bookshelf settings.
+Home, wallpapers, icons, bindings, cover size/text, native per-chip selections,
+disabled packs, manually edited artwork, reading data and credentials stay intact.
+Switching away from Classic does not uninstall artwork it already installed;
+disable individual installed packs in Shelf theme or select Minimal to hide all.
+Existing matching and spacing improvements apply to any installed ornaments.
+The stock-cactus replacement remains part of the explicitly selected Classic
+pack's one-time installer, not a new-install default.
+
+Selection asks for confirmation, saves with rollback on detected errors and
+invalidates prepared box/ornament pagination. Parked shelves rebuild on return.
+The guide includes presets in its normal stale-draft validation and review/save
+transaction. Cancel does not apply a preset or install artwork. Geometry fixes
+and modern bindings remain available in all presets; standalone components are
+unchanged by default: profile `series_boxes` joins the style fields and an optional
+editor frequency override reports None/read-only in Minimal without changing the
+saved frequency. Returning to a decorated preset restores that control.
+Physical-device acceptance is still required before a separately approved beta.
 
 Before exposing either component, OrbitUI snapshots Bookshelf settings (including
 Bookshelf-owned link records), SimpleUI settings, and the global reader settings into:

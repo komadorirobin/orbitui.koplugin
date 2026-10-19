@@ -2,6 +2,63 @@
 
 ## Automated
 
+2026-10-19 alpha.53 publication preparation: the user explicitly chose one final
+OTA test alpha because the standalone build has not been tested on the reader.
+Release all four configuration stages together; do not label this beta. Re-run
+the complete sequential Lua/LuaJIT suites, translations and clean-commit package.
+Audit runtime changes against public alpha.52, exact assets/bootstrap/upstream
+pins, outgoing history, held artwork and secrets. Exercise alpha.52's native
+installer before publication and against anonymous public bytes, including
+activation, restart, rollback and interrupted download recovery. Verify main/tag
+CI and downloaded draft/public assets. Evidence: `test-results/alpha53-20261019/`.
+The release checklist in `releases/0.1.0-alpha.53.md` requires physical tests of
+both preserved upgrades and an isolated fresh setup before beta approval.
+The first full run caught an obsolete source-shape assertion in Bookshelf's
+ornament-frequency test. Replace it with execution of the real dial row,
+covering live apply plus host override, read-only callbacks and restoration of
+the saved frequency. Re-run both complete suites; no runtime workaround is used.
+
+2026-10-19 standalone appearance stage 4 (unpublished): test neutral defaults
+before component seeding, existing OrbitUI defaults, first-time adoption over
+standalone component settings, persistence, unknown schemas and failed writes.
+Exercise native per-chip/profile/global orientations and series toggles, reversible
+Classic/Minimal overrides, singleton grouping, active/parked pagination caches,
+targeted and ordinary ornament suppression, deferred additive pack installation,
+session shuffling, confirmation/cancel and setup drafts. Both runtimes must pass
+the existing geometry, ornament, settings, integration and upstream suites.
+Evidence: `test-results/appearance-presets-20261019/`.
+
+Device acceptance additionally needs all three presets on physical shelves in
+Library and Manga, after paging, opening/returning from a series, restart and
+changing a native chip style. Test a fresh settings copy without integrations,
+and an existing setup with custom packs/backgrounds/icons. Confirm no artwork
+is installed on neutral first launch or cancelled setup; choosing Classic offers
+the packs, Minimal hides every ornament, and returning to Shelf settings restores
+saved choices. Test profile chips sharing IDs with native tabs. Verify touch-menu
+refresh and Home/back navigation. Do not infer device acceptance from headless tests.
+
+2026-10-19 standalone setup stage 3 (unpublished): exercise detection before
+component defaults, fresh/FileManager and reader-first launches, preserved
+upgrades, one automatic prompt per session, pending/skip/reopen, teardown and
+late callbacks. Draft tests cover folder changes, stable IDs, stale snapshots,
+removable drives, launch targets, additive dashboard pages, ordered/capped bar
+buttons, save/flush failures and touched-key rollback. Verify standalone
+SimpleUI still owns its original onboarding while the embedded instance does
+not overwrite launch/book-close choices. Optional integration inspection must
+work without installed providers and make no provider/client calls or show
+credentials. Run both runtimes, translations and a sealed development ZIP from
+the actual working tree, without committing or changing VERSION/upstream pins.
+Evidence: `test-results/setup-guide-20261019/`.
+
+Device acceptance for this stage: use an isolated fresh KOReader settings copy,
+then a copy of an existing OrbitUI setup. Test Cancel, Skip, Review/Apply and
+reopening from settings; folder picker/keyboard/back in both orientations;
+reader-first startup; changes to the dock and Home after restart; disabled or
+missing providers and no network. Verify old shelves, custom pages, icons,
+book-close behavior and credentials remain intact. Recovery tests include
+unwritable settings and interrupted startup. Headless tests are not device
+acceptance; artwork/public-release review remains separate.
+
 2026-10-19 alpha.52 publication preparation: explicitly requested for Manga III.
 The implementation passed 696 Lua / 697 LuaJIT root cases in 54 suites,
 407 Bookshelf suites (two existing environment skips), all 13 SimpleUI files,

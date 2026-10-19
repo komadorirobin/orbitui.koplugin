@@ -1,8 +1,28 @@
 # OrbitUI for KOReader
 
-An experimental, single-plugin distribution of the BookOrbit-tailored SimpleUI
-and Bookshelf forks. The first milestone preserves the existing screens and
-behavior; it is not a rewrite of the navigation or reading engine.
+An experimental, single-plugin distribution of SimpleUI and Bookshelf for
+KOReader, with configurable library sections, Home cards and shelf appearance.
+BookOrbit, Hardcover and MyAnimeList are optional. Existing OrbitUI setups keep
+their screens and preferences; this is not a rewrite of the reading engine.
+
+### Standalone configuration (alpha.53 test preview)
+
+Version **0.1.0-alpha.53** adds configurable library sections, dashboard
+cards/sources and an **OrbitUI settings > Setup guide** for folders, launch
+screen and bottom-bar buttons. Fresh installs are offered the guide; upgrades
+keep their existing configuration. All changes are reviewed before applying,
+and the guide can be cancelled or reopened later. BookOrbit, Hardcover and
+MyAnimeList are optional, with a read-only explanation in **Optional integrations**.
+**Appearance > Shelf preset** offers Shelf settings, Classic OrbitUI and Minimal
+bookshelf. New installations follow each shelf's own choices; existing OrbitUI
+installations retain the classic look. Presets leave Home, wallpapers, icons,
+reading data and per-shelf preferences intact. Extra ornament packs install only
+in Classic; changing away does not delete installed artwork. The same choice is
+available in the setup guide, applied only after review.
+See [migration and device-test requirements](docs/MIGRATION.md) and
+[the alpha.53 test checklist](docs/releases/0.1.0-alpha.53.md). This is a test
+alpha, not the first public beta: physical-device acceptance of the new setup
+flow, restart and preset switching is still required.
 
 ## Status
 
@@ -16,15 +36,15 @@ The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
 complete histories and licenses are retained under `components/`. Exact sources
 are recorded in `sources.json`. Neither original repository is modified.
 
-Version **0.1.0-alpha.47** adds an optional Reading dashboard with independent
+Version **0.1.0-alpha.47** added an optional Reading dashboard with independent
 book-row paging, plus per-shelf titles over series covers. The dashboard adds
 a first Home page without replacing the existing layout. Alpha.46's rounded
 MAL cover-corner cutout, alpha.45's Kanzenban option and cached ratings remain,
 along with alpha.44's natural spine widths,
 partial filling and `+N`, complete read/total counts,
 aspect-true covers, scoped binding choices, the automatic-cover fix and bounded
-image picker. Bookshelf **5.5.2** (`c7a9db2c`) and SimpleUI **2.7.5** (`7eb80f9e`)
-remain the reviewed upstream baselines.
+image picker. The reviewed upstream baselines are now Bookshelf **5.5.4**
+(`982375a7`) and SimpleUI **2.7.5** (`7eb80f9e`), unchanged in alpha.53.
 The read-total sits in the compact exposed head, above the picture; minimum
 box width is 85% of a normal cover, with the existing maximum/space cap.
 The requested upstream series-box trial keeps native open-topped slipcases
@@ -36,7 +56,7 @@ labels/sizes, ornaments,
 custom icons and dock/Bento layout are retained. Back up settings before
 updating: new grouped-order, ledger and module edits are not mirrored to older
 code on rollback. New surface choices are likewise not mirrored to older code.
-See [the release notes](docs/releases/0.1.0-alpha.47.md)
+See [the release notes](docs/releases/0.1.0-alpha.53.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.

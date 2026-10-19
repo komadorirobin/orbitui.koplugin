@@ -413,6 +413,26 @@ to alpha.51 or earlier, disable Manga III: copied artwork remains but older
 planners do not recognize these series bindings. Earlier backup/migration
 caveats and physical-device acceptance gaps remain in effect.
 
+Alpha.53 is the standalone-configuration **test alpha**, not beta. It adds
+editable library sections, per-screen dashboard cards/sources, a reviewed setup
+guide and reversible Shelf settings / Classic OrbitUI / Minimal bookshelf
+presets. Upgrades preserve their layout, integrations and Classic appearance;
+fresh installs start neutral and offer the guide in FileManager. Existing users
+open it manually under OrbitUI settings > Setup guide. No book files move and
+no credentials or reading data are reset. No upstream merge, asset replacement
+or bootstrap/API change is included. Alpha.48 or later can update directly;
+older installers still require the alpha.48 bridge.
+
+Before testing, back up current KOReader settings independently: the first-run
+snapshot is not refreshed on upgrades. Rollback changes code only. Alpha.52
+ignores new library sections, dashboard sources/card order and presets, returning
+to its fixed Library/Manga configuration and earlier presentation. It does not
+undo setup-guide edits to shared launch/dock preferences; newly created section
+buttons therefore require this build. Keep the existing bar during initial
+upgrade tests, or restore its affected preferences separately if rolling back.
+Do not delete new settings or restore old reading progress. Physical restart,
+setup-guide and shelf-preset acceptance remain mandatory before the first beta.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries
