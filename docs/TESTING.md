@@ -2,6 +2,17 @@
 
 ## Automated
 
+2026-10-19 alpha.50 publication preparation: explicitly requested after the
+verified Bookshelf 5.5.4 merge at `82fd72c9`. Only VERSION and release documents
+change during preparation. Re-run complete sequential Lua/LuaJIT suites and
+translations, seal a clean-commit runtime and audit all outgoing history for
+held artwork and secrets. Compare bootstrap files, SimpleUI and existing assets
+with the public alpha.49 ZIP. Exercise the actual alpha.49 installer's native
+upgrade/restart/rollback and failed-download recovery; verify both CI jobs and
+downloaded draft/public bytes, including anonymous OTA discovery. Evidence
+belongs in `test-results/alpha50-20261019/`. Publish as a prerelease; the physical
+Bigme checks below remain open, and no device acceptance is inferred.
+
 2026-10-19 reviewed Bookshelf 5.5.4 merge (unpublished): import `982375a7`
 after `c7a9db2c`; SimpleUI stays at `7eb80f9e`. Run complete sequential Lua and
 LuaJIT suites, translations, then a clean-commit package. Evidence belongs in

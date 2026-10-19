@@ -2660,6 +2660,22 @@ Evidence lives in `test-results/upstream-20261019/`. Physical Bigme checks remai
 open as listed in `TESTING.md`. No version bump, push, tag, GitHub release, CI
 dispatch or OTA update was made. Fast-forward local main to the verified branch.
 
+## 2026-10-19: Prepare alpha.50 Bookshelf 5.5.4 publication
+
+The user explicitly requested publication after the verified merge at `82fd72c9`.
+Publish that reviewed tree as a new prerelease, never replace alpha.49 assets.
+Only VERSION and release documentation change in preparation. Keep the exact
+component pins, stable bootstrap/API 1, artwork and unpushed alternate design
+branch unchanged. No additional upstream fetch/import or settings migration.
+
+Release gates: full sequential Lua/LuaJIT suites, all translation catalogues,
+clean-commit packaging, complete inventory and outgoing-history audits, the
+public alpha.49 installer's native upgrade/restart/rollback and truncated-file
+recovery, green CI and verified draft/public downloads. Evidence lives in
+`test-results/alpha50-20261019/`. Alpha.48 or later is still required for OTA;
+the payload exceeds the older 64 MiB bound. Bigme rendering, gestures, cache
+timing and opt-in full-refresh acceptance remain to be checked on the device.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

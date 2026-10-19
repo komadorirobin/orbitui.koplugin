@@ -377,6 +377,17 @@ choices survive. Before rolling back to alpha.48 or earlier, disable Manga and
 Manga II: copied artwork remains but the older planner lacks series matching.
 New Solar icons require alpha.49 or later. Earlier rollback caveats still apply.
 
+Alpha.50 publishes the reviewed Bookshelf 5.5.4 merge through `982375a7`.
+It includes native Paperback bindings, deferred/cached statistics modules,
+optional KOReader-rate shelf refreshes, parked-reader gesture fixes and folder
+history/progress sorting. OrbitUI retains its independent Hardcover/Paperback/
+Kanzenban choices, profile-specific shelves and series-box refinements without
+duplicate native controls. SimpleUI, artwork, stable bootstrap and API 1 remain
+unchanged. Alpha.48 or later can update directly through the preview channel;
+older installers still require the small alpha.48 bridge because this ZIP
+exceeds 64 MiB. No settings or reading-state migration is introduced. Existing
+rollback caveats and physical-device acceptance gaps remain in effect.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries
