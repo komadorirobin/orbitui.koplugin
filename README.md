@@ -79,6 +79,10 @@ and a page counter when needed, independent of the other row and the Home page.
 Tap books to open, hold them for the existing book panel; tap the goal/statistics
 cards for their settings. The dark hero can be switched off. Disabling the page
 preserves edits to other pages and never resets data, wallpaper or dock choices.
+Under **Reading dashboard > Headings**, rename any of its nine card headings.
+Use **Restore default** or save an empty field to restore the automatic heading,
+including the current-book status and reading-goal title. These names affect
+only the dashboard on that screen, not ordinary Home modules or book metadata.
 The existing Hardcover goal is used when that module is enabled, otherwise the
 local annual KOReader goal. This is a local-book view, not a new BookOrbit sync
 client: unavailable remote covers/books are not downloaded, no library totals

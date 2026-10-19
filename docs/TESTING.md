@@ -2,6 +2,23 @@
 
 ## Automated
 
+2026-10-19 dashboard card headings (unpublished): exercise all nine editors from
+both the shared and native module settings entries. Cover saving, cancel,
+per-card reset, blank/invalid values, module reload, per-screen isolation,
+Swedish/English menus and unchanged user text after language switches. Renderer
+checks cover long UTF-8 headings at three screen sizes and DPI factors in both
+hero colour modes, refresh/paging retention and dynamic hero/goal defaults.
+Evidence belongs in `test-results/dashboard-headings-20261019/`. Run full
+sequential Lua/LuaJIT suites, translations and a clean-commit package; do not
+replace the published alpha.50 asset. Bigme keyboard/menu, font truncation and
+immediate redraw acceptance remain open.
+
+Completed automated gates: 677 Lua / 678 LuaJIT root cases in 54 files (27
+dashboard cases), 407 Bookshelf suites and all 13 SimpleUI files on both
+runtimes. Python: 103 tests with four existing external-artwork-source skips;
+Bookshelf retains two existing environment skips. All 43 translation catalogues,
+318 module paths and 874 syntax files pass. No new exceptions were added.
+
 2026-10-19 alpha.50 publication preparation: explicitly requested after the
 verified Bookshelf 5.5.4 merge at `82fd72c9`. Only VERSION and release documents
 change during preparation. Re-run complete sequential Lua/LuaJIT suites and
@@ -1025,6 +1042,11 @@ quality or completeness.
 - On the dashboard check portrait/landscape, actual DPI/font choice, long titles,
   dark/light hero, night mode and large dock/pager margins. No card should paint
   under the pager/dock. Covers keep their proportions and colour.
+- Rename cards via Reading dashboard > Headings from both settings entry points.
+  Check the keyboard, immediate redraw, long Swedish/CJK titles, persistence
+  after restart and language changes, Cancel, blank input and Restore default.
+  Other Home modules and Custom Screens must retain their own names; reset must
+  restore the current-book status title and configured reading-goal title.
 - Open and hold the hero, each ongoing book and both cover rows. Change progress
   and completion status, return from the reader, switch pages and sleep/resume;
   check updated counts/bars and no stale/freed covers. Page Want to Read and New

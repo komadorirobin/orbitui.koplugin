@@ -142,6 +142,9 @@ function M.content(widget, p, ctx, data)
     local function title(label, r, dark)
         text(label, r.x + p.pad, r.y + p.pad, r.w - p.pad * 2, 13, true, dark and paper or ink)
     end
+    local function heading(key, fallback)
+        return Model.heading(data.headings, key, fallback)
+    end
 
     local date = os.date("*t")
     text(_(Model.greeting(date.hour)), 0, 0, p.w - px(58), 23, true)
@@ -155,7 +158,7 @@ function M.content(widget, p, ctx, data)
     local r, dark = p.hero, data.dark
     box(r, dark and ink or paper, dark and ink or nil)
     local label = data.current and data.current.data.status == "complete" and "Last opened" or "Continue reading"
-    title(_(label), r, dark)
+    title(heading("hero", _(label)), r, dark)
     if data.current then
         local bd = data.current.data
         local h = r.h - p.pad * 2 - px(28)
@@ -180,15 +183,15 @@ function M.content(widget, p, ctx, data)
 
     local stats = data.stats
     local tiles = {
-        { "Pages today", tostring(stats.today_pages or 0), "pages" },
-        { "Reading today", Model.duration(stats.today_secs), "reading time" },
-        { "Reading streak", tostring(stats.streak or 0), "days in a row" },
-        { "This week", Model.duration(stats.week_secs), "reading time" },
+        { "Pages today", tostring(stats.today_pages or 0), "pages", "pages_today" },
+        { "Reading today", Model.duration(stats.today_secs), "reading time", "reading_today" },
+        { "Reading streak", tostring(stats.streak or 0), "days in a row", "streak" },
+        { "This week", Model.duration(stats.week_secs), "reading time", "week" },
     }
     for i, tile in ipairs(tiles) do
         r = p.stats[i]
         box(r)
-        title(_(tile[1]), r)
+        title(heading(tile[4], _(tile[1])), r)
         text(tile[2], r.x + p.pad, r.y + math.floor(r.h * 0.40), r.w - p.pad * 2, 23, true)
         text(_(tile[3]), r.x + p.pad, r.y + r.h - p.pad - px(15), r.w - p.pad * 2, 11, false, muted)
         action(r, settings("reading_stats"))
@@ -196,7 +199,7 @@ function M.content(widget, p, ctx, data)
 
     r = p.ongoing
     box(r)
-    title(_("Also reading"), r)
+    title(heading("ongoing", _("Also reading")), r)
     if #data.ongoing == 0 then
         text(_("No other books in progress."), r.x + p.pad, r.y + px(46),
             r.w - p.pad * 2, 14, false, muted, 3)
@@ -219,7 +222,8 @@ function M.content(widget, p, ctx, data)
     r = p.goal
     box(r)
     local goal = data.goal
-    title(goal and goal.title and goal.title ~= "" and goal.title or _("Reading goal") .. " " .. date.year, r)
+    title(heading("goal", goal and goal.title and goal.title ~= "" and goal.title
+        or _("Reading goal") .. " " .. date.year), r)
     if goal then
         local unit = ({ book = "books", books = "books", page = "pages", pages = "pages",
             hour = "hours", minute = "minutes" })[goal.metric] or "completed"
@@ -247,7 +251,7 @@ function M.content(widget, p, ctx, data)
         local page = math.min(pages, math.max(1, owner._orbitui_dashboard_pages[key] or 1))
         owner._orbitui_dashboard_pages[key] = page
         local nav_h = pages > 1 and px(32) or 0
-        text(label, area.x + p.pad, area.y + p.pad, area.w - 2 * p.pad, 13, true)
+        text(heading(key, label), area.x + p.pad, area.y + p.pad, area.w - 2 * p.pad, 13, true)
         if pages > 1 then
             local button_w = px(36)
             local indicator_w = math.min(px(76), area.w - 2 * p.pad - 2 * button_w)

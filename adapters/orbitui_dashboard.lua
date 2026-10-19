@@ -10,6 +10,64 @@ local M = {
 
 local function store() return require("infra/sui_store") end
 
+local function headingKey(pfx, key)
+    return (pfx or "simpleui_hs_") .. "orbitui_dashboard_heading_" .. key
+end
+
+function M.readHeadings(pfx)
+    local headings = {}
+    for _, card in ipairs(Model.heading_cards) do
+        headings[card.key] = Model.normalizeHeading(store():readSetting(headingKey(pfx, card.key)))
+    end
+    return headings
+end
+
+local function editHeading(card, refresh, pfx)
+    local UIManager = require("ui/uimanager")
+    local InputDialog = require("ui/widget/inputdialog")
+    local key = headingKey(pfx, card.key)
+    local dialog
+    local function save(value)
+        store():saveSetting(key, Model.normalizeHeading(value))
+        UIManager:close(dialog)
+        if refresh then refresh() else
+            require("screens/sui_homescreen").rebuildLayout({ keep_wallpaper = true })
+        end
+    end
+    dialog = InputDialog:new{
+        title = _("Edit heading") .. ": " .. _(card.label),
+        description = _("Only changes this dashboard card. Leave empty to use its automatic heading."),
+        input = Model.normalizeHeading(store():readSetting(key)) or "",
+        input_hint = _(card.label),
+        buttons = {
+            { { text = _("Restore default"), callback = function() save(nil) end } },
+            {
+                { text = _("Cancel"), id = "close", callback = function() UIManager:close(dialog) end },
+                { text = _("Save"), is_enter_default = true,
+                    callback = function() save(dialog:getInputText()) end },
+            },
+        },
+    }
+    UIManager:show(dialog)
+    dialog:onShowKeyboard()
+end
+
+function M.headingItems(refresh, pfx)
+    local items = {}
+    for i, card in ipairs(Model.heading_cards) do
+        local entry = card
+        items[i] = {
+            text_func = function()
+                local value = Model.normalizeHeading(store():readSetting(headingKey(pfx, entry.key)))
+                return _(entry.label) .. ": " .. (value or _("Automatic"))
+            end,
+            keep_menu_open = false,
+            callback = function() editHeading(entry, refresh, pfx) end,
+        }
+    end
+    return items
+end
+
 function M.isEnabled(pfx)
     return store():readSetting((pfx or "simpleui_hs_") .. M.enabled_key) == true
 end
@@ -46,6 +104,9 @@ function M.menuItems(refresh, pfx)
                     require("screens/sui_homescreen").rebuildLayout({ keep_wallpaper = true })
                 end
             end },
+        { text = _("Headings"), sub_item_table_func = function()
+            return M.headingItems(refresh, pfx)
+        end },
     }
 end
 
@@ -120,6 +181,7 @@ function M.readData(ctx)
         want = want, new = new, want_error = want_error, new_error = new_error,
         stats = ctx.stats or {}, goal = goal, hardcover = hc_enabled,
         dark = store():readSetting((ctx.pfx or "simpleui_hs_") .. "orbitui_dashboard_dark") ~= false,
+        headings = M.readHeadings(ctx.pfx),
     }
 end
 

@@ -2676,6 +2676,31 @@ recovery, green CI and verified draft/public downloads. Evidence lives in
 the payload exceeds the older 64 MiB bound. Bigme rendering, gestures, cache
 timing and opt-in full-refresh acceptance remain to be checked on the device.
 
+## 2026-10-19: Editable Reading dashboard headings (not published)
+
+User approved adding independent names for the dashboard cards. Add
+Reading dashboard > Headings in shared and native module settings, with an
+editor for each of the nine cards. Store overrides in the existing SimpleUI
+store, scoped to the screen prefix. Empty input and Restore default remove
+only the selected override; Cancel does not write or refresh. Automatic hero
+and goal titles remain dynamic when no override is set. User names are not
+translated, and long single-line headings retain the existing width bounds.
+
+Changes stay in OrbitUI core/adapters and tests; no component or source-pin
+change. Other Home modules, layouts, book metadata, goals, reading progress,
+artwork and bootstrap files remain unchanged. C10 records the ownership and
+fallback contract. Test all editors, menu translations, persistence through
+module reload, refresh/paging, screen isolation and bounded rendering; evidence
+belongs in `test-results/dashboard-headings-20261019/`. No version bump, push,
+tag or public OTA change is authorized by this implementation request.
+
+Full sequential Lua/LuaJIT verification passed: 677/678 root cases, including
+27 dashboard cases, 407 Bookshelf suites, all 13 SimpleUI files and 103 Python
+tests. All 43 translations pass. Existing four artwork-source and two
+environment suite skips remain; no new exceptions. Package the clean local
+commit for validation only, retaining VERSION alpha.50 without replacing its
+public assets. Device keyboard/menu, redraw and native font checks remain open.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

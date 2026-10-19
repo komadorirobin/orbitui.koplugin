@@ -1,6 +1,28 @@
 -- Geometry and layout edits are independent of KOReader's widget/cache owners.
 local M = { id = "orbitui_dashboard" }
 
+M.heading_cards = {
+    { key = "hero", label = "Continue reading" },
+    { key = "pages_today", label = "Pages today" },
+    { key = "reading_today", label = "Reading today" },
+    { key = "streak", label = "Reading streak" },
+    { key = "week", label = "This week" },
+    { key = "ongoing", label = "Also reading" },
+    { key = "goal", label = "Reading goal" },
+    { key = "want", label = "BookOrbit Want to Read" },
+    { key = "new", label = "Recently added" },
+}
+
+function M.normalizeHeading(value)
+    if type(value) ~= "string" then return nil end
+    value = value:gsub("%s+", " "):match("^%s*(.-)%s*$")
+    return value ~= "" and value or nil
+end
+
+function M.heading(headings, key, fallback)
+    return M.normalizeHeading(type(headings) == "table" and headings[key]) or fallback
+end
+
 local function copy(value)
     if type(value) ~= "table" then return value end
     local result = {}

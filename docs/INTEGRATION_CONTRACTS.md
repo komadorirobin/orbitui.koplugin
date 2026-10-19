@@ -772,6 +772,14 @@ Its height reserves the dock-adjusted content bounds, module margin and pager;
 font sizes must not double-apply device DPI. It owns its individual card chrome,
 so native whole-module background controls must not be offered as if they affected it.
 
+Dashboard card headings have independent, per-screen overrides under the
+`orbitui_dashboard_heading_` keys in the existing SimpleUI store. Preserve
+user-entered text across language changes, refreshes and cover-row pagination.
+Empty input or an explicit reset removes only that card's override, restoring
+the translated/dynamic default (including last-opened and remote goal titles).
+Do not rename ordinary modules, metadata, remote goals or other screens.
+Headings stay single-line and width-bounded without changing cover geometry.
+
 Reuse native recent-book filtering/metadata, the New Books source, the cached
 BookOrbit Want to Read list and StatsProvider. Ongoing rows omit the hero,
 duplicates, unread, abandoned and finished entries. Use the configured

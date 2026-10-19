@@ -2,6 +2,16 @@ package.path = "./?.lua;" .. package.path
 local H = require("tests/helpers")
 local Model = require("core/orbitui_dashboard")
 
+H.test("custom headings stay single-line and invalid or empty values use the default", function()
+    H.eq(Model.normalizeHeading("  Min\n\t boklista  "), "Min boklista")
+    H.eq(Model.normalizeHeading(" \t\r\n"), nil)
+    H.eq(Model.normalizeHeading(false), nil)
+    H.eq(Model.normalizeHeading({}), nil)
+    H.eq(Model.heading({ want = 12 }, "want", "Default"), "Default")
+    H.eq(Model.heading(false, "want", "Default"), "Default")
+    H.eq(Model.heading({ want = "Mina böcker 日本語" }, "want", "Default"), "Mina böcker 日本語")
+end)
+
 H.test("dashboard insertion and removal preserve all existing pages and settings", function()
     local original = { custom = "keep", pages = {
         { id = 3, modules = { "currently", "hardcover" } },
@@ -223,7 +233,16 @@ package.loaded["ffi/blitbuffer"] = { COLOR_BLACK = "black", COLOR_WHITE = "white
 package.loaded["features/sui_style"] = { getStyledFace = function(_, size, variant)
     return { size = math.floor(size * dpi) }, variant == "bold"
 end }
-package.loaded["ui/uimanager"] = { setDirty = function() dirtied = dirtied + 1 end }
+local shown_dialog
+package.loaded["ui/uimanager"] = {
+    setDirty = function() dirtied = dirtied + 1 end,
+    show = function(_, dialog) shown_dialog = dialog end,
+    close = function(_, dialog) dialog.closed = true end,
+}
+package.loaded["ui/widget/inputdialog"] = Widget:extend{
+    getInputText = function(self) return self.input end,
+    onShowKeyboard = function(self) self.keyboard_shown = true end,
+}
 local View = require("adapters/orbitui_dashboard_view")
 local data = Dashboard.readData(ctx)
 local widget
@@ -404,14 +423,186 @@ H.test("book actions after paging use the displayed book and stay outside the ar
     current:free()
 end)
 
+local function headingSetting(key, pfx)
+    return (pfx or "simpleui_hs_") .. "orbitui_dashboard_heading_" .. key
+end
+
+local function pressDialog(button)
+    for _, row in ipairs(shown_dialog.buttons) do
+        for _, item in ipairs(row) do
+            if item.text == button then item.callback(); return end
+        end
+    end
+    error("Missing dialog button: " .. button)
+end
+
+local function headingWidget(current, key)
+    local plan = Model.plan(current.dimen.w, current.dimen.h)
+    local areas = { pages_today = plan.stats[1], reading_today = plan.stats[2],
+        streak = plan.stats[3], week = plan.stats[4] }
+    local area = areas[key] or plan[key]
+    for _, child in ipairs(current[1]) do
+        local xy = child.overlap_offset
+        if child.kind == "text" and xy[1] == area.x + plan.pad
+                and xy[2] == area.y + plan.pad then return child, area end
+    end
+    error("Missing heading: " .. key)
+end
+
+H.test("both settings entry points expose all nine independent heading editors", function()
+    local updates = 0
+    local menu = Dashboard.menuItems(function() updates = updates + 1 end)
+    H.eq(menu[3].text, "Headings")
+    local items = menu[3].sub_item_table_func()
+    H.eq(#items, 9)
+    H.eq(Dashboard.getMenuItems(ctx)[2].text, "Headings")
+    local keys = {}
+    for i, card in ipairs(Model.heading_cards) do
+        assert(not keys[card.key]); keys[card.key] = true
+        H.eq(items[i].text_func(), card.label .. ": Automatic")
+        items[i].callback()
+        H.eq(shown_dialog.input, ""); H.eq(shown_dialog.keyboard_shown, true)
+        H.eq(shown_dialog.title, "Edit heading: " .. card.label)
+        shown_dialog.input = "  Custom " .. card.key .. "\n "
+        pressDialog("Save")
+        H.eq(shown_dialog.closed, true)
+        H.eq(updates, i)
+        H.eq(Dashboard.readData(ctx).headings[card.key], "Custom " .. card.key)
+        H.eq(items[i].text_func(), card.label .. ": Custom " .. card.key)
+    end
+    local reloaded = dofile("adapters/orbitui_dashboard.lua")
+    for i, card in ipairs(Model.heading_cards) do
+        H.eq(reloaded.readHeadings()[card.key], "Custom " .. card.key)
+        items[i].callback()
+        H.eq(shown_dialog.input, "Custom " .. card.key)
+        pressDialog("Restore default")
+        H.eq(saved[headingSetting(card.key)], nil)
+    end
+    H.eq(updates, 18)
+end)
+
+H.test("cancel writes nothing and blank input restores the automatic heading", function()
+    local updates = 0
+    saved[headingSetting("want")] = "My list"
+    local item = Dashboard.headingItems(function() updates = updates + 1 end)[8]
+    item.callback(); shown_dialog.input = "Not saved"; pressDialog("Cancel")
+    H.eq(saved[headingSetting("want")], "My list"); H.eq(updates, 0)
+    H.eq(shown_dialog.closed, true)
+    item.callback(); shown_dialog.input = " \t\n "; pressDialog("Save")
+    H.eq(saved[headingSetting("want")], nil); H.eq(updates, 1)
+end)
+
+H.test("heading changes are screen-scoped and never rewrite ordinary module or goal settings", function()
+    local other = "simpleui_cs_private_"
+    saved.simpleui_hide_label_new_books = true
+    saved.simpleui_hs_label_scale = 115
+    saved[headingSetting("new")] = "Home additions"
+    saved[headingSetting("want")] = "Home list"
+    local before_refresh = refresh
+    Dashboard.headingItems(nil, other)[9].callback()
+    shown_dialog.input = "Private additions"; pressDialog("Save")
+    H.eq(refresh, before_refresh + 1)
+    H.eq(Dashboard.readHeadings(other).new, "Private additions")
+    H.eq(Dashboard.readHeadings().new, "Home additions")
+    H.eq(Dashboard.readHeadings(other).want, nil)
+    H.eq(saved.simpleui_hide_label_new_books, true)
+    H.eq(saved.simpleui_hs_label_scale, 115)
+    H.eq(saved.simpleui_hs_hardcover, false)
+    Dashboard.getMenuItems({ pfx = other })[2].sub_item_table_func()[9].callback()
+    pressDialog("Restore default")
+    H.eq(saved[headingSetting("new", other)], nil)
+    H.eq(saved[headingSetting("new")], "Home additions")
+    saved[headingSetting("new")], saved[headingSetting("want")] = nil, nil
+end)
+
+H.test("all nine cards render custom headings with unchanged geometry in light and dark modes", function()
+    for _, card in ipairs(Model.heading_cards) do
+        saved[headingSetting(card.key)] = card.key .. " " .. string.rep("Lång rubrik 日本語 ", 20)
+    end
+    for _, density in ipairs({ 1, 1.5, 2 }) do
+    dpi = density
+    for _, size in ipairs({ { 300, 400 }, { 600, 730 }, { 800, 480 } }) do
+    for _, dark in ipairs({ true, false }) do
+        local custom_data = Dashboard.readData(ctx)
+        custom_data.dark = dark
+        local current = View.build(size[1], size[2], ctx, custom_data)
+        local plan = Model.plan(size[1], size[2])
+        for _, card in ipairs(Model.heading_cards) do
+            local label, area = headingWidget(current, card.key)
+            H.eq(label.text, Model.normalizeHeading(saved[headingSetting(card.key)]))
+            H.eq(label.max_width, math.floor(area.w - 2 * plan.pad))
+            H.eq(label.max_lines, nil)
+            assert(label.overlap_offset[1] + label:getSize().w <= area.x + area.w - plan.pad)
+            assert(label.overlap_offset[2] + label:getSize().h <= area.y + area.h)
+            H.eq(label.fgcolor, card.key == "hero" and dark and "white" or "black")
+        end
+        current:free()
+    end
+    end
+    end
+    dpi = 1
+    for _, card in ipairs(Model.heading_cards) do saved[headingSetting(card.key)] = nil end
+end)
+
+H.test("stats and cover-row refreshes retain titles and native paging and book actions", function()
+    local current, page_ctx = pagedWidget()
+    Dashboard.headingItems(function() Dashboard.updateStats(current, page_ctx) end)[8].callback()
+    shown_dialog.input = "Want list"; pressDialog("Save")
+    H.eq(headingWidget(current, "want").text, "Want list")
+    tapArrow(current, "want", ">")
+    H.eq(headingWidget(current, "want").text, "Want list")
+    H.eq(Dashboard.updateCovers(current), true)
+    H.eq(headingWidget(current, "want").text, "Want list")
+    H.eq(page_ctx._screen_widget._orbitui_dashboard_pages.want, 2)
+    current:free()
+    saved[headingSetting("want")] = nil
+end)
+
+H.test("reset keeps the dynamic last-opened and remote or annual goal headings", function()
+    local source = Dashboard.readData(ctx)
+    source.current = { file = "/current", data = { title = "Done", status = "complete" } }
+    source.goal = { title = "A remote challenge", value = 10, target = 30 }
+    source.headings = { hero = "My book", goal = "My goal" }
+    local current = View.build(600, 730, ctx, source)
+    H.eq(headingWidget(current, "hero").text, "My book")
+    H.eq(headingWidget(current, "goal").text, "My goal")
+    source.headings = { hero = false, goal = "  " }
+    current:replaceContent(ctx, source)
+    H.eq(headingWidget(current, "hero").text, "Last opened")
+    H.eq(headingWidget(current, "goal").text, "A remote challenge")
+    source.goal = nil
+    source.current = nil
+    current:replaceContent(ctx, source)
+    H.eq(headingWidget(current, "hero").text, "Continue reading")
+    H.eq(headingWidget(current, "goal").text, "Reading goal " .. os.date("%Y"))
+    current:free()
+end)
+
 H.test("Swedish dashboard strings translate while other locales retain English", function()
     local translate = require("core/orbitui_i18n")
     G_reader_settings = { readSetting = function() return "sv_SE" end }
     H.eq(translate("Reading dashboard"), "Läsöversikt")
     H.eq(translate("Continue reading"), "Fortsätt läsa")
     H.eq(translate("October"), "oktober")
+    H.eq(Dashboard.menuItems()[3].text, "Rubriker")
+    H.eq(Dashboard.headingItems()[9].text_func(), "Nya böcker: Automatisk")
+    Dashboard.headingItems()[9].callback()
+    H.eq(shown_dialog.title, "Ändra rubrik: Nya böcker")
+    shown_dialog.input = "Min läslista"; pressDialog("Spara")
+    H.eq(Dashboard.readHeadings().new, "Min läslista")
     G_reader_settings.readSetting = function() return "de_DE" end
     H.eq(translate("Continue reading"), "Continue reading")
+    H.eq(Dashboard.menuItems()[3].text, "Headings")
+    H.eq(Dashboard.headingItems()[9].text_func(), "Recently added: Min läslista")
+    local current = Dashboard.build(600, ctx)
+    H.eq(headingWidget(current, "new").text, "Min läslista")
+    current:free()
+    G_reader_settings.readSetting = function() return "sv" end
+    Dashboard.headingItems()[9].callback(); pressDialog("Återställ standard")
+    current = Dashboard.build(600, ctx)
+    H.eq(headingWidget(current, "new").text, "Nya böcker")
+    current:free()
+    G_reader_settings.readSetting = function() return "en" end
 end)
 local preview_path = os.getenv("ORBITUI_DASHBOARD_PREVIEW")
 if preview_path then
