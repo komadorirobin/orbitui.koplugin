@@ -401,6 +401,18 @@ dashboard headings but older code ignores them, and restores the earlier
 grouping/paging presentation without changing book files or reading state.
 Earlier backup/migration caveats and physical-device acceptance gaps still apply.
 
+Alpha.52 adds the independent Manga III ornament pack: a stargazing telescope
+for Insomniacs After School and a quiet Japanese bungalow for Hirayasumi.
+Both are original AI-generated thematic designs, with transparent colour,
+native zoom, sourced info cards and exact series-metadata matching. Enable
+Manga III when a theme selects specific packs. Its independent additive marker
+preserves older packs, customized artwork, deletions and all theme settings.
+Upstream pins and bootstrap/API 1 are unchanged. Alpha.48 or later can update
+directly; older installers still need the alpha.48 bridge. Before rolling back
+to alpha.51 or earlier, disable Manga III: copied artwork remains but older
+planners do not recognize these series bindings. Earlier backup/migration
+caveats and physical-device acceptance gaps remain in effect.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

@@ -36,7 +36,7 @@ native zoom/info cards and per-piece provenance. Enable Manga II as well when
 your shelf theme selects specific packs. Disable both packs before rolling
 back to alpha.48 or earlier, which does not know their series bindings.
 
-**Manga III** (unreleased) adds a stargazing telescope for **Insomniacs After
+**Manga III** (alpha.52) adds a stargazing telescope for **Insomniacs After
 School** and a quiet Japanese bungalow for **Hirayasumi**. These are original
 AI-generated thematic designs, not replicas of specific props/buildings or
 copies of commercial figures. No third-party reference bitmap or 3D model

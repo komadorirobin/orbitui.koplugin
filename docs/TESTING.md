@@ -2,6 +2,19 @@
 
 ## Automated
 
+2026-10-19 alpha.52 publication preparation: explicitly requested for Manga III.
+The implementation passed 696 Lua / 697 LuaJIT root cases in 54 suites,
+407 Bookshelf suites (two existing environment skips), all 13 SimpleUI files,
+108 Python tests (four existing external-source skips), 43 translation
+catalogues and clean-commit packaging. Re-run both runtimes for the release;
+audit the exact runtime delta against public alpha.51, outgoing history,
+held artwork and secrets. Verify both CI refs, downloaded draft/public bytes
+and alpha.51's native installer, including activation, restart and rollback.
+Only the new Manga III artwork/metadata and its series registration are added;
+older assets, component code, upstream pins and bootstrap remain unchanged.
+Evidence belongs in `test-results/alpha52-20261019/`. Keep prerelease status;
+physical Bigme appearance and interaction remain unverified.
+
 2026-10-19 alpha.51 publication preparation: explicitly requested after the
 Oneshots/singleton boxes, enlarged dashboard pagination/swipes and editable
 card headings. Only VERSION and release documentation change during preparation.
