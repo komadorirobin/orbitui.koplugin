@@ -2,6 +2,23 @@
 
 ## Automated
 
+2026-10-19 beta.2: user requested publication after the reported headless tests
+and remaining device gap. No new physical-device result is claimed. Coverage
+includes complete external-root snapshots, deferred main-process activation,
+unchanged/older factory copies, incomplete/corrupt inventories, symlink parents,
+cancelled/stale activation, failed startup, manual rollback and explicit retry.
+The stable bootstrap and API 1 remain unchanged. The packaged native smoke test
+also exercises import/restart/rollback after ordinary OTA installation.
+
+Ornament channel migration accepts only the exact old/new repository prefixes,
+retains cached catalogs and registry state, and rejects changed immutable pack
+versions. All six ZIPs and previews in the new repository are byte-identical to
+the original release; the legacy release remains intact. Native HTTPS/archive
+testing installs from legacy URLs, refreshes the new catalog and verifies that
+updates preserve local captions, deletions, enablement and placement. Actual
+app-store installation and the extra-restart prompt still need device feedback;
+Storefront's separate installer fix must be released first.
+
 2026-10-19 beta.1: the user confirmed the alpha.55 ornament menu now works and
 explicitly approved the first public beta. Earlier reader feedback confirmed
 the retained layout, restart and setup/preset controls. This is limited device

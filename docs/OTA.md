@@ -470,6 +470,15 @@ update through the preview channel; restart after installation. A new installati
 over native-only standalone Bookshelf should not roll back to an OrbitUI alpha
 that cannot read that path; see [migration and rollback](MIGRATION.md).
 
+Version `0.1.0-beta.2` moves ornament discovery to the separate `orbitui-addons`
+repository, retaining old catalog URLs, pack versions, settings and artwork. It
+also adds verified snapshots of newer external root installations with deferred
+activation, previous-slot rollback and an explicit retry control. Install this
+release through internal OTA first, then restart. Bootstrap/API 1 and upstream
+pins are unchanged. Returning to Beta 1 removes the new import logic but retains
+ornament state. External app-store/device acceptance remains open; see below and
+[the Beta 2 notes](releases/0.1.0-beta.2.md).
+
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries
 inside the embedded components are also named **Uppdatera OrbitUI** and open this
 same OrbitUI menu, not their old installers. The label is supplied by the common
@@ -526,9 +535,9 @@ retained. `.orbitui-work` is disposable download/staging space. Allow roughly
 installation, in addition to existing installed versions. Allow more as future
 packages grow.
 
-## External updates (development version, not yet released)
+## External updates (Beta 2 and later)
 
-Install the version introducing this support through OrbitUI's own updater first.
+Install Beta 2 through OrbitUI's own updater first.
 Beta 1 and earlier cannot detect root changes while running an older OTA slot.
 The stable bootstrap and API 1 remain byte-identical; no manual bridge is needed.
 

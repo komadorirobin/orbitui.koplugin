@@ -80,7 +80,7 @@ versions cannot understand this add-on channel. The bundled catalog contains
 descriptions only: **Check ornament updates** retrieves verified download details
 from the published release. Publishing remains an explicit maintainer action.
 
-The development version now discovers releases in
+Beta 2 and later discover releases in
 [`komadorirobin/orbitui-addons`](https://github.com/komadorirobin/orbitui-addons).
 The initial `ornaments-1` mirror has identical ZIP/preview bytes, pack IDs,
 versions and compatibility folders; only catalog URLs differ. Existing installed
