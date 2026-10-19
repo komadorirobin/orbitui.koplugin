@@ -450,6 +450,14 @@ Keep a separate settings backup; do not restore old reading progress. Fresh
 setup and add-on device acceptance are required before beta; see the
 [alpha.54 checklist](releases/0.1.0-alpha.54.md).
 
+Version `0.1.0-alpha.55` fixes opening the ornament add-on menu when pre-existing,
+unmanaged ornament folders are present. A loop index shadowed the translation
+function, failing before the menu opened or any download began. Existing artwork,
+settings and the separately published `ornaments-1` catalog are unchanged. Update
+from alpha.54 through the preview channel and restart KOReader; no artwork removal
+or reinstallation is needed. Bootstrap API 1 is unchanged. This remains a test
+alpha pending the fresh-setup and add-on physical-device acceptance checks.
+
 ## On the reader
 
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries

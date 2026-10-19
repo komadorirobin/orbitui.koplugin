@@ -296,8 +296,8 @@ function M.items()
         local pack, r = p, state.packs[p.id]
         local status = _("Not installed")
         if not r then
-            for _, native in ipairs(s.legacy or {}) do
-                for _, folder in ipairs(p.folders) do
+            for _root_index, native in ipairs(s.legacy or {}) do
+                for _folder_index, folder in ipairs(p.folders) do
                     if F.attr(native .. "/" .. folder) then status = _("Local files; not managed") end
                 end
             end

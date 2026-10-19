@@ -5,9 +5,9 @@ KOReader, with configurable library sections, Home cards and shelf appearance.
 BookOrbit, Hardcover and MyAnimeList are optional. Existing OrbitUI setups keep
 their screens and preferences; this is not a rewrite of the reading engine.
 
-### Standalone configuration (alpha.54 test preview)
+### Standalone configuration (alpha.55 test preview)
 
-Version **0.1.0-alpha.54** builds on alpha.53's configurable library sections, dashboard
+Version **0.1.0-alpha.55** builds on alpha.53's configurable library sections, dashboard
 cards/sources and an **OrbitUI settings > Setup guide** for folders, launch
 screen and bottom-bar buttons. Fresh installs are offered the guide; upgrades
 keep their existing configuration. All changes are reviewed before applying,
@@ -25,7 +25,9 @@ See [migration and device-test requirements](docs/MIGRATION.md) and
 [the alpha.54 test checklist](docs/releases/0.1.0-alpha.54.md). Alpha.54 removes
 ornament artwork from the plugin download and introduces six independently
 updated packs, bilingual information cards and per-pack matching/random placement.
-Matching remains the default. This is a test alpha, not the first public beta:
+Matching remains the default. Alpha.55 fixes opening the add-on menu when old,
+unmanaged ornament folders already exist; no artwork needs to be removed or
+reinstalled. This is a test alpha, not the first public beta:
 fresh-setup and add-on acceptance on a physical reader are still required.
 
 ## Status
@@ -48,7 +50,7 @@ along with alpha.44's natural spine widths,
 partial filling and `+N`, complete read/total counts,
 aspect-true covers, scoped binding choices, the automatic-cover fix and bounded
 image picker. The reviewed upstream baselines are now Bookshelf **5.5.4**
-(`982375a7`) and SimpleUI **2.7.5** (`7eb80f9e`), unchanged in alpha.54.
+(`982375a7`) and SimpleUI **2.7.5** (`7eb80f9e`), unchanged in alpha.55.
 The read-total sits in the compact exposed head, above the picture; minimum
 box width is 85% of a normal cover, with the existing maximum/space cap.
 The requested upstream series-box trial keeps native open-topped slipcases
@@ -60,7 +62,7 @@ labels/sizes, ornaments,
 custom icons and dock/Bento layout are retained. Back up settings before
 updating: new grouped-order, ledger and module edits are not mirrored to older
 code on rollback. New surface choices are likewise not mirrored to older code.
-See [the release notes](docs/releases/0.1.0-alpha.54.md)
+See [the release notes](docs/releases/0.1.0-alpha.55.md)
 and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.

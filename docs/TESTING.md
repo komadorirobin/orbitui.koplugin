@@ -2,6 +2,16 @@
 
 ## Automated
 
+2026-10-19 alpha.55 release preparation: reproduce opening the
+ornament add-on menu from Home with pre-existing, unmanaged ornament folders.
+The status-label branch shadowed the gettext function with the numeric loop
+index, failing before the menu opened or any download started. The regression
+test fails on the released code under both Lua and LuaJIT, then passes after
+renaming the two loop indexes. Cover each legacy Manga folder in both native
+roots, with Swedish and English labels, and assert opening the menu neither
+downloads/adopts artwork nor changes installed state or theme switches. Preserve
+the existing install/update/placement tests. Device confirmation is still needed.
+
 2026-10-19 ornament placement (unpublished): test the read-only matching default,
 per-pack random choices, disabled-state preservation, failed atomic writes,
 restart, stale update plans and preference retention across update/reinstall.

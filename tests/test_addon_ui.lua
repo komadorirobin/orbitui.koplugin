@@ -24,7 +24,7 @@ local made = {}
 package.loaded["core/orbitui_addon_files"] = { attr = function() end, mkdir = function(path) made[#made + 1] = path end,
     json = function() return { bindings = {} } end }
 package.loaded.datastorage = { getSettingsDir = function() return "/settings" end }
-package.loaded["core/orbitui_i18n"] = function(x) return x end
+package.loaded["core/orbitui_i18n"] = nil
 package.loaded["core/orbitui_context"] = { notify = function(text) notices[#notices + 1] = text end }
 local warnings = {}
 package.loaded.logger = { warn = function(_, err) warnings[#warnings + 1] = tostring(err) end }
@@ -57,6 +57,36 @@ H.test("fresh hosts create no stock artwork and managed roots are added without 
     local roots = orn.roots(); H.eq(roots[1], "/native"); H.eq(roots[2], "/managed")
     assert(not orn.acceptFile("x", "x", "/hidden"))
     H.eq(orn.packGroup("Manga III"), "Manga"); H.eq(orn.packGroup("Own"), "Own")
+end)
+H.test("existing unmanaged folders open the add-on menu from Home in Swedish and English", function()
+    local F = require("core/orbitui_addon_files")
+    local attr, legacy = F.attr, s.legacy
+    local languages = { en = "Local files; not managed", sv_SE = "Lokala filer; inte pakethanterade" }
+    local menu
+    package.loaded["lib/bookshelf_menu_host"] = { show = function(opts)
+        menu = opts
+        return { _shim = { liveItems = function() return menu.item_table end, updateItems = function() end } }
+    end }
+    s.legacy = { "/native", "/legacy" }
+    for lang, status in pairs(languages) do
+        G_reader_settings = { readSetting = function() return lang end }
+        for _, root in ipairs(s.legacy) do
+            for _, folder in ipairs(p.folders) do
+                F.attr = function(path) if path == root .. "/" .. folder then return { mode = "directory" } end end
+                H.eq(A.items()[2].text, "Manga - " .. status)
+                local warning_count, notice_count = #warnings, #notices
+                menu = nil
+                A.show()
+                assert(menu, "Add-on menu did not open over existing native artwork")
+                H.eq(menu.item_table[2].text, "Manga - " .. status)
+                H.eq(#warnings, warning_count); H.eq(#notices, notice_count)
+                H.eq(next(installed.packs), nil); H.eq(adopted, 0); H.eq(active, 0)
+                H.eq(#tasks, 0); H.eq(next(toggles), nil)
+                menu.close_callback()
+            end
+        end
+    end
+    F.attr, s.legacy, G_reader_settings = attr, legacy, nil
 end)
 H.test("disabled add-ons are filtered from collection and themed shelves with stable list identities", function()
     H.eq(#orn.list(), 4); H.eq(orn.list(), orn.list())
