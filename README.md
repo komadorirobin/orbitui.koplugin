@@ -116,6 +116,39 @@ under `components/` as separate plugins.
 Do not install SimpleUI or Bookshelf updates inside OrbitUI. For manual updates
 of an existing OTA installation, read [the recovery guide](docs/OTA.md) first.
 
+### Installing through a community app store
+
+OrbitUI is discoverable by KOReader app stores through its GitHub repository
+name and the `koreader-plugin` topic. These stores are independent projects;
+being listed does not mean that their maintainers have reviewed or endorsed
+OrbitUI. Their local catalogs may need refreshing.
+
+**[AppStore by omer-faruq](https://github.com/omer-faruq/appstore.koplugin):**
+after the backup and predecessor-disable steps above, find
+`komadorirobin/orbitui.koplugin`. In its download options, choose
+**Other releases...**, uncheck **Filter pre-releases**, select
+**v0.1.0-beta.1**, then select **`orbitui.koplugin.zip`**. Restart KOReader
+after installation. Beta 1 is not returned by GitHub's "latest stable release"
+endpoint, so the default latest-release lookup may report that none exists.
+Do not choose **Direct download from repo**, **Source code**, the checksum
+file, or the add-on-only **ornaments-1** release.
+
+**[Storefront by ultimatejimmy](https://github.com/ultimatejimmy/storefront.koplugin):**
+OrbitUI is already listed, but **use the manual ZIP instructions above for now**.
+The installer checked in Storefront **26.10.17-beta2** mistakes the embedded
+SimpleUI component for the outer OrbitUI plugin. This can install into
+`simpleui.koplugin` instead of `orbitui.koplugin`, including an existing
+SimpleUI installation. A fix and regression tests have been submitted in
+[Storefront PR #5078](https://github.com/ultimatejimmy/storefront.koplugin/pull/5078).
+Wait for a Storefront release containing that fix before installing OrbitUI
+through it. Its cached catalog may also show an older OrbitUI prerelease.
+
+These instructions concern **first installation**. For subsequent OrbitUI
+updates, use **OrbitUI's own updater**, not app-store update-all or repository
+downloads. An external overwrite does not switch OrbitUI's active OTA version
+and bypasses its verified update/rollback flow. In-app ornament add-ons are
+managed separately under **OrbitUI settings > Add-ons**.
+
 ## Already using SimpleUI or Bookshelf?
 
 **Your existing data is not intentionally wiped or moved.** OrbitUI reuses
