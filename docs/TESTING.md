@@ -11,6 +11,15 @@ and embedded dock priority with FileManager or a parked reader. All incoming
 cache, deferred-statistics, e-ink refresh, binding and gesture suites must run.
 No new failure allowances or upstream settings migrations are permitted.
 
+Completed: both runtimes pass all 407 Bookshelf suites, all 13 SimpleUI files
+and root integration tests (670 Lua / 671 LuaJIT cases including the four
+separately run Lua dock cases). All 43 translation catalogues, 318 mapped paths,
+874 syntax files and the 103 Python checks pass, with the existing four artwork
+cache and two KOReader-SQLite suite skips. The added profile-scoped history-sort
+case also passes its focused Lua run. Clean committed source `05cb0b83` packages
+successfully with 1,888 manifest files and stays within the reviewed OTA bounds.
+The final documentation-only commit is repackaged, never published over alpha.49.
+
 On the Bigme, still verify Pocket/Kanzenban and series overrides, completed and
 partly filled boxes, MAL/title cutouts, Library/Manga dock taps/holds, gestures
 in ornament zoom/book details after returning from reading, opt-in full-refresh

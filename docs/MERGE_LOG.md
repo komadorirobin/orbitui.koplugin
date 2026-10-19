@@ -2640,11 +2640,25 @@ tankobon handling. Keep native and host preferences separate, never show both
 controls. Scope statistics-only locals after the added upstream helper pushed
 the combined repository over LuaJIT's 200-local limit.
 
-Verification and clean-package results are recorded after the gates below;
-evidence lives in `test-results/upstream-20261019/`. Preserve existing SQLite,
-native-font, external-artwork-cache and absent-Bookends limitations. Physical
-Bigme checks remain open as listed in `TESTING.md`. No version bump, push, tag,
-GitHub release, CI dispatch or OTA update is authorized by this merge.
+Adaptation and regression commit: `05cb0b83`. Full sequential Lua and LuaJIT
+runs passed, including 407 Bookshelf suites and all 13 SimpleUI test files.
+Root coverage is 670 Lua / 671 LuaJIT cases in 54 files (the last four Lua dock
+cases ran separately after the full run); the added scoped-history assertions
+also passed a separate Lua repository run. Python: 103 tests, four unchanged
+external-artwork-cache skips. Module map: 318 paths; final LuaJIT syntax: 874
+files. Translation checks: all 43 catalogues, no baseline or new failures.
+Existing two KOReader-SQLite suite skips, native-font and absent-Bookends
+limitations remain; no failure allowances were added.
+
+Clean-source package from `05cb0b83` passed sealing, full ZIP validation and
+runtime inventory checks: 1,888 manifest files / 1,943 ZIP entries, 79,647,494
+bytes, SHA-256 `a74b434958bd44c76a65989005516f8abed03f5c4b3b3d7ed188ee402533bcdf`.
+This is an unpublished development package still carrying alpha.49, NOT a
+replacement for the public alpha.49 asset. Rebuild after this documentation
+record; any publication must use a new version and the normal release gates.
+Evidence lives in `test-results/upstream-20261019/`. Physical Bigme checks remain
+open as listed in `TESTING.md`. No version bump, push, tag, GitHub release, CI
+dispatch or OTA update was made. Fast-forward local main to the verified branch.
 
 ## Template for the next approved merge
 
