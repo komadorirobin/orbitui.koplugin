@@ -2,6 +2,22 @@
 
 ## Automated
 
+2026-10-19 reviewed Bookshelf 5.5.4 merge (unpublished): import `982375a7`
+after `c7a9db2c`; SimpleUI stays at `7eb80f9e`. Run complete sequential Lua and
+LuaJIT suites, translations, then a clean-commit package. Evidence belongs in
+`test-results/upstream-20261019/`. New regressions cover native/host binding
+control exclusivity, preserved profile/series choices, per-root history sorts,
+and embedded dock priority with FileManager or a parked reader. All incoming
+cache, deferred-statistics, e-ink refresh, binding and gesture suites must run.
+No new failure allowances or upstream settings migrations are permitted.
+
+On the Bigme, still verify Pocket/Kanzenban and series overrides, completed and
+partly filled boxes, MAL/title cutouts, Library/Manga dock taps/holds, gestures
+in ornament zoom/book details after returning from reading, opt-in full-refresh
+cadence in day/night mode, and reopening cached statistics cards. Headless
+tests do not establish device timing, rendering or touch acceptance. VERSION
+and published OTA assets remain unchanged until a separate publication request.
+
 2026-10-18 alpha.49 publication: the user confirmed the alpha.48 installation
 and restart, satisfying the bridge prerequisite. Publish the pending Manga /
 Manga II ornaments and Solar v1.1.0 icons with the already-reviewed updater.

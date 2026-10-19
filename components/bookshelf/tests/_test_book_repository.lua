@@ -7211,6 +7211,21 @@ test("getFolderSections: books arrive in tree order, tagged with their folder", 
         { roots = { "/lib/Discworld", "/lib/Discworld/Witches" } })
     assert(overlap_total == 3, "overlapping profile roots must not duplicate books")
 
+    local old_history = package.loaded["readhistory"].hist
+    package.loaded["readhistory"].hist = {
+        {file="/lib/Culture/c2.epub", time=300},
+        {file="/lib/Discworld/Witches/w2.epub", time=200},
+        {file="/lib/loose.epub", time=999},
+    }
+    local recent, recent_total = Repo.getFolderSections(20, 0,
+        {{key="last_opened", reverse=true}}, scope, nil, {light_only=true})
+    assert(recent_total == 5 and recent[1].filepath == "/lib/Culture/c2.epub"
+        and recent[4].filepath == "/lib/Discworld/Witches/w2.epub",
+        "Opened sorts within each root, never escaping the profile")
+    assert(recent[1].title == "C Two" and recent[4].title == "W Two",
+        "each section must use its own profile root's light metadata")
+    package.loaded["readhistory"].hist = old_history
+
     local was_spine = Repo.spine_light
     Repo.spine_light = true
     local pinned, pinned_total = Repo.getBySource(

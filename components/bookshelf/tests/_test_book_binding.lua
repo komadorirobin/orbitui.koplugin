@@ -55,7 +55,7 @@ t.test("drilled and pinned series supply identity for light members, not author 
     eq(M.resolve({}, {series_name="Saga"}, M.applyOptions({}, "plain")), "paperback")
 end)
 
-local function groupMenu(mode, kind)
+local function groupMenu(mode, kind, host_binding)
     local src = F.source("lib/bookshelf_widget.lua")
     local state = {shown=0, closed=0, rebuilds=0, reinits=0, refocuses=0, dirty={}}
     local function labels(dialog)
@@ -107,6 +107,7 @@ local function groupMenu(mode, kind)
         return F.compile("return function(self"..args..")\n"..body.."\nend",env)()
     end
     local w = {
+        seriesBindingButton = host_binding,
         _selection={stackState=function() return "none" end, contains=function() return false end},
         _resolveStackPaths=function() return {} end,
         _viewMode=function() return mode end, _isSpineMode=method("_isSpineMode", ""),
@@ -164,7 +165,7 @@ t.test("binding and series boxes share a row, with independent live-applied togg
     local block=assert(src:match('if show_spines then\n(.-)\n%s*%-%- The spine view'))
     local draft, applied={id="soft"},0
     local rows=F.compile("local rows={}\n"..block.."\nreturn rows", {
-        draft=draft, _=function(s) return s end, T=function(s,v) return s:gsub("%%1",v) end,
+        self={}, draft=draft, _=function(s) return s end, T=function(s,v) return s:gsub("%%1",v) end,
         pick=function(fn) return function() fn(); applied=applied+1 end end,
     })()
     eq(#rows,1); eq(#rows[1],2)
@@ -175,6 +176,26 @@ t.test("binding and series boxes share a row, with independent live-applied togg
     boxes.callback(); eq(draft.series_boxes,true); eq(draft.book_binding,"paperback")
     binding.callback(); eq(draft.book_binding,nil); eq(draft.series_boxes,true)
     boxes.callback(); eq(draft.series_boxes,nil); eq(applied,4)
+end)
+
+t.test("host-owned bindings replace the native control rather than duplicating it", function()
+    local opened = 0
+    local state = groupMenu("spines", "series", function(_, name, close)
+        eq(name, "Saga")
+        return {text="Book binding: Kanzenban", callback=function()
+            close(); opened=opened+1
+        end}
+    end)
+    local n=0
+    for _,row in ipairs(state.dialog.buttons) do
+        for _,b in ipairs(row) do
+            if state.dialog.labels[b]:match("^Book binding:") then n=n+1 end
+        end
+    end
+    eq(n,1); eq(state.dialog.labels[state.button],"Book binding: Kanzenban")
+    local flushes=F.flushes
+    state.button.callback()
+    eq(opened,1); eq(state.closed,1); eq(F.flushes,flushes)
 end)
 
 t.test("warm planning caches follow shelf and series changes without changing geometry", function()

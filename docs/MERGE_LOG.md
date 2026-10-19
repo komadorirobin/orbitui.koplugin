@@ -2607,6 +2607,45 @@ downloaded draft/public bytes. Save evidence in `test-results/alpha49-20261018/`
 Publish as a prerelease; physical Bigme rendering/touch checks remain open.
 Disable Manga/Manga II before rolling back to a runtime without series matching.
 
+## 2026-10-19: Reviewed Bookshelf 5.5.4 merge
+
+User request: "Merga upstream", without publication. Review both tracked
+branches on `maintenance/upstream-bookshelf-5.5.4-20261019`, starting from the
+clean published alpha.49 tree (`9271cb33`).
+
+- Bookshelf master: `c7a9db2ca1c21ef6a38715e74306fe7f514ba807` to
+  `982375a7f1fe48ccaad4627dad0646af5e0f6651`, 29 previously absent commits,
+  including 5.5.3, 5.5.4 and the user's Paperback PR #536.
+- SimpleUI main is unchanged at `7eb80f9e570e6351c55f501f91e1a29c1442b756`.
+- Unsquashed subtree import: `3efaecee`. Original fork provenance and the
+  alternate box-design branch are untouched. Only the Bookshelf integrated
+  pin advances; module map adds book binding/module cache and removes the
+  obsolete internal gesture-passthrough module.
+
+Reviewed C01-C11, with changes concentrated in C01/C02/C04/C06/C07/C08/C10.
+Incoming behavior includes deferred/cached micro-module fitting and statistics,
+optional KOReader-rate e-ink flashes, live-host gestures for parked readers,
+folder progress/history sorting, shelf-of-shelves counts/random picks, themed
+cover/badge colours, Calibre home fallback and About/help/translation updates.
+The new count and goal caches are performance caches, not synchronization or
+reading-state owners. No claim of measured Bigme acceleration.
+
+Resolve six textual conflicts semantically: retain OrbitUI documentation in a
+short note beside the new upstream guide, per-root metadata caches and profile
+scope in the repository, host-owned binding/series controls, reader prewarm
+controls, binding skins/geometry and box render keys, folder actions and dock
+gestures. Native Hardback/Paperback works without host hooks; embedded controls
+continue to use `orbitui_book_bindings`, including Kanzenban and legacy read-only
+tankobon handling. Keep native and host preferences separate, never show both
+controls. Scope statistics-only locals after the added upstream helper pushed
+the combined repository over LuaJIT's 200-local limit.
+
+Verification and clean-package results are recorded after the gates below;
+evidence lives in `test-results/upstream-20261019/`. Preserve existing SQLite,
+native-font, external-artwork-cache and absent-Bookends limitations. Physical
+Bigme checks remain open as listed in `TESTING.md`. No version bump, push, tag,
+GitHub release, CI dispatch or OTA update is authorized by this merge.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

@@ -124,6 +124,38 @@ H.test("binding labels are Swedish only for Swedish and otherwise English", func
 end)
 
 -- Load the real planner and painters, only replacing native display services.
+H.test("native binding options cannot override OrbitUI profile and series choices", function()
+    local Native = require("lib/bookshelf_book_binding")
+    tabs.authors.book_binding = "hardcover"
+    saved.series_bindings = {Saga="hardcover"}
+    local w = {profile=P.get("comics"),chip="authors",_drilldown_path={},
+        _spinePlanBase=function(self)
+            return Native.applyOptions({}, self.chip, self._drilldown_path)
+        end}
+    M.widget(w)
+    local count = flushes
+    local opts = w:_spinePlanBase()
+    H.eq(opts.book_binding,"hardcover")
+    H.eq(M.resolve({}, {}, opts),"kanzenban")
+    H.eq(M.resolve({series_name="Saga"}, {}, opts),"paperback")
+    H.eq(saved.series_bindings.Saga,"hardcover")
+    H.eq(tabs.authors.book_binding,"hardcover"); H.eq(flushes,count)
+end)
+
+H.test("embedded chip editor leaves all binding choices with the host menu", function()
+    local editor = require("adapters/orbitui_ui").wrap("lib/bookshelf_chip_editor", {})
+    H.eq(editor.book_binding_external,true); H.eq(editor.series_boxes_external,true)
+    local f=assert(io.open("components/bookshelf/lib/bookshelf_chip_editor.lua"))
+    local src=f:read("*a"); f:close()
+    local body=assert(src:match('if show_spines then\n(.-)\n%s*%-%- The spine view'))
+    local env=setmetatable({self=editor}, {__index=_G})
+    local code="local rows={}\n"..body.."\nreturn rows"
+    local fn
+    if setfenv then fn=assert(loadstring(code)); setfenv(fn,env)
+    else fn=assert(load(code,"embedded binding controls","t",env)) end
+    H.eq(#fn(),0)
+end)
+
 local dpi, night = 1, false
 local Screen = {scaleBySize=function(_, n) return math.floor(n*dpi+.5) end}
 package.loaded.device = {screen=Screen}

@@ -163,7 +163,8 @@ local function folderRepository()
         end, logger = package.loaded.logger,
     }
     local method = assert(source():match("(function Repo%.getFolderSections.-)\nfunction Repo%.getGenres"))
-    compile(method .. "\nreturn Repo", env)
+    local prefetch = assert(source():match("(local function _prefetchSortProgress.-)\nend")) .. "\nend"
+    compile(prefetch .. "\n" .. method .. "\nreturn Repo", env)
     Integration.wrap("lib/bookshelf_book_repository", repo)
     return repo, entries
 end

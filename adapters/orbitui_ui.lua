@@ -85,6 +85,8 @@ function M.wrap(name, module)
     elseif name == "lib/bookshelf_chip_editor" then
         module.face_out_override = SHELF_FACE_OUT
         module.cover_text_external = true
+        -- The host owns profile-qualified bindings, including Kanzenban.
+        module.book_binding_external = true
         -- OrbitUI still boxes all eligible series; only the design changed.
         module.series_boxes_external = true
     elseif name == "lib/bookshelf_book_repository" then

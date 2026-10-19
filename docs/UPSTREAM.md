@@ -146,6 +146,20 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
+- October 19 reviewed merge: Bookshelf master `982375a7` (5.5.4), 29 incoming
+  commits including the Paperback PR #536; SimpleUI remains at `7eb80f9e`.
+  Native binding resolver/skins are fallbacks to host hooks. Keep OrbitUI's
+  profile-qualified settings, Kanzenban geometry, partial fill and render keys;
+  suppress native binding controls when the host owns them. Retain dock gesture
+  priority before `GestureZones.tryLiveZones` and its guarded live-host action
+  forwarding. Keep folder scopes and per-root light caches while adding native
+  progress/history sort enrichment. Statistics-only locals are block-scoped to
+  satisfy LuaJIT's 200-local limit. Preserve prewarm controls beside the new
+  opt-in e-ink refresh-rate setting. New fitted-size/tally/goal caches use the
+  component's resolved cache directory, not user settings; counts/calculations
+  run after paint. Regenerate the map for `bookshelf_book_binding` and
+  `bookshelf_module_cache`; the unused internal `bookshelf_gesture_passthrough`
+  has been replaced by the shared gesture helpers. No release/version change.
 - October 18, approved MAL rating on physical series boxes: an OrbitUI-only
   post-paint overlay reuses the folder provider and CountBadge renderer for
   `star + score`, inset inside the aspect-fitted cover. Keep native geometry,

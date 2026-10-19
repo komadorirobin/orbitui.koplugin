@@ -444,8 +444,14 @@ collide with native or other profile chips. Store choices separately under
 Pass the same choices through page planning and rendering; key both the plan
 and spine bitmap cache by them. Face-out top blocks and opening poses must
 retain the binding. Apply all matching runtime adapters so ornament spacing
-and binding skins coexist. The standalone component remains hardcover unless
-the host installs the optional binding hooks. Covered by `test_book_bindings`
+and binding skins coexist. As of the reviewed 5.5.4 import, the standalone
+component also offers native Hardback/Paperback settings. Native defaults and
+rendering work without host hooks, but embedded OrbitUI retains ownership of
+its three styles and saved namespace: hide the native chip binding toggle via
+`book_binding_external` and suppress the native series toggle when the host's
+`seriesBindingButton` exists. Never show two controls backed by different keys,
+silently import native choices, or let native plan options override the host's
+profile-qualified preferences. Covered by `test_book_bindings`
 and the real-loader composition case in `test_runtime`.
 
 Bookshelf 5.5.2 may use an explicit series image instead of the first cover.
