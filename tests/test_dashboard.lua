@@ -348,6 +348,186 @@ local function pagedWidget()
     return current, page_ctx, page_data
 end
 
+local function swipeAt(current, key, direction)
+    local area = Model.plan(current.dimen.w, current.dimen.h)[key]
+    local pos = { x = current.dimen.x + area.x + math.floor(area.w / 2),
+        y = current.dimen.y + area.y + math.floor(area.h / 2) }
+    function pos:intersectWith(r)
+        return self.x >= r.x and self.x < r.x + r.w and self.y >= r.y and self.y < r.y + r.h
+    end
+    return { ges = "swipe", direction = direction, pos = pos }
+end
+
+H.test("larger page controls use the card bottom without overlapping covers or the Home footer", function()
+    for _, density in ipairs({ 1, 1.5, 2 }) do
+    dpi = density
+    for _, size in ipairs({ { 600, 730 }, { 1100, 1350 }, { 300, 400 }, { 450, 610 }, { 800, 480 } }) do
+        local initial, page_ctx, page_data = pagedWidget()
+        initial:free()
+        local current = View.build(size[1], size[2], page_ctx, page_data)
+        local plan = Model.plan(size[1], size[2])
+        for _, key in ipairs({ "want", "new" }) do
+            local area = plan[key]
+            local arrow = assert(shelfItem(current, key, ">"))
+            local xy, sz = arrow.overlap_offset, arrow:getSize()
+            H.eq(arrow.face.size, math.floor(math.max(7, 28 * plan.scale) / dpi * dpi))
+            local target
+            for _, a in ipairs(current._actions) do
+                if xy[1] >= a.x and xy[1] + sz.w <= a.x + a.w
+                        and xy[2] >= a.y and xy[2] + sz.h <= a.y + a.h then target = a end
+            end
+            assert(target)
+            H.eq(target.w, math.max(1, math.floor(52 * plan.scale)))
+            H.eq(target.h, math.max(1, math.floor(48 * plan.scale)))
+            H.eq(target.y + target.h, area.y + area.h - math.max(1, math.floor(4 * plan.scale)))
+            assert(target.x >= area.x and target.x + target.w <= area.x + area.w)
+            local counter = assert(shelfItem(current, key, key == "want" and "1/3" or "1/2"))
+            H.eq(counter.fgcolor, "black")
+            H.eq(counter.face.size, math.floor(math.max(7, 16 * plan.scale) / dpi * dpi))
+            local cover_widget = assert(shelfItem(current, key, key == "want" and "/want1" or "/new1"))
+            assert(cover_widget.overlap_offset[2] + cover_widget:getSize().h <= target.y)
+            if size[1] == 600 then
+                -- The portrait covers remain width-limited, not shrunk for the larger pager.
+                H.eq(cover_widget:getSize().w, math.floor((area.w - 2 * plan.pad - 2 * plan.gap) / 3))
+            end
+        end
+        current:free()
+    end
+    end
+    dpi = 1
+end)
+
+H.test("the larger arrow hit target works below the glyph without opening a book", function()
+    local current, page_ctx = pagedWidget()
+    local area = Model.plan(600, 730).want
+    opened = nil
+    H.eq(current:onDashboardTap(nil, { pos = { x = current.dimen.x + area.w / 2 + 60,
+        y = current.dimen.y + area.y + area.h - 6 } }), true)
+    H.eq(page_ctx._screen_widget._orbitui_dashboard_pages.want, 2)
+    H.eq(opened, nil)
+    current:free()
+end)
+
+H.test("horizontal swipes page each card independently and share arrow state", function()
+    local current, page_ctx = pagedWidget()
+    local pages = page_ctx._screen_widget._orbitui_dashboard_pages
+    local before = dirtied
+    H.eq(current:onSwipe(nil, swipeAt(current, "want", "west")), true)
+    H.eq(pages.want, 2); H.eq(pages.new, 1); H.eq(dirtied, before + 1)
+    assert(shelfItem(current, "want", "/want4"))
+    tapArrow(current, "want", ">")
+    H.eq(pages.want, 3)
+    H.eq(current:onSwipe(nil, swipeAt(current, "want", "east")), true)
+    H.eq(pages.want, 2)
+    H.eq(current:onSwipe(nil, swipeAt(current, "new", "west")), true)
+    H.eq(pages.new, 2); H.eq(pages.want, 2)
+    assert(shelfItem(current, "new", "/new4"))
+    H.eq(current:onSwipe(nil, swipeAt(current, "new", "east")), true)
+    H.eq(pages.new, 1); H.eq(page_ctx._screen_widget._current_page, 4)
+    current:free()
+end)
+
+H.test("card swipes at either boundary or on empty and single-page lists are consumed without repaint", function()
+    local current, page_ctx, page_data = pagedWidget()
+    local before = dirtied
+    H.eq(current:onSwipe(nil, swipeAt(current, "want", "east")), true)
+    H.eq(dirtied, before)
+    tapArrow(current, "want", ">"); tapArrow(current, "want", ">")
+    before = dirtied
+    H.eq(current:onSwipe(nil, swipeAt(current, "want", "west")), true)
+    H.eq(dirtied, before)
+    page_data.want, page_data.new = { "/only" }, {}
+    current:replaceContent(page_ctx, page_data)
+    for _, key in ipairs({ "want", "new" }) do
+        for _, dir in ipairs({ "west", "east" }) do
+            H.eq(current:onSwipe(nil, swipeAt(current, key, dir)), true)
+            H.eq(page_ctx._screen_widget._orbitui_dashboard_pages[key], 1)
+        end
+    end
+    H.eq(dirtied, before)
+    current:free()
+end)
+
+H.test("vertical swipes, other cards and invalid gestures remain available to the Home screen", function()
+    local current = pagedWidget()
+    local before = dirtied
+    for _, dir in ipairs({ "north", "south", "northeast" }) do
+        H.eq(current:onSwipe(nil, swipeAt(current, "want", dir)), nil)
+    end
+    H.eq(current:onSwipe(nil, swipeAt(current, "ongoing", "west")), nil)
+    H.eq(current:onSwipe(nil, swipeAt(current, "goal", "east")), nil)
+    H.eq(current:onSwipe(nil, nil), nil)
+    H.eq(current:onSwipe(nil, { direction = "west" }), nil)
+    H.eq(current:onSwipe(nil, { pos = { x = -1, y = -1 }, direction = "west" }), nil)
+    H.eq(dirtied, before)
+    current:free()
+end)
+
+H.test("swipes discard a pending book hold and use fresh lists after data and cover updates", function()
+    local current, page_ctx, page_data = pagedWidget()
+    local book = shelfItem(current, "want", "/want1")
+    held = nil
+    current:onDashboardHold(nil, { pos = { x = current.dimen.x + book.overlap_offset[1] + 2,
+        y = current.dimen.y + book.overlap_offset[2] + 2 } })
+    assert(current._held)
+    current:onSwipe(nil, swipeAt(current, "want", "west"))
+    H.eq(current:onDashboardHoldRelease(), nil); H.eq(held, nil)
+    page_data.want = { "/replacement1", "/replacement2", "/replacement3", "/replacement4" }
+    current:replaceContent(page_ctx, page_data)
+    Dashboard.updateCovers(current)
+    current:onSwipe(nil, swipeAt(current, "want", "east"))
+    assert(shelfItem(current, "want", "/replacement1"))
+    current:onSwipe(nil, swipeAt(current, "want", "west"))
+    assert(shelfItem(current, "want", "/replacement4"))
+    H.eq(#current._swipe_areas, 2)
+    current:free()
+end)
+
+H.test("native SimpleUI swipe routing reaches the dashboard while retaining Home and edge gestures", function()
+    local file = assert(io.open("components/simpleui/engines/sui_screen_engine.lua"))
+    local source = file:read("*a"); file:close()
+    local code = ""
+    for _, name in ipairs({ "_inXRange", "_findSwipeWidget", "_pageHasMod" }) do
+        code = code .. assert(source:match("(local function " .. name .. "%b().-\nend)")) .. "\n"
+    end
+    for _, name in ipairs({ "_isSideEdge", "_isModOnVisiblePage", "_bookModHitDimen", "_swipeBookMod", "onScreenSwipe" }) do
+        code = code .. assert(source:match("(function ScreenWidget:" .. name .. "%b().-\nend)")) .. "\n"
+    end
+    local current, page_ctx = pagedWidget()
+    local screen = page_ctx._screen_widget
+    local env = setmetatable({ ScreenWidget = screen, Screen = { getWidth = function() return 640 end },
+        _isLandscape = function() return false end }, { __index = _G })
+    if setfenv then setfenv(assert(loadstring(code)), env)()
+    else assert(load(code, "native dashboard swipe routing", "t", env))() end
+    local home_turns, forwarded = 0, 0
+    screen._gesture_zones = { left_edge = { ratio_x = 0, ratio_w = .05 },
+        right_edge = { ratio_x = .95, ratio_w = .05 } }
+    screen._enabled_mods_cache = { pages_of_mods = { [4] = { { id = Model.id } }, [5] = {} } }
+    screen._book_mod_slots = { [Model.id] = { widget = Widget:new{ dimen = current.dimen, current } } }
+    function screen:_swipePage() home_turns = home_turns + 1 end
+    function screen:_fmGestureAction() forwarded = forwarded + 1; return true end
+    -- Only the screen registers a swipe range, so its edge priority cannot be bypassed.
+    for _, ranges in pairs(current.ges_events) do
+        for _, range in ipairs(ranges) do assert(range.ges ~= "swipe") end
+    end
+    H.eq(screen:onScreenSwipe(nil, swipeAt(current, "want", "west")), true)
+    H.eq(screen._orbitui_dashboard_pages.want, 2); H.eq(home_turns, 0)
+    screen:onScreenSwipe(nil, swipeAt(current, "new", "west"))
+    screen:onScreenSwipe(nil, swipeAt(current, "new", "west"))
+    H.eq(screen._orbitui_dashboard_pages.new, 2); H.eq(home_turns, 0)
+    screen:onScreenSwipe(nil, swipeAt(current, "ongoing", "west"))
+    H.eq(home_turns, 1)
+    local edge = swipeAt(current, "want", "east"); edge.pos.x = 20
+    screen:onScreenSwipe(nil, edge)
+    H.eq(forwarded, 1); H.eq(screen._orbitui_dashboard_pages.want, 2)
+    screen:onScreenSwipe(nil, swipeAt(current, "new", "north"))
+    H.eq(forwarded, 2)
+    screen._current_page = 5
+    screen:onScreenSwipe(nil, swipeAt(current, "want", "west"))
+    H.eq(home_turns, 2); H.eq(screen._orbitui_dashboard_pages.want, 2)
+    current:free()
+end)
+
 H.test("both book rows page forwards and backwards independently of the Home page", function()
     local current, page_ctx = pagedWidget()
     local pages = page_ctx._screen_widget._orbitui_dashboard_pages

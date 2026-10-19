@@ -59,10 +59,25 @@ function Dashboard:onDashboardHoldRelease()
     return true
 end
 
+-- SimpleUI routes interior swipes here, keeping screen-edge gestures intact.
+function Dashboard:onSwipe(_, ges)
+    if not ges or not ges.pos or (ges.direction ~= "west" and ges.direction ~= "east") then return end
+    local x, y = ges.pos.x - self.dimen.x, ges.pos.y - self.dimen.y
+    for _, area in ipairs(self._swipe_areas) do
+        if hit(area, x, y) then
+            self._held = nil
+            area.turn(ges.direction == "west" and 1 or -1)
+            -- Consume at either end too: never turn a Home page by accident.
+            return true
+        end
+    end
+end
+
 function Dashboard:replaceContent(ctx, data)
     local old = self[1]
     self._dashboard_ctx, self._dashboard_data = ctx, data
     self._actions, self._cover_slots, self._held = {}, {}, nil
+    self._swipe_areas = {}
     self[1] = M.content(self, Model.plan(self.dimen.w, self.dimen.h), ctx, data)
     if old then old:free() end
 end
@@ -250,13 +265,24 @@ function M.content(widget, p, ctx, data)
         local pages = math.max(1, math.ceil(#files / count))
         local page = math.min(pages, math.max(1, owner._orbitui_dashboard_pages[key] or 1))
         owner._orbitui_dashboard_pages[key] = page
-        local nav_h = pages > 1 and px(32) or 0
+        local nav_h = pages > 1 and px(48) or 0
+        local bottom_pad = pages > 1 and px(4) or p.pad
+        local nav_y = area.y + area.h - bottom_pad - nav_h
+        local function turn(delta)
+            local next_page = math.max(1, math.min(pages, page + delta))
+            if next_page == page then return end
+            owner._orbitui_dashboard_pages[key] = next_page
+            widget:replaceContent(ctx, data)
+            require("ui/uimanager"):setDirty(ctx._screen_widget or widget, "ui", widget.dimen)
+        end
+        local swipe_area = rect(area.x, area.y, area.w, area.h)
+        swipe_area.turn = turn
+        widget._swipe_areas[#widget._swipe_areas + 1] = swipe_area
         text(heading(key, label), area.x + p.pad, area.y + p.pad, area.w - 2 * p.pad, 13, true)
         if pages > 1 then
-            local button_w = px(36)
+            local button_w = px(52)
             local indicator_w = math.min(px(76), area.w - 2 * p.pad - 2 * button_w)
             local nav_x = area.x + math.floor((area.w - 2 * button_w - indicator_w) / 2)
-            local nav_y = area.y + area.h - p.pad - nav_h
             local function centered(value, x, width, size, color)
                 local label_widget = text(value, x, nav_y, width, size, false, color)
                 local label_size = label_widget:getSize()
@@ -265,16 +291,9 @@ function M.content(widget, p, ctx, data)
                     nav_y + math.floor((nav_h - label_size.h) / 2),
                 }
             end
-            local function turn(delta)
-                local next_page = math.max(1, math.min(pages, page + delta))
-                if next_page == page then return end
-                owner._orbitui_dashboard_pages[key] = next_page
-                widget:replaceContent(ctx, data)
-                require("ui/uimanager"):setDirty(ctx._screen_widget or widget, "ui", widget.dimen)
-            end
-            centered("<", nav_x, button_w, 18, page > 1 and ink or BB.COLOR_LIGHT_GRAY)
-            centered(string.format("%d/%d", page, pages), nav_x + button_w, indicator_w, 11, muted)
-            centered(">", nav_x + button_w + indicator_w, button_w, 18,
+            centered("<", nav_x, button_w, 28, page > 1 and ink or BB.COLOR_LIGHT_GRAY)
+            centered(string.format("%d/%d", page, pages), nav_x + button_w, indicator_w, 16, ink)
+            centered(">", nav_x + button_w + indicator_w, button_w, 28,
                 page < pages and ink or BB.COLOR_LIGHT_GRAY)
             action(rect(nav_x, nav_y, button_w, nav_h), function() turn(-1) end)
             action(rect(nav_x + button_w + indicator_w, nav_y, button_w, nav_h), function() turn(1) end)
@@ -286,7 +305,7 @@ function M.content(widget, p, ctx, data)
             return
         end
         local slot_w = math.floor((area.w - 2 * p.pad - 2 * p.gap) / count)
-        local max_h = area.h - 2 * p.pad - px(34) - nav_h
+        local max_h = nav_y - area.y - p.pad - px(34)
         local cw = math.floor(math.min(slot_w, max_h * 2 / 3))
         local ch = math.floor(cw * 3 / 2)
         for i = 1, count do

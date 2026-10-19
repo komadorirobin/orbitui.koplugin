@@ -74,8 +74,12 @@ Optional Home layout: **OrbitUI settings > Reading dashboard > Show dashboard
 as first Home page** adds a BookOrbit-inspired card layout without replacing
 any existing pages. It combines a larger continue-reading card, daily/week/streak
 statistics, three in-progress books, the existing reading goal, and three-cover
-BookOrbit Want to Read / Recently added rows. Each row has previous/next arrows
-and a page counter when needed, independent of the other row and the Home page.
+BookOrbit Want to Read / Recently added rows. Each row has larger previous/next
+arrows, touch targets and a page counter below the covers when needed. Swipe
+left/right within either card to see the next/previous books, independently of
+the other row and the Home page; swipes stop at the first and last book page.
+Swipe outside these two cards to change Home pages; screen-edge gestures retain
+their configured actions.
 Tap books to open, hold them for the existing book panel; tap the goal/statistics
 cards for their settings. The dark hero can be switched off. Disabling the page
 preserves edits to other pages and never resets data, wallpaper or dock choices.

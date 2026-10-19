@@ -2701,6 +2701,36 @@ environment suite skips remain; no new exceptions. Package the clean local
 commit for validation only, retaining VERSION alpha.50 without replacing its
 public assets. Device keyboard/menu, redraw and native font checks remain open.
 
+## 2026-10-19: Larger dashboard pagination and card swipes (not published)
+
+User requested larger pagination controls and horizontal swipes in the Reading
+dashboard's Want to Read / Recently added cards. Increase the scaled pager
+height from 32 to 48, button width from 36 to 52, arrow type from 18 to 28 and
+counter type from 11 to 16, with dark counters and a smaller bottom inset.
+Use the existing card bounds and preserve width-limited portrait cover size;
+do not borrow space reserved for the Home footer or bottom dock.
+
+Both arrows and interior card swipes share a clamped callback and independent
+session positions. Consume swipes at boundaries and for empty/single-page rows
+to avoid accidental Home turns. Rebuild regions with content and discard a
+pending book hold when swiping. Use native SimpleUI `onSwipe` delegation rather
+than registering an independent gesture range, retaining screen-edge, vertical
+and outside-card behavior. No component, pin, layout/settings migration, source
+provider, artwork, bootstrap or version changes. The earlier unpublished custom
+card headings remain intact.
+
+Add seven dashboard cases, including execution of the native screen-routing
+methods, in addition to the existing geometry/book-action/paging/heading tests.
+Evidence belongs in `test-results/dashboard-pagination-20261019/`. Validate full
+sequential Lua/LuaJIT suites, translations and the clean-commit runtime ZIP.
+No push, tag or release requested; physical-device acceptance remains open.
+
+Full sequential Lua/LuaJIT verification passed: 684/685 root cases (34 dashboard
+cases), 407 Bookshelf suites, all 13 SimpleUI files and 103 Python tests, plus
+all 43 translation catalogues. Existing four artwork-source skips and two
+environment suite skips remain unchanged. The generated schematic shows both
+larger pagers, without claiming native font or physical touch verification.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

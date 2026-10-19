@@ -2,6 +2,26 @@
 
 ## Automated
 
+2026-10-19 dashboard pagination and swipes (unpublished): test larger arrows,
+page-counter type and hit targets near each card bottom at five screen sizes
+and three DPI factors, preserving portrait cover size and footer/dock bounds.
+Exercise independent west/east paging, mixed arrow/swipe use, clamping, no-op
+boundary/empty/single-page swipes, pending-hold cancellation and refreshed data.
+Run the native SimpleUI screen-routing methods against the real dashboard
+handler: other cards still turn Home pages, hidden modules do not consume
+swipes, and vertical and edge gestures retain their file-manager actions.
+Evidence belongs in `test-results/dashboard-pagination-20261019/`. Run complete
+sequential Lua/LuaJIT, translations and clean-commit ZIP validation without
+updating VERSION or public alpha.50 assets. Physical Bigme touch, typography,
+redraw, rotation and swipe-direction acceptance remain open.
+
+Completed automated gates: 684 Lua / 685 LuaJIT root cases in 54 files (34
+dashboard cases), 407 Bookshelf suites and all 13 SimpleUI files on both
+runtimes. Python: 103 tests with the four existing external-artwork-source
+skips; Bookshelf retains two environment suite skips. All 43 translation
+catalogues, 318 module paths and 874 syntax files pass. The optional schematic
+was rendered and inspected with synthetic covers, not native device fonts.
+
 2026-10-19 dashboard card headings (unpublished): exercise all nine editors from
 both the shared and native module settings entries. Cover saving, cancel,
 per-card reset, blank/invalid values, module reload, per-screen isolation,
@@ -1050,8 +1070,11 @@ quality or completeness.
 - Open and hold the hero, each ongoing book and both cover rows. Change progress
   and completion status, return from the reader, switch pages and sleep/resume;
   check updated counts/bars and no stale/freed covers. Page Want to Read and New
-  Books independently with both arrows; check the counters and first/last-page
-  stops, and that the controls never cover a book. Verify BookOrbit auto-refresh
+  Books independently with the larger arrows and left/right swipes anywhere
+  within each card. Check the counters, first/last-page stops and empty or
+  single-page lists never switching Home pages. Other cards should still allow
+  Home-page swipes; edge gestures retain their configured actions. Check the
+  larger targets never cover a book or the Home pager/dock. Verify BookOrbit auto-refresh
   opt-out, offline cached data, missing cover/goal states and Hardcover/local
   annual goal selection.
 

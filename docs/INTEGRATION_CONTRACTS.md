@@ -768,6 +768,14 @@ pagination, cover-cache ownership and stats/cover refresh slots. Each cover row
 has its own previous/next arrows and page counter below the covers, with no
 wraparound at either end. Hide controls for a single page, clamp saved positions
 when a source shrinks, and never change the Home page when paging a book row.
+The enlarged controls sit near each card's bottom without overlapping covers.
+Interior horizontal swipes starting anywhere in either cover-row card (including
+the heading or pager) use the same clamped paging callback as its arrows. Consume
+boundary, empty and single-page swipes too; clear pending holds, never open a book
+or fall through to Home paging. Rebuild swipe regions/callbacks with the content.
+Expose `onSwipe` for the native screen engine's book-module routing, not an
+independent swipe gesture range that bypasses screen-edge priority. Other cards,
+vertical/diagonal swipes and screen-edge gestures retain native handling.
 Its height reserves the dock-adjusted content bounds, module margin and pager;
 font sizes must not double-apply device DPI. It owns its individual card chrome,
 so native whole-module background controls must not be offered as if they affected it.
