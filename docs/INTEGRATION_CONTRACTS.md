@@ -191,6 +191,8 @@ Do not fetch ratings, hydrate metadata, read private plugin settings or change
 links while painting. Missing/disabled/erroring providers and absent/invalid
 scores produce no badge. Read the live callback on repaint so cached refreshes,
 relinks and removal do not leave a stale score. No MAL plugin update required.
+Folder-backed Oneshots boxes have no shared series rating; never inherit a
+representative one's link or average unrelated ratings.
 Tests: `test_series_rating`, `test_upstream_series_boxes`.
 
 ## C07: Presentation and preferences
@@ -331,9 +333,29 @@ Native `bookshelf_series_boxes` and `bookshelf_series_box_widget` now own the
 grouping, geometry, shadows and painter. OrbitUI keeps boxes enabled on all
 eligible physical shelves, including both fixed profiles, without writing
 settings or exposing a redundant native on/off switch. Grid/list, remote feeds,
-search, opened series and native single-series chips remain unboxed. A lone
-volume is an ordinary book as upstream intends. Fixed profile IDs must not
+search, opened series and native single-series chips remain unboxed. The
+approved October 19 follow-up boxes named series even with one local volume;
+the native `prepare` default still flattens singletons when the host opt-in
+is absent. Fixed profile IDs must not
 inherit an unrelated native tab's source or box preference.
+
+The same follow-up adds folder-backed **Oneshots** boxes only on the fixed
+Comics profile's folder chips (Manga/Serier and their folder drills). Match the
+exact directory component, case-insensitively, within that chip's root, never
+a filename, similar prefix or path outside the root. One box per actual path,
+including nested title folders, using only the complete fetched membership.
+Deduplicate files, preserve incoming folder order and retain original member
+metadata. Do not infer other metadata-free folders to be series or apply this
+folder rule on author, latest, TBR, next, search or remote sources.
+
+These boxes keep `kind=folder` and a real path, with a distinct box-cache key.
+Native tap/hold, image lookup, bulk selection and persistence use folder
+identity, not a fictional series. Opening/restoring the folder fetches current
+membership and disables reboxing within it. A one-book Oneshots folder remains
+a box at its parent. No representative author/series ornament, series-name
+binding override or MAL score may be assigned to the whole collection. Genuine
+member series bindings and the shelf's default binding remain available.
+Only view records change: never move files, edit metadata or migrate settings.
 
 The open-topped box shows up to eight native member spines above a first-cover
 sticker, with its name and full read/total count. Its width follows the native

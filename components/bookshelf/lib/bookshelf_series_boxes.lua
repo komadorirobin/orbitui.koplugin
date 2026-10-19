@@ -67,7 +67,7 @@ function M.onlyBook(books)
     return first
 end
 
-function M.prepare(items, light_meta)
+function M.prepare(items, light_meta, opts)
     local out, groups = {}, {}
     for _, item in ipairs(items or {}) do
         -- Native author/tag groups can contain only file identifiers. Resolve
@@ -80,12 +80,12 @@ function M.prepare(items, light_meta)
             out[#out+1] = item
         elseif item.books then
             if name(item) and (not item.kind or item.kind == "series") then
-                -- One volume on the shelf is a book, not a box set.
-                local only = M.onlyBook(item.books)
+                -- Hosts may keep one-volume series drillable as box sets.
+                local only = not (opts and opts.include_singletons) and M.onlyBook(item.books)
                 out[#out+1] = only or M.box(item.books, name(item), item, light_meta)
             else
                 local group = copy(item)
-                group._series_display_books = M.prepare(item.books, light_meta)
+                group._series_display_books = M.prepare(item.books, light_meta, opts)
                 out[#out+1] = group
             end
         elseif item.filepath and name(item) and not item.is_remote then
@@ -104,7 +104,8 @@ function M.prepare(items, light_meta)
         end
     end
     for _, g in pairs(groups) do
-        out[g.at] = M.onlyBook(g.books) or M.box(g.books, g.title, g.original, light_meta)
+        local only = not (opts and opts.include_singletons) and M.onlyBook(g.books)
+        out[g.at] = only or M.box(g.books, g.title, g.original, light_meta)
     end
     return out
 end

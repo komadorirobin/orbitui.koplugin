@@ -6,6 +6,8 @@ local REGISTRY = "bookshelf_folder_badge_providers"
 -- private settings. Nested volume folders resolve to their common parent.
 function M.folder(book)
     if type(book) ~= "table" or type(book.books) ~= "table" then return nil end
+    -- A collection of unrelated one-shots has no shared series rating.
+    if book.kind == "folder" and book._series_box then return nil end
     local common
     for _, member in ipairs(book.books) do
         local path = type(member) == "table" and member.filepath

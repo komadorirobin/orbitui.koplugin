@@ -52,6 +52,67 @@ local function tip(self)
     return path[#path]
 end
 
+local function localPath(path)
+    if type(path) ~= "string" or path:sub(1, 1) ~= "/" or path:find("://", 1, true) then return end
+    path = path:gsub("/+", "/"):gsub("/+$", "")
+    for part in path:gmatch("[^/]+") do if part == "." or part == ".." then return end end
+    return path ~= "" and path or "/"
+end
+
+function M.oneshotsPath(filepath, root)
+    filepath, root = localPath(filepath), localPath(root)
+    if not filepath or not root then return end
+    local prefix = root == "/" and root or root .. "/"
+    if filepath:sub(1, #prefix) ~= prefix then return end
+    local parent = root == "/" and "" or root
+    -- Only directory components count, never a book named Oneshots.epub.
+    for part in filepath:sub(#prefix + 1):gmatch("([^/]+)/") do
+        parent = parent .. "/" .. part
+        if part:lower() == "oneshots" then return parent end
+    end
+end
+
+local function folderRoot(self)
+    if not self.profile or self.profile.key ~= "comics" then return end
+    local last = tip(self)
+    if last and last.kind ~= "folder" then return end
+    local chip = require("lib/bookshelf_profiles").chip(self.profile, self.chip)
+    if chip and chip.kind == "folder" then return chip.path end
+end
+
+function M.folderBoxes(items, root, light_meta)
+    local Boxes = require("lib/bookshelf_series_boxes")
+    local out, groups = {}, {}
+    for _, item in ipairs(items) do
+        local folder = not item.is_remote and not item.books and M.oneshotsPath(item.filepath, root)
+        if folder then
+            local group = groups[folder]
+            if not group then
+                group = { books = {}, original = item, at = #out + 1 }
+                groups[folder], out[group.at] = group, group
+            end
+            group.books[#group.books + 1] = item
+        else
+            out[#out + 1] = item
+        end
+    end
+    for path, group in pairs(groups) do
+        local label = path:match("([^/]+)$")
+        local box = Boxes.box(group.books, label, group.original, light_meta)
+        -- Retain folder order, rather than sorting unrelated books by series index.
+        local order = {}
+        for i, book in ipairs(group.books) do order[book.filepath] = order[book.filepath] or i end
+        table.sort(box.books, function(a, b) return order[a.filepath] < order[b.filepath] end)
+        box.first_book = box.books[1]
+        box.kind, box.path = "folder", path
+        box._spine_single = false
+        box.author, box.authors = nil, nil
+        box._series_box_key = "folder\0" .. path
+        out[group.at] = box
+    end
+    return out
+end
+
 local function nativeTab(self)
     -- Fixed profile chips can share IDs with unrelated native tabs.
     if self.profile then return nil end
@@ -63,11 +124,21 @@ function M.widget(widget)
     -- compaction, geometry, painting, counts and member status marks.
     widget._seriesBoxesEnabled = function(self)
         local last, tab = tip(self), nativeTab(self)
+        local root = folderRoot(self)
+        local folder = last and last.kind == "folder" and last.payload and localPath(last.payload.path)
         return self:_isSpineMode()
+            and not (folder and root and M.oneshotsPath(folder .. "/_", root))
             and not (tab and tab.source and tab.source.kind == "single_series")
             and not (last and (last.kind == "series" or last.kind == "search"
                 or last.kind == "opds_nav"))
             and not (self._opdsEffectiveTab and self:_opdsEffectiveTab())
+    end
+    widget._prepareSpineItems = function(self, items, total)
+        if not self:_seriesBoxesEnabled() or (total and total > #items) then return items end
+        local light_meta = require("lib/bookshelf_book_repository").lightMetaFor
+        local root = folderRoot(self)
+        if root then items = M.folderBoxes(items, root, light_meta) end
+        return require("lib/bookshelf_series_boxes").prepare(items, light_meta, { include_singletons = true })
     end
     widget.spineShowSectionBadges = function(self)
         local last = tip(self)

@@ -53,7 +53,8 @@ local function widget(raw)
     for _, name in ipairs({"_prepareSpineItems", "_spineCachedFetch", "_spineItemsSig",
             "_spineUpdateBookCounts", "_serializeDrillPath", "_restoreDrillPath",
             "_applyWithinGroupSort"}) do
-        w[name] = method(name, {Repo = Repo, SPINE_ALL_LIMIT = 10000})
+        w[name] = method(name, {Repo = Repo, SPINE_ALL_LIMIT = 10000,
+            FolderLabel = {display = function(label) return label end}})
     end
     Adapter.widget(w)
     return w
@@ -114,11 +115,147 @@ H.test("letter jumps and footer use the same native compact display list", funct
     H.eq(w._spine_books_total, 3); H.eq(w._spine_books_before, 2)
 end)
 
-H.test("a one-volume series remains an ordinary book as upstream intends", function()
+H.test("a one-volume series is boxed in OrbitUI while standalone Bookshelf keeps its default", function()
     local lone = book(1, "Saga")
     local w = widget({lone, book(0)})
     local items = w:_spineCachedFetch(100)
-    H.eq(items[1], lone); H.eq(Boxes.isBox(items[1]), false)
+    H.eq(Boxes.isBox(items[1]), true); H.eq(items[1].book_count, 1)
+    H.eq(items[1].first_book.filepath, lone.filepath); H.eq(items[2].filepath, "/books/0.epub")
+    H.eq(Boxes.prepare({lone})[1], lone)
+    H.eq(lone._series_box, nil)
+end)
+
+H.test("singletons include light metadata and grouped stubs without mutating the source", function()
+    local lone = book(1)
+    metas[lone.filepath] = {series_name = "Light series", cover_bb = "shared"}
+    local w = widget({lone})
+    local box = w:_prepareSpineItems({lone}, 1)[1]
+    H.eq(box.series_name, "Light series"); H.eq(box.books[1].cover_bb, nil)
+    H.eq(lone.series_name, nil); H.eq(metas[lone.filepath].cover_bb, "shared")
+    local group = {series_name = "Grouped series", books = {{filepath = "/books/stub.epub"}}}
+    box = w:_prepareSpineItems({group}, 1)[1]
+    assert(Boxes.isBox(box)); H.eq(box.series_name, "Grouped series"); H.eq(box.book_count, 1)
+    H.eq(group.books[1].series_name, nil)
+    local author = {kind = "author", series_name = "A name", books = {book(2, "Another")}}
+    local display = w:_prepareSpineItems({author}, 1)[1]
+    H.eq(display.books, author.books); assert(Boxes.isBox(display._series_display_books[1]))
+    metas = {}
+end)
+
+local Profiles = require("lib/bookshelf_profiles")
+local manga_root = Profiles.get("comics").chips[1].path
+local function mangaBook(path, series)
+    local b = book(1, series)
+    b.filepath, b.filename, b.title = manga_root .. "/" .. path, path:match("([^/]+)$"), path
+    return b
+end
+local function mangaWidget(raw)
+    local w = widget(raw)
+    w.profile, w.chip = Profiles.get("comics"), "profile_manga"
+    w._profileScope = function() return Profiles.scope(w.profile) end
+    return w
+end
+
+H.test("Oneshots directory matching is component-based scoped and local-only", function()
+    for _, fp in ipairs({"/Manga/Oneshots/A.cbz", "/Manga/Oneshots/Title/A.cbz"}) do
+        H.eq(Adapter.oneshotsPath(fp, "/Manga/"), "/Manga/Oneshots")
+    end
+    H.eq(Adapter.oneshotsPath("/Manga/Author/oneshots/A.cbz", "/Manga"), "/Manga/Author/oneshots")
+    for _, fp in ipairs({"/Manga/Oneshots.cbz", "/Manga/Oneshots Extra/A.cbz", "/Manga2/Oneshots/A.cbz",
+            "/Manga/../Fiction/Oneshots/A.epub", "https://example.org/Manga/Oneshots/A.cbz"}) do
+        H.eq(Adapter.oneshotsPath(fp, "/Manga"), nil)
+    end
+    H.eq(Adapter.oneshotsPath(nil, "/Manga"), nil)
+end)
+
+H.test("Oneshots and nested title folders occupy one box preserving displayed order and metadata", function()
+    local raw = {mangaBook("Before.cbz"), mangaBook("Oneshots/Z.cbz"),
+        mangaBook("Oneshots/Title/A.cbz"), mangaBook("Oneshots/WithMetadata.cbz", "A real series"),
+        mangaBook("After/1.cbz", "Another series"), mangaBook("Loose.cbz")}
+    raw[2].cover_bb = "shared"
+    local w = mangaWidget(raw)
+    local items = w:_spineCachedFetch(100)
+    H.eq(#items, 4)
+    local box = items[2]
+    assert(Boxes.isBox(box)); H.eq(box.kind, "folder"); H.eq(box.path, manga_root .. "/Oneshots")
+    H.eq(box.label, "Oneshots"); H.eq(box.book_count, 3); H.eq(box._spine_single, false)
+    H.eq(box.first_book.filepath, raw[2].filepath); H.eq(box.books[2].filepath, raw[3].filepath)
+    H.eq(box.books[3].series_name, "A real series"); H.eq(box.books[1].cover_bb, nil)
+    H.eq(raw[2].series_name, nil); H.eq(raw[2].cover_bb, "shared"); H.eq(raw[2]._series_box, nil)
+    H.eq(box.author, nil); H.eq(box.authors, nil)
+    H.eq(require("core/orbitui_author_ornaments").authorOf({book = box}), nil)
+    H.eq(require("core/orbitui_manga_ornaments").seriesOf({book = box}), nil)
+    assert(Boxes.isBox(items[3])); H.eq(items[3].book_count, 1)
+    H.eq(items[4], raw[6])
+    local scan = w:_jumpScanList()
+    H.eq(#scan, #items); H.eq(Boxes.signature(scan[2]), Boxes.signature(box))
+    w._cursor = 3; w:_spineUpdateBookCounts(items)
+    H.eq(w._spine_books_total, 4); H.eq(w._spine_books_before, 2)
+end)
+
+H.test("separate Oneshots paths and a real series named Oneshots never merge", function()
+    local raw = {mangaBook("Oneshots/A.cbz"), mangaBook("Oneshots/A.cbz"),
+        mangaBook("Other/Oneshots/B.cbz"), mangaBook("Real/1.cbz", "Oneshots")}
+    local items = mangaWidget(raw):_prepareSpineItems(raw, #raw)
+    H.eq(#items, 3); H.eq(items[1].book_count, 1); H.eq(items[2].book_count, 1)
+    assert(items[1]._series_box_key ~= items[2]._series_box_key)
+    assert(items[1]._series_box_key ~= items[3]._series_box_key)
+    H.eq(items[3].kind, "series"); H.eq(items[3].series_name, "Oneshots")
+end)
+
+H.test("Oneshots grouping does not invent collections on other profiles or non-folder sources", function()
+    local raw = {mangaBook("Oneshots/A.cbz"), mangaBook("Oneshots/B.cbz")}
+    local w = mangaWidget(raw)
+    for _, chip in ipairs({"authors", "bookorbit_tbr", "latest", "next"}) do
+        w.chip = chip
+        H.eq(#w:_prepareSpineItems(raw, #raw), 2)
+    end
+    w.chip, w.profile = "profile_fiction", Profiles.get("prose")
+    H.eq(#w:_prepareSpineItems(raw, #raw), 2)
+    w.profile = nil; H.eq(#w:_prepareSpineItems(raw, #raw), 2)
+    w = mangaWidget(raw)
+    H.eq(w:_prepareSpineItems(raw, 1000), raw)
+    w._isSpineMode = function() return false end
+    H.eq(w:_prepareSpineItems(raw, #raw), raw)
+    w._isSpineMode = function() return true end
+    for _, kind in ipairs({"series", "search", "opds_nav", "author"}) do
+        w._drilldown_path = {{kind = kind}}
+        H.eq(#w:_prepareSpineItems(raw, #raw), 2)
+    end
+    w._drilldown_path = {}; raw[1].is_remote = true
+    local items = w:_prepareSpineItems(raw, #raw)
+    H.eq(items[1], raw[1]); H.eq(items[2].book_count, 1)
+end)
+
+H.test("opening and restoring an Oneshots box use the native folder path without reboxing", function()
+    local raw = {mangaBook("Oneshots/A.cbz"), mangaBook("Oneshots/B.cbz", "Actual series")}
+    local w = mangaWidget(raw)
+    local box = w:_prepareSpineItems(raw, #raw)[1]
+    local marked
+    w._markTapped = function(_, fp) marked = fp end
+    w._drillInto = function(self, entry) self._drilldown_path[#self._drilldown_path + 1] = entry end
+    w._expandFolder = method("_expandFolder", {FolderLabel = {display = function(label) return label end}})
+    w:_expandFolder(box)
+    H.eq(marked, box.first_book.filepath); H.eq(w._drilldown_path[1].kind, "folder")
+    H.eq(w:_seriesBoxesEnabled(), false); H.eq(w:_prepareSpineItems(raw, #raw), raw)
+    local saved = w:_serializeDrillPath()
+    H.eq(saved[1].path, box.path); H.eq(saved[1].kind, "folder")
+    H.eq(saved[1].books, nil); H.eq(saved[1].series_box_files, nil)
+    local restored = mangaWidget()
+    restored:_restoreDrillPath(saved)
+    H.eq(restored._drilldown_path[1].payload.path, box.path)
+    H.eq(restored:_seriesBoxesEnabled(), false)
+    -- Fetch again from the folder, not a persisted membership snapshot.
+    local fresh = {raw[2], mangaBook("Oneshots/New.cbz")}
+    Repo.getFolderSections = function(_, _, _, scope, _, opts)
+        H.eq(opts.root, box.path); H.eq(scope.roots[1], manga_root)
+        return fresh, #fresh
+    end
+    restored._fetchChipItems = method("_fetchChipItems", {Repo = Repo, Profiles = Profiles})
+    local items, total = restored:_fetchChipItems(10000, true)
+    H.eq(items, fresh); H.eq(total, 2); H.eq(restored:_prepareSpineItems(items, total), fresh)
+    Repo.getFolderSections = nil
+    restored._drilldown_path = {}; H.eq(restored:_seriesBoxesEnabled(), true)
 end)
 
 H.test("author groups retain members, bust identity and native box signatures", function()
@@ -532,6 +669,58 @@ H.test("complete native boxes paint safely in day and night after a fresh build"
         end
     end
     night = false
+end)
+
+H.test("single-volume and Oneshots boxes paint live read totals including fully read collections", function()
+    local raw = {mangaBook("Oneshots/A.cbz"), mangaBook("Oneshots/B.cbz")}
+    local folder = mangaWidget(raw):_prepareSpineItems(raw, #raw)[1]
+    local single = widget({book(1, "Only volume")}):_prepareSpineItems({book(1, "Only volume")}, 1)[1]
+    for _, box in ipairs({folder, single}) do
+        for _, done in ipairs({false, true}) do
+            statuses = {}
+            for _, b in ipairs(box.books) do statuses[b.filepath] = done and "finished" or "reading" end
+            for _, dark in ipairs({false, true}) do
+                night = dark
+                local shape = Boxes.geometry(box, {w = 160, h = 248, face_h = 240, depth = 8}, {content_w = 800})
+                local w = Painter:new{entry = {book = box, series_box = shape}, width = shape.w, height = 400}
+                local bb = surface(w.width, 400); w:paintTo(bb, 0, 0)
+                H.eq(w.count.text, count(done and #box.books or 0, #box.books))
+                H.eq(bb.blits, 1)
+                if box.kind == "folder" then H.eq(box._spine_single, false) end
+                w:free()
+            end
+        end
+    end
+    statuses, night = {}, false
+end)
+
+H.test("Oneshots taps and holds use folder callbacks and folder images rather than series identities", function()
+    local raw = {mangaBook("Oneshots/A.cbz")}
+    local box = mangaWidget(raw):_prepareSpineItems(raw, #raw)[1]
+    local shape = Boxes.geometry(box, {w = 160, h = 248, face_h = 240, depth = 8}, {content_w = 800})
+    local cached = surface(200, 300)
+    local folder_lookups, series_lookups, taps, holds = 0, 0, 0, 0
+    package.loaded["lib/bookshelf_image_source"] = {
+        resolveFolderImage = function(path)
+            H.eq(path, box.path); folder_lookups = folder_lookups + 1; return "/folder.png"
+        end,
+        resolveStackImage = function() series_lookups = series_lookups + 1; return "/wrong.png" end,
+        imageSizeTag = function() return "200x300" end,
+        loadImageNative = function(path) H.eq(path, "/folder.png"); return cached end,
+    }
+    local w = Painter:new{entry = {book = box, series_box = shape}, width = shape.w, height = 400,
+        callbacks = {
+            on_folder_tap = function(b) H.eq(b, box); taps = taps + 1 end,
+            on_folder_hold = function(b) H.eq(b, box); holds = holds + 1 end,
+            on_series_tap = function() error("not a metadata series") end,
+            on_series_hold = function() error("not a series menu") end,
+        }}
+    H.eq(w:onTap(), true); H.eq(w:onDoubleTap(), true); H.eq(w:onHold(), true)
+    H.eq(taps, 2); H.eq(holds, 1)
+    local bb = surface(w.width, 400); w:paintTo(bb, 0, 0)
+    H.eq(folder_lookups, 1); H.eq(series_lookups, 0); H.eq(w.custom_path, "/folder.png")
+    H.eq(bb.blits, 1); w:free(); H.eq(cached.freed, nil)
+    package.loaded["lib/bookshelf_image_source"] = nil
 end)
 
 H.test("native box gestures still open the group rather than its first volume", function()

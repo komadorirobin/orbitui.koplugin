@@ -29,6 +29,13 @@ H.test("unknown, remote and unrelated locations do not guess a linked folder", f
     H.eq(Rating.folder(nil), nil)
 end)
 
+H.test("Oneshots folder boxes cannot inherit a member's MAL rating", function()
+    local collection = series({"/Manga/Oneshots/A title/one.cbz"}, "Oneshots")
+    collection.kind, collection._series_box, collection.path = "folder", true, "/Manga/Oneshots"
+    H.eq(Rating.folder(collection), nil)
+    H.eq(Rating.folder(series({"/Manga/A title/one.cbz"}, "A title")).path, "/Manga/A title")
+end)
+
 H.test("only the cached MAL provider is consulted, independently of registration order", function()
     local folder = Rating.folder(manga)
     package.loaded[REGISTRY] = nil

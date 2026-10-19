@@ -2,6 +2,27 @@
 
 ## Automated
 
+2026-10-19 Oneshots and singleton boxes (unpublished): exercise exact local
+directory matching, nested title folders, duplicate files, separate same-named
+directories, real series named Oneshots, cached metadata, grouped stubs and
+one-volume series on ordinary and profile shelves. Verify unmodified native
+defaults, incomplete/windowed-list guards, grid/search/OPDS exclusions, scoped
+folder chips, pagination/letter-jump identity and source-record immutability.
+Native folder tap/hold and image callbacks, path-only navigation restore and
+fresh membership fetch must work; the open folder must not rebox its members.
+Render singleton and folder counts before/after completion in both colour modes,
+and exclude misleading representative ornaments, series binding names and MAL
+ratings. Evidence belongs in `test-results/oneshots-boxes-20261019/`. Run full
+sequential Lua/LuaJIT, translations and a clean-commit package. No publication
+or upstream pin change is part of this request.
+
+Completed automated gates: 694 Lua / 695 LuaJIT root cases in 54 files,
+407 Bookshelf suites and all 13 SimpleUI files on both runtimes. Python:
+103 tests with four existing external-artwork-source skips; Bookshelf retains
+two environment suite skips. All 43 translation catalogues, 318 module paths
+and 874 syntax files pass. Physical Bigme rendering, navigation and read-status
+acceptance remain open.
+
 2026-10-19 dashboard pagination and swipes (unpublished): test larger arrows,
 page-counter type and hit targets near each card bottom at five screen sizes
 and three DPI factors, preserving portrait cover size and footer/dock bounds.
@@ -1054,6 +1075,14 @@ some catalogs remain upstream debt; passing syntax does not verify translation
 quality or completeness.
 
 ## Before calling the alpha device-tested
+
+- On Manga/Serier physical shelves, confirm the Oneshots box contains every
+  local member (including nested title folders), preserves read/total counts,
+  opens the real folder and offers the folder menu on hold. Check folder image
+  overrides, restart/Back and added/deleted books, with no nested Oneshots box.
+  Named one-volume series must box too, including in Library, and open to their
+  individual volume. Confirm completion, cover proportions, bindings and
+  pagination on the Bigme; no shared MAL score belongs on the Oneshots box.
 
 - Enable **OrbitUI settings > Reading dashboard > Show dashboard as first Home
   page**. Confirm older Home pages still appear on swipe, retain their settings,

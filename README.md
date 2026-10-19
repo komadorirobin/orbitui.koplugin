@@ -41,6 +41,14 @@ and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
 KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
 OrbitUI does not run Bookshelf 5.3's automatic file move.
 
+Physical shelves also box series with just one locally available volume.
+In the Manga/Comics profile's folder shelves, each **Oneshots** directory
+(including nested title folders) occupies one folder-backed box. Tap it to
+browse its books normally; long-press opens the folder menu. It uses the
+folder's custom image, or the first book's cover, and the normal read/total
+counter. This does not assign series metadata, move files or invent a combined
+MAL score. Other source types and grid/list views retain their existing behavior.
+
 Tankobon is replaced by **Kanzenban / large format**.
 It uses Paperback's cover-derived colours and thin boards, about 12% taller
 where shelf space permits. Covers retain their proportions, and page-derived

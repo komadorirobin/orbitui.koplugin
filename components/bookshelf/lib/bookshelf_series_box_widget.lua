@@ -233,7 +233,10 @@ function Box:_initSlipcase()
     local ok_is, ImageSource = pcall(require, "lib/bookshelf_image_source")
     local sname = entry.book.series_name
     self.custom_path = nil
-    if ok_is and ImageSource and type(sname) == "string" and sname ~= "" then
+    if ok_is and ImageSource and entry.book.kind == "folder" then
+        local ok_r, path = pcall(ImageSource.resolveFolderImage, entry.book.path)
+        if ok_r then self.custom_path = path end
+    elseif ok_is and ImageSource and type(sname) == "string" and sname ~= "" then
         local ok_r, path = pcall(ImageSource.resolveStackImage, "series", sname)
         if ok_r then self.custom_path = path end
     end
@@ -526,7 +529,8 @@ function Box:_paintSlipcase(bb, x, y)
 end
 
 function Box:onTap()
-    local cb = self.callbacks and self.callbacks.on_series_tap
+    local key = self.entry.book.kind == "folder" and "on_folder_tap" or "on_series_tap"
+    local cb = self.callbacks and self.callbacks[key]
     if cb then cb(self.entry.book); return true end
     return false
 end
@@ -534,7 +538,8 @@ end
 function Box:onDoubleTap() return self:onTap() end
 
 function Box:onHold()
-    local cb = self.callbacks and self.callbacks.on_series_hold
+    local key = self.entry.book.kind == "folder" and "on_folder_hold" or "on_series_hold"
+    local cb = self.callbacks and self.callbacks[key]
     if cb then cb(self.entry.book); return true end
     return false
 end

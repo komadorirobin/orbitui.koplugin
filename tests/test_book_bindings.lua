@@ -35,6 +35,16 @@ H.test("bindings are opt-in; no initial settings or metadata migration", functio
     H.eq(next(saved), nil); H.eq(flushes, 0)
 end)
 
+H.test("folder-box names do not masquerade as series binding overrides", function()
+    local folder = {kind = "folder", _series_box = true, series_name = "Oneshots"}
+    local opts = {binding_shelf = "paperback", binding_series = {Oneshots = "hardcover", Saga = "kanzenban"}}
+    H.eq(M.resolve(folder, folder, opts), "paperback")
+    H.eq(M.resolve({}, folder, opts), "paperback")
+    H.eq(M.resolve({series_name = "Saga"}, folder, opts), "kanzenban")
+    H.eq(M.resolve({series_name = "Oneshots"}, {}, opts), "hardcover")
+    H.eq(M.resolve({kind = "folder", series_name = "Oneshots"}, {}, opts), "hardcover")
+end)
+
 H.test("native, nested, prose and manga shelves remain independent across reloads", function()
     M.save("shelves", "authors", "paperback")
     M.save("shelves", "child", "kanzenban")

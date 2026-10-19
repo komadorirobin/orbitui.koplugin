@@ -2731,6 +2731,41 @@ all 43 translation catalogues. Existing four artwork-source skips and two
 environment suite skips remain unchanged. The generated schematic shows both
 larger pagers, without claiming native font or physical touch verification.
 
+## 2026-10-19: Oneshots folder boxes and single-volume series (not published)
+
+User requested one box for Oneshots manga and boxes for named series that so
+far have only one local volume. Enable a new optional `include_singletons`
+argument to native box preparation from the OrbitUI adapter, including nested
+group preparations. Calls without that option retain upstream's lone-book
+behavior. Existing grid, series drills, incomplete lists, search and OPDS
+exclusions remain.
+
+On the fixed Comics profile's Manga/Serier folder chips and folder drills,
+group complete local Oneshots directory membership into a view-only native
+box. Scope matching to the chip root, exact folder components and real paths;
+include title subfolders and deduplicate without changing source metadata or
+folder order. Do not collect other metadata-free directories or widen special
+source/filter membership by introducing folder navigation on other chips.
+
+Folder boxes retain kind/path, native folder callbacks and path-only restore;
+the folder's live fetch handles additions/deletions. Disable compaction while
+inside Oneshots. Extend native box image/callback dispatch minimally for folder
+identity, preserving normal series defaults. Suppress representative ornaments
+and shared MAL ratings, and do not treat the collection name as a series binding
+override. Keep shelf and genuine member binding choices. No component import,
+source-pin/version bump, file move, settings write or public release.
+
+C06/C07 document the deliberate follow-up; tests cover both host preparation
+and native folder navigation/painter/gestures. Full sequential Lua/LuaJIT,
+translations and clean-commit ZIP validation belong in
+`test-results/oneshots-boxes-20261019/`. Physical Bigme verification remains
+open. The earlier unpublished heading and dashboard-swipe changes are retained.
+
+Both full runtimes passed: 694 Lua / 695 LuaJIT root cases in 54 files,
+407 Bookshelf suites (two environment skips), all 13 SimpleUI files and
+103 Python tests (four existing external-source skips). All 43 translation
+catalogues, 318 module paths and 874 syntax files passed. No new exceptions.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

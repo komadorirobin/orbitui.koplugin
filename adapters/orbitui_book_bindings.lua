@@ -57,7 +57,9 @@ function M.save(scope, id, style)
 end
 
 function M.resolve(book, source, opts)
-    local name = book.series_name or (source and source.series_name) or opts.binding_series_name
+    local name = (not (book.kind == "folder" and book._series_box) and book.series_name)
+        or (source and not (source.kind == "folder" and source._series_box) and source.series_name)
+        or opts.binding_series_name
     local value = name and tableOrEmpty(opts.binding_series)[name]
     return normalize(value) or normalize(opts.binding_shelf) or "hardcover"
 end
