@@ -30,6 +30,7 @@ local logger         = require("logger")
 local BFont          = require("lib/bookshelf_fonts")
 local CoverProgress  = require("lib/bookshelf_cover_progress")
 local SpineLayout    = require("lib/bookshelf_spine_layout")
+local BookBinding    = require("lib/bookshelf_book_binding")
 local RoundCorner    = require("lib/bookshelf_round_corner")
 
 local SpineShelf = {}
@@ -823,7 +824,7 @@ end
 -- ── Paint helpers ───────────────────────────────────────────────────────────
 
 local function _textColor(night, look)
-    if look and look.binding_skin and look.binding_skin.lighten > 0 then
+    if look and look.binding_skin and (look.binding_skin.lighten or 0) > 0 then
         return night and Blitbuffer.COLOR_WHITE or Blitbuffer.COLOR_BLACK
     end
     -- Painted pre-inverted in night mode so it always DISPLAYS white.
@@ -961,7 +962,7 @@ end
 
 local function _bindingTint(look, f, night, skin)
     local function channel(v)
-        v = math.min(255, (v + (255 - v) * skin.lighten) * f)
+        v = math.min(255, (v + (255 - v) * (skin.lighten or 0)) * f)
         return math.floor((night and (255 - v) or v) + 0.5)
     end
     return Blitbuffer.ColorRGB32(channel(look.r), channel(look.g), channel(look.b), 255)
@@ -2153,9 +2154,11 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
     -- ── The spine proper ────────────────────────────────────────────────
     local hairline = Screen:scaleBySize(1)
     if hairline < 1 then hairline = 1 end
-    local skin = SpineShelf.bindingStyle and SpineShelf.bindingStyle(e.binding)
+    local skin = (SpineShelf.bindingStyle or BookBinding.skin)(e.binding)
     local look = e.look
     if skin then
+        -- The title's rotated background uses this same ramp, without
+        -- changing the cached cover colour shared with other views.
         look = { r = look.r, g = look.g, b = look.b, aspect = look.aspect, binding_skin = skin }
     end
     -- Top edge: the sliver of page block you see looking at a real shelf.
@@ -2451,7 +2454,7 @@ function FaceOutTopBlock:paintTo(bb, x, y)
     local w, h = self.dimen.w, self.dimen.h
     if w < 6 or h < 3 then return end
     local night = _nightMode()
-    local skin = SpineShelf.bindingStyle and SpineShelf.bindingStyle(self.binding)
+    local skin = (SpineShelf.bindingStyle or BookBinding.skin)(self.binding)
     local board = skin and math.max(1, Screen:scaleBySize(1)) or math.max(2, math.min(Screen:scaleBySize(3),
                                        math.floor(h * 0.3)))
     local function tone(v)
@@ -2665,8 +2668,11 @@ function ShelfBadges:drawAt(bb, x, y)
                     -- shallower than the label.
                     local fh = SpineShelf.plankFace(h)
                     local by = y + h - fh - 2
-                    bb:paintRoundedRect(bx, by, bw, badge_h, fill,
-                                        Screen:scaleBySize(2))
+                    -- Through the RGB32-aware dispatch: plain
+                    -- paintRoundedRect fills with getColor8(), so a chosen
+                    -- Folder overlay colour came out as its grey (issue 525).
+                    CoverProgress.paintRoundedRect(bb, bx, by, bw, badge_h, fill,
+                                                   Screen:scaleBySize(2))
                     -- Where it stands ON SCREEN, for a tap (BadgeOverlay):
                     -- only the screen's own buffer, never a wipe's scratch.
                     if rawequal(bb, Screen.bb) then
@@ -4222,7 +4228,7 @@ function SpineShelf.plan(items, opts)
             w_dp = math.max(8, w_dp)
             w = Screen:scaleBySize(w_dp)
         end
-        local binding = SpineShelf.bookBinding and SpineShelf.bookBinding(bk, src, opts)
+        local binding = (SpineShelf.bookBinding or BookBinding.resolve)(bk, src, opts)
         local base = { w = w, h = h, face_h = face_h, depth = depth, aspect = aspect,
                        ref_w_dp = ref_w_dp }
         if SpineShelf.bindingGeometry and not bk.add_subshelf then
@@ -6078,7 +6084,7 @@ function SpineShelf.paintFaceOutTilt(tile)
             end
         end
         -- 4. The faces.
-        local skin = SpineShelf.bindingStyle and SpineShelf.bindingStyle(fx.binding)
+        local skin = (SpineShelf.bindingStyle or BookBinding.skin)(fx.binding)
         local board = fx.look and (skin and _bindingTint(fx.look, 0.8, night, skin)
             or _boardColor(fx.look, night)) or tone(0x55)
         local bfrac = skin and math.max(1 / T, 0.025) or math.max(2 / T, 0.08)

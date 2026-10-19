@@ -1900,16 +1900,30 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
         end
 
         if show_spines then
+            local binding_row = {}
+            local Binding = require("lib/bookshelf_book_binding")
+            if not self.book_binding_external then
+                binding_row[#binding_row + 1] = {
+                    text_func = function()
+                        return T(_("Book binding: %1"), Binding.label(draft.book_binding))
+                    end,
+                    callback = pick(function()
+                        if draft.book_binding == "paperback" then draft.book_binding = nil
+                        else draft.book_binding = "paperback" end
+                    end),
+                }
+            end
             if not self.series_boxes_external then
-                rows[#rows + 1] = {{
+                binding_row[#binding_row + 1] = {
                     text_func = function()
                         return T(_("Series boxes: %1"), draft.series_boxes and _("On") or _("Off"))
                     end,
                     callback = pick(function()
                         draft.series_boxes = not draft.series_boxes or nil
                     end),
-                }}
+                }
             end
+            if #binding_row > 0 then rows[#rows + 1] = binding_row end
             -- The spine view's own density. Rows like the list's; height as
             -- a percentage of the row so a single-shelf chip can pull the
             -- books down to a size whose titles stay readable.
