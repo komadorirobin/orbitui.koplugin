@@ -155,6 +155,21 @@ H.test("file and parent-directory symlinks cannot enter an external snapshot", f
         H.eq(Boot.state(c.root).current, slot)
     end
 end)
+H.test("mismatched file sizes are rejected before reading or copying their bytes", function()
+    local c, m = fixture()
+    local path = c.root .. "/core/orbitui_plugin.lua"
+    write(path, string.rep("x", m.files[5].size + 1))
+    local before, opened = Boot.read, false
+    Boot.read = function(name, limit)
+        if name == path then opened = true end
+        return before(name, limit)
+    end
+    local ok = pcall(prepared, c)
+    Boot.read = before
+    assert(not ok and not opened)
+    H.eq(Boot.state(c.root).current, slot)
+    H.eq(Boot.read(c.root .. "/.orbitui-external-attempt"), nil)
+end)
 H.test("unsafe manifest paths, duplicate case, sizes and incompatible bootstrap fail closed", function()
     for _, change in ipairs({
         function(m) m.bootstrap_api = 2 end,

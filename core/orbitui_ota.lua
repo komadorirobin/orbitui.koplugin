@@ -227,11 +227,14 @@ function M.prepareExternal(context, candidate)
     removeTree(work); mkdir(work)
     local staging = work .. "/runtime"
     mkdir(staging)
-    for _, path in ipairs(files) do
+    for i, path in ipairs(files) do
         local attr = plainFile(context.root, path)
         local limit = path == "manifest.json" and 1024 * 1024 or MAX_FILE
-        assert(attr and attr.mode == "file" and attr.size <= limit, "Invalid external file: " .. path)
-        writeFile(staging, path, assert(Boot.read(context.root .. "/" .. path, limit)))
+        local size = i == 1 and attr and attr.size or manifest.files[i - 1].size
+        assert(attr and attr.mode == "file" and attr.size == size and size <= limit, "Invalid external file: " .. path)
+        local data = assert(Boot.read(context.root .. "/" .. path, size))
+        assert(#data == size, "External file changed while copying: " .. path)
+        writeFile(staging, path, data)
     end
     assert(M.hashFile(staging .. "/manifest.json") == candidate.slot, "External manifest changed while copying")
     M.validate(staging, files, candidate, context.runtime)
