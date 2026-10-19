@@ -33,9 +33,9 @@ a { color:inherit; }
 <body>
 <header>
 <div class="eyebrow">ORBITUI / MANGA COLLECTION</div>
-<h1>Fjorton små världar på hyllan.</h1>
+<h1>Sexton små världar på hyllan.</h1>
 <p>De riktiga PNG-filerna i ungefärlig hyllstorlek, med transparent bakgrund och bevarade färger.
-De första tre ingår i Manga, de elva nya i Manga II. Varje motiv kopplas till sin egen serie.
+Tre ingår i Manga, elva i Manga II och två i Manga III. Varje motiv kopplas till sin egen serie.
 Detta är en bildförhandsvisning, inte en KOReader-emulator.</p>
 <button data-class="dark" type="button" aria-pressed="false">Mörk bakgrund</button>
 <button data-class="patterned" type="button" aria-pressed="false">Mönstrad bakgrund</button>
@@ -99,13 +99,23 @@ Detta är en bildförhandsvisning, inte en KOReader-emulator.</p>
 <div class="shelf"><img src="../assets/ornaments/Manga%20II/Cafe%20Alpha.png" alt="Kaffekopp och grön kanna" loading="lazy"></div>
 <figcaption><strong>Kaféset</strong><span>Yokohama Kaidashi Kikou<br>Manga II / eget AI-genererat tematiskt stilleben</span></figcaption>
 </figure>
+<figure data-scale="0.8" style="--lift:-0.02">
+<div class="shelf"><img src="../assets/ornaments/Manga%20III/Stargazing%20Telescope.png" alt="Vit och mörkblå stjärnkikare på trebensstativ" loading="lazy"></div>
+<figcaption><strong>Stjärnkikare</strong><span>Insomniacs After School<br>Manga III / eget AI-genererat tematiskt motiv</span></figcaption>
+</figure>
+<figure data-scale="0.82" style="--lift:-0.0555">
+<div class="shelf"><img src="../assets/ornaments/Manga%20III/Quiet%20Bungalow.png" alt="Litet japanskt hus med tegeltak, veranda och krukväxter" loading="lazy"></div>
+<figcaption><strong>Det lilla huset</strong><span>Hirayasumi<br>Manga III / eget AI-genererat tematiskt motiv</span></figcaption>
+</figure>
 </main>
 <footer>Skapade med OpenAI image_gen, utan bildreferenser som indata.
 Kontextkällor är dokumenterade separat från bildrättigheterna.
 <a href="../assets/ornaments/Manga/prompts.json">Prompter och bilddata</a> /
 <a href="../assets/ornaments/Manga/ATTRIBUTION.txt">Bildkrediter och rättighetsnoteringar</a>.<br>
 Manga II: <a href="../assets/ornaments/Manga%20II/prompts.json">Prompter och bilddata</a> /
-<a href="../assets/ornaments/Manga%20II/ATTRIBUTION.txt">Bildkrediter och rättighetsnoteringar</a>.</footer>
+<a href="../assets/ornaments/Manga%20II/ATTRIBUTION.txt">Bildkrediter och rättighetsnoteringar</a>.<br>
+Manga III: <a href="../assets/ornaments/Manga%20III/prompts.json">Prompter och bilddata</a> /
+<a href="../assets/ornaments/Manga%20III/ATTRIBUTION.txt">Bildkrediter och rättighetsnoteringar</a>.</footer>
 <script>
 function sizeImages() {
   const stand = parseFloat(getComputedStyle(document.body).getPropertyValue("--stand"));

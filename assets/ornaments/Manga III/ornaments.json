@@ -1,0 +1,22 @@
+{
+  "Stargazing Telescope.png": {
+    "scale": 0.8,
+    "anchor": "bottom",
+    "lift": -0.02,
+    "pad": 0.025,
+    "night": "off",
+    "mirror": "off",
+    "tap": "zoom",
+    "info": "Stargazing telescope / Insomniacs After School\n\nIn Makoto Ojiro's Insomniacs After School, Ganta Nakami and Isaki Magari find a shared refuge in their school's observatory. Both struggle to sleep at night; their time together turns a lonely experience into companionship. The telescope is a thematic reminder of that quiet meeting place and the night sky, rather than a character figure.\n\nThis ivory-and-navy refractor is an original generic miniature, not a reconstruction of the observatory's equipment or a commercial model.\n\nContext: https://www.viz.com/insomniacs-after-school\n\nOriginal AI-generated thematic ornament made for OrbitUI, not an official or endorsed design. No third-party image or 3D model was supplied to the generator. Artwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/\nSee Manga III/ATTRIBUTION.txt for provenance and rights notes."
+  },
+  "Quiet Bungalow.png": {
+    "scale": 0.82,
+    "anchor": "bottom",
+    "lift": -0.0555,
+    "pad": 0.025,
+    "night": "off",
+    "mirror": "off",
+    "tap": "zoom",
+    "info": "Quiet bungalow / Hirayasumi\n\nA modest one-story home is at the heart of Keigo Shinzo's Hirayasumi. Hiroto Ikuta, an easygoing young man working part-time, receives a bungalow from an elderly neighbor he befriends. Around this home, the series finds its rhythm in ordinary encounters and the changing seasons of Tokyo's Suginami neighborhoods.\n\nThe tiled roof, timber veranda and small potted plants evoke that domestic warmth. This is an original generic Japanese house miniature: a thematic homage, not an exact architectural replica of Hiroto's house or a reproduction of a manga panel.\n\nContext: https://hirayasumi-anime.jp/en/\n\nOriginal AI-generated thematic ornament made for OrbitUI, not an official or endorsed design. No third-party image or 3D model was supplied to the generator. Artwork: CC BY 4.0, to the extent applicable. https://creativecommons.org/licenses/by/4.0/\nSee Manga III/ATTRIBUTION.txt for provenance and rights notes."
+  }
+}

@@ -119,5 +119,27 @@ class MangaIIOrnamentAssetsTests(MangaChecks, unittest.TestCase):
             self.assertIn("thematic", metadata[name]["info"].lower())
 
 
+class MangaIIIOrnamentAssetsTests(MangaChecks, unittest.TestCase):
+    pack_name = "Manga III"
+    hashes = {
+        "Stargazing Telescope.png": "012ba25de1158ca8d690993989331c864bbbefab9135b75bb0b29a0c51f40945",
+        "Quiet Bungalow.png": "9a2acb4001da834bc581a6ca871f69e8e5aca22148672b88950cdce1c115d17a",
+    }
+
+    def test_original_thematic_designs_include_context_not_third_party_renders(self):
+        pack = ROOT / "assets/ornaments" / self.pack_name
+        metadata = json.loads((pack / "ornaments.json").read_text())
+        prompts = json.loads((pack / "prompts.json").read_text())
+        for asset in prompts["assets"]:
+            with self.subTest(name=asset["file"]):
+                self.assertTrue(asset["research_sources"])
+                for source in asset["research_sources"]:
+                    self.assertTrue(source.startswith("https://"))
+                    self.assertIn(source, metadata[asset["file"]]["info"])
+                self.assertIn("thematic", metadata[asset["file"]]["info"].lower())
+                self.assertIn("not a", metadata[asset["file"]]["info"])
+                self.assertEqual(asset["references"], [])
+
+
 if __name__ == "__main__":
     unittest.main()

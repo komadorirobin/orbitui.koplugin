@@ -24,9 +24,15 @@ local manga_added = {
     { "Camp Tent", "series:laid-back-camp", { "Laid-Back Camp", "Yuru Camp", "ゆるキャン△" } },
     { "Armillary Sphere", "series:orb", { "Orb: On the Movements of the Earth (Omnibus)", "Orb: On the Movements of the Earth", "Chi: On the Movements of the Earth" } },
     { "Cafe Alpha", "series:yokohama-kaidashi-kikou", { "Yokohama Kaidashi Kikou: Deluxe Edition", "Yokohama Kaidashi Kikou", "ヨコハマ買い出し紀行" } },
+    { "Stargazing Telescope", "series:insomniacs-after-school", {
+        "Insomniacs After School", " INSOMNIACS  AFTER SCHOOL ", "Kimi wa Houkago Insomnia",
+        "Kimi wa Hokago Insomnia", "君は放課後インソムニア",
+    }, pack = "Manga III" },
+    { "Quiet Bungalow", "series:hirayasumi", { "Hirayasumi", " HIRAYASUMI ", "ひらやすみ" }, pack = "Manga III" },
 }
 for _, subject in ipairs(manga_added) do
-    subject.piece = { name = "Manga II/" .. subject[1] .. ".png", pack = "Manga II", w = 75 }
+    local pack = subject.pack or "Manga II"
+    subject.piece = { name = pack .. "/" .. subject[1] .. ".png", pack = pack, w = 75 }
 end
 local added = {
     { file = "August Strindberg", id = "august strindberg", names = { "August Strindberg", "Johan August Strindberg" } },
@@ -154,7 +160,7 @@ H.test("series miniatures never enter the random or bare-shelf deck", function()
     H.eq(bust(unrelated[1]), nil); H.eq(bust(unrelated[2]), nil)
 end)
 
-H.test("all eleven additions match actual library names and preserve exact-series boundaries", function()
+H.test("all manga additions match series aliases and preserve exact-series boundaries", function()
     for _, subject in ipairs(manga_added) do
         local piece, id, names = subject.piece, subject[2], subject[3]
         H.eq(Manga.pieces[piece.name], id)
@@ -169,7 +175,8 @@ H.test("all eleven additions match actual library names and preserve exact-serie
             H.eq(Manga.seriesOf({book={title=name,filepath="/"..name..".epub"}}), nil)
         end
     end
-    for _, name in ipairs({"Witch Hat Atelier Kitchen", "One Piece Novel A", "Orb", "Natsume", "Girls"}) do
+    for _, name in ipairs({"Witch Hat Atelier Kitchen", "One Piece Novel A", "Orb", "Natsume", "Girls",
+            "Insomniacs", "After School", "Hirayasumi Art Book"}) do
         H.eq(Manga.seriesOf(volume(1, name)), nil)
     end
 end)

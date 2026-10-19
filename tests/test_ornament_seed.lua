@@ -306,5 +306,58 @@ H.test("failed Manga II copies retry without resetting earlier files or either p
     H.eq(files[target .. "Cafe Alpha.png"], "retry cafe")
     assert(files[mark])
 end)
+H.test("Manga III installs independently without restoring either earlier pack", function()
+    fixture()
+    local pack = Manga.packs[3]
+    H.eq(pack.name, "Manga III")
+    local target = "/settings/bookshelf/ornaments/" .. pack.name .. "/"
+    local mark = "/settings/orbitui/" .. pack.marker
+    local function install() return Manga.seed("/slot", "/settings/bookshelf/ornaments") end
+    for i = 1, 2 do
+        local old = Manga.packs[i]
+        files["/settings/orbitui/" .. old.marker] = "completed old pack"
+        files["/settings/bookshelf/ornaments/" .. old.name .. "/ornaments.json"] = "custom old metadata"
+    end
+    files[target .. "ornaments.json"] = "custom new metadata"
+    files[target .. "Stargazing Telescope.png"] = "custom telescope"
+    H.eq(install(), true)
+    for i = 1, 2 do
+        local old = Manga.packs[i]
+        H.eq(files["/settings/orbitui/" .. old.marker], "completed old pack")
+        for _, name in ipairs(old.files) do
+            H.eq(files["/settings/bookshelf/ornaments/" .. old.name .. "/" .. name],
+                name == "ornaments.json" and "custom old metadata" or nil)
+        end
+    end
+    H.eq(files[target .. "ornaments.json"], "custom new metadata")
+    H.eq(files[target .. "Stargazing Telescope.png"], "custom telescope")
+    for _, name in ipairs({"Quiet Bungalow.png", "ATTRIBUTION.txt", "README.txt", "prompts.json"}) do
+        H.eq(files[target .. name], files["/slot/assets/ornaments/Manga III/" .. name])
+    end
+    assert(files[mark])
+    files[target .. "Quiet Bungalow.png"] = nil
+    H.eq(install(), false)
+    H.eq(files[target .. "Quiet Bungalow.png"], nil)
+    H.eq(files[target .. "Stargazing Telescope.png"], "custom telescope")
+    for _, name in ipairs(pack.files) do files[target .. name] = nil end
+    H.eq(install(), false)
+    for _, name in ipairs(pack.files) do H.eq(files[target .. name], nil) end
+end)
+H.test("Manga III interrupted copies retry without overwriting user edits", function()
+    fixture()
+    local target = "/settings/bookshelf/ornaments/Manga III/"
+    local input = "/slot/assets/ornaments/Manga III/Quiet Bungalow.png"
+    local mark = "/settings/orbitui/" .. Manga.packs[3].marker
+    local function install() return Manga.seed("/slot", "/settings/bookshelf/ornaments") end
+    files[input] = nil
+    H.eq(pcall(install), false); H.eq(files[mark], nil)
+    for i = 1, 2 do assert(files["/settings/orbitui/" .. Manga.packs[i].marker]) end
+    files[target .. "Stargazing Telescope.png"] = "edited during partial install"
+    files[input] = "complete bungalow"
+    H.eq(install(), true)
+    H.eq(files[target .. "Stargazing Telescope.png"], "edited during partial install")
+    H.eq(files[target .. "Quiet Bungalow.png"], "complete bungalow")
+    assert(files[mark])
+end)
 io.open, os.rename, os.remove = original_open, original_rename, original_remove
 H.finish()

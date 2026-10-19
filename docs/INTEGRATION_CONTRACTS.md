@@ -868,6 +868,13 @@ The same adjacency, row limit, author priority, disabled-state and zoom rules
 apply to both packs. Captions distinguish thematic still lifes from fan art;
 source/provenance notices and unmodified generated PNGs ship with each pack.
 
+The user's 2026-10-19 approval adds Manga III: an original thematic telescope
+for Insomniacs After School and a generic bungalow for Hirayasumi. Preserve
+all the same matching, row-cap, priority, enablement and zoom contracts. Use
+the independent `ornament-manga-iii-v1.installed` marker rather than changing
+either earlier pack's marker or defaults. No third-party model/render is used;
+captions must not present the generic designs as exact canonical replicas.
+
 For ordinary end ornaments, distribute unused room evenly between the ornament
 and its two slot boundaries (shelf end and adjacent book). The optional
 `SpineShelf.positionOrnamentX` seam is installed by `adapters/orbitui_ornaments.lua`

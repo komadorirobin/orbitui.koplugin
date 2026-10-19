@@ -1,0 +1,35 @@
+Manga III - artwork provenance
+
+Created for OrbitUI on 2026-10-19 with OpenAI's built-in image_gen tool.
+Original text-prompt generation; transparent_background=true. No reference
+image, manga panel, product photograph, third-party render or 3D model was
+supplied to the generator. Distributed PNGs retain their original output
+bytes, alpha channel and embedded provenance. Complete prompts and hashes
+are recorded in prompts.json.
+
+Stargazing Telescope.png
+Original generic ivory/navy refractor telescope miniature. A thematic
+association with Insomniacs After School, not a replica of a specific prop.
+Context: https://www.viz.com/insomniacs-after-school
+
+Quiet Bungalow.png
+Original generic Japanese bungalow miniature with veranda and potted plants.
+A thematic association with the home at the heart of Hirayasumi, not an exact
+reconstruction of Hiroto's house or a copy of a published illustration.
+Context: https://hirayasumi-anime.jp/en/
+
+Credit: OrbitUI project / OpenAI image_gen.
+Artwork: CC BY 4.0, to the extent copyright applies and the OrbitUI project
+holds rights in these original generated images.
+https://creativecommons.org/licenses/by/4.0/
+
+Series names and contextual sources identify inspiration only. No endorsement,
+official status or rights to third-party manga artwork, characters or logos
+are claimed. The contextual websites are not sources of licensed image files.
+Information cards are original AI-assisted summaries, not publisher quotations.
+
+No Cults3D files or Gom3D product renders are included. Free distribution does
+not by itself grant permission to redistribute someone else's artwork. Cults
+Private Use separately allows credited images of one's own physical 3D prints;
+that is not a blanket permission to reuse a seller's promotional images.
+License reference: https://cults3d.com/en/licenses

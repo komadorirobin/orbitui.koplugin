@@ -1,0 +1,43 @@
+{
+  "tool": "built-in image_gen (OpenAI)",
+  "created": "2026-10-19",
+  "method": "Original text-prompt generation, transparent_background=true. Unmodified output bytes; no input/reference bitmaps. Research links identify the thematic context, not assets cleared for copying.",
+  "assets": [
+    {
+      "file": "Stargazing Telescope.png",
+      "width": 1230,
+      "height": 1278,
+      "sha256": "012ba25de1158ca8d690993989331c864bbbefab9135b75bb0b29a0c51f40945",
+      "alpha_bbox_at_24": [
+        159,
+        22,
+        1127,
+        1236
+      ],
+      "references": [],
+      "research_sources": [
+        "https://www.viz.com/insomniacs-after-school"
+      ],
+      "artwork_license": "CC BY 4.0 to the extent applicable; original generic thematic ornament",
+      "prompt": "Use case: stylized-concept. Asset type: one transparent PNG shelf ornament for a skeuomorphic manga library on a color e-ink reader. Create an original detailed hand-painted resin collectible miniature of a generic astronomical refractor telescope, a thematic tribute to stargazing in Insomniacs After School, not a replica of any manga panel, character, commercial product or 3D model. Single short ivory-white optical tube aimed diagonally upward to the left, dark navy lens hood and focuser, small finder scope aligned with the main tube, subdued brass adjustment knobs, sturdy dark graphite alt-azimuth mount and compact three-legged tripod with clearly separated legs and rubber feet. Physically plausible optical tube and mount. Clean readable silhouette at 100 pixels high, bold enough legs to survive small e-ink display. Shelf-eye-level front three-quarter view, subtle depth, stable feet resting on one shelf plane. Soft upper-left light, tactile matte/satin surfaces, natural ivory/navy/brass colors. Entire object fully visible and tightly framed with a small transparent margin. Genuinely transparent background and all gaps between tripod legs. No people, characters, scenery, stars, display plinth, floor, shelf, cast shadow outside the object, glow, halo, text, logos or watermark. Preserve color; do not grayscale."
+    },
+    {
+      "file": "Quiet Bungalow.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "9a2acb4001da834bc581a6ca871f69e8e5aca22148672b88950cdce1c115d17a",
+      "alpha_bbox_at_24": [
+        10,
+        138,
+        1527,
+        918
+      ],
+      "references": [],
+      "research_sources": [
+        "https://hirayasumi-anime.jp/en/"
+      ],
+      "artwork_license": "CC BY 4.0 to the extent applicable; original generic thematic ornament",
+      "prompt": "Use case: stylized-concept. Asset type: one transparent PNG shelf ornament for a skeuomorphic manga library on a color e-ink reader. Create an original finely hand-painted resin architectural miniature of a modest, welcoming one-story Japanese suburban bungalow. A thematic homage to the quiet domestic life of Hirayasumi, NOT an exact replica of a manga drawing, any existing licensed model, product or recognizable real building. Compact low rectangular house with gently pitched dark blue-gray tiled roof and broad eaves, warm cream plaster walls and honey-brown timber trim, a wide sliding glass door, short wooden veranda, simple little entry step, two small terracotta potted green plants at one end of the veranda. No people or characters. The miniature should feel lived-in and warm, with crisp bold architectural masses rather than a busy dollhouse. Low front three-quarter view near shelf eye level, showing front and a little right side, flat level foundation, roof remains readable without excessive aerial perspective. Soft upper-left studio light, tactile matte painted ceramic/resin texture, natural restrained colors, sharp silhouette readable at 100 pixels high. Complete building tightly framed with small clear margins, no cropped roof or plants. Genuinely transparent background and exterior gaps. No scenery, garden, lawn, surrounding ground slab, display pedestal, floor, shelf, external shadow, glow, halo, text, signs, logos or watermark. Preserve color; do not grayscale."
+    }
+  ]
+}

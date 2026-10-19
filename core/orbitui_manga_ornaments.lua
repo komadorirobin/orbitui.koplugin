@@ -12,6 +12,10 @@ M.packs = {
         "Pochita.png", "Turbo Granny.png", "Transponder Snail.png", "Kettenkrad.png",
         "Camp Tent.png", "Armillary Sphere.png", "Cafe Alpha.png",
     } },
+    { name = "Manga III", marker = "ornament-manga-iii-v1.installed", files = {
+        "ATTRIBUTION.txt", "README.txt", "prompts.json", "ornaments.json",
+        "Stargazing Telescope.png", "Quiet Bungalow.png",
+    } },
 }
 M.pieces = {
     ["Manga/Kaneda Motorcycle.png"] = "series:akira",
@@ -28,6 +32,8 @@ M.pieces = {
     ["Manga II/Camp Tent.png"] = "series:laid-back-camp",
     ["Manga II/Armillary Sphere.png"] = "series:orb",
     ["Manga II/Cafe Alpha.png"] = "series:yokohama-kaidashi-kikou",
+    ["Manga III/Stargazing Telescope.png"] = "series:insomniacs-after-school",
+    ["Manga III/Quiet Bungalow.png"] = "series:hirayasumi",
 }
 
 local function normalize(name)
@@ -57,6 +63,10 @@ for id, names in pairs({
     ["series:yokohama-kaidashi-kikou"] = {
         "Yokohama Kaidashi Kikou", "Yokohama Kaidashi Kikou: Deluxe Edition", "ヨコハマ買い出し紀行",
     },
+    ["series:insomniacs-after-school"] = {
+        "Insomniacs After School", "Kimi wa Houkago Insomnia", "Kimi wa Hokago Insomnia", "君は放課後インソムニア",
+    },
+    ["series:hirayasumi"] = { "Hirayasumi", "ひらやすみ" },
 }) do
     for _, name in ipairs(names) do aliases[normalize(name)] = id end
 end
