@@ -277,7 +277,7 @@ H.test("ZIP traversal, symlinks, case duplicates, oversized files and late archi
 end)
 H.test("catalog discovery ignores code releases and does not affect the code OTA channel", function()
     local catalog = { schema = 1, api = 1, revision = 2, packs = { pack() } }
-    local url = base:gsub("ornaments%-1", "ornaments-2") .. "ornaments-catalog.json"
+    local url = base:gsub("orbitui%.koplugin", "orbitui-addons"):gsub("ornaments%-1", "ornaments-2") .. "ornaments-catalog.json"
     local releases = {
         { tag_name = "v9.9.9", assets = {} },
         { tag_name = "ornaments-1", assets = {} },
@@ -294,5 +294,61 @@ H.test("catalog discovery ignores code releases and does not affect the code OTA
     H.eq(OTA.version("ornaments-2"), nil)
     catalog.revision = 3
     assert(not pcall(M.fetchCatalog))
+end)
+H.test("separate repository accepts old cached URLs without trusting other repositories", function()
+    local p = pack()
+    M.asset(p)
+    p.url = p.url:gsub("orbitui%.koplugin", "orbitui-addons")
+    M.asset(p)
+    for _, url in ipairs({ p.url:gsub("orbitui%-addons", "orbitui-addons-evil"),
+        p.url .. "?redirect=evil", p.url:gsub("github.com", "github.com.evil"),
+        p.url:gsub("ornaments%-1", "v1.0.0"), p.url:gsub("manga%-1", "../manga-1") }) do
+        p.url = url
+        assert(not pcall(M.asset, p))
+    end
+end)
+H.test("unavailable new channel falls back to the unchanged legacy catalog", function()
+    local catalog = { schema = 1, api = 1, revision = 1, packs = { pack() } }
+    local url = base .. "ornaments-catalog.json"
+    local calls = {}
+    package.loaded.rapidjson = { decode = function(body)
+        if body == "releases" then return {{ tag_name = "ornaments-1",
+            assets = {{ name = "ornaments-catalog.json", browser_download_url = url }} }} end
+        return copy(catalog)
+    end }
+    package.loaded["core/orbitui_http"] = { get = function(address)
+        calls[#calls + 1] = address
+        if address:find("/orbitui-addons/", 1, true) then error("offline") end
+        if address:find("api.github.com", 1, true) then return "releases" end
+        H.eq(address, url); return "catalog"
+    end }
+    H.eq(M.fetchCatalog().revision, 1)
+    H.eq(#calls, 3)
+    -- An available but broken new catalog must not be hidden by falling back.
+    calls = {}
+    package.loaded["core/orbitui_http"].get = function(address)
+        calls[#calls + 1] = address
+        return "releases"
+    end
+    assert(not pcall(M.fetchCatalog))
+    H.eq(#calls, 1)
+end)
+H.test("moving a catalog preserves pack versions registry enablement and placement", function()
+    local p = pack()
+    local store = M.new("/plugin", "/migration")
+    F.save("/migration/catalog.json", { schema = 1, api = 1, revision = 1, packs = { p } })
+    local registry = { schema = 1, revision = 7, packs = {
+        manga = { slot = "manga-1-saved", pack = p, enabled = false, placement = "random" },
+    } }
+    F.save("/migration/installed.json", registry)
+    local moved = copy(p); moved.url = p.url:gsub("orbitui%.koplugin", "orbitui-addons")
+    store:saveCatalog{ schema = 1, api = 1, revision = 1, packs = { moved } }
+    H.eq(store:catalog().packs[1].url, moved.url)
+    H.eq(store:registry().revision, 7)
+    H.eq(store:registry().packs.manga.enabled, false)
+    H.eq(store:registry().packs.manga.placement, "random")
+    H.eq(store:registry().packs.manga.slot, "manga-1-saved")
+    assert(not pcall(store.saveCatalog, store, { schema = 1, api = 1, revision = 1,
+        packs = { (function() local v = copy(moved); v.sha256 = string.rep("a", 64); return v end)() } }))
 end)
 H.finish()

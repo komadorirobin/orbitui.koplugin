@@ -80,6 +80,21 @@ versions cannot understand this add-on channel. The bundled catalog contains
 descriptions only: **Check ornament updates** retrieves verified download details
 from the published release. Publishing remains an explicit maintainer action.
 
+The development version now discovers releases in
+[`komadorirobin/orbitui-addons`](https://github.com/komadorirobin/orbitui-addons).
+The initial `ornaments-1` mirror has identical ZIP/preview bytes, pack IDs,
+versions and compatibility folders; only catalog URLs differ. Existing installed
+packs, enablement, placement and user edits are not reset or reinstalled on refresh.
+The old `orbitui.koplugin` release stays available unchanged for alpha.54 through
+beta.1, cached catalogs and rollback. Those clients need a plugin update to find
+future add-on releases in the new repository.
+
+Both exact repository URL prefixes remain allowed. An unavailable or empty new
+channel can fall back to the legacy channel; a malformed new catalog cannot.
+Catalog and pack downgrade/immutable-version checks still apply, so a fallback
+cannot overwrite a newer cached catalog. Future ornament releases belong only
+in the add-on repository, preventing app stores from confusing them with code.
+
 1. Add/update source artwork, attribution, information and default metadata under
    `assets/ornaments/<folder>/`. Keep stable paths for existing images.
    Update `addons/ornament-translations.json` too: each information card has
@@ -97,17 +112,17 @@ from the published release. Publishing remains an explicit maintainer action.
    `--previous` for the first release. Revisions must increase; unchanged pack
    versions must have identical ZIP bytes and keep their immutable download URL.
 4. Review rights/credits, run tests and the native smoke test, then publish only
-   with explicit approval. Use the tag **ornaments-N** in this repository with
+   with explicit approval. Use the tag **ornaments-N** in **orbitui-addons** with
    `ornaments-catalog.json`, new ZIPs, previews and `SHA256SUMS` as release assets.
    Retain referenced assets from previous releases. Never overwrite a released
    pack version. Mark these releases as prereleases and never as GitHub's Latest
-   (`make_latest: false`), so plugin download links still point to a code release.
+   (`make_latest: false`). Never publish new add-on releases in the plugin repo.
    These non-semver tags are ignored by the OrbitUI code updater.
 
 No plugin VERSION bump or new OrbitUI ZIP is needed for subsequent ornament
 updates. The catalog is refreshed only on request, with its last verified copy
 available offline. It currently discovers catalogs among the latest 100 GitHub
-releases; do not let the last ornament catalog age out of that window.
+releases of the separate add-on repository, not among frequent plugin releases.
 
 `--baseline` is for the initial frozen migration inventory only, not for artwork
 updates. It refuses to replace an existing inventory with different content.
@@ -120,6 +135,8 @@ archive checks. `scripts/smoke-addons.lua` exercises actual libarchive/SHA-256/J
 installation, preservation, cleanup and uninstall on Linux with the pinned
 KOReader reference FFI modules. It uses local ZIPs by default; append `--live`
 to fetch the published catalog and install through actual LuaSocket/LuaSec HTTPS.
+An optional fourth argument selects the pack build directory. The smoke test
+installs legacy-URL packs before refreshing the migrated catalog and updating.
 
 Continue beta device testing: fresh install with no artwork; existing
 reader adoption; cancelled/offline download; Manga update; custom image and

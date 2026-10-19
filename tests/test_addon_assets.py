@@ -30,6 +30,20 @@ class AddonAssets(unittest.TestCase):
             for name in ("Manga/Kaneda Motorcycle.png", "Manga II/Pochita.png", "Manga III/Quiet Bungalow.png"):
                 self.assertIn(name, z.namelist())
 
+    def test_new_releases_use_separate_repo_but_unchanged_old_packs_keep_working(self):
+        prefix = "https://github.com/komadorirobin/orbitui-addons/releases/download/"
+        for pack in self.catalog["packs"]:
+            self.assertTrue(pack["url"].startswith(prefix))
+            self.assertTrue(pack["preview"]["url"].startswith(prefix))
+        legacy = json.loads(json.dumps(self.catalog))
+        for pack in legacy["packs"]:
+            pack["url"] = pack["url"].replace("orbitui-addons", "orbitui.koplugin")
+        next_catalog = builder.build(self.output / "legacy", 2, legacy)
+        for old, new in zip(legacy["packs"], next_catalog["packs"]):
+            self.assertEqual(old["url"], new["url"])
+            self.assertEqual(old["sha256"], new["sha256"])
+            self.assertTrue(new["preview"]["url"].startswith(prefix))
+
     def test_every_file_is_verified_and_credits_travel_with_packs(self):
         for p in self.catalog["packs"]:
             archive = self.output / p["url"].split("/")[-1]

@@ -1,9 +1,10 @@
 -- Data-only ornament releases. Preparation never changes the active registry.
 local F = require("core/orbitui_addon_files")
 local OTA = require("core/orbitui_ota")
-local M = { API = 1, MAX_ZIP = 128 * 1024 * 1024, MAX_FILE = 16 * 1024 * 1024 }
+local M = { API = 1, MAX_ZIP = 128 * 1024 * 1024, MAX_FILE = 16 * 1024 * 1024,
+    REPO = "komadorirobin/orbitui-addons", LEGACY_REPO = "komadorirobin/orbitui.koplugin" }
 local Store = {}; Store.__index = Store
-local base = "https://github.com/komadorirobin/orbitui.koplugin/releases/download/"
+local function releaseBase(repo) return "https://github.com/" .. repo .. "/releases/download/" end
 local function integer(n) return type(n) == "number" and n >= 1 and n <= 1000000000 and n == math.floor(n) end
 local function id(s) return type(s) == "string" and #s <= 60 and s:match("^[a-z][a-z0-9%-]*$") end
 local function slotId(s) return type(s) == "string" and #s <= 140 and s:match("^[a-z][a-z0-9%-]*$") end
@@ -20,8 +21,13 @@ local function folders(list)
 end
 function M.asset(a)
     assert(type(a) == "table" and integer(a.size) and a.size <= M.MAX_ZIP and hash(a.sha256), "Invalid asset")
-    assert(type(a.url) == "string" and a.url:sub(1, #base) == base
-        and a.url:sub(#base + 1):match("^ornaments%-%d+/[a-z0-9%-]+%.[a-z]+$"), "Untrusted asset URL")
+    local trusted = false
+    for _, repo in ipairs({ M.REPO, M.LEGACY_REPO }) do
+        local base = releaseBase(repo)
+        if type(a.url) == "string" and a.url:sub(1, #base) == base
+                and a.url:sub(#base + 1):match("^ornaments%-%d+/[a-z0-9%-]+%.[a-z]+$") then trusted = true end
+    end
+    assert(trusted, "Untrusted asset URL")
     return a
 end
 function M.catalog(value)
@@ -40,17 +46,20 @@ function M.catalog(value)
     end
     return value
 end
-function M.fetchCatalog()
+local function fetchCatalog(repo)
     local HTTP = require("core/orbitui_http")
-    local releases = require("rapidjson").decode(HTTP.get(
-        "https://api.github.com/repos/komadorirobin/orbitui.koplugin/releases?per_page=100", nil, 2 * 1024 * 1024))
+    local ok, body = pcall(HTTP.get,
+        "https://api.github.com/repos/" .. repo .. "/releases?per_page=100", nil, 2 * 1024 * 1024)
+    if not ok then return nil, body end
+    local releases = require("rapidjson").decode(body)
+    assert(type(releases) == "table", "Invalid add-on releases response")
     local best, revision = nil, 0
     for _, release in ipairs(releases) do
         local n = tonumber((release.tag_name or ""):match("^ornaments%-(%d+)$"))
         if not release.draft and n and n > revision then best, revision = release, n end
     end
-    assert(best, "No ornament catalog has been published yet")
-    local url = base .. best.tag_name .. "/ornaments-catalog.json"
+    if not best then return nil, "No ornament catalog has been published yet" end
+    local url = releaseBase(repo) .. best.tag_name .. "/ornaments-catalog.json"
     local present = false
     for _, a in ipairs(best.assets or {}) do
         if a.name == "ornaments-catalog.json" and a.browser_download_url == url then present = true end
@@ -59,6 +68,14 @@ function M.fetchCatalog()
     local catalog = M.catalog(require("rapidjson").decode(HTTP.get(url, nil, 1024 * 1024)))
     assert(catalog.revision == revision, "Catalog revision mismatch")
     return catalog
+end
+function M.fetchCatalog()
+    -- Fall back only for an unavailable/empty channel, never an invalid catalog.
+    -- Old URLs stay trusted so cached catalogs and installed packs keep working.
+    local catalog = fetchCatalog(M.REPO)
+    if catalog then return catalog end
+    local legacy, err = fetchCatalog(M.LEGACY_REPO)
+    return assert(legacy, err)
 end
 
 local allowed = { png = true, jpg = true, jpeg = true, json = true, txt = true, md = true }

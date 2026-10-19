@@ -1,5 +1,5 @@
 -- Linux smoke test with real libarchive, SHA-256, JSON and filesystem I/O.
--- Usage: luajit scripts/smoke-addons.lua /refs /tmp/orbitui-addon-smoke [--live]
+-- Usage: luajit scripts/smoke-addons.lua /refs /tmp/orbitui-addon-smoke [--live] [pack-directory]
 package.path = "./?.lua;" .. assert(arg[1]) .. "/?.lua;" .. package.path
 local ffi = require("ffi")
 ffi.cdef[[typedef long time_t; void *malloc(size_t size); void free(void *ptr);]]
@@ -13,7 +13,8 @@ local A = require("core/orbitui_addons")
 local Text = require("core/orbitui_ornament_text")
 local root = assert(arg[2]); assert(root:match("^/tmp/orbitui%-addon%-"))
 F.remove(root); F.mkdir(root)
-local catalog = A.catalog(F.json("./dist/ornaments/ornaments-catalog.json"))
+local pack_directory = arg[4] or "./dist/ornaments"
+local catalog = A.catalog(F.json(pack_directory .. "/ornaments-catalog.json"))
 if arg[3] == "--live" then
     package.loaded.socketutil = {
         set_timeout = function(_, block)
@@ -35,12 +36,17 @@ if arg[3] == "--live" then
     print("PASS anonymous catalog discovery through real LuaSocket/LuaSec TLS")
 else
     package.loaded["core/orbitui_http"] = { get = function(url, target)
-        F.write(target, F.read("./dist/ornaments/" .. assert(url:match("/([^/]+)$")), A.MAX_ZIP))
+        F.write(target, F.read(pack_directory .. "/" .. assert(url:match("/([^/]+)$")), A.MAX_ZIP))
     end }
 end
 local store = A.new(".", root .. "/addons", { root .. "/native" })
-store:saveCatalog(catalog)
-for _, pack in ipairs(catalog.packs) do
+local legacy = require("cjson").decode(require("cjson").encode(catalog))
+for _, pack in ipairs(legacy.packs) do
+    pack.url = pack.url:gsub("orbitui%-addons", "orbitui.koplugin")
+    if pack.preview then pack.preview.url = pack.preview.url:gsub("orbitui%-addons", "orbitui.koplugin") end
+end
+store:saveCatalog(legacy)
+for _, pack in ipairs(legacy.packs) do
     local plan = store:prepare(pack)
     assert(not store:registry().packs[pack.id])
     store:activate(plan)
@@ -59,6 +65,7 @@ for _, pack in ipairs(catalog.packs) do
     end
     print("PASS native install/hash/archive/metadata:", pack.id, pack.size)
 end
+store:saveCatalog(catalog)
 local p = catalog.packs[1]
 store:setPlacement("manga", "random")
 store = A.new(".", root .. "/addons", { root .. "/native" })

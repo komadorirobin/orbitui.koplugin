@@ -8,7 +8,7 @@ import re
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-RELEASE = "https://github.com/komadorirobin/orbitui.koplugin/releases/download/"
+RELEASE = "https://github.com/komadorirobin/orbitui-addons/releases/download/"
 HELD = "fc6d71bd1538bee9a569a9838b7a00c5374469f0cc8efad3c70674a20c286bb9"
 EXTS = {".png", ".jpg", ".jpeg", ".json", ".txt", ".md"}
 NOTICES = {"authors": ["THOMAS-MANN-SEITZ.txt", "AUTHOR-SCULPTURES.txt", "KAFKA-KIELCE.txt"],
