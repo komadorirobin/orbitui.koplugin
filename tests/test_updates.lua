@@ -72,4 +72,32 @@ H.test("cancellation never invokes installation activation", function()
     H.eq(activated, false)
     Boot.activate = previous
 end)
+H.test("external installation also activates only in the deferred main-process callback", function()
+    local U, queue, activated = dofile("adapters/orbitui_updates.lua"), {}, false
+    local candidate = { slot = string.rep("b", 64), version = "1.0.2" }
+    local previous = package.loaded["core/orbitui_ota"]
+    package.loaded["core/orbitui_ota"] = {
+        externalCandidate = function() return candidate end,
+        prepareExternal = function() assert(not activated); return candidate end,
+        activateExternal = function() activated = true end,
+    }
+    package.loaded["ui/uimanager"].scheduleIn = function(_, _, fn) queue[#queue + 1] = fn end
+    package.loaded["ui/widget/confirmbox"] = { new = function(_, msg) return msg end }
+    local cancelled = true
+    package.loaded["ui/trapper"].dismissableRunInSubprocess = function(_, fn)
+        if cancelled then return false end
+        return true, fn()
+    end
+    U.configure{ root = "/test-orbitui", slot = string.rep("a", 64), version = "1.0.1" }
+    U.checkExternal(false)
+    queue[1]()
+    H.eq(activated, false)
+    cancelled, queue = false, {}
+    U.checkExternal(false)
+    H.eq(activated, false)
+    H.eq(#queue, 1)
+    queue[1]()
+    H.eq(activated, true)
+    package.loaded["core/orbitui_ota"] = previous
+end)
 H.finish()

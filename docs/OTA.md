@@ -526,6 +526,45 @@ retained. `.orbitui-work` is disposable download/staging space. Allow roughly
 installation, in addition to existing installed versions. Allow more as future
 packages grow.
 
+## External updates (development version, not yet released)
+
+Install the version introducing this support through OrbitUI's own updater first.
+Beta 1 and earlier cannot detect root changes while running an older OTA slot.
+The stable bootstrap and API 1 remain byte-identical; no manual bridge is needed.
+
+When an app store or manual **release ZIP** subsequently overwrites the plugin
+root while an OTA slot is selected, OrbitUI checks the root VERSION after healthy
+startup. Only a strictly newer semantic version is considered. An older factory
+copy, equal version or pending activation is left alone. Source-code ZIPs without
+a sealed manifest are not supported. The app store must preserve hidden version
+directories; an installer that deletes the whole plugin removes rollback too.
+
+Verification copies only manifest-listed files into an inactive snapshot, bounded
+by the normal file/count/size limits. It rejects links (including parent-directory
+links), altered/truncated files, incompatible bootstrap files and invalid Lua.
+It verifies the copied snapshot against the manifest before selecting it. No
+candidate code executes during preparation. Unlisted root files, user settings,
+ornaments and reading data are neither imported nor removed.
+
+The main process then selects `.orbitui-versions/<manifest-sha256>/` with the
+current OTA slot as rollback. An **additional restart** is required and offered;
+the current session keeps its old runtime. Later root overwrites cannot mutate
+the selected snapshot. The normal pending-boot recovery remains in force.
+
+`.orbitui-external-attempt` records the candidate before activation so startup
+failure or manual rollback cannot create an automatic update loop. If interrupted
+between recording and activation, the old runtime stays selected. Use **Retry
+external installation** in the update menu after checking the installed ZIP to
+retry explicitly. Interrupted preparation can be retried without a new download.
+The verifier checks integrity, not an independent signature; only install trusted
+release ZIPs. It cannot protect bootstrap files already overwritten by an external
+installer, nor retroactively recover a factory installation with no retained slot.
+
+Headless coverage includes corrupt/incomplete files, unsafe paths/links, unchanged
+and older factory versions, cancelled/stale activation, failed startup and manual
+rollback. Real app-store/device installation and the extra restart still need
+acceptance testing. Keep using the built-in updater as the recommended path.
+
 ## Startup failure and recovery
 
 A pending version writes `.orbitui-booting` before loading its runtime. After
@@ -538,8 +577,9 @@ Manual rollback is available in the update menu. It also cancels a pending
 update. If KOReader cannot reach that menu, stop it and rename `.orbitui-active`
 to `.orbitui-active.saved` inside **orbitui.koplugin**, then restart. The original
 factory code is selected when no active record exists. Do not delete the plugin
-or its settings. Reinstalling a new factory ZIP manually also requires removing
-or renaming the old activation record while KOReader is stopped.
+or its settings. On beta 1 and earlier, manually replacing the factory ZIP also
+requires renaming the old activation record while KOReader is stopped. After
+external-update support is installed, prefer its verified import/restart instead.
 
 Activation uses same-filesystem rename and flush/fsync where available. This
 does not replace a backup against storage corruption or power-loss behavior

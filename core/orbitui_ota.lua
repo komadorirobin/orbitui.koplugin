@@ -146,16 +146,42 @@ function M.extract(zip, target)
     return files
 end
 
+function M.inventory(manifest)
+    assert(type(manifest) == "table" and manifest.schema == 1 and manifest.bootstrap_api == Boot.API,
+        "Unsupported OTA/bootstrap format; install manually")
+    assert(type(manifest.files) == "table" and #manifest.files < 2000, "Invalid package inventory")
+    local files, seen, total = { "manifest.json" }, {}, 0
+    for _, entry in ipairs(manifest.files) do
+        assert(type(entry) == "table" and M.safePath(entry.path) and entry.path:sub(-1) ~= "/"
+            and entry.path:lower() ~= "manifest.json" and not seen[entry.path:lower()], "Invalid manifest path")
+        assert(type(entry.sha256) == "string" and #entry.sha256 == 64 and entry.sha256:match("^[0-9a-f]+$"), "Invalid manifest hash")
+        assert(type(entry.size) == "number" and entry.size >= 0 and entry.size <= MAX_FILE
+            and entry.size == math.floor(entry.size), "Invalid manifest file size")
+        total = total + entry.size
+        assert(total <= MAX_TOTAL - 1024 * 1024, "Package exceeds size limit")
+        seen[entry.path:lower()] = true
+        files[#files + 1] = entry.path
+    end
+    return files
+end
+
+local function plainFile(root, path)
+    local fs, parent = require("libs/libkoreader-lfs"), root
+    assert(fs.symlinkattributes(parent, "mode") == "directory", "Not a plain runtime directory")
+    for part in (path:match("^(.*)/") or ""):gmatch("[^/]+") do
+        parent = parent .. "/" .. part
+        assert(fs.symlinkattributes(parent, "mode") == "directory", "Not a plain directory: " .. parent)
+    end
+    return fs.symlinkattributes(root .. "/" .. path)
+end
+
 function M.validate(target, files, release, install_root)
     local manifest = require("rapidjson").decode(assert(Boot.read(target .. "/manifest.json", 1024 * 1024)))
-    assert(manifest.schema == 1 and manifest.bootstrap_api == Boot.API, "Unsupported OTA/bootstrap format; install manually")
+    M.inventory(manifest)
     assert(manifest.version == release.version and Boot.version(target) == release.version, "Package version mismatch")
-    assert(type(manifest.files) == "table", "Missing package inventory")
     local expected = {}
     for _, entry in ipairs(manifest.files) do
-        assert(M.safePath(entry.path) and entry.path ~= "manifest.json" and not expected[entry.path], "Invalid manifest path")
-        assert(type(entry.sha256) == "string" and #entry.sha256 == 64 and entry.sha256:match("^[0-9a-f]+$"), "Invalid manifest hash")
-        local attr = require("libs/libkoreader-lfs").symlinkattributes(target .. "/" .. entry.path)
+        local attr = plainFile(target, entry.path)
         assert(attr and attr.mode == "file" and attr.size == entry.size, "Missing/incomplete file: " .. entry.path)
         assert(M.hashFile(target .. "/" .. entry.path) == entry.sha256, "File checksum mismatch: " .. entry.path)
         expected[entry.path] = true
@@ -174,6 +200,65 @@ function M.validate(target, files, release, install_root)
         assert(M.hashFile(target .. "/" .. path) == M.hashFile(install_root .. "/" .. path),
             "Stable bootstrap changed; this release requires manual installation")
     end
+end
+
+-- Inspect only data from the externally overwritten root. Its code must never
+-- be loaded into the already-running OTA runtime, even during verification.
+function M.externalCandidate(context, retry)
+    local state = Boot.state(context.root)
+    if context.slot == "factory" or state.pending or state.current ~= context.slot then return end
+    local version = Boot.read(context.root .. "/VERSION", 80)
+    version = version and version:match("^([%w.%-]+)%s*$")
+    if not M.version(version) or not M.newer(version, context.version) then return end
+    local attr = plainFile(context.root, "manifest.json")
+    assert(attr and attr.mode == "file" and attr.size <= 1024 * 1024, "External update has no valid manifest")
+    local digest = M.hashFile(context.root .. "/manifest.json")
+    if not retry and Boot.read(context.root .. "/.orbitui-external-attempt", 80) == digest then return end
+    return { version = version, slot = digest }
+end
+
+function M.prepareExternal(context, candidate)
+    local current = assert(M.externalCandidate(context, true), "No newer external update is available")
+    assert(current.slot == candidate.slot and current.version == candidate.version, "External update changed; retry")
+    local manifest = require("rapidjson").decode(assert(Boot.read(context.root .. "/manifest.json", 1024 * 1024)))
+    local files = M.inventory(manifest)
+    assert(manifest.version == candidate.version, "External package version mismatch")
+    local work = context.root .. "/.orbitui-work"
+    removeTree(work); mkdir(work)
+    local staging = work .. "/runtime"
+    mkdir(staging)
+    for _, path in ipairs(files) do
+        local attr = plainFile(context.root, path)
+        local limit = path == "manifest.json" and 1024 * 1024 or MAX_FILE
+        assert(attr and attr.mode == "file" and attr.size <= limit, "Invalid external file: " .. path)
+        writeFile(staging, path, assert(Boot.read(context.root .. "/" .. path, limit)))
+    end
+    assert(M.hashFile(staging .. "/manifest.json") == candidate.slot, "External manifest changed while copying")
+    M.validate(staging, files, candidate, context.runtime)
+    local state = Boot.state(context.root)
+    assert(not state.pending and state.current == context.slot, "Restart before updating again")
+    mkdir(context.root .. "/.orbitui-versions")
+    local destination = Boot.path(context.root, candidate.slot)
+    if candidate.slot == state.current or candidate.slot == state.previous then
+        assert(M.hashFile(destination .. "/manifest.json") == candidate.slot, "Retained snapshot changed")
+        M.validate(destination, files, candidate, context.runtime)
+    else
+        removeTree(destination)
+        assert(os.rename(staging, destination))
+    end
+    removeTree(work)
+    return { slot = candidate.slot, version = candidate.version }
+end
+
+function M.activateExternal(context, plan)
+    local state = Boot.state(context.root)
+    assert(not state.pending and state.current == context.slot and Boot.validSlot(plan.slot)
+        and plan.slot ~= "factory" and plan.slot ~= state.current, "External activation is stale")
+    assert(Boot.version(Boot.path(context.root, plan.slot)) == plan.version, "Prepared external update missing")
+    -- Record before activation: a failed boot/manual rollback must never select
+    -- the same root again. A power loss between writes is recoverable via Retry.
+    Boot.atomicWrite(context.root .. "/.orbitui-external-attempt", plan.slot)
+    Boot.activate(context.root, plan.slot)
 end
 
 -- No activation here. A killed subprocess can only leave inactive staging data.

@@ -149,6 +149,12 @@ downloads. An external overwrite does not switch OrbitUI's active OTA version
 and bypasses its verified update/rollback flow. In-app ornament add-ons are
 managed separately under **OrbitUI settings > Add-ons**.
 
+The unreleased development version adds verified import of newer external ZIP
+installations, preserving the active OTA snapshot for rollback. It must first be
+installed through OrbitUI's updater and requires an extra restart when adopting
+an external update. Beta 1 does not include this yet; see
+[external-update compatibility](docs/OTA.md#external-updates-development-version-not-yet-released).
+
 ## Already using SimpleUI or Bookshelf?
 
 **Your existing data is not intentionally wiped or moved.** OrbitUI reuses

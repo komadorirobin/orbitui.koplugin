@@ -6,6 +6,7 @@ The reference directory must contain ffi/{archiver,libarchive_h,sha2}.lua.
 Uses system libarchive and LuaJIT; does not run KOReader UI or touch an install.
 """
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -46,12 +47,22 @@ with tempfile.TemporaryDirectory(prefix="orbitui-native-ota-") as directory:
     if not args.base_zip:
         (install / "VERSION").write_text("0.1.0-alpha.1\n")
     base_version = (install / "VERSION").read_text().strip()
+    external_manifest = json.loads(manifest_text)
+    major, minor, patch = map(int, external_manifest["version"].split("-")[0].split("."))
+    external_version = f"{major}.{minor}.{patch + 1}"
+    external_manifest["version"] = external_version
+    for entry in external_manifest["files"]:
+        if entry["path"] == "VERSION":
+            data = (external_version + "\n").encode()
+            entry.update(size=len(data), sha256=hashlib.sha256(data).hexdigest())
     fixture = {
         "root": str(install), "archive": str(archive), "references": str(references),
         "manifest_text": manifest_text, "manifest": json.loads(manifest_text),
         "checksum": archive.with_name(archive.name + ".sha256").read_text(),
         "size": archive.stat().st_size,
         "live": args.live, "base_version": base_version,
+        "external_manifest": external_manifest,
+        "external_manifest_text": json.dumps(external_manifest),
     }
     fixture_path = directory / "fixture.lua"
     fixture_path.write_text("return " + lua(fixture), encoding="ascii")

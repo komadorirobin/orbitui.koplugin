@@ -38,6 +38,7 @@ package.loaded["libs/libkoreader-lfs"] = {
     end,
 }
 package.loaded.rapidjson = { decode = function(data)
+    if data == fixture.external_manifest_text then return fixture.external_manifest end
     assert(data == fixture.manifest_text, "Unexpected JSON bytes")
     return fixture.manifest
 end }
@@ -115,3 +116,37 @@ local ok, err = pcall(OTA.prepare, context, release)
 assert(not ok and tostring(err):find("size mismatch", 1, true))
 assert(Boot.state(context.root).current == "factory")
 print("PASS activation, restart, code rollback and truncated-download recovery")
+
+-- The newly installed runtime must adopt a later external overwrite safely.
+Boot.activate(context.root, prepared.slot)
+Boot = dofile(fixture.root .. "/orbitui_bootstrap.lua")
+context = Boot.begin(fixture.root)
+Boot.healthy(context.root)
+package.loaded.orbitui_bootstrap = Boot
+local next_ota = dofile(context.runtime .. "/core/orbitui_ota.lua")
+local function write(path, data)
+    assert(shell("mkdir -p " .. quote(assert(path:match("^(.*)/")))))
+    local f = assert(io.open(path, "wb")); assert(f:write(data)); assert(f:close())
+end
+for _, entry in ipairs(fixture.manifest.files) do
+    write(context.root .. "/" .. entry.path, assert(Boot.read(context.runtime .. "/" .. entry.path, 32 * 1024 * 1024)))
+end
+write(context.root .. "/VERSION", fixture.external_manifest.version .. "\n")
+write(context.root .. "/manifest.json", fixture.external_manifest_text)
+local candidate = assert(next_ota.externalCandidate(context))
+local external = next_ota.prepareExternal(context, candidate)
+assert(Boot.state(context.root).current == prepared.slot)
+next_ota.activateExternal(context, external)
+assert(context.version == fixture.manifest.version)
+Boot = dofile(fixture.root .. "/orbitui_bootstrap.lua")
+assert(Boot.begin(context.root).version == fixture.external_manifest.version)
+Boot.healthy(context.root)
+Boot.rollback(context.root)
+Boot = dofile(fixture.root .. "/orbitui_bootstrap.lua")
+context = Boot.begin(fixture.root)
+Boot.healthy(context.root)
+package.loaded.orbitui_bootstrap = Boot
+next_ota = dofile(context.runtime .. "/core/orbitui_ota.lua")
+assert(context.version == fixture.manifest.version)
+assert(not next_ota.externalCandidate(context), "Rollback must not re-adopt the same external install")
+print("PASS full external runtime snapshot, native SHA verification, restart and persistent rollback")

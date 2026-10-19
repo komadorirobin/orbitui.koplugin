@@ -815,6 +815,18 @@ Both embedded legacy installers remain blocked; OrbitUI OTA must stage and
 validate the whole package, not update one component independently. Preserve
 the stable bootstrap, deferred activation and previous-version recovery.
 
+The approved 2026-10-19 app-store compatibility work keeps all three bootstrap
+files and API 1 unchanged. The active runtime may verify a strictly newer external
+root installation after healthy startup, snapshot only its verified inventory and
+defer activation to the main process/restart. Never reset the pointer merely
+because factory and active versions differ, execute candidate code during copy,
+or discard the previous OTA slot. Record an external candidate before activation
+to prevent failed-start/manual-rollback loops; explicit Retry is the recovery for
+an interrupted marker/pointer write. Beta 1 needs the feature via internal OTA
+before it can detect future external overwrites. Tests: `test_external_updates`,
+`test_updates` and the full-package native `smoke-ota` scenario. Device acceptance
+is separate; this change is not publication approval.
+
 Source: `.github/workflows/upstream-watch.yml`, `scripts/upstream_watch.py`,
 `sources.json`, `adapters/orbitui_updates.lua`, `core/orbitui_ota.lua`, `orbitui_bootstrap.lua`.
 Tests: `tests/test_upstream_watch.py`, `test_updates.lua`, `test_runtime.lua`,

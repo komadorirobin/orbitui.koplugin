@@ -111,12 +111,41 @@ function M.check(quiet)
     else Network:runWhenOnline(check) end
 end
 
+function M.checkExternal(retry)
+    if busy or not context then return end
+    local OTA = require("core/orbitui_ota")
+    local ok, candidate = pcall(OTA.externalCandidate, context, retry)
+    if not ok then
+        if retry then info("External OrbitUI installation could not be verified. The current version is unchanged.\n\n" .. tostring(candidate)) end
+        return
+    end
+    if not candidate then
+        if retry then info("No newer external OrbitUI installation is available, or a restart is pending.") end
+        return
+    end
+    busy = true
+    local current = context
+    M.runTask(function() return OTA.prepareExternal(current, candidate) end,
+        "Verifying external OrbitUI " .. candidate.version .. "...\nTap to cancel safely.", function(result)
+            busy = false
+            if not result or not result.ok or not result.value then
+                info("External OrbitUI installation was not activated. The current version is unchanged.\n\n"
+                    .. tostring(result and result.error or "No result"))
+                return
+            end
+            local activated, err = pcall(OTA.activateExternal, current, result.value)
+            if not activated then info("Could not activate external OrbitUI update:\n" .. tostring(err)); return end
+            restartPrompt("External OrbitUI " .. result.value.version .. " is verified and ready. The previous version is retained for rollback.")
+        end)
+end
+
 function M.started()
     if not context or started then return end
     local ok, err = pcall(require("orbitui_bootstrap").healthy, context.root)
     if not ok then info("Could not confirm OrbitUI startup:\n" .. tostring(err)); return end
     started = true
     if context.notice then info(context.notice) end
+    require("ui/uimanager"):scheduleIn(1, function() M.checkExternal(false) end)
     if G_reader_settings and G_reader_settings:isTrue("orbitui_update_auto") then
         local last = tonumber(G_reader_settings:readSetting("orbitui_update_last_check")) or 0
         if os.time() - last >= 86400 then
@@ -153,6 +182,15 @@ function M.show()
                             if ok then restartPrompt("The previous OrbitUI version is selected.")
                             else info("Could not restore OrbitUI:\n" .. tostring(err)) end
                         end) end,
+                    })
+                end }},
+            {{ text = "Retry external installation", enabled = context.slot ~= "factory" and not state.pending,
+                callback = function()
+                    close()
+                    UI:show(require("ui/widget/confirmbox"):new{
+                        text = "Verify a newer OrbitUI ZIP installed by an app store or manually? This also retries a previously cancelled or rolled-back external update. Settings and reading progress are kept.",
+                        ok_text = "Verify",
+                        ok_callback = function() UI:scheduleIn(0.1, function() M.checkExternal(true) end) end,
                     })
                 end }},
             {{ text = "Close", callback = close }},
