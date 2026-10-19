@@ -121,12 +121,13 @@ installation, preservation, cleanup and uninstall on Linux with the pinned
 KOReader reference FFI modules. It uses local ZIPs by default; append `--live`
 to fetch the published catalog and install through actual LuaSocket/LuaSec HTTPS.
 
-Device acceptance remains required: fresh install with no artwork; existing
+Continue beta device testing: fresh install with no artwork; existing
 reader adoption; cancelled/offline download; Manga update; custom image and
 deleted-image preservation; restart; enabled/disabled themed shelves; preview,
 credits, zoom and native browser controls. Verify that native artwork remains
 available if add-on state is unreadable. Headless tests do not prove touch UI or
-device-specific rendering. No public beta approval is implied.
+device-specific rendering. Beta 1 was explicitly approved after the maintainer's
+existing-install and ornament-menu tests; that is not a full device matrix.
 Also switch each pack between matching and random, return to both active and
 parked shelves, page forward/back and restart. Confirm off switches and theme
 choices stay unchanged, all old Manga folders follow the same setting, and the

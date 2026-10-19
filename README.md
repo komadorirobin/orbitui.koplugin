@@ -1,260 +1,183 @@
 # OrbitUI for KOReader
 
-An experimental, single-plugin distribution of SimpleUI and Bookshelf for
-KOReader, with configurable library sections, Home cards and shelf appearance.
-BookOrbit, Hardcover and MyAnimeList are optional. Existing OrbitUI setups keep
-their screens and preferences; this is not a rewrite of the reading engine.
+**A customizable Home screen and a visual library, together in one KOReader plugin.**
 
-### Standalone configuration (alpha.55 test preview)
+OrbitUI combines **[SimpleUI](https://github.com/doctorhetfield-cmd/simpleui.koplugin)
+by [doctorhetfield-cmd](https://github.com/doctorhetfield-cmd)** and
+**[Bookshelf](https://github.com/AndyHazz/bookshelf.koplugin)
+by [AndyHazz](https://github.com/AndyHazz)**, with their contributors' work.
+These projects are the foundation of OrbitUI, not just inspiration: their code,
+interfaces and features are included and adapted here. Please support and credit
+the original creators.
 
-Version **0.1.0-alpha.55** builds on alpha.53's configurable library sections, dashboard
-cards/sources and an **OrbitUI settings > Setup guide** for folders, launch
-screen and bottom-bar buttons. Fresh installs are offered the guide; upgrades
-keep their existing configuration. All changes are reviewed before applying,
-and the guide can be cancelled or reopened later. BookOrbit, Hardcover and
-MyAnimeList are optional, with a read-only explanation in **Optional integrations**.
-**Appearance > Shelf preset** offers Shelf settings, Classic OrbitUI and Minimal
-bookshelf. New installations follow each shelf's own choices; existing OrbitUI
-installations retain the classic look. Presets leave Home, wallpapers, icons,
-reading data and per-shelf preferences intact. Ornament packs are optional
-[add-ons](docs/ADDONS.md), installed and updated separately through **OrbitUI
-settings > Add-ons > Ornament add-ons**. No preset installs artwork automatically;
-existing artwork is retained. The same preset choice is
-available in the setup guide, applied only after review.
-See [migration and device-test requirements](docs/MIGRATION.md) and
-[the alpha.54 test checklist](docs/releases/0.1.0-alpha.54.md). Alpha.54 removes
-ornament artwork from the plugin download and introduces six independently
-updated packs, bilingual information cards and per-pack matching/random placement.
-Matching remains the default. Alpha.55 fixes opening the add-on menu when old,
-unmanaged ornament folders already exist; no artwork needs to be removed or
-reinstalled. This is a test alpha, not the first public beta:
-fresh-setup and add-on acceptance on a physical reader are still required.
+**[Download Beta 1](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.1)**
+| [Install](#installation)
+| [Switch from SimpleUI / Bookshelf](#already-using-simpleui-or-bookshelf)
+| [Feature guide](docs/FEATURES.md)
+| [Report a problem](https://github.com/komadorirobin/orbitui.koplugin/issues)
 
-## Status
+> **OrbitUI replaces the standalone SimpleUI and Bookshelf plugins.**
+> You do not need to install either one first. If you already use one or both,
+> disable them and restart KOReader before installing OrbitUI. Never run them
+> alongside OrbitUI. Keep their files and settings for backup and rollback.
 
-Public preview, not yet fully device-accepted. Retain a working installation and its
-backups while testing. Original SimpleUI and Bookshelf installations must be
-disabled and KOReader restarted before enabling OrbitUI. Their files and user
-data must not be deleted. OrbitUI refuses to initialize its components while
-either original plugin is enabled.
+## Why combine them?
 
-The imported baselines are Bookshelf 5.2.2.3 and SimpleUI 2.7.2-beta.5. Their
-complete histories and licenses are retained under `components/`. Exact sources
-are recorded in `sources.json`. Neither original repository is modified.
+SimpleUI provides a modular Home screen, reading statistics and navigation bars.
+Bookshelf provides a visual library with shelves, covers, lists, series, book
+details and themes. OrbitUI connects those experiences: go from your Home page
+to a shelf, open the same book-detail panel from either place, pin shelves to
+Home and search your library through one interface.
 
-Version **0.1.0-alpha.47** added an optional Reading dashboard with independent
-book-row paging, plus per-shelf titles over series covers. The dashboard adds
-a first Home page without replacing the existing layout. Alpha.46's rounded
-MAL cover-corner cutout, alpha.45's Kanzenban option and cached ratings remain,
-along with alpha.44's natural spine widths,
-partial filling and `+N`, complete read/total counts,
-aspect-true covers, scoped binding choices, the automatic-cover fix and bounded
-image picker. The reviewed upstream baselines are now Bookshelf **5.5.4**
-(`982375a7`) and SimpleUI **2.7.5** (`7eb80f9e`), unchanged in alpha.55.
-The read-total sits in the compact exposed head, above the picture; minimum
-box width is 85% of a normal cover, with the existing maximum/space cap.
-The requested upstream series-box trial keeps native open-topped slipcases
-instead of OrbitUI's old whole-box completion mark/fade. The compact head shows
-the aggregate read-total rather than individual member marks.
-The old design remains on local branch `design/orbitui-series-boxes`, not as an
-in-app switch. Existing Library/Manga profiles, face-out books, per-chip cover
-labels/sizes, ornaments,
-custom icons and dock/Bento layout are retained. Back up settings before
-updating: new grouped-order, ledger and module edits are not mirrored to older
-code on rollback. New surface choices are likewise not mirrored to older code.
-See [the release notes](docs/releases/0.1.0-alpha.55.md)
-and [the merge log](docs/MERGE_LOG.md) for retained behavior and testing.
-KOReader v2025.08 or newer is required. Storage paths remain rollback-compatible;
-OrbitUI does not run Bookshelf 5.3's automatic file move.
+The aim is a coherent reading interface with **one installation, one settings
+hub and one update channel**, while retaining the flexibility of both projects.
+It is not a new reading engine, a replacement for KOReader itself, or an official
+release by either upstream author.
 
-Physical shelves also box series with just one locally available volume.
-In the Manga/Comics profile's folder shelves, each **Oneshots** directory
-(including nested title folders) occupies one folder-backed box. Tap it to
-browse its books normally; long-press opens the folder menu. It uses the
-folder's custom image, or the first book's cover, and the normal read/total
-counter. This does not assign series metadata, move files or invent a combined
-MAL score. Other source types and grid/list views retain their existing behavior.
+## What you get
 
-Tankobon is replaced by **Kanzenban / large format**.
-It uses Paperback's cover-derived colours and thin boards, about 12% taller
-where shelf space permits. Covers retain their proportions, and page-derived
-spine widths do not grow. Saved Tankobon choices display as Paperback without
-rewriting those preferences; existing Paperback/Hardcover choices are unchanged.
+| Part | What it provides |
+| --- | --- |
+| **SimpleUI foundation** | Modular Home and Custom Screens, reading statistics/goals, navigation and quick actions, wallpapers and layout customization. |
+| **Bookshelf foundation** | Visual shelves, cover grids and lists, book details, filtering/grouping, series boxes, themes and ornaments. |
+| **Shared OrbitUI interface** | Connected Home/library navigation, shared book details and scoped search, shelf rows or carousels pinned to Home, and unified settings. |
+| **Your own library structure** | Name and configure sections, folders, shelves and bottom-bar buttons. No required fiction/manga split or hard-coded personal folder setup. |
+| **Optional Reading dashboard** | Continue reading, statistics, goals and book rows, with configurable cards, headings and sources. Each book row has arrows and swipe navigation. |
+| **Shelf refinements** | Per-shelf cover size and captions, optional above-cover labels, Hardcover/Paperback/Kanzenban bindings, and aspect-preserving series covers with naturally sized spines. |
+| **Optional ornament add-ons** | Browse, install and update packs inside OrbitUI, separately from plugin updates. Author/series matching is the default; random placement is also available. |
+| **One update channel** | Verified full-plugin OTA updates with restart activation and code rollback. Embedded SimpleUI and Bookshelf do not update separately. |
 
-Physical series boxes show the linked MyAnimeList community rating (for example
-`★8.72`) directly on the board in a rounded cutout at the cover's upper-left.
-It uses the same cached provider and font scale as folder cards, not a personal
-score or a new network request, with the box's own text colour. Only that small
-corner is masked; cover size and proportions are unchanged. Read/total and `+N`
-stay above the cover, with the series name below by default. The cutout follows the text's
-width and disappears with the rating. Unlinked/unrated series have no cutout;
-exceptionally small covers omit it instead of clipping text. Folder-card badges
-keep their existing appearance.
+These are additions and integration choices on top of substantial upstream
+functionality, not a claim that OrbitUI invented the Home screen, library,
+series boxes, themes or ornament system. [The feature guide](docs/FEATURES.md)
+explains the extra controls and where to find them.
 
-Long-press a shelf chip > **Series box title** >
-**On the cover (bottom)** to put series names on an opaque, box-coloured plate
-inside the image. This reclaims the separate title strip for the full,
-aspect-preserved cover and aligns it with the bottom inset. The choice is
-independent per shelf in Library/Manga; **Below the cover (default)** restores
-the previous layout. It does not change individual-book captions or folder cards.
+### Local books first, online services optional
 
-Long-press a shelf chip > **Book binding** to choose Hardcover, Paperback or
-Kanzenban / large format. Long-press a series box > **Book binding** for an override
-that follows that series across shelves, or choose **Follow shelf** to clear it.
-Untouched shelves retain Hardcover. Choices affect physical books and box
-member spines, not book metadata, cover-grid/list views or reading progress.
+You can use OrbitUI with ordinary local books, KOReader collections, local
+reading goals and no online account. BookOrbit, Hardcover and MyAnimeList are
+optional integrations, not requirements.
 
-Optional Home layout: **OrbitUI settings > Reading dashboard > Show dashboard
-as first Home page** adds a BookOrbit-inspired card layout without replacing
-any existing pages. It combines a larger continue-reading card, daily/week/streak
-statistics, three in-progress books, the existing reading goal, and three-cover
-BookOrbit Want to Read / Recently added rows. Each row has larger previous/next
-arrows, touch targets and a page counter below the covers when needed. Swipe
-left/right within either card to see the next/previous books, independently of
-the other row and the Home page; swipes stop at the first and last book page.
-Swipe outside these two cards to change Home pages; screen-edge gestures retain
-their configured actions.
-Tap books to open, hold them for the existing book panel; tap the goal/statistics
-cards for their settings. The dark hero can be switched off. Disabling the page
-preserves edits to other pages and never resets data, wallpaper or dock choices.
-Under **Reading dashboard > Headings**, rename any of its nine card headings.
-Use **Restore default** or save an empty field to restore the automatic heading,
-including the current-book status and reading-goal title. These names affect
-only the dashboard on that screen, not ordinary Home modules or book metadata.
-The existing Hardcover goal is used when that module is enabled, otherwise the
-local annual KOReader goal. This is a local-book view, not a new BookOrbit sync
-client: unavailable remote covers/books are not downloaded, no library totals
-are invented, and no pet/remote-download feature is copied from the reference.
+BookOrbit synchronization, MyAnimeList and Patch Manager remain separate
+plugins where used. OrbitUI does not replace them, download your whole server
+library or introduce a new synchronization engine.
 
-Box members pack left at natural widths, up to eight visible volumes; `+N`
-counts additional local volumes not drawn, not missing or unread books.
-Unknown or reader-layout-dependent page counts use a neutral thickness.
-Binding labels use Swedish when selected in KOReader and English otherwise.
+### Choose the look
 
-The alpha.5 preview adapts upstream's footer refresh regions to the OrbitUI dock
-and retains whole-group navigation through shared book panels/search. The
-transparent-pagination divider fix also covers folder/list views and full-screen
-modules. No existing release assets are replaced.
+Keep each shelf's own settings, choose **Classic OrbitUI** for face-out books
+and compact series boxes, or choose **Minimal bookshelf** without ornaments.
+The Home layout is configured separately.
 
-The first public build has a positive initial Bigme startup/navigation report.
-Full device acceptance and device OTA/recovery testing are still outstanding.
+Ornaments are **not bundled or automatically installed** on a fresh setup.
+Install only the packs you want through **OrbitUI settings > Add-ons >
+Ornament add-ons**. Existing artwork is retained. Packs have their own credits
+and licenses, including some noncommercial licenses; they are not all covered
+by the code license. See [add-on instructions](docs/ADDONS.md).
 
-Alpha.10 adds per-icon Solar Outline, Solar Line Duotone and Tabler
-sources, including an OrbitUI manga icon in both Solar styles. Existing choices
-are unchanged; these are not bulk icon-pack presets. See [icons](docs/ICONS.md)
-for previews and selection instructions.
-Alpha.11 adds Database, Cloud Download, Download Minimalistic and Library in
-both Solar styles, bringing each selection to 80 icons. Selection remains
-per-icon only; no existing choice is replaced.
+## Installation
 
-Alpha.14 bundles James Joyce and Virginia Woolf busts in the **Modernists**
-ornament pack. They stand next to books by the matching author, not randomly
-among other books. Installation is automatic on first opening the shelf or
-ornament collection after updating; existing settings/files are preserved.
-See [author ornaments](docs/ORNAMENTS.md) for matching, controls and artwork licenses.
-Alpha.17 also includes the **Authors** pack: Strindberg, Lem, Dylan
-Thomas, Thomas Mann, Dostoevsky, Hamsun, Lispector, Musil and Kafka. It installs
-independently without replacing Modernists artwork or user adjustments.
-Alpha.22: the generated Lispector portrait is retired. Only the exact old
-default is removed on upgrade; custom replacements and settings stay intact.
-The Authors pack now contains eight busts. No Rio replacement is bundled yet.
-The new **Authors II** pack adds photographic Svevo and Hemingway ornaments.
+**Requirements:** KOReader **v2025.08 or newer**; v2026.03 or newer is recommended
+by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 1 is a
+prerelease, not a promise of compatibility with every device or user patch.
 
-Alpha.19: **Ukiyo-e Gallery** adds 27 genuine CC0 museum prints in original
-frames, native zoom/info cards and an optional washi/Hinoki-style theme. No
-existing theme is activated or replaced. See [the gallery preview](docs/ukiyoe-gallery-preview.html)
-and [installation/source notes](docs/ORNAMENTS.md#ukiyo-e-gallery-alpha19).
+1. **Back up first.** Keep a copy of your KOReader settings, user patches,
+   custom artwork and working plugins. Preserve book sidecars/reading data
+   separately too. See [backup details](docs/MIGRATION.md#what-is-preserved).
+2. **If SimpleUI or Bookshelf is installed, disable it in KOReader's plugin
+   manager and restart KOReader.** Disable both if you have both. Do not delete
+   their settings or plugin folders.
+3. Download **`orbitui.koplugin.zip`** from the
+   [Beta 1 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.1).
+   Do **not** use **Code > Download ZIP** or GitHub's **Source code** archives.
+4. Fully exit KOReader. Extract the ZIP and copy its **`orbitui.koplugin`**
+   folder into your KOReader **`plugins/`** directory.
+5. Start KOReader. Enable OrbitUI in the plugin manager and restart if needed.
+   On a fresh setup, the guide helps you choose folders, a start screen and
+   bottom-bar buttons. Nothing in the guide is applied until you confirm.
+6. Open **Tools > OrbitUI > OrbitUI settings** to customize it. Existing
+   SimpleUI/Bookshelf users keep their configuration rather than receiving an
+   automatic setup prompt; open **Setup guide** manually when wanted.
 
-Alpha.20 gallery correction: frames hang above the plank rather than stand
-on it. Expanded Swedish, source-linked commentary and museum measurements replace
-the short visual notes. A guarded metadata upgrade reaches existing alpha.19
-installations without replacing artwork, user captions or manual positioning.
+Typical plugin locations (use the location of your actual KOReader installation):
 
-The alpha.6 preview added 110 offline Material Symbols Rounded icons, including
-manga. A Bigme startup crash was reported after applying its whole-pack preset.
-If that prevents startup, see the non-destructive [recovery patch](recovery/README.md).
-The alpha.7 correction makes Material a [per-icon picker](docs/ICONS.md) only
-and uses SVGs instead of a separate text font. Existing choices are not reset.
-It can be installed directly from alpha.5 through the preview OTA channel.
-Alpha.8 fixes a separate crash when opening the Material picker: the category
-loop shadowed the translation function. Regression tests now construct and
-refresh the real shared modal over native widget stubs. Device testing remains
-outstanding; no saved icon choices are changed.
-Alpha.9 adds a Material line-thickness preview and per-icon weights of 200, 300,
-400 or 500. The requested new default is 300, also for older unweighted Material
-selections. Explicit weights remain independent; Nerd Font and custom image
-choices are unchanged. All variants remain offline SVGs, not variable fonts.
+| Device | Plugins directory |
+| --- | --- |
+| Kobo | `.adds/koreader/plugins/` |
+| Kindle | `koreader/plugins/` |
+| PocketBook | `applications/koreader/plugins/` |
+| Android | `koreader/plugins/` in internal storage |
 
-## Architecture
+The resulting path must be **`plugins/orbitui.koplugin/main.lua`**, not
+`plugins/orbitui.koplugin/orbitui.koplugin/main.lua`. Do not install the folders
+under `components/` as separate plugins.
 
-- `main.lua` is the only KOReader plugin entry point, backed by a stable OTA bootstrap.
-- `core/` owns component loading, compatibility checks and the host lifecycle.
-- `adapters/` contains the small component-specific embedding seams.
-- `components/` contains the two imported Git subtrees.
-- `tests/` exercises OrbitUI's integration contracts in addition to the original
-  component suites.
+**Already using OrbitUI?** Use **Tools > OrbitUI > Uppdatera OrbitUI**
+(the updater's current label), enable preview releases, update and restart.
+Do not install SimpleUI or Bookshelf updates inside OrbitUI. For manual updates
+of an existing OTA installation, read [the recovery guide](docs/OTA.md) first.
 
-Version `0.1.0-alpha.4` adds shared book panels, searchable library scopes,
-live Home shelf modules and an OrbitUI settings hub.
-See [shared UI features](docs/SHARED_UI.md) for controls,
-compatibility boundaries and the pending device checks.
+## Already using SimpleUI or Bookshelf?
 
-BookOrbit synchronization, MyAnimeList and Patch Manager remain separate plugins.
-The component updaters are disabled in OrbitUI; components must never update
-independently inside a combined installation. Install the first
-[release ZIP](https://github.com/komadorirobin/orbitui.koplugin/releases) manually.
-Subsequent updates use **Tools > OrbitUI > Uppdatera OrbitUI**. The same label
-appears in the embedded SimpleUI and Bookshelf update menus. The common OTA
-installer validates a complete package, activates it on restart and retains
-rollback. See [OTA and recovery](docs/OTA.md).
+**Your existing data is not intentionally wiped or moved.** OrbitUI reuses
+SimpleUI's settings and recognizes both the older and current Bookshelf settings
+locations. It reads existing ornament folders in place. Normal preference edits
+use the selected existing stores, rather than a separate one-time imported copy.
 
-## Upstream monitoring
+Before its first component startup, OrbitUI also makes a **limited settings
+snapshot** in `settings/orbitui/before-first-run/`. A failed snapshot blocks
+startup. This is **not a full backup**: ornament images, wallpapers, books,
+sidecars, databases and other plugins' settings are not copied by that snapshot.
 
-[Upstream watch](https://github.com/komadorirobin/orbitui.koplugin/actions/workflows/upstream-watch.yml)
-checks Bookshelf `master` and SimpleUI `main` every six hours. The
-[status issue](https://github.com/komadorirobin/orbitui.koplugin/issues?q=label%3Aupstream-watch)
-shows missing commits, exact revisions and latest stable releases. It adds a
-comment only when the monitored state changes, not on every check.
+If both old and new Bookshelf settings files exist, the older flat location
+wins to protect existing OrbitUI installations. The other copy is left untouched,
+not merged. Read [the migration guide](docs/MIGRATION.md) before proceeding if
+you have two different configurations.
 
-The watcher never merges, creates merge PRs, changes versions or publishes OTA
-updates. Request merges in the development conversation. Follow
-[the merge procedure](docs/UPSTREAM.md), preserve
-[the integration contracts](docs/INTEGRATION_CONTRACTS.md), and record results
-in [the merge log](docs/MERGE_LOG.md). This keeps project knowledge in the repo,
-not only in a particular chat or model's context.
+Existing Home pages and configured integrations are retained. OrbitUI-specific
+options and later upstream setting formats may not be understood by older
+standalone versions. Visual behavior can differ; custom patches are not
+guaranteed compatible. For rollback, **disable OrbitUI and restart before
+re-enabling your old plugins**. Never restore stale reading-progress files just
+to undo a UI change.
+
+## Beta status and feedback
+
+**0.1.0-beta.1** is the first public beta. The existing reader setup, upgrades
+and ornament menu have been tried on the maintainer's device. Automated tests
+cover both Lua and LuaJIT, integration, packaging and the OTA installer.
+This is not an exhaustive device/fresh-install compatibility certification.
+
+Please report your device, KOReader version, OrbitUI version and steps to
+reproduce a problem in [OrbitUI issues](https://github.com/komadorirobin/orbitui.koplugin/issues).
+Report integration problems here first, not as presumed bugs in SimpleUI or
+Bookshelf. Redact tokens, account details and private paths from logs; do not
+upload settings backups.
+
+## Credits and licenses
+
+- **SimpleUI:** [doctorhetfield-cmd and contributors](https://github.com/doctorhetfield-cmd/simpleui.koplugin),
+  [MIT license](components/simpleui/LICENSE).
+- **Bookshelf:** [AndyHazz and contributors](https://github.com/AndyHazz/bookshelf.koplugin),
+  [AGPL-3.0 license](components/bookshelf/LICENSE).
+- **OrbitUI integration and customizations:** [komadorirobin](https://github.com/komadorirobin),
+  [AGPL-3.0](LICENSE). This is an independent project, not an upstream endorsement.
+- **Icons and artwork:** their original creators retain credit and separate
+  licenses. See [icon credits](docs/ICONS.md) and each ornament pack's
+  **Credits and licenses**. Free download does not make every asset public domain.
+
+Both component licenses, notices and imported Git histories are retained.
+Beta 1 integrates Bookshelf **5.5.4** and SimpleUI **2.7.5**; exact imported and
+reviewed upstream revisions are recorded in [sources.json](sources.json).
+Upstream updates are reviewed and merged, not automatically installed.
 
 ## Development
 
-Run `sh scripts/test.sh` to check syntax and run the integration and component
-tests. Run `sh scripts/package.sh` to build a runtime ZIP from a clean, committed
-revision. The ZIP contains one `orbitui.koplugin/` directory; do not
-install GitHub's source archive as a plugin.
+Run `sh scripts/test.sh` and `LUA=luajit sh scripts/test.sh`, then
+`sh scripts/check-translations.sh`. Build a runtime ZIP from a clean committed
+revision with `sh scripts/package.sh`.
 
-See `docs/MIGRATION.md` for the opt-in installation and rollback procedure,
-`docs/TESTING.md` for device verification, and `docs/UPSTREAM.md` for the import
-workflow. No automatic migration, upstream merge or public release is performed
-by the build scripts.
-
-## Licensing
-
-OrbitUI's original code is licensed under AGPL-3.0. The complete license is in
-`LICENSE`. Bookshelf's AGPL-3.0 license and SimpleUI's MIT license and copyright
-notice are preserved in their component directories. Bundled assets retain
-their original notices. OrbitUI is an independent integration, not an official
-release of either upstream project.
-
-The Modernists artwork is separately licensed: Joyce under CC BY-SA 4.0 and
-Woolf under **CC BY-NC-SA 4.0 (non-commercial only)**. The AGPL code license
-does not grant additional rights to those images. Sources, adaptations and
-license links accompany the assets in `assets/ornaments/Modernists/ATTRIBUTION.txt`.
-The additional Authors collection has its own per-image notices in
-`assets/ornaments/Authors/ATTRIBUTION.txt`: Lem is CC BY-SA 4.0, Dostoevsky is
-**CC BY-NC-SA 4.0 (non-commercial only)**, and the other six are CC BY 4.0
-to the extent applicable. Original portrait interpretations are distinguished
-from adaptations of source photographs or scans.
-
-Ukiyo-e Gallery uses individually verified CC0 museum images, with independent
-frames/AI-assisted Swedish commentary and separately identified AI-generated material
-textures. Its provenance and credits are in
-`assets/ornaments/Ukiyo-e Gallery/ATTRIBUTION.txt` and `provenance.json`.
-No assets or descriptions from a paid ornament pack are redistributed.
+Integration code lives in `core/` and `adapters/`; the original components live
+under `components/`. See [integration contracts](docs/INTEGRATION_CONTRACTS.md),
+[upstream workflow](docs/UPSTREAM.md), [merge history](docs/MERGE_LOG.md),
+[testing](docs/TESTING.md) and [OTA/recovery](docs/OTA.md).
+The upstream watcher reports changes only; it never merges or publishes.

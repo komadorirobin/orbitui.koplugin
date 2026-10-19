@@ -50,6 +50,15 @@ function M.ensure()
             files[#files + 1] = { settings .. "/" .. name, name }
         end
     end
+    local native = settings .. "/bookshelf"
+    if lfs.attributes(native, "mode") == "directory" then
+        assert(lfs.mkdir(attempt .. "/bookshelf"))
+        for name in lfs.dir(native) do
+            if name:match("%.lua$") or name:match("%.lua%.old$") then
+                files[#files + 1] = { native .. "/" .. name, "bookshelf/" .. name }
+            end
+        end
+    end
     for _, suffix in ipairs({ "", ".old" }) do
         files[#files + 1] = {
             settings .. "/simpleui/sui_settings.lua" .. suffix,

@@ -111,5 +111,32 @@ H.test("close errors do not become a completed backup", function()
     H.eq(pcall(Backup.ensure), false)
     H.eq(files[base .. "/COMPLETE"], nil)
 end)
+H.test("native Bookshelf Lua settings and backups are copied without moving artwork or databases", function()
+    fixture()
+    local native = "/data/settings/bookshelf"
+    dirs[native] = true
+    files[native .. "/settings.lua"] = "native-settings"
+    files[native .. "/settings.lua.old"] = "native-backup"
+    files[native .. "/hardcover_links.lua"] = "native-links"
+    files[native .. "/micromodule_data.lua"] = "native-modules"
+    files[native .. "/ornaments.json"] = "custom-ornaments"
+    files[native .. "/book_facts.sqlite3"] = "database"
+    files[native .. "/ornaments/custom.png"] = "image"
+    local before = {}
+    for k, v in pairs(files) do before[k] = v end
+    Backup.ensure()
+    local attempt = assert(files[base .. "/COMPLETE"]):match("\n([^\n]+)\n")
+    local target = base .. "/" .. attempt .. "/bookshelf"
+    for _, name in ipairs({ "settings.lua", "settings.lua.old", "hardcover_links.lua", "micromodule_data.lua" }) do
+        H.eq(files[target .. "/" .. name], files[native .. "/" .. name])
+    end
+    H.eq(files[target .. "/ornaments.json"], nil)
+    H.eq(files[target .. "/book_facts.sqlite3"], nil)
+    for k, v in pairs(before) do H.eq(files[k], v) end
+    fail_write = true
+    files[base .. "/COMPLETE"] = nil
+    H.eq(pcall(Backup.ensure), false)
+    H.eq(files[base .. "/COMPLETE"], nil)
+end)
 io.open, os.rename, os.remove = original_open, original_rename, original_remove
 H.finish()

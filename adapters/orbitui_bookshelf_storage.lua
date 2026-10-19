@@ -1,6 +1,20 @@
--- Keep rollback-compatible paths until a separate storage migration is approved.
+-- Reuse the installed layout without moving files. Existing OrbitUI/flat
+-- settings win if both layouts exist; a native-only Bookshelf keeps its paths.
 local M = {}
 local function ds() return require("datastorage") end
+local native_layout
+local function useNativeLayout()
+    if native_layout == nil then
+        local fs = require("libs/libkoreader-lfs")
+        local dir = ds():getSettingsDir()
+        local function exists(path)
+            return fs.attributes(path, "mode") ~= nil or fs.attributes(path .. ".old", "mode") ~= nil
+        end
+        native_layout = not exists(dir .. "/bookshelf.lua") and exists(dir .. "/bookshelf/settings.lua")
+        M.paths.preserveReaderSettings = not native_layout
+    end
+    return native_layout
+end
 local settings_names = {
     ["settings.lua"] = "bookshelf.lua",
     ["micromodule_data.lua"] = "bookshelf_micromodules.lua",
@@ -39,9 +53,11 @@ M.paths = { preserveReaderSettings = true }
 function M.paths.settingsDir() return ds():getSettingsDir() .. "/bookshelf" end
 function M.paths.cacheDir() return ds():getDataDir() .. "/cache/bookshelf" end
 function M.paths.settingsFile(name)
+    if useNativeLayout() then return ensureParent(M.paths.settingsDir() .. "/" .. name) end
     return ensureParent(mapped(name, settings_names) or (M.paths.settingsDir() .. "/" .. name))
 end
 function M.paths.cacheFile(name)
+    if useNativeLayout() then return ensureParent(M.paths.cacheDir() .. "/" .. name) end
     local path = mapped(name, cache_names)
     if name == "scaled_covers" or name:sub(1, 14) == "scaled_covers/" then
         path = ds():getDataDir() .. "/cache/bookshelf_covers" .. name:sub(14)
@@ -57,6 +73,7 @@ local reader_keys = {
 }
 
 function M.wrapStore(store)
+    if useNativeLayout() then return store end
     local read, save, defer = store.read, store.save, store.saveDeferred
     local delete, flush, generation = store.delete, store.flush, store.generation
     local isTrue, nilOrTrue = store.isTrue, store.nilOrTrue

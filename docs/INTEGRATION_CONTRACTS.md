@@ -769,6 +769,17 @@ recoverable migration is required. The automatic first-run snapshot is limited
 to UI settings and Bookshelf-owned links; it is not a full device backup.
 Never overwrite a completed snapshot or erase sidecars/progress to roll back UI.
 
+Beta 1 also recognizes a native-only Bookshelf 5.3+ installation without moving
+its files. Select the native layout only when `settings/bookshelf/settings.lua`
+or its `.old` exists and neither flat `settings/bookshelf.lua` nor its `.old`
+exists. Keep this decision fixed for the session; flat wins if both exist.
+Native settings, auxiliary stores, SQLite companions, caches and status-line
+keys stay native. Flat installations retain the old global reader-key wrapper.
+Backup native top-level Lua files before component startup and detect them as
+an existing setup, not fresh onboarding. Preserve all ornament paths. Tests:
+`test_bookshelf_storage_native.lua`, `test_bookshelf_storage.lua`,
+`test_backup.lua`, `test_setup_ui.lua`. No storage move/import is authorized.
+
 The approved standalone-configuration work adds a host-owned setup guide
 (`core/orbitui_setup.lua`, `adapters/orbitui_setup.lua`). Detect fresh versus
 existing configuration before component initialization and persist that decision

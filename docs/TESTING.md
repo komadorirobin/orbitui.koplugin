@@ -2,6 +2,22 @@
 
 ## Automated
 
+2026-10-19 beta.1: the user confirmed the alpha.55 ornament menu now works and
+explicitly approved the first public beta. Earlier reader feedback confirmed
+the retained layout, restart and setup/preset controls. This is limited device
+evidence, not a completed fresh-install/device matrix.
+
+Release review found native Bookshelf 5.3+ settings were not selected by the
+flat-path adapter. Beta.1 reads the existing native layout in place when no flat
+settings/backup exists, retains native reader-line keys, snapshots native Lua
+settings and recognizes that install as existing during onboarding. Regressions
+cover both layouts and `.old`, deterministic flat precedence, stable per-session
+paths, auxiliary stores/caches/SQLite companions, no file moves, native read/write,
+backup failure and preservation, and no automatic setup prompt. Native standalone
+migration still needs wider physical-device feedback. No upstream pins or artwork
+changed. Public documentation now separates upstream credit, OrbitUI additions,
+installation, limited backup coverage and rollback caveats.
+
 2026-10-19 alpha.55 release preparation: reproduce opening the
 ornament add-on menu from Home with pre-existing, unmanaged ornament folders.
 The status-label branch shadowed the gettext function with the numeric loop

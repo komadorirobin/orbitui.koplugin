@@ -60,7 +60,9 @@ package.loaded["adapters/orbitui_libraries"] = {
 }
 local function reset(existing, saved, existing_host)
     files, data, queue, windows, hosts, redraws = { ["/Books"] = "directory" }, saved or {}, {}, {}, {}, 0
-    if existing then files["/settings/simpleui/sui_settings.lua"] = "file" end
+    if existing then
+        files[type(existing) == "string" and existing or "/settings/simpleui/sui_settings.lua"] = "file"
+    end
     settings = { simpleui_bar_tabs = { "home", "homescreen", "power" }, simpleui_hs_book_close_target = "book_folder",
         secret = "kept", simpleui_layout = { pages = { { id = 3, modules = { "currently" } } } } }
     books = { orbitui_libraries = { version = 1, sections = {} }, bookshelf_private = "kept" }
@@ -105,6 +107,14 @@ H.test("first OrbitUI install over standalone components uses neutral appearance
     H.eq(data.setup.status, "kept"); H.eq(data.appearance.preset, "native")
     Setup.started({ ui = {} }); drain(); H.eq(#hosts, 0)
     reset(true, Copy(data), true); H.eq(data.appearance.preset, "native")
+end)
+H.test("native Bookshelf alone, including its backup, is an existing setup, not a fresh install", function()
+    for _, suffix in ipairs({ "", ".old" }) do
+        local Setup = reset("/settings/bookshelf/settings.lua" .. suffix, nil, false)
+        H.eq(data.setup.status, "kept"); H.eq(data.appearance.preset, "native")
+        Setup.started({ ui = {} }); drain(); H.eq(#hosts, 0)
+        H.eq(G_reader_settings.data.start_with, "last")
+    end
 end)
 H.test("shelf presets stay in the setup draft until confirmation and are saved with the completion marker", function()
     local Setup = reset(true)

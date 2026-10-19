@@ -460,6 +460,16 @@ alpha pending the fresh-setup and add-on physical-device acceptance checks.
 
 ## On the reader
 
+Version `0.1.0-beta.1` is the first explicitly approved public beta, following the
+reader confirmation of alpha.55's ornament menu fix. It adds native-only current
+Bookshelf settings-path recognition and backup/onboarding coverage without moving
+files, alongside a rewritten public introduction and installation guide. Existing
+flat-layout OrbitUI settings remain on their old paths. The optional `ornaments-1`
+catalog, artwork, upstream pins and bootstrap API 1 are unchanged. Alpha.55 can
+update through the preview channel; restart after installation. A new installation
+over native-only standalone Bookshelf should not roll back to an OrbitUI alpha
+that cannot read that path; see [migration and rollback](MIGRATION.md).
+
 Open **Tools > OrbitUI > Uppdatera OrbitUI > Check for updates**. The update entries
 inside the embedded components are also named **Uppdatera OrbitUI** and open this
 same OrbitUI menu, not their old installers. The label is supplied by the common

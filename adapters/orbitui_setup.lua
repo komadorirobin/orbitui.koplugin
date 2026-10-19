@@ -23,6 +23,7 @@ function M.prepare(existing_host)
         end
         for _i, suffix in ipairs({ "", ".old" }) do
             existing = existing or fs.attributes(dir .. "/simpleui/sui_settings.lua" .. suffix, "mode") == "file"
+                or fs.attributes(dir .. "/bookshelf/settings.lua" .. suffix, "mode") == "file"
         end
         for key in pairs(G_reader_settings and G_reader_settings.data or {}) do
             if type(key) == "string" and (key:match("^simpleui_") or key:match("^bookshelf_")) then existing = true end

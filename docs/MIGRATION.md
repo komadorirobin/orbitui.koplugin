@@ -1,21 +1,59 @@
-# Experimental installation and rollback
+# Installing, switching and returning safely
 
-Alpha.53 is a standalone-configuration test preview, not a stable replacement. It keeps the
-two component implementations and existing navigation behavior behind one
-KOReader plugin. The navigation state machine and shared data services have not
-yet been consolidated. Headless tests do not establish device stability.
+OrbitUI Beta 1 replaces the standalone SimpleUI and Bookshelf plugins with one
+combined plugin. Neither original plugin is required for a fresh installation.
+Existing users can retain their settings and artwork, with the limits below.
+This is a public beta, not an exhaustive device-compatibility certification.
 
-## Before testing
+## Before installing
 
-1. Retain the working Bookshelf and SimpleUI installation ZIPs.
-2. Make an independent backup of KOReader's settings and your userpatches.
-3. Disable the standalone Bookshelf and SimpleUI plugins in KOReader, then restart.
-4. Install the generated `dist/orbitui.koplugin.zip` in the plugins directory and
-   restart. Keep the original plugin directories, but keep them disabled.
+1. With KOReader stopped, make an independent backup of its settings, user
+   patches, custom artwork and working plugin folders/ZIPs. Include the entire
+   `settings/bookshelf/` and `settings/simpleui/` directories, any loose
+   `settings/bookshelf*` files, `settings.reader.lua`, custom resources under
+   `icons/`, and external wallpaper/image folders. Book sidecars and reading
+   data may live elsewhere; include them in your normal reading-data backup.
+2. Start KOReader, disable **SimpleUI and Bookshelf** in the plugin manager
+   (whichever are installed), then restart. Do not delete their files/settings.
+3. Fully exit KOReader. Download **orbitui.koplugin.zip** from the
+   [OrbitUI release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.1),
+   extract it into KOReader's `plugins/` directory and start KOReader again.
+   The correct path is `plugins/orbitui.koplugin/main.lua`, with no extra wrapper.
+4. Enable OrbitUI and restart if necessary. Fresh users get a setup guide;
+   existing component users can open **Tools > OrbitUI > OrbitUI settings >
+   Setup guide** manually. Review choices before applying them.
 
 OrbitUI blocks startup if either standalone plugin is still enabled. Installing
 the ZIP does not automatically disable anything. Renaming a backup directory to
 another name ending in `.koplugin` is not a safe way to disable it.
+
+## What is preserved
+
+| Data | Behavior in Beta 1 |
+| --- | --- |
+| SimpleUI preferences and Home layout | Reused at `settings/simpleui/sui_settings.lua`, not reset to a demonstration layout. |
+| Older Bookshelf / existing OrbitUI preferences | Continue using `settings/bookshelf.lua` and related flat files. |
+| Current standalone Bookshelf preferences | If no flat settings file (or `.old`) exists, use `settings/bookshelf/settings.lua` and its associated stores/caches in place. No file move is run. |
+| Ornaments | Existing `settings/bookshelf/ornaments/` and legacy `icons/bookshelf.ornaments/` remain available. Files, custom captions and selections are not intentionally replaced. |
+| Wallpapers, icons and external image folders | Files remain where they were. Keep custom paths and the disabled original plugin folders if settings refer to resources inside them. |
+| Books, bookmarks and reading progress | No book move or reading-progress reset is performed by setup. Normal KOReader reading behavior continues. |
+| Other plugins and accounts | Not removed or reconfigured by setup. BookOrbit/MAL synchronization still belongs to those plugins. |
+
+**These stores are reused, not isolated copies.** UI preference changes may be
+visible when you return to the standalone plugins. New OrbitUI-only keys and
+newer upstream formats may be ignored by older versions; exact visual rollback
+is not guaranteed.
+
+If both `settings/bookshelf.lua` and `settings/bookshelf/settings.lua` exist
+(including `.old` backups), the **flat layout wins** to preserve established
+OrbitUI installations. Neither copy is merged or deleted. If the native folder
+contains the configuration you want instead, stop and back up both complete
+sets before switching; do not delete individual settings files to experiment.
+Ask for help if you are unsure which installation last wrote each set.
+
+The first-run snapshot covers selected Lua settings, not artwork, books,
+databases or every external plugin. Its exact scope and rollback instructions
+are below. It does not replace the independent backup in step 1.
 
 ## Settings
 
@@ -38,8 +76,7 @@ file by itself does not trigger that import. With no earlier profile usage, the
 initial section uses KOReader's selected home directory, or remains unconfigured
 if no absolute home directory is set. Invalid/future schemas are not overwritten.
 
-This is the configuration foundation, not a stable public onboarding release.
-The stage 3 guide below still needs physical-device acceptance.
+This is the configuration foundation used by the beta setup guide below.
 Older OrbitUI versions ignore the new section registry and retain their former
 fixed profiles; new sections and edited paths therefore require this build.
 
@@ -99,7 +136,8 @@ bar: select it in the guide's Bottom bar step.
 
 Before components create defaults, `settings/orbitui/setup.lua` records version 1
 and a `pending` or `kept` status. Existing Bookshelf/SimpleUI files (including
-`.old`) or legacy global preferences select `kept`: upgrades are not prompted
+native Bookshelf's `settings/bookshelf/settings.lua`, `.old` backups, or legacy
+global preferences) select `kept`: upgrades are not prompted
 and their choices are left alone. The user can open the guide manually, with
 all choices initially set to Keep existing. On a fresh install, Cancel leaves
 setup pending for the next launch; Skip automatic setup stops automatic prompts
@@ -122,13 +160,14 @@ Local books, TBR, reading goals and series boxes work without these integrations
 Existing configured integrations continue to work; this guide does not disable
 them or rewrite old dashboard sources.
 
-Still required before general release: test fresh/upgrade installs on devices,
+Broader beta testing should cover fresh/upgrade installs on devices,
 folder picker/back/cancel in portrait and landscape, ReaderUI-first startup,
 Home/library/bar transitions after restart, missing integrations/offline use,
 and OTA/rollback. Shelf appearance presets are covered in stage 4 below.
 Legacy action aliases remain supported, not forcibly renamed. Artwork/license
-and public documentation review are separate release gates. Alpha.53 publishes
-the four stages together for OTA/device testing, not as an accepted public beta.
+and public documentation review are separate release checks. The maintainer
+approved Beta 1 after testing the existing setup and ornament menu; this does not
+certify every fresh-install path or device.
 
 ### Shelf presets (stage 4, alpha.53)
 
@@ -173,19 +212,22 @@ and modern bindings remain available in all presets; standalone components are
 unchanged by default: profile `series_boxes` joins the style fields and an optional
 editor frequency override reports None/read-only in Minimal without changing the
 saved frequency. Returning to a decorated preset restores that control.
-Physical-device acceptance is still required before a separately approved beta.
+Beta feedback should include these choices on fresh and upgraded installations.
 
-Before exposing either component, OrbitUI snapshots Bookshelf settings (including
-Bookshelf-owned link records), SimpleUI settings, and the global reader settings into:
+Before exposing either component on the first OrbitUI launch, OrbitUI snapshots
+flat `settings/bookshelf*.lua` files and `.old` backups, top-level Lua files and
+`.old` backups in `settings/bookshelf/`, SimpleUI's `sui_settings.lua` and `.old`,
+and the global reader settings into:
 
 `settings/orbitui/before-first-run/`
 
 `COMPLETE` names the successful `attempt-*` snapshot and its files. Failed
 attempts are retained for inspection, never declared complete. Backup failure
 blocks component startup. A completed snapshot is not overwritten on later
-launches. These files may contain private tokens; do not attach them to issues.
+launches. Native Bookshelf files use the `bookshelf/` subdirectory inside the
+snapshot attempt. These files may contain private tokens; do not attach them to issues.
 
-The first milestone deliberately keeps using the existing settings filenames
+OrbitUI deliberately keeps using the selected existing settings filenames
 and schemas. There is no destructive settings migration. Normal UI preference
 changes therefore also remain visible to the old plugins if you roll back.
 Bookmarks, document sidecars and reading-history databases are not copied or
@@ -205,12 +247,20 @@ Never run the standalone plugins alongside OrbitUI, even if an earlier startup
 failed. A failed initialization may already have installed some UI hooks; a
 restart is required before switching implementations.
 
-## Updating this alpha
+## Updating OrbitUI
 
-After the first manual installation, use **Tools > OrbitUI > OrbitUI updates**.
+After the first manual installation, use **Tools > OrbitUI > Uppdatera OrbitUI**
+(the updater's current label).
 Embedded component update entries open the same common updater; they cannot
 install standalone packages. Preview releases are included by default on an
-alpha installation. No predecessor update channel is redirected to OrbitUI.
+alpha/beta installation. No predecessor update channel is redirected to OrbitUI.
+
+Beta 1's native Bookshelf layout support is new. If you switch from a current
+standalone Bookshelf installation using `settings/bookshelf/settings.lua`, an
+OrbitUI alpha rollback does not understand that location. It leaves the native
+files intact but may display defaults from a newly created flat store. Prefer
+returning to the retained standalone Bookshelf instead of downgrading to an alpha
+in that case. Existing flat-layout OrbitUI users retain their usual code rollback.
 
 Read `OTA.md` for verified staging, restart activation and code rollback. Manual
 replacement of the factory ZIP requires stopping KOReader and renaming any
