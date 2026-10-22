@@ -67,7 +67,11 @@ function M.controller(file, opts)
     function controller:_orbitui_file_dialog_close(id)
         return function()
             if self._orbitui_modal then self._orbitui_modal:onClose() end
-            if opts.navigate_row_ids and opts.navigate_row_ids[id] and opts.navigate_fn then
+            local navigating = opts.navigate_row_ids
+            if not navigating and opts.navigate_fn then
+                navigating = require("features/library/sui_hold_rows").NAVIGATING_ROW_IDS
+            end
+            if navigating and navigating[id] and opts.navigate_fn then
                 opts.navigate_fn()
             else
                 refresh()

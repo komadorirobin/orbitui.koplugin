@@ -10,7 +10,7 @@ These projects are the foundation of OrbitUI, not just inspiration: their code,
 interfaces and features are included and adapted here. Please support and credit
 the original creators.
 
-**[Download Beta 3](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.3)**
+**[Download Beta 4](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.4)**
 | [Install](#installation)
 | [Switch from SimpleUI / Bookshelf](#already-using-simpleui-or-bookshelf)
 | [Feature guide](docs/FEATURES.md)
@@ -77,7 +77,7 @@ by the code license. See [add-on instructions](docs/ADDONS.md).
 ## Installation
 
 **Requirements:** KOReader **v2025.08 or newer**; v2026.03 or newer is recommended
-by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 3 is a
+by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 4 is a
 prerelease, not a promise of compatibility with every device or user patch.
 
 1. **Back up first.** Keep a copy of your KOReader settings, user patches,
@@ -87,7 +87,7 @@ prerelease, not a promise of compatibility with every device or user patch.
    manager and restart KOReader.** Disable both if you have both. Do not delete
    their settings or plugin folders.
 3. Download **`orbitui.koplugin.zip`** from the
-   [Beta 3 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.3).
+   [Beta 4 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.4).
    Do **not** use **Code > Download ZIP** or GitHub's **Source code** archives.
 4. Fully exit KOReader. Extract the ZIP and copy its **`orbitui.koplugin`**
    folder into your KOReader **`plugins/`** directory.
@@ -127,8 +127,8 @@ OrbitUI. Their local catalogs may need refreshing.
 after the backup and predecessor-disable steps above, find
 `komadorirobin/orbitui.koplugin`. In its download options, choose
 **Other releases...**, uncheck **Filter pre-releases**, select
-**v0.1.0-beta.3**, then select **`orbitui.koplugin.zip`**. Restart KOReader
-after installation. Beta 3 is not returned by GitHub's "latest stable release"
+**v0.1.0-beta.4**, then select **`orbitui.koplugin.zip`**. Restart KOReader
+after installation. Beta 4 is not returned by GitHub's "latest stable release"
 endpoint, so the default latest-release lookup may report that none exists.
 Do not choose **Direct download from repo**, **Source code**, the checksum
 file, or the add-on-only **ornaments-1** release.
@@ -136,7 +136,7 @@ file, or the add-on-only **ornaments-1** release.
 **[Storefront by ultimatejimmy](https://github.com/ultimatejimmy/storefront.koplugin):**
 use **26.10.20 or newer**, which includes the
 [embedded-plugin detection fix](https://github.com/ultimatejimmy/storefront.koplugin/releases/tag/26.10.20).
-Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.3** and
+Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.4** and
 **`orbitui.koplugin.zip`** from its versions/releases options if the cached
 catalog still shows an older beta. Disable the predecessor plugins first as
 described above. Older affected installers (including **26.10.17-beta2**) can
@@ -185,8 +185,9 @@ to undo a UI change.
 
 ## Beta status and feedback
 
-**0.1.0-beta.3** is the current beta. It integrates Bookshelf 5.5.5 and its
-subsequent Shelf size crash fix. The existing reader setup, upgrades and
+**0.1.0-beta.4** is the current beta. It integrates Bookshelf 5.5.5 and its
+subsequent Shelf size crash fix, plus SimpleUI's latest action dialogs and
+Tabbed Grid frame fix. The existing reader setup, upgrades and
 ornament menu were tried on the maintainer's device before Beta 1. Automated
 tests cover both Lua and LuaJIT, integration, packaging and the OTA installer,
 including Beta 2's external-update snapshots and rollback. The new external
@@ -202,7 +203,8 @@ upload settings backups.
 ## Credits and licenses
 
 - **SimpleUI:** [doctorhetfield-cmd and contributors](https://github.com/doctorhetfield-cmd/simpleui.koplugin),
-  [MIT license](components/simpleui/LICENSE).
+  [GPL-3.0 license](components/simpleui/LICENSE). The original MIT notice is
+  [retained](components/simpleui/LICENSE-MIT-ORIGINAL.txt) for previously imported code.
 - **Bookshelf:** [AndyHazz and contributors](https://github.com/AndyHazz/bookshelf.koplugin),
   [AGPL-3.0 license](components/bookshelf/LICENSE).
 - **OrbitUI integration and customizations:** [komadorirobin](https://github.com/komadorirobin),
@@ -212,7 +214,7 @@ upload settings backups.
   **Credits and licenses**. Free download does not make every asset public domain.
 
 Both component licenses, notices and imported Git histories are retained.
-Beta 3 integrates Bookshelf **5.5.5** and SimpleUI **2.7.5**; exact imported and
+Beta 4 integrates Bookshelf **5.5.5** and SimpleUI **2.7.5**; exact imported and
 reviewed upstream revisions are recorded in [sources.json](sources.json).
 Upstream updates are reviewed and merged, not automatically installed.
 

@@ -1,4 +1,6 @@
 package.path = "./?.lua;./?/init.lua;" .. package.path
+package.loaded.logger = { warn=function() end }
+package.loaded.device = { isKobo=function() return false end }
 
 local home_dir = "/books"
 local files = { "/books/billy-bat-02.cbz", "/books/100%.epub", "/books/unknown.epub" }

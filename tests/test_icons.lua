@@ -6,6 +6,7 @@ local VectorIcons = require("core/orbitui_vector_icons")
 local Adapter = require("adapters/orbitui_icons")
 local Widget = H.widget()
 function Widget:getSize() return { w = self.width or 24, h = self.height or 24 } end
+function Widget:getWidth() return self:getSize().w end
 function Widget:free() end
 function Widget:_render() end
 function Widget:paintTo() end
@@ -34,6 +35,8 @@ function Image:_render()
     f:close()
 end
 package.loaded["infra/sui_store"] = {
+    memoize = function(fn) return fn end,
+    isTrue = function(_, k) return store[k] == true end,
     get = function(_, k) return store[k] end,
     set = function(_, k, v) store[k] = v; writes = writes + 1 end,
     del = function(_, k) store[k] = nil; writes = writes + 1 end,
@@ -68,6 +71,9 @@ local has_keys = false
 package.loaded["device"] = { screen = screen, input = { group = { Back = { "Back" } } },
     hasKeys = function() return has_keys end, hasDPad = function() return has_keys end }
 package.loaded["ui/uimanager"] = manager
+package.preload["infra/sui_virtual_paths"] = function()
+    return dofile("components/simpleui/infra/sui_virtual_paths.lua")
+end
 package.loaded["ui/rendertext"] = {}
 package.loaded["ui/font"] = { getFace = function(_, name, size)
     assert(not name:lower():find("material", 1, true), "Material must never load as a text font")
@@ -106,12 +112,30 @@ package.loaded["lib/bookshelf_icons_catalogue"] = {
 package.loaded["lib/bookshelf_nerdfont_names"] = { { code = 0xF02D, name = "book" } }
 package.loaded["infra/sui_aa_paint"] = {}
 package.loaded["infra/sui_core"] = {
+    getPortraitDims = function() return math.min(screen.width, screen.height), math.max(screen.width, screen.height) end,
     makeColoredText = function(opts) return Widget:new(opts) end,
     wrapDimmable = function(w, dim) w.dim = dim; return w end,
     makeAlphaMaskWidget = function(inner, fg, dimen)
         return Widget:new{ _inner = inner, _fg = fg, dimen = dimen }
     end,
 }
+-- Exercise real ActionSheet picker callbacks; only the native window is stubbed.
+local SheetWindow = Widget:extend{}
+function SheetWindow:show() manager:show(self) end
+function SheetWindow:close() manager:close(self) end
+package.loaded["engines/sui_window"] = SheetWindow
+package.loaded["ui/widget/textboxwidget"] = Widget
+package.preload["engines/sui_action_sheet"] = function()
+    return dofile("components/simpleui/engines/sui_action_sheet.lua")
+end
+local function pickerRows()
+    local upvalues = debug.getinfo(shown.screens.__root__, "u").nups
+    for i = 1, upvalues do
+        local name, value = debug.getupvalue(shown.screens.__root__, i)
+        if name == "opts" then return value.sections[1].rows end
+    end
+    error("ActionSheet options missing")
+end
 package.preload["infra/sui_menu_hooks"] = function() return dofile("components/simpleui/infra/sui_menu_hooks.lua") end
 package.preload["infra/sui_icon_registry"] = function() return dofile("components/simpleui/infra/sui_icon_registry.lua") end
 local language = "en"
@@ -119,6 +143,7 @@ G_reader_settings = { readSetting = function(_, key) if key == "language" then r
 package.loaded["infra/sui_raster_cache"] = dofile("components/simpleui/infra/sui_raster_cache.lua")
 package.loaded["ui/widget/widget"] = Widget
 package.loaded["infra/sui_backdrop"] = dofile("components/simpleui/infra/sui_backdrop.lua")
+package.loaded["features/sui_wallpaper"] = {}
 local Config = Adapter.wrap("infra/sui_config", dofile("components/simpleui/infra/sui_config.lua"))
 package.loaded["infra/sui_config"] = Config
 local Style = Adapter.wrap("features/sui_style", dofile("components/simpleui/features/sui_style.lua"))
@@ -472,13 +497,13 @@ H.test("existing picker exposes Material and returns to the same picker on cance
     local handle = {}
     QA.showIconPicker("nerd:F02D", function() end, "Default", handle, "picker", true)
     local original, material = shown
-    for _, row in ipairs(shown.buttons) do
+    for _, row in ipairs(pickerRows()) do
         if row[1].text == "Material Symbols Rounded..." then material = row[1] end
     end
     assert(material)
     material.callback(); assert(shown.config)
     shown.config.footer_actions[1].on_tap(); deferred[#deferred]()
-    assert(shown ~= original and shown.buttons)
+    assert(shown ~= original and shown.screens)
     H.eq(handle.picker, shown)
 end)
 H.test("Material is not a pack and legacy apply requests never overwrite settings", function()
@@ -512,7 +537,7 @@ H.test("opening the individual picker and cancelling writes nothing; selection c
         QA.showIconPicker(QA.getDefaultActionIcon("bookshelf_comics"), function(value)
             QA.setDefaultActionIcon("bookshelf_comics", value)
         end, "Default", {}, "picker", true)
-        for _, row in ipairs(shown.buttons) do
+        for _, row in ipairs(pickerRows()) do
             if row[1].text == "Material Symbols Rounded..." then row[1].callback(); return end
         end
         error("Material picker is missing")
@@ -737,7 +762,7 @@ H.test("new sources are per-icon choices only and cancelling never saves", funct
             QA.showIconPicker(QA.getDefaultActionIcon("bookshelf_comics"), function(value)
                 QA.setDefaultActionIcon("bookshelf_comics", value)
             end, "Default", {}, "picker", true)
-            for _, row in ipairs(shown.buttons) do
+            for _, row in ipairs(pickerRows()) do
                 if row[1].text == (source.title or source.label) .. "..." then row[1].callback(); return end
             end
             error("Source missing: " .. source.key)

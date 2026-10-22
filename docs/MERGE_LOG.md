@@ -2853,6 +2853,56 @@ default heart. The install guide now identifies Storefront 26.10.20 as containin
 PR #5078's embedded-root fix; its external-import device test is still pending.
 Preserve the separate unpushed design branch and artwork hold.
 
+## 2026-10-22: SimpleUI dialogs and Beta 4 publication preparation
+
+The user explicitly requested merging the remaining SimpleUI upstream changes,
+publishing and drafting (not posting) an English reply about tab compatibility.
+SimpleUI main advances from `7eb80f9e570e6351c55f501f91e1a29c1442b756` to
+`dd541fc2b384af43287474587622ef68a2fb3185` (still 2.7.5), containing
+`58e0ce66`'s dialog refactor and `dd541fc2`'s active-tab frame fit. Bookshelf
+stays at `065f25c0` (5.5.5 + PR #544); no fresh Bookshelf import is implied.
+
+Import `732714d6` is an unsquashed subtree merge on
+`maintenance/simpleui-dialogs-beta4-20261022`. Nine file conflicts were resolved
+individually. New window-step registration keeps navigation-generation guards,
+destination-safe displaced-screen handover, ProgressSync and owned menu hooks.
+The new soft-park promotion replaces the unused old warm helper and retains
+immediate refresh. Window hooks deactivate rather than overwrite third-party
+wrappers during teardown. New ActionSheet icon choices retain all OrbitUI icon
+sources and both call signatures. Book opening retains bridge preparation;
+the Home helper export and extra-row refresh callbacks remain compatible.
+Metadata ignore flags coexist with the bounded cache, invalidation and
+progress-only/prefetched fast paths; non-Kobo paths avoid provider lookups.
+Chinese single-plural translations remain valid.
+
+Separate adaptation work retains the native file-browser book action sheet
+(including file operations) while keeping OrbitUI's detail panel on Home.
+The panel consumes upstream's navigation-row registry when the old explicit
+row-id option is absent. Nine new canonical modules bring the map to 327.
+SimpleUI's upstream LICENSE now contains GPL-3.0; the original MIT copyright
+and permission notice remains in `LICENSE-MIT-ORIGINAL.txt`. `sources.json`
+distinguishes original import licensing from the current component license.
+
+Reviewed C01-C11, especially C02/C05 navigation, C03 book opening, C04 caches,
+C06 plugin wrappers and C07 grid/settings. No upstream feature is deliberately
+deferred. Tabbed Grid already existed before this merge; only its frame fit
+changes here. No bootstrap/API, artwork, settings reset or reading-data migration.
+
+Release gate: sequential full Lua/LuaJIT suites, translations, clean-commit
+package audit, outgoing secret/held-artwork checks, native OTA from public
+Beta 3 with restart/rollback, both CI refs and exact draft/public bytes.
+Evidence: `test-results/beta4-20261022/`. Added tests cover window ordering,
+error propagation, later wrappers/stale owners, scheduled navigation, store
+memoization, optional virtual paths, file-browser/Home routing, ignored metadata
+and whitespace outside the active Tabbed Grid frame. Existing icon and book
+panel tests now exercise the new API rather than discard prior assertions.
+
+Publication is approved as a prerelease, not physical-device acceptance.
+Dialogs, touch/keyboard navigation, suspend/resume and third-party plugin
+interactions still need a physical-reader smoke test. Internal OTA requires
+no bridge; code rollback retains settings and reading data. Preserve the
+unpublished alternate-design branch and the held-artwork exclusion.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

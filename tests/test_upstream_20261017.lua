@@ -17,6 +17,7 @@ end
 local function noop() end
 local settings = {}
 local store = {
+    memoize = function(fn) return fn end,
     readSetting = function(_, k) return settings[k] end,
     saveSetting = function(_, k, v) settings[k] = v end,
     get = function(_, k) return settings[k] end,
@@ -177,7 +178,7 @@ local stack, fm, shown, hs, manager = {}, {}, {}, {}, {}
 package.loaded["apps/filemanager/filemanager"] = {instance = fm}
 package.loaded["engines/sui_screen_engine"] = {getInstance = function() end}
 package.loaded["infra/sui_screen_nav"] = {reopen = function(id) shown[#shown + 1] = id end}
-local reopen = run(section(patches, "local function _doShowHS", "    UIManager.close =")
+local reopen = run(section(patches, "local function _doShowHS", "-- Gate of the reopen step")
     .. "\nreturn _doShowHS", {
         UIManager = manager, isAppExiting = function() return false end,
         liveHS = function() return hs end, UI = {getWindowStack = function() return stack end},

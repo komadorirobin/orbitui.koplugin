@@ -262,7 +262,7 @@ end)
 H.test("tab grid rebuilds only its selected source without changing module height", function()
     settings = {}
     home = "/books"
-    local strip, spec, pages, repaints, source_seen, covers_seen
+    local strip, spec, pages, repaints, source_seen, covers_seen, framed_body
     pages, repaints = {}, 0
     local W = {}
     function W:new(t)
@@ -311,7 +311,7 @@ H.test("tab grid rebuilds only its selected source without changing module heigh
         contentWidth = function(w) return w - 20 end,
         boxInset = function() return 4 end,
         inset = function(w) return w end,
-        wrap = function(w) return w end,
+        wrap = function(w) framed_body = w; return w end,
     }
     local imports = {
         ["infra/sui_i18n"] = { translate = identity },
@@ -342,6 +342,9 @@ H.test("tab grid rebuilds only its selected source without changing module heigh
     local height = mod.getHeight(ctx)
     local first = mod.build(300, ctx)
     H.eq(first:getSize().h, height); H.eq(first[1].eraser, true)
+    -- Empty height belongs outside the visible frame, not after its pager.
+    H.eq(framed_body[#framed_body].width, nil)
+    assert(first[2][#first[2]].width > 0)
     H.eq(source_seen, "recent"); H.eq(pages.tab_grid_1, 1)
     pages.tab_grid_1 = 3; strip.on_select(1); H.eq(pages.tab_grid_1, 1)
     ctx[spec.cache_key] = { "stale" }

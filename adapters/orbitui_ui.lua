@@ -47,7 +47,11 @@ function M.wrap(name, module)
                 or widget.name == "ReaderUI")
         end
     elseif name == "features/library/sui_book_hold_dialog" then
-        module.show = function(file, opts) return require("adapters/orbitui_book_panel").show(file, opts) end
+        local show = module.show
+        module.show = function(file, opts)
+            if opts and opts.file_chooser then return show(file, opts) end
+            return require("adapters/orbitui_book_panel").show(file, opts)
+        end
     elseif name == "features/library/sui_library_search" then
         module.show = function(opts) return require("core/orbitui_search").show(opts) end
     elseif name == "lib/bookshelf_widget" then

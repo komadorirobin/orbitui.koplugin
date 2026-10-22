@@ -118,6 +118,22 @@ test("BIM change listeners refresh indexed fields and series without waiting for
     assert(SH.getBookSeries(fp).series == "New")
 end)
 
+test("ignored metadata is respected without losing page counts or cached fast paths", function()
+    local fp = "/books/ignored.epub"
+    SH.invalidateSidecarCache()
+    settings.doc_props = {title="Sidecar title", authors="Writer"}
+    book_info = {title="Indexed", pages=42, description="Hidden", ignore_meta=true}
+    local b = SH.getBookData(fp)
+    assert(b.title == "ignored" and b.authors == "" and b.description == "" and b.pages == 42)
+    local before = bim_reads
+    b = SH.getBookData(fp, {title="Prefetched", doc_pages=42}, {skip_description=true})
+    assert(b.title == "ignored" and bim_reads == before)
+    book_info.ignore_meta = false
+    for _, listener in ipairs(info_listeners) do listener(fp) end
+    assert(SH.getBookData(fp).title == "Sidecar title")
+    settings = {}
+end)
+
 local persisted = {}
 local ledger = { books = {} }
 package.loaded["infra/sui_store"] = {

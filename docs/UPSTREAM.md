@@ -146,6 +146,17 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
+- October 22 SimpleUI follow-up: integrate main `dd541fc2` (still 2.7.5),
+  including the new action sheets/window-step hooks and content-fitted Tabbed
+  Grid frame. Bookshelf stays at `065f25c0` (5.5.5 + PR #544). Port navigation
+  generation/displacement guards into registered window steps; obsolete
+  `_raiseHSFromStack` is replaced by the soft-park helper, retaining immediate
+  stale-data refresh. Keep owner-safe teardown even beneath later wrappers.
+  Preserve the one-shot Home helper export, old/new icon-picker signatures and
+  extra icon sources, book-open bridge calls, extra-row refresh callbacks,
+  bounded metadata caching and non-Kobo virtual-path fast path. Regenerate the
+  map to 327 paths. Current upstream is GPL-3.0; retain the original MIT notice
+  separately. See `test_simpleui_dialog_merge` and the merge log.
 - October 22 reviewed merge: Bookshelf master `065f25c0`, including 5.5.5
   (`2d26fd7f`) and PR #544's Shelf size translator fix. SimpleUI stays pinned
   at `7eb80f9e`. Retain the shared sidecar count helper and rendered-count

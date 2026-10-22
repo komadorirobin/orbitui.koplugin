@@ -138,10 +138,34 @@ H.test("a broken extra-row provider cannot break the native panel", function()
     local c = Panel.controller(file, { extra_rows = function() error("unavailable") end })
     H.eq(#c:_fileDialogPluginRows(file), 2)
 end)
+H.test("Home honors the upstream navigation registry when callers omit legacy row ids", function()
+    package.loaded["features/library/sui_hold_rows"] = { NAVIGATING_ROW_IDS={sui_browse_author=true} }
+    local navigated_here, refreshed_here = 0, 0
+    local c = Panel.controller(file, {
+        navigate_fn=function() navigated_here=navigated_here+1 end,
+        refresh_fn=function() refreshed_here=refreshed_here+1 end,
+    })
+    c:_orbitui_file_dialog_close("sui_browse_author")()
+    H.eq(navigated_here, 1); H.eq(refreshed_here, 0)
+    c:_orbitui_file_dialog_close("other")()
+    H.eq(navigated_here, 1); H.eq(refreshed_here, 1)
+end)
+H.test("file-browser book actions retain the native sheet and file-operation context", function()
+    local chooser, called = {}, 0
+    local module = require("adapters/orbitui_ui").wrap("features/library/sui_book_hold_dialog", {
+        show=function(path, opts)
+            H.eq(path, file); H.eq(opts.file_chooser, chooser); called=called+1
+            return "native-sheet"
+        end,
+    })
+    H.eq(module.show(file, {file_chooser=chooser}), "native-sheet"); H.eq(called, 1)
+    assert(module.show(file).bw._orbitui_detail_only)
+    H.eq(called, 1)
+end)
 H.test("Book Information preserves Home through the native one-shot helper and chains its close callback", function()
     local f = assert(io.open("components/simpleui/features/library/sui_book_hold_dialog.lua"))
     local text = f:read("*a"); f:close()
-    local body = assert(text:match("local function _keepHomescreenAliveForNextShow%(%)\n(.-)\nend\n"))
+    local body = assert(text:match("local function keepHomescreenForNextShow%(%)\n(.-)\nend\n"))
     local env = setmetatable({ UIManager = UI }, { __index = _G })
     local code = "return function()\n" .. body .. "\nend"
     local helper

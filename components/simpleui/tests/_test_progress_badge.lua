@@ -1,4 +1,5 @@
 package.path = "./?.lua;./?/init.lua;" .. package.path
+package.loaded.logger = { warn=function() end }
 
 local function widget(_self, opts) return opts end
 package.loaded["infra/sui_i18n"] = { translate = function(s) return s end }
