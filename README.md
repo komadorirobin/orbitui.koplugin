@@ -21,6 +21,17 @@ the original creators.
 > disable them and restart KOReader before installing OrbitUI. Never run them
 > alongside OrbitUI. Keep their files and settings for backup and rollback.
 
+## Screenshots
+
+| Reading dashboard | Book shelves | Manga series |
+| --- | --- | --- |
+| [![Reading dashboard with reading progress, goals and paginated book rows](docs/screenshots/reading-dashboard.jpg)](docs/screenshots/reading-dashboard.jpg) | [![Physical bookshelf view with book covers and a framed-print ornament](docs/screenshots/book-shelves.jpg)](docs/screenshots/book-shelves.jpg) | [![Manga series boxes with MAL star ratings, read-volume counts and a motorcycle ornament](docs/screenshots/manga-series.jpg)](docs/screenshots/manga-series.jpg) |
+
+Click a screenshot to view it full-size. This is an example **customized setup**,
+not a fixed default: choose your own wallpaper, navigation buttons, sections and
+layout. Ornaments are optional add-ons. The manga star ratings come from the
+separate [MyAnimeList Manga Sync plugin](https://github.com/komadorirobin/myanimelist.koplugin).
+
 ## Why combine them?
 
 SimpleUI provides a modular Home screen, reading statistics and navigation bars.
