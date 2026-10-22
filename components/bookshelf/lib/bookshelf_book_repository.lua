@@ -1760,6 +1760,13 @@ local function _readDocSetting(ds, key)
     return ok and value or nil
 end
 
+-- An absent preference preserves legacy fallback; explicit false must never
+-- use publisher labels, even when KOReader still stores them in the sidecar.
+local function _stablePagesOn(ds)
+    local ok, use = pcall(ds.readSetting, ds, "pagemap_use_page_labels")
+    return not (ok and use == false)
+end
+
 local function _docSettingsPageCount(ds)
     local use_page_labels = _readDocSetting(ds, "pagemap_use_page_labels") == true
     if use_page_labels then
@@ -1773,7 +1780,7 @@ local function _docSettingsPageCount(ds)
     local rendered_pages = tonumber(_readDocSetting(ds, BOOKSHELF_RENDERED_PAGE_COUNT_KEY))
     if rendered_pages then return rendered_pages, "render" end
 
-    if not use_page_labels then
+    if not use_page_labels and _stablePagesOn(ds) then
         local stable_pages = tonumber(_readDocSetting(ds, "pagemap_doc_pages"))
         if stable_pages then return stable_pages, "stable" end
     end
@@ -2081,6 +2088,7 @@ function Repo.buildBook(filepath, opts)
     -- page_count nil) because it doubles as the progress-cache seed
     -- below, which must match what readProgress would compute for this
     -- file - readProgress never sees BIM's count.
+    local stable_on = _stablePagesOn(ds)
     local ds_page_count, ds_page_src = _docSettingsPageCount(ds)
     local fallback_page_count = Repo.pageCountFor(filepath, ds_page_count)
     if ds_page_count and _prefersDocSettingsPageCount(filepath, book.format) then
@@ -2110,7 +2118,7 @@ function Repo.buildBook(filepath, opts)
     -- won; readProgress had always preferred the label, so the shelf row and
     -- the hero disagreed about the same book the moment %page_num started
     -- rendering on rows.
-    if not book.page_num then
+    if not book.page_num and stable_on then
         local label = ds:readSetting("pagemap_current_page_label")
         if label then
             local n = tonumber(label)
@@ -2812,11 +2820,33 @@ local READ_STATE_SORT_TOKENS = {
     "s:last_opened:", "s:percent_read:", "s:read_status", "s:rating:",
     "s:added_or_opened:",
 }
+-- The same sorts by key, for caches that spell the priority differently.
+local READ_STATE_SORT_KEYS = {
+    last_opened = true, percent_read = true, read_status = true,
+    read_status_active = true, rating = true, added_or_opened = true,
+    percent_natural = true,
+}
 function Repo.invalidateReadStateCache()
     for k in pairs(_bySource_cache) do
         for _i, tok in ipairs(READ_STATE_SORT_TOKENS) do
             if k:find(tok, 1, true) then
                 _bySource_cache[k] = nil
+                break
+            end
+        end
+    end
+    -- And getAll's own listings, the Home (folders) and folder shelves (issue
+    -- 519): their cache key spells the priority as "<key>[R]" joined by
+    -- commas, not the "s:<key>:" tokens above, so it is matched by sort key.
+    -- Missed before, a Home shelf sorted by Added or opened kept the book just
+    -- closed where it was until a refresh, the file poll or a restart.
+    for k in pairs(_all_cache) do
+        local a = k:find("\0", 1, true)
+        local b = a and k:find("\0", a + 1, true)
+        local prio = (a and b) and k:sub(a + 1, b - 1) or ""
+        for part in prio:gmatch("[^,]+") do
+            if READ_STATE_SORT_KEYS[(part:gsub("R$", ""))] then
+                _all_cache[k] = nil
                 break
             end
         end
@@ -2962,6 +2992,40 @@ function Repo.invalidateLightMeta()
     _invalidateCustomMetaGate()
 end
 
+-- Repo.effectiveRating(fp, own) -> the rating a book counts as, or nil.
+-- The reader's own rating (own, whole stars; 0 means none), else, with the
+-- Hardcover "Use Hardcover rating if no user rating" switch on, the
+-- Hardcover average already cached for a linked book (fractional). Covers,
+-- the Rating sort, the Ratings shelf and its filter all ask here, so one
+-- book cannot show four stars on its cover and sort as unrated (issue 538).
+-- Never the book menu's own stars: those are the reader's rating to set.
+-- Nothing is fetched; a book without a cached Hardcover rating is unrated.
+function Repo.effectiveRating(fp, own)
+    own = tonumber(own)
+    if own and own > 0 then return own end
+    if not (fp and BookshelfSettings.isTrue("hardcover_rating_fallback")) then return nil end
+    local ok, HC = pcall(require, "lib/bookshelf_hardcover")
+    if not (ok and HC and HC.isAvailable and HC.getLink and HC.getCachedRating) then return nil end
+    local ok_a, avail = pcall(HC.isAvailable)
+    if not (ok_a and avail) then return nil end
+    local ok_l, link = pcall(HC.getLink, fp)
+    if not (ok_l and link and link.book_id) then return nil end
+    local ok_r, hr = pcall(HC.getCachedRating, link.book_id)
+    hr = ok_r and tonumber(hr) or nil
+    if hr and hr > 0 then return hr end
+    return nil
+end
+
+-- Repo.effectiveRatingStars(fp, own) -> 1..5, or nil: effectiveRating to
+-- the nearest whole star, for the Ratings shelf's buckets and its filter.
+function Repo.effectiveRatingStars(fp, own)
+    local r = Repo.effectiveRating(fp, own)
+    if not r then return nil end
+    local n = math.floor(r + 0.5)
+    if n < 1 then n = 1 elseif n > 5 then n = 5 end
+    return n
+end
+
 -- Cached read of a file's percent_finished + summary.status + summary.rating
 -- + page count. Returns (pct, status, rating, page_count). Any field may
 -- be nil. A pcall guards a corrupt sdr sidecar so the caller's loop
@@ -2994,6 +3058,7 @@ function Repo.readProgress(filepath)
             rating = tonumber(summary.rating)
             _finished_on[filepath] = summary.modified or false
         end
+        local stable_on = _stablePagesOn(ds)
         page_count, page_src = _docSettingsPageCount(ds)
         -- CURRENT page, in buildBook's own precedence, so a shelf row and the
         -- hero never disagree about where the reader is in the same book: the
@@ -3003,7 +3068,7 @@ function Repo.readProgress(filepath)
         -- resolver at all before, so it rendered empty everywhere except the
         -- hero, which builds its one book the expensive way.
         local ok_lbl, label = pcall(ds.readSetting, ds, "pagemap_current_page_label")
-        if ok_lbl and label then page_num = tonumber(label) end
+        if stable_on and ok_lbl and label then page_num = tonumber(label) end
         if not page_num then
             local ok_lp, last_page = pcall(ds.readSetting, ds, "last_page")
             if ok_lp then page_num = tonumber(last_page) end
@@ -5140,7 +5205,7 @@ function Repo.getAll(path, limit, offset, sort_priority, filter, opts)
                 local pct, status, rating, page_count = Repo.readProgress(e.fp)
                 e._pct    = pct
                 e._status = status
-                if needs.rating     then e.rating     = rating     end
+                if needs.rating     then e.rating     = Repo.effectiveRating(e.fp, rating) end
                 if needs.page_count then e.page_count = page_count end
             end
         end
@@ -6945,14 +7010,15 @@ local function _prefetchSortProgress(recs, sort_priority, tag)
                 local pct, status, rating, page_count = Repo.readProgress(b.filepath)
                 b._pct       = pct
                 b._status    = status
-                b.rating     = b.rating or rating
+                b.rating     = b.rating or Repo.effectiveRating(b.filepath, rating)
                 b.page_count = b.page_count or page_count
                 full_read    = full_read + 1
             else
                 b._pct      = nil
                 b._status   = nil
-                -- rating / page_count stay nil too -- unread books
-                -- can't be rated and have no sidecar page map
+                -- No sidecar: no rating of the reader's own and no page map.
+                -- A Hardcover rating can still stand in (effectiveRating).
+                b.rating     = b.rating or Repo.effectiveRating(b.filepath, nil)
                 fast_skipped = fast_skipped + 1
             end
             b._progress_fetched = true
@@ -7763,6 +7829,8 @@ local function _buildRatingGroups()
                 local _p, _s, r = Repo.readProgress(c.fp)
                 rating = r
             end
+            -- To whole stars for the buckets, with the Hardcover stand-in.
+            rating = Repo.effectiveRatingStars(c.fp, rating)
             -- Bucket key: only an integer 1..5 is a star bucket; everything
             -- else (nil, 0 = KOReader's "no rating", a float, out of range)
             -- is Unrated. NB 0 is TRUTHY in Lua, so `rating or "unrated"`
@@ -9304,10 +9372,12 @@ function Repo.getBySource(source, filter, sort_priority, offset, limit, scope_or
             if raw == "unrated" or target == 0 then target = nil end
             candidates = loadCandidatesByPredicate(function(b)
                 if not b._progress_fetched and b.filepath then
+                    local own
                     if _hasSidecar(b.filepath) then
                         local _p, _s, r = Repo.readProgress(b.filepath)
-                        b.rating = r
+                        own = r
                     end
+                    b.rating = Repo.effectiveRatingStars(b.filepath, own)
                     b._progress_fetched = true
                 end
                 return b.rating == target
