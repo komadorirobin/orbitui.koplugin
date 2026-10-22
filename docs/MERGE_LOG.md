@@ -2897,6 +2897,16 @@ memoization, optional virtual paths, file-browser/Home routing, ignored metadata
 and whitespace outside the active Tabbed Grid frame. Existing icon and book
 panel tests now exercise the new API rather than discard prior assertions.
 
+Full sequential runs passed: 832/833 OrbitUI cases in 67 files under
+Lua/LuaJIT, 410 Bookshelf suites and all 13 SimpleUI test files. All 115 Python
+tests passed with four unchanged external-source skips. The two native SQLite
+suite skips and existing font/parity limitations remain unchanged. All 43
+translation catalogues, 327 module paths and 914 LuaJIT syntax checks passed.
+Local native archive/SHA OTA from Beta 3 passed upgrade, restart, code rollback,
+truncated-download recovery and the external-runtime snapshot path. Package and
+outgoing-history audits found no held artwork; Gitleaks found no secrets in
+the outgoing commits. Final CI/draft/public verification remains a release gate.
+
 Publication is approved as a prerelease, not physical-device acceptance.
 Dialogs, touch/keyboard navigation, suspend/resume and third-party plugin
 interactions still need a physical-reader smoke test. Internal OTA requires
