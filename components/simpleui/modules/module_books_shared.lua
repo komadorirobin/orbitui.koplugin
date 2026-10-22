@@ -16,41 +16,12 @@ local util            = require("util")
 local Config          = require("infra/sui_config")
 local SUIStyle        = require("features/sui_style")
 local CoverPlaceholder = require("engines/sui_cover_placeholder")
+local VirtualPaths     = require("infra/sui_virtual_paths")
 
 local math_floor = math.floor
 local math_max   = math.max
 local math_min   = math.min
 
--- Returns the KOBO_VIRTUAL:// path for a real kepub filepath when the
--- kobo.koplugin is active, or the original filepath otherwise.
--- This ensures that covers and sidecars are looked up via the virtual path
--- (which the kobo.koplugin's BookInfoManager patch understands), and that
--- openBook always passes a virtual path to DocumentRegistry so DRM
--- decryption is triggered correctly.
-local _kobo_virtual_library
-local function _koboVirtualPath(fp)
-    -- Avoid consulting PluginLoader for every history row on Android/Kindle.
-    if not (Device.isKobo and Device:isKobo()) then return fp end
-    if _kobo_virtual_library then
-        local vl = _kobo_virtual_library
-        if vl:isVirtualPath(fp) then return fp end
-        if not next(vl.virtual_to_real) then
-            pcall(function() vl:buildPathMappings() end)
-        end
-        return vl:getVirtualPath(fp) or fp
-    end
-    local ok, PluginLoader = pcall(require, "pluginloader")
-    if not ok or not PluginLoader then return fp end
-    local kobo = PluginLoader:getPluginInstance("kobo_plugin")
-    if not kobo or not kobo.virtual_library then return fp end
-    local vl = kobo.virtual_library
-    _kobo_virtual_library = vl
-    if vl:isVirtualPath(fp) then return fp end
-    if not next(vl.virtual_to_real) then
-        pcall(function() vl:buildPathMappings() end)
-    end
-    return vl:getVirtualPath(fp) or fp
-end
 
 local SH = {}
 
@@ -730,7 +701,8 @@ local function _bimFields(fp)
     end
     fields = {
         title = info.title, authors = info.authors, pages = info.pages,
-        description = description, resolved_at = os.time(),
+        description = description, ignore_meta = info.ignore_meta and true or false,
+        resolved_at = os.time(),
     }
     if not _bim_fields[fp] then
         if #_bim_order >= 256 then
@@ -780,14 +752,18 @@ function SH.getBookData(filepath, prefetched, opts)
     local status = type(summary) == "table" and summary.status or nil
     if opts.progress_only then return { percent = data.percent or 0, status = status } end
     local needs_description = not opts.skip_description and data.description == nil
-    local bim
-    if not data.doc_pages or not data.title or data.title == "" or needs_description then
+    local bim = _bim_fields[filepath]
+    if prefetched == nil or not data.doc_pages or not data.title or data.title == "" or needs_description then
         bim = _bimFields(filepath)
     end
-    local title, authors = data.title, data.authors
-    if (not title or title == "") and bim and bim.title and bim.title ~= "" then
-        title   = bim.title
-        authors = authors and authors ~= "" and authors or bim.authors
+    local ignore_meta = (bim and bim.ignore_meta) or data.ignore_meta
+    local title, authors
+    if not ignore_meta then
+        title, authors = data.title, data.authors
+        if (not title or title == "") and bim and bim.title and bim.title ~= "" then
+            title = bim.title
+            authors = authors and authors ~= "" and authors or bim.authors
+        end
     end
     if not title or title == "" then
         title = filepath:match("([^/]+)%.[^%.]+$") or "?"
@@ -805,7 +781,7 @@ function SH.getBookData(filepath, prefetched, opts)
         percent     = data.percent or 0,
         title       = title,
         authors     = authors or "",
-        description = description,
+        description = not ignore_meta and description or "",
         pages       = pages,
         avg_time    = _avgPageTime(filepath, data),
         status      = type(summary) == "table" and summary.status or nil, -- "complete" | "abandoned" | nil
@@ -1013,12 +989,10 @@ function SH.prefetchBooks(show_currently, show_recent, max_recent, opts)
         local entry = ReadHistory.hist[i]
         local fp = entry and entry.file
         if fp and _fileExistsCheck(fp) then
-            -- Normalise to KOBO_VIRTUAL:// if this is a real kepub path saved
-            -- by the kobo.koplugin into ReadHistory. Using the virtual path as
-            -- the key ensures cover extraction and sidecar lookups go through
-            -- the kobo.koplugin's BookInfoManager patch, and that openBook
-            -- passes the correct path to DocumentRegistry for DRM decryption.
-            fp = _koboVirtualPath(fp)
+            -- A book known to a virtual library is keyed by its virtual path, so
+            -- cover extraction, sidecar lookups and opening all go through the
+            -- library's own handling.
+            fp = VirtualPaths.toVirtual(fp)
             local is_current = show_currently and not claimed_current
             if is_current then
                 claimed_current = true

@@ -350,6 +350,7 @@ local function buildScreens(st)
         return {
             SUI.ListRow{
                 title        = _("Home Screen"),
+                left_icon    = "home",
                 subtitle     = _("Layout, wallpaper, presets and behaviour"),
                 inner_w      = iw,
                 show_chevron = true,
@@ -357,6 +358,7 @@ local function buildScreens(st)
             },
             SUI.ListRow{
                 title        = _("Bars"),
+                left_icon    = "bars",
                 subtitle     = _("Status, title, navigation and pagination"),
                 inner_w      = iw,
                 show_chevron = true,
@@ -364,6 +366,7 @@ local function buildScreens(st)
             },
             SUI.ListRow{
                 title        = _("Library"),
+                left_icon    = "library",
                 subtitle     = _("Book-browser settings"),
                 inner_w      = iw,
                 show_chevron = true,
@@ -371,6 +374,7 @@ local function buildScreens(st)
             },
             SUI.ListRow{
                 title        = _("Style"),
+                left_icon    = "style",
                 subtitle     = _("Icons, fonts and appearance"),
                 inner_w      = iw,
                 show_chevron = true,
@@ -378,6 +382,7 @@ local function buildScreens(st)
             },
             SUI.ListRow{
                 title        = _("Quick Actions"),
+                left_icon    = "quick_actions",
                 subtitle     = _("Global custom actions & icons"),
                 inner_w      = iw,
                 show_chevron = true,
@@ -392,6 +397,7 @@ local function buildScreens(st)
             },
             SUI.ListRow{
                 title        = _("About"),
+                left_icon    = "info",
                 subtitle     = _("Version, author and updates"),
                 inner_w      = iw,
                 show_chevron = true,
@@ -1150,6 +1156,7 @@ function SettingsWindow:show(on_close, nav_path)
     local Config = require("infra/sui_config")
     local win = SUI:new{
         name           = "sui_win_settings",
+        icon           = "settings",
         screens        = screens,
         screen_titles  = titles,
         navpager_mode  = Config.isNavpagerEnabled(),
