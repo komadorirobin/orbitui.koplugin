@@ -10,7 +10,7 @@ These projects are the foundation of OrbitUI, not just inspiration: their code,
 interfaces and features are included and adapted here. Please support and credit
 the original creators.
 
-**[Download Beta 2](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.2)**
+**[Download Beta 3](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.3)**
 | [Install](#installation)
 | [Switch from SimpleUI / Bookshelf](#already-using-simpleui-or-bookshelf)
 | [Feature guide](docs/FEATURES.md)
@@ -77,7 +77,7 @@ by the code license. See [add-on instructions](docs/ADDONS.md).
 ## Installation
 
 **Requirements:** KOReader **v2025.08 or newer**; v2026.03 or newer is recommended
-by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 2 is a
+by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 3 is a
 prerelease, not a promise of compatibility with every device or user patch.
 
 1. **Back up first.** Keep a copy of your KOReader settings, user patches,
@@ -87,7 +87,7 @@ prerelease, not a promise of compatibility with every device or user patch.
    manager and restart KOReader.** Disable both if you have both. Do not delete
    their settings or plugin folders.
 3. Download **`orbitui.koplugin.zip`** from the
-   [Beta 2 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.2).
+   [Beta 3 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.3).
    Do **not** use **Code > Download ZIP** or GitHub's **Source code** archives.
 4. Fully exit KOReader. Extract the ZIP and copy its **`orbitui.koplugin`**
    folder into your KOReader **`plugins/`** directory.
@@ -127,31 +127,31 @@ OrbitUI. Their local catalogs may need refreshing.
 after the backup and predecessor-disable steps above, find
 `komadorirobin/orbitui.koplugin`. In its download options, choose
 **Other releases...**, uncheck **Filter pre-releases**, select
-**v0.1.0-beta.2**, then select **`orbitui.koplugin.zip`**. Restart KOReader
-after installation. Beta 2 is not returned by GitHub's "latest stable release"
+**v0.1.0-beta.3**, then select **`orbitui.koplugin.zip`**. Restart KOReader
+after installation. Beta 3 is not returned by GitHub's "latest stable release"
 endpoint, so the default latest-release lookup may report that none exists.
 Do not choose **Direct download from repo**, **Source code**, the checksum
 file, or the add-on-only **ornaments-1** release.
 
 **[Storefront by ultimatejimmy](https://github.com/ultimatejimmy/storefront.koplugin):**
-OrbitUI is already listed, but **use the manual ZIP instructions above for now**.
-The installer checked in Storefront **26.10.17-beta2** mistakes the embedded
-SimpleUI component for the outer OrbitUI plugin. This can install into
-`simpleui.koplugin` instead of `orbitui.koplugin`, including an existing
-SimpleUI installation. A fix and regression tests have been submitted in
-[Storefront PR #5078](https://github.com/ultimatejimmy/storefront.koplugin/pull/5078).
-Wait for a Storefront release containing that fix before installing OrbitUI
-through it. Its cached catalog may also show an older OrbitUI prerelease.
+use **26.10.20 or newer**, which includes the
+[embedded-plugin detection fix](https://github.com/ultimatejimmy/storefront.koplugin/releases/tag/26.10.20).
+Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.3** and
+**`orbitui.koplugin.zip`** from its versions/releases options if the cached
+catalog still shows an older beta. Disable the predecessor plugins first as
+described above. Older affected installers (including **26.10.17-beta2**) can
+mistake embedded SimpleUI for the outer plugin and overwrite `simpleui.koplugin`;
+use the manual ZIP instructions rather than those versions.
 
 These instructions concern **first installation**. For subsequent OrbitUI
-updates, **OrbitUI's own updater remains the recommended path**. Install Beta 2
+updates, **OrbitUI's own updater remains the recommended path**. Install Beta 2 or later
 through it first: Beta 1 and earlier cannot detect an externally overwritten root
 while an older OTA version remains active.
 
 Beta 2 adds verified import of subsequently installed, newer external **release
 ZIPs**, preserving the active OTA snapshot for rollback. An extra restart is
-required to adopt the verified snapshot. This does not fix Storefront's separate
-installer issue above, and real-device testing of the external-import flow is
+required to adopt the verified snapshot. Storefront also needs its own installer
+fix as described above, and real-device testing of the external-import flow is
 still pending. See [external-update compatibility](docs/OTA.md#external-updates-beta-2-and-later).
 
 In-app ornaments are managed separately under **OrbitUI settings > Add-ons**.
@@ -185,7 +185,8 @@ to undo a UI change.
 
 ## Beta status and feedback
 
-**0.1.0-beta.2** is the current beta. The existing reader setup, upgrades and
+**0.1.0-beta.3** is the current beta. It integrates Bookshelf 5.5.5 and its
+subsequent Shelf size crash fix. The existing reader setup, upgrades and
 ornament menu were tried on the maintainer's device before Beta 1. Automated
 tests cover both Lua and LuaJIT, integration, packaging and the OTA installer,
 including Beta 2's external-update snapshots and rollback. The new external
@@ -211,7 +212,7 @@ upload settings backups.
   **Credits and licenses**. Free download does not make every asset public domain.
 
 Both component licenses, notices and imported Git histories are retained.
-Beta 2 integrates Bookshelf **5.5.4** and SimpleUI **2.7.5**; exact imported and
+Beta 3 integrates Bookshelf **5.5.5** and SimpleUI **2.7.5**; exact imported and
 reviewed upstream revisions are recorded in [sources.json](sources.json).
 Upstream updates are reviewed and merged, not automatically installed.
 

@@ -12,3 +12,24 @@ msgstr ""
 
 msgid "Cover size"
 msgstr "Omslagsstorlek"
+
+msgid "Heart (favorite)"
+msgstr "Hjärta (favorit)"
+
+msgid "Star (favorite)"
+msgstr "Stjärna (favorit)"
+
+msgid "Stars (rating)"
+msgstr "Stjärnor (betyg)"
+
+msgid "Favorite icon or star rating: %1"
+msgstr "Favoritikon eller stjärnbetyg: %1"
+
+msgid "Use Hardcover rating if no user rating"
+msgstr "Använd Hardcover-betyg om eget betyg saknas"
+
+msgid "Books you have not rated yourself use their Hardcover rating instead: in star ratings on covers, the Rating sort and the Ratings shelf. Only for books linked to Hardcover, from ratings already fetched."
+msgstr "Böcker som du inte har betygsatt själv använder sitt Hardcover-betyg: för stjärnbetyg på omslag, betygssortering och betygshyllan. Gäller bara böcker länkade till Hardcover och redan hämtade betyg."
+
+msgid "Bookshelf: refresh the library"
+msgstr "Bookshelf: uppdatera biblioteket"

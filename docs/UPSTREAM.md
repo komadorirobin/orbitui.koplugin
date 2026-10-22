@@ -146,6 +146,14 @@ not make semantic conflicts disappear.
 
 ## Current embedding changes
 
+- October 22 reviewed merge: Bookshelf master `065f25c0`, including 5.5.5
+  (`2d26fd7f`) and PR #544's Shelf size translator fix. SimpleUI stays pinned
+  at `7eb80f9e`. Retain the shared sidecar count helper and rendered-count
+  precedence while honoring explicit `pagemap_use_page_labels=false` for both
+  page totals and current labels. Keep lazy widget dependencies with the new
+  variable-width star glyphs. Ratings are opt-in and cached-only; preserve MAL
+  box ratings, per-profile shelves, bindings, ornaments and the OrbitUI updater.
+  No module-map changes. See the merge log and `test_upstream_20261022`.
 - October 19 reviewed merge: Bookshelf master `982375a7` (5.5.4), 29 incoming
   commits including the Paperback PR #536; SimpleUI remains at `7eb80f9e`.
   Native binding resolver/skins are fallbacks to host hooks. Keep OrbitUI's

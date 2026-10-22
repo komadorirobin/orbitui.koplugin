@@ -107,6 +107,15 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+The October 22 Bookshelf 5.5.5 import honors an explicit disabled stable-page
+preference in both hydrated metadata and progress-cache reads. Preserve the
+fork's doc_pages/rendered-cache precedence and never use stored publisher page
+labels when disabled. Ratings on covers/sorts use only cached Hardcover data
+when explicitly enabled, never write the user's rating or fetch while painting.
+Folder read-state sort invalidation retains scope-qualified keys and leaves
+unrelated title/filename caches usable. Cover-cache clearing also invalidates
+sampled spine colours, without removing page facts or status. C05/C07 still apply.
+
 Prewarming is idle-only, bounded and cancellable. No poll may live indefinitely
 after its owning screen/reader is gone. Reuse shared index/metadata work where
 the baseline does, but invalidate it on status, metadata, file or day changes.

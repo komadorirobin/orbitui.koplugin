@@ -2,6 +2,17 @@
 
 ## Automated
 
+2026-10-22 beta.3: reviewed Bookshelf 5.5.5 plus PR #544. Run both complete
+Lua/LuaJIT suites, including the upstream tests for base-shelf Back/Folder up,
+refresh action, cached ratings, read-state sort invalidation and spine colour
+reset. Additional regressions preserve doc_pages/rendered-cache priority with
+stable labels disabled, lazy variable-width glyph construction and the Shelf
+size translator after wrapping/repainting. Verify unchanged bootstrap and
+artwork, sealed packages, public bytes and native Beta 2 upgrade/rollback.
+No new physical-device test is claimed: check corner-star fit, tall top panels,
+gesture navigation, colour resampling and your Home/Library/Manga layout after
+updating. Evidence: `test-results/beta3-20261022/`.
+
 2026-10-19 beta.2: user requested publication after the reported headless tests
 and remaining device gap. No new physical-device result is claimed. Coverage
 includes complete external-root snapshots, deferred main-process activation,

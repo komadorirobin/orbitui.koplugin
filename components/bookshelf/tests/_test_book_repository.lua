@@ -438,6 +438,14 @@ test("readProgress: page-count sources preserve fork precedence through cache an
           pages = 312, source = "render" },
         { data = { pagemap_doc_pages = 211, stats = { pages = 99 } },
           pages = 211, source = "stable" },
+        { data = { pagemap_use_page_labels = false, pagemap_doc_pages = 211,
+                   doc_pages = 312, stats = { pages = 99 } },
+          pages = 312, source = "render" },
+        { data = { pagemap_use_page_labels = false, pagemap_doc_pages = 211,
+                   bookshelf_rendered_page_count = 312, stats = { pages = 99 } },
+          pages = 312, source = "render" },
+        { data = { pagemap_use_page_labels = false, pagemap_doc_pages = 211,
+                   stats = { pages = 312 } }, pages = 312, source = "render" },
         { data = { stats = { pages = 312 } }, pages = 312, source = "render" },
     }
     for i, case in ipairs(cases) do

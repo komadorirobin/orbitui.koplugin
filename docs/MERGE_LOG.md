@@ -2801,6 +2801,58 @@ or later is still required for OTA; disable Manga III before rolling back to
 alpha.51 or earlier, where its images are not known as series-bound pieces.
 Physical e-ink checks remain separate. Evidence: `test-results/alpha52-20261019/`.
 
+## 2026-10-22: Bookshelf 5.5.5 and Beta 3 publication preparation
+
+The user explicitly requested merging and publishing before replying about
+Bookshelf compatibility. Scope is Bookshelf, from integrated
+`982375a7f1fe48ccaad4627dad0646af5e0f6651` to master
+`065f25c06d9a8e0607f29cbe632f4b3d44a8bd37`: 15 incoming commits, including
+5.5.5 (`2d26fd7f96ee1cc5caccf3960bd70076ca7a763e`) and PR #544's subsequent
+Shelf size translator fix. SimpleUI stays at
+`7eb80f9e570e6351c55f501f91e1a29c1442b756` (2.7.5).
+
+Import commit `ee10004e` is an unsquashed subtree merge on the dedicated
+`maintenance/bookshelf-5.5.5-beta3-20261022` branch. The following adaptation
+and release commit records the pin, regressions, Swedish strings and beta.3
+documentation separately. No module-map changes (318 canonical paths).
+
+Four conflicts were resolved individually: retain the shared sidecar page-count
+resolver and doc_pages/rendered-cache priority while honoring an explicit
+disabled stable-page preference; retain lazy widget dependencies with upstream's
+variable-width halo glyphs; keep both the new rating painter and completed-group
+decoration; retain local title/footer gettext messages in the refreshed template.
+No upstream feature is deliberately deferred. Reviewed C01-C11, especially C04
+cache/page-count semantics, C05 navigation, C06/C07 shelf scope and rendering,
+C08 migration safety and C09 package/update ownership.
+
+Incoming behavior includes opt-in cover star ratings and cached Hardcover
+fallback, the refresh-library dispatcher action, read-state folder re-sorting,
+base-shelf Back/Folder up guards, taller hero covers, spine-colour cache reset
+and stable-page preference handling. Existing dashboard, bindings, MAL badges,
+aspect-preserving box covers, profiles and optional ornament packs remain.
+No root bootstrap, artwork, SimpleUI code or reading-data migration changes.
+
+Full sequential Lua and LuaJIT runs passed: 823/824 OrbitUI cases in 66 files,
+410 Bookshelf suites and all 13 SimpleUI test files. The two Bookshelf SQLite
+suite skips, four external-artwork-source skips among 115 Python tests, and
+existing native-font/parity limitations are unchanged. All 43 translation
+catalogues, module-map checks and 904 LuaJIT syntax checks passed. No new
+exceptions. Added regressions cover disabled stable labels with all local count
+sources, fresh lazy wide-glyph construction and wrapped Shelf size repainting.
+
+Publication is approved as a prerelease, not device acceptance. The release
+gate additionally requires a clean-commit ZIP, audit of outgoing history and
+held artwork, native OTA upgrade/restart/rollback from public Beta 2, both CI
+refs and verified draft/public download bytes. Evidence belongs in
+`test-results/beta3-20261022/`. Physical-reader checks of stars, navigation and
+tall cover layout remain outstanding; do not infer them from headless tests.
+
+Internal OTA needs no bridge: bootstrap API 1 is unchanged. Rollback retains
+settings and reading data; old code may treat the new rating icon choice as its
+default heart. The install guide now identifies Storefront 26.10.20 as containing
+PR #5078's embedded-root fix; its external-import device test is still pending.
+Preserve the separate unpushed design branch and artwork hold.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

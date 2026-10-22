@@ -632,5 +632,15 @@ test("rating stars: full, half from .5, never an empty star on a cover", functio
     end
 end)
 
+test("wide rating glyphs retain lazy widget dependencies and their true bounds", function()
+    local fresh = dofile("lib/bookshelf_cover_progress.lua")
+    local glyph = fresh.buildHaloShadowedGlyphWidget(
+        fresh.ratingStars(4), 20, 1, 2, 2, nil, nil, nil, "symbols", 80)
+    eq(glyph.dimen.w, 83)
+    eq(glyph.dimen.h, 23)
+    local single = fresh.buildHaloShadowedGlyphWidget(fresh.FAV_GLYPH_HEART, 20)
+    eq(single.dimen.w, 23)
+end)
+
 print(string.format("%d passed, %d failed", pass, fail))
 if fail > 0 then os.exit(1) end

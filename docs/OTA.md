@@ -460,6 +460,15 @@ alpha pending the fresh-setup and add-on physical-device acceptance checks.
 
 ## On the reader
 
+Version `0.1.0-beta.3` integrates Bookshelf 5.5.5 and the subsequent Shelf size
+translator fix through `065f25c0`. SimpleUI 2.7.5, ornament channels, bootstrap
+and API 1 are unchanged. Update through OrbitUI's preview channel and restart;
+no intermediate Beta 2 installation is required when using internal OTA.
+Existing preferences and reading data are retained. New cover-rating display
+and cached Hardcover fallback are opt-in. Code rollback retains their keys;
+older Bookshelf code may treat the new rating icon choice as its default heart.
+No physical-device result is inferred from automated upgrade/rollback tests.
+
 Version `0.1.0-beta.1` is the first explicitly approved public beta, following the
 reader confirmation of alpha.55's ornament menu fix. It adds native-only current
 Bookshelf settings-path recognition and backup/onboarding coverage without moving
