@@ -12,6 +12,11 @@ history without the held bitmap before releasing.
 Experimental KOReader Lua plugin combining the published user forks of SimpleUI
 and Bookshelf. Keep the original repositories and their update channels intact.
 
+Start new work by reading `docs/PROJECT_CONTEXT.md`. It is the durable current
+state map after the original development conversation was lost; update it when a
+change makes its snapshot, architecture, risks or next milestones materially
+stale. Detailed contracts and merge records remain authoritative.
+
 - Work in `core/` and `adapters/` for shared integration logic. Keep component
   source changes minimal, documented, and in separate commits from subtree imports.
 - Do not update upstream baselines unless explicitly requested. Record exact

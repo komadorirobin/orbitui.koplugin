@@ -236,7 +236,8 @@ Run `sh scripts/test.sh` and `LUA=luajit sh scripts/test.sh`, then
 revision with `sh scripts/package.sh`.
 
 Integration code lives in `core/` and `adapters/`; the original components live
-under `components/`. See [integration contracts](docs/INTEGRATION_CONTRACTS.md),
+under `components/`. See the [project context](docs/PROJECT_CONTEXT.md),
+[integration contracts](docs/INTEGRATION_CONTRACTS.md),
 [upstream workflow](docs/UPSTREAM.md), [merge history](docs/MERGE_LOG.md),
 [testing](docs/TESTING.md) and [OTA/recovery](docs/OTA.md).
 The upstream watcher reports changes only; it never merges or publishes.
