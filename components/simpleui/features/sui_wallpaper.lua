@@ -55,7 +55,6 @@ local SUISettings  = require("infra/sui_store")
 local Backdrop     = require("infra/sui_backdrop")
 local Memory       = require("infra/sui_memory")
 local ImageWidget  = require("ui/widget/imagewidget")
-local UIManager    = require("ui/uimanager")
 local lfs          = require("libs/libkoreader-lfs")
 local Screen       = Device.screen
 
@@ -780,24 +779,14 @@ function M.paintEraser(bb, x, y, w, h, strength, radius, color)
 end
 
 -- ---------------------------------------------------------------------------
--- Night-mode hook — free the wallpaper cache whenever night mode is toggled
--- so the next _styleGetBgWidget() call rebuilds with the correct inversion
--- state (original_in_nightmode reflects the new setting).
+-- Night-mode change — free the wallpaper cache and rebuild the layout so the
+-- next _styleGetBgWidget() call rebuilds with the correct inversion state
+-- (original_in_nightmode reflects the new setting). Called by the night-mode
+-- hook in infra/sui_patches.lua.
 -- ---------------------------------------------------------------------------
-local _orig_UIManager_ToggleNightMode = UIManager.ToggleNightMode
-function UIManager:ToggleNightMode()
-    _orig_UIManager_ToggleNightMode(self)
+function M.onNightModeChanged()
     _styleFreeBgCache()
     _notifyLayoutChanged()
-end
-
-local _orig_UIManager_SetNightMode = UIManager.SetNightMode
-if _orig_UIManager_SetNightMode then
-    function UIManager:SetNightMode(nightmode)
-        _orig_UIManager_SetNightMode(self, nightmode)
-        _styleFreeBgCache()
-        _notifyLayoutChanged()
-    end
 end
 
 Memory.onReset(M.freeCache)

@@ -16,12 +16,13 @@
 --     the "update available" banner appears immediately on next startup)
 
 local UIManager   = require("ui/uimanager")
-local ConfirmBox  = require("ui/widget/confirmbox")
 local logger      = require("logger")
 local util        = require("util")
 local _           = require("infra/sui_i18n").translate
 local UI          = require("infra/sui_core")
 local Text        = require("infra/sui_text")
+
+local function Dialogs() return require("features/dialogs/sui_dialogs") end
 
 -- ---------------------------------------------------------------------------
 -- Configuration
@@ -516,15 +517,12 @@ local function _applyUpdate(download_url, new_version, opts)
         end
         _clear_update_state()
         if opts.on_success then pcall(opts.on_success) end
-        UIManager:show(ConfirmBox:new{
-            text        = string.format(
+        Dialogs().askRestart{
+            text = string.format(
                 _("Simple UI %s installed.\n\nRestart KOReader to apply the update?"),
                 new_version
             ),
-            ok_text     = _("Restart"),
-            cancel_text = _("Later"),
-            ok_callback = function() UIManager:restartKOReader() end,
-        })
+        }
     end
 
     if ok_tr and Trapper and Trapper.dismissableRunInSubprocess then
@@ -571,7 +569,7 @@ local function _showUpdateDialog(release, current, force_switch)
     local notes_block = notes and ("\n\n" .. _("What's new:") .. "\n" .. notes) or ""
 
     if not download_url then
-        UIManager:show(ConfirmBox:new{
+        Dialogs().confirm{
             text        = header .. notes_block
                        .. "\n\n" .. _("No download file found.\n\nOpen the releases page?"),
             ok_text     = _("Open in browser"),
@@ -585,11 +583,11 @@ local function _showUpdateDialog(release, current, force_switch)
                     ))
                 end
             end,
-        })
+        }
         return
     end
 
-    UIManager:show(ConfirmBox:new{
+    Dialogs().confirm{
         text        = header .. notes_block .. "\n\n" .. _("Download and install now?"),
         ok_text     = _("Download and install"),
         cancel_text = _("Cancel"),
@@ -604,7 +602,7 @@ local function _showUpdateDialog(release, current, force_switch)
                 end,
             })
         end,
-    })
+    }
 end
 
 -- ---------------------------------------------------------------------------
