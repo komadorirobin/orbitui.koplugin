@@ -1012,7 +1012,9 @@ local function fetchSessionRecords(conn, since)
                    COALESCE(SUM(pages), 0), COALESCE(SUM(secs), 0)
             FROM sessions WHERE secs >= %d;
         ]], SESSION_GAP_SECS, SESSION_GAP_SECS, SESSION_GAP_SECS, since, SESSION_MIN_SECS))
-        if not (rw and rw[1] and rw[1][1]) then return end
+        if not (rw and rw[1] and rw[1][1]) then
+            error("session-record query returned no aggregate")
+        end
         records.sessions     = rownum(rw[1][1])
         records.longest_secs = rownum(rw[2] and rw[2][1])
         records.avg_secs     = rownum(rw[3] and rw[3][1])
@@ -1036,7 +1038,7 @@ function SP.getSessionRecords(db_conn)
     local today = os.date("%Y-%m-%d")
     if _records_day ~= today then
         _records     = fetchSessionRecords(db_conn, os.time() - RECORDS_WINDOW_DAYS * 86400)
-        _records_day = today
+        _records_day = _records and today or nil
     end
     return _records or nil
 end
@@ -1145,7 +1147,7 @@ function SP.getChartData(db_conn)
     local today = os.date("%Y-%m-%d")
     if _charts_day ~= today then
         _charts     = fetchChartData(db_conn)
-        _charts_day = today
+        _charts_day = _charts and today or nil
     end
     return _charts or nil
 end
@@ -1209,7 +1211,7 @@ function SP.getYearData(db_conn)
     local today = os.date("%Y-%m-%d")
     if _year_day ~= today then
         _year     = fetchYearData(db_conn)
-        _year_day = today
+        _year_day = _year and today or nil
     end
     return _year or nil
 end

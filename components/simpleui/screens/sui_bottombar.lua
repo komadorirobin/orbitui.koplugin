@@ -243,7 +243,7 @@ end
 
 -- Base sizes at 100%, in dp. The label font keeps its own base (see LABEL_FS),
 -- so the bar and the icons can shrink without shrinking the label.
-local BAR_H_DP = 77
+local BAR_H_DP = 96
 local ICON_DP  = 35
 
 function M.BAR_H()       return _cached("bar_h",   function() return math.floor(Screen:scaleBySize(BAR_H_DP) * _getNavbarScale()) end) end

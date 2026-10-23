@@ -66,6 +66,8 @@ H.test("book-close preference migrates once without changing startup or library 
         native = { start_with = sample.start, book_grid_width = 5 }
         Config.applyFirstRunDefaults()
         H.eq(Config.getBookCloseTarget(), sample.expected)
+        H.eq(memory.simpleui_ui_font_enabled, nil)
+        H.eq(memory.simpleui_ui_font_name, nil)
         H.eq(native.start_with, sample.start); H.eq(native.book_grid_width, 5)
         Config.setBookCloseTarget("book_folder")
         Config.applyFirstRunDefaults()

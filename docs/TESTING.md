@@ -2,6 +2,25 @@
 
 ## Automated
 
+2026-10-23 SimpleUI 3.0 release-ZIP import (unpublished): verify the exact official
+asset against its recorded digest, then preserve all original suites. New
+regressions exercise copy-only badge/folder migrations, failed-migration retries
+and embedded deferral, legacy stacked/percentage Bento layouts and explicit
+fixed-span activation, independently aligned new rows, retryable chart/session
+queries, the old Reading Stats module alias, Lua 5.1 varargs and owner-safe
+night-mode teardown beneath external wrappers. Native search tests execute the
+new dialog facade; icon tests retain custom sources, weights, cancellation and
+both legacy picker signatures. Package all new fonts/OFL notices, critter assets
+and module paths; keep the public VERSION/bootstrap and Bookshelf pin unchanged.
+Evidence: `test-results/upstream-simpleui3-20261023/`.
+
+Physical acceptance still required on Bigme B7 Pro: existing Home/Custom Screen
+layout before editing, new preview and width/movement controls, detailed stats
+and charts after reader return, accent day/night and grayscale, font selection
+and fallback, optional Tiny Critter, dialog keyboard/touch/D-pad, suspend/resume,
+and BookOrbit/MAL/Patch Manager interactions. No device acceptance or release
+approval is inferred from headless tests or this import request.
+
 2026-10-22 beta.3: reviewed Bookshelf 5.5.5 plus PR #544. Run both complete
 Lua/LuaJIT suites, including the upstream tests for base-shelf Back/Folder up,
 refresh action, cached ratings, read-state sort invalidation and spine colour

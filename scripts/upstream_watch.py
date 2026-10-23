@@ -93,6 +93,16 @@ def load_sources(path):
         for key in ("commit", "upstream_commit"):
             if not SHA.fullmatch(source.get(key, "")):
                 raise WatchError("Expected a full commit SHA: " + name + "." + key)
+        snapshot = source.get("release_snapshot")
+        if snapshot is not None:
+            if (not isinstance(snapshot, dict)
+                    or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", str(snapshot.get("tag", "")))
+                    or snapshot.get("asset") != name + ".koplugin.zip"
+                    or not re.fullmatch(r"[a-f0-9]{64}", str(snapshot.get("sha256", "")))
+                    or any(not SHA.fullmatch(str(snapshot.get(key, ""))) for key in ("tag_commit", "source_commit"))
+                    or not isinstance(snapshot.get("asset_id"), int) or snapshot["asset_id"] <= 0
+                    or not isinstance(snapshot.get("size"), int) or snapshot["size"] <= 0):
+                raise WatchError("Invalid reviewed release snapshot: " + name)
         branch = source.get("upstream_branch", "")
         if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_./-]*", branch):
             raise WatchError("Invalid upstream branch: " + name)
@@ -113,10 +123,14 @@ def collect_component(git, api, name, source, head):
     slug = repository_slug(source["upstream"])
     item = {"name": name, "repository": slug, "branch": source["upstream_branch"],
             "integrated": source["upstream_commit"], "status": "ok", "errors": []}
+    if source.get("release_snapshot"):
+        item["release_snapshot"] = source["release_snapshot"]
     phase = "history"
     try:
         if not git.ancestor(source["commit"], head) or not git.ancestor(item["integrated"], head):
             raise WatchError("Recorded import/upstream revision is not in OrbitUI history")
+        if source.get("release_snapshot") and not git.ancestor(source["release_snapshot"]["source_commit"], head):
+            raise WatchError("Recorded release snapshot is not in OrbitUI history")
         phase = "fetch"
         ref = "refs/remotes/orbitui-watch/" + name
         # This only updates a private remote-tracking ref, never a branch/worktree.
@@ -156,7 +170,7 @@ def fingerprint(report):
     # Timestamps, OrbitUI-only commits and volatile error messages are not news.
     state = [{key: item.get(key) for key in (
         "name", "repository", "branch", "integrated", "head", "included", "behind",
-        "manifest_stale", "release", "status")}
+        "manifest_stale", "release", "release_snapshot", "status")}
         | {"error_phases": sorted({error["phase"] for error in item["errors"]})}
         for item in report["components"]]
     return hashlib.sha256(json.dumps(state, sort_keys=True).encode()).hexdigest()
@@ -200,6 +214,12 @@ def render(report):
                   "Recorded integrated upstream: " + commit_link(slug, item["integrated"]) + "."]
         if item.get("head"):
             lines.append("Observed upstream tip: " + commit_link(slug, item["head"]) + ".")
+        snapshot = item.get("release_snapshot")
+        if snapshot:
+            lines.append("Additional reviewed release ZIP: " + safe_text(snapshot["tag"])
+                         + " (SHA-256 " + safe_text(snapshot["sha256"]) + "). "
+                         + "Its release-only code is not represented by the upstream Git pin/count above. "
+                         + "Reconcile this snapshot explicitly when matching upstream history is published.")
         if item.get("manifest_stale"):
             lines.append("Additional upstream history is already included. Update sources.json during the next reviewed merge.")
         for error in item["errors"]:

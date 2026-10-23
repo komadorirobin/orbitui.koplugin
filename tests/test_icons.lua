@@ -1,4 +1,4 @@
-package.path = "./?.lua;" .. package.path
+package.path = "./?.lua;./components/simpleui/?.lua;" .. package.path
 local H = require("tests/helpers")
 H.simpleuiMemory()
 local Icons = require("core/orbitui_icons")
@@ -69,12 +69,15 @@ local screen = { width = 1264, height = 1680, scaleBySize = function(_, v) retur
     getWidth = function(self) return self.width end, getHeight = function(self) return self.height end }
 local has_keys = false
 package.loaded["device"] = { screen = screen, input = { group = { Back = { "Back" } } },
-    hasKeys = function() return has_keys end, hasDPad = function() return has_keys end }
+    hasKeys = function() return has_keys end, hasDPad = function() return has_keys end,
+    isTouchDevice = function() return true end }
 package.loaded["ui/uimanager"] = manager
 package.preload["infra/sui_virtual_paths"] = function()
     return dofile("components/simpleui/infra/sui_virtual_paths.lua")
 end
 package.loaded["ui/rendertext"] = {}
+package.loaded["optmath"] = { round = function(n) return math.floor(n + 0.5) end }
+package.loaded["ui/bidi"] = { mirroredUILayout = function() return false end }
 package.loaded["ui/font"] = { getFace = function(_, name, size)
     assert(not name:lower():find("material", 1, true), "Material must never load as a text font")
     return { name = name, size = size }
@@ -84,7 +87,7 @@ package.loaded["ui/size"] = { border = { thin = 1, default = 2, window = 3 }, li
 for _, name in ipairs({ "container/centercontainer", "container/framecontainer", "container/widgetcontainer",
         "container/inputcontainer", "container/leftcontainer", "container/topcontainer", "button", "linewidget",
         "textwidget", "imagewidget", "buttondialog", "notification", "horizontalgroup", "horizontalspan", "overlapgroup",
-        "verticalgroup", "verticalspan" }) do
+        "verticalgroup", "verticalspan", "container/rightcontainer" }) do
     package.loaded["ui/widget/" .. name] = Widget
 end
 package.loaded["ui/widget/imagewidget"] = Image
@@ -121,6 +124,10 @@ package.loaded["infra/sui_core"] = {
 }
 -- Exercise real ActionSheet picker callbacks; only the native window is stubbed.
 local SheetWindow = Widget:extend{}
+SheetWindow.stackedWidth = function() return 600 end
+function SheetWindow:getScale() return 1 end
+function SheetWindow:getWidget() return self end
+function SheetWindow:handleEvent() end
 function SheetWindow:show() manager:show(self) end
 function SheetWindow:close() manager:close(self) end
 package.loaded["engines/sui_window"] = SheetWindow
@@ -129,12 +136,20 @@ package.preload["engines/sui_action_sheet"] = function()
     return dofile("components/simpleui/engines/sui_action_sheet.lua")
 end
 local function pickerRows()
-    local upvalues = debug.getinfo(shown.screens.__root__, "u").nups
-    for i = 1, upvalues do
-        local name, value = debug.getupvalue(shown.screens.__root__, i)
-        if name == "opts" then return value.sections[1].rows end
+    local seen = {}
+    local function find(fn)
+        if seen[fn] then return end
+        seen[fn] = true
+        for i = 1, debug.getinfo(fn, "u").nups do
+            local name, value = debug.getupvalue(fn, i)
+            if name == "opts" then return value.sections[1].rows end
+            if type(value) == "function" then
+                local found = find(value)
+                if found then return found end
+            end
+        end
     end
-    error("ActionSheet options missing")
+    return assert(find(shown.screens.__root__), "ActionSheet options missing")
 end
 package.preload["infra/sui_menu_hooks"] = function() return dofile("components/simpleui/infra/sui_menu_hooks.lua") end
 package.preload["infra/sui_icon_registry"] = function() return dofile("components/simpleui/infra/sui_icon_registry.lua") end
@@ -264,7 +279,8 @@ H.test("both pickers render every Material weight with SVG and UI-face labels", 
 end)
 H.test("dock and quick actions use the existing image and alpha-mask paths", function()
     local Renderer = dofile("components/simpleui/engines/sui_quickactions_render.lua")
-    local w = Renderer.buildIcon({ icon = "material:manga", label = "Manga", dim = true }, 64, "white")
+    local white = { getColor8 = function() return { a = 255 } end }
+    local w = Renderer.buildIcon({ icon = "material:manga", label = "Manga", dim = true }, 64, white)
     H.eq(w.file, Icons.imageFile("material:manga"))
     H.eq(w.alpha, true); H.eq(w.dim, true)
     local nerd = Renderer.buildIcon({ icon = "nerd:F5E3" }, 64, "black")
@@ -898,7 +914,8 @@ H.test("quick settings, action lists and dock render night icons at full contras
     local build, rendered = Renderer.buildIcon, 0
     Renderer.buildIcon = function(entry, ...)
         local icon = build(entry, ...)
-        H.eq(icon.dim, false)
+        H.eq(entry.dim, false)
+        H.eq(icon.dim == true, false)
         rendered = rendered + 1
         return icon
     end

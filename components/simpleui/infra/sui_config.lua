@@ -13,7 +13,6 @@ local SUICoverCache     = require("infra/sui_cover_cache")
 local LRU               = require("infra/sui_lru")
 local Memory            = require("infra/sui_memory")
 local Backdrop          = require("infra/sui_backdrop")
-local SUIFonts          = require("infra/sui_fonts")
 local logger            = require("logger")
 local _ = require("infra/sui_i18n").translate
 local Text = require("infra/sui_text")
@@ -1787,7 +1786,7 @@ function M.getBentoSpan(mod_id, pfx)
         local legacy = _G.G_reader_settings and _G.G_reader_settings:readSetting("simpleui_bento_width_" .. mod_id)
         if legacy ~= nil then
             local span = Bento.pctToSpan(legacy)
-            M.setBentoSpan(span, mod_id, pfx)
+            M.setBentoWidth(legacy, mod_id, pfx)
             return span
         end
         return Bento.FULL
@@ -1803,12 +1802,40 @@ end
 
 -- Width as a percent of the row, for modules that size their content by it.
 function M.getBentoWidth(mod_id, pfx)
-    return Bento.spanToPct(M.getBentoSpan(mod_id, pfx))
+    if not mod_id then return 100 end
+    -- Existing OrbitUI layouts retain arbitrary percentages and stacked columns.
+    local stored = tonumber(SUISettings:get(_bentoKey(mod_id, pfx)))
+    if stored then return math_max(20, math_min(100, stored)) end
+    local legacy = _G.G_reader_settings and _G.G_reader_settings:readSetting("simpleui_bento_width_" .. mod_id)
+    if legacy ~= nil then
+        M.setBentoWidth(legacy, mod_id, pfx)
+        return tonumber(SUISettings:get(_bentoKey(mod_id, pfx)))
+    end
+    return 100
 end
 
 -- Stores a percent width, snapped to the nearest fixed width.
 function M.setBentoWidth(pct, mod_id, pfx)
-    M.setBentoSpan(Bento.pctToSpan(pct), mod_id, pfx)
+    if mod_id and pfx then
+        SUISettings:set(_bentoKey(mod_id, pfx), math_max(20, math_min(100, tonumber(pct) or 100)))
+    end
+end
+
+-- Legacy per-module picker kept for external callers; the new editor uses spans.
+function M.makeBentoWidthItem(opts)
+    return {
+        text_func = opts.text_func or function() return _("Column Width (Bento Grid)") end,
+        keep_menu_open = true,
+        value_func = function() return opts.get() .. "%" end,
+        callback = function()
+            require("ui/uimanager"):show(require("ui/widget/spinwidget"):new{
+                title_text = opts.title or _("Column Width (Bento Grid)"),
+                value = opts.get(), value_min = 20, value_max = 100, value_step = 5,
+                default_value = 100, unit = "%",
+                callback = function(spin) opts.set(spin.value); opts.refresh() end,
+            })
+        end,
+    }
 end
 
 -- Radio options for the module widths.
@@ -3381,10 +3408,7 @@ function M.applyFirstRunDefaults()
     end
 
     -- UI font: installs that never picked a font start with the bundled family.
-    if SUISettings:get(SUIFonts.KEY_ENABLED) == nil then
-        SUISettings:set(SUIFonts.KEY_ENABLED, true)
-        SUISettings:set(SUIFonts.KEY_NAME, SUIFonts.FAMILY)
-    end
+    -- Bundled UI fonts remain an explicit choice; keep the current system font.
 
     -- Navbar
     def("simpleui_bar_enabled",  true)

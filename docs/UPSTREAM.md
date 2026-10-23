@@ -144,8 +144,40 @@ not make semantic conflicts disappear.
    device gaps to `MERGE_LOG.md`. Report the outcome for review. Publication and
    any OTA channel change still require a separate explicit approval.
 
+### Reconciling the approved 3.0 release snapshot
+
+The October 23 exception was explicitly approved after comparing the published
+release asset with its Git tag. The source snapshot is a local commit parented
+to that tag, containing the release's runtime bytes (excluding `.DS_Store`) and
+retaining upstream's development documentation. Original component provenance
+and tracked branches remain unchanged. This does not authorize arbitrary ZIP
+imports in future maintenance tasks.
+
+When upstream publishes the missing history, inspect its complete diff and
+compare its tree with source snapshot `3cb36431` before importing it. Merge the
+reviewed upstream SHA normally, resolving equivalent changes against the ZIP
+snapshot and OrbitUI adaptations. Advance `upstream_commit` only after that
+reviewed Git merge. Remove `release_snapshot` only when the imported history
+actually accounts for the release-only code; record any remaining differences.
+Never reset the subtree to the old tag, relabel the local snapshot as an upstream
+commit, or assume that a release name proves equivalent contents.
+
 ## Current embedding changes
 
+- October 23, user-approved release-ZIP exception: SimpleUI 3.0.0's official
+  asset contains code absent from both `main` and its release tag (both still
+  `dd541fc2`). Import the verified asset as local source snapshot `3cb36431`
+  and merge it unsquashed in `a5d9e76a`. The full identity is recorded in
+  `sources.json.release_snapshot`; `upstream_commit` remains the actual Git
+  baseline, never a fabricated upstream revision. The monitor displays this
+  distinction. Bookshelf has no incoming commits and stays at `065f25c0`.
+  Keep old Reading Stats module aliases, copy-only v12/v13 migrations, legacy
+  percentage/stacked Bento layouts and independent margins, transparent
+  defaults, explicit font choices and 96dp navbar height. The new fixed-span
+  model is selected per screen by an explicit width/movement edit. Preserve
+  custom icon sources across both legacy picker signatures and new flow pages,
+  fresh label ownership, retryable stats failures, Lua 5.1 vararg helpers and
+  owner-safe night/input hooks. See `test_simpleui3` and the merge log.
 - October 22 SimpleUI follow-up: integrate main `dd541fc2` (still 2.7.5),
   including the new action sheets/window-step hooks and content-fitted Tabbed
   Grid frame. Bookshelf stays at `065f25c0` (5.5.5 + PR #544). Port navigation

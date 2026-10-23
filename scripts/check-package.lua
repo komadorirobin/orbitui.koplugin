@@ -94,6 +94,9 @@ for path in tracked:lines() do
             or path:match("^components/bookshelf/assets/planks/")
             or path:match("^components/bookshelf/assets/shadows/")
             or path:match("^components/simpleui/icons/")
+            or path:match("^components/simpleui/fonts/")
+            or path:match("^components/simpleui/modules/critter/assets/")
+            or path:match("^components/simpleui/modules/critter/decor/")
             or path:match("^components/[^/]+/locale/.*%.po$") then
         expect(path)
     end

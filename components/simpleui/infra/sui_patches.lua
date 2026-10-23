@@ -64,6 +64,8 @@ local function _hsActionId(widget)
 end
 
 local M = {}
+local _pack = table.pack or function(...) return { n = select("#", ...), ... } end
+local _unpack = table.unpack or unpack
 
 -- Forward declarations needed because the screen reopen step of the window
 -- hooks (below) can encounter a soft-parked Homescreen before these are
@@ -3570,7 +3572,12 @@ function M.patchInputDialogs(plugin)
         if state then
             for _j, key in ipairs(entry.methods) do
                 if Owner[key] then
-                    _addHook(state, Owner, key, NativeInputs.scoped(Owner[key]))
+                    local original = Owner[key]
+                    local scoped = NativeInputs.scoped(original)
+                    _addHook(state, Owner, key, function(...)
+                        if not next(state.users) then return original(...) end
+                        return scoped(...)
+                    end)
                 end
             end
         end
@@ -3782,7 +3789,8 @@ function M.patchNightMode(plugin)
 
     local Accent = require("infra/sui_accent")
     UIManager.ToggleNightMode = function(self, ...)
-        local results = table.pack(orig(self, ...))
+        if not next(state.users) then return orig(self, ...) end
+        local results = _pack(orig(self, ...))
         SUIWallpaper.onNightModeChanged()
         SUISettings:invalidateDerived()
         local live = _live_plugin
@@ -3792,7 +3800,7 @@ function M.patchNightMode(plugin)
             local ok_tb, TB = pcall(require, "screens/sui_titlebar")
             if ok_tb and TB then pcall(TB.refreshAccent) end
         end
-        return table.unpack(results, 1, results.n)
+        return _unpack(results, 1, results.n)
     end
     _trackHooks(state, { { UIManager, "ToggleNightMode", orig } })
 end
@@ -4169,7 +4177,7 @@ function M.patchReloadDocument(plugin, readerui)
             end
         end)
 
-        return table.unpack(ret)
+        return _unpack(ret)
     end
     readerui._simpleui_reload_patched = true
 end

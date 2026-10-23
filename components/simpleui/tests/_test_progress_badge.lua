@@ -14,17 +14,18 @@ for _, name in ipairs({
     package.loaded[name] = { new = widget }
 end
 package.loaded["device"] = { screen = { scaleBySize = function(_self, value) return value end } }
-package.loaded["features/sui_style"] = { BADGE_BORDER_SZ = 2,
+package.loaded["features/sui_style"] = { BADGE_BORDER_SZ = 2, PROGRESS_BAR_H = 4,
     coverShadowOffset = function() return 0 end }
 local library_color = "dark"
+package.loaded["features/sui_cover_elements"] = { getColor = function() return library_color end }
 local calls, last_desc = 0, nil
 package.loaded["features/library/sui_foldercovers"] = {
     getBadgeColorProgress = function() return library_color end,
 }
 package.loaded["features/library/sui_cover_widgets"] = {
-    buildProgressBadgeDesc = function(size, status, percent, border, dark)
+    buildProgressBadgeDesc = function(size, status, percent, border, color)
         calls = calls + 1
-        last_desc = { size = size, status = status, percent = percent, border = border, dark = dark }
+        last_desc = { size = size, status = status, percent = percent, border = border, color = color }
         return last_desc
     end,
     buildProgressBadgeWidget = function(desc)
@@ -41,16 +42,16 @@ assert(calls == 0, "unread covers must not gain a badge")
 local progress = { percent = 0.52, status = "reading" }
 local result = Shared.applyProgressBadge(cover, progress, 100, 150)
 assert(result[1] == cover and result.dimen.w == 100 and result.dimen.h == 150)
-assert(last_desc.size == 14 and last_desc.border == 2 and last_desc.dark == true)
+assert(last_desc.size == 14 and last_desc.border == 2 and last_desc.color == "dark")
 assert(result[2].overlap_offset[1] == 78 and result[2].overlap_offset[2] == 0)
 
 library_color = "light"
 Shared.buildProgressBadgeWidget(progress, 20)
-assert(last_desc.dark == false, "unset color follows the library")
+assert(last_desc.color == "light", "unset color follows the library")
 Shared.buildProgressBadgeWidget(progress, 20, "dark")
-assert(last_desc.dark == true, "explicit color overrides the library")
+assert(last_desc.color == "dark", "explicit color overrides the library")
 Shared.buildProgressBadgeWidget(progress, 20, "light")
-assert(last_desc.dark == false)
+assert(last_desc.color == "light")
 
 for _, status in ipairs({ "complete", "abandoned" }) do
     assert(Shared.buildProgressBadgeWidget({ percent = 0, status = status }, 14))

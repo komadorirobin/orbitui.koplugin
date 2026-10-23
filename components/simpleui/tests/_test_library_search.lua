@@ -13,6 +13,19 @@ local ask_to_open = false
 local metadata_calls = 0
 
 local function widget(_self, opts) return opts end
+package.loaded.util = { trim = function(s) return (s:gsub("^%s*(.-)%s*$", "%1")) end }
+package.loaded["ui/event"] = {}
+package.loaded["infra/sui_store"] = {}
+package.loaded["engines/sui_action_sheet"] = {
+    show = function(opts)
+        dialog = opts
+        opts.getFieldText = function() return input end
+        opts.close = function() closed = opts end
+        opts.update = function() end
+        keyboard = opts.sections[1].type == "field" and type(opts.on_enter) == "function"
+        return opts
+    end,
+}
 package.loaded["ui/widget/inputdialog"] = {
     new = function(_self, opts)
         opts.getInputText = function() return input end
@@ -64,8 +77,8 @@ local function search(query)
     Search.show()
     assert(keyboard, "search must explicitly open the keyboard")
     local original = dialog
-    original.buttons[1][2].callback()
-    assert(closed == original, "submitted search dialog must close")
+    original.footer[#original.footer].callback()
+    if query:match("%S") then assert(closed == original, "submitted search dialog must close") end
     if window then return window.screens.__root__({ inner_w = 600, repaint = function() end }) end
 end
 
@@ -85,8 +98,8 @@ assert(#rows == 1 and rows[1].title == "unknown.epub", "missing metadata uses fi
 
 ask_to_open = true
 rows[1].on_tap()
-assert(opened == nil and dialog.ok_callback, "respect confirmation before opening")
-dialog.ok_callback()
+assert(opened == nil and dialog.sections[1].items[2].callback, "respect confirmation before opening")
+dialog.sections[1].items[2].callback()
 assert(opened == files[3])
 
 assert(search("unmatched") == nil and notice == "No results for: unmatched")

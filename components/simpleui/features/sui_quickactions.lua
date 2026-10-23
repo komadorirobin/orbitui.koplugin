@@ -2321,8 +2321,10 @@ function QA.showIconPicker(opts, on_select_legacy, default_label, allow_nerd, on
             allow_nerd, on_cancel = legacy_allow_nerd, legacy_on_cancel
         end
         opts = { icon = opts, on_select = on_select_legacy,
-            default_label = default_label, allow_nerd = allow_nerd, on_cancel = on_cancel }
+            default_label = default_label, allow_nerd = allow_nerd, on_cancel = on_cancel,
+            _orbitui_handle = handle, _orbitui_key = key }
     end
+    handle, key = opts._orbitui_handle, opts._orbitui_key
     local ActionSheet = require("engines/sui_action_sheet")
     local current_icon, on_select, parent = opts.icon, opts.on_select, opts.parent
     local icons   = _loadCustomIconList()
@@ -2358,7 +2360,7 @@ function QA.showIconPicker(opts, on_select_legacy, default_label, allow_nerd, on
         items[#items + 1] = {
             text = extra.text,
             callback = function()
-                if not parent then sheet:close() end
+                if parent then parent:closePage() else sheet:close() end
                 extra.show(current_icon, on_select, function() QA.showIconPicker(opts) end, opts.allow_nerd)
             end,
         }

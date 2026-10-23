@@ -2913,6 +2913,97 @@ interactions still need a physical-reader smoke test. Internal OTA requires
 no bridge; code rollback retains settings and reading data. Preserve the
 unpublished alternate-design branch and the held-artwork exclusion.
 
+## 2026-10-23: Reviewed SimpleUI 3.0 release-ZIP import (not published)
+
+User requested an upstream merge for both components, then explicitly approved
+using SimpleUI's official 3.0 release ZIP after the Git/asset discrepancy was
+demonstrated. Bookshelf `master` remains
+`065f25c06d9a8e0607f29cbe632f4b3d44a8bd37` with zero incoming commits.
+SimpleUI `main` and tag `3.0.0` both remain
+`dd541fc2b384af43287474587622ef68a2fb3185`, already integrated in Beta 4;
+the ZIP contains 93 changed and 142 added paths relative to that Git tree,
+and omits 10 Git paths. This is an approved source-import exception, not a
+claim that the missing upstream commits have been published.
+
+Artifact: `simpleui.koplugin.zip` from the official `3.0.0` release,
+published `2026-10-23T19:19:21Z`, GitHub asset `670136743`, 2,625,011 bytes.
+Downloaded SHA-256, also matching GitHub's asset digest:
+`033f19775610faca6b9cf2d0f92802fdd0fbfad9ebcdda881a1910884cafcf87`.
+Source URL:
+https://github.com/doctorhetfield-cmd/simpleui.koplugin/releases/download/3.0.0/simpleui.koplugin.zip
+
+Local source snapshot `3cb364313ee8b2b17f860f67ef330cd6c2f5370b` is parented
+to the real published Git baseline. Every runtime asset matches the ZIP;
+`fonts/.DS_Store` is excluded. Git-only development documentation is retained,
+while the four omitted runtime paths are removed in the source snapshot.
+Unsquashed subtree merge `a5d9e76a` imports that snapshot on
+`maintenance/simpleui-3-zip-20261023`. Existing context documentation is a
+separate preceding commit, `78ac30e9`. The following adaptation commit records
+the source manifest, regressions and compatibility work separately.
+
+`sources.json.release_snapshot` records the exact artifact and local source
+commit; SimpleUI's `upstream_commit`, original fork provenance and tracked
+branch remain unchanged. The watcher validates and reports the snapshot apart
+from Git ancestry counts. `UPSTREAM.md` explains how to reconcile it when the
+matching Git history arrives. No older fork was modified and no upstream
+commit was fabricated or falsely marked integrated.
+
+Incoming features include detailed statistics and charts, live Bento preview
+and quick adjustments, accent/secondary colours, bundled Inter/Geist fonts,
+Tiny Critter, label/cover-element controls, and new dialogs/native-widget
+bridges. The snapshot contains GPL-3.0 code and both fonts' OFL notices.
+The original MIT notice stays retained. All new runtime modules and assets are
+included; 37 new canonical paths bring the module map to 364.
+
+Reviewed C01-C11. Resolutions and adaptations:
+
+- C02/C03/C05/C06: retain navigation-generation/displacement guards, real book
+  opening, the Android progress-jump bridge, BookOrbit Want to Read and external
+  patch ownership. New native input and night-mode hooks become inert under
+  later third-party wrappers when their last owner tears down. Lua 5.1 helpers
+  preserve nil varargs and results; no global table/require/gettext replacement.
+- C04: preserve complete/partial statistics cache rules and ledger reconciliation.
+  New session/chart/year failures remain retryable, including a nil aggregate
+  result, instead of persisting a day's zeros. New data work stays on demand.
+- C06/C07/C10: old positional icon-picker signatures coexist with the new options
+  and flow pages. Extra Material/Solar/Tabler pickers retain selection, cancel,
+  handle replacement and per-icon weight choices. The old Reading Stats path
+  forwards to the new module, giving both names one instance. Section labels
+  are fresh, normally freed widgets with scoped scales and stable repaint
+  signatures; hidden labels can be restored. Chrome refresh targets real content.
+- C07/C08: retain exact legacy Bento percentages, stacked columns and independent
+  top margins. An explicit width/movement edit opts only that screen into the
+  new fixed-span row model; new rows remain top-aligned. Layout drafts and saved
+  tables stay separate. Keep the 96dp navbar, transparent control/cover/module
+  defaults, detailed Currently Reading defaults and explicit UI font selection.
+  v12/v13 badge/folder/caption migrations copy into unset new keys, retain all
+  legacy keys for code rollback, honor embedding deferral and retry failures.
+- C08/C09/C11: root bootstrap/API 1, VERSION, Bookshelf, existing artwork/add-ons,
+  ornament ownership and reading-data paths stay unchanged. About identifies
+  the integrated component versions. The new fonts/critter asset directories
+  participate in package inventory checks. No publication or OTA change.
+
+Both full sequential Lua/LuaJIT gates and all 43 translation catalogues passed.
+Supplemental root runs passed 841/842 cases in 68 files under Lua/LuaJIT. After
+the final missing-aggregate regression was added, the complete nine-case
+`test_simpleui3` suite passed separately under both runtimes. Python: 117 tests
+per full run, with four existing external-source skips. Both runtimes passed
+410 Bookshelf suites (zero failures, two environment skips); all 13 original
+SimpleUI test files passed. All 364 module paths and 952 LuaJIT syntax files
+passed. The clean-commit package audit is recorded below after completion.
+The original 13 SimpleUI test files remain enabled, with native fixtures adapted
+to the new APIs rather than discarded assertions. Python includes two additional
+monitor/provenance tests. The existing four external-source audits and two
+Bookshelf KOReader-SQLite environment skips remain; no new exceptions.
+
+Evidence: `test-results/upstream-simpleui3-20261023/`, including the frozen ZIP,
+full logs and final package checks. `docs/TESTING.md` records outstanding Bigme
+layout/editor, typography, colour/night mode, charts, Critter, dialog/keyboard,
+reader return and external-plugin checks. Physical-device acceptance is not
+claimed. VERSION stays `0.1.0-beta.4`; a local validation ZIP must never replace
+the published Beta 4 asset. Publication, version/tag and OTA require a separate
+user request. Preserve the held-artwork exclusion and alternate design branch.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

@@ -2559,6 +2559,7 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
 
     -- Column spans come from per-module settings (bento grid), not the layout.
     local mod_col_span = {}
+    local mod_col_width = {}
     if layout and type(layout.pages) == "table" then
         for _, page in ipairs(layout.pages) do
             local page_ids = {}
@@ -2577,7 +2578,9 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
                     table.insert(page_ids, mod_id)
                     local span = Config.getBentoSpan(mod_id, self._pfx)
                     mod_col_span[mod_id] = span
+                    mod_col_width[mod_id] = Config.getBentoWidth(mod_id, self._pfx)
                     layout_fingerprint = layout_fingerprint .. mod_id .. ":" .. tostring(span)
+                        .. ":" .. tostring(mod_col_width[mod_id])
                         .. ":" .. tostring(Config.getModuleGapPx(mod_id, self._pfx, MOD_GAP)) .. ","
                 end
             end
@@ -2590,7 +2593,9 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
             if mod_id ~= "__page_break__" then
                 local span = Config.getBentoSpan(mod_id, self._pfx)
                 mod_col_span[mod_id] = span
+                mod_col_width[mod_id] = Config.getBentoWidth(mod_id, self._pfx)
                 layout_fingerprint = layout_fingerprint .. mod_id .. ":" .. tostring(span)
+                        .. ":" .. tostring(mod_col_width[mod_id])
                         .. ":" .. tostring(Config.getModuleGapPx(mod_id, self._pfx, MOD_GAP)) .. ","
             else
                 layout_fingerprint = layout_fingerprint .. "|"
@@ -2809,6 +2814,7 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
                 self._clock_is_wrapped = true
                 self._clock_inner_w    = col_w
                 self._clock_label      = label_text
+                self._clock_legacy_background = bg_enabled
             end
             if mod.is_book_mod then
                 self._book_mod_slots[mod.id] = {
@@ -2834,7 +2840,112 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
         -- Packs mods into parent_body. container_w is the full available
         -- width for a full-width module. first is a one-element table cleared
         -- once a row has been placed.
+        local function _pack_legacy_bento(mods, parent_body, container_w, first)
+            local function _flush_row(row_cols)
+                if not row_cols or #row_cols == 0 then return end
+                if first[1] then
+                    first[1] = false
+                    if not topbar_on then
+                        parent_body[#parent_body+1] = self:_vspan(MOD_GAP)
+                    end
+                end
+
+                local n = #row_cols
+                local gaps_w = (n - 1) * H_COL_GAP
+                local avail = math.max(1, container_w - gaps_w)
+
+                local sum_pct = 0
+                for _, col in ipairs(row_cols) do sum_pct = sum_pct + col.width end
+
+                local target = {}
+                local allocated = 0
+                for i, col in ipairs(row_cols) do
+                    if i == n then
+                        local row_pixels = math.max(1, math.floor(avail * sum_pct / 100))
+                        target[i] = math.max(1, row_pixels - allocated)
+                    else
+                        target[i] = math.max(1, math.floor(avail * col.width / 100))
+                        allocated = allocated + target[i]
+                    end
+                end
+
+                -- Margins belong to individual modules, not the leading column.
+                -- Top alignment prevents a taller neighbour from offsetting them.
+                local h_row = HorizontalGroup:new{ align = "top" }
+                for i, col in ipairs(row_cols) do
+                    local slot_w = target[i]
+                    local v_col = VerticalGroup:new{ align = "left" }
+                    for _, mod in ipairs(col.mods) do
+                        local cell = _emit_mod(mod, slot_w)
+                        if cell then
+                            v_col[#v_col+1] = self:_vspan(mod_gaps[mod.id] or MOD_GAP)
+                            _register_cell(cell)
+                            v_col[#v_col+1] = cell
+                        end
+                    end
+                    local col_h = v_col:getSize().h
+                    h_row[#h_row+1] = LeftContainer:new{
+                        dimen = Geom:new{ w = slot_w, h = col_h },
+                        v_col,
+                    }
+                    if i < n then
+                        h_row[#h_row+1] = HorizontalSpan:new{ width = H_COL_GAP }
+                    end
+                end
+
+                -- Centre when the row does not consume the full container.
+                local content_w = gaps_w
+                for i = 1, n do content_w = content_w + target[i] end
+                local leftover = container_w - content_w
+                if leftover > 1 then
+                    local left_pad = math.floor(leftover / 2)
+                    parent_body[#parent_body+1] = HorizontalGroup:new{
+                        align = "center",
+                        HorizontalSpan:new{ width = left_pad },
+                        h_row,
+                        HorizontalSpan:new{ width = leftover - left_pad },
+                    }
+                else
+                    parent_body[#parent_body+1] = h_row
+                end
+            end
+
+            local row_cols = {}
+            local row_sum = 0
+            for _, mod in ipairs(mods) do
+                -- Width already clamped by Config.getBentoWidth.
+                local w = mod_col_width[mod.id] or 100
+
+                if w >= 100 then
+                    _flush_row(row_cols)
+                    row_cols, row_sum = {}, 0
+                    _flush_row({ { width = 100, mods = { mod } } })
+                elseif row_sum + w <= 100 then
+                    row_cols[#row_cols+1] = { width = w, mods = { mod } }
+                    row_sum = row_sum + w
+                else
+                    -- Stack only onto a column with the same width %.
+                    local stacked = false
+                    for _, col in ipairs(row_cols) do
+                        if col.width == w then
+                            col.mods[#col.mods+1] = mod
+                            stacked = true
+                            break
+                        end
+                    end
+                    if not stacked then
+                        _flush_row(row_cols)
+                        row_cols = { { width = w, mods = { mod } } }
+                        row_sum = w
+                    end
+                end
+            end
+            _flush_row(row_cols)
+        end
         local function _pack_bento(mods, parent_body, container_w, first)
+            if not (layout and layout.bento_model == 3) then
+                return _pack_legacy_bento(mods, parent_body, container_w, first)
+            end
             local ids, by_id = {}, {}
             for i, mod in ipairs(mods) do
                 ids[i] = mod.id
@@ -3499,6 +3610,11 @@ function ScreenWidget:_syncBookModLabel(mod_id)
     local new_label = self:_labelFor(slot.mod, slot.col_w, ctx, slot.inside)
     if not new_label then return end
     local old_label = slot.parent[slot.index]
+    if old_label and new_label._orbitui_label_signature
+            and new_label._orbitui_label_signature == old_label._orbitui_label_signature then
+        if new_label.free then new_label:free() end
+        return
+    end
     slot.parent[slot.index] = new_label
     if old_label and type(old_label.free) == "function" then pcall(old_label.free, old_label) end
     if new_label.dimen then

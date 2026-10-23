@@ -253,6 +253,8 @@ end
 -- stores its width.
 -- Updates the stored spans only: the caller saves the layout.
 function LayoutService.setSpan(layout, pfx, mod_id, span)
+    -- Explicit editing opts this screen into the new preview/row model.
+    layout.bento_model = 3
     local Config = require("infra/sui_config")
     local page = LayoutService.findPage(layout, mod_id)
     if not page then
@@ -270,6 +272,7 @@ end
 -- Moves a module one step (left, right, up or down) inside its page.
 -- Updates the page order and the stored spans: the caller saves the layout.
 function LayoutService.move(layout, pfx, mod_id, dir)
+    layout.bento_model = 3
     local page = LayoutService.findPage(layout, mod_id)
     if not page then return {} end
     local Config = require("infra/sui_config")

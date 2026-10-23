@@ -99,6 +99,38 @@ class CollectTests(unittest.TestCase):
         self.assertNotIn("behind", item)
         self.assertEqual(item["errors"][0]["phase"], "fetch")
 
+    def test_reviewed_zip_is_reported_separately_from_git_ancestry(self):
+        snapshot = json.loads((ROOT / "sources.json").read_text())["components"]["simpleui"]["release_snapshot"]
+        source = {**SOURCE, "release_snapshot": snapshot}
+        item = watch.collect_component(FakeGit(), FakeAPI(), "bookshelf", source, HEAD)
+        self.assertEqual(item["integrated"], BASE)
+        self.assertEqual(item["release_snapshot"], snapshot)
+        baseline = report()
+        changed = copy.deepcopy(baseline)
+        changed["components"][0] = item
+        self.assertNotEqual(watch.fingerprint(baseline), watch.fingerprint(changed))
+        text = watch.render(changed)
+        self.assertIn("Additional reviewed release ZIP: 3.0.0", text)
+        self.assertIn("not represented by the upstream Git pin/count", text)
+        self.assertIn(snapshot["sha256"], text)
+        git = FakeGit()
+        git.not_ancestors.add((snapshot["source_commit"], HEAD))
+        rejected = watch.collect_component(git, FakeAPI(), "bookshelf", source, HEAD)
+        self.assertEqual(rejected["status"], "error")
+        self.assertEqual(git.calls, [])
+
+    def test_invalid_snapshot_identity_is_rejected(self):
+        data = json.loads((ROOT / "sources.json").read_text())
+        for key, value in (("sha256", "bad"), ("source_commit", "bad"),
+                           ("tag", "../outside"), ("asset", "another.zip"), ("size", 0)):
+            with self.subTest(key=key), tempfile.TemporaryDirectory() as tmp:
+                altered = copy.deepcopy(data)
+                altered["components"]["simpleui"]["release_snapshot"][key] = value
+                path = Path(tmp) / "sources.json"
+                path.write_text(json.dumps(altered))
+                with self.assertRaises(watch.WatchError):
+                    watch.load_sources(path)
+
     def test_recorded_history_must_belong_to_orbitui(self):
         git = FakeGit()
         git.not_ancestors.add((FORK, HEAD))

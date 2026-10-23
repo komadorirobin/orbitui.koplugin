@@ -20,7 +20,7 @@ local function method(source, first)
     return source:sub(start, assert(source:find("\nend", start, true)) + 3)
 end
 
-local layout_code = section(read("screens/sui_settings_window.lua"),
+local layout_code = section(read("infra/sui_layout.lua"),
     "local LayoutService = {}", "function LayoutService.getModuleName")
 local function layoutFixture(initial, key, prefix)
     key, prefix = key or "simpleui_layout", prefix or "simpleui_hs_"
@@ -217,6 +217,7 @@ H.test("action-list rows use the chrome-provided width without a second inset", 
     local build = compile(method(read("modules/module_action_list.lua"), "local function buildListWidget(")
         .. "\nreturn buildListWidget", {
         PAD = 10, VerticalGroup = W, VerticalSpan = W, FrameContainer = W,
+        Chrome = { radius = function() return 0 end },
         QA = { filterValidIds = function(ids) return ids end },
         QARenderer = { buildListRow = function(_, args) widths[#widths + 1] = args.inner_w; return W:new{} end },
     })

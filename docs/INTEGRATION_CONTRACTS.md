@@ -236,6 +236,18 @@ Tests: `test_series_rating`, `test_upstream_series_boxes`.
 
 ## C07: Presentation and preferences
 
+The user-approved October 23 SimpleUI 3.0 ZIP import preserves existing Bento
+percentages and stacked columns. No render-time width snapping or automatic
+layout conversion is permitted. Explicit width/movement edits in the new editor
+set the screen layout's `bento_model=3`, enabling its fixed-span preview/rows.
+Both models retain independent module top gaps and top alignment. The 96dp
+embedded navbar, transparent defaults and opt-in UI fonts remain unchanged.
+The old Reading Stats module path aliases the new directory module (C06).
+The v12/v13 badge/folder/caption migrations copy only into unset new keys,
+retain all old keys for rollback and mark completion only after success (C08).
+New charts/session caches must retry transient DB failures. Coverage:
+`test_simpleui3`, `test_simpleui_bento_margins` and existing integration suites.
+
 Retain the user's independent prose/manga configurations, backgrounds, fonts,
 dock and custom Home/Bento layout. "Show section label" must still show labels.
 Transparent book-title/page-indicator backgrounds must not also erase the hero

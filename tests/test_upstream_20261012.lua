@@ -165,6 +165,10 @@ H.test("clock rebuild retains module background and hold wrapper", function()
     local rebuild = run(section(read("components/simpleui/modules/module_clock.lua"),
         "local function _rebuildModule", "local function _tick") .. "\nreturn _rebuildModule", {
         Screen={getWidth=function() return 600 end},
+        Chrome={ resolve=function() return {} end, outerMargin=function() return 0 end,
+            boxInset=function() return 0 end, contentWidth=function(w) return w end,
+            ink=function() return {} end, palette=function() return {} end,
+            wrap=function(w) return w end },
         UI={}, UIManager={setDirty=function() end},
         build=function(_,_,_,_,_,live) live.texts={}; return {clock=true} end,
         require=function() return nil end,

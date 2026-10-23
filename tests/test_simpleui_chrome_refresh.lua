@@ -10,7 +10,8 @@ function UIManager:setDirty(_, region)
     assert(dimen and dimen.h > 0)
     dirty = dirty + 1
 end
-local Config = { cover_extraction_pending = true, flushCoverQueue = function() flushes = flushes + 1 end }
+local Config = { cover_extraction_pending = true, flushCoverQueue = function() flushes = flushes + 1 end,
+    isModuleBackgroundEnabled = function() return false end }
 local function node(child)
     return { child, dimen = { w = 200, h = 60 }, getSize = function() return { w = 200, h = 60 } end }
 end
@@ -18,6 +19,8 @@ local last_chrome, last_content
 package.loaded["features/sui_module_chrome"] = {
     resolve = function(pfx, id) return { pfx = pfx, id = id } end,
     hasFill = function() return false end,
+    hasChrome = function() return false end,
+    ink = function() return {} end, palette = function() return {} end,
     contentWidth = function(w) return w - 20 end,
     wrap = function(content, chrome, w)
         H.eq(chrome.pfx, "simpleui_hs_")

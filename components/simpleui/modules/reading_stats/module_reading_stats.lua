@@ -853,8 +853,9 @@ local function _buildHeatmap(stats, d, max_w, free_h, clr_blk)
         return Charts.heatmap{ levels = grid.levels, size = size, gap = gap, gap_x = gap_x, color = clr_blk,
                                today = { grid.today_col, grid.today_row } }
     end
-    for _, count in ipairs{ 28, 14, 7 } do
-        size, gap, _, gap_x = Charts.fitGrid(1, count, max_w, free_h, d.dot_max, count)
+    for _i, count in ipairs{ 28, 14, 7 } do
+        local ignored_cols
+        size, gap, ignored_cols, gap_x = Charts.fitGrid(1, count, max_w, free_h, d.dot_max, count)
         if size then
             local levels = {}
             for i, level in ipairs(HD.levels(HD.lastDays(days, count, now))) do levels[i] = { level } end

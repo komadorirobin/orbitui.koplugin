@@ -17,6 +17,15 @@
       "path": "components/simpleui",
       "upstream_branch": "main",
       "upstream_commit": "dd541fc2b384af43287474587622ef68a2fb3185",
+      "release_snapshot": {
+        "tag": "3.0.0",
+        "asset": "simpleui.koplugin.zip",
+        "asset_id": 670136743,
+        "size": 2625011,
+        "sha256": "033f19775610faca6b9cf2d0f92802fdd0fbfad9ebcdda881a1910884cafcf87",
+        "tag_commit": "dd541fc2b384af43287474587622ef68a2fb3185",
+        "source_commit": "3cb364313ee8b2b17f860f67ef330cd6c2f5370b"
+      },
       "tag": "2.7.2-beta.5",
       "commit": "a8bbbdb89dcce9a4b9d86cfa321c8cecce9b030f",
       "import_license": "MIT",

@@ -39,6 +39,8 @@ local NativeSheets = require("features/dialogs/sui_native_sheets")
 local NativeInputs = require("features/dialogs/sui_native_inputs")
 
 local NativeWidgets = {}
+local pack = table.pack or function(...) return { n = select("#", ...), ... } end
+local unpack = table.unpack or unpack
 
 -- True while showOverWindows runs its function.
 local over_windows = false
@@ -247,10 +249,10 @@ end
 function NativeWidgets.showOverWindows(fn, ...)
     local previous = over_windows
     over_windows = true
-    local results = table.pack(pcall(fn, ...))
+    local results = pack(pcall(fn, ...))
     over_windows = previous
     if not results[1] then error(results[2], 0) end
-    return table.unpack(results, 2, results.n)
+    return unpack(results, 2, results.n)
 end
 
 --- Close step: closing a widget that something stands in for closes that. The

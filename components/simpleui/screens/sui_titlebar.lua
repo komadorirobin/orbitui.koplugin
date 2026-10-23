@@ -720,18 +720,48 @@ end
 -- Shared building blocks (FM styles and sub-pages)
 -- ---------------------------------------------------------------------------
 
--- Shows the back icon: the SUIStyle override when set, the slot's default
--- symbol glyph (which follows the layout direction) otherwise.
-local function _applyBackIcon(btn)
-    local _ss = SUIStyle()
-    if _ss then _ss.applyIconToBtn("sui_back", btn) end
+-- Default back icon as { icon = <native name> } or { file = <path> }.
+-- LTR layouts use the plugin's left-aligned chevron; mirrored (RTL) layouts
+-- use the native right chevron.
+local function _backIcon()
+    local mirrored = false
+    pcall(function() mirrored = require("ui/bidi").mirroredUILayout() end)
+    if mirrored then return { icon = "chevron.right" } end
+    if M.getStyle() == M.STYLE_TABS then return { file = Config.ICON.back } end
+    return { icon = "chevron.left" }
 end
 
--- Shows the menu icon: the SUIStyle override when set, the slot's default
--- symbol glyph otherwise.
+-- Shows the back icon: the SUIStyle override when set, `back_icon` (see
+-- _backIcon) otherwise. .icon and .file are mutually exclusive in
+-- ImageWidget:init (.icon wins), so the field that is not wanted is cleared.
+local function _applyBackIcon(btn, back_icon)
+    back_icon = back_icon or _backIcon()
+    local _ss = SUIStyle()
+    if _ss and (M.getStyle() == M.STYLE_TABS or not _ss.getIcon or _ss.getIcon("sui_back"))
+        and _ss.applyIconToBtn("sui_back", btn) then return end
+    if _ss and _ss.restoreDefaultIcon then
+        _ss.restoreDefaultIcon(btn, back_icon.icon, back_icon.file)
+    elseif btn.image then
+        btn.image.icon = back_icon.icon
+        btn.image.file = back_icon.file
+        _reloadImage(btn.image)
+    end
+end
+
+-- Shows the menu icon: the SUIStyle override when set, the plugin's default
+-- menu icon otherwise.
 local function _applyMenuIcon(btn)
     local _ss = SUIStyle()
-    if _ss then _ss.applyIconToBtn("sui_menu", btn) end
+    if _ss and (M.getStyle() == M.STYLE_TABS or not _ss.getIcon or _ss.getIcon("sui_menu"))
+        and _ss.applyIconToBtn("sui_menu", btn) then return end
+    local file = M.getStyle() == M.STYLE_TABS and Config.ICON.menu or Config.ICON.ko_menu
+    if _ss and _ss.restoreDefaultIcon then
+        _ss.restoreDefaultIcon(btn, nil, file)
+    elseif btn.image then
+        btn.image.icon = nil
+        btn.image.file = file
+        _reloadImage(btn.image)
+    end
 end
 
 -- Creates the injected back button, sized and styled like the other title-bar

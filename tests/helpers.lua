@@ -18,6 +18,9 @@ end
 
 -- Exercise the real shared caches while keeping native KOReader services stubbed.
 function M.simpleuiMemory()
+    for _, name in ipairs({ "sui_accent", "sui_fonts", "sui_text_fit", "sui_span_grid", "sui_bento" }) do
+        package.preload["infra/" .. name] = function() return dofile("components/simpleui/infra/" .. name .. ".lua") end
+    end
     package.preload["infra/sui_text"] = function() return dofile("components/simpleui/infra/sui_text.lua") end
     package.preload["util"] = package.preload["util"] or function()
         return { trim = function(s) return (s:gsub("^%s*(.-)%s*$", "%1")) end }

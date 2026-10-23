@@ -1,6 +1,7 @@
 package.path = "./?.lua;./?/init.lua;" .. package.path
 package.loaded["features/library/sui_finished_books"] = { isHidden = function() return false end }
 package.loaded["infra/sui_backdrop"] = {}
+package.loaded["infra/sui_perf"] = { mark = function() end }
 
 local passed = 0
 local function test(name, fn)
@@ -15,6 +16,7 @@ for _, name in ipairs({
     "ui/widget/textboxwidget", "ui/widget/textwidget", "ui/widget/verticalgroup",
     "ui/widget/verticalspan", "features/sui_style", "ui/widget/imagewidget", "ui/rendertext",
 }) do package.loaded[name] = {} end
+package.loaded["features/sui_style"].PROGRESS_BAR_H = 4
 package.loaded.device = { screen = { scaleBySize = function(_, n) return n end,
     getWidth = function() return 1072 end, getHeight = function() return 1448 end } }
 package.loaded["ui/uimanager"] = { scheduleIn = function() end, unschedule = function() end }

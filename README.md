@@ -196,6 +196,11 @@ to undo a UI change.
 
 ## Beta status and feedback
 
+The local maintenance branch includes a reviewed **SimpleUI 3.0** release-ZIP
+snapshot. This work has not been published as an OrbitUI update. The release
+asset differs from SimpleUI's Git tag; provenance and the later Git reconciliation
+procedure are in [the upstream workflow](docs/UPSTREAM.md).
+
 **0.1.0-beta.4** is the current beta. It integrates Bookshelf 5.5.5 and its
 subsequent Shelf size crash fix, plus SimpleUI's latest action dialogs and
 Tabbed Grid frame fix. The existing reader setup, upgrades and

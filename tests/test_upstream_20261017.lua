@@ -29,8 +29,12 @@ package.loaded["infra/sui_i18n"] = { translate = function(s) return s end }
 package.loaded["device"] = { screen = { scaleBySize = function(_, n) return n end } }
 package.loaded["ui/geometry"] = H.widget()
 package.loaded["ui/widget/widget"] = H.widget()
+package.loaded["ui/widget/container/widgetcontainer"] = H.widget()
+package.loaded["ffi/blitbuffer"] = {}
 package.loaded["infra/sui_aa_paint"] = {}
-package.loaded["features/sui_style"] = { BORDER_SZ = 1, COLOR = { surface = "white", surface_flat = "gray" } }
+package.loaded["features/sui_style"] = { BORDER_SZ = 1, COLOR = { surface = "white", surface_flat = "gray", surface_gray = "gray" },
+    isPaletteChoice = function() return false end, paletteChoiceAvailable = function() return false end,
+    resolveColor = function() return nil end }
 local Backdrop = require("infra/sui_backdrop")
 local WP, active = {}, true
 run(section(read("features/sui_wallpaper.lua"), "local STRENGTH_MIN, STRENGTH_MAX", "-- Applies the lighten"),
@@ -117,6 +121,7 @@ H.test("quick-setting buttons preserve migrated opacity and let users change it"
     local spec = run(section(source, "local function buttonSpec", "-- Returns makeButton")
         .. "\nreturn buttonSpec", {
             BTN_ICON_PCT = 0.5, getShape = function() return "square_round" end,
+            _QARenderer = function() return { cellDims = function(n) return { icon_sz = n * 0.5 } end } end,
             buttonSurface = buttonSurface, Backdrop = Backdrop, SUIStyle = {COLOR = {}},
         })
     settings = {old_buttons_look = "transparent"}

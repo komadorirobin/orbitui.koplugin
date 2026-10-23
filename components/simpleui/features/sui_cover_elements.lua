@@ -363,7 +363,7 @@ local LEGACY = {
 }
 
 -- Moves the library badge settings of earlier versions to the registry keys.
--- A value already stored under a new key wins; every legacy key is removed.
+-- A value already stored under a new key wins; legacy keys stay for rollback.
 -- Enums that combined visibility and variant are split into `show` + variant.
 function CE.migrateLegacyBadges()
     local function read(legacy) return SUISettings:get(legacy) end
@@ -374,7 +374,7 @@ function CE.migrateLegacyBadges()
     local moved = 0
     local function drop(legacy)
         if SUISettings:get(legacy) ~= nil then moved = moved + 1 end
-        SUISettings:delNoFlush(legacy)
+        -- Keep the old namespace readable by the retained rollback runtime.
     end
 
     -- Visibility flags: pages was on unless set false, series off unless set true.
@@ -429,7 +429,7 @@ function CE.migrateLegacyBadges()
     drop(LEGACY.size)
 
     logger.info("simpleui: migration v12 — library badge settings moved to the cover elements registry,",
-        moved, "legacy keys removed")
+        moved, "legacy settings copied; old keys retained")
 end
 
 local LEGACY_FOLDER = {
@@ -449,8 +449,8 @@ local LEGACY_FOLDER = {
 }
 
 -- Moves the library folder cover settings of earlier versions to the registry
--- keys. A value already stored under a new key wins; every legacy key is
--- removed. The name's visibility flag and mode merge into one `show`, and
+-- keys. A value already stored under a new key wins; legacy keys are retained.
+-- The name's visibility flag and mode merge into one `show`, and
 -- the book stack's negative `hide` becomes `show`.
 function CE.migrateLegacyFolder()
     local function read(legacy) return SUISettings:get(legacy) end
@@ -460,7 +460,7 @@ function CE.migrateLegacyFolder()
     local moved = 0
     local function drop(legacy)
         if SUISettings:get(legacy) ~= nil then moved = moved + 1 end
-        SUISettings:delNoFlush(legacy)
+        -- Copy-only migration; old OrbitUI releases still read these keys.
     end
 
     put(TYPE_KEY, read(LEGACY_FOLDER.type))
@@ -489,7 +489,7 @@ function CE.migrateLegacyFolder()
     drop(LEGACY_FOLDER.label_style)
 
     logger.info("simpleui: migration v13 — folder cover settings moved to the cover elements registry,",
-        moved, "legacy keys removed")
+        moved, "legacy settings copied; old keys retained")
 end
 
 return CE

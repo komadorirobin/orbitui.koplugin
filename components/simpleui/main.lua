@@ -988,10 +988,10 @@ function SimpleUIPlugin:init()
         -- the keys gain the "simpleui_style_badge_" prefix.
         if not defer_defaults_until_settings_migrated
                 and not SUISettings:isTrue("simpleui_settings_migrated_v12") then
-            pcall(function()
+            local migrated = pcall(function()
                 require("features/sui_cover_elements").migrateLegacyBadges()
             end)
-            SUISettings:set("simpleui_settings_migrated_v12", true)
+            if migrated then SUISettings:set("simpleui_settings_migrated_v12", true) end
             SUISettings:flush()
         end
         -- -------------------------------------------------------------------
@@ -1002,13 +1002,11 @@ function SimpleUIPlugin:init()
         -- `show`) and the library caption flags to the captions keys.
         if not defer_defaults_until_settings_migrated
                 and not SUISettings:isTrue("simpleui_settings_migrated_v13") then
-            pcall(function()
+            local migrated = pcall(function()
                 require("features/sui_cover_elements").migrateLegacyFolder()
-            end)
-            pcall(function()
                 require("features/library/sui_foldercovers").migrateLegacyCaptions()
             end)
-            SUISettings:set("simpleui_settings_migrated_v13", true)
+            if migrated then SUISettings:set("simpleui_settings_migrated_v13", true) end
             SUISettings:flush()
         end
         -- -------------------------------------------------------------------

@@ -2,7 +2,7 @@
 -- Single owner of a module's section label (the title row above a module):
 --   • descriptor — what the label shows: text, right-aligned text, page state
 --   • PageState  — per-module pagination state stored in the screen ctx
---   • rendering  — label widget construction and a per-screen widget cache
+--   • rendering  — fresh label widgets owned by their mounted screen tree
 --   • height     — vertical space the label reserves
 --
 -- Descriptor: { text, right_text, page, npages }. A module supplies it through
@@ -99,7 +99,7 @@ end
 function M.describe(mod, ctx)
     if type(mod.getLabel) == "function" then return mod.getLabel(ctx) end
     local right_text = type(mod.label_right_func) == "function" and mod.label_right_func(ctx) or nil
-    return M.makeDescriptor(mod.id, mod.label, ctx, right_text)
+    return M.makeDescriptor(mod.id, mod._section_label or mod.label, ctx, right_text)
 end
 
 -- ---------------------------------------------------------------------------
@@ -183,9 +183,8 @@ local function buildWidget(desc, w, scale, turn_page, focusable, inside)
     }, stops
 end
 
--- Returns the label widget for module `id`, reusing the one in `cache` while
--- everything it shows is unchanged (same widget identity = nothing to
--- repaint). `cache` is a table owned by one screen instance.
+-- Returns a fresh label widget for module `id`. `cache` is a retained API
+-- argument, not a store of widgets; the owning tree frees every mounted label.
 --   desc             descriptor (see M.describe)
 --   w                column width the label spans
 --   landscape_factor label scale multiplier (default 1)
@@ -198,17 +197,14 @@ end
 function M.get(cache, id, desc, w, landscape_factor, turn_page, focusable, inside, pfx)
     local scale  = Config.getSectionLabelScale(id, pfx) * (landscape_factor or 1)
     local paged  = desc.right_text ~= nil and desc.npages > 1
-    local ink    = inside and inside.ink
-    local key = table.concat({
-        desc.text, w, scale, desc.right_text or "",
-        paged and desc.page or 0, paged and desc.npages or 0,
-        inside and 1 or 0, ink and tostring(ink.blk) or "",
-        tostring(LabelStyle.color(inside)),
-        LabelStyle.signature(),
-    }, "|")
-
     local nav = paged and turn_page and function(delta) turn_page(id, delta) end or nil
     local widget, stops = buildWidget(desc, w, scale, nav, focusable, inside)
+    local ink = inside and inside.ink
+    widget._orbitui_label_signature = table.concat({
+        id, desc.text, w, scale, desc.right_text or "", desc.page or 1, desc.npages or 1,
+        inside and 1 or 0, ink and tostring(ink.blk) or "",
+        tostring(LabelStyle.color(inside)), LabelStyle.signature(),
+    }, "|")
     -- Each mounted tree owns fresh widgets; never suppress native free().
     return widget, stops
 end

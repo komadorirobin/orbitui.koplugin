@@ -34,6 +34,7 @@ local function widget(kind)
 end
 local V, HG, VS, HS, Box = widget("vertical"), widget("horizontal"),
     widget("vspan"), widget("hspan"), widget("box")
+local Overlap = widget("overlap")
 local noop = function() end
 local mods = {
     coverdeck = { id = "coverdeck", is_book_mod = true, height = 300 },
@@ -45,6 +46,9 @@ local widths, gaps, settings, landscape, label_hidden, background
 local layout_key, pfx = "test_layout", "simpleui_hs_"
 local Config = {
     getBentoWidth = function(id) return widths[id] or 100 end,
+    getBentoSpan = function(id)
+        return dofile("components/simpleui/infra/sui_bento.lua").pctToSpan(widths[id])
+    end,
     setBentoWidth = function(value, id) widths[id] = value end,
     getModuleGapPx = function(id, prefix, default)
         H.eq(prefix, pfx)
@@ -58,6 +62,15 @@ local env = setmetatable({
     ScreenWidget = ScreenWidget, Config = Config, MOD_GAP = 10, SIDE_PAD = 0,
     VerticalGroup = V, HorizontalGroup = HG, VerticalSpan = VS,
     HorizontalSpan = HS, LeftContainer = Box,
+    OverlapGroup = Overlap, Bento = dofile("components/simpleui/infra/sui_bento.lua"),
+    BD = { mirroredUILayout = function() return false end },
+    require = function(name)
+        if name == "features/sui_module_chrome" then
+            return { outerMargin = function() return 0 end, GUTTER = 10,
+                stretch = function() return nil end }
+        end
+        return require(name)
+    end,
     Geom = { new = function(_, args) return args end },
     Screen = { getWidth = function() return 1264 end, getHeight = function() return 1680 end },
     UI = { getSpreadColWidth = function(w) return math.floor((w - 1) / 2) end,
@@ -116,6 +129,9 @@ local function screen(pages, prefix)
             local content = Box:new{ content_id = mod.id, dimen = { w = w, h = mod.height } }
             return content, content
         end,
+        _labelFor = function(_, mod, w)
+            return not label_hidden and env.sectionLabel(mod.id, w, mod.id) or nil
+        end,
         _makeModWrapper = function(_, _, content) return Box:new{ content } end,
         _updateFooter = noop,
     }, { __index = ScreenWidget })
@@ -133,9 +149,10 @@ local function positions(tree)
             if node.kind == "horizontal" and node.align == "center" then
                 cy = cy + math.floor((size.h - cs.h) / 2)
             end
-            walk(child, x, cy)
+            local off = child.overlap_offset or { 0, 0 }
+            walk(child, x + off[1], cy + off[2])
             if node.kind == "horizontal" then x = x + cs.w
-            else y = y + cs.h end
+            elseif node.kind ~= "overlap" then y = y + cs.h end
         end
     end
     walk(tree, 0, 0)
@@ -151,6 +168,19 @@ H.test("each column uses its own margin above label and content", function()
     H.eq(p.labels.coverdeck.y, 30)
     H.eq(p.labels.new_books.y, 0)
     H.eq(p.contents.new_books.y, 12)
+end)
+
+H.test("explicit 3.0 rows preserve individual margins and align columns at the top", function()
+    local s = screen({ { "coverdeck", "new_books" } })
+    settings[layout_key].bento_model = 3
+    widths.coverdeck, widths.new_books = 50, 50
+    gaps.coverdeck, gaps.new_books = 30, 0
+    s:_updatePage(false)
+    local p = positions(s._body)
+    H.eq(p.labels.coverdeck.y, 30)
+    H.eq(p.labels.new_books.y, 0)
+    H.eq(p.contents.new_books.y, 12)
+    assert(p.contents.new_books.x > p.contents.coverdeck.x)
 end)
 
 H.test("stacked New Books margin moves only that module, not its neighbour or predecessor", function()

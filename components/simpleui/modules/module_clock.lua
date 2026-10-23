@@ -831,6 +831,7 @@ local function _rebuildModule(screen)
         local lf = screen._clock_landscape_factor
 
         local pfx = screen._clock_pfx or "simpleui_hs_"
+        local legacy = screen._clock_legacy_background
         local chrome = Chrome.resolve(pfx, "clock")
         local col_w = screen._clock_col_w
         if not col_w then
@@ -840,14 +841,16 @@ local function _rebuildModule(screen)
         col_w = col_w or inner_w
 
         -- Build at the same content width the page path would use.
-        local build_w = Chrome.contentWidth(col_w, chrome)
+        local build_w = legacy and inner_w or Chrome.contentWidth(col_w, chrome)
         local live = {}
         local ok_w, new_widget = pcall(build, build_w, pfx, screen._vspan_pool, lf, nil, live, Chrome.ink(chrome), Chrome.palette(chrome))
 
         if ok_w and new_widget then
             -- Re-apply module chrome so the surgical swap keeps the same
             -- fill/frame width the full page build would have wrapped.
-            new_widget = Chrome.wrap(new_widget, chrome, col_w, lf or 1, nil, screen._clock_min_h)
+            if not legacy then
+                new_widget = Chrome.wrap(new_widget, chrome, col_w, lf or 1, nil, screen._clock_min_h)
+            end
             local target
             if type(screen._applyModuleBackground) == "function" then
                 new_widget = screen:_applyModuleBackground("clock", new_widget, inner_w)

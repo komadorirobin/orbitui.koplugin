@@ -30,9 +30,15 @@ and correct this file in the same change.
 - Embedded Bookshelf upstream: `065f25c06d9a8e0607f29cbe632f4b3d44a8bd37`
   (5.5.5 plus PR #544's Shelf size translator fix).
 - Embedded SimpleUI upstream: `dd541fc2b384af43287474587622ef68a2fb3185`
-  (2.7.5 action dialogs and Tabbed Grid frame fix).
-- Upstream dashboard check at 2026-10-23 17:26 UTC: zero missing commits for
-  both components. The live status is GitHub issue #1.
+  remains the public Git baseline. The approved local 3.0 release-ZIP import
+  is source snapshot `3cb364313ee8b2b17f860f67ef330cd6c2f5370b`, merged in
+  `a5d9e76a` on `maintenance/simpleui-3-zip-20261023` (unpublished).
+- SimpleUI 3.0.0's official ZIP differs from its Git tag/main. Its exact digest,
+  asset ID and local snapshot are in `sources.json.release_snapshot`.
+  Reconcile them with upstream's eventual commits using `docs/UPSTREAM.md`.
+- Read-only upstream check at 2026-10-23 20:30 UTC: zero missing Git commits
+  for both components, despite the release-only code difference. GitHub issue
+  #1 is the published monitor; local snapshot-aware output is separate.
 - Open pull requests: none. The only open issue is the monitoring-only upstream
   dashboard.
 - The repository was clean, had no stash and had no unreachable commits during
@@ -83,6 +89,11 @@ provides canonical module names and legacy aliases while preserving
 
 ### Shared Home and library
 
+- The local SimpleUI 3.0 integration adds detailed statistics/charts, live Bento
+  preview, accent/secondary colours, optional bundled fonts and Tiny Critter.
+  Existing percentage/stacked layouts retain their geometry until an explicit
+  new-editor width/movement change; per-module gaps remain independent.
+  UI fonts remain explicit choices and the embedded navbar keeps its 96dp base.
 - One settings hub joins Home, arbitrary library sections, appearance, search,
   Home shelves and the OrbitUI updater.
 - Library sections are user-defined; no personal fiction/manga folder layout is
@@ -199,6 +210,9 @@ tests/device checklist updates, and a `MERGE_LOG.md` entry.
 - Reviewed subtree imports use an exact full SHA on a dedicated maintenance
   branch and retain unsquashed history. Keep the import commit separate from
   OrbitUI adaptations and release documentation where feasible.
+- Exception approved October 23: the official SimpleUI 3.0 ZIP is a separately
+  identified local source snapshot. Do not advance the Git pin or remove the
+  snapshot record until upstream's matching history has been reviewed.
 - Before a merge, read `docs/UPSTREAM.md`, all C01-C11 contracts and the latest
   `docs/MERGE_LOG.md` entries. Update only the appropriate `upstream_commit` in
   `sources.json`; preserve original fork provenance fields.
@@ -223,13 +237,14 @@ A fresh local verification on 2026-10-23 passed:
 - `sh scripts/test.sh`
 - `LUA=luajit sh scripts/test.sh`
 - `sh scripts/check-translations.sh`
-- 115 Python tests per run, with four documented external source-cache audits
+- 117 Python tests per run, with four documented external source-cache audits
   skipped
-- all OrbitUI Lua tests under both interpreters
-- module map: 327 paths verified
-- LuaJIT syntax: 914 Lua files verified
+- all 68 OrbitUI Lua test files under both interpreters, plus the final
+  nine-case SimpleUI 3.0 compatibility suite after its last regression was added
+- module map: 364 paths verified
+- LuaJIT syntax: 952 Lua files verified
 - Bookshelf: 410 suites, 0 failed, 2 documented KOReader-SQLite skips per run
-- all SimpleUI suites exercised by `scripts/test.sh`
+- all 13 original SimpleUI test files exercised by `scripts/test.sh`
 - translations: 43 passed, 0 baseline failures and 0 new failures
 
 These results are headless. They do not establish real fonts, touch targets,
@@ -292,6 +307,9 @@ redesign.
   translator fix.
 - **2026-10-22 — Beta 4:** reviewed SimpleUI 2.7.5 action-dialog and Tabbed Grid
   integration. The following `11bbbcb8` commit added public screenshots only.
+- **2026-10-23 — local maintenance:** approved SimpleUI 3.0 release-ZIP import;
+  its tag still points to the already-integrated 2.7.5 Git baseline. Bookshelf,
+  OrbitUI VERSION and public releases remain unchanged.
 
 For the full decision trail, use `docs/MERGE_LOG.md`; commit messages and tags
 are supporting evidence, not substitutes for the recorded contracts and tests.

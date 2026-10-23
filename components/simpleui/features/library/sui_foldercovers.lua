@@ -143,8 +143,7 @@ function M.migrateLegacyCaptions()
             SUISettings:setNoFlush(SK.captions_content, author == true and "title_author" or "title")
         end
     end
-    SUISettings:delNoFlush(SK.legacy_title_strip)
-    SUISettings:delNoFlush(SK.legacy_author_strip)
+    -- Retain both legacy flags for code rollback.
     logger.info("simpleui: migration v13 — library captions settings moved to the captions keys")
 end
 
