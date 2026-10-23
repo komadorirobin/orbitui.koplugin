@@ -460,6 +460,17 @@ alpha pending the fresh-setup and add-on physical-device acceptance checks.
 
 ## On the reader
 
+Version `0.1.0-beta.5` includes the reviewed official SimpleUI 3.0 release-ZIP
+snapshot. Beta 4 can update directly through the preview channel and restart;
+the stable bootstrap and API 1 are unchanged. Existing percentage/stacked Bento
+layouts are retained until explicitly editing width/movement in the new editor.
+New font choices and Tiny Critter are optional. Settings migrations copy into
+unset new keys while retaining old keys for rollback; preserve a separate
+settings backup because code rollback does not undo later settings edits.
+Bookshelf, ornament packs and reading data are unchanged. New layout, font,
+chart, colour/night, input and external-plugin behavior still needs physical
+reader acceptance. See [the Beta 5 notes](releases/0.1.0-beta.5.md).
+
 Version `0.1.0-beta.3` integrates Bookshelf 5.5.5 and the subsequent Shelf size
 translator fix through `065f25c0`. SimpleUI 2.7.5, ornament channels, bootstrap
 and API 1 are unchanged. Update through OrbitUI's preview channel and restart;

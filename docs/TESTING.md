@@ -2,6 +2,17 @@
 
 ## Automated
 
+2026-10-23 beta.5 publication: user explicitly requested push and publication
+after disclosure of the remaining Bigme checks. Retain the existing beta's
+limited device evidence; this is a prerelease, not new physical acceptance.
+Re-run both full Lua/LuaJIT suites and translations on the versioned tree,
+audit all outgoing Git objects (including the release-snapshot parent), secrets,
+held artwork, sealed inventory and unchanged bootstrap/Bookshelf/artwork.
+Exercise the actual public Beta 4 installer locally and against anonymous public
+Beta 5 bytes, including restart, rollback and external-runtime snapshots. Verify
+main/tag CI and exact downloaded draft/public assets before handoff.
+Evidence: `test-results/beta5-20261023/`; the device checklist below remains open.
+
 2026-10-23 SimpleUI 3.0 release-ZIP import (unpublished): verify the exact official
 asset against its recorded digest, then preserve all original suites. New
 regressions exercise copy-only badge/folder migrations, failed-migration retries

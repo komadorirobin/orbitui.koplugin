@@ -22,17 +22,16 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-23
 
-- Product version: `0.1.0-beta.4` (public GitHub prerelease).
-- Baseline commit: `11bbbcb8` on `main`, which matched `origin/main` when this
-  context was reconstructed. It adds the public README screenshots on top of
-  the Beta 4 release commit.
-- Latest release tag: `v0.1.0-beta.4` at `b4c51138`.
+- Product version: `0.1.0-beta.5` (explicitly requested GitHub prerelease;
+  publication verification is recorded in `docs/MERGE_LOG.md`).
+- Previous public baseline: `11bbbcb8` (README screenshots following Beta 4).
+- Release tag: `v0.1.0-beta.5`; previous tag `v0.1.0-beta.4` is unchanged.
 - Embedded Bookshelf upstream: `065f25c06d9a8e0607f29cbe632f4b3d44a8bd37`
   (5.5.5 plus PR #544's Shelf size translator fix).
 - Embedded SimpleUI upstream: `dd541fc2b384af43287474587622ef68a2fb3185`
-  remains the public Git baseline. The approved local 3.0 release-ZIP import
+  remains the upstream Git baseline. The approved 3.0 release-ZIP import
   is source snapshot `3cb364313ee8b2b17f860f67ef330cd6c2f5370b`, merged in
-  `a5d9e76a` on `maintenance/simpleui-3-zip-20261023` (unpublished).
+  `a5d9e76a`, with adaptations in `9248fe71`, is included in Beta 5.
 - SimpleUI 3.0.0's official ZIP differs from its Git tag/main. Its exact digest,
   asset ID and local snapshot are in `sources.json.release_snapshot`.
   Reconcile them with upstream's eventual commits using `docs/UPSTREAM.md`.
@@ -315,9 +314,10 @@ redesign.
   translator fix.
 - **2026-10-22 — Beta 4:** reviewed SimpleUI 2.7.5 action-dialog and Tabbed Grid
   integration. The following `11bbbcb8` commit added public screenshots only.
-- **2026-10-23 — local maintenance:** approved SimpleUI 3.0 release-ZIP import;
-  its tag still points to the already-integrated 2.7.5 Git baseline. Bookshelf,
-  OrbitUI VERSION and public releases remain unchanged.
+- **2026-10-23 — Beta 5:** approved SimpleUI 3.0 release-ZIP import and explicit
+  push/publication request. Its upstream tag still points to the integrated
+  2.7.5 Git baseline. Bookshelf and stable bootstrap/API remain unchanged;
+  no new physical-reader acceptance is claimed.
 
 For the full decision trail, use `docs/MERGE_LOG.md`; commit messages and tags
 are supporting evidence, not substitutes for the recorded contracts and tests.

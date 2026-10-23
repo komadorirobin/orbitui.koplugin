@@ -3022,6 +3022,23 @@ claimed. VERSION stays `0.1.0-beta.4`; a local validation ZIP must never replace
 the published Beta 4 asset. Publication, version/tag and OTA require a separate
 user request. Preserve the held-artwork exclusion and alternate design branch.
 
+## 2026-10-23: Beta 5 publication request
+
+After the completed SimpleUI 3.0 import and disclosure of the remaining Bigme
+tests, the user explicitly requested "Pusha och publicera". Prepare a new
+`0.1.0-beta.5` prerelease; never replace Beta 4's assets. This continues the
+previously approved public beta line and does not claim new physical-device
+acceptance. Preserve the device checklist, old layouts/settings, stable
+bootstrap/API 1, Bookshelf, artwork and held-bitmap exclusion.
+
+Only VERSION and release documentation change in this preparation. Release
+gates: both full runtimes/translations, clean-commit inventory and all outgoing
+Git-object/secret audits, actual public Beta 4 native upgrade/restart/rollback,
+main/tag CI, exact draft/public bytes and anonymous live OTA. Evidence belongs
+in `test-results/beta5-20261023/`; publication outcomes are recorded separately
+after verification. The raw source snapshot remains an unsquashed import;
+unrelated alternate-design/held-artwork branches must not be pushed.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
