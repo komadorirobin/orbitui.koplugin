@@ -36,7 +36,7 @@ and correct this file in the same change.
 - SimpleUI 3.0.0's official ZIP differs from its Git tag/main. Its exact digest,
   asset ID and local snapshot are in `sources.json.release_snapshot`.
   Reconcile them with upstream's eventual commits using `docs/UPSTREAM.md`.
-- Read-only upstream check at 2026-10-23 20:30 UTC: zero missing Git commits
+- Read-only upstream check at 2026-10-23 20:59 UTC: zero missing Git commits
   for both components, despite the release-only code difference. GitHub issue
   #1 is the published monitor; local snapshot-aware output is separate.
 - Open pull requests: none. The only open issue is the monitoring-only upstream
@@ -246,11 +246,19 @@ A fresh local verification on 2026-10-23 passed:
 - Bookshelf: 410 suites, 0 failed, 2 documented KOReader-SQLite skips per run
 - all 13 original SimpleUI test files exercised by `scripts/test.sh`
 - translations: 43 passed, 0 baseline failures and 0 new failures
+- clean-commit package: 1,969 inventoried files, all byte sizes/hashes verified;
+  native installer smoke test from public Beta 3 passed extraction, activation,
+  restart, code rollback, truncated-download recovery and external snapshots
 
 These results are headless. They do not establish real fonts, touch targets,
 e-ink rendering, device lifecycle, performance or update recovery.
 
 ## Known gaps and next milestones
+
+The SimpleUI 3.0 local runtime contains 1,969 inventoried files, plus its
+manifest, within the installed OTA API 1 limit of 2,000 extracted files. Review
+that budget before adding more assets/modules; a producer-only limit increase
+would not change limits enforced by already-installed updaters.
 
 The primary unresolved gate is focused physical acceptance on the Bigme B7 Pro
 at 1264 x 1680. `docs/TESTING.md` and `docs/SHARED_UI.md` contain the authoritative

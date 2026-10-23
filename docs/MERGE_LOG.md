@@ -2938,8 +2938,8 @@ to the real published Git baseline. Every runtime asset matches the ZIP;
 while the four omitted runtime paths are removed in the source snapshot.
 Unsquashed subtree merge `a5d9e76a` imports that snapshot on
 `maintenance/simpleui-3-zip-20261023`. Existing context documentation is a
-separate preceding commit, `78ac30e9`. The following adaptation commit records
-the source manifest, regressions and compatibility work separately.
+separate preceding commit, `78ac30e9`. Adaptation commit `9248fe71` records the
+source manifest, regressions and compatibility work separately.
 
 `sources.json.release_snapshot` records the exact artifact and local source
 commit; SimpleUI's `upstream_commit`, original fork provenance and tracked
@@ -2990,7 +2990,25 @@ the final missing-aggregate regression was added, the complete nine-case
 per full run, with four existing external-source skips. Both runtimes passed
 410 Bookshelf suites (zero failures, two environment skips); all 13 original
 SimpleUI test files passed. All 364 module paths and 952 LuaJIT syntax files
-passed. The clean-commit package audit is recorded below after completion.
+passed.
+
+Clean committed candidate `9248fe71` packaged successfully: 1,969 inventoried
+runtime files plus the manifest (2,034 ZIP entries including directories),
+SHA-256 `f99a6889e01a70b8805aeba8a4074c7d00ec3d3e5e7249ee7411b232cd50992e`.
+Every packaged file matched its inventory size/hash and `.DS_Store` was absent.
+The actual public Beta 3 installer passed native libarchive extraction and
+SHA verification, missing-module rejection, activation/restart, code rollback,
+truncated-download recovery and the full external-runtime snapshot path with
+persistent rollback. These are temporary headless installations, not reader UI
+tests or publication. The final documentation-only verification commit is
+repackaged separately; its checksum stays with the local artifact/evidence.
+
+A fresh read-only collector at 20:59 UTC reported zero missing Git commits for
+both components and explicitly displayed the additional reviewed 3.0 ZIP
+snapshot. The official asset digest remained unchanged. No issue was published
+or updated by the local collector. The temporary source checkout was removed;
+`imports/simpleui-3.0.0-release-zip` retains the source commit, and the exact ZIP
+is preserved in the local evidence directory.
 The original 13 SimpleUI test files remain enabled, with native fixtures adapted
 to the new APIs rather than discarded assertions. Python includes two additional
 monitor/provenance tests. The existing four external-source audits and two
