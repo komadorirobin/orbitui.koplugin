@@ -22,10 +22,11 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-23
 
-- Product version: `0.1.0-beta.5` (explicitly requested GitHub prerelease;
-  publication verification is recorded in `docs/MERGE_LOG.md`).
+- Product version: `0.1.0-beta.5` (public GitHub prerelease, published
+  2026-10-23 at 21:26 UTC; verification is in `docs/MERGE_LOG.md`).
 - Previous public baseline: `11bbbcb8` (README screenshots following Beta 4).
-- Release tag: `v0.1.0-beta.5`; previous tag `v0.1.0-beta.4` is unchanged.
+- Release tag: `v0.1.0-beta.5` at `a19a96ab`; previous tag
+  `v0.1.0-beta.4` and its assets are unchanged.
 - Embedded Bookshelf upstream: `065f25c06d9a8e0607f29cbe632f4b3d44a8bd37`
   (5.5.5 plus PR #544's Shelf size translator fix).
 - Embedded SimpleUI upstream: `dd541fc2b384af43287474587622ef68a2fb3185`
@@ -238,23 +239,26 @@ A fresh local verification on 2026-10-23 passed:
 - `sh scripts/check-translations.sh`
 - 117 Python tests per run, with four documented external source-cache audits
   skipped
-- all 68 OrbitUI Lua test files under both interpreters, plus the final
-  nine-case SimpleUI 3.0 compatibility suite after its last regression was added
+- all 68 OrbitUI Lua test files under both interpreters, including the complete
+  nine-case SimpleUI 3.0 compatibility suite
 - module map: 364 paths verified
 - LuaJIT syntax: 952 Lua files verified
 - Bookshelf: 410 suites, 0 failed, 2 documented KOReader-SQLite skips per run
 - all 13 original SimpleUI test files exercised by `scripts/test.sh`
 - translations: 43 passed, 0 baseline failures and 0 new failures
-- clean-commit package: 1,969 inventoried files, all byte sizes/hashes verified;
-  native installer smoke test from public Beta 3 passed extraction, activation,
-  restart, code rollback, truncated-download recovery and external snapshots
+- Beta 5 clean-commit package: 1,970 inventoried files, all sizes/hashes verified;
+  actual public Beta 4 native installer passed extraction, activation, restart,
+  rollback, truncated-download recovery and external snapshots. Anonymous public
+  discovery and real HTTPS download of Beta 5 passed the same native checks.
+- main/tag CI and the snapshot-aware upstream monitor passed; draft/public
+  assets were downloaded and matched the sealed release bytes exactly
 
 These results are headless. They do not establish real fonts, touch targets,
 e-ink rendering, device lifecycle, performance or update recovery.
 
 ## Known gaps and next milestones
 
-The SimpleUI 3.0 local runtime contains 1,969 inventoried files, plus its
+The published Beta 5 runtime contains 1,970 inventoried files, plus its
 manifest, within the installed OTA API 1 limit of 2,000 extracted files. Review
 that budget before adding more assets/modules; a producer-only limit increase
 would not change limits enforced by already-installed updaters.

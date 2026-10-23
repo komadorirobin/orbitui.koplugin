@@ -3039,6 +3039,50 @@ in `test-results/beta5-20261023/`; publication outcomes are recorded separately
 after verification. The raw source snapshot remains an unsquashed import;
 unrelated alternate-design/held-artwork branches must not be pushed.
 
+### Beta 5 publication verification
+
+Published `v0.1.0-beta.5` from clean commit
+`a19a96abce51e46da7175aab829cea6239bee127` at `2026-10-23T21:26:16Z`,
+as a prerelease, not a stable release. Main and the annotated tag were pushed
+explicitly and atomically; unrelated branches were not pushed. Public release:
+https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.5
+
+Both complete sequential Lua/LuaJIT runs passed: all 68 OrbitUI test files,
+117 Python tests per run (four existing external-source skips), 410 Bookshelf
+suites per run (zero failures, two environment skips), and all 13 original
+SimpleUI files. All 43 translation catalogues, 364 module paths and 952 LuaJIT
+syntax files passed. No new skip or failure allowance was introduced.
+
+The sealed ZIP contains 1,970 inventoried files plus its manifest, 2,035 entries
+including directories, 8,793,504 compressed bytes and 27,137,935 expanded bytes.
+SHA-256: `ff36fa56485f725f78cae11ea4023edb95fda3362e90b4f4e05641db03aa9146`.
+Every file's inventory size/hash and committed source bytes matched. The public
+Beta 4 base matched its GitHub digest. Bootstrap/API, Bookshelf and existing
+artwork are byte-identical; only three obsolete SimpleUI SVGs are removed.
+All 334 outgoing blobs, including the raw source snapshot's ancestry, were
+hashed and excluded the held bitmap. Gitleaks found no outgoing secrets.
+
+Main CI `40026326806` and tag CI `40026326592` both passed their Lua/LuaJIT
+jobs; monitoring-only upstream watch `40026326440` also passed. Downloaded
+authenticated draft and anonymous public assets exactly matched the sealed ZIP
+and checksum, including GitHub's sizes/digests and the target commit.
+
+Native macOS OTA from the actual public Beta 4 passed full archive/SHA checks,
+missing-module rejection, activation/restart, code rollback, truncated download
+recovery and external-root snapshot/restart/persistent rollback. The first local
+live attempt lacked `cjson`, before any discovery/download. A fresh isolated
+Debian test with the required native dependencies then passed anonymous GitHub
+discovery and real LuaSocket/LuaSec HTTPS download of the published Beta 5 bytes,
+followed by all the same upgrade/rollback checks. Its temporary container was
+removed; Docker was returned to its initially stopped state. No reader install
+was touched. Evidence: `test-results/beta5-20261023/`, particularly
+`audit-{local,draft,public}.json`, `ci*.log`, `native-ota-local.log` and
+`native-ota-live-linux.log`. The earlier failed environment-only live attempt is
+retained separately in `native-ota-live.log`.
+
+Physical Bigme acceptance remains open as documented. This verification-only
+documentation follow-up does not replace or regenerate published release bytes.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
