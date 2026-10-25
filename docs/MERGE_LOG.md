@@ -3561,6 +3561,51 @@ new button after rollback. Release/OTA notes disclose that an older saved-profil
 action may need to be reselected, and recommend backing up navigation choices.
 No old public code/assets are changed. This is not a reading-data rollback.
 
+### Beta 9 publication verification
+
+Published `v0.1.0-beta.9` at candidate
+`a4bb9acbab883b8510924de19a67f6414ed3df32` on
+2026-10-25 at 19:49:26 UTC as a prerelease after the explicit user approval.
+Both complete local Lua/LuaJIT gates passed: 117 Python tests/four unchanged
+source-cache skips per run, 72 root Lua files, 478 Bookshelf suites/zero failures/
+three normal native-SQLite exclusions, all 13 original SimpleUI files. Module
+map 383; LuaJIT syntax 1,044; translations 43/zero failures. All 12 navigation,
+three whole-engine Home-load and 14 first-run/error/retry cases also pass against
+the final extracted release ZIP under both interpreters. Luacheck of all seven
+changed runtime files reports zero undeclared globals after explicitly allowing
+G_reader_settings. No database/component source changed; Beta 6's recorded
+SQLite/ledger supplements remain latest, not newly repeated Beta 9 evidence.
+
+The clean candidate ZIP contains 1,994 inventoried files plus manifest, 2,060
+entries and 27,919,804 expanded bytes. Every inventory size/hash matches Git.
+Only the new release note is added; no Beta 8 path is removed. Runtime changes
+are six existing host adapters and owned translations. Components, source pins,
+module map, main entry/bootstrap/API 1, artwork/fonts and existing data paths are
+unchanged. Five installed file slots remain. All 31 outgoing blobs exclude the
+held bitmap; Gitleaks scanned four outgoing commits without leaks.
+
+Actual public Beta 8 and Beta 5 installers each pass local and anonymous
+public-byte Linux/LuaSec runs: real TLS release discovery, complete native
+SHA/libarchive inventory verification, missing-runtime rejection, activation,
+restart/code rollback, truncated-download recovery, full external runtime
+snapshot/native verification, adoption restart and persistent rollback. These
+are isolated temporary installations, not user devices. The task-owned Docker
+container is removed and the previously stopped desktop runtime restored after
+validation, provided no unrelated containers were started meanwhile.
+
+Main/tag CI runs `40227604923` and `40227604800` passed for the exact candidate.
+Existing Node action runtime and ubuntu-latest migration annotations are warnings,
+not failures. Draft and anonymously downloaded public ZIP/checksum assets match
+the sealed local build byte for byte and GitHub's asset digests. ZIP SHA-256:
+`3a2c8fab178e01ff99822b8b8a6105bc4d70228f42a2f6fa227a6275403842c9`,
+9,025,063 bytes. Previous public tags/assets were not changed. Evidence:
+`test-results/beta9-20261025/`. Follow-up verification docs do not rebuild or
+replace published assets. The new Bookshelf profile/navigation flow remains
+unverified on physical Boox/Bigme devices; the earlier Home confirmation is
+retained without claiming native Android mutex-crash resolution. Existing bars
+need explicit Bookshelf enablement; code rollback's unknown-action pruning risk
+is disclosed in the immutable release/OTA notes.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

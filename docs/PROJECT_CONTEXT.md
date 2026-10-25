@@ -22,14 +22,15 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-25
 
-- Product version: `0.1.0-beta.9` (approved release candidate, not yet published).
-  Latest public prerelease is Beta 8, published 2026-10-25 at 19:00 UTC.
+- Product version: `0.1.0-beta.9` (public GitHub prerelease, published
+  2026-10-25 at 19:49 UTC; verification is in `docs/MERGE_LOG.md`).
 - Public main baseline before this release: `abe6164e` (Beta 8 verification).
-- Release tag: `v0.1.0-beta.8` at `50edce78`; previous tag
-  `v0.1.0-beta.7` at `31f287e1` and all earlier assets are unchanged.
-- Active branch: `fix/bookshelf-navigation-20261025` (approved Beta 9 preparation).
+- Release tag: `v0.1.0-beta.9` at `a4bb9acb`; previous tag
+  `v0.1.0-beta.8` at `50edce78` and all earlier assets are unchanged.
+- Active branch: `main`; feature and Beta 9 candidate were fast-forwarded/pushed.
+  `fix/bookshelf-navigation-20261025` is retained locally.
   The user explicitly approved pushing and publishing this feature as Beta 9.
-  Public main remains Beta 8 verification at `abe6164e`. The earlier Home
+  Public main before this release was Beta 8 verification at `abe6164e`. The earlier Home
   runtime fix `8641271c` and release candidate `50edce78` were pushed.
   The user explicitly approved fixing and publishing Beta 8 after the photo.
   `fix/home-blitbuffer-20261025` is retained locally.
@@ -102,11 +103,12 @@ provides canonical module names and legacy aliases while preserving
 
 - The user now confirms Home works on the affected Go Color 7 with Beta 8.
   A subsequent navbar report matches a missing legacy `prose` profile: its
-  handler silently returned false. The approved local improvement adds a
+  handler silently returned false. Published Beta 9 adds a
   first-class default/removable Bookshelf action, hold-to-configure and shared
   navigation settings, optional saved-profile target, direct per-profile bar
   buttons and explicit missing-profile repair. Saved bars/aliases/data remain
-  intact. These changes are not in the public Beta 8 ZIP; see `docs/SHARED_UI.md`.
+  intact. Existing saved bars need explicit enablement in Bookshelf navigation;
+  these changes do not retrofit Beta 8. See `docs/SHARED_UI.md`.
 - Beta 8 explicitly imports `ffi/blitbuffer` in the shared engine. The photo's
   exact line-288 load error reproduces before the import and passes afterward
   under Lua/LuaJIT. New whole-engine cold-load tests close the gap left by the
@@ -269,51 +271,40 @@ ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
 
-The local/unpublished Bookshelf navigation candidate `2366897f` passed both
-complete Lua/LuaJIT gates and all 43 translations. All 72 root Lua files were
-rerun on the final label/test refinements; module map 383, LuaJIT syntax 1,044.
-All 12 new navigation cases pass against extracted candidate bytes under both
-interpreters, including no saved sections and simulated parked-reader selection.
-The clean validation ZIP preserves all 1,993 installed paths plus manifest,
-all component source/pins/bootstrap/artwork/fonts and six remaining file slots.
-It is not a replacement public Beta 8: no new version, tag, push or publication.
-Physical Boox/Bigme navigation acceptance remains open. Evidence:
-`test-results/bookshelf-navigation-20261025/`; details in the merge record.
-
-A fresh local verification on the versioned Beta 8 tree on 2026-10-25 passed:
+A fresh local verification on the versioned Beta 9 tree on 2026-10-25 passed:
 
 - `sh scripts/test.sh`
 - `LUA=luajit sh scripts/test.sh`
 - `sh scripts/check-translations.sh`
 - 117 Python tests per run, with four documented external source-cache audits
   skipped
-- all 71 OrbitUI Lua test files under both interpreters, including the three
-  new whole-engine cold-load cases and 14 first-run/error/retry cases. Both
-  suites also pass against the extracted sealed release ZIP under both interpreters
+- all 72 OrbitUI Lua test files under both interpreters, including 12 new
+  navigation cases, three whole-engine cold-load and 14 first-run/error/retry
+  cases. All three suites also pass against the sealed ZIP under both interpreters
 - module map: 383 paths verified
-- LuaJIT syntax: 1,043 Lua files verified
+- LuaJIT syntax: 1,044 Lua files verified
 - Bookshelf: 478 suites, 0 failed, 3 documented KOReader-SQLite skips per run;
   the latest supplemental real SQLite runs remain Beta 6's 7 deck, 16 facts,
-  100 OPDS cases and SimpleUI ledger check. Beta 8 changes no database code;
-  those supplemental runs were not repeated for this UI-only hotfix.
+  100 OPDS cases and SimpleUI ledger check. Beta 9 changes no component or
+  database code; those supplemental runs were not repeated for this host UI change.
 - all 13 original SimpleUI test files exercised by `scripts/test.sh`
 - translations: 43 passed, 0 baseline failures and 0 new failures
-- clean-commit release package: 1,993 inventoried files plus its manifest, all
+- clean-commit release package: 1,994 inventoried files plus its manifest, all
   sizes/hashes verified; bootstrap/API 1 and existing artwork/fonts unchanged.
-  All nine outgoing blobs were checked for held artwork, and Gitleaks found no
-  secrets in two outgoing commits. No package file was removed from Beta 7;
-  its sole runtime change is the explicit engine import.
-- Luacheck reports no undeclared globals in engine/Home/navigation after
-  allowing KOReader's intentional G_reader_settings/G_defaults host globals.
-- actual public Beta 5 and Beta 7 native installers passed discovery of Beta 8, extraction,
+  All 31 outgoing blobs were checked for held artwork, and Gitleaks found no
+  secrets in four outgoing commits. No Beta 8 path was removed; runtime changes
+  are six host adapters and owned translations, with component files/pins unchanged.
+- Luacheck reports no undeclared globals in all seven changed runtime files
+  after allowing the intentional G_reader_settings host global.
+- actual public Beta 5 and Beta 8 native installers passed discovery of Beta 9, extraction,
   activation, restart, rollback, truncated-download recovery and external
   snapshots. Both local Linux and anonymous public-byte Linux/TLS runs passed
   for each starting release. No installed reader was touched.
-- GitHub checks passed for both main and the exact release tag at `50edce78`
-  (runs `40223707342` and `40223707268`). No upstream pins were changed.
+- GitHub checks passed for both main and the exact release tag at `a4bb9acb`
+  (runs `40227604923` and `40227604800`). No upstream pins were changed.
 - draft and anonymously downloaded public assets match the local build exactly:
-  ZIP SHA-256 `ebd0271530e30cb2173ca9e87c974351321b60b7c314ffc38179e3f111b82bca`,
-  9,012,570 bytes. Evidence: `test-results/beta8-20261025/`. Later verification
+  ZIP SHA-256 `3a2c8fab178e01ff99822b8b8a6105bc4d70228f42a2f6fa227a6275403842c9`,
+  9,025,063 bytes. Evidence: `test-results/beta9-20261025/`. Later verification
   documentation commits do not replace or rebuild the immutable release assets.
 
 These results are headless. They do not establish real fonts, touch targets,
@@ -321,11 +312,11 @@ e-ink rendering, device lifecycle, performance or update recovery.
 
 ## Known gaps and next milestones
 
-The published Beta 8 runtime contains 1,993 inventoried files, plus its
+The published Beta 9 runtime contains 1,994 inventoried files, plus its
 manifest, within the installed OTA API 1 limit of 2,000 extracted files. Review
 that budget before adding more assets/modules; a producer-only limit increase
 would not change limits enforced by already-installed updaters.
-Only six installed file slots remain. Do not raise only the producer limit or
+Only five installed file slots remain. Do not raise only the producer limit or
 discard runtime assets/licenses to force a build through.
 
 The primary unresolved gate is focused physical acceptance on the Bigme B7 Pro
@@ -401,6 +392,11 @@ redesign.
   after the exact photo error reproduced under both interpreters and the user
   explicitly approved publication. Whole-module cold-load coverage, complete
   gates, CI and public-byte OTA from Beta 5/Beta 7 pass. Device retesting is open.
+- **2026-10-25 — Beta 9:** after the user's Beta 8 Home confirmation, published
+  first-class Bookshelf navigation, simple profile/chip targeting, removable
+  defaults and missing-legacy-profile repair. Explicitly approved; full gates,
+  CI and public-byte OTA from Beta 8/Beta 5 pass. Saved bars/data are retained.
+  New-flow Boox/Bigme physical acceptance remains open.
 
 For the full decision trail, use `docs/MERGE_LOG.md`; commit messages and tags
 are supporting evidence, not substitutes for the recorded contracts and tests.

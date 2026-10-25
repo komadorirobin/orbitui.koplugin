@@ -2,6 +2,27 @@
 
 ## Automated
 
+2026-10-25 beta.9 published: tag `v0.1.0-beta.9` at `a4bb9acb`, 19:49 UTC,
+prerelease. Both complete Lua/LuaJIT suites pass: 72 root Lua files, 117 Python
+tests/four unchanged external-source skips, 478 Bookshelf suites/zero failures/
+three normal SQLite exclusions, all 13 original SimpleUI files. Module map 383,
+LuaJIT syntax 1,044, translations 43/zero failures. The 12 navigation, three
+whole-Home-load and 14 first-run cases also pass on sealed ZIP bytes under both
+interpreters. Explicit-host-globals Luacheck passes on all seven changed runtime
+files. Source/inventory comparison, all 31 outgoing blobs/held-artwork checks and
+four-commit Gitleaks pass. No existing path is removed; only the new release note
+is added. Components/pins/bootstrap/fonts/artwork are unchanged; 1,994 inventoried
+files plus manifest leave five API 1 slots. Local and anonymous published-byte
+Linux/LuaSec/native OTA from actual Beta 8 and Beta 5 pass release discovery,
+SHA/archive verification, activation/restart, rollback, missing-module/truncated
+download rejection and external snapshots/adoption/persistent rollback. Main/tag
+CI `40227604923`/`40227604800` pass. Draft/public assets match the build exactly:
+ZIP SHA-256 `3a2c8fab178e01ff99822b8b8a6105bc4d70228f42a2f6fa227a6275403842c9`,
+9,025,063 bytes. Evidence: `test-results/beta9-20261025/`. No database supplement
+was repeated for this host-only change; recorded Beta 6 supplements remain latest.
+New physical Boox/Bigme navigation/reader-transition checks below remain open.
+The earlier user-confirmed Beta 8 Home check is not native Android crash acceptance.
+
 2026-10-25 beta.9 publication preparation: the user explicitly approved push
 and publication after disclosure that the new navigation flow still needs device
 testing. Re-run both complete suites and translations on the versioned tree,
