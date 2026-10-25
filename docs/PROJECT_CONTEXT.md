@@ -22,25 +22,17 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-25
 
-- Candidate product version: `0.1.0-beta.10`; release gates are in progress.
-  Public version before this merge: `0.1.0-beta.9` (GitHub prerelease, published
-  2026-10-25 at 19:49 UTC; verification is in `docs/MERGE_LOG.md`).
-- Public main baseline for the requested Beta 10: `97b7948a` (Beta 9 verification).
-- Release tag: `v0.1.0-beta.9` at `a4bb9acb`; previous tag
-  `v0.1.0-beta.8` at `50edce78` and all earlier assets are unchanged.
-- Active branch: `maintenance/upstream-late-20261025`; the user explicitly
-  requested merging upstream, pushing and publishing a new release. Beta 10
-  preparation follows a conflict-free Bookshelf subtree import `0db81b46`.
-  Main remains at the public baseline until final gates pass.
-  The feature and Beta 9 candidate were previously fast-forwarded/pushed.
-  `fix/bookshelf-navigation-20261025` is retained locally.
-  The user explicitly approved pushing and publishing this feature as Beta 9.
-  Public main before this release was Beta 8 verification at `abe6164e`. The earlier Home
-  runtime fix `8641271c` and release candidate `50edce78` were pushed.
-  The user explicitly approved fixing and publishing Beta 8 after the photo.
-  `fix/home-blitbuffer-20261025` is retained locally.
-  `fix/home-first-run-20261025` is retained locally.
-  `maintenance/upstream-20261025` is retained locally.
+- Product version: `0.1.0-beta.10` (public GitHub prerelease, published
+  2026-10-25 at 22:58:45 UTC; verification is in `docs/MERGE_LOG.md`).
+- Public main baseline before Beta 10: `97b7948a` (Beta 9 verification).
+- Release tag: `v0.1.0-beta.10` at `0a2ea22b`; previous tag
+  `v0.1.0-beta.9` at `a4bb9acb` and all earlier tags/assets are unchanged.
+- Active branch: `main`; the user explicitly requested merging upstream,
+  pushing and publishing. Reviewed Bookshelf import `0db81b46`, integration
+  tests/pin `66fe1b4a` and candidate `0a2ea22b` were fast-forwarded/pushed.
+  `maintenance/upstream-late-20261025`, the earlier maintenance branch and
+  `fix/bookshelf-navigation-20261025`, `fix/home-blitbuffer-20261025` and
+  `fix/home-first-run-20261025` are retained locally.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
 - Embedded Bookshelf Git: `5f726c253c5cb4d5a2a2137af52731562e1cb9b7`
@@ -52,13 +44,14 @@ and correct this file in the same change.
   A read-only local collector at 2026-10-25 22:43 UTC found eight Bookshelf
   commits and no SimpleUI changes. Issue #1's older 17:48 result listed only
   five commits; the exact newer Git tip was inspected before importing it.
-  Final Beta 10 verification/publication is recorded separately after completion.
+  The 22:53 local check and 22:56 public monitoring run both report zero missing
+  commits for the reviewed pins. Beta 10 verification is recorded below.
 - The real SimpleUI Git history now accounts for the approved 3.0 ZIP snapshot
   `3cb36431`. Content reconciliation preserved OrbitUI's changes; the active
   `release_snapshot` field is retired. Historical digest/asset provenance stays
   in `docs/MERGE_LOG.md` and Git, not relabelled as an upstream commit.
-- GitHub issue #1 is monitoring-only and describes public main. Its run for
-  `7e573fd9` passed after the merge push; it never authorizes a new import.
+- GitHub issue #1 is monitoring-only and describes public main. Run
+  `40242459666` passed at the Beta 10 candidate; it never authorizes an import.
 - Open pull requests: none. The only open issue is the monitoring-only upstream
   dashboard.
 - The repository was clean, had no stash and had no unreachable commits during
@@ -286,40 +279,43 @@ ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
 
-A fresh local verification on the versioned Beta 9 tree on 2026-10-25 passed:
+A fresh local verification on the versioned Beta 10 tree on 2026-10-25 passed:
 
 - `sh scripts/test.sh`
 - `LUA=luajit sh scripts/test.sh`
 - `sh scripts/check-translations.sh`
 - 117 Python tests per run, with four documented external source-cache audits
   skipped
-- all 72 OrbitUI Lua test files under both interpreters, including 12 new
-  navigation cases, three whole-engine cold-load and 14 first-run/error/retry
-  cases. All three suites also pass against the sealed ZIP under both interpreters
+- all 73 OrbitUI Lua test files under both interpreters, including four new
+  whole-module book-helper/opener cases, 12 navigation, three whole-engine
+  cold-load and 14 first-run/error/retry cases. These four suites also pass
+  against the sealed ZIP under both interpreters
 - module map: 383 paths verified
-- LuaJIT syntax: 1,044 Lua files verified
-- Bookshelf: 478 suites, 0 failed, 3 documented KOReader-SQLite skips per run;
-  the latest supplemental real SQLite runs remain Beta 6's 7 deck, 16 facts,
-  100 OPDS cases and SimpleUI ledger check. Beta 9 changes no component or
-  database code; those supplemental runs were not repeated for this host UI change.
+- LuaJIT syntax: 1,049 Lua files verified
+- Bookshelf: 482 suites, 0 failed, 3 documented KOReader-SQLite skips per run;
+  fresh supplemental real SQLite runs pass 7 deck, 16 facts, 100 OPDS cases
+  and the SimpleUI ledger daily/year/page/invalidation checks
 - all 13 original SimpleUI test files exercised by `scripts/test.sh`
 - translations: 43 passed, 0 baseline failures and 0 new failures
-- clean-commit release package: 1,994 inventoried files plus its manifest, all
+- clean-commit release package: 1,995 inventoried files plus its manifest, all
   sizes/hashes verified; bootstrap/API 1 and existing artwork/fonts unchanged.
-  All 31 outgoing blobs were checked for held artwork, and Gitleaks found no
-  secrets in four outgoing commits. No Beta 8 path was removed; runtime changes
-  are six host adapters and owned translations, with component files/pins unchanged.
-- Luacheck reports no undeclared globals in all seven changed runtime files
-  after allowing the intentional G_reader_settings host global.
-- actual public Beta 5 and Beta 8 native installers passed discovery of Beta 9, extraction,
+  All 42 outgoing blobs were checked for held artwork, and Gitleaks found no
+  secrets in ten scanned non-merge commits. No Beta 9 path is removed; only
+  the release note is added. Host/SimpleUI runtime is unchanged; Bookshelf
+  equals the reviewed subtree import and only its upstream pin advances.
+- Luacheck's global checks pass on all eleven changed runtime Lua modules after
+  allowing G_reader_settings/G_defaults. Optional broader style checks still
+  report unused/shadowing warnings; they are not a clean style-lint claim.
+- actual public Beta 5 and Beta 9 native installers passed discovery of Beta 10, extraction,
   activation, restart, rollback, truncated-download recovery and external
   snapshots. Both local Linux and anonymous public-byte Linux/TLS runs passed
-  for each starting release. No installed reader was touched.
-- GitHub checks passed for both main and the exact release tag at `a4bb9acb`
-  (runs `40227604923` and `40227604800`). No upstream pins were changed.
+  for each starting release. A local macOS Beta 9 run also passes all phases.
+  No installed reader was touched.
+- GitHub checks passed for both main and the exact release tag at `0a2ea22b`
+  (runs `40242459682` and `40242459905`).
 - draft and anonymously downloaded public assets match the local build exactly:
-  ZIP SHA-256 `3a2c8fab178e01ff99822b8b8a6105bc4d70228f42a2f6fa227a6275403842c9`,
-  9,025,063 bytes. Evidence: `test-results/beta9-20261025/`. Later verification
+  ZIP SHA-256 `d461f9afd5a1e122df4bacfa44b4e6595b27a024acc0e43b9bd78739d21cdd43`,
+  9,035,141 bytes. Evidence: `test-results/beta10-20261025/`. Later verification
   documentation commits do not replace or rebuild the immutable release assets.
 
 These results are headless. They do not establish real fonts, touch targets,
@@ -327,11 +323,11 @@ e-ink rendering, device lifecycle, performance or update recovery.
 
 ## Known gaps and next milestones
 
-The published Beta 9 runtime contains 1,994 inventoried files, plus its
+The published Beta 10 runtime contains 1,995 inventoried files, plus its
 manifest, within the installed OTA API 1 limit of 2,000 extracted files. Review
 that budget before adding more assets/modules; a producer-only limit increase
 would not change limits enforced by already-installed updaters.
-Only five installed file slots remain. Do not raise only the producer limit or
+Only four installed file slots remain. Do not raise only the producer limit or
 discard runtime assets/licenses to force a build through.
 
 The primary unresolved gate is focused physical acceptance on the Bigme B7 Pro
@@ -412,6 +408,11 @@ redesign.
   defaults and missing-legacy-profile repair. Explicitly approved; full gates,
   CI and public-byte OTA from Beta 8/Beta 5 pass. Saved bars/data are retained.
   New-flow Boox/Bigme physical acceptance remains open.
+- **2026-10-25 — Beta 10:** user confirms Home/navigation work on Boox, then
+  explicitly requests merge/push/publication. Reviewed Bookshelf 6.0.2 fixes
+  metadata/cover refresh, clipped colour shadows, status refreshes and module
+  actions/keys. Full gates, main/tag CI, fresh SQLite supplements and local/live
+  native OTA from Beta 9/Beta 5 pass. Cover/device acceptance remains open.
 
 For the full decision trail, use `docs/MERGE_LOG.md`; commit messages and tags
 are supporting evidence, not substitutes for the recorded contracts and tests.

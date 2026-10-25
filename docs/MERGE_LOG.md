@@ -3653,6 +3653,58 @@ manifest, four slots below the installed API 1 2,000-file ceiling. Preserve all
 assets/licenses and keep existing public releases immutable. Publication results
 will be appended only once verified.
 
+### Beta 10 publication verification
+
+Published `v0.1.0-beta.10` at exact candidate
+`0a2ea22bcc37c0739351c52e841e17fa8b22cf5c` on
+2026-10-25 at 22:58:45 UTC as a prerelease. Import `0db81b46`, separate pin/
+integration tests `66fe1b4a` and release preparation `0a2ea22b` are retained.
+Main was fast-forwarded and only main plus this exact new OrbitUI tag pushed
+atomically; unrelated local branches, old tags/assets and standalone forks
+remain unchanged. No production adaptation beyond the reviewed import is needed.
+
+Both complete sequential Lua/LuaJIT gates pass: 117 Python tests per run/four
+unchanged source-cache skips, all 73 root Lua files, 482 Bookshelf suites/zero
+failed/three normal SQLite exclusions, all 13 original SimpleUI files. Module
+map 383, LuaJIT syntax 1,049, translations 43/zero failures. New native suites
+cover the incoming regressions. Four whole-module opener/helper, 12 navigation,
+three Home cold-load and 14 first-run/error/retry cases also pass on extracted
+sealed ZIP bytes under both interpreters. Native services/rendering are stubbed.
+Luacheck's global checks pass on eleven changed runtime modules with the explicit
+host globals; broader optional style lint still reports unused/shadowing warnings.
+Fresh real-SQLite supplements pass 7 deck, 16 facts, 100 OPDS cases and the
+SimpleUI daily/year/page/invalidation checks using the pinned KOReader helpers.
+
+The clean-commit ZIP has 1,995 inventoried files plus manifest, 2,061 entries,
+27,950,557 expanded bytes and 9,035,141 compressed bytes. Every hash/size matches
+candidate source; only the new release note is added, no Beta 9 path removed.
+Four installed API 1 file slots remain. Bootstrap/API 1, host/SimpleUI runtime,
+module map, fonts/artwork and data paths are unchanged. Bookshelf equals the
+reviewed subtree tree; only its upstream pin advances, with original provenance
+retained. All 42 outgoing blobs exclude held artwork; Gitleaks finds no secrets
+in ten non-merge commits. ZIP SHA-256:
+`d461f9afd5a1e122df4bacfa44b4e6595b27a024acc0e43b9bd78739d21cdd43`.
+
+Draft and anonymously downloaded public ZIP/checksum bytes, API asset digests/
+sizes and exact target SHA all match. Actual public Beta 9 and Beta 5 installers
+each pass local Linux and anonymous public-byte LuaSocket/LuaSec discovery,
+native SHA/libarchive inventory verification, missing-module rejection,
+activation/restart/code rollback, truncated-download recovery and complete
+external runtime snapshot/adoption/restart/persistent rollback. Local macOS
+Beta 9 also passes every phase. No installed reader/settings are touched. The
+task-owned container is removed; the previously stopped Docker Desktop runtime
+is restored after confirming no unrelated containers are running.
+
+Main/tag CI runs `40242459682` and `40242459905` pass for the exact candidate;
+monitor `40242459666` also passes, reporting both upstreams current at 22:56 UTC.
+Node action-runtime and ubuntu-latest migration annotations are warnings.
+Evidence: `test-results/beta10-20261025/`. Follow-up verification docs do not
+rebuild/replace immutable release bytes. The user-confirmed Home/navigation
+results are retained, but new cover loading/refresh, colour repaint, overlay
+minute ticks, module-key/rotation and wider Bigme/external-plugin acceptance
+remain open. No automatic index/reset, measured speedup or native Android
+mutex-crash diagnosis is inferred.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

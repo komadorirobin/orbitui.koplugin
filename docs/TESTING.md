@@ -2,6 +2,38 @@
 
 ## Automated
 
+2026-10-25 beta.10 published: tag `v0.1.0-beta.10` at `0a2ea22b`, 22:58:45 UTC,
+prerelease. Complete sequential Lua/LuaJIT gates pass: 73 root Lua files,
+117 Python tests/four unchanged external-source skips per run, 482 Bookshelf
+suites/zero failed/three normal SQLite exclusions, all 13 original SimpleUI
+files. Module map 383; LuaJIT syntax 1,049; translations 43/zero failures.
+The four whole-module helper/opener, 12 navigation, three cold-load Home and
+14 first-run/error cases also pass on sealed ZIP bytes under both interpreters.
+All eleven changed runtime modules pass Luacheck's undeclared-global checks
+with the explicit KOReader host globals; optional broader style lint reports
+unused/shadowing warnings, not undeclared globals. Fresh actual-SQLite runs
+pass 7 deck, 16 facts, 100 OPDS cases and the SimpleUI ledger checks.
+
+Every package file matches committed source and manifest hash/size. No old path
+is removed; only the Beta 10 note is added. Inventory 1,995 plus manifest leaves
+four installed API 1 slots; 2,061 entries, 27,950,557 expanded bytes. All 42
+outgoing blobs exclude held artwork; Gitleaks scans ten non-merge commits with
+no leaks. Host/SimpleUI/assets/fonts/bootstrap remain unchanged; Bookshelf
+matches the reviewed import. ZIP SHA-256
+`d461f9afd5a1e122df4bacfa44b4e6595b27a024acc0e43b9bd78739d21cdd43`,
+9,035,141 bytes. Draft and anonymous public bytes/digests match exactly.
+
+Actual public Beta 9 and Beta 5 installers pass local Linux and public-byte
+anonymous TLS discovery/native SHA/libarchive inventory, missing-module
+rejection, activation/restart/code rollback, truncated-download recovery and
+external snapshot/adoption/restart/persistent rollback. Local macOS Beta 9
+also passes all phases. Main/tag CI `40242459682`/`40242459905` and upstream
+watch `40242459666` pass at the exact candidate. Evidence:
+`test-results/beta10-20261025/`. These are temporary installations, not reader
+tests. Home/navigation has user confirmation; new cover refresh/repaint/tick/
+module-key and broader Bigme/external-plugin physical acceptance remains open.
+Verification follow-up docs do not rebuild or replace the immutable assets.
+
 2026-10-25 beta.10 preparation: explicit user request to merge upstream, push
 and publish. Review all eight Bookshelf commits through `5f726c25` (6.0.2),
 retain SimpleUI `40b301f0`; conflict-free unsquashed merge `0db81b46`.
