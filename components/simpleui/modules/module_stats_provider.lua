@@ -1427,6 +1427,8 @@ end
 -- _stats_need_refresh is set), module_reading_goals dialogs.
 -- ---------------------------------------------------------------------------
 function SP.invalidate(keep_status_counts)
+    local ledger = package.loaded["infra/sui_stats_ledger"]
+    if ledger and ledger.invalidate then ledger.invalidate() end
     _reconciled_day, _books_dirty = nil, true
     _cache_day          = nil
     _records_day        = nil

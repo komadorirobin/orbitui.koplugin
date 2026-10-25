@@ -65,7 +65,9 @@ function M.resolveFor(items, dims, opts)
         -- One-time upgrade from the old row packer.
         boxes = Grid.snapLegacy(opts.legacy(), dims)
         Grid.writeBack(items, boxes, key)
-        for _i, it in ipairs(items) do it.size, it.page = nil, nil end
+        if not M.preserve_legacy then
+            for _i, it in ipairs(items) do it.size, it.page = nil, nil end
+        end
         changed = true
     elseif #unplaced > 0 then
         for _i, it in ipairs(unplaced) do

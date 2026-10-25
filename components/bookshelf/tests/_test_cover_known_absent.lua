@@ -10,7 +10,7 @@ local t = dofile("tests/_helpers.lua").runner()
 local repo = io.open("lib/bookshelf_book_repository.lua"):read("*a")
 local plan = io.open("lib/bookshelf_spine_shelf.lua"):read("*a")
 
-local body = repo:match("\nlocal function _recordHasCover%(has_cover, info%)\n(.-)\nend\n")
+local body = repo:match("\nfunction CoverHooks%.recordHasCover%(has_cover, info%)\n(.-)\nend\n")
 local function rhc(has_cover, info)
     assert(body, "_recordHasCover not found")
     return load("local has_cover, info = ...\n" .. body, "rhc", "t", {})(has_cover, info)
@@ -31,7 +31,7 @@ t.test("not looked at yet: nil, unknown", function()
 end)
 
 t.test("the record carries it", function()
-    assert(repo:find("has_cover   = _recordHasCover(has_cover, info),", 1, true))
+    assert(repo:find("has_cover   = CoverHooks.recordHasCover(has_cover, info),", 1, true))
 end)
 
 t.test("the spine plan enriches a face-out book's record at most once", function()
@@ -49,10 +49,10 @@ local function absent(row, opts)
         require = function() return { has = function(_s, fp) return opts.cached == fp end } end,
         _isRemotePath = function() return false end,
         _batchInfoFor = function() return row end,
-        _recordHasCover = function(hc, info)
+        CoverHooks = { recordHasCover = function(hc, info)
             if hc == "Y" then return not info.ignore_cover end
             if info.cover_fetched == "Y" then return false end
-        end,
+        end, forMeta = function() return opts.hooked end },
         getBookInfoMgr = function() return {} end,
         _hookedCoverFor = function() return opts.hooked end,
     }

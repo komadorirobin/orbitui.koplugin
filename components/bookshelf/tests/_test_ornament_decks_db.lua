@@ -88,5 +88,58 @@ test("a new database takes the settings store's decks, once, and the old key goe
     assert(DB.get("all")[1] == "p1", "moved in again over the database's own")
 end)
 
+test("hosted migration keeps the old deck snapshot for code rollback", function()
+    fresh()
+    local Paths = require("lib/bookshelf_paths")
+    Paths.preserveLegacyOrnamentDecks = true
+    local old = { all = { "kept", "order" } }
+    store = { ornament_decks = old }
+    assert(DB.get("all")[1] == "kept")
+    assert(store.ornament_decks == old)
+    DB.put("all", { "new", "order" })
+    reopen()
+    assert(DB.get("all")[1] == "new", "the rollback snapshot overwrote a newer database")
+    assert(store.ornament_decks == old)
+    Paths.preserveLegacyOrnamentDecks = nil
+end)
+
+local SQ = require("lua-ljsqlite3/init")
+local real_open = SQ.open
+local function failOnce(needle)
+    local fail_next = true
+    SQ.open = function(...)
+        local db = real_open(...)
+        return { prepare=function(_, ...) return db:prepare(...) end,
+            close=function() return db:close() end,
+            exec=function(_, sql)
+                if fail_next and sql:find(needle, 1, true) then
+                    fail_next=false; error("simulated SQLITE_BUSY")
+                end
+                return db:exec(sql)
+            end }
+    end
+end
+
+test("failed migration commit preserves its source and retries instead of opening empty", function()
+    fresh()
+    store = { ornament_decks = { all = { "precious", "order" } } }
+    failOnce("COMMIT")
+    assert(not DB.usable())
+    assert(store.ornament_decks.all[1] == "precious")
+    assert(DB.get("all")[1] == "precious")
+    SQ.open = real_open
+end)
+
+test("failed deck commit rolls back both SQLite and its in-memory copy", function()
+    fresh(); store = {}
+    DB.put("all", { "original" }); reopen()
+    failOnce("COMMIT")
+    assert(DB.get("all")[1] == "original")
+    assert(DB.put("all", { "not-committed" }) == false)
+    assert(DB.get("all")[1] == "original")
+    SQ.open = real_open; reopen()
+    assert(DB.get("all")[1] == "original")
+end)
+
 io.write(string.format("\n%d passed, %d failed\n", pass, fail))
 os.exit(fail == 0 and 0 or 1)

@@ -191,7 +191,13 @@ local function _relocateAux(s)
         sub.flush()
         logger.dbg(string.format("[bookshelf] relocated %d key(s) to %s", n, sub.path()))
     end
-    for _i, k in ipairs(keys) do s:delSetting(k) end
+    for _i, k in ipairs(keys) do
+        -- Keep the pre-6.0 deck snapshot readable by code rollback. The new
+        -- auxiliary store/SQLite own subsequent changes, never book data.
+        if k ~= "ornament_decks" or not Paths.preserveLegacyOrnamentDecks then
+            s:delSetting(k)
+        end
+    end
     for _i, k in ipairs(LEFT_BEHIND) do s:delSetting(k) end
     s:delSetting("aux_data_relocated_v2")
     s:saveSetting(RELOCATED_FLAG, true)

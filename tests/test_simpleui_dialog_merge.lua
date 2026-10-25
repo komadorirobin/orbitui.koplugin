@@ -122,6 +122,7 @@ H.test("registered navigation cancels scheduled Home restores after a destinatio
         .. "\nreturn _reopenScreen", {
         UIManager=UI, _handOverDisplacedScreen=function() return false end,
         _isReader=function() return false end, isAppExiting=function() return false end,
+        _isForeignPluginWidget=function() return false end,
         liveFM=function() return {} end,
         _doShowHS=function(_, _, _, gen)
             if gen == (UI._simpleui_navigation_generation or 0) then shown=shown+1 end

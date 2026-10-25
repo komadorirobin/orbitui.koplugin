@@ -837,6 +837,8 @@ end
 -- (issue 537: spines saved grey beside colour covers, with no way to redo
 -- them short of changing each book's status).
 function SpineShelf.forgetLooks()
+    local boxes = package.loaded["lib/bookshelf_series_box_widget"]
+    if boxes and boxes.clearStickerCache then boxes.clearStickerCache() end
     _look_cache, _look_count = {}, 0
     local F = _facts()
     local n = F and F.clearLooks and F.clearLooks() or 0
@@ -3950,7 +3952,7 @@ function SpineShelf.plan(items, opts)
     -- module is already loaded (a shelf with ornaments off never loads it).
     local OrnScan = package.loaded["lib/bookshelf_ornaments"]
     local orn_scan_was_open = false
-    if OrnScan and OrnScan.allowRecent then orn_scan_was_open = OrnScan.allowRecent(true) end
+    if type(OrnScan) == "table" and OrnScan.allowRecent then orn_scan_was_open = OrnScan.allowRecent(true) end
     local entries = {}
     local budget = opts.row_h
     -- Auto thickness: base widths scale with the shelf height, so one tall
@@ -4893,7 +4895,7 @@ function SpineShelf.plan(items, opts)
         _t_balance * 1000, _n_balance, _r_balance))
     -- Closed only if this plan opened it: inside a rebuild or a page turn the
     -- widget holds it open for the rest of its run (_ornScanWindow).
-    if OrnScan and OrnScan.allowRecent and not orn_scan_was_open then OrnScan.allowRecent(false) end
+    if type(OrnScan) == "table" and OrnScan.allowRecent and not orn_scan_was_open then OrnScan.allowRecent(false) end
     return { entries = entries, rows = rows, shown = shown,
              next_item = next_item, next_skip = next_skip,
              -- Where the deck stands after this plan's rows (the next page

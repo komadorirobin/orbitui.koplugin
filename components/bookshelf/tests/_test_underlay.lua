@@ -160,4 +160,61 @@ t.test("the shelf lets only the restoring close go unpainted", function()
     assert(main:find('UIManager:setDirty(nil, "full")', 1, true), "wake still repaints the shelf whole")
 end)
 
+t.test("Lua 5.1 wrappers preserve nil return positions, including a restoring close", function()
+    U.uninstall()
+    local um = package.loaded["ui/uimanager"]
+    local function pack(...) return { n = select("#", ...), ... } end
+    um.show = function() return nil, "shown", nil end
+    um.close = function() return nil, "closed", nil end
+    local owner = {}
+    U.install(owner)
+    Screen.bb:fillRect(0, 0, W, H, "shelf")
+    local win, x, y = window("returns", 10, 10, 20, 20)
+    local shown = pack(um:show(win))
+    eq(shown.n, 3); eq(shown[2], "shown")
+    win:paintTo(Screen.bb, x, y)
+    local closed = pack(um:close(win))
+    eq(closed.n, 3); eq(closed[2], "closed")
+    eq(Screen.bb.px[15][15], "shelf")
+    assert(not U.restoring())
+    U.uninstall(owner)
+end)
+
+t.test("closing a tracked window never overwrites a later paint wrapper", function()
+    U._reset(); U.install({})
+    local win, x, y = window("later", 10, 10, 20, 20)
+    U.shown(win)
+    local inner = win.paintTo
+    local calls = 0
+    local later = function(...)
+        calls = calls + 1
+        return inner(...)
+    end
+    win.paintTo = later
+    U.closing(win)
+    eq(win.paintTo, later)
+    win:paintTo(Screen.bb, x, y)
+    eq(calls, 1); assert(not U.covered())
+    U.uninstall()
+end)
+
+t.test("last-owner teardown preserves later UI wrappers and a new owner", function()
+    U.uninstall()
+    local um = package.loaded["ui/uimanager"]
+    local first, second = {}, {}
+    U.install(first); U.install(second)
+    U.uninstall(first)
+    local win = window("new-owner", 10, 10, 20, 20)
+    um:show(win); assert(U.covered(), "the previous owner removed the new one")
+    local show, close = um.show, um.close
+    local later_show = function(...) return show(...) end
+    local later_close = function(...) return close(...) end
+    um.show, um.close = later_show, later_close
+    U.uninstall(second)
+    eq(um.show, later_show); eq(um.close, later_close)
+    um:show(win); assert(not U.covered(), "a captured retired wrapper is still active")
+    U.install({}); um:show(win); assert(U.covered())
+    U.uninstall()
+end)
+
 t.done()

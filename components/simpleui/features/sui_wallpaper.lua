@@ -287,14 +287,15 @@ local function _eraserSource()
     local w = _styleGetBgWidget()
     if not w then return nil end
     if not _style_eraser_bb then
-        local ok, canvas = pcall(function()
+        local canvas
+        local ok = pcall(function()
             local Blitbuffer = require("ffi/blitbuffer")
-            local c = Blitbuffer.new(Screen:getWidth(), Screen:getHeight(), Screen.bb:getType())
-            c:fill(Blitbuffer.COLOR_WHITE)
-            w:paintTo(c, 0, 0)
-            return c
+            canvas = Blitbuffer.new(Screen:getWidth(), Screen:getHeight(), Screen.bb:getType())
+            canvas:fill(Blitbuffer.COLOR_WHITE)
+            w:paintTo(canvas, 0, 0)
         end)
-        if ok then _style_eraser_bb = canvas end
+        if ok then _style_eraser_bb = canvas
+        elseif canvas then pcall(canvas.free, canvas) end
     end
     return _style_eraser_bb
 end

@@ -49,7 +49,7 @@ local function ensureParent(path)
     return path
 end
 
-M.paths = { preserveReaderSettings = true }
+M.paths = { preserveReaderSettings = true, preserveLegacyOrnamentDecks = true }
 function M.paths.settingsDir() return ds():getSettingsDir() .. "/bookshelf" end
 function M.paths.cacheDir() return ds():getDataDir() .. "/cache/bookshelf" end
 function M.paths.settingsFile(name)

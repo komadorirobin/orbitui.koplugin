@@ -45,8 +45,19 @@ local body = assert(source:match("function BookshelfWidget:_spineFaceOut%(%)\n(.
 local env = setmetatable({ BookshelfSettings = { read = function(key) return prefs[key] end },
     TabModel = package.loaded["lib/bookshelf_tab_model"] }, { __index = _G })
 package.loaded["lib/bookshelf_spine_shelf"] = { FACE_REASONS = { "favorites", "reading", "first", "unread", "recent" } }
-local modes = assert(source:match("(local function _faceOutModes%(%).-)\n%-%- Returns the setting"))
-local code = modes .. "\nreturn function(self)\n" .. body .. "\nend"
+local ss_file = assert(io.open("components/bookshelf/lib/bookshelf_spine_shelf.lua"))
+local ss_source = ss_file:read("*a"); ss_file:close()
+local face_for = assert(ss_source:match("(function SpineShelf.faceOutFor%(tab%).-)\nend\n")) .. "\nend"
+local ss_env = setmetatable({ SpineShelf = package.loaded["lib/bookshelf_spine_shelf"],
+    require = function(name)
+        if name == "lib/bookshelf_settings_store" then
+            return { read = function(key) return prefs[key] end }
+        end
+        return require(name)
+    end }, { __index = _G })
+if setfenv then local fn = assert(loadstring(face_for)); setfenv(fn, ss_env); fn()
+else assert(load(face_for, "native face-out policy", "t", ss_env))() end
+local code = "return function(self)\n" .. body .. "\nend"
 local loader
 if setfenv then loader = assert(loadstring(code)); setfenv(loader, env)
 else loader = assert(load(code, "native face-out", "t", env)) end

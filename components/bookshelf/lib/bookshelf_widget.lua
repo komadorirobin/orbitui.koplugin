@@ -12960,6 +12960,9 @@ end
 -- callback in show().
 function BookshelfWidget:onCloseWidget()
     self._closed = true   -- the registered-source listener (init) stands down
+    local underlay = package.loaded["lib/bookshelf_underlay"]
+    if underlay and underlay.uninstall then underlay.uninstall(self) end
+    if BookshelfWidget._clip_target == self then BookshelfWidget._clip_target = nil end
     self:_stopStatusTimer()
     -- Invalidate any pending Kobo prepare-poll (_openKoboWhenReady). The poll
     -- closure captures self and would otherwise call _launchReader on this

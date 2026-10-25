@@ -20,25 +20,24 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-10-23
+## Snapshot: 2026-10-25
 
 - Product version: `0.1.0-beta.5` (public GitHub prerelease, published
   2026-10-23 at 21:26 UTC; verification is in `docs/MERGE_LOG.md`).
-- Previous public baseline: `11bbbcb8` (README screenshots following Beta 4).
+- Public main baseline for this maintenance: `254a1182` (Beta 5 verification).
 - Release tag: `v0.1.0-beta.5` at `a19a96ab`; previous tag
   `v0.1.0-beta.4` and its assets are unchanged.
-- Embedded Bookshelf upstream: `065f25c06d9a8e0607f29cbe632f4b3d44a8bd37`
-  (5.5.5 plus PR #544's Shelf size translator fix).
-- Embedded SimpleUI upstream: `dd541fc2b384af43287474587622ef68a2fb3185`
-  remains the upstream Git baseline. The approved 3.0 release-ZIP import
-  is source snapshot `3cb364313ee8b2b17f860f67ef330cd6c2f5370b`, merged in
-  `a5d9e76a`, with adaptations in `9248fe71`, is included in Beta 5.
-- SimpleUI 3.0.0's official ZIP differs from its Git tag/main. Its exact digest,
-  asset ID and local snapshot are in `sources.json.release_snapshot`.
-  Reconcile them with upstream's eventual commits using `docs/UPSTREAM.md`.
-- Read-only upstream check at 2026-10-23 20:59 UTC: zero missing Git commits
-  for both components, despite the release-only code difference. GitHub issue
-  #1 is the published monitor; local snapshot-aware output is separate.
+- Local maintenance branch: `maintenance/upstream-20261025`, not pushed.
+- Embedded Bookshelf Git: `fc1103a3de9fd19eea89a53c5f1f1b0e8175682a`
+  (6.0.0 plus follow-ups), 209 reviewed incoming commits; merge `48438837`.
+- Embedded SimpleUI Git: `40b301f0f5e4466021d00b4e47ac8c09bb65ac8c`
+  (3.0 plus follow-ups), 18 reviewed incoming commits; merge `b9dfc849`.
+- The real SimpleUI Git history now accounts for the approved 3.0 ZIP snapshot
+  `3cb36431`. Content reconciliation preserved OrbitUI's changes; the active
+  `release_snapshot` field is retired. Historical digest/asset provenance stays
+  in `docs/MERGE_LOG.md` and Git, not relabelled as an upstream commit.
+- GitHub issue #1 is monitoring-only and describes public main, not unpublished
+  local imports. Do not mistake its missing-commit count for the local state.
 - Open pull requests: none. The only open issue is the monitoring-only upstream
   dashboard.
 - The repository was clean, had no stash and had no unreachable commits during
@@ -89,11 +88,14 @@ provides canonical module names and legacy aliases while preserving
 
 ### Shared Home and library
 
-- The local SimpleUI 3.0 integration adds detailed statistics/charts, live Bento
+- The SimpleUI 3.0 integration adds detailed statistics/charts, live Bento
   preview, accent/secondary colours, optional bundled fonts and Tiny Critter.
   Existing percentage/stacked layouts retain their geometry until an explicit
   new-editor width/movement change; per-module gaps remain independent.
   UI fonts remain explicit choices and the embedded navbar keeps its 96dp base.
+- The local Bookshelf 6.0 import adds grid-editable micro-modules, Shelf/Ornament
+  modules among books, pinned ornaments, Highlights and persistent derived caches.
+  Hosted migrations retain old module/deck keys; no settings/book data moves.
 - One settings hub joins Home, arbitrary library sections, appearance, search,
   Home shelves and the OrbitUI updater.
 - Library sections are user-defined; no personal fiction/manga folder layout is
@@ -210,9 +212,9 @@ tests/device checklist updates, and a `MERGE_LOG.md` entry.
 - Reviewed subtree imports use an exact full SHA on a dedicated maintenance
   branch and retain unsquashed history. Keep the import commit separate from
   OrbitUI adaptations and release documentation where feasible.
-- Exception approved October 23: the official SimpleUI 3.0 ZIP is a separately
-  identified local source snapshot. Do not advance the Git pin or remove the
-  snapshot record until upstream's matching history has been reviewed.
+- October 23's official 3.0 ZIP exception was reconciled with real upstream Git
+  on October 25. Retain its historical identity; future ZIP-only imports still
+  require their own explicit approval and source comparison.
 - Before a merge, read `docs/UPSTREAM.md`, all C01-C11 contracts and the latest
   `docs/MERGE_LOG.md` entries. Update only the appropriate `upstream_commit` in
   `sources.json`; preserve original fork provenance fields.
@@ -322,6 +324,9 @@ redesign.
   push/publication request. Its upstream tag still points to the integrated
   2.7.5 Git baseline. Bookshelf and stable bootstrap/API remain unchanged;
   no new physical-reader acceptance is claimed.
+- **2026-10-25 — local maintenance:** reviewed Bookshelf 6.0 + SimpleUI follow-ups;
+  the old ZIP baseline is reconciled with upstream Git. No push, version bump,
+  publication or new physical-reader acceptance.
 
 For the full decision trail, use `docs/MERGE_LOG.md`; commit messages and tags
 are supporting evidence, not substitutes for the recorded contracts and tests.

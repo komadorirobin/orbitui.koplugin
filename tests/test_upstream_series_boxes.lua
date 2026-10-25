@@ -557,13 +557,16 @@ H.test("portrait square and landscape stickers fit and center without a second s
                     - (w.art_h - w.count_band_h)) <= 1)
                 H.eq(w.art_cover.width - 2 * W.CARD_BORDER, iw)
                 H.eq(w.art_cover.height - 2 * W.CARD_BORDER, ih)
+                Painter.clearStickerCache()
                 allocated, scaled = {}, 0
                 local bb = surface(shape.w, 400); w:paintTo(bb, 0, 0)
                 H.eq(bb.blits, 1); H.eq(scaled, 0); H.eq(#allocated, 1)
-                assert(allocated[1].freed)
+                assert(not allocated[1].freed, "the cached source must survive widget teardown")
                 local copy = bb.copies[1]
                 H.eq(copy.sx, W.CARD_BORDER); H.eq(copy.sy, W.CARD_BORDER)
                 H.eq(copy.w, iw); H.eq(copy.h, ih)
+                Painter.clearStickerCache()
+                assert(allocated[1].freed, "clearing the sticker cache must release its source")
             end
         end
     end
@@ -638,12 +641,14 @@ H.test("high DPI borders are removed exactly without cropping the image", functi
 end)
 
 H.test("failed cover painting frees its scratch buffer and retries on redraw", function()
+    Painter.clearStickerCache()
     local w = visibleBox(members(3)); local bb = surface(w.width, 400)
     allocated, fail_cover = {}, true
     w:paintTo(bb, 0, 0); H.eq(bb.blits, 0); H.eq(#allocated, 1)
     assert(allocated[1].freed)
     fail_cover = false
-    w:paintTo(bb, 0, 0); H.eq(bb.blits, 1); assert(allocated[2].freed)
+    w:paintTo(bb, 0, 0); H.eq(bb.blits, 1); assert(not allocated[2].freed)
+    Painter.clearStickerCache(); assert(allocated[2].freed)
 end)
 
 H.test("upstream read count follows live completion and reverting the final volume", function()
@@ -658,6 +663,31 @@ H.test("upstream read count follows live completion and reverting the final volu
     statuses[raw[3].filepath] = "reading"
     H.eq(visibleBox(raw).count.text, count(2, 3))
     H.eq(raw[3].status, "finished") -- No writes to source reading state.
+end)
+
+H.test("sticker buffers survive page rebuilds, stay bounded and free on explicit invalidation", function()
+    Painter.clearStickerCache()
+    allocated, fail_cover = {}, false
+    local raw = members(3)
+    raw[1].filepath = "/cache/rebuilt-first.cbz"
+    local first = visibleBox(raw)
+    first:paintTo(surface(first.width, 400), 0, 0)
+    H.eq(#allocated, 1)
+    local kept = allocated[1]
+    first:free(); assert(not kept.freed)
+    local rebuilt = visibleBox(raw)
+    fail_cover = true -- a hit must not ask the cover to paint again
+    local bb = surface(rebuilt.width, 400)
+    rebuilt:paintTo(bb, 0, 0); H.eq(bb.blits, 1); H.eq(#allocated, 1)
+    rebuilt:free(); fail_cover = false
+    for i = 1, 12 do
+        local other = members(3); other[1].filepath = "/cache/different-" .. i .. ".cbz"
+        local w = visibleBox(other)
+        w:paintTo(surface(w.width, 400), 0, 0); w:free()
+    end
+    assert(kept.freed, "the thirteenth cached sticker must evict the oldest")
+    Painter.clearStickerCache()
+    for _, buffer in ipairs(allocated) do assert(buffer.freed, "cache-owned buffer leaked") end
 end)
 
 H.test("complete native boxes paint safely in day and night after a fresh build", function()

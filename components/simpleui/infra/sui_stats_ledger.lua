@@ -28,11 +28,18 @@ local FORMAT = 1
 local _state
 local _loaded = false
 local _path_override
+local _current_pages   -- memo of the current year's distinct pages
 
 --- Points the ledger file somewhere else and drops the in-memory state.
 function Ledger.setPath(path)
     _path_override = path
-    _state, _loaded = nil, false
+    _state, _loaded, _current_pages = nil, false, nil
+end
+
+-- A full statistics invalidation (e.g. cloud replacement/import) cannot reuse
+-- a disk prefix with the same count/min/max but edited historical durations.
+function Ledger.invalidate()
+    _state, _loaded, _current_pages = nil, true, nil
 end
 
 local function storePath()
@@ -57,6 +64,10 @@ local function loadState()
         days = {}, by_day = {}, pages = type(data.pages) == "table" and data.pages or {},
     }
     for i, row in ipairs(data.days) do
+        if type(row) ~= "table" or type(row[1]) ~= "string"
+            or not row[1]:match("^%d%d%d%d%-%d%d%-%d%d$")
+            or type(row[2]) ~= "number" or type(row[3]) ~= "number"
+            or type(row[4]) ~= "number" or type(row[5]) ~= "number" then return nil end
         local entry = {
             day = row[1], secs = row[2], first = row[3], last = row[4],
             first_active = row[5] > 0 and row[5] or nil,
@@ -87,9 +98,12 @@ end
 -- Queries
 -- ---------------------------------------------------------------------------
 local function query(conn, sql, row_fn)
-    local stmt = conn:prepare(sql)
-    for row in stmt:rows() do row_fn(row) end
-    stmt:close()
+    local stmt = assert(conn:prepare(sql), "statistics query unavailable")
+    local ok, err = pcall(function()
+        for row in stmt:rows() do row_fn(row) end
+    end)
+    pcall(stmt.close, stmt)
+    if not ok then error(err, 0) end
 end
 
 -- Local midnight of today.
@@ -100,13 +114,14 @@ end
 
 -- Row count and oldest/newest start_time of the rows before `before`.
 local function prefixSignature(conn, before)
-    local count, min_t, max_t = 0, 0, 0
+    local count, min_t, max_t
     query(conn, string.format([[
         SELECT COUNT(*), COALESCE(MIN(start_time), 0), COALESCE(MAX(start_time), 0)
         FROM page_stat_data WHERE start_time < %d
     ]], before), function(row)
-        count, min_t, max_t = tonumber(row[1]) or 0, tonumber(row[2]) or 0, tonumber(row[3]) or 0
+        count, min_t, max_t = tonumber(row[1]), tonumber(row[2]), tonumber(row[3])
     end)
+    assert(count and min_t and max_t, "statistics signature unavailable")
     return count, min_t, max_t
 end
 
@@ -180,8 +195,6 @@ end
 -- ---------------------------------------------------------------------------
 local Snapshot = {}
 Snapshot.__index = Snapshot
-
-local _current_pages   -- memo of the pages of the current year
 
 --- Snapshot of the ledger: every completed day plus today as the database holds
 --- them now. Uses `conn` when given, otherwise opens its own. Returns nil plus
@@ -304,10 +317,11 @@ end
 
 -- Count and total pages of the books: the page_stat view rescales to them.
 local function booksSignature(conn)
-    local sig = "0:0"
+    local sig
     query(conn, "SELECT COUNT(*), COALESCE(SUM(pages), 0) FROM book", function(row)
         sig = string.format("%d:%d", tonumber(row[1]) or 0, tonumber(row[2]) or 0)
     end)
+    assert(sig, "book statistics signature unavailable")
     return sig
 end
 
@@ -317,7 +331,7 @@ end
 local function countPages(conn, year)
     local lo = os.time{ year = year, month = 1, day = 1, hour = 0 }
     local hi = os.time{ year = year + 1, month = 1, day = 1, hour = 0 }
-    local n = 0
+    local n
     query(conn, string.format([[
         SELECT COUNT(*) FROM (
             SELECT 1 FROM page_stat
@@ -325,7 +339,8 @@ local function countPages(conn, year)
                                  WHERE start_time >= %d AND start_time < %d)
             GROUP BY id_book, page
         )
-    ]], lo, hi), function(row) n = tonumber(row[1]) or 0 end)
+    ]], lo, hi), function(row) n = tonumber(row[1]) end)
+    assert(n, "statistics page aggregate unavailable")
     return n
 end
 
@@ -338,7 +353,7 @@ function Snapshot:pagesInYear(year, conn)
         local books = booksSignature(c)
         if year < tonumber(os.date("%Y")) then
             local hit = self.state.pages[year]
-            if hit and hit.books == books then return hit.n end
+            if type(hit) == "table" and hit.books == books and type(hit.n) == "number" then return hit.n end
             local n = countPages(c, year)
             self.state.pages[year] = { n = n, books = books }
             saveState(self.state)

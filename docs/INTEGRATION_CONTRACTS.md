@@ -107,6 +107,17 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+The October 25 SimpleUI daily-history ledger is derived statistics, not a new
+reading-data owner. Busy/missing aggregates must not persist zero days/pages;
+close failed statements and retry within the same window. Full statistics
+invalidation also drops the ledger's disk/memory prefix, including historical
+duration edits that leave its row-count/min/max signature unchanged. Insights
+retains both ends of its year range. Bounded Bookshelf sticker buffers retain
+aspect-true pixels across widget rebuilds, exclude text overlays, and free on
+eviction/explicit cover-cache reset. A failed image build remains retryable.
+Tests: `test_upstream_20261025`, `test_upstream_series_boxes` and the real-SQLite
+supplement in the October 25 evidence directory.
+
 The October 22 Bookshelf 5.5.5 import honors an explicit disabled stable-page
 preference in both hydrated metadata and progress-cache reads. Preserve the
 fork's doc_pages/rendered-cache precedence and never use stored publisher page
@@ -197,6 +208,13 @@ Device/server checks: one finished read record, remote position actually moves,
 and server-backed Want to Read remains usable. No live credentials in tests.
 
 ## C06: External plugin and patch compatibility
+
+Bookshelf 6.0's underlay/dirty hooks must not overwrite later plugin wrappers.
+Window paint wrappers become inert when released; widget close releases only
+the current underlay owner. Preserve nil positions and original errors/results
+under Lua 5.1 as well as newer Lua, including restoring closes. New exposed-screen
+refreshes retain OrbitUI navigation-generation guards. Coverage: native
+`_test_underlay`, `test_simpleui_dialog_merge` and existing navigation suites.
 
 MyAnimeList, Patch Manager, manga-header patches and BookOrbit undo-opening
 support are external integrations, not features reimplemented by this import.
@@ -744,6 +762,17 @@ screens keep independent layouts and refresh targets. Regression coverage:
 `tests/test_simpleui_upstream_20261006.lua`.
 
 ## C08: Assets, data and recovery
+
+The October 25 Bookshelf 6.0 migrations are copy-only while hosted: retain the
+old main-file ornament-deck snapshot and its auxiliary-store copy when SQLite
+imports it. Code rollback can read the old snapshot; it does not undo later
+deck/layout edits. New module-grid positions may be added, but keep legacy
+size/page fields for old code. Standalone component migration remains native
+when the optional host flags are absent. Failed SQLite import/commit preserves
+its source and memo, rolls back and remains retryable. Existing flat/native
+paths, profile namespaces, custom ornaments, book sidecars and reading data
+must not move. Tests: `test_upstream_20261025`, `_test_ornament_decks_db` against
+real SQLite, and the existing storage/ornament/profile suites.
 
 Bookshelf 5.5's author-photo lookup is explicit and separate from the bundled
 bust ornaments. Bulk discovery keeps existing/manual images; a failed install

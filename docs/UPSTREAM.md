@@ -164,6 +164,29 @@ commit, or assume that a release name proves equivalent contents.
 
 ## Current embedding changes
 
+- October 25 reviewed merge: Bookshelf `fc1103a3` (6.0.0 plus follow-ups),
+  209 incoming commits; SimpleUI `40b301f0` (3.0 plus follow-ups), 18 commits.
+  SimpleUI's newly published Git history now contains the reviewed ZIP runtime.
+  Reconcile content three-way against `3cb36431`, retaining all OrbitUI deltas
+  and the 13 original tests, rather than replaying 3.0 or resetting to a tag.
+  The remaining upstream delta is 25 paths; remove the now-reconciled active
+  `release_snapshot` field but retain its identity in the merge log/history.
+  Both real Git pins advance; no version bump, push or publication is implied.
+  Preserve scoped `findGroup` calls alongside the new shelf-visible grouping
+  flag, dock and top-panel ornament gesture bounds, bindings, above-cover
+  labels, series/rating/title geometry and fresh widget ownership. Cache the
+  aspect-true sticker without scaling it again; invalidate/free bounded owned
+  buffers on explicit cache clearing. Keep new module/plank/pinning controls.
+  Hosted module-grid migration retains old size/page fields for rollback;
+  the ornament Lua/SQLite migration keeps old settings copies. Failed SQLite
+  migration/commits cannot advance the in-memory deck. New underlay hooks
+  preserve Lua 5.1 nil returns, become inert under later wrappers on teardown,
+  and never restore over a third-party paint wrapper. SimpleUI's daily ledger
+  and Insights retry missing/busy aggregates, keep both year-range results,
+  close failed statements and rebuild after full statistics invalidation.
+  Preserve navigation generation guards with the new ghosting refresh, and
+  free a failed wallpaper eraser allocation. See `test_upstream_20261025`,
+  extended series/underlay/deck tests and the merge log.
 - October 23, user-approved release-ZIP exception: SimpleUI 3.0.0's official
   asset contains code absent from both `main` and its release tag (both still
   `dd541fc2`). Import the verified asset as local source snapshot `3cb36431`

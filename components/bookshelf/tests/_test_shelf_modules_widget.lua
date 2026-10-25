@@ -82,7 +82,7 @@ t.test("spine modules stand like face-out covers", function()
     assert(tile, "_moduleTile does not take the push")
     assert(tile:find("e._drawn_h = cell_h", 1, true), "the shadow does not follow the drawn module")
     assert(not tile:find("0.08", 1, true), "still leaves lift headroom")
-    assert(ss:find("foot = ((e.face_out or e.shelf_module) and inset or 0)", 1, true),
+    assert(ss:find("foot = (entry.face_out or entry.shelf_module) and inset or 0", 1, true),
            "the shadow's foot is not pushed back with the module")
 end)
 
@@ -90,7 +90,7 @@ end)
 -- shelf's shading must carry on behind it, not stop round a blank box.
 t.test("card-less modules leave the shelf shading alone", function()
     local ss = io.open("lib/bookshelf_spine_shelf.lua"):read("*a")
-    assert(ss:find("elseif e.shelf_module and SpineShelf._bareModule(e.shelf_module) then", 1, true),
+    assert(ss:find("if e.shelf_module and SpineShelf._bareModule(e.shelf_module) then", 1, true),
            "a bare module still blanks the shading behind it")
 end)
 

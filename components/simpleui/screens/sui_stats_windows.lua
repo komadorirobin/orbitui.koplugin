@@ -1307,16 +1307,18 @@ end
 local function _riGetYearRange()
     local current_year = tonumber(os.date("%Y"))
     local ledger = _getLedger()
-    local min_year, max_year = ledger and ledger:yearRange()
+    local min_year, max_year
+    if ledger then min_year, max_year = ledger:yearRange() end
     return { min_year = min_year or current_year, max_year = max_year or current_year }
 end
 
 -- Returns { days, pages, duration } for a given year.
 local function _riGetYearlyStats(year)
     local ledger = _getLedger()
-    if not ledger then return { days = 0, pages = 0, duration = 0 } end
+    if not ledger then return { days = 0, pages = 0, duration = 0 }, false end
     local days, duration = ledger:yearTotals(year)
-    return { days = days, pages = ledger:pagesInYear(year) or 0, duration = duration }
+    local pages = ledger:pagesInYear(year)
+    return { days = days, pages = pages or 0, duration = duration }, pages ~= nil
 end
 
 -- Returns an array[1..12] of { month="YYYY-MM", days=N, hours=H,
@@ -1760,11 +1762,12 @@ end
 
 local function _riGetOrFetchYear(year)
     if _ri_cache[year] then return _ri_cache[year] end
+    local yearly_stats, complete = _riGetYearlyStats(year)
     local entry = {
-        yearly_stats = _riGetYearlyStats(year),
+        yearly_stats = yearly_stats,
         monthly_data = _riGetMonthlyData(year),
     }
-    _ri_cache[year] = entry
+    if complete then _ri_cache[year] = entry end
     return entry
 end
 

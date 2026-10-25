@@ -196,6 +196,10 @@ to undo a UI change.
 
 ## Beta status and feedback
 
+Local maintenance after Beta 5 includes reviewed Bookshelf **6.0.0** and newer
+SimpleUI **3.0** Git commits. It is not yet published as an OrbitUI update;
+the public Beta 5 download below is unchanged. See [the merge log](docs/MERGE_LOG.md).
+
 **0.1.0-beta.5** integrates **SimpleUI 3.0** from its reviewed official release
 ZIP: detailed statistics/charts, live Bento layout preview, accent colours,
 optional fonts and Tiny Critter. Existing percentage/stacked layouts and OrbitUI

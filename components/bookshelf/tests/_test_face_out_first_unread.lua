@@ -187,19 +187,22 @@ end)
 
 t.test("fixed SimpleUI profile pins keep the new reasons and override the library", function()
     local w = io.open("lib/bookshelf_widget.lua"):read("*a")
-    local modes = assert(w:match("local function _faceOutModes%(%)(.-)\nend"))
     local body = assert(w:match("\nfunction BookshelfWidget:_spineFaceOut%(%)\n(.-)\nend"))
+    local ss = io.open("lib/bookshelf_spine_shelf.lua"):read("*a")
+    local policy = assert(ss:match("(function SpineShelf%.faceOutFor%(tab%).-)\nend")) .. "\nend"
+    local SS = { FACE_REASONS = { "favorites", "first", "first_unread", "reading", "unread", "recent" } }
+    assert(load(policy, "shared face out", "t", setmetatable({ SpineShelf = SS,
+        require = function() return { read = function() return "all" end } end,
+    }, { __index = _G })))()
     local env = setmetatable({
         BookshelfSettings = { read = function() return "all" end },
         require = function(name)
             assert(name == "lib/bookshelf_spine_shelf",
                 "fixed profiles must not read the ordinary tab's settings")
-            return { FACE_REASONS = { "favorites", "first", "first_unread",
-                                      "reading", "unread", "recent" } }
+            return SS
         end,
     }, { __index = _G })
-    local resolve = assert(load("local function _faceOutModes()\n" .. modes
-        .. "\nend\nreturn function(self)\n" .. body .. "\nend", "profile face out", "t", env))()
+    local resolve = assert(load("return function(self)\n" .. body .. "\nend", "profile face out", "t", env))()
     local pin
     local shelf = { _profileShelfSettings = function() return { spine_face_out = pin } end }
     for _, reason in ipairs{ "first_unread", "unread", "recent", "none" } do

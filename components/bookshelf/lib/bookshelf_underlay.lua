@@ -39,6 +39,9 @@ local _tiles = {}      -- [tile index] = true once copied
 local _tile_area = 0
 local _valid = true
 local _restoring = false
+local _hooks
+local unpack_values = table.unpack or unpack
+local function pack_values(...) return { n = select("#", ...), ... } end
 M._last_restore = 0
 
 local function screen()
@@ -224,9 +227,12 @@ function M.shown(window)
     local paint = window.paintTo
     -- Its own paintTo, if it had one, to put back (false: none).
     rawset(window, "_underlay_own", rawget(window, "paintTo") or false)
-    rawset(window, "paintTo", function(self, bb, x, y)
+    local wrapper = function(self, bb, x, y)
+        if not _over[self] then return paint(self, bb, x, y) end
         return paintOver(self, paint, bb, x, y)
-    end)
+    end
+    rawset(window, "_underlay_wrapper", wrapper)
+    rawset(window, "paintTo", wrapper)
 end
 
 --- closing(window) -> true when the shelf's pixels went back under it (and
@@ -235,8 +241,11 @@ function M.closing(window)
     if not _over[window] then return false end
     _over[window] = nil
     local own = rawget(window, "_underlay_own")
-    rawset(window, "paintTo", own or nil)
+    if rawget(window, "paintTo") == rawget(window, "_underlay_wrapper") then
+        rawset(window, "paintTo", own or nil)
+    end
     rawset(window, "_underlay_own", nil)
+    rawset(window, "_underlay_wrapper", nil)
     local restored = false
     if _valid and #_pieces > 0 then
         local Screen = screen()
@@ -261,35 +270,60 @@ function M.covered() return next(_over) ~= nil end
 
 --- install(bw): wrap UIManager.show / close once; bw is the live shelf.
 function M.install(bw)
+    if _bw ~= bw then M._reset() end
     _bw = bw
     if M._installed then return end
     M._installed = true
     local UIManager = require("ui/uimanager")
     local show, close = UIManager.show, UIManager.close
-    UIManager.show = function(um, window, ...)
-        local res = table.pack and table.pack(show(um, window, ...)) or { show(um, window, ...) }
+    local state = { active = true, manager = UIManager, show = show, close = close }
+    _hooks = state
+    state.show_wrapper = function(um, window, ...)
+        if not state.active then return show(um, window, ...) end
+        local res = pack_values(show(um, window, ...))
         pcall(function()
             if _bw and not _bw._closed and um:isWidgetShown(_bw) then M.shown(window) end
         end)
-        return (table.unpack or unpack)(res, 1, res.n or #res)
+        return unpack_values(res, 1, res.n)
     end
-    UIManager.close = function(um, window, ...)
+    state.close_wrapper = function(um, window, ...)
+        if not state.active then return close(um, window, ...) end
         local ok_r, restored = pcall(M.closing, window)
         if ok_r and restored then
             _restoring = true
-            local ok, err = pcall(close, um, window, ...)
+            local res = pack_values(pcall(close, um, window, ...))
             _restoring = false
-            if not ok then error(err, 0) end
-            return
+            if not res[1] then error(res[2], 0) end
+            return unpack_values(res, 2, res.n)
         end
         return close(um, window, ...)
     end
+    UIManager.show, UIManager.close = state.show_wrapper, state.close_wrapper
 end
 
 function M._debugPieces() return _pieces end
 
 function M._reset()
+    for window in pairs(_over) do
+        if rawget(window, "paintTo") == rawget(window, "_underlay_wrapper") then
+            rawset(window, "paintTo", rawget(window, "_underlay_own") or nil)
+        end
+        rawset(window, "_underlay_own", nil)
+        rawset(window, "_underlay_wrapper", nil)
+    end
     dropPieces(); _over = {}; _valid = true; _restoring = false; _bw = nil
+end
+
+function M.uninstall(bw)
+    if bw and _bw ~= bw then return end
+    M._reset()
+    local state = _hooks
+    if state then
+        state.active = false
+        if state.manager.show == state.show_wrapper then state.manager.show = state.show end
+        if state.manager.close == state.close_wrapper then state.manager.close = state.close end
+    end
+    _hooks, M._installed = nil, false
 end
 
 return M

@@ -3083,6 +3083,93 @@ retained separately in `native-ota-live.log`.
 Physical Bigme acceptance remains open as documented. This verification-only
 documentation follow-up does not replace or regenerate published release bytes.
 
+## 2026-10-25: Reviewed Bookshelf 6.0 and SimpleUI Git reconciliation (unpublished)
+
+User explicitly requested another upstream merge, not publication. Start from
+clean public main `254a1182` on `maintenance/upstream-20261025`. Bookshelf master
+advances from `065f25c06d9a8e0607f29cbe632f4b3d44a8bd37` to
+`fc1103a3de9fd19eea89a53c5f1f1b0e8175682a`: 209 missing commits, including
+6.0.0 (`3411d901`) and its follow-ups, net 215 changed paths. SimpleUI main
+advances from `dd541fc2b384af43287474587622ef68a2fb3185` to
+`40b301f0f5e4466021d00b4e47ac8c09bb65ac8c`: 18 missing commits.
+
+SimpleUI's newly published Git history contains the approved 3.0 ZIP runtime.
+Its net difference from source snapshot `3cb36431` is only 25 paths. A standard
+unsquashed subtree merge retains actual upstream ancestry; content reconciliation
+uses that exact reviewed ZIP snapshot as the three-way baseline, preserving
+all local adaptations and all 13 original test files. Two remaining content
+conflicts combine the refreshed upstream README with fork information and the
+new exposed-screen ghosting refresh with navigation-generation guards. Retire
+the active `release_snapshot` manifest field only now; its digest, asset ID,
+snapshot and original approval remain in the October 23 log/history. Import
+commit: `b9dfc849`. No Git commit is fabricated or relabelled.
+
+Bookshelf import `48438837` resolves nine file conflicts individually, retaining
+profile scope in the new shelf-visible `findGroup` option, optional host binding
+controls beside card-plank settings, dock/footer geometry and top-panel gesture
+exclusions, above-cover labels during in-place lift, the series-box hooks,
+aspect-preserving sticker fitting and scratch ownership. Repository helpers stay
+scoped/on existing module tables to fit LuaJIT's 200-local limit. Both imports
+are separate from the following OrbitUI adaptation/regression/documentation work.
+
+Reviewed C01-C11. Incoming Bookshelf features: grid-editable top/fullscreen
+micro-modules and module packs, Shelf/Ornament modules among books, per-card and
+panel colours, Highlights, Pin here, shelf copy/move, optional single-group
+display, own menu icon, and persistent cover/progress/ornament/wallpaper/plank
+caches. SimpleUI adds the shared daily-history ledger, retry-sensitive Insights/
+Streak/Heatmap changes, transparent-bar/exposed-screen fixes, translations and
+Critter dialogue. No upstream feature is deliberately omitted.
+
+Adaptations preserve current OrbitUI behavior:
+
+- C02/C03/C05/C10: retain generation guards, normal ReaderUI opening, profiles,
+  shared panels/search/Home shelves, BookOrbit/KOSync bridge and one intended
+  external progress writer. Exposed-screen refresh never reopens a stale route.
+- C04/C07: native aspect-true sticker buffers survive widget rebuilds, bounded
+  to 12 and freed on eviction/explicit cover-cache reset. Never scale the fitted
+  cover again or cache text overlays. Unknown custom-file stamps bypass custom
+  caching; missing custom images fall back/retry. Above-cover labels, natural
+  member widths, binding/title/MAL seams and bare-module shadows stay intact.
+- C06: underlay show/close and per-window paint wrappers preserve nil results
+  and errors under Lua 5.1, release only their own owner and leave later plugin
+  wrappers in place with retired inner wrappers inert. Failed wallpaper eraser
+  allocations free their scratch before retry.
+- C07/C08/C11: hosted grid migration retains old size/page fields; Lua/SQLite
+  deck migration keeps the main-file rollback snapshot and auxiliary copy.
+  Failed commits preserve source/memo and roll back. Existing flat/native paths,
+  settings, links, ornaments and reading data stay put. Standalone migration
+  defaults are unchanged when host flags are absent.
+- C04: missing/busy ledger/page aggregates cannot seal zeros; failed statements
+  close, malformed persisted rows rebuild, and full statistics invalidation
+  discards stale historical prefixes. Insights preserves both year-range values
+  and retries failed year/page queries without caching a zero result.
+
+Both full sequential Lua/LuaJIT runs passed, with 478 Bookshelf suites (zero
+failures), 117 Python tests (four existing external source-cache skips), all
+original SimpleUI tests, 383 module paths and 1,041 LuaJIT syntax files. All 43
+translation catalogues pass. Targeted follow-ups cover the final grid-rollback
+and bounded-sticker cases under both interpreters. Test fixtures were updated
+for new helper names and cache ownership without dropping original assertions.
+
+The normal Bookshelf runner now excludes three native SQLite suites (the new
+deck suite plus the prior facts/OPDS suites). Supplemental LuaJIT runs execute
+all three against real macOS SQLite with unmodified pinned KOReader LJSQLite3:
+7 deck, 16 facts and 100 OPDS cases pass, including failed transactions and
+rollback-copy retention. A real-SQLite SimpleUI ledger check passes daily/year
+totals, distinct pages, active days and historical edits after invalidation.
+The new failure/retry tests also run with both plain Lua and LuaJIT; underlay
+ownership/nil-result tests pass under both. No new failure exception is added.
+
+Clean-commit packaging, complete inventory/held-artwork/history/secret audit and
+native archive/SHA smoke remain final gates, recorded in the verification entry.
+Evidence: `test-results/upstream-20261025/` (including exact upstream patches,
+merge/reconciliation logs, test logs and pinned native-test reference hashes).
+Physical Bigme module migration/editor/rotation, pinned/bound ornaments, colours,
+Highlights/shared panels, menus/sleep, statistics and external-plugin checks
+remain open in `TESTING.md`. VERSION stays `0.1.0-beta.5`; no push/tag/release/OTA
+publication is authorized. Never replace the published Beta 5 ZIP. Preserve the
+held-artwork exclusion and unrelated alternate-design branch.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

@@ -15,6 +15,13 @@ spec.loader.exec_module(watch)
 BASE, FORK, HEAD, TIP = (char * 40 for char in "abcd")
 SOURCE = {"upstream": "https://github.com/example/bookshelf.git", "path": "components/bookshelf",
           "upstream_branch": "master", "upstream_commit": BASE, "commit": FORK}
+REVIEWED_SNAPSHOT = {
+    "tag": "3.0.0", "asset": "simpleui.koplugin.zip", "asset_id": 670136743,
+    "size": 2625011,
+    "sha256": "033f19775610faca6b9cf2d0f92802fdd0fbfad9ebcdda881a1910884cafcf87",
+    "tag_commit": "dd541fc2b384af43287474587622ef68a2fb3185",
+    "source_commit": "3cb364313ee8b2b17f860f67ef330cd6c2f5370b",
+}
 
 
 class FakeGit:
@@ -100,7 +107,7 @@ class CollectTests(unittest.TestCase):
         self.assertEqual(item["errors"][0]["phase"], "fetch")
 
     def test_reviewed_zip_is_reported_separately_from_git_ancestry(self):
-        snapshot = json.loads((ROOT / "sources.json").read_text())["components"]["simpleui"]["release_snapshot"]
+        snapshot = REVIEWED_SNAPSHOT
         source = {**SOURCE, "release_snapshot": snapshot}
         item = watch.collect_component(FakeGit(), FakeAPI(), "bookshelf", source, HEAD)
         self.assertEqual(item["integrated"], BASE)
@@ -121,6 +128,7 @@ class CollectTests(unittest.TestCase):
 
     def test_invalid_snapshot_identity_is_rejected(self):
         data = json.loads((ROOT / "sources.json").read_text())
+        data["components"]["simpleui"]["release_snapshot"] = REVIEWED_SNAPSHOT
         for key, value in (("sha256", "bad"), ("source_commit", "bad"),
                            ("tag", "../outside"), ("asset", "another.zip"), ("size", 0)):
             with self.subTest(key=key), tempfile.TemporaryDirectory() as tmp:

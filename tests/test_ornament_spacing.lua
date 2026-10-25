@@ -66,6 +66,7 @@ local function render(opts, enabled)
     env._nightMode = function() return false end
     env.b, env.stand_h = SS.plankUnit(opts.height), opts.height - 25
     env.i, env.cursor = opts.row.first, g.lead
+    opts.no_pin = true -- this test isolates placement, not the pin menu's plan index
     env.HorizontalSpan = H.widget()
     env.group, env.hanging, env.gap_ornaments, env.orn_list = {}, {}, {}, {}
     compile(lead_piece, env)()
@@ -272,11 +273,14 @@ H.test("ornament taps cannot cover pagination above the embedded dock", function
     local source = f:read("*a"); f:close()
     local body = assert(source:match("blocked = function%(pos%)\n(.-)\n            end,"))
     local shelf = {height=1680, _simpleUIReservedBottom=function() return 120 end,
-        _paginationFooterReserveHeight=function() return 72 end}
+        _paginationFooterReserveHeight=function() return 72 end,
+        _ornGestureTop=function() return 100 end}
     local blocked = compile("return function(pos)\n" .. body .. "\nend", {shelf=shelf})()
     H.eq(blocked({y=1487}),false)
     H.eq(blocked({y=1488}),true)
     H.eq(blocked({y=1600}),true)
+    H.eq(blocked({y=99}),true)
+    H.eq(blocked({y=100}),false)
 end)
 
 H.finish()

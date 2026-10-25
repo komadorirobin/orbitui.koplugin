@@ -71,22 +71,27 @@ local function _moveIn(db)
     local st = db:prepare("SELECT COUNT(*) FROM decks")
     st:reset()
     local row = st:step()
-    if row and tonumber(row[1]) and tonumber(row[1]) > 0 then return end
+    if not row or not tonumber(row[1]) then error("ornament deck count unavailable") end
+    if tonumber(row[1]) > 0 then return true end
     local ok_s, Store = pcall(require, "lib/bookshelf_settings_store")
     if not (ok_s and Store) then return end
     local ok_r, old = pcall(Store.read, M.OLD_KEY)
-    if not (ok_r and type(old) == "table" and next(old) ~= nil) then return end
+    if not ok_r then error(old) end
+    if not (type(old) == "table" and next(old) ~= nil) then return true end
     db:exec("BEGIN;")
     local ok = pcall(function()
         for shelf, list in pairs(old) do _writeShelf(db, tostring(shelf), list) end
     end)
     if not ok then
         db:exec("ROLLBACK;")
-        return
+        return false
     end
     db:exec("COMMIT;")
-    pcall(Store.delete, M.OLD_KEY)
+    if not require("lib/bookshelf_paths").preserveLegacyOrnamentDecks then
+        pcall(Store.delete, M.OLD_KEY)
+    end
     logger.dbg("[bookshelf] ornament decks moved into", M.DB_NAME)
+    return true
 end
 
 -- open() -> db | nil, reason
@@ -99,7 +104,7 @@ function M.open()
     if not (ok_sq and SQ3) then _open_failed = "no-sqlite"; return nil, _open_failed end
     local path = require("lib/bookshelf_paths").settingsFile(M.DB_NAME)
     local ok_open, db = pcall(SQ3.open, path)
-    if not (ok_open and db) then _open_failed = "open-failed"; return nil, _open_failed end
+    if not (ok_open and db) then return nil, "open-failed" end
     local ok_p = pcall(function()
         db:exec("PRAGMA journal_mode=WAL;")
         db:exec("PRAGMA synchronous=NORMAL;")
@@ -109,10 +114,14 @@ function M.open()
     end)
     if not ok_p then
         pcall(function() db:close() end)
-        _open_failed = "schema-failed"
-        return nil, _open_failed
+        return nil, "schema-failed"
     end
-    pcall(_moveIn, db)
+    local ok_move, moved = pcall(_moveIn, db)
+    if not ok_move or moved == false then
+        pcall(function() db:exec("ROLLBACK;") end)
+        pcall(function() db:close() end)
+        return nil, "migration-failed"
+    end
     _db = db
     return _db
 end
@@ -125,32 +134,33 @@ end
 -- usable() -> true when the database opened (else the deck keeps to the
 -- settings store, as it did before).
 function M.usable()
-    return M.open() ~= nil
+    return M.open() ~= nil and M.all() ~= nil
 end
 
 -- all() -> { [shelf] = { piece, ... } }: the session's copy.
 function M.all()
     if _memo then return _memo end
     local db = M.open()
-    if not db then return {} end
+    if not db then return nil end
     local ok, res = pcall(_readAll, db)
     if not ok then
         logger.warn("[bookshelf] ornament decks db:", tostring(res))
-        return {}
+        return nil
     end
     _memo = res
     return _memo
 end
 
 function M.get(shelf)
-    return M.all()[tostring(shelf)]
+    local all = M.all()
+    return all and all[tostring(shelf)]
 end
 
 -- put(shelf, list): replace one shelf's deck (nil: drop it).
 function M.put(shelf, list)
     local k = tostring(shelf)
     local decks = M.all()
-    decks[k] = list
+    if not decks then return false end
     local db = M.open()
     if not db then return end
     local ok, err = pcall(function()
@@ -158,7 +168,13 @@ function M.put(shelf, list)
         local ok_w, e = pcall(_writeShelf, db, k, list)
         if ok_w then db:exec("COMMIT;") else db:exec("ROLLBACK;"); error(e) end
     end)
-    if not ok then logger.warn("[bookshelf] ornament decks db:", tostring(err)) end
+    if not ok then
+        pcall(function() db:exec("ROLLBACK;") end)
+        logger.warn("[bookshelf] ornament decks db:", tostring(err))
+        return false
+    end
+    decks[k] = list
+    return true
 end
 
 function M.drop(shelf) M.put(shelf, nil) end

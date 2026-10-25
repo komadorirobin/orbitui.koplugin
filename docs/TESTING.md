@@ -2,6 +2,27 @@
 
 ## Automated
 
+2026-10-25 reviewed upstream import (unpublished): Bookshelf 6.0.0 plus
+follow-ups through `fc1103a3`, SimpleUI 3.0 through `40b301f0`. Reconcile the
+previous ZIP snapshot without discarding original suites or OrbitUI choices.
+Regression coverage includes scoped group restoration, hosted grid/deck rollback
+keys, failed SQLite transactions, complete/retryable daily statistics, Insights
+year ranges, bounded aspect-true sticker ownership, independent labels/bindings,
+top/dock gesture exclusions, nil-return/third-party underlay hooks and navigation
+generations. Full sequential Lua/LuaJIT and translations are required; supplement
+the normal runner's three SQLite exclusions with actual native database runs.
+Evidence: `test-results/upstream-20261025/`.
+
+Bigme checks still required: existing top-panel and fullscreen module layouts
+before/after migration and rotation; module move/resize/page/palette controls;
+Shelf/Ornament modules among books; Pin here alongside bound add-ons; labels,
+bindings, captions and aspect-true series stickers; Highlights from both Home
+and Library; menu/sleep underlay restoration, day/night/grayscale; statistics
+after reader return or cloud import; external BookOrbit/MAL/Patch Manager hooks.
+Headless checks do not establish device performance or physical acceptance.
+VERSION remains Beta 5 until a separate release request; a local validation ZIP
+must never replace the public Beta 5 asset or be described as a new OTA release.
+
 2026-10-23 beta.5 publication: user explicitly requested push and publication
 after disclosure of the remaining Bigme checks. Retain the existing beta's
 limited device evidence; this is a prerelease, not new physical acceptance.

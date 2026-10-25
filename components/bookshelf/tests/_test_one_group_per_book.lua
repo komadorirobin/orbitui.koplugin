@@ -105,10 +105,10 @@ t.test("Authors and Genres shelves read the view; lookups read the cache", funct
         local body = fn("\nfunction Repo%." .. name .. "%(.-\nend\n", name)
         assert(not body:find("_oneGroupShapes", 1, true), name .. " would lose co-authors")
     end
-    local f = fn("\nfunction Repo%.findGroup%(kind, name, shelf%).-\nend\n", "findGroup")
+    local f = fn("\nfunction Repo%.findGroup%(kind, name, scope, shelf%).-\nend\n", "findGroup")
     assert(f:find("shelf and Repo._oneGroupShapes(cache) or cache.groups", 1, true))
     local w = assert(io.open("lib/bookshelf_widget.lua")):read("*a")
-    assert(w:find("Repo.findGroup(e.kind, e.label, true)", 1, true),
+    assert(w:find("Repo.findGroup(e.kind, e.label, self:_profileScope(), true)", 1, true),
         "a drill-down restored after sleep shows books the shelf left out")
     assert(src:find('if Repo.oneGroupPerBook() then parts[#parts + 1] = "g1" end', 1, true),
         "getBySource's cache would serve the other answer after a toggle")

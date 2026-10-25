@@ -336,7 +336,7 @@ t.test("a rebuild and a page turn hold the window open for their whole run", fun
     for _i, name in ipairs({ "BookshelfWidget:_rebuild", "BookshelfWidget:_swapShelvesInPlace" }) do
         local f = w:match("\nfunction " .. name:gsub("[%.%:]", "%%%0") .. "%(.-\n")
         assert(f, name .. " not found")
-        local at = w:find("\nfunction " .. name, 1, true)
+        local at = w:find("\nfunction " .. name .. "(", 1, true)
         local head = w:sub(at, at + 600)
         assert(head:find("self:_ornScanWindow()", 1, true), name .. " does not open the window first")
     end

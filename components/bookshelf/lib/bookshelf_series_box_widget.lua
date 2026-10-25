@@ -123,6 +123,10 @@ local CONTACT_SHADOW = 0.35   -- the shadow's strength at the rim
 -- The ink printed on a slipcase: its name and count.
 -- Finished sticker images by what they show (see paintTo), oldest out.
 local _stickers, _sticker_order, STICKERS_MAX = {}, {}, 12
+function Box.clearStickerCache()
+    for _, kept in pairs(_stickers) do kept.bb:free() end
+    _stickers, _sticker_order = {}, {}
+end
 -- scaled(src, w, h) -> a new w x h copy: MuPDF's scaler (C), the one the
 -- covers use (RenderImage's, which falls back on its own); Blitbuffer:scale
 -- is a per-pixel Lua loop.
@@ -453,33 +457,36 @@ function Box:_paintSlipcase(bb, x, y)
         -- with Blitbuffer:scale, a per-pixel Lua loop, was ~10% of a spine
         -- page turn on the PW5 with series boxes on screen.
         local first = self.art_cover and self.art_cover.book
-        local skey = table.concat({ tostring(self.custom_path or (first and first.filepath)),
+        local custom_stamp = self.custom_path and require("lib/bookshelf_derived_cache").stamp(self.custom_path)
+        local cacheable = not custom or custom_stamp ~= nil
+        local skey = table.concat({ tostring((custom and self.custom_path) or (first and first.filepath)),
             tostring(first and first.cover_sizetag), SW, FH, iw, ih, c,
             tostring(self.preserve_cover_aspect),
-            tostring(self.custom_path and require("lib/bookshelf_derived_cache").stamp(self.custom_path)),
+            tostring(custom_stamp),
             tostring(bb:getType()), night and "n" or "d" }, "|")
-        local kept = _stickers[skey]
+        local kept = cacheable and _stickers[skey]
         if kept then
-            bb:blitFrom(kept, sx + E, sy + E, 0, 0, iw, ih)
+            bb:blitFrom(kept.bb, sx + E, sy + E, kept.x, kept.y, iw, ih)
             return
         end
-        local function keep(fit)
-            _stickers[skey] = fit
+        local function keep(buffer, cx, cy)
+            if not cacheable then return false end
+            _stickers[skey] = { bb = buffer, x = cx or 0, y = cy or 0 }
             _sticker_order[#_sticker_order + 1] = skey
             if #_sticker_order > STICKERS_MAX then
                 local old = table.remove(_sticker_order, 1)
                 local ob = _stickers[old]
                 _stickers[old] = nil
-                if ob then ob:free() end
+                if ob then ob.bb:free() end
             end
+            return true
         end
         -- The series' own image: no tile frame to crop. Cache-owned, so it is
         -- scaled from and never freed here.
         if custom then
             fit = scaled(custom, iw, ih)
             bb:blitFrom(fit, sx + E, sy + E, 0, 0, iw, ih)
-            keep(fit)
-            fit = nil -- ownership transferred to the bounded sticker cache
+            if keep(fit) then fit = nil end -- cache owns only successfully kept buffers
             return
         end
         local tw_, th_ = SW + 2 * c, FH + 2 * c
@@ -491,11 +498,8 @@ function Box:_paintSlipcase(bb, x, y)
         self.art_cover:paintTo(tmp, 0, 0)
         if self.preserve_cover_aspect then
             -- The tile is already at the final, aspect-true image size.
-            fit = BB.new(iw, ih, bb:getType())
-            fit:blitFrom(tmp, 0, 0, c, c, iw, ih)
-            bb:blitFrom(fit, sx + E, sy + E, 0, 0, iw, ih)
-            keep(fit)
-            fit = nil
+            bb:blitFrom(tmp, sx + E, sy + E, c, c, iw, ih)
+            if keep(tmp, c, c) then tmp = nil end
             return
         end
         -- Off with the tile's frame, then to the space inside the edge.
@@ -503,8 +507,7 @@ function Box:_paintSlipcase(bb, x, y)
         inner:blitFrom(tmp, 0, 0, c, c, SW, FH)
         fit = scaled(inner, iw, ih)
         bb:blitFrom(fit, sx + E, sy + E, 0, 0, iw, ih)
-        keep(fit)
-        fit = nil
+        if keep(fit) then fit = nil end
     end)
     if fit then fit:free() end
     if inner then inner:free() end

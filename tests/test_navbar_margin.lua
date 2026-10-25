@@ -72,7 +72,8 @@ method(core_source, "M.applyNavbarState", { M = UI, _TB = function() return Topb
 local calls = 0
 BB.rebuildAllNavbars = function() calls = calls + 1; BB.invalidateDimCache() end
 package.loaded["infra/sui_core"] = UI
-package.loaded["features/sui_wallpaper"] = { resolveBar = function() return { strength = 100 } end }
+package.loaded["features/sui_wallpaper"] = { resolveBar = function() return { strength = 100 } end,
+    barsRevealWallpaper = function() return false end }
 package.loaded["infra/sui_patches"] = {}
 package.loaded["ui/uimanager"] = UIManager
 package.loaded["ui/widget/linewidget"] = Box

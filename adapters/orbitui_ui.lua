@@ -14,6 +14,7 @@ M.modules = {
     ["lib/bookshelf_series_box_widget"] = true,
     ["lib/bookshelf_settings"] = true,
     ["lib/bookshelf_chip_editor"] = true,
+    ["lib/bookshelf_module_layout"] = true,
     ["lib/bookshelf_book_repository"] = true,
     ["lib/bookshelf_sort_engine"] = true,
     ["lib/bookshelf_theme_pack"] = true,
@@ -97,6 +98,8 @@ function M.wrap(name, module)
         module.cover_text_external = true
         -- The host owns profile-qualified bindings, including Kanzenban.
         module.book_binding_external = true
+    elseif name == "lib/bookshelf_module_layout" then
+        module.preserve_legacy = true
     elseif name == "lib/bookshelf_book_repository" then
         require("adapters/orbitui_shelf_sort").repository(module)
     elseif name == "lib/bookshelf_sort_engine" then

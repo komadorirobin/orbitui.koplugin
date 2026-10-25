@@ -28,7 +28,7 @@ end)
 t.test("buildBookMeta trusts the wrapper's cover on a get_cover=false read", function()
     assert(repo:find('if has_cover ~= "Y" and not want_cover and CoverHooks.forMeta(bim, filepath, info) then', 1, true),
         "a cached-cover build still reads the database's no cover")
-    assert(repo:find("has_cover   = _recordHasCover(has_cover, info),", 1, true),
+    assert(repo:find("has_cover   = CoverHooks.recordHasCover(has_cover, info),", 1, true),
         "the record does not carry the wrapper's answer")
 end)
 

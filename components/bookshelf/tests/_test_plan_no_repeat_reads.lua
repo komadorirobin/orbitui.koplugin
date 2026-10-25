@@ -25,7 +25,7 @@ t.test("the file-name marker is remembered per path", function()
 end)
 
 t.test("the file-name marker still reads the same", function()
-    local env = { type = type, tonumber = tonumber, _filename_pages = {}, NONE = false }
+    local env = { type = type, tonumber = tonumber, Repo = { _filename_pages = {} }, NONE = false }
     local f = load("local filepath = ...\n" .. body, "pcf", "t", env)
     assert(f("/b/Some Book p(412).epub") == 412)
     assert(f("/b/Some Book P(7).epub") == 7)

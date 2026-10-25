@@ -158,7 +158,7 @@ H.test("embedded chip editor leaves all binding choices with the host menu", fun
     local f=assert(io.open("components/bookshelf/lib/bookshelf_chip_editor.lua"))
     local src=f:read("*a"); f:close()
     local body=assert(src:match('if show_spines then\n(.-)\n%s*%-%- The spine view'))
-    local env=setmetatable({self=editor}, {__index=_G})
+    local env=setmetatable({self=editor, draft={}}, {__index=_G})
     local code="local rows={}\n"..body.."\nreturn rows"
     local fn
     if setfenv then fn=assert(loadstring(code)); setfenv(fn,env)
