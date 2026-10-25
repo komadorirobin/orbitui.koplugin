@@ -24,6 +24,7 @@
 -- require("screens/sui_homescreen") elsewhere in the codebase.
 
 local BD               = require("ui/bidi")
+local Blitbuffer       = require("ffi/blitbuffer")
 local BottomContainer  = require("ui/widget/container/bottomcontainer")
 local Button           = require("ui/widget/button")
 local CenterContainer  = require("ui/widget/container/centercontainer")
