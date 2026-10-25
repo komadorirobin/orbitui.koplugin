@@ -460,6 +460,14 @@ alpha pending the fresh-setup and add-on physical-device acceptance checks.
 
 ## On the reader
 
+Version `0.1.0-beta.7` fixes a reproduced first-run Home logger failure and adds
+shared load/open error reporting with guarded partial-window cleanup. Beta 5
+and Beta 6 can update directly through the preview channel and restart. No
+settings reset is needed; bootstrap/API 1 and all existing data/assets remain
+unchanged. The separately reported native Android mutex crash is not proven
+resolved; retest on the affected device and capture any detailed Home error.
+See [the Beta 7 notes](releases/0.1.0-beta.7.md).
+
 Version `0.1.0-beta.6` integrates reviewed Bookshelf 6.0.0 and SimpleUI 3.0
 follow-ups. Beta 5 can update directly through the preview channel and restart;
 the stable bootstrap and API 1 are unchanged. Existing Home/Bento geometry,

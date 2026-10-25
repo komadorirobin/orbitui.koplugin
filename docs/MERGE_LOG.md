@@ -3278,6 +3278,52 @@ The focused Bigme module/editor/rotation, pinning/bound ornaments, Highlights,
 colours/underlay, statistics and external-plugin checks remain open. Headless
 tests and the explicit publication request are not new physical acceptance.
 
+## 2026-10-25: Beta 7 first-run Home fix and release preparation
+
+The user reported a fresh Android Beta 5 installation where Home was unavailable
+or KOReader crashed, persisting after a KOReader update and enabling Cover
+browser. The supplied logs contain a native destroyed-mutex abort from a process
+preceding the logged restart, not a matching Lua traceback. Do not claim that
+this identifies or resolves the native crash. Raw device logs are not committed.
+The user explicitly requested implementing the proposed fix/diagnostics and
+publishing a new release immediately, after the remaining uncertainty was stated.
+
+Confirmed independently in Beta 5/Beta 6: the built-in Home post-open hook uses
+`logger.info` without importing logger, only when onboarding is absent/false.
+The first-run regression fails on the previous code with a nil-global error;
+configured installations skip it. Import logger explicitly. Keep the real Home
+facade's shared engine identity, callbacks, host-owned onboarding and optional
+cached BookOrbit refresh, rather than rewriting user flags or layouts.
+
+The existing screen-nav module now owns Home load diagnostics and guarded open.
+Home action, boot, resume, reader return and reopen use the reporting loader;
+full tracebacks are logged and the real first error is shown persistently.
+Only newly failed non-table entries for the two owned Home/engine modules are
+restored to their previously absent values. LuaJIT's real require sentinel can
+be numeric; test real require failures, not only mocked userdata. Never purge
+valid tables, pre-existing state or third-party modules. Partial Home cleanup
+sets intentional-close before closing, does not erase a later replacement, and
+reports even if cleanup/notification fails. Closing the error message cannot
+schedule an automatic Home retry. Existing navigation-generation guards remain.
+
+Contracts C01/C02/C06/C07/C08 are preserved; no settings, links, reading data,
+libraries, artwork, fonts, bootstrap/API 1 or upstream pins change. No upstream
+merge is included. Four existing component files change, plus one excluded test
+file; no runtime module path is added. Beta 7 uses a new version/tag/asset, never
+replacement bytes for Beta 5/Beta 6. The release note consumes one additional
+installed file slot under the existing API 1 limit (seven remain).
+
+All 14 targeted cases pass under Lua/LuaJIT: fresh and configured onboarding,
+actual factory/facade and action, optional host setup, callback/table identity,
+load/construct/show/hook errors, bounded readable notifications/full traces,
+first-cause retention, real retry sentinel cleanup and owner-safe partial close.
+Final gates: both full suites, translations, tests against extracted sealed
+payload, source/inventory/artwork/history/secret audits, native upgrade/rollback
+from actual public Beta 5 and Beta 6, exact downloaded draft/public bytes and
+main/tag CI. Evidence: `test-results/beta7-20261025/`. Physical Go Color 7/Bigme
+Home and native-crash acceptance remain open. Publication results follow only
+after verification actually completes.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

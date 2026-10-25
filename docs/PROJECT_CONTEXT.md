@@ -22,12 +22,14 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-25
 
-- Product version: `0.1.0-beta.6` (public GitHub prerelease, published
-  2026-10-25 at 17:52 UTC; verification is in `docs/MERGE_LOG.md`).
+- Product version: `0.1.0-beta.7` (release candidate; explicit publication
+  request after the first-run Home investigation). Public Beta 6 remains
+  unchanged until verified publication; see `docs/MERGE_LOG.md`.
 - Public main baseline before this maintenance: `254a1182` (Beta 5 verification).
 - Release tag: `v0.1.0-beta.6` at `7e573fd9`; previous tag
   `v0.1.0-beta.5` at `a19a96ab` and its assets are unchanged.
-- Active branch: `main`, with the reviewed maintenance fast-forwarded and pushed.
+- Active branch: `fix/home-first-run-20261025`; runtime fix plus regression tests,
+  with Beta 7 publication explicitly requested. Public main is `ba6c912f`.
   `maintenance/upstream-20261025` is retained locally.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
@@ -94,6 +96,12 @@ provides canonical module names and legacy aliases while preserving
 
 ### Shared Home and library
 
+- Beta 7's local candidate imports Home's missing logger and reports guarded
+  Home load/open failures, preserving the initial cause across LuaJIT retries.
+  Shared identity/callbacks and settings/data stay intact. Android fresh-install
+  failure is reported on a Go Color 7 with KOReader 2026.07.2; Cover browser is
+  now enabled, but the native mutex abort in the logs is not tied to a Lua trace
+  and is not proven resolved. Physical retesting is required after publication.
 - The SimpleUI 3.0 integration adds detailed statistics/charts, live Bento
   preview, accent/secondary colours, optional bundled fonts and Tiny Critter.
   Existing percentage/stacked layouts retain their geometry until an explicit
@@ -284,7 +292,7 @@ The published Beta 6 runtime contains 1,991 inventoried files, plus its
 manifest, within the installed OTA API 1 limit of 2,000 extracted files. Review
 that budget before adding more assets/modules; a producer-only limit increase
 would not change limits enforced by already-installed updaters.
-Only eight installed file slots remain. Do not raise only the producer limit or
+Beta 7's release note consumes one more slot (seven remain). Do not raise only the producer limit or
 discard runtime assets/licenses to force a build through.
 
 The primary unresolved gate is focused physical acceptance on the Bigme B7 Pro
@@ -353,6 +361,9 @@ redesign.
   push/publication request, complete release gates and public-byte OTA tests.
   Standing merge authorization now includes audited pushes, never automatic
   releases. New physical-reader acceptance remains outstanding.
+- **2026-10-25 — Beta 7 preparation:** confirmed first-run Home logger failure
+  in Beta 5/Beta 6. Add shared guarded diagnostics and first-run regression
+  coverage; user explicitly requests immediate publication after verification.
 
 For the full decision trail, use `docs/MERGE_LOG.md`; commit messages and tags
 are supporting evidence, not substitutes for the recorded contracts and tests.

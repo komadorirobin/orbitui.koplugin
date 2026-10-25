@@ -2,6 +2,19 @@
 
 ## Automated
 
+2026-10-25 beta.7 preparation: reproduce the missing-logger failure on a fresh
+Home, not only a configured/onboarded fixture. `test_home_first_run.lua` executes
+the real Home facade and generic open factory with native services stubbed;
+all 14 cases pass under Lua/LuaJIT after the first case fails on the previous
+source. Cover absent/false/true onboarding flags, host no-op onboarding, original
+callbacks/shared identity, real require failures and owned-sentinel cleanup,
+retained initial cause, partial constructor/show/hook failures, close/notification
+failures, third-party replacement ownership and the actual Home action.
+Persistent error messages must not auto-reopen Home on close. Run this suite
+against extracted release bytes too, then both full gates, translations, clean
+packaging and public Beta 5/Beta 6 native OTA/rollback. Evidence:
+`test-results/beta7-20261025/`. No physical Home/native-crash resolution is inferred.
+
 2026-10-25 beta.6 publication completed: tag `v0.1.0-beta.6` at `7e573fd9`,
 published 17:52 UTC as a prerelease. Both complete local Lua/LuaJIT runs and all
 43 translations pass; native SQLite deck/facts/OPDS/ledger checks also pass.
