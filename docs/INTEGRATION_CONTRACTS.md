@@ -37,8 +37,11 @@ partial instance without auto-reopen or settings resets. Do not treat failed
 LuaJIT require sentinels as screens or purge valid/third-party module state.
 Keep the shared engine table and callbacks. Source: `infra/sui_screen_nav.lua`,
 `screens/sui_homescreen.lua`, `infra/sui_patches.lua` and `features/sui_quickactions.lua`
-under SimpleUI; regression: `tests/test_home_first_run.lua`. This is not a
-claim of physical Android native-crash acceptance.
+under SimpleUI; regressions: `tests/test_home_first_run.lua` and
+`tests/test_home_module_load.lua`. The latter must load the entire screen engine
+without ambient Blitbuffer/logger; an extracted factory alone misses dependency
+failures during module initialization, as the Beta 8 photo/reproduction proved.
+This is not a claim of physical Android native-crash acceptance.
 
 User-approved generalisation, stage 1 (October 19, 2026): runtime sections are
 stored in `orbitui_libraries` (version 1) in the Bookshelf settings store. Import

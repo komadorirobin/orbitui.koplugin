@@ -22,13 +22,14 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-25
 
-- Product version: `0.1.0-beta.8` (approved release candidate, not yet published).
-  Latest public prerelease is Beta 7, published 2026-10-25 at 18:34 UTC.
+- Product version: `0.1.0-beta.8` (public GitHub prerelease, published
+  2026-10-25 at 19:00 UTC; verification is in `docs/MERGE_LOG.md`).
 - Public main baseline before this hotfix: `1a42010d` (Beta 7 verification).
-- Release tag: `v0.1.0-beta.7` at `31f287e1`; previous tag
-  `v0.1.0-beta.6` at `7e573fd9` and all earlier assets are unchanged.
-- Active branch: `fix/home-blitbuffer-20261025`; runtime fix `8641271c`.
+- Release tag: `v0.1.0-beta.8` at `50edce78`; previous tag
+  `v0.1.0-beta.7` at `31f287e1` and all earlier assets are unchanged.
+- Active branch: `main`; runtime fix `8641271c` and candidate `50edce78` pushed.
   The user explicitly approved fixing and publishing Beta 8 after the photo.
+  `fix/home-blitbuffer-20261025` is retained locally.
   `fix/home-first-run-20261025` is retained locally.
   `maintenance/upstream-20261025` is retained locally.
   Future user-requested verified merges include an audited push to `origin/main`;
@@ -256,36 +257,40 @@ ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
 
-A fresh local verification on the versioned Beta 7 tree on 2026-10-25 passed:
+A fresh local verification on the versioned Beta 8 tree on 2026-10-25 passed:
 
 - `sh scripts/test.sh`
 - `LUA=luajit sh scripts/test.sh`
 - `sh scripts/check-translations.sh`
 - 117 Python tests per run, with four documented external source-cache audits
   skipped
-- all 70 OrbitUI Lua test files under both interpreters, including 14 new
-  first-run/error/retry cases that also pass against the extracted release ZIP
+- all 71 OrbitUI Lua test files under both interpreters, including the three
+  new whole-engine cold-load cases and 14 first-run/error/retry cases. Both
+  suites also pass against the extracted sealed release ZIP under both interpreters
 - module map: 383 paths verified
-- LuaJIT syntax: 1,042 Lua files verified
+- LuaJIT syntax: 1,043 Lua files verified
 - Bookshelf: 478 suites, 0 failed, 3 documented KOReader-SQLite skips per run;
   the latest supplemental real SQLite runs remain Beta 6's 7 deck, 16 facts,
-  100 OPDS cases and SimpleUI ledger check. Beta 7 changes no database code;
+  100 OPDS cases and SimpleUI ledger check. Beta 8 changes no database code;
   those supplemental runs were not repeated for this UI-only hotfix.
 - all 13 original SimpleUI test files exercised by `scripts/test.sh`
 - translations: 43 passed, 0 baseline failures and 0 new failures
-- clean-commit release package: 1,992 inventoried files plus its manifest, all
+- clean-commit release package: 1,993 inventoried files plus its manifest, all
   sizes/hashes verified; bootstrap/API 1 and existing artwork/fonts unchanged.
-  All 12 outgoing blobs were checked for held artwork, and Gitleaks found no
-  secrets in two outgoing commits. No package file was removed from Beta 6.
-- actual public Beta 5 and Beta 6 native installers passed discovery of Beta 7, extraction,
+  All nine outgoing blobs were checked for held artwork, and Gitleaks found no
+  secrets in two outgoing commits. No package file was removed from Beta 7;
+  its sole runtime change is the explicit engine import.
+- Luacheck reports no undeclared globals in engine/Home/navigation after
+  allowing KOReader's intentional G_reader_settings/G_defaults host globals.
+- actual public Beta 5 and Beta 7 native installers passed discovery of Beta 8, extraction,
   activation, restart, rollback, truncated-download recovery and external
   snapshots. Both local Linux and anonymous public-byte Linux/TLS runs passed
   for each starting release. No installed reader was touched.
-- GitHub checks passed for both main and the exact release tag at `31f287e1`
-  (runs `40221675093` and `40221674987`). No upstream pins were changed.
+- GitHub checks passed for both main and the exact release tag at `50edce78`
+  (runs `40223707342` and `40223707268`). No upstream pins were changed.
 - draft and anonymously downloaded public assets match the local build exactly:
-  ZIP SHA-256 `b463ad3a416f21910a6f7ec69ea66ad6a515ba6108cd77c37a560d70797d5775`,
-  9,007,880 bytes. Evidence: `test-results/beta7-20261025/`. Later verification
+  ZIP SHA-256 `ebd0271530e30cb2173ca9e87c974351321b60b7c314ffc38179e3f111b82bca`,
+  9,012,570 bytes. Evidence: `test-results/beta8-20261025/`. Later verification
   documentation commits do not replace or rebuild the immutable release assets.
 
 These results are headless. They do not establish real fonts, touch targets,
@@ -293,11 +298,11 @@ e-ink rendering, device lifecycle, performance or update recovery.
 
 ## Known gaps and next milestones
 
-The published Beta 7 runtime contains 1,992 inventoried files, plus its
+The published Beta 8 runtime contains 1,993 inventoried files, plus its
 manifest, within the installed OTA API 1 limit of 2,000 extracted files. Review
 that budget before adding more assets/modules; a producer-only limit increase
 would not change limits enforced by already-installed updaters.
-Only seven installed file slots remain. Do not raise only the producer limit or
+Only six installed file slots remain. Do not raise only the producer limit or
 discard runtime assets/licenses to force a build through.
 
 The primary unresolved gate is focused physical acceptance on the Bigme B7 Pro
@@ -369,6 +374,10 @@ redesign.
 - **2026-10-25 — Beta 7:** published the confirmed first-run Home logger fix,
   shared guarded diagnostics and first-run regression coverage after explicit
   approval and full/public-byte gates. Native Android crash acceptance is open.
+- **2026-10-25 — Beta 8:** published the missing screen-engine Blitbuffer import
+  after the exact photo error reproduced under both interpreters and the user
+  explicitly approved publication. Whole-module cold-load coverage, complete
+  gates, CI and public-byte OTA from Beta 5/Beta 7 pass. Device retesting is open.
 
 For the full decision trail, use `docs/MERGE_LOG.md`; commit messages and tags
 are supporting evidence, not substitutes for the recorded contracts and tests.

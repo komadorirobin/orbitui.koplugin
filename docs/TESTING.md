@@ -2,6 +2,26 @@
 
 ## Automated
 
+2026-10-25 beta.8 published: tag `v0.1.0-beta.8` at `50edce78`, 19:00 UTC,
+prerelease. Both complete suites pass: 71 root Lua files, 117 Python tests/four
+unchanged skips, 478 Bookshelf suites/zero failed/three normal SQLite exclusions,
+all 13 original SimpleUI files. Module map 383, LuaJIT syntax 1,043, translations
+43/zero failures. The three whole-engine and 14 first-run cases also pass on
+sealed ZIP bytes under both interpreters. Explicit-host-globals Luacheck passes
+for the complete engine/Home/navigation sources. Inventory/source equivalence,
+all nine outgoing blobs/held-artwork checks and two-commit Gitleaks pass.
+The sole runtime difference from Beta 7 is one import; no file is removed.
+Both public Beta 5/Beta 7 native installers pass local and anonymous published-byte
+Linux/LuaSec discovery, native hash/archive verification, activation/restart,
+rollback, missing-module/truncated-download rejection and external snapshots.
+Main/tag CI runs `40223707342`/`40223707268` pass. Draft/public assets exactly
+match the sealed build: ZIP SHA-256
+`ebd0271530e30cb2173ca9e87c974351321b60b7c314ffc38179e3f111b82bca`,
+9,012,570 bytes; 1,993 inventoried files plus manifest, six API 1 slots remain.
+Evidence: `test-results/beta8-20261025/`. Physical Go Color 7 Home/native-crash
+and wider Bigme acceptance remain outstanding. No new database supplement was
+needed for this import-only hotfix; Beta 6's recorded supplements remain latest.
+
 2026-10-25 beta.8 preparation: the supplied photo identifies a missing
 `Blitbuffer` global at engine module initialization, line 288. The new
 `test_home_module_load.lua` loads the ENTIRE engine without ambient Blitbuffer

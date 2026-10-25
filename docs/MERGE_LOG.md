@@ -3405,6 +3405,52 @@ and public bytes, draft/public digest checks and main/tag CI. Evidence:
 load error, not a demonstrated cause of the earlier native Android mutex abort.
 Affected Go Color 7 Home retesting and the wider Bigme checklist remain open.
 
+### Beta 8 publication verification
+
+Published `v0.1.0-beta.8` at candidate
+`50edce78b4691fc6b14db975c207e98ccdf26958` on
+2026-10-25 at 19:00:36 UTC as a prerelease. Both complete local Lua/LuaJIT runs
+and all 43 translation checks passed. Each full run covers 117 Python tests
+(four unchanged source-cache skips), 71 root Lua test files, 478 Bookshelf
+suites (zero failed, three normal native-SQLite exclusions) and all 13 original
+SimpleUI test files. Module map 383; LuaJIT syntax 1,043. Beta 6's supplemental
+database tests remain the latest; no database code changes in this import-only fix.
+
+The three new whole-module cases fail with the exact line-288 error before the
+import and pass afterward in both interpreters. Both these and the existing 14
+first-run/error/retry cases also pass against extracted sealed ZIP bytes.
+Additional Luacheck inspection of the complete engine, Home and navigation
+reports no undeclared globals after explicitly allowing KOReader's intentional
+G_reader_settings/G_defaults host globals. Native construction/rendering remains
+stubbed; no physical Home or native Android abort acceptance is inferred.
+
+The clean-commit ZIP has 1,993 inventoried files plus manifest (2,059 ZIP entries,
+27,881,470 expanded bytes). Every inventory size/hash matches candidate Git.
+Only the new Beta 8 release note is added; no Beta 7 path is removed. The engine
+diff is exactly one local import; bootstrap/API 1, module map, source pins,
+Bookshelf, fonts, artwork, settings/migrations and external integrations remain
+unchanged. Six installed API 1 file slots remain. All nine outgoing blobs were
+hashed for the held bitmap; absent. Gitleaks scanned two commits: no leaks.
+
+The actual public Beta 5 and Beta 7 native installers each pass local and
+anonymous public-byte Linux/LuaSec runs: real TLS release discovery, complete
+native SHA/libarchive inventory verification, missing-runtime rejection,
+activation/restart/code rollback, truncated-download recovery, complete external
+snapshot/native verification, adoption restart and persistent rollback. Each
+uses an isolated temporary installation, not a user's reader. Docker was started
+only for this validation; its task-owned container is removed and the previously
+stopped desktop runtime restored after verification.
+
+Main/tag CI runs `40223707342` and `40223707268` passed for the exact candidate.
+Existing Node action runtime and ubuntu-latest migration notices are warnings,
+not test failures. Draft and anonymous public ZIP/checksum downloads match the
+sealed local build byte for byte, including GitHub's asset digests. ZIP SHA-256:
+`ebd0271530e30cb2173ca9e87c974351321b60b7c314ffc38179e3f111b82bca`;
+9,012,570 bytes. Previous tags/assets were not changed. All evidence is under
+`test-results/beta8-20261025/`. Follow-up verification/contract documentation
+does not rebuild or replace the immutable published release. Physical retesting
+on the affected Go Color 7 and the wider Bigme acceptance checklist remain open.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
