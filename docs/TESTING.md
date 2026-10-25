@@ -2,6 +2,24 @@
 
 ## Automated
 
+2026-10-25 beta.10 preparation: explicit user request to merge upstream, push
+and publish. Review all eight Bookshelf commits through `5f726c25` (6.0.2),
+retain SimpleUI `40b301f0`; conflict-free unsquashed merge `0db81b46`.
+New native cases cover refresh/requeue, clipped colour shadows, status bounds,
+covered-window ticks, module book helpers and editor key focus. The four-case
+`test_module_book_integration` loads both entire helper/opener modules with
+native services stubbed, checking live-host/deferred-close delivery, detail
+hydration, ReaderUI fallback and adopted surface ownership. Update the runtime
+version fixture, not production code, from 6.0.0 to 6.0.2. Re-run both complete
+gates, translations, sealed-byte regressions, inventory/history/artwork/secrets,
+actual public Beta 9/Beta 5 native OTA and draft/public/main/tag verification.
+Evidence: `test-results/beta10-20261025/`. No new runtime path or data migration;
+one installed release note should leave four slots under the old API 1 limit.
+User confirms Home and Beta 9 navigation work on Boox; new cover-refresh,
+colour repaint, minute-tick/overlay, module-key, rotation and Bigme lifecycle/
+external-plugin checks still need physical testing. No native Android mutex
+crash diagnosis or measured speedup is inferred.
+
 2026-10-25 beta.9 published: tag `v0.1.0-beta.9` at `a4bb9acb`, 19:49 UTC,
 prerelease. Both complete Lua/LuaJIT suites pass: 72 root Lua files, 117 Python
 tests/four unchanged external-source skips, 478 Bookshelf suites/zero failures/

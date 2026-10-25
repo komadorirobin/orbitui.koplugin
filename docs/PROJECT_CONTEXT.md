@@ -22,12 +22,16 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-25
 
-- Product version: `0.1.0-beta.9` (public GitHub prerelease, published
+- Product version before this merge: `0.1.0-beta.9` (public GitHub prerelease, published
   2026-10-25 at 19:49 UTC; verification is in `docs/MERGE_LOG.md`).
-- Public main baseline before this release: `abe6164e` (Beta 8 verification).
+- Public main baseline for the requested Beta 10: `97b7948a` (Beta 9 verification).
 - Release tag: `v0.1.0-beta.9` at `a4bb9acb`; previous tag
   `v0.1.0-beta.8` at `50edce78` and all earlier assets are unchanged.
-- Active branch: `main`; feature and Beta 9 candidate were fast-forwarded/pushed.
+- Active branch: `maintenance/upstream-late-20261025`; the user explicitly
+  requested merging upstream, pushing and publishing a new release. Beta 10
+  preparation follows a conflict-free Bookshelf subtree import `0db81b46`.
+  Main remains at the public baseline until final gates pass.
+  The feature and Beta 9 candidate were previously fast-forwarded/pushed.
   `fix/bookshelf-navigation-20261025` is retained locally.
   The user explicitly approved pushing and publishing this feature as Beta 9.
   Public main before this release was Beta 8 verification at `abe6164e`. The earlier Home
@@ -38,13 +42,16 @@ and correct this file in the same change.
   `maintenance/upstream-20261025` is retained locally.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
-- Embedded Bookshelf Git: `fc1103a3de9fd19eea89a53c5f1f1b0e8175682a`
-  (6.0.0 plus follow-ups), 209 reviewed incoming commits; merge `48438837`.
+- Embedded Bookshelf Git: `5f726c253c5cb4d5a2a2137af52731562e1cb9b7`
+  (6.0.2), eight reviewed incoming commits; merge `0db81b46`.
+  Prior 6.0.0 integration `fc1103a3` / `48438837` is retained in ancestry.
 - Embedded SimpleUI Git: `40b301f0f5e4466021d00b4e47ac8c09bb65ac8c`
   (3.0 plus follow-ups), 18 reviewed incoming commits; merge `b9dfc849`.
-- OrbitUI adaptation candidate: `3a33fee6`; all final headless gates passed.
-  A read-only local collector at 2026-10-25 12:30 UTC reported zero missing
-  commits for both exact reviewed targets. Nothing was published by that run.
+- Prior broad adaptation candidate: `3a33fee6`; its final headless gates passed.
+  A read-only local collector at 2026-10-25 22:43 UTC found eight Bookshelf
+  commits and no SimpleUI changes. Issue #1's older 17:48 result listed only
+  five commits; the exact newer Git tip was inspected before importing it.
+  Final Beta 10 verification/publication is recorded separately after completion.
 - The real SimpleUI Git history now accounts for the approved 3.0 ZIP snapshot
   `3cb36431`. Content reconciliation preserved OrbitUI's changes; the active
   `release_snapshot` field is retired. Historical digest/asset provenance stays
@@ -101,7 +108,14 @@ provides canonical module names and legacy aliases while preserving
 
 ### Shared Home and library
 
-- The user now confirms Home works on the affected Go Color 7 with Beta 8.
+- The user confirms both Home and the Beta 9 Bookshelf navigation fix work on
+  the affected Boox. Wider lifecycle/rotation/device checks remain outstanding.
+  The later cover-loading/indexing report is not yet device-verified as resolved.
+  Bookshelf 6.0.2 fixes stale batch rows that prevented explicit Refresh metadata
+  from re-extracting a deleted metadata/cover row; it is not an automatic rescan.
+  It also corrects colour-cover shadows during clipped repaints, narrows status
+  refreshes, suppresses covered-window clock refreshes and improves module keys.
+  Home worked on the affected Go Color 7 with Beta 8.
   A subsequent navbar report matches a missing legacy `prose` profile: its
   handler silently returned false. Published Beta 9 adds a
   first-class default/removable Bookshelf action, hold-to-configure and shared

@@ -173,6 +173,19 @@ commit, or assume that a release name proves equivalent contents.
 
 ## Current embedding changes
 
+- October 25 late reviewed merge: Bookshelf master `5f726c25` (6.0.2),
+  eight incoming commits since `fc1103a3`; SimpleUI remains at `40b301f0`.
+  The unsquashed subtree merge is conflict-free; review the overlapping
+  repository, hero, widget and fullscreen paths for C01-C11 semantics anyway.
+  Import metadata refresh's batch-row invalidation, clipped colour-shadow
+  painting, measured status-strip refresh bounds, covered-window tick suppression,
+  public module book actions and keyboard access to the module editor.
+  Preserve scoped profiles/navigation, shared detail/reader opening, underlay
+  ownership, dock geometry, series/binding/ornament seams and Home cold-load fixes.
+  No runtime module path is added; the module map stays unchanged. Whole-module
+  integration coverage: `test_module_book_integration`; native tests cover the
+  refresh/requeue, clipping, status rectangles, covered ticks and key controls.
+  No settings/data migration or external sync-owner change. See the merge log.
 - October 25 reviewed merge: Bookshelf `fc1103a3` (6.0.0 plus follow-ups),
   209 incoming commits; SimpleUI `40b301f0` (3.0 plus follow-ups), 18 commits.
   SimpleUI's newly published Git history now contains the reviewed ZIP runtime.

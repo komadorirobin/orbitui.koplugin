@@ -3606,6 +3606,53 @@ retained without claiming native Android mutex-crash resolution. Existing bars
 need explicit Bookshelf enablement; code rollback's unknown-action pruning risk
 is disclosed in the immutable release/OTA notes.
 
+## 2026-10-25: Reviewed Bookshelf 6.0.2 merge and Beta 10 preparation
+
+The user explicitly requested "Merga upstream, pusha ouch publicera". This
+authorizes the reviewed merge, audited push and a new prerelease, not rewriting
+any published tag/assets. Start from clean main `97b7948a` on dedicated branch
+`maintenance/upstream-late-20261025`. The read-only collector at 22:43 UTC finds
+eight incoming Bookshelf commits; issue #1's older 17:48 result lists only five.
+Review the exact Git delta, not the older dashboard count. Bookshelf advances
+from `fc1103a3de9fd19eea89a53c5f1f1b0e8175682a` to
+`5f726c253c5cb4d5a2a2137af52731562e1cb9b7` (6.0.2), net 22 changed paths.
+SimpleUI is unchanged at `40b301f0f5e4466021d00b4e47ac8c09bb65ac8c`.
+
+Unsquashed subtree import `0db81b46885f5802414253a912f5a34c0c670a4a` has no
+text conflicts. Review overlapping repository/hero/widget/fullscreen paths for
+all C01-C11 contracts nonetheless. No upstream feature is omitted. Import the
+metadata batch-row invalidation (single/bulk refresh, stale sweep and cover
+revert), hero memo invalidation after extraction, clipped colour-shadow fix,
+measured status-strip bounds, covered-window tick suppression, editor key focus
+and public module book helpers. Preserve all host profile/navigation, shared
+detail/ReaderUI, dock, underlay ownership, series/binding/rating/title/ornament,
+Home first-run/cold-load, settings/storage and external-owner behavior.
+
+No production adaptation is needed after the import. Update the pinned upstream
+SHA and runtime-version test fixture separately; retain all original component
+tests. Add four whole-module helper/opener integration cases for live shelf
+delivery/deferred fullscreen close, hydrated details, ordinary ReaderUI fallback
+and adopted shelf-context ownership. Native rendering/lifecycle is stubbed.
+No runtime path is added, so the generated 383-path map remains unchanged.
+Original fork provenance/tags, SimpleUI pin, stable bootstrap/API 1, fonts/artwork,
+profile/chip IDs, reading data and external sync ownership stay unchanged.
+
+The user has confirmed Home and Beta 9 Bookshelf navigation work on Boox.
+The new cover-loading/indexing report is not yet physically retested; upstream's
+metadata fix addresses a reproduced stale-row cause, not every missing cover.
+No automatic rescan, cache reset or data migration is introduced. Broader device
+checks and the earlier unproven native Android abort remain open.
+
+Required release gates: full sequential Lua/LuaJIT and translations, new native
+and sealed-byte integration/Home/navigation tests, clean-commit source/inventory
+checks, every outgoing Git blob checked for held artwork, Gitleaks, actual public
+Beta 9/Beta 5 native OTA upgrade/restart/rollback and external adoption, exact
+draft/public assets and main/tag CI. Evidence: `test-results/beta10-20261025/`.
+The release note adds one installed path; expect 1,995 inventoried files plus
+manifest, four slots below the installed API 1 2,000-file ceiling. Preserve all
+assets/licenses and keep existing public releases immutable. Publication results
+will be appended only once verified.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
