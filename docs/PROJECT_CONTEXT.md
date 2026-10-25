@@ -22,14 +22,13 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-25
 
-- Product version: `0.1.0-beta.7` (release candidate; explicit publication
-  request after the first-run Home investigation). Public Beta 6 remains
-  unchanged until verified publication; see `docs/MERGE_LOG.md`.
-- Public main baseline before this maintenance: `254a1182` (Beta 5 verification).
-- Release tag: `v0.1.0-beta.6` at `7e573fd9`; previous tag
-  `v0.1.0-beta.5` at `a19a96ab` and its assets are unchanged.
-- Active branch: `fix/home-first-run-20261025`; runtime fix plus regression tests,
-  with Beta 7 publication explicitly requested. Public main is `ba6c912f`.
+- Product version: `0.1.0-beta.7` (public GitHub prerelease, published
+  2026-10-25 at 18:34 UTC; verification is in `docs/MERGE_LOG.md`).
+- Public main baseline before this hotfix: `ba6c912f` (Beta 6 verification).
+- Release tag: `v0.1.0-beta.7` at `31f287e1`; previous tag
+  `v0.1.0-beta.6` at `7e573fd9` and all earlier assets are unchanged.
+- Active branch: `main`; the Home hotfix and release candidate were
+  fast-forwarded and pushed. `fix/home-first-run-20261025` is retained locally.
   `maintenance/upstream-20261025` is retained locally.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
@@ -96,12 +95,12 @@ provides canonical module names and legacy aliases while preserving
 
 ### Shared Home and library
 
-- Beta 7's local candidate imports Home's missing logger and reports guarded
+- Beta 7 imports Home's missing logger and reports guarded
   Home load/open failures, preserving the initial cause across LuaJIT retries.
   Shared identity/callbacks and settings/data stay intact. Android fresh-install
   failure is reported on a Go Color 7 with KOReader 2026.07.2; Cover browser is
   now enabled, but the native mutex abort in the logs is not tied to a Lua trace
-  and is not proven resolved. Physical retesting is required after publication.
+  and is not proven resolved. Physical retesting remains required.
 - The SimpleUI 3.0 integration adds detailed statistics/charts, live Bento
   preview, accent/secondary colours, optional bundled fonts and Tiny Critter.
   Existing percentage/stacked layouts retain their geometry until an explicit
@@ -252,35 +251,36 @@ ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
 
-A fresh local verification on the versioned Beta 6 tree on 2026-10-25 passed:
+A fresh local verification on the versioned Beta 7 tree on 2026-10-25 passed:
 
 - `sh scripts/test.sh`
 - `LUA=luajit sh scripts/test.sh`
 - `sh scripts/check-translations.sh`
 - 117 Python tests per run, with four documented external source-cache audits
   skipped
-- all 69 OrbitUI Lua test files under both interpreters, including nine new
-  merge regressions and 49 native series-box integration cases
+- all 70 OrbitUI Lua test files under both interpreters, including 14 new
+  first-run/error/retry cases that also pass against the extracted release ZIP
 - module map: 383 paths verified
-- LuaJIT syntax: 1,041 Lua files verified
+- LuaJIT syntax: 1,042 Lua files verified
 - Bookshelf: 478 suites, 0 failed, 3 documented KOReader-SQLite skips per run;
-  all three excluded suites ran separately against real SQLite: 7 deck,
-  16 facts and 100 OPDS cases passed. A real-SQLite SimpleUI ledger check passed.
+  the latest supplemental real SQLite runs remain Beta 6's 7 deck, 16 facts,
+  100 OPDS cases and SimpleUI ledger check. Beta 7 changes no database code;
+  those supplemental runs were not repeated for this UI-only hotfix.
 - all 13 original SimpleUI test files exercised by `scripts/test.sh`
 - translations: 43 passed, 0 baseline failures and 0 new failures
-- clean-commit release package: 1,991 inventoried files plus its manifest, all
+- clean-commit release package: 1,992 inventoried files plus its manifest, all
   sizes/hashes verified; bootstrap/API 1 and existing artwork/fonts unchanged.
-  All 876 outgoing blobs were checked for held artwork, and Gitleaks found no
-  secrets in 188 outgoing commits. No package file was removed from Beta 5.
-- actual public Beta 5 native installer passed discovery of Beta 6, extraction,
+  All 12 outgoing blobs were checked for held artwork, and Gitleaks found no
+  secrets in two outgoing commits. No package file was removed from Beta 6.
+- actual public Beta 5 and Beta 6 native installers passed discovery of Beta 7, extraction,
   activation, restart, rollback, truncated-download recovery and external
-  snapshots. Local macOS/Linux runs and the anonymous public-byte Linux/TLS run
-  passed. No installed reader was touched.
-- GitHub checks passed for both main and the exact release tag at `7e573fd9`
-  (runs `40218238089` and `40218233505`); upstream watch `40218238155` passed.
+  snapshots. Both local Linux and anonymous public-byte Linux/TLS runs passed
+  for each starting release. No installed reader was touched.
+- GitHub checks passed for both main and the exact release tag at `31f287e1`
+  (runs `40221675093` and `40221674987`). No upstream pins were changed.
 - draft and anonymously downloaded public assets match the local build exactly:
-  ZIP SHA-256 `abf753248e490d742f03240b19ed4d01e0cb0b60aefe945c6f47fd61f8b01c8b`,
-  9,001,302 bytes. Evidence: `test-results/beta6-20261025/`. Later verification
+  ZIP SHA-256 `b463ad3a416f21910a6f7ec69ea66ad6a515ba6108cd77c37a560d70797d5775`,
+  9,007,880 bytes. Evidence: `test-results/beta7-20261025/`. Later verification
   documentation commits do not replace or rebuild the immutable release assets.
 
 These results are headless. They do not establish real fonts, touch targets,
@@ -288,11 +288,11 @@ e-ink rendering, device lifecycle, performance or update recovery.
 
 ## Known gaps and next milestones
 
-The published Beta 6 runtime contains 1,991 inventoried files, plus its
+The published Beta 7 runtime contains 1,992 inventoried files, plus its
 manifest, within the installed OTA API 1 limit of 2,000 extracted files. Review
 that budget before adding more assets/modules; a producer-only limit increase
 would not change limits enforced by already-installed updaters.
-Beta 7's release note consumes one more slot (seven remain). Do not raise only the producer limit or
+Only seven installed file slots remain. Do not raise only the producer limit or
 discard runtime assets/licenses to force a build through.
 
 The primary unresolved gate is focused physical acceptance on the Bigme B7 Pro
@@ -361,9 +361,9 @@ redesign.
   push/publication request, complete release gates and public-byte OTA tests.
   Standing merge authorization now includes audited pushes, never automatic
   releases. New physical-reader acceptance remains outstanding.
-- **2026-10-25 — Beta 7 preparation:** confirmed first-run Home logger failure
-  in Beta 5/Beta 6. Add shared guarded diagnostics and first-run regression
-  coverage; user explicitly requests immediate publication after verification.
+- **2026-10-25 — Beta 7:** published the confirmed first-run Home logger fix,
+  shared guarded diagnostics and first-run regression coverage after explicit
+  approval and full/public-byte gates. Native Android crash acceptance is open.
 
 For the full decision trail, use `docs/MERGE_LOG.md`; commit messages and tags
 are supporting evidence, not substitutes for the recorded contracts and tests.

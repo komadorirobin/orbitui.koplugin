@@ -2,6 +2,20 @@
 
 ## Automated
 
+2026-10-25 beta.7 published: tag `v0.1.0-beta.7` at `31f287e1`, 18:34 UTC,
+prerelease. Both complete Lua/LuaJIT suites pass (70 root files, 117 Python tests
+with four unchanged skips, 478 Bookshelf suites with zero failures/three normal
+native-SQLite exclusions, all 13 original SimpleUI files). Module map 383,
+LuaJIT syntax 1,042, translations 43/0 failures. All 14 new cases also pass on
+the extracted sealed ZIP under both interpreters. Exact source/inventory and
+outgoing held-artwork/secret audits pass. Both public Beta 5/Beta 6 installers
+pass local and anonymous published-byte Linux/LuaSec discovery, native hash/
+archive verification, activation/restart, rollback, missing-module/truncated
+download rejection and external snapshots. Main/tag CI runs
+`40221675093`/`40221674987` passed; draft/public assets match the tested build.
+Evidence: `test-results/beta7-20261025/`. Physical Home/native-crash retesting
+on the affected Go Color 7 and wider Bigme acceptance remain outstanding.
+
 2026-10-25 beta.7 preparation: reproduce the missing-logger failure on a fresh
 Home, not only a configured/onboarded fixture. `test_home_first_run.lua` executes
 the real Home facade and generic open factory with native services stubbed;

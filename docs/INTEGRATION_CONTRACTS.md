@@ -30,6 +30,16 @@ Do not let a generic Show/PathChanged event steal a destination already chosen
 by another component. A stale deferred callback must not reopen the previous
 book or raise the wrong screen.
 
+The approved Beta 7 Home error path must remain shared across manual Home,
+startup, resume and reader return. Preserve the first real load error and full
+trace, catch built-in Home factory/first-run-hook failures, and close only its
+partial instance without auto-reopen or settings resets. Do not treat failed
+LuaJIT require sentinels as screens or purge valid/third-party module state.
+Keep the shared engine table and callbacks. Source: `infra/sui_screen_nav.lua`,
+`screens/sui_homescreen.lua`, `infra/sui_patches.lua` and `features/sui_quickactions.lua`
+under SimpleUI; regression: `tests/test_home_first_run.lua`. This is not a
+claim of physical Android native-crash acceptance.
+
 User-approved generalisation, stage 1 (October 19, 2026): runtime sections are
 stored in `orbitui_libraries` (version 1) in the Bookshelf settings store. Import
 the old prose/comics definitions only when profile-specific settings prove that

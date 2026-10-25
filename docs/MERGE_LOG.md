@@ -3324,6 +3324,50 @@ main/tag CI. Evidence: `test-results/beta7-20261025/`. Physical Go Color 7/Bigme
 Home and native-crash acceptance remain open. Publication results follow only
 after verification actually completes.
 
+### Beta 7 publication verification
+
+Published `v0.1.0-beta.7` at candidate
+`31f287e1e6b291d95669b0d466b281e96c365bf3` on 2026-10-25 at 18:34 UTC as a
+prerelease. Runtime/test fix is `42021c5e`, release preparation `31f287e1`;
+main was fast-forwarded and only the exact new OrbitUI tag pushed. No upstream
+pin or old fork changed; Beta 5/Beta 6 tags and assets remain immutable.
+
+Both complete sequential local suites pass: 117 Python tests per run (four
+unchanged external-source skips), all 70 root Lua files, all 14 new Home cases,
+478 Bookshelf suites (zero failures/three normal native SQLite exclusions), all
+13 original SimpleUI test files, 383 module-map paths, 1,042 LuaJIT syntax files,
+and 43 translations with zero failures. Native SQLite supplements remain the
+unchanged database code's Beta 6 results, not newly repeated Beta 7 runs.
+The new first test fails on the prior code with missing global logger; all 14
+pass on extracted sealed release bytes under both Lua and LuaJIT.
+
+Package: 1,992 inventoried files plus manifest (seven API 1 slots remain),
+2,058 ZIP entries, 9,007,880 compressed bytes and 27,869,078 expanded bytes.
+SHA-256 `b463ad3a416f21910a6f7ec69ea66ad6a515ba6108cd77c37a560d70797d5775`.
+Every file matches source and manifest size/hash; the only new path is the
+Beta 7 release note and no old path is removed. Only the four documented
+SimpleUI runtime files change; Bookshelf, assets/fonts, module map, source pins
+and stable bootstrap/API 1 are unchanged. All 12 outgoing blobs exclude the
+held bitmap; Gitleaks found no leaks in the two outgoing commits.
+
+Draft and anonymous public API/download audits verify both exact assets and
+their GitHub digests/sizes against the local build. Actual public Beta 5 and
+Beta 6 installers each passed local Linux and live anonymous LuaSocket/LuaSec
+discovery of Beta 7, complete native SHA/libarchive inventory checks, rejected
+missing modules, activation/restart, code rollback, truncated-download recovery,
+and external runtime snapshots/restart/persistent rollback. No installed reader
+or live user settings were touched.
+
+CI succeeded for [main run 40221675093](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/40221675093)
+and [tag run 40221674987](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/40221674987),
+both at `31f287e1`. Evidence: `test-results/beta7-20261025/` (before/after and
+packaged Home tests, full suite/translation logs, local/live OTA logs for both
+bases, exact draft/public downloads, audits and CI logs). Verification and the
+new error-path contract note are documentation-only follow-ups; do not rebuild
+or replace the published assets. No claim that the reported native Android
+mutex abort is fixed. Physical Home retesting remains required on the affected
+Go Color 7; broader Bigme/device acceptance remains open.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
