@@ -460,6 +460,15 @@ alpha pending the fresh-setup and add-on physical-device acceptance checks.
 
 ## On the reader
 
+Version `0.1.0-beta.9` adds a first-class Bookshelf navbar destination and simple
+saved-profile/chip targeting. Beta 8 and Beta 5 can update directly through the
+preview channel and restart. Existing bars are retained: enable Bookshelf in
+**OrbitUI settings > Bookshelf navigation**, then choose a destination; each
+profile also offers Add to navigation bar. No reset or raw dispatcher ID is
+needed. Bootstrap/API 1, component pins, artwork/fonts and existing data stay
+unchanged. The new physical Boox/Bigme navigation checks remain open. See
+[the Beta 9 notes](releases/0.1.0-beta.9.md).
+
 Version `0.1.0-beta.8` imports `ffi/blitbuffer` in the shared screen engine,
 fixing the photographed `sui_screen_engine.lua:288` cold-load failure that
 remained after Beta 7. Beta 5 and Beta 7 can update directly through the preview

@@ -3528,6 +3528,33 @@ do not change that candidate runtime. Evidence is retained under
 No merge to main, remote push, version bump, tag, public release, OTA publication
 or user-device mutation occurred. Publication needs a new explicit request.
 
+## 2026-10-25: Beta 9 navigation release preparation
+
+After the local implementation/verification and explicit disclosure of remaining
+device checks, the assistant asked whether to push and publish this as Beta 9.
+The user replied "Ja". This authorizes the audited feature push and new Beta 9
+prerelease, not changes to existing public assets or an upstream import. Runtime
+feature commit `2366897f` and supplementary tests/docs `35fa08fb` are retained.
+
+Keep C01-C11, existing profile IDs and saved bars/settings/data. No component,
+source pin, asset/font, module-map path or bootstrap/API change. The release
+only adds one installed note (expected 1,994 inventoried files plus manifest,
+five remaining API 1 file slots). Do not remove assets/licenses or raise only
+the producer's installer limit. VERSION advances to `0.1.0-beta.9` separately
+from the feature commits. README, shared controls, OTA and testing docs identify
+the upgrade behavior and the explicit enablement needed for saved bars.
+
+Gates: both complete Lua/LuaJIT suites, translations, packaged navigation and
+Home regressions, clean-commit source/inventory/hash equivalence, all outgoing
+held-artwork/secret checks, exact draft/public downloads and main/tag CI. Exercise
+the real public Beta 8 and Beta 5 native installers against local and anonymous
+public bytes, including discovery, verification, restart, rollback, missing-module
+and truncated-download rejection and external snapshot/adoption/rollback.
+Evidence: `test-results/beta9-20261025/`. All new Boox/Bigme navigation, touch,
+rotation, parked-reader and dock-indicator device checks remain outstanding.
+The earlier user-confirmed Beta 8 Home result is retained, not generalized to
+new-flow acceptance or a diagnosis of the native Android mutex abort.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

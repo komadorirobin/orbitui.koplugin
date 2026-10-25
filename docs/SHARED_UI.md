@@ -30,10 +30,10 @@ change. Device acceptance is still pending.
   Author/series/genre/folder matches navigate to the corresponding library view.
   Results are capped at 400 with a notice; narrow the query if necessary.
 
-## Bookshelf navigation (unreleased)
+## Bookshelf navigation (Beta 9)
 
-The local navigation improvement is not part of the published Beta 8 ZIP yet.
-The user has confirmed that Beta 8 opens Home on the affected Go Color 7.
+Beta 9 introduces this navigation improvement. The user has confirmed that
+Beta 8 opens Home on the affected Go Color 7; the new flow still needs device tests.
 
 `open_bookshelf_prose` opens the saved profile whose internal ID is `prose`.
 It is a compatibility alias, not a universal "open Bookshelf" command. A fresh
@@ -47,7 +47,7 @@ settings > Library sections**, choose this reader's folders and add its shelves
 dispatcher action pointing to `open_bookshelf_prose`. Each saved section has a
 registered navigation action. Existing legacy sections and bindings remain valid.
 
-The unreleased improvement adds:
+Beta 9 adds:
 
 - A first-class **Bookshelf** action, included in unsaved/default navigation
   bars and the fresh setup guide. It opens Bookshelf without needing any fixed

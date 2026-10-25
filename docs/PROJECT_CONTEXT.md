@@ -22,12 +22,13 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-25
 
-- Product version: `0.1.0-beta.8` (public GitHub prerelease, published
-  2026-10-25 at 19:00 UTC; verification is in `docs/MERGE_LOG.md`).
-- Public main baseline before this hotfix: `1a42010d` (Beta 7 verification).
+- Product version: `0.1.0-beta.9` (approved release candidate, not yet published).
+  Latest public prerelease is Beta 8, published 2026-10-25 at 19:00 UTC.
+- Public main baseline before this release: `abe6164e` (Beta 8 verification).
 - Release tag: `v0.1.0-beta.8` at `50edce78`; previous tag
   `v0.1.0-beta.7` at `31f287e1` and all earlier assets are unchanged.
-- Active branch: `fix/bookshelf-navigation-20261025` (local/unpublished feature).
+- Active branch: `fix/bookshelf-navigation-20261025` (approved Beta 9 preparation).
+  The user explicitly approved pushing and publishing this feature as Beta 9.
   Public main remains Beta 8 verification at `abe6164e`. The earlier Home
   runtime fix `8641271c` and release candidate `50edce78` were pushed.
   The user explicitly approved fixing and publishing Beta 8 after the photo.

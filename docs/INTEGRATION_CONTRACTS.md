@@ -60,7 +60,7 @@ search scopes, theme inventories, reader-return matching and Home prewarming
 must resolve the same saved inventory. Longest-root matching is deterministic.
 Changing a root updates descendant folder sources, not shelf IDs or actual files.
 
-October 25 user-approved navigation improvement (unreleased): Bookshelf is a
+October 25 user-approved navigation improvement (Beta 9): Bookshelf is a
 first-class action in unsaved/default bars and the fresh setup guide, without
 requiring a prose/comics profile. Saved/custom bars are not automatically changed;
 explicit removal persists. Distinguish the file browser from Bookshelf. The

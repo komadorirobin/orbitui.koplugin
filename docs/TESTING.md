@@ -2,6 +2,17 @@
 
 ## Automated
 
+2026-10-25 beta.9 publication preparation: the user explicitly approved push
+and publication after disclosure that the new navigation flow still needs device
+testing. Re-run both complete suites and translations on the versioned tree,
+the 12 navigation cases and retained Home regressions against sealed ZIP bytes,
+source/inventory/history/artwork/secret audits, real public Beta 8/Beta 5 native
+installers against local and public bytes, draft/public digest checks and main/tag
+CI. Preserve all component source/pins/fonts/artwork/bootstrap API 1. Only the new
+release note adds an installed file: expected 1,994 plus manifest, five API 1
+slots remain. Evidence: `test-results/beta9-20261025/`. Physical checks below
+are not replaced by these headless gates. Keep Beta 8's public assets immutable.
+
 2026-10-25 Bookshelf navigation (local/unreleased): the user confirms Beta 8
 Home works, then reports a silent `open_bookshelf_prose` navbar action on a fresh
 Boox. Reproduce missing legacy profile rejection and cover a first-class default
