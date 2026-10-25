@@ -22,12 +22,15 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-25
 
-- Product version: `0.1.0-beta.5` (public GitHub prerelease, published
-  2026-10-23 at 21:26 UTC; verification is in `docs/MERGE_LOG.md`).
+- Product version: `0.1.0-beta.6` (release candidate; publication explicitly
+  requested on October 25). Public Beta 5 remains unchanged until verified
+  Beta 6 publication; results belong in `docs/MERGE_LOG.md`.
 - Public main baseline for this maintenance: `254a1182` (Beta 5 verification).
 - Release tag: `v0.1.0-beta.5` at `a19a96ab`; previous tag
   `v0.1.0-beta.4` and its assets are unchanged.
-- Local maintenance branch: `maintenance/upstream-20261025`, not pushed.
+- Maintenance branch: `maintenance/upstream-20261025`; push/publication requested.
+  Future user-requested verified merges include an audited push to `origin/main`;
+  a new release still requires a separate explicit request.
 - Embedded Bookshelf Git: `fc1103a3de9fd19eea89a53c5f1f1b0e8175682a`
   (6.0.0 plus follow-ups), 209 reviewed incoming commits; merge `48438837`.
 - Embedded SimpleUI Git: `40b301f0f5e4466021d00b4e47ac8c09bb65ac8c`
@@ -96,7 +99,7 @@ provides canonical module names and legacy aliases while preserving
   Existing percentage/stacked layouts retain their geometry until an explicit
   new-editor width/movement change; per-module gaps remain independent.
   UI fonts remain explicit choices and the embedded navbar keeps its 96dp base.
-- The local Bookshelf 6.0 import adds grid-editable micro-modules, Shelf/Ornament
+- The reviewed Bookshelf 6.0 import adds grid-editable micro-modules, Shelf/Ornament
   modules among books, pinned ornaments, Highlights and persistent derived caches.
   Hosted migrations retain old module/deck keys; no settings/book data moves.
 - One settings hub joins Home, arbitrary library sections, appearance, search,
@@ -223,6 +226,10 @@ tests/device checklist updates, and a `MERGE_LOG.md` entry.
   `sources.json`; preserve original fork provenance fields.
 - Publication requires a separate explicit user request. A green CI/package is
   not publication approval and is not physical-device acceptance.
+- User-requested merges include pushing the verified result to `origin/main`
+  after history/artwork/secret audits. Summarize changes in Swedish by likely
+  practical impact on Robin's setup, distinguishing expected/measured benefits,
+  retained custom behavior, device gaps and local/published status.
 - Never replace the bytes of an existing published tag. Fixes receive a new
   version/tag.
 
@@ -273,8 +280,8 @@ The published Beta 5 runtime contains 1,970 inventoried files, plus its
 manifest, within the installed OTA API 1 limit of 2,000 extracted files. Review
 that budget before adding more assets/modules; a producer-only limit increase
 would not change limits enforced by already-installed updaters.
-The October 25 local runtime uses 1,990 plus its manifest (only nine file slots
-left). A new release-note file also consumes one slot. Do not raise only the
+The October 25 import uses 1,990 plus its manifest (only nine file slots left).
+Beta 6's release-note file consumes one more slot (eight remain). Do not raise only the
 producer limit or discard runtime assets/licenses to force a build through.
 
 The primary unresolved gate is focused physical acceptance on the Bigme B7 Pro
@@ -339,6 +346,9 @@ redesign.
 - **2026-10-25 — local maintenance:** reviewed Bookshelf 6.0 + SimpleUI follow-ups;
   the old ZIP baseline is reconciled with upstream Git. No push, version bump,
   publication or new physical-reader acceptance.
+- **2026-10-25 — Beta 6 preparation:** explicit push/publication request for that
+  reviewed merge. Standing merge authorization now includes audited pushes,
+  never automatic releases. New physical-reader acceptance remains outstanding.
 
 For the full decision trail, use `docs/MERGE_LOG.md`; commit messages and tags
 are supporting evidence, not substitutes for the recorded contracts and tests.

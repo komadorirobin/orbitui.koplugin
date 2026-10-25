@@ -10,7 +10,7 @@ These projects are the foundation of OrbitUI, not just inspiration: their code,
 interfaces and features are included and adapted here. Please support and credit
 the original creators.
 
-**[Download Beta 5](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.5)**
+**[Download Beta 6](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.6)**
 | [Install](#installation)
 | [Switch from SimpleUI / Bookshelf](#already-using-simpleui-or-bookshelf)
 | [Feature guide](docs/FEATURES.md)
@@ -88,7 +88,7 @@ by the code license. See [add-on instructions](docs/ADDONS.md).
 ## Installation
 
 **Requirements:** KOReader **v2025.08 or newer**; v2026.03 or newer is recommended
-by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 5 is a
+by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 6 is a
 prerelease, not a promise of compatibility with every device or user patch.
 
 1. **Back up first.** Keep a copy of your KOReader settings, user patches,
@@ -98,7 +98,7 @@ prerelease, not a promise of compatibility with every device or user patch.
    manager and restart KOReader.** Disable both if you have both. Do not delete
    their settings or plugin folders.
 3. Download **`orbitui.koplugin.zip`** from the
-   [Beta 5 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.5).
+   [Beta 6 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.6).
    Do **not** use **Code > Download ZIP** or GitHub's **Source code** archives.
 4. Fully exit KOReader. Extract the ZIP and copy its **`orbitui.koplugin`**
    folder into your KOReader **`plugins/`** directory.
@@ -138,8 +138,8 @@ OrbitUI. Their local catalogs may need refreshing.
 after the backup and predecessor-disable steps above, find
 `komadorirobin/orbitui.koplugin`. In its download options, choose
 **Other releases...**, uncheck **Filter pre-releases**, select
-**v0.1.0-beta.5**, then select **`orbitui.koplugin.zip`**. Restart KOReader
-after installation. Beta 5 is not returned by GitHub's "latest stable release"
+**v0.1.0-beta.6**, then select **`orbitui.koplugin.zip`**. Restart KOReader
+after installation. Beta 6 is not returned by GitHub's "latest stable release"
 endpoint, so the default latest-release lookup may report that none exists.
 Do not choose **Direct download from repo**, **Source code**, the checksum
 file, or the add-on-only **ornaments-1** release.
@@ -147,7 +147,7 @@ file, or the add-on-only **ornaments-1** release.
 **[Storefront by ultimatejimmy](https://github.com/ultimatejimmy/storefront.koplugin):**
 use **26.10.20 or newer**, which includes the
 [embedded-plugin detection fix](https://github.com/ultimatejimmy/storefront.koplugin/releases/tag/26.10.20).
-Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.5** and
+Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.6** and
 **`orbitui.koplugin.zip`** from its versions/releases options if the cached
 catalog still shows an older beta. Disable the predecessor plugins first as
 described above. Older affected installers (including **26.10.17-beta2**) can
@@ -196,26 +196,25 @@ to undo a UI change.
 
 ## Beta status and feedback
 
-Local maintenance after Beta 5 includes reviewed Bookshelf **6.0.0** and newer
-SimpleUI **3.0** Git commits. It is not yet published as an OrbitUI update;
-the public Beta 5 download below is unchanged. See [the merge log](docs/MERGE_LOG.md).
+**0.1.0-beta.6** integrates reviewed **Bookshelf 6.0.0** and newer **SimpleUI 3.0**
+Git commits. Bookshelf adds a micro-module layout editor, Shelf/Ornament modules
+among books, pinned ornaments, per-card colours, Highlights in book details and
+persistent derived caches. Its editor is separate from SimpleUI's Home/Bento
+editor. SimpleUI adds a shared daily-statistics ledger and display fixes.
 
-**0.1.0-beta.5** integrates **SimpleUI 3.0** from its reviewed official release
-ZIP: detailed statistics/charts, live Bento layout preview, accent colours,
-optional fonts and Tiny Critter. Existing percentage/stacked layouts and OrbitUI
-defaults are retained; the new fixed-span layout is activated per screen by an
-explicit width/movement edit. The release asset differs from SimpleUI's Git tag;
-provenance and later Git reconciliation are documented in
-[the upstream workflow](docs/UPSTREAM.md).
+Existing Home/Bento layouts, scoped shelves, series-box bindings and cover
+proportions, author/series ornaments and optional external integrations are
+retained. SimpleUI's real Git history now accounts for the previously reviewed
+3.0 ZIP; provenance remains documented in [the upstream workflow](docs/UPSTREAM.md).
+See [the Beta 6 notes](docs/releases/0.1.0-beta.6.md) for upgrade and rollback details.
 
-Bookshelf remains 5.5.5 with its subsequent Shelf size crash fix. The existing
-reader setup, upgrades and
-ornament menu were tried on the maintainer's device before Beta 1. Automated
-tests cover both Lua and LuaJIT, integration, packaging and the OTA installer,
-including Beta 2's external-update snapshots and rollback. The new external
-installation/restart flow and the new SimpleUI 3.0 surfaces still need
-physical-device testing. This is not an
-exhaustive device/fresh-install compatibility certification.
+The existing reader setup, upgrades and ornament menu were tried on the
+maintainer's device before Beta 1. Automated tests cover Lua and LuaJIT,
+integration, packaging and the OTA installer, including external-update
+snapshots and rollback. The new module migrations/editor, pinning, Highlights,
+colours/underlay restoration and external-plugin interactions still need physical
+Bigme testing. Cache changes are not a measured device speedup. This remains a
+prerelease, not an exhaustive device/fresh-install compatibility certification.
 
 Please report your device, KOReader version, OrbitUI version and steps to
 reproduce a problem in [OrbitUI issues](https://github.com/komadorirobin/orbitui.koplugin/issues).
@@ -237,7 +236,7 @@ upload settings backups.
   **Credits and licenses**. Free download does not make every asset public domain.
 
 Both component licenses, notices and imported Git histories are retained.
-Beta 5 integrates Bookshelf **5.5.5** and SimpleUI **3.0**; exact imported and
+Beta 6 integrates Bookshelf **6.0.0** and SimpleUI **3.0**; exact imported and
 reviewed upstream revisions are recorded in [sources.json](sources.json).
 Upstream updates are reviewed and merged, not automatically installed.
 

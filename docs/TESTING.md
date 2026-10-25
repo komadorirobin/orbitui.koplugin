@@ -2,6 +2,17 @@
 
 ## Automated
 
+2026-10-25 beta.6 publication preparation: the user explicitly requested push
+and publication after disclosure of the remaining Bigme checks. Keep prerelease
+status; no new physical-device acceptance is claimed. Re-run both complete
+Lua/LuaJIT suites and translations on the versioned tree, seal/audit the exact
+clean-commit ZIP and all outgoing history/artwork/secrets, and retain bootstrap
+API 1 and existing assets/fonts. Exercise the actual public Beta 5 installer
+against local and downloaded public Beta 6 bytes, including activation/restart,
+rollback and external snapshots. Verify draft/public asset digests and main/tag
+CI. Evidence: `test-results/beta6-20261025/`. The device checklist below remains
+open. The standing merge authorization now includes audited pushes, not releases.
+
 2026-10-25 reviewed upstream import (unpublished): Bookshelf 6.0.0 plus
 follow-ups through `fc1103a3`, SimpleUI 3.0 through `40b301f0`. Reconcile the
 previous ZIP snapshot without discarding original suites or OrbitUI choices.

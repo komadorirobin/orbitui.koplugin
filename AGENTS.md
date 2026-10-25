@@ -33,6 +33,10 @@ stale. Detailed contracts and merge records remain authoritative.
   and an explicit publication request are required before a public beta release.
 - Upstream automation is monitoring only: no automatic merge, merge PR, version
   bump, tag, release or OTA publication. A reviewed merge requires a user request.
+- A user-requested upstream merge includes pushing the verified result to
+  `origin/main` after the history/artwork/secret audits pass. This standing
+  authorization does not cover scheduled merges or any new version, tag,
+  release or OTA publication; those still require an explicit publication request.
 - Before merging, read `docs/UPSTREAM.md`, `docs/INTEGRATION_CONTRACTS.md` and
   `docs/MERGE_LOG.md`. Preserve the contract IDs; record any deliberate change
   and its approval rather than silently dropping a local behavior.

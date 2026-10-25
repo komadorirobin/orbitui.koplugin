@@ -3206,6 +3206,33 @@ acceptance. A future publication needs a new version and OTA from public Beta 5;
 never replace Beta 5's existing files. The archive is close to API 1's 2,000-file
 limit: only nine slots remain, before adding future release notes/assets.
 
+## 2026-10-25: OrbitUI 0.1.0-beta.6 release preparation and push policy
+
+The user explicitly requested "Pusha och publicera" after the local merge and
+disclosure of the remaining Bigme checks. Publish a new Beta 6 prerelease, never
+replace Beta 5's assets or infer new physical acceptance. In the same request,
+the user gave standing authorization to push each future requested merge after
+verification/audits; new releases continue to require a separate explicit request.
+`AGENTS.md` and `UPSTREAM.md` retain this distinction and the personalized Swedish
+merge-summary preference. Scheduled monitoring still cannot merge or publish.
+
+This release contains the exact already-reviewed Bookshelf `fc1103a3` and
+SimpleUI `40b301f0` imports/adaptations above; no additional upstream update.
+Only VERSION and release/workflow documentation change. Bootstrap/API 1,
+runtime/tool/test bytes, existing assets/fonts, source pins and integration
+contracts C01-C11 are unchanged. The new release note uses one more installed
+file slot; respect the installed API 1 2,000-file ceiling.
+
+Required final gates: complete sequential Lua/LuaJIT runs and translations,
+clean-commit package with exact inventory/source hashes, all outgoing objects
+checked for held artwork and secrets, actual public Beta 5 native installer
+upgrade/restart/rollback/external snapshots, exact downloaded draft/public bytes,
+anonymous API/asset/channel selection and main/tag CI. Evidence belongs in
+`test-results/beta6-20261025/`. New Bigme module migration/editor/rotation,
+pinning/bound ornaments, series labels/bindings, Highlights, colours/underlay,
+statistics and BookOrbit/MAL/Patch Manager checks remain outstanding. Publication
+results are appended only after the gates actually complete.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

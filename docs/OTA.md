@@ -460,6 +460,16 @@ alpha pending the fresh-setup and add-on physical-device acceptance checks.
 
 ## On the reader
 
+Version `0.1.0-beta.6` integrates reviewed Bookshelf 6.0.0 and SimpleUI 3.0
+follow-ups. Beta 5 can update directly through the preview channel and restart;
+the stable bootstrap and API 1 are unchanged. Existing Home/Bento geometry,
+scoped shelves, series bindings, ornaments and reading data are retained.
+Bookshelf's new module-grid/deck migrations retain old keys/copies for code
+rollback; code rollback does not undo later settings edits. New modules, pinning,
+Highlights, colours/underlay and external-plugin behavior still need physical
+Bigme acceptance. Cache changes are not a measured device speedup. See
+[the Beta 6 notes](releases/0.1.0-beta.6.md).
+
 Version `0.1.0-beta.5` includes the reviewed official SimpleUI 3.0 release-ZIP
 snapshot. Beta 4 can update directly through the preview channel and restart;
 the stable bootstrap and API 1 are unchanged. Existing percentage/stacked Bento

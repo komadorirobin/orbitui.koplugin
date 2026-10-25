@@ -12,6 +12,12 @@ in `MERGE_LOG.md`, so correctness does not depend on access to one chat history
 or on a particular model. A request to merge is not automatically a request
 to publish to devices.
 
+Since 2026-10-25, the user explicitly authorizes pushing each requested,
+verified merge to `origin/main` after the outgoing history/artwork/secret audits.
+Include a Swedish summary ordered by likely impact on the user's setup (see
+`AGENTS.md`). This is not authorization for scheduled merges, version bumps,
+tags, releases or OTA publication; a new release still needs a separate request.
+
 ## History and source pins
 
 `components/bookshelf` and `components/simpleui` were imported with `git subtree
@@ -141,8 +147,11 @@ not make semantic conflicts disappear.
    that they remain outstanding. Inspect external integration versions when their
    interfaces changed. Do not claim Bigme verification from headless tests.
 9. Append the exact commits, affected contracts, resolutions, test results and
-   device gaps to `MERGE_LOG.md`. Report the outcome for review. Publication and
-   any OTA channel change still require a separate explicit approval.
+   device gaps to `MERGE_LOG.md`. Audit outgoing history/artwork/secrets, then
+   push the verified merge to `origin/main` under the standing user authorization.
+   Report important changes in Swedish, emphasizing their likely practical impact
+   on the user's setup. Publication and any OTA channel change still require a
+   separate explicit approval.
 
 ### Reconciling the approved 3.0 release snapshot
 
