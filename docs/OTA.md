@@ -460,6 +460,14 @@ alpha pending the fresh-setup and add-on physical-device acceptance checks.
 
 ## On the reader
 
+Version `0.1.0-beta.8` imports `ffi/blitbuffer` in the shared screen engine,
+fixing the photographed `sui_screen_engine.lua:288` cold-load failure that
+remained after Beta 7. Beta 5 and Beta 7 can update directly through the preview
+channel and restart; no reset or bridge is needed. Existing settings/data,
+artwork/fonts, component pins and bootstrap/API 1 are unchanged. Whole-module
+tests now supplement the first-run hook tests. Physical Home/native-crash
+retesting remains required. See [the Beta 8 notes](releases/0.1.0-beta.8.md).
+
 Version `0.1.0-beta.7` fixes a reproduced first-run Home logger failure and adds
 shared load/open error reporting with guarded partial-window cleanup. Beta 5
 and Beta 6 can update directly through the preview channel and restart. No

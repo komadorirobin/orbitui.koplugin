@@ -2,6 +2,19 @@
 
 ## Automated
 
+2026-10-25 beta.8 preparation: the supplied photo identifies a missing
+`Blitbuffer` global at engine module initialization, line 288. The new
+`test_home_module_load.lua` loads the ENTIRE engine without ambient Blitbuffer
+or logger, not an extracted factory. Both interpreters reproduce that exact
+error before the one-line import fix and pass afterward. Three cases cover
+whole-module exports/colour initialization and Home/Custom Screen opening,
+fresh/existing settings, identity, callbacks and cached-state preservation.
+Native construction/rendering and surrounding services remain stubbed. Retain
+the 14 first-run/error/retry tests too; run both suites against sealed ZIP bytes,
+both full gates, translations, package/history audits and real Beta 5/Beta 7
+native OTA/rollback. Evidence: `test-results/beta8-20261025/`. Neither this
+reproduction nor headless tests establish native Android crash resolution.
+
 2026-10-25 beta.7 published: tag `v0.1.0-beta.7` at `31f287e1`, 18:34 UTC,
 prerelease. Both complete Lua/LuaJIT suites pass (70 root files, 117 Python tests
 with four unchanged skips, 478 Bookshelf suites with zero failures/three normal

@@ -3368,6 +3368,43 @@ or replace the published assets. No claim that the reported native Android
 mutex abort is fixed. Physical Home retesting remains required on the affected
 Go Color 7; broader Bigme/device acceptance remains open.
 
+## 2026-10-25: Beta 8 screen-engine import fix and release preparation
+
+The user supplied a photo from the affected reader showing
+`sui_screen_engine.lua:288: attempt to index global 'Blitbuffer' (a nil value)`.
+The displayed slot prefix matches the published Beta 7 ZIP. Read-only source
+inspection confirmed the engine initializes a colour at module load and later
+uses COLOR_WHITE without importing `ffi/blitbuffer`; Beta 5 also has this defect.
+After explaining the test gap and asking to fix/publish Beta 8, the user said
+"Ja". This explicitly approves this new hotfix release, not an upstream merge
+or any data reset. Physical acceptance is still outstanding and disclosed.
+
+Runtime commit `8641271c` adds exactly one local import to the engine. The new
+three-case `test_home_module_load.lua` executes the entire engine, Home facade
+and navigation module in isolated environments without ambient Blitbuffer/logger.
+The first case fails with the exact photographed error under Lua and LuaJIT
+before the import and passes afterward. Home fresh/existing settings, cached
+state/callbacks, exports/shared identity and Custom Screen separation are covered.
+Native widget construction/rendering and surrounding services remain stubbed.
+Beta 7's 14-case extracted-open suite is retained; it did not cover module-level
+initialization, which is why that suite missed this defect.
+
+Relevant contracts: C02 navigation, C06 module compatibility, C07/C08 preserved
+preferences/data and C09 explicit publication. No contract is relaxed. No
+upstream import or pin change, no module-map path change, no font/artwork,
+bootstrap/API, library, migration or external-provider change. Existing public
+assets/tags remain immutable. The versioned candidate adds only its new release
+note to the installed inventory (expected 1,993 files plus manifest, six slots
+below API 1's 2,000-file limit). Preserve all existing assets/licenses.
+
+Required gates: both complete Lua/LuaJIT suites, translations, packaged-byte
+Home regressions, clean-commit inventory/source equivalence, outgoing held-artwork
+and secret audits, actual public Beta 5/Beta 7 native installers against local
+and public bytes, draft/public digest checks and main/tag CI. Evidence:
+`test-results/beta8-20261025/`. The one-line change fixes the reproduced Lua
+load error, not a demonstrated cause of the earlier native Android mutex abort.
+Affected Go Color 7 Home retesting and the wider Bigme checklist remain open.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

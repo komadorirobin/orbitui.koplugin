@@ -22,13 +22,14 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-25
 
-- Product version: `0.1.0-beta.7` (public GitHub prerelease, published
-  2026-10-25 at 18:34 UTC; verification is in `docs/MERGE_LOG.md`).
-- Public main baseline before this hotfix: `ba6c912f` (Beta 6 verification).
+- Product version: `0.1.0-beta.8` (approved release candidate, not yet published).
+  Latest public prerelease is Beta 7, published 2026-10-25 at 18:34 UTC.
+- Public main baseline before this hotfix: `1a42010d` (Beta 7 verification).
 - Release tag: `v0.1.0-beta.7` at `31f287e1`; previous tag
   `v0.1.0-beta.6` at `7e573fd9` and all earlier assets are unchanged.
-- Active branch: `main`; the Home hotfix and release candidate were
-  fast-forwarded and pushed. `fix/home-first-run-20261025` is retained locally.
+- Active branch: `fix/home-blitbuffer-20261025`; runtime fix `8641271c`.
+  The user explicitly approved fixing and publishing Beta 8 after the photo.
+  `fix/home-first-run-20261025` is retained locally.
   `maintenance/upstream-20261025` is retained locally.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
@@ -95,6 +96,10 @@ provides canonical module names and legacy aliases while preserving
 
 ### Shared Home and library
 
+- Beta 8 explicitly imports `ffi/blitbuffer` in the shared engine. The photo's
+  exact line-288 load error reproduces before the import and passes afterward
+  under Lua/LuaJIT. New whole-engine cold-load tests close the gap left by the
+  extracted-open first-run tests. Native rendering/device acceptance remains open.
 - Beta 7 imports Home's missing logger and reports guarded
   Home load/open failures, preserving the initial cause across LuaJIT retries.
   Shared identity/callbacks and settings/data stay intact. Android fresh-install

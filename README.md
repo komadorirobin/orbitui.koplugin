@@ -10,7 +10,7 @@ These projects are the foundation of OrbitUI, not just inspiration: their code,
 interfaces and features are included and adapted here. Please support and credit
 the original creators.
 
-**[Download Beta 7](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.7)**
+**[Download Beta 8](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.8)**
 | [Install](#installation)
 | [Switch from SimpleUI / Bookshelf](#already-using-simpleui-or-bookshelf)
 | [Feature guide](docs/FEATURES.md)
@@ -88,7 +88,7 @@ by the code license. See [add-on instructions](docs/ADDONS.md).
 ## Installation
 
 **Requirements:** KOReader **v2025.08 or newer**; v2026.03 or newer is recommended
-by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 7 is a
+by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 8 is a
 prerelease, not a promise of compatibility with every device or user patch.
 
 1. **Back up first.** Keep a copy of your KOReader settings, user patches,
@@ -98,7 +98,7 @@ prerelease, not a promise of compatibility with every device or user patch.
    manager and restart KOReader.** Disable both if you have both. Do not delete
    their settings or plugin folders.
 3. Download **`orbitui.koplugin.zip`** from the
-   [Beta 7 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.7).
+   [Beta 8 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.8).
    Do **not** use **Code > Download ZIP** or GitHub's **Source code** archives.
 4. Fully exit KOReader. Extract the ZIP and copy its **`orbitui.koplugin`**
    folder into your KOReader **`plugins/`** directory.
@@ -138,8 +138,8 @@ OrbitUI. Their local catalogs may need refreshing.
 after the backup and predecessor-disable steps above, find
 `komadorirobin/orbitui.koplugin`. In its download options, choose
 **Other releases...**, uncheck **Filter pre-releases**, select
-**v0.1.0-beta.7**, then select **`orbitui.koplugin.zip`**. Restart KOReader
-after installation. Beta 7 is not returned by GitHub's "latest stable release"
+**v0.1.0-beta.8**, then select **`orbitui.koplugin.zip`**. Restart KOReader
+after installation. Beta 8 is not returned by GitHub's "latest stable release"
 endpoint, so the default latest-release lookup may report that none exists.
 Do not choose **Direct download from repo**, **Source code**, the checksum
 file, or the add-on-only **ornaments-1** release.
@@ -147,7 +147,7 @@ file, or the add-on-only **ornaments-1** release.
 **[Storefront by ultimatejimmy](https://github.com/ultimatejimmy/storefront.koplugin):**
 use **26.10.20 or newer**, which includes the
 [embedded-plugin detection fix](https://github.com/ultimatejimmy/storefront.koplugin/releases/tag/26.10.20).
-Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.7** and
+Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.8** and
 **`orbitui.koplugin.zip`** from its versions/releases options if the cached
 catalog still shows an older beta. Disable the predecessor plugins first as
 described above. Older affected installers (including **26.10.17-beta2**) can
@@ -195,6 +195,13 @@ re-enabling your old plugins**. Never restore stale reading-progress files just
 to undo a UI change.
 
 ## Beta status and feedback
+
+**0.1.0-beta.8** fixes the missing `Blitbuffer` import in Home's shared screen
+engine. This caused `sui_screen_engine.lua:288` to fail while loading Home,
+including after Beta 7. New tests load the entire engine without ambient globals,
+then exercise Home and Custom Screen opening with native rendering stubbed.
+Update and restart; no settings reset is needed. Physical-device retesting is
+still required. See [the Beta 8 notes](docs/releases/0.1.0-beta.8.md).
 
 **0.1.0-beta.7** fixes a reproduced first-run Home crash caused by a missing
 logger import. Home load/open failures now show the actual error and log its
@@ -244,7 +251,7 @@ upload settings backups.
   **Credits and licenses**. Free download does not make every asset public domain.
 
 Both component licenses, notices and imported Git histories are retained.
-Beta 7 integrates Bookshelf **6.0.0** and SimpleUI **3.0**; exact imported and
+Beta 8 integrates Bookshelf **6.0.0** and SimpleUI **3.0**; exact imported and
 reviewed upstream revisions are recorded in [sources.json](sources.json).
 Upstream updates are reviewed and merged, not automatically installed.
 
