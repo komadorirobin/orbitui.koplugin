@@ -78,11 +78,23 @@ local function fitName(name, size, room, font)
 end
 
 -- finishedCount(books) -> how many of them are marked finished.
+-- The read status from the book facts store when it holds one (checked
+-- against the sidecar's mtime once a session, SpineShelf.cachedProgress),
+-- else the sidecar itself. Parsing every member's sidecar on each build was
+-- most of a box's cost on the first visit to a page (a 10-book series box:
+-- ten dofiles) on the PW5.
 local function finishedCount(books)
     local Repo = require("lib/bookshelf_book_repository")
+    local SS = require("lib/bookshelf_spine_shelf")
     local done = 0
     for _, member in ipairs(books) do
-        local _, status = Repo.readProgress(member.filepath)
+        local _p, status, known = SS.cachedProgress(member.filepath)
+        if not known then
+            local _pct
+            _pct, status = Repo.readProgress(member.filepath)
+            -- Kept for next time (status only: the stored page count stays).
+            if member.filepath then pcall(SS.persistProgress, member.filepath, nil, status) end
+        end
         if status == "finished" then done = done + 1 end
     end
     return done
@@ -109,6 +121,18 @@ end
 local CONTACT_SHADOW = 0.35   -- the shadow's strength at the rim
 
 -- The ink printed on a slipcase: its name and count.
+-- Finished sticker images by what they show (see paintTo), oldest out.
+local _stickers, _sticker_order, STICKERS_MAX = {}, {}, 12
+-- scaled(src, w, h) -> a new w x h copy: MuPDF's scaler (C), the one the
+-- covers use (RenderImage's, which falls back on its own); Blitbuffer:scale
+-- is a per-pixel Lua loop.
+local function scaled(src, w, h)
+    if src:getWidth() == w and src:getHeight() == h then return src:copy() end
+    local ok, out = pcall(function() return require("ui/renderimage"):scaleBlitBuffer(src, w, h) end)
+    if ok and out then return out end
+    return src:scale(w, h)
+end
+
 local function name_ink_for(night)
     return night and BB.ColorRGB32(30,28,24,255) or BB.ColorRGB32(246,239,219,255)
 end
@@ -424,11 +448,38 @@ function Box:_paintSlipcase(bb, x, y)
         local c = self.art_crop
         local FH = self.st_full_h
         local iw, ih = math.max(1, SW - 2 * E), math.max(1, SH - 2 * E)
+        -- The finished sticker image, kept across rebuilds (a page turn makes
+        -- new widgets): rendering the cover tile, cropping it and scaling it
+        -- with Blitbuffer:scale, a per-pixel Lua loop, was ~10% of a spine
+        -- page turn on the PW5 with series boxes on screen.
+        local first = self.art_cover and self.art_cover.book
+        local skey = table.concat({ tostring(self.custom_path or (first and first.filepath)),
+            tostring(first and first.cover_sizetag), SW, FH, iw, ih, c,
+            tostring(self.preserve_cover_aspect),
+            tostring(self.custom_path and require("lib/bookshelf_derived_cache").stamp(self.custom_path)),
+            tostring(bb:getType()), night and "n" or "d" }, "|")
+        local kept = _stickers[skey]
+        if kept then
+            bb:blitFrom(kept, sx + E, sy + E, 0, 0, iw, ih)
+            return
+        end
+        local function keep(fit)
+            _stickers[skey] = fit
+            _sticker_order[#_sticker_order + 1] = skey
+            if #_sticker_order > STICKERS_MAX then
+                local old = table.remove(_sticker_order, 1)
+                local ob = _stickers[old]
+                _stickers[old] = nil
+                if ob then ob:free() end
+            end
+        end
         -- The series' own image: no tile frame to crop. Cache-owned, so it is
         -- scaled from and never freed here.
         if custom then
-            fit = custom:scale(iw, ih)
+            fit = scaled(custom, iw, ih)
             bb:blitFrom(fit, sx + E, sy + E, 0, 0, iw, ih)
+            keep(fit)
+            fit = nil -- ownership transferred to the bounded sticker cache
             return
         end
         local tw_, th_ = SW + 2 * c, FH + 2 * c
@@ -440,14 +491,20 @@ function Box:_paintSlipcase(bb, x, y)
         self.art_cover:paintTo(tmp, 0, 0)
         if self.preserve_cover_aspect then
             -- The tile is already at the final, aspect-true image size.
-            bb:blitFrom(tmp, sx + E, sy + E, c, c, iw, ih)
+            fit = BB.new(iw, ih, bb:getType())
+            fit:blitFrom(tmp, 0, 0, c, c, iw, ih)
+            bb:blitFrom(fit, sx + E, sy + E, 0, 0, iw, ih)
+            keep(fit)
+            fit = nil
             return
         end
         -- Off with the tile's frame, then to the space inside the edge.
         inner = BB.new(SW, FH, bb:getType())
         inner:blitFrom(tmp, 0, 0, c, c, SW, FH)
-        fit = inner:scale(iw, ih)
+        fit = scaled(inner, iw, ih)
         bb:blitFrom(fit, sx + E, sy + E, 0, 0, iw, ih)
+        keep(fit)
+        fit = nil
     end)
     if fit then fit:free() end
     if inner then inner:free() end
