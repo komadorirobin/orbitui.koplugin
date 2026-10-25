@@ -177,7 +177,7 @@ msgstr "Um novo recorde pessoal!"
 
 #: modules/critter/phrases.lua:236
 msgid "A new week of stories."
-msgstr "Uma nova semana de histórias."
+msgstr "Uma nova semana cheia de histórias."
 
 #: features/sui_presets.lua:346
 msgid "A preset named \"%s\" already exists."
@@ -2174,7 +2174,7 @@ msgstr "Olá, %s!"
 
 #: modules/critter/phrases.lua:257
 msgid "Hello, reader!"
-msgstr "Olá, leitor!"
+msgstr "Hora de ler!"
 
 #: features/sui_accent_picker.lua:56
 msgid "Hex Color"
@@ -3911,7 +3911,7 @@ msgstr "Leia um pouco hoje para começar uma nova."
 
 #: modules/critter/phrases.lua:142
 msgid "Read again tomorrow to keep it going."
-msgstr "Leia novamente amanhã para continuar."
+msgstr "Leia novamente amanhã para manter a sequência."
 
 #: screens/sui_quicksettings_bar.lua:1677
 msgid "Reader"
@@ -3955,7 +3955,7 @@ msgstr "Sequência de leitura"
 
 #: modules/critter/phrases.lua:258 modules/critter/phrases.lua:277
 msgid "Ready for a good story?"
-msgstr "Pronto para uma boa história?"
+msgstr "Que tal uma boa história?"
 
 #: features/sui_stats_menu.lua:65
 msgid "Real streak only"
@@ -4939,7 +4939,7 @@ msgstr "Status, título, navegação e paginação"
 
 #: modules/critter/phrases.lua:107
 msgid "Still awake?"
-msgstr "Ainda acordado?"
+msgstr "Ainda de olhos abertos?"
 
 #: features/sui_stats_menu.lua:134 modules/module_reading_stats.lua:250
 #: screens/sui_stats_windows.lua:3227
@@ -6035,8 +6035,8 @@ msgstr[1] "%d livros lidos"
 #: modules/critter/phrases.lua:164
 msgid "%d book to go for your goal."
 msgid_plural "%d books to go for your goal."
-msgstr[0] "Falta %d livro para a sua meta."
-msgstr[1] "Faltam %d livros para a sua meta."
+msgstr[0] "Falta %d livro para atingir a sua meta."
+msgstr[1] "Faltam %d livros para atingir a sua meta."
 
 #: infra/sui_book_stats.lua:190 screens/sui_stats_windows.lua:1975
 #: screens/sui_stats_windows.lua:1977
@@ -6054,8 +6054,8 @@ msgstr[1] "%d dias de leitura seguidos."
 #: modules/critter/phrases.lua:67
 msgid "%d day strong!"
 msgid_plural "%d days strong!"
-msgstr[0] "%d dia firme!"
-msgstr[1] "%d dias firmes!"
+msgstr[0] "%d dia seguido!"
+msgstr[1] "%d dias seguidos!"
 
 #: modules/critter/phrases.lua:205
 msgid "%d day, your longest streak yet."
@@ -6459,3 +6459,1236 @@ msgstr[1] "%1 colunas"
 
 #~ msgid "All caps style"
 #~ msgstr "Estilo em maiúsculas"
+
+msgid "%d%% left. I'll be brave."
+msgstr "Só restam %d%%. Vou ter coragem."
+
+msgid "%s already?"
+msgstr "Já é %s?"
+
+msgid "%s arrives! A new act begins!"
+msgstr "Chegou %s! Começa um novo ato!"
+
+msgid "%s is over. Good for you."
+msgstr "%s acabou. Que bom para você."
+
+msgid "%s was a good one."
+msgstr "“%s” foi um bom livro."
+
+msgid "%s will be sung about."
+msgstr "Vão cantar %s por gerações."
+
+msgid "%s! DONE! Incredible!"
+msgstr "%s! Você chegou ao fim! Inacreditável!"
+
+msgid "%s! New month, new adventures!"
+msgstr "%s! Mês novo, aventuras novas!"
+
+msgid "%s, finished!"
+msgstr "Você acabou de ler “%s”!"
+
+msgid "%s. Another month of the same pile."
+msgstr "%s. Mais um mês com a mesma pilha."
+
+msgid "A MARATHON! You're unstoppable!"
+msgstr "UMA MARATONA! Você é imparável!"
+
+msgid "A book finished. I need to lie down."
+msgstr "Um livro terminado. Preciso descansar."
+
+msgid "A book is over. Good for you."
+msgstr "Um livro acabou. Que bom para você."
+
+msgid "A brief, brilliant visit to another world!"
+msgstr "Uma visita breve e brilhante a outro mundo!"
+
+msgid "A charger would be lovely."
+msgstr "Um carregador cairia superbem."
+
+msgid "A day for books, at last."
+msgstr "Um dia para os livros, finalmente."
+
+msgid "A decent session. I almost stayed awake."
+msgstr "Uma sessão decente. Quase não dormi."
+
+msgid "A fresh month, a fresh stack."
+msgstr "Um mês novo, uma pilha nova."
+
+msgid "A marathon. I'm tired just watching."
+msgstr "Uma maratona. Só de ver já me cansei."
+
+msgid "A mind like an index. I'm honoured."
+msgstr "O seu cérebro é um índice. É uma honra."
+
+msgid "A month. I kept busy. Mostly sulking."
+msgstr "Um mês. Fui me distraindo. Emburrando, principalmente."
+
+msgid "A motion! Seconded by the entire shelf!"
+msgstr "Uma moção! Apoiada pela prateleira inteira!"
+
+msgid "A new chapter of your legend is complete!"
+msgstr "Mais um capítulo da sua lenda foi concluído!"
+
+msgid "A new year, a new saga! Onward!"
+msgstr "Um ano novo, uma saga nova! Avante!"
+
+msgid "A new year. Wake me in January. Oh, wait."
+msgstr "Um ano novo. Me acorde em janeiro. Ah, espere."
+
+msgid "A noble soul! Bards will sing of this."
+msgstr "Uma alma nobre! Os bardos vão cantar sobre isso."
+
+msgid "A page here, a page there."
+msgstr "Uma página aqui, outra ali."
+
+msgid "A proper stretch."
+msgstr "Uma boa sessão."
+
+msgid "A purist. Boring. Respect."
+msgstr "Purismo. Chato."
+
+msgid "A purist. I knew I liked you."
+msgstr "Um purista. Sabia que ia gostar de você."
+
+msgid "A quick peek?"
+msgstr "Só uma espiadinha?"
+
+msgid "A session worthy of the great libraries!"
+msgstr "Uma sessão digna das grandes bibliotecas!"
+
+msgid "A short holiday?"
+msgstr "Umas férias curtas?"
+
+msgid "A short one. My kind of effort."
+msgstr "Curta. O meu tipo de esforço."
+
+msgid "A small goal, a big grin."
+msgstr "Uma meta pequena, um sorrisão."
+
+msgid "A twist? In this economy?"
+msgstr "Um twist? Com essa crise?"
+
+msgid "A whisper of a twist. Exquisite."
+msgstr "Um sussurro de twist. Requintado."
+
+msgid "A whole year of unread pages awaits."
+msgstr "Um ano inteiro de páginas não lidas à espera."
+
+msgid "A word that earned its place on the shelf!"
+msgstr "Uma palavra que mereceu o seu lugar na estante!"
+
+msgid "A word that tastes like old paper. Divine."
+msgstr "Uma palavra com gosto de papel antigo. Divina."
+
+msgid "About what?"
+msgstr "Sobre o quê?"
+
+msgid "All that reading. Wake me when it's over."
+msgstr "Tanta leitura. Me acorde quando acabar."
+
+msgid "Always."
+msgstr "Sempre."
+
+msgid "An anniversary. Cake? No? Nap, then."
+msgstr "Um aniversário. Bolo? Não? Então, soneca."
+
+msgid "An anniversary. I suppose I'm fond of you."
+msgstr "Um aniversário. Acho que tenho carinho por você."
+
+msgid "An audience! I knew this day would come."
+msgstr "Plateia! Sabia que esse dia ia chegar."
+
+msgid "An epic voyage! The sagas will remember it!"
+msgstr "Uma viagem épica! Vai ser lembrada por gerações!"
+
+msgid "Another book on the done pile."
+msgstr "Mais um livro na pilha dos lidos."
+
+msgid "Another chapter of your legend is complete!"
+msgstr "Mais um capítulo da sua lenda foi concluído!"
+
+msgid "Another lap around the sun."
+msgstr "Mais uma volta ao redor do Sol."
+
+msgid "Another one"
+msgstr "Outro"
+
+msgid "Another one for the done pile."
+msgstr "Mais um para a pilha dos livros lidos."
+
+msgid "Another year. The pile is still there."
+msgstr "Mais um ano. A pilha continua lá."
+
+msgid "Asking for a friend. The friend is me."
+msgstr "É para um amigo. O amigo sou eu."
+
+msgid "Aww! We'll cheer them up with a visit!"
+msgstr "Ah! Vamos animá-los com uma visita!"
+
+msgid "Battery low! Quick, adventure's calling!"
+msgstr "Bateria fraca! Rápido, a aventura chama!"
+
+msgid "Be careful what you wish for."
+msgstr "Cuidado com o que você deseja."
+
+msgid "Be honest: do you read the last page first?"
+msgstr "Fale a verdade: você lê a última página primeiro?"
+
+msgid "Bold words, with no book in hand."
+msgstr "Palavras ousadas, sem nenhum livro na mão."
+
+msgid "Bold. We'll see how long that lasts."
+msgstr "Ousado. Vamos ver quanto tempo dura."
+
+msgid "Book Day. A holiday for my favourite thing: sitting."
+msgstr "Dia do Livro. Um feriado para a minha coisa preferida: me sentar."
+
+msgid "Book finished!"
+msgstr "Livro terminado!"
+
+msgid "Books don't have feelings."
+msgstr "Livros não têm sentimentos."
+
+msgid "Brave. I'd hide behind the sofa."
+msgstr "Que coragem. Eu me esconderia atrás do sofá."
+
+msgid "Brave. I'm already behind the sofa."
+msgstr "Que coragem. Eu já estou atrás do sofá."
+
+msgid "Careful. They can hear you."
+msgstr "Cuidado. Eles estão ouvindo você."
+
+msgid "Challenge accepted"
+msgstr "Desafio aceito"
+
+msgid "Challenge crushed! Take a bow, champion!"
+msgstr "Desafio esmagado! Faça uma reverência, você merece!"
+
+msgid "Challenge met!"
+msgstr "Desafio cumprido!"
+
+msgid "Chaos! I adore you."
+msgstr "Caos! Gosto disso!"
+
+msgid "Chapter one of a brand new saga!"
+msgstr "Capítulo um de uma saga novinha em folha!"
+
+msgid "Chapter one. Again. Wonderful."
+msgstr "Capítulo um. De novo. Maravilhoso."
+
+msgid "Charging. About time."
+msgstr "Carregando. Já não era sem tempo."
+
+msgid "Charging. Bliss."
+msgstr "Carregando. Que maravilha."
+
+msgid "Charging. Wake me at 100%."
+msgstr "Carregando. Me acorde nos 100%."
+
+msgid "Confetti! Dragons! A talking bookcase!"
+msgstr "Confete! Dragões! Uma estante que fala!"
+
+msgid "Counting is my love language."
+msgstr "Contar é a minha forma de demonstrar amor."
+
+msgid "DONE! Incredible!"
+msgstr "TERMINOU! Inacreditável!"
+
+msgid "Dangerous AND brilliant. Naturally."
+msgstr "Perigoso E brilhante. Naturalmente."
+
+msgid "Dangerous! Thrilling! Say it again!"
+msgstr "Perigoso! Emocionante! Fale de novo!"
+
+msgid "Dangerous."
+msgstr "Perigoso."
+
+msgid "Deal. A twist so quiet nobody notices."
+msgstr "Combinado. Um twist tão discreto que ninguém percebe."
+
+msgid "Do the unread books judge us?"
+msgstr "Os livros não lidos nos julgam?"
+
+msgid "Do the unread books judge us? I think so."
+msgstr "Os livros não lidos nos julgam? Acho que sim."
+
+msgid "Do you think books get lonely?"
+msgstr "Você acha que os livros se sentem sozinhos?"
+
+msgid "Dog-ears are better."
+msgstr "Dobrar os cantinhos das páginas é melhor."
+
+msgid "Don't answer. It's a trap."
+msgstr "Não responda. É uma armadilha."
+
+msgid "Don't remind me."
+msgstr "Não me lembre."
+
+msgid "Done and dusted! Look at you go!"
+msgstr "Feito e arrumado! Olha só você!"
+
+msgid "Done and dusted."
+msgstr "Feito e arrumado."
+
+msgid "Done. Now I need a nap."
+msgstr "Feito. Agora preciso de uma soneca."
+
+msgid "Drink some water, hero."
+msgstr "Beba água que a sessão de leitura é longa."
+
+msgid "Electrons, my favourite."
+msgstr "Elétrons: meus favoritos."
+
+msgid "Energy flows! I am reborn!"
+msgstr "A energia flui! Renasci!"
+
+msgid "Even a few pages count."
+msgstr "Até poucas páginas contam."
+
+msgid "Every day is a reading day."
+msgstr "Todo dia é dia de leitura."
+
+msgid "Every day! Hooray!"
+msgstr "Todos os dias! Viva!"
+
+msgid "Every page counts! Hooray for pages!"
+msgstr "Toda página conta! Viva as páginas!"
+
+msgid "Every single book opened! Look at you!"
+msgstr "Todos os livros abertos!"
+
+msgid "Everyone's fine. The tea isn't."
+msgstr "Está tudo bem. O chá é que não."
+
+msgid "Exactly the energy I need."
+msgstr "Exatamente a energia de que preciso."
+
+msgid "Fancy. Very fancy."
+msgstr "Que requinte. Muito requinte."
+
+msgid "Feeling a bit faint."
+msgstr "Estou com pouca energia."
+
+msgid "Finally, an audience."
+msgstr "Finalmente, plateia."
+
+msgid "Finders keepers."
+msgstr "Achado não é roubado."
+
+msgid "Finders keepers. Kidding. Mostly."
+msgstr "Achado não é roubado. Brincadeira. Talvez."
+
+msgid "Fine. A decent session. Don't let it go to your head."
+msgstr "Tudo bem. Uma sessão decente. Não deixe isso subir à cabeça."
+
+msgid "Fine. But I'm not wearing a party hat."
+msgstr "Tudo bem. Mas não vou usar chapéu de festa."
+
+msgid "Fine. But it's looking at me."
+msgstr "Tudo bem. Mas ele está olhando para mim."
+
+msgid "Fine. I'll go be dramatic elsewhere."
+msgstr "Tudo bem. Vou fazer drama em outro lugar."
+
+msgid "Fine. The books can wait. So can I."
+msgstr "Tudo bem. Os livros podem esperar. Eu também."
+
+msgid "Fine. They'll keep."
+msgstr "Tudo bem. Eles esperam."
+
+msgid "Fine. You did it. Don't expect a parade."
+msgstr "Tudo bem. Você conseguiu. Não espere um desfile."
+
+msgid "Gasp."
+msgstr "Ai."
+
+msgid "Gasp. Your secret is safe with the shelves."
+msgstr "*Ofega.* O seu segredo está seguro com as estantes."
+
+msgid "Go and visit one."
+msgstr "Vá ler um."
+
+msgid "Go on, I'm listening."
+msgstr "Continue, estou ouvindo."
+
+msgid "Go on, pick something shiny."
+msgstr "Vamos, escolha algo brilhante."
+
+msgid "Go, go, go! Pages await."
+msgstr "Força, força, força! As páginas esperam por você."
+
+msgid "Goals are patient. Until they aren't."
+msgstr "As metas são pacientes. Até deixarem de ser."
+
+msgid "Great. Now I'm thinking about it."
+msgstr "Ótimo. Agora fiquei pensando nisso."
+
+msgid "HAPPY ANNIVERSARY! I love us!"
+msgstr "FELIZ ANIVERSÁRIO! Eu amo a gente!"
+
+msgid "HAPPY NEW YEAR! Let's read everything!"
+msgstr "FELIZ ANO NOVO! Vamos ler tudo!"
+
+msgid "Happy %s, I suppose?"
+msgstr "Feliz %s, imagino?"
+
+msgid "Happy Book Day!"
+msgstr "Feliz Dia do Livro!"
+
+msgid "Happy World Book Day!"
+msgstr "Feliz Dia Mundial do Livro!"
+
+msgid "Happy anniversary!"
+msgstr "Feliz aniversário!"
+
+msgid "Happy new year!"
+msgstr "Feliz ano novo!"
+
+msgid "Hear, hear! Put it on a mug."
+msgstr "Muito bem! Imprima isso numa caneca."
+
+msgid "Heresy! Call the librarian."
+msgstr "Heresia! Chamem o bibliotecário!"
+
+msgid "Hope the books were jealous."
+msgstr "Espero que os livros tenham sentido ciúme."
+
+msgid "I didn't want to say anything."
+msgstr "Eu não queria dizer nada."
+
+msgid "I don't have one."
+msgstr "Não tenho nenhuma."
+
+msgid "I dusted the shelves twice."
+msgstr "Tirei o pó das estantes duas vezes."
+
+msgid "I found a bookmark in the sofa."
+msgstr "Achei um marcador no sofá."
+
+msgid "I kept your place."
+msgstr "Guardei o seu lugar."
+
+msgid "I knew you'd say yes. I love this for us."
+msgstr "Sabia que você ia dizer sim."
+
+msgid "I never doubted you. Much."
+msgstr "Nunca duvidei de você. Muito."
+
+msgid "I never thought about it."
+msgstr "Nunca pensei nisso."
+
+msgid "I preside over a kingdom of paper."
+msgstr "Presido um reino de papel."
+
+msgid "I remember the day we met."
+msgstr "Lembro do dia em que nos conhecemos."
+
+msgid "I started talking to the bookcase."
+msgstr "Comecei a conversar com a estante."
+
+msgid "I supervise the shelves."
+msgstr "Supervisiono as estantes."
+
+msgid "I supervise the shelves. Sitting down."
+msgstr "Supervisiono as estantes. Sem me levantar."
+
+msgid "I'd like a plot twist today."
+msgstr "Hoje eu queria um twist na história."
+
+msgid "I'd rather not discuss it."
+msgstr "Prefiro não falar disso."
+
+msgid "I'll be back, promise."
+msgstr "Eu volto, prometo."
+
+msgid "I'll hold you to it. Gently. With snacks."
+msgstr "Fico esperando. Com lanchinhos."
+
+msgid "I'll just rest my eyes."
+msgstr "Vou só fechar os olhos um pouquinho."
+
+msgid "I'm at %d%%."
+msgstr "Estou com %d%%."
+
+msgid "I'm keeping count, you know."
+msgstr "Estou contando, sabe?"
+
+msgid "I'm not crying. It's dust."
+msgstr "Não estou chorando. É poeira."
+
+msgid "I'm on track."
+msgstr "Estou no caminho certo."
+
+msgid "I've been thinking."
+msgstr "Estive pensando."
+
+msgid "I've been waiting all year."
+msgstr "Esperei o ano inteiro por isso."
+
+msgid "Impressive. I'd clap, but effort."
+msgstr "Impressionante. Eu aplaudiria, mas dá trabalho."
+
+msgid "Impressive. Or suspicious."
+msgstr "Impressionante. Ou suspeito."
+
+msgid "Impressive. Terrifying, but impressive."
+msgstr "Impressionante. Assustador, mas impressionante."
+
+msgid "Invented by a publisher, loved by everyone."
+msgstr "Inventada por um editor, adorada por todos."
+
+msgid "Is it already?"
+msgstr "Já?"
+
+msgid "Is it morning already?"
+msgstr "Já é de manhã?"
+
+msgid "It will be sung about."
+msgstr "Vão cantar isso por gerações."
+
+msgid "It's %s. I barely noticed."
+msgstr "Estamos em %s. Mal percebi."
+
+msgid "It's World Book Day!"
+msgstr "É o Dia Mundial do Livro!"
+
+msgid "It's a good listener."
+msgstr "Escuta muito bem."
+
+msgid "It's always about snacks, %s."
+msgstr "É sempre por causa dos lanchinhos, %s."
+
+msgid "It's always about snacks, %s. And naps."
+msgstr "É sempre por causa dos lanchinhos, %s. E das sonecas."
+
+msgid "It's been a while."
+msgstr "Faz um tempo."
+
+msgid "It's been so long."
+msgstr "Faz tanto tempo."
+
+msgid "It's on holiday."
+msgstr "Está de férias."
+
+msgid "Just a little one today."
+msgstr "Hoje foi só uma leitura rapidinha."
+
+msgid "Kindly. Mostly kindly."
+msgstr "Com carinho. Quase sempre com carinho."
+
+msgid "Leave me be."
+msgstr "Me deixe em paz."
+
+msgid "Less talking. More reading."
+msgstr "Menos conversa. Mais leitura."
+
+msgid "Let it watch! We shall dazzle it!"
+msgstr "Deixe estar! Vamos deslumbrá-lo!"
+
+msgid "Let it watch."
+msgstr "Deixe estar."
+
+msgid "Let's keep it going."
+msgstr "Vamos manter o ritmo."
+
+msgid "Let's make it a good chapter."
+msgstr "Vamos fazer dele um bom capítulo."
+
+msgid "Let's restart it today."
+msgstr "Vamos recomeçar hoje."
+
+msgid "Let's see what %s brings."
+msgstr "Vamos ver o que %s traz."
+
+msgid "Like what?"
+msgstr "Como o quê?"
+
+msgid "Little reads add up."
+msgstr "Até as leituras rápidas contam."
+
+msgid "Look at us."
+msgstr "Olhe só para nós."
+
+msgid "Look who's back!"
+msgstr "Olha quem voltou!"
+
+msgid "Look who's got staying power."
+msgstr "Olha só quem tem fôlego."
+
+msgid "Low battery. Finally, a reason to nap."
+msgstr "Bateria fraca. Finalmente, uma desculpa para dormir."
+
+msgid "Low battery. Typical."
+msgstr "Bateria fraca. Típico."
+
+msgid "Lucky streak. I could use a holiday."
+msgstr "Que sorte. Eu também precisava de férias."
+
+msgid "Make it a quiet one."
+msgstr "Que seja um twist discreto."
+
+msgid "Marathon reader!"
+msgstr "Que maratonista da leitura!"
+
+msgid "Maybe later"
+msgstr "Talvez mais tarde"
+
+msgid "Mine are perfectly happy."
+msgstr "Os meus estão bem felizes."
+
+msgid "Mine is to nap more. Yours?"
+msgstr "O meu é tirar mais sonecas. E o seu?"
+
+msgid "Monstrous. And yet, efficient."
+msgstr "Seu monstro. Mas um monstro eficiente."
+
+msgid "Monstrous. I'll allow it."
+msgstr "Seu monstro! Mas aceito."
+
+msgid "My light is fading! Fetch the charger, brave soul!"
+msgstr "A minha luz está se apagando! Traga o carregador, alma corajosa!"
+
+msgid "Nap."
+msgstr "Uma soneca."
+
+msgid "Never mentioned. Never existed."
+msgstr "Nunca falamos disso. Nunca existiu."
+
+msgid "Never!"
+msgstr "Nunca!"
+
+msgid "New month, new goals."
+msgstr "Mês novo, metas novas."
+
+msgid "New year, new shelf."
+msgstr "Ano novo, estante nova."
+
+msgid "Nice little session!"
+msgstr "Que bela sessão de leitura!"
+
+msgid "No pressure? Sure."
+msgstr "Sem pressão? Claro."
+
+msgid "No rush! The shelf isn't going anywhere."
+msgstr "Sem pressa! A estante não vai a lugar nenhum."
+
+msgid "No shame in snacks."
+msgstr "Não há vergonha nenhuma em lanchar."
+
+msgid "No spoilers. Okay, spoilers."
+msgstr "Sem spoilers. Tá, com spoilers."
+
+msgid "Not now"
+msgstr "Agora não"
+
+msgid "Not now."
+msgstr "Agora não."
+
+msgid "Not one unopened book. Show-off."
+msgstr "Nem um livro sem abrir. Que exibicionismo."
+
+msgid "Not really."
+msgstr "Não exatamente."
+
+msgid "Not to be dramatic, but find a charger."
+msgstr "Sem querer fazer drama, mas arranje um carregador."
+
+msgid "Noted. I'll sulk quietly. Loudly."
+msgstr "Anotado. Vou emburrar em silêncio. Bem alto."
+
+msgid "Nothing unopened on your shelves."
+msgstr "Não há nada por abrir nas suas estantes."
+
+msgid "Nothing. Nothing happens. Perfect."
+msgstr "Nada. Não acontece nada. Perfeito."
+
+msgid "Now you never will stop."
+msgstr "Agora você nunca mais vai parar de pensar nisso."
+
+msgid "Obviously."
+msgstr "Obviamente."
+
+msgid "Of course. No pressure at all."
+msgstr "Claro. Sem pressão nenhuma."
+
+msgid "Oh, EVERYTHING! Where do I even start?"
+msgstr "Ah, TUDO! Nem sei por onde começar!"
+
+msgid "Oh, you remember me."
+msgstr "Ah, você se lembrou de mim."
+
+msgid "On it!"
+msgstr "Deixa comigo!"
+
+msgid "On track and in legend. Metaphorically."
+msgstr "Um caminho lendário!"
+
+msgid "On track and on fire. Metaphorically."
+msgstr "No caminho certo e a todo vapor. Metaforicamente."
+
+msgid "On track. I'm proud, quietly."
+msgstr "No caminho certo. Tenho orgulho, em silêncio."
+
+msgid "One more finished. I need to lie down."
+msgstr "Mais um terminado. Preciso descansar."
+
+msgid "Only if it's about snacks."
+msgstr "Só se for sobre lanchinhos."
+
+msgid "Only the unread ones."
+msgstr "Só os que ninguém leu."
+
+msgid "Onward! Glory awaits in chapter nine!"
+msgstr "Avante! A glória espera no capítulo nove!"
+
+msgid "Ooh, so pretty! Say it again!"
+msgstr "Ui, tão bonita! Fale de novo!"
+
+msgid "Ooh, that's nice."
+msgstr "Ui, que bom."
+
+msgid "Ooh. A question for a committee of me."
+msgstr "Ui. Uma pergunta para uma comissão composta só por mim."
+
+msgid "Open it"
+msgstr "Abrir"
+
+msgid "Or the same ones. I'm not picky."
+msgstr "Ou os mesmos. Eu não ligo."
+
+msgid "Our story is the finest of all libraries!"
+msgstr "A nossa história é a melhor de todas as bibliotecas!"
+
+msgid "Page 212, probably."
+msgstr "Página 212, provavelmente."
+
+msgid "Peace at last."
+msgstr "Paz, finalmente."
+
+msgid "Please don't."
+msgstr "Por favor, não."
+
+msgid "Postcards expected."
+msgstr "Fico esperando os cartões-postais."
+
+msgid "Power! Glorious power!"
+msgstr "Energia! Gloriosa energia!"
+
+msgid "Psst, %s. Can I ask you something?"
+msgstr "Psiu, %s. Posso fazer uma pergunta?"
+
+msgid "Psst. The battery is low."
+msgstr "Psiu. A bateria está fraca."
+
+msgid "Put it back."
+msgstr "Coloque de volta no lugar."
+
+msgid "Put it on a banner. On a flag!"
+msgstr "Imprima isso numa bandeira!"
+
+msgid "Put it on a mug. Then leave me alone."
+msgstr "Imprima isso numa caneca. E depois me deixe em paz."
+
+msgid "Put it to a vote. I'm in favour."
+msgstr "Vamos votar. Sou a favor."
+
+msgid "Put it to a vote. Tomorrow."
+msgstr "Vamos votar. Amanhã."
+
+msgid "Quick: favourite word?"
+msgstr "Rápido: palavra preferida?"
+
+msgid "Read a little today and your streak is safe."
+msgstr "Leia um pouco hoje para manter a sequência."
+
+msgid "Read a little today to keep your streak?"
+msgstr "Ler um pouco hoje para manter a sua sequência?"
+
+msgid "Read before %d:00?"
+msgstr "Ler antes das %d:00?"
+
+msgid "Reading today is practically mandatory."
+msgstr "Hoje, ler é praticamente obrigatório."
+
+msgid "Resolutions?"
+msgstr "Resoluções?"
+
+msgid "Returned with full honours!"
+msgstr "Devolvido com todas as honras!"
+
+msgid "Right where you left it."
+msgstr "Exatamente onde você deixou."
+
+msgid "Rude. Accurate, but rude."
+msgstr "Que falta de educação. Mas você tem razão."
+
+msgid "Rude. Also correct. I hate that."
+msgstr "Que falta de educação. E ainda por cima você tem razão. Detesto isso."
+
+msgid "Running on fumes."
+msgstr "Funcionando por milagre."
+
+msgid "Same time tomorrow?"
+msgstr "Amanhã no mesmo horário?"
+
+msgid "Say something else…"
+msgstr "Fale outra coisa…"
+
+msgid "Says the one who needs a charger."
+msgstr "Fala quem precisa de um carregador."
+
+msgid "Serendipity."
+msgstr "Serendipidade."
+
+msgid "Shall I pick a harder one tomorrow?"
+msgstr "Escolho um mais difícil amanhã?"
+
+msgid "Shall we pick up where we left off?"
+msgstr "Retomamos de onde paramos?"
+
+msgid "Shall we read them all and settle it?"
+msgstr "Vamos ler todos e tirar isso a limpo?"
+
+msgid "Short and sweet."
+msgstr "Curto e bom."
+
+msgid "Show-off."
+msgstr "Que exibicionismo."
+
+msgid "Slurp. Thank you."
+msgstr "*Slurp.* Que bom."
+
+msgid "Small steps. One page is still a page."
+msgstr "Passos pequenos. Uma página continua sendo uma página."
+
+msgid "Snack time!"
+msgstr "Hora do lanchinho!"
+
+msgid "So you remember where I live."
+msgstr "Então você ainda sabe onde eu moro."
+
+msgid "So, how did it end?"
+msgstr "Então, como terminou?"
+
+msgid "Sometimes."
+msgstr "Às vezes."
+
+msgid "Sound advice. I'll ignore it."
+msgstr "Bom conselho. Vou ignorar."
+
+msgid "Spoiled books. I approve."
+msgstr "Livros mimados. Aprovo."
+
+msgid "Spoilers, please."
+msgstr "Me dê spoilers!"
+
+msgid "Spoken like a true diplomat, %s."
+msgstr "Falou como um verdadeiro diplomata, %s."
+
+msgid "Start reading before %d:00 and it's yours."
+msgstr "Comece a ler antes das %d:00 e o desafio é seu."
+
+msgid "Stop counting."
+msgstr "Pare de contar."
+
+msgid "Sunburnt and ready to return, I hope!"
+msgstr "Espero que volte bronzeada e cheia de energia!"
+
+msgid "Sure."
+msgstr "Claro."
+
+msgid "Take a bow. I'll hold the applause."
+msgstr "Faça uma reverência. Eu cuido dos aplausos."
+
+msgid "Taxes are low."
+msgstr "Os impostos são baixos."
+
+msgid "Tell me about %s. No spoilers. Okay, spoilers."
+msgstr "Me fale sobre %s. Sem spoilers. Tá, com spoilers."
+
+msgid "Tell me everything. Slowly."
+msgstr "Me conte tudo. Devagar."
+
+msgid "Tell that to the ending of that one book."
+msgstr "Diga isso ao final daquele livro."
+
+msgid "That depends."
+msgstr "Depende."
+
+msgid "That was a good one."
+msgstr "Foi uma boa leitura."
+
+msgid "That was cosy."
+msgstr "Foi gostoso."
+
+msgid "That was short. I blinked and missed it."
+msgstr "Foi curto. Pisquei e perdi."
+
+msgid "That's how libraries get built."
+msgstr "É assim que se constroem as bibliotecas."
+
+msgid "That's mine!"
+msgstr "É meu!"
+
+msgid "That's the best kind of promise."
+msgstr "É a melhor espécie de promessa."
+
+msgid "That's the saddest true thing I've heard."
+msgstr "É a coisa mais triste que já ouvi."
+
+msgid "That's the spirit! I'll sharpen the bookmarks."
+msgstr "É esse o espírito! Vou afiar os marcadores de livro."
+
+msgid "That's the spirit. I'll be watching."
+msgstr "É esse o espírito. Estarei de olho."
+
+msgid "The book and you make a good team."
+msgstr "Você e o livro formam uma boa equipe."
+
+msgid "The book clearly deserved it."
+msgstr "O livro merecia, claramente."
+
+msgid "The book is warm now."
+msgstr "O livro já está quentinho."
+
+msgid "The books were worried."
+msgstr "Os livros estavam preocupados."
+
+msgid "The butler did it. In a library. With a bookmark."
+msgstr "Foi o mordomo. Na biblioteca. Com um marcador."
+
+msgid "The calendar flipped a page."
+msgstr "O calendário virou a página."
+
+msgid "The critter was the author all along!"
+msgstr "A mascote era a autora desde o início!"
+
+msgid "The dust and I have become friends."
+msgstr "Fiz amizade com a poeira."
+
+msgid "The goal can wait."
+msgstr "A meta pode esperar."
+
+msgid "The hero returns after a long quest!"
+msgstr "O herói volta de uma longa jornada!"
+
+msgid "The offer stands. Dramatically."
+msgstr "A oferta continua de pé. Com todo o drama."
+
+msgid "The reader returns! Let the feast begin!"
+msgstr "A leitura volta! Que comece o banquete!"
+
+msgid "The sequel will be better. I can feel it!"
+msgstr "A continuação vai ser melhor. Eu sinto!"
+
+msgid "The shelves missed you."
+msgstr "As estantes sentiram a sua falta."
+
+msgid "The streak took a little break."
+msgstr "A sequência deu uma pequena pausa."
+
+msgid "The wanderer returns to the library!"
+msgstr "Quem andava sumido volta à biblioteca!"
+
+msgid "The world can wait."
+msgstr "O mundo pode esperar."
+
+msgid "The year turns like a page."
+msgstr "O ano vira como uma página."
+
+msgid "Then borrow mine: snack."
+msgstr "Então use a minha emprestada: lanchinho."
+
+msgid "Then let's take it slowly. Very slowly."
+msgstr "Então vamos com calma. Com muita calma."
+
+msgid "Then we agree. A rare event."
+msgstr "Então concordamos. Um acontecimento raro."
+
+msgid "Then we rescue them, one chapter at a time!"
+msgstr "Então vamos resgatá-los, um capítulo de cada vez!"
+
+msgid "Then we start again, with snacks."
+msgstr "Então a gente recomeça, com lanchinhos."
+
+msgid "Time flies when you're reading."
+msgstr "O tempo voa quando a gente está lendo."
+
+msgid "Time is an illusion. So are weekends."
+msgstr "O tempo é uma ilusão. Os fins de semana também."
+
+msgid "Today the whole world kneels to the book!"
+msgstr "Hoje o mundo inteiro se ajoelha diante do livro!"
+
+msgid "Today we celebrate you and your shelves."
+msgstr "Hoje celebramos você e as suas estantes."
+
+msgid "Together, with books."
+msgstr "Juntos, com livros."
+
+msgid "Too late. It's already in the air."
+msgstr "Tarde demais. A pergunta já está no ar."
+
+msgid "Tough one…"
+msgstr "Está difícil…"
+
+msgid "Try “%s”, by %s."
+msgstr "Experimente “%s”, de %s."
+
+msgid "Try “%s”."
+msgstr "Experimente “%s”."
+
+msgid "Typical."
+msgstr "Típico."
+
+msgid "Understood. Let us speak of the weather. Damp."
+msgstr "Entendido. Vamos falar do tempo. Úmido."
+
+msgid "Unputdownable."
+msgstr "Inexorável."
+
+msgid "Unputdownable. Unlike my energy levels."
+msgstr "Inexorável. Ok."
+
+msgid "Unstoppable! I can feel it!"
+msgstr "Imparável! Dá para sentir!"
+
+msgid "Very demanding work."
+msgstr "Trabalho muito exigente."
+
+msgid "Very much."
+msgstr "Sim."
+
+msgid "WORLD BOOK DAY! The best day of the year!"
+msgstr "DIA MUNDIAL DO LIVRO! O melhor dia do ano!"
+
+msgid "Want something new to read?"
+msgstr "Quer ler algo novo?"
+
+msgid "Was it that good?"
+msgstr "Foi tão bom assim?"
+
+msgid "We agree! Fetch the confetti!"
+msgstr "Concordamos! Tragam os confetes!"
+
+msgid "We agree. Mark the calendar."
+msgstr "Concordamos. Marque no calendário."
+
+msgid "Weekdays should be optional."
+msgstr "Os dias úteis deviam ser opcionais."
+
+msgid "Welcome back!"
+msgstr "Que bom ver você de volta!"
+
+msgid "Welcome back, stranger!"
+msgstr "Olha só, uma cara conhecida!"
+
+msgid "Welcome home."
+msgstr "Você está em casa."
+
+msgid "Welcome to %s!"
+msgstr "Chegamos a %s!"
+
+msgid "What a lovely session! Bravo!"
+msgstr "Que sessão linda! Bravo!"
+
+msgid "What did I miss?"
+msgstr "O que foi que eu perdi?"
+
+msgid "What do you do all day?"
+msgstr "O que você faz o dia todo?"
+
+msgid "What if I miss a day?"
+msgstr "E se eu faltar um dia?"
+
+msgid "What shall we read first?"
+msgstr "O que lemos primeiro?"
+
+msgid "What's a last page?"
+msgstr "O que é isso de última página?"
+
+msgid "Whenever you're ready. I'll be right here."
+msgstr "Quando quiser. Estou aqui."
+
+msgid "Where was I? Ah, yes: snacks."
+msgstr "Onde eu estava? Ah, sim: lanchinhos."
+
+msgid "Whether I am a footnote or a whole chapter."
+msgstr "Se sou uma nota de rodapé ou um capítulo inteiro."
+
+msgid "Whether anyone reads me. Never mind."
+msgstr "Se alguém me lê. Deixa pra lá."
+
+msgid "Whether books read us back."
+msgstr "Se os livros também nos leem."
+
+msgid "Which book next?"
+msgstr "Qual é o próximo livro?"
+
+msgid "Wise. Spoken like a scholar."
+msgstr "Sábio."
+
+msgid "Wonderful! Suspense is the best part!"
+msgstr "Maravilhoso! O suspense é a melhor parte!"
+
+msgid "World Book Day. Fine. Read something."
+msgstr "Dia Mundial do Livro. Tudo bem. Leia alguma coisa."
+
+msgid "Wow! Page 212! You're amazing!"
+msgstr "Uau! Página 212! Você é incrível!"
+
+msgid "YES! The best kind of book!"
+msgstr "Como o destino. Um destino feliz, por sinal."
+
+msgid "YOU'RE BACK! Confetti, everyone!"
+msgstr "VOCÊ VOLTOU! Confete para todo mundo!"
+
+msgid "Yes yes yes! Let's gooo!"
+msgstr "Sim sim sim! Vamos láaa!"
+
+msgid "Yes! We agree! What a lovely day!"
+msgstr "Sim! Concordamos! Que dia lindo!"
+
+msgid "Yes! You've got this!"
+msgstr "Sim! Você consegue!"
+
+msgid "Yes, pick one"
+msgstr "Sim, escolha um"
+
+msgid "You came back."
+msgstr "Você voltou."
+
+msgid "You can do it! One page at a time!"
+msgstr "Você consegue! Uma página de cada vez!"
+
+msgid "You finished %s."
+msgstr "Você acabou de ler “%s”."
+
+msgid "You finished a book."
+msgstr "Você terminou um livro."
+
+msgid "You had a book in your hand."
+msgstr "Você tinha um livro na mão."
+
+msgid "You know the one."
+msgstr "Você sabe qual é."
+
+msgid "You must tell me everything."
+msgstr "Você precisa me contar tudo."
+
+msgid "You plugged me in."
+msgstr "Você me ligou na tomada."
+
+msgid "You said you would, and you did."
+msgstr "Você disse que ia fazer, e fez."
+
+msgid "You understand me, %s. Truly."
+msgstr "Você me entende, %s. De verdade."
+
+msgid "You're back! Best day ever!"
+msgstr "Você voltou! O melhor dia de todos!"
+
+msgid "You're back! I missed you!"
+msgstr "Você voltou! Senti saudade!"
+
+msgid "You're back. Finally. I got so bored I napped."
+msgstr "Você voltou. Finalmente. Fiquei com tanto tédio que cochilei."
+
+msgid "You're back. I slept through half of it."
+msgstr "Você voltou. Dormi metade do tempo."
+
+msgid "You're back. I was napping, honest."
+msgstr "Você voltou. Eu estava cochilando, juro."
+
+msgid "You're my favourite human."
+msgstr "Você é a minha pessoa preferida."
+
+msgid "You've opened them all. I'm so proud."
+msgstr "Você abriu todos. Que orgulho."
+
+msgid "Yours! Take it! Take two!"
+msgstr "É seu! Leve! Leve dois!"
+
+msgid "Zero pressure, infinite splendour."
+msgstr "Zero pressão, esplendor infinito."
+
+msgid "Zero pressure. Pure vibes."
+msgstr "Pressão zero. Só boas energias."
+
+msgid "Zero. None. Breathe."
+msgstr "Zero. Nenhuma. Respire."
+
+msgid "%d book this year. The goal is watching."
+msgid_plural "%d books this year. The goal is watching."
+msgstr[0] "%d livro lido este ano. A meta está de olho."
+msgstr[1] "%d livros lidos este ano. A meta está de olho."
+
+msgid "%d day away. I counted."
+msgid_plural "%d days away. I counted."
+msgstr[0] "Você ficou fora %d dia. Eu contei."
+msgstr[1] "Você ficou fora %d dias. Eu contei."
+
+msgid "%d day! I thought you'd moved."
+msgid_plural "%d days! I thought you'd moved."
+msgstr[0] "%d dia! Pensei que você tinha se mudado."
+msgstr[1] "%d dias! Pensei que você tinha se mudado."
+
+msgid "%d day! Where were you?"
+msgid_plural "%d days! Where were you?"
+msgstr[0] "%d dia! Onde você andava?"
+msgstr[1] "%d dias! Onde você andava?"
+
+msgid "%d minute of reading."
+msgid_plural "%d minutes of reading."
+msgstr[0] "%d minuto de leitura."
+msgstr[1] "%d minutos de leitura."
+
+msgid "%d minute without surfacing."
+msgid_plural "%d minutes without surfacing."
+msgstr[0] "%d minuto sem vir à tona."
+msgstr[1] "%d minutos sem vir à tona."
+
+msgid "%d minute! Did you eat?"
+msgid_plural "%d minutes! Did you eat?"
+msgstr[0] "%d minuto! Você comeu alguma coisa?"
+msgstr[1] "%d minutos! Você comeu alguma coisa?"
+
+msgid "%d minute. A sneaky one."
+msgid_plural "%d minutes. A sneaky one."
+msgstr[0] "%d minuto. Uma leitura escondida."
+msgstr[1] "%d minutos. Uma leitura escondida."
+
+msgid "%d of %d minute so far."
+msgid_plural "%d of %d minutes so far."
+msgstr[0] "Você já leu %d de %d minuto."
+msgstr[1] "Você já leu %d de %d minutos."
+
+msgid "%d of %d page so far."
+msgid_plural "%d of %d pages so far."
+msgstr[0] "Você já leu %d de %d página."
+msgstr[1] "Você já leu %d de %d páginas."
+
+msgid "%d year of pages and snacks."
+msgid_plural "%d years of pages and snacks."
+msgstr[0] "%d ano de páginas e lanchinhos."
+msgstr[1] "%d anos de páginas e lanchinhos."
+
+msgid "%d year together!"
+msgid_plural "%d years together!"
+msgstr[0] "Faz %d ano que estamos juntos!"
+msgstr[1] "Faz %d anos que estamos juntos!"
+
+msgid "Our streak is at %d day. No pressure."
+msgid_plural "Our streak is at %d days. No pressure."
+msgstr[0] "Já estamos em %d dia seguido. Sem pressão."
+msgstr[1] "Já estamos em %d dias seguidos. Sem pressão."
+
+msgid "Read %d minute today?"
+msgid_plural "Read %d minutes today?"
+msgstr[0] "Ler %d minuto hoje?"
+msgstr[1] "Ler %d minutos hoje?"
+
+msgid "Read %d page today?"
+msgid_plural "Read %d pages today?"
+msgstr[0] "Ler %d página hoje?"
+msgstr[1] "Ler %d páginas hoje?"

@@ -1409,10 +1409,11 @@ function M.secondary(fallback)
     return Accent.secondaryColor() or fallback or M.COLOR.surface_flat
 end
 
--- True when `color` is the plain surface colour. Safe on nil: comparing a
--- colour with nil calls into the colour's own `==` and raises an error.
+-- True when `color` is the plain surface colour. Safe on nil and non-colours:
+-- any `==`/`~=` involving a colour calls its `__eq`, which raises on nil, so
+-- the type is tested first.
 function M.isSurface(color)
-    return color ~= nil and color == M.COLOR.surface
+    return type(color) == "cdata" and color == M.COLOR.surface
 end
 
 -- The palette colours a stored choice can name: how to read the colour and the

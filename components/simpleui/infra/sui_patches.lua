@@ -20,6 +20,7 @@ local SUIWallpaper = require("features/sui_wallpaper")
 local Backdrop   = require("infra/sui_backdrop")
 local WindowHooks  = require("infra/sui_window_hooks")
 local Perf         = require("infra/sui_perf")
+local SUIPaths     = require("infra/sui_paths")
 
 -- Lazy: only needed on D-pad devices, inside gesture event handlers.
 local _FocusManager
@@ -822,6 +823,13 @@ function M.patchFileManagerClass(plugin)
             plugin:_registerTouchZones(this)
             Bottombar.setActiveTab(this, plugin.active_action, t)
             Bottombar.repaintBar(this)
+            -- The menu tab bar overlaps the topbar: refresh the topbar region
+            -- so nothing of the closed menu stays on screen. The box is read
+            -- lazily, once the paint pass has positioned the topbar.
+            local bar_topbar = this._navbar_topbar
+            if bar_topbar then
+                UIManager:setDirty(this, function() return "ui", bar_topbar.dimen end)
+            end
         end
 
         plugin:_registerTouchZones(fm_self)
@@ -2238,6 +2246,21 @@ local function _refreshExposedFileManager()
     UIManager:scheduleIn(0, _refreshLiveFileChooser)
 end
 
+-- A closing screen exposes whatever fullscreen widget lies beneath it, and
+-- UIManager:close queues no refresh of its own: only the regions dirtied by
+-- other code reach the display, leaving the screen's pixels in the gaps.
+local function _closedScreenExposesWidget(widget)
+    return widget.name == "homescreen"
+end
+
+local function _refreshExposedWidget()
+    local stack = UI.getWindowStack()
+    local top = stack[#stack] and stack[#stack].widget
+    if top and top ~= liveFM() and top.covers_fullscreen and not _isReader(top) then
+        UIManager:setDirty(top, "ui")
+    end
+end
+
 -- ── close: screen reopen ────────────────────────────────────────────────────
 
 -- Shows screen `screen_id` (the built-in homescreen when nil) again, unless
@@ -2356,6 +2379,34 @@ local function _reopenAfterReaderClose(plugin, reader)
     end)
 end
 
+-- Methods inspected to tell where a widget's class comes from.
+local WIDGET_SOURCE_METHODS = { "init", "onCloseWidget", "onShow", "onClose" }
+
+-- True when the widget class is implemented by a plugin other than this one.
+-- Native widgets resolve to files under frontend/, so they never match.
+local function _isForeignPluginWidget(widget)
+    local own_dir = SUIPaths.getPluginDir()
+    for _, name in ipairs(WIDGET_SOURCE_METHODS) do
+        local fn = widget[name]
+        local info = type(fn) == "function" and debug.getinfo(fn, "S")
+        local src = info and info.source
+        if src and src:find("plugins/", 1, true) and not src:find(own_dir, 1, true) then
+            return true
+        end
+    end
+    return false
+end
+
+-- A foreign fullscreen widget can leave its pixels on a panel that the
+-- non-flashing refresh of the reopened screen does not clear: flash it once.
+local function _clearExposedGhosting()
+    local stack = UI.getWindowStack()
+    local top = stack[#stack] and stack[#stack].widget
+    if top and top.name == "homescreen" then
+        UIManager:setDirty(nil, "flashui")
+    end
+end
+
 local function _reopenScreen(ctx)
     local widget, plugin = ctx.widget, ctx.plugin
     widget._navbar_hs_scheduled = true
@@ -2366,13 +2417,16 @@ local function _reopenScreen(ctx)
         return
     end
     local generation = UIManager._simpleui_navigation_generation or 0
+    local foreign = _isForeignPluginWidget(widget)
     UIManager:scheduleIn(0, function()
         if isAppExiting() then return end
+        if generation ~= (UIManager._simpleui_navigation_generation or 0) then return end
         local fm = liveFM()
         if not fm then return end
         local reader_module = package.loaded["apps/reader/readerui"]
         if reader_module and reader_module.instance then return end
         _doShowHS(fm, plugin, widget._sui_displaced_screen, generation)
+        if foreign then _clearExposedGhosting() end
     end)
 end
 
@@ -2468,6 +2522,10 @@ local function registerWindowSteps()
     WindowHooks.register{
         id = "lazy_refresh", point = CLOSE, order = close.LAZY_REFRESH,
         match = _closedScreenExposesFileManager, after = _refreshExposedFileManager,
+    }
+    WindowHooks.register{
+        id = "exposed_refresh", point = CLOSE, order = close.EXPOSED_REFRESH,
+        match = _closedScreenExposesWidget, after = _refreshExposedWidget,
     }
     WindowHooks.register{
         id = "screen_reopen", point = CLOSE, order = close.REOPEN_SCREEN,
@@ -2580,10 +2638,11 @@ local function _libraryRecalculate(menu, ...)
     end
 end
 
--- Display modes whose layout is inset, with the margin each one already
--- applies at the item area edge.
+-- Display modes hooked for the side margin, with the margin each one already
+-- applies at the item area edge. A mode without `native_margin` is hooked but
+-- never inset: the mosaic grid keeps its own margins.
 local SIDE_MARGIN_MODES = {
-    { module = "mosaicmenu", native_margin = function(menu) return menu.item_margin end },
+    { module = "mosaicmenu" },
     { module = "listmenu",   native_margin = function() return 0 end },
 }
 
@@ -2591,6 +2650,9 @@ local SIDE_MARGIN_STATE = "_simpleui_side_margin"
 
 -- Installs the side margin hooks on `DisplayMode` unless already present.
 local function _installSideMargin(DisplayMode, native_margin, owner)
+    local function inset_of(menu)
+        return native_margin and _sideInset(menu, native_margin(menu)) or 0
+    end
     local state = _acquireHooks(DisplayMode, SIDE_MARGIN_STATE, owner)
     if not state then return end
 
@@ -2601,7 +2663,7 @@ local function _installSideMargin(DisplayMode, native_margin, owner)
     -- native_margin(menu) is read after the mode has run _recalculateDimen.
     local function recalculate(menu, ...)
         orig_recalculate(menu, ...)
-        local inset = _sideInset(menu, native_margin(menu))
+        local inset = inset_of(menu)
         menu._sui_side_inset = inset
         if inset > 0 then _withInsetWidth(menu, inset, orig_recalculate, ...) end
     end
@@ -4394,6 +4456,18 @@ local function _wallpaperBg()
     return SUIWallpaper.styleGetBgWidget()
 end
 
+-- Paints the wallpaper behind the status bar and the bottom bar only, for when
+-- a bar is transparent but the wallpaper is not shown on all screens. It
+-- clears what was on screen before (closed menus, other screens) and leaves
+-- the content area to paint itself.
+local function _paintBarBands(bb, x)
+    if _wallpaperBg() or not SUIWallpaper.barsRevealWallpaper() then return end
+    local sw, sh = Screen:getWidth(), Screen:getHeight()
+    local bottom_h = Bottombar.TOTAL_H()
+    SUIWallpaper.paintEraser(bb, x, 0, sw, UI.getTopInset(), 0)
+    SUIWallpaper.paintEraser(bb, x, sh - bottom_h, sw, bottom_h, 0)
+end
+
 -- Recursively nil all COLOR_WHITE backgrounds in a widget tree.
 -- Stops at depth 12 to avoid runaway traversal.
 local function _clearWhiteBackgrounds(w, depth)
@@ -4421,7 +4495,17 @@ end
 local function _injectWallpaperIntoWidget(widget)
     if not widget then return end
     local outer = widget[1]   -- simpleui outer FrameContainer
-    if not outer or outer._sui_wallpaper_patched then return end
+    if not outer then return end
+    -- Bar bands are checked live on every paint, so a later setting change applies.
+    if not outer._sui_bands_patched then
+        outer._sui_bands_patched = true
+        local bands_pt = outer.paintTo
+        function outer:paintTo(bb, x, y)
+            _paintBarBands(bb, x)
+            bands_pt(self, bb, x, y)
+        end
+    end
+    if outer._sui_wallpaper_patched or not _wallpaperBg() then return end
     outer._sui_wallpaper_patched = true
 
     -- Clear opaque backgrounds in the widget chain.
@@ -4497,7 +4581,7 @@ function M.patchWallpaperFM(plugin)
     FileManager.paintTo = function(fm_self, bb, x, y)
         -- Only intercept the FileManager instance (not subclasses / other callers).
         local _live_bg_fm = _wallpaperBg()
-        if _live_bg_fm then _paintWallpaper(_live_bg_fm, bb, x, y) end
+        if _live_bg_fm then _paintWallpaper(_live_bg_fm, bb, x, y) else _paintBarBands(bb, x) end
         -- Call the original paintTo (WidgetContainer:paintTo).
         if orig_fm_paintTo then
             orig_fm_paintTo(fm_self, bb, x, y)
@@ -5047,7 +5131,6 @@ function M.injectWallpaperIntoFullscreenWidget(widget)
     -- Utility overlays that happen to set covers_fullscreen (SortWidget,
     -- PathChooser, etc.) must be left untouched.
     if not WALLPAPER_NAMES[widget.name] then return end
-    if not _wallpaperBg() then return end
     _injectWallpaperIntoWidget(widget)
 end
 

@@ -498,10 +498,9 @@ function M.wrapWithNavbar(inner_widget, active_action_id, tabs, force_no_arrows)
     local topbar_idx       = topbar_on and #overlap_items or nil
     local navbar_container = OverlapGroup():new(overlap_items)
     -- The plain surface behind the bars and content stays unless a bar is
-    -- fully transparent, so the wallpaper shows through.
+    -- fully transparent over a loaded wallpaper, so the wallpaper shows through.
     local WP = require("features/sui_wallpaper")
-    local bars_opaque = WP.resolveBar("navbar").strength > 0 and WP.resolveBar("statusbar").strength > 0
-    local wrapper_bg = bars_opaque and SUIStyle.COLOR.surface or nil
+    local wrapper_bg = not WP.barsRevealWallpaper() and SUIStyle.COLOR.surface or nil
 
     return navbar_container,
            FrameContainer():new{

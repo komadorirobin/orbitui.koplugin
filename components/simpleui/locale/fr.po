@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: simpleui\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-10-22 11:13+0000\n"
-"PO-Revision-Date: 2026-10-14 17:50+0100\n"
+"PO-Revision-Date: 2026-10-23 11:36+0200\n"
 "Last-Translator: jpiebrig <jpv69005@gmx.fr>\n"
 "Language-Team: Français (France)\n"
 "Language: fr\n"
@@ -309,16 +309,16 @@ msgstr "Ajouter un livre seul"
 #: modules/module_tab_grid.lua:869
 #, fuzzy
 msgid "Add Tab"
-msgstr "Ajouter une page"
+msgstr "Ajouter un onglet"
 
 #: modules/module_action_list.lua:287 modules/module_quick_actions.lua:349
 #: screens/sui_menu.lua:1916 screens/sui_quicksettings_bar.lua:1509
 msgid "Add at least 2 actions to arrange."
-msgstr "Ajoutez au moins 2 actions à organiser."
+msgstr "Ajoutez au moins 2 actions pour organiser."
 
 #: features/sui_collection_arrange.lua:35
 msgid "Add at least 2 books to arrange."
-msgstr "Ajoutez au moins 2 livres pour les organiser."
+msgstr "Ajoutez au moins 2 livres pour organiser."
 
 #: modules/critter/module_critter.lua:559
 msgid "Add at least 2 decorations to arrange."
@@ -326,12 +326,12 @@ msgstr ""
 
 #: modules/module_reading_stats.lua:1143
 msgid "Add at least 2 stats to arrange."
-msgstr "Ajoutez au moins 2 statistiques à organiser."
+msgstr "Ajoutez au moins 2 statistiques pour organiser."
 
 #: modules/module_tab_grid.lua:868 screens/sui_menu.lua:363
 #, fuzzy
 msgid "Add at least 2 tabs to arrange."
-msgstr "Ajoutez au moins 2 statistiques à organiser."
+msgstr "Ajoutez au moins 2 onglets pour organiser."
 
 #: modules/module_tbr.lua:342
 msgid "Add to To Be Read"
@@ -656,7 +656,7 @@ msgstr "Comportement"
 #: engines/sui_group_cell.lua:231
 #, fuzzy
 msgid "Below Cover"
-msgstr "Couverture unique"
+msgstr "Sous la couverture"
 
 #: screens/sui_stats_windows.lua:1990 screens/sui_stats_windows.lua:2010
 msgid "Best streak"
@@ -726,7 +726,7 @@ msgstr "Navigateur de signets"
 msgid "Bookmark browser requires a newer KOReader. Please update."
 msgstr ""
 "Le navigateur de signets nécessite une version plus récente de KOReader. "
-"Effectuer la mise à jour."
+"Faites la mise à jour SVP."
 
 #: features/sui_quickactions.lua:864 infra/sui_config.lua:133
 msgid "Bookmarks"
@@ -2097,7 +2097,7 @@ msgstr ""
 #: features/library/sui_label_options.lua:130 infra/sui_config.lua:1482
 #: modules/module_tab_grid.lua:647
 msgid "Gray"
-msgstr ""
+msgstr "Gris"
 
 #: modules/critter/phrases.lua:145
 msgid "Great going, %s!"
@@ -2119,7 +2119,7 @@ msgstr "Groupe"
 #: modules/module_tab_grid.lua:923
 #, fuzzy
 msgid "Group Covers"
-msgstr "Couvertures"
+msgstr "Grouper les couvertures"
 
 #: screens/sui_menu.lua:2725
 msgid "Group by Book Series"
@@ -2416,7 +2416,7 @@ msgstr "Les éléments incompatibles ont été désactivés :"
 #: engines/sui_group_cell.lua:232
 #, fuzzy
 msgid "Inside Cover"
-msgstr "Couverture unique"
+msgstr "A l'intérieur de la couverture"
 
 #: screens/sui_menu.lua:3463
 msgid "Install pack from ZIP"
@@ -2678,8 +2678,8 @@ msgid ""
 "Lists books without an author, series or tag as a separate group in the "
 "Authors, Series and Tags views."
 msgstr ""
-"Répertorie les livres sans auteur, sans série ni balise dans un "
-"groupedistinct dans les vues « Auteurs, Séries et Balises »."
+"Répertorie les livres sans auteur, sans série ni balise dans un groupe "
+"distinct dans les vues « Auteurs, Séries et Balises »."
 
 #: screens/sui_stats_launcher.lua:47
 msgid "Loading statistics…"
@@ -3129,7 +3129,7 @@ msgstr "Aucun livre dans cette collection."
 #: modules/module_tab_grid.lua:506
 #, fuzzy
 msgid "No books in this tab"
-msgstr "Aucun livre dans l'historique."
+msgstr "Aucun livre dans cet onglet"
 
 #: engines/sui_screen_engine.lua:271
 msgid "No books opened yet"
@@ -3214,7 +3214,7 @@ msgstr "Aucune police trouvée."
 #: modules/module_tab_grid.lua:506
 #, fuzzy
 msgid "No groups in this tab"
-msgstr "Aucun livre dans cette collection."
+msgstr "Aucun groupe dans cet onglet"
 
 #: modules/module_quote.lua:1014
 msgid "No highlights found. Open a book and highlight some passages."
@@ -3308,16 +3308,16 @@ msgstr "Aucune action système trouvée."
 
 #: modules/module_tab_grid.lua:1037 modules/module_tab_grid.lua:1118
 msgid "No tabs"
-msgstr ""
+msgstr "Pas d'onglets"
 
 #: modules/module_tab_grid.lua:1037
 #, fuzzy
 msgid "No tabs  —  long press to configure"
-msgstr "Aucune statistique sélectionnée — appui long pour configurer"
+msgstr "Pas d'onglets — appuyez longuement pour configurer"
 
 #: modules/module_tab_grid.lua:867
 msgid "No tabs."
-msgstr ""
+msgstr "Pas d'onglets"
 
 #: screens/sui_menu.lua:2233
 msgid "No wallpapers found."
@@ -3366,7 +3366,7 @@ msgstr "Nombre de livres"
 #: modules/module_tab_grid.lua:586
 #, fuzzy
 msgid "Numbers"
-msgstr "novembre"
+msgstr "Chiffres"
 
 #: modules/module_clock.lua:345
 msgid "O'Clock"
@@ -3555,9 +3555,8 @@ msgid "Pages read"
 msgstr "Pages lues"
 
 #: modules/module_tab_grid.lua:581
-#, fuzzy
 msgid "Pagination"
-msgstr "Barre de pagination"
+msgstr "Pagination"
 
 #: features/sui_style.lua:1266 screens/sui_menu.lua:2636
 msgid "Pagination Bar"
@@ -3637,7 +3636,7 @@ msgstr ""
 msgid "Pick any existing folder to use as the library home."
 msgstr ""
 "Choisissez n'importe quel dossier existant pour en faire le répertoire "
-"racine de la bibliothèque."
+"d'accueil de la bibliothèque."
 
 #: modules/critter/phrases.lua:252
 msgid "Pick your next read."
@@ -3669,7 +3668,7 @@ msgstr "Couverture provisoire pour dossiers sans livre"
 #: engines/sui_group_cell.lua:228
 #, fuzzy
 msgid "Placement"
-msgstr "Placez des images dans :"
+msgstr "Placement"
 
 #: infra/sui_compat_check.lua:155
 msgid ""
@@ -4198,7 +4197,7 @@ msgstr "Superposition ronde"
 #: modules/module_tab_grid.lua:633
 #, fuzzy
 msgid "Round Pill"
-msgstr "Rond"
+msgstr "Puce ronde"
 
 #: modules/module_quick_actions.lua:458 screens/sui_quicksettings_bar.lua:1658
 msgid "Rounded Square"
@@ -4308,7 +4307,7 @@ msgstr ""
 #: engines/sui_group_cell.lua:313
 #, fuzzy
 msgid "Scale for the group count badge."
-msgstr "Échelle du badge du compteur de collection."
+msgstr "Échelle pour le badge indiquant le nombre d'éléments du groupe."
 
 #: screens/sui_quicksettings_bar.lua:1639
 msgid ""
@@ -4483,7 +4482,7 @@ msgstr "Définir la couverture de la collection"
 #: engines/sui_group_cell.lua:580
 #, fuzzy
 msgid "Set cover"
-msgstr "Définir la couverture du dossier"
+msgstr "Définir la couverture"
 
 #: features/library/sui_foldercovers.lua:561
 #: features/library/sui_library_browse.lua:879
@@ -4790,7 +4789,7 @@ msgid ""
 "100% matches the homescreen section labels."
 msgstr ""
 "Taille du texte des étiquettes d'onglet.\n"
-"100% est la taille par défaut."
+"100% correspond aux étiquettes des sections de l'écran d'accueil."
 
 #: screens/sui_menu.lua:1723
 msgid ""
@@ -4874,7 +4873,7 @@ msgstr "Espacement"
 
 #: modules/module_tab_grid.lua:634
 msgid "Square Pill"
-msgstr ""
+msgstr "Puce carrée"
 
 #: screens/sui_onboarding.lua:447
 msgid "Start using Simple UI"
@@ -5017,7 +5016,7 @@ msgstr ""
 #: modules/module_tab_grid.lua:587
 #, fuzzy
 msgid "Swipe Bar"
-msgstr "Indicateur de glissement"
+msgstr "Balayer la barre"
 
 #: screens/sui_menu.lua:988
 msgid "Swipe Indicator"
@@ -5108,7 +5107,7 @@ msgstr "Onglet : Outils"
 #: features/sui_presets.lua:158 modules/module_tab_grid.lua:930
 #: modules/module_tab_grid.lua:1100
 msgid "Tabbed Grid"
-msgstr ""
+msgstr "Grille à onglets"
 
 #: modules/module_tab_grid.lua:635 modules/module_tab_grid.lua:863
 #: modules/module_tab_grid.lua:866 screens/sui_menu.lua:350
@@ -5644,8 +5643,8 @@ msgstr ""
 "doit continuer à être pris en compte dans les statistiques « Livres lus » de "
 "l'écran d'accueil.\n"
 "\n"
-"Les livres dont le statut est revenu à « En cours de lecture » ou « "
-"Abandonné » sont automatiquement retirés de cette liste."
+"Les livres dont le statut est revenu à « En cours de lecture » ou "
+"« Abandonné » sont automatiquement retirés de cette liste."
 
 #: screens/sui_menu.lua:2545
 msgid ""
@@ -5702,7 +5701,7 @@ msgstr ""
 
 #: infra/sui_config.lua:1481 modules/module_tab_grid.lua:646
 msgid "White"
-msgstr ""
+msgstr "Blanc"
 
 #: features/sui_quickactions.lua:914 infra/sui_config.lua:135
 msgid "Wi-Fi"
@@ -6228,14 +6227,14 @@ msgstr[1] ""
 #: screens/sui_stats_windows.lua:1820
 msgid "day read"
 msgid_plural "days read"
-msgstr[0] "jour lu"
-msgstr[1] "jour de suite"
+msgstr[0] "jour de lecture"
+msgstr[1] "jours de lecture"
 
 #: modules/module_reading_stats.lua:253
 msgid "day streak"
 msgid_plural "days streak"
-msgstr[0] "série  du jour"
-msgstr[1] "jours de suite"
+msgstr[0] "série de jour"
+msgstr[1] "séries de jour"
 
 #: screens/sui_stats_windows.lua:1835
 msgid "page read"
@@ -6243,86 +6242,8 @@ msgid_plural "pages read"
 msgstr[0] "page lue"
 msgstr[1] "pages lues aujourd'hui"
 
-#~ msgid "Background"
-#~ msgstr "Arrière plan"
-
-#~ msgid "Badges"
-#~ msgstr "Badges"
-
-#~ msgid "Bar Style"
-#~ msgstr "Style de barre"
-
-#~ msgid "Folder Book Stack"
-#~ msgstr "Pile de dossiers de livre"
-
-#~ msgid "Folder Cover Type"
-#~ msgstr "Type de couverture de dossier"
-
-#~ msgid "Follow Library"
-#~ msgstr "Comme la bibliothèque"
-
-#~ msgid "Number of Books in Folder"
-#~ msgstr "Nombre de livres dans le dossier"
-
-#~ msgid "Number of Pages"
-#~ msgstr "Nombre de pages"
-
 #~ msgid "Overlays"
 #~ msgstr "Superpositions"
-
-#~ msgid ""
-#~ "Scale for the library badges (progress, pages, etc.).\n"
-#~ "100% is the default size."
-#~ msgstr ""
-#~ "Échelle des badges de la bibliothèque (progression, pages, etc.).\n"
-#~ "100% est la taille par défaut."
-
-#~ msgid ""
-#~ "Scales the section label text above each module.\n"
-#~ "100% is the default size."
-#~ msgstr ""
-#~ "Redimensionne le texte de l'étiquette de section situé au-dessus de "
-#~ "chaque module.\n"
-#~ "100% est la taille par défaut."
-
-#~ msgid "Title and Author Below Covers"
-#~ msgstr "Titre et auteur sous les couvertures"
-
-#~ msgid ""
-#~ "Title and author strip enabled.\n"
-#~ "\n"
-#~ "Restart now?"
-#~ msgstr ""
-#~ "Bandeau titre et auteur activé.\n"
-#~ "\n"
-#~ "Redémarrer maintenant ?"
-
-#~ msgid "Title only"
-#~ msgstr "Titre uniquement"
-
-#~ msgid ""
-#~ "Title strip disabled.\n"
-#~ "\n"
-#~ "Restart now?"
-#~ msgstr ""
-#~ "Bandeau titre désactivé.\n"
-#~ "\n"
-#~ "Redémarrer maintenant ?"
-
-#~ msgid ""
-#~ "Title strip enabled.\n"
-#~ "\n"
-#~ "Restart now?"
-#~ msgstr ""
-#~ "Bandeau titre activé.\n"
-#~ "\n"
-#~ "Redémarrer maintenant ?"
-
-#~ msgid "UI Font  (default)"
-#~ msgstr "Police d'interface  (par défaut)"
-
-#~ msgid "UI Font  [%s]"
-#~ msgstr "Police d'interface  [%s]"
 
 #~ msgid "Visibility"
 #~ msgstr "Visibilité"
@@ -6339,15 +6260,3 @@ msgstr[1] "pages lues aujourd'hui"
 #~ msgstr[1] ""
 #~ "Le maximum de %d statistiques par ligne a été atteint. Supprimez-en une "
 #~ "d'abord."
-
-#~ msgid "Button Background"
-#~ msgstr "Arrière-plan de bouton"
-
-#~ msgid "Button Opacity"
-#~ msgstr "Opacité de bouton"
-
-#~ msgid "Button Style"
-#~ msgstr "Style de bouton"
-
-#~ msgid "Card Opacity"
-#~ msgstr "Opacité de la carte"
