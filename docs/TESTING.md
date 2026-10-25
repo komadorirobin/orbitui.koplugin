@@ -9,11 +9,26 @@ Bookshelf action without prose/comics, saved-bar/label/icon preservation,
 explicit persistent removal, direct profile buttons/targets, same-view defaults,
 missing/disabled repair, full-bar explicit replacement, correct generic/specific
 indicators, real deferred profile enforcement after simulated reader parking,
-newer-request ownership, and minimum/navpager limits. The 11-case new suite loads
+newer-request ownership, and minimum/navpager limits. The 12-case new suite loads
 the complete config and QA modules, real library model/profiles, bridge and host
 adapters; native delivery/rendering/reader lifecycle are stubbed. Run both full
 gates, translations and a clean local validation ZIP; do not publish or replace
 Beta 8 assets. Evidence: `test-results/bookshelf-navigation-20261025/`.
+Verification completed locally at candidate `2366897f`: both complete Lua/LuaJIT
+gates pass (117 Python/four unchanged skips, 478 Bookshelf/zero failed/three
+normal SQLite exclusions, all 13 original SimpleUI files). All 72 root Lua files
+were rerun under both interpreters after the final label/test refinements.
+Module map 383, LuaJIT syntax 1,044, translations 43/zero failures. All 12 new
+cases also pass under both interpreters against the extracted sealed ZIP using
+`ORBITUI_TEST_ROOT`. This includes an empty profile inventory/no chosen home,
+not merely a home-folder-generated Library. Package/source/hash comparison
+passes: the same 1,993 inventoried paths plus manifest; no additions/removals,
+unchanged component source/pins/bootstrap/fonts/artwork, six API 1 slots remain.
+All 15 candidate blobs exclude the held artwork; Gitleaks reports no secrets.
+Local validation ZIP SHA-256:
+`10fd487498b313add62e47c719f52b2456a069944c8eb9ebd819bf6f56681735`.
+This same-version ZIP is validation only, not a replacement public Beta 8 or an
+install recommendation. Follow-up tests/docs do not change candidate runtime.
 Physical acceptance: fresh Boox with no home/with a chosen home; open Bookshelf
 from Home and the file browser; create Prose/Manga with separate chips; select
 each as a button target and as separate buttons; full-bar replacement/cancel;

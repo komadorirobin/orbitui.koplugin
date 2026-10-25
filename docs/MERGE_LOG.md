@@ -3488,7 +3488,7 @@ component source, source pins, module map, assets/fonts, bootstrap/API, library
 data and external sync owners are unchanged. No new runtime path/file is added.
 
 Contracts C02/C06/C07/C08/C09 are preserved and C02 documents the user's new
-default/repair expectations. The 11-case focused suite loads complete config/QA
+default/repair expectations. The 12-case focused suite loads complete config/QA
 modules with native services stubbed, actual model/profiles/adapters/bridge and
 the real deferred coordinator. It covers the photo's legacy action, profile
 selection and chips, saved bars and overrides, full-bar replacement, persistent
@@ -3497,6 +3497,36 @@ and superseded requests. Full Lua/LuaJIT, translation and local-package gates
 are required. Evidence: `test-results/bookshelf-navigation-20261025/`.
 All physical Boox/Bigme navigation/reader-transition checks remain open; the
 earlier user-confirmed Home result is not acceptance of this new feature.
+
+### Local navigation verification
+
+Candidate `2366897f58d50518bdd4ce623c0ebd37bca8a13f` is committed locally.
+Both complete test gates passed: 117 Python tests/four unchanged external
+source-cache skips per run, 478 Bookshelf suites/zero failures/three normal
+native-SQLite exclusions, all 13 original SimpleUI files. Module map 383;
+LuaJIT syntax 1,044. After final display-label/test refinements, all 72 root
+Lua files pass again under both interpreters. Translations: 43, zero failures.
+The final 12 navigation cases also pass under both interpreters against the
+extracted sealed package, with `ORBITUI_TEST_ROOT` selecting packaged adapters,
+model/config/QA/bridge sources. Includes an empty profile inventory as well as
+the default home-based section. This is still not a physical KOReader session.
+
+The clean local validation package contains the same 1,993 inventoried files
+plus manifest as public Beta 8; no path was added or removed. Every hash/size
+matches the candidate Git source. Runtime changes are limited to six existing
+host adapters and owned translations. All embedded component files, source
+pins, module map, bootstrap/API 1, assets/fonts and VERSION are unchanged.
+Six installed file slots remain. All 15 candidate blobs were checked against
+the held bitmap; absent. Gitleaks scanned the feature commit without leaks.
+Local ZIP SHA-256:
+`10fd487498b313add62e47c719f52b2456a069944c8eb9ebd819bf6f56681735`,
+9,020,151 bytes. It is a same-version validation ZIP only, not a public update
+or install recommendation. Follow-up package-test support and evidence docs
+do not change that candidate runtime. Evidence is retained under
+`test-results/bookshelf-navigation-20261025/`.
+
+No merge to main, remote push, version bump, tag, public release, OTA publication
+or user-device mutation occurred. Publication needs a new explicit request.
 
 ## Template for the next approved merge
 

@@ -268,6 +268,17 @@ ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
 
+The local/unpublished Bookshelf navigation candidate `2366897f` passed both
+complete Lua/LuaJIT gates and all 43 translations. All 72 root Lua files were
+rerun on the final label/test refinements; module map 383, LuaJIT syntax 1,044.
+All 12 new navigation cases pass against extracted candidate bytes under both
+interpreters, including no saved sections and simulated parked-reader selection.
+The clean validation ZIP preserves all 1,993 installed paths plus manifest,
+all component source/pins/bootstrap/artwork/fonts and six remaining file slots.
+It is not a replacement public Beta 8: no new version, tag, push or publication.
+Physical Boox/Bigme navigation acceptance remains open. Evidence:
+`test-results/bookshelf-navigation-20261025/`; details in the merge record.
+
 A fresh local verification on the versioned Beta 8 tree on 2026-10-25 passed:
 
 - `sh scripts/test.sh`

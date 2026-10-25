@@ -1,4 +1,5 @@
-package.path = "./?.lua;" .. package.path
+local runtime_root = os.getenv("ORBITUI_TEST_ROOT") or "."
+package.path = runtime_root .. "/?.lua;./?.lua;" .. package.path
 local H = require("tests/helpers")
 local Copy = require("core/orbitui_libraries").copy
 local values, books, queue, hosts, notices, opened, closed = {}, {}, {}, {}, {}, {}, {}
@@ -35,15 +36,15 @@ local deps = {
 for name, module in pairs(deps) do package.loaded[name] = module end
 local Nav = require("adapters/orbitui_navbar")
 local Libraries = require("adapters/orbitui_libraries")
-local P = dofile("components/bookshelf/lib/bookshelf_profiles.lua")
+local P = dofile(runtime_root .. "/components/bookshelf/lib/bookshelf_profiles.lua")
 package.loaded["lib/bookshelf_profiles"] = P
 Libraries.profiles(P)
 -- Load complete modules, not extracted config/registry functions. Native
 -- rendering, event delivery and persistence are the explicit test boundaries.
-local Config = dofile("components/simpleui/infra/sui_config.lua")
+local Config = dofile(runtime_root .. "/components/simpleui/infra/sui_config.lua")
 package.loaded["infra/sui_config"] = Config
 require("adapters/orbitui_ui").wrap("infra/sui_config", Config)
-local QA = dofile("components/simpleui/features/sui_quickactions.lua")
+local QA = dofile(runtime_root .. "/components/simpleui/features/sui_quickactions.lua")
 package.loaded["features/sui_quickactions"] = QA
 Libraries.actions(QA)
 package.loaded["lib/bookshelf_menu_host"] = {
@@ -117,6 +118,15 @@ H.test("saved Bigme and Boox bars, custom labels and icons are not migrated or o
     H.eq(values.simpleui_qa_custom_qa_1.icon, before.simpleui_qa_custom_qa_1.icon)
     H.eq(values.simpleui_qa_custom_qa_1.dispatcher_action, "open_bookshelf_prose")
 end)
+H.test("Bookshelf also opens when a fresh reader has no configured library sections at all", function()
+    local previous = Copy(P.config())
+    P.save({ version = 1, sections = {} })
+    reset(); Libraries.actions(QA)
+    H.eq(#P.list(), 0); QA.execute(Nav.bookshelf_action, {})
+    H.eq(#opened, 1); H.eq(opened[1].key, nil); H.eq(#hosts, 0)
+    H.eq(#Settings.destinationItems(), 1)
+    P.save(previous); Libraries.actions(QA)
+end)
 H.test("the photographed missing legacy dispatcher target opens repair instead of silently doing nothing", function()
     reset({ "homescreen", "custom_qa_1", "power" })
     QA.execute("custom_qa_1", {})
@@ -174,7 +184,7 @@ H.test("missing and disabled configured profiles fail closed and remain repairab
 end)
 H.test("bridge indicators prefer explicit profiles and preserve the generic Bookshelf slot", function()
     reset()
-    local bridge = dofile("components/simpleui/sui_bookshelf_bridge.lua")
+    local bridge = dofile(runtime_root .. "/components/simpleui/sui_bookshelf_bridge.lua")
     Libraries.bridge(bridge)
     local key = P.list()[2].key
     Libraries.setBookshelfTarget(key)
