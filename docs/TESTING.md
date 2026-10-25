@@ -2,6 +2,19 @@
 
 ## Automated
 
+2026-10-25 beta.6 publication completed: tag `v0.1.0-beta.6` at `7e573fd9`,
+published 17:52 UTC as a prerelease. Both complete local Lua/LuaJIT runs and all
+43 translations pass; native SQLite deck/facts/OPDS/ledger checks also pass.
+The sealed package contains 1,991 inventoried files plus manifest (eight API 1
+file slots remain). All 876 outgoing blobs exclude the held bitmap; Gitleaks
+reports no leaks across 188 commits. Draft/public downloads match the build
+exactly. Local macOS/Linux and anonymous public-byte Linux/LuaSec OTA from the
+actual Beta 5 installer pass discovery, full native hash/archive verification,
+missing-module rejection, activation/restart, code rollback, truncated download
+and external snapshots/restart/persistent rollback. Main/tag CI runs
+`40218238089`/`40218233505` passed. Evidence: `test-results/beta6-20261025/`.
+Beta 5 remains immutable; the physical Bigme checklist remains open.
+
 2026-10-25 beta.6 publication preparation: the user explicitly requested push
 and publication after disclosure of the remaining Bigme checks. Keep prerelease
 status; no new physical-device acceptance is claimed. Re-run both complete

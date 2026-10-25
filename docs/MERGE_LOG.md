@@ -3233,6 +3233,51 @@ pinning/bound ornaments, series labels/bindings, Highlights, colours/underlay,
 statistics and BookOrbit/MAL/Patch Manager checks remain outstanding. Publication
 results are appended only after the gates actually complete.
 
+### Beta 6 publication verification
+
+Published `v0.1.0-beta.6` at exact candidate
+`7e573fd90a0ed6b352607568e9c3008655c31bdf` on 2026-10-25 at 17:52 UTC, as a
+prerelease. `main` was fast-forwarded to the reviewed maintenance candidate and
+pushed with only the exact new OrbitUI tag; unrelated local branches and all
+earlier releases/assets are retained unchanged. The old standalone forks were
+not modified. Final verification documentation is a separate follow-up commit,
+not a replacement ZIP for the release tag.
+
+Both full sequential local runs passed: 117 Python tests per run (four existing
+external source-cache skips), all 69 root Lua test files, 478 Bookshelf suites
+(zero failures; three native SQLite exclusions), all 13 original SimpleUI files,
+383 module-map paths, 1,041 LuaJIT syntax files and all 43 translations.
+Supplemental real SQLite runs passed 7 deck, 16 facts, 100 OPDS cases and the
+SimpleUI ledger checks. Runtime/tool/test bytes remain those of `3a33fee6`;
+only the root VERSION and documentation changed for release preparation.
+
+Clean-commit ZIP: 1,991 inventoried files plus manifest, 2,057 entries,
+9,001,302 compressed bytes, 27,852,531 expanded bytes. SHA-256:
+`abf753248e490d742f03240b19ed4d01e0cb0b60aefe945c6f47fd61f8b01c8b`.
+Every file matches committed source and manifest size/hash; all 21 added paths
+are additive relative to public Beta 5, with no removed runtime paths. Stable
+bootstrap/API 1 and existing artwork/fonts are unchanged. All 876 outgoing blobs
+exclude the held bitmap; Gitleaks found no secrets in 188 outgoing commits.
+There are only eight installed file slots left under the existing 2,000 limit.
+
+Draft and anonymous public API/download checks verified both exact uploaded
+assets, their GitHub digests/sizes and equality with the tested local build.
+The actual public Beta 5 installer offered Beta 6 and passed native SHA/libarchive
+inventory verification, missing-module rejection, activation/restart, code
+rollback, truncated-download recovery and external runtime snapshots/restart/
+persistent rollback. Local macOS/Linux and anonymous public-byte Linux runs
+passed; the live run used real LuaSocket/LuaSec TLS for release discovery and
+downloads. No installed KOReader or user settings were touched.
+
+GitHub checks succeeded for [main run 40218238089](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/40218238089)
+and [tag run 40218233505](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/40218233505),
+both at `7e573fd9`; upstream watch `40218238155` also passed. Evidence:
+`test-results/beta6-20261025/` (`audit-local/draft/public.json`, native OTA logs,
+Lua/LuaJIT/translation/SQLite logs, Gitleaks and downloaded draft/public assets).
+The focused Bigme module/editor/rotation, pinning/bound ornaments, Highlights,
+colours/underlay, statistics and external-plugin checks remain open. Headless
+tests and the explicit publication request are not new physical acceptance.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

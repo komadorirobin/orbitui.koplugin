@@ -22,13 +22,13 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-25
 
-- Product version: `0.1.0-beta.6` (release candidate; publication explicitly
-  requested on October 25). Public Beta 5 remains unchanged until verified
-  Beta 6 publication; results belong in `docs/MERGE_LOG.md`.
-- Public main baseline for this maintenance: `254a1182` (Beta 5 verification).
-- Release tag: `v0.1.0-beta.5` at `a19a96ab`; previous tag
-  `v0.1.0-beta.4` and its assets are unchanged.
-- Maintenance branch: `maintenance/upstream-20261025`; push/publication requested.
+- Product version: `0.1.0-beta.6` (public GitHub prerelease, published
+  2026-10-25 at 17:52 UTC; verification is in `docs/MERGE_LOG.md`).
+- Public main baseline before this maintenance: `254a1182` (Beta 5 verification).
+- Release tag: `v0.1.0-beta.6` at `7e573fd9`; previous tag
+  `v0.1.0-beta.5` at `a19a96ab` and its assets are unchanged.
+- Active branch: `main`, with the reviewed maintenance fast-forwarded and pushed.
+  `maintenance/upstream-20261025` is retained locally.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
 - Embedded Bookshelf Git: `fc1103a3de9fd19eea89a53c5f1f1b0e8175682a`
@@ -42,8 +42,8 @@ and correct this file in the same change.
   `3cb36431`. Content reconciliation preserved OrbitUI's changes; the active
   `release_snapshot` field is retired. Historical digest/asset provenance stays
   in `docs/MERGE_LOG.md` and Git, not relabelled as an upstream commit.
-- GitHub issue #1 is monitoring-only and describes public main, not unpublished
-  local imports. Do not mistake its missing-commit count for the local state.
+- GitHub issue #1 is monitoring-only and describes public main. Its run for
+  `7e573fd9` passed after the merge push; it never authorizes a new import.
 - Open pull requests: none. The only open issue is the monitoring-only upstream
   dashboard.
 - The repository was clean, had no stash and had no unreachable commits during
@@ -244,7 +244,7 @@ ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
 
-A fresh local verification on 2026-10-25 passed:
+A fresh local verification on the versioned Beta 6 tree on 2026-10-25 passed:
 
 - `sh scripts/test.sh`
 - `LUA=luajit sh scripts/test.sh`
@@ -260,29 +260,32 @@ A fresh local verification on 2026-10-25 passed:
   16 facts and 100 OPDS cases passed. A real-SQLite SimpleUI ledger check passed.
 - all 13 original SimpleUI test files exercised by `scripts/test.sh`
 - translations: 43 passed, 0 baseline failures and 0 new failures
-- local clean-commit package: 1,990 inventoried files plus its manifest, all
-  sizes/hashes verified; bootstrap, VERSION, existing artwork/fonts unchanged.
-  All 864 outgoing candidate blobs were checked for held artwork, and the
-  outgoing history passed Gitleaks. No package file was removed from Beta 5.
-- actual public Beta 4 native installer passed extraction, activation, restart,
-  rollback, truncated-download recovery and external snapshots. The validation
-  ZIP retains the old Beta 5 VERSION; it must never replace its public asset.
-  A later release must bump the version and repeat OTA from public Beta 5.
-- no new CI refs or public/live release test is claimed: this merge is local.
-  Beta 5's earlier publication verification remains in the merge log.
+- clean-commit release package: 1,991 inventoried files plus its manifest, all
+  sizes/hashes verified; bootstrap/API 1 and existing artwork/fonts unchanged.
+  All 876 outgoing blobs were checked for held artwork, and Gitleaks found no
+  secrets in 188 outgoing commits. No package file was removed from Beta 5.
+- actual public Beta 5 native installer passed discovery of Beta 6, extraction,
+  activation, restart, rollback, truncated-download recovery and external
+  snapshots. Local macOS/Linux runs and the anonymous public-byte Linux/TLS run
+  passed. No installed reader was touched.
+- GitHub checks passed for both main and the exact release tag at `7e573fd9`
+  (runs `40218238089` and `40218233505`); upstream watch `40218238155` passed.
+- draft and anonymously downloaded public assets match the local build exactly:
+  ZIP SHA-256 `abf753248e490d742f03240b19ed4d01e0cb0b60aefe945c6f47fd61f8b01c8b`,
+  9,001,302 bytes. Evidence: `test-results/beta6-20261025/`. Later verification
+  documentation commits do not replace or rebuild the immutable release assets.
 
 These results are headless. They do not establish real fonts, touch targets,
 e-ink rendering, device lifecycle, performance or update recovery.
 
 ## Known gaps and next milestones
 
-The published Beta 5 runtime contains 1,970 inventoried files, plus its
+The published Beta 6 runtime contains 1,991 inventoried files, plus its
 manifest, within the installed OTA API 1 limit of 2,000 extracted files. Review
 that budget before adding more assets/modules; a producer-only limit increase
 would not change limits enforced by already-installed updaters.
-The October 25 import uses 1,990 plus its manifest (only nine file slots left).
-Beta 6's release-note file consumes one more slot (eight remain). Do not raise only the
-producer limit or discard runtime assets/licenses to force a build through.
+Only eight installed file slots remain. Do not raise only the producer limit or
+discard runtime assets/licenses to force a build through.
 
 The primary unresolved gate is focused physical acceptance on the Bigme B7 Pro
 at 1264 x 1680. `docs/TESTING.md` and `docs/SHARED_UI.md` contain the authoritative
@@ -346,9 +349,10 @@ redesign.
 - **2026-10-25 — local maintenance:** reviewed Bookshelf 6.0 + SimpleUI follow-ups;
   the old ZIP baseline is reconciled with upstream Git. No push, version bump,
   publication or new physical-reader acceptance.
-- **2026-10-25 — Beta 6 preparation:** explicit push/publication request for that
-  reviewed merge. Standing merge authorization now includes audited pushes,
-  never automatic releases. New physical-reader acceptance remains outstanding.
+- **2026-10-25 — Beta 6:** published the reviewed merge after the explicit
+  push/publication request, complete release gates and public-byte OTA tests.
+  Standing merge authorization now includes audited pushes, never automatic
+  releases. New physical-reader acceptance remains outstanding.
 
 For the full decision trail, use `docs/MERGE_LOG.md`; commit messages and tags
 are supporting evidence, not substitutes for the recorded contracts and tests.

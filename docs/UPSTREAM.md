@@ -180,7 +180,9 @@ commit, or assume that a release name proves equivalent contents.
   and the 13 original tests, rather than replaying 3.0 or resetting to a tag.
   The remaining upstream delta is 25 paths; remove the now-reconciled active
   `release_snapshot` field but retain its identity in the merge log/history.
-  Both real Git pins advance; no version bump, push or publication is implied.
+  Both real Git pins advance. The separate October 25 publication request
+  released this reviewed merge as OrbitUI Beta 6; the standing push policy
+  above applies to future requested merges, not automatic releases.
   Preserve scoped `findGroup` calls alongside the new shelf-visible grouping
   flag, dock and top-panel ornament gesture bounds, bindings, above-cover
   labels, series/rating/title geometry and fresh widget ownership. Cache the
