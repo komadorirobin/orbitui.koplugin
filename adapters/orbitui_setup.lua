@@ -75,6 +75,7 @@ local function actionChoices(draft)
         if not seen[id] then result[#result + 1], seen[id] = { id = id, label = label }, true end
     end
     add("homescreen", _("Home"))
+    add("orbitui_bookshelf", "Bookshelf")
     for _i, section in ipairs(draft.libraries.sections) do
         if section.enabled ~= false then
             add(require("adapters/orbitui_libraries").actionId(section.key), _(section.label))
@@ -317,9 +318,7 @@ function M.show(owner, fresh)
     local session = { owner = owner or current_owner, draft = Model.draft(snapshot()), children = {}, watched = {} }
     if fresh then
         session.draft.home, session.draft.bar = "dashboard", "custom"
-        local first = session.draft.libraries.sections[1]
-        local library = first and first.enabled ~= false and require("adapters/orbitui_libraries").actionId(first.key) or "home"
-        session.draft.tabs = { "homescreen", library, "power" }
+        session.draft.tabs = { "homescreen", "orbitui_bookshelf", "power" }
     end
     active = session
     local rows = {

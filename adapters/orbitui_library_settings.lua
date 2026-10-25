@@ -196,7 +196,15 @@ function M.sectionItems(key)
         rows[#rows + 1] = { text = chip.label, callback = function() M.shelf(key, id) end }
     end
     rows[#rows + 1] = { text = _("Add shelf"), callback = function() M.addShelf(key) end }
-    rows[#rows + 1] = { text = _("Add to the bottom bar using Navigation & bars."), enabled_func = function() return false end }
+    rows[#rows + 1] = { text = _("Add to navigation bar"), enabled_func = function()
+        return p.get(key) ~= nil
+    end, callback = function() M.addToBar(require("adapters/orbitui_libraries").actionId(key)) end }
+    rows[#rows + 1] = { text = _("Use for Bookshelf button"), enabled_func = function()
+        return p.get(key) ~= nil
+    end, callback = function()
+        require("adapters/orbitui_libraries").setBookshelfTarget(key)
+        M.addToBar(require("adapters/orbitui_navbar").bookshelf_action)
+    end }
     return rows
 end
 
@@ -221,5 +229,80 @@ local function items()
 end
 
 function M.items() return watch(items) end
+
+function M.addToBar(id)
+    local Nav = require("adapters/orbitui_navbar")
+    local ok, reason = Nav.setAction(id, true)
+    if ok then return true end
+    if reason ~= "full" then
+        require("core/orbitui_context").notify(_("The navigation bar changed. Please try again."))
+        return false
+    end
+    local rows, Config = {}, require("infra/sui_config")
+    for _, current in ipairs(Config.loadTabConfig()) do
+        local old = current
+        rows[#rows + 1] = { text = require("features/sui_quickactions").getEntry(old).label,
+            callback = function(host)
+                host.closeMenu()
+                local saved = Nav.setAction(id, true, old)
+                if not saved then M.addToBar(id) end
+            end }
+    end
+    return menu(_("Bar full: choose a button to replace"), rows)
+end
+
+function M.destinationItems()
+    local Libraries = require("adapters/orbitui_libraries")
+    local rows = { { text = _("Bookshelf (no fixed profile)"), radio = true,
+        checked_func = function() return Libraries.bookshelfTarget() == nil end,
+        callback = function() Libraries.setBookshelfTarget(nil) end } }
+    for _i, section in ipairs(profiles().list()) do
+        local key = section.key
+        rows[#rows + 1] = { text = _(section.label), radio = true,
+            checked_func = function() return Libraries.bookshelfTarget() == key end,
+            callback = function() Libraries.setBookshelfTarget(key) end }
+    end
+    return rows
+end
+
+function M.navigationItems()
+    local Libraries, Nav = require("adapters/orbitui_libraries"), require("adapters/orbitui_navbar")
+    return {
+        { text = _("Show Bookshelf in navigation bar"), checked_func = function()
+            return Nav.hasAction(Nav.bookshelf_action)
+        end, callback = function()
+            if Nav.hasAction(Nav.bookshelf_action) then
+                if not Nav.setAction(Nav.bookshelf_action, false) then
+                    require("core/orbitui_context").notify(_("Keep at least two navigation buttons, or one with the page navigator."))
+                end
+            else M.addToBar(Nav.bookshelf_action) end
+        end },
+        { text_func = function()
+            local key = Libraries.bookshelfTarget()
+            local section = key and profiles().get(key)
+            return _("Destination") .. ": " .. (key == nil and _("Bookshelf (no fixed profile)")
+                or section and _(section.label) or _("Unavailable profile"))
+        end, sub_item_table_func = M.destinationItems },
+        { text = _("Profiles and chips"), sub_item_table_func = M.items },
+        { text = _("About Bookshelf navigation"), callback = function()
+            require("core/orbitui_context").notify(_("Each library section is a Bookshelf profile with its own folders and chips. Choose one for the Bookshelf button, or add several profiles as separate navigation buttons. Long-press Bookshelf to return here. The file browser is separate."))
+        end },
+    }
+end
+
+function M.navigation() return menu(_("Bookshelf navigation"), M.navigationItems) end
+
+function M.missingProfile(key)
+    local rows = {
+        { text = string.format(_("Profile '%s' is missing or disabled on this device."), tostring(key)),
+            enabled_func = function() return false end },
+        { text = _("Open Bookshelf"), callback = function(host)
+            host.closeMenu()
+            require("features/sui_quickactions").openBookshelfProfile(nil, {})
+        end },
+        { text = _("Configure Bookshelf navigation"), sub_item_table_func = M.navigationItems },
+    }
+    return menu(_("Bookshelf profile unavailable"), rows)
+end
 
 return M

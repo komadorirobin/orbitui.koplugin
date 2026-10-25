@@ -132,10 +132,12 @@ H.test("navigation registers arbitrary sections while retaining old action IDs",
     local registered, calls = {}, {}
     local QA = { register = function(desc) registered[desc.id] = desc end,
         openBookshelfProfile = function(key, ctx, menu) calls = { key, ctx, menu } end }
+    package.loaded["infra/sui_core"] = { getOpenScreen = function() end }
+    package.loaded["core/orbitui_context"] = { withShelf = function(key) calls = { key } end }
     local key = P.add("Audio", "/audio")
     Adapter.actions(QA)
     local id = Adapter.actionId(key)
-    registered[id].execute({ test = true }); H.eq(calls[1], key); H.eq(calls[2].test, true)
+    registered[id].execute({ test = true }); H.eq(calls[1], key)
     registered[id].hold_execute({}); H.eq(calls[3], true)
     H.eq(Adapter.actionId("prose"), "bookshelf_prose")
     assert(registered.bookshelf_comics)

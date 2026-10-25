@@ -27,7 +27,9 @@ and correct this file in the same change.
 - Public main baseline before this hotfix: `1a42010d` (Beta 7 verification).
 - Release tag: `v0.1.0-beta.8` at `50edce78`; previous tag
   `v0.1.0-beta.7` at `31f287e1` and all earlier assets are unchanged.
-- Active branch: `main`; runtime fix `8641271c` and candidate `50edce78` pushed.
+- Active branch: `fix/bookshelf-navigation-20261025` (local/unpublished feature).
+  Public main remains Beta 8 verification at `abe6164e`. The earlier Home
+  runtime fix `8641271c` and release candidate `50edce78` were pushed.
   The user explicitly approved fixing and publishing Beta 8 after the photo.
   `fix/home-blitbuffer-20261025` is retained locally.
   `fix/home-first-run-20261025` is retained locally.
@@ -97,16 +99,25 @@ provides canonical module names and legacy aliases while preserving
 
 ### Shared Home and library
 
+- The user now confirms Home works on the affected Go Color 7 with Beta 8.
+  A subsequent navbar report matches a missing legacy `prose` profile: its
+  handler silently returned false. The approved local improvement adds a
+  first-class default/removable Bookshelf action, hold-to-configure and shared
+  navigation settings, optional saved-profile target, direct per-profile bar
+  buttons and explicit missing-profile repair. Saved bars/aliases/data remain
+  intact. These changes are not in the public Beta 8 ZIP; see `docs/SHARED_UI.md`.
 - Beta 8 explicitly imports `ffi/blitbuffer` in the shared engine. The photo's
   exact line-288 load error reproduces before the import and passes afterward
   under Lua/LuaJIT. New whole-engine cold-load tests close the gap left by the
-  extracted-open first-run tests. Native rendering/device acceptance remains open.
+  extracted-open first-run tests. The user's affected-device Home check now passes;
+  wider rendering/lifecycle/device acceptance remains open.
 - Beta 7 imports Home's missing logger and reports guarded
   Home load/open failures, preserving the initial cause across LuaJIT retries.
   Shared identity/callbacks and settings/data stay intact. Android fresh-install
   failure is reported on a Go Color 7 with KOReader 2026.07.2; Cover browser is
   now enabled, but the native mutex abort in the logs is not tied to a Lua trace
-  and is not proven resolved. Physical retesting remains required.
+  and is not proven causally resolved. The later Home check passes; wider native
+  crash/lifecycle acceptance remains open.
 - The SimpleUI 3.0 integration adds detailed statistics/charts, live Bento
   preview, accent/secondary colours, optional bundled fonts and Tiny Critter.
   Existing percentage/stacked layouts retain their geometry until an explicit

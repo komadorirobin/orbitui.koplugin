@@ -2,6 +2,7 @@
 -- has loaded; package.preload userpatches still have priority in the resolver.
 local M = {}
 M.modules = {
+    ["infra/sui_config"] = true,
     ["lib/bookshelf_profiles"] = true,
     ["features/sui_quickactions"] = true,
     ["sui_bookshelf_bridge"] = true,
@@ -36,7 +37,9 @@ local function settingsEntry(items, old_key)
 end
 
 function M.wrap(name, module)
-    if name == "lib/bookshelf_profiles" then
+    if name == "infra/sui_config" then
+        require("adapters/orbitui_navbar").config(module)
+    elseif name == "lib/bookshelf_profiles" then
         require("adapters/orbitui_libraries").profiles(module)
     elseif name == "features/sui_quickactions" then
         require("adapters/orbitui_libraries").actions(module)
@@ -131,6 +134,7 @@ function M.wrap(name, module)
 end
 
 function M.classes(bookshelf, simpleui)
+    require("adapters/orbitui_libraries").classes(bookshelf)
     local build = bookshelf.buildMenuItems
     function bookshelf:buildMenuItems(items)
         build(self, items)

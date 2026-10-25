@@ -60,6 +60,17 @@ search scopes, theme inventories, reader-return matching and Home prewarming
 must resolve the same saved inventory. Longest-root matching is deterministic.
 Changing a root updates descendant folder sources, not shelf IDs or actual files.
 
+October 25 user-approved navigation improvement (unreleased): Bookshelf is a
+first-class action in unsaved/default bars and the fresh setup guide, without
+requiring a prose/comics profile. Saved/custom bars are not automatically changed;
+explicit removal persists. Distinguish the file browser from Bookshelf. The
+Bookshelf button's optional saved profile and per-section Add to navigation
+controls reuse the same inventory, IDs, chip settings and real reader lifecycle.
+A full bar requires an explicit replacement choice. Missing/disabled profile
+aliases must explain the problem and offer configuration, never silently no-op
+or substitute an unrelated library. Source: the library/navbar/setup/UI adapters;
+regression: `tests/test_bookshelf_navigation.lua`. No bootstrap or data migration.
+
 The old comics-only presentation choices (folder-label strip and three-row
 folder-list cap) are now explicit shelf options. The Oneshots grouping rule is
 an optional subfolder-name rule on any folder shelf; migrating the old Manga

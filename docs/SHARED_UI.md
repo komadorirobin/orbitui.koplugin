@@ -30,6 +30,49 @@ change. Device acceptance is still pending.
   Author/series/genre/folder matches navigate to the corresponding library view.
   Results are capped at 400 with a notice; narrow the query if necessary.
 
+## Bookshelf navigation (unreleased)
+
+The local navigation improvement is not part of the published Beta 8 ZIP yet.
+The user has confirmed that Beta 8 opens Home on the affected Go Color 7.
+
+`open_bookshelf_prose` opens the saved profile whose internal ID is `prose`.
+It is a compatibility alias, not a universal "open Bookshelf" command. A fresh
+reader deliberately does not import another reader's prose/comics folders.
+Merely naming a newly created section "Prose" does not give it that legacy ID.
+
+For the currently published Beta 8, create/rename sections under **OrbitUI
+settings > Library sections**, choose this reader's folders and add its shelves
+(chips). Then choose that section's NAME directly for a navigation slot under
+**Appearance > Navigation & bars > Navigation Bar**; do not create a custom
+dispatcher action pointing to `open_bookshelf_prose`. Each saved section has a
+registered navigation action. Existing legacy sections and bindings remain valid.
+
+The unreleased improvement adds:
+
+- A first-class **Bookshelf** action, included in unsaved/default navigation
+  bars and the fresh setup guide. It opens Bookshelf without needing any fixed
+  profile; the native last view is retained. The file browser is separately
+  labelled **File browser**. Saved/custom bars are not rewritten.
+- **OrbitUI settings > Bookshelf navigation** (**Bookshelf i navigationsraden**).
+  Toggle the Bookshelf button and choose **Destination** (**Öppnar**): native
+  Bookshelf or any enabled, locally saved profile. Long-press the Bookshelf
+  button to reach this same menu.
+- **Profiles and chips** leads to the existing section editor. Name profiles
+  Prose, Manga, Children, etc.; choose their roots and shelves independently.
+  No device paths, folders or online integrations are assumed.
+- Each profile offers **Add to navigation bar** and **Use for Bookshelf button**.
+  The first supports several independent profile buttons. A full bar asks which
+  existing button to replace; cancellation changes no slots. Explicitly removing
+  Bookshelf persists and does not cause it to reappear on restart.
+- Missing/disabled old dispatcher profiles open an explanation/repair menu;
+  they never silently open an unrelated library or invent a profile. Existing
+  prose/comics aliases, chip IDs, custom labels/icons and all data are retained.
+
+Focused regression: `tests/test_bookshelf_navigation.lua` loads the complete
+SimpleUI config and QA modules with native services stubbed, the real library
+model/profile inventory, host adapters, bridge and deferred shelf coordinator.
+Touch/layout/reader-transition acceptance still needs Bigme and Boox testing.
+
 ## Data and behavior
 
 Home pins store only id, display mode, fallback label and profile/chip reference

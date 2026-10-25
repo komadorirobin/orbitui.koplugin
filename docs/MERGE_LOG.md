@@ -3451,6 +3451,53 @@ sealed local build byte for byte, including GitHub's asset digests. ZIP SHA-256:
 does not rebuild or replace the immutable published release. Physical retesting
 on the affected Go Color 7 and the wider Bigme acceptance checklist remain open.
 
+## 2026-10-25: Bookshelf navigation and profile setup (local, unpublished)
+
+The user confirms Home works after Beta 8, then reports that a navbar custom
+action bound to `open_bookshelf_prose` works on Bigme but only changes the
+indicator on a fresh Boox. The code checks `Profiles.get("prose")` and returns
+false silently when absent/disabled. Fresh OrbitUI deliberately seeds only the
+reader's own home-based section, not Bigme's old prose/comics folders. A section
+named Prose has a generated stable ID, not automatically the old `prose` ID.
+The old SimpleUI Library default is the file browser, not Bookshelf.
+
+The user explicitly requests Bookshelf as a removable default navbar item, a
+simple way to open it without a profile and easy profile/chip targeting. This
+authorizes the local implementation, not a release, new upstream import or
+device-data rewrite. Branch: `fix/bookshelf-navigation-20261025`; VERSION stays
+Beta 8 and published assets/tags remain unchanged. No push/publication was asked
+for this feature. The user received the root cause and preservation/default plan.
+
+Host-owned changes only: wrap config defaults/catalogue without touching saved
+bars, register generic `orbitui_bookshelf`, distinguish File browser, use the
+existing native opener for no fixed profile and the deferred shelf coordinator
+for an explicit profile, preserve profile/legacy IDs, and retain specific-tab
+indicator priority over the generic button. Fix the old nil==nil tab resolution
+ambiguity exposed by an unscoped Bookshelf view. Generic long-press opens the
+new shared Bookshelf navigation menu, also accessible from the settings hub.
+Saved target uses additive `orbitui_bookshelf_profile`; absent means no forced
+profile, not resetting the native last view.
+
+The section editor now offers Add to navigation bar / Use for Bookshelf button,
+and the navigation menu exposes destination and Profiles and chips. A full bar
+requires the user to choose a replacement; cancellation changes no slots.
+Existing bars and explicit removals remain saved. Missing/disabled legacy profile
+handlers show a repair/configuration menu; no fabricated profile, unrelated
+fallback or settings/data reset. Swedish labels have English fallbacks. Native
+component source, source pins, module map, assets/fonts, bootstrap/API, library
+data and external sync owners are unchanged. No new runtime path/file is added.
+
+Contracts C02/C06/C07/C08/C09 are preserved and C02 documents the user's new
+default/repair expectations. The 11-case focused suite loads complete config/QA
+modules with native services stubbed, actual model/profiles/adapters/bridge and
+the real deferred coordinator. It covers the photo's legacy action, profile
+selection and chips, saved bars and overrides, full-bar replacement, persistent
+removal, disabled/missing targets, scoped indicators, simulated reader parking
+and superseded requests. Full Lua/LuaJIT, translation and local-package gates
+are required. Evidence: `test-results/bookshelf-navigation-20261025/`.
+All physical Boox/Bigme navigation/reader-transition checks remain open; the
+earlier user-confirmed Home result is not acceptance of this new feature.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

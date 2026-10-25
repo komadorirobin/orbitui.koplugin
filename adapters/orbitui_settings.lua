@@ -72,6 +72,9 @@ function M.items(close)
                 require("adapters/orbitui_addons").show()
             end) },
         } },
+        { text = _("Bookshelf navigation"), sub_item_table_func = function()
+            return require("adapters/orbitui_library_settings").navigationItems()
+        end },
     }
     local sections = require("lib/bookshelf_profiles").list()
     for i, section in ipairs(sections) do

@@ -26,6 +26,30 @@ end
 
 local function profiles() return require("lib/bookshelf_profiles") end
 
+function M.bookshelfTarget()
+    return require("infra/sui_store"):get("orbitui_bookshelf_profile")
+end
+
+function M.setBookshelfTarget(key)
+    assert(key == nil or profiles().get(key), "Unavailable Bookshelf profile")
+    require("infra/sui_store"):set("orbitui_bookshelf_profile", key)
+    require("adapters/orbitui_navbar").changed()
+end
+
+local function openProfile(QA, key, ctx, menu)
+    if menu or key == nil then return QA.openBookshelfProfile(key, ctx, menu) end
+    local UI = require("infra/sui_core")
+    local _id, screen = UI.getOpenScreen()
+    if screen then
+        screen._navbar_closing_intentionally = true
+        require("ui/uimanager"):close(screen)
+        screen._navbar_closing_intentionally = nil
+    end
+    -- The normal owner handles ReaderUI/parking; enforce the explicitly chosen
+    -- profile only when its live shelf is ready, never by bypassing that lifecycle.
+    return require("core/orbitui_context").withShelf(key, function() end)
+end
+
 function M.actionId(key)
     -- Keep existing dock slots and user-defined icons untouched.
     if key == "prose" or key == "comics" then return "bookshelf_" .. key end
@@ -40,6 +64,31 @@ end
 
 function M.actions(QA)
     local Config = require("infra/sui_config")
+    if QA.iterBuiltin then
+        for descriptor in QA.iterBuiltin() do
+            if descriptor.id == "home" then descriptor.label = _("File browser") end
+        end
+    end
+    local function register(descriptor)
+        QA.register(descriptor)
+        if not Config.ACTION_BY_ID[descriptor.id] then Config.ALL_ACTIONS[#Config.ALL_ACTIONS + 1] = descriptor end
+        Config.ACTION_BY_ID[descriptor.id] = descriptor
+        for i, old in ipairs(Config.ALL_ACTIONS) do
+            if old.id == descriptor.id then Config.ALL_ACTIONS[i] = descriptor; break end
+        end
+    end
+    register{
+        id = require("adapters/orbitui_navbar").bookshelf_action, label = "Bookshelf", icon = "nerd:F02D",
+        is_in_place = false,
+        execute = function(ctx)
+            local key = M.bookshelfTarget()
+            if key and not profiles().get(key) then
+                return require("adapters/orbitui_library_settings").missingProfile(key)
+            end
+            return openProfile(QA, key, ctx)
+        end,
+        hold_execute = function() return require("adapters/orbitui_library_settings").navigation() end,
+    }
     for _i, section in ipairs(profiles().list(true)) do
         local key, label = section.key, _(section.label)
         local id = M.actionId(key)
@@ -47,35 +96,57 @@ function M.actions(QA)
             id = id, label = label, icon = section.icon or "nerd:F02D", is_in_place = false,
             execute = function(ctx)
                 if not profiles().get(key) then
-                    require("core/orbitui_context").notify(_("This library section is disabled."))
-                    return
+                    return require("adapters/orbitui_library_settings").missingProfile(key)
                 end
-                return QA.openBookshelfProfile(key, ctx)
+                return openProfile(QA, key, ctx)
             end,
             hold_execute = function(ctx)
                 if profiles().get(key) then return QA.openBookshelfProfile(key, ctx, true) end
             end,
         }
-        QA.register(descriptor)
-        if not Config.ACTION_BY_ID[id] then Config.ALL_ACTIONS[#Config.ALL_ACTIONS + 1] = descriptor end
-        Config.ACTION_BY_ID[id] = descriptor
-        for i, old in ipairs(Config.ALL_ACTIONS) do
-            if old.id == id then Config.ALL_ACTIONS[i] = descriptor; break end
-        end
+        register(descriptor)
     end
 end
 
 function M.bridge(bridge)
     local navigation, resolve = bridge.profileForNavigation, bridge.resolveProfileTab
     bridge.profileForNavigation = function(id)
+        if id == require("adapters/orbitui_navbar").bookshelf_action then
+            local key = M.bookshelfTarget()
+            return key and profiles().get(key) and key or nil
+        end
         local key = M.navigationProfile(id) or navigation(id)
         return key and profiles().get(key) and key or nil
     end
     bridge.resolveProfileTab = function(key, tabs)
         for _, id in ipairs(tabs or {}) do
-            if M.navigationProfile(id) == key then return id end
+            if key and M.navigationProfile(id) == key then return id end
         end
-        return resolve(key, tabs)
+        local exact = resolve(key, tabs)
+        if exact then return exact end
+        local target = M.bookshelfTarget()
+        if target == nil or (target == key and profiles().get(key)) then
+            for _, id in ipairs(tabs or {}) do
+                if id == require("adapters/orbitui_navbar").bookshelf_action then return id end
+            end
+        end
+    end
+end
+
+function M.classes(bookshelf)
+    -- Dispatcher aliases remain stable, but a missing/disabled legacy profile
+    -- must explain itself instead of silently marking a dead navigation tab.
+    for _, name in ipairs({ "onOpenBookshelfProfile", "onOpenBookshelfProfileStartMenu" }) do
+        local original = bookshelf[name]
+        if original then
+            bookshelf[name] = function(self, key, ...)
+                if key and not profiles().get(key) then
+                    require("adapters/orbitui_library_settings").missingProfile(key)
+                    return false
+                end
+                return original(self, key, ...)
+            end
+        end
     end
 end
 

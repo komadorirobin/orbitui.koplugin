@@ -2,6 +2,24 @@
 
 ## Automated
 
+2026-10-25 Bookshelf navigation (local/unreleased): the user confirms Beta 8
+Home works, then reports a silent `open_bookshelf_prose` navbar action on a fresh
+Boox. Reproduce missing legacy profile rejection and cover a first-class default
+Bookshelf action without prose/comics, saved-bar/label/icon preservation,
+explicit persistent removal, direct profile buttons/targets, same-view defaults,
+missing/disabled repair, full-bar explicit replacement, correct generic/specific
+indicators, real deferred profile enforcement after simulated reader parking,
+newer-request ownership, and minimum/navpager limits. The 11-case new suite loads
+the complete config and QA modules, real library model/profiles, bridge and host
+adapters; native delivery/rendering/reader lifecycle are stubbed. Run both full
+gates, translations and a clean local validation ZIP; do not publish or replace
+Beta 8 assets. Evidence: `test-results/bookshelf-navigation-20261025/`.
+Physical acceptance: fresh Boox with no home/with a chosen home; open Bookshelf
+from Home and the file browser; create Prose/Manga with separate chips; select
+each as a button target and as separate buttons; full-bar replacement/cancel;
+remove/restart; rename/disable a target; verify Bigme's existing aliases and
+chip style settings; parked-reader returns, rotation and dock indicators.
+
 2026-10-25 beta.8 published: tag `v0.1.0-beta.8` at `50edce78`, 19:00 UTC,
 prerelease. Both complete suites pass: 71 root Lua files, 117 Python tests/four
 unchanged skips, 478 Bookshelf suites/zero failed/three normal SQLite exclusions,
