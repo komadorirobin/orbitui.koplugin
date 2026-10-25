@@ -468,6 +468,10 @@ profile also offers Add to navigation bar. No reset or raw dispatcher ID is
 needed. Bootstrap/API 1, component pins, artwork/fonts and existing data stay
 unchanged. The new physical Boox/Bigme navigation checks remain open. See
 [the Beta 9 notes](releases/0.1.0-beta.9.md).
+Older releases do not recognize the new generic Bookshelf action ID and may
+prune that button after a code rollback. Reselect an older saved-profile action
+if necessary; keep a separate navigation/settings backup. No older public
+release is rewritten to retrofit support for the new action.
 
 Version `0.1.0-beta.8` imports `ffi/blitbuffer` in the shared screen engine,
 fixing the photographed `sui_screen_engine.lua:288` cold-load failure that

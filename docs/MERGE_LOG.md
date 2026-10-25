@@ -3555,6 +3555,12 @@ rotation, parked-reader and dock-indicator device checks remain outstanding.
 The earlier user-confirmed Beta 8 Home result is retained, not generalized to
 new-flow acceptance or a diagnosis of the native Android mutex abort.
 
+Pre-tag documentation refinement: older immutable releases cannot recognize
+`orbitui_bookshelf` and their existing unknown-action pruning can remove that
+new button after rollback. Release/OTA notes disclose that an older saved-profile
+action may need to be reselected, and recommend backing up navigation choices.
+No old public code/assets are changed. This is not a reading-data rollback.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
