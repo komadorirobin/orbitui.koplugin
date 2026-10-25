@@ -3170,6 +3170,42 @@ remain open in `TESTING.md`. VERSION stays `0.1.0-beta.5`; no push/tag/release/O
 publication is authorized. Never replace the published Beta 5 ZIP. Preserve the
 held-artwork exclusion and unrelated alternate-design branch.
 
+### October 25 final verification
+
+Adaptation candidate `3a33fee6ec6b806157caa622038ab9ab1a35c265` passed both
+complete sequential gates again after all runtime/test changes: all 69 root
+Lua files under Lua and LuaJIT, 117 Python tests per run (four unchanged external
+source-cache skips), 478 Bookshelf suites per run (zero failures; three native
+SQLite suites separately passed as described above), all 13 original SimpleUI
+files, 383 module paths, 1,041 syntax files, and all 43 translation catalogues.
+The nine new merge tests, 49 series-box cases and 11 underlay cases are included
+in these final runs. Logs: `lua-final.log`, `luajit-final.log` and
+`translations-final.log` in the evidence directory. A full native archive/SHA
+smoke from the real public Beta 4 ZIP passed all inventory checks, missing-module
+rejection, activation/restart, code rollback, truncated-download recovery, and
+the external snapshot/restart/persistent-rollback path (`native-ota.log`). No
+installed reader was touched. Keeping the old VERSION means this tests packaging
+and installer compatibility, not offering a new update to a Beta 5 reader.
+
+Candidate package: 1,990 inventoried files plus manifest, 2,056 ZIP entries,
+8,996,740 compressed bytes and 27,840,709 expanded bytes. SHA-256:
+`28c122d53fa6c6d973cdb36ace535ee34dd38720d0794854e51a361ea5d7079f`.
+Every file matched its committed source and inventory size/hash. There are 20
+additive runtime paths and no removed paths relative to the byte-verified public
+Beta 5 ZIP. Root bootstrap/API 1, VERSION, existing artwork and fonts are
+unchanged. Full imported ancestry, including the former ZIP source and original
+forks, is retained. All 864 outgoing blobs were hashed and exclude the held
+bitmap; Gitleaks found no secrets in the outgoing commits.
+
+The local read-only collector at 12:30 UTC reported zero missing commits and
+current pins for both components, without the reconciled snapshot warning. It
+did not update the GitHub issue. The final documentation-only verification commit
+is packaged/audited separately; runtime/tool/test bytes remain the candidate's.
+No push, public CI run, version/tag, release, OTA publication or physical-reader
+acceptance. A future publication needs a new version and OTA from public Beta 5;
+never replace Beta 5's existing files. The archive is close to API 1's 2,000-file
+limit: only nine slots remain, before adding future release notes/assets.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

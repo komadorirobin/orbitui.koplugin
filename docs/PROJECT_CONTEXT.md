@@ -32,6 +32,9 @@ and correct this file in the same change.
   (6.0.0 plus follow-ups), 209 reviewed incoming commits; merge `48438837`.
 - Embedded SimpleUI Git: `40b301f0f5e4466021d00b4e47ac8c09bb65ac8c`
   (3.0 plus follow-ups), 18 reviewed incoming commits; merge `b9dfc849`.
+- OrbitUI adaptation candidate: `3a33fee6`; all final headless gates passed.
+  A read-only local collector at 2026-10-25 12:30 UTC reported zero missing
+  commits for both exact reviewed targets. Nothing was published by that run.
 - The real SimpleUI Git history now accounts for the approved 3.0 ZIP snapshot
   `3cb36431`. Content reconciliation preserved OrbitUI's changes; the active
   `release_snapshot` field is retired. Historical digest/asset provenance stays
@@ -234,26 +237,32 @@ ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
 
-A fresh local verification on 2026-10-23 passed:
+A fresh local verification on 2026-10-25 passed:
 
 - `sh scripts/test.sh`
 - `LUA=luajit sh scripts/test.sh`
 - `sh scripts/check-translations.sh`
 - 117 Python tests per run, with four documented external source-cache audits
   skipped
-- all 68 OrbitUI Lua test files under both interpreters, including the complete
-  nine-case SimpleUI 3.0 compatibility suite
-- module map: 364 paths verified
-- LuaJIT syntax: 952 Lua files verified
-- Bookshelf: 410 suites, 0 failed, 2 documented KOReader-SQLite skips per run
+- all 69 OrbitUI Lua test files under both interpreters, including nine new
+  merge regressions and 49 native series-box integration cases
+- module map: 383 paths verified
+- LuaJIT syntax: 1,041 Lua files verified
+- Bookshelf: 478 suites, 0 failed, 3 documented KOReader-SQLite skips per run;
+  all three excluded suites ran separately against real SQLite: 7 deck,
+  16 facts and 100 OPDS cases passed. A real-SQLite SimpleUI ledger check passed.
 - all 13 original SimpleUI test files exercised by `scripts/test.sh`
 - translations: 43 passed, 0 baseline failures and 0 new failures
-- Beta 5 clean-commit package: 1,970 inventoried files, all sizes/hashes verified;
-  actual public Beta 4 native installer passed extraction, activation, restart,
-  rollback, truncated-download recovery and external snapshots. Anonymous public
-  discovery and real HTTPS download of Beta 5 passed the same native checks.
-- main/tag CI and the snapshot-aware upstream monitor passed; draft/public
-  assets were downloaded and matched the sealed release bytes exactly
+- local clean-commit package: 1,990 inventoried files plus its manifest, all
+  sizes/hashes verified; bootstrap, VERSION, existing artwork/fonts unchanged.
+  All 864 outgoing candidate blobs were checked for held artwork, and the
+  outgoing history passed Gitleaks. No package file was removed from Beta 5.
+- actual public Beta 4 native installer passed extraction, activation, restart,
+  rollback, truncated-download recovery and external snapshots. The validation
+  ZIP retains the old Beta 5 VERSION; it must never replace its public asset.
+  A later release must bump the version and repeat OTA from public Beta 5.
+- no new CI refs or public/live release test is claimed: this merge is local.
+  Beta 5's earlier publication verification remains in the merge log.
 
 These results are headless. They do not establish real fonts, touch targets,
 e-ink rendering, device lifecycle, performance or update recovery.
@@ -264,6 +273,9 @@ The published Beta 5 runtime contains 1,970 inventoried files, plus its
 manifest, within the installed OTA API 1 limit of 2,000 extracted files. Review
 that budget before adding more assets/modules; a producer-only limit increase
 would not change limits enforced by already-installed updaters.
+The October 25 local runtime uses 1,990 plus its manifest (only nine file slots
+left). A new release-note file also consumes one slot. Do not raise only the
+producer limit or discard runtime assets/licenses to force a build through.
 
 The primary unresolved gate is focused physical acceptance on the Bigme B7 Pro
 at 1264 x 1680. `docs/TESTING.md` and `docs/SHARED_UI.md` contain the authoritative
