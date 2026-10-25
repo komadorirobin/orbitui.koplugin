@@ -323,7 +323,8 @@ end
 
 -- Returns the live homescreen module from package.loaded, or nil.
 local function liveHS()
-    return package.loaded["screens/sui_homescreen"]
+    local home = package.loaded["screens/sui_homescreen"]
+    return type(home) == "table" and home or nil
 end
 
 -- True when the file manager main menu is open above the stack entry at index
@@ -750,9 +751,7 @@ function M.patchFileManagerClass(plugin)
                 this._hs_rotation_on_qa_tap   = nil
                 this._hs_rotation_on_goal_tap = nil
                 UIManager:scheduleIn(0, function()
-                    local HS = liveHS() or (function()
-                        local ok, m = pcall(require, "screens/sui_homescreen"); return ok and m
-                    end)()
+                    local HS = liveHS() or require("infra/sui_screen_nav").loadHome()
                     if HS then
                         _ensureGoalCallback(plugin)
                         local qa_tap   = rot_qa_tap   or _makeQaTap(plugin)
@@ -3145,8 +3144,7 @@ function M.showHSAfterResume(plugin, force)
         if not fm then return end
 
         if not HS2 then
-            local ok, m = pcall(require, "screens/sui_homescreen")
-            HS2 = ok and m
+            HS2 = require("infra/sui_screen_nav").loadHome()
         end
         if not HS2 then return end
 
@@ -4098,9 +4096,7 @@ end
 local function _closeReaderToHomescreenSync(plugin, readerui, file, prev_action)
     if isAppExiting() then return end
 
-    local HS = liveHS() or (function()
-        local ok, m = pcall(require, "screens/sui_homescreen"); return ok and m
-    end)()
+    local HS = liveHS() or require("infra/sui_screen_nav").loadHome()
 
     if not HS then
         _teardownReader(readerui, file)

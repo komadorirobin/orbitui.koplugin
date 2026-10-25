@@ -15,6 +15,7 @@
 -- id == "hs" — returning a different table here would break that identity.
 local ScreenEngine = require("engines/sui_screen_engine")
 local SUISettings = require("infra/sui_store")
+local logger = require("logger")
 
 -- The built-in Homescreen's instance_cfg. Nothing else should build one of
 -- these — Custom Screens get their own from infra/sui_custom_screens.lua.
@@ -48,7 +49,8 @@ BUILTIN_INSTANCE_CFG = {
 }
 
 function ScreenEngine.show(on_qa_tap, on_goal_tap)
-    return ScreenEngine._open(BUILTIN_INSTANCE_CFG, on_qa_tap, on_goal_tap)
+    return require("infra/sui_screen_nav").openHome(
+        ScreenEngine, BUILTIN_INSTANCE_CFG, on_qa_tap, on_goal_tap)
 end
 
 function ScreenEngine.close()

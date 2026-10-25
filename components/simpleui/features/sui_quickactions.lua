@@ -844,8 +844,8 @@ local function _registerBuiltins()
                         return
                     end
                 end
-                local ok_hs, HS = pcall(require, "screens/sui_homescreen")
-                if ok_hs and HS and type(HS.show) == "function" then
+                local HS = require("infra/sui_screen_nav").loadHome()
+                if HS then
                     local saved_page = HS._current_page or 1
                     if ctx.already_active then
                         HS._current_page = 1
@@ -868,9 +868,6 @@ local function _registerBuiltins()
                         end
                     end
                     HS.show(on_qa_tap, on_goal_tap)
-                else
-                    local su = ctx.show_unavailable or _unavailToast
-                    su(_("Homescreen not available."))
                 end
             end,
         },
