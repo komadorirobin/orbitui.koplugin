@@ -22,7 +22,8 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-25
 
-- Product version before this merge: `0.1.0-beta.9` (public GitHub prerelease, published
+- Candidate product version: `0.1.0-beta.10`; release gates are in progress.
+  Public version before this merge: `0.1.0-beta.9` (GitHub prerelease, published
   2026-10-25 at 19:49 UTC; verification is in `docs/MERGE_LOG.md`).
 - Public main baseline for the requested Beta 10: `97b7948a` (Beta 9 verification).
 - Release tag: `v0.1.0-beta.9` at `a4bb9acb`; previous tag

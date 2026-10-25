@@ -460,6 +460,15 @@ alpha pending the fresh-setup and add-on physical-device acceptance checks.
 
 ## On the reader
 
+Version `0.1.0-beta.10` integrates reviewed Bookshelf 6.0.2 metadata-refresh,
+colour-cover clipping, bounded/covered status repaint and module-action/key fixes.
+SimpleUI, Home/Bento and Bookshelf profile/navigation behavior are retained.
+Beta 9 and Beta 5 can update directly through the preview channel and restart;
+bootstrap/API 1 is unchanged. No automatic metadata scan, settings/data reset,
+artwork change or external sync-owner change is included. Physical cover refresh,
+minute-tick/overlay, module-key and broader device checks remain open. See
+[the Beta 10 notes](releases/0.1.0-beta.10.md).
+
 Version `0.1.0-beta.9` adds a first-class Bookshelf navbar destination and simple
 saved-profile/chip targeting. Beta 8 and Beta 5 can update directly through the
 preview channel and restart. Existing bars are retained: enable Bookshelf in

@@ -10,7 +10,7 @@ These projects are the foundation of OrbitUI, not just inspiration: their code,
 interfaces and features are included and adapted here. Please support and credit
 the original creators.
 
-**[Download Beta 9](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.9)**
+**[Download Beta 10](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.10)**
 | [Install](#installation)
 | [Switch from SimpleUI / Bookshelf](#already-using-simpleui-or-bookshelf)
 | [Feature guide](docs/FEATURES.md)
@@ -98,7 +98,7 @@ prerelease, not a promise of compatibility with every device or user patch.
    manager and restart KOReader.** Disable both if you have both. Do not delete
    their settings or plugin folders.
 3. Download **`orbitui.koplugin.zip`** from the
-   [Beta 9 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.9).
+   [Beta 10 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.10).
    Do **not** use **Code > Download ZIP** or GitHub's **Source code** archives.
 4. Fully exit KOReader. Extract the ZIP and copy its **`orbitui.koplugin`**
    folder into your KOReader **`plugins/`** directory.
@@ -138,7 +138,7 @@ OrbitUI. Their local catalogs may need refreshing.
 after the backup and predecessor-disable steps above, find
 `komadorirobin/orbitui.koplugin`. In its download options, choose
 **Other releases...**, uncheck **Filter pre-releases**, select
-**v0.1.0-beta.9**, then select **`orbitui.koplugin.zip`**. Restart KOReader
+**v0.1.0-beta.10**, then select **`orbitui.koplugin.zip`**. Restart KOReader
 after installation. Beta 9 is not returned by GitHub's "latest stable release"
 endpoint, so the default latest-release lookup may report that none exists.
 Do not choose **Direct download from repo**, **Source code**, the checksum
@@ -147,7 +147,7 @@ file, or the add-on-only **ornaments-1** release.
 **[Storefront by ultimatejimmy](https://github.com/ultimatejimmy/storefront.koplugin):**
 use **26.10.20 or newer**, which includes the
 [embedded-plugin detection fix](https://github.com/ultimatejimmy/storefront.koplugin/releases/tag/26.10.20).
-Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.9** and
+Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.10** and
 **`orbitui.koplugin.zip`** from its versions/releases options if the cached
 catalog still shows an older beta. Disable the predecessor plugins first as
 described above. Older affected installers (including **26.10.17-beta2**) can
@@ -195,6 +195,15 @@ re-enabling your old plugins**. Never restore stale reading-progress files just
 to undo a UI change.
 
 ## Beta status and feedback
+
+**0.1.0-beta.10** integrates **Bookshelf 6.0.2**: explicit metadata refresh
+now discards stale batch rows so books/covers can be re-extracted, colour-cover
+shadows stay clipped, status updates use the measured strip and clock ticks
+avoid refreshing beneath other windows. Micro-modules gain public book actions
+and keyboard access to their fullscreen editor. SimpleUI and the working
+Home/Bookshelf navigation fixes are retained. No automatic rescan or data reset.
+See [the Beta 10 notes](docs/releases/0.1.0-beta.10.md); physical cover/repaint/
+module-key and broader Bigme checks remain open.
 
 **0.1.0-beta.9** makes **Bookshelf** a direct navigation action and a removable
 default button on new setups. Existing bars are kept: open **OrbitUI settings >
