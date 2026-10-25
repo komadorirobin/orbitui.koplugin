@@ -36,6 +36,12 @@ stale. Detailed contracts and merge records remain authoritative.
 - Before merging, read `docs/UPSTREAM.md`, `docs/INTEGRATION_CONTRACTS.md` and
   `docs/MERGE_LOG.md`. Preserve the contract IDs; record any deliberate change
   and its approval rather than silently dropping a local behavior.
+- After every upstream merge, summarize the important user-facing changes in
+  Swedish, ordered by likely impact on Robin's current setup, not commit counts.
+  Explain practical effects where relevant for the Bigme B7 Pro, Home/Bento,
+  shelves/series boxes/ornaments and BookOrbit/MAL/patch integrations. Mention
+  retained custom behavior and important risks or device checks. Distinguish
+  expected benefits from measured results, and local merges from published releases.
 - `sources.json` records original fork imports and separately the integrated
   upstream commits/branches. Advance upstream pins only in a reviewed merge;
   never mark an observed-but-unmerged upstream commit as integrated.
