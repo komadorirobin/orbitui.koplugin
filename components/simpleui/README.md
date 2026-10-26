@@ -89,7 +89,7 @@ If you are comparing this fork with the original project, those are the main use
 
 ### Home Screen
 
-Build the screen you want from modules — Currently Reading, Recent and New Books, To Be Read, Cover Deck, Collections, Reading Goals, Reading Stats, Reading Heatmap, Tabbed Grid, Quick Actions, Quote of the Day, a Tiny Critter and more. Each module can take **1/3, 1/2, 2/3 or the full width** of a row, so modules sit side by side in a bento-style grid; you can split a screen into **several pages**, save **presets**, set a **wallpaper** and create extra **Custom Screens**.
+Build the screen you want from modules — Currently Reading, Recent and New Books, To Be Read, Cover Deck, Collections, Reading Goals, Reading Stats, Reading Heatmap, Tabbed Grid, Quick Actions, Quote of the Day, a Tiny Critter and more. Each module is a box you size and place freely on a grid of 6 columns, so modules sit side by side; you can split a screen into **several pages**, save **presets**, set a **wallpaper** and create extra **Custom Screens**.
 
 The embedded fork also retains the cached BookOrbit Want to Read source and
 OrbitUI's legacy percentage/stacked layouts until an explicit new-editor edit.

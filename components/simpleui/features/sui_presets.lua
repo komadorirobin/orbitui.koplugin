@@ -74,6 +74,7 @@ local HS_EXACT = {
     ["simpleui_cover_strip_tone"]             = true,
     ["simpleui_cover_strip_show_frame"]       = true,
     ["simpleui_wallpaper_show_in_fm"]         = true,  -- "show wallpaper in file manager" toggle
+    ["simpleui_library_backdrop"]             = true,
     ["simpleui_reading_goals_show_annual"]    = true,
     ["simpleui_reading_goals_show_monthly"]   = true,
     ["simpleui_reading_goals_show_daily"]     = true,
