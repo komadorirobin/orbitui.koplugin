@@ -42,6 +42,9 @@ local _restoring = false
 local _hooks
 local unpack_values = table.unpack or unpack
 local function pack_values(...) return { n = select("#", ...), ... } end
+-- The screen was cleared or turned since the shelf last painted all of it:
+-- what is on it is not the shelf, so there is nothing to keep.
+local _wiped = false
 M._last_restore = 0
 
 local function screen()
@@ -186,6 +189,11 @@ local function paintOver(window, paint, bb, x, y)
     local Screen = screen()
     if not _valid or bb ~= Screen.bb then return paint(window, bb, x, y) end
     if sleepScreen(window) then
+        if _wiped then
+            _valid = false
+            dropPieces()
+            return paint(window, bb, x, y)
+        end
         if not _tiles.all then
             _tiles.all = true
             local ok = pcall(copy, bb, 0, 0, Screen:getWidth(), Screen:getHeight())
@@ -265,6 +273,9 @@ end
 function M.restoring() return _restoring end
 function M._setRestoring(v) _restoring = v and true or false end
 
+--- shelfPainted(): the shelf painted the whole of itself to the screen.
+function M.shelfPainted() _wiped = false end
+
 --- covered() -> true while a tracked window is over the shelf.
 function M.covered() return next(_over) ~= nil end
 
@@ -299,6 +310,27 @@ function M.install(bw)
         return close(um, window, ...)
     end
     UIManager.show, UIManager.close = state.show_wrapper, state.close_wrapper
+    -- An image sleep screen on e-ink clears the screen to white, and one in
+    -- landscape turns it upright, before it shows itself (ui/screensaver):
+    -- its first paint then finds no shelf to copy (issue 551).
+    local Screen = screen()
+    state.screen_hooks = {}
+    for _i, name in ipairs({ "clear", "setRotationMode" }) do
+        local f = Screen[name]
+        if type(f) == "function" then
+            local wrapper = function(...)
+                if state.active then
+                    _wiped = true
+                    M.invalidate()
+                end
+                return f(...)
+            end
+            state.screen_hooks[#state.screen_hooks + 1] = {
+                screen = Screen, name = name, original = f, wrapper = wrapper,
+            }
+            Screen[name] = wrapper
+        end
+    end
 end
 
 function M._debugPieces() return _pieces end
@@ -311,7 +343,7 @@ function M._reset()
         rawset(window, "_underlay_own", nil)
         rawset(window, "_underlay_wrapper", nil)
     end
-    dropPieces(); _over = {}; _valid = true; _restoring = false; _bw = nil
+    dropPieces(); _over = {}; _valid = true; _restoring = false; _bw = nil; _wiped = false
 end
 
 function M.uninstall(bw)
@@ -322,6 +354,11 @@ function M.uninstall(bw)
         state.active = false
         if state.manager.show == state.show_wrapper then state.manager.show = state.show end
         if state.manager.close == state.close_wrapper then state.manager.close = state.close end
+        for _, hook in ipairs(state.screen_hooks or {}) do
+            if hook.screen[hook.name] == hook.wrapper then
+                hook.screen[hook.name] = hook.original
+            end
+        end
     end
     _hooks, M._installed = nil, false
 end
