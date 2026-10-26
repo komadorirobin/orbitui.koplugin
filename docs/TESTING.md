@@ -2,6 +2,32 @@
 
 ## Automated
 
+2026-10-26 Beta 11 published: `v0.1.0-beta.11` at `03106015`, 18:43:59 UTC,
+prerelease. Both full suites pass 117 Python tests/four unchanged source-cache
+skips, 74 root Lua files, 483 Bookshelf suites/zero failures/three normal SQLite
+exclusions and all 13 original SimpleUI files. Module map 383; syntax 1,051;
+translations 43/zero failures. Sealed-byte runs under Lua/LuaJIT pass 8 HTTP,
+8 updater/Trapper, 4 real menu-builder/root-dialog, 12 navigation, 3 whole-Home,
+14 first-run/error, 4 book-helper, 8 October 26 and 15 Bento geometry cases.
+Undeclared-global checks pass three changed host modules. Existing October 26
+actual-SQLite supplements remain latest; no database code changes in this fix.
+
+Clean package/source/inventory match; 1,996 files plus manifest, three installed
+API 1 slots, 2,062 entries, 29,058,002 expanded bytes. Bootstrap/assets/fonts/
+pins unchanged since reviewed main; only the optional two-line native menu seam
+changes component code. All 15 outgoing blobs exclude held artwork; one-commit
+Gitleaks is clean. Draft and anonymous public assets/API digests match exactly:
+ZIP SHA-256 `b9a78e82ffdceaf3b2d0c77da1ec4e7c60319df4eaab60a81dfacd0b68b9b391`,
+9,274,291 bytes. Actual Beta 5/9/10 installers pass local Linux native inventory,
+rejection/recovery/activation/restart/code rollback and external snapshot/adoption/
+persistent rollback; macOS Beta 9 passes all phases too. Anonymous published-byte
+LuaSocket/LuaSec discovery/download and all phases pass from Beta 9 and Beta 10.
+Main/tag CI `40379763363`/`40379764285` pass. Evidence:
+`test-results/beta11-20261026/`. Follow-up docs leave runtime/ZIP unchanged;
+older tags/assets remain immutable. Temporary installs do not prove the photo's
+403 cause, real menu rendering or physical Bigme/Boox lifecycle/new upstream
+acceptance. No automatic index/reset, network bypass or measured speedup.
+
 2026-10-26 Beta 11 preparation: user approves updater UI/error fix and release.
 Native Bookshelf menu-builder tests must exercise the optional hosted menu seam
 and unchanged standalone fallback, actual OrbitUI version/preview/daily controls,

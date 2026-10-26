@@ -3874,6 +3874,53 @@ Physical Boox/Bigme update dialogs and underlying network rejection, reader/
 suspend/rotation and upstream editor/wallpaper/module acceptance remain open.
 This is an explicitly approved prerelease, not a device-acceptance claim.
 
+### Beta 11 publication and final verification
+
+Publish prerelease `v0.1.0-beta.11` at exact candidate
+`0310601522ac97925915438ca424e3e555799c57`, 2026-10-26 18:43:59 UTC, after
+explicit user approval. Main and this exact tag are pushed. Both complete
+Lua/LuaJIT gates pass 117 Python tests/four unchanged source-cache skips, 74 root
+Lua files, 483 Bookshelf suites/zero failures/three normal SQLite exclusions and
+all 13 original SimpleUI files. Module map 383; syntax 1,051; translations 43/
+zero failures. No exceptions added. All 8 HTTP, 8 update/Trapper, 4 real-menu/
+root-dialog, 12 navigation, 3 whole-Home, 14 first-run/error, 4 book-helper,
+8 October 26 and 15 real Bento geometry cases also pass on sealed bytes under
+both interpreters. Three changed host modules pass undeclared-global lint with
+explicit G_reader_settings; this is not a broad style-lint claim. Actual-SQLite
+checks from unchanged October 26 data code remain latest, not newly repeated.
+
+Every package file matches clean committed source and manifest hash/size. Only
+the Beta 11 note adds an installed path; none is removed. Inventory 1,996 plus
+manifest leaves three API 1 slots, 2,062 entries, 29,058,002 expanded bytes.
+Bootstrap/API/assets/fonts/artwork/module-map/pins unchanged since reviewed main;
+only component change is the optional two-line menu delegation. All 15 outgoing
+blobs exclude held artwork; Gitleaks scans one commit with no leaks. ZIP SHA-256
+`b9a78e82ffdceaf3b2d0c77da1ec4e7c60319df4eaab60a81dfacd0b68b9b391`,
+9,274,291 bytes. Draft and anonymously fetched public ZIP/checksum bytes and API
+asset digests/sizes match exactly. Inspect draft ID `424624609` when the draft
+by-tag API returns 404; anonymous published by-tag access succeeds.
+
+Actual public Beta 5/9/10 native installers pass local Linux SHA/libarchive
+inventory, missing-module rejection, activation/restart/code rollback,
+truncated-download recovery and full external snapshot/adoption/restart/
+persistent rollback. macOS Beta 9 also passes all phases. Anonymous published-byte
+LuaSocket/LuaSec TLS discovery/download and all native phases pass from Beta 9
+and Beta 10. These are temporary installations; no reader/settings/data touched.
+Main/tag CI [40379763363](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/40379763363)/
+[40379764285](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/40379764285)
+pass at the exact candidate. Node/runner migration annotations are warnings.
+Evidence: `test-results/beta11-20261026/`.
+
+Older tags/assets remain unchanged. Follow-up PROJECT_CONTEXT/TESTING/MERGE_LOG/
+UPSTREAM edits record results only, with outgoing held-artwork/secrets audit;
+they do not rebuild/replace published bytes. Physical Boox/Bigme update menu,
+network cause, editor/free-width/stack/rotation, wallpaper/night, wake, modules
+and optional Fast Book Closing/external-plugin acceptance remain open. No bypass,
+measured performance gain or native Android crash fix is claimed. An old updater
+still receiving 403 must wait/retry or use the complete release ZIP, preserving
+hidden version directories/settings; new error UI cannot repair old running code
+before installation.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

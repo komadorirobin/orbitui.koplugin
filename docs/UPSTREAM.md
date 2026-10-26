@@ -181,7 +181,7 @@ commit, or assume that a release name proves equivalent contents.
   bounded status/rate-limit timing, not bodies/URLs; Trapper serializes safe
   messages and explicit rate-limit cooldown. Preserve C09 TLS/activation gates.
   Coverage: `test_update_menus`, `test_updates`, `test_http`.
-- October 26 reviewed merge (main only, no release): Bookshelf master
+- October 26 reviewed merge (subsequently published in Beta 11): Bookshelf master
   `c37580a1` (6.0.3), five commits since `5f726c25`; SimpleUI main `b1580f90`,
   four commits since `40b301f0` (including the categorized Add Module picker
   published during review). Preserve the new sleep-clear/rotation detection

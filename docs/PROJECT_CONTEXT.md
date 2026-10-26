@@ -22,40 +22,42 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-26
 
-- Beta 11 preparation: user explicitly requests fixing the photo's misleading
-  update menu/HTTP 403 diagnostics and publishing. Start from clean public
-  `25a2e7ab` on `fix/orbitui-updater-beta11-20261026`. VERSION advances to
-  `0.1.0-beta.11`; public Beta 10 and earlier assets remain immutable. No new
-  upstream import/pin change is authorized. Already-reviewed October 26 imports
-  are included. Release verification/publication results follow in the merge log.
-- Product version: `0.1.0-beta.10` (public GitHub prerelease, published
-  2026-10-25 at 22:58:45 UTC; verification is in `docs/MERGE_LOG.md`).
+- Product version: `0.1.0-beta.11` (public GitHub prerelease, published
+  2026-10-26 at 18:43:59 UTC; verification is in `docs/MERGE_LOG.md`).
+- User explicitly approved the photo's updater UI/HTTP diagnostics fix and
+  publication. Candidate `03106015` starts from clean public `25a2e7ab` on
+  `fix/orbitui-updater-beta11-20261026`, then fast-forwards/pushes to main.
+  Already-reviewed October 26 imports are included; no new upstream import/pin.
+  Public Beta 10 and earlier tags/assets remain immutable.
 - Public main baseline before Beta 10: `97b7948a` (Beta 9 verification).
 - October 26 maintenance starts from public main `84597df5` on
   `maintenance/upstream-20261026` and is fast-forwarded/pushed to `main` at
-  verified candidate `706b7341`. It is merge/push only, not publication.
-  VERSION and the public Beta 10 tag/assets remain unchanged. Import commits
+  verified candidate `706b7341`. That request was merge/push only; the later
+  explicit Beta 11 request publishes its runtime. Import commits
   are `c8c0f394` (Bookshelf) and `eeb5e012` (SimpleUI); adaptation/tests `dff46bce`.
   A later observed SimpleUI picker commit is imported separately in `65ca534e`,
   with category/instance/external-module tests in `0acdd843`.
   Complete local Lua/LuaJIT, translation, sealed-package and native OTA gates
   pass; exact verification results are recorded in `docs/MERGE_LOG.md`.
-- Release tag: `v0.1.0-beta.10` at `0a2ea22b`; previous tag
-  `v0.1.0-beta.9` at `a4bb9acb` and all earlier tags/assets are unchanged.
-- Active branch: `main`; the latest request is merge/push only. The previous
+- Release tag: `v0.1.0-beta.11` at `03106015`; previous tags
+  `v0.1.0-beta.10` at `0a2ea22b`, `v0.1.0-beta.9` at `a4bb9acb` and all
+  earlier tags/assets are unchanged.
+- Active branch: `main`; the latest fix/release request produced Beta 11,
+  followed only by verification documentation. The previous
   explicit publication request produced Beta 10: Bookshelf import `0db81b46`,
   integration tests/pin `66fe1b4a` and release candidate `0a2ea22b`.
-  Retained local branches include `maintenance/upstream-20261026`,
+  Retained local branches include `fix/orbitui-updater-beta11-20261026`,
+  `maintenance/upstream-20261026`,
   `maintenance/upstream-late-20261025`, the earlier maintenance branch and
   `fix/bookshelf-navigation-20261025`, `fix/home-blitbuffer-20261025` and
   `fix/home-first-run-20261025`.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
-- Embedded Bookshelf Git on main:
+- Embedded Bookshelf Git in main/Beta 11:
   `c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3), five incoming commits.
   Public Beta 10 keeps `5f726c25` / merge `0db81b46` unchanged.
   Prior 6.0.0 integration `fc1103a3` / `48438837` is retained in ancestry.
-- Embedded SimpleUI Git on main:
+- Embedded SimpleUI Git in main/Beta 11:
   `b1580f90b2e17cf03a66c744c323a1df66d77100` (3.0 follow-ups), four commits.
   Public Beta 10 keeps `40b301f0` / merge `b9dfc849` unchanged.
 - Prior broad adaptation candidate: `3a33fee6`; its final headless gates passed.
@@ -120,13 +122,13 @@ provides canonical module names and legacy aliases while preserving
 
 ### Shared Home and library
 
-- Beta 11 preparation replaces the embedded Bookshelf update page with shared
+- Beta 11 replaces the embedded Bookshelf update page with shared
   real OrbitUI version/preview/daily/recovery controls. Bounded safe HTTP
   status/rate-limit diagnostics survive Trapper; confirmed limits suspend checks
   for their retry/reset interval in the running session. Generic 403s are not
   mislabelled. The photo does not prove its device/network cause. Settings,
   component installers, TLS, bootstrap/API and activation safety remain intact.
-- October 26 maintenance (not in the public Beta 10 ZIP): Bookshelf 6.0.3 fixes
+- October 26 maintenance (included in Beta 11, not Beta 10): Bookshelf 6.0.3 fixes
   image-screensaver wake repaint and fullscreen status-line taps, and adds an
   independent On the shelf module toggle that retains saved modules. SimpleUI
   adds optional free widths/stacking, Fast Book Closing (off by default), library
@@ -314,6 +316,30 @@ ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
 
+Beta 11 candidate/tag `03106015` passes both complete Lua/LuaJIT suites: 117
+Python tests/four existing source-cache skips, 74 root Lua files, 483 Bookshelf
+suites/zero failures/three normal SQLite exclusions and 13 original SimpleUI
+files. Syntax 1,051; module map 383; translations 43/zero failures. The HTTP,
+Trapper/update, real-menu/root-dialog and retained Home/navigation/Bento cases
+also pass on sealed bytes under both interpreters. Undeclared-global lint passes
+the three changed host modules. Prior October 26 actual-SQLite supplements
+remain applicable; no database code changes in this fix.
+
+Every ZIP file matches committed source/manifest hash/size: 1,996 inventoried
+files plus manifest, three API 1 slots, 2,062 entries, 29,058,002 expanded bytes.
+All 15 outgoing blobs exclude held artwork; one-commit Gitleaks is clean.
+Bootstrap/assets/fonts/pins unchanged since reviewed main. Draft/anonymous
+public assets match exactly: ZIP SHA-256
+`b9a78e82ffdceaf3b2d0c77da1ec4e7c60319df4eaab60a81dfacd0b68b9b391`,
+9,274,291 bytes. Actual Beta 5/9/10 native installers pass local Linux OTA,
+recovery/restart/rollback/external adoption; macOS Beta 9 also passes. Anonymous
+published-byte TLS discovery/download and every native phase pass from Beta 9
+and Beta 10. Main/tag CI `40379763363`/`40379764285` pass at the exact candidate;
+Node/runner migration annotations are warnings. Evidence:
+`test-results/beta11-20261026/`. Temporary installs are not reader tests. The
+photo's device/network cause and physical UI acceptance remain open. Follow-up
+docs do not rebuild/replace immutable assets.
+
 October 26 unreleased main candidate `706b7341` passes both complete sequential
 Lua/LuaJIT gates: 117 Python tests/four existing external-source skips, all 74
 root Lua files, 483 Bookshelf suites/zero failures/three normal SQLite exclusions
@@ -385,11 +411,11 @@ e-ink rendering, device lifecycle, performance or update recovery.
 
 ## Known gaps and next milestones
 
-The published Beta 10 runtime contains 1,995 inventoried files, plus its
+The published Beta 11 runtime contains 1,996 inventoried files, plus its
 manifest, within the installed OTA API 1 limit of 2,000 extracted files. Review
 that budget before adding more assets/modules; a producer-only limit increase
 would not change limits enforced by already-installed updaters.
-Only four installed file slots remain. Do not raise only the producer limit or
+Only three installed file slots remain. Do not raise only the producer limit or
 discard runtime assets/licenses to force a build through.
 
 The primary unresolved gate is focused physical acceptance on the Bigme B7 Pro
@@ -475,6 +501,11 @@ redesign.
   metadata/cover refresh, clipped colour shadows, status refreshes and module
   actions/keys. Full gates, main/tag CI, fresh SQLite supplements and local/live
   native OTA from Beta 9/Beta 5 pass. Cover/device acceptance remains open.
+
+- **2026-10-26 — Beta 11:** explicitly approved shared updater/HTTP diagnostic fix
+  plus the already-reviewed October 26 upstream changes. Complete suites, sealed
+  bytes, exact draft/public assets, main/tag CI and native older-installer OTA
+  pass. Physical UI/network and upstream device acceptance remain open.
 
 For the full decision trail, use `docs/MERGE_LOG.md`; commit messages and tags
 are supporting evidence, not substitutes for the recorded contracts and tests.
