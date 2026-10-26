@@ -1726,6 +1726,7 @@ function GridRenderer.makeModule(spec)
     local M = {}
     M.id          = id
     M.name        = spec.name or id
+    M.category    = spec.category
     M.label       = spec.label
     M._section_label = spec.label
     M.enabled_key = spec.enabled_key or (id .. "_enabled")

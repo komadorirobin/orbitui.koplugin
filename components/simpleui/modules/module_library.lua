@@ -263,6 +263,7 @@ end
 local mod = GridRenderer.makeModule{
     id          = "flat_library",
     name        = _("Flat Library"),
+    category    = "books",
     label       = _("Books"),
     default_on  = false,
     is_book_mod = true,   -- surgical repaint on swipe between pages; suppresses the generic empty-state

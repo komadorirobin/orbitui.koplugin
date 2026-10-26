@@ -349,6 +349,7 @@ local M = {}
 
 M.id          = "currently"
 M.name        = _("Currently Reading")
+M.category    = "books"
 M.label       = _("Currently Reading")
 M._section_label = M.label
 M.enabled_key = "currently_enabled"

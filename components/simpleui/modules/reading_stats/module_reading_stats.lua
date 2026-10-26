@@ -1798,6 +1798,7 @@ end
 local M = {}
 M.id            = BASE_ID
 M.name          = _("Reading Stats")
+M.category      = "stats"
 M.instanciable  = true
 M.bare_instance = true   -- BASE_ID is itself the first instance
 M.instances_key = "simpleui_reading_stats_instances"
