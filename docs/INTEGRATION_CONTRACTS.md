@@ -973,6 +973,30 @@ actions, the advanced SimpleUI window and the single OrbitUI updater available.
 No silent settings reset, new sync owner or automatic release accompanies these
 UI changes.
 
+October 26 user-approved local redesign: keep five task areas and settings search,
+with Home explicitly identified as SimpleUI in Swedish and English. New labels,
+help, scopes and search vocabulary must support both languages; user-entered
+names remain values, not translation keys. Global Bookshelf settings must never
+be presented as profile-specific. Show library/shelf/theme and SimpleUI editing
+scopes honestly without changing their storage scope. Direct visibility switches
+delegate to the original region/tag callbacks, preserve templates/other choices,
+and reflect the labels line's effective visibility. A label switch may enable
+its master line, but must keep other category flags and explain this behavior.
+
+Search is static, bounded and local: never index credentials/current values,
+invoke a provider/native callback, or mutate settings to build results. Retained
+native wording is checked against the generated static vocabulary after imports;
+unknown future native controls remain reachable in Advanced. Use stable metadata
+IDs, not translated-label or numeric-position matching. Native controls retain
+their callbacks; scoped wrappers are shallow copies, not a preference migration.
+Back/close-all remain distinct and delayed library openers are cancelled by a
+newer settings destination. The optional menu-host Back and SimpleUI title seams
+must leave standalone behavior unchanged. Contextual shelf/panel shortcuts keep
+the real edit/detail actions and gesture/selection gates. Regression:
+`test_settings_navigation`, `test_shared_settings`, `test_settings_i18n` and
+`scripts/settings-search.py --check`. Physical bilingual layout/touch/Back and
+reader-return acceptance remains outstanding; no release is implied.
+
 Source: `core/orbitui_context.lua`, `orbitui_shelf_query.lua`,
 `orbitui_search.lua`, `orbitui_i18n.lua`; adapters `orbitui_ui.lua`,
 `orbitui_book_panel.lua`, `orbitui_home_shelves.lua`, `orbitui_settings.lua`.

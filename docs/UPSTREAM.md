@@ -173,6 +173,19 @@ commit, or assume that a release name proves equivalent contents.
 
 ## Current embedding changes
 
+- Local settings redesign (user approved, no release request): native settings
+  rows carry stable `orbitui_id` metadata; tag master/categories and hero regions
+  are identifiable without translated-text matching. The top-panel hold has an
+  optional `orbitui_hero_menu` shortcut after existing gesture/selection gates.
+  MenuHost accepts optional root `on_back`/`parent_title` while preserving nested
+  Back and close-all. SimpleUI's window applies optional `orbitui_settings_titles`
+  before construction. The host wraps only Bookshelf's i18n namespace, preserving
+  existing native/preload translations before its SV fallback; never global
+  gettext. Scoped native submenu wrappers preserve callback/store ownership.
+  `scripts/settings-search.py --check` checks 332 static native phrases; update
+  generated terms after a reviewed import. All unclassified controls still appear
+  in Advanced. No upstream pin, bootstrap, storage or runtime file addition.
+
 - Beta 12 Android covers: `adapters/orbitui_android_covers.lua` wraps the widget's
   extraction kickoff/fire/stop and Bookshelf's `scanAllMetadata`. Two optional
   component hooks precede single/bulk metadata deletion; standalone fallback

@@ -463,6 +463,7 @@ function Settings:_heroSubItems(keys)
     end
     for _i, key in ipairs(keys) do
         local item = {
+            orbitui_id = "hero." .. key,
             keep_menu_open = true,
             text_func = function()
                 local label    = _(Regions.LABELS[key] or key)
@@ -537,6 +538,7 @@ function Settings:_tagsRegionSubItems()
     -- category shown == pre-#99 behaviour), so nil reads as on.
     local function categoryRow(field, label, separator)
         return {
+            orbitui_id = field,
             text = label,
             checked_func = function() return Regions.read().tags[field] ~= false end,
             keep_menu_open = true,
@@ -562,6 +564,7 @@ function Settings:_tagsRegionSubItems()
     end
     return {
         {
+            orbitui_id = "tags.enabled",
             text = _("Show tags line"),
             checked_func = function() return not Regions.read().tags.disabled end,
             keep_menu_open = true,
@@ -3240,6 +3243,7 @@ function Settings:_settingsSubItems()
     items[#items + 1] = self:_heroSubItems({ "status" })[1]
     items[#items].enabled_func = function() return self._bw ~= nil end
     items[#items + 1] = {
+        orbitui_id          = "settings.panel",
         text                = _("Edit top panel content"),
         help_text = _("The lines of book information shown in the top panel:"
             .. " title, subtitle, author, rating, metadata, description, tags and"
@@ -3258,18 +3262,21 @@ function Settings:_settingsSubItems()
 
     -- ── appearance band ──
     items[#items + 1] = {
+        orbitui_id          = "settings.covers",
         text                = _("Cover display"),
         sub_item_table_func = function()
             return self:_coverDisplaySubItems()
         end,
     }
     items[#items + 1] = {
+        orbitui_id          = "settings.list",
         text                = _("List view"),
         sub_item_table_func = function()
             return self:_listViewSubItems()
         end,
     }
     items[#items + 1] = {
+        orbitui_id          = "settings.text",
         text                = _("Text size"),
         sub_item_table_func = function()
             return self:_textSizeSubItems()
@@ -3282,6 +3289,7 @@ function Settings:_settingsSubItems()
     -- Bookshelf UI font: promoted here from Advanced to sit with the other
     -- appearance settings.
     items[#items + 1] = {
+        orbitui_id = "settings.font",
         text_func = function()
             local Fonts = require("lib/bookshelf_fonts")
             local f = Fonts.getUIFontFace()
@@ -3309,6 +3317,7 @@ function Settings:_settingsSubItems()
     -- ("Hero area starts with" - which the hero checkbox governs - lives in
     -- Behavior since 4.0.)
     items[#items + 1] = {
+        orbitui_id = "settings.modules",
         text_func = function()
             if not BookshelfSettings.microAnyEnabled() then
                 return _("Micro modules") .. ": " .. _("Off")
@@ -3392,6 +3401,7 @@ function Settings:_settingsSubItems()
         end,
     }
     items[#items + 1] = {
+        orbitui_id          = "settings.start",
         text                = _("Start menu"),
         sub_item_table_func = function()
             return self:_startMenuSubItems()
@@ -3401,18 +3411,21 @@ function Settings:_settingsSubItems()
 
     -- ("Hardcover enrichment" lives at the top level - see main.lua.)
     items[#items + 1] = {
+        orbitui_id          = "settings.behavior",
         text                = _("Behavior"),
         sub_item_table_func = function()
             return self:_behaviourSubItems()
         end,
     }
     items[#items + 1] = {
+        orbitui_id          = "settings.library",
         text                = _("Library & search"),
         sub_item_table_func = function()
             return self:_librarySubItems()
         end,
     }
     items[#items + 1] = {
+        orbitui_id          = "settings.advanced",
         text                = _("Advanced"),
         sub_item_table_func = function()
             return self:_advancedSubItems()

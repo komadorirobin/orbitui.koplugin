@@ -2,6 +2,28 @@
 
 ## Automated
 
+2026-10-26 local settings redesign, not published: `test_settings_navigation`
+exercises the five task areas, explicit SimpleUI ownership, complete SV/EN owned
+labels/scopes and 332 native search phrases, literal/bounded bilingual search,
+no eager providers/preferences, real native region/tag callbacks and preserved
+templates/categories, effective label-line behavior, canonical/search Back versus
+close-all, scope inheritance, stable native IDs/future-control retention and
+deferred-open cancellation. It cold-loads the complete SimpleUI settings window
+and applies hosted titles before window construction, keeping custom-screen
+context unchanged. It also loads the real Bookshelf settings module and MenuHost
+with only native UI boundaries stubbed. `test_settings_i18n` checks format
+parameters, inherited-only duplicate keys and static vocabulary/UTF-8 byte escape
+decoding. Existing settings/navigation/Home/cover suites remain required.
+
+Both full interpreters, translations and clean-commit/sealed package gates are
+run in `test-results/settings-navigation-20261026/`. This does not authorize a
+push/release or replacing Beta 12 bytes. VERSION and installed API 1 limits stay
+unchanged; no runtime paths are added/removed. Physical SV/EN pagination/title
+width, scope comprehension, genre/labels, shelf/panel shortcuts, nested Back,
+native SimpleUI windows, custom-screen state, reader return/rotation/suspend
+remain untested. The user separately confirms Beta 12 covers now display
+correctly on the affected Boox; that is not acceptance of this settings redesign.
+
 2026-10-26 Beta 12 published at exact `ea8bbaf0`, 20:42:10 UTC. Both main/tag
 CI runs `40397510037`/`40397510247` pass complete clean-source Lua/LuaJIT,
 translation/package and native OTA gates. Local complete sequential suites also

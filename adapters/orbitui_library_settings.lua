@@ -117,6 +117,7 @@ function M.shelfItems(key, id)
         end)
     end
     local rows = {
+        require("adapters/orbitui_settings").scopeRow("shelf", section.label .. " / " .. chip.label),
         { text = _("Rename"), callback = function()
             input(_("Shelf name"), chip.label, function(text) update(function(c) c.label = text end) end)
         end },
@@ -165,6 +166,7 @@ function M.sectionItems(key)
     local p, rows = profiles(), {}
     local section = p.get(key, true)
     if not section then return {} end
+    rows[#rows + 1] = require("adapters/orbitui_settings").scopeRow("library", section.label)
     rows[#rows + 1] = { text = _("Rename"), callback = function()
         input(_("Library name"), section.label, function(text) edit(key, function(s) s.label = text end) end)
     end }

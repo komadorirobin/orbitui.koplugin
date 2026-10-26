@@ -22,6 +22,15 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-26
 
+- Local user-approved settings redesign is on
+  `feature/settings-navigation-20261026`, based on public main `9f3f75a0`.
+  Five task areas plus bilingual settings search replace the crowded root;
+  Home is explicitly Home/Hem (SimpleUI). Native preference callbacks, scopes,
+  advanced controls and stored values remain in place. This task does not
+  request a push, upstream merge or release: VERSION and public Beta 12 stay
+  unchanged. Verification is recorded in TESTING/MERGE_LOG; a development ZIP
+  is not a replacement release or an installable same-version OTA.
+
 - Product version: `0.1.0-beta.12` (public GitHub prerelease, published
   2026-10-26 at 20:42:10 UTC after explicit user request; verification is in
   `docs/MERGE_LOG.md`). Previous Beta 11 remains immutable.
@@ -54,7 +63,7 @@ and correct this file in the same change.
   `v0.1.0-beta.11` at `03106015`,
   `v0.1.0-beta.10` at `0a2ea22b`, `v0.1.0-beta.9` at `a4bb9acb` and all
   earlier tags/assets are unchanged.
-- Active branch: `main`; the latest fix/release request produced Beta 12,
+- Public branch: `main`; the latest fix/release request produced Beta 12,
   followed only by verification documentation. The preceding updater request
   produced Beta 11. The previous
   explicit publication request produced Beta 10: Bookshelf import `0db81b46`,
@@ -155,7 +164,8 @@ provides canonical module names and legacy aliases while preserving
   saved menu option; it is not a new replacement for Bookshelf's fast return.
 - The user confirms both Home and the Beta 9 Bookshelf navigation fix work on
   the affected Boox. Wider lifecycle/rotation/device checks remain outstanding.
-  The later cover-loading/indexing report is not yet device-verified as resolved.
+  After Beta 12 the user confirms all covers now display correctly on that Boox.
+  This does not close unrelated native-crash, memory or lifecycle acceptance.
   Bookshelf 6.0.2 fixes stale batch rows that prevented explicit Refresh metadata
   from re-extracting a deleted metadata/cover row; it is not an automatic rescan.
   It also corrects colour-cover shadows during clipped repaints, narrows status
@@ -188,8 +198,12 @@ provides canonical module names and legacy aliases while preserving
 - The reviewed Bookshelf 6.0 import adds grid-editable micro-modules, Shelf/Ornament
   modules among books, pinned ornaments, Highlights and persistent derived caches.
   Hosted migrations retain old module/deck keys; no settings/book data moves.
-- One settings hub joins Home, arbitrary library sections, appearance, search,
-  Home shelves and the OrbitUI updater.
+- The local settings redesign groups Home (SimpleUI), Bookshelf, Navigation &
+  interface, Integrations and System & maintenance, with a separate settings
+  search. Book search stays under Bookshelf. Clear scope headers distinguish
+  global Bookshelf controls, library/shelf overrides, shared themes and SimpleUI
+  screen contexts. Native advanced controls remain accessible; no migration.
+  The published Beta 12 still has the previous hub until an explicit new release.
 - Library sections are user-defined; no personal fiction/manga folder layout is
   hard-coded as the live source of truth.
 - Home can pin live shelf rows/carousels by profile/chip reference. It never
@@ -425,11 +439,12 @@ e-ink rendering, device lifecycle, performance or update recovery.
 
 ## Known gaps and next milestones
 
-The published Beta 11 runtime contains 1,996 inventoried files, plus its
+The published Beta 12 runtime contains 1,998 inventoried files, plus its
 manifest, within the installed OTA API 1 limit of 2,000 extracted files. Review
 that budget before adding more assets/modules; a producer-only limit increase
 would not change limits enforced by already-installed updaters.
-Only three installed file slots remain. Do not raise only the producer limit or
+Only one installed file slot remains. The local settings redesign adds no
+runtime path. Do not raise only the producer limit or
 discard runtime assets/licenses to force a build through.
 
 The primary unresolved gate is focused physical acceptance on the Bigme B7 Pro

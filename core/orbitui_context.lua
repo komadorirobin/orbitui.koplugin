@@ -26,7 +26,7 @@ function M.openBook(file)
     return require("engines/sui_screen_engine").openBook(file)
 end
 
-function M.withShelf(profile, action)
+function M.withShelf(profile, action, opts)
     local plugin = M.plugin("bookshelf")
     local function unavailable()
         M.notify(require("core/orbitui_i18n")(
@@ -39,7 +39,7 @@ function M.withShelf(profile, action)
     local UIManager = require("ui/uimanager")
     local attempts = 0
     local function ready()
-        if request ~= navigation then return end
+        if request ~= navigation or (opts and opts.is_current and not opts.is_current()) then return end
         -- A parked reader can replace its plugin during the transition.
         local current = M.plugin("bookshelf")
         local widget = current and current._widget

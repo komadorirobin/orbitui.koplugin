@@ -4,6 +4,7 @@ cd "$(dirname "$0")/.."
 LUA="${LUA:-lua}"
 export LUA
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_*.py' -v
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/settings-search.py --check
 "$LUA" scripts/module-map.lua --check
 luajit scripts/syntax.lua
 for test_file in tests/test_*.lua; do

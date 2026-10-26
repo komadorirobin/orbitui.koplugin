@@ -25,6 +25,8 @@ M.modules = {
     ["features/sui_module_chrome"] = true,
     ["screens/sui_menu"] = true,
     ["screens/sui_bottombar"] = true,
+    ["screens/sui_settings_window"] = true,
+    ["lib/bookshelf_i18n"] = true,
     ["infra/sui_patches"] = true,
 }
 
@@ -71,6 +73,9 @@ function M.wrap(name, module)
         module.orbitui_shelf_menu = function(self, chip)
             return require("adapters/orbitui_home_shelves").shelfMenu(self, chip)
         end
+        module.orbitui_hero_menu = function(self, book)
+            return require("adapters/orbitui_settings").heroMenu(self, book)
+        end
         module.orbitui_search = function(self, text)
             return require("core/orbitui_search").show{
                 ref = require("core/orbitui_shelf_query").capture(self, nil, true), query = text,
@@ -81,6 +86,17 @@ function M.wrap(name, module)
         module._commitBookStatus = function(self, book, status)
             commit(self, book, status)
             require("core/orbitui_context").refresh(book and book.filepath)
+        end
+    elseif name == "lib/bookshelf_i18n" then
+        local translate = module.gettext
+        module.gettext = function(text)
+            local native = translate(text)
+            if native ~= text then return native end
+            return require("core/orbitui_i18n")(text)
+        end
+    elseif name == "screens/sui_settings_window" then
+        module.orbitui_settings_titles = function(titles, state)
+            require("adapters/orbitui_settings").homeTitles(titles, state)
         end
     elseif name == "lib/bookshelf_spine_widget" then
         require("adapters/orbitui_cover_labels").cover(module)

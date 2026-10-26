@@ -972,6 +972,7 @@ function SettingsWindow:show(on_close, nav_path, state)
 
     local screens = buildScreens(st)
     local titles  = makeScreenTitles(st)
+    if self.orbitui_settings_titles then self.orbitui_settings_titles(titles, st) end
 
     local win = SUI:new{
         name           = "sui_win_settings",

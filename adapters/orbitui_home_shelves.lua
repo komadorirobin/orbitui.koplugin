@@ -230,7 +230,8 @@ function M.shelfMenu(widget, chip)
     local UIManager = require("ui/uimanager")
     local function close() UIManager:close(dialog) end
     dialog = require("ui/widget/buttondialog"):new{
-        title = (Query.resolve(ref) or {}).label or chip,
+        title = _("Customize this shelf") .. "\n"
+            .. ((Query.resolve(ref) or {}).label or chip),
         buttons = {
             {{ text = _("Show this shelf on Home"), callback = function() close(); M.choose(ref) end }},
             {{ text = _("Cover text"), callback = function()
@@ -245,7 +246,7 @@ function M.shelfMenu(widget, chip)
                 close()
                 require("adapters/orbitui_series_titles").show(widget, chip)
             end }},
-            {{ text = _("Edit shelf"), callback = function()
+            {{ text = _("Customize this shelf"), callback = function()
                 close()
                 if widget.profile then require("adapters/orbitui_library_settings").shelf(widget.profile.key, chip)
                 else

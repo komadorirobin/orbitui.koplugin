@@ -4018,6 +4018,53 @@ open. Keep Android safe mode ON and browse affected Bookshelf pages after
 restart; do not instruct another cache wipe or full-library scan. No measured
 speedup or general native Android crash fix is claimed.
 
+## 2026-10-26: Local bilingual task-oriented settings redesign
+
+User asks for clearer settings, approves all five-area/direct-controls/scope/
+context-shortcut/search proposals, explicitly requests SimpleUI ownership for
+Home and Swedish plus English throughout the new UI. Implement on
+`feature/settings-navigation-20261026` from clean public `9f3f75a0`. This is not
+an upstream merge, push or release request. Keep public Beta 12, VERSION and its
+assets immutable; retain the one remaining installed API 1 path slot.
+
+Root becomes Settings search + Home (SimpleUI), Bookshelf, Navigation & interface,
+Integrations, System & maintenance. Library names/chips no longer crowd the root.
+Retain the complete native Advanced controls, sole updater and old dispatcher
+aliases. Book search moves under Bookshelf, distinct from settings search.
+Scope headers distinguish shared Bookshelf, SimpleUI/Home/custom-screen,
+library/shelf and shared-theme edits without changing preference ownership.
+Menu-host parent Back preserves native nested Back/close-all, and search Back
+restores the query. Newer settings navigation cancels delayed library openers.
+
+Direct region/category visibility delegates to actual native callbacks; no second
+store or migration. Existing templates, fonts, ignore choices, profile/chip IDs,
+progress, books, links and data stay intact. Category switches reflect the master
+line: turning a label on can enable its line but keeps all other category flags.
+Top-panel hold offers customization plus the original detail action after the
+same gesture/selection guards. Shelf hold retains its actions and renames Edit
+to Customize this shelf. Existing themes are edited through the current native
+theme menu, fixing the obsolete host call to absent `_backgroundSubItems`.
+
+Static bilingual search indexes the owned descriptors plus 332 native short
+Bookshelf phrases, without building native settings, evaluating current values,
+opening a reader/provider or contacting a service. Forty-result cap with notice,
+label relevance ranking, literal token matching and true UTF-8 byte decoding.
+Generated vocabulary remains in the existing adapter; its source checker runs
+in the normal gates after future imports. Small component metadata and optional
+hero/title/Back seams preserve standalone behavior. Namespace-only Bookshelf
+translation fallback keeps native/preload translations ahead of owned SV text;
+no global gettext or require replacement. Existing SimpleUI translations stay
+untouched. New labels/help, indexed phrases and common dynamic labels are SV/EN;
+numeric/format placeholders are checked. No runtime file is added.
+
+Focused native-backed settings/navigation/locale tests pass under Lua/LuaJIT;
+complete final suites, translations, sealed-package and audits follow in
+`test-results/settings-navigation-20261026/`. C01-C11 preserved, especially
+C02/C03/C04/C06/C07/C08/C09/C10. Physical bilingual layout/touch, SimpleUI window
+return/custom context, shared themes and reader/suspend/rotation acceptance is
+still outstanding. No performance gain or device-acceptance claim. The user's
+new cover confirmation applies to already published Beta 12, not this local UI.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

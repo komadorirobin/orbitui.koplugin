@@ -21,14 +21,68 @@ change. Device acceptance is still pending.
   Home/Bento layout with the existing layout editor. Pinning it again changes
   its display type instead of adding a duplicate. The settings hub's **Home
   shelves** list can open the shelf, switch type or remove it from Home.
-- **OrbitUI settings** groups Home, Library, Manga & comics, Home shelves,
-  Appearance, search, **Uppdatera OrbitUI** and advanced settings. The old
-  dispatcher action for SimpleUI settings still works and opens this hub.
+- Published Beta 12's **OrbitUI settings** groups Home, library profiles,
+  Home shelves, appearance, search and the common updater. The local redesign
+  below replaces that grouping only after a separately requested release.
+  The old SimpleUI settings dispatcher action still opens the shared hub.
 - Home/library search uses one input/results flow with **Entire library**,
   **Library**, **Manga & comics**, and **Current shelf** when a supported local
   shelf is available. Tap a book to open it, long-press for the shared panel.
   Author/series/genre/folder matches navigate to the corresponding library view.
   Results are capped at 400 with a notice; narrow the query if necessary.
+
+## Task-oriented settings (local, not yet released)
+
+The approved redesign has five root categories and **Search settings / Sök
+inställning**. The public Beta 12 tag/assets are not modified by this work.
+
+- **Home (SimpleUI) / Hem (SimpleUI):** layout/modules, custom screens, reading
+  dashboard, Bookshelf shelves pinned on Home, wallpaper/presets/behavior and
+  clearly named Advanced SimpleUI settings. The native window's titles identify
+  Home versus named custom screens and global SimpleUI bars/style controls.
+- **Bookshelf:** libraries and shelf sources, separate book search, the upper
+  book panel, covers, themes/backgrounds/ornaments, shelf presets, fonts and
+  retained advanced controls. Global settings are not falsely labelled Prosa/
+  Manga-specific. Library and individual shelf editors name their actual scope;
+  theme edits follow the selected theme wherever it is used.
+- **Navigation & interface / Navigation och gränssnitt:** Bookshelf destination
+  and profile buttons, bars/start view, icons/common style, custom quick actions
+  and native reader/return behavior controls.
+- **Integrations / Integrationer:** connection/help inspection, native Hardcover
+  enrichment controls and ornament add-ons. Existing optional providers and
+  explicit network actions are unchanged; opening search never calls them.
+- **System & maintenance / System och underhåll:** the sole OrbitUI updater,
+  metadata/cover maintenance, Android/performance safety, setup and honest
+  backup/recovery information. This does not introduce a full-device backup or
+  reset a cache automatically. Keep Android safe mode enabled on the affected Boox.
+
+The genre example becomes **Bookshelf > Book panel at the top > Show genres**
+(**Bookshelf > Bokpanelen överst > Visa genrer**). Title, subtitle, author,
+description, rating, metadata, progress and label visibility have ordinary
+checkboxes; templates/font/alignment remain under Advanced. Category switches
+reflect actual visibility: enabling one can enable the labels line, retaining
+all other saved category choices. Metadata/filter membership is not changed.
+
+Long-press the upper book panel to choose **Customize book panel / Anpassa
+bokpanelen** or the existing real book detail/actions panel. Selection mode and
+disabled hold gestures still gate this. Long-pressing a shelf chip keeps the
+existing shelf actions and names its edit action **Customize this shelf /
+Anpassa den här hyllan**. These are shortcuts to the same controls and stores.
+
+Settings search accepts Swedish and English regardless of UI language. Static
+catalogue words and 332 short native Bookshelf phrases contain no current values,
+paths or credentials. Exact visible labels rank ahead of broad section matches;
+there are at most 40 results and an explicit truncation notice. Results open a
+live control or its owning native section; opening never activates that control.
+Back from a result restores the query; category Back and close-all are separate.
+The old misleading All settings entry is now Advanced SimpleUI settings.
+
+All native preference controls remain available, including unknown future rows.
+Small optional metadata/title/Back/hero hooks preserve standalone behavior;
+neither global gettext nor require is replaced. No settings migration or new
+runtime file is needed. Before a future release, test SV/EN touch/long-press,
+native windows, nested Back, Prosa/Manga scopes, custom-screen layout, theme
+sharing, reading-profile opening and sleep/rotation on physical Boox/Bigme.
 
 ## Bookshelf navigation (Beta 9)
 

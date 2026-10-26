@@ -5952,6 +5952,7 @@ function BookshelfWidget:_buildHero(content_w, hero_cover_w, hero_cover_h, hero_
                 return true  -- suppress: no per-book menu in select mode
             end
             if not Gestures.on("top_panel_hold") then return true end
+            if self.orbitui_hero_menu then return self:orbitui_hero_menu(b) end
             self:_showBookDetail(b, { active = "edit" })
         end,
         on_description_tap = function(b)

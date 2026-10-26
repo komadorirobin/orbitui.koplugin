@@ -139,7 +139,7 @@ local function levelItems(host, src_items, is_pushed)
     return rows
 end
 
--- opts: { title, item_table, on_item_activated?, close_callback? }
+-- opts: { title, item_table, on_item_activated?, close_callback?, on_back?, parent_title? }
 -- Returns the host object; MenuHost.close(host) closes it.
 function MenuHost.show(opts)
     local Menu      = require("ui/widget/menu")
@@ -217,7 +217,14 @@ function MenuHost.show(opts)
         height         = Screen:getHeight(),
         is_borderless  = true,
         is_popout      = false,
-        onReturn       = function() host:_pop() end,
+        paths          = opts.parent_title and { { title = opts.parent_title } } or nil,
+        onReturn       = function()
+            if host._closed then return true end
+            if #host._stack == 1 and opts.on_back then
+                MenuHost.close(host)
+                opts.on_back()
+            else host:_pop() end
+        end,
         -- close_callback intentionally omitted here: Menu:onMenuSelect fires
         -- close_callback after every leaf item tap (menu.lua:1360), which
         -- would close the host on each selection. We gate the owner's callback
