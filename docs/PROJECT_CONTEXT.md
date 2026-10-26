@@ -22,9 +22,9 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-26
 
-- Product version: `0.1.0-beta.12` (Android-safe local-cover release candidate;
-  user explicitly requests immediate publication). Latest public before this
-  candidate is Beta 11, published 2026-10-26 at 18:43:59 UTC.
+- Product version: `0.1.0-beta.12` (public GitHub prerelease, published
+  2026-10-26 at 20:42:10 UTC after explicit user request; verification is in
+  `docs/MERGE_LOG.md`). Previous Beta 11 remains immutable.
 - Beta 12 starts from clean public main `70e5a1fd` on
   `fix/android-covers-beta12-20261026`. Android safe mode remains enabled;
   host-owned foreground local extraction replaces the blocked Bookshelf queue,
@@ -32,6 +32,9 @@ and correct this file in the same change.
   full-metadata scanner. Home's separate Android background guard stays on.
   No upstream pins, bootstrap, settings, reading data or artwork change.
   Physical cover quality/responsiveness/native-engine acceptance remains open.
+  Tag `v0.1.0-beta.12` pins candidate `ea8bbaf0`; main/tag CI and public native
+  upgrade/rollback checks pass. Only verification docs follow, without rebuilding
+  the ZIP. Inventory 1,998 plus manifest leaves one installed API 1 file slot.
 - User explicitly approved the photo's updater UI/HTTP diagnostics fix and
   publication. Candidate `03106015` starts from clean public `25a2e7ab` on
   `fix/orbitui-updater-beta11-20261026`, then fast-forwards/pushes to main.
@@ -47,25 +50,28 @@ and correct this file in the same change.
   with category/instance/external-module tests in `0acdd843`.
   Complete local Lua/LuaJIT, translation, sealed-package and native OTA gates
   pass; exact verification results are recorded in `docs/MERGE_LOG.md`.
-- Release tag: `v0.1.0-beta.11` at `03106015`; previous tags
+- Release tag: `v0.1.0-beta.12` at `ea8bbaf0`; previous tags
+  `v0.1.0-beta.11` at `03106015`,
   `v0.1.0-beta.10` at `0a2ea22b`, `v0.1.0-beta.9` at `a4bb9acb` and all
   earlier tags/assets are unchanged.
-- Previous public branch: `main`; the previous fix/release request produced Beta 11,
-  followed only by verification documentation. The previous
+- Active branch: `main`; the latest fix/release request produced Beta 12,
+  followed only by verification documentation. The preceding updater request
+  produced Beta 11. The previous
   explicit publication request produced Beta 10: Bookshelf import `0db81b46`,
   integration tests/pin `66fe1b4a` and release candidate `0a2ea22b`.
-  Retained local branches include `fix/orbitui-updater-beta11-20261026`,
+  Retained local branches include `fix/android-covers-beta12-20261026`,
+  `fix/orbitui-updater-beta11-20261026`,
   `maintenance/upstream-20261026`,
   `maintenance/upstream-late-20261025`, the earlier maintenance branch and
   `fix/bookshelf-navigation-20261025`, `fix/home-blitbuffer-20261025` and
   `fix/home-first-run-20261025`.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
-- Embedded Bookshelf Git in main/Beta 11:
+- Embedded Bookshelf Git in main/Beta 12 (unchanged since Beta 11):
   `c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3), five incoming commits.
   Public Beta 10 keeps `5f726c25` / merge `0db81b46` unchanged.
   Prior 6.0.0 integration `fc1103a3` / `48438837` is retained in ancestry.
-- Embedded SimpleUI Git in main/Beta 11:
+- Embedded SimpleUI Git in main/Beta 12 (unchanged since Beta 11):
   `b1580f90b2e17cf03a66c744c323a1df66d77100` (3.0 follow-ups), four commits.
   Public Beta 10 keeps `40b301f0` / merge `b9dfc849` unchanged.
 - Prior broad adaptation candidate: `3a33fee6`; its final headless gates passed.

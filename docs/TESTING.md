@@ -2,6 +2,30 @@
 
 ## Automated
 
+2026-10-26 Beta 12 published at exact `ea8bbaf0`, 20:42:10 UTC. Both main/tag
+CI runs `40397510037`/`40397510247` pass complete clean-source Lua/LuaJIT,
+translation/package and native OTA gates. Local complete sequential suites also
+pass 117 Python/four unchanged skips, 483 Bookshelf/zero failures/three normal
+SQLite exclusions and 13 SimpleUI files. All 75 root Lua files are additionally
+rerun on the final committed source under both interpreters. Module map 383;
+syntax 1,053; translations 43/zero failures; changed-host undeclared-global lint
+passes. The new suite passes 26 cases under each interpreter and 27 with the
+real KOReader SQLite binding; sealed bytes repeat these and Home/navigation/
+updater/Bento regressions under both interpreters.
+
+Local native installers from public Beta 5/9/11 pass all five phases. Anonymous
+real LuaSocket/LuaSec TLS discovery/download plus all phases pass from Beta 9
+and Beta 11 against the published bytes. Draft/public downloads, API digests,
+manifest and committed source match. ZIP SHA-256
+`fe54c593c9b06fc0ba6055c82d6544a2807ee7e96efd9fd158b9c40d41dbafe2`,
+9,286,577 bytes, 1,998 inventoried files plus manifest, 2,064 entries and
+29,092,889 expanded bytes. One API 1 installed-file slot remains; no installed
+path is removed and no bootstrap/API/assets/fonts/pin changes occur. Thirteen
+outgoing blobs exclude held artwork; Gitleaks scans the candidate without leaks.
+Evidence: `test-results/beta12-20261026/`. Follow-up documentation is audited
+separately and does not rebuild/replace immutable release bytes. Physical Boox/
+Bigme quality, UI responsiveness/memory and lifecycle acceptance remains open.
+
 2026-10-26 Beta 12 preparation: user confirms Android safe mode is enabled on
 the affected Boox and explicitly requests the fix plus immediate release.
 `test_android_covers` exercises local extraction without the subprocess BIM

@@ -3970,6 +3970,54 @@ open. A single synchronous native document load is not cancellable midway;
 headless tests do not prove damaged-document/native Android crash containment.
 This is an explicitly requested prerelease, not a device-acceptance claim.
 
+### Beta 12 publication and final verification
+
+Publish user-requested prerelease `v0.1.0-beta.12` at exact candidate
+`ea8bbaf0296f32c2bfd5a40460e219a3b3f2318f`, 2026-10-26 20:42:10 UTC.
+Fast-forward/push main and this exact tag only. Complete local sequential suites
+pass 117 Python/four existing external-source skips, 483 Bookshelf/zero failures/
+three normal SQLite exclusions and 13 SimpleUI files. All 75 root Lua files are
+also rerun against final committed code under Lua/LuaJIT. Exact main/tag CI
+[40397510037](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/40397510037)/
+[40397510247](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/40397510247)
+each pass both complete clean-source test jobs, translations, packaging and
+native OTA gates. Node/runner migration annotations remain warnings.
+
+New Android suite: 26 cases under each interpreter, 27 with actual KOReader
+SQLite binding, including native BLOB ownership and failed-write savepoint
+rollback. Sealed-byte runs repeat these and HTTP/update/menu/navigation/whole-
+Home/first-run/book-helper/October 26/Bento regressions under both interpreters.
+Module map 383; syntax 1,053; translations 43/zero failures. Three changed host
+modules pass undeclared-global lint with explicit G_reader_settings; this is not
+a broad style-lint claim. No source-cache or SQLite exclusions are added.
+
+Clean-source inventory audit matches every package file/hash/size to candidate
+Git. Only adapter and Beta 12 note add installed paths; none removed. Inventory
+1,998 plus manifest leaves one API 1 file slot, with 2,064 ZIP entries and
+29,092,889 expanded bytes. Bootstrap/assets/fonts/artwork/pins/module map remain
+unchanged. Thirteen outgoing blobs exclude held artwork; Gitleaks scans the
+one candidate commit without leaks. ZIP SHA-256
+`fe54c593c9b06fc0ba6055c82d6544a2807ee7e96efd9fd158b9c40d41dbafe2`,
+9,286,577 bytes. Draft ID `424742800` and anonymous published ZIP/checksum bytes,
+asset digests/sizes match exactly. Older public Beta 9/11 assets are reverified;
+no older tag/release is modified.
+
+Actual public Beta 5/9/11 native installers pass local Linux SHA/libarchive
+inventory, missing-module rejection, activation/restart/code rollback,
+truncated-download recovery and external snapshot/adoption/restart/persistent
+rollback. Anonymous published-byte LuaSocket/LuaSec TLS discovery/download and
+all native phases pass from Beta 9 and Beta 11. Temporary installations only;
+no reader settings/data touched. Evidence: `test-results/beta12-20261026/`.
+
+Follow-up PROJECT_CONTEXT/TESTING/MERGE_LOG edits record verification only, with
+outgoing held-artwork/secrets audit; do not rebuild/replace published ZIP bytes.
+The task-owned Linux container is removed and Docker Desktop returned to its
+initial stopped state if no unrelated container has started. Physical Boox/
+Bigme cover quality/input latency/native-engine and prior device gaps remain
+open. Keep Android safe mode ON and browse affected Bookshelf pages after
+restart; do not instruct another cache wipe or full-library scan. No measured
+speedup or general native Android crash fix is claimed.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
