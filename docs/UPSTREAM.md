@@ -173,6 +173,14 @@ commit, or assume that a release name proves equivalent contents.
 
 ## Current embedding changes
 
+- Beta 11 updater integration: `Settings:_updateSubItems` delegates to the
+  optional updater `menuItems` seam before constructing standalone controls.
+  The host shim owns real OrbitUI version/preview/daily/recovery controls;
+  native component version/branch/changelog/wake controls must not leak into
+  that page. Standalone fallback is unchanged. HTTP diagnostics carry only
+  bounded status/rate-limit timing, not bodies/URLs; Trapper serializes safe
+  messages and explicit rate-limit cooldown. Preserve C09 TLS/activation gates.
+  Coverage: `test_update_menus`, `test_updates`, `test_http`.
 - October 26 reviewed merge (main only, no release): Bookshelf master
   `c37580a1` (6.0.3), five commits since `5f726c25`; SimpleUI main `b1580f90`,
   four commits since `40b301f0` (including the categorized Add Module picker

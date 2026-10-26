@@ -1,5 +1,6 @@
 local M = { menuLabel = "Uppdatera OrbitUI" }
-local context, busy, started, available
+local context, busy, started, available, check_error
+local _ = require("core/orbitui_i18n")
 
 function M.configure(value)
     assert(not context or context.root == value.root, "Another OrbitUI installation is already loaded")
@@ -35,7 +36,9 @@ function M.runTask(operation, label, callback)
     local function run()
         local completed, result = Trapper:dismissableRunInSubprocess(function()
             local ok, value = pcall(operation)
-            return ok and { ok = true, value = value } or { error = tostring(value) }
+            if ok then return { ok = true, value = value } end
+            local HTTP = require("core/orbitui_http")
+            return { error = HTTP.message(value), http_error = HTTP.errorInfo(value) }
         end, label, false)
         UI:scheduleIn(0.1, function()
             callback(completed and result or { error = "Operation cancelled or interrupted" })
@@ -71,6 +74,10 @@ function M.check(quiet)
         if not quiet then restartPrompt("An OrbitUI update or rollback is pending.") end
         return
     end
+    if check_error and check_error.retry_at > os.time() then
+        if not quiet then info(require("core/orbitui_http").message(check_error)) end
+        return
+    end
     local Network = require("ui/network/manager")
     local function check()
         if busy then return end
@@ -82,9 +89,14 @@ function M.check(quiet)
             label, function(result)
                 busy = false
                 if not result or not result.ok then
-                    if not quiet then info("Could not check OrbitUI updates:\n" .. tostring(result and result.error or "No result")) end
+                    local err = result and result.http_error
+                    check_error = err and err.kind == "rate_limit" and err or nil
+                    if not quiet then info(_("Could not check OrbitUI updates:") .. "\n"
+                        .. tostring(result and result.error or _("No result")) .. "\n\n"
+                        .. _("Your installed OrbitUI version has not changed.")) end
                     return
                 end
+                check_error = nil
                 setting("orbitui_update_last_check", os.time())
                 local release = result.value
                 if not release then
@@ -154,47 +166,68 @@ function M.started()
     end
 end
 
-function M.show()
-    if not context then info("OrbitUI updates are unavailable until OrbitUI has started."); return end
-    if busy then info("An OrbitUI update operation is already running."); return end
-    local UI = require("ui/uimanager")
+function M.menuItems()
+    if not context then return {{ text = M.menuLabel, callback = M.show }} end
     local Boot = require("orbitui_bootstrap")
     local state = Boot.state(context.root)
+    return {
+        { text = _("Installed:") .. " OrbitUI " .. context.version,
+            enabled = false },
+        { text_func = function()
+                return available and (_("Update available:") .. " " .. available) or _("Check for updates")
+            end,
+            callback = function() M.check(false) end },
+        { text = _("Include preview releases"), checked_func = previewEnabled,
+            keep_menu_open = true,
+            callback = function() setting("orbitui_update_preview", not previewEnabled()) end },
+        { text = _("Check daily when online"),
+            checked_func = function() return G_reader_settings:isTrue("orbitui_update_auto") end,
+            keep_menu_open = true,
+            callback = function() setting("orbitui_update_auto", not G_reader_settings:isTrue("orbitui_update_auto")) end },
+        { text = _("Restore previous OrbitUI version"), enabled = state.previous ~= "none",
+            callback = function()
+                require("ui/uimanager"):show(require("ui/widget/confirmbox"):new{
+                    text = _("Restore the previous OrbitUI code? Settings and reading progress will not be reset."),
+                    ok_text = _("Restore"),
+                    ok_callback = function() require("ui/uimanager"):scheduleIn(0.1, function()
+                        local ok, err = pcall(Boot.rollback, context.root)
+                        if ok then restartPrompt(_("The previous OrbitUI version is selected."))
+                        else info(_("Could not restore OrbitUI:") .. "\n" .. tostring(err)) end
+                    end) end,
+                })
+            end },
+        { text = _("Retry external installation"), enabled = context.slot ~= "factory" and not state.pending,
+            callback = function()
+                require("ui/uimanager"):show(require("ui/widget/confirmbox"):new{
+                    text = _("Verify a newer OrbitUI ZIP installed by an app store or manually? Settings and reading progress are kept."),
+                    ok_text = _("Verify"),
+                    ok_callback = function() require("ui/uimanager"):scheduleIn(0.1, function() M.checkExternal(true) end) end,
+                })
+            end },
+    }
+end
+
+function M.show()
+    if not context then info(_("OrbitUI updates are unavailable until OrbitUI has started.")); return end
+    if busy then info(_("An OrbitUI update operation is already running.")); return end
+    local UI = require("ui/uimanager")
     local dialog
     local function close() UI:close(dialog) end
+    local buttons = {}
+    for _, item in ipairs(M.menuItems()) do
+        local text = item.text_func and item.text_func() or item.text
+        if item.checked_func then text = (item.checked_func() and "[x] " or "[ ] ") .. text end
+        buttons[#buttons + 1] = {{ text = text, enabled = item.enabled,
+            callback = function()
+                close()
+                if item.callback then item.callback() end
+                if item.keep_menu_open then M.show() end
+            end }}
+    end
+    buttons[#buttons + 1] = {{ text = _("Close"), callback = close }}
     dialog = require("ui/widget/buttondialog"):new{
         title = "OrbitUI " .. context.version,
-        buttons = {
-            {{ text = available and ("Update available: " .. available) or "Check for updates",
-                callback = function() close(); M.check(false) end }},
-            {{ text = (previewEnabled() and "[x] " or "[ ] ") .. "Include preview releases",
-                callback = function() setting("orbitui_update_preview", not previewEnabled()); close(); M.show() end }},
-            {{ text = (G_reader_settings:isTrue("orbitui_update_auto") and "[x] " or "[ ] ") .. "Check daily when online",
-                callback = function() setting("orbitui_update_auto", not G_reader_settings:isTrue("orbitui_update_auto")); close(); M.show() end }},
-            {{ text = "Restore previous OrbitUI version", enabled = state.previous ~= "none",
-                callback = function()
-                    close()
-                    UI:show(require("ui/widget/confirmbox"):new{
-                        text = "Restore the previous OrbitUI code? Settings and reading progress will not be reset.",
-                        ok_text = "Restore",
-                        ok_callback = function() UI:scheduleIn(0.1, function()
-                            local ok, err = pcall(Boot.rollback, context.root)
-                            if ok then restartPrompt("The previous OrbitUI version is selected.")
-                            else info("Could not restore OrbitUI:\n" .. tostring(err)) end
-                        end) end,
-                    })
-                end }},
-            {{ text = "Retry external installation", enabled = context.slot ~= "factory" and not state.pending,
-                callback = function()
-                    close()
-                    UI:show(require("ui/widget/confirmbox"):new{
-                        text = "Verify a newer OrbitUI ZIP installed by an app store or manually? This also retries a previously cancelled or rolled-back external update. Settings and reading progress are kept.",
-                        ok_text = "Verify",
-                        ok_callback = function() UI:scheduleIn(0.1, function() M.checkExternal(true) end) end,
-                    })
-                end }},
-            {{ text = "Close", callback = close }},
-        },
+        buttons = buttons,
     }
     UI:show(dialog)
 end
@@ -223,6 +256,7 @@ function M.component(name, root)
     assert(name == "bookshelf", "Unknown component")
     return {
         menuLabel = M.menuLabel,
+        menuItems = M.menuItems,
         pluginDir = function() return root .. "/components/bookshelf" end,
         getInstalledVersion = currentVersion,
         otherCopies = function() return {} end,

@@ -460,6 +460,20 @@ alpha pending the fresh-setup and add-on physical-device acceptance checks.
 
 ## On the reader
 
+Beta 11 makes the root and embedded Bookshelf update controls use the same
+OrbitUI version, **Include preview releases**, daily online check and recovery
+settings. The old component version/branch/channel/wake/changelog rows do not
+describe OrbitUI and are no longer shown on the hosted page. Existing OrbitUI
+preferences win; Bookshelf's old settings are retained for rollback.
+
+GitHub HTTP failures show safe status/retry guidance instead of Lua paths.
+Confirmed 403/429 limits honor the longest valid Retry-After/reset hint (bounded
+to one day; one minute when no valid timing is supplied), with no further check
+in the same running session before that deadline. A generic 403 is not assumed
+to be a rate limit. This does not bypass GitHub/network policy. An older installed
+updater still needs to download the new runtime before it can show these fixes;
+wait before retrying a blocked request. Do not delete settings or version slots.
+
 Version `0.1.0-beta.10` integrates reviewed Bookshelf 6.0.2 metadata-refresh,
 colour-cover clipping, bounded/covered status repaint and module-action/key fixes.
 SimpleUI, Home/Bento and Bookshelf profile/navigation behavior are retained.

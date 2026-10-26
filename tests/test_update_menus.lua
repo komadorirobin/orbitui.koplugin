@@ -72,17 +72,59 @@ H.test("Bookshelf update menu and check action show the common label", function(
     local entry = buildBookshelfEntry()
     H.eq(entry.text_func(), "Uppdatera OrbitUI")
     local action = entry.sub_item_table_func()[1]
-    H.eq(action.text_func(), "Uppdatera OrbitUI")
+    H.eq(action.text_func and action.text_func() or action.text, "Uppdatera OrbitUI")
     opensOrbitUI(action)
 end)
 H.test("SimpleUI About update action shows the common label and opens OrbitUI", function()
     opensOrbitUI(findItem(buildSimpleUIItems(), "Uppdatera OrbitUI"))
 end)
 H.test("component menus retain their standalone labels without adapter metadata", function()
-    bookshelf.menuLabel, simpleui.menuLabel = nil, nil
+    bookshelf.menuLabel, bookshelf.menuItems, simpleui.menuLabel = nil, nil, nil
     bookshelf.getInstalledVersion = function() return "5.3.1" end
     H.eq(buildBookshelfEntry().text_func(), "Updates")
     assert(buildBookshelfItems(settings)[1].text_func():find("Check for updates", 1, true))
     assert(findItem(buildSimpleUIItems(), "Check for Updates").callback)
+end)
+H.test("hosted Bookshelf menus contain only real OrbitUI version and channel controls", function()
+    local saved, flushes = { orbitui_update_preview = false }, 0
+    G_reader_settings = {
+        readSetting = function(_, key) return saved[key] end,
+        isTrue = function(_, key) return saved[key] == true end,
+        saveSetting = function(_, key, value) saved[key] = value end,
+        flush = function() flushes = flushes + 1 end,
+    }
+    Updates.configure{ root = root, version = "0.1.0-beta.42", slot = "factory" }
+    bookshelf.menuItems = Updates.menuItems
+    local items = buildBookshelfItems(settings)
+    H.eq(items[1].text, "Installed: OrbitUI 0.1.0-beta.42")
+    local preview = findItem(items, "Include preview releases")
+    H.eq(preview.checked_func(), false) -- Explicit old choice still wins.
+    preview.callback(); H.eq(saved.orbitui_update_preview, true)
+    findItem(items, "Check daily when online").callback()
+    H.eq(saved.orbitui_update_auto, true); H.eq(flushes, 2)
+    for _, item in ipairs(items) do
+        local label = item.text_func and item.text_func() or item.text
+        assert(not label:find("6.0.", 1, true) and not label:find("branch", 1, true))
+        assert(not label:find("wake", 1, true) and not label:find("changelog", 1, true))
+    end
+    H.eq(saved.bookshelf_dev_branch, nil); H.eq(saved.bookshelf_check_updates, nil)
+    saved.language = "sv"
+    H.eq(buildBookshelfItems(settings)[1].text, "Installerad: OrbitUI 0.1.0-beta.42")
+    saved.language = "en"
+    local shown, closed
+    package.loaded["ui/uimanager"].show = function(_, value) shown = value end
+    package.loaded["ui/uimanager"].close = function() closed = (closed or 0) + 1 end
+    package.loaded["ui/widget/buttondialog"] = { new = function(_, value) return value end }
+    Updates.show()
+    H.eq(shown.title, "OrbitUI 0.1.0-beta.42")
+    H.eq(shown.buttons[1][1].enabled, false)
+    assert(shown.buttons[3][1].text:find("[x] Include preview releases", 1, true))
+    shown.buttons[3][1].callback()
+    H.eq(saved.orbitui_update_preview, false); H.eq(closed, 1)
+    assert(shown.buttons[3][1].text:find("[ ] Include preview releases", 1, true))
+    shown.buttons[4][1].callback()
+    H.eq(saved.orbitui_update_auto, false); H.eq(closed, 2)
+    H.eq(shown.buttons[5][1].enabled, false)
+    H.eq(shown.buttons[6][1].enabled, false)
 end)
 H.finish()

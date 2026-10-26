@@ -2,6 +2,20 @@
 
 ## Automated
 
+2026-10-26 Beta 11 preparation: user approves updater UI/error fix and release.
+Native Bookshelf menu-builder tests must exercise the optional hosted menu seam
+and unchanged standalone fallback, actual OrbitUI version/preview/daily controls,
+Swedish labels and real root dialog checkbox callbacks/disabled recovery actions.
+HTTP tests must distinguish generic/confirmed 403, 429, 404 and 5xx, preserve the
+longest bounded header wait, reject malformed/unbounded timing, omit private
+response details and retain TLS/host/byte limits. Trapper/check tests must carry
+safe diagnostics, suppress quiet/manual network work until cooldown expires and
+retry afterward without activation or preference resets. Run complete Lua/
+LuaJIT/translation/sealed/native OTA, clean source/inventory/history/secret and
+draft/public/main/tag gates. Evidence: `test-results/beta11-20261026/`.
+New device/network UI checks and the October 26 upstream acceptance gaps remain
+open; no actual cause of the photographed 403 or measured speedup is inferred.
+
 2026-10-26 upstream main verified/pushed at `706b7341`, not released: both
 complete sequential Lua/LuaJIT gates pass 117 Python tests/four existing
 external-source skips, 74 root Lua files, 483 Bookshelf suites/zero failures/

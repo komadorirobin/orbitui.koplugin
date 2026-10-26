@@ -5,6 +5,60 @@ local hosts = {
     ["objects.githubusercontent.com"] = true, ["github-releases.githubusercontent.com"] = true,
 }
 
+-- Carry only safe, bounded diagnostics through pcall/Trapper. Never display the
+-- response body, signed asset URL or arbitrary headers in an error dialog.
+local function failure(code, headers, body)
+    local values = {}
+    for key, value in pairs(headers or {}) do
+        if type(key) == "string" then values[key:lower()] = value end
+    end
+    local now = os.time()
+    local function bounded(value)
+        value = tonumber(value)
+        if value and value == value and value >= 0 and value <= 86400 then
+            return math.ceil(value)
+        end
+    end
+    local wait = bounded(values["retry-after"])
+    local remaining = tonumber(values["x-ratelimit-remaining"])
+    local reset = tonumber(values["x-ratelimit-reset"])
+    local reset_wait = remaining == 0 and reset and bounded(reset - now)
+    if reset_wait then wait = math.max(wait or 0, reset_wait) end
+    local lower = type(body) == "string" and body:lower() or ""
+    local limited = (code == 403 or code == 429) and (code == 429
+        or remaining == 0 or wait ~= nil or lower:find("rate limit", 1, true)
+        or lower:find("abuse detection", 1, true))
+    return setmetatable({ orbitui_http_error = true, status = code,
+        kind = limited and "rate_limit" or "http",
+        retry_at = limited and (now + math.max(60, wait or 60)) or nil,
+    }, { __tostring = M.message })
+end
+
+function M.errorInfo(value)
+    if type(value) == "table" and value.orbitui_http_error == true then
+        return { orbitui_http_error = true, status = value.status,
+            kind = value.kind, retry_at = value.retry_at }
+    end
+end
+
+function M.message(value)
+    local err = M.errorInfo(value)
+    if not err then return tostring(value) end
+    local _ = require("core/orbitui_i18n")
+    if err.kind == "rate_limit" then
+        local minutes = math.max(1, math.ceil(((err.retry_at or os.time()) - os.time()) / 60))
+        return string.format(_("GitHub is temporarily limiting requests (HTTP %d)."), err.status)
+            .. "\n" .. string.format(_("Try again in %d minute(s)."), minutes)
+    elseif err.status == 403 then
+        return _("GitHub refused the request (HTTP 403). The response does not identify a rate limit. Try again later or check your network, VPN or proxy.")
+    elseif err.status == 404 then
+        return _("GitHub could not find the requested download (HTTP 404).")
+    elseif err.status >= 500 and err.status <= 599 then
+        return string.format(_("GitHub is temporarily unavailable (HTTP %d). Try again later."), err.status)
+    end
+    return string.format(_("GitHub request failed (HTTP %d)."), err.status)
+end
+
 function M.host(url)
     assert(type(url) == "string" and not url:find("[%z%c\\]"), "Invalid download URL")
     local host = url:match("^https://([^/]+)/")
@@ -88,11 +142,13 @@ function M.get(url, target, limit)
                     ["Cache-Control"] = "no-cache" }, sink = sink,
             }
             if output then assert(output:close()); output = nil end
-            if tonumber(code) == 200 then return target and count or table.concat(parts) end
+            code = tonumber(code) or code
+            if code == 200 then return target and count or table.concat(parts) end
             if code == 301 or code == 302 or code == 303 or code == 307 or code == 308 then
                 url = require("socket.url").absolute(url, assert(headers and headers.location))
                 M.host(url)
             else
+                if type(code) == "number" then error(failure(code, headers, table.concat(parts)), 0) end
                 error("GitHub download failed: " .. tostring(code))
             end
         end
@@ -100,7 +156,7 @@ function M.get(url, target, limit)
     end)
     if output then output:close() end
     socketutil:reset_timeout()
-    assert(ok, result)
+    if not ok then error(result, 0) end
     return result
 end
 

@@ -6440,6 +6440,8 @@ end
 -- Advanced recovery pocket. Selecting a channel never installs it.
 function Settings:_updateSubItems()
     local Updater = require("lib/bookshelf_updater")
+    -- An embedding host owns the complete update channel, not only its installer.
+    if Updater.menuItems then return Updater.menuItems() end
     local plugin = self._plugin   -- the Bookshelf plugin instance
     local function currentBranch()
         return (plugin and plugin.dev_branch) or ""

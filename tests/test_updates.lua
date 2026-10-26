@@ -100,4 +100,46 @@ H.test("external installation also activates only in the deferred main-process c
     H.eq(activated, true)
     package.loaded["core/orbitui_ota"] = previous
 end)
+H.test("rate-limit errors survive Trapper safely and suppress new checks until their deadline", function()
+    local U, queue, calls, messages_before = dofile("adapters/orbitui_updates.lua"), {}, 0, #messages
+    local Boot = require("orbitui_bootstrap")
+    local old_state, old_ota, old_time, old_settings = Boot.state, package.loaded["core/orbitui_ota"], os.time, G_reader_settings
+    local now, fail, saved = 1000, true, {}
+    os.time = function() return now end
+    Boot.state = function() return { current = "factory", previous = "none" } end
+    G_reader_settings = {
+        readSetting = function(_, key) return saved[key] end,
+        saveSetting = function(_, key, value) saved[key] = value end,
+        flush = function() end,
+    }
+    package.loaded["ui/uimanager"].scheduleIn = function(_, _, fn) queue[#queue + 1] = fn end
+    package.loaded["ui/network/manager"] = {
+        runWhenOnline = function(_, fn) fn() end, isOnline = function() return true end,
+    }
+    package.loaded["ui/trapper"].dismissableRunInSubprocess = function(_, fn)
+        local result = fn()
+        if fail then
+            H.eq(type(result.error), "string")
+            H.eq(result.http_error.retry_at, 1120)
+            H.eq(result.http_error.body, nil)
+            assert(not result.error:find("private", 1, true))
+        end
+        return true, result
+    end
+    package.loaded["core/orbitui_ota"] = { check = function()
+        calls = calls + 1
+        if fail then error({ orbitui_http_error = true, status = 403, kind = "rate_limit",
+            retry_at = 1120, body = "private body" }) end
+    end }
+    U.configure{ root = "/test-orbitui", version = "0.1.0-beta.42", slot = "factory" }
+    U.check(false); H.eq(calls, 1); queue[1](); queue = {}
+    H.eq(#messages, messages_before + 1)
+    assert(messages[#messages]:find("installed OrbitUI version has not changed", 1, true))
+    U.check(true); H.eq(calls, 1); H.eq(#queue, 0)
+    U.check(false); H.eq(calls, 1); H.eq(#messages, messages_before + 2)
+    now, fail = 1120, false
+    U.check(false); H.eq(calls, 2); queue[1]()
+    H.eq(saved.orbitui_update_last_check, now)
+    Boot.state, package.loaded["core/orbitui_ota"], os.time, G_reader_settings = old_state, old_ota, old_time, old_settings
+end)
 H.finish()

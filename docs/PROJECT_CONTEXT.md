@@ -22,6 +22,12 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-26
 
+- Beta 11 preparation: user explicitly requests fixing the photo's misleading
+  update menu/HTTP 403 diagnostics and publishing. Start from clean public
+  `25a2e7ab` on `fix/orbitui-updater-beta11-20261026`. VERSION advances to
+  `0.1.0-beta.11`; public Beta 10 and earlier assets remain immutable. No new
+  upstream import/pin change is authorized. Already-reviewed October 26 imports
+  are included. Release verification/publication results follow in the merge log.
 - Product version: `0.1.0-beta.10` (public GitHub prerelease, published
   2026-10-25 at 22:58:45 UTC; verification is in `docs/MERGE_LOG.md`).
 - Public main baseline before Beta 10: `97b7948a` (Beta 9 verification).
@@ -114,6 +120,12 @@ provides canonical module names and legacy aliases while preserving
 
 ### Shared Home and library
 
+- Beta 11 preparation replaces the embedded Bookshelf update page with shared
+  real OrbitUI version/preview/daily/recovery controls. Bounded safe HTTP
+  status/rate-limit diagnostics survive Trapper; confirmed limits suspend checks
+  for their retry/reset interval in the running session. Generic 403s are not
+  mislabelled. The photo does not prove its device/network cause. Settings,
+  component installers, TLS, bootstrap/API and activation safety remain intact.
 - October 26 maintenance (not in the public Beta 10 ZIP): Bookshelf 6.0.3 fixes
   image-screensaver wake repaint and fullscreen status-line taps, and adds an
   independent On the shelf module toggle that retains saved modules. SimpleUI
@@ -123,6 +135,8 @@ provides canonical module names and legacy aliases while preserving
   modules under Other and follows categories for instanced modules.
   Existing layouts/margins, old wallpaper flags/APIs, profiles/navigation and
   external owners are retained; physical-device acceptance remains outstanding.
+  Fast Book Closing exposes an existing internally-disabled Home soft-park as a
+  saved menu option; it is not a new replacement for Bookshelf's fast return.
 - The user confirms both Home and the Beta 9 Bookshelf navigation fix work on
   the affected Boox. Wider lifecycle/rotation/device checks remain outstanding.
   The later cover-loading/indexing report is not yet device-verified as resolved.

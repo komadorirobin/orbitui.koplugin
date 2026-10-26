@@ -93,5 +93,54 @@ H.test("size limits and HTTP failures remain failures", function()
     assert(not pcall(HTTP.get, "https://api.github.com/releases", nil, 10))
     assert(timeout_reset)
 end)
+H.test("rate-limit diagnostics retain the longest bounded header wait without body or paths", function()
+    fixture()
+    local old_time = os.time
+    os.time = function() return 100000 end
+    responses = {{ code = "403", body = "private body", headers = {
+        ["X-RateLimit-Remaining"] = "0", ["X-RateLimit-Reset"] = "100180",
+        ["Retry-After"] = "90", authorization = "secret",
+    } }}
+    local ok, err = pcall(HTTP.get, "https://api.github.com/releases", nil, 100)
+    assert(not ok and timeout_reset)
+    local safe = assert(HTTP.errorInfo(err))
+    H.eq(safe.kind, "rate_limit"); H.eq(safe.status, 403); H.eq(safe.retry_at, 100180)
+    H.eq(safe.body, nil); H.eq(safe.headers, nil)
+    local text = tostring(err)
+    assert(text:find("3 minute", 1, true) and not text:find("orbitui_http.lua", 1, true))
+    assert(not text:find("private", 1, true) and not text:find("secret", 1, true))
+    os.time = old_time
+end)
+H.test("secondary limits and 429s use bounded retry hints but generic 403s are not mislabelled", function()
+    for _, case in ipairs({
+        { 403, "API rate limit exceeded", {}, "rate_limit" },
+        { 429, "", {}, "rate_limit" },
+        { 403, "", { ["retry-after"] = "120" }, "rate_limit" },
+        { 403, "blocked by policy", {}, "http" },
+        { 404, "private", {}, "http" }, { 503, "private", {}, "http" },
+    }) do
+        fixture(); responses = {{ code = case[1], body = case[2], headers = case[3] }}
+        local ok, err = pcall(HTTP.get, "https://api.github.com/releases", nil, 100)
+        assert(not ok and timeout_reset)
+        H.eq(HTTP.errorInfo(err).kind, case[4])
+        assert(not tostring(err):find("private", 1, true))
+        if case[1] == 403 and case[4] == "http" then
+            assert(tostring(err):find("does not identify a rate limit", 1, true))
+        end
+    end
+    fixture()
+    responses = {{ code = 429, headers = { ["retry-after"] = "inf", ["x-ratelimit-reset"] = "99999999999999" } }}
+    local ok, err = pcall(HTTP.get, "https://api.github.com/releases", nil, 100)
+    assert(not ok)
+    assert(err.retry_at <= os.time() + 60)
+end)
+H.test("HTTP diagnostic messages follow the reader language", function()
+    local old = G_reader_settings
+    G_reader_settings = { readSetting = function() return "sv_SE" end }
+    fixture(); responses = {{ code = 429 }}
+    local ok, err = pcall(HTTP.get, "https://api.github.com/releases", nil, 100)
+    assert(not ok and tostring(err):find("GitHub begränsar", 1, true))
+    G_reader_settings = old
+end)
 io.open = old_open
 H.finish()

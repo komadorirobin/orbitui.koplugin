@@ -920,6 +920,16 @@ Tests: `tests/test_upstream_watch.py`, `test_updates.lua`, `test_runtime.lua`,
 `test_bootstrap.lua`, `test_ota.lua`, `test_http.lua`, `test_release_package.py`.
 Full device acceptance, including the OTA UI, is still outstanding.
 
+Beta 11's hosted component menus must show the running OrbitUI version and its
+actual preview/daily/recovery preferences, not standalone component versions,
+branch selectors, wake notifications or upstream changelogs. Standalone menu
+builders retain their fallback when no host seam is supplied. No component
+installer is re-enabled. A GitHub HTTP failure carries only safe status/rate-limit
+diagnostics; respect bounded retry/reset hints within the session and never
+claim generic 403s are proven rate limits. Trapper must retain those diagnostics
+without exposing raw bodies, headers or signed URLs and without activation.
+Coverage: `test_update_menus`, `test_updates`, `test_http`.
+
 ## C10: Shared panels, search, settings and Home shelves
 
 Home book actions and search results reuse the real Bookshelf detail panel.

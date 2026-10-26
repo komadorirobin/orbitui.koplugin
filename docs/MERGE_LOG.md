@@ -3832,6 +3832,48 @@ changes only PROJECT_CONTEXT, TESTING and MERGE_LOG; runtime and the sealed
 validation ZIP stay byte-identical. Audit follow-up outgoing documentation
 blobs and Gitleaks before pushing; do not rebuild or publish a release.
 
+## 2026-10-26: Beta 11 shared updater and safe GitHub diagnostics preparation
+
+User sends a photo of the Bookshelf update page labelled OrbitUI, showing
+`Installed: v6.0.0`, standalone Stable release/channel/wake/changelog controls
+and `core/orbitui_http.lua`'s nested generic HTTP 403 trace. Read-only diagnosis
+finds that the updater shim blocks native installers but the native settings
+builder still constructs its standalone rows. HTTP discards GitHub's headers/
+reason and Trapper stringifies errors. The endpoint returns HTTP 200 from this
+host; the photo alone cannot prove the reader's cause. GitHub's primary docs
+confirm 403/429 rate-limit signals and retry/reset header semantics.
+
+User explicitly approves both the fix and publication. Start from clean public
+`25a2e7ab` on `fix/orbitui-updater-beta11-20261026`; version `0.1.0-beta.11`.
+No new upstream review/import/pin is implied. Include the already-reviewed
+October 26 Bookshelf `c37580a1` / SimpleUI `b1580f90` integrations. Clarification:
+Fast Book Closing exposes the existing internally-disabled Home soft-park as a
+saved option; it does not replace Bookshelf's separate hot-return/deferred-close.
+
+Add one two-line component seam: `_updateSubItems` delegates to an optional
+updater `menuItems` before native menu construction. Host/root menus share real
+OrbitUI version, retained preview/daily choices and existing confirmed recovery.
+Hide misleading standalone rows, do not rewrite their settings or re-enable
+their installers. The standalone fallback remains test-covered.
+
+HTTP errors carry safe status and bounded timing only, never raw bodies/headers/
+signed URLs. Trapper converts them to localized messages and serializable safe
+metadata. Confirmed 403/429 limits use the longest valid retry/reset wait (one-day
+cap/minimum one minute); failed checks do not poll again within that session's
+deadline. Generic 403s explicitly remain unconfirmed rate limits. No bypass,
+automatic retry loop, credentials or security relaxation. TLS/CA/hostname,
+allowlisted redirects, byte limits and deferred activation remain unchanged.
+
+Five added regression cases extend existing suites: HTTP header/body/error and
+language checks, Trapper cooldown expiry/no-activation, hosted/standalone real
+menu builders and root checkbox callbacks. Complete sequential gates, native
+older/public installers, sealed tests and release audits follow. Evidence:
+`test-results/beta11-20261026/`. No runtime module added; module map stays 383.
+Only the Beta 11 release note adds an installed path, leaving three API 1 slots.
+Physical Boox/Bigme update dialogs and underlying network rejection, reader/
+suspend/rotation and upstream editor/wallpaper/module acceptance remain open.
+This is an explicitly approved prerelease, not a device-acceptance claim.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
