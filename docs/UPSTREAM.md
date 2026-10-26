@@ -173,6 +173,20 @@ commit, or assume that a release name proves equivalent contents.
 
 ## Current embedding changes
 
+- October 26 reviewed merge (main only, no release): Bookshelf master
+  `c37580a1` (6.0.3), five commits since `5f726c25`; SimpleUI main `96fcd0f0`,
+  three commits since `40b301f0`. Preserve the new sleep-clear/rotation detection
+  with owner-safe Screen hooks, nil returns and inert captured wrappers after
+  teardown. Keep the new On the shelf module switch non-destructive.
+  Preserve legacy Home geometry and independent margins; fixed-grid stacking is
+  opt-in in OrbitUI. Explicit Free widths selection enables the new editor model,
+  but reading saved percentages never snaps them. Cache fingerprints include
+  the mode/stack choice. The single wallpaper raster frees partial allocations,
+  retries failed decode after five seconds and has a safe legacy painting facade.
+  Copy the library-opacity setting without deleting its rollback flag; retain
+  old opacity APIs and preset keys. Native book/file actions and external owners
+  remain intact. Module map 383 unchanged; see `test_upstream_20261026`, expanded
+  Bento geometry/underlay tests and the merge log for conflict decisions.
 - October 25 late reviewed merge: Bookshelf master `5f726c25` (6.0.2),
   eight incoming commits since `fc1103a3`; SimpleUI remains at `40b301f0`.
   The unsquashed subtree merge is conflict-free; review the overlapping

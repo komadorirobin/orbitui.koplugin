@@ -3705,6 +3705,60 @@ minute ticks, module-key/rotation and wider Bigme/external-plugin acceptance
 remain open. No automatic index/reset, measured speedup or native Android
 mutex-crash diagnosis is inferred.
 
+## 2026-10-26: Reviewed Bookshelf 6.0.3 and SimpleUI follow-ups (not released)
+
+User requested "Merga upstream igen". Standing authorization includes the audited
+push to main, not a version/tag/release. Start from clean public `84597df5` on
+`maintenance/upstream-20261026`. Collector at 17:37 UTC and issue #1's 17:27
+report agree: Bookshelf `5f726c253c5cb4d5a2a2137af52731562e1cb9b7` to
+`c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3), five commits/30 changed
+paths; SimpleUI `40b301f0f5e4466021d00b4e47ac8c09bb65ac8c` to
+`96fcd0f024fd62fe88f6b534b4e856f3c5fd3a81`, three commits/51 paths. Review
+all runtime changes, original tests, removed/added paths and refreshed locales;
+validate the complete catalogues rather than treating line-reference churn as
+new features. Neither import adds a runtime module; the 383-path map is unchanged.
+
+Unsquashed Bookshelf import `c8c0f394` resolves underlay conflicts by combining
+sleep-screen clear/rotation detection with OrbitUI's existing owner-safe UI
+hooks/window cleanup/nil-result handling. Screen hooks inherit that ownership:
+restore only our exact wrappers and leave later wrappers with retired inners
+inert. Import the new non-destructive On the shelf switch/loader fix and the
+fullscreen-strip respect for disabled swipe-back. Preserve shelf/profile scopes,
+dock, bindings, series/rating/title/ornament and external integration seams.
+
+Unsquashed SimpleUI import `eeb5e012` resolves engine/config/layout conflicts
+without reinstating shared top margins, widget reuse or automatic percentage
+snapping. Keep host-level wallpaper painting behind all chrome, move the
+independent titlebar-button opacity into the new submenu, retain preset keys and
+old opacity aliases, and preserve Swedish fork strings. Single-form catalogues
+keep valid plural forms and known rollback strings; deduplicate active/obsolete
+entries mechanically without adding validation exceptions.
+
+Adaptation/tests `dff46bce`: fixed-grid stacking remains opt-in; old layouts keep
+their renderer, explicit Free widths activates model 3, saved percentage reads
+do not snap, and layout fingerprints include mode/stack. Adopt the one-raster
+wallpaper renderer with complete partial-allocation cleanup, five-second failed
+decode retry, safe legacy paint facade/show API and copy-only library-opacity
+migration. Preserve the old show flag and explicit new opacity precedence.
+Later-page stats request flags are set only after successful data reads; retain
+the new live DB handoff. Flow side covers counter-invert at paint time without
+mutating their shared source. Fast Book Closing is optional/off by default;
+existing generation guards, real ReaderUI paths and sync owners remain intact.
+All C01-C11 are preserved; no migration of book data/settings paths or artwork.
+
+Six new merge cases load the whole wallpaper module and real Bento packing,
+plus focused stats/Flow methods; two extra real page-builder geometry cases and
+one native underlay ownership case cover the merge seams. Existing test fixtures
+now supply new layout helpers/mode APIs and the renamed raster source, retaining
+their assertions. The Bookshelf version fixture advances to 6.0.3. Complete
+Lua/LuaJIT, translation, sealed-package/native OTA and outgoing history/artwork/
+secret gates follow; exact verification/push results will be appended afterward.
+Evidence: `test-results/upstream-20261026/`. VERSION remains Beta 10; no new
+release note/tag/assets or public OTA update. A same-version validation package
+is not a replacement for the immutable published Beta 10 ZIP. Physical Bigme/
+Boox editor/free-width/stack/rotation, wallpaper/night, wake restoration, shelf
+modules and optional Fast Book Closing/external-plugin tests remain open.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

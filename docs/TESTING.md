@@ -2,6 +2,22 @@
 
 ## Automated
 
+2026-10-26 upstream maintenance preparation (no release): five Bookshelf commits
+through `c37580a1` (6.0.3), three SimpleUI commits through `96fcd0f0`. Preserve
+C01-C11, VERSION/public Beta 10 bytes, existing layouts/profiles/settings/artwork.
+Six new merge cases exercise the whole wallpaper module's single-raster ownership,
+legacy painting API, bounded decode/error retry, constructor/allocation/fill/paint
+cleanup, copy-only library-opacity migration, fixed-grid stacking opt-in, free
+percentages, later-page statistics demand and Flow night-mode source ownership.
+The existing geometry suite gains two real page-builder cases for stacked gaps,
+warm mode invalidation and unsnapped free widths. Native underlay coverage adds
+screen-hook nil results/owner-safe teardown/reinstallation beside new sleep/wake
+cases. Native rendering/services are stubbed. Full gates, translations, sealed
+package/source/history/artwork/secrets and native OTA validation are required;
+evidence `test-results/upstream-20261026/`. New editor/rotation, wallpaper/night,
+screensaver wake, module switches and Fast Book Closing/BookOrbit/patch device
+checks remain open; no measured Bigme speedup or OTA publication is inferred.
+
 2026-10-25 beta.10 published: tag `v0.1.0-beta.10` at `0a2ea22b`, 22:58:45 UTC,
 prerelease. Complete sequential Lua/LuaJIT gates pass: 73 root Lua files,
 117 Python tests/four unchanged external-source skips per run, 482 Bookshelf

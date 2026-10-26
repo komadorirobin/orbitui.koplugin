@@ -20,11 +20,16 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-10-25
+## Snapshot: 2026-10-26
 
 - Product version: `0.1.0-beta.10` (public GitHub prerelease, published
   2026-10-25 at 22:58:45 UTC; verification is in `docs/MERGE_LOG.md`).
 - Public main baseline before Beta 10: `97b7948a` (Beta 9 verification).
+- New requested maintenance starts from public main `84597df5` on
+  `maintenance/upstream-20261026`. It is merge/push only, not publication.
+  VERSION and the public Beta 10 tag/assets remain unchanged. Import commits
+  are `c8c0f394` (Bookshelf) and `eeb5e012` (SimpleUI); adaptation/tests `dff46bce`.
+  Final verification and push results are recorded separately after completion.
 - Release tag: `v0.1.0-beta.10` at `0a2ea22b`; previous tag
   `v0.1.0-beta.9` at `a4bb9acb` and all earlier tags/assets are unchanged.
 - Active branch: `main`; the user explicitly requested merging upstream,
@@ -35,11 +40,13 @@ and correct this file in the same change.
   `fix/home-first-run-20261025` are retained locally.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
-- Embedded Bookshelf Git: `5f726c253c5cb4d5a2a2137af52731562e1cb9b7`
-  (6.0.2), eight reviewed incoming commits; merge `0db81b46`.
+- Embedded Bookshelf Git on maintenance/main after verification:
+  `c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3), five incoming commits.
+  Public Beta 10 keeps `5f726c25` / merge `0db81b46` unchanged.
   Prior 6.0.0 integration `fc1103a3` / `48438837` is retained in ancestry.
-- Embedded SimpleUI Git: `40b301f0f5e4466021d00b4e47ac8c09bb65ac8c`
-  (3.0 plus follow-ups), 18 reviewed incoming commits; merge `b9dfc849`.
+- Embedded SimpleUI Git on maintenance/main after verification:
+  `96fcd0f024fd62fe88f6b534b4e856f3c5fd3a81` (3.0 follow-ups), three commits.
+  Public Beta 10 keeps `40b301f0` / merge `b9dfc849` unchanged.
 - Prior broad adaptation candidate: `3a33fee6`; its final headless gates passed.
   A read-only local collector at 2026-10-25 22:43 UTC found eight Bookshelf
   commits and no SimpleUI changes. Issue #1's older 17:48 result listed only
@@ -102,6 +109,13 @@ provides canonical module names and legacy aliases while preserving
 
 ### Shared Home and library
 
+- October 26 maintenance (not in the public Beta 10 ZIP): Bookshelf 6.0.3 fixes
+  image-screensaver wake repaint and fullscreen status-line taps, and adds an
+  independent On the shelf module toggle that retains saved modules. SimpleUI
+  adds optional free widths/stacking, Fast Book Closing (off by default), library
+  wallpaper opacity, later-page statistics refresh and Flow night-mode colours.
+  Existing layouts/margins, old wallpaper flags/APIs, profiles/navigation and
+  external owners are retained; physical-device acceptance remains outstanding.
 - The user confirms both Home and the Beta 9 Bookshelf navigation fix work on
   the affected Boox. Wider lifecycle/rotation/device checks remain outstanding.
   The later cover-loading/indexing report is not yet device-verified as resolved.

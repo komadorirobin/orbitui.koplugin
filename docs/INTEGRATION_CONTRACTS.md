@@ -278,6 +278,19 @@ Tests: `test_series_rating`, `test_upstream_series_boxes`.
 
 ## C07: Presentation and preferences
 
+The October 26 upstream free-width/stack editor remains opt-in for existing
+OrbitUI layouts. Unset fixed-grid stacking stays off; legacy percentage/stacked
+layouts keep their old renderer until explicit width/movement or Free widths
+selection. Merely reading a saved percentage must not snap it. Each stacked
+module retains its own top margin; preview/render mode and warm-cache keys agree.
+Wallpaper uses one owned raster with bounded failed-decode retries, safe partial
+allocation cleanup and a legacy paint facade that never owns a freed image.
+The library-opacity migration copies into an unset new key, retaining the old
+show-in-file-manager flag and preset/backup fields for rollback. Explicit new
+opacity wins. Keep the old opacity/show APIs usable. New Fast Book Closing is
+off until selected, not an automatic memory/performance migration. Coverage:
+`test_upstream_20261026`, `test_simpleui_bento_margins` and native underlay tests.
+
 The user-approved October 23 SimpleUI 3.0 ZIP import preserves existing Bento
 percentages and stacked columns. No render-time width snapping or automatic
 layout conversion is permitted. Explicit width/movement edits in the new editor
