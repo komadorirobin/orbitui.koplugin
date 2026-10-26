@@ -305,9 +305,8 @@ H.test("paginated grid erasers restore module backdrop over the wallpaper", func
     run(method(wallpaper, "function M.paintEraser("), {
         M = M, STRENGTH_MIN = 0, STRENGTH_MAX = 100,
         Backdrop = { clampBackdropStrength = function(n) return n end, paintBackdrop = M.paintBackdrop },
-        _eraserSource = function()
-            return { getWidth = function() return 100 end, getHeight = function() return 100 end }
-        end,
+        _styleGetBgWidget = function() return true end,
+        _raster = { getWidth = function() return 100 end, getHeight = function() return 100 end },
     })
     local bb = { blitFrom = function() calls[#calls + 1] = "wallpaper" end }
     M.paintEraser(bb, 0, 0, 10, 10, 40, 0)

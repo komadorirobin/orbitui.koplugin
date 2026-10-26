@@ -1803,8 +1803,7 @@ function ScreenWidget:_initLayout()
         function overlap:paintTo(bb, x, y)
             bb:paintRect(x, 0, Screen:getWidth(), Screen:getHeight(), Blitbuffer.COLOR_WHITE)
             if _bg then
-                _bg:paintTo(bb, x, 0)
-                SUIWallpaper.paintTint(bb, x, 0, Screen:getWidth(), Screen:getHeight())
+                SUIWallpaper.paintBackground(bb, x)
             end
             _orig_paintTo(self, bb, x, y)
         end
@@ -2563,7 +2562,8 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
     local layout = SUISettings:readSetting(self._layout_key)
     local raw_order = Registry.loadOrder(self._pfx)
 
-    local layout_fingerprint = ""
+    local layout_fingerprint = tostring(Config.isBentoClassic(self._pfx)) .. ":"
+        .. tostring(Config.isBentoStack(self._pfx)) .. "|"
     local pages_by_id = {}
 
     -- Column spans (percents in the classic layout) come from per-module

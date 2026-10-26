@@ -45,6 +45,9 @@ local mods = {
 local widths, gaps, settings, landscape, label_hidden, background
 local layout_key, pfx = "test_layout", "simpleui_hs_"
 local Config = {
+    isBentoClassic = function() return settings[pfx .. "bento_mode"] == "classic" end,
+    isBentoStack = function() return settings[pfx .. "bento_stack"] == true end,
+    getBentoPct = function(id) return widths[id] or 100 end,
     getBentoWidth = function(id) return widths[id] or 100 end,
     getBentoSpan = function(id)
         return dofile("components/simpleui/infra/sui_bento.lua").pctToSpan(widths[id])
@@ -337,4 +340,37 @@ H.test("clock and book update slots still address their wrappers, not margin spa
     H.eq(slot.parent[slot.index][1].content_id, "new_books")
 end)
 
+H.test("new stacked columns retain each module's top margin and mode changes invalidate warm rows", function()
+    local s = screen({ { "coverdeck", "recent", "new_books" } })
+    settings[layout_key].bento_model = 3
+    widths.coverdeck, widths.recent, widths.new_books = 50, 50, 50
+    gaps.coverdeck, gaps.recent, gaps.new_books = 30, 0, 20
+    s:_updatePage(false)
+    local old = positions(s._body)
+    settings[pfx .. "bento_stack"] = true
+    s:_updatePage(false)
+    local before = positions(s._body)
+    H.eq(before.labels.new_books.x, before.labels.coverdeck.x)
+    H.eq(before.labels.new_books.y, before.contents.coverdeck.y + mods.coverdeck.height + 20)
+    assert(old.labels.new_books.x ~= before.labels.new_books.x)
+    gaps.new_books = 40
+    s:_updatePage(false)
+    local after = positions(s._body)
+    H.eq(after.labels.new_books.y - before.labels.new_books.y, 20)
+    H.eq(after.labels.coverdeck.y, before.labels.coverdeck.y)
+    H.eq(after.labels.recent.y, before.labels.recent.y)
+end)
+H.test("explicit free-width rows render unsnapped percentages with independent stacked gaps", function()
+    local s = screen({ { "coverdeck", "recent", "new_books" } })
+    settings[layout_key].bento_model = 3
+    settings[pfx .. "bento_mode"] = "classic"
+    widths.coverdeck, widths.recent, widths.new_books = 28, 60, 28
+    gaps.coverdeck, gaps.recent, gaps.new_books = 5, 15, 25
+    s:_updatePage(false)
+    local p = positions(s._body)
+    H.eq(widths.coverdeck, 28); H.eq(p.labels.coverdeck.y, 5)
+    H.eq(p.labels.recent.y, 15)
+    H.eq(p.labels.new_books.x, p.labels.coverdeck.x)
+    H.eq(p.labels.new_books.y, p.contents.coverdeck.y + mods.coverdeck.height + 25)
+end)
 H.finish()

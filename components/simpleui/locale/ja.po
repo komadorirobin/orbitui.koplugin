@@ -172,25 +172,19 @@ msgid "(collection not found)"
 msgstr "（コレクションが見つかりません）"
 
 #: screens/sui_menu.lua:199
-msgid ""
-"0% transparent, 100% solid. Applies across the full width of the title bar."
+msgid "0% transparent, 100% solid. Applies across the full width of the title bar."
 msgstr ""
 
 #: screens/sui_menu.lua:203
-msgid ""
-"0% transparent, 100% solid. Applies to the native page bar in Library, "
-"History, Collections and similar screens."
+msgid "0% transparent, 100% solid. Applies to the native page bar in Library, History, Collections and similar screens."
 msgstr ""
 
 #: features/library/sui_label_options.lua:151
-msgid ""
-"0% transparent, 100% solid. Only the background changes; the text stays "
-"solid."
+msgid "0% transparent, 100% solid. Only the background changes; the text stays solid."
 msgstr ""
 
 #: infra/sui_config.lua:1478
-msgid ""
-"0% transparent, 100% solid. Values in between add a scrim over the wallpaper."
+msgid "0% transparent, 100% solid. Values in between add a scrim over the wallpaper."
 msgstr ""
 
 #: infra/sui_config.lua:1752
@@ -266,12 +260,8 @@ msgid "A folder named \"Books\" will be created and set as the library home."
 msgstr ""
 
 #: screens/sui_stats_windows.lua:2201
-msgid ""
-"A freeze can only bridge a single missed day right after an active one — "
-"yesterday doesn't qualify."
-msgstr ""
-"凍結は、記録のある日の直後の1日分の未読日だけを埋められます — 昨日は対象外で"
-"す。"
+msgid "A freeze can only bridge a single missed day right after an active one — yesterday doesn't qualify."
+msgstr "凍結は、記録のある日の直後の1日分の未読日だけを埋められます — 昨日は対象外です。"
 
 #: modules/critter/phrases.lua:89
 msgid "A fresh day, a fresh page."
@@ -851,9 +841,7 @@ msgstr "バックアップに失敗しました。"
 
 #: features/sui_backup.lua:984
 msgid "Backup loaded. Choose what to import, then tap \"Restore Selected…\"."
-msgstr ""
-"バックアップを読み込みました。インポートする項目を選択し、「選択項目を復元…」"
-"をタップしてください。"
+msgstr "バックアップを読み込みました。インポートする項目を選択し、「選択項目を復元…」をタップしてください。"
 
 #: features/sui_backup.lua:1041
 msgid ""
@@ -864,11 +852,8 @@ msgstr ""
 "すべての変更を適用するために、今すぐ KOReader を再起動しますか？"
 
 #: features/sui_backup.lua:615
-msgid ""
-"Backup was made by a newer SimpleUI version. Please update this plugin first."
-msgstr ""
-"このバックアップはより新しいバージョンの SimpleUI で作成されました。先に本プ"
-"ラグインを更新してください。"
+msgid "Backup was made by a newer SimpleUI version. Please update this plugin first."
+msgstr "このバックアップはより新しいバージョンの SimpleUI で作成されました。先に本プラグインを更新してください。"
 
 #: engines/sui_book_grid.lua:2100 engines/sui_group_cell.lua:319
 #: features/sui_cover_elements.lua:81
@@ -1075,17 +1060,8 @@ msgid "Bottom Margin"
 msgstr "下マージン"
 
 #: screens/sui_menu.lua:2506
-msgid ""
-"Briefly show the book cover full-screen when opening or closing a book, "
-"masking the page-layout flash. Normally requires the book to already be "
-"indexed by the cover browser (its cover must have been seen at least once in "
-"a grid/list view) — see \"High-Quality Cover\" below to also cover un-"
-"indexed books."
-msgstr ""
-"本を開閉する際に、カバーを一瞬全画面表示し、ページレイアウトのちらつきを隠し"
-"ます。通常、本がすでにカバーブラウザでインデックス化されている必要があります"
-"（グリッド/リスト表示で一度は表示されている必要があります）— インデックス化さ"
-"れていない本もカバーするには、下記の「高品質カバー」を参照してください。"
+msgid "Briefly show the book cover full-screen when opening or closing a book, masking the page-layout flash. Normally requires the book to already be indexed by the cover browser (its cover must have been seen at least once in a grid/list view) — see \"High-Quality Cover\" below to also cover un-indexed books."
+msgstr "本を開閉する際に、カバーを一瞬全画面表示し、ページレイアウトのちらつきを隠します。通常、本がすでにカバーブラウザでインデックス化されている必要があります（グリッド/リスト表示で一度は表示されている必要があります）— インデックス化されていない本もカバーするには、下記の「高品質カバー」を参照してください。"
 
 #: features/sui_accent_picker.lua:92 features/sui_quickactions.lua:930
 #: infra/sui_config.lua:136 infra/sui_config.lua:202
@@ -1150,14 +1126,8 @@ msgid "By day of the week"
 msgstr ""
 
 #: screens/sui_menu.lua:2545
-msgid ""
-"By default the cover is stretched to fill the whole screen, which can "
-"distort it if its proportions don't match your screen's. When on, the cover "
-"keeps its original proportions instead, centered over a black background."
-msgstr ""
-"デフォルトではカバーは画面全体を埋めるように引き伸ばされ、比率が画面と合わな"
-"い場合は歪むことがあります。オンにすると、カバーは元の比率を保ち、黒い背景の"
-"中央に表示されます。"
+msgid "By default the cover is stretched to fill the whole screen, which can distort it if its proportions don't match your screen's. When on, the cover keeps its original proportions instead, centered over a black background."
+msgstr "デフォルトではカバーは画面全体を埋めるように引き伸ばされ、比率が画面と合わない場合は歪むことがあります。オンにすると、カバーは元の比率を保ち、黒い背景の中央に表示されます。"
 
 #: screens/insights/sui_insights_charts.lua:153
 msgid "By hour of the day"
@@ -1299,15 +1269,11 @@ msgid "Choose icon pack"
 msgstr "アイコンパックを選択"
 
 #: screens/sui_onboarding.lua:211
-msgid ""
-"Choose the folder where you will place all your books. Simple UI uses it to "
-"show your books in the Library."
+msgid "Choose the folder where you will place all your books. Simple UI uses it to show your books in the Library."
 msgstr ""
 
 #: screens/sui_quicksettings_bar.lua:1691
-msgid ""
-"Choose the menus that open directly on the Quick Settings tab instead of the "
-"last used tab."
+msgid "Choose the menus that open directly on the Quick Settings tab instead of the last used tab."
 msgstr ""
 
 #: screens/sui_menu.lua:2220
@@ -1486,9 +1452,7 @@ msgid "Could not write backup file"
 msgstr "バックアップファイルに書き込めませんでした"
 
 #: features/sui_stats_menu.lua:115
-msgid ""
-"Count manually tracked books in the all-time total of books finished. They "
-"always count towards the year they belong to."
+msgid "Count manually tracked books in the all-time total of books finished. They always count towards the year they belong to."
 msgstr ""
 
 #: features/sui_presets.lua:200 features/sui_presets.lua:218
@@ -1527,8 +1491,7 @@ msgid "Cover for \"%s\""
 msgstr "「%s」のカバー"
 
 #: infra/sui_compat_check.lua:131
-msgid ""
-"CoverBrowser plugin is not enabled, some features will not work correctly."
+msgid "CoverBrowser plugin is not enabled, some features will not work correctly."
 msgstr ""
 
 #: modules/module_coverdeck.lua:123 screens/sui_menu.lua:3970
@@ -1827,9 +1790,7 @@ msgstr "設定を削除"
 
 #: screens/sui_settings_window.lua:364
 msgid "Delete \"%s\"? This removes its layout, modules and Quick Action."
-msgstr ""
-"「%s」を削除しますか？レイアウト、モジュール、クイックアクションが削除されま"
-"す。"
+msgstr "「%s」を削除しますか？レイアウト、モジュール、クイックアクションが削除されます。"
 
 #: features/sui_presets.lua:978 features/sui_presets.lua:1016
 #: screens/sui_menu.lua:3793 screens/sui_menu.lua:3834
@@ -1886,15 +1847,11 @@ msgstr "デジタル"
 
 #: screens/sui_menu.lua:2421
 msgid "Disable \"Lock Scale\" first to set a custom label scale."
-msgstr ""
-"カスタムラベルスケールを設定するには、まず「スケールのロック」を無効にしてく"
-"ださい。"
+msgstr "カスタムラベルスケールを設定するには、まず「スケールのロック」を無効にしてください。"
 
 #: infra/sui_config.lua:1414
 msgid "Disable \"Lock Scale\" first to set a per-module scale."
-msgstr ""
-"モジュールごとのスケールを設定するには、まず「スケールのロック」を無効にして"
-"ください。"
+msgstr "モジュールごとのスケールを設定するには、まず「スケールのロック」を無効にしてください。"
 
 #: infra/sui_config.lua:204
 msgid "Disk Usage"
@@ -2037,8 +1994,7 @@ msgstr "有効"
 
 #: features/sui_quickactions.lua:667
 msgid "Enable 'Browse by Author / Series / Tags' in the library menu first."
-msgstr ""
-"まずライブラリメニューで「著者/シリーズ/タグ別に参照」を有効にしてください。"
+msgstr "まずライブラリメニューで「著者/シリーズ/タグ別に参照」を有効にしてください。"
 
 #: screens/sui_menu.lua:2971
 msgid "Enable Browse by Author / Series / Tags"
@@ -2088,8 +2044,7 @@ msgid ""
 "Leave blank and press OK to remove a Nerd Font icon."
 msgstr ""
 "Nerd FontsシンボルのUnicodeコードポイント（16進数）を入力してください。\n"
-"wakamaifondue.comでコードを確認できます（ファイル: /koreader/fonts/nerdfonts/"
-"symbols.ttf）。\n"
+"wakamaifondue.comでコードを確認できます（ファイル: /koreader/fonts/nerdfonts/symbols.ttf）。\n"
 "空のままOKを押すとNerd Fontアイコンが削除されます。"
 
 #: screens/sui_menu.lua:3593
@@ -2225,9 +2180,7 @@ msgid "Fade Intensity"
 msgstr "フェード強度"
 
 #: features/library/sui_finished_books.lua:63
-msgid ""
-"Fades finished book covers in the file browser. Other lists show them as "
-"usual."
+msgid "Fades finished book covers in the file browser. Other lists show them as usual."
 msgstr ""
 
 #: screens/sui_menu.lua:2703
@@ -2482,12 +2435,8 @@ msgid "Freezes"
 msgstr "凍結"
 
 #: screens/sui_stats_windows.lua:2182
-msgid ""
-"Freezes can only cover a single missed day, and only right after an active "
-"one. Tap yesterday's cell to use one, when eligible."
-msgstr ""
-"凍結は1日分の未読日だけを、しかも記録のある日の直後にのみ埋められます。該当す"
-"る場合は、昨日のセルをタップして使用してください。"
+msgid "Freezes can only cover a single missed day, and only right after an active one. Tap yesterday's cell to use one, when eligible."
+msgstr "凍結は1日分の未読日だけを、しかも記録のある日の直後にのみ埋められます。該当する場合は、昨日のセルをタップして使用してください。"
 
 #: engines/sui_heatmap_widgets.lua:127 infra/sui_datenames.lua:45
 msgid "Fri"
@@ -2553,17 +2502,11 @@ msgstr "グローバルカスタムアクションとアイコン"
 
 #: screens/sui_menu.lua:4006
 msgid ""
-"Global scale applied to all of KOReader's interface text — menus, dialogs, "
-"titles, and Simple UI. It does not change the book's reading font size, "
-"which has its own setting.\n"
-"100% is the default size. Useful when a chosen UI font (see UI Font above) "
-"renders smaller or larger than usual."
+"Global scale applied to all of KOReader's interface text — menus, dialogs, titles, and Simple UI. It does not change the book's reading font size, which has its own setting.\n"
+"100% is the default size. Useful when a chosen UI font (see UI Font above) renders smaller or larger than usual."
 msgstr ""
-"メニュー、ダイアログ、タイトル、Simple UIなど、KOReaderのインターフェーステキ"
-"スト全体に適用される全体スケールです。本の読書用フォントサイズは変更されませ"
-"ん（別途設定があります）。\n"
-"100%がデフォルトサイズです。選択したUIフォント（上記の「UIフォント」参照）が"
-"通常より小さく／大きく表示される場合に便利です。"
+"メニュー、ダイアログ、タイトル、Simple UIなど、KOReaderのインターフェーステキスト全体に適用される全体スケールです。本の読書用フォントサイズは変更されません（別途設定があります）。\n"
+"100%がデフォルトサイズです。選択したUIフォント（上記の「UIフォント」参照）が通常より小さく／大きく表示される場合に便利です。"
 
 #: screens/sui_menu.lua:2403
 msgid ""
@@ -2692,17 +2635,13 @@ msgstr "グループ: アクションを選択"
 
 #: modules/module_currently.lua:1302
 msgid ""
-"Grows or shrinks the cover so its height always matches the text column, "
-"keeping the cover's proportions.\n"
+"Grows or shrinks the cover so its height always matches the text column, keeping the cover's proportions.\n"
 "The spacing between cover and text stays as set above.\n"
-"The Cover size setting still applies on top of this, and the cover never "
-"shrinks below its 100% size."
+"The Cover size setting still applies on top of this, and the cover never shrinks below its 100% size."
 msgstr ""
-"カバーの比率を保ちながら、高さがテキスト列と常に一致するようにカバーを拡大・"
-"縮小します。\n"
+"カバーの比率を保ちながら、高さがテキスト列と常に一致するようにカバーを拡大・縮小します。\n"
 "カバーとテキストの間隔は上記で設定した値のままです。\n"
-"「カバーサイズ」の設定はこれに加えてさらに適用され、カバーは100%サイズより小"
-"さくなることはありません。"
+"「カバーサイズ」の設定はこれに加えてさらに適用され、カバーは100%サイズより小さくなることはありません。"
 
 #: modules/critter/reaction_lines.lua:270
 msgid "HAPPY ANNIVERSARY! I love us!"
@@ -2915,16 +2854,8 @@ msgid "Hours read"
 msgstr ""
 
 #: modules/module_heatmap.lua:310
-msgid ""
-"How many weeks of history to include, and (in Calendar view) how many weeks "
-"the grid shows — this count is unaffected by Scale, which only resizes the "
-"cells. In Time of day view, this only changes how much history feeds the "
-"shading — the grid itself always has one column per hour."
-msgstr ""
-"含める履歴の週数、および（カレンダー表示で）グリッドに表示する週数 — この数値"
-"はセルのサイズだけを変える「スケール」の影響を受けません。時間帯表示では、こ"
-"の設定は陰影に反映される履歴の量だけを変え、グリッド自体は常に1時間につき1列"
-"です。"
+msgid "How many weeks of history to include, and (in Calendar view) how many weeks the grid shows — this count is unaffected by Scale, which only resizes the cells. In Time of day view, this only changes how much history feeds the shading — the grid itself always has one column per hour."
+msgstr "含める履歴の週数、および（カレンダー表示で）グリッドに表示する週数 — この数値はセルのサイズだけを変える「スケール」の影響を受けません。時間帯表示では、この設定は陰影に反映される履歴の量だけを変え、グリッド自体は常に1時間につき1列です。"
 
 #: modules/critter/dialog.lua:331
 msgid "How was your day?"
@@ -3126,8 +3057,7 @@ msgstr "アイコンのみ"
 
 #: screens/sui_menu.lua:3957
 msgid ""
-"Icons that contain color keep their original colors in night mode instead of "
-"being inverted.\n"
+"Icons that contain color keep their original colors in night mode instead of being inverted.\n"
 "Monochrome icons are not affected and keep following the interface colors.\n"
 "Requires a color screen."
 msgstr ""
@@ -3145,12 +3075,8 @@ msgid "If I were in a book, what kind would it be?"
 msgstr ""
 
 #: screens/sui_onboarding.lua:330
-msgid ""
-"If you selected the Momentum Preset, long press the Reading Goal module to "
-"choose and set your reading goals."
-msgstr ""
-"モメンタムプリセットを選択した場合、読書目標モジュールを長押しして読書目標を"
-"選択・設定してください。"
+msgid "If you selected the Momentum Preset, long press the Reading Goal module to choose and set your reading goals."
+msgstr "モメンタムプリセットを選択した場合、読書目標モジュールを長押しして読書目標を選択・設定してください。"
 
 #: features/sui_backup.lua:1148
 msgid "Import Backup…"
@@ -3428,9 +3354,7 @@ msgid "Layout Editor"
 msgstr "レイアウトエディタ"
 
 #: screens/sui_quicksettings_bar.lua:1600
-msgid ""
-"Layout of the Quick Settings panel in the reader. The file browser always "
-"uses the classic layout."
+msgid "Layout of the Quick Settings panel in the reader. The file browser always uses the classic layout."
 msgstr ""
 
 #: features/sui_backup.lua:118
@@ -3512,9 +3436,7 @@ msgid "Library View"
 msgstr "ライブラリビュー"
 
 #: screens/sui_menu.lua:2892
-msgid ""
-"Library captions are enabled. Folder names are shown in the caption strip "
-"under each cover instead of on the cover."
+msgid "Library captions are enabled. Folder names are shown in the caption strip under each cover instead of on the cover."
 msgstr ""
 
 #: screens/sui_menu.lua:2765
@@ -3541,9 +3463,7 @@ msgid "List"
 msgstr "リスト"
 
 #: screens/sui_menu.lua:3008
-msgid ""
-"Lists books without an author, series or tag as a separate group in the "
-"Authors, Series and Tags views."
+msgid "Lists books without an author, series or tag as a separate group in the Authors, Series and Tags views."
 msgstr ""
 
 #: modules/critter/reaction_lines.lua:119
@@ -3622,14 +3542,8 @@ msgstr "カスタマイズ"
 
 #: screens/sui_menu.lua:2593
 #, fuzzy
-msgid ""
-"Makes the device's physical Home key open the SimpleUI Home Screen — while "
-"reading and while browsing files — instead of KOReader's native Home "
-"behaviour. The file browser title-bar home icon still goes to the home "
-"folder."
-msgstr ""
-"デバイスのホームボタンで、読書中でもファイルの閲覧中でも、KOReader 標準のホー"
-"ム動作ではなく常に SimpleUI のホーム画面を開くようにします。"
+msgid "Makes the device's physical Home key open the SimpleUI Home Screen — while reading and while browsing files — instead of KOReader's native Home behaviour. The file browser title-bar home icon still goes to the home folder."
+msgstr "デバイスのホームボタンで、読書中でもファイルの閲覧中でも、KOReader 標準のホーム動作ではなく常に SimpleUI のホーム画面を開くようにします。"
 
 #: features/sui_presets.lua:952 features/sui_presets.lua:997
 #: features/sui_presets.lua:1002 screens/sui_menu.lua:3763
@@ -4153,12 +4067,8 @@ msgid "No collections selected  —  long press to configure"
 msgstr "コレクションが選択されていません — 長押しで設定"
 
 #: modules/module_quote.lua:948
-msgid ""
-"No custom quotes found. Add a .lua file to the plugin's sui_quotes/ folder "
-"and select it in Settings."
-msgstr ""
-"カスタム引用が見つかりません。プラグインのsui_quotes/フォルダに.luaファイルを"
-"追加し、設定で選択してください。"
+msgid "No custom quotes found. Add a .lua file to the plugin's sui_quotes/ folder and select it in Settings."
+msgstr "カスタム引用が見つかりません。プラグインのsui_quotes/フォルダに.luaファイルを追加し、設定で選択してください。"
 
 #: screens/sui_settings_window.lua:315
 msgid "No custom screens yet."
@@ -4205,8 +4115,7 @@ msgstr "このコレクションに本がありません。"
 
 #: modules/module_quote.lua:1014
 msgid "No highlights found. Open a book and highlight some passages."
-msgstr ""
-"ハイライトが見つかりません。本を開いてテキストをハイライトしてください。"
+msgstr "ハイライトが見つかりません。本を開いてテキストをハイライトしてください。"
 
 #: features/library/sui_library_search.lua:175
 #, fuzzy
@@ -4817,11 +4726,8 @@ msgid "Place images in:"
 msgstr "画像を以下に配置:"
 
 #: screens/sui_onboarding.lua:334
-msgid ""
-"Place your files in koreader/settings/simpleui/sui_wallpapers or sui_icons."
-msgstr ""
-"ファイルをkoreader/settings/simpleui/sui_wallpapersまたはsui_iconsに配置して"
-"ください。"
+msgid "Place your files in koreader/settings/simpleui/sui_wallpapers or sui_icons."
+msgstr "ファイルをkoreader/settings/simpleui/sui_wallpapersまたはsui_iconsに配置してください。"
 
 #: screens/sui_menu.lua:3053
 msgid "Placeholder Cover for Bookless Folders"
@@ -4833,9 +4739,7 @@ msgid "Placement"
 msgstr "画像を以下に配置:"
 
 #: infra/sui_compat_check.lua:155
-msgid ""
-"Please delete the Project: Title plugin from your plugins folder and restart "
-"KOReader."
+msgid "Please delete the Project: Title plugin from your plugins folder and restart KOReader."
 msgstr ""
 
 #: screens/sui_stats_windows.lua:511
@@ -4957,12 +4861,8 @@ msgid "Presets module unavailable."
 msgstr "プリセットモジュールは利用できません。"
 
 #: screens/sui_onboarding.lua:322
-msgid ""
-"Press and hold any element on the screen (like modules or bars) to quickly "
-"customize its settings."
-msgstr ""
-"画面上の任意の要素（モジュールやバーなど）を長押しして、その設定を素早くカス"
-"タマイズできます。"
+msgid "Press and hold any element on the screen (like modules or bars) to quickly customize its settings."
+msgstr "画面上の任意の要素（モジュールやバーなど）を長押しして、その設定を素早くカスタマイズできます。"
 
 #: modules/critter/dialog.lua:336
 msgid "Pretty good."
@@ -5294,22 +5194,16 @@ msgid "Rename screen"
 msgstr "画面名を変更"
 
 #: screens/sui_menu.lua:2521
-msgid ""
-"Replaces the \"Closing book…\" notice above with the cover for that close, "
-"when a cover is available."
-msgstr ""
-"カバーが利用可能な場合、上記の「本を閉じています…」通知をそのカバーに置き換え"
-"ます。"
+msgid "Replaces the \"Closing book…\" notice above with the cover for that close, when a cover is available."
+msgstr "カバーが利用可能な場合、上記の「本を閉じています…」通知をそのカバーに置き換えます。"
 
 #: screens/sui_menu.lua:453
 msgid ""
-"Replaces the pagination bar with Prev/Next arrows at the edges of the "
-"navigation bar.\n"
+"Replaces the pagination bar with Prev/Next arrows at the edges of the navigation bar.\n"
 "The arrows dim when there is no previous or next page.\n"
 "With navpager active, as few as 1 tab and at most 4 tabs can be configured."
 msgstr ""
-"ページネーションバーをナビゲーションバーの端にある前へ/次へ矢印に置き換えま"
-"す。\n"
+"ページネーションバーをナビゲーションバーの端にある前へ/次へ矢印に置き換えます。\n"
 "前または次のページがない場合、矢印は暗くなります。\n"
 "navpager有効時は、1〜4個のタブを設定できます。"
 
@@ -5336,8 +5230,7 @@ msgstr "すべてのクイックアクションアイコンをデフォルトに
 
 #: screens/sui_menu.lua:2443
 msgid "Reset all scales to default (100%)? This cannot be undone."
-msgstr ""
-"すべてのスケールをデフォルト（100%）にリセットしますか？元に戻せません。"
+msgstr "すべてのスケールをデフォルト（100%）にリセットしますか？元に戻せません。"
 
 #: features/sui_style.lua:1282
 msgid "Reset all system icons to default?"
@@ -5386,12 +5279,8 @@ msgid "Restore failed. Your previous configuration was kept unchanged."
 msgstr "復元に失敗しました。以前の設定は変更されずに保持されます。"
 
 #: features/sui_backup.lua:1027
-msgid ""
-"Restore this backup? Existing settings for these categories will be "
-"replaced. Saved presets are merged — yours are kept."
-msgstr ""
-"このバックアップを復元しますか？これらのカテゴリの既存の設定は置き換えられま"
-"す。保存済みプリセットはマージされ、既存のものは保持されます。"
+msgid "Restore this backup? Existing settings for these categories will be replaced. Saved presets are merged — yours are kept."
+msgstr "このバックアップを復元しますか？これらのカテゴリの既存の設定は置き換えられます。保存済みプリセットはマージされ、既存のものは保持されます。"
 
 #: screens/sui_menu.lua:2372
 msgid "Return to Home Screen on Wakeup"
@@ -5548,13 +5437,11 @@ msgstr ""
 msgid ""
 "Scale for the cover thumbnail only.\n"
 "100% is the default size.\n"
-"When Dynamic Cover Size is on, this scales the cover relative to its current "
-"dynamic size instead, and the cover never shrinks below its 100% size."
+"When Dynamic Cover Size is on, this scales the cover relative to its current dynamic size instead, and the cover never shrinks below its 100% size."
 msgstr ""
 "カバーのサムネイルのみのスケールです。\n"
 "100%がデフォルトサイズです。\n"
-"「動的カバーサイズ」がオンの場合、現在の動的サイズを基準にカバーを拡大・縮小"
-"し、カバーは100%サイズより小さくなることはありません。"
+"「動的カバーサイズ」がオンの場合、現在の動的サイズを基準にカバーを拡大・縮小し、カバーは100%サイズより小さくなることはありません。"
 
 #: modules/module_coverdeck.lua:1474
 msgid ""
@@ -5602,8 +5489,7 @@ msgid "Scale for the progress badge."
 msgstr ""
 
 #: engines/sui_book_grid.lua:1965
-msgid ""
-"Scale for this module's corner badges (progress, pages, series, new book)."
+msgid "Scale for this module's corner badges (progress, pages, series, new book)."
 msgstr ""
 "このモジュールの角バッジ（進捗、ページ、シリーズ、新着本）のスケール。\n"
 "100%がデフォルトサイズ。"
@@ -5627,15 +5513,10 @@ msgstr ""
 #: modules/module_heatmap.lua:326
 msgid ""
 "Scale for this module.\n"
-"100% is the default size. Capped at 100% here: the grid always has as many "
-"columns as \"Weeks shown\" (or, in Time of day view, 24), so there's no room "
-"to grow the cells past their autofit size without the grid overflowing the "
-"card."
+"100% is the default size. Capped at 100% here: the grid always has as many columns as \"Weeks shown\" (or, in Time of day view, 24), so there's no room to grow the cells past their autofit size without the grid overflowing the card."
 msgstr ""
 "このモジュールのスケールです。\n"
-"100%がデフォルトサイズです。ここでは100%が上限です: グリッドの列数は常に「表"
-"示する週数」（時間帯表示では24）と同じであるため、カードからグリッドがはみ出"
-"さない限り、セルを自動フィットサイズより大きくする余地がありません。"
+"100%がデフォルトサイズです。ここでは100%が上限です: グリッドの列数は常に「表示する週数」（時間帯表示では24）と同じであるため、カードからグリッドがはみ出さない限り、セルを自動フィットサイズより大きくする余地がありません。"
 
 #: screens/sui_menu.lua:2402
 msgid ""
@@ -5647,8 +5528,7 @@ msgstr ""
 
 #: screens/sui_menu.lua:2424
 msgid ""
-"Scales the module label text above each module, on top of the size set in "
-"Style > Module Labels.\n"
+"Scales the module label text above each module, on top of the size set in Style > Module Labels.\n"
 "100% is the default size."
 msgstr ""
 
@@ -5661,15 +5541,11 @@ msgid "Screen name"
 msgstr "画面名"
 
 #: screens/sui_menu.lua:2355
-msgid ""
-"Screen shown after closing a book. Gestures and quick actions that name a "
-"destination always open that destination."
+msgid "Screen shown after closing a book. Gestures and quick actions that name a destination always open that destination."
 msgstr ""
 
 #: screens/sui_menu.lua:2279
-msgid ""
-"Scrim over the wallpaper in Library, History and Collections. 0% shows the "
-"wallpaper, 100% hides it."
+msgid "Scrim over the wallpaper in Library, History and Collections. 0% shows the wallpaper, 100% hides it."
 msgstr ""
 
 #: features/library/sui_library_search.lua:181
@@ -5860,20 +5736,12 @@ msgid "Show Uncategorized Items"
 msgstr ""
 
 #: screens/sui_menu.lua:2459
-msgid ""
-"Show a brief \"Closing book…\" notice when closing a book, preventing "
-"accidental double-taps while e-ink refreshes."
-msgstr ""
-"本を閉じる際に簡潔な「本を閉じています…」通知を表示し、e-ink更新中の誤ったダ"
-"ブルタップを防止します。"
+msgid "Show a brief \"Closing book…\" notice when closing a book, preventing accidental double-taps while e-ink refreshes."
+msgstr "本を閉じる際に簡潔な「本を閉じています…」通知を表示し、e-ink更新中の誤ったダブルタップを防止します。"
 
 #: features/sui_stats_menu.lua:92
-msgid ""
-"Show a brief \"Loading statistics…\" notice when opening a statistics "
-"window, preventing accidental double-taps while e-ink refreshes."
-msgstr ""
-"統計ウィンドウを開くときに簡潔な「統計を読み込み中…」通知を表示し、e-ink更新"
-"中の誤ったダブルタップを防止します。"
+msgid "Show a brief \"Loading statistics…\" notice when opening a statistics window, preventing accidental double-taps while e-ink refreshes."
+msgstr "統計ウィンドウを開くときに簡潔な「統計を読み込み中…」通知を表示し、e-ink更新中の誤ったダブルタップを防止します。"
 
 #: engines/sui_book_sources.lua:276 modules/module_coverdeck.lua:1661
 #: modules/module_recent.lua:49
@@ -5901,9 +5769,7 @@ msgid "Show section label"
 msgstr "セクションラベルを表示"
 
 #: screens/sui_quicksettings_bar.lua:1626
-msgid ""
-"Show the frontlight and warmth sliders below the book details in the Book "
-"layout."
+msgid "Show the frontlight and warmth sliders below the book details in the Book layout."
 msgstr ""
 
 #: screens/sui_menu.lua:2877
@@ -5912,13 +5778,11 @@ msgstr ""
 
 #: screens/sui_menu.lua:594
 msgid ""
-"Shows \"Page X of Y\" in the title bar subtitle when browsing the library, "
-"history or collections.\n"
+"Shows \"Page X of Y\" in the title bar subtitle when browsing the library, history or collections.\n"
 "Navpager enables this automatically.\n"
 "Not available when Navpager is active."
 msgstr ""
-"ライブラリ、履歴、コレクションを閲覧中にタイトルバーのサブタイトルに「ページ "
-"X / Y」を表示します。\n"
+"ライブラリ、履歴、コレクションを閲覧中にタイトルバーのサブタイトルに「ページ X / Y」を表示します。\n"
 "Navpagerが自動的に有効にします。\n"
 "Navpagerが有効な場合は利用できません。"
 
@@ -5972,12 +5836,8 @@ msgid "Simple UI Settings"
 msgstr "Simple UI設定"
 
 #: screens/sui_onboarding.lua:294
-msgid ""
-"Simple UI is designed to be simple and flexible. Here are a few tips to get "
-"the most out of it."
-msgstr ""
-"Simple UIはシンプルで柔軟にデザインされています。最大限に活用するためのヒント"
-"を紹介します。"
+msgid "Simple UI is designed to be simple and flexible. Here are a few tips to get the most out of it."
+msgstr "Simple UIはシンプルで柔軟にデザインされています。最大限に活用するためのヒントを紹介します。"
 
 #: infra/sui_updater.lua:486
 msgid "Simple UI is up to date (%s)."
@@ -6200,9 +6060,7 @@ msgstr ""
 "100%がデフォルト間隔。"
 
 #: screens/sui_menu.lua:3361
-msgid ""
-"Space between the characters of a module label, as a percentage of its text "
-"size."
+msgid "Space between the characters of a module label, as a percentage of its text size."
 msgstr ""
 
 #: modules/module_spacer.lua:58 modules/module_spacer.lua:112
@@ -6613,22 +6471,8 @@ msgid "The case of the missing bookmark."
 msgstr ""
 
 #: screens/sui_menu.lua:2533
-msgid ""
-"The cover shown right as a book opens normally comes from the library's "
-"cached thumbnail, which can look soft on higher-resolution screens. When on, "
-"SimpleUI instead reads the cover straight from the book file for that moment "
-"(also covers books never opened before, which otherwise show no cover at "
-"all) — at the cost of a brief extra pause while opening, since the file has "
-"to be read twice. Cover on close is unaffected either way: it already reads "
-"the full-quality cover from the open book."
-msgstr ""
-"本を開いた瞬間に表示されるカバーは、通常ライブラリのキャッシュされたサムネイ"
-"ルから取得され、高解像度画面では粗く見えることがあります。オンにすると、"
-"SimpleUIはその瞬間に本のファイルから直接カバーを読み込みます（これまで一度も"
-"開いたことがなく、カバーがまったく表示されない本もカバーします）— ファイルを2"
-"回読み込むため、開くときにわずかな追加の一時停止が発生します。閉じるときのカ"
-"バーはいずれの場合も影響を受けません: すでに開いている本から高品質なカバーを"
-"読み込んでいるためです。"
+msgid "The cover shown right as a book opens normally comes from the library's cached thumbnail, which can look soft on higher-resolution screens. When on, SimpleUI instead reads the cover straight from the book file for that moment (also covers books never opened before, which otherwise show no cover at all) — at the cost of a brief extra pause while opening, since the file has to be read twice. Cover on close is unaffected either way: it already reads the full-quality cover from the open book."
+msgstr "本を開いた瞬間に表示されるカバーは、通常ライブラリのキャッシュされたサムネイルから取得され、高解像度画面では粗く見えることがあります。オンにすると、SimpleUIはその瞬間に本のファイルから直接カバーを読み込みます（これまで一度も開いたことがなく、カバーがまったく表示されない本もカバーします）— ファイルを2回読み込むため、開くときにわずかな追加の一時停止が発生します。閉じるときのカバーはいずれの場合も影響を受けません: すでに開いている本から高品質なカバーを読み込んでいるためです。"
 
 #: modules/critter/module_critter.lua:782
 msgid "The critter may use it in what it says."
@@ -7240,21 +7084,17 @@ msgstr "新機能:"
 #: features/sui_stats_menu.lua:102
 #, fuzzy
 msgid ""
-"When a finished book is deleted from the device (file or folder), keep it "
-"counted in the Books Read statistics on the Home Screen.\n"
+"When a finished book is deleted from the device (file or folder), keep it counted in the Books Read statistics on the Home Screen.\n"
 "\n"
-"Books changed back to Reading or Abandoned are automatically removed from "
-"this list."
+"Books changed back to Reading or Abandoned are automatically removed from this list."
 msgstr ""
-"読了した本が端末から削除された場合でも、ホーム画面の「読了した本」統計に引き"
-"続きカウントします。\n"
+"読了した本が端末から削除された場合でも、ホーム画面の「読了した本」統計に引き続きカウントします。\n"
 "\n"
 "「読書中」または「放棄」に戻された本は、このリストから自動的に削除されます。"
 
 #: screens/sui_menu.lua:2571
 msgid ""
-"When enabled, long-pressing a module on the home screen opens its settings "
-"menu.\n"
+"When enabled, long-pressing a module on the home screen opens its settings menu.\n"
 "Disable this to prevent settings from appearing on long tap."
 msgstr ""
 "有効にすると、ホーム画面のモジュールを長押しして設定メニューを開けます。\n"
@@ -7285,12 +7125,8 @@ msgstr ""
 "無効にすると、長押しで設定メニューが表示されなくなります。"
 
 #: screens/sui_menu.lua:2373
-msgid ""
-"When waking the device from sleep/suspend, always return to the Home Screen "
-"— even if a book was open when it went to sleep."
-msgstr ""
-"端末をスリープ/休止状態から復帰させる際、スリープ時に本が開いていた場合でも常"
-"にホーム画面に戻ります。"
+msgid "When waking the device from sleep/suspend, always return to the Home Screen — even if a book was open when it went to sleep."
+msgstr "端末をスリープ/休止状態から復帰させる際、スリープ時に本が開いていた場合でも常にホーム画面に戻ります。"
 
 #: modules/critter/dialog.lua:98
 msgid "When you close a book, do the characters wait?"
@@ -8019,22 +7855,17 @@ msgstr[0] ""
 #: modules/module_action_list.lua:300 modules/module_quick_actions.lua:351
 #: screens/sui_menu.lua:1899 screens/sui_menu.lua:2013
 msgid "The maximum of %d action per module has been reached. Remove one first."
-msgid_plural ""
-"The maximum of %d actions per module has been reached. Remove one first."
-msgstr[0] ""
-"モジュールあたり最大%d個のアクションに達しました。先に1つ削除してください。"
+msgid_plural "The maximum of %d actions per module has been reached. Remove one first."
+msgstr[0] "モジュールあたり最大%d個のアクションに達しました。先に1つ削除してください。"
 
 #: modules/critter/module_critter.lua:750
-msgid ""
-"The maximum of %d decoration per side has been reached. Remove one first."
-msgid_plural ""
-"The maximum of %d decorations per side has been reached. Remove one first."
+msgid "The maximum of %d decoration per side has been reached. Remove one first."
+msgid_plural "The maximum of %d decorations per side has been reached. Remove one first."
 msgstr[0] ""
 
 #: features/sui_quickactions.lua:1636 features/sui_quickactions.lua:2844
 msgid "The maximum of %d quick action has been reached. Delete one first."
-msgid_plural ""
-"The maximum of %d quick actions has been reached. Delete one first."
+msgid_plural "The maximum of %d quick actions has been reached. Delete one first."
 msgstr[0] "最大%d個のクイックアクションに達しました。先に1つ削除してください。"
 
 #: screens/sui_menu.lua:366
@@ -8063,6 +7894,7 @@ msgstr[0] "日連続"
 msgid "page read"
 msgid_plural "pages read"
 msgstr[0] "読了ページ"
+
 #~ msgid "ALL TIME"
 #~ msgstr "全期間"
 
@@ -8092,12 +7924,10 @@ msgstr[0] "読了ページ"
 
 #~ msgid ""
 #~ "Share of the row this module occupies.\n"
-#~ "100% = full width. Modules under 100% share a row when their widths fit "
-#~ "(bento grid)."
+#~ "100% = full width. Modules under 100% share a row when their widths fit (bento grid)."
 #~ msgstr ""
 #~ "このモジュールが占める行の割合。\n"
-#~ "100% = 全幅。100% 未満のモジュールは、幅が合えば同じ行に並びます（Bento グ"
-#~ "リッド）。"
+#~ "100% = 全幅。100% 未満のモジュールは、幅が合えば同じ行に並びます（Bento グリッド）。"
 
 #~ msgid "Show wallpaper on all screens"
 #~ msgstr "すべての画面で壁紙を表示"
@@ -8146,21 +7976,6 @@ msgstr[0] "読了ページ"
 
 #~ msgid "reading time"
 #~ msgstr "読書時間"
-
-#~ msgid "%d freeze available"
-#~ msgid_plural "%d freezes available"
-#~ msgstr[0] "利用可能な凍結: %d件"
-#~ msgstr[1] "利用可能な凍結: %d件"
-
-#~ msgid "day read"
-#~ msgid_plural "days read"
-#~ msgstr[0] "読了日"
-#~ msgstr[1] "読了日"
-
-#~ msgid "page read"
-#~ msgid_plural "pages read"
-#~ msgstr[0] "読了ページ"
-#~ msgstr[1] "読了ページ"
 
 #~ msgid "Badges"
 #~ msgstr "バッジ"
@@ -8243,8 +8058,7 @@ msgstr[0] "読了ページ"
 #~ msgstr "表示"
 
 #~ msgid "The maximum of %d stat per row has been reached. Remove one first."
-#~ msgid_plural ""
-#~ "The maximum of %d stats per row has been reached. Remove one first."
+#~ msgid_plural "The maximum of %d stats per row has been reached. Remove one first."
 #~ msgstr[0] "行あたり最大%d個の統計に達しました。先に1つ削除してください。"
 #~ msgstr[1] "行あたり最大%d個の統計に達しました。先に1つ削除してください。"
 

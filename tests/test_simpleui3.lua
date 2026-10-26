@@ -101,12 +101,14 @@ H.test("new chart and session caches retry failed DB queries within the same day
 end)
 H.test("new layout model activates through explicit width or movement edits", function()
     local source = read("infra/sui_layout.lua")
-    local methods = part(source, "function LayoutService.setSpan(", "return LayoutService")
+    local methods = part(source, "local function storeWidth(", "return LayoutService")
     local L = { findPage = function() return { modules = { "a", "b" } } end,
-        pageSpans = function() return { "a", "b" }, { a = 3, b = 3 } end }
+        pageSpans = function() return { "a", "b" }, { a = 3, b = 3 } end,
+        mode = function() return { classic = false, stack = false } end }
     local Bento = dofile("components/simpleui/infra/sui_bento.lua")
     run(methods, { LayoutService = L, Bento = Bento,
-        require = function() return { isBentoAutofit = function() return true end, setBentoSpan = noop } end })
+        require = function() return { isBentoAutofit = function() return true end,
+            isBentoClassic = function() return false end, setBentoSpan = noop } end })
     local layout = { pages = {} }
     L.setSpan(layout, "home_", "a", 2); H.eq(layout.bento_model, 3)
     local other = {}; H.eq(other.bento_model, nil)

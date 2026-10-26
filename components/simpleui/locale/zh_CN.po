@@ -173,26 +173,19 @@ msgid "(collection not found)"
 msgstr "（未找到书单）"
 
 #: screens/sui_menu.lua:199
-msgid ""
-"0% transparent, 100% solid. Applies across the full width of the title bar."
+msgid "0% transparent, 100% solid. Applies across the full width of the title bar."
 msgstr "0% 为透明，100% 为完全不透明。应用于标题栏的整个宽度。"
 
 #: screens/sui_menu.lua:203
-msgid ""
-"0% transparent, 100% solid. Applies to the native page bar in Library, "
-"History, Collections and similar screens."
-msgstr ""
-"0% 为透明，100% 为纯色。应用于“书库”、“历史记录”与“书单”等原生页面导航栏。"
+msgid "0% transparent, 100% solid. Applies to the native page bar in Library, History, Collections and similar screens."
+msgstr "0% 为透明，100% 为纯色。应用于“书库”、“历史记录”与“书单”等原生页面导航栏。"
 
 #: features/library/sui_label_options.lua:151
-msgid ""
-"0% transparent, 100% solid. Only the background changes; the text stays "
-"solid."
+msgid "0% transparent, 100% solid. Only the background changes; the text stays solid."
 msgstr ""
 
 #: infra/sui_config.lua:1478
-msgid ""
-"0% transparent, 100% solid. Values in between add a scrim over the wallpaper."
+msgid "0% transparent, 100% solid. Values in between add a scrim over the wallpaper."
 msgstr "0% 透明，100% 纯色。介于两者之间的值会在壁纸上叠加一层遮罩。"
 
 #: infra/sui_config.lua:1752
@@ -268,9 +261,7 @@ msgid "A folder named \"Books\" will be created and set as the library home."
 msgstr "将创建一个名为“Books”的文件夹，并将其设置为书库主目录。"
 
 #: screens/sui_stats_windows.lua:2201
-msgid ""
-"A freeze can only bridge a single missed day right after an active one — "
-"yesterday doesn't qualify."
+msgid "A freeze can only bridge a single missed day right after an active one — yesterday doesn't qualify."
 msgstr "冻结补签仅可衔接一次紧接有效阅读日之后的缺勤 — 昨天不符合条件。"
 
 #: modules/critter/phrases.lua:89
@@ -862,8 +853,7 @@ msgstr ""
 "是否立即重启 KOReader 以应用所有更改？"
 
 #: features/sui_backup.lua:615
-msgid ""
-"Backup was made by a newer SimpleUI version. Please update this plugin first."
+msgid "Backup was made by a newer SimpleUI version. Please update this plugin first."
 msgstr "此备份由更新版本的 SimpleUI 创建。请先更新本插件。"
 
 #: engines/sui_book_grid.lua:2100 engines/sui_group_cell.lua:319
@@ -1070,16 +1060,8 @@ msgid "Bottom Margin"
 msgstr "下边距"
 
 #: screens/sui_menu.lua:2506
-msgid ""
-"Briefly show the book cover full-screen when opening or closing a book, "
-"masking the page-layout flash. Normally requires the book to already be "
-"indexed by the cover browser (its cover must have been seen at least once in "
-"a grid/list view) — see \"High-Quality Cover\" below to also cover un-"
-"indexed books."
-msgstr ""
-"在打开或关闭书籍时以全屏封面短暂显示，以遮盖页面布局刷新。通常要求该书已被封"
-"面浏览器索引（即在网格/列表视图中至少显示过一次封面）。如需覆盖未索引书籍，请"
-"参阅下方的“高质量封面”选项。"
+msgid "Briefly show the book cover full-screen when opening or closing a book, masking the page-layout flash. Normally requires the book to already be indexed by the cover browser (its cover must have been seen at least once in a grid/list view) — see \"High-Quality Cover\" below to also cover un-indexed books."
+msgstr "在打开或关闭书籍时以全屏封面短暂显示，以遮盖页面布局刷新。通常要求该书已被封面浏览器索引（即在网格/列表视图中至少显示过一次封面）。如需覆盖未索引书籍，请参阅下方的“高质量封面”选项。"
 
 #: features/sui_accent_picker.lua:92 features/sui_quickactions.lua:930
 #: infra/sui_config.lua:136 infra/sui_config.lua:202
@@ -1144,13 +1126,8 @@ msgid "By day of the week"
 msgstr ""
 
 #: screens/sui_menu.lua:2545
-msgid ""
-"By default the cover is stretched to fill the whole screen, which can "
-"distort it if its proportions don't match your screen's. When on, the cover "
-"keeps its original proportions instead, centered over a black background."
-msgstr ""
-"默认情况下，封面会拉伸以填满整个屏幕；如果封面的宽高比与屏幕不匹配，可能会导"
-"致变形。开启后，封面将保持原始比例，并以黑色背景居中显示。"
+msgid "By default the cover is stretched to fill the whole screen, which can distort it if its proportions don't match your screen's. When on, the cover keeps its original proportions instead, centered over a black background."
+msgstr "默认情况下，封面会拉伸以填满整个屏幕；如果封面的宽高比与屏幕不匹配，可能会导致变形。开启后，封面将保持原始比例，并以黑色背景居中显示。"
 
 #: screens/insights/sui_insights_charts.lua:153
 msgid "By hour of the day"
@@ -1292,17 +1269,11 @@ msgid "Choose icon pack"
 msgstr "选择图标包"
 
 #: screens/sui_onboarding.lua:211
-msgid ""
-"Choose the folder where you will place all your books. Simple UI uses it to "
-"show your books in the Library."
-msgstr ""
-"请选择用于存放所有书籍的文件夹。SimpleUI 将使用该文件夹在“书库”中显示你的书"
-"籍。"
+msgid "Choose the folder where you will place all your books. Simple UI uses it to show your books in the Library."
+msgstr "请选择用于存放所有书籍的文件夹。SimpleUI 将使用该文件夹在“书库”中显示你的书籍。"
 
 #: screens/sui_quicksettings_bar.lua:1691
-msgid ""
-"Choose the menus that open directly on the Quick Settings tab instead of the "
-"last used tab."
+msgid "Choose the menus that open directly on the Quick Settings tab instead of the last used tab."
 msgstr ""
 
 #: screens/sui_menu.lua:2220
@@ -1480,9 +1451,7 @@ msgid "Could not write backup file"
 msgstr "无法写入备份文件"
 
 #: features/sui_stats_menu.lua:115
-msgid ""
-"Count manually tracked books in the all-time total of books finished. They "
-"always count towards the year they belong to."
+msgid "Count manually tracked books in the all-time total of books finished. They always count towards the year they belong to."
 msgstr ""
 
 #: features/sui_presets.lua:200 features/sui_presets.lua:218
@@ -1521,8 +1490,7 @@ msgid "Cover for \"%s\""
 msgstr "“%s”的封面"
 
 #: infra/sui_compat_check.lua:131
-msgid ""
-"CoverBrowser plugin is not enabled, some features will not work correctly."
+msgid "CoverBrowser plugin is not enabled, some features will not work correctly."
 msgstr "封面浏览器插件未启用，部分功能将无法正常工作。"
 
 #: modules/module_coverdeck.lua:123 screens/sui_menu.lua:3970
@@ -2208,9 +2176,7 @@ msgid "Fade Intensity"
 msgstr "淡化强度"
 
 #: features/library/sui_finished_books.lua:63
-msgid ""
-"Fades finished book covers in the file browser. Other lists show them as "
-"usual."
+msgid "Fades finished book covers in the file browser. Other lists show them as usual."
 msgstr ""
 
 #: screens/sui_menu.lua:2703
@@ -2460,12 +2426,8 @@ msgid "Freezes"
 msgstr "冻结"
 
 #: screens/sui_stats_windows.lua:2182
-msgid ""
-"Freezes can only cover a single missed day, and only right after an active "
-"one. Tap yesterday's cell to use one, when eligible."
-msgstr ""
-" 冻结权只能补救连续阅读日后错过第一天的情况。符合条件时，点击昨天的格子即可使"
-"用。"
+msgid "Freezes can only cover a single missed day, and only right after an active one. Tap yesterday's cell to use one, when eligible."
+msgstr " 冻结权只能补救连续阅读日后错过第一天的情况。符合条件时，点击昨天的格子即可使用。"
 
 #: engines/sui_heatmap_widgets.lua:127 infra/sui_datenames.lua:45
 msgid "Fri"
@@ -2531,16 +2493,11 @@ msgstr "全局自定义操作与图标"
 
 #: screens/sui_menu.lua:4006
 msgid ""
-"Global scale applied to all of KOReader's interface text — menus, dialogs, "
-"titles, and Simple UI. It does not change the book's reading font size, "
-"which has its own setting.\n"
-"100% is the default size. Useful when a chosen UI font (see UI Font above) "
-"renders smaller or larger than usual."
+"Global scale applied to all of KOReader's interface text — menus, dialogs, titles, and Simple UI. It does not change the book's reading font size, which has its own setting.\n"
+"100% is the default size. Useful when a chosen UI font (see UI Font above) renders smaller or larger than usual."
 msgstr ""
-"作用于 KOReader 所有界面文本的全局缩放，包括菜单、对话框、标题及 SimpleUI。不"
-"影响书籍正文的阅读字号（其有独立设置）。\n"
-"默认大小为 100%。当所选界面文本（见上方界面字体）显示偏大或偏小时，可通过此项"
-"调整。"
+"作用于 KOReader 所有界面文本的全局缩放，包括菜单、对话框、标题及 SimpleUI。不影响书籍正文的阅读字号（其有独立设置）。\n"
+"默认大小为 100%。当所选界面文本（见上方界面字体）显示偏大或偏小时，可通过此项调整。"
 
 #: screens/sui_menu.lua:2403
 msgid ""
@@ -2669,11 +2626,9 @@ msgstr "分组：选择操作"
 
 #: modules/module_currently.lua:1302
 msgid ""
-"Grows or shrinks the cover so its height always matches the text column, "
-"keeping the cover's proportions.\n"
+"Grows or shrinks the cover so its height always matches the text column, keeping the cover's proportions.\n"
 "The spacing between cover and text stays as set above.\n"
-"The Cover size setting still applies on top of this, and the cover never "
-"shrinks below its 100% size."
+"The Cover size setting still applies on top of this, and the cover never shrinks below its 100% size."
 msgstr ""
 "根据文本栏高度自动放大或缩小封面，并保持封面比例。\n"
 "封面与文本之间的间距保持为上述设置。\n"
@@ -2889,15 +2844,8 @@ msgid "Hours read"
 msgstr ""
 
 #: modules/module_heatmap.lua:310
-msgid ""
-"How many weeks of history to include, and (in Calendar view) how many weeks "
-"the grid shows — this count is unaffected by Scale, which only resizes the "
-"cells. In Time of day view, this only changes how much history feeds the "
-"shading — the grid itself always has one column per hour."
-msgstr ""
-"要包含多少周的历史记录，以及（在日历视图中）网格显示多少周，此数值不受缩放设"
-"定影响，缩放只改变格子大小。在时间段视图中，此设置只改变有多少历史记录数据参"
-"与深浅渲染 — 网格本身始终每小时一列。"
+msgid "How many weeks of history to include, and (in Calendar view) how many weeks the grid shows — this count is unaffected by Scale, which only resizes the cells. In Time of day view, this only changes how much history feeds the shading — the grid itself always has one column per hour."
+msgstr "要包含多少周的历史记录，以及（在日历视图中）网格显示多少周，此数值不受缩放设定影响，缩放只改变格子大小。在时间段视图中，此设置只改变有多少历史记录数据参与深浅渲染 — 网格本身始终每小时一列。"
 
 #: modules/critter/dialog.lua:331
 msgid "How was your day?"
@@ -3099,8 +3047,7 @@ msgstr "仅图标"
 
 #: screens/sui_menu.lua:3957
 msgid ""
-"Icons that contain color keep their original colors in night mode instead of "
-"being inverted.\n"
+"Icons that contain color keep their original colors in night mode instead of being inverted.\n"
 "Monochrome icons are not affected and keep following the interface colors.\n"
 "Requires a color screen."
 msgstr ""
@@ -3121,11 +3068,8 @@ msgid "If I were in a book, what kind would it be?"
 msgstr ""
 
 #: screens/sui_onboarding.lua:330
-msgid ""
-"If you selected the Momentum Preset, long press the Reading Goal module to "
-"choose and set your reading goals."
-msgstr ""
-"如果你选择了“阅读势头”预设，请长按“阅读目标”模块以选择和设置你的阅读目标。"
+msgid "If you selected the Momentum Preset, long press the Reading Goal module to choose and set your reading goals."
+msgstr "如果你选择了“阅读势头”预设，请长按“阅读目标”模块以选择和设置你的阅读目标。"
 
 #: features/sui_backup.lua:1148
 msgid "Import Backup…"
@@ -3402,9 +3346,7 @@ msgid "Layout Editor"
 msgstr "布局编辑"
 
 #: screens/sui_quicksettings_bar.lua:1600
-msgid ""
-"Layout of the Quick Settings panel in the reader. The file browser always "
-"uses the classic layout."
+msgid "Layout of the Quick Settings panel in the reader. The file browser always uses the classic layout."
 msgstr ""
 
 #: features/sui_backup.lua:118
@@ -3486,9 +3428,7 @@ msgid "Library View"
 msgstr "书库视图"
 
 #: screens/sui_menu.lua:2892
-msgid ""
-"Library captions are enabled. Folder names are shown in the caption strip "
-"under each cover instead of on the cover."
+msgid "Library captions are enabled. Folder names are shown in the caption strip under each cover instead of on the cover."
 msgstr ""
 
 #: screens/sui_menu.lua:2765
@@ -3515,11 +3455,8 @@ msgid "List"
 msgstr "列表"
 
 #: screens/sui_menu.lua:3008
-msgid ""
-"Lists books without an author, series or tag as a separate group in the "
-"Authors, Series and Tags views."
-msgstr ""
-"在“作者”“丛书”“标签”视图中，将无作者、无丛书或无标签的书籍单独归为一组。"
+msgid "Lists books without an author, series or tag as a separate group in the Authors, Series and Tags views."
+msgstr "在“作者”“丛书”“标签”视图中，将无作者、无丛书或无标签的书籍单独归为一组。"
 
 #: modules/critter/reaction_lines.lua:119
 msgid "Little reads add up."
@@ -3596,14 +3533,8 @@ msgid "Make it yours"
 msgstr "打造成你的专属样式"
 
 #: screens/sui_menu.lua:2593
-msgid ""
-"Makes the device's physical Home key open the SimpleUI Home Screen — while "
-"reading and while browsing files — instead of KOReader's native Home "
-"behaviour. The file browser title-bar home icon still goes to the home "
-"folder."
-msgstr ""
-"使设备的物理主页键打开 SimpleUI 主页，无论是在阅读时还是在浏览文件时，而非 "
-"KOReader 的原生主页行为。文件浏览器标题栏的主页图标仍会进入主文件夹。"
+msgid "Makes the device's physical Home key open the SimpleUI Home Screen — while reading and while browsing files — instead of KOReader's native Home behaviour. The file browser title-bar home icon still goes to the home folder."
+msgstr "使设备的物理主页键打开 SimpleUI 主页，无论是在阅读时还是在浏览文件时，而非 KOReader 的原生主页行为。文件浏览器标题栏的主页图标仍会进入主文件夹。"
 
 #: features/sui_presets.lua:952 features/sui_presets.lua:997
 #: features/sui_presets.lua:1002 screens/sui_menu.lua:3763
@@ -4126,12 +4057,8 @@ msgid "No collections selected  —  long press to configure"
 msgstr "未选择任何书单 — 长按以配置"
 
 #: modules/module_quote.lua:948
-msgid ""
-"No custom quotes found. Add a .lua file to the plugin's sui_quotes/ folder "
-"and select it in Settings."
-msgstr ""
-"未找到自定义名言。请将 .lua 文件添加到插件的 sui_quotes/ 文件夹中，然后在设置"
-"中选择它。"
+msgid "No custom quotes found. Add a .lua file to the plugin's sui_quotes/ folder and select it in Settings."
+msgstr "未找到自定义名言。请将 .lua 文件添加到插件的 sui_quotes/ 文件夹中，然后在设置中选择它。"
 
 #: screens/sui_settings_window.lua:315
 msgid "No custom screens yet."
@@ -4785,10 +4712,8 @@ msgid "Place images in:"
 msgstr "请将图片放入："
 
 #: screens/sui_onboarding.lua:334
-msgid ""
-"Place your files in koreader/settings/simpleui/sui_wallpapers or sui_icons."
-msgstr ""
-"请将文件放入 koreader/settings/simpleui/sui_wallpapers 或 sui_icons 文件夹。"
+msgid "Place your files in koreader/settings/simpleui/sui_wallpapers or sui_icons."
+msgstr "请将文件放入 koreader/settings/simpleui/sui_wallpapers 或 sui_icons 文件夹。"
 
 #: screens/sui_menu.lua:3053
 msgid "Placeholder Cover for Bookless Folders"
@@ -4800,9 +4725,7 @@ msgid "Placement"
 msgstr "请将图片放入："
 
 #: infra/sui_compat_check.lua:155
-msgid ""
-"Please delete the Project: Title plugin from your plugins folder and restart "
-"KOReader."
+msgid "Please delete the Project: Title plugin from your plugins folder and restart KOReader."
 msgstr "请从你的插件文件夹中删除“Project: Title”插件，然后重启 KOReader。"
 
 #: screens/sui_stats_windows.lua:511
@@ -4924,9 +4847,7 @@ msgid "Presets module unavailable."
 msgstr "预设模块不可用。"
 
 #: screens/sui_onboarding.lua:322
-msgid ""
-"Press and hold any element on the screen (like modules or bars) to quickly "
-"customize its settings."
+msgid "Press and hold any element on the screen (like modules or bars) to quickly customize its settings."
 msgstr "长按屏幕上的任意元素（如模块或栏），快速自定义其设置。"
 
 #: modules/critter/dialog.lua:336
@@ -5257,15 +5178,12 @@ msgid "Rename screen"
 msgstr "重命名屏幕"
 
 #: screens/sui_menu.lua:2521
-msgid ""
-"Replaces the \"Closing book…\" notice above with the cover for that close, "
-"when a cover is available."
+msgid "Replaces the \"Closing book…\" notice above with the cover for that close, when a cover is available."
 msgstr "关闭书籍时以该书的书籍封面取代“正在关闭书籍…”的文本提示。"
 
 #: screens/sui_menu.lua:453
 msgid ""
-"Replaces the pagination bar with Prev/Next arrows at the edges of the "
-"navigation bar.\n"
+"Replaces the pagination bar with Prev/Next arrows at the edges of the navigation bar.\n"
 "The arrows dim when there is no previous or next page.\n"
 "With navpager active, as few as 1 tab and at most 4 tabs can be configured."
 msgstr ""
@@ -5344,12 +5262,8 @@ msgid "Restore failed. Your previous configuration was kept unchanged."
 msgstr "恢复失败。你之前的配置保持不变。"
 
 #: features/sui_backup.lua:1027
-msgid ""
-"Restore this backup? Existing settings for these categories will be "
-"replaced. Saved presets are merged — yours are kept."
-msgstr ""
-"是否恢复此备份？这些分类的现有设置将被替换。已保存的预设将合并，你原有的预设"
-"会予以保留。"
+msgid "Restore this backup? Existing settings for these categories will be replaced. Saved presets are merged — yours are kept."
+msgstr "是否恢复此备份？这些分类的现有设置将被替换。已保存的预设将合并，你原有的预设会予以保留。"
 
 #: screens/sui_menu.lua:2372
 msgid "Return to Home Screen on Wakeup"
@@ -5506,13 +5420,11 @@ msgstr ""
 msgid ""
 "Scale for the cover thumbnail only.\n"
 "100% is the default size.\n"
-"When Dynamic Cover Size is on, this scales the cover relative to its current "
-"dynamic size instead, and the cover never shrinks below its 100% size."
+"When Dynamic Cover Size is on, this scales the cover relative to its current dynamic size instead, and the cover never shrinks below its 100% size."
 msgstr ""
 "仅封面缩略图的缩放。\n"
 "默认大小为 100%。\n"
-"启用“动态封面大小”后，此设置将相对于其当前动态大小缩放封面，且封面永远不会小"
-"于其 100% 大小。"
+"启用“动态封面大小”后，此设置将相对于其当前动态大小缩放封面，且封面永远不会小于其 100% 大小。"
 
 #: modules/module_coverdeck.lua:1474
 msgid ""
@@ -5558,8 +5470,7 @@ msgid "Scale for the progress badge."
 msgstr "进度徽章的缩放。"
 
 #: engines/sui_book_grid.lua:1965
-msgid ""
-"Scale for this module's corner badges (progress, pages, series, new book)."
+msgid "Scale for this module's corner badges (progress, pages, series, new book)."
 msgstr "此模块角落徽章（进度、页数、丛书、新书）的缩放。"
 
 #: modules/module_coverdeck.lua:1466
@@ -5581,14 +5492,10 @@ msgstr ""
 #: modules/module_heatmap.lua:326
 msgid ""
 "Scale for this module.\n"
-"100% is the default size. Capped at 100% here: the grid always has as many "
-"columns as \"Weeks shown\" (or, in Time of day view, 24), so there's no room "
-"to grow the cells past their autofit size without the grid overflowing the "
-"card."
+"100% is the default size. Capped at 100% here: the grid always has as many columns as \"Weeks shown\" (or, in Time of day view, 24), so there's no room to grow the cells past their autofit size without the grid overflowing the card."
 msgstr ""
 "此模块的缩放。\n"
-"默认大小为 100%。此处上限为 100%：网格的列数始终与“显示周数”一致（在时间段视"
-"图中则固定为 24 列），格子一旦放大到超出其自适应大小，网格就会溢出卡片。"
+"默认大小为 100%。此处上限为 100%：网格的列数始终与“显示周数”一致（在时间段视图中则固定为 24 列），格子一旦放大到超出其自适应大小，网格就会溢出卡片。"
 
 #: screens/sui_menu.lua:2402
 msgid ""
@@ -5600,8 +5507,7 @@ msgstr ""
 
 #: screens/sui_menu.lua:2424
 msgid ""
-"Scales the module label text above each module, on top of the size set in "
-"Style > Module Labels.\n"
+"Scales the module label text above each module, on top of the size set in Style > Module Labels.\n"
 "100% is the default size."
 msgstr ""
 
@@ -5614,17 +5520,11 @@ msgid "Screen name"
 msgstr "屏幕名称"
 
 #: screens/sui_menu.lua:2355
-msgid ""
-"Screen shown after closing a book. Gestures and quick actions that name a "
-"destination always open that destination."
-msgstr ""
-"关闭书籍后显示的屏幕。手势和快速操作中若指定了目标位置，将始终直接打开该目标"
-"位置。"
+msgid "Screen shown after closing a book. Gestures and quick actions that name a destination always open that destination."
+msgstr "关闭书籍后显示的屏幕。手势和快速操作中若指定了目标位置，将始终直接打开该目标位置。"
 
 #: screens/sui_menu.lua:2279
-msgid ""
-"Scrim over the wallpaper in Library, History and Collections. 0% shows the "
-"wallpaper, 100% hides it."
+msgid "Scrim over the wallpaper in Library, History and Collections. 0% shows the wallpaper, 100% hides it."
 msgstr ""
 
 #: features/library/sui_library_search.lua:181
@@ -5813,18 +5713,12 @@ msgid "Show Uncategorized Items"
 msgstr "显示未分类项"
 
 #: screens/sui_menu.lua:2459
-msgid ""
-"Show a brief \"Closing book…\" notice when closing a book, preventing "
-"accidental double-taps while e-ink refreshes."
+msgid "Show a brief \"Closing book…\" notice when closing a book, preventing accidental double-taps while e-ink refreshes."
 msgstr "关闭书籍时显示短暂的“正在关闭书籍…”提示，防止墨水屏刷新时误触。"
 
 #: features/sui_stats_menu.lua:92
-msgid ""
-"Show a brief \"Loading statistics…\" notice when opening a statistics "
-"window, preventing accidental double-taps while e-ink refreshes."
-msgstr ""
-"打开统计窗口时，显示短暂的“正在加载统计数据…”提示，以防止电子墨水屏刷新期间发"
-"生误触。"
+msgid "Show a brief \"Loading statistics…\" notice when opening a statistics window, preventing accidental double-taps while e-ink refreshes."
+msgstr "打开统计窗口时，显示短暂的“正在加载统计数据…”提示，以防止电子墨水屏刷新期间发生误触。"
 
 #: engines/sui_book_sources.lua:276 modules/module_coverdeck.lua:1661
 #: modules/module_recent.lua:49
@@ -5852,9 +5746,7 @@ msgid "Show section label"
 msgstr "显示分区标签"
 
 #: screens/sui_quicksettings_bar.lua:1626
-msgid ""
-"Show the frontlight and warmth sliders below the book details in the Book "
-"layout."
+msgid "Show the frontlight and warmth sliders below the book details in the Book layout."
 msgstr ""
 
 #: screens/sui_menu.lua:2877
@@ -5863,8 +5755,7 @@ msgstr ""
 
 #: screens/sui_menu.lua:594
 msgid ""
-"Shows \"Page X of Y\" in the title bar subtitle when browsing the library, "
-"history or collections.\n"
+"Shows \"Page X of Y\" in the title bar subtitle when browsing the library, history or collections.\n"
 "Navpager enables this automatically.\n"
 "Not available when Navpager is active."
 msgstr ""
@@ -5922,9 +5813,7 @@ msgid "Simple UI Settings"
 msgstr "SimpleUI 设置"
 
 #: screens/sui_onboarding.lua:294
-msgid ""
-"Simple UI is designed to be simple and flexible. Here are a few tips to get "
-"the most out of it."
+msgid "Simple UI is designed to be simple and flexible. Here are a few tips to get the most out of it."
 msgstr "SimpleUI 的设计兼具简洁与灵活，以下是充分发挥其功能的一些小技巧。"
 
 #: infra/sui_updater.lua:486
@@ -6147,9 +6036,7 @@ msgstr ""
 "默认间距为 100%。"
 
 #: screens/sui_menu.lua:3361
-msgid ""
-"Space between the characters of a module label, as a percentage of its text "
-"size."
+msgid "Space between the characters of a module label, as a percentage of its text size."
 msgstr ""
 
 #: modules/module_spacer.lua:58 modules/module_spacer.lua:112
@@ -6559,19 +6446,8 @@ msgid "The case of the missing bookmark."
 msgstr ""
 
 #: screens/sui_menu.lua:2533
-msgid ""
-"The cover shown right as a book opens normally comes from the library's "
-"cached thumbnail, which can look soft on higher-resolution screens. When on, "
-"SimpleUI instead reads the cover straight from the book file for that moment "
-"(also covers books never opened before, which otherwise show no cover at "
-"all) — at the cost of a brief extra pause while opening, since the file has "
-"to be read twice. Cover on close is unaffected either way: it already reads "
-"the full-quality cover from the open book."
-msgstr ""
-"书籍打开时显示的封面，一般来自书库的缓存缩略图，在高分辨率屏幕上可能发虚。启"
-"用此选项后，插件会直接从书籍文件中读取封面，即便是从未打开过的书也能显示封面"
-"（否则将无封面显示），代价是打开书籍时会多一次短暂停顿，因为文件需要被读取两"
-"次。关闭时的封面不受影响：其始终从已打开的书籍中读取完整质量封面。"
+msgid "The cover shown right as a book opens normally comes from the library's cached thumbnail, which can look soft on higher-resolution screens. When on, SimpleUI instead reads the cover straight from the book file for that moment (also covers books never opened before, which otherwise show no cover at all) — at the cost of a brief extra pause while opening, since the file has to be read twice. Cover on close is unaffected either way: it already reads the full-quality cover from the open book."
+msgstr "书籍打开时显示的封面，一般来自书库的缓存缩略图，在高分辨率屏幕上可能发虚。启用此选项后，插件会直接从书籍文件中读取封面，即便是从未打开过的书也能显示封面（否则将无封面显示），代价是打开书籍时会多一次短暂停顿，因为文件需要被读取两次。关闭时的封面不受影响：其始终从已打开的书籍中读取完整质量封面。"
 
 #: modules/critter/module_critter.lua:782
 msgid "The critter may use it in what it says."
@@ -7185,21 +7061,17 @@ msgstr "更新内容："
 
 #: features/sui_stats_menu.lua:102
 msgid ""
-"When a finished book is deleted from the device (file or folder), keep it "
-"counted in the Books Read statistics on the Home Screen.\n"
+"When a finished book is deleted from the device (file or folder), keep it counted in the Books Read statistics on the Home Screen.\n"
 "\n"
-"Books changed back to Reading or Abandoned are automatically removed from "
-"this list."
+"Books changed back to Reading or Abandoned are automatically removed from this list."
 msgstr ""
-"当从设备中删除已读完的书籍（文件或文件夹）时，仍在主页的“已读图书”统计中保留"
-"计数。\n"
+"当从设备中删除已读完的书籍（文件或文件夹）时，仍在主页的“已读图书”统计中保留计数。\n"
 "\n"
 "状态改回“在读”或“搁置”的书籍会自动从此列表中移除。"
 
 #: screens/sui_menu.lua:2571
 msgid ""
-"When enabled, long-pressing a module on the home screen opens its settings "
-"menu.\n"
+"When enabled, long-pressing a module on the home screen opens its settings menu.\n"
 "Disable this to prevent settings from appearing on long tap."
 msgstr ""
 "启用后，长按主页上的模块会打开其设置菜单。\n"
@@ -7230,9 +7102,7 @@ msgstr ""
 "禁用此项可防止长按时出现设置菜单。"
 
 #: screens/sui_menu.lua:2373
-msgid ""
-"When waking the device from sleep/suspend, always return to the Home Screen "
-"— even if a book was open when it went to sleep."
+msgid "When waking the device from sleep/suspend, always return to the Home Screen — even if a book was open when it went to sleep."
 msgstr "设备从休眠唤醒时始终返回主页，即使休眠前正在阅读书籍。"
 
 #: modules/critter/dialog.lua:98
@@ -7962,21 +7832,17 @@ msgstr[0] ""
 #: modules/module_action_list.lua:300 modules/module_quick_actions.lua:351
 #: screens/sui_menu.lua:1899 screens/sui_menu.lua:2013
 msgid "The maximum of %d action per module has been reached. Remove one first."
-msgid_plural ""
-"The maximum of %d actions per module has been reached. Remove one first."
+msgid_plural "The maximum of %d actions per module has been reached. Remove one first."
 msgstr[0] "每个模块最多 %d 个操作，请先移除一个。"
 
 #: modules/critter/module_critter.lua:750
-msgid ""
-"The maximum of %d decoration per side has been reached. Remove one first."
-msgid_plural ""
-"The maximum of %d decorations per side has been reached. Remove one first."
+msgid "The maximum of %d decoration per side has been reached. Remove one first."
+msgid_plural "The maximum of %d decorations per side has been reached. Remove one first."
 msgstr[0] ""
 
 #: features/sui_quickactions.lua:1636 features/sui_quickactions.lua:2844
 msgid "The maximum of %d quick action has been reached. Delete one first."
-msgid_plural ""
-"The maximum of %d quick actions has been reached. Delete one first."
+msgid_plural "The maximum of %d quick actions has been reached. Delete one first."
 msgstr[0] "最多 %d 个快捷操作，请先删除一个。"
 
 #: screens/sui_menu.lua:366
@@ -8005,6 +7871,7 @@ msgstr[0] "连续阅读天数"
 msgid "page read"
 msgid_plural "pages read"
 msgstr[0] "已读页数"
+
 #~ msgid "ALL TIME"
 #~ msgstr "所有时间"
 
@@ -8034,12 +7901,10 @@ msgstr[0] "已读页数"
 
 #~ msgid ""
 #~ "Share of the row this module occupies.\n"
-#~ "100% = full width. Modules under 100% share a row when their widths fit "
-#~ "(bento grid)."
+#~ "100% = full width. Modules under 100% share a row when their widths fit (bento grid)."
 #~ msgstr ""
 #~ "此模块在该行中所占的比例。\n"
-#~ "100% 表示整行宽度。宽度小于 100% 的模块，若宽度合适则会共用同一行（Bento "
-#~ "网格）。"
+#~ "100% 表示整行宽度。宽度小于 100% 的模块，若宽度合适则会共用同一行（Bento 网格）。"
 
 #~ msgid "Show wallpaper on all screens"
 #~ msgstr "在所有屏幕显示壁纸"
@@ -8088,21 +7953,6 @@ msgstr[0] "已读页数"
 
 #~ msgid "reading time"
 #~ msgstr "阅读时长"
-
-#~ msgid "%d freeze available"
-#~ msgid_plural "%d freezes available"
-#~ msgstr[0] "%d 次冻结可用"
-#~ msgstr[1] "%d 次冻结可用"
-
-#~ msgid "day read"
-#~ msgid_plural "days read"
-#~ msgstr[0] "已读天数"
-#~ msgstr[1] "已读天数"
-
-#~ msgid "page read"
-#~ msgid_plural "pages read"
-#~ msgstr[0] "已读页数"
-#~ msgstr[1] "已读页数"
 
 #~ msgid "Badges"
 #~ msgstr "徽章"
@@ -8188,8 +8038,7 @@ msgstr[0] "已读页数"
 #~ msgstr "可见"
 
 #~ msgid "The maximum of %d stat per row has been reached. Remove one first."
-#~ msgid_plural ""
-#~ "The maximum of %d stats per row has been reached. Remove one first."
+#~ msgid_plural "The maximum of %d stats per row has been reached. Remove one first."
 #~ msgstr[0] "每行最多 %d 个统计项，请先移除一项。"
 #~ msgstr[1] "每行最多 %d 个统计项，请先移除一项。"
 

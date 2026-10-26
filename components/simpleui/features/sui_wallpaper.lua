@@ -68,6 +68,7 @@ local M = {}
 -- blits from this raster.
 local _raster     = nil   -- screen-sized Blitbuffer of the wallpaper, or nil
 local _raster_key = nil   -- (screen w/h, night mode) the raster was built for
+local _retry_at = 0
 local _HANDLE     = {}    -- truthy token handed to callers while a raster exists
 
 -- Setting readers — centralised so _buildRaster stays readable.
@@ -116,8 +117,11 @@ local function _buildRaster(path, sw, sh)
     local bb = RenderImage:renderImageFile(path, false, nil, nil)
     if not bb then return nil end
 
+    local widget, canvas
+    local ok, err = pcall(function()
     local rotation_angle = 0
     local img_w, img_h = bb:getWidth(), bb:getHeight()
+    assert(img_w > 0 and img_h > 0, "empty wallpaper")
     if _wpAutoRotate() and (img_w > img_h) ~= (sw > sh) then
         rotation_angle = G_reader_settings:isTrue("imageviewer_rotation_landscape_invert")
             and -90 or 90
@@ -133,7 +137,7 @@ local function _buildRaster(path, sw, sh)
 
     -- The widget owns `bb` from here and frees it with itself. The night-mode
     -- inversion it applies covers only the image, so the bands stay white.
-    local widget = ImageWidget:new{
+    widget = ImageWidget:new{
         image                 = bb,
         image_disposable      = true,
         width                 = tw,
@@ -143,13 +147,14 @@ local function _buildRaster(path, sw, sh)
         rotation_angle        = rotation_angle,
     }
     local Blitbuffer = require("ffi/blitbuffer")
-    local canvas = Blitbuffer.new(sw, sh, Screen.bb:getType())
+    canvas = Blitbuffer.new(sw, sh, Screen.bb:getType())
     canvas:fill(Blitbuffer.COLOR_WHITE)
-    local ok = pcall(widget.paintTo, widget, canvas, math.floor((sw - tw) / 2), math.floor((sh - th) / 2))
-    widget:free()
+    widget:paintTo(canvas, math.floor((sw - tw) / 2), math.floor((sh - th) / 2))
+    end)
+    if widget then pcall(widget.free, widget) else pcall(bb.free, bb) end
     if not ok then
-        canvas:free()
-        return nil
+        if canvas then pcall(canvas.free, canvas) end
+        error(err, 0)
     end
     return canvas
 end
@@ -165,8 +170,8 @@ local function _styleGetBgWidget()
     if not path then return nil end
 
     local sw, sh = Screen:getWidth(), Screen:getHeight()
-    local key = sw .. "x" .. sh .. (Screen.night_mode and "n" or "d")
-    if _raster_key ~= key then
+    local key = path .. ":" .. sw .. "x" .. sh .. (Screen.night_mode and "n" or "d")
+    if _raster_key ~= key or (not _raster and os.time() >= _retry_at) then
         if _raster then _raster:free(); _raster = nil end
         local ok, canvas = pcall(_buildRaster, path, sw, sh)
         if ok then _raster = canvas end
@@ -174,6 +179,7 @@ local function _styleGetBgWidget()
             logger.warn("sui_wallpaper: cannot load wallpaper:", path, ok and "" or canvas)
         end
         _raster_key = key
+        _retry_at = _raster and 0 or os.time() + 5
     end
     return _raster and _HANDLE or nil
 end
@@ -183,7 +189,16 @@ local function _styleFreeBgCache()
     if _raster then _raster:free() end
     _raster     = nil
     _raster_key = nil
+    _retry_at = 0
 end
+
+-- Legacy callers receive a stable facade, never a freed cached ImageWidget.
+function _HANDLE:paintTo(bb, x)
+    if _styleGetBgWidget() then
+        bb:blitFrom(_raster, x, 0, 0, 0, Screen:getWidth(), Screen:getHeight())
+    end
+end
+function _HANDLE:free() end -- the wallpaper module owns its single raster
 
 -- Lazily asks the homescreen engine to free the cache (redundant but
 -- harmless — see ScreenEngine.rebuildLayout()) and rebuild its layout so a
@@ -207,7 +222,7 @@ end
 
 -- Settings that only make sense while a wallpaper is active.
 local function _resetWallpaperDependents()
-    SUISettings:del(KEY_LEGACY_SHOW_IN_FM)
+    SUISettings:saveSetting(KEY_LEGACY_SHOW_IN_FM, false)
     SUISettings:del(KEY_LIBRARY)
 end
 
@@ -260,13 +275,18 @@ function M.getLibraryStrength()
         if SUISettings:get(KEY_LIBRARY) == nil and SUISettings:isTrue(KEY_LEGACY_SHOW_IN_FM) then
             Backdrop.saveBackdropStrength(KEY_LIBRARY, Backdrop.STRENGTH_MIN)
         end
-        SUISettings:del(KEY_LEGACY_SHOW_IN_FM)
+        -- Copy-only: old code still needs its saved flag on rollback.
     end
     return Backdrop.readBackdropStrength(KEY_LIBRARY, Backdrop.STRENGTH_MAX)
 end
 
 function M.setLibraryStrength(n)
     Backdrop.saveBackdropStrength(KEY_LIBRARY, n)
+end
+
+function M.styleSetWallpaperShowInFM(on)
+    SUISettings:saveSetting(KEY_LEGACY_SHOW_IN_FM, on and true or false)
+    M.setLibraryStrength(on and Backdrop.STRENGTH_MIN or Backdrop.STRENGTH_MAX)
 end
 
 --- Consumed by sui_patches.lua to decide whether to paint the wallpaper into

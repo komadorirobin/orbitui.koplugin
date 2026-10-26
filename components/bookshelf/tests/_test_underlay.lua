@@ -267,4 +267,26 @@ t.test("last-owner teardown preserves later UI wrappers and a new owner", functi
     U.uninstall()
 end)
 
+t.test("screen clear and rotation hooks retain nil results and release only their own wrappers", function()
+    U.uninstall()
+    local clear, rotation = Screen.clear, Screen.setRotationMode
+    local calls = 0
+    Screen.clear = function() calls = calls + 1; return nil, "cleared", nil end
+    local base = Screen.clear
+    local owner = {}
+    U.install(owner)
+    local function count(...) eq(select("#", ...), 3); local _, middle = ...; eq(middle, "cleared") end
+    count(Screen:clear()); eq(calls, 1)
+    local inner = Screen.clear
+    local later = function(...) return inner(...) end
+    Screen.clear = later
+    U.uninstall(owner)
+    eq(Screen.clear, later); eq(Screen.setRotationMode, rotation)
+    count(Screen:clear()); eq(calls, 2)
+    U.install({}); Screen:clear(); U.uninstall()
+    eq(Screen.clear, later); eq(calls, 3)
+    Screen.clear = clear
+    assert(base ~= clear)
+end)
+
 t.done()

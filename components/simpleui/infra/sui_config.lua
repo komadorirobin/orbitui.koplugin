@@ -1803,6 +1803,10 @@ end
 
 -- Width as a percent of the row, for modules that size their content by it.
 function M.getBentoWidth(mod_id, pfx)
+    if M.isBentoClassic(pfx) then return M.getBentoPct(mod_id, pfx) end
+    if SUISettings:get((pfx or "simpleui_hs_") .. "bento_mode") == "grid" then
+        return Bento.spanToPct(M.getBentoSpan(mod_id, pfx))
+    end
     if not mod_id then return 100 end
     -- Existing OrbitUI layouts retain arbitrary percentages and stacked columns.
     local stored = tonumber(SUISettings:get(_bentoKey(mod_id, pfx)))
@@ -1870,7 +1874,9 @@ end
 function M.getBentoPct(mod_id, pfx)
     local v = mod_id and SUISettings:get(_bentoKey(mod_id, pfx))
     if type(v) ~= "number" then return Bento.spanToPct(M.getBentoSpan(mod_id, pfx)) end
-    return _snapPct(v)
+    -- Reading existing percentages must not snap a saved layout. Only the
+    -- explicit width editor writes in five-percent steps.
+    return math.max(Bento.CLASSIC_MIN, math.min(Bento.CLASSIC_MAX, v))
 end
 
 function M.setBentoPct(pct, mod_id, pfx)
@@ -1923,7 +1929,9 @@ end
 -- Whether a module that does not fit in its row goes under a column of the
 -- row with the same width, instead of starting a new row. On by default.
 function M.isBentoStack(pfx)
-    return SUISettings:nilOrTrue(_bentoStackKey(pfx))
+    -- OrbitUI's existing fixed-grid layouts did not stack. Opt in explicitly;
+    -- the separate legacy percentage renderer keeps its previous geometry.
+    return SUISettings:isTrue(_bentoStackKey(pfx))
 end
 
 function M.setBentoStack(on, pfx)

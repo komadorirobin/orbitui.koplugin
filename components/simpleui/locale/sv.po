@@ -177,25 +177,19 @@ msgid "(collection not found)"
 msgstr "(samlingen hittades inte)"
 
 #: screens/sui_menu.lua:199
-msgid ""
-"0% transparent, 100% solid. Applies across the full width of the title bar."
+msgid "0% transparent, 100% solid. Applies across the full width of the title bar."
 msgstr ""
 
 #: screens/sui_menu.lua:203
-msgid ""
-"0% transparent, 100% solid. Applies to the native page bar in Library, "
-"History, Collections and similar screens."
+msgid "0% transparent, 100% solid. Applies to the native page bar in Library, History, Collections and similar screens."
 msgstr ""
 
 #: features/library/sui_label_options.lua:151
-msgid ""
-"0% transparent, 100% solid. Only the background changes; the text stays "
-"solid."
+msgid "0% transparent, 100% solid. Only the background changes; the text stays solid."
 msgstr ""
 
 #: infra/sui_config.lua:1478
-msgid ""
-"0% transparent, 100% solid. Values in between add a scrim over the wallpaper."
+msgid "0% transparent, 100% solid. Values in between add a scrim over the wallpaper."
 msgstr ""
 
 #: infra/sui_config.lua:1752
@@ -271,12 +265,8 @@ msgid "A folder named \"Books\" will be created and set as the library home."
 msgstr ""
 
 #: screens/sui_stats_windows.lua:2201
-msgid ""
-"A freeze can only bridge a single missed day right after an active one — "
-"yesterday doesn't qualify."
-msgstr ""
-"En frysning kan bara överbrygga en enda missad dag direkt efter en aktiv dag "
-"— igår kvalificerar inte."
+msgid "A freeze can only bridge a single missed day right after an active one — yesterday doesn't qualify."
+msgstr "En frysning kan bara överbrygga en enda missad dag direkt efter en aktiv dag — igår kvalificerar inte."
 
 #: modules/critter/phrases.lua:89
 msgid "A fresh day, a fresh page."
@@ -372,8 +362,7 @@ msgid ""
 "\n"
 "Restart now?"
 msgstr ""
-"En omstart krävs för att tillämpa den nya stapelstorleken för alla "
-"layouter.\n"
+"En omstart krävs för att tillämpa den nya stapelstorleken för alla layouter.\n"
 "\n"
 "Omstarta nu?"
 
@@ -869,8 +858,7 @@ msgid ""
 msgstr ""
 
 #: features/sui_backup.lua:615
-msgid ""
-"Backup was made by a newer SimpleUI version. Please update this plugin first."
+msgid "Backup was made by a newer SimpleUI version. Please update this plugin first."
 msgstr ""
 
 #: engines/sui_book_grid.lua:2100 engines/sui_group_cell.lua:319
@@ -1078,18 +1066,8 @@ msgid "Bottom Margin"
 msgstr "Nedre marginal"
 
 #: screens/sui_menu.lua:2506
-msgid ""
-"Briefly show the book cover full-screen when opening or closing a book, "
-"masking the page-layout flash. Normally requires the book to already be "
-"indexed by the cover browser (its cover must have been seen at least once in "
-"a grid/list view) — see \"High-Quality Cover\" below to also cover un-"
-"indexed books."
-msgstr ""
-"Visar bokomslaget kort i helskärm när en bok öppnas eller stängs, för att "
-"dölja sidlayoutens blinkning. Kräver normalt att boken redan har indexerats "
-"av omslagsbläddraren (dess omslag måste ha visats minst en gång i en "
-"rutnäts-/listvy) — se \"Högkvalitativt omslag\" nedan för att även täcka "
-"oindexerade böcker."
+msgid "Briefly show the book cover full-screen when opening or closing a book, masking the page-layout flash. Normally requires the book to already be indexed by the cover browser (its cover must have been seen at least once in a grid/list view) — see \"High-Quality Cover\" below to also cover un-indexed books."
+msgstr "Visar bokomslaget kort i helskärm när en bok öppnas eller stängs, för att dölja sidlayoutens blinkning. Kräver normalt att boken redan har indexerats av omslagsbläddraren (dess omslag måste ha visats minst en gång i en rutnäts-/listvy) — se \"Högkvalitativt omslag\" nedan för att även täcka oindexerade böcker."
 
 #: features/sui_accent_picker.lua:92 features/sui_quickactions.lua:930
 #: infra/sui_config.lua:136 infra/sui_config.lua:202
@@ -1155,15 +1133,8 @@ msgid "By day of the week"
 msgstr ""
 
 #: screens/sui_menu.lua:2545
-msgid ""
-"By default the cover is stretched to fill the whole screen, which can "
-"distort it if its proportions don't match your screen's. When on, the cover "
-"keeps its original proportions instead, centered over a black background."
-msgstr ""
-"Som standard sträcks omslaget ut för att fylla hela skärmen, vilket kan "
-"förvränga det om proportionerna inte matchar skärmens. Om aktiverat behåller "
-"omslaget istället sina ursprungliga proportioner, centrerat över en svart "
-"bakgrund."
+msgid "By default the cover is stretched to fill the whole screen, which can distort it if its proportions don't match your screen's. When on, the cover keeps its original proportions instead, centered over a black background."
+msgstr "Som standard sträcks omslaget ut för att fylla hela skärmen, vilket kan förvränga det om proportionerna inte matchar skärmens. Om aktiverat behåller omslaget istället sina ursprungliga proportioner, centrerat över en svart bakgrund."
 
 #: screens/insights/sui_insights_charts.lua:153
 msgid "By hour of the day"
@@ -1305,15 +1276,11 @@ msgid "Choose icon pack"
 msgstr ""
 
 #: screens/sui_onboarding.lua:211
-msgid ""
-"Choose the folder where you will place all your books. Simple UI uses it to "
-"show your books in the Library."
+msgid "Choose the folder where you will place all your books. Simple UI uses it to show your books in the Library."
 msgstr ""
 
 #: screens/sui_quicksettings_bar.lua:1691
-msgid ""
-"Choose the menus that open directly on the Quick Settings tab instead of the "
-"last used tab."
+msgid "Choose the menus that open directly on the Quick Settings tab instead of the last used tab."
 msgstr ""
 
 #: screens/sui_menu.lua:2220
@@ -1495,9 +1462,7 @@ msgid "Could not write backup file"
 msgstr "Kunde inte fastställa paketmappen"
 
 #: features/sui_stats_menu.lua:115
-msgid ""
-"Count manually tracked books in the all-time total of books finished. They "
-"always count towards the year they belong to."
+msgid "Count manually tracked books in the all-time total of books finished. They always count towards the year they belong to."
 msgstr ""
 
 #: features/sui_presets.lua:200 features/sui_presets.lua:218
@@ -1536,8 +1501,7 @@ msgid "Cover for \"%s\""
 msgstr "Omslag för \"%s\""
 
 #: infra/sui_compat_check.lua:131
-msgid ""
-"CoverBrowser plugin is not enabled, some features will not work correctly."
+msgid "CoverBrowser plugin is not enabled, some features will not work correctly."
 msgstr ""
 
 #: modules/module_coverdeck.lua:123 screens/sui_menu.lua:3970
@@ -2043,9 +2007,7 @@ msgstr "aktiverad"
 
 #: features/sui_quickactions.lua:667
 msgid "Enable 'Browse by Author / Series / Tags' in the library menu first."
-msgstr ""
-"Aktivera först \"Bläddra efter författare / serie / etiketter\" i "
-"biblioteksmenyn."
+msgstr "Aktivera först \"Bläddra efter författare / serie / etiketter\" i biblioteksmenyn."
 
 #: screens/sui_menu.lua:2971
 msgid "Enable Browse by Author / Series / Tags"
@@ -2233,9 +2195,7 @@ msgid "Fade Intensity"
 msgstr "Toningsintensitet"
 
 #: features/library/sui_finished_books.lua:63
-msgid ""
-"Fades finished book covers in the file browser. Other lists show them as "
-"usual."
+msgid "Fades finished book covers in the file browser. Other lists show them as usual."
 msgstr ""
 
 #: screens/sui_menu.lua:2703
@@ -2491,12 +2451,8 @@ msgid "Freezes"
 msgstr "Frysningar"
 
 #: screens/sui_stats_windows.lua:2182
-msgid ""
-"Freezes can only cover a single missed day, and only right after an active "
-"one. Tap yesterday's cell to use one, when eligible."
-msgstr ""
-"Frysningar kan bara täcka en enda missad dag, och bara direkt efter en aktiv "
-"dag. Tryck på gårdagens cell för att använda en, när möjligt."
+msgid "Freezes can only cover a single missed day, and only right after an active one. Tap yesterday's cell to use one, when eligible."
+msgstr "Frysningar kan bara täcka en enda missad dag, och bara direkt efter en aktiv dag. Tryck på gårdagens cell för att använda en, när möjligt."
 
 #: engines/sui_heatmap_widgets.lua:127 infra/sui_datenames.lua:45
 msgid "Fri"
@@ -2563,17 +2519,11 @@ msgstr "Globala anpassade åtgärder och ikoner"
 
 #: screens/sui_menu.lua:4006
 msgid ""
-"Global scale applied to all of KOReader's interface text — menus, dialogs, "
-"titles, and Simple UI. It does not change the book's reading font size, "
-"which has its own setting.\n"
-"100% is the default size. Useful when a chosen UI font (see UI Font above) "
-"renders smaller or larger than usual."
+"Global scale applied to all of KOReader's interface text — menus, dialogs, titles, and Simple UI. It does not change the book's reading font size, which has its own setting.\n"
+"100% is the default size. Useful when a chosen UI font (see UI Font above) renders smaller or larger than usual."
 msgstr ""
-"Global skala som tillämpas på all KOReaders gränssnittstext — menyer, "
-"dialogrutor, titlar och Simple UI. Ändrar inte bokens läsartypsnittsstorlek, "
-"som har en egen inställning.\n"
-"100% är standardstorleken. Användbart när ett valt gränssnittstypsnitt (se "
-"Gränssnittstypsnitt ovan) visas mindre eller större än vanligt."
+"Global skala som tillämpas på all KOReaders gränssnittstext — menyer, dialogrutor, titlar och Simple UI. Ändrar inte bokens läsartypsnittsstorlek, som har en egen inställning.\n"
+"100% är standardstorleken. Användbart när ett valt gränssnittstypsnitt (se Gränssnittstypsnitt ovan) visas mindre eller större än vanligt."
 
 #: screens/sui_menu.lua:2403
 msgid ""
@@ -2591,8 +2541,7 @@ msgstr ""
 
 #: screens/sui_onboarding.lua:326
 msgid "Go to Settings > Home Screen to edit your layout whenever you want."
-msgstr ""
-"Gå till Inställningar > Startsida för att redigera din layout när du vill."
+msgstr "Gå till Inställningar > Startsida för att redigera din layout när du vill."
 
 #: modules/critter/dialog.lua:657
 msgid "Go! I'll be here, counting."
@@ -2703,17 +2652,13 @@ msgstr "Grupp: välj åtgärder"
 
 #: modules/module_currently.lua:1302
 msgid ""
-"Grows or shrinks the cover so its height always matches the text column, "
-"keeping the cover's proportions.\n"
+"Grows or shrinks the cover so its height always matches the text column, keeping the cover's proportions.\n"
 "The spacing between cover and text stays as set above.\n"
-"The Cover size setting still applies on top of this, and the cover never "
-"shrinks below its 100% size."
+"The Cover size setting still applies on top of this, and the cover never shrinks below its 100% size."
 msgstr ""
-"Förstorar eller förminskar omslaget så att dess höjd alltid matchar "
-"textkolumnen, med bevarade proportioner.\n"
+"Förstorar eller förminskar omslaget så att dess höjd alltid matchar textkolumnen, med bevarade proportioner.\n"
 "Avståndet mellan omslag och text förblir det som ställts in ovan.\n"
-"Inställningen Omslagsstorlek gäller fortfarande utöver detta, och omslaget "
-"krymper aldrig under 100% av sin storlek."
+"Inställningen Omslagsstorlek gäller fortfarande utöver detta, och omslaget krymper aldrig under 100% av sin storlek."
 
 #: modules/critter/reaction_lines.lua:270
 msgid "HAPPY ANNIVERSARY! I love us!"
@@ -2927,16 +2872,8 @@ msgid "Hours read"
 msgstr ""
 
 #: modules/module_heatmap.lua:310
-msgid ""
-"How many weeks of history to include, and (in Calendar view) how many weeks "
-"the grid shows — this count is unaffected by Scale, which only resizes the "
-"cells. In Time of day view, this only changes how much history feeds the "
-"shading — the grid itself always has one column per hour."
-msgstr ""
-"Hur många veckors historik som ska inkluderas och (i kalendervy) hur många "
-"veckor rutnätet visar — detta antal påverkas inte av Skala, som bara ändrar "
-"cellernas storlek. I vyn Tid på dygnet ändrar detta bara hur mycket historik "
-"som matar skuggningen — själva rutnätet har alltid en kolumn per timme."
+msgid "How many weeks of history to include, and (in Calendar view) how many weeks the grid shows — this count is unaffected by Scale, which only resizes the cells. In Time of day view, this only changes how much history feeds the shading — the grid itself always has one column per hour."
+msgstr "Hur många veckors historik som ska inkluderas och (i kalendervy) hur många veckor rutnätet visar — detta antal påverkas inte av Skala, som bara ändrar cellernas storlek. I vyn Tid på dygnet ändrar detta bara hur mycket historik som matar skuggningen — själva rutnätet har alltid en kolumn per timme."
 
 #: modules/critter/dialog.lua:331
 msgid "How was your day?"
@@ -3138,8 +3075,7 @@ msgstr "Endast ikoner"
 
 #: screens/sui_menu.lua:3957
 msgid ""
-"Icons that contain color keep their original colors in night mode instead of "
-"being inverted.\n"
+"Icons that contain color keep their original colors in night mode instead of being inverted.\n"
 "Monochrome icons are not affected and keep following the interface colors.\n"
 "Requires a color screen."
 msgstr ""
@@ -3157,12 +3093,8 @@ msgid "If I were in a book, what kind would it be?"
 msgstr ""
 
 #: screens/sui_onboarding.lua:330
-msgid ""
-"If you selected the Momentum Preset, long press the Reading Goal module to "
-"choose and set your reading goals."
-msgstr ""
-"Om du valde förinställningen Momentum, tryck länge på modulen Läsmål för att "
-"välja och ställa in dina läsmål."
+msgid "If you selected the Momentum Preset, long press the Reading Goal module to choose and set your reading goals."
+msgstr "Om du valde förinställningen Momentum, tryck länge på modulen Läsmål för att välja och ställa in dina läsmål."
 
 #: features/sui_backup.lua:1148
 msgid "Import Backup…"
@@ -3440,9 +3372,7 @@ msgid "Layout Editor"
 msgstr "Layoutredigerare"
 
 #: screens/sui_quicksettings_bar.lua:1600
-msgid ""
-"Layout of the Quick Settings panel in the reader. The file browser always "
-"uses the classic layout."
+msgid "Layout of the Quick Settings panel in the reader. The file browser always uses the classic layout."
 msgstr ""
 
 #: features/sui_backup.lua:118
@@ -3525,9 +3455,7 @@ msgid "Library View"
 msgstr "Biblioteksvy"
 
 #: screens/sui_menu.lua:2892
-msgid ""
-"Library captions are enabled. Folder names are shown in the caption strip "
-"under each cover instead of on the cover."
+msgid "Library captions are enabled. Folder names are shown in the caption strip under each cover instead of on the cover."
 msgstr ""
 
 #: screens/sui_menu.lua:2765
@@ -3554,9 +3482,7 @@ msgid "List"
 msgstr "Lista"
 
 #: screens/sui_menu.lua:3008
-msgid ""
-"Lists books without an author, series or tag as a separate group in the "
-"Authors, Series and Tags views."
+msgid "Lists books without an author, series or tag as a separate group in the Authors, Series and Tags views."
 msgstr ""
 
 #: modules/critter/reaction_lines.lua:119
@@ -3635,15 +3561,8 @@ msgstr "Gör den till din"
 
 #: screens/sui_menu.lua:2593
 #, fuzzy
-msgid ""
-"Makes the device's physical Home key open the SimpleUI Home Screen — while "
-"reading and while browsing files — instead of KOReader's native Home "
-"behaviour. The file browser title-bar home icon still goes to the home "
-"folder."
-msgstr ""
-"Gör att enhetens fysiska Hem-knapp alltid öppnar SimpleUI:s startsida — både "
-"vid läsning och vid filbläddring — istället för KOReaders inbyggda Hem-"
-"beteende."
+msgid "Makes the device's physical Home key open the SimpleUI Home Screen — while reading and while browsing files — instead of KOReader's native Home behaviour. The file browser title-bar home icon still goes to the home folder."
+msgstr "Gör att enhetens fysiska Hem-knapp alltid öppnar SimpleUI:s startsida — både vid läsning och vid filbläddring — istället för KOReaders inbyggda Hem-beteende."
 
 #: features/sui_presets.lua:952 features/sui_presets.lua:997
 #: features/sui_presets.lua:1002 screens/sui_menu.lua:3763
@@ -4168,12 +4087,8 @@ msgid "No collections selected  —  long press to configure"
 msgstr "Inga samlingar valda — långtryck för att konfigurera"
 
 #: modules/module_quote.lua:948
-msgid ""
-"No custom quotes found. Add a .lua file to the plugin's sui_quotes/ folder "
-"and select it in Settings."
-msgstr ""
-"Inga anpassade citat hittades. Lägg till en .lua-fil i tilläggets "
-"sui_quotes/-mapp och välj den i Inställningar."
+msgid "No custom quotes found. Add a .lua file to the plugin's sui_quotes/ folder and select it in Settings."
+msgstr "Inga anpassade citat hittades. Lägg till en .lua-fil i tilläggets sui_quotes/-mapp och välj den i Inställningar."
 
 #: screens/sui_settings_window.lua:315
 msgid "No custom screens yet."
@@ -4610,13 +4525,11 @@ msgstr ""
 
 #: features/sui_presets.lua:962 features/sui_presets.lua:1036
 msgid "Overwrite preset \"%s\" with the current homescreen settings?"
-msgstr ""
-"Skriv över förinställningen \"%s\" med de aktuella startsidesinställningarna?"
+msgstr "Skriv över förinställningen \"%s\" med de aktuella startsidesinställningarna?"
 
 #: screens/sui_menu.lua:3773 screens/sui_menu.lua:3856
 msgid "Overwrite preset \"%s\" with the current icon settings?"
-msgstr ""
-"Skriv över förinställningen \"%s\" med de aktuella ikoninställningarna?"
+msgstr "Skriv över förinställningen \"%s\" med de aktuella ikoninställningarna?"
 
 #: modules/reading_stats/module_reading_stats.lua:422
 msgid "PM"
@@ -4831,11 +4744,8 @@ msgid "Place images in:"
 msgstr "Placera bilder i:"
 
 #: screens/sui_onboarding.lua:334
-msgid ""
-"Place your files in koreader/settings/simpleui/sui_wallpapers or sui_icons."
-msgstr ""
-"Placera dina filer i koreader/settings/simpleui/sui_wallpapers eller "
-"sui_icons."
+msgid "Place your files in koreader/settings/simpleui/sui_wallpapers or sui_icons."
+msgstr "Placera dina filer i koreader/settings/simpleui/sui_wallpapers eller sui_icons."
 
 #: screens/sui_menu.lua:3053
 msgid "Placeholder Cover for Bookless Folders"
@@ -4847,9 +4757,7 @@ msgid "Placement"
 msgstr "Placera bilder i:"
 
 #: infra/sui_compat_check.lua:155
-msgid ""
-"Please delete the Project: Title plugin from your plugins folder and restart "
-"KOReader."
+msgid "Please delete the Project: Title plugin from your plugins folder and restart KOReader."
 msgstr ""
 
 #: screens/sui_stats_windows.lua:511
@@ -4971,12 +4879,8 @@ msgid "Presets module unavailable."
 msgstr "Förinställningsmodulen är inte tillgänglig."
 
 #: screens/sui_onboarding.lua:322
-msgid ""
-"Press and hold any element on the screen (like modules or bars) to quickly "
-"customize its settings."
-msgstr ""
-"Tryck och håll på valfritt element på skärmen (som moduler eller staplar) "
-"för att snabbt anpassa dess inställningar."
+msgid "Press and hold any element on the screen (like modules or bars) to quickly customize its settings."
+msgstr "Tryck och håll på valfritt element på skärmen (som moduler eller staplar) för att snabbt anpassa dess inställningar."
 
 #: modules/critter/dialog.lua:336
 msgid "Pretty good."
@@ -5307,22 +5211,16 @@ msgid "Rename screen"
 msgstr "Döp om skärm"
 
 #: screens/sui_menu.lua:2521
-msgid ""
-"Replaces the \"Closing book…\" notice above with the cover for that close, "
-"when a cover is available."
-msgstr ""
-"Ersätter meddelandet \"Stänger bok…\" ovan med omslaget för den stängningen, "
-"när ett omslag finns tillgängligt."
+msgid "Replaces the \"Closing book…\" notice above with the cover for that close, when a cover is available."
+msgstr "Ersätter meddelandet \"Stänger bok…\" ovan med omslaget för den stängningen, när ett omslag finns tillgängligt."
 
 #: screens/sui_menu.lua:453
 msgid ""
-"Replaces the pagination bar with Prev/Next arrows at the edges of the "
-"navigation bar.\n"
+"Replaces the pagination bar with Prev/Next arrows at the edges of the navigation bar.\n"
 "The arrows dim when there is no previous or next page.\n"
 "With navpager active, as few as 1 tab and at most 4 tabs can be configured."
 msgstr ""
-"Ersätter sidindelningslisten med Föregående/Nästa-pilar vid kanterna av det "
-"nedre fältet.\n"
+"Ersätter sidindelningslisten med Föregående/Nästa-pilar vid kanterna av det nedre fältet.\n"
 "Pilarna tonas ned när det inte finns föregående eller nästa sida.\n"
 "Med navpager aktiv kan som minst 1 och som mest 4 flikar konfigureras."
 
@@ -5400,9 +5298,7 @@ msgid "Restore failed. Your previous configuration was kept unchanged."
 msgstr ""
 
 #: features/sui_backup.lua:1027
-msgid ""
-"Restore this backup? Existing settings for these categories will be "
-"replaced. Saved presets are merged — yours are kept."
+msgid "Restore this backup? Existing settings for these categories will be replaced. Saved presets are merged — yours are kept."
 msgstr ""
 
 #: screens/sui_menu.lua:2372
@@ -5563,14 +5459,11 @@ msgstr ""
 msgid ""
 "Scale for the cover thumbnail only.\n"
 "100% is the default size.\n"
-"When Dynamic Cover Size is on, this scales the cover relative to its current "
-"dynamic size instead, and the cover never shrinks below its 100% size."
+"When Dynamic Cover Size is on, this scales the cover relative to its current dynamic size instead, and the cover never shrinks below its 100% size."
 msgstr ""
 "Skala endast för omslagsminiatyren.\n"
 "100% är standardstorleken.\n"
-"När Dynamisk omslagsstorlek är aktiverad, skalas omslaget istället i "
-"förhållande till dess aktuella dynamiska storlek, och omslaget krymper "
-"aldrig under 100% av sin storlek."
+"När Dynamisk omslagsstorlek är aktiverad, skalas omslaget istället i förhållande till dess aktuella dynamiska storlek, och omslaget krymper aldrig under 100% av sin storlek."
 
 #: modules/module_coverdeck.lua:1474
 msgid ""
@@ -5618,8 +5511,7 @@ msgid "Scale for the progress badge."
 msgstr ""
 
 #: engines/sui_book_grid.lua:1965
-msgid ""
-"Scale for this module's corner badges (progress, pages, series, new book)."
+msgid "Scale for this module's corner badges (progress, pages, series, new book)."
 msgstr "Skala för denna moduls hörnmärken (förlopp, sidor, serie, ny bok)."
 
 #: modules/module_coverdeck.lua:1466
@@ -5643,16 +5535,10 @@ msgstr ""
 #: modules/module_heatmap.lua:326
 msgid ""
 "Scale for this module.\n"
-"100% is the default size. Capped at 100% here: the grid always has as many "
-"columns as \"Weeks shown\" (or, in Time of day view, 24), so there's no room "
-"to grow the cells past their autofit size without the grid overflowing the "
-"card."
+"100% is the default size. Capped at 100% here: the grid always has as many columns as \"Weeks shown\" (or, in Time of day view, 24), so there's no room to grow the cells past their autofit size without the grid overflowing the card."
 msgstr ""
 "Skala för denna modul.\n"
-"100% är standardstorleken. Begränsad till 100% här: rutnätet har alltid lika "
-"många kolumner som \"Visade veckor\" (eller 24, i vyn Tid på dygnet), så det "
-"finns inget utrymme att öka cellerna förbi deras autoanpassade storlek utan "
-"att rutnätet svämmar över kortet."
+"100% är standardstorleken. Begränsad till 100% här: rutnätet har alltid lika många kolumner som \"Visade veckor\" (eller 24, i vyn Tid på dygnet), så det finns inget utrymme att öka cellerna förbi deras autoanpassade storlek utan att rutnätet svämmar över kortet."
 
 #: screens/sui_menu.lua:2402
 msgid ""
@@ -5664,8 +5550,7 @@ msgstr ""
 
 #: screens/sui_menu.lua:2424
 msgid ""
-"Scales the module label text above each module, on top of the size set in "
-"Style > Module Labels.\n"
+"Scales the module label text above each module, on top of the size set in Style > Module Labels.\n"
 "100% is the default size."
 msgstr ""
 
@@ -5678,15 +5563,11 @@ msgid "Screen name"
 msgstr "Skärmnamn"
 
 #: screens/sui_menu.lua:2355
-msgid ""
-"Screen shown after closing a book. Gestures and quick actions that name a "
-"destination always open that destination."
+msgid "Screen shown after closing a book. Gestures and quick actions that name a destination always open that destination."
 msgstr ""
 
 #: screens/sui_menu.lua:2279
-msgid ""
-"Scrim over the wallpaper in Library, History and Collections. 0% shows the "
-"wallpaper, 100% hides it."
+msgid "Scrim over the wallpaper in Library, History and Collections. 0% shows the wallpaper, 100% hides it."
 msgstr ""
 
 #: features/library/sui_library_search.lua:181
@@ -5875,21 +5756,12 @@ msgid "Show Uncategorized Items"
 msgstr ""
 
 #: screens/sui_menu.lua:2459
-msgid ""
-"Show a brief \"Closing book…\" notice when closing a book, preventing "
-"accidental double-taps while e-ink refreshes."
-msgstr ""
-"Visar ett kort meddelande \"Stänger bok…\" när en bok stängs, vilket "
-"förhindrar oavsiktliga dubbeltryckningar medan e-ink uppdateras."
+msgid "Show a brief \"Closing book…\" notice when closing a book, preventing accidental double-taps while e-ink refreshes."
+msgstr "Visar ett kort meddelande \"Stänger bok…\" när en bok stängs, vilket förhindrar oavsiktliga dubbeltryckningar medan e-ink uppdateras."
 
 #: features/sui_stats_menu.lua:92
-msgid ""
-"Show a brief \"Loading statistics…\" notice when opening a statistics "
-"window, preventing accidental double-taps while e-ink refreshes."
-msgstr ""
-"Visar ett kort meddelande \"Läser in statistik…\" när ett statistikfönster "
-"öppnas, vilket förhindrar oavsiktliga dubbeltryckningar medan e-ink "
-"uppdateras."
+msgid "Show a brief \"Loading statistics…\" notice when opening a statistics window, preventing accidental double-taps while e-ink refreshes."
+msgstr "Visar ett kort meddelande \"Läser in statistik…\" när ett statistikfönster öppnas, vilket förhindrar oavsiktliga dubbeltryckningar medan e-ink uppdateras."
 
 #: engines/sui_book_sources.lua:276 modules/module_coverdeck.lua:1661
 #: modules/module_recent.lua:49
@@ -5917,9 +5789,7 @@ msgid "Show section label"
 msgstr "Visa avsnittsetikett"
 
 #: screens/sui_quicksettings_bar.lua:1626
-msgid ""
-"Show the frontlight and warmth sliders below the book details in the Book "
-"layout."
+msgid "Show the frontlight and warmth sliders below the book details in the Book layout."
 msgstr ""
 
 #: screens/sui_menu.lua:2877
@@ -5928,13 +5798,11 @@ msgstr ""
 
 #: screens/sui_menu.lua:594
 msgid ""
-"Shows \"Page X of Y\" in the title bar subtitle when browsing the library, "
-"history or collections.\n"
+"Shows \"Page X of Y\" in the title bar subtitle when browsing the library, history or collections.\n"
 "Navpager enables this automatically.\n"
 "Not available when Navpager is active."
 msgstr ""
-"Visar \"Sida X av Y\" i titelradens underrubrik vid bläddring i biblioteket, "
-"historiken eller samlingar.\n"
+"Visar \"Sida X av Y\" i titelradens underrubrik vid bläddring i biblioteket, historiken eller samlingar.\n"
 "Navpager aktiverar detta automatiskt.\n"
 "Ej tillgänglig när Navpager är aktiv."
 
@@ -5988,12 +5856,8 @@ msgid "Simple UI Settings"
 msgstr "Simple UI-inställningar"
 
 #: screens/sui_onboarding.lua:294
-msgid ""
-"Simple UI is designed to be simple and flexible. Here are a few tips to get "
-"the most out of it."
-msgstr ""
-"Simple UI är utformat för att vara enkelt och flexibelt. Här är några tips "
-"för att få ut det mesta av det."
+msgid "Simple UI is designed to be simple and flexible. Here are a few tips to get the most out of it."
+msgstr "Simple UI är utformat för att vara enkelt och flexibelt. Här är några tips för att få ut det mesta av det."
 
 #: infra/sui_updater.lua:486
 msgid "Simple UI is up to date (%s)."
@@ -6216,9 +6080,7 @@ msgstr ""
 "100% är standardavståndet."
 
 #: screens/sui_menu.lua:3361
-msgid ""
-"Space between the characters of a module label, as a percentage of its text "
-"size."
+msgid "Space between the characters of a module label, as a percentage of its text size."
 msgstr ""
 
 #: modules/module_spacer.lua:58 modules/module_spacer.lua:112
@@ -6629,23 +6491,8 @@ msgid "The case of the missing bookmark."
 msgstr ""
 
 #: screens/sui_menu.lua:2533
-msgid ""
-"The cover shown right as a book opens normally comes from the library's "
-"cached thumbnail, which can look soft on higher-resolution screens. When on, "
-"SimpleUI instead reads the cover straight from the book file for that moment "
-"(also covers books never opened before, which otherwise show no cover at "
-"all) — at the cost of a brief extra pause while opening, since the file has "
-"to be read twice. Cover on close is unaffected either way: it already reads "
-"the full-quality cover from the open book."
-msgstr ""
-"Omslaget som visas direkt när en bok öppnas kommer normalt från bibliotekets "
-"cachade miniatyrbild, vilket kan se suddigt ut på skärmar med högre "
-"upplösning. Om aktiverat läser SimpleUI istället omslaget direkt från "
-"bokfilen i det ögonblicket (täcker även böcker som aldrig öppnats tidigare, "
-"vilka annars inte visar något omslag alls) — till priset av en kort extra "
-"paus vid öppning, eftersom filen måste läsas två gånger. Omslaget vid "
-"stängning påverkas inte i något fall: det läser redan omslaget i full "
-"kvalitet från den öppna boken."
+msgid "The cover shown right as a book opens normally comes from the library's cached thumbnail, which can look soft on higher-resolution screens. When on, SimpleUI instead reads the cover straight from the book file for that moment (also covers books never opened before, which otherwise show no cover at all) — at the cost of a brief extra pause while opening, since the file has to be read twice. Cover on close is unaffected either way: it already reads the full-quality cover from the open book."
+msgstr "Omslaget som visas direkt när en bok öppnas kommer normalt från bibliotekets cachade miniatyrbild, vilket kan se suddigt ut på skärmar med högre upplösning. Om aktiverat läser SimpleUI istället omslaget direkt från bokfilen i det ögonblicket (täcker även böcker som aldrig öppnats tidigare, vilka annars inte visar något omslag alls) — till priset av en kort extra paus vid öppning, eftersom filen måste läsas två gånger. Omslaget vid stängning påverkas inte i något fall: det läser redan omslaget i full kvalitet från den öppna boken."
 
 #: modules/critter/module_critter.lua:782
 msgid "The critter may use it in what it says."
@@ -6771,8 +6618,7 @@ msgid ""
 "This book is marked as Finished, so it can't be added to To Be Read.\n"
 "Change its status to Reading or On Hold first."
 msgstr ""
-"Denna bok är markerad som Avslutad, så den kan inte läggas till i Ska "
-"läsas.\n"
+"Denna bok är markerad som Avslutad, så den kan inte läggas till i Ska läsas.\n"
 "Ändra först dess status till Läser eller Vilande."
 
 #: features/sui_quickactions.lua:3117 features/sui_quickactions.lua:3196
@@ -6812,8 +6658,7 @@ msgid ""
 "This will delete all Simple UI settings and restart KOReader.\n"
 "Are you sure?"
 msgstr ""
-"Detta kommer att ta bort alla Simple UI-inställningar och starta om "
-"KOReader.\n"
+"Detta kommer att ta bort alla Simple UI-inställningar och starta om KOReader.\n"
 "Är du säker?"
 
 #: modules/reading_stats/module_reading_stats.lua:447
@@ -7260,26 +7105,20 @@ msgstr "Nyheter:"
 #: features/sui_stats_menu.lua:102
 #, fuzzy
 msgid ""
-"When a finished book is deleted from the device (file or folder), keep it "
-"counted in the Books Read statistics on the Home Screen.\n"
+"When a finished book is deleted from the device (file or folder), keep it counted in the Books Read statistics on the Home Screen.\n"
 "\n"
-"Books changed back to Reading or Abandoned are automatically removed from "
-"this list."
+"Books changed back to Reading or Abandoned are automatically removed from this list."
 msgstr ""
-"När en avslutad bok tas bort från enheten, fortsätt räkna den i statistiken "
-"Lästa böcker på startsidan.\n"
+"När en avslutad bok tas bort från enheten, fortsätt räkna den i statistiken Lästa böcker på startsidan.\n"
 "\n"
-"Böcker som ändras tillbaka till Läser eller Övergiven tas automatiskt bort "
-"från denna lista."
+"Böcker som ändras tillbaka till Läser eller Övergiven tas automatiskt bort från denna lista."
 
 #: screens/sui_menu.lua:2571
 msgid ""
-"When enabled, long-pressing a module on the home screen opens its settings "
-"menu.\n"
+"When enabled, long-pressing a module on the home screen opens its settings menu.\n"
 "Disable this to prevent settings from appearing on long tap."
 msgstr ""
-"När aktiverat öppnar ett långtryck på en modul på startsidan dess "
-"inställningsmeny.\n"
+"När aktiverat öppnar ett långtryck på en modul på startsidan dess inställningsmeny.\n"
 "Inaktivera för att hindra inställningarna från att visas vid långtryck."
 
 #: screens/sui_quicksettings_bar.lua:1688
@@ -7287,8 +7126,7 @@ msgid ""
 "When enabled, long-pressing the Quick Settings Bar opens its settings menu.\n"
 "Disable this to prevent the settings menu from appearing on long tap."
 msgstr ""
-"När aktiverat öppnar ett långtryck på snabbinställningslisten dess "
-"inställningsmeny.\n"
+"När aktiverat öppnar ett långtryck på snabbinställningslisten dess inställningsmeny.\n"
 "Inaktivera för att hindra inställningsmenyn från att visas vid långtryck."
 
 #: screens/sui_menu.lua:1178
@@ -7296,8 +7134,7 @@ msgid ""
 "When enabled, long-pressing the navigation bar opens its settings menu.\n"
 "Disable this to prevent the settings menu from appearing on long tap."
 msgstr ""
-"När aktiverat öppnar ett långtryck på navigationslisten dess "
-"inställningsmeny.\n"
+"När aktiverat öppnar ett långtryck på navigationslisten dess inställningsmeny.\n"
 "Inaktivera för att hindra inställningsmenyn från att visas vid långtryck."
 
 #: screens/sui_menu.lua:1009
@@ -7305,17 +7142,12 @@ msgid ""
 "When enabled, long-pressing the top bar opens its settings menu.\n"
 "Disable this to prevent the settings menu from appearing on long tap."
 msgstr ""
-"När aktiverat öppnar ett långtryck på den övre stapeln dess "
-"inställningsmeny.\n"
+"När aktiverat öppnar ett långtryck på den övre stapeln dess inställningsmeny.\n"
 "Inaktivera för att hindra inställningsmenyn från att visas vid långtryck."
 
 #: screens/sui_menu.lua:2373
-msgid ""
-"When waking the device from sleep/suspend, always return to the Home Screen "
-"— even if a book was open when it went to sleep."
-msgstr ""
-"När enheten väcks från vila/vänteläge, återgå alltid till startsidan — även "
-"om en bok var öppen när den gick i vila."
+msgid "When waking the device from sleep/suspend, always return to the Home Screen — even if a book was open when it went to sleep."
+msgstr "När enheten väcks från vila/vänteläge, återgå alltid till startsidan — även om en bok var öppen när den gick i vila."
 
 #: modules/critter/dialog.lua:98
 msgid "When you close a book, do the characters wait?"
@@ -7356,7 +7188,7 @@ msgstr "WiFi inte tillgängligt på denna enhet."
 #: features/dialogs/sui_bento_sheet.lua:183
 #: modules/reading_stats/width_sheet.lua:298
 msgid "Width"
-msgstr ""
+msgstr "Bredd"
 
 #: features/dialogs/sui_bento_sheet.lua:220 infra/sui_config.lua:1831
 msgid "Width and Position"
@@ -8086,23 +7918,19 @@ msgstr[1] ""
 #: modules/module_action_list.lua:300 modules/module_quick_actions.lua:351
 #: screens/sui_menu.lua:1899 screens/sui_menu.lua:2013
 msgid "The maximum of %d action per module has been reached. Remove one first."
-msgid_plural ""
-"The maximum of %d actions per module has been reached. Remove one first."
+msgid_plural "The maximum of %d actions per module has been reached. Remove one first."
 msgstr[0] "Maximalt %d åtgärd per modul nått. Ta bort en först."
 msgstr[1] "Maximalt %d åtgärder per modul nått. Ta bort en först."
 
 #: modules/critter/module_critter.lua:750
-msgid ""
-"The maximum of %d decoration per side has been reached. Remove one first."
-msgid_plural ""
-"The maximum of %d decorations per side has been reached. Remove one first."
+msgid "The maximum of %d decoration per side has been reached. Remove one first."
+msgid_plural "The maximum of %d decorations per side has been reached. Remove one first."
 msgstr[0] ""
 msgstr[1] ""
 
 #: features/sui_quickactions.lua:1636 features/sui_quickactions.lua:2844
 msgid "The maximum of %d quick action has been reached. Delete one first."
-msgid_plural ""
-"The maximum of %d quick actions has been reached. Delete one first."
+msgid_plural "The maximum of %d quick actions has been reached. Delete one first."
 msgstr[0] "Maximalt %d snabbåtgärd nått. Ta bort en först."
 msgstr[1] "Maximalt %d snabbåtgärder nått. Ta bort en först."
 
@@ -8125,97 +7953,8 @@ msgid_plural "days streak"
 msgstr[0] "dag i rad"
 msgstr[1] "dagar i rad"
 
-#~ msgid "ALL TIME"
-#~ msgstr "ALLA TIDER"
-
-#~ msgid "All time — Books"
-#~ msgstr "Totalt — Böcker"
-
-#~ msgid "All time — Time"
-#~ msgstr "Totalt — Tid"
-
-#~ msgid "DAY STREAK"
-#~ msgstr "DAGSSVIT"
-
-#~ msgid "Daily avg — Pages"
-#~ msgstr "Dagligt snitt — Sidor"
-
-#~ msgid "Daily avg — Time"
-#~ msgstr "Dagligt snitt — Tid"
-
-#~ msgid "FREEZES"
-#~ msgstr "FRYSNINGAR"
-
-#~ msgid "LAST 7 DAYS"
-#~ msgstr "SENASTE 7 DAGARNA"
-
-#~ msgid "Show wallpaper on all screens"
-#~ msgstr "Visa bakgrundsbild på alla skärmar"
-
-#~ msgid "Status — Abandoned"
-#~ msgstr "Status — Övergiven"
-
-#~ msgid "Status — Reading"
-#~ msgstr "Status — Läser"
-
-#~ msgid "Status — Unread"
-#~ msgstr "Status — Oläst"
-
-#~ msgid "THIS MONTH"
-#~ msgstr "DENNA MÅNAD"
-
-#~ msgid "THIS WEEK"
-#~ msgstr "DENNA VECKA"
-
-#~ msgid "TODAY'S SUMMARY"
-#~ msgstr "DAGENS SAMMANFATTNING"
-
-#~ msgid "This month — Pages"
-#~ msgstr "Denna månad — Sidor"
-
-#~ msgid "This month — Time"
-#~ msgstr "Denna månad — Tid"
-
-#~ msgid "This week — Pages"
-#~ msgstr "Denna vecka — Sidor"
-
-#~ msgid "This week — Time"
-#~ msgstr "Denna vecka — Tid"
-
-#~ msgid "Today — Pages"
-#~ msgstr "Idag — Sidor"
-
-#~ msgid "Today — Time"
-#~ msgstr "Idag — Tid"
-
-#~ msgid "WEEK STREAK"
-#~ msgstr "VECKOSVIT"
-
-#~ msgid "hours read"
-#~ msgstr "timmar lästa"
-
-#~ msgid "reading time"
-#~ msgstr "lästid"
-
-#~ msgid "%d freeze available"
-#~ msgid_plural "%d freezes available"
-#~ msgstr[0] "%d frysning tillgänglig"
-#~ msgstr[1] "%d frysningar tillgängliga"
-
-#~ msgid "day read"
-#~ msgid_plural "days read"
-#~ msgstr[0] "dag läst"
-#~ msgstr[1] "dag i rad"
-
-#~ msgid "page read"
-#~ msgid_plural "pages read"
-#~ msgstr[0] "sida läst"
-#~ msgstr[1] "sidor lästa idag"
-
 #: screens/sui_menu.lua:2427
-msgid ""
-"0% transparent, 100% solid. Rounded background behind title bar buttons "
-"(back, search, menu, …)."
+msgid "0% transparent, 100% solid. Rounded background behind title bar buttons (back, search, menu, …)."
 msgstr ""
 
 #: infra/sui_updater.lua:846
@@ -8427,10 +8166,8 @@ msgid "Hardcover: kunde inte hämta data."
 msgstr ""
 
 #: modules/module_hardcover.lua:706
-msgid ""
-"Hardcover: kunde inte hämta data. Kontrollera API-nyckeln och nätverket."
-msgstr ""
-"Hardcover: kunde inte hämta data. Kontrollera API-nyckeln och nätverket."
+msgid "Hardcover: kunde inte hämta data. Kontrollera API-nyckeln och nätverket."
+msgstr "Hardcover: kunde inte hämta data. Kontrollera API-nyckeln och nätverket."
 
 #: modules/module_hardcover.lua:911
 msgid "Hardcover: uppdaterad!"
@@ -8646,16 +8383,8 @@ msgid "Weekly"
 msgstr "Veckovis"
 
 #: screens/sui_menu.lua:2655
-msgid ""
-"When closing a book from the Home Screen, go back to the folder where the "
-"book is located instead of the Library home folder."
-msgstr ""
-"När en bok stängs från startsidan, gå tillbaka till mappen där boken finns "
-"istället för bibliotekets hemmapp."
-
-#: modules/module_image.lua:374 modules/module_image.lua:375
-msgid "Width"
-msgstr "Bredd"
+msgid "When closing a book from the Home Screen, go back to the folder where the book is located instead of the Library home folder."
+msgstr "När en bok stängs från startsidan, gå tillbaka till mappen där boken finns istället för bibliotekets hemmapp."
 
 #: modules/module_image.lua:376
 msgid "Width of the image area."
@@ -8668,6 +8397,94 @@ msgstr "hardcover.app → Inställningar → Utvecklare"
 #: infra/sui_updater.lua:817
 msgid "unknown error"
 msgstr ""
+
+#~ msgid "ALL TIME"
+#~ msgstr "ALLA TIDER"
+
+#~ msgid "All time — Books"
+#~ msgstr "Totalt — Böcker"
+
+#~ msgid "All time — Time"
+#~ msgstr "Totalt — Tid"
+
+#~ msgid "DAY STREAK"
+#~ msgstr "DAGSSVIT"
+
+#~ msgid "Daily avg — Pages"
+#~ msgstr "Dagligt snitt — Sidor"
+
+#~ msgid "Daily avg — Time"
+#~ msgstr "Dagligt snitt — Tid"
+
+#~ msgid "FREEZES"
+#~ msgstr "FRYSNINGAR"
+
+#~ msgid "LAST 7 DAYS"
+#~ msgstr "SENASTE 7 DAGARNA"
+
+#~ msgid "Show wallpaper on all screens"
+#~ msgstr "Visa bakgrundsbild på alla skärmar"
+
+#~ msgid "Status — Abandoned"
+#~ msgstr "Status — Övergiven"
+
+#~ msgid "Status — Reading"
+#~ msgstr "Status — Läser"
+
+#~ msgid "Status — Unread"
+#~ msgstr "Status — Oläst"
+
+#~ msgid "THIS MONTH"
+#~ msgstr "DENNA MÅNAD"
+
+#~ msgid "THIS WEEK"
+#~ msgstr "DENNA VECKA"
+
+#~ msgid "TODAY'S SUMMARY"
+#~ msgstr "DAGENS SAMMANFATTNING"
+
+#~ msgid "This month — Pages"
+#~ msgstr "Denna månad — Sidor"
+
+#~ msgid "This month — Time"
+#~ msgstr "Denna månad — Tid"
+
+#~ msgid "This week — Pages"
+#~ msgstr "Denna vecka — Sidor"
+
+#~ msgid "This week — Time"
+#~ msgstr "Denna vecka — Tid"
+
+#~ msgid "Today — Pages"
+#~ msgstr "Idag — Sidor"
+
+#~ msgid "Today — Time"
+#~ msgstr "Idag — Tid"
+
+#~ msgid "WEEK STREAK"
+#~ msgstr "VECKOSVIT"
+
+#~ msgid "hours read"
+#~ msgstr "timmar lästa"
+
+#~ msgid "reading time"
+#~ msgstr "lästid"
+
+#~ msgid "%d freeze available"
+#~ msgid_plural "%d freezes available"
+#~ msgstr[0] "%d frysning tillgänglig"
+#~ msgstr[1] "%d frysningar tillgängliga"
+
+#~ msgid "day read"
+#~ msgid_plural "days read"
+#~ msgstr[0] "dag läst"
+#~ msgstr[1] "dag i rad"
+
+#~ msgid "page read"
+#~ msgid_plural "pages read"
+#~ msgstr[0] "sida läst"
+#~ msgstr[1] "sidor lästa idag"
+
 #~ msgid "Badges"
 #~ msgstr "Märken"
 
@@ -8749,8 +8566,7 @@ msgstr ""
 #~ msgstr "Synlig"
 
 #~ msgid "The maximum of %d stat per row has been reached. Remove one first."
-#~ msgid_plural ""
-#~ "The maximum of %d stats per row has been reached. Remove one first."
+#~ msgid_plural "The maximum of %d stats per row has been reached. Remove one first."
 #~ msgstr[0] "Maximalt %d statistik per rad nått. Ta bort en först."
 #~ msgstr[1] "Maximalt %d åtgärder per modul nått. Ta bort en först."
 

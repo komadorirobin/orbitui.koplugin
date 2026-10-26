@@ -106,6 +106,7 @@ function BentoSheet.show(opts)
     end
 
     local function setClassic(on)
+        layout.bento_model = 3
         Config.setBentoClassic(on, pfx)
         commit({}, true)
     end

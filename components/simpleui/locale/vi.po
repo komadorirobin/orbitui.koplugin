@@ -170,25 +170,19 @@ msgid "(collection not found)"
 msgstr "(không tìm thấy bộ sưu tập)"
 
 #: screens/sui_menu.lua:199
-msgid ""
-"0% transparent, 100% solid. Applies across the full width of the title bar."
+msgid "0% transparent, 100% solid. Applies across the full width of the title bar."
 msgstr ""
 
 #: screens/sui_menu.lua:203
-msgid ""
-"0% transparent, 100% solid. Applies to the native page bar in Library, "
-"History, Collections and similar screens."
+msgid "0% transparent, 100% solid. Applies to the native page bar in Library, History, Collections and similar screens."
 msgstr ""
 
 #: features/library/sui_label_options.lua:151
-msgid ""
-"0% transparent, 100% solid. Only the background changes; the text stays "
-"solid."
+msgid "0% transparent, 100% solid. Only the background changes; the text stays solid."
 msgstr ""
 
 #: infra/sui_config.lua:1478
-msgid ""
-"0% transparent, 100% solid. Values in between add a scrim over the wallpaper."
+msgid "0% transparent, 100% solid. Values in between add a scrim over the wallpaper."
 msgstr ""
 
 #: infra/sui_config.lua:1752
@@ -264,12 +258,8 @@ msgid "A folder named \"Books\" will be created and set as the library home."
 msgstr ""
 
 #: screens/sui_stats_windows.lua:2201
-msgid ""
-"A freeze can only bridge a single missed day right after an active one — "
-"yesterday doesn't qualify."
-msgstr ""
-"Đóng băng chỉ có thể bù cho một ngày bị bỏ lỡ ngay sau một ngày có hoạt động "
-"— hôm qua không đủ điều kiện."
+msgid "A freeze can only bridge a single missed day right after an active one — yesterday doesn't qualify."
+msgstr "Đóng băng chỉ có thể bù cho một ngày bị bỏ lỡ ngay sau một ngày có hoạt động — hôm qua không đủ điều kiện."
 
 #: modules/critter/phrases.lua:89
 msgid "A fresh day, a fresh page."
@@ -861,8 +851,7 @@ msgid ""
 msgstr ""
 
 #: features/sui_backup.lua:615
-msgid ""
-"Backup was made by a newer SimpleUI version. Please update this plugin first."
+msgid "Backup was made by a newer SimpleUI version. Please update this plugin first."
 msgstr ""
 
 #: engines/sui_book_grid.lua:2100 engines/sui_group_cell.lua:319
@@ -1070,18 +1059,8 @@ msgid "Bottom Margin"
 msgstr "Lề dưới"
 
 #: screens/sui_menu.lua:2506
-msgid ""
-"Briefly show the book cover full-screen when opening or closing a book, "
-"masking the page-layout flash. Normally requires the book to already be "
-"indexed by the cover browser (its cover must have been seen at least once in "
-"a grid/list view) — see \"High-Quality Cover\" below to also cover un-"
-"indexed books."
-msgstr ""
-"Hiển thị bìa sách toàn màn hình trong chốc lát khi mở hoặc đóng sách, che đi "
-"hiện tượng nhấp nháy bố cục trang. Thông thường yêu cầu sách đã được lập chỉ "
-"mục bởi trình duyệt bìa (bìa của sách phải đã được xem ít nhất một lần ở chế "
-"độ xem lưới/danh sách) — xem \"Bìa chất lượng cao\" bên dưới để bao gồm cả "
-"sách chưa được lập chỉ mục."
+msgid "Briefly show the book cover full-screen when opening or closing a book, masking the page-layout flash. Normally requires the book to already be indexed by the cover browser (its cover must have been seen at least once in a grid/list view) — see \"High-Quality Cover\" below to also cover un-indexed books."
+msgstr "Hiển thị bìa sách toàn màn hình trong chốc lát khi mở hoặc đóng sách, che đi hiện tượng nhấp nháy bố cục trang. Thông thường yêu cầu sách đã được lập chỉ mục bởi trình duyệt bìa (bìa của sách phải đã được xem ít nhất một lần ở chế độ xem lưới/danh sách) — xem \"Bìa chất lượng cao\" bên dưới để bao gồm cả sách chưa được lập chỉ mục."
 
 #: features/sui_accent_picker.lua:92 features/sui_quickactions.lua:930
 #: infra/sui_config.lua:136 infra/sui_config.lua:202
@@ -1147,14 +1126,8 @@ msgid "By day of the week"
 msgstr ""
 
 #: screens/sui_menu.lua:2545
-msgid ""
-"By default the cover is stretched to fill the whole screen, which can "
-"distort it if its proportions don't match your screen's. When on, the cover "
-"keeps its original proportions instead, centered over a black background."
-msgstr ""
-"Theo mặc định, bìa được kéo giãn để lấp đầy toàn màn hình, có thể làm biến "
-"dạng bìa nếu tỷ lệ không khớp với màn hình. Khi bật, bìa sẽ giữ nguyên tỷ lệ "
-"gốc và được căn giữa trên nền đen."
+msgid "By default the cover is stretched to fill the whole screen, which can distort it if its proportions don't match your screen's. When on, the cover keeps its original proportions instead, centered over a black background."
+msgstr "Theo mặc định, bìa được kéo giãn để lấp đầy toàn màn hình, có thể làm biến dạng bìa nếu tỷ lệ không khớp với màn hình. Khi bật, bìa sẽ giữ nguyên tỷ lệ gốc và được căn giữa trên nền đen."
 
 #: screens/insights/sui_insights_charts.lua:153
 msgid "By hour of the day"
@@ -1296,15 +1269,11 @@ msgid "Choose icon pack"
 msgstr ""
 
 #: screens/sui_onboarding.lua:211
-msgid ""
-"Choose the folder where you will place all your books. Simple UI uses it to "
-"show your books in the Library."
+msgid "Choose the folder where you will place all your books. Simple UI uses it to show your books in the Library."
 msgstr ""
 
 #: screens/sui_quicksettings_bar.lua:1691
-msgid ""
-"Choose the menus that open directly on the Quick Settings tab instead of the "
-"last used tab."
+msgid "Choose the menus that open directly on the Quick Settings tab instead of the last used tab."
 msgstr ""
 
 #: screens/sui_menu.lua:2220
@@ -1487,9 +1456,7 @@ msgid "Could not write backup file"
 msgstr "Không thể xác định thư mục gói"
 
 #: features/sui_stats_menu.lua:115
-msgid ""
-"Count manually tracked books in the all-time total of books finished. They "
-"always count towards the year they belong to."
+msgid "Count manually tracked books in the all-time total of books finished. They always count towards the year they belong to."
 msgstr ""
 
 #: features/sui_presets.lua:200 features/sui_presets.lua:218
@@ -1528,8 +1495,7 @@ msgid "Cover for \"%s\""
 msgstr "Bìa cho \"%s\""
 
 #: infra/sui_compat_check.lua:131
-msgid ""
-"CoverBrowser plugin is not enabled, some features will not work correctly."
+msgid "CoverBrowser plugin is not enabled, some features will not work correctly."
 msgstr ""
 
 #: modules/module_coverdeck.lua:123 screens/sui_menu.lua:3970
@@ -1832,8 +1798,7 @@ msgstr "Xóa cài đặt"
 
 #: screens/sui_settings_window.lua:364
 msgid "Delete \"%s\"? This removes its layout, modules and Quick Action."
-msgstr ""
-"Xóa \"%s\"? Thao tác này sẽ xóa bố cục, mô-đun và thao tác nhanh của nó."
+msgstr "Xóa \"%s\"? Thao tác này sẽ xóa bố cục, mô-đun và thao tác nhanh của nó."
 
 #: features/sui_presets.lua:978 features/sui_presets.lua:1016
 #: screens/sui_menu.lua:3793 screens/sui_menu.lua:3834
@@ -2225,9 +2190,7 @@ msgid "Fade Intensity"
 msgstr "Cường độ làm mờ"
 
 #: features/library/sui_finished_books.lua:63
-msgid ""
-"Fades finished book covers in the file browser. Other lists show them as "
-"usual."
+msgid "Fades finished book covers in the file browser. Other lists show them as usual."
 msgstr ""
 
 #: screens/sui_menu.lua:2703
@@ -2483,12 +2446,8 @@ msgid "Freezes"
 msgstr "Đóng băng"
 
 #: screens/sui_stats_windows.lua:2182
-msgid ""
-"Freezes can only cover a single missed day, and only right after an active "
-"one. Tap yesterday's cell to use one, when eligible."
-msgstr ""
-"Đóng băng chỉ có thể bù cho một ngày bị bỏ lỡ, và chỉ ngay sau một ngày có "
-"hoạt động. Chạm vào ô của hôm qua để sử dụng khi đủ điều kiện."
+msgid "Freezes can only cover a single missed day, and only right after an active one. Tap yesterday's cell to use one, when eligible."
+msgstr "Đóng băng chỉ có thể bù cho một ngày bị bỏ lỡ, và chỉ ngay sau một ngày có hoạt động. Chạm vào ô của hôm qua để sử dụng khi đủ điều kiện."
 
 #: engines/sui_heatmap_widgets.lua:127 infra/sui_datenames.lua:45
 msgid "Fri"
@@ -2555,17 +2514,11 @@ msgstr "Thao tác và biểu tượng tùy chỉnh toàn cục"
 
 #: screens/sui_menu.lua:4006
 msgid ""
-"Global scale applied to all of KOReader's interface text — menus, dialogs, "
-"titles, and Simple UI. It does not change the book's reading font size, "
-"which has its own setting.\n"
-"100% is the default size. Useful when a chosen UI font (see UI Font above) "
-"renders smaller or larger than usual."
+"Global scale applied to all of KOReader's interface text — menus, dialogs, titles, and Simple UI. It does not change the book's reading font size, which has its own setting.\n"
+"100% is the default size. Useful when a chosen UI font (see UI Font above) renders smaller or larger than usual."
 msgstr ""
-"Tỷ lệ toàn cục áp dụng cho toàn bộ chữ giao diện của KOReader — menu, hộp "
-"thoại, tiêu đề và Simple UI. Không thay đổi kích thước phông chữ đọc sách, "
-"vốn có cài đặt riêng.\n"
-"100% là kích thước mặc định. Hữu ích khi phông chữ giao diện đã chọn (xem "
-"Phông chữ giao diện ở trên) hiển thị nhỏ hơn hoặc lớn hơn bình thường."
+"Tỷ lệ toàn cục áp dụng cho toàn bộ chữ giao diện của KOReader — menu, hộp thoại, tiêu đề và Simple UI. Không thay đổi kích thước phông chữ đọc sách, vốn có cài đặt riêng.\n"
+"100% là kích thước mặc định. Hữu ích khi phông chữ giao diện đã chọn (xem Phông chữ giao diện ở trên) hiển thị nhỏ hơn hoặc lớn hơn bình thường."
 
 #: screens/sui_menu.lua:2403
 msgid ""
@@ -2694,17 +2647,13 @@ msgstr "Nhóm: chọn thao tác"
 
 #: modules/module_currently.lua:1302
 msgid ""
-"Grows or shrinks the cover so its height always matches the text column, "
-"keeping the cover's proportions.\n"
+"Grows or shrinks the cover so its height always matches the text column, keeping the cover's proportions.\n"
 "The spacing between cover and text stays as set above.\n"
-"The Cover size setting still applies on top of this, and the cover never "
-"shrinks below its 100% size."
+"The Cover size setting still applies on top of this, and the cover never shrinks below its 100% size."
 msgstr ""
-"Tăng hoặc giảm kích thước bìa để chiều cao của bìa luôn khớp với cột chữ, "
-"giữ nguyên tỷ lệ của bìa.\n"
+"Tăng hoặc giảm kích thước bìa để chiều cao của bìa luôn khớp với cột chữ, giữ nguyên tỷ lệ của bìa.\n"
 "Khoảng cách giữa bìa và chữ vẫn giữ như đã đặt ở trên.\n"
-"Cài đặt Kích thước bìa vẫn được áp dụng thêm vào đây, và bìa không bao giờ "
-"nhỏ hơn 100% kích thước của nó."
+"Cài đặt Kích thước bìa vẫn được áp dụng thêm vào đây, và bìa không bao giờ nhỏ hơn 100% kích thước của nó."
 
 #: modules/critter/reaction_lines.lua:270
 msgid "HAPPY ANNIVERSARY! I love us!"
@@ -2918,16 +2867,8 @@ msgid "Hours read"
 msgstr ""
 
 #: modules/module_heatmap.lua:310
-msgid ""
-"How many weeks of history to include, and (in Calendar view) how many weeks "
-"the grid shows — this count is unaffected by Scale, which only resizes the "
-"cells. In Time of day view, this only changes how much history feeds the "
-"shading — the grid itself always has one column per hour."
-msgstr ""
-"Số tuần lịch sử cần tính, và (ở chế độ xem Lịch) số tuần lưới hiển thị — con "
-"số này không bị ảnh hưởng bởi Tỷ lệ, vốn chỉ thay đổi kích thước ô. Ở chế độ "
-"xem Thời điểm trong ngày, điều này chỉ thay đổi lượng lịch sử đưa vào tô "
-"bóng — bản thân lưới luôn có một cột cho mỗi giờ."
+msgid "How many weeks of history to include, and (in Calendar view) how many weeks the grid shows — this count is unaffected by Scale, which only resizes the cells. In Time of day view, this only changes how much history feeds the shading — the grid itself always has one column per hour."
+msgstr "Số tuần lịch sử cần tính, và (ở chế độ xem Lịch) số tuần lưới hiển thị — con số này không bị ảnh hưởng bởi Tỷ lệ, vốn chỉ thay đổi kích thước ô. Ở chế độ xem Thời điểm trong ngày, điều này chỉ thay đổi lượng lịch sử đưa vào tô bóng — bản thân lưới luôn có một cột cho mỗi giờ."
 
 #: modules/critter/dialog.lua:331
 msgid "How was your day?"
@@ -3129,8 +3070,7 @@ msgstr "Chỉ biểu tượng"
 
 #: screens/sui_menu.lua:3957
 msgid ""
-"Icons that contain color keep their original colors in night mode instead of "
-"being inverted.\n"
+"Icons that contain color keep their original colors in night mode instead of being inverted.\n"
 "Monochrome icons are not affected and keep following the interface colors.\n"
 "Requires a color screen."
 msgstr ""
@@ -3148,12 +3088,8 @@ msgid "If I were in a book, what kind would it be?"
 msgstr ""
 
 #: screens/sui_onboarding.lua:330
-msgid ""
-"If you selected the Momentum Preset, long press the Reading Goal module to "
-"choose and set your reading goals."
-msgstr ""
-"Nếu bạn đã chọn Thiết lập động lượng, nhấn giữ mô-đun Mục tiêu đọc để chọn "
-"và đặt mục tiêu đọc."
+msgid "If you selected the Momentum Preset, long press the Reading Goal module to choose and set your reading goals."
+msgstr "Nếu bạn đã chọn Thiết lập động lượng, nhấn giữ mô-đun Mục tiêu đọc để chọn và đặt mục tiêu đọc."
 
 #: features/sui_backup.lua:1148
 msgid "Import Backup…"
@@ -3234,8 +3170,7 @@ msgstr "Dữ liệu không hợp lệ"
 
 #: features/sui_quickactions.lua:2042
 msgid "Invalid input. Please enter 1–6 hexadecimal digits (0–9, A–F)."
-msgstr ""
-"Đầu vào không hợp lệ. Vui lòng nhập 1–6 chữ số thập lục phân (0–9, A–F)."
+msgstr "Đầu vào không hợp lệ. Vui lòng nhập 1–6 chữ số thập lục phân (0–9, A–F)."
 
 #: features/sui_presets.lua:558 features/sui_presets.lua:741
 msgid "Invalid preset file"
@@ -3432,9 +3367,7 @@ msgid "Layout Editor"
 msgstr "Trình chỉnh sửa bố cục"
 
 #: screens/sui_quicksettings_bar.lua:1600
-msgid ""
-"Layout of the Quick Settings panel in the reader. The file browser always "
-"uses the classic layout."
+msgid "Layout of the Quick Settings panel in the reader. The file browser always uses the classic layout."
 msgstr ""
 
 #: features/sui_backup.lua:118
@@ -3517,9 +3450,7 @@ msgid "Library View"
 msgstr "Chế độ xem thư viện"
 
 #: screens/sui_menu.lua:2892
-msgid ""
-"Library captions are enabled. Folder names are shown in the caption strip "
-"under each cover instead of on the cover."
+msgid "Library captions are enabled. Folder names are shown in the caption strip under each cover instead of on the cover."
 msgstr ""
 
 #: screens/sui_menu.lua:2765
@@ -3546,9 +3477,7 @@ msgid "List"
 msgstr "Danh sách"
 
 #: screens/sui_menu.lua:3008
-msgid ""
-"Lists books without an author, series or tag as a separate group in the "
-"Authors, Series and Tags views."
+msgid "Lists books without an author, series or tag as a separate group in the Authors, Series and Tags views."
 msgstr ""
 
 #: modules/critter/reaction_lines.lua:119
@@ -3627,14 +3556,8 @@ msgstr "Cá nhân hóa"
 
 #: screens/sui_menu.lua:2593
 #, fuzzy
-msgid ""
-"Makes the device's physical Home key open the SimpleUI Home Screen — while "
-"reading and while browsing files — instead of KOReader's native Home "
-"behaviour. The file browser title-bar home icon still goes to the home "
-"folder."
-msgstr ""
-"Làm cho nút Home vật lý của thiết bị luôn mở Màn hình chính của SimpleUI — "
-"cả khi đọc lẫn khi duyệt tệp — thay vì hành vi Home mặc định của KOReader."
+msgid "Makes the device's physical Home key open the SimpleUI Home Screen — while reading and while browsing files — instead of KOReader's native Home behaviour. The file browser title-bar home icon still goes to the home folder."
+msgstr "Làm cho nút Home vật lý của thiết bị luôn mở Màn hình chính của SimpleUI — cả khi đọc lẫn khi duyệt tệp — thay vì hành vi Home mặc định của KOReader."
 
 #: features/sui_presets.lua:952 features/sui_presets.lua:997
 #: features/sui_presets.lua:1002 screens/sui_menu.lua:3763
@@ -4159,12 +4082,8 @@ msgid "No collections selected  —  long press to configure"
 msgstr "Chưa chọn bộ sưu tập nào — nhấn giữ để cấu hình"
 
 #: modules/module_quote.lua:948
-msgid ""
-"No custom quotes found. Add a .lua file to the plugin's sui_quotes/ folder "
-"and select it in Settings."
-msgstr ""
-"Không tìm thấy trích dẫn tùy chỉnh. Thêm tệp .lua vào thư mục sui_quotes/ "
-"của plugin và chọn trong Cài đặt."
+msgid "No custom quotes found. Add a .lua file to the plugin's sui_quotes/ folder and select it in Settings."
+msgstr "Không tìm thấy trích dẫn tùy chỉnh. Thêm tệp .lua vào thư mục sui_quotes/ của plugin và chọn trong Cài đặt."
 
 #: screens/sui_settings_window.lua:315
 msgid "No custom screens yet."
@@ -4822,10 +4741,8 @@ msgid "Place images in:"
 msgstr "Đặt hình ảnh vào:"
 
 #: screens/sui_onboarding.lua:334
-msgid ""
-"Place your files in koreader/settings/simpleui/sui_wallpapers or sui_icons."
-msgstr ""
-"Đặt tệp của bạn vào koreader/settings/simpleui/sui_wallpapers hoặc sui_icons."
+msgid "Place your files in koreader/settings/simpleui/sui_wallpapers or sui_icons."
+msgstr "Đặt tệp của bạn vào koreader/settings/simpleui/sui_wallpapers hoặc sui_icons."
 
 #: screens/sui_menu.lua:3053
 msgid "Placeholder Cover for Bookless Folders"
@@ -4837,9 +4754,7 @@ msgid "Placement"
 msgstr "Đặt hình ảnh vào:"
 
 #: infra/sui_compat_check.lua:155
-msgid ""
-"Please delete the Project: Title plugin from your plugins folder and restart "
-"KOReader."
+msgid "Please delete the Project: Title plugin from your plugins folder and restart KOReader."
 msgstr ""
 
 #: screens/sui_stats_windows.lua:511
@@ -4961,12 +4876,8 @@ msgid "Presets module unavailable."
 msgstr "Mô-đun thiết lập không khả dụng."
 
 #: screens/sui_onboarding.lua:322
-msgid ""
-"Press and hold any element on the screen (like modules or bars) to quickly "
-"customize its settings."
-msgstr ""
-"Nhấn và giữ bất kỳ yếu tố nào trên màn hình (như mô-đun hoặc thanh) để nhanh "
-"chóng tùy chỉnh cài đặt."
+msgid "Press and hold any element on the screen (like modules or bars) to quickly customize its settings."
+msgstr "Nhấn và giữ bất kỳ yếu tố nào trên màn hình (như mô-đun hoặc thanh) để nhanh chóng tùy chỉnh cài đặt."
 
 #: modules/critter/dialog.lua:336
 msgid "Pretty good."
@@ -5299,22 +5210,16 @@ msgid "Rename screen"
 msgstr "Đổi tên màn hình"
 
 #: screens/sui_menu.lua:2521
-msgid ""
-"Replaces the \"Closing book…\" notice above with the cover for that close, "
-"when a cover is available."
-msgstr ""
-"Thay thế thông báo \"Đang đóng sách…\" ở trên bằng bìa sách khi đóng, nếu có "
-"bìa khả dụng."
+msgid "Replaces the \"Closing book…\" notice above with the cover for that close, when a cover is available."
+msgstr "Thay thế thông báo \"Đang đóng sách…\" ở trên bằng bìa sách khi đóng, nếu có bìa khả dụng."
 
 #: screens/sui_menu.lua:453
 msgid ""
-"Replaces the pagination bar with Prev/Next arrows at the edges of the "
-"navigation bar.\n"
+"Replaces the pagination bar with Prev/Next arrows at the edges of the navigation bar.\n"
 "The arrows dim when there is no previous or next page.\n"
 "With navpager active, as few as 1 tab and at most 4 tabs can be configured."
 msgstr ""
-"Thay thế thanh phân trang bằng các mũi tên Trước/Tiếp theo ở các cạnh thanh "
-"điều hướng.\n"
+"Thay thế thanh phân trang bằng các mũi tên Trước/Tiếp theo ở các cạnh thanh điều hướng.\n"
 "Các mũi tên mờ đi khi không có trang trước hoặc tiếp theo.\n"
 "Khi navpager hoạt động, có thể cấu hình từ 1 đến 4 tab."
 
@@ -5341,8 +5246,7 @@ msgstr "Đặt lại tất cả biểu tượng thao tác nhanh về mặc đị
 
 #: screens/sui_menu.lua:2443
 msgid "Reset all scales to default (100%)? This cannot be undone."
-msgstr ""
-"Đặt lại tất cả tỷ lệ về mặc định (100%)? Thao tác này không thể hoàn tác."
+msgstr "Đặt lại tất cả tỷ lệ về mặc định (100%)? Thao tác này không thể hoàn tác."
 
 #: features/sui_style.lua:1282
 msgid "Reset all system icons to default?"
@@ -5393,9 +5297,7 @@ msgid "Restore failed. Your previous configuration was kept unchanged."
 msgstr ""
 
 #: features/sui_backup.lua:1027
-msgid ""
-"Restore this backup? Existing settings for these categories will be "
-"replaced. Saved presets are merged — yours are kept."
+msgid "Restore this backup? Existing settings for these categories will be replaced. Saved presets are merged — yours are kept."
 msgstr ""
 
 #: screens/sui_menu.lua:2372
@@ -5556,13 +5458,11 @@ msgstr ""
 msgid ""
 "Scale for the cover thumbnail only.\n"
 "100% is the default size.\n"
-"When Dynamic Cover Size is on, this scales the cover relative to its current "
-"dynamic size instead, and the cover never shrinks below its 100% size."
+"When Dynamic Cover Size is on, this scales the cover relative to its current dynamic size instead, and the cover never shrinks below its 100% size."
 msgstr ""
 "Tỷ lệ chỉ áp dụng cho ảnh thu nhỏ của bìa.\n"
 "100% là kích thước mặc định.\n"
-"Khi Kích thước bìa động được bật, tỷ lệ này sẽ áp dụng theo kích thước động "
-"hiện tại thay vào đó, và bìa không bao giờ nhỏ hơn 100% kích thước của nó."
+"Khi Kích thước bìa động được bật, tỷ lệ này sẽ áp dụng theo kích thước động hiện tại thay vào đó, và bìa không bao giờ nhỏ hơn 100% kích thước của nó."
 
 #: modules/module_coverdeck.lua:1474
 msgid ""
@@ -5610,11 +5510,9 @@ msgid "Scale for the progress badge."
 msgstr ""
 
 #: engines/sui_book_grid.lua:1965
-msgid ""
-"Scale for this module's corner badges (progress, pages, series, new book)."
+msgid "Scale for this module's corner badges (progress, pages, series, new book)."
 msgstr ""
-"Tỷ lệ cho huy hiệu góc của mô-đun này (tiến trình, trang, bộ sách, sách "
-"mới).\n"
+"Tỷ lệ cho huy hiệu góc của mô-đun này (tiến trình, trang, bộ sách, sách mới).\n"
 "100% là kích thước mặc định."
 
 #: modules/module_coverdeck.lua:1466
@@ -5636,16 +5534,10 @@ msgstr ""
 #: modules/module_heatmap.lua:326
 msgid ""
 "Scale for this module.\n"
-"100% is the default size. Capped at 100% here: the grid always has as many "
-"columns as \"Weeks shown\" (or, in Time of day view, 24), so there's no room "
-"to grow the cells past their autofit size without the grid overflowing the "
-"card."
+"100% is the default size. Capped at 100% here: the grid always has as many columns as \"Weeks shown\" (or, in Time of day view, 24), so there's no room to grow the cells past their autofit size without the grid overflowing the card."
 msgstr ""
 "Tỷ lệ cho mô-đun này.\n"
-"100% là kích thước mặc định. Bị giới hạn ở 100% tại đây: lưới luôn có số cột "
-"bằng \"Số tuần hiển thị\" (hoặc 24, ở chế độ xem Thời điểm trong ngày), vì "
-"vậy không có chỗ để các ô lớn hơn kích thước tự động vừa khít mà không làm "
-"lưới tràn ra ngoài thẻ."
+"100% là kích thước mặc định. Bị giới hạn ở 100% tại đây: lưới luôn có số cột bằng \"Số tuần hiển thị\" (hoặc 24, ở chế độ xem Thời điểm trong ngày), vì vậy không có chỗ để các ô lớn hơn kích thước tự động vừa khít mà không làm lưới tràn ra ngoài thẻ."
 
 #: screens/sui_menu.lua:2402
 msgid ""
@@ -5657,8 +5549,7 @@ msgstr ""
 
 #: screens/sui_menu.lua:2424
 msgid ""
-"Scales the module label text above each module, on top of the size set in "
-"Style > Module Labels.\n"
+"Scales the module label text above each module, on top of the size set in Style > Module Labels.\n"
 "100% is the default size."
 msgstr ""
 
@@ -5671,15 +5562,11 @@ msgid "Screen name"
 msgstr "Tên màn hình"
 
 #: screens/sui_menu.lua:2355
-msgid ""
-"Screen shown after closing a book. Gestures and quick actions that name a "
-"destination always open that destination."
+msgid "Screen shown after closing a book. Gestures and quick actions that name a destination always open that destination."
 msgstr ""
 
 #: screens/sui_menu.lua:2279
-msgid ""
-"Scrim over the wallpaper in Library, History and Collections. 0% shows the "
-"wallpaper, 100% hides it."
+msgid "Scrim over the wallpaper in Library, History and Collections. 0% shows the wallpaper, 100% hides it."
 msgstr ""
 
 #: features/library/sui_library_search.lua:181
@@ -5870,20 +5757,12 @@ msgid "Show Uncategorized Items"
 msgstr ""
 
 #: screens/sui_menu.lua:2459
-msgid ""
-"Show a brief \"Closing book…\" notice when closing a book, preventing "
-"accidental double-taps while e-ink refreshes."
-msgstr ""
-"Hiển thị thông báo \"Đang đóng sách…\" khi đóng sách, ngăn chặn nhấn đúp "
-"trong khi làm mới e-ink."
+msgid "Show a brief \"Closing book…\" notice when closing a book, preventing accidental double-taps while e-ink refreshes."
+msgstr "Hiển thị thông báo \"Đang đóng sách…\" khi đóng sách, ngăn chặn nhấn đúp trong khi làm mới e-ink."
 
 #: features/sui_stats_menu.lua:92
-msgid ""
-"Show a brief \"Loading statistics…\" notice when opening a statistics "
-"window, preventing accidental double-taps while e-ink refreshes."
-msgstr ""
-"Hiển thị thông báo ngắn \"Đang tải thống kê…\" khi mở cửa sổ thống kê, ngăn "
-"chặn nhấn đúp ngoài ý muốn trong khi e-ink làm mới."
+msgid "Show a brief \"Loading statistics…\" notice when opening a statistics window, preventing accidental double-taps while e-ink refreshes."
+msgstr "Hiển thị thông báo ngắn \"Đang tải thống kê…\" khi mở cửa sổ thống kê, ngăn chặn nhấn đúp ngoài ý muốn trong khi e-ink làm mới."
 
 #: engines/sui_book_sources.lua:276 modules/module_coverdeck.lua:1661
 #: modules/module_recent.lua:49
@@ -5911,9 +5790,7 @@ msgid "Show section label"
 msgstr "Hiển thị nhãn phần"
 
 #: screens/sui_quicksettings_bar.lua:1626
-msgid ""
-"Show the frontlight and warmth sliders below the book details in the Book "
-"layout."
+msgid "Show the frontlight and warmth sliders below the book details in the Book layout."
 msgstr ""
 
 #: screens/sui_menu.lua:2877
@@ -5922,13 +5799,11 @@ msgstr ""
 
 #: screens/sui_menu.lua:594
 msgid ""
-"Shows \"Page X of Y\" in the title bar subtitle when browsing the library, "
-"history or collections.\n"
+"Shows \"Page X of Y\" in the title bar subtitle when browsing the library, history or collections.\n"
 "Navpager enables this automatically.\n"
 "Not available when Navpager is active."
 msgstr ""
-"Hiển thị \"Trang X trên Y\" trong phụ đề của thanh tiêu đề khi mở thư viện, "
-"lịch sử hoặc bộ sưu tập.\n"
+"Hiển thị \"Trang X trên Y\" trong phụ đề của thanh tiêu đề khi mở thư viện, lịch sử hoặc bộ sưu tập.\n"
 "Navpager tự động bật tính năng này.\n"
 "Không khả dụng khi Navpager đang hoạt động."
 
@@ -5982,12 +5857,8 @@ msgid "Simple UI Settings"
 msgstr "Cài đặt Simple UI"
 
 #: screens/sui_onboarding.lua:294
-msgid ""
-"Simple UI is designed to be simple and flexible. Here are a few tips to get "
-"the most out of it."
-msgstr ""
-"Simple UI được thiết kế đơn giản và linh hoạt. Đây là một vài mẹo để tận "
-"dụng tối đa."
+msgid "Simple UI is designed to be simple and flexible. Here are a few tips to get the most out of it."
+msgstr "Simple UI được thiết kế đơn giản và linh hoạt. Đây là một vài mẹo để tận dụng tối đa."
 
 #: infra/sui_updater.lua:486
 msgid "Simple UI is up to date (%s)."
@@ -6207,9 +6078,7 @@ msgstr ""
 "100% là khoảng cách mặc định."
 
 #: screens/sui_menu.lua:3361
-msgid ""
-"Space between the characters of a module label, as a percentage of its text "
-"size."
+msgid "Space between the characters of a module label, as a percentage of its text size."
 msgstr ""
 
 #: modules/module_spacer.lua:58 modules/module_spacer.lua:112
@@ -6620,22 +6489,8 @@ msgid "The case of the missing bookmark."
 msgstr ""
 
 #: screens/sui_menu.lua:2533
-msgid ""
-"The cover shown right as a book opens normally comes from the library's "
-"cached thumbnail, which can look soft on higher-resolution screens. When on, "
-"SimpleUI instead reads the cover straight from the book file for that moment "
-"(also covers books never opened before, which otherwise show no cover at "
-"all) — at the cost of a brief extra pause while opening, since the file has "
-"to be read twice. Cover on close is unaffected either way: it already reads "
-"the full-quality cover from the open book."
-msgstr ""
-"Bìa hiển thị ngay khi mở sách thường lấy từ ảnh thu nhỏ đã lưu trong bộ nhớ "
-"đệm của thư viện, có thể trông không sắc nét trên màn hình độ phân giải cao. "
-"Khi bật, SimpleUI sẽ đọc bìa trực tiếp từ tệp sách vào thời điểm đó (cũng "
-"bao gồm cả những sách chưa từng mở trước đây, vốn không hiển thị bìa nào cả) "
-"— với cái giá là một khoảng dừng ngắn khi mở, vì tệp phải được đọc hai lần. "
-"Bìa khi đóng sách không bị ảnh hưởng trong mọi trường hợp: nó đã đọc bìa "
-"chất lượng đầy đủ từ cuốn sách đang mở."
+msgid "The cover shown right as a book opens normally comes from the library's cached thumbnail, which can look soft on higher-resolution screens. When on, SimpleUI instead reads the cover straight from the book file for that moment (also covers books never opened before, which otherwise show no cover at all) — at the cost of a brief extra pause while opening, since the file has to be read twice. Cover on close is unaffected either way: it already reads the full-quality cover from the open book."
+msgstr "Bìa hiển thị ngay khi mở sách thường lấy từ ảnh thu nhỏ đã lưu trong bộ nhớ đệm của thư viện, có thể trông không sắc nét trên màn hình độ phân giải cao. Khi bật, SimpleUI sẽ đọc bìa trực tiếp từ tệp sách vào thời điểm đó (cũng bao gồm cả những sách chưa từng mở trước đây, vốn không hiển thị bìa nào cả) — với cái giá là một khoảng dừng ngắn khi mở, vì tệp phải được đọc hai lần. Bìa khi đóng sách không bị ảnh hưởng trong mọi trường hợp: nó đã đọc bìa chất lượng đầy đủ từ cuốn sách đang mở."
 
 #: modules/critter/module_critter.lua:782
 msgid "The critter may use it in what it says."
@@ -7248,22 +7103,17 @@ msgstr "Có gì mới:"
 #: features/sui_stats_menu.lua:102
 #, fuzzy
 msgid ""
-"When a finished book is deleted from the device (file or folder), keep it "
-"counted in the Books Read statistics on the Home Screen.\n"
+"When a finished book is deleted from the device (file or folder), keep it counted in the Books Read statistics on the Home Screen.\n"
 "\n"
-"Books changed back to Reading or Abandoned are automatically removed from "
-"this list."
+"Books changed back to Reading or Abandoned are automatically removed from this list."
 msgstr ""
-"Khi một cuốn sách đã đọc xong bị xóa khỏi thiết bị, vẫn tính nó trong thống "
-"kê Sách đã đọc ở Màn hình chính.\n"
+"Khi một cuốn sách đã đọc xong bị xóa khỏi thiết bị, vẫn tính nó trong thống kê Sách đã đọc ở Màn hình chính.\n"
 "\n"
-"Sách được đổi trở lại thành Đang đọc hoặc Đã bỏ sẽ tự động bị xóa khỏi danh "
-"sách này."
+"Sách được đổi trở lại thành Đang đọc hoặc Đã bỏ sẽ tự động bị xóa khỏi danh sách này."
 
 #: screens/sui_menu.lua:2571
 msgid ""
-"When enabled, long-pressing a module on the home screen opens its settings "
-"menu.\n"
+"When enabled, long-pressing a module on the home screen opens its settings menu.\n"
 "Disable this to prevent settings from appearing on long tap."
 msgstr ""
 "Khi bật, nhấn giữ mô-đun trên màn hình chính mở menu cài đặt.\n"
@@ -7294,12 +7144,8 @@ msgstr ""
 "Tắt để ngăn menu cài đặt xuất hiện khi nhấn giữ."
 
 #: screens/sui_menu.lua:2373
-msgid ""
-"When waking the device from sleep/suspend, always return to the Home Screen "
-"— even if a book was open when it went to sleep."
-msgstr ""
-"Khi đánh thức thiết bị khỏi chế độ ngủ/tạm dừng, luôn quay lại Màn hình "
-"chính — ngay cả khi có sách đang mở lúc thiết bị vào chế độ ngủ."
+msgid "When waking the device from sleep/suspend, always return to the Home Screen — even if a book was open when it went to sleep."
+msgstr "Khi đánh thức thiết bị khỏi chế độ ngủ/tạm dừng, luôn quay lại Màn hình chính — ngay cả khi có sách đang mở lúc thiết bị vào chế độ ngủ."
 
 #: modules/critter/dialog.lua:98
 msgid "When you close a book, do the characters wait?"
@@ -8029,21 +7875,17 @@ msgstr[0] ""
 #: modules/module_action_list.lua:300 modules/module_quick_actions.lua:351
 #: screens/sui_menu.lua:1899 screens/sui_menu.lua:2013
 msgid "The maximum of %d action per module has been reached. Remove one first."
-msgid_plural ""
-"The maximum of %d actions per module has been reached. Remove one first."
+msgid_plural "The maximum of %d actions per module has been reached. Remove one first."
 msgstr[0] "Đã đạt tối đa %d thao tác mỗi mô-đun. Vui lòng xóa bớt."
 
 #: modules/critter/module_critter.lua:750
-msgid ""
-"The maximum of %d decoration per side has been reached. Remove one first."
-msgid_plural ""
-"The maximum of %d decorations per side has been reached. Remove one first."
+msgid "The maximum of %d decoration per side has been reached. Remove one first."
+msgid_plural "The maximum of %d decorations per side has been reached. Remove one first."
 msgstr[0] ""
 
 #: features/sui_quickactions.lua:1636 features/sui_quickactions.lua:2844
 msgid "The maximum of %d quick action has been reached. Delete one first."
-msgid_plural ""
-"The maximum of %d quick actions has been reached. Delete one first."
+msgid_plural "The maximum of %d quick actions has been reached. Delete one first."
 msgstr[0] "Đã đạt tối đa %d thao tác nhanh. Vui lòng xóa bớt."
 
 #: screens/sui_menu.lua:366
@@ -8072,6 +7914,7 @@ msgstr[0] "chuỗi ngày"
 msgid "page read"
 msgid_plural "pages read"
 msgstr[0] "trang đọc"
+
 #~ msgid "ALL TIME"
 #~ msgstr "TOÀN THỜI GIAN"
 
@@ -8143,21 +7986,6 @@ msgstr[0] "trang đọc"
 
 #~ msgid "reading time"
 #~ msgstr "thời gian đọc"
-
-#~ msgid "%d freeze available"
-#~ msgid_plural "%d freezes available"
-#~ msgstr[0] "%d lượt đóng băng khả dụng"
-#~ msgstr[1] "%d lượt đóng băng khả dụng"
-
-#~ msgid "day read"
-#~ msgid_plural "days read"
-#~ msgstr[0] "ngày đọc"
-#~ msgstr[1] "ngày đọc"
-
-#~ msgid "page read"
-#~ msgid_plural "pages read"
-#~ msgstr[0] "trang đọc"
-#~ msgstr[1] "trang đọc"
 
 #~ msgid "Badges"
 #~ msgstr "Huy hiệu"
@@ -8240,8 +8068,7 @@ msgstr[0] "trang đọc"
 #~ msgstr "Hiển thị"
 
 #~ msgid "The maximum of %d stat per row has been reached. Remove one first."
-#~ msgid_plural ""
-#~ "The maximum of %d stats per row has been reached. Remove one first."
+#~ msgid_plural "The maximum of %d stats per row has been reached. Remove one first."
 #~ msgstr[0] "Đã đạt tối đa %d mục thống kê mỗi hàng. Vui lòng xóa bớt."
 #~ msgstr[1] "Đã đạt tối đa %d mục thống kê mỗi hàng. Vui lòng xóa bớt."
 
