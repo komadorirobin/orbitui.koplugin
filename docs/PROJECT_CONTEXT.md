@@ -344,6 +344,27 @@ ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
 
+Local settings candidate `ffd3ef34` (implementation `d905e04c` plus the native
+Menu:init ordering fix) is packaged/verified, not pushed or released. Complete
+sequential Lua/LuaJIT gates pass 119 Python/four existing skips, 483 Bookshelf
+suites/zero failures/three normal SQLite exclusions and 13 SimpleUI files. All
+76 root Lua files are rerun against final code under both interpreters. Nineteen
+new settings cases, plus retained settings/library/Home/navigation/cover/update
+regressions, pass on sealed bytes. The real native MenuHost/region supplements
+pass again under both interpreters. Module map 383; syntax 1,054; translations
+43/zero failures; static vocabulary 332. No new exclusion is introduced.
+
+Development-only ZIP SHA-256
+`2fc49a0db048e32b34faf2fd568987e12a96df7309148aacc86428d062c5c4f7`,
+9,309,755 bytes, exact candidate source/manifest inventory, 1,998 files plus
+manifest and one API 1 slot left. No runtime paths added/removed. Stable entry/
+bootstrap, version/pins/assets/fonts/module map and public main/tag/Beta 12 ZIP
+remain unchanged. Twenty-three outgoing blobs exclude held artwork; two source
+commits pass Gitleaks. Evidence: `test-results/settings-navigation-20261026/`.
+Follow-up verification docs do not rebuild/replace those validation bytes. This
+same-version development ZIP must not be published/used as replacement Beta 12.
+Physical new-menu SV/EN/touch/Back/reader acceptance remains open.
+
 Beta 11 candidate/tag `03106015` passes both complete Lua/LuaJIT suites: 117
 Python tests/four existing source-cache skips, 74 root Lua files, 483 Bookshelf
 suites/zero failures/three normal SQLite exclusions and 13 original SimpleUI

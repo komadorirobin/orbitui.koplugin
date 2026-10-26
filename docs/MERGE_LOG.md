@@ -4065,6 +4065,43 @@ return/custom context, shared themes and reader/suspend/rotation acceptance is
 still outstanding. No performance gain or device-acceptance claim. The user's
 new cover confirmation applies to already published Beta 12, not this local UI.
 
+### Local settings final verification (not published)
+
+Implementation commit `d905e04c` plus native-ordering fix `ffd3ef34` remain only
+on the feature branch. Reviewing official KOReader Menu:init reveals that it
+always resets paths, so supplying parent paths in Menu:new options would leave
+the Back arrow disabled. Set the parent path/enable the arrow after construction
+before first paint. Update the complete MenuHost native-boundary test to emulate
+the real reset, not a permissive fake. Parent/nested Back and close-all still
+have separate semantics; a closed host cannot trigger a second parent callback.
+
+Complete sequential gates pass 119 Python/four existing source-cache skips,
+483 Bookshelf suites/zero failures/three normal SQLite exclusions and all 13
+SimpleUI files. Both interpreters rerun all 76 root Lua files on final source.
+All 19 new settings cases and retained shared settings/library/Home/navigation/
+cover/update cases pass on the sealed ZIP. The native MenuHost/hero-region
+supplements rerun under both interpreters after the arrow-ordering fix. Module
+map 383; syntax 1,054; translations 43/zero failures; native search vocabulary
+332. No new failure exception or skip is introduced.
+
+Every validation ZIP file/hash/size equals clean candidate `ffd3ef34` plus its
+manifest. No runtime path is added/removed: 1,998 files plus manifest, 2,064 ZIP
+entries, one API 1 slot remaining. Bootstrap/entry/assets/fonts/VERSION/pins/
+module map unchanged from public baseline. ZIP SHA-256
+`2fc49a0db048e32b34faf2fd568987e12a96df7309148aacc86428d062c5c4f7`,
+9,309,755 bytes, expanded 29,170,091. Twenty-three outgoing blobs exclude held
+artwork; two source commits pass Gitleaks. Main/origin remain `9f3f75a0`; Beta 12
+tag stays `ea8bbaf0` and public ZIP SHA stays `fe54c593c9b06fc0ba6055c82d6544a2807ee7e96efd9fd158b9c40d41dbafe2`.
+Evidence: `test-results/settings-navigation-20261026/`.
+
+Follow-up PROJECT_CONTEXT/TESTING/MERGE_LOG records results only and is audited
+for secrets/held artwork. Do not rebuild/replace those development bytes or
+publish them as a replacement Beta 12: VERSION is unchanged and no new release
+was requested. No push, tag/release/OTA, physical install or new Docker session.
+Actual SV/EN pagination/title widths, touch/long-press, scope comprehension,
+themes, native SimpleUI Back/custom context and reader/sleep/rotation still need
+Boox/Bigme acceptance. No measured speed or complete native-crash fix is claimed.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

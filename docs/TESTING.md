@@ -2,6 +2,31 @@
 
 ## Automated
 
+Local settings final verification: source candidate `ffd3ef34` includes the
+native Menu:init ordering fix after `d905e04c`. KOReader's actual Menu:init resets
+constructor-supplied paths; parent breadcrumbs and the footer arrow are now set
+after construction, before first paint. The native-boundary stub intentionally
+matches that reset so the regression cannot pass by assuming the options survive.
+Official reference saved in the evidence directory:
+`https://raw.githubusercontent.com/koreader/koreader/master/frontend/ui/widget/menu.lua`.
+
+Complete sequential suites pass 119 Python/four unchanged skips, 483 Bookshelf/
+zero failures/three standard SQLite exclusions and 13 SimpleUI files. Both
+interpreters rerun all 76 root Lua files against final source. The final parent-
+arrow fix and all 19 settings cases are rechecked on sealed bytes under Lua/
+LuaJIT, alongside retained shared-settings, library, Home, navigation, cover and
+update cases. Native MenuHost and hero-region suites also rerun after the fix.
+Module map 383, syntax 1,054, translations 43/zero failures, static vocabulary
+332. Package/source/hash audit: no runtime paths added/removed; 1,998 files plus
+manifest, one API 1 slot. ZIP 9,309,755 bytes, expanded 29,170,091; SHA-256
+`2fc49a0db048e32b34faf2fd568987e12a96df7309148aacc86428d062c5c4f7`.
+All 23 outgoing blobs exclude held artwork and both source commits pass Gitleaks.
+Evidence includes `lua-final.log`, `luajit-final.log`, `*-root-sealed-source.log`,
+`native-host-final.log`, `sealed.log`, `audit-local.json` and `gitleaks.log` under
+`test-results/settings-navigation-20261026/`. Final docs are audited separately;
+do not rebuild or publish this same-version development ZIP as Beta 12. No push,
+tag, release, live OTA or physical-device installation occurs in this task.
+
 2026-10-26 local settings redesign, not published: `test_settings_navigation`
 exercises the five task areas, explicit SimpleUI ownership, complete SV/EN owned
 labels/scopes and 332 native search phrases, literal/bounded bilingual search,
