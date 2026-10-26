@@ -163,4 +163,48 @@ H.test("Flow side covers counter-invert only at paint time without changing shar
     screen.night_mode = true; tilted.paintTo(card, bb, 0, 0)
     H.eq(table.concat(calls, ","), "normal,inverse"); H.eq(next(source), nil)
 end)
+H.test("category lookup follows an instance base and keeps external modules reachable in Other", function()
+    local registry, language = {}, "first:"
+    local mods = { external = {}, clock = { category = "extras" }, unknown = { category = "new-kind" } }
+    registry.get = function(id) return mods[id] end
+    run(part(read("modules/moduleregistry.lua"), "function Registry.getCategories()", "-- Layout-editor summary"), {
+        Registry = registry, _ = function(s) return language .. s end,
+        _baseOf = function(id) if id == "stats_instance" then return { category = "stats" } end end,
+        _instanciable = {},
+    })
+    H.eq(registry.getCategory("stats_instance"), "stats")
+    H.eq(registry.getCategory("external"), "other"); H.eq(registry.getCategory("unknown"), "other")
+    H.eq(registry.getCategory("clock"), "extras")
+    H.eq(registry.getCategories()[1].title, "first:Books")
+    language = "second:"; H.eq(registry.getCategories()[1].title, "second:Books")
+end)
+H.test("categorized picker preserves external and instanced modules and adds only the chosen item", function()
+    local categories = {{key="books",title="Books"},{key="stats",title="Statistics"},{key="other",title="Other"}}
+    local st = { layout = { pages = {{modules={"already"}}} }, current_page=1, pfx="home_" }
+    local selected, pushed, popped, saves = nil, nil, nil, 0
+    local registry = {
+        list = function() return {{id="already"},{id="book",name="A book"},{id="external",name="OrbitUI"}} end,
+        isInstance = function() return false end,
+        getCategory = function(id) return id=="book" and "books" or id=="stats" and "stats" or "other" end,
+        getCategories = function() return categories end,
+        getInstanciableBaseIds = function() return {"stats"} end,
+        getBase = function() return {name="Reading Stats"} end,
+        createInstance = function(id) H.eq(id,"stats"); return "stats_new" end,
+    }
+    local source = read("screens/sui_settings_window.lua")
+    local build = run(part(source, "    local function buildModulePicker(ctx)", "    -- ── 2.5b.")
+        .. "\nreturn buildModulePicker", {
+        st=st, Registry=registry, _=function(s) return s end,
+        LayoutService={entryId=function(id) return id end, save=function() saves=saves+1 end},
+        SUI={ListRow=function(item) return item end},
+    })
+    local ctx = {inner_w=600, current=function() return {params={category=selected}} end,
+        push=function(_, params) pushed=params end, pop=function(opts) popped=opts.levels end}
+    local groups = build(ctx); H.eq(#groups,3); H.eq(#st.layout.pages[1].modules,1)
+    groups[3].on_tap(); H.eq(pushed.category,"other")
+    selected="other"; local external=build(ctx); H.eq(#external,1)
+    external[1].on_tap(); H.eq(st.layout.pages[1].modules[2],"external"); H.eq(popped,2)
+    selected="stats"; build(ctx)[1].on_tap()
+    H.eq(st.layout.pages[1].modules[3],"stats_new"); H.eq(saves,2)
+end)
 H.finish()
