@@ -217,7 +217,6 @@ function MenuHost.show(opts)
         height         = Screen:getHeight(),
         is_borderless  = true,
         is_popout      = false,
-        paths          = opts.parent_title and { { title = opts.parent_title } } or nil,
         onReturn       = function()
             if host._closed then return true end
             if #host._stack == 1 and opts.on_back then
@@ -230,6 +229,13 @@ function MenuHost.show(opts)
         -- would close the host on each selection. We gate the owner's callback
         -- through MenuHost.close instead.
     }
+    -- Menu:init always resets paths, even when a constructor option supplies
+    -- it. Attach the parent AFTER construction and enable the footer arrow
+    -- before the first paint (subsequent refreshes read paths normally).
+    if opts.parent_title then
+        host._menu.paths[1] = { title = opts.parent_title }
+        if host._menu.page_return_arrow then host._menu.page_return_arrow:enableDisable(true) end
+    end
     -- The shim's show_parent must be the real Menu widget so hideMenu-style
     -- hide/re-show cycles close and re-show something paintable.
     host._shim.show_parent = host._menu

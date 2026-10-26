@@ -170,7 +170,9 @@ end)
 H.test("the real menu host distinguishes nested Back, parent Back and explicit close-all", function()
     local mocked = package.loaded["lib/bookshelf_menu_host"]
     local menu = { new = function(_, opts)
-        opts.paths = opts.paths or {}; opts.page = 1
+        -- Match actual Menu:init: constructor-supplied paths are discarded.
+        opts.paths = {}; opts.page = 1
+        opts.page_return_arrow = { enableDisable = function(self, enabled) self.enabled = enabled end }
         opts.switchItemTable = function(self, title, rows) self.title = title; self.item_table = rows end
         return opts
     end }
@@ -183,7 +185,7 @@ H.test("the real menu host distinguishes nested Back, parent Back and explicit c
         return Host.show{ title = "Panel", item_table = {}, parent_title = "Bookshelf",
             on_back = function() backs = backs + 1 end, close_callback = function() closes = closes + 1 end }
     end
-    local h = show(); H.eq(#h._menu.paths, 1)
+    local h = show(); H.eq(#h._menu.paths, 1); H.eq(h._menu.page_return_arrow.enabled, true)
     h:_push("Nested", {}, {}); h._menu.onReturn(); H.eq(backs, 0); H.eq(#h._stack, 1)
     h._menu.onReturn(); H.eq(backs, 1); H.eq(closes, 1); assert(h._closed)
     h._menu.onReturn(); H.eq(backs, 1)
