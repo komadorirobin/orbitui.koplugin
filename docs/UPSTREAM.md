@@ -173,6 +173,14 @@ commit, or assume that a release name proves equivalent contents.
 
 ## Current embedding changes
 
+- Beta 12 Android covers: `adapters/orbitui_android_covers.lua` wraps the widget's
+  extraction kickoff/fire/stop and Bookshelf's `scanAllMetadata`. Two optional
+  component hooks precede single/bulk metadata deletion; standalone fallback
+  remains untouched. Local UI-thread extraction does not call the subprocess
+  extractor or change crengine's cache. Atomic derived-row merges preserve old
+  pixels on failure; bounds/lifecycle/provider-stream/parked-reader rules are
+  in C04 and `test_android_covers`. Preserve these hooks in future imports.
+
 - Beta 11 updater integration: `Settings:_updateSubItems` delegates to the
   optional updater `menuItems` seam before constructing standalone controls.
   The host shim owns real OrbitUI version/preview/daily/recovery controls;

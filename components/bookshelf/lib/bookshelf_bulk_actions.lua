@@ -506,6 +506,10 @@ function BulkActions.show(opts)
                     local ok = true
                     if draft.refresh_metadata then
                         ok = safe("refresh", function()
+                            if bw.orbitui_preserveMetadataRefresh and bw:orbitui_preserveMetadataRefresh() then
+                                refresh_paths[#refresh_paths + 1] = fp
+                                return
+                            end
                             local ok_bim, BIM = pcall(require, "bookinfomanager")
                             if ok_bim and BIM and BIM.deleteBookInfo then
                                 BIM:deleteBookInfo(fp)

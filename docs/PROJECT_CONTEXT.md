@@ -22,8 +22,16 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-26
 
-- Product version: `0.1.0-beta.11` (public GitHub prerelease, published
-  2026-10-26 at 18:43:59 UTC; verification is in `docs/MERGE_LOG.md`).
+- Product version: `0.1.0-beta.12` (Android-safe local-cover release candidate;
+  user explicitly requests immediate publication). Latest public before this
+  candidate is Beta 11, published 2026-10-26 at 18:43:59 UTC.
+- Beta 12 starts from clean public main `70e5a1fd` on
+  `fix/android-covers-beta12-20261026`. Android safe mode remains enabled;
+  host-owned foreground local extraction replaces the blocked Bookshelf queue,
+  with non-destructive single/bulk refresh and a guard on Bookshelf's forking
+  full-metadata scanner. Home's separate Android background guard stays on.
+  No upstream pins, bootstrap, settings, reading data or artwork change.
+  Physical cover quality/responsiveness/native-engine acceptance remains open.
 - User explicitly approved the photo's updater UI/HTTP diagnostics fix and
   publication. Candidate `03106015` starts from clean public `25a2e7ab` on
   `fix/orbitui-updater-beta11-20261026`, then fast-forwards/pushes to main.
@@ -42,7 +50,7 @@ and correct this file in the same change.
 - Release tag: `v0.1.0-beta.11` at `03106015`; previous tags
   `v0.1.0-beta.10` at `0a2ea22b`, `v0.1.0-beta.9` at `a4bb9acb` and all
   earlier tags/assets are unchanged.
-- Active branch: `main`; the latest fix/release request produced Beta 11,
+- Previous public branch: `main`; the previous fix/release request produced Beta 11,
   followed only by verification documentation. The previous
   explicit publication request produced Beta 10: Bookshelf import `0db81b46`,
   integration tests/pin `66fe1b4a` and release candidate `0a2ea22b`.

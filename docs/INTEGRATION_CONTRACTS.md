@@ -131,6 +131,24 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+Beta 12's user-approved Android cover fix keeps Android safe mode enabled.
+The host adapter may extract local covers/metadata serially in the foreground,
+one document per UI turn with a 256-entry queue/attempt bound, cancellation on
+navigation/reader/suspend/close, and cooldown-limited retryable failures. It must
+not invoke subprocess-only BIM extraction, redirect crengine's global cache,
+reload/close an already live reader, or fetch provider-stream formats. Borrow
+the matching live document read-only, as Book information does. Prepare native
+images before a savepoint-protected derived-row update; retain old rows/covers
+on failure and ignore/custom-cover choices always. Never cache a synthetic
+upscale as new high-resolution source art or downgrade a larger cached image
+to a smaller requested slot. Single/bulk metadata refresh delegates before
+native row/cache deletion. Bookshelf's full-library metadata scanner explains
+the safe-mode alternative instead of forking. Native fallback and SimpleUI's
+independent Android background gate remain unchanged. Coverage:
+`test_android_covers` (including optional actual-SQLite supplement). Physical
+native-engine/latency/image quality remains unaccepted; a synchronous native
+document load cannot be preempted halfway through.
+
 The October 25 SimpleUI daily-history ledger is derived statistics, not a new
 reading-data owner. Busy/missing aggregates must not persist zero days/pages;
 close failed statements and retry within the same window. Full statistics

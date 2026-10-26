@@ -67,6 +67,7 @@ function M.wrap(name, module)
         require("adapters/orbitui_book_bindings").widget(module)
         require("adapters/orbitui_series_titles").widget(module)
         require("adapters/orbitui_navbar").widget(module)
+        require("adapters/orbitui_android_covers").widget(module)
         module.orbitui_shelf_menu = function(self, chip)
             return require("adapters/orbitui_home_shelves").shelfMenu(self, chip)
         end
@@ -135,6 +136,7 @@ end
 
 function M.classes(bookshelf, simpleui)
     require("adapters/orbitui_libraries").classes(bookshelf)
+    require("adapters/orbitui_android_covers").bookshelf(bookshelf)
     local build = bookshelf.buildMenuItems
     function bookshelf:buildMenuItems(items)
         build(self, items)

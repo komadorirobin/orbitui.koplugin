@@ -3921,6 +3921,55 @@ still receiving 403 must wait/retry or use the complete release ZIP, preserving
 hidden version directories/settings; new error UI cannot repair old running code
 before installation.
 
+## 2026-10-26: Beta 12 Android-safe local covers preparation
+
+User reports missing and intermittently pixelated Bookshelf covers on the Boox
+despite latest KOReader/OrbitUI and repeated metadata indexing, then confirms
+Android safe mode is enabled. Read-only diagnosis finds the default safe-mode
+gate disables all Bookshelf BIM background work; metadata indexing can leave
+known coverless rows and single/bulk refresh deletes old rows/caches before the
+blocked rebuild. User explicitly approves the fix and immediate new release.
+
+Start from clean public `70e5a1fd` on `fix/android-covers-beta12-20261026`;
+version `0.1.0-beta.12`. No upstream merge/pin advance. Add one host adapter and
+minimal optional single/bulk refresh hooks (one/four component lines), plus
+host UI wiring and two Swedish messages. Preserve C01-C11, particularly C03/
+C04/C06/C08/C09: no ReaderUI lifecycle shortcut or process-wide require/cache
+replacement, no progress/settings/sidecar/link/artwork reset, no automatic
+network, no legacy installers and unchanged bootstrap/API 1.
+
+Foreground local work is hero-first and one document per turn, capped at 256
+queued/attempt entries, cancellable on page/foreground/reader/suspend/close.
+Prepare document metadata and an adequately sized original/custom cover before
+an SQLite savepoint; insert only missing rows and UPDATE only derived fields.
+Retain accurate pages/ignore flags/old cover on absent replacement; rollback on
+failure. Native pixel buffers are freed, compressed buffers transfer to the
+KOReader SQLite BLOB binder (which frees its pointer) or are freed on failure.
+Borrow the matching live document read-only, never reload/close it. Do not use
+BIM's subprocess-only extractor: it changes global crengine cache settings and
+prewrites a placeholder row. Non-Android/native fallback remains unchanged.
+The Bookshelf full-library scanner now explains page-by-page safe extraction
+instead of forking while safe mode is enabled. SimpleUI's separate Android
+background extraction remains blocked; this is not a new full-library/Home
+indexer. New callbacks do not take over external KOReader/plugin scanners.
+
+Primary API review uses official KOReader BookInfo/BookInfoManager/UIManager/
+Notification and koreader-base zstd source, saved in ignored evidence. The
+cover API honors existing custom covers; original dimensions constrain scaling.
+Existing large thumbnails are not downgraded. Native load/scale/SQL failures
+leave old data/cache intact, settle only in bounded session memory and remain
+retryable. Single and real bulk-refresh branch tests execute the component
+seams before any native deletion. Actual-SQLite BLOB commit/failed-row rollback
+also pass with KOReader's binding; complete gates and publication follow.
+
+Only adapter + release note add installed paths (two of the three remaining
+API 1 slots); do not raise only producer limits, remove resources/licenses or
+change old bootstrap to make room. Physical Boox/Bigme cover quality, UI pause/
+memory, suspend/rotation, menus/reader return and prior acceptance gaps remain
+open. A single synchronous native document load is not cancellable midway;
+headless tests do not prove damaged-document/native Android crash containment.
+This is an explicitly requested prerelease, not a device-acceptance claim.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

@@ -23482,6 +23482,7 @@ function BookshelfWidget:_buildBookEditTab(book, modal, avail_w, avail_h)
 
     local refresh_btn = { text = _("Refresh metadata"), callback = function()
         closeModal()
+        if bw.orbitui_refreshMetadata and bw:orbitui_refreshMetadata({ book.filepath }) then return end
         local ok_bim, BIM = pcall(require, "bookinfomanager")
         if ok_bim and BIM and BIM.deleteBookInfo then
             pcall(function() BIM:deleteBookInfo(book.filepath) end)

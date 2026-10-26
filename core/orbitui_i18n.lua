@@ -1,5 +1,7 @@
 -- OrbitUI-owned strings, independent of the two upstream translation catalogs.
 local sv = {
+    ["Local metadata refresh queued: %d book(s), maximum 256 at a time. Keep Bookshelf open. Existing covers are kept if extraction fails."] = "Lokal metadatauppdatering köad: %d bok/böcker, högst 256 åt gången. Håll Bookshelf öppet. Befintliga omslag behålls om hämtningen misslyckas.",
+    ["Android safe mode: local metadata and covers load as you browse Bookshelf pages. For selected books, use Refresh metadata. The full-library scanner is disabled because it starts subprocesses. Keep Android safe mode enabled."] = "Android-säkerhetsläge: lokal metadata och omslag laddas när du bläddrar i Bookshelf. Använd Uppdatera metadata för valda böcker. Hela bibliotekets indexering är avstängd eftersom den startar underprocesser. Låt Android-säkerhetsläget vara aktiverat.",
     ["Installed:"] = "Installerad:",
     ["Check for updates"] = "Sök efter uppdateringar",
     ["Update available:"] = "Uppdatering tillgänglig:",

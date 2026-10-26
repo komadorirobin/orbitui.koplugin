@@ -2,6 +2,24 @@
 
 ## Automated
 
+2026-10-26 Beta 12 preparation: user confirms Android safe mode is enabled on
+the affected Boox and explicitly requests the fix plus immediate release.
+`test_android_covers` exercises local extraction without the subprocess BIM
+extractor, native dimensions/no fake upscale/no thumbnail downgrade, cold module
+load, custom-cover API, live-reader borrowing without reload/close, metadata
+preservation/ignore flags, failed decode/compress/DB/resource cleanup, visible
+hero-first work, foreign-indexer/no-network/provider exclusions, bounds,
+cancellation/stale callbacks, cooldown/retry and actual single/bulk refresh
+seams. Optional `ORBITUI_NATIVE_SQLITE` points at KOReader's pinned binding for
+a real SQLite BLOB commit and failed-write savepoint rollback. Full Lua/LuaJIT,
+translation, sealed-package, older native OTA, exact asset/CI/history/artwork/
+secret release gates follow. Evidence: `test-results/beta12-20261026/`.
+Device checks: keep Android safe mode ON, pause/browse affected shelf pages,
+refresh a selected book/batch, compare hero/slot resolution, interrupt by reader,
+Home/menu/suspend/rotation, restart and verify saved covers/custom covers and
+normal progress. Home has no new Android extractor; one synchronous native
+document cannot be preempted, and native crashes/latency remain physical gaps.
+
 2026-10-26 Beta 11 published: `v0.1.0-beta.11` at `03106015`, 18:43:59 UTC,
 prerelease. Both full suites pass 117 Python tests/four unchanged source-cache
 skips, 74 root Lua files, 483 Bookshelf suites/zero failures/three normal SQLite
