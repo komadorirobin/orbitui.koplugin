@@ -2,6 +2,35 @@
 
 ## Automated
 
+2026-10-26 upstream main verified/pushed at `706b7341`, not released: both
+complete sequential Lua/LuaJIT gates pass 117 Python tests/four existing
+external-source skips, 74 root Lua files, 483 Bookshelf suites/zero failures/
+three normal SQLite exclusions and 13 original SimpleUI files. Module map 383;
+syntax 1,051; translations 43/zero failures. Fresh real-SQLite supplements pass
+7 deck, 16 facts, 100 OPDS cases and the daily/year/pages/invalidation ledger.
+Sealed-byte runs under both interpreters pass 12 navigation, three whole-Home
+cold-load, 14 first-run/error, four book-helper, eight October 26 merge and 15
+Bento geometry cases. Native underlay has 16 passing ownership/wake cases.
+
+Every validation-package path/hash/size matches clean candidate source. No
+installed path is added/removed; inventory 1,995 plus manifest leaves four API 1
+slots, 2,061 ZIP entries and 29,032,084 expanded bytes. Host/bootstrap/assets/
+fonts/VERSION remain unchanged. All 194 outgoing blobs exclude held artwork;
+Gitleaks scans 13 non-merge commits without leaks. Validation ZIP SHA-256
+`119cd716929a3797c0d8cc13ff13ccd74323994ed2a37a433481fede8b80a6e4`,
+9,265,056 bytes. Actual public Beta 9 native installer passes local macOS native
+SHA/libarchive inventory, missing-module rejection, activation/restart/code
+rollback, truncated-download recovery and external snapshot/adoption/persistent
+rollback against candidate bytes. Temporary installations only; no device or
+public release changes. Final evidence uses `*-current.log` and
+`audit-current.json` in `test-results/upstream-20261026/`, not initial-target
+logs. The immutable public Beta 10 ZIP/tag are unchanged. Headless success does
+not close physical editor/rotation, wallpaper/night, image-screensaver wake,
+module-toggle or Fast Book Closing/external-plugin acceptance gaps.
+Main CI `40374393514` passes both interpreter jobs at this exact candidate,
+including integration/translations/package/native OTA. Node/runner migration
+annotations are warnings. Follow-up verification docs leave runtime/ZIP intact.
+
 2026-10-26 upstream maintenance preparation (no release): five Bookshelf commits
 through `c37580a1` (6.0.3), four SimpleUI commits through `b1580f90`. Preserve
 C01-C11, VERSION/public Beta 10 bytes, existing layouts/profiles/settings/artwork.

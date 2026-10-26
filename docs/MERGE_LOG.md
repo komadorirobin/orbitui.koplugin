@@ -3776,6 +3776,62 @@ The Swedish compiled-catalog audit confirms no changed surviving translation;
 30 retired native labels are retained as obsolete source entries rather than
 compiled into the new menu. Original localized fork entries remain available.
 
+### Final October 26 verification and push (no publication)
+
+Clean candidate `706b73419dc16a03f875d4166ba068ab568a30eb` is fast-forwarded
+to main and pushed after complete final-target verification. Exact imported
+tips are Bookshelf `c37580a1ca5040d2423e45b9bdd429776117f3c1` and SimpleUI
+`b1580f90b2e17cf03a66c744c323a1df66d77100`; no later moving tip is implicitly
+approved. Both full sequential `scripts/test.sh` runs (Lua and LuaJIT) pass:
+117 Python tests/four existing external-source cache skips per run, 74 root
+Lua test files, 483 Bookshelf suites/zero failures/three normal SQLite exclusions
+and all 13 original SimpleUI files. Module map remains 383; syntax verifies
+1,051 Lua files; all 43 translation catalogues pass without baseline exceptions.
+Fresh actual-SQLite supplements pass 7 deck, 16 facts, 100 OPDS cases and the
+SimpleUI daily/year/page/invalidation ledger. Swedish catalogue comparison
+preserves every surviving active fork translation.
+
+Sealed-byte tests under both interpreters pass 12 navigation, three whole-Home
+cold-load, 14 first-run/error, four whole-module book-helper, eight new merge and
+15 real Bento geometry cases. The native underlay suite passes 16 cases including
+clear/rotation wake tracking, nil-result preservation and owner-safe teardown/
+reinstallation. These rendering/native service fixtures remain headless.
+
+The clean-source validation ZIP has SHA-256
+`119cd716929a3797c0d8cc13ff13ccd74323994ed2a37a433481fede8b80a6e4`,
+9,265,056 bytes, 1,995 inventoried files plus manifest, 2,061 ZIP entries and
+29,032,084 expanded bytes. Every file hash/size equals committed source; no
+installed path is added/removed. Four installed API 1 file slots remain.
+Host/core/adapters/bootstrap/assets/fonts/VERSION are unchanged. All 194 outgoing
+blobs exclude held artwork; Gitleaks scans 13 non-merge commits without leaks.
+Actual public Beta 9's native installer passes local macOS SHA/libarchive
+inventory, missing-module rejection, activation/restart/code rollback,
+truncated-download recovery and full external snapshot/adoption/restart/
+persistent rollback against these candidate bytes. No reader installation,
+settings, live release channel or Docker state is changed.
+
+Evidence: `test-results/upstream-20261026/` final `lua-current.log`,
+`luajit-current.log`, `translations-current.log`, `sealed-current.log`,
+`native-ota-current.log`, `audit-current.json` and `gitleaks-current.log`.
+Initial-target logs/packages are historical, not final-candidate evidence.
+This same-version validation ZIP is not published or substituted for Beta 10:
+VERSION remains `0.1.0-beta.10`; tag `v0.1.0-beta.10` remains at `0a2ea22b`
+and public ZIP SHA remains
+`d461f9afd5a1e122df4bacfa44b4e6595b27a024acc0e43b9bd78739d21cdd43`.
+No version bump, new tag, release note, release assets or live-OTA publication.
+Follow-up verification documentation does not rebuild/replace candidate bytes.
+Physical Bigme/Boox editor/free-width/stack/rotation, wallpaper/night, wake,
+module switches and optional Fast Book Closing/external-plugin checks remain
+open. No measured performance gain or native Android crash fix is inferred.
+
+Main CI [40374393514](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/40374393514)
+passes both Lua/LuaJIT jobs at candidate `706b7341`, including integration,
+translations, packaging and native OTA checks. Node action-runtime and
+ubuntu-latest migration annotations are warnings, not failures. This follow-up
+changes only PROJECT_CONTEXT, TESTING and MERGE_LOG; runtime and the sealed
+validation ZIP stay byte-identical. Audit follow-up outgoing documentation
+blobs and Gitleaks before pushing; do not rebuild or publish a release.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

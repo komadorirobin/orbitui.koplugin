@@ -25,28 +25,31 @@ and correct this file in the same change.
 - Product version: `0.1.0-beta.10` (public GitHub prerelease, published
   2026-10-25 at 22:58:45 UTC; verification is in `docs/MERGE_LOG.md`).
 - Public main baseline before Beta 10: `97b7948a` (Beta 9 verification).
-- New requested maintenance starts from public main `84597df5` on
-  `maintenance/upstream-20261026`. It is merge/push only, not publication.
+- October 26 maintenance starts from public main `84597df5` on
+  `maintenance/upstream-20261026` and is fast-forwarded/pushed to `main` at
+  verified candidate `706b7341`. It is merge/push only, not publication.
   VERSION and the public Beta 10 tag/assets remain unchanged. Import commits
   are `c8c0f394` (Bookshelf) and `eeb5e012` (SimpleUI); adaptation/tests `dff46bce`.
   A later observed SimpleUI picker commit is imported separately in `65ca534e`,
   with category/instance/external-module tests in `0acdd843`.
-  Final verification and push results are recorded separately after completion.
+  Complete local Lua/LuaJIT, translation, sealed-package and native OTA gates
+  pass; exact verification results are recorded in `docs/MERGE_LOG.md`.
 - Release tag: `v0.1.0-beta.10` at `0a2ea22b`; previous tag
   `v0.1.0-beta.9` at `a4bb9acb` and all earlier tags/assets are unchanged.
-- Active branch: `main`; the user explicitly requested merging upstream,
-  pushing and publishing. Reviewed Bookshelf import `0db81b46`, integration
-  tests/pin `66fe1b4a` and candidate `0a2ea22b` were fast-forwarded/pushed.
+- Active branch: `main`; the latest request is merge/push only. The previous
+  explicit publication request produced Beta 10: Bookshelf import `0db81b46`,
+  integration tests/pin `66fe1b4a` and release candidate `0a2ea22b`.
+  Retained local branches include `maintenance/upstream-20261026`,
   `maintenance/upstream-late-20261025`, the earlier maintenance branch and
   `fix/bookshelf-navigation-20261025`, `fix/home-blitbuffer-20261025` and
-  `fix/home-first-run-20261025` are retained locally.
+  `fix/home-first-run-20261025`.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
-- Embedded Bookshelf Git on maintenance/main after verification:
+- Embedded Bookshelf Git on main:
   `c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3), five incoming commits.
   Public Beta 10 keeps `5f726c25` / merge `0db81b46` unchanged.
   Prior 6.0.0 integration `fc1103a3` / `48438837` is retained in ancestry.
-- Embedded SimpleUI Git on maintenance/main after verification:
+- Embedded SimpleUI Git on main:
   `b1580f90b2e17cf03a66c744c323a1df66d77100` (3.0 follow-ups), four commits.
   Public Beta 10 keeps `40b301f0` / merge `b9dfc849` unchanged.
 - Prior broad adaptation candidate: `3a33fee6`; its final headless gates passed.
@@ -296,6 +299,33 @@ different documented asset. Replacing the working-tree file does not sanitize an
 ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
+
+October 26 unreleased main candidate `706b7341` passes both complete sequential
+Lua/LuaJIT gates: 117 Python tests/four existing external-source skips, all 74
+root Lua files, 483 Bookshelf suites/zero failures/three normal SQLite exclusions
+and all 13 original SimpleUI test files. Module map remains 383; syntax checks
+1,051 Lua files; all 43 translation catalogues pass. Fresh actual-SQLite checks
+pass 7 deck, 16 facts, 100 OPDS cases and the SimpleUI daily/year/pages ledger.
+Sealed-byte Home/navigation/book-helper cases, eight new merge cases and all 15
+real Bento geometry cases pass under both interpreters. The 16-case native
+underlay suite includes owner-safe screen-hook teardown and wake handling.
+
+The validation-only ZIP matches clean candidate source and manifest exactly:
+1,995 inventoried files plus manifest, no installed paths added/removed, four
+API 1 slots left, 29,032,084 expanded bytes. Its SHA-256 is
+`119cd716929a3797c0d8cc13ff13ccd74323994ed2a37a433481fede8b80a6e4`
+(9,265,056 bytes). All 194 outgoing blobs exclude held artwork; Gitleaks finds
+no secrets across 13 non-merge commits. Host/bootstrap/fonts/artwork/VERSION
+are unchanged. The actual public Beta 9 native installer passes all local macOS
+OTA, rejection/recovery, restart, snapshot and persistent rollback phases against
+these candidate bytes in temporary installations. This is not public discovery
+of a new release or a physical reader test. Evidence:
+`test-results/upstream-20261026/`. Public Beta 10 tag/assets remain immutable;
+the same-version validation ZIP is never uploaded as a replacement.
+Main CI run `40374393514` passes both Lua/LuaJIT integration, translation,
+package and native OTA jobs at the exact candidate. Node/runner migration
+annotations are warnings. Follow-up documentation leaves tested runtime and
+validation ZIP bytes unchanged.
 
 A fresh local verification on the versioned Beta 10 tree on 2026-10-25 passed:
 
