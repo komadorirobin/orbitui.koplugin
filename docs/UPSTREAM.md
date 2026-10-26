@@ -174,8 +174,9 @@ commit, or assume that a release name proves equivalent contents.
 ## Current embedding changes
 
 - October 26 reviewed merge (main only, no release): Bookshelf master
-  `c37580a1` (6.0.3), five commits since `5f726c25`; SimpleUI main `96fcd0f0`,
-  three commits since `40b301f0`. Preserve the new sleep-clear/rotation detection
+  `c37580a1` (6.0.3), five commits since `5f726c25`; SimpleUI main `b1580f90`,
+  four commits since `40b301f0` (including the categorized Add Module picker
+  published during review). Preserve the new sleep-clear/rotation detection
   with owner-safe Screen hooks, nil returns and inert captured wrappers after
   teardown. Keep the new On the shelf module switch non-destructive.
   Preserve legacy Home geometry and independent margins; fixed-grid stacking is

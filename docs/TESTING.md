@@ -3,12 +3,14 @@
 ## Automated
 
 2026-10-26 upstream maintenance preparation (no release): five Bookshelf commits
-through `c37580a1` (6.0.3), three SimpleUI commits through `96fcd0f0`. Preserve
+through `c37580a1` (6.0.3), four SimpleUI commits through `b1580f90`. Preserve
 C01-C11, VERSION/public Beta 10 bytes, existing layouts/profiles/settings/artwork.
-Six new merge cases exercise the whole wallpaper module's single-raster ownership,
+Eight new merge cases exercise the whole wallpaper module's single-raster ownership,
 legacy painting API, bounded decode/error retry, constructor/allocation/fill/paint
 cleanup, copy-only library-opacity migration, fixed-grid stacking opt-in, free
 percentages, later-page statistics demand and Flow night-mode source ownership.
+They also cover categorized/instanced module lookup and actual picker navigation,
+retaining external OrbitUI modules under Other and adding only the chosen item.
 The existing geometry suite gains two real page-builder cases for stacked gaps,
 warm mode invalidation and unsnapped free widths. Native underlay coverage adds
 screen-hook nil results/owner-safe teardown/reinstallation beside new sleep/wake

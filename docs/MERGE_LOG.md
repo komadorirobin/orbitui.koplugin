@@ -3759,6 +3759,23 @@ is not a replacement for the immutable published Beta 10 ZIP. Physical Bigme/
 Boox editor/free-width/stack/rotation, wallpaper/night, wake restoration, shelf
 modules and optional Fast Book Closing/external-plugin tests remain open.
 
+### Additional SimpleUI picker commit observed during verification
+
+The later collector observes one new SimpleUI commit, `b1580f90b2e17cf03a66c744c323a1df66d77100`,
+after the initial target was reviewed. Review all 24 changed paths and include
+it separately, conflict-free and unsquashed, in import `65ca534e`. There are now
+four incoming SimpleUI commits and 67 net changed paths from `40b301f0`.
+The Add Module picker groups Books/Statistics/Shortcuts/Extras/Other, inherits
+instance categories and leaves unknown/external host modules reachable in Other.
+No module ID, settings, layout or default enablement changes. Focused tests
+`0acdd843` verify category lookup/localization and the real picker builder,
+external/instance add paths and two-level navigation. Eight new merge cases in
+total. Re-run complete sequential gates and validate a fresh exact candidate ZIP;
+the earlier initial-target logs/packages are not final-target evidence.
+The Swedish compiled-catalog audit confirms no changed surviving translation;
+30 retired native labels are retained as obsolete source entries rather than
+compiled into the new menu. Original localized fork entries remain available.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

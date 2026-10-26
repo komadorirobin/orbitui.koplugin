@@ -29,6 +29,8 @@ and correct this file in the same change.
   `maintenance/upstream-20261026`. It is merge/push only, not publication.
   VERSION and the public Beta 10 tag/assets remain unchanged. Import commits
   are `c8c0f394` (Bookshelf) and `eeb5e012` (SimpleUI); adaptation/tests `dff46bce`.
+  A later observed SimpleUI picker commit is imported separately in `65ca534e`,
+  with category/instance/external-module tests in `0acdd843`.
   Final verification and push results are recorded separately after completion.
 - Release tag: `v0.1.0-beta.10` at `0a2ea22b`; previous tag
   `v0.1.0-beta.9` at `a4bb9acb` and all earlier tags/assets are unchanged.
@@ -45,7 +47,7 @@ and correct this file in the same change.
   Public Beta 10 keeps `5f726c25` / merge `0db81b46` unchanged.
   Prior 6.0.0 integration `fc1103a3` / `48438837` is retained in ancestry.
 - Embedded SimpleUI Git on maintenance/main after verification:
-  `96fcd0f024fd62fe88f6b534b4e856f3c5fd3a81` (3.0 follow-ups), three commits.
+  `b1580f90b2e17cf03a66c744c323a1df66d77100` (3.0 follow-ups), four commits.
   Public Beta 10 keeps `40b301f0` / merge `b9dfc849` unchanged.
 - Prior broad adaptation candidate: `3a33fee6`; its final headless gates passed.
   A read-only local collector at 2026-10-25 22:43 UTC found eight Bookshelf
@@ -114,6 +116,8 @@ provides canonical module names and legacy aliases while preserving
   independent On the shelf module toggle that retains saved modules. SimpleUI
   adds optional free widths/stacking, Fast Book Closing (off by default), library
   wallpaper opacity, later-page statistics refresh and Flow night-mode colours.
+  The categorized Add Module picker retains uncategorized external OrbitUI
+  modules under Other and follows categories for instanced modules.
   Existing layouts/margins, old wallpaper flags/APIs, profiles/navigation and
   external owners are retained; physical-device acceptance remains outstanding.
 - The user confirms both Home and the Beta 9 Bookshelf navigation fix work on
