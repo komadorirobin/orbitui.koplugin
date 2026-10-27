@@ -1159,6 +1159,7 @@ return {
 
     -- Homescreen preset menu items (shared between sui_menu and sui_layout_editor)
     makeMenuItems = SUIPresets.makeMenuItems,
+    buildListRows = SUIPresets.buildListRows,
     icons = SUIIconPresets,
 
     -- Shared name prompt for any preset store (see promptName)
