@@ -15,6 +15,20 @@ No new runtime paths or component edits are introduced by this refinement.
 Evidence: `test-results/library-chip-settings-20261027/`; final full gates and
 sealed package results are recorded in `MERGE_LOG.md`.
 
+Source `5810c567` passes complete sequential Lua/LuaJIT suites: 119 Python/four
+unchanged external-source skips, 77 root Lua files, 483 Bookshelf suites/zero
+failures/three normal SQLite exclusions, 13 SimpleUI files, map 383, syntax 1,055,
+translations 43/zero failures. Targeted 18 library/19 settings/12 navigation and
+retained 23 reader-menu cases plus host/Home/panel/Android-cover cases also pass
+against sealed bytes under both interpreters. Exact source/manifest/history
+audit passes: 25 outgoing blobs exclude held artwork, three local commits pass
+Gitleaks, no new runtime path or upstream/component/VERSION/bootstrap/asset change.
+Development ZIP SHA-256
+`e41141216342ed6d9710a9636c1313630e0c06d2cc997a2fdffe454c6b4250ee`,
+9,329,310 bytes/29,229,702 expanded, 1,999 files plus manifest/zero API 1 slots
+free. Main/origin/tag/public ZIP remain unchanged; verification-only follow-up
+docs do not rebuild the artifact. Not a replacement Beta 13 or a published OTA.
+
 Physical acceptance still required: SV/EN long-path wrapping, small-screen and
 multi-page order lists, selected position/boundaries, touch/Back/close, restart,
 old and newly selected folder membership, root remapping, Home links, navigation

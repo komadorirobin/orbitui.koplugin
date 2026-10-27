@@ -384,7 +384,28 @@ ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
 
-Local native-reader-menu candidate `1f2bb837` is verified, not pushed/released.
+Latest LOCAL library/chip editor source `5810c567` passes complete sequential
+Lua/LuaJIT gates: 119 Python/four unchanged source-cache skips, all 77 root Lua
+files, 483 Bookshelf suites/zero failures/three normal SQLite exclusions and 13
+SimpleUI files. Module map 383; syntax 1,055; translations 43/zero failures.
+All 18 library settings cases (including the real MenuHost), 19 settings cases,
+12 navigation cases, prior 23 native-reader-menu cases and retained host/Home/
+panel/Android-cover regressions pass on the sealed bytes under both interpreters.
+No new skip/failure exception. Evidence:
+`test-results/library-chip-settings-20261027/`.
+
+Latest development-only ZIP SHA-256
+`e41141216342ed6d9710a9636c1313630e0c06d2cc997a2fdffe454c6b4250ee`,
+9,329,310 bytes, expanded 29,229,702. Every manifest file matches clean committed
+source `5810c567`; exactly the same 1,999 paths plus manifest/all 2,000 API 1
+slots. No new component/runtime paths, bootstrap/API/VERSION/pins/assets/font/map
+changes. All 25 outgoing blobs exclude held artwork; all three local commits
+pass Gitleaks. Main/origin remain `33b13a08`, tag/public Beta 13 ZIP unchanged.
+The previous reader-menu development ZIP is retained in its evidence directory.
+Follow-up verification docs do not rebuild the ZIP. No push, tag, release, OTA,
+CI or installed reader change; physical bilingual/Boox/Bigme checks remain open.
+
+Earlier local native-reader-menu candidate `1f2bb837` is verified, not pushed/released.
 Complete final sequential Lua/LuaJIT suites pass 119 Python/four unchanged skips,
 77 root Lua files, 483 Bookshelf suites/zero failures/three normal SQLite skips
 and 13 SimpleUI files. Module map 383; syntax 1,055; translations 43/zero failures.

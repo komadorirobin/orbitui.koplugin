@@ -4287,6 +4287,38 @@ gates, clean-source package and history/artwork audits are recorded below after
 completion. Physical bilingual layout/touch/long paths/multi-page order/Back/
 restart/profile/reader-return acceptance remains open. No performance claim.
 
+### Local library/chip editor final verification
+
+Source candidate `5810c567960b23e95361456ea3c2ac086b25fb33` passes the complete
+sequential Lua/LuaJIT gates with no runtime edits afterwards: 119 Python/four
+unchanged source-cache skips, all 77 root Lua files, 483 Bookshelf suites/zero
+failures/three normal SQLite exclusions and all 13 SimpleUI files. Module map
+383, syntax 1,055, static search vocabulary 332, translations 43/zero failures.
+No new skip or failure allowance. All 18 library settings cases include the real
+MenuHost and pass under both interpreters. Sealed-byte regressions also pass for
+19 settings/12 navigation cases, all prior 23 reader-menu cases against whole
+pinned/minimum native ReaderMenu, host/shared settings/Home/panel/Android covers.
+Native UI/font/touch/document services remain stub boundaries, not device tests.
+
+Package/source/manifest audit passes for every file: development-only ZIP SHA-256
+`e41141216342ed6d9710a9636c1313630e0c06d2cc997a2fdffe454c6b4250ee`,
+9,329,310 bytes; expanded 29,229,702. Same 1,999 inventory paths plus manifest,
+all 2,000 installed API 1 slots; 2,065 ZIP entries. No new/removed runtime path,
+component change in this task, VERSION/bootstrap/API/pin/asset/font/map change.
+No release note added. All 25 outgoing blobs exclude held artwork and all three
+local commits pass Gitleaks. Main/origin remain `33b13a08`, public tag remains
+`f9d3b3a2`, public Beta 13 ZIP remains
+`65ce2609b4bf914c298abb2f812c98d0e3ae84fad0863bf7786e1d54ac4a6c63`.
+The preceding `1f2bb837` development ZIP was preserved before the local rebuild.
+
+Evidence: `test-results/library-chip-settings-20261027/`, with the existing
+native-reader-menu audit/sealed runners reused against this package. Follow-up
+verification documentation is audited separately without rebuilding. This is
+NOT a replacement Beta 13 or new OTA. No push/tag/release/CI/upstream import or
+installed-reader change. Physical Boox/Bigme bilingual layout, long paths,
+multi-page ordering, touch/Back, persistence, Home links and profile/reader return
+remain open. Zero new claims of speed, native-crash acceptance or device testing.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
