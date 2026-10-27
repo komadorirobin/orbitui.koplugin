@@ -60,6 +60,18 @@ search scopes, theme inventories, reader-return matching and Home prewarming
 must resolve the same saved inventory. Longest-root matching is deterministic.
 Changing a root updates descendant folder sources, not shelf IDs or actual files.
 
+October 27 user-approved LOCAL editor cleanup: each chip exposes its own source
+and, for a folder source, its path. Whole-library roots remain distinct under an
+advanced submenu; replacing one explicitly confirms the descendant remapping.
+Changing just a chip must not relocate siblings or remove old roots. Choosing
+an out-of-root folder asks before appending it to library scope (including search
+and reader-return matching). Keep all existing paths/IDs/settings; no file moves.
+Library ordering lives at inventory level and must not claim to order navigation
+buttons. Chip ordering matches the chip bar left-to-right. Both use a live numbered
+list, explicit positions and named before/after neighbours; stable IDs, not stale
+indices, identify the selected item and destination. All owned wording/help and
+search terms support Swedish and English. No component import/release is implied.
+
 October 25 user-approved navigation improvement (Beta 9): Bookshelf is a
 first-class action in unsaved/default bars and the fresh setup guide, without
 requiring a prose/comics profile. Saved/custom bars are not automatically changed;

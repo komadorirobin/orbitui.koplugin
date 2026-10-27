@@ -2,6 +2,24 @@
 
 ## Automated
 
+2026-10-27 LOCAL library/chip editor refinement, not pushed/released:
+`test_library_settings` now has 18 cases under Lua/LuaJIT, including the real
+Bookshelf menu host with a stub native widget. It checks separate profile/chip
+ordering, immediate list/position/boundary updates, stable-ID stale callbacks,
+disabled libraries, non-folder source labels, isolated chip folder changes,
+out-of-root consent/cancel/stale/invalid paths, explicit broad root replacement,
+live parent controls and SV/EN wording. Search regressions include Order chips,
+Ordna bibliotek, Placera före and Source without native providers or writes.
+The underlying roots, metadata model, IDs and stored appearance remain intact.
+No new runtime paths or component edits are introduced by this refinement.
+Evidence: `test-results/library-chip-settings-20261027/`; final full gates and
+sealed package results are recorded in `MERGE_LOG.md`.
+
+Physical acceptance still required: SV/EN long-path wrapping, small-screen and
+multi-page order lists, selected position/boundaries, touch/Back/close, restart,
+old and newly selected folder membership, root remapping, Home links, navigation
+targets and reader return on Boox/Bigme. No physical-device claim is made.
+
 2026-10-27 native reader-menu LOCAL candidate `1f2bb837`, no push/release:
 complete final sequential Lua/LuaJIT suites pass 119 Python/four unchanged
 source-cache skips, 77 root Lua files, 483 Bookshelf suites/zero failures/three

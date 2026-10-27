@@ -368,7 +368,7 @@ local nodes = {
     { "home_options", "Wallpaper, presets & behaviour", "home", "home", "bakgrund wallpaper förinställningar beteende fast book closing", screen = "home_screen_settings" },
     { "home_advanced", "Advanced SimpleUI settings", "home", "screens", "alla all settings statistik statistics", screen = "__root__" },
     { "bookshelf", "Bookshelf", nil, "mixed", "bibliotek library böcker books manga prosa" },
-    { "libraries", "Libraries & shelves", "bookshelf", "mixed", "biblioteksavdelningar profiler profiles mappar folders chip chips filters filter sortering sorting" },
+    { "libraries", "Libraries & shelves", "bookshelf", "mixed", "biblioteksavdelningar profiler profiles mappar folders chip chips filters filter sortering sorting ordna bibliotek order libraries ordna chip order chips placera före place before källa source" },
     { "book_search", "Search books", "bookshelf", "mixed", "böcker böksökning books library search" },
     { "panel", "Book panel at the top", "bookshelf", "bookshelf", "toppanel hero bokinformation baksidestext tags interactive" },
     { "covers", "Covers & book information", "bookshelf", "bookshelf", "omslag upplösning resolution metadata indexering indexing" },

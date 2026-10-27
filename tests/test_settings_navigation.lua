@@ -100,6 +100,8 @@ H.test("settings search is bilingual, case-insensitive, literal and bounded in e
         hit("Hide single-book series", "maintenance"); hit("Dölj serier och genrer", "maintenance")
         hit("Raka omslagshörn", "covers"); hit("Square cover corners", "covers")
         hit("Bakgrund bakom mapptext", "themes")
+        hit("Ordna bibliotek", "libraries"); hit("Order chips", "libraries")
+        hit("Placera före", "libraries"); hit("Source", "libraries")
         H.eq(#Settings.find("[.*]"), 0); H.eq(#Settings.find("  "), 0)
         assert(#Settings.find(" ") == 0 and #Settings.find("a") <= 40)
     end

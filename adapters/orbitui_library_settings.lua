@@ -9,8 +9,7 @@ local function watch(build)
     watched[rows] = { build = build }
     return rows
 end
-local function changed()
-    require("adapters/orbitui_libraries").changed()
+local function refresh()
     for rows, observer in pairs(watched) do
         local fresh = observer.build()
         for i = #rows, 1, -1 do rows[i] = nil end
@@ -18,6 +17,10 @@ local function changed()
         local host = observer.host and observer.host[1]
         if host and not host._closed then host._shim.updateItems() end
     end
+end
+local function changed()
+    require("adapters/orbitui_libraries").changed()
+    refresh()
 end
 
 local function input(title, value, save, allow_empty)
@@ -61,14 +64,141 @@ local function edit(key, fn)
     if profiles().edit(key, fn) then changed() end
 end
 
-local function move(list, key, delta)
+local function indexOf(list, key)
     for i, item in ipairs(list) do
-        if item.key == key and list[i + delta] then
-            list[i], list[i + delta] = list[i + delta], list[i]
-            return
-        end
+        if item.key == key then return i end
     end
 end
+
+-- Resolve both stable IDs against the latest inventory, never a saved row index.
+local function place(list, key, neighbour, after)
+    local from, to = indexOf(list, key), indexOf(list, neighbour)
+    if not from or not to or from == to then return end
+    local item = table.remove(list, from)
+    to = indexOf(list, neighbour)
+    table.insert(list, to + (after and 1 or 0), item)
+end
+
+local function position(index, count)
+    return string.format(_("Position %d of %d"), index, count)
+end
+
+local function info(text)
+    return { text = text, enabled_func = function() return false end }
+end
+
+local function orderMenu(title, selected, read, save, help)
+    return menu(title, function()
+        local list = read()
+        local index = indexOf(list, selected) or (#list > 0 and 1)
+        if not index then return {} end
+        selected = list[index].key
+        local rows = { info(list[index].label .. " — " .. position(index, #list)) }
+        local function control(neighbour, after, boundary)
+            if not neighbour then return info(_(boundary)) end
+            local key, target = selected, neighbour.key
+            return { text = string.format(_(after and "Place after %s" or "Place before %s"), neighbour.label),
+                callback = function() save(key, target, after) end }
+        end
+        rows[#rows + 1] = control(list[index - 1], false, "Already first")
+        rows[#rows + 1] = control(list[index + 1], true, "Already last")
+        for i, item in ipairs(list) do
+            local key = item.key
+            rows[#rows + 1] = { text = string.format("%d. %s", i, item.label), radio = true,
+                checked_func = function() return selected == key end,
+                callback = function() selected = key; refresh() end }
+        end
+        rows[#rows + 1] = { text = _("About this order"), callback = function()
+            require("core/orbitui_context").notify(_(help))
+        end }
+        return rows
+    end)
+end
+
+function M.orderLibraries()
+    return orderMenu(_("Order libraries"), nil, function() return profiles().list(true) end,
+        function(key, target, after)
+            edit(key, function(_, config) place(config.sections, key, target, after) end)
+        end, "Tap a library to select it, then place it before or after its neighbour. The numbered list updates immediately. This orders library profiles, not navigation buttons. For equally specific matching folders, the first enabled library wins. No books are moved.")
+end
+
+function M.orderChips(key, selected)
+    return orderMenu(_("Order chips"), selected, function()
+        local section = profiles().get(key, true)
+        return section and section.chips or {}
+    end, function(id, target, after)
+        edit(key, function(section) place(section.chips, id, target, after) end)
+    end, "Tap a chip to select it, then place it before or after its neighbour. The numbered list updates immediately and matches the chip bar from left to right. No books are moved.")
+end
+
+local function covered(section, path)
+    for _i, root in ipairs(section.roots) do
+        if Model.contains(path, root) then return true end
+    end
+    return false
+end
+
+local function shelfFolder(key, id, old, path)
+    local p = profiles()
+    local section = p.get(key, true)
+    local chip = p.chip(section, id)
+    if not chip or chip.source.kind ~= "folder" or chip.source.id ~= old then return end
+    if old == path then return end
+    local function save()
+        -- A chooser/confirmation may outlive the chip that opened it.
+        local current = p.get(key, true)
+        local target = p.chip(current, id)
+        if not target or target.source.kind ~= "folder" or target.source.id ~= old then return end
+        edit(key, function(s)
+            p.chip(s, id).source.id = path
+            if not covered(s, path) then s.roots[#s.roots + 1] = path end
+        end)
+    end
+    if covered(section, path) then save(); return end
+    ui():show(require("ui/widget/confirmbox"):new{
+        text = string.format(_("Add %s to library '%s' and use it for this chip? This also includes the folder in library-wide search and reader-return matching. Other chip sources and existing library folders are kept. No files are moved."), path, section.label),
+        ok_text = _("Add folder and use"), ok_callback = save,
+    })
+end
+
+function M.folderItems(key)
+    local p, rows = profiles(), {}
+    local section = p.get(key, true)
+    if not section then return rows end
+    rows[#rows + 1] = { text = _("About library folders"), callback = function()
+        require("core/orbitui_context").notify(_("These folders define the whole library, including search and reader-return matching. To change only one chip, open that chip's Folder setting. Replacing a library folder also remaps chip sources beneath it; no files are moved."))
+    end }
+    for _i, root in ipairs(section.roots) do
+        local path = root
+        rows[#rows + 1] = { text = _("Folder") .. ": " .. path, callback = function()
+            folder(path, function(replacement)
+                if replacement == path then return end
+                ui():show(require("ui/widget/confirmbox"):new{
+                    text = string.format(_("Replace library folder %s with %s? All chip sources beneath this folder will be remapped too. Book files are not moved."), path, replacement),
+                    ok_text = _("Replace folder"), ok_callback = function()
+                        local current = p.get(key, true)
+                        for _i, existing in ipairs(current and current.roots or {}) do
+                            if existing == path then
+                                if p.relocateRoot(key, path, replacement) then changed() end
+                                return
+                            end
+                        end
+                    end,
+                })
+            end)
+        end }
+    end
+    return rows
+end
+
+function M.folders(key)
+    local section = profiles().get(key, true)
+    if section then return menu(section.label .. " / " .. _("Library folders (advanced)"),
+        function() return M.folderItems(key) end) end
+end
+
+local sourceLabels = { folder = "Folder", latest = "Recently added", authors = "Authors", series = "Series",
+    recent = "Recent", favorites = "Favorites", next = "Next unread in series", bookorbit_want = "BookOrbit Want to Read" }
 
 local function addShelf(key, kind, path, default_label)
     input(_("Shelf name"), kind == "folder" and path:match("([^/]+)$") or _(default_label), function(label)
@@ -121,12 +251,19 @@ function M.shelfItems(key, id)
         { text = _("Rename"), callback = function()
             input(_("Shelf name"), chip.label, function(text) update(function(c) c.label = text end) end)
         end },
+        info(_("Source") .. ": " .. _(sourceLabels[chip.source.kind] or chip.source.kind)),
+    }
+    if chip.source.kind == "folder" then
+        rows[#rows + 1] = { text = _("Folder") .. ": " .. chip.source.id, callback = function()
+            folder(chip.source.id, function(path) shelfFolder(key, id, chip.source.id, path) end)
+        end }
+    end
+    rows[#rows + 1] =
         { text = _("Appearance"), callback = function()
             require("core/orbitui_context").withShelf(key, function(widget) widget:_showProfileShelfStyle(id) end)
-        end },
-        { text = _("Move up"), callback = function() edit(key, function(s) move(s.chips, id, -1) end) end },
-        { text = _("Move down"), callback = function() edit(key, function(s) move(s.chips, id, 1) end) end },
-    }
+        end }
+    rows[#rows + 1] = { text = position(indexOf(section.chips, id), #section.chips),
+        callback = function() M.orderChips(key, id) end }
     if chip.kind == "folder" then
         rows[#rows + 1] = { text = _("Group subfolder as a box") .. ": " .. (chip.group_folder_name or _("Off")),
             callback = function()
@@ -178,26 +315,13 @@ function M.sectionItems(key)
     rows[#rows + 1] = { text = _("Enabled"), checked_func = function()
         return p.get(key, true).enabled ~= false
     end, callback = function() edit(key, function(s) s.enabled = s.enabled == false end) end }
-    rows[#rows + 1] = { text = _("Move up"), callback = function()
-        edit(key, function(_, config) move(config.sections, key, -1) end)
-    end }
-    rows[#rows + 1] = { text = _("Move down"), callback = function()
-        edit(key, function(_, config) move(config.sections, key, 1) end)
-    end }
-    for _i, root in ipairs(section.roots) do
-        local path = root
-        rows[#rows + 1] = { text = _("Folder") .. ": " .. path, callback = function()
-            folder(path, function(replacement)
-                p.relocateRoot(key, path, replacement)
-                changed()
-            end)
-        end }
-    end
+    rows[#rows + 1] = { text = _("Order chips"), callback = function() M.orderChips(key) end }
     for _, chip in ipairs(section.chips) do
         local id = chip.key
         rows[#rows + 1] = { text = chip.label, callback = function() M.shelf(key, id) end }
     end
     rows[#rows + 1] = { text = _("Add shelf"), callback = function() M.addShelf(key) end }
+    rows[#rows + 1] = { text = _("Library folders (advanced)"), callback = function() M.folders(key) end }
     rows[#rows + 1] = { text = _("Add to navigation bar"), enabled_func = function()
         return p.get(key) ~= nil
     end, callback = function() M.addToBar(require("adapters/orbitui_libraries").actionId(key)) end }
@@ -222,6 +346,7 @@ local function items()
         rows[#rows + 1] = { text = section.label .. (section.enabled == false and " (" .. _("Off") .. ")" or ""),
             callback = function() M.section(key) end }
     end
+    rows[#rows + 1] = { text = _("Order libraries"), callback = M.orderLibraries }
     rows[#rows + 1] = { text = _("Add library section"), callback = function()
         input(_("Library name"), "", function(label)
             folder(nil, function(path) profiles().add(label, path); changed() end)

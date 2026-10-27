@@ -29,6 +29,35 @@ change. Device acceptance is still pending.
   Author/series/genre/folder matches navigate to the corresponding library view.
   Results are capped at 400 with a notice; narrow the query if necessary.
 
+## Local library/chip editor refinement (not released)
+
+From **Navigation & interface > Bookshelf button & destinations > Profiles and
+chips**, or **Bookshelf > Libraries & shelves**, open a library profile:
+
+- Open a chip (for example Fiktion) for its name, source, folder and appearance.
+  A folder change edits that chip only. Choosing a folder outside existing roots
+  asks before adding it to whole-library search/reader-return scope; old roots
+  and other chips stay intact. Cancel writes nothing and no book files move.
+- **Order chips / Ordna chip** shows the whole numbered chip list in bar order
+  (left-to-right). Select a chip, then **Place before… / Placera före…** or
+  **Place after… / Placera efter…** its named neighbour. The list and
+  **Position N of M / Plats N av M** update in place, without going Back.
+  The position row inside a chip opens the same view with that chip selected.
+- **Order libraries / Ordna bibliotek** is one level up, alongside the profiles.
+  It orders profiles, not navigation buttons or chips. Disabled profiles remain
+  visible. Equal-specificity folder matching prefers the first enabled profile.
+- **Library folders (advanced) / Bibliotekets mappar (avancerat)** holds the
+  whole-profile roots formerly listed alongside chips. Its help explains the
+  scope; replacing a root requires confirmation and remaps descendant chip
+  sources, preserving the existing model and files.
+
+Stable profile/chip IDs and existing theme, Home and navigation references are
+kept. Both languages and search aliases are covered headlessly. Device checks
+remain open: long paths/names, small screens, many chips/page boundaries, touch,
+Back/close, restart persistence, profile matching and reader return on Boox/Bigme.
+This local branch also retains the previous local native reader-menu change;
+public Beta 13 and its assets are unchanged.
+
 ## Task-oriented settings (Beta 13)
 
 The approved redesign has five root categories and **Search settings / Sök

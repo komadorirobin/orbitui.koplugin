@@ -22,6 +22,18 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-27
 
+- User-approved LOCAL library/chip editor cleanup is on
+  `feature/library-chip-settings-20261027`, continuing `3d9dfad4` and retaining
+  the native reader-menu return below. Each folder chip now contains its own
+  Source/Folder control. Whole-library roots are collapsed under Library folders
+  (advanced); changing them still remaps descendant sources after confirmation.
+  Separate Order libraries/Order chips screens show a numbered live list,
+  position and named before/after neighbours. Stable IDs, themes, Home references,
+  existing roots and navigation bindings survive. An out-of-root chip choice
+  requires explicit confirmation before adding that folder to library scope.
+  SV/EN labels/help/search are included. No push/release/upstream/version change
+  is requested. Targeted logic/menu-host tests pass; physical Boox/Bigme layout,
+  touch, long-path wrapping and persistence acceptance remains outstanding.
 - New user-approved LOCAL native cabinet/file-browser reader-menu return is on
   `fix/native-reader-close-20261027`, based on public `33b13a08`. One post-build
   menu owner delegates to existing safe Bookshelf parking/close and matches
@@ -231,6 +243,9 @@ provides canonical module names and legacy aliases while preserving
   Beta 12 and earlier retain the previous hub; update/restart to use the new one.
 - Library sections are user-defined; no personal fiction/manga folder layout is
   hard-coded as the live source of truth.
+- The LOCAL profile editor separates chip sources from advanced library-wide
+  roots, and library order from chip-bar order. Reordering stays on the numbered
+  list with immediate position feedback. This is not yet part of public Beta 13.
 - Home can pin live shelf rows/carousels by profile/chip reference. It never
   copies membership or falls back to unrelated recent books when a source is
   missing.

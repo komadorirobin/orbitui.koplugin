@@ -4255,6 +4255,38 @@ without rebuilding the ZIP. No push, new tag, release, CI run, Docker session,
 native OTA publication or installed reader change. Physical Boox/Bigme menu,
 profile, progress/sync, layout/touch, rotation and sleep acceptance remain open.
 
+## 2026-10-27 — LOCAL library/chip editor clarity (not released)
+
+User approved the proposed cleanup after the photo of Books under Navigation >
+Bookshelf button & destinations > Profiles and chips. Work continues from
+`3d9dfad4` on `feature/library-chip-settings-20261027`, retaining both preceding
+local reader-menu commits. No upstream import/pin, version, push, tag, release,
+OTA replacement or device installation is requested or performed.
+
+Only owned adapters/translations change at runtime. Each chip shows its source
+and editable folder, separately from whole-library roots, now collapsed in an
+advanced submenu with scope help and explicit replacement confirmation. A chip
+folder change preserves siblings and old roots; an external folder requires
+consent before appending it to whole-library scope. Stale/invalid chooser results
+cannot overwrite a newer chip source. No file operations or settings migration.
+
+Separate Order libraries (inventory level) and Order chips (profile level) keep
+the numbered list visible. Select an item, then place before/after a named
+neighbour; position/list/boundaries update immediately. Selection itself does not
+write settings. Reorder callbacks resolve stable IDs in the latest inventory,
+preserving appearance, disabled flags, Home references and navbar bindings.
+Library order help explains equal-root matching and that navbar order is separate.
+Ambiguous Move up/down rows are removed from these editors. SV/EN labels, help,
+confirmations and bounded static search aliases are provided.
+
+C02's editor presentation is deliberately refined with approval; underlying
+matching/storage semantics and C01-C11 remain preserved. Targeted coverage:
+18 library settings cases under both interpreters, including the real MenuHost,
+plus existing 19 settings-navigation and 12 Bookshelf-navigation cases. Full
+gates, clean-source package and history/artwork audits are recorded below after
+completion. Physical bilingual layout/touch/long paths/multi-page order/Back/
+restart/profile/reader-return acceptance remains open. No performance claim.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
