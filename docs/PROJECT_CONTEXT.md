@@ -28,7 +28,9 @@ and correct this file in the same change.
   saved profiles for Home/search opens. A bilingual opt-out retains the original
   action. Source shelf state and exact external prewarm identity are guarded.
   No push/release/upstream import/version bump or new runtime path is requested.
-  Full local validation follows; physical Boox/Bigme acceptance remains open.
+  Implementation candidate `1f2bb837` passes complete Lua/LuaJIT/translation
+  gates, 23 targeted/native-menu regressions and sealed-byte/source/history
+  audits. Physical Boox/Bigme acceptance remains open. Details below.
 - The user explicitly requested push/publication of the bilingual settings
   redesign. Beta 13 is public at exact tag/candidate `f9d3b3a2`, fast-forwarded
   from public main `9f3f75a0` via `release/settings-beta13-20261027` after complete
@@ -366,6 +368,28 @@ different documented asset. Replacing the working-tree file does not sanitize an
 ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
+
+Local native-reader-menu candidate `1f2bb837` is verified, not pushed/released.
+Complete final sequential Lua/LuaJIT suites pass 119 Python/four unchanged skips,
+77 root Lua files, 483 Bookshelf suites/zero failures/three normal SQLite skips
+and 13 SimpleUI files. Module map 383; syntax 1,055; translations 43/zero failures.
+The 23 targeted cases pass with complete official ReaderMenu references at
+`f0db5fcb3c3e35949a99c8bff3dc36837a3f0fd6` and `v2025.08`, both interpreters,
+also on sealed bytes. The first actual-menu case fails against public `33b13a08`
+before the change. Existing Home/settings/navigation/panel/Android-cover/host
+sealed regressions pass. No new skip/failure exception or sync owner.
+
+Development-only ZIP SHA-256
+`f3aa81c4bf2a36a2e6dcf649318daa6f621edff4411ac0b1a63aadd15208ecee`,
+9,322,410 bytes; 29,207,174 expanded. Exact clean source/manifest audit, same
+1,999 files plus manifest/all 2,000 installed slots, no runtime paths added or
+removed. Entry/bootstrap/API 1/VERSION/pins/assets/fonts/module map unchanged.
+All 12 outgoing blobs exclude held artwork; source commit passes Gitleaks.
+Evidence: `test-results/native-reader-close-20261027/`. Main/origin remain
+`33b13a08`, tag/Beta 13 public ZIP unchanged. Do not publish/install this
+same-version validation ZIP as a replacement Beta 13. Follow-up docs do not
+rebuild it. Physical menu/reader/profile/rotation/sleep/BookOrbit checks remain
+open. No push/tag/release/OTA/CI or installed reader is changed in this task.
 
 Beta 13 candidate/tag `f9d3b3a2` passes full sequential Lua/LuaJIT gates: 119
 Python/four unchanged skips, all 76 root Lua files, 483 Bookshelf suites/zero

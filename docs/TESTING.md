@@ -2,6 +2,31 @@
 
 ## Automated
 
+2026-10-27 native reader-menu LOCAL candidate `1f2bb837`, no push/release:
+complete final sequential Lua/LuaJIT suites pass 119 Python/four unchanged
+source-cache skips, 77 root Lua files, 483 Bookshelf suites/zero failures/three
+normal SQLite exclusions and 13 SimpleUI files. Map 383; syntax 1,055;
+translations 43/zero failures. No new exception. All 23 new reader-menu cases
+pass under both interpreters with whole actual KOReader ReaderMenu references
+at `f0db5fcb3c3e35949a99c8bff3dc36837a3f0fd6` and minimum `v2025.08`. Native UI/
+sorter/document services remain explicit stub boundaries, not a whole reader UI.
+The first full-menu case fails on public `33b13a08` before this fix. Those cases
+plus retained host/settings/library/Home/panel/cover regressions pass on the
+sealed bytes. Exact source/manifest audit: no runtime paths added/removed,
+1,999 inventory plus manifest/all 2,000 API 1 slots; bootstrap/assets/fonts/pins/
+VERSION/module map unchanged. ZIP SHA-256
+`f3aa81c4bf2a36a2e6dcf649318daa6f621edff4411ac0b1a63aadd15208ecee`,
+9,322,410 bytes, expanded 29,207,174. All 12 outgoing blobs exclude held artwork;
+source commit passes Gitleaks. Evidence: `test-results/native-reader-close-20261027/`.
+Same-version development ZIP, NOT a replacement public Beta 13 or a new OTA.
+Main/origin/tag/public assets are unchanged; follow-up docs do not rebuild it.
+
+Physical acceptance still required: cabinet-button exits from arbitrary saved
+profiles/chips/pages and Home/shared search; cold/not-ready and rotated returns;
+repeated menu rebuild/reload/close/open; suspend/resume; the live SV/EN opt-out;
+unchanged Home gestures/end-of-book/exit; actual saved reading position and one
+intended BookOrbit/Hardcover writer. No measured speed/native-crash claim.
+
 2026-10-27 Beta 13 is public at exact candidate/tag `f9d3b3a2`, 06:04:40 UTC,
 after explicit push/publication approval. Complete sequential local Lua/LuaJIT
 and main/tag CI `40458588212`/`40458587953` pass: 119 Python/four unchanged skips,

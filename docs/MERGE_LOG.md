@@ -4214,6 +4214,47 @@ preserved; C02's menu-only destination behavior is the expressly approved change
 Physical Boox/Bigme menu/layout/touch/rotation/sleep/reader-profile acceptance is
 outstanding. Do not claim a measured speed gain or a new native-crash fix.
 
+### Local native reader-menu final verification
+
+Source candidate `1f2bb837b709e4a9b56e60edefeaef61fd6dcab7` remains local on the
+feature/fix branch. Final complete sequential Lua/LuaJIT gates pass 119 Python/
+four unchanged external-source skips, all 77 root Lua files, 483 Bookshelf suites/
+zero failures/three normal SQLite exclusions and all 13 SimpleUI files. Module
+map 383; syntax 1,055; translations 43/zero failures. No new exclusions. A final
+scope refinement makes the third `exact_target` `_safeShow` argument opt-in for
+ONLY this menu callback; standalone, gesture and end-of-book callers keep their
+existing native fast-path contract. Both complete suites run again after that
+refinement, without subsequent runtime edits.
+
+Twenty-three targeted cases pass against whole official native ReaderMenu at
+current pinned `f0db5fcb3c3e35949a99c8bff3dc36837a3f0fd6` and minimum `v2025.08`,
+under both interpreters, including sealed bytes. Coverage includes native first/
+cached/rebuilt/copied tables, icon retention, single owner, stale/double taps,
+reader/owner identity, teardown, actual path/callback forwarding, source state,
+external matching, disabled/unmatched fallback, searchable SV/EN live opt-out,
+parked-shelf browser exit, exact prewarm identity and normal rotation/close
+fallback. The first actual-menu case fails against public `33b13a08` before the
+fix. Root supplements and final suites include all added tests. Native UI,
+sorter and document services are still stub boundaries, not physical rendering.
+Retained sealed host/settings/library/Home/navigation/panel/Android-cover cases
+also pass. Evidence: `test-results/native-reader-close-20261027/`.
+
+Every development ZIP file/hash/size equals the clean committed source and
+manifest. No runtime path added/removed: 1,999 inventory plus manifest/all 2,000
+API 1 installed slots, 2,065 entries. Entry/bootstrap/VERSION/API/pins/assets/
+fonts/module map stay unchanged. SHA-256
+`f3aa81c4bf2a36a2e6dcf649318daa6f621edff4411ac0b1a63aadd15208ecee`,
+9,322,410 bytes, expanded 29,207,174. All 12 outgoing blobs exclude held artwork;
+one source commit passes Gitleaks. Main/origin remain `33b13a08`, public Beta 13
+tag remains `f9d3b3a2`, public ZIP remains
+`65ce2609b4bf914c298abb2f812c98d0e3ae84fad0863bf7786e1d54ac4a6c63`.
+
+This is a same-version LOCAL validation build: never upload it as replacement
+Beta 13 or call it a new OTA. Follow-up verification docs are audited separately
+without rebuilding the ZIP. No push, new tag, release, CI run, Docker session,
+native OTA publication or installed reader change. Physical Boox/Bigme menu,
+profile, progress/sync, layout/touch, rotation and sleep acceptance remain open.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
