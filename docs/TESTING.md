@@ -2,7 +2,31 @@
 
 ## Automated
 
-Local settings final verification: source candidate `ffd3ef34` includes the
+2026-10-27 Beta 13 is public at exact candidate/tag `f9d3b3a2`, 06:04:40 UTC,
+after explicit push/publication approval. Complete sequential local Lua/LuaJIT
+and main/tag CI `40458588212`/`40458587953` pass: 119 Python/four unchanged skips,
+76 root Lua files, 483 Bookshelf/zero failures/three normal SQLite exclusions,
+13 SimpleUI files, module map 383, syntax 1,054, translations 43/zero failures,
+332 static search phrases. Both interpreters pass the 19 settings cases and
+retained shared settings/library/Home/navigation/cover/updater sealed regressions.
+Undeclared-global lint passes all six changed host modules. No new exclusions.
+
+Clean source/manifest audit: 1,999 files plus manifest equals the exact 2,000
+installed API 1 boundary; only the new release note adds a path, none removed.
+Bootstrap/entry/assets/fonts/upstream pins/module map remain unchanged. ZIP
+9,314,791 bytes, expanded 29,182,623, 2,065 entries; SHA-256
+`65ce2609b4bf914c298abb2f812c98d0e3ae84fad0863bf7786e1d54ac4a6c63`.
+All 30 outgoing blobs exclude held artwork; five commits pass Gitleaks. Actual
+Beta 5/9/12 native Linux installers pass all local OTA/recovery/restart/rollback/
+external-snapshot phases at that file boundary. Exact draft and anonymous public
+assets match local bytes and API digests; Beta 12 metadata/assets are unchanged.
+Published-byte native TLS discovery/download and every phase pass from Beta 9
+and Beta 12 without credentials. Evidence: `test-results/beta13-20261027/`.
+Follow-up docs do not rebuild/replace immutable release bytes. Temporary installs
+are not physical-reader tests. SV/EN layout/touch/Back, SimpleUI custom screens,
+themes, reader return/rotation/sleep/wake remain open. No speed/device claim.
+
+Historical local settings final verification: source candidate `ffd3ef34` includes the
 native Menu:init ordering fix after `d905e04c`. KOReader's actual Menu:init resets
 constructor-supplied paths; parent breadcrumbs and the footer arrow are now set
 after construction, before first paint. The native-boundary stub intentionally

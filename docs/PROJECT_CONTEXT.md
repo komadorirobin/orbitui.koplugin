@@ -22,27 +22,23 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-27
 
-- The user now explicitly requests push/publication of the verified bilingual
-  settings redesign. Prepare Beta 13 on `release/settings-beta13-20261027`,
-  carrying the three local settings commits from public main `9f3f75a0`.
-  No new upstream import. VERSION advances to `0.1.0-beta.13`; Beta 12 and all
-  older tags/assets remain immutable. Publication is pending release gates.
-  The new release note uses the final API 1 file slot: 1,999 inventory files
-  plus manifest, exactly 2,000 installed. Do not add runtime paths or merely
-  raise producer limits. Physical settings acceptance remains outstanding.
-
-- Local user-approved settings redesign is on
-  `feature/settings-navigation-20261026`, based on public main `9f3f75a0`.
+- The user explicitly requested push/publication of the bilingual settings
+  redesign. Beta 13 is public at exact tag/candidate `f9d3b3a2`, fast-forwarded
+  from public main `9f3f75a0` via `release/settings-beta13-20261027` after complete
+  gates. Main/tag CI and native published-byte upgrade/rollback pass. No new
+  upstream import. Beta 12 and older tags/assets remain immutable. The release
+  note uses the final API 1 slot: 1,999 inventory files plus manifest, exactly
+  2,000 installed. Do not add runtime paths or merely raise producer limits.
+  Physical settings acceptance remains outstanding; this is a prerelease.
+- The settings implementation was developed locally on
+  `feature/settings-navigation-20261026`, then published in Beta 13.
   Five task areas plus bilingual settings search replace the crowded root;
   Home is explicitly Home/Hem (SimpleUI). Native preference callbacks, scopes,
-  advanced controls and stored values remain in place. This task does not
-  request a push, upstream merge or release: VERSION and public Beta 12 stay
-  unchanged. Verification is recorded in TESTING/MERGE_LOG; a development ZIP
-  is not a replacement release or an installable same-version OTA.
-
-- Product version: `0.1.0-beta.12` (public GitHub prerelease, published
-  2026-10-26 at 20:42:10 UTC after explicit user request; verification is in
-  `docs/MERGE_LOG.md`). Previous Beta 11 remains immutable.
+  advanced controls and stored values remain in place. The earlier same-version
+  development ZIP was never published as a replacement Beta 12.
+- Product version: `0.1.0-beta.13` (public GitHub prerelease, published
+  2026-10-27 at 06:04:40 UTC after explicit user request; verification is in
+  `docs/MERGE_LOG.md`). Previous Beta 12 remains immutable.
 - Beta 12 starts from clean public main `70e5a1fd` on
   `fix/android-covers-beta12-20261026`. Android safe mode remains enabled;
   host-owned foreground local extraction replaces the blocked Bookshelf queue,
@@ -68,16 +64,19 @@ and correct this file in the same change.
   with category/instance/external-module tests in `0acdd843`.
   Complete local Lua/LuaJIT, translation, sealed-package and native OTA gates
   pass; exact verification results are recorded in `docs/MERGE_LOG.md`.
-- Release tag: `v0.1.0-beta.12` at `ea8bbaf0`; previous tags
+- Release tag: `v0.1.0-beta.13` at `f9d3b3a2`; previous tags
+  `v0.1.0-beta.12` at `ea8bbaf0`,
   `v0.1.0-beta.11` at `03106015`,
   `v0.1.0-beta.10` at `0a2ea22b`, `v0.1.0-beta.9` at `a4bb9acb` and all
   earlier tags/assets are unchanged.
-- Public branch: `main`; the latest fix/release request produced Beta 12,
-  followed only by verification documentation. The preceding updater request
+- Public branch: `main`; the latest settings push/release request produced
+  Beta 13, followed only by verification documentation. The preceding cover
+  request produced Beta 12. The earlier updater request
   produced Beta 11. The previous
   explicit publication request produced Beta 10: Bookshelf import `0db81b46`,
   integration tests/pin `66fe1b4a` and release candidate `0a2ea22b`.
-  Retained local branches include `fix/android-covers-beta12-20261026`,
+  Retained local branches include `release/settings-beta13-20261027`,
+  `feature/settings-navigation-20261026`, `fix/android-covers-beta12-20261026`,
   `fix/orbitui-updater-beta11-20261026`,
   `maintenance/upstream-20261026`,
   `maintenance/upstream-late-20261025`, the earlier maintenance branch and
@@ -85,11 +84,11 @@ and correct this file in the same change.
   `fix/home-first-run-20261025`.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
-- Embedded Bookshelf Git in main/Beta 12 (unchanged since Beta 11):
+- Embedded Bookshelf Git in main/Beta 13 (unchanged since Beta 11):
   `c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3), five incoming commits.
   Public Beta 10 keeps `5f726c25` / merge `0db81b46` unchanged.
   Prior 6.0.0 integration `fc1103a3` / `48438837` is retained in ancestry.
-- Embedded SimpleUI Git in main/Beta 12 (unchanged since Beta 11):
+- Embedded SimpleUI Git in main/Beta 13 (unchanged since Beta 11):
   `b1580f90b2e17cf03a66c744c323a1df66d77100` (3.0 follow-ups), four commits.
   Public Beta 10 keeps `40b301f0` / merge `b9dfc849` unchanged.
 - Prior broad adaptation candidate: `3a33fee6`; its final headless gates passed.
@@ -207,12 +206,12 @@ provides canonical module names and legacy aliases while preserving
 - The reviewed Bookshelf 6.0 import adds grid-editable micro-modules, Shelf/Ornament
   modules among books, pinned ornaments, Highlights and persistent derived caches.
   Hosted migrations retain old module/deck keys; no settings/book data moves.
-- The local settings redesign groups Home (SimpleUI), Bookshelf, Navigation &
+- Beta 13 groups settings into Home (SimpleUI), Bookshelf, Navigation &
   interface, Integrations and System & maintenance, with a separate settings
   search. Book search stays under Bookshelf. Clear scope headers distinguish
   global Bookshelf controls, library/shelf overrides, shared themes and SimpleUI
   screen contexts. Native advanced controls remain accessible; no migration.
-  The published Beta 12 still has the previous hub until an explicit new release.
+  Beta 12 and earlier retain the previous hub; update/restart to use the new one.
 - Library sections are user-defined; no personal fiction/manga folder layout is
   hard-coded as the live source of truth.
 - Home can pin live shelf rows/carousels by profile/chip reference. It never
@@ -353,8 +352,32 @@ ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
 
-Local settings candidate `ffd3ef34` (implementation `d905e04c` plus the native
-Menu:init ordering fix) is packaged/verified, not pushed or released. Complete
+Beta 13 candidate/tag `f9d3b3a2` passes full sequential Lua/LuaJIT gates: 119
+Python/four unchanged skips, all 76 root Lua files, 483 Bookshelf suites/zero
+failures/three normal SQLite exclusions and 13 SimpleUI files. Module map 383,
+syntax 1,054, translations 43/zero failures and search vocabulary 332. Nineteen
+settings cases and retained Home/library/navigation/cover/updater regressions
+pass on sealed bytes under both interpreters. Six changed host modules pass
+undeclared-global lint. Five outgoing commits pass Gitleaks; all 30 outgoing
+blobs exclude held artwork. No new test exclusion.
+
+Every ZIP file equals committed source/manifest hash/size. Only the release
+note adds a runtime path; no path is removed. Inventory 1,999 plus manifest uses
+all 2,000 API 1 slots. Bootstrap/entry/assets/fonts/pins/module map unchanged.
+ZIP SHA-256 `65ce2609b4bf914c298abb2f812c98d0e3ae84fad0863bf7786e1d54ac4a6c63`,
+9,314,791 bytes, expanded 29,182,623, 2,065 entries. Draft and anonymous public
+assets/API digest match exactly; Beta 12 metadata/assets are unchanged. Native
+actual Beta 5/9/12 installers pass Linux local activation/restart/recovery/code
+rollback/external adoption. Anonymous published-byte TLS discovery/download and
+all native phases pass from Beta 9 and Beta 12. Main/tag CI
+`40458588212`/`40458587953` pass at the exact candidate. Existing runner/Node
+migration annotations are warnings. Evidence: `test-results/beta13-20261027/`.
+Verification docs do not rebuild/replace the published ZIP. These are not
+physical-reader tests; SV/EN layout/touch/Back/themes/reader/sleep/rotation remain
+open. Beta 12's user-confirmed Boox covers are retained, not new device proof.
+
+Historical pre-release settings candidate `ffd3ef34` (implementation `d905e04c`
+plus the native Menu:init ordering fix) was packaged/verified locally. Complete
 sequential Lua/LuaJIT gates pass 119 Python/four existing skips, 483 Bookshelf
 suites/zero failures/three normal SQLite exclusions and 13 SimpleUI files. All
 76 root Lua files are rerun against final code under both interpreters. Nineteen
@@ -469,14 +492,12 @@ e-ink rendering, device lifecycle, performance or update recovery.
 
 ## Known gaps and next milestones
 
-The published Beta 12 runtime contains 1,998 inventoried files, plus its
-manifest, within the installed OTA API 1 limit of 2,000 extracted files. Review
-that budget before adding more assets/modules; a producer-only limit increase
-would not change limits enforced by already-installed updaters.
-Only one installed file slot remains in Beta 12. Beta 13's release note uses
-that final slot; the settings redesign itself adds no runtime path. No slot
-remains in the Beta 13 candidate. Do not raise only the producer limit or
-discard runtime assets/licenses to force a build through.
+The published Beta 13 runtime contains 1,999 inventoried files plus its manifest:
+all 2,000 installed OTA API 1 file slots are used. The settings redesign itself
+adds no runtime path; its release note uses Beta 12's final free slot. A reviewed
+compatibility plan is required before adding runtime assets/modules/release
+notes. A producer-only limit increase cannot change already-installed updaters.
+Do not discard runtime assets/licenses or casually change the bootstrap to fit.
 
 The primary unresolved gate is focused physical acceptance on the Bigme B7 Pro
 at 1264 x 1680. `docs/TESTING.md` and `docs/SHARED_UI.md` contain the authoritative
@@ -566,6 +587,14 @@ redesign.
   plus the already-reviewed October 26 upstream changes. Complete suites, sealed
   bytes, exact draft/public assets, main/tag CI and native older-installer OTA
   pass. Physical UI/network and upstream device acceptance remain open.
+
+- **2026-10-26 — Beta 12:** explicitly approved Android safe-mode cover fix;
+  native older installers, CI and public-byte checks pass. The user later
+  confirms all covers display correctly on Boox; broader lifecycle gaps remain.
+- **2026-10-27 — Beta 13:** explicitly approved push/publication of the bilingual
+  five-area settings hub, local search, scope headers, panel controls and context
+  shortcuts. Full suites, exact assets, CI and native public-byte older-installer
+  upgrade/rollback pass. No upstream import; physical settings acceptance is open.
 
 For the full decision trail, use `docs/MERGE_LOG.md`; commit messages and tags
 are supporting evidence, not substitutes for the recorded contracts and tests.

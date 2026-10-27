@@ -4123,6 +4123,51 @@ Physical SV/EN/touch/Back/theme/reader/rotation/suspend acceptance remains open;
 publish as a prerelease, not as proof of physical acceptance. The user's cover
 confirmation concerns Beta 12 and is preserved, not extended to other claims.
 
+### Beta 13 publication and final verification
+
+Candidate/tag `f9d3b3a20148c10b204f4815b484252e25d11d37` combines release prep
+`a2fe1045` and exact-label note correction `f9d3b3a2` with the three local settings
+commits. Fast-forward and atomic main/tag push succeed; no unrelated branch/ref
+or upstream pin is pushed/changed. Public prerelease `v0.1.0-beta.13` published
+2026-10-27 at 06:04:40 UTC, after exact draft asset verification and green main/
+tag CI `40458588212`/`40458587953`. Both jobs run complete Lua/LuaJIT, translation,
+package and native OTA gates. Node/runner migration annotations are warnings.
+
+Complete local sequential suites pass 119 Python/four unchanged external-source
+skips, all 76 root Lua files, 483 Bookshelf suites/zero failures/three normal
+SQLite exclusions and all 13 SimpleUI files. Module map 383; syntax 1,054;
+translations 43/zero failures; search vocabulary 332. Nineteen settings cases
+and retained shared settings/library/Home/navigation/cover/update regressions
+pass on final sealed bytes under both interpreters. Six changed host modules
+pass undeclared-global lint. No new failure exception. The sole change during
+full gates is release-note wording; final exact-commit CI reruns all gates.
+
+Every ZIP file/hash/size equals clean candidate source and manifest. Only the
+new release note adds a path; none removed. Inventory 1,999 plus manifest equals
+the existing 2,000-file installed API 1 limit; zero slots remain. Bootstrap,
+entry/assets/fonts/pins/module map stay unchanged. Final ZIP SHA-256
+`65ce2609b4bf914c298abb2f812c98d0e3ae84fad0863bf7786e1d54ac4a6c63`,
+9,314,791 bytes, 29,182,623 expanded bytes, 2,065 entries. All 30 outgoing blobs
+exclude held artwork; Gitleaks scans five outgoing commits with no leaks.
+
+Actual immutable public Beta 5/9/12 ZIPs are checked against fresh API digests
+and used as native Linux starting installers. All local phases pass: offer,
+full native SHA/libarchive extraction at the file limit, missing-module rejection,
+activation/restart/code rollback/truncated recovery and complete external
+snapshot/restart/persistent rollback. Anonymous public API/ZIP/checksum and
+GitHub asset digests match local/draft bytes exactly. Published-byte live TLS
+discovery/download and all six native phases pass from Beta 9 and Beta 12.
+Beta 12 release metadata/assets remain byte-for-byte unchanged. Evidence:
+`test-results/beta13-20261027/`. Do not rebuild/replace published assets for this
+follow-up documentation. Audit/push only these verification docs; restore the
+task-owned Docker environment to its initially stopped state after tests finish.
+
+No physical reader was changed. SV/EN pagination, touch/hold, native SimpleUI
+Back/custom context, theme edits, reader return, rotation and sleep/wake still
+need Boox/Bigme checks. Existing user-confirmed Beta 12 covers remain working
+evidence for that earlier fix, not acceptance of the new settings. Code rollback
+preserves current progress/settings. No new upstream merge or performance claim.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
