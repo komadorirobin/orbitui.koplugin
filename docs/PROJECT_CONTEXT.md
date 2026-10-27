@@ -20,7 +20,16 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-10-26
+## Snapshot: 2026-10-27
+
+- The user now explicitly requests push/publication of the verified bilingual
+  settings redesign. Prepare Beta 13 on `release/settings-beta13-20261027`,
+  carrying the three local settings commits from public main `9f3f75a0`.
+  No new upstream import. VERSION advances to `0.1.0-beta.13`; Beta 12 and all
+  older tags/assets remain immutable. Publication is pending release gates.
+  The new release note uses the final API 1 file slot: 1,999 inventory files
+  plus manifest, exactly 2,000 installed. Do not add runtime paths or merely
+  raise producer limits. Physical settings acceptance remains outstanding.
 
 - Local user-approved settings redesign is on
   `feature/settings-navigation-20261026`, based on public main `9f3f75a0`.
@@ -464,8 +473,9 @@ The published Beta 12 runtime contains 1,998 inventoried files, plus its
 manifest, within the installed OTA API 1 limit of 2,000 extracted files. Review
 that budget before adding more assets/modules; a producer-only limit increase
 would not change limits enforced by already-installed updaters.
-Only one installed file slot remains. The local settings redesign adds no
-runtime path. Do not raise only the producer limit or
+Only one installed file slot remains in Beta 12. Beta 13's release note uses
+that final slot; the settings redesign itself adds no runtime path. No slot
+remains in the Beta 13 candidate. Do not raise only the producer limit or
 discard runtime assets/licenses to force a build through.
 
 The primary unresolved gate is focused physical acceptance on the Bigme B7 Pro

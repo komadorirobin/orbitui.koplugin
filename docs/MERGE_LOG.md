@@ -4102,6 +4102,27 @@ Actual SV/EN pagination/title widths, touch/long-press, scope comprehension,
 themes, native SimpleUI Back/custom context and reader/sleep/rotation still need
 Boox/Bigme acceptance. No measured speed or complete native-crash fix is claimed.
 
+## 2026-10-27: Explicit settings Beta 13 push/publication request
+
+The user explicitly says "Pusha och publicera" after the local settings handoff.
+Prepare `release/settings-beta13-20261027` from `4a042fc2`, retaining settings
+implementation `d905e04c`, native parent-navigation fix `ffd3ef34` and final
+validation docs. Fresh origin/main remains `9f3f75a0`; latest public release is
+Beta 12. No upstream import, pin advance or unrelated feature is authorized.
+
+Advance VERSION to `0.1.0-beta.13`, add bilingual release notes, keep stable
+bootstrap/API 1 and all previous tags/assets intact. The note consumes the last
+installed API 1 slot: 1,999 inventoried files plus manifest equals 2,000. Verify
+the exact boundary using actual older native installers, not a producer-only
+limit change. No assets/licenses/runtime paths are removed to fit. Repeat full
+Lua/LuaJIT/translation, clean committed package, sealed source, history/artwork/
+secret, native OTA and CI gates before publishing exact verified draft assets.
+Record final outcomes below. Evidence: `test-results/beta13-20261027/`.
+
+Physical SV/EN/touch/Back/theme/reader/rotation/suspend acceptance remains open;
+publish as a prerelease, not as proof of physical acceptance. The user's cover
+confirmation concerns Beta 12 and is preserved, not extended to other claims.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
