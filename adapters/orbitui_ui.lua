@@ -48,6 +48,11 @@ function M.wrap(name, module)
     elseif name == "sui_bookshelf_bridge" then
         require("adapters/orbitui_libraries").bridge(module)
     elseif name == "infra/sui_patches" then
+        -- Both embedded plugins used to replace this callback independently,
+        -- before KOReader recreated it on the first menu build.
+        module.wireReaderMenuFMTab = function(_plugin, reader)
+            require("adapters/orbitui_libraries").wireReaderMenu(reader)
+        end
         module.isNavigationDestination = function(widget)
             return widget and (widget.name == "bookshelf" or widget.name == "homescreen"
                 or widget.name == "ReaderUI")
@@ -61,6 +66,13 @@ function M.wrap(name, module)
     elseif name == "features/library/sui_library_search" then
         module.show = function(opts) return require("core/orbitui_search").show(opts) end
     elseif name == "lib/bookshelf_widget" then
+        local launch = module._launchReader
+        if launch then
+            module._launchReader = function(self, file, ...)
+                self._orbitui_reader_file = file
+                return launch(self, file, ...)
+            end
+        end
         require("adapters/orbitui_appearance").widget(module)
         require("adapters/orbitui_shelf_themes").widget(module)
         require("adapters/orbitui_cover_labels").widget(module)
@@ -152,6 +164,9 @@ end
 
 function M.classes(bookshelf, simpleui)
     require("adapters/orbitui_libraries").classes(bookshelf)
+    function bookshelf:_wireFastFileBrowserTab()
+        require("adapters/orbitui_libraries").wireReaderMenu(self.ui)
+    end
     require("adapters/orbitui_android_covers").bookshelf(bookshelf)
     local build = bookshelf.buildMenuItems
     function bookshelf:buildMenuItems(items)

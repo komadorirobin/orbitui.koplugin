@@ -164,4 +164,112 @@ function M.changed()
     require("core/orbitui_context").refresh()
 end
 
+function M.readerMenuEnabled()
+    return require("infra/sui_store"):get("orbitui_reader_menu_return") ~= false
+end
+
+function M.readerMenuSetting()
+    return { orbitui_id = "reader_menu", text = _("Reader menu: fast return to Bookshelf"),
+        keep_menu_open = true, checked_func = M.readerMenuEnabled,
+        callback = function(menu)
+            require("infra/sui_store"):set("orbitui_reader_menu_return", not M.readerMenuEnabled())
+            if menu and menu.updateItems then menu:updateItems() end
+        end,
+        help_text = _("Use the file-browser button in the reading menu to return to the original shelf, or to the library matching the book. Uses instant close when a safe warm shelf is ready; otherwise closes normally. Turn off to use KOReader's original file-browser action. Other gestures and close actions keep their settings."),
+    }
+end
+
+-- Pure destination selection: never reposition/rebuild a shelf over a live
+-- reader. Explicit external targets can park only if native prewarm prepared
+-- that exact reader/file; the native fallback resolves their location AFTER
+-- the real close. A shelf source retains its chip/page rather than locating it.
+function M.readerReturnTarget(reader, shelf)
+    local file = reader and reader.document and reader.document.file
+    if type(file) ~= "string" or file == "" then return end
+    if shelf and shelf._opened_book and shelf._orbitui_reader_file == file
+            and require("ui/uimanager"):isWidgetShown(shelf) then
+        local key = shelf.profile_key
+        if not key or profiles().get(key) then return { profile = key } end
+        return -- a disabled/deleted source must not select an unrelated shelf
+    end
+    local key = profiles().matchFile(file)
+    if key and profiles().get(key) then return { profile = key, file = file } end
+end
+
+local function prepareReaderMenu(menu)
+    local reader = menu and menu.ui
+    local plugin = reader and reader.bookshelf
+    local item = menu and menu.menu_items and menu.menu_items.filemanager
+    if not (plugin and plugin._orbitui_owned and reader.document and item) then return end
+    local state = menu._orbitui_reader_menu
+    if not state or state.item ~= item or state.plugin ~= plugin then
+        local original = item.callback
+        if state and state.item == item and item.callback == state.callback then original = state.original end
+        if state then state.callback = nil end
+        state = { item = item, original = original, plugin = plugin }
+        menu._orbitui_reader_menu = state
+    end
+    local used = false
+    local callback
+    callback = function(...)
+        local RUI = package.loaded["apps/reader/readerui"]
+        if used or menu._orbitui_reader_menu ~= state or state.callback ~= callback or reader.bookshelf ~= plugin
+                or not RUI or RUI.instance ~= reader or not reader.document
+                or reader.tearing_down then return true end
+        used = true
+        local Park = require("lib/bookshelf_reader_park")
+        local shelf = require("lib/bookshelf_widget").live
+        -- The reader menu can also be opened OVER a parked shelf. Its browser
+        -- button then means the actual file browser, not the already-visible shelf.
+        if Park.isParked() then
+            if menu.onTapCloseMenu then menu:onTapCloseMenu() end
+            return Park.closeShelfToFileManager(shelf)
+        end
+        local target = M.readerMenuEnabled() and M.readerReturnTarget(reader, shelf)
+        if target and type(plugin._safeShow) == "function" then
+            if menu.onTapCloseMenu then menu:onTapCloseMenu() end
+            return plugin:_safeShow(target.profile, target.file, true)
+        end
+        -- Preserve the callback supplied by KOReader (or a construction-time
+        -- userpatch), not an embedded component's previous close replacement.
+        -- The flags suppress destination restoration only, not CloseDocument,
+        -- progress/statistics/sync events or the real ReaderUI lifecycle.
+        if type(state.original) == "function" then
+            reader._orbitui_native_reader_close = true
+            reader._navbar_closing_intentionally = true
+            return state.original(...)
+        end
+    end
+    state.callback = callback
+    item.callback = callback
+    -- MenuSorter normally shares the item, but tolerate a copied tab descriptor.
+    for _i, tab in ipairs(menu.tab_item_table or {}) do
+        if tab.id == "filemanager" then tab.callback = callback end
+    end
+end
+
+function M.unwireReaderMenu(reader, plugin)
+    local menu = reader and reader.menu
+    local state = menu and menu._orbitui_reader_menu
+    if not state or (plugin and state.plugin ~= plugin) then return end
+    if state.item.callback == state.callback then state.item.callback = state.original end
+    for _i, tab in ipairs(menu.tab_item_table or {}) do
+        if tab.id == "filemanager" and tab.callback == state.callback then tab.callback = state.original end
+    end
+    state.callback = nil
+    menu._orbitui_reader_menu = nil
+end
+
+function M.wireReaderMenu(reader)
+    if not (reader and reader.document and reader.bookshelf
+            and reader.bookshelf._orbitui_owned and reader.menu) then return end
+    local hooks = require("infra/sui_menu_hooks")
+    hooks.register{ id = "orbitui_reader_return", order = 30,
+        prepare = function(menu, target)
+            if target == hooks.TARGET.READER then prepareReaderMenu(menu) end
+        end,
+    }
+    prepareReaderMenu(reader.menu)
+end
+
 return M

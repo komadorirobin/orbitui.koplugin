@@ -4168,6 +4168,52 @@ need Boox/Bigme checks. Existing user-confirmed Beta 12 covers remain working
 evidence for that earlier fix, not acceptance of the new settings. Code rollback
 preserves current progress/settings. No new upstream merge or performance claim.
 
+## 2026-10-27: Local native reading-menu fast Bookshelf return
+
+User asks to route KOReader's native file-browser/cabinet reading-menu button
+through OrbitUI's fast close and correct shelf profile, then explicitly approves
+local implementation. Branch `fix/native-reader-close-20261027` starts from clean
+public main `33b13a08`. No upstream import, push, version bump, release or device
+installation is requested. Published Beta 13/tag/assets remain immutable; retain
+its exact 2,000 installed-file budget by adding no runtime file.
+
+Observed cause: current native ReaderMenu:getDefaultMenuButtons creates the
+original onClose/showFileManager callback again inside setUpdateItemTable.
+Bookshelf and SimpleUI previously wrote it at init/show time, before that reset.
+The shared prepare hook now runs after native table construction and on each
+cached opening. Both hosted component writers delegate to one owner; native
+component standalone methods remain unchanged. A first-menu regression fails
+against public `33b13a08` with the actual native menu, then passes locally.
+
+Keep exact shelf-origin file/profile/chip/page/drilldown; Home/search files use
+the shared saved-inventory matcher, no hard-coded prose/comics. Source provenance
+records the real path before delegating to the unchanged native launch method.
+External hot parking requires completed location prewarm for this exact reader,
+file and profile. No positioning/rebuild occurs over a live unrelated reader;
+otherwise the existing normal-close/location fallback runs, including rotation
+refusal. Native menu over an already parked shelf keeps its real-browser exit.
+
+Default-on `orbitui_reader_menu_return` in the SimpleUI store is the sole new
+preference. A searchable checkbox/help is owned SV/EN, under Navigation > Opening
+books & returning; turning it off invokes the original construction-time callback.
+Unmatched/disabled/deleted sources likewise fall back, not to an unrelated shelf.
+Skip only competing destination restoration; CloseDocument, progress/statistics,
+sync, normal ReaderUI lifecycle and native invalidations still run. No other
+gesture, hardware key, exit/restart or end-of-book policy is replaced. Per-item/
+owner/generation/active-reader/consumed guards prevent stale and double taps.
+Owner-safe Host.detach restores only its own callback, including older native
+menus that retain their item table rather than resetting it.
+
+Focused tests use complete host adapters/shared MenuHooks plus native close/
+prewarm methods at explicit native service boundaries. The optional supplement
+loads the WHOLE official KOReader ReaderMenu, at current reference
+`f0db5fcb3c3e35949a99c8bff3dc36837a3f0fd6` and minimum supported `v2025.08`,
+under Lua/LuaJIT. Evidence: `test-results/native-reader-close-20261027/`.
+Full gates, sealed package and final audits follow below. C01-C08/C10 remain
+preserved; C02's menu-only destination behavior is the expressly approved change.
+Physical Boox/Bigme menu/layout/touch/rotation/sleep/reader-profile acceptance is
+outstanding. Do not claim a measured speed gain or a new native-crash fix.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

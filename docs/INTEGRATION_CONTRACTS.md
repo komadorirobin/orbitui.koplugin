@@ -84,6 +84,30 @@ search, themes and component navigation suites. Device acceptance still needed:
 rename/move a library root, add a dock destination, switch from Home and reader,
 then restart and verify existing profile-specific appearance and Home pins.
 
+October 27 user-approved native reading-menu integration (local, not released):
+OrbitUI owns the file-browser/cabinet button through a shared menu prepare step
+AFTER KOReader builds/rebuilds its table. Both embedded init-time callback writers
+delegate to that owner. This changes only that button, not explicit Home gestures,
+hardware keys, exit/restart or end-of-book policy. Default is fast Bookshelf return;
+a bilingual opt-out invokes the original construction-time native/userpatch
+callback. Native close events, invalidations, reading progress and sync owners
+remain intact; skip only competing destination restoration on that fallback.
+
+An exact shelf-launched file keeps its source profile/chip/page/drilldown. Home/
+search/external files use the same enabled inventory/longest-root matcher, never
+hard-coded prose/comics IDs. Disabled/deleted source profiles and unmatched files
+fall back to the original action, not another library. An external location can
+hot-park ONLY when prewarm finished for that exact ReaderUI/file/profile; otherwise
+let native real-close finish before resolving the location. Do not rebuild a
+buried shelf while the live reader owns its screen/document. Rotation refusal
+still uses native normal close. Opening the menu over an already parked shelf
+keeps its explicit real-file-browser exit. Stale/replaced menu callbacks and
+double taps are inert; owner-safe teardown restores only that owner's callback.
+Source: `adapters/orbitui_libraries.lua`, `adapters/orbitui_ui.lua`,
+`core/orbitui_host.lua` and the optional native Bookshelf return fields/guard.
+Regression: `tests/test_reader_menu_return.lua`; execute physical Boox/Bigme
+menu/rotation/sleep/reader-profile checks before claiming device acceptance.
+
 Preserve the warm shelf on an ordinary reader return, but drain windows on
 exit. Closing a book via gesture, menu or end-of-book dialog must reach the
 intended destination without a second menu layer or prolonged input blocking.

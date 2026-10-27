@@ -1565,6 +1565,8 @@ function Bookshelf:_raiseInPlace()
     _live_widget._bookshelf_reader_prewarmed_only = nil
     _live_widget._bookshelf_reader_return_target = nil
     _live_widget._bookshelf_reader_return_ready = nil
+    _live_widget._orbitui_reader_return_file = nil
+    _live_widget._orbitui_reader_return_reader = nil
     -- "ui" rather than "partial": on Colorsoft, "partial" of a full-
     -- screen region gets promoted to a full flash refresh by the EPDC
     -- driver. "ui" uses a smoother waveform that doesn't get promoted.
@@ -1598,7 +1600,7 @@ end
 -- A "Closing book…" InfoMessage shows synchronously for feedback during
 -- the 1–3s onClose disk-I/O block. _suppress_close_document_show stops
 -- onCloseDocument's parallel nextTick(show) so we don't double-trigger.
-function Bookshelf:_safeShow(profile_key, target_file)
+function Bookshelf:_safeShow(profile_key, target_file, exact_target)
     self:_cancelReaderPrewarm()
     local readerui = self.ui
     if not (readerui and readerui.document and readerui.onClose) then
@@ -1618,7 +1620,17 @@ function Bookshelf:_safeShow(profile_key, target_file)
         and _live_widget._bookshelf_reader_return_ready
     -- Pass the canonical widget so upstream's orientation guard can compare
     -- the reader rotation with the shelf's pre-read rotation.
-    if (not prewarmed_only or prewarmed_ready)
+    -- An explicit location request must never raise an unrelated warm shelf.
+    -- OrbitUI's hosted menu uses this for Home/search books. Positioning a
+    -- non-ready shelf here would rebuild while ReaderUI still owns the screen;
+    -- use the existing real-close/location fallback instead.
+    -- The optional host flag leaves standalone/end-of-book/gesture callers
+    -- unchanged; only the hosted reader-menu destination requests this guard.
+    local target_ready = not exact_target or not target_file or (_live_widget
+        and _live_widget._orbitui_reader_return_file == target_file
+        and _live_widget._orbitui_reader_return_reader == readerui
+        and _live_widget.profile_key == profile_key and prewarmed_ready)
+    if target_ready and (not prewarmed_only or prewarmed_ready)
         and Park.park(self, _live_widget) then
         -- The live Bookshelf widget already retains its profile/page when it
         -- launched the book. Explicit prewarm positions externally opened
@@ -1906,6 +1918,8 @@ function Bookshelf:_prewarmShelfBehindReader(profile_key, readerui, opts)
     widget._suppress_transition_paint = true
     widget._bookshelf_reader_prewarmed = true
     widget._bookshelf_reader_return_ready = nil
+    widget._orbitui_reader_return_file = nil
+    widget._orbitui_reader_return_reader = nil
     if opts.explicit_return_target then
         widget._bookshelf_reader_return_target = true
         widget._bookshelf_reader_prewarmed_only = true
@@ -1966,6 +1980,10 @@ function Bookshelf:_prewarmShelfBehindReader(profile_key, readerui, opts)
                 .. tostring(target_found))
         else
             widget._bookshelf_reader_return_ready = target_found == true
+            if target_found == true then
+                widget._orbitui_reader_return_file = opts.target_file
+                widget._orbitui_reader_return_reader = readerui
+            end
         end
     end
     UIManager:setDirty(readerui, "ui")
@@ -2986,6 +3004,9 @@ function Bookshelf:onCloseDocument()
     --     book's TRUE and hijacked the return home.
     local opened_here = _live_widget and _live_widget._opened_book or false
     if _live_widget then _live_widget._opened_book = false end
+    -- Host-owned opt-out/unmatched-file fallback still performs all native
+    -- invalidations above, but must not resurrect Bookshelf over the browser.
+    if self.ui and self.ui._orbitui_native_reader_close then return end
     if not showing then
         -- The book was opened from the RAW FileManager (the shelf was not
         -- parked underneath) and is closing back to the home view. No

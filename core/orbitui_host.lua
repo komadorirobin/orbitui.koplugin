@@ -31,6 +31,11 @@ function M.attach(owner, classes, loader, root)
 end
 
 function M.detach(owner, loader)
+    local libraries = package.loaded["adapters/orbitui_libraries"]
+    local bookshelf = owner._orbitui_components and owner._orbitui_components.bookshelf
+    if bookshelf and libraries and libraries.unwireReaderMenu then
+        libraries.unwireReaderMenu(owner.ui, bookshelf)
+    end
     for _, name in ipairs(names) do
         local instance = owner._orbitui_components and owner._orbitui_components[name]
         if instance then

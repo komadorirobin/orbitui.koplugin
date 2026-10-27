@@ -22,6 +22,13 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-27
 
+- New user-approved LOCAL native cabinet/file-browser reader-menu return is on
+  `fix/native-reader-close-20261027`, based on public `33b13a08`. One post-build
+  menu owner delegates to existing safe Bookshelf parking/close and matches
+  saved profiles for Home/search opens. A bilingual opt-out retains the original
+  action. Source shelf state and exact external prewarm identity are guarded.
+  No push/release/upstream import/version bump or new runtime path is requested.
+  Full local validation follows; physical Boox/Bigme acceptance remains open.
 - The user explicitly requested push/publication of the bilingual settings
   redesign. Beta 13 is public at exact tag/candidate `f9d3b3a2`, fast-forwarded
   from public main `9f3f75a0` via `release/settings-beta13-20261027` after complete
@@ -153,6 +160,14 @@ provides canonical module names and legacy aliases while preserving
 
 ### Shared Home and library
 
+- Locally (not in public Beta 13), the reader menu's cabinet button uses the
+  existing fast Bookshelf return after every native menu build/rebuild. Exact
+  source shelves keep profile/chip/page; external books use saved root matching.
+  Only exact ready reader/file/profile prewarms can park; cold/rotated targets
+  use safe normal close first. Missing/disabled sources fall back to the original
+  action. A searchable SV/EN checkbox under Navigation > Opening books & returning
+  opts out without changing other gestures, close policies or data. No new sync
+  owner. Stale taps are inert; teardown restores only its own menu callback.
 - Beta 11 replaces the embedded Bookshelf update page with shared
   real OrbitUI version/preview/daily/recovery controls. Bounded safe HTTP
   status/rate-limit diagnostics survive Trapper; confirmed limits suspend checks

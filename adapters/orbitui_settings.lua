@@ -382,6 +382,7 @@ local nodes = {
     { "interface", "Icons, fonts & shared appearance", "navigation", "screens", "ikoner icon font färger colors stil style", screen = "style_settings" },
     { "quick_actions", "Custom quick actions", "navigation", "screens", "snabbåtgärder gester gestures shortcuts", screen = "quick_actions_settings" },
     { "reader", "Opening books & returning", "navigation", "bookshelf", "läsare reader bokstängning close return återgång hot park" },
+    { "reader_menu", "Reader menu: fast return to Bookshelf", "reader", "navigation", "arkivskåp arkivknapp snabbstängning stäng boken file browser cabinet close button reader menu fast return" },
     { "integrations", "Integrations", nil, "integrations", "bookorbit hardcover myanimelist mal synk sync kopplingar" },
     { "connections", "Connections & help", "integrations", "integrations", "bookorbit myanimelist mal anslutningar credentials" },
     { "hardcover", "Hardcover book information", "integrations", "bookshelf", "hardcover enrichment berikning api betyg rating omslag" },
@@ -640,6 +641,7 @@ function M.library(profile, appearance, page, target, opts)
         elseif page == "maintenance" then native = S:_librarySubItems()
         elseif page == "safety" then native = S:_performanceSubItems()
         elseif page == "reader" then native = {
+            require("adapters/orbitui_libraries").readerMenuSetting(),
             { text = _("Bookshelf behaviour"), sub_item_table_func = function() return S:_behaviourSubItems() end },
             { text = _("While reading"), sub_item_table_func = function() return S:_whileReadingSubItems() end },
         }
@@ -664,6 +666,10 @@ function M.open(id, opts)
     local profile = opts and opts.profile
     if n.target then return M.library(profile, nil, "panel", n.target, opts) end
     if n.screen then return nativeHome(n.screen) end
+    if id == "reader_menu" then
+        return host(_(n.label), { M.scopeRow("navigation"),
+            require("adapters/orbitui_libraries").readerMenuSetting() }, "reader", opts)
+    end
     if id == "book_search" then return require("core/orbitui_search").show() end
     if id == "updates" then return require("adapters/orbitui_updates").show() end
     if id == "setup" then return require("adapters/orbitui_setup").show() end

@@ -21,9 +21,7 @@ change. Device acceptance is still pending.
   Home/Bento layout with the existing layout editor. Pinning it again changes
   its display type instead of adding a duplicate. The settings hub's **Home
   shelves** list can open the shelf, switch type or remove it from Home.
-- Published Beta 12's **OrbitUI settings** groups Home, library profiles,
-  Home shelves, appearance, search and the common updater. The local redesign
-  below replaces that grouping only after a separately requested release.
+- Published Beta 13's **OrbitUI settings** uses the task-oriented grouping below.
   The old SimpleUI settings dispatcher action still opens the shared hub.
 - Home/library search uses one input/results flow with **Entire library**,
   **Library**, **Manga & comics**, and **Current shelf** when a supported local
@@ -31,10 +29,10 @@ change. Device acceptance is still pending.
   Author/series/genre/folder matches navigate to the corresponding library view.
   Results are capped at 400 with a notice; narrow the query if necessary.
 
-## Task-oriented settings (local, not yet released)
+## Task-oriented settings (Beta 13)
 
 The approved redesign has five root categories and **Search settings / Sök
-inställning**. The public Beta 12 tag/assets are not modified by this work.
+inställning**. Earlier release tags/assets remain unchanged.
 
 - **Home (SimpleUI) / Hem (SimpleUI):** layout/modules, custom screens, reading
   dashboard, Bookshelf shelves pinned on Home, wallpaper/presets/behavior and
@@ -83,6 +81,30 @@ neither global gettext nor require is replaced. No settings migration or new
 runtime file is needed. Before a future release, test SV/EN touch/long-press,
 native windows, nested Back, Prosa/Manga scopes, custom-screen layout, theme
 sharing, reading-profile opening and sleep/rotation on physical Boox/Bigme.
+
+## Reading-menu cabinet button (local, not yet released)
+
+The native reading-menu file-browser/cabinet button uses OrbitUI's existing
+Bookshelf return routine. A book opened from Bookshelf returns to its original
+profile, chip, page and drilldown. A Home/search/external book selects the saved
+library matching its file. A safe, exact prewarmed reader/file/profile can return
+instantly; otherwise normal close happens before the target location is shown.
+Rotation changes retain the native safe fallback. Unmatched files or a disabled/
+deleted source use the original action, never an unrelated library. No new
+background document/sync owner is introduced. Other explicit gestures retain
+their destinations. In a menu over an already parked shelf the button exits to
+the real file browser, as before.
+
+Setting (on by default, no migration/reset): **Navigation & interface > Opening
+books & returning > Reader menu: fast return to Bookshelf**. Swedish:
+**Navigation och gränssnitt > Öppna böcker och återgå > Läsmenyn: snabb återgång
+till Bookshelf**. Turn it off for KOReader's original file-browser action.
+Settings search also finds "arkivskåp", "stäng boken" and "reader menu".
+
+Only the existing native routines perform parking, deferred real close, progress
+saving, book opens and rotation restoration. No new runtime file fits/is added;
+VERSION remains Beta 13 locally. This is not available in the immutable published
+Beta 13 ZIP yet. Test it on Boox/Bigme before claiming physical acceptance.
 
 ## Bookshelf navigation (Beta 9)
 

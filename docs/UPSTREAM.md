@@ -173,7 +173,23 @@ commit, or assume that a release name proves equivalent contents.
 
 ## Current embedding changes
 
-- Local settings redesign (user approved, no release request): native settings
+- Local native reader-menu return (October 27 user approval, no push/release):
+  hosted `_wireFastFileBrowserTab` and `wireReaderMenuFMTab` delegate to one
+  `orbitui_reader_return` MenuHooks prepare step (order 30). Reapply to both
+  menu_items and copied sorted tab descriptors after native build/rebuild.
+  Keep item/owner identity, stale/double-tap guards and owner-safe unbinding in
+  Host.detach. Hosted `_launchReader` records the real opened path; do not
+  replace ReaderUI opening. Bookshelf `_safeShow` has an optional third
+  `exact_target` flag used ONLY by this hosted menu route. It guards targets with
+  exact `_orbitui_reader_return_file`/`_orbitui_reader_return_reader` plus native
+  readiness/profile, set only after successful native location prewarm and cleared
+  on raise. `_orbitui_native_reader_close` skips only late destination restoration,
+  after native invalidations/provenance consumption. Preserve native normal-close/
+  rotation fallback; never position/rebuild a wrong warm shelf over ReaderUI.
+  `test_reader_menu_return` uses complete shared MenuHooks, with optional complete
+  actual KOReader ReaderMenu references. No source pin/bootstrap/runtime path change.
+
+- Beta 13 settings redesign (explicitly published): native settings
   rows carry stable `orbitui_id` metadata; tag master/categories and hero regions
   are identifiable without translated-text matching. The top-panel hold has an
   optional `orbitui_hero_menu` shortcut after existing gesture/selection gates.
