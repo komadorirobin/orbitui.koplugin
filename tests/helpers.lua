@@ -23,7 +23,8 @@ function M.simpleuiMemory()
     end
     package.preload["infra/sui_text"] = function() return dofile("components/simpleui/infra/sui_text.lua") end
     package.preload["util"] = package.preload["util"] or function()
-        return { trim = function(s) return (s:gsub("^%s*(.-)%s*$", "%1")) end }
+        return { trim = function(s) return (s:gsub("^%s*(.-)%s*$", "%1")) end,
+            stringLower = string.lower }
     end
     package.preload["infra/sui_lru"] = function() return dofile("components/simpleui/infra/sui_lru.lua") end
     package.preload["infra/sui_memory"] = function() return dofile("components/simpleui/infra/sui_memory.lua") end

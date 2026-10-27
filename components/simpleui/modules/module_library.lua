@@ -22,7 +22,7 @@
 --      "flat_library_sort_mode" setting (see sortRaw below).
 
 local lfs    = require("libs/libkoreader-lfs")
-local util   = require("util")
+local Text   = require("infra/sui_text")
 local _ = require("infra/sui_i18n").translate
 
 local Config       = require("infra/sui_config")
@@ -173,12 +173,12 @@ local function sortRaw(raw, mode, pfx)
         end)
     elseif mode == "author_asc" then
         local keys = {}
-        for _, fp in ipairs(fps) do keys[fp] = util.stringLower(cachedAuthor(fp)) end
+        for _, fp in ipairs(fps) do keys[fp] = Text.lower(cachedAuthor(fp)) end
         table.sort(fps, function(a, b) return keys[a] < keys[b] end)
     else -- "title_asc" / "title_desc" / unrecognized -> default
         local desc = (mode == "title_desc")
         local keys = {}
-        for _, fp in ipairs(fps) do keys[fp] = util.stringLower(cachedTitle(fp)) end
+        for _, fp in ipairs(fps) do keys[fp] = Text.lower(cachedTitle(fp)) end
         table.sort(fps, function(a, b)
             local ta, tb = keys[a], keys[b]
             if desc then return ta > tb else return ta < tb end

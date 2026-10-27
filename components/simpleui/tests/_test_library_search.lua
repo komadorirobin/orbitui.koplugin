@@ -13,7 +13,8 @@ local ask_to_open = false
 local metadata_calls = 0
 
 local function widget(_self, opts) return opts end
-package.loaded.util = { trim = function(s) return (s:gsub("^%s*(.-)%s*$", "%1")) end }
+package.loaded.util = { trim = function(s) return (s:gsub("^%s*(.-)%s*$", "%1")) end,
+    stringLower = string.lower }
 package.loaded["ui/event"] = {}
 package.loaded["infra/sui_store"] = {}
 package.loaded["engines/sui_action_sheet"] = {

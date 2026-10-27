@@ -58,6 +58,7 @@ local WidgetContainer = require("ui/widget/container/widgetcontainer")
 local ffiUtil = require("ffi/util")
 local logger = require("logger")
 local util = require("util")
+local Text = require("infra/sui_text")
 local _ = require("infra/sui_i18n").translate
 local Screen = Device.screen
 
@@ -148,9 +149,9 @@ function _InnerChooser:_applyCurrentFilter()
         items = self._all_items
     else
         items = {}
-        local pattern = util.stringLower(filter_text)
+        local pattern = Text.lower(filter_text)
         for _, item in ipairs(self._all_items) do
-            if item.is_go_up or (item.text and util.stringLower(item.text):find(pattern, 1, true)) then
+            if item.is_go_up or (item.text and Text.lower(item.text):find(pattern, 1, true)) then
                 table.insert(items, item)
             end
         end

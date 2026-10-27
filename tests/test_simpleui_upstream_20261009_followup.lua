@@ -87,6 +87,7 @@ H.test("BookOrbit source and unsaved native collections survive the new menu hel
     local row = run(section(src, "    local fixed_sources =", "    -- Items and statistics") ..
         "\nreturn source_item", {
             Config = Config, _lc = identity, refresh = noop, pfx = "custom_",
+            Text = { lower = string.lower },
             SETTING_SOURCE = "source", COLLECTION_PREFIX = "collection:",
             getSource = function() return source end,
             collectionNameOf = function(v) return v:match("^collection:(.*)") end,

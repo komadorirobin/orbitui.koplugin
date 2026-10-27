@@ -27,7 +27,7 @@
 
 local _              = require("infra/sui_i18n").translate
 local T              = require("ffi/util").template
-local util           = require("util")
+local Text           = require("infra/sui_text")
 
 local VirtualPaths   = require("infra/sui_virtual_paths")
 local LibraryScan    = require("engines/sui_library_scan")
@@ -65,18 +65,18 @@ end
 
 local function splitWords(query)
     local words = {}
-    for w in query:gmatch("%S+") do words[#words + 1] = util.stringLower(w) end
+    for w in query:gmatch("%S+") do words[#words + 1] = Text.lower(w) end
     return words
 end
 
 -- One haystack string per candidate so each query word is checked with a
 -- single find() rather than once per field.
 local function buildHaystack(filename, row)
-    local parts = { util.stringLower(filename) }
+    local parts = { Text.lower(filename) }
     if row then
-        if row.title   then parts[#parts + 1] = util.stringLower(row.title)   end
-        if row.authors then parts[#parts + 1] = util.stringLower(row.authors) end
-        if row.series  then parts[#parts + 1] = util.stringLower(row.series)  end
+        if row.title   then parts[#parts + 1] = Text.lower(row.title)   end
+        if row.authors then parts[#parts + 1] = Text.lower(row.authors) end
+        if row.series  then parts[#parts + 1] = Text.lower(row.series)  end
     end
     return table.concat(parts, " ")
 end
@@ -114,7 +114,7 @@ local function search(home_dir, query)
             if #results >= MAX_RESULTS then break end
         end
     end
-    table.sort(results, function(a, b) return util.stringLower(a.text) < util.stringLower(b.text) end)
+    table.sort(results, function(a, b) return Text.lower(a.text) < Text.lower(b.text) end)
     return results
 end
 

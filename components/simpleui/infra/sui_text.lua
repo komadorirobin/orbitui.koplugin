@@ -22,6 +22,22 @@ local _    = require("infra/sui_i18n").translate
 
 local Text = {}
 
+-- KOReader v2025.08 has utf8proc but no util.stringLower. Resolve locally;
+-- never patch the global util table or reduce supported readers to ASCII.
+local lower
+function Text.lower(s)
+    if s == nil then return nil end
+    if not lower then
+        lower = type(util.stringLower) == "function" and util.stringLower or nil
+        if not lower then
+            local ok, utf8 = pcall(require, "ffi/utf8proc")
+            lower = ok and type(utf8) == "table" and type(utf8.lowercase) == "function" and utf8.lowercase
+                or string.lower
+        end
+    end
+    return lower(s)
+end
+
 local ELLIPSIS = "…"
 
 -- Byte length of the UTF-8 sequence introduced by `lead_byte`.
