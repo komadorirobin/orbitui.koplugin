@@ -173,6 +173,18 @@ commit, or assume that a release name proves equivalent contents.
 
 ## Current embedding changes
 
+- October 27 reviewed SimpleUI main `e5cd6dcb` (12 incoming commits). Bookshelf
+  remains `c37580a1`. Unicode search/sorts use existing `infra/sui_text.lower`:
+  native stringLower when available, utf8proc on older supported readers, ASCII
+  only if neither native service exists. Never patch util globally. Keep last
+  known metadata and retry recognized DB faults without automatic deletion of
+  bookinfo DB/WAL/SHM or resetting shared statements/connections (C04/C08).
+  Upstream destructive recreation is deliberately deferred, not silently applied.
+  Preserve the onboarding buildListRows export. PO conflicts are reconciled by
+  semantic message identity, retaining six local-only messages per Chinese
+  catalog and removing invalid extra plural forms, with no new failure allowance.
+  Regressions: `test_upstream_20261027`; no module-map/runtime path addition.
+
 - Local native reader-menu return (October 27 user approval, no push/release):
   hosted `_wireFastFileBrowserTab` and `wireReaderMenuFMTab` delegate to one
   `orbitui_reader_return` MenuHooks prepare step (order 30). Reapply to both

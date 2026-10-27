@@ -22,6 +22,18 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-27
 
+- User explicitly requests upstream merge, push and publication. Beta 14 is
+  being prepared on `maintenance/upstream-beta14-20261027` from `7a3c519f`,
+  retaining both preceding local reader-menu/editor features. SimpleUI's twelve
+  incoming commits are imported unsquashed in `a94b7533`, through exact
+  `e5cd6dcb31fa759b9831223d4719f61126367cff`; Bookshelf is unchanged at `c37580a1`.
+  Adaptation `856e28ab` adds older-reader Unicode fallback and keeps recognized
+  DB faults retryable without upstream's destructive auto-reset. Chinese catalogs
+  retain local-only messages and valid single-form plurals with new translations.
+  VERSION advances to `0.1.0-beta.14`. Release notes use existing `docs/OTA.md`
+  and GitHub's body, adding no runtime path at the installed 2,000-file limit.
+  Full tests/package/native OTA/CI/public-byte checks precede publication;
+  physical Boox/Bigme acceptance stays open. Final results are in MERGE_LOG.
 - User-approved LOCAL library/chip editor cleanup is on
   `feature/library-chip-settings-20261027`, continuing `3d9dfad4` and retaining
   the native reader-menu return below. Each folder chip now contains its own
@@ -573,6 +585,8 @@ adds no runtime path; its release note uses Beta 12's final free slot. A reviewe
 compatibility plan is required before adding runtime assets/modules/release
 notes. A producer-only limit increase cannot change already-installed updaters.
 Do not discard runtime assets/licenses or casually change the bootstrap to fit.
+Beta 14's reviewed compatibility plan adds no runtime file: its notes go into
+existing `docs/OTA.md` and the GitHub body. Retain all Beta 13 paths and limits.
 
 The primary unresolved gate is focused physical acceptance on the Bigme B7 Pro
 at 1264 x 1680. `docs/TESTING.md` and `docs/SHARED_UI.md` contain the authoritative

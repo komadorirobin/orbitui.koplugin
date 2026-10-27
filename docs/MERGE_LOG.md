@@ -4319,6 +4319,46 @@ installed-reader change. Physical Boox/Bigme bilingual layout, long paths,
 multi-page ordering, touch/Back, persistence, Home links and profile/reader return
 remain open. Zero new claims of speed, native-crash acceptance or device testing.
 
+## 2026-10-27 — Reviewed SimpleUI merge and Beta 14 preparation
+
+The user explicitly requests merge, push and publication. Start clean from
+`7a3c519f` on `maintenance/upstream-beta14-20261027`, retaining local reader-menu
+`1f2bb837` and library/chip editor `5810c567` plus their verification docs.
+Fresh main/origin are `33b13a08`; Beta 13 and older public assets remain immutable.
+BookShelf master has zero incoming commits and stays at exact
+`c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3).
+
+SimpleUI main advances from `b1580f90b2e17cf03a66c744c323a1df66d77100` to reviewed
+`e5cd6dcb31fa759b9831223d4719f61126367cff`: 12 commits/10 changed paths. Reviewed
+all subjects and net runtime diff: Unicode-aware library/collection/asset search
+and sorts, buildListRows export for onboarding, cache-error guard and Spanish/
+Chinese translations. No dependency/license/asset/runtime path change. Import
+`a94b7533` uses unsquashed exact-SHA subtree merge. Chinese PO conflicts are
+resolved semantically: preserve six local-only entries per catalog, take updated
+translations, remove 50 invalid extra plural forms per single-form catalog.
+Both catalogs pass msgfmt; no baseline allowance is increased.
+
+Adaptation `856e28ab` preserves C01-C11, especially C03/C04/C06/C08/C10. Upstream's
+automatic deletion of the bookinfo DB/WAL/SHM and reset of shared statements is
+deliberately deferred. Known faults return last known text or nil, warn once per
+failure episode and retry; unrelated errors retain their original error value.
+No automatic DB repair is claimed. All five changed Unicode paths use existing
+sui_text with native/utf8proc/ASCII fallback without mutating global util. Actual
+official v2025.08 util lacks stringLower, confirming this compatibility need.
+The preset export and scoped reader-opening paths are preserved. Ten new cases
+include complete provider/preset/search modules, Unicode fallback/matching,
+single-pass sort keys, idempotence, varargs, non-destructive errors and retries.
+
+VERSION becomes `0.1.0-beta.14`, published only after complete Lua/LuaJIT/
+translation/package/history/artwork/secret/native OTA/CI gates. Installed API 1
+has no free slot: notes are added to existing docs/OTA.md and GitHub body, not a
+new runtime file. This reviewed plan preserves every old path/asset/license/note,
+all bootstrap bytes and installed limits. No source provenance field changes;
+only the reviewed SimpleUI integrated pin advances. Code rollback preserves
+settings, links and reading data. Physical Boox/Bigme bilingual editor/menu,
+reader-profile, covers, rotation/sleep and external integration acceptance is
+outstanding; no measured speed or device-crash claim. Final results follow.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

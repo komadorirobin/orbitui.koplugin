@@ -167,6 +167,15 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+October 27 SimpleUI import: catch recognized metadata-cache faults and retain
+last known text, with one warning per failure episode and a real read on every
+later attempt. Never automatically delete the DB/WAL/SHM or reset shared live
+connections/statements; upstream's destructive recreation is deferred under C08.
+Non-database errors propagate unchanged. Unicode search/sort/filter keys use the
+native helper or utf8proc on older supported KOReader, without changing global
+util. Headless native-free environments may fall back to ASCII. Tests:
+`test_upstream_20261027`; minimum supported KOReader remains v2025.08.
+
 Beta 12's user-approved Android cover fix keeps Android safe mode enabled.
 The host adapter may extract local covers/metadata serially in the foreground,
 one document per UI turn with a 256-entry queue/attempt bound, cancellation on

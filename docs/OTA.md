@@ -7,6 +7,42 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 0.1.0-beta.14
+
+Beta 14 includes the approved native reader-menu fast Bookshelf return and the
+clearer bilingual library/chip editor, plus reviewed SimpleUI upstream through
+`e5cd6dcb` (Bookshelf stays at `c37580a1`, 6.0.3). Open a chip for its own folder
+and source. Order libraries and chips separately, with live numbered positions
+and named before/after neighbours. Library-wide roots remain in Advanced.
+The cabinet/file-browser reader-menu button returns to the source shelf or
+matching library; cold or unsafe targets use normal close. A searchable bilingual
+opt-out keeps KOReader's original button action.
+
+SimpleUI adds Unicode-aware search/sorts and a preset-list export fix. OrbitUI
+retains the older-reader utf8proc fallback and contains recognized metadata-cache
+faults without upstream's automatic database/WAL deletion or connection reset.
+It does not automatically repair a corrupt database; last known text may remain
+visible and future reads retry. No progress/settings/links/artwork are reset.
+Home/Bento, Android safe-mode covers, bindings/ornaments, profile identities and
+external sync owners remain unchanged. Physical Boox/Bigme checks are outstanding.
+
+Svenska: Arkivskåpsknappen i läsmenyn använder nu vår snabba återgång till rätt
+hylla, med säker vanlig stängning som reserv. Profil- och chipinställningarna är
+tydligare: mappen finns inne i chippet och ordningen visas direkt i en numrerad
+lista. SimpleUI får bättre Unicode-sökning/sortering och en startguidefix.
+Databasfel fångas utan att automatiskt radera cachen. Befintliga inställningar,
+läsläge, bibliotek, omslagsfixar och integrationer behålls. Enhetstester återstår.
+
+Beta 13 and older supported installers can update directly using the preview
+channel, then restart KOReader. Bootstrap/API 1 and the complete installed path
+inventory are unchanged: 1,999 files plus manifest, exactly 2,000. This release's
+notes live in this existing document and the GitHub release body, not a new
+runtime file. No assets/licenses/old notes are removed and no installer limit is
+raised. Older public tags/assets remain immutable. Code rollback does not undo
+later settings edits or reading progress; keep a separate settings backup.
+
+## Earlier releases
+
 The first public build is `0.1.0-alpha.2`, a prerelease. Its initial Bigme
 startup/navigation test was positive; full device OTA acceptance remains open.
 Version `0.1.0-alpha.3` is the next preview, using the same OTA bootstrap API 1.
