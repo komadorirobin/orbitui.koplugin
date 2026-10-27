@@ -29,7 +29,7 @@ change. Device acceptance is still pending.
   Author/series/genre/folder matches navigate to the corresponding library view.
   Results are capped at 400 with a notice; narrow the query if necessary.
 
-## Local library/chip editor refinement (not released)
+## Library/chip editor refinement (Beta 14)
 
 From **Navigation & interface > Bookshelf button & destinations > Profiles and
 chips**, or **Bookshelf > Libraries & shelves**, open a library profile:
@@ -55,7 +55,7 @@ Stable profile/chip IDs and existing theme, Home and navigation references are
 kept. Both languages and search aliases are covered headlessly. Device checks
 remain open: long paths/names, small screens, many chips/page boundaries, touch,
 Back/close, restart persistence, profile matching and reader return on Boox/Bigme.
-This local branch also retains the previous local native reader-menu change;
+Beta 14 also includes the approved native reader-menu fast-return change;
 public Beta 13 and its assets are unchanged.
 
 ## Task-oriented settings (Beta 13)

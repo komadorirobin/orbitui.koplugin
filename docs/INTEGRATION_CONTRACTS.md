@@ -60,7 +60,7 @@ search scopes, theme inventories, reader-return matching and Home prewarming
 must resolve the same saved inventory. Longest-root matching is deterministic.
 Changing a root updates descendant folder sources, not shelf IDs or actual files.
 
-October 27 user-approved LOCAL editor cleanup: each chip exposes its own source
+October 27 user-approved editor cleanup (Beta 14): each chip exposes its own source
 and, for a folder source, its path. Whole-library roots remain distinct under an
 advanced submenu; replacing one explicitly confirms the descendant remapping.
 Changing just a chip must not relocate siblings or remove old roots. Choosing
@@ -96,7 +96,7 @@ search, themes and component navigation suites. Device acceptance still needed:
 rename/move a library root, add a dock destination, switch from Home and reader,
 then restart and verify existing profile-specific appearance and Home pins.
 
-October 27 user-approved native reading-menu integration (local, not released):
+October 27 user-approved native reading-menu integration (Beta 14):
 OrbitUI owns the file-browser/cabinet button through a shared menu prepare step
 AFTER KOReader builds/rebuilds its table. Both embedded init-time callback writers
 delegate to that owner. This changes only that button, not explicit Home gestures,

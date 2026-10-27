@@ -185,7 +185,7 @@ commit, or assume that a release name proves equivalent contents.
   catalog and removing invalid extra plural forms, with no new failure allowance.
   Regressions: `test_upstream_20261027`; no module-map/runtime path addition.
 
-- Local native reader-menu return (October 27 user approval, no push/release):
+- Native reader-menu return (October 27 user approval, published in Beta 14):
   hosted `_wireFastFileBrowserTab` and `wireReaderMenuFMTab` delegate to one
   `orbitui_reader_return` MenuHooks prepare step (order 30). Reapply to both
   menu_items and copied sorted tab descriptors after native build/rebuild.

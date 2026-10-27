@@ -22,8 +22,9 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-27
 
-- User explicitly requests upstream merge, push and publication. Beta 14 is
-  being prepared on `maintenance/upstream-beta14-20261027` from `7a3c519f`,
+- User explicitly requested upstream merge, push and publication. Beta 14 is
+  public at exact candidate/tag `575fdb7a`, published 2026-10-27 13:22:20 UTC.
+  Work used `maintenance/upstream-beta14-20261027` from `7a3c519f`,
   retaining both preceding local reader-menu/editor features. SimpleUI's twelve
   incoming commits are imported unsquashed in `a94b7533`, through exact
   `e5cd6dcb31fa759b9831223d4719f61126367cff`; Bookshelf is unchanged at `c37580a1`.
@@ -32,9 +33,12 @@ and correct this file in the same change.
   retain local-only messages and valid single-form plurals with new translations.
   VERSION advances to `0.1.0-beta.14`. Release notes use existing `docs/OTA.md`
   and GitHub's body, adding no runtime path at the installed 2,000-file limit.
-  Full tests/package/native OTA/CI/public-byte checks precede publication;
-  physical Boox/Bigme acceptance stays open. Final results are in MERGE_LOG.
-- User-approved LOCAL library/chip editor cleanup is on
+  Full tests/package/native OTA/CI/public-byte checks pass. Main/tag checks
+  `40510806422`/`40510806468` are green; live public-byte upgrades from Beta 9/13
+  and local upgrades from Beta 5/9/13 pass. Physical Boox/Bigme acceptance stays
+  open. SimpleUI 3.0.1 appeared during verification: its ZIP runtime matches
+  reviewed e5cd6dcb exactly (only extra .DS_Store files), so no ZIP-only import.
+- User-approved library/chip editor cleanup, now published in Beta 14, was on
   `feature/library-chip-settings-20261027`, continuing `3d9dfad4` and retaining
   the native reader-menu return below. Each folder chip now contains its own
   Source/Folder control. Whole-library roots are collapsed under Library folders
@@ -43,15 +47,15 @@ and correct this file in the same change.
   position and named before/after neighbours. Stable IDs, themes, Home references,
   existing roots and navigation bindings survive. An out-of-root chip choice
   requires explicit confirmation before adding that folder to library scope.
-  SV/EN labels/help/search are included. No push/release/upstream/version change
-  is requested. Targeted logic/menu-host tests pass; physical Boox/Bigme layout,
+  SV/EN labels/help/search are included. Targeted logic/menu-host tests pass;
+  physical Boox/Bigme layout,
   touch, long-path wrapping and persistence acceptance remains outstanding.
-- New user-approved LOCAL native cabinet/file-browser reader-menu return is on
+- User-approved native cabinet/file-browser return, now in Beta 14, was on
   `fix/native-reader-close-20261027`, based on public `33b13a08`. One post-build
   menu owner delegates to existing safe Bookshelf parking/close and matches
   saved profiles for Home/search opens. A bilingual opt-out retains the original
   action. Source shelf state and exact external prewarm identity are guarded.
-  No push/release/upstream import/version bump or new runtime path is requested.
+  No new runtime path was required.
   Implementation candidate `1f2bb837` passes complete Lua/LuaJIT/translation
   gates, 23 targeted/native-menu regressions and sealed-byte/source/history
   audits. Physical Boox/Bigme acceptance remains open. Details below.
@@ -69,9 +73,9 @@ and correct this file in the same change.
   Home is explicitly Home/Hem (SimpleUI). Native preference callbacks, scopes,
   advanced controls and stored values remain in place. The earlier same-version
   development ZIP was never published as a replacement Beta 12.
-- Product version: `0.1.0-beta.13` (public GitHub prerelease, published
-  2026-10-27 at 06:04:40 UTC after explicit user request; verification is in
-  `docs/MERGE_LOG.md`). Previous Beta 12 remains immutable.
+- Product version: `0.1.0-beta.14` (public GitHub prerelease, published
+  2026-10-27 at 13:22:20 UTC after explicit user request; verification is in
+  `docs/MERGE_LOG.md`). Beta 13 and earlier assets remain immutable.
 - Beta 12 starts from clean public main `70e5a1fd` on
   `fix/android-covers-beta12-20261026`. Android safe mode remains enabled;
   host-owned foreground local extraction replaces the blocked Bookshelf queue,
@@ -97,13 +101,15 @@ and correct this file in the same change.
   with category/instance/external-module tests in `0acdd843`.
   Complete local Lua/LuaJIT, translation, sealed-package and native OTA gates
   pass; exact verification results are recorded in `docs/MERGE_LOG.md`.
-- Release tag: `v0.1.0-beta.13` at `f9d3b3a2`; previous tags
+- Release tag: `v0.1.0-beta.14` at `575fdb7a`; previous tags
+  `v0.1.0-beta.13` at `f9d3b3a2`,
   `v0.1.0-beta.12` at `ea8bbaf0`,
   `v0.1.0-beta.11` at `03106015`,
   `v0.1.0-beta.10` at `0a2ea22b`, `v0.1.0-beta.9` at `a4bb9acb` and all
   earlier tags/assets are unchanged.
-- Public branch: `main`; the latest settings push/release request produced
-  Beta 13, followed only by verification documentation. The preceding cover
+- Public branch: `main`; the latest merge/push/release request produced Beta 14,
+  followed only by verification documentation. The settings request produced
+  Beta 13. The preceding cover
   request produced Beta 12. The earlier updater request
   produced Beta 11. The previous
   explicit publication request produced Beta 10: Bookshelf import `0db81b46`,
@@ -117,12 +123,13 @@ and correct this file in the same change.
   `fix/home-first-run-20261025`.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
-- Embedded Bookshelf Git in main/Beta 13 (unchanged since Beta 11):
+- Embedded Bookshelf Git in main/Beta 14 (unchanged since Beta 11):
   `c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3), five incoming commits.
   Public Beta 10 keeps `5f726c25` / merge `0db81b46` unchanged.
   Prior 6.0.0 integration `fc1103a3` / `48438837` is retained in ancestry.
-- Embedded SimpleUI Git in main/Beta 13 (unchanged since Beta 11):
-  `b1580f90b2e17cf03a66c744c323a1df66d77100` (3.0 follow-ups), four commits.
+- Embedded SimpleUI Git in main/Beta 14:
+  `e5cd6dcb31fa759b9831223d4719f61126367cff` (3.0.1 runtime), twelve commits
+  after `b1580f90b2e17cf03a66c744c323a1df66d77100` retained in Beta 13.
   Public Beta 10 keeps `40b301f0` / merge `b9dfc849` unchanged.
 - Prior broad adaptation candidate: `3a33fee6`; its final headless gates passed.
   A read-only local collector at 2026-10-25 22:43 UTC found eight Bookshelf
@@ -186,7 +193,7 @@ provides canonical module names and legacy aliases while preserving
 
 ### Shared Home and library
 
-- Locally (not in public Beta 13), the reader menu's cabinet button uses the
+- In Beta 14, the reader menu's cabinet button uses the
   existing fast Bookshelf return after every native menu build/rebuild. Exact
   source shelves keep profile/chip/page; external books use saved root matching.
   Only exact ready reader/file/profile prewarms can park; cold/rotated targets
@@ -255,9 +262,9 @@ provides canonical module names and legacy aliases while preserving
   Beta 12 and earlier retain the previous hub; update/restart to use the new one.
 - Library sections are user-defined; no personal fiction/manga folder layout is
   hard-coded as the live source of truth.
-- The LOCAL profile editor separates chip sources from advanced library-wide
+- The Beta 14 profile editor separates chip sources from advanced library-wide
   roots, and library order from chip-bar order. Reordering stays on the numbered
-  list with immediate position feedback. This is not yet part of public Beta 13.
+  list with immediate position feedback. Beta 13 retains the earlier editor.
 - Home can pin live shelf rows/carousels by profile/chip reference. It never
   copies membership or falls back to unrelated recent books when a source is
   missing.
@@ -396,7 +403,25 @@ ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
 
-Latest LOCAL library/chip editor source `5810c567` passes complete sequential
+Beta 14 tag/candidate `575fdb7a` passes complete sequential Lua/LuaJIT suites:
+119 Python/four unchanged source-cache skips, all 78 root Lua files, 483
+Bookshelf suites/zero failures/three normal SQLite exclusions and 13 SimpleUI
+files. Map 383, syntax 1,056, translations 43/zero failures. Ten new upstream
+cases and retained editor/menu/Home/cover cases pass on sealed bytes under both
+interpreters. Native system utf8proc supplement and eight-module global lint
+pass. Main/tag CI `40510806422`/`40510806468` and upstream watch are green.
+
+Draft and anonymous public assets match the clean candidate/manifest exactly:
+SHA-256 `01010c252a9abd5842cd0e7e3c539cb9e609fec07358a1196039911f80c30bc0`,
+9,363,469 bytes, 29,300,429 expanded, 1,999 inventory plus manifest/all 2,000
+API 1 slots. No runtime paths added/removed; bootstrap/assets/fonts/map unchanged.
+All 69 outgoing blobs exclude held artwork; Gitleaks scans 14 non-merge commits
+without leaks. Local native OTA from actual Beta 5/9/13 and public live-TLS
+upgrade/restart/rollback/external snapshot from Beta 9/13 pass. Beta 13 remains
+immutable. Evidence: `test-results/beta14-20261027/`. Follow-up docs do not rebuild
+or replace public bytes. No physical reader touched; device acceptance stays open.
+
+Earlier LOCAL library/chip editor source `5810c567` passes complete sequential
 Lua/LuaJIT gates: 119 Python/four unchanged source-cache skips, all 77 root Lua
 files, 483 Bookshelf suites/zero failures/three normal SQLite exclusions and 13
 SimpleUI files. Module map 383; syntax 1,055; translations 43/zero failures.
@@ -406,7 +431,7 @@ panel/Android-cover regressions pass on the sealed bytes under both interpreters
 No new skip/failure exception. Evidence:
 `test-results/library-chip-settings-20261027/`.
 
-Latest development-only ZIP SHA-256
+Earlier development-only ZIP SHA-256
 `e41141216342ed6d9710a9636c1313630e0c06d2cc997a2fdffe454c6b4250ee`,
 9,329,310 bytes, expanded 29,229,702. Every manifest file matches clean committed
 source `5810c567`; exactly the same 1,999 paths plus manifest/all 2,000 API 1
@@ -417,7 +442,8 @@ The previous reader-menu development ZIP is retained in its evidence directory.
 Follow-up verification docs do not rebuild the ZIP. No push, tag, release, OTA,
 CI or installed reader change; physical bilingual/Boox/Bigme checks remain open.
 
-Earlier local native-reader-menu candidate `1f2bb837` is verified, not pushed/released.
+Earlier local native-reader-menu candidate `1f2bb837` was verified locally;
+its behavior is now included in Beta 14.
 Complete final sequential Lua/LuaJIT suites pass 119 Python/four unchanged skips,
 77 root Lua files, 483 Bookshelf suites/zero failures/three normal SQLite skips
 and 13 SimpleUI files. Module map 383; syntax 1,055; translations 43/zero failures.
@@ -579,7 +605,7 @@ e-ink rendering, device lifecycle, performance or update recovery.
 
 ## Known gaps and next milestones
 
-The published Beta 13 runtime contains 1,999 inventoried files plus its manifest:
+The published Beta 14 runtime contains 1,999 inventoried files plus its manifest:
 all 2,000 installed OTA API 1 file slots are used. The settings redesign itself
 adds no runtime path; its release note uses Beta 12's final free slot. A reviewed
 compatibility plan is required before adding runtime assets/modules/release

@@ -2,6 +2,26 @@
 
 ## Automated
 
+2026-10-27 public Beta 14 at exact candidate/tag `575fdb7a`, 13:22:20 UTC:
+complete sequential Lua/LuaJIT and main/tag CI `40510806422`/`40510806468` pass
+119 Python/four unchanged source-cache skips, 78 root Lua files, 483 Bookshelf
+suites/zero failures/three normal SQLite exclusions and 13 SimpleUI files.
+Map 383; syntax 1,056; translations 43/zero failures. Ten new upstream cases and
+retained editor/reader-menu/Home/cover/navigation regressions pass on sealed
+bytes. Eight changed modules pass undeclared-global lint. Official utf8proc
+wrapper/system ABI supplement passes without util.stringLower (not an exact
+reader-library build). No new exclusions. Physical device acceptance stays open.
+
+Exact source/manifest/draft/public audits pass, with no new/removed runtime paths,
+unchanged bootstrap/assets/fonts/map and no destructive cache migration. ZIP
+SHA-256 `01010c252a9abd5842cd0e7e3c539cb9e609fec07358a1196039911f80c30bc0`,
+9,363,469 bytes/29,300,429 expanded; 1,999 inventory plus manifest/all 2,000 API 1
+slots. All 69 outgoing blobs exclude held artwork; 14 non-merge commits pass
+Gitleaks. Actual Beta 5/9/13 native local installers and Beta 9/13 public-byte
+live-TLS upgrades pass discovery, extraction, activation/restart/code rollback,
+truncated recovery and external snapshot/restart/rollback. Previous assets remain
+immutable. Evidence: `test-results/beta14-20261027/`; follow-up docs do not rebuild.
+
 2026-10-27 LOCAL library/chip editor refinement, not pushed/released:
 `test_library_settings` now has 18 cases under Lua/LuaJIT, including the real
 Bookshelf menu host with a stub native widget. It checks separate profile/chip

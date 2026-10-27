@@ -4359,6 +4359,55 @@ settings, links and reading data. Physical Boox/Bigme bilingual editor/menu,
 reader-profile, covers, rotation/sleep and external integration acceptance is
 outstanding; no measured speed or device-crash claim. Final results follow.
 
+### Beta 14 publication and final verification
+
+Exact candidate/tag `575fdb7aead98f94de593e35ecf27772363ebb41` fast-forwards and
+atomically pushes main/tag after all local gates. Public prerelease
+`v0.1.0-beta.14` published 2026-10-27 13:22:20 UTC after exact draft audit and
+green main/tag CI `40510806422`/`40510806468`. Both check jobs run complete suites,
+translations, packaging and native OTA. Only runner/Node migration warnings.
+Upstream watch `40510806263` passes and reports zero missing commits. SimpleUI
+3.0.1 appeared at 13:12:29 UTC during verification: read-only ZIP comparison finds
+every supplied source/runtime byte equal to reviewed e5cd6dcb, with only two extra
+.DS_Store files. No release-only code or new ZIP-import exception is needed.
+
+Complete sequential Lua/LuaJIT gates pass 119 Python/four unchanged external-source
+skips, all 78 root Lua files, 483 Bookshelf suites/zero failures/three normal
+SQLite exclusions and 13 SimpleUI files. Map 383; syntax 1,056; translation
+validation 43/zero failures; settings vocabulary 332. All ten new upstream cases
+and retained reader-menu/editor/settings/Home/panel/navigation/Android-cover
+regressions pass on sealed bytes under both interpreters. Eight changed modules
+pass undeclared-global lint. The official utf8proc wrapper with native system
+casefold ABI passes a real Unicode supplement without util.stringLower; it is
+not an exact reader-library build or device test. No new skip/failure allowance.
+
+Every packaged file/hash/size equals clean candidate source and manifest. No
+runtime path added/removed; notes use existing docs/OTA.md and the GitHub body.
+Same 1,999 inventory plus manifest/all 2,000 installed API 1 slots, 2,065 entries.
+Bootstrap/entry/assets/fonts/map and Bookshelf pin stay unchanged. SimpleUI pin
+alone advances; original provenance retained. ZIP SHA-256
+`01010c252a9abd5842cd0e7e3c539cb9e609fec07358a1196039911f80c30bc0`,
+9,363,469 bytes, expanded 29,300,429. All 69 outgoing blobs exclude held artwork;
+Gitleaks scans 14 outgoing non-merge commits with no leaks. No unrelated ref is
+pushed and no earlier tag/asset is replaced.
+
+Fresh GitHub digests verify actual immutable Beta 5/9/13 starting ZIPs. Their
+native Linux installers pass local offer/extraction/full-inventory SHA, missing
+module rejection, activation/restart/code rollback/truncated recovery and full
+external snapshot/restart/persistent rollback. Exact draft and anonymously
+downloaded public ZIP/checksum/API asset digests match the local build. Live
+public-byte TLS discovery/download and all six native phases pass from Beta 9
+and Beta 13. The first anonymous tag request during publication returned 404;
+fresh verification and actual updater discovery succeed. Beta 13 metadata/assets
+remain unchanged. Evidence: `test-results/beta14-20261027/`.
+
+Follow-up verification docs do not rebuild/replace public bytes. Task-owned
+Docker is stopped and Desktop returned to its initially stopped state. No reader
+installation, settings, progress, artwork, links or external sync owner changes.
+Physical Boox/Bigme bilingual editor/menu, long paths/paging/touch/Back, reader
+profiles, covers, rotation/sleep and server-backed BookOrbit/MAL/Hardcover checks
+remain open. No measured speed or native-crash acceptance claim.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
