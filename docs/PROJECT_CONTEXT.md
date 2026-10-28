@@ -31,7 +31,12 @@ and correct this file in the same change.
   interrupted cleanup to resume. The unsafe prepare-time bulk slot deletion is
   removed. Stable bootstrap/API/2,000-file limit, VERSION Beta 15, source pins,
   settings/progress/cache/artwork and external integrations remain unchanged.
-  No push/release is authorized. Full verification is recorded in MERGE_LOG.
+  No push/release is authorized. Candidate `ff972412` passes complete interpreter,
+  translation/package/source-byte and native older-installer/cleanup/resume gates.
+  Fifteen collector and four new updater cases also pass on the sealed bytes;
+  the largest in-memory candidate has all 1,999 API-1 inventory entries. Exact
+  results are in MERGE_LOG. Follow-up test/verification notes do not rebuild the
+  candidate ZIP; physical Boox/Bigme storage/startup acceptance remains open.
 
 - User approves the first size-reduction proposal only: omit developer source
   locations (`#:` comments) from the 43 component PO catalogs during packaging,

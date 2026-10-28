@@ -4,18 +4,34 @@
 
 Local October 28 storage cleanup: `test_update_storage.lua` exercises the real
 collector/validator/bootstrap reads and Lua syntax checks on a confined in-memory
-filesystem, without touching a reader. Fourteen cases cover current/rollback/
+filesystem, without touching a reader. Fifteen cases cover current/rollback/
 factory and user-data preservation, full retained-package verification, strict
 older-version filtering, one-snapshot budget, pending/stale/recovered/unconfirmed
 startup, links/unknown/modified/missing files, manifest/bootstrap failures,
 interrupted quarantine/resume, empty final quarantine, changed selection and
-rename failures. Preparation must preserve arbitrary hash-named user directories.
+rename failures and a full 1,999-file API-1 inventory. Preparation must preserve
+arbitrary hash-named user directories.
 Four added updater cases check health/deferred-worker ordering, idempotence,
 failed startup, cleanup failure/cancellation, following external/daily checks and
 a stale rollback confirmation while busy. `smoke-ota.py`/`.lua` add actual-file,
 native SHA/libarchive cleanup plus interrupted-delete restart/resume and retained
 rollback/data checks after the ordinary older-installer scenarios. Full results
 are recorded in `MERGE_LOG.md`; this is not device or publication acceptance.
+
+Candidate `ff972412`: complete sequential Lua/LuaJIT runs pass 122 Python/four
+unchanged source-cache skips, 81 root Lua files, 487 Bookshelf suites/zero
+failures/three normal SQLite exclusions and 13 SimpleUI files. Map 383; syntax
+1,063; translations 43/zero failures. Final targeted/sealed reruns include all
+15 collector and 12 total updater cases, plus bootstrap/OTA/external/menu/HTTP
+regressions. Actual public Beta 14's older installer accepts the full local ZIP;
+native extraction/hash/activation/rollback/external-snapshot and real-file
+collector interruption/reload/resume/unknown-and-modified-data preservation pass.
+For this supplemental macOS run the optional `ORBITUI_TEST_NATIVE_FS` adapter
+uses locally compiled POSIX lstat/mkdir/rmdir/opendir/readdir, avoiding thousands
+of shell processes; the normal smoke harness remains compiler-free. The obsolete
+native fixture is a small synthetic complete manifest, not a whole reader install.
+The full 1,999-file deletion is exercised in memory. Evidence:
+`test-results/update-storage-20261028/`. No new failure waiver/device claim.
 
 Local October 28 package-size work: `test_release_package.py` checks narrow PO
 source-reference omission (including CRLF/UTF-8/indented comments, literal `#:`

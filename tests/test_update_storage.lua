@@ -352,6 +352,20 @@ H.test("normal update preparation no longer bulk-deletes arbitrary hex-named dir
     assert(nodes[Boot.path(c.root, obsolete)] and nodes[Boot.path(c.root, plan.slot)])
     H.eq(Boot.state(c.root).current, current)
 end)
+H.test("a full API-1 1999-file runtime is collected without touching retained packages", function()
+    local c, manifest = fixture()
+    local target = Boot.path(c.root, obsolete)
+    for i = #manifest.files + 1, 1999 do
+        local path, data = string.format("assets/icons/entry-%04d.svg", i), "unchanged stock asset " .. i
+        write(target .. "/" .. path, data)
+        manifest.files[#manifest.files + 1] = { path = path, size = #data, sha256 = digest(data) }
+    end
+    local active, rollback = snapshot(c.runtime), snapshot(Boot.path(c.root, previous))
+    local result = OTA.cleanup(c)
+    H.eq(result.removed, 1); assert(result.bytes > 40000)
+    H.eq(nodes[target], nil); H.eq(nodes[gc(c)], nil)
+    H.eq(snapshot(c.runtime), active); H.eq(snapshot(Boot.path(c.root, previous)), rollback)
+end)
 
 io.open, loadfile = original_open, original_loadfile
 os.remove, os.rename = original_remove, original_rename

@@ -4705,7 +4705,7 @@ Failure/cancellation never fails startup or changes activation/recovery markers;
 external/daily checks follow. Actual freed bytes are logged, not inferred from
 ZIP size. Factory/current/rollback duplication intentionally remains.
 
-Fourteen collector cases and four new updater-order/guard cases pass under Lua
+Fifteen collector cases and four new updater-order/guard cases pass under Lua
 and LuaJIT. Collector tests use actual production validation and Lua parsing on
 an in-memory filesystem; no candidate Lua is executed and no user path is
 touched. The native full-package smoke additionally covers real-file interrupted
@@ -4713,6 +4713,54 @@ cleanup and resume after reloading bootstrap/collector state. Complete final
 test/package/source-integrity/native results follow below. Physical Boox/Bigme
 startup responsiveness, cancellation/power-loss and storage behavior remain
 unverified. No RAM/speed benefit or actual device-space saving is claimed.
+
+### Final local verification
+
+Clean implementation/package candidate:
+`ff972412078fa798bea4e25e4c1a8ca873394af4`. Complete sequential Lua/LuaJIT
+`scripts/test.sh` runs pass 122 Python tests/four unchanged optional source-pixel
+skips, 81 root Lua files, 487 Bookshelf suites/zero failures/three normal SQLite
+exclusions and all 13 SimpleUI files. Map 383, syntax 1,063; all 43 catalogs
+validate without exceptions. Final targeted and sealed-byte runs cover the
+collector's last interruption guard and the added full 1,999-file inventory case
+(15 collector cases), all 12 updater cases, bootstrap/OTA/external-update/menu/
+HTTP suites, under both interpreters. No new skip or failure waiver.
+
+The full sealed package passes inventory/asset/license/recovery checks and an
+independent Git-archive/source audit applying only the approved PO projection.
+Every manifest hash/size and ZIP checksum agrees, with the same 1,999 inventory
+files plus manifest/all 2,000 API-1 paths, 2,066 ZIP entries. Stable bootstrap,
+module map, VERSION, pins, component sources and artwork/fonts/assets are
+byte-identical to `58b944b7`. Native PO loaders still agree on 54,517 singular/
+fallback and 327,102 plural comparisons per interpreter, across all 43 catalogs.
+Local test ZIP: 8,763,124 bytes; expanded contents 25,577,967 bytes; SHA-256
+`d4ef0c875a7a715a7ac593169412f2edb078526322fba3f6a139bd2e8b0cdc65`.
+VERSION stays Beta 15 only for local testing; never replace its public asset.
+
+Actual public Beta 14's installer passes local full-package native libarchive/
+SHA discovery, extraction, missing-module rejection, activation/restart/code
+rollback, truncated recovery and external snapshot/restart/persistent rollback.
+The new sealed collector additionally operates on real files: interruption after
+the first obsolete unlink, fresh bootstrap/collector state, manifest-based resume,
+retained active/rollback records, and unknown/modified/user-data preservation.
+The obsolete fixture is a small synthetic complete API-1 runtime; full 1,999-file
+collection is separately covered in memory. The optional test-only filesystem
+hook uses a locally compiled POSIX C shim on macOS (native lstat/mkdir/rmdir/
+opendir/readdir, strict compiler warnings), rather than the default shell-backed
+scaffolding; no dependency or helper is added to the reader package. Existing
+native hash/archive sources remain pinned. This is not a device, native KOReader
+UI/power-cut or live newly published-byte test. Public Beta 14/15 cached ZIP
+digests are rechecked unchanged. No Docker/app state is changed by these tests.
+
+Evidence: `test-results/update-storage-20261028/` (complete logs, collector and
+updater targeted logs, `package.log`, independent `audit.log`, `sealed-final.log`,
+native older-install/cleanup logs and the native filesystem test source).
+Follow-up verification/test-only refinements do not rebuild the tested candidate
+ZIP. No actual reader, settings, progress, links, cache, artwork, external writer
+or production update channel changes. No user files have been deleted; only
+generated obsolete-runtime test fixtures were removed. Work remains local,
+without push/tag/release. Physical startup responsiveness/storage/recovery on
+Boox/Bigme remains outstanding; this does not certify real device-space savings.
 
 ## Template for the next approved merge
 
