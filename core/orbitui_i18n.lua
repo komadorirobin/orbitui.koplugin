@@ -1,5 +1,7 @@
 -- OrbitUI-owned strings, independent of the two upstream translation catalogs.
 local sv = {
+    ["Flash on every page turn"] = "Blinka vid varje sidbyte",
+    ["Use a flashing refresh on every page turn of the home screen, with or without book covers, to reduce ghosting."] = "Använd en blinkande uppdatering vid varje sidbyte på Hem (SimpleUI), med eller utan bokomslag, för att minska kvarstående bildspår.",
     ["About label switches"] = "Om etikettreglagen",
     ["Enabling a label also enables the labels line. Other saved category choices are kept. This changes only the book panel, not book metadata or shelf filters."] = "När du aktiverar en etikett aktiveras också etikettraden. Övriga sparade kategorival behålls. Bara bokpanelen ändras, inte bokens metadata eller hyllornas filter.",
     ["%1 (missing)"] = "%1 (saknas)",

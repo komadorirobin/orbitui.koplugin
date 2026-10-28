@@ -248,10 +248,14 @@ function Color.paintBorder(bb, x, y, w, h, bw, c, r, anti_alias)
         local ok_d, Device = pcall(require, "device")
         local suppress = ok_d and Device.isAndroid and Device:isAndroid()
             and bb.getInverse and bb:getInverse() == 1
-        if suppress then bb:setInverse(0) end
-        bb:paintBorderRGB32(x, y, w, h, bw, c, r, anti_alias)
-        if suppress then bb:setInverse(1) end
-        return
+        if suppress then
+            bb:setInverse(0)
+            local ok, err = pcall(bb.paintBorderRGB32, bb, x, y, w, h, bw, c, r, anti_alias)
+            bb:setInverse(1)
+            if not ok then error(err, 0) end
+            return
+        end
+        return bb:paintBorderRGB32(x, y, w, h, bw, c, r, anti_alias)
     end
     return bb:paintBorder(x, y, w, h, bw, c, r, anti_alias)
 end

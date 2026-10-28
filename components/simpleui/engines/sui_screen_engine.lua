@@ -3857,7 +3857,10 @@ function ScreenWidget:_scheduleCoverPoll()
                     local wrapper = self_ref._wrapper_pool and self_ref._wrapper_pool[mod_id]
                     local dimen   = (wrapper and wrapper.dimen) or (slot.widget and slot.widget.dimen)
                     -- Repaint only when a cover was actually patched in.
-                    if dimen and changed then
+                    -- Legacy/external modules only return all_done. Treat an
+                    -- absent change flag conservatively; explicit false is the
+                    -- new native contract for an unchanged poll.
+                    if dimen and changed ~= false then
                         self_ref.dithered = true
                         UIManager:setDirty(self_ref, function()
                             return "ui", dimen, true

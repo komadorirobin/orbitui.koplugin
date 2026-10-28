@@ -167,6 +167,15 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+October 28: native cover polling may report done/changed to avoid redundant
+refreshes, but a legacy/external callback returning only done must still repaint.
+Resolved native slots are not decoded again; failed ImageWidget construction
+stays pending. Weak shared hook ownership must not retain dropped reader UIs.
+Deferred file-manager listing materializes when exposed; temporary per-instance
+refresh overrides restore exactly even after errors. These optimizations do not
+supersede C02 reader/profile/navigation-generation guards or Android cover safety.
+Coverage: test_upstream_20261028 and retained Home/reader/navigation suites.
+
 October 27 SimpleUI import: catch recognized metadata-cache faults and retain
 last known text, with one warning per failure episode and a real read on every
 later attempt. Never automatically delete the DB/WAL/SHM or reset shared live
@@ -957,6 +966,14 @@ Tests: `tests/test_backup.lua`, `test_runtime.lua`, `scripts/check-package.lua`.
 Recovery procedure: `MIGRATION.md`.
 
 ## C09: Reviewed imports and explicit releases
+
+October 28 merge-only maintenance preserves VERSION Beta 14 and all public
+tag/asset bytes. API 1 still allows at most 2,000 installed files including the
+manifest. New Hazel originals remain tracked unchanged; sealed packages embed
+their exact PNG bytes in an existing critter resource rather than add runtime
+paths, remove old assets or raise old installer limits. File-based/user overrides
+and existing cache/pixel/alpha ownership remain unchanged. The package audit must
+check old path-set equality, embedded source-byte parity and unchanged bootstrap.
 
 The monitor can fetch refs and update its one status issue only. It cannot merge,
 open merge PRs, advance integrated pins, tag, release or publish OTA. Publishing

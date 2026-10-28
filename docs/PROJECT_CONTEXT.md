@@ -20,7 +20,23 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-10-27
+## Snapshot: 2026-10-28
+
+- User-requested upstream merge (no release) starts from clean `19cec4de` on
+  `maintenance/upstream-20261028`. Exact unsquashed imports are Bookshelf
+  `d07905ba932e09044827aadf480c188a5d324b96` (6.0.4, import `695035f1`) and
+  SimpleUI `22d5a3d2dd7be4651e718eb49027d82f68b3ace7` (3.0.1 follow-up,
+  import `048174b2`). Retain reader-menu return, profile/chip settings, Android
+  cover safety, metadata fault containment and Unicode compatibility.
+  Hazel's twelve new upstream PNGs stay byte-identical in Git and are losslessly
+  embedded in the existing critter assets.lua for sealed packages: no old path,
+  image, license or bootstrap is removed; installed API 1 limits stay unchanged.
+  Native/data PNG rendering retains pixel scaling, alpha and bounded raster-cache
+  ownership. Source/user files override the embedded fallback. Eleven targeted
+  regressions cover this, legacy cover-poll callbacks, weak hook ownership,
+  error-safe Android inverse state and deferred chooser callback restoration.
+  Full verification and audited push are recorded in the latest MERGE_LOG entry.
+  VERSION remains Beta 14; no new tag/release/OTA is authorized by this request.
 
 - User explicitly requested upstream merge, push and publication. Beta 14 is
   public at exact candidate/tag `575fdb7a`, published 2026-10-27 13:22:20 UTC.
@@ -107,8 +123,8 @@ and correct this file in the same change.
   `v0.1.0-beta.11` at `03106015`,
   `v0.1.0-beta.10` at `0a2ea22b`, `v0.1.0-beta.9` at `a4bb9acb` and all
   earlier tags/assets are unchanged.
-- Public branch: `main`; the latest merge/push/release request produced Beta 14,
-  followed only by verification documentation. The settings request produced
+- Public branch: `main`; October 28 maintenance is merge/push only, not a new
+  release. The preceding merge/push/release request produced Beta 14. The settings request produced
   Beta 13. The preceding cover
   request produced Beta 12. The earlier updater request
   produced Beta 11. The previous

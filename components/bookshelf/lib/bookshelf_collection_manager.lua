@@ -39,8 +39,6 @@ local Screen          = Device.screen
 
 local _ = require("lib/bookshelf_i18n").gettext
 
-local _ = require("lib/bookshelf_i18n").gettext
-
 local CollectionManager = {}
 
 -- "To Be Read" used to be protected when bookshelf had a dedicated

@@ -4408,6 +4408,54 @@ Physical Boox/Bigme bilingual editor/menu, long paths/paging/touch/Back, reader
 profiles, covers, rotation/sleep and server-backed BookOrbit/MAL/Hardcover checks
 remain open. No measured speed or native-crash acceptance claim.
 
+## 2026-10-28 — Reviewed Bookshelf/SimpleUI maintenance (no release)
+
+User requests upstream merge; standing authorization includes audited push to
+origin/main, not a new version/tag/release/OTA. Start clean at `19cec4de` on
+`maintenance/upstream-20261028`. Fetch tracked branches and review exact net
+diffs/commit lists. Bookshelf advances c37580a1 to
+`d07905ba932e09044827aadf480c188a5d324b96` (6.0.4, seven commits/22 paths),
+SimpleUI e5cd6dcb to `22d5a3d2dd7be4651e718eb49027d82f68b3ace7`
+(3.0.1 follow-up, sixteen commits/36 paths). No dependency/license change.
+Unsquashed exact-SHA subtree imports: `695035f1` and `048174b2`; source provenance
+is untouched and only the two reviewed upstream_commit fields advance.
+
+Bookshelf colour fill/border fixes cover picked colours on colour displays;
+collection manager now uses shared searchable LibraryModal; modal/editor closes
+bound refresh regions; sleep capture happens before timer-driven anti-ghosting.
+Conflicts: retain shared renderText/custom badge API with upstream colourBorder,
+and retain owner-safe underlay wrapper removal with eager sleep capture.
+SimpleUI reduces redundant cover repainting, dithers Home wallpaper, adds optional
+page-turn flash, repairs hidden pagination arrows, uses two-column action sheets,
+weakens old plugin hook owners and defers file listing until exposed on Home
+return. Conflicts combine flash/full-repaint precedence, replace old lazy-refresh
+marker with upstream pending-listing while retaining navigation generation, and
+accept the corrected TBR comment. Existing native reader fast-return owner and
+exact source-profile/prewarm matching survive.
+
+C01-C11 are preserved; especially C02/C03/C04/C06/C07/C08/C09/C10. Compatibility
+adaptations retain one-result external cover poll redraws, retry failed group
+image widgets, restore chooser instance callbacks and Android inverse state on
+errors. New flash label/help is SV/EN and opt-in. Retain Unicode old-reader
+fallback, non-destructive cache-fault retry, settings editor, covers safe mode,
+bounded extraction and all external sync owners. No settings/data/cache resets.
+
+API 1 has zero spare paths. Twelve new Hazel PNGs remain byte-identical in Git,
+but sealed packages losslessly embed them in existing assets.lua; only their new
+separate PNG paths are export-ignored. Native renderImageData (confirmed present
+in official minimum v2025.08) retains file rendering for every existing/custom
+image, pixel scaling/alpha/night-mode and bounded raster ownership. User/source
+files override the embedded fallback. No old runtime resource, license, artwork,
+font or bootstrap is removed. No module path change/map regeneration needed.
+Eleven new regressions exercise these boundaries; generator checks all twelve
+PNGs. VERSION remains 0.1.0-beta.14; public Beta 14 ZIP is never replaced.
+
+Verification results follow after full sequential Lua/LuaJIT, translations,
+sealed package/native OTA and outgoing history/artwork/secret audits. Physical
+Boox/Bigme colour, ghosting, wallpaper, sleep/rotation, repeated reader returns,
+touch/Back and server-backed integrations remain outstanding; headless testing
+does not demonstrate speed, native document-engine safety or device acceptance.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

@@ -108,6 +108,31 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+October 28 compatibility seams: Bookshelf 6.0.4 colour-safe count borders go in
+the existing shared renderText path too (including external metadata badges).
+Sleep-screen eager capture retains our owner-safe wrapper teardown. Android
+inverse state is restored even if a picked-colour border painter raises.
+SimpleUI 22d5a3d2's weak shared hook owners and lazy file chooser are retained;
+temporary chooser refresh overrides restore prior instance callbacks on success
+and error. Our reader/profile/navigation-generation guards remain authoritative.
+Combine optional page-turn flash with the existing one-shot full repaint, not
+instead of it. New native cover polls return done/changed; old/external callbacks
+without the second return must still repaint. Failed group ImageWidget creation
+remains pending. New labels/help include SV/EN without changing saved values.
+
+API 1 already has 1,999 inventoried files plus manifest: never merely raise its
+limits or discard old assets. The twelve new upstream Hazel PNGs are kept
+unchanged in Git, export-ignored only as separate runtime paths, and losslessly
+hex-embedded in existing modules/critter/assets.lua by scripts/embed-critter.py.
+The full gate checks all twelve source-byte matches. Sprite uses the native
+renderImageData API (present in minimum v2025.08) only for exact embedded URIs;
+file-based critters/decorations retain renderImageFile. Real bundled files and
+custom user files win over the fallback. No file extraction, settings migration,
+default-critter change, native cache bypass or new module path is introduced.
+The sealed manifest must preserve every prior runtime path and all old artwork.
+This is package representation, not permission for broader asset deletion.
+Coverage: tests/test_upstream_20261028.lua plus retained full/native suites.
+
 Future imports are explicit maintenance tasks, not a startup/build side effect.
 Fetch the requested upstream revision, inspect it, and merge it into the correct
 subtree on a dedicated work branch. Record the imported revision and relevant

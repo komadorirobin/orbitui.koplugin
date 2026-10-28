@@ -528,10 +528,14 @@ function M.patchFileManagerClass(plugin)
                 if _lazy_listing_pending and fc_self.name == "filemanager" then
                     _lazy_listing_pending = false
                     fc_self._sui_lazy_listing = true
+                    local own_refresh = rawget(fc_self, "refreshPath")
                     fc_self.refreshPath = function() end
                     local ok, err = pcall(orig_fc_init, fc_self)
-                    fc_self.refreshPath = nil
-                    if not ok then error(err, 0) end
+                    fc_self.refreshPath = own_refresh
+                    if not ok then
+                        fc_self._sui_lazy_listing = nil
+                        error(err, 0)
+                    end
                     return
                 end
                 orig_fc_init(fc_self)

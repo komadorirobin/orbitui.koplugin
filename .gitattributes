@@ -15,3 +15,6 @@
 /components/*/.gitignore export-ignore
 /components/*/.gitattributes export-ignore
 *.pot export-ignore
+# Losslessly embedded by scripts/embed-critter.py into the existing assets.lua;
+# keep upstream originals in Git without exceeding old API-1 OTA file limits.
+/components/simpleui/modules/critter/assets/hazel/*.png export-ignore

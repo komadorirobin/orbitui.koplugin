@@ -559,6 +559,8 @@ function GroupCell.updateCovers(widget, _ctx)
                     img,
                 }
                 slot.done, changed = true, true
+            else
+                all_done = false -- keep a failed widget construction retryable
             end
         elseif not slot.done and not Config.isCoverMissing(slot.fp) then
             all_done = false

@@ -22,6 +22,7 @@ local lfs         = require("libs/libkoreader-lfs")
 local logger      = require("logger")
 
 local RasterCache = require("infra/sui_raster_cache")
+local Assets = require("modules/critter/assets")
 
 local Screen = Device.screen
 
@@ -33,6 +34,12 @@ local BLIT = {
     [false] = { [false] = "pmulalphablitFrom", [true] = "ditherpmulalphablitFrom" },
     [true]  = { [false] = "alphablitFrom",     [true] = "ditheralphablitFrom" },
 }
+
+local function renderPNG(path, width, height)
+    local data = Assets.imageData(path)
+    if data then return RenderImage:renderImageData(data, #data, false, width, height) end
+    return RenderImage:renderImageFile(path, false, width, height)
+end
 
 -- Decodes `path` for a box of max_w x max_h. Returns the bitmap, whether its
 -- alpha is straight (SVG) rather than premultiplied (PNG), and the pixel
@@ -48,7 +55,7 @@ local function decode(path, max_w, max_h, max_pixel)
         return bb, straight
     end
 
-    local bb = RenderImage:renderImageFile(path, false)
+    local bb = renderPNG(path)
     if not bb then return nil end
     local w, h = bb:getWidth(), bb:getHeight()
     if math.max(w, h) <= PIXEL_ART_MAX then
@@ -63,7 +70,7 @@ local function decode(path, max_w, max_h, max_pixel)
         end
     end
     bb:free()
-    return RenderImage:renderImageFile(path, false, max_w, max_h)
+    return renderPNG(path, max_w, max_h)
 end
 
 -- Number of fully transparent rows at the bottom of `bb`, 0 for a bitmap
