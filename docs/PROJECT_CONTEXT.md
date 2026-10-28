@@ -22,6 +22,15 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-28
 
+- User explicitly approves push/publication of the accumulated performance and
+  size/storage work. Release preparation is on
+  `release/performance-beta16-20261028` from clean `fa17565c`, with public main
+  still `af238167`. VERSION advances to `0.1.0-beta.16`; Bootstrap/API 1, path
+  inventory, original upstream pins and assets remain unchanged. Release notes
+  use existing OTA/README files, not a new installed path. Beta 15 and earlier
+  tags/assets must remain immutable. Final candidate/checks/publication evidence
+  follow in MERGE_LOG; no physical-device performance acceptance is implied.
+
 - User approves the comparative UI/performance recommendations. Local work on
   `feature/performance-20261028` from `66b6f1c1` retains the unpublished PO/OTA
   storage work. Dashboard demands now follow each screen's visible cards and

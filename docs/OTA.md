@@ -7,7 +7,62 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
-## Local update-storage cleanup (not yet published)
+## OrbitUI 0.1.0-beta.16
+
+Beta 16 brings the reviewed local performance and size/storage work together.
+There is no new upstream import: Bookshelf remains at `d07905ba` (6.0.4) and
+SimpleUI at `22d5a3d2` (3.0.1 follow-up), as in Beta 15.
+
+- **Reading dashboard:** hidden cards stop requesting unnecessary statistics,
+  book counts and recent-book candidates. Visible local goals and native Recent
+  sources retain their needs; other enabled modules still request their data.
+- **Optional performance profiles:** open **OrbitUI settings > System &
+  maintenance > Speed, memory & diagnostics**. **Keep existing behaviour** is
+  the default. **Adaptive memory** coordinates retained cover-cache limits when
+  available memory is low or a reader is visible, without rewriting saved
+  limits or freeing images borrowed by the active shelf. **Responsive** also
+  disables Bookshelf wipe animations and speculative next-page/chip preload;
+  cold page loads can take longer. Android safe mode, visible cover extraction,
+  image quality and prepared fast reader return are preserved.
+- **Local diagnostics:** opt in to **Measure performance**, then view/copy a
+  report. Only fixed operation labels and numeric timing/memory/cache/queue data
+  are included. No book paths/titles, accounts, raw errors, automatic file or
+  upload. Reports measure synchronous calls, not panel/deferred end-to-end
+  latency, and Lua heap is not total RAM. Device speed/RAM gains are not claimed.
+- **Quick guide:** **Home and Bookshelf: quick guide** explains Home (SimpleUI),
+  library profiles, chip sources, the navigation button and fast reader return.
+  The guide and all new settings/help are available in Swedish and English.
+- **Smaller package and safer update storage:** omit only developer source
+  references from translation catalogs, retaining every language/message/license.
+  After healthy startup, at most one verified strictly older unused code runtime
+  may be collected. Factory/current/rollback, pending/newer code and unknown or
+  modified files remain. Details below; no reading/settings/cover/artwork cleanup.
+
+Svenska: Beta 16 gör Läsöversikts databehov beroende av synliga kort och samlar
+de frivilliga lägena **Adaptiv minneshantering** och **Snabbhetsläge** under
+**OrbitUI-inställningar > System och underhåll > Snabbhet, minne och diagnostik**.
+**Behåll befintligt beteende** är fortfarande standard. Snabbhetsläget stänger
+av svepanimationer och spekulativ förladdning; kalla sidladdningar kan därför ta
+längre tid. Androids säkra omslagshantering, bildkvalitet och vår återgång till
+rätt hylla behålls. Slå på **Mät prestanda** för en lokal rapport utan boknamn,
+sökvägar eller konton; inget laddas upp. **Hem och Bookshelf: snabbguide** visar
+hur startskärm, profiler, chip och navigationsknapp hänger ihop.
+
+Paketet blir mindre utan att språk eller resurser tas bort. Gamla, oanvända
+kodkopior kan städas efter en verifierad start, högst en per start. Fabrikskopia,
+aktiv version, återställningsversion och okända/ändrade filer behålls. Böcker,
+inställningar, läsdata, omslagscache och tilläggsbilder rörs inte. Faktisk snabbhet,
+minnespåverkan, skärmrendering och lagringsbeteende på Boox/Bigme återstår att
+kontrollera; detta är fortsatt en förhandsversion.
+
+Update from Beta 15 or earlier supported betas on the preview channel, then
+restart KOReader. Bootstrap/API 1 and the complete installed file set are
+unchanged: 1,999 inventoried files plus manifest, all 2,000 slots. No new fonts,
+image packs or runtime dependencies. Old public releases remain immutable.
+Rollback changes code, not later settings/reading data; earlier code ignores
+the new performance preferences. Keep an independent KOReader data backup.
+
+## Update-storage cleanup (Beta 16 and later)
 
 After confirmed healthy startup a quiet deferred worker may remove one obsolete
 code snapshot, rather than leave it until a later update. It first verifies the
@@ -32,7 +87,7 @@ Cleanup is serialized with update operations, does not change activation records
 and is not required for successful startup. External installation and daily
 checks follow its completion/cancellation. Removal counts/bytes are logged; actual
 savings depend on installed obsolete snapshots. Factory + current + rollback
-copies still take space by design. This local change does not republish Beta 15.
+copies still take space by design. Introduced in Beta 16; Beta 15 is unchanged.
 
 Svenska: Efter bekräftad lyckad start kan en gammal, oanvänd kodversion städas
 bort. Aktiv version och återställningsversion måste först klara en fullständig
@@ -40,24 +95,24 @@ kontroll. Fabrikskopian och de två behållna versionerna lämnas alltid kvar.
 Högst en gammal kopia tas bort per start; ändrade/okända filer och väntande eller
 nyare versioner behålls. Avbruten städning kan fortsätta vid nästa start.
 Inställningar, läsdata, omslagscache och tilläggsbilder rörs inte. Ändringen är
-lokal och ännu inte publicerad; inga filer på din läsplatta har städats av arbetet.
+införs i Beta 16; lagringsbesparingen beror på vilka gamla kodkopior som finns.
 
-## Local packaging optimization (not yet published)
+## Packaging optimization (Beta 16 and later)
 
-Future sealed packages omit only developer source-file/line references (`#:`
+Sealed packages omit only developer source-file/line references (`#:`
 comments) from the 43 component PO catalogs. All languages, message bytes,
 headers, plural rules and copyright/license/translator notices remain. Original
 upstream catalogs in Git are not rewritten. The package manifest and checksum
 are generated after optimization, so older API-1 installers still validate the
 exact shipped bytes. No file paths, bootstrap, limits, settings, caches, artwork
-or retained update versions change. This is local build work, not a replacement
-for public Beta 15 or a new release. Semantic checks compile each original and
+or retained update versions change in this packaging step. Beta 15's existing
+asset is not replaced. Semantic checks compile each original and
 optimized catalog and require byte-identical translation tables.
 
-Svenska: Kommande releasepaket utelämnar bara utvecklarnas fil- och radreferenser
+Svenska: Releasepaketet utelämnar bara utvecklarnas fil- och radreferenser
 i översättningsfilerna. Alla språk, texter, pluralregler och licensuppgifter
 behålls; originalen i Git ändras inte. Kontrollsummor beräknas efter optimeringen.
-Ändringen är lokal och ingår ännu inte i någon publicerad release.
+Optimeringen införs i Beta 16.
 
 ## OrbitUI 0.1.0-beta.15
 
@@ -738,13 +793,12 @@ Symlinks, special files, traversal, hidden paths and case-ambiguous duplicates
 are rejected. Archive extraction copies bytes rather than filesystem metadata.
 
 The factory installation and previous code remain available. Published Beta 15
-and earlier clean obsolete inactive slots during a later update. The local,
-unpublished collector described above instead verifies/removes at most one old
+and earlier clean obsolete inactive slots during a later update. Beta 16's
+collector described above instead verifies/removes at most one old
 snapshot after healthy startup, preserving current/previous/factory and unknown
-data. `.orbitui-work` is disposable download/staging space. Allow roughly
-350 MiB free for the upcoming artwork package's download, staging and one-time artwork
-installation, in addition to existing installed versions. Allow more as future
-packages grow.
+data. `.orbitui-work` is disposable download/staging space. Allow space for the
+ZIP download, extraction, retained code versions and any optional add-on artwork;
+actual requirements depend on the installed versions and selected packs.
 
 ## External updates (Beta 2 and later)
 

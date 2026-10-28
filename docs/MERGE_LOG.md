@@ -4886,3 +4886,17 @@ sealed/source audit, Gitleaks and native OTA log). Verification-only follow-up
 documentation does not rebuild the candidate ZIP. No push, tag, release, public
 asset/OTA change or user-device installation occurred. The optional profiles
 remain opt-in pending the physical acceptance protocol in TESTING.
+## 2026-10-28 — Beta 16 release preparation
+
+The user explicitly requests "Pusha och publicera" after the local performance
+work. `release/performance-beta16-20261028` starts clean at `fa17565c`; fresh
+GitHub/main is `af23816717586674a4ab82f5968cb6f707ffeb35` and Beta 15 is the
+newest public prerelease. Include all six reviewed local performance/PO/storage
+commits, without a new upstream import. VERSION becomes `0.1.0-beta.16`.
+Release notes reuse OTA/README, keeping all installed paths and stable bootstrap.
+Publication is gated on both full interpreters, translations, clean candidate
+package/source/history/artwork/secret audit, native older-installer upgrade/
+rollback, CI, exact draft-download bytes and anonymous published-byte checks.
+Optional profiles remain opt-in; physical device response/memory/display/OTA
+UI acceptance remains open and this release remains a prerelease. No public
+Beta 15 or older asset/tag may be changed. Final evidence follows below.
