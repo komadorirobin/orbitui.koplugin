@@ -4628,8 +4628,55 @@ and after optimization. Regression fixtures retain CRLF/UTF-8, literal `#:` in
 message/context/continuation strings, plural rules, legal and translator text,
 fuzzy/format flags and obsolete entries; only source comments disappear. Path
 scope/idempotence and ZIP/manifest/checksum byte integrity are verified.
-Full local verification and measured sealed-package comparison follow below.
-Physical device acceptance is separate; no speed/RAM improvement is claimed.
+### Local verification and size comparison
+
+Tested, clean committed source/package candidate: `edc2c850389c9df84d2f6644a9fecc78200149c4`.
+Complete sequential `scripts/test.sh` under Lua and LuaJIT passes: 122 Python
+tests/four unchanged external-source pixel-audit skips, all 80 root Lua files,
+487 Bookshelf suites/zero failures/three normal SQLite exclusions and all 13
+SimpleUI files. Module map 383 and syntax pass; all 43 source catalogs validate
+without exceptions. An initial host invocation selected a Python lacking
+Pillow and stopped before Lua; full runs use the established Python 3.12/Pillow
+environment instead. No test exemption or source change masks that environment
+problem.
+
+The sealed ZIP passes module/assets/licenses/recovery inventory checks. An
+independent exact-source audit projects only PO source-reference lines; every
+other file equals the clean committed Git archive, every catalog equals its
+expected projection, and all manifest sizes/hashes plus the ZIP checksum match.
+The same 1,999 inventoried files plus manifest occupy all 2,000 API-1 paths;
+2,066 archive entries remain. All bootstrap bytes, assets/fonts and source pins
+are unchanged. All 43 original/sealed catalogs compile identically. The actual
+component Lua translation loaders additionally agree on 54,517 singular/fallback
+and 327,102 plural comparisons per interpreter under both Lua and LuaJIT,
+without replacing native gettext. This uses headless native-loader execution,
+not physical screen acceptance.
+
+Local optimized package SHA-256:
+`5e1bd3241f944477b9753e8bd21858da4750b69ef8f669ff034a76ca4eba4851`.
+ZIP: 8,756,519 bytes, compared with immutable public Beta 15's 9,380,788
+(624,269 bytes / 6.65% smaller). Expanded contents: 25,554,846 versus 29,340,517
+(3,785,671 bytes / 12.90% smaller, including the added documentation).
+Source-reference removal itself saves exactly 3,794,410 bytes across 43 files.
+The public Beta 15 ZIP retains its original `f2005c95...` digest. Original
+catalogs and all languages remain; no source/runtime loader is rewritten.
+
+Actual public Beta 14's older installer also passes the local full-package
+native libarchive/SHA smoke on macOS: update offer, full inventory extraction/
+hash verification, missing-module rejection, activation/restart/code rollback,
+truncated-download recovery and external runtime snapshot/restart/persistent
+rollback. This uses the existing headless filesystem scaffolding, not a device
+or live published-byte download; no new release exists for live discovery.
+
+Evidence:
+`test-results/slim-translations-20261028/` (full interpreter/translation/package
+logs, independent `audit.py`/`audit.log`, native OTA log). This test ZIP keeps
+VERSION Beta 15 only for local verification; it must never replace the published
+Beta 15 asset. A future release needs explicit approval and a new version/build.
+Follow-up verification documentation does not rebuild this tested candidate.
+No reader installation, settings/progress/cache, retained version or external
+sync owner is changed. Physical device acceptance is separate; no speed/RAM
+improvement is claimed. Work stays local, without push/tag/release.
 
 ## Template for the next approved merge
 

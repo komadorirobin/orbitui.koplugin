@@ -10,8 +10,20 @@ to byte-identical `msgfmt --check --no-hash` output before/after the transform;
 the source files remain unchanged. Sealing tests verify the same path set and
 recomputed ZIP sizes, manifest sizes/hashes and whole-archive checksum. The
 transformed PO bytes, not their larger Git sources, are the source-audit target.
-This local build change does not republish Beta 15; final gates and measured
-size comparison are recorded in `MERGE_LOG.md`.
+The local package at candidate `edc2c850` passes complete sequential Lua/LuaJIT
+gates: 122 Python/four unchanged external-source skips, 80 root Lua files,
+487 Bookshelf suites/zero failures/three normal SQLite exclusions and 13
+SimpleUI files. Translations 43/zero failures; map 383; no new skip/waiver.
+Actual older public Beta 14 installer passes native libarchive/SHA extraction,
+activation/restart/rollback, truncated recovery and external snapshot/recovery
+with the local ZIP on macOS; no device or live publication test is implied.
+Both real component PO loaders compare all 43 catalogs on source versus sealed
+bytes under Lua/LuaJIT: 54,517 singular/fallback and 327,102 plural comparisons
+per interpreter agree. Source/manifest/checksum/path audits pass. Test ZIP is
+8,756,519 bytes / 25,554,846 expanded, retaining all 2,000 installed paths.
+This local build change does not republish Beta 15; exact size comparison and
+older-installer verification are recorded in `MERGE_LOG.md`. Evidence lives in
+`test-results/slim-translations-20261028/`.
 
 2026-10-27 public Beta 14 at exact candidate/tag `575fdb7a`, 13:22:20 UTC:
 complete sequential Lua/LuaJIT and main/tag CI `40510806422`/`40510806468` pass

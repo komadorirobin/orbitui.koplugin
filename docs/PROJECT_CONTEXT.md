@@ -29,7 +29,13 @@ and correct this file in the same change.
   Work is local on `maintenance/slim-translations-20261028`; no component import,
   runtime path/bootstrap/limit change, language-pack split, cache/slot cleanup,
   version bump, push or publication is included. Beta 15 remains the public build.
-  Full verification and exact size comparison are recorded in MERGE_LOG below.
+  Tested package candidate `edc2c850` retains the same 1,999 inventory files plus
+  manifest: 8,756,519 ZIP bytes and 25,554,846 expanded, versus public Beta 15's
+  9,380,788 / 29,340,517 (6.65% / 12.90% smaller). Complete Lua/LuaJIT gates,
+  all-language semantic/native-loader parity and package/source integrity pass;
+  actual Beta 14 native archive/SHA upgrade/rollback/external-snapshot checks
+  also pass on macOS. Exact verification is recorded in MERGE_LOG. Follow-up
+  verification notes do not rebuild/republish the tested candidate ZIP.
 
 - User approves dashboard colour implementation and immediate Beta 15
   publication, including the already-reviewed October 28 upstreams. Work starts
