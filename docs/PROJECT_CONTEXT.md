@@ -36,6 +36,10 @@ and correct this file in the same change.
   regressions cover this, legacy cover-poll callbacks, weak hook ownership,
   error-safe Android inverse state and deferred chooser callback restoration.
   Full verification and audited push are recorded in the latest MERGE_LOG entry.
+  Candidate `eb4f4347` is pushed to main; GitHub checks `40684034831` (both
+  interpreters, package/native OTA) and watch `40684034924` are green. Watch
+  reports zero missing commits for both components. Local sealed-byte/source/
+  artwork/history/secret audits and native older-installer rollback pass.
   VERSION remains Beta 14; no new tag/release/OTA is authorized by this request.
 
 - User explicitly requested upstream merge, push and publication. Beta 14 is

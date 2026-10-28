@@ -4480,6 +4480,37 @@ Boox/Bigme colour, ghosting, wallpaper, sleep/rotation, repeated reader returns,
 touch/Back and server-backed integrations remain outstanding; headless testing
 does not demonstrate speed, native document-engine safety or device acceptance.
 
+### October 28 final package and push verification
+
+Exact tested source candidate `eb4f4347e82c874e31293dc0328c8b4f55862f52`
+fast-forwards/pushes only main after the complete local gates. GitHub checks
+`40684034831` pass both Lua/LuaJIT jobs, translations, packaging and native OTA;
+watch `40684034924` passes and its fresh dashboard reports zero missing commits
+for both reviewed targets. No PR, tag, release or OTA publication is created.
+
+Clean-candidate development ZIP SHA-256
+`55350876950d8653c174f70b71267a73d24e6a601063feab092f3e7f70dcb43e`,
+9,374,227 bytes; expanded 29,321,004; 2,066 entries, 1,999 inventory files plus
+manifest. Every file/hash/size equals committed source and manifest. Prior
+runtime file set, bootstrap/API/VERSION/font/old-artwork/module-map bytes stay
+unchanged. All twelve embedded PNGs exactly match reviewed upstream, decode as
+32x40 RGBA and pass PNG verification. Corrupted embedded-image ZIPs fail the
+whole checker under Lua and LuaJIT. All 125 outgoing blobs exclude held artwork;
+Gitleaks scans 22 non-merge commits with no leaks. No new exception/skip.
+
+Final sealed regressions (both interpreters) and all native Linux OTA phases
+also pass on these exact bytes. The actual immutable Beta 13 starting installer
+has the same OTA implementation as Beta 14, verified byte-for-byte. VERSION is
+unchanged, so this development ZIP is never offered/uploaded over public Beta 14.
+Public Beta 14 tag stays `575fdb7a`; its release metadata is unchanged and its
+saved public ZIP stays
+`01010c252a9abd5842cd0e7e3c539cb9e609fec07358a1196039911f80c30bc0`.
+Follow-up verification docs do not rebuild/replace the tested development ZIP.
+Task-only Docker container is removed and Desktop restored to initially stopped.
+No reader installation or user data/settings/cache/link/sync-owner changes.
+Physical Boox/Bigme acceptance remains open as above; no measured speed or
+native document-engine/device-crash claim.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
