@@ -4900,3 +4900,56 @@ rollback, CI, exact draft-download bytes and anonymous published-byte checks.
 Optional profiles remain opt-in; physical device response/memory/display/OTA
 UI acceptance remains open and this release remains a prerelease. No public
 Beta 15 or older asset/tag may be changed. Final evidence follows below.
+
+### Beta 16 publication and verification
+
+Exact candidate/tag: `5c846730d5fbcaafc805fce9db97f6b57257139d`.
+Fast-forward/atomic push updates `origin/main` from `af238167` and adds only
+`v0.1.0-beta.16`. Main/tag CI `40750773286`/`40750773783` is green (both
+interpreters, translations, package and native archive/SHA OTA). A draft release
+for that exact commit receives only ZIP and checksum. Both downloaded draft
+assets match local bytes and GitHub's size/digest/state before publication.
+Published as a prerelease, not latest/stable, at **2026-10-28 19:09:05 UTC**:
+<https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.16>.
+
+Both complete local interpreters pass 122 Python tests/four unchanged optional
+source-pixel skips, all 83 root Lua files, 487 Bookshelf suites/zero failures/
+three normal SQLite exclusions and all 13 SimpleUI files. Map 383; syntax 1,066;
+all 43 catalogs validate. ALL 83 root suites also pass on the sealed package
+under Lua and LuaJIT. No new failure waiver. Each manifest byte/hash/size is
+compared against a Git archive of the exact candidate with only the reviewed
+PO source-reference projection. Bootstrap/API 1, all 2,000 installed paths,
+module map, source pins, fonts/artwork/assets stay unchanged. The only component
+source change since public main is the documented nine-line optional SimpleUI
+LRU runtime-cap setter. All 47 newly outgoing blobs exclude held artwork;
+Gitleaks scans seven commits without leaks.
+
+Public package: **8,781,021 bytes**, expanded **25,632,378 bytes**, 2,066 ZIP
+entries, 1,999 manifest inventory files plus manifest. SHA-256:
+`a9a1b6f6a36376b11091f195f2a0230208898909b483914c4cddd0e80d4aff98`.
+Compared with unchanged Beta 15: **6.39% smaller ZIP / 12.64% smaller expanded**.
+All languages/messages, licenses, images and fonts remain; real installed
+storage savings depend on the device's obsolete code snapshots. No device
+speed or memory improvement is measured by this comparison.
+
+Native real-public-Beta-5/9/14/15 installer checks pass: full inventory extraction
+with pinned KOReader libarchive/SHA, missing-module rejection, activation/restart/
+code rollback, truncated-download recovery and external snapshot/restart/persistent
+rollback. Real-file obsolete-code interruption/reload/resume and protection of
+active/rollback/unknown/modified/user data pass too. After publication, anonymous
+API and both public asset downloads match the reviewed bytes. Actual application
+HTTP/TLS discovery and public-byte OTA from Beta 9/15 pass the same native and
+recovery scenarios. Preview selects Beta 16; stable remains unchanged (no stable
+release). All 70 previous public release records/assets and all earlier remote
+tag refs are checked unchanged, excluding mutable download counts.
+
+Test-only JSON/LuaSocket/LuaSec are built under the ignored evidence folder,
+not globally installed or shipped; the old Lua-CJSON test source has a local
+LuaJIT compatibility guard. The optional native filesystem shim is also confined
+to test fixtures. No reader or user data is touched. Evidence:
+`test-results/beta16-20261028/` (complete/full/sealed logs, package/source audit,
+native and live older-installer logs, CI results, draft/public metadata/downloads,
+channel and immutability checks). Follow-up verification docs do not rebuild or
+replace the tagged/public ZIP. The prerelease retains open physical Boox/Bigme
+UI, native image-pressure, performance, storage/power-cut and updater-dialog
+acceptance. Existing behaviour is still default; Adaptive/Responsive remain opt-in.

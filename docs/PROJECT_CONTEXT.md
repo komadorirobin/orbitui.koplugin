@@ -23,13 +23,17 @@ and correct this file in the same change.
 ## Snapshot: 2026-10-28
 
 - User explicitly approves push/publication of the accumulated performance and
-  size/storage work. Release preparation is on
-  `release/performance-beta16-20261028` from clean `fa17565c`, with public main
-  still `af238167`. VERSION advances to `0.1.0-beta.16`; Bootstrap/API 1, path
-  inventory, original upstream pins and assets remain unchanged. Release notes
-  use existing OTA/README files, not a new installed path. Beta 15 and earlier
-  tags/assets must remain immutable. Final candidate/checks/publication evidence
-  follow in MERGE_LOG; no physical-device performance acceptance is implied.
+  size/storage work. Beta 16 is public at exact candidate/tag `5c846730`,
+  published 2026-10-28 19:09:05 UTC from
+  `release/performance-beta16-20261028`. Main/tag checks
+  `40750773286`/`40750773783`, both full interpreters, all 83 root suites on
+  sealed bytes, translations/source/history/artwork/secret audits and native
+  actual-Beta-5/9/14/15 upgrade/rollback tests pass. Anonymous public assets and
+  live application-TLS OTA from Beta 9/15 pass; preview selects Beta 16 and stable
+  remains unchanged. Bootstrap/API 1, all 2,000 paths, upstream pins and assets
+  remain unchanged. All 70 previous public releases/assets and old tag refs
+  are unchanged. Exact artifact/evidence is in MERGE_LOG. Optional profiles
+  remain opt-in; no physical-device performance acceptance is implied.
 
 - User approves the comparative UI/performance recommendations. Local work on
   `feature/performance-20261028` from `66b6f1c1` retains the unpublished PO/OTA
@@ -167,9 +171,9 @@ and correct this file in the same change.
   Home is explicitly Home/Hem (SimpleUI). Native preference callbacks, scopes,
   advanced controls and stored values remain in place. The earlier same-version
   development ZIP was never published as a replacement Beta 12.
-- Product version: `0.1.0-beta.15` (public GitHub prerelease, published
-  2026-10-28 at 15:08:36 UTC after explicit user request; verification is in
-  `docs/MERGE_LOG.md`). Beta 14 and earlier assets remain immutable.
+- Product version: `0.1.0-beta.16` (public GitHub prerelease, published
+  2026-10-28 at 19:09:05 UTC after explicit user request; verification is in
+  `docs/MERGE_LOG.md`). Beta 15 and earlier assets remain immutable.
 - Beta 12 starts from clean public main `70e5a1fd` on
   `fix/android-covers-beta12-20261026`. Android safe mode remains enabled;
   host-owned foreground local extraction replaces the blocked Bookshelf queue,
@@ -195,15 +199,18 @@ and correct this file in the same change.
   with category/instance/external-module tests in `0acdd843`.
   Complete local Lua/LuaJIT, translation, sealed-package and native OTA gates
   pass; exact verification results are recorded in `docs/MERGE_LOG.md`.
-- Release tag: `v0.1.0-beta.15` at `ee35bf19`; previous tags
+- Release tag: `v0.1.0-beta.16` at `5c846730`; previous tags
+  `v0.1.0-beta.15` at `ee35bf19`,
   `v0.1.0-beta.14` at `575fdb7a`,
   `v0.1.0-beta.13` at `f9d3b3a2`,
   `v0.1.0-beta.12` at `ea8bbaf0`,
   `v0.1.0-beta.11` at `03106015`,
   `v0.1.0-beta.10` at `0a2ea22b`, `v0.1.0-beta.9` at `a4bb9acb` and all
   earlier tags/assets are unchanged.
-- Public branch: `main`; the later October 28 explicit colour/publication request
-  produces Beta 15, including the preceding reviewed merge/push-only maintenance.
+- Public branch: `main`; the latest October 28 push/publication request produces
+  Beta 16 with the reviewed local performance, translation-size and safe obsolete
+  update-code cleanup work. The earlier colour/publication request produces
+  Beta 15, including the preceding reviewed merge/push-only maintenance.
   The preceding merge/push/release request produced Beta 14. The settings request produced
   Beta 13. The preceding cover
   request produced Beta 12. The earlier updater request
@@ -219,12 +226,12 @@ and correct this file in the same change.
   `fix/home-first-run-20261025`.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
-- Embedded Bookshelf Git in main/Beta 15:
+- Embedded Bookshelf Git in main/Beta 15/16:
   `d07905ba932e09044827aadf480c188a5d324b96` (6.0.4). Public Beta 14 retains
   `c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3).
   Public Beta 10 keeps `5f726c25` / merge `0db81b46` unchanged.
   Prior 6.0.0 integration `fc1103a3` / `48438837` is retained in ancestry.
-- Embedded SimpleUI Git in main/Beta 15:
+- Embedded SimpleUI Git in main/Beta 15/16:
   `22d5a3d2dd7be4651e718eb49027d82f68b3ace7` (3.0.1 follow-up). Beta 14 keeps
   `e5cd6dcb31fa759b9831223d4719f61126367cff` (3.0.1 runtime), twelve commits
   after `b1580f90b2e17cf03a66c744c323a1df66d77100` retained in Beta 13.
@@ -500,6 +507,21 @@ different documented asset. Replacing the working-tree file does not sanitize an
 ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
+
+Beta 16 candidate/tag `5c846730` passes both complete local interpreters and
+main/tag CI `40750773286`/`40750773783`: 122 Python tests/four unchanged optional
+source-pixel skips, 83 root Lua files, 487 Bookshelf suites/zero failures/three
+normal SQLite exclusions and 13 SimpleUI files. Map 383, syntax 1,066, catalogs
+43/zero failures. All 83 root suites also pass against sealed bytes under both
+interpreters. Native actual-Beta-5/9/14/15 upgrade/restart/rollback/external
+snapshot and interrupted obsolete-code cleanup/resume pass. Live anonymous
+application-TLS public-byte upgrade from Beta 9/15 and channel selection pass.
+SHA-256 `a9a1b6f6a36376b11091f195f2a0230208898909b483914c4cddd0e80d4aff98`;
+8,781,021 ZIP bytes, 25,632,378 expanded, same 2,000 installed paths. All prior
+public tags/assets remain unchanged. Evidence: `test-results/beta16-20261028/`.
+Verification-only follow-up docs do not rebuild the tagged/public ZIP. Physical
+Boox/Bigme performance, UI, image pressure, storage and update-dialog acceptance
+remain outstanding; automated checks do not prove a device speed/RAM gain.
 
 Beta 14 tag/candidate `575fdb7a` passes complete sequential Lua/LuaJIT suites:
 119 Python/four unchanged source-cache skips, all 78 root Lua files, 483

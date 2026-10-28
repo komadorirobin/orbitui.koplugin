@@ -2,6 +2,34 @@
 
 ## Automated
 
+### Beta 16 publication (October 28)
+
+Exact release candidate/tag `5c846730d5fbcaafc805fce9db97f6b57257139d` passes both
+complete Lua/LuaJIT runs: 122 Python tests/four unchanged optional source-pixel
+skips, 83 root Lua files, 487 Bookshelf suites/zero failures/three normal SQLite
+exclusions and 13 SimpleUI files. All 83 root suites also pass on actual sealed
+bytes under both interpreters. Map 383, syntax 1,066; all 43 catalogs validate.
+Main/tag CI `40750773286`/`40750773783` passes, including native archive/SHA OTA.
+Exact source projection, manifest/checksum/path inventory and outgoing history/
+artwork/secret audits pass. No bootstrap, source-pin, asset or installed-path change.
+
+Draft downloads and anonymous public assets match the exact candidate ZIP:
+SHA-256 `a9a1b6f6a36376b11091f195f2a0230208898909b483914c4cddd0e80d4aff98`,
+8,781,021 bytes, 25,632,378 expanded and 1,999 inventory files plus manifest.
+Native actual-public-Beta-5/9/14/15 installers accept the new full package;
+activation/restart/rollback, missing-module/truncated recovery, external snapshot
+and interrupted obsolete-code cleanup/resume preserve retained and unknown data.
+Live anonymous application-TLS public-byte upgrade from Beta 9/15 passes with
+native archive/SHA and the same recovery scenarios. Preview selects Beta 16;
+stable stays unchanged with no stable release. All 70 previous public releases/
+assets and all older remote tag refs remain unchanged.
+
+Evidence: `test-results/beta16-20261028/`. The local POSIX shim and locally built
+TLS/JSON test dependencies stay outside the reader package and global install
+paths. No actual reader installation or display is touched. Follow-up verification
+docs do not rebuild the release ZIP. The device protocol below remains open;
+optional profiles remain opt-in and no measured device speed/RAM gain is claimed.
+
 ### Local UI/performance follow-up (October 28, not a release)
 
 `test_dashboard_demand.lua` runs the real registry against all 512 card visibility
