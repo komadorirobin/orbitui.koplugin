@@ -4450,8 +4450,32 @@ font or bootstrap is removed. No module path change/map regeneration needed.
 Eleven new regressions exercise these boundaries; generator checks all twelve
 PNGs. VERSION remains 0.1.0-beta.14; public Beta 14 ZIP is never replaced.
 
-Verification results follow after full sequential Lua/LuaJIT, translations,
-sealed package/native OTA and outgoing history/artwork/secret audits. Physical
+Adaptation candidate `6902f104` passes full sequential Lua/LuaJIT gates: 119
+Python tests/four unchanged source-cache skips, all 79 root Lua files, 487
+Bookshelf suites/zero failures/three normal SQLite exclusions and all 13
+SimpleUI files. Module map 383; syntax 1,061; static search vocabulary 332;
+translations 43/zero failures. No new skip or failure allowance. All eleven
+new cases and retained native reader-menu/profile/editor/Home/Android regressions
+also pass against sealed bytes under both interpreters. Native menu supplements
+load complete pinned/minimum v2025.08 ReaderMenu with native UI services stubbed.
+
+The first package-validator run correctly flagged that it still required each
+new separate Hazel path. Its narrow replacement checks all twelve SEALED hex
+resources against the tracked original PNG bytes; every other old asset/path
+remains mandatory. A corrupted embedded-image ZIP must fail this whole checker.
+Package/source/history audit verifies 1,999 inventory files plus manifest,
+identical prior runtime file set and unchanged VERSION/bootstrap/assets/fonts/map.
+All twelve embedded PNGs match exact reviewed upstream, and no held bitmap is
+in the outgoing history. Gitleaks scans 21 incoming non-merge commits without
+leaks. The native Linux libarchive/SHA smoke passes offer, complete extraction,
+missing-module rejection, activation/restart/code rollback, truncated recovery
+and external snapshot/restart/persistent rollback from immutable public Beta 13.
+Its OTA implementation is byte-identical to Beta 14's; the same-version
+development ZIP is NOT offered or uploaded as a replacement public Beta 14.
+Final clean-candidate package hash/audits and push/CI results follow separately.
+Evidence: test-results/upstream-20261028/ and its full-suite logs in test-results/.
+
+Physical
 Boox/Bigme colour, ghosting, wallpaper, sleep/rotation, repeated reader returns,
 touch/Back and server-backed integrations remain outstanding; headless testing
 does not demonstrate speed, native document-engine safety or device acceptance.

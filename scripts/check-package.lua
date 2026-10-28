@@ -86,6 +86,32 @@ for _, source in ipairs(require("core/orbitui_vector_icons").sources) do
         expect("assets/vector-icons/" .. source.key .. "/" .. icon.name .. ".svg")
     end
 end
+-- Hazel's twelve upstream PNGs are losslessly embedded in an existing Lua
+-- resource to fit already-installed API-1 updaters. Verify SEALED bytes against
+-- each tracked original; this is not a general exemption for missing artwork.
+local resource = assert(io.popen("unzip -p " .. quoted ..
+    " 'orbitui.koplugin/components/simpleui/modules/critter/assets.lua'"))
+local resource_text = resource:read("*a")
+assert(resource:close(), "Could not read sealed critter resource")
+local block = assert(resource_text:match("%-%- BEGIN ORBITUI EMBEDDED HAZEL\n(.-)%-%- END ORBITUI EMBEDDED HAZEL"),
+    "Missing embedded Hazel resource")
+local embedded, verified, embedded_count = {}, {}, 0
+for mood, hex in block:gmatch('([a-z]+) = "([0-9a-f]+)"') do
+    assert(not embedded[mood], "Duplicate embedded Hazel mood: " .. mood)
+    embedded[mood], embedded_count = hex, embedded_count + 1
+end
+assert(embedded_count == 12, "Expected all twelve embedded Hazel moods")
+local function verifyEmbedded(path)
+    local mood = path:match("^components/simpleui/modules/critter/assets/hazel/([a-z]+)%.png$")
+    if not mood then return false end
+    local f = assert(io.open(path, "rb"))
+    local bytes = f:read("*a"); f:close()
+    local hex = bytes:gsub(".", function(byte) return string.format("%02x", byte:byte()) end)
+    assert(embedded[mood] == hex, "Sealed Hazel differs from upstream PNG: " .. path)
+    assert(not entries[prefix .. path], "Duplicate separate Hazel resource: " .. path)
+    verified[mood] = true
+    return true
+end
 local tracked = assert(io.popen("git ls-files"))
 for path in tracked:lines() do
     if path:match("^core/.*%.lua$") or path:match("^adapters/.*%.lua$")
@@ -98,8 +124,9 @@ for path in tracked:lines() do
             or path:match("^components/simpleui/modules/critter/assets/")
             or path:match("^components/simpleui/modules/critter/decor/")
             or path:match("^components/[^/]+/locale/.*%.po$") then
-        expect(path)
+        if not verifyEmbedded(path) then expect(path) end
     end
 end
 assert(tracked:close())
+for mood in pairs(embedded) do assert(verified[mood], "Untracked embedded Hazel mood: " .. mood) end
 print("Runtime archive: " .. count .. " entries; modules, assets, licenses and recovery docs verified")
