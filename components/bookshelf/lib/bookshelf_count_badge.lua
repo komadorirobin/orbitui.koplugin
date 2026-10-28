@@ -37,7 +37,7 @@ function CountBadge.renderText(text)
     if text == "" then return nil end
     local colors = CoverProgress.resolvedColors()
     local face, bold = BFont:getFace("smallinfofont", _badgeSize(12), { bold = true })
-    local badge = FrameContainer:new{
+    local badge = require("lib/bookshelf_color").colourBorder(FrameContainer:new{
         bordersize     = Size.border.thin,
         background     = colors.badge_bg,
         color          = colors.badge_fg,
@@ -52,7 +52,7 @@ function CountBadge.renderText(text)
             bold = bold,
             fgcolor = colors.badge_fg,
         },
-    }
+    })
     -- Re-colour in place on a night-mode flip instead of waiting for a full
     -- shelf rebuild. External metadata badges use this renderer too.
     badge._bs_recolour = function(self, roles)
