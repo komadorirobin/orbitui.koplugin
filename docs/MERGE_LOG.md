@@ -4778,3 +4778,66 @@ Copy this section and replace placeholders only after performing the work.
 - Device checks performed / still required:
 - Release decision and user approval (or explicitly "not published"):
 - Recovery considerations and next maintainer notes:
+## 2026-10-28 — Local UI/performance follow-up (not released)
+
+The user says "Kör" after the comparative review of CyberUI, VOS, Project:Title,
+ZenOS and d1-m4ss's published benchmark. Work is local on
+`feature/performance-20261028` from `66b6f1c1`, retaining the unpublished PO
+packaging and safe update-storage work. This is not an upstream merge or
+authorization to push/publish. VERSION stays Beta 15; its public bytes remain
+immutable. No foreign UI code, assets or fonts are copied. Research checkouts
+are ignored under `test-results/ui-survey-20261028/`.
+
+Implementation:
+
+- C04: dashboard `M.needs` uses the existing real registry's per-screen dynamic
+  API. Only visible statistics/local annual-goal consumers request stats; only
+  the local goal requests book-count reconciliation. Ongoing keeps 30 recent
+  candidates, hero alone needs one, and a visible native Recent source keeps 30
+  independently. Hidden source labels no longer resolve saved shelf references.
+  Other enabled modules still contribute their own demands. Existing card
+  geometry/actions/ordering/sources and cached/remote goal ownership are retained.
+- C02/C04/C06/C07: opt-in Adaptive/Responsive profiles coordinate the two loaded
+  cover-cache runtime caps against a shared available-memory/reader policy.
+  Native budget writers keep their saved/base values; switching back restores
+  them. Unknown readings do not guess memory. Native reference-only eviction
+  keeps borrowed images/one oversized newest entry, reports deferred GC pressure
+  and does not clear disk caches or rebuild a parked shelf. One deferred 1.5s
+  one-shot is generation/owner/suspend guarded, never periodic. Responsive also
+  gates wipe animation and speculative next-page/chip warming; mandatory reader
+  prewarm, cabinet return/profile/chip/page, safe visible Android extraction,
+  source resolution and external progress writers are unchanged. Existing
+  behaviour is the default and an unknown future saved mode is retained inertly.
+- C04/C06: bounded opt-in local diagnostics record only allowlisted synchronous
+  method labels/counts/error counts and the latest 60 durations per operation.
+  Nil arguments/results and original error objects survive. CPU fallback is not
+  mixed with monotonic elapsed samples. Snapshot/report reads do not force GC or
+  fetch metadata/network data. Reports include numeric Lua/OS/cache/queue data,
+  not book paths/titles/profile names/credentials/raw errors. View/copy is an
+  explicit local user action; no automatic report file/upload. Captured wrappers
+  become inert on last-owner teardown and do not overwrite later external hooks.
+- Shared settings add one bilingual Speed, memory & diagnostics page and a short
+  read-only Home→Bookshelf profile/chips→navigation→reader-return guide. Both
+  retain the five task areas and static SV/EN settings search. No reset/migration,
+  menu auto-launch, added dependency or new installed runtime path. The only
+  component edit is the existing SimpleUI LRU's optional runtime byte-cap setter;
+  canonical paths, module map, source pins/bootstrap/assets/reading data remain.
+
+Baseline and limits:
+
+`scripts/benchmark-dashboard-demand.lua` was run before/after on the same local
+tree/interpreter. With only hero shown, declared recent candidates fall 30→1;
+book rows without statistics stop requesting stats/counts; remote-goal-only and
+all-hidden layouts request neither stats/counts nor recent candidates. Local
+annual goals and native Recent rows retain their needs. This is a deterministic
+DECLARED-DEMAND comparison, not observed provider calls or a device speed/RAM
+benchmark. All 512 visibility combinations and the real registry are tested.
+
+No complete runnable KOReader emulator was present. Device/emulator end-to-end
+latency, real C-buffer memory pressure, SV/EN touch/layout and Boox/Bigme cover/
+reader/rotation/suspend acceptance remain open. Reports measure synchronous
+methods only (not settled deferred work/panel latency); close-event timing is
+not total book-close latency. Lua heap is not total RAM and retained-cache bytes
+exclude live borrowed buffers. The published benchmark has different pins and
+views; no comparison or speedup percentage is claimed. Exact final local
+verification follows after the sealed package checks.

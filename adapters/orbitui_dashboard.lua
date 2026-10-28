@@ -6,7 +6,6 @@ local M = {
     id = Model.id, name = _("Reading dashboard"), default_on = false,
     enabled_key = "orbitui_dashboard_enabled", owns_chrome = true,
     has_covers = true, is_book_mod = true,
-    needs = { recent = 30, stats = true, books = true },
 }
 
 local function store() return require("infra/sui_store") end
@@ -21,6 +20,38 @@ function M.readConfig(pfx)
     if raw == nil then store():saveSetting(key, config) end
     return config
 end
+
+local function hardcoverGoal(config, pfx)
+    return config.goal == "hardcover" or config.goal == "auto"
+        and store():readSetting((pfx or "simpleui_hs_") .. "hardcover") == true
+end
+
+-- Use the registry's existing per-screen demand API. A hidden card must not
+-- keep statistics/the finished-books ledger alive. Native Recent rows also
+-- consume ctx.recent_fps, even when hero/ongoing are hidden; retain the old
+-- candidate bound for those rows rather than silently emptying their source.
+M.needs = {
+    recent = function(pfx)
+        local config = M.readConfig(pfx)
+        if Model.visible(config, "ongoing") then return 30 end
+        for _, id in ipairs({ "want", "new" }) do
+            local source = config.sources[id]
+            if Model.visible(config, id) and source.kind == "native" and source.id == "recent" then return 30 end
+        end
+        return Model.visible(config, "hero") and 1 or 0
+    end,
+    stats = function(pfx)
+        local config = M.readConfig(pfx)
+        for _, id in ipairs(Model.stat_order) do
+            if Model.visible(config, id) then return true end
+        end
+        return Model.visible(config, "goal") and not hardcoverGoal(config, pfx)
+    end,
+    books = function(pfx)
+        local config = M.readConfig(pfx)
+        return Model.visible(config, "goal") and not hardcoverGoal(config, pfx)
+    end,
+}
 
 function M.editConfig(pfx, edit, refresh)
     local config = M.readConfig(pfx)
@@ -211,17 +242,16 @@ end
 function M.readData(ctx)
     local config = M.readConfig(ctx.pfx)
     local function visible(id) return Model.visible(config, id) end
-    local SH = require("modules/module_books_shared")
     local function read(fp)
-        return SH.getBookData(fp, ctx.prefetched and ctx.prefetched[fp], { skip_description = true })
+        return require("modules/module_books_shared").getBookData(fp,
+            ctx.prefetched and ctx.prefetched[fp], { skip_description = true })
     end
     local fp = ctx.current_fp or (ctx.recent_fps or {})[1]
     local want, want_error, new, new_error = {}, nil, {}, nil
     if visible("want") then want, want_error = Sources.files(config.sources.want, ctx) end
     if visible("new") then new, new_error = Sources.files(config.sources.new, ctx) end
     local goal
-    local hc_enabled = config.goal == "hardcover" or config.goal == "auto"
-        and store():readSetting((ctx.pfx or "simpleui_hs_") .. "hardcover") == true
+    local hc_enabled = hardcoverGoal(config, ctx.pfx)
     if visible("goal") and hc_enabled then
         local HC = require("modules/module_hardcover")
         local cached = HC._getCached()
@@ -241,7 +271,8 @@ function M.readData(ctx)
         ongoing = visible("ongoing") and Model.ongoing(visible("hero") and fp or nil, ctx.recent_fps, read, 3) or {},
         want = want, new = new, want_error = want_error, new_error = new_error,
         config = config,
-        source_labels = { want = Sources.label(config.sources.want), new = Sources.label(config.sources.new) },
+        source_labels = { want = visible("want") and Sources.label(config.sources.want) or nil,
+            new = visible("new") and Sources.label(config.sources.new) or nil },
         stats = ctx.stats or {}, goal = goal, hardcover = hc_enabled,
         dark = store():readSetting((ctx.pfx or "simpleui_hs_") .. "orbitui_dashboard_dark") ~= false,
         colour = M.colourMode(ctx.pfx),
@@ -266,8 +297,11 @@ function M.getHeight(ctx)
     return math.max(1, content_h - footer_h - gap - top_gap - Screen:scaleBySize(8))
 end
 
-function M.build(w, ctx)
+local function buildDashboard(w, ctx)
     return require("adapters/orbitui_dashboard_view").build(w, M.getHeight(ctx), ctx, M.readData(ctx))
+end
+function M.build(w, ctx)
+    return require("core/orbitui_host").measure("dashboard", buildDashboard, w, ctx)
 end
 
 -- These callbacks replace only this module's children. Cached cover buffers

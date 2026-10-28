@@ -390,7 +390,9 @@ local nodes = {
     { "system", "System & maintenance", nil, "system", "system underhåll uppdatering update backup återställning restore felsökning diagnostics" },
     { "updates", "Update OrbitUI", "system", "system", "uppdatera update version rollback återställ tidigare" },
     { "maintenance", "Covers, metadata & troubleshooting", "system", "bookshelf", "saknade suddiga omslag cache index scan extrahera metadata felsökning" },
-    { "safety", "Performance & Android safety", "system", "bookshelf", "android safe mode säkerhetsläge prestanda mutex crash krasch cache" },
+    { "safety", "Android safety & advanced cache settings", "performance", "bookshelf", "android safe mode säkerhetsläge prestanda performance mutex crash krasch cache" },
+    { "performance", "Speed, memory & diagnostics", "system", "system", "snabbhetsläge snabb prestanda minne adaptiv responsive adaptive benchmark diagnostik rapport mätning measurement memory latency" },
+    { "quick_start", "Home and Bookshelf: quick guide", "system", "system", "introduktion guide komma igång hem simpleui bookshelf bibliotek profil chip navigation" },
     { "setup", "Setup guide", "system", "system", "startguide inställningar setup startvy" },
     { "recovery", "Backup & recovery information", "system", "system", "säkerhetskopia återställning backup restore settings" },
 }
@@ -660,6 +662,64 @@ function M.library(profile, appearance, page, target, opts)
             by_id[page] and by_id[page].parent or "bookshelf", opts or { profile = profile })
     end)
 end
+function M.performanceItems()
+    local Host = require("core/orbitui_host")
+    return {
+        { text = _("Performance profile"), sub_item_table_func = function()
+            local rows = {}
+            for _i, choice in ipairs({
+                { "existing", "Keep existing behaviour", "Uses your saved animation, cache and preload choices without a shared runtime cap." },
+                { "adaptive", "Adaptive memory", "Reduces retained cover-cache entries when memory is low or the reader is visible. Keeps image quality, saved budgets and the active shelf for fast return." },
+                { "responsive", "Responsive", "Also disables Bookshelf wipe animations and speculative next-page/chip preload. Cold page loads may take longer. Visible Android covers and reader-return preparation keep their safe existing path." },
+            }) do
+                local id = choice[1]
+                rows[#rows + 1] = { text = _(choice[2]), help_text = _(choice[3]), radio = true,
+                    checked_func = function() return Host.performanceMode() == id end,
+                    keep_menu_open = true, callback = function() Host.setPerformanceMode(id) end }
+            end
+            return rows
+        end },
+        { text = _("Measure performance"), checked_func = Host.isMeasuring, keep_menu_open = true,
+            help_text = _("Optional local timing of synchronous calls. No book names, paths, accounts or raw errors are recorded. Nothing is uploaded; measurements stay in memory until reset or restart."),
+            callback = function() Host.setMeasuring(not Host.isMeasuring()) end },
+        { text = _("View performance report"), callback = function()
+            require("ui/uimanager"):show(require("ui/widget/textviewer"):new{
+                title = _("OrbitUI performance report"), text = Host.performanceReport() })
+        end },
+        { text = _("Copy performance report"), callback = function()
+            local input = require("device").input
+            if input and type(input.setClipboardText) == "function" then
+                local ok, result = pcall(input.setClipboardText, input, Host.performanceReport())
+                if ok and result ~= false then Context.notify(_("Performance report copied.")); return end
+            end
+            Context.notify(_("Clipboard unavailable. Use View performance report instead."))
+        end },
+        { text = _("Reset measurements"), keep_menu_open = true, callback = Host.resetMeasurements,
+            help_text = _("Clears only in-memory timing samples. Books, reading data, settings and cover caches are kept.") },
+        { text = _("How to compare performance"), callback = function()
+            Context.notify(_("Use the same library, profile, chip, book and cover settings. Measure a first visit separately, then repeat warm operations ten times: Home, shelf paging, book open and fast return. Compare the existing and optional profiles separately. These call timings do not measure panel refresh or deferred work; confirm responsiveness and cover quality on the device."))
+        end },
+    }
+end
+
+function M.quickStartItems(close)
+    local rows = {{ text = _("About this guide"), callback = function()
+        Context.notify(_("Home (SimpleUI) is your start screen. Bookshelf is the library view. A library profile chooses folders and shelves; chips are the tabs inside that profile. These are not KOReader reading profiles. Opening this guide changes nothing."))
+    end }}
+    for _i, step in ipairs({
+        { "1. Choose library folders and chips", "libraries", "Choose a library profile, then edit each chip's Source/Folder. Library folders (advanced) define the whole profile's scope, not just one chip." },
+        { "2. Point the Bookshelf button at a profile", "bookshelf_navigation", "Choose Bookshelf for the navigation bar, then optionally select a library profile. Saved bars are kept until you edit them." },
+        { "3. Customize Home (SimpleUI)", "home_dashboard", "Reading dashboard belongs to Home (SimpleUI). Choose which cards and book sources to show independently of your Bookshelf profile." },
+        { "4. Check fast reader return", "reader_menu", "Open a book from the chosen shelf and use the cabinet/file-browser button in the reading menu. A safe prepared shelf returns to its profile, chip and position; otherwise the book closes normally." },
+    }) do
+        local id = step[2]
+        rows[#rows + 1] = { text = _(step[1]), help_text = _(step[3]), callback = function()
+            if close then close() end
+            M.open(id)
+        end }
+    end
+    return rows
+end
 function M.open(id, opts)
     settings_request = settings_request + 1
     local n = assert(by_id[id], "Unknown settings page")
@@ -688,6 +748,10 @@ function M.open(id, opts)
     elseif id == "home_shelves" then extra = require("adapters/orbitui_home_shelves").menuItems()
     elseif id == "bookshelf_navigation" then extra = require("adapters/orbitui_library_settings").navigationItems()
     elseif id == "connections" then extra = require("adapters/orbitui_integrations").items()
+    elseif id == "performance" then
+        extra = M.performanceItems()
+        for _i, row in ipairs(children(id, close, opts)) do extra[#extra + 1] = row end
+    elseif id == "quick_start" then extra = M.quickStartItems(close)
     else extra = children(id, close, opts) end
     for _i, row in ipairs(extra or {}) do rows[#rows + 1] = row end
     current = host(_("OrbitUI settings") .. " / " .. _(n.label), rows, n.parent or "__root__", opts); return current

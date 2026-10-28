@@ -203,4 +203,13 @@ end
 function LRU:count() return self._count end
 function LRU:bytes() return self._bytes end
 
+-- Optional host-owned RAM cap. Do not free borrowed cover buffers: eviction
+-- retains the same reference/GC ownership rules as put(). Keep one oversized
+-- entry usable, just as the normal insertion path does.
+function LRU:setByteBudget(bytes)
+    if type(bytes) ~= "number" or bytes ~= bytes or bytes < 1 or bytes == math.huge then return end
+    self._max_bytes = math.floor(bytes)
+    _evictOverLimits(self)
+end
+
 return LRU

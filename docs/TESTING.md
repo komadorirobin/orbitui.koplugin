@@ -2,6 +2,58 @@
 
 ## Automated
 
+### Local UI/performance follow-up (October 28, not a release)
+
+`test_dashboard_demand.lua` runs the real registry against all 512 card visibility
+combinations, Home/custom-screen scopes, native Recent sources, local/Hardcover
+goal ownership and unsupported/disabled configurations. It must not load stats,
+book/remote providers or rewrite existing settings merely to calculate demand.
+`scripts/benchmark-dashboard-demand.lua` prints the same seven declared-demand
+cases before/after the change. It does NOT count actual provider calls or measure
+UI startup, native buffers or device latency; another enabled Home module can
+legitimately still request the same data. Evidence: before/after CSVs in
+`test-results/performance-20261028/`.
+
+`test_performance.lua` covers both real native-free cover-cache implementations,
+borrowed buffer retention, oversize guards, reversible base budgets and later
+user changes; invalid/unknown memory readings; shown versus parked readers;
+one-shot/cancelled/superseded/suspended/last-owner work; opt-in bounded timing,
+nil/error identity, CPU-versus-elapsed series, privacy allowlist, idempotent hooks
+and later external wrappers; animation/screen seams and bilingual read-only menus.
+It does not emulate C image allocations or the Android document renderer.
+
+### Physical performance acceptance (still required)
+
+In Swedish: **OrbitUI-inställningar → System och underhåll → Snabbhet, minne och
+diagnostik**. In English: **OrbitUI settings → System & maintenance → Speed,
+memory & diagnostics**. Existing behaviour remains the default. Enable **Mät
+prestanda / Measure performance** explicitly, then view/copy the local report.
+Capture is opt-in, in memory, capped at 60 recent samples per operation. Reset
+clears timings only; no persistent report or upload is automatic. Reports contain
+fixed operation labels, numeric cache/memory/queue counters and error counts,
+never file/title/profile/account strings, raw errors or screenshots. No forced GC.
+
+Use the SAME books, library profile, chip/page, cover mode, orientation and
+KOReader version for each variant. Keep Android safe mode enabled. Separate cold
+startup/first visits from warm loops (two warmups, at least ten measured repeats).
+Compare existing, Adaptive and Responsive separately: Home, shelf/chip navigation,
+opening from Home and shelf, cabinet fast return and normal fallback. Verify the
+exact profile/chip/cursor and unchanged cover quality after every return. Include
+rotation, settings over reader/shelf, suspend/resume, repeated opens and low-memory
+conditions on both Boox and Bigme. The Home/Bookshelf quick guide must remain
+read-only until a native setting is explicitly selected; inspect SV/EN wrapping,
+Back/close and clipboard-unavailable fallback on the device.
+
+Current timings are SYNCHRONOUS METHOD intervals, not the benchmark project's
+settled end-to-end transitions: deferred stats/prewarm/reader work and physical
+panel refresh are not included. A close-event sample is not full book-close
+latency. Lua heap excludes C image buffers; cache bytes omit image references
+still legitimately held by live/parked widgets and allow one oversized newest
+entry. OS available RAM may include reclaimable caches and is not process RSS.
+Missing/invalid readings keep native budgets. Do not compare these reports with
+the published macOS SDL numbers or claim speed/RAM gains without device evidence.
+No complete runnable KOReader emulator was available during this local task.
+
 Local October 28 storage cleanup: `test_update_storage.lua` exercises the real
 collector/validator/bootstrap reads and Lua syntax checks on a confined in-memory
 filesystem, without touching a reader. Fifteen cases cover current/rollback/

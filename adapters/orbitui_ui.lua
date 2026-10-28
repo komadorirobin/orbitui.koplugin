@@ -28,6 +28,10 @@ M.modules = {
     ["screens/sui_settings_window"] = true,
     ["lib/bookshelf_i18n"] = true,
     ["infra/sui_patches"] = true,
+    ["infra/sui_cover_cache"] = true,
+    ["lib/bookshelf_scaled_cover_cache"] = true,
+    ["lib/bookshelf_page_wipe"] = true,
+    ["engines/sui_screen_engine"] = true,
 }
 
 local function settingsEntry(items, old_key)
@@ -39,7 +43,20 @@ local function settingsEntry(items, old_key)
 end
 
 function M.wrap(name, module)
-    if name == "infra/sui_config" then
+    if name == "infra/sui_cover_cache" then
+        require("core/orbitui_host").performanceCache(module, "home")
+    elseif name == "lib/bookshelf_scaled_cover_cache" then
+        require("core/orbitui_host").performanceCache(module, "shelf")
+    elseif name == "engines/sui_screen_engine" then
+        require("core/orbitui_host").timeMethod(module, "_open", "home")
+        require("core/orbitui_host").timeMethod(module, "openBook", "open")
+    elseif name == "lib/bookshelf_page_wipe" then
+        local resolve = module.resolveSteps
+        module.resolveSteps = function(...)
+            if require("core/orbitui_host").performanceMode() == "responsive" then return nil end
+            return resolve(...)
+        end
+    elseif name == "infra/sui_config" then
         require("adapters/orbitui_navbar").config(module)
     elseif name == "lib/bookshelf_profiles" then
         require("adapters/orbitui_libraries").profiles(module)
@@ -82,6 +99,15 @@ function M.wrap(name, module)
         require("adapters/orbitui_series_titles").widget(module)
         require("adapters/orbitui_navbar").widget(module)
         require("adapters/orbitui_android_covers").widget(module)
+        local Host = require("core/orbitui_host")
+        for key, label in pairs({ _rebuild = "shelf", _paginateNext = "next", _paginatePrev = "previous",
+                _launchReader = "open" }) do Host.timeMethod(module, key, label) end
+        for _, key in ipairs({ "_schedulePreload", "_queueWarmForVisible" }) do
+            local original = module[key]
+            if original then module[key] = function(self, ...)
+                if Host.allowSpeculation() then return original(self, ...) end
+            end end
+        end
         module.orbitui_shelf_menu = function(self, chip)
             return require("adapters/orbitui_home_shelves").shelfMenu(self, chip)
         end
@@ -168,6 +194,10 @@ function M.classes(bookshelf, simpleui)
         require("adapters/orbitui_libraries").wireReaderMenu(self.ui)
     end
     require("adapters/orbitui_android_covers").bookshelf(bookshelf)
+    local Host = require("core/orbitui_host")
+    Host.timeMethod(bookshelf, "onCloseDocument", "close")
+    Host.timeMethod(bookshelf, "onOpenBookshelfProfile", "library")
+    Host.timeMethod(bookshelf, "_showAfterReaderReturn", "return_shelf")
     local build = bookshelf.buildMenuItems
     function bookshelf:buildMenuItems(items)
         build(self, items)

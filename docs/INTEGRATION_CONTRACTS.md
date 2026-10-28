@@ -167,6 +167,23 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+October 28 approved local performance follow-up: dashboard data demand follows
+visible per-screen cards and the selected goal owner, retaining native Recent
+source candidates independently of hero/ongoing visibility. Other enabled modules
+still contribute their own demands. Optional Adaptive/Responsive policies modify
+only runtime retained-cover budgets, never saved native limits, source images,
+disk caches or parked shelf state. Unknown readings preserve existing budgets;
+unset/future modes retain existing behaviour. Eviction uses existing borrowed
+reference lifetimes and keeps one oversized newest image usable, without explicit
+free/synchronous GC. Existing deferred native GC-pressure accounting remains.
+Work is one-shot, deferred, cancellable and owner/generation-safe.
+Responsive can suppress wipes and speculative next-page/chip work, not mandatory
+reader-return preparation or Android's safe visible extraction. Timing is opt-in,
+bounded and payload-free, preserves original nil/results/errors and distinguishes
+synchronous method time from screen/deferred latency. Later external hooks win;
+last-owner teardown neutralizes policy. Tests: test_dashboard_demand/performance.
+Physical Boox/Bigme performance, image pressure and UI acceptance remain required.
+
 October 28: native cover polling may report done/changed to avoid redundant
 refreshes, but a legacy/external callback returning only done must still repaint.
 Resolved native slots are not decoded again; failed ImageWidget construction

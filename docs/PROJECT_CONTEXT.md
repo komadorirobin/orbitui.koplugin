@@ -22,6 +22,21 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-28
 
+- User approves the comparative UI/performance recommendations. Local work on
+  `feature/performance-20261028` from `66b6f1c1` retains the unpublished PO/OTA
+  storage work. Dashboard demands now follow each screen's visible cards and
+  goal owner (native Recent rows keep their candidates). Optional shared
+  Adaptive/Responsive profiles cap only retained cover references; existing
+  behaviour is the unset/default and original budgets/animations/preload choices
+  remain saved. Responsive skips wipes and speculative next-page/chip warming,
+  never Android's safe visible-cover queue or mandatory reader-return prewarm.
+  Bounded opt-in local timings/cache reports and a bilingual Home→library→chip→
+  navigation/return guide are under System & maintenance. No external UI code,
+  new installed path, source-pin/bootstrap/VERSION/artwork change, push or release.
+  Full/sealed verification is recorded in MERGE_LOG; actual UI/device latency
+  and native image-pressure acceptance remain open. The headless demand baseline
+  is not a KOReader emulator benchmark or a measured RAM/speed improvement.
+
 - User approves size-reduction step 3: safer update-slot storage cleanup, local
   only on `maintenance/update-storage-20261028` from `58b944b7`, retaining the
   preceding PO optimization. After confirmed startup, a quiet deferred worker
