@@ -54,6 +54,21 @@ Missing/invalid readings keep native budgets. Do not compare these reports with
 the published macOS SDL numbers or claim speed/RAM gains without device evidence.
 No complete runnable KOReader emulator was available during this local task.
 
+Candidate `5def9a06a65c081dd05d8cb9c00e4447ef4f089a` passes complete sequential
+Lua/LuaJIT suites: 122 Python/four unchanged optional source-pixel skips, 83 root
+Lua files, 487 Bookshelf suites/zero failures/three normal SQLite exclusions and
+all 13 SimpleUI files. Map 383; syntax 1,066; catalogs 43/zero failures. Both
+interpreters additionally rerun ALL 83 root files against the sealed package,
+including the 14 performance cases, four demand cases/all visibility combinations,
+existing Home/cover/navigation/menu/OTA/storage/translation cases. Exact Git
+archive→approved PO projection→manifest/hash/checksum audit passes with the same
+1,999 inventory files plus manifest. Native actual-public-Beta-14 upgrade,
+extraction/SHA/restart/rollback/truncated/external-snapshot and interrupted code-
+cleanup/resume/retained-data checks pass on macOS using the existing test-only
+POSIX shim. No reader installation or physical display is touched. Evidence:
+`test-results/performance-20261028/`. This is an unpublished same-version test
+ZIP, not a replacement Beta 15 asset. Follow-up docs do not rebuild its bytes.
+
 Local October 28 storage cleanup: `test_update_storage.lua` exercises the real
 collector/validator/bootstrap reads and Lua syntax checks on a confined in-memory
 filesystem, without touching a reader. Fifteen cases cover current/rollback/

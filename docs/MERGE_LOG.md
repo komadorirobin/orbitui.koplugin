@@ -4841,3 +4841,48 @@ not total book-close latency. Lua heap is not total RAM and retained-cache bytes
 exclude live borrowed buffers. The published benchmark has different pins and
 views; no comparison or speedup percentage is claimed. Exact final local
 verification follows after the sealed package checks.
+
+### Final local verification
+
+Implementation/package candidate: `5def9a06a65c081dd05d8cb9c00e4447ef4f089a`.
+Complete sequential Lua/LuaJIT `scripts/test.sh` runs pass 122 Python tests/four
+unchanged optional source-pixel skips, 83 root Lua files, 487 Bookshelf suites/
+zero failures/three normal SQLite exclusions and all 13 SimpleUI files. Map 383;
+LuaJIT syntax 1,066; all 43 catalogs validate without exceptions. All 83 root Lua
+files ALSO pass on actual sealed bytes under both interpreters, including 14 new
+performance cases, four new demand cases/all 512 visibility combinations, and
+the retained Android-cover/Home/reader-menu/lifecycle/OTA/storage suites. No new
+skip or failure waiver. Initial harness launches used a Python lacking Pillow
+and omitted the optional POSIX-shim library variable; final complete runs use the
+existing Python 3.12/Pillow environment and both documented shim variables.
+
+The source/package audit compares every sealed byte to a Git archive of the exact
+candidate with only the already-approved PO projection. Manifest sizes/hashes,
+archive checksum and the complete path set agree: 1,999 inventory files plus
+manifest/all 2,000 API-1 paths, 2,066 ZIP entries. All 13 newly outgoing blobs
+exclude held artwork and the implementation commit passes Gitleaks. Stable
+bootstrap/entry, VERSION, source pins/map, images/fonts/assets and all component
+sources except the documented nine-line SimpleUI LRU extension are unchanged
+from `66b6f1c1`. Existing public Beta 14/15 cached asset digests remain unchanged.
+
+Local ZIP: **8,777,692 bytes**, expanded **25,622,138 bytes**; SHA-256
+`4b32158c0142556aeba3972db605dc7df1853611c10b6d46b8d427673ad2b8c1`.
+This includes the preceding unpublished package-size/storage work, not a new
+public version. Compared with that preceding tested ZIP it adds 14,568 compressed
+bytes (code, bilingual help and verification docs), no installed file paths,
+artwork or dependency. Never replace the published same-version Beta 15 asset.
+
+Actual public Beta 14's older installer passes full-package native libarchive/
+SHA extraction, missing-module rejection, activation/restart/code rollback,
+truncated recovery and external snapshot/restart/persistent rollback. Native
+real-file obsolete-code interruption/reload/resume and active/rollback/unknown/
+modified/user-data preservation pass too. These are isolated temporary macOS
+fixtures, not an emulator UI or physical device. Native reference files use the
+same pinned koreader-base revision as CI; no foreign UI plugin is executed.
+
+Evidence: `test-results/performance-20261028/` (`full-lua.log`, `full-luajit.log`,
+before/after demand CSVs, targeted/settings/cover/menu logs, package and complete
+sealed/source audit, Gitleaks and native OTA log). Verification-only follow-up
+documentation does not rebuild the candidate ZIP. No push, tag, release, public
+asset/OTA change or user-device installation occurred. The optional profiles
+remain opt-in pending the physical acceptance protocol in TESTING.

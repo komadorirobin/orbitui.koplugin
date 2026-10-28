@@ -33,6 +33,9 @@ and correct this file in the same change.
   Bounded opt-in local timings/cache reports and a bilingual Home→library→chip→
   navigation/return guide are under System & maintenance. No external UI code,
   new installed path, source-pin/bootstrap/VERSION/artwork change, push or release.
+  Candidate `5def9a06` passes full Lua/LuaJIT, all 83 root suites on sealed bytes,
+  43 catalogs, exact package/source/path audits and native actual-Beta-14 OTA/
+  restart/rollback/cleanup tests. Verification follow-up does not rebuild its ZIP.
   Full/sealed verification is recorded in MERGE_LOG; actual UI/device latency
   and native image-pressure acceptance remain open. The headless demand baseline
   is not a KOReader emulator benchmark or a measured RAM/speed improvement.
