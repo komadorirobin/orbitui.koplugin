@@ -488,12 +488,14 @@ local function _sidecarChanged(entry, fp)
     return _docSettingsFinds("findSidecarFile", fp)
 end
 
--- Same for the custom metadata file.
-local function _customMetadataChanged(entry, fp)
+-- Same for the custom metadata file. A book cached without one is not
+-- searched again: the file is only created from Book information, which
+-- flushes this cache through BookMetadataChanged.
+local function _customMetadataChanged(entry)
     if entry.custom_path then
         return lfs.attributes(entry.custom_path, "modification") ~= entry.custom_mtime
     end
-    return _docSettingsFinds("findCustomMetadataFile", fp)
+    return false
 end
 
 -- Returns cached data table for fp, or nil on miss / stale entry.
@@ -508,7 +510,7 @@ local function _cacheGet(fp)
     if entry.validated_at == now then return entry.data end
     if not entry.sidecar_path and now >= entry.expires_at
             or _sidecarChanged(entry, fp)
-            or _customMetadataChanged(entry, fp) then
+            or _customMetadataChanged(entry) then
         _sidecar_cache[fp] = nil
         return nil
     end
