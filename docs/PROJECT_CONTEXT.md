@@ -32,8 +32,11 @@ and correct this file in the same change.
   No BookOrbit code/art/palette is imported. Inspiration: BookOrbit colour-board
   feature `267f53fc` (27 October), not a new embedded component or sync feature.
   New runtime logic lives in existing dashboard files at the API-1 path ceiling.
-  VERSION is Beta 15 for this explicitly approved prerelease; publication and
-  complete verification results are recorded in the latest MERGE_LOG entry.
+  Beta 15 is public at exact candidate/tag `ee35bf19`, published 2026-10-28
+  15:08:36 UTC. Main/tag checks `40712349677`/`40712349197`, local complete
+  Lua/LuaJIT/translation/sealed-byte/source/history/artwork/secret gates, actual
+  older-install native OTA from Beta 5/9/14 and live public-byte OTA from Beta
+  9/14 pass. Exact asset digest and device gaps are in the latest MERGE_LOG entry.
 
 - User-requested upstream merge (no release) starts from clean `19cec4de` on
   `maintenance/upstream-20261028`. Exact unsquashed imports are Bookshelf
@@ -106,9 +109,9 @@ and correct this file in the same change.
   Home is explicitly Home/Hem (SimpleUI). Native preference callbacks, scopes,
   advanced controls and stored values remain in place. The earlier same-version
   development ZIP was never published as a replacement Beta 12.
-- Product version: `0.1.0-beta.14` (public GitHub prerelease, published
-  2026-10-27 at 13:22:20 UTC after explicit user request; verification is in
-  `docs/MERGE_LOG.md`). Beta 13 and earlier assets remain immutable.
+- Product version: `0.1.0-beta.15` (public GitHub prerelease, published
+  2026-10-28 at 15:08:36 UTC after explicit user request; verification is in
+  `docs/MERGE_LOG.md`). Beta 14 and earlier assets remain immutable.
 - Beta 12 starts from clean public main `70e5a1fd` on
   `fix/android-covers-beta12-20261026`. Android safe mode remains enabled;
   host-owned foreground local extraction replaces the blocked Bookshelf queue,
@@ -134,14 +137,16 @@ and correct this file in the same change.
   with category/instance/external-module tests in `0acdd843`.
   Complete local Lua/LuaJIT, translation, sealed-package and native OTA gates
   pass; exact verification results are recorded in `docs/MERGE_LOG.md`.
-- Release tag: `v0.1.0-beta.14` at `575fdb7a`; previous tags
+- Release tag: `v0.1.0-beta.15` at `ee35bf19`; previous tags
+  `v0.1.0-beta.14` at `575fdb7a`,
   `v0.1.0-beta.13` at `f9d3b3a2`,
   `v0.1.0-beta.12` at `ea8bbaf0`,
   `v0.1.0-beta.11` at `03106015`,
   `v0.1.0-beta.10` at `0a2ea22b`, `v0.1.0-beta.9` at `a4bb9acb` and all
   earlier tags/assets are unchanged.
-- Public branch: `main`; October 28 maintenance is merge/push only, not a new
-  release. The preceding merge/push/release request produced Beta 14. The settings request produced
+- Public branch: `main`; the later October 28 explicit colour/publication request
+  produces Beta 15, including the preceding reviewed merge/push-only maintenance.
+  The preceding merge/push/release request produced Beta 14. The settings request produced
   Beta 13. The preceding cover
   request produced Beta 12. The earlier updater request
   produced Beta 11. The previous
@@ -156,12 +161,12 @@ and correct this file in the same change.
   `fix/home-first-run-20261025`.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
-- Embedded Bookshelf Git in main/Beta 15 preparation:
+- Embedded Bookshelf Git in main/Beta 15:
   `d07905ba932e09044827aadf480c188a5d324b96` (6.0.4). Public Beta 14 retains
   `c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3).
   Public Beta 10 keeps `5f726c25` / merge `0db81b46` unchanged.
   Prior 6.0.0 integration `fc1103a3` / `48438837` is retained in ancestry.
-- Embedded SimpleUI Git in main/Beta 15 preparation:
+- Embedded SimpleUI Git in main/Beta 15:
   `22d5a3d2dd7be4651e718eb49027d82f68b3ace7` (3.0.1 follow-up). Beta 14 keeps
   `e5cd6dcb31fa759b9831223d4719f61126367cff` (3.0.1 runtime), twelve commits
   after `b1580f90b2e17cf03a66c744c323a1df66d77100` retained in Beta 13.

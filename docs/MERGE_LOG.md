@@ -4552,6 +4552,57 @@ gates; final results follow. Physical Boox/Bigme colour/contrast/night/ghosting,
 touch/Back, DPI, restart/rotation/sleep and actual document-engine acceptance
 remain open. Do not infer device performance from stubbed UI/contrast tests.
 
+### Beta 15 publication and final verification
+
+Exact candidate/tag `ee35bf19836906ea81bf74737fc661ec8e4fa178` fast-forwards and
+atomically pushes main/tag only after complete local gates. Public prerelease
+v0.1.0-beta.15 is published 2026-10-28 15:08:36 UTC after both main/tag checks
+`40712349677`/`40712349197` pass both interpreters, translations, packaging and
+native OTA. Only runner/Node migration annotations. The draft's tag endpoint
+returned 404; authenticated release listing/by-ID found the existing draft
+426819687, so there was no duplicate creation. Exact draft assets were downloaded
+and audited before publication. Anonymous public metadata/download/digest and
+actual old-installer live TLS discovery/download then pass.
+
+Complete sequential final local gates: 119 Python/four unchanged external-source
+cache skips, all 80 root Lua files, 487 Bookshelf suites/zero failures/three
+normal SQLite exclusions and all 13 SimpleUI files. Map 383, syntax 1,062,
+static vocabulary 332, translations 43/zero failures. No new skip/allowance.
+All 38 dashboard/15 config/six colour cases, retained settings/Home/panel/Android
+covers/navigation/Unicode/cache and 23 native reader-menu cases (whole pinned and
+minimum v2025.08 ReaderMenu) pass on sealed bytes under both interpreters.
+Tests cover logical day/night contrast, default-off/monochrome/colour-disabled
+fallback, independent scopes, unchanged geometry/actions/text/pagers, 64-pixel
+read-only sampling, weak ownership, pending/failed bitmap retry and RGB paint.
+Native UI/font/document boundaries are stubbed; synthetic SVG/Quick Look previews
+are schematic with approximate text, not actual native/device rendering.
+
+Every package file/hash/size equals committed source and exact manifest. No
+runtime path added/removed: 1,999 files plus manifest/all 2,000 installed API 1
+slots; 2,066 entries. Stable bootstrap/API/limits/fonts/artwork/module map and
+both reviewed component trees/pins stay unchanged from preceding maintenance.
+ZIP SHA-256 `f2005c95e9d4536661402c424811861c729369ea32313dc3e1c9ce559f593043`,
+9,380,788 bytes, expanded 29,340,517. All 149 blobs since public Beta 14 exclude
+held artwork; Gitleaks scans 25 non-merge commits without leaks. No old tag or
+release asset is changed. Source/manifest and draft/public asset/API digests match.
+
+Fresh GitHub digests verify immutable public Beta 5/9/14 starting ZIPs. Actual
+old-installer Linux libarchive/SHA tests pass offer/extraction/full inventory,
+missing-module rejection, activation/restart/code rollback, truncated recovery
+and external snapshot/restart/persistent rollback from all three. Live actual
+published-byte TLS discovery/download and every native phase pass from Beta
+9 and 14. Public Beta 14 tag remains 575fdb7a and its metadata/asset identities,
+sizes/digests/update timestamps stay unchanged; its ZIP is still
+01010c252a9abd5842cd0e7e3c539cb9e609fec07358a1196039911f80c30bc0.
+
+Evidence: test-results/beta15-20261028/. Follow-up verification documentation
+does not rebuild/replace published bytes. Task-only Docker container is removed
+and Desktop restored to its initially stopped state. No reader install, settings,
+progress, links, cache reset, external sync owner or artwork change. Physical
+Boox/Bigme colour strength/night/ghosting/touch/Back/DPI/rotation/restart/sleep and
+actual document-engine acceptance remains open. This beta does not claim measured
+speed, physical display acceptance or newly verified native-crash safety.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.
