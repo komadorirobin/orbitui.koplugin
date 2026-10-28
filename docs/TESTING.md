@@ -1776,6 +1776,16 @@ quality or completeness.
   dark/light hero, night mode and large dock/pager margins. No card should paint
   under the pager/dock. Covers keep their proportions and colour.
 - Rename cards via Reading dashboard > Headings from both settings entry points.
+  For Beta 15 also test **Home (SimpleUI) > Reading dashboard > Card colours**
+  (Hem (SimpleUI) > Läsöversikt > Kortfärger) and native module settings:
+  Off/Accents/Tinted cards, before/after restart and independently on Custom
+  Screens. Existing installs must remain Off. Check real coloured fills/borders
+  and progress on Boox/Bigme, dark/light hero with colourful/grey/missing/custom
+  covers, night-mode flips, colour rendering on/off and an actual monochrome
+  reader. Cover arrival must only recolour its frame, not change text, row pages,
+  sources or book actions. Check portrait/landscape, language/search, Back,
+  reader return, sleep/resume and tinted-area ghosting without changing native
+  refresh preferences. Schematic SVGs/contrast tests are not display acceptance.
   Check the keyboard, immediate redraw, long Swedish/CJK titles, persistence
   after restart and language changes, Cancel, blank input and Restore default.
   Other Home modules and Custom Screens must retain their own names; reset must

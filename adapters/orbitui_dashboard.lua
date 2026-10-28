@@ -102,6 +102,31 @@ function M.isEnabled(pfx)
     return store():readSetting((pfx or "simpleui_hs_") .. M.enabled_key) == true
 end
 
+function M.colourMode(pfx)
+    return Model.colourMode(store():readSetting((pfx or "simpleui_hs_") .. "orbitui_dashboard_colour"))
+end
+
+function M.colourItem(refresh, pfx)
+    local labels = { off = "Off", accents = "Accents", tinted = "Tinted cards" }
+    return { text_func = function() return _("Card colours") .. ": " .. _(labels[M.colourMode(pfx)]) end,
+        help_text = _("Colours affect only this reading dashboard. Monochrome screens keep greyscale. Layout, headings and book sources are kept."),
+        sub_item_table_func = function()
+            local rows = {}
+            for _i, mode in ipairs({ "off", "accents", "tinted" }) do
+                local choice = mode
+                rows[#rows + 1] = { text = _(labels[choice]), checked_func = function()
+                    return M.colourMode(pfx) == choice
+                end, callback = function()
+                    store():saveSetting((pfx or "simpleui_hs_") .. "orbitui_dashboard_colour", choice)
+                    if refresh then refresh() else
+                        require("screens/sui_homescreen").rebuildLayout({ keep_wallpaper = true })
+                    end
+                end }
+            end
+            return rows
+        end }
+end
+
 function M.install(registry)
     -- Snapshot old defaults before a newly enabled module can look like an upgrade.
     M.readConfig("simpleui_hs_")
@@ -149,6 +174,7 @@ function M.menuItems(refresh, pfx, ctx_menu)
         { text = _("Cards and content"), sub_item_table_func = function()
             return require("adapters/orbitui_dashboard_settings").items(refresh, pfx, ctx_menu)
         end },
+        M.colourItem(refresh, pfx),
     }
 end
 
@@ -218,6 +244,7 @@ function M.readData(ctx)
         source_labels = { want = Sources.label(config.sources.want), new = Sources.label(config.sources.new) },
         stats = ctx.stats or {}, goal = goal, hardcover = hc_enabled,
         dark = store():readSetting((ctx.pfx or "simpleui_hs_") .. "orbitui_dashboard_dark") ~= false,
+        colour = M.colourMode(ctx.pfx),
         headings = M.readHeadings(ctx.pfx),
     }
 end

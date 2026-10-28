@@ -54,8 +54,8 @@ return function(widget, path)
             end
             emit('</g>')
         elseif child.kind == "bar" then
-            rect(x, y, w, h, "#a9aaa9", nil, h / 2)
-            rect(x, y, w * child.pct, h, "#525754", nil, h / 2)
+            rect(x, y, w, h, child.background or "#a9aaa9", nil, h / 2)
+            rect(x, y, w * child.pct, h, child.color or "#525754", nil, h / 2)
         elseif child.kind == "cover" then
             i = i + 1
             rect(x, y, w, h, cover_colors[(i - 1) % #cover_colors + 1], "#303333")

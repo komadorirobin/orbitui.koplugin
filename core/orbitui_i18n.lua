@@ -1,5 +1,9 @@
 -- OrbitUI-owned strings, independent of the two upstream translation catalogs.
 local sv = {
+    ["Card colours"] = "Kortfärger",
+    ["Accents"] = "Accenter",
+    ["Tinted cards"] = "Tonade kort",
+    ["Colours affect only this reading dashboard. Monochrome screens keep greyscale. Layout, headings and book sources are kept."] = "Färgerna gäller bara den här läsöversikten. Svartvita skärmar behåller gråskalan. Layout, rubriker och bokkällor behålls.",
     ["Flash on every page turn"] = "Blinka vid varje sidbyte",
     ["Use a flashing refresh on every page turn of the home screen, with or without book covers, to reduce ghosting."] = "Använd en blinkande uppdatering vid varje sidbyte på Hem (SimpleUI), med eller utan bokomslag, för att minska kvarstående bildspår.",
     ["About label switches"] = "Om etikettreglagen",

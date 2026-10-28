@@ -1,6 +1,72 @@
 -- Geometry and layout edits are independent of KOReader's widget/cache owners.
 local M = { id = "orbitui_dashboard" }
 
+-- OrbitUI's own card palette; no BookOrbit code, palettes or assets imported.
+-- Stable card IDs keep colours attached to content when cards are reordered.
+local CARD_INK = {
+    hero = "#406B91", pages_today = "#3579A6", reading_today = "#287D78",
+    streak = "#B56E19", week = "#3E865D", ongoing = "#5867AE",
+    goal = "#B44770", want = "#9A713F", new = "#237D83",
+}
+
+function M.colourMode(value)
+    return (value == "accents" or value == "tinted") and value or "off"
+end
+
+local function rgb(hex)
+    if type(hex) ~= "string" then return end
+    local r, g, b = hex:match("^#(%x%x)(%x%x)(%x%x)$")
+    if r then return tonumber(r, 16), tonumber(g, 16), tonumber(b, 16) end
+end
+
+local function mix(hex, target, amount)
+    local r, g, b = rgb(hex)
+    local function channel(c) return math.floor(c + (target - c) * amount + 0.5) end
+    return string.format("#%02X%02X%02X", channel(r), channel(g), channel(b))
+end
+
+-- Logical on-screen colours. The view uses SimpleUI's existing night-aware
+-- conversion, while ordinary black/white text retains native inversion.
+function M.cardColours(key, mode, night, cover_hex)
+    if M.colourMode(mode) == "off" then return nil end
+    local base = key == "hero" and rgb(cover_hex) and cover_hex or CARD_INK[key] or CARD_INK.hero
+    return {
+        accent = night and mix(base, 255, 0.38) or base,
+        border = mix(base, 255, night and 0.18 or 0.48),
+        fill = mode == "tinted" and mix(base, night and 0 or 255, night and 0.78 or 0.86) or nil,
+        deep = key == "hero" and rgb(cover_hex)
+            and mix(cover_hex, night and 255 or 0, night and 0.76 or 0.64) or nil,
+    }
+end
+
+-- At most 64 reads from an already-cached bitmap. Quantised RGB buckets favour
+-- a saturated region over white lettering/background; no image decode or I/O.
+function M.coverColour(width, height, pixel)
+    if width < 1 or height < 1 then return nil end
+    local buckets, best, score = {}, nil, 0
+    for row = 0, 7 do
+        for col = 0, 7 do
+            local r, g, b, alpha = pixel(math.min(width - 1, math.floor((col + 0.5) * width / 8)),
+                math.min(height - 1, math.floor((row + 0.5) * height / 8)))
+            if r and g and b and (alpha or 255) >= 128 then
+                local bright, low = math.max(r, g, b), math.min(r, g, b)
+                local chroma = bright - low
+                if chroma >= 40 and bright >= 55 and low <= 215 then
+                    local key = math.floor(r / 64) + 4 * math.floor(g / 64) + 16 * math.floor(b / 64)
+                    local bucket = buckets[key] or { weight = 0, r = 0, g = 0, b = 0 }
+                    buckets[key] = bucket
+                    bucket.weight = bucket.weight + chroma
+                    bucket.r, bucket.g, bucket.b = bucket.r + r * chroma, bucket.g + g * chroma, bucket.b + b * chroma
+                    if bucket.weight > score then best, score = bucket, bucket.weight end
+                end
+            end
+        end
+    end
+    if not best then return nil end
+    return string.format("#%02X%02X%02X", math.floor(best.r / best.weight + 0.5),
+        math.floor(best.g / best.weight + 0.5), math.floor(best.b / best.weight + 0.5))
+end
+
 M.heading_cards = {
     { key = "hero", label = "Continue reading" },
     { key = "pages_today", label = "Pages today" },

@@ -7,6 +7,45 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 0.1.0-beta.15
+
+Beta 15 adds optional **Card colours > Off / Accents / Tinted cards** under
+**OrbitUI settings > Home (SimpleUI) > Reading dashboard** and the dashboard's
+own module settings. The choice belongs to that Home/Custom Screen only.
+Existing installations stay Off until explicitly changed. Monochrome screens
+and disabled colour rendering keep the old greyscale regardless of the stored
+choice. Tinted cards add quiet backgrounds; accents colour borders/progress.
+The continue-reading card can use the displayed cover's dark shade, retaining
+its light/dark preference. Night-mode palettes keep native black/white text
+contrasting. Layout, card order/headings/sources, row paging, covers and actions
+are preserved. No BookOrbit code, palette or artwork is imported; the feature
+is an independent OrbitUI implementation inspired by its colour-board options.
+
+Also includes the reviewed October 28 upstream imports: Bookshelf 6.0.4 through
+`d07905ba` (colour-safe frames, bounded dialog refreshes, searchable collections
+and sleep-screen capture), SimpleUI 3.0.1 follow-up through `22d5a3d2` (weak
+reader hook owners, deferred file listing, cover-poll/page-refresh and hidden
+pager fixes, dithered wallpaper, optional page flash and Hazel). OrbitUI's fast
+profile return, clearer settings, Android safe-mode covers, Home/Bento,
+series/ornaments, cached MAL and external BookOrbit sync owners remain intact.
+
+Svenska: Välj **OrbitUI-inställningar > Hem (SimpleUI) > Läsöversikt > Kortfärger**:
+Av, Accenter eller Tonade kort. Tonade kort ger pastellbakgrunder och färgade
+ramar/indikatorer. Valet gäller bara den aktuella läsöversikten. Befintliga
+installationer behåller gråskalan tills du väljer färg. Mörkt Fortsätt läsa-kort
+kan hämta sin färg från omslaget; rubriker, layout, bokkällor och bläddring behålls.
+Även senaste granskade upstream-rättningarna ingår. Fysisk Boox/Bigme-kontroll
+av färg, nattläge, ghosting och lyhördhet återstår.
+
+Update from Beta 14 (or earlier supported betas) on the preview channel and
+restart KOReader. Bootstrap/API 1 and the complete installed file set stay
+unchanged: 1,999 inventoried files plus manifest, all 2,000 slots. New code and
+notes use existing runtime files; Hazel's exact original PNG bytes remain
+embedded as reviewed. No old asset/license/note is removed or installer limit
+raised. Old public tags/ZIPs stay immutable. Rollback changes code, not later
+settings/reading data; older builds ignore the new scoped colour preference.
+Headless/native-archive tests are not physical colour/display acceptance.
+
 ## OrbitUI 0.1.0-beta.14
 
 Beta 14 includes the approved native reader-menu fast Bookshelf return and the

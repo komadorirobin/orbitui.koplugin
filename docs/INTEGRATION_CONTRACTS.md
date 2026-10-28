@@ -1124,6 +1124,23 @@ auto-refresh gate only for visible BookOrbit-backed rows, without overriding
 other modules or the global opt-out. Goal source may explicitly select local or
 Hardcover while the automatic mode retains existing behavior.
 
+October 28 user-approved card colours are scoped independently under each
+screen prefix's orbitui_dashboard_colour key. Off is the default; Accents and
+Tinted cards do not alter layout, headings, sources, dark-hero preference or
+other SimpleUI/Bookshelf colours. Monochrome/colour-disabled readers retain
+the exact greyscale route while preserving the saved choice. Stable IDs own
+palette roles after reordering. Night palettes account for native inversion;
+text stays native black/white with contrast tested in logical display space.
+RGB fills/borders use colour-aware primitives, including older FrameContainer
+implementations. Cover arrival recolours only the hero frame: text/actions/
+pagers keep their identities. Read at most 64 pixels of an already-borrowed
+native cover, cache at most 32 weak-keyed derived strings, retry after a missing
+or replaced bitmap, and never decode, mutate, scale, invert, retain strongly,
+free, write settings/data or fetch artwork to compute a colour. The native
+night-mode layout invalidation rebuilds these palettes too. Own OrbitUI palette
+and RGB-bucket code; no BookOrbit implementation/assets are imported.
+Tests: test_dashboard_colour, test_dashboard and test_dashboard_config.
+
 Source: `core/orbitui_dashboard.lua`, `adapters/orbitui_dashboard.lua`,
 `adapters/orbitui_dashboard_view.lua`, `adapters/orbitui_dashboard_sources.lua`,
 `adapters/orbitui_dashboard_settings.lua`, explicit UI loader/settings seams.

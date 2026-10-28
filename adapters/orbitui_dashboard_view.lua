@@ -14,6 +14,54 @@ local Screen = require("device").screen
 
 local M = {}
 local Dashboard = Input:extend{}
+local cover_colours = setmetatable({}, { __mode = "k" })
+local cover_colour_count = 0
+
+function M.colourSupported()
+    return Screen.isColorScreen and Screen:isColorScreen()
+        and Screen.isColorEnabled and Screen:isColorEnabled()
+        and BB.ColorRGB32 ~= nil and BB.isColor8 ~= nil or false
+end
+
+-- Find the borrowed ImageWidget bitmap in the native cover/shadow containers.
+-- Never hold an extra strong reference, mutate, scale, invert or free it.
+function M.coverColour(image)
+    local visited = 0
+    local function find(node, depth)
+        if type(node) ~= "table" or depth > 5 or visited >= 24 then return end
+        visited = visited + 1
+        local bb = node.image
+        if (type(bb) == "table" or type(bb) == "cdata") and bb.getPixel and bb.getWidth and bb.getHeight then return bb end
+        for i = 1, math.min(#node, 8) do
+            local found = find(node[i], depth + 1)
+            if found then return found end
+        end
+    end
+    local ok, result = pcall(function()
+        local bb = find(image, 0)
+        if not bb then return nil end
+        if cover_colours[bb] ~= nil then return cover_colours[bb] or nil end
+        local colour = Model.coverColour(bb:getWidth(), bb:getHeight(), function(x, y)
+            local c = bb:getPixel(x, y):getColorRGB32()
+            return c.r, c.g, c.b, c.alpha
+        end)
+        if cover_colour_count >= 32 then cover_colours, cover_colour_count = setmetatable({}, { __mode = "k" }), 0 end
+        cover_colours[bb], cover_colour_count = colour or false, cover_colour_count + 1
+        return colour
+    end)
+    return ok and result or nil
+end
+
+-- These decorative frames have no content; text/covers are separate siblings.
+-- Explicit RGB fills/borders also work with older FrameContainer implementations
+-- whose plain paintRoundedRect/paintBorder lose chroma with a C blitter.
+function M.paintColourCard(frame, bb, x, y)
+    local Colour = require("lib/bookshelf_color")
+    frame.dimen.x, frame.dimen.y = x, y
+    Colour.paintRoundedRect(bb, x, y, frame.width, frame.height, frame.background, frame.radius + frame.bordersize)
+    Colour.paintBorder(bb, x, y, frame.width, frame.height, frame.bordersize, frame.color, frame.radius,
+        not G_reader_settings or G_reader_settings:nilOrTrue("anti_alias_ui"))
+end
 local MONTHS = { "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December" }
 
@@ -77,6 +125,7 @@ function Dashboard:replaceContent(ctx, data)
     local old = self[1]
     self._dashboard_ctx, self._dashboard_data = ctx, data
     self._actions, self._cover_slots, self._held = {}, {}, nil
+    self._hero_apply_colour = nil
     self._swipe_areas = {}
     self[1] = M.content(self, Model.plan(self.dimen.w, self.dimen.h, data.config), ctx, data)
     if old then old:free() end
@@ -91,6 +140,7 @@ function Dashboard:refreshCovers()
             local old = self[1][slot.index]
             self[1][slot.index] = image
             old:free()
+            if slot.hero and self._hero_apply_colour then self._hero_apply_colour(image) end
             changed = true
         end
     end
@@ -100,19 +150,30 @@ end
 function M.content(widget, p, ctx, data)
     local root = Overlap:new{ dimen = Geom:new{ w = p.w, h = p.h }, allow_mirroring = false }
     local ink, paper, muted = BB.COLOR_BLACK, BB.COLOR_WHITE, BB.COLOR_DARK_GRAY
+    local coloured = Model.colourMode(data.colour) ~= "off" and M.colourSupported()
+    widget.dithered = coloured or nil
+    local Accent = coloured and require("infra/sui_accent")
+    local function colours(key, cover_hex)
+        return coloured and Model.cardColours(key, data.colour, Screen.night_mode, cover_hex) or nil
+    end
+    local function native(hex) return hex and Accent.toColor(hex) end
     local function px(n) return math.max(1, math.floor(n * p.scale)) end
     local function add(child, x, y)
         child.overlap_offset = { x, y }
         root[#root + 1] = child
         return child
     end
-    local function box(r, fill, border)
-        return add(Frame:new{
+    local function box(r, fill, border, key)
+        local palette = colours(key)
+        local frame = Frame:new{
             dimen = Geom:new{ w = r.w, h = r.h }, width = r.w, height = r.h,
             margin = 0, padding = 0, radius = px(12), bordersize = px(1),
-            background = fill or paper, color = border or BB.COLOR_GRAY,
+            background = fill or (palette and native(palette.fill)) or paper,
+            color = border or (palette and native(palette.border)) or BB.COLOR_GRAY,
             Overlap:new{ dimen = Geom:new{ w = r.w - 2 * px(1), h = r.h - 2 * px(1) } },
-        }, r.x, r.y)
+        }
+        if coloured then frame.paintTo = M.paintColourCard end
+        return add(frame, r.x, r.y)
     end
     local function text(value, x, y, w, size, bold, color, lines)
         if w < 1 then return end
@@ -142,17 +203,20 @@ function M.content(widget, p, ctx, data)
         action(r, function() if ctx.open_fn then ctx.open_fn(fp) end end,
             function() if ctx.hold_fn then ctx.hold_fn(fp, Model.id) end end)
     end
-    local function bar(x, y, w, value, dark)
+    local function bar(x, y, w, value, dark, key)
+        local palette = colours(key)
         add(UI.progressBar(math.max(1, math.floor(w)), Model.fraction(value), px(4),
-            dark and paper or ink, dark and BB.COLOR_DARK_GRAY or BB.COLOR_LIGHT_GRAY), x, y)
+            dark and paper or (palette and native(palette.accent)) or ink,
+            dark and BB.COLOR_DARK_GRAY or BB.COLOR_LIGHT_GRAY), x, y)
     end
-    local function cover(fp, r)
+    local function cover(fp, r, hero)
         local image = makeCover(fp, r, ctx)
         if image then
             add(image, r.x, r.y)
-            widget._cover_slots[#widget._cover_slots + 1] = { file = fp, area = r, index = #root }
+            widget._cover_slots[#widget._cover_slots + 1] = { file = fp, area = r, index = #root, hero = hero }
         end
         bookAction(r, fp)
+        return image
     end
     local function title(label, r, dark)
         text(label, r.x + p.pad, r.y + p.pad, r.w - p.pad * 2, 13, true, dark and paper or ink)
@@ -172,7 +236,14 @@ function M.content(widget, p, ctx, data)
     -- Hero: covers stay in colour; only the surrounding card is dark.
     local r, dark = p.hero, data.dark
     if r then
-    box(r, dark and ink or paper, dark and ink or nil)
+    local hero_frame = box(r, dark and ink or nil, dark and ink or nil, "hero")
+    if coloured then
+        widget._hero_apply_colour = function(image)
+            local palette = colours("hero", M.coverColour(image))
+            hero_frame.background = (dark and native(palette.deep)) or (not dark and native(palette.fill)) or (dark and ink or paper)
+            hero_frame.color = dark and hero_frame.background or native(palette.border)
+        end
+    end
     local label = data.current and data.current.data.status == "complete" and "Last opened" or "Continue reading"
     title(heading("hero", _(label)), r, dark)
     if data.current then
@@ -181,14 +252,15 @@ function M.content(widget, p, ctx, data)
         local cw = math.floor(math.min(h * 2 / 3, r.w * 0.40))
         local ch = math.floor(cw * 3 / 2)
         local cr = rect(r.x + p.pad, r.y + r.h - p.pad - ch, cw, ch)
-        cover(data.current.file, cr)
+        local hero_image = cover(data.current.file, cr, true)
+        if widget._hero_apply_colour then widget._hero_apply_colour(hero_image) end
         local tx, ty = cr.x + cw + px(12), r.y + p.pad + px(34)
         local tw = r.x + r.w - p.pad - tx
         text(bd.title, tx, ty, tw, 18, true, dark and paper or ink, 2)
         text(require("infra/sui_text").formatAuthors(bd.authors) or "",
             tx, ty + px(53), tw, 13, false, dark and paper or muted, 2)
         local by = r.y + r.h - p.pad - px(35)
-        bar(tx, by, tw, bd.percent, dark)
+        bar(tx, by, tw, bd.percent, dark, "hero")
         text(string.format("%d%%", math.floor(Model.fraction(bd.percent) * 100 + 0.5)),
             tx, by + px(11), tw, 14, true, dark and paper or ink)
         bookAction(rect(tx, ty, tw, r.y + r.h - p.pad - ty), data.current.file)
@@ -208,7 +280,7 @@ function M.content(widget, p, ctx, data)
     for i, tile in ipairs(tiles) do
         r = p.stats[i]
         if r then
-        box(r)
+        box(r, nil, nil, tile[4])
         title(heading(tile[4], _(tile[1])), r)
         text(tile[2], r.x + p.pad, r.y + math.floor(r.h * 0.40), r.w - p.pad * 2, 23, true)
         text(_(tile[3]), r.x + p.pad, r.y + r.h - p.pad - px(15), r.w - p.pad * 2, 11, false, muted)
@@ -218,7 +290,7 @@ function M.content(widget, p, ctx, data)
 
     r = p.ongoing
     if r then
-    box(r)
+    box(r, nil, nil, "ongoing")
     title(heading("ongoing", _("Also reading")), r)
     if #data.ongoing == 0 then
         text(_("No other books in progress."), r.x + p.pad, r.y + px(46),
@@ -233,7 +305,7 @@ function M.content(widget, p, ctx, data)
             local tw = r.x + r.w - p.pad - tx
             text(book.data.title, tx, y, tw, 13, true)
             local pct = string.format("%d%%", math.floor(Model.fraction(book.data.percent) * 100 + 0.5))
-            bar(tx, y + rh - px(15), tw - px(37), book.data.percent)
+            bar(tx, y + rh - px(15), tw - px(37), book.data.percent, false, "ongoing")
             text(pct, tx + tw - px(32), y + rh - px(21), px(32), 10, false, muted)
             bookAction(rect(tx, y, tw, rh), book.file)
         end
@@ -242,7 +314,7 @@ function M.content(widget, p, ctx, data)
 
     r = p.goal
     if r then
-    box(r)
+    box(r, nil, nil, "goal")
     local goal = data.goal
     title(heading("goal", goal and goal.title and goal.title ~= "" and goal.title
         or _("Reading goal") .. " " .. date.year), r)
@@ -253,7 +325,7 @@ function M.content(widget, p, ctx, data)
         text(string.format("%s / %s", value, target > 0 and tostring(target) or "-"),
             r.x + p.pad, r.y + px(43), r.w - p.pad * 2, 28, true)
         text(_(unit), r.x + p.pad, r.y + px(80), r.w - p.pad * 2, 13, false, muted)
-        bar(r.x + p.pad, r.y + r.h - p.pad - px(30), r.w - p.pad * 2, target > 0 and value / target or 0)
+        bar(r.x + p.pad, r.y + r.h - p.pad - px(30), r.w - p.pad * 2, target > 0 and value / target or 0, false, "goal")
         text(target <= 0 and _("Set a reading goal") or
             (value >= target and _("Goal reached") or goal.source),
             r.x + p.pad, r.y + r.h - p.pad - px(17), r.w - p.pad * 2, 11, false, muted)
@@ -278,7 +350,7 @@ function M.content(widget, p, ctx, data)
                 owner._orbitui_dashboard_sources[key] = identity
             end
         end
-        box(area)
+        box(area, nil, nil, key)
         local count = 3
         local pages = math.max(1, math.ceil(#files / count))
         local page = math.min(pages, math.max(1, owner._orbitui_dashboard_pages[key] or 1))

@@ -22,6 +22,19 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-28
 
+- User approves dashboard colour implementation and immediate Beta 15
+  publication, including the already-reviewed October 28 upstreams. Work starts
+  clean at public main `eacfa7a7` on `feature/dashboard-colour-beta15-20261028`.
+  Independent OrbitUI code/palette adds per-screen Off/Accents/Tinted cards;
+  existing installs default Off. Native monochrome fallback, night palettes,
+  explicit RGB card paint and bounded read-only borrowed-cover sampling preserve
+  layout/headings/sources/row pages/actions and all external sync owners.
+  No BookOrbit code/art/palette is imported. Inspiration: BookOrbit colour-board
+  feature `267f53fc` (27 October), not a new embedded component or sync feature.
+  New runtime logic lives in existing dashboard files at the API-1 path ceiling.
+  VERSION is Beta 15 for this explicitly approved prerelease; publication and
+  complete verification results are recorded in the latest MERGE_LOG entry.
+
 - User-requested upstream merge (no release) starts from clean `19cec4de` on
   `maintenance/upstream-20261028`. Exact unsquashed imports are Bookshelf
   `d07905ba932e09044827aadf480c188a5d324b96` (6.0.4, import `695035f1`) and
@@ -143,11 +156,13 @@ and correct this file in the same change.
   `fix/home-first-run-20261025`.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
-- Embedded Bookshelf Git in main/Beta 14 (unchanged since Beta 11):
-  `c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3), five incoming commits.
+- Embedded Bookshelf Git in main/Beta 15 preparation:
+  `d07905ba932e09044827aadf480c188a5d324b96` (6.0.4). Public Beta 14 retains
+  `c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3).
   Public Beta 10 keeps `5f726c25` / merge `0db81b46` unchanged.
   Prior 6.0.0 integration `fc1103a3` / `48438837` is retained in ancestry.
-- Embedded SimpleUI Git in main/Beta 14:
+- Embedded SimpleUI Git in main/Beta 15 preparation:
+  `22d5a3d2dd7be4651e718eb49027d82f68b3ace7` (3.0.1 follow-up). Beta 14 keeps
   `e5cd6dcb31fa759b9831223d4719f61126367cff` (3.0.1 runtime), twelve commits
   after `b1580f90b2e17cf03a66c744c323a1df66d77100` retained in Beta 13.
   Public Beta 10 keeps `40b301f0` / merge `b9dfc849` unchanged.

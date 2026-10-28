@@ -277,4 +277,38 @@ H.test("new configuration strings switch language without changing saved ids or 
     H.eq(Dashboard.readHeadings(home).want, "My own label")
 end)
 
+H.test("card colour choices are per screen, default off and preserve all existing configuration", function()
+    local config = saved[key(home)]
+    local heading = saved[home .. "orbitui_dashboard_heading_want"]
+    H.eq(Dashboard.colourMode(home), "off"); H.eq(Dashboard.colourMode(custom), "off")
+    local item = Dashboard.colourItem(function() updates = updates + 1 end, custom)
+    local before = updates
+    local choices = item.sub_item_table_func()
+    H.eq(choices[1].text, "Off"); H.eq(choices[2].text, "Accents"); H.eq(choices[3].text, "Tinted cards")
+    H.eq(choices[1].checked_func(), true)
+    choices[3].callback()
+    H.eq(Dashboard.colourMode(custom), "tinted"); H.eq(Dashboard.colourMode(home), "off")
+    H.eq(updates, before + 1); H.eq(saved[key(home)], config)
+    H.eq(saved[home .. "orbitui_dashboard_heading_want"], heading)
+    H.eq(saved[home .. "orbitui_dashboard_dark"], false)
+    H.eq(Dashboard.readData({ pfx = custom }).colour, "tinted")
+    choices[1].callback(); H.eq(Dashboard.colourMode(custom), "off")
+    saved[custom .. "orbitui_dashboard_colour"] = "future-mode"
+    H.eq(Dashboard.colourMode(custom), "off")
+    H.eq(saved[custom .. "orbitui_dashboard_colour"], "future-mode", "unknown values must not be rewritten")
+end)
+
+H.test("colour label help and choices switch Swedish English without changing saved IDs", function()
+    local tr = require("core/orbitui_i18n")
+    for _, text in ipairs({ "Card colours", "Accents", "Tinted cards",
+        "Colours affect only this reading dashboard. Monochrome screens keep greyscale. Layout, headings and book sources are kept." }) do
+        assert(tr(text, "sv") ~= text); H.eq(tr(text, "en"), text)
+    end
+    G_reader_settings.readSetting = function() return "sv" end
+    local item = Dashboard.colourItem(nil, custom)
+    H.eq(item.text_func(), "Kortfärger: Av")
+    H.eq(item.sub_item_table_func()[3].text, "Tonade kort")
+    G_reader_settings.readSetting = function() return "en" end
+    H.eq(item.text_func(), "Card colours: Off")
+end)
 H.finish()

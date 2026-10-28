@@ -126,9 +126,9 @@ local SH = {
 }
 package.loaded["modules/module_books_shared"] = SH
 local UI = { MOD_GAP = 12, getContentHeight = function() return 800 end,
-    progressBar = function(w, pct, h)
+    progressBar = function(w, pct, h, fg, bg)
         assert(w > 0 and h > 0 and pct >= 0 and pct <= 1)
-        return Widget:new{ kind = "bar", pct = pct, dimen = { w = w, h = h } }
+        return Widget:new{ kind = "bar", pct = pct, color = fg, background = bg, dimen = { w = w, h = h } }
     end,
 }
 local function makeText(args)
@@ -838,17 +838,122 @@ H.test("source changes reset only that card's pager while reordering preserves i
     current:free()
 end)
 
+local colour_screen = package.loaded.device.screen
+local BB = package.loaded["ffi/blitbuffer"]
+local colour_enabled = true
+local function colourFixture()
+    G_reader_settings.nilOrTrue = function() return true end
+    colour_screen.isColorScreen = function() return true end
+    colour_screen.isColorEnabled = function() return colour_enabled end
+    BB.ColorRGB32 = function(r, g, b) return string.format("#%02X%02X%02X", r, g, b) end
+    BB.isColor8 = function(c) return type(c) ~= "string" or #c ~= 7 end
+    package.loaded["infra/sui_accent"] = { toColor = function(hex)
+        if not colour_screen.night_mode then return hex end
+        return (hex:gsub("%x%x", function(pair) return string.format("%02X", 255 - tonumber(pair, 16)) end))
+    end }
+end
+local function frameAt(tree, area)
+    for _, node in ipairs(tree[1]) do
+        if node.width == area.w and node.height == area.h
+                and node.overlap_offset[1] == area.x and node.overlap_offset[2] == area.y then return node end
+    end
+    error("Missing card frame")
+end
+H.test("whole colour dashboard keeps geometry and text, falls back on monochrome and honours rendering off", function()
+    colourFixture()
+    local local_data = Dashboard.readData(ctx)
+    local_data.config, local_data.colour = Model.config(), "tinted"
+    local plan = Model.plan(600, 730, local_data.config)
+    local current = View.build(600, 730, ctx, local_data)
+    local frame = frameAt(current, plan.goal)
+    H.eq(frame.background, Model.cardColours("goal", "tinted", false).fill)
+    H.eq(frame.paintTo, View.paintColourCard); H.eq(current.dithered, true)
+    local fill_calls, border_calls = 0, 0
+    local original_colour = package.loaded["lib/bookshelf_color"]
+    package.loaded["lib/bookshelf_color"] = dofile("components/bookshelf/lib/bookshelf_color.lua")
+    local bb = { paintRoundedRectRGB32 = function(_, _, _, _, _, color)
+            H.eq(color, frame.background); fill_calls = fill_calls + 1
+        end, paintBorderRGB32 = function(_, _, _, _, _, _, color)
+            H.eq(color, frame.color); border_calls = border_calls + 1
+        end }
+    frame:paintTo(bb, 10, 20); H.eq(fill_calls, 1); H.eq(border_calls, 1)
+    package.loaded["lib/bookshelf_color"] = original_colour
+    current:free()
+    colour_enabled = false
+    current = View.build(600, 730, ctx, local_data)
+    H.eq(frameAt(current, plan.goal).background, "white"); H.eq(current.dithered, nil)
+    current:free(); colour_enabled = true
+    local_data.colour = "off"
+    current = View.build(600, 730, ctx, local_data)
+    H.eq(frameAt(current, plan.goal).background, "white"); current:free()
+    colour_screen.isColorScreen = function() return false end
+    local_data.colour = "tinted"
+    current = View.build(600, 730, ctx, local_data)
+    H.eq(frameAt(current, plan.goal).background, "white"); current:free()
+    colourFixture()
+end)
+H.test("ready hero covers recolour only their frame, preserve text and borrow the bitmap read-only", function()
+    local reads = 0
+    local bb = { getWidth = function() return 32 end, getHeight = function() return 40 end,
+        getPixel = function() reads = reads + 1; return { getColorRGB32 = function()
+            return { r = 20, g = 100, b = 180, alpha = 255 }
+        end } end, free = function() error("borrowed bitmap freed") end,
+        scale = function() error("must not scale to sample") end,
+        invert = function() error("must not invert to sample") end }
+    local original = SH.getBookCover
+    SH.getBookCover = function(fp, ...)
+        local image = original(fp, ...)
+        if image and fp == "/current" then image.image = bb end
+        return image
+    end
+    local local_data = Dashboard.readData(ctx)
+    local_data.config, local_data.colour, local_data.dark = Model.config(), "tinted", true
+    missing_cover = "/current"
+    local current = View.build(600, 730, ctx, local_data)
+    local frame = frameAt(current, Model.plan(600, 730, local_data.config).hero)
+    H.eq(frame.background, "black"); H.eq(reads, 0)
+    local text_nodes = {}
+    for i, child in ipairs(current[1]) do if child.kind == "text" then text_nodes[i] = child end end
+    missing_cover = nil; H.eq(Dashboard.updateCovers(current), true)
+    H.eq(frame.background, Model.cardColours("hero", "tinted", false, "#1464B4").deep)
+    H.eq(reads, 64)
+    Dashboard.updateCovers(current); H.eq(reads, 64, "same bitmap sampled again")
+    for i, child in pairs(text_nodes) do H.eq(current[1][i], child, "cover arrival rebuilt text") end
+    current:free()
+    colour_screen.night_mode = true
+    current = View.build(600, 730, ctx, local_data)
+    frame = frameAt(current, Model.plan(600, 730, local_data.config).hero)
+    H.eq(frame.background, package.loaded["infra/sui_accent"].toColor(
+        Model.cardColours("hero", "tinted", true, "#1464B4").deep))
+    H.eq(reads, 64); current:free(); colour_screen.night_mode = false
+    H.eq(View.coverColour({ image = { getWidth = function() error("evicted") end,
+        getHeight = function() return 1 end, getPixel = function() end } }), nil)
+    local weak = setmetatable({}, { __mode = "v" })
+    do local transient = { getWidth = function() return 1 end, getHeight = function() return 1 end,
+        getPixel = bb.getPixel }; weak[1] = transient; View.coverColour({ image = transient }) end
+    collectgarbage("collect"); collectgarbage("collect"); H.eq(weak[1], nil, "colour cache retained bitmap")
+    SH.getBookCover = original
+end)
+
 local preview_path = os.getenv("ORBITUI_DASHBOARD_PREVIEW")
 if preview_path then
     G_reader_settings.readSetting = function() return "sv_SE" end
     books["/current"].title, books["/current"].authors, books["/current"].percent = "Skannad i dunklet", "Philip K. Dick", .59
     books["/first"].title, books["/second"].title, books["/third"].title = "The Strange House, Vol. 4", "En annan pågående bok", "En tredje bok"
     data = Dashboard.readData(ctx)
+    data.colour = os.getenv("ORBITUI_DASHBOARD_COLOUR") or "off"
     data.goal = { title = "Läsmål för 2026", target = 300, value = 201, metric = "book", source = "Hardcover" }
     data.stats = { today_pages = 0, today_secs = 0, week_secs = 7 * 3600 + 13 * 60, streak = 12 }
     data.new = { "/third", "/first", "/second", "/fourth" }
     ctx._screen_widget._orbitui_dashboard_pages = {}
     local preview = View.build(720, 876, ctx, data)
+    if preview._hero_apply_colour then
+        -- A synthetic bitmap matching the schematic's first synthetic cover.
+        preview._hero_apply_colour({ image = { getWidth = function() return 32 end,
+            getHeight = function() return 40 end, getPixel = function()
+                return { getColorRGB32 = function() return { r = 71, g = 119, b = 118, alpha = 255 } end }
+            end } })
+    end
     require("tests/dashboard_preview")(preview, preview_path)
     preview:free()
     data.config.order = { "want", "new", "ongoing", "hero", "stats", "goal" }

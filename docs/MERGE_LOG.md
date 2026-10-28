@@ -4511,6 +4511,47 @@ No reader installation or user data/settings/cache/link/sync-owner changes.
 Physical Boox/Bigme acceptance remains open as above; no measured speed or
 native document-engine/device-crash claim.
 
+## 2026-10-28 — Dashboard card colours and approved Beta 15 publication
+
+User approves the colour-dashboard proposal and immediate publication together
+with the reviewed October 28 upstreams. Start clean at `eacfa7a7` on
+`feature/dashboard-colour-beta15-20261028`; no additional upstream import/pin or
+license/dependency/asset/module path change. Bookshelf d07905ba and SimpleUI
+22d5a3d2 are already reviewed/imported in the preceding maintenance records.
+
+Independent OrbitUI implementation in existing core/dashboard/view/settings
+files adds Off (default), Accents and Tinted cards per Home/Custom Screen.
+Stable card IDs own a distinct palette; native black/white text stays readable
+on day/night fills, and monochrome/colour-disabled screens use the old route.
+Existing dark/light hero, headings, sources, layout and independent row paging
+stay intact. Colour-aware fill/border primitives bypass older native frame
+chroma loss without global drawing patches. Native night-layout invalidation
+re-resolves colours. The optional cover-derived hero reads at most 64 existing
+bitmap pixels, with at most 32 weak-keyed derived strings: no decode, I/O,
+strong retention, mutation/free, cover or provider work is added to paint.
+Pending/missing/replaced covers remain retryable. Cover arrival recolours the
+frame, preserving text/action/pager identity and borrowed-cover ownership.
+All new controls/help/search are bilingual; unknown future colour values are
+not silently rewritten. Main settings search includes colour/tint aliases.
+
+BookOrbit's colour feature 267f53fccd909cc05dbb8edca88b698a439b8a9e is product/
+visual inspiration only. No code, palette, icons, pets or artwork are copied.
+Its AGPL-plus additional terms were reviewed; this is not a BookOrbit subtree
+import or claim of endorsement. Sync/plugin/server responsibilities stay external.
+Own RGB-bucket sampler/palette reuse existing OrbitUI native cover/render owners.
+
+VERSION advances to 0.1.0-beta.15 under explicit publication approval; notes stay
+in existing OTA.md and the GitHub body because API 1 already has all 2,000 file
+slots. No old runtime path/license/artwork/bootstrap/limit is removed or changed.
+Public Beta 14 and all earlier tags/assets remain immutable. README download
+points to the release list rather than an outdated Beta 10 tag. Contracts
+C01-C11 preserved, especially C02/C04/C05/C07/C08/C09/C10. Targeted model/menu/
+whole-widget tests and schematics supplement the complete sequential Lua/LuaJIT,
+translation/package/history/artwork/secret/native older-installer and public-byte
+gates; final results follow. Physical Boox/Bigme colour/contrast/night/ghosting,
+touch/Back, DPI, restart/rotation/sleep and actual document-engine acceptance
+remain open. Do not infer device performance from stubbed UI/contrast tests.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

@@ -363,7 +363,7 @@ local nodes = {
     { "home", "Home (SimpleUI)", nil, "home", "homescreen hemskärm startsida simpleui" },
     { "home_layout", "Layout & modules", "home", "home", "layout moduler widgets bento kolumner columns pages sidor", screen = "pages" },
     { "home_screens", "Custom screens", "home", "screens", "egna anpassade skärmar screens", screen = "custom_screens" },
-    { "home_dashboard", "Reading dashboard", "home", "screens", "läsöversikt statistik mål goals" },
+    { "home_dashboard", "Reading dashboard", "home", "screens", "läsöversikt statistik mål goals kortfärger accenter tonade färg card colours colors accents tinted" },
     { "home_shelves", "Bookshelf shelves on Home", "home", "home", "bokhyllor carousel karusell bokrad book row" },
     { "home_options", "Wallpaper, presets & behaviour", "home", "home", "bakgrund wallpaper förinställningar beteende fast book closing", screen = "home_screen_settings" },
     { "home_advanced", "Advanced SimpleUI settings", "home", "screens", "alla all settings statistik statistics", screen = "__root__" },
