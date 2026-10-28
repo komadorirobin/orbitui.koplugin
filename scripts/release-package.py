@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Seal a git-archive runtime ZIP with an exact file inventory and SHA-256."""
+"""Optimize and seal a git-archive runtime ZIP with an exact byte inventory."""
 
 import hashlib
 import json
@@ -17,6 +17,21 @@ MAX_FILES = 2000
 MAX_MANIFEST = 1024 * 1024
 
 
+def runtime_bytes(relative, data):
+    """Omit only PO source locations, retaining every language and legal notice.
+
+    Keep the tracked upstream catalogs intact. These developer-only comments
+    are ignored by both native translation loaders; headers, flags, translator
+    comments, obsolete entries and all message bytes stay unchanged. Transform
+    before inventory/hash generation so installed API-1 checks cover the bytes
+    actually shipped, not the larger source catalogs.
+    """
+    if re.fullmatch(r"components/(?:bookshelf|simpleui)/locale/[^/]+\.po", relative):
+        return b"".join(line for line in data.splitlines(keepends=True)
+                        if not line.lstrip(b" \t").startswith(b"#:"))
+    return data
+
+
 def seal(path):
     with zipfile.ZipFile(path) as source:
         records = []
@@ -32,7 +47,7 @@ def seal(path):
             mode = (item.external_attr >> 16) & 0o170000
             assert mode in (0, 0o040000, 0o100000), "Links/special files are not allowed"
             assert item.file_size <= MAX_FILE, "Archive file exceeds OTA size limit"
-            records.append((item, source.read(item)))
+            records.append((item, runtime_bytes(relative, source.read(item))))
     files = {item.filename[len(PREFIX):]: data for item, data in records if not item.is_dir()}
     version = files["VERSION"].decode("ascii").strip()
     assert re.fullmatch(r"\d+\.\d+\.\d+(?:-(?:alpha|beta|rc)\.\d+)?", version), "Invalid version"

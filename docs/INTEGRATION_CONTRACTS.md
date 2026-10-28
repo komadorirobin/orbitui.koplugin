@@ -975,6 +975,15 @@ paths, remove old assets or raise old installer limits. File-based/user override
 and existing cache/pixel/alpha ownership remain unchanged. The package audit must
 check old path-set equality, embedded source-byte parity and unchanged bootstrap.
 
+October 28 user-approved package-size work omits only developer source-location
+comments (`#:` lines) from the component `locale/*.po` files when sealing a new
+build. Tracked upstream sources and all runtime paths/languages remain intact;
+headers, plural rules, messages, flags, legal notices and translator credits are
+unchanged. Manifest sizes/hashes describe the optimized bytes. Source-parity
+audits must apply this narrow documented transform to PO files, not waive their
+integrity checks. Compiled catalog semantics must remain identical. No language
+pack split, cache/rollback cleanup, bootstrap change or publication is implied.
+
 The monitor can fetch refs and update its one status issue only. It cannot merge,
 open merge PRs, advance integrated pins, tag, release or publish OTA. Publishing
 to users remains a separate explicitly approved action after reviewed changes.

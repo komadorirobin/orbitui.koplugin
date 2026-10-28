@@ -2,6 +2,17 @@
 
 ## Automated
 
+Local October 28 package-size work: `test_release_package.py` checks narrow PO
+source-reference omission (including CRLF/UTF-8/indented comments, literal `#:`
+inside strings, legal/translator comments, headers/plurals/flags/obsolete text,
+idempotence and non-catalog exclusions). All 43 tracked catalogs must compile
+to byte-identical `msgfmt --check --no-hash` output before/after the transform;
+the source files remain unchanged. Sealing tests verify the same path set and
+recomputed ZIP sizes, manifest sizes/hashes and whole-archive checksum. The
+transformed PO bytes, not their larger Git sources, are the source-audit target.
+This local build change does not republish Beta 15; final gates and measured
+size comparison are recorded in `MERGE_LOG.md`.
+
 2026-10-27 public Beta 14 at exact candidate/tag `575fdb7a`, 13:22:20 UTC:
 complete sequential Lua/LuaJIT and main/tag CI `40510806422`/`40510806468` pass
 119 Python/four unchanged source-cache skips, 78 root Lua files, 483 Bookshelf

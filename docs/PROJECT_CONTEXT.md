@@ -22,6 +22,15 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-28
 
+- User approves the first size-reduction proposal only: omit developer source
+  locations (`#:` comments) from the 43 component PO catalogs during packaging,
+  before generating manifest sizes/hashes. Tracked catalogs, all languages,
+  headers/plurals/translation bytes and legal/translator notices remain intact.
+  Work is local on `maintenance/slim-translations-20261028`; no component import,
+  runtime path/bootstrap/limit change, language-pack split, cache/slot cleanup,
+  version bump, push or publication is included. Beta 15 remains the public build.
+  Full verification and exact size comparison are recorded in MERGE_LOG below.
+
 - User approves dashboard colour implementation and immediate Beta 15
   publication, including the already-reviewed October 28 upstreams. Work starts
   clean at public main `eacfa7a7` on `feature/dashboard-colour-beta15-20261028`.

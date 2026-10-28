@@ -4603,6 +4603,34 @@ Boox/Bigme colour strength/night/ghosting/touch/Back/DPI/rotation/restart/sleep 
 actual document-engine acceptance remains open. This beta does not claim measured
 speed, physical display acceptance or newly verified native-crash safety.
 
+## 2026-10-28 — Local translation package-size optimization (not released)
+
+User approves the recommended first size-reduction step after measurement of
+public Beta 15: strip developer source-file/line references from packaged PO
+catalogs, not languages, functions, artwork or legal information. Work starts
+clean at public main `af238167` on `maintenance/slim-translations-20261028`.
+No upstream import/pin, component source, runtime path, stable bootstrap, API-1
+limit, VERSION, user data/cache or rollback-slot cleanup changes. No push,
+new tag or publication is authorized by this implementation request; public
+Beta 15 and all earlier releases remain immutable.
+
+`scripts/release-package.py` omits only lines beginning with `#:` (optionally
+indented) in the two components' direct `locale/*.po` catalogs. Original
+catalogs stay tracked byte-for-byte, along with all languages, legal/translator
+comments, flags, headers, plural rules and message bytes. The transform runs
+before inventory sizes/SHA-256 and archive checksum generation. No new runtime
+file is required at the installed 2,000-path ceiling. Source-parity audits use
+this narrow documented projection, never an unconditional PO exception.
+
+Targeted packaging tests pass all seven cases, including all 43 current
+catalogs compiling to identical checked, hash-free GNU gettext MO bytes before
+and after optimization. Regression fixtures retain CRLF/UTF-8, literal `#:` in
+message/context/continuation strings, plural rules, legal and translator text,
+fuzzy/format flags and obsolete entries; only source comments disappear. Path
+scope/idempotence and ZIP/manifest/checksum byte integrity are verified.
+Full local verification and measured sealed-package comparison follow below.
+Physical device acceptance is separate; no speed/RAM improvement is claimed.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

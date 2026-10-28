@@ -7,6 +7,23 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## Local packaging optimization (not yet published)
+
+Future sealed packages omit only developer source-file/line references (`#:`
+comments) from the 43 component PO catalogs. All languages, message bytes,
+headers, plural rules and copyright/license/translator notices remain. Original
+upstream catalogs in Git are not rewritten. The package manifest and checksum
+are generated after optimization, so older API-1 installers still validate the
+exact shipped bytes. No file paths, bootstrap, limits, settings, caches, artwork
+or retained update versions change. This is local build work, not a replacement
+for public Beta 15 or a new release. Semantic checks compile each original and
+optimized catalog and require byte-identical translation tables.
+
+Svenska: Kommande releasepaket utelämnar bara utvecklarnas fil- och radreferenser
+i översättningsfilerna. Alla språk, texter, pluralregler och licensuppgifter
+behålls; originalen i Git ändras inte. Kontrollsummor beräknas efter optimeringen.
+Ändringen är lokal och ingår ännu inte i någon publicerad release.
+
 ## OrbitUI 0.1.0-beta.15
 
 Beta 15 adds optional **Card colours > Off / Accents / Tinted cards** under
