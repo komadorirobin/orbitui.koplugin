@@ -2,6 +2,21 @@
 
 ## Automated
 
+Local October 28 storage cleanup: `test_update_storage.lua` exercises the real
+collector/validator/bootstrap reads and Lua syntax checks on a confined in-memory
+filesystem, without touching a reader. Fourteen cases cover current/rollback/
+factory and user-data preservation, full retained-package verification, strict
+older-version filtering, one-snapshot budget, pending/stale/recovered/unconfirmed
+startup, links/unknown/modified/missing files, manifest/bootstrap failures,
+interrupted quarantine/resume, empty final quarantine, changed selection and
+rename failures. Preparation must preserve arbitrary hash-named user directories.
+Four added updater cases check health/deferred-worker ordering, idempotence,
+failed startup, cleanup failure/cancellation, following external/daily checks and
+a stale rollback confirmation while busy. `smoke-ota.py`/`.lua` add actual-file,
+native SHA/libarchive cleanup plus interrupted-delete restart/resume and retained
+rollback/data checks after the ordinary older-installer scenarios. Full results
+are recorded in `MERGE_LOG.md`; this is not device or publication acceptance.
+
 Local October 28 package-size work: `test_release_package.py` checks narrow PO
 source-reference omission (including CRLF/UTF-8/indented comments, literal `#:`
 inside strings, legal/translator comments, headers/plurals/flags/obsolete text,

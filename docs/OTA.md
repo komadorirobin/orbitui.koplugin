@@ -7,6 +7,41 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## Local update-storage cleanup (not yet published)
+
+After confirmed healthy startup a quiet deferred worker may remove one obsolete
+code snapshot, rather than leave it until a later update. It first verifies the
+active and previous packages completely. Factory, current and previous versions
+are always kept. A pending update, recovered startup, stale context or unreadable/
+modified retained runtime prevents collection. Equal/newer prepared snapshots
+are kept. Settings, reading data, links, covers/cache and add-on artwork are not
+cleanup targets; this does not shrink the release ZIP or measure RAM usage.
+
+Only a strictly older, complete manifest-verified runtime with no extra or
+modified files/directories/links can enter cleanup. A same-filesystem rename
+quarantines it as `.orbitui-versions/.orbitui-gc-<slot>`; known files are checked
+again before unlinking, directories are removed only when empty and the manifest
+is removed last. An interruption can resume from the verified remainder on a
+later healthy startup. Unknown/changed entries stop deletion and stay intact.
+The collector inspects at most 128 version-directory entries/eight candidates,
+with a 12,000-node tree limit, and completes at most one snapshot per startup.
+Large backlogs may therefore need several starts; this is deliberately bounded.
+The previous unsafe bulk deletion during update preparation is removed.
+
+Cleanup is serialized with update operations, does not change activation records
+and is not required for successful startup. External installation and daily
+checks follow its completion/cancellation. Removal counts/bytes are logged; actual
+savings depend on installed obsolete snapshots. Factory + current + rollback
+copies still take space by design. This local change does not republish Beta 15.
+
+Svenska: Efter bekräftad lyckad start kan en gammal, oanvänd kodversion städas
+bort. Aktiv version och återställningsversion måste först klara en fullständig
+kontroll. Fabrikskopian och de två behållna versionerna lämnas alltid kvar.
+Högst en gammal kopia tas bort per start; ändrade/okända filer och väntande eller
+nyare versioner behålls. Avbruten städning kan fortsätta vid nästa start.
+Inställningar, läsdata, omslagscache och tilläggsbilder rörs inte. Ändringen är
+lokal och ännu inte publicerad; inga filer på din läsplatta har städats av arbetet.
+
 ## Local packaging optimization (not yet published)
 
 Future sealed packages omit only developer source-file/line references (`#:`
@@ -702,9 +737,11 @@ checksum requests retain three minutes, with the same 15-second socket timeout.
 Symlinks, special files, traversal, hidden paths and case-ambiguous duplicates
 are rejected. Archive extraction copies bytes rather than filesystem metadata.
 
-The factory installation and previous code remain available. Obsolete inactive
-version slots are cleaned during a later update; current and previous slots are
-retained. `.orbitui-work` is disposable download/staging space. Allow roughly
+The factory installation and previous code remain available. Published Beta 15
+and earlier clean obsolete inactive slots during a later update. The local,
+unpublished collector described above instead verifies/removes at most one old
+snapshot after healthy startup, preserving current/previous/factory and unknown
+data. `.orbitui-work` is disposable download/staging space. Allow roughly
 350 MiB free for the upcoming artwork package's download, staging and one-time artwork
 installation, in addition to existing installed versions. Allow more as future
 packages grow.

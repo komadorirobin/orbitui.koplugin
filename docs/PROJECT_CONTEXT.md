@@ -22,6 +22,17 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-28
 
+- User approves size-reduction step 3: safer update-slot storage cleanup, local
+  only on `maintenance/update-storage-20261028` from `58b944b7`, retaining the
+  preceding PO optimization. After confirmed startup, a quiet deferred worker
+  collects at most one strictly older unused runtime. Current/previous packages
+  must verify fully; factory, pending/equal/newer snapshots, modified/unknown
+  files and links remain. Atomic quarantine plus manifest-last deletion permits
+  interrupted cleanup to resume. The unsafe prepare-time bulk slot deletion is
+  removed. Stable bootstrap/API/2,000-file limit, VERSION Beta 15, source pins,
+  settings/progress/cache/artwork and external integrations remain unchanged.
+  No push/release is authorized. Full verification is recorded in MERGE_LOG.
+
 - User approves the first size-reduction proposal only: omit developer source
   locations (`#:` comments) from the 43 component PO catalogs during packaging,
   before generating manifest sizes/hashes. Tracked catalogs, all languages,

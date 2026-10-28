@@ -1,6 +1,9 @@
 local M = { REPO = "komadorirobin/orbitui.koplugin", ASSET = "orbitui.koplugin.zip" }
 local Boot = require("orbitui_bootstrap")
 local MAX_ZIP, MAX_TOTAL, MAX_FILE = 128 * 1024 * 1024, 256 * 1024 * 1024, 32 * 1024 * 1024
+local REQUIRED_RUNTIME = { "VERSION", "main.lua", "_meta.lua", "orbitui_bootstrap.lua", "core/orbitui_plugin.lua",
+    "core/orbitui_runtime.lua", "core/orbitui_ota.lua", "adapters/orbitui_updates.lua",
+    "components/bookshelf/main.lua", "components/simpleui/main.lua", "assets/ca-bundle.crt", "LICENSE" }
 
 function M.version(value)
     if type(value) ~= "string" then return nil end
@@ -191,15 +194,187 @@ function M.validate(target, files, release, install_root)
         assert(path == "manifest.json" or expected[path], "File absent from manifest: " .. path)
     end
     assert(#files == #manifest.files + 1, "Incomplete package inventory")
-    for _, path in ipairs({ "VERSION", "main.lua", "_meta.lua", "orbitui_bootstrap.lua", "core/orbitui_plugin.lua",
-        "core/orbitui_runtime.lua", "core/orbitui_ota.lua", "adapters/orbitui_updates.lua",
-        "components/bookshelf/main.lua", "components/simpleui/main.lua", "assets/ca-bundle.crt", "LICENSE" }) do
+    for _, path in ipairs(REQUIRED_RUNTIME) do
         assert(expected[path], "Required runtime file missing: " .. path)
     end
     for _, path in ipairs({ "main.lua", "_meta.lua", "orbitui_bootstrap.lua" }) do
         assert(M.hashFile(target .. "/" .. path) == M.hashFile(install_root .. "/" .. path),
             "Stable bootstrap changed; this release requires manual installation")
     end
+end
+
+-- Collect at most one obsolete runtime per confirmed startup. Never use the
+-- installer's generic removeTree here: unknown/modified files and links belong
+-- to the user. Quarantine by rename, retain the manifest until last, and verify
+-- remaining bytes so an interrupted deletion can safely resume next startup.
+function M.cleanup(context)
+    local result = { removed = 0, bytes = 0, skipped = 0 }
+    if not context._orbitui_storage_ready or context.notice then return result end
+    local fs = require("libs/libkoreader-lfs")
+    local versions = context.root .. "/.orbitui-versions"
+    local function state()
+        assert(fs.symlinkattributes(context.root, "mode") == "directory", "Unsafe installation directory")
+        assert(fs.symlinkattributes(versions, "mode") == "directory", "Unsafe versions directory")
+        local record = fs.symlinkattributes(context.root .. "/.orbitui-active", "mode")
+        assert(not record or record == "file", "Unsafe activation record")
+        local value = Boot.state(context.root)
+        if value.pending or value.current ~= context.slot
+                or context.runtime ~= Boot.path(context.root, context.slot) then return end
+        for _, slot in ipairs({ value.current, value.previous }) do
+            if slot ~= "none" then
+                local root = Boot.path(context.root, slot)
+                local attr = plainFile(root, "VERSION")
+                assert(attr and attr.mode == "file", "Retained runtime is missing")
+                local version = Boot.version(root)
+                if slot == context.slot and version ~= context.version then return end
+            end
+        end
+        return value
+    end
+    assert(fs.symlinkattributes(context.root, "mode") == "directory", "Unsafe installation directory")
+    local mode = fs.symlinkattributes(versions, "mode")
+    if not mode then return result end
+    assert(mode == "directory", "Unsafe versions directory")
+    local initial = state()
+    if not initial then return result end
+    local retained_verified = false
+    local function retained()
+        if retained_verified then return true end
+        local ok = pcall(function()
+            for _, slot in ipairs({ initial.current, initial.previous }) do
+                if slot ~= "none" then
+                    local root = Boot.path(context.root, slot)
+                    local attr = plainFile(root, "manifest.json")
+                    assert(attr and attr.mode == "file" and attr.size <= 1024 * 1024, "Retained manifest is missing")
+                    local manifest = require("rapidjson").decode(assert(Boot.read(root .. "/manifest.json", 1024 * 1024)))
+                    M.validate(root, M.inventory(manifest), { version = Boot.version(root) }, context.runtime)
+                end
+            end
+        end)
+        if not ok then result.retained_unverified = true; return false end
+        retained_verified = true
+        return true
+    end
+    local function unchanged(slot)
+        assert(fs.symlinkattributes(versions, "mode") == "directory", "Versions directory changed")
+        local live = state()
+        assert(live and live.previous == initial.previous and slot ~= live.current and slot ~= live.previous,
+            "Runtime selection changed during cleanup")
+    end
+    local names = {}
+    local scanned = 0
+    for name in fs.dir(versions) do
+        scanned = scanned + 1
+        if scanned > 128 then break end
+        local slot = name:match("^%.orbitui%-gc%-([0-9a-f]+)$") or name
+        if slot ~= "factory" and Boot.validSlot(slot) and slot ~= initial.current and slot ~= initial.previous then
+            names[#names + 1] = name
+        end
+    end
+    table.sort(names) -- Interrupted quarantines sort before new candidates.
+    for i = 1, math.min(#names, 8) do
+        local name = names[i]
+        local slot = name:match("^%.orbitui%-gc%-([0-9a-f]+)$") or name
+        local target = versions .. "/" .. name
+        local collecting = false
+        local ok, removed = pcall(function()
+            unchanged(slot)
+            assert(fs.symlinkattributes(target, "mode") == "directory", "Not a plain runtime")
+            local quarantined = name ~= slot
+            local attr = plainFile(target, "manifest.json")
+            if quarantined and not attr then
+                -- The final manifest unlink may have completed before a crash.
+                -- rmdir only succeeds for an empty directory; never recurse.
+                if not retained() then return false end
+                unchanged(slot)
+                collecting = true
+                assert(fs.rmdir(target), "Quarantine is not empty")
+                return true
+            end
+            assert(attr and attr.mode == "file" and attr.size <= 1024 * 1024, "Missing runtime manifest")
+            local manifest_hash = M.hashFile(target .. "/manifest.json")
+            local manifest = require("rapidjson").decode(assert(Boot.read(target .. "/manifest.json", 1024 * 1024)))
+            local inventory = M.inventory(manifest)
+            assert(M.version(manifest.version), "Invalid runtime version")
+            if not M.newer(context.version, manifest.version) then return false end
+            if not retained() then return false end
+            local expected, directories = {}, {}
+            for _, entry in ipairs(manifest.files) do
+                expected[entry.path] = entry
+                local parent = entry.path:match("^(.*)/")
+                while parent do
+                    directories[parent] = true
+                    parent = parent:match("^(.*)/")
+                end
+            end
+            for _, path in ipairs(REQUIRED_RUNTIME) do assert(expected[path], "Not a managed runtime") end
+            for _, path in ipairs({ "main.lua", "_meta.lua", "orbitui_bootstrap.lua" }) do
+                assert(expected[path].sha256 == M.hashFile(context.runtime .. "/" .. path), "Unknown bootstrap")
+            end
+            local files, dirs, nodes = {}, {}, 0
+            local function walk(relative)
+                for child in fs.dir(target .. (relative == "" and "" or "/" .. relative)) do
+                    if child ~= "." and child ~= ".." then
+                        nodes = nodes + 1
+                        assert(nodes <= 12000, "Runtime tree exceeds cleanup limit")
+                        local path = relative == "" and child or relative .. "/" .. child
+                        assert(M.safePath(path), "Unsafe runtime entry")
+                        local entry = assert(plainFile(target, path), "Runtime entry disappeared")
+                        if entry.mode == "directory" then
+                            assert(directories[path], "Unlisted runtime directory")
+                            walk(path)
+                            dirs[#dirs + 1] = path
+                        elseif path == "manifest.json" then
+                            assert(entry.mode == "file" and M.hashFile(target .. "/" .. path) == manifest_hash,
+                                "Runtime manifest changed")
+                        else
+                            local wanted = assert(expected[path], "Unlisted runtime file")
+                            assert(entry.mode == "file" and entry.size == wanted.size
+                                and M.hashFile(target .. "/" .. path) == wanted.sha256, "Modified runtime file")
+                            files[#files + 1] = path
+                        end
+                    end
+                end
+            end
+            walk("") -- Complete preflight before any rename/unlink.
+            if not quarantined then
+                M.validate(target, inventory, { version = manifest.version }, context.runtime)
+                unchanged(slot)
+                assert(M.hashFile(target .. "/manifest.json") == manifest_hash, "Runtime manifest changed")
+                local destination = versions .. "/.orbitui-gc-" .. slot
+                assert(not fs.symlinkattributes(destination), "Cleanup is already quarantined")
+                assert(os.rename(target, destination))
+                target = destination
+            end
+            collecting = true
+            table.sort(files)
+            for _, path in ipairs(files) do
+                unchanged(slot)
+                local entry, wanted = plainFile(target, path), expected[path]
+                assert(entry and entry.mode == "file" and entry.size == wanted.size
+                    and M.hashFile(target .. "/" .. path) == wanted.sha256, "Runtime changed during cleanup")
+                assert(os.remove(target .. "/" .. path))
+                result.bytes = result.bytes + wanted.size
+            end
+            for _, path in ipairs(dirs) do
+                unchanged(slot)
+                assert(plainFile(target, path).mode == "directory", "Runtime directory changed")
+                assert(fs.rmdir(target .. "/" .. path))
+            end
+            unchanged(slot)
+            assert(plainFile(target, "manifest.json").mode == "file"
+                and M.hashFile(target .. "/manifest.json") == manifest_hash, "Runtime manifest changed")
+            assert(os.remove(target .. "/manifest.json"))
+            result.bytes = result.bytes + attr.size
+            assert(fs.rmdir(target))
+            return true
+        end)
+        if ok and removed then result.removed = 1; return result end
+        if result.retained_unverified then return result end
+        if not ok then result.skipped = result.skipped + 1 end
+        if collecting then return result end -- Never start deleting a second snapshot after interruption.
+    end
+    return result
 end
 
 -- Inspect only data from the externally overwritten root. Its code must never
@@ -285,11 +460,6 @@ function M.prepare(context, release)
     M.validate(staging, files, release, context.root)
     local versions = context.root .. "/.orbitui-versions"
     mkdir(versions)
-    for slot in require("libs/libkoreader-lfs").dir(versions) do
-        if slot ~= "factory" and Boot.validSlot(slot) and slot ~= state.current and slot ~= state.previous then
-            removeTree(Boot.path(context.root, slot))
-        end
-    end
     local destination = Boot.path(context.root, digest)
     assert(digest ~= state.current and digest ~= state.previous, "This package is already retained; use rollback")
     removeTree(destination)

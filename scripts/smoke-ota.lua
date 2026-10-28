@@ -12,7 +12,9 @@ local function shell(command)
     local a, _, code = os.execute(command)
     return a == 0 or (a == true and code == 0)
 end
-package.loaded["libs/libkoreader-lfs"] = {
+-- Optional test-only native filesystem adapter; default stays compiler-free.
+package.loaded["libs/libkoreader-lfs"] = os.getenv("ORBITUI_TEST_NATIVE_FS")
+    and dofile(os.getenv("ORBITUI_TEST_NATIVE_FS")) or {
     symlinkattributes = function(path, key)
         local mode, size
         if shell("test -L " .. quote(path)) then mode = "link"
@@ -39,6 +41,7 @@ package.loaded["libs/libkoreader-lfs"] = {
 }
 package.loaded.rapidjson = { decode = function(data)
     if data == fixture.external_manifest_text then return fixture.external_manifest end
+    if data == fixture.cleanup_manifest_text then return fixture.cleanup_manifest end
     assert(data == fixture.manifest_text, "Unexpected JSON bytes")
     return fixture.manifest
 end }
@@ -150,3 +153,47 @@ next_ota = dofile(context.runtime .. "/core/orbitui_ota.lua")
 assert(context.version == fixture.manifest.version)
 assert(not next_ota.externalCandidate(context), "Rollback must not re-adopt the same external install")
 print("PASS full external runtime snapshot, native SHA verification, restart and persistent rollback")
+
+-- New runtime's collector on real files/native hashes, without touching a reader.
+-- A small complete API-1 fixture uses the real bootstrap and required Lua/assets.
+local obsolete = string.rep("e", 64)
+assert(obsolete ~= Boot.state(context.root).current and obsolete ~= Boot.state(context.root).previous)
+local obsolete_path = Boot.path(context.root, obsolete)
+for _, entry in ipairs(fixture.cleanup_manifest.files) do
+    local data = entry.path == "VERSION" and "0.0.1\n"
+        or assert(Boot.read(context.runtime .. "/" .. entry.path, 32 * 1024 * 1024))
+    write(obsolete_path .. "/" .. entry.path, data)
+end
+write(obsolete_path .. "/manifest.json", fixture.cleanup_manifest_text)
+write(context.root .. "/reading-data-sentinel", "preserve user data")
+local selection = assert(Boot.read(context.root .. "/.orbitui-active"))
+local retained = Boot.state(context.root)
+local previous_manifest = next_ota.hashFile(Boot.path(context.root, retained.previous) .. "/manifest.json")
+context._orbitui_storage_ready = true
+local remove, unlinks = os.remove, 0
+os.remove = function(path)
+    if path:find("/.orbitui-gc-" .. obsolete .. "/", 1, true) then
+        unlinks = unlinks + 1
+        if unlinks == 2 then return nil, "simulated interruption" end
+    end
+    return remove(path)
+end
+local interrupted = next_ota.cleanup(context)
+os.remove = remove
+assert(interrupted.removed == 0 and interrupted.bytes > 0)
+assert(Boot.read(context.root .. "/.orbitui-versions/.orbitui-gc-" .. obsolete .. "/manifest.json"))
+-- Reload resolver state and collector rather than keep an in-memory delete plan.
+Boot = dofile(fixture.root .. "/orbitui_bootstrap.lua")
+context = Boot.begin(fixture.root)
+Boot.healthy(fixture.root)
+context._orbitui_storage_ready = true
+package.loaded.orbitui_bootstrap = Boot
+next_ota = dofile(context.runtime .. "/core/orbitui_ota.lua")
+local cleaned = next_ota.cleanup(context)
+assert(cleaned.removed == 1 and cleaned.bytes > 0)
+assert(not package.loaded["libs/libkoreader-lfs"].symlinkattributes(obsolete_path))
+assert(not package.loaded["libs/libkoreader-lfs"].symlinkattributes(context.root .. "/.orbitui-versions/.orbitui-gc-" .. obsolete))
+assert(Boot.read(context.root .. "/.orbitui-active") == selection)
+assert(next_ota.hashFile(Boot.path(context.root, retained.previous) .. "/manifest.json") == previous_manifest)
+assert(Boot.read(context.root .. "/reading-data-sentinel") == "preserve user data")
+print("PASS native obsolete-runtime cleanup, interrupted-delete restart/resume and retained rollback/user data")

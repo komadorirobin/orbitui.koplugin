@@ -151,19 +151,48 @@ function M.checkExternal(retry)
         end)
 end
 
+function M.cleanStorage(after)
+    if busy or not context or not started then
+        if after then after() end
+        return
+    end
+    busy = true
+    local current = context
+    M.runTask(function() return require("core/orbitui_ota").cleanup(current) end, false, function(result)
+        busy = false
+        local loaded, logger = pcall(require, "logger")
+        if result and result.ok and result.value then
+            if loaded and logger.warn and result.value.retained_unverified then
+                logger.warn("OrbitUI kept old update versions: active/rollback runtime could not be verified")
+            end
+            if loaded and logger.info and result.value.bytes > 0 then
+                logger.info("OrbitUI unused update cleanup:", result.value.removed, "versions;", result.value.bytes, "bytes")
+            end
+        elseif loaded and logger.warn then
+            logger.warn("OrbitUI update cleanup was interrupted or unavailable; retained versions are unchanged")
+        end
+        if after then after() end
+    end)
+end
+
 function M.started()
     if not context or started then return end
     local ok, err = pcall(require("orbitui_bootstrap").healthy, context.root)
     if not ok then info("Could not confirm OrbitUI startup:\n" .. tostring(err)); return end
     started = true
+    context._orbitui_storage_ready = true
     if context.notice then info(context.notice) end
-    require("ui/uimanager"):scheduleIn(1, function() M.checkExternal(false) end)
-    if G_reader_settings and G_reader_settings:isTrue("orbitui_update_auto") then
-        local last = tonumber(G_reader_settings:readSetting("orbitui_update_last_check")) or 0
-        if os.time() - last >= 86400 then
-            require("ui/uimanager"):scheduleIn(5, function() M.check(true) end)
-        end
-    end
+    require("ui/uimanager"):scheduleIn(1, function()
+        M.cleanStorage(function()
+            M.checkExternal(false)
+            if G_reader_settings and G_reader_settings:isTrue("orbitui_update_auto") then
+                local last = tonumber(G_reader_settings:readSetting("orbitui_update_last_check")) or 0
+                if os.time() - last >= 86400 then
+                    require("ui/uimanager"):scheduleIn(5, function() M.check(true) end)
+                end
+            end
+        end)
+    end)
 end
 
 function M.menuItems()
@@ -190,6 +219,7 @@ function M.menuItems()
                     text = _("Restore the previous OrbitUI code? Settings and reading progress will not be reset."),
                     ok_text = _("Restore"),
                     ok_callback = function() require("ui/uimanager"):scheduleIn(0.1, function()
+                        if busy then info(_("An OrbitUI update operation is already running.")); return end
                         local ok, err = pcall(Boot.rollback, context.root)
                         if ok then restartPrompt(_("The previous OrbitUI version is selected."))
                         else info(_("Could not restore OrbitUI:") .. "\n" .. tostring(err)) end

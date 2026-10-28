@@ -984,6 +984,22 @@ audits must apply this narrow documented transform to PO files, not waive their
 integrity checks. Compiled catalog semantics must remain identical. No language
 pack split, cache/rollback cleanup, bootstrap change or publication is implied.
 
+The separately approved October 28 storage-cleanup step runs only after the
+host confirms healthy startup. A deferred, serialized Trapper worker may
+collect at most one strictly older unselected runtime per start, after full
+integrity verification of both retained packages. Always keep the factory root,
+current and previous selections, pending/equal/newer candidates and unknown or
+modified files/directories/links. Require a complete manifest-verified old
+runtime before atomically renaming it to `.orbitui-versions/.orbitui-gc-<slot>`.
+Keep its manifest until last; resume only when every remaining entry is known
+and byte-identical. Recheck activation state and plain paths during deletion;
+on uncertainty keep the remainder. No generic recursive delete may collect
+arbitrary hash-named slots during preparation. Cleanup must not block startup,
+change activation/recovery records or touch settings, caches, reading data,
+artwork, standalone installs or external sync owners. Prevent a stale rollback
+confirmation from changing selection while the update worker is busy. Preserve
+bootstrap API 1 byte-for-byte; no publication is implied by this change.
+
 The monitor can fetch refs and update its one status issue only. It cannot merge,
 open merge PRs, advance integrated pins, tag, release or publish OTA. Publishing
 to users remains a separate explicitly approved action after reviewed changes.

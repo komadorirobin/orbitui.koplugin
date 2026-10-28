@@ -4678,6 +4678,42 @@ No reader installation, settings/progress/cache, retained version or external
 sync owner is changed. Physical device acceptance is separate; no speed/RAM
 improvement is claimed. Work stays local, without push/tag/release.
 
+## 2026-10-28 — Local safe update-storage collection (not released)
+
+User requests step 3 of the size proposal after the local PO optimization.
+Work starts from clean `58b944b7` on `maintenance/update-storage-20261028`;
+preceding local packaging work is retained. No upstream import/pin, VERSION,
+bootstrap/API-1 or runtime path/limit change, push, tag or release is authorized.
+No reader installation or user data is accessed. Public Beta 15 stays immutable.
+
+Previous behavior retained an extra obsolete code snapshot after a healthy boot
+until the next in-app update; external snapshots could also accumulate. The new
+host-confirmed, deferred quiet Trapper task may collect one strictly older unused
+snapshot per start. Verify current and previous packages fully before deleting
+any old code. Retain factory/current/previous, pending/equal/newer snapshots,
+unknown/modified files/directories, links and unverified data. A recovered/stale/
+unconfirmed start cannot collect; corrupt retained code keeps every old version.
+Remove the old prepare-time bulk deletion of arbitrary hash-named directories.
+
+Atomic rename to an invalid-bootstrap-slot quarantine, complete preflight,
+rechecked state/plain paths/hashes and manifest-last unlink make interruption
+resumable. Only byte-identical known remaining files can be removed; unknown or
+changed data stops cleanup. Empty final quarantines use rmdir only. Work is
+bounded to 128 directory entries/eight candidates/12,000 tree nodes and one
+completed snapshot per startup. Busy guards also stop stale rollback callbacks.
+Failure/cancellation never fails startup or changes activation/recovery markers;
+external/daily checks follow. Actual freed bytes are logged, not inferred from
+ZIP size. Factory/current/rollback duplication intentionally remains.
+
+Fourteen collector cases and four new updater-order/guard cases pass under Lua
+and LuaJIT. Collector tests use actual production validation and Lua parsing on
+an in-memory filesystem; no candidate Lua is executed and no user path is
+touched. The native full-package smoke additionally covers real-file interrupted
+cleanup and resume after reloading bootstrap/collector state. Complete final
+test/package/source-integrity/native results follow below. Physical Boox/Bigme
+startup responsiveness, cancellation/power-loss and storage behavior remain
+unverified. No RAM/speed benefit or actual device-space saving is claimed.
+
 ## Template for the next approved merge
 
 Copy this section and replace placeholders only after performing the work.

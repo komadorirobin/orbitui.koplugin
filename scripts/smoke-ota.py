@@ -48,6 +48,16 @@ with tempfile.TemporaryDirectory(prefix="orbitui-native-ota-") as directory:
         (install / "VERSION").write_text("0.1.0-alpha.1\n")
     base_version = (install / "VERSION").read_text().strip()
     external_manifest = json.loads(manifest_text)
+    cleanup_paths = {"VERSION", "main.lua", "_meta.lua", "orbitui_bootstrap.lua", "core/orbitui_plugin.lua",
+                     "core/orbitui_runtime.lua", "core/orbitui_ota.lua", "adapters/orbitui_updates.lua",
+                     "components/bookshelf/main.lua", "components/simpleui/main.lua", "assets/ca-bundle.crt", "LICENSE"}
+    cleanup_manifest = json.loads(manifest_text)
+    cleanup_manifest["version"] = "0.0.1"
+    cleanup_manifest["files"] = [entry for entry in cleanup_manifest["files"] if entry["path"] in cleanup_paths]
+    for entry in cleanup_manifest["files"]:
+        if entry["path"] == "VERSION":
+            data = b"0.0.1\n"
+            entry.update(size=len(data), sha256=hashlib.sha256(data).hexdigest())
     major, minor, patch = map(int, external_manifest["version"].split("-")[0].split("."))
     external_version = f"{major}.{minor}.{patch + 1}"
     external_manifest["version"] = external_version
@@ -63,6 +73,8 @@ with tempfile.TemporaryDirectory(prefix="orbitui-native-ota-") as directory:
         "live": args.live, "base_version": base_version,
         "external_manifest": external_manifest,
         "external_manifest_text": json.dumps(external_manifest),
+        "cleanup_manifest": cleanup_manifest,
+        "cleanup_manifest_text": json.dumps(cleanup_manifest),
     }
     fixture_path = directory / "fixture.lua"
     fixture_path.write_text("return " + lua(fixture), encoding="ascii")

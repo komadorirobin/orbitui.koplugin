@@ -142,4 +142,105 @@ H.test("rate-limit errors survive Trapper safely and suppress new checks until t
     H.eq(saved.orbitui_update_last_check, now)
     Boot.state, package.loaded["core/orbitui_ota"], os.time, G_reader_settings = old_state, old_ota, old_time, old_settings
 end)
+local function startupFixture(mode)
+    local U = dofile("adapters/orbitui_updates.lua")
+    local Boot = require("orbitui_bootstrap")
+    local old_health, old_state = Boot.healthy, Boot.state
+    local old_ota, old_logger, old_settings = package.loaded["core/orbitui_ota"], package.loaded.logger, G_reader_settings
+    local f = { queue = {}, shown = {}, order = {}, warnings = 0, checks = 0, automatic = 0 }
+    local context = { root = "/startup-orbitui", runtime = "/startup-orbitui/active", slot = string.rep("a", 64), version = "3.0.0" }
+    f.context = context
+    Boot.healthy = function()
+        f.order[#f.order + 1] = "healthy"
+        if mode == "health-failed" then error("cannot write health record") end
+        f.healthy = true
+    end
+    Boot.state = function() return { current = context.slot, previous = string.rep("b", 64), pending = false } end
+    G_reader_settings = { isTrue = function() return true end, readSetting = function(_, key)
+        return key == "orbitui_update_last_check" and 0 or nil
+    end }
+    package.loaded.logger = { info = function() end, warn = function() f.warnings = f.warnings + 1 end }
+    package.loaded["ui/uimanager"] = {
+        scheduleIn = function(_, delay, fn) f.queue[#f.queue + 1] = { delay = delay, fn = fn } end,
+        show = function(_, msg) f.shown[#f.shown + 1] = msg end,
+    }
+    package.loaded["ui/widget/confirmbox"] = { new = function(_, msg) return msg end }
+    package.loaded["ui/trapper"] = {
+        isWrapped = function() return false end,
+        wrap = function(_, fn) fn() end,
+        dismissableRunInSubprocess = function(_, fn, label)
+            H.eq(label, false)
+            if mode == "cancelled" then return false end
+            return true, fn()
+        end,
+    }
+    package.loaded["core/orbitui_ota"] = {
+        cleanup = function(c)
+            assert(f.healthy and c._orbitui_storage_ready, "cleanup ran before health confirmation")
+            f.order[#f.order + 1] = "cleanup"
+            if mode == "cleanup-failed" then error("storage unavailable") end
+            return { removed = 1, bytes = 64, skipped = 0 }
+        end,
+        externalCandidate = function()
+            f.checks = f.checks + 1; f.order[#f.order + 1] = "external"
+        end,
+    }
+    U.check = function(quiet) assert(quiet); f.automatic = f.automatic + 1 end
+    U.configure(context)
+    f.restore = function()
+        Boot.healthy, Boot.state = old_health, old_state
+        package.loaded["core/orbitui_ota"], package.loaded.logger, G_reader_settings = old_ota, old_logger, old_settings
+    end
+    return U, f
+end
+H.test("storage cleanup waits for healthy startup and runs once before external/daily checks", function()
+    local U, f = startupFixture()
+    U.cleanStorage(); H.eq(#f.order, 0)
+    U.started(); U.started()
+    H.eq(#f.order, 1); H.eq(f.order[1], "healthy"); H.eq(#f.queue, 1)
+    H.eq(f.queue[1].delay, 1); H.eq(f.checks, 0)
+    f.queue[1].fn()
+    H.eq(f.order[2], "cleanup"); H.eq(f.checks, 0)
+    f.queue[2].fn()
+    H.eq(f.order[3], "external"); H.eq(f.checks, 1)
+    H.eq(f.queue[3].delay, 5); f.queue[3].fn(); H.eq(f.automatic, 1)
+    U.started(); H.eq(#f.queue, 3)
+    f.restore()
+end)
+H.test("failed startup confirmation never starts storage cleanup", function()
+    local U, f = startupFixture("health-failed")
+    U.started(); U.cleanStorage()
+    H.eq(f.context._orbitui_storage_ready, nil)
+    H.eq(#f.queue, 0); H.eq(#f.order, 1)
+    assert(f.shown[1].text:find("Could not confirm OrbitUI startup", 1, true))
+    f.restore()
+end)
+H.test("cleanup failure or cancellation cannot block startup or later update checks", function()
+    for _, mode in ipairs({ "cleanup-failed", "cancelled" }) do
+        local U, f = startupFixture(mode)
+        U.started(); f.queue[1].fn(); f.queue[2].fn()
+        H.eq(f.warnings, 1); H.eq(f.checks, 1)
+        f.queue[3].fn(); H.eq(f.automatic, 1)
+        assert(f.context._orbitui_storage_ready)
+        f.restore()
+    end
+end)
+H.test("a stale rollback confirmation cannot change selected code during cleanup", function()
+    local U, f = startupFixture()
+    local Boot, rollbacks = require("orbitui_bootstrap"), 0
+    local old_rollback = Boot.rollback
+    Boot.rollback = function() rollbacks = rollbacks + 1 end
+    U.started()
+    U.menuItems()[5].callback()
+    local confirm = f.shown[#f.shown]
+    f.queue[1].fn() -- Cleanup now owns the update-operation guard.
+    confirm.ok_callback(); f.queue[3].fn()
+    H.eq(rollbacks, 0)
+    assert(f.shown[#f.shown].text:find("already running", 1, true))
+    f.queue[2].fn() -- Completion releases the guard.
+    confirm.ok_callback(); f.queue[#f.queue].fn()
+    H.eq(rollbacks, 1)
+    Boot.rollback = old_rollback
+    f.restore()
+end)
 H.finish()
