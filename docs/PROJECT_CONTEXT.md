@@ -31,9 +31,12 @@ and correct this file in the same change.
   list fallback. A four-line read-only grid-gap accessor is the only component
   edit; no private upvalue patch, foreign plugin/code/artwork/font import, new
   installed path or settings migration. VERSION stays Beta 16 for local testing;
-  never replace its public ZIP. No push or publication is authorized. Final
-  verification follows in MERGE_LOG; native SV/EN touch/font/rotation acceptance
-  on Boox/Bigme remains open.
+  never replace its public ZIP. No push or publication is authorized. Candidate
+  `8133c7ab` passes full Lua/LuaJIT, 43 catalogs, all 84 root suites on sealed
+  bytes, exact source/path/artwork/secret audits and native actual-Beta-15 OTA/
+  restart/rollback checks. Verification-only follow-up does not rebuild that ZIP.
+  Exact evidence is in MERGE_LOG; native SV/EN touch/font/rotation acceptance on
+  Boox/Bigme remains open.
 
 - User explicitly approves push/publication of the accumulated performance and
   size/storage work. Beta 16 is public at exact candidate/tag `5c846730`,

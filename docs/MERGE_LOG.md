@@ -4991,3 +4991,37 @@ checkbox tests remain. Final full/sealed/package verification follows below.
 These checks do not establish actual KOReader shaping/e-ink/touch, rotation/sleep
 or the underlying Boox/Bigme reader/profile lifecycle; physical acceptance stays
 open. Public Beta 16 remains immutable and is not replaced by a development ZIP.
+
+### Final local card-start verification
+
+Implementation/package candidate `8133c7aba6260d5e018564f955e72f7b6e8a0ff5`.
+Complete sequential Lua/LuaJIT gates pass 122 Python tests/four unchanged optional
+source-pixel skips, 84 root files, 487 Bookshelf suites/zero failures/three normal
+SQLite exclusions and all 13 SimpleUI files. Map 383, syntax 1,067, catalogs
+43/zero failures. All 84 root suites rerun on final sealed bytes under BOTH
+interpreters, including the final eleven start-card/search/touch/key/rotation/
+geometry cases and retained settings/native control/deferred-library tests.
+No new skip or failure waiver. The final sealed rerun covers the search Cancel
+and stale-dialog guard refinements made after the first Lua root-file phase.
+
+Every package byte equals the exact committed Git-archive source after only the
+approved PO projection; inventory hashes/sizes/checksum agree. Same 1,999 files
+plus manifest/all 2,000 installed API-1 paths, 2,066 ZIP entries. No bootstrap,
+VERSION, source pin/map, asset, artwork/font or license change. The four-line
+read-only modal grid-gap accessor is the only component source change. All nine
+new outgoing blobs exclude held artwork and the source commit passes Gitleaks.
+Local ZIP **8,788,882 bytes**, expanded **25,656,913 bytes**, SHA-256
+`1c404bb6814103ad523d3b933dbe264ea9a85e6a160f8e65246707bfdc39279f`.
+This is 7,861 ZIP bytes above the unchanged public Beta 16, with no new path.
+
+The actual public Beta 15 installer passes local full-package native libarchive/
+SHA validation, missing-module rejection, activation/restart/rollback, truncated
+recovery and external snapshot/restart/persistent rollback. Real-file obsolete
+cleanup interruption/reload/resume retains active/rollback/unknown/modified/user
+data. These isolated fixtures use the existing pinned native references/POSIX
+shim, not an installed reader or live new release. The cached public Beta 16 ZIP
+digest is unchanged. Evidence: `test-results/settings-start-20261029/` (full Lua/
+LuaJIT/translation logs, complete sealed rerun, package/source/history audit,
+Gitleaks and native OTA log). Verification-only follow-up documentation does not
+rebuild the tested ZIP. No push, tag, release, production OTA or reader install;
+physical SV/EN shaping/layout/touch/night/rotation/sleep acceptance stays open.

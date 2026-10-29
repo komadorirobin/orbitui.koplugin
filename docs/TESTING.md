@@ -22,6 +22,20 @@ hardware keys, close/reopen, display contrast/night mode and return to the exact
 underlying Home/shelf/reader after rotation/suspend. No new release is implied;
 the local same-version Beta 16 ZIP must never replace its public asset.
 
+Candidate `8133c7aba6260d5e018564f955e72f7b6e8a0ff5`: complete sequential local
+Lua/LuaJIT gates pass 122 Python tests/four unchanged optional source-pixel skips,
+84 root Lua files, 487 Bookshelf suites/zero failures/three normal SQLite
+exclusions and all 13 SimpleUI files. Map 383, syntax 1,067, catalogs 43/zero
+failures. ALL 84 root files additionally pass on the final sealed bytes under
+both interpreters, including the final eleven card-start cases. Exact candidate
+Git archive/approved PO projection/manifest/hash/checksum audit passes with the
+same 1,999 inventory files plus manifest/all 2,000 installed paths. Native actual
+public Beta 15's installer accepts this LOCAL fixture package, including archive/
+SHA, restart/rollback, external snapshot and interrupted cleanup/resume checks.
+It is not live public discovery of a new release. No reader or public asset is
+changed. Evidence: `test-results/settings-start-20261029/`. Follow-up verification
+docs do not rebuild the candidate ZIP. Native font/display acceptance stays open.
+
 ### Beta 16 publication (October 28)
 
 Exact release candidate/tag `5c846730d5fbcaafc805fce9db97f6b57257139d` passes both
