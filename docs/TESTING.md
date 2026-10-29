@@ -2,6 +2,26 @@
 
 ## Automated
 
+### Local category-card settings start (October 29)
+
+`test_settings_start.lua` loads the complete actual LibraryModal and OrbitUI
+settings adapter over a native widget/font/display boundary stub. Eleven cases
+cover the five static bilingual categories and existing icon assets, unchanged
+stores/lazy shelf access, native category and Back routes, stale/double taps,
+search/cancel/query Back, list/card switching, touch-only and D-pad/footer exits,
+rotation and deferred-library cancellation, missing UI/tiny-screen fallback.
+The geometry matrix has six portrait/landscape/narrow sizes (including native
+1264x1680 and 1680x1264), SV/EN and three font-scale factors: 36 fixtures per
+interpreter. Actual native grid/pagination/focus code runs, but text wrapping uses
+a conservative boundary proxy, NOT native fonts/shaping or a rendered screen.
+Opening cards never loads providers, initializes a shelf or writes preferences.
+
+Physical acceptance still required: both languages and UI fonts, large DPI,
+portrait/landscape paging and touch targets, category/list/search Back and Cancel,
+hardware keys, close/reopen, display contrast/night mode and return to the exact
+underlying Home/shelf/reader after rotation/suspend. No new release is implied;
+the local same-version Beta 16 ZIP must never replace its public asset.
+
 ### Beta 16 publication (October 28)
 
 Exact release candidate/tag `5c846730d5fbcaafc805fce9db97f6b57257139d` passes both

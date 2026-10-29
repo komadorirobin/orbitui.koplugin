@@ -47,6 +47,10 @@ local LibraryModal = InputContainer:extend{
     search_query = nil,     -- current submitted query, or nil
 }
 
+-- OrbitUI settings cards measure their content against the same grid spacing,
+-- including when this module was loaded before a runtime DPI change.
+function LibraryModal.gridGap() return MARGIN end
+
 function LibraryModal:init()
     assert(self.config, "LibraryModal requires a config table")
     -- Pre-populate runtime state from config defaults

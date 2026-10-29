@@ -20,7 +20,20 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-10-28
+## Snapshot: 2026-10-29
+
+- User approves only the category-card settings start, following the Bookshelf-OS
+  review. Local work on `feature/settings-start-cards-20261029` starts clean at
+  `fe93bb39`. The same five task areas now have icons and static SV/EN summaries;
+  Home remains explicitly SimpleUI. The existing search, category/scope/native
+  controls and list API remain. Cards use the existing LibraryModal's grid,
+  paging, key focus and close handling, with measured wrapping and a complete
+  list fallback. A four-line read-only grid-gap accessor is the only component
+  edit; no private upvalue patch, foreign plugin/code/artwork/font import, new
+  installed path or settings migration. VERSION stays Beta 16 for local testing;
+  never replace its public ZIP. No push or publication is authorized. Final
+  verification follows in MERGE_LOG; native SV/EN touch/font/rotation acceptance
+  on Boox/Bigme remains open.
 
 - User explicitly approves push/publication of the accumulated performance and
   size/storage work. Beta 16 is public at exact candidate/tag `5c846730`,

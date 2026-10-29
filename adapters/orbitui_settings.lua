@@ -5,6 +5,13 @@ local M = {}
 local _ = require("core/orbitui_i18n")
 local Context = require("core/orbitui_context")
 local settings_request = 0
+local start_ref = setmetatable({}, { __mode = "v" })
+local function beginRequest()
+    settings_request = settings_request + 1
+    local old = start_ref.current
+    start_ref.current = nil
+    if old and not old._orbitui_closed then require("ui/uimanager"):close(old) end
+end
 -- BEGIN GENERATED SETTINGS SEARCH TERMS
 local native_terms = {
     bookshelf_advanced = {
@@ -545,14 +552,19 @@ function M.find(query)
     return hits, truncated
 end
 function M.search(query, opts)
-    settings_request = settings_request + 1
+    beginRequest()
     if query == nil then
         local dialog
         local UI = require("ui/uimanager")
+        local request = settings_request
         dialog = require("ui/widget/inputdialog"):new{
             title = _("Search settings"), input = "", input_hint = _("For example: genres, covers, navigation"),
-            buttons = {{ { text = _("Cancel"), callback = function() UI:close(dialog) end },
+            buttons = {{ { text = _("Cancel"), id = "close", callback = function()
+                    UI:close(dialog)
+                    if request == settings_request and opts and opts.cancel_to then opts.cancel_to() end
+                end },
                 { text = _("Search"), is_enter_default = true, callback = function()
+                    if request ~= settings_request then return end
                     local text = dialog:getInputText(); UI:close(dialog); M.search(text, opts)
                 end } }},
         }
@@ -631,7 +643,7 @@ function M.panelItems(S)
     return rows
 end
 function M.library(profile, appearance, page, target, opts)
-    settings_request = settings_request + 1
+    beginRequest()
     page = page or (appearance and "themes" or "bookshelf_advanced")
     return withSettings(profile, function(S)
         local rows = { M.scopeRow(page == "themes" and "theme" or "bookshelf") }
@@ -721,7 +733,7 @@ function M.quickStartItems(close)
     return rows
 end
 function M.open(id, opts)
-    settings_request = settings_request + 1
+    beginRequest()
     local n = assert(by_id[id], "Unknown settings page")
     local profile = opts and opts.profile
     if n.target then return M.library(profile, nil, "panel", n.target, opts) end
@@ -763,16 +775,203 @@ function M.items(close)
     for _i, row in ipairs(children(nil, close)) do rows[#rows + 1] = row end
     return rows
 end
-function M.show()
-    settings_request = settings_request + 1
+function M.showList(opts)
+    beginRequest()
     local current
     current = host(_("OrbitUI settings"), M.items(function()
         if current then require("lib/bookshelf_menu_host").close(current) end
-    end))
+    end), nil, opts)
     return current
 end
+
+-- Presentation only: no native settings/provider builders, current values or
+-- preference writes are needed to describe the five existing destinations.
+local start_cards = {
+    { "home", "home", "Layout, widgets and reading dashboard" },
+    { "bookshelf", "shelves", "Library profiles, shelves and covers" },
+    { "navigation", "tune", "Navigation bar, buttons and reader return" },
+    { "integrations", "extension", "BookOrbit, Hardcover and add-ons" },
+    { "system", "settings", "Updates, performance and troubleshooting" },
+}
+function M.startCards()
+    local cards = {}
+    for _i, card in ipairs(start_cards) do
+        cards[#cards + 1] = { id = card[1], text = _(by_id[card[1]].label),
+            icon = card[2], description = _(card[3]) }
+    end
+    return cards
+end
+
+-- All inputs are measured pixels, not assumptions about device DPI. The
+-- caller measures wrapped labels at the chosen column width, including room
+-- for the native keyboard focus ring. Short screens page instead of clipping.
+function M.startLayout(width, height, gap, min_width, min_height, count)
+    local cols = width >= 2 * min_width + gap and 2 or 1
+    local rows = math.min(math.ceil(count / cols), math.floor((height + gap) / (min_height + gap)))
+    if rows < 1 then return nil end
+    return { cols = cols, rows = rows, per_page = rows * cols,
+        cell_w = math.floor((width - (cols - 1) * gap) / cols),
+        area_h = rows * min_height + (rows - 1) * gap }
+end
+
+local function cardBody(card, width, deps, with_icon)
+    local Screen, Space, BFont = deps.Screen, deps.Space, deps.BFont
+    local title_face, title_bold = BFont:getFace("cfont", 20, { bold = true })
+    local body_face = BFont:getFace("cfont", 14)
+    local icon_h = Screen:scaleBySize(30)
+    local icon
+    if with_icon then
+        local ok, result = pcall(function()
+            return require("ui/widget/iconwidget"):new{
+                file = require("core/orbitui_icons").imageFile("material:" .. card.icon .. ":300"),
+                width = icon_h, height = icon_h, alpha = true, is_icon = true,
+            }
+        end)
+        if ok then icon = result end
+    end
+    return deps.VerticalGroup:new{ align = "left",
+        icon or deps.VerticalSpan:new{ width = icon_h },
+        deps.VerticalSpan:new{ width = Space.px(8) },
+        deps.TextBox:new{ text = card.text, face = title_face, bold = title_bold,
+            width = width, fgcolor = deps.BB.COLOR_BLACK },
+        deps.VerticalSpan:new{ width = Space.px(6) },
+        deps.TextBox:new{ text = card.description, face = body_face,
+            width = width, fgcolor = deps.BB.COLOR_DARK_GRAY },
+    }
+end
+
+local function showCards(request, initial_page, initial_focus)
+    local deps = {
+        Screen = require("device").screen, Space = require("lib/bookshelf_space"),
+        BFont = require("lib/bookshelf_fonts"), BB = require("ffi/blitbuffer"),
+        VerticalGroup = require("ui/widget/verticalgroup"), VerticalSpan = require("ui/widget/verticalspan"),
+        TextBox = require("ui/widget/textboxwidget"),
+    }
+    local Base = require("lib/bookshelf_library_modal")
+    local Frame = require("ui/widget/container/framecontainer")
+    local Top = require("ui/widget/container/topcontainer")
+    local HG = require("ui/widget/horizontalgroup")
+    local HS = require("ui/widget/horizontalspan")
+    local Geom = require("ui/geometry")
+    local UI = require("ui/uimanager")
+    local cards, modal = M.startCards()
+    local gap = Base.gridGap()
+    local border = deps.Screen:scaleBySize(1)
+    local padding = deps.Space.px(14)
+    local inset = padding + border
+    local layout
+    local function current()
+        return request == settings_request and modal and not modal._orbitui_closed
+            and start_ref.current == modal
+    end
+    local function choose(id)
+        if not current() then return end
+        if id == "search" then return M.search(nil, { cancel_to = M.show }) end
+        if id == "list" then return M.showList({ return_to = M.show, return_label = _("Category cards") }) end
+        return M.open(id)
+    end
+    local function padded(widget)
+        return HG:new{ align = "center", HS:new{ width = gap }, widget, HS:new{ width = gap } }
+    end
+    local Start = Base:extend{ name = "orbitui_settings_start" }
+    -- Reuse the native modal's grid gestures, D-pad/footer focus, pagination,
+    -- keyboard cleanup and close repaint. Only this instance's presentation
+    -- changes; no component or KOReader widget class is monkey-patched.
+    function Start:refresh()
+        local cw = self.content_w
+        local face, bold = deps.BFont:getFace("cfont", 22, { bold = true })
+        local title = deps.TextBox:new{ text = _("OrbitUI settings"), face = face,
+            bold = bold, width = cw, fgcolor = deps.BB.COLOR_BLACK }
+        local footer = self:_renderFooter(cw)
+        -- Reserve the measured pager even on a one-page screen: stable chrome
+        -- avoids jumping cards when orientation or font scale changes.
+        layout = layout or { per_page = #cards }
+        local pager = self:_renderPagination(cw)
+        local remaining = deps.Screen:getHeight() - title:getSize().h - footer:getSize().h
+            - pager:getSize().h - 6 * gap - 2 * require("ui/size").border.window
+        local min_width = deps.Screen:scaleBySize(220)
+        local cols = cw >= 2 * min_width + gap and 2 or 1
+        local cell_w = math.floor((cw - (cols - 1) * gap) / cols)
+        local focus_inset = 2 * deps.Screen:scaleBySize(2)
+        local text_w = cell_w - 2 * inset - focus_inset
+        assert(text_w >= deps.Screen:scaleBySize(70), "Settings card width unavailable")
+        local min_height = 0
+        for _i, card in ipairs(cards) do
+            local body = cardBody(card, text_w, deps, false)
+            min_height = math.max(min_height, body:getSize().h + 2 * inset + focus_inset)
+            body:free()
+        end
+        layout = assert(M.startLayout(cw, remaining, gap, min_width, min_height, #cards),
+            "Settings card height unavailable")
+        -- The provisional pager is no longer needed; render it with the final
+        -- page size (native paging/focus use the same per_page).
+        pager:free()
+        local grid = self:_renderGridArea(cw, layout.area_h)
+        pager = self:_renderPagination(cw)
+        local old = self._shown_rect
+        local previous = self.frame[1]
+        self.frame[1] = deps.VerticalGroup:new{ align = "left",
+            deps.VerticalSpan:new{ width = gap }, padded(title),
+            deps.VerticalSpan:new{ width = gap }, padded(grid),
+            deps.VerticalSpan:new{ width = gap }, padded(pager),
+            deps.VerticalSpan:new{ width = gap }, padded(footer),
+        }
+        if previous then previous:free() end
+        self:_repaintIfResized(old)
+        if self._focus_zone == "footer" and self._footer_layout then
+            local row = self._footer_layout[self._footer_row or 1]
+            local button = row and row[self._footer_col or 1]
+            if button then button:onFocus() end
+        end
+        self:_dirty()
+    end
+    function Start:onSetDimensions()
+        if current() then M.show({ page = self.page, focus = self._dpad_idx }) end
+        return true
+    end
+    modal = Start:new{ page = initial_page or 1, config = {
+        title = _("OrbitUI settings"), no_search = true,
+        grid_cols = function() return layout and layout.cols or 1 end,
+        cells_per_page = function() return layout and layout.per_page or #cards end,
+        item_count = function() return #cards end,
+        item_at = function(i) return cards[i] end,
+        focus_on_key = function() return initial_focus or 1 end,
+        cell_renderer = function(card, dimen)
+            local body = cardBody(card, dimen.w - 2 * inset, deps, true)
+            return Frame:new{ bordersize = border, padding = padding, margin = 0,
+                radius = deps.Space.px(7), background = deps.BB.COLOR_WHITE,
+                color = deps.BB.COLOR_BLACK,
+                Top:new{ dimen = Geom:new{ w = dimen.w - 2 * inset, h = dimen.h - 2 * inset }, body },
+            }
+        end,
+        on_cell_tap = function(card) choose(card.id) end,
+        footer_rows = {
+            {{ key = "search", label = _("Search settings"), on_tap = function() choose("search") end }},
+            {{ key = "list", label = _("List view"), on_tap = function() choose("list") end },
+             { key = "close", label = _("Close"), on_tap = function() if current() then UI:close(modal) end end }},
+        },
+        on_closed = function()
+            if modal then modal._orbitui_closed = true end
+            if start_ref.current == modal then start_ref.current = nil end
+        end,
+    } }
+    start_ref.current = modal
+    UI:show(modal)
+    return modal
+end
+
+function M.show(opts)
+    beginRequest()
+    local ok, modal = pcall(showCards, settings_request, opts and opts.page, opts and opts.focus)
+    if ok then return modal end
+    -- Unsupported/very small UI configurations retain the complete old menu,
+    -- not a blank screen or an installation/settings migration.
+    local logger = package.loaded.logger
+    if logger then logger.warn("OrbitUI: settings cards unavailable; using the settings list", modal) end
+    return M.showList()
+end
 function M.heroMenu(widget, book)
-    settings_request = settings_request + 1
+    beginRequest()
     local dialog
     local UI = require("ui/uimanager")
     local function close() UI:close(dialog) end

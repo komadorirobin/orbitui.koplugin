@@ -4953,3 +4953,41 @@ channel and immutability checks). Follow-up verification docs do not rebuild or
 replace the tagged/public ZIP. The prerelease retains open physical Boox/Bigme
 UI, native image-pressure, performance, storage/power-cut and updater-dialog
 acceptance. Existing behaviour is still default; Adaptive/Responsive remain opt-in.
+
+## 2026-10-29 — Category-card settings start (local, not released)
+
+The user requests "Börja med Inställningsstart med stora, tydliga kategorikort"
+after the read-only Bookshelf-OS comparison. Work starts clean at `fe93bb39` on
+`feature/settings-start-cards-20261029`. Scope is ONLY the OrbitUI settings start,
+not the reader toolbar/font menu, light/Wi-Fi popovers or a global KOReader menu
+replacement. No new upstream import, push, VERSION bump, tag or release.
+
+The five existing category IDs gain static localized summaries and existing
+Material SVG icons. Home remains Home/Hem (SimpleUI). The existing LibraryModal
+provides grid gestures, pagination, key/footer focus, keyboard/close cleanup and
+repaint, without global class or private-upvalue modification. Its only source
+change is a four-line read-only `gridGap()` accessor, so measured card content
+uses its exact initialized grid spacing across later DPI changes. No Bookshelf-OS
+implementation, icons, fonts or extra plugin is imported; this is an independent
+presentation over OrbitUI's existing menu routes. All runtime paths and source
+pins/bootstrap/artwork remain; settings/progress/caches/providers are untouched.
+
+Measured wrapped labels/descriptions and focus-ring space determine card height,
+column count and page size. Narrow/large-text configurations use one column;
+short screens page. The old complete list is an explicit option and the fallback
+for unusable geometry/missing UI. Its Back link and category Back return to cards;
+search Cancel from cards returns there and results keep their query Back route.
+Opening any newer settings destination closes the old root and invalidates stale
+root/search/deferred-library callbacks. Native submenus, scopes, preference writers
+and public list-building APIs remain unchanged. No current values, credentials,
+provider menus or book queries are needed to render the start.
+
+Eleven targeted tests run the real complete native modal and adapter over stubbed
+native widgets/fonts; 36 SV/EN size/scale fixtures per interpreter verify bounds,
+page reachability and unclipped proxy text, including Bigme native portrait and
+landscape. The first matrix run caught initialized-modal spacing versus later DPI
+spacing drift; the read-only accessor fixes it. Existing settings/search/native
+checkbox tests remain. Final full/sealed/package verification follows below.
+These checks do not establish actual KOReader shaping/e-ink/touch, rotation/sleep
+or the underlying Boox/Bigme reader/profile lifecycle; physical acceptance stays
+open. Public Beta 16 remains immutable and is not replaced by a development ZIP.

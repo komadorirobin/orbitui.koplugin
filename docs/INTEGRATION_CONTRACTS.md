@@ -1054,6 +1054,19 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+October 29 approved category-card settings start: keep the same five stable
+category IDs, explicit Home/SimpleUI identity, SV/EN summaries, existing search
+and all native submenus/scopes/callbacks. Build static descriptions only, without
+opening a shelf, native settings builders, providers or preference writes.
+Measured wrapping, responsive columns/paging, touch/keyboard exit and a complete
+list fallback must keep every destination accessible. List and category Back
+return to cards; search results retain their query; obsolete root/dialog and
+deferred-shelf callbacks cannot cover a newer destination. Reuse native modal
+chrome/focus/close semantics with a read-only spacing seam, not global menu or
+private-upvalue replacement. No third-party plugin or new runtime file. Tests:
+`test_settings_start` and existing settings/navigation suites. Physical native
+fonts, SV/EN layout/touch, rotation, sleep and reader-underlay acceptance remain.
+
 Home book actions and search results reuse the real Bookshelf detail panel.
 Its detail-only controller must not initialize a hidden shelf, claim the live
 widget, register shelf timers or replace repository callbacks. Keep registered

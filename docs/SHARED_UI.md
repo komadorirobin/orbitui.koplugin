@@ -63,6 +63,25 @@ public Beta 13 and its assets are unchanged.
 The approved redesign has five root categories and **Search settings / Sök
 inställning**. Earlier release tags/assets remain unchanged.
 
+Local October 29 follow-up (not yet published): the settings start presents the
+same five categories as large icon cards with short Swedish/English descriptions.
+Home is still explicitly SimpleUI. Search settings remains a prominent action;
+List view opens the unchanged six-row root with a Back link to Category cards.
+Category Back also returns to cards. Cancelling a search opened from cards
+returns there; result Back retains the typed query. Close/Back exits the card
+start without changing preferences. Existing legacy menu item APIs remain lists.
+
+The existing Bookshelf LibraryModal supplies pagination, touch and D-pad/footer
+focus and close repaint; no extra plugin, icon/font pack or global widget patch
+is installed. Titles/descriptions are measured at the actual card width with
+focus-ring space. Two columns collapse to one at larger text/narrower widths;
+short screens page instead of clipping. Unusable geometry or unavailable native
+UI dependencies fall back to the full old list. A new read-only `gridGap()`
+accessor keeps measurement aligned with the native modal across DPI changes.
+The root does not construct shelf/provider settings, index current values,
+change profiles or write preferences. Native rendering and physical-device
+acceptance remain required; headless wrapping tests are a geometry proxy.
+
 - **Home (SimpleUI) / Hem (SimpleUI):** layout/modules, custom screens, reading
   dashboard, Bookshelf shelves pinned on Home, wallpaper/presets/behavior and
   clearly named Advanced SimpleUI settings. The native window's titles identify
