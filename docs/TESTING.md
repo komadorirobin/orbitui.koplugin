@@ -34,6 +34,21 @@ transparent/blurred panels, covers' original colours, pinned Light/Dark/Auto,
 day/night/day toggles, reader return, rotation and sleep. Record results below
 and in MERGE_LOG. No push/release or measured performance gain is implied.
 
+Verified local source/package candidate `67bbe60c`: both complete interpreter
+gates pass (133 Python/four unchanged optional skips, 89 root Lua files,
+487 Bookshelf/zero failures/three normal SQLite exclusions, 13 SimpleUI files,
+map 396, syntax 1,085), followed by fresh final 89-root-suite sealed reruns
+under both interpreters. All 43 catalogs pass, as do all 28 quick-control cases
+with complete minimum/current native owners and all 11 night raster cases with
+both Android/non-Android CBB and software paths on sealed bytes. Exact source/
+manifest/path/checksum/history/held-art/Gitleaks checks pass. Same 2,000 installed
+paths; development ZIP digest and precise metrics are recorded in MERGE_LOG.
+Actual public Beta 18's native libarchive/SHA installer passes extraction,
+activation/restart/rollback, truncated recovery, external snapshot/restart/
+persistent rollback and interrupted cleanup retaining active/rollback/unknown/
+modified/user files. Only temporary fixture installs, no live/public OTA or
+device changes. Verification-only docs do not rebuild or replace the ZIP.
+
 ### Published Beta 19 (October 30)
 
 Exact candidate/annotated tag `89d23c78` / `v0.1.0-beta.19` passes fresh

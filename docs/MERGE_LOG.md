@@ -5799,3 +5799,43 @@ checks are required before local handoff; record final results below. No GitHub
 push, tag, release, installed device or production OTA is changed. Physical
 three-view legibility, covers, pinned themes, day/night/day, rotation, reader
 return and suspend/resume remain open; no measured speedup is claimed.
+
+### Final local night-mode verification
+
+Exact source/package candidate **`67bbe60c854fabb478dd74aae4da8feb2c1e9f83`**
+passes both complete interpreter gates: 133 Python tests/four unchanged optional
+source-pixel skips, 89 root Lua files, 487 Bookshelf suites/zero failures/three
+normal SQLite exclusions and 13 SimpleUI files. Map 396, syntax 1,085 and all
+43 catalogs pass. Fresh final sealed reruns execute all 89 root files under
+both interpreters, including the final dock/hero changes; all 28 quick-control
+cases pass with complete minimum/current native owners. All eleven native
+night cases pass in Android and non-Android modes on sealed bytes: unguarded
+negative control, corrected corners at four rotations/CBB on and off, RGB/grey
+brightness, unchanged source pixels, real blur and partial restoration.
+
+Development-only same-version ZIP: **9,030,547 bytes**, **26,511,573 expanded**,
+2,066 ZIP entries, identical 1,999 manifest records plus manifest / 2,000 API-1
+paths. SHA-256
+**`d3ff1d7c5717b5a2e0cfa40d8cbfd09f3e6a38e2106432966a9e500b17bbae3f`**.
+Every byte equals the exact candidate Git archive after only approved PO
+reference-comment reduction; inventory/hash/size/checksum agree. Changes are
+restricted to the reviewed seven runtime paths, tests and existing documents.
+Bootstrap/entry/version/source pins/artwork/fonts/languages remain unchanged.
+All fourteen outgoing implementation blobs exclude held art; Gitleaks reports
+no leaks. Verification-only documentation history is re-audited after commit.
+
+Actual public Beta 18's older native installer passes complete libarchive/SHA
+inventory, missing-module rejection, activation/restart/code rollback, truncated
+recovery, external snapshot/restart/persistent rollback and interrupted obsolete
+runtime cleanup retaining active/rollback/unknown/modified/user files. Existing
+reviewed macOS POSIX shim and compiled raster dependencies are test-only. No
+installed device, external synchronization or production OTA is touched.
+
+Evidence: ignored `test-results/night-mode-20261030/` full/sealed/native raster/
+native-Beta-18/catalog/package/audit/Gitleaks logs and pinned native dependencies.
+Verification docs do not rebuild this development ZIP. Public Beta 19 remains
+immutable at `89d23c78` with digest
+`86b5ffc63ddbd820a1e335c8a8cb21651683edba1b336785057e9455a71d9e64`;
+the development artifact is NOT a replacement release. No push/tag/release is
+authorized or performed. Physical Bigme/Boox three-view contrast, cover colours,
+theme choices, day/night/day, reader return, rotation and sleep still need tests.

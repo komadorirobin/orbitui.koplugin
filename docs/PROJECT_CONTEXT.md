@@ -36,9 +36,15 @@ and correct this file in the same change.
   tone/contrasting ink, also over pinned Light; day opacity stays saved.
   VERSION stays Beta 19; no source pin, bootstrap, installed
   path, asset/font/language, external sync or hardware patch change. No push or
-  release is authorized. Tests/package/native raster evidence and physical
-  Bigme/Boox gaps are recorded in MERGE_LOG/TESTING; a headless pixel check is
-  not device acceptance.
+  release is authorized. Candidate `67bbe60c` passes both complete interpreter
+  gates plus fresh final 89-root-suite sealed reruns, 43 catalogs and exact
+  source/path/artwork/history/secret audits. All 11 native raster cases pass
+  in Android and non-Android modes on sealed bytes; actual Beta 18's native
+  installer/restart/rollback/cleanup passes. The same-version development ZIP
+  is never a replacement for public Beta 19. Verification-only docs do not
+  rebuild it. Evidence is in MERGE_LOG/TESTING and ignored
+  `test-results/night-mode-20261030/`. Nothing is pushed or published; physical
+  Bigme/Boox acceptance remains open, not established by headless pixels.
 
 - The explicitly requested Beta 19 is public at exact candidate/annotated tag
   `89d23c78d5432f35cf14046ab78dc26de85ef13d` / `v0.1.0-beta.19`, published
