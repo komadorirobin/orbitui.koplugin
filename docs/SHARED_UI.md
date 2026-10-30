@@ -6,6 +6,55 @@ change. Device acceptance is still pending.
 
 ## Controls
 
+### Local October 31 UI refinements (not published)
+
+- Shared Search has **Typo-tolerant search / Stavfelstålig sökning**, on unless
+  explicitly disabled. Exact spelling, including Swedish å/ä/ö, ranks before
+  accent-folded and approximate book matches. Short words stay exact; longer
+  words allow at most one/two edits, including transposition and typed prefixes.
+  Native scope/genre choices and the 400-hit cap still apply. No new book index,
+  cover decode, metadata writer or remote query is added. Query-local distance
+  memoization is bounded; unknown future search/history data remains untouched.
+- Tap the shelf counter marked **▾** for **Sort, filter & view / Sortering,
+  filter och vy**. The native footer's former page-jump action remains in that
+  menu; advanced native multi-level sorting remains available too. Filters show
+  counts for All/Unread/In progress/Barely started/Finished. Barely started is a
+  derived local category at 0–5% for a started book, never a status write.
+  Quick sort/status choices display this shelf's matching books, not its group
+  cards. Source membership and existing filters are applied first. **Use shelf
+  defaults here / Använd hyllans standard här** restores the original grouping,
+  layout and sorting without overwriting the chip's saved configuration.
+- Quick choices are remembered independently per profile/chip and opened
+  author/series/collection/folder (whole-group views have their own identity).
+  Up to 100 saved places; a full/future-format store refuses new writes rather
+  than evicting another saved place. Covers/List/Book spines/Compact list/
+  Compact list · 2 columns reuse native renderers and density limits. Compact
+  rows show title, author, progress and relative last-read/added date; narrow
+  screens use the native one-column fallback. Cover-preview pins still win.
+  Spine quick sorting preserves OrbitUI's series-block/volume order. Only visible
+  page records hydrate covers through the existing cache/Android-safe path.
+- Shared settings display **You are here / Du är här**. Tap for an ancestor
+  picker; direct jumps retain the selected profile and native Back/page/close
+  ownership. Nested settings retain the row. Category navigation has a submenu
+  cue; native check/radio/disabled/hold actions remain. Native Menu pagination
+  remains responsible for visible widgets; no global menu or setDirty takeover.
+- The book detail header emphasizes cover/title/author and percentage read.
+  **Book details / Bokdetaljer**, before Edit, holds pages/language/format/size/
+  dates/filename/folder. It is read-only, escaped, lazy and independently zoomable;
+  Description/Reviews/Tags/Cover and registered plugin actions remain. **Read
+  now / Läs nu** uses the existing open/close callback, not a new reader path.
+- Existing opt-in diagnostics additionally time library search, browse filtering/
+  sorting, settings search and technical-detail building. Same scalar-only,
+  bounded, local memory report; no paths/titles/queries/raw errors are recorded.
+  `luajit scripts/benchmark-ui.lua` is a synthetic CPU-only 200/2,000/5,000-book
+  comparison, not an emulator/native-image/e-ink/device latency measurement.
+
+Design references (reviewed, not imported): modern_menu `6aef188c`, Library GUI
+`c7e60300`, KiKome `b232f18b`. All owned UI/help is Swedish/English. Source pins,
+all original user data, artwork, bootstrap and installed paths remain unchanged.
+Physical Boox/Bigme fonts, touch, paging, compact rows, transitions, rotation,
+sleep and the retained local night fix still require device acceptance.
+
 ### Local Kobold design follow-up (October 30; not published)
 
 Search adds **Recent searches** (ten local query/scope pairs, explicit Clear)

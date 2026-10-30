@@ -1103,6 +1103,27 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+October 31 user-approved refinements: optional native repository match callbacks
+let the shared host implement bounded typo/Unicode matching without a second
+index. Preserve exact Swedish spelling priority, profile/current membership,
+genre choice, ranking before the cap, native records and inert stale callbacks.
+Native callers without options retain their original matching rules.
+
+Browse sort/filter/view choices belong only to their profile/chip/drill identity,
+not a destructive chip migration. Keep original source filters first and expose
+native page jump/advanced sorting plus explicit per-place defaults. A local
+5-percent category must never write read status, annotations, files or remote
+progress. Retain native cover-preview pins, renderer/density limits, Android-safe
+visible covers and bookcase series blocks. Retire stale menu owners; expire only
+listing caches after a choice. Future schema/unknown fields/other places survive.
+
+Settings ancestor navigation preserves the native stack, pages, checks, holds
+and close ownership; do not globally replace KOReader menus or painting. Book
+details remain the same native panel and reader callbacks: technical metadata
+moves into an independently zoomable, lazy, read-only tab, with no network fetch.
+Original tabs/cover ownership/plugin actions remain. Extra opt-in timing labels
+remain scalar-only and bounded; synthetic CPU tests are not device acceptance.
+
 October 30 approved Kobold design follow-up: shared search keeps ten local
 query/scope pairs in the existing SimpleUI store, with explicit Clear and no
 provider/account/book records in history. Preserve future schemas; deleted

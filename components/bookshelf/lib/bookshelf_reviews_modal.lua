@@ -75,6 +75,7 @@ local DESC_FONT_MIN     = 12
 local DESC_FONT_MAX     = 40
 local DESC_FONT_STEP    = 2
 local TAB_FONT_KEYS = {
+    information = "orbitui_information_font_size",
     edit        = "edit_font_size",
     description = DESC_FONT_KEY,
     reviews     = "reviews_font_size",
@@ -504,7 +505,7 @@ function ReviewsModal:init()
     -- keeps showing the popup until the reader's first paint replaces it.
     if self.on_open then
         button_row[#button_row + 1] = {
-            text = _("Open"),
+            text = self.open_text or _("Open"),
             id   = "open",
             callback = function()
                 local cb = self.on_open

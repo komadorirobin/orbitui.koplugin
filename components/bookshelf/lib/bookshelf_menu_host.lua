@@ -70,7 +70,7 @@ local function mapItems(host, src_items)
             -- _src: the source item, so the host Menu's onMenuHold can run
             -- its hold_callback with TouchMenu semantics.
             local row = { text = text, dim = not enabled or nil, _src = it }
-            local has_sub = it.sub_item_table ~= nil or it.sub_item_table_func ~= nil
+            local has_sub = it.sub_item_table ~= nil or it.sub_item_table_func ~= nil or it.orbitui_navigation
             if has_sub then
                 -- Drill-down marker: Menu.getMenuText appends its native
                 -- (BiDi-aware) submenu arrow when the row has a
@@ -79,7 +79,7 @@ local function mapItems(host, src_items)
                 -- deliberately leave unset so taps run our callback and the
                 -- push goes through host:_push, not Menu's own stack).
                 row.sub_item_table_func = it.sub_item_table_func
-                    or function() return it.sub_item_table end
+                    or function() return it.sub_item_table or {} end
             end
             if enabled then
                 row.callback = function()
@@ -136,6 +136,11 @@ local function levelItems(host, src_items, is_pushed)
             callback = function() host:_pop() end,
         })
     end
+    -- Optional host-owned location row. Standalone menus remain unchanged.
+    if host._level_header then
+        local header = host._level_header(host)
+        if header then table.insert(rows, 1, mapItems(host, { header })[1]) end
+    end
     return rows
 end
 
@@ -146,7 +151,7 @@ function MenuHost.show(opts)
     local UIManager = require("ui/uimanager")
     local Screen    = require("device").screen
 
-    local host = { on_item_activated = opts.on_item_activated, _stack = {} }
+    local host = { on_item_activated = opts.on_item_activated, _stack = {}, _level_header = opts.level_header }
     -- store the owner's close callback so all close routes fire it
     host._close_callback = opts.close_callback
     host._shim = {
@@ -212,7 +217,7 @@ function MenuHost.show(opts)
     host._stack[1] = { title = opts.title, src = opts.item_table }
     host._menu = Menu:new{
         title          = opts.title,
-        item_table     = mapItems(host, opts.item_table),
+        item_table     = levelItems(host, opts.item_table, false),
         width          = Screen:getWidth(),
         height         = Screen:getHeight(),
         is_borderless  = true,

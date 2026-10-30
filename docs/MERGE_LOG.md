@@ -4,6 +4,66 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-10-31 — Published prose ribbon, local UI-reference follow-up
+
+User says "Kör alla", first extending the NON-manga header bookmark to the full
+header height, publishing it, then continuing the five reviewed OrbitUI items.
+Ereader is clean at public `3cd30288`; commit
+`6c05155cb96395b656f85c47b4924523488715a1` is pushed to its main. The straight
+body now reaches `header_top_margin + measured text height`, preserving width,
+notch, contrast, bookmark state/refresh and thumbnail safety. Manga is untouched.
+All 51 header cases pass in both Lua/LuaJIT, diff/secret checks pass, and GitHub
+contents confirms exact public blob `7b48586881e5991888ba4c7038a5bf175ca83c48`.
+Patch Manager's normal numbered-patch discovery publishes this without a new
+manager release; enabled/disabled state is preserved and restart is required.
+
+OrbitUI implementation stays local on `feature/ui-refinements-20261031`, from
+`4686cbea`, retaining the approved unpublished night fixes. "Publicera sen" above
+applies to the preceding header task, not to an OrbitUI release after the list.
+VERSION remains Beta 19 and public bytes/tags stay untouched. No new upstream,
+inspiration-watch target, external message, hardware patch or remote sync writer.
+
+Reviewed design references are modern_menu `6aef188c71a60dda2a69c812f6f7e05ba600c285`,
+Library GUI `c7e6030082fac4b7bd170379e6eb5fcb618946a0` and KiKome
+`b232f18bf00d9efe7bedefbc1b844091c2a39996`. Independent integration code is used,
+not their engines, assets, cache formats, move/delete code or global menu/paint
+wrappers. Import/source pins stay exactly as before.
+
+1. Shared typo search: native repository optional matcher callbacks preserve its
+   source/genre filtering and exact standalone behavior. Host matches exact,
+   accent-folded, then bounded UTF-8 word edits/transpositions/prefixes; short
+   words stay exact, user opt-out is live. Rank original book records before the
+   cap. Resolve the native lower-case helper once, not per compared field.
+2. Shelf counter's visible dropdown opens sort/filter/view/counts, native page
+   jump and advanced sorting. Read-only local 5% classification; no status write.
+   Separate bounded per-profile/chip/drill preferences preserve native defaults,
+   unknown schema/fields and other places. Optional compact lists use native
+   row/density limits and date tokens. Quick book listings keep scope/filter
+   first, slice before cover hydration and retain safe Android/native cover
+   owners; whole-list reads are metadata-only. Expire listing caches after a
+   change. Native cover-preview pins and bookcase series-block/volume order win.
+3. Shared settings get an optional native MenuHost location row/ancestor picker
+   at every nested level and navigation cues, preserving native pages/Back/
+   checks/holds/close. Native pagination remains the visible-widget owner;
+   there is no new all-KOReader menu renderer or global setDirty wrapper.
+4. Detail header shows title/author/cover/progress; a lazy escaped read-only
+   technical tab before Edit preserves source tabs, native open/close/plugin
+   actions and independent zoom. "Read now" is the original callback. No
+   extra metadata/history stat work for the simplified header itself.
+5. Four fixed opt-in diagnostic labels plus a reproducible synthetic CPU
+   benchmark. Reports remain bounded local scalar timings, no book/query/path/
+   account/raw-error logging. The 200/2,000/5,000-book benchmark excludes disk
+   scan, native images, widgets, paint and e-ink latency. No device speed claim.
+
+All owned wording/help is Swedish/English. Small optional component seams are
+documented by C10; all other integration lives in existing core/adapters. No new
+installed runtime path, bootstrap/OTA/file-limit change, artwork, font/language
+removal, settings migration, book/file/cache deletion or external sync change.
+Verification evidence is kept in ignored `test-results/ui-refinements-20261031/`.
+Native fonts/touch/keyboard, group presentation, compact lists, scopes/restart,
+cover quality, old default layouts, reader return, night/day, rotation and sleep
+on Bigme/Boox remain device checks, not established by headless success.
+
 ## 2026-10-30: Local Kobold follow-up and separate inspiration monitoring
 
 User approves the search/collection recommendations and explicitly confirms

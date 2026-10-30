@@ -1,6 +1,71 @@
 local M = {}
 local Context = require("core/orbitui_context")
 
+local function escape(value)
+    return tostring(value or ""):gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;")
+        :gsub('"', "&quot;")
+end
+function M.information(book)
+    local _ = require("core/orbitui_i18n")
+    local rows = {}
+    local function add(label, value)
+        if value ~= nil and value ~= "" then
+            rows[#rows + 1] = "<p><b>" .. escape(_(label)) .. "</b><br/>" .. escape(value) .. "</p>"
+        end
+    end
+    add("Pages", book.page_count)
+    add("Language", book.lang or book.language)
+    add("Format", book.format)
+    local attrs
+    local ok, fs = pcall(require, "libs/libkoreader-lfs")
+    if ok and book.filepath then attrs = fs.attributes(book.filepath) end
+    local size = book.size or (attrs and attrs.size)
+    if size then add("Size", require("lib/bookshelf_tokens").formatFileSize(size)) end
+    local function date(value)
+        value = tonumber(value)
+        return value and value > 0 and os.date("%Y-%m-%d", value) or nil
+    end
+    add("Added", date(book.date_added or (attrs and attrs.modification)))
+    local last = book.last_opened
+    if not last then
+        local ok_history, history = pcall(require, "readhistory")
+        for _i, item in ipairs(ok_history and history.hist or {}) do
+            if item.file == book.filepath then last = item.time; break end
+        end
+    end
+    add("Last read", date(last))
+    add("File name", book.filename or (book.filepath or ""):match("([^/]+)$"))
+    add("Folder", (book.filepath or ""):match("^(.*)/[^/]+$"))
+    return table.concat(rows, "\n")
+end
+function M.widget(widget)
+    widget.orbitui_detail_args = function(self, book, args)
+        local _ = require("core/orbitui_i18n")
+        local selected = args.tabs[args.active_tab] and args.tabs[args.active_tab].id
+        -- Keep all native tabs, plugin actions, sources and their close/open
+        -- lifecycle. The new read-only page is built only when selected.
+        local position = #args.tabs + 1
+        for i, tab in ipairs(args.tabs) do if tab.id == "edit" then position = i; break end end
+        table.insert(args.tabs, position, { id = "information", label = _("Book details"),
+            widget_builder = function(w, h, modal)
+                return self:_headedHtmlBody(modal, w, h, nil, M.information(book))
+            end })
+        for i, tab in ipairs(args.tabs) do if tab.id == selected then args.active_tab = i end end
+        args.open_text = _("Read now")
+        args.header_builder = function(width)
+            local pct, status = require("lib/bookshelf_book_repository").readProgress(book.filepath)
+            local text = status == "finished" and _("Finished")
+                or string.format(_("%d%% read"), math.floor(math.max(0, math.min(1, tonumber(pct) or 0)) * 100 + .5))
+            return self:_buildBookMenuHeader(book, width, nil, nil, { rich = true, summary_text = text })
+        end
+    end
+end
+
+local information = M.information
+function M.information(...)
+    return require("core/orbitui_host").measure("details", information, ...)
+end
+
 -- A book detail controller, not a second hidden shelf. It inherits the actual
 -- Bookshelf methods (including userpatch wrappers), but never runs shelf init,
 -- claims BookshelfWidget.live, registers timers or installs repository hooks.

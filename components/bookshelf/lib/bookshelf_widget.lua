@@ -6505,6 +6505,10 @@ end
 
 function BookshelfWidget:_viewMode()
     if _covers_pin > 0 then return ViewMode.COVERS end
+    if self.orbitui_view_mode then
+        local own = self:orbitui_view_mode()
+        if own then return own end
+    end
     -- A chip pinned to either mode wins outright, over all three globals.
     --
     -- Resolved HERE rather than as a sixth argument to ViewMode.effective:
@@ -9479,7 +9483,10 @@ function BookshelfWidget:_buildPaginationFooter(content_w, label_h, total_pages)
         text_font_size = self:_paginationFooterTextSize(),
         width         = slots.page,
         callback      = function()
-            if Gestures.on("page_jump") then bw:_openPageJump() end
+            if Gestures.on("page_jump") then
+                if bw.orbitui_browse_controls then bw:orbitui_browse_controls()
+                else bw:_openPageJump() end
+            end
         end,
         -- The separate grid/list button already changes view mode. Use the
         -- page label's long-press for the sort picker so sorting remains
@@ -21903,6 +21910,12 @@ function BookshelfWidget:_buildBookMenuHeader(book, override_width, pill_specs, 
         }
     end
 
+    if opts and opts.summary_text then
+        top_stack[#top_stack + 1] = TextBoxWidget_:new{
+            text = opts.summary_text, face = BFont:getFace("cfont", rich and 18 or 14),
+            width = text_w,
+        }
+    else
     -- Metadata + filename block: cheap-to-fetch supporting detail in a
     -- compact bottom slice of the top stack. Each chunk skipped when
     -- its source is unavailable.
@@ -22040,6 +22053,8 @@ function BookshelfWidget:_buildBookMenuHeader(book, override_width, pill_specs, 
             width = text_w,
         }
     end
+
+    end -- optional host summary keeps technical details in its own tab
 
     -- Bottom-aligned pill strip: tappable nav facets (series, author,
     -- collections, genres, folder, rating). Each pill is a small
@@ -25574,6 +25589,7 @@ function BookshelfWidget:_showBookDetail(book, opts)
     -- Description tab's on_source_close (fired by the modal on dismiss), so no
     -- top-level on_tab_close mapping is needed here.
 
+    if self.orbitui_detail_args then self:orbitui_detail_args(book, args, opts) end
     local ReviewsModal = require("lib/bookshelf_reviews_modal")
     modal = ReviewsModal:new(args)
     UIManager:show(modal)

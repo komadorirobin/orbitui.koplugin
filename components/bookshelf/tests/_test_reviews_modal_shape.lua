@@ -50,7 +50,9 @@ t.test("Open leads the row and Close holds the far-right corner", function()
     -- on-screen order.
     local close = src:find('text = _("Close"),', 1, true)
     local zoom  = src:find("ZOOM_IN_GLYPH,", 1, true)
-    local open  = src:find('text = _("Open"),', 1, true)
+    -- OrbitUI may relabel this exact native action, retaining Open as fallback.
+    local open  = src:find('text = self.open_text or _("Open"),', 1, true)
+        or src:find('text = _("Open"),', 1, true)
     assert(close and zoom and open, "a footer button went missing")
     assert(open < zoom, "Open must sit BEFORE the zoom controls")
     assert(zoom < close, "Close must hold the far-right corner")

@@ -2,6 +2,34 @@
 
 ## Automated
 
+### Local October 31 UI refinements (not pushed/released)
+
+`test_ui_refinements` covers exact/normalised/typo ranking, transpositions,
+prefixes, UTF-8 preservation, excluded genres, native matcher-before-limit,
+record identity, per-place/future-schema preference ownership, local 5-percent
+classification, sorting-only avoiding progress IO, native comparator keys,
+compact geometry inputs, filter-before-pagination, metadata-only whole-list
+fetches, stale navigation/menu callbacks, date rollover, escaped/lazy technical
+details, retained active native tab/open callback, real MenuHost ancestor jumps,
+cover-preview priority and listing-cache expiry. `test_shelf_sort` additionally
+executes quick bookcase ordering against the real native engine and retains
+Moberg's series blocks/volume numbering. Existing shared search, panel, settings,
+Android covers, native-reader return, quick controls and night tests still apply.
+
+`scripts/benchmark-ui.lua` reports CPU p50/p90/max over synthetic metadata at
+200/2,000/5,000 books. It asserts late exact/fuzzy hits survive, but imposes no
+machine-dependent speed threshold. It excludes filesystem scans, native image
+memory, asynchronous jobs, UI build/paint and e-ink refresh. Do not present its
+numbers as a Boox/Bigme speedup. Existing optional device-side timings additionally
+record search/browse/settings/detail calls without queries/paths/titles/errors.
+
+Required device checks: SV/EN narrow/landscape/large-font menus and ancestor
+jumps; top-level and grouped profile scopes; sort/filter/defaults and restart
+persistence; native group/default presentation; compact one/two-column fallback;
+spines/volume order/preview pin; covers before/after paging and return; technical
+tab and independent zoom; unchanged read/open/plugin/BookOrbit/Hardcover behavior;
+night/day, rotation and suspend. No physical-device acceptance is implied.
+
 ### Local night-mode correction (October 31, not pushed/released)
 
 `test_night_mode` exercises the shared runtime tone, error-safe Android inverse

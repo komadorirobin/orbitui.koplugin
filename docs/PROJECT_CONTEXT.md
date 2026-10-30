@@ -22,6 +22,27 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-31
 
+- User approves all five UI-review follow-ups, but first asks for a longer
+  NON-manga bookmark ribbon and its publication. Ereader alone is published at
+  `6c05155cb96395b656f85c47b4924523488715a1`: the prose ribbon reaches the
+  measured header-text bottom, keeping width/notch/contrast and thumbnail safety;
+  manga is unchanged. All 51 header cases pass in Lua/LuaJIT, Gitleaks is clear,
+  and GitHub's public patch blob matches `7b48586881e5991888ba4c7038a5bf175ca83c48`.
+  Patch Manager discovers that commit automatically; no manager release needed.
+- OrbitUI follow-up is LOCAL on `feature/ui-refinements-20261031`, retaining the
+  unpushed night-mode correction below. Independent code, not another embedded
+  UI engine: bounded typo/Unicode search with exact-spelling priority and opt-out;
+  explicit sort/filter/view access from the shelf counter; per-profile/chip/group
+  browse preferences, compact one/two-column lists and relative dates; an ancestor
+  picker in shared settings; simpler detail header plus lazy technical-info tab;
+  opt-in private timings and a reproducible synthetic CPU-only search benchmark.
+  Native scope, Android cover queue, series-block order, reader lifecycle, all
+  original tabs/actions/fonts and external sync owners remain. Quick sort/status
+  choices show that shelf's matching books; shelf defaults restore group cards.
+  No setting migration, source pin/bootstrap/VERSION/asset change, new installed
+  path, reference-watch activation, push or OrbitUI release is authorized here.
+  Full verification and device gaps are recorded in SHARED_UI/TESTING/MERGE_LOG.
+
 - The user's Beta 19 photos expose unreadable white chrome over retained light
   wallpaper and Android RGB rounded-fill corner islands. User approves a LOCAL
   night-mode pass only, on `fix/night-mode-20261030` from clean `3476ac93`.

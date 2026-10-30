@@ -28,7 +28,8 @@ package.loaded["core/orbitui_search"] = { show = function(opts) search_opts = op
 package.loaded["core/orbitui_shelf_query"] = { capture = function(w)
     return { chip = w.chip, profile = w.profile_key }
 end }
-package.loaded["adapters/orbitui_book_panel"] = { show = function(file, opts) panel_args = { file, opts } end }
+package.loaded["adapters/orbitui_book_panel"] = { show = function(file, opts) panel_args = { file, opts } end,
+    widget = function() end }
 package.loaded["adapters/orbitui_home_shelves"] = {
     shelfMenu = function(w, chip) shelf_menu = { w, chip } end,
     choose = function(ref) shelf_menu = ref end,

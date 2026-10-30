@@ -313,7 +313,7 @@ H.test("the hosted launch seam records the actual path without changing the nati
         "book_bindings", "series_titles", "navbar", "android_covers" }, {}
     for _, name in ipairs(modules) do
         local id = "adapters/orbitui_" .. name; saved[id] = package.loaded[id]
-        package.loaded[id] = { widget = function() end }
+        package.loaded[id] = { widget = function() end, browsing = function() end }
     end
     local after = function() end
     local W = { _commitBookStatus = function() end,

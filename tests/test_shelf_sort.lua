@@ -287,4 +287,13 @@ H.test("unscoped bookcase scans restore native flags on success and error", func
     H.eq(ok, false); H.eq(repo.spine_light, nil); H.eq(repo.suppress_covers, false)
 end)
 
+H.test("quick bookcase sorting retains the native Moberg series blocks and volume order", function()
+    local saved_query = package.loaded["core/orbitui_shelf_query"]
+    local _entries, books = fixture()
+    package.loaded["core/orbitui_shelf_query"] = { books = function() return books end }
+    local result = Adapter.browseBooks({}, { sort = "author" }, false, true)
+    H.eq(ids(result), "r,u1,u2,u3,u4,z")
+    H.eq(ids(books), "z,r,u4,u2,u3,u1", "native metadata list remains unchanged")
+    package.loaded["core/orbitui_shelf_query"] = saved_query
+end)
 H.finish()

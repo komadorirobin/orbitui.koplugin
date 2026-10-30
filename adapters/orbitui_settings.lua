@@ -376,7 +376,7 @@ local nodes = {
     { "home_advanced", "Advanced SimpleUI settings", "home", "screens", "alla all settings statistik statistics", screen = "__root__" },
     { "bookshelf", "Bookshelf", nil, "mixed", "bibliotek library böcker books manga prosa" },
     { "libraries", "Libraries & shelves", "bookshelf", "mixed", "biblioteksavdelningar profiler profiles mappar folders chip chips filters filter sortering sorting ordna bibliotek order libraries ordna chip order chips placera före place before källa source" },
-    { "book_search", "Search books", "bookshelf", "mixed", "böcker böksökning books library search" },
+    { "book_search", "Search books", "bookshelf", "mixed", "böcker boksökning books library search stavfel typo accent diakritiska" },
     { "panel", "Book panel at the top", "bookshelf", "bookshelf", "toppanel hero bokinformation baksidestext tags interactive" },
     { "covers", "Covers & book information", "bookshelf", "bookshelf", "omslag upplösning resolution metadata indexering indexing" },
     { "themes", "Themes, backgrounds & ornaments", "bookshelf", "theme", "tema färger colors bakgrund wallpaper plank hyllplan dekorationer" },
@@ -481,12 +481,47 @@ local function scopedControls(source, scope, depth)
     end
     return rows
 end
+function M.locationHeader(title, parent, opts)
+    return function(menu_host)
+        local routes = { { label = _("OrbitUI settings"), callback = function() M.show() end } }
+        local chain, node = {}, by_id[parent]
+        while node do table.insert(chain, 1, node); node = by_id[node.parent] end
+        for _i, item in ipairs(chain) do
+            local id = item.id
+            routes[#routes + 1] = { label = _(item.label), callback = function()
+                M.open(id, { profile = opts and opts.profile })
+            end }
+        end
+        local labels = {}
+        for _, route in ipairs(routes) do labels[#labels + 1] = route.label end
+        for index, level in ipairs(menu_host._stack or {}) do
+            local depth = index
+            labels[#labels + 1] = index == 1 and title:gsub("^.- / ", "") or level.title
+            routes[#routes + 1] = { label = labels[#labels], depth = depth }
+        end
+        return { text = _("You are here") .. ": " .. table.concat(labels, " › "),
+            sub_item_table_func = function()
+                local choices = {}
+                for _, route in ipairs(routes) do
+                    local destination = route
+                    choices[#choices + 1] = { text = destination.label, callback = function(shim)
+                        if menu_host._closed then return end
+                        if destination.depth then
+                            while #menu_host._stack > destination.depth do menu_host:_pop() end
+                        else shim.closeMenu(); destination.callback() end
+                    end }
+                end
+                return choices
+            end }
+    end
+end
 local function host(title, rows, parent, opts)
     local on_back = opts and opts.return_to
     if not on_back and parent then on_back = function()
         if parent == "__root__" then M.show() else M.open(parent, { profile = opts and opts.profile }) end
     end end
     return require("lib/bookshelf_menu_host").show{ title = title, item_table = rows,
+        level_header = M.locationHeader(title, parent, opts),
         on_back = on_back, parent_title = on_back and ((opts and opts.return_label)
             or (by_id[parent] and _(by_id[parent].label)) or _("OrbitUI settings")),
         close_callback = function() require("adapters/orbitui_appearance").refreshVisible() end }
@@ -500,7 +535,7 @@ local function children(id, close, opts)
     for _i, n in ipairs(nodes) do
         if n.parent == id then
             local target = n.id
-            rows[#rows + 1] = { orbitui_id = target, text = _(n.label),
+            rows[#rows + 1] = { orbitui_id = target, text = _(n.label), orbitui_navigation = true,
                 callback = function()
                     if close then close() end
                     M.open(target, { profile = opts and opts.profile })
@@ -551,6 +586,10 @@ function M.find(query)
     local truncated = #hits > 40
     while #hits > 40 do table.remove(hits) end
     return hits, truncated
+end
+local find = M.find
+function M.find(...)
+    return require("core/orbitui_host").measure("settings", find, ...)
 end
 function M.search(query, opts)
     beginRequest()

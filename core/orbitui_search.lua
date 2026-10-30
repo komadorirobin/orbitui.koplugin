@@ -3,13 +3,18 @@ local _ = require("core/orbitui_i18n")
 local Query = require("core/orbitui_shelf_query")
 local Context = require("core/orbitui_context")
 local HISTORY = "orbitui_search_history"
+local TYPOS = "orbitui_search_typos"
 local session = 0
 M.sorts = { { id = "relevance", text = "Relevance" }, { id = "title", text = "Title" },
     { id = "author", text = "Author" }, { id = "series", text = "Series" } }
 
+local text_lower
 function M.lower(value)
-    local ok, Text = pcall(require, "infra/sui_text")
-    return ok and Text.lower(value or "") or (value or ""):lower()
+    if not text_lower then
+        local ok, Text = pcall(require, "infra/sui_text")
+        text_lower = ok and type(Text) == "table" and Text.lower or string.lower
+    end
+    return text_lower(value or "")
 end
 
 local function author(book)
@@ -17,7 +22,7 @@ local function author(book)
     return type(value) == "table" and table.concat(value, ", ") or value
 end
 
-function M.sortBooks(books, sort, query)
+function M.sortBooks(books, sort, query, matches)
     local keys, q = {}, M.lower(query)
     local function score(value, weight)
         if q == "" then return 0 end
@@ -35,6 +40,9 @@ function M.sortBooks(books, sort, query)
         local ak, bk = keys[a], keys[b]
         local field = sort == "author" and "author" or sort == "series" and "series"
             or sort == "title" and "title" or "relevance"
+        if field == "relevance" and matches and matches[a] ~= matches[b] then
+            return (matches[a] or 0) < (matches[b] or 0)
+        end
         if ak[field] ~= bk[field] then
             if field == "relevance" then return ak[field] > bk[field] end
             -- Unknown author/series sorts last, rather than hiding named hits.
@@ -51,6 +59,96 @@ end
 local function store()
     local ok, value = pcall(require, "infra/sui_store")
     return ok and value or nil
+end
+
+-- Independent host-side matcher: no second library index, cover access or
+-- metadata writer. Native repository scope and genre preferences still apply.
+local folds = {}
+for plain, letters in pairs({ a = "àáâãäåÀÁÂÃÄÅ", e = "èéêëÈÉÊË", i = "ìíîïÌÍÎÏ",
+        o = "òóôõöøÒÓÔÕÖØ", u = "ùúûüÙÚÛÜ", y = "ýÿÝŸ", c = "çÇ", n = "ñÑ",
+        ae = "æÆ", oe = "œŒ", ss = "ß" }) do
+    for letter in letters:gmatch("[\194-\244][\128-\191]*") do folds[letter] = plain end
+end
+function M.normalize(text)
+    return M.lower(text):gsub("[\194-\244][\128-\191]*", folds)
+        :gsub("’", ""):gsub("'", ""):gsub("[%c%p]", " ")
+end
+local function characters(text, limit)
+    local out = {}
+    for char in text:gmatch("[%z\1-\127\194-\244][\128-\191]*") do
+        out[#out + 1] = char
+        if limit and #out >= limit then break end
+    end
+    return out
+end
+local function distance(query, target, cap)
+    local n = #query
+    if #target < n - cap then return end
+    local previous, older = {}, nil
+    for j = 0, math.min(#target, n + cap) do previous[j] = j end
+    for i = 1, n do
+        local row = { [0] = i }
+        for j = 1, math.min(#target, n + cap) do
+            local cost = query[i] == target[j] and 0 or 1
+            row[j] = math.min(previous[j] + 1, row[j - 1] + 1, previous[j - 1] + cost)
+            if older and j > 1 and query[i] == target[j - 1] and query[i - 1] == target[j] then
+                row[j] = math.min(row[j], older[j - 2] + 1)
+            end
+        end
+        older, previous = previous, row
+    end
+    local best = cap + 1
+    for j = math.max(1, n - cap), math.min(#target, n + cap) do best = math.min(best, previous[j]) end
+    return best <= cap and best or nil
+end
+function M.typosEnabled()
+    local settings = store()
+    return not settings or settings:get(TYPOS) ~= false
+end
+function M.matcher(query, forgiving)
+    local raw_words, words = {}, {}
+    for word in M.lower(query):gmatch("%S+") do raw_words[#raw_words + 1] = word end
+    for word in M.normalize(query):gmatch("%S+") do words[#words + 1] = { text = word, chars = characters(word, 65) } end
+    local memo, memo_size = {}, 0
+    return function(book, _native_words, skip_genres)
+        local parts = { book.title or "", author(book), book.series_name or book.series or "", book.filename or "" }
+        if not skip_genres then
+            for _, genre in ipairs(book.genres or {}) do parts[#parts + 1] = genre end
+        end
+        local raw = M.lower(table.concat(parts, " "))
+        local exact = true
+        for _, word in ipairs(raw_words) do if not raw:find(word, 1, true) then exact = false; break end end
+        if exact then return 0 end
+        if not forgiving or #words == 0 then return end
+        local normalized, tokens = M.normalize(raw), nil
+        local edits = 0
+        for _, word in ipairs(words) do
+            if not normalized:find(word.text, 1, true) then
+                local length = #word.chars
+                local cap = length >= 8 and 2 or length >= 4 and 1 or 0
+                if cap == 0 or length > 64 or #words > 16 then return end
+                if not tokens then
+                    tokens = {}
+                    for token in normalized:gmatch("%S+") do tokens[#tokens + 1] = token end
+                end
+                local best
+                for _, token in ipairs(tokens) do
+                    local key = word.text .. "\0" .. token:sub(1, 264)
+                    local value = memo[key]
+                    if value == nil then
+                        value = distance(word.chars, characters(token, 66), cap) or false
+                        if memo_size >= 2048 then memo, memo_size = {}, 0 end
+                        memo[key], memo_size = value, memo_size + 1
+                    end
+                    if value and (not best or value < best) then best = value end
+                end
+                if not best then return end
+                edits = edits + best
+            end
+        end
+        -- All exact spelling, including Swedish å/ä/ö, ranks first.
+        return edits == 0 and 100 or 200 + edits
+    end
 end
 
 function M.history()
@@ -104,7 +202,7 @@ function M.scopes(ref)
     return scopes
 end
 
-function M.search(text, scope_id, ref, sort)
+function M.search(text, scope_id, ref, sort, forgiving)
     text = (text or ""):match("^%s*(.-)%s*$")
     if text == "" then return {}, false end
     local Repo = require("lib/bookshelf_book_repository")
@@ -125,20 +223,27 @@ function M.search(text, scope_id, ref, sort)
     end
     -- Membership filtering precedes the limit: a narrow shelf must not miss
     -- its matches merely because other shelves supplied the first 400 hits.
-    local matches = not allowed and Repo.searchAll(text, scope, { book_limit = math.huge }) or nil
+    if forgiving == nil then forgiving = M.typosEnabled() end
+    local match, scores = M.matcher(text, forgiving), {}
+    local match_opts = { book_limit = math.huge, match_book = function(book, words, skip_genres)
+        local score = match(book, words, skip_genres)
+        scores[book] = score
+        return score ~= nil
+    end, match_group = function(label) return match({ title = label }, nil, true) ~= nil end }
+    local matches = not allowed and Repo.searchAll(text, scope, match_opts) or nil
     local results, seen, groups = {}, {}, {}
     for _i, category in ipairs({ "folders", "authors", "series", "genres" }) do
         for _j, group in ipairs(matches and matches[category] or {}) do
             groups[#groups + 1] = { category = category, record = group }
         end
     end
-    for _i, book in ipairs(matches and matches.books or Repo.searchBooks(text, nil, scope)) do
+    for _i, book in ipairs(matches and matches.books or Repo.searchBooks(text, nil, scope, match_opts)) do
         if not seen[book.filepath] and (not allowed or allowed[book.filepath]) then
             seen[book.filepath] = true
             results[#results + 1] = book
         end
     end
-    M.sortBooks(results, sort, text)
+    M.sortBooks(results, sort, text, scores)
     local truncated = #results + #groups > M.limit
     while #groups > M.limit do groups[#groups] = nil end
     while #results > M.limit - #groups do results[#results] = nil end
@@ -214,7 +319,8 @@ function M.results(text, scope_id, ref, opts)
         screen_footers = { __root__ = function(ctx)
             local sort_label = _("Relevance")
             for _i, item in ipairs(M.sorts) do if item.id == opts.sort then sort_label = _(item.text) end end
-            return Window.CenteredButtonFooter(ctx, { text = _("Search") .. " · " .. sort_label, on_tap = function()
+            return Window.CenteredButtonFooter(ctx, { text = string.format(_("%d books"), #books)
+                .. " · " .. sort_label .. " ▾", on_tap = function()
                 if not current() then return end
                 ctx.close()
                 M.show{ query = text, scope = scope_id, ref = ref, open_book = opts.open_book, sort = opts.sort }
@@ -357,6 +463,14 @@ function M.show(opts)
                     end
                     page(1)
                 end }},
+                {{ text = _("Typo-tolerant search") .. ": " .. _(M.typosEnabled() and "On" or "Off"),
+                    callback = function()
+                        local query = dialog:getInputText()
+                        local settings = store()
+                        if not settings then return end
+                        settings:set(TYPOS, not M.typosEnabled())
+                        UIManager:close(dialog); input(query)
+                    end }},
             },
         }
         for _i, row in ipairs(dialog.buttons) do
@@ -372,4 +486,8 @@ function M.show(opts)
     return input(opts.query)
 end
 
+local search = M.search
+function M.search(...)
+    return require("core/orbitui_host").measure("search", search, ...)
+end
 return M

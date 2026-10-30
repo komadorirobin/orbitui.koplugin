@@ -39,6 +39,7 @@ M.modules = {
     ["features/sui_wallpaper"] = true,
     ["lib/bookshelf_wallpaper"] = true,
     ["lib/bookshelf_color"] = true,
+    ["lib/bookshelf_tokens"] = true,
 }
 
 local function settingsEntry(items, old_key)
@@ -50,7 +51,9 @@ local function settingsEntry(items, old_key)
 end
 
 function M.wrap(name, module)
-    if name == "features/sui_wallpaper" or name == "lib/bookshelf_wallpaper" then
+    if name == "lib/bookshelf_tokens" then
+        require("adapters/orbitui_shelf_sort").tokens(module)
+    elseif name == "features/sui_wallpaper" or name == "lib/bookshelf_wallpaper" then
         require("adapters/orbitui_appearance").wallpaper(module, name == "lib/bookshelf_wallpaper")
     elseif name == "lib/bookshelf_color" then
         require("adapters/orbitui_appearance").colourPainter(module)
@@ -108,9 +111,11 @@ function M.wrap(name, module)
             end
         end
         require("adapters/orbitui_appearance").widget(module)
+        require("adapters/orbitui_book_panel").widget(module)
         require("adapters/orbitui_shelf_themes").widget(module)
         require("adapters/orbitui_cover_labels").widget(module)
         require("adapters/orbitui_shelf_sort").widget(module)
+        require("adapters/orbitui_shelf_sort").browsing(module)
         require("adapters/orbitui_series_boxes").widget(module)
         require("adapters/orbitui_book_bindings").widget(module)
         require("adapters/orbitui_series_titles").widget(module)

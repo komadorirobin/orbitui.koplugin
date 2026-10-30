@@ -92,6 +92,8 @@ local labels = {
     home = "Home build", dashboard = "Dashboard build", shelf = "Shelf rebuild",
     next = "Shelf next page", previous = "Shelf previous page", open = "Book open call",
     close = "Book close event", library = "Open Bookshelf call", return_shelf = "Return to shelf call",
+    search = "Library search", browse = "Browse filter and sort", settings = "Settings search",
+    details = "Book details build",
 }
 local function settings() return package.loaded["infra/sui_store"] end
 local function readOptions()
@@ -340,7 +342,8 @@ function M.performanceReport()
             .. string.format(": %.1f / %.1f MiB; n=%d", cache.bytes / MiB, cache.budget / MiB, cache.count)
             .. (cache.hits and string.format("; %s=%d; %s=%d", _("Hits"), cache.hits, _("Puts"), cache.puts or 0) or "") end
     end
-    local order = { "home", "dashboard", "shelf", "next", "previous", "open", "close", "library", "return_shelf" }
+    local order = { "home", "dashboard", "shelf", "next", "previous", "open", "close", "library", "return_shelf",
+        "search", "browse", "settings", "details" }
     for _i, id in ipairs(order) do
         local timing = data.timings[id]
         if timing then lines[#lines + 1] = _(labels[id]) .. string.format(

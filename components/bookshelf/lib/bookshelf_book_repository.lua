@@ -5731,7 +5731,7 @@ _librarySourceBooks = function()
     return out
 end
 
-function Repo.searchBooks(query, limit, scope)
+function Repo.searchBooks(query, limit, scope, opts)
     if not query or query == "" then return {} end
     local home  = HomeDir.get() or "/"
     local depth = BookshelfSettings.read("latest_walk_depth") or 3
@@ -5743,6 +5743,8 @@ function Repo.searchBooks(query, limit, scope)
     if #words == 0 then return {} end
     local light_cache = _getLightMetaCache(home, depth)
     local skip_genres = not _searchIncludesGenres()
+    -- Optional host matcher only; native callers retain their substring rule.
+    local match = opts and opts.match_book or _searchMatches
     local out = {}
     for _i, c in ipairs(cands) do
         -- _buildBookMetaLight rather than buildBookMeta: search compares
@@ -5750,7 +5752,7 @@ function Repo.searchBooks(query, limit, scope)
         -- search reuses the same BIM batch read warmed by a previous
         -- Series / Authors / Genres tab visit.
         local b = _lightMetaForFp(light_cache, c.fp)
-        if b and _searchMatches(b, words, skip_genres) then
+        if b and match(b, words, skip_genres) then
             out[#out + 1] = b
             if limit and #out >= limit then break end
         end
@@ -5763,7 +5765,7 @@ function Repo.searchBooks(query, limit, scope)
     -- Kindle's.
     if not scope and not (limit and #out >= limit) then
         for _i, b in ipairs(_librarySourceBooks() or {}) do
-            if _searchMatches(b, words, skip_genres) then
+            if match(b, words, skip_genres) then
                 out[#out + 1] = b
                 if limit and #out >= limit then break end
             end
@@ -8208,7 +8210,8 @@ function Repo.searchAll(query, scope, opts)
             if not seen_dirs[dir] then
                 seen_dirs[dir] = true
                 local basename = dir:match("([^/]+)$") or dir
-                if basename:lower():find(q, 1, true) then
+                if (opts and opts.match_group and opts.match_group(basename))
+                        or (not (opts and opts.match_group) and basename:lower():find(q, 1, true)) then
                     local first_book = { filepath = c.fp }
                     folders[#folders + 1] = {
                         kind       = "folder",
@@ -8231,7 +8234,8 @@ function Repo.searchAll(query, scope, opts)
         if not cache_table[key] then return {} end
         local out = {}
         for _i, shape in ipairs(cache_table[key].groups) do
-            if (shape.series_name or ""):lower():find(q, 1, true) then
+            if (opts and opts.match_group and opts.match_group(shape.series_name or ""))
+                    or (not (opts and opts.match_group) and (shape.series_name or ""):lower():find(q, 1, true)) then
                 out[#out + 1] = _hydrateGroupShape(shape, nil, nil, true)
             end
         end
@@ -8246,7 +8250,7 @@ function Repo.searchAll(query, scope, opts)
     local genres  = _searchIncludesGenres() and matchGroups(_genres_cache) or {}
 
     -- ── books ──
-    local books = Repo.searchBooks(query, opts and opts.book_limit or 200, scope) or {}
+    local books = Repo.searchBooks(query, opts and opts.book_limit or 200, scope, opts) or {}
 
     return { folders = folders, authors = authors, series = series, genres = genres, books = books }
 end
