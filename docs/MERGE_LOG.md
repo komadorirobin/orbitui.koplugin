@@ -5706,3 +5706,53 @@ touch/keyboard, paging, Save/Cancel, reader return, rotation and sleep acceptanc
 remain open. Automated gates are not a device or measured performance claim.
 Evidence goes in ignored `test-results/beta19-20261030/`; append final results
 without rebuilding or replacing the sealed release artifact.
+
+### Beta 19 verified publication result
+
+Exact candidate/annotated tag `89d23c78d5432f35cf14046ab78dc26de85ef13d` /
+`v0.1.0-beta.19` is pushed to main and public at
+https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.19,
+published **2026-10-30 22:40:07 UTC**, prerelease true, draft false, not stable.
+The only release-preparation changes are VERSION and existing bilingual release/
+context/merge documentation; runtime bytes match reviewed public `493eb05a`.
+
+Fresh sequential complete Lua and LuaJIT gates pass: 133 Python tests/four
+unchanged optional source-pixel skips, 88 root Lua files, 487 Bookshelf suites/
+zero failures/three normal SQLite exclusions and all 13 SimpleUI files. Map 396,
+syntax 1,084 and all 43 catalogs pass. All sealed root suites pass under both
+interpreters, plus all 28 quick-control cases with both minimum/current whole
+native input/dialog owners. Main/tag CI **41139100244 / 41139100184** pass all
+four jobs, translations, packaging and native OTA. Inherited Node/Ubuntu runner
+deprecation warnings remain outside this release's scope.
+
+Clean sealed ZIP: **9,024,426 bytes**, expanded **26,493,380 bytes**, 2,066 ZIP
+entries, identical 1,999 inventory files plus manifest / 2,000 API-1 paths.
+SHA-256 **`86b5ffc63ddbd820a1e335c8a8cb21651683edba1b336785057e9455a71d9e64`**.
+Every runtime byte matches the exact candidate Git archive after only approved
+PO reference-comment reduction. Inventory/checksum/hash/size agree; bootstrap,
+entry files, artwork/fonts/languages/pins and reviewed runtime remain unchanged.
+All four outgoing release-preparation blobs exclude held art; Gitleaks finds
+no leaks. Verification-only documentation is separately re-audited before push.
+
+Both authenticated draft downloads match sealed bytes and their GitHub digests/
+sizes before publication. Both anonymous public downloads match afterward.
+The original 73 releases/assets, 119 remote tag refs and public Beta 18 digest
+`9205d218043989cbbd89aac90a6b6df8305f3f587c05efa2602f28cdb616ce27`
+remain unchanged. Only annotated Beta 19 refs and its prerelease/assets are added.
+Anonymous preview selection finds Beta 19; stable remains absent/unchanged.
+
+Actual Beta 5/9/18 installers pass complete native libarchive/SHA extraction,
+missing-module rejection, activation/restart/code rollback, truncated recovery,
+external snapshot/restart/persistent rollback and interrupted obsolete-runtime
+collection/resume retaining active/rollback/unknown/modified/user files. Actual
+Beta 9 and 18 also pass anonymous real LuaSocket/LuaSec TLS discovery/download
+and all phases using public bytes. The existing reviewed macOS POSIX shim and
+isolated TLS dependencies are test-only, with only temporary fixture installs.
+
+Evidence: ignored `test-results/beta19-20261030/`, including full/sealed/native/
+live logs, catalogs, CI metadata, exact source/draft/public audits, Gitleaks,
+anonymous channel checks and immutable release/tag snapshots. Verification-only
+PROJECT_CONTEXT/TESTING/MERGE_LOG changes never rebuild or replace the artifact.
+No installed reader, user data, Hardcover/edition behavior, hardware patch or
+additional upstream pin is changed. Physical acceptance remains open as listed
+above; automated tests are not a Bigme/Boox or measured speedup claim.

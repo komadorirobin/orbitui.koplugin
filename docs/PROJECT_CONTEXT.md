@@ -22,17 +22,26 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-30
 
-- The user explicitly requests a new beta after the main push and confirms
-  leaving Hardcover/automatic edition linking unchanged. Prepare Beta 19 from
-  clean public `493eb05a` on `release/search-collections-beta19-20261030`.
-  Include the already-reviewed search/collection work and evening SimpleUI merge,
-  no additional import, hardware patch, source pin or installed-path change.
-  VERSION advances to `0.1.0-beta.19`; bilingual notes use existing docs/OTA.md.
-  Inspiration watch is active: first run `41133753256` succeeded and owns issue
-  #2; main CI `41133753262` passed both jobs/native OTA. Release requires fresh
-  full/sealed/translation/source/history/secret/native installer gates and exact
-  draft/public byte audits; record results in MERGE_LOG. Physical Boox/Bigme
-  acceptance remains open and the release must be a prerelease, not stable.
+- The explicitly requested Beta 19 is public at exact candidate/annotated tag
+  `89d23c78d5432f35cf14046ab78dc26de85ef13d` / `v0.1.0-beta.19`, published
+  2026-10-30 22:40:07 UTC, from clean public `493eb05a` on
+  `release/search-collections-beta19-20261030`. VERSION is `0.1.0-beta.19`.
+  It includes the reviewed search/collection work and evening SimpleUI merge;
+  Hardcover/edition behavior, source pins, hardware patches, bootstrap and all
+  2,000 installed paths are unchanged. Both fresh full interpreter gates,
+  sealed/native-owner suites, 43 catalogs and exact source/history/artwork/
+  secret/draft/public byte audits pass. Main/tag CI `41139100244`/`41139100184`
+  pass all four jobs. Actual Beta 5/9/18 native installers pass; anonymous
+  LuaSocket/LuaSec TLS discovery/download and installation of published bytes
+  pass from Beta 9 and 18. Preview selects Beta 19; stable remains absent and
+  all 73 prior releases/assets and 119 prior remote tag refs are unchanged.
+  ZIP SHA-256 `86b5ffc63ddbd820a1e335c8a8cb21651683edba1b336785057e9455a71d9e64`;
+  evidence is in ignored `test-results/beta19-20261030/` and MERGE_LOG/TESTING.
+  Verification-only docs never rebuild or replace the released artifact.
+  Inspiration watch remains active, with first successful run `41133753256`
+  and separate issue #2. Physical Boox/Bigme search/collection/Insights and
+  lifecycle acceptance remain open; this is a prerelease, not a stable release
+  or measured performance claim.
 
 - Local approved Kobold follow-up on
   `feature/search-collections-inspiration-watch-20261030`, from public `71442369`:

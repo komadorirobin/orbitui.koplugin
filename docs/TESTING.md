@@ -2,6 +2,41 @@
 
 ## Automated
 
+### Published Beta 19 (October 30)
+
+Exact candidate/annotated tag `89d23c78` / `v0.1.0-beta.19` passes fresh
+sequential complete Lua/LuaJIT gates: 133 Python tests/four unchanged optional
+source-pixel skips, all 88 root Lua files, 487 Bookshelf suites/zero failures/
+three normal SQLite exclusions and 13 SimpleUI files. Map 396, syntax 1,084
+and all 43 catalogs pass. All sealed root suites pass under both interpreters;
+all 28 quick-control cases also pass with minimum/current native input/dialog
+owners. Main/tag CI `41139100244`/`41139100184` pass all four jobs, including
+packages and native OTA. Existing runner deprecation warnings are not failures.
+
+The clean-commit sealed ZIP is 9,024,426 bytes / 26,493,380 expanded bytes,
+2,066 ZIP entries and the identical 1,999 inventory files plus manifest / 2,000
+API-1 installed paths. SHA-256
+`86b5ffc63ddbd820a1e335c8a8cb21651683edba1b336785057e9455a71d9e64`.
+Exact source projection, inventory/checksum, unchanged bootstrap/entry/assets/
+fonts/pins/runtime since reviewed main, held-art exclusion and Gitleaks pass.
+Both uploaded draft assets and both anonymous public downloads match local
+sealed bytes and GitHub digests/sizes. All 73 previous releases/assets and 119
+previous remote tag refs remain unchanged. Stable remains absent; the anonymous
+preview catalogue selects Beta 19.
+
+Actual Beta 5, 9 and 18 installers pass full native libarchive/SHA inventory,
+missing-module rejection, activation/restart/code rollback, truncated recovery,
+external snapshot/restart/persistent rollback and interrupted obsolete-runtime
+cleanup retaining rollback/unknown/modified/user files. Actual Beta 9 and 18
+also pass anonymous real LuaSocket/LuaSec TLS discovery/download and every phase
+using the published bytes, not a substituted fixture. The existing reviewed
+macOS POSIX filesystem shim and isolated TLS dependencies are test-only; no
+device/global installation is changed. Evidence: ignored
+`test-results/beta19-20261030/`. Verification-only docs never rebuild assets.
+Physical SV/EN fonts/touch/keyboard, search/history/scopes, collection views/
+search/clear/paging/Save/Cancel, Insights/year picker, reader return, rotation
+and sleep acceptance remain outstanding. Hardcover is deliberately unchanged.
+
 ### Local search/collections and inspiration watch (October 30)
 
 New `test_shared_search` cases cover ten-item history, scoped deduplication,
