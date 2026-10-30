@@ -34,8 +34,13 @@ and correct this file in the same change.
   polling, cold network initialization, fake connectivity event, provider/DB work
   while painting, foreign code/assets, new installed path or upstream import.
   All owned labels/help support SV/EN. No version bump, push or release is
-  authorized; public Beta 16 remains unchanged. Verification is recorded in
-  MERGE_LOG; physical fonts/touch/PowerD/Android/underlay acceptance stays open.
+  authorized; public Beta 16 remains unchanged. Candidate `493775af` passes
+  both complete interpreter gates, all 86 root suites on its sealed bytes,
+  43 catalogs, exact path/source/artwork/secret audits and actual-Beta-15 native
+  installer/restart/rollback checks. Twenty-two new cases also pass the complete
+  minimum/current native ButtonDialog and component Topbar/Slider boundaries.
+  MERGE_LOG records the evidence; physical fonts/touch/PowerD/Android/underlay
+  acceptance stays open. Verification-only docs do not rebuild that local ZIP.
 
 - User requests an upstream merge, including the standing audited push to main,
   NOT a new release. Maintenance branch starts at local `7083c8a1`, retaining the

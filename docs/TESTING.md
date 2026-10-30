@@ -16,7 +16,13 @@ expanded shelf/custom gesture/job Stop paths, hero ownership, topbar dimensions,
 SV/EN/error text and complete native Topbar construction/label identities.
 Set `ORBITUI_NATIVE_BUTTON_DIALOG` to an inspected official `buttondialog.lua`
 to repeat against its whole native dialog implementation. Boundary sizing is
-not native font shaping or an emulator/device result.
+not native font shaping or an emulator/device result. Candidate `493775af`
+passes both complete interpreter gates, all 86 root suites on final sealed bytes,
+43 catalogs, exact package/source/path/artwork/secret audits and actual-Beta-15
+native installer/restart/rollback/cleanup checks. All 22 new cases pass with
+both interpreters against the complete `v2025.08` and official current
+`801277394b7fdb77da5580459a9827e9d95e95a4` ButtonDialog. Evidence and exact
+development ZIP digest are recorded in MERGE_LOG; no new release is published.
 
 Physical checks remain: enable the opt-in through SV/EN navigation settings;
 Home fields at all saved placements/scales, hidden/disabled fields and corner/

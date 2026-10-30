@@ -5215,7 +5215,46 @@ ignored `test-results/quick-controls-20261030/native/`. Added logic lives in an
 existing installed path; source pins, bootstrap/API 1, VERSION Beta 16, artwork,
 fonts, all locales and all public release/tag assets remain unchanged.
 
-Verification is recorded below after the clean candidate package is checked.
+Verification: source/package candidate `493775af38b8fea747b8a173356a3f7fa6207d9a`
+(implementation `845459e5`, followed by the stale-tap-before-custom-gesture
+guard). Both complete sequential `scripts/test.sh` interpreter gates pass:
+122 Python tests/four unchanged optional source-pixel skips, 86 root Lua files,
+487 Bookshelf suites/zero failures/three normal SQLite exclusions, and all 13
+SimpleUI files. Module map 396, syntax 1,082; all 43 catalogs pass without
+baseline/new failures. The final small guard is additionally covered by every
+root suite freshly executed on the final sealed candidate under both interpreters.
+
+Twenty-two new cases pass, including actual complete Topbar/Slider/Caption
+modules and the native focus rows. Optional whole official ButtonDialog runs
+pass with both interpreters at minimum `v2025.08` and observed official master
+`801277394b7fdb77da5580459a9827e9d95e95a4`; widget/font/drawing boundaries remain
+stubbed. These are not rendered-screen, emulator or actual hardware tests.
+
+Development-only ZIP SHA-256
+`3eda2022536d72d188a87c9612634bee362a052d9bb2abbb23b261e4c8ff7aeb`;
+8,955,558 bytes, 26,289,148 expanded, 2,066 entries. Every inventory file equals
+the clean candidate source after the existing narrow PO-comment projection;
+all manifest sizes/hashes pass. Exactly the same 1,999 inventory paths plus
+manifest/all 2,000 API-1 installed paths as public Beta 16; bootstrap, assets,
+fonts, module registry, VERSION and pins unchanged. The two explicitly recorded
+component seams are the only component edits. Compared with the previous local
+October 30 build this adds 11,817 ZIP bytes, not another resource bundle.
+
+All 16 outgoing source-candidate blobs exclude the held bitmap; Gitleaks scans
+both non-merge commits without leaks. Actual public Beta 15's older installer
+passes native libarchive/SHA extraction, complete inventory, missing-module
+rejection, activation/restart/code rollback, truncated recovery, external
+snapshot/restart/persistent rollback, interrupted obsolete-code cleanup/resume
+and retention of active/rollback/unknown/modified/user data. This isolated macOS
+POSIX-shim fixture is not public discovery of a new release or a device install.
+Only generated obsolete-runtime fixtures are removed by those tests.
+
+Evidence: ignored `test-results/quick-controls-20261030/` (`verified-lua.log`,
+`verified-luajit.log`, translations, sealed-final, minimum/current native-dialog
+logs, native-ota-final, exact audit and Gitleaks). Follow-up verification docs do
+not rebuild this same-version development ZIP. Do not replace the public Beta
+16 asset with it. No push, new tag, release, production OTA or device mutation.
+
 No physical reader or actual user data is changed; Boox/Bigme fonts, layout,
 touch/D-pad, hardware/system return, day/night underlay and lifecycle acceptance
 remain open. Headless results must not be described as measured device gains.
