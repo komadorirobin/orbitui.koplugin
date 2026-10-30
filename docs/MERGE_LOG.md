@@ -5522,7 +5522,7 @@ C01-C11 review and decisions:
   sentinel, validate result rows and require complete finished-ledger reconciliation
   before sealing chart totals. Original finished-book list stays the first return;
   completeness is additive. Preserve partial closed-month reuse, full historical
-  invalidation and future-year retry across rollover. No settings/sidecar writes,
+  invalidation and future-year retry across rollover. No new settings/sidecar writer,
   cache deletion, DB migration or raw connection replacement.
 - Adopt the recursive plural parser instead of our superseded text-to-Lua
   ternary workaround (the sole textual conflict). It handles enclosing/nested
@@ -5554,3 +5554,44 @@ audits are required before push; final evidence is appended below.
 Physical new Insights chart typography/colour/touch/year-picker, Boox/Bigme
 custom actions, rotation and sleep acceptance remain open. No measured startup,
 RAM or page-turn improvement is claimed; no installed reader is changed.
+
+### Final local verification before the standing main push
+
+Exact source/package candidate `b4332ea80f11b5b5284c0d5cdb45234546840383`
+passes complete sequential `scripts/test.sh` runs under Lua and LuaJIT:
+123 Python tests/four unchanged optional source-pixel skips, all 87 root Lua
+files, 487 Bookshelf suites/zero failures/three normal SQLite exclusions and
+all 13 SimpleUI files. Map 396, LuaJIT syntax 1,083; all 43 catalogs pass with
+zero baseline failures or new exceptions. All 87 root files also pass on sealed
+bytes under both interpreters, including the twelve new cases. All 28 quick-control
+cases pass with whole minimum/current native input/dialog owners on sealed bytes.
+The extra real SQLite test verifies actual monthly query semantics and emptiness.
+
+Development-only ZIP: **9,009,542 bytes**, expanded **26,443,516 bytes**,
+2,066 ZIP entries, identical 1,999 inventory files plus manifest / 2,000 API-1
+installed paths. SHA-256
+`1df23443b7539043c9f7a12f3eda652d3385c63fe932758b6580b215508c9bad`.
+Every byte equals the exact candidate Git archive after only the approved PO
+reference-comment transform; inventory sizes/hashes/checksum agree. Bootstrap,
+entry files, VERSION, map, all Bookshelf bytes and all artwork/fonts/icons are
+byte-identical to public Beta 18. All 45 newly outgoing blobs exclude held art;
+Gitleaks scans all twelve non-merge outgoing commits with no leaks. Final
+documentation history is re-audited before push. All 73 public releases/assets
+and remote tag refs are unchanged; the preserved public Beta 18 digest is
+`9205d218043989cbbd89aac90a6b6df8305f3f587c05efa2602f28cdb616ce27`.
+
+Actual public Beta 17's older installer passes the complete native libarchive/
+SHA test with the existing reviewed macOS POSIX test-only filesystem shim:
+full inventory extraction, missing-module rejection, activation/restart/code
+rollback, truncated download, external snapshot/restart/persistent rollback and
+interrupted obsolete-runtime collection/resume with active/rollback/unknown/
+modified/user files retained. Only generated test fixtures are changed, never
+an installed device. No live public OTA is claimed for this unpublished build.
+
+Evidence: ignored `test-results/upstream-20261030-evening/`, including complete
+Lua/LuaJIT, sealed/native-owner, translations, package/audit, Gitleaks,
+`native-posix-beta17.log`, immutable release/tag snapshots and the read-only
+collector. Fresh collection shows zero missing commits for both tracked tips.
+Verification-only docs do not rebuild or replace either this development ZIP
+or any public ZIP. Main CI/watch is checked after push; physical acceptance and
+measured runtime gains remain open. No version/tag/release/production OTA change.

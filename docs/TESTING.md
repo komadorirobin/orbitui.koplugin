@@ -2,6 +2,31 @@
 
 ## Automated
 
+### October 30 evening reviewed upstream merge (not released)
+
+Source/package candidate `b4332ea8` passes both complete interpreter gates:
+123 Python tests/four unchanged optional skips, all 87 root Lua files,
+487 Bookshelf suites/zero failures/three normal SQLite exclusions, 13 SimpleUI
+files, map 396, syntax 1,083 and all 43 catalogs. All root suites pass on sealed
+bytes under both interpreters, including twelve new evening-merge cases; all
+28 quick-control cases also pass with complete minimum/current native input/
+dialog owners. Real SQLite checks the actual monthly books/pages query.
+
+New cases cover missing/busy/incomplete monthly reads, empty-result sentinel,
+finished-ledger completeness, partial/full invalidation, future-year rollover,
+same-window retries, custom-screen Dispatcher restoration on success/error,
+passive-toast versus modal/stale navigation, monotone zero-safe chart curves,
+RGB clipping and Swedish/English labels. Exact source/inventory/hash checks keep
+the same 2,000 installed paths and unchanged bootstrap/Bookshelf/artwork bytes.
+Outgoing history/artwork/secret audit and actual-Beta-17 native installer/
+restart/rollback/interrupted-cleanup checks pass. Evidence and development-only
+digest are in MERGE_LOG and `test-results/upstream-20261030-evening/`.
+
+New Insights chart fonts/contrast/touch/year-picker and custom-screen actions
+still need Boox/Bigme testing, including rotation and sleep. No measured speed/
+memory result, new release or live public-byte OTA test of this unpublished
+build is implied. VERSION/public Beta 18 and its public bytes remain unchanged.
+
 ### Beta 18 verified publication (October 30)
 
 The user now explicitly authorizes publishing the reviewed quick-control fixes
