@@ -243,7 +243,9 @@ and correct this file in the same change.
   `v0.1.0-beta.11` at `03106015`,
   `v0.1.0-beta.10` at `0a2ea22b`, `v0.1.0-beta.9` at `a4bb9acb` and all
   earlier tags/assets are unchanged.
-- Public branch: `main`; the latest October 28 push/publication request produces
+- Public branch: `main`; the October 30 merge includes the local category cards
+  and reviewed upstream follow-ups under the standing push-only authorization.
+  The October 28 push/publication request produces
   Beta 16 with the reviewed local performance, translation-size and safe obsolete
   update-code cleanup work. The earlier colour/publication request produces
   Beta 15, including the preceding reviewed merge/push-only maintenance.
@@ -262,13 +264,15 @@ and correct this file in the same change.
   `fix/home-first-run-20261025`.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
-- Embedded Bookshelf Git in main/Beta 15/16:
+- Embedded Bookshelf Git in main: `ee84a8fe1621171c00df91c41dee76b9ed07028c`
+  (issue-form follow-ups only). Public Beta 15/16 retains
   `d07905ba932e09044827aadf480c188a5d324b96` (6.0.4). Public Beta 14 retains
   `c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3).
   Public Beta 10 keeps `5f726c25` / merge `0db81b46` unchanged.
   Prior 6.0.0 integration `fc1103a3` / `48438837` is retained in ancestry.
-- Embedded SimpleUI Git in main/Beta 15/16:
-  `22d5a3d2dd7be4651e718eb49027d82f68b3ace7` (3.0.1 follow-up). Beta 14 keeps
+- Embedded SimpleUI Git in main: `257c26d6685ced4fc2e895f98287b5f16f1d4f5e`
+  (3.0.1 follow-ups). Public Beta 15/16 retains
+  `22d5a3d2dd7be4651e718eb49027d82f68b3ace7`. Beta 14 keeps
   `e5cd6dcb31fa759b9831223d4719f61126367cff` (3.0.1 runtime), twelve commits
   after `b1580f90b2e17cf03a66c744c323a1df66d77100` retained in Beta 13.
   Public Beta 10 keeps `40b301f0` / merge `b9dfc849` unchanged.
@@ -543,6 +547,17 @@ different documented asset. Replacing the working-tree file does not sanitize an
 ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
+
+October 30 final local source/package `3b47b194` passes both complete sequential
+Lua/LuaJIT gates (122 Python/four unchanged skips, 85 root files, 487 Bookshelf/
+zero failures/three normal SQLite exclusions and 13 SimpleUI files), all 43
+catalogs and every root suite on sealed bytes under both interpreters. Map 396,
+syntax 1,081. Exact source/path/manifest and outgoing history/artwork/secret
+audits plus actual-Beta-15 native installer/restart/rollback/cleanup gates pass.
+Same 2,000 installed paths, unchanged bootstrap/assets; ZIP 8,943,741 bytes,
+SHA-256 `2ca3ec818d82e3a14795902e172a8586d84e7e4277087be8aecfe852baf4c0ca`.
+This is not a new public release. Follow-up docs do not rebuild this local ZIP;
+physical device acceptance remains open. See the October 30 MERGE_LOG evidence.
 
 Beta 16 candidate/tag `5c846730` passes both complete local interpreters and
 main/tag CI `40750773286`/`40750773783`: 122 Python tests/four unchanged optional

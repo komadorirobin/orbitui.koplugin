@@ -5104,7 +5104,7 @@ upstream SHAs; regenerate the map from 383 to 396 canonical paths. The sealed
 checker verifies all thirteen exact source bytes/identities/syntax, while full
 source/manifest and old-path equality audits remain mandatory.
 
-Tests added/extended: 17 October 30 merge cases, runtime loader/patch guard cases,
+Tests added/extended: 18 October 30 merge cases, runtime loader/patch guard cases,
 hidden-cabinet actual shared menu handling, native-window API boundary and prior
 finished-gate memoization boundary. Existing category-card, Home, cover, navigation,
 settings, series/bindings/ornaments and external-owner suites remain. Supplemental
@@ -5114,3 +5114,51 @@ Physical Boox/Bigme fonts/touch/D-pad/night/rotation/sleep/reader-profile/cover/
 startup and native-image pressure acceptance remains open. No reader install or
 user data/settings/credentials/artwork change; public Beta 16 is immutable and
 VERSION stays Beta 16 solely for local development validation.
+
+### Final local verification before push
+
+Final source/package candidate: `3b47b194710d0169de7c0325ca5eb3fde1736dcd`.
+Implementation `2573a869` is followed by test-only `53df3a9f` (sealed reader must
+return one source value, not assert's additional diagnostic argument) and
+`3b47b194` (explicit global/Home/quick-panel Critter scope, including its new
+regression). The complete final sequential `scripts/test.sh` Lua and LuaJIT runs
+pass: 122 Python tests/four unchanged optional source-pixel skips, all 85 root
+Lua files, 487 Bookshelf suites/zero failures/three normal SQLite exclusions and
+all 13 SimpleUI files. Map 396; LuaJIT syntax 1,081; all 43 catalogs validate.
+All 85 root files ALSO pass on the final sealed bytes under both interpreters,
+including 18 merge, 24 native-menu and eleven category-card cases. No new failure
+waiver. The early harness/API-boundary and source-copy mistakes caught during
+development are corrected; the final gate has no remaining failure.
+
+Actual SQLite additionally verifies repeated page turns versus distinct pages
+and positive-duration totals. Complete minimum-v2025.08 ReaderMenu plus the
+previous pinned official ReaderMenu pass the expanded 24-case actual-menu
+supplement. Native UI/font/engine boundaries remain stubbed, not device evidence.
+
+Local development ZIP: **8,943,741 bytes**, expanded **26,251,910 bytes**,
+2,066 entries, same 1,999 inventory files plus manifest/all 2,000 API-1 paths.
+SHA-256 `2ca3ec818d82e3a14795902e172a8586d84e7e4277087be8aecfe852baf4c0ca`.
+Every byte equals the exact candidate Git archive after only the approved PO
+reference-comment projection; manifest sizes/hashes and checksum agree. Sealed
+module checks verify all thirteen embedded Lua sources against tracked originals.
+Bootstrap/entry/VERSION/fonts/icons/artwork and all old installed paths remain.
+All 222 newly outgoing candidate blobs exclude held artwork; Gitleaks scans all
+25 non-merge commits without leaks. Final documentation/history is re-audited
+before push. Public Beta 15/16 cached ZIP digests remain unchanged.
+
+Actual public Beta 15's older installer accepts the final local package with
+native pinned KOReader libarchive/SHA: complete inventory extraction, missing-
+module rejection, activation/restart/code rollback, truncated recovery, external
+snapshot/restart/persistent rollback and interrupted obsolete-code cleanup/resume
+with active/rollback/unknown/modified/user data retained. This is an isolated
+macOS POSIX-shim fixture, not live discovery of a new release or a physical reader.
+No actual user data was removed; only generated obsolete-runtime test fixtures.
+
+Evidence: `test-results/upstream-20261030/` (`final-lua.log`, `final-luajit.log`,
+`translations.log`, `sealed.log`, package/source/path/history audit, Gitleaks,
+native-menu/SQLite and native OTA logs). Follow-up verification documentation
+does not rebuild this ZIP. VERSION/public Beta 16 stays immutable; no tag,
+release, production OTA or installed device change is authorized. Physical
+acceptance and measured startup/memory gains remain open. Main CI/watch results
+are checked after the standing audited push; publication still requires a
+separate explicit request.
