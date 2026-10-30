@@ -5281,3 +5281,60 @@ installer/recovery checks, exact draft assets and main/tag CI precede publishing
 Anonymous public-byte/channel/native OTA and immutable-old-release checks follow.
 Exact candidate/results are recorded after verification; no physical-device
 acceptance is implied. All existing public tag/asset bytes remain immutable.
+
+### Beta 17 verified publication result
+
+Candidate/tag `ab2e0bd747bd9ee571ac65722d8af076100a1665` is pushed to main and
+published as prerelease `v0.1.0-beta.17` at **2026-10-30 09:38:55 UTC**. Release
+ID `428851776`, assets `691614505` (ZIP) and `691614508` (checksum). The draft
+was recovered by its existing ID after the by-tag draft read returned 404;
+it was not recreated. Both authenticated draft downloads equal the tested
+local files and API digests. Publication explicitly keeps `make_latest=false`.
+
+Both complete sequential Lua/LuaJIT gates pass on the versioned tree: 122 Python
+tests/four unchanged optional source-pixel skips, all 86 root Lua files, 487
+Bookshelf suites/zero failures/three normal SQLite exclusions and all 13 SimpleUI
+files. Map 396, syntax 1,082 and 43 catalogs/zero baseline/new failures. Every
+root suite also passes on sealed bytes under both interpreters. The complete
+current native ButtonDialog supplement passes 22 quick-control cases; the
+complete minimum ReaderMenu passes 24 reader-return cases. Prior minimum/current
+native module evidence remains applicable because feature runtime is unchanged.
+
+Versioned local and anonymous public ZIP SHA-256:
+`8767d8ed569529f8b8bba779140f5e8df894b9169a36d83b7c116caa80cbc4ae`.
+8,959,367 ZIP bytes, 26,300,406 expanded, 2,066 entries, 1,999 inventoried files
+plus manifest/all 2,000 API-1 paths. Every manifest hash/size equals the clean
+candidate source after only the existing PO-comment projection. Same public
+Beta 16 installed path set; bootstrap/assets/fonts/languages/pins are retained.
+No new runtime file or source change is introduced for publication. All 25
+outgoing candidate blobs exclude the held bitmap; Gitleaks scans four non-merge
+commits without leaks. Verification-only follow-up docs are audited separately
+before push, without rebuilding or replacing this tagged/public ZIP.
+
+Actual public Beta 5/9/15/16 installers pass complete native libarchive/SHA
+inventory extraction, missing-module rejection, activation/restart/code rollback,
+truncated recovery, external snapshot/restart/persistent rollback and interrupted
+obsolete-runtime cleanup/resume with active/rollback/unknown/modified/user data
+kept. Isolated macOS POSIX-shim fixtures remove generated obsolete code only;
+no installed reader or actual user data is touched.
+
+Main CI `41034381766` and exact-tag CI `41034383748` pass both interpreter jobs,
+translation/package and native OTA checks. Existing Node/Ubuntu migration
+annotations are warnings, not failed gates. Anonymous API/asset downloads equal
+both local files and API digests exactly. Live real LuaSocket/LuaSec application
+TLS from actual Beta 9/16 passes public release discovery/download and all native
+OTA/recovery phases. This reuses isolated test-only dependencies from Beta 16;
+no runtime dependency or global library is installed.
+
+Preview selects Beta 17; stable remains absent/unchanged. Immutable checks cover
+all **71 previous public releases/assets** and every previous remote tag ref;
+only the new annotated Beta 17 tag/ref and release are added. Old Beta 16's ZIP
+SHA remains `a9a1b6f6a36376b11091f195f2a0230208898909b483914c4cddd0e80d4aff98`.
+
+Evidence: ignored `test-results/beta17-20261030/`: full-lua/full-luajit,
+translations, sealed, native-beta5/9/15/16, native-current-dialog/reader-menu,
+package/source/history and draft/public audits, Gitleaks, main/tag CI JSON/watch,
+channel-before/public, live-beta9/16, immutable release/tag snapshots and logs.
+Physical SV/EN fonts/touch/focus, light/warmth, Android system return, colour/
+night/underlay and reader/rotation/suspend/update acceptance remains open.
+The beta is published for that test; no stable/device-performance claim is made.

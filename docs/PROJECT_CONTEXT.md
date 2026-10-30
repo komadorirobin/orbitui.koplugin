@@ -27,11 +27,17 @@ and correct this file in the same change.
   `release/quick-controls-beta17-20261030` starts clean at `b83c2175`, with public
   main `44316d3e`. Include the approved quick controls, category cards and the
   already-reviewed October 30 imports; do not fetch/import another upstream.
-  VERSION advances to `0.1.0-beta.17`; notes use existing docs/OTA.md at the API-1
+  Beta 17 is public at exact candidate/tag `ab2e0bd7`, published 2026-10-30
+  09:38:55 UTC. Notes use existing docs/OTA.md at the API-1
   path ceiling. Status taps remain opt-in; existing bars/profiles/cover safety,
   external sync/patch owners, bootstrap, assets and source pins stay intact.
-  Publication waits for versioned full/sealed/native/history/secret/CI gates and
-  draft asset verification, then anonymous public bytes/channel/OTA checks.
+  Both complete local interpreters, all 86 root suites on sealed bytes, 43
+  catalogs, native actual-Beta-5/9/15/16 installers and exact source/path/
+  history/artwork/secret/draft checks pass. Main/tag CI `41034381766`/
+  `41034383748` are green. Anonymous public bytes, live application-TLS OTA
+  from Beta 9/16 and recovery pass; preview selects Beta 17, stable is unchanged.
+  All 71 prior releases/assets and previous tag refs remain unchanged. Exact
+  ZIP digest/evidence is in MERGE_LOG; verification docs do not rebuild it.
   Physical device acceptance remains open; this is a prerelease, not stable.
 
 - User requests the next high-priority Bookshelf-OS idea after the category-card
@@ -45,8 +51,10 @@ and correct this file in the same change.
   Owner/navigation/rotation/suspend/close guards retire stale callbacks. No
   polling, cold network initialization, fake connectivity event, provider/DB work
   while painting, foreign code/assets, new installed path or upstream import.
-  All owned labels/help support SV/EN. No version bump, push or release is
-  authorized; public Beta 16 remains unchanged. Candidate `493775af` passes
+  All owned labels/help support SV/EN. That implementation request alone did
+  not authorize a version bump, push or release; the subsequent explicit
+  request now publishes it in Beta 17. Public Beta 16 remains unchanged.
+  Local implementation candidate `493775af` passes
   both complete interpreter gates, all 86 root suites on its sealed bytes,
   43 catalogs, exact path/source/artwork/secret audits and actual-Beta-15 native
   installer/restart/rollback checks. Twenty-two new cases also pass the complete
@@ -239,9 +247,9 @@ and correct this file in the same change.
   Home is explicitly Home/Hem (SimpleUI). Native preference callbacks, scopes,
   advanced controls and stored values remain in place. The earlier same-version
   development ZIP was never published as a replacement Beta 12.
-- Product version: `0.1.0-beta.16` (public GitHub prerelease, published
-  2026-10-28 at 19:09:05 UTC after explicit user request; verification is in
-  `docs/MERGE_LOG.md`). Beta 15 and earlier assets remain immutable.
+- Product version: `0.1.0-beta.17` (public GitHub prerelease, published
+  2026-10-30 at 09:38:55 UTC after explicit user request; verification is in
+  `docs/MERGE_LOG.md`). Beta 16 and earlier assets remain immutable.
 - Beta 12 starts from clean public main `70e5a1fd` on
   `fix/android-covers-beta12-20261026`. Android safe mode remains enabled;
   host-owned foreground local extraction replaces the blocked Bookshelf queue,
@@ -267,7 +275,8 @@ and correct this file in the same change.
   with category/instance/external-module tests in `0acdd843`.
   Complete local Lua/LuaJIT, translation, sealed-package and native OTA gates
   pass; exact verification results are recorded in `docs/MERGE_LOG.md`.
-- Release tag: `v0.1.0-beta.16` at `5c846730`; previous tags
+- Release tag: `v0.1.0-beta.17` at `ab2e0bd7`; previous tags
+  `v0.1.0-beta.16` at `5c846730`,
   `v0.1.0-beta.15` at `ee35bf19`,
   `v0.1.0-beta.14` at `575fdb7a`,
   `v0.1.0-beta.13` at `f9d3b3a2`,
@@ -275,8 +284,10 @@ and correct this file in the same change.
   `v0.1.0-beta.11` at `03106015`,
   `v0.1.0-beta.10` at `0a2ea22b`, `v0.1.0-beta.9` at `a4bb9acb` and all
   earlier tags/assets are unchanged.
-- Public branch: `main`; the October 30 merge includes the local category cards
-  and reviewed upstream follow-ups under the standing push-only authorization.
+- Public branch: `main`; the separate October 30 publication request produces
+  Beta 17 with quick controls, category cards and the already-reviewed imports.
+  The preceding merge includes the local category cards and reviewed upstream
+  follow-ups under the standing push-only authorization.
   The October 28 push/publication request produces
   Beta 16 with the reviewed local performance, translation-size and safe obsolete
   update-code cleanup work. The earlier colour/publication request produces
@@ -579,6 +590,22 @@ different documented asset. Replacing the working-tree file does not sanitize an
 ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
+
+Beta 17 candidate/tag `ab2e0bd7` passes both complete local interpreters and
+main/tag CI `41034381766`/`41034383748`: 122 Python tests/four unchanged optional
+source-pixel skips, 86 root Lua files, 487 Bookshelf suites/zero failures/three
+normal SQLite exclusions, 13 SimpleUI files, map 396, syntax 1,082 and all 43
+catalogs. All root suites also pass against sealed bytes under both interpreters.
+Actual older installers from Beta 5/9/15/16 pass native archive/hash/activation/
+restart/rollback/recovery/external snapshot and interrupted cleanup checks.
+Draft and anonymously downloaded public assets match the clean candidate;
+live real application TLS passes public discovery/download and all native phases
+from Beta 9/16. Preview selects Beta 17, stable is unchanged; all 71 previous
+public releases/assets and old tags are immutable. SHA-256
+`8767d8ed569529f8b8bba779140f5e8df894b9169a36d83b7c116caa80cbc4ae`;
+8,959,367 ZIP bytes, 26,300,406 expanded, same 2,000 installed paths and bootstrap.
+Evidence: `test-results/beta17-20261030/` and MERGE_LOG. Follow-up verification
+docs do not rebuild the tagged ZIP. Physical Boox/Bigme acceptance remains open.
 
 October 30 final local source/package `3b47b194` passes both complete sequential
 Lua/LuaJIT gates (122 Python/four unchanged skips, 85 root files, 487 Bookshelf/

@@ -2,7 +2,20 @@
 
 ## Automated
 
-### Local quick controls (October 30; not released)
+### Beta 17 publication (October 30)
+
+Exact candidate/tag `ab2e0bd7` passes both full interpreters: 122 Python/four
+unchanged optional skips, 86 root Lua files, 487 Bookshelf/zero failures/three
+normal SQLite exclusions, 13 SimpleUI files, map 396, syntax 1,082, all 43
+catalogs. Every root suite passes on the sealed ZIP under Lua and LuaJIT.
+Actual Beta 5/9/15/16 installers pass native archive/hash/recovery gates;
+anonymous public-byte application TLS/native OTA also passes from Beta 9/16.
+Main/tag CI `41034381766`/`41034383748` are green. Exact candidate/source/
+inventory/artwork/secret/draft/public-byte audits pass; previous releases/tags
+remain unchanged. See MERGE_LOG and `test-results/beta17-20261030/` for evidence.
+No physical device acceptance, new measured speed/RAM result or stable release.
+
+### Quick controls (included in Beta 17)
 
 `test_quick_controls.lua` exercises the complete shared chrome adapter over
 native widget/hardware boundaries: default-off taps/isolated preference write,
