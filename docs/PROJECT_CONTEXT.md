@@ -36,9 +36,13 @@ and correct this file in the same change.
   these regressions; the two reproduced failures pass after the fixes. Tests use
   the real Core/NativeSheets and optional whole minimum/current native input/UI.
   VERSION remains Beta 17; pins/bootstrap/assets/installed paths stay unchanged.
-  Both complete interpreter gates and 43 catalogs pass; local ZIP/source audit
-  evidence is recorded in MERGE_LOG. Fixes are not installed or physically
-  accepted on Boox/Bigme yet.
+  Source/package candidate `c1fe57df` passes both complete interpreter gates,
+  fresh final 86-root-file reruns, 43 catalogs and all 28 quick-control cases on
+  sealed bytes (also with current native input/dialog boundaries). Exact ZIP/
+  source/path/secret audits pass; evidence is in MERGE_LOG and ignored
+  `test-results/quick-controls-input-20261030/`. Verification-only docs do not
+  rebuild that same-version development ZIP. Nothing is pushed/published;
+  fixes are not installed or physically accepted on Boox/Bigme yet.
   The separate Bigme light problem reproduces in native KOReader with OrbitUI
   disabled. User reports all compatibility light choices fail; supplied test.log
   identifies `bigme/hibreak`, MT6877, Generic plus missing Onyx DeviceController.

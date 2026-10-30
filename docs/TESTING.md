@@ -34,6 +34,16 @@ OrbitUI disabled; no hardware support or ADB/device change is included here.
 Local VERSION stays Beta 17. Never replace the published Beta 17 ZIP with this
 same-version development build. Gate/package details are recorded in MERGE_LOG.
 
+Source/package candidate `c1fe57df` passes both complete interpreter gates and
+fresh final reruns of all 86 root suites. The 28 quick-control cases pass on
+sealed bytes under both interpreters, also with current native input/dialogs.
+All 43 catalogs and exact source/hash/path/asset/bootstrap/secret checks pass.
+Development-only SHA-256:
+`2ccca671a32ac5a74f8f0042bd695892051d2d9b34cbb2c95d356ef7d71ce9c7`;
+8,964,450 ZIP bytes, 26,316,699 expanded, same 2,000 installed paths. Evidence:
+ignored `test-results/quick-controls-input-20261030/`. Verification-only docs
+do not rebuild this ZIP or authorize publishing it. Device acceptance stays open.
+
 ### Beta 17 publication (October 30)
 
 Exact candidate/tag `ab2e0bd7` passes both full interpreters: 122 Python/four

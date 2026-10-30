@@ -5383,3 +5383,39 @@ module map 396 and syntax 1,082. All 43 translation catalogs pass. Focused and
 minimum/current native supplements are rerun on the final source; final source/
 sealed-package evidence follows. A development ZIP is not approval to replace
 the public Beta 17 asset or install on an unattended device.
+
+### Local verified result
+
+Source/package candidate `c1fe57df81d0efb38e3609a4902bb4220b1022ea` is committed
+locally. Both complete sequential gates above pass. After the final guard-order
+and negative-fixture checks, every one of the 86 root Lua files is freshly rerun
+under both interpreters; focused cases remain 28. Whole official minimum/current
+InputContainer/WidgetContainer/ButtonDialog supplements pass under both, using
+the actual Core priority owner and actual NativeSheets interceptor with an
+ordinary-dialog conversion positive control. Native UI fonts, render/touch and
+hardware APIs remain test boundaries, not claimed physical acceptance.
+
+Development-only ZIP SHA-256:
+`2ccca671a32ac5a74f8f0042bd695892051d2d9b34cbb2c95d356ef7d71ce9c7`.
+8,964,450 ZIP bytes, 26,316,699 expanded; 2,066 entries, 1,999 inventory records
+plus manifest/all 2,000 API-1 installed paths. Every record hash/size matches the
+exact clean candidate source with only the existing PO-comment projection.
+The installed path set equals public Beta 17; VERSION, pins, bootstrap, entry
+files, module registry and all assets are unchanged. Both interpreters pass all
+28 quick-control cases on extracted sealed bytes, also with current native
+input/dialog boundaries. This is local verification, not a public OTA build.
+
+The previous local dist files were copied into this run's `previous-dist/`
+before packaging; their ZIP still has the immutable public Beta 17 digest
+`8767d8ed569529f8b8bba779140f5e8df894b9169a36d83b7c116caa80cbc4ae`.
+No public asset/tag is replaced. The exact scope audit permits only the two
+chrome adapters, the three-line component seam, the existing regression file
+and four existing documents. Held artwork is absent from every changed blob;
+Gitleaks reports no leaks in the new source commit. Verification-only follow-up
+docs do not rebuild this same-version package; runtime remains exactly c1fe57df.
+
+Evidence: ignored `test-results/quick-controls-input-20261030/`: full-lua/
+full-luajit, final-root-lua/luajit, focused and minimum/current native logs,
+translations, package, audit.py/audit.json, extracted sealed/sealed-native logs,
+previous-dist and Gitleaks. No new dependency, push, tag, release, production OTA
+or reader/user-data mutation. Boox/Bigme retesting remains required.
