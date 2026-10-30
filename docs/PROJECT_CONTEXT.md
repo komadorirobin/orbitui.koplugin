@@ -23,12 +23,19 @@ and correct this file in the same change.
 ## Snapshot: 2026-10-30
 
 - User now explicitly requests the next beta after the unpublished-code audit.
-  Prepare Beta 18 on `release/quick-controls-beta18-20261030` from clean
-  `e2f1aa32`, with public main `f97d9bd0`. Publish only the reviewed quick-control
+  Beta 18 is public at exact candidate/tag `7c0f7057`, published 2026-10-30
+  16:31:24 UTC from `release/quick-controls-beta18-20261030`, clean `e2f1aa32`
+  and prior public main `f97d9bd0`. It contains only the reviewed quick-control
   input fixes below plus version/English-Swedish release documentation; no new
   upstream import, hardware driver or installed path. Prior local-only approval
-  is superseded for this release. VERSION becomes `0.1.0-beta.18`; exact complete
-  gate/package/CI/draft/public verification will be recorded in MERGE_LOG.
+  is superseded for this release. VERSION is `0.1.0-beta.18`; both complete
+  interpreter gates, all sealed root/native-owner suites, 43 catalogs and exact
+  source/history/artwork/secret/draft/public audits pass. Main/tag CI
+  `41089949928`/`41089950111` are green. Native actual-Beta-5/9/17 installers
+  and live public-byte application-TLS upgrades from Beta 9/17 pass. Preview
+  selects Beta 18; stable and all 72 previous releases/assets/tags are unchanged.
+  Exact digest/results are in MERGE_LOG and `test-results/beta18-20261030/`.
+  Verification-only docs do not rebuild/replace the tagged ZIP.
   Physical quick-control acceptance remains open. The optional Bigme frontlight
   userpatch is already published separately through Ereader and
   `komadorirobin/koreader-bigme-frontlight`, not embedded in OrbitUI.
@@ -284,9 +291,9 @@ and correct this file in the same change.
   Home is explicitly Home/Hem (SimpleUI). Native preference callbacks, scopes,
   advanced controls and stored values remain in place. The earlier same-version
   development ZIP was never published as a replacement Beta 12.
-- Product version: `0.1.0-beta.17` (public GitHub prerelease, published
-  2026-10-30 at 09:38:55 UTC after explicit user request; verification is in
-  `docs/MERGE_LOG.md`). Beta 16 and earlier assets remain immutable.
+- Product version: `0.1.0-beta.18` (public GitHub prerelease, published
+  2026-10-30 at 16:31:24 UTC after explicit user request; verification is in
+  `docs/MERGE_LOG.md`). Beta 17 and earlier assets remain immutable.
 - Beta 12 starts from clean public main `70e5a1fd` on
   `fix/android-covers-beta12-20261026`. Android safe mode remains enabled;
   host-owned foreground local extraction replaces the blocked Bookshelf queue,
@@ -312,7 +319,8 @@ and correct this file in the same change.
   with category/instance/external-module tests in `0acdd843`.
   Complete local Lua/LuaJIT, translation, sealed-package and native OTA gates
   pass; exact verification results are recorded in `docs/MERGE_LOG.md`.
-- Release tag: `v0.1.0-beta.17` at `ab2e0bd7`; previous tags
+- Release tag: `v0.1.0-beta.18` at `7c0f7057`; previous tags
+  `v0.1.0-beta.17` at `ab2e0bd7`,
   `v0.1.0-beta.16` at `5c846730`,
   `v0.1.0-beta.15` at `ee35bf19`,
   `v0.1.0-beta.14` at `575fdb7a`,
@@ -321,7 +329,9 @@ and correct this file in the same change.
   `v0.1.0-beta.11` at `03106015`,
   `v0.1.0-beta.10` at `0a2ea22b`, `v0.1.0-beta.9` at `a4bb9acb` and all
   earlier tags/assets are unchanged.
-- Public branch: `main`; the separate October 30 publication request produces
+- Public branch: `main`; the next October 30 publication request produces
+  Beta 18 with the reviewed status-routing/live-opt-in/native-dialog fixes.
+  The earlier separate October 30 publication request produces
   Beta 17 with quick controls, category cards and the already-reviewed imports.
   The preceding merge includes the local category cards and reviewed upstream
   follow-ups under the standing push-only authorization.
@@ -627,6 +637,21 @@ different documented asset. Replacing the working-tree file does not sanitize an
 ancestor; audit outgoing history before every push/publication.
 
 ## Verification status
+
+Beta 18 candidate/tag `7c0f7057` passes both complete local interpreters and
+main/tag CI `41089949928`/`41089950111`: 122 Python/four unchanged optional
+source-pixel skips, 86 root Lua files, 487 Bookshelf suites/zero failures/three
+normal SQLite exclusions, 13 SimpleUI files, map 396, syntax 1,082 and 43 catalogs.
+All root suites pass on sealed bytes under both interpreters, including 28
+quick-control cases with complete minimum/current native input/dialog owners.
+Native actual-Beta-5/9/17 upgrade/recovery and live anonymous application-TLS OTA
+from Beta 9/17 pass. Exact draft/public bytes and source/history/artwork/secret
+checks pass; all 72 prior releases/assets/tag refs remain unchanged. SHA-256
+`9205d218043989cbbd89aac90a6b6df8305f3f587c05efa2602f28cdb616ce27`;
+8,967,453 ZIP bytes, 26,326,308 expanded, same 2,000 installed paths/bootstrap.
+Preview selects Beta 18; stable is unchanged. Evidence:
+`test-results/beta18-20261030/`. Verification docs do not rebuild this ZIP.
+Physical Boox/Bigme quick-control and lifecycle acceptance remains open.
 
 Beta 17 candidate/tag `ab2e0bd7` passes both complete local interpreters and
 main/tag CI `41034381766`/`41034383748`: 122 Python tests/four unchanged optional

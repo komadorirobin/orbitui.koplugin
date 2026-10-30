@@ -2,15 +2,24 @@
 
 ## Automated
 
-### Beta 18 publication candidate (October 30)
+### Beta 18 verified publication (October 30)
 
 The user now explicitly authorizes publishing the reviewed quick-control fixes
 below as a new beta, superseding the earlier local-only restriction. Runtime is
 unchanged from reviewed `c1fe57df`; VERSION and release documentation advance to
-Beta 18, never replacing Beta 17's assets. Both full interpreters, translations,
-sealed-byte suites, native older-installer upgrade/recovery, history/artwork/
-secret audits and exact draft/public-byte checks are required again. Evidence:
-`test-results/beta18-20261030/`; final results are recorded in MERGE_LOG.
+Beta 18, never replacing Beta 17's assets. Candidate/tag `7c0f7057` is public
+since 16:31:24 UTC. Both complete local interpreter gates pass: 122 Python/four
+unchanged optional source-pixel skips, all 86 root Lua files, 487 Bookshelf suites/
+zero failures/three normal SQLite exclusions and 13 SimpleUI files. Map 396,
+syntax 1,082 and all 43 catalogs pass. All root suites also pass on sealed bytes
+under both interpreters; 28 quick-control cases pass with whole minimum/current
+native input/dialog owners. Native actual-Beta-5/9/17 upgrade/recovery and live
+public-byte application-TLS OTA from Beta 9/17 pass. Main/tag CI
+`41089949928`/`41089950111` are green. Exact source/path/history/artwork/secret/
+draft/public-byte audits pass; all 72 previous releases/assets/tag refs and stable
+remain unchanged. Preview selects Beta 18. Evidence:
+`test-results/beta18-20261030/`; exact artifact digest/details are in MERGE_LOG.
+Verification-only documentation does not rebuild or replace the tagged ZIP.
 Physical panel/touch/system-return checks remain outstanding. The separately
 published Bigme hardware userpatch is not included in this release.
 

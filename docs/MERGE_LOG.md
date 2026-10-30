@@ -5442,3 +5442,51 @@ native older-installer/recovery tests, CI and verified draft downloads. Verify
 anonymous public bytes, channel selection and live native OTA after publishing;
 all previous releases/tags/assets remain immutable. Physical Boox/Bigme input,
 Android system return, light behavior and lifecycle acceptance remains open.
+
+### Beta 18 verified publication result
+
+Candidate/tag `7c0f705783fbbbf34ce07e35d9aefbb1f6b358c5` is pushed to main and
+published as prerelease `v0.1.0-beta.18` at **2026-10-30 16:31:24 UTC**. Release
+ID `429253357`, assets `692699835` (ZIP) and `692699836` (checksum). Draft and
+anonymous public downloads equal the tested local files and GitHub asset digests
+exactly. Publication explicitly uses `make_latest=false`; stable remains absent.
+
+Both complete sequential Lua/LuaJIT gates pass: 122 Python/four unchanged optional
+source-pixel skips, all 86 root Lua files, 487 Bookshelf suites/zero failures/three
+normal SQLite exclusions and 13 SimpleUI files. Map 396, syntax 1,082 and all
+43 catalogs pass. The first local invocation stopped on five missing-Pillow
+imports; an isolated ignored Python environment supplies Pillow and both full
+gates are rerun successfully. No test exclusion or product change masks this.
+Every root suite also passes on sealed bytes under both interpreters. All 28
+quick-control cases pass with complete official minimum/current native input
+and ButtonDialog owners, actual Core/NativeSheets and an ordinary-sheet positive
+control. Main/tag CI `41089949928`/`41089950111` are green; existing Node/Ubuntu
+migration annotations remain warnings, not failed release gates.
+
+Public/local ZIP SHA-256:
+`9205d218043989cbbd89aac90a6b6df8305f3f587c05efa2602f28cdb616ce27`.
+8,967,453 ZIP bytes, 26,326,308 expanded; 2,066 entries, 1,999 manifest records
+plus manifest/all 2,000 installed API-1 paths. Every record equals the exact
+candidate Git archive after only the existing PO-comment projection. Installed
+paths equal Beta 17. Runtime matches reviewed `c1fe57df`; assets/fonts/languages,
+bootstrap/entry/API and upstream pins are unchanged. All 17 outgoing candidate
+blobs exclude held artwork; Gitleaks scans three commits without leaks.
+
+Actual public Beta 5/9/17 installers pass complete native libarchive/SHA
+extraction, missing-module rejection, activation/restart/code rollback,
+truncated-download recovery, external snapshot/restart/persistent rollback and
+interrupted obsolete-runtime cleanup/resume with active/rollback/unknown/
+modified/user data retained. Anonymous live LuaSocket/LuaSec application TLS
+from Beta 9/17 passes release discovery, download and every native OTA phase.
+These isolated filesystem fixtures never touch an installed reader or user data.
+
+Preview selects Beta 18; stable and all **72 previous releases/assets** and every
+previous remote tag ref remain unchanged. Prior public Beta 17 digest remains
+`8767d8ed569529f8b8bba779140f5e8df894b9169a36d83b7c116caa80cbc4ae`.
+Only the new annotated Beta 18 ref/release/assets are added. Evidence is in
+ignored `test-results/beta18-20261030/`: complete/full/sealed/native-owner logs,
+translations, package/source/history audits, Gitleaks, exact CI metadata/watch,
+draft/public metadata/downloads, immutable snapshots, channel and live-OTA logs.
+Verification-only docs are audited separately before pushing and do not rebuild
+or replace the tagged/public ZIP. Physical Boox/Bigme touch, Android return,
+hardware light behavior, rendering, rotation and suspend acceptance remains open.
