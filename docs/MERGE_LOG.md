@@ -84,6 +84,17 @@ live JSON/Markdown, package/audit and secret logs). Verification-only docs do
 not rebuild or replace the sealed artifact. No push, tag, release, source import,
 OTA activation or physical-device/performance approval is implied.
 
+### Subsequent push authorization
+
+The user now explicitly requests "Pusha", superseding the local-only boundary
+for this work. Fresh origin fetch confirms a clean fast-forward from `71442369`
+with only the two already-verified feature/verification commits. Include this
+authorization documentation, audit all outgoing history again, push main and
+check the normal CI plus first separate inspiration-watch run. Workflow issue
+creation/reporting is the intended activation; no new upstream import, version,
+tag, release or OTA asset upload is authorized. Runtime remains the sealed
+`3e01ee0f` candidate, not a replacement for public Beta 18 assets.
+
 ## 2026-10-02: Initial OrbitUI import
 
 - Bookshelf fork: `v5.2.2.3`, `2d46b259028ddbebc0159effe6171abb14520868`.

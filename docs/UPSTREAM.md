@@ -18,12 +18,13 @@ Include a Swedish summary ordered by likely impact on the user's setup (see
 `AGENTS.md`). This is not authorization for scheduled merges, version bumps,
 tags, releases or OTA publication; a new release still needs a separate request.
 
-## Separate inspiration references (October 30; local implementation)
+## Separate inspiration references (October 30)
 
 `scripts/inspiration_watch.py` and `.github/workflows/inspiration-watch.yml`
 are independent of the real SimpleUI/Bookshelf import dashboard. The user
-explicitly approved building this locally; activation requires a later authorized
-push to main. Nothing is scheduled or posted merely by creating these files.
+initially approved building this locally, then explicitly authorized "Pusha".
+That main push activates the workflow; it is not a release or import request.
+Nothing is scheduled or posted merely by creating these files locally.
 
 The export-ignored `scripts/inspiration-sources.json` maps each idea to exact
 source paths/globs, a branch and a full reference snapshot SHA, plus its real

@@ -38,14 +38,15 @@ and correct this file in the same change.
   warnings), fails closed on rewritten history/errors and never imports/executes
   reference code. Bookshelf-OS currently exposes only README in its source tree:
   monitor README/release metadata and clearly request manual code review.
-  Workflow/dashboard remain LOCAL until an explicitly authorized push. No push,
-  release, version bump, source-pin change, new runtime path or device acceptance.
+  Initially local-only; the subsequent user request "Pusha" authorizes the
+  verified main push and workflow/dashboard activation, NOT a release. No version
+  bump, source-pin change, new runtime path or device acceptance is implied.
   See UPSTREAM/SHARED_UI/TESTING for operation, limits and remaining checks.
   Source/package candidate `3e01ee0f` passes both full interpreter gates and
   final sealed root reruns, 43 catalogs and exact path/source/artwork/secret
   audits. Same 2,000 installed paths, only a 12-line optional component action;
   development digest/evidence is in MERGE_LOG. Verification docs do not replace
-  the sealed ZIP; local GitHub workflow activation and device tests remain open.
+  the sealed ZIP; GitHub activation is checked after push, device tests remain open.
 
 - Evening user request "Merga upstream": from clean public `70fc3473`, review
   and merge all 18 SimpleUI commits through `7a605bbc261196fa65609adf26f59c77a4d966a7`
