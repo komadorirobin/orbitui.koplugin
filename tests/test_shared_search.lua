@@ -1,4 +1,5 @@
-package.path = "./?.lua;./components/bookshelf/?.lua;" .. package.path
+local root = os.getenv("ORBITUI_TEST_ROOT") or "."
+package.path = root .. "/?.lua;" .. root .. "/components/bookshelf/?.lua;./?.lua;" .. package.path
 local H = require("tests/helpers")
 local Profiles = require("lib/bookshelf_profiles")
 local Query = require("core/orbitui_shelf_query")
@@ -189,5 +190,81 @@ H.test("empty and unavailable search results provide explicit feedback", functio
     H.eq(win.screens.__root__{ inner_w = 600 }[1].title, "No matches.")
     H.eq(Search.results("Book", "current", { chip = "gone" }), nil)
     H.eq(notifications[#notifications], "This shelf is no longer available.")
+end)
+local saved = {}
+package.loaded["infra/sui_store"] = {
+    get = function(_, key) return saved[key] end,
+    set = function(_, key, value) saved[key] = value end,
+    del = function(_, key) saved[key] = nil end,
+}
+H.test("recent searches retain only ten query/scope pairs and do not alias storage", function()
+    for i = 1, 12 do Search.remember("Book " .. i, "all") end
+    H.eq(#Search.history(), 10); H.eq(Search.history()[1].query, "Book 12")
+    Search.remember("BOOK 12", "all")
+    H.eq(#Search.history(), 10)
+    Search.remember("BOOK 12", "comics")
+    H.eq(Search.history()[1].scope, "comics")
+    local copy = Search.history(); copy[1].query = "changed"
+    H.eq(Search.history()[1].query, "BOOK 12")
+    Search.clearHistory(); H.eq(#Search.history(), 0)
+    saved.orbitui_search_history = { schema = 99, items = {} }
+    Search.remember("Future", "all"); H.eq(saved.orbitui_search_history.schema, 99)
+    Search.clearHistory()
+end)
+H.test("ranking uses cached fields with deterministic ties and no record mutations", function()
+    local a = { filepath = "/a", title = "A story", authors = { "Book" } }
+    local b = { filepath = "/b", title = "Book", author = "Z" }
+    local c = { filepath = "/c", title = "Book two", author = "A" }
+    local books = { a, c, b }
+    Search.sortBooks(books, "relevance", "Book")
+    H.eq(books[1], b); H.eq(books[2], c); H.eq(a.relevance, nil)
+    Search.sortBooks(books, "author", "Book")
+    H.eq(books[1], c); H.eq(books[3], b)
+    Search.sortBooks(books, "title", "Book"); H.eq(books[1], a)
+end)
+H.test("relevance ranking precedes the cap rather than discarding a late exact hit", function()
+    search_records = {}
+    for i = 1, 500 do search_records[i] = { filepath = "/" .. i, title = "A Book " .. i } end
+    local exact = { filepath = "/exact", title = "Book" }; search_records[501] = exact
+    local books, truncated = Search.search("Book", "all", nil, "relevance")
+    H.eq(books[1], exact); H.eq(#books, 400); H.eq(truncated, true)
+end)
+H.test("sort and history choices retain the query and never widen a missing scope", function()
+    Search.remember("Old", "deleted")
+    local input = Search.show{ query = "Typed", scope = "comics" }
+    input.buttons[3][1].callback()
+    shown[#shown].buttons[3][1].callback()
+    local next_input = shown[#shown]
+    H.eq(next_input.input, "Typed")
+    assert(next_input.buttons[3][1].text:find("Author", 1, true))
+    next_input.buttons[4][1].callback()
+    local picker = shown[#shown]; picker.buttons[1][1].callback()
+    H.eq(picker.closed, nil)
+    H.eq(notifications[#notifications], "This shelf is no longer available.")
+    H.eq(Search.show{ scope = "deleted" }, nil)
+end)
+H.test("a deferred search cannot cover a newer native navigation destination", function()
+    local input = Search.show{ query = "Book" }
+    input.buttons[2][2].callback()
+    UI._simpleui_navigation_generation = 1234
+    local before = #shown
+    table.remove(queued, 1)()
+    H.eq(#shown, before)
+end)
+H.test("history is paged without losing full queries and old controls become inert", function()
+    Search.clearHistory()
+    for i = 1, 10 do Search.remember("Query " .. i, "all") end
+    local input = Search.show{ query = "Typed" }
+    input.buttons[4][1].callback()
+    local first = shown[#shown]
+    H.eq(#first.buttons, 8)
+    input.buttons[2][2].callback(); H.eq(#queued, 0, "replaced input must not submit")
+    first.buttons[6][2].callback()
+    local second = shown[#shown]
+    assert(second.buttons[1][1].text:find("Query 5", 1, true))
+    local before = #shown
+    first.buttons[1][1].callback(); H.eq(#shown, before)
+    second.buttons[1][1].callback()
+    H.eq(shown[#shown].input, "Query 5")
 end)
 H.finish()

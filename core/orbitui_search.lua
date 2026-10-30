@@ -2,6 +2,94 @@ local M = { limit = 400 }
 local _ = require("core/orbitui_i18n")
 local Query = require("core/orbitui_shelf_query")
 local Context = require("core/orbitui_context")
+local HISTORY = "orbitui_search_history"
+local session = 0
+M.sorts = { { id = "relevance", text = "Relevance" }, { id = "title", text = "Title" },
+    { id = "author", text = "Author" }, { id = "series", text = "Series" } }
+
+function M.lower(value)
+    local ok, Text = pcall(require, "infra/sui_text")
+    return ok and Text.lower(value or "") or (value or ""):lower()
+end
+
+local function author(book)
+    local value = book.author or book.authors or ""
+    return type(value) == "table" and table.concat(value, ", ") or value
+end
+
+function M.sortBooks(books, sort, query)
+    local keys, q = {}, M.lower(query)
+    local function score(value, weight)
+        if q == "" then return 0 end
+        if value == q then return weight * 4 end
+        if value:sub(1, #q) == q then return weight * 2 end
+        return value:find(q, 1, true) and weight or 0
+    end
+    for _, book in ipairs(books) do
+        local title, name, series = M.lower(book.title or book.filename or book.filepath),
+            M.lower(author(book)), M.lower(book.series or book.series_name)
+        keys[book] = { title = title, author = name, series = series,
+            relevance = score(title, 100) + score(name, 20) + score(series, 10) }
+    end
+    table.sort(books, function(a, b)
+        local ak, bk = keys[a], keys[b]
+        local field = sort == "author" and "author" or sort == "series" and "series"
+            or sort == "title" and "title" or "relevance"
+        if ak[field] ~= bk[field] then
+            if field == "relevance" then return ak[field] > bk[field] end
+            -- Unknown author/series sorts last, rather than hiding named hits.
+            if ak[field] == "" then return false end
+            if bk[field] == "" then return true end
+            return ak[field] < bk[field]
+        end
+        if ak.title ~= bk.title then return ak.title < bk.title end
+        return a.filepath < b.filepath
+    end)
+    return books
+end
+
+local function store()
+    local ok, value = pcall(require, "infra/sui_store")
+    return ok and value or nil
+end
+
+function M.history()
+    local settings = store()
+    local value = settings and settings:get(HISTORY)
+    local out = {}
+    if type(value) ~= "table" or value.schema ~= 1 or type(value.items) ~= "table" then return out end
+    for _, item in ipairs(value.items) do
+        if type(item) == "table" and type(item.query) == "string" and #item.query <= 512
+                and item.query:find("%S") and type(item.scope) == "string" and #item.scope <= 128 then
+            out[#out + 1] = { query = item.query, scope = item.scope }
+            if #out == 10 then break end
+        end
+    end
+    return out
+end
+
+function M.remember(query, scope)
+    if #query > 512 then return end
+    local settings = store()
+    if not settings then return end
+    local old = settings:get(HISTORY)
+    -- A future schema belongs to its writer; do not silently replace it.
+    if old ~= nil and (type(old) ~= "table" or old.schema ~= 1) then return end
+    if old and type(old.items) == "table" and type(old.items[1]) == "table"
+            and old.items[1].query == query and old.items[1].scope == scope then return end
+    local items = { { query = query, scope = scope } }
+    for _, item in ipairs(M.history()) do
+        if not (M.lower(item.query) == M.lower(query) and item.scope == scope) and #items < 10 then
+            items[#items + 1] = item
+        end
+    end
+    settings:set(HISTORY, { schema = 1, items = items })
+end
+
+function M.clearHistory()
+    local settings = store()
+    if settings then settings:del(HISTORY) end
+end
 
 function M.scopes(ref)
     local scopes = {
@@ -16,7 +104,7 @@ function M.scopes(ref)
     return scopes
 end
 
-function M.search(text, scope_id, ref)
+function M.search(text, scope_id, ref, sort)
     text = (text or ""):match("^%s*(.-)%s*$")
     if text == "" then return {}, false end
     local Repo = require("lib/bookshelf_book_repository")
@@ -50,12 +138,7 @@ function M.search(text, scope_id, ref)
             results[#results + 1] = book
         end
     end
-    table.sort(results, function(a, b)
-        local at = (a.title or a.filepath):lower()
-        local bt = (b.title or b.filepath):lower()
-        if at == bt then return a.filepath < b.filepath end
-        return at < bt
-    end)
+    M.sortBooks(results, sort, text)
     local truncated = #results + #groups > M.limit
     while #groups > M.limit do groups[#groups] = nil end
     while #results > M.limit - #groups do results[#results] = nil end
@@ -64,17 +147,27 @@ end
 
 function M.results(text, scope_id, ref, opts)
     opts = opts or {}
-    local ok, books, truncated, err, groups = pcall(M.search, text, scope_id, ref)
+    local UI = require("ui/uimanager")
+    local navigation = UI._simpleui_navigation_generation
+    session = session + 1
+    local request, retired = session, false
+    local function current()
+        return not retired and request == session and navigation == UI._simpleui_navigation_generation
+    end
+    local ok, books, truncated, err, groups = pcall(M.search, text, scope_id, ref, opts.sort)
     if not ok or err then
         if not ok then require("logger").warn("OrbitUI search:", books) end
         Context.notify(_(err == "missing" and "This shelf is no longer available." or "Could not load books."))
         return
     end
+    local saved, failure = pcall(M.remember, text, scope_id)
+    if not saved then require("logger").warn("OrbitUI search history:", failure) end
     local Window = require("engines/sui_window")
     local window = Window:new{
         name = "sui_win_orbitui_search", title = _("Search results") .. ": " .. text,
         position = "bottom",
         navpager_mode = require("infra/sui_config").isNavpagerEnabled(),
+        on_close = function() retired = true end,
         screens = { __root__ = function(ctx)
             local rows = {}
             if #books == 0 and #(groups or {}) == 0 then
@@ -90,6 +183,7 @@ function M.results(text, scope_id, ref, opts)
                     inner_w = ctx.inner_w, title = group.label or group.series_name or group.path,
                     show_chevron = true, separator = true,
                     on_tap = function()
+                        if not current() then return end
                         ctx.close()
                         Context.withShelf(scope_id ~= "all" and scope_id or nil, function(shelf)
                             local methods = { folders = "_expandFolder", authors = "_expandAuthor",
@@ -106,8 +200,11 @@ function M.results(text, scope_id, ref, opts)
                     inner_w = ctx.inner_w, title = book.title or book.filename or book.filepath,
                     subtitle = author,
                     right_value = _("Open"), separator = true,
-                    on_tap = function() (opts.open_book or Context.openBook)(book.filepath, book) end,
+                    on_tap = function()
+                        if current() then (opts.open_book or Context.openBook)(book.filepath, book) end
+                    end,
                     on_hold = function()
+                        if not current() then return end
                         require("adapters/orbitui_book_panel").show(book.filepath, { open_book = opts.open_book })
                     end,
                 }
@@ -115,9 +212,12 @@ function M.results(text, scope_id, ref, opts)
             return rows
         end },
         screen_footers = { __root__ = function(ctx)
-            return Window.CenteredButtonFooter(ctx, { text = _("Search"), on_tap = function()
+            local sort_label = _("Relevance")
+            for _i, item in ipairs(M.sorts) do if item.id == opts.sort then sort_label = _(item.text) end end
+            return Window.CenteredButtonFooter(ctx, { text = _("Search") .. " · " .. sort_label, on_tap = function()
+                if not current() then return end
                 ctx.close()
-                M.show{ query = text, scope = scope_id, ref = ref, open_book = opts.open_book }
+                M.show{ query = text, scope = scope_id, ref = ref, open_book = opts.open_book, sort = opts.sort }
             end })
         end },
     }
@@ -128,11 +228,39 @@ end
 function M.show(opts)
     opts = opts or {}
     local UIManager = require("ui/uimanager")
+    session = session + 1
+    local request, native_generation = session, UIManager._simpleui_navigation_generation
+    local active
+    local function current()
+        return request == session and native_generation == UIManager._simpleui_navigation_generation
+    end
+    local function guarded(fn, owner)
+        return function(...) if current() and active == owner() then return fn(...) end end
+    end
+    local function pickerDialog(title, rows)
+        local picker
+        for _i, row in ipairs(rows) do
+            for _j, button in ipairs(row) do
+                if button.callback then button.callback = guarded(button.callback, function() return picker end) end
+            end
+        end
+        picker = require("ui/widget/buttondialog"):new{ title = title, buttons = rows }
+        active = picker
+        return picker
+    end
     local scope_id = opts.scope or (opts.ref and opts.ref.profile) or "all"
     local scopes = M.scopes(opts.ref)
     local valid = false
     for _i, item in ipairs(scopes) do if item.id == scope_id then valid = true end end
-    if not valid then scope_id = "all" end
+    if not valid then
+        if opts.scope then Context.notify(_("This shelf is no longer available.")); return end
+        scope_id = "all"
+    end
+    local sort_id = opts.sort or "relevance"
+    local function sortText()
+        for _i, item in ipairs(M.sorts) do if item.id == sort_id then return _(item.text) end end
+        sort_id = "relevance"; return _("Relevance")
+    end
     local function input(prefill)
         local dialog
         local selected
@@ -153,20 +281,90 @@ function M.show(opts)
                     rows[#rows + 1] = {{ text = _("Cancel"), callback = function()
                         UIManager:close(picker); input(query)
                     end }}
-                    picker = require("ui/widget/buttondialog"):new{ title = _("Search in"), buttons = rows }
+                    picker = pickerDialog(_("Search in"), rows)
                     UIManager:show(picker)
                 end }},
                 {
-                    { text = _("Cancel"), id = "close", callback = function() UIManager:close(dialog) end },
+                    { text = _("Cancel"), id = "close", callback = function()
+                        session = session + 1; UIManager:close(dialog)
+                    end },
                     { text = _("Search"), is_enter_default = true, callback = function()
                         local query = (dialog:getInputText() or ""):match("^%s*(.-)%s*$")
                         if query == "" then return end
                         UIManager:close(dialog)
-                        UIManager:nextTick(function() M.results(query, scope_id, opts.ref, opts) end)
+                        UIManager:nextTick(function()
+                            if not current() then return end
+                            M.results(query, scope_id, opts.ref, { sort = sort_id, open_book = opts.open_book })
+                        end)
                     end },
                 },
+                {{ text = _("Sort results") .. ": " .. sortText(), callback = function()
+                    local query = dialog:getInputText()
+                    UIManager:close(dialog)
+                    local picker
+                    local rows = {}
+                    for _i, item in ipairs(M.sorts) do
+                        rows[#rows + 1] = {{ text = _(item.text), callback = function()
+                            UIManager:close(picker); sort_id = item.id; input(query)
+                        end }}
+                    end
+                    rows[#rows + 1] = {{ text = _("Cancel"), callback = function()
+                        UIManager:close(picker); input(query)
+                    end }}
+                    picker = pickerDialog(_("Sort results"), rows)
+                    UIManager:show(picker)
+                end }},
+                {{ text = _("Recent searches"), callback = function()
+                    local query = dialog:getInputText()
+                    UIManager:close(dialog)
+                    local history, scopes_by_id = M.history(), {}
+                    for _, item in ipairs(scopes) do scopes_by_id[item.id] = item.text end
+                    local function short(value, count)
+                        local ok, Text = pcall(require, "infra/sui_text")
+                        return ok and Text.truncate(value, count) or value
+                    end
+                    local function page(index)
+                        local picker, rows = nil, {}
+                        for i = (index - 1) * 5 + 1, math.min(index * 5, #history) do
+                            local item = history[i]
+                            rows[#rows + 1] = {{ text = short(item.query, 40) .. " — " .. short(scopes_by_id[item.scope]
+                                    or _("Unavailable scope"), 28), callback = function()
+                                if not scopes_by_id[item.scope] then
+                                    Context.notify(_("This shelf is no longer available.")); return
+                                end
+                                UIManager:close(picker); scope_id = item.scope; input(item.query)
+                            end }}
+                        end
+                        if #rows == 0 then rows[1] = {{ text = _("No recent searches."), enabled = false }} end
+                        if #history > 5 then
+                            rows[#rows + 1] = {
+                                { text = "‹", enabled = index > 1, callback = function()
+                                    UIManager:close(picker); page(1)
+                                end },
+                                { text = "›", enabled = index == 1, callback = function()
+                                    UIManager:close(picker); page(2)
+                                end },
+                            }
+                        end
+                        rows[#rows + 1] = {{ text = _("Clear search history"), callback = function()
+                            M.clearHistory(); UIManager:close(picker); input(query)
+                        end }}
+                        rows[#rows + 1] = {{ text = _("Cancel"), callback = function()
+                            UIManager:close(picker); input(query)
+                        end }}
+                        picker = pickerDialog(_("Recent searches"), rows)
+                        UIManager:show(picker)
+                    end
+                    page(1)
+                end }},
             },
         }
+        for _i, row in ipairs(dialog.buttons) do
+            for _j, button in ipairs(row) do
+                if button.callback then button.callback = guarded(button.callback, function() return dialog end) end
+            end
+        end
+        active = dialog
         UIManager:show(dialog)
         dialog:onShowKeyboard()
         return dialog

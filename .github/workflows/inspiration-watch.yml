@@ -1,0 +1,56 @@
+name: Inspiration watch
+on:
+  schedule:
+    - cron: '47 6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/inspiration_watch.py
+      - scripts/inspiration-sources.json
+      - scripts/upstream_watch.py
+      - tests/test_inspiration_watch.py
+      - .github/workflows/inspiration-watch.yml
+permissions:
+  contents: read
+concurrency:
+  group: inspiration-watch
+  cancel-in-progress: false
+jobs:
+  report:
+    if: github.repository == 'komadorirobin/orbitui.koplugin' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Test filtering and reporting offline
+        run: python3 -m unittest discover -s tests -p test_inspiration_watch.py -v
+      - name: Collect selected reference changes (never execute upstream)
+        id: collect
+        run: python3 scripts/inspiration_watch.py collect
+      - name: Update separate review dashboard
+        if: always() && steps.collect.outcome != 'skipped'
+        run: |
+          if test -f test-results/inspiration-watch/report.json; then
+            python3 scripts/inspiration_watch.py publish --repository "$GITHUB_REPOSITORY" --report test-results/inspiration-watch/report.json
+          fi
+      - name: Job summary
+        if: always()
+        run: |
+          if test -f test-results/inspiration-watch/report.md; then
+            cat test-results/inspiration-watch/report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: inspiration-watch
+          path: test-results/inspiration-watch/
+          retention-days: 30

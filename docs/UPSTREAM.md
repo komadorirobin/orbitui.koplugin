@@ -18,6 +18,60 @@ Include a Swedish summary ordered by likely impact on the user's setup (see
 `AGENTS.md`). This is not authorization for scheduled merges, version bumps,
 tags, releases or OTA publication; a new release still needs a separate request.
 
+## Separate inspiration references (October 30; local implementation)
+
+`scripts/inspiration_watch.py` and `.github/workflows/inspiration-watch.yml`
+are independent of the real SimpleUI/Bookshelf import dashboard. The user
+explicitly approved building this locally; activation requires a later authorized
+push to main. Nothing is scheduled or posted merely by creating these files.
+
+The export-ignored `scripts/inspiration-sources.json` maps each idea to exact
+source paths/globs, a branch and a full reference snapshot SHA, plus its real
+OrbitUI implementation area. `reviewed_commit` means the observation baseline
+chosen after the reference/path review, NOT code accepted into OrbitUI. The
+first baseline deliberately starts at the October 30 reviewed tree and does
+not notify about all earlier history. Update it only after explicitly reviewing
+the pending matches; do not automatically advance it or any `sources.json` pin.
+
+References: Kobold (search/collections), Bookshelf-OS (settings cards/quick
+controls), CyberUI (demand-driven stats/diagnostics), ProjectTitle (metadata/
+cover efficiency), Zen-OS (cache budgets/metadata snapshots). VOS is explicitly
+**review-only**, not a claim of borrowed implementation. All six are design
+references; no third-party plugin/assets or executable dependency is imported.
+Bookshelf-OS currently has only README in its branch and no published source
+files to filter: its README and latest stable release/asset signature are
+observed, with a permanent manual-code-review warning. No ZIP is executed or
+downloaded by the watcher. A release-only change is not claimed as a source scan.
+
+Local read-only check:
+
+```sh
+python3 -m unittest discover -s tests -p test_inspiration_watch.py -v
+python3 scripts/inspiration_watch.py collect
+```
+
+Full Git checkout, Python 3 and authenticated `gh` are required. Collection
+fetches objects into `refs/remotes/orbitui-inspiration/*`, never checking out,
+running or merging their code. Every commit since the reference snapshot is
+inspected against **all parents**, including merge resolutions and both rename
+paths. Do not use only the final net diff (which hides changes later reverted).
+More than 5,000 commits, fetch/API failures or rewritten ancestry require manual
+review instead of a partial/up-to-date claim. Missing watched paths are warnings.
+Path filters can miss new/extracted helpers or dependency changes outside the
+list: periodically review mappings and never infer semantic compatibility from
+no matching commits. The complete matching list/paths is in the JSON artifact;
+the dashboard shows ten matches per repository to stay within issue-size limits.
+
+Once activated, the workflow runs daily at 06:47 UTC, on relevant main changes
+or manually. It has contents-read/issues-write permissions only and owns a
+**separate** marker-based issue. It updates that dashboard and comments only
+when matching commits, tracked paths/configuration, release signatures or error
+phases change; unrelated commits, timestamps and OrbitUI-only commits do not
+cause notification comments. Retries deduplicate transition comments. Duplicate
+dashboards and reports not matching current main fail closed. A collect failure
+still uploads its diagnostic report; it is never presented as "no changes".
+No merge PR, version/tag/release/OTA, foreign workflow or executable is run.
+
 ## History and source pins
 
 `components/bookshelf` and `components/simpleui` were imported with `git subtree

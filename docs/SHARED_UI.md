@@ -6,6 +6,35 @@ change. Device acceptance is still pending.
 
 ## Controls
 
+### Local Kobold design follow-up (October 30; not published)
+
+Search adds **Recent searches** (ten local query/scope pairs, explicit Clear)
+and **Sort results**: relevance, title, author or series. Sorting happens before
+the existing 400-result limit. Profiles/current shelf, group matches and native
+book-open/hold actions retain their existing meaning. History never indexes book
+records, remote accounts or credentials, and a missing scope cannot silently
+become the entire library. Switching sort/scope preserves typed text; obsolete
+windows/pickers and queued native-navigation work cannot cover a newer search.
+
+In Bookshelf **Manage collections**, tap a custom collection, then **Manage
+books…**. The shared native LibraryModal has **In collection**, **Add books**
+and **Changes** views, selected with the bottom-left view button. Search filters members; Add books searches the local
+library only on explicit submission. Tap to stage/undo membership, review the
+add/remove counts, choose title/author ordering, then Save or Cancel. Back/X
+also discards the draft. Neither removal nor deleting a collection deletes a
+book file. This editor does not create/delete/rename collections or modify
+Hardcover lists; existing native actions still own those separate workflows.
+Favourites and auto-folder collections stay in their original KOReader controls.
+One optional `CollectionManager.orbitui_edit_contents` seam adds the manage-only
+entry; native standalone, per-book and bulk membership behavior is unchanged.
+No hidden shelf, cover extraction, new data index or installed runtime file.
+
+All new owned wording is English/Swedish. Device acceptance remains: native
+fonts on narrow/landscape screens, long collection names/paths, touch and D-pad,
+keyboard/search/view/paging focus, Back/X/Cancel/Save, a removed book during an
+open draft, native book-detail return and rotation/sleep. Headless tests are not
+evidence that these interactions have passed on Boox/Bigme.
+
 - Long-press a book on Home or in shared search results to open the Bookshelf
   detail panel, initially on Edit. Description, tags/collections, ratings,
   Hardcover linking and registered external plugin actions remain native.

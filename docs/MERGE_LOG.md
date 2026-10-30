@@ -4,6 +4,52 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-10-30: Local Kobold follow-up and separate inspiration monitoring
+
+User approves the search/collection recommendations and explicitly confirms
+"Ja, bygg bevakningen också" for selected reference-file monitoring. Local
+branch `feature/search-collections-inspiration-watch-20261030` starts from clean
+public `71442369`. This is implementation authority, NOT a push/release or
+GitHub activation request. VERSION remains Beta 18; imported source pins,
+bootstrap/API 1 and public assets stay unchanged.
+
+- Shared search: ten local query/scope pairs in the existing store, Clear,
+  paged recent choices, relevance/title/author/series ranking before the cap,
+  original grouped/profile/current results and native book callbacks. Explicit
+  deleted scopes fail closed; future history schemas survive; old dialog and
+  queued navigation callbacks become inert. No new index or account/provider IO.
+- Manual local collection contents: a small optional manage-only native seam
+  opens the host LibraryModal editor. Member/add/change views use a keyboard-
+  reachable view picker rather than crowding the native shared title/tab row.
+  Search/clear, title/author sort, staged counts/undo, Save/Cancel and responsive
+  row counts retain native paging/focus/close. Save delegates to ReadCollection
+  for one collection, preserving unrelated membership and detecting stale or
+  missing additions before writing. Restore memory on native write exceptions.
+  Favourites and folder-managed collections retain their KOReader owner. No
+  remote Hardcover/list writer, metadata or book-file operation is added.
+- Inspiration watcher: explicit per-idea path mappings and separate reference
+  snapshots for Kobold, Bookshelf-OS, CyberUI, VOS, ProjectTitle and Zen-OS.
+  VOS is comparison-only; the others are design references, not vendored code.
+  Bookshelf-OS's current source tree exposes README only, so report README and
+  release/asset signatures with an explicit manual-code-review warning. Scan
+  individual commits/all merge parents and both rename paths, not merely a net
+  diff. Filtered irrelevant changes/timestamps/OrbitUI commits do not change
+  notification fingerprints. Missing paths, rewritten history, oversized pending
+  history and API/fetch failures are explicit; errors never become "zero changes".
+  Separate daily report-only GitHub workflow/issue uses current-main checks and
+  retry-safe comments. No issue, workflow, merge, tag or release is activated by
+  this local work. No reference code is executed or installed.
+
+All owned UI wording has Swedish/English translations. All runtime work uses
+existing files; scripts/config/tests/workflow are export-ignored. The only
+component change is the optional collection-manager action (12 lines), absent
+in standalone/book/bulk modes. Full/sealed verification is recorded below when
+completed; tests additionally exercise the complete LibraryModal/PickerCell and
+collection-manager owners, not only simplified dialog doubles. They exposed and
+fixed native nil-on-clear, title/tab crowding and excessive landscape height.
+Native glyph/font/touch/rotation/sleep/reader-underlay acceptance on Boox/Bigme
+remains open. No measured speed or memory claim and no installed device change.
+
 ## 2026-10-02: Initial OrbitUI import
 
 - Bookshelf fork: `v5.2.2.3`, `2d46b259028ddbebc0159effe6171abb14520868`.

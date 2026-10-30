@@ -1087,6 +1087,29 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+October 30 approved Kobold design follow-up: shared search keeps ten local
+query/scope pairs in the existing SimpleUI store, with explicit Clear and no
+provider/account/book records in history. Preserve future schemas; deleted
+scopes fail closed. Relevance/title/author/series sorting uses cached fields,
+does not mutate metadata, and precedes the shared 400-hit cap; existing groups,
+current-shelf membership and caller reader/book-panel paths remain. Retired
+search windows/pickers and deferred native-navigation callbacks must be inert.
+
+The optional `CollectionManager.orbitui_edit_contents` host seam is available
+only in manage mode for custom collections; standalone/book/bulk membership
+behavior is unchanged. The host editor uses LibraryModal and native local
+ReadCollection: searchable members, Add books, staged Changes/counts, explicit
+Save/Cancel, title/author ordering. No speculative all-library scan on paint,
+cover extraction, hidden shelf, metadata/file deletion or remote list writer.
+Preserve unrelated concurrent membership, detect replaced/deleted collections
+and touched-file conflicts, preflight missing additions, and keep a failed draft
+open. Roll back in-memory membership on native write exceptions. Favourites and
+folder-managed collections retain their native owner. Close/Back discards only
+the draft and retires its callbacks. Both English and Swedish labels are required.
+Regression: `test_shared_search`, `test_collection_contents`; physical bilingual
+native-font/touch/keyboard/paging/rotation/Back and reader-underlay acceptance
+remain required. No publication or performance claim accompanies this change.
+
 October 30 approved Bookshelf-OS follow-up: small quick-control dialogs reuse
 native widgets/PowerD/core network/statistics owners in the existing chrome
 adapter. Status taps default off and saved bars/layouts remain unchanged; an

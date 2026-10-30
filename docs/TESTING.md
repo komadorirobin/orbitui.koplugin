@@ -2,6 +2,29 @@
 
 ## Automated
 
+### Local search/collections and inspiration watch (October 30)
+
+New `test_shared_search` cases cover ten-item history, scoped deduplication,
+storage copy/future-schema preservation, missing-scope refusal, sort/query
+retention, ranking before the cap, original record identity and cancelled
+deferred navigation. `test_collection_contents` covers draft/undo counts,
+single-collection Save, unrelated concurrent changes, stale/replaced collections,
+missing additions, native write failure/retry, favourites/folder ownership,
+native modal search/sort/Cancel/Save/retirement and the optional loader seam.
+
+`python3 -m unittest discover -s tests -p test_inspiration_watch.py -v` runs
+offline filters, fingerprints, rename/revert/delete Git fixtures, missing-path/
+rewritten-history/limit/fetch failures, release asset replacement, destination
+mapping and retry-safe issue reporting. Collection is also tested read-only
+against all six real references. No issue is created and no workflow activated
+by local collection; the separate daily workflow awaits an authorized main push.
+
+Run both complete interpreter gates, all translation checks and sealed packaging
+before declaring the candidate ready. VERSION/source pins/bootstrap/artwork and
+all 2,000 installed paths must remain unchanged. These are development bytes,
+not replacement assets for the existing public Beta 18. Physical search/modal
+acceptance listed in SHARED_UI remains outstanding; no measured speedup claimed.
+
 ### October 30 evening reviewed upstream merge (not released)
 
 Source/package candidate `b4332ea8` passes both complete interpreter gates:

@@ -246,4 +246,62 @@ H.test("unusable geometry and missing optional UI dependencies fall back to the 
     package.loaded["lib/bookshelf_library_modal"] = Base
     H.eq(writes, 0); H.eq(eager, 0)
 end)
+H.test("collection contents use the complete native modal including clear, keyboard, focus and close", function()
+    local Label = W:extend{}
+    function Label:getSize()
+        local _, chars = (self.text or ""):gsub("[^\128-\191]", "")
+        return { w = math.min(self.max_width or math.huge, chars * self.face.size * 0.57),
+            h = math.ceil(self.face.size * 1.3) }
+    end
+    local Input = W:extend{}
+    function Input:init() self._frame_textwidget = {} end
+    function Input:getSize() return { w = self.width + 2 * (self.padding + self.bordersize), h = Screen:scaleBySize(40) } end
+    function Input:getText() return self.text end
+    function Input:setText(text) self.text = text end
+    function Input:isKeyboardVisible() return false end
+    function Input:onCloseKeyboard() end
+    function Input:unfocus() self.focused = false end
+    function Input:focus() self.focused = true end
+    package.loaded["ui/widget/inputtext"] = Input
+    package.loaded["ui/widget/container/leftcontainer"] = W
+    package.loaded["lib/bookshelf_colour_text"] = Label
+    package.loaded["ui/widget/buttondialog"] = W
+    local Size = package.loaded["ui/size"]
+    Size.border.default, Size.border.thin = 1, 1
+    package.loaded["ffi/blitbuffer"].COLOR_LIGHT_GRAY = "light-gray"
+    package.loaded["lib/bookshelf_picker_cell"] = dofile(root .. "/components/bookshelf/lib/bookshelf_picker_cell.lua")
+    local rc = { default_collection_name = "favorites", coll = { Test = {} }, coll_settings = { Test = {} } }
+    package.loaded.readcollection = rc
+    local Context = package.loaded["core/orbitui_context"]
+    Context.notify = function(text) error(text) end
+    local books = {}
+    for i = 1, 18 do
+        local file = "/books/" .. i
+        rc.coll.Test[file] = { text = "Book " .. i, file = file }
+        books[i] = { filepath = file, title = "Book " .. i }
+    end
+    package.loaded["lib/bookshelf_book_repository"] = { getBySource = function() return books end,
+        searchBooks = function() return {} end }
+    local Panel = require("adapters/orbitui_book_panel")
+    for _, size in ipairs({ {600,800}, {800,600}, {1264,1680}, {480,800} }) do
+        for _, lang in ipairs({ "en", "sv" }) do
+            width, height, locale, scale = size[1], size[2], lang, math.min(size[1], size[2]) / 600
+            local modal = Panel.collection("Test")
+            assert(modal._search_input and modal.key_events.Close)
+            local d = modal.frame:getSize()
+            assert(d.w <= width and d.h <= height, "collection exceeds " .. width .. "x" .. height .. ": " .. d.w .. "x" .. d.h)
+            modal:_onSearchSubmit("") -- native emits nil, not an empty string
+            modal:_onSearchSubmit("Book")
+            modal:onSwipeNextPage(); H.eq(modal.page, 2)
+            modal:onGridFocusDown(); modal:onGridPress()
+            modal.config.footer_rows[1][1].on_tap()
+            local picker = shown[#shown]; picker.buttons[2][1].callback()
+            H.eq(modal.config.item_count(), 0)
+            modal:_onSearchSubmit("")
+            modal:onClose(); assert(modal.closed)
+            modal.config.footer_rows[2][2].on_tap() -- retired Save does nothing
+        end
+    end
+    width, height, scale, locale = 600, 800, 1, "en"
+end)
 H.finish()

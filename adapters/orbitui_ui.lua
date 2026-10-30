@@ -16,6 +16,7 @@ M.modules = {
     ["lib/bookshelf_series_box_widget"] = true,
     ["lib/bookshelf_settings"] = true,
     ["lib/bookshelf_chip_editor"] = true,
+    ["lib/bookshelf_collection_manager"] = true,
     ["lib/bookshelf_module_layout"] = true,
     ["lib/bookshelf_book_repository"] = true,
     ["lib/bookshelf_sort_engine"] = true,
@@ -87,6 +88,10 @@ function M.wrap(name, module)
         end
     elseif name == "features/library/sui_library_search" then
         module.show = function(opts) return require("core/orbitui_search").show(opts) end
+    elseif name == "lib/bookshelf_collection_manager" then
+        module.orbitui_edit_contents = function(name, on_saved)
+            return require("adapters/orbitui_book_panel").collection(name, { on_saved = on_saved })
+        end
     elseif name == "lib/bookshelf_widget" then
         local launch = module._launchReader
         if launch then

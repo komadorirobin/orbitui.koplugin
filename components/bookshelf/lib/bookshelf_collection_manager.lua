@@ -356,6 +356,18 @@ function CollectionManager.show(opts)
             }
         end
 
+        -- Optional host action, absent in standalone Bookshelf. Keep book/bulk
+        -- membership drafts independent from editing a collection's contents.
+        if not book_mode and not bulk_mode and can_modify and CollectionManager.orbitui_edit_contents then
+            table.insert(buttons, 1, {{
+                text = _("Manage books…"), callback = function()
+                    hclose()
+                    CollectionManager.orbitui_edit_contents(coll_name, function()
+                        if UIManager:isWidgetShown(modal) then reload(); refresh() end
+                    end)
+                end,
+            }})
+        end
         hold_dialog = ButtonDialog:new{
             title          = _("Edit collection: ") .. _displayName(coll_name),
             title_align    = "center",

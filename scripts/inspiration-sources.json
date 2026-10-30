@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "references": [
+    {
+      "id": "kobold", "repository": "unitreign/kobold", "branch": "main",
+      "reviewed_commit": "556dad48145dea61b4451746223b3879808d0d22",
+      "ideas": [
+        {"idea": "Search history and relevance", "relationship": "design-reference", "orbitui": "core/orbitui_search.lua", "paths": ["Kobold.koplugin/kobold/ui/search.lua", "Kobold.koplugin/kobold/ui/search_prompt.lua"]},
+        {"idea": "Collection content workflow", "relationship": "design-reference", "orbitui": "adapters/orbitui_book_panel.lua", "paths": ["Kobold.koplugin/kobold/ui/collection_manage.lua", "Kobold.koplugin/kobold/ui/collection_pick.lua", "Kobold.koplugin/kobold/data/mybooks.lua"]}
+      ]
+    },
+    {
+      "id": "bookshelf-os", "repository": "taiminator/Bookshelf-OS", "branch": "main",
+      "reviewed_commit": "072bfc6e852e9f0ef86c1530b4ac237c60a4d636", "release_watch": true,
+      "ideas": [{"idea": "Category-card settings and quick controls (release-only reference)", "relationship": "design-reference", "orbitui": "adapters/orbitui_settings.lua; adapters/orbitui_navbar.lua", "paths": ["README.md"]}]
+    },
+    {
+      "id": "cyberui", "repository": "EmirErtorer/CyberUI.koplugin", "branch": "main",
+      "reviewed_commit": "78ba21caec0ad42b41427544a85ffb44a6bd85e7",
+      "ideas": [{"idea": "Demand-driven statistics and timing diagnostics", "relationship": "design-reference", "orbitui": "core/orbitui_host.lua", "paths": ["cyberui/data/stats.lua", "cyberui/data/statsdb.lua", "cyberui/data/statsscope.lua", "cyberui/perf.lua"]}]
+    },
+    {
+      "id": "vos", "repository": "SeriousHornet/vos.koplugin", "branch": "main",
+      "reviewed_commit": "a5c91d882290af68b437c049bed10e03a3b03be4",
+      "ideas": [{"idea": "Quick settings and scoped UI ownership (comparison only)", "relationship": "review-only", "orbitui": "adapters/orbitui_navbar.lua", "paths": ["modules/quick_settings.lua", "modules/titlebar.lua"]}]
+    },
+    {
+      "id": "projecttitle", "repository": "joshuacant/ProjectTitle", "branch": "master",
+      "reviewed_commit": "1f89add705603709b3c408f92f21836e90598c5f",
+      "ideas": [{"idea": "Metadata and cover-cache efficiency", "relationship": "design-reference", "orbitui": "core/orbitui_host.lua; adapters/orbitui_android_covers.lua", "paths": ["bookinfomanager.lua", "covermenu.lua", "ptutil.lua"]}]
+    },
+    {
+      "id": "zen-os", "repository": "xZenLabs/zen-os", "branch": "main",
+      "reviewed_commit": "a2d7230110eb1fa6f9e2e29944c49e5607a82bd6",
+      "ideas": [{"idea": "Adaptive cache budgets and read-only metadata snapshots", "relationship": "design-reference", "orbitui": "core/orbitui_host.lua; adapters/orbitui_android_covers.lua", "paths": ["common/memory_policy.lua", "common/cover_decode_cache.lua", "common/cover_render_cache.lua", "common/db_bookinfo.lua", "common/db_connection.lua", "common/db_stats.lua"]}]
+    }
+  ]
+}

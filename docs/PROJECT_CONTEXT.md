@@ -22,6 +22,26 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-30
 
+- Local approved Kobold follow-up on
+  `feature/search-collections-inspiration-watch-20261030`, from public `71442369`:
+  shared search gains ten local recent query/scope pairs and relevance/title/
+  author/series ranking before the existing cap. Preserve groups, profile/current
+  membership and original reader/book-panel callbacks. Collection management
+  gains an optional host-owned content editor: searchable members/additions/
+  changes, live counts, title/author sorting, explicit Save/Cancel, native local
+  ReadCollection writes to one manual collection only. Favourites/folder-managed
+  collections stay with KOReader; no remote list, metadata or book-file writer.
+  A separate six-reference inspiration watcher uses explicit idea/path mappings
+  in `scripts/inspiration-sources.json`, not `sources.json`. References are
+  design comparisons, not vendored upstream or integrated revisions. It reports
+  matching commits (including reverted changes, rename/deletion and missing-path
+  warnings), fails closed on rewritten history/errors and never imports/executes
+  reference code. Bookshelf-OS currently exposes only README in its source tree:
+  monitor README/release metadata and clearly request manual code review.
+  Workflow/dashboard remain LOCAL until an explicitly authorized push. No push,
+  release, version bump, source-pin change, new runtime path or device acceptance.
+  See UPSTREAM/SHARED_UI/TESTING for operation, limits and remaining checks.
+
 - Evening user request "Merga upstream": from clean public `70fc3473`, review
   and merge all 18 SimpleUI commits through `7a605bbc261196fa65609adf26f59c77a4d966a7`
   (3.0.2 plus branch follow-ups); Bookshelf remains `ee84a8fe` with no new commits.
