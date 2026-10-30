@@ -450,6 +450,8 @@ function M.topbar(module)
             -- Home already owns its configured FM gesture routing. A corner
             -- action wins over this opt-in shortcut, just as it does on Shelf.
             local owner = self._orbitui_owner
+            if owner ~= topWidget() or call(ui(), "isWidgetShown", owner) ~= true
+                    or sleeping or device().screen_saver_mode or device().screen_saver_lock then return false end
             if ges and owner._fmGestureAction and owner:_fmGestureAction(ges) then return true end
             return M.showQuickControls(kind, { owner = self._orbitui_owner, anchor = self.dimen }) ~= false
         end

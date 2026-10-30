@@ -280,8 +280,9 @@ H.test("topbar preserves content and measurement; stale/nonpainted cells do not 
     cell:paintTo(nil, 10, 10); assert(cell:onQuickControls()); M.closeQuickControls()
     host._fmGestureAction = function() return true end
     local before = shown; assert(cell:onQuickControls(nil, { ges = "tap" })); H.eq(shown, before)
+    host._fmGestureAction = function() error("stale gesture must not run") end
+    stack = { { name = "ReaderUI" } }; H.eq(cell:onQuickControls(nil, { ges = "tap" }), false)
     host._fmGestureAction = nil
-    stack = { { name = "ReaderUI" } }; H.eq(cell:onQuickControls(), false)
 end)
 H.test("owned Swedish/English labels, help and errors are translated without exposing diagnostics", function()
     reset(); locale = "sv"; local d = M.showQuickControls("wifi")
