@@ -22,6 +22,28 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-30
 
+- User's Beta 17 device test exposes two quick-control integration regressions:
+  Home's priority menu zone consumes status taps before child cells, and SimpleUI
+  converts unanchored plain dialogs into action sheets that fail the controller's
+  exact topmost-dialog guard (including Close). User approves LOCAL fixes only,
+  on `fix/quick-controls-input-20261030` from clean `f97d9bd0`; no push/release.
+  A three-line optional `sui_core.beforeGesture` seam lets the chrome adapter
+  dispatch only current painted Home/custom-screen status cells before the menu,
+  preserving configured corner gestures, holds, whitespace and native FM input.
+  Dormant wrappers read the opt-in live, so toggling needs no body/provider
+  rebuild. Quick dialogs explicitly use the documented `sui_native` opt-out;
+  lifecycle/navigation guards are not weakened. Six new full-owner cases cover
+  these regressions; the two reproduced failures pass after the fixes. Tests use
+  the real Core/NativeSheets and optional whole minimum/current native input/UI.
+  VERSION remains Beta 17; pins/bootstrap/assets/installed paths stay unchanged.
+  Both complete interpreter gates and 43 catalogs pass; local ZIP/source audit
+  evidence is recorded in MERGE_LOG. Fixes are not installed or physically
+  accepted on Boox/Bigme yet.
+  The separate Bigme light problem reproduces in native KOReader with OrbitUI
+  disabled. User reports all compatibility light choices fail; supplied test.log
+  identifies `bigme/hibreak`, MT6877, Generic plus missing Onyx DeviceController.
+  No Bigme hardware driver, ADB permission change or device write is included.
+
 - User explicitly requests push and publication so the new quick controls can
   be tested on Boox/Bigme before further reader UI work. Beta 17 release branch
   `release/quick-controls-beta17-20261030` starts clean at `b83c2175`, with public

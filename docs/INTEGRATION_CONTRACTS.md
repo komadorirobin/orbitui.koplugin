@@ -1094,6 +1094,20 @@ Tests: `test_quick_controls`, including complete Topbar and optional native
 ButtonDialog, plus existing settings/navigation/host/reader/cover tests.
 Physical native-font/touch/focus/PowerD/system-return/underlay acceptance remains.
 
+October 30 local device-regression fix: the optional `sui_core.beforeGesture`
+seam must route only an enabled, current, painted Home/custom-screen status cell
+before Home's full-width priority menu zone. Keep native FM/other host routing,
+custom corners, holds/swipes, whitespace menu taps and touch-input disabling.
+Cells stay mounted while disabled and read the opt-in at dispatch time; toggling
+must not need a restart or invalidate book/provider caches. Quick-control dialogs
+use the documented `sui_native` opt-out of automatic NativeSheets conversion:
+preserve the actual dialog identity rather than weakening stale/modal/lifecycle
+guards to accept unrelated topmost windows. Other dialogs still convert normally.
+Tests load the whole Core/NativeSheets and minimum/current native input/dialog
+boundaries. The Bigme light failure outside OrbitUI is a separate hardware/API
+compatibility investigation, not a claimed fix or reason to add guessed writes.
+No upstream import, preference migration, publication or new device acceptance.
+
 October 29 approved category-card settings start: keep the same five stable
 category IDs, explicit Home/SimpleUI identity, SV/EN summaries, existing search
 and all native submenus/scopes/callbacks. Build static descriptions only, without

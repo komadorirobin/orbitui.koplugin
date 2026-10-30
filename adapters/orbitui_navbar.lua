@@ -348,7 +348,9 @@ function M.showQuickControls(kind, opts)
         { text = _("Close"), callback = guarded(M.closeQuickControls) },
     }
     local dialog = require("ui/widget/buttondialog"):new{
-        title = title, buttons = rows,
+        -- This controller owns the native dialog's exact identity/lifecycle.
+        -- A SimpleUI action-sheet proxy would make every guarded action stale.
+        sui_native = true, title = title, buttons = rows,
         width = math.max(1, math.min(screen:getWidth() - 2 * screen:scaleBySize(12), screen:scaleBySize(440))),
         anchor = anchor and function() return anchor, true end or nil,
     }
@@ -396,10 +398,8 @@ function M.quickControlsItems(close)
             checked_func = enabled, callback = function()
                 require("infra/sui_store"):saveSetting(QUICK_KEY, not enabled())
                 M.closeQuickControls()
-                local Topbar = package.loaded["screens/sui_topbar"]
-                if Topbar then Topbar.invalidateDimCache() end
-                local Engine = package.loaded["engines/sui_screen_engine"]
-                if Engine then Engine.refreshAllLiveImmediate(false) end
+                -- Status cells stay mounted while disabled and read the flag
+                -- at dispatch time. No chrome/book/provider rebuild is needed.
             end },
     }
 end
@@ -423,16 +423,44 @@ function M.hero(module)
     end
 end
 
+function M.core(module)
+    local previous = module.beforeGesture
+    module.beforeGesture = function(owner, ges)
+        if previous and previous(owner, ges) then return true end
+        -- Only Home/custom screens delegate their configured FM gestures via
+        -- _fmGestureAction. Do not override native file-manager/other routing.
+        if not owner or owner.name ~= "homescreen" or not ges or ges.ges ~= "tap" or not ges.pos
+                or ui()._input_gestures_disabled or not enabled() then return false end
+        local function findCell(widget, depth)
+            if type(widget) ~= "table" or depth > 8 then return end
+            if widget._orbitui_status_cell then
+                local rect = widget.dimen
+                if widget._orbitui_owner == owner and rect and finite(rect.w) and finite(rect.h)
+                        and rect.w > 0 and rect.h > 0 and ges.pos:intersectWith(rect) then return widget end
+                return
+            end
+            for _, child in ipairs(widget) do
+                local found = findCell(child, depth + 1)
+                if found then return found end
+            end
+        end
+        -- Search only the currently mounted topbar, not retired cells or body
+        -- widgets. The cell keeps the same owner/custom-gesture/lifecycle guard.
+        local cell = findCell(owner._navbar_topbar, 0)
+        return cell and cell:onQuickControls(nil, ges) or false
+    end
+end
+
 function M.topbar(module)
     local previous = module.itemWidget
     module.itemWidget = function(key, content)
         if previous then content = previous(key, content) or content end
         local kind = ({ brightness = "light", wifi = "wifi", battery = "battery", clock = "clock" })[key]
-        if not kind or not enabled() then return content end
+        if not kind then return content end
         local size = content:getSize()
         local Geom = require("ui/geometry")
         local cell = require("ui/widget/container/inputcontainer"):new{
-            dimen = Geom:new{ w = size.w, h = size.h }, content,
+            dimen = Geom:new{ w = size.w, h = size.h }, _orbitui_status_cell = true, content,
         }
         cell.ges_events = { QuickControls = { require("ui/gesturerange"):new{
             ges = "tap", range = function() return cell.dimen end,
@@ -451,6 +479,7 @@ function M.topbar(module)
             -- action wins over this opt-in shortcut, just as it does on Shelf.
             local owner = self._orbitui_owner
             if owner ~= topWidget() or call(ui(), "isWidgetShown", owner) ~= true
+                    or owner._closed or owner._suspended or owner._parked
                     or sleeping or device().screen_saver_mode or device().screen_saver_lock then return false end
             if ges and owner._fmGestureAction and owner:_fmGestureAction(ges) then return true end
             return M.showQuickControls(kind, { owner = self._orbitui_owner, anchor = self.dimen }) ~= false

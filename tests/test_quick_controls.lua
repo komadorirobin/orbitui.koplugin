@@ -345,5 +345,225 @@ H.test("whole native sliders/captions/focus rows support real units and guarded 
     created[1].on_change(1, true); created[1].on_release(); H.eq(native_writes, before)
     package.loaded["engines/sui_slider"] = Slider
 end)
+
+-- Complete SimpleUI owners, not just direct button callbacks: the two Beta 17
+-- device regressions require gesture-priority and native-sheet interception.
+local Input, Core
+local function inputBoundary()
+    local Event = { new = function(_, name, ...)
+        return { handler = "on" .. name, args = { n = select("#", ...), ... } }
+    end }
+    package.loaded["ui/event"] = Event
+    local Range = W:extend{}
+    function Range:match(ges)
+        local rect = type(self.range) == "function" and self.range() or self.range
+        return ges.ges == self.ges and ges.pos and ges.pos:intersectWith(rect)
+    end
+    package.loaded["ui/gesturerange"] = Range
+    local native = os.getenv("ORBITUI_NATIVE_INPUT_DIR")
+    if native then
+        -- Real minimum/current KOReader dispatch; no source extraction.
+        local Base = W:extend{}
+        function Base:handleEvent(event)
+            local fn = self[event.handler]
+            if fn then return fn(self, (unpack or table.unpack)(event.args, 1, event.args.n)) end
+        end
+        package.loaded["ui/widget/widget"] = Base
+        package.loaded["depgraph"] = {}
+        package.loaded.gettext = function(text) return text end
+        package.loaded["ui/widget/container/widgetcontainer"] = assert(loadfile(native .. "/widgetcontainer.lua"))()
+        Input = assert(loadfile(native .. "/inputcontainer.lua"))()
+    else
+        -- Native API boundary only. Core's real priority wrapper remains the
+        -- owner of dispatch order, including before the children are visited.
+        Input = W:extend{}
+        function Input:_init() self.ges_events, self._ordered_touch_zones = {}, {} end
+        function Input:onGesture(ges)
+            for _, zone in ipairs(self._ordered_touch_zones) do
+                if zone.gs_range:match(ges) and zone.handler(ges) then return true end
+            end
+            for name, seq in pairs(self.ges_events) do
+                for _, range in ipairs(seq) do
+                    if range:match(ges) and self:handleEvent(Event:new(name, seq.args, ges)) then return true end
+                end
+            end
+        end
+        package.loaded["ui/widget/container/widgetcontainer"] = W
+    end
+    package.loaded["ui/widget/container/inputcontainer"] = Input
+    package.loaded["infra/sui_memory"] = { onReset = function() end }
+    package.loaded["features/sui_style"].COLOR = { text_primary = 0 }
+    Core = assert(loadfile(root .. "/components/simpleui/infra/sui_core.lua"))()
+    require("adapters/orbitui_ui").wrap("infra/sui_core", Core)
+    -- Match the real UIManager contract, not the older entry-shaped stub.
+    UI.getTopmostVisibleWidget = function() return stack[#stack] end
+end
+
+local function statusOwner(setting)
+    reset(); values[KEY] = setting
+    host = Input:new{ name = "homescreen" }
+    resetStack()
+    local bar = {}; M.topbar(bar)
+    local cell = bar.itemWidget("battery", W:new{ dimen = geom{ w = 100, h = 24 } })
+    cell:paintTo(nil, 10, 10)
+    host._navbar_topbar = W:new{ W:new{ W:new{ cell } } }
+    host[1] = host._navbar_topbar
+    local menus, corners, holds, swipes = 0, 0, 0, 0
+    host._fmGestureAction = function() corners = corners + 1; return false end
+    local function zone(kind, action)
+        return { def = { id = "test_" .. kind }, gs_range = package.loaded["ui/gesturerange"]:new{
+            ges = kind, range = geom{ x = 0, y = 0, w = width, h = 50 },
+        }, handler = action }
+    end
+    host._ordered_touch_zones = {
+        zone("tap", function() menus = menus + 1; return true end),
+        zone("hold", function() holds = holds + 1; return true end),
+        zone("swipe", function() swipes = swipes + 1; return true end),
+    }
+    Core.applyGesturePriorityHandleEvent(host)
+    local function send(kind, x, y)
+        return host:handleEvent(package.loaded["ui/event"]:new("Gesture", {
+            ges = kind or "tap", pos = geom{ x = x or 20, y = y or 20, w = 0, h = 0 },
+        }))
+    end
+    return cell, send, function() return menus, corners, holds, swipes end
+end
+
+H.test("real chrome priority routes an opted-in status tap before the legacy menu zone", function()
+    inputBoundary()
+    local _, send, counts = statusOwner(true)
+    assert(send())
+    H.eq((counts()), 0); H.eq(#stack, 2)
+    assert(stack[2].title:find("Battery", 1, true))
+    M.closeQuickControls()
+    assert(send("tap", 200, 20)); H.eq((counts()), 1); H.eq(#stack, 1)
+end)
+H.test("a cell built while disabled activates and deactivates without rebuilding chrome or book data", function()
+    local cell, send, counts = statusOwner(false)
+    assert(cell.onQuickControls, "retain dormant touch wrapper for live activation")
+    assert(send()); H.eq((counts()), 1); H.eq(#stack, 1)
+    local saved_topbar, saved_engine = package.loaded["screens/sui_topbar"], package.loaded["engines/sui_screen_engine"]
+    package.loaded["screens/sui_topbar"] = { invalidateDimCache = function() error("no chrome rebuild needed") end }
+    package.loaded["engines/sui_screen_engine"] = { refreshAllLiveImmediate = function() error("no book/provider work") end }
+    local toggle = M.quickControlsItems()[2]
+    toggle.callback(); assert(send()); H.eq((counts()), 1); H.eq(#stack, 2)
+    button(stack[2], "Close").callback(); H.eq(#stack, 1)
+    toggle.callback(); assert(send()); H.eq((counts()), 2); H.eq(#stack, 1)
+    package.loaded["screens/sui_topbar"], package.loaded["engines/sui_screen_engine"] = saved_topbar, saved_engine
+end)
+H.test("priority keeps configured corners, holds, swipes and other host hooks", function()
+    local _, send, counts = statusOwner(true)
+    host._fmGestureAction = function() return true end
+    assert(send()); H.eq((counts()), 0); H.eq(#stack, 1)
+    assert(send("hold")); assert(send("swipe"))
+    local menus, _, holds, swipes = counts()
+    H.eq(menus, 0); H.eq(holds, 1); H.eq(swipes, 1)
+    host.name = "filemanager"
+    host._fmGestureAction = function() error("native FM routing belongs to its own zones") end
+    assert(send()); H.eq((counts()), 1); H.eq(#stack, 1)
+    host.name = "homescreen"
+    local hook_calls = 0
+    host.onProbe = function(_, a, b) H.eq(a, "one"); H.eq(b, "two"); return "unchanged" end
+    local before = Core.beforeGesture
+    Core.beforeGesture = function() hook_calls = hook_calls + 1; return true end
+    H.eq(host:handleEvent(package.loaded["ui/event"]:new("Probe", "one", "two")), "unchanged")
+    H.eq(hook_calls, 0, "non-gesture events keep their original arguments/dispatch")
+    Core.beforeGesture = before
+    local source = assert(loadfile(root .. "/components/simpleui/infra/sui_core.lua"))()
+    source.beforeGesture = function() return true end
+    require("adapters/orbitui_ui").wrap("infra/sui_core", source)
+    assert(source.beforeGesture(host, { ges = "tap", pos = geom{ x = 20, y = 20 } }))
+    H.eq(#stack, 1)
+end)
+H.test("priority cannot use retired, covered, unmounted, hidden or touch-disabled status cells", function()
+    local cell, send = statusOwner(true)
+    local bar = host._navbar_topbar
+    host._navbar_topbar = nil; assert(send()); H.eq(#stack, 1)
+    host._navbar_topbar = bar
+    cell._orbitui_owner = {}; assert(send()); H.eq(#stack, 1)
+    cell._orbitui_owner = host
+    for _, flag in ipairs({ "_closed", "_parked", "_suspended" }) do
+        host[flag] = true; assert(send()); H.eq(#stack, 1); host[flag] = nil
+    end
+    cell.dimen.w = 0; assert(send()); H.eq(#stack, 1); cell.dimen.w = 100
+    stack[#stack + 1] = { name = "ReaderUI" }
+    host._fmGestureAction = function() error("covered owner must not forward gestures") end
+    assert(send()); H.eq(#stack, 2); table.remove(stack)
+    host._fmGestureAction = nil
+    UI._input_gestures_disabled = true
+    H.eq(Core.beforeGesture(host, { ges = "tap", pos = geom{ x = 20, y = 20 } }), false)
+    local on_gesture = Input.onGesture
+    Input.onGesture = Input._onGestureFiltered or function() return false end
+    assert(not send()); H.eq(#stack, 1, "early hook must not bypass disabled native touch input")
+    Input.onGesture = on_gesture
+    UI._input_gestures_disabled = nil
+    cell:paintTo(nil, 200, 10)
+    assert(send()); H.eq(#stack, 1)
+    assert(send("tap", 210, 20)); H.eq(#stack, 2)
+    M.closeQuickControls()
+end)
+H.test("a new chrome host hook sees priority handlers already installed before integration", function()
+    local _, send, counts = statusOwner(true)
+    local before = Core.beforeGesture
+    Core.beforeGesture = nil
+    assert(send()); H.eq((counts()), 1); H.eq(#stack, 1)
+    Core.beforeGesture = before
+    assert(send()); H.eq((counts()), 1); H.eq(#stack, 2)
+    M.closeQuickControls()
+end)
+
+H.test("real NativeSheets cannot replace quick dialogs or invalidate Wi-Fi, tabs and Close", function()
+    reset()
+    local show, close = UI.show, UI.close
+    local sheets, last_sheet = 0
+    package.loaded.gettext = function(text) return text end
+    package.loaded["features/dialogs/sui_dialog_icons"] = { forText = function() end }
+    package.loaded["engines/sui_window"] = { _open_instances = {} }
+    package.loaded["apps/filemanager/filemanager"] = { instance = {} }
+    package.loaded["engines/sui_action_sheet"] = { show = function(content)
+        sheets = sheets + 1
+        local wrapper = { name = "sui_win_native_dialog", content = content }
+        local win = { wrapper = wrapper }
+        function win:close()
+            close(UI, wrapper)
+            if content.on_close then content.on_close() end
+        end
+        show(UI, wrapper); last_sheet = win
+        return win
+    end }
+    local Sheets = assert(loadfile(root .. "/components/simpleui/features/dialogs/sui_native_sheets.lua"))()
+    UI.show = function(self, widget)
+        if not Sheets.interceptShow(widget) then show(self, widget) end
+    end
+    UI.close = function(self, widget)
+        if not Sheets.interceptClose(widget) then close(self, widget) end
+    end
+    -- Positive control: the full actual interceptor is active, not stubbed out.
+    local ordinary = Dialog:new{ title = "Ordinary", buttons = {{ { text = "OK" } }}, width = 300 }
+    UI:show(ordinary); H.eq(sheets, 1); assert(last_sheet)
+    UI:close(ordinary); H.eq(#stack, 1)
+    caps.android = true
+    for _, kind in ipairs({ "wifi", "battery", "clock", "light" }) do
+        local dialog = M.showQuickControls(kind)
+        H.eq(UI:getTopmostVisibleWidget(), dialog); H.eq(dialog.sui_native, true)
+        H.eq(sheets, 1, "quick controls must opt out of automatic sheet conversion")
+        button(dialog, "Refresh status").callback()
+        local replacement = UI:getTopmostVisibleWidget()
+        assert(replacement ~= dialog)
+        button(dialog, "Close").callback(); H.eq(UI:getTopmostVisibleWidget(), replacement)
+        button(replacement, "Close").callback(); H.eq(#stack, 1)
+    end
+    local d = M.showQuickControls("battery")
+    button(d, "Wi-Fi").callback()
+    d = UI:getTopmostVisibleWidget(); button(d, "Wi-Fi settings…").callback()
+    H.eq(hardware.android, true); H.eq(#stack, 1)
+    d = M.showQuickControls("battery")
+    button(d, "Screen light").callback(); d = UI:getTopmostVisibleWidget()
+    button(d, "Turn night mode on").callback(); H.eq(events[#events], "onToggleNightMode")
+    H.eq(#stack, 1)
+    d = M.showQuickControls("battery")
+    UI:close(d); button(d, "Wi-Fi").callback(); H.eq(#stack, 1)
+    UI.show, UI.close = show, close
+end)
 reset()
 H.finish()

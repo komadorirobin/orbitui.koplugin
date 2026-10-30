@@ -2,6 +2,38 @@
 
 ## Automated
 
+### Local Beta 17 quick-control device regressions (October 30; not published)
+
+The user's screenshots/tests expose gaps in the original 22-case boundary suite:
+Home's full-width parent menu zone preempts the child status target, and a real
+SimpleUI NativeSheets replacement silently blocks the exact-dialog guard. The
+expanded `test_quick_controls.lua` has 28 cases. It loads complete `sui_core`
+and `sui_native_sheets`, exercises real owner-level priority dispatch and keeps
+a positive ordinary-dialog conversion control. The new cases fail on Beta 17
+before the fixes and pass with them. Optional native dispatch is enabled with
+`ORBITUI_NATIVE_INPUT_DIR` pointing to inspected `inputcontainer.lua` and
+`widgetcontainer.lua`, alongside `ORBITUI_NATIVE_BUTTON_DIALOG` as below.
+Minimum `v2025.08` and current `801277394b7fdb77da5580459a9827e9d95e95a4`
+input/dialog supplements pass under Lua and LuaJIT; fonts/hardware/rendering
+remain boundary stubs, not physical acceptance.
+
+Added checks: cold-disabled cells activate/deactivate in place without rebuilding
+books/providers; current mounted cell/painted geometry only; configured corners,
+holds/swipes and previous host hooks win as before; hidden/retired/covered and
+touch-disabled cells do not open; already-installed priority closures see the
+new host hook. Native, unanchored Wi-Fi/battery/clock/light panels retain identity,
+tabs/refresh/Close/system Wi-Fi/night actions work, and retired callbacks remain
+inert. Other native dialogs keep their normal SimpleUI sheet conversion.
+
+Physical retest remains required: toggle while Home stays live, tap actual status
+fields versus blank topbar/chevron; custom screens/corners/holds; open the panel
+from settings and the added action (without an anchor), switch every tab, Refresh,
+Close/outside/Back, Android Wi-Fi return, reader return, rotation and sleep.
+The user's separate Bigme light failure also occurs in native KOReader with
+OrbitUI disabled; no hardware support or ADB/device change is included here.
+Local VERSION stays Beta 17. Never replace the published Beta 17 ZIP with this
+same-version development build. Gate/package details are recorded in MERGE_LOG.
+
 ### Beta 17 publication (October 30)
 
 Exact candidate/tag `ab2e0bd7` passes both full interpreters: 122 Python/four

@@ -5338,3 +5338,48 @@ channel-before/public, live-beta9/16, immutable release/tag snapshots and logs.
 Physical SV/EN fonts/touch/focus, light/warmth, Android system return, colour/
 night/underlay and reader/rotation/suspend/update acceptance remains open.
 The beta is published for that test; no stable/device-performance claim is made.
+
+## 2026-10-30 — Local quick-control device-regression fixes (no publication)
+
+User approves local correction of the two confirmed Beta 17 input/dialog faults,
+explicitly leaving push/publication for later. Start clean at `f97d9bd0` on
+`fix/quick-controls-input-20261030`. No upstream fetch/import, source-pin advance,
+version bump, tag, release or production OTA change is requested or performed.
+
+Device reports expose two interactions omitted by the original boundary tests:
+Home's parent-first priority menu zone handles the status tap before its child
+cell, and automatic NativeSheets conversion replaces the unanchored ButtonDialog
+by an action-sheet wrapper that the exact topmost-dialog guard correctly rejects.
+Tabs, Wi-Fi and even Close then silently stop. The expanded regression first
+fails with a consumed menu tap on Beta 17; with only that fix it fails again at
+the real NativeSheets replacement. Both failures pass after the separate fixes.
+
+Keep C02/C04/C06/C07/C10: a three-line optional `sui_core.beforeGesture` seam
+dispatches host chrome before native parent zones. The shared adapter searches
+only the currently mounted topbar, at bounded depth, for current painted opted-in
+Home/custom-screen cells. Configured FM corner gestures, holds/swipes, blank menu
+areas, touch-input disabling and native FM/other-host routing are retained.
+Dormant status wrappers read the flag live; toggling no longer invalidates or
+rebuilds books/providers. The shared dialogs set documented `sui_native=true`,
+retaining real native identity instead of relaxing lifecycle/navigation/modal
+guards. Ordinary dialogs still convert to sheets. No new UI strings, artwork,
+runtime path, polling/network/provider work, settings migration or hardware API.
+
+The Bigme b7/hibreak lighting report is separate: light fails with OrbitUI
+disabled and the user reports no working compatibility-test choice. Supplied
+test.log identifies `bigme/hibreak` on MT6877; Generic is selected and the Onyx
+test cannot find `android.onyx.hardware.DeviceController`. No guessed sysfs/API
+write, root/ADB permission change or hardware-support claim is part of this fix.
+
+Twenty-eight focused cases pass under both interpreters, including whole Core,
+Topbar/Slider and actual NativeSheets plus a positive ordinary-sheet conversion.
+Optional whole official minimum/current InputContainer/WidgetContainer and
+ButtonDialog supplements pass with Lua and LuaJIT. Native fonts, physical touch,
+Android/system return and device lifecycle still require retesting on Boox/Bigme.
+Both complete sequential `scripts/test.sh` interpreter gates pass: 122 Python
+tests/four unchanged optional source-pixel skips, 86 root Lua files, 487 Bookshelf
+suites/zero failures/three normal SQLite exclusions, all 13 SimpleUI files,
+module map 396 and syntax 1,082. All 43 translation catalogs pass. Focused and
+minimum/current native supplements are rerun on the final source; final source/
+sealed-package evidence follows. A development ZIP is not approval to replace
+the public Beta 17 asset or install on an unattended device.

@@ -2,6 +2,7 @@
 -- has loaded; package.preload userpatches still have priority in the resolver.
 local M = {}
 M.modules = {
+    ["infra/sui_core"] = true,
     ["infra/sui_config"] = true,
     ["lib/bookshelf_profiles"] = true,
     ["features/sui_quickactions"] = true,
@@ -45,7 +46,9 @@ local function settingsEntry(items, old_key)
 end
 
 function M.wrap(name, module)
-    if name == "infra/sui_cover_cache" then
+    if name == "infra/sui_core" then
+        require("adapters/orbitui_navbar").core(module)
+    elseif name == "infra/sui_cover_cache" then
         require("core/orbitui_host").performanceCache(module, "home")
     elseif name == "lib/bookshelf_scaled_cover_cache" then
         require("core/orbitui_host").performanceCache(module, "shelf")

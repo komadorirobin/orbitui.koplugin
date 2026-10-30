@@ -561,6 +561,9 @@ function M.applyGesturePriorityHandleEvent(target)
     target.handleEvent = function(self, event)
         if event.handler == "onGesture" then
             local ges = event.args and event.args[1]
+            -- Optional host-owned chrome targets must run before a full-width
+            -- menu zone can consume their tap. Unhandled input stays native.
+            if ges and M.beforeGesture and M.beforeGesture(self, ges) then return true end
             if ges and InputContainer.onGesture(self, ges) then
                 return true
             end
