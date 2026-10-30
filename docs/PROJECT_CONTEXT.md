@@ -22,6 +22,18 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-30
 
+- User explicitly requests push and publication so the new quick controls can
+  be tested on Boox/Bigme before further reader UI work. Beta 17 release branch
+  `release/quick-controls-beta17-20261030` starts clean at `b83c2175`, with public
+  main `44316d3e`. Include the approved quick controls, category cards and the
+  already-reviewed October 30 imports; do not fetch/import another upstream.
+  VERSION advances to `0.1.0-beta.17`; notes use existing docs/OTA.md at the API-1
+  path ceiling. Status taps remain opt-in; existing bars/profiles/cover safety,
+  external sync/patch owners, bootstrap, assets and source pins stay intact.
+  Publication waits for versioned full/sealed/native/history/secret/CI gates and
+  draft asset verification, then anonymous public bytes/channel/OTA checks.
+  Physical device acceptance remains open; this is a prerelease, not stable.
+
 - User requests the next high-priority Bookshelf-OS idea after the category-card
   start. The recovered review identifies small light/Wi-Fi/battery/time menus.
   Local work on `feature/quick-controls-20261030` starts clean at `44316d3e`.

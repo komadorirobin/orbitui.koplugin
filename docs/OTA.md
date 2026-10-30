@@ -7,6 +7,73 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 0.1.0-beta.17
+
+Beta 17 publishes the approved settings cards/quick controls and already-reviewed
+October 30 upstream changes. There is no additional upstream import in this
+release: Bookshelf master `ee84a8fe` (issue forms only after 6.0.4) and SimpleUI
+main `257c26d6` (3.0.1 follow-ups) are the integrated pins.
+
+- **Clear settings start:** five large icon cards with short descriptions,
+  including **Home (SimpleUI)**. Existing search, scopes and advanced/native
+  controls remain. **List view** is available; small screens page or fall back
+  to the complete list rather than hide categories.
+- **Shared quick controls:** open **OrbitUI settings > Navigation & interface >
+  Quick controls > Open quick controls**. Optionally enable **Tap status fields
+  for quick controls**, or add **Quick controls** through the existing bar/
+  quick-action editor. Saved bars and status layouts are not replaced.
+  Home's brightness/Wi-Fi/battery/clock fields open the relevant small menu;
+  Bookshelf's ordinary book-hero/micro status line opens the same controls.
+  Choose a tab inside the menu when a custom status template is used.
+- **Device-aware controls:** supported native brightness/colour-temperature
+  sliders plus night mode/advanced light settings; Android system Wi-Fi settings
+  or native non-Android connection prompts; battery state/statistics and date/
+  time/reading-calendar links when their existing plugins are enabled. Opening
+  status does not scan, connect, cold-initialize networking or start polling.
+  Refresh explicitly rereads values; Back/outside tap/Close dismiss the menu.
+  Job Stop/page dots, configured gestures/long presses and expanded-shelf return
+  keep priority. Stale/closed/rotated/sleeping callbacks cannot act on a new view.
+- **Reviewed upstream additions:** optional grid quick actions and up to six
+  book covers per row on Home, protected/restorable menu hiding, page-turn
+  statistics, expanded Tiny Critter options/panel/games/voices, guarded deferred
+  startup listing and scrollable long messages. Existing Critter screen choices
+  and native Android Bluetooth remain. Automatic patch disabling stays blocked.
+
+Svenska: Beta 17 ger inställningsstarten fem stora kategorikort med förklaringar,
+inklusive **Hem (SimpleUI)**. Sökningen, listvyn och befintliga undermenyer finns
+kvar. Öppna **OrbitUI-inställningar > Navigation och gränssnitt > Snabbkontroller >
+Öppna snabbkontroller**. Slå vid behov på **Tryck på statusfält för
+snabbkontroller**, eller lägg till **Snabbkontroller** i navigationsraden.
+Tryckfunktionen är av från början; sparade knappar och egna gester behålls.
+
+Menyerna ger ljusstyrka/färgtemperatur där enheten stöder det, nattläge,
+Wi-Fi-inställningar, batteristatus/statistik samt klocka och läskalender.
+På Boox/Bigme går Wi-Fi till Androids systeminställningar. På Hem kan du trycka
+på respektive statusfält; i Bookshelf trycker du på den vanliga statusraden och
+väljer kontroll i menyn. Helskärmens befintliga återgång och aktiva jobbknappar
+behålls. **Uppdatera status** läser om värdena; stäng med Tillbaka, Stäng eller
+tryck utanför. Alla nya egna texter och hjälpsidor finns på svenska och engelska.
+
+Även de granskade upstream-ändringarna från 30 oktober ingår: valfria rutnät
+för snabbåtgärder, upp till sex omslag per rad på Hem, menyfiltrering, statistik
+för bläddrade sidor, fler Tiny Critter-val och mindre arbete vid uppstart.
+Egna patchar stängs inte av automatiskt. Biblioteksprofiler, chip/position,
+Android safe mode/omslagsfixen, snabbstängning och BookOrbit/MAL-ägarskap behålls.
+
+Update through the preview channel and restart KOReader. Beta 16 and earlier
+supported betas can update directly; no bridge or settings reset is introduced.
+The stable bootstrap/API 1, all 2,000 installed paths, artwork, fonts and languages
+remain. New exact Lua sources are lazily embedded in the existing module
+registry to stay within older installers' limits, not shipped as extra files.
+Old public releases and tags remain immutable. Rollback changes code only;
+older code ignores the new quick-control preference/action, so remove or reselect
+that optional bar button after rollback if necessary. Keep an independent backup
+of KOReader's settings/data; never restore old reading progress to undo a UI build.
+
+This remains a prerelease. Physical Boox/Bigme font/touch/focus, light/warmth,
+Android system return, colour/night/underlay, reader/rotation/sleep and update
+acceptance remains open. Automated checks do not establish a device speed/RAM gain.
+
 ## OrbitUI 0.1.0-beta.16
 
 Beta 16 brings the reviewed local performance and size/storage work together.

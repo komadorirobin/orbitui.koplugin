@@ -5258,3 +5258,26 @@ not rebuild this same-version development ZIP. Do not replace the public Beta
 No physical reader or actual user data is changed; Boox/Bigme fonts, layout,
 touch/D-pad, hardware/system return, day/night underlay and lifecycle acceptance
 remain open. Headless results must not be described as measured device gains.
+
+## 2026-10-30 — Beta 17 publication request
+
+User explicitly requests “Då går vu vidare med push och publicering etc” after
+being told quick controls are local and need a test release for screenshots.
+Start clean at `b83c2175` on `release/quick-controls-beta17-20261030`; public main
+is `44316d3e98bb53f63c9545eb4b9f123fc763b274`, public Beta 16 remains unchanged.
+Publish the approved quick controls, category cards and already-reviewed October
+30 upstream imports. No new import/pin advance or further reader-UI feature.
+
+VERSION advances to `0.1.0-beta.17`; bilingual notes/activation/rollback/device
+gaps use existing `docs/OTA.md` and the release body, not a new installed path.
+README download/store links select the new explicit prerelease. Status-field
+taps default off; saved bars/layouts, profiles/chips, Android covers, fast reader
+return and external BookOrbit/MAL/patch ownership remain. Bootstrap/API 1,
+assets/fonts/languages and all 2,000 installed paths are retained. Core/adapters/
+components runtime is unchanged from the reviewed local implementation.
+
+Versioned test/package/source/history/artwork/secret audits, native older-
+installer/recovery checks, exact draft assets and main/tag CI precede publishing.
+Anonymous public-byte/channel/native OTA and immutable-old-release checks follow.
+Exact candidate/results are recorded after verification; no physical-device
+acceptance is implied. All existing public tag/asset bytes remain immutable.

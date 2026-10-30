@@ -88,7 +88,7 @@ by the code license. See [add-on instructions](docs/ADDONS.md).
 ## Installation
 
 **Requirements:** KOReader **v2025.08 or newer**; v2026.03 or newer is recommended
-by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 16 is a
+by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 17 is a
 prerelease, not a promise of compatibility with every device or user patch.
 
 1. **Back up first.** Keep a copy of your KOReader settings, user patches,
@@ -98,7 +98,7 @@ prerelease, not a promise of compatibility with every device or user patch.
    manager and restart KOReader.** Disable both if you have both. Do not delete
    their settings or plugin folders.
 3. Download **`orbitui.koplugin.zip`** from the
-   [Beta 16 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.16).
+   [Beta 17 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.17).
    Do **not** use **Code > Download ZIP** or GitHub's **Source code** archives.
 4. Fully exit KOReader. Extract the ZIP and copy its **`orbitui.koplugin`**
    folder into your KOReader **`plugins/`** directory.
@@ -138,7 +138,7 @@ OrbitUI. Their local catalogs may need refreshing.
 after the backup and predecessor-disable steps above, find
 `komadorirobin/orbitui.koplugin`. In its download options, choose
 **Other releases...**, uncheck **Filter pre-releases**, select
-**v0.1.0-beta.16**, then select **`orbitui.koplugin.zip`**. Restart KOReader
+**v0.1.0-beta.17**, then select **`orbitui.koplugin.zip`**. Restart KOReader
 after installation. Preview builds are not returned by GitHub's "latest stable release"
 endpoint, so the default latest-release lookup may report that none exists.
 Do not choose **Direct download from repo**, **Source code**, the checksum
@@ -147,7 +147,7 @@ file, or the add-on-only **ornaments-1** release.
 **[Storefront by ultimatejimmy](https://github.com/ultimatejimmy/storefront.koplugin):**
 use **26.10.20 or newer**, which includes the
 [embedded-plugin detection fix](https://github.com/ultimatejimmy/storefront.koplugin/releases/tag/26.10.20).
-Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.16** and
+Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.17** and
 **`orbitui.koplugin.zip`** from its versions/releases options if the cached
 catalog still shows an older beta. Disable the predecessor plugins first as
 described above. Older affected installers (including **26.10.17-beta2**) can
@@ -195,6 +195,18 @@ re-enabling your old plugins**. Never restore stale reading-progress files just
 to undo a UI change.
 
 ## Beta status and feedback
+
+**0.1.0-beta.17** adds large bilingual settings-category cards and shared
+light/Wi-Fi/battery/time quick controls. Open **OrbitUI settings > Navigation &
+interface > Quick controls**; status-field taps are opt-in and the same action
+can be added to a bar without replacing saved buttons. Supported light controls
+use native ranges; Android Wi-Fi opens system settings. The reviewed October 30
+upstream changes also add optional grid quick actions, six-column book rows,
+menu hiding, page-turn statistics and Tiny Critter options. Existing profiles,
+safe-mode covers, fast reader return and external integrations are retained.
+See [Beta 17 notes](docs/OTA.md#orbitui-010-beta17) for SV/EN controls, upgrade/
+rollback details and outstanding physical-device checks. No new upstream import
+is performed by this release, and no measured device-speed claim is made.
 
 **0.1.0-beta.16** adds demand-driven Reading dashboard data, optional Adaptive
 memory / Responsive profiles, local performance reports and a bilingual

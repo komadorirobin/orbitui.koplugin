@@ -29,7 +29,7 @@ change. Device acceptance is still pending.
   Author/series/genre/folder matches navigate to the corresponding library view.
   Results are capped at 400 with a notice; narrow the query if necessary.
 
-## Local quick controls (October 30; not yet released)
+## Quick controls (Beta 17)
 
 Open **OrbitUI settings > Navigation & interface > Quick controls**
 (**OrbitUI-inställningar > Navigation och gränssnitt > Snabbkontroller**).
@@ -99,7 +99,7 @@ public Beta 13 and its assets are unchanged.
 The approved redesign has five root categories and **Search settings / Sök
 inställning**. Earlier release tags/assets remain unchanged.
 
-Local October 29 follow-up (not yet published): the settings start presents the
+Included in Beta 17 from the October 29 follow-up: the settings start presents the
 same five categories as large icon cards with short Swedish/English descriptions.
 Home is still explicitly SimpleUI. Search settings remains a prominent action;
 List view opens the unchanged six-row root with a Back link to Category cards.
