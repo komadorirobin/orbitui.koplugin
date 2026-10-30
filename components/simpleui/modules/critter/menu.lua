@@ -17,7 +17,7 @@ local M = {}
 
 local MAX_NAME_CHARS = 20
 
-local function makeCritterItem(refresh)
+local function makeCritterItem(refresh, Settings)
     local function get()
         local entry = Assets.get(Settings.pick())
         return entry and entry.id
@@ -81,7 +81,7 @@ end
 -- Arrange row for the decorations of both sides, in one list: those of the left
 -- side, then those of the right, each as they stand on the screen. The arrange
 -- screen needs a menu context, which the native menu does not have.
-local function makeDecorItem(ctx_menu, refresh)
+local function makeDecorItem(ctx_menu, refresh, Settings)
     local arrange_ctx = setmetatable({ _ = _, refresh = refresh }, { __index = ctx_menu })
     local title = _("Decorations")
     return Arrange.makeSectionedItem{
@@ -113,7 +113,7 @@ local function makeDecorItem(ctx_menu, refresh)
     }
 end
 
-local function makeStyleItem(refresh)
+local function makeStyleItem(refresh, Settings)
     return Config.makeRadioSubmenuItem{
         text    = _("Bubble style"),
         options = {
@@ -126,7 +126,7 @@ local function makeStyleItem(refresh)
     }
 end
 
-local function makeSourceItem(refresh)
+local function makeSourceItem(refresh, Settings)
     return Config.makeRadioSubmenuItem{
         text    = _("Phrases"),
         options = {
@@ -140,7 +140,7 @@ local function makeSourceItem(refresh)
     }
 end
 
-local function makeCategoriesItem(refresh)
+local function makeCategoriesItem(refresh, Settings)
     return {
         text_func = function() return _("Topics") end,
         sub_item_table_func = function()
@@ -161,7 +161,7 @@ local function makeCategoriesItem(refresh)
     }
 end
 
-local function makeReactionsItem(refresh)
+local function makeReactionsItem(refresh, Settings)
     return {
         text           = _("React to events"),
         checked_func   = Settings.reactionsOn,
@@ -176,6 +176,8 @@ end
 -- Items of the menu. `rebuild`, when given, redraws the Home Screen; `ctx_menu`,
 -- when there is one, also redraws the window the menu is shown in.
 function M.getItems(ctx_menu, rebuild)
+    -- A module's menu keeps the scope of its saved pre-upgrade choices.
+    local scoped = Settings.forScreen(ctx_menu and ctx_menu.pfx)
     local function refresh()
         if rebuild then rebuild() end
         if ctx_menu and ctx_menu.refresh then ctx_menu.refresh() end
@@ -184,17 +186,17 @@ function M.getItems(ctx_menu, rebuild)
     Assets.relist()
     Assets.ensureUserDir()
     return {
-        makeCritterItem(refresh),
-        makeDecorItem(ctx_menu, refresh),
+        makeCritterItem(refresh, scoped),
+        makeDecorItem(ctx_menu, refresh, scoped),
         {
             text    = T(_("Add your own decorations in %1"), Assets.userDecorDir()),
             enabled = false,
         },
-        makeStyleItem(refresh),
+        makeStyleItem(refresh, scoped),
         makeNameItem(refresh),
-        makeSourceItem(refresh),
-        makeCategoriesItem(refresh),
-        makeReactionsItem(refresh),
+        makeSourceItem(refresh, scoped),
+        makeCategoriesItem(refresh, scoped),
+        makeReactionsItem(refresh, scoped),
     }
 end
 

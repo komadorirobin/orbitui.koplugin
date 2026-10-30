@@ -167,6 +167,14 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+October 30: covered boot listings may defer until safe idle/exposure. Idle warm
+callbacks require the same live owner, Home/FM, navigation generation and no
+reader/suspend/exit; folder work is one entry per tick, max 64, cancelled on
+chooser path/page/list changes. Dynamic menu snapshots never evaluate current
+values/providers and are cancelled/restored on last-owner release. Page-turn
+counts reuse the existing aggregate query, retaining error/retry signaling and
+distinct-page statistics. No new network or synchronization writer.
+
 October 28 approved local performance follow-up: dashboard data demand follows
 visible per-screen cards and the selected goal owner, retaining native Recent
 source candidates independently of hero/ongoing visibility. Other enabled modules
@@ -366,6 +374,13 @@ representative one's link or average unrelated ratings.
 Tests: `test_series_rating`, `test_upstream_series_boxes`.
 
 ## C07: Presentation and preferences
+
+October 30: grid quick actions/six-column covers/new statistics and panel Critter
+are opt-in. Existing rows/layouts and native Android Bluetooth remain usable.
+Global Critter controls are defaults; saved screen-specific picks, style, source,
+topics, reactions and decorations retain their original scope and editable keys.
+Keep v14 copy-only/retry/deferred-marker guards and prior migrations in main;
+the upstream migration-extraction refactor is intentionally deferred.
 
 The October 26 upstream free-width/stack editor remains opt-in for existing
 OrbitUI layouts. Unset fixed-grid stacking stays off; legacy percentage/stacked
@@ -983,6 +998,13 @@ Tests: `tests/test_backup.lua`, `test_runtime.lua`, `scripts/check-package.lua`.
 Recovery procedure: `MIGRATION.md`.
 
 ## C09: Reviewed imports and explicit releases
+
+October 30 merge-only keeps VERSION/public Beta 16 immutable. Thirteen new Lua
+modules are exact source strings in metadata on the existing generated registry,
+not extra installed paths. Canonical loader compilation is lazy, real-file and
+preload overrides retain priority, aliases share identity, parse errors propagate.
+Verify source parity/syntax, sealed all-root tests, unchanged old inventory and
+native older-installer upgrade/rollback. Stable bootstrap/API-1 limits stay fixed.
 
 October 28 merge-only maintenance preserves VERSION Beta 14 and all public
 tag/asset bytes. API 1 still allows at most 2,000 installed files including the

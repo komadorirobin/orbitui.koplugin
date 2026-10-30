@@ -96,7 +96,8 @@ H.test("finished file gate composes with external wrappers and uninstalls safely
     local deps = {
         ["ui/widget/filechooser"] = fc,
         ["ui/widget/booklist"] = { getBookStatus = function() return "complete" end },
-        ["infra/sui_store"] = {}, ["infra/sui_i18n"] = { translate = function(s) return s end },
+        ["infra/sui_store"] = { memoize = function(fn) return fn end },
+        ["infra/sui_i18n"] = { translate = function(s) return s end },
         ["infra/sui_config"] = { readChoice = function() return mode end },
     }
     local Finished = run(read(root .. "features/library/sui_finished_books.lua"), {

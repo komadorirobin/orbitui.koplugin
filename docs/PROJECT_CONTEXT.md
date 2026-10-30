@@ -20,7 +20,25 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-10-29
+## Snapshot: 2026-10-30
+
+- User requests an upstream merge, including the standing audited push to main,
+  NOT a new release. Maintenance branch starts at local `7083c8a1`, retaining the
+  category-card work below. Reviewed imports: Bookshelf master
+  `ee84a8fe1621171c00df91c41dee76b9ed07028c` (six issue-form commits, no runtime
+  change); SimpleUI main `257c26d6685ced4fc2e895f98287b5f16f1d4f5e` (14 commits).
+  New optional menu hiding, grid quick actions, six-column cover rows, page-turn
+  statistics, Critter settings/panel/games/voices and guarded lazy boot listing.
+  Keep Android Device Bluetooth API, exact cabinet/profile return even with a
+  hidden tab, per-screen Critter choices and read-only patch compatibility.
+  The migration-extraction refactor is deliberately deferred: the existing
+  retry/copy-only/deferral implementation remains, with a guarded v14 copy.
+  Thirteen exact Lua sources are lazily embedded in the existing generated
+  registry, retaining canonical/legacy/preload identity and all API-1 installed
+  paths. No bootstrap/limit change or asset/language removal. New settings labels
+  have Swedish/English support; all catalogs remain. VERSION/public assets stay
+  Beta 16. Full/sealed/native verification is recorded in MERGE_LOG below;
+  physical Boox/Bigme UI, memory/latency and lifecycle acceptance remains open.
 
 - User approves only the category-card settings start, following the Bookshelf-OS
   review. Local work on `feature/settings-start-cards-20261029` starts clean at
@@ -31,7 +49,9 @@ and correct this file in the same change.
   list fallback. A four-line read-only grid-gap accessor is the only component
   edit; no private upvalue patch, foreign plugin/code/artwork/font import, new
   installed path or settings migration. VERSION stays Beta 16 for local testing;
-  never replace its public ZIP. No push or publication is authorized. Candidate
+  never replace its public ZIP. That implementation request alone did not
+  authorize push/publication; the October 30 merge now includes the local work.
+  Candidate
   `8133c7ab` passes full Lua/LuaJIT, 43 catalogs, all 84 root suites on sealed
   bytes, exact source/path/artwork/secret audits and native actual-Beta-15 OTA/
   restart/rollback checks. Verification-only follow-up does not rebuild that ZIP.

@@ -18,3 +18,17 @@
 # Losslessly embedded by scripts/embed-critter.py into the existing assets.lua;
 # keep upstream originals in Git without exceeding old API-1 OTA file limits.
 /components/simpleui/modules/critter/assets/hazel/*.png export-ignore
+# Exact lazy Lua sources in the existing generated module registry (API 1).
+/components/simpleui/features/sui_menu_hide.lua export-ignore
+/components/simpleui/features/sui_patch_compat.lua export-ignore
+/components/simpleui/infra/sui_migrations.lua export-ignore
+/components/simpleui/modules/critter/book.lua export-ignore
+/components/simpleui/modules/critter/game_lines.lua export-ignore
+/components/simpleui/modules/critter/games.lua export-ignore
+/components/simpleui/modules/critter/menu.lua export-ignore
+/components/simpleui/modules/critter/panel_row.lua export-ignore
+/components/simpleui/modules/critter/settings.lua export-ignore
+/components/simpleui/modules/critter/state.lua export-ignore
+/components/simpleui/modules/critter/voice_lines.lua export-ignore
+/components/simpleui/modules/critter/voice_phrases.lua export-ignore
+/components/simpleui/screens/sui_bluetooth.lua export-ignore

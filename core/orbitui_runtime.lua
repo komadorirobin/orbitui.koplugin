@@ -7,6 +7,7 @@ function M.install(root, module_map)
         return
     end
     module_map = module_map or require("core/orbitui_module_map")
+    local embedded = (getmetatable(module_map) or {}).orbitui_embedded or {}
     local metadata_only = {
         ["lib/bookshelf_i18n"] = true,
         ["infra/sui_i18n"] = true,
@@ -51,11 +52,28 @@ function M.install(root, module_map)
             -- OrbitUI's guard reports conflicts without mutating plugin/patch choices.
             return function() return function() return false end end
         end
+        if name == "features/sui_patch_compat" then
+            -- Keep both canonical and legacy direct callers read-only too.
+            return function() return { check = function() return false end,
+                detect = function() return {}, {} end, apply = function() return false end } end
+        end
         if name == "screens/sui_onboarding" then
             -- OrbitUI owns onboarding, including FileManager-only first launches.
             return function() return { show = function() end } end
         end
-        local fn, err = loadfile(root .. "/" .. path)
+        local fn, err
+        local source = embedded[name]
+        if source then
+            local file = io.open(root .. "/" .. path, "rb")
+            if file then
+                file:close()
+                fn, err = loadfile(root .. "/" .. path)
+            else
+                fn, err = (loadstring or load)(source, "@" .. root .. "/" .. path)
+            end
+        else
+            fn, err = loadfile(root .. "/" .. path)
+        end
         if not fn then error(err) end
         if name == "lib/bookshelf_settings_store" then
             return function()

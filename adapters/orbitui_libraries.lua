@@ -246,6 +246,9 @@ local function prepareReaderMenu(menu)
     for _i, tab in ipairs(menu.tab_item_table or {}) do
         if tab.id == "filemanager" then tab.callback = callback end
     end
+    local hide = package.loaded["features/sui_menu_hide"]
+    local hidden = hide and hide.findHiddenTab(menu.tab_item_table or {}, "filemanager")
+    if hidden then hidden.callback = callback end
 end
 
 function M.unwireReaderMenu(reader, plugin)
@@ -256,6 +259,9 @@ function M.unwireReaderMenu(reader, plugin)
     for _i, tab in ipairs(menu.tab_item_table or {}) do
         if tab.id == "filemanager" and tab.callback == state.callback then tab.callback = state.original end
     end
+    local hide = package.loaded["features/sui_menu_hide"]
+    local hidden = hide and hide.findHiddenTab(menu.tab_item_table or {}, "filemanager")
+    if hidden and hidden.callback == state.callback then hidden.callback = state.original end
     state.callback = nil
     menu._orbitui_reader_menu = nil
 end

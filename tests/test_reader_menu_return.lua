@@ -9,6 +9,7 @@ local UI = {
     nextTick = function(_, fn) queue[#queue + 1] = fn end,
     scheduleIn = function() end, forceRePaint = function() end,
     show = function() end, close = function() end, setDirty = function() end,
+    unschedule = function() end,
 }
 local RUI = {}
 local Store = { get = function(_, key) return values[key] end,
@@ -161,6 +162,36 @@ H.test("the real shared menu hook rewires the native browser item after the firs
     H.eq(calls.target, nil); H.eq(shelf.chip, before.chip); H.eq(shelf.page, before.page)
     H.eq(shelf._cursor, before._cursor); H.eq(shelf._drilldown_path[1], before._drilldown_path[1])
     H.eq(reader.tearing_down, nil)
+end)
+H.test("a hidden cabinet tab retains fast profile return and owner-safe teardown", function()
+    local reader, menu, plugin = fixture()
+    menu:setUpdateItemTable()
+    menu.tab_item_table[2] = { id = "tools", { id = "orbitui_settings", text = "OrbitUI" } }
+    local path = root .. "/components/simpleui/features/sui_menu_hide.lua"
+    local f = io.open(path)
+    local source
+    if f then source = f:read("*a"); f:close()
+    else source = getmetatable(dofile(root .. "/core/orbitui_module_map.lua")).orbitui_embedded["features/sui_menu_hide"] end
+    local env = setmetatable({ require = function(n)
+        if n == "infra/sui_i18n" then return { translate = function(s) return s end, ngettext = function(s) return s end } end
+        if n == "features/sui_style" then return { SLOTS = {} } end
+        return require(n)
+    end }, { __index = _G })
+    local hide
+    if setfenv then hide = setfenv(assert(loadstring(source)), env)()
+    else hide = assert(load(source, "menu hide", "t", env))() end
+    package.loaded["features/sui_menu_hide"] = hide
+    hide.install(plugin)
+    values.simpleui_menu_hidden_reader = { filemanager = true }
+    Hooks.refresh(menu, "reader")
+    H.eq(#menu.tab_item_table, 1); H.eq(menu.tab_item_table[1].id, "tools")
+    local hidden = assert(hide.findHiddenTab(menu.tab_item_table, "filemanager"))
+    H.eq(hidden.callback, menu.menu_items.filemanager.callback)
+    hidden.callback(); H.eq(calls.fast, 1); H.eq(calls.profile, "section_7")
+    Libraries.unwireReaderMenu(reader, plugin)
+    H.eq(hidden.callback, menu.menu_items.filemanager.callback)
+    hide.uninstall(plugin); H.eq(#menu.tab_item_table, 2)
+    package.loaded["features/sui_menu_hide"] = nil
 end)
 H.test("cached openings and fresh menu rebuilds keep one owner and preserve the icon", function()
     local reader, menu, plugin = fixture()

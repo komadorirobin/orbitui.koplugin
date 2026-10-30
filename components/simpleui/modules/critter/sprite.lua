@@ -14,7 +14,7 @@
 -- transparent rows at the bottom of an image are not part of the widget.
 
 local Blitbuffer  = require("ffi/blitbuffer")
-local ffi         = require("ffi")
+local has_ffi, ffi = pcall(require, "ffi")
 local Device      = require("device")
 local Geom        = require("ui/geometry")
 local RenderImage = require("ui/renderimage")
@@ -89,6 +89,14 @@ local function transparentFoot(bb)
         return 0
     end
     local w, h = bb:getWidth(), bb:getHeight()
+    if not has_ffi or not bb.data then
+        for py = h - 1, 0, -1 do
+            for px = 0, w - 1 do
+                if bb:getPixel(px, py):getColorRGB32().alpha > 0 then return h - 1 - py end
+            end
+        end
+        return h
+    end
     local data, stride = ffi.cast("uint8_t *", bb.data), bb.stride
     for py = h - 1, 0, -1 do
         local row = data + py * stride + alpha_at

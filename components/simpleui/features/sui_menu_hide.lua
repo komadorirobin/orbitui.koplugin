@@ -20,7 +20,9 @@ local MenuHooks   = require("infra/sui_menu_hooks")
 
 local M = {}
 
-M.PROTECTED = { _sui_qs_panel = true }
+M.PROTECTED = { _sui_qs_panel = true, orbitui_settings = true }
+local _owners = setmetatable({}, { __mode = "k" })
+local _active = false
 
 local SETTING_PREFIX = "simpleui_menu_hidden_"
 
@@ -103,8 +105,9 @@ end
 local function entryText(node)
     if type(node.text) == "string" then return node.text, false end
     if type(node.text_func) == "function" then
-        local ok, text = pcall(node.text_func)
-        if ok and type(text) == "string" then return text, true end
+        -- Do not evaluate/persist current values, book names or provider
+        -- callbacks just to snapshot a menu. Its stable id stays selectable.
+        return node.id, true
     end
 end
 
@@ -219,7 +222,7 @@ end
 local function flushTree(target)
     local tree = _pending[target]
     _pending[target] = nil
-    if not tree then return end
+    if not tree or not _active then return end
     if _written[target] == nil then
         local stored = readTreeFile(target)
         _written[target] = stored and signature(stored) or false
@@ -284,6 +287,7 @@ local SEEN = "_sui_menu_hide_seen"
 local LOG  = "_sui_menu_hide_log"
 
 local function prepare(menu, target)
+    if not _active then return end
     local tabs = menu.tab_item_table
     if type(tabs) ~= "table" then return end
     -- The table is cached between openings; capture it once per build, before
@@ -346,7 +350,9 @@ local function keepLastTab(menu, target)
     if new_index ~= index then saveTabIndex(menu, target, new_index) end
 end
 
-function M.install()
+function M.install(owner)
+    _owners[owner or M] = true
+    _active = true
     MenuHooks.register{
         id      = "menu_hide",
         order   = MenuHooks.ORDER.MENU_HIDE,
@@ -362,6 +368,23 @@ end
 -- ---------------------------------------------------------------------------
 -- Editor (Style > Hide Menu Items)
 -- ---------------------------------------------------------------------------
+
+-- Restore live menus and cancel queued snapshots on last-owner teardown.
+function M.uninstall(owner)
+    _owners[owner or M] = nil
+    if next(_owners) then return end
+    _active = false
+    require("ui/uimanager"):unschedule(flushTree)
+    _pending, _trees, _written = {}, {}, {}
+    for _, target in pairs(MenuHooks.TARGET) do
+        local menu = liveMenu(target)
+        local tabs = menu and menu.tab_item_table
+        if tabs then
+            M.restore(tabs[LOG] or {})
+            tabs[SEEN], tabs[LOG], tabs[LAYOUT] = nil, nil, nil
+        end
+    end
+end
 
 local function showProtectedNotice()
     local InfoMessage = require("ui/widget/infomessage")

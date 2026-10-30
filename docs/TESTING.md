@@ -2,6 +2,26 @@
 
 ## Automated
 
+### October 30 reviewed merge (not a release)
+
+`test_upstream_20261030` covers thirteen embedded source identities/Lua syntax,
+copy-only scoped Critter defaults, native Android/absent Kindle Bluetooth,
+protected/restorable menu pruning and read-only snapshots/last-owner teardown,
+pure games, bounded hidden-Recent book facts, opt-in grid capacity, stale boot
+warm callbacks/one-folder ticks, plural headers, scrolling long messages and
+page-turn aggregate/error semantics. Extended runtime tests exercise sealed
+compilation, legacy/canonical identity, preload priority and both read-only
+compatibility entry modules. The actual shared reader-menu suite covers a
+hidden cabinet descriptor, exact profile return and owned unbinding too.
+All prior category-card/Home/reader/Android cover/series/ornament tests remain.
+
+Physical checks still required: hide/show/restore menu items with safe settings
+access; cabinet/Book quick-panel exit to exact chip/page with both hidden/visible
+tabs; touch/D-pad/rotation/suspend; grid scales and six-cover rows; old per-screen
+Critter choices, panel on/off, games, conversation and close/reopen; native colour/
+night frames; startup warm cancellation and Android covers. No headless test is
+a measured Bigme/Boox speed, RAM, e-ink or document-engine acceptance result.
+
 ### Local category-card settings start (October 29)
 
 `test_settings_start.lua` loads the complete actual LibraryModal and OrbitUI

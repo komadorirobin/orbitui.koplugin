@@ -110,8 +110,11 @@ end
 
 local function backend()
     if _backend ~= nil then return _backend end
-    if isPlatform("isKindle") then
-        _backend = readKindle() ~= nil and "kindle"
+    -- Preserve the native Device API, notably on Android/Boox/Bigme.
+    if isPlatform("hasBluetoothToggle") and type(Device.isBluetoothOn) == "function" then
+        _backend = "device"
+    elseif isPlatform("isKindle") then
+        _backend = readKindle() ~= nil and "kindle" or false
     elseif isPlatform("isKobo") then
         _kobo_dest = koboDestination()
         _backend = (_kobo_dest or koboProvider()) and "kobo" or false
@@ -135,7 +138,10 @@ function M.isOn()
     local now = os.time()
     if _state ~= nil and now - _state_time < STATE_TTL then return _state end
     local v
-    if b == "kindle" then
+    if b == "device" then
+        local ok, state = pcall(Device.isBluetoothOn, Device)
+        v = ok and state == true
+    elseif b == "kindle" then
         v = readKindle()
     elseif b == "kobo" then
         v = readKobo()

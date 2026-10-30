@@ -191,7 +191,6 @@ local OverlapGroup    = require("ui/widget/overlapgroup")
 local RightContainer  = require("ui/widget/container/rightcontainer")
 local Size            = require("ui/size")
 local TextBoxWidget   = require("ui/widget/textboxwidget")
-local ScrollTextWidget = require("ui/widget/scrolltextwidget")
 local TextWidget      = require("ui/widget/textwidget")
 local UI              = require("infra/sui_core")
 local VerticalGroup   = require("ui/widget/verticalgroup")
@@ -302,7 +301,7 @@ local function buildMessage(ctx, text, has_title, width, dialog)
     widget:free()
     args.height = max_h
     args.dialog = dialog
-    return ScrollTextWidget:new(args)
+    return require("ui/widget/scrolltextwidget"):new(args)
 end
 
 -- Message line: the text, and `trailing` (optional) at its far end.

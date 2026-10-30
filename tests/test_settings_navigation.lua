@@ -243,7 +243,9 @@ H.test("the complete SimpleUI settings window applies hosted titles before const
     local deps = {
         ["ui/uimanager"] = UI, ["infra/sui_core"] = {},
         ["infra/sui_i18n"] = { translate = translate },
-        ["engines/sui_window"] = { new = function(_, opts)
+        ["engines/sui_window"] = { paramsTitle = function(default)
+            return function(ctx) local cur = ctx.current(); return cur and cur.params and cur.params.title or default end
+        end, new = function(_, opts)
             constructed = constructed + 1
             if expected then H.eq(opts.screen_titles.__root__, expected) end
             opts._nav_stack = { { id = "__root__" } }

@@ -108,6 +108,29 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+October 30: Bookshelf `ee84a8fe` changes issue forms only. SimpleUI `257c26d6`
+adds menu hiding, grid actions, page-turn stats, Critter and lazy-boot work.
+Keep OrbitUI settings protected; menu snapshots never evaluate dynamic value/
+provider callbacks. Restore pruned menus/cancel snapshots on last-owner teardown.
+The cabinet callback must also update the hidden copied descriptor, preserving
+fast return and opt-out. Startup warm work is owner/reader/suspend/generation
+guarded, one visible folder per tick (max 64), cancelled on path/page changes.
+Keep native Android Bluetooth before new platform fallbacks. Preserve per-screen
+Critter picks/topics/reactions/decor with shared defaults, copy-only v14 and
+bounded hidden-Recent-aware book facts. Defer upstream's migration extraction
+rather than lose the old retry/rollback/first-run guards. Both compatibility
+entry modules are read-only under the host; never rename patches or change flags.
+
+API-1 representation: the thirteen new Lua modules stay complete in Git but are
+export-ignored as installed paths. `scripts/module-map.lua` puts exact source
+strings in metatable metadata on the existing path registry; its `pairs` API is
+unchanged. The canonical searcher lazily compiles only the requested module,
+after package.preload; real file overrides win and syntax errors cannot silently
+fall back to embedded code. Legacy aliases still require the canonical instance.
+Sealed checks verify all thirteen source bytes/syntax/identities and old path-set
+equality. No source extraction, eager module execution, new bootstrap, producer
+limit increase, dropped old asset or language is permitted. Keep these gates.
+
 October 28 compatibility seams: Bookshelf 6.0.4 colour-safe count borders go in
 the existing shared renderText path too (including external metadata badges).
 Sleep-screen eager capture retains our owner-safe wrapper teardown. Android

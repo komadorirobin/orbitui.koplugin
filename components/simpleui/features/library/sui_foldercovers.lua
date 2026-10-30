@@ -479,18 +479,24 @@ function M.resolveStyle(fc, dir_path, entry) return _resolveStyle(fc, dir_path, 
 
 -- Lists the folders behind the folder cells of the chooser's current page, so
 -- that their covers are later planned from cached listings.
-function M.warmFolderListings(fc)
+function M.warmFolderListings(fc, valid)
     local items, perpage = fc.item_table, fc.perpage
-    if not (M.isEnabled() and items and perpage) then return end
+    if not (M.isEnabled() and type(items) == "table" and type(perpage) == "number" and perpage >= 1) then return end
     local first = ((fc.page or 1) - 1) * perpage + 1
-    for i = first, math.min(first + perpage - 1, #items) do
+    local path, page = fc.path, fc.page
+    local last = math.min(first + perpage - 1, #items, first + 63)
+    local function step(i)
+        if i > last or (valid and not valid()) or fc.item_table ~= items
+                or fc.path ~= path or fc.page ~= page or fc.perpage ~= perpage then return end
         local entry = items[i]
         if entry.path and _isRealFolder(entry)
                 and not (entry.is_file or entry.file or entry.is_go_up) then
             _resolveStyle(fc, entry.path, entry)
             CoverFinder.getDirSummary(fc, entry.path)
         end
+        require("ui/uimanager"):nextTick(function() step(i + 1) end)
     end
+    step(first)
 end
 
 -- Collect up to _COLLECT_MAX books from dir_path for the cover picker dialog.

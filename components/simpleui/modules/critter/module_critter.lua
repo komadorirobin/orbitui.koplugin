@@ -138,8 +138,8 @@ local TEXT_ELEMS = { "message", "detail" }
 -- The main line is bold until the user picks another variant.
 Config.declareTextVariants("critter", { message = "bold" })
 -- The pixel bubble speaks in the pixel font until another one is picked.
-local function pixelFamily()
-    return CritterSettings.bubbleStyle() == "pixel" and SUIFonts.PIXEL_FAMILY or nil
+local function pixelFamily(pfx)
+    return CritterSettings.forScreen(pfx).bubbleStyle() == "pixel" and SUIFonts.PIXEL_FAMILY or nil
 end
 Config.declareTextFamilies("critter", { message = pixelFamily, detail = pixelFamily })
 
@@ -147,18 +147,18 @@ Config.declareTextFamilies("critter", { message = pixelFamily, detail = pixelFam
 -- Settings
 -- ---------------------------------------------------------------------------
 
-local function enabledCategories()
+local function enabledCategories(settings)
     local set = {}
     for _i, cat in ipairs(Phrases.CATEGORIES) do
-        set[cat.id] = CritterSettings.categoryOn(cat.id)
+        set[cat.id] = settings.categoryOn(cat.id)
     end
     return set
 end
 
 -- Options for Phrases.pick, and a signature that changes with them.
-local function phraseOptions()
-    local source  = CritterSettings.source()
-    local enabled = enabledCategories()
+local function phraseOptions(settings)
+    local source  = settings.source()
+    local enabled = enabledCategories(settings)
     local parts = { source }
     local custom
     if source ~= "builtin" then
@@ -192,11 +192,11 @@ end
 -- Lets the critter notice the day and, with `with_device` and reactions on, the
 -- state of the device: its battery and charger, which may be read from the hardware, so this
 -- is left for after the first paint.
-local function observeReactions(with_device)
+local function observeReactions(settings, with_device)
     -- The day is noted even when reactions are off, so that turning them on
     -- does not read the days off as an absence.
     Reactions.observe(os.date("%Y-%m-%d"))
-    if not (with_device and CritterSettings.reactionsOn()) then return end
+    if not (with_device and settings.reactionsOn()) then return end
     local ok, capacity, charging = pcall(function()
         local powerd = Device:getPowerDevice()
         return powerd:getCapacity(), powerd:isCharging()
@@ -226,8 +226,9 @@ local function trackStreakRecord(streak, longest)
 end
 
 -- Id of the critter chosen.
-local function critterId()
-    local critter = Assets.get(CritterSettings.pick())
+local function critterId(settings)
+    local settings = CritterSettings.forScreen(pfx)
+    local critter = Assets.get(settings.pick())
     return critter and critter.id
 end
 
@@ -256,7 +257,7 @@ local function collectFacts(ctx)
         daily_goal_secs  = Goals.get("daily"),
         user_name        = CritterSettings.userName(),
         book             = Book.current(os.time()),
-        critter_id       = critterId(),
+        critter_id       = critterId(CritterSettings.forScreen(ctx.pfx)),
     }
     -- Challenges stand on fresh statistics: their base and progress come from them.
     if not ctx.stats_stale then
@@ -294,7 +295,7 @@ end
 -- { key, signature, phrase, at, cold, sticky } of the phrase every critter shows,
 -- whatever the screen; a sticky phrase (a reaction or a reply of the conversation)
 -- stays until REROLL_SECS, whatever the facts do
-local _shown
+local _shown_by_screen = {}
 
 -- Latest critter built for each screen -> { pfx, follow }, where `follow` makes it
 -- show the phrase in `_shown`. A critter dropped without being freed gives way to
@@ -302,9 +303,9 @@ local _shown
 local _live = setmetatable({}, { __mode = "k" })
 
 -- Makes every critter but `except` show the phrase in `_shown`.
-local function broadcast(except)
+local function broadcast(except, pfx)
     for root, entry in pairs(_live) do
-        if root ~= except then entry.follow() end
+        if root ~= except and entry.pfx == pfx then entry.follow() end
     end
 end
 
@@ -321,17 +322,19 @@ end
 -- Phrase for `facts`: the last one while it still fits, else a new one (nil
 -- when nothing fits). `force` always picks a new one. A phrase picked before
 -- the statistics arrived (`cold`) is kept, rewritten, when it still fits them.
-local function choosePhrase(facts, opts, signature, force)
+local function choosePhrase(pfx, settings, facts, opts, signature, force)
+    local _shown = _shown_by_screen[pfx]
     local key, now = factsKey(facts, signature), os.time()
     -- A sticky phrase on show keeps its place; a waiting reaction takes the next turn.
     local holding = _shown and _shown.sticky and now - _shown.at < REROLL_SECS
-    if not force and not holding and CritterSettings.reactionsOn() then
+    if not force and not holding and settings.reactionsOn() then
         local reaction = Reactions.peek()
         local line = reaction and ReactionLines.pick(
-            reaction.kind, reaction.data, Mood.tier(Mood.read().score), critterId())
+            reaction.kind, reaction.data, Mood.tier(Mood.read().score), critterId(settings))
         if line then
             Reactions.take()
             _shown = { key = key, signature = signature, phrase = line, at = now, sticky = true }
+            _shown_by_screen[pfx] = _shown
             return line
         end
     end
@@ -357,6 +360,7 @@ local function choosePhrase(facts, opts, signature, force)
         key = key, signature = signature, phrase = phrase, at = now,
         cold = facts.streak == nil,
     }
+    _shown_by_screen[pfx] = _shown
     return phrase
 end
 
@@ -387,6 +391,8 @@ end
 local Root = Stage:extend{}
 
 function Root:free()
+    if self._sui_critter_freed then return end
+    self._sui_critter_freed = true
     _live[self] = nil
     Stage.free(self)
 end
@@ -409,10 +415,10 @@ end
 
 -- The chosen decorations that still exist, the nearest to the centre first and
 -- alternating between the sides: { side = "left" | "right", entry = decoration }.
-local function decorOrder()
+local function decorOrder(settings)
     local by_id = {}
     for _i, entry in ipairs(Assets.decorList()) do by_id[entry.id] = entry end
-    local ids = { left = CritterSettings.decorIds("left"), right = CritterSettings.decorIds("right") }
+    local ids = { left = settings.decorIds("left"), right = settings.decorIds("right") }
 
     local order = {}
     for rank = 1, CritterSettings.DECOR_PER_SIDE do
@@ -427,10 +433,10 @@ end
 -- cells of each side, the nearest to the centre first, and the width the two
 -- sides take. Every cell is followed, towards the centre, by `gap` and the one
 -- nearest to the centre by `centre_gap[side]`.
-local function decorCells(height, pixel, budget, gap, centre_gap)
+local function decorCells(settings, height, pixel, budget, gap, centre_gap)
     local cells, used = { left = {}, right = {} }, { left = 0, right = 0 }
     local total, closed = 0, {}
-    for _i, slot in ipairs(decorOrder()) do
+    for _i, slot in ipairs(decorOrder(settings)) do
         if not closed[slot.side] then
             local side_cells = cells[slot.side]
             local spacing = #side_cells == 0 and centre_gap[slot.side] or gap
@@ -487,8 +493,9 @@ function M.build(w, ctx)
     local bubble_gap = math.floor(Screen:scaleBySize(BUBBLE_GAP_DP) * scale)
     local side   = Config.getAlignment(pfx .. KEY_SIDE, SIDES, "left")
     local align  = Config.getAlignment(pfx .. KEY_ALIGN, ALIGNS, DEFAULT_ALIGN)
-    local critter = Assets.get(CritterSettings.pick())
-    local bubble_style = CritterSettings.bubbleStyle()
+    local settings = CritterSettings.forScreen(pfx)
+    local critter = Assets.get(settings.pick())
+    local bubble_style = settings.bubbleStyle()
 
     local styles = Config.resolveTextStyles(ctx, M.id, TEXT_ELEMS)
     local msg_fs = math.max(8, math.floor(SUIStyle.FS_BODY   * scale * styles.message.scale))
@@ -496,11 +503,11 @@ function M.build(w, ctx)
     local msg_face, msg_bold = SUIStyle.getTextFace(styles.message, msg_fs)
     local det_face, det_bold = SUIStyle.getTextFace(styles.detail,  det_fs)
 
-    local opts, signature = phraseOptions()
+    local opts, signature = phraseOptions(settings)
     local facts  = collectFacts(ctx)
     if not ctx.stats_stale then creditChallenge(facts) end
-    observeReactions(false)
-    local phrase = choosePhrase(facts, opts, signature, false)
+    observeReactions(settings, false)
+    local phrase = choosePhrase(pfx, settings, facts, opts, signature, false)
 
     -- Sprite of `mood` inside the box of `max_w`, nil when there is none.
     local function sprite(mood, max_w)
@@ -529,7 +536,7 @@ function M.build(w, ctx)
         left  = (critter_right or not neutral) and bubble_gap or gap,
         right = not critter_right and bubble_gap or gap,
     }
-    local cells, used = decorCells(height, pixel, avail - min_w, gap, centre_gap)
+    local cells, used = decorCells(settings, height, pixel, avail - min_w, gap, centre_gap)
     local left_decor  = #cells.left  > 0 and decorRow(cells.left,  gap, centre_gap.left,  true)  or nil
     local right_decor = #cells.right > 0 and decorRow(cells.right, gap, centre_gap.right, false) or nil
     local bubble_w = math.min(target, avail - used.left - used.right)
@@ -666,20 +673,20 @@ function M.build(w, ctx)
                     end,
                 },
                 on_other = function()
-                    phrase = choosePhrase(facts, opts, signature, true)
+                    phrase = choosePhrase(pfx, settings, facts, opts, signature, true)
                     show(phrase)
                     repaint()
-                    broadcast(root)
+                    broadcast(root, pfx)
                 end,
                 on_reply = function(reply)
                     phrase = { text = reply.text, sub = reply.sub, mood = reply.mood }
-                    _shown = {
+                    _shown_by_screen[pfx] = {
                         key = factsKey(facts, signature), signature = signature, phrase = phrase,
                         at = os.time(), sticky = true,
                     }
                     show(phrase)
                     repaint()
-                    broadcast(root)
+                    broadcast(root, pfx)
                 end,
             }
             return true
@@ -697,12 +704,12 @@ function M.build(w, ctx)
     root.critter_update = function(new_ctx)
         facts = collectFacts(new_ctx)
         if not new_ctx.stats_stale then creditChallenge(facts) end
-        observeReactions(true)
-        local current = choosePhrase(facts, opts, signature, false)
+        observeReactions(settings, true)
+        local current = choosePhrase(pfx, settings, facts, opts, signature, false)
         if current == phrase then return false end
         phrase = current
         show(phrase)
-        broadcast(root)
+        broadcast(root, pfx)
         return true
     end
 
@@ -711,13 +718,13 @@ function M.build(w, ctx)
         if entry.pfx == pfx then _live[other] = nil end
     end
     _live[root] = { pfx = pfx, follow = function()
-        local current = _shown and _shown.phrase
+        local current = _shown_by_screen[pfx] and _shown_by_screen[pfx].phrase
         if current == phrase then return end
         phrase = current
         show(phrase)
         repaint()
     end }
-    broadcast(root)
+    broadcast(root, pfx)
     return root
 end
 

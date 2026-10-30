@@ -67,6 +67,40 @@ function M.setUserName(name) SUISettings:set(KEY_NAME, name ~= "" and name or ni
 function M.categoryOn(id) return SUISettings:nilOrTrue(KEY_CAT .. id) end
 function M.setCategory(id, on) SUISettings:set(KEY_CAT .. id, on) end
 
+-- OrbitUI: saved Home/custom-screen choices remain independent. New shared
+-- settings are defaults only; a module's own menu edits its original namespace.
+function M.forScreen(pfx)
+    if type(pfx) ~= "string" or pfx == "" then return M end
+    local function get(suffix, fallback)
+        local value = SUISettings:get(pfx .. suffix)
+        if value ~= nil then return value end
+        return fallback()
+    end
+    local function set(suffix, value) SUISettings:set(pfx .. suffix, value) end
+    local function choice(suffix, values, fallback)
+        local value = get(suffix, fallback)
+        for _, allowed in ipairs(values) do if value == allowed then return value end end
+        return fallback()
+    end
+    return setmetatable({
+        pick = function() return get("critter_pick", M.pick) end,
+        setPick = function(v) set("critter_pick", v) end,
+        bubbleStyle = function() return choice("critter_bubble_style", M.STYLES, M.bubbleStyle) end,
+        setBubbleStyle = function(v) set("critter_bubble_style", v) end,
+        source = function() return choice("critter_source", M.SOURCES, M.source) end,
+        setSource = function(v) set("critter_source", v) end,
+        reactionsOn = function() return get("critter_reactions", M.reactionsOn) ~= false end,
+        setReactions = function(v) set("critter_reactions", v) end,
+        categoryOn = function(id) return get("critter_cat_" .. id, function() return M.categoryOn(id) end) ~= false end,
+        setCategory = function(id, v) set("critter_cat_" .. id, v) end,
+        decorIds = function(side)
+            local ids = get("critter_decor_" .. side, function() return M.decorIds(side) end)
+            return { unpack(type(ids) == "table" and ids or DEFAULT_DECOR[side]) }
+        end,
+        setDecorIds = function(side, ids) set("critter_decor_" .. side, ids) end,
+    }, { __index = M })
+end
+
 -- Copies the values the default screen had into the global keys that are still
 -- unset. The other screens' values are left where they are.
 function M.migrateLegacy()

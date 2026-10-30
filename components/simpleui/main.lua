@@ -1006,6 +1006,15 @@ function SimpleUIPlugin:init()
         end
         -- -------------------------------------------------------------------
 
+        -- Copy-only global Critter defaults; keep per-screen values and retry
+        -- failed/deferred migrations rather than consuming their marker.
+        if not defer_defaults_until_settings_migrated
+                and not SUISettings:isTrue("simpleui_settings_migrated_v14") then
+            local migrated = pcall(function() require("modules/critter/settings").migrateLegacy() end)
+            if migrated then SUISettings:set("simpleui_settings_migrated_v14", true) end
+            SUISettings:flush()
+        end
+
         -- Apply the saved UI font preference early, before any widget is built.
         -- SUIStyle is lazy (module-level init runs only when the font menu opens)
         -- so this pcall is cheap on the common path where no custom font is set.

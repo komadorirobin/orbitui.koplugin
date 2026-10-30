@@ -32,6 +32,14 @@ local _dir = require("infra/sui_paths").getPluginDir()
 -- ---------------------------------------------------------------------------
 local function parsePluralExpression(expr)
     local function translateTernary(s)
+        s = s:match("^%s*(.-)%s*$")
+        -- Most real PO headers wrap the entire ternary (and nested branches).
+        -- Strip only a pair that encloses the WHOLE expression, not `(a) + b`.
+        while s:sub(1, 1) == "(" do
+            local outer = s:match("^%b()")
+            if not outer or #outer ~= #s then break end
+            s = outer:sub(2, -2):match("^%s*(.-)%s*$")
+        end
         local function findQuestion(str)
             local depth = 0
             for i = 1, #str do
@@ -49,7 +57,9 @@ local function parsePluralExpression(expr)
 
         local q = findQuestion(s)
         if not q then
-            return s
+            return (s:gsub("%b()", function(group)
+                return "(" .. translateTernary(group:sub(2, -2)) .. ")"
+            end))
         end
 
         local depth = 0

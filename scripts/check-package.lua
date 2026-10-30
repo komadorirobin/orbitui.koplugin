@@ -22,7 +22,25 @@ assert(not entries[prefix .. "assets/ornaments/Authors/Clarice Lispector.png"],
 local function expect(path)
     assert(entries[prefix .. path], "Missing runtime file: " .. path)
 end
-for _, path in pairs(dofile("core/orbitui_module_map.lua")) do expect(path) end
+local source_map = dofile("core/orbitui_module_map.lua")
+local map_pipe = assert(io.popen("unzip -p " .. quoted .. " 'orbitui.koplugin/core/orbitui_module_map.lua'"))
+local map_bytes = map_pipe:read("*a"); assert(map_pipe:close())
+local sealed_map = assert((loadstring or load)(map_bytes))()
+local embedded = assert(getmetatable(sealed_map)).orbitui_embedded
+local embedded_count = 0
+for name, path in pairs(source_map) do
+    assert(sealed_map[name] == path, "Sealed module identity differs: " .. name)
+    if embedded[name] then
+        local f = assert(io.open(path, "rb"))
+        local source = f:read("*a"); f:close()
+        assert(embedded[name] == source, "Sealed embedded source differs: " .. name)
+        assert((loadstring or load)(source, "@" .. path))
+        assert(not entries[prefix .. path], "Duplicate embedded source: " .. path)
+        embedded_count = embedded_count + 1
+    else expect(path) end
+end
+for name in pairs(embedded) do assert(source_map[name], "Unknown embedded module: " .. name) end
+assert(embedded_count == 13, "Expected thirteen reviewed embedded modules")
 for _, path in ipairs({
     "main.lua", "_meta.lua", "orbitui_bootstrap.lua", "VERSION", "manifest.json", "LICENSE", "README.md", "sources.json",
     "docs/MIGRATION.md", "docs/TESTING.md", "docs/UPSTREAM.md",

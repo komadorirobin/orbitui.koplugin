@@ -29,9 +29,13 @@ end
 
 -- Closes the menu and opens the book `filepath`, from the reader or not.
 local function openBook(touch_menu, filepath)
+    local ReaderUI = package.loaded["apps/reader/readerui"] or require("apps/reader/readerui")
+    local reader = ReaderUI.instance
+    local generation = UIManager._simpleui_navigation_generation or 0
     touch_menu:onClose()
     UIManager:nextTick(function()
-        local ReaderUI = package.loaded["apps/reader/readerui"] or require("apps/reader/readerui")
+        if ReaderUI.instance ~= reader or (reader and reader.tearing_down)
+                or generation ~= (UIManager._simpleui_navigation_generation or 0) then return end
         local virtual = VirtualPaths.toVirtual(filepath)
         if ReaderUI.instance then
             ReaderUI.instance:switchDocument(virtual)

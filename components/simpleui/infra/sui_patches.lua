@@ -347,12 +347,12 @@ end
 M.materializeLazyListing = _materializeLazyListing
 
 -- Lists the folders behind the folder covers of the live file manager's page.
-local function _warmFolderCovers()
+local function _warmFolderCovers(valid)
     local fm = liveFM()
     local fc = fm and fm.file_chooser
     local FolderCovers = package.loaded["features/library/sui_foldercovers"]
     if fc and not fc._sui_lazy_listing and FolderCovers then
-        FolderCovers.warmFolderListings(fc)
+        FolderCovers.warmFolderListings(fc, valid)
     end
 end
 
@@ -825,9 +825,22 @@ function M.patchFileManagerClass(plugin)
                     -- The homescreen is up: list the deferred folder, then the
                     -- folders behind its covers, while idle (one step per tick),
                     -- so the first visit to the library does not wait for them.
+                    local owner, fm = _live_plugin, liveFM()
+                    local instance = HS and HS._instance
+                    local generation = UIManager._simpleui_navigation_generation or 0
+                    local function valid()
+                        local RUI = package.loaded["apps/reader/readerui"]
+                        return _hs_boot_done and owner and _live_plugin == owner
+                            and not owner._simpleui_suspended and not isAppExiting()
+                            and liveFM() == fm and HS and HS._instance == instance
+                            and instance and not instance._parked
+                            and generation == (UIManager._simpleui_navigation_generation or 0)
+                            and not (RUI and RUI.instance)
+                    end
                     UIManager:scheduleIn(1, function()
+                        if not valid() then return end
                         _materializeLazyListing()
-                        UIManager:nextTick(_warmFolderCovers)
+                        UIManager:nextTick(function() if valid() then _warmFolderCovers(valid) end end)
                     end)
                 end)
                 return
@@ -5258,7 +5271,7 @@ function M.installAll(plugin)
     end
     local ok_mh, MenuHide = pcall(require, "features/sui_menu_hide")
     if ok_mh and MenuHide then
-        pcall(MenuHide.install)
+        pcall(MenuHide.install, plugin)
     end
     -- Install button-bounds overlay when the debug setting is on at startup.
     if SUISettings:isTrue("simpleui_debug_button_bounds") then
@@ -5434,6 +5447,8 @@ function M.teardownAll(plugin)
     end
     -- Restore the FM and Reader menu methods and drop every registered step.
     local MenuHooks = package.loaded["infra/sui_menu_hooks"]
+    local MenuHide = package.loaded["features/sui_menu_hide"]
+    if MenuHide then pcall(MenuHide.uninstall, plugin) end
     if MenuHooks then MenuHooks.uninstall(plugin) end
 
     local Dispatcher = package.loaded["dispatcher"]

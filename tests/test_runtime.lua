@@ -13,7 +13,8 @@ H.test("module map references existing component source only", function()
     for key, path in pairs(map) do
         assert(path:match("^components/[^/]+/"))
         assert(not key:match("tests/") and key ~= "main" and key ~= "_meta")
-        assert(loadfile(path))
+        local source = (getmetatable(map) or {}).orbitui_embedded
+        assert(loadfile(path) or (source and source[key] and (loadstring or load)(source[key])))
         n = n + 1
     end
     assert(n > 200)
@@ -48,6 +49,48 @@ end)
 H.test("userpatch preload interceptors retain priority", function()
     package.preload["modules/module_quote"] = function() return { patched = true } end
     H.eq(require("modules/module_quote").patched, true)
+end)
+H.test("sealed modules compile lazily under canonical and legacy identities", function()
+    local open = io.open
+    io.open = function(path, ...)
+        if path == root .. "/components/simpleui/modules/critter/state.lua" then return nil end
+        return open(path, ...)
+    end
+    local ok, state = pcall(require, "modules/critter/state")
+    io.open = open
+    assert(ok, state)
+    local original = { score = 4 }
+    local changed = state.copy(original, { score = 5 })
+    H.eq(changed.score, 5); H.eq(original.score, 4)
+    local source = assert(getmetatable(map).orbitui_embedded)
+    H.eq(type(source["screens/sui_bluetooth"]), "string")
+    package.preload["screens/sui_bluetooth"] = function() return { preload = true } end
+    H.eq(require("sui_bluetooth"), require("screens/sui_bluetooth"))
+    H.eq(require("sui_bluetooth").preload, true)
+end)
+H.test("an invalid real override cannot silently fall back to an embedded module", function()
+    local open, loader = io.open, loadfile
+    local target = root .. "/components/simpleui/modules/critter/book.lua"
+    io.open = function(path, ...)
+        if path == target then return { close = function() end } end
+        return open(path, ...)
+    end
+    _G.loadfile = function(path, ...)
+        if path == target then return nil, "intentional override parse error" end
+        return loader(path, ...)
+    end
+    local ok, err = pcall(require, "modules/critter/book")
+    io.open, _G.loadfile = open, loader
+    package.loaded["modules/critter/book"] = nil
+    H.eq(ok, false); assert(tostring(err):find("intentional override parse error", 1, true))
+end)
+H.test("direct canonical and legacy patch-compat callers cannot rename patches", function()
+    local rename = os.rename
+    os.rename = function() error("patch rename forbidden") end
+    local pc = require("features/sui_patch_compat")
+    H.eq(pc, require("sui_patch_compat")); H.eq(pc.check(), false)
+    H.eq(pc.apply("/patches", { { file = "2-navbar-vos.lua" } }, {}), false)
+    os.rename = rename
 end)
 H.test("spine renderer receives both ornament and binding adapters through the real loader", function()
     local load, calls = loadfile, 0

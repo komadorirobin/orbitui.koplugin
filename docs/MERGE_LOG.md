@@ -5025,3 +5025,92 @@ LuaJIT/translation logs, complete sealed rerun, package/source/history audit,
 Gitleaks and native OTA log). Verification-only follow-up documentation does not
 rebuild the tested ZIP. No push, tag, release, production OTA or reader install;
 physical SV/EN shaping/layout/touch/night/rotation/sleep acceptance stays open.
+
+## 2026-10-30 — Reviewed upstream merge and standing main push (no release)
+
+User requests "Merga upstream". Standing authorization includes an audited,
+verified fast-forward push to `origin/main`, not a version/tag/release/OTA.
+Start clean at `7083c8a120c62e1c950edd4f1135eee42dc0e478` on
+`maintenance/upstream-20261030`, retaining the two local category-card commits
+`8133c7ab` / `7083c8a1`. Public main is `fe93bb391f7de9bc2d87eb7fb731cc5c9990bee9`.
+
+Reviewed/imported exact branches:
+
+- Bookshelf master `d07905ba932e09044827aadf480c188a5d324b96` →
+  `ee84a8fe1621171c00df91c41dee76b9ed07028c`, six commits, four issue-form/workflow
+  files only. Unsquashed import `39e28383`; no Bookshelf runtime change. The
+  existing read-only LibraryModal grid-gap accessor remains.
+- SimpleUI main `22d5a3d2dd7be4651e718eb49027d82f68b3ace7` →
+  `257c26d6685ced4fc2e895f98287b5f16f1d4f5e`, all 14 commits / 82 net paths.
+  Unsquashed import `f339c492`. Latest published releases remain Bookshelf 6.0.4
+  and SimpleUI 3.0.1; branch follow-ups, not new release tags, are reviewed here.
+
+C01-C10 review and semantic decisions (C11 has no native runtime delta):
+
+- Import optional hidden menu items, grid Quick Actions (up to 7×4), six-column
+  cover modules, page-turn statistics/odometer, scrollable long action-sheet
+  messages, Critter global defaults/quick-panel/games/quotes/voices and platform
+  Bluetooth follow-ups. Existing layout/defaults remain. Page turns count
+  positive-duration records (including rereads), not unique rendered/book pages.
+- Menu hiding protects shared OrbitUI settings and Quick Settings, restores
+  native order and cancels snapshots on last-owner release. Snapshots use static
+  text/IDs, never evaluate dynamic current-value/provider callbacks. Cabinet
+  ownership also updates hidden copied descriptors, retaining exact fast shelf
+  return, opt-out, stale guards and teardown. No new reader or sync owner.
+- Covered boot listing retains guarded Home failure fallback. Idle work requires
+  the same owner/FM/Home/navigation generation, no reader/suspend/exit; folder
+  warming is one visible entry per tick, max 64, cancelled on chooser changes.
+  CoverFinder's new no-mandatory-text optimization restores the exact previous
+  instance callback, dummy and filter even after error. Real device latency and
+  RAM benefits are unmeasured.
+- Keep Android's Device Bluetooth API before platform fallbacks; unavailable
+  Kindle does not appear supported. Preserve native safe-mode Android covers.
+  Raw Critter alpha scanning retains pixel/stride ownership and a non-FFI path;
+  embedded Hazel still uses native image-data decoding and exact PNG bytes.
+- Do NOT activate upstream's patch-disable dialogue/rename implementation.
+  Both compatibility module entry points remain read-only in the host, including
+  legacy aliases. MAL, BookOrbit, Patch Manager and arbitrary user patches remain.
+- The upstream migration-extraction refactor is deliberately deferred: retain
+  the existing main-file copy/retry/deferral/first-run implementation, not the
+  unadapted replacement's old deletions/default overrides. Add only guarded,
+  retryable v14 default copies. Saved per-screen Critter pick/style/source/topics/
+  reactions/decor remain effective and editable; global controls supply defaults.
+  Prefix-local phrases cannot overwrite another screen's presentation. Panel
+  suggestion callbacks validate reader/navigation; root release is idempotent.
+- Plural parser imports header/boolean/nested-ternary fixes and additionally
+  handles enclosing parentheses used by real Russian/Polish/Czech/Lithuanian
+  headers. Existing global gettext remains untouched. 352 Swedish empty/new
+  messages are completed, including visible new controls and games. All original
+  catalog languages remain; this is not a claim of complete upstream prose
+  translation in every locale.
+
+Conflicts: CoverFinder combines callback optimization with exact original-field
+restoration; Home boot combines guarded Home loading/full repaint with safe
+deferred listing. Main keeps the reviewed migration implementation as above.
+Japanese/Korean/Swedish/Vietnamese PO conflicts are reconciled by message identity:
+upstream references/new phrases, retained actual translations and correct
+single-form plurals. Remove one duplicate Swedish Row entry introduced by the
+new action-grid message. No test baseline or failure allowance is expanded.
+
+API-1 compatibility plan: thirteen new Lua source modules stay tracked complete
+and export-ignore only their separate installed paths. The existing generated
+module registry carries exact source strings in metatable metadata, preserving
+the old string-valued path iteration API. Canonical loader compilation is lazy;
+real files and userpatch preload win, real parse errors cannot silently fall
+back, and legacy aliases share the canonical instance. No source extraction,
+eager module execution, old asset/language/license deletion, new installed path,
+bootstrap/API/file-limit change or new external dependency. Pin both reviewed
+upstream SHAs; regenerate the map from 383 to 396 canonical paths. The sealed
+checker verifies all thirteen exact source bytes/identities/syntax, while full
+source/manifest and old-path equality audits remain mandatory.
+
+Tests added/extended: 17 October 30 merge cases, runtime loader/patch guard cases,
+hidden-cabinet actual shared menu handling, native-window API boundary and prior
+finished-gate memoization boundary. Existing category-card, Home, cover, navigation,
+settings, series/bindings/ornaments and external-owner suites remain. Supplemental
+actual SQLite validates repeated-page turns versus distinct pages and duration.
+Final full interpreter/sealed/package/native/history/CI evidence follows below.
+Physical Boox/Bigme fonts/touch/D-pad/night/rotation/sleep/reader-profile/cover/
+startup and native-image pressure acceptance remains open. No reader install or
+user data/settings/credentials/artwork change; public Beta 16 is immutable and
+VERSION stays Beta 16 solely for local development validation.
