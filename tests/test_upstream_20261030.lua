@@ -288,4 +288,25 @@ H.test("new visible menu and page-turn controls translate in Swedish without glo
     end
     H.eq(i18n.ngettext("%d hidden", "%d hidden", 2), "%d dolda"); H.eq(native("Reader"), "Reader")
 end)
+H.test("global Critter menus never inherit a Home editor prefix and panel edits use their own prefix", function()
+    local selected, seen = {}, {}
+    local function noop() end
+    local settings = { forScreen = function(pfx)
+        seen[#seen + 1] = pfx or "global"
+        return selected
+    end }
+    local cfg = { makeRadioSubmenuItem = function(opts) return opts end }
+    local deps = { ["ffi/util"] = {}, util = {}, ["infra/sui_config"] = cfg,
+        ["features/sui_arrange"] = { makeSectionedItem = function(opts) return opts end },
+        ["infra/sui_i18n"] = { translate = function(s) return s end },
+        ["modules/critter/assets"] = { relist = noop, ensureUserDir = noop,
+            userDir = function() return "critters" end, userDecorDir = function() return "decor" end },
+        ["modules/critter/phrases"] = {}, ["modules/critter/settings"] = settings }
+    deps["ffi/util"].template = function(s) return s end
+    local menu = run(read("modules/critter/menu"), { require = function(n) return assert(deps[n], n) end })
+    local ctx = { pfx = "simpleui_hs_", refresh = noop }
+    menu.getItems(ctx); H.eq(seen[1], "global")
+    menu.makeSettingsItem(ctx, "simpleui_hs_").sub_item_table_func(); H.eq(seen[2], "simpleui_hs_")
+    menu.makeSettingsItem(ctx, "simpleui_qs_bar_").sub_item_table_func(); H.eq(seen[3], "simpleui_qs_bar_")
+end)
 H.finish()

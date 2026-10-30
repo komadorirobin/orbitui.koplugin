@@ -785,7 +785,7 @@ M.makeScaleItem      = makeScaleItem
 function M.getMenuItems(ctx_menu)
     local pfx, refresh, _lc = ctx_menu.pfx, ctx_menu.refresh, ctx_menu._
     local content = makePlacementItems(ctx_menu)
-    table.insert(content, 1, require("modules/critter/menu").makeSettingsItem(ctx_menu))
+    table.insert(content, 1, require("modules/critter/menu").makeSettingsItem(ctx_menu, pfx))
     return Config.buildModuleMenu({
         content = content,
         appearance = {

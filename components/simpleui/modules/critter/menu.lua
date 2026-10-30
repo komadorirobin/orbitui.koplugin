@@ -175,9 +175,9 @@ end
 
 -- Items of the menu. `rebuild`, when given, redraws the Home Screen; `ctx_menu`,
 -- when there is one, also redraws the window the menu is shown in.
-function M.getItems(ctx_menu, rebuild)
+function M.getItems(ctx_menu, rebuild, screen_prefix)
     -- A module's menu keeps the scope of its saved pre-upgrade choices.
-    local scoped = Settings.forScreen(ctx_menu and ctx_menu.pfx)
+    local scoped = Settings.forScreen(screen_prefix)
     local function refresh()
         if rebuild then rebuild() end
         if ctx_menu and ctx_menu.refresh then ctx_menu.refresh() end
@@ -201,10 +201,10 @@ function M.getItems(ctx_menu, rebuild)
 end
 
 -- Entry that opens the menu above from the menu of a module or a panel.
-function M.makeSettingsItem(ctx_menu)
+function M.makeSettingsItem(ctx_menu, screen_prefix)
     return {
         text                = _("Tiny Critter Settings"),
-        sub_item_table_func = function() return M.getItems(ctx_menu) end,
+        sub_item_table_func = function() return M.getItems(ctx_menu, nil, screen_prefix) end,
     }
 end
 

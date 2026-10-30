@@ -122,7 +122,7 @@ function M.getMenuItems(refresh, outer_menu)
     }
     for _i, item in ipairs(Critter.makePlacementItems(ctx_menu)) do items[#items + 1] = item end
     items[#items + 1] = Critter.makeScaleItem(ctx_menu)
-    table.insert(items, 1, require("modules/critter/menu").makeSettingsItem(outer_menu))
+    table.insert(items, 1, require("modules/critter/menu").makeSettingsItem(outer_menu, PFX))
     return items
 end
 
