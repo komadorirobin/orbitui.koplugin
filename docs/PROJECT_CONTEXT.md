@@ -41,6 +41,11 @@ and correct this file in the same change.
   Workflow/dashboard remain LOCAL until an explicitly authorized push. No push,
   release, version bump, source-pin change, new runtime path or device acceptance.
   See UPSTREAM/SHARED_UI/TESTING for operation, limits and remaining checks.
+  Source/package candidate `3e01ee0f` passes both full interpreter gates and
+  final sealed root reruns, 43 catalogs and exact path/source/artwork/secret
+  audits. Same 2,000 installed paths, only a 12-line optional component action;
+  development digest/evidence is in MERGE_LOG. Verification docs do not replace
+  the sealed ZIP; local GitHub workflow activation and device tests remain open.
 
 - Evening user request "Merga upstream": from clean public `70fc3473`, review
   and merge all 18 SimpleUI commits through `7a605bbc261196fa65609adf26f59c77a4d966a7`

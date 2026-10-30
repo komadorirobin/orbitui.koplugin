@@ -25,6 +25,16 @@ all 2,000 installed paths must remain unchanged. These are development bytes,
 not replacement assets for the existing public Beta 18. Physical search/modal
 acceptance listed in SHARED_UI remains outstanding; no measured speedup claimed.
 
+Verified development source/package `3e01ee0f`: both complete gates pass (133
+Python/four optional skips, 88 root Lua files, 487 Bookshelf/zero failures/three
+SQLite exclusions, 13 SimpleUI files), followed by final sealed root reruns
+under both interpreters. Map 396, syntax 1,084 and all 43 catalogs pass. The
+complete native dialog-builder case catches nil-on-clear, picker/keyboard/focus/
+paging/close and landscape geometry. Exact source/path/checksum/history/artwork/
+secret audits pass; no new installed path. Evidence and immutable development
+digest are in MERGE_LOG and `test-results/search-collections-watch-20261030/`.
+Nothing is pushed/published or installed on a device by these local checks.
+
 ### October 30 evening reviewed upstream merge (not released)
 
 Source/package candidate `b4332ea8` passes both complete interpreter gates:

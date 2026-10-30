@@ -50,6 +50,40 @@ fixed native nil-on-clear, title/tab crowding and excessive landscape height.
 Native glyph/font/touch/rotation/sleep/reader-underlay acceptance on Boox/Bigme
 remains open. No measured speed or memory claim and no installed device change.
 
+### Local verification (not a release)
+
+Source/package candidate `3e01ee0f6c09f5eb0f09b9b48ab6aa716cf9eb35`
+passes complete sequential Lua/LuaJIT gates (133 Python tests/four unchanged
+optional source-pixel skips, 88 root Lua files, 487 Bookshelf suites/zero failures/
+three normal SQLite exclusions, 13 SimpleUI files). Final root tests additionally
+pass under both interpreters against sealed bytes after the last UI refinements.
+Map stays 396; syntax verifies 1,084 files; all 43 catalogs pass. New coverage
+includes ten offline watcher cases, six additional shared-search cases, ten
+collection-content cases and one complete native dialog-builder case across
+portrait/landscape, Swedish/English and multiple screen sizes. Approximate test
+font metrics are not native text-shaping or physical touch acceptance.
+
+Development ZIP: **9,020,942 bytes**, expanded **26,483,282 bytes**, 2,066 entries,
+unchanged 1,999 inventory files plus manifest / 2,000 API-1 installed paths.
+SHA-256 `c2872382a7f4f71406c24f0cfca0d9cd8eb825f51fba677afb4d8fc5eb1f64dd`.
+Exact source projection, checksum/size inventory, path equality and outgoing
+18-blob artwork audit pass. Bootstrap, VERSION, source pins, module map, all
+SimpleUI files and Bookshelf files except the 12-line optional action are
+byte-identical to the previous development package; all artwork/fonts/icons
+remain identical. Gitleaks finds no leaks in the sole outgoing implementation
+commit. The original public Beta 18 ZIP retains digest
+`9205d218043989cbbd89aac90a6b6df8305f3f587c05efa2602f28cdb616ce27`.
+This same-version development package must not replace public Beta 18 assets.
+
+Read-only live collection succeeds for all six reference snapshots with no
+missing configured paths and zero new matching commits at initial baselining.
+Bookshelf-OS's release-only/manual-review warning remains explicit. No issue
+publisher or GitHub workflow is run locally. Evidence is in ignored
+`test-results/search-collections-watch-20261030/` (full/sealed/native-owner,
+live JSON/Markdown, package/audit and secret logs). Verification-only docs do
+not rebuild or replace the sealed artifact. No push, tag, release, source import,
+OTA activation or physical-device/performance approval is implied.
+
 ## 2026-10-02: Initial OrbitUI import
 
 - Bookshelf fork: `v5.2.2.3`, `2d46b259028ddbebc0159effe6171abb14520868`.
