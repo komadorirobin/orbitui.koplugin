@@ -1831,6 +1831,7 @@ M.ICON = {
     show       = "\u{E907}", -- eye / show (NerdFonts)
 
     -- State / Content
+    warning  = "\u{F071}",   -- nf-fa-warning (triangle)
     goal     = "\u{E153}",   -- flag (reading goals)
     clock    = "\u{E385}",
     page     = "\u{F40E}",
@@ -1897,6 +1898,7 @@ M.ICON = {
     library     = "\u{F405}",  -- book
     style       = "\u{EAD7}",  -- paint palette
     quick_actions = "\u{EDD3}", -- lightning bolt (outline)
+    critter     = "\u{EAE8}",  -- paw
 
     -- Collections
     collection_add = "\u{EA33}", -- library with plus

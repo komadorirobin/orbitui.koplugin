@@ -303,7 +303,7 @@ local mod = GridRenderer.makeModule{
         { key = "show_finished", label = _("Show finished books"), default = true },
     },
 
-    -- Configurable grid (Rows 1-3 × Columns 4-5) + swipe pagination —
+    -- Configurable grid (Rows 1-3 × Columns 4-6) + swipe pagination —
     -- the whole library rarely fits on a single row.
     grid          = true,
     default_rows  = 1,

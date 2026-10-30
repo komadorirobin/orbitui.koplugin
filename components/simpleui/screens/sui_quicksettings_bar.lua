@@ -91,6 +91,9 @@ end
 local function _SH()
     return package.loaded["modules/module_books_shared"] or require("modules/module_books_shared")
 end
+local function _CritterRow()
+    return package.loaded["modules/critter/panel_row"] or require("modules/critter/panel_row")
+end
 
 local QSBar = {}
 local _showQSBarSettingsWindow
@@ -774,6 +777,16 @@ local function buildClassicPanel(touch_menu)
         VerticalSpan:new{ width = Screen:scaleBySize(16) },
     }
 
+    local critter = _CritterRow().build(touch_menu, refs, inner_w)
+    if critter then
+        table.insert(panel, VerticalSpan:new{ width = Screen:scaleBySize(8) })
+        table.insert(panel, CenterContainer:new{
+            dimen = Geom:new{ w = panel_w, h = critter:getSize().h },
+            critter,
+        })
+        table.insert(panel, VerticalSpan:new{ width = Screen:scaleBySize(10) })
+    end
+
     local sliders = buildSliders(touch_menu, refs, inner_w)
     if sliders then
         table.insert(panel, VerticalSpan:new{ width = Screen:scaleBySize(10) })
@@ -998,11 +1011,14 @@ end
 -- Exit button: the icon of the action buttons followed by the text, in a frame
 -- of their shape. The extra space after the text balances the icon's inner
 -- margin. It activates the reader menu's native "file browser" tab,
--- the single path that honours the configured book-close destination. nil
--- when the menu has no such tab.
+-- the single path that honours the configured book-close destination, also
+-- when the user has hidden that tab from the menu. nil when the menu has no
+-- such tab.
 local function buildBookExitButton(touch_menu, refs, m)
     local tab_index = tabIndexBy(touch_menu, "id", "filemanager")
-    if not tab_index then return nil end
+    local hidden_tab = not tab_index
+        and require("features/sui_menu_hide").findHiddenTab(touch_menu.tab_item_table, "filemanager")
+    if not tab_index and not hidden_tab then return nil end
 
     local spec  = buttonSpec(m.btn_size)
     local label = _("Exit")
@@ -1026,7 +1042,12 @@ local function buildBookExitButton(touch_menu, refs, m)
     table.insert(refs.buttons, {
         widget   = frame,
         callback = function()
-            touch_menu:switchMenuTab(tab_index)
+            if tab_index then
+                touch_menu:switchMenuTab(tab_index)
+            else
+                if touch_menu.touch_menu_callback then touch_menu.touch_menu_callback() end
+                hidden_tab.callback()
+            end
             return true -- the tab callback already closed the menu
         end,
     })
@@ -1095,6 +1116,14 @@ local function buildBookPanel(touch_menu, ui)
         VerticalSpan:new{ width = m.pad },
         LeftContainer:new{ dimen = Geom:new{ w = m.inner_w, h = body:getSize().h }, body },
     }
+    local critter = _CritterRow().build(touch_menu, refs, m.inner_w)
+    if critter then
+        table.insert(content, VerticalSpan:new{ width = m.block_gap })
+        table.insert(content, LeftContainer:new{
+            dimen = Geom:new{ w = m.inner_w, h = critter:getSize().h },
+            critter,
+        })
+    end
     local sliders = showBookSliders() and buildSliders(touch_menu, refs, m.inner_w)
     if sliders then
         table.insert(content, VerticalSpan:new{ width = m.block_gap })
@@ -1187,6 +1216,7 @@ local function patchTouchMenu()
         -- Not our panel tab — delegate normally.
         if not (self.item_table and self.item_table._sui_qs_panel) then
             self._sui_qs_refs = nil
+            _CritterRow().release(self)
             return orig_updateItems(self, target_page, target_item_id)
         end
 
@@ -1417,18 +1447,9 @@ _showQSBarSettingsWindow = function(touch_menu)
         }
     end
 
-    local function titleFn(ctx)
-        local cur = ctx.current()
-        local id  = cur and cur.id or "__root__"
-        if id == "nested_menu" then return cur.params.title or "" end
-        if id == "arrange"     then return cur.params.title or _("Arrange Items") end
-        if id == "item_picker" then return cur.params and cur.params.title or _("Add Item") end
-        return _("Quick Settings Bar")
-    end
-
     local win = SUIWindow:new{
         name           = "sui_win_context",
-        title          = titleFn,
+        title          = SUIWindow.makeSettingsTitle(_("Quick Settings Bar")),
         screens        = SUIWindow.makeSettingsScreens(buildRoot),
         navpager_mode  = _Config().isNavpagerEnabled(),
         position       = "bottom",
@@ -1625,6 +1646,10 @@ function QSBar.makeMenuItems(ctx_menu)
             help_text    = _("Show the frontlight and warmth sliders below the book details in the Book layout."),
             enabled_func = function() return is_book_layout() and Device:hasFrontlight() end,
         }),
+        {
+            text                = _("Tiny Critter"),
+            sub_item_table_func = function() return _CritterRow().getMenuItems(refresh, ctx_menu) end,
+        },
     }
 
     -- Appearance: labels and buttons.
