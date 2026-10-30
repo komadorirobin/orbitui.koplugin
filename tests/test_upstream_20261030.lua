@@ -6,7 +6,7 @@ local embedded = getmetatable(map).orbitui_embedded
 local function read(name)
     local f = io.open(root .. "/components/simpleui/" .. name .. ".lua", "rb")
     if f then local s = f:read("*a"); f:close(); return s end
-    return assert(embedded[name], name)
+    return (assert(embedded[name], name))
 end
 local function run(source, env)
     env = setmetatable(env or {}, { __index = _G })
