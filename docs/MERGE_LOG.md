@@ -5490,3 +5490,67 @@ draft/public metadata/downloads, immutable snapshots, channel and live-OTA logs.
 Verification-only docs are audited separately before pushing and do not rebuild
 or replace the tagged/public ZIP. Physical Boox/Bigme touch, Android return,
 hardware light behavior, rendering, rotation and suspend acceptance remains open.
+
+## 2026-10-30 evening — Reviewed SimpleUI follow-up (merge/push, no release)
+
+User requests "Merga upstream". Start clean at public main `70fc3473` on
+`maintenance/upstream-20261030-evening`. Standing approval includes a verified,
+audited main push, not a version bump, tag, release or production OTA change.
+Public Beta 18 stays immutable. Separate Bigme frontlight and reader-header
+userpatches remain externally owned and are not imported into OrbitUI.
+
+Exact review: Bookshelf `ee84a8fe1621171c00df91c41dee76b9ed07028c` is unchanged;
+SimpleUI `257c26d6685ced4fc2e895f98287b5f16f1d4f5e` →
+`7a605bbc261196fa65609adf26f59c77a4d966a7`, all 18 incoming commits / 18 net
+paths. Latest releases are SimpleUI 3.0.2 and Bookshelf 6.0.4. The 3.0.2 release
+notes mostly describe code already integrated earlier today; this is the actual
+remaining branch delta, not a second import of those features. The penultimate
+commit's Home-stat chart is removed in the final incoming commit: retain only
+the final Reading Insights implementation. No new dependencies or runtime paths.
+Unsquashed subtree merge `6c3b93243c17bb065647a4632c9b7102d9fc5680` is separate
+from host adaptations. Preserve original fork provenance in sources.json.
+
+C01-C11 review and decisions:
+
+- New Reading Insights "Books and pages" / "By month" card has an independent
+  year picker, monthly finished-book and distinct-book/page/day totals, smooth
+  separately scaled lines, RGB-preserving clipped strokes and shared accent
+  shading. Month initials are UTF-8-aware. This does not rearrange or add cards
+  to the user's dashboard, change annual goals or add a completion/sync writer.
+- Fix two new failure sentinels: neither the provider nor the window may retain
+  a failed activity read as false for the day/window. Add a successful-empty SQL
+  sentinel, validate result rows and require complete finished-ledger reconciliation
+  before sealing chart totals. Original finished-book list stays the first return;
+  completeness is additive. Preserve partial closed-month reuse, full historical
+  invalidation and future-year retry across rollover. No settings/sidecar writes,
+  cache deletion, DB migration or raw connection replacement.
+- Adopt the recursive plural parser instead of our superseded text-to-Lua
+  ternary workaround (the sole textual conflict). It handles enclosing/nested
+  catalogue expressions, C numeric truth, arithmetic and zero plural indices
+  without executing expression strings. Preserve native gettext ownership and
+  test real Slavic headers plus malformed/executable text rejection.
+- Import Custom Screen Dispatcher forwarding and passive-toast Home return.
+  Keep our destination/displacement and navigation-generation guards, exact
+  reader/profile return, opt-in quick-control input priority and native-dialog
+  ownership. No new global require/gettext hooks or user-patch auto-disable.
+- Upstream catalog additions retain every previously translated key: Czech
+  +1,447, French +981/78 revised, Brazilian/European Portuguese +5 each. All
+  existing languages remain. Supply the new monthly UI's Swedish labels/plurals;
+  English stays the source fallback. No baseline validation exceptions added.
+- Bookshelf series/bindings/ornaments, Android-safe cover extraction, BookOrbit,
+  MAL, patch integration, scoped profiles/settings, assets and data paths are
+  unchanged. Module map stays 396 and the same thirteen embedded sources; the
+  API-1 bootstrap/2,000 installed-path limit stays unchanged.
+
+New regression coverage: twelve focused Lua cases under both interpreters,
+plus real SQLite for duplicate page turns across books/days, positive duration,
+monthly boundaries and an empty year's sentinel. Cases include same-window DB
+retry, incomplete finished ledger, partial/full cache invalidation, future-year
+rollover, custom-screen dispatch success/error restoration, passive toast versus
+modal/stale navigation, monotone zero-safe lines, RGB clipping and SV/EN labels.
+Existing full suites, all catalogs, sealed/native owners and OTA/package/history
+audits are required before push; final evidence is appended below.
+
+Physical new Insights chart typography/colour/touch/year-picker, Boox/Bigme
+custom actions, rotation and sleep acceptance remain open. No measured startup,
+RAM or page-turn improvement is claimed; no installed reader is changed.

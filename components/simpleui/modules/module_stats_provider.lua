@@ -619,7 +619,7 @@ function SP.getFinishedBooks(year)
         end
     end
     table.sort(books, _newerFirst)
-    return books
+    return books, _reconciled_day == os.date("%Y-%m-%d")
 end
 
 --- Oldest and newest completion year among the listed finished books. The
@@ -1234,7 +1234,7 @@ end
 -- per day; dropped by SP.invalidate() / SP.invalidateTimeSeries() /
 -- SP.invalidateBooks().
 -- ---------------------------------------------------------------------------
-local _activity     = {}    -- year -> the activity table, or false when the query failed
+local _activity     = {}    -- year -> complete activity table; failures remain retryable
 local _activity_day = nil   -- "YYYY-MM-DD" when _activity was built
 
 -- Pages read per month of a year, with the month the next fetch queries from.
@@ -1260,29 +1260,45 @@ local function fetchYearPages(conn, year)
                 WHERE start_time >= %d AND start_time < %d AND duration > 0
                 GROUP BY d
             )
-            SELECT substr(d, 6, 2), sum(pg) FROM day_buckets GROUP BY 1;
+            SELECT substr(d, 6, 2), sum(pg) FROM day_buckets GROUP BY 1
+            UNION ALL SELECT 0, 0;
         ]], os.time{ year = year, month = from, day = 1, hour = 0 }, os.time{ year = year + 1, month = 1, day = 1, hour = 0 }))
-        for i = 1, rw and rw[1] and #rw[1] or 0 do
+        -- The sentinel distinguishes a successful empty year from a missing
+        -- result. Never memoize a busy/incomplete read as twelve zeroes.
+        assert(rw and rw[1] and rw[2] and #rw[1] == #rw[2], "missing monthly page rows")
+        local complete = false
+        for i = 1, #rw[1] do
             local m = tonumber(rw[1][i])
-            if pages[m] then pages[m] = rownum(rw[2][i]) end
+            local count = tonumber(rw[2][i])
+            assert(m and count and count >= 0, "invalid monthly page row")
+            if m == 0 then complete = true
+            else
+                assert(m >= 1 and m <= 12 and m == math.floor(m), "invalid page month")
+                pages[m] = count
+            end
         end
+        assert(complete, "incomplete monthly page result")
     end) end
     if not ok then
         logger.warn("simpleui: stats_provider: fetchYearPages failed: " .. tostring(err))
         return nil
     end
-    _pages_cache[year] = { pages = pages, from = year == tonumber(os.date("%Y")) and tonumber(os.date("%m")) or 13 }
+    local current = os.date("*t")
+    _pages_cache[year] = { pages = pages,
+        from = year < current.year and 13 or (year == current.year and current.month or 1) }
     return pages
 end
 
 local function fetchYearActivity(conn, year)
     local pages = fetchYearPages(conn, year)
-    if not pages then return false end
+    if not pages then return nil end
+    local finished, complete = SP.getFinishedBooks(year)
+    if not complete then return nil end
     local books = {}
     for m = 1, 12 do books[m] = 0 end
 
     local total_books, total_pages = 0, 0
-    for _, book in ipairs(SP.getFinishedBooks(year)) do
+    for _, book in ipairs(finished) do
         local _, m = SP.parseStamp(book.date_finished)
         if m and not book.exclude_from_goals then books[m] = books[m] + (book.count or 1) end
     end

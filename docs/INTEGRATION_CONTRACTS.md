@@ -167,6 +167,17 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+October 30 evening monthly Reading Insights activity is lazy, read-only and
+derived from positive-duration distinct book/page/day records and the existing
+finished ledger, never a second completion/sync owner. Cache only successful,
+complete results, including in the window; distinguish an empty SQL year from
+missing rows. Failed queries and incomplete reconciliation must retry. Full
+invalidation drops historical page caches; partial invalidation may retain
+closed months but cannot freeze future years at zero across year rollover.
+Preserve original finished-book return values; its additive completeness result
+only gates the new chart. Tests: `test_upstream_20261030_evening` and real SQLite
+`test_monthly_activity`. No hidden dashboard work or settings/data migration.
+
 October 30: covered boot listings may defer until safe idle/exposure. Idle warm
 callbacks require the same live owner, Home/FM, navigation generation and no
 reader/suspend/exit; folder work is one entry per tick, max 64, cancelled on

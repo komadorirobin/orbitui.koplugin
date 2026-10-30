@@ -1308,7 +1308,7 @@ msgstr ""
 
 #: screens/sui_stats_windows.lua:1937
 msgid "By month"
-msgstr ""
+msgstr "Per månad"
 
 #: screens/sui_titlebar.lua:1153
 msgid "By series"
@@ -9855,3 +9855,18 @@ msgid "%d hidden"
 msgid_plural "%d hidden"
 msgstr[0] "%d dold"
 msgstr[1] "%d dolda"
+
+# Reading Insights: monthly activity (upstream October 30 follow-up).
+msgid "Books and pages"
+msgstr "Böcker och sidor"
+
+msgid "No reading in this year"
+msgstr "Ingen läsning under detta år"
+
+msgid "The statistics could not be read"
+msgstr "Statistiken kunde inte läsas"
+
+msgid "%d page"
+msgid_plural "%d pages"
+msgstr[0] "%d sida"
+msgstr[1] "%d sidor"

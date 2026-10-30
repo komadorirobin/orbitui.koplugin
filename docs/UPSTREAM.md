@@ -108,6 +108,20 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+October 30 evening: SimpleUI `7a605bbc` is the reviewed 18-commit follow-up to
+`257c26d6`; Bookshelf remains `ee84a8fe`. Upstream's recursive plural parser
+supersedes the local string-to-Lua ternary fix, retaining real catalogue rules
+and isolated gettext ownership. Custom-screen Dispatcher forwarding and passive
+toast reopening retain our navigation-generation/destination safeguards. Monthly
+books/pages exist in Reading Insights only, not a new default dashboard module.
+Keep failed monthly queries and incomplete finished ledgers retryable, including
+the window-level cache. SQL's sentinel distinguishes an empty year from missing
+results; full invalidation clears all monthly page history, partial invalidation
+keeps closed months and future-year caches must not freeze at zero. New labels
+are SV/EN; no installed paths/module-map or API-1 bootstrap changes. Tests:
+`test_upstream_20261030_evening`, `test_monthly_activity`, prior merge and full
+sealed/native-owner suites. Merge/push only; public Beta 18 is not rebuilt.
+
 October 30: Bookshelf `ee84a8fe` changes issue forms only. SimpleUI `257c26d6`
 adds menu hiding, grid actions, page-turn stats, Critter and lazy-boot work.
 Keep OrbitUI settings protected; menu snapshots never evaluate dynamic value/

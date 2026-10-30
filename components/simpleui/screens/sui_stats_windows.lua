@@ -1289,7 +1289,7 @@ end
 -- Insights and Streak windows read their daily history from, taken once per
 -- window session.
 local _ri_cache   = {}
-local _ri_activity = {}   -- year -> books and pages per month (SP.getYearActivity), false when unreadable
+local _ri_activity = {}   -- year -> complete books/pages; failed reads are never cached
 local _ri_streaks = nil
 local _ledger     = nil
 
@@ -1768,7 +1768,7 @@ local function _riGetActivity(year)
     if _ri_activity[year] == nil then
         _ri_activity[year] = _withStatsDb(nil, function(conn)
             return require("modules/module_stats_provider").getYearActivity(conn, year)
-        end) or false
+        end)
     end
     return _ri_activity[year] or nil
 end

@@ -22,6 +22,24 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-30
 
+- Evening user request "Merga upstream": from clean public `70fc3473`, review
+  and merge all 18 SimpleUI commits through `7a605bbc261196fa65609adf26f59c77a4d966a7`
+  (3.0.2 plus branch follow-ups); Bookshelf remains `ee84a8fe` with no new commits.
+  Unsquashed subtree import `6c3b9324` uses upstream's real plural-expression
+  parser instead of the superseded local ternary translator. New Reading
+  Insights monthly books/pages chart has an independent year selector; it does
+  not change the dashboard layout or remote goal/sync ownership. Preserve the
+  custom-screen Dispatcher fix, passive-toast Home return, our generation guards
+  and Beta 18 quick-control seams. Retry missing/busy/incomplete activity reads
+  in both provider and window; complete empty years have an explicit SQL sentinel,
+  incomplete finished-ledger reconciliation cannot seal totals, and future-year
+  page caches remain queryable at rollover. Full invalidation rereads historical
+  months; partial invalidation retains closed months. Add Swedish new labels and
+  retain all languages. No new installed path, bootstrap, artwork or hardware
+  patch. Standing authorization includes audited main push, NOT publication:
+  VERSION/public Beta 18 and all its assets remain immutable. Verification and
+  device gaps are recorded in MERGE_LOG; this is not a measured Bigme speedup.
+
 - User now explicitly requests the next beta after the unpublished-code audit.
   Beta 18 is public at exact candidate/tag `7c0f7057`, published 2026-10-30
   16:31:24 UTC from `release/quick-controls-beta18-20261030`, clean `e2f1aa32`
