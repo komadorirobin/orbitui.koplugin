@@ -29,6 +29,42 @@ change. Device acceptance is still pending.
   Author/series/genre/folder matches navigate to the corresponding library view.
   Results are capped at 400 with a notice; narrow the query if necessary.
 
+## Local quick controls (October 30; not yet released)
+
+Open **OrbitUI settings > Navigation & interface > Quick controls**
+(**OrbitUI-inställningar > Navigation och gränssnitt > Snabbkontroller**).
+**Open quick controls / Öppna snabbkontroller** works without changing a bar.
+Optionally enable **Tap status fields for quick controls / Tryck på statusfält
+för snabbkontroller**, or add the **Quick controls / Snabbkontroller** action
+using the existing navigation/quick-action editor. Saved bars are never replaced.
+
+- Home (SimpleUI): tap a visible brightness, Wi-Fi, battery or clock field.
+  Its small menu opens at that field. Hidden fields stay hidden; existing
+  long-press settings and configured corner gestures keep their behaviour.
+- Bookshelf: tap the ordinary book-hero or micro-module status line to open
+  the same controls. Custom token layouts are not guessed into per-icon zones;
+  select the desired control inside the menu. Job Stop/page dots retain priority.
+  Expanded/full-screen shelves retain their existing tap-to-restore behaviour.
+- Light offers brightness and colour-temperature sliders only when supported,
+  plus native advanced light settings and night mode. Native numeric ranges
+  and warmth conversions are preserved. If the sliders cannot fit the screen,
+  the native settings button remains; no partly clipped slider is installed.
+- Wi-Fi reports known local state, never treats Android's no-toggle shim as
+  proof of connection, and opens Android's system Wi-Fi settings. Supported
+  non-Android devices use KOReader's original connection prompts/network chooser.
+  Opening the menu never enables Wi-Fi, scans, or cold-initializes NetworkMgr.
+- Battery reports level/charge state and opens the existing battery-statistics
+  plugin when available. Time/date follows KOReader's clock formatting and
+  opens the existing statistics plugin's reading calendar when enabled.
+
+Tabs replace one dialog; **Refresh status / Uppdatera status** rereads values
+explicitly. Back, outside tap and Close dismiss it. There is no new polling
+timer or provider/database work in paint. Navigation, close, rotation, sleep
+and host lifecycle guards make retired callbacks inert; no reader/profile
+transition is introduced. Native widget fonts, touch, D-pad focus, system return
+and day/night underlay behaviour still need physical Boox/Bigme acceptance.
+No third-party code, artwork, icon/font pack or additional runtime path is used.
+
 ## Library/chip editor refinement (Beta 14)
 
 From **Navigation & interface > Bookshelf button & destinations > Profiles and

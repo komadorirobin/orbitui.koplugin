@@ -1076,6 +1076,24 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+October 30 approved Bookshelf-OS follow-up: small quick-control dialogs reuse
+native widgets/PowerD/core network/statistics owners in the existing chrome
+adapter. Status taps default off and saved bars/layouts remain unchanged; an
+addable shared action and searchable SV/EN settings entry expose the same UI.
+Home preserves custom corner/hold behaviour; Shelf preserves custom gestures,
+job Stop/page dots and expanded-return taps. Do not parse custom status tokens
+into guessed icon zones or build a hidden shelf. Read local state only when
+opening/explicitly refreshing, never cold-load NetworkMgr (which can restore
+Wi-Fi), scan/connect while painting, infer Android connectivity from no-toggle
+shims, manufacture network events or add a synchronization writer. Use actual
+native light ranges/warmth conversions/readback and keep a native fallback when
+sliders cannot fit. Owner/navigation/rotation/suspend/close guards invalidate
+retired callbacks; popup hardware/status UI does not navigate or close books.
+Keep canonical/preload identity and existing global menu hooks untouched.
+Tests: `test_quick_controls`, including complete Topbar and optional native
+ButtonDialog, plus existing settings/navigation/host/reader/cover tests.
+Physical native-font/touch/focus/PowerD/system-return/underlay acceptance remains.
+
 October 29 approved category-card settings start: keep the same five stable
 category IDs, explicit Home/SimpleUI identity, SV/EN summaries, existing search
 and all native submenus/scopes/callbacks. Build static descriptions only, without

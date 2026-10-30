@@ -5162,3 +5162,60 @@ release, production OTA or installed device change is authorized. Physical
 acceptance and measured startup/memory gains remain open. Main CI/watch results
 are checked after the standing audited push; publication still requires a
 separate explicit request.
+
+## 2026-10-30 — local Bookshelf-OS follow-up: shared quick controls
+
+Request: “Gå vidare med nästa högprioriterade grej från Bookshelf-OS-listan ovan”.
+Read-only retrieval of this thread's original review identifies small light/
+Wi-Fi/battery/time menus as the remaining high-priority item after category
+cards. The other ideas (reader settings/font preview, optional reader toolbar,
+extra shelf modules) are not included. Work starts clean at public main
+`44316d3e98bb53f63c9545eb4b9f123fc763b274` on
+`feature/quick-controls-20261030`. No push/publication/version/tag is requested.
+
+Independent implementation in existing `adapters/orbitui_navbar.lua`:
+
+- Small anchored core ButtonDialogs, one instance at a time, share four
+  capability-gated destinations, explicit Refresh and native Back/outside/Close.
+  Existing SimpleUI Slider/Caption/step-control widgets retain real PowerD
+  ranges, warmth conversion and readback; drag refresh stays in the slider
+  region, without direct caption painting into another owner's screen buffer.
+  Short screens retain native advanced light settings rather than clipped
+  added widgets. Native night-mode event and advanced light dialog remain.
+- Wi-Fi reads only an already-loaded core manager. Cold require could perform
+  automatic restore, so even that is forbidden on opening status. No scanning,
+  connect attempt, fabricated network event or optimistic connection claim.
+  Android opens system Wi-Fi settings; absent toggle capability never turns
+  core's generic `true` shim into a Connected label. Other supported devices
+  delegate to the original core toggle prompt/network chooser on explicit tap.
+- Battery/time use local status and existing enabled battery-statistics/reading-
+  calendar owners. Unknown/unsupported/error values stay unknown/unavailable.
+  No reading database query/provider/network work during paint or new poller.
+- Status taps default OFF; existing bars/layouts/choices are untouched. A
+  searchable Navigation > Quick controls page and addable in-place quick action
+  expose the same UI. All owned labels/help/error messages have SV/EN text.
+- Home's item key and optional measured item-widget hook preserve native
+  label references/in-place refresh, spacing and long presses. Painted owner,
+  custom FM corner action, navigation/modal/geometry/sleep checks guard taps.
+  Bookshelf's ordinary hero and micro status use native strip geometry; custom
+  token layouts are not parsed into guessed icon hit regions. A four-line
+  optional seam runs only after user gestures and child controls; full-screen
+  tap-to-restore, page dots and job Stop keep priority. Shared detail cards do
+  not acquire shelf controls. Reader return/profiles/sync owners remain intact.
+- Dialog close, replacement, owner/navigation changes, rotation, sleep and host
+  teardown invalidate callbacks. Lifecycle observation does not consume events
+  or replace global menu, `require`, gettext, DataStorage or preload priority.
+
+No Bookshelf-OS code/assets/plugins are imported. Source inspiration remains
+https://github.com/taiminator/Bookshelf-OS/releases/tag/main (read-only review),
+not an additional embedded component or upstream pin. Native API inspection:
+official KOReader `v2025.08` ButtonDialog/MovableContainer/InputContainer,
+FrontlightWidget, NetworkMgr and battery/statistics plugin sources, retained in
+ignored `test-results/quick-controls-20261030/native/`. Added logic lives in an
+existing installed path; source pins, bootstrap/API 1, VERSION Beta 16, artwork,
+fonts, all locales and all public release/tag assets remain unchanged.
+
+Verification is recorded below after the clean candidate package is checked.
+No physical reader or actual user data is changed; Boox/Bigme fonts, layout,
+touch/D-pad, hardware/system return, day/night underlay and lifecycle acceptance
+remain open. Headless results must not be described as measured device gains.

@@ -32,6 +32,8 @@ function M.attach(owner, classes, loader, root)
 end
 
 function M.detach(owner, loader)
+    local navbar = package.loaded["adapters/orbitui_navbar"]
+    if navbar then navbar.quickControlsEvent("teardown", owner.ui) end
     M.performanceStopped(owner)
     local libraries = package.loaded["adapters/orbitui_libraries"]
     local bookshelf = owner._orbitui_components and owner._orbitui_components.bookshelf
@@ -61,6 +63,8 @@ function M.abort(owner, loader)
 end
 
 function M.propagate(owner, event, report)
+    local navbar = package.loaded["adapters/orbitui_navbar"]
+    if navbar then navbar.quickControlsEvent(event.handler, owner.ui) end
     M.performanceEvent(event.handler)
     for _, instance in ipairs(owner) do
         local ok, consumed = pcall(instance.handleEvent, instance, event)

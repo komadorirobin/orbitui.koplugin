@@ -78,6 +78,13 @@ function M.actions(QA)
         end
     end
     register{
+        id = "orbitui_quick_controls", label = _("Quick controls"), icon = "nerd:F1DE",
+        is_in_place = true, is_async_in_place = true,
+        execute = function(ctx)
+            return require("adapters/orbitui_navbar").showQuickControls(nil, { plugin = ctx.plugin })
+        end,
+    }
+    register{
         id = require("adapters/orbitui_navbar").bookshelf_action, label = "Bookshelf", icon = "nerd:F02D",
         is_in_place = false,
         execute = function(ctx)

@@ -2,6 +2,32 @@
 
 ## Automated
 
+### Local quick controls (October 30; not released)
+
+`test_quick_controls.lua` exercises the complete shared chrome adapter over
+native widget/hardware boundaries: default-off taps/isolated preference write,
+capability gating, cold NetworkMgr refusal, honest Android no-toggle state and
+system settings, native non-Android connection/chooser delegation, native light
+ranges/warmth conversions/readback/retired slider callbacks, short-screen native
+fallback, unknown battery/errors/zero charge, existing plugin statistics/calendar
+and clock formatting. It covers one-popup replacement, copied anchors, double/
+stale callbacks, navigation/modal/rotation/suspend/teardown guards, unchanged
+expanded shelf/custom gesture/job Stop paths, hero ownership, topbar dimensions,
+SV/EN/error text and complete native Topbar construction/label identities.
+Set `ORBITUI_NATIVE_BUTTON_DIALOG` to an inspected official `buttondialog.lua`
+to repeat against its whole native dialog implementation. Boundary sizing is
+not native font shaping or an emulator/device result.
+
+Physical checks remain: enable the opt-in through SV/EN navigation settings;
+Home fields at all saved placements/scales, hidden/disabled fields and corner/
+hold gestures; Bookshelf hero/micro status, active job Stop/page dots, expanded
+return; small/landscape/large-text layout, touch/sliders/D-pad/Back/outside close;
+Boox/Bigme Android Wi-Fi settings return without fake connection indications;
+actual light minimum/maximum/warmth/resume and no-API fallback; plugin-disabled
+battery/calendar; unknown/full/charging state; day/night underlay, reader fast
+return/profile state, rotation and sleep during drag/dialog/action. No poller,
+automatic scan/connect, metadata extraction or network-provider call is expected.
+
 ### October 30 reviewed merge (not a release)
 
 `test_upstream_20261030` covers thirteen embedded source identities/Lua syntax,

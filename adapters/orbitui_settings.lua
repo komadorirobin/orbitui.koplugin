@@ -386,6 +386,7 @@ local nodes = {
     { "navigation", "Navigation & interface", nil, "navigation", "navigationsrad bottenmeny knappar buttons dock navbar bars pagination" },
     { "bookshelf_navigation", "Bookshelf button & destinations", "navigation", "navigation", "bookshelf navigationsrad mål profile profil prose comics manga" },
     { "bars", "Bars, buttons & start view", "navigation", "screens", "status titelrad title navigation pagination startvy", screen = "bars_settings" },
+    { "quick_controls", "Quick controls", "navigation", "navigation", "snabbkontroller ljus belysning färgtemperatur warmth wifi wi-fi batteri klocka statusfält status light battery clock" },
     { "interface", "Icons, fonts & shared appearance", "navigation", "screens", "ikoner icon font färger colors stil style", screen = "style_settings" },
     { "quick_actions", "Custom quick actions", "navigation", "screens", "snabbåtgärder gester gestures shortcuts", screen = "quick_actions_settings" },
     { "reader", "Opening books & returning", "navigation", "bookshelf", "läsare reader bokstängning close return återgång hot park" },
@@ -755,7 +756,8 @@ function M.open(id, opts)
     local current
     local function close() if current then require("lib/bookshelf_menu_host").close(current) end end
     local rows, extra = { M.scopeRow(n.scope) }
-    if id == "libraries" then extra = require("adapters/orbitui_library_settings").items()
+    if id == "quick_controls" then extra = require("adapters/orbitui_navbar").quickControlsItems(close)
+    elseif id == "libraries" then extra = require("adapters/orbitui_library_settings").items()
     elseif id == "home_dashboard" then extra = require("adapters/orbitui_dashboard").menuItems()
     elseif id == "home_shelves" then extra = require("adapters/orbitui_home_shelves").menuItems()
     elseif id == "bookshelf_navigation" then extra = require("adapters/orbitui_library_settings").navigationItems()

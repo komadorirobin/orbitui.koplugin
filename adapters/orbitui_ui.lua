@@ -25,6 +25,8 @@ M.modules = {
     ["features/sui_module_chrome"] = true,
     ["screens/sui_menu"] = true,
     ["screens/sui_bottombar"] = true,
+    ["screens/sui_topbar"] = true,
+    ["lib/bookshelf_hero_card"] = true,
     ["screens/sui_settings_window"] = true,
     ["lib/bookshelf_i18n"] = true,
     ["infra/sui_patches"] = true,
@@ -175,6 +177,10 @@ function M.wrap(name, module)
         require("adapters/orbitui_dashboard").wrapChrome(module)
     elseif name == "screens/sui_bottombar" then
         require("adapters/orbitui_navbar").bottombar(module)
+    elseif name == "screens/sui_topbar" then
+        require("adapters/orbitui_navbar").topbar(module)
+    elseif name == "lib/bookshelf_hero_card" then
+        require("adapters/orbitui_navbar").hero(module)
     elseif name == "screens/sui_menu" then
         return function(plugin)
             module(plugin)

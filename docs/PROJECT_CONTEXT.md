@@ -22,6 +22,21 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-30
 
+- User requests the next high-priority Bookshelf-OS idea after the category-card
+  start. The recovered review identifies small light/Wi-Fi/battery/time menus.
+  Local work on `feature/quick-controls-20261030` starts clean at `44316d3e`.
+  Shared anchored native dialogs reuse SimpleUI's slider/control widgets and
+  actual PowerD units/readback, core network prompts/Android system settings,
+  and existing statistics owners. Status taps are opt-in, with a searchable
+  Navigation > Quick controls page and an addable quick action. Existing custom
+  gestures, long presses, expanded-shelf return and preferences stay intact.
+  Owner/navigation/rotation/suspend/close guards retire stale callbacks. No
+  polling, cold network initialization, fake connectivity event, provider/DB work
+  while painting, foreign code/assets, new installed path or upstream import.
+  All owned labels/help support SV/EN. No version bump, push or release is
+  authorized; public Beta 16 remains unchanged. Verification is recorded in
+  MERGE_LOG; physical fonts/touch/PowerD/Android/underlay acceptance stays open.
+
 - User requests an upstream merge, including the standing audited push to main,
   NOT a new release. Maintenance branch starts at local `7083c8a1`, retaining the
   category-card work below. Reviewed imports: Bookshelf master

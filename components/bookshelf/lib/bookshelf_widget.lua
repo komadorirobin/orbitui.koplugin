@@ -1367,6 +1367,10 @@ function BookshelfWidget:handleEvent(event)
         -- would strip that priority.
         if InputContainer.handleEvent(self, event) then return true end
 
+        -- Optional host shortcut on otherwise unclaimed status-line taps.
+        -- User gestures and child controls (job Stop, page dots) keep priority.
+        if self.orbitui_status_tap and self:orbitui_status_tap(event.args[1]) then return true end
+
         -- KOReader's zones on whichever host is live: FileManager, or the
         -- reader parked beneath the shelf (hot parking: no FileManager exists
         -- then, and a menu-intent gesture finishes the close and opens the

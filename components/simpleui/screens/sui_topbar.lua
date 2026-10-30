@@ -401,7 +401,7 @@ local function resolveBar()
                 local icon, label, nerd, max_w = builder()
                 if label == "" then label = nil end
                 if icon or label then
-                    items[#items + 1] = { icon = icon, label = label, nerd = nerd, max_w = max_w }
+                    items[#items + 1] = { key = key, icon = icon, label = label, nerd = nerd, max_w = max_w }
                 end
             end
         end
@@ -437,7 +437,7 @@ local function resolveBar()
     for _, zone in ipairs({ "left", "right", "center" }) do
         local parts = {}
         for i, item in ipairs(bar.zones[zone] or {}) do
-            parts[i] = table.concat({ item.icon or "", item.nerd and "n" or "t",
+            parts[i] = table.concat({ item.key or "", item.icon or "", item.nerd and "n" or "t",
                                       item.label and "L" or "-", item.max_w or "" }, "|")
             if item.label then bar.labels[#bar.labels + 1] = item.label end
         end
@@ -471,8 +471,9 @@ function M.buildTopbarWidget(bar)
                     text = "  ", face = face, fgcolor = fg,
                 }
             end
+            local cell = HorizontalGroup:new{}
             if item.icon then
-                group[#group + 1] = TextWidget:new{
+                cell[#cell + 1] = TextWidget:new{
                     text    = item.icon,
                     face    = item.nerd and icon_face or face,
                     fgcolor = fg,
@@ -485,9 +486,12 @@ function M.buildTopbarWidget(bar)
                     fgcolor   = fg,
                     max_width = item.max_w,
                 })
-                group[#group + 1] = label
+                cell[#cell + 1] = label
                 label_widgets[#label_widgets + 1] = label
             end
+            -- Optional host presentation hook; preserve the measured contents
+            -- and label references used by the in-place minute refresh.
+            group[#group + 1] = M.itemWidget and M.itemWidget(item.key, cell) or cell
         end
         return group
     end
