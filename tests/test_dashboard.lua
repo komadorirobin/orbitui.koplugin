@@ -924,7 +924,7 @@ H.test("ready hero covers recolour only their frame, preserve text and borrow th
     current = View.build(600, 730, ctx, local_data)
     frame = frameAt(current, Model.plan(600, 730, local_data.config).hero)
     H.eq(frame.background, package.loaded["infra/sui_accent"].toColor(
-        Model.cardColours("hero", "tinted", true, "#1464B4").deep))
+        Model.cardColours("hero", "tinted", true, "#1464B4").fill))
     H.eq(reads, 64); current:free(); colour_screen.night_mode = false
     H.eq(View.coverColour({ image = { getWidth = function() error("evicted") end,
         getHeight = function() return 1 end, getPixel = function() end } }), nil)
@@ -933,6 +933,29 @@ H.test("ready hero covers recolour only their frame, preserve text and borrow th
         getPixel = bb.getPixel }; weak[1] = transient; View.coverColour({ image = transient }) end
     collectgarbage("collect"); collectgarbage("collect"); H.eq(weak[1], nil, "colour cache retained bitmap")
     SH.getBookCover = original
+end)
+
+H.test("night hero uses the same dark card and light ink as its neighbours for every colour mode", function()
+    colourFixture()
+    local local_data = Dashboard.readData(ctx)
+    local_data.config, local_data.dark = Model.config(), true
+    colour_screen.night_mode = true
+    for _, mode in ipairs({ "off", "accents", "tinted" }) do
+        local_data.colour = mode
+        local current = View.build(600, 730, ctx, local_data)
+        local frame = frameAt(current, Model.plan(600, 730, local_data.config).hero)
+        local palette = Model.cardColours("hero", mode, true)
+        H.eq(frame.background, palette and palette.fill and package.loaded["infra/sui_accent"].toColor(palette.fill) or "white")
+        local found = false
+        for _, child in ipairs(current[1]) do
+            if child.text == local_data.current.data.title then
+                H.eq(child.fgcolor, "black", "native inversion must display light title ink"); found = true
+            end
+        end
+        assert(found); current:free()
+    end
+    colour_screen.night_mode = false
+    H.eq(local_data.dark, true, "night paint changed the saved day emphasis")
 end)
 
 local preview_path = os.getenv("ORBITUI_DASHBOARD_PREVIEW")

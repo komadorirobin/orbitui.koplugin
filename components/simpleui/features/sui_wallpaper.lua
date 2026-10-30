@@ -196,6 +196,7 @@ end
 function _HANDLE:paintTo(bb, x)
     if _styleGetBgWidget() then
         bb:blitFrom(_raster, x, 0, 0, 0, Screen:getWidth(), Screen:getHeight())
+        if M.orbituiBackdrop then M.orbituiBackdrop(bb, x, 0, Screen:getWidth(), Screen:getHeight()) end
     end
 end
 function _HANDLE:free() end -- the wallpaper module owns its single raster
@@ -650,6 +651,7 @@ function M.paintTint(bb, x, y, w, h)
     if Screen.night_mode then lighten, darken = darken, lighten end
     if lighten > 0 then bb:lightenRect(x, y, w, h, lighten / 100) end
     if darken  > 0 then bb:darkenRect(x, y, w, h, darken / 100) end
+    if M.orbituiBackdrop then M.orbituiBackdrop(bb, x, y, w, h) end
 end
 
 -- Paints the library scrim over the rect (x, y, w, h); nothing while it is

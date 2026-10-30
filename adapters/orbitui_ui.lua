@@ -36,6 +36,9 @@ M.modules = {
     ["lib/bookshelf_scaled_cover_cache"] = true,
     ["lib/bookshelf_page_wipe"] = true,
     ["engines/sui_screen_engine"] = true,
+    ["features/sui_wallpaper"] = true,
+    ["lib/bookshelf_wallpaper"] = true,
+    ["lib/bookshelf_color"] = true,
 }
 
 local function settingsEntry(items, old_key)
@@ -47,7 +50,11 @@ local function settingsEntry(items, old_key)
 end
 
 function M.wrap(name, module)
-    if name == "infra/sui_core" then
+    if name == "features/sui_wallpaper" or name == "lib/bookshelf_wallpaper" then
+        require("adapters/orbitui_appearance").wallpaper(module, name == "lib/bookshelf_wallpaper")
+    elseif name == "lib/bookshelf_color" then
+        require("adapters/orbitui_appearance").colourPainter(module)
+    elseif name == "infra/sui_core" then
         require("adapters/orbitui_navbar").core(module)
     elseif name == "infra/sui_cover_cache" then
         require("core/orbitui_host").performanceCache(module, "home")

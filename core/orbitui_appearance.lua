@@ -1,5 +1,14 @@
 -- Reversible shelf policies, kept separately from native per-shelf preferences.
 local M = { key = "appearance", order = { "native", "classic", "minimal" } }
+
+-- Runtime-only contrast floor, not a saved theme migration. Even a white
+-- wallpaper lands below 19% brightness; covers and chrome are painted later.
+M.NIGHT_BACKDROP = 0.82
+M.NIGHT_NAVBAR = 90
+function M.nightBackdrop(dark, inverting)
+    if not dark then return nil end
+    return M.NIGHT_BACKDROP, inverting and 255 or 0
+end
 local presets = {
     native = { label = "Shelf settings", boxes = "native",
         description = "Use each shelf's cover orientation, series boxes and ornaments. No extra ornament packs are installed automatically." },

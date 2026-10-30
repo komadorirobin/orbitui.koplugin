@@ -234,7 +234,9 @@ function M.content(widget, p, ctx, data)
     action(search, function() require("core/orbitui_search").show() end)
 
     -- Hero: covers stay in colour; only the surrounding card is dark.
-    local r, dark = p.hero, data.dark
+    -- Night cards share light ink on a dark surface. The day-only hero
+    -- emphasis must not become a bright white hole when the frame inverts.
+    local r, dark = p.hero, data.dark and not Screen.night_mode
     if r then
     local hero_frame = box(r, dark and ink or nil, dark and ink or nil, "hero")
     if coloured then

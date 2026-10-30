@@ -20,7 +20,25 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-10-30
+## Snapshot: 2026-10-31
+
+- The user's Beta 19 photos expose unreadable white chrome over retained light
+  wallpaper and Android RGB rounded-fill corner islands. User approves a LOCAL
+  night-mode pass only, on `fix/night-mode-20261030` from clean `3476ac93`.
+  A shared runtime-only 82% backdrop shade follows Home's screen flag and each
+  shelf's actual light/dark look, without changing saved themes or image files.
+  Optional wallpaper paint seams cover full/partial/scratch/legacy/blur paths;
+  blur cache keys include the tone. Shade before chrome, never over covers or
+  borrowed source rasters. The host guards the entire RGB rounded fill against
+  Android CBB's mixed inverse handling, restores flags on errors, and keeps the
+  native software/hardware paths. The day-only hero emphasis no longer becomes
+  a bright night card. The dock gets a 90% runtime opacity floor with native
+  tone/contrasting ink, also over pinned Light; day opacity stays saved.
+  VERSION stays Beta 19; no source pin, bootstrap, installed
+  path, asset/font/language, external sync or hardware patch change. No push or
+  release is authorized. Tests/package/native raster evidence and physical
+  Bigme/Boox gaps are recorded in MERGE_LOG/TESTING; a headless pixel check is
+  not device acceptance.
 
 - The explicitly requested Beta 19 is public at exact candidate/annotated tag
   `89d23c78d5432f35cf14046ab78dc26de85ef13d` / `v0.1.0-beta.19`, published

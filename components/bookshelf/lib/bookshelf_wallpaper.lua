@@ -628,6 +628,7 @@ local function frostBuild(src_bb, x, y, w, h, tint)
     -- with no rotation, no inversion flag and a known byte layout to read.
     local region = Blitbuffer.new(rw, rh, btype)
     region:blitFrom(src_bb, 0, 0, rx, ry, rw, rh)
+    if M.orbituiBackdrop then M.orbituiBackdrop(region, 0, 0, rw, rh) end
     local out = Blitbuffer.new(w, h, btype)
     local alloc = function(n) return ffi.new("double[?]", math.max(1, n)) end
     local ok, err = pcall(Frost.blur,
@@ -696,9 +697,10 @@ local function frostFor(x, y, w, h, tint)
     local bg = M._bg
     if not (bg and bg.bb and M._bg_key) then return nil end
     local tc, ts = tint and tint.key, tint and tint.strength
+    local tone = M.orbituiBackdropKey and M.orbituiBackdropKey() or ""
     for i, e in ipairs(M._frost) do
         if e.bg_key == M._bg_key and e.x == x and e.y == y and e.w == w and e.h == h
-                and e.tint_key == tc and e.tint_strength == ts then
+                and e.tint_key == tc and e.tint_strength == ts and (e.tone or "") == tone then
             if i > 1 then table.remove(M._frost, i); table.insert(M._frost, 1, e) end
             return e.bb
         end
@@ -713,6 +715,7 @@ local function frostFor(x, y, w, h, tint)
         fkey = string.format("frost:%s|%s|%d,%d,%dx%d|%s|%s|%d/%d/%d", bg.dkey,
             M._bg_key:sub(-2) == "|n" and "n" or "d", x, y, w, h, tostring(tc), tostring(ts),
             Frost.FACTOR, Frost.RADIUS, Frost.PASSES)
+        if tone ~= "" then fkey = fkey .. tone end
     end
     local bb = fkey and diskCache().load(fkey)
     if not bb then
@@ -721,7 +724,7 @@ local function frostFor(x, y, w, h, tint)
     end
     if not bb then return nil end
     table.insert(M._frost, 1, { bg_key = M._bg_key, x = x, y = y, w = w, h = h, bb = bb,
-                                tint_key = tc, tint_strength = ts })
+                                tint_key = tc, tint_strength = ts, tone = tone })
     while #M._frost > FROST_MAX do
         local old = table.remove(M._frost)
         pcall(function() old.bb:free() end)
@@ -1222,6 +1225,7 @@ function M.backdrop(target, region)
         local ok = pcall(function()
             target:blitFrom(bg.bb, region.x, region.y, region.x, region.y,
                             region.w, region.h)
+            if M.orbituiBackdrop then M.orbituiBackdrop(target, region.x, region.y, region.w, region.h) end
         end)
         return ok and true or false
     end
@@ -1353,6 +1357,7 @@ function M.restore(target, x, y, w, h)
             target:blitFrom(bg.bb, x, y, x, y, w, h)
         end)
         if ok then
+            if M.orbituiBackdrop then M.orbituiBackdrop(target, x, y, w, h) end
             _reshade(target, x, y, w, h)
             return true
         end
@@ -1401,6 +1406,7 @@ function M.patch(target, dx, dy, sx, sy, w, h)
     if w <= 0 or h <= 0 then return false end
     local ok = pcall(function()
         target:blitFrom(bg.bb, dx, dy, sx, sy, w, h)
+        if M.orbituiBackdrop then M.orbituiBackdrop(target, dx, dy, w, h) end
     end)
     return ok and true or false
 end
@@ -1956,6 +1962,7 @@ local function backgroundWidget(bb, w, h)
             end
             pcall(function()
                 target:blitFrom(self.bb, x, y, 0, 0, self.w, self.h)
+                if M.orbituiBackdrop then M.orbituiBackdrop(target, x, y, self.w, self.h) end
             end)
         end
     end

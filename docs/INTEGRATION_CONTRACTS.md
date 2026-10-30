@@ -386,6 +386,22 @@ Tests: `test_series_rating`, `test_upstream_series_boxes`.
 
 ## C07: Presentation and preferences
 
+October 31 local night-mode correction: dark Home/shelf wallpaper must provide
+readable contrast without changing saved day settings, theme/pinned-look choices,
+source images or covers. Shade only the background destination, before panels/
+text/images. Full, partial, scratch, legacy facade and blurred backgrounds must
+agree; tone participates in the blur cache key, including independently pinned
+Light/Dark with an unchanged screen flag. Preserve native image/cache ownership.
+Android CBB's flag-ignoring rectangles and flag-aware rounded corners need one
+error-safe inverse guard for the whole RGB fill; software-only/non-Android
+targets keep their native inversion. Home's optional hero emphasis is day-only,
+so every night card uses light text on a dark surface. The shared dock's runtime
+opacity is at least 90% at night, independently of pinned shelf Light; resolve
+native tone/ink together and retain day opacity and memoized surface ownership.
+No global framebuffer/
+image patch or settings migration. Tests: `test_night_mode`, dashboard/colour and
+native CBB/scrim/blur/rotation checks. Physical legibility/lifecycle remains open.
+
 October 30: grid quick actions/six-column covers/new statistics and panel Critter
 are opt-in. Existing rows/layouts and native Android Bluetooth remain usable.
 Global Critter controls are defaults; saved screen-specific picks, style, source,

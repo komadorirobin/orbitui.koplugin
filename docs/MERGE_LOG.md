@@ -5756,3 +5756,46 @@ PROJECT_CONTEXT/TESTING/MERGE_LOG changes never rebuild or replace the artifact.
 No installed reader, user data, Hardcover/edition behavior, hardware patch or
 additional upstream pin is changed. Physical acceptance remains open as listed
 above; automated tests are not a Bigme/Boox or measured speedup claim.
+
+## 2026-10-31 — approved local night-mode correction
+
+User reports Beta 19 photos: light wallpaper under inverted white heading/dock
+and pagination, bright hero among dark cards, and rectangular corner islands.
+After read-only diagnosis the user approves a local fix, not publication.
+Branch `fix/night-mode-20261030` starts clean at public `3476ac93`.
+
+The common runtime-only contrast policy lives in existing appearance files:
+82% darkening of wallpaper follows Home's frame flag or a shelf's resolved
+Light/Dark/Auto look. No saved day/night/theme/opacity choice or source bitmap is
+rewritten. Optional host paint seams in both wallpaper modules shade destination
+pixels only: full/partial/scratch/legacy paints and blur input before text/panel/
+cover painting. Blur cache identities include the tone (both memory and derived
+disk keys), so pinned Light/Dark cannot reuse the other tone. Raw wallpaper and
+cover caches keep their original ownership; day pixels retain the native path.
+
+The Android CBB ignores inversion for rect fills but native Lua rounded corners
+honour it. Guard the entire host RGB rounded fill, not just its outline; restore
+the exact inverse flag on exceptions. The existing native outline guard also
+respects CBB-off, retaining software-only native inversion. Other platforms and
+hardware inversion remain native. Home's day hero preference is retained but
+night uses the same dark surface/light ink as neighbouring cards. The shared
+dock's night opacity has a 90% runtime floor; resolve its native tone and ink
+together, including over pinned Light, without mutating the shared surface or
+day preference. Other bars retain their own appearance controls.
+
+New tests cover whole component wallpaper owners and adapter/loader seams,
+partial repairs, blur cache identity, saved-value/source preservation and the
+dashboard hero across colour modes. An optional real KOReader-base C/Lua raster
+supplement reproduces the unguarded corner defect, verifies corrected corner/
+centre pixels at four rotations with CBB on/off, RGB/grey brightness and actual
+blur/corner restore without changing source pixels. Native dependency pin is
+`fe41d7698ad8a6a7caf794d9b601229009a34053`; compiled dependencies and evidence stay
+in ignored `test-results/night-mode-20261030/`, never in the runtime package.
+
+VERSION remains `0.1.0-beta.19`; source pins, API-1 bootstrap/all 2,000 installed
+paths, artwork/fonts/languages and external BookOrbit/Hardcover/MAL/patch owners
+are unchanged. Full interpreter/catalog/sealed/source/history/secret/native-OTA
+checks are required before local handoff; record final results below. No GitHub
+push, tag, release, installed device or production OTA is changed. Physical
+three-view legibility, covers, pinned themes, day/night/day, rotation, reader
+return and suspend/resume remain open; no measured speedup is claimed.

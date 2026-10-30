@@ -248,6 +248,7 @@ function Color.paintBorder(bb, x, y, w, h, bw, c, r, anti_alias)
         local ok_d, Device = pcall(require, "device")
         local suppress = ok_d and Device.isAndroid and Device:isAndroid()
             and bb.getInverse and bb:getInverse() == 1
+            and (not Blitbuffer.getUseCBB or Blitbuffer:getUseCBB())
         if suppress then
             bb:setInverse(0)
             local ok, err = pcall(bb.paintBorderRGB32, bb, x, y, w, h, bw, c, r, anti_alias)

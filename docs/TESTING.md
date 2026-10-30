@@ -2,6 +2,38 @@
 
 ## Automated
 
+### Local night-mode correction (October 31, not pushed/released)
+
+`test_night_mode` exercises the shared runtime tone, error-safe Android inverse
+guard, explicit loader seams, preserved external callbacks and pinned shelf look,
+full/region/restore/scratch paint ordering, blur tone identities and SimpleUI's
+whole wallpaper/legacy facade/partial eraser. Day preferences are never written;
+source rasters remain owned by native caches and unmodified by shading. Dashboard
+tests add night hero ink/fill coverage for Off/Accents/Tinted without changing the
+day preference or book widgets/actions. The dock retains native tone/ink with a
+90% night opacity floor, including pinned Light, without changing day opacity or
+another consumer's memoized surface. Eight new ordinary cases plus one full
+dashboard case run under both interpreters.
+
+The optional native supplement uses unmodified KOReader-base
+`fe41d7698ad8a6a7caf794d9b601229009a34053` blitbuffer.lua and blitbuffer.c/h,
+built only in ignored `test-results/night-mode-20261030/native/`. Execute
+`ORBITUI_NATIVE_BB_DIR=... ORBITUI_NATIVE_BB_LIB=... luajit tests/test_night_mode.lua`
+both with `IS_ANDROID=1` and unset. A minimal libc/idiv shim is test-only. It
+reproduces the UNGUARDED Android corner mismatch, checks the corrected pixels
+at all four rotations with CBB on/off, caps displayed RGB/grey night wallpaper
+brightness, preserves source pixels and compares full paint, corner restore and
+the real native blur. Three native cases supplement the eight ordinary ones;
+they are not an Android framebuffer/window or physical reader acceptance claim.
+
+Run fresh complete Lua/LuaJIT gates, all catalogs and clean-commit/sealed-package
+checks before handing off. Same-version development ZIPs must never replace the
+public Beta 19 asset. Retest the three reported views on Bigme/Boox: headers,
+hero/stat/caption contrast, rounded corners, dock/status/paging labels, opaque/
+transparent/blurred panels, covers' original colours, pinned Light/Dark/Auto,
+day/night/day toggles, reader return, rotation and sleep. Record results below
+and in MERGE_LOG. No push/release or measured performance gain is implied.
+
 ### Published Beta 19 (October 30)
 
 Exact candidate/annotated tag `89d23c78` / `v0.1.0-beta.19` passes fresh

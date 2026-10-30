@@ -24,12 +24,12 @@ H.test("tinted cards keep black day text and white night text above accessible c
         H.eq(M.cardColours(entry.key, "tinted", false).fill, day.fill)
     end
 end)
-H.test("hero colours keep white day and native-inverted black night text readable", function()
+H.test("day hero emphasis stays readable and night uses the ordinary dark card palette", function()
     for _, hex in ipairs({ "#FF0000", "#00FF00", "#0000FF", "#EFEF00", "#550099", "#222222" }) do
         local day = M.cardColours("hero", "accents", false, hex)
-        local night = M.cardColours("hero", "accents", true, hex)
+        local night = M.cardColours("hero", "tinted", true, hex)
         assert(1.05 / (luminance(day.deep) + .05) >= 7)
-        assert((luminance(night.deep) + .05) / .05 >= 7)
+        assert(1.05 / (luminance(night.fill) + .05) >= 7)
     end
     H.eq(M.cardColours("hero", "tinted", false, nil).deep, nil)
     H.eq(M.cardColours("hero", "tinted", false, "invalid").deep, nil)
