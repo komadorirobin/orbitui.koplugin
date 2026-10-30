@@ -5419,3 +5419,26 @@ full-luajit, final-root-lua/luajit, focused and minimum/current native logs,
 translations, package, audit.py/audit.json, extracted sealed/sealed-native logs,
 previous-dist and Gitleaks. No new dependency, push, tag, release, production OTA
 or reader/user-data mutation. Boox/Bigme retesting remains required.
+
+## 2026-10-30 — Beta 18 publication request
+
+After the status audit identified one functional quick-control fix and one
+verification commit ahead of public main, the user explicitly requests “Pusha i
+alla fall nästa beta”. This authorizes push and publication as a new prerelease,
+superseding the earlier local-only restriction. Start clean at `e2f1aa32` on
+`release/quick-controls-beta18-20261030`; public main is `f97d9bd0`.
+
+Include reviewed source `c1fe57df` without additional runtime changes: current
+painted Home status routing, live opt-in and native quick-dialog identity.
+Keep C02/C04/C06/C07/C10 and exact modal/lifecycle ownership. VERSION advances
+to `0.1.0-beta.18`; SV/EN notes use existing OTA.md, not a new installed path.
+No upstream import/pin advance, bootstrap/API change, artwork/fonts/language
+removal, settings/reading-data change or Bigme hardware driver. That optional
+driver is already published separately through Ereader and its own repository.
+
+Publication is gated on both complete interpreter suites, translations, a clean
+committed sealed package, exact source/path/history/artwork/secret checks,
+native older-installer/recovery tests, CI and verified draft downloads. Verify
+anonymous public bytes, channel selection and live native OTA after publishing;
+all previous releases/tags/assets remain immutable. Physical Boox/Bigme input,
+Android system return, light behavior and lifecycle acceptance remains open.

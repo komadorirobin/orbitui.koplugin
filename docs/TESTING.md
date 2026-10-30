@@ -2,6 +2,18 @@
 
 ## Automated
 
+### Beta 18 publication candidate (October 30)
+
+The user now explicitly authorizes publishing the reviewed quick-control fixes
+below as a new beta, superseding the earlier local-only restriction. Runtime is
+unchanged from reviewed `c1fe57df`; VERSION and release documentation advance to
+Beta 18, never replacing Beta 17's assets. Both full interpreters, translations,
+sealed-byte suites, native older-installer upgrade/recovery, history/artwork/
+secret audits and exact draft/public-byte checks are required again. Evidence:
+`test-results/beta18-20261030/`; final results are recorded in MERGE_LOG.
+Physical panel/touch/system-return checks remain outstanding. The separately
+published Bigme hardware userpatch is not included in this release.
+
 ### Local Beta 17 quick-control device regressions (October 30; not published)
 
 The user's screenshots/tests expose gaps in the original 22-case boundary suite:

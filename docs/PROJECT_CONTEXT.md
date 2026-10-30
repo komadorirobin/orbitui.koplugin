@@ -22,6 +22,17 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-30
 
+- User now explicitly requests the next beta after the unpublished-code audit.
+  Prepare Beta 18 on `release/quick-controls-beta18-20261030` from clean
+  `e2f1aa32`, with public main `f97d9bd0`. Publish only the reviewed quick-control
+  input fixes below plus version/English-Swedish release documentation; no new
+  upstream import, hardware driver or installed path. Prior local-only approval
+  is superseded for this release. VERSION becomes `0.1.0-beta.18`; exact complete
+  gate/package/CI/draft/public verification will be recorded in MERGE_LOG.
+  Physical quick-control acceptance remains open. The optional Bigme frontlight
+  userpatch is already published separately through Ereader and
+  `komadorirobin/koreader-bigme-frontlight`, not embedded in OrbitUI.
+
 - User's Beta 17 device test exposes two quick-control integration regressions:
   Home's priority menu zone consumes status taps before child cells, and SimpleUI
   converts unanchored plain dialogs into action sheets that fail the controller's

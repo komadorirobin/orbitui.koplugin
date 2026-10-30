@@ -7,6 +7,50 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 0.1.0-beta.18
+
+Beta 18 publishes the locally reviewed quick-control input fixes. There is no
+new upstream import: the reviewed October 30 pins and all Beta 17 features remain.
+
+- Home's current status fields can open quick controls before its parent menu
+  intercepts the tap. Blank topbar areas, the menu chevron, configured corner
+  gestures and long presses retain their existing behavior.
+- Enabling/disabling **Tap status fields for quick controls** takes effect on
+  the mounted Home without rebuilding books/providers or restarting first.
+- Quick controls opened from settings or a bar action remain native dialogs
+  instead of being converted to SimpleUI action sheets. This fixes blocked tabs,
+  Refresh, Close and Wi-Fi actions without relaxing stale-dialog/owner guards.
+
+Svenska: Beta 18 rättar snabbkontrollerna. Tryck på statusfälten på Hem ska nu
+öppna rätt kontroll i stället för den vanliga toppmenyn. **Tryck på statusfält för
+snabbkontroller** börjar/slutar gälla direkt när valet ändras. Dialoger som öppnas
+från inställningarna eller en knapp behåller rätt identitet, så flikar,
+**Uppdatera status**, **Stäng** och Wi-Fi-åtgärder inte blockeras. Egna hörngester,
+långtryck, vanliga menyytor och skydd mot gamla dialogers tryck behålls.
+
+Open **OrbitUI settings > Navigation & interface > Quick controls** / öppna
+**OrbitUI-inställningar > Navigation och gränssnitt > Snabbkontroller**.
+Status taps remain opt-in; saved bars/layouts/profiles are not replaced.
+Android Wi-Fi delegates to the system settings. Light control still requires
+working native KOReader device support; this release does not add a hardware
+driver. The separately distributed optional Bigme compatibility userpatch is
+installed through the Ereader patch catalogue or its own repository, not OrbitUI.
+Svenska: Ljuset kräver fungerande enhetsstöd i KOReader. Bigmes separata valfria
+kompatibilitetspatch installeras via Ereader-patchpaketet eller sin egen repo;
+den ingår inte i denna OrbitUI-release.
+
+Update on the preview channel and restart KOReader / uppdatera via
+förhandsversionskanalen och starta om KOReader. Beta 17 and earlier supported
+betas can update directly. Bootstrap/API 1, all 2,000 installed paths, artwork,
+fonts, languages and source pins are unchanged. Old tags/assets remain immutable;
+rollback changes code only, never reading progress or later settings.
+
+This remains a prerelease. Automated source/package/native-boundary tests are
+not physical acceptance: retest Home status/menu routing, toggling, every panel's
+tabs/Close/Back/outside, Android Wi-Fi return, reader return, rotation and sleep
+on Boox/Bigme. Svenska: Fortsatt beta; tryck, dialoger, systemåtergång och
+enhetslivscykel behöver bekräftas på läsplattan efter uppdateringen.
+
 ## OrbitUI 0.1.0-beta.17
 
 Beta 17 publishes the approved settings cards/quick controls and already-reviewed
