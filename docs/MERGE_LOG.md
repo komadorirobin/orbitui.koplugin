@@ -5686,3 +5686,23 @@ collector. Fresh collection shows zero missing commits for both tracked tips.
 Verification-only docs do not rebuild or replace either this development ZIP
 or any public ZIP. Main CI/watch is checked after push; physical acceptance and
 measured runtime gains remain open. No version/tag/release/production OTA change.
+
+## 2026-10-30 — explicitly authorized Beta 19 publication
+
+The user requests "Publicera ny beta" after the verified main push. Prepare
+`0.1.0-beta.19` from public `493eb05a` on
+`release/search-collections-beta19-20261030`. This publishes the already-reviewed
+shared-search/collection editor, inspiration monitoring and evening SimpleUI
+merge; it does not import more upstream or alter Hardcover/edition behavior.
+The current source pins, API-1 bootstrap, all 2,000 installed paths, artwork,
+fonts, languages, existing data ownership and integrations remain unchanged.
+
+Bilingual release notes are in OTA.md. Fresh full Lua/LuaJIT, translations,
+clean-commit package, sealed suites/native owners, real older installers,
+source/path/history/artwork/secret and exact draft/public byte checks are
+required. Preserve every existing release/tag/asset; publish only a prerelease
+on the preview channel. Physical Boox/Bigme search/collection/Insights, fonts,
+touch/keyboard, paging, Save/Cancel, reader return, rotation and sleep acceptance
+remain open. Automated gates are not a device or measured performance claim.
+Evidence goes in ignored `test-results/beta19-20261030/`; append final results
+without rebuilding or replacing the sealed release artifact.

@@ -22,6 +22,18 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-30
 
+- The user explicitly requests a new beta after the main push and confirms
+  leaving Hardcover/automatic edition linking unchanged. Prepare Beta 19 from
+  clean public `493eb05a` on `release/search-collections-beta19-20261030`.
+  Include the already-reviewed search/collection work and evening SimpleUI merge,
+  no additional import, hardware patch, source pin or installed-path change.
+  VERSION advances to `0.1.0-beta.19`; bilingual notes use existing docs/OTA.md.
+  Inspiration watch is active: first run `41133753256` succeeded and owns issue
+  #2; main CI `41133753262` passed both jobs/native OTA. Release requires fresh
+  full/sealed/translation/source/history/secret/native installer gates and exact
+  draft/public byte audits; record results in MERGE_LOG. Physical Boox/Bigme
+  acceptance remains open and the release must be a prerelease, not stable.
+
 - Local approved Kobold follow-up on
   `feature/search-collections-inspiration-watch-20261030`, from public `71442369`:
   shared search gains ten local recent query/scope pairs and relevance/title/

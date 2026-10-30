@@ -7,6 +7,63 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 0.1.0-beta.19
+
+Beta 19 publishes the reviewed shared-search/collection changes and the earlier
+October 30 evening SimpleUI merge. No additional upstream is imported for this
+release: SimpleUI stays at `7a605bbc` (3.0.2 plus follow-ups), Bookshelf at
+`ee84a8fe` (6.0.4 plus issue forms). Hardcover behavior is deliberately unchanged.
+
+- **Shared search:** ten recent local query/scope pairs, explicit history clear,
+  and relevance/title/author/series sorting. Ranking happens before the existing
+  400-hit cap. Profile/current-shelf restrictions, group results and the original
+  open/hold book actions remain. Missing profiles never silently become the
+  whole library. Recent choices are paged; changing scope/sort retains typed text.
+- **Collection contents:** in Bookshelf's **Manage collections**, tap a custom
+  collection and choose **Manage books…**. Search members or choose **Add books**
+  with the bottom-left view selector, review **Changes** and the add/remove
+  counts, sort by title/author, then Save or Cancel. Back/X also discards the
+  draft. Removal changes membership only, never deletes a book file. Favourites
+  and folder-managed collections retain their native KOReader controls.
+- **Reading Insights:** the reviewed SimpleUI update adds monthly books/pages
+  charts with a separate year selector. Missing/busy/incomplete activity reads
+  can retry; empty years, historical refresh and future-year rollover retain
+  accurate cache boundaries. Existing Home/dashboard layout is not replaced.
+- **Repository monitoring:** a separate daily inspiration dashboard watches
+  selected source files from six design references. It never merges, imports
+  or publishes code automatically and does not run on the reader.
+
+Svenska: Beta 19 ger sökningen **Senaste sökningar** med tio lokala poster och
+**Sortera träffar** efter relevans, titel, författare eller serie. Profilen och
+den aktuella hyllans avgränsning behålls. En borttagen profil ger ett tydligt fel
+i stället för att söka i hela biblioteket. Historiken kan rensas.
+
+I Bookshelfs samlingshantering väljer du en egen samling och **Hantera böcker…**.
+Knappen nere till vänster växlar mellan **I samlingen**, **Lägg till böcker** och
+**Ändringar**. Sök och markera böcker, kontrollera antalet tillägg/borttagningar
+och välj **Spara** eller **Avbryt**. Tillbaka/krysset kastar också utkastet.
+Inga bokfiler tas bort. Favoriter och mappstyrda samlingar hanteras som tidigare.
+
+De redan granskade upstream-ändringarna ingår också: månadsdiagram för böcker/
+sidor i läsinsikterna, egen årsväljare och säkrare återförsök/cachehantering av
+statistik. Läsöversiktens layout, profiler, chip, snabbstängning, Androids säkra
+omslagshantering och BookOrbit/MAL/patch-integrationer behålls. Hardcover-patchen,
+utgåvekopplingen och ansvaret för lässtatus/progress ändras inte av denna release.
+Den separata inspirationsbevakningen körs på GitHub, inte på läsplattan.
+
+Update on the preview channel and restart KOReader / uppdatera via
+förhandsversionskanalen och starta om KOReader. Older supported betas can update
+directly; no bridge, reset, new runtime path or bootstrap/API change is needed.
+All 2,000 installed paths, artwork/fonts/languages and current source pins remain.
+Previous releases/assets are immutable. Rollback changes code only, not later
+settings, reading progress, metadata links or collections saved by the reader.
+
+This is still a prerelease. Automated tests do not establish physical Boox/Bigme
+acceptance or a measured speedup. Retest Swedish/English fonts/touch/keyboard,
+search/history/scope, collection view/search/clear/paging/Save/Cancel, the Insights
+year picker and reader/rotation/sleep return. Svenska: Fortsatt beta. Prova de nya
+vyerna på enheten; ingen fysisk enhetsverifiering eller prestandavinst påstås.
+
 ## OrbitUI 0.1.0-beta.18
 
 Beta 18 publishes the locally reviewed quick-control input fixes. There is no
