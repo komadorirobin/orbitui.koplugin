@@ -70,4 +70,15 @@ function M.widget()
     return Widget
 end
 
+-- Complete source or sealed API-1 component; only registered helpers may lack a file.
+function M.componentModule(root, name)
+    local map = dofile(root .. "/core/orbitui_module_map.lua")
+    local path = root .. "/" .. assert(map[name], name)
+    local file = io.open(path, "rb")
+    local fn
+    if file then file:close(); fn = assert(loadfile(path))
+    else fn = assert((loadstring or load)(assert(getmetatable(map).orbitui_embedded[name], path), "@" .. path)) end
+    return fn()
+end
+
 return M

@@ -89,7 +89,7 @@ package.loaded["lib/bookshelf_i18n"] = { gettext = translate }
 package.loaded["lib/bookshelf_fonts"] = fonts
 package.loaded["lib/bookshelf_space"] = dofile(root .. "/components/bookshelf/lib/bookshelf_space.lua")
 package.loaded["lib/bookshelf_colour_text"] = Text
-package.loaded["lib/bookshelf_popup_kit"] = dofile(root .. "/components/bookshelf/lib/bookshelf_popup_kit.lua")
+package.loaded["lib/bookshelf_popup_kit"] = H.componentModule(root,"lib/bookshelf_popup_kit")
 package.loaded["lib/bookshelf_cap_centre"] = dofile(root .. "/components/bookshelf/lib/bookshelf_cap_centre.lua")
 package.loaded["lib/bookshelf_chip_button"] = dofile(root .. "/components/bookshelf/lib/bookshelf_chip_button.lua")
 package.loaded["lib/bookshelf_pagination"] = { buildNav = function(opts)

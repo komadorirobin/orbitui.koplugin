@@ -108,7 +108,7 @@ package.loaded["lib/bookshelf_space"] = { px = function(n) return n end, radius 
     padding = { default = 4 }, span = {} }
 package.loaded["lib/bookshelf_pagination"] = { buildNav = function(opts) return Widget:new(opts) end }
 -- Keep modal init/refresh and all picker callbacks real; stub native widgets only.
-package.loaded["lib/bookshelf_popup_kit"] = dofile("components/bookshelf/lib/bookshelf_popup_kit.lua")
+package.loaded["lib/bookshelf_popup_kit"] = H.componentModule(os.getenv("ORBITUI_TEST_ROOT") or ".","lib/bookshelf_popup_kit")
 package.loaded["lib/bookshelf_cap_centre"] = dofile("components/bookshelf/lib/bookshelf_cap_centre.lua")
 package.loaded["lib/bookshelf_chip_button"] = dofile("components/bookshelf/lib/bookshelf_chip_button.lua")
 package.loaded["lib/bookshelf_library_modal"] = dofile("components/bookshelf/lib/bookshelf_library_modal.lua")

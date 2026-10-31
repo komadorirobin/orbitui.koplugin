@@ -266,7 +266,7 @@ H.test("actual native Tags builder retains author/collection/genre/folder sectio
     package.loaded["lib/bookshelf_fonts"]={getFace=function() return {} end}
     package.loaded["ui/font"]=package.loaded["lib/bookshelf_fonts"]
     package.loaded["lib/bookshelf_chip_button"]=deps["lib/bookshelf_chip_button"]
-    local popup_kit=dofile(root.."/components/bookshelf/lib/bookshelf_popup_kit.lua")
+    local popup_kit=H.componentModule(root,"lib/bookshelf_popup_kit")
     local env = setmetatable({ UIManager = UI, _ = function(s) return s end, Repo = {},
         PopupKit=popup_kit,
         require = function(name) return deps[name] or require(name) end,
