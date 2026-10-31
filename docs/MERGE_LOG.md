@@ -70,6 +70,46 @@ gates finish. Physical Bigme/Boox popup/editor/back/close, cache warmth, profile
 navigation, day/night, rotation and reader return remain required; no measured
 speedup or physical visual acceptance is claimed.
 
+### Final local verification
+
+Runtime candidate `b187170cae56c5da3494b8a34fe902187e696472`, followed by
+test-only sealed-loader correction `57945328`, passes both full interpreter
+gates: 133 Python tests/four unchanged optional pixel-cache skips, all 95 root
+Lua files (including the separately run new merge suite), 533 Bookshelf suites/
+zero failures/three normal SQLite exclusions, and all 13 SimpleUI files. The
+final folder-action fixture is rerun under both interpreters. Syntax 1,146,
+module map 403, vocabulary 336 and all 43 catalogs pass. New Bookshelf POT
+msgids are checked against explicit host Swedish equivalents with none missing.
+
+All 95 root files pass again on sealed bytes under both interpreters, including
+the complete native Tags/modal owners using the exact embedded popup helper,
+not a missing physical helper or logical stub. Minimum/current input owners,
+native EPUB/libarchive and Android/non-Android CBB/software RGB/grey night and
+tilted-cover supplements pass. Actual Beta 5/9/22 native installers pass full
+inventory/hash validation, missing-module rejection, activation/restart/code
+rollback, truncated recovery, external snapshots and interrupted obsolete-code
+cleanup retaining active/rollback/unknown/modified/user data. Only temporary
+test installs are touched.
+
+DEVELOPMENT-ONLY same-version ZIP: **9,285,139 bytes**, **27,421,960 expanded**,
+2,066 entries, exactly the same 1,999 manifest records plus manifest / **2,000
+API-1 installed paths**. SHA-256
+`cc54a4f5f2e47a9eed9111280adaf63d26637a6db98bee202c3db61fb11f40ec`.
+All runtime bytes equal the exact candidate archive after only approved PO
+source-comment reduction; manifest/checksum/size/source projection agree.
+Bootstrap/entry/version/root artwork are unchanged. New helpers are exactly
+embedded, not additional installed files. All 1,025 outgoing blobs through the
+test-only follow-up exclude the held artwork; Gitleaks finds no leaks. Repeat
+the final history/secret audit after verification docs and before push.
+
+Fresh read-only upstream collection at 20:34 UTC reports zero missing commits
+for both reviewed pins, no errors/stale manifest; latest stable upstream
+releases are Bookshelf 6.1.0 and SimpleUI 3.0.2. Evidence stays ignored under
+`test-results/upstream-bookshelf61-20261031/` (full/sealed/native/package/audit/
+catalog/monitor logs). Verification/test-only changes do not replace the sealed
+development artifact, and no GitHub release/asset/tag is changed. Final main
+push/CI result is recorded separately; device acceptance stays open above.
+
 ## 2026-10-31 — BookOrbit controls push and Beta 23 publication
 
 The user explicitly approves push/new-beta publication after the status report
