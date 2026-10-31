@@ -60,6 +60,13 @@ documented by C10; all other integration lives in existing core/adapters. No new
 installed runtime path, bootstrap/OTA/file-limit change, artwork, font/language
 removal, settings migration, book/file/cache deletion or external sync change.
 Verification evidence is kept in ignored `test-results/ui-refinements-20261031/`.
+Final source review additionally catches light group members that are path-only:
+shared queries now prefer their existing `books_meta`, and optional quick-order
+queries ask the native producer for the appropriate sort keys without changing
+saved priorities. Remaining stubs reuse the light map; date ordering uses native
+TokenRecord read-only proxies and unwraps back to the original metadata records.
+Regression coverage includes actual native history/mtime resolution, not only
+already-enriched fixtures. No whole-list cover decode or data writer is added.
 Native fonts/touch/keyboard, group presentation, compact lists, scopes/restart,
 cover quality, old default layouts, reader return, night/day, rotation and sleep
 on Bigme/Boox remain device checks, not established by headless success.

@@ -51,9 +51,12 @@ function M.resolve(ref)
         scope = Profiles.scope(profile) }
 end
 
-function M.books(ref)
+function M.books(ref, opts)
     local query, err = M.resolve(ref)
     if not query then return {}, err end
+    -- A browse order asks the same native producer to prepare its date/history
+    -- keys. This changes only the resolved query, never the saved chip sort.
+    if opts and opts.sort then query.sort = opts.sort end
     local Repo = require("lib/bookshelf_book_repository")
     local source = {}
     for key, value in pairs(query.source) do source[key] = value end
@@ -77,12 +80,12 @@ function M.books(ref)
             seen[item.filepath] = true
             books[#books + 1] = item
         elseif item.books then
-            local members = item.books
-            if item.books_meta and query.sort and #query.sort > 1 then
+            local members = item.books_meta or item.books
+            if query.sort and #query.sort > 1 then
                 local priority = {}
                 for i = 2, #query.sort do priority[#priority + 1] = query.sort[i] end
                 members = {}
-                for i, book in ipairs(item.books_meta) do members[i] = book end
+                for i, book in ipairs(item.books_meta or item.books) do members[i] = book end
                 require("lib/bookshelf_sort_engine").sort(members, priority)
             end
             for _, book in ipairs(members) do add(book) end

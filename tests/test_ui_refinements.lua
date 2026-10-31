@@ -174,6 +174,27 @@ H.test("relative dates handle invalid, future, yesterday and year rollover witho
     local midnight = os.time{ year = 2026, month = 1, day = 1, hour = 0, min = 10 }
     H.eq(Sort.relativeDate(midnight - 1200, midnight), "Yesterday")
 end)
+H.test("path-only group members sort with real native lazy dates and return original metadata records", function()
+    local Repo, Engine = package.loaded["lib/bookshelf_book_repository"], package.loaded["lib/bookshelf_sort_engine"]
+    local old_books, old_sort, old_light = books, Engine.sort, Repo.lightMetaFor
+    local old_fs, old_history = package.loaded["libs/libkoreader-lfs"], package.loaded.readhistory
+    local a, b = { filepath = "/date-a", title = "A" }, { filepath = "/date-b", title = "B" }
+    books = { { filepath = a.filepath }, { filepath = b.filepath } }
+    Repo.lightMetaFor = function(fp) return fp == a.filepath and a or b end
+    package.loaded["libs/libkoreader-lfs"] = { attributes = function(fp, field)
+        H.eq(field, "modification"); return fp == a.filepath and 100 or 200
+    end }
+    package.loaded.readhistory = { hist = { { file = a.filepath, time = 400 }, { file = b.filepath, time = 300 } } }
+    Engine.sort = function(records, priority)
+        local key = priority[1].key
+        table.sort(records, function(left, right) return left[key] > right[key] end)
+    end
+    H.eq(Sort.browseBooks(ref, { sort = "last_opened" })[1], a)
+    H.eq(Sort.browseBooks(ref, { sort = "date_added" })[1], b)
+    H.eq(a.last_opened, nil); H.eq(a.date_added, nil); H.eq(books[1].title, nil)
+    books, Engine.sort, Repo.lightMetaFor = old_books, old_sort, old_light
+    package.loaded["libs/libkoreader-lfs"], package.loaded.readhistory = old_fs, old_history
+end)
 
 local Panel = require("adapters/orbitui_book_panel")
 package.loaded["libs/libkoreader-lfs"] = { attributes = function() return { size = 1024, modification = 1 } end }

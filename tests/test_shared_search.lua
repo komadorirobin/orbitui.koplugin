@@ -80,6 +80,15 @@ H.test("current shelf captures the deepest supported drilldown", function()
     H.eq(Query.resolve(captured).source.kind, "single_series")
     H.eq(Query.resolve(captured).source.id, "Billy Bat")
 end)
+H.test("group book queries retain native metadata even without a secondary sort", function()
+    tabs.custom.sort_priority = nil
+    local rich = { filepath = "/rich", title = "Actual title", date_added = 123 }
+    records = { { books = { { filepath = "/rich" } }, books_meta = { rich } } }
+    H.eq(Query.books(ref)[1], rich)
+    local priority = { { key = "title" } }
+    Query.books(ref, { sort = priority })
+    H.eq(call.sort, priority); H.eq(tabs.custom.sort_priority, nil)
+end)
 H.test("current-shelf queries preserve whole groups without changing the source filter", function()
     records = {}
     local filter = tabs.custom.filter

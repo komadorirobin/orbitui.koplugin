@@ -71,11 +71,17 @@ function M.bookStatus(book, repo)
     return "unread"
 end
 function M.browseBooks(ref, prefs, with_counts, bookcase)
-    local books, err = require("core/orbitui_shelf_query").books(ref)
+    local key = ({ author = "author_surname", series = "series_combined" })[prefs.sort] or prefs.sort
+    local priority = key and { { key = key,
+        reverse = prefs.sort == "last_opened" or prefs.sort == "date_added" }, { key = "title" } }
+    local books, err = require("core/orbitui_shelf_query").books(ref, { sort = priority })
     if err then return nil, err end
     local Repo = require("lib/bookshelf_book_repository")
     local counts, selected = { all = #books, unread = 0, reading = 0, barely = 0, finished = 0 }, {}
     for _, book in ipairs(books) do
+        -- Light group members may be path-only. Reuse the native metadata map
+        -- before comparing them, never attach covers to a whole-list query.
+        if not book.title and Repo.lightMetaFor then book = Repo.lightMetaFor(book.filepath) or book end
         local status
         if with_counts or (prefs.filter and prefs.filter ~= "all") then
             status = M.bookStatus(book, Repo)
@@ -84,9 +90,14 @@ function M.browseBooks(ref, prefs, with_counts, bookcase)
         if not prefs.filter or prefs.filter == "all" or status == prefs.filter then selected[#selected + 1] = book end
     end
     if prefs.sort then
-        local key = ({ author = "author_surname", series = "series_combined" })[prefs.sort] or prefs.sort
-        local priority = { { key = key,
-            reverse = prefs.sort == "last_opened" or prefs.sort == "date_added" }, { key = "title" } }
+        local dates = key == "date_added" or key == "last_opened"
+        local TokenRecord
+        if dates then
+            TokenRecord = require("lib/bookshelf_token_record")
+            local proxies = {}
+            for i, book in ipairs(selected) do proxies[i] = TokenRecord.wrap(book) end
+            selected = proxies
+        end
         local Order = require("core/orbitui_shelf_sort")
         if bookcase and Order.enabled(priority) then
             local entries, section = {}, {}
@@ -95,6 +106,9 @@ function M.browseBooks(ref, prefs, with_counts, bookcase)
             selected = {}
             for i, entry in ipairs(ordered) do selected[i] = entry.rec end
         else require("lib/bookshelf_sort_engine").sort(selected, priority) end
+        if TokenRecord then
+            for i, book in ipairs(selected) do selected[i] = TokenRecord.unwrap(book) end
+        end
     end
     return selected, nil, counts
 end
