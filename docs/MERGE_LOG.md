@@ -4,6 +4,61 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-10-31 — approved local BookOrbit tags in the existing Tags tab
+
+User says "Gå vidare med taggarna", specifies on-device books only, then clarifies
+that the existing Tags tab is the right place. Do not put these in technical
+Book details. Start from clean public Beta-21 verification head `de51ac9b` on
+`feature/bookorbit-local-tags-20261031`. User separately approves a small LOCAL
+BookOrbit API addition, explicitly without server deployment. No push or new
+release is requested for either repository.
+
+An optional structured `orbitui_tag_sections` native seam adds a distinct
+BookOrbit section first in the existing Tags tab, retaining author/series/
+collections/genres/folder order below, native focus/scroll/zoom and standalone
+behavior without the seam. Host code lives in the existing book-panel,
+integrations and search files, keeping all 2,000 installed API-1 paths. All
+owned labels and help are English/Swedish; user tag names stay literal.
+
+Load/Refresh fetch only the linked book's detail tags on explicit action.
+Tag taps search the external plugin's real current-account local maps, not its
+bounded private detail cache or a title-based guess. Batches contain up to 200
+IDs, exact server-side tag membership is intersected with each batch, local
+files are rechecked and at most 400 matches survive with a visible notice.
+All library profiles are included. A native paginated modal reads only visible
+metadata without covers, filters filenames, supports refresh/close and reuses
+the caller's normal reader/hold actions. Native cancelable workers keep requests
+off the UI thread; only explicit actions can prompt for Wi-Fi. Stale account,
+credential/link/navigation/modal owners cannot deliver results or callbacks.
+No automatic fetch, persistent tag index, collection/genre/metadata/file write,
+reading-state change, progress sync or new external writer is introduced.
+
+BookOrbit work is isolated from the older undo-opening checkout in
+`/Users/robinbolinsson/work/bookorbit-local-tags-20261031`, branch
+`feat/koreader-local-tags-20261031`, based on observed public `ba315c7`.
+BookOrbit revision: `0cf7db16f1059049820f36dc0fe4022ea52a630b`. Its four targeted
+suites pass 215 tests; full server typecheck, full server ESLint and formatting
+checks pass under Node 24.19. No database/production calls are made by these
+unit/type/static checks. The old undo-opening checkout stays untouched.
+The existing KOReader-auth catalog controller exposes a no-store read-only
+`tag-matches` GET route. Mandatory 1..200 safe integer IDs and a literal 1..200
+character tag are validated without dropping malformed members. Shared types
+define `{bookIds: number[]}`. The existing OPDS query owner applies requested
+IDs, accessible libraries, present status and content filters before an exact,
+parameterized tag membership query, returning only IDs with no per-book detail,
+cover, progress or status hydration. No new DB schema, index or dependency is
+needed. Existing public plugin client methods suffice; no plugin fork/change.
+Require the native account-scoped state manager, not a pre-account-partitioned
+plugin whose old match maps could carry book IDs across servers. The host never
+calls setAccount or edits the plugin's state. Ambiguous ID/path maps are excluded
+rather than guessed; older providers get an update-needed message.
+
+Require both full interpreter gates, all catalogs, sealed source/path/held-art/
+history/secret checks and native installer recovery against public Beta 21.
+Record final local results below. A same-version development ZIP must never
+replace published Beta-21 bytes. No physical Bigme/Boox or live deployed API
+acceptance is claimed; no server/credentials/account data are accessed in tests.
+
 ## 2026-10-31 — approved Beta 21 headerless book-details fix
 
 User reports a KOReader crash when selecting Bokdetaljer after Beta 20. Local

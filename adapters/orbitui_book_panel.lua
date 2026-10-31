@@ -39,9 +39,13 @@ function M.information(book)
     return table.concat(rows, "\n")
 end
 function M.widget(widget)
+    widget.orbitui_tag_sections = function(self, book, modal)
+        return M.tagSections(self, book, modal)
+    end
     widget.orbitui_detail_args = function(self, book, args)
         local _ = require("core/orbitui_i18n")
         local selected = args.tabs[args.active_tab] and args.tabs[args.active_tab].id
+        for _i, tab in ipairs(args.tabs) do if tab.id == "tags" then tab.label = _("Tags") end end
         -- Keep all native tabs, plugin actions, sources and their close/open
         -- lifecycle. The new read-only page is built only when selected.
         local position = #args.tabs + 1
@@ -65,6 +69,59 @@ function M.widget(widget)
             return self:_buildBookMenuHeader(book, width, nil, nil, { rich = true, summary_text = text })
         end
     end
+end
+
+local tag_states = setmetatable({}, { __mode = "k" })
+function M.tagSections(owner, book, modal)
+    local _ = require("core/orbitui_i18n")
+    local Integration = require("adapters/orbitui_integrations")
+    local UI = require("ui/uimanager")
+    if not modal then return {} end
+    local state = tag_states[modal]
+    if not state then
+        state = { navigation = UI._simpleui_navigation_generation }
+        tag_states[modal] = state
+    end
+    state.render = (state.render or 0) + 1
+    local render = state.render
+    local function current()
+        return not modal._dismissed and not modal._closed and UI:isWidgetShown(modal)
+            and state.navigation == UI._simpleui_navigation_generation
+    end
+    local function refresh()
+        local tab = modal._tabs and modal._tabs[modal._active_tab]
+        if current() and modal.rebuildTab and tab and tab.id == "tags" then modal:rebuildTab() end
+    end
+    local pills = {}
+    if state.session and not state.session:current() then
+        state.tags, state.session, state.error = nil, nil, Integration.bookOrbitError("stale")
+    end
+    for _, tag in ipairs(state.tags or {}) do
+        pills[#pills + 1] = { label = tag, on_tap = function()
+            if not current() or state.render ~= render or state.busy or not state.session or not state.session:current() then return end
+            modal:onClose()
+            require("core/orbitui_search").bookOrbitTag(tag, {
+                open_book = function(file, record) owner:_openBook(record or { filepath = file }) end,
+            })
+        end }
+    end
+    pills[#pills + 1] = { label = _(state.busy and "Loading…" or state.tags and "Refresh BookOrbit tags" or "Load BookOrbit tags"),
+        link = true, on_tap = function()
+            if not current() or state.render ~= render or state.busy then return end
+            local session, err = Integration.bookOrbitSession()
+            if not session then state.error = Integration.bookOrbitError(err); refresh(); return end
+            state.busy, state.error = true, nil
+            refresh()
+            Integration.bookOrbitRequest(session, function(s) return s:detail(book.filepath) end, current, function(result, failure)
+                state.busy = false
+                if result then state.tags, state.session = result.tags, session
+                elseif failure ~= "cancelled" then state.error = Integration.bookOrbitError(failure) end
+                refresh()
+            end)
+        end }
+    return {{ title = _("BookOrbit tags"), pills = pills,
+        note = state.error or (state.tags and #state.tags == 0 and _("No BookOrbit tags for this book."))
+            or _("Tap a tag to find linked books on this device, across all library profiles. Tags are read-only; nothing is synced or edited.") }}
 end
 
 local information = M.information

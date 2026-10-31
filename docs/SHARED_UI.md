@@ -6,6 +6,36 @@ change. Device acceptance is still pending.
 
 ## Controls
 
+### Local BookOrbit tags (October 31; not published)
+
+The existing **Tags / Taggar** tab starts with **BookOrbit tags /
+BookOrbit-taggar**. The original author, series, collections, genres and folder
+sections remain below it. **Load BookOrbit tags / Hämta BookOrbit-taggar** reads
+the linked book's tags; **Refresh BookOrbit tags / Uppdatera BookOrbit-taggar**
+rereads them. No fetch on opening/painting and no mixing with genres or KOReader
+collections. Tags remain in this panel's memory only, never a new disk index.
+
+Tap a tag for exact matches among **BookOrbit-linked files on the device, across
+all library profiles**. The native paginated result modal offers filename
+filtering, Refresh and Close; tap opens via the caller's original reader action,
+hold opens the shared book panel. Only visible-page metadata is read, without
+covers. At most 400 results, with an explicit cap notice. Account/link changes,
+closed/replaced owners, canceled work, missing files and invalid/partial responses
+fail closed; requests run through the external plugin's cancelable worker.
+Only explicit actions may request Wi-Fi. Nothing edits metadata, collections,
+reading status, remote progress or existing preferences.
+
+The separately approved LOCAL BookOrbit API adds a KOReader-authenticated
+`GET /koreader/plugin/catalog/tag-matches?ids=1,2&tag=...` (API-v1 prefix as
+usual), with 1..200 IDs and one literal tag per request, returning `{bookIds}`.
+Native accessible-library/present-book/content-filter rules still apply. The
+An account-scoped BookOrbit plugin's existing public client methods suffice; its bounded private
+detail cache is not scraped. An older server displays an update-needed message.
+Neither repository is pushed or published and no server is deployed by this
+work. Physical SV/EN fonts/touch/D-pad/keyboard, long names, scroll/zoom,
+Wi-Fi/cancel/offline, reader return, rotation/sleep and live API acceptance are
+still required. See MERGE_LOG/TESTING for final local verification.
+
 ### October 31 UI refinements (Beta 20)
 
 - Shared Search has **Typo-tolerant search / Stavfelstålig sökning**, on unless

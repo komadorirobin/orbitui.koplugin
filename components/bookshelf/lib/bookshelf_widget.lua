@@ -24785,7 +24785,7 @@ function BookshelfWidget:_showBookDetail(book, opts)
         { cat = "folder",      title = _("Folder") },
     }
     local tags_tab
-    if #pill_specs > 0 then
+    if #pill_specs > 0 or self.orbitui_tag_sections then
         tags_tab = {
             id = "tags",
             label = _("Tags"),
@@ -24924,9 +24924,31 @@ function BookshelfWidget:_showBookDetail(book, opts)
                     }
                 end
                 local vg = VerticalGroup:new{ align = "left" }
-                for _s = 1, #TAG_SECTIONS do
-                    local sec = TAG_SECTIONS[_s]
-                    if sec.cat == "genres" then
+                local sections = {}
+                if self.orbitui_tag_sections then
+                    for _, extra in ipairs(self:orbitui_tag_sections(book, show_parent) or {}) do
+                        sections[#sections + 1] = { orbitui = extra }
+                    end
+                end
+                for _, sec in ipairs(TAG_SECTIONS) do
+                    sections[#sections + 1] = sec
+                end
+                for _s = 1, #sections do
+                    local sec = sections[_s]
+                    if sec.orbitui then
+                        local extra = sec.orbitui
+                        vg[#vg + 1] = self:_sectionHeadingBar(extra.title, avail_w, base, lpad)
+                        if extra.note then
+                            vg[#vg + 1] = FrameContainer:new{
+                                bordersize = 0, margin = 0,
+                                padding_left = lpad, padding_right = lpad,
+                                padding_top = Space.px(10), padding_bottom = Space.px(6),
+                                TextBoxWidget:new{ text = extra.note, width = pills_w,
+                                    face = BFont:getFace("cfont", base) },
+                            }
+                        end
+                        vg[#vg + 1] = pillsFrame(extra.pills or {}, Space.px(10))
+                    elseif sec.cat == "genres" then
                         -- Genres are special: a source chip bar (Embedded /
                         -- Calibre / Hardcover) over the SELECTED source's genres.
                         -- Picking a source persists a per-book preference and

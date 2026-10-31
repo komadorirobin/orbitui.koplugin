@@ -22,6 +22,31 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-31
 
+- User approves implementing clickable BookOrbit tags with ON-DEVICE matches
+  only, then explicitly moves them to the existing Tags tab rather than the
+  technical Book details tab. Local work on `feature/bookorbit-local-tags-20261031`
+  starts from clean public Beta-21 verification head `de51ac9b`. Tags/Taggar has
+  a separate BookOrbit section first, followed by unchanged author/series/
+  collections/genres/folder sections. Loading and refresh are explicit; opening
+  or painting never starts a network request. Native focus, zoom, scrolling,
+  close/resource owners and original book-open/plugin actions remain. Exact
+  case-sensitive tag lookup uses BookOrbit's current-account onDeviceMaps and
+  native cancelable subprocess/client, batches 200 IDs, rechecks real files and
+  caps results at 400 with a notice. Results include all library profiles,
+  hydrate only visible metadata without covers and offer filename filtering.
+  No persistent tag index/detail-cache scraping, account data in settings/logs,
+  metadata/collection/progress writes or sync owner. Missing/old/offline/malformed
+  providers and stale account/link/navigation/close callbacks fail closed.
+  User additionally approves LOCAL BookOrbit API support, NOT deployment:
+  `/Users/robinbolinsson/work/bookorbit-local-tags-20261031` on
+  `feat/koreader-local-tags-20261031` from observed public `ba315c7` adds a bounded
+  read-only catalog tag-matches route with native KOReader auth, accessible-
+  library/present-book/content-filter scope and shared response types. Existing
+  client methods suffice, so no BookOrbit KOReader plugin fork is necessary.
+  Neither repository is pushed or published; no server is deployed. VERSION,
+  source pins, all 2,000 installed paths, bootstrap and assets stay unchanged.
+  Final checks and physical-device gaps are recorded in MERGE_LOG/TESTING.
+
 - User reports KOReader exits on selecting Bokdetaljer in Beta 20; reproduce
   the deterministic nil-header error locally. User approves the fix, a true
   render-path regression and immediate Beta 21 publication. Work from clean

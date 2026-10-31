@@ -1110,6 +1110,26 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+October 31 approved BookOrbit tag navigation belongs in the existing Tags tab,
+NOT technical Book details. A distinct BookOrbit-tags section never aliases or
+edits native genres/collections. Opening/painting stays passive; explicit load,
+refresh and tag taps use the external plugin's client and cancelable subprocess.
+Use its current-account local match maps, exact tag names, batches of 200 IDs,
+real-file checks and the 400-result cap with an explicit notice. Include all
+local profiles, not a silently narrowed active profile or server-only books.
+No downloaded covers, metadata/file/reading-state writes, extra sync writer,
+persistent tag index or private detail-cache scraping. Native Tags focus/zoom/
+scroll/close and existing book-open/hold actions remain. Stale modal, navigation,
+account, credentials and link-generation callbacks must be inert. Missing/older/
+erroring providers, malformed responses and partial failures cannot become a
+complete-looking empty or partial result. All owned labels are Swedish/English.
+Local API work in BookOrbit is separately approved; deployment/publication is
+not. Its read-only KOReader-auth route validates mandatory IDs/tag and preserves
+accessible libraries, present status and content filters before exact matching.
+Tests: `test_bookorbit_tags`, shared book-panel/search and real modal lifecycle
+regressions. Device fonts/touch/keyboard, cancellation, native reader return and
+live deployed-server acceptance remain required.
+
 Beta 21 corrects the headerless information tab: use the actual modal's native
 scroller, never `_headedHtmlBody` with a nil header. Preserve modal CSS, scaled
 per-tab font size, current body dimensions, swipe-down yielding and native

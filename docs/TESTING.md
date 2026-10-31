@@ -2,6 +2,28 @@
 
 ## Automated
 
+### Local BookOrbit tag navigation
+
+`test_bookorbit_tags` exercises the real native `_showBookDetail` factory and
+its actual Tags body builder with primitive widgets stubbed, including the new
+section, all original sections, focus tables, narrow geometry and per-tab font
+size. Provider/UI tests cover passive opening, exact Unicode tag identity,
+separate genres/collections, current-account/public local maps, 200-ID batches,
+the 400-hit notice, missing/deleted/remote files, unknown returned IDs, invalid
+arrays, partial errors/old servers, cancel/offline/deferred callbacks, retired
+modal/navigation/link/account owners, explicit load/refresh, paged metadata-only
+hydration and unchanged reader callbacks. Swedish labels/user-entered names are
+tested. Existing 20-case true modal lifecycle regression remains required.
+
+BookOrbit's separate local branch tests actual ValidationPipe DTO transforms,
+mandatory/bounded/invalid/extra inputs, controller KOReader auth/no-store scope,
+current-user service delegation, literal SQL parameterization, requested IDs,
+accessible libraries, present status and content-filter subqueries. It selects
+only IDs without per-book hydration or any status/progress writer. No production
+server/database/device is touched. Physical fonts, input/cancel/scroll/zoom,
+native reader return and live deployment acceptance are not established by
+these headless tests. No push/release/deployment is authorized by this work.
+
 ### Beta 21 book-details crash fix
 
 `test_ui_refinements` now invokes the real information tab builder through

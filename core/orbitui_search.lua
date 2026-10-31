@@ -331,6 +331,108 @@ function M.results(text, scope_id, ref, opts)
     return window
 end
 
+function M.bookOrbitTag(tag, opts)
+    opts = opts or {}
+    local Integration = require("adapters/orbitui_integrations")
+    local UI, Screen = require("ui/uimanager"), require("device").screen
+    local fs = require("libs/libkoreader-lfs")
+    local modal, retired, busy, data_session = nil, false, false, nil
+    local records, visible, query = {}, {}, ""
+    local generation = UI._simpleui_navigation_generation
+    session = session + 1
+    local request = session
+    local function current()
+        return not retired and modal and UI:isWidgetShown(modal)
+            and request == session and generation == UI._simpleui_navigation_generation
+    end
+    local function available(file) return fs.attributes(file, "mode") == "file" end
+    local function filter()
+        visible = {}
+        if data_session and not data_session:current() then
+            records, data_session = {}, nil
+            modal.config.intro = Integration.bookOrbitError("stale")
+        end
+        for _, book in ipairs(records) do
+            if M.lower(book.filename):find(M.lower(query), 1, true) then visible[#visible + 1] = book end
+        end
+    end
+    local function fetch()
+        if not current() or busy then return end
+        local source, err = Integration.bookOrbitSession()
+        if not source then modal.config.intro = Integration.bookOrbitError(err); modal:refresh(); return end
+        busy = true
+        records, visible, data_session = {}, {}, nil
+        modal.config.intro = _("Only BookOrbit-linked books on this device. All library profiles are included.")
+        modal:refresh()
+        Integration.bookOrbitRequest(source, function(s) return s:matches(tag) end, current, function(result, failure)
+            busy = false
+            if result then
+                data_session = source
+                for _, file in ipairs(result.paths) do
+                    if available(file) then records[#records + 1] = { filepath = file, filename = file:match("([^/]+)$") or file } end
+                end
+                table.sort(records, function(a, b) return M.lower(a.filepath) < M.lower(b.filepath) end)
+                modal.config.intro = _("Only BookOrbit-linked books on this device. All library profiles are included.")
+                if result.truncated then modal.config.intro = modal.config.intro .. " " .. _("Showing the first 400 matches.") end
+            else
+                modal.config.intro = failure == "cancelled" and _("Search cancelled. Tap Refresh to try again.")
+                    or Integration.bookOrbitError(failure)
+            end
+            filter(); modal.page = 1; modal:refresh()
+        end)
+    end
+    local function bookMeta(book)
+        if not book.title and available(book.filepath) then
+            local ok, value = pcall(require("lib/bookshelf_book_repository").buildBookMeta, book.filepath, { want_cover = false })
+            if ok and value then
+                book.title, book.author = value.title, author(value)
+            end
+        end
+        return book
+    end
+    local function canOpen(book)
+        if type(book) ~= "table" or not current() or busy or not data_session or not data_session:current() then return false end
+        if not available(book.filepath) then Context.notify(_("This book is no longer on the device.")); return false end
+        return true
+    end
+    modal = require("lib/bookshelf_library_modal"):new{ _sui_keep_homescreen = true, config = {
+        title = _("BookOrbit tags") .. ": " .. tag,
+        intro = _("Only BookOrbit-linked books on this device. All library profiles are included."),
+        search_placeholder = function() return _("Filter by filename") end,
+        on_search_submit = function(value)
+            if not current() then return end
+            query = value or ""; filter(); modal.page = 1; modal:refresh()
+        end,
+        grid_cols = 1, rows_per_page = 4,
+        cells_per_page = function() return Screen:getWidth() > Screen:getHeight() and 3 or 4 end,
+        item_count = function() filter(); return #visible end,
+        item_at = function(index) return visible[index] end,
+        empty_state = function(w, h)
+            return require("lib/bookshelf_picker_cell").render({ label = _(busy and "Loading…" or "No matches.") }, { w = w, h = h })
+        end,
+        cell_renderer = function(book, dimen)
+            bookMeta(book)
+            return require("lib/bookshelf_picker_cell").render({ label = book.title or book.filename,
+                subtitle = book.author or book.filename }, dimen)
+        end,
+        on_cell_tap = function(book)
+            if not canOpen(book) then return end
+            modal:onClose()
+            local open = opts.open_book or Context.openBook
+            open(book.filepath, bookMeta(book))
+        end,
+        cell_long_tap = function(book)
+            if canOpen(book) then require("adapters/orbitui_book_panel").show(book.filepath, { open_book = opts.open_book }) end
+        end,
+        footer_rows = {{ { label = _("Refresh"), on_tap = fetch },
+            { label = _("Close"), on_tap = function() if current() then modal:onClose() end end } }},
+        on_closed = function() retired = true end,
+    } }
+    UI:show(modal)
+    fetch()
+    return modal
+end
+
 function M.show(opts)
     opts = opts or {}
     local UIManager = require("ui/uimanager")
