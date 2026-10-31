@@ -21,6 +21,40 @@ immutable. Full interpreter/catalog/sealed/native-OTA/source/history/secret,
 draft/public byte and channel checks precede final handoff. Record results and
 exact candidate below; physical Bigme/Boox acceptance remains open.
 
+Beta 24 is public at exact candidate/annotated tag
+**`6532b06b8b79b466342e93b7a31c28f49c21e2c4` / `v0.1.0-beta.24`**,
+published **2026-10-31 20:51:49 UTC**, prerelease true. Both full interpreters
+pass: 133 Python/four unchanged optional skips, all 95 root Lua files, 533
+Bookshelf suites/zero failures/three normal SQLite exclusions, 13 SimpleUI,
+syntax 1,146/map 403/vocabulary 336 and all 43 catalogs. Fresh sealed all-root
+reruns, complete minimum/current input owners, native EPUB/libarchive and
+Android/non-Android RGB/grey/CBB/software night/tilted-cover supplements pass.
+
+Actual Beta 5/9/23 native installers pass inventory/hash validation, missing-
+module rejection, activation/restart/code rollback, truncated recovery, external
+snapshots and interrupted obsolete-code cleanup retaining protected/user data.
+Main/tag CI **`41240494963` / `41240495034`** pass all four interpreter/package/
+native-OTA jobs at the exact candidate. The draft is resolved by release ID
+`430177194`; uploaded assets are downloaded and checked before publication.
+Anonymous public API/assets match local bytes and GitHub digests. Live anonymous
+LuaSocket/LuaSec application-TLS upgrades from Beta 9/23 pass every recovery
+phase. Tests affect temporary installations only, not the user's device.
+
+ZIP SHA-256
+**`80b2dee3e057aace19ad9c3102a67db2a14ddda9a397d89dbaf0564462e845fc`**;
+**9,288,226 bytes**, **27,431,859 expanded**, 2,066 entries, exactly the same
+1,999 manifest records plus manifest / **2,000 installed API-1 paths**.
+Every sealed runtime byte equals the exact candidate archive after approved
+PO source-comment reduction. Runtime code, pins, module map, bootstrap and
+resources are unchanged from the verified merge. History/artwork/Gitleaks
+checks pass; repeat the final audit after verification-only docs.
+
+Preview selects Beta 24; stable remains absent. All **78 previous releases/
+assets and 129 old tag refs remain unchanged**. Evidence stays ignored in
+`test-results/beta24-20261031/`. Verification-only docs never rebuild or replace
+the tagged package. No BookOrbit production deployment, external patch install
+or physical Bigme/Boox acceptance is implied. Device gaps remain in OTA/TESTING.
+
 ## 2026-10-31 — requested Bookshelf 6.1 upstream merge (no release)
 
 User: "Merga upstream. Bookshelf har fått en lite större uppdatering".

@@ -15,6 +15,19 @@ draft/public bytes and live anonymous application-TLS upgrades, unchanged old
 releases/tags and preview-only channel selection. See MERGE_LOG for results.
 The physical popup/editor/cache acceptance list below stays open.
 
+Beta 24 is now public at `6532b06b` / `v0.1.0-beta.24`, published
+2026-10-31 20:51:49 UTC, prerelease true. Both full gates pass 133 Python/four
+unchanged skips, 95 root Lua files, 533 Bookshelf/zero failures/three SQLite
+exclusions, 13 SimpleUI, syntax 1,146/map 403 and all 43 catalogs. Sealed-root,
+minimum/current input, native EPUB and Android/non-Android night/tilted-cover
+checks pass. Actual Beta 5/9/23 native upgrade/recovery and live anonymous
+application-TLS upgrades from Beta 9/23 pass. Exact source/path/history/secret/
+draft/public checks pass; main/tag CI `41240494963` / `41240495034` are green.
+Preview selects Beta 24, stable stays absent, and all 78 old releases/assets
+and 129 tag refs remain unchanged. Evidence is in `test-results/beta24-20261031/`;
+verification-only docs never rebuild published bytes. These are headless tests,
+not physical popup/editor/cache acceptance on Bigme/Boox.
+
 ### October 31 Bookshelf 6.1 reviewed merge (not a release)
 
 Targets: Bookshelf `7ff93b9d`, SimpleUI `fdf83c7d`; VERSION stays Beta 23.

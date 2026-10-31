@@ -22,17 +22,24 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-31
 
-- User explicitly requests "Pusha och publicera etc" after the completed
-  Bookshelf 6.1 merge. Prepare **Beta 24** on
-  `release/bookshelf61-beta24-20261031` from clean public `bfd9a9d9`.
-  The prior main CI `41239651434` and watch `41239651437` are green; both
-  upstream pins are fully included. No additional import, runtime code,
-  bootstrap/API-1/path, asset/language or external server/patch change is in
-  scope. Only VERSION and existing SV/EN release documentation change.
-  Keep Beta 23 and all earlier assets/tags immutable. Follow draft/download/
-  checksum/prerelease/anonymous/live-OTA verification in OTA.md; exact final
-  candidate, audits and publication evidence go in MERGE_LOG. Physical
-  Bigme/Boox acceptance remains open; publish as a prerelease, not stable.
+- **Beta 24 is public**, exact candidate/annotated tag
+  `6532b06b8b79b466342e93b7a31c28f49c21e2c4` / `v0.1.0-beta.24`, published
+  **2026-10-31 20:51:49 UTC**, prerelease true. The user's explicit
+  "Pusha och publicera etc" follows the verified Bookshelf 6.1 merge;
+  preparation starts clean at `bfd9a9d9` on `release/bookshelf61-beta24-20261031`.
+  Only VERSION and existing SV/EN release documents change; no further import,
+  runtime code, bootstrap/API-1/path, asset/language or external server/patch
+  change. Main/tag CI `41240494963` / `41240495034` pass all four jobs.
+  Both full interpreter gates, all 43 catalogs, sealed-root/native input/EPUB/
+  raster checks, exact source/path/history/held-art/secret and draft/public byte
+  audits pass. Actual Beta 5/9/23 native installers pass recovery/rollback;
+  live anonymous LuaSocket/LuaSec upgrades from Beta 9/23 pass all phases.
+  Preview selects Beta 24; stable stays absent. All 78 earlier releases/assets
+  and 129 old tag refs stay unchanged. ZIP SHA-256
+  `80b2dee3e057aace19ad9c3102a67db2a14ddda9a397d89dbaf0564462e845fc`,
+  9,288,226 bytes, 27,431,859 expanded, same 2,000 installed API-1 paths.
+  Evidence: `test-results/beta24-20261031/`. Verification-only docs never
+  rebuild/replace published bytes. Physical Bigme/Boox acceptance remains open.
 
 - A user-requested merge-only maintenance pass integrates Bookshelf **6.1.0**
   at `7ff93b9d8fb11194701440bcafd366002745cb01` (255 commits) and SimpleUI at
