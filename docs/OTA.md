@@ -7,6 +7,73 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 0.1.0-beta.20
+
+Beta 20 publishes the approved night-mode and shared-interface refinements,
+plus the reviewed SimpleUI follow-up through `5631ce10`. Bookshelf remains at
+`ee84a8fe` (6.0.4 plus issue forms), with no new commits. No original artwork,
+font/language, library data, external sync owner or hardware patch is replaced.
+
+- **Night mode:** dark Home/shelf backgrounds gain runtime contrast over retained
+  wallpaper, rounded RGB cards keep consistent corners on Android, and the dock
+  retains readable ink. Day preferences and source cover colours stay intact;
+  independently pinned Light/Dark shelf looks are preserved.
+- **Tilted Cover Deck artwork:** upstream matches warped buffers to the screen
+  format before inverted night blits and correctly counts their resident bytes
+  in the existing cache. The original cached cover is never freed by conversion;
+  allocation failures retain the native fallback. Polish translations improve.
+- **Shared search:** optional typo-tolerant matching handles accents, prefixes
+  and transposed letters. Exact spelling, including Swedish å/ä/ö, ranks first.
+  Existing scopes, genre choice, recent queries, result ordering and the 400-hit
+  cap remain. Disable **Typo-tolerant search** to keep exact substring matching.
+- **Sort, filter & view:** tap the shelf counter marked **▾**. Choose ordering,
+  reading-state filters or Covers/List/Book spines/compact one-/two-column rows.
+  Choices are remembered per profile/chip/opened group, without rewriting shelf
+  defaults. **Use shelf defaults here** restores original grouping/layout/order.
+  Quick sort/status choices show that shelf's matching books. Barely started is
+  a read-only local 0–5% category for started books, never a remote status write.
+  Existing page jump and advanced native sorting remain in the same menu.
+- **Settings and book details:** **You are here** offers direct ancestor jumps.
+  Book details emphasize cover/title/author/progress; a lazy, independently
+  zoomable **Book details** tab holds technical fields. **Read now** uses the
+  original reader action. Other tabs and external plugin actions remain.
+- **Diagnostics:** existing opt-in local timings cover search, browse, settings
+  search and technical details, without titles, queries or paths. The synthetic
+  developer benchmark is not a measured reader/paint/cover-performance claim.
+
+Svenska: Beta 20 innehåller nattlägesfixen för ljusa bakgrunder, felaktiga
+korthörn och svårläst navigationsrad. Dina daginställningar, bakgrundsbilder och
+omslag behålls. SimpleUI rättar dessutom bildformatet för lutade omslag i Cover
+Deck vid nattläge och deras minnesräkning. Bookshelf har inget nytt upstream.
+
+**Stavfelstålig sökning** kan hitta böcker även med stavfel, accenter och
+omkastade bokstäver; exakt svensk stavning prioriteras. Valet kan stängas av.
+Tryck på hyllans sidräknare med **▾** för **Sortering, filter och vy**. Valen
+sparas per profil/chip/grupp. Kompaktlistor visar titel, författare, läsprocent
+och datum. **Använd hyllans standard här** återställer ursprunglig gruppering,
+vy och sortering. Filtren ändrar aldrig lässtatus eller fjärrsynk.
+
+**Du är här** gör det enklare att gå tillbaka genom inställningarna. Bokpanelen
+får en renare header, teknisk information under **Bokdetaljer** och **Läs nu**
+med samma läsaröppning som förut. Alla nya egna texter finns på svenska och
+engelska; befintliga språk och pluginåtgärder behålls.
+
+Update through the preview channel and restart KOReader / uppdatera via
+förhandsversionskanalen och starta om KOReader. Older supported betas can update
+directly. All 2,000 installed paths and the API-1 bootstrap remain; no bridge,
+settings reset, metadata scan or automatic Android-safe-mode change is needed.
+Profiles/chips, snabbstängning, BookOrbit/Hardcover/MAL and external patches keep
+their existing owners. The separately published Ereader prose bookmark patch
+is updated through Ereader Patch Manager, not embedded in this OrbitUI release.
+Previous public releases and assets are never overwritten. Code rollback keeps
+later user settings, progress, annotations, links and collections.
+
+This remains a prerelease. Physical Bigme/Boox acceptance is outstanding: retest
+day/night/day, tilted and ordinary covers, SV/EN fonts/touch/keyboard, shelf
+controls/compact lists/defaults/restart, settings ancestors, detail tabs/zoom,
+reader return, rotation/sleep and OTA. Svenska: Fortsatt beta; prova på enheten.
+Automatiska tester är inte fysisk enhetsverifiering eller en uppmätt snabbhet.
+
 ## OrbitUI 0.1.0-beta.19
 
 Beta 19 publishes the reviewed shared-search/collection changes and the earlier
