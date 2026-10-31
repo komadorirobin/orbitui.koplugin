@@ -7,6 +7,54 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 0.1.0-beta.23
+
+Beta 23 publishes the optional **OrbitUI settings > Integrations > BookOrbit**
+page. A master switch plus independent Want to Read list, manual reading-status
+actions and online-tag controls affect OrbitUI only. Unset preferences preserve
+existing behaviour. BookOrbit's own reading-progress sync, credentials, links,
+cached lists and saved layouts are not disabled or reset. Opening settings or
+Tags never tests the network automatically.
+
+The two sources are now explicitly **Want to read [BookOrbit]** and **Want to
+read [Local]**. The local source is the existing KOReader To Be Read collection,
+not a new list or a replacement when the online source is disabled. Add either
+or both through **Home (SimpleUI) > Layout & modules**, or choose a Reading
+dashboard source. Saved IDs, memberships and custom headings remain intact.
+
+An explicit refresh reports success/failure and preserves the last successful
+list-refresh timestamp even if membership is unchanged. Queued work is retired
+when its feature is disabled, including an off/on cycle. An already-sent server
+write cannot be unsent; its retired result does not overwrite the local cache.
+Manual Add/Remove Want to Read actions explicitly change server read status.
+
+Offline EPUB tags remain independent. Optional online exact tag matching needs
+its compatible server API addition. The separate
+[BookOrbit Extras 3.6.0 guide](https://github.com/komadorirobin/bookorbit-extras/tree/main/server-support/bookorbit-3.6.0)
+provides composable tag/undo source patches for that exact official release,
+not every newer release. Never put the old 3.2.0 compiled overlay on a newer
+server. An old custom undo database needs a separately reviewed upgrade plan.
+OrbitUI does not install, remove or deploy these patches; resolve protected
+openings and pending cleanup before disabling external undo support.
+
+Svenska: **OrbitUI-inställningar > Integrationer > BookOrbit** samlar de valfria
+funktionerna. Huvudbrytaren och separata val för Vill läsa, manuella lässtatusval
+och nättaggar styr bara OrbitUI, inte BookOrbits egen progressionssynk. Befintliga
+listor, kopplingar, inställningar och layouter behålls. **Vill läsa [Lokalt]**
+använder KOReaders lokala samling; **Vill läsa [BookOrbit]** visar serverlistans
+matchade filer på enheten. Listorna byts aldrig ut mot varandra. Lägg till båda
+via Hem (SimpleUI), eller välj källa i Läsöversikt. Tydlig uppdatering/tidsstämpel
+och skydd mot gamla väntande svar ingår. Manuella Vill läsa-val ändrar serverns
+lässtatus. EPUB-taggar fungerar fortfarande offline utan BookOrbit.
+Hjälpen pekar på versionsgranskat serverstöd, men installerar ingenting.
+
+No new upstream merge, runtime path, artwork, language removal, bootstrap or
+API-1 limit change. Earlier published releases remain immutable. Update via the
+preview channel and restart KOReader. This remains a prerelease: Bigme/Boox
+layout, touch/keyboard, refresh, off/on, local/server source selection, long
+help text, Back/rotation/sleep and reader return need physical acceptance.
+Headless tests do not establish a working live tag API on your server.
+
 ## OrbitUI 0.1.0-beta.22
 
 Beta 22 adds clickable tags to the existing **Tags** tab. Start with **EPUB tags

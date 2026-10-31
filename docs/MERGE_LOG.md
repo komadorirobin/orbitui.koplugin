@@ -4,6 +4,28 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-10-31 — BookOrbit controls push and Beta 23 publication
+
+The user explicitly approves push/new-beta publication after the status report
+identified the remaining local BookOrbit controls. Start clean at `43c627db`
+on `release/bookorbit-controls-beta23-20261031` from public `b8619fad`. This
+supersedes the preceding local-only publication boundary for this work, not
+for a production BookOrbit deployment. No new upstream merge is requested.
+
+Publish the independent integration switches, explicit Local/BookOrbit Want
+to Read names, passive settings, honest refresh timestamps and deferred-policy
+guards. Keep source IDs, memberships, layouts, caches, external progress sync
+and protected undo ownership. Update SV/EN help/README for the now-public exact
+official 3.6.0 extras package at `3533480`; its code and legacy database warning
+remain separate from an OrbitUI installation. The existing server's earlier
+custom undo support was verified read-only; nothing is deployed by this release.
+
+VERSION advances to `0.1.0-beta.23`. Notes use existing OTA.md, retaining every
+API-1 runtime path, bootstrap, source pin, asset and language. All prior public
+tags/assets remain immutable. Full interpreter/translation, sealed/native OTA,
+history/artwork/secret/draft/public-byte gates and exact publication evidence
+are appended below when complete. Physical Bigme/Boox acceptance remains open.
+
 ## 2026-10-31 — optional BookOrbit settings, explicit list sources and extras
 
 User approves the integration settings/documentation/extras proposal and asks

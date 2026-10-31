@@ -28,7 +28,7 @@ shelf preset before applying them. Existing installations start with Keep existi
 Changing folder references does not move book files. Custom library buttons can
 be selected in the guide or **Navigation & bars**.
 
-## Optional BookOrbit integrations (local development after Beta 22)
+## Optional BookOrbit integrations (Beta 23)
 
 Open **Integrations > BookOrbit / Integrationer > BookOrbit** for the master
 switch and separate list, manual status-action and online-tag switches. Unset
@@ -56,9 +56,10 @@ In **Tags / Taggar**, EPUB tags remain offline regardless of these switches.
 The online section is hidden when its feature/master switch is off. Online
 exact tag matching requires the separate compatible server API addition.
 [BookOrbit Extras](https://github.com/komadorirobin/bookorbit-extras) documents
-its exact base and the older undo-opening overlay separately, with SV/EN
-installation, licenses and test limitations. Do not combine those different
-server bases without a reviewed rebase. OrbitUI neither installs device patches
+the composable exact official 3.6.0 source package and the legacy artifacts
+separately, with SV/EN installation, licenses and test limitations. Never put
+the old compiled 3.2.0 overlay on a newer server; old custom databases need a
+separately reviewed upgrade. OrbitUI neither installs device patches
 nor deploys a server, and never offers a naive off toggle for protected undo state.
 
 **Svenska:** De två Vill läsa-källorna är separata. Lokalt kräver inget konto;

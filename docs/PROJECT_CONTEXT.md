@@ -22,7 +22,22 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-31
 
-- Approved BookOrbit settings/documentation/extras work is LOCAL on
+- User explicitly approves pushing the remaining BookOrbit controls and a new
+  beta ("Kör" after the unpublished-code status). Beta 23 preparation starts
+  clean at `43c627db` on `release/bookorbit-controls-beta23-20261031` from public
+  main `b8619fad`. No new upstream import is requested; retain pins, bootstrap,
+  all 2,000 runtime paths, assets, saved data and external sync/patch owners.
+  Update SV/EN extras help and guides for the public exact-3.6.0 source package,
+  preserving the legacy database warning and no-deployment boundary. No
+  BookOrbit server change is authorized. Publication/native/sealed/audit results
+  are recorded in MERGE_LOG after the gates; physical acceptance remains open.
+  Extras is already public at `3533480`, CI `41208332613` green for device
+  checks, undo-only, tags-only and combined server builds. A separate read-only
+  server check found an existing custom 3.6.0 undo installation, registered
+  authenticated routes and a migrated opening table; the newer public package
+  was not deployed there. Do not equate publication with server deployment.
+
+- Earlier approved BookOrbit settings/documentation/extras work was LOCAL on
   `feature/bookorbit-controls-20261031` from clean `b8619fad`. New searchable
   Integrations > BookOrbit page keeps five root categories. Master plus
   independent list/manual-status/online-tag flags preserve unset behaviour,

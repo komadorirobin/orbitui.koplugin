@@ -183,4 +183,19 @@ H.test("all new settings rows and help texts have Swedish translations", functio
         assert(_(text, "sv") ~= text, text)
     end
 end)
+H.test("extras help describes the reviewed source package without deploying or disabling undo", function()
+    reset()
+    local context, notice = package.loaded["core/orbitui_context"], nil
+    local original_notify = context.notify
+    context.notify = function(text) notice = text end
+    local rows = Integration.bookOrbitItems()
+    rows[#rows].callback()
+    context.notify = original_notify
+    assert(notice:find("3.6.0", 1, true) and notice:find("3.2.0", 1, true))
+    assert(notice:find("does not install, disable or deploy", 1, true))
+    local translated = require("core/orbitui_i18n")(notice, "sv")
+    assert(translated ~= notice and translated:find("serverutökning", 1, true))
+    H.eq(client_calls, 0); H.eq(writes, 0); H.eq(#queue, 0)
+    assert(Integration.bookOrbitEnabled())
+end)
 H.finish()

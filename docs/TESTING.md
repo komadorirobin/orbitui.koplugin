@@ -2,7 +2,7 @@
 
 ## Automated
 
-### BookOrbit settings and optional extras (local development)
+### BookOrbit settings and optional extras (Beta 23)
 
 `test_bookorbit_controls` executes actual Want provider queue/subprocess paths
 with fake transport/storage. It covers passive settings inspection, default
@@ -18,12 +18,13 @@ reader return on Bigme/Boox remain required. Never interpret an already-sent
 server write as canceled merely because a local result is retired.
 
 The separate BookOrbit Extras repository mirrors exact Ereader device bytes
-and documents two DIFFERENT server bases. It does not deploy a server or
+and now provides composable patches for exact official 3.6.0, alongside the
+separate legacy artifacts. It does not deploy a server or
 install/disable a device patch. Packaging validates hashes/licenses, each
 server diff against its base, undo state and all three pinned native plugin
 profiles plus the original Hardcover single-writer regression in Lua/LuaJIT.
 The unchanged local tag API branch retains its auth/access/bounds contracts.
-Final local candidate `18a8547c` passes both complete interpreter gates: 133
+The earlier local candidate `18a8547c` passes both complete interpreter gates: 133
 Python/four unchanged skips, 94 root Lua files, 487 Bookshelf suites/zero
 failures/three normal SQLite exclusions, 13 SimpleUI suites, syntax 1,091/map
 396 and all 43 catalogs. All final sealed root/native EPUB/minimum-current

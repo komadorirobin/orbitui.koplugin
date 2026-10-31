@@ -6,7 +6,7 @@ change. Device acceptance is still pending.
 
 ## Controls
 
-### BookOrbit integration settings (local development after Beta 22)
+### BookOrbit integration settings (Beta 23)
 
 **Integrations > BookOrbit / Integrationer > BookOrbit** is a stable searchable
 destination, not a sixth root category. Master and independent Want to Read,
@@ -40,7 +40,9 @@ does not replace global gettext, collection keys or upstream catalogs.
 
 Help links to the separate BookOrbit Extras distribution, exact server bases
 and SV/EN instructions. Undo opening/Hardcover remain external device patches;
-the older undo overlay is NOT interchangeable with the tag API base. No naive
+the reviewed exact official 3.6.0 source package can combine tags and undo.
+The old 3.2.0 compiled overlay is NOT interchangeable with newer server code,
+and an old custom database needs a separately reviewed upgrade. No naive
 undo off switch, automatic patch installation or server deployment is added.
 Tests: `test_bookorbit_controls`, `test_bookorbit_tags`, settings/dashboard/native
 modal suites. Physical input/font/scroll/source-refresh acceptance is still open.
@@ -78,15 +80,16 @@ fail closed; requests run through the external plugin's cancelable worker.
 Only explicit actions may request Wi-Fi. Nothing edits metadata, collections,
 reading status, remote progress or existing preferences.
 
-The separately approved LOCAL BookOrbit API adds a KOReader-authenticated
+The separately approved BookOrbit API adds a KOReader-authenticated
 `GET /koreader/plugin/catalog/tag-matches?ids=1,2&tag=...` (API-v1 prefix as
 usual), with 1..200 IDs and one literal tag per request, returning `{bookIds}`.
 Native accessible-library/present-book/content-filter rules still apply. The
 account-scoped BookOrbit plugin's existing public client methods suffice; its bounded private
 detail cache is not scraped. An older server displays an update-needed message.
 The user now explicitly approves OrbitUI push/publication after local tags and
-an upstream merge. The BookOrbit server change is still LOCAL and is not deployed
-by that publication; it is NOT needed for embedded tags. Physical SV/EN
+an upstream merge. The API source is now public in BookOrbit Extras, including
+a reviewed official 3.6.0 package, but is not deployed by OrbitUI publication;
+it is NOT needed for embedded tags. Physical SV/EN
 fonts/touch/D-pad/keyboard, long names, scroll/zoom,
 Wi-Fi/cancel/offline, reader return, rotation/sleep and live API acceptance are
 still required. See MERGE_LOG/TESTING for final local verification.
