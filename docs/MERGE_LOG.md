@@ -67,6 +67,36 @@ saved priorities. Remaining stubs reuse the light map; date ordering uses native
 TokenRecord read-only proxies and unwraps back to the original metadata records.
 Regression coverage includes actual native history/mtime resolution, not only
 already-enriched fixtures. No whole-list cover decode or data writer is added.
+
+Final implementation/package candidate is
+`885b16f6a435e852ba92d5cf069b9a1a415a3b10` (main feature `48ad7930`, then
+native metadata/date correction). Fresh sequential LuaJIT and Lua full gates
+pass: 133 Python/four unchanged optional skips; all 90 root Lua files; 487
+Bookshelf suites/zero failures/three normal SQLite exclusions; 13 SimpleUI files;
+396 mapped paths, 1,087 syntax files and all 43 catalogs. Fresh sealed-root
+invocation reruns pass in both interpreters; some legacy fixtures remain source-
+only, backed by the complete byte-for-byte source-projection audit. Minimum and
+current native input/dialog owners pass all 28 quick-control cases under both
+interpreters. All 11 native night-raster cases pass on Android/non-Android CBB
+and software paths. Actual public Beta 18's native libarchive/SHA installer
+passes full inventory extraction, missing-module rejection, activation/restart/
+rollback, truncation recovery, external snapshot/persistent rollback and
+interrupted obsolete-runtime cleanup retaining user/unknown/modified files.
+
+The development-only same-version ZIP is 9,045,389 bytes / 26,558,864 expanded,
+2,066 entries and the identical 1,999 inventory files plus manifest / 2,000
+installed API-1 paths. SHA-256
+`1300e5237b3802e6dd7b31de2cdb19b6c23525e7c46a400526c6f8562086648d`.
+Exact source projection, checksums, unchanged public bootstrap/entry/map/pins,
+unchanged assets/SimpleUI since the night correction, 44 outgoing source blobs'
+held-art exclusion and Gitleaks pass. Synthetic 5,000-book LuaJIT typo matching
+has CPU median 24.126 ms/p90 26.323 ms here; plain Lua median 35.869 ms/p90
+50.502 ms. This is synthetic metadata-only Mac CPU, NOT a reader/cover/paint
+performance claim. Ignored `verified-*` logs under the evidence directory retain
+the exact runs. Verification-only docs do not rebuild or replace that ZIP.
+No OrbitUI push, tag, release, live OTA, reference-watch activation or physical
+device change occurred; public Beta 19 remains immutable.
+
 Native fonts/touch/keyboard, group presentation, compact lists, scopes/restart,
 cover quality, old default layouts, reader return, night/day, rotation and sleep
 on Bigme/Boox remain device checks, not established by headless success.

@@ -42,6 +42,13 @@ and correct this file in the same change.
   No setting migration, source pin/bootstrap/VERSION/asset change, new installed
   path, reference-watch activation, push or OrbitUI release is authorized here.
   Full verification and device gaps are recorded in SHARED_UI/TESTING/MERGE_LOG.
+  Final source/package candidate `885b16f6` also preserves rich group metadata
+  and native lazy date-sort keys. Both fresh complete interpreter gates and
+  sealed-root reruns pass, as do all 43 catalogs, minimum/current native input
+  owners, Android/non-Android raster cases and actual Beta 18 installer recovery.
+  Exact source/path/history/held-art/secret checks pass; same 2,000 runtime paths.
+  The same-version ZIP is DEVELOPMENT ONLY, never a public Beta 19 replacement.
+  Verification-only documentation does not rebuild it; device acceptance is open.
 
 - The user's Beta 19 photos expose unreadable white chrome over retained light
   wallpaper and Android RGB rounded-fill corner islands. User approves a LOCAL

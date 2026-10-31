@@ -15,6 +15,22 @@ cover-preview priority and listing-cache expiry. `test_shelf_sort` additionally
 executes quick bookcase ordering against the real native engine and retains
 Moberg's series blocks/volume numbering. Existing shared search, panel, settings,
 Android covers, native-reader return, quick controls and night tests still apply.
+Path-only group fixtures additionally exercise real native TokenRecord history
+and filesystem-time resolution, preserving the original metadata records.
+
+Final source/package candidate `885b16f6` passes fresh complete Lua and LuaJIT
+gates: 133 Python tests/four unchanged optional skips, all 90 root Lua files,
+487 Bookshelf suites/zero failures/three normal SQLite exclusions and 13 SimpleUI
+files. Map 396, syntax 1,087 and all 43 catalogs pass. Fresh sealed-root-invocation
+reruns pass in both interpreters (legacy source-only fixtures remain backed by
+the exact source-projection audit). All 28 quick-control cases pass with complete
+minimum/current native owners; all 11 night raster cases pass in Android and
+non-Android modes on sealed bytes. Actual public Beta 18's native installer
+passes the full temporary extraction/activation/restart/rollback/recovery and
+cleanup sequence, preserving active/rollback/unknown/modified/user files.
+Source/inventory/path/checksum/history/held-art/Gitleaks audits pass. Development
+ZIP digest/size are in MERGE_LOG and ignored `test-results/ui-refinements-20261031/`;
+it is NOT a replacement public Beta 19. Verification-only docs do not rebuild it.
 
 `scripts/benchmark-ui.lua` reports CPU p50/p90/max over synthetic metadata at
 200/2,000/5,000 books. It asserts late exact/fuzzy hits survive, but imposes no
