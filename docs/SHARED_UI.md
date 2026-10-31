@@ -6,7 +6,7 @@ change. Device acceptance is still pending.
 
 ## Controls
 
-### Local October 31 UI refinements (not published)
+### October 31 UI refinements (Beta 20)
 
 - Shared Search has **Typo-tolerant search / Stavfelstålig sökning**, on unless
   explicitly disabled. Exact spelling, including Swedish å/ä/ö, ranks before

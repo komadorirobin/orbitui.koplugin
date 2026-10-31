@@ -22,6 +22,20 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-31
 
+- The user now explicitly requests "Merga upstream, den pusha och publicera
+  etc". This supersedes local-only publication limits for the reviewed night
+  and UI follow-ups below. Prepare Beta 20 from clean `82d4104c` on
+  `release/upstream-ui-beta20-20261031`, with public main still `3476ac93`.
+  Reviewed unsquashed SimpleUI merge `e6694c77` integrates all three commits
+  through `5631ce1035286803d7586979c75993671ff022cb`: native-screen tilted-cover
+  format for night blits, correct final-buffer LRU byte accounting and updated
+  Polish translation. Bookshelf stays `ee84a8fe` with no new commits. Preserve
+  private/borrowed cover ownership, every local adapter and all 2,000 API-1
+  installed paths. No bootstrap/assets/hardware patch or external sync change.
+  Beta 19 and earlier tags/assets are immutable. Full local/sealed/native OTA,
+  history/held-art/secret, CI and exact draft/public byte gates are required;
+  physical Bigme/Boox acceptance remains open and the release stays a prerelease.
+
 - User approves all five UI-review follow-ups, but first asks for a longer
   NON-manga bookmark ribbon and its publication. Ereader alone is published at
   `6c05155cb96395b656f85c47b4924523488715a1`: the prose ribbon reaches the

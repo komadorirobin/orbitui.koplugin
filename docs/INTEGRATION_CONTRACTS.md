@@ -386,6 +386,13 @@ Tests: `test_series_rating`, `test_upstream_series_boxes`.
 
 ## C07: Presentation and preferences
 
+October 31 Cover Deck import: final tilted buffers match the native screen type
+so inverted blits remain valid in night mode. Preserve source-cover ownership,
+private stretch copies, trapezoid geometry, revisions and allocation fallback.
+Count the final buffer's real stride/height in the existing byte-bounded LRU;
+eviction dereferences entries without freeing a buffer still held by a widget.
+Tests: `test_upstream_20261031`, including real grey/RGB/CBB/software painting.
+
 October 31 local night-mode correction: dark Home/shelf wallpaper must provide
 readable contrast without changing saved day settings, theme/pinned-look choices,
 source images or covers. Shade only the background destination, before panels/

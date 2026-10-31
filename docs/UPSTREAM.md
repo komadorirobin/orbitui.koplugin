@@ -163,6 +163,19 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+October 31: SimpleUI `5631ce1035286803d7586979c75993671ff022cb` adds three
+commits since `7a605bbc` (including the Polish translation PR merge). Bookshelf
+remains `ee84a8fe`, with no new commits. Tilted Cover Deck artwork is converted
+to the native screen buffer type before day/night painting; borrowed source
+images are never freed. Charge the final buffer, not its entry table, to the
+existing byte-bounded LRU. This preserves the prior private stretch/clone guard,
+revision reuse, widget ownership and fallback on allocation failure. No new
+assets, module paths, source/settings migration or native hook is imported.
+`test_upstream_20261031` reproduces the old format mismatch and verifies native
+grey/RGB conversion, inversion, memory accounting and borrowed-image lifetime.
+The explicit merge/push/publication request also includes the previously local
+night and UI refinements in a new Beta 20, never a replacement Beta 19 asset.
+
 October 30 evening: SimpleUI `7a605bbc` is the reviewed 18-commit follow-up to
 `257c26d6`; Bookshelf remains `ee84a8fe`. Upstream's recursive plural parser
 supersedes the local string-to-Lua ternary fix, retaining real catalogue rules

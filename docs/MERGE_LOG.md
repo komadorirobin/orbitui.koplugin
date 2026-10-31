@@ -4,6 +4,50 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-10-31 — reviewed upstream and explicitly approved Beta 20
+
+User requests "Merga upstream, den pusha och publicera etc". Start clean from
+`82d4104c` on `release/upstream-ui-beta20-20261031`, preserving all previously
+approved local night/UI work; public main is `3476ac93`. This is explicit push
+and new prerelease authority, superseding the prior local-only release limits.
+Read the live issue #1 and fetch both tracked branches. Bookshelf is unchanged
+at `ee84a8fe1621171c00df91c41dee76b9ed07028c`. SimpleUI adds exactly:
+
+- `4dec40d90083d73f165531d87b7bfda8202ae587`: Polish 3.0.2 translation update.
+- `d88764cd33d010e05a721f52eb7913fbf634d973`: merge of that translation PR.
+- `5631ce1035286803d7586979c75993671ff022cb`: match warped Cover Deck buffers
+  to the screen for inverted night blits; charge the final raster to the LRU.
+
+Review the complete commit list/net runtime diff, catalogue structure/header
+and msgfmt checks. Unsquashed subtree merge `e6694c772036788a4f4fffc7c2cc0cd64c7cdd73`
+changes only `module_coverdeck.lua` and `locale/pl.po`, without conflicts.
+No dependencies, assets, installed paths, migrations, hooks or source branches
+change. Advance only SimpleUI's integrated pin, preserving original provenance.
+C04/C07 retain bounds and source/widget ownership; C01-C03/C05-C06/C08-C11
+remain unchanged, including Android cover safety, reader return, BookOrbit,
+Hardcover, MAL, patches, ornaments and legacy/canonical module identity.
+
+New `test_upstream_20261031` executes the actual tilt/cache/paint section and
+real Memory/LRU helpers. Public Beta 19 reproduces the wrong output type. New
+code passes six ordinary cases in Lua/LuaJIT plus a real native warp/blitbuffer
+case across grey/RGB and CBB/software day/night paths. Preserve earlier private
+stretch cloning; conversion frees only its private intermediate, not cached
+source covers or rasters still referenced by widgets after eviction. No broader
+paint/menu engine or automatic settings change is introduced.
+
+Prepare `0.1.0-beta.20` with bilingual notes in existing OTA.md, not another
+installed release-note path. Include the already-reviewed night contrast/corner/
+dock fix and all five UI follow-ups. All 2,000 installed API-1 paths, stable
+bootstrap/entry points and artwork/fonts/languages remain. Beta 19 and every
+older tag/asset must stay untouched. Fresh full interpreters/catalogs, sealed
+root/native-owner/raster runs, actual older installers/recovery, source/path/
+history/held-art/Gitleaks, main/tag CI and exact draft/public downloads are
+required before sign-off. Record final results below without rebuilding sealed
+bytes for verification-only docs. Physical Bigme/Boox fonts/touch/keyboard,
+night/day/tilted artwork, profiles, quick controls, compact rows, detail panel,
+reader return, rotation/sleep and native OTA acceptance remain open; no measured
+reader-performance gain is claimed. Evidence: `test-results/beta20-20261031/`.
+
 ## 2026-10-31 — Published prose ribbon, local UI-reference follow-up
 
 User says "Kör alla", first extending the NON-manga header bookmark to the full

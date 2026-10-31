@@ -2,7 +2,25 @@
 
 ## Automated
 
-### Local October 31 UI refinements (not pushed/released)
+### October 31 upstream and Beta 20
+
+`test_upstream_20261031` tests the actual Cover Deck tilt/cache/paint functions
+with real native Memory/LRU helpers. Cases cover mismatched screen conversion,
+same-format allocation avoidance, resident RGB byte accounting, failed-allocation
+fallback/retry, borrowed stretch cloning, generated-source release, byte-budget
+eviction with live widget references and day/night trapezoid blits. The optional
+`ORBITUI_NATIVE_BB_DIR`/`ORBITUI_NATIVE_BB_LIB` supplement executes the real warp
+and KOReader blitbuffer/CBB with grey/RGB screen types, CBB on/off and both paint
+modes. Run it with `IS_ANDROID=1` and unset. Public Beta 19 reproduces the format
+mismatch in the same fixture. This is not physical-reader acceptance.
+
+The user explicitly requests a reviewed merge, push and new prerelease. Include
+the previously local night/UI refinements below, preserving every existing
+installed path and the API-1 bootstrap. Retest tilted Cover Deck colour/greyscale
+and generated covers on Bigme/Boox, day/night/day, cache pressure, rotation,
+sleep and all shared UI cases below. Record final release checks separately.
+
+### October 31 UI refinements (Beta 20)
 
 `test_ui_refinements` covers exact/normalised/typo ranking, transpositions,
 prefixes, UTF-8 preservation, excluded genres, native matcher-before-limit,
@@ -46,7 +64,7 @@ spines/volume order/preview pin; covers before/after paging and return; technica
 tab and independent zoom; unchanged read/open/plugin/BookOrbit/Hardcover behavior;
 night/day, rotation and suspend. No physical-device acceptance is implied.
 
-### Local night-mode correction (October 31, not pushed/released)
+### Night-mode correction (October 31, Beta 20)
 
 `test_night_mode` exercises the shared runtime tone, error-safe Android inverse
 guard, explicit loader seams, preserved external callbacks and pinned shelf look,
