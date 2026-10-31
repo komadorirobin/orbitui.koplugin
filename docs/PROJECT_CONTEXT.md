@@ -34,8 +34,24 @@ and correct this file in the same change.
   hotfix. Existing detail payload has separate tags/genres, but its current
   KOReader list-query DTO has no exact tag filter. Native Bookshelf Tags are
   KOReader collections; never silently equate them with BookOrbit tags.
+  User explicitly chooses tag matches from books on the device only. Keeping
+  results within the current profile is a proposal, not an approved extra
+  restriction. Metadata completeness/local book-ID mapping still needs design;
+  do not claim the existing bounded detail cache covers every local book.
   No BookOrbit/server/plugin write, new sync owner, import pin, installed path,
   asset or bootstrap change. Final publication gates/device gaps go in MERGE_LOG.
+  Beta 21 is now public at exact candidate/tag `3116ed1c` /
+  `v0.1.0-beta.21`, published **2026-10-31 10:32:57 UTC**, prerelease true.
+  Both complete interpreter gates, sealed/native suites, 43 catalogs and exact
+  source/history/held-art/secret/draft/public audits pass. Main/tag CI
+  `41192857769` / `41192857730` pass all four jobs. Actual Beta 5/9/20 native
+  installers and anonymous published-byte application-TLS upgrades from Beta
+  9/20 pass all recovery phases. Preview selects Beta 21; stable stays absent;
+  all 75 prior releases/assets and 123 old tag refs remain unchanged. ZIP
+  SHA-256 `b694c19b3da9ced3d2814d0f87a8bd3f36e0100b89d48673c01b64e1d5bfcf94`.
+  Evidence is in ignored `test-results/beta21-20261031/` and MERGE_LOG/TESTING.
+  Verification-only docs do not rebuild sealed bytes. Physical detail-tab
+  scrolling/zoom/repeated switches/close and reader return remain unverified.
 
 - The user's explicit "Merga upstream, den pusha och publicera etc" supersedes
   local-only publication limits for the night/UI work below. Beta 20 is public

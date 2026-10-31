@@ -33,8 +33,11 @@ existing local BookOrbit source confirms separate `tags`/`genres` in detail
 responses/cache, tags as namespaced JSON in embedded EPUB metadata (genres
 use dc:subject), and no tag filter in the KOReader list-query DTO. Bookshelf's
 existing Tags refer to KOReader collections, not server tags. Recommend a
-distinct BookOrbit-tags section/chips and explicit device-vs-server result
-scope. No remote fetch, account data, BookOrbit code change or new sync is
+distinct BookOrbit-tags section/chips. User explicitly chooses results from
+books on the device only. Current-profile scoping is a proposal, not an extra
+approved restriction. Local ID mapping and tag completeness need a separate
+design: the bounded detail cache is not a complete local tag index. No tag
+feature, remote fetch, account data, BookOrbit code change or new sync is
 included in this narrowly approved crash hotfix. No live server is touched.
 
 Prepare Beta 21 with English/Swedish notes in existing OTA.md, preserving all
@@ -43,6 +46,57 @@ Require fresh full Lua/LuaJIT/catalogue, sealed/native-owner/raster, older nativ
 installer/recovery, exact source/path/history/held-art/secret, CI and draft/public
 byte checks. Physical Bigme/Boox detail scrolling/zoom/tab cycling/close/reader
 return remains open. Evidence: ignored `test-results/beta21-20261031/`.
+
+### Beta 21 verified publication result
+
+Exact candidate/annotated tag `3116ed1c0fc9558114d9d09c24cfdea457e933df` /
+`v0.1.0-beta.21` is pushed to main and published at
+https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.21,
+**2026-10-31 10:32:57 UTC**, prerelease true, draft false, not stable/latest.
+Release preparation changes only VERSION and existing bilingual OTA notes after
+implementation `b0d72e94`; user-approved local-only tag scope is recorded above,
+not implemented by this release. No upstream pin or other runtime path changes.
+
+Fresh sequential full LuaJIT/Lua gates pass 133 Python tests/four unchanged
+optional skips, all 91 root Lua files, 487 Bookshelf suites/zero failures/three
+normal SQLite exclusions and all 13 SimpleUI files. Map 396, syntax 1,088 and all
+43 catalogs pass. UI refinements now has 20 cases; shared book panel retains 13.
+Fresh sealed-root invocation reruns pass in both interpreters; legacy source-
+only fixtures remain backed by exact source projection. All 28 quick-control
+cases pass with both minimum/current native owners; all 11 night raster cases
+and seven tilted-cover cases pass on Android/non-Android CBB/software paths.
+Main/tag CI **41192857769 / 41192857730** pass all four jobs, including native
+archive/hash OTA. Existing Node/Ubuntu migration warnings are not new failures.
+
+Clean sealed ZIP: **9,069,228 bytes**, expanded **26,628,302**, 2,066 entries,
+identical 1,999 manifest records plus manifest / 2,000 installed API-1 paths.
+SHA-256 **`b694c19b3da9ced3d2814d0f87a8bd3f36e0100b89d48673c01b64e1d5bfcf94`**.
+Every byte matches the exact candidate archive after approved PO source-comment
+reduction. Source/manifest/checksum/path parity, unchanged entry/map/bootstrap/
+assets and exact upstream pins/Polish catalog pass. All eight initial outgoing
+source blobs exclude held art; both initial outgoing commits pass Gitleaks.
+Verification-only docs receive the same full-range history/secret audit.
+
+Authenticated draft and anonymous public downloads match sealed bytes and
+GitHub digests/sizes, with exact body/tag/candidate and prerelease metadata.
+All **75 previous releases/assets** and **123 old remote tag refs** stay intact.
+Only annotated Beta 21 refs and the new prerelease/assets are added. Anonymous
+application TLS preview selects Beta 21; stable remains absent.
+
+Actual public Beta 5/9/20 installers pass native full-inventory extraction,
+missing-module rejection, activation/restart/code rollback, truncation recovery,
+external snapshot/restart/persistent rollback and interrupted obsolete-runtime
+cleanup retaining active/rollback/unknown/modified/user files. Actual Beta 9/20
+also pass anonymous real LuaSocket/LuaSec discovery/download and every native
+phase using the published bytes. Reviewed macOS POSIX/TLS helpers are test-only;
+only temporary fixture installs are touched, never a physical reader.
+
+Ignored evidence contains full/sealed/native/live runs, catalogs, CI metadata,
+exact source/draft/public audits, immutable release/tag snapshots and channel
+checks. Verification-only docs do not rebuild or replace the immutable tagged
+ZIP. Physical Bigme/Boox detail-tab scrolling, independent zoom, repeated tab
+switches, close and reader return still need user acceptance; this is a beta,
+not a stable-release or measured-performance claim.
 
 ## 2026-10-31 — reviewed upstream and explicitly approved Beta 20
 

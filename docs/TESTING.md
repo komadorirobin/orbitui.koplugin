@@ -15,6 +15,24 @@ body. Both interpreters pass after the host-only headerless-scroller fix.
 Physical test: open Bokdetaljer, scroll, zoom, switch tabs repeatedly, close and
 return to the same shelf on Bigme/Boox. Existing book/read/plugin actions stay.
 
+Published Beta 21 candidate/tag `3116ed1c` / `v0.1.0-beta.21` passes fresh full
+sequential LuaJIT/Lua gates: 133 Python/four unchanged optional skips, 91 root
+Lua files, 487 Bookshelf suites/zero failures/three normal SQLite exclusions,
+13 SimpleUI files, map 396, syntax 1,088 and all 43 catalogs. The refined UI
+suite has 20 cases; the original shared book-panel suite retains all 13 cases.
+Fresh sealed-root reruns pass under both interpreters, along with all 28 native
+quick-control cases using minimum/current owners, 11 native night raster and
+seven tilted-cover cases in Android/non-Android CBB/software modes. Main/tag CI
+`41192857769` / `41192857730` pass all four jobs, including native archive/hash
+OTA. Actual public Beta 5/9/20 installers pass complete temporary upgrade,
+restart, rollback, truncation/external-snapshot recovery and cleanup-preservation
+checks. Beta 9/20 additionally pass anonymous application-TLS discovery/download
+and every native phase against published bytes. Exact source/path/history/
+held-art/secret/draft/public audits pass; all 75 previous releases/assets and
+123 old tag refs stay unchanged. Preview selects Beta 21; stable remains absent.
+Metrics/digest are in MERGE_LOG and ignored `test-results/beta21-20261031/`.
+Verification-only docs do not rebuild assets. Physical acceptance remains open.
+
 ### October 31 upstream and Beta 20
 
 `test_upstream_20261031` tests the actual Cover Deck tilt/cache/paint functions
