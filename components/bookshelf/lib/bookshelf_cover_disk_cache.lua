@@ -40,9 +40,15 @@ local MAGIC = "BSC1"
 -- not a mirror of the library, and still modest next to BIM's cover
 -- database -- the largest thing bookshelf touches on a Kindle.
 M.MAX_BYTES = 96 * 1024 * 1024
+M.ORNAMENT_MAX_BYTES = 24 * 1024 * 1024
+M.DISK_SHARE, M.PRUNE_TO = 0.25, 0.85
+M.SWEEP_DELAY, M._auto = 15, true
+local ORNAMENT_PREFIX = "ornament:"
+local TOUCH_AFTER = 24 * 60 * 60
 
 local _dir            -- resolved cache directory, or false when unavailable
 local _entries, _bytes, _indexed = {}, 0, false
+local _cover_bytes, _ornament_bytes = 0, 0
 local _task, _dir_handle
 local _active = true
 local _write_generation = 0
@@ -50,7 +56,13 @@ local _write_generation = 0
 local function record(path, size, mtime)
     local old = _entries[path]
     _bytes = _bytes - (old and old.b or 0) + (size or 0)
-    _entries[path] = size and { p = path, b = size, m = mtime or 0 } or nil
+    local ornament = path:match("/o[0-9a-f]+_%d+$") ~= nil
+    if ornament then
+        _ornament_bytes = _ornament_bytes - (old and old.b or 0) + (size or 0)
+    else
+        _cover_bytes = _cover_bytes - (old and old.b or 0) + (size or 0)
+    end
+    _entries[path] = size and { p = path, b = size, m = mtime or 0, ornament = ornament } or nil
 end
 
 local function cancelMaintenance()
@@ -97,7 +109,8 @@ local function keyFor(filepath)
     for i = 1, #filepath do
         h = (h * 33 + filepath:byte(i)) % 4294967296
     end
-    return string.format("%08x_%d", h, #filepath)
+    local kind = filepath:sub(1, #ORNAMENT_PREFIX) == ORNAMENT_PREFIX and "o" or ""
+    return string.format("%s%08x_%d", kind, h, #filepath)
 end
 
 local function pathFor(filepath)
@@ -122,6 +135,29 @@ local function bookOf(path)
     return fp
 end
 
+-- Reuse upstream's separate budgets and free-space cap, but keep OrbitUI's
+-- bounded/cancellable index and pruning: no full directory walk in a paint.
+function M._freeBytes(path)
+    local ok, bytes = pcall(function()
+        local ffi = require("ffi")
+        require("ffi/posix_h")
+        local st = ffi.new("struct statvfs")
+        if ffi.C.statvfs(path, st) ~= 0 then return nil end
+        return tonumber(st.f_bavail) * tonumber(st.f_frsize)
+    end)
+    if ok and type(bytes) == "number" and bytes >= 0 and bytes < math.huge then return bytes end
+end
+
+local function caps(d)
+    local c, o = M.MAX_BYTES, M.ORNAMENT_MAX_BYTES
+    local free = M._freeBytes(d)
+    if free and c + o > 0 then
+        local factor = math.min(1, (free + _bytes) * M.DISK_SHARE / (c + o))
+        c, o = math.floor(c * factor), math.floor(o * factor)
+    end
+    return c, o
+end
+
 -- Index existing files once, then account for every store/drop. Automatic
 -- maintenance yields between small batches of filesystem operations.
 local function sweep(yield_step)
@@ -132,7 +168,7 @@ local function sweep(yield_step)
         local iter, handle = lfs.dir(d)
         _dir_handle = handle
         for entry in iter, handle do
-            if entry ~= "." and entry ~= ".." then
+            if entry:sub(1, 1) ~= "." then
                 local p = d .. "/" .. entry
                 local a = lfs.attributes(p) or {}
                 if a.mode == "file" then record(p, a.size, a.modification) end
@@ -142,7 +178,9 @@ local function sweep(yield_step)
         _dir_handle = nil
         _indexed = true
     end
-    if _bytes <= M.MAX_BYTES then return end
+    local cover_cap, ornament_cap = caps(d)
+    local cover_over, ornament_over = _cover_bytes > cover_cap, _ornament_bytes > ornament_cap
+    if not cover_over and not ornament_over then return end
     local entries = {}
     for _, entry in pairs(_entries) do entries[#entries + 1] = entry end
     -- Over budget. Before falling back to age, drop covers whose book is no
@@ -161,7 +199,12 @@ local function sweep(yield_step)
     for i = 1, #entries do
         local fp = bookOf(entries[i].p)
         -- No readable header is its own kind of orphan: nothing can use it.
-        entries[i].orphan = (fp == nil) or (lfs.attributes(fp, "mode") == nil)
+        local legacy = false
+        if fp and fp:sub(1, #ORNAMENT_PREFIX) == ORNAMENT_PREFIX then
+            legacy = not entries[i].ornament
+            fp = fp:match("^ornament:(.-)|") or fp
+        end
+        entries[i].orphan = legacy or (fp == nil) or (lfs.attributes(fp, "mode") == nil)
         if entries[i].orphan then orphans = orphans + 1 end
         yield_step()
     end
@@ -171,10 +214,13 @@ local function sweep(yield_step)
     end)
     local pruned = 0
     for i = 1, #entries do
-        if _bytes <= M.MAX_BYTES then break end
+        local cover_needed = cover_over and _cover_bytes > math.floor(cover_cap * M.PRUNE_TO)
+        local ornament_needed = ornament_over and _ornament_bytes > math.floor(ornament_cap * M.PRUNE_TO)
+        if not cover_needed and not ornament_needed then break end
         local entry = entries[i]
+        local needed = (entry.ornament and ornament_needed) or (not entry.ornament and cover_needed)
         -- A foreground render may have replaced this file while we yielded.
-        if _entries[entry.p] == entry then
+        if needed and _entries[entry.p] == entry then
             local ok, removed = pcall(os.remove, entry.p)
             if (ok and removed) or lfs.attributes(entry.p, "mode") == nil then
                 record(entry.p, nil)
@@ -193,6 +239,7 @@ end
 function M.sweep()
     cancelMaintenance()
     _entries, _bytes, _indexed = {}, 0, false
+    _cover_bytes, _ornament_bytes = 0, 0
     local ok, err = pcall(sweep)
     if not ok then
         cancelMaintenance()
@@ -201,7 +248,11 @@ function M.sweep()
 end
 
 local function maybeSweep()
-    if not _active or _task or (_indexed and _bytes <= M.MAX_BYTES) then return end
+    if not _active or not M._auto or _task then return end
+    if _indexed then
+        local c, o = caps(dir())
+        if _cover_bytes <= c and _ornament_bytes <= o then return end
+    end
     local ok, ui = pcall(require, "ui/uimanager")
     if not ok or not ui.scheduleIn or not ui.unschedule then return end
     local task = { ui = ui, generation = _write_generation }
@@ -226,7 +277,17 @@ local function maybeSweep()
             ui:scheduleIn(0.02, task.tick)
         end
     end
-    ui:scheduleIn(0.05, task.tick)
+    ui:scheduleIn(M.SWEEP_DELAY, task.tick)
+end
+
+-- Explicit check uses the already-exact session ledger when it can. A new
+-- process indexes lazily in bounded steps; no stale persistent tally is trusted.
+function M._check()
+    local d = dir()
+    if not d then return end
+    local c, o = caps(d)
+    if _indexed and _cover_bytes <= c and _ornament_bytes <= o then return end
+    M.sweep()
 end
 
 function M.setActive(active)
@@ -321,6 +382,11 @@ function M.load(filepath)
         if not out then return nil end
         local ffi = require("ffi")
         ffi.copy(out.data, data, want)
+        local mt, now = lfs.attributes(p, "modification"), os.time()
+        if mt and now - mt > TOUCH_AFTER and lfs.touch then
+            local touched, result = pcall(lfs.touch, p, now, now)
+            if touched and result and _entries[p] then record(p, _entries[p].b, now) end
+        end
         return out
     end)
     return ok and bb or nil
@@ -344,6 +410,7 @@ function M.clear()
         end
     end)
     _entries, _bytes, _indexed = {}, 0, false
+    _cover_bytes, _ornament_bytes = 0, 0
 end
 
 return M

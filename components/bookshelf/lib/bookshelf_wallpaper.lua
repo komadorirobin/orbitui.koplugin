@@ -1367,7 +1367,8 @@ function M.restore(target, x, y, w, h)
     -- and the caller's own fallback would paint paper white into it.
     if type(M._ground) == "nil" then return false end
     local ok = pcall(function()
-        target:paintRect(x, y, w, h, M._ground)
+        -- The page colour pick: through Color.paintRect.
+        require("lib/bookshelf_color").paintRect(target, x, y, w, h, M._ground)
     end)
     return ok and true or false
 end
@@ -1392,7 +1393,7 @@ function M.patch(target, dx, dy, sx, sy, w, h)
         -- it needs no source coordinates at all. Same reasoning as restore.
         if type(M._ground) == "nil" then return false end
         local ok = pcall(function()
-            target:paintRect(dx, dy, w, h, M._ground)
+            require("lib/bookshelf_color").paintRect(target, dx, dy, w, h, M._ground)
         end)
         return ok and true or false
     end
@@ -1957,7 +1958,7 @@ local function backgroundWidget(bb, w, h)
                     return self.bb:getWidth() >= self.w and self.bb:getHeight() >= self.h
                 end)
                 if not (ok_c and covers) then
-                    pcall(function() target:paintRect(x, y, self.w, self.h, ground) end)
+                    pcall(function() require("lib/bookshelf_color").paintRect(target, x, y, self.w, self.h, ground) end)
                 end
             end
             pcall(function()
