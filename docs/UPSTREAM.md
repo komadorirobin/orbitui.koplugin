@@ -163,6 +163,13 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+October 31 Beta 22 request: after local-first EPUB tags, a fresh read-only fetch
+at 11:54 UTC confirms Bookshelf master `ee84a8fe1621171c00df91c41dee76b9ed07028c`
+and SimpleUI main `5631ce1035286803d7586979c75993671ff022cb` are already included,
+with zero missing commits and zero changed files. Latest stable releases remain
+6.0.4 / 3.0.2. No empty import or pin advancement is made. The user explicitly
+authorizes push and a new beta; retain prior custom behavior and public assets.
+
 October 31: SimpleUI `5631ce1035286803d7586979c75993671ff022cb` adds three
 commits since `7a605bbc` (including the Polish translation PR merge). Bookshelf
 remains `ee84a8fe`, with no new commits. Tilted Cover Deck artwork is converted

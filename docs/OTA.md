@@ -7,6 +7,45 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 0.1.0-beta.22
+
+Beta 22 adds clickable tags to the existing **Tags** tab. Start with **EPUB tags
+(offline) > Read EPUB tags**. EPUB 2/3 `bookorbit:tags` metadata is read directly
+from the file: no BookOrbit plugin, account, link, patch/API addition or connection
+is needed. Standard EPUB subjects remain native Genres; collections stay separate.
+
+Tap a tag for exact matches among local EPUBs across your configured library
+profiles and home library. The library's scan-depth setting still applies; the
+originating book is included even outside those folders. Scanning yields between
+books and can be canceled. Successful reads use a disposable file-stat cache;
+Refresh rereads the files. Unreadable books and the 400-match cap are disclosed.
+Results retain native paging, filename filtering and normal reader/hold actions.
+
+The separate optional online BookOrbit section can fetch server-only tags for
+linked files. Its tag search requires the separately prepared BookOrbit API
+addition; that server change is NOT deployed by this release and is not needed
+for embedded tags. Nothing writes book metadata, collections, reading status or
+remote progress, and no settings/data are reset.
+
+Svenska: Beta 22 lägger taggar i den befintliga **Taggar-fliken**. Börja med
+**EPUB-taggar (offline) > Läs EPUB-taggar**. Taggar som BookOrbit har skrivit in
+i EPUB-filen fungerar utan plugin, konto, koppling eller nätverk. Tryck på en
+tagg för att hitta fler lokala EPUB-filer med exakt samma tagg i alla dina
+biblioteksprofiler. Bibliotekets skanningsdjup gäller fortfarande. Sökningen går
+att avbryta; Uppdatera läser om filerna. Genrer och samlingar hålls separata.
+Den valfria nätkällan kräver serverstöd för taggsökning, men offlinefunktionen
+gör inte det. Inga böcker, läsdata eller inställningar skrivs över.
+
+Fresh upstream check on October 31 finds no new commits: Bookshelf remains
+`ee84a8fe`, SimpleUI `5631ce10`. Beta 21's Book details crash fix and previous
+night/search/navigation/cover adaptations remain. No runtime paths, artwork,
+fonts/languages, bootstrap or API-1 limits change. Earlier public assets remain
+immutable. Update via the preview channel and restart KOReader.
+
+Still a prerelease: Bigme/Boox layout, touch/keyboard, long tags, scroll/zoom,
+scan latency, cancel/Back, rotation/sleep and reader return need physical checks.
+Automated native archive/modal tests are not device acceptance.
+
 ## OrbitUI 0.1.0-beta.21
 
 Beta 21 fixes the crash when selecting **Book details** in the book panel.

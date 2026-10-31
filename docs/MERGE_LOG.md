@@ -38,6 +38,25 @@ Full integration, reviewed upstream, release sealing/audits, native older OTA,
 CI and exact draft/public-byte evidence are recorded below when completed.
 Physical Bigme/Boox acceptance and live optional API deployment remain open.
 
+### Upstream and release preparation
+
+Local-first implementation is committed as `ecce27ee79a27512860ec56c311984a2c84533b5`.
+Continue on `release/local-tags-upstream-beta22-20261031`; public origin/main
+is still `de51ac9b94f668bfc87aab60e023c0d96db80254`. Fresh read-only collection
+at 11:54 UTC fetches both tracked branches: Bookshelf master
+`ee84a8fe1621171c00df91c41dee76b9ed07028c`, SimpleUI main
+`5631ce1035286803d7586979c75993671ff022cb`. Both have zero missing commits,
+zero changed files, no rewrite/error and current pins. Latest stable releases
+remain 6.0.4 / 3.0.2. There is nothing new to merge; do not manufacture an import
+or change provenance. Snapshot the report in the Beta 22 evidence directory.
+
+VERSION advances to `0.1.0-beta.22`; bilingual notes use existing docs/OTA.md,
+not a new installed path at the API-1 ceiling. Keep entry/bootstrap/assets/map,
+all 2,000 runtime identities, source pins and every previous release immutable.
+Tag/publication only follows full local/sealed/audit/native OTA/CI and draft
+byte checks. No BookOrbit server push/deployment is included. Device acceptance
+is still open; the release must be a prerelease.
+
 ## 2026-10-31 — approved local BookOrbit tags in the existing Tags tab
 
 User says "Gå vidare med taggarna", specifies on-device books only, then clarifies
