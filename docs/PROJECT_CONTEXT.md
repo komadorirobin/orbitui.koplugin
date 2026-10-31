@@ -22,6 +22,24 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-31
 
+- Beta 22 is now public at exact candidate/annotated tag
+  `db909dcff807e255d4ba878d99028ee968ba963c` / `v0.1.0-beta.22`, published
+  **2026-10-31 12:14:47 UTC**, prerelease true. It includes the approved offline
+  EPUB tags plus the earlier optional online tag UI. Both full interpreter
+  gates, sealed-root/native EPUB/modal/input/raster checks, all 43 catalogs,
+  exact source/path/held-art/history/secret audits and actual Beta 5/9/21 native
+  OTA recovery pass. Main/tag CI `41199505965` / `41199887141` pass all four
+  jobs at that exact candidate. Draft/anonymous public bytes match; live
+  application-TLS upgrades from Beta 9/21 pass. Preview selects Beta 22, stable
+  stays absent; all 76 prior releases/assets and 125 old tag refs are unchanged.
+  ZIP SHA-256 `2ed3191e76fda3828757163e3786b770c195bf834af7d509f89ae5e777243013`,
+  9,089,361 bytes, 26,698,613 expanded, same 2,000 installed paths/API 1.
+  No new upstream commits were available; pins remain unchanged. The separate
+  BookOrbit API branch stays local and undeployed, and is not needed for EPUB
+  tags. Verification-only docs never rebuild/replace these published bytes.
+  Evidence: `test-results/beta22-20261031/`; physical Bigme/Boox acceptance remains
+  open, not established by native headless tests.
+
 - User explicitly approves local-first EPUB tags, then a fresh upstream merge,
   push and new beta publication. The offline section precedes the optional
   BookOrbit source in the existing Tags tab. Explicit Read/Refresh parses
@@ -513,9 +531,9 @@ and correct this file in the same change.
   Home is explicitly Home/Hem (SimpleUI). Native preference callbacks, scopes,
   advanced controls and stored values remain in place. The earlier same-version
   development ZIP was never published as a replacement Beta 12.
-- Product version: `0.1.0-beta.18` (public GitHub prerelease, published
-  2026-10-30 at 16:31:24 UTC after explicit user request; verification is in
-  `docs/MERGE_LOG.md`). Beta 17 and earlier assets remain immutable.
+- Product version: `0.1.0-beta.22` (public GitHub prerelease, published
+  2026-10-31 at 12:14:47 UTC after explicit user request; verification is in
+  `docs/MERGE_LOG.md`). Beta 21 and earlier assets remain immutable.
 - Beta 12 starts from clean public main `70e5a1fd` on
   `fix/android-covers-beta12-20261026`. Android safe mode remains enabled;
   host-owned foreground local extraction replaces the blocked Bookshelf queue,
@@ -541,7 +559,9 @@ and correct this file in the same change.
   with category/instance/external-module tests in `0acdd843`.
   Complete local Lua/LuaJIT, translation, sealed-package and native OTA gates
   pass; exact verification results are recorded in `docs/MERGE_LOG.md`.
-- Release tag: `v0.1.0-beta.18` at `7c0f7057`; previous tags
+- Release tag: `v0.1.0-beta.22` at `db909dcf`; previous tags
+  `v0.1.0-beta.21` at `3116ed1c`, `v0.1.0-beta.20` at `32603575`,
+  `v0.1.0-beta.19` at `89d23c78`, `v0.1.0-beta.18` at `7c0f7057`,
   `v0.1.0-beta.17` at `ab2e0bd7`,
   `v0.1.0-beta.16` at `5c846730`,
   `v0.1.0-beta.15` at `ee35bf19`,
@@ -551,7 +571,9 @@ and correct this file in the same change.
   `v0.1.0-beta.11` at `03106015`,
   `v0.1.0-beta.10` at `0a2ea22b`, `v0.1.0-beta.9` at `a4bb9acb` and all
   earlier tags/assets are unchanged.
-- Public branch: `main`; the next October 30 publication request produces
+- Public branch: `main`; Beta 22 publishes local-first EPUB tags and the earlier
+  optional online source, after a fresh check found no new upstream commits.
+  The earlier October 30 publication request produced
   Beta 18 with the reviewed status-routing/live-opt-in/native-dialog fixes.
   The earlier separate October 30 publication request produces
   Beta 17 with quick controls, category cards and the already-reviewed imports.
@@ -582,8 +604,8 @@ and correct this file in the same change.
   `c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3).
   Public Beta 10 keeps `5f726c25` / merge `0db81b46` unchanged.
   Prior 6.0.0 integration `fc1103a3` / `48438837` is retained in ancestry.
-- Embedded SimpleUI Git in main: `257c26d6685ced4fc2e895f98287b5f16f1d4f5e`
-  (3.0.1 follow-ups). Public Beta 15/16 retains
+- Embedded SimpleUI Git in main: `5631ce1035286803d7586979c75993671ff022cb`
+  (3.0.2 plus reviewed follow-ups, unchanged in Beta 22). Public Beta 15/16 retains
   `22d5a3d2dd7be4651e718eb49027d82f68b3ace7`. Beta 14 keeps
   `e5cd6dcb31fa759b9831223d4719f61126367cff` (3.0.1 runtime), twelve commits
   after `b1580f90b2e17cf03a66c744c323a1df66d77100` retained in Beta 13.

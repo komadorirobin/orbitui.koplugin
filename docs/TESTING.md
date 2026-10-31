@@ -18,6 +18,20 @@ final full/sealed/OTA/CI/public-byte results in MERGE_LOG before completion.
 The API addition stays local; physical Bigme/Boox tag layout, scan latency,
 Cancel/Back/sleep/rotation and reader return remain required device checks.
 
+Beta 22 is now public at exact candidate/tag `db909dcf` / `v0.1.0-beta.22`.
+Both full interpreter gates pass (133 Python/four unchanged skips, 93 root Lua
+files, 487 Bookshelf/zero failures/three normal SQLite exclusions, 13 SimpleUI,
+map 396, syntax 1,090, 43 catalogs). All sealed root/native EPUB/modal/input/
+raster supplements pass. Main/tag CI `41199505965` / `41199887141` pass all four
+jobs. Exact source/path/history/held-art/secret/draft/public byte checks pass;
+all 2,000 runtime paths and bootstrap/pins/assets remain. Actual Beta 5/9/21
+native upgrade/recovery/rollback passes, as do live anonymous application-TLS
+published-byte upgrades from Beta 9/21. Preview selects Beta 22; stable remains
+absent, and all 76 previous releases/assets and 125 old tag refs are unchanged.
+Exact digest/metrics are in MERGE_LOG and `test-results/beta22-20261031/`.
+Verification-only notes never rebuild/replace the published bytes. Physical
+and live optional BookOrbit API acceptance remain separate and open.
+
 ### Local BookOrbit tag navigation
 
 `test_bookorbit_tags` exercises the real native `_showBookDetail` factory and

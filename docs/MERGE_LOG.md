@@ -57,6 +57,47 @@ Tag/publication only follows full local/sealed/audit/native OTA/CI and draft
 byte checks. No BookOrbit server push/deployment is included. Device acceptance
 is still open; the release must be a prerelease.
 
+### Beta 22 verified publication
+
+Exact source/package candidate and annotated tag:
+`db909dcff807e255d4ba878d99028ee968ba963c` / `v0.1.0-beta.22`. Public GitHub
+prerelease published **2026-10-31 12:14:47 UTC**, after explicit user approval.
+Both full Lua/LuaJIT gates pass: 133 Python tests/four unchanged optional skips,
+all 93 root Lua files, 487 Bookshelf suites/zero failures/three normal SQLite
+exclusions, 13 SimpleUI files, map 396, syntax 1,090 and 43 catalogs/zero failures.
+All root suites pass again on sealed bytes in both interpreters, including the
+11 offline cases and 15 online/native-Tag cases, retained true modal lifecycle,
+shared panel/search and minimum/current native input/dialog regressions. The
+additional real EPUB/native libarchive/JSON case passes on sealed bytes, as do
+native Android/non-Android grey/RGB/CBB/software night/tilted-cover suites.
+
+Main/tag checks `41199505965` / `41199887141` pass all four jobs at the exact
+candidate. Existing Node/runner migration annotations remain warnings. Source
+and packaged bytes, inventory/manifest/hash/size, old path equality, unchanged
+entry/bootstrap/assets/map/pins and outgoing history/held-art/Gitleaks audits
+pass. Initial outgoing range has 29 blobs/four commits, no leaks/held bitmap.
+Verification-only documentation is audited separately and never rebuilds or
+replaces the sealed/public ZIP.
+
+ZIP SHA-256 `2ed3191e76fda3828757163e3786b770c195bf834af7d509f89ae5e777243013`,
+**9,089,361 bytes**, **26,698,613 expanded**, 2,066 entries and all 1,999 inventory
+records plus manifest / 2,000 installed API-1 paths. Both uploaded draft assets
+and anonymous public API/downloads match the candidate byte-for-byte, including
+GitHub's digest/size. Actual public Beta 5/9/21 native installers pass extraction,
+missing-module rejection, activation/restart/code rollback, truncated-download
+recovery, external snapshot/persistent rollback and interrupted obsolete-runtime
+cleanup preserving active/previous/unknown/modified/user files. Live anonymous
+LuaSocket/LuaSec TLS discovery/download and every native phase pass from Beta
+9/21 against the published bytes. Preview selects Beta 22; stable remains absent.
+All 76 earlier releases/assets and 125 old remote tag refs remain unchanged.
+
+Evidence: ignored `test-results/beta22-20261031/`. The separate BookOrbit API
+worktree stays clean, one local commit ahead of its observed public base, not
+pushed or deployed. Offline EPUB tags require no server/plugin/API change.
+Physical Bigme/Boox fonts/touch/long-tag layout, scroll/zoom, scan latency,
+Cancel/Back, rotation/sleep and native reader return remain open. These native
+headless checks do not constitute device acceptance or a measured speed claim.
+
 ## 2026-10-31 — approved local BookOrbit tags in the existing Tags tab
 
 User says "Gå vidare med taggarna", specifies on-device books only, then clarifies
