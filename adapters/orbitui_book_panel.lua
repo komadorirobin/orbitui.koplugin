@@ -148,9 +148,11 @@ function M.tagSections(owner, book, modal)
                 refresh()
             end)
         end }
-    return {{ title = _("EPUB tags (offline)"), pills = local_pills,
+    local sections = {{ title = _("EPUB tags (offline)"), pills = local_pills,
         note = local_state.error or (local_state.tags and #local_state.tags == 0 and _("No separate tags embedded in this EPUB. Standard EPUB subjects are shown as genres below."))
-            or _("Read tags from the file, then tap a tag to search EPUBs on this device across all library profiles. No account or connection is needed. Nothing is synced or edited.") }, remote }
+            or _("Read tags from the file, then tap a tag to search EPUBs on this device across all library profiles. No account or connection is needed. Nothing is synced or edited.") }}
+    if Integration.bookOrbitEnabled("tags") then sections[#sections + 1] = remote end
+    return sections
 end
 
 local information = M.information

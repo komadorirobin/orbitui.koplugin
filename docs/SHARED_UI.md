@@ -6,6 +6,45 @@ change. Device acceptance is still pending.
 
 ## Controls
 
+### BookOrbit integration settings (local development after Beta 22)
+
+**Integrations > BookOrbit / Integrationer > BookOrbit** is a stable searchable
+destination, not a sixth root category. Master and independent Want to Read,
+manual status-menu and online-tag controls use new optional SimpleUI-store
+keys. Unset preserves existing behaviour; external BookOrbit sync/settings,
+offline EPUB tags, TBR membership, caches, source IDs, profiles and layouts are
+not migrated or erased. The local TBR module already exists and is displayed
+as **Want to read [Local] / Vill läsa [Lokalt]**; the remote source is
+**Want to read [BookOrbit] / Vill läsa [BookOrbit]** on module, source picker,
+Cover Deck, dashboard and owned status actions. Custom headings remain custom.
+No fallback that silently substitutes unrelated list membership.
+
+Opening this settings page remains passive. Detection is not a connection
+test; the explicit list refresh reports only its own result. Auto-refresh uses
+the existing preference. The last successful timestamp is now flushed even
+for unchanged membership. Manual status actions explicitly write Want to Read
+or Unread; that control is not the external progress-sync owner. A disabled
+source returns no files, including Bookshelf's persisted-cache fallback. Home
+data is marked stale, pending shelf work is retired and the existing exposure
+hook rebuilds without moving the current profile/chip/page or raising it over
+a dialog/reader. Disabled source selections remain saved and identifiable.
+
+Minimal optional `requestGuard` callbacks in the original Want provider keep
+standalone behaviour without a host. Queue/subprocess boundaries and response
+adoption recheck the captured live policy generation. Off/on retires old work.
+Already-sent server mutations cannot be unsent; no rollback/extra sync writer
+is invented. Online-tag sessions also retire on policy changes; stale buttons
+cannot request even if a hidden old panel remains alive. Offline tags retain
+their original independent lifetime. Scoped SimpleUI display-name translation
+does not replace global gettext, collection keys or upstream catalogs.
+
+Help links to the separate BookOrbit Extras distribution, exact server bases
+and SV/EN instructions. Undo opening/Hardcover remain external device patches;
+the older undo overlay is NOT interchangeable with the tag API base. No naive
+undo off switch, automatic patch installation or server deployment is added.
+Tests: `test_bookorbit_controls`, `test_bookorbit_tags`, settings/dashboard/native
+modal suites. Physical input/font/scroll/source-refresh acceptance is still open.
+
 ### Local EPUB tags and optional BookOrbit tags (October 31)
 
 The existing **Tags / Taggar** tab now begins with **EPUB tags (offline) /

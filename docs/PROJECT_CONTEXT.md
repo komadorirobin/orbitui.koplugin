@@ -22,6 +22,25 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-31
 
+- Approved BookOrbit settings/documentation/extras work is LOCAL on
+  `feature/bookorbit-controls-20261031` from clean `b8619fad`. New searchable
+  Integrations > BookOrbit page keeps five root categories. Master plus
+  independent list/manual-status/online-tag flags preserve unset behaviour,
+  caches/layouts/source IDs and the external plugin's own progress sync.
+  Existing local TBR is explicitly Want to read [Local] / Vill läsa [Lokalt];
+  the separate server list is Want to read [BookOrbit] / Vill läsa [BookOrbit].
+  No silent source substitution or new local list owner. Queue/off-on/subprocess
+  policy guards retire late results; already-sent writes cannot be unsent.
+  Offline EPUB tags stay independent. Detection/paint is passive, explicit
+  refresh and durable successful timestamp are honest, and extras help never
+  disables protected undo state. README now identifies public Beta 22 and
+  distinguishes the new local-only controls. Separate extras packaging is in
+  `/Users/robinbolinsson/bookorbit-extras`, with exact tested device copies,
+  bilingual guides/licenses and separately pinned old undo/new tag server
+  diffs. They target DIFFERENT bases, not an installable combined overlay.
+  No OrbitUI release or BookOrbit production deployment is authorized by this
+  step. Final tests/publication state will be recorded below and in MERGE_LOG.
+
 - Beta 22 is now public at exact candidate/annotated tag
   `db909dcff807e255d4ba878d99028ee968ba963c` / `v0.1.0-beta.22`, published
   **2026-10-31 12:14:47 UTC**, prerelease true. It includes the approved offline

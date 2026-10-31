@@ -82,7 +82,10 @@ H.test("every catalog label and every scope has an explicit Swedish and English 
     for _, item in ipairs(Settings.catalog()) do
         assert(not ids[item.id]); ids[item.id] = true
         H.eq(translate(item.label, "en"), item.label)
-        if item.label ~= "Bookshelf" then assert(translate(item.label, "sv") ~= item.label, item.label) end
+        -- Product names are the same in both languages, not missing prose.
+        if item.label ~= "Bookshelf" and item.label ~= "BookOrbit" then
+            assert(translate(item.label, "sv") ~= item.label, item.label)
+        end
         local english = Settings.scopeRow(item.scope).text
         assert(type(english) == "string" and #english > 0)
     end

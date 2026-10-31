@@ -73,6 +73,44 @@ BookOrbit synchronization, MyAnimeList and Patch Manager remain separate
 plugins where used. OrbitUI does not replace them, download your whole server
 library or introduce a new synchronization engine.
 
+### Optional BookOrbit features
+
+**OrbitUI settings > Integrations > BookOrbit** has a master switch and
+independent controls for the BookOrbit list, manual status actions and online
+tags. These controls are in development after Beta 22; they are not in the
+currently published ZIP. They do not disable the separate BookOrbit plugin's
+reading-progress sync, erase its credentials, or replace your saved layouts.
+
+| Feature | Source and requirements |
+| --- | --- |
+| **Want to read [Local]** | Existing local To Be Read module and KOReader collection. No account, network or server patch. |
+| **Want to read [BookOrbit]** | BookOrbit's Want to Read list, matched to files already on the device. Requires its connected KOReader plugin; no optional server patch. Does not download books. |
+| **Manual BookOrbit menu actions** | Explicitly add/remove a linked book from Want to Read. These actions change the server's read status; they are not a second automatic progress sync. |
+| **EPUB tags (offline)** | Read embedded `bookorbit:tags` metadata and find matching local EPUBs across profiles. No BookOrbit installation or API patch required. Standard EPUB subjects remain genres. Available in Beta 22. |
+| **Online BookOrbit tags** | Explicit load/refresh in the Tags tab. Exact matches among linked local files need the optional server API addition. No server-only results or automatic metadata writes. |
+| **Undo accidental opening** | Separate device patch plus a version-compatible server extension. Not bundled or controlled by OrbitUI. |
+| **Hardcover single-writer compatibility** | Optional device patch keeps BookOrbit as the automatic Hardcover writer while retaining the separate Hardcover plugin's linking/edition/metadata tools. |
+
+The two Want to Read modules remain separate. Turning BookOrbit off does not
+silently substitute the local collection, alter either list or remove saved
+source selections. Add the local module through **Home (SimpleUI) > Layout &
+modules**, or choose its source in **Reading dashboard**. Custom headings stay.
+
+See **[BookOrbit Extras](https://github.com/komadorirobin/bookorbit-extras)** for
+device-patch installation, exact server bases, licenses and English/Swedish
+instructions. Server changes require the server administrator to build, test
+and deploy them separately. An OrbitUI update never deploys a server patch.
+Do not disable/remove undo support with a protected opening pending; resolve
+that state using the patch first. Local EPUB tags need none of these extras.
+
+**Svenska:** Under **OrbitUI-inställningar > Integrationer > BookOrbit** samlas
+de valfria funktionerna. **Vill läsa [Lokalt]** använder KOReaders lokala samling;
+**Vill läsa [BookOrbit]** hämtar serverns lista men visar bara matchade filer på
+enheten. Listorna byts aldrig ut mot varandra. Huvudbrytaren styr bara OrbitUIs
+funktioner, inte BookOrbits egen synk. EPUB-taggar fungerar offline utan patchar;
+taggmatchning via servern och Ångra öppning har separata serverkrav. De nya
+inställningarna och källnamnen är ännu inte publicerade i Beta 22.
+
 ### Choose the look
 
 Keep each shelf's own settings, choose **Classic OrbitUI** for face-out books
@@ -88,7 +126,7 @@ by the code license. See [add-on instructions](docs/ADDONS.md).
 ## Installation
 
 **Requirements:** KOReader **v2025.08 or newer**; v2026.03 or newer is recommended
-by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 18 is a
+by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 22 is a
 prerelease, not a promise of compatibility with every device or user patch.
 
 1. **Back up first.** Keep a copy of your KOReader settings, user patches,
@@ -98,7 +136,7 @@ prerelease, not a promise of compatibility with every device or user patch.
    manager and restart KOReader.** Disable both if you have both. Do not delete
    their settings or plugin folders.
 3. Download **`orbitui.koplugin.zip`** from the
-   [Beta 18 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.18).
+   [Beta 22 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.22).
    Do **not** use **Code > Download ZIP** or GitHub's **Source code** archives.
 4. Fully exit KOReader. Extract the ZIP and copy its **`orbitui.koplugin`**
    folder into your KOReader **`plugins/`** directory.
@@ -138,7 +176,7 @@ OrbitUI. Their local catalogs may need refreshing.
 after the backup and predecessor-disable steps above, find
 `komadorirobin/orbitui.koplugin`. In its download options, choose
 **Other releases...**, uncheck **Filter pre-releases**, select
-**v0.1.0-beta.18**, then select **`orbitui.koplugin.zip`**. Restart KOReader
+**v0.1.0-beta.22**, then select **`orbitui.koplugin.zip`**. Restart KOReader
 after installation. Preview builds are not returned by GitHub's "latest stable release"
 endpoint, so the default latest-release lookup may report that none exists.
 Do not choose **Direct download from repo**, **Source code**, the checksum
@@ -147,7 +185,7 @@ file, or the add-on-only **ornaments-1** release.
 **[Storefront by ultimatejimmy](https://github.com/ultimatejimmy/storefront.koplugin):**
 use **26.10.20 or newer**, which includes the
 [embedded-plugin detection fix](https://github.com/ultimatejimmy/storefront.koplugin/releases/tag/26.10.20).
-Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.18** and
+Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.22** and
 **`orbitui.koplugin.zip`** from its versions/releases options if the cached
 catalog still shows an older beta. Disable the predecessor plugins first as
 described above. Older affected installers (including **26.10.17-beta2**) can
@@ -195,6 +233,15 @@ re-enabling your old plugins**. Never restore stale reading-progress files just
 to undo a UI change.
 
 ## Beta status and feedback
+
+**0.1.0-beta.22** is the current published preview. It adds offline embedded
+EPUB tags to the existing Tags tab, alongside the optional online source.
+Exact local results span configured profiles without an account or server
+patch. It includes Beta 21's Book details crash fix and Beta 20's night-mode,
+search/browse refinements and reviewed upstream changes. Physical Bigme/Boox
+acceptance and optional live tag API verification remain open. The new
+BookOrbit integration settings described above are local development work,
+not a replacement of the published Beta 22 archive.
 
 **0.1.0-beta.18** fixes status taps being intercepted by Home's top menu,
 applies the quick-control opt-in immediately and keeps unanchored quick-control
@@ -298,8 +345,8 @@ upload settings backups.
   **Credits and licenses**. Free download does not make every asset public domain.
 
 Both component licenses, notices and imported Git histories are retained.
-Beta 9 integrates Bookshelf **6.0.0** and SimpleUI **3.0**; exact imported and
-reviewed upstream revisions are recorded in [sources.json](sources.json).
+Exact imported baselines and currently reviewed upstream revisions are recorded
+in [sources.json](sources.json); historical release numbers are not source pins.
 Upstream updates are reviewed and merged, not automatically installed.
 
 ## Development

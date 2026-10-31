@@ -24,6 +24,9 @@ M.modules = {
     ["lib/bookshelf_theme_menu"] = true,
     ["modules/moduleregistry"] = true,
     ["integrations/sui_bookorbit_want"] = true,
+    ["lib/bookshelf_bookorbit_want_source"] = true,
+    ["modules/module_bookorbit_want"] = true,
+    ["infra/sui_i18n"] = true,
     ["features/sui_module_chrome"] = true,
     ["screens/sui_menu"] = true,
     ["screens/sui_bottombar"] = true,
@@ -51,7 +54,19 @@ local function settingsEntry(items, old_key)
 end
 
 function M.wrap(name, module)
-    if name == "lib/bookshelf_tokens" then
+    if name == "infra/sui_i18n" then
+        -- Only the embedded component's two source names; KOReader's global
+        -- gettext, collection identifiers and upstream catalogs are untouched.
+        local translate = module.translate
+        module.translate = function(text)
+            local _ = require("core/orbitui_i18n")
+            if text == "BookOrbit Want to Read" then return _("Want to read [BookOrbit]") end
+            if text == "To Be Read" then return _("Want to read [Local]") end
+            local native = translate(text)
+            return (native:gsub("BookOrbit Want to Read", "Want to read [BookOrbit]")
+                :gsub("BookOrbit Vill läsa", "Vill läsa [BookOrbit]"))
+        end
+    elseif name == "lib/bookshelf_tokens" then
         require("adapters/orbitui_shelf_sort").tokens(module)
     elseif name == "features/sui_wallpaper" or name == "lib/bookshelf_wallpaper" then
         require("adapters/orbitui_appearance").wallpaper(module, name == "lib/bookshelf_wallpaper")
@@ -193,6 +208,11 @@ function M.wrap(name, module)
         require("adapters/orbitui_dashboard").install(module)
     elseif name == "integrations/sui_bookorbit_want" then
         require("adapters/orbitui_dashboard").wrapWantProvider(module)
+        require("adapters/orbitui_integrations").wantProvider(module)
+    elseif name == "lib/bookshelf_bookorbit_want_source" then
+        require("adapters/orbitui_integrations").wantSnapshot(module)
+    elseif name == "modules/module_bookorbit_want" then
+        require("adapters/orbitui_integrations").wantModule(module)
     elseif name == "features/sui_module_chrome" then
         require("adapters/orbitui_dashboard").wrapChrome(module)
     elseif name == "screens/sui_bottombar" then

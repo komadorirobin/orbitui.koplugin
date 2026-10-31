@@ -1,6 +1,8 @@
 local root = os.getenv("ORBITUI_TEST_ROOT") or "."
 package.path = root .. "/?.lua;./?.lua;" .. package.path
 local H = require("tests/helpers")
+local integration_settings = {}
+package.loaded["infra/sui_store"] = { readSetting = function(_, key) return integration_settings[key] end }
 local queue, shown, live, generation, connected, network_calls = {}, {}, nil, 1, true, 0
 local files, maps, requests, details, mode = {}, {}, {}, 0, nil
 local UI = { _simpleui_navigation_generation = 1,
@@ -306,5 +308,18 @@ H.test("all owned tag labels have Swedish translations without editing user tag 
     H.eq(_("BookOrbit tags"), "BookOrbit-taggar"); H.eq(_("Tags"), "Taggar")
     H.eq(_("Load BookOrbit tags"), "Hämta BookOrbit-taggar"); H.eq(_(tag), tag)
     G_reader_settings = old
+end)
+H.test("online switches hide only the online section and retire existing sessions", function()
+    reset(1)
+    local source = assert(Integration.bookOrbitSession())
+    local modal = { _tabs = {{ id = "tags" }}, _active_tab = 1 }
+    integration_settings.simpleui_orbitui_bookorbit_tags = false
+    H.eq(source:current(), false)
+    local result, err = source:detail(maps[1]); H.eq(result, nil); H.eq(err, "stale")
+    local sections = Panel.tagSections({}, { filepath = maps[1] }, modal)
+    H.eq(#sections, 1); H.eq(sections[1].title, "EPUB tags (offline)")
+    H.eq(sections[1].pills[1].label, "Read EPUB tags")
+    H.eq(details, 0); H.eq(#requests, 0)
+    integration_settings.simpleui_orbitui_bookorbit_tags = nil
 end)
 H.finish()

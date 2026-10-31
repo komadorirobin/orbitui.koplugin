@@ -4,6 +4,60 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-10-31 — optional BookOrbit settings, explicit list sources and extras
+
+User approves the integration settings/documentation/extras proposal and asks
+for Want to read [BookOrbit] with a genuine local alternative. Start clean
+`b8619fad` on `feature/bookorbit-controls-20261031`; no upstream import/pin change.
+The existing local TBR module/KOReader To Be Read collection already supplies
+that alternative. Rename display names to Want to read [Local] / Vill läsa
+[Lokalt] and Want to read [BookOrbit] / Vill läsa [BookOrbit], never module IDs,
+collection keys, memberships, custom headings, profiles, source choices or layouts.
+Do not silently convert a disabled server source to an unrelated local list.
+
+Stable Integrations > BookOrbit destination retains five root categories and
+SV/EN search/help. Master plus list/manual-status/online-tag flags default to
+existing behaviour, affect OrbitUI only and preserve external plugin progress
+sync/credentials. Inspection is passive; explicit refresh and the durable last-
+success timestamp describe that list request, not every server dependency.
+Manual Want/Unread actions are labelled as explicit server status writes.
+Disabled cached sources are gated including Bookshelf's persisted fallback.
+Home cache invalidation and deferred shelf rebuild preserve position and modal/
+reader ownership. Optional component `requestGuard` callbacks gate queued work,
+subprocess boundaries and adoption by generation, including off/on. Already-
+sent server mutations cannot be unsent. Offline EPUB tags remain independent;
+online sessions retire with policy changes. Scoped source-name translation does
+not replace global gettext or alter upstream catalogs. C02/C04-C08/C10 retained.
+
+README installation/presentation now identifies actual public Beta 22 and
+explicitly marks these newer controls local-only. The GitHub description also
+mentions optional BookOrbit lists/tags and local-first tools. No OrbitUI push,
+tag, new beta, production server/database change or reader-patch install is
+performed by this feature request.
+
+The approved extras distribution is public at
+https://github.com/komadorirobin/bookorbit-extras, exact initial commit
+`0c8302dab1149c2dc5f7f687a51da787dda5a86d`. Device patch bytes mirror public
+Ereader `6c05155c` unchanged; existing Patch Manager source/enablement is not
+changed. SV/EN instructions, hashes, exact plugin/source profiles, licenses/
+notices, undo reconciliation and separate administrator build/test instructions
+are included. Old undo v1 overlay targets BookOrbit 3.2.0 `d1b3fae`; tag API v1
+diff targets `ba315c7`, implementation `0cf7db1`. These are DIFFERENT bases,
+not a precombined server upgrade. No naive undo-off UI or automatic deployment.
+Extras CI `41204384358` succeeds: checksum/notices, native Lua5.1/LuaJIT state,
+all three complete BookOrbit plugin profiles, original Hardcover regression
+and both exact-base patch-application checks. Directory/new-history Gitleaks
+passes. The unchanged local BookOrbit API branch passes 215 fresh targeted
+tests and full backend typecheck/ESLint; no branch is pushed to BookOrbit.
+
+Twelve new policy/callback tests and the 16-case real native Tags suite pass
+Lua/LuaJIT; all original settings/dashboard/modal/native compatibility suites
+are retained. Full interpreter/package/sealed/audit completion is recorded in
+the verification note below. Physical Bigme/Boox input/refresh/scroll/fonts,
+live tag API, combined server rebase and end-to-end external sync remain open.
+VERSION stays public Beta 22; any same-version ZIP is DEVELOPMENT ONLY and
+must never replace the published archive or bypass the same-version OTA guard.
+
 ## 2026-10-31 — local-first EPUB tags, requested upstream and Beta 22
 
 User approves offline embedded tags, then explicitly requests another upstream

@@ -392,6 +392,7 @@ local nodes = {
     { "reader", "Opening books & returning", "navigation", "bookshelf", "läsare reader bokstängning close return återgång hot park" },
     { "reader_menu", "Reader menu: fast return to Bookshelf", "reader", "navigation", "arkivskåp arkivknapp snabbstängning stäng boken file browser cabinet close button reader menu fast return" },
     { "integrations", "Integrations", nil, "integrations", "bookorbit hardcover myanimelist mal synk sync kopplingar" },
+    { "bookorbit", "BookOrbit", "integrations", "integrations", "vill läsa want to read lokalt local taggar tags ångra öppning undo opening hardcover server api patch sync synk" },
     { "connections", "Connections & help", "integrations", "integrations", "bookorbit myanimelist mal anslutningar credentials" },
     { "hardcover", "Hardcover book information", "integrations", "bookshelf", "hardcover enrichment berikning api betyg rating omslag" },
     { "addons", "Ornament add-ons", "integrations", "bookshelf", "ornament tillägg packs paket download hämta" },
@@ -801,6 +802,7 @@ function M.open(id, opts)
     elseif id == "home_shelves" then extra = require("adapters/orbitui_home_shelves").menuItems()
     elseif id == "bookshelf_navigation" then extra = require("adapters/orbitui_library_settings").navigationItems()
     elseif id == "connections" then extra = require("adapters/orbitui_integrations").items()
+    elseif id == "bookorbit" then extra = require("adapters/orbitui_integrations").bookOrbitItems(close)
     elseif id == "performance" then
         extra = M.performanceItems()
         for _i, row in ipairs(children(id, close, opts)) do extra[#extra + 1] = row end

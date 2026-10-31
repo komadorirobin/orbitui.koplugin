@@ -1,5 +1,29 @@
 -- OrbitUI-owned strings, independent of the two upstream translation catalogs.
 local sv = {
+    ["BookOrbit"] = "BookOrbit",
+    ["Online tag matching needs a compatible BookOrbit server API extension. See Integrations > BookOrbit."] = "Taggmatchning via nätet kräver ett kompatibelt API-tillägg på BookOrbit-servern. Se Integrationer > BookOrbit.",
+    ["Want to read [BookOrbit]"] = "Vill läsa [BookOrbit]",
+    ["Want to read [Local]"] = "Vill läsa [Lokalt]",
+    ["BookOrbit integration settings"] = "Inställningar för BookOrbit-integreringen",
+    ["Enable BookOrbit features in OrbitUI"] = "Aktivera BookOrbit-funktioner i OrbitUI",
+    ["Online BookOrbit tags"] = "BookOrbit-taggar via nätet",
+    ["BookOrbit reading-status menu actions"] = "Menyval för lässtatus i BookOrbit",
+    ["Want to read (local, no account)"] = "Vill läsa (lokalt, utan konto)",
+    ["Refresh whenever Home opens"] = "Uppdatera varje gång Hem öppnas",
+    ["Refresh from BookOrbit now"] = "Uppdatera från BookOrbit nu",
+    ["Last successful list refresh: %s"] = "Senaste lyckade listuppdatering: %s",
+    ["BookOrbit extras: installation & compatibility"] = "BookOrbit-tillägg: installation och kompatibilitet",
+    ["BookOrbit features are disabled in OrbitUI. Enable online tags in Integrations > BookOrbit."] = "BookOrbit-funktionerna är avstängda i OrbitUI. Aktivera nättaggar under Integrationer > BookOrbit.",
+    ["Install and connect the separate BookOrbit KOReader plugin. This page never tests a connection automatically. A successful list refresh verifies only that request, not every optional server feature."] = "Installera och anslut det separata BookOrbit-pluginet för KOReader. Den här sidan testar aldrig anslutningen automatiskt. En lyckad listuppdatering bekräftar bara just den begäran, inte alla valfria serverfunktioner.",
+    ["Controls OrbitUI's BookOrbit lists, menu actions and online tags only. BookOrbit's own reading-progress sync is unchanged. Saved lists, sources and layouts are kept."] = "Styr bara OrbitUIs BookOrbit-listor, menyval och nättaggar. BookOrbits egen synk av läsprogression påverkas inte. Sparade listor, källor och layouter behålls.",
+    ["Shows the BookOrbit Want to Read list, matched to books already on this device. It does not download books. This source needs the connected BookOrbit plugin, not the optional tags or undo server patch."] = "Visar BookOrbits Vill läsa-lista, matchad mot böcker som redan finns på enheten. Inga böcker laddas ner. Källan kräver ett anslutet BookOrbit-plugin, men inte de valfria serverpatcharna för taggar eller ångrad öppning.",
+    ["BookOrbit list refreshed. Only matched books on this device are shown."] = "BookOrbit-listan har uppdaterats. Bara matchade böcker på enheten visas.",
+    ["BookOrbit list could not be refreshed. Check the plugin connection and network, then try again."] = "BookOrbit-listan kunde inte uppdateras. Kontrollera pluginets anslutning och nätverket och försök igen.",
+    ["This timestamp describes the saved list, not the current connection. Disabling BookOrbit keeps its cache but stops OrbitUI from displaying or refreshing it."] = "Tidsstämpeln gäller den sparade listan, inte den aktuella anslutningen. När BookOrbit stängs av behålls cachen, men OrbitUI visar eller uppdaterar den inte.",
+    ["Want to read [Local] uses KOReader's local To Be Read collection. Add it through Home (SimpleUI) > Layout & modules, or choose it as a Reading dashboard source. It works offline and stays separate from Want to read [BookOrbit]; disabling BookOrbit never replaces one list with the other."] = "Vill läsa [Lokalt] använder KOReaders lokala samling To Be Read. Lägg till modulen via Hem (SimpleUI) > Layout och moduler, eller välj den som källa i Läsöversikt. Den fungerar offline och är separat från Vill läsa [BookOrbit]. Listorna byts aldrig ut mot varandra när BookOrbit stängs av.",
+    ["Shows OrbitUI's manual Add/Remove Want to Read actions for linked books. These actions DO change BookOrbit's read status (Want to Read / Unread). They are not automatic reading-progress sync."] = "Visar OrbitUIs manuella menyval för att lägga till eller ta bort kopplade böcker i Vill läsa. Valen ÄNDRAR BookOrbits lässtatus (Vill läsa / Oläst). De är inte automatisk synk av läsprogression.",
+    ["Explicitly load tags for a linked book and find matching linked files on this device, across all profiles. Exact online tag matching needs the optional BookOrbit server API patch. Local EPUB tags remain available without BookOrbit or this switch."] = "Hämta uttryckligen taggar för en kopplad bok och hitta matchande kopplade filer på enheten i alla profiler. Exakt taggmatchning via nätet kräver det valfria API-tillägget på BookOrbit-servern. Lokala EPUB-taggar fungerar utan BookOrbit och oberoende av den här inställningen.",
+    ["Optional device and server patches are documented at github.com/komadorirobin/bookorbit-extras. Online tag matching requires its server API addition; embedded EPUB tags do not. Undo opening requires both the device patch and a compatible server overlay. The Hardcover single-writer device patch leaves BookOrbit as the automatic writer. OrbitUI does not install, disable or deploy these patches. Do not remove undo support while a protected opening is pending; resolve it with the patch first."] = "Valfria enhets- och serverpatchar dokumenteras på github.com/komadorirobin/bookorbit-extras. Taggmatchning via nätet kräver API-tillägget på servern, men inbäddade EPUB-taggar gör det inte. Ångra öppning kräver både enhetspatchen och ett kompatibelt serveröverlägg. Hardcover-patchen låter BookOrbit vara den enda automatiska skrivaren. OrbitUI installerar, stänger av eller driftsätter inte patcharna. Ta inte bort ångra-stödet medan en skyddad öppning väntar; hantera den först med patchen.",
     ["In progress"] = "Pågående",
     ["Book spines"] = "Bokryggar",
     ["Library search"] = "Bibliotekssökning",
@@ -932,6 +956,9 @@ local sv = {
 }
 
 return function(text, language)
+    -- Display names only. Persistent module/source/collection IDs never change.
+    if text == "BookOrbit Want to Read" then text = "Want to read [BookOrbit]" end
+    if text == "To Be Read" then text = "Want to read [Local]" end
     local lang = language or (G_reader_settings and G_reader_settings:readSetting("language")) or "en"
     if type(lang) == "string" and lang:match("^sv") then return sv[text] or text end
     return text

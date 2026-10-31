@@ -311,6 +311,14 @@ end
 
 function M.setWantToRead(filepath, wanted, opts)
     opts = opts or {}
+    -- Optional host policy, absent in standalone SimpleUI. Keep the token
+    -- through queued work and subprocess yields; never commit retired results.
+    local current = M.requestGuard and M.requestGuard("actions") or nil
+    if M.requestGuard and not current then
+        _notifyStatus(opts.on_done, { ok = false, error = "disabled" })
+        return false, "disabled"
+    end
+    current = current or function() return true end
     wanted = wanted == true
     local callback = opts.on_done
     local book_id = M.getBookId(filepath)
@@ -329,12 +337,14 @@ function M.setWantToRead(filepath, wanted, opts)
 
     _status_updates[filepath] = true
     UIManager:scheduleIn(opts.delay or 0, function()
+        if not current() then _finishStatus(filepath, callback, { ok = false, error = "disabled" }); return end
         if not _connected() then
             _finishStatus(filepath, callback, { ok = false, error = "offline" })
             return
         end
 
         local function run()
+            if not current() then _finishStatus(filepath, callback, { ok = false, error = "disabled" }); return end
             local plugin = _pluginInstance("bookorbit")
             if not plugin or type(plugin.newClient) ~= "function" then
                 _finishStatus(filepath, callback, { ok = false, error = "bookorbit_unavailable" })
@@ -360,6 +370,7 @@ function M.setWantToRead(filepath, wanted, opts)
             local completed, result = client:runInSubprocess(function()
                 return client:catalogSetReadStatus(book_id, status)
             end)
+            if not current() then _finishStatus(filepath, callback, { ok = false, error = "disabled" }); return end
             if not completed then
                 _finishStatus(filepath, callback, { ok = false, error = "cancelled" })
                 return
@@ -442,7 +453,8 @@ _connected = function()
     return ok and value == true
 end
 
-local function _fetch(force_local_scan)
+local function _fetch(force_local_scan, current)
+    if not current() then return nil, "disabled" end
     local plugin = _pluginInstance("bookorbit")
     if not plugin or not plugin.newClient then return nil, "bookorbit_unavailable" end
     if plugin.isLoggedIn and not plugin:isLoggedIn() then return nil, "not_configured" end
@@ -481,6 +493,7 @@ local function _fetch(force_local_scan)
     end)
 
     if not completed then return nil, "cancelled" end
+    if not current() then return nil, "disabled" end
     if not result or not result.body then
         return nil, result and result.err or "request_failed"
     end
@@ -580,7 +593,9 @@ local function _finish(files, err, skipped, matches, scan_performed, started_gen
     SUISettings:setNoFlush(CACHE_AT_KEY, os.time())
     SUISettings:setNoFlush(MATCH_CACHE_KEY, _cached_matches)
     if scan_performed then SUISettings:setNoFlush(LOCAL_SCAN_AT_KEY, os.time()) end
-    if changed or matches_changed or scan_performed then SUISettings:flush() end
+    -- The successful-refresh timestamp is user-visible even if membership did
+    -- not change. Keep it durable too; never flush a retired request.
+    SUISettings:flush()
     _notifyListeners{
         ok = true,
         changed = changed,
@@ -591,6 +606,14 @@ end
 
 function M.requestRefresh(opts)
     opts = opts or {}
+    local current = M.requestGuard and M.requestGuard("want") or nil
+    if M.requestGuard and not current then
+        if type(opts.on_done) == "function" then
+            _notifyStatus(opts.on_done, { ok = false, error = "disabled" })
+        end
+        return false, "disabled"
+    end
+    current = current or function() return true end
     if type(opts.on_done) == "function" then
         _listeners[#_listeners + 1] = opts.on_done
     end
@@ -603,12 +626,14 @@ function M.requestRefresh(opts)
     _running = true
     local started_generation = _cache_generation
     UIManager:scheduleIn(opts.delay or 0.1, function()
+        if not current() then _finish(nil, "disabled"); return end
         if not _connected() then
             _finish(nil, "offline")
             return
         end
         local function run()
-            local ok, files, err, skipped, matches, scan_performed = pcall(_fetch, opts.force_local_scan)
+            local ok, files, err, skipped, matches, scan_performed = pcall(_fetch, opts.force_local_scan, current)
+            if not current() then _finish(nil, "disabled"); return end
             if not ok then
                 _finish(nil, tostring(files))
             else

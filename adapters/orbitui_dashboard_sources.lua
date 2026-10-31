@@ -5,7 +5,11 @@ local M = {}
 local labels = { tbr = "To Be Read", recent = "Recent", new_books = "Recently added" }
 
 function M.label(source)
-    if source.kind == "bookorbit" then return _("BookOrbit Want to Read") end
+    if source.kind == "bookorbit" then
+        local label = _("Want to read [BookOrbit]")
+        if not require("adapters/orbitui_integrations").bookOrbitEnabled("want") then label = label .. " · " .. _("Disabled") end
+        return label
+    end
     if source.kind == "native" then
         if labels[source.id] then return _(labels[source.id]) end
         if source.id == "collection" then return source.coll or _("Collection") end
@@ -26,6 +30,9 @@ function M.usesBookOrbit(source)
 end
 
 function M.files(source, ctx)
+    if M.usesBookOrbit(source) and not require("adapters/orbitui_integrations").bookOrbitEnabled("want") then
+        return {}, true
+    end
     local ok, files, err = pcall(function()
         if source.kind == "bookorbit" then
             return require("integrations/sui_bookorbit_want").getCachedFiles()

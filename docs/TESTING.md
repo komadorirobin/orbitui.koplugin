@@ -2,6 +2,29 @@
 
 ## Automated
 
+### BookOrbit settings and optional extras (local development)
+
+`test_bookorbit_controls` executes actual Want provider queue/subprocess paths
+with fake transport/storage. It covers passive settings inspection, default
+compatibility, independent switches, master off/on, real menu callbacks,
+deferred Home/shelf invalidation without navigation reset, persisted-source
+fallback gating, rejection before scheduling, retirement after requests were
+sent, unchanged-membership timestamp durability and SV/EN names/help without
+global gettext changes. `test_bookorbit_tags` additionally confirms online
+switches retire a session and leave only the independent offline Tags section.
+Keep the real native Tags/modal/settings/dashboard suites, not a string-only
+mock of the UI. Physical source refresh, fonts, paging, touch/keyboard/Back and
+reader return on Bigme/Boox remain required. Never interpret an already-sent
+server write as canceled merely because a local result is retired.
+
+The separate BookOrbit Extras repository mirrors exact Ereader device bytes
+and documents two DIFFERENT server bases. It does not deploy a server or
+install/disable a device patch. Packaging validates hashes/licenses, each
+server diff against its base, undo state and all three pinned native plugin
+profiles plus the original Hardcover single-writer regression in Lua/LuaJIT.
+The unchanged local tag API branch retains its auth/access/bounds contracts.
+Final full/package/sealed/audit results will be recorded in MERGE_LOG.
+
 ### Local-first EPUB tags and Beta 22 preparation
 
 The user approves offline embedded tags followed by merge/push/new beta.

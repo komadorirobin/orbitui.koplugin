@@ -1,6 +1,138 @@
 -- Settings inspection stays passive. Tag requests below require a user action.
 local _ = require("core/orbitui_i18n")
 local M = {}
+local policy_generation = 0
+local policy_keys = {
+    enabled = "simpleui_orbitui_bookorbit_enabled",
+    want = "simpleui_orbitui_bookorbit_want",
+    actions = "simpleui_orbitui_bookorbit_actions",
+    tags = "simpleui_orbitui_bookorbit_tags",
+}
+local function store() return require("infra/sui_store") end
+function M.bookOrbitEnabled(feature)
+    -- Unset flags preserve existing installations. Never touch BookOrbit's own
+    -- credentials, sync preferences, caches or account lifecycle.
+    local ok, settings = pcall(store)
+    if not ok then return false end
+    if settings:readSetting(policy_keys.enabled) == false then return false end
+    return not feature or settings:readSetting(assert(policy_keys[feature])) ~= false
+end
+function M.setBookOrbitEnabled(feature, value)
+    store():saveSetting(assert(policy_keys[feature]), value == true)
+    policy_generation = policy_generation + 1
+    local engine = package.loaded["engines/sui_screen_engine"]
+    if engine and engine.markAllStale then engine.markAllStale() end
+    local widget = package.loaded["lib/bookshelf_widget"]
+    local live = widget and widget.live
+    if live and not live._closed then
+        if live._cancelChipPreload then live:_cancelChipPreload() end
+        live._spine_fetch_cache, live._warmed_chip_keys = nil, nil
+        -- Use the existing return hook; never rebuild over settings/a reader.
+        live._orbitui_navbar_pending = true
+    end
+    require("core/orbitui_context").refresh()
+    local appearance = package.loaded["adapters/orbitui_appearance"]
+    if appearance and appearance.refreshVisible then appearance.refreshVisible() end
+end
+function M.bookOrbitGuard(feature)
+    if not M.bookOrbitEnabled(feature) then return nil end
+    local generation = policy_generation
+    return function() return generation == policy_generation and M.bookOrbitEnabled(feature) end
+end
+function M.wantProvider(provider)
+    if provider._orbitui_policy then return end
+    provider._orbitui_policy = true
+    provider.requestGuard = M.bookOrbitGuard
+    local cached, auto, id = provider.getCachedFiles, provider.shouldAutoRefreshHome, provider.getBookId
+    provider.getCachedFiles = function(...)
+        if not M.bookOrbitEnabled("want") then return {} end
+        return cached(...)
+    end
+    provider.shouldAutoRefreshHome = function(...)
+        return M.bookOrbitEnabled("want") and auto(...)
+    end
+    provider.getBookId = function(...)
+        if M.bookOrbitEnabled("actions") then return id(...) end
+    end
+end
+function M.wantSnapshot(source)
+    if source._orbitui_policy then return end
+    source._orbitui_policy = true
+    local snapshot = source.snapshot
+    source.snapshot = function(...)
+        if not M.bookOrbitEnabled("want") then return {}, "orbitui:bookorbit:disabled" end
+        return snapshot(...)
+    end
+end
+function M.wantModule(module)
+    if module._orbitui_policy then return end
+    module._orbitui_policy = true
+    module.name, module.label = _("Want to read [BookOrbit]"), _("Want to read [BookOrbit]")
+    module._section_label = module.label
+    module.getLabel = function(ctx)
+        local label = _("Want to read [BookOrbit]")
+        if not M.bookOrbitEnabled("want") then label = label .. " · " .. _("Disabled") end
+        return require("engines/sui_section_label").makeDescriptor(module.id, label, ctx)
+    end
+    local menu = module.getMenuItems
+    module.getMenuItems = function(ctx)
+        local rows = menu(ctx)
+        table.insert(rows, 1, { text = _("BookOrbit integration settings"), callback = function()
+            require("adapters/orbitui_settings").open("bookorbit")
+        end })
+        return rows
+    end
+end
+function M.bookOrbitItems(close)
+    local function info(text) require("core/orbitui_context").notify(_(text)) end
+    local function toggle(feature, label, help_text)
+        return { orbitui_id = "bookorbit_" .. feature, text = _(label), help_text = _(help_text),
+            checked_func = function() return feature == "enabled" and M.bookOrbitEnabled() or M.bookOrbitEnabled(feature) end,
+            enabled_func = function() return feature == "enabled" or M.bookOrbitEnabled() end,
+            callback = function()
+                if feature ~= "enabled" and not M.bookOrbitEnabled() then return end
+                M.setBookOrbitEnabled(feature, not M.bookOrbitEnabled(feature))
+                if close then close() end
+                require("adapters/orbitui_settings").open("bookorbit")
+            end }
+    end
+    local entries = M.entries()
+    local last = tonumber(store():readSetting("simpleui_bookorbit_want_updated_at"))
+    if not last or last ~= last or last <= 0 or last > 32503680000 then last = nil end
+    local rows = {
+        { text = "BookOrbit: " .. _(entries[1].available and "Detected (not connection-tested)" or "Not detected"),
+            callback = function() info("Install and connect the separate BookOrbit KOReader plugin. This page never tests a connection automatically. A successful list refresh verifies only that request, not every optional server feature.") end },
+        toggle("enabled", "Enable BookOrbit features in OrbitUI", "Controls OrbitUI's BookOrbit lists, menu actions and online tags only. BookOrbit's own reading-progress sync is unchanged. Saved lists, sources and layouts are kept."),
+        toggle("want", "Want to read [BookOrbit]", "Shows the BookOrbit Want to Read list, matched to books already on this device. It does not download books. This source needs the connected BookOrbit plugin, not the optional tags or undo server patch."),
+        { text = _("Refresh whenever Home opens"), checked_func = function()
+                return store():readSetting("simpleui_bookorbit_want_auto_refresh") ~= false end,
+            enabled_func = function() return M.bookOrbitEnabled("want") end,
+            callback = function()
+                if M.bookOrbitEnabled("want") then store():saveSetting("simpleui_bookorbit_want_auto_refresh",
+                    store():readSetting("simpleui_bookorbit_want_auto_refresh") == false) end
+            end, keep_menu_open = true },
+        { text = _("Refresh from BookOrbit now"), enabled_func = function() return M.bookOrbitEnabled("want") end,
+            callback = function()
+                if not M.bookOrbitEnabled("want") then return end
+                require("integrations/sui_bookorbit_want").requestRefresh{ delay = 0, force_local_scan = true,
+                    on_done = function(result)
+                        if result.ok then require("core/orbitui_context").refresh() end
+                        info(result.ok and "BookOrbit list refreshed. Only matched books on this device are shown."
+                            or "BookOrbit list could not be refreshed. Check the plugin connection and network, then try again.")
+                    end }
+                if close then close() end
+            end },
+        { text = string.format(_("Last successful list refresh: %s"), last and os.date("%Y-%m-%d %H:%M", last) or _("Never")),
+            callback = function() info("This timestamp describes the saved list, not the current connection. Disabling BookOrbit keeps its cache but stops OrbitUI from displaying or refreshing it.") end },
+        { text = _("Want to read (local, no account)"), callback = function()
+            info("Want to read [Local] uses KOReader's local To Be Read collection. Add it through Home (SimpleUI) > Layout & modules, or choose it as a Reading dashboard source. It works offline and stays separate from Want to read [BookOrbit]; disabling BookOrbit never replaces one list with the other.") end },
+        toggle("actions", "BookOrbit reading-status menu actions", "Shows OrbitUI's manual Add/Remove Want to Read actions for linked books. These actions DO change BookOrbit's read status (Want to Read / Unread). They are not automatic reading-progress sync."),
+        toggle("tags", "Online BookOrbit tags", "Explicitly load tags for a linked book and find matching linked files on this device, across all profiles. Exact online tag matching needs the optional BookOrbit server API patch. Local EPUB tags remain available without BookOrbit or this switch."),
+        { text = _("BookOrbit extras: installation & compatibility"), callback = function()
+            info("Optional device and server patches are documented at github.com/komadorirobin/bookorbit-extras. Online tag matching requires its server API addition; embedded EPUB tags do not. Undo opening requires both the device patch and a compatible server overlay. The Hardcover single-writer device patch leaves BookOrbit as the automatic writer. OrbitUI does not install, disable or deploy these patches. Do not remove undo support while a protected opening is pending; resolve it with the patch first.") end },
+    }
+    return rows
+end
 local help = {
     bookorbit = "BookOrbit is optional. Install and connect its KOReader plugin, then choose BookOrbit as a shelf or dashboard source. Library Sync can help match downloaded files. Local books work without it.",
     hardcover = "Hardcover is optional. Configure its API key in the Hardcover module settings, then select it as the dashboard goal source. The local reading goal needs no account.",
@@ -49,6 +181,8 @@ local function array(value, limit)
 end
 
 function M.bookOrbitSession()
+    local guard = M.bookOrbitGuard("tags")
+    if not guard then return nil, "disabled" end
     local ok, plugin = pcall(require("core/orbitui_context").plugin, "bookorbit")
     if not ok or not plugin or type(plugin.newClient) ~= "function"
             or (plugin.isLoggedIn and not plugin:isLoggedIn()) then return nil, "unavailable" end
@@ -64,6 +198,7 @@ function M.bookOrbitSession()
     local generation = manager.generation()
     local session = { client = client }
     function session:current()
+        if not guard() then return false end
         local safe, current = pcall(function()
             if require("core/orbitui_context").plugin("bookorbit") ~= plugin
                     or manager.generation() ~= generation then return false end
@@ -92,6 +227,7 @@ function M.bookOrbitSession()
         return by_id, ids
     end
     function session:detail(file)
+        if not self:current() then return nil, "stale" end
         local by_id, ids = paths()
         for _, id in ipairs(ids) do
             if by_id[id] == file then
@@ -110,10 +246,12 @@ function M.bookOrbitSession()
         return nil, "not_linked"
     end
     function session:matches(tag)
+        if not self:current() then return nil, "stale" end
         if type(tag) ~= "string" or tag == "" or #tag > 800 or tag:find("%c") then return nil, "invalid" end
         local by_id, ids = paths()
         local found, seen = {}, {}
         for first = 1, #ids, 200 do
+            if not self:current() then return nil, "stale" end
             local batch, allowed = {}, {}
             for i = first, math.min(first + 199, #ids) do
                 batch[#batch + 1] = tostring(ids[i]); allowed[ids[i]] = true
@@ -148,8 +286,10 @@ function M.bookOrbitSession()
 end
 
 function M.bookOrbitError(err)
+    if err == "disabled" then return _("BookOrbit features are disabled in OrbitUI. Enable online tags in Integrations > BookOrbit.") end
     if err == "stale" then return _("The BookOrbit connection or local links changed. Refresh and try again.") end
-    if err == 404 or err == "unsupported" then return _("Update BookOrbit to use tag search.") end
+    if err == 404 then return _("Online tag matching needs a compatible BookOrbit server API extension. See Integrations > BookOrbit.") end
+    if err == "unsupported" then return _("Update BookOrbit to use tag search.") end
     if err == "unavailable" then return _("Install and connect the BookOrbit plugin first.") end
     if err == "not_linked" then return _("This file is not linked to BookOrbit. Match it in BookOrbit first.") end
     if err == "too_many_tags" then return _("This book has too many tags to display here.") end

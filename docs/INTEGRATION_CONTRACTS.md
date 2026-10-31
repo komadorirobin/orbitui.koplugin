@@ -302,6 +302,18 @@ Tests: `test_upstream_20261016` and the native cache/index suites.
 
 ## C05: Synchronization has explicit owners
 
+October 31 BookOrbit settings: the OrbitUI master controls only its own list,
+manual menu actions and online-tag requests. It never changes the external
+plugin's progress sync, credentials, foreign preferences or undo-protection
+state. Manual Want/Unread taps remain explicit remote status mutations and
+are labelled as such. New flags default to prior behaviour; preserve cache,
+module/source IDs, profiles, layouts and local TBR collection/membership.
+Captured policy generations gate queued work and late result adoption,
+including off/on. An already-sent mutation is not falsely claimed canceled or
+rolled back. Disabled shelf snapshots must not leak the saved remote-list
+fallback or substitute local TBR. Offline EPUB tags remain independent.
+Tests: `test_bookorbit_controls`, `test_bookorbit_tags`, dashboard/settings.
+
 The October 14 finished-book ledger is local statistics state, not a new
 external synchronization owner. Read-only reconciliation must not write book
 sidecars; completion dates are aligned only on explicit status-change events.

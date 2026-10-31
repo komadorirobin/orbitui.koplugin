@@ -75,7 +75,7 @@ M.heading_cards = {
     { key = "week", label = "This week" },
     { key = "ongoing", label = "Also reading" },
     { key = "goal", label = "Reading goal" },
-    { key = "want", label = "BookOrbit Want to Read" },
+    { key = "want", label = "Want to read [BookOrbit]" },
     { key = "new", label = "Recently added" },
 }
 

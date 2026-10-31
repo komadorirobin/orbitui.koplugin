@@ -28,6 +28,45 @@ shelf preset before applying them. Existing installations start with Keep existi
 Changing folder references does not move book files. Custom library buttons can
 be selected in the guide or **Navigation & bars**.
 
+## Optional BookOrbit integrations (local development after Beta 22)
+
+Open **Integrations > BookOrbit / Integrationer > BookOrbit** for the master
+switch and separate list, manual status-action and online-tag switches. Unset
+switches preserve existing behaviour. Disabling them keeps caches, library
+profiles, module/source IDs, custom headings, layout and local TBR membership.
+It never turns off the external BookOrbit plugin's own reading-progress sync.
+Queued requests retire; an already-sent server write cannot be unsent, but its
+late response cannot overwrite OrbitUI's cache after a policy change.
+
+**Want to read [Local] / Vill läsa [Lokalt]** is the existing local To Be Read
+module, backed by KOReader's `To Be Read` collection. **Want to read [BookOrbit]
+/ Vill läsa [BookOrbit]** is the separate server list matched to local files.
+Add either or both using **Home (SimpleUI) > Layout & modules**, or select the
+source in the Reading dashboard. Disabling the online list never substitutes
+the local one. No automatic layout, membership or collection-name migration.
+
+Automatic Home refresh uses the existing preference; explicit **Refresh from
+BookOrbit now / Uppdatera från BookOrbit nu** shows whether that request
+succeeded. The timestamp is the last successful saved list, not a connection
+test or proof of optional server support. Opening settings/Tags never requests
+the network. Manual Add/Remove actions do change BookOrbit's read status on an
+explicit tap; that is distinct from automatic progress sync.
+
+In **Tags / Taggar**, EPUB tags remain offline regardless of these switches.
+The online section is hidden when its feature/master switch is off. Online
+exact tag matching requires the separate compatible server API addition.
+[BookOrbit Extras](https://github.com/komadorirobin/bookorbit-extras) documents
+its exact base and the older undo-opening overlay separately, with SV/EN
+installation, licenses and test limitations. Do not combine those different
+server bases without a reviewed rebase. OrbitUI neither installs device patches
+nor deploys a server, and never offers a naive off toggle for protected undo state.
+
+**Svenska:** De två Vill läsa-källorna är separata. Lokalt kräver inget konto;
+BookOrbit visar matchade filer från serverns lista. Huvudbrytaren stänger bara
+av OrbitUIs funktioner, inte BookOrbits egen progressionssynk. EPUB-taggar finns
+kvar offline. Serverpatchar är frivilliga, versionsbundna och installeras av
+administratören separat. Hantera skyddade öppningar innan ångra-stöd tas bort.
+
 ## Optional Reading dashboard
 
 Under **Reading dashboard**, enable the extra first Home page. It does not
