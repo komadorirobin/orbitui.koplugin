@@ -188,4 +188,267 @@ function M.bookOrbitRequest(session, task, current, done)
     UI:nextTick(run)
 end
 
+-- EPUB tags are a local, independent provider. No BookOrbit client, document
+-- engine, shell command, cover decoder or account state is involved.
+local function xmlText(text)
+    return (text:gsub("&([^;]+);", function(entity)
+        local named = { amp = "&", lt = "<", gt = ">", quot = '"', apos = "'" }
+        if named[entity] then return named[entity] end
+        local cp = entity:match("^#x(%x+)$")
+        cp = cp and tonumber(cp, 16) or tonumber(entity:match("^#(%d+)$"))
+        assert(cp and cp > 0 and cp <= 1114111 and not (cp >= 55296 and cp <= 57343), "invalid XML entity")
+        if cp < 128 then return string.char(cp) end
+        if cp < 2048 then return string.char(192 + math.floor(cp / 64), 128 + cp % 64) end
+        if cp < 65536 then return string.char(224 + math.floor(cp / 4096), 128 + math.floor(cp / 64) % 64, 128 + cp % 64) end
+        return string.char(240 + math.floor(cp / 262144), 128 + math.floor(cp / 4096) % 64,
+            128 + math.floor(cp / 64) % 64, 128 + cp % 64)
+    end))
+end
+
+-- A bounded non-expanding XML reader for OPF/container metadata, not an HTML
+-- parser. Comments/CDATA/quoted > and numeric entities cannot create fake meta
+-- elements. DTDs and external entities are rejected, never fetched or expanded.
+local function xmlElements(text, consume)
+    assert(type(text) == "string" and #text <= 1024 * 1024, "invalid XML size")
+    local pos, count, roots, stack = 1, 0, 0, {}
+    local function content(value, literal)
+        if #stack > 0 then
+            local top = stack[#stack]
+            if top.localname == "meta" then top.text[#top.text + 1] = literal and value or xmlText(value) end
+        else assert(not value:find("%S"), "text outside XML root") end
+    end
+    local function finish(name)
+        local node = assert(stack[#stack], "unexpected XML end")
+        assert(node.name == name, "mismatched XML end")
+        stack[#stack] = nil
+        consume(node, stack[#stack])
+    end
+    text = text:gsub("^\239\187\191", "")
+    while pos <= #text do
+        local first = text:find("<", pos, true)
+        if not first then content(text:sub(pos)); break end
+        content(text:sub(pos, first - 1))
+        if text:sub(first, first + 3) == "<!--" then
+            pos = assert(text:find("-->", first + 4, true), "unterminated XML comment") + 3
+        elseif text:sub(first, first + 8) == "<![CDATA[" then
+            local last = assert(text:find("]]>", first + 9, true), "unterminated CDATA")
+            content(text:sub(first + 9, last - 1), true); pos = last + 3
+        elseif text:sub(first, first + 1) == "<?" then
+            pos = assert(text:find("?>", first + 2, true), "unterminated XML instruction") + 2
+        else
+            assert(text:sub(first, first + 1) ~= "<!", "unsupported XML declaration")
+            local last, quote = first + 1, nil
+            while last <= #text do
+                local ch = text:sub(last, last)
+                if quote then if ch == quote then quote = nil end
+                elseif ch == '"' or ch == "'" then quote = ch
+                elseif ch == ">" then break end
+                last = last + 1
+            end
+            assert(last <= #text and not quote, "unterminated XML element")
+            local body = text:sub(first + 1, last - 1)
+            local ending = body:match("^/([%a_][%w_.:%-]*)%s*$")
+            if ending then finish(ending)
+            else
+                local name, rest = body:match("^([%a_][%w_.:%-]*)(.*)$")
+                assert(name, "invalid XML name")
+                local empty = rest:match("/%s*$") ~= nil
+                if empty then rest = rest:gsub("/%s*$", "") end
+                local attrs, n = {}, 0
+                while rest:find("%S") do
+                    local key, delimiter, tail = rest:match("^%s+([%a_][%w_.:%-]*)%s*=%s*(['\"])(.*)$")
+                    assert(key and attrs[key] == nil and n < 128, "invalid XML attribute")
+                    local stop = assert(tail:find(delimiter, 1, true), "unterminated XML attribute")
+                    attrs[key] = xmlText(tail:sub(1, stop - 1))
+                    rest, n = tail:sub(stop + 1), n + 1
+                end
+                count = count + 1
+                assert(count <= 20000 and #stack < 64, "XML complexity limit")
+                if #stack == 0 then roots = roots + 1; assert(roots == 1, "multiple XML roots") end
+                stack[#stack + 1] = { name = name, localname = name:match("([^:]+)$"), attrs = attrs, text = {}, depth = #stack + 1 }
+                if empty then finish(name) end
+            end
+            pos = last + 1
+        end
+    end
+    assert(#stack == 0 and roots == 1, "incomplete XML")
+end
+
+function M.embeddedTagsFromOpf(opf)
+    local tags, seen, metadata = {}, {}, false
+    local ok = pcall(xmlElements, opf, function(node, parent)
+        if node.depth == 2 and node.localname == "metadata" and parent and parent.localname == "package" then metadata = true end
+        if node.depth ~= 3 or node.localname ~= "meta" or not parent or parent.localname ~= "metadata" then return end
+        local key = node.attrs.property or node.attrs.name
+        if key ~= "bookorbit:tags" then return end
+        local json = node.attrs.content or table.concat(node.text)
+        assert(json:match("^%s*%["), "tags must be a JSON array")
+        local values = require("rapidjson").decode(json)
+        assert(array(values, 200), "invalid tags array")
+        for _, tag in ipairs(values) do
+            assert(type(tag) == "string" and #tag <= 800 and tag:find("%S") and not tag:find("%c"), "invalid tag")
+            if not seen[tag] then tags[#tags + 1] = tag; seen[tag] = true end
+            assert(#tags <= 200, "too many tags")
+        end
+    end)
+    if not ok or not metadata then return nil, "invalid_epub" end
+    return tags
+end
+
+local function epubMetadata(file)
+    local reader = require("ffi/archiver").Reader:new()
+    local ok, result = pcall(function()
+        assert(reader:open(file), "EPUB open failed")
+        local seen, count = {}, 0
+        for entry in reader:iterate() do
+            count = count + 1
+            assert(count <= 20000 and not seen[entry.path], "invalid EPUB entries")
+            seen[entry.path] = true
+        end
+        assert(not reader.err, "EPUB listing failed")
+        local function read(path, limit)
+            local entry = assert(reader.entries[path], "missing EPUB metadata")
+            local size = tonumber(entry.size)
+            assert(entry.mode == "file" and size and size >= 0 and size <= limit, "EPUB metadata size limit")
+            local data = assert(reader:extractToMemory(path), "EPUB metadata read failed")
+            assert(#data == size, "short EPUB metadata read")
+            return data
+        end
+        local path
+        xmlElements(read("META-INF/container.xml", 128 * 1024), function(node, parent)
+            if node.localname == "rootfile" and parent and parent.localname == "rootfiles"
+                    and (not node.attrs["media-type"] or node.attrs["media-type"] == "application/oebps-package+xml") then
+                assert(not path, "ambiguous EPUB rootfile"); path = node.attrs["full-path"]
+            end
+        end)
+        assert(type(path) == "string" and #path <= 1024 and path:sub(1, 1) ~= "/" and not path:find("[%c\\]"), "invalid OPF path")
+        for part in path:gmatch("[^/]+") do assert(part ~= ".." and part ~= ".", "invalid OPF path") end
+        return assert(M.embeddedTagsFromOpf(read(path, 1024 * 1024)))
+    end)
+    pcall(reader.close, reader)
+    if ok then return result end
+    return nil, "invalid_epub"
+end
+
+local tag_disk
+function M.embeddedTags(file, refresh)
+    local fs = require("libs/libkoreader-lfs")
+    local attrs = type(file) == "string" and file:sub(1, 1) == "/" and fs.attributes(file)
+    if not attrs or attrs.mode ~= "file" then return nil, "missing" end
+    if not file:lower():match("%.epub$") then return nil, "not_epub" end
+    tag_disk = tag_disk or require("lib/bookshelf_keyed_cache").new("orbitui_epub_tags", 1)
+    local stamp = tostring(attrs.modification) .. ":" .. tostring(attrs.change) .. ":" .. tostring(attrs.size)
+    if not refresh then
+        local cached = tag_disk.read(file)
+        if cached and cached.stamp == stamp and array(cached.tags, 200) then
+            local valid = true
+            for _, tag in ipairs(cached.tags) do
+                if type(tag) ~= "string" or #tag > 800 or not tag:find("%S") or tag:find("%c") then valid = false; break end
+            end
+            if valid then return cached.tags end
+        end
+    end
+    local ok, tags, err = pcall(epubMetadata, file)
+    if not ok or not tags then return nil, err or "invalid_epub" end
+    local after = fs.attributes(file)
+    if not after or after.size ~= attrs.size or after.modification ~= attrs.modification or after.change ~= attrs.change then
+        return nil, "changed"
+    end
+    tag_disk.write(file, { stamp = stamp, tags = tags })
+    return tags
+end
+
+local embeddedTags = M.embeddedTags
+function M.embeddedTags(...)
+    local ok, tags, err = pcall(embeddedTags, ...)
+    if ok then return tags, err end
+    return nil, "invalid_epub"
+end
+
+function M.embeddedTagError(err)
+    if err == "not_epub" then return _("Embedded tags are available for EPUB files. Genres and collections remain below.") end
+    return _("Could not read EPUB tags. The file may be unavailable, damaged or too large to inspect safely. Try Refresh.")
+end
+
+local function libraryIdentity()
+    local parts = { tostring(G_reader_settings and G_reader_settings:readSetting("home_dir")) }
+    parts[#parts + 1] = tostring(require("lib/bookshelf_settings_store").read("latest_walk_depth"))
+    for _, profile in ipairs(require("lib/bookshelf_profiles").list()) do
+        parts[#parts + 1] = profile.key
+        for _, path in ipairs(profile.roots or {}) do parts[#parts + 1] = path end
+    end
+    return table.concat(parts, "\0")
+end
+function M.embeddedTagSession()
+    local identity = libraryIdentity()
+    local source = { embedded = true }
+    function source:current()
+        local ok, value = pcall(libraryIdentity)
+        return ok and value == identity
+    end
+    return source
+end
+
+-- One bounded metadata archive per event-loop turn, also on Android. Avoid
+-- forked crengine/SQLite workers and leave Cancel/Back/touch processing live.
+function M.embeddedTagRequest(source, task, current, done)
+    local UI = require("ui/uimanager")
+    local progress = require("ui/widget/infomessage"):new{
+        text = _("Reading EPUB tags… Tap to cancel."), sui_native = true, _sui_keep_homescreen = true,
+    }
+    local cancelled, finished = false, false
+    progress.dismiss_callback = function() cancelled = true end
+    local function finish(body, err)
+        if finished then return end
+        finished = true
+        if UI:isWidgetShown(progress) then UI:close(progress) end
+        if current() then done(body, err) end
+    end
+    local files, cursor, paths, skipped, truncated = nil, 1, {}, 0, false
+    local function step()
+        if not current() then finish(); return end
+        if cancelled or not UI:isWidgetShown(progress) then finish(nil, "cancelled"); return end
+        if source and not source:current() then finish(nil, "stale"); return end
+        if not files then
+            local ok, value = pcall(function()
+                if task.file then return { task.file } end
+                local Repo, Profiles = require("lib/bookshelf_book_repository"), require("lib/bookshelf_profiles")
+                local out, seen = {}, {}
+                local function add(scope)
+                    for _, file in ipairs(Repo.getAllFilepaths(scope)) do
+                        if type(file) == "string" and file:sub(1, 1) == "/" and file:lower():match("%.epub$") and not seen[file] then
+                            seen[file] = true; out[#out + 1] = file
+                        end
+                    end
+                end
+                add(nil)
+                for _, profile in ipairs(Profiles.list()) do add(Profiles.scope(profile)) end
+                table.sort(out)
+                -- The clicked book may sit outside the configured roots.
+                if task.origin and not seen[task.origin] then out[#out + 1] = task.origin end
+                return out
+            end)
+            if not ok then finish(nil, "invalid_epub"); return end
+            files = value
+        end
+        local file = files[cursor]
+        if not file then finish({ paths = paths, skipped = skipped, truncated = truncated }); return end
+        local tags, err = M.embeddedTags(file, task.refresh)
+        if task.file then finish(tags and { tags = tags } or nil, err); return end
+        if not tags then skipped = skipped + 1
+        else
+            for _, tag in ipairs(tags) do
+                if tag == task.tag then
+                    if #paths == 400 then truncated = true; finish({ paths = paths, skipped = skipped, truncated = true }); return end
+                    paths[#paths + 1] = file; break
+                end
+            end
+        end
+        cursor = cursor + 1
+        UI:scheduleIn(0.01, step)
+    end
+    UI:show(progress)
+    UI:nextTick(step)
+end
+
 return M

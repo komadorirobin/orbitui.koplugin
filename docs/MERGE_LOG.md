@@ -4,6 +4,40 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-10-31 — local-first EPUB tags, requested upstream and Beta 22
+
+User approves offline embedded tags, then explicitly requests another upstream
+merge, push and a new beta. Continue clean `afd9d8cc` on the existing tag branch;
+keep the earlier API feature commits. Publication permission applies to OrbitUI,
+not deployment of the separately local BookOrbit API branch.
+
+Host code adds an offline section first in the existing Tags tab. Explicit
+Read/Refresh parses EPUB 2/3 `bookorbit:tags` JSON without any BookOrbit plugin,
+account, local link or network. Native dc:subject remains a genre; collections
+and original author/series/folder pills stay intact. Own non-expanding bounded
+XML reads support comments, CDATA, numeric entities and quoted delimiters,
+rejecting DTDs/malformed/oversized metadata. Native libarchive closes on every
+path, bounds entry count/metadata sizes and extracts nothing to disk. A separate
+versioned disposable cache retains successful local tag reads with mtime/ctime/
+size identity; no account/server records or negative failure entries.
+
+Tag search reuses native home/profile inventories/scan depth, deduplicates EPUBs,
+includes the origin, and reads one archive per UI turn, not while painting or
+through a forked document engine. Cancel/retired navigation/scope guards stop
+work; unreadable counts and 400-result truncation are explicit. Visible-only
+metadata hydration, native result modal and original reader/hold actions remain.
+Recheck file/tag membership on opening. All labels/help are English/Swedish.
+C02/C04-C10 preserved; the user-approved derived local tag cache deliberately
+supersedes C10's earlier no-index restriction. No settings migration, reading
+state/metadata/book write, external sync owner, asset/bootstrap/path change.
+
+Eleven new dependency-free local tag cases pass Lua/LuaJIT; an additional real
+EPUB/libarchive/JSON supplement passes, including escaped names/path and literal
+Unicode/quotes/commas. Existing 15 API/native-Tag cases pass both interpreters.
+Full integration, reviewed upstream, release sealing/audits, native older OTA,
+CI and exact draft/public-byte evidence are recorded below when completed.
+Physical Bigme/Boox acceptance and live optional API deployment remain open.
+
 ## 2026-10-31 — approved local BookOrbit tags in the existing Tags tab
 
 User says "Gå vidare med taggarna", specifies on-device books only, then clarifies

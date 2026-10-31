@@ -331,12 +331,20 @@ function M.results(text, scope_id, ref, opts)
     return window
 end
 
-function M.bookOrbitTag(tag, opts)
+local function tagSearch(tag, opts)
     opts = opts or {}
     local Integration = require("adapters/orbitui_integrations")
+    local embedded = opts.embedded == true
+    local title = embedded and _("EPUB tags (offline)") or _("BookOrbit tags")
+    local intro = embedded and _("Only EPUBs on this device. All library profiles are included; the library's scan-depth setting applies. No connection is needed.")
+        or _("Only BookOrbit-linked books on this device. All library profiles are included.")
+    local function failureText(err)
+        if embedded and err == "stale" then return _("Library folders changed. Refresh and try again.") end
+        return embedded and Integration.embeddedTagError(err) or Integration.bookOrbitError(err)
+    end
     local UI, Screen = require("ui/uimanager"), require("device").screen
     local fs = require("libs/libkoreader-lfs")
-    local modal, retired, busy, data_session = nil, false, false, nil
+    local modal, retired, busy, data_session, fetched = nil, false, false, nil, false
     local records, visible, query = {}, {}, ""
     local generation = UI._simpleui_navigation_generation
     session = session + 1
@@ -350,7 +358,7 @@ function M.bookOrbitTag(tag, opts)
         visible = {}
         if data_session and not data_session:current() then
             records, data_session = {}, nil
-            modal.config.intro = Integration.bookOrbitError("stale")
+            modal.config.intro = failureText("stale")
         end
         for _, book in ipairs(records) do
             if M.lower(book.filename):find(M.lower(query), 1, true) then visible[#visible + 1] = book end
@@ -358,13 +366,17 @@ function M.bookOrbitTag(tag, opts)
     end
     local function fetch()
         if not current() or busy then return end
-        local source, err = Integration.bookOrbitSession()
-        if not source then modal.config.intro = Integration.bookOrbitError(err); modal:refresh(); return end
+        local source, err
+        if embedded then
+            local ok, value = pcall(Integration.embeddedTagSession)
+            if ok then source = value end
+        else source, err = Integration.bookOrbitSession() end
+        if not source then modal.config.intro = failureText(err); modal:refresh(); return end
         busy = true
         records, visible, data_session = {}, {}, nil
-        modal.config.intro = _("Only BookOrbit-linked books on this device. All library profiles are included.")
+        modal.config.intro = intro
         modal:refresh()
-        Integration.bookOrbitRequest(source, function(s) return s:matches(tag) end, current, function(result, failure)
+        local function done(result, failure)
             busy = false
             if result then
                 data_session = source
@@ -372,14 +384,21 @@ function M.bookOrbitTag(tag, opts)
                     if available(file) then records[#records + 1] = { filepath = file, filename = file:match("([^/]+)$") or file } end
                 end
                 table.sort(records, function(a, b) return M.lower(a.filepath) < M.lower(b.filepath) end)
-                modal.config.intro = _("Only BookOrbit-linked books on this device. All library profiles are included.")
+                modal.config.intro = intro
                 if result.truncated then modal.config.intro = modal.config.intro .. " " .. _("Showing the first 400 matches.") end
+                if (result.skipped or 0) > 0 then
+                    modal.config.intro = modal.config.intro .. " " .. string.format(_("%d EPUBs could not be read; results may be incomplete. Refresh to retry."), result.skipped)
+                end
             else
                 modal.config.intro = failure == "cancelled" and _("Search cancelled. Tap Refresh to try again.")
-                    or Integration.bookOrbitError(failure)
+                    or failureText(failure)
             end
             filter(); modal.page = 1; modal:refresh()
-        end)
+        end
+        if embedded then
+            Integration.embeddedTagRequest(source, { tag = tag, origin = opts.origin, refresh = fetched }, current, done)
+            fetched = true
+        else Integration.bookOrbitRequest(source, function(s) return s:matches(tag) end, current, done) end
     end
     local function bookMeta(book)
         if not book.title and available(book.filepath) then
@@ -393,11 +412,17 @@ function M.bookOrbitTag(tag, opts)
     local function canOpen(book)
         if type(book) ~= "table" or not current() or busy or not data_session or not data_session:current() then return false end
         if not available(book.filepath) then Context.notify(_("This book is no longer on the device.")); return false end
+        if embedded then
+            local tags = Integration.embeddedTags(book.filepath)
+            local matches = false
+            for _, value in ipairs(tags or {}) do if value == tag then matches = true; break end end
+            if not matches then Context.notify(_("This file's tags changed or could not be read. Refresh the results.")); return false end
+        end
         return true
     end
     modal = require("lib/bookshelf_library_modal"):new{ _sui_keep_homescreen = true, config = {
-        title = _("BookOrbit tags") .. ": " .. tag,
-        intro = _("Only BookOrbit-linked books on this device. All library profiles are included."),
+        title = title .. ": " .. tag,
+        intro = intro,
         search_placeholder = function() return _("Filter by filename") end,
         on_search_submit = function(value)
             if not current() then return end
@@ -431,6 +456,14 @@ function M.bookOrbitTag(tag, opts)
     UI:show(modal)
     fetch()
     return modal
+end
+
+function M.bookOrbitTag(tag, opts) return tagSearch(tag, opts or {}) end
+function M.embeddedTag(tag, opts)
+    local options = {}
+    for key, value in pairs(opts or {}) do options[key] = value end
+    options.embedded = true
+    return tagSearch(tag, options)
 end
 
 function M.show(opts)

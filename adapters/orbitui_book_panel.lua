@@ -119,9 +119,38 @@ function M.tagSections(owner, book, modal)
                 refresh()
             end)
         end }
-    return {{ title = _("BookOrbit tags"), pills = pills,
+    local remote = { title = _("BookOrbit tags (optional online source)"), pills = pills,
         note = state.error or (state.tags and #state.tags == 0 and _("No BookOrbit tags for this book."))
-            or _("Tap a tag to find linked books on this device, across all library profiles. Tags are read-only; nothing is synced or edited.") }}
+            or _("Tap a tag to find linked books on this device, across all library profiles. Tags are read-only; nothing is synced or edited.") }
+    local local_state = state.embedded
+    if not local_state then local_state = {}; state.embedded = local_state end
+    local local_pills = {}
+    for _, tag in ipairs(local_state.tags or {}) do
+        local_pills[#local_pills + 1] = { label = tag, on_tap = function()
+            if not current() or state.render ~= render or local_state.busy then return end
+            modal:onClose()
+            require("core/orbitui_search").embeddedTag(tag, {
+                origin = book.filepath,
+                open_book = function(file, record) owner:_openBook(record or { filepath = file }) end,
+            })
+        end }
+    end
+    local_pills[#local_pills + 1] = { label = _(local_state.busy and "Loading…"
+            or local_state.tags and "Refresh EPUB tags" or "Read EPUB tags"), link = true,
+        on_tap = function()
+            if not current() or state.render ~= render or local_state.busy then return end
+            local_state.busy, local_state.error = true, nil
+            refresh()
+            Integration.embeddedTagRequest(nil, { file = book.filepath, refresh = true }, current, function(result, failure)
+                local_state.busy = false
+                if result then local_state.tags = result.tags
+                elseif failure ~= "cancelled" then local_state.error = Integration.embeddedTagError(failure) end
+                refresh()
+            end)
+        end }
+    return {{ title = _("EPUB tags (offline)"), pills = local_pills,
+        note = local_state.error or (local_state.tags and #local_state.tags == 0 and _("No separate tags embedded in this EPUB. Standard EPUB subjects are shown as genres below."))
+            or _("Read tags from the file, then tap a tag to search EPUBs on this device across all library profiles. No account or connection is needed. Nothing is synced or edited.") }, remote }
 end
 
 local information = M.information

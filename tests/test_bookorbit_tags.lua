@@ -87,7 +87,8 @@ H.test("settings and rendering Tags are passive, with no plugin load or network 
     Integration.entries()
     local modal = { _tabs = {{ id = "tags" }}, _active_tab = 1 }
     local extra = Panel.tagSections({}, { filepath = maps[1] }, modal)
-    H.eq(extra[1].title, "BookOrbit tags"); H.eq(extra[1].pills[1].label, "Load BookOrbit tags")
+    H.eq(extra[1].title, "EPUB tags (offline)"); H.eq(extra[1].pills[1].label, "Read EPUB tags")
+    H.eq(extra[2].title, "BookOrbit tags (optional online source)"); H.eq(extra[2].pills[1].label, "Load BookOrbit tags")
     H.eq(network_calls, calls); H.eq(details, 0); H.eq(#requests, 0)
 end)
 H.test("detail reads only this linked local book's tags, preserving exact names without genre or collection mixing", function()
@@ -181,7 +182,7 @@ H.test("Tags loads explicitly, stays in its existing native tab and retires old 
     Search.bookOrbitTag = function(value) H.eq(value, tag); opened = opened + 1 end
     local modal = { _tabs = {{ id = "tags" }}, _active_tab = 1 }
     local section
-    function modal:rebuildTab() section = Panel.tagSections({}, { filepath = maps[7] }, self)[1] end
+    function modal:rebuildTab() section = Panel.tagSections({}, { filepath = maps[7] }, self)[2] end
     function modal:onClose() self._dismissed = true; closed = closed + 1 end
     UI:show(modal)
     modal:rebuildTab()
@@ -281,7 +282,7 @@ H.test("actual native Tags builder retains author/collection/genre/folder sectio
     H.eq(tab.id, "tags")
     local modal = { _tabs = args.tabs, _active_tab = args.active_tab, font_size = 18, _side_pad = 20 }
     local body = tab.widget_builder(600, 400, modal)
-    H.eq(table.concat(headings, ","), "BookOrbit tags,Author(s),Collections,Genres,Folder")
+    H.eq(table.concat(headings, ","), "EPUB tags (offline),BookOrbit tags (optional online source),Author(s),Collections,Genres,Folder")
     H.eq(body.dimen.w, 600); H.eq(body.dimen.h, 400); assert(#body.focus_tables > 0)
     assert(table.concat(notes, " "):find("across all library profiles", 1, true))
     for _, size in ipairs(pill_sizes) do H.eq(size, 18) end

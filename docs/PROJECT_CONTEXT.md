@@ -22,6 +22,21 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-31
 
+- User explicitly approves local-first EPUB tags, then a fresh upstream merge,
+  push and new beta publication. The offline section precedes the optional
+  BookOrbit source in the existing Tags tab. Explicit Read/Refresh parses
+  EPUB 2/3 `bookorbit:tags` JSON without a plugin/account/network; dc:subject
+  stays with native genres. A separate disposable stat-keyed cache stores
+  successful local tag reads, never server/account data or failures. Native
+  bounded archive reads and a non-expanding XML reader inspect metadata only.
+  Local search uses native home/profile path inventories and scan depth, one
+  EPUB per event-loop turn, deduplicated across profiles, with cancel/retired
+  guards, a 400-result notice and unreadable-file counts. No document engine,
+  cover extraction, metadata/file/progress write or settings migration. Real
+  reader/hold/modal ownership remains; optional API code is not deployed.
+  Implementation/upstream/release gates and exact final pins will be recorded
+  in MERGE_LOG. Physical Bigme/Boox acceptance remains open.
+
 - User approves implementing clickable BookOrbit tags with ON-DEVICE matches
   only, then explicitly moves them to the existing Tags tab rather than the
   technical Book details tab. Local work on `feature/bookorbit-local-tags-20261031`

@@ -6,10 +6,24 @@ change. Device acceptance is still pending.
 
 ## Controls
 
-### Local BookOrbit tags (October 31; not published)
+### Local EPUB tags and optional BookOrbit tags (October 31)
 
-The existing **Tags / Taggar** tab starts with **BookOrbit tags /
-BookOrbit-taggar**. The original author, series, collections, genres and folder
+The existing **Tags / Taggar** tab now begins with **EPUB tags (offline) /
+EPUB-taggar (offline)**. Choose **Read EPUB tags / Läs EPUB-taggar**, then tap
+a tag for exact local matches across configured library profiles and the native
+home library. No BookOrbit plugin/account/link/server/API is required. EPUB 2
+name/content and EPUB 3 property metadata containing `bookorbit:tags` JSON work;
+ordinary dc:subject stays under native Genres. The originating file is included
+even outside configured folders; normal library scan depth applies elsewhere.
+The scanner reads only bounded ZIP metadata, one EPUB per event-loop turn, with
+tap-to-cancel and retired navigation/scope guards. A separate stat-keyed derived
+cache speeds later searches. Explicit Refresh rereads the files; failed reads
+are retryable and counted as incomplete results, not silently missing matches.
+The same native result modal retains paging, filename filtering, 400-hit notice
+and original book-open/hold actions. No books, metadata or reading state change.
+
+The optional **BookOrbit tags / BookOrbit-taggar** online section follows it.
+The original author, series, collections, genres and folder
 sections remain below it. **Load BookOrbit tags / Hämta BookOrbit-taggar** reads
 the linked book's tags; **Refresh BookOrbit tags / Uppdatera BookOrbit-taggar**
 rereads them. No fetch on opening/painting and no mixing with genres or KOReader
@@ -29,10 +43,12 @@ The separately approved LOCAL BookOrbit API adds a KOReader-authenticated
 `GET /koreader/plugin/catalog/tag-matches?ids=1,2&tag=...` (API-v1 prefix as
 usual), with 1..200 IDs and one literal tag per request, returning `{bookIds}`.
 Native accessible-library/present-book/content-filter rules still apply. The
-An account-scoped BookOrbit plugin's existing public client methods suffice; its bounded private
+account-scoped BookOrbit plugin's existing public client methods suffice; its bounded private
 detail cache is not scraped. An older server displays an update-needed message.
-Neither repository is pushed or published and no server is deployed by this
-work. Physical SV/EN fonts/touch/D-pad/keyboard, long names, scroll/zoom,
+The user now explicitly approves OrbitUI push/publication after local tags and
+an upstream merge. The BookOrbit server change is still LOCAL and is not deployed
+by that publication; it is NOT needed for embedded tags. Physical SV/EN
+fonts/touch/D-pad/keyboard, long names, scroll/zoom,
 Wi-Fi/cancel/offline, reader return, rotation/sleep and live API acceptance are
 still required. See MERGE_LOG/TESTING for final local verification.
 

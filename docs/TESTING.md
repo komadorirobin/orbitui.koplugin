@@ -2,6 +2,22 @@
 
 ## Automated
 
+### Local-first EPUB tags and Beta 22 preparation
+
+The user approves offline embedded tags followed by merge/push/new beta.
+`test_local_epub_tags` covers EPUB 2/3 namespaced JSON, exact Unicode names,
+deduplication, comments/CDATA/prefixes/quoted > and numeric entities, malformed
+XML/JSON/DTD/control/size rejection, always-closed archive ownership, stat-keyed
+cache/refresh/deletion and retryable errors, unlinked/profile/deduplicated local
+scope, one-file-per-tick scans, cancel/closed/scope guards, incomplete/cap notices,
+actual host Tags pills/result modal and unchanged original reader callbacks.
+The optional real-ZIP supplement uses unmodified KOReader libarchive and real
+JSON decoding without a document engine or BookOrbit. Retain all existing
+native Tags/scroll/zoom/modal/reader regressions in both interpreters. Record
+final full/sealed/OTA/CI/public-byte results in MERGE_LOG before completion.
+The API addition stays local; physical Bigme/Boox tag layout, scan latency,
+Cancel/Back/sleep/rotation and reader return remain required device checks.
+
 ### Local BookOrbit tag navigation
 
 `test_bookorbit_tags` exercises the real native `_showBookDetail` factory and

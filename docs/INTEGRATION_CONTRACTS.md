@@ -1110,6 +1110,27 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+October 31 user-approved local-first extension: a distinct offline EPUB-tags
+section comes first in Tags. Explicit Read/Refresh reads EPUB 2/3 namespaced
+`bookorbit:tags` JSON; standard dc:subject remains a native genre, not a copied
+collection/tag. No BookOrbit plugin, account, ID map, API or connection is needed.
+Native bounded libarchive reads always close, reject ambiguous/oversized entries,
+and never extract to disk or open a document engine. The bounded non-expanding
+XML reader rejects DTD/external entities and malformed data. A separate versioned,
+disposable local cache validates mtime/ctime/size and tag values, keeps successful
+empty results but never caches transient failures. Explicit Refresh rereads.
+Local search reuses native home/profile path inventories and scan-depth setting,
+deduplicates real EPUBs, includes the originating file, and yields between books.
+Cancellation/closed/navigation/scope owners retire work; unreadable-file counts
+and the 400-hit cap are visible. Recheck membership/file before opening via the
+original reader callback. No covers/network/remote metadata or reading-state
+writes. All new controls/help remain SV/EN. This deliberately supersedes the
+earlier prohibition on a local derived tag cache, not the prohibition on private
+BookOrbit cache scraping or new sync ownership. Publication is now explicitly
+approved for OrbitUI; the separate BookOrbit API remains local and undeployed.
+Tests: `test_local_epub_tags`, `test_bookorbit_tags` and retained shared/native
+modal lifecycle suites; real archive supplement is separate from device proof.
+
 October 31 approved BookOrbit tag navigation belongs in the existing Tags tab,
 NOT technical Book details. A distinct BookOrbit-tags section never aliases or
 edits native genres/collections. Opening/painting stays passive; explicit load,
