@@ -1110,6 +1110,13 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+Beta 21 corrects the headerless information tab: use the actual modal's native
+scroller, never `_headedHtmlBody` with a nil header. Preserve modal CSS, scaled
+per-tab font size, current body dimensions, swipe-down yielding and native
+replacement/close resource ownership. Tests execute actual tab/zoom/assembly/
+scroller/close methods with primitive widgets stubbed, not the headed helper
+replaced by an HTML string passthrough. No tab, metadata or sync migration.
+
 October 31 user-approved refinements: optional native repository match callbacks
 let the shared host implement bounded typo/Unicode matching without a second
 index. Preserve exact Swedish spelling priority, profile/current membership,

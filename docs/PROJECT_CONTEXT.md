@@ -22,6 +22,21 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-31
 
+- User reports KOReader exits on selecting Bokdetaljer in Beta 20; reproduce
+  the deterministic nil-header error locally. User approves the fix, a true
+  render-path regression and immediate Beta 21 publication. Work from clean
+  public `f02f3c74` on `fix/book-details-beta21-20261031`. The host now calls
+  the modal's native headerless scroller with its CSS, scaled independent font
+  and current dimensions. Native gestures and body lifetime remain authoritative.
+  The new test reproduces Beta 20's nil `top` through real native modal methods
+  and passes after the fix; prior tests had stubbed away this render contract.
+  BookOrbit tag navigation is a design/research request, NOT bundled into this
+  hotfix. Existing detail payload has separate tags/genres, but its current
+  KOReader list-query DTO has no exact tag filter. Native Bookshelf Tags are
+  KOReader collections; never silently equate them with BookOrbit tags.
+  No BookOrbit/server/plugin write, new sync owner, import pin, installed path,
+  asset or bootstrap change. Final publication gates/device gaps go in MERGE_LOG.
+
 - The user's explicit "Merga upstream, den pusha och publicera etc" supersedes
   local-only publication limits for the night/UI work below. Beta 20 is public
   at exact candidate/annotated tag `326035753702ca70492097d5a32391dd5023250c` /

@@ -4,6 +4,46 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-10-31 — approved Beta 21 headerless book-details fix
+
+User reports a KOReader crash when selecting Bokdetaljer after Beta 20. Local
+diagnosis reproduces `attempt to index local 'top' (a nil value)` in the native
+`_headedHtmlBody`: the new information tab passed no required header widget.
+User explicitly approves fixing, adding actual rendering-path regression and
+publishing Beta 21 immediately. Start from clean public `f02f3c74` on
+`fix/book-details-beta21-20261031`; no upstream import is requested.
+
+The host-only fix uses the modal's native `_scroller` directly, supplying the
+technical HTML, native CSS, screen-scaled per-tab font size, current width/
+height and dialog owner. Keep original tabs/actions, page-one swipe-down yield,
+native assembly/replacement/close ownership and deferred independent zoom keys.
+No user setting/data, metadata, book file, sync behavior, artwork, source pin,
+module map, runtime path or bootstrap changes. C02/C05-C10 remain authoritative.
+
+The new regression executes actual ReviewsModal tab switching, active body,
+assembly, scroller, font read/write, zoom, resize/rebuild and close/free methods
+with primitive widgets stubbed. Sealed Beta 20 fails at the original nil `top`;
+the fixed source passes Lua/LuaJIT, including repeat transitions and releasing
+every replaced/closed HTML body once. Old tests mocked the headed helper and
+did not exercise this contract; this is a genuine coverage correction, not a
+claim that the earlier green headless gates established physical rendering.
+
+User additionally proposes clickable BookOrbit tags. Read-only review of the
+existing local BookOrbit source confirms separate `tags`/`genres` in detail
+responses/cache, tags as namespaced JSON in embedded EPUB metadata (genres
+use dc:subject), and no tag filter in the KOReader list-query DTO. Bookshelf's
+existing Tags refer to KOReader collections, not server tags. Recommend a
+distinct BookOrbit-tags section/chips and explicit device-vs-server result
+scope. No remote fetch, account data, BookOrbit code change or new sync is
+included in this narrowly approved crash hotfix. No live server is touched.
+
+Prepare Beta 21 with English/Swedish notes in existing OTA.md, preserving all
+2,000 installed API-1 paths. Keep every earlier tag/release/asset immutable.
+Require fresh full Lua/LuaJIT/catalogue, sealed/native-owner/raster, older native
+installer/recovery, exact source/path/history/held-art/secret, CI and draft/public
+byte checks. Physical Bigme/Boox detail scrolling/zoom/tab cycling/close/reader
+return remains open. Evidence: ignored `test-results/beta21-20261031/`.
+
 ## 2026-10-31 — reviewed upstream and explicitly approved Beta 20
 
 User requests "Merga upstream, den pusha och publicera etc". Start clean from

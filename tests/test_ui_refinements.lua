@@ -216,6 +216,85 @@ H.test("book detail enhancement preserves native active tab, callbacks and heade
     H.eq(args.on_open, opened); H.eq(args.open_text, "Read now")
     H.eq(args.header_builder(400).summary_text, "0% read")
 end)
+H.test("Book details renders through native tab switching, zoom, resize and close ownership", function()
+    local function source(path)
+        local f = assert(io.open(root .. "/components/bookshelf/lib/" .. path .. ".lua"))
+        local text = f:read("*a"); f:close(); return text
+    end
+    local modal_source, shelf_source = source("bookshelf_reviews_modal"), source("bookshelf_widget")
+    local primitives, bodies, sizes, flushed = H.widget(), {}, {}, 0
+    local screen = { scaleBySize = function(_, n) return n * 2 end }
+    local scrollers = { new = function(_, opts)
+        assert(type(opts.html_body) == "string" and opts.html_body:find("&lt;book&gt;", 1, true))
+        assert(type(opts.css) == "string" and opts.width > 0 and opts.height > 0)
+        local body = { opts = opts, htmlbox_widget = { page_number = 1 },
+            onScrollText = function() return "scroll" end,
+            handleEvent = function(self, ev)
+                if ev.handler == "onCloseWidget" then
+                    assert(not self.freed, "replaced HTML body closed twice"); self.freed = true
+                end
+            end }
+        bodies[#bodies + 1] = body; return body
+    end }
+    local env = { ScrollHtmlWidget = scrollers, Screen = screen, UIManager = { setDirty = function() end,
+        scheduleIn = function() end }, _gettime = os.clock, logger = { dbg = function() end },
+        Event = { new = function(_, name) return { handler = "on" .. name } end },
+        FrameContainer = primitives, VerticalGroup = primitives, CenterContainer = primitives,
+        Geom = primitives, Device = { hasDPad = function() return false end },
+        Space = { radius = { window = 0 } }, Size = { border = { window = 1 } },
+        Blitbuffer = { COLOR_WHITE = 255 }, require = function(name)
+            if name == "ui/widget/scrollhtmlwidget" then return scrollers end
+            if name == "ui/widget/linewidget" then return primitives end
+            error("optional native dependency absent: " .. name)
+        end,
+        Store = { read = function(key, fallback) return sizes[key] or fallback end,
+            saveDeferred = function(key, value) sizes[key] = value end,
+            flush = function() flushed = flushed + 1 end } }
+    local constants = modal_source:sub(assert(modal_source:find("local DESC_FONT_KEY", 1, true)),
+        assert(modal_source:find("local TAB_LABEL_FONT_KEY", 1, true)) - 1)
+    local function native(text, class, name, args)
+        local body = assert(text:match("function " .. class .. ":" .. name .. "%([^\n]-%)\n(.-)\nend\n"))
+        local signature = args and args ~= "" and ("self, " .. args) or "self"
+        return compile(constants .. "return function(" .. signature .. ")\n" .. body .. "\nend", env)
+    end
+    local owner = { _headedHtmlBody = native(shelf_source, "BookshelfWidget", "_headedHtmlBody",
+        "modal, avail_w, avail_h, header, html, above") }
+    Panel.widget(owner)
+    local args = { tabs = { { id = "description", html = "<p>Description</p>" },
+        { id = "edit", widget_builder = function() return { handleEvent = function() end } end } }, active_tab = 2 }
+    owner:orbitui_detail_args({ filepath = "/books/<book>.epub" }, args)
+    local modal = { _tabs = args.tabs, _active_tab = args.active_tab, _css = "body {}",
+        width = 400, _body_h = 300, _screen_w = 600, _screen_h = 800,
+        _buildHeader = function() end, _buildButtons = function() return {} end,
+        mergeLayoutInVertical = function() end }
+    env.ReviewsModal = {}
+    for name, parameters in pairs({ _activeBody = "", _scroller = "opts", _assemble = "",
+        _switchTab = "i", _fontSizeKey = "", _readFontSize = "", _changeFontSize = "delta",
+        _activeHtml = "", _renderHtml = "html", _isRetainedBody = "w", _freeSourcedCache = "",
+        onCloseWidget = "", rebuildTab = "" }) do
+        modal[name] = native(modal_source, "ReviewsModal", name, parameters)
+    end
+    sizes.desc_font_size, sizes.edit_font_size, sizes.orbitui_information_font_size = 20, 18, 24
+    local previous_device = package.loaded.device
+    package.loaded.device = { screen = screen }
+    modal:_switchTab(2)
+    H.eq(modal._tabs[modal._active_tab].id, "information")
+    H.eq(bodies[1].opts.default_font_size, 48); H.eq(bodies[1].opts.dialog, modal)
+    H.eq(bodies[1].opts.width, 400); H.eq(bodies[1].opts.height, 300)
+    H.eq(bodies[1]:onScrollText(nil, { direction = "south" }), false)
+    bodies[1].htmlbox_widget.page_number = 2
+    H.eq(bodies[1]:onScrollText(nil, { direction = "south" }), "scroll")
+    H.eq(bodies[1]:onScrollText(nil, { direction = "north" }), "scroll")
+    modal:_changeFontSize(2)
+    H.eq(bodies[1].freed, true); H.eq(bodies[2].opts.default_font_size, 52)
+    H.eq(sizes.orbitui_information_font_size, 26); H.eq(sizes.edit_font_size, 18)
+    modal.width, modal._body_h = 240, 220; modal:rebuildTab()
+    H.eq(bodies[2].freed, true); H.eq(bodies[3].opts.width, 240); H.eq(bodies[3].opts.height, 220)
+    for _i = 1, 3 do modal:_switchTab(args.active_tab); modal:_switchTab(2) end
+    modal:onCloseWidget(); H.eq(flushed, 1)
+    for _, body in ipairs(bodies) do H.eq(body.freed, true) end
+    package.loaded.device = previous_device
+end)
 H.test("actual native menu host exposes breadcrumb ancestors and preserves page/close ownership", function()
     package.loaded["ui/widget/menu"] = { new = function(_, opts)
         opts.paths, opts.page, opts.page_num = {}, 1, 10

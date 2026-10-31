@@ -2,6 +2,19 @@
 
 ## Automated
 
+### Beta 21 book-details crash fix
+
+`test_ui_refinements` now invokes the real information tab builder through
+native ReviewsModal tab switching, active body, assembly, scroller, font-key/
+zoom, resize/rebuild and close/free paths. Only render primitives are stubbed;
+no native MuPDF/e-ink or physical-device claim. The same test fails on sealed
+Beta 20 with `attempt to index local 'top' (a nil value)`. It checks native CSS,
+body geometry, scaled independent zoom, swipe-down yielding only at page one,
+repeated Edit/information transitions and single release of every replaced HTML
+body. Both interpreters pass after the host-only headerless-scroller fix.
+Physical test: open Bokdetaljer, scroll, zoom, switch tabs repeatedly, close and
+return to the same shelf on Bigme/Boox. Existing book/read/plugin actions stay.
+
 ### October 31 upstream and Beta 20
 
 `test_upstream_20261031` tests the actual Cover Deck tilt/cache/paint functions

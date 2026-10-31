@@ -48,7 +48,13 @@ function M.widget(widget)
         for i, tab in ipairs(args.tabs) do if tab.id == "edit" then position = i; break end end
         table.insert(args.tabs, position, { id = "information", label = _("Book details"),
             widget_builder = function(w, h, modal)
-                return self:_headedHtmlBody(modal, w, h, nil, M.information(book))
+                -- The headed helper requires a real header widget. This tab
+                -- has none; retain the modal's native scroller/gesture owner.
+                return modal:_scroller{
+                    html_body = M.information(book), css = modal._css,
+                    default_font_size = require("device").screen:scaleBySize(modal.font_size or 20),
+                    width = w, height = h, dialog = modal,
+                }
             end })
         for i, tab in ipairs(args.tabs) do if tab.id == selected then args.active_tab = i end end
         args.open_text = _("Read now")
