@@ -2,6 +2,31 @@
 
 ## Automated
 
+### Beta 23 publication
+
+The BookOrbit controls are public in `v0.1.0-beta.23`, exact candidate
+`51f63ed9`. Both full interpreters pass 133 Python/four unchanged skips, 94
+root files, 487 Bookshelf suites/zero failures/three normal SQLite exclusions,
+13 SimpleUI files, map 396 and syntax 1,091. All 43 catalogs pass. All 13
+policy/help cases and 16 Tags cases pass, including actual English/Swedish
+extras-help callbacks. The bundled Python/Pillow runtime resolves an initial
+environment-only missing-PIL error; no new skip or exception is introduced.
+
+All sealed root/native EPUB/input/dialog/raster cases pass. Native actual
+Beta 5/9/22 installers and live anonymous application-TLS upgrades from Beta
+9/22 pass full verification, activation/restart/code rollback, truncated
+download, external snapshot and interrupted cleanup/retained-data checks.
+Main/tag CI `41211382356` / `41211383347` pass all four jobs at that candidate.
+Exact source/path/history/held-art/secret/draft/public byte audits pass. The
+same 2,000 API-1 paths, pins, bootstrap, assets and languages remain. Preview
+selects Beta 23; stable stays absent; all 77 prior releases/assets and 127 old
+tag refs are unchanged. Digest, metrics and evidence are in MERGE_LOG and
+`test-results/beta23-20261031/`. Verification docs never replace tagged bytes.
+
+These are not physical-device tests or a BookOrbit deployment. Bigme/Boox
+settings/source-switch/refresh/input/Back/sleep/rotation/reader-return and
+optional authenticated live tag API acceptance remain open.
+
 ### BookOrbit settings and optional extras (Beta 23)
 
 `test_bookorbit_controls` executes actual Want provider queue/subprocess paths

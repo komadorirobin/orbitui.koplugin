@@ -26,6 +26,46 @@ tags/assets remain immutable. Full interpreter/translation, sealed/native OTA,
 history/artwork/secret/draft/public-byte gates and exact publication evidence
 are appended below when complete. Physical Bigme/Boox acceptance remains open.
 
+Beta 23 is now public at exact candidate/annotated tag
+**`51f63ed9f632effadc19c6c7575435032237d457` / `v0.1.0-beta.23`**, published
+**2026-10-31 14:48:11 UTC**, prerelease true. Both complete interpreter gates
+pass: 133 Python tests/four unchanged optional source-cache skips, all 94 root
+Lua files, 487 Bookshelf suites/zero failures/three normal SQLite exclusions,
+13 SimpleUI files, module map 396, syntax 1,091 and all 43 catalogs. The 13
+BookOrbit control cases and 16 native Tags cases retain source/policy/data
+ownership; the new help callback is tested in English and Swedish. Full gates
+use the bundled Pillow runtime after the initial Homebrew Python lacked PIL;
+no test exception or new skip was added for that environment issue.
+
+All sealed root suites pass under both interpreters. Native EPUB/libarchive,
+minimum/current input-dialog owners and Android/non-Android RGB/grey/CBB/
+software night/tilted-cover supplements pass. Actual Beta 5/9/22 native
+installers pass full extraction/hash validation, missing-module rejection,
+activation/restart/code rollback, truncated-download recovery, verified external
+snapshots and interrupted obsolete-code cleanup while retaining unknown/
+modified/user data. Tests operate only on temporary installs.
+
+Exact ZIP source projection and all 1,999 manifest records plus manifest retain
+the same **2,000 installed API-1 paths**, bootstrap, entry points, module map,
+source pins and assets. All 33 outgoing blobs exclude the held artwork;
+Gitleaks passes all three outgoing commits. Main/tag CI `41211382356` /
+`41211383347` pass all four interpreter/package/native-OTA jobs at the exact
+candidate. Draft owner downloads and anonymous public downloads match both
+local assets and GitHub's digests. The draft was resolved by its exact release
+ID after a tag-lookup 404; no duplicate release or tag was created.
+
+ZIP SHA-256
+`756a535844d4145c73287312c9b7661e9ddee26c3348fbc13d7593c45e1eb965`;
+9,105,906 bytes, 26,750,160 expanded, 2,066 entries. Real anonymous LuaSocket/
+LuaSec discovery/download and every native recovery phase pass from Beta 9
+and Beta 22 against the published bytes. Preview selects Beta 23; stable stays
+absent. All **77 previous releases/assets and 127 old tag refs remain unchanged**.
+Ignored evidence: `test-results/beta23-20261031/`. Verification-only follow-up
+docs never rebuild/replace these published bytes. No BookOrbit production
+deployment or device-patch installation is performed. Physical Bigme/Boox
+source-switch, layout/input, refresh, sleep/rotation/reader-return and optional
+live tag API acceptance remain open, not inferred from these headless gates.
+
 ## 2026-10-31 — optional BookOrbit settings, explicit list sources and extras
 
 User approves the integration settings/documentation/extras proposal and asks

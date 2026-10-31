@@ -23,14 +23,28 @@ and correct this file in the same change.
 ## Snapshot: 2026-10-31
 
 - User explicitly approves pushing the remaining BookOrbit controls and a new
-  beta ("Kör" after the unpublished-code status). Beta 23 preparation starts
+  beta ("Kör" after the unpublished-code status). Beta 23 is now public at
+  exact candidate/annotated tag `51f63ed9f632effadc19c6c7575435032237d457` /
+  `v0.1.0-beta.23`, published **2026-10-31 14:48:11 UTC**, prerelease true.
+  Preparation starts
   clean at `43c627db` on `release/bookorbit-controls-beta23-20261031` from public
   main `b8619fad`. No new upstream import is requested; retain pins, bootstrap,
   all 2,000 runtime paths, assets, saved data and external sync/patch owners.
   Update SV/EN extras help and guides for the public exact-3.6.0 source package,
   preserving the legacy database warning and no-deployment boundary. No
-  BookOrbit server change is authorized. Publication/native/sealed/audit results
-  are recorded in MERGE_LOG after the gates; physical acceptance remains open.
+  BookOrbit server change is authorized. Both full interpreter gates, 43
+  catalogs, sealed root/native EPUB/input/raster suites, exact source/path/
+  held-art/history/secret checks, draft/public byte verification and main/tag
+  CI `41211382356` / `41211383347` pass. Actual Beta 5/9/22 native installers
+  and live anonymous application-TLS upgrades from Beta 9/22 pass recovery,
+  code rollback and retained-data cleanup. Preview selects Beta 23; stable
+  stays absent, all 77 previous releases/assets and 127 old tag refs remain
+  unchanged. ZIP SHA-256
+  `756a535844d4145c73287312c9b7661e9ddee26c3348fbc13d7593c45e1eb965`,
+  9,105,906 bytes, 26,750,160 expanded. Evidence:
+  `test-results/beta23-20261031/`. Verification-only docs do not rebuild these
+  published bytes; physical Bigme/Boox and live optional tag API acceptance
+  remain open.
   Extras is already public at `3533480`, CI `41208332613` green for device
   checks, undo-only, tags-only and combined server builds. A separate read-only
   server check found an existing custom 3.6.0 undo installation, registered
@@ -576,9 +590,9 @@ and correct this file in the same change.
   Home is explicitly Home/Hem (SimpleUI). Native preference callbacks, scopes,
   advanced controls and stored values remain in place. The earlier same-version
   development ZIP was never published as a replacement Beta 12.
-- Product version: `0.1.0-beta.22` (public GitHub prerelease, published
-  2026-10-31 at 12:14:47 UTC after explicit user request; verification is in
-  `docs/MERGE_LOG.md`). Beta 21 and earlier assets remain immutable.
+- Product version: `0.1.0-beta.23` (public GitHub prerelease, published
+  2026-10-31 at 14:48:11 UTC after explicit user request; verification is in
+  `docs/MERGE_LOG.md`). Beta 22 and earlier assets remain immutable.
 - Beta 12 starts from clean public main `70e5a1fd` on
   `fix/android-covers-beta12-20261026`. Android safe mode remains enabled;
   host-owned foreground local extraction replaces the blocked Bookshelf queue,
@@ -604,8 +618,9 @@ and correct this file in the same change.
   with category/instance/external-module tests in `0acdd843`.
   Complete local Lua/LuaJIT, translation, sealed-package and native OTA gates
   pass; exact verification results are recorded in `docs/MERGE_LOG.md`.
-- Release tag: `v0.1.0-beta.22` at `db909dcf`; previous tags
-  `v0.1.0-beta.21` at `3116ed1c`, `v0.1.0-beta.20` at `32603575`,
+- Release tag: `v0.1.0-beta.23` at `51f63ed9`; previous tags
+  `v0.1.0-beta.22` at `db909dcf`, `v0.1.0-beta.21` at `3116ed1c`,
+  `v0.1.0-beta.20` at `32603575`,
   `v0.1.0-beta.19` at `89d23c78`, `v0.1.0-beta.18` at `7c0f7057`,
   `v0.1.0-beta.17` at `ab2e0bd7`,
   `v0.1.0-beta.16` at `5c846730`,
@@ -616,7 +631,9 @@ and correct this file in the same change.
   `v0.1.0-beta.11` at `03106015`,
   `v0.1.0-beta.10` at `0a2ea22b`, `v0.1.0-beta.9` at `a4bb9acb` and all
   earlier tags/assets are unchanged.
-- Public branch: `main`; Beta 22 publishes local-first EPUB tags and the earlier
+- Public branch: `main`; Beta 23 publishes the optional BookOrbit settings,
+  explicit Local/BookOrbit source names and deferred-policy guards. No new
+  upstream merge or server deployment. Beta 22 publishes local-first EPUB tags and the earlier
   optional online source, after a fresh check found no new upstream commits.
   The earlier October 30 publication request produced
   Beta 18 with the reviewed status-routing/live-opt-in/native-dialog fixes.
