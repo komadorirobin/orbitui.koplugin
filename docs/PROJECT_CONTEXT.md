@@ -22,19 +22,28 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-31
 
-- The user now explicitly requests "Merga upstream, den pusha och publicera
-  etc". This supersedes local-only publication limits for the reviewed night
-  and UI follow-ups below. Prepare Beta 20 from clean `82d4104c` on
-  `release/upstream-ui-beta20-20261031`, with public main still `3476ac93`.
-  Reviewed unsquashed SimpleUI merge `e6694c77` integrates all three commits
+- The user's explicit "Merga upstream, den pusha och publicera etc" supersedes
+  local-only publication limits for the night/UI work below. Beta 20 is public
+  at exact candidate/annotated tag `326035753702ca70492097d5a32391dd5023250c` /
+  `v0.1.0-beta.20`, published **2026-10-31 08:20:10 UTC**, prerelease true.
+  It starts from clean `82d4104c` on `release/upstream-ui-beta20-20261031` and
+  public main `3476ac93`. Reviewed unsquashed merge `e6694c77` adds three commits
   through `5631ce1035286803d7586979c75993671ff022cb`: native-screen tilted-cover
   format for night blits, correct final-buffer LRU byte accounting and updated
   Polish translation. Bookshelf stays `ee84a8fe` with no new commits. Preserve
   private/borrowed cover ownership, every local adapter and all 2,000 API-1
-  installed paths. No bootstrap/assets/hardware patch or external sync change.
-  Beta 19 and earlier tags/assets are immutable. Full local/sealed/native OTA,
-  history/held-art/secret, CI and exact draft/public byte gates are required;
-  physical Bigme/Boox acceptance remains open and the release stays a prerelease.
+  installed paths; no bootstrap/assets/hardware patch or external sync change.
+  Both fresh full interpreter gates, sealed/native input/raster suites, all 43
+  catalogs and source/history/held-art/Gitleaks/draft/public byte audits pass.
+  Main/tag CI `41183802880` / `41183802884` pass all four jobs; upstream watch
+  `41183802881` is green. Actual Beta 5/9/19 native installers pass; anonymous
+  published-byte LuaSocket/LuaSec upgrades from Beta 9/19 and recovery pass.
+  Preview selects Beta 20; stable remains absent and all 74 previous releases
+  and 121 old remote tag refs are unchanged. ZIP SHA-256
+  `33d9971a6fb8b4771222bd4f4568704fa62134d4f63fd943d806c91c386858d9`.
+  Evidence is in ignored `test-results/beta20-20261031/` and MERGE_LOG/TESTING.
+  Verification-only docs never rebuild or replace the tagged bytes. Physical
+  Bigme/Boox acceptance remains open; this is not a stable/performance claim.
 
 - User approves all five UI-review follow-ups, but first asks for a longer
   NON-manga bookmark ribbon and its publication. Ereader alone is published at
@@ -43,8 +52,9 @@ and correct this file in the same change.
   manga is unchanged. All 51 header cases pass in Lua/LuaJIT, Gitleaks is clear,
   and GitHub's public patch blob matches `7b48586881e5991888ba4c7038a5bf175ca83c48`.
   Patch Manager discovers that commit automatically; no manager release needed.
-- OrbitUI follow-up is LOCAL on `feature/ui-refinements-20261031`, retaining the
-  unpushed night-mode correction below. Independent code, not another embedded
+- Earlier OrbitUI follow-up was LOCAL on `feature/ui-refinements-20261031`;
+  it and the night-mode correction below are now included in Beta 20. Independent
+  code, not another embedded
   UI engine: bounded typo/Unicode search with exact-spelling priority and opt-out;
   explicit sort/filter/view access from the shelf counter; per-profile/chip/group
   browse preferences, compact one/two-column lists and relative dates; an ancestor

@@ -48,6 +48,56 @@ night/day/tilted artwork, profiles, quick controls, compact rows, detail panel,
 reader return, rotation/sleep and native OTA acceptance remain open; no measured
 reader-performance gain is claimed. Evidence: `test-results/beta20-20261031/`.
 
+### Beta 20 verified publication result
+
+Exact candidate/annotated tag `326035753702ca70492097d5a32391dd5023250c` /
+`v0.1.0-beta.20` is pushed to main and published at
+https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.20,
+**2026-10-31 08:20:10 UTC**, prerelease true, draft false, not stable/latest.
+Release preparation changes only VERSION and existing bilingual OTA notes after
+reviewed implementation `35a7411f`. No extra runtime path or bootstrap change.
+
+Fresh sequential full LuaJIT and Lua gates pass 133 Python tests/four unchanged
+optional skips, all 91 root Lua files, 487 Bookshelf suites/zero failures/three
+normal SQLite exclusions and all 13 SimpleUI files. Map 396, syntax 1,088 and all
+43 catalogs pass. Fresh sealed-root invocation reruns pass in both interpreters;
+legacy source-only fixtures remain backed by the exact byte-projection audit.
+All 28 quick-control cases pass with both minimum/current native input/dialog
+owners, all 11 night raster cases and all seven Cover Deck native warp cases
+pass on Android/non-Android CBB/software paths. Main/tag CI **41183802880 /
+41183802884** pass all four jobs, including native archive/hash OTA. Existing
+Node/Ubuntu runner migration warnings are not new failures. Upstream watch
+**41183802881** is green after the integrated pin push.
+
+Clean sealed ZIP: **9,064,965 bytes**, expanded **26,615,748**, 2,066 entries,
+identical 1,999 inventory records plus manifest / 2,000 installed API-1 paths.
+SHA-256 **`33d9971a6fb8b4771222bd4f4568704fa62134d4f63fd943d806c91c386858d9`**.
+Every byte matches the exact candidate archive after only approved PO source-
+comment reduction. Source/manifest/checksum/path parity, unchanged entry/map/
+bootstrap/assets, preserved local night/UI ancestors and exact upstream Polish
+catalogue pass. Sixty outgoing source blobs exclude held art; all nine outgoing
+non-merge commits pass Gitleaks. Verification-only docs are re-audited separately.
+
+Both authenticated draft downloads match sealed bytes/GitHub digests/sizes;
+both anonymous public downloads match afterward, with exact body/tag/candidate
+and prerelease metadata. All **74 previous releases/assets** and **121 previous
+remote tag refs** stay unchanged; only annotated Beta 20 refs/release/assets are
+added. Anonymous application TLS preview selects Beta 20; stable stays absent.
+
+Actual public Beta 5/9/19 installers pass native full-inventory extraction,
+missing-module rejection, activation/restart/code rollback, truncation recovery,
+external snapshot/restart/persistent rollback and interrupted obsolete-runtime
+cleanup retaining active/rollback/unknown/modified/user files. Actual Beta 9/19
+also pass anonymous real LuaSocket/LuaSec discovery/download and every native
+phase using the published bytes. Reviewed macOS POSIX/TLS helpers are test-only;
+only temporary fixture installs are touched, never a physical reader.
+
+Ignored evidence contains full/sealed/native/live runs, catalogue checks, CI
+metadata/watch logs, exact source/draft/public audits, immutable release/tag
+snapshots and channel checks. Verification-only docs do not rebuild or replace
+the immutable tagged ZIP. Device/night/cover/layout/reader acceptance remains
+open as listed above; this is not a measured Bigme/Boox performance gain.
+
 ## 2026-10-31 — Published prose ribbon, local UI-reference follow-up
 
 User says "Kör alla", first extending the NON-manga header bookmark to the full

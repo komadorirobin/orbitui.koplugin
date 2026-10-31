@@ -20,6 +20,23 @@ installed path and the API-1 bootstrap. Retest tilted Cover Deck colour/greyscal
 and generated covers on Bigme/Boox, day/night/day, cache pressure, rotation,
 sleep and all shared UI cases below. Record final release checks separately.
 
+Published Beta 20 candidate/tag `32603575` / `v0.1.0-beta.20` passes fresh full
+sequential LuaJIT/Lua gates: 133 Python/four unchanged optional skips, 91 root
+Lua files, 487 Bookshelf suites/zero failures/three normal SQLite exclusions,
+13 SimpleUI files, map 396, syntax 1,088 and all 43 catalogs. Fresh sealed-root
+invocation reruns pass under both interpreters; legacy source-only fixtures are
+backed by the exact byte-projection audit. All 28 quick-control cases pass with
+minimum/current native owners, all 11 night raster cases and seven tilted-cover
+cases pass on sealed bytes with Android/non-Android native CBB/software paths.
+Main/tag CI `41183802880` / `41183802884` pass four jobs, including native OTA.
+Actual Beta 5/9/19 installers pass temporary upgrade/recovery/rollback/cleanup;
+Beta 9/19 also pass anonymous discovery/download/application-TLS installation of
+published bytes. Source/path/history/held-art/secret and exact draft/public audits
+pass. All 74 earlier releases/assets and 121 old tag refs stay unchanged; preview
+selects Beta 20 and stable is absent. Exact digest/metrics are in MERGE_LOG and
+ignored `test-results/beta20-20261031/`. Verification docs do not rebuild assets.
+Physical device acceptance remains outstanding, as listed above and below.
+
 ### October 31 UI refinements (Beta 20)
 
 `test_ui_refinements` covers exact/normalised/typo ranking, transpositions,
