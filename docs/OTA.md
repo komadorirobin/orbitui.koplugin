@@ -7,6 +7,37 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 0.1.0-beta.21
+
+Beta 21 fixes the crash when selecting **Book details** in the book panel.
+The information tab incorrectly called a renderer requiring a header widget
+without supplying one. It now uses the modal's native headerless HTML scroller,
+retaining its CSS, current dimensions, per-tab zoom and gesture/resource owner.
+
+Regression coverage now follows the real modal tab-switch/render/zoom/resize/
+close path rather than mocking the headed renderer. Beta 20 reproduces the
+nil-header failure; the corrected path retains scrolling and safe body teardown.
+No book files, metadata, links, progress, collections or settings are reset.
+
+Svenska: Beta 21 rättar kraschen när du väljer **Bokdetaljer**. Fliken använde
+fel renderingshjälp utan den rubrikdel som den krävde. Nu används dialogens
+vanliga HTML-yta med rätt textstorlek, scrollning och stängning. Testet växlar
+verkligen till fliken och kontrollerar zoom, storleksändring och frigöring av
+ersatta vyer. Du behöver inte indexera om eller ändra några inställningar.
+
+Update through the preview channel and restart KOReader / uppdatera via
+förhandsversionskanalen och starta om KOReader. Earlier betas can update directly.
+The Beta 20 night/search/shelf improvements remain, along with original book/
+reader/plugin actions. No new upstream import, source-pin change, BookOrbit
+feature/sync change, asset, installed path or bootstrap/API-1 change. BookOrbit
+tag navigation is being assessed separately, not shipped by this crash hotfix.
+All 2,000 installed paths and earlier public assets remain unchanged in identity.
+
+Still a prerelease: retest Book details scrolling, independent zoom, repeated tab
+switches, close and reader/shelf return on Bigme/Boox. Automated modal-path tests
+are not physical MuPDF/font/touch/e-ink acceptance. Svenska: Fortsatt beta;
+prova Bokdetaljer på enheten efter uppdateringen.
+
 ## OrbitUI 0.1.0-beta.20
 
 Beta 20 publishes the approved night-mode and shared-interface refinements,
