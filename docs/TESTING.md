@@ -22,6 +22,18 @@ verify no uninstall, empty/reset/restart, extra/narrow-layout page arrows and
 the existing Settings icon destination. Do not replace live code under a running
 KOReader or publish while the earlier metadata-result acceptance is unresolved.
 
+Candidate `3e52650b` passes both complete final gates (133 Python/four optional
+skips, 96 root Lua files, 533 Bookshelf/zero failures/three normal SQLite skips,
+13 SimpleUI, syntax 1,147/map 403), all 43 catalogs and sealed-root/native
+input/EPUB/raster supplements. Actual Beta 5/9/24 native OTA/recovery/cleanup
+passes. Exact source/path/bootstrap/pins/assets/history/held-art/Gitleaks checks
+pass. ZIP SHA-256
+`233d7a61cea392b3feb577dca10554d65ce73a5ceb6fdb6c5cff0207f180facc`,
+9,304,185 bytes / 27,482,431 expanded / same 2,000 installed paths. Evidence:
+`test-results/beta25-20261031/android-apps/`. The known ADB port refuses a
+reconnect; physical app-picker/hold/paging acceptance is still open. No install
+or publication. Verification-only docs never rebuild these tested bytes.
+
 ### Beta 25 Android metadata-refresh fix
 
 The user-provided live ADB reproduction on Bigme / KOReader v2026.07.1 proves

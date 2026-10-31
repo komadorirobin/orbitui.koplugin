@@ -47,6 +47,17 @@ and correct this file in the same change.
   lists no device: this new app-management build is LOCAL, not installed on
   Bigme. The earlier shortcut-only candidate remains its last tested runtime;
   physical long-press/picker/add/remove/reorder/paging acceptance is still open.
+  Local sealed candidate `3e52650b9c9ef20b2a55036a85dcf049e4b2bc1d` passes
+  both complete interpreter gates, all 43 catalogs, all-root sealed/native
+  input/EPUB/raster and actual Beta 5/9/24 native OTA/recovery/cleanup. Exact
+  source/path/bootstrap/pins/assets, outgoing held-art and Gitleaks audits pass.
+  ZIP SHA-256 `233d7a61cea392b3feb577dca10554d65ce73a5ceb6fdb6c5cff0207f180facc`,
+  9,304,185 bytes / 27,482,431 expanded / unchanged 2,000 installed paths.
+  Evidence: `test-results/beta25-20261031/android-apps/`. One reconnect to the
+  known device port is refused; do not scan other ports or alter Android's
+  debugging settings. Ask for its current connection before device testing.
+  No push, tag, draft, release or device installation. Verification docs are
+  descendants only and must not rebuild the sealed candidate bytes.
 
 - User approves the Android metadata-refresh fix, regression coverage, testing
   on the connected Bigme and Beta 25 publication. Start clean at `60c57efc` on

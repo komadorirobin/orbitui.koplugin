@@ -48,6 +48,37 @@ native discovery/exception/frame/UTF-8 handling, max count, paging/narrow widths
 unchanged launch targets and the earlier Developer options choice. Full/sealed/
 catalog/package/source/history checks and exact local candidate follow below.
 
+Local candidate **`3e52650b9c9ef20b2a55036a85dcf049e4b2bc1d`** passes initial
+and final full runs with both interpreters: 133 Python/four existing optional
+skips, 96 root Lua files (21 launcher cases), 533 Bookshelf suites/zero failures/
+three normal SQLite exclusions, 13 SimpleUI files, syntax 1,147/map 403, and
+all 43 catalogs. All root tests rerun against sealed source, including actual
+reduced PO catalogs. Minimum/current native input, native EPUB/libarchive and
+Android/non-Android grey/RGB/CBB night/tilted-cover supplements pass. Actual
+Beta 5/9/24 native installers pass hash/inventory, missing-module rejection,
+activation/restart/rollback, truncated recovery, external snapshots and
+interrupted obsolete-code cleanup retaining protected data.
+
+ZIP SHA-256
+**`233d7a61cea392b3feb577dca10554d65ce73a5ceb6fdb6c5cff0207f180facc`**;
+**9,304,185 bytes**, **27,482,431 expanded**, 2,066 entries and exactly the
+same **2,000 installed API-1 paths**. Manifest SHA-256
+`68a650aeb731201a4dede001295332d5544bd962a858e4fa2c3f42793ca2676b`.
+Every sealed byte matches the exact candidate projection; the earlier metadata
+adapter remains the exact one-line store-import fix. Only the documented
+launcher/SV catalog/source template component files differ. Bootstrap, core
+module map, assets, scripts and upstream pins remain unchanged. Outgoing
+held-art history and Gitleaks (four initial unpublished commits) pass; repeat
+after the verification-only docs commit. Evidence:
+`test-results/beta25-20261031/android-apps/`.
+
+The known device's ADB port refuses one bounded reconnect and no device is
+listed. Do not scan, change debugging settings or claim physical acceptance.
+Request its current address/port before staging. The new feature stays local;
+no device install, push, tag, draft or release. The earlier metadata-result
+acceptance remains a separate publication gate. Verification-only descendants
+never rebuild/replace this tested archive.
+
 ## 2026-10-31 — Android metadata-refresh crash and approved Beta 25
 
 User approves correction, a regression test, physical verification on the
