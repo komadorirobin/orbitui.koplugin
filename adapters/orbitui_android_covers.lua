@@ -7,7 +7,7 @@ local META = { "title", "authors", "series", "series_index", "language", "keywor
 
 local function enabled()
     return require("device"):isAndroid()
-        and require("lib/bookshelf_settings").nilOrTrue("android_safe_mode")
+        and require("lib/bookshelf_settings_store").nilOrTrue("android_safe_mode")
 end
 
 local function localFile(fp)

@@ -22,6 +22,20 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-31
 
+- User approves the Android metadata-refresh fix, regression coverage, testing
+  on the connected Bigme and Beta 25 publication. Start clean at `60c57efc` on
+  `fix/android-metadata-beta25-20261031`. A direct ADB capture proves
+  `adapters/orbitui_android_covers.lua:10` called missing `nilOrTrue` on the
+  settings editor, before extraction. Use `lib/bookshelf_settings_store`;
+  preserve existing safety/default semantics and all queue/cache protections.
+  The corrected old fixture reproduces the exact nil-field failure before the
+  fix. A real runtime/store/storage-adapter test covers unset/on/off/non-Android
+  and no preference write; sealed tests load the actual candidate adapter.
+  VERSION becomes `0.1.0-beta.25`. No new upstream import, bootstrap/API/path,
+  resource, external patch or server/sync-owner change. Physical staging uses
+  a separate verified runtime slot, retaining Beta 24 and data. Test/publication
+  evidence and device acceptance will be recorded in MERGE_LOG/TESTING.
+
 - **Beta 24 is public**, exact candidate/annotated tag
   `6532b06b8b79b466342e93b7a31c28f49c21e2c4` / `v0.1.0-beta.24`, published
   **2026-10-31 20:51:49 UTC**, prerelease true. The user's explicit

@@ -2,7 +2,8 @@ package.path = "./?.lua;" .. package.path
 local H = require("tests/helpers")
 local native_ffi = jit and require("ffi")
 package.loaded.ffi = { C = { free = function() end } }
-local M = require("adapters/orbitui_android_covers") -- cold load, no native globals
+local root = os.getenv("ORBITUI_TEST_ROOT") or "."
+local M = assert(loadfile(root .. "/adapters/orbitui_android_covers.lua"))() -- cold load, no native globals
 local android, safe, calls, pending, top, rows, failure, cover, in_use, busy, clock
 local dropped, closed, freed, statements, original_kick, original_fire, notifications
 local old_time = os.time
@@ -40,7 +41,10 @@ function connection:prepare(sql)
     return s
 end
 package.loaded.device = { isAndroid = function() return android end, screen = { getWidth = function() return 1000 end } }
-package.loaded["lib/bookshelf_settings"] = { nilOrTrue = function() return safe end }
+-- The editor is not the preference store. Giving it nilOrTrue hid the real
+-- Android refresh crash; only the store may answer this policy check.
+package.loaded["lib/bookshelf_settings"] = {}
+package.loaded["lib/bookshelf_settings_store"] = { nilOrTrue = function() return safe end }
 package.loaded["libs/libkoreader-lfs"] = { attributes = function(fp, field)
     if fp == "/gone.epub" then return nil end
     if field == "mode" then return "file" end

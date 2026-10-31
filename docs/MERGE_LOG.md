@@ -4,6 +4,34 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-10-31 — Android metadata-refresh crash and approved Beta 25
+
+User approves correction, a regression test, physical verification on the
+connected Bigme and Beta 25 publication. Start clean at public `60c57efc` on
+`fix/android-metadata-beta25-20261031`. No upstream merge is requested.
+
+The first exported Android log contains startup only. Direct, bounded ADB
+capture records the failure at 22:37:55 device time: Android cover adapter
+line 10 calls missing `nilOrTrue` on the settings editor. It exits before any
+metadata extraction. The implementation must require the existing settings
+store, not invent an editor API or disable Android safe mode. Existing
+preferences, cover preservation and cancel/no-fork policy stay intact.
+
+Correcting the old test fixture reproduces the exact nil-field crash before
+the runtime fix. The additional real-loader/store/storage-adapter regression
+rejects loading the settings editor and covers unset/on/off/non-Android with
+no preference write. Both test files use the sealed candidate's actual adapter
+and store when `ORBITUI_TEST_ROOT` is set. Targeted tests pass in Lua/LuaJIT.
+
+VERSION becomes `0.1.0-beta.25`, with SV/EN notes in existing documents. All
+2,000 installed API-1 paths, stable bootstrap, resources and upstream pins
+remain. No external patch, BookOrbit server or sync-owner change. Stage the
+verified candidate separately while KOReader is closed, keep Beta 24 available,
+and record physical results separately from headless tests. Full publication
+gates, exact candidate/digest and immutable draft/public evidence follow below.
+Raw device logs remain ignored under `test-results/metadata-crash-20261031/`;
+no personal titles/paths or ADB pairing credentials are committed.
+
 ## 2026-10-31 — requested Bookshelf 6.1 Beta 24 publication
 
 User explicitly requests "Pusha och publicera etc" after the verified merge.

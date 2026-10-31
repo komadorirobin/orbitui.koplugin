@@ -2,6 +2,19 @@
 
 ## Automated
 
+### Beta 25 Android metadata-refresh fix
+
+The user-provided live ADB reproduction on Bigme / KOReader v2026.07.1 proves
+the missing `nilOrTrue` call at Android cover adapter line 10. The corrected
+cover-test fixture first reproduces that exact error. The actual component
+loader, settings store and storage adapter now test safety-policy reads for
+unset/on/off/non-Android without changing preferences or loading the editor.
+Both affected suites load the adapter/store from `ORBITUI_TEST_ROOT` when
+checking sealed bytes. All 26 existing queue/row-preservation/cancel/failure
+cases remain required. Repeat the full interpreter/package/catalog/native-OTA
+gates and perform the approved physical metadata-refresh test before publishing
+the exact Beta 25 candidate. Keep unrelated Bigme/Boox acceptance gaps open.
+
 ### Beta 24 publication
 
 The user explicitly requests push/publication of the reviewed Bookshelf 6.1

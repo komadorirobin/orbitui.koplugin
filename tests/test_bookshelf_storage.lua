@@ -1,6 +1,6 @@
 package.path = "./?.lua;" .. package.path
 local H = require("tests/helpers")
-local root = H.root()
+local root = os.getenv("ORBITUI_TEST_ROOT") or H.root()
 package.loaded.datastorage = {
     getSettingsDir = function() return "/reader/settings" end,
     getDataDir = function() return "/reader" end,
@@ -112,5 +112,31 @@ H.test("deferred status edits flush once and deletion preserves default semantic
     H.eq(Store.read("status_in_reader", "default"), "default")
     G_reader_settings:saveSetting("bookshelf_status_in_reader", false)
     H.eq(Store.nilOrTrue("status_in_reader"), false)
+end)
+H.test("Android cover policy uses the real runtime store, never the settings editor", function()
+    -- Keep the real component loader, store and OrbitUI storage adapter above.
+    -- The editor intentionally has no nilOrTrue API: the old cover-test fake
+    -- invented one there and let the physical Android crash pass unnoticed.
+    package.preload["lib/bookshelf_settings"] = function()
+        error("Android cover policy loaded the settings editor instead of its store")
+    end
+    local android = true
+    package.loaded.device = { isAndroid = function() return android end }
+    local Widget = { _stopStatusTimer = function() end,
+        _kickOffMissingMetaExtractionNow = function() end, _fireBimExtraction = function() end }
+    assert(loadfile(root .. "/adapters/orbitui_android_covers.lua"))().widget(Widget)
+    local w = setmetatable({}, { __index = Widget })
+    for _, state in ipairs({ "unset", "on", "off" }) do
+        if state == "unset" then Store.delete("android_safe_mode")
+        else Store.save("android_safe_mode", state == "on") end
+        local g, count = Store.generation(), flushes["/reader/settings/bookshelf.lua"]
+        H.eq(w:orbitui_preserveMetadataRefresh(), state ~= "off", state)
+        H.eq(Store.generation(), g, "reading safety policy must not change preferences")
+        H.eq(flushes["/reader/settings/bookshelf.lua"], count)
+    end
+    Store.delete("android_safe_mode")
+    android = false
+    H.eq(w:orbitui_preserveMetadataRefresh(), false)
+    H.eq(package.loaded["lib/bookshelf_settings"], nil)
 end)
 H.finish()

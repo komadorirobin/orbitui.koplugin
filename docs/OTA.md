@@ -7,6 +7,33 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 0.1.0-beta.25
+
+Beta 25 fixes the Android crash after long-pressing a book and choosing
+**Refresh metadata**. OrbitUI's Android safety check read the settings editor
+instead of the preference store and called a missing `nilOrTrue` function.
+It now reads the existing store without changing the safety preference.
+
+Regression coverage reproduces the original failure before the fix, uses the
+real component loader/preference store/storage adapter, and checks unset,
+enabled, disabled and non-Android behavior. The cover queue tests no longer
+give the editor an invented store API. Both source and sealed-package paths
+are covered. Existing cover preservation, bounded no-fork extraction and
+cancellation remain; no cache reset or full reindex is required for this fix.
+
+Svenska: Beta 25 rättar kraschen vid **långtryck på en bok > Uppdatera metadata**
+på Android. Säkerhetskontrollen läste från inställningsmenyn i stället för
+inställningslagret. Befintligt säkerhetsläge behålls och ett regressionstest
+använder det riktiga lagret. Du behöver inte radera omslagscachen eller indexera
+om biblioteket för att rätta den här kraschen.
+
+All Beta 24 Bookshelf 6.1/SimpleUI changes remain. No new upstream import,
+bootstrap/API-1 or installed-path change, settings migration, resource removal,
+external patch or BookOrbit/Hardcover synchronization change. Previous public
+releases/assets remain immutable. Update through the preview channel and
+restart KOReader. Still a prerelease; broader Bigme/Boox acceptance remains
+separate from this targeted metadata-refresh check.
+
 ## OrbitUI 0.1.0-beta.24
 
 Beta 24 publishes the reviewed **Bookshelf 6.1.0** merge through `7ff93b9d`
