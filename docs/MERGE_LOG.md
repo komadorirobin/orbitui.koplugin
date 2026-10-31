@@ -58,6 +58,36 @@ live tag API, combined server rebase and end-to-end external sync remain open.
 VERSION stays public Beta 22; any same-version ZIP is DEVELOPMENT ONLY and
 must never replace the published archive or bypass the same-version OTA guard.
 
+Final local candidate **`18a8547ce847c000bbe87ec747f7a0aaacf241be`** passes both
+complete interpreter gates: 133 Python tests/four unchanged skips, 94 root Lua
+files, 487 Bookshelf suites/zero failures/three normal SQLite exclusions,
+13 SimpleUI suites, map 396 and syntax 1,091. The two later callback/deferred-
+refresh test additions also pass fresh focused Lua/LuaJIT runs and final sealed
+runs; all 12 policy cases and 16 Tags cases are green. All 43 catalogs pass.
+Sealed archive reruns pass every root suite in both interpreters, native
+minimum/current quick-control owners, real libarchive/JSON EPUBs and Android/
+non-Android grey/RGB/CBB/software night/tilted-cover cases. Native OTA with the
+existing test-only filesystem adapter passes extraction/hash, missing-module
+rejection, activation/restart/code rollback, truncated-download recovery,
+external snapshot and interrupted obsolete-runtime cleanup while preserving
+unknown/modified/user data. The initial slow shell-fallback harness was stopped
+and replaced by that complete native-FS run, not treated as a code test failure.
+No installed reader, public archive or real server is used by the fixture.
+
+DEVELOPMENT ZIP SHA-256
+`f23cf9ad10fad4943be5376052cf2c1bb174c8dbaaa76db43e96dbf7d1eb5c6e`,
+9,102,255 bytes, 26,738,989 expanded, 2,066 entries and the exact same 2,000
+installed paths as public Beta 22 (1,999 manifest records plus manifest).
+Every manifest byte matches the candidate's reviewed runtime source projection;
+bootstrap/entry/map/pins/assets remain unchanged. Outgoing source/history
+held-art audit checks all 19 new blobs; new-history Gitleaks passes. Evidence:
+`test-results/bookorbit-controls-20261031/` (ignored). Verification-only docs do
+not rebuild sealed bytes. Public Beta 22 still has its original digest
+`2ed3191e76fda3828757163e3786b770c195bf834af7d509f89ae5e777243013` and publication
+time; no OrbitUI push/tag/release, source-pin change or production deployment.
+Extras public main/README match local `0c8302d`, with green CI as recorded above.
+Physical-device and live API acceptance remain open, not inferred from tests.
+
 ## 2026-10-31 — local-first EPUB tags, requested upstream and Beta 22
 
 User approves offline embedded tags, then explicitly requests another upstream

@@ -23,7 +23,21 @@ install/disable a device patch. Packaging validates hashes/licenses, each
 server diff against its base, undo state and all three pinned native plugin
 profiles plus the original Hardcover single-writer regression in Lua/LuaJIT.
 The unchanged local tag API branch retains its auth/access/bounds contracts.
-Final full/package/sealed/audit results will be recorded in MERGE_LOG.
+Final local candidate `18a8547c` passes both complete interpreter gates: 133
+Python/four unchanged skips, 94 root Lua files, 487 Bookshelf suites/zero
+failures/three normal SQLite exclusions, 13 SimpleUI suites, syntax 1,091/map
+396 and all 43 catalogs. All final sealed root/native EPUB/minimum-current
+input/night-raster/tilted-cover supplements and native archive/hash/OTA/
+restart/rollback/truncation/external-snapshot/cleanup recovery checks pass.
+The native filesystem supplement replaced a deliberately stopped slow shell
+harness, not a failing runtime test. All 12 new policy and 16 Tags cases pass
+in both interpreters. Exact source/path/held-art/history/secret audits pass;
+all 2,000 installed paths and original bootstrap/assets/pins remain unchanged.
+The same-version ZIP is DEVELOPMENT ONLY, not a replacement public Beta 22.
+Extras CI `41204384358` is green at public `0c8302d`; exact device profiles and
+separate server bases pass, with 215 fresh API tests and backend typecheck/lint.
+No production deployment or physical acceptance. Exact archive metrics and
+ignored evidence paths are in MERGE_LOG; verification docs never rebuild it.
 
 ### Local-first EPUB tags and Beta 22 preparation
 

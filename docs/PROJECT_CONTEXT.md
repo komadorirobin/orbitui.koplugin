@@ -39,7 +39,18 @@ and correct this file in the same change.
   bilingual guides/licenses and separately pinned old undo/new tag server
   diffs. They target DIFFERENT bases, not an installable combined overlay.
   No OrbitUI release or BookOrbit production deployment is authorized by this
-  step. Final tests/publication state will be recorded below and in MERGE_LOG.
+  step. Final local candidate `18a8547c` passes both full interpreter gates
+  (133 Python/four existing skips, 94 root files, 487 Bookshelf/zero failures/
+  three normal SQLite exclusions, 13 SimpleUI, syntax 1,091/map 396), 43
+  catalogs, sealed-root/native EPUB/input/raster and native OTA/recovery/cleanup
+  checks. Exact source/path/artwork/history/secret audits pass: same 2,000
+  API-1 paths, bootstrap/pins/assets unchanged. DEVELOPMENT ZIP SHA-256
+  `f23cf9ad10fad4943be5376052cf2c1bb174c8dbaaa76db43e96dbf7d1eb5c6e`.
+  Extras is now public at `0c8302d`, CI `41204384358` green, with public README/
+  remote bytes verified. Its API diff is public, but the BookOrbit source
+  branch stays local/undeployed. OrbitUI's GitHub description is updated;
+  its implementation/README remain LOCAL and public Beta 22 is unchanged.
+  Verification-only docs do not rebuild sealed bytes. See MERGE_LOG.
 
 - Beta 22 is now public at exact candidate/annotated tag
   `db909dcff807e255d4ba878d99028ee968ba963c` / `v0.1.0-beta.22`, published
