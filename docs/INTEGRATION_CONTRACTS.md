@@ -398,6 +398,21 @@ Tests: `test_series_rating`, `test_upstream_series_boxes`.
 
 ## C07: Presentation and preferences
 
+October 31 approved Android apps customization: keep `app_launcher` stable and
+native module hold/settings ownership, including the user's settings-on-hold
+policy. SUISettings owns its device-local app selection, shared across this
+module's Home/custom pages. Existing enabled modules retain legacy choices;
+first explicit enable of a new module starts empty. A saved empty list must
+not restore personal defaults. Read/paint/page-turn must never write it or
+enumerate Android apps. Explicit Add queries public launcher activities only,
+with bounded JNI frames/errors/UTF-8/dedup and manual package fallback. Rename,
+named before/after moves and confirmed remove use package identity rather
+than stale indices. Removing a shortcut never uninstalls a package or resets
+the Settings destination. Extra apps paginate at fitted width; only visible
+icons load. All new wording is SV/EN. No server, permission, private-activity
+or external-patch owner is introduced. Source: `module_app_launcher`; regression:
+`test_android_app_launcher`. Physical picker/paging acceptance remains separate.
+
 October 31 Cover Deck import: final tilted buffers match the native screen type
 so inverted blits remain valid in night mode. Preserve source-cover ownership,
 private stretch copies, trapezoid geometry, revisions and allocation fallback.

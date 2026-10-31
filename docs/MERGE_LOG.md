@@ -4,6 +4,50 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-10-31 — user-selected Android apps through module long-press (local)
+
+The user explicitly asks to add/remove personal apps through a long-press on
+the module. Start clean at `d1798813` on the existing unpublished Beta 25 fix
+branch. No upstream merge, push or public release is requested by this step.
+The previous metadata/shortcut candidate remains the last tested device code;
+its metadata-result acceptance stays open. ADB currently lists no device, so
+do not claim this new app-management code has been installed or tested there.
+
+Keep stable module ID `app_launcher`; translate its title to Android apps /
+Android-appar. Reuse the native SimpleUI module hold/release/settings window,
+without a global touch hook or changing settings-on-hold. Its new Apps page
+has Add app, stable-package app pages for rename, exact named before/after
+neighbours and confirmed Remove from module (never uninstall). Live numbered
+positions avoid making the user leave an app page to discover its new order.
+An empty module remains visible/holdable and tappable for configuration.
+
+SUISettings owns one device-local selection shared by this module's Home/custom
+pages. Lazy reads copy/validate in memory; explicit edits alone persist it.
+Retain the legacy six choices on already-enabled modules, including custom
+pages. The first explicit enable of a new module seeds an empty list instead
+of Robin's personal defaults; saved empty remains empty after restart. Preserve
+the existing global Settings-destination key, including removing/re-adding its
+app shortcut. No account, book data, cache reset or existing layout rewrite.
+
+App discovery is an explicit public MAIN/LAUNCHER PackageManager query only
+when Add app opens, with per-item and outer JNI frames, cleared exceptions,
+UTF-8 byte conversion, package deduplication and bounded results. No private
+activity launch, APK modification, permission grant or shell workaround.
+Android filtering/failure has a manual package-name fallback, not invented
+results or silent selection. No installed-app inventory in logs or telemetry.
+Selected apps are capped at 128; responsive single-row pages avoid overflow
+in narrow bento cells, request only visible icons and never persist page turns.
+
+The existing module file holds this component-local implementation to retain
+the full 2,000-path API-1 budget. No new module identity/helper file, bootstrap,
+asset, upstream pin, external userpatch or synchronization-owner change. All
+new labels/help/errors have English source and Swedish catalog entries.
+Twenty-one actual full-module/menu/widget/JNI-boundary cases pass Lua/LuaJIT,
+covering legacy/fresh/empty/restart, cancel/invalid/stale callbacks, duplicates,
+native discovery/exception/frame/UTF-8 handling, max count, paging/narrow widths,
+unchanged launch targets and the earlier Developer options choice. Full/sealed/
+catalog/package/source/history checks and exact local candidate follow below.
+
 ## 2026-10-31 — Android metadata-refresh crash and approved Beta 25
 
 User approves correction, a regression test, physical verification on the

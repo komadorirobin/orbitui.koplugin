@@ -2,6 +2,26 @@
 
 ## Automated
 
+### Configurable Android apps (unpublished Beta 25 candidate)
+
+`test_android_app_launcher` loads the full actual module, not an extracted
+factory. Twenty-one Lua/LuaJIT cases exercise native widget/menu/JNI boundaries:
+legacy/fresh/custom-page/empty selections, explicit native-store writes only,
+cancel/invalid/manual/duplicate/stale actions, rename and live named-neighbour
+ordering, confirm/remove without uninstall, Settings removal/re-addition with
+retained Developer options target, UTF-8 discovery/sort/dedup, frame/error cleanup,
+bounded discovery/selection, no paint-time query, narrow-width paging and no
+page-turn preference writes. Actual SV/EN catalog lookups cover every new label.
+JNI/primitive widgets are fakes; these are not physical Android picker tests.
+
+Repeat both full suites, all catalogs and sealed/native/package verification.
+Keep all 2,000 installed API-1 paths and previous bootstrap/assets/pins unchanged.
+Physical acceptance remains open while ADB has no connected device: long-press
+the actual module, select a new installed app, cancel/add/rename/reorder/remove,
+verify no uninstall, empty/reset/restart, extra/narrow-layout page arrows and
+the existing Settings icon destination. Do not replace live code under a running
+KOReader or publish while the earlier metadata-result acceptance is unresolved.
+
 ### Beta 25 Android metadata-refresh fix
 
 The user-provided live ADB reproduction on Bigme / KOReader v2026.07.1 proves

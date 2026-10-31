@@ -10988,3 +10988,79 @@ msgstr ""
 #: modules/module_app_launcher.lua
 msgid "Choose where the Settings icon opens on this device. Developer options does not enable debugging or change Android settings."
 msgstr ""
+
+#: modules/module_app_launcher.lua
+msgid "Android apps"
+msgstr ""
+
+msgid "Apps"
+msgstr ""
+
+msgid "Add app…"
+msgstr ""
+
+msgid "Add Android apps…"
+msgstr ""
+
+msgid "Add Android app"
+msgstr ""
+
+msgid "Add by package name…"
+msgstr ""
+
+msgid "Android package name (for example org.mozilla.firefox)"
+msgstr ""
+
+msgid "Enter a valid Android package name."
+msgstr ""
+
+msgid "Android did not provide an app list. You can add an app by package name."
+msgstr ""
+
+msgid "This app is already in the module."
+msgstr ""
+
+msgid "You can add up to %d apps."
+msgstr ""
+
+msgid "No apps selected."
+msgstr ""
+
+msgid "This app is no longer in the module."
+msgstr ""
+
+msgid "Position %d of %d"
+msgstr ""
+
+msgid "App name"
+msgstr ""
+
+msgid "Enter an app name of at most 128 characters."
+msgstr ""
+
+msgid "Move before %s"
+msgstr ""
+
+msgid "Move after %s"
+msgstr ""
+
+msgid "Already first"
+msgstr ""
+
+msgid "Already last"
+msgstr ""
+
+msgid "Remove from module"
+msgstr ""
+
+msgid "Remove %s from this module? The Android app will not be uninstalled."
+msgstr ""
+
+msgid "Choose apps for this device. Tap an app to rename, move or remove it. Removing a shortcut does not uninstall the app."
+msgstr ""
+
+msgid "Opening %s…"
+msgstr ""
+
+msgid "Could not open %s. The app may be unavailable."
+msgstr ""

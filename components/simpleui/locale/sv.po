@@ -9883,3 +9883,79 @@ msgstr "Utvecklaralternativ"
 
 msgid "Choose where the Settings icon opens on this device. Developer options does not enable debugging or change Android settings."
 msgstr "Välj vart Inställningar-ikonen leder på den här enheten. Utvecklaralternativ aktiverar inte felsökning och ändrar inga Android-inställningar."
+
+# OrbitUI: configurable Android launcher (device-local only).
+msgid "Android apps"
+msgstr "Android-appar"
+
+msgid "Apps"
+msgstr "Appar"
+
+msgid "Add app…"
+msgstr "Lägg till app…"
+
+msgid "Add Android apps…"
+msgstr "Lägg till Android-appar…"
+
+msgid "Add Android app"
+msgstr "Lägg till Android-app"
+
+msgid "Add by package name…"
+msgstr "Lägg till med paketnamn…"
+
+msgid "Android package name (for example org.mozilla.firefox)"
+msgstr "Android-paketnamn (till exempel org.mozilla.firefox)"
+
+msgid "Enter a valid Android package name."
+msgstr "Ange ett giltigt Android-paketnamn."
+
+msgid "Android did not provide an app list. You can add an app by package name."
+msgstr "Android kunde inte visa någon applista. Du kan lägga till en app med dess paketnamn."
+
+msgid "This app is already in the module."
+msgstr "Appen finns redan i modulen."
+
+msgid "You can add up to %d apps."
+msgstr "Du kan lägga till upp till %d appar."
+
+msgid "No apps selected."
+msgstr "Inga appar valda."
+
+msgid "This app is no longer in the module."
+msgstr "Appen finns inte längre i modulen."
+
+msgid "Position %d of %d"
+msgstr "Plats %d av %d"
+
+msgid "App name"
+msgstr "Appnamn"
+
+msgid "Enter an app name of at most 128 characters."
+msgstr "Ange ett appnamn med högst 128 tecken."
+
+msgid "Move before %s"
+msgstr "Flytta före %s"
+
+msgid "Move after %s"
+msgstr "Flytta efter %s"
+
+msgid "Already first"
+msgstr "Redan först"
+
+msgid "Already last"
+msgstr "Redan sist"
+
+msgid "Remove from module"
+msgstr "Ta bort från modulen"
+
+msgid "Remove %s from this module? The Android app will not be uninstalled."
+msgstr "Ta bort %s från den här modulen? Android-appen avinstalleras inte."
+
+msgid "Choose apps for this device. Tap an app to rename, move or remove it. Removing a shortcut does not uninstall the app."
+msgstr "Välj appar för den här enheten. Tryck på en app för att byta namn, flytta eller ta bort den. Att ta bort en genväg avinstallerar inte appen."
+
+msgid "Opening %s…"
+msgstr "Öppnar %s…"
+
+msgid "Could not open %s. The app may be unavailable."
+msgstr "Kunde inte öppna %s. Appen kanske inte är tillgänglig."

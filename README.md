@@ -73,6 +73,37 @@ BookOrbit synchronization, MyAnimeList and Patch Manager remain separate
 plugins where used. OrbitUI does not replace them, download your whole server
 library or introduce a new synchronization engine.
 
+### Android apps (Beta 25 candidate, not published yet)
+
+Long-press the **Android apps** module (previously **App Launcher**) and open
+**Apps > Add app…** to choose a launcher app installed on the device. Tap a
+selected app in that list to rename it, move it before/after a named neighbour,
+or remove its shortcut. Removing a shortcut does not uninstall the Android app.
+The numbered list shows the current order; extra apps get page arrows rather
+than being squeezed into one row. Choices are saved locally for this device
+and shared by this module's Home/custom pages. No account or server is needed.
+
+Existing enabled modules retain the six legacy shortcuts until edited. A
+newly enabled module starts empty; tap its **Add Android apps…** placeholder
+to configure it. An explicitly emptied list stays empty after restart. Normal
+SimpleUI module long-press settings still apply. If Android does not expose an
+app in the picker, **Add by package name…** remains available. App discovery
+runs only when you ask to add an app, never during Home painting. The list is
+bounded to 128 selected apps. The separate Settings destination choice stays
+saved even if you remove and re-add the Settings shortcut.
+
+**Svenska:** Långtryck på **Android-appar** (tidigare **App Launcher**) och välj
+**Appar > Lägg till app…**. Tryck på en vald app för att byta namn, flytta den
+före/efter en namngiven granne eller ta bort genvägen. Android-appen avinstalleras
+inte. Numreringen visar ordningen och fler appar får sidpilar. Valen sparas
+lokalt på enheten och delas mellan modulens Hem- och anpassade sidor.
+Befintliga aktiva moduler behåller sina val; nya börjar tomma. Tryck på
+**Lägg till Android-appar…** i en tom modul för att konfigurera den. En tömd
+lista förblir tom efter omstart. Vanliga SimpleUI-inställningar för långtryck
+gäller. **Lägg till med paketnamn…** finns om en app saknas i Androids lista.
+Målet för Inställningar-ikonen behålls även när genvägen tas bort och läggs till
+igen. Funktionen är lokal testkod och finns ännu inte i en publicerad beta.
+
 ### Optional BookOrbit features
 
 **OrbitUI settings > Integrations > BookOrbit** has a master switch and

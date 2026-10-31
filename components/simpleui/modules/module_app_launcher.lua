@@ -4,13 +4,16 @@
 -- Shows a row of tappable app buttons (real app icon + label below).
 -- Tapping a button launches the Android app.
 --
--- Apps are configured in the APPS table below.  Each entry has:
+-- OrbitUI: long-press the module to add, remove, rename and order apps.
+-- The saved list is device-local, shared by this module's Home/custom pages.
+-- Each entry has:
 --   label   — display name shown below the icon
 --   abbr    — 1–3 character fallback shown as the icon if icon fetch fails
 --   package — Android package name
 --   action  — (optional) explicit intent action to use instead of getLaunchIntentForPackage
 --
--- To add or remove apps, edit the APPS table and restart KOReader.
+-- The old hard-coded list is retained only for already-configured modules.
+-- Newly enabled modules start empty. No app discovery occurs during painting.
 
 local Blitbuffer      = require("ffi/blitbuffer")
 local CenterContainer = require("ui/widget/container/centercontainer")
@@ -33,6 +36,8 @@ local Screen          = Device.screen
 
 local UI     = require("infra/sui_core")
 local Config = require("infra/sui_config")
+local SUISettings = require("infra/sui_store")
+local _ = require("infra/sui_i18n").translate
 
 local PAD = UI.PAD
 
@@ -247,10 +252,10 @@ local function _getIconPath(pkg, sz)
 end
 
 -- ---------------------------------------------------------------------------
--- App list — edit here to add / remove / reorder apps
+-- Legacy list — keep existing users' choices until they edit the module.
 -- ---------------------------------------------------------------------------
 
-local APPS = {
+local LEGACY_APPS = {
     { label = "Firefox",       abbr = "FF",  package = "org.mozilla.firefox"            },
     { label = "AirDroid",      abbr = "AD",  package = "com.sand.airdroid"              },
     { label = "Tailscale",     abbr = "TS",  package = "com.tailscale.ipn"              },
@@ -258,6 +263,266 @@ local APPS = {
     { label = "Play Butik",    abbr = "▶",   package = "com.android.vending"            },
     { label = "Files",         abbr = "📁",  package = "com.google.android.apps.nbu.files" },
 }
+
+local APPS_KEY = "simpleui_app_launcher_apps_v1"
+local MAX_APPS = 128
+local pages = {} -- transient page positions, never persisted on a page turn
+
+local function validPackage(pkg)
+    return type(pkg) == "string" and #pkg <= 255
+        and pkg:match("^[%a_][%w_]*%.[%w_%.]+$") ~= nil
+        and not pkg:find("..", 1, true) and pkg:sub(-1) ~= "."
+end
+
+local function appName(text)
+    if type(text) ~= "string" or #text > 512 then return nil end
+    local _, chars = text:gsub("[^\128-\191]", "")
+    if chars > 128 then return nil end
+    text = text:gsub("[%z\1-\31\127]", " "):gsub("^%s*(.-)%s*$", "%1")
+    return text ~= "" and text or nil
+end
+
+local function getApps()
+    local saved = SUISettings:readSetting(APPS_KEY)
+    if saved == nil then saved = LEGACY_APPS end
+    local apps, seen = {}, {}
+    for _, app in ipairs(type(saved) == "table" and saved or {}) do
+        if type(app) == "table" and validPackage(app.package) and not seen[app.package] then
+            seen[app.package] = true
+            local action = type(app.action) == "string" and app.action:match("^[%w_%.]+$") and app.action or nil
+            apps[#apps + 1] = { package = app.package, label = appName(app.label) or app.package,
+                abbr = appName(app.abbr) or app.package:match("([%w_]+)$"):sub(1, 2):upper(),
+                action = action }
+            if #apps == MAX_APPS then break end
+        end
+    end
+    return apps
+end
+
+local function saveApps(apps)
+    SUISettings:saveSetting(APPS_KEY, apps) -- native store flushes this explicit edit
+end
+
+local function findApp(apps, pkg)
+    for i, app in ipairs(apps) do if app.package == pkg then return i end end
+end
+
+-- Only called from Add app, not module load/build/menu construction. Query
+-- public launcher activities, not private components or background services.
+-- Android may filter this list; manual package entry remains available.
+local function installedApps()
+    local ok, result = pcall(function()
+        local android, ffi = require("android"), require("ffi")
+        local vm = android.app.activity.vm
+        local out = ffi.new("JNIEnv*[1]")
+        assert(vm[0].AttachCurrentThread(vm, out, nil) == 0, "attach")
+        local env = out[0]
+        local j = env[0]
+        local function check()
+            if j.ExceptionCheck(env) ~= 0 then j.ExceptionClear(env); error("Java app query failed") end
+        end
+        local frame = j.PushLocalFrame(env, 48); check()
+        assert(frame == 0, "local frame")
+        local inner = false
+        local worked, apps = pcall(function()
+            local function method(class, name, sig)
+                assert(class ~= nil, "class")
+                local id = j.GetMethodID(env, class, name, sig); check(); return assert(id, name)
+            end
+            local function classOf(obj)
+                assert(obj ~= nil, "object")
+                local class = j.GetObjectClass(env, obj); check(); return assert(class, "object class")
+            end
+            local function findClass(name)
+                local class = j.FindClass(env, name); check(); return assert(class, name)
+            end
+            local function args(...)
+                local values = { ... }
+                local a = ffi.new("jvalue[" .. #values .. "]")
+                for i, v in ipairs(values) do
+                    if type(v) == "number" then a[i - 1].i = v else a[i - 1].l = v end
+                end
+                return a
+            end
+            local function call(obj, id, a)
+                local value = j.CallObjectMethodA(env, obj, id, a); check(); return value
+            end
+            local activity = android.app.activity.clazz
+            assert(ffi.cast("uintptr_t", ffi.cast("void*", activity)) ~= 0, "activity")
+            local pm = assert(call(activity, method(classOf(activity), "getPackageManager",
+                "()Landroid/content/pm/PackageManager;"), nil), "package manager")
+            local ic = findClass("android/content/Intent")
+            local intent = j.NewObjectA(env, ic, method(ic, "<init>", "(Ljava/lang/String;)V"),
+                args(j.NewStringUTF(env, "android.intent.action.MAIN"))); check(); assert(intent ~= nil, "intent")
+            call(intent, method(ic, "addCategory", "(Ljava/lang/String;)Landroid/content/Intent;"),
+                args(j.NewStringUTF(env, "android.intent.category.LAUNCHER")))
+            local list = assert(call(pm, method(classOf(pm), "queryIntentActivities",
+                "(Landroid/content/Intent;I)Ljava/util/List;"), args(intent, 0)), "launcher list")
+            local lc = findClass("java/util/List")
+            local size = j.CallIntMethodA(env, list, method(lc, "size", "()I"), nil); check()
+            assert(size >= 0 and size <= 2048, "launcher list too large")
+            local get = method(lc, "get", "(I)Ljava/lang/Object;")
+            local rc = findClass("android/content/pm/ResolveInfo")
+            local ac = findClass("android/content/pm/ActivityInfo")
+            local info_field = j.GetFieldID(env, rc, "activityInfo", "Landroid/content/pm/ActivityInfo;"); check()
+            local pkg_field = j.GetFieldID(env, ac, "packageName", "Ljava/lang/String;"); check()
+            assert(info_field and pkg_field, "activity fields")
+            local label_method = method(rc, "loadLabel", "(Landroid/content/pm/PackageManager;)Ljava/lang/CharSequence;")
+            local sc = findClass("java/lang/String")
+            local bytes_method = method(sc, "getBytes", "(Ljava/lang/String;)[B")
+            local encoding = j.NewStringUTF(env, "UTF-8")
+            local function text(obj)
+                if obj == nil then return nil end
+                local str = assert(call(obj, method(classOf(obj), "toString", "()Ljava/lang/String;"), nil), "label string")
+                local bytes = assert(call(str, bytes_method, args(encoding)), "label bytes")
+                local n = j.GetArrayLength(env, bytes); check()
+                assert(n >= 0 and n <= 4096, "label too large")
+                local buf = ffi.new("int8_t[?]", math.max(1, n))
+                j.GetByteArrayRegion(env, bytes, 0, n, buf); check()
+                return ffi.string(buf, n)
+            end
+            local found, seen = {}, {}
+            for i = 0, size - 1 do
+                assert(j.PushLocalFrame(env, 24) == 0, "item frame"); inner = true
+                local ri = call(list, get, args(i))
+                local ai = ri ~= nil and j.GetObjectField(env, ri, info_field) or nil; check()
+                local pkg = ai ~= nil and text(j.GetObjectField(env, ai, pkg_field)) or nil; check()
+                if validPackage(pkg) and not seen[pkg] then
+                    seen[pkg] = true
+                    local label = appName(text(call(ri, label_method, args(pm)))) or pkg
+                    found[#found + 1] = { package = pkg, label = label }
+                end
+                j.PopLocalFrame(env, nil); inner = false
+            end
+            table.sort(found, function(a, b)
+                local left, right = a.label:lower(), b.label:lower()
+                return left == right and a.package < b.package or left < right
+            end)
+            return found
+        end)
+        if j.ExceptionCheck(env) ~= 0 then j.ExceptionClear(env) end
+        if inner then j.PopLocalFrame(env, nil) end
+        j.PopLocalFrame(env, nil)
+        if not worked then error(apps) end
+        return apps
+    end)
+    if ok then return result end
+    logger.warn("OrbitUI: Android app list unavailable") -- never log the installed-app inventory
+    return nil
+end
+
+local function notify(text)
+    UIManager:show(InfoMessage:new{ text = text, timeout = 4 })
+end
+
+local function addApp(app, refresh)
+    local apps = getApps()
+    if findApp(apps, app.package) then notify(_("This app is already in the module.")); return false end
+    if #apps >= MAX_APPS then notify(string.format(_("You can add up to %d apps."), MAX_APPS)); return false end
+    apps[#apps + 1] = { package = app.package, label = appName(app.label) or app.package,
+        action = app.package == "com.android.settings" and "android.settings.SETTINGS" or nil }
+    _icon_mem_cache[app.package] = nil
+    saveApps(apps); refresh()
+    return true
+end
+
+local function input(title, initial, apply)
+    local dialog
+    dialog = require("ui/widget/inputdialog"):new{
+        title = title, input = initial or "",
+        buttons = {{
+            { text = _("Cancel"), id = "close", callback = function() UIManager:close(dialog) end },
+            { text = _("Save"), is_enter_default = true, callback = function()
+                if apply(dialog:getInputText()) then UIManager:close(dialog) end
+            end },
+        }},
+    }
+    UIManager:show(dialog); dialog:onShowKeyboard()
+end
+
+local function showAppPicker(refresh)
+    local apps = Device:isAndroid() and installedApps() or nil
+    local picker
+    local rows = {{ text = _("Add by package name…"), callback = function()
+        input(_("Android package name (for example org.mozilla.firefox)"), "", function(pkg)
+            pkg = type(pkg) == "string" and pkg:match("^%s*(.-)%s*$") or nil
+            if not validPackage(pkg) then notify(_("Enter a valid Android package name.")); return false end
+            if not addApp({ package = pkg, label = pkg }, refresh) then return false end
+            UIManager:close(picker)
+            return true
+        end)
+    end }}
+    if not apps or #apps == 0 then
+        rows[#rows + 1] = { text = _("Android did not provide an app list. You can add an app by package name."),
+            enabled = false, select_enabled = false, dim = true }
+    end
+    local selected = getApps()
+    for _, app in ipairs(apps or {}) do
+        local entry = app
+        local available = findApp(selected, entry.package) == nil
+        rows[#rows + 1] = {
+            text = entry.label .. "  (" .. entry.package .. ")",
+            enabled = available, select_enabled = available, dim = not available,
+            callback = function()
+                if addApp(entry, refresh) then UIManager:close(picker) end
+            end,
+        }
+    end
+    picker = require("ui/widget/menu"):new{ title = _("Add Android app"), item_table = rows,
+        covers_fullscreen = true }
+    UIManager:show(picker)
+end
+
+local function appItems(pkg, refresh)
+    local apps = getApps()
+    local i = findApp(apps, pkg)
+    if not i then return {{ text = _("This app is no longer in the module."), enabled = false }} end
+    local function move(delta)
+        local current = getApps()
+        local index = findApp(current, pkg)
+        if not index or not current[index + delta] then return end
+        current[index], current[index + delta] = current[index + delta], current[index]
+        saveApps(current); refresh()
+    end
+    return {
+        { text = string.format(_("Position %d of %d"), i, #apps), enabled = false },
+        { text = _("Rename"), keep_menu_open = true, callback = function()
+            input(_("App name"), apps[i].label, function(label)
+                label = appName(label)
+                if not label then notify(_("Enter an app name of at most 128 characters.")); return false end
+                local current = getApps(); local index = findApp(current, pkg)
+                if index then current[index].label = label; saveApps(current); refresh() end
+                return true
+            end)
+        end },
+        { text = i > 1 and string.format(_("Move before %s"), apps[i - 1].label) or _("Already first"),
+            enabled = i > 1, keep_menu_open = true, callback = function() move(-1) end },
+        { text = i < #apps and string.format(_("Move after %s"), apps[i + 1].label) or _("Already last"),
+            enabled = i < #apps, keep_menu_open = true, callback = function() move(1) end },
+        { text = _("Remove from module"), keep_menu_open = true, callback = function()
+            UIManager:show(require("ui/widget/confirmbox"):new{
+                text = string.format(_("Remove %s from this module? The Android app will not be uninstalled."), apps[i].label),
+                ok_text = _("Remove"), ok_callback = function()
+                    local current = getApps(); local index = findApp(current, pkg)
+                    if index then table.remove(current, index); saveApps(current); refresh() end
+                end,
+            })
+        end },
+    }
+end
+
+local function appsMenu(refresh)
+    local items = {{ text = _("Add app…"), keep_menu_open = true, callback = function() showAppPicker(refresh) end }}
+    local apps = getApps()
+    if #apps == 0 then items[#items + 1] = { text = _("No apps selected."), enabled = false } end
+    for i, app in ipairs(apps) do
+        local pkg = app.package
+        items[#items + 1] = { text = string.format("%d. %s", i, app.label),
+            value_func = function() return "" end, -- do not eagerly build every app's submenu
+            sub_item_table_func = function() return appItems(pkg, refresh) end }
+    end
+    return items
+end
 
 -- OrbitUI: an explicit device-local choice, not a change to every Android's
 -- Settings button. Some vendor Settings homepages crash entering wireless ADB;
@@ -302,6 +567,22 @@ local function _getDims(scale)
     }
 end
 
+local function layout(w, d)
+    local inner = math.max(1, w - PAD * 2)
+    -- Even a narrow bento cell must fit a whole icon, never negative gaps.
+    if d.frame_sz > inner then
+        local factor = inner / d.frame_sz
+        local fitted = {}
+        for k, v in pairs(d) do fitted[k] = math.max(1, math.floor(v * factor)) end
+        d = fitted
+    end
+    return math.max(1, math.min(6, math.floor(inner / d.frame_sz))), d
+end
+
+local function pagerHeight(d)
+    return Screen:scaleBySize(8) + math.max(d.lbl_h, Screen:scaleBySize(36))
+end
+
 -- ---------------------------------------------------------------------------
 -- Launch helper — JNI approach: PackageManager.getLaunchIntentForPackage
 -- ---------------------------------------------------------------------------
@@ -317,7 +598,7 @@ local function _launchApp(pkg, label, action)
 
     -- Feedback toast — visible immediately so the user knows the tap fired.
     UIManager:show(InfoMessage:new{
-        text    = "Starting " .. label .. "…",
+        text    = string.format(_("Opening %s…"), label),
         timeout = 1.5,
     })
 
@@ -515,15 +796,40 @@ local function _launchApp(pkg, label, action)
     end
 
     logger.warn("module_app_launcher: all launch strategies failed for " .. pkg)
+    notify(string.format(_("Could not open %s. The app may be unavailable."), label))
 end
 
 -- ---------------------------------------------------------------------------
 -- Widget builder
 -- ---------------------------------------------------------------------------
 
-local function _buildWidget(w, d)
-    local n = #APPS
-    if n == 0 then return nil end
+local function _buildWidget(w, d, ctx)
+    local apps = getApps()
+    local capacity
+    capacity, d = layout(w, d)
+    local total = math.max(1, math.ceil(#apps / capacity))
+    local page_key = ctx.pfx
+    local page = math.max(1, math.min(pages[page_key] or 1, total))
+    local first = (page - 1) * capacity + 1
+    local n = math.min(capacity, #apps - first + 1)
+    if #apps == 0 then
+        -- An empty selection remains a real, holdable module. Tapping is also
+        -- an escape hatch when settings-on-hold is disabled on this screen.
+        local empty = InputContainer:new{
+            dimen = Geom:new{ w = w, h = d.frame_sz + d.lbl_sp + d.lbl_h },
+            CenterContainer:new{
+                dimen = Geom:new{ w = w, h = d.frame_sz + d.lbl_sp + d.lbl_h },
+                TextWidget:new{ text = _("Add Android apps…"), face = Font:getFace("cfont", d.lbl_fs),
+                    max_width = math.max(1, w - PAD * 2) },
+            },
+        }
+        empty.ges_events = { TapApp = { GestureRange:new{ ges = "tap", range = function() return empty.dimen end } } }
+        function empty:onTapApp()
+            if ctx.open_settings_fn then ctx.open_settings_fn("app_launcher") end
+            return true
+        end
+        return empty
+    end
 
     local inner_w = w - PAD * 2
     local gap = n <= 1 and 0
@@ -531,7 +837,8 @@ local function _buildWidget(w, d)
 
     local row = HorizontalGroup:new{ align = "top" }
 
-    for i, app in ipairs(APPS) do
+    for i = 1, n do
+        local app = apps[first + i - 1]
         -- Try to get a real app icon; fall back to abbreviation text
         local icon_path = _getIconPath(app.package, d.icon_sz)
 
@@ -576,7 +883,7 @@ local function _buildWidget(w, d)
                 text    = app.label,
                 face    = Font:getFace("cfont", d.lbl_fs),
                 fgcolor = _CLR_TEXT,
-                width   = d.frame_sz,
+                max_width = d.frame_sz,
             },
         }
 
@@ -612,11 +919,30 @@ local function _buildWidget(w, d)
         row[#row + 1] = tappable
     end
 
+    local content = row
+    if total > 1 then
+        local PageNav = require("engines/sui_page_nav")
+        local h = pagerHeight(d) - Screen:scaleBySize(8)
+        content = VerticalGroup:new{
+            align = "left", row,
+            VerticalSpan:new{ width = Screen:scaleBySize(8) },
+            CenterContainer:new{
+                dimen = Geom:new{ w = w - PAD * 2, h = h },
+                PageNav.buildPager(page, total, h,
+                    TextWidget:new{ text = string.format("%d / %d", page, total),
+                        face = Font:getFace("cfont", d.lbl_fs) }, Screen:scaleBySize(12),
+                    function(delta)
+                        pages[page_key] = math.max(1, math.min(page + delta, total))
+                        if ctx.refresh_fn then ctx.refresh_fn() end
+                    end),
+            },
+        }
+    end
     return FrameContainer:new{
         bordersize   = 0,
         padding      = 0,
         padding_left = PAD,
-        row,
+        content,
     }
 end
 
@@ -627,7 +953,7 @@ end
 local M = {}
 
 M.id         = "app_launcher"
-M.name       = "App Launcher"
+M.name       = _("Android apps")
 M.label      = nil
 M.default_on = false
 
@@ -636,18 +962,30 @@ function M.isEnabled(pfx)
 end
 
 function M.setEnabled(pfx, on)
+    if on and SUISettings:readSetting(APPS_KEY) == nil then
+        -- Do not introduce Robin's personal defaults on a new installation.
+        -- Already-enabled legacy modules (including custom pages) keep them.
+        local legacy = false
+        for key, value in pairs(G_reader_settings.data or {}) do
+            if type(key) == "string" and key:match("app_launcher_enabled$") and value == true then
+                legacy = true; break
+            end
+        end
+        if not legacy then saveApps({}) end
+    end
     G_reader_settings:saveSetting(pfx .. "app_launcher_enabled", on)
 end
 
 function M.build(w, ctx)
     if not M.isEnabled(ctx.pfx) then return nil end
     local d = _getDims(Config.getModuleScale(M.id, ctx.pfx))
-    return _buildWidget(w, d)
+    return _buildWidget(w, d, ctx)
 end
 
 function M.getHeight(ctx)
-    local d = _getDims(Config.getModuleScale(M.id, ctx.pfx))
-    return d.frame_sz + d.lbl_sp + d.lbl_h
+    local capacity, d = layout(ctx.col_w or ctx.inner_w or Screen:getWidth(),
+        _getDims(Config.getModuleScale(M.id, ctx.pfx)))
+    return d.frame_sz + d.lbl_sp + d.lbl_h + (#getApps() > capacity and pagerHeight(d) or 0)
 end
 
 function M.getMenuItems(ctx_menu)
@@ -674,7 +1012,14 @@ function M.getMenuItems(ctx_menu)
     end
     return {
         {
+            text = _lc("Apps"),
+            value_func = function() return tostring(#getApps()) end,
+            help_text = _lc("Choose apps for this device. Tap an app to rename, move or remove it. Removing a shortcut does not uninstall the app."),
+            sub_item_table_func = function() return appsMenu(refresh) end,
+        },
+        {
             text = _lc("Settings shortcut"),
+            enabled_func = function() return findApp(getApps(), "com.android.settings") ~= nil end,
             value_func = function()
                 return _lc(_settingsTarget() == "developer" and "Developer options" or "Android settings")
             end,

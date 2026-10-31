@@ -42,6 +42,24 @@ inställningsstartsida hos tillverkaren. Inga Android-inställningar eller
 behörigheter ändras och felsökning aktiveras inte. Från Utvecklaralternativ
 öppnar du själv Trådlös felsökning. Ikonen och de andra appknapparna behålls.
 
+The unpublished Beta 25 candidate additionally makes **Android apps**
+(previously App Launcher) configurable through long-press > **Apps**. Add a
+device launcher app, rename, move before/after a named neighbour, or confirm
+removal of its shortcut without uninstalling it. Extra apps receive responsive
+page arrows; an empty module remains configurable. Existing enabled modules
+keep their choices; newly enabled ones start empty, not with personal defaults.
+Only explicit edits save the device-local list. Discovery runs on Add app only;
+manual package-name entry is available if Android filters/fails the query.
+Removing/re-adding Settings does not reset its destination choice.
+
+Svenska: Den ännu opublicerade testversionen låter dig långtrycka på
+**Android-appar > Appar** för att lägga till, byta namn, flytta och ta bort
+genvägar. Flyttvalen namnger grannen och visar platsen direkt. Att ta bort en
+genväg avinstallerar inte Android-appen. Fler appar får sidpilar och en tom
+modul går fortfarande att konfigurera. Befintliga aktiva moduler behåller
+sina val; nya börjar tomma. Applistan och Inställningar-målet sparas lokalt.
+Den nya apphanteringen är ännu inte enhetstestad eller publicerad.
+
 All Beta 24 Bookshelf 6.1/SimpleUI changes remain. No new upstream import,
 bootstrap/API-1 or installed-path change, settings migration, resource removal,
 external patch or BookOrbit/Hardcover synchronization change. Previous public

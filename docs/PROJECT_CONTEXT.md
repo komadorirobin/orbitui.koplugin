@@ -22,6 +22,32 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-31
 
+- User additionally requests personal app selection through module long-press.
+  Work stays on `fix/android-metadata-beta25-20261031` from clean `d1798813`;
+  no new upstream merge, release authorization or device preference change.
+  Existing custom App Launcher becomes Android apps / Android-appar (stable
+  `app_launcher` ID). Native module hold/settings ownership is reused. Apps
+  supports explicit launcher discovery, manual package fallback, rename,
+  stable-package remove/confirm and named-neighbour ordering with live numbers.
+  The saved list belongs to SUISettings, key
+  `simpleui_app_launcher_apps_v1`, device-local/shared across its Home pages;
+  read/paint never migrates or writes it. An already-enabled legacy module
+  retains its old six choices. First explicit enable of a genuinely new module
+  writes an empty list; a deliberately emptied selection never resurrects
+  defaults. The earlier Settings-destination key remains unchanged in its
+  original store and survives Settings removal/re-addition. Responsive bounded
+  single-row pages fit narrow bento cells and more than six apps; page turns
+  are memory-only and fetch icons only for visible items. Query only public
+  launcher activities on Add app, with JNI frame/exception cleanup and UTF-8
+  labels; do not enumerate while painting, grant permissions, install/uninstall
+  packages, call a server or log the inventory. All new wording is SV/EN.
+  No new API-1 installed paths, bootstrap, assets or external patch changes.
+  Twenty-one real module/menu/widget/JNI-boundary tests pass both interpreters;
+  full/catalog/sealed/package evidence follows in MERGE_LOG/TESTING. ADB now
+  lists no device: this new app-management build is LOCAL, not installed on
+  Bigme. The earlier shortcut-only candidate remains its last tested runtime;
+  physical long-press/picker/add/remove/reorder/paging acceptance is still open.
+
 - User approves the Android metadata-refresh fix, regression coverage, testing
   on the connected Bigme and Beta 25 publication. Start clean at `60c57efc` on
   `fix/android-metadata-beta25-20261031`. A direct ADB capture proves
@@ -45,7 +71,7 @@ and correct this file in the same change.
   retain its Settings icon and the other five launch targets. Supersede the
   unbooted metadata-only test slot, keeping known-working Beta 24 as rollback.
   Do not publish before the physical metadata test; no Beta 25 is public yet.
-  Final local candidate is `2fdd1e97006208d1c28566096bea9a859e590b9f`, ZIP
+  Earlier shortcut-only test candidate is `2fdd1e97006208d1c28566096bea9a859e590b9f`, ZIP
   SHA-256 `3115c35d49175230f46b5f96a155bb4296109c227118210b1b3e9daefc485f46`.
   Both full gates, 43 catalogs, sealed/native/OTA and exact source/history/
   secret audits pass. It is installed on the connected Bigme, bootstrap pending
