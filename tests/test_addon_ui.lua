@@ -38,6 +38,7 @@ local sw = { isOff = function() return false end, isPackOff = function(pack) ret
 package.loaded["lib/bookshelf_theme_pack"] = { switches = function() return sw end,
     invalidate = function() end, forgetChoice = function() end }
 local orn = { roots = function() return { "/native" } end, dir = function() return "/native" end,
+    allowRecent = function() end,
     invalidate = function() end, list = function() return data end, listFor = function() return data end,
     listAll = function() return data, { "Manga", "Manga II", "Manga III", "Own" } end }
 package.loaded["lib/bookshelf_ornaments"] = orn

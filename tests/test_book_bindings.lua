@@ -157,13 +157,20 @@ H.test("embedded chip editor leaves all binding choices with the host menu", fun
     H.eq(editor.book_binding_external,true); H.eq(editor.series_boxes_external,true)
     local f=assert(io.open("components/bookshelf/lib/bookshelf_chip_editor.lua"))
     local src=f:read("*a"); f:close()
-    local body=assert(src:match('if show_spines then\n(.-)\n%s*%-%- The spine view'))
-    local env=setmetatable({self=editor, draft={}}, {__index=_G})
-    local code="local rows={}\n"..body.."\nreturn rows"
+    local body=assert(src:match('local function spinesBlocks%(pick, add%)\n(.-)\n    end\n'))
+    local env=setmetatable({self=editor, draft={}, _=function(s) return s end,
+        Editor={}, pick=function(fn) return fn end, stepper=function(_,label) return {label=label} end,
+        onOff=function(_,label) return {label=label} end, authorOn=function() return true end,
+        ornamentStop=function() return {{0,"None"}},1 end}, {__index=_G})
+    local code="local rows={}\nlocal function add(b) rows[#rows+1]=b end\n"..body.."\nreturn rows"
     local fn
     if setfenv then fn=assert(loadstring(code)); setfenv(fn,env)
     else fn=assert(load(code,"embedded binding controls","t",env)) end
-    H.eq(#fn(),0)
+    local controls=fn()
+    assert(#controls>0)
+    for _,b in ipairs(controls) do
+        assert(b.label~="Book binding" and b.label~="Series boxes", "duplicate native binding control")
+    end
 end)
 
 local dpi, night = 1, false

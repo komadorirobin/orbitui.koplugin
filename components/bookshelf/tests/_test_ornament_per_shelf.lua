@@ -131,16 +131,9 @@ t.test("the row sits in the spine block", function()
 end)
 
 local function dial(owner, draft)
-    local definitions = assert(editor:match("(local ORN_STOPS = {.-)\n            rows%[#rows %+ 1%] ="))
-    local row = assert(editor:match('({ text_func = function%(%)%s+return _%("Ornaments"%).-\n                  end })'))
-    local picked = 0
-    local env = { self = owner, draft = draft, Orn = { FREQ_DEFAULT = 1 },
-        math = math, ipairs = ipairs, _ = function(s) return s end,
-        pick = function(change)
-            return function() change(); picked = picked + 1 end
-        end }
-    return assert(load(definitions .. "\nreturn " .. row, "ornament-dial", "t", env))(),
-        function() return picked end
+    draft.view_mode="spines"
+    local page=dofile("tests/_editor_view_fixture.lua")(owner,draft)
+    return page.control("Ornaments"), page.applied
 end
 
 t.test("the pin reaches the shelf behind as it is picked, like the other spine pins", function()
@@ -156,15 +149,15 @@ t.test("a host override is read-only and preserves the saved frequency when remo
     local owner, draft = { ornament_frequency_override = 0 }, { ornament_frequency = 2 }
     local row, picked = dial(owner, draft)
     eq(row.enabled, false)
-    eq(row.text_func(), "Ornaments: None")
-    row.callback()
+    eq(row.items[row.active].label, "None")
+    row.on_pick(2)
     eq(picked(), 0)
     eq(draft.ornament_frequency, 2)
     owner.ornament_frequency_override = nil
     row, picked = dial(owner, draft)
     eq(row.enabled, true)
-    eq(row.text_func(), "Ornaments: Always")
-    row.callback()
+    eq(row.items[row.active].label, "Always")
+    row.on_pick(1)
     eq(draft.ornament_frequency, 0)
     eq(picked(), 1)
 end)

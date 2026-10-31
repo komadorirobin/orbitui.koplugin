@@ -93,7 +93,7 @@ local function save(k, v)
     local s = store(); if not s then return end
     -- Deferred with the ornaments while the browser is open (Orn.beginDeferred).
     local O = M._orn or package.loaded["lib/bookshelf_ornaments"]
-    if O and O._defer and s.saveDeferred then s.saveDeferred(k, v) return end
+    if type(O) == "table" and O._defer and s.saveDeferred then s.saveDeferred(k, v) return end
     s.save(k, v); if s.flush then pcall(s.flush) end
 end
 local function fs() return M._lfs or require("libs/libkoreader-lfs") end

@@ -2,6 +2,30 @@
 
 ## Automated
 
+### October 31 Bookshelf 6.1 reviewed merge (not a release)
+
+Targets: Bookshelf `7ff93b9d`, SimpleUI `fdf83c7d`; VERSION stays Beta 23.
+`test_bookshelf61_merge` checks all 20 exact embedded helpers, module identities,
+real scaled-font/bold-clone callbacks, default no-hook behavior and new SV/EN
+labels. Adapt prior editor tests to the actual page model, not old row shapes:
+legacy unset views, OPDS restrictions, all-cover read-only settings, caption/
+binding ownership, cover-size clamping and ornament overrides. Complete native
+Tags, LibraryModal, icon picker and keyboard-first-focus tests retain real
+owners over the existing font/widget boundary. Native disk-cache tests cover
+independent budgets, free-space caps, last-use recency, orphan preference,
+bounded cancellation, failed deletion/write accounting and exact session tally.
+Use `TMPDIR=/tmp` locally for upstream's fixed 400-byte cache fixtures: macOS's
+long per-user temp prefix can itself make one fixture exceed the 85% target.
+Do not change production budgets or weaken assertions to accommodate it.
+
+Run both full interpreters, all 43 catalogs, exact source/path/held-art/secret
+audits, sealed all-root and native EPUB/input/RGB/grey/CBB owners, and an older
+native API-1 upgrade/recovery/rollback. Development ZIPs never replace Beta 23.
+Physical Bigme/Boox acceptance: new popup tabs/status/Tags, all menu close/back
+paths, profile/chip edits and live reorder, font scaling, night/day and rotation,
+reader return, folder/MAL actions, cache reuse after restart and low-space
+behavior. No device speedup or visual correctness is inferred from headless tests.
+
 ### Beta 23 publication
 
 The BookOrbit controls are public in `v0.1.0-beta.23`, exact candidate

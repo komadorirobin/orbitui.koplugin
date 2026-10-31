@@ -22,6 +22,23 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-31
 
+- A user-requested merge-only maintenance pass integrates Bookshelf **6.1.0**
+  at `7ff93b9d8fb11194701440bcafd366002745cb01` (255 commits) and SimpleUI at
+  `fdf83c7da73e6fa82c4ad02efa84a0dad3733541` (two font/compatibility follow-ups).
+  Work starts clean at `0561e2ba` on `maintenance/upstream-bookshelf61-20261031`.
+  Verified merges include an audited main push, NOT a new release. Public
+  Beta 23 stays immutable; VERSION, bootstrap/API 1 and all 2,000 installed
+  paths stay unchanged. Seven new Bookshelf helpers join the existing 13 exact
+  lazy embedded sources in the generated map (403 module identities).
+  New page-based editor/popup controls retain profile-specific settings,
+  bindings, all-cover shelves, cover scale/captions, BookOrbit Tags/details,
+  MAL/folder actions, night/Android safety and external patch ownership.
+  Separate cover/ornament disk budgets and use-based recency retain our
+  cancellable bounded maintenance rather than a synchronous full sweep.
+  New native UI has SV/EN host translations. Full/sealed/native verification
+  and final push evidence belong to the latest MERGE_LOG entry. Physical
+  Bigme/Boox popup/editor/navigation and cache acceptance remain open.
+
 - User explicitly approves pushing the remaining BookOrbit controls and a new
   beta ("Kör" after the unpublished-code status). Beta 23 is now public at
   exact candidate/annotated tag `51f63ed9f632effadc19c6c7575435032237d457` /
@@ -660,14 +677,16 @@ and correct this file in the same change.
   `fix/home-first-run-20261025`.
   Future user-requested verified merges include an audited push to `origin/main`;
   a new release still requires a separate explicit request.
-- Embedded Bookshelf Git in main: `ee84a8fe1621171c00df91c41dee76b9ed07028c`
-  (issue-form follow-ups only). Public Beta 15/16 retains
+- Reviewed Bookshelf maintenance pin: `7ff93b9d8fb11194701440bcafd366002745cb01`
+  (6.1.0; see latest merge-only entry). Public Beta 23 remains `ee84a8fe`.
+  Public Beta 15/16 retains
   `d07905ba932e09044827aadf480c188a5d324b96` (6.0.4). Public Beta 14 retains
   `c37580a1ca5040d2423e45b9bdd429776117f3c1` (6.0.3).
   Public Beta 10 keeps `5f726c25` / merge `0db81b46` unchanged.
   Prior 6.0.0 integration `fc1103a3` / `48438837` is retained in ancestry.
-- Embedded SimpleUI Git in main: `5631ce1035286803d7586979c75993671ff022cb`
-  (3.0.2 plus reviewed follow-ups, unchanged in Beta 22). Public Beta 15/16 retains
+- Reviewed SimpleUI maintenance pin: `fdf83c7da73e6fa82c4ad02efa84a0dad3733541`
+  (3.0.2 plus font/compatibility follow-ups). Public Beta 23 remains `5631ce10`.
+  Public Beta 15/16 retains
   `22d5a3d2dd7be4651e718eb49027d82f68b3ace7`. Beta 14 keeps
   `e5cd6dcb31fa759b9831223d4719f61126367cff` (3.0.1 runtime), twelve commits
   after `b1580f90b2e17cf03a66c744c323a1df66d77100` retained in Beta 13.

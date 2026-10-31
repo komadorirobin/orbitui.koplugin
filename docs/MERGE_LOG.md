@@ -4,6 +4,72 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-10-31 — requested Bookshelf 6.1 upstream merge (no release)
+
+User: "Merga upstream. Bookshelf har fått en lite större uppdatering".
+Start clean at `0561e2ba` on `maintenance/upstream-bookshelf61-20261031`.
+Standing authorization includes pushing the verified merge to origin/main,
+not changing VERSION, tags, releases or OTA. Public Beta 23 remains immutable.
+Original import provenance and all C01–C11 contracts remain authoritative.
+
+Exact targets: Bookshelf master **`7ff93b9d8fb11194701440bcafd366002745cb01`**,
+6.1.0, 255 commits after `ee84a8fe`; SimpleUI main
+**`fdf83c7da73e6fa82c4ad02efa84a0dad3733541`**, two commits after `5631ce10`.
+Unsquashed subtree imports: `35a1ee07` / `22c2b717`; source pins advance only
+to these reviewed revisions. No inspiration baseline is advanced or imported.
+
+Bookshelf replaces many dialogs with a shared popup kit, rounded action cards,
+segmented choices, pressed feedback and keyboard focus revealed on first key.
+The short shelf editor opens source/view/sort/filter/theme/module/order pages,
+with breadcrumbs, staged filter Apply and coalesced live previews. Filters gain
+genre AND/NOT and excluded collections; themes sort by name/newest/last use.
+Book popup header/cover cache reuse, editable action layout, the Tags edit strip
+and opt-in review spoilers are imported. Source catalog/home improvements and
+module shelf context/self-sized blocks remain native. SimpleUI fixes unscaled
+orig_size in cached bold clones; its added incompatible-patch name does not
+override OrbitUI's read-only compatibility policy.
+
+Deliberate host adaptations:
+
+- Port all-cover orientation, per-chip 50–150% cover size, external binding/
+  series-box/caption ownership and minimal-preset ornament override onto the
+  new page model. Preserve saved pins and unset legacy cover/list behavior;
+  visiting settings never silently converts a profile. OPDS stays cover/list.
+- Keep profile-scoped shelf settings, footer geometry and long-press sorting;
+  retain the new search-only view resolver. BookOrbit EPUB/online sections stay
+  in Tags, ahead of native author/series/collection/genre/folder sections, with
+  explicit requests, focus, font/scroll geometry and original lifecycle guards.
+  Technical details remain lazy and the shared header stays minimal. Port
+  folder completion/MAL/plugin actions into option cards, retaining enabled
+  state and deferred callbacks, and avoid duplicate native binding controls.
+- Adopt separate 96 MiB cover / 24 MiB ornament disk caps, free-space scaling,
+  last-use recency and legacy-render orphan preference. Retain our bounded,
+  cancellable async maintenance, accurate failed-delete/write accounting and
+  exact session ledger; reject upstream's synchronous full sweep/persistent
+  tally. Automatic housekeeping stays outside paint and respects owner close.
+- Preserve Android safe covers, CBB/night contrast, navigation/fast return,
+  external BookOrbit/Hardcover/MAL and hardware patch owners. All new Bookshelf
+  msgids have SV/EN host equivalents; search vocabulary regenerates to 336 terms.
+- Seven new helpers are exact lazy sources in the existing map (403 canonical
+  identities / 20 embedded helpers). Exclude only their extra physical paths
+  and developer STYLE.md from export, preserving the API-1 bootstrap and all
+  2,000 installed paths, languages, artwork and font resources.
+
+Tests are updated to execute real page models/callbacks and complete native
+modal/Tags owners over the existing widget/font boundary, not obsolete button
+row shapes. New `test_bookshelf61_merge` covers embedded-source identity, actual
+bold clone behavior/default no-hook and new bilingual labels. Native group
+tests cover folder completion, optional disabled/deferred plugin actions and
+host-owned bindings. macOS long TMPDIR paths made fixed 400-byte upstream cache
+fixtures exceed their 85% prune target; run those fixtures under `/tmp`, retaining
+all assertions and production budgets. Native theme save now ignores a numeric
+failed-require sentinel when probing an optional ornament module.
+
+Final verification/package/history/secret/push evidence is appended after the
+gates finish. Physical Bigme/Boox popup/editor/back/close, cache warmth, profile
+navigation, day/night, rotation and reader return remain required; no measured
+speedup or physical visual acceptance is claimed.
+
 ## 2026-10-31 — BookOrbit controls push and Beta 23 publication
 
 The user explicitly approves push/new-beta publication after the status report

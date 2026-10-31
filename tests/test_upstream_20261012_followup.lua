@@ -29,7 +29,7 @@ local TabModel = {
     saveDeferred = function() writes = writes + 1 end,
 }
 local W = {}
-for _, name in ipairs({"_profileShelfSettings", "_chipViewMode", "_isSearchResults",
+for _, name in ipairs({"_profileShelfSettings", "_chipViewMode", "_isSearchResults", "_searchLevel",
         "_isDrilledIn", "_autoLevel", "_chipListValue", "_setChipDensity"}) do
     local args, body = src:match("\nfunction BookshelfWidget:" .. name .. "%((.-)%)\n(.-)\nend\n")
     assert(body, name)

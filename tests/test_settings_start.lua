@@ -3,6 +3,7 @@
 local root = os.getenv("ORBITUI_TEST_ROOT") or "."
 package.path = root .. "/?.lua;./?.lua;" .. package.path
 local H = require("tests/helpers")
+unpack = unpack or table.unpack -- KOReader's LuaJIT global under desktop Lua
 local locale, writes, eager, warnings = "en", 0, 0, {}
 G_reader_settings = { readSetting = function(_, key) if key == "language" then return locale end end,
     saveSetting = function() writes = writes + 1 end }
@@ -61,8 +62,10 @@ local Text = W:extend{}
 function Text:getSize()
     -- Conservative UTF-8 character count and wrapping proxy, not KOReader shaping.
     local _, chars = self.text:gsub("[^\128-\191]", "")
-    local lines = math.max(1, math.ceil(chars * self.face.size * 0.57 / self.width))
-    return { w = self.width, h = math.ceil(lines * self.face.size * 1.3) }
+    local intrinsic = chars * self.face.size * 0.57
+    local width = self.width or math.min(self.max_width or math.huge, intrinsic)
+    local lines = math.max(1, math.ceil(intrinsic / math.max(1,width)))
+    return { w = width, h = math.ceil(lines * self.face.size * 1.3) }
 end
 local Button = W:extend{}
 function Button:getSize() return { w = self.width, h = Screen:scaleBySize(42) } end
@@ -70,19 +73,25 @@ function Button:onFocus() self.focused = true end
 local fonts = { getFace = function(_, _, size, opts) return { size = Screen:scaleBySize(size) }, opts and opts.bold end }
 for path, class in pairs({
     ["container/centercontainer"] = W, ["container/topcontainer"] = W,
-    ["container/framecontainer"] = Frame, ["container/inputcontainer"] = W,
+    ["container/framecontainer"] = Frame, ["container/inputcontainer"] = W, ["container/widgetcontainer"] = W,
+    ["container/leftcontainer"] = W,
+    textwidget = Text,
     verticalgroup = VG, horizontalgroup = HG, verticalspan = VS, horizontalspan = HS,
     textboxwidget = Text, button = Button, linewidget = W, iconwidget = W,
 }) do package.loaded["ui/widget/" .. path] = class end
 package.loaded["ui/gesturerange"] = W
 package.loaded["ui/font"] = fonts
-package.loaded["ui/size"] = { border = { window = 1 }, line = { thin = 1 } }
+package.loaded["ui/size"] = { border = { window = 1, button = 1 }, line = { thin = 1 } }
 package.loaded["ffi/blitbuffer"] = { COLOR_WHITE = "white", COLOR_BLACK = "black", COLOR_DARK_GRAY = "gray" }
 package.loaded["ffi/util"] = { template = function(s) return s end }
 local translate = require("core/orbitui_i18n")
 package.loaded["lib/bookshelf_i18n"] = { gettext = translate }
 package.loaded["lib/bookshelf_fonts"] = fonts
 package.loaded["lib/bookshelf_space"] = dofile(root .. "/components/bookshelf/lib/bookshelf_space.lua")
+package.loaded["lib/bookshelf_colour_text"] = Text
+package.loaded["lib/bookshelf_popup_kit"] = dofile(root .. "/components/bookshelf/lib/bookshelf_popup_kit.lua")
+package.loaded["lib/bookshelf_cap_centre"] = dofile(root .. "/components/bookshelf/lib/bookshelf_cap_centre.lua")
+package.loaded["lib/bookshelf_chip_button"] = dofile(root .. "/components/bookshelf/lib/bookshelf_chip_button.lua")
 package.loaded["lib/bookshelf_pagination"] = { buildNav = function(opts)
     return W:new{ opts = opts, width = Screen:scaleBySize(180), height = Screen:scaleBySize(32) }
 end }

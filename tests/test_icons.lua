@@ -1,5 +1,6 @@
 package.path = "./?.lua;./components/simpleui/?.lua;" .. package.path
 local H = require("tests/helpers")
+unpack = unpack or table.unpack -- KOReader's LuaJIT global under desktop Lua
 H.simpleuiMemory()
 local Icons = require("core/orbitui_icons")
 local VectorIcons = require("core/orbitui_vector_icons")
@@ -83,10 +84,10 @@ package.loaded["ui/font"] = { getFace = function(_, name, size)
     return { name = name, size = size }
 end }
 package.loaded["ui/geometry"] = { new = function(_, opts) return opts end }
-package.loaded["ui/size"] = { border = { thin = 1, default = 2, window = 3 }, line = { thin = 1 } }
+package.loaded["ui/size"] = { border = { thin = 1, default = 2, window = 3, button = 1 }, line = { thin = 1 } }
 for _, name in ipairs({ "container/centercontainer", "container/framecontainer", "container/widgetcontainer",
         "container/inputcontainer", "container/leftcontainer", "container/topcontainer", "button", "linewidget",
-        "textwidget", "imagewidget", "buttondialog", "notification", "horizontalgroup", "horizontalspan", "overlapgroup",
+        "textwidget", "imagewidget", "iconbutton", "buttondialog", "notification", "horizontalgroup", "horizontalspan", "overlapgroup",
         "verticalgroup", "verticalspan", "container/rightcontainer" }) do
     package.loaded["ui/widget/" .. name] = Widget
 end
@@ -103,10 +104,13 @@ function InputText:isKeyboardVisible() return false end
 package.loaded["ui/widget/inputtext"] = InputText
 package.loaded["lib/bookshelf_colour_text"] = Widget
 package.loaded["lib/bookshelf_fonts"] = package.loaded["ui/font"]
-package.loaded["lib/bookshelf_space"] = { px = function(n) return n end, radius = { default = 2 },
+package.loaded["lib/bookshelf_space"] = { px = function(n) return n end, radius = { default = 2, button = 4 },
     padding = { default = 4 }, span = {} }
 package.loaded["lib/bookshelf_pagination"] = { buildNav = function(opts) return Widget:new(opts) end }
 -- Keep modal init/refresh and all picker callbacks real; stub native widgets only.
+package.loaded["lib/bookshelf_popup_kit"] = dofile("components/bookshelf/lib/bookshelf_popup_kit.lua")
+package.loaded["lib/bookshelf_cap_centre"] = dofile("components/bookshelf/lib/bookshelf_cap_centre.lua")
+package.loaded["lib/bookshelf_chip_button"] = dofile("components/bookshelf/lib/bookshelf_chip_button.lua")
 package.loaded["lib/bookshelf_library_modal"] = dofile("components/bookshelf/lib/bookshelf_library_modal.lua")
 package.loaded["lib/bookshelf_icons_catalogue"] = {
     CHIPS = { { key = "all", label = "All" }, { key = "svg", label = "SVG" } },
@@ -339,7 +343,8 @@ H.test("Material initializes the real modal in both languages, orientations and 
                 H.eq(picker.active_chip, "all")
                 H.eq(picker._total_pages, landscape and 8 or 7)
                 H.eq(picker:_gridCols(), landscape and 5 or 4)
-                H.eq(picker._dpad_idx, keys and 1 or nil)
+                H.eq(picker._dpad_idx, nil, "keyboard focus is hidden until the first key")
+                if keys then picker:_revealFocus(); H.eq(picker._dpad_idx,1) end
                 assert(picker.frame[1] and picker._search_input and picker._footer_layout)
                 for i, chip in ipairs(picker.config.chip_strip()) do
                     H.eq(chip.label, expected[i])

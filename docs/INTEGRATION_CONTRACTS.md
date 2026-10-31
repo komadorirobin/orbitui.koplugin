@@ -1045,6 +1045,17 @@ Recovery procedure: `MIGRATION.md`.
 
 ## C09: Reviewed imports and explicit releases
 
+October 31 Bookshelf 6.1 merge-only retains VERSION/public Beta 23 and the
+API-1 bootstrap/path set. Seven new Bookshelf helpers bring the exact-source
+lazy embedded registry to 20 entries (403 canonical identities), not seven
+new installed files. C01–C11 remain unchanged: new page layouts preserve host
+profile/face-out/binding/caption/ornament overrides, BookOrbit Tags and lazy
+technical details, folder/plugin actions and reader-return ownership. Visiting
+View mode must not migrate unset legacy views. New cache budgets/last-use
+recency retain bounded cancellable housekeeping and honest failed-delete
+accounting; no synchronous full-directory sweep is permitted during paint.
+The new font clone fix does not authorize mutation of incompatible user patches.
+
 October 30 merge-only keeps VERSION/public Beta 16 immutable. Thirteen new Lua
 modules are exact source strings in metadata on the existing generated registry,
 not extra installed paths. Canonical loader compilation is lazy, real-file and

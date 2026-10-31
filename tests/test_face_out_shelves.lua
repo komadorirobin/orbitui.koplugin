@@ -116,121 +116,94 @@ package.loaded["lib/bookshelf_stack_display"] = {
 package.loaded["lib/bookshelf_ornaments"] = { FREQ_DEFAULT = 1 }
 local ViewMode = require("lib/bookshelf_view_mode")
 local Editor = require("lib/bookshelf_chip_editor")
+Editor._menu = function(spec)
+    shown = spec; shows = shows + 1
+    return { refresh = function() end }
+end
+local function control(label)
+    for _, block in ipairs(shown.page().blocks) do
+        if block.label == label then return block end
+    end
+end
 local function openStyle(draft, chrome)
     Editor:_pickGroupDisplay(draft, function() changes = changes + 1 end, chrome)
-    for _, row in ipairs(shown.buttons) do
-        for _, button in ipairs(row) do
-            local text = button.text_func and button.text_func() or button.text
-            if text and text:match("^Face out:") then return button, text end
-        end
-    end
+    return control("Face out")
 end
-
-H.test("the standalone component keeps its native configurable orientation", function()
-    local button, text = openStyle({ [ViewMode.CHIP_KEY] = ViewMode.SPINES,
-        spine_face_out = "reading" })
-    H.eq(text, "Face out: Reading")
-    H.eq(button.enabled, true)
-    H.eq(Editor.face_out_override, nil)
+H.test("standalone orientation and captions remain configurable", function()
+    local button = openStyle({view_mode="spines", spine_face_out="reading"})
+    H.eq(button.value,"Reading"); H.eq(button.enabled,true)
+    H.eq(Editor.face_out_override,nil)
+    openStyle({id="home",view_mode="covers"})
+    assert(control("Cover captions")); H.eq(Editor.cover_text_external,nil)
 end)
-
-local function hasNativeCaptions()
-    for _, row in ipairs(shown.buttons) do
-        for _, b in ipairs(row) do
-            local text = b.text_func and b.text_func() or b.text
-            if text and text:match("^Cover captions:") then return true end
-        end
-    end
-    return false
-end
-
-H.test("standalone grid style retains the upstream per-shelf caption picker", function()
-    openStyle({id="home", [ViewMode.CHIP_KEY]=ViewMode.COVERS})
-    H.eq(hasNativeCaptions(), true)
-    H.eq(Editor.cover_text_external, nil)
-end)
-
-H.test("OrbitUI style editor reflects the override without changing saved drafts", function()
-    H.eq(Integration.modules["lib/bookshelf_chip_editor"], true)
-    H.eq(Integration.wrap("lib/bookshelf_chip_editor", Editor), Editor)
-    for _, saved in ipairs(saved_values) do
-        local draft = { [ViewMode.CHIP_KEY] = ViewMode.SPINES,
-            spine_face_out = saved.value, spine_rows = 3 }
-        local button, text = openStyle(draft)
-        H.eq(text, "Face out: All books")
-        H.eq(button.enabled, false)
-        local old_shows, old_closes, old_changes = shows, closes, changes
+H.test("OrbitUI shows read-only all-cover orientation and preserves saved drafts", function()
+    H.eq(Integration.modules["lib/bookshelf_chip_editor"],true)
+    H.eq(Integration.wrap("lib/bookshelf_chip_editor",Editor),Editor)
+    for _,saved in ipairs(saved_values) do
+        local draft={view_mode="spines",spine_face_out=saved.value,spine_rows=3}
+        local button=openStyle(draft)
+        H.eq(button.value,"All books"); H.eq(button.enabled,false)
+        local before={shows,closes,changes}
         button.callback()
-        H.eq(shows, old_shows); H.eq(closes, old_closes); H.eq(changes, old_changes)
-        H.eq(draft.spine_face_out, saved.value)
-        H.eq(draft.spine_rows, 3)
-        H.eq(draft[ViewMode.CHIP_KEY], ViewMode.SPINES)
+        H.eq(shows,before[1]); H.eq(closes,before[2]); H.eq(changes,before[3])
+        H.eq(draft.spine_face_out,saved.value); H.eq(draft.spine_rows,3)
+        H.eq(draft.view_mode,"spines")
+        H.eq(control("Book binding"),nil); H.eq(control("Series boxes"),nil)
     end
 end)
-
-H.test("normal grid/list/auto modes and remote catalogue restrictions stay unchanged", function()
-    for _, mode in ipairs({ ViewMode.AUTO, ViewMode.COVERS, ViewMode.LIST }) do
-        local draft = { [ViewMode.CHIP_KEY] = mode, spine_face_out = false }
-        H.eq(openStyle(draft), nil)
-        H.eq(hasNativeCaptions(), false, "OrbitUI already owns the chip's caption menu")
-        H.eq(draft[ViewMode.CHIP_KEY], mode)
-        H.eq(draft.spine_face_out, false)
+H.test("grid/list/auto controls and remote restrictions are preserved", function()
+    for _,mode in ipairs({"auto","covers","list"}) do
+        local draft={view_mode=mode,spine_face_out=false}
+        H.eq(openStyle(draft),nil)
+        H.eq(control("Cover captions"),nil)
+        H.eq(draft.view_mode,mode); H.eq(draft.spine_face_out,false)
     end
-    H.eq(openStyle({ [ViewMode.CHIP_KEY] = ViewMode.SPINES }, { is_opds = true }), nil)
-    local modes
-    for _, row in ipairs(shown.buttons) do
-        if row[1] and row[1].text == "Auto" then modes = row end
-    end
-    H.eq(#assert(modes), 3)
+    local draft={view_mode="spines"}
+    H.eq(openStyle(draft,{is_opds=true}),nil)
+    H.eq(#control("Show as").items,3)
+    H.eq(control("Show as").active,"covers"); H.eq(draft.view_mode,"spines")
 end)
-
-local function sizeRow(draft, chrome)
-    openStyle(draft, chrome)
-    for _, row in ipairs(shown.buttons) do
-        local button = row[2]
-        if button and button.text_func
-                and button.text_func():match("^Cover size:") then return row end
-    end
-end
-
-H.test("cover size defaults to 100 percent and previews each ten-percent step", function()
-    local draft = { [ViewMode.CHIP_KEY] = ViewMode.SPINES, spine_rows = 2 }
-    local row = sizeRow(draft)
-    H.eq(row[2].text_func(), "Cover size: 100%")
-    local before = changes
-    row[3].callback()
-    H.eq(draft.spine_cover_size_pct, 110)
-    H.eq(changes, before + 1)
-    H.eq(sizeRow(draft)[2].text_func(), "Cover size: 110%")
-    sizeRow(draft)[1].callback()
-    H.eq(draft.spine_cover_size_pct, nil)
-    H.eq(sizeRow(draft)[2].text_func(), "Cover size: 100%")
-    for _ = 1, 12 do sizeRow(draft)[1].callback() end
-    H.eq(draft.spine_cover_size_pct, 50)
-    for _ = 1, 12 do sizeRow(draft)[3].callback() end
-    H.eq(draft.spine_cover_size_pct, 150)
-    H.eq(draft.spine_rows, 2)
-    H.eq(draft.spine_thickness_pct, nil)
-end)
-
-H.test("only physical bookshelves expose the size control", function()
-    for _, mode in ipairs({ ViewMode.AUTO, ViewMode.COVERS, ViewMode.LIST }) do
-        H.eq(sizeRow({ [ViewMode.CHIP_KEY] = mode }), nil)
-    end
-    H.eq(sizeRow({ [ViewMode.CHIP_KEY] = ViewMode.SPINES }, { is_opds = true }), nil)
-end)
-H.test("minimal preset reports ornaments off without changing the saved shelf frequency", function()
-    local draft = { [ViewMode.CHIP_KEY] = ViewMode.SPINES, ornament_frequency = 3 }
-    Editor.ornament_frequency_override = 0
+H.test("legacy unset view exposes covers and list controls without a migration", function()
+    local draft={source={kind="authors"}}
     openStyle(draft)
-    local found
-    for _, row in ipairs(shown.buttons) do
-        for _, button in ipairs(row) do
-            if button.text_func and button.text_func():match("^Ornaments:") then found = button end
-        end
-    end
-    H.eq(assert(found).text_func(), "Ornaments: None"); H.eq(found.enabled, false)
-    local before = changes; found.callback(); H.eq(changes, before); H.eq(draft.ornament_frequency, 3)
-    Editor.ornament_frequency_override = nil
+    H.eq(control("Show as").active,"auto")
+    assert(control("Columns")); H.eq(control("Top level"),nil)
+    H.eq(draft.view_mode,nil)
+    control("Show as").on_pick("covers")
+    H.eq(draft.view_mode,"covers")
+end)
+local function sizeRow(draft,chrome)
+    openStyle(draft,chrome); return control("Cover size")
+end
+H.test("cover-size steps preview, clamp and preserve unrelated settings",function()
+    local draft={view_mode="spines",spine_rows=2}
+    H.eq(sizeRow(draft).value,"100%")
+    local before=changes
+    sizeRow(draft).on_inc()
+    H.eq(draft.spine_cover_size_pct,110); H.eq(changes,before+1)
+    H.eq(sizeRow(draft).value,"110%")
+    sizeRow(draft).on_dec()
+    H.eq(draft.spine_cover_size_pct,nil); H.eq(sizeRow(draft).value,"100%")
+    for _=1,12 do sizeRow(draft).on_dec() end
+    H.eq(draft.spine_cover_size_pct,50)
+    for _=1,12 do sizeRow(draft).on_inc() end
+    H.eq(draft.spine_cover_size_pct,150)
+    H.eq(draft.spine_rows,2); H.eq(draft.spine_thickness_pct,nil)
+end)
+H.test("only physical shelves expose cover-size controls",function()
+    for _,mode in ipairs({"auto","covers","list"}) do H.eq(sizeRow({view_mode=mode}),nil) end
+    H.eq(sizeRow({view_mode="spines"},{is_opds=true}),nil)
+end)
+H.test("minimal preset disables ornaments without rewriting the saved choice",function()
+    local draft={view_mode="spines",ornament_frequency=3}
+    Editor.ornament_frequency_override=0
+    openStyle(draft)
+    local row=assert(control("Ornaments"))
+    H.eq(row.items[row.active].label,"None"); H.eq(row.enabled,false)
+    local before=changes; row.on_pick(2)
+    H.eq(changes,before); H.eq(draft.ornament_frequency,3)
+    Editor.ornament_frequency_override=nil
+    openStyle(draft); row=control("Ornaments")
+    H.eq(row.items[row.active].label,"Always"); H.eq(row.enabled,true)
 end)
 H.finish()

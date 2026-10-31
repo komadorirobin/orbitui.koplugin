@@ -32,3 +32,12 @@
 /components/simpleui/modules/critter/voice_lines.lua export-ignore
 /components/simpleui/modules/critter/voice_phrases.lua export-ignore
 /components/simpleui/screens/sui_bluetooth.lua export-ignore
+# Bookshelf 6.1 helpers use the same exact-source lazy registry, not new API-1 paths.
+/components/bookshelf/STYLE.md export-ignore
+/components/bookshelf/lib/bookshelf_book_actions_layout.lua export-ignore
+/components/bookshelf/lib/bookshelf_editor_page.lua export-ignore
+/components/bookshelf/lib/bookshelf_link_panel.lua export-ignore
+/components/bookshelf/lib/bookshelf_page_dialog.lua export-ignore
+/components/bookshelf/lib/bookshelf_picker_sort.lua export-ignore
+/components/bookshelf/lib/bookshelf_popup_kit.lua export-ignore
+/components/bookshelf/lib/bookshelf_slider.lua export-ignore

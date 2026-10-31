@@ -2,6 +2,9 @@
 -- already at 2,000 files. Keep exact source in this existing registry, compiled
 -- lazily by the canonical loader. This explicit list also controls export-ignore.
 local embedded_names = {
+    "lib/bookshelf_book_actions_layout", "lib/bookshelf_editor_page",
+    "lib/bookshelf_link_panel", "lib/bookshelf_page_dialog", "lib/bookshelf_picker_sort",
+    "lib/bookshelf_popup_kit", "lib/bookshelf_slider",
     "features/sui_menu_hide", "features/sui_patch_compat", "infra/sui_migrations",
     "modules/critter/book", "modules/critter/game_lines", "modules/critter/games",
     "modules/critter/menu", "modules/critter/panel_row", "modules/critter/settings",

@@ -253,7 +253,22 @@ H.test("actual native Tags builder retains author/collection/genre/folder sectio
         ["ui/widget/horizontalspan"] = primitives,
         ["lib/bookshelf_chip_button"] = { build = function(args) return primitives:new(args) end },
     }
+    -- Complete real popup kit, with only KOReader widgets/font boundary faked.
+    for _,n in ipairs({"container/centercontainer","container/framecontainer","container/inputcontainer",
+            "container/widgetcontainer","horizontalgroup","horizontalspan","verticalgroup","verticalspan","linewidget"}) do
+        package.loaded["ui/widget/"..n]=primitives
+    end
+    package.loaded["ui/geometry"],package.loaded["ui/gesturerange"]=primitives,primitives
+    package.loaded["ffi/blitbuffer"]={}
+    package.loaded["ui/size"]={border={button=1}}
+    package.loaded["lib/bookshelf_space"]={px=function(v) return v end,radius={button=4}}
+    package.loaded["lib/bookshelf_colour_text"]=primitives
+    package.loaded["lib/bookshelf_fonts"]={getFace=function() return {} end}
+    package.loaded["ui/font"]=package.loaded["lib/bookshelf_fonts"]
+    package.loaded["lib/bookshelf_chip_button"]=deps["lib/bookshelf_chip_button"]
+    local popup_kit=dofile(root.."/components/bookshelf/lib/bookshelf_popup_kit.lua")
     local env = setmetatable({ UIManager = UI, _ = function(s) return s end, Repo = {},
+        PopupKit=popup_kit,
         require = function(name) return deps[name] or require(name) end,
         Screen = { scaleBySize = function(_, v) return v end },
         Space = { px = function(v) return v end, padding = { small = 2 } },
@@ -285,13 +300,13 @@ H.test("actual native Tags builder retains author/collection/genre/folder sectio
     local modal = { _tabs = args.tabs, _active_tab = args.active_tab, font_size = 18, _side_pad = 20 }
     local body = tab.widget_builder(600, 400, modal)
     H.eq(table.concat(headings, ","), "EPUB tags (offline),BookOrbit tags (optional online source),Author(s),Collections,Genres,Folder")
-    H.eq(body.dimen.w, 600); H.eq(body.dimen.h, 400); assert(#body.focus_tables > 0)
+    H.eq(body[2].dimen.w, 600); H.eq(body[2].dimen.h, 400-body[1]:getSize().h); assert(#body.focus_tables > 0)
     assert(table.concat(notes, " "):find("across all library profiles", 1, true))
     for _, size in ipairs(pill_sizes) do H.eq(size, 18) end
     headings, pill_sizes = {}, {}
     modal.font_size = 28
     body = tab.widget_builder(280, 160, modal)
-    H.eq(body.dimen.w, 280); H.eq(body.dimen.h, 160)
+    H.eq(body[2].dimen.w, 280); H.eq(body[2].dimen.h, 160-body[1]:getSize().h)
     for _, size in ipairs(pill_sizes) do H.eq(size, 28) end
     native_pills = {}
     args = build(bw, book, { active = "tags" })

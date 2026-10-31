@@ -114,6 +114,7 @@ local map = {
     ["lib/bookshelf_band_metrics"] = "components/bookshelf/lib/bookshelf_band_metrics.lua",
     ["lib/bookshelf_bar_paint"] = "components/bookshelf/lib/bookshelf_bar_paint.lua",
     ["lib/bookshelf_bim_db"] = "components/bookshelf/lib/bookshelf_bim_db.lua",
+    ["lib/bookshelf_book_actions_layout"] = "components/bookshelf/lib/bookshelf_book_actions_layout.lua",
     ["lib/bookshelf_book_binding"] = "components/bookshelf/lib/bookshelf_book_binding.lua",
     ["lib/bookshelf_book_facts_db"] = "components/bookshelf/lib/bookshelf_book_facts_db.lua",
     ["lib/bookshelf_book_highlights"] = "components/bookshelf/lib/bookshelf_book_highlights.lua",
@@ -145,6 +146,7 @@ local map = {
     ["lib/bookshelf_cover_sources"] = "components/bookshelf/lib/bookshelf_cover_sources.lua",
     ["lib/bookshelf_derived_cache"] = "components/bookshelf/lib/bookshelf_derived_cache.lua",
     ["lib/bookshelf_drill_rekey"] = "components/bookshelf/lib/bookshelf_drill_rekey.lua",
+    ["lib/bookshelf_editor_page"] = "components/bookshelf/lib/bookshelf_editor_page.lua",
     ["lib/bookshelf_epub_metadata"] = "components/bookshelf/lib/bookshelf_epub_metadata.lua",
     ["lib/bookshelf_faceout_pose"] = "components/bookshelf/lib/bookshelf_faceout_pose.lua",
     ["lib/bookshelf_file_ops"] = "components/bookshelf/lib/bookshelf_file_ops.lua",
@@ -196,6 +198,7 @@ local map = {
     ["lib/bookshelf_library_modal"] = "components/bookshelf/lib/bookshelf_library_modal.lua",
     ["lib/bookshelf_lightmeta_refresh"] = "components/bookshelf/lib/bookshelf_lightmeta_refresh.lua",
     ["lib/bookshelf_line_editor"] = "components/bookshelf/lib/bookshelf_line_editor.lua",
+    ["lib/bookshelf_link_panel"] = "components/bookshelf/lib/bookshelf_link_panel.lua",
     ["lib/bookshelf_list_geom"] = "components/bookshelf/lib/bookshelf_list_geom.lua",
     ["lib/bookshelf_list_group"] = "components/bookshelf/lib/bookshelf_list_group.lua",
     ["lib/bookshelf_list_line_editor"] = "components/bookshelf/lib/bookshelf_list_line_editor.lua",
@@ -242,18 +245,21 @@ local map = {
     ["lib/bookshelf_pack_editor"] = "components/bookshelf/lib/bookshelf_pack_editor.lua",
     ["lib/bookshelf_pacman_sprite"] = "components/bookshelf/lib/bookshelf_pacman_sprite.lua",
     ["lib/bookshelf_page_count_dialog"] = "components/bookshelf/lib/bookshelf_page_count_dialog.lua",
+    ["lib/bookshelf_page_dialog"] = "components/bookshelf/lib/bookshelf_page_dialog.lua",
     ["lib/bookshelf_page_wipe"] = "components/bookshelf/lib/bookshelf_page_wipe.lua",
     ["lib/bookshelf_pagemap_probe"] = "components/bookshelf/lib/bookshelf_pagemap_probe.lua",
     ["lib/bookshelf_pagination"] = "components/bookshelf/lib/bookshelf_pagination.lua",
     ["lib/bookshelf_paths"] = "components/bookshelf/lib/bookshelf_paths.lua",
     ["lib/bookshelf_perf"] = "components/bookshelf/lib/bookshelf_perf.lua",
     ["lib/bookshelf_picker_cell"] = "components/bookshelf/lib/bookshelf_picker_cell.lua",
+    ["lib/bookshelf_picker_sort"] = "components/bookshelf/lib/bookshelf_picker_sort.lua",
     ["lib/bookshelf_pinyin"] = "components/bookshelf/lib/bookshelf_pinyin.lua",
     ["lib/bookshelf_placeholders"] = "components/bookshelf/lib/bookshelf_placeholders.lua",
     ["lib/bookshelf_plank_browser"] = "components/bookshelf/lib/bookshelf_plank_browser.lua",
     ["lib/bookshelf_plugin_formats"] = "components/bookshelf/lib/bookshelf_plugin_formats.lua",
     ["lib/bookshelf_plugin_scan"] = "components/bookshelf/lib/bookshelf_plugin_scan.lua",
     ["lib/bookshelf_plural_guard"] = "components/bookshelf/lib/bookshelf_plural_guard.lua",
+    ["lib/bookshelf_popup_kit"] = "components/bookshelf/lib/bookshelf_popup_kit.lua",
     ["lib/bookshelf_profiles"] = "components/bookshelf/lib/bookshelf_profiles.lua",
     ["lib/bookshelf_quotes"] = "components/bookshelf/lib/bookshelf_quotes.lua",
     ["lib/bookshelf_reader_buttons"] = "components/bookshelf/lib/bookshelf_reader_buttons.lua",
@@ -276,6 +282,7 @@ local map = {
     ["lib/bookshelf_shadow_assets"] = "components/bookshelf/lib/bookshelf_shadow_assets.lua",
     ["lib/bookshelf_shelf_modules"] = "components/bookshelf/lib/bookshelf_shelf_modules.lua",
     ["lib/bookshelf_shelf_row"] = "components/bookshelf/lib/bookshelf_shelf_row.lua",
+    ["lib/bookshelf_slider"] = "components/bookshelf/lib/bookshelf_slider.lua",
     ["lib/bookshelf_snug_scroll"] = "components/bookshelf/lib/bookshelf_snug_scroll.lua",
     ["lib/bookshelf_sort_engine"] = "components/bookshelf/lib/bookshelf_sort_engine.lua",
     ["lib/bookshelf_sort_priority_list"] = "components/bookshelf/lib/bookshelf_sort_priority_list.lua",
@@ -398,6 +405,2571 @@ local map = {
     ["sui_bookshelf_bridge"] = "components/simpleui/sui_bookshelf_bridge.lua",
 }
 local embedded = {
+    ["lib/bookshelf_book_actions_layout"] = "-- bookshelf_book_actions_layout.lua\
+-- The book popup's Actions cards in the reader's own order, with the ones they\
+-- hid left out. A long-press on a card rearranges them (the Edit tab); the\
+-- result is one setting: { order = { id, ... }, hidden = { [id] = true } }.\
+-- Ids are stable names (\"favorite\", \"delete\", \"plugin:<label>\"), so an action\
+-- that comes or goes (a plugin installed or removed) leaves the rest in place.\
+\
+local M = {}\
+\
+M.KEY = \"book_popup_actions\"\
+\
+-- arrange(specs, layout) -> a new list: the specs in layout.order, then any it\
+-- doesn't name in their default order. Each carries .hidden from layout.hidden.\
+function M.arrange(specs, layout)\
+    layout = layout or {}\
+    local rank = {}\
+    for i, id in ipairs(layout.order or {}) do rank[id] = i end\
+    local out = {}\
+    for i, a in ipairs(specs) do out[i] = a; a._default_rank = i end\
+    table.sort(out, function(a, b)\
+        local ra, rb = rank[a.id], rank[b.id]\
+        if ra and rb then return ra < rb end\
+        if ra or rb then return ra ~= nil end\
+        return a._default_rank < b._default_rank\
+    end)\
+    local hidden = layout.hidden or {}\
+    for _i, a in ipairs(out) do\
+        a._default_rank = nil\
+        a.hidden = hidden[a.id] == true or nil\
+    end\
+    return out\
+end\
+\
+-- visible(list) -> the arranged list without the hidden ones.\
+function M.visible(list)\
+    local out = {}\
+    for _i, a in ipairs(list) do\
+        if not a.hidden then out[#out + 1] = a end\
+    end\
+    return out\
+end\
+\
+-- move(order, id, d) -> a copy of order with id moved d places (stops at the\
+-- ends).\
+function M.move(order, id, d)\
+    local out, at = {}, nil\
+    for i, v in ipairs(order) do\
+        out[i] = v\
+        if v == id then at = i end\
+    end\
+    if not at then return out end\
+    local to = math.max(1, math.min(#out, at + d))\
+    table.remove(out, at)\
+    table.insert(out, to, id)\
+    return out\
+end\
+\
+-- canHide(list, hidden, id) -> false when hiding id would leave no card to\
+-- long-press (the only way back in).\
+function M.canHide(list, hidden, id)\
+    for _i, a in ipairs(list) do\
+        if a.id ~= id and not hidden[a.id] then return true end\
+    end\
+    return false\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_editor_page"] = "-- bookshelf_editor_page.lua (see STYLE.md)\
+-- The shelf editor's pages (Sort, Source, Shelf style, Filters, Face out) as\
+-- data: a page is a list of blocks, and this lays them out in the popup\
+-- style, so a page says what it holds and how it looks stays in one place.\
+-- Page.toButtons flattens the same blocks to a ButtonDialog's rows, for when\
+-- the editor is not up to host the page (tests, a caller outside it).\
+--\
+-- Blocks ({ type = ..., ... }):\
+--   summary   text: what the shelf will do, in a sentence (the strip's lead)\
+--   heading   text, tag (optional: a word in a badge at the right, OR)\
+--   hint      text: grey\
+--   chips     items { {text, icon, on, enabled, callback} }: cards sized to\
+--             their labels (icon: a symbols-font glyph before it), wrapping;\
+--             the one(s) on are black\
+--   segmented label (optional), items { {key, label} }, active, on_pick(key),\
+--             allow_none (a tap on the active one un-picks it): label at the\
+--             left, the control at the right (full width with no label)\
+--   stepper   label, value (text), on_dec, on_inc: label, then  -  value  +\
+--   slider    label (optional), value, min, max, step, default, format(v),\
+--             on_change(v), big, big_label: the label and the value, then\
+--             -  track  +  (-10 and +10 cards with big), with\
+--             the range's ends and Default ticked under it (bookshelf_slider)\
+--   row       label, value, icon, callback, on, on_clear, half: a card reading\
+--             \"label   value >\"; on (a setting made) turns it black and\
+--             on_clear adds a cross beside it; half rows pair up two a line\
+--   option    text, desc, icon, on, callback, links { {text, on, callback} },\
+--             half: a card with a title and a grey line saying what it does,\
+--             and small buttons at its right (Pick one >)\
+--   pills     items { {label, trailing, on_tap} }: small outlined pills in\
+--             lines, as the book menu's tags (trailing: a glyph inside,\
+--             after the label, as the cross on a tag that removes it)\
+--   Any block with half = true pairs with the next one, two to a line.\
+--   order     label, selected, on_up, on_down, up_enabled, down_enabled,\
+--             on_edit: a shelf's label as its chip draws it (a tap on it\
+--             opens that shelf's editor, with on_edit), then up and down\
+--   slot      badge, text, selected, callback, seg {items, active,\
+--             on_pick}, on_clear: a numbered line (a sort level), outlined\
+--             when selected\
+-- Widgets are required on the first render, so toButtons runs without them.\
+local Blitbuffer, CenterContainer, FrameContainer, Geom, HorizontalGroup\
+local HorizontalSpan, LeftContainer, VerticalGroup, VerticalSpan, Font\
+local TextWidget, Kit, Space\
+local function loadDeps()\
+    if Kit then return end\
+    Blitbuffer      = require(\"ffi/blitbuffer\")\
+    CenterContainer = require(\"ui/widget/container/centercontainer\")\
+    FrameContainer  = require(\"ui/widget/container/framecontainer\")\
+    Geom            = require(\"ui/geometry\")\
+    HorizontalGroup = require(\"ui/widget/horizontalgroup\")\
+    HorizontalSpan  = require(\"ui/widget/horizontalspan\")\
+    LeftContainer   = require(\"ui/widget/container/leftcontainer\")\
+    VerticalGroup   = require(\"ui/widget/verticalgroup\")\
+    VerticalSpan    = require(\"ui/widget/verticalspan\")\
+    Font            = require(\"ui/font\")\
+    TextWidget      = require(\"lib/bookshelf_colour_text\")\
+    Kit             = require(\"lib/bookshelf_popup_kit\")\
+    Space           = require(\"lib/bookshelf_space\")\
+end\
+\
+local Page = {}\
+\
+local CHEVRON = \" \\xE2\\x80\\xBA\"   -- \" ›\"\
+local CROSS   = \"\\xE2\\x9C\\x95\"    -- \"✕\"\
+\
+-- One laid-out page: the faces, the width and the keys' layout it fills.\
+local Ctx = {}\
+Ctx.__index = Ctx\
+\
+local function newCtx(o)\
+    local fs = o.font_size or 20\
+    local ctx = setmetatable({\
+        fs = fs, w = o.width - 2 * o.inset,\
+        face = require(\"lib/bookshelf_fonts\"):getFace(\"cfont\", fs),\
+        small = require(\"lib/bookshelf_fonts\"):getFace(\"cfont\", math.max(10, fs - 3)),\
+        chip_face = require(\"lib/bookshelf_fonts\"):getFace(\"cfont\", math.max(10, fs - 2)),\
+        gap = Space.px(10), layout = {},\
+    }, Ctx)\
+    return ctx\
+end\
+\
+-- leftRight(left, right, w): left at the start, right flush with the end.\
+local function leftRight(left, right, w)\
+    local lw = left and left:getSize().w or 0\
+    local rw = right and right:getSize().w or 0\
+    local hg = HorizontalGroup:new{ align = \"center\" }\
+    if left then hg[#hg + 1] = left end\
+    hg[#hg + 1] = HorizontalSpan:new{ width = math.max(0, w - lw - rw) }\
+    if right then hg[#hg + 1] = right end\
+    return hg\
+end\
+\
+-- tapCard(content, w, h, on, callback, enabled, outline, pad, instant) -> a\
+-- Kit.card as a w x h tap target, its focus ring the card's corner. instant:\
+-- a choice, shown by the page drawn again rather than pressed (Kit.tapCell).\
+local function tapCard(content, w, h, on, callback, enabled, outline, pad, instant)\
+    pad = pad or Space.px(12)\
+    local card = Kit.card{ width = w, height = h, on = on, outline = outline,\
+        padding_left = pad, padding_right = pad,\
+        LeftContainer:new{ dimen = Geom:new{ w = w - 2 * pad, h = h }, content } }\
+    local cell = Kit.tapCell(card, w, h, callback, enabled, nil, instant)\
+    cell.focus_radius = Kit.RADIUS\
+    return cell\
+end\
+\
+function Ctx:ink(on, enabled)\
+    if on then return Blitbuffer.COLOR_WHITE end\
+    -- Grey, not dark grey: dark grey reads as black on e-ink (STYLE.md), so\
+    -- a greyed control looked live.\
+    if enabled == false then return Blitbuffer.COLOR_GRAY end\
+    return Blitbuffer.COLOR_BLACK\
+end\
+\
+function Ctx:text(text, o)\
+    o = o or {}\
+    return TextWidget:new{ text = text or \"\", face = o.face or self.face, bold = o.bold,\
+        fgcolor = o.fgcolor or Blitbuffer.COLOR_BLACK, max_width = o.max_width }\
+end\
+\
+-- The height of a one-line card: the body face and its padding.\
+function Ctx:cardH()\
+    if not self._card_h then\
+        self._card_h = self:text(\"Hg\"):getSize().h + 2 * Space.px(10)\
+    end\
+    return self._card_h\
+end\
+\
+-- A small button the height of a one-line control (Pick one >, the cross).\
+function Ctx:smallButton(text, on, callback, h)\
+    return Kit.button{ text = text, face = require(\"lib/bookshelf_fonts\"):getFace(\"cfont\", math.max(10, self.fs - 2)),\
+        height = h or (self:cardH() - Space.px(12)), inverted = on or false,\
+        bold = on or false, on_tap = callback }\
+end\
+\
+-- icon(glyph, ink) -> a symbols-font glyph a step larger than the body,\
+-- for a row's or option's icon.\
+function Ctx:icon(glyph, ink)\
+    return TextWidget:new{ text = glyph, face = Font:getFace(\"symbols\", self.fs + 2),\
+        fgcolor = ink or Blitbuffer.COLOR_BLACK }\
+end\
+-- iconW() -> an icon's width and the gap after it.\
+function Ctx:iconW()\
+    if not self._icon_w then self._icon_w = self:icon(\"\\u{EA31}\"):getSize().w + Space.px(12) end\
+    return self._icon_w\
+end\
+\
+-- A folder row's path, cut in the middle (TextFit.pathMiddle).\
+local function shortenPath(path, fits) return require(\"lib/bookshelf_text_fit\").pathMiddle(path, fits) end\
+Page._shortenPath = shortenPath   -- for tests\
+\
+local R = {}\
+\
+function R.summary(ctx, b)\
+    return require(\"ui/widget/textboxwidget\"):new{ text = b.text or \"\", width = ctx.w,\
+        face = ctx.face, fgcolor = Blitbuffer.COLOR_BLACK, bgcolor = ctx.bg }\
+end\
+\
+-- tag: a word on a grey tag at the line's right end (a filter list's OR,\
+-- AND or NOT), apart from the heading's own sentence. Filled, white on\
+-- grey: an outline reads as a button (STYLE.md).\
+function R.heading(ctx, b)\
+    local head = Kit.heading(b.text, ctx.fs)\
+    if not b.tag then return head end\
+    local badge = FrameContainer:new{\
+        bordersize = 0, background = Blitbuffer.COLOR_DARK_GRAY,\
+        radius = Space.px(6), margin = 0,\
+        padding = 0, padding_left = Space.px(8), padding_right = Space.px(8),\
+        Kit.heading(b.tag, ctx.fs, Blitbuffer.COLOR_WHITE),\
+    }\
+    local gap = math.max(Space.px(8), ctx.w - head:getSize().w - badge:getSize().w)\
+    return HorizontalGroup:new{ align = \"center\", head, HorizontalSpan:new{ width = gap }, badge }\
+end\
+\
+-- The book menu's own pills (its Tags tab in edit mode), so a list of\
+-- picks with crosses reads the same in both places.\
+function R.pills(ctx, b)\
+    local W = require(\"lib/bookshelf_widget\")\
+    local group, rows = W._buildPillGroup(nil, b.items or {}, ctx.w, 9999, ctx.fs,\
+        \"left\", Space.px(8), nil, nil, Kit.BORDER)\
+    for _i, r in ipairs(rows or {}) do ctx.layout[#ctx.layout + 1] = r end\
+    return group\
+end\
+\
+function R.hint(ctx, b)\
+    return Kit.hintText(b.text or \"\", nil, ctx.w, nil, { face = ctx.small, bg = ctx.bg })\
+end\
+\
+function R.chips(ctx, b)\
+    local vg = VerticalGroup:new{ align = \"left\" }\
+    local line, line_w, focus = nil, 0, nil\
+    local face = ctx.chip_face\
+    local h = ctx:text(\"Hg\", { face = face }):getSize().h + 2 * Space.px(10)\
+    local pad = Space.px(14)\
+    for _i, it in ipairs(b.items or {}) do\
+        local enabled = it.enabled ~= false\
+        local label = ctx:text(it.text, { bold = it.on, fgcolor = ctx:ink(it.on, enabled),\
+            max_width = ctx.w - 2 * pad, face = face })\
+        if it.icon then\
+            -- A glyph from the symbols font before the label (the reader's\
+            -- favourites mark).\
+            label = HorizontalGroup:new{ align = \"center\",\
+                ctx:text(it.icon, { face = Font:getFace(\"symbols\", math.max(10, ctx.fs - 2)),\
+                    fgcolor = ctx:ink(it.on, enabled) }),\
+                HorizontalSpan:new{ width = Space.px(8) }, label }\
+        end\
+        local cw = label:getSize().w + 2 * pad\
+        if line and line_w + ctx.gap + cw > ctx.w then\
+            vg[#vg + 1] = line\
+            vg[#vg + 1] = VerticalSpan:new{ width = ctx.gap }\
+            line = nil\
+        end\
+        if not line then\
+            line, line_w, focus = HorizontalGroup:new{ align = \"top\" }, 0, {}\
+            ctx.layout[#ctx.layout + 1] = focus\
+        else\
+            line[#line + 1] = HorizontalSpan:new{ width = ctx.gap }\
+            line_w = line_w + ctx.gap\
+        end\
+        -- A chip that is on or off is a choice; one without (Edit collection\
+        -- order >) goes somewhere and is shown pressed.\
+        -- On the grey strip (Clear all filters) the strip's own button, as\
+        -- the pickers' Clear: white, outlined, no shadow (maintainer).\
+        local cell\
+        if ctx.bg then\
+            cell = Kit.button{ text = it.text, face = face, height = h, pad_h = pad,\
+                inverted = it.on or false, bold = it.on or false, enabled = enabled,\
+                on_tap = it.callback }\
+            cw = cell:getSize().w\
+        else\
+            cell = tapCard(label, cw, h, it.on, it.callback, enabled, nil, pad, it.on ~= nil)\
+        end\
+        line[#line + 1] = cell\
+        focus[#focus + 1] = cell\
+        line_w = line_w + cw\
+    end\
+    if line then vg[#vg + 1] = line end\
+    return vg\
+end\
+\
+-- labelled(ctx, label, ctl): the label at the left and the control at the\
+-- right end; the label above the control when the two do not fit side by\
+-- side (a half-width pair).\
+local function labelled(ctx, label, ctl)\
+    local cw = ctl:getSize().w\
+    local lt = ctx:text(label)\
+    if lt:getSize().w + ctx.gap + cw <= ctx.w then return leftRight(lt, ctl, ctx.w) end\
+    return VerticalGroup:new{ align = \"left\",\
+        ctx:text(label, { max_width = ctx.w }), VerticalSpan:new{ width = Space.px(6) }, ctl }\
+end\
+\
+function R.segmented(ctx, b)\
+    local face = require(\"lib/bookshelf_fonts\"):getFace(\"cfont\", math.max(10, ctx.fs - 2))\
+    if not b.label then\
+        local seg, rows = Kit.segmented{ items = b.items, active = b.active,\
+            on_pick = b.on_pick, allow_none = b.allow_none, face = face, width = ctx.w,\
+            pad_v = Space.px(8) }\
+        for _i, r in ipairs(rows) do ctx.layout[#ctx.layout + 1] = r end\
+        return seg\
+    end\
+    local seg, rows = Kit.segmented{ items = b.items, active = b.active,\
+        on_pick = b.on_pick, allow_none = b.allow_none, face = face, pad_v = Space.px(8),\
+        pad_h = Space.px(14) }\
+    for _i, r in ipairs(rows) do ctx.layout[#ctx.layout + 1] = r end\
+    return labelled(ctx, b.label, seg)\
+end\
+\
+function R.slider(ctx, b)\
+    local fmt = b.format or tostring\
+    local w, keys = require(\"lib/bookshelf_slider\").new{ width = ctx.w,\
+        value = b.value, min = b.min, max = b.max, step = b.step, default = b.default,\
+        big = b.big, big_label = b.big_label,\
+        format = fmt, on_change = b.on_change, face = ctx.face, small = ctx.small }\
+    ctx.layout[#ctx.layout + 1] = keys\
+    -- no_value: the value is shown elsewhere (the dialog's title).\
+    if b.no_value and not b.label then return w end\
+    local head = leftRight(b.label and ctx:text(b.label) or nil,\
+        ctx:text(fmt(b.value), { bold = true }), ctx.w)\
+    return VerticalGroup:new{ align = \"left\", head, VerticalSpan:new{ width = Space.px(4) }, w }\
+end\
+\
+-- The stepper's - and + nudge a value in place, so they are grey cards\
+-- (STYLE.md: a card nudges or opens, an outline chooses or commits), with the\
+-- kit's minus and plus (Kit.MINUS, Kit.PLUS; Kit is loaded on the first\
+-- render, so read where they are used).\
+-- nudgeCard(glyph, callback, h, enabled, size) -> a square grey card with\
+-- a symbols-font glyph: a stepper's - and +, a Shelf order row's up and down.\
+function Ctx:nudgeCard(glyph, callback, h, enabled, size)\
+    return Kit.button{ icon_glyph = glyph, card = true,\
+        icon_face = Font:getFace(\"symbols\", size or math.max(10, self.fs - 4)), width = h,\
+        height = h, instant = true, enabled = enabled, on_tap = callback }\
+end\
+\
+function R.stepper(ctx, b)\
+    local h = ctx:cardH() - Space.px(8)\
+    local minus = ctx:nudgeCard(Kit.MINUS, b.on_dec, h)\
+    local plus = ctx:nudgeCard(Kit.PLUS, b.on_inc, h)\
+    local value = CenterContainer:new{ dimen = Geom:new{ w = Space.px(84), h = h },\
+        ctx:text(b.value, { bold = true }) }\
+    ctx.layout[#ctx.layout + 1] = { minus, plus }\
+    local ctl = HorizontalGroup:new{ align = \"center\", minus, value, plus }\
+    return labelled(ctx, b.label, ctl)\
+end\
+\
+-- A Shelf order row: the shelf's label drawn as its chip is on the menu bar\
+-- (icons, pictures and the bar's case: ChipBar.buildChipLabel), outlined,\
+-- black for the shelf being edited, then up and down as grey cards (they\
+-- nudge a place, STYLE.md). on_edit: a tap on the pill opens that shelf's\
+-- editor; it looked like a button and did nothing, and the pencil beside it\
+-- that did went (maintainer). The shelf being edited has none.\
+local CHEV_UP   = \"\\xEE\\xA1\\x82\"   -- U+E842 mdi-chevron-up\
+local CHEV_DOWN = \"\\xEE\\xA0\\xBF\"   -- U+E83F mdi-chevron-down\
+function R.order(ctx, b)\
+    local Size = require(\"ui/size\")\
+    local h = ctx:cardH() - Space.px(8)\
+    local up = ctx:nudgeCard(CHEV_UP, b.on_up, h, b.up_enabled ~= false, ctx.fs + 4)\
+    local down = ctx:nudgeCard(CHEV_DOWN, b.on_down, h, b.down_enabled ~= false, ctx.fs + 4)\
+    local gap = Space.px(8)\
+    -- The cards as they are (a card is wider than its height by its\
+    -- shadow): the row overflowed the page by the two shadows and the frame\
+    -- grew to it (PW5).\
+    local pill_w = ctx.w - up:getSize().w - down:getSize().w - 2 * gap\
+    local border = Size.border.button\
+    local pad = Space.px(12)\
+    local ink = b.selected and Blitbuffer.COLOR_WHITE or Blitbuffer.COLOR_BLACK\
+    local label = require(\"lib/bookshelf_chip_bar\").buildChipLabel(b.label or \"\",\
+        math.max(10, ctx.fs - 2), pill_w - 2 * (border + pad), ink, b.selected)\
+    local pill = FrameContainer:new{ bordersize = border, radius = Space.px(6),\
+        margin = 0, padding = 0, color = Blitbuffer.COLOR_BLACK,\
+        background = b.selected and Blitbuffer.COLOR_BLACK or Blitbuffer.COLOR_WHITE,\
+        CenterContainer:new{ dimen = Geom:new{ w = pill_w - 2 * border, h = h - 2 * border }, label } }\
+    local cell\
+    if b.on_edit then cell = Kit.tapCell(pill, pill_w, h, b.on_edit) end\
+    local keys = {}\
+    if cell then keys[1] = cell end\
+    keys[#keys + 1] = up\
+    keys[#keys + 1] = down\
+    ctx.layout[#ctx.layout + 1] = keys\
+    return HorizontalGroup:new{ align = \"center\", cell or pill, HorizontalSpan:new{ width = gap },\
+        up, HorizontalSpan:new{ width = gap }, down }\
+end\
+\
+-- rowParts(b, w) -> the row's inner width, ink, and whether its label and\
+-- value fit side by side.\
+function Ctx:rowParts(b, w)\
+    if b.on and b.on_clear then w = w - self:cardH() - Space.px(6) end\
+    local inner = w - 2 * Space.px(12)\
+    local ink = self:ink(b.on, b.enabled ~= false)\
+    local vt = b.value and (b.value .. (b.callback and CHEVRON or \"\"))\
+    local fits = true\
+    if vt then\
+        fits = (b.icon and self:iconW() or 0) + self:text(b.label):getSize().w + self.gap\
+            + self:text(vt, { bold = true }):getSize().w <= inner\
+    end\
+    return inner, ink, vt, fits\
+end\
+\
+-- row(b, w, stacked) -> the card, and the cross beside it when the row can\
+-- be cleared. Stacked (too narrow for both, or its pair is): the label as a\
+-- heading over the value, as the editor's own cards read.\
+function Ctx:row(b, w, stacked)\
+    local h = self:cardH()\
+    local enabled = b.enabled ~= false\
+    local inner, ink, vt, fits = self:rowParts(b, w)\
+    if stacked == nil then stacked = not fits end\
+    local cross_w = h\
+    if b.on and b.on_clear then w = w - cross_w - Space.px(6) end\
+    local body\
+    if stacked and vt then\
+        -- The icon beside the label on a line of their own, the value under\
+        -- them across the card's whole width (maintainer).\
+        body = VerticalGroup:new{ align = \"left\",\
+            Kit.iconHeading(b.icon, b.label, self.fs, ink),\
+            VerticalSpan:new{ width = Space.px(4) },\
+            self:text(vt, { bold = true, fgcolor = ink, max_width = inner }) }\
+        h = body:getSize().h + 2 * Space.px(10)\
+    else\
+        local iw = b.icon and self:iconW() or 0\
+        local value = vt and self:text(vt, { bold = true, fgcolor = ink,\
+            max_width = math.floor(inner * 0.6) })\
+        local label_w = inner - iw - (value and value:getSize().w + self.gap or 0)\
+        local text = b.label\
+        if b.path and text then\
+            text = shortenPath(text, function(t) return self:text(t):getSize().w <= label_w end)\
+        end\
+        local label = self:text(text, { fgcolor = ink, max_width = label_w })\
+        if b.icon then\
+            label = HorizontalGroup:new{ align = \"center\", self:icon(b.icon, ink),\
+                HorizontalSpan:new{ width = Space.px(12) }, label }\
+        end\
+        body = leftRight(label, value, inner)\
+    end\
+    local cell = tapCard(body, w, h, b.on, b.callback, enabled)\
+    -- The cross as tall as the card beside it (maintainer), as wide as a\
+    -- one-line card is tall.\
+    local cross\
+    if b.on and b.on_clear then\
+        cross = tapCard(self:text(CROSS, { bold = true }), cross_w, h, false, b.on_clear, true, nil,\
+            math.floor((cross_w - self:text(CROSS):getSize().w) / 2))\
+    end\
+    if not cross then return cell, { cell } end\
+    return HorizontalGroup:new{ align = \"center\", cell, HorizontalSpan:new{ width = Space.px(6) }, cross },\
+        { cell, cross }\
+end\
+\
+-- option(b, w) -> a card with its title and a grey line, and link buttons\
+-- inside it at the right.\
+function Ctx:option(b, w)\
+    local pad = Space.px(12)\
+    local inner = w - 2 * pad\
+    local links = HorizontalGroup:new{ align = \"center\" }\
+    local focus = {}\
+    for i, l in ipairs(b.links or {}) do\
+        if i > 1 then links[#links + 1] = HorizontalSpan:new{ width = Space.px(6) } end\
+        local btn = self:smallButton(l.text, l.on, l.callback)\
+        links[#links + 1] = btn\
+        focus[#focus + 1] = btn\
+    end\
+    local links_w = (#links > 0) and (links:getSize().w + self.gap) or 0\
+    local ink = self:ink(b.on, b.enabled)\
+    -- The icon leads the title's line and the grey line runs under both,\
+    -- the card's whole width (maintainer).\
+    local text_w = inner - links_w\
+    local icon_gap = Space.px(12)\
+    local title = self:text(b.text, { bold = true, fgcolor = ink,\
+        max_width = text_w - (b.icon and (self:iconW() + icon_gap) or 0) })\
+    if b.icon then\
+        title = HorizontalGroup:new{ align = \"center\", self:icon(b.icon, ink),\
+            HorizontalSpan:new{ width = icon_gap }, title }\
+    end\
+    local vg = VerticalGroup:new{ align = \"left\", title }\
+    if b.desc then\
+        vg[#vg + 1] = VerticalSpan:new{ width = Space.px(2) }\
+        vg[#vg + 1] = require(\"ui/widget/textboxwidget\"):new{ text = b.desc, width = text_w,\
+            face = self.small, fgcolor = b.on and Blitbuffer.COLOR_GRAY_E or Kit.DIM_ON_GREY,\
+            bgcolor = b.on and Blitbuffer.COLOR_BLACK or Kit.STRIP_BG }\
+    end\
+    local h = math.max(vg:getSize().h, links:getSize().h) + 2 * Space.px(b.desc and 12 or 6)\
+    if not b.desc then h = math.max(h, self:cardH()) end\
+    local body = (#links > 0) and leftRight(vg, links, inner) or vg\
+    local cell = tapCard(body, w, h, b.on, b.callback, b.enabled, nil, nil, true)\
+    table.insert(focus, 1, cell)\
+    return cell, focus\
+end\
+\
+-- Half-width blocks of a kind side by side, two to a line.\
+local function halves(ctx, list, build)\
+    local vg = VerticalGroup:new{ align = \"left\" }\
+    local w = math.floor((ctx.w - ctx.gap) / 2)\
+    for i = 1, #list, 2 do\
+        if i > 1 then vg[#vg + 1] = VerticalSpan:new{ width = ctx.gap } end\
+        local a, fa = build(list[i], w)\
+        local hg = HorizontalGroup:new{ align = \"center\", a }\
+        local focus = fa\
+        if list[i + 1] then\
+            local bw_, fb = build(list[i + 1], ctx.w - w - ctx.gap)\
+            hg[#hg + 1] = HorizontalSpan:new{ width = ctx.gap }\
+            hg[#hg + 1] = bw_\
+            for _j, f in ipairs(fb) do focus[#focus + 1] = f end\
+        end\
+        vg[#vg + 1] = hg\
+        if #focus > 0 then ctx.layout[#ctx.layout + 1] = focus end\
+    end\
+    return vg\
+end\
+\
+function R.row(ctx, b)\
+    local wdg, focus = ctx:row(b, ctx.w)\
+    ctx.layout[#ctx.layout + 1] = focus\
+    return wdg\
+end\
+\
+function R.option(ctx, b)\
+    local wdg, focus = ctx:option(b, ctx.w)\
+    ctx.layout[#ctx.layout + 1] = focus\
+    return wdg\
+end\
+\
+function R.slot(ctx, b)\
+    local h = ctx:cardH()\
+    local pad = Space.px(12)\
+    local focus = {}\
+    local seg\
+    if b.seg then\
+        local rows\
+        seg, rows = Kit.segmented{ items = b.seg.items, active = b.seg.active,\
+            on_pick = b.seg.on_pick, face = require(\"lib/bookshelf_fonts\"):getFace(\"cfont\", math.max(10, ctx.fs - 3)),\
+            pad_v = Space.px(6), pad_h = Space.px(10) }\
+        for _i, c in ipairs(rows[1] or {}) do focus[#focus + 1] = c end\
+    end\
+    local cross\
+    if b.on_clear then\
+        cross = ctx:smallButton(CROSS, false, b.on_clear, h - Space.px(14))\
+        focus[#focus + 1] = cross\
+    end\
+    local right = HorizontalGroup:new{ align = \"center\" }\
+    if seg then right[#right + 1] = seg end\
+    if cross then\
+        if seg then right[#right + 1] = HorizontalSpan:new{ width = Space.px(8) } end\
+        right[#right + 1] = cross\
+    end\
+    local inner = ctx.w - 2 * pad\
+    local badge = ctx:text(b.badge or \"\", { bold = true, fgcolor = Blitbuffer.COLOR_DARK_GRAY })\
+    local bw = Space.px(36)\
+    local label = ctx:text(b.text, { bold = true,\
+        max_width = math.max(Space.px(40), inner - bw - right:getSize().w - ctx.gap) })\
+    local left = HorizontalGroup:new{ align = \"center\",\
+        CenterContainer:new{ dimen = Geom:new{ w = bw, h = label:getSize().h }, badge }, label }\
+    local card = Kit.card{ width = ctx.w, height = h, background = Blitbuffer.COLOR_WHITE,\
+        outline = b.selected, padding_left = pad, padding_right = pad,\
+        LeftContainer:new{ dimen = Geom:new{ w = inner, h = h },\
+            leftRight(left, (#right > 0) and right or nil, inner) } }\
+    local cell = Kit.tapCell(card, ctx.w, h, b.callback, b.callback ~= nil, nil, true)\
+    cell.focus_radius = Kit.RADIUS\
+    table.insert(focus, 1, cell)\
+    ctx.layout[#ctx.layout + 1] = focus\
+    return cell\
+end\
+\
+-- One run of blocks, stacked: consecutive half rows/options pair up.\
+local function stack(ctx, blocks, spacing)\
+    local vg = VerticalGroup:new{ align = \"left\" }\
+    local i = 1\
+    local prev\
+    while i <= #blocks do\
+        local b = blocks[i]\
+        local wdg\
+        if b.half then\
+            -- Half-width blocks pair up, two to a line: rows and options\
+            -- sized to the half, other controls laid out in it (their own\
+            -- keys rows).\
+            local run = {}\
+            while blocks[i] and blocks[i].half do\
+                run[#run + 1] = blocks[i]; i = i + 1\
+            end\
+            -- A pair of rows stacks its labels together, or not at all,\
+            -- so the two cards are one height.\
+            local half_w = math.floor((ctx.w - ctx.gap) / 2)\
+            local stacked = {}\
+            for j = 1, #run, 2 do\
+                local a_, b_ = run[j], run[j + 1]\
+                local s_ = false\
+                for _k, x in ipairs({ a_, b_ }) do\
+                    if x and x.type == \"row\" and not select(4, ctx:rowParts(x, half_w)) then s_ = true end\
+                end\
+                stacked[a_] = s_\
+                if b_ then stacked[b_] = s_ end\
+            end\
+            wdg = halves(ctx, run, function(x, w)\
+                if x.type == \"row\" then return ctx:row(x, w, stacked[x]) end\
+                if x.type == \"option\" then return ctx:option(x, w) end\
+                local saved = ctx.w\
+                ctx.w = w\
+                local out = R[x.type](ctx, x)\
+                ctx.w = saved\
+                return out, {}\
+            end)\
+        else\
+            local r = R[b.type]\
+            wdg = r and r(ctx, b)\
+            i = i + 1\
+        end\
+        if wdg then\
+            if prev then\
+                -- A heading sits close to what it heads, further from what\
+                -- went before.\
+                local gap = (b.type == \"heading\") and math.floor(spacing * 1.8)\
+                    or (prev.type == \"heading\") and Space.px(6) or spacing\
+                vg[#vg + 1] = VerticalSpan:new{ width = gap }\
+            end\
+            vg[#vg + 1] = wdg\
+            prev = b\
+        end\
+    end\
+    return vg\
+end\
+\
+-- units(blocks) -> the blocks in runs that stay together on a page: a\
+-- heading (and a hint under it) with what follows, a run of half blocks.\
+local function units(blocks)\
+    local out, cur = {}, nil\
+    local glue = false\
+    local halves_in = 0   -- half blocks in the current unit's pair so far\
+    for i, b in ipairs(blocks) do\
+        local prev = blocks[i - 1]\
+        -- The second of a pair joins the first; a page may break between\
+        -- pairs, as it may between any two lines.\
+        local join = cur and (glue or (b.half and prev and prev.half and halves_in % 2 == 1))\
+        if not join then\
+            cur = {}\
+            out[#out + 1] = cur\
+            halves_in = 0\
+        end\
+        cur[#cur + 1] = b\
+        if b.half then halves_in = halves_in + 1 else halves_in = 0 end\
+        glue = (b.type == \"heading\") or (b.type == \"hint\" and prev and prev.type == \"heading\")\
+    end\
+    return out\
+end\
+\
+Page._units = units   -- for tests\
+\
+-- pager(ctx, n, of, on_page) -> the page row: < n of m >, the ends greyed.\
+local function pager(ctx, n, of, on_page)\
+    local h = ctx:cardH() - Space.px(8)\
+    local isz = h - Space.px(16)\
+    local prev = Kit.button{ icon = \"chevron.left\", icon_size = isz, height = h,\
+        pad_h = Space.px(20), enabled = n > 1, on_tap = function() on_page(n - 1) end }\
+    local nxt = Kit.button{ icon = \"chevron.right\", icon_size = isz, height = h,\
+        pad_h = Space.px(20), enabled = n < of, on_tap = function() on_page(n + 1) end }\
+    ctx.layout[#ctx.layout + 1] = { prev, nxt }\
+    local label = CenterContainer:new{ dimen = Geom:new{ w = Space.px(160), h = h },\
+        ctx:text(require(\"ffi/util\").template(require(\"lib/bookshelf_i18n\").gettext(\"%1 of %2\"), n, of)) }\
+    return CenterContainer:new{ dimen = Geom:new{ w = ctx.w, h = h },\
+        HorizontalGroup:new{ align = \"center\", prev, label, nxt } }\
+end\
+\
+-- render(model, o) -> strip (nil without one), body, layout, pages\
+--   model { strip = {blocks}, blocks = {blocks} }\
+--   o { width (the popup's), inset, font_size, max_h (the most the body may\
+--   take; past it the blocks go onto pages), page (1-based), on_page(n) }\
+-- A page break never splits a unit (units()), so a heading stays with what\
+-- it heads; a unit taller than a whole page has one to itself.\
+function Page.render(model, o)\
+    loadDeps()\
+    local ctx = newCtx(o)\
+    local strip\
+    if model.strip and #model.strip > 0 then\
+        ctx.bg = Kit.STRIP_BG\
+        strip = Kit.withShadow(FrameContainer:new{\
+            bordersize = 0, margin = 0, width = o.width,\
+            background = Kit.STRIP_BG,\
+            padding_left = o.inset, padding_right = o.inset,\
+            padding_top = Space.px(12), padding_bottom = Space.px(12),\
+            stack(ctx, model.strip, Space.px(10)),\
+        }, o.width)\
+        ctx.bg = nil\
+    end\
+    local spacing = Space.px(10)\
+    local pad_top, pad_bottom = Space.px(14), o.inset\
+    -- Each unit laid out on its own, with the keys rows it adds.\
+    -- under: the heading a unit sits under, repeated at the top of a page\
+    -- the section carries on to.\
+    local built = {}\
+    local strip_layout = ctx.layout\
+    local under\
+    for _i, u in ipairs(units(model.blocks or {})) do\
+        ctx.layout = {}\
+        local w = stack(ctx, u, spacing)\
+        if u[1].type == \"heading\" then under = u[1].text end\
+        built[#built + 1] = { w = w, h = w:getSize().h, layout = ctx.layout, under = under,\
+            head = u[1].type == \"heading\",\
+            gap = (u[1].type == \"heading\") and math.floor(spacing * 1.8) or spacing }\
+    end\
+    local cont_h = Kit.heading(\"Hg\", ctx.fs):getSize().h + Space.px(6)\
+    -- What a page starting at unit i spends before it on the carried heading.\
+    local function carried(i)\
+        return (not built[i].head and built[i].under) and cont_h or 0\
+    end\
+    ctx.layout = strip_layout\
+    local function total(from, to)\
+        local h = 0\
+        for i = from, to do h = h + built[i].h + ((i > from) and built[i].gap or 0) end\
+        return h\
+    end\
+    -- Greedy pages within the room left.\
+    local room = o.max_h and (o.max_h - (strip and strip:getSize().h or 0) - pad_top - pad_bottom)\
+        or math.huge\
+    local pages = { { 1, #built } }\
+    if #built > 0 and total(1, #built) > room then\
+        local pager_h = ctx:cardH() - Space.px(8) + spacing\
+        local fit = room - pager_h\
+        pages = {}\
+        local first = 1\
+        while first <= #built do\
+            local last = first\
+            while last < #built and carried(first) + total(first, last + 1) <= fit do last = last + 1 end\
+            pages[#pages + 1] = { first, last }\
+            first = last + 1\
+        end\
+    end\
+    local n = math.max(1, math.min(o.page or 1, #pages))\
+    local vg = VerticalGroup:new{ align = \"left\" }\
+    local span = pages[n]\
+    if span and span[1] <= span[2] then\
+        if #pages > 1 and carried(span[1]) > 0 then\
+            vg[#vg + 1] = Kit.heading(built[span[1]].under, ctx.fs)\
+            vg[#vg + 1] = VerticalSpan:new{ width = Space.px(6) }\
+        end\
+        for i = span[1], span[2] do\
+            if i > span[1] then vg[#vg + 1] = VerticalSpan:new{ width = built[i].gap } end\
+            vg[#vg + 1] = built[i].w\
+            for _j, row in ipairs(built[i].layout) do ctx.layout[#ctx.layout + 1] = row end\
+        end\
+    end\
+    if #pages > 1 then\
+        -- The page row at the foot, the same place on every page.\
+        local used = (span and span[1] <= span[2]) and (carried(span[1]) + total(span[1], span[2])) or 0\
+        local pager_h = ctx:cardH() - Space.px(8)\
+        vg[#vg + 1] = VerticalSpan:new{ width = math.max(spacing, room - used - pager_h) }\
+        vg[#vg + 1] = pager(ctx, n, #pages, o.on_page or function() end)\
+    end\
+    local body = FrameContainer:new{ bordersize = 0, margin = 0,\
+        padding_left = o.inset, padding_right = o.inset,\
+        padding_top = pad_top, padding_bottom = pad_bottom, vg }\
+    return strip, body, ctx.layout, #pages\
+end\
+\
+-- toButtons(model) -> ButtonDialog rows for the same page: a button for\
+-- each thing to tap, the ones on ticked, and headings, hints and the summary\
+-- as greyed rows.\
+function Page.toButtons(model)\
+    local rows = {}\
+    local TICK, BLANK = \"\\xE2\\x9C\\x93 \", \"  \"\
+    local function mark(on) return on and TICK or BLANK end\
+    local function add(blocks)\
+        for _i, b in ipairs(blocks or {}) do\
+            local t = b.type\
+            if t == \"summary\" or t == \"heading\" or t == \"hint\" then\
+                rows[#rows + 1] = { { text = b.text, enabled = false } }\
+            elseif t == \"pills\" then\
+                local row = {}\
+                for _j, it in ipairs(b.items or {}) do\
+                    row[#row + 1] = { text = it.label .. (it.trailing and \" \" .. it.trailing or \"\"),\
+                        callback = it.on_tap }\
+                end\
+                rows[#rows + 1] = row\
+            elseif t == \"chips\" then\
+                local row = {}\
+                for _j, it in ipairs(b.items or {}) do\
+                    row[#row + 1] = { text = mark(it.on) .. it.text, callback = it.callback,\
+                        enabled = it.enabled }\
+                end\
+                rows[#rows + 1] = row\
+            elseif t == \"segmented\" then\
+                local row = {}\
+                for _j, it in ipairs(b.items or {}) do\
+                    local key = it.key\
+                    row[#row + 1] = { text = mark(key == b.active) .. it.label,\
+                        callback = function() if key ~= b.active then b.on_pick(key) end end }\
+                end\
+                if b.label then rows[#rows + 1] = { { text = b.label, enabled = false } } end\
+                rows[#rows + 1] = row\
+            elseif t == \"slider\" then\
+                local fmt, step = b.format or tostring, b.step or 1\
+                rows[#rows + 1] = { { text = \"\\u{2212}\", callback = function() b.on_change(math.max(b.min, b.value - step)) end },\
+                    { text = (b.label and (b.label .. \": \") or \"\") .. fmt(b.value), enabled = false },\
+                    { text = \"+\", callback = function() b.on_change(math.min(b.max, b.value + step)) end } }\
+            elseif t == \"order\" then\
+                rows[#rows + 1] = { { text = mark(b.selected) .. (b.label or \"\"), enabled = false },\
+                    { text = \"\\u{2191}\", callback = b.on_up, enabled = b.up_enabled ~= false },\
+                    { text = \"\\u{2193}\", callback = b.on_down, enabled = b.down_enabled ~= false } }\
+                if b.on_edit then\
+                    rows[#rows][4] = { text = require(\"lib/bookshelf_i18n\").gettext(\"Edit\"), callback = b.on_edit }\
+                end\
+            elseif t == \"stepper\" then\
+                rows[#rows + 1] = { { text = \"\\u{2212}\", callback = b.on_dec },\
+                    { text = b.label .. \": \" .. tostring(b.value), enabled = false },\
+                    { text = \"+\", callback = b.on_inc } }\
+            elseif t == \"row\" then\
+                local row = { { text = b.label .. (b.value and (\": \" .. b.value) or \"\"),\
+                    callback = b.callback, enabled = b.enabled } }\
+                if b.on and b.on_clear then row[2] = { text = CROSS, callback = b.on_clear } end\
+                rows[#rows + 1] = row\
+            elseif t == \"option\" then\
+                local row = { { text = mark(b.on) .. b.text, callback = b.callback, enabled = b.enabled } }\
+                for _j, l in ipairs(b.links or {}) do\
+                    row[#row + 1] = { text = mark(l.on) .. l.text, callback = l.callback }\
+                end\
+                rows[#rows + 1] = row\
+            elseif t == \"slot\" then\
+                local row = { { text = mark(b.selected) .. (b.badge or \"\") .. \" \" .. b.text,\
+                    callback = b.callback } }\
+                if b.seg then\
+                    for _j, it in ipairs(b.seg.items) do\
+                        local key = it.key\
+                        row[#row + 1] = { text = mark(key == b.seg.active) .. it.label,\
+                            callback = function() if key ~= b.seg.active then b.seg.on_pick(key) end end }\
+                    end\
+                end\
+                if b.on_clear then row[#row + 1] = { text = CROSS, callback = b.on_clear } end\
+                rows[#rows + 1] = row\
+            end\
+        end\
+    end\
+    add(model.strip)\
+    add(model.blocks)\
+    return rows\
+end\
+\
+return Page\
+",
+    ["lib/bookshelf_link_panel"] = "-- bookshelf_link_panel.lua\
+-- The About panel's kind of popup: a white rounded frame of centred blocks\
+-- over the screen, closed by a tap outside it or Back; links that open (or,\
+-- with no browser, copy) a URL; and a QR code of a URL, so a reader on an\
+-- e-reader with no browser can open it on their phone (maintainer,\
+-- 2026-10-31). About, Add theme pack and Add ornaments use it.\
+--   LinkPanel.show{ build = function(content_w) -> { widgets }, pad_top }\
+--   LinkPanel.linkButton(display, url) -> a Button\
+--   LinkPanel.qr(text, side) -> an ImageWidget about side px square, or nil\
+--   LinkPanel.showShop{ title, text, shop } -> a panel that says how to add\
+--     something, then where to get ready-made ones: the shop's QR and link\
+\
+local Blitbuffer = require(\"ffi/blitbuffer\")\
+local Device     = require(\"device\")\
+local UIManager  = require(\"ui/uimanager\")\
+local Space      = require(\"lib/bookshelf_space\")\
+local _          = require(\"lib/bookshelf_i18n\").gettext\
+local Screen     = Device.screen\
+\
+local M = {}\
+\
+-- The quiet zone round the code, in modules: the standard's four. In night\
+-- mode the code keeps its own colours (a phone reads black on white), so\
+-- its white border is all the quiet zone it has there.\
+M.QUIET = 4\
+\
+-- openLink(url): Device:openLink where there is a browser (desktop,\
+-- Android); else to KOReader's clipboard, with a note that it went there.\
+function M.openLink(url)\
+    local ok = false\
+    if Device.openLink then\
+        local _ok, ret = pcall(function() return Device:openLink(url) end)\
+        if _ok and ret then ok = true end\
+    end\
+    if not ok and Device.input and Device.input.setClipboardText then\
+        pcall(function() Device.input.setClipboardText(url) end)\
+        local Notification = require(\"ui/widget/notification\")\
+        UIManager:show(Notification:new{ text = _(\"Link copied to clipboard\") })\
+    end\
+end\
+\
+function M.linkButton(display, url)\
+    local Button = require(\"ui/widget/button\")\
+    return Button:new{\
+        text = display, bordersize = 0, padding = 0, margin = 0,\
+        text_font_face = \"cfont\", text_font_size = 14,\
+        callback = function() M.openLink(url) end,\
+    }\
+end\
+\
+-- qr(text, side): whole pixels a module, so no module blurs into the next;\
+-- nil when the encoder is missing or fails (the link still shows).\
+function M.qr(text, side)\
+    local ok, qrencode = pcall(require, \"ffi/qrencode\")\
+    if not ok or not qrencode then return nil end\
+    local ok2, good, grid = pcall(qrencode.qrcode, text)\
+    if not (ok2 and good and type(grid) == \"table\" and #grid > 0) then return nil end\
+    local n = #grid + 2 * M.QUIET\
+    local px = math.max(1, math.floor(side / n))\
+    local size = px * n\
+    local bb = Blitbuffer.new(size, size, Blitbuffer.TYPE_BB8)\
+    bb:fill(Blitbuffer.COLOR_WHITE)\
+    for x, col in ipairs(grid) do\
+        for y, v in ipairs(col) do\
+            if v > 0 then\
+                bb:paintRect((x - 1 + M.QUIET) * px, (y - 1 + M.QUIET) * px, px, px, Blitbuffer.COLOR_BLACK)\
+            end\
+        end\
+    end\
+    local ImageWidget = require(\"ui/widget/imagewidget\")\
+    return ImageWidget:new{ image = bb, width = size, height = size,\
+        original_in_nightmode = true }\
+end\
+\
+-- M.qrSide(): the code's size, about an inch on any screen.\
+function M.qrSide()\
+    return Screen:scaleBySize(130)\
+end\
+\
+function M.show(o)\
+    local Geom             = require(\"ui/geometry\")\
+    local FrameContainer   = require(\"ui/widget/container/framecontainer\")\
+    local CenterContainer  = require(\"ui/widget/container/centercontainer\")\
+    local MovableContainer = require(\"ui/widget/container/movablecontainer\")\
+    local InputContainer   = require(\"ui/widget/container/inputcontainer\")\
+    local VerticalGroup    = require(\"ui/widget/verticalgroup\")\
+    local GestureRange     = require(\"ui/gesturerange\")\
+\
+    local sw, sh = Screen:getWidth(), Screen:getHeight()\
+    -- ~80% of a phone-sized portrait, capped so it doesn't sprawl in\
+    -- landscape or on a tablet.\
+    local frame_w = math.min(math.floor(sw * 0.8), Screen:scaleBySize(420))\
+    local FRAME_PAD = Space.px(24)\
+    local content_w = frame_w - FRAME_PAD * 2\
+    local column = VerticalGroup:new{ align = \"center\" }\
+    for _i, w in ipairs(o.build(content_w)) do column[#column + 1] = w end\
+    local frame = FrameContainer:new{\
+        radius      = Space.radius.window,\
+        padding     = FRAME_PAD,\
+        padding_top = o.pad_top and math.floor(FRAME_PAD * o.pad_top) or FRAME_PAD,\
+        margin      = 0,\
+        background  = Blitbuffer.COLOR_WHITE,\
+        column,\
+    }\
+    local dialog = InputContainer:new{\
+        align = \"center\",\
+        dimen = Geom:new{ x = 0, y = 0, w = sw, h = sh },\
+        CenterContainer:new{\
+            dimen = Geom:new{ w = sw, h = sh },\
+            MovableContainer:new{ frame },\
+        },\
+    }\
+    if Device:isTouchDevice() then\
+        dialog.ges_events = {\
+            TapClose = { GestureRange:new{ ges = \"tap\", range = Geom:new{ x = 0, y = 0, w = sw, h = sh } } },\
+        }\
+        dialog.onTapClose = function(self_d, _arg, ges_ev)\
+            if not frame.dimen or ges_ev.pos:notIntersectWith(frame.dimen) then\
+                UIManager:close(self_d)\
+            end\
+            return true\
+        end\
+    end\
+    if Device:hasKeys() then\
+        dialog.key_events = { Close = { { Device.input.group.Back } } }\
+        dialog.onClose = function(self_d)\
+            UIManager:close(self_d)\
+            return true\
+        end\
+    end\
+    -- Refreshed on show and on close, as InfoMessage is: UIManager:show\
+    -- with no refresh type queues none, and on e-ink nothing shows until\
+    -- one is (the rig shows the framebuffer, so it looked fine there; on a\
+    -- PW5 Add theme pack did nothing, maintainer).\
+    function dialog:onShow()\
+        UIManager:setDirty(self, function() return \"ui\", frame.dimen end)\
+        return true\
+    end\
+    function dialog:onCloseWidget()\
+        UIManager:setDirty(nil, function() return \"ui\", frame.dimen end)\
+    end\
+    UIManager:show(dialog)\
+    return dialog\
+end\
+\
+M.SHOP_URL = \"https://ko-fi.com/andyhazz/shop\"\
+M.SHOP_DISPLAY = \"ko-fi.com/andyhazz/shop\"\
+\
+-- showShop{ title, text, shop }: the title in the menus' bold, the text,\
+-- then shop (a line such as \"Ready-made theme packs\") over the shop's QR\
+-- code and its link.\
+function M.showShop(o)\
+    local BFont         = require(\"lib/bookshelf_fonts\")\
+    local TextBoxWidget = require(\"ui/widget/textboxwidget\")\
+    local VerticalSpan  = require(\"ui/widget/verticalspan\")\
+    return M.show{ build = function(content_w)\
+        local tface, tbold = BFont:getFace(\"cfont\", 22, { bold = true })\
+        local face, bold = BFont:getFace(\"cfont\", 16)\
+        local function box(text, f, b, align)\
+            return TextBoxWidget:new{ text = text, face = f, bold = b,\
+                width = content_w, alignment = align or \"center\" }\
+        end\
+        local out = {\
+            box(o.title, tface, tbold),\
+            VerticalSpan:new{ width = Space.padding.large },\
+            box(o.text, face, bold, \"left\"),\
+            VerticalSpan:new{ width = Space.padding.large * 2 },\
+            box(o.shop, face, true),\
+            VerticalSpan:new{ width = Space.padding.default },\
+        }\
+        local qr = M.qr(M.SHOP_URL, math.min(content_w, M.qrSide()))\
+        if qr then\
+            out[#out + 1] = qr\
+            out[#out + 1] = VerticalSpan:new{ width = Space.padding.default }\
+        end\
+        out[#out + 1] = M.linkButton(M.SHOP_DISPLAY, M.SHOP_URL)\
+        return out\
+    end }\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_page_dialog"] = "-- bookshelf_page_dialog.lua (see STYLE.md)\
+-- A popup of its own laid out as a page of blocks (lib/bookshelf_editor_page),\
+-- for a screen outside the shelf editor that would otherwise be a stock\
+-- ButtonDialog: the title with its X, the page's strip and body, and a footer\
+-- when there is something to confirm (Cancel | Apply). Centred; it pages past\
+-- the room on the screen as the editor's pages do.\
+--   PageDialog.show{\
+--     title,                      the title line, or a function returning\
+--                                 it, read on every refresh (a value in it)\
+--     page = function() -> model  { strip = {blocks}, blocks = {blocks} },\
+--                                 laid out afresh on every refresh()\
+--     footer = { { text, callback, enabled_func, primary } ... } (optional)\
+--     on_close = function()       the X, a tap outside, Back (after closing)\
+--     dismissable = false         a tap outside does nothing (a nudge: rapid\
+--                                 taps fell through and closed it mid-edit)\
+--     at_bottom = true            a slim panel low on the screen, so more\
+--                                 of a live preview stays in sight\
+--     anchor = rect | function() -> rect   open under that rect (above it\
+--                                 when there is no room), not centred: a\
+--                                 nudge for the thing at the rect\
+--   } -> the dialog; dialog:refresh() lays it out again in place.\
+\
+local Blitbuffer      = require(\"ffi/blitbuffer\")\
+local Device          = require(\"device\")\
+local FrameContainer  = require(\"ui/widget/container/framecontainer\")\
+local CenterContainer = require(\"ui/widget/container/centercontainer\")\
+local Geom            = require(\"ui/geometry\")\
+local GestureRange    = require(\"ui/gesturerange\")\
+local InputContainer  = require(\"ui/widget/container/inputcontainer\")\
+local Size            = require(\"ui/size\")\
+local UIManager       = require(\"ui/uimanager\")\
+local VerticalGroup   = require(\"ui/widget/verticalgroup\")\
+local Space           = require(\"lib/bookshelf_space\")\
+local Screen          = Device.screen\
+\
+local PageDialog = InputContainer:extend{\
+    title    = nil,\
+    page     = nil,\
+    footer   = nil,\
+    on_close = nil,\
+    dismissable = true,\
+    anchor   = nil,\
+    at_bottom = nil,\
+}\
+\
+local FS = 20\
+\
+function PageDialog:init()\
+    local sw, sh = Screen:getWidth(), Screen:getHeight()\
+    -- The shelf editor's width, so the two read as one kind of popup.\
+    self.width = math.floor(math.min(sw, sh) * 0.85)\
+    self.inset = Space.px(16)\
+    self.pg = 1\
+    -- The keys' cursor across rebuilds (Kit.keyFocus).\
+    self._key_state = {}\
+    self.frame = FrameContainer:new{\
+        radius = Space.radius.window, padding = 0, margin = 0,\
+        background = Blitbuffer.COLOR_WHITE,\
+        VerticalGroup:new{},\
+    }\
+    -- Dragged out of the way, as KOReader's own dialogs can be (maintainer).\
+    -- Not a long-press: MovableContainer makes that a see-through toggle, and\
+    -- a long-press on a nudge's button is its big step.\
+    local MovableContainer = require(\"ui/widget/container/movablecontainer\")\
+    self.movable = MovableContainer:new{ ignore_events = { \"hold\", \"hold_release\", \"hold_pan\" },\
+        self.frame }\
+    -- The footer runs to the frame's edge: its border is drawn again over it.\
+    local frame = self.frame\
+    function frame:paintTo(bb, x, y)\
+        FrameContainer.paintTo(self, bb, x, y)\
+        local sz = self:getSize()\
+        bb:paintBorder(x, y, sz.w, sz.h, self.bordersize, Blitbuffer.COLOR_BLACK, self.radius)\
+    end\
+    if self.anchor or self.at_bottom then\
+        -- Under the anchor's rect, centred across; above it with no room\
+        -- below; centred when the anchor has no rect now.\
+        local dialog = self\
+        local WidgetContainer = require(\"ui/widget/container/widgetcontainer\")\
+        local holder = WidgetContainer:new{ dimen = Geom:new{ w = sw, h = sh }, dialog.movable }\
+        function holder:paintTo(bb, x, y)\
+            local a = dialog:_anchorRect()\
+            dialog._anchor_seen = a and Geom:new{ x = a.x, y = a.y, w = a.w, h = a.h } or false\
+            local sz = frame:getSize()\
+            local fx, fy = math.floor((sw - sz.w) / 2), math.floor((sh - sz.h) / 2)\
+            if dialog.at_bottom and not (a and a.y) then\
+                fy = sh - sz.h - Space.px(24)\
+            elseif a and a.y and a.h then\
+                local gap = Space.px(8)\
+                if a.y + a.h + gap + sz.h <= sh then fy = a.y + a.h + gap\
+                else fy = math.max(0, a.y - gap - sz.h) end\
+            end\
+            dialog.movable:paintTo(bb, x + fx, y + fy)\
+        end\
+        self[1] = holder\
+    else\
+        self[1] = CenterContainer:new{ dimen = Geom:new{ w = sw, h = sh }, self.movable }\
+    end\
+    if Device:isTouchDevice() then\
+        self.ges_events = { TapClose = { GestureRange:new{ ges = \"tap\",\
+            range = Geom:new{ x = 0, y = 0, w = sw, h = sh } } } }\
+    end\
+    if Device:hasKeys() then\
+        self.key_events = { Close = { { Device.input.group.Back } } }\
+    end\
+    self:_build()\
+end\
+\
+-- footerRow(w) -> the footer: equal buttons edge to edge under a full-width\
+-- line, thin separators between them, and the keys' row for them.\
+function PageDialog:_footerRow(w)\
+    local actions = {}\
+    for i, a in ipairs(self.footer) do\
+        local enabled = true\
+        if a.enabled_func then enabled = a.enabled_func() end\
+        actions[i] = { text = a.text, primary = a.primary, enabled = enabled, callback = a.callback }\
+    end\
+    return require(\"lib/bookshelf_popup_kit\").footerRow(actions, w,\
+        { radius = Space.radius.window, show_parent = self })\
+end\
+\
+-- _titleText() -> the title now: a function's answer, else the text.\
+function PageDialog:_titleText()\
+    if type(self.title) == \"function\" then return self.title() end\
+    return self.title\
+end\
+\
+function PageDialog:_build()\
+    local TitleBar     = require(\"ui/widget/titlebar\")\
+    local FocusManager = require(\"ui/widget/focusmanager\")\
+    local EditorPage   = require(\"lib/bookshelf_editor_page\")\
+    local title_bar = TitleBar:new{\
+        title_face = require(\"lib/bookshelf_popup_kit\").titleFace(),\
+        width = self.width, title = self:_titleText(),\
+        with_bottom_line = true, bottom_v_padding = 0,\
+        close_callback = function() self:_dismiss() end,\
+        show_parent = self,\
+    }\
+    require(\"lib/bookshelf_popup_kit\").centreTitle(title_bar)\
+    local footer, footer_btns\
+    if self.footer and #self.footer > 0 then\
+        footer, footer_btns = self:_footerRow(self.width)\
+    end\
+    local max_h = Screen:getHeight() - Space.px(96) - title_bar:getSize().h\
+        - (footer and footer:getSize().h or 0) - 2 * Size.border.window\
+    local strip, body, layout = EditorPage.render(self.page(), {\
+        width = self.width, inset = self.inset, font_size = FS, max_h = max_h,\
+        page = self.pg,\
+        on_page = function(n) self.pg = n; self:refresh() end,\
+    })\
+    if footer_btns then layout[#layout + 1] = footer_btns end\
+    local vg = VerticalGroup:new{ align = \"left\" }\
+    if strip then vg[#vg + 1] = strip end\
+    vg[#vg + 1] = body\
+    if footer then vg[#vg + 1] = footer end\
+    local fm = FocusManager:new{ layout = layout, show_parent = self, vg }\
+    -- The cursor on the first control, shown at the first key (STYLE.md);\
+    -- each page of a paged dialog seeds afresh.\
+    require(\"lib/bookshelf_popup_kit\").keyFocus(fm, self._key_state, 1, self.pg)\
+    self.frame[1] = VerticalGroup:new{ align = \"left\", title_bar, fm }\
+end\
+\
+-- _anchorRect() -> where the anchor is now (a rect, or a function's answer).\
+function PageDialog:_anchorRect()\
+    local a = self.anchor\
+    if type(a) == \"function\" then a = a() end\
+    return a\
+end\
+\
+-- refresh(): lay the page out again from its model and repaint it in place;\
+-- what it no longer covers (a shorter page) is repainted from underneath.\
+function PageDialog:refresh()\
+    if not UIManager:isWidgetShown(self) then return end\
+    local d = self.frame.dimen\
+    local prev = d and d.x and Geom:new{ x = d.x, y = d.y, w = d.w, h = d.h }\
+    self:_build()\
+    local size = self.frame:getSize()\
+    -- Anchored: only when what it is anchored to moved (a module nudged\
+    -- along the shelf) is it somewhere else; the windows underneath were\
+    -- repainted on every tap (the whole shelf behind a size page).\
+    local moved = false\
+    if self.anchor then\
+        local a, seen = self:_anchorRect(), self._anchor_seen\
+        moved = (a and a.x and seen) and (a.x ~= seen.x or a.y ~= seen.y or a.h ~= seen.h) or false\
+    end\
+    if prev and (size.w ~= prev.w or size.h ~= prev.h or moved) then\
+        -- Centred: a change of size moves it too.\
+        UIManager:setDirty(\"all\", \"ui\", prev)\
+        self.frame.dimen = nil\
+    end\
+    UIManager:setDirty(self, function()\
+        local now = self.frame.dimen\
+        return \"ui\", (now and now.x) and now or prev\
+    end)\
+end\
+\
+-- over(tail) -> a LibraryModal config.over: a picker opened from this page\
+-- opens as a page of it, in its frame, titled \"title > tail\", its X closing\
+-- the whole dialog.\
+function PageDialog:over(tail)\
+    local dialog = self\
+    local crumbs = { self:_titleText() }\
+    for _i, t in ipairs(tail or {}) do crumbs[#crumbs + 1] = t end\
+    return {\
+        rect = function()\
+            local d = dialog.frame.dimen\
+            if not (d and d.x) then return nil end\
+            local size = dialog.frame:getSize()\
+            return { x = d.x, y = d.y, w = size.w, h = size.h }\
+        end,\
+        crumbs = table.concat(crumbs, \" \\xE2\\x80\\xBA \"),\
+        on_exit = function() dialog:_dismiss() end,\
+    }\
+end\
+\
+function PageDialog:_dismiss()\
+    UIManager:close(self)\
+    if self.on_close then self.on_close() end\
+end\
+\
+function PageDialog:onTapClose(_arg, ges)\
+    local d = self.frame.dimen\
+    if self.dismissable ~= false and d and ges and ges.pos and ges.pos:notIntersectWith(d) then\
+        self:_dismiss()\
+    end\
+    return true\
+end\
+\
+function PageDialog:onClose()\
+    self:_dismiss()\
+    return true\
+end\
+\
+function PageDialog:onShow()\
+    UIManager:setDirty(self, function() return \"ui\", self.frame.dimen end)\
+    return true\
+end\
+\
+function PageDialog:onCloseWidget()\
+    local d = self.frame.dimen\
+    UIManager:setDirty(nil, function() return \"ui\", d end)\
+end\
+\
+function PageDialog.show(o)\
+    local dialog = PageDialog:new(o)\
+    UIManager:show(dialog)\
+    return dialog\
+end\
+\
+-- KOReader's own gestures (the menu, brightness) keep working around it,\
+-- as over the shelf (GestureZones.overlayEvent; maintainer, PW5).\
+function PageDialog:handleEvent(event)\
+    -- Outside the frame KOReader's zones go first (the top menu, brightness:\
+    -- maintainer), then a tap no zone took closes it (onTapClose).\
+    -- A swipe from the top menu band opens KOReader's menu even over the\
+    -- dialog (GestureZones.onWindow): at the top, it covers that band.\
+    local GZ = require(\"lib/bookshelf_gesture_zones\")\
+    return GZ.overlayEvent(self, event, InputContainer,\
+        GZ.onWindow(event, function(pos)\
+            local d = self.frame and self.frame.dimen\
+            return not (d and d.x) or not pos:notIntersectWith(d)\
+        end))\
+end\
+\
+return PageDialog\
+",
+    ["lib/bookshelf_picker_sort"] = "-- The order a grouped-source picker lists its choices in (Home > Source >\
+-- Author, Series, Genre...): A-Z, or the ones with the most books first. The\
+-- picker offers the switch only when its choices carry book counts.\
+local _ = require(\"lib/bookshelf_i18n\").gettext\
+\
+local Sort = {}\
+\
+-- The switch's cells, for Kit.segmented / a LibraryModal chip strip.\
+function Sort.items()\
+    return {\
+        { key = \"az\",    label = _(\"A-Z\") },\
+        { key = \"count\", label = _(\"Most books\") },\
+    }\
+end\
+\
+-- hasCounts(choices) -> true when any choice says how many books it holds.\
+function Sort.hasCounts(choices)\
+    for _i, c in ipairs(choices or {}) do\
+        if c.count then return true end\
+    end\
+    return false\
+end\
+\
+-- sort(choices, by) -> a sorted copy. by = \"count\": most books first, ties\
+-- A-Z; anything else A-Z. Case is ignored, as people type it in the search.\
+function Sort.sort(choices, by)\
+    local out = {}\
+    for i, c in ipairs(choices or {}) do out[i] = c end\
+    local function az(a, b) return (a.label or \"\"):lower() < (b.label or \"\"):lower() end\
+    if by == \"count\" then\
+        table.sort(out, function(a, b)\
+            local ca, cb = a.count or 0, b.count or 0\
+            if ca ~= cb then return ca > cb end\
+            return az(a, b)\
+        end)\
+    else\
+        table.sort(out, az)\
+    end\
+    return out\
+end\
+\
+return Sort\
+",
+    ["lib/bookshelf_popup_kit"] = "-- bookshelf_popup_kit.lua (see STYLE.md for how the pieces are used)\
+-- The book popup's controls, shared by its tabs so they read as one set:\
+-- every tappable thing is a closed rounded shape with the button border and\
+-- corner, set in from the frame, and black fill means only \"this is on\". No\
+-- control leans on the frame edge or a neighbour to finish its outline (the\
+-- stock button grid did, and left lines that ended nowhere once inset).\
+\
+local Blitbuffer      = require(\"ffi/blitbuffer\")\
+local CenterContainer = require(\"ui/widget/container/centercontainer\")\
+local FrameContainer  = require(\"ui/widget/container/framecontainer\")\
+local Geom            = require(\"ui/geometry\")\
+local GestureRange    = require(\"ui/gesturerange\")\
+local HorizontalGroup = require(\"ui/widget/horizontalgroup\")\
+local HorizontalSpan  = require(\"ui/widget/horizontalspan\")\
+local InputContainer  = require(\"ui/widget/container/inputcontainer\")\
+local Size            = require(\"ui/size\")\
+local WidgetContainer = require(\"ui/widget/container/widgetcontainer\")\
+local TextWidget      = require(\"lib/bookshelf_colour_text\")\
+local Space           = require(\"lib/bookshelf_space\")\
+\
+local Kit = {}\
+\
+Kit.BORDER = Size.border.button\
+Kit.RADIUS = Space.radius.button\
+\
+-- A source switch (Embedded | Hardcover, My review | Hardcover) is the same\
+-- control as Reading status, a step smaller: it picks what a tab shows.\
+Kit.SOURCE_PAD_V = Space.px(8)\
+function Kit.sourceFace(font_size)\
+    return require(\"lib/bookshelf_fonts\"):getFace(\"cfont\", math.max(10, (font_size or 20) - 2))\
+end\
+\
+-- tapCell(widget, w, h, on_tap, enabled, on_hold, instant) -> widget as a\
+-- w x h tap target that shows the keys' ring when they focus it. enabled == false\
+-- swallows the tap (not the hold). instant: a choice on a page that is drawn\
+-- again to show it (a sort key, an option), so no pressed frame first: that\
+-- was one more state for every tap to pass through (maintainer, PW5).\
+function Kit.tapCell(widget, w, h, on_tap, enabled, on_hold, instant)\
+    local cell = InputContainer:new{ dimen = Geom:new{ w = w, h = h }, widget }\
+    -- As a stock Button's: the keys pass over one that can't act (Kit.keyFocus).\
+    cell.enabled = enabled ~= false\
+    cell.ges_events = { Tap = { GestureRange:new{ ges = \"tap\", range = cell.dimen } } }\
+    cell.onTap = function(_self, _arg, ges)\
+        -- Only a tap inside it. A card that is a tap cell itself re-sends its\
+        -- matched tap as \"Tap\" to its children first, and a cell inside it\
+        -- (a sort level's direction switch) took every tap on the card\
+        -- (maintainer, PW5). Left alone, the tap goes on to the card.\
+        local p, d = ges and ges.pos, cell.dimen\
+        if p and p.x and d and d.x and (p.x < d.x or p.x >= d.x + d.w\
+                or p.y < d.y or p.y >= d.y + d.h) then\
+            return false\
+        end\
+        if enabled ~= false and on_tap then\
+            if instant then on_tap()\
+            else Kit.pressThen(cell, Kit.findCard(widget), on_tap) end\
+        end\
+        return true\
+    end\
+    if on_hold then\
+        cell.ges_events.Hold = { GestureRange:new{ ges = \"hold\", range = cell.dimen } }\
+        cell.onHold = function() on_hold(); return true end\
+    end\
+    cell._focused = false\
+    function cell:paintTo(bb, x, y)\
+        InputContainer.paintTo(self, bb, x, y)\
+        if self._focused then\
+            -- A ring, not the whole cell inverted: inverted, a focused cell\
+            -- looked exactly like a selected one (black means \"on\"), and a\
+            -- tab strip showed two tabs picked. The ring inverts what is\
+            -- under it, so it shows on a black (selected) cell as on a white\
+            -- one. focus_radius: round it to a rounded card's corner.\
+            -- focus_inset: set it in from the cell's edge, clear of an\
+            -- outline drawn round the cell (a segmented control's).\
+            local i = self.focus_inset or 0\
+            Kit.invertRing(bb, x + i, y + i, w - 2 * i, h - 2 * i, Kit.focusWidth(),\
+                self.focus_radius or 0)\
+        end\
+    end\
+    cell.onFocus = function() cell._focused = true; return true end\
+    cell.onUnfocus = function() cell._focused = false; return true end\
+    return cell\
+end\
+\
+-- invertRounded(bb, x, y, w, h, r, square_bottom): invert a rounded box,\
+-- leaving the corners outside the radius as they were (a plain invertRect\
+-- shows square black corners past a rounded outline). square_bottom: only\
+-- the top corners are rounded (a button flush with the screen's bottom).\
+function Kit.invertRounded(bb, x, y, w, h, r, square_bottom)\
+    bb:invertRect(x, y, w, h)\
+    r = math.min(r or 0, math.floor(w / 2), math.floor(h / 2))\
+    for i = 0, r - 1 do\
+        local dy = r - i - 0.5\
+        local out = math.floor(r - math.sqrt(r * r - dy * dy) + 0.5)\
+        if out > 0 then\
+            bb:invertRect(x, y + i, out, 1)\
+            bb:invertRect(x + w - out, y + i, out, 1)\
+            if not square_bottom then\
+                bb:invertRect(x, y + h - 1 - i, out, 1)\
+                bb:invertRect(x + w - out, y + h - 1 - i, out, 1)\
+            end\
+        end\
+    end\
+end\
+\
+-- focusWidth() -> the keys' focus ring's width.\
+function Kit.focusWidth() return Space.px(4) end\
+\
+-- invertRing(bb, x, y, w, h, t, r, square_bottom): invert a ring t wide\
+-- inside the box, its corners rounded to r: the whole box inverted, then the\
+-- part inside the ring inverted back, so only the ring changes.\
+function Kit.invertRing(bb, x, y, w, h, t, r, square_bottom)\
+    if w <= 2 * t or h <= 2 * t then return bb:invertRect(x, y, w, h) end\
+    Kit.invertRounded(bb, x, y, w, h, r, square_bottom)\
+    -- Open at the bottom, as the button is (ChipFrame): the inside runs to\
+    -- the bottom edge.\
+    Kit.invertRounded(bb, x + t, y + t, w - 2 * t, h - (square_bottom and t or 2 * t),\
+        math.max(0, r - t), square_bottom)\
+end\
+\
+-- ringFocus(btn, inset, radius) -> btn: a stock KOReader Button that shows\
+-- the keys' focus as the kit's ring, set in by inset with corners rounded to\
+-- radius, instead of inverting the whole button: inverted, a focused Cancel\
+-- in a footer looked like one that is on (black means \"on\").\
+function Kit.ringFocus(btn, inset, radius)\
+    local focused = false\
+    local paint = btn.paintTo\
+    function btn:paintTo(bb, x, y)\
+        paint(self, bb, x, y)\
+        if focused then\
+            -- inset: a number, or { x, y } for a short, wide button (a\
+            -- footer's: clear of the frame's corners, clear of the label).\
+            local sz = self:getSize()\
+            local ix = type(inset) == \"table\" and inset[1] or inset or 0\
+            local iy = type(inset) == \"table\" and inset[2] or inset or 0\
+            Kit.invertRing(bb, x + ix, y + iy, sz.w - 2 * ix, sz.h - 2 * iy, Kit.focusWidth(), radius or 0)\
+        end\
+    end\
+    btn.onFocus = function(self)\
+        if self.no_focus then return end\
+        focused = true\
+        return true\
+    end\
+    btn.onUnfocus = function(self)\
+        if self.no_focus then return end\
+        focused = false\
+        return true\
+    end\
+    return btn\
+end\
+\
+-- ringFocusTable(bt, inset, radius) -> bt: ringFocus on every button of a\
+-- stock ButtonTable (its rows of buttons).\
+function Kit.ringFocusTable(bt, inset, radius)\
+    -- buttons_layout: set whether or not the device has a D-pad (layout\
+    -- only with one).\
+    for _i, row in ipairs(bt.buttons_layout or bt.layout or {}) do\
+        for _j, b in ipairs(row) do Kit.ringFocus(b, inset, radius) end\
+    end\
+    return bt\
+end\
+\
+-- quietFocus(fm) -> fm: a FocusManager (a KOReader ButtonTable is one) whose\
+-- buttons an outer FocusManager keys. Events go to children before their\
+-- parent, so left alone the inner one took every arrow (FocusMove) and could\
+-- move nowhere, and pressed its own button on Press: no key reached the\
+-- outer one (maintainer, desktop: the shelf editor took no keys). Its key\
+-- bindings and its focus handlers stand down.\
+function Kit.quietFocus(fm)\
+    fm.key_events = {}\
+    local function pass() return false end\
+    fm.onFocusMove, fm.onFocusHalfMove = pass, pass\
+    fm.onFocusNext, fm.onFocusPrevious = pass, pass\
+    fm.onPress, fm.onHold = pass, pass\
+    return fm\
+end\
+\
+-- keyFocus(fm, state, seed_y): the keys on a FocusManager our popup rebuilds\
+-- (STYLE.md): the cursor seeded on row seed_y (the first thing a reader\
+-- would reach for, not the strip above it), hidden until the first key,\
+-- which shows it there rather than moving it; after that each key moves it.\
+-- state lives as long as the popup, so a rebuild (every change rebuilds)\
+-- keeps the cursor where it was and showing: state.shown, state.sel;\
+-- state.page names the page it was on, and a new page seeds afresh.\
+function Kit.keyFocus(fm, state, seed_y, page)\
+    if not (fm and fm.layout and #fm.layout > 0) then return end\
+    -- A control that can't act (greyed) is no stop for the keys: out of the\
+    -- layout, and a row with nothing left goes too (maintainer). seed_y\
+    -- names a row of the layout as given. at[y][x] is where each control of\
+    -- the given layout went (nil: greyed), back[ky][kx] where each kept one\
+    -- came from: the cursor is kept by its place in the layout as given, so\
+    -- a neighbour greying does not shift it onto another (the slider's -5\
+    -- greying at its minimum put it on +10).\
+    local kept, new_seed, at, back, len = {}, nil, {}, {}, {}\
+    for y, row in ipairs(fm.layout) do\
+        local r, b = {}, {}\
+        at[y], len[y] = {}, #row\
+        for x, item in ipairs(row) do\
+            if item.enabled ~= false then\
+                r[#r + 1] = item\
+                b[#r] = { y = y, x = x }\
+                at[y][x] = { x = #r }\
+            end\
+        end\
+        if #r > 0 then\
+            kept[#kept + 1] = r\
+            back[#kept] = b\
+            for _x, a in pairs(at[y]) do a.y = #kept end\
+            if not new_seed and y >= (seed_y or 1) then new_seed = #kept end\
+        end\
+    end\
+    if #kept == 0 then return end\
+    fm.layout, seed_y = kept, new_seed or 1\
+    local FocusManager = require(\"ui/widget/focusmanager\")\
+    local UIManager = require(\"ui/uimanager\")\
+    if state.page ~= page then state.page, state.sel = page, nil end\
+    local x, y = 1, seed_y or 1\
+    local sel = state.sel\
+    if sel then\
+        -- Where it was, else the nearest live control on its row, else the\
+        -- first row at or after it that has one.\
+        local function nearest(oy, ox)\
+            local row = at[oy]\
+            if not row then return nil end\
+            if row[ox] then return row[ox] end\
+            for d = 1, len[oy] do\
+                local hit = row[ox + d] or row[ox - d]\
+                if hit then return hit end\
+            end\
+        end\
+        local hit = nearest(sel.y, sel.x)\
+        for oy = sel.y + 1, #at do\
+            if hit then break end\
+            hit = nearest(oy, 1)\
+        end\
+        if hit then x, y = hit.x, hit.y else y = #kept end\
+    end\
+    y = math.max(1, math.min(#fm.layout, y))\
+    x = math.max(1, math.min(#fm.layout[y], x))\
+    fm.selected = { x = x, y = y }\
+    -- The ring shown at the first key: the cursor's own box (the focused\
+    -- widget's), not the whole of a popup that spans the screen.\
+    local function repaint()\
+        local target = fm.show_parent or fm\
+        local row = fm.layout[fm.selected.y]\
+        local w = row and row[fm.selected.x]\
+        local d = w and w.dimen\
+        if d and d.x then\
+            UIManager:setDirty(target, function() return \"ui\", d end)\
+        else\
+            UIManager:setDirty(target, \"ui\")\
+        end\
+    end\
+    local move = fm.onFocusMove\
+    function fm:onFocusMove(args)\
+        if not state.shown then\
+            state.shown = true\
+            self:moveFocusTo(self.selected.x, self.selected.y, FocusManager.FORCED_FOCUS)\
+            repaint()\
+            return true\
+        end\
+        local r = move(self, args)\
+        local from = back[self.selected.y] and back[self.selected.y][self.selected.x]\
+        if from then state.sel = { x = from.x, y = from.y } end\
+        return r\
+    end\
+    -- Rebuilt with the cursor already showing: show it again where it was.\
+    if state.shown then fm:moveFocusTo(x, y, FocusManager.FORCED_FOCUS) end\
+end\
+\
+-- findCard(widget) -> the kit card in widget (itself, or a few levels in),\
+-- or nil: what a tap shows pressed.\
+function Kit.findCard(widget, depth)\
+    depth = depth or 0\
+    if type(widget) ~= \"table\" or depth > 4 then return nil end\
+    if widget._kit_card then return widget end\
+    for i = 1, #widget do\
+        local c = Kit.findCard(widget[i], depth + 1)\
+        if c then return c end\
+    end\
+    return nil\
+end\
+\
+-- segmented(o) -> widget, focus_rows: one rounded control split into cells,\
+-- the active cell filled black with a bold white label. It draws its own\
+-- outline and dividers.\
+--   o.items   { { key=, label= }, ... }\
+--   o.active  the key shown selected (may match none)\
+--   o.on_pick function(key), fired for a tap on an inactive cell\
+--   o.allow_none  a tap on the active cell un-picks it: on_pick(nil)\
+--   o.face    label face\
+--   o.width   total width, split evenly; nil sizes each cell to its label\
+--   o.pad_h   label side padding when sized to labels (default Space.px(16))\
+--   o.pad_v   label top/bottom padding (default Space.px(12))\
+function Kit.segmented(o)\
+    local items, n = o.items, #o.items\
+    local pad_h = o.pad_h or Space.px(16)\
+    local pad_v = o.pad_v or Space.px(12)\
+    local labels, widths, label_h = {}, {}, 0\
+    if o.width then\
+        local each = math.floor(o.width / n)\
+        for i = 1, n do widths[i] = (i == n) and (o.width - each * (n - 1)) or each end\
+    end\
+    for i, it in ipairs(items) do\
+        local on = it.key == o.active\
+        labels[i] = TextWidget:new{ text = it.label or \"\", face = o.face, bold = on,\
+            fgcolor = on and Blitbuffer.COLOR_WHITE or Blitbuffer.COLOR_BLACK,\
+            max_width = widths[i] and (widths[i] - 2 * Space.px(6)) or nil }\
+        label_h = math.max(label_h, labels[i]:getSize().h)\
+    end\
+    local w = 0\
+    if o.width then\
+        w = o.width\
+    else\
+        for i = 1, n do\
+            widths[i] = labels[i]:getSize().w + 2 * pad_h\
+            w = w + widths[i]\
+        end\
+    end\
+    local h = label_h + 2 * pad_v\
+    -- Not mirrored in a right-to-left UI: the black of the one chosen and the\
+    -- dividers are painted from the left by their own offsets, and under a\
+    -- mirrored row they fell on another cell (as the shelf bar's chips, 559).\
+    local row = HorizontalGroup:new{ align = \"top\", allow_mirroring = false }\
+    local cells, sel = {}, nil\
+    for i, it in ipairs(items) do\
+        if it.key == o.active then sel = i end\
+        local key = it.key\
+        local cell = Kit.tapCell(\
+            CenterContainer:new{ dimen = Geom:new{ w = widths[i], h = h }, labels[i] },\
+            widths[i], h, function()\
+                if not o.on_pick then return end\
+                if key ~= o.active then o.on_pick(key)\
+                elseif o.allow_none then o.on_pick(nil) end\
+            end)\
+        -- The keys' ring set in from the cell, rounded: on the cell's edge\
+        -- its square corners stuck out past the control's rounded ends and\
+        -- ran over the outline and dividers (maintainer).\
+        cell.focus_inset = Kit.BORDER + Space.px(3)\
+        cell.focus_radius = math.max(Space.px(4), Kit.RADIUS - cell.focus_inset)\
+        row[#row + 1] = cell\
+        cells[#cells + 1] = cell\
+    end\
+    local seg = WidgetContainer:new{ dimen = Geom:new{ w = w, h = h }, row }\
+    function seg:paintTo(bb, x, y)\
+        self.dimen.x, self.dimen.y = x, y\
+        local r, black = Kit.RADIUS, Blitbuffer.COLOR_BLACK\
+        local starts, sx = {}, x\
+        for i = 1, n do starts[i] = sx; sx = sx + widths[i] end\
+        bb:paintRoundedRect(x, y, w, h, Blitbuffer.COLOR_WHITE, r)\
+        if sel then\
+            local cx, cw = starts[sel], widths[sel]\
+            bb:paintRoundedRect(cx, y, cw, h, black, r)\
+            -- Only the control's own ends are rounded.\
+            if sel > 1 then bb:paintRect(cx, y, r, h, black) end\
+            if sel < n then bb:paintRect(cx + cw - r, y, r, h, black) end\
+        end\
+        for i = 2, n do\
+            if i ~= sel and i - 1 ~= sel then\
+                bb:paintRect(starts[i], y, Kit.BORDER, h, black)\
+            end\
+        end\
+        bb:paintBorder(x, y, w, h, Kit.BORDER, black, r)\
+        row:paintTo(bb, x, y)\
+    end\
+    return seg, { cells }\
+end\
+\
+-- segmentedWrap(o) -> widget, focus_rows: Kit.segmented, split into as many\
+-- rows as it takes to fit o.max_w (each row its own rounded control), for a\
+-- choice with more options than one line holds (a picker's filter chips).\
+-- Takes Kit.segmented's options (sized to labels) plus o.max_w and\
+-- o.max_rows. Past max_rows the last cell is \"More\"\
+-- (o.more_label), which calls o.on_more(hidden_items); the active option is\
+-- always among the ones shown.\
+function Kit.segmentedWrap(o)\
+    local pad_h = o.pad_h or Space.px(16)\
+    local function width(it)\
+        -- The bold (active) width, so a row can't overflow once picked.\
+        return TextWidget:new{ text = it.label or \"\", face = o.face, bold = true }:getSize().w\
+            + 2 * pad_h\
+    end\
+    -- pack(list, last_cap) -> rows, hidden: greedy rows; past max_rows the\
+    -- last row holds only last_cap (room left for More).\
+    local function pack(list, last_cap)\
+        local rows, row, row_w, hidden = {}, {}, 0, {}\
+        for _i, it in ipairs(list) do\
+            local w = width(it)\
+            local cap = (o.max_rows and #rows == o.max_rows - 1) and last_cap or o.max_w\
+            if #hidden > 0 then\
+                hidden[#hidden + 1] = it\
+            elseif #row > 0 and row_w + w > cap then\
+                if o.max_rows and #rows + 1 >= o.max_rows then\
+                    hidden[#hidden + 1] = it\
+                else\
+                    rows[#rows + 1], row, row_w = row, { it }, w\
+                end\
+            else\
+                row[#row + 1], row_w = it, row_w + w\
+            end\
+        end\
+        if #row > 0 then rows[#rows + 1] = row end\
+        return rows, hidden\
+    end\
+    local items = o.items\
+    local rows, hidden = pack(items, o.max_w)\
+    -- Two rows with everything shown: split them evenly (as many options\
+    -- on each, then as near the same width), not a full row over a stub.\
+    if #rows == 2 and #hidden == 0 then\
+        local n, best, best_i = #items, nil, nil\
+        for i = 1, n - 1 do\
+            local w1, w2 = 0, 0\
+            for j = 1, n do\
+                if j <= i then w1 = w1 + width(items[j]) else w2 = w2 + width(items[j]) end\
+            end\
+            if w1 <= o.max_w and w2 <= o.max_w then\
+                local score = math.abs(2 * i - n) * o.max_w + math.abs(w1 - w2)\
+                if not best or score < best then best, best_i = score, i end\
+            end\
+        end\
+        if best_i then\
+            local r1, r2 = {}, {}\
+            for j = 1, n do\
+                if j <= best_i then r1[#r1 + 1] = items[j] else r2[#r2 + 1] = items[j] end\
+            end\
+            rows = { r1, r2 }\
+        end\
+    end\
+    local more\
+    if #hidden > 0 and o.on_more then\
+        more = { key = \"\\0more\", label = o.more_label or \"More\" }\
+        rows, hidden = pack(items, o.max_w - width(more))\
+        -- Keep the active option in sight: it takes the last shown place.\
+        local active_hidden\
+        for _i, it in ipairs(hidden) do if it.key == o.active then active_hidden = it end end\
+        if active_hidden and #rows > 0 then\
+            local shown = {}\
+            for _r, row in ipairs(rows) do for _i, it in ipairs(row) do shown[#shown + 1] = it end end\
+            local list = {}\
+            for i = 1, #shown - 1 do list[#list + 1] = shown[i] end\
+            list[#list + 1] = active_hidden\
+            for _i, it in ipairs(items) do\
+                local seen = it == active_hidden\
+                for _j, sh in ipairs(list) do if sh == it then seen = true end end\
+                if not seen then list[#list + 1] = it end\
+            end\
+            rows, hidden = pack(list, o.max_w - width(more))\
+        end\
+        if #rows == 0 then rows[1] = {} end\
+        local last = rows[#rows]\
+        last[#last + 1] = more\
+    end\
+    local function pick(key)\
+        if more and key == more.key then o.on_more(hidden) else o.on_pick(key) end\
+    end\
+    if #rows <= 1 then\
+        return Kit.segmented{ items = rows[1] or {}, active = o.active,\
+            face = o.face, pad_h = pad_h, pad_v = o.pad_v, on_pick = pick }\
+    end\
+    return Kit.segmentedGrid{ rows = rows, active = o.active, face = o.face,\
+        width = o.max_w, pad_h = pad_h, pad_v = o.pad_v, on_pick = pick }\
+end\
+\
+-- segmentedGrid(o) -> widget, focus_rows: Kit.segmented over several rows\
+-- as ONE control: every row stretched to o.width, one rounded outline round\
+-- the lot, a line between rows (a wrapped bar of separate rows read as two\
+-- unconnected controls). Only the control's own corners are rounded.\
+--   o.rows { { {key=, label=}, ... }, ... }, o.active, o.on_pick, o.face,\
+--   o.width, o.pad_h, o.pad_v\
+function Kit.segmentedGrid(o)\
+    local pad_h = o.pad_h or Space.px(16)\
+    local pad_v = o.pad_v or Space.px(12)\
+    local W, B, r = o.width, Kit.BORDER, Kit.RADIUS\
+    local black, white = Blitbuffer.COLOR_BLACK, Blitbuffer.COLOR_WHITE\
+    local label_h = 0\
+    local built = {}\
+    for ri, items in ipairs(o.rows) do\
+        local labels, natural, sum = {}, {}, 0\
+        for i, it in ipairs(items) do\
+            local on = it.key == o.active\
+            labels[i] = TextWidget:new{ text = it.label or \"\", face = o.face, bold = on,\
+                fgcolor = on and white or black }\
+            natural[i] = labels[i]:getSize().w + 2 * pad_h\
+            sum = sum + natural[i]\
+            label_h = math.max(label_h, labels[i]:getSize().h)\
+        end\
+        -- Stretch the row to the full width, the slack shared out evenly.\
+        local n, extra = #items, math.max(0, W - sum)\
+        local each = math.floor(extra / n)\
+        local widths = {}\
+        for i = 1, n do widths[i] = natural[i] + each + ((i == n) and (extra - each * n) or 0) end\
+        built[ri] = { items = items, labels = labels, widths = widths }\
+    end\
+    local h = label_h + 2 * pad_v\
+    local VerticalGroup = require(\"ui/widget/verticalgroup\")\
+    local vg, focus_rows, cells = VerticalGroup:new{ align = \"left\" }, {}, {}\
+    for ri, row in ipairs(built) do\
+        -- Painted by its own offsets, as Kit.segmented: not mirrored.\
+        local hg, fr = HorizontalGroup:new{ align = \"top\", allow_mirroring = false }, {}\
+        local cx = 0\
+        for i, it in ipairs(row.items) do\
+            local key, w = it.key, row.widths[i]\
+            local cell = Kit.tapCell(\
+                CenterContainer:new{ dimen = Geom:new{ w = w, h = h }, row.labels[i] },\
+                w, h, function()\
+                    if key ~= o.active and o.on_pick then o.on_pick(key) end\
+                end)\
+            hg[#hg + 1], fr[#fr + 1] = cell, cell\
+            cells[#cells + 1] = { x = cx, y = (ri - 1) * h, w = w, on = key == o.active,\
+                last = i == #row.items }\
+            cx = cx + w\
+        end\
+        vg[#vg + 1], focus_rows[#focus_rows + 1] = hg, fr\
+    end\
+    local H = h * #built\
+    local grid = WidgetContainer:new{ dimen = Geom:new{ w = W, h = H }, vg }\
+    function grid:paintTo(bb, x, y)\
+        self.dimen.x, self.dimen.y = x, y\
+        bb:paintRoundedRect(x, y, W, H, white, r)\
+        for _i, c in ipairs(cells) do\
+            if c.on then\
+                local cx, cy = x + c.x, y + c.y\
+                bb:paintRoundedRect(cx, cy, c.w, h, black, r)\
+                -- Square every corner that is not one of the control's own.\
+                local left, right = c.x == 0, c.x + c.w >= W\
+                local top, bottom = c.y == 0, c.y + h >= H\
+                if not (left and top) then bb:paintRect(cx, cy, r, r, black) end\
+                if not (right and top) then bb:paintRect(cx + c.w - r, cy, r, r, black) end\
+                if not (left and bottom) then bb:paintRect(cx, cy + h - r, r, r, black) end\
+                if not (right and bottom) then bb:paintRect(cx + c.w - r, cy + h - r, r, r, black) end\
+            end\
+        end\
+        for _i, c in ipairs(cells) do\
+            if not c.last then bb:paintRect(x + c.x + c.w, y + c.y, B, h, black) end\
+        end\
+        for ri = 1, #built - 1 do bb:paintRect(x, y + ri * h, W, B, black) end\
+        bb:paintBorder(x, y, W, H, B, black, r)\
+        vg:paintTo(bb, x, y)\
+    end\
+    return grid, focus_rows\
+end\
+\
+-- paintCard(frame, bb, x, y, outline): a kit card. Raised: a hairline\
+-- shadow down and right. Pressed (frame._pressed, while its tap's action\
+-- runs): the shadow flips inside, along the top and left, and nothing else\
+-- changes (maintainer), so a slow action shows it was taken at once.\
+local function paintCard(frame, bb, x, y, outline)\
+    -- A set width/height is what FrameContainer fills; getSize is only the\
+    -- content's measure, so a card stretched to its row had a short shadow.\
+    local sz = frame:getSize()\
+    sz = { w = frame.width or sz.w, h = frame.height or sz.h }\
+    local r, s = Kit.RADIUS, Kit.shadowSize()\
+    if frame._pressed then\
+        local d = 2 * s\
+        local bg = frame.background\
+        bb:paintRoundedRect(x, y, sz.w, sz.h, Kit.SHADOW, r)\
+        require(\"lib/bookshelf_color\").paintRoundedRect(bb, x + d, y + d, sz.w - d, sz.h - d, bg, r)\
+        frame.background = nil\
+        FrameContainer.paintTo(frame, bb, x, y)\
+        frame.background = bg\
+    else\
+        bb:paintRoundedRect(x + s, y + s, sz.w, sz.h, Kit.SHADOW, r)\
+        FrameContainer.paintTo(frame, bb, x, y)\
+    end\
+    if outline then\
+        bb:paintBorder(x, y, sz.w, sz.h, Space.px(4), Blitbuffer.COLOR_BLACK, r)\
+    end\
+end\
+\
+-- pressThen(cell, card, action): show card pressed at once (repainted and\
+-- refreshed in place), run action on the next tick, then let it up. Without\
+-- dimen yet (not painted, or headless), just the action.\
+function Kit.pressThen(cell, card, action)\
+    if not action then return end\
+    local d = cell and cell.dimen\
+    if not (card and d and d.x) then return action() end\
+    local UIManager = require(\"ui/uimanager\")\
+    local box = Geom:new{ x = d.x, y = d.y, w = d.w + 2, h = d.h + 2 }\
+    card._pressed = true\
+    UIManager:widgetRepaint(cell, d.x, d.y)\
+    -- \"ui\", not \"fast\": fast is black and white only on e-ink, which turned\
+    -- a grey card white and a black button's rounded corners jagged\
+    -- (maintainer, PW5).\
+    UIManager:setDirty(nil, \"ui\", box)\
+    UIManager:forceRePaint()\
+    -- Let the panel take the pressed card before the action paints: closing\
+    -- the window (the editor's Modules card) otherwise put the shelf behind\
+    -- into the card's refresh now and then (maintainer, PW5). KOReader's\
+    -- Button yields 1 ms; on a MediaTek Kindle (the PW5) a refresh is sent\
+    -- without waiting for the panel to take it, and the close wrote the\
+    -- shelf back 20 ms later. Where the screen can wait for that (Kindles,\
+    -- MediaTek Kobos), wait: milliseconds, not the refresh's whole run.\
+    local Screen = require(\"device\").screen\
+    local wait = Screen and Screen.mech_wait_update_submission\
+    if not (wait and Screen.marker and Screen.marker ~= 0\
+            and pcall(wait, Screen, Screen.marker)) then\
+        UIManager:yieldToEPDC()\
+    end\
+    local top = UIManager:getTopmostVisibleWidget()\
+    UIManager:tickAfterNext(function()\
+        action()\
+        card._pressed = false\
+        -- Let it up while its window is still open, also when the action\
+        -- put something over it (a note, a menu): the windows above repaint\
+        -- with it. Only the top one before left the layout editor's d-pad\
+        -- and Settings black on the PW5 (maintainer).\
+        if top and UIManager:isWidgetShown(top) then\
+            UIManager:setDirty(top, \"ui\", box)\
+        end\
+    end)\
+end\
+\
+-- card(o) -> a light grey card with a hairline shadow down and right: the\
+-- book popup's action cards and the start menu's module rows. Black when on.\
+--   o[1] the content, o.width/o.height (optional; else sized to content),\
+--   o.on, o.padding (default 0), o.padding_top..., o.radius (Kit.RADIUS),\
+--   o.background (Kit.STRIP_BG), o.outline (a heavy black outline: picked)\
+function Kit.card(o)\
+    local radius = o.radius or Kit.RADIUS\
+    local card = FrameContainer:new{\
+        bordersize = 0, margin = 0, radius = radius,\
+        padding = o.padding or 0,\
+        padding_top = o.padding_top, padding_bottom = o.padding_bottom,\
+        padding_left = o.padding_left, padding_right = o.padding_right,\
+        background = o.on and Blitbuffer.COLOR_BLACK or (o.background or Kit.STRIP_BG),\
+        width = o.width, height = o.height,\
+        o[1],\
+    }\
+    card._kit_card = true\
+    function card:paintTo(bb, x, y) paintCard(self, bb, x, y, o.outline) end\
+    return card\
+end\
+\
+-- cardify(frame, o) -> frame as a Kit.card: no border, light grey (unless\
+-- o.keep_bg), the kit's corner and hairline shadow, and a heavy outline\
+-- when o.outline (the one in use). For a picker's own card builder.\
+function Kit.cardify(frame, o)\
+    o = o or {}\
+    frame.bordersize = 0\
+    frame.radius = Kit.RADIUS\
+    if not o.keep_bg then frame.background = Kit.STRIP_BG end\
+    frame._kit_card = true\
+    function frame:paintTo(bb, x, y) paintCard(self, bb, x, y, o.outline) end\
+    return frame\
+end\
+\
+-- heading(text, font_size, fgcolor) -> a section heading: grey, bold, upper\
+-- case, a step smaller than the body, no line (the book popup's\
+-- _sectionHeadingBar). fgcolor: on a card, Kit.headInk's.\
+function Kit.heading(text, font_size, fgcolor)\
+    local BFont = require(\"lib/bookshelf_fonts\")\
+    local face, bold = BFont:getFace(\"cfont\", math.max(10, (font_size or 20) - 4), { bold = true })\
+    return TextWidget:new{ text = require(\"lib/bookshelf_text_segments\").upper(text),\
+        face = face, bold = bold, fgcolor = fgcolor or Blitbuffer.COLOR_DARK_GRAY }\
+end\
+\
+-- headInk(ink) -> a card's heading colour for the card's own ink: on a black\
+-- card (white ink) light grey, on a grey one the darker grey that reads on\
+-- it (dark grey on a black card could not be seen, and on the grey was\
+-- faint); a greyed card's grey as it is.\
+function Kit.headInk(ink)\
+    -- `not ink`: a Color8 raises when compared with nil.\
+    if not ink or ink == Blitbuffer.COLOR_BLACK then return Kit.DIM_ON_GREY end\
+    if ink == Blitbuffer.COLOR_WHITE then return Blitbuffer.COLOR_LIGHT_GRAY end\
+    return ink\
+end\
+\
+-- iconHeading(glyph, text, font_size, ink) -> a card's heading with its\
+-- icon before it, on a line of their own, so the value under them has the\
+-- card's whole width (maintainer). glyph nil: the heading alone.\
+function Kit.iconHeading(glyph, text, font_size, ink)\
+    local head = Kit.heading(text, font_size, Kit.headInk(ink))\
+    if not glyph then return head end\
+    local icon = TextWidget:new{ text = glyph,\
+        face = require(\"ui/font\"):getFace(\"symbols\", math.max(10, (font_size or 20) - 2)),\
+        fgcolor = ink or Blitbuffer.COLOR_BLACK }\
+    return HorizontalGroup:new{ align = \"center\", icon,\
+        HorizontalSpan:new{ width = Space.px(8) }, head }\
+end\
+\
+-- hintText(text, font_size, width, align, o) -> grey secondary text: a hint\
+-- or a note, never a greyed-out button (a border says \"tap me\").\
+-- width: the box it wraps in (else TextBoxWidget's default, 400 at 160 dpi,\
+-- whatever the room); align: \"center\" to centre it in that box.\
+-- o.face: a face of its own (else a step under font_size); o.bg: the grey\
+-- strip or card it sits on, which takes the darker DIM_ON_GREY.\
+function Kit.hintText(text, font_size, width, align, o)\
+    o = o or {}\
+    local TextBoxWidget = require(\"ui/widget/textboxwidget\")\
+    return TextBoxWidget:new{ text = text, width = width, alignment = align,\
+        face = o.face or require(\"lib/bookshelf_fonts\"):getFace(\"cfont\", math.max(10, (font_size or 20) - 3)),\
+        fgcolor = o.bg and Kit.DIM_ON_GREY or Blitbuffer.COLOR_DARK_GRAY,\
+        bgcolor = o.bg }\
+end\
+\
+-- footerRow(actions, w, o) -> widget, btns: a popup's footer row (STYLE.md):\
+-- equal stock Buttons edge to edge under a full-width rule, thin dividers\
+-- their full height, the end buttons rounded as the frame is (o.radius; not\
+-- a nil background: a Button's tap feedback inverts it), the keys' ring in\
+-- each rather than the button inverted. actions { { text, primary, enabled,\
+-- callback } }; btns, left to right, for the keys. PageDialog's and\
+-- LibraryModal's footers.\
+-- buttonFont(size, bold) -> { face, size, bold }: a stock Button's font\
+-- fields (text_font_face/size/bold) for the Bookshelf UI font, by the name\
+-- KOReader's Font resolves (the face's orig_font).\
+function Kit.buttonFont(size, bold)\
+    local face, faux = require(\"lib/bookshelf_fonts\"):getFace(\"cfont\", size, { bold = bold })\
+    return { face = (face and face.orig_font) or \"cfont\", size = (face and face.orig_size) or size,\
+             bold = faux and true or false }\
+end\
+\
+-- uiFontButtons(rows) -> rows: a stock ButtonTable's rows, each button in\
+-- the Bookshelf UI font (font_face/size/bold), in the look ButtonTable\
+-- gives them (cfont, 20, bold), where the entry sets none of its own.\
+function Kit.uiFontButtons(rows)\
+    local ff = Kit.buttonFont(20, true)\
+    for _i, row in ipairs(rows or {}) do\
+        for _j, b in ipairs(row) do\
+            if b.font_face == nil then\
+                b.font_face, b.font_size, b.font_bold = ff.face, ff.size, ff.bold\
+            end\
+        end\
+    end\
+    return rows\
+end\
+\
+function Kit.footerRow(actions, w, o)\
+    o = o or {}\
+    local Button          = require(\"ui/widget/button\")\
+    local LineWidget      = require(\"ui/widget/linewidget\")\
+    local VerticalGroup   = require(\"ui/widget/verticalgroup\")\
+    local Size            = require(\"ui/size\")\
+    local n = #actions\
+    local each = math.floor(w / n)\
+    local hg = HorizontalGroup:new{ align = \"center\" }\
+    local btns = {}\
+    -- KOReader's Button takes its font by name, not a face: the face this\
+    -- passed was ignored, and the footers were KOReader's cfont, 20, bold.\
+    -- That look, in the UI font (Kit.buttonFont).\
+    local ff = Kit.buttonFont(20, true)\
+    for i, a in ipairs(actions) do\
+        local enabled = a.enabled ~= false\
+        local btn = Button:new{\
+            text = a.text,\
+            text_font_face = ff.face, text_font_size = ff.size, text_font_bold = ff.bold,\
+            bordersize = 0, radius = 0, padding_v = Space.px(12),\
+            width = (i == n) and (w - each * (n - 1)) or each,\
+            enabled = enabled,\
+            callback = function() if enabled then a.callback() end end,\
+            show_parent = o.show_parent,\
+        }\
+        if btn.frame then btn.frame.radius = o.radius or Space.radius.window end\
+        Kit.ringFocus(btn, { Space.px(10), Space.px(4) }, Kit.RADIUS)\
+        if i > 1 then\
+            hg[#hg + 1] = LineWidget:new{ background = Blitbuffer.COLOR_DARK_GRAY,\
+                dimen = Geom:new{ w = Size.line.thin, h = btn:getSize().h } }\
+        end\
+        hg[#hg + 1] = btn\
+        btns[#btns + 1] = btn\
+    end\
+    return VerticalGroup:new{ align = \"left\",\
+        LineWidget:new{ background = Blitbuffer.COLOR_DARK_GRAY,\
+            dimen = Geom:new{ w = w, h = Size.line.thin } },\
+        hg }, btns\
+end\
+\
+-- The steppers' minus and plus: the symbols font's pair (U+F068, U+F44D),\
+-- one width, where the text minus ran wider than its +.\
+Kit.MINUS, Kit.PLUS = \"\\xEF\\x81\\xA8\", \"\\xEF\\x91\\x8D\"\
+\
+-- button(opts) -> a small rounded button (lib/bookshelf_chip_button) with the\
+-- popup's border and corner. Takes ChipButton.build's options, and\
+-- opts.card: a grey card with no border (STYLE.md: it nudges a value or\
+-- opens a thing) rather than an outline.\
+function Kit.button(opts)\
+    local card = opts.card\
+    opts.card = nil\
+    if card then opts.border = 0 end\
+    opts.border = opts.border or Kit.BORDER\
+    opts.radius = opts.radius or Kit.RADIUS\
+    local btn = require(\"lib/bookshelf_chip_button\").build(opts)\
+    if card then Kit.cardify(btn[1]) end\
+    return btn\
+end\
+\
+-- headerButton(o) -> a tab's own action (Edit, Refresh, Choose from device):\
+-- a small rounded button, label then icon, the same height as a source\
+-- switch, so every tab's top row holds the same control. Tabs put these at\
+-- the right end of their first row (headerRow).\
+--   o.text, o.icon (a symbols-font glyph, optional), o.icon_size (its face\
+--   size, default font_size - 2), o.font_size (the popup's), o.inverted\
+--   (busy or on), o.enabled (false: greyed), o.on_tap\
+function Kit.headerButton(o)\
+    local face = Kit.sourceFace(o.font_size)\
+    local probe = TextWidget:new{ text = \"Hg\", face = face }\
+    return Kit.button{\
+        text       = o.text,\
+        face       = face,\
+        icon_glyph = o.icon,\
+        icon_face  = o.icon and require(\"ui/font\"):getFace(\"symbols\",\
+            o.icon_size or math.max(10, (o.font_size or 20) - 2)) or nil,\
+        icon_after = true,\
+        height     = probe:getSize().h + 2 * Kit.SOURCE_PAD_V,\
+        inverted   = o.inverted or false,\
+        enabled    = o.enabled,\
+        on_tap     = o.on_tap,\
+    }\
+end\
+\
+-- iconButton(o) -> headerButton with only an icon, the same height as the\
+-- labelled ones (icon_size = font_size; a bigger glyph grows the button).\
+function Kit.iconButton(o)\
+    return Kit.headerButton{ icon = o.icon, icon_size = o.font_size or 20,\
+        font_size = o.font_size, inverted = o.inverted, enabled = o.enabled, on_tap = o.on_tap }\
+end\
+\
+-- The light grey strip a tab's controls sit in, edge to edge under the tabs.\
+Kit.STRIP_BG = Blitbuffer.COLOR_GRAY_E\
+-- Secondary text (a summary, a description, a hint) on a grey card or\
+-- strip: dark grey (0x88) on 0xEE was too faint to read (maintainer).\
+Kit.DIM_ON_GREY = Blitbuffer.COLOR_GRAY_5\
+\
+-- The hairline shadow under a strip and the action cards: the light grey\
+-- alone is faint on e-ink with no border.\
+Kit.SHADOW = Blitbuffer.COLOR_GRAY\
+function Kit.shadowSize() return Space.px(1) end\
+\
+-- withShadow(strip, w) -> the strip with a shadow line under it, w wide.\
+function Kit.withShadow(strip, w)\
+    local VerticalGroup = require(\"ui/widget/verticalgroup\")\
+    local LineWidget    = require(\"ui/widget/linewidget\")\
+    return VerticalGroup:new{ align = \"left\", strip,\
+        LineWidget:new{ background = Kit.SHADOW,\
+            dimen = Geom:new{ w = w, h = Kit.shadowSize() } } }\
+end\
+\
+-- headerRow(o) -> a tab's controls strip: o.left (a source switch; optional)\
+-- at the content edge, o.buttons (headerButtons) at the right end, on the\
+-- grey strip the tab's full width. Stacks the two when they don't fit side\
+-- by side.\
+--   o.width (the tab's), o.inset (its side padding), o.pad_top, o.pad_bottom,\
+--   o.top (a full-width line above the row, e.g. a picker's search box)\
+function Kit.headerRow(o)\
+    local VerticalGroup = require(\"ui/widget/verticalgroup\")\
+    local VerticalSpan  = require(\"ui/widget/verticalspan\")\
+    local content_w = o.width - 2 * o.inset\
+    local btns = HorizontalGroup:new{ align = \"center\" }\
+    for i, b in ipairs(o.buttons or {}) do\
+        if i > 1 then btns[#btns + 1] = HorizontalSpan:new{ width = Space.px(10) } end\
+        btns[#btns + 1] = b\
+    end\
+    local bw = 0\
+    for _i, wdg in ipairs(btns) do bw = bw + wdg:getSize().w end\
+    local lw = o.left and o.left:getSize().w or 0\
+    local row\
+    if not o.left and #btns == 0 then\
+        row = nil\
+    elseif o.left and #btns > 0 and lw + Space.px(10) + bw > content_w then\
+        row = VerticalGroup:new{ align = \"left\",\
+            o.left, VerticalSpan:new{ width = Space.px(8) }, btns }\
+    else\
+        row = HorizontalGroup:new{ align = \"center\" }\
+        if o.left then row[#row + 1] = o.left end\
+        row[#row + 1] = HorizontalSpan:new{ width = math.max(0, content_w - lw - bw) }\
+        row[#row + 1] = btns\
+    end\
+    if o.top then\
+        row = row and VerticalGroup:new{ align = \"left\",\
+            o.top, VerticalSpan:new{ width = Space.px(10) }, row } or o.top\
+    end\
+    return Kit.withShadow(FrameContainer:new{\
+        bordersize = 0, margin = 0, width = o.width,\
+        background = Kit.STRIP_BG,\
+        padding_left = o.inset, padding_right = o.inset,\
+        padding_top = o.pad_top or Space.px(10), padding_bottom = o.pad_bottom or Space.px(10),\
+        row,\
+    }, o.width)\
+end\
+\
+-- iconTitle(title_bar, title) -> title_bar: a stock TitleBar's text swapped\
+-- for the title drawn as the shelf menu draws a shelf's name, its\
+-- [icon=NAME] pictures and icon glyphs among the text, in the bar's own\
+-- font. A title with no picture is left as TitleBar made it. A shelf named\
+-- with a picture showed the markup itself in the shelf editor (PW5).\
+function Kit.iconTitle(title_bar, title)\
+    if type(title) ~= \"string\" or not title:find(\"[icon=\", 1, true) then return title_bar end\
+    local old = title_bar and title_bar.title_widget\
+    if not (old and old.face) then return title_bar end\
+    local ok, label = pcall(function()\
+        return require(\"lib/bookshelf_chip_bar\").buildLabel(title, old.face.orig_size or 20,\
+            old.max_width or math.floor(title_bar.width * 0.7), Blitbuffer.COLOR_BLACK, old.face)\
+    end)\
+    if not (ok and label) then return title_bar end\
+    for _i, group in ipairs({ title_bar.title_group, title_bar.inner_title_group }) do\
+        for i, child in ipairs(group) do\
+            if child == old then\
+                group[i] = label\
+                group:resetLayout()\
+            end\
+        end\
+    end\
+    title_bar.title_widget = label\
+    -- The text's own font and baseline, for what lines up with it (backLabel).\
+    title_bar._text_face, title_bar._text_baseline = old.face, old:getBaseline()\
+    old:free()\
+    return title_bar\
+end\
+\
+-- titleFace() -> a title bar's font: the Bookshelf UI font's bold at the size\
+-- KOReader's own title bars use (x_smalltfont, 22), so a menu's title is in\
+-- the same typeface as the rest of it (maintainer). Follow mode: KOReader's.\
+function Kit.titleFace()\
+    return (require(\"lib/bookshelf_fonts\"):getFace(\"x_smalltfont\", 22))\
+end\
+\
+-- centreTitle(title_bar) -> title_bar: a stock TitleBar's title with its\
+-- capitals in the middle of the bar, between its top and its bottom line,\
+-- where its icons are. TitleBar sets the text by KOReader's font's baseline:\
+-- in another font, or as a row with a shelf's picture, it sat low\
+-- (maintainer). The bar's height stays as TitleBar made it.\
+function Kit.centreTitle(title_bar)\
+    local tw = title_bar and title_bar.title_widget\
+    local group = title_bar and title_bar.title_group\
+    if not (tw and group and group[1] and group[1].width and title_bar.dimen) then return title_bar end\
+    -- A plain title's capitals centred in its own box (a picture row's are).\
+    if not title_bar._text_face then require(\"lib/bookshelf_cap_centre\").centre(tw) end\
+    local Size = require(\"ui/size\")\
+    local line = title_bar.with_bottom_line and Size.line.thick or 0\
+    group[1].width = math.max(0, math.floor((title_bar.dimen.h - line - tw:getSize().h) / 2))\
+    group:resetLayout()\
+    -- The chevron and the X on the same line: TitleBar puts them at its\
+    -- padding, 2 px above the text's middle on a PW5 (maintainer). An\
+    -- aligned child ignores an offset, so they take a place of their own;\
+    -- not in a mirrored layout, where OverlapGroup flips an offset per paint.\
+    local mid = group[1].width + math.floor(tw:getSize().h / 2)\
+    if not require(\"ui/bidi\").mirroredUILayout() then\
+        for _i, btn in ipairs({ title_bar.left_button, title_bar.right_button }) do\
+            local pad = title_bar.button_padding or 0\
+            local dy = mid - (pad + math.floor((btn and btn.height or 0) / 2))\
+            if btn and dy ~= 0 then\
+                local x = (btn == title_bar.right_button) and (title_bar.width - btn:getSize().w) or 0\
+                btn.overlap_align = nil\
+                btn.overlap_offset = { x, dy }\
+            end\
+        end\
+    end\
+    return title_bar\
+end\
+\
+-- backLabel(title_bar) -> title_bar: \"Back\" beside a stock TitleBar's back\
+-- chevron, where it clears the centred title with padding; nothing where\
+-- it would crowd it. The chevron alone was easy to miss (maintainer). A tap\
+-- on it goes back as the chevron does; where the chevron's own tap zone\
+-- reaches over it, the chevron takes the tap (one back, not two).\
+function Kit.backLabel(title_bar)\
+    local btn = title_bar and title_bar.left_button\
+    local tw = title_bar and title_bar.title_widget\
+    local face = tw and (tw.face or title_bar._text_face)\
+    if not (btn and tw and tw.getSize and face) then return title_bar end\
+    local _ = require(\"lib/bookshelf_i18n\").gettext\
+    -- The title's size, not its bold (maintainer): a word beside the\
+    -- chevron, not a second title.\
+    local regular = require(\"lib/bookshelf_fonts\"):getFace(\"cfont\", face.orig_size or 20)\
+    local label = TextWidget:new{ text = _(\"Back\"), face = regular,\
+        fgcolor = Blitbuffer.COLOR_BLACK }\
+    local pad = title_bar.button_padding or Space.px(11)\
+    local x = pad + (btn.width or 0) + Space.px(4)\
+    local lw = label:getSize().w\
+    local title_left = math.floor((title_bar.width - tw:getSize().w) / 2)\
+    local gap = Space.px(24)\
+    if x + lw + gap > title_left then\
+        label:free()\
+        return title_bar\
+    end\
+    -- On the title's baseline: the title sits under the bar's top padding\
+    -- (its title_group's first span).\
+    local group = title_bar.title_group\
+    local top = (group and group[1] and group[1].width) or 0\
+    -- The title's capitals are centred in its box (centreTitle; a picture\
+    -- row's always are): the label's, centred on that box, line up with them.\
+    require(\"lib/bookshelf_cap_centre\").centre(label)\
+    local y = top + math.floor((tw:getSize().h - label:getSize().h) / 2)\
+    local cell = InputContainer:new{\
+        dimen = Geom:new{ x = 0, y = 0, w = lw + Space.px(12), h = label:getSize().h },\
+        label,\
+    }\
+    cell.ges_events = { TapBack = { GestureRange:new{ ges = \"tap\",\
+        range = function() return cell.dimen end } } }\
+    function cell:onTapBack()\
+        if title_bar.left_icon_tap_callback then title_bar.left_icon_tap_callback() end\
+        return true\
+    end\
+    cell.overlap_offset = { x, y }\
+    table.insert(title_bar, cell)\
+    return title_bar\
+end\
+\
+return Kit\
+",
+    ["lib/bookshelf_slider"] = "-- bookshelf_slider.lua (see STYLE.md)\
+-- A value on a track: a size nudge, an ornament's size or lift. A tap\
+-- anywhere on the track sets it there; a drag moves the knob and sets it\
+-- when the finger lifts (each change redraws a preview behind, which on\
+-- e-ink is no thing to do on every move). - and + step it finely. Ticks\
+-- under the track mark the range's ends and Default.\
+--   Slider.new{ width, value, min, max, step, default, format(v) -> text,\
+--               on_change(v), face, small, step_label, big, big_label }\
+--               -> widget, keys_row\
+-- Grey cards either side step it: \"-5\" \"+5\" by o.step beside the track and,\
+-- with o.big, \"-10\" \"+10\" outside them (maintainer: keep both nudges).\
+-- step_label / big_label: the number a card shows, when the value's own\
+-- units are not the reader's (an ornament's 0.05 reads 5).\
+-- The maths is kept apart (snap, valueAt, xOf, ticks) so the tests reach it\
+-- without widgets.\
+\
+local Slider = {}\
+\
+-- snap(v, o) -> v on o.step's grid from o.min, kept in [o.min, o.max]. Rounded\
+-- through the step count, so 0.05 steps come out as 1.25, not 1.2500000001.\
+function Slider.snap(v, o)\
+    local step = o.step or 1\
+    local n = math.floor((v - o.min) / step + 0.5)\
+    local out = o.min + n * step\
+    -- Two places past the step's own, enough for any step we use.\
+    out = math.floor(out * 10000 + 0.5) / 10000\
+    return math.max(o.min, math.min(o.max, out))\
+end\
+\
+-- valueAt(x, w, o) -> the value at x along a track w wide (snapped).\
+function Slider.valueAt(x, w, o)\
+    local f = math.max(0, math.min(1, w > 0 and x / w or 0))\
+    return Slider.snap(o.min + f * (o.max - o.min), o)\
+end\
+\
+-- xOf(v, w, o) -> where v sits along a track w wide.\
+function Slider.xOf(v, w, o)\
+    if o.max <= o.min then return 0 end\
+    local f = (math.max(o.min, math.min(o.max, v)) - o.min) / (o.max - o.min)\
+    return math.floor(f * w + 0.5)\
+end\
+\
+-- ticks(o) -> the values marked under the track: the ends and Default.\
+function Slider.ticks(o)\
+    local out, seen = {}, {}\
+    for _i, v in ipairs({ o.min, o.default, o.max }) do\
+        if v and not seen[v] then seen[v] = true; out[#out + 1] = v end\
+    end\
+    table.sort(out)\
+    return out\
+end\
+\
+-- colors(picked, defaults) -> fill, track: the reader's own progress bar\
+-- colours (Colors > Progress bar; cover_progress.pickedBarColors, nil when\
+-- none is picked), each falling back to the slider's own.\
+function Slider.colors(picked, defaults)\
+    picked = picked or {}\
+    return picked.fill or defaults.fill, picked.bg or defaults.track\
+end\
+\
+function Slider.new(o)\
+    local Blitbuffer      = require(\"ffi/blitbuffer\")\
+    local Geom            = require(\"ui/geometry\")\
+    local GestureRange    = require(\"ui/gesturerange\")\
+    local HorizontalGroup = require(\"ui/widget/horizontalgroup\")\
+    local HorizontalSpan  = require(\"ui/widget/horizontalspan\")\
+    local InputContainer  = require(\"ui/widget/container/inputcontainer\")\
+    local UIManager       = require(\"ui/uimanager\")\
+    local VerticalGroup   = require(\"ui/widget/verticalgroup\")\
+    local TextWidget      = require(\"lib/bookshelf_colour_text\")\
+    local Kit             = require(\"lib/bookshelf_popup_kit\")\
+    local Space           = require(\"lib/bookshelf_space\")\
+    local _ = require(\"lib/bookshelf_i18n\").gettext\
+\
+    local fmt = o.format or tostring\
+    local value = Slider.snap(o.value, o)\
+    local function commit(v)\
+        v = Slider.snap(v, o)\
+        if v ~= value and o.on_change then o.on_change(v) end\
+    end\
+\
+    local btn_h = TextWidget:new{ text = \"Hg\", face = o.face }:getSize().h + Space.px(12)\
+    -- stepButton(d, by): a grey card stepping by d * by, labelled with the\
+    -- step (\"-10\", \"+5\"): the fine step beside the track, the big one\
+    -- outside it (maintainer: keep both nudges).\
+    -- The kit's minus and plus before the number.\
+    local MINUS, PLUS = Kit.MINUS, Kit.PLUS\
+    local glyph_face = require(\"ui/font\"):getFace(\"symbols\", math.max(10, (o.face and o.face.orig_size or 18) - 4))\
+    local function stepButton(d, by, label)\
+        local enabled = (d < 0 and value > o.min) or (d > 0 and value < o.max)\
+        return Kit.button{ text = label, face = o.face, icon_glyph = d < 0 and MINUS or PLUS,\
+            icon_face = glyph_face, gap = Space.px(2), pad_h = Space.px(8), card = true,\
+            height = btn_h, enabled = enabled, instant = true,\
+            on_tap = function() commit(value + d * by) end }\
+    end\
+    local step = o.step or 1\
+    local fine_label = o.step_label or tostring(step)\
+    local minus = stepButton(-1, step, fine_label)\
+    local plus  = stepButton(1, step, fine_label)\
+    local big_minus, big_plus\
+    if o.big then\
+        local big_label = o.big_label or tostring(o.big)\
+        big_minus = stepButton(-1, o.big, big_label)\
+        big_plus  = stepButton(1, o.big, big_label)\
+    end\
+    local gap = Space.px(10)\
+    local side = minus:getSize().w + gap\
+    if big_minus then side = side + big_minus:getSize().w + gap end\
+    local track_w = math.max(Space.px(60), o.width - 2 * side)\
+\
+    -- The track: a bar in the reader's progress bar colours, the fill up to\
+    -- the knob (the value is what is \"on\"), ticks under it, the knob a ring\
+    -- in the fill colour (maintainer: hollow, and a thicker track). Its\
+    -- touch area is the buttons' height, so it is as easy to hit as they are.\
+    local CP = require(\"lib/bookshelf_cover_progress\")\
+    local fill, track_c = Slider.colors(CP.pickedBarColors(),\
+        { fill = Blitbuffer.COLOR_BLACK, track = Blitbuffer.COLOR_LIGHT_GRAY })\
+    local bar_h = math.max(4, Space.px(12))\
+    local r = math.max(math.floor(btn_h / 4), bar_h)   -- the knob's radius\
+    local ring = math.max(2, Space.px(3))\
+    local inner = track_w - 2 * r            -- where the knob's centre runs\
+    -- knob(bb, cx, cy, rad, c): a disc, through the colour-safe paint.\
+    local function knob(bb, cx, cy, rad, c)\
+        CP.paintRoundedRect(bb, cx - rad, cy - rad, 2 * rad, 2 * rad, c, rad)\
+    end\
+    local Track = InputContainer:extend{}\
+    local track = Track:new{ dimen = Geom:new{ w = track_w, h = btn_h } }\
+    track.shown = value\
+    function track:paintTo(bb, x, y)\
+        self.dimen.x, self.dimen.y = x, y\
+        local cy = y + math.floor(btn_h / 2)\
+        local x0 = x + r\
+        local kx = x0 + Slider.xOf(self.shown, inner, o)\
+        CP.paintRoundedRect(bb, x0, cy - math.floor(bar_h / 2), inner, bar_h,\
+            track_c, math.floor(bar_h / 2))\
+        if kx > x0 then\
+            CP.paintRoundedRect(bb, x0, cy - math.floor(bar_h / 2), kx - x0, bar_h,\
+                fill, math.floor(bar_h / 2))\
+        end\
+        for _i, tv in ipairs(Slider.ticks(o)) do\
+            local tx = x0 + Slider.xOf(tv, inner, o)\
+            bb:paintRect(tx - 1, cy + math.floor(bar_h / 2) + Space.px(3), 2, Space.px(6),\
+                Blitbuffer.COLOR_DARK_GRAY)\
+        end\
+        knob(bb, kx, cy, r, fill)\
+        knob(bb, kx, cy, r - ring, Blitbuffer.COLOR_WHITE)\
+    end\
+    local function at(pos)\
+        return Slider.valueAt(pos.x - track.dimen.x - r, inner, o)\
+    end\
+    local function show(v)\
+        if v == track.shown then return end\
+        track.shown = v\
+        local top = UIManager.getTopmostVisibleWidget and UIManager:getTopmostVisibleWidget()\
+        -- \"ui\", not \"fast\": fast is black and white only, and broke up the\
+        -- grey track behind the knob (maintainer, PW5).\
+        UIManager:setDirty(top, function() return \"ui\", track.dimen end)\
+    end\
+    track.ges_events = {\
+        Tap        = { GestureRange:new{ ges = \"tap\",         range = function() return track.dimen end } },\
+        Pan        = { GestureRange:new{ ges = \"pan\",         range = function() return track.dimen end } },\
+        PanRelease = { GestureRange:new{ ges = \"pan_release\", range = function() return track.dimen end } },\
+        Swipe      = { GestureRange:new{ ges = \"swipe\",       range = function() return track.dimen end } },\
+    }\
+    function track:onTap(_a, ges) commit(at(ges.pos)); return true end\
+    function track:onPan(_a, ges) show(at(ges.pos)); return true end\
+    function track:onPanRelease(_a, ges) commit(at(ges.pos)); return true end\
+    -- A quick drag arrives as a swipe: its pos is where it began, so the end\
+    -- is that plus its distance, along the track.\
+    function track:onSwipe(_a, ges)\
+        local dx = (ges.direction == \"east\" and 1 or ges.direction == \"west\" and -1 or 0)\
+            * (ges.distance or 0)\
+        commit(at({ x = ges.pos.x + dx }))\
+        return true\
+    end\
+\
+    -- Under the track: each tick's label, Default by name, left out where it\
+    -- would run into the one before.\
+    -- The track, its ticks and knob are painted by their own offsets, left\
+    -- to right; the rows round them are not mirrored in a right-to-left UI,\
+    -- or Default sat under another tick and + on the low end.\
+    local labels = HorizontalGroup:new{ align = \"top\", allow_mirroring = false }\
+    local used = 0\
+    for _i, tv in ipairs(Slider.ticks(o)) do\
+        local text = (tv == o.default) and _(\"Default\") or fmt(tv)\
+        local lw = TextWidget:new{ text = text, face = o.small,\
+            fgcolor = Blitbuffer.COLOR_DARK_GRAY }\
+        local w = lw:getSize().w\
+        local cx = r + Slider.xOf(tv, inner, o)\
+        local lx = math.max(0, math.min(track_w - w, cx - math.floor(w / 2)))\
+        if lx >= used then\
+            labels[#labels + 1] = HorizontalSpan:new{ width = lx - used }\
+            labels[#labels + 1] = lw\
+            used = lx + w + Space.px(6)\
+        end\
+    end\
+\
+    local row = HorizontalGroup:new{ align = \"center\", allow_mirroring = false }\
+    local keys = {}\
+    local function add(w)\
+        if #row > 0 then row[#row + 1] = HorizontalSpan:new{ width = gap } end\
+        row[#row + 1] = w\
+    end\
+    local parts = { minus, track, plus }\
+    if big_minus then parts = { big_minus, minus, track, plus, big_plus } end\
+    for _i, w in ipairs(parts) do\
+        add(w)\
+        if w ~= track then keys[#keys + 1] = w end\
+    end\
+    local vg = VerticalGroup:new{ align = \"left\",\
+        row,\
+        HorizontalGroup:new{ align = \"top\", allow_mirroring = false,\
+            HorizontalSpan:new{ width = side }, labels },\
+    }\
+    return vg, keys, fmt(value)\
+end\
+\
+return Slider\
+",
     ["features/sui_menu_hide"] = "-- sui_menu_hide.lua — Simple UI\
 --\
 -- Hides chosen tabs, submenus and items of the File Manager and Reader menus.\
@@ -1077,6 +3649,10 @@ local function catalog()\
                 \"2-pages-badge_estimate.lua\", \"2-finished-badge.lua\", \"2-reading-percentage.lua\",\
                 \"2-real-books.lua\", \"2-percent-badge.lua\",\
             },\
+        },\
+        {\
+            reason = _(\"Replaces the folder covers\"),\
+            files  = { \"2-rounded-folder-covers.lua\" },\
         },\
         {\
             reason = _(\"Hides Wi-Fi dialogs, and any other dialog that mentions Wi-Fi\"),\

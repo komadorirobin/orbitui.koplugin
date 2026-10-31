@@ -47,6 +47,7 @@ local function render(opts, enabled)
         ornamentY=function(pl, stand) return stand - pl.h end,
         behindAbove=function() return false end,
         noteOrn=function(list, widget) list[#list+1] = widget end,
+        _noteKeyOrn=function() end, -- no keyboard placement context in this geometry-only harness
     }
     for _, name in ipairs({"ornPad", "rowEndRoom"}) do
         local fn = assert(source:match("(function SpineShelf%." .. name .. "%b()\n.-\nend)"))

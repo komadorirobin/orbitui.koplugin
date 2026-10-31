@@ -86,6 +86,7 @@ H.test("Auto level choices persist independently in Library and Manga profiles",
         _chipViewMode=function(self) return self:_profileShelfSettings().view_mode end,
         _isDrilledIn=function(self) return self.drilled end,
         _isSearchResults=function() return false end,
+        _searchLevel=function() return nil end,
     }, {__index=W})
     H.eq(w:_viewMode(), "list")
     w._expanded = true; H.eq(w:_viewMode(), "list")

@@ -163,6 +163,27 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+October 31 Bookshelf 6.1 merge-only: exact reviewed master
+`7ff93b9d8fb11194701440bcafd366002745cb01` adds 255 commits after `ee84a8fe`;
+SimpleUI main `fdf83c7da73e6fa82c4ad02efa84a0dad3733541` adds two after
+`5631ce10`. Keep unsquashed ancestry and original provenance. The shared popup
+kit/page editor supersedes old ButtonDialog layouts; port local binding,
+caption, face-out, ornament override, folder/MAL and BookOrbit seams to that
+model rather than retaining obsolete duplicate controls. Unset view settings
+keep OrbitUI's legacy cover/list policy without a migration; explicit Covers
+stores a pin. OPDS cannot select spines. Cover scale remains 50–150%.
+Keep bounded/cancellable disk maintenance while adopting separate 96 MiB
+cover/24 MiB ornament caps, free-space scaling and last-use recency. Do not
+import a synchronous full sweep or trust a stale persistent byte tally.
+Seven new helpers are exact lazy embedded sources on the existing module map:
+403 identities, 20 embedded sources, no new API-1 installed paths. Never
+replace public Beta 23 or change bootstrap/limits/assets/languages to make room.
+SimpleUI bold clones keep unscaled orig_size; its added incompatible patch
+name is informational only under the existing read-only compatibility policy.
+No external patch may be renamed/disabled. Verify real page callbacks, both
+full interpreters, all 43 catalogs, sealed/native owners and older native OTA
+before the audited push. Publication still needs a separate user request.
+
 October 31 Beta 22 request: after local-first EPUB tags, a fresh read-only fetch
 at 11:54 UTC confirms Bookshelf master `ee84a8fe1621171c00df91c41dee76b9ed07028c`
 and SimpleUI main `5631ce1035286803d7586979c75993671ff022cb` are already included,

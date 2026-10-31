@@ -27068,6 +27068,7 @@ function BookshelfWidget:_openGroupMenu(group, kind)
     -- title's X.
     local dialog
     local bw_ref = self
+    local function close_dialog() UIManager:close(dialog) end
     local function act(fn)
         return function() UIManager:close(dialog); fn() end
     end
@@ -27127,9 +27128,8 @@ function BookshelfWidget:_openGroupMenu(group, kind)
     -- 4.0's image, move and rename controls. Marking every contained book read
     -- also drives the existing finished-folder fade state.
     if kind == "folder" and group.path then
-        table.insert(buttons, {
-            { text = _("Mark folder as read"), callback = function()
-                close_dialog()
+        local folder_options = {
+            opt("\u{E838}", _("Mark folder as read"), nil, function()
                 local InfoMessage = require("ui/widget/infomessage")
                 UIManager:show(InfoMessage:new{
                     text = _("Marking folder as read..."), timeout = 1,
@@ -27143,8 +27143,8 @@ function BookshelfWidget:_openGroupMenu(group, kind)
                         timeout = 2,
                     })
                 end)
-            end },
-        })
+            end),
+        }
 
         -- Other plugins may add folder-specific actions without patching this
         -- dialog. Provider failures are isolated by FolderActions.collect, so
@@ -27152,14 +27152,13 @@ function BookshelfWidget:_openGroupMenu(group, kind)
         local folder_actions = require("lib/bookshelf_folder_actions").collect(group)
         for i = 1, #folder_actions do
             local action = folder_actions[i]
-            table.insert(buttons, {
-                { text = action.text, enabled = action.enabled ~= false,
-                  callback = function()
-                    close_dialog()
-                    UIManager:nextTick(action.callback)
-                  end },
-            })
+            local item = opt("\u{EA89}", action.text, nil, function()
+                UIManager:nextTick(action.callback)
+            end)
+            item.enabled = action.enabled ~= false
+            folder_options[#folder_options + 1] = item
         end
+        section(_("Plugin actions"), folder_options)
     end
 
     if kind == "series" and self:_isSpineMode() and not self.seriesBindingButton then

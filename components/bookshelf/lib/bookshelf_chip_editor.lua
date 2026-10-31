@@ -2427,10 +2427,13 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
         local Binding = require("lib/bookshelf_book_binding")
         -- Face out first: which books show their covers is the spine shelf's
         -- biggest choice (maintainer).
-        add({ type = "row", label = _("Face out"), value = self.face_out_override and self.face_out_override(draft) or Editor._faceOutText(draft),
+        add({ type = "row", label = _("Face out"), value = self.face_out_override and _("All books") or Editor._faceOutText(draft),
             enabled = not self.face_out_override,
             icon = "\u{E7B9}",   -- book
-            callback = function() Editor:_openFaceOut(draft, on_change) end })
+            callback = function()
+                if self.face_out_override then return end
+                Editor:_openFaceOut(draft, on_change)
+            end })
         add(stepper(pick, _("Rows"), "spine_rows", 1, 6,
             bw and function()
                 local ok, n = pcall(bw._nShelves, bw)
@@ -2450,6 +2453,16 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
         add({ type = "stepper", label = _("Thickness"),
             value = tostring(draft.spine_thickness_pct or 100) .. "%",
             on_dec = thick(-1), on_inc = thick(1) })
+        -- OrbitUI's face-out shelves retain their independent cover scale.
+        local function coverSize(delta)
+            return pick(function()
+                local n = math.max(50, math.min(150, (draft.spine_cover_size_pct or 100) + delta * 10))
+                draft.spine_cover_size_pct = n ~= 100 and n or nil
+            end)
+        end
+        add({ type = "stepper", label = _("Cover size"),
+            value = tostring(draft.spine_cover_size_pct or 100) .. "%",
+            on_dec = coverSize(-1), on_inc = coverSize(1) })
         if not self.book_binding_external then
         add({ type = "segmented", label = _("Book binding"),
             items = { { key = "hardcover", label = Binding.label("hardcover") },
@@ -2490,7 +2503,7 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
         end
     end
     local function spinesSummary()
-        local parts = { T(_("face out: %1"), self.face_out_override and self.face_out_override(draft) or Editor._faceOutText(draft)),
+        local parts = { T(_("face out: %1"), self.face_out_override and _("All books") or Editor._faceOutText(draft)),
             T(_("rows: %1"), numText(draft.spine_rows)) }
         if draft.spine_thickness_pct then parts[#parts + 1] = T(_("%1% thick"), draft.spine_thickness_pct) end
         if not self.book_binding_external and draft.book_binding == "paperback" then parts[#parts + 1] = _("paperbacks") end
@@ -2570,7 +2583,8 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
         -- did. A shelf of shelves is never drilled into, so Auto's levels
         -- would be one level: not offered there (maintainer, 2026-10-11),
         -- and one stored before shows as the style it gives.
-        local mode = Editor._shownMode(draft[ViewMode.CHIP_KEY], no_spines)
+        local stored = ViewMode.chipOverride(draft[ViewMode.CHIP_KEY])
+        local mode = no_spines and stored == ViewMode.SPINES and ViewMode.COVERS or stored
         local is_shelves = TabModel.isShelves(draft)
         if is_shelves and mode == ViewMode.AUTO then
             mode = ViewMode.auto(draft, false)
@@ -2661,6 +2675,13 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
                     icon = Editor._modeIcon(style, no_spines),
                     callback = section(title, st[3], level) })
             end
+        elseif mode == nil and not is_shelves then
+            -- Unpinned OrbitUI shelves historically use covers at the top
+            -- and lists inside groups; visiting settings must not migrate them.
+            add({ type = "heading", text = _("Covers") })
+            coversBlocks(pick, add)
+            add({ type = "heading", text = _("List") })
+            listBlocks(pick, add)
         else
             local st = (show_spines and STYLES[ViewMode.SPINES])
                 or (show_list and STYLES[ViewMode.LIST]) or STYLES[ViewMode.COVERS]

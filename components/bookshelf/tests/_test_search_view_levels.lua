@@ -35,6 +35,7 @@ local function widget(settings, path, chip_tab)
         assert(load(method(name), name, "t", env))()
     end
     return setmetatable({ chip = "home", _drilldown_path = path,
+        _profileShelfSettings = function() return chip_tab end,
         _isDrilledIn = function(self) return #self._drilldown_path > 0 end },
         { __index = env.BookshelfWidget })
 end

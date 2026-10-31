@@ -55,9 +55,9 @@ t.test("drilled and pinned series supply identity for light members, not author 
     eq(M.resolve({}, {series_name="Saga"}, M.applyOptions({}, "plain")), "paperback")
 end)
 
-local function groupMenu(mode, kind, host_binding)
+local function groupMenu(mode, kind, host_binding, actions)
     local src = F.source("lib/bookshelf_widget.lua")
-    local state = {shown=0, closed=0, rebuilds=0, refreshes=0, dirty={}}
+    local state = {shown=0, closed=0, rebuilds=0, refreshes=0, dirty={}, queued={}}
     local mocks = {
         ["lib/bookshelf_page_dialog"] = {show=function(spec)
             state.spec = spec; state.shown = state.shown + 1
@@ -70,7 +70,9 @@ local function groupMenu(mode, kind, host_binding)
             getFolderImageOverride=function() end, resolveFolderImage=function() end,
         },
         ["lib/bookshelf_author_images"] = {isPlaceholder=function() return true end},
+        ["ui/widget/infomessage"] = {new=function(_,o) return o end},
     }
+    if actions then mocks["lib/bookshelf_folder_actions"]={collect=function() return actions end} end
     local env = {
         require=function(name) return mocks[name] or require(name) end,
         _=function(s) return s end, T=function(s,a,b) return (s:gsub("%%1",tostring(a)):gsub("%%2",tostring(b))) end,
@@ -78,9 +80,13 @@ local function groupMenu(mode, kind, host_binding)
             folder={source_id_field="path"}},
         ViewMode=require("lib/bookshelf_view_mode"), Focus=require("lib/bookshelf_focus"),
         BFont={getFace=function() return {} end},
+        Repo={markFolderRead=function(path,depth)
+            eq(path,"/library"); eq(depth,3); state.marked=true; return 2
+        end},
         UIManager={
             show=function() end,
             close=function() state.closed=state.closed+1 end,
+            nextTick=function(_,fn) state.queued[#state.queued+1]=fn end,
             setDirty=function(_, w, refresh)
                 eq(refresh,"ui"); state.dirty[w]=(state.dirty[w] or 0)+1
             end,
@@ -106,6 +112,23 @@ local function groupMenu(mode, kind, host_binding)
     end
     return state
 end
+
+t.test("folder completion and optional plugin actions survive the page-model conversion",function()
+    local called=0
+    local state=groupMenu("covers","folder",nil,{
+        {text="MAL action",callback=function() called=called+1 end},
+        {text="Unavailable",enabled=false,callback=function() error("disabled action") end},
+    })
+    local found={}
+    for _,b in ipairs(state.spec.page().blocks) do if b.text then found[b.text]=b end end
+    eq(found.Unavailable.enabled,false)
+    found["MAL action"].callback()
+    eq(state.closed,1); eq(called,0); eq(#state.queued,1)
+    table.remove(state.queued,1)(); eq(called,1)
+    found["Mark folder as read"].callback()
+    eq(state.closed,2); eq(state.marked,nil)
+    table.remove(state.queued,1)(); eq(state.marked,true); eq(state.rebuilds,1)
+end)
 
 t.test("series binding is a choice on the menu's page, saved and redrawn in place", function()
     M.setSeries("Saga",nil)
@@ -146,22 +169,15 @@ t.test("series binding is absent in covers/list views and on non-series groups",
     eq(F.flushes,flushes)
 end)
 
-t.test("binding and series boxes share a row, with independent live-applied toggles", function()
-    local src=F.source("lib/bookshelf_chip_editor.lua")
-    local block=assert(src:match('if show_spines then\n(.-)\n%s*%-%- The spine view'))
-    local draft, applied={id="soft"},0
-    local rows=F.compile("local rows={}\n"..block.."\nreturn rows", {
-        self={}, draft=draft, _=function(s) return s end, T=function(s,v) return s:gsub("%%1",v) end,
-        pick=function(fn) return function() fn(); applied=applied+1 end end,
-    })()
-    eq(#rows,1); eq(#rows[1],2)
-    local binding, boxes=rows[1][1],rows[1][2]
-    eq(binding.text_func(),"Book binding: Hardback")
-    eq(boxes.text_func(),"Series boxes: Off")
-    binding.callback(); eq(draft.book_binding,"paperback"); eq(draft.series_boxes,nil)
-    boxes.callback(); eq(draft.series_boxes,true); eq(draft.book_binding,"paperback")
-    binding.callback(); eq(draft.book_binding,nil); eq(draft.series_boxes,true)
-    boxes.callback(); eq(draft.series_boxes,nil); eq(applied,4)
+t.test("binding and series boxes remain independent live-applied page controls", function()
+    local draft={id="soft",view_mode="spines"}
+    local page=dofile("tests/_editor_view_fixture.lua")({},draft)
+    eq(page.control("Book binding").active,"hardcover")
+    eq(page.control("Series boxes").active,false)
+    page.control("Book binding").on_pick("paperback"); eq(draft.book_binding,"paperback"); eq(draft.series_boxes,nil)
+    page.control("Series boxes").on_pick(true); eq(draft.series_boxes,true); eq(draft.book_binding,"paperback")
+    page.control("Book binding").on_pick("hardcover"); eq(draft.book_binding,nil); eq(draft.series_boxes,true)
+    page.control("Series boxes").on_pick(false); eq(draft.series_boxes,nil); eq(page.applied(),4)
 end)
 
 t.test("host-owned bindings replace the native control rather than duplicating it", function()
@@ -173,14 +189,13 @@ t.test("host-owned bindings replace the native control rather than duplicating i
         end}
     end)
     local n=0
-    for _,row in ipairs(state.dialog.buttons) do
-        for _,b in ipairs(row) do
-            if state.dialog.labels[b]:match("^Book binding:") then n=n+1 end
-        end
+    local button
+    for _,b in ipairs(state.spec.page().blocks) do
+        if b.text and b.text:match("^Book binding:") then n=n+1; button=b end
     end
-    eq(n,1); eq(state.dialog.labels[state.button],"Book binding: Kanzenban")
+    eq(n,1); eq(button.text,"Book binding: Kanzenban")
     local flushes=F.flushes
-    state.button.callback()
+    button.callback()
     eq(opened,1); eq(state.closed,1); eq(F.flushes,flushes)
 end)
 
