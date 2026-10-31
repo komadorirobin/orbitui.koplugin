@@ -10968,3 +10968,7 @@ msgstr ""
 #: infra/sui_updater.lua:817
 msgid "unknown error"
 msgstr ""
+
+#: features/sui_patch_compat.lua:40
+msgid "Replaces the folder covers"
+msgstr ""
