@@ -45,6 +45,21 @@ and correct this file in the same change.
   retain its Settings icon and the other five launch targets. Supersede the
   unbooted metadata-only test slot, keeping known-working Beta 24 as rollback.
   Do not publish before the physical metadata test; no Beta 25 is public yet.
+  Final local candidate is `2fdd1e97006208d1c28566096bea9a859e590b9f`, ZIP
+  SHA-256 `3115c35d49175230f46b5f96a155bb4296109c227118210b1b3e9daefc485f46`.
+  Both full gates, 43 catalogs, sealed/native/OTA and exact source/history/
+  secret audits pass. It is installed on the connected Bigme, bootstrap pending
+  flag cleared to 0, with Beta 24 retained. The actual SimpleUI Settings icon
+  opens public Developer options, then Wireless debugging without a crash.
+  The single preference persists after another launch; the temporary setup
+  userpatch was removed (recoverable copy retained). No Android toggle changed.
+  A physical book-menu Refresh metadata no longer exits KOReader with the old
+  error, but the tested book leaves the current filtered page after refresh;
+  extraction/filter-result acceptance and the user's original-book check stay
+  open. Existing `android_safe_mode=false` is retained, not silently enabled.
+  No push, tag, draft or public release. Evidence lives under ignored
+  `test-results/beta25-20261031/settings-shortcut/`; verification docs do not
+  rebuild or change the tested runtime bytes.
 
 - **Beta 24 is public**, exact candidate/annotated tag
   `6532b06b8b79b466342e93b7a31c28f49c21e2c4` / `v0.1.0-beta.24`, published

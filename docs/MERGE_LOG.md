@@ -51,6 +51,45 @@ choice/flush/refresh, unchanged apps, page-independent scope and SV/EN help.
 Supersede the unpublished metadata-only archive; preserve its separate slot
 and known-working Beta 24. Final candidate/device/test evidence follows below.
 
+Final local candidate **`2fdd1e97006208d1c28566096bea9a859e590b9f`** passes
+both full interpreter gates: 133 Python/four unchanged optional skips, 96 root
+Lua files, 533 Bookshelf suites/zero failures/three normal SQLite exclusions,
+13 SimpleUI files, syntax 1,147/map 403, and all 43 catalogs. Fresh sealed-root
+tests cover actual module/widget/menu/JNI-boundary callbacks and real SV/EN
+catalogs; minimum/current input, native EPUB/libarchive and Android/non-Android
+grey/RGB/CBB night/tilted-cover checks pass. Actual Beta 5/9/24 native OTA
+upgrade/recovery/rollback/cleanup passes. Exact source/path/bootstrap/pins/assets/
+held-art history and Gitleaks checks pass (18 outgoing blobs, two commits).
+
+ZIP SHA-256 **`3115c35d49175230f46b5f96a155bb4296109c227118210b1b3e9daefc485f46`**;
+9,293,471 bytes, 27,447,707 expanded, 2,066 entries / unchanged 2,000 installed
+API-1 paths. Manifest SHA-256
+`d96fbb61d353c196c1a5ea8f73b9c75a1f20e52a43ac166ff20b4a464cf33f37`.
+Both uploaded ZIP and all 1,999 inventory hashes match on-device. With KOReader
+closed, atomically supersede the never-booted metadata-only candidate, keeping
+known-working Beta 24 as previous code. Successful startup clears pending to 0.
+
+Physical shortcut test: tap the actual Settings icon on Home page 2, observe
+the public Developer options activity, scroll and tap the Wireless debugging
+row (not its switch), and verify the live WirelessDebuggingFragment. No Settings
+crash, debugging toggle or permission change. A native one-time userpatch saves
+only the approved destination preference; remove that exact verified helper
+after success, retaining a recovery copy outside patches. A further KOReader
+launch retains the preference without the helper. Other userpatches and app
+targets remain untouched.
+
+Physical metadata test: long-press a local EPUB in Bookshelf and tap Refresh
+metadata. The parent process survives and the original nil-field crash does
+not recur. The selected book drops from the current filtered page; do NOT
+claim complete extraction/filter acceptance or the user's original-book result
+from absence of a crash alone. The existing `android_safe_mode=false` remains
+unchanged, so this is the native/background branch rather than a physical
+safe-mode queue acceptance. Ask the user to confirm the original reproduction
+before publication. No push, tag, draft or release is performed in this step.
+Evidence: ignored `test-results/beta25-20261031/settings-shortcut/`. Raw device
+screenshots/logs, books/paths, addresses and credentials are not committed.
+Verification-only documents never rebuild the tested candidate ZIP.
+
 ## 2026-10-31 — requested Bookshelf 6.1 Beta 24 publication
 
 User explicitly requests "Pusha och publicera etc" after the verified merge.

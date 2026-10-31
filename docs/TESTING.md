@@ -25,6 +25,22 @@ Physical acceptance must launch from the actual SimpleUI icon, not merely
 `adb am start`; verify Developer options > Wireless debugging without toggling
 any system switch. The earlier public-action preview is not this final test.
 
+Candidate `2fdd1e97`, ZIP SHA-256
+`3115c35d49175230f46b5f96a155bb4296109c227118210b1b3e9daefc485f46`, passes both
+full gates (133 Python/four skips, 96 root Lua files, 533 Bookshelf/zero failures/
+three SQLite exclusions, 13 SimpleUI, syntax 1,147/map 403), all 43 catalogs,
+sealed-root/native input/EPUB/raster, actual Beta 5/9/24 native OTA and exact
+source/path/history/held-art/secret audits. Device ZIP/all inventory hashes match;
+startup accepts the new runtime and retains Beta 24 rollback. Actual SimpleUI
+icon > Developer options > Wireless debugging passes without changing system
+switches; destination persists after another launch without the removed setup
+helper. One physical Refresh metadata returns without the original crash and
+retains the process, but the selected book leaves the current filtered page.
+Do not claim extraction/filter acceptance from this alone. Existing Android
+safe mode is explicitly false and untouched; physical local-safe-mode behavior
+and the user's original-book check remain open. No publication yet. Evidence:
+`test-results/beta25-20261031/settings-shortcut/`. See MERGE_LOG for details.
+
 ### Beta 24 publication
 
 The user explicitly requests push/publication of the reviewed Bookshelf 6.1
