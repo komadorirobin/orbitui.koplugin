@@ -22,6 +22,18 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-10-31
 
+- User explicitly requests "Pusha och publicera etc" after the completed
+  Bookshelf 6.1 merge. Prepare **Beta 24** on
+  `release/bookshelf61-beta24-20261031` from clean public `bfd9a9d9`.
+  The prior main CI `41239651434` and watch `41239651437` are green; both
+  upstream pins are fully included. No additional import, runtime code,
+  bootstrap/API-1/path, asset/language or external server/patch change is in
+  scope. Only VERSION and existing SV/EN release documentation change.
+  Keep Beta 23 and all earlier assets/tags immutable. Follow draft/download/
+  checksum/prerelease/anonymous/live-OTA verification in OTA.md; exact final
+  candidate, audits and publication evidence go in MERGE_LOG. Physical
+  Bigme/Boox acceptance remains open; publish as a prerelease, not stable.
+
 - A user-requested merge-only maintenance pass integrates Bookshelf **6.1.0**
   at `7ff93b9d8fb11194701440bcafd366002745cb01` (255 commits) and SimpleUI at
   `fdf83c7da73e6fa82c4ad02efa84a0dad3733541` (two font/compatibility follow-ups).

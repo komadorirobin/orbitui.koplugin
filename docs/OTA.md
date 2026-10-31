@@ -7,6 +7,65 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 0.1.0-beta.24
+
+Beta 24 publishes the reviewed **Bookshelf 6.1.0** merge through `7ff93b9d`
+and SimpleUI follow-ups through `fdf83c7d`. It does not import another upstream
+revision during release preparation.
+
+- Bookshelf's shelf editor gains a short front page and dedicated source,
+  view, sort, filter, theme, module and order pages, with breadcrumbs and
+  coalesced live previews. Existing OrbitUI profiles and unset view preferences
+  retain their behavior; visiting settings never resets a layout.
+- Book dialogs use clearer rounded action cards and segmented choices, with
+  a rearrangeable action layout, persistent Tags edit strip and optional review
+  spoilers. Our minimal header, lazy Book details and offline/online BookOrbit
+  tag sections remain; opening them never starts an automatic network request.
+- Filters can require all selected genres or exclude genres/collections.
+  Theme sorting adds newest and last-used choices. Filter changes still need
+  their explicit Apply where offered; they do not edit books or reading status.
+- Disk cache separates covers (96 MiB) and ornament renders (24 MiB), scales
+  budgets with available space and retains recently used images. Our bounded,
+  cancelable maintenance stays outside painting. This should reduce avoidable
+  decoding after restart, not a measured Bigme/Boox speed improvement.
+- SimpleUI fixes cached bold-face sizing when global UI text is scaled.
+  New controls have English/Swedish labels. All prior languages/resources stay.
+
+Svenska: Beta 24 innehåller **Bookshelf 6.1.0** och de redan granskade
+SimpleUI-ändringarna. Hyllredigeraren delas upp i tydligare sidor för källa,
+visningsläge, sortering, filter, tema, moduler och ordning. Bokdialogerna får
+tydligare åtgärdskort, valknappar och en redigeringsrad i Taggar. Fler
+genre-/samlingsfilter och sortering av teman ingår. Omslag och ornament får
+separata cachegränser och senast använda bilder prioriteras. Rensningen är
+fortfarande avbrytbar och görs i små steg. Förväntad nytta är färre onödiga
+omladdningar, inte en uppmätt snabbhetsvinst. SimpleUI rättar storleken på fet
+text när gränssnittets textskalning används.
+
+Our profile/chip navigation, fast close/return, all-cover shelves, 50–150%
+cover size, binding/caption controls, Android safe covers, night contrast,
+folder/MAL actions and BookOrbit features retain their owners. No external
+BookOrbit/Hardcover progress writer, hardware driver, credential, book metadata,
+reading data or user patch is changed. No server is deployed.
+
+Update via the preview channel and restart KOReader / uppdatera via
+förhandsversionskanalen och starta om KOReader. Back up settings separately
+first. Earlier supported betas can update directly; bootstrap API 1 and all
+2,000 installed paths remain unchanged. Seven new helpers use the existing
+exact-source embedded registry; no language/font/artwork is removed to fit.
+Previous public releases/assets remain immutable.
+
+Code rollback preserves settings/data but older runtimes may ignore new 6.1
+filters or action-layout choices and display shelves differently. Review the
+scope after rollback; never restore old reading progress to undo UI changes.
+Svenska: Kodåterställning behåller data, men äldre kod kan ignorera nya filter
+och visningsval. Kontrollera hyllans avgränsning efter återställning.
+
+Still a prerelease: physical Bigme/Boox dialog layout, tap/keyboard/Back/Close,
+profile editing/reorder, Tags/Book details/zoom, cache warmth, day/night,
+rotation/sleep and reader return need acceptance. Full headless/native archive,
+input and raster tests are not device acceptance. Svenska: Fortsatt beta;
+prova de nya vyerna på enheten. Ingen fysisk snabbhetsvinst är verifierad.
+
 ## OrbitUI 0.1.0-beta.23
 
 Beta 23 publishes the optional **OrbitUI settings > Integrations > BookOrbit**

@@ -2,6 +2,19 @@
 
 ## Automated
 
+### Beta 24 publication
+
+The user explicitly requests push/publication of the reviewed Bookshelf 6.1
+merge from clean `bfd9a9d9`. VERSION becomes `0.1.0-beta.24`; existing release
+documents gain SV/EN notes without a new installed path. Runtime code, source
+pins, API-1 bootstrap and resources remain byte-identical to the verified merge.
+Repeat both full interpreter gates, 43 catalogs, sealed all-root/native input/
+EPUB/raster tests, exact source/path/history/held-art/Gitleaks checks and actual
+older native OTA upgrade/recovery/rollback before publication. Verify exact
+draft/public bytes and live anonymous application-TLS upgrades, unchanged old
+releases/tags and preview-only channel selection. See MERGE_LOG for results.
+The physical popup/editor/cache acceptance list below stays open.
+
 ### October 31 Bookshelf 6.1 reviewed merge (not a release)
 
 Targets: Bookshelf `7ff93b9d`, SimpleUI `fdf83c7d`; VERSION stays Beta 23.

@@ -4,6 +4,23 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-10-31 — requested Bookshelf 6.1 Beta 24 publication
+
+User explicitly requests "Pusha och publicera etc" after the verified merge.
+Start clean at public `bfd9a9d9` on `release/bookshelf61-beta24-20261031`.
+The merge's main CI `41239651434` and watch `41239651437` passed; both exact
+reviewed pins have zero missing commits. This approval supersedes the earlier
+merge-only release boundary, not the external server/device-patch boundary.
+
+Publish the already-reviewed Bookshelf 6.1 and SimpleUI follow-ups, preserving
+all host contracts, sources, settings/data, resources and external sync owners.
+Only VERSION advances to `0.1.0-beta.24` with English/Swedish notes in existing
+runtime documents. No new import, installed path, bootstrap/API limit, artwork,
+language or production BookOrbit change. Previous public assets/tags stay
+immutable. Full interpreter/catalog/sealed/native-OTA/source/history/secret,
+draft/public byte and channel checks precede final handoff. Record results and
+exact candidate below; physical Bigme/Boox acceptance remains open.
+
 ## 2026-10-31 — requested Bookshelf 6.1 upstream merge (no release)
 
 User: "Merga upstream. Bookshelf har fått en lite större uppdatering".
