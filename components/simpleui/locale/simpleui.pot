@@ -10972,3 +10972,19 @@ msgstr ""
 #: features/sui_patch_compat.lua:40
 msgid "Replaces the folder covers"
 msgstr ""
+
+#: modules/module_app_launcher.lua
+msgid "Settings shortcut"
+msgstr ""
+
+#: modules/module_app_launcher.lua
+msgid "Android settings"
+msgstr ""
+
+#: modules/module_app_launcher.lua
+msgid "Developer options"
+msgstr ""
+
+#: modules/module_app_launcher.lua
+msgid "Choose where the Settings icon opens on this device. Developer options does not enable debugging or change Android settings."
+msgstr ""

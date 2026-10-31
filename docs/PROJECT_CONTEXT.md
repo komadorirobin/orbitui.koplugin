@@ -35,6 +35,16 @@ and correct this file in the same change.
   resource, external patch or server/sync-owner change. Physical staging uses
   a separate verified runtime slot, retaining Beta 24 and data. Test/publication
   evidence and device acceptance will be recorded in MERGE_LOG/TESTING.
+  An additional approved Bigme request adds an explicit device-local App
+  Launcher > Settings shortcut choice (SV/EN). Default stays normal Android
+  Settings; Developer options uses only the public development-settings action.
+  User rejects the alternative `.Settings` homepage. The public Developer
+  options route reaches the existing Wireless debugging page without a crash;
+  Android refuses direct private SubSettings startup. No system toggle or
+  permission is changed. Select the new option only on the user's Bigme;
+  retain its Settings icon and the other five launch targets. Supersede the
+  unbooted metadata-only test slot, keeping known-working Beta 24 as rollback.
+  Do not publish before the physical metadata test; no Beta 25 is public yet.
 
 - **Beta 24 is public**, exact candidate/annotated tag
   `6532b06b8b79b466342e93b7a31c28f49c21e2c4` / `v0.1.0-beta.24`, published

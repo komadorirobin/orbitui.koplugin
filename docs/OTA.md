@@ -27,6 +27,21 @@ inställningslagret. Befintligt säkerhetsläge behålls och ett regressionstest
 använder det riktiga lagret. Du behöver inte radera omslagscachen eller indexera
 om biblioteket för att rätta den här kraschen.
 
+The SimpleUI **App Launcher** module also gains **Settings shortcut > Android
+settings / Developer options**. Normal Android Settings remains the default
+on all devices. The explicit device-local alternative opens Android's public
+Developer options entry, useful where a vendor Settings homepage crashes
+entering Wireless debugging. It does not directly open private Android pages,
+enable debugging, grant permissions or change any system setting. The Settings
+icon and other app buttons remain unchanged.
+
+Svenska: SimpleUI-modulen **App Launcher** får valet **Inställningar-genväg >
+Android-inställningar / Utvecklaralternativ**. Standardvalet är oförändrat;
+det nya målet väljs separat på varje enhet. Det kan kringgå en felande
+inställningsstartsida hos tillverkaren. Inga Android-inställningar eller
+behörigheter ändras och felsökning aktiveras inte. Från Utvecklaralternativ
+öppnar du själv Trådlös felsökning. Ikonen och de andra appknapparna behålls.
+
 All Beta 24 Bookshelf 6.1/SimpleUI changes remain. No new upstream import,
 bootstrap/API-1 or installed-path change, settings migration, resource removal,
 external patch or BookOrbit/Hardcover synchronization change. Previous public

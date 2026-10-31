@@ -15,6 +15,16 @@ cases remain required. Repeat the full interpreter/package/catalog/native-OTA
 gates and perform the approved physical metadata-refresh test before publishing
 the exact Beta 25 candidate. Keep unrelated Bigme/Boox acceptance gaps open.
 
+The additional approved device-local Settings shortcut uses the real App
+Launcher module, menu callbacks and previously built tap widgets over fake
+primitive widgets/JNI. Check absent/unknown values retain normal Settings;
+only explicit opt-in uses the public Developer options action. Verify one
+preference write/flush, reversible choice, shared scope across Home pages,
+unchanged Settings artwork and other five apps, and real SV/EN translations.
+Physical acceptance must launch from the actual SimpleUI icon, not merely
+`adb am start`; verify Developer options > Wireless debugging without toggling
+any system switch. The earlier public-action preview is not this final test.
+
 ### Beta 24 publication
 
 The user explicitly requests push/publication of the reviewed Bookshelf 6.1

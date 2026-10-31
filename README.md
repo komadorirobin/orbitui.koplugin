@@ -246,11 +246,15 @@ The safety check now uses the existing preference store instead of the settings
 editor. Android safe mode and your settings remain unchanged; no cache reset or
 full reindex is needed for this fix. All Beta 24 changes below remain. See
 [Beta 25 notes](docs/OTA.md#orbitui-010-beta25).
+App Launcher additionally offers an optional device-local **Settings shortcut >
+Developer options** target; normal Android Settings stays the default.
 
 **Svenska:** Beta 25 rättar kraschen vid långtryck > **Uppdatera metadata** på
 Android. Säkerhetsläget och dina inställningar behålls. Du behöver inte radera
 omslagscachen eller indexera om för att rätta den här kraschen. Uppdatera via
 förhandsversionskanalen och starta om KOReader. Fortsatt beta.
+App Launcher får också ett frivilligt enhetslokalt val **Inställningar-genväg >
+Utvecklaralternativ**. Vanliga Android-inställningar är fortfarande standard.
 
 **0.1.0-beta.24** publishes the reviewed **Bookshelf 6.1.0** integration:
 page-based shelf editing, clearer book dialogs/actions, richer genre/collection

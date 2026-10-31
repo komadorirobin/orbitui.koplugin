@@ -32,6 +32,25 @@ gates, exact candidate/digest and immutable draft/public evidence follow below.
 Raw device logs remain ignored under `test-results/metadata-crash-20261031/`;
 no personal titles/paths or ADB pairing credentials are committed.
 
+Additional user-approved scope: the SimpleUI Android App Launcher's Settings
+icon should open the working Developer options entry on this Bigme. Inspection
+finds the original Wireless debugging screen is a private SubSettings fragment
+in the same Android Settings package, not a separate app. Android blocks direct
+startup of it. The user rejects the normal `.Settings` launcher homepage. The
+public `android.settings.APPLICATION_DEVELOPMENT_SETTINGS` action is verified
+on-device to reach Developer options, from which Wireless debugging opens
+without a Settings crash. No debugging/system/permission toggle is changed.
+
+Keep default behavior for every other device. A minimal documented App Launcher
+delta adds one explicit device-local preference and reversible SV/EN module
+menu choice; only the Settings intent changes on opt-in. Read it at tap time
+so previously built Home widgets do not retain a stale destination. Existing
+Settings artwork/label, five other app targets and JNI/fallback launch logic
+remain. Real module/menu/widget/JNI-boundary tests cover default/invalid values,
+choice/flush/refresh, unchanged apps, page-independent scope and SV/EN help.
+Supersede the unpublished metadata-only archive; preserve its separate slot
+and known-working Beta 24. Final candidate/device/test evidence follows below.
+
 ## 2026-10-31 — requested Bookshelf 6.1 Beta 24 publication
 
 User explicitly requests "Pusha och publicera etc" after the verified merge.

@@ -9870,3 +9870,16 @@ msgid "%d page"
 msgid_plural "%d pages"
 msgstr[0] "%d sida"
 msgstr[1] "%d sidor"
+
+# OrbitUI: optional device-local Android Settings destination.
+msgid "Settings shortcut"
+msgstr "Inställningar-genväg"
+
+msgid "Android settings"
+msgstr "Android-inställningar"
+
+msgid "Developer options"
+msgstr "Utvecklaralternativ"
+
+msgid "Choose where the Settings icon opens on this device. Developer options does not enable debugging or change Android settings."
+msgstr "Välj vart Inställningar-ikonen leder på den här enheten. Utvecklaralternativ aktiverar inte felsökning och ändrar inga Android-inställningar."

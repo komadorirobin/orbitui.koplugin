@@ -259,6 +259,16 @@ local APPS = {
     { label = "Files",         abbr = "📁",  package = "com.google.android.apps.nbu.files" },
 }
 
+-- OrbitUI: an explicit device-local choice, not a change to every Android's
+-- Settings button. Some vendor Settings homepages crash entering wireless ADB;
+-- the public Developer options action avoids that homepage without targeting
+-- Android's private SubSettings activity or enabling any developer setting.
+local SETTINGS_TARGET_KEY = "simpleui_app_launcher_settings_target"
+local function _settingsTarget()
+    return G_reader_settings:readSetting(SETTINGS_TARGET_KEY) == "developer"
+        and "developer" or "settings"
+end
+
 -- ---------------------------------------------------------------------------
 -- Dimensions
 -- ---------------------------------------------------------------------------
@@ -588,7 +598,11 @@ local function _buildWidget(w, d)
             },
         }
         function tappable:onTapApp()
-            _launchApp(_pkg, _label, _action)
+            local action = _action
+            if _pkg == "com.android.settings" and _settingsTarget() == "developer" then
+                action = "android.settings.APPLICATION_DEVELOPMENT_SETTINGS"
+            end
+            _launchApp(_pkg, _label, action)
             return true
         end
 
@@ -640,7 +654,33 @@ function M.getMenuItems(ctx_menu)
     local pfx     = ctx_menu.pfx
     local refresh = ctx_menu.refresh
     local _lc     = ctx_menu._ or function(s) return s end
+    local targets = {}
+    for _, choice in ipairs({
+        { "settings", "Android settings" },
+        { "developer", "Developer options" },
+    }) do
+        local target = choice[1]
+        targets[#targets + 1] = {
+            text = _lc(choice[2]),
+            radio = true,
+            checked_func = function() return _settingsTarget() == target end,
+            keep_menu_open = true,
+            callback = function()
+                G_reader_settings:saveSetting(SETTINGS_TARGET_KEY, target)
+                G_reader_settings:flush()
+                refresh()
+            end,
+        }
+    end
     return {
+        {
+            text = _lc("Settings shortcut"),
+            value_func = function()
+                return _lc(_settingsTarget() == "developer" and "Developer options" or "Android settings")
+            end,
+            help_text = _lc("Choose where the Settings icon opens on this device. Developer options does not enable debugging or change Android settings."),
+            sub_item_table = targets,
+        },
         Config.makeScaleItem({
             text_func = function() return _lc("Scale") end,
             title     = _lc("Scale"),
