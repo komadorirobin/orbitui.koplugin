@@ -54,10 +54,50 @@ calls setAccount or edits the plugin's state. Ambiguous ID/path maps are exclude
 rather than guessed; older providers get an update-needed message.
 
 Require both full interpreter gates, all catalogs, sealed source/path/held-art/
-history/secret checks and native installer recovery against public Beta 21.
+history/secret checks and native installer recovery from public Beta 20;
+public Beta 21 must reject this same-version development OTA before activation.
 Record final local results below. A same-version development ZIP must never
 replace published Beta-21 bytes. No physical Bigme/Boox or live deployed API
 acceptance is claimed; no server/credentials/account data are accessed in tests.
+
+### Verified local result
+
+Source/package candidate `dd31edcb548684f25798f950241e9e2c86ace64c` passes fresh
+complete sequential LuaJIT/Lua gates: 133 Python tests/four unchanged optional
+skips, all 92 root Lua files, 487 Bookshelf suites/zero failures/three normal
+SQLite exclusions and all 13 SimpleUI files. Module map 396, syntax 1,089 and
+all 43 catalogs pass. All 15 tag cases pass under both interpreters, including
+actual native Tags construction; the existing 20 UI-refinement/modal-lifecycle
+and 13 shared-book-panel cases remain green. Fresh sealed-root invocation
+reruns pass in both interpreters, with legacy source-only fixtures backed by
+exact source projection. No physical MuPDF/font/touch/e-ink claim is made.
+
+The DEVELOPMENT ONLY same-version ZIP is **9,079,116 bytes**, expanded
+**26,664,082**, 2,066 entries and the same 1,999 inventory records plus manifest /
+2,000 installed API-1 paths. SHA-256
+`2964da2544381dc1127864d8e757425d7692434e24f656d86699c87097d30145`.
+Every byte matches the exact candidate archive after approved PO source-comment
+reduction. VERSION, pins, entry/bootstrap/map/assets and prior Beta-21 tag remain
+unchanged. Initial outgoing 11 source blobs exclude held art; source Gitleaks
+passes. Verification-only documentation receives a final full-range audit and
+does not rebuild or replace sealed bytes.
+
+Public Beta 20's actual native installer passes full extraction, missing-module
+rejection, activation/restart/code rollback, truncated-download recovery,
+external snapshot/restart/persistent rollback and interrupted obsolete-runtime
+cleanup preserving active/rollback/unknown/modified/user files. The public
+Beta-21 installer correctly refuses the same-version package with `No newer
+version to install`, before activation; that expected refusal is checked
+explicitly. These are temporary macOS native fixtures, not a device update.
+
+BookOrbit's 215 targeted tests, full backend typecheck/ESLint/format checks and
+new-history Gitleaks pass. Its old undo-opening checkout remains clean and
+untouched. Evidence is in ignored `test-results/bookorbit-tags-20261031/`.
+Both repositories remain local and clean; no push/tag/release, server deployment
+or live private API/credential call occurs. To test on a real reader, separately
+approve deployment of the BookOrbit endpoint and publication/test installation
+of OrbitUI, with an account-scoped BookOrbit plugin and matched local books.
+Physical SV/EN scrolling/zoom/input/cancel/reader-return acceptance remains open.
 
 ## 2026-10-31 — approved Beta 21 headerless book-details fix
 

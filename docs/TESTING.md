@@ -24,6 +24,21 @@ server/database/device is touched. Physical fonts, input/cancel/scroll/zoom,
 native reader return and live deployment acceptance are not established by
 these headless tests. No push/release/deployment is authorized by this work.
 
+Final source/package candidate `dd31edcb` passes both fresh full interpreter
+gates: 133 Python tests/four unchanged optional skips, 92 root Lua files,
+487 Bookshelf suites/zero failures/three normal SQLite exclusions, 13 SimpleUI
+files, map 396, syntax 1,089 and all 43 catalogs. All 15 new tag cases pass in
+Lua/LuaJIT, including the real native Tags body; existing 20 UI-refinement/modal
+and 13 shared-book-panel cases remain green. Fresh sealed-root invocations pass
+in both interpreters, backed by exact source/path/history/held-art/secret audits.
+Actual public Beta 20 native installer/recovery/rollback/cleanup passes. Actual
+Beta 21 correctly refuses the same-version development package before activation;
+the expected negative guard is checked explicitly, not bypassed. BookOrbit's
+four targeted suites pass 215 tests; full backend typecheck, full backend ESLint,
+formatting and new-history Gitleaks pass under Node 24.19. Exact development
+metrics/digest are in MERGE_LOG. No earlier public bytes are replaced; verification
+docs do not rebuild the sealed ZIP. Live API and physical acceptance remain open.
+
 ### Beta 21 book-details crash fix
 
 `test_ui_refinements` now invokes the real information tab builder through

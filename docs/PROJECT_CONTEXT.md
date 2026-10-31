@@ -46,6 +46,16 @@ and correct this file in the same change.
   Neither repository is pushed or published; no server is deployed. VERSION,
   source pins, all 2,000 installed paths, bootstrap and assets stay unchanged.
   Final checks and physical-device gaps are recorded in MERGE_LOG/TESTING.
+  Final local source/package candidate `dd31edcb` passes both fresh full
+  interpreter gates, 43 catalogs, all 15 tag cases plus existing modal/search
+  cases and sealed-root reruns. Source/path/history/held-art/Gitleaks audits
+  pass; all 2,000 installed paths stay identical. Actual Beta 20 native upgrade/
+  recovery/rollback passes; actual Beta 21 correctly rejects a same-version
+  development OTA before activation. BookOrbit revision `0cf7db1` passes 215
+  targeted tests, full backend typecheck/ESLint/format checks and Gitleaks. Both
+  repositories remain LOCAL; no release/deployment/live API check. Deployment
+  and a device build/publication require separate user direction. Exact ZIP
+  digest/evidence is in MERGE_LOG; verification docs never rebuild sealed bytes.
 
 - User reports KOReader exits on selecting Bokdetaljer in Beta 20; reproduce
   the deterministic nil-header error locally. User approves the fix, a true
