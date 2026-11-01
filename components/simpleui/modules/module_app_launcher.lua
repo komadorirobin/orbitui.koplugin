@@ -923,18 +923,21 @@ local function _buildWidget(w, d, ctx)
     if total > 1 then
         local PageNav = require("engines/sui_page_nav")
         local h = pagerHeight(d) - Screen:scaleBySize(8)
+        -- buildPager also returns focus stops. Only its widget belongs in the
+        -- input tree; a final table expression would expand both results.
+        local pager = PageNav.buildPager(page, total, h,
+            TextWidget:new{ text = string.format("%d / %d", page, total),
+                face = Font:getFace("cfont", d.lbl_fs) }, Screen:scaleBySize(12),
+            function(delta)
+                pages[page_key] = math.max(1, math.min(page + delta, total))
+                if ctx.refresh_fn then ctx.refresh_fn() end
+            end)
         content = VerticalGroup:new{
             align = "left", row,
             VerticalSpan:new{ width = Screen:scaleBySize(8) },
             CenterContainer:new{
                 dimen = Geom:new{ w = w - PAD * 2, h = h },
-                PageNav.buildPager(page, total, h,
-                    TextWidget:new{ text = string.format("%d / %d", page, total),
-                        face = Font:getFace("cfont", d.lbl_fs) }, Screen:scaleBySize(12),
-                    function(delta)
-                        pages[page_key] = math.max(1, math.min(page + delta, total))
-                        if ctx.refresh_fn then ctx.refresh_fn() end
-                    end),
+                pager,
             },
         }
     end

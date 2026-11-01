@@ -130,7 +130,7 @@ H.test("Android cover policy uses the real runtime store, never the settings edi
         if state == "unset" then Store.delete("android_safe_mode")
         else Store.save("android_safe_mode", state == "on") end
         local g, count = Store.generation(), flushes["/reader/settings/bookshelf.lua"]
-        H.eq(w:orbitui_preserveMetadataRefresh(), state ~= "off", state)
+        H.eq(w:orbitui_preserveMetadataRefresh(), true, state)
         H.eq(Store.generation(), g, "reading safety policy must not change preferences")
         H.eq(flushes["/reader/settings/bookshelf.lua"], count)
     end

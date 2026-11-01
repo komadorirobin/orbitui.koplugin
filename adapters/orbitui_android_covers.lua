@@ -173,7 +173,19 @@ local function queue(self, files, explicit)
     job.callback = function()
         if self._orbitui_cover_job ~= job then return end
         job.callback = nil
-        if self._closed or not enabled() or not foreground(UI, self) then cancel(self); return end
+        if self._closed or not require("device"):isAndroid() or not foreground(UI, self) then cancel(self); return end
+        if not enabled() then
+            -- Safe mode controls automatic page extraction. An explicit
+            -- Refresh metadata must still be transactional on Android: the
+            -- native delete-first path can leave covers missing permanently.
+            -- Discard only automatic work when the preference changes.
+            local kept = {}
+            for _, entry in ipairs(job.files) do
+                if entry.explicit then kept[#kept + 1] = entry
+                else job.seen[entry.filepath] = nil end
+            end
+            job.files = kept
+        end
         local file = table.remove(job.files, 1)
         if not file then cancel(self); return end
         job.seen[file.filepath] = nil
@@ -219,9 +231,9 @@ function M.widget(Widget)
         cancel(self)
         return stop(self, ...)
     end
-    Widget.orbitui_preserveMetadataRefresh = function() return enabled() end
+    Widget.orbitui_preserveMetadataRefresh = function() return require("device"):isAndroid() end
     Widget.orbitui_refreshMetadata = function(self, paths)
-        if not enabled() then return false end
+        if not require("device"):isAndroid() then return false end
         local files = {}
         local screen = require("device").screen
         local w = math.floor(screen:getWidth() * 0.4)
@@ -240,12 +252,12 @@ function M.widget(Widget)
         return true
     end
     Widget._fireBimExtraction = function(self, files, label)
-        if not enabled() then return fire(self, files, label) end
-        if label == "bulk-refresh" then
+        if label == "bulk-refresh" and require("device"):isAndroid() then
             local paths = {}
             for _, file in ipairs(files or {}) do paths[#paths + 1] = file.filepath end
             return self:orbitui_refreshMetadata(paths)
         end
+        if not enabled() then return fire(self, files, label) end
         return queue(self, files, false)
     end
     Widget._kickOffMissingMetaExtractionNow = function(self, items, sw, sh, hw, hh)

@@ -38,7 +38,7 @@ package.loaded["infra/sui_store"] = {
     saveSetting = function(_, k, v) saved[k] = v; app_writes[#app_writes + 1] = k end,
 }
 package.loaded["engines/sui_page_nav"] = { buildPager = function(page, total, h, text, gap, turn)
-    return { _test_pager = true, page = page, total = total, turn = turn, text = text, height = h }
+    return W:new{ _test_pager = true, page = page, total = total, turn = turn, text = text, height = h }, {}
 end }
 package.loaded["infra/sui_core"] = { PAD = 5 }
 package.loaded["infra/sui_config"] = {
@@ -404,6 +404,41 @@ H.test("narrow bento widths fit icons and use more pages rather than overflowing
         H.eq(first[1][3][1].max_width, first.dimen.w)
         assert(M.getHeight{ pfx = "simpleui_hs_", col_w = width } > first.dimen.h)
     end
+end)
+H.test("the actual pager contributes widgets only and accepts input across overflow pages", function()
+    local old_pager, old_core = package.loaded["engines/sui_page_nav"], package.loaded["infra/sui_core"]
+    package.loaded["ui/bidi"] = { mirroredUILayout = function() return false end }
+    package.loaded["ui/size"] = { padding = { button = 4 } }
+    package.loaded["ui/widget/widget"] = W
+    package.loaded["infra/sui_aa_paint"] = {}
+    package.loaded["features/sui_style"] = { COLOR = { disabled = 1 },
+        glyphFace = function() return {} end, icon = function(s) return s end }
+    package.loaded["infra/sui_core"] = { PAD = 5, makeColoredText = function(o) return W:new(o) end,
+        runWithTapFeedback = function(_, fn) fn() end }
+    package.loaded["engines/sui_page_nav"] = H.componentModule(root, "engines/sui_page_nav")
+    local list = {}; for i = 1, 7 do list[i] = app("org.example.a" .. i, "App " .. i) end
+    fixture(list)
+    local turns = 0
+    for _, delta in ipairs({ 1, -1 }) do
+        local _, widget = build("simpleui_hs_", 1000, { refresh_fn = function() turns = turns + 1 end })
+        local arrows = {}
+        local function walk(w)
+            assert(type(w.handleEvent) == "function", "non-widget in pager input tree")
+            if w.onTapPageNav then arrows[#arrows + 1] = w end
+            for _, child in ipairs(w) do walk(child) end
+        end
+        walk(widget)
+        H.eq(widget:handleEvent{ handler = "onUnrelatedTouch", args = {} }, nil)
+        local native_dir = os.getenv("ORBITUI_NATIVE_INPUT_DIR")
+        if native_dir then
+            local Native = assert(loadfile(native_dir .. "/widgetcontainer.lua"))()
+            local ok, err = pcall(Native.propagateEvent, widget, { handler = "onUnrelatedTouch", args = {} })
+            assert(ok, err)
+        end
+        H.eq(#arrows, 1); arrows[1]:onTapPageNav()
+    end
+    H.eq(turns, 2); H.eq(#app_writes, 0)
+    package.loaded["engines/sui_page_nav"], package.loaded["infra/sui_core"] = old_pager, old_core
 end)
 H.test("the bounded list refuses a 129th app without discarding existing choices", function()
     local list = {}; for i = 1, 128 do list[i] = app("org.example.a" .. i, "App " .. i) end

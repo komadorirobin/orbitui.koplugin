@@ -1,5 +1,127 @@
 # Verification and device acceptance
 
+## November 1 Beta 26 physical acceptance pass (blockers found)
+
+User authorizes separate synthetic test books, backups and temporary sync
+pauses, preserving real reading data. Test the exact public Beta 26 candidate
+`96e10fbf9e7b4703810f87908df39a9da7bc2229`, ZIP SHA-256
+`6800190ab077407f2fa5d42bc276ee52fdcb6ca33b44441a389fe1571f92817d`, on
+Bigme HiBreak / Android 14 / KOReader v2026.07.1 / 1264x1680. The accepted
+bootstrap reports pending=0; all 2,000 installed paths hash-verify both before
+and after testing. No source/runtime fix, merge, push, release or new archive.
+The earlier full publication gates are not rerun or reclassified as device
+acceptance. Raw screenshots, logs, configs and databases stay private/ignored:
+`test-results/device-acceptance-beta26-20261101/`.
+
+### Findings requiring work before 1.0
+
+| Priority | Device observation | Evidence and limits |
+| --- | --- | --- |
+| Blocker | Android apps module crashes with seven choices, including after restart. | Tap the rendered next-page arrow: native CrashReportActivity/process exit. A subsequent hold in the same overflow module also crashes. Restoring the original six removes the failure. |
+| Blocker | Read EPUB tags leaves a persistent notice and never produces tags. | Valid embedded `bookorbit:tags` in synthetic EPUBs; notice tap cancels, process remains alive. Clickable local result-list acceptance cannot proceed. |
+| High, bounded reproduction | Update metadata loses a previously displayed cover without crashing. | Both opened Alpha and unopened Beta become fallback covers; untouched Gamma retains its cover. All three use SVG covers. Other UI caches still display the original cover. Do not generalize to all EPUBs before PNG/JPEG controls. |
+| Polish | App editor title/position stays stale immediately after rename/reorder. | Saved data and ordering survive restart, while current editor header still shows the previous name/index. |
+| Polish | Some book-panel/pagination labels remain English in Swedish. | Examples include READING STATUS, RATINGS, Unopened and Show info. Personal saved module/book/dock labels are not translation defects. |
+
+The input failure is isolated in unchanged
+`components/simpleui/modules/module_app_launcher.lua`: its final table
+expression expands both `PageNav.buildPager` returns into CenterContainer.
+The second return is a plain focus-stop list, not a widget. A diagnostic copy
+of the 21 existing app tests, corrected to return both pager results, reproduces
+`attempt to call method 'handleEvent' (a nil value)` through the captured
+official WidgetContainer implementation. The diagnostic's 22 successful
+assertions include an **expected failure**, not a fixed runtime or full native
+UI pass. Future regression coverage must use the real pager and input tree,
+not the old single-return fake.
+
+A separate Lua/LuaJIT diagnostic combines unchanged
+`adapters/orbitui_integrations.lua` and
+`components/simpleui/features/dialogs/sui_native_widgets.lua`, with primitive
+UI/replacement eligibility fakes. `embeddedTagRequest` requests a `sui_native`
+InfoMessage, but the interceptor replaces it with a toast without respecting
+that flag. Native UIManager's top-level identity comparison cannot find the
+original widget. The first scheduled step returns `cancelled` **before any
+archive read**, while the replacement remains visible. This explains the
+device symptom; it does not validate a repair or the post-repair tag results.
+
+Metadata logs show refresh invalidation followed by `no-cover-fetched`, with
+metadata present but `has_cover=false` / `cover_fetched=false`. Existing
+`android_safe_mode=false` is preserved. The old missing-settings-method crash
+does not recur. Test PNG/JPEG cover EPUBs, both safety modes, extraction/rebuild
+and restart recovery before closing the cover finding.
+
+### Physical checks that passed
+
+- Synthetic EPUB opens, turns a page and displays book details (36 pages,
+  language, format and file details) without the reported details crash.
+- The native reader-menu library/close icon invokes fast-close and returns to
+  the correct Fiktion profile and synthetic subfolder, not generic file manager.
+- Basic Home, Library and Manga navigation and native status-area/quick-controls
+  routes work. Battery/Wi-Fi controls respond; Wi-Fi settings launches the
+  Android settings page, and KOReader resumes. No Wi-Fi/debug/permission toggle
+  or hardware light value is changed by these checks.
+- Day/night Home, Library and Manga framebuffer screenshots have coherent dark
+  surfaces, readable primary text and uninverted color covers; day mode is
+  restored. These are not physical-panel contrast, ghosting or refresh claims.
+- Settings root category cards fit and open in Swedish and English. Swedish
+  Bookshelf/cover-scope pages and app picker/settings in both languages are
+  checked. Not every category/deep Back/rotation route is accepted by this pass.
+- Native app discovery, add, rename, reorder and persistence work before the
+  overflow input failure. Original six-app choices and Developer options
+  Settings target are restored; no Android app was installed or uninstalled.
+
+One first Manga visit after restart is about **9.4 s**, with existing debug
+logging enabled; the folder-section log reports 8,523 ms and a later rebuild
+833 ms. This is a single observation, not a matched A/B regression benchmark
+or evidence that the earlier median improved/worsened. One RAM snapshot is
+not a leak/stress test. Earlier optimization measurements below still belong
+to their exact earlier candidate.
+
+### Reading data, sync incident and verified restoration
+
+Back up selected complete configuration/history files and the statistics DB
+while KOReader is closed. A separate large cache/settings pull was interrupted
+and is explicitly marked incomplete; it is **not** the configuration backup.
+Use three generated EPUBs with no real ISBN/server IDs and original SVG covers.
+Only Alpha is read. SQLite integrity is OK afterward; every pre-existing book
+row and reading-event row is unchanged, with exactly one new synthetic-book
+row. Do not restore the entire statistics database or reset real history.
+
+BookOrbit auto-sync is paused before reading, and the installed Hardcover
+writer guard is verified. A separately bundled legacy KOSync plugin was
+initially overlooked: its existing auto-sync/page interval caused a failed
+pull and failed 5.55% synthetic-book push before it was paused. One retry row
+was queued. There is no acknowledged successful remote test write, but do not
+claim no attempted network writes or a server audit. Hardcover also created a
+local fuzzy autolink for the fixture despite no successful writer sync.
+
+After normal shutdown, compare structured tables and independently match the
+fixture checksum: all 50 pre-existing KOSync queue rows, all pre-existing
+Hardcover records, and all old history entries/order are unchanged. Remove only
+the owned fixture queue/history/link additions, using snapshots only after
+proving they equal those targeted cleanup results. Preserve the older KOSync
+queue and BookOrbit's three already-waiting changes; do not drain or permanently
+disable either writer without a separate user decision.
+
+Restore original BookOrbit/KOSync auto-sync, Swedish language, last-book pointer,
+font history, menu tab, library chip/page/cursor and unset legacy app list.
+Preserve unrelated cache/updater state. All six prepared restoration files
+match their device SHA-256 hashes. Archive the fixture folder/sidecar outside
+library roots and keep a host copy; the permitted synthetic statistics row
+remains. Leave KOReader normally **closed**, so restored sync does not drain
+queues as part of testing. The exact public runtime and rollback slot remain
+unchanged; no diagnostic runtime patch is installed.
+
+### Still open
+
+Repair/retest the two blockers and cover refresh first. Then complete native
+tag load/cancel/result selection, real-pager app input/empty/reset/remove,
+raster-cover/safe-mode controls, broader deep-menu/Back/SV/EN layouts,
+Manga/CBZ reading and close paths, bookmark/end-of-book, rotation/suspend/resume,
+repeated-navigation/memory tests, optional live integrations with explicit
+write-safe fixtures, physical OTA interruption/recovery, and another device
+(particularly Boox). This pass is not a 1.0 sign-off.
+
 ## Automated
 
 ### Beta 26 publication (November 1)
@@ -30,10 +152,10 @@ history and Gitleaks audits pass. Draft/public downloads and both GitHub asset
 digests match. Preview selects 26; stable stays absent. The 79 previous releases
 and 131 old tag refs remain immutable. Evidence: `test-results/beta26-20261101/`.
 
-No final-package device install or fresh performance trial is claimed while ADB
-is disconnected. Earlier measured results below belong to their exact earlier
-candidate. Physical app-edit persistence, metadata extraction/filter-result
-acceptance and broader deep-menu/rotation/sleep/Boox checks remain open. The
+At publication ADB is disconnected; the subsequent physical pass above records
+final-package verification, partial acceptance and new blockers. Earlier measured
+results below belong to their exact earlier candidate. Metadata extraction/
+filter-result and broader deep-menu/rotation/sleep/Boox checks remain open. The
 user explicitly authorizes this beta despite the old publication pause; this
 does not turn those gaps into passes. The external Undo fix is separately
 published in Ereader/Extras 0.2.1 and does not change past history or deploy a

@@ -228,7 +228,9 @@ end
 --- Show step: replaces an eligible native widget. Returns true when the widget
 --- was consumed.
 function NativeWidgets.interceptShow(widget)
-    if widget == nil then return false end
+    -- Some callers track the original widget's visibility/lifecycle. Honor
+    -- the same explicit ownership opt-out as NativeSheets, including notices.
+    if widget == nil or widget.sui_native then return false end
     local kind = kindOf(widget)
     if not kind or not NativeSheets.canReplace(over_windows) or not kind.eligible(widget) then
         return false

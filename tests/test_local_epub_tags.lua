@@ -210,6 +210,35 @@ H.test("local result actions retain real reader paths and refuse a changed tag/f
     book = modal.config.item_at(2)
     modal.config.on_cell_tap(book); H.eq(opened_file, book.filepath)
 end)
+H.test("native dialog interception preserves tag progress identity, completion and cancellation", function()
+    local old_show, old_close = UI.show, UI.close
+    local Info, Toast = package.loaded["ui/widget/infomessage"], H.widget()
+    local names = { "features/dialogs/sui_native_sheets", "features/dialogs/sui_native_inputs", "engines/sui_toast", "logger" }
+    local previous = {}; for _, name in ipairs(names) do previous[name] = package.loaded[name] end
+    package.loaded[names[1]] = { canReplace = function() return true end }
+    package.loaded[names[2]] = { eligible = function() return false end }
+    package.loaded[names[3]] = Toast
+    package.loaded.logger = { warn = function() error("unexpected native widget fallback") end }
+    local Native = H.componentModule(root, "features/dialogs/sui_native_widgets")
+    UI.show = function(self, w) if not Native.interceptShow(w) then old_show(self, w) end end
+    UI.close = function(self, w) if not Native.interceptClose(w) then old_close(self, w) end end
+    -- Ordinary notices still use the facade; only explicit native ownership opts out.
+    UI:show(Info:new{ text = "ordinary notice" }); H.eq(getmetatable(last_widget), Toast)
+    for _, cancel in ipairs({ false, true }) do
+        reset()
+        local body, failure
+        Integration.embeddedTagRequest(Integration.embeddedTagSession(), { file = "/books/a.epub" },
+            function() return true end, function(value, err) body, failure = value, err end)
+        H.eq(getmetatable(last_widget), Info); H.eq(last_widget.sui_native, true)
+        if cancel then last_widget.dismiss_callback() end
+        flush()
+        if cancel then H.eq(body, nil); H.eq(failure, "cancelled"); H.eq(opened, 0)
+        else H.eq(body.tags[1], tag); H.eq(opened, 1); H.eq(failure, nil) end
+        H.eq(last_widget.shown, false)
+    end
+    UI.show, UI.close = old_show, old_close
+    for _, name in ipairs(names) do package.loaded[name] = previous[name] end
+end)
 H.test("all embedded-tag strings have Swedish translations while literal tags stay unchanged", function()
     local old = G_reader_settings
     G_reader_settings = { readSetting = function(_, key) return key == "language" and "sv" end }

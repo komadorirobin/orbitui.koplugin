@@ -218,12 +218,40 @@ H.test("automatic extraction respects existing native bad-document quarantine an
     w:_kickOffMissingMetaExtractionNow({ { filepath = "/bad.epub" } }, 100, 150, 400, 600)
     tick(); H.eq(#calls, 0)
 end)
-H.test("turning off Android safe mode and non-Android devices retain the original extraction path", function()
+H.test("explicit Android refresh preserves covers with safe mode off, including bulk requests", function()
+    local w = fixture(); safe = false
+    rows["/a.epub"] = { title = "Old", has_cover = "Y", cover_bb_data = "old pixels" }
+    assert(w:orbitui_preserveMetadataRefresh())
+    assert(w:orbitui_refreshMetadata({ "/a.epub" }))
+    H.eq(rows["/a.epub"].cover_bb_data, "old pixels"); H.eq(#calls, 0)
+    tick(); H.eq(rows["/a.epub"].title, "Custom title"); H.eq(rows["/a.epub"].has_cover, "Y")
+    w:_fireBimExtraction({ { filepath = "/b.epub" } }, "bulk-refresh")
+    tick(); H.eq(rows["/b.epub"].cover_w, 400); H.eq(original_fire, 0)
+end)
+H.test("safe-mode changes discard automatic work but retain an explicit refresh", function()
+    local w = fixture()
+    w:_fireBimExtraction({ { filepath = "/auto.epub", cover_specs = specs } })
+    w:orbitui_refreshMetadata({ "/manual.epub" }); safe = false
+    tick(); H.eq(calls[1], "/manual.epub"); H.eq(#calls, 1); H.eq(#pending, 0)
+    H.eq(rows["/auto.epub"], nil); H.eq(rows["/manual.epub"].has_cover, "Y")
+end)
+H.test("safe-mode-off refresh keeps old pixels when the decoder fails or finds no cover", function()
+    for _, failed in ipairs({ false, true }) do
+        local w = fixture(); safe = false
+        rows["/a.epub"] = { title = "Old", has_cover = "Y", cover_bb_data = "old pixels" }
+        if failed then failure = "decode" else cover = nil end
+        assert(w:orbitui_refreshMetadata({ "/a.epub" })); tick()
+        H.eq(rows["/a.epub"].cover_bb_data, "old pixels"); H.eq(rows["/a.epub"].has_cover, "Y")
+        H.eq(rows["/a.epub"].title, failed and "Old" or "Custom title")
+    end
+end)
+H.test("turning off Android safe mode and non-Android devices retain automatic extraction policy", function()
     for _, state in ipairs({ { false, true }, { true, false } }) do
         local w = fixture(); android, safe = state[1], state[2]
         w:_kickOffMissingMetaExtractionNow({}, 100, 150); w:_fireBimExtraction({}, "kickoff")
-        H.eq(original_kick, 1); H.eq(original_fire, 1); assert(not w:orbitui_refreshMetadata({ "/a.epub" }))
+        H.eq(original_kick, 1); H.eq(original_fire, 1)
         H.eq(#pending, 0)
+        if not android then assert(not w:orbitui_refreshMetadata({ "/a.epub" })) end
     end
 end)
 H.test("close, suspend and reader-open cancellation invalidate already captured callbacks", function()
@@ -282,8 +310,9 @@ local function compile(code, env)
     if setfenv then local f = assert(loadstring(code)); setfenv(f, env); return f end
     return assert(load(code, "refresh-seam", "t", env))
 end
-H.test("the real single-book Refresh metadata callback delegates before any row or cache deletion", function()
-    local w = fixture(); local text = source("components/bookshelf/lib/bookshelf_widget.lua")
+H.test("the real single-book Refresh metadata callback delegates with either Android safety preference", function()
+  for _, state in ipairs({ true, false }) do
+    local w = fixture(); safe = state; local text = source("components/bookshelf/lib/bookshelf_widget.lua")
     local body = assert(text:match('local refresh_btn = ({ text = _%("Refresh metadata"%).-})\n    local select_btn'))
     local env = setmetatable({ bw = w, book = { filepath = "/a.epub" }, _ = function(s) return s end,
         closeModal = function() calls.modal_closed = true end }, { __index = _G })
@@ -291,15 +320,18 @@ H.test("the real single-book Refresh metadata callback delegates before any row 
     compile("return " .. body, env)().callback()
     assert(calls.modal_closed); H.eq(rows["/a.epub"].title, "Keep until ready"); H.eq(dropped["/a.epub"], nil)
     tick(); H.eq(rows["/a.epub"].title, "Custom title")
+  end
 end)
-H.test("the real bulk refresh branch collects paths without deleting rows in safe mode", function()
-    local w = fixture(); local text = source("components/bookshelf/lib/bookshelf_bulk_actions.lua")
+H.test("the real bulk refresh branch preserves Android rows with either safety preference", function()
+  for _, state in ipairs({ true, false }) do
+    local w = fixture(); safe = state; local text = source("components/bookshelf/lib/bookshelf_bulk_actions.lua")
     local branch = assert(text:match('(if draft%.refresh_metadata then.-)\n                    if draft%.status then'))
     local paths = {}; local env = setmetatable({ bw = w, fp = "/a.epub", draft = { refresh_metadata = true },
         refresh_paths = paths, safe = function(_, fn) fn(); return true end }, { __index = _G })
     rows["/a.epub"] = { title = "Keep until ready" }
     compile("local ok = true; " .. branch, env)()
     H.eq(paths[1], "/a.epub"); H.eq(rows["/a.epub"].title, "Keep until ready"); H.eq(dropped["/a.epub"], nil)
+  end
 end)
 
 -- Optional actual-SQLite supplement, using KOReader's pinned binding rather

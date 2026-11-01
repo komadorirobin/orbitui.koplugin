@@ -22,6 +22,48 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- User authorizes fixing the three acceptance findings and retesting, **not**
+  push/publication or another upstream merge. Branch
+  `fix/beta26-acceptance-20261101` starts at `8f0ceff2` with the preceding local
+  acceptance notes. Restrict the app pager to its first return; honor explicit
+  `sui_native` ownership in native-widget interception. On Android, explicit
+  single/bulk metadata refresh uses the existing transactional no-fork queue
+  even with safe mode off; automatic extraction and the saved preference stay
+  unchanged. Switching safe mode off drops only automatic queued work, not
+  explicit refreshes. New tests fail on the old code and pass after the fixes,
+  with real pager/input and interceptor/request boundaries; cover tests include
+  both preferences, failure/coverless retention and mixed queued work. Both
+  full interpreter gates pass. Separate sealed candidate/device verification
+  follows; never overwrite the immutable public Beta 26 ZIP or claim a device
+  repair from headless results alone. Private evidence:
+  `test-results/beta26-acceptance-fixes-20261101/`.
+
+- **Beta 26 Bigme device acceptance is NOT complete; two blockers reproduced.**
+  The exact public ZIP is installed/accepted (pending=0), and all 2,000 runtime
+  paths verify before and after testing. No runtime correction, upstream import,
+  push or publication in this pass. Seven Android apps trigger a native input
+  crash: `PageNav.buildPager`'s second return becomes a bare container child;
+  the old one-return pager fake missed it. Offline EPUB tag requests also fail:
+  the native-widget interceptor replaces their `sui_native` InfoMessage, so
+  `isWidgetShown(original)` is false, parsing self-cancels and the toast stays.
+  Focused unchanged-source diagnostics reproduce both boundaries. Metadata
+  refresh no longer crashes, but drops previously visible SVG covers for both
+  an opened and unopened synthetic EPUB; raster-cover/safe-mode controls remain
+  open. Book details, page turning, native fast-close to the correct profile/
+  folder, basic Home/Library/Manga navigation, day/night framebuffer rendering,
+  quick-controls Wi-Fi settings launch, and settings-root/app menus in SV/EN
+  pass. This is not a full deep-menu, physical e-ink or stress acceptance.
+  User-approved synthetic books only; pre-existing statistics rows/events are
+  unchanged. An initially overlooked legacy KOSync writer attempted a failed
+  synthetic-book push before being paused; its one owned queue row and a local
+  Hardcover autolink were removed after proving all old entries unchanged.
+  Original sync/language/navigation/app choices are restored and hash-verified,
+  all 50 old KOSync queue rows retained, fixtures archived outside the library,
+  KOReader left normally closed. No successful remote test write is confirmed;
+  do not describe this as zero attempted network writes. Details/remaining
+  checks: `docs/TESTING.md`; private evidence:
+  `test-results/device-acceptance-beta26-20261101/`.
+
 - **Beta 26 is public**, exact candidate/annotated tag
   `96e10fbf9e7b4703810f87908df39a9da7bc2229` / `v0.1.0-beta.26`.
   It publishes the reviewed Bookshelf **6.1.1** import (`c686f5a3`) and the
@@ -36,9 +78,9 @@ and correct this file in the same change.
   9/24 and the actual local Beta 25 pass recovery/rollback/cleanup. Preview
   selects 26; stable stays absent. All 79 older releases and 131 old tag refs
   remain unchanged. Evidence: `test-results/beta26-20261101/`.
-  No physical final-package install, new benchmark or metadata/app-edit
-  acceptance is claimed while ADB is disconnected. Earlier Bigme measurements
-  apply to the pre-import performance candidate, not a new 26 benchmark.
+  At publication ADB was disconnected; the later physical final-package pass
+  above now records partial acceptance and blockers. Earlier Bigme measurements
+  apply to the pre-import performance candidate, not a controlled 26 benchmark.
   Undo-opening fix is separately public in Ereader / BookOrbit Extras **0.2.1**,
   not embedded or automatically deployed by OrbitUI. Existing history/server
   state is unchanged. Verification-only descendants never rebuild public bytes.
