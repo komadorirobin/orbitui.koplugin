@@ -42,6 +42,17 @@ are immutable; any same-version development candidate is test-only and public
 dist is restored afterwards. Physical Bigme visual/timing checks remain open;
 less flashing is an expected benefit, not a measured device benchmark.
 
+Final runtime candidate `b3fd8887`, private ZIP `5ff334e2`, 9,410,973 bytes,
+same 2,000 API-1 paths. Both full scripts pass (133 Python/four inherited skips,
+102 root files, 542 Bookshelf suites/zero failures/three inherited SQLite skips,
+13 SimpleUI files), plus 43 catalogs, both sealed roots and native min/current
+input/Trapper/span/SQLite/EPUB/night/contrast checks. Native OTA scenarios from
+Beta 5/9/26/27 pass upgrade/restart/rollback/recovery/external-snapshot/cleanup.
+Source/manifest/path/bootstrap/artwork/history/secret audits pass; both upstream
+pins are current. Public Beta 28 dist is restored byte-for-byte. Full results
+and exact hashes are in TESTING. Only a standing verified main push follows;
+no beta/tag/OTA release or server/device changes are included.
+
 ## 2026-11-01: separately approved companion status server deployment
 
 User requests publishing and deploying the read-status server extension after

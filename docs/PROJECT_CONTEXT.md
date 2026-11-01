@@ -35,8 +35,10 @@ and correct this file in the same change.
   helpers fit the existing registry (22 embedded, 405 canonical identities),
   not extra installed paths. New labels/help are SV/EN. VERSION/public Beta 28,
   bootstrap, all artwork, SimpleUI source, reading/settings/sync owners and
-  BookOrbit server stay unchanged. Full/sealed/native/package/history checks
-  and main push are recorded in TESTING/MERGE_LOG when complete. No fresh
+  BookOrbit server stay unchanged. Candidate `b3fd8887`, private ZIP `5ff334e2`
+  passes both full scripts, sealed/native/package/history and four older-beta
+  installer gates. Exact 2,000 paths and public dist `3fd75c19` are retained.
+  Only the standing audited main push follows; see TESTING/MERGE_LOG. No fresh
   physical Bigme test or measured performance improvement is claimed.
 
 - **Companion server now published/deployed, separately from Beta 28.** User

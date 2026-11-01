@@ -25,6 +25,41 @@ No device/server change is authorized by this merge request. Physical Bigme
 night/contrast, footer reveal/hitboxes, module-minute timing, menu flashing and
 warm/cold navigation still need acceptance; no measured speedup is claimed.
 
+Integration checks first caught stale version/embedded-count expectations and
+old series/footer fixtures that lacked the new native look/default/geometry
+dependencies. These retain their assertions with current native-shaped fixtures.
+The all-picker swipe assertion exposed three local dialogs lacking the new hook;
+production routing was completed rather than exempting them. The isolated night
+fixture now loads the exact sealed lazy helper. Disk-cache tests use unique short
+native temp names: parallel second-resolution names collided, and long TMPDIR
+paths exceeded the deliberately tiny 400-byte fixture budget. No production
+cache budget, eviction rule, skip list or assertion was weakened to pass tests.
+
+Final private candidate **`b3fd8887ecc3d83ff1ee30ed151647708f5400e2`** seals
+as **`5ff334e238bac8e602443e6bc2d9947debffaeb8851fda7c7ee33440b0333f54`**,
+9,410,973 bytes, 27,815,144 expanded; manifest
+`b22c75d1a4b08a193cef3d0bd93f05c8d30f5776f5f8545706a21eb825ca499a`.
+Both complete `sh scripts/test.sh` runs pass: 133 Python tests/four inherited
+source-cache skips, 102 root Lua files, 542 Bookshelf suites/zero failures/three
+inherited SQLite skips, and all 13 SimpleUI test files. All 43 catalogs,
+1,164 Lua syntax files and 405 canonical module identities pass. Both sealed
+102-root runs and minimum/current native dialog/input/Trapper/span supplements
+pass, including the pinned real status payload builder. Real SQLite/tag index,
+libarchive EPUB, UIManager input windows, Android/frame/CBB/software/rotation
+night raster and four-format contrast/alpha/derived-copy checks pass.
+
+Every sealed file matches optimized candidate source, size and SHA; exactly
+2,000 old paths, unchanged bootstrap, artwork and SimpleUI bytes. Both new
+helpers match tracked source exactly and are absent as separate ZIP files.
+Native old-installer extraction/activation/restart/rollback/interrupted-download/
+external-snapshot/obsolete-runtime-cleanup tests pass from Beta 5, 9, 26 and 27.
+Outgoing history has no held bitmap and gitleaks finds no secrets. Fresh read-only
+watch reports both exact pins current with zero missing commits. Public dist is
+restored to Beta 28 `3fd75c19`; this private same-version ZIP is never uploaded
+as a replacement release. Verification-only documentation descendants do not
+rebuild the verified candidate. Main push/CI is separate from these local gates;
+no device install, public release, OTA or server deployment is performed.
+
 ## November 1 companion status server publication/deployment
 
 Separate user authorization publishes BookOrbit Extras **v0.3.0** and deploys
