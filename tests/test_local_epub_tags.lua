@@ -611,7 +611,9 @@ H.test("index manager opens passively, exposes real pause/resume actions and ign
     reset()
     local manager = require("core/orbitui_search").tagIndex()
     H.eq(opened, 0); H.eq(#queue, 0); H.eq(manager.config.title, "Tags and indexing")
+    H.eq(manager.config.no_search, true)
     local rows = manager.config.footer_rows
+    H.eq(rows[1][2].enabled_when(), false) -- native buttons treat nil as enabled
     rows[1][1].on_tap(); H.eq(rows[2][2].enabled_when(), true)
     flush(1); rows[2][2].on_tap(); flush()
     H.eq(opened, 1); H.eq(rows[1][2].enabled_when(), true)

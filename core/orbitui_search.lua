@@ -555,8 +555,8 @@ function M.tagIndex(opts)
         title = _("Tags and indexing"),
         -- The native picker subtitle is single-line; phase/errors need the
         -- modal's wrapping hint instead, not a newline that would be clipped.
-        intro = function() return summary() .. "\n\n" .. _("Offline EPUB tags across all configured libraries, using the current scan depth. No tag filter or 400-result limit. No account is needed. Closing pauses the job; completed reads are kept. Stop before replacing your EPUB files, then update the index.") end,
-        grid_cols = 1, rows_per_page = 1,
+        intro = function() return summary() .. "\n\n" .. _("All configured libraries at the current scan depth, without a 400-file limit. No account needed. Closing pauses; completed reads are kept. Pause before replacing EPUB files.") end,
+        no_search = true, grid_cols = 1, rows_per_page = 1,
         item_count = function() return 1 end, item_at = function() return true end,
         cell_renderer = function(_value, dimen)
             local counts = status and string.format(_("%d of %d EPUB files checked"), status.scanned, status.total) or _("Ready to index")
@@ -567,7 +567,7 @@ function M.tagIndex(opts)
             {{ label = _("Update tag index"), enabled_when = function() return not busy end,
                 on_tap = function() if failure == "invalid_job" then confirm("update") else start("update", false) end end },
              { label = _("Continue indexing"), enabled_when = function()
-                return not busy and status and status.current_scope and status.phase ~= "complete"
+                return not busy and status ~= nil and status.current_scope and status.phase ~= "complete"
              end, on_tap = function() start(nil, true) end }},
             {{ label = _("Reread all EPUB tags…"), enabled_when = function() return not busy end,
                 on_tap = function() confirm("reread") end },
