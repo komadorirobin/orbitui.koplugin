@@ -32,7 +32,8 @@ local W = H.widget()
 function W:free()
     assert(not self.freed, "double free")
     self.freed = true
-    for _, child in ipairs(self) do child:free() end
+    -- Match native WidgetContainer: stateless spans have no free method.
+    for _, child in ipairs(self) do if child.free then child:free() end end
 end
 function W:getSize() return self.dimen or { w = self.width or 0, h = self.height or 0 } end
 local VG = W:extend{}
@@ -54,9 +55,15 @@ function Frame:getSize()
     return { w = d.w + 2 * border + 2 * p,
         h = d.h + 2 * border + (self.padding_top or p) + (self.padding_bottom or p) }
 end
-local VS = W:extend{}
+local VS = W:extend{ free = false }
 function VS:getSize() return { w = 0, h = self.width } end
-local HS = W:extend{}
+local native_span = os.getenv("ORBITUI_NATIVE_VERTICAL_SPAN")
+if native_span then
+    package.loaded["ui/widget/widget"] = H.widget() -- native base has no free
+    VS = assert(loadfile(native_span))()
+    assert(VS.free == nil, "native stateless span must not acquire fake cleanup")
+end
+local HS = W:extend{ free = false }
 function HS:getSize() return { w = self.width, h = 0 } end
 local Text = W:extend{}
 function Text:getSize()
@@ -138,6 +145,14 @@ H.test("five static bilingual cards use existing category IDs and assets without
         assert(not m.config.on_search_submit and m.config.no_search)
     end
     H.eq(writes, 0); H.eq(eager, 0); H.eq(#warnings, 0)
+end)
+H.test("single-page stateless pagination and repeated refresh need no fake span cleanup", function()
+    H.eq(not VS.free, true)
+    local m = show()
+    H.eq(m._total_pages, 1)
+    m:refresh(); m:refresh()
+    H.eq(m.name, "orbitui_settings_start")
+    m:onClose(); assert(m.closed); H.eq(writes, 0)
 end)
 H.test("tap closes cards before opening the same native category; Back reconstructs the card start", function()
     local m = show()

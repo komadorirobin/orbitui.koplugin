@@ -6,6 +6,21 @@ does not imply a public release or successful device testing.
 
 ## 2026-11-01 — measured Bigme library opening and menu pass (local)
 
+Physical menu review of `9ae7cb15` finds a real settings-card fallback:
+one-page native pagination returns a stateless VerticalSpan without `free`.
+Guard only that provisional pager cleanup; containers still free normally.
+Correct the primitive fixtures to match native spans rather than giving every
+widget an invented cleanup method. The old call fails the corrected fixture;
+SV/EN, rotation/paging/Back and repeated refresh are retained. Optional full
+unmodified minimum/current VerticalSpan coverage supplements the actual native
+LibraryModal tests. Full suites and final device retest follow this small fix.
+
+The read-only temporary trap observer identifies a second silent DROP worker
+in the separate Ereader Patch Manager startup check. Do not modify that plugin
+under this OrbitUI task or claim its first-tap issue fixed. OrbitUI's own quiet
+worker does physically forward the canceling input; the unrelated topmost
+worker can still consume a tap. Remove the observer before comparative tests.
+
 The first sealed performance candidate `7a19786c` (ZIP
 `c33b93ab2a86790dc320e03a5a3a848331153abbe8296db8f6cb552a4296ce88`)
 passes complete Lua/LuaJIT, all catalogs, sealed/native and exact 2,000-path

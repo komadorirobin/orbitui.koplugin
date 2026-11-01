@@ -952,7 +952,9 @@ local function showCards(request, initial_page, initial_focus)
             "Settings card height unavailable")
         -- The provisional pager is no longer needed; render it with the final
         -- page size (native paging/focus use the same per_page).
-        pager:free()
+        -- Native single-page pagination is a stateless VerticalSpan, which
+        -- has no free method. Multi-page containers still release resources.
+        if pager.free then pager:free() end
         local grid = self:_renderGridArea(cw, layout.area_h)
         pager = self:_renderPagination(cw)
         local old = self._shown_rect

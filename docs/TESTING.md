@@ -32,6 +32,13 @@ cover quiet cancellation forwarding Tap/Hold/Swipe/PanRelease exactly once,
 worker/FD cleanup and unchanged visible-download modal cancellation, on both
 interpreters. The new input test fails with the previous false-label call.
 
+Physical `9ae7cb15` review exposes one-page category-card fallback at provisional
+pager cleanup: native VerticalSpan has no free method. The corrected fixture
+must reproduce it before guarding that call; retain actual LibraryModal and
+optional unmodified minimum/current spans, repeated refresh, SV/EN, paging,
+rotation and Back. A separate Ereader Patch Manager startup DROP worker remains
+an external input issue, not an OrbitUI fix or a benchmark trial.
+
 ### Configurable Android apps (unpublished Beta 25 candidate)
 
 `test_android_app_launcher` loads the full actual module, not an extracted

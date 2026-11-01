@@ -46,7 +46,12 @@ and correct this file in the same change.
   derivation. Silent startup maintenance also swallowed its canceling tap:
   use native Trapper nil/invisible-resend mode, keeping visible cancellation
   modal and cleanup safety unchanged. New native minimum/current input tests
-  pass both interpreters; combined candidate/device verification continues.
+  pass both interpreters; own worker forwards on device. A separate DROP worker
+  belongs to Ereader Patch Manager and remains unchanged. Physical menu review
+  also finds one-page settings cards falling back because native pagination
+  returns a stateless VerticalSpan without free. Guard that one cleanup call;
+  correct the overpowered fixture and exercise real minimum/current spans.
+  Combined final candidate/device verification continues.
   Evidence:
   `test-results/device-performance-20261101/`. The temporary instrumentation
   patch is already moved out of `patches/` before uninstrumented comparisons.
