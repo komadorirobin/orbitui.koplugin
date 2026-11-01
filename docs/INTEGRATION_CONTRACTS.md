@@ -1168,6 +1168,23 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+November 1 explicit index-manager approval: **Settings > Bookshelf > Tags and
+indexing** is a passive SV/EN page until Update, Continue or confirmed Reread.
+Its local-only all-configured-library worker shares scan depth, bounded archive/
+cache turns and native input windows, but has no tag predicate or 400-match
+termination. Ordinary Update reuses valid SQL/per-file entries; Reread starts a
+fresh run token and bypasses prior runs. A scalar versioned journal and per-file
+same-run markers in the existing independent cache support explicit pause/resume
+after restart. Resume rediscovers and stamp-validates inventory, never blindly
+skips a saved cursor. Closing/navigation/scope retirement pauses; no startup
+daemon/autoresume, document engine, book/reading-state write, sync or cache wipe.
+Errors count separately and remain retryable. Journal write failure cannot claim
+completion; malformed/future progress needs explicit replacement confirmation.
+Start/finish and explicit same-file rereads retire derived chip snapshots, even
+for retained stamps. The result-list reread button now opens this global manager
+and its confirmation, not another 400-capped search. Match views remain capped
+and disclose that limit. New runtime paths/schema migrations are not required.
+
 November 1 approved smart-tag-chip first stage: long-press ONLY an offline EPUB
 pill to draft a named chip in an existing enabled library. Rules are versioned,
 literal case-sensitive AND/OR sets, 1–16 tags; do not reinterpret genres,

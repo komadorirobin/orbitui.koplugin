@@ -447,12 +447,8 @@ local function tagSearch(tag, opts)
     if embedded then
         footer[#footer + 1] = {{ label = _("Reread all EPUB tags…"), enabled_when = function() return not busy end, on_tap = function()
             if not current() or busy then return end
-            UI:show(require("ui/widget/confirmbox"):new{
-                sui_native = true, _sui_keep_homescreen = true,
-                text = opts.profile and _("Reread tags from every EPUB in this library? This can take a long time. Normal Refresh reuses cached tags. No books or reading data are edited.")
-                    or _("Reread tags from every EPUB on this device? This can take a long time. Normal Refresh reuses cached tags for unchanged files. No books or reading data are edited."),
-                ok_text = _("Reread all EPUB tags…"), ok_callback = function() fetch(true) end,
-            })
+            modal:onClose()
+            M.tagIndex{ confirm_reread = true }
         end }}
     end
     modal = require("lib/bookshelf_library_modal"):new{ _sui_keep_homescreen = true, config = {
@@ -504,6 +500,86 @@ function M.embeddedTag(tag, opts)
     for key, value in pairs(opts or {}) do options[key] = value end
     options.embedded = true
     return tagSearch(tag, options)
+end
+
+function M.tagIndex(opts)
+    opts = opts or {}
+    local I, UI = require("adapters/orbitui_integrations"), require("ui/uimanager")
+    local modal, worker, retired, busy = nil, nil, false, false
+    local status, failure = I.embeddedTagIndexStatus()
+    local generation = UI._simpleui_navigation_generation
+    local function current()
+        return not retired and modal and UI:isWidgetShown(modal) and generation == UI._simpleui_navigation_generation
+    end
+    local function render()
+        if current() then modal:refresh() end
+    end
+    local function update(value, err)
+        if not current() then return end
+        status, failure = value, err ~= "cancelled" and err or nil
+        busy = value and value.phase == "running" and not err or false
+        if not busy then worker = nil end
+        render()
+    end
+    local function start(mode, resume, replace_invalid)
+        if not current() or busy then return end
+        failure = nil
+        local control, err = I.startEmbeddedTagIndex(mode, resume, current, update, replace_invalid)
+        if not control then failure = err; render(); return end
+        worker, busy, status = control, true, I.embeddedTagIndexStatus()
+        render()
+    end
+    local function confirm(mode)
+        if not current() or busy then return end
+        UI:show(require("ui/widget/confirmbox"):new{
+            sui_native = true, _sui_keep_homescreen = true,
+            text = failure == "invalid_job" and _("Replace the unreadable indexing-job record and start a new job? Only its saved progress is replaced. Existing tag caches, books and reading data are kept.")
+                or _("Reread tags from every EPUB in all configured libraries? This bypasses old tags and may take a long time. You can pause and continue later, including after restarting KOReader. No books or reading data are edited."),
+            ok_text = mode == "reread" and _("Reread all EPUB tags…") or _("Update tag index"),
+            ok_callback = function() if current() then start(mode, false, failure == "invalid_job") end end,
+        })
+    end
+    local function summary()
+        if failure then
+            if failure == "stale" then return _("Library folders or scan depth changed. Start a new index update.") end
+            if failure == "invalid_job" then return _("The saved indexing job is unreadable or from a newer version. Starting a new job requires confirmation; tag caches are kept.") end
+            return _("Indexing could not continue. Check free space and try again. Completed tag reads are kept.")
+        end
+        if not status then return _("No indexing job yet. Choose Update tag index to check all configured libraries.") end
+        if not status.current_scope then return _("Library folders or scan depth changed. Start a new index update.") end
+        local phase = ({ running = "Indexing…", paused = "Indexing paused. Continue when ready.",
+            complete = "Tag indexing complete.", errors = "Indexing finished with unreadable files. Continue to retry them." })[status.phase]
+        return _(phase or "Indexing paused. Continue when ready.")
+    end
+    modal = require("lib/bookshelf_library_modal"):new{ _sui_keep_homescreen = true, config = {
+        title = _("Tags and indexing"),
+        -- The native picker subtitle is single-line; phase/errors need the
+        -- modal's wrapping hint instead, not a newline that would be clipped.
+        intro = function() return summary() .. "\n\n" .. _("Offline EPUB tags across all configured libraries, using the current scan depth. No tag filter or 400-result limit. No account is needed. Closing pauses the job; completed reads are kept. Stop before replacing your EPUB files, then update the index.") end,
+        grid_cols = 1, rows_per_page = 1,
+        item_count = function() return 1 end, item_at = function() return true end,
+        cell_renderer = function(_value, dimen)
+            local counts = status and string.format(_("%d of %d EPUB files checked"), status.scanned, status.total) or _("Ready to index")
+            local text = status and string.format(_("Read: %d · Reused: %d · Failed: %d"), status.reread, status.reused, status.skipped) or ""
+            return require("lib/bookshelf_picker_cell").render({ label = counts, subtitle = text }, dimen)
+        end,
+        footer_rows = {
+            {{ label = _("Update tag index"), enabled_when = function() return not busy end,
+                on_tap = function() if failure == "invalid_job" then confirm("update") else start("update", false) end end },
+             { label = _("Continue indexing"), enabled_when = function()
+                return not busy and status and status.current_scope and status.phase ~= "complete"
+             end, on_tap = function() start(nil, true) end }},
+            {{ label = _("Reread all EPUB tags…"), enabled_when = function() return not busy end,
+                on_tap = function() confirm("reread") end },
+             { label = _("Pause indexing"), enabled_when = function() return busy end,
+                on_tap = function() if current() and worker then worker.cancel() end end }},
+            {{ label = _("Close"), on_tap = function() if current() then modal:onClose() end end }},
+        },
+        on_closed = function() retired = true; if worker then worker.cancel(); worker = nil end end,
+    } }
+    UI:show(modal)
+    if opts.confirm_reread then confirm("reread") end
+    return modal
 end
 
 function M.show(opts)

@@ -1,5 +1,22 @@
 # Verification and device acceptance
 
+## November 1 tag-index manager / Beta 27 release gates
+
+User approves explicit all-library offline indexing and publication of pending
+OrbitUI work. No new upstream import, installed slot, component pin, cache wipe,
+sync writer or BookOrbit deployment. Focused tests cover a complete 3,303-EPUB
+pass beyond the 400-match view cap, normal reuse/error retry, new/changed/deleted
+files, forced same-run persistence and restart resume, inventory revalidation,
+explicit pause/navigation/scope cancellation, single ownership, malformed/future
+journal replacement, journal/per-file write failures, snapshot invalidation and
+passive/native modal ownership with SV/EN controls. The native UIManager test
+exercises both search and index-only cancellation with slow archive/repaint work;
+the real SQLite supplement checks stamp-only prefetch, including known-empty
+rows. A result list's global reread redirect and stale confirmation are tested.
+Private evidence: `test-results/tag-index-manager-20261101/`. Full/sealed/package,
+device, outgoing-history/secret and local/live OTA results are recorded after
+they run. These focused desktop tests are not whole-library physical acceptance.
+
 ## November 1 smart EPUB tag chips (local first stage)
 
 User approves implementation after the feasibility proposal, starting clean at

@@ -22,6 +22,19 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- **Beta 27 preparation is explicitly approved.** User requests a separate
+  offline tag-index manager, then push/publication of all pending OrbitUI work.
+  No additional upstream merge: Bookshelf stays `c686f5a3`, SimpleUI `fdf83c7d`.
+  Settings > Bookshelf > Tags and indexing has cache-aware Update, confirmed
+  global Reread, scalar progress/error counts and explicit Pause/Continue across
+  restart. No 400-file index limit; result views retain their honest 400-hit cap.
+  Existing independent cache/index holds disposable data only; no reading/book
+  or server write, cache deletion, new installed path or sync owner. Forced
+  resume revalidates inventory/stamps and same-run successes. Snapshot revision
+  retires prior chip membership after same-stamp rereads. Full release/device/
+  history/OTA gates are in progress; do not claim publication yet. Include the
+  preceding local smart-chip/index/app-paging/cover-preservation fixes below.
+
 - **Smart EPUB tag chips are a LOCAL follow-up, not a new public beta.**
   User approves the proposed first stage: hold an offline Tags pill to create
   a named chip in an existing enabled library, with literal AND/OR rules (up to

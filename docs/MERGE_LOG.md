@@ -4,6 +4,22 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-01 — all-library tag-index manager and Beta 27 preparation
+
+User explicitly approves the separate index manager, followed by push and a new
+beta containing all pending OrbitUI work. Start at `7e19c814` on
+`fix/beta26-acceptance-20261101`; no extra upstream import or server deployment.
+Preserve both pins and the exact 2,000 installed paths. The index manager under
+Settings > Bookshelf is passive until an explicit action, scans all configured
+EPUBs without the search result cap, and supports cache-aware Update, confirmed
+Reread and Pause/Continue after restart. A scalar disposable journal and per-file
+run markers retain completed forced reads while revalidating changed inventory.
+Do not trust a cursor, erase caches, open books, change sync ownership or turn
+standard subjects into BookOrbit tags. All controls/help are SV/EN. Invalidate
+derived chip snapshots after indexing and same-stamp explicit rereads. A result
+list's full-reread action now opens the global manager; its own 400-hit display
+limit remains unchanged. Tests/release/device evidence follow in TESTING.
+
 ## 2026-11-01 — smart offline tag chips (local first stage)
 
 User approves the proposed first stage at `b99d32c2`: hold a local EPUB tag to

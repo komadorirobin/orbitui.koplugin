@@ -45,6 +45,12 @@ end)
 
 local files, documents, disk, queue, roots, opened, closed, extracted, written, last_widget
 local elapsed, cache_cost, cache_reads, archive_cost, delays
+local write_failure, journal_writes
+local function clone(value)
+    if type(value) ~= "table" then return value end
+    local out = {}; for k, v in pairs(value) do out[k] = clone(v) end
+    return out
+end
 local UI = { _simpleui_navigation_generation = 1,
     show = function(_, w) w.shown = true; last_widget = w end,
     close = function(_, w) w.shown = false end,
@@ -62,8 +68,14 @@ package.loaded["ui/widget/confirmbox"] = H.widget()
 package.loaded["device"] = { screen = { getWidth = function() return 600 end, getHeight = function() return 800 end } }
 package.loaded["lib/bookshelf_keyed_cache"] = { new = function(name, version)
     H.eq(name, "orbitui_epub_tags"); H.eq(version, 1)
-    return { read = function(file) elapsed = elapsed + cache_cost; cache_reads = cache_reads + 1; return disk[file] end,
-        write = function(file, entry) disk[file] = entry; written = written + 1 end }
+    return { read = function(file) elapsed = elapsed + cache_cost; cache_reads = cache_reads + 1; return clone(disk[file]) end,
+        write = function(file, entry)
+            if file == write_failure then return false end
+            disk[file] = clone(entry)
+            if file:sub(1, 1) == "/" then written = written + 1 end
+            if file == "index_job_v1" then journal_writes = journal_writes + 1 end
+            return true
+        end }
 end }
 package.loaded["libs/libkoreader-lfs"] = { attributes = function(file, field)
     local value = files[file]
@@ -73,7 +85,13 @@ package.loaded["lib/bookshelf_profiles"] = { list = function() return {{ key = "
     scope = function(p) return { roots = p.roots } end }
 package.loaded["lib/bookshelf_settings_store"] = { read = function() return 3 end }
 local repo = { getAllFilepaths = function(scope)
-    if scope then return { "/profile/a.epub", "/books/a.epub", "OPDS://remote.epub" } end
+    if scope then
+        local out = { "OPDS://remote.epub" }
+        for _, file in ipairs{ "/profile/a.epub", "/books/a.epub" } do
+            if files[file] then out[#out + 1] = file end
+        end
+        return out
+    end
     local out = {}; for file in pairs(files) do if file:sub(1, 7) == "/books/" then out[#out + 1] = file end end
     return out
 end, buildBookMeta = function(file, opts) H.eq(opts.want_cover, false); return { title = file, author = "Author" } end }
@@ -114,6 +132,7 @@ local function reset()
     files, documents, disk, queue, roots = {}, {}, {}, {}, { "/profile" }
     opened, closed, extracted, written = 0, 0, 0, 0
     elapsed, cache_cost, cache_reads, archive_cost, delays = 0, 0, 0, 0, {}
+    write_failure, journal_writes = nil, 0
     add("/books/a.epub", opf('["Åland & 日本語"]'))
     add("/profile/a.epub", opf('["Åland & 日本語"]', true))
     add("/books/untagged.epub", opf('[]'))
@@ -353,15 +372,22 @@ H.test("full reread is a separate confirmed local action and stale confirmations
     flush(); H.eq(opened, 3)
     local action = modal.config.footer_rows[2][1]
     H.eq(action.label, "Reread all EPUB tags…")
-    action.on_tap(); H.eq(opened, 3); H.eq(#queue, 0)
+    local manager
+    local show = UI.show
+    UI.show = function(self, widget)
+        if getmetatable(widget) == Modal then manager = widget end
+        show(self, widget)
+    end
+    action.on_tap(); H.eq(opened, 3); H.eq(#queue, 0); H.eq(modal.shown, false)
     local confirm = last_widget
     H.eq(confirm.sui_native, true)
     UI:close(confirm) -- Cancelling confirmation does not touch any archive/cache.
     H.eq(opened, 3); H.eq(#queue, 0)
-    action.on_tap(); last_widget.ok_callback(); flush()
-    H.eq(opened, 6); H.eq(modal.config.item_count(), 2)
-    action.on_tap(); confirm = last_widget
-    modal:onClose(); confirm.ok_callback(); flush(); H.eq(opened, 6)
+    manager.config.footer_rows[2][1].on_tap(); last_widget.ok_callback(); flush()
+    H.eq(opened, 6); H.eq(Integration.embeddedTagIndexStatus().phase, "complete")
+    manager.config.footer_rows[2][1].on_tap(); confirm = last_widget
+    manager:onClose(); confirm.ok_callback(); flush(); H.eq(opened, 6)
+    UI.show = show
 end)
 H.test("inline matches are usable before completion; stopping keeps honest partial results and Refresh continues", function()
     reset()
@@ -470,8 +496,139 @@ H.test("an unavailable index falls back to file tags rather than a successful em
     H.eq(opened, 3)
     Integration.openEmbeddedTagIndex = original
 end)
+local function freshIntegration() return assert(loadfile(root .. "/adapters/orbitui_integrations.lua"))() end
+H.test("explicit indexing covers more than 3000 EPUBs even when their tag matches exceed the search cap", function()
+    reset()
+    for i = 1, 3300 do add("/books/large" .. i .. ".epub", opf('["Åland & 日本語"]')) end
+    local M = freshIntegration()
+    local result, failure
+    assert(M.startEmbeddedTagIndex("update", false, function() return true end,
+        function(value, err) result, failure = value, err end))
+    H.eq(opened, 0); flush()
+    H.eq(failure, nil); H.eq(result.phase, "complete"); H.eq(result.scanned, 3303)
+    H.eq(result.total, 3303); H.eq(result.reread, 3303); H.eq(result.reused, 0)
+    H.eq(opened, 3303); H.eq(opened, closed); H.eq(written, 3303)
+    H.eq(disk.index_job_v1.paths, nil) -- no unbounded progress ledger
+end)
+H.test("normal index updates reuse unchanged and tagless files, retry errors and see changed/new/deleted EPUBs", function()
+    reset(); documents["/books/untagged.epub"] = nil
+    local M, result = freshIntegration()
+    local function run(resume)
+        assert(M.startEmbeddedTagIndex("update", resume, function() return true end, function(value) result = value end))
+        flush()
+    end
+    run(false); H.eq(result.phase, "errors"); H.eq(result.skipped, 1)
+    add("/books/untagged.epub", opf('[]'))
+    run(true); H.eq(result.phase, "complete"); H.eq(result.reused, 2); H.eq(result.reread, 1); H.eq(opened, 4)
+    files["/books/a.epub"] = nil
+    files["/profile/a.epub"].change = 2
+    add("/books/new.epub", opf('[]'))
+    run(false); H.eq(result.scanned, 3); H.eq(result.reused, 1); H.eq(result.reread, 2); H.eq(opened, 6)
+end)
+H.test("forced index pause and restart resume reuse only unchanged successful files from the same run", function()
+    reset()
+    for file in pairs(files) do assert(Integration.embeddedTags(file)) end
+    local M, result = freshIntegration()
+    assert(M.startEmbeddedTagIndex("reread", false, function() return true end, function(value) result = value end))
+    flush(1); H.eq(opened, 4)
+    local run = disk.index_job_v1.run
+    queue = {} -- simulate process loss before the first progress checkpoint
+    M = freshIntegration()
+    H.eq(M.embeddedTagIndexStatus().phase, "paused")
+    assert(M.startEmbeddedTagIndex(nil, true, function() return true end, function(value) result = value end))
+    flush(); H.eq(result.phase, "complete"); H.eq(result.run, run)
+    H.eq(result.reused, 1); H.eq(result.reread, 2); H.eq(opened, 6)
+    assert(M.startEmbeddedTagIndex("reread", false, function() return true end, function(value) result = value end))
+    flush(); H.eq(opened, 9); assert(result.run ~= run); H.eq(result.reused, 0)
+end)
+H.test("forced resume revalidates earlier files instead of trusting cursor position or a same-run changed stamp", function()
+    reset(); local M, result = freshIntegration()
+    local control = assert(M.startEmbeddedTagIndex("reread", false, function() return true end, function(value) result = value end))
+    flush(1); control.cancel(); flush(); H.eq(result.phase, "paused"); H.eq(result.scanned, 1)
+    files["/books/a.epub"].change = 2
+    add("/books/0-new.epub", opf('[]'))
+    assert(M.startEmbeddedTagIndex(nil, true, function() return true end, function(value) result = value end))
+    flush(); H.eq(result.scanned, 4); H.eq(result.reread, 4); H.eq(opened, 5)
+end)
+H.test("index jobs are explicit, single-owner and retire on close/navigation/scope changes", function()
+    for _, reason in ipairs{ "cancel", "close", "scope" } do
+        reset(); local M, active, result, failure = freshIntegration(), true
+        local control = assert(M.startEmbeddedTagIndex("update", false, function() return active end,
+            function(value, err) result, failure = value, err end))
+        local second, err = M.startEmbeddedTagIndex("update", false, function() return true end, function() end)
+        H.eq(second, nil); H.eq(err, "busy")
+        flush(1)
+        if reason == "cancel" then control.cancel()
+        elseif reason == "close" then active = false
+        else roots = { "/other" } end
+        flush(); H.eq(opened, 1); H.eq(M.embeddedTagIndexStatus().phase, "paused")
+        if reason == "scope" then
+            H.eq(failure, "stale"); H.eq(result.current_scope, false)
+            local resumed, why = M.startEmbeddedTagIndex(nil, true, function() return true end, function() end)
+            H.eq(resumed, nil); H.eq(why, "stale")
+        end
+    end
+end)
+H.test("bad or future index journals require explicit replacement, and cannot silently delete caches", function()
+    for _, bad in ipairs{ { version = 2 }, { version = 1, run = "" }, "bad" } do
+        reset(); local M = freshIntegration()
+        assert(Integration.embeddedTags("/books/a.epub"))
+        disk.index_job_v1 = bad
+        local status, err = M.embeddedTagIndexStatus(); H.eq(status, nil); H.eq(err, "invalid_job")
+        local control, why = M.startEmbeddedTagIndex("update", false, function() return true end, function() end)
+        H.eq(control, nil); H.eq(why, "invalid_job"); H.eq(opened, 1)
+        assert(M.startEmbeddedTagIndex("update", false, function() return true end, function() end, true))
+        flush(); H.eq(opened, 3); H.eq(M.embeddedTagIndexStatus().phase, "complete")
+    end
+end)
+H.test("journal and per-file persistence failures cannot report a complete durable index", function()
+    reset(); local M = freshIntegration()
+    write_failure = "index_job_v1"
+    local control, err = M.startEmbeddedTagIndex("update", false, function() return true end, function() end)
+    H.eq(control, nil); H.eq(err, "journal_failed"); H.eq(opened, 0)
+    write_failure = nil; archive_cost = .3
+    local result, failure, notices = nil, nil, 0
+    assert(M.startEmbeddedTagIndex("update", false, function() return true end,
+        function(value, why) result, failure, notices = value, why, notices + 1 end))
+    write_failure = "index_job_v1"; flush(); H.eq(opened, 1); H.eq(failure, "journal_failed"); H.eq(notices, 1)
+    write_failure = "/books/untagged.epub"
+    assert(M.startEmbeddedTagIndex("update", false, function() return true end, function(value) result = value end))
+    flush(); H.eq(result.phase, "errors"); H.eq(result.skipped, 1)
+    H.eq(disk[write_failure], nil)
+end)
+H.test("index completion and explicit same-stamp single-book rereads retire derived chip membership", function()
+    reset(); local M = freshIntegration()
+    local before = M.embeddedTagSnapshotRevision()
+    assert(M.startEmbeddedTagIndex("update", false, function() return true end, function() end))
+    local running = M.embeddedTagSnapshotRevision(); assert(before ~= running)
+    flush(); local finished = M.embeddedTagSnapshotRevision(); assert(running ~= finished)
+    H.eq(freshIntegration().embeddedTagSnapshotRevision(), finished)
+    add("/books/a.epub", opf('[]'))
+    assert(M.embeddedTags("/books/a.epub", true))
+    assert(M.embeddedTagSnapshotRevision() ~= finished)
+end)
+H.test("index manager opens passively, exposes real pause/resume actions and ignores stale confirmations", function()
+    reset()
+    local manager = require("core/orbitui_search").tagIndex()
+    H.eq(opened, 0); H.eq(#queue, 0); H.eq(manager.config.title, "Tags and indexing")
+    local rows = manager.config.footer_rows
+    rows[1][1].on_tap(); H.eq(rows[2][2].enabled_when(), true)
+    flush(1); rows[2][2].on_tap(); flush()
+    H.eq(opened, 1); H.eq(rows[1][2].enabled_when(), true)
+    local cell = manager.config.cell_renderer(true, { w = 500, h = 500 })
+    assert(cell.subtitle:find("Read: 1", 1, true))
+    assert(manager.config.intro():find("paused", 1, true))
+    rows[1][2].on_tap(); flush(); H.eq(opened, 3); H.eq(rows[1][2].enabled_when(), false)
+    rows[2][1].on_tap(); local confirm = last_widget
+    H.eq(confirm.sui_native, true); manager:onClose(); confirm.ok_callback(); flush(); H.eq(opened, 3)
+    manager = require("core/orbitui_search").tagIndex()
+    manager.config.footer_rows[2][1].on_tap(); last_widget.ok_callback(); flush(1)
+    manager:onClose(); flush(); H.eq(opened, 4)
+    H.eq(Integration.embeddedTagIndexStatus().phase, "paused")
+end)
 if os.getenv("ORBITUI_NATIVE_UI_MANAGER") then
     H.test("native handleInput polls cancellation between slow archive reads after repaint", function()
+        for _, index_only in ipairs{ false, true } do
         reset(); archive_cost = .3
         local f = assert(io.open(os.getenv("ORBITUI_NATIVE_UI_MANAGER"), "rb"))
         local source = f:read("*a"); f:close()
@@ -504,12 +661,13 @@ if os.getenv("ORBITUI_NATIVE_UI_MANAGER") then
             self._task_queue_dirty = true
         end
         UI.nextTick = function(self, fn) self:scheduleIn(0, fn) end
-        control = Integration.embeddedTagRequest(Integration.embeddedTagSession(), { tag = tag,
+        control = Integration.embeddedTagRequest(Integration.embeddedTagSession(), { tag = tag, index_only = index_only,
             on_progress = function() dirty = true end }, function() return true end,
             function(value, err) body, failure = value, err end)
         UI:handleInput()
         H.eq(polls, 1); H.eq(opened, 1); H.eq(failure, "cancelled"); H.eq(body.complete, false)
         for _, key in ipairs(keys) do UI[key] = old[key] end
+        end
     end)
 end
 H.test("native dialog interception preserves tag progress identity, completion and cancellation", function()
@@ -548,6 +706,11 @@ H.test("all embedded-tag strings have Swedish translations while literal tags st
     H.eq(_("EPUB tags (offline)"), "EPUB-taggar (offline)")
     H.eq(_("Read EPUB tags"), "Läs EPUB-taggar"); H.eq(_(tag), tag)
     H.eq(_("Reread all EPUB tags…"), "Läs om alla EPUB-taggar…")
+    H.eq(_("Tags and indexing"), "Taggar och indexering")
+    H.eq(_("Update tag index"), "Uppdatera taggindex")
+    H.eq(_("Continue indexing"), "Fortsätt indexering")
+    H.eq(_("Pause indexing"), "Pausa indexering")
+    H.eq(string.format(_("%d of %d EPUB files checked"), 3001, 3342), "3001 av 3342 EPUB-filer kontrollerade")
     H.eq(_("Stop search"), "Stoppa sökning")
     G_reader_settings = old
 end)

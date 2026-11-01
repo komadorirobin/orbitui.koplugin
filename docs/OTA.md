@@ -7,6 +7,68 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 0.1.0-beta.27
+
+Beta 27 publishes the offline EPUB-tag index/search and smart-chip follow-ups,
+plus the locally verified Android app-paging/native-dialog and metadata-cover
+fixes after Beta 26. No new upstream import: Bookshelf remains **6.1.1**
+(`c686f5a3`), SimpleUI `fdf83c7d`. Existing settings, caches, reading data and
+external BookOrbit/Hardcover synchronization ownership are retained.
+
+- **OrbitUI settings > Bookshelf > Tags and indexing**: Update checks all
+  configured library roots at the saved scan depth, reusing unchanged entries
+  and retrying failures. Confirmed **Reread all EPUB tags…** reads every EPUB
+  afresh, useful after bulk retagging. This explicit job has no 400-file cap.
+  Pause/Continue works after restart; closing the page pauses. Resume starts a
+  new checked counter but reuses unchanged successful reads from that same run.
+  Keep KOReader open while it runs; pause before replacing EPUBs. Failed files
+  are counted separately and never cached as an empty successful result.
+- Long-press a local EPUB tag in **Tags** to save a named smart chip in an
+  existing library. Combine up to 16 literal tags with **AND/OR**, scoped to
+  that library or all local libraries. Cached indexed matches render without
+  opening EPUB archives; explicit Update reads missing/changed entries.
+  Result views remain capped at 400 matches and disclose **400+**, even though
+  the separate indexer can process thousands of files. Rename/order/Home pins
+  and native sorting/filtering/pagination remain available.
+- Local tag search uses a separate disposable SQLite index, bounded batches
+  and progressive checked/total results with Stop/Refresh. Native touch gets
+  an input window after visible updates, so slow archive scans stay stoppable.
+  Existing tagless success rows and completed work survive cancellation.
+- Android app lists with page arrows no longer crash on the native pager's
+  extra return value. Explicitly owned native progress dialogs are not replaced
+  by a toast. Explicit Android metadata refresh uses the transactional no-fork
+  cover queue regardless of the automatic safe-mode preference, retaining
+  existing covers on extraction failure. The saved preference is not changed.
+
+Offline tags mean EPUB 2/3 **`bookorbit:tags` JSON**, not ordinary subjects,
+genres or KOReader collections. No BookOrbit account, plugin or API patch is
+needed for these offline features. No EPUB/reading-state write, cache reset,
+server deployment, new runtime path, bootstrap or API-1 limit change. All owned
+controls/help are Swedish and English. Older releases/assets remain immutable.
+
+Svenska: Beta 27 samlar taggindexeringen, smarta taggchip och de lokalt provade
+Android-/omslagsfixarna efter Beta 26. Öppna **OrbitUI-inställningar > Bookshelf >
+Taggar och indexering**. **Uppdatera taggindex** läser nya/ändrade filer och
+försöker igen med fel; **Läs om alla EPUB-taggar…** läser efter bekräftelse om
+hela det konfigurerade beståndet utan någon gräns på 400 filer. Du kan pausa och
+fortsätta efter omstart. Stängning pausar och behåller färdiga läsningar.
+Fortsätt räknar det aktuella beståndet på nytt men återanvänder oförändrade filer
+från samma jobb. Låt KOReader vara öppet under körningen; pausa innan du ersätter
+EPUB-filer. Långtryck på en lokal tagg i **Tags/Taggar** för ett eget chip med
+upp till 16 taggar och **OCH/ELLER**, i valt eller alla lokala bibliotek.
+Träffvyerna behåller sin tydliga gräns på 400/400+; indexeringen kan hantera fler.
+Sökningen visar framsteg och går att stoppa. Appmodulens sidpilar och taggarnas
+inläsningsruta fungerar med native-widgetarna. Manuell metadatauppdatering på
+Android använder den säkra omslagskön utan att ändra din inställning. Offline
+kräver `bookorbit:tags` i EPUB-filen, inget BookOrbit-konto eller servertillägg.
+Inga böcker, läsdata, synkägare, upstream-versioner eller gamla releaser ändras.
+
+Update through the preview channel and restart KOReader. This remains a beta:
+desktop/native-service tests do not establish full-library cold completion,
+physical panel quality, every menu/reader return, rotation, suspend/resume,
+Boox compatibility or 1.0 readiness. Focused Bigme checks and final sealed/public
+byte verification are recorded separately in TESTING; earlier open gates remain.
+
 ## OrbitUI 0.1.0-beta.26
 
 Beta 26 publishes the previously local Beta 25 changes and the reviewed

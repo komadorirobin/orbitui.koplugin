@@ -472,6 +472,28 @@ end
 
 local tag_disk
 local index_failed = false
+local snapshot_revision
+local run_serial = 0
+local function tagCache()
+    tag_disk = tag_disk or require("lib/bookshelf_keyed_cache").new("orbitui_epub_tags", 1)
+    return tag_disk
+end
+local function tagRun()
+    run_serial = run_serial + 1
+    return tostring(os.time()) .. ":" .. tostring(require("ui/time").now()) .. ":"
+        .. tostring(math.random(1, 1073741824)) .. ":" .. run_serial
+end
+function M.embeddedTagSnapshotRevision()
+    if snapshot_revision == nil then
+        local value = tagCache().read("shelf_revision_v1")
+        snapshot_revision = value and type(value.value) == "string" and value.value or "0"
+    end
+    return snapshot_revision
+end
+function M.invalidateEmbeddedTagSnapshots()
+    snapshot_revision = tagRun()
+    tagCache().write("shelf_revision_v1", { value = snapshot_revision })
+end
 -- Literal EPUB tags, never the native collection/genre filter language.
 -- A compact bounded rule is shared by saved chips and the explicit search.
 function M.embeddedTagRule(value)
@@ -552,11 +574,11 @@ function M.openEmbeddedTagIndex(existing_only)
     end
     function store.prefetch(files, first, tag)
         if not db or index_failed then return nil end
-        local rule = M.embeddedTagRule(tag)
-        if not rule then return nil end
+        local rule = tag ~= nil and M.embeddedTagRule(tag)
+        if tag ~= nil and not rule then return nil end
         local ok_read, out = pcall(function()
             local marks, args, predicates = {}, {}, {}
-            for _, name in ipairs(rule.tags) do
+            for _, name in ipairs(rule and rule.tags or {}) do
                 predicates[#predicates + 1] = "EXISTS(SELECT 1 FROM tags t WHERE t.fp=f.fp AND t.tag=?)"
                 args[#args + 1] = name
             end
@@ -564,7 +586,8 @@ function M.openEmbeddedTagIndex(existing_only)
             for i = first, math.min(first + 127, #files) do
                 marks[#marks + 1] = "?"; args[#args + 1] = files[i]
             end
-            local stmt = db:prepare("SELECT f.fp,f.stamp,(" .. table.concat(predicates, rule.mode == "all" and " AND " or " OR ") .. ") "
+            local expression = rule and table.concat(predicates, rule.mode == "all" and " AND " or " OR ") or "0"
+            local stmt = db:prepare("SELECT f.fp,f.stamp,(" .. expression .. ") "
                 .. "FROM files f WHERE f.epoch=? AND f.fp IN (" .. table.concat(marks, ",") .. ")")
             local unpack_fn = unpack or table.unpack
             stmt:bind(unpack_fn(args))
@@ -614,16 +637,16 @@ function M.openEmbeddedTagIndex(existing_only)
     return store
 end
 
-function M.embeddedTags(file, refresh, defer_index, cache_only)
+function M.embeddedTags(file, refresh, defer_index, cache_only, run, durable)
     local fs = require("libs/libkoreader-lfs")
     local attrs = type(file) == "string" and file:sub(1, 1) == "/" and fs.attributes(file)
     if not attrs or attrs.mode ~= "file" then return nil, "missing" end
     if not file:lower():match("%.epub$") then return nil, "not_epub" end
     tag_disk = tag_disk or require("lib/bookshelf_keyed_cache").new("orbitui_epub_tags", 1)
     local stamp = tagStamp(attrs)
-    if not refresh then
+    if not refresh or run then
         local cached = tag_disk.read(file)
-        if cached and cached.stamp == stamp and array(cached.tags, 200) then
+        if cached and (not refresh or cached.reread_run == run) and cached.stamp == stamp and array(cached.tags, 200) then
             local valid = true
             for _, tag in ipairs(cached.tags) do
                 if type(tag) ~= "string" or #tag > 800 or not tag:find("%S") or tag:find("%c") then valid = false; break end
@@ -638,10 +661,12 @@ function M.embeddedTags(file, refresh, defer_index, cache_only)
     if not after or after.size ~= attrs.size or after.modification ~= attrs.modification or after.change ~= attrs.change then
         return nil, "changed"
     end
-    tag_disk.write(file, { stamp = stamp, tags = tags })
+    local saved = tag_disk.write(file, { stamp = stamp, tags = tags, reread_run = run })
+    if durable and saved == false then return nil, "cache_write" end
     if not defer_index then
         local index = M.openEmbeddedTagIndex(true)
         if index then index.put(file, stamp, tags); index.close() end
+        M.invalidateEmbeddedTagSnapshots()
     end
     return tags, nil, false, stamp
 end
@@ -669,7 +694,7 @@ local function libraryIdentity()
 end
 function M.embeddedTagSession()
     local identity = libraryIdentity()
-    local source = { embedded = true }
+    local source = { embedded = true, identity = identity }
     function source:current()
         local ok, value = pcall(libraryIdentity)
         return ok and value == identity
@@ -689,14 +714,16 @@ function M.embeddedTagRequest(source, task, current, done)
     }
     local cancelled, finished = false, false
     local files, cursor, paths, skipped, truncated = nil, 1, {}, 0, false
-    local rule = not task.file and M.embeddedTagRule(task.rule or task.tag)
+    local rule = not task.file and not task.index_only and M.embeddedTagRule(task.rule or task.tag)
     local stamps, unindexed = {}, 0
+    local reread, reused = 0, 0
     local index, indexed, index_end, pending = nil, {}, 0, 0
     local last_update, last_flush, last_matches = time.now(), time.now(), 0
     local function snapshot()
         local out = {}; for i, file in ipairs(paths) do out[i] = file end
         local copied = {}; for file, stamp in pairs(stamps) do copied[file] = stamp end
         return { paths = out, stamps = copied, unindexed = unindexed, skipped = skipped, truncated = truncated,
+            reread = reread, reused = reused,
             scanned = cursor - 1, total = files and #files or 0,
             complete = files ~= nil and cursor > #files and not truncated and unindexed == 0 }
     end
@@ -717,7 +744,7 @@ function M.embeddedTagRequest(source, task, current, done)
         if not current() then finish(); return end
         if cancelled or progress and not UI:isWidgetShown(progress) then control.cancel(); return end
         if source and not source:current() then finish(nil, "stale"); return end
-        if not task.file and not rule then finish(nil, "invalid_epub"); return end
+        if not task.file and not task.index_only and not rule then finish(nil, "invalid_epub"); return end
         if not files then
             local ok, value = pcall(function()
                 if task.file then return { task.file } end
@@ -758,7 +785,7 @@ function M.embeddedTagRequest(source, task, current, done)
             if not file then finish(snapshot()); return end
             if index and index_failed then index.close(); index, indexed = nil, {} end
             if index and not task.refresh and cursor > index_end then
-                indexed = index.prefetch(files, cursor, task.rule or task.tag)
+                indexed = index.prefetch(files, cursor, not task.index_only and (task.rule or task.tag) or nil)
                 index_end = cursor + 127
                 if not indexed then index.close(); index, indexed = nil, {} end
             end
@@ -766,17 +793,20 @@ function M.embeddedTagRequest(source, task, current, done)
             if hit and tagStamp(require("libs/libkoreader-lfs").attributes(file)) ~= hit.stamp then hit = nil end
             local tags, err, cached, stamp
             if hit and not task.refresh then
-                tags, cached, stamp = hit.matches and rule.tags or {}, true, hit.stamp
+                tags, cached, stamp = not task.index_only and hit.matches and rule.tags or {}, true, hit.stamp
             else
-                tags, err, cached, stamp = M.embeddedTags(file, task.refresh, not task.file, task.cache_only)
+                tags, err, cached, stamp = M.embeddedTags(file, task.refresh, not task.file, task.cache_only, task.run, task.index_only)
                 if index and tags then index.put(file, stamp, tags); pending = pending + 1 end
             end
             if task.file then finish(tags and { tags = tags } or nil, err); return end
             if not tags then
                 if err == "unindexed" then unindexed = unindexed + 1 else skipped = skipped + 1 end
-            elseif M.embeddedTagMatches(tags, rule) then
+            elseif not task.index_only and M.embeddedTagMatches(tags, rule) then
                 if #paths == 400 then truncated = true; finish(snapshot()); return end
                 paths[#paths + 1], stamps[file] = file, stamp
+            end
+            if tags then
+                if cached then reused = reused + 1 else reread = reread + 1 end
             end
             cursor = cursor + 1
             if not cached or time.to_us(time.since(start)) >= 8000 then break end
@@ -803,6 +833,95 @@ function M.embeddedTagRequest(source, task, current, done)
     if progress then UI:show(progress) end
     UI:nextTick(step)
     return control
+end
+
+local active_index
+local function readIndexJob()
+    local value = tagCache().read("index_job_v1")
+    if value == nil then return nil end
+    if type(value) ~= "table" or value.version ~= 1 or type(value.run) ~= "string" or #value.run > 160
+            or not value.run:find("%S") or value.run:find("%c") or type(value.identity) ~= "string"
+            or (value.mode ~= "update" and value.mode ~= "reread")
+            or not ({ running = true, paused = true, complete = true, errors = true })[value.phase] then return nil, "invalid_job" end
+    for _i, key in ipairs{ "scanned", "total", "skipped", "reread", "reused" } do
+        local n = value[key]
+        if type(n) ~= "number" or n < 0 or n > 10000000 or n % 1 ~= 0 then return nil, "invalid_job" end
+    end
+    return value
+end
+function M.embeddedTagIndexStatus()
+    local value, err = readIndexJob()
+    if not value then return nil, err end
+    local out = {}; for key, field in pairs(value) do out[key] = field end
+    out.current_scope = value.identity == libraryIdentity()
+    if out.phase == "running" and not active_index then out.phase = "paused" end
+    return out
+end
+
+-- One explicit all-library job, never limited by a tag or its result cap.
+-- The journal contains only scalar progress/identity. Per-file reread markers
+-- in the existing derived cache survive restart; resume still validates stamps.
+function M.startEmbeddedTagIndex(mode, resume, current, changed, replace_invalid)
+    local previous, failure = readIndexJob()
+    if failure and not replace_invalid then return nil, failure end
+    if active_index then return nil, "busy" end
+    local source = M.embeddedTagSession()
+    local job
+    if resume then
+        if not previous or previous.phase == "complete" or previous.identity ~= source.identity then return nil, "stale" end
+        job = previous
+    else
+        if mode ~= "update" and mode ~= "reread" then return nil, "invalid_job" end
+        job = { version = 1, mode = mode, run = tagRun(), identity = source.identity }
+    end
+    job.phase = "running"
+    for _i, key in ipairs{ "scanned", "total", "skipped", "reread", "reused" } do job[key] = 0 end
+    if tagCache().write("index_job_v1", job) == false then return nil, "journal_failed" end
+    M.invalidateEmbeddedTagSnapshots()
+    local controller, retired, journal_error = {}, false, false
+    active_index = controller
+    local function save(result, phase)
+        if result then
+            for _i, key in ipairs{ "scanned", "total", "skipped", "reread", "reused" } do job[key] = result[key] or 0 end
+        end
+        job.phase = phase
+        return tagCache().write("index_job_v1", job) ~= false
+    end
+    local function retire()
+        if retired then return end
+        retired, active_index = true, nil
+        save(nil, "paused")
+        M.invalidateEmbeddedTagSnapshots()
+    end
+    local function valid()
+        if retired then return false end
+        if not current() then retire(); return false end
+        if not source:current() then retire(); changed(M.embeddedTagIndexStatus(), "stale"); return false end
+        return true
+    end
+    controller.worker = M.embeddedTagRequest(source, { index_only = true, refresh = job.mode == "reread",
+        run = job.mode == "reread" and job.run or nil,
+        on_progress = function(result)
+            if not valid() then return end
+            if not save(result, "running") then
+                journal_error = true
+                controller.worker.cancel()
+                return
+            end
+            changed(M.embeddedTagIndexStatus())
+        end,
+    }, valid, function(result, err)
+        if retired then return end
+        local phase = err == "cancelled" and "paused" or result and result.complete
+            and (result.skipped == 0 and "complete" or "errors") or "paused"
+        local saved = save(result, phase)
+        retired, active_index = true, nil
+        M.invalidateEmbeddedTagSnapshots()
+        if journal_error or not saved then err = "journal_failed" end
+        changed(M.embeddedTagIndexStatus(), err)
+    end)
+    function controller.cancel() if not retired then controller.worker.cancel() end end
+    return controller
 end
 
 return M

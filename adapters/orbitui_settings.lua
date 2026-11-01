@@ -381,6 +381,7 @@ local nodes = {
     { "bookshelf", "Bookshelf", nil, "mixed", "bibliotek library böcker books manga prosa" },
     { "libraries", "Libraries & shelves", "bookshelf", "mixed", "biblioteksavdelningar profiler profiles mappar folders chip chips filters filter sortering sorting ordna bibliotek order libraries ordna chip order chips placera före place before källa source" },
     { "book_search", "Search books", "bookshelf", "mixed", "böcker boksökning books library search stavfel typo accent diakritiska" },
+    { "tag_index", "Tags and indexing", "bookshelf", "bookshelf", "taggar tags epub indexera indexering indexing omläsning reread uppdatera pause pausa fortsätt resume" },
     { "panel", "Book panel at the top", "bookshelf", "bookshelf", "toppanel hero bokinformation baksidestext tags interactive" },
     { "covers", "Covers & book information", "bookshelf", "bookshelf", "omslag upplösning resolution metadata indexering indexing" },
     { "themes", "Themes, backgrounds & ornaments", "bookshelf", "theme", "tema färger colors bakgrund wallpaper plank hyllplan dekorationer" },
@@ -788,6 +789,7 @@ function M.open(id, opts)
             require("adapters/orbitui_libraries").readerMenuSetting() }, "reader", opts)
     end
     if id == "book_search" then return require("core/orbitui_search").show() end
+    if id == "tag_index" then return require("core/orbitui_search").tagIndex() end
     if id == "updates" then return require("adapters/orbitui_updates").show() end
     if id == "setup" then return require("adapters/orbitui_setup").show() end
     if id == "preset" then return require("adapters/orbitui_appearance").show() end

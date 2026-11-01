@@ -13,7 +13,7 @@ local function tagContext(source)
     local P = require("lib/bookshelf_profiles")
     local profile = P.get(source.profile)
     if not rule or not profile then return end
-    local parts = { source.profile, source.scope, rule.mode, tostring(#rule.tags) }
+    local parts = { source.profile, source.scope, rule.mode, tostring(#rule.tags), I.embeddedTagSnapshotRevision() }
     local function add(text) parts[#parts + 1] = #text .. ":" .. text end
     for _, tag in ipairs(rule.tags) do add(tag) end
     -- Include all roots/depth/home, even for all-library rules. Removed roots
