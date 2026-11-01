@@ -1,6 +1,11 @@
 local root = os.getenv("ORBITUI_TEST_ROOT") or "."
 package.path = root .. "/?.lua;" .. root .. "/components/bookshelf/?.lua;./?.lua;" .. package.path
 local H = require("tests/helpers")
+-- This isolated painter fixture does not install the full plugin loader.
+-- Resolve the new lazy helper from the sealed registry, not a checkout file.
+local embedded = getmetatable(dofile(root .. "/core/orbitui_module_map.lua")).orbitui_embedded
+package.preload["lib/bookshelf_image_contrast"] = assert((loadstring or load)(
+    assert(embedded["lib/bookshelf_image_contrast"]), "@lib/bookshelf_image_contrast"))
 local A = require("adapters/orbitui_appearance")
 local Model = require("core/orbitui_appearance")
 local W = H.widget()
