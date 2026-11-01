@@ -4,6 +4,38 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-01 — measured Bigme library opening and menu pass (local)
+
+User explicitly starts the proposed overnight ADB performance pass and provides
+the new device connection. No upstream merge, push, tag or release is requested.
+Start clean at `76876d44` on `performance/bigme-library-20261101`. Existing
+accepted shortcut-only Beta 25 code remains the measurement baseline; the
+newer app-management build has not yet been staged. Device is charging and
+KOReader was stopped, so start normally; do not force-stop a live reader.
+
+Uninstrumented first Manga opens take about 15–17 seconds, most of it metadata
+preparation. Warm rebuild loops are roughly 0.2 seconds. Temporary read-only,
+fixed-label method/syscall instrumentation shows a 4.8-second counterfactual
+grid-label fetch and a second 3.2-second derivation of the same ~2,600 Manga
+records for series boxes, including thousands of repeated custom-metadata
+sidecar probes. Move the diagnostic patch outside `patches/` before final
+comparisons; no permission, system setting or reading-data write is involved.
+
+Host-owned sharing retains at most 4,096 immutable text derivations for 60
+seconds and one raw batch identity. Return independent deep copies to existing
+per-root maps, preserving scope, native providers, custom metadata and status
+ownership. Reset on native invalidation/ready/forget operations; row identity
+changes and expiry force a new derivation, failures never populate the pool.
+The component producer gets only an optional callback; standalone behavior is
+unchanged. Native counterfactual label measurement asks for light records,
+skipping recursive folder collage/cover candidates it never paints, and
+restores prior transient flags/cursor even when the protected pin catches errors.
+No new cache files, runtime paths, bootstrap, source pins, resources, safety
+preference, profile layout or synchronization owner changes. Three untranslated
+main-menu labels observed on device get Swedish text; English and personal
+saved action labels remain unchanged. Eight new regression cases pass both
+interpreters; complete/sealed/package/device checks are still in progress.
+
 ## 2026-10-31 — user-selected Android apps through module long-press (local)
 
 The user explicitly asks to add/remove personal apps through a long-press on

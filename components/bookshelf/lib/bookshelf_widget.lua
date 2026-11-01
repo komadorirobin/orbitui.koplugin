@@ -6481,15 +6481,20 @@ function BookshelfWidget:_ensureGridLabels()
     if kind == "opds" or (kind and require("lib/bookshelf_sources").isPaged(kind)) then
         return
     end
-    local cursor, quiet = self._cursor, Repo.suppress_covers
+    local cursor, quiet, light = self._cursor, Repo.suppress_covers, Repo.spine_light
     self._cursor = 1
     Repo.suppress_covers = true
+    -- A counterfactual label measurement needs text/shapes only. Suppressing
+    -- decoded covers alone still prepared folder collages and their recursive
+    -- cover candidates, before the spine shelf fetched the same books again.
+    Repo.spine_light = true
     local got = _asCoverGrid(function()
         local items, hint = self:_fetchChipItems(400)
         return { items = items or {}, windowed = hint ~= nil }
     end)
     self._cursor = cursor
     Repo.suppress_covers = quiet
+    Repo.spine_light = light
     if got then self:_noteGridLabels(got.items, got.windowed) end
 end
 

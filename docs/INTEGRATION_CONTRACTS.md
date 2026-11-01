@@ -167,6 +167,19 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+November 1 measured Bigme optimization: the optional light-record producer seam
+may share immutable text derivations across scopes backed by the same raw BIM
+batch. Each scope still checks its own prefix and owns a deep copy, including
+nested author/genre/Calibre arrays. Keep the 4,096-entry/60-second bound, reset on
+batch or row identity and all native metadata/series/walk/book/Calibre/ready/forget
+invalidations; failed derivations must not become cache hits. No persistent
+metadata index, new provider/sync writer, cover pointer retention or progress
+sharing. A counterfactual grid-label query uses native light records, never
+folder-cover collage preparation; restore the prior cursor and both transient
+cover flags even on a caught error. Actual visual label/hero geometry and
+separate cold/warm tap-to-paint tests remain required. Coverage:
+`test_library_performance` plus the retained native label/section/series suites.
+
 October 30 evening monthly Reading Insights activity is lazy, read-only and
 derived from positive-duration distinct book/page/day records and the existing
 finished ledger, never a second completion/sync owner. Cache only successful,

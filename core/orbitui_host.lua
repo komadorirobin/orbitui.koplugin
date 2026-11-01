@@ -106,6 +106,50 @@ function M.performanceMode() return mode end
 function M.isMeasuring() return measuring end
 function M.resetMeasurements() observations = {} end
 
+-- One batch of BIM rows can back several independently scoped light maps.
+-- Keep the expensive, immutable text derivation once, not its render/status
+-- mutations. Each scope receives its own copy. No new disk cache or writer.
+function M.shareLightMetadata(repo)
+    if repo._orbitui_shared_light_metadata then return end
+    repo._orbitui_shared_light_metadata = true
+    local source, cache, ring, cursor = nil, {}, {}, 0
+    local function reset()
+        source, cache, ring, cursor = nil, {}, {}, 0
+    end
+    local function copy(value, seen)
+        if type(value) ~= "table" then return value end
+        seen = seen or {}
+        if seen[value] then return seen[value] end
+        local out = {}; seen[value] = out
+        for key, item in pairs(value) do out[key] = copy(item, seen) end
+        return out
+    end
+    repo.deriveLightRecord = function(fp, info, rows, build)
+        if source ~= rows then reset(); source = rows end
+        local now = os.time()
+        local hit = cache[fp]
+        if not hit or hit.info ~= info or now >= hit.expires then
+            -- Publish only successful derivations. Failed metadata/provider
+            -- reads retain the native retry/error contract.
+            local record = build(fp, info)
+            if type(record) ~= "table" then return record end
+            cursor = cursor % 4096 + 1
+            local old = ring[cursor]
+            if old and cache[old.fp] == old then cache[old.fp] = nil end
+            hit = { fp = fp, info = info, record = record, expires = now + 60 }
+            cache[fp], ring[cursor] = hit, hit
+        end
+        return copy(hit.record)
+    end
+    for _, key in ipairs({ "invalidateWalkCache", "invalidateSeriesCache", "invalidateLightMeta",
+            "invalidateBookCache", "invalidateCalibreCache", "lightMetaReady", "forgetBook" }) do
+        local native = repo[key]
+        if type(native) == "function" then
+            repo[key] = function(...) reset(); return native(...) end
+        end
+    end
+end
+
 local function memory()
     local util = package.loaded.util
     if not util then local ok, loaded = pcall(require, "util"); if ok then util = loaded end end

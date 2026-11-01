@@ -20,7 +20,29 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-10-31
+## Snapshot: 2026-11-01
+
+- User authorizes an overnight Bigme ADB performance/menu pass, measured
+  optimizations and device retesting, NOT a push/release or upstream merge.
+  Start clean at `76876d44`, branch `performance/bigme-library-20261101`.
+  The accepted shortcut-only Beta 25 slot is the baseline; the later Android
+  app-management candidate is not installed yet. Device cold Manga navigation
+  takes roughly 15–17 seconds, versus warm rebuilds around 0.2 seconds.
+  Temporary read-only instrumentation attributes ~4.8 seconds to the grid-label
+  counterfactual and ~3.2 seconds to duplicate global/scoped metadata derivation
+  for series boxes. Do not confuse rebuild time with tap-to-paint latency.
+  Build a 4,096-entry/60-second in-memory text derivation pool per BIM row batch,
+  preserving separate deep-copied scope records, original prefix checks, retry
+  behavior and all native invalidations. A narrow optional producer seam keeps
+  standalone behavior. Label measurement uses the existing light-record path
+  without recursive folder collage preparation; restore both flags/cursor even
+  when the native protected pin catches a fetch error. Three physically observed
+  missing menu translations gain SV/EN support; saved personal action labels
+  are not rewritten. No new runtime paths/bootstrap/pins/assets, preference,
+  reading-data, safe-mode or sync-owner change. Full/sealed/device verification
+  is in progress; do not claim a measured speedup before after-tests. Evidence:
+  `test-results/device-performance-20261101/`. The temporary instrumentation
+  patch is already moved out of `patches/` before uninstrumented comparisons.
 
 - User additionally requests personal app selection through module long-press.
   Work stays on `fix/android-metadata-beta25-20261031` from clean `d1798813`;

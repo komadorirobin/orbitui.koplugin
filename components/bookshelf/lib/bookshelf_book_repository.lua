@@ -4371,7 +4371,8 @@ local function _getLightMetaCache(home, depth)
                 -- session. When the book's extraction completes, the
                 -- extraction poll swaps in its row (Repo.lightMetaReady).
                 local info = row_map[fp] or Repo._NO_ROW
-                local rec = _buildLightMetaFromInfo(fp, info)
+                local rec = (Repo.deriveLightRecord or _buildLightMetaFromInfo)(
+                    fp, info, row_map, _buildLightMetaFromInfo)
                 -- Memoise, so the second consumer of a book pays nothing and
                 -- the map behaves like the eager one it replaced.
                 rawset(t, fp, rec)

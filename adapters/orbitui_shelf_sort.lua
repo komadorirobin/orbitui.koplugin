@@ -290,6 +290,7 @@ function M.browseBooks(...)
 end
 
 function M.repository(repo)
+    require("core/orbitui_host").shareLightMetadata(repo)
     local Sort = require("core/orbitui_shelf_sort")
     repo.orderShelfSections = Sort.folderEntries
     repo.orderShelfSeries = Sort.seriesShapes

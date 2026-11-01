@@ -1,5 +1,8 @@
 -- OrbitUI-owned strings, independent of the two upstream translation catalogs.
 local sv = {
+    ["Close Bookshelf"] = "Stäng Bookshelf",
+    ["Edit shelves…"] = "Redigera hyllor…",
+    ["Hardcover enrichment"] = "Metadata från Hardcover",
     ["White"] = "Vit",
     ["Done"] = "Klar",
     -- Reviewed Bookshelf 6.1 pages and popup controls (upstream catalogs kept intact).

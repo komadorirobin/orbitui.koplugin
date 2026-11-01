@@ -2,6 +2,26 @@
 
 ## Automated
 
+### November 1 Bigme library performance pass (local, in progress)
+
+`test_library_performance` covers shared text derivation, independent nested
+scope records, all native invalidations and original nil returns, replacement
+rows/batches, TTL expiry, failure/error identity/retry, 4,096-entry eviction and
+idempotent hooks. Its real repository fixture exercises profile folder sections
+followed by global series-box lookups without a second derivation. The actual
+label method/protected cover-grid pin verifies text-only flags and restoration
+after errors. Device-observed main-menu labels have explicit SV/EN checks.
+
+Physical baseline is the accepted shortcut-only Beta 25 runtime, not the newer
+local app-management ZIP. Preserve the same profile/chip/page/layout/covers,
+Android safe-mode false and debug level; separate first process visits from
+warm loops. Temporary method/syscall counters are diagnostic only: compare
+before/after without that patch active and distinguish tap-to-first paint from
+synchronous rebuild and post-paint work. Do not clear library caches or alter
+reading status to manufacture a cold result. All raw logs/screenshots remain
+ignored under `test-results/device-performance-20261101/`. No release is
+authorized. Final suite/package hashes and physical results follow after tests.
+
 ### Configurable Android apps (unpublished Beta 25 candidate)
 
 `test_android_app_launcher` loads the full actual module, not an extracted
