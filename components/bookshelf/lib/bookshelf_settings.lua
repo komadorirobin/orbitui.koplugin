@@ -5871,6 +5871,7 @@ function Settings:_pickPaginationFooterFontScale(touchmenu_instance)
         },
         tap_close_callback = revert,
     }
+    require("lib/bookshelf_gesture_zones").passSwipesOn(dialog)
     if dialog.movable then dialog.movable.ges_events = {} end
     UIManager:show(dialog)
 end
@@ -5955,6 +5956,7 @@ function Settings:_pickPaginationFooterMargin(touchmenu_instance, key, title)
         },
         tap_close_callback = revert,
     }
+    require("lib/bookshelf_gesture_zones").passSwipesOn(dialog)
     if dialog.movable then dialog.movable.ges_events = {} end
     UIManager:show(dialog)
 end

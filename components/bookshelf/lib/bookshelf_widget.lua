@@ -26722,6 +26722,7 @@ function BookshelfWidget:_openFolderMenu(folder)
             },
         },
     }
+    require("lib/bookshelf_gesture_zones").passSwipesOn(dialog)
     UIManager:show(dialog)
 end
 

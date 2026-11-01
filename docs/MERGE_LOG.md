@@ -27,6 +27,9 @@ the real host lifecycle; later external wrappers survive and captured released
 hooks are inert. Async minute refresh expires on hidden/replaced/closed shelf.
 RGB rounding retains software inversion and error-safe nested restoration.
 Invisible footer capture includes negative margins and frees/restores on errors.
+The upstream all-picker swipe check also covers our custom footer font/margin
+dialogs and folder menu; these now use the same outside-swipe routing, while
+keeping taps and swipes inside the dialog with its native handler.
 Two new helpers are exact-source lazy entries in the existing registry, not
 new installed paths (22 entries, 405 identities). New help/search is SV/EN;
 image defaults remain unchanged, no raw/disk artwork rewrite.

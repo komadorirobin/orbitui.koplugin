@@ -67,7 +67,9 @@ t.test("three modes, Show by default; Hide gives the shelf the footer's space", 
         BookshelfSettings = { read = function(k, d) if store[k] == nil then return d end return store[k] end },
         Screen = { scaleBySize = function(_s, v) return v end },
     }, { __index = _G })
-    local chunk = fn("_footerMode") .. "\n" .. fn("_footerBarH") .. "\n" .. fn("_footerReserveH")
+    local chunk = fn("_paginationFooterFontScale") .. "\n" .. fn("_paginationFooterMarginPx")
+        .. "\n" .. fn("_paginationFooterVisibleReserve")
+        .. "\n" .. fn("_footerMode") .. "\n" .. fn("_footerBarH") .. "\n" .. fn("_footerReserveH")
         .. "\nreturn _footerMode, _footerBarH, _footerReserveH"
     local mode, barH, reserveH = assert(load(chunk, "f", "t", fenv))()
     eq(mode(), "show"); eq(reserveH(), barH())
