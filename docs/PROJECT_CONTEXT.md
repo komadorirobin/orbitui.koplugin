@@ -48,7 +48,12 @@ and correct this file in the same change.
   Fix drains native repaint before scheduling the continuation. A regression
   using actual native handleInput/_checkTasks/forceRePaint fails old source
   (3 archives before input vs expected 1) and passes both interpreters after
-  repair. New sealed bytes/device touch acceptance and restoration follow;
+  repair. A second candidate `b9c07cff` / `7631ca9d` drains paint but still fails
+  actual touch: Android's remaining frame bookkeeping can exceed 1ms. It is
+  force-stopped as an owned test, not accepted. Reserve a 50ms input window only
+  after visible updates; cached no-paint batches keep 1ms scheduling. Strengthen
+  the native regression with 5ms bookkeeping even when no paint is pending.
+  New sealed bytes/device touch acceptance and restoration follow;
   never classify the first candidate as ready. Evidence:
   `test-results/tag-index-20261101/`.
 

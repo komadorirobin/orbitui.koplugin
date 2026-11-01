@@ -1204,9 +1204,11 @@ Failures fall back to the ordinary EPUB/tag cache path, not a successful empty
 answer. No file may be omitted because it has no index row or online link.
 
 Search uses inline, throttled checked/total progress instead of a blocking
-InfoMessage. Drain its pending repaint before scheduling the 1ms continuation:
+InfoMessage. Drain its pending repaint before scheduling the continuation:
 native handleInput repeats its dirty-task/paint cycle, so a repaint that outlasts
-that timer must not keep it from polling touch. Exercise actual native
+that timer must not keep it from polling touch. Reserve a 50ms input window
+after a visible update; non-painting cache batches retain 1ms continuations.
+Exercise actual native
 handleInput/_checkTasks/forceRePaint with slow archives, not only a FIFO fake.
 Prioritize the clicked local EPUB but include all profiles/depth.
 Expose checked partial matches before completion, with an explicit incomplete

@@ -38,6 +38,13 @@ method regression fails old code (three archives before input) and passes the
 fix under both interpreters (one then cancellation). Both diagnostics remain
 private; corrected sealed/device/normal-exit/restoration evidence follows.
 
+Second local candidate `b9c07cff` / `7631ca9d` drains paint and passes desktop
+checks, but fails actual touch again: remaining native/Android frame bookkeeping
+can exceed the 1ms gap. It is not accepted; force-stop only this no-book-open,
+sync-paused test process, retaining derived data. Reserve 50ms ONLY after visible
+updates, leaving no-paint cached batches at 1ms. Strengthen native scheduler
+regression with 5ms fixed bookkeeping; it rejects the second source as well.
+
 ## 2026-11-01 — offline tag-search cache and scheduling optimization (local)
 
 User approves the staged proposal, beginning with cache reuse and UI-turn

@@ -85,6 +85,20 @@ This is stronger scheduler proof than the FIFO harness, but final actual touch,
 corrected sealed source/ZIP/inventory, normal shutdown and restoration still
 must be recorded before marking the corrected candidate accepted.
 
+Second source/package `b9c07cff` /
+`7631ca9d05da0850d3cdf4c6fa56d2d8dae95c187ae9765f43569b8f19bcd2cd`
+also passes desktop/sealed/native primitive gates but does NOT pass actual
+touch. All 2,000 paths are verified after copying/delta staging before activation.
+Draining paint alone leaves too little time for Android's remaining frame
+bookkeeping; the 1ms continuation still repeatedly becomes due before polling.
+Stop via scheduled callback works, actual Stop does not. Force-stop only this
+owned test again (no books open, sync paused), preserve derived rows and move
+diagnostic out of patches. Do not leave this source as an accepted candidate.
+The next revision reserves 50ms after a visible progress repaint, retaining 1ms
+for ordinary nonpainting cached batches. Strengthen actual native-loop regression
+with 5ms bookkeeping on every repaint call, even when its dirty list is empty;
+this rejects the second source too. New final-package touch proof follows.
+
 ## November 1 offline tag-search optimization (local step 1/2)
 
 User approves the staged optimization proposal: begin with cache-aware normal

@@ -52,7 +52,7 @@ local UI = { _simpleui_navigation_generation = 1,
     forceRePaint = function() end,
     nextTick = function(_, fn) queue[#queue + 1] = fn end,
     scheduleIn = function(_, delay, fn)
-        H.eq(delay, .001); delays[#delays + 1] = delay; queue[#queue + 1] = fn
+        assert(delay == .001 or delay == .05); delays[#delays + 1] = delay; queue[#queue + 1] = fn
     end }
 package.loaded["ui/uimanager"] = UI
 package.loaded["ui/time"] = { now = function() return elapsed end,
@@ -418,7 +418,10 @@ if os.getenv("ORBITUI_NATIVE_UI_MANAGER") then
         UI._task_queue, UI._window_stack, UI._zeromqs = {}, { {} }, {}
         UI.event_hook = { execute = function() end }
         UI.processZMQs, UI._standbyTransition = function() end, function() end
-        UI._repaint = function() if dirty then elapsed = elapsed + .008; dirty = false end end
+        UI._repaint = function()
+            elapsed = elapsed + .005 -- bookkeeping can exceed the shortest timer even when paint is drained
+            if dirty then elapsed = elapsed + .008; dirty = false end
+        end
         UI.scheduleIn = function(self, delay, fn)
             table.insert(self._task_queue, { time = elapsed + delay, action = fn, args = { n = 0 } })
             table.sort(self._task_queue, function(a, b) return a.time > b.time end)
