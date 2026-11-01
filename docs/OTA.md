@@ -7,9 +7,21 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
-## OrbitUI 0.1.0-beta.25
+## OrbitUI 0.1.0-beta.26
 
-Beta 25 fixes the Android crash after long-pressing a book and choosing
+Beta 26 publishes the previously local Beta 25 changes and the reviewed
+Bookshelf **6.1.1** import through `c686f5a3`. Self-sizing picker cards use their
+own height when opened as an editor page, while remaining within the display.
+SimpleUI stays at `fdf83c7d`; no new SimpleUI commits were available. Beta 25
+was never publicly released: using 26 also permits upgrades from that installed
+local test version. All earlier public release assets remain immutable.
+
+Svenska: Beta 26 publicerar de tidigare lokala Beta 25-ändringarna och
+Bookshelf **6.1.1**. Valkort får sin egen höjd inne i hyllredigeraren utan att
+gå utanför skärmen. SimpleUI är oförändrat. Beta 25 släpptes aldrig offentligt;
+26 gör att även den lokala testversionen kan uppdateras.
+
+The release fixes the Android crash after long-pressing a book and choosing
 **Refresh metadata**. OrbitUI's Android safety check read the settings editor
 instead of the preference store and called a missing `nilOrTrue` function.
 It now reads the existing store without changing the safety preference.
@@ -21,7 +33,7 @@ give the editor an invented store API. Both source and sealed-package paths
 are covered. Existing cover preservation, bounded no-fork extraction and
 cancellation remain; no cache reset or full reindex is required for this fix.
 
-Svenska: Beta 25 rättar kraschen vid **långtryck på en bok > Uppdatera metadata**
+Svenska: Beta 26 rättar kraschen vid **långtryck på en bok > Uppdatera metadata**
 på Android. Säkerhetskontrollen läste från inställningsmenyn i stället för
 inställningslagret. Befintligt säkerhetsläge behålls och ett regressionstest
 använder det riktiga lagret. Du behöver inte radera omslagscachen eller indexera
@@ -42,7 +54,7 @@ inställningsstartsida hos tillverkaren. Inga Android-inställningar eller
 behörigheter ändras och felsökning aktiveras inte. Från Utvecklaralternativ
 öppnar du själv Trådlös felsökning. Ikonen och de andra appknapparna behålls.
 
-The unpublished Beta 25 candidate additionally makes **Android apps**
+The release additionally makes **Android apps**
 (previously App Launcher) configurable through long-press > **Apps**. Add a
 device launcher app, rename, move before/after a named neighbour, or confirm
 removal of its shortcut without uninstalling it. Extra apps receive responsive
@@ -52,16 +64,16 @@ Only explicit edits save the device-local list. Discovery runs on Add app only;
 manual package-name entry is available if Android filters/fails the query.
 Removing/re-adding Settings does not reset its destination choice.
 
-Svenska: Den ännu opublicerade testversionen låter dig långtrycka på
+Svenska: Du kan långtrycka på
 **Android-appar > Appar** för att lägga till, byta namn, flytta och ta bort
 genvägar. Flyttvalen namnger grannen och visar platsen direkt. Att ta bort en
 genväg avinstallerar inte Android-appen. Fler appar får sidpilar och en tom
 modul går fortfarande att konfigurera. Befintliga aktiva moduler behåller
 sina val; nya börjar tomma. Applistan och Inställningar-målet sparas lokalt.
 Långtryck, riktig applista och avbryt är nu provade på Bigme. Ändringar av
-applistan är ännu bara automatiskt testade; inget är publicerat.
+applistan är ännu bara automatiskt testade.
 
-November 1's local candidate also reuses bounded text metadata between library
+The release also reuses bounded text metadata between library
 scopes and makes layout probes skip unused folder-cover work. First Manga
 profile visits measured about 5–7 seconds versus 15–17 before on the test Bigme;
 warm Manga did not improve, and metadata refresh can still pause for a fresh
@@ -70,20 +82,32 @@ dropping it; visible download cancellation is unchanged. One-page category
 cards no longer fall back to the old list when native pagination is a stateless
 span. Full tests and focused device checks pass, not complete device acceptance.
 
-Svenska: Den lokala testversionen återanvänder textmetadata mellan biblioteksvyer
+Svenska: Versionen återanvänder textmetadata mellan biblioteksvyer
 och undviker onödigt omslagsarbete vid layoutmätning. Första Manga-besök tog
 cirka 5–7 sekunder mot tidigare 15–17 på test-Bigmen. Redan laddad Manga blev
 inte snabbare och metadatauppdatering kan fortfarande ge en paus. OrbitUIs
 tysta uppdateringsarbete släpper nu vidare trycket som avbryter det. Kategorikort
 på en sida fungerar även med KOReaders enkla sidavstånds-widget. Detta är
-testat lokalt men inte publicerat eller ett godkännande av alla enhetsflöden.
+testat på Bigmen, men är inte ett godkännande av alla enhetsflöden.
 
-All Beta 24 Bookshelf 6.1/SimpleUI changes remain. No new upstream import,
-bootstrap/API-1 or installed-path change, settings migration, resource removal,
+All Beta 24 Bookshelf/SimpleUI behavior remains alongside the reviewed 6.1.1
+picker fix. No bootstrap/API-1 or installed-path change, settings migration, resource removal,
 external patch or BookOrbit/Hardcover synchronization change. Previous public
 releases/assets remain immutable. Update through the preview channel and
-restart KOReader. Still a prerelease; broader Bigme/Boox acceptance remains
-separate from this targeted metadata-refresh check.
+restart KOReader. Still a prerelease: the exact final merged package has not
+been tested on a physical device. Broader Bigme/Boox acceptance, app-edit
+persistence and metadata-refresh extraction/filter-result acceptance remain
+open. The user's new explicit publication request approves this beta with
+those limits; it is not a claim that all earlier device gates have passed.
+
+The separately published Undo-opening fix is **BookOrbit Extras 0.2.1** /
+the Ereader Patch Manager catalogue, not an embedded OrbitUI patch. Update
+that patch separately and restart KOReader. No server is deployed and no
+already committed reading history is restored by either update.
+Svenska: Ångra-fixen uppdateras separat via Ereader Patch Manager eller
+BookOrbit Extras 0.2.1. OrbitUI installerar ingen serverpatch. Befintlig
+läshistorik ändras inte. Slutpaketet och kvarstående app-/metadataflöden
+behöver fortfarande provas på enheten.
 
 ## OrbitUI 0.1.0-beta.24
 

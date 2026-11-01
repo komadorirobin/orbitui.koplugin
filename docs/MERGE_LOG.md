@@ -4,6 +4,41 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-01 — requested Bookshelf 6.1.1 merge and Beta 26 publication preparation
+
+User explicitly requests: publish the Undo fix first, merge upstream, then push
+and publish the next OrbitUI beta. The external fix is already public in the
+Ereader catalogue (`30ded4e`) and BookOrbit Extras 0.2.1 (`4c7e1b2`), with exact
+uploaded-byte checks. No BookOrbit server or earlier history is changed.
+
+OrbitUI starts clean at `480dc52b` on `release/upstream-beta25-20261101`.
+Bookshelf master advances from `7ff93b9d8fb11194701440bcafd366002745cb01` to
+**`c686f5a36af134e778e8e1172be75ead76b08168`**, release **6.1.1**. The complete
+two-commit/five-file diff is reviewed: one self-sizing editor-picker height fix,
+its three test updates and the component version. Unsquashed subtree merge
+**`f27d98fa`** has no conflicts. No SimpleUI commits are pending; retain
+`fdf83c7da73e6fa82c4ad02efa84a0dad3733541` and both original fork provenance pins.
+
+Affected contracts: C07/C10 picker layout, with C01–C11 otherwise retained.
+Native picker pages ask for their own card area, bounded by screen room below
+the editor top, instead of inheriting a short front page. Preserve OrbitUI's
+stateless pager cleanup guard, custom category-card presenter, fonts, profile/
+chip/menu ownership and bounded work. No runtime/module/path, resource,
+bootstrap/API, dependency, preference or data migration is needed. The extra
+host test executes actual native refresh at portrait/landscape/Bigme sizes.
+The runtime updater test's explicit component version becomes 6.1.1; no
+failure exclusion or compatibility check is weakened.
+
+VERSION becomes **0.1.0-beta.26**. Beta 25 was local only; 26 permits the
+installed local test build to upgrade without replacing same-version bytes.
+This includes all prior local Android-app customization, metadata-safety,
+measured first-profile library optimizations, quiet-input forwarding and
+single-page category-card fixes. Existing public releases remain immutable.
+The user now explicitly authorizes publication despite the recorded remaining
+device checks; no claim of complete metadata/app-edit acceptance is made.
+ADB currently lists no device. Final tests, exact sealed digest, audits,
+draft/public checks and CI results will be recorded after running them.
+
 ## 2026-11-01 — measured Bigme library opening and menu pass (local)
 
 Final tested candidate is **`6271a6f296b2b62368f2944d3b1d7699d3efdaf1`**.

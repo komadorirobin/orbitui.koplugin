@@ -73,7 +73,7 @@ BookOrbit synchronization, MyAnimeList and Patch Manager remain separate
 plugins where used. OrbitUI does not replace them, download your whole server
 library or introduce a new synchronization engine.
 
-### Android apps (Beta 25 candidate, not published yet)
+### Android apps (Beta 26)
 
 Long-press the **Android apps** module (previously **App Launcher**) and open
 **Apps > Add app…** to choose a launcher app installed on the device. Tap a
@@ -102,7 +102,7 @@ Befintliga aktiva moduler behåller sina val; nya börjar tomma. Tryck på
 lista förblir tom efter omstart. Vanliga SimpleUI-inställningar för långtryck
 gäller. **Lägg till med paketnamn…** finns om en app saknas i Androids lista.
 Målet för Inställningar-ikonen behålls även när genvägen tas bort och läggs till
-igen. Funktionen är lokal testkod och finns ännu inte i en publicerad beta.
+igen. Funktionen ingår i Beta 26.
 
 ### Optional BookOrbit features
 
@@ -164,7 +164,7 @@ by the code license. See [add-on instructions](docs/ADDONS.md).
 ## Installation
 
 **Requirements:** KOReader **v2025.08 or newer**; v2026.03 or newer is recommended
-by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 25 is a
+by Bookshelf. Keep KOReader's **Cover browser** plugin enabled. Beta 26 is a
 prerelease, not a promise of compatibility with every device or user patch.
 
 1. **Back up first.** Keep a copy of your KOReader settings, user patches,
@@ -174,7 +174,7 @@ prerelease, not a promise of compatibility with every device or user patch.
    manager and restart KOReader.** Disable both if you have both. Do not delete
    their settings or plugin folders.
 3. Download **`orbitui.koplugin.zip`** from the
-   [Beta 25 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.25).
+   [Beta 26 release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.26).
    Do **not** use **Code > Download ZIP** or GitHub's **Source code** archives.
 4. Fully exit KOReader. Extract the ZIP and copy its **`orbitui.koplugin`**
    folder into your KOReader **`plugins/`** directory.
@@ -214,7 +214,7 @@ OrbitUI. Their local catalogs may need refreshing.
 after the backup and predecessor-disable steps above, find
 `komadorirobin/orbitui.koplugin`. In its download options, choose
 **Other releases...**, uncheck **Filter pre-releases**, select
-**v0.1.0-beta.25**, then select **`orbitui.koplugin.zip`**. Restart KOReader
+**v0.1.0-beta.26**, then select **`orbitui.koplugin.zip`**. Restart KOReader
 after installation. Preview builds are not returned by GitHub's "latest stable release"
 endpoint, so the default latest-release lookup may report that none exists.
 Do not choose **Direct download from repo**, **Source code**, the checksum
@@ -223,7 +223,7 @@ file, or the add-on-only **ornaments-1** release.
 **[Storefront by ultimatejimmy](https://github.com/ultimatejimmy/storefront.koplugin):**
 use **26.10.20 or newer**, which includes the
 [embedded-plugin detection fix](https://github.com/ultimatejimmy/storefront.koplugin/releases/tag/26.10.20).
-Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.25** and
+Find `komadorirobin/orbitui.koplugin` and choose **v0.1.0-beta.26** and
 **`orbitui.koplugin.zip`** from its versions/releases options if the cached
 catalog still shows an older beta. Disable the predecessor plugins first as
 described above. Older affected installers (including **26.10.17-beta2**) can
@@ -272,15 +272,27 @@ to undo a UI change.
 
 ## Beta status and feedback
 
-**0.1.0-beta.25** fixes the Android crash on long-press > **Refresh metadata**.
+**0.1.0-beta.26** publishes Bookshelf **6.1.1**, configurable **Android apps**,
+and the measured first-Manga-opening optimizations. On the test Bigme, first
+Manga visits improved from a 15.76-second median to 6.18 seconds; warm Manga
+did not improve and metadata refresh can still pause. Picker cards now use
+their own height inside the shelf editor. Quiet update work forwards the tap
+that cancels it, and single-page settings retain category cards.
+
+It also fixes the Android crash on long-press > **Refresh metadata**.
 The safety check now uses the existing preference store instead of the settings
 editor. Android safe mode and your settings remain unchanged; no cache reset or
 full reindex is needed for this fix. All Beta 24 changes below remain. See
-[Beta 25 notes](docs/OTA.md#orbitui-010-beta25).
+[Beta 26 notes](docs/OTA.md#orbitui-010-beta26).
 App Launcher additionally offers an optional device-local **Settings shortcut >
 Developer options** target; normal Android Settings stays the default.
 
-**Svenska:** Beta 25 rättar kraschen vid långtryck > **Uppdatera metadata** på
+**Svenska:** Beta 26 innehåller Bookshelf **6.1.1**, valbara **Android-appar**
+och optimerad första öppning av Manga. På test-Bigmen sjönk medianen från
+15,76 till 6,18 sekunder; redan laddad Manga blev inte snabbare. Valkort får
+rätt höjd i hyllredigeraren, tyst uppdateringsarbete släpper vidare avbrytande
+tryck och inställningarnas kategorikort fungerar även på en sida.
+Beta 26 rättar också kraschen vid långtryck > **Uppdatera metadata** på
 Android. Säkerhetsläget och dina inställningar behålls. Du behöver inte radera
 omslagscachen eller indexera om för att rätta den här kraschen. Uppdatera via
 förhandsversionskanalen och starta om KOReader. Fortsatt beta.

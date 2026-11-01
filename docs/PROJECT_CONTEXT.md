@@ -22,6 +22,25 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- User explicitly requests publication of the Undo-opening fix, then an upstream
+  merge and the next OrbitUI beta. Ereader `30ded4e` and BookOrbit Extras
+  `4c7e1b2` are pushed; Extras **0.2.1** is public, with exact patch/checksum
+  verification. It preserves future same-cover reloads without reopening done
+  rows or repairing the earlier accidental reading. No server/device change.
+  OrbitUI preparation starts clean at `480dc52b` on
+  `release/upstream-beta25-20261101`. Reviewed Bookshelf **6.1.1**
+  `c686f5a36af134e778e8e1172be75ead76b08168` imports two commits in unsquashed
+  subtree merge `f27d98fa`, without conflicts; SimpleUI stays `fdf83c7d`.
+  The self-sized picker height fix preserves the stateless-pager host guard.
+  VERSION becomes **0.1.0-beta.26**, not an in-place replacement of the local
+  25 or any published release. Include the previously unpublished Android apps,
+  metadata safety and measured library/input/category-card fixes. Full/sealed/
+  native/OTA/source/history/secret gates must pass before publication. Current
+  ADB lists no device; new final-package/picker/app-edit and broader metadata
+  acceptance stay explicitly open. The new publication request supersedes the
+  old publication pause, not the evidence limits. Final release facts follow
+  in MERGE_LOG/TESTING; do not rebuild already sealed bytes for verification docs.
+
 - Overnight pass has a tested local candidate at `6271a6f2`, sealed ZIP
   `443fa966cde4df35ce86126b5dd23d9c3c1e04efe68244b8d080eab7af267c4d`.
   Full Lua/LuaJIT, catalogs, sealed/native/OTA/source gates pass. All 2,000

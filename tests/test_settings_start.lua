@@ -154,6 +154,29 @@ H.test("single-page stateless pagination and repeated refresh need no fake span 
     H.eq(m.name, "orbitui_settings_start")
     m:onClose(); assert(m.closed); H.eq(writes, 0)
 end)
+H.test("self-sized editor pickers retain their own card height without exceeding the screen", function()
+    for _, size in ipairs({ {600,800}, {800,600}, {1264,1680}, {1680,1264} }) do
+        width, height, scale = size[1], size[2], 1
+        local m = show()
+        m._over_rect = {x = 10, y = 30, w = m.modal_w, h = 170}
+        local natural, available, result = 220, nil, nil
+        local natural_queries = 0
+        m.config.area_height = function(cw, room)
+            H.eq(cw, m.content_w)
+            if room == nil then natural_queries = natural_queries + 1
+            else available = room end
+            result = math.max(20, math.min(natural, room or natural))
+            return result
+        end
+        Base.refresh(m)
+        H.eq(natural_queries, 1, "asks the picker, not the short editor front page")
+        assert(available >= natural, "cards were squashed to the front page")
+        H.eq(result, natural)
+        assert(m.frame:getSize().h + m._over_rect.y <= height, "picker extends below the display")
+        m:onClose()
+    end
+    width, height, scale = 600, 800, 1
+end)
 H.test("tap closes cards before opening the same native category; Back reconstructs the card start", function()
     local m = show()
     m.config.on_cell_tap(m.config.item_at(1))

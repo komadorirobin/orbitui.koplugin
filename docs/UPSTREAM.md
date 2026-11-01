@@ -163,6 +163,20 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+November 1: reviewed Bookshelf master **6.1.1** at
+`c686f5a36af134e778e8e1172be75ead76b08168` adds two commits after `7ff93b9d`.
+Self-sizing pickers embedded in an editor request their own height, bounded by
+the remaining display room, rather than inheriting a short front page's height.
+Preserve the local stateless-pagination cleanup guard, category-card presenter,
+native editor navigation and profile/settings ownership (C07/C10). A host test
+executes full native modal refresh in portrait/landscape/Bigme-sized geometry.
+No runtime path, new module, asset, migration, dependency or source embedding
+change. SimpleUI remains `fdf83c7d`, with no pending commits. The user explicitly
+requests the merge, audited pushes and next beta; release 26 supersedes the
+unpublished local Beta 25 without replacing any public archive. Physical final
+picker/app-edit/metadata acceptance remains open; do not reuse prior device
+measurements as a benchmark of the exact newly merged archive.
+
 October 31 Bookshelf 6.1 merge-only: exact reviewed master
 `7ff93b9d8fb11194701440bcafd366002745cb01` adds 255 commits after `ee84a8fe`;
 SimpleUI main `fdf83c7da73e6fa82c4ad02efa84a0dad3733541` adds two after
