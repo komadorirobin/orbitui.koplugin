@@ -167,6 +167,13 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+Silent update checks/obsolete-code maintenance must yield to the first user
+input, not swallow it. Use native Trapper's nil/invisible-resend mode, preserving
+cancel/reap/FD ownership and forwarding exactly once. Visible progress dialogs
+retain their modal cancellation behavior; no bootstrap or cleanup safety guard
+is bypassed. `test_update_input` optionally loads full native Trapper/TrapWidget
+to exercise this boundary on minimum/current KOReader with both interpreters.
+
 November 1 measured Bigme optimization: the optional light-record producer seam
 may share immutable text derivations across scopes backed by the same raw BIM
 batch. Each scope still checks its own prefix and owns a deep copy, including

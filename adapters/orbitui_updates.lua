@@ -34,12 +34,17 @@ end
 function M.runTask(operation, label, callback)
     local Trapper, UI = require("ui/trapper"), require("ui/uimanager")
     local function run()
+        -- Native Trapper uses false to DROP the dismissing input. A quiet
+        -- maintenance task must instead yield to and resend that first tap.
+        -- nil is its invisible, resend-enabled mode; visible tasks stay modal.
+        local trap = label
+        if trap == false then trap = nil end
         local completed, result = Trapper:dismissableRunInSubprocess(function()
             local ok, value = pcall(operation)
             if ok then return { ok = true, value = value } end
             local HTTP = require("core/orbitui_http")
             return { error = HTTP.message(value), http_error = HTTP.errorInfo(value) }
-        end, label, false)
+        end, trap, false)
         UI:scheduleIn(0.1, function()
             callback(completed and result or { error = "Operation cancelled or interrupted" })
         end)

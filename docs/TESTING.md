@@ -22,6 +22,16 @@ reading status to manufacture a cold result. All raw logs/screenshots remain
 ignored under `test-results/device-performance-20261101/`. No release is
 authorized. Final suite/package hashes and physical results follow after tests.
 
+First performance candidate `7a19786c` passes both complete suites, 43 catalogs,
+sealed/native and exact unchanged 2,000-path checks. Physical Manga first-open
+is 6.2 seconds versus baseline 15–17; returning to the old runtime yields 14.9
+seconds. Warm Manga does not improve; a metadata refresh causes a separately
+reported ~5.9-second rebuild. Preserve c33b93ab ZIP/log evidence before staging
+the next candidate. Native v2025.08/current full Trapper + TrapWidget tests
+cover quiet cancellation forwarding Tap/Hold/Swipe/PanRelease exactly once,
+worker/FD cleanup and unchanged visible-download modal cancellation, on both
+interpreters. The new input test fails with the previous false-label call.
+
 ### Configurable Android apps (unpublished Beta 25 candidate)
 
 `test_android_app_launcher` loads the full actual module, not an extracted

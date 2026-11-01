@@ -169,7 +169,7 @@ local function startupFixture(mode)
         isWrapped = function() return false end,
         wrap = function(_, fn) fn() end,
         dismissableRunInSubprocess = function(_, fn, label)
-            H.eq(label, false)
+            H.eq(label, nil, "silent startup work must resend the dismissing input")
             if mode == "cancelled" then return false end
             return true, fn()
         end,

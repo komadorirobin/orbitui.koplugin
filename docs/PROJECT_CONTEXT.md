@@ -39,8 +39,15 @@ and correct this file in the same change.
   when the native protected pin catches a fetch error. Three physically observed
   missing menu translations gain SV/EN support; saved personal action labels
   are not rewritten. No new runtime paths/bootstrap/pins/assets, preference,
-  reading-data, safe-mode or sync-owner change. Full/sealed/device verification
-  is in progress; do not claim a measured speedup before after-tests. Evidence:
+  reading-data, safe-mode or sync-owner change. First sealed candidate `7a19786c`
+  passes full/sealed/source gates and is physically tested: first Manga is
+  6.2 seconds versus 15–17 before; the old-runtime control returns to 14.9.
+  Warm Manga is not faster; metadata refresh still triggers a fresh ~5.9-second
+  derivation. Silent startup maintenance also swallowed its canceling tap:
+  use native Trapper nil/invisible-resend mode, keeping visible cancellation
+  modal and cleanup safety unchanged. New native minimum/current input tests
+  pass both interpreters; combined candidate/device verification continues.
+  Evidence:
   `test-results/device-performance-20261101/`. The temporary instrumentation
   patch is already moved out of `patches/` before uninstrumented comparisons.
 

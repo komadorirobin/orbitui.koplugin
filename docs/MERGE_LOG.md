@@ -6,6 +6,25 @@ does not imply a public release or successful device testing.
 
 ## 2026-11-01 — measured Bigme library opening and menu pass (local)
 
+The first sealed performance candidate `7a19786c` (ZIP
+`c33b93ab2a86790dc320e03a5a3a848331153abbe8296db8f6cb552a4296ce88`)
+passes complete Lua/LuaJIT, all catalogs, sealed/native and exact 2,000-path
+source checks. It is physically accepted by bootstrap. Uninstrumented first
+Manga opens fall from 15–17 seconds to 6.2 seconds; an A/B/A return to the old
+accepted runtime takes 14.9 seconds again. Covers, count and geometry match.
+Warm Manga is not measurably improved, and a later metadata-refresh invalidation
+still needs a fresh ~5.9-second derivation. Retain those limits in reporting.
+
+The control also exposes a separate first-input bug: automatic silent obsolete
+runtime cleanup passes `false` to native Trapper, whose invisible TrapWidget
+drops the tap used to cancel its worker. Pass `nil` for quiet work instead:
+native invisible-resend mode cancels/reaps the same worker, closes its FD and
+forwards the original input once. Visible download cancellation stays modal.
+No cleanup validation/deletion policy, bootstrap, IPC or setting changes. The
+new regression fails with the old call; full unmodified v2025.08/current native
+Trapper and TrapWidget pass Tap/Hold/Swipe/PanRelease and visible-cancel checks
+under Lua and LuaJIT. Actual first-input/device verification follows below.
+
 User explicitly starts the proposed overnight ADB performance pass and provides
 the new device connection. No upstream merge, push, tag or release is requested.
 Start clean at `76876d44` on `performance/bigme-library-20261101`. Existing
