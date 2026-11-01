@@ -22,6 +22,28 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- **Offline index/progressive results are installed as a LOCAL test candidate.**
+  Final source `711d507e`, exact ZIP
+  `6df633e02b10dbad03341e3fd71de94cdac6fb05916b1c5b72a5c7ddaa7c50d5`.
+  All 2,000 paths verify before/after; bootstrap pending=0, known-good step-1/2
+  `2ac22d61` remains rollback, NOT either rejected intermediate. Public Beta 26
+  bytes/version/pins/assets/installed paths stay unchanged; no push/release.
+  Actual native Stop touch works during the real 3,342-EPUB all-profile scan
+  (including the synthetic origin): cancels at 1,706, checked partial match stays;
+  real Refresh revalidates/advances, and real partial selection retires work and
+  invokes a guard-only opener without opening any document. Normal Home/Quit
+  passes. Whole-library completion/actual reading/rotation/panel/Boox/1.0 remain
+  open; cold Manga metadata stays slow. 1,734 durable index rows, quick_check OK.
+  Visible progress reserves 50ms for input; nonpainting cache batches keep 1ms.
+  Final full LuaJIT and both sealed/native root gates (25 tag/five real SQLite
+  cases), preceding full Lua and 43 catalogs pass; TESTING states exact limits.
+  Original reader/sync/lastdir restored and pushed hashes match; retain only
+  normal patch-manager timestamp/read-only Hardcover goal-cache refreshes.
+  History/50-row KOSync queue/BookOrbit state are byte-identical. Diagnostics are
+  inactive, fixtures outside roots, KOReader normally CLOSED with final local
+  slot installed. Preserve exact tested bytes across verification-doc descendants.
+  Evidence: `test-results/tag-index-20261101/`.
+
 - **Offline aggregate index / progressive results follow-up (local).** User
   says Gå vidare after the installed step-1/2 candidate; no push/release/import
   authorization. Work starts at `56924edc`, same branch. Host integration/search/

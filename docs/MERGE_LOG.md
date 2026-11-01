@@ -45,6 +45,24 @@ sync-paused test process, retaining derived data. Reserve 50ms ONLY after visibl
 updates, leaving no-paint cached batches at 1ms. Strengthen native scheduler
 regression with 5ms fixed bookkeeping; it rejects the second source as well.
 
+Final source **`711d507e`**, sealed local ZIP
+`6df633e02b10dbad03341e3fd71de94cdac6fb05916b1c5b72a5c7ddaa7c50d5`,
+passes fresh full LuaJIT and both final sealed/native root gates (25 tag/five
+real SQLite cases); earlier full Lua and 43 catalogs pass. TESTING distinguishes
+final sealed Lua from a fresh complete post-window script. Same 2,000 paths
+verify before/after; pending=0, known-good `2ac22d61` rollback, public bytes/pins/
+bootstrap/assets/version unchanged. Real all-profile query includes 3,342 EPUBs
+with the synthetic origin. Actual touch Stop cancels at 1,706 before timeout,
+retaining an explicitly partial match. Refresh continues; actual partial tap
+retires work and invokes a guard opener WITHOUT reading a document. Normal Home/
+Quit passes. Independent index quick_check OK, 1,734 saved rows retained.
+Whole-library completion/slow cold Manga/actual reading/panel/rotation/Boox/1.0
+stay open. Restore original sync/navigation choices and verify hashes; preserve
+only normal patch-check and read-only Hardcover goal-cache refreshes. Existing
+history/50-row KOSync queue/BookOrbit state are byte-identical, diagnostics are
+inactive, KOReader closed. No push/publication. Verification descendants must
+preserve this exact tested archive; do not silently rebuild it.
+
 ## 2026-11-01 — offline tag-search cache and scheduling optimization (local)
 
 User approves the staged proposal, beginning with cache reuse and UI-turn

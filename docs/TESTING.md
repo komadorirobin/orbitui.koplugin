@@ -99,6 +99,59 @@ for ordinary nonpainting cached batches. Strengthen actual native-loop regressio
 with 5ms bookkeeping on every repaint call, even when its dirty list is empty;
 this rejects the second source too. New final-package touch proof follows.
 
+### Final local candidate and bounded device acceptance
+
+Final source **`711d507e`**, exact sealed ZIP
+**`6df633e02b10dbad03341e3fd71de94cdac6fb05916b1c5b72a5c7ddaa7c50d5`**
+(`orbitui.koplugin.input-window.zip` in the private evidence folder). This
+supersedes the two rejected local candidates, NOT immutable public Beta 26.
+A fresh final full LuaJIT gate passes: 133 Python/four existing skips, 99 root
+files, 533 Bookshelf/zero failures/three SQLite exclusions, 13 SimpleUI, syntax
+1,150/map 403. Both final sealed-root suites execute 25 tag cases including the
+actual native scheduler methods; five additional real SQLite cases run with
+LuaJIT. Final plain Lua proof combines that final sealed/native root pass with
+the preceding unchanged-component/full gate; it is not a separately repeated
+complete post-window script. All 43 catalogs pass; input-window changes add no
+new UI text. The strengthened regression rejects the second source too.
+
+Archive/module/source/held-art inventory checks pass. Same 2,000 installed paths,
+bootstrap, pins, assets, catalogs and public ZIP. One copied-slot inventory probe
+ran before copying finished and was discarded; deltas were reapplied and all
+paths verified before activation. No incomplete slot was booted. Final staging
+uses a single pushed ZIP and Android unzip into an isolated staging directory,
+then moves/verifies the exact slot. Before/after on-device hashes pass;
+pending=0 and **known-good `2ac22d61`** is rollback, not either rejected slot.
+All previous slots are retained.
+
+The actual final query uses the real all-profile repository, no fake catalog:
+3,342 total EPUBs INCLUDING the isolated synthetic origin. Diagnostic observes
+scalar counts/timing/input only, with a non-reading guard opener. First checked
+match is delivered at 32 files/106.1ms (callback time, NOT tap-to-paint), the
+cached prefix is reused, and uncached Manga files continue. Actual injected Stop
+tap is observed as native input and cancels at 1,706 files/27.457s, BEFORE the
+harness's 60s timeout; checked match stays with explicit incomplete status.
+Actual Refresh continues past that prefix. Actual tap on the partial synthetic
+match retires work, invokes only the guard callback and returns Home; NO document
+opens and scanning stops. Normal native power-menu Quit succeeds. This proves
+actual touch/progressive/Stop/Resume/guarded-selection, not end-to-end reading,
+whole-library completion, English device UI, rotation, panel or 1.0 acceptance.
+The input window adds visible-update latency; no-paint worker measurements are
+not final UI latency. Uncached Manga still reads slowly; no daemon is left to
+finish the first scan. Independent index copy: quick_check OK, 1,734 saved rows,
+including durable progress across the earlier forced stops.
+
+After normal shutdown, restore both automatic sync flags and original lastdir
+with targeted edits; both pushed hashes match. Retain only normal Patch Manager
+check timestamp and Home Hardcover goal-cache JSON/time. The inspected Hardcover
+operation is a read-only `me { goals ... }` query, not a status/progress writer;
+do not claim zero network traffic. All other reader/KOSync fields match original
+values. Original history, all 50 KOSync queue rows and BookOrbit sync-state file
+are byte-identical across the entire experiment. No document opens. Diagnostics
+are outside patches, fixtures outside library roots, KOReader normally CLOSED
+with the final local slot installed. No preference/cache/reading reset, server
+deployment, push/tag/release or public-byte replacement. Verification-doc
+descendants must not rebuild or replace this exact tested archive.
+
 ## November 1 offline tag-search optimization (local step 1/2)
 
 User approves the staged optimization proposal: begin with cache-aware normal
