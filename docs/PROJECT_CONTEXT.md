@@ -22,6 +22,19 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- **Local, unreleased status-import reporting follow-up.** User approves fixing
+  the misleading "0 updated, 469 protected or conflicting" summary. Existing
+  import/write rules, OFF default, batches/throttle/owners remain unchanged.
+  New SV/EN details separate unchanged server/local status, missing local files/
+  data, protections, newer-local conflicts and not-imported statuses; uncertain
+  dates are labelled protection. Native read-only viewer; no extra metadata I/O
+  for reports or canonical-unchanged entries. Counts only persist; at most 50
+  sanitized filename/reason samples stay in memory. Old reports ask for a fresh
+  check instead of inventing reasons. No diagnosis of the user's particular 469
+  entries without device evidence. Beta 29/version/pins/public bytes remain
+  unchanged; no push/publication/device/server operation in this step. See
+  TESTING/MERGE_LOG and `test-results/status-report-20261101/` for verification.
+
 - **Beta 29 is public**, source/tag `98be962a` / `v0.1.0-beta.29`, published
   **2026-11-01 21:59:45 UTC** after the explicit user request and disclosed
   physical-device gaps. Main `48234e73` / tag CI **41354378033 / 41354377995**

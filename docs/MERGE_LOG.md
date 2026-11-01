@@ -4,6 +4,26 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-01 — local reading-status result reporting follow-up
+
+After Beta 29, user reports "0 updated, 469 protected or conflicting" and
+approves clearer categories/details. Start at clean `78e67985`, branch
+`fix/status-import-report-20261101`. Reporting changes only: keep S.decide's
+existing status decisions, canonical fast path and every parent publication
+guard. Separate newer-local conflict from same-day/missing/invalid-date
+protection, missing file/sidecar, uncertain identity and mid-check changes.
+Local-equal and canonical-server-unchanged are separate; neutral/absent server
+rows are not conflicts. No new API, remote write, EPUB/catalog work, sidecar
+repair or settings migration. Counts persist under the existing account-scoped
+key; bounded basename/reason samples exist only in the current session.
+Read-only native viewer has SV/EN labels; legacy totals request a new check.
+
+No version/pin/bootstrap/artwork/installed-path changes or upstream merge.
+No push, release, server deployment or device installation is requested here.
+Beta 29 public assets remain immutable. Automated/package results and physical
+acceptance gaps are recorded in TESTING and ignored local evidence under
+`test-results/status-report-20261101/`.
+
 ## 2026-11-01 — explicit Beta 29 publication request
 
 After the Bookshelf 6.2.0 merge/push and explicit disclosure of outstanding

@@ -1,5 +1,30 @@
 # Verification and device acceptance
 
+## November 1 status-import reporting follow-up (local, unreleased)
+
+User approves correcting the ambiguous skipped summary after Beta 29. No
+import/write rule is loosened. Reports separate server-unchanged (no sidecar
+read), locally equal, missing files/data, protected/uncertain, newer-local
+conflicts and neutral/absent server statuses. Same-day/missing/invalid local
+dates still skip safely. Legacy results never invent a new category split.
+Counts-only persistence and up to 50 length-bounded basename/reason samples in
+session memory; the viewer is native and read-only, with SV/EN labels. No new
+installed path, bootstrap change, remote write, device/server action or release.
+
+`test_bookorbit_status_import` extends the original decision/ownership tests
+with 469-missing-sidecar and 469-equal-status reproductions, mixed results,
+apply-time guard reasons, uncertain dates, partial errors, legacy/restart/account
+scope, malformed counts, retained-table store privacy, sanitized UTF-8 sample
+bounds and read-only bilingual viewer delegation. Worker return values are
+copied to avoid assuming parent/child shared tables. Exact evidence and final
+full/sealed/package checks: `test-results/status-report-20261101/`.
+
+Physical acceptance remains open: on Bigme/Boox run a manual status check, open
+Integrations > BookOrbit > Import reading status > Status check details, verify
+scroll/Close/Back, SV/EN and the actual reasons for this device's skipped files.
+Headless reproductions do not establish the cause of the user's 469 skips. New
+reports apply only to a newly installed build; public Beta 29 is unchanged.
+
 ## November 1 Beta 29 publication gates
 
 The user explicitly requests a new beta after disclosure that the freshly

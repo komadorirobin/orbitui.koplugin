@@ -352,6 +352,16 @@ status fields to avoid echo as a fresh native completion; no POST/PUT/PATCH or
 Hardcover call is introduced. Native sync keeps its own choices and ownership.
 Unchanged native canonical statuses require no sidecar I/O and never reverse
 unsynced local edits. Visual caches retire without forced Manga/Home rebuilds.
+The November 1 reporting follow-up does not loosen any decision/write guard.
+Counts distinguish local-equal and canonical-server-unchanged (without reading
+local data), missing files/data, protections, newer-local conflicts and neutral/
+absent server statuses. Same-day/missing/invalid dates remain protected, not
+presented as verified conflicts. Legacy reports request a new check for reasons;
+they never invent a split for old skipped totals. Fork workers return bounded
+reports; the parent merges counts and at most 50 filename/reason samples. Only
+account-scoped counts persist; filenames are session-only, basename-only, length
+bounded, and never uploaded. Details use native TextViewer without network,
+sidecar/EPUB reads or changes to books/settings/sync ownership.
 Tests: `test_bookorbit_status_import`, optional pinned native Sidecar payload
 builder, exact-base server DTO/controller/scoped SQL and combined-extras suites.
 

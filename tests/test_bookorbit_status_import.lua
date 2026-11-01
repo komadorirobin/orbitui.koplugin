@@ -92,7 +92,7 @@ package.loaded["adapters/orbitui_updates"] = { runTask = function(task, label, c
         if fail == "cancel" then callback{ error = "interrupted" }; return end
         local ok, value = pcall(task)
         if after_read and #calls > 0 then local fn = after_read; after_read = nil; fn() end
-        callback{ ok = ok, value = value }
+        callback{ ok = ok, value = copy(value) } -- Worker return values do not share parent tables.
     end)
 end }
 local Integration = require("adapters/orbitui_integrations")
@@ -110,6 +110,7 @@ local function path(i) return "/books/" .. i .. ".epub" end
 local function digest(i) return string.format("%032x", i) end
 local function reset(n)
     if owner then S.stopped(owner) end
+    S.last = nil
     saved, files, books, remote, settings, queue, calls, changed = {}, {}, {}, {}, {}, {}, {}, {}
     writes, opens, work_calls, now, generation, after_read, shadow = 0, 0, 0, base_time, 1, nil, {}
     online, top, native_busy, during, fail, client_key = true, { name = "homescreen" }, false, nil, nil, "not-a-real-token"
@@ -130,7 +131,7 @@ local function request(opts) local ok, err = S.request(opts or {}); assert(ok, t
 H.test("disabled by default: startup, settings and events do no link, sidecar or network work", function()
     reset(3000)
     for _, event in ipairs{ "onResume", "onCloseDocument", "onReaderReady" } do S.event(event) end
-    local rows = S.items(); H.eq(#rows, 5); H.eq(#queue, 0); H.eq(work_calls, 0); H.eq(opens, 0); H.eq(#calls, 0)
+    local rows = S.items(); H.eq(#rows, 6); H.eq(#queue, 0); H.eq(work_calls, 0); H.eq(opens, 0); H.eq(#calls, 0)
     H.eq(rows[1].checked_func(), false)
 end)
 H.test("enabled foreground start only schedules; a 3000-match poll costs 15 bounded GETs off the paint path", function()
@@ -246,6 +247,147 @@ H.test("unchanged server status does not reverse an intentional unsynced local e
     reset(); enable(); remote[1].status = "reading"; settings[path(1)].summary.status = "complete"
     request(); H.eq(writes, 0); H.eq(opens, 0); H.eq(settings[path(1)].summary.status, "complete")
 end)
+H.test("469 absent sidecars are missing data, never 469 conflicts, with bounded session-only samples", function()
+    reset(469); enable()
+    for file in pairs(settings) do settings[file] = nil end
+    request()
+    H.eq(S.last.changed, 0); H.eq(S.last.skipped, 469); H.eq(S.last.counts.missing_data, 469)
+    H.eq(S.last.counts.newer_local, 0); H.eq(S.last.counts.uncertain_date, 0)
+    H.eq(#S.last.details, 50); H.eq(opens, 0); H.eq(writes, 0); H.eq(#calls, 3)
+    local persisted = saved.simpleui_orbitui_bookorbit_status_result
+    H.eq(persisted.details, nil); H.eq(persisted.counts.missing_data, 469)
+    for _, sample in ipairs(S.last.details) do assert(not sample.name:find("/", 1, true)); H.eq(sample.reason, "missing_data") end
+    assert(S.summary(S.last):find("469 skipped", 1, true))
+    assert(S.details(S.last):find("Conflicts: 0", 1, true))
+    assert(S.details(S.last):find("Showing 50 of 469", 1, true))
+    assert(S.details(persisted):find("Only counts were saved", 1, true))
+end)
+H.test("469 existing equal statuses and the canonical fast path are distinguished without extra sidecar reads", function()
+    reset(469); enable()
+    for _, data in pairs(settings) do data.summary.status = "complete" end
+    request(); H.eq(S.last.counts.local_unchanged, 469); H.eq(S.last.skipped, 0)
+    H.eq(S.last.counts.newer_local, 0); H.eq(opens, 469); H.eq(writes, 0)
+    H.eq(#S.last.details, 0); assert(S.summary(S.last):find("469 unchanged", 1, true))
+    reset(469); enable()
+    for _, row in pairs(remote) do row.status = "reading" end
+    for _, data in pairs(settings) do data.summary.status = "complete" end
+    request(); H.eq(S.last.counts.server_unchanged, 469); H.eq(S.last.counts.local_unchanged, 0)
+    H.eq(opens, 0); H.eq(writes, 0); H.eq(S.last.skipped, 0)
+    assert(S.details(S.last):find("local data not read", 1, true))
+end)
+H.test("mixed reasons, neutral statuses and absent server rows count once without changing import rules", function()
+    reset(9); enable()
+    files[path(1)] = nil
+    settings[path(2)] = nil
+    settings[path(3)].partial_md5_checksum = "wrong"
+    settings[path(4)].summary.modified = "2026-11-01"
+    remote[5].status = "unread"; remote[6].status = "want_to_read"; remote[7] = nil
+    settings[path(8)].summary.status = "complete"
+    request(); H.eq(writes, 1); H.eq(S.last.changed, 1); H.eq(S.last.skipped, 4)
+    local counts = S.last.counts
+    H.eq(counts.updated, 1); H.eq(counts.local_unchanged, 1); H.eq(counts.missing_file, 1)
+    H.eq(counts.missing_data, 1); H.eq(counts.identity_mismatch, 1); H.eq(counts.newer_local, 1)
+    H.eq(counts.neutral, 2); H.eq(counts.server_missing, 1); H.eq(#S.last.details, 4)
+    assert(S.details(S.last):find("Not imported: 3", 1, true))
+end)
+H.test("apply-time guards retain their separate reasons and no file writes", function()
+    local changes = {
+        { "active_reader", function() package.loaded["apps/reader/readerui"].instance = { document = { file = path(1) } } end },
+        { "pending_undo", function() G_reader_settings.readSetting = function() return { account = { opening = { file = path(1), phase = "undo_pending" } } } end end },
+        { "pending_undo", function() G_reader_settings.readSetting = function() return "unsafe" end end },
+        { "local_changed", function() settings[path(1)].last_page = 40 end },
+        { "local_changed", function() settings[path(1)].summary.status = "abandoned" end },
+        { "file_changed", function() files[path(1)].mtime = 70 end },
+        { "missing_file", function() files[path(1)] = nil end },
+        { "missing_data", function() settings[path(1)] = nil end },
+    }
+    for _, row in ipairs(changes) do
+        reset(); enable(); after_read = row[2]; request()
+        H.eq(writes, 0); H.eq(S.last.skipped, 1); H.eq(S.last.counts[row[1]], 1)
+        H.eq(#S.last.details, 1); H.eq(S.last.details[1].reason, row[1])
+    end
+end)
+H.test("unsafe sidecars and uncertain dates are reported without repair or relaxed conflict protection", function()
+    reset(); enable(); shadow[path(1) .. ".metadata.lua"] = { mode = "link", size = 10 }
+    request(); H.eq(opens, 0); H.eq(writes, 0); H.eq(S.last.counts.unsafe_sidecar, 1)
+    for _, date in ipairs{ "2026-11-01", "2026-10-31", "bad", false } do
+        reset(); enable(); settings[path(1)].summary.modified = date or nil; request()
+        local reason = date == "2026-11-01" and "newer_local" or "uncertain_date"
+        H.eq(S.last.counts[reason], 1); H.eq(writes, 0); H.eq(S.last.skipped, 1)
+    end
+end)
+H.test("partial checks retain precise completed-batch counts but never promote last success", function()
+    reset(201); enable(); fail = "second"; request()
+    H.eq(S.last.counts.updated, 200); H.eq(S.last.changed, 200); H.eq(S.last.error, "network")
+    H.eq(S.last.counts.server_missing, 0); H.eq(saved.simpleui_orbitui_bookorbit_status_result, nil)
+    assert(S.details(S.last):find("Incomplete check", 1, true)); assert(S.details(S.last):find("Updated: 200", 1, true))
+end)
+H.test("legacy results are honest, account scoped and survive restart without inventing conflict reasons", function()
+    reset(); enable(); request()
+    local result_key = "simpleui_orbitui_bookorbit_status_result"
+    local result = saved[result_key]
+    saved[result_key] = { account = result.account, at = now, changed = 0, skipped = 469 }; S.last = nil
+    local rows = S.items(); H.eq(rows[5].enabled_func(), true)
+    assert(rows[4].text:find("469 skipped", 1, true)); assert(not rows[4].text:find("conflict", 1, true))
+    assert(S.details(saved[result_key]):find("Run a new check", 1, true))
+    saved[result_key] = result
+    H.eq(S.items()[4].text, S.summary(result))
+    client_key = "different-account"; H.eq(S.items()[5].enabled_func(), false)
+end)
+H.test("retained-table settings stores never acquire session filenames and persisted samples are not displayed", function()
+    reset(); enable(); settings[path(1)] = nil
+    local save = store.saveSetting
+    store.saveSetting = function(_, key, value) saved[key] = value end
+    request(); store.saveSetting = save
+    local persisted = saved.simpleui_orbitui_bookorbit_status_result
+    H.eq(persisted.details, nil); H.eq(#S.last.details, 1)
+    persisted.details = { { name = "must-not-display.epub", reason = "missing_data" } }; S.last = nil
+    local shown
+    package.loaded["ui/widget/textviewer"] = { new = function(_, opts) return opts end }
+    UI.show = function(_, opts) shown = opts end
+    S.showDetails(); assert(not shown.text:find("must-not-display", 1, true))
+    assert(shown.text:find("Only counts were saved", 1, true))
+end)
+H.test("report rendering rejects malformed counters and delegates read-only display to the native viewer", function()
+    reset(); enable(); settings[path(1)] = nil; request()
+    local shown, shown_count = nil, 0
+    local Widget = H.widget()
+    function Widget:onClose() UI:close(self); return true end
+    package.loaded["ui/widget/textviewer"] = Widget
+    UI.show = function(_, widget) shown = widget; shown_count = shown_count + 1 end
+    UI.close = function(_, widget) H.eq(widget, shown); shown = nil end
+    local old_calls, old_opens, old_writes = #calls, opens, writes
+    S.items()[5].callback(); H.eq(shown_count, 1); H.eq(shown.title, "Status check details")
+    assert(shown.text:find("Local reading data not found", 1, true)); shown:onClose(); H.eq(shown, nil)
+    G_reader_settings.readSetting = function(_, key) if key == "language" then return "sv" end end
+    S.showDetails(); H.eq(shown.title, "Detaljer om statuskontrollen")
+    assert(shown.text:find("Konflikter: 0", 1, true)); shown:onClose()
+    G_reader_settings.readSetting = function() end
+    H.eq(#calls, old_calls); H.eq(opens, old_opens); H.eq(writes, old_writes)
+    local bad = copy(S.last); bad.counts.newer_local = 0 / 0
+    assert(S.details(bad):find("Run a new check", 1, true))
+    bad.counts.newer_local = 50001; assert(S.details(bad):find("Run a new check", 1, true))
+    local stale_callback = S.items()[5].callback; client_key = "new-account"; stale_callback(); H.eq(shown_count, 2)
+end)
+H.test("all report labels and reasons have Swedish and English text, with bounded UTF-8 filenames", function()
+    reset(); enable()
+    local file = "/private/library/" .. string.rep("å", 100) .. "\n.epub"
+    files[file], books[digest(1)].file = files[path(1)], file
+    request(); H.eq(#S.last.details, 1)
+    local name = S.last.details[1].name
+    assert(#name <= 163); assert(not name:find("\n", 1, true)); assert(not name:find("/", 1, true))
+    local i18n = require("core/orbitui_i18n")
+    H.eq(i18n("Status check details…", "sv"), "Detaljer om statuskontrollen…")
+    H.eq(i18n("Reading status: %d updated, %d unchanged, %d skipped.", "sv"), "Lässtatus: %d uppdaterade, %d utan ändring, %d överhoppade.")
+    for _, label in ipairs{
+        "Updated", "Unchanged", "Missing local files or reading data", "Protected", "Conflicts", "Not imported",
+        "Unchanged server status (local data not read)", "Already the same local status", "Local book file not found",
+        "Local reading data not found or unreadable", "Unsafe or competing reading-data files", "Local book identity could not be verified",
+        "Book open in the reader", "Pending Undo or uncertain opening state", "Book file changed during the check",
+        "Local reading data changed during the check", "Newer local status", "Uncertain or missing local status date",
+        "Unread / Want to read is not imported", "No status returned by the server",
+    } do assert(i18n(label, "sv") ~= label, label); H.eq(i18n(label, "en"), label) end
+end)
 if os.getenv("BOOKORBIT_STATUS_SOURCE") then
     H.test("the pinned native BookOrbit payload builder does not echo an imported completion", function()
         reset(); enable()
@@ -258,6 +400,29 @@ if os.getenv("BOOKORBIT_STATUS_SOURCE") then
             status = summary.status, status_modified = summary.modified, rating = summary.rating, review_note = summary.note,
         })
         H.eq(payload, nil)
+    end)
+end
+if os.getenv("ORBITUI_STATUS_BASELINE_FILE") then
+    H.test("status decisions and legacy reason returns match immutable Beta 29 across status/date combinations", function()
+        reset()
+        local baseline = assert(loadfile(os.getenv("ORBITUI_STATUS_BASELINE_FILE")))().statusImport
+        local date_cases = { false, "2026-10-29", "2026-10-31", "2026-11-01", "bad", "2026-02-30" }
+        local status_cases = { false, "new", "reading", "complete", "abandoned" }
+        for _, status in ipairs(status_cases) do
+            for _, date in ipairs(date_cases) do
+                for _, remote_status in ipairs{ "read", "skimmed", "reading", "rereading", "abandoned", "on_hold", "unread", "want_to_read", "bad" } do
+                    for _, stamp in ipairs{ "2026-10-31T12:00:00.000Z", "2026-10-31T00:00:30.000Z", "2026-11-02T12:00:00.000Z", "bad" } do
+                        local summary = { status = status or nil, modified = date or nil }
+                        local row = { status = remote_status, updatedAt = stamp, finishedAt = "2026-10-30T00:00:00.000Z" }
+                        local expected, why = baseline.decide(summary, row, now)
+                        local actual, reason = S.decide(summary, row, now)
+                        H.eq(reason, why)
+                        H.eq(type(actual), type(expected))
+                        if actual then H.eq(actual.status, expected.status); H.eq(actual.modified, expected.modified) end
+                    end
+                end
+            end
+        end
     end)
 end
 H.test("status settings are bilingual and master switch preserves opt-in without touching foreign sync", function()

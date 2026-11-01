@@ -944,6 +944,68 @@ do
     local timer, busy, epoch, sleeping = nil, nil, 0, false
     local statuses = { read = "complete", skimmed = "complete", reading = "reading",
         rereading = "reading", on_hold = "abandoned", abandoned = "abandoned" }
+    -- Reporting only: preserve the decision order and the no-sidecar-I/O fast
+    -- path. Worker reports cross the fork boundary as bounded return values.
+    local SAMPLE_LIMIT = 50
+    local reasons = {
+        { "updated", "updated", "Updated" },
+        { "server_unchanged", "unchanged", "Unchanged server status (local data not read)" },
+        { "local_unchanged", "unchanged", "Already the same local status" },
+        { "missing_file", "missing", "Local book file not found" },
+        { "missing_data", "missing", "Local reading data not found or unreadable" },
+        { "unsafe_sidecar", "protected", "Unsafe or competing reading-data files" },
+        { "identity_mismatch", "protected", "Local book identity could not be verified" },
+        { "active_reader", "protected", "Book open in the reader" },
+        { "pending_undo", "protected", "Pending Undo or uncertain opening state" },
+        { "file_changed", "protected", "Book file changed during the check" },
+        { "local_changed", "protected", "Local reading data changed during the check" },
+        { "newer_local", "conflict", "Newer local status" },
+        { "uncertain_date", "protected", "Uncertain or missing local status date" },
+        { "neutral", "ignored", "Unread / Want to read is not imported" },
+        { "server_missing", "ignored", "No status returned by the server" },
+    }
+    local reason_by_code = {}; for _, row in ipairs(reasons) do reason_by_code[row[1]] = row end
+    local function newReport()
+        local counts = {}; for _, row in ipairs(reasons) do counts[row[1]] = 0 end
+        return { counts = counts, details = {} }
+    end
+    local function record(report, code, file)
+        local row = assert(reason_by_code[code])
+        report.counts[code] = report.counts[code] + 1
+        if (row[2] == "missing" or row[2] == "protected" or row[2] == "conflict")
+                and #report.details < SAMPLE_LIMIT then
+            local name = (file:match("([^/]+)$") or "…"):gsub("[%c]", " ")
+            -- Bound bytes without leaving a cut UTF-8 sequence at the end.
+            if #name > 160 then name = name:sub(1, 160):gsub("[\194-\244][\128-\191]*$", "") .. "…" end
+            report.details[#report.details + 1] = { name = name, reason = code }
+        end
+    end
+    local function totals(counts)
+        local out = { updated = 0, unchanged = 0, missing = 0, protected = 0, conflict = 0, ignored = 0 }
+        for _, row in ipairs(reasons) do out[row[2]] = out[row[2]] + counts[row[1]] end
+        out.skipped = out.missing + out.protected + out.conflict
+        return out
+    end
+    local function validCounts(result)
+        if result.report_version ~= 1 or type(result.counts) ~= "table" then return end
+        local sum = 0
+        for _, row in ipairs(reasons) do
+            local n = result.counts[row[1]]
+            if type(n) ~= "number" or n ~= n or n < 0 or n > 50000 or n % 1 ~= 0 then return end
+            sum = sum + n
+        end
+        if sum > 50000 then return end
+        local t = totals(result.counts)
+        if t.updated ~= result.changed or t.skipped ~= result.skipped then return end
+        return t
+    end
+    function S.summary(result)
+        local t = validCounts(result)
+        if t then return string.format(_("Reading status: %d updated, %d unchanged, %d skipped."), t.updated, t.unchanged, t.skipped) end
+        -- Older saved results cannot be retrospectively split into reasons.
+        local function count(n) return type(n) == "number" and n == n and n >= 0 and n <= 50000 and math.floor(n) or 0 end
+        return string.format(_("Reading status: %d updated, %d skipped. Run a new check for reasons."), count(result.changed), count(result.skipped))
+    end
     local function UI() return require("ui/uimanager") end
     local function identity(client)
         if not client or type(client.server_url) ~= "string" or type(client.username) ~= "string"
@@ -1008,12 +1070,15 @@ do
         if summary.status == status then return nil, "unchanged" end
         if summary.modified ~= nil then
             local y, m, d = day(summary.modified)
-            if not y then return nil, "conflict" end
+            if not y then return nil, "conflict", "uncertain_date" end
             -- KOReader timestamps status only to a local calendar DAY. Refuse
             -- same-day/ambiguous conflicts instead of inventing last-writer wins.
             local after_day = os.time{ year = y, month = m, day = d + 1, hour = 0 }
-            if not after_day or updated < after_day + 60 then return nil, "conflict" end
-        elseif summary.status and summary.status ~= "new" then return nil, "conflict" end
+            if not after_day or updated < after_day + 60 then
+                local before_day = os.time{ year = y, month = m, day = d, hour = 0 }
+                return nil, "conflict", before_day and updated < before_day and "newer_local" or "uncertain_date"
+            end
+        elseif summary.status and summary.status ~= "new" then return nil, "conflict", "uncertain_date" end
         local date = remote.updatedAt:sub(1, 10)
         if status == "complete" and remote.finishedAt ~= nil then
             local finished = instant(remote.finishedAt)
@@ -1035,11 +1100,11 @@ do
     local function readSidecar(file)
         local DS = require("docsettings")
         local source = DS:findSidecarFile(file, true)
-        if not source then return end
+        if not source then return nil, nil, "missing_data" end
         assert(type(source) == "string" and source:sub(1, 1) == "/" and source ~= file
             and source:match("%.lua$"), "invalid sidecar path")
         local attr = require("libs/libkoreader-lfs").symlinkattributes(source)
-        if not attr or attr.mode ~= "file" or type(attr.size) ~= "number" or attr.size > 4 * 1024 * 1024 then return end
+        if not attr or attr.mode ~= "file" or type(attr.size) ~= "number" or attr.size > 4 * 1024 * 1024 then return nil, nil, "unsafe_sidecar" end
         local fs = require("libs/libkoreader-lfs")
         if DS.getSidecarDir and DS.getSidecarFilename and DS.isHashLocationEnabled then
             local locations = { "doc", "dir" }
@@ -1057,13 +1122,14 @@ do
             -- may repair corruption. Do not let an automatic import turn an
             -- older preferred copy into the newest authoritative reading data.
             for _, candidate in ipairs(alternatives) do
-                if candidate ~= source and candidate ~= source .. ".old" and fs.symlinkattributes(candidate) then return end
+                if candidate ~= source and candidate ~= source .. ".old" and fs.symlinkattributes(candidate) then return nil, nil, "unsafe_sidecar" end
             end
         end
         -- DocSettings:open() can DELETE invalid candidates, even in a child.
         -- Its light reader neither repairs nor creates files. Keep that rule
         -- in the parent too; atomically replace only this validated sidecar.
-        return DS.openSettingsFile(source), source
+        local ds = DS.openSettingsFile(source)
+        return ds, source, not ds and "missing_data" or nil
     end
     local function capture()
         local guard = M.bookOrbitGuard("status")
@@ -1131,10 +1197,15 @@ do
         pcall(refresh, job.changed)
         busy = nil
         local result = { account = job.session.key, at = os.time(), changed = job.count,
-            skipped = job.skipped, error = not ok and "storage" or reason }
+            skipped = job.skipped, error = not ok and "storage" or reason,
+            report_version = 1, counts = job.report.counts }
         if not result.error and not pcall(function() store():saveSetting(RESULT, result) end) then result.error = "storage" end
-        S.last = result
-        if job.done then pcall(job.done, result) end
+        -- Never persist filenames/paths. A separate object also protects stores
+        -- that retain the supplied table until their eventual flush.
+        local recent = {}; for key, value in pairs(result) do recent[key] = value end
+        recent.details = job.report.details
+        S.last = recent
+        if job.done then pcall(job.done, recent) end
         arm(60)
     end
     local function worker(job, task, done)
@@ -1171,6 +1242,10 @@ do
         return ids
     end
     local nextBatch
+    local function skip(job, code, file)
+        job.skipped = job.skipped + 1
+        record(job.report, code, file)
+    end
     local function apply(job, rows, index)
         local safe, current = pcall(job.session.current, job.session)
         if not safe or not current or not visible() then finish(job, "retired"); return end
@@ -1178,9 +1253,12 @@ do
             for i = index, math.min(index + 3, #rows) do
                 local entry = rows[i]
                 local attr = require("libs/libkoreader-lfs").attributes(entry.file)
-                if not activeFile(entry.file) and not protected(entry.file) and attr and attr.mode == "file"
-                        and attr.size == entry.size and attr.modification == entry.mtime then
-                    local ds, source = readSidecar(entry.file)
+                if activeFile(entry.file) then skip(job, "active_reader", entry.file)
+                elseif protected(entry.file) then skip(job, "pending_undo", entry.file)
+                elseif not attr or attr.mode ~= "file" then skip(job, "missing_file", entry.file)
+                elseif attr.size ~= entry.size or attr.modification ~= entry.mtime then skip(job, "file_changed", entry.file)
+                else
+                    local ds, source, why = readSidecar(entry.file)
                     local sig, summary
                     if ds then sig, summary = signature(ds) end
                     if ds and source == entry.sidecar and sig == entry.signature
@@ -1193,8 +1271,11 @@ do
                         require("orbitui_bootstrap").atomicWrite(source, "return " .. require("dump")(data, nil, true) .. "\n")
                         job.count = job.count + 1; job.changed[entry.file] = copy.status
                         job.ack[entry.digest] = entry
-                    else job.skipped = job.skipped + 1 end
-                else job.skipped = job.skipped + 1 end
+                        record(job.report, "updated")
+                    elseif not ds then skip(job, why, entry.file)
+                    elseif ds:readSetting("partial_md5_checksum") ~= entry.digest then skip(job, "identity_mismatch", entry.file)
+                    else skip(job, "local_changed", entry.file) end
+                end
             end
         end)
         if not ok then finish(job, "storage"); return end
@@ -1220,12 +1301,11 @@ do
             for _, entry in ipairs(batch) do
                 ids[#ids + 1], allowed[entry.id] = tostring(entry.id), entry
             end
-            if #ids == 0 then return { items = {}, skipped = #batch } end
             local client = job.session.client
             local body, err = client:request("GET", client:query("/koreader/plugin/catalog/read-statuses", { ids = table.concat(ids, ",") }))
             if not body then return { error = (err == 404 and "server_support" or "network") } end
             assert(type(body) == "table" and body.version == 1 and array(body.items, #ids), "invalid response")
-            local found, seen, skipped = {}, {}, 0
+            local found, seen, report = {}, {}, newReport()
             for _, row in ipairs(body.items) do
                 assert(type(row) == "table", "invalid row")
                 local id = bookId(row.id); local entry = allowed[id]
@@ -1238,26 +1318,41 @@ do
                 if statuses[row.status] and not (entry.known and entry.synced == statuses[row.status]) then
                     local attr = fs.attributes(entry.file)
                     if attr and attr.mode == "file" then
-                        local ds, source = readSidecar(entry.file)
+                        local ds, source, reason = readSidecar(entry.file)
                         if ds then entry.signature, entry.summary = signature(ds) end
                         if ds and ds:readSetting("partial_md5_checksum") == entry.digest then
-                            local value, why = S.decide(entry.summary, row, os.time())
+                            local value, why, reason = S.decide(entry.summary, row, os.time())
                             assert(why ~= "invalid", "invalid status date")
                             if value then
                                 entry.summary, entry.value = nil, value
                                 entry.sidecar = source
                                 entry.size, entry.mtime = attr.size, attr.modification
                                 found[#found + 1] = entry
-                            elseif why == "conflict" then skipped = skipped + 1 end
-                        else skipped = skipped + 1 end
-                    else skipped = skipped + 1 end
-                end
+                            elseif why == "conflict" then record(report, reason, entry.file)
+                            elseif why == "unchanged" then record(report, "local_unchanged") end
+                        elseif not ds then record(report, reason, entry.file)
+                        else record(report, "identity_mismatch", entry.file) end
+                    else record(report, "missing_file", entry.file) end
+                elseif statuses[row.status] then record(report, "server_unchanged")
+                else record(report, "neutral") end
             end
-            return { items = found, skipped = skipped }
+            for _, entry in ipairs(batch) do if not seen[entry.id] then record(report, "server_missing") end end
+            return { items = found, skipped = totals(report.counts).skipped, report = report }
         end, function(result)
             assert(type(result) == "table", "invalid worker result")
             if result.error then finish(job, result.error); return end
             assert(array(result.items, BATCH), "invalid candidates")
+            assert(type(result.report) == "table" and validCounts{ report_version = 1,
+                counts = result.report.counts, changed = 0, skipped = result.skipped }, "invalid counts")
+            for _, row in ipairs(reasons) do
+                job.report.counts[row[1]] = job.report.counts[row[1]] + result.report.counts[row[1]]
+            end
+            assert(array(result.report.details, SAMPLE_LIMIT), "invalid details")
+            for _, sample in ipairs(result.report.details) do
+                assert(type(sample) == "table" and reason_by_code[sample.reason]
+                    and type(sample.name) == "string" and #sample.name <= 163, "invalid detail")
+                if #job.report.details < SAMPLE_LIMIT then job.report.details[#job.report.details + 1] = sample end
+            end
             job.skipped = job.skipped + (result.skipped or 0)
             apply(job, result.items, 1)
         end)
@@ -1274,7 +1369,7 @@ do
         if not opts.force and type(attempt) == "table" and attempt.account == session.key
                 and type(attempt.at) == "number" and math.abs(os.time() - attempt.at) < INTERVAL then return false, "throttled" end
         store():saveSetting(ATTEMPT, { account = session.key, at = os.time() })
-        local job = { session = session, index = 1, count = 0, skipped = 0, changed = {}, ack = {}, done = opts.done }
+        local job = { session = session, index = 1, count = 0, skipped = 0, changed = {}, ack = {}, done = opts.done, report = newReport() }
         busy = job
         worker(job, function() return links(job) end, function(result)
             assert(array(result, 50000), "invalid links")
@@ -1317,24 +1412,74 @@ do
         arm(2)
     end
     function S.isRunning() return busy ~= nil end
-    function S.items()
-        local result = store():readSetting(RESULT)
+    local errors = {
+        server_support = "The server needs the read-statuses v1 extension. No server was changed.",
+        network = "Status check failed: connection or server unavailable.",
+        invalid = "Status check stopped: unsupported or invalid response.",
+        interrupted = "Status check interrupted; it will be retried later.",
+        retired = "Status check retired after navigation, account or local-state changes.",
+        storage = "Status check stopped: local data could not be safely saved.",
+    }
+    local function reports()
         local plugin = require("core/orbitui_context").plugin("bookorbit")
         local ok, key = pcall(function() return identity(plugin and plugin:newClient()) end)
-        if not ok or type(result) ~= "table" or not key or result.account ~= key
-                or type(result.at) ~= "number" or result.at ~= result.at or result.at <= 0
-                or result.at > 32503680000 then result = nil end
-        local errors = {
-            server_support = "The server needs the read-statuses v1 extension. No server was changed.",
-            network = "Status check failed: connection or server unavailable.",
-            invalid = "Status check stopped: unsupported or invalid response.",
-            interrupted = "Status check interrupted; it will be retried later.",
-            retired = "Status check retired after navigation, account or local-state changes.",
-            storage = "Status check stopped: local data could not be safely saved.",
-        }
-        local recent = S.last and S.last.account == key and S.last
+        local function scoped(r)
+            if ok and key and type(r) == "table" and r.account == key and type(r.at) == "number"
+                    and r.at == r.at and r.at > 0 and r.at <= 32503680000 then return r end
+        end
+        local raw = scoped(store():readSetting(RESULT))
+        -- Stored records are counts-only, including when reading old or edited
+        -- settings. Never treat a persisted details field as session samples.
+        local saved = raw and { account = raw.account, at = raw.at, changed = raw.changed,
+            skipped = raw.skipped, report_version = raw.report_version, counts = raw.counts }
+        return saved, scoped(S.last) or saved
+    end
+    function S.details(result)
+        local lines = { S.summary(result) }
+        if result.error then
+            lines[#lines + 1] = _(errors[result.error] or errors.network)
+            lines[#lines + 1] = _("Incomplete check: counts cover only processed entries.")
+        end
+        local t = validCounts(result)
+        if not t then return table.concat(lines, "\n\n") end
+        local groups = { { "updated", "Updated" }, { "unchanged", "Unchanged" },
+            { "missing", "Missing local files or reading data" }, { "protected", "Protected" },
+            { "conflict", "Conflicts" }, { "ignored", "Not imported" } }
+        for _i, group in ipairs(groups) do
+            lines[#lines + 1] = string.format("%s: %d", _(group[2]), t[group[1]])
+            if group[1] ~= "updated" then
+                for _j, row in ipairs(reasons) do
+                    if row[2] == group[1] and result.counts[row[1]] > 0 then
+                        lines[#lines + 1] = string.format("  %s: %d", _(row[3]), result.counts[row[1]])
+                    end
+                end
+            end
+        end
+        lines[#lines + 1] = _("An unchanged server status is not reapplied and does not read local data. This preserves intentional unsynced local changes.")
+        lines[#lines + 1] = _("Only unique saved BookOrbit matches are checked, not every book on the device. Skipped books are left untouched; they are not all conflicts.")
+        if result.details then
+            if #result.details > 0 then
+                lines[#lines + 1] = string.format(_("Showing %d of %d skipped books. Filenames are kept only until KOReader restarts."), #result.details, t.skipped)
+                for _i, sample in ipairs(result.details) do
+                    lines[#lines + 1] = sample.name .. " — " .. _(reason_by_code[sample.reason][3])
+                end
+            end
+        elseif t.skipped > 0 then
+            lines[#lines + 1] = _("Only counts were saved. Run a new check to see example filenames.")
+        end
+        return table.concat(lines, "\n\n")
+    end
+    function S.showDetails()
+        local recent = select(2, reports()) -- Recheck account on activation, not just menu construction.
+        if not recent then return end
+        UI():show(require("ui/widget/textviewer"):new{
+            title = _("Status check details"), text = S.details(recent),
+        })
+    end
+    function S.items()
+        local result, recent = reports()
         local report = recent and recent.error and _(errors[recent.error] or "Status check failed: connection or server unavailable.")
-            or (recent and string.format(_("Reading status: %d updated, %d protected or conflicting."), recent.changed, recent.skipped))
+            or (recent and S.summary(recent))
             or _("No status check in this session")
         return {
             { text = _("Automatic reading-status import"), checked_func = function() return M.bookOrbitEnabled("status") end,
@@ -1346,13 +1491,15 @@ do
                     UI():scheduleIn(.2, function()
                         local started = S.request{ force = true, done = function(r)
                             require("core/orbitui_context").notify(r.error and _("Reading status could not be fully imported. Existing reading data is kept; check server support and try again.")
-                                or string.format(_("Reading status: %d updated, %d protected or conflicting."), r.changed, r.skipped))
+                                or (S.summary(r) .. "\n" .. _("See Status check details for reasons.")))
                         end }
                         if not started then require("core/orbitui_context").notify(_("Reading-status import is unavailable or offline. Open Home or a shelf and try again.")) end
                     end)
                 end },
             { text = string.format(_("Last successful status check: %s"), result and os.date("%Y-%m-%d %H:%M", result.at) or _("Never")) },
             { text = report },
+            { text = _("Status check details…"), enabled_func = function() local _, r = reports(); return r ~= nil end,
+                callback = S.showDetails },
             { text = _("How reading-status import works"), callback = function()
                 require("core/orbitui_context").notify(_("Off by default. After Home or a shelf is visible, checks saved BookOrbit matches at most every 15 minutes. No EPUB scan, cover reload, download or remote write. Requires the read-statuses v1 server extension. Offline, unsupported servers and interrupted checks keep local data. Open books, pending Undo, newer local status and ambiguous same-day changes are protected. Unread/Want to Read never reset a local read; page position, history, ratings and reviews are unchanged. Previously imported books remain imported when disabled. BookOrbit's own sync preferences are untouched."))
             end },
