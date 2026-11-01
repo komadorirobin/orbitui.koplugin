@@ -23,6 +23,29 @@ the draft before publishing those exact bytes; verify anonymous public assets,
 preview selection, native live OTA and old tag/release immutability. Record
 results below rather than inferring physical acceptance from these tests.
 
+Exact candidate **`98be962a8d8762ff1ddab3a877b392e47e9ea554`**, sealed ZIP
+**`60fc00b394dc18a2567daaa4d2c8b5a2c5bbbd194e1286a8c9f23ecc8b4b14bc`**:
+9,414,999 bytes, 27,826,834 expanded; manifest
+`f4b1f64b29b812f60771be202e6dd0d32c2f495ed7964ee5ca358cd3d96ded43`.
+Both full scripts pass: 133 Python tests/four inherited source-cache skips,
+102 root Lua files, 542 Bookshelf suites/zero failures/three inherited SQLite
+skips and 13 SimpleUI files. All 43 catalogs, 1,164 Lua syntax files and 405
+canonical identities pass. Both sealed roots plus minimum/current native
+dialog/input/Trapper/span, real SQLite tag index, native EPUB/libarchive and
+UIManager input windows pass. Android/frame/CBB/software/rotation night and
+four-format contrast/alpha/derived-copy checks pass on the sealed source.
+
+Native old-installer scenarios from Beta 5, 9, 27 and 28 pass extraction/hash
+verification, activation/restart, code rollback, interrupted-download recovery,
+external-runtime snapshots and bounded obsolete-runtime cleanup. Exact optimized
+source projection, every manifest size/hash, identical old 2,000-path set,
+unchanged bootstrap/artwork/SimpleUI and no new code versus reviewed `86f65e71`
+pass. Full outgoing post-Beta-28 history contains no held bitmap; gitleaks finds
+no secrets. Fresh read-only watch finds zero missing commits in both components.
+Keep these exact candidate ZIP bytes across verification-only documentation
+descendants. Main/tag CI, draft/public and immutable-release checks follow;
+no device/server change or measured physical speedup is claimed.
+
 ## November 1 Bookshelf 6.2.0 merge-only gates
 
 Exact reviewed upstream `78f582fd8e4f2612b2d41498e6878af90d30f31e`, import

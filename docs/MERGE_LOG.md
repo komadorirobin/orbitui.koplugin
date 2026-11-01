@@ -19,6 +19,15 @@ remains open. Use a new immutable prerelease, never replace public Beta 28.
 Exact automated/sealed/native OTA/source/history, CI/draft/public/channel
 and previous-release immutability results are recorded in TESTING below.
 
+Candidate `98be962a` seals as ZIP `60fc00b3`, 9,414,999 bytes, the same
+2,000 API-1 paths. Both complete Lua/LuaJIT scripts, 43 catalogs, sealed roots
+and native input/Trapper/span/SQLite/EPUB/night/contrast checks pass. Native
+old-installer Beta 5/9/27/28 upgrade/restart/rollback/recovery/snapshot/cleanup
+scenarios pass. Optimized source/manifest/path/bootstrap/artwork/history/secret
+audits pass; both pins are current. Verification-only documentation never
+rebuilds the exact candidate archive. Main/tag CI and draft/public byte checks
+remain separate publication gates; no physical acceptance is implied.
+
 ## 2026-11-01 — reviewed Bookshelf 6.2.0 merge (main push only)
 
 User requests "Merga upstream" after Beta 28 and the separate server work.

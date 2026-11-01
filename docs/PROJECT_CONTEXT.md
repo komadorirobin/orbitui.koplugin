@@ -33,7 +33,13 @@ and correct this file in the same change.
   are still open; publication remains a prerelease, not device acceptance.
   No connected ADB device, device installation, server deployment, importer
   opt-in or new sync owner. Public Beta 28 bytes remain immutable. Exact
-  candidate/full/sealed/native/OTA/history/CI/public checks follow in TESTING.
+  candidate/full/sealed/native/OTA/history/CI/public checks are in TESTING.
+  Candidate `98be962a`, ZIP `60fc00b3` / 9,414,999 bytes passes both full
+  scripts, 43 catalogs, both sealed roots/native supplements and four native
+  older-beta installer gates (including public Beta 28). Optimized source/
+  manifest/2,000-path/bootstrap/artwork/history/secret checks pass; both pins
+  remain current. Main/tag CI and draft/public verification follow, retaining
+  the exact candidate bytes across documentation-only descendants.
 
 - **Reviewed Bookshelf 6.2.0 merge, not a new release.** The user's next
   "Merga upstream" request integrates 23 commits through exact master
