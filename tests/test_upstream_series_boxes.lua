@@ -30,7 +30,7 @@ local Repo = {
 package.loaded["lib/bookshelf_book_repository"] = Repo
 package.loaded["lib/bookshelf_tab_model"] = {getById = function() return tab end}
 package.loaded["lib/bookshelf_settings_store"] = {
-    read = function() end, generation = function() return 0 end,
+    read = function(_, default) return default end, generation = function() return 0 end,
 }
 package.loaded["lib/bookshelf_i18n"] = {gettext = function(s) return s end}
 package.loaded["lib/bookshelf_scaled_cover_cache"] = {has = function() return true end}
@@ -446,6 +446,7 @@ package.loaded["lib/bookshelf_spine_shelf"] = {
     cachedProgress = function() return nil end, cachedPageCount = function() return nil end,
     _SpineBookSlot = Slot,
     bookLook = function() return {r = 90, g = 120, b = 80, aspect = cover_aspect} end,
+    shownLook = function() return {r = 90, g = 120, b = 80, aspect = cover_aspect} end,
     boardColor = function() return {r = 90, g = 120, b = 80} end,
 }
 local Painter = require("lib/bookshelf_series_box_widget")

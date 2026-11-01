@@ -176,7 +176,8 @@ if native then
     package.loaded["ffi/blitbuffer"] = BB
     android = os.getenv("IS_ANDROID") ~= nil
     package.loaded["lib/bookshelf_color"] = dofile(root .. "/components/bookshelf/lib/bookshelf_color.lua")
-    local unguarded_fill = package.loaded["lib/bookshelf_color"].paintRoundedRect
+    -- Counterfactual pre-fix call; 6.2 now guards its native entry point too.
+    local unguarded_fill = function(bb, ...) return bb:paintRoundedRectRGB32(...) end
     A.colourPainter(package.loaded["lib/bookshelf_color"])
     local function shown(bb, x, y, final_flip)
         local c = bb:getPixelP(x, y)[0]:getColorRGB32()

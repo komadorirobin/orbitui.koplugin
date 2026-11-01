@@ -4,6 +4,41 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-01 — reviewed Bookshelf 6.2.0 merge (main push only)
+
+User requests "Merga upstream" after Beta 28 and the separate server work.
+Start at clean `c4e4fbab`, exact Bookshelf pin `0d976875`; review all 23 new
+commits through `78f582fd8e4f2612b2d41498e6878af90d30f31e` (6.2.0).
+SimpleUI `fdf83c7d` has no missing commits. Unsquashed subtree merge `dc77c11a`
+retains ancestry. Conflicts in color/series/spine/widget/catalog/tests combine
+new RGB/contrast/footer behavior with existing OrbitUI presentation contracts.
+
+Incoming changes: opt-in cover/ornament/spine contrast and wallpaper contrast/
+brightness; Show/Hide/Invisible footer; reduced menu/theme refresh flashing;
+slider outside-tap commits/swipe routing; robust dynamic shortcut toggles;
+minute hooks for configured shelf modules; current calibre wording/help; tighter
+opening-book repaint and stale-wallpaper/menu-owner guards. No new artwork,
+fonts, dependencies or removals. Existing Home/Manga/profile, custom series
+art/aspect/cache, footer scale/margins, dock, BookOrbit/MAL/patch and sync
+ownership remain intact (C01-C11).
+
+Separate hosted adaptations acquire/release the shared TouchMenu hook with
+the real host lifecycle; later external wrappers survive and captured released
+hooks are inert. Async minute refresh expires on hidden/replaced/closed shelf.
+RGB rounding retains software inversion and error-safe nested restoration.
+Invisible footer capture includes negative margins and frees/restores on errors.
+Two new helpers are exact-source lazy entries in the existing registry, not
+new installed paths (22 entries, 405 identities). New help/search is SV/EN;
+image defaults remain unchanged, no raw/disk artwork rewrite.
+
+Verification evidence: `test-results/upstream-bookshelf62-20261101/` (private).
+Full Lua/LuaJIT, sealed/native input/raster/contrast/SQLite, exact source/path,
+older-installer and outgoing history/secret gates are recorded in TESTING as
+they complete. No new beta/tag/OTA/device/server change. Public Beta 28 bytes
+are immutable; any same-version development candidate is test-only and public
+dist is restored afterwards. Physical Bigme visual/timing checks remain open;
+less flashing is an expected benefit, not a measured device benchmark.
+
 ## 2026-11-01: separately approved companion status server deployment
 
 User requests publishing and deploying the read-status server extension after

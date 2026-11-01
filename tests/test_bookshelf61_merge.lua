@@ -9,7 +9,7 @@ local function run(code,env)
     if setfenv then return setfenv(assert(loadstring(code)),env)() end
     return assert(load(code,"6.1 integration","t",env))()
 end
-H.test("all twenty lazy helpers preserve canonical source bytes and API-1 module identities",function()
+H.test("all lazy helpers preserve canonical source bytes and API-1 module identities",function()
     local map=dofile(root.."/core/orbitui_module_map.lua")
     local embedded=getmetatable(map).orbitui_embedded
     local count=0
@@ -19,9 +19,9 @@ H.test("all twenty lazy helpers preserve canonical source bytes and API-1 module
         local f=io.open(root.."/"..assert(map[name]),"rb")
         if f then H.eq(f:read("*a"),source,name); f:close() end
     end
-    H.eq(count,20)
+    H.eq(count,22)
     for _,name in ipairs({"book_actions_layout","editor_page","link_panel","page_dialog",
-            "picker_sort","popup_kit","slider"}) do
+            "picker_sort","popup_kit","slider","image_contrast","menu_close_refresh"}) do
         assert(embedded["lib/bookshelf_"..name],name)
     end
 end)

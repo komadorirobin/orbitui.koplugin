@@ -317,6 +317,7 @@ function BookshelfWidget:_paginationFooterReserveHeight()
         or (self._selection and self._selection:isActive())
         or SIMPLEUI_USE_OFFICIAL_FOOTER
     if not show_footer_row then return 0 end
+    if _footerMode() == "hide" then return Screen:scaleBySize(12) end
     return _paginationFooterVisibleReserve(
         self:_paginationFooterBaseHeight(),
         self:_paginationFooterTopMargin(),
@@ -10095,9 +10096,11 @@ local function _paintUnseen(bb, x, y, w, h, paint)
     if not (ok and keep) then return paint() end
     -- A clipped paint hands a stand-in: read the real buffer behind it.
     keep:blitFrom(require("lib/bookshelf_clip_bb").real(bb), 0, 0, x, y, w, h)
-    local ret = paint()
-    bb:blitFrom(keep, x, y, 0, 0, w, h)
+    local ok, ret = pcall(paint)
+    local restored, err = pcall(bb.blitFrom, bb, keep, x, y, 0, 0, w, h)
     keep:free()
+    if not ok then error(ret, 0) end
+    if not restored then error(err, 0) end
     return ret
 end
 
@@ -10128,7 +10131,7 @@ function BookshelfWidget:_buildFooterRow(content_w, total_pages, footer_h)
     end
     if mode == "hide" then
         -- Shown over the foot of the shelf, at its own height.
-        footer_h = _footerBarH()
+        footer_h = self:_paginationFooterHeight()
     end
     local CenterContainer = require("ui/widget/container/centercontainer")
     local LeftContainer   = require("ui/widget/container/leftcontainer")
@@ -10253,7 +10256,10 @@ function BookshelfWidget:_buildFooterRow(content_w, total_pages, footer_h)
     if mode == "invisible" and not reveal then
         local shown = row.paintTo
         row.paintTo = function(slf, bb, x, y)
-            return _paintUnseen(bb, x, y, self.width, footer_h,
+            local real = require("lib/bookshelf_clip_bb").real(bb)
+            local top = math.max(0, y + math.min(0, margin_top))
+            local bottom = math.min(real:getHeight(), y + math.max(footer_h, margin_top + content_h))
+            return _paintUnseen(bb, x, top, self.width, math.max(1, bottom - top),
                 function() return shown(slf, bb, x, y) end)
         end
     end

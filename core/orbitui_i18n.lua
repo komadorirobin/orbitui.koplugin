@@ -1,5 +1,18 @@
 -- OrbitUI-owned strings, independent of the two upstream translation catalogs.
 local sv = {
+    ["Image contrast"] = "Bildkontrast",
+    ["Covers and ornaments contrast boost"] = "Kontrastförstärkning för omslag och dekorationer",
+    ["Wallpaper contrast"] = "Bakgrundsbildens kontrast",
+    ["Wallpaper brightness"] = "Bakgrundsbildens ljusstyrka",
+    ["Covers and ornaments contrast boost deepens the shadows and mid-tones of covers, spines and ornaments, which can help on a screen with few greys. Wallpaper contrast and brightness adjust the wallpaper, quieter or bolder; at 0% each shows the picture as it is."] = "Kontrastförstärkning fördjupar skuggor och mellantoner på omslag, bokryggar och dekorationer, vilket kan hjälpa på skärmar med få gråtoner. Bakgrundsbildens kontrast och ljusstyrka gör bilden mer diskret eller framträdande. Vid 0 % visas originalbilden.",
+    ["Footer bar"] = "Nederkantens knapprad",
+    ["Invisible buttons"] = "Osynliga knappar",
+    ["The bar along the bottom of the shelf, with the menu button and the page arrows."] = "Raden längst ned i bokhyllan med menyknappen och sidpilarna.",
+    ["The bar with the menu button and the page arrows."] = "Raden med menyknappen och sidpilarna.",
+    ["No bar: the shelf uses its space. Swipe to turn pages; open the menu from KOReader's menu or a gesture. The bar comes back while you select books."] = "Ingen knapprad: bokhyllan använder utrymmet. Svep för att byta sida och öppna menyn via KOReaders meny eller en gest. Knappraden visas när du markerar böcker.",
+    ["The bar is not drawn, but its buttons still work where they were: the menu in its corner and the arrows to turn pages. Moving into it with the keys shows it."] = "Knappraden ritas inte, men knapparna fungerar på sina vanliga platser: menyn i hörnet och pilarna för sidbyte. Raden visas när du går till den med tangenterna.",
+    ["Read calibre metadata.calibre"] = "Läs Calibres metadata.calibre",
+    ["A calibre column by name, like %calibre{pubdate} or a custom column; dates show the year (needs Read calibre metadata.calibre, except a book's pubdate in an OPDS catalog)"] = "En Calibre-kolumn via namn, exempelvis %calibre{pubdate} eller en egen kolumn. Datum visas som årtal. Kräver Läs Calibres metadata.calibre, utom utgivningsår för en bok i en OPDS-katalog.",
     ["Tags and indexing"] = "Taggar och indexering",
     ["Update tag index"] = "Uppdatera taggindex",
     ["Continue indexing"] = "Fortsätt indexering",

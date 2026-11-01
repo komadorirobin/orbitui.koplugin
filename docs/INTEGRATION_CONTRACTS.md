@@ -167,6 +167,16 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+November 1 Bookshelf 6.2: image contrast is opt-in, applied once to retained
+decoded/scaled copies, not per framebuffer paint. Propagate boosted-copy marks
+and never persist boosted pixels as raw disk artwork. Contrast participates in
+series/spine/wallpaper cache identity without dropping existing source stamps,
+profile or night keys. Shelf-module minute callbacks are only for explicitly
+configured visible modules; coalesce synchronous refresh and expire asynchronous
+refresh on page/chip replacement, hidden/list/editing/closed shelves. No new
+network/sync writer or default Home module. Coverage: test_bookshelf62_merge,
+native FFI contrast supplement and retained upstream image/cache/minute suites.
+
 Silent update checks/obsolete-code maintenance must yield to the first user
 input, not swallow it. Use native Trapper's nil/invisible-resend mode, preserving
 cancel/reap/FD ownership and forwarding exactly once. Visible progress dialogs
@@ -396,6 +406,13 @@ and server-backed Want to Read remains usable. No live credentials in tests.
 
 ## C06: External plugin and patch compatibility
 
+November 1 Bookshelf 6.2 menu-close refresh is shared by live host owners, not
+an unreleased global component-init mutation. Last-owner release restores the
+method only while it is our wrapper; a later external wrapper survives with
+our captured inner wrapper inert. Preserve native fallback nil arguments/results
+and reinstall without duplicate active effects. Standalone Bookshelf retains
+its native install path. Coverage: test_bookshelf62_merge and native menu suite.
+
 Bookshelf 6.0's underlay/dirty hooks must not overwrite later plugin wrappers.
 Window paint wrappers become inert when released; widget close releases only
 the current underlay owner. Preserve nil positions and original errors/results
@@ -440,6 +457,18 @@ representative one's link or average unrelated ratings.
 Tests: `test_series_rating`, `test_upstream_series_boxes`.
 
 ## C07: Presentation and preferences
+
+November 1 Bookshelf 6.2 retains OrbitUI's night-tone and RGB inverse guards:
+raw RGB rounding suppresses inversion only on Android/CBB, never software, and
+restores the flag after errors, including nested host wrappers. New footer
+Show/Hide/Invisible modes preserve custom scale, positive/negative margins and
+dock-dependent reserve. Hidden mode reserves its small reveal area; Invisible
+keeps hitboxes and restores every painted pixel, including negative-margin
+overflow. Scratch buffers are freed even after paint errors. Existing defaults,
+profile settings, series aspect/source ownership and all artwork remain intact.
+New labels/help are SV/EN. Native raster/contrast checks do not replace physical
+Bigme night/footer/swipe acceptance. Coverage: test_bookshelf62_merge,
+test_night_mode and retained footer/nav/series suites.
 
 October 31 approved Android apps customization: keep `app_launcher` stable and
 native module hold/settings ownership, including the user's settings-on-hold
@@ -1102,6 +1131,14 @@ Tests: `tests/test_backup.lua`, `test_runtime.lua`, `scripts/check-package.lua`.
 Recovery procedure: `MIGRATION.md`.
 
 ## C09: Reviewed imports and explicit releases
+
+November 1 post-Beta-28 merge-only request retains the public Beta 28 archive,
+VERSION and stable bootstrap/API 1. Two new Bookshelf 6.2 helpers are exact-source
+lazy entries in the existing registry: 22 embedded entries, 405 canonical module
+identities, identical 2,000 installed paths. No assets/languages are removed.
+Seal a private development candidate for source/hash/native-installer checks,
+then restore public dist bytes. Never publish that same-version test ZIP as a
+replacement Beta 28. Standing audited main push is not release authorization.
 
 October 31 Bookshelf 6.1 merge-only retains VERSION/public Beta 23 and the
 API-1 bootstrap/path set. Seven new Bookshelf helpers bring the exact-source

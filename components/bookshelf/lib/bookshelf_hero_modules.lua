@@ -1913,7 +1913,14 @@ function HeroModules._tickShelfMinuteHooks(bw)
     local Kit = require("lib/bookshelf_module_kit")
     local host = HeroModules._hostOf(cells[1])
     local ticking, want = true, false
+    local function current()
+        return not bw._closed and not bw._shelf_module_edit
+            and bw._shelf_minute_cells == cells and bw.chip == cells.chip
+            and not (bw._isListMode and bw:_isListMode())
+            and UIManager:getTopmostVisibleWidget() == bw
+    end
     local function refresh()
+        if not current() then return end
         if ticking then want = true
         elseif host and host.refresh then host.refresh() end
     end
@@ -1928,7 +1935,7 @@ function HeroModules._tickShelfMinuteHooks(bw)
         end
     end
     ticking = false
-    if want and host and host.refresh then host.refresh() end
+    if want and current() and host and host.refresh then host.refresh() end
     return true
 end
 

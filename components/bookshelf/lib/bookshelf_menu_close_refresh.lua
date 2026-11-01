@@ -11,6 +11,8 @@
 -- the window under it is the one the menu sat on.
 
 local M = {}
+local owners = setmetatable({}, { __mode = "k" })
+local release
 
 -- install([deps]): wraps TouchMenu:onCloseWidget once. deps (tests):
 -- { TouchMenu?, UIManager, GZ, Screen }; the first argument may be the
@@ -21,7 +23,13 @@ function M.install(TouchMenu, deps)
     if TouchMenu._bookshelf_close_refresh then return end
     TouchMenu._bookshelf_close_refresh = true
     local orig = TouchMenu.onCloseWidget
-    TouchMenu.onCloseWidget = function(self, ...)
+    local active = true
+    local wrapped
+    wrapped = function(self, ...)
+        if not active then
+            if orig then return orig(self, ...) end
+            return
+        end
         local UIManager = deps.UIManager or require("ui/uimanager")
         local GZ = deps.GZ or require("lib/bookshelf_gesture_zones")
         local Screen = deps.Screen or require("device").screen
@@ -40,6 +48,27 @@ function M.install(TouchMenu, deps)
         local ok_g, Geom = pcall(require, "ui/geometry")
         if ok_g and Geom and Geom.new then region = Geom:new(region) end
         UIManager:setDirty(nil, "ui", region)
+    end
+    TouchMenu.onCloseWidget = wrapped
+    return function()
+        if not active then return end
+        active = false
+        if TouchMenu.onCloseWidget == wrapped then TouchMenu.onCloseWidget = orig end
+        TouchMenu._bookshelf_close_refresh = nil
+    end
+end
+
+function M.acquire(owner, TouchMenu, deps)
+    if owners[owner] then return end
+    owners[owner] = true
+    if not release then release = M.install(TouchMenu, deps) end
+end
+
+function M.release(owner)
+    owners[owner] = nil
+    if next(owners) == nil and release then
+        release()
+        release = nil
     end
 end
 

@@ -234,7 +234,8 @@ end
 -- With the flag off for the call, every part is inverted once, at the blit.
 -- Other devices invert in hardware or in the C blitter and are left alone.
 function Color.rawInvertBegin(bb)
-    if not (bb and bb.getInverse and bb:getInverse() == 1) then return false end
+    if not (bb and bb.getInverse and bb.setInverse and bb:getInverse() == 1) then return false end
+    if Blitbuffer.getUseCBB and not Blitbuffer:getUseCBB() then return false end
     local ok_d, Device = pcall(require, "device")
     if not (ok_d and Device and Device.isAndroid and Device:isAndroid()) then return false end
     bb:setInverse(0)
@@ -244,15 +245,20 @@ function Color.rawInvertEnd(bb, token)
     if token then bb:setInverse(1) end
 end
 
+function Color.rawPaint(bb, method, ...)
+    local raw = Color.rawInvertBegin(bb)
+    local ok, result = pcall(method, bb, ...)
+    Color.rawInvertEnd(bb, raw)
+    if not ok then error(result, 0) end
+    return result
+end
+
 -- Color.paintRoundedRect: paintRoundedRect, keeping a picked colour (the same
 -- dispatch as paintRect above).
 function Color.paintRoundedRect(bb, x, y, w, h, c, r)
     if type(c) == "nil" then return end   -- not c == nil: see parseColorValue
     if bb.paintRoundedRectRGB32 and Blitbuffer.isColor8 and not Blitbuffer.isColor8(c) then
-        local raw = Color.rawInvertBegin(bb)
-        bb:paintRoundedRectRGB32(x, y, w, h, c, r)
-        Color.rawInvertEnd(bb, raw)
-        return
+        return Color.rawPaint(bb, bb.paintRoundedRectRGB32, x, y, w, h, c, r)
     end
     return bb:paintRoundedRect(x, y, w, h, c, r)
 end
@@ -267,18 +273,7 @@ end
 function Color.paintBorder(bb, x, y, w, h, bw, c, r, anti_alias)
     if type(c) == "nil" or not bw or bw <= 0 then return end   -- not c == nil: see parseColorValue
     if bb.paintBorderRGB32 and Blitbuffer.isColor8 and not Blitbuffer.isColor8(c) then
-        local ok_d, Device = pcall(require, "device")
-        local suppress = ok_d and Device.isAndroid and Device:isAndroid()
-            and bb.getInverse and bb:getInverse() == 1
-            and (not Blitbuffer.getUseCBB or Blitbuffer:getUseCBB())
-        if suppress then
-            bb:setInverse(0)
-            local ok, err = pcall(bb.paintBorderRGB32, bb, x, y, w, h, bw, c, r, anti_alias)
-            bb:setInverse(1)
-            if not ok then error(err, 0) end
-            return
-        end
-        return bb:paintBorderRGB32(x, y, w, h, bw, c, r, anti_alias)
+        return Color.rawPaint(bb, bb.paintBorderRGB32, x, y, w, h, bw, c, r, anti_alias)
     end
     return bb:paintBorder(x, y, w, h, bw, c, r, anti_alias)
 end

@@ -28,11 +28,15 @@ function M.attach(owner, classes, loader, root)
         if instance._init then instance:_init() end
         if instance.init then instance:init() end
     end
+    local refresh = package.loaded["lib/bookshelf_menu_close_refresh"]
+    if refresh and refresh.acquire then refresh.acquire(owner) end
     M.performanceStarted(owner)
     require("adapters/orbitui_integrations").statusImport.started(owner)
 end
 
 function M.detach(owner, loader)
+    local refresh = package.loaded["lib/bookshelf_menu_close_refresh"]
+    if refresh and refresh.release then refresh.release(owner) end
     local navbar = package.loaded["adapters/orbitui_navbar"]
     if navbar then navbar.quickControlsEvent("teardown", owner.ui) end
     M.performanceStopped(owner)

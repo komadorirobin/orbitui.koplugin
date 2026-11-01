@@ -22,6 +22,23 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- **Reviewed Bookshelf 6.2.0 merge, not a new release.** The user's next
+  "Merga upstream" request integrates 23 commits through exact master
+  `78f582fd8e4f2612b2d41498e6878af90d30f31e`, unsquashed import `dc77c11a`.
+  SimpleUI `fdf83c7d` is already current. Adds opt-in image/wallpaper contrast,
+  Show/Hide/Invisible footer modes, less flashing for shelf menu/theme changes,
+  slider/swipe fixes and minute callbacks for explicitly configured modules.
+  Retain OrbitUI's night-tone/inverse guards, profile-qualified theme identity,
+  series artwork/aspect/cache ownership, custom footer sizing/margins and dock
+  geometry. The new global menu-close hook is host-owned/released; late minute
+  callbacks cannot repaint a different/hidden shelf. Two exact-source lazy
+  helpers fit the existing registry (22 embedded, 405 canonical identities),
+  not extra installed paths. New labels/help are SV/EN. VERSION/public Beta 28,
+  bootstrap, all artwork, SimpleUI source, reading/settings/sync owners and
+  BookOrbit server stay unchanged. Full/sealed/native/package/history checks
+  and main push are recorded in TESTING/MERGE_LOG when complete. No fresh
+  physical Bigme test or measured performance improvement is claimed.
+
 - **Companion server now published/deployed, separately from Beta 28.** User
   explicitly requests publication and deployment, and approves the modified
   build name Littex with BookOrbit attribution. Extras **v0.3.0** pins

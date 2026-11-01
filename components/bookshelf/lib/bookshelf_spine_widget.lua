@@ -102,13 +102,11 @@ local function _paintColorSafeBorder(bb, x, y, w, h, border_size, color, radius,
     if not color or not border_size or border_size <= 0 then return end
     local is_rgb32 = ffi.istype(ColorRGB32_t, color)
     local Color = require("lib/bookshelf_color")
-    local raw = is_rgb32 and Color.rawInvertBegin(bb)
     if is_rgb32 then
-        bb:paintBorderRGB32(x, y, w, h, border_size, color, radius, anti_alias)
+        return Color.rawPaint(bb, bb.paintBorderRGB32, x, y, w, h, border_size, color, radius, anti_alias)
     else
         bb:paintBorder(x, y, w, h, border_size, color, radius, anti_alias)
     end
-    Color.rawInvertEnd(bb, raw)
 end
 
 -- Thin FrameContainer subclass that routes its border paint through

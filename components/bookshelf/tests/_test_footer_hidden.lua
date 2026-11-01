@@ -81,7 +81,8 @@ t.test("the footer row: empty when hidden, unseen when invisible, shown while se
     assert(row:find('self._selection:isActive() or self._focus_zone == "footer"', 1, true), "no reveal")
     assert(row:find('mode == "hide" and not reveal', 1, true), "hide does not drop the row")
     assert(row:find('mode == "invisible" and not reveal', 1, true), "invisible is not painted unseen")
-    assert(row:find("_paintUnseen(bb, x, y, self.width, footer_h", 1, true), "the row is not painted unseen")
+    assert(row:find("_paintUnseen(bb, x, top, self.width", 1, true), "the row is not painted unseen")
+    assert(row:find("math.min(0, margin_top)", 1, true), "negative margins leave visible buttons")
     assert(W:find('require("lib/bookshelf_clip_bb").real(bb), 0, 0, x, y, w, h)', 1, true),
         "a clipped paint's stand-in is read directly")
     local lp = W:match("\nfunction BookshelfWidget:_layoutPrimitives%(.-\nend\n")

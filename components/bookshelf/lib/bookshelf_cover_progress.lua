@@ -335,9 +335,7 @@ end
 local function _paintRoundedRect(bb, x, y, w, h, c, r)
     if not c then return end
     if ffi.istype(ColorRGB32_t, c) then
-        local raw = Color.rawInvertBegin(bb)
-        bb:paintRoundedRectRGB32(x, y, w, h, c, r)
-        Color.rawInvertEnd(bb, raw)
+        return Color.rawPaint(bb, bb.paintRoundedRectRGB32, x, y, w, h, c, r)
     else
         bb:paintRoundedRect(x, y, w, h, c, r)
     end
@@ -347,9 +345,7 @@ M.paintRoundedRect = _paintRoundedRect
 local function _paintBorder(bb, x, y, w, h, bw, c, r)
     if not c then return end
     if ffi.istype(ColorRGB32_t, c) then
-        local raw = Color.rawInvertBegin(bb)
-        bb:paintBorderRGB32(x, y, w, h, bw, c, r)
-        Color.rawInvertEnd(bb, raw)
+        return Color.rawPaint(bb, bb.paintBorderRGB32, x, y, w, h, bw, c, r)
     else
         bb:paintBorder(x, y, w, h, bw, c, r)
     end

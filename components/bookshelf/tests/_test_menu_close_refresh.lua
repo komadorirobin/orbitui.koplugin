@@ -65,7 +65,8 @@ end)
 
 t.test("main.lua installs it", function()
     local m = io.open("main.lua"):read("*a")
-    assert(m:find('require("lib/bookshelf_menu_close_refresh").install()', 1, true))
+    assert(m:find('require("lib/bookshelf_menu_close_refresh")', 1, true))
+    assert(m:find('if not self._orbitui_owned then refresh.install() end', 1, true))
 end)
 
 t.done()

@@ -1,5 +1,30 @@
 # Verification and device acceptance
 
+## November 1 Bookshelf 6.2.0 merge-only gates
+
+Exact reviewed upstream `78f582fd8e4f2612b2d41498e6878af90d30f31e`, import
+`dc77c11a`, 23 commits. SimpleUI `fdf83c7d` is unchanged/current. Hosted
+adaptations preserve C01-C11; VERSION/public Beta 28 is not rebuilt for release.
+Evidence lives under `test-results/upstream-bookshelf62-20261101/`.
+
+New `test_bookshelf62_merge` covers shared menu-hook owner lifetime and later
+external wrappers, real host attach/detach, custom footer reserve/dock geometry,
+invisible-footer paint failure restoration/free, coalesced and stale minute
+callbacks, Android/CBB/software RGB inverse restoration and SV/EN/defaults.
+Optional native FFI supplements exercise real BB8/BB8A/RGB24/RGB32 pixels,
+stride/alpha, raw-copy preservation and once-only/derived boost marks. Existing
+native Android/frame/CBB/software/rotation/night tests retain the pre-fix
+counterfactual while verifying the new native color entry point too.
+
+Full, sealed, source/history and installer results follow when complete. The
+private same-version candidate must have exactly the old 2,000 runtime paths,
+unchanged API-1 bootstrap, all original artwork and SimpleUI bytes; the two
+new helpers live only as exact lazy source strings in the existing map. Verify
+all 43 catalog semantics. Restore the public dist ZIP/checksum afterwards.
+No device/server change is authorized by this merge request. Physical Bigme
+night/contrast, footer reveal/hitboxes, module-minute timing, menu flashing and
+warm/cold navigation still need acceptance; no measured speedup is claimed.
+
 ## November 1 companion status server publication/deployment
 
 Separate user authorization publishes BookOrbit Extras **v0.3.0** and deploys

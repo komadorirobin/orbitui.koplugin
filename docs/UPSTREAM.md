@@ -163,6 +163,23 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+November 1, after Beta 28: merge-only request integrates Bookshelf **6.2.0**,
+exact master `78f582fd8e4f2612b2d41498e6878af90d30f31e` (23 commits after
+`0d976875`). SimpleUI remains `fdf83c7d`, already current. Unsquashed import
+`dc77c11a` is followed by separate hosted adaptations. Resolve color/series/
+spine/widget/test/catalog conflicts by combining new contrast cache keys and
+footer modes with retained night guards, hydrated artwork, aspect ratio,
+profile-qualified theme keys and adjustable footer/dock geometry. Host-owner
+acquisition/release must neutralize the TouchMenu wrapper without overwriting
+later external wrappers. Minute-module refresh callbacks expire with their
+page/chip/visibility. Keep RGB software inversion and restore state on errors.
+Two new helper sources are exact lazy strings in the existing module map,
+not new installed paths; registry 22, canonical identities 405. Contrast is
+off by default and does not rewrite original/disk images. Labels/help are SV/EN.
+Public Beta 28/version/bootstrap/assets and SimpleUI remain immutable. This
+request includes the standing audited main push, not a beta/tag/OTA release,
+device install or server deployment. See C04/C06/C07/C09 and TESTING/MERGE_LOG.
+
 November 1 Beta 28 request: Bookshelf master
 `0d976875c47f786c1a6df55591f36fb3153554b6` adds publication-year extraction
 for OPDS 1.x/2.0 catalog records (`%calibre{pubdate}`), plus regressions.
