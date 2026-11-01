@@ -39,6 +39,20 @@ MenuHost's nested choice/summary refresh/Cancel path; 29 regular EPUB cases,
 skip exception. These are desktop/native-service supplements, not a physical
 reader test. Package identity/inventory follow the clean implementation commit.
 
+Clean implementation **`9bd76331`**, private same-version validation ZIP
+**`969b908fd83ca938fed44d7f7f0648def42068fc6e8c3f33411615624c1a73c8`**,
+9,351,377 bytes. Native package checks, exact committed source/manifest hashes
+(including the normal PO-location-only transformation), held-art exclusion and
+the identical public-Beta-26 path set pass: 1,999 inventoried files + manifest,
+all 2,000 API-1 slots. Eleven focused/retained suites pass against extracted
+sealed runtime under both interpreters (including the 12 tag-chip and 30 native
+EPUB cases); all six actual-SQLite cases also pass against those sealed bytes.
+The final all-100-root reruns pass both interpreters after the last editor
+refinement. No installed path, pin, component, asset, bootstrap or version change.
+Public ZIP remains `6800190a`; Bigme remains on `711d507e` / `6df633e0`, normally
+closed, with no device/settings/reading/server changes. No push or publication.
+Verification-only descendants do not rebuild this exact validation archive.
+
 ## November 1 aggregate offline index / progressive results (local follow-up)
 
 User explicitly proceeds beyond the already installed step-1/2 candidate.

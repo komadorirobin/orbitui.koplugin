@@ -36,8 +36,11 @@ and correct this file in the same change.
   explicit-path filtering/sorting/page/cover hydration and existing Home pins.
   Manual updates retire automatic work; reader opening rechecks cached results
   without blocking unrelated global-search routes or parked-reader returns.
-  Local tests/package verification are recorded in TESTING; no device install,
-  push or publication is authorized by this request. The preceding installed
+  Clean implementation `9bd76331`, private ZIP `969b908f` (9,351,377 bytes),
+  exact source/hash/held-art and identical 2,000-path audits pass. Sequential
+  full Lua/LuaJIT gates, all final 100 root files, 43 catalogs, both sealed
+  11-suite passes (12 chip/30 native EPUB cases) and six real SQLite cases pass.
+  Details/limits in TESTING; no device install, push or publication. The preceding installed
   `711d507e` / `6df633e0` candidate below is unchanged on Bigme.
 
 - **Offline index/progressive results are installed as a LOCAL test candidate.**

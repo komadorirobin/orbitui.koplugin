@@ -26,6 +26,14 @@ Reader return/shared search, stale owners, scope changes and cancellation have
 focused regressions. TESTING records final suite/package evidence and open
 physical font/touch/latency/reader acceptance, not a measured device speedup.
 
+Implementation `9bd76331`; sealed private validation ZIP `969b908f`,
+9,351,377 bytes. Both complete interpreter suites and final 100-root reruns,
+43 catalogs, both sealed focused/retained 11-suite runs (12 chip/30 native EPUB
+cases), six sealed actual-SQLite cases and source/hash/path/held-art audits pass.
+Same 2,000 installed slots; no public ZIP replacement, version change, device
+install or push/release. Physical UI/latency remains open. Documentation-only
+descendants preserve the exact tested archive bytes.
+
 ## 2026-11-01 — local offline aggregate index and progressive tag results
 
 User approves proceeding after step 1/2; start clean at `56924edc` on the same
