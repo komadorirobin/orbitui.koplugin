@@ -2,6 +2,21 @@
 
 ## November 1 optional BookOrbit status import (LOCAL, unpublished)
 
+Final runtime source `f3aa3ff6`, private ZIP
+`6ad7b4b8c4bc2c013f8aa77fb8765bf94b50b8f9a37c26da3be4112f0ab86aec`
+(9,373,240 bytes), source tree `828e219d`. All 2,000 paths match the public
+Beta 27 path set; 1,999 manifest records match the exact optimized source
+projection and no held bitmap is present. Public dist remains `7f4d19ba`.
+Both sealed status suites pass 17 cases with native BookOrbit Sidecar source.
+Six native input-forwarding cases pass for both minimum/current Trapper.
+All 101 final root Lua files pass; full Lua/LuaJIT runs, 43 catalogs,
+1,152-file syntax and 403-path module map pass. Known SQLite/environment skips
+remain, not device results. Combined server builds 1,504 files with zero type
+issues. Final guarded persistence and callback failure cases are included.
+Evidence: `test-results/status-import-20261101/`. This is a private test
+archive, not an OTA release. Verification-only documentation descendants do
+not rebuild or replace those exact bytes.
+
 User approves the OrbitUI implementation and explicitly approves building the
 read-only server extension locally in BookOrbit Extras. No release, push,
 upstream import, device installation or production deployment is authorized.

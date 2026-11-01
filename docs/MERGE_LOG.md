@@ -22,6 +22,10 @@ undo/tags through the checked helper. It is not deployed or published.
 Focused client/native-source, timezone and exact-server tests are described in
 TESTING. ADB is disconnected, so physical timing/layout/acceptance remains an
 explicit release gate, not a claimed result.
+Local runtime `f3aa3ff6`, Extras `ab47cd2`, server implementation `6cb2feb2`.
+Private ZIP `6ad7b4b8` preserves the exact 2,000 API-1 paths; source/hash/held-art
+and secret checks pass. Public Beta 27 `7f4d19ba` and both upstream pins stay
+unchanged. Do not publish this same-version validation archive.
 
 ## 2026-11-01 — all-library tag-index manager and Beta 27 preparation
 

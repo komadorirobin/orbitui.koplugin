@@ -39,6 +39,14 @@ and correct this file in the same change.
   `a96ff0c`; no migration or production changes. ADB has no connected device;
   physical latency/rendering/acceptance is still pending. Public Beta 27's
   source/version/ZIP and upstream pins are unchanged.
+  Runtime source **`f3aa3ff6`** (includes persistence/callback containment),
+  Extras **`ab47cd2`**, exact server implementation **`6cb2feb2`**. Private
+  validation-only ZIP **`6ad7b4b8c4bc2c013f8aa77fb8765bf94b50b8f9a37c26da3be4112f0ab86aec`**,
+  9,373,240 bytes; exact source projection and unchanged 2,000 API-1 paths
+  pass. Both sealed status suites pass 17 cases with the pinned native payload
+  builder; minimum/current native input forwarding passes. Evidence:
+  `test-results/status-import-20261101/`. Do not replace public Beta 27 bytes
+  with this same-version local test archive. No device install/push/release.
 
 - **Beta 27 is public**, source/tag `617848a8` / `v0.1.0-beta.27` after the
   explicit request to build all-library indexing and publish pending work.
