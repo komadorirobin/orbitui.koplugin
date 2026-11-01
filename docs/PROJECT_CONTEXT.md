@@ -22,24 +22,30 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
-- **Beta 28 preparation, explicit merge/publication request.** Reviewed
+- **Beta 28 is public**, source/tag `e9d3e084` / `v0.1.0-beta.28`. Reviewed
   Bookshelf `0d976875c47f786c1a6df55591f36fb3153554b6` is integrated through
   unsquashed `ceb86a6d`: OPDS 1.x/2.0 catalog publication years, no new paths,
   settings/hooks or assets. SimpleUI remains `fdf83c7d`, already current.
   Includes the previously local status importer described below, still OFF.
   Its companion Extras/API code remains local and no server is deployed.
   Beta 27 public bytes remain immutable. Fresh ADB inventory has no devices;
-  physical OPDS/status layout/timing is not accepted. Test/package/publication
-  evidence follows in TESTING; do not claim release until its gates finish.
+  physical OPDS/status layout/timing is not accepted. Exact evidence in TESTING.
   User explicitly approves publication with these device limits. Candidate
   `e9d3e084`, sealed ZIP `3fd75c19` / 9,376,824 bytes passes both full suites,
   43 catalogs, both sealed root/native supplements, exact source/path/artwork/
   secret audits and older Beta 5/9/26/27 installer scenarios. No rebuild of
-  these bytes for verification-only docs. Push/CI/publication checks follow.
+  these bytes for verification-only docs. Main `f0665548` / tag CI
+  **41337249777 / 41337305703** pass both jobs each. Draft **430776228**,
+  anonymous published ZIP/checksum and native public-byte OTA from Beta 9/26/27
+  all pass. Preview selects 28; stable stays absent. All 81 previous releases
+  and 135 old tag refs remain unchanged. Published **2026-11-01 18:38:40 UTC**.
+  No device install or server deployment; Extras remains one local unpushed
+  commit `ab47cd2`. Verification docs do not rebuild the public archive.
 
-- **LOCAL follow-up after Beta 27: optional BookOrbit read-status import.**
-  Latest user approves local implementation and a local read-only API addition
-  in `bookorbit-extras`, not a push/release/deployment/import. Host lifecycle
+- **Status-import implementation history (client now in Beta 28).**
+  Original local approval covered the client and a local read-only API addition
+  in `bookorbit-extras`, not deployment. Only that server addition remains
+  unpublished; the OrbitUI client is now public as above. Host lifecycle
   schedules work after paint, opt-in defaults OFF. GET-only 200-ID batches,
   15-minute attempt throttle, saved native matches only; no library traversal,
   document engine, cover work or new runtime path. Child reads are nonrepairing;
@@ -52,8 +58,8 @@ and correct this file in the same change.
   unchanged. Settings/help SV/EN under Integrations > BookOrbit, Update now,
   last success and session outcome. Server `status.patch` targets exact 3.6.0
   `a96ff0c`; no migration or production changes. ADB has no connected device;
-  physical latency/rendering/acceptance is still pending. Public Beta 27's
-  source/version/ZIP and upstream pins are unchanged.
+  physical latency/rendering/acceptance is still pending. The original local
+  stage preserved Beta 27's source/version/ZIP and upstream pins.
   Runtime source **`f3aa3ff6`** (includes persistence/callback containment),
   Extras **`ab47cd2`**, exact server implementation **`6cb2feb2`**. Private
   validation-only ZIP **`6ad7b4b8c4bc2c013f8aa77fb8765bf94b50b8f9a37c26da3be4112f0ab86aec`**,
@@ -61,7 +67,8 @@ and correct this file in the same change.
   pass. Both sealed status suites pass 17 cases with the pinned native payload
   builder; minimum/current native input forwarding passes. Evidence:
   `test-results/status-import-20261101/`. Do not replace public Beta 27 bytes
-  with this same-version local test archive. No device install/push/release.
+  with this same-version local test archive. That stage had no device install/
+  push/release; the separate versioned Beta 28 publication supersedes it.
 
 - **Beta 27 is public**, source/tag `617848a8` / `v0.1.0-beta.27` after the
   explicit request to build all-library indexing and publish pending work.

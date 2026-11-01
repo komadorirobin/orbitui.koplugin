@@ -41,6 +41,19 @@ with the status feature OFF by default. This is a prerelease authorization,
 not physical acceptance or server-extension publication. Push/CI/draft/public
 byte checks follow; verification-only documentation does not rebuild this ZIP.
 
+**Published 2026-11-01 18:38:40 UTC.** Main `f0665548` and tag/source `e9d3e084`
+CI **41337249777 / 41337305703** pass both matrix jobs each, including native
+OTA on Linux. Draft **430776228** is downloaded/byte-verified before publishing
+that same prerelease. Anonymous published API/ZIP/checksum exactly match;
+preview chooses 28 and stable remains absent. All 81 previous releases and
+135 previous tag refs are immutable. Native anonymous-public-byte upgrades
+from Beta 9, 26 and 27 pass full inventory/hash verification, activation,
+restart/rollback/recovery, external snapshot and obsolete-runtime cleanup.
+Outgoing source/history/secret audits pass. No exact-candidate device install,
+physical acceptance or server/API deployment is claimed. Extras `ab47cd2`
+remains local/unpushed; original private same-version ZIP is not published.
+Documentation-only descendants retain the exact public bytes.
+
 ## November 1 optional BookOrbit status import (original LOCAL verification)
 
 Final runtime source `f3aa3ff6`, private ZIP

@@ -33,6 +33,19 @@ held-art and gitleaks audits pass. Read-only watch finds zero missing commits
 for both components. Keep the exact tested ZIP across documentation descendants.
 CI/draft/public verification remains separate; no device/server deployment.
 
+Audited main push `f0665548` and exact annotated tag `v0.1.0-beta.28` at
+`e9d3e084` complete. Main/tag CI **41337249777 / 41337305703** passes all four
+matrix jobs. Draft **430776228** is downloaded and byte-verified, then that
+same prerelease publishes **2026-11-01 18:38:40 UTC**. Anonymous published
+API/ZIP/checksum match `3fd75c19`; preview selects 28, stable remains absent.
+All 81 earlier releases and 135 earlier tag refs are unchanged. Native public-
+byte OTA from Beta 9/26/27 passes install/restart/rollback/recovery/external
+snapshot/cleanup. No public bytes are rebuilt for verification-only notes.
+Bigme/Boox OPDS/status acceptance remains open as explicitly approved, with
+the importer OFF. Extras `ab47cd2` remains local/unpushed and no server is
+deployed. Existing Home/Manga/series/ornament and BookOrbit/MAL/patch behavior
+is retained; no measured device performance benefit is claimed for this merge.
+
 ## 2026-11-01 — optional BookOrbit status import, local follow-up
 
 User says Kör to the optional deferred status-check proposal, then explicitly
