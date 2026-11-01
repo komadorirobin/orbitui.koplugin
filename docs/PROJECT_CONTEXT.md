@@ -22,26 +22,27 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
-- **Beta 29 publication requested.** After the reviewed Bookshelf 6.2 merge
-  and disclosed physical-device gaps, the user explicitly says "Publicera ny
-  beta". Prepare `0.1.0-beta.29` from clean/pushed `86f65e71`; existing runtime
-  and receipt CI **41351394477 / 41351698356** and watch **41351394509** pass.
-  No new import: Bookshelf `78f582fd`, SimpleUI `fdf83c7d`. Only VERSION and
-  bilingual release/presentation/verification notes change in this step.
-  The new beta contains contrast/footer/menu/swipe/minute/RGB changes already
-  documented below, retaining all custom behavior. Physical Bigme/Boox tests
-  are still open; publication remains a prerelease, not device acceptance.
-  No connected ADB device, device installation, server deployment, importer
-  opt-in or new sync owner. Public Beta 28 bytes remain immutable. Exact
-  candidate/full/sealed/native/OTA/history/CI/public checks are in TESTING.
-  Candidate `98be962a`, ZIP `60fc00b3` / 9,414,999 bytes passes both full
-  scripts, 43 catalogs, both sealed roots/native supplements and four native
-  older-beta installer gates (including public Beta 28). Optimized source/
-  manifest/2,000-path/bootstrap/artwork/history/secret checks pass; both pins
-  remain current. Main/tag CI and draft/public verification follow, retaining
-  the exact candidate bytes across documentation-only descendants.
+- **Beta 29 is public**, source/tag `98be962a` / `v0.1.0-beta.29`, published
+  **2026-11-01 21:59:45 UTC** after the explicit user request and disclosed
+  physical-device gaps. Main `48234e73` / tag CI **41354378033 / 41354377995**
+  pass all four matrix jobs, including native Linux OTA. Publishes the reviewed
+  Bookshelf 6.2.0 (`78f582fd`) contrast/footer/menu/swipe/minute/RGB changes;
+  SimpleUI stays `fdf83c7d`. No additional import/implementation in publication.
+  ZIP `60fc00b3` / 9,414,999 bytes passes both full scripts, 43 catalogs, sealed
+  roots/native supplements and four older-installer gates, same 2,000 API-1
+  paths. Draft **430882883** is downloaded/byte-checked before publishing those
+  exact assets. Anonymous public ZIP/checksum match; preview selects 29, stable
+  stays absent. Public-byte native upgrades from Beta 9/27/28 pass restart,
+  rollback, recovery, external snapshots and cleanup. All 82 prior releases
+  and 137 old tag refs are unchanged. Source/manifest/bootstrap/artwork/history/
+  secret checks pass. Documentation-only receipts do not rebuild public bytes.
+  Existing Home/Manga/profiles/series/art/settings/sync/patch owners remain.
+  No connected ADB device/install, server deployment, importer opt-in or new
+  sync owner. New physical Bigme/Boox contrast/footer/swipe/night/minute checks
+  and measured timing remain open; beta publication is not device acceptance.
+  Exact evidence: TESTING and `test-results/beta29-20261101/`.
 
-- **Reviewed Bookshelf 6.2.0 merge, not a new release.** The user's next
+- **Reviewed Bookshelf 6.2.0 merge-only stage (now in Beta 29).** The user's next
   "Merga upstream" request integrates 23 commits through exact master
   `78f582fd8e4f2612b2d41498e6878af90d30f31e`, unsquashed import `dc77c11a`.
   SimpleUI `fdf83c7d` is already current. Adds opt-in image/wallpaper contrast,

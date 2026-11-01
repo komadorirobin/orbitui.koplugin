@@ -46,6 +46,19 @@ Keep these exact candidate ZIP bytes across verification-only documentation
 descendants. Main/tag CI, draft/public and immutable-release checks follow;
 no device/server change or measured physical speedup is claimed.
 
+**Published 2026-11-01 21:59:45 UTC.** Audited main `48234e73` and annotated
+tag/source `98be962a` complete; GitHub CI **41354378033 / 41354377995** passes
+all four Lua/LuaJIT matrix jobs, including Linux native OTA. Draft **430882883**
+contains exactly the ZIP/checksum, downloaded and byte-verified before that
+same prerelease is published. Anonymous public API/ZIP/checksum match `60fc00b3`;
+preview selects Beta 29 and stable remains absent. All **82** prior releases
+and **137** old tag refs are unchanged. Public-byte native upgrades from Beta 9,
+27 and 28 pass discovery/full inventory/hash checks, activation/restart/code
+rollback/truncated-download recovery, external snapshots and bounded obsolete-
+runtime cleanup. Final source/history/secret checks pass. Verification-only
+documentation receipts never rebuild or replace these public assets. There
+is no device install, physical acceptance, server change or measured speedup.
+
 ## November 1 Bookshelf 6.2.0 merge-only gates
 
 Exact reviewed upstream `78f582fd8e4f2612b2d41498e6878af90d30f31e`, import

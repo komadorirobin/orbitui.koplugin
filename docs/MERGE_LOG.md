@@ -28,6 +28,16 @@ audits pass; both pins are current. Verification-only documentation never
 rebuilds the exact candidate archive. Main/tag CI and draft/public byte checks
 remain separate publication gates; no physical acceptance is implied.
 
+Audited main `48234e73` and annotated tag/source `98be962a` are pushed; CI
+**41354378033 / 41354377995** passes all four matrix jobs. Draft **430882883**
+is downloaded/byte-checked, then published **2026-11-01 21:59:45 UTC** as
+`v0.1.0-beta.29`. Anonymous public assets match `60fc00b3`; preview selects 29,
+stable remains absent. Public-byte native OTA from Beta 9/27/28 passes upgrade,
+restart/rollback/recovery/snapshot/cleanup. All 82 earlier releases and 137 old
+tag refs are unchanged. Final source/history/secret audits pass. Receipt-only
+documentation does not rebuild the archive. No device/server change; physical
+visual/timing acceptance stays open. Runtime defaults and sync owners remain.
+
 ## 2026-11-01 — reviewed Bookshelf 6.2.0 merge (main push only)
 
 User requests "Merga upstream" after Beta 28 and the separate server work.
