@@ -42,7 +42,7 @@ Native settings route, portrait SV wrapped status/counts, Update, real Pause,
 Continue after normal process restart, reread confirmation/Cancel, Close and
 normal Home/Quit pass. Final instrumented input records actual touch/tap inside
 the enabled Pause rectangle, action 2/2, then paused at 1,780 checked with
-1 reused-prefix pass / 1,779 cache hits, before the diagnostic's timeout. Earlier
+one fresh read / 1,779 cache hits, before the diagnostic's timeout. Earlier
 injected Pause taps without an action dispatch are not counted as acceptance;
 the bounded timeout was a safety guard, not proof of working touch. Broader
 touch/repaint stress reliability remains open. There is **no whole-library
@@ -59,6 +59,22 @@ outside patches; KOReader is normally CLOSED on the final tested slot. Initial
 inventory verification raced the first candidate's file transfer and is rejected;
 no activation occurred until a subsequent complete 2,000-file check passed.
 Do not rebuild these exact tested bytes for verification-only documentation.
+
+**Published Beta 27:** annotated tag remains on `617848a8`; main verification
+head `fd70572a`. CI **41322288961 / 41322288865** passes both interpreter jobs
+on each head, including Linux native packaged OTA. Draft assets downloaded by
+authenticated CLI and anonymously downloaded public assets match the sealed
+ZIP/checksum exactly. Draft lookup by the REST tag endpoint returned 404;
+recover the existing draft by release ID **430677833**, never create a duplicate.
+The existing draft is published at 2026-11-01T15:44:00Z. Anonymous native-TLS
+installation of the public bytes from public Beta 9/26 and actual local index
+candidate passes discovery/download, native validation, activation, restart,
+rollback, truncation recovery, external snapshot and cleanup/retained-data
+phases. Preview selects 27; stable stays absent. All **80 previous releases**
+and **133 old tag refs** are unchanged. No later source import/device/server
+change. The normal-lua channel check lacked cjson in the host's Lua 5.5;
+rerun successfully under the documented LuaJIT/native dependency environment.
+These verification-only notes preserve the immutable tested/public archive.
 
 ## November 1 smart EPUB tag chips (local first stage)
 

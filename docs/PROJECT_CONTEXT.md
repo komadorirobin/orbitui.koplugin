@@ -22,29 +22,33 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
-- **Beta 27 preparation is explicitly approved.** User requests a separate
-  offline tag-index manager, then push/publication of all pending OrbitUI work.
-  No additional upstream merge: Bookshelf stays `c686f5a3`, SimpleUI `fdf83c7d`.
-  Settings > Bookshelf > Tags and indexing has cache-aware Update, confirmed
-  global Reread, scalar progress/error counts and explicit Pause/Continue across
-  restart. No 400-file index limit; result views retain their honest 400-hit cap.
-  Existing independent cache/index holds disposable data only; no reading/book
-  or server write, cache deletion, new installed path or sync owner. Forced
-  resume revalidates inventory/stamps and same-run successes. Snapshot revision
-  retires prior chip membership after same-stamp rereads. Full release/device/
-  history/OTA gates pass locally; do not claim publication yet. Include the
-  preceding local smart-chip/index/app-paging/cover-preservation fixes below.
-  Final candidate `617848a8`, sealed ZIP `7f4d19ba` (9,359,164 bytes), exact 2,000
-  retained paths. Full Lua/LuaJIT, 43 catalogs, sealed/native/real SQLite and
-  older-installer OTA gates pass. Installed/accepted on Bigme with `6df633e0`
-  rollback; all hashes before/after pass. Real 3,341-EPUB inventory, actual Pause
-  action and Continue after restart, native SV layout, reread confirmation/
-  Cancel and Home/Quit pass. Job is paused at 1,780, NOT complete. First full
-  cold/reread, repaint-stress, smart-chip UI/English/Boox acceptance remain open.
-  Restored sync/reader choices, byte-identical history/50-row queue/BookOrbit
-  state; keep normal readonly goal/maintenance caches. Diagnostic is inactive;
-  KOReader closed. TESTING has exact evidence/limits. Verification descendants
-  must preserve the sealed ZIP. Push/draft/public-byte/CI gates follow.
+- **Beta 27 is public**, source/tag `617848a8` / `v0.1.0-beta.27` after the
+  explicit request to build all-library indexing and publish pending work.
+  ZIP `7f4d19ba5d544a8659c526a8ff5b8bd66e4762cc04285614dd224768ded2b05d`,
+  9,359,164 bytes, same 2,000 API-1 paths. No extra import: Bookshelf `c686f5a3`,
+  SimpleUI `fdf83c7d`. Publishes the formerly local app-pager/native-dialog/
+  metadata-cover fixes, offline aggregate/progressive tag search, smart AND/OR
+  chips and the resumable global index manager under Settings > Bookshelf.
+  Update reuses valid cache entries; confirmed Reread supports same-run resume
+  after restart. No 400-file index cap; match views retain their 400-hit notice.
+  Disposable index/journal/snapshot revision only; no book/reading/server write,
+  cache wipe, new runtime path or sync owner. All controls/help SV/EN.
+  Final full Lua/LuaJIT, 43 catalogs, sealed/native/real SQLite, exact source/
+  history/secret and local/live anonymous old-installer OTA gates pass. Main
+  `fd70572a` / tag CI **41322288961 / 41322288865** pass all four jobs. Draft and
+  anonymous public downloads match; preview selects 27, stable remains absent.
+  All 80 previous releases and 133 old tag refs are unchanged. Evidence:
+  `test-results/beta27-20261101/` and `test-results/tag-index-manager-20261101/`.
+  Installed/accepted on Bigme with `6df633e0` rollback; all 2,000 hashes before/
+  after pass. Real inventory 3,341; actual Pause, Continue after restart, native
+  SV layout, reread confirmation/Cancel and Home/Quit pass. Job is paused at
+  1,780, NOT complete. Full cold/reread, repaint stress, smart-chip UI/English/
+  Boox and broader 1.0 acceptance remain open. Reader/sync choices restored;
+  history/50-row queue/BookOrbit state byte-identical. Diagnostic inactive,
+  KOReader closed. Verification-only descendants never rebuild public bytes.
+
+The following bullets record historical pre-release stages, not additional
+unpublished runtime work after Beta 27.
 
 - **Smart EPUB tag chips are a LOCAL follow-up, not a new public beta.**
   User approves the proposed first stage: hold an offline Tags pill to create

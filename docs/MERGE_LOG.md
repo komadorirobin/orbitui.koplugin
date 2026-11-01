@@ -35,6 +35,19 @@ Boox or 1.0 acceptance. Reading/sync/history state is restored/verified and the
 diagnostic is inactive; keep only disposable index progress and normal caches.
 Public push/draft/CI/download/OTA verification follows without rebuilding bytes.
 
+All pending work is pushed to `origin/main` at `fd70572a`; annotated
+`v0.1.0-beta.27` points to exact candidate `617848a8`. Main/tag CI
+**41322288961 / 41322288865** passes all four jobs. Draft **430677833** and
+anonymous published downloads match ZIP `7f4d19ba` and its checksum. The draft's
+tag REST lookup initially returns 404; recover the existing draft through its
+listed ID instead of creating a duplicate. Publish that same prerelease at
+2026-11-01T15:44:00Z. Native anonymous public-byte OTA from Beta 9/26 and the
+actual local index candidate passes install/restart/rollback/recovery/external
+snapshot/cleanup. Preview selects 27; stable remains absent. All 80 prior
+releases and 133 prior tag refs remain immutable. No rebuild for these
+verification-only notes, no further import or server deployment. Exact tests,
+device preservation and open acceptance limits remain in TESTING.
+
 ## 2026-11-01 — smart offline tag chips (local first stage)
 
 User approves the proposed first stage at `b99d32c2`: hold a local EPUB tag to
