@@ -32,8 +32,19 @@ and correct this file in the same change.
   or server write, cache deletion, new installed path or sync owner. Forced
   resume revalidates inventory/stamps and same-run successes. Snapshot revision
   retires prior chip membership after same-stamp rereads. Full release/device/
-  history/OTA gates are in progress; do not claim publication yet. Include the
+  history/OTA gates pass locally; do not claim publication yet. Include the
   preceding local smart-chip/index/app-paging/cover-preservation fixes below.
+  Final candidate `617848a8`, sealed ZIP `7f4d19ba` (9,359,164 bytes), exact 2,000
+  retained paths. Full Lua/LuaJIT, 43 catalogs, sealed/native/real SQLite and
+  older-installer OTA gates pass. Installed/accepted on Bigme with `6df633e0`
+  rollback; all hashes before/after pass. Real 3,341-EPUB inventory, actual Pause
+  action and Continue after restart, native SV layout, reread confirmation/
+  Cancel and Home/Quit pass. Job is paused at 1,780, NOT complete. First full
+  cold/reread, repaint-stress, smart-chip UI/English/Boox acceptance remain open.
+  Restored sync/reader choices, byte-identical history/50-row queue/BookOrbit
+  state; keep normal readonly goal/maintenance caches. Diagnostic is inactive;
+  KOReader closed. TESTING has exact evidence/limits. Verification descendants
+  must preserve the sealed ZIP. Push/draft/public-byte/CI gates follow.
 
 - **Smart EPUB tag chips are a LOCAL follow-up, not a new public beta.**
   User approves the proposed first stage: hold an offline Tags pill to create

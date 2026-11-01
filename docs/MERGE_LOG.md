@@ -20,6 +20,21 @@ derived chip snapshots after indexing and same-stamp explicit rereads. A result
 list's full-reread action now opens the global manager; its own 400-hit display
 limit remains unchanged. Tests/release/device evidence follow in TESTING.
 
+Clean first implementation `82fbd7e7` passes full/package checks; focused device
+inspection finds an irrelevant search strip and a nil-enabled Continue button.
+Final `617848a8` removes that strip, returns explicit false and shortens wrapped
+help. Rebuild only this unpublished candidate, never Beta 26. Final ZIP
+`7f4d19ba` / 9,359,164 bytes keeps all 2,000 paths. Both final full suites,
+43 catalogs, sealed native/input/archive/raster and seven real SQLite cases,
+source/held-art/secret and local old-installer OTA gates pass. Bigme accepts the
+exact final slot with original `6df633e0` rollback; 2,000 hashes pass before/after.
+Actual all-profile Update/Pause/Continue after restart, portrait SV layout,
+confirmation/Cancel and Home/Quit pass with the real 3,341-file inventory. Never
+claim full completion, a full forced reread, repaint stress, chip/UI/English/
+Boox or 1.0 acceptance. Reading/sync/history state is restored/verified and the
+diagnostic is inactive; keep only disposable index progress and normal caches.
+Public push/draft/CI/download/OTA verification follows without rebuilding bytes.
+
 ## 2026-11-01 — smart offline tag chips (local first stage)
 
 User approves the proposed first stage at `b99d32c2`: hold a local EPUB tag to

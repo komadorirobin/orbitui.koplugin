@@ -17,6 +17,49 @@ Private evidence: `test-results/tag-index-manager-20261101/`. Full/sealed/packag
 device, outgoing-history/secret and local/live OTA results are recorded after
 they run. These focused desktop tests are not whole-library physical acceptance.
 
+Final source **`617848a816559eac25ddbd4517a2d5de74a71144`**, exact Beta 27 ZIP
+**`7f4d19ba5d544a8659c526a8ff5b8bd66e4762cc04285614dd224768ded2b05d`**:
+9,359,164 bytes, 27,649,808 expanded; manifest
+`eb8750dd1dfd3e4d5fe7a9fbc83d6a4d320d2f239d899b8c4fb741e174a33e06`.
+Same 1,999 inventoried files plus manifest / all 2,000 API-1 slots. Exact source
+projection, all hashes, retained paths/bootstrap/pins/assets and outgoing held-art
+checks pass. Sequential final full Lua/LuaJIT gates pass 133 Python tests/four
+existing exclusions, all 100 root Lua files, 533 Bookshelf suites/zero failures/
+three existing native-SQLite exclusions and 13 SimpleUI files. Map 403, syntax
+1,151; all 43 catalogs pass. Final sealed all-root/native input, minimum/current
+Trapper/span, EPUB/archive and both Android/framebuffer night/raster supplements
+pass: 38 regular EPUB cases, 39 with native scheduler, 40 with native archive;
+12 chip cases and seven actual SQLite cases. No new skip exception. Native
+older-installer OTA passes from public Beta 5/9/26 and the actual local index
+candidate: preparation, restart, rollback, truncated-download recovery, external
+snapshot and verified cleanup/retained data. Evidence: `test-results/beta27-20261101/`.
+
+Bigme actual all-profile inventory is **3,341 EPUBs**, not a fake catalog. Final
+sealed runtime is installed/accepted, pending=0, previous `6df633e0` retained;
+all 2,000 hashes pass before activation and after testing. The preceding UI
+candidate is archived recoverably outside active versions, not used as rollback.
+Native settings route, portrait SV wrapped status/counts, Update, real Pause,
+Continue after normal process restart, reread confirmation/Cancel, Close and
+normal Home/Quit pass. Final instrumented input records actual touch/tap inside
+the enabled Pause rectangle, action 2/2, then paused at 1,780 checked with
+1 reused-prefix pass / 1,779 cache hits, before the diagnostic's timeout. Earlier
+injected Pause taps without an action dispatch are not counted as acceptance;
+the bounded timeout was a safety guard, not proof of working touch. Broader
+touch/repaint stress reliability remains open. There is **no whole-library
+completion, full forced reread, physical panel/speedup, smart-chip keyboard/Home
+pin, English-device, rotation/suspend/reader-return or Boox acceptance claim**.
+The native derived DB quick_check is OK (1,781 rows, including an older isolated
+fixture outside current roots). Keep the real job paused/resumable, not complete.
+
+No document was opened. Original reader/navigation/sync flags are restored and
+round-trip hashes match. History, all 50 old KOSync queue rows and BookOrbit state
+are byte-identical. Keep only normal patch-manager check/readonly Hardcover goal
+cache refreshes and derived tag/index progress. The diagnostic patch is inactive,
+outside patches; KOReader is normally CLOSED on the final tested slot. Initial
+inventory verification raced the first candidate's file transfer and is rejected;
+no activation occurred until a subsequent complete 2,000-file check passed.
+Do not rebuild these exact tested bytes for verification-only documentation.
+
 ## November 1 smart EPUB tag chips (local first stage)
 
 User approves implementation after the feasibility proposal, starting clean at
