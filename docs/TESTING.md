@@ -1,5 +1,54 @@
 # Verification and device acceptance
 
+## November 1 offline tag-search optimization (local step 1/2)
+
+User approves the staged optimization proposal: begin with cache-aware normal
+Refresh and bounded cached-entry batches, then measure before an aggregate index.
+No upstream import, push, publication or version bump. No new runtime path,
+cache schema/namespace, provider, background indexer or sync writer. The public
+Beta 26 ZIP remains immutable.
+
+Seventeen focused cases pass Lua/LuaJIT: existing archive/XML/cache/membership
+and native progress guards plus bounded hot batches, elapsed I/O budget,
+inter-turn cancellation, mixed hit/miss attempts, restart after cancellation,
+ordinary Refresh (changed/new/deleted/retryable files), separately confirmed
+reread-all, cancelled/stale confirmation and Swedish wording. The new timing
+expectation fails against the old worker before implementation. Both full
+gates pass: 133 Python/four existing skips, 98 root files, 533 Bookshelf/zero
+failures/three documented SQLite exclusions, 13 SimpleUI files, syntax 1,149,
+map 403. All 43 translation catalogs pass. Initial macOS-long-TMPDIR cover-cache
+fixture failures reproduce unchanged; the focused suite passes 27/27 and both
+full repeats use the already documented TMPDIR=/tmp. No production cover-cache
+budget, assertion, source or exclusion changes.
+
+Bigme worker benchmark uses the unchanged installed acceptance-fix runtime and
+separately loaded exact old/new integration source, with isolated require
+environments (no live repository/component monkey-patch). Actual native event
+queue/InfoMessage, libarchive, lfs stats and zstd disk cache are used. Both scans
+receive the same 300 real local EPUB paths; enumeration and result-modal
+rendering are excluded. A cache-priming pass takes 1519.0ms with zero archive
+opens. Alternate old/new warm runs:
+
+| Run | Old worker | New worker | Archive opens / skipped |
+| --- | ---: | ---: | --- |
+| 1 | 4174.8ms | 542.8ms | 0 / 0 in each |
+| 2 | 3731.7ms | 611.1ms | 0 / 0 in each |
+| 3 | 3734.6ms | 561.9ms | 0 / 0 in each |
+
+Medians 3734.6 -> 561.9ms, about 6.6x for this already-cached subset. Sequential
+forced rereads of 30 paths take 3964.5 -> 1174.6ms with 30 archive opens each;
+those are not controlled cold-storage samples and are not a promised reread
+speedup. No whole-library first-scan, uncached Manga, tap-to-paint, memory,
+physical panel, final installed-modal or 1.0 acceptance is inferred.
+
+The diagnostic patch is moved outside patches after normal quit; no book was
+opened. Pause BookOrbit and bundled KOSync flags before launch; confirm their
+original state, then restore only those fields after testing. Original history,
+all 50 KOSync queue rows and BookOrbit sync state compare byte-for-byte before/
+after the benchmark. Raw configs/results stay private under ignored
+`test-results/tag-performance-20261101/`. Candidate packaging/UI verification and
+final restoration are recorded below when complete; do not claim them early.
+
 ## November 1 acceptance fixes (local, not published)
 
 User approves fixing the three findings below and device retesting. Exact

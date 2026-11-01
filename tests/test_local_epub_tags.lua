@@ -44,18 +44,24 @@ H.test("malformed JSON/XML, DTDs, control tags and oversized metadata fail close
 end)
 
 local files, documents, disk, queue, roots, opened, closed, extracted, written, last_widget
+local elapsed, cache_cost, delays
 local UI = { _simpleui_navigation_generation = 1,
     show = function(_, w) w.shown = true; last_widget = w end,
     close = function(_, w) w.shown = false end,
     isWidgetShown = function(_, w) return w and w.shown end,
     nextTick = function(_, fn) queue[#queue + 1] = fn end,
-    scheduleIn = function(_, delay, fn) H.eq(delay, .01); queue[#queue + 1] = fn end }
+    scheduleIn = function(_, delay, fn)
+        H.eq(delay, .001); delays[#delays + 1] = delay; queue[#queue + 1] = fn
+    end }
 package.loaded["ui/uimanager"] = UI
+package.loaded["ui/time"] = { now = function() return elapsed end,
+    since = function(start) return elapsed - start end, to_us = function(value) return value * 1000000 end }
 package.loaded["ui/widget/infomessage"] = H.widget()
+package.loaded["ui/widget/confirmbox"] = H.widget()
 package.loaded["device"] = { screen = { getWidth = function() return 600 end, getHeight = function() return 800 end } }
 package.loaded["lib/bookshelf_keyed_cache"] = { new = function(name, version)
     H.eq(name, "orbitui_epub_tags"); H.eq(version, 1)
-    return { read = function(file) return disk[file] end,
+    return { read = function(file) elapsed = elapsed + cache_cost; return disk[file] end,
         write = function(file, entry) disk[file] = entry; written = written + 1 end }
 end }
 package.loaded["libs/libkoreader-lfs"] = { attributes = function(file, field)
@@ -105,6 +111,7 @@ end
 local function reset()
     files, documents, disk, queue, roots = {}, {}, {}, {}, { "/profile" }
     opened, closed, extracted, written = 0, 0, 0, 0
+    elapsed, cache_cost, delays = 0, 0, {}
     add("/books/a.epub", opf('["Åland & 日本語"]'))
     add("/profile/a.epub", opf('["Åland & 日本語"]', true))
     add("/books/untagged.epub", opf('[]'))
@@ -152,6 +159,44 @@ H.test("local search scans configured profiles and unlinked EPUBs one per tick, 
     flush(1); H.eq(opened, 1); H.eq(result, nil)
     flush(); H.eq(#result.paths, 2); H.eq(result.skipped, 0); H.eq(result.truncated, false)
     H.eq(opened, 3); H.eq(opened, closed)
+end)
+H.test("cache-only searches batch bounded hits without reopening unchanged or tagless EPUBs", function()
+    reset()
+    for i = 1, 80 do add("/books/cached" .. i .. ".epub", opf('[]')) end
+    for file in pairs(files) do assert(Integration.embeddedTags(file)) end
+    local before, result = opened
+    Integration.embeddedTagRequest(Integration.embeddedTagSession(), { tag = tag }, function() return true end,
+        function(value) result = value end)
+    flush(1)
+    H.eq(opened, before); H.eq(result, nil); H.eq(#queue, 1)
+    flush()
+    H.eq(opened, before); H.eq(#result.paths, 2); H.eq(result.skipped, 0)
+    H.eq(#delays, 2) -- 83 entries, at most 32 per turn rather than 83 timers.
+end)
+H.test("slow cache I/O yields at its elapsed budget and rechecks cancellation before more work", function()
+    reset()
+    for file in pairs(files) do assert(Integration.embeddedTags(file)) end
+    cache_cost = .009
+    local result, failure
+    Integration.embeddedTagRequest(Integration.embeddedTagSession(), { tag = tag }, function() return true end,
+        function(value, err) result, failure = value, err end)
+    flush(1); H.eq(elapsed, .009); H.eq(result, nil); H.eq(#delays, 1)
+    last_widget.dismiss_callback(); flush()
+    H.eq(elapsed, .009); H.eq(result, nil); H.eq(failure, "cancelled")
+end)
+H.test("mixed scans open at most one uncached archive per turn and preserve successes after cancellation", function()
+    reset()
+    local result, failure
+    local function request()
+        Integration.embeddedTagRequest(Integration.embeddedTagSession(), { tag = tag }, function() return true end,
+            function(value, err) result, failure = value, err end)
+    end
+    request(); flush(1); H.eq(opened, 1)
+    last_widget.dismiss_callback(); flush(); H.eq(failure, "cancelled")
+    request(); flush(1); H.eq(opened, 2); H.eq(result, nil)
+    flush(1); H.eq(opened, 3)
+    flush(); H.eq(#result.paths, 2)
+    H.eq(written, 3); H.eq(opened, closed)
 end)
 H.test("cancelled, closed and changed-scope workers do not continue scans or deliver stale results", function()
     for _, reason in ipairs{ "cancel", "close", "scope" } do
@@ -210,6 +255,36 @@ H.test("local result actions retain real reader paths and refuse a changed tag/f
     book = modal.config.item_at(2)
     modal.config.on_cell_tap(book); H.eq(opened_file, book.filepath)
 end)
+H.test("normal Refresh reuses valid tags, rechecks changed/deleted files and retries previous failures", function()
+    reset()
+    documents["/books/untagged.epub"] = nil
+    local modal = require("core/orbitui_search").embeddedTag(tag)
+    flush(); H.eq(opened, 3); H.eq(modal.config.item_count(), 2)
+    add("/books/untagged.epub", opf('["Åland & 日本語"]'))
+    modal.config.footer_rows[1][1].on_tap(); flush()
+    H.eq(opened, 4); H.eq(modal.config.item_count(), 3)
+    files["/books/a.epub"] = nil
+    add("/profile/a.epub", opf('[]')); files["/profile/a.epub"].change = 2
+    add("/books/new.epub", opf('["Åland & 日本語"]'))
+    modal.config.footer_rows[1][1].on_tap(); flush()
+    H.eq(opened, 6); H.eq(modal.config.item_count(), 2)
+end)
+H.test("full reread is a separate confirmed local action and stale confirmations cannot start work", function()
+    reset()
+    local modal = require("core/orbitui_search").embeddedTag(tag)
+    flush(); H.eq(opened, 3)
+    local action = modal.config.footer_rows[2][1]
+    H.eq(action.label, "Reread all EPUB tags…")
+    action.on_tap(); H.eq(opened, 3); H.eq(#queue, 0)
+    local confirm = last_widget
+    H.eq(confirm.sui_native, true)
+    UI:close(confirm) -- Cancelling confirmation does not touch any archive/cache.
+    H.eq(opened, 3); H.eq(#queue, 0)
+    action.on_tap(); last_widget.ok_callback(); flush()
+    H.eq(opened, 6); H.eq(modal.config.item_count(), 2)
+    action.on_tap(); confirm = last_widget
+    modal:onClose(); confirm.ok_callback(); flush(); H.eq(opened, 6)
+end)
 H.test("native dialog interception preserves tag progress identity, completion and cancellation", function()
     local old_show, old_close = UI.show, UI.close
     local Info, Toast = package.loaded["ui/widget/infomessage"], H.widget()
@@ -245,6 +320,7 @@ H.test("all embedded-tag strings have Swedish translations while literal tags st
     local _ = require("core/orbitui_i18n")
     H.eq(_("EPUB tags (offline)"), "EPUB-taggar (offline)")
     H.eq(_("Read EPUB tags"), "Läs EPUB-taggar"); H.eq(_(tag), tag)
+    H.eq(_("Reread all EPUB tags…"), "Läs om alla EPUB-taggar…")
     G_reader_settings = old
 end)
 -- Optional supplement uses the unmodified native KOReader archive reader and

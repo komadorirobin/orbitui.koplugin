@@ -4,6 +4,38 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-01 — offline tag-search cache and scheduling optimization (local)
+
+User approves the staged proposal, beginning with cache reuse and UI-turn
+batching before a persistent aggregate index. Branch remains
+`fix/beta26-acceptance-20261101`, starting clean at `5ad7d87e`. Only host
+integration/search/i18n runtime changes: no component import, pin/bootstrap,
+installed path, schema/namespace, asset, version, sync-owner or public ZIP
+change. C10 now distinguishes the book-level explicit reread, cache-aware
+result-list Refresh and separately confirmed bilingual reread-all. Workers
+return an internal cache-hit hint, process up to 32 hits / 8ms per turn, stop
+after the first uncached archive attempt, then yield with a positive 1ms timer.
+Successful per-file cache entries remain useful after cancellation; errors do
+not become empty cached tags. Native progress/current/navigation/scope and
+400-result/incomplete/membership protections remain.
+
+Seventeen focused cases, both full Lua/LuaJIT gates and all 43 catalogs pass.
+The unchanged long-macOS-TMPDIR fixed-budget fixture limitation is reproduced;
+documented TMPDIR=/tmp repeats pass without changing its production code/tests.
+Actual Bigme native-worker comparisons alternate the same 300 cached local
+EPUBs: median 3734.6 -> 561.9ms (about 6.6x), no archive opens/skips. A separate
+30-file forced reread opens every archive on both workers; sequential storage
+warmth means it is not a controlled cold-storage speed claim. Enumeration and
+modal rendering are excluded. No whole-library completion or 1.0 claim.
+
+Before launch, back up configs and pause both automatic sync owners. No books
+are opened; original history/50-row KOSync queue/BookOrbit sync state remain
+byte-identical after normal quit. Instrumentation is moved outside patches.
+Final source/ZIP/UI verification and targeted sync restoration follow in
+TESTING. Evidence stays private under `test-results/tag-performance-20261101/`.
+No push, release, upstream merge or aggregate index is performed/authorized by
+this first step. Preserve the immutable public Beta 26 archive.
+
 ## 2026-11-01 — Beta 26 verified publication
 
 The user's explicit requested sequence is complete: external Undo fix published

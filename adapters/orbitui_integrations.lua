@@ -485,7 +485,7 @@ function M.embeddedTags(file, refresh)
             for _, tag in ipairs(cached.tags) do
                 if type(tag) ~= "string" or #tag > 800 or not tag:find("%S") or tag:find("%c") then valid = false; break end
             end
-            if valid then return cached.tags end
+            if valid then return cached.tags, nil, true end
         end
     end
     local ok, tags, err = pcall(epubMetadata, file)
@@ -495,13 +495,13 @@ function M.embeddedTags(file, refresh)
         return nil, "changed"
     end
     tag_disk.write(file, { stamp = stamp, tags = tags })
-    return tags
+    return tags, nil, false
 end
 
 local embeddedTags = M.embeddedTags
 function M.embeddedTags(...)
-    local ok, tags, err = pcall(embeddedTags, ...)
-    if ok then return tags, err end
+    local ok, tags, err, cached = pcall(embeddedTags, ...)
+    if ok then return tags, err, cached end
     return nil, "invalid_epub"
 end
 
@@ -529,10 +529,12 @@ function M.embeddedTagSession()
     return source
 end
 
--- One bounded metadata archive per event-loop turn, also on Android. Avoid
--- forked crengine/SQLite workers and leave Cancel/Back/touch processing live.
+-- Cache hits share a bounded 8ms/32-entry turn; at most one metadata archive
+-- attempt per turn, also on Android. No forked crengine/SQLite worker. A small
+-- positive delay yields to input even on native queues that drain due tasks.
 function M.embeddedTagRequest(source, task, current, done)
     local UI = require("ui/uimanager")
+    local time = require("ui/time")
     local progress = require("ui/widget/infomessage"):new{
         text = _("Reading EPUB tags… Tap to cancel."), sui_native = true, _sui_keep_homescreen = true,
     }
@@ -571,21 +573,25 @@ function M.embeddedTagRequest(source, task, current, done)
             if not ok then finish(nil, "invalid_epub"); return end
             files = value
         end
-        local file = files[cursor]
-        if not file then finish({ paths = paths, skipped = skipped, truncated = truncated }); return end
-        local tags, err = M.embeddedTags(file, task.refresh)
-        if task.file then finish(tags and { tags = tags } or nil, err); return end
-        if not tags then skipped = skipped + 1
-        else
-            for _, tag in ipairs(tags) do
-                if tag == task.tag then
-                    if #paths == 400 then truncated = true; finish({ paths = paths, skipped = skipped, truncated = true }); return end
-                    paths[#paths + 1] = file; break
+        local start = time.now()
+        for _i = 1, 32 do
+            local file = files[cursor]
+            if not file then finish({ paths = paths, skipped = skipped, truncated = truncated }); return end
+            local tags, err, cached = M.embeddedTags(file, task.refresh)
+            if task.file then finish(tags and { tags = tags } or nil, err); return end
+            if not tags then skipped = skipped + 1
+            else
+                for _, tag in ipairs(tags) do
+                    if tag == task.tag then
+                        if #paths == 400 then truncated = true; finish({ paths = paths, skipped = skipped, truncated = true }); return end
+                        paths[#paths + 1] = file; break
+                    end
                 end
             end
+            cursor = cursor + 1
+            if not cached or time.to_us(time.since(start)) >= 8000 then break end
         end
-        cursor = cursor + 1
-        UI:scheduleIn(0.01, step)
+        UI:scheduleIn(0.001, step)
     end
     UI:show(progress)
     UI:nextTick(step)

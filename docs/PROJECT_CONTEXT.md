@@ -22,6 +22,27 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- **Offline tag-search optimization, local step 1/2 (not published).** User
+  approves cache-aware Refresh and bounded cache-hit batching before an aggregate
+  index. Ordinary result Refresh no longer forces every archive to reopen;
+  changed/new/missing/unreadable files are still rechecked. A separate confirmed
+  SV/EN reread-all action bypasses the cache. Workers process at most 32 hits /
+  8ms, one uncached archive per turn, with a positive 1ms input yield. No schema,
+  namespace, file slot, component pin, sync owner, version or public ZIP changes.
+  Seventeen focused cases pass both interpreters; full Lua/LuaJIT and 43 catalogs
+  pass. The known macOS long-TMPDIR fixture issue is reproduced, not changed;
+  repeat full runs use documented TMPDIR=/tmp. On Bigme, isolated actual-native
+  queue/archive/zstd scans of the same 300 cached local EPUBs take old
+  4174.8/3731.7/3734.6ms vs new 542.8/611.1/561.9ms, zero archive opens/errors.
+  This is a warm 300-file worker comparison, not whole-library cold completion,
+  tap-to-paint or an installed final-package acceptance. Temporary instrumentation
+  is already moved out of patches; no books opened. Both sync owners are paused
+  before launch; original history, 50-row queue and BookOrbit sync state compare
+  byte-for-byte after normal quit. Final packaging/UI checks and sync-flag
+  restoration follow; no push/release is authorized. Aggregate indexing and
+  progressive result presentation remain later steps. Private evidence:
+  `test-results/tag-performance-20261101/`.
+
 - **The three acceptance fixes are implemented and locally device-tested.**
   Exact source `1502f632`, sealed local ZIP
   `4d66d68a5a74bc89e0667f997ce11c7e7b9b9f74658c6f508ac65c81794be221`;

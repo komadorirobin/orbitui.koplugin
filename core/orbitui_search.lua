@@ -344,7 +344,7 @@ local function tagSearch(tag, opts)
     end
     local UI, Screen = require("ui/uimanager"), require("device").screen
     local fs = require("libs/libkoreader-lfs")
-    local modal, retired, busy, data_session, fetched = nil, false, false, nil, false
+    local modal, retired, busy, data_session = nil, false, false, nil
     local records, visible, query = {}, {}, ""
     local generation = UI._simpleui_navigation_generation
     session = session + 1
@@ -364,7 +364,7 @@ local function tagSearch(tag, opts)
             if M.lower(book.filename):find(M.lower(query), 1, true) then visible[#visible + 1] = book end
         end
     end
-    local function fetch()
+    local function fetch(reread)
         if not current() or busy then return end
         local source, err
         if embedded then
@@ -396,8 +396,7 @@ local function tagSearch(tag, opts)
             filter(); modal.page = 1; modal:refresh()
         end
         if embedded then
-            Integration.embeddedTagRequest(source, { tag = tag, origin = opts.origin, refresh = fetched }, current, done)
-            fetched = true
+            Integration.embeddedTagRequest(source, { tag = tag, origin = opts.origin, refresh = reread == true }, current, done)
         else Integration.bookOrbitRequest(source, function(s) return s:matches(tag) end, current, done) end
     end
     local function bookMeta(book)
@@ -419,6 +418,18 @@ local function tagSearch(tag, opts)
             if not matches then Context.notify(_("This file's tags changed or could not be read. Refresh the results.")); return false end
         end
         return true
+    end
+    local footer = {{ { label = _("Refresh"), on_tap = function() fetch(false) end },
+        { label = _("Close"), on_tap = function() if current() then modal:onClose() end end } }}
+    if embedded then
+        footer[#footer + 1] = {{ label = _("Reread all EPUB tags…"), on_tap = function()
+            if not current() or busy then return end
+            UI:show(require("ui/widget/confirmbox"):new{
+                sui_native = true, _sui_keep_homescreen = true,
+                text = _("Reread tags from every EPUB on this device? This can take a long time. Normal Refresh reuses cached tags for unchanged files. No books or reading data are edited."),
+                ok_text = _("Reread all EPUB tags…"), ok_callback = function() fetch(true) end,
+            })
+        end }}
     end
     modal = require("lib/bookshelf_library_modal"):new{ _sui_keep_homescreen = true, config = {
         title = title .. ": " .. tag,
@@ -449,8 +460,7 @@ local function tagSearch(tag, opts)
         cell_long_tap = function(book)
             if canOpen(book) then require("adapters/orbitui_book_panel").show(book.filepath, { open_book = opts.open_book }) end
         end,
-        footer_rows = {{ { label = _("Refresh"), on_tap = fetch },
-            { label = _("Close"), on_tap = function() if current() then modal:onClose() end end } }},
+        footer_rows = footer,
         on_closed = function() retired = true end,
     } }
     UI:show(modal)

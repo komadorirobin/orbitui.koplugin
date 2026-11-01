@@ -1176,9 +1176,20 @@ Native bounded libarchive reads always close, reject ambiguous/oversized entries
 and never extract to disk or open a document engine. The bounded non-expanding
 XML reader rejects DTD/external entities and malformed data. A separate versioned,
 disposable local cache validates mtime/ctime/size and tag values, keeps successful
-empty results but never caches transient failures. Explicit Refresh rereads.
+empty results but never caches transient failures. A book's explicit Read/Refresh
+rereads that file. The November 1 approved search optimization makes ordinary
+result-list Refresh reuse unchanged entries, while retrying failures and checking
+new/changed/deleted files. A separate SV/EN **Reread all EPUB tags** action requires
+confirmation before bypassing the cache. Never reinterpret ordinary Refresh as
+a forced whole-library reread, or change online BookOrbit matching semantics.
 Local search reuses native home/profile path inventories and scan-depth setting,
-deduplicates real EPUBs, includes the originating file, and yields between books.
+deduplicates real EPUBs and includes the originating file. Process at most 32
+cache hits or 8ms per UI turn (whichever comes first), and at most one uncached
+archive attempt per turn. Yield through a positive 1ms timer, not a chain of
+already-due tasks. Keep native progress ownership and per-turn current-owner,
+navigation, cancellation and library-identity checks. Successful entries survive
+cancellation; transient failures do not become negative hits. This step adds no
+persistent aggregate index, new cache namespace, file slot or background sync.
 Cancellation/closed/navigation/scope owners retire work; unreadable-file counts
 and the 400-hit cap are visible. Recheck membership/file before opening via the
 original reader callback. No covers/network/remote metadata or reading-state
