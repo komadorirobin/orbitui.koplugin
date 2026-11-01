@@ -38,7 +38,8 @@ and correct this file in the same change.
   BookOrbit server stay unchanged. Candidate `b3fd8887`, private ZIP `5ff334e2`
   passes both full scripts, sealed/native/package/history and four older-beta
   installer gates. Exact 2,000 paths and public dist `3fd75c19` are retained.
-  Only the standing audited main push follows; see TESTING/MERGE_LOG. No fresh
+  Audited main push `c5656b02` is complete; upstream-watch run `41351394509`
+  passes. Runtime CI is tracked at `41351394477`; see TESTING/MERGE_LOG. No fresh
   physical Bigme test or measured performance improvement is claimed.
 
 - **Companion server now published/deployed, separately from Beta 28.** User

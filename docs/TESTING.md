@@ -60,6 +60,11 @@ as a replacement release. Verification-only documentation descendants do not
 rebuild the verified candidate. Main push/CI is separate from these local gates;
 no device install, public release, OTA or server deployment is performed.
 
+Audited runtime main push is `c5656b02`. GitHub matrix/package/native-OTA
+results are [41351394477](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/41351394477);
+upstream-watch **41351394509** passes. A documentation-only receipt preserves
+the exact verified private ZIP and restored immutable public Beta 28 bytes.
+
 ## November 1 companion status server publication/deployment
 
 Separate user authorization publishes BookOrbit Extras **v0.3.0** and deploys

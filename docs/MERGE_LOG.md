@@ -53,6 +53,12 @@ pins are current. Public Beta 28 dist is restored byte-for-byte. Full results
 and exact hashes are in TESTING. Only a standing verified main push follows;
 no beta/tag/OTA release or server/device changes are included.
 
+Audited fast-forward push `c4e4fbab..c5656b02` to `origin/main` completes.
+Upstream-watch **41351394509** succeeds. Runtime test/package/native-OTA CI
+is recorded at [41351394477](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/41351394477).
+The receipt is documentation-only and does not rebuild the private candidate
+or alter any public beta asset, source pin or installed reader/server.
+
 ## 2026-11-01: separately approved companion status server deployment
 
 User requests publishing and deploying the read-status server extension after
