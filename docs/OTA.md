@@ -7,6 +7,47 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 0.1.0-beta.28
+
+Beta 28 imports Bookshelf master through `0d976875` (after 6.1.1), adding
+publication years for OPDS 1.x/2.0 catalog books through `%calibre{pubdate}`.
+It prefers publication-specific fields over an Atom date-added value and
+preserves the first known year when editions merge. SimpleUI stays at
+`fdf83c7d`. Existing Home/Manga profiles, fast close/return, shelves, tags,
+ornaments and external integrations retain their behavior.
+
+**Experimental, off by default:** **Integrations > BookOrbit > Import reading
+status from BookOrbit** checks already matched device books after Home or a
+shelf is visible, at most every 15 minutes. The page has Update now and last
+successful check. It requires the separate `read-statuses v1` server extension
+for exact BookOrbit 3.6.0, currently built/tested locally but NOT published or
+deployed. Updating OrbitUI alone does not provide that server support.
+
+The importer only reads the server. It preserves page position, history,
+ratings/reviews and existing BookOrbit/Hardcover sync preferences. Open/parked
+books, pending Undo, newer local status, ambiguous same-day changes and
+competing metadata copies are protected rather than resolved automatically.
+Unread/Want to Read never reset a local read. Work is deferred and bounded;
+unchanged canonical statuses require no sidecar reads/writes. No EPUB scan,
+cover work, forced Manga rebuild or new remote status/progress writer.
+
+Svenska: Beta 28 hämtar senaste Bookshelf-ändringen: utgivningsår för
+OPDS-katalogböcker via `%calibre{pubdate}`. SimpleUI är redan uppdaterat.
+Under **Integrationer > BookOrbit > Hämta lässtatus från BookOrbit** finns en
+experimentell funktion, **avstängd som standard**, som kontrollerar redan
+kopplade böcker högst var 15:e minut efter att Hem/hyllan visas. Kräver det
+separata servertillägget `read-statuses v1`, som ännu inte publicerats eller
+driftsatts. Enbart OrbitUI-uppdateringen räcker alltså inte för serverstödet.
+Öppna böcker, väntande ångring och osäkra/nyare lokala ändringar skyddas.
+Sidposition, historik, betyg, recensioner och externa synkinställningar behålls.
+Ingen server, EPUB-fil eller gammal release ändras av uppdateringen.
+
+Update via the preview channel and restart KOReader. All new controls/help
+are Swedish and English. The 2,000 installed paths and API-1 bootstrap remain
+unchanged. This is a prerelease: latest OPDS/status changes have no fresh
+physical Bigme/Boox acceptance or measured startup/return speedup. See TESTING
+for exact automated/sealed/native OTA evidence and remaining device gates.
+
 ## OrbitUI 0.1.0-beta.27
 
 Beta 27 publishes the offline EPUB-tag index/search and smart-chip follow-ups,

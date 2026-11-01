@@ -163,6 +163,18 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+November 1 Beta 28 request: Bookshelf master
+`0d976875c47f786c1a6df55591f36fb3153554b6` adds publication-year extraction
+for OPDS 1.x/2.0 catalog records (`%calibre{pubdate}`), plus regressions.
+Review covers both new commits after `c686f5a3`; no new files, dependencies,
+settings or hooks. Namespaced publication dates outrank Atom's published date;
+Calibre's unset sentinel stays empty and merged editions retain the first year.
+Unsquashed import `ceb86a6d` is conflict-free. Keep existing OPDS, profile,
+tag/search and sync ownership (C04/C05/C10). SimpleUI remains `fdf83c7d`, zero
+pending commits. Publication also includes the previously local, off-by-default
+status importer; its separate server extension remains local and undeployed.
+No bootstrap, installed-path, artwork, alias or external-patch changes.
+
 November 1: reviewed Bookshelf master **6.1.1** at
 `c686f5a36af134e778e8e1172be75ead76b08168` adds two commits after `7ff93b9d`.
 Self-sizing pickers embedded in an editor request their own height, bounded by

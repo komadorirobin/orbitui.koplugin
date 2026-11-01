@@ -4,6 +4,26 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-01 — reviewed OPDS publication-year merge / Beta 28 preparation
+
+User explicitly requests upstream merge and subsequent publication. Fresh fetch
+finds Bookshelf master `0d976875c47f786c1a6df55591f36fb3153554b6`, two commits
+after `c686f5a3`: `220b2e5b` and PR merge `0d976875`. SimpleUI remains
+`fdf83c7da73e6fa82c4ad02efa84a0dad3733541`, zero pending commits. Complete
+diff is one runtime helper and its existing test file. Unsquashed subtree import
+`ceb86a6d` is clean; pin advancement is separate from that import. OPDS catalog
+records gain publication year with date-field precedence, unset-date rejection
+and edition-merging preservation. No local contract C01-C11 is relaxed.
+No new installed file/module, migration, artwork, bootstrap, settings, native
+hook, external patch or sync-owner change. Home/Manga/custom behavior stays.
+
+Beta 28 also includes local status-import source `f3aa3ff6`, opt-in OFF, with
+the C05 conflict/Undo/atomic/canonical-ack protections intact. Its separate
+BookOrbit Extras/API extension stays LOCAL and UNDEPLOYED; this OrbitUI release
+does not make an unextended server support status import. ADB has no devices;
+fresh physical OPDS/status/timing acceptance remains open. Full/sealed/OTA,
+outgoing-history/secret, publication approval and public-byte checks follow.
+
 ## 2026-11-01 — optional BookOrbit status import, local follow-up
 
 User says Kör to the optional deferred status-check proposal, then explicitly

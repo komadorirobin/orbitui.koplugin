@@ -22,6 +22,16 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- **Beta 28 preparation, explicit merge/publication request.** Reviewed
+  Bookshelf `0d976875c47f786c1a6df55591f36fb3153554b6` is integrated through
+  unsquashed `ceb86a6d`: OPDS 1.x/2.0 catalog publication years, no new paths,
+  settings/hooks or assets. SimpleUI remains `fdf83c7d`, already current.
+  Includes the previously local status importer described below, still OFF.
+  Its companion Extras/API code remains local and no server is deployed.
+  Beta 27 public bytes remain immutable. Fresh ADB inventory has no devices;
+  physical OPDS/status layout/timing is not accepted. Test/package/publication
+  evidence follows in TESTING; do not claim release until its gates finish.
+
 - **LOCAL follow-up after Beta 27: optional BookOrbit read-status import.**
   Latest user approves local implementation and a local read-only API addition
   in `bookorbit-extras`, not a push/release/deployment/import. Host lifecycle

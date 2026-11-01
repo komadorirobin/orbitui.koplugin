@@ -1,6 +1,18 @@
 # Verification and device acceptance
 
-## November 1 optional BookOrbit status import (LOCAL, unpublished)
+## November 1 Beta 28 merge and release gates
+
+Candidate preparation starts at `8cada8ca`. Reviewed unsquashed Bookshelf merge
+`ceb86a6d` integrates exact `0d976875` (two commits): only OPDS publication-year
+mapping and its existing regression file change. SimpleUI remains `fdf83c7d`.
+The previously local optional status importer is included, still OFF by default;
+its separate server patch remains local/undeployed. All C01-C11 safeguards,
+API-1 bootstrap and 2,000 installed paths remain. New fresh device acceptance
+and timing are not claimed: ADB inventory is empty. Automated/sealed/native OTA,
+outgoing source/history/secret and final/public checks are recorded below when
+completed. Evidence: `test-results/beta28-20261101/`.
+
+## November 1 optional BookOrbit status import (original LOCAL verification)
 
 Final runtime source `f3aa3ff6`, private ZIP
 `6ad7b4b8c4bc2c013f8aa77fb8765bf94b50b8f9a37c26da3be4112f0ab86aec`
