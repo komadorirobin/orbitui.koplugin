@@ -1,5 +1,35 @@
 # Verification and device acceptance
 
+## November 1 companion status server publication/deployment
+
+Separate user authorization publishes BookOrbit Extras **v0.3.0** and deploys
+the reviewed **Littex** server build, preserving that installation's existing
+legacy-0101 undo implementation. No OrbitUI runtime, installed reader, version,
+upstream pin, release tag or public ZIP changes in this follow-up.
+
+Extras CI **41341624599** passes all six jobs. Exact production source
+`819daf51` passes 1,567 server tests, 14 client tests and typecheck/lint/build.
+Thirteen real undo database tests pass on an isolated restored copy with
+outbound network blocked. Runtime migrations are byte-identical; applying the
+native migrator changes none of the 177 restored table fingerprints. The fresh
+pre-cutover database backup also restores all 177 tables exactly, and stopped
+appdata backup matches its source. No production database restore is performed.
+
+Healthy deployment **19:54:13 UTC**, then authenticated loopback and public
+HTTPS read-status requests return the expected 198 distinct canonical rows
+from 200 supplied IDs. Anonymous/invalid/oversized requests are rejected and
+no-store is retained. Twelve protected reading/book/migration tables remain
+unchanged after startup and API checks; no actual reading-state or Hardcover
+test writes. Existing undo and unrelated containers/configuration are retained.
+Normal anonymous login/Legal notices render Littex and BookOrbit attribution,
+SV/EN modification notice and the complete-source link without console errors.
+
+Full source and checksums are public in Extras 0.3.0; see its VERIFICATION.md
+for exact image/source/archive hashes and the generic-0132 versus personal-0101
+distinction. Physical Bigme status import, lifecycle/conflict UI and latency
+remain untested. Client import stays OFF by default; no new device acceptance
+or general performance improvement is inferred from server acceptance.
+
 ## November 1 Beta 28 merge and release gates
 
 Candidate preparation starts at `8cada8ca`. Reviewed unsquashed Bookshelf merge

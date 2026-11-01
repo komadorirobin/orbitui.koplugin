@@ -22,12 +22,36 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- **Companion server now published/deployed, separately from Beta 28.** User
+  explicitly requests publication and deployment, and approves the modified
+  build name Littex with BookOrbit attribution. Extras **v0.3.0** pins
+  `644640a8`, published **19:52:52 UTC**; all six CI jobs at **41341624599**
+  pass. The existing installation's legacy-0101 undo source is reproduced
+  exactly, then only the read-status API plus Littex/full-source notices are
+  added. No schema/migration/lockfile change or generic-0132 replacement.
+  Exact complete source `819daf51`, published archive SHA `4f3149cf`, runtime
+  image `sha256:2a1a4f9b7de2ed7b12bf550543bf1c1ca334293aeeb2955ddb08f9c42f01ce6b`.
+  Deployment **19:54:13 UTC** is healthy. Fresh backup restores all 177 table
+  fingerprints; 13 real undo DB tests and authenticated status acceptance
+  pass on an isolated outbound-blocked copy. Production loopback/public HTTPS
+  GET acceptance returns exact canonical statuses, rejects anonymous/invalid
+  requests and preserves 12 protected tables. Existing undo, data mounts,
+  credentials/PWA overrides/assets and unrelated containers are preserved.
+  Full source/legal notices are live in SV/EN. The generic all-source archive
+  separately uses 0132 and is NOT the existing server's upgrade image.
+  No device change, client opt-in or actual remote reading-status mutation.
+  Physical status-import acceptance remains pending. Private server evidence
+  is in bookorbit-extras/test-results/status-release-20261101; public receipt
+  is Extras VERIFICATION.md. OrbitUI changes here are documentation only:
+  VERSION, runtime, upstream pins and all Beta 28/public bytes stay unchanged.
+
 - **Beta 28 is public**, source/tag `e9d3e084` / `v0.1.0-beta.28`. Reviewed
   Bookshelf `0d976875c47f786c1a6df55591f36fb3153554b6` is integrated through
   unsquashed `ceb86a6d`: OPDS 1.x/2.0 catalog publication years, no new paths,
   settings/hooks or assets. SimpleUI remains `fdf83c7d`, already current.
   Includes the previously local status importer described below, still OFF.
-  Its companion Extras/API code remains local and no server is deployed.
+  Its companion Extras/API code was still local at beta publication; the
+  separately approved server follow-up above supersedes that limitation.
   Beta 27 public bytes remain immutable. Fresh ADB inventory has no devices;
   physical OPDS/status layout/timing is not accepted. Exact evidence in TESTING.
   User explicitly approves publication with these device limits. Candidate
@@ -39,13 +63,14 @@ and correct this file in the same change.
   anonymous published ZIP/checksum and native public-byte OTA from Beta 9/26/27
   all pass. Preview selects 28; stable stays absent. All 81 previous releases
   and 135 old tag refs remain unchanged. Published **2026-11-01 18:38:40 UTC**.
-  No device install or server deployment; Extras remains one local unpushed
-  commit `ab47cd2`. Verification docs do not rebuild the public archive.
+  At beta publication there was no device install/server deployment and Extras
+  remained local at `ab47cd2`. The server follow-up above is separate.
+  Verification docs do not rebuild the public archive.
 
 - **Status-import implementation history (client now in Beta 28).**
   Original local approval covered the client and a local read-only API addition
-  in `bookorbit-extras`, not deployment. Only that server addition remains
-  unpublished; the OrbitUI client is now public as above. Host lifecycle
+  in `bookorbit-extras`, not deployment. The later server approval/publication
+  is recorded above; the OrbitUI client is public as above. Host lifecycle
   schedules work after paint, opt-in defaults OFF. GET-only 200-ID batches,
   15-minute attempt throttle, saved native matches only; no library traversal,
   document engine, cover work or new runtime path. Child reads are nonrepairing;

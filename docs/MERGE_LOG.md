@@ -4,6 +4,22 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-01: separately approved companion status server deployment
+
+User requests publishing and deploying the read-status server extension after
+Beta 28, then approves Littex as the modified build name with BookOrbit
+attribution. Extras v0.3.0 at `644640a8` publishes 19:52:52 UTC; six CI jobs
+pass. The existing installation's legacy-0101 undo source is retained exactly,
+with status-only API and Littex/full-source notices added as `819daf51`.
+No migration or generic-0132 replacement. Fresh backup restoration verifies
+177 exact table fingerprints. Isolated native undo DB tests and status API
+acceptance pass; production loopback/public HTTPS acceptance preserves all
+12 protected reading/book/migration tables. Deployment is healthy at
+19:54:13 UTC; full receipt/source hashes are in Extras VERIFICATION.md.
+No reader installation, importer opt-in, physical device acceptance or remote
+reading-status/Hardcover test mutation. OrbitUI documentation is updated in
+SV/EN; runtime, VERSION, pins, tags and all published Beta 28 bytes stay intact.
+
 ## 2026-11-01 — reviewed OPDS publication-year merge / Beta 28 preparation
 
 User explicitly requests upstream merge and subsequent publication. Fresh fetch

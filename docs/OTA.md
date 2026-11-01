@@ -20,8 +20,11 @@ ornaments and external integrations retain their behavior.
 status from BookOrbit** checks already matched device books after Home or a
 shelf is visible, at most every 15 minutes. The page has Update now and last
 successful check. It requires the separate `read-statuses v1` server extension
-for exact BookOrbit 3.6.0, currently built/tested locally but NOT published or
-deployed. Updating OrbitUI alone does not provide that server support.
+for exact BookOrbit 3.6.0, now published in
+[BookOrbit Extras 0.3.0](https://github.com/komadorirobin/bookorbit-extras/releases/tag/v0.3.0).
+An administrator installs it separately. The reviewed Littex server build was
+deployed after this beta's publication; the client remains OFF by default.
+Updating OrbitUI alone does not provide server support on other installations.
 
 The importer only reads the server. It preserves page position, history,
 ratings/reviews and existing BookOrbit/Hardcover sync preferences. Open/parked
@@ -36,8 +39,10 @@ OPDS-katalogböcker via `%calibre{pubdate}`. SimpleUI är redan uppdaterat.
 Under **Integrationer > BookOrbit > Hämta lässtatus från BookOrbit** finns en
 experimentell funktion, **avstängd som standard**, som kontrollerar redan
 kopplade böcker högst var 15:e minut efter att Hem/hyllan visas. Kräver det
-separata servertillägget `read-statuses v1`, som ännu inte publicerats eller
-driftsatts. Enbart OrbitUI-uppdateringen räcker alltså inte för serverstödet.
+separata servertillägget `read-statuses v1`, nu publicerat i BookOrbit Extras
+0.3.0. Det separat granskade Littex-bygget driftsattes efter betans publicering;
+funktionen i läsaren är fortfarande avstängd. Andra servrar kräver separat
+administratörsinstallation. Enbart OrbitUI-uppdateringen räcker inte för det.
 Öppna böcker, väntande ångring och osäkra/nyare lokala ändringar skyddas.
 Sidposition, historik, betyg, recensioner och externa synkinställningar behålls.
 Ingen server, EPUB-fil eller gammal release ändras av uppdateringen.

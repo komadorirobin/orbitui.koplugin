@@ -172,7 +172,10 @@ Calibre's unset sentinel stays empty and merged editions retain the first year.
 Unsquashed import `ceb86a6d` is conflict-free. Keep existing OPDS, profile,
 tag/search and sync ownership (C04/C05/C10). SimpleUI remains `fdf83c7d`, zero
 pending commits. Publication also includes the previously local, off-by-default
-status importer; its separate server extension remains local and undeployed.
+status importer; its separate server extension was local and undeployed at
+beta publication. A later explicit approval publishes Extras 0.3.0 and deploys
+the reviewed Littex server build; see TESTING/MERGE_LOG. This is not another
+component import, client opt-in or change to the immutable Beta 28 archive.
 No bootstrap, installed-path, artwork, alias or external-patch changes.
 
 November 1: reviewed Bookshelf master **6.1.1** at
