@@ -24,6 +24,15 @@ does not make an unextended server support status import. ADB has no devices;
 fresh physical OPDS/status/timing acceptance remains open. Full/sealed/OTA,
 outgoing-history/secret, publication approval and public-byte checks follow.
 
+The user explicitly approves publishing after automated tests despite no fresh
+Bigme acceptance. Exact candidate `e9d3e084` seals as ZIP `3fd75c19`, 9,376,824
+bytes, unchanged 2,000 paths. Both full suites, all 43 catalogs, sealed root/
+native dialog/input/raster/SQLite/status checks and four older-installer OTA
+scenarios pass. Source projection, retained security adaptations, full outgoing
+held-art and gitleaks audits pass. Read-only watch finds zero missing commits
+for both components. Keep the exact tested ZIP across documentation descendants.
+CI/draft/public verification remains separate; no device/server deployment.
+
 ## 2026-11-01 — optional BookOrbit status import, local follow-up
 
 User says Kör to the optional deferred status-check proposal, then explicitly

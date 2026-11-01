@@ -31,6 +31,11 @@ and correct this file in the same change.
   Beta 27 public bytes remain immutable. Fresh ADB inventory has no devices;
   physical OPDS/status layout/timing is not accepted. Test/package/publication
   evidence follows in TESTING; do not claim release until its gates finish.
+  User explicitly approves publication with these device limits. Candidate
+  `e9d3e084`, sealed ZIP `3fd75c19` / 9,376,824 bytes passes both full suites,
+  43 catalogs, both sealed root/native supplements, exact source/path/artwork/
+  secret audits and older Beta 5/9/26/27 installer scenarios. No rebuild of
+  these bytes for verification-only docs. Push/CI/publication checks follow.
 
 - **LOCAL follow-up after Beta 27: optional BookOrbit read-status import.**
   Latest user approves local implementation and a local read-only API addition

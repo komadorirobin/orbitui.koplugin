@@ -12,6 +12,35 @@ and timing are not claimed: ADB inventory is empty. Automated/sealed/native OTA,
 outgoing source/history/secret and final/public checks are recorded below when
 completed. Evidence: `test-results/beta28-20261101/`.
 
+Final candidate **`e9d3e084128fe82ca3d5ef4a688c116ba72094de`**, ZIP
+**`3fd75c19cd7287d8d3e9ec349df5f5bb9dba11beb55c3111ee2f7ccd685cf9dd`**:
+9,376,824 bytes, 27,706,820 expanded; manifest
+`c3f9ce5293a0eec3a6e54cd8810c07663b46015b8a8750b0839a3fd1e0cf43d4`.
+Both complete Lua/LuaJIT scripts pass: 133 Python tests/four inherited skips,
+101 root Lua files, 533 Bookshelf suites/zero failures/three inherited SQLite
+skips and 13 SimpleUI files. OPDS feed reports 269 passes, zero failures.
+All 43 catalogs, 1,152 syntax files and 403 module identities pass. Both sealed
+101-root runs and minimum/current native dialog/input/Trapper/span checks pass;
+status import includes the pinned real BookOrbit payload builder (17 cases).
+Seven real SQLite tag-index cases, native libarchive EPUB, actual UIManager
+input-window and native Android/software grey/RGB night/raster checks pass.
+These desktop/native-source supplements are not a physical-device session.
+
+Exact optimized source projection, every manifest size/hash and identical
+Beta 27 path set pass: 1,999 manifest entries plus manifest = 2,000 files.
+Stable bootstrap, assets, SimpleUI tree, module map and export policy are
+unchanged. The OPDS delta is exactly upstream while existing authorization/
+redirect adaptations survive. Full outgoing history has no held bitmap;
+gitleaks passes. Native old-installer tests from Beta 5/9/26/27 pass extraction,
+activation, restart, rollback, interrupted-download recovery, external snapshot
+and bounded obsolete-runtime cleanup. Fresh read-only watch confirms both
+pins current with zero missing commits. No server or device was modified.
+
+The user explicitly approves publication despite these untested-device limits,
+with the status feature OFF by default. This is a prerelease authorization,
+not physical acceptance or server-extension publication. Push/CI/draft/public
+byte checks follow; verification-only documentation does not rebuild this ZIP.
+
 ## November 1 optional BookOrbit status import (original LOCAL verification)
 
 Final runtime source `f3aa3ff6`, private ZIP
