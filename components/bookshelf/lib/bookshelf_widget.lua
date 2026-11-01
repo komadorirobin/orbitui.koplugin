@@ -178,7 +178,13 @@ end
 -- leftover height, so it absorbs the difference silently, and correcting it
 -- there would change every existing user's row count. List mode has a fixed row
 -- height and cannot absorb anything, so its budget uses the real number.
-local function _footerReserveH()
+local function _footerMode()
+    local v = BookshelfSettings.read("footer_bar", "show")
+    if v == "hide" or v == "invisible" then return v end
+    return "show"
+end
+
+local function _footerBarH()
     local scale = _paginationFooterFontScale() / 100
     local function scaled(base, min_px)
         return math.max(min_px or 1,
@@ -190,6 +196,10 @@ local function _footerReserveH()
         base_h,
         _paginationFooterMarginPx("pagination_footer_top_margin"),
         _paginationFooterMarginPx("pagination_footer_bottom_margin"))
+end
+local function _footerReserveH()
+    if _footerMode() == "hide" then return Screen:scaleBySize(12) end
+    return _footerBarH()
 end
 
 -- _asCoverGrid(fn) — run fn() with the view mode pinned to covers, then drop
@@ -1725,19 +1735,19 @@ end
 -- from the last one: it may wear its own theme (bookshelf_theme_pack). Named
 -- FIRST in _rebuild, so every colour, wallpaper and plank read of this build
 -- is the shelf's; a different look bumps the settings generation (the caches
--- keyed on it rebuild) and asks for a full-screen refresh, the wallpaper and
--- chrome having changed under the whole screen.
+-- keyed on it rebuild) and asks for a whole-screen refresh, the wallpaper and
+-- chrome having changed under the whole screen: "ui" (AUTO on a PW5), no
+-- flash (maintainer). "full" flashed; "partial" (REAGL) still flashed and
+-- left obvious ghosting (PW5 trial).
 function BookshelfWidget:_syncShelfTheme()
     local ok, TP = pcall(require, "lib/bookshelf_theme_pack")
     if not (ok and TP and TP.setShelf) then return false end
     local changed = TP.setShelf(self.themeShelfId and self:themeShelfId() or self.chip)
     if changed and self._shelf_theme_seen then
         self._ground_memo = nil
-        -- While the Theme library is up, each theme tapped is a plain ui
-        -- refresh (no flash over the picker); it makes the full one as it
-        -- closes (TL.previewing).
-        local TL = package.loaded["lib/bookshelf_theme_library"]
-        UIManager:setDirty("all", (TL and TL.previewing) and "ui" or "full")
+        -- The Theme library still makes a full one as it closes, after a
+        -- theme was chosen (TL.previewing).
+        UIManager:setDirty("all", "ui")
     end
     self._shelf_theme_seen = true
     return changed
@@ -4656,6 +4666,15 @@ end
 -- (see lib/bookshelf_night_mode_sync.lua), and keying on the wrong one would
 -- serve a bitmap inverted the wrong way round.
 function BookshelfWidget:_wallpaperWidget()
+    local w = self:_wallpaperWidgetRaw()
+    -- What is behind the shelf on screen, for whatever puts it back (the
+    -- cover opening, ring erases, wipes): the picture kept from another
+    -- shelf is not, and was flashed behind a picture-less shelf's row (PW5).
+    pcall(function() require("lib/bookshelf_wallpaper").setShowing(w ~= nil) end)
+    return w
+end
+
+function BookshelfWidget:_wallpaperWidgetRaw()
     local name = self:_wallpaperName()
     if not name then return nil end
     local ok, w = pcall(function()
@@ -5006,6 +5025,26 @@ function BookshelfWidget:burgerUnder(menu)
         end
     end
     return nil
+end
+
+-- _paintRevealedFooterPanel(bb, x, y, h): Behavior > Footer bar > Hide gives
+-- the shelf the bar's space; while the bar is shown anyway (selecting, the
+-- keys in it) it stands over the bottom row, so it gets a solid panel in the
+-- panel colour, inset like the usual footer panel.
+function BookshelfWidget:_paintRevealedFooterPanel(bb, x, y, h)
+    local ok_w, Wallpaper = pcall(require, "lib/bookshelf_wallpaper")
+    if not (ok_w and Wallpaper and Wallpaper.panel) then return end
+    local colour
+    local ok_cp, CoverProgress = pcall(require, "lib/bookshelf_cover_progress")
+    if ok_cp and CoverProgress and CoverProgress.resolvedColors then
+        local ok_c, colors = pcall(CoverProgress.resolvedColors)
+        if ok_c and colors then colour = colors.panel_tint or colors.panel_bg end
+    end
+    colour = colour or require("ffi/blitbuffer").COLOR_WHITE
+    local PAD, content_w = self:_layoutPrimitives()
+    local bleed = math.floor(math.floor((self.width - content_w) / 2) / 2)
+    pcall(Wallpaper.panel, bb, x + bleed, y, self.width - bleed * 2, h,
+        colour, 1, Space.radius.window, false)
 end
 
 function BookshelfWidget:_footerPanelRectRaw(strength)
@@ -7417,6 +7456,8 @@ end
 function BookshelfWidget:_buildShelfRows(items, content_w, shelf_h, PAD, n_rows)
     n_rows = n_rows or 2
     local bw = self
+    -- This page's modules with a minute hook, as _makeCell draws them.
+    self._shelf_minute_cells = { chip = self.chip }
     -- Tap/hold handlers and the selected filepath now come from
     -- _shelfCallbacks, shared verbatim with the list-mode row builder.
     -- on_book_tap branches on _expanded so a tap on a shelf book in
@@ -8501,6 +8542,8 @@ end
 
 function BookshelfWidget:_buildSpineRows(items, content_w, shelf_h, PAD, n_rows)
     local SpineShelf = require("lib/bookshelf_spine_shelf")
+    -- This page's modules with a minute hook, as _makeCell draws them.
+    self._shelf_minute_cells = { chip = self.chip }
     -- The page's dealt pieces, stops for the keys (_noteKeyOrn).
     self._key_orns_build = {}
     local shared = self:_shelfCallbacks()
@@ -10043,6 +10086,21 @@ function BookshelfWidget:_startMenuPosition()
     return "left"
 end
 
+-- _paintUnseen(bb, x, y, w, h, paint) -> paint()'s result: paint runs as
+-- usual (its buttons learn where they are, so their hit boxes work), then
+-- what was in the rect before is put back. Behavior > Footer bar.
+local function _paintUnseen(bb, x, y, w, h, paint)
+    local Blitbuffer = require("ffi/blitbuffer")
+    local ok, keep = pcall(Blitbuffer.new, w, h, bb:getType())
+    if not (ok and keep) then return paint() end
+    -- A clipped paint hands a stand-in: read the real buffer behind it.
+    keep:blitFrom(require("lib/bookshelf_clip_bb").real(bb), 0, 0, x, y, w, h)
+    local ret = paint()
+    bb:blitFrom(keep, x, y, 0, 0, w, h)
+    keep:free()
+    return ret
+end
+
 -- _buildFooterRow(content_w, total_pages, footer_h) — the screen-anchored
 -- footer row. Composes the pagination chev nav (centered) with the
 -- selection-mode close-X (left-aligned) and bucket (right-aligned). All
@@ -10055,6 +10113,23 @@ end
 -- the bottom-left and bottom-right "feel" tappable everywhere.
 function BookshelfWidget:_buildFooterRow(content_w, total_pages, footer_h)
     local OverlapGroup    = require("ui/widget/overlapgroup")
+    -- Behavior > Footer bar. Both hidden modes show the bar while selecting
+    -- (its X and bucket are the way out) and while the keys are in it.
+    local mode = _footerMode()
+    local reveal = self._selection:isActive() or self._focus_zone == "footer"
+    if mode == "hide" and not reveal then
+        -- No bar: the shelf has its space. An empty row keeps the callers'
+        -- contract (a row of footer_h to anchor and swap).
+        self._burger_dimen, self._micromod_dimen = nil, nil
+        local row = OverlapGroup:new{ dimen = Geom:new{ w = self.width, h = footer_h } }
+        self._footer_h_last = footer_h
+        self._footer_row_widget = row
+        return row
+    end
+    if mode == "hide" then
+        -- Shown over the foot of the shelf, at its own height.
+        footer_h = _footerBarH()
+    end
     local CenterContainer = require("ui/widget/container/centercontainer")
     local LeftContainer   = require("ui/widget/container/leftcontainer")
     local RightContainer  = require("ui/widget/container/rightcontainer")
@@ -10160,6 +10235,11 @@ function BookshelfWidget:_buildFooterRow(content_w, total_pages, footer_h)
     local side_w = math.floor((self.width - math.floor(content_w * 0.75)) / 2)
     local inner = row.paintTo
     row.paintTo = function(slf, bb, x, y)
+        if mode == "hide" then
+            -- Shown over the foot of the shelf (selecting, the keys): a solid
+            -- panel under it, or the buttons sit on the bottom row's titles.
+            self:_paintRevealedFooterPanel(bb, x, y, footer_h)
+        end
         self:_paintFooterPanel(bb)
         if burger_side == "left" or burger_side == "right" then
             self:_keepBurgerUnder(bb,
@@ -10167,6 +10247,15 @@ function BookshelfWidget:_buildFooterRow(content_w, total_pages, footer_h)
                 side_w, footer_h)
         end
         return inner(slf, bb, x, y)
+    end
+    -- Behavior > Footer bar > Invisible buttons: painted unseen, so every
+    -- button keeps its hit box in its usual place (maintainer).
+    if mode == "invisible" and not reveal then
+        local shown = row.paintTo
+        row.paintTo = function(slf, bb, x, y)
+            return _paintUnseen(bb, x, y, self.width, footer_h,
+                function() return shown(slf, bb, x, y) end)
+        end
     end
     self._footer_h_last = footer_h
     self._footer_row_widget = row
@@ -10906,6 +10995,11 @@ function BookshelfWidget:_swapShelvesInPlace()
     -- gap above the rows so overhanging cover badges (favourite heart, issue
     -- #92) aren't clipped. On any failure, fall back to the scoped refresh.
     local anim_steps = _wipe_dir and shelf_top and _pageAnimSteps()
+    -- Under another window (a slider page passing side swipes to the
+    -- shelf) the wipe would draw the new page over it: repaint instead,
+    -- which paints the windows above the shelf again. A toast is no cover.
+    local top_window = anim_steps and UIManager:getTopmostVisibleWidget()
+    if top_window and top_window ~= self and not top_window.toast then anim_steps = nil end
     -- Colour e-ink (Kaleido): the FIRST page-turn wipe after a full-screen
     -- refresh (cold start, chip switch, book return) stalls ~1.6s - its
     -- per-strip partial refreshes contend with the panel still draining the
@@ -11777,7 +11871,7 @@ function BookshelfWidget:_refreshSpineSlotInPlace(fp)
                     SpineShelf.invalidateBook(fp)
                     slot.book = fresh
                     slot.entry.book = fresh
-                    slot.entry.look = SpineShelf.bookLook(fresh)
+                    slot.entry.look = SpineShelf.shownLook(fresh)
                     -- The render paints the ENTRY's display fields, not the
                     -- record: refresh those too.
                     local label = fresh.display_title or fresh.title
@@ -13344,6 +13438,10 @@ function BookshelfWidget:_startStatusTimer(background_active)
                 -- has no clock.
                 require("lib/bookshelf_hero_modules").tickClocks(self)
             end
+            -- Modules among the shelf's books, while the shelf is on screen.
+            if not (mfs and UIManager:isWidgetShown(mfs)) then
+                require("lib/bookshelf_hero_modules")._tickShelfMinuteHooks(self)
+            end
             if self._hero_status_strip then
                 -- Micro-page header or expanded strip: the status line isn't a
                 -- clock cell, so tick it here when it carries a time token (#292);
@@ -14089,7 +14187,9 @@ function BookshelfWidget:_swapFooterInPlace()
     local old_row = old and old[1]
     local footer_band
     if old_row and old_row.getSize then
-        local row_h = old_row:getSize().h
+        -- A bar revealed from a hidden one (Behavior > Footer bar) is taller
+        -- than the row going out: cover the whole bar.
+        local row_h = math.max(old_row:getSize().h, _footerBarH())
         local over  = Screen:scaleBySize(12)
         local x0 = self.dimen and self.dimen.x or 0
         local y0 = self.dimen and self.dimen.y or 0
@@ -15351,6 +15451,8 @@ function BookshelfWidget:_layoutPrimitives()
     local content_w   = self.width - PAD * 2
     local chip_h = BandMetrics.cellHeight(BandMetrics.CHIP_KEY)
     local footer_h = self:_paginationFooterReserveHeight()
+    -- Behavior > Footer bar "hide": the rows get the bar's space.
+    if _footerMode() == "hide" then footer_h = Screen:scaleBySize(12) end
     return PAD, content_w, chip_h, footer_h
 end
 
@@ -21480,6 +21582,7 @@ function BookshelfWidget:_showRemoteBookInfo(book, opts)
     logger.dbg(string.format(
         "[bookshelf perf] _showRemoteBookInfo: build=%.0fms %s",
         (_gettime() - _perf_t0) * 1000, tostring(book.title or book.filepath)))
+    require("lib/bookshelf_gesture_zones").passSwipesOn(dialog)
     UIManager:show(dialog)
 
     if not opts.no_cover_fetch then
@@ -25812,6 +25915,7 @@ function BookshelfWidget:_showBookDetail(book, opts)
                                     width = math.floor(Screen:getWidth() * 0.7),
                                     buttons = buttons,
                                 }
+                                require("lib/bookshelf_gesture_zones").passSwipesOn(hold_dialog)
                                 UIManager:show(hold_dialog)
                             end
                             local gpills = {}

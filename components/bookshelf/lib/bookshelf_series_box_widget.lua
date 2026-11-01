@@ -49,7 +49,7 @@ local Box = InputContainer:extend{
 -- paints from: its own look, number and status, no title (a slipcase's
 -- books show their heads, not their spines' lettering).
 local function memberEntry(member, w, h, SpineShelf)
-    local look = SpineShelf.bookLook(member)
+    local look = SpineShelf.shownLook(member)
     return { book = member, item = member, w = w, h = h, look = look,
              w_dp = math.floor(w / (Screen:scaleBySize(100) / 100) + .5),
              label = "",
@@ -224,7 +224,7 @@ function Box:_initSlipcase()
     -- Group members may contain only light metadata. The cover widget needs
     -- this hydrated copy too, not the member whose has_cover is still nil.
     self.art_book = first
-    self.first_look = SpineShelf.bookLook(first)
+    self.first_look = SpineShelf.shownLook(first)
     local Slot = SpineShelf._SpineBookSlot
     self.slots = {}
     for _, sp in ipairs(shape.spines) do
@@ -457,10 +457,11 @@ function Box:_paintSlipcase(bb, x, y)
         -- with Blitbuffer:scale, a per-pixel Lua loop, was ~10% of a spine
         -- page turn on the PW5 with series boxes on screen.
         local first = self.art_cover and self.art_cover.book
+        local boost = require("lib/bookshelf_image_contrast").boost()
         local custom_stamp = self.custom_path and require("lib/bookshelf_derived_cache").stamp(self.custom_path)
         local cacheable = not custom or custom_stamp ~= nil
         local skey = table.concat({ tostring((custom and self.custom_path) or (first and first.filepath)),
-            tostring(first and first.cover_sizetag), SW, FH, iw, ih, c,
+            tostring(first and first.cover_sizetag), SW, FH, iw, ih, c, boost,
             tostring(self.preserve_cover_aspect),
             tostring(custom_stamp),
             tostring(bb:getType()), night and "n" or "d" }, "|")
@@ -485,6 +486,9 @@ function Box:_paintSlipcase(bb, x, y)
         -- scaled from and never freed here.
         if custom then
             fit = scaled(custom, iw, ih)
+            -- The series' own picture is not a cover from the cache: our copy
+            -- gets the boost here.
+            if boost > 0 then require("lib/bookshelf_image_contrast").boostImage(fit) end
             bb:blitFrom(fit, sx + E, sy + E, 0, 0, iw, ih)
             if keep(fit) then fit = nil end -- cache owns only successfully kept buffers
             return
