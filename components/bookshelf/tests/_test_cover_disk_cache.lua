@@ -8,8 +8,10 @@
 -- filepath that hashed to the same file, a truncated write, a bad magic.
 package.path = "./?.lua;./?/init.lua;" .. package.path
 
-local TMP = os.getenv("TMPDIR") or "/tmp"
-local DIR = TMP .. "/bscovtest_" .. tostring(os.time())
+-- Unique short native temp names avoid parallel-run collisions and keep the
+-- deliberately tiny 400-byte eviction fixtures independent of TMPDIR length.
+local DIR = os.tmpname()
+os.remove(DIR) -- Lua may reserve a file; the fixture needs a directory.
 
 -- ── stubs ───────────────────────────────────────────────────────────────────
 -- Minimal lfs over shell + io, so the suite needs no lfs binding. Only the
