@@ -27,6 +27,17 @@ Separate forced rereads are slightly slower with index writes in this experiment
 Full/sealed/physical package gates and final restoration are recorded in TESTING.
 Raw configs/evidence stay private in `test-results/tag-index-20261101/`.
 
+First source/ZIP `5148c077` / `01008d9b` passes full/sealed/package gates but
+fails actual touch cancellation. All 3,342 local EPUBs are included; the timed
+native callback stops honestly at 980 and Refresh reuses successes. Slow Manga
+reads plus inline repaint nevertheless keep the 1ms continuation always due in
+native handleInput's dirty-task loop, starving actual Stop/Back input. Force-stop
+only this test process with no book open/sync paused; do not mark it accepted.
+Drain repaint before scheduling the continuation. Unmodified native scheduler
+method regression fails old code (three archives before input) and passes the
+fix under both interpreters (one then cancellation). Both diagnostics remain
+private; corrected sealed/device/normal-exit/restoration evidence follows.
+
 ## 2026-11-01 — offline tag-search cache and scheduling optimization (local)
 
 User approves the staged proposal, beginning with cache reuse and UI-turn

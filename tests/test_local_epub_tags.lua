@@ -44,11 +44,12 @@ H.test("malformed JSON/XML, DTDs, control tags and oversized metadata fail close
 end)
 
 local files, documents, disk, queue, roots, opened, closed, extracted, written, last_widget
-local elapsed, cache_cost, cache_reads, delays
+local elapsed, cache_cost, cache_reads, archive_cost, delays
 local UI = { _simpleui_navigation_generation = 1,
     show = function(_, w) w.shown = true; last_widget = w end,
     close = function(_, w) w.shown = false end,
     isWidgetShown = function(_, w) return w and w.shown end,
+    forceRePaint = function() end,
     nextTick = function(_, fn) queue[#queue + 1] = fn end,
     scheduleIn = function(_, delay, fn)
         H.eq(delay, .001); delays[#delays + 1] = delay; queue[#queue + 1] = fn
@@ -82,6 +83,7 @@ local archive = { new = function()
     local reader = { entries = {} }
     function reader:open(file)
         opened = opened + 1
+        elapsed = elapsed + archive_cost
         self.doc = documents[file]
         if not self.doc then return nil end
         for i, item in ipairs(self.doc) do self.entries[i] = item; self.entries[item.path] = item end
@@ -111,7 +113,7 @@ end
 local function reset()
     files, documents, disk, queue, roots = {}, {}, {}, {}, { "/profile" }
     opened, closed, extracted, written = 0, 0, 0, 0
-    elapsed, cache_cost, cache_reads, delays = 0, 0, 0, {}
+    elapsed, cache_cost, cache_reads, archive_cost, delays = 0, 0, 0, 0, {}
     add("/books/a.epub", opf('["Åland & 日本語"]'))
     add("/profile/a.epub", opf('["Åland & 日本語"]', true))
     add("/books/untagged.epub", opf('[]'))
@@ -392,6 +394,45 @@ H.test("an unavailable index falls back to file tags rather than a successful em
     H.eq(opened, 3)
     Integration.openEmbeddedTagIndex = original
 end)
+if os.getenv("ORBITUI_NATIVE_UI_MANAGER") then
+    H.test("native handleInput polls cancellation between slow archive reads after repaint", function()
+        reset(); archive_cost = .3
+        local f = assert(io.open(os.getenv("ORBITUI_NATIVE_UI_MANAGER"), "rb"))
+        local source = f:read("*a"); f:close()
+        local keys = { "_checkTasks", "handleInput", "forceRePaint", "scheduleIn", "nextTick", "_repaint",
+            "_task_queue", "_window_stack", "_zeromqs", "event_hook", "processZMQs", "_standbyTransition" }
+        local old = {}; for _, key in ipairs(keys) do old[key] = UI[key] end
+        local control, body, failure, polls, dirty = nil, nil, nil, 0, false
+        local env = { UIManager = UI, time = package.loaded["ui/time"], unpack = unpack or table.unpack,
+            logger = { info = function() end }, Input = { waitEvent = function()
+                polls = polls + 1; control.cancel()
+            end } }
+        env.time.us = function(value) return value / 1000000 end
+        setmetatable(env, { __index = _G })
+        for _, method in ipairs{ "_checkTasks", "handleInput", "forceRePaint" } do
+            local code = assert(source:match('(function UIManager:' .. method .. '%b().-\nend)'))
+            local fn = assert((loadstring or load)(code))
+            if setfenv then setfenv(fn, env) else fn = assert(load(code, "native UIManager", "t", env)) end
+            fn()
+        end
+        UI._task_queue, UI._window_stack, UI._zeromqs = {}, { {} }, {}
+        UI.event_hook = { execute = function() end }
+        UI.processZMQs, UI._standbyTransition = function() end, function() end
+        UI._repaint = function() if dirty then elapsed = elapsed + .008; dirty = false end end
+        UI.scheduleIn = function(self, delay, fn)
+            table.insert(self._task_queue, { time = elapsed + delay, action = fn, args = { n = 0 } })
+            table.sort(self._task_queue, function(a, b) return a.time > b.time end)
+            self._task_queue_dirty = true
+        end
+        UI.nextTick = function(self, fn) self:scheduleIn(0, fn) end
+        control = Integration.embeddedTagRequest(Integration.embeddedTagSession(), { tag = tag,
+            on_progress = function() dirty = true end }, function() return true end,
+            function(value, err) body, failure = value, err end)
+        UI:handleInput()
+        H.eq(polls, 1); H.eq(opened, 1); H.eq(failure, "cancelled"); H.eq(body.complete, false)
+        for _, key in ipairs(keys) do UI[key] = old[key] end
+    end)
+end
 H.test("native dialog interception preserves tag progress identity, completion and cancellation", function()
     local old_show, old_close = UI.show, UI.close
     local Info, Toast = package.loaded["ui/widget/infomessage"], H.widget()

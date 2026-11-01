@@ -50,6 +50,41 @@ are backed up/paused/hash-verified before launching KOReader. No books open in
 the worker experiment. The temporary worker diagnostic is already outside
 patches after normal quit; final package/UI/state restoration follows.
 
+First source/package `5148c077` /
+`01008d9bd99e9b5137db6e0f5965674a325688cd5b622a6574e4eb12ce262561`
+passes both full interpreter suites, all 43 catalogs, both sealed-root suites,
+five real SQLite cases and exact 2,000-path inventory/held-art/source checks.
+Initial concurrent full runs collide in the upstream cache fixture's same-second
+temporary directory; they are discarded, not called passing or "fixed" through
+changed production code. Sequential TMPDIR=/tmp repeats pass (133 Python/four
+existing skips, 99 root files, 533 Bookshelf/zero failures/three exclusions,
+13 SimpleUI, map 403, syntax 1,150). New focused source has 24 dependency-free
+cases plus the optional real scheduler case described below.
+
+That first package is deliberately NOT device-accepted. All 2,000 files were
+completely copied and verified before activation; bootstrap pending=0. Actual
+all-profile native search (no repository/catalog fake) finds 3,342 EPUBs, with
+an additional synthetic origin outside roots. Partial match/counters display
+correctly. A scheduled native-footer stop at 980 files/20.45s keeps the checked
+match; real Refresh revalidates that prefix and reaches 981 by 1.37s. However,
+subsequent actual Stop taps/Back are not polled while slow uncached Manga
+archives cause a repaint every turn. The UI queue repeats _checkTasks/repaint;
+painting outlasts the 1ms continuation, so it remains perpetually due and touch
+is starved. No crash and no complete-library claim. Stop this owned test process
+through Android force-stop after ordinary tap/Back fail, with no book open and
+both automatic sync owners paused. Preserve caches/reading/settings backups;
+move its temporary diagnostic outside patches. It is not a normal-quit pass.
+
+The repair explicitly drains the progress repaint BEFORE scheduling the next
+step. A regression executes unmodified captured native handleInput, _checkTasks
+and forceRePaint with primitive clock/archive/paint/input fakes (300ms archive,
+8ms repaint). Old sealed source reads all three archives before polling input;
+the fixed code polls after one and cancels with honest partial results. Passes
+Lua/LuaJIT, with 25 focused cases when enabled via ORBITUI_NATIVE_UI_MANAGER.
+This is stronger scheduler proof than the FIFO harness, but final actual touch,
+corrected sealed source/ZIP/inventory, normal shutdown and restoration still
+must be recorded before marking the corrected candidate accepted.
+
 ## November 1 offline tag-search optimization (local step 1/2)
 
 User approves the staged optimization proposal: begin with cache-aware normal

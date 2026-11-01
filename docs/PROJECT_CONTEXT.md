@@ -39,8 +39,18 @@ and correct this file in the same change.
   56.2/75.4/74.4ms; medians 260.1 ->74.4ms (~3.5x). Separate cache reads 300->1,
   no archive opens/skips; initial index fill 687.7ms. Enumeration/UI excluded;
   do not multiply with prior-run speedups or claim first-library completion.
-  Full gates, sealed bytes, actual-scope UI/cancellation checks and targeted
-  sync restoration follow. Evidence: `test-results/tag-index-20261101/`.
+  First sealed candidate `5148c077` / ZIP `01008d9b` passes desktop/package
+  checks but is NOT accepted: actual all-profile inventory is 3,342 EPUBs, and
+  a repaint/1ms scheduling cycle starves touch under slow Manga reads. Timed
+  footer callback stop at 980 retains a partial match; Resume revalidates the
+  cached prefix, but actual tap/Back cannot stop it. Force-stop only the test
+  process (no book opened, sync paused), leaving the atomic derived index intact.
+  Fix drains native repaint before scheduling the continuation. A regression
+  using actual native handleInput/_checkTasks/forceRePaint fails old source
+  (3 archives before input vs expected 1) and passes both interpreters after
+  repair. New sealed bytes/device touch acceptance and restoration follow;
+  never classify the first candidate as ready. Evidence:
+  `test-results/tag-index-20261101/`.
 
 - **Offline tag-search optimization, local step 1/2 (not published).** User
   approves cache-aware Refresh and bounded cache-hit batching before an aggregate

@@ -741,6 +741,10 @@ function M.embeddedTagRequest(source, task, current, done)
         end
         if inline and (last_matches == 0 and #paths > 0 or time.to_us(time.since(last_update)) >= 250000) then
             task.on_progress(snapshot())
+            -- Native handleInput repeats _checkTasks after a repaint dirties
+            -- its task queue. If painting outlasts the 1ms next-step timer,
+            -- that loop never polls touch. Drain paint BEFORE starting it.
+            UI:forceRePaint()
             last_update, last_matches = time.now(), #paths
         end
         UI:scheduleIn(0.001, step)
