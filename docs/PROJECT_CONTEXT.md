@@ -22,6 +22,19 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- **Beta 29 publication requested.** After the reviewed Bookshelf 6.2 merge
+  and disclosed physical-device gaps, the user explicitly says "Publicera ny
+  beta". Prepare `0.1.0-beta.29` from clean/pushed `86f65e71`; existing runtime
+  and receipt CI **41351394477 / 41351698356** and watch **41351394509** pass.
+  No new import: Bookshelf `78f582fd`, SimpleUI `fdf83c7d`. Only VERSION and
+  bilingual release/presentation/verification notes change in this step.
+  The new beta contains contrast/footer/menu/swipe/minute/RGB changes already
+  documented below, retaining all custom behavior. Physical Bigme/Boox tests
+  are still open; publication remains a prerelease, not device acceptance.
+  No connected ADB device, device installation, server deployment, importer
+  opt-in or new sync owner. Public Beta 28 bytes remain immutable. Exact
+  candidate/full/sealed/native/OTA/history/CI/public checks follow in TESTING.
+
 - **Reviewed Bookshelf 6.2.0 merge, not a new release.** The user's next
   "Merga upstream" request integrates 23 commits through exact master
   `78f582fd8e4f2612b2d41498e6878af90d30f31e`, unsquashed import `dc77c11a`.

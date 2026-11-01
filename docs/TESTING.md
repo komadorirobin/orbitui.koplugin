@@ -1,5 +1,28 @@
 # Verification and device acceptance
 
+## November 1 Beta 29 publication gates
+
+The user explicitly requests a new beta after disclosure that the freshly
+reviewed Bookshelf 6.2 changes still need physical Bigme acceptance. Start at
+clean/pushed `86f65e71`; prior runtime/receipt CI **41351394477 / 41351698356**
+and upstream-watch **41351394509** pass. Version becomes `0.1.0-beta.29`;
+Bookshelf `78f582fd` and SimpleUI `fdf83c7d` stay pinned. No further runtime
+implementation, module-map, asset, bootstrap, setting, sync-owner or server
+change. Bilingual notes/README describe contrast/footer/swipe/night/minute
+behavior and unchanged defaults. Current ADB inventory is empty; release is
+a prerelease with no device installation, fresh visual/timing acceptance or
+server deployment. BookOrbit status import remains OFF by default.
+
+Evidence: `test-results/beta29-20261101/`. Rerun both full scripts and all
+43 catalogs; seal the exact clean candidate, verify old 2,000-path equality,
+optimized source projection and retained source/artwork/bootstrap identities.
+Run both sealed roots/native minimum/current input/Trapper/span, real SQLite/
+EPUB/raster/contrast and native older-beta installer checks. Audit all outgoing
+history for held artwork/secrets. After main/tag CI, download and byte-check
+the draft before publishing those exact bytes; verify anonymous public assets,
+preview selection, native live OTA and old tag/release immutability. Record
+results below rather than inferring physical acceptance from these tests.
+
 ## November 1 Bookshelf 6.2.0 merge-only gates
 
 Exact reviewed upstream `78f582fd8e4f2612b2d41498e6878af90d30f31e`, import

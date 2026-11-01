@@ -4,6 +4,21 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-01 — explicit Beta 29 publication request
+
+After the Bookshelf 6.2.0 merge/push and explicit disclosure of outstanding
+physical Bigme checks, the user requests "Publicera ny beta". Prepare version
+`0.1.0-beta.29` from clean/pushed `86f65e71`. No further upstream import or
+implementation: exact Bookshelf `78f582fd`, SimpleUI `fdf83c7d`; existing
+runtime and receipt CI **41351394477 / 41351698356** and watch **41351394509**
+pass. Only VERSION and SV/EN release/presentation/verification notes change.
+All C01-C11 behavior, defaults, 2,000 installed paths, stable bootstrap,
+artwork and external reading/sync/patch owners remain. No device/server
+change or status-import opt-in. ADB is empty; new visual/timing acceptance
+remains open. Use a new immutable prerelease, never replace public Beta 28.
+Exact automated/sealed/native OTA/source/history, CI/draft/public/channel
+and previous-release immutability results are recorded in TESTING below.
+
 ## 2026-11-01 — reviewed Bookshelf 6.2.0 merge (main push only)
 
 User requests "Merga upstream" after Beta 28 and the separate server work.

@@ -7,6 +7,55 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 0.1.0-beta.29
+
+Beta 29 publishes the reviewed **Bookshelf 6.2.0** merge at `78f582fd`.
+SimpleUI remains at `fdf83c7d`; no further upstream revision is imported.
+
+- **Image contrast** adds optional cover/ornament/spine contrast boost and
+  separate wallpaper contrast/brightness. All are unchanged/off by default.
+  Adjustments apply once to retained image copies, not the original artwork
+  or raw disk cache. Wallpaper controls also appear in **Theme > Wallpaper**.
+- **Behavior > Footer bar** offers Show, Hide or Invisible buttons. Hide
+  reclaims the space; Invisible keeps the button hitboxes without showing the
+  buttons. Selection/key focus reveals the controls. OrbitUI's custom footer
+  size, margins and navigation-bar geometry are retained.
+- Menu/theme transitions request fewer full-screen flashes. Side swipes on
+  the shelf outside a picker can turn the shelf page without closing it;
+  tapping outside a slider commits its value. The X/Back still cancel it.
+- Android night-mode rounded RGB paints keep consistent corners, including
+  the software fallback. Existing OrbitUI night wallpaper/dock fixes remain.
+  Stale wallpaper/menu restoration and face-out opening-shadow bugs are fixed.
+- Explicitly configured shelf modules can update every minute. Hidden or
+  replaced shelves cannot be refreshed by a late callback. Shared menu hooks
+  are released with their host rather than remaining active after teardown.
+
+Svenska: Beta 29 innehåller den granskade **Bookshelf 6.2.0**-uppdateringen.
+SimpleUI är redan uppdaterat och inga ytterligare upstream-ändringar hämtas.
+**Bildkontrast** ger valfri kontrastökning för omslag, ornament och bokryggar,
+plus separat kontrast/ljusstyrka för bakgrunden. Standardutseendet ändras inte;
+originalbilder och rå bildcache skrivs inte om. Under **Beteende > Nederkantens
+knapprad** kan knapparna visas, döljas eller vara osynliga men fortfarande
+tryckbara. Markering/tangentfokus visar dem igen. Egna storlekar/marginaler
+och navigationsfältets placering behålls.
+
+Meny- och temabyten ska ge färre helskärmsblinkningar. Svep på hyllan utanför
+en dialog kan byta sida bakom dialogen. Ett tryck utanför ett reglage sparar
+värdet; kryss/Bakåt ångrar fortfarande. Förbättrad hantering av runda färgade
+hörn i Android-nattläge, bakgrunder, menyåterställning och skuggor när böcker
+öppnas. Valda hyllmoduler får minutuppdateringar bara medan rätt hylla visas.
+Ingen ny uppmätt hastighetsförbättring på Bigmen utlovas.
+
+Existing Home/Bento, Manga profiles, series artwork/aspect, tags/indexing,
+ornament add-ons, reading data and BookOrbit/Hardcover/MAL/patch ownership stay
+intact. Optional BookOrbit status import remains OFF by default and still
+requires its separate server extension; this release deploys no server.
+All owned new controls/help are Swedish and English. Exactly 2,000 installed
+paths and the stable API-1 bootstrap are retained. Earlier public assets/tags
+are immutable. Update through the preview channel and restart KOReader.
+Still a prerelease: the new contrast/footer/swipe/menu/minute behavior has no
+fresh physical Bigme/Boox acceptance. See TESTING for verification and gaps.
+
 ## OrbitUI 0.1.0-beta.28
 
 Beta 28 imports Bookshelf master through `0d976875` (after 6.1.1), adding
