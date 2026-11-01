@@ -22,6 +22,26 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- Overnight pass has a tested local candidate at `6271a6f2`, sealed ZIP
+  `443fa966cde4df35ce86126b5dd23d9c3c1e04efe68244b8d080eab7af267c4d`.
+  Full Lua/LuaJIT, catalogs, sealed/native/OTA/source gates pass. All 2,000
+  installed paths verify on Bigme; bootstrap accepts pending=0, previous
+  b9d423f2 retained. No push/release/upstream merge. Detailed samples/limits
+  in TESTING: first Manga median 15.76 -> 6.175 seconds (three first-profile
+  visits each, old-runtime control returns to 14.9); fresh Library 1.669 ->
+  0.732 seconds (one matched trial). Warm Manga not improved; metadata-refresh
+  re-derivation still ~5.9 seconds. No RAM/e-ink-panel benchmark claim.
+  All five settings cards/categories/Back work physically after the stateless
+  pager fix; Android module hold/real launcher picker/cancel and Quick Controls
+  Wi-Fi/Battery Close/status-area routes pass. English is headless-only;
+  app edit persistence and broader metadata-refresh acceptance remain open.
+  Ereader Patch Manager's separate first-tap DROP and native date/power display
+  issues remain outside these fixes. Diagnostic patches are inactive.
+  A menu-test accident opened one book at cover; its registered undo row is
+  already done, so Undo was unavailable. A targeted repair question is pending;
+  do not reset history, assume it was undone, or claim no reading-state writes.
+  Verification-only descendants must not rebuild the exact tested archive.
+
 - User authorizes an overnight Bigme ADB performance/menu pass, measured
   optimizations and device retesting, NOT a push/release or upstream merge.
   Start clean at `76876d44`, branch `performance/bigme-library-20261101`.

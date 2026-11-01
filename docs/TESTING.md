@@ -2,7 +2,68 @@
 
 ## Automated
 
-### November 1 Bigme library performance pass (local, in progress)
+### November 1 Bigme library performance pass (local device candidate)
+
+Final tested source is `6271a6f296b2b62368f2944d3b1d7699d3efdaf1`, ZIP
+`443fa966cde4df35ce86126b5dd23d9c3c1e04efe68244b8d080eab7af267c4d`.
+9,310,576 bytes / 27,499,914 expanded, unchanged 2,000 API-1 installed paths;
+all 1,999 manifest records and the manifest itself hash-verified on device.
+Bootstrap accepts this slot with pending=0 and retains the b9d423f2 predecessor.
+No upstream merge, push, tag, release or OTA publication. Verification-only
+documentation descendants must not rebuild/replace these exact tested bytes.
+
+Both complete suites pass: 133 Python/four existing optional skips, 98 root
+Lua files, 533 Bookshelf/zero failures/three normal SQLite exclusions, 13
+SimpleUI files, syntax 1,149/map 403. All 43 catalogs, sealed-root/native input,
+EPUB/libarchive, grey/RGB/CBB/night/tilted-cover and Beta 5/9/24 native OTA,
+recovery/rollback/obsolete-code cleanup pass. Minimum/current full native
+Trapper/TrapWidget and VerticalSpan supplements pass both interpreters against
+sealed source. Exact source projection, bootstrap, resource/source-pin and
+outgoing secret checks pass. Private evidence: `test-results/device-performance-20261101/`.
+
+Device is Bigme HiBreak, KOReader v2026.07.1, 1264x1680, plugged in at 100%.
+Compare the shortcut-only accepted runtime against c33b93ab/b9d423f2 with the
+same profiles, chips, pagination, covers, safe-mode preference and debug logging.
+No cache clearing. The temporary method/call-site observers are removed from
+`patches/`; instrumented processes are excluded. Timings are tap-to-rebuild,
+not physical panel-settling or end-to-end book-open measurements.
+
+| Operation | Baseline | Optimized, before the later UI tests |
+| --- | --- | --- |
+| First Manga profile visit per process | median 15,760 ms, n=3; 14,887–17,070 | median 6,175 ms, n=3; 5,015–6,795 |
+| Fresh-process Library first, matched order | 1,669 ms, n=1 | 732 ms, n=1 |
+| Warm Manga | median 215 ms, n=9 | median 227 ms, n=18; no improvement claim |
+| Warm Library | median 75 ms, n=8 | median 50.5 ms, n=16; small sample/setup-specific |
+
+Returning to the old runtime after the first optimization restores ~14.9-second
+Manga opening (A/B/A control). A legitimate metadata-refresh invalidation still
+causes a separately reported 5,902 ms derivation; do not hide it in warm samples
+or skip invalidation. Final UI smoke is faster again (~1.35 s), but its book/
+metadata state changed, so it is excluded from the fixed-state comparison.
+Do not infer reduced RAM, physical e-ink refresh gains or universal device speed.
+
+Physical final checks: all five category cards fit and open their matching
+Swedish categories; Back reconstructs the cards. Quick controls open from the
+native settings route and battery/clock status areas; Wi-Fi and Battery Close
+work without outside taps. Light/network/debug settings are not changed.
+Actual Android module long-press, retained six choices/Developer options target,
+UTF-8 launcher discovery and picker cancel work; add/remove/reorder persistence
+is still headless-only. English catalogs/layout proxies pass, not a switched
+English-device session. Not every deep submenu/rotation/sleep path is accepted.
+
+Remaining observations: Ereader Patch Manager's independent startup DROP worker
+can still consume its first tap. The native localized datetime formatter shows
+an incorrect November label; native power flags report not-charging at 100%
+despite AC. These owners/preferences are unchanged. The ordinary protected OTA
+cleanup removed 4,253,088 bytes of obsolete code; active/rollback code and host
+archives remain. Separate metadata-refresh result acceptance remains open.
+
+Test incident: a menu-exit coordinate unintentionally opened one local book at
+its cover; reflow reopened the same file. Native statistics/history and optional
+sync therefore may include that opening. The installed undo record is already
+registered/done; no manual history/database/server reset was attempted. Preserve
+the private evidence and request the user's direction for targeted repair. Do
+not claim this session made no reading-state changes or that Undo succeeded.
 
 `test_library_performance` covers shared text derivation, independent nested
 scope records, all native invalidations and original nil returns, replacement

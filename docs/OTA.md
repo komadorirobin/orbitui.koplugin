@@ -58,7 +58,25 @@ genvägar. Flyttvalen namnger grannen och visar platsen direkt. Att ta bort en
 genväg avinstallerar inte Android-appen. Fler appar får sidpilar och en tom
 modul går fortfarande att konfigurera. Befintliga aktiva moduler behåller
 sina val; nya börjar tomma. Applistan och Inställningar-målet sparas lokalt.
-Den nya apphanteringen är ännu inte enhetstestad eller publicerad.
+Långtryck, riktig applista och avbryt är nu provade på Bigme. Ändringar av
+applistan är ännu bara automatiskt testade; inget är publicerat.
+
+November 1's local candidate also reuses bounded text metadata between library
+scopes and makes layout probes skip unused folder-cover work. First Manga
+profile visits measured about 5–7 seconds versus 15–17 before on the test Bigme;
+warm Manga did not improve, and metadata refresh can still pause for a fresh
+derivation. Own quiet update work forwards its canceling input rather than
+dropping it; visible download cancellation is unchanged. One-page category
+cards no longer fall back to the old list when native pagination is a stateless
+span. Full tests and focused device checks pass, not complete device acceptance.
+
+Svenska: Den lokala testversionen återanvänder textmetadata mellan biblioteksvyer
+och undviker onödigt omslagsarbete vid layoutmätning. Första Manga-besök tog
+cirka 5–7 sekunder mot tidigare 15–17 på test-Bigmen. Redan laddad Manga blev
+inte snabbare och metadatauppdatering kan fortfarande ge en paus. OrbitUIs
+tysta uppdateringsarbete släpper nu vidare trycket som avbryter det. Kategorikort
+på en sida fungerar även med KOReaders enkla sidavstånds-widget. Detta är
+testat lokalt men inte publicerat eller ett godkännande av alla enhetsflöden.
 
 All Beta 24 Bookshelf 6.1/SimpleUI changes remain. No new upstream import,
 bootstrap/API-1 or installed-path change, settings migration, resource removal,

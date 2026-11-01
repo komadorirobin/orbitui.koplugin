@@ -6,6 +6,46 @@ does not imply a public release or successful device testing.
 
 ## 2026-11-01 — measured Bigme library opening and menu pass (local)
 
+Final tested candidate is **`6271a6f296b2b62368f2944d3b1d7699d3efdaf1`**.
+ZIP **`443fa966cde4df35ce86126b5dd23d9c3c1e04efe68244b8d080eab7af267c4d`**,
+**9,310,576 bytes / 27,499,914 expanded**, unchanged 2,000 installed paths;
+manifest `8c0f1c53661ac8b79ce278c94003e344cdfe6414199f030d160c5c8283e107a9`.
+Both complete interpreter gates, 43 catalogs, sealed-root/native input/EPUB/
+raster, minimum/current full Trapper/TrapWidget/VerticalSpan and actual Beta
+5/9/24 native OTA/recovery/rollback/cleanup pass. Exact source, bootstrap,
+pins/resources and outgoing secret audits pass. Device hashes all 2,000 files
+before activation while KOReader is stopped; final bootstrap pending=0,
+b9d423f2 previous retained. One earlier staging attempt overlapped extraction;
+no process was launched, the selection was restored, incomplete files retained
+outside the runtime area, and the extraction repeated/fully verified before
+activation. Do not describe that interrupted inventory as a pass.
+
+Uninstrumented first Manga profile visits: baseline median 15,760 ms (n=3),
+optimized 6,175 ms (n=3); old-runtime A/B/A control 14,887 ms. Fresh Library
+first matched order 1,669 -> 732 ms (n=1 each). Warm Manga 215 -> 227 ms median
+is not a speed gain. Background metadata invalidation still needs 5,902 ms.
+See TESTING for sample ranges/exclusions and why later faster UI smoke is not
+a comparable benchmark. No cache clearing, resolution loss, RAM or physical
+panel-refresh claim. Temporary observers are outside patches before final tests.
+
+Final physical menu review verifies all five category cards, destination pages
+and Back; Android app-module hold, retained choices/Settings target, real UTF-8
+picker/cancel; Quick Controls settings/status-area entry and Wi-Fi/Battery
+Close. No app-list/light/network/debug preference edit. Deep menus, English
+device switching, app-edit persistence and metadata-refresh result acceptance
+remain open. Ereader Patch Manager input interception and native date/power
+wording are recorded as follow-ups, not silently changed external behavior.
+Normal OTA cleanup removed 4,253,088 obsolete code bytes, retaining protected
+active/rollback versions and host archives. No push, tag, release or OTA change.
+
+A menu-exit test accidentally opened a local book at its cover; reflow reopened
+the same file. Reading statistics/history and automatic sync may reflect that
+session. The installed undo record is registered/done, so Undo is unavailable;
+no manual data reset is attempted. A user question requests direction for a
+targeted repair. Keep private titles/paths/settings/identities in ignored
+evidence only; do not assert that the opening was undone. Documentation-only
+verification descendants do not rebuild the exact candidate above.
+
 Physical menu review of `9ae7cb15` finds a real settings-card fallback:
 one-page native pagination returns a stateless VerticalSpan without `free`.
 Guard only that provisional pager cleanup; containers still free normally.
