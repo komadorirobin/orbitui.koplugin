@@ -1132,9 +1132,9 @@ do
         busy = nil
         local result = { account = job.session.key, at = os.time(), changed = job.count,
             skipped = job.skipped, error = not ok and "storage" or reason }
-        if not result.error then store():saveSetting(RESULT, result) end
+        if not result.error and not pcall(function() store():saveSetting(RESULT, result) end) then result.error = "storage" end
         S.last = result
-        if job.done then job.done(result) end
+        if job.done then pcall(job.done, result) end
         arm(60)
     end
     local function worker(job, task, done)
@@ -1208,7 +1208,8 @@ do
     end
     nextBatch = function(job)
         if busy ~= job then return end
-        if not job.session:current() or not visible() then finish(job, "retired"); return end
+        local ok, current = pcall(job.session.current, job.session)
+        if not ok or not current or not visible() then finish(job, "retired"); return end
         if job.index > #job.links then finish(job); return end
         local batch = {}
         for i = job.index, math.min(job.index + BATCH - 1, #job.links) do batch[#batch + 1] = job.links[i] end
@@ -1280,6 +1281,13 @@ do
             job.links = result; nextBatch(job)
         end)
         return true
+    end
+    local request = S.request
+    function S.request(opts)
+        local ok, started, reason = pcall(request, opts)
+        if ok then return started, reason end
+        if busy then pcall(finish, busy, "unavailable") end
+        return false, "unavailable"
     end
     arm = function(delay)
         if timer then UI():unschedule(timer); timer = nil end

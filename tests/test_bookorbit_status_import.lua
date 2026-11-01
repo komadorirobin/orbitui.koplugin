@@ -221,6 +221,16 @@ H.test("failed sidecar publication cannot advance the canonical baseline", funct
     reset(); enable(); fail = "flush"; request(); H.eq(writes, 0); H.eq(books[digest(1)].statusSynced, "reading")
     H.eq(S.last.error, "storage")
 end)
+H.test("failed attempt persistence and late callbacks cannot crash the caller or strand ownership", function()
+    reset(); enable()
+    local save = store.saveSetting
+    store.saveSetting = function() error("disk unavailable") end
+    local ok, started = pcall(S.request)
+    H.eq(ok, true); H.eq(started, false); H.eq(S.isRunning(), false); H.eq(writes, 0)
+    store.saveSetting = save
+    request{ done = function() error("closed notification owner") end }
+    H.eq(S.isRunning(), false); H.eq(S.last.error, nil)
+end)
 H.test("existing temporary files and competing metadata locations are never overwritten or repaired", function()
     reset(); enable(); shadow[path(1) .. ".metadata.lua.tmp"] = { mode = "link" }; request()
     H.eq(writes, 0); H.eq(S.last.error, "storage")
