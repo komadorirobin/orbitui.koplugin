@@ -4,6 +4,62 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-01 — Beta 26 verified publication
+
+The user's explicit requested sequence is complete: external Undo fix published
+first in Ereader and BookOrbit Extras 0.2.1, then reviewed Bookshelf 6.1.1 merge,
+audited main/tag push and OrbitUI Beta 26 publication. The exact sealed source
+and annotated tag are **`96e10fbf9e7b4703810f87908df39a9da7bc2229`** /
+**`v0.1.0-beta.26`**. The release is a public **prerelease**, not a stable OTA.
+No prior tag/release bytes are replaced. SimpleUI has no new commits.
+
+Both complete Lua/LuaJIT gates pass: 133 Python tests with four existing
+optional skips, 98 root Lua files, 533 Bookshelf suites with zero failures and
+three normal native-SQLite exclusions, 13 SimpleUI suites, 1,149 syntax checks
+and 403 module identities. All 43 catalogs pass. The new self-sizing picker
+regression fails against the prior modal and passes on actual full native
+refresh, including portrait/landscape/Bigme-sized room. The first desktop pass
+used macOS's long temp prefix, making the upstream fixed 400-byte cache fixture
+exceed its budget; both full runs were repeated with the already documented
+`TMPDIR=/tmp`. The unchanged focused cache suite passes 27/27. No production
+budget/assertion/skip was changed to hide that environment failure.
+
+All-root sealed checks run in both interpreters. Minimum/current unmodified
+Trapper/TrapWidget/VerticalSpan and native input/modal owners, real EPUB archive
+reading and grey/RGB/CBB/software night/tilted-cover supplements pass. Actual
+native installers from Beta 5/9/24 and the previously device-tested local Beta
+25 validate full hashing/extraction, missing-module rejection, activation,
+restart, code rollback, truncated downloads and retained-data cleanup.
+
+Sealed ZIP SHA-256:
+`6800190ab077407f2fa5d42bc276ee52fdcb6ca33b44441a389fe1571f92817d`.
+**9,316,969 bytes / 27,516,914 expanded**, unchanged 2,000 API-1 installed files;
+manifest SHA-256 `121d3dba65fed25ef35e6687b77e32d5a018574068c3274fe084cb31c6e3b4a9`.
+Exact Git-source projection (including only the documented PO transform), old
+path equality, bootstrap/assets/module-map/provenance preservation and outgoing
+held-bitmap/secret audits pass. All 75 candidate outgoing blobs are checked for
+the held image hash; Gitleaks reports no secrets. All resources/languages remain.
+
+Main CI **41290954328** and tag CI **41290954313** pass all four jobs at that
+exact source, including packaged native OTA. Upstream watch **41290954329** also
+passes. Draft and public asset downloads, sizes and GitHub digest metadata match
+the tested ZIP/checksum byte-for-byte. Live anonymous LuaSocket/LuaSec native
+upgrades from Beta 9/24 and the actual local Beta 25 also pass. Preview selects
+26; stable remains absent. All **79** earlier releases/assets and **131** old
+remote tag refs remain unchanged. Evidence is ignored under
+`test-results/beta26-20261101/`; no private reader settings/logs are published.
+
+The final merged package has not been installed or newly benchmarked on the
+disconnected Bigme. Prior measured first-Manga improvements and physical menu/
+app-picker checks remain valid evidence for their earlier exact candidate,
+not a new whole-device certification. App-edit persistence, metadata refresh's
+extraction/filter result, deep menus/rotation/sleep and broader Boox acceptance
+remain open. The explicit publication request supersedes the older publication
+pause, not those evidence limits. Existing profiles, fast close, patches and
+BookOrbit/Hardcover/MAL owners are retained; no server, cache, settings or reading
+history is reset. The external same-cover Undo fix does not revive the earlier
+done opening. These verification-only descendants do not rebuild the tagged ZIP.
+
 ## 2026-11-01 — requested Bookshelf 6.1.1 merge and Beta 26 publication preparation
 
 User explicitly requests: publish the Undo fix first, merge upstream, then push

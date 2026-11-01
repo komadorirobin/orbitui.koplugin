@@ -22,6 +22,27 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- **Beta 26 is public**, exact candidate/annotated tag
+  `96e10fbf9e7b4703810f87908df39a9da7bc2229` / `v0.1.0-beta.26`.
+  It publishes the reviewed Bookshelf **6.1.1** import (`c686f5a3`) and the
+  formerly local Beta 25 Android apps/metadata and measured library/input/card
+  fixes. SimpleUI stays `fdf83c7d`. Main/tag CI **41290954328 / 41290954313**
+  pass all four jobs; the upstream watcher also passes. Both full interpreter
+  suites, 43 catalogs, sealed/native input/EPUB/raster/span/Trapper checks,
+  old-installer OTA and exact source/path/history/held-art/secret audits pass.
+  ZIP SHA-256 `6800190ab077407f2fa5d42bc276ee52fdcb6ca33b44441a389fe1571f92817d`,
+  9,316,969 bytes / 27,516,914 expanded / unchanged 2,000 API-1 installed files.
+  Draft/public downloads match; live anonymous native-TLS upgrades from Beta
+  9/24 and the actual local Beta 25 pass recovery/rollback/cleanup. Preview
+  selects 26; stable stays absent. All 79 older releases and 131 old tag refs
+  remain unchanged. Evidence: `test-results/beta26-20261101/`.
+  No physical final-package install, new benchmark or metadata/app-edit
+  acceptance is claimed while ADB is disconnected. Earlier Bigme measurements
+  apply to the pre-import performance candidate, not a new 26 benchmark.
+  Undo-opening fix is separately public in Ereader / BookOrbit Extras **0.2.1**,
+  not embedded or automatically deployed by OrbitUI. Existing history/server
+  state is unchanged. Verification-only descendants never rebuild public bytes.
+
 - User explicitly requests publication of the Undo-opening fix, then an upstream
   merge and the next OrbitUI beta. Ereader `30ded4e` and BookOrbit Extras
   `4c7e1b2` are pushed; Extras **0.2.1** is public, with exact patch/checksum

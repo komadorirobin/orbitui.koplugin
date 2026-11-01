@@ -2,6 +2,43 @@
 
 ## Automated
 
+### Beta 26 publication (November 1)
+
+Public candidate/tag **`96e10fbf9e7b4703810f87908df39a9da7bc2229`** /
+**`v0.1.0-beta.26`** publishes Bookshelf 6.1.1 (`c686f5a3`) and the previously
+local Beta 25 changes below. SimpleUI remains `fdf83c7d`. Both full Lua/LuaJIT
+gates pass: 133 Python tests/four optional skips, 98 root files, 533 Bookshelf
+suites/zero failures/three normal SQLite exclusions, 13 SimpleUI suites,
+1,149 syntax checks and 403 module identities. All 43 catalogs pass. The initial
+long macOS temp prefix fails the upstream 400-byte cache fixture; the documented
+`TMPDIR=/tmp` fixes that test environment and both full suites are rerun. No
+runtime cache budget, assertion or skip changes are made.
+
+The new picker test executes actual native LibraryModal refresh, not an
+extracted shape assertion, in portrait/landscape/Bigme geometry; it fails before
+the 6.1.1 fix. Both-interpreter sealed-root suites and minimum/current native
+input/Trapper/TrapWidget/VerticalSpan, real EPUB and CBB/software raster suites
+pass. Actual Beta 5/9/24 and local Beta 25 native installers pass full inventory,
+activation/restart, missing-module/truncated-download rejection, code rollback
+and cleanup preservation. Live anonymous TLS upgrades from Beta 9/24/local 25
+pass after publication. Main/tag CI 41290954328 / 41290954313 pass all four jobs.
+
+ZIP SHA-256 `6800190ab077407f2fa5d42bc276ee52fdcb6ca33b44441a389fe1571f92817d`;
+9,316,969 bytes / 27,516,914 expanded, unchanged 2,000 API-1 installed files.
+Exact source projection, old path/asset/bootstrap/module-map equality, held-art
+history and Gitleaks audits pass. Draft/public downloads and both GitHub asset
+digests match. Preview selects 26; stable stays absent. The 79 previous releases
+and 131 old tag refs remain immutable. Evidence: `test-results/beta26-20261101/`.
+
+No final-package device install or fresh performance trial is claimed while ADB
+is disconnected. Earlier measured results below belong to their exact earlier
+candidate. Physical app-edit persistence, metadata extraction/filter-result
+acceptance and broader deep-menu/rotation/sleep/Boox checks remain open. The
+user explicitly authorizes this beta despite the old publication pause; this
+does not turn those gaps into passes. The external Undo fix is separately
+published in Ereader/Extras 0.2.1 and does not change past history or deploy a
+server. Verification-only documents must never rebuild the published archive.
+
 ### November 1 Bigme library performance pass (local device candidate)
 
 Final tested source is `6271a6f296b2b62368f2944d3b1d7699d3efdaf1`, ZIP
