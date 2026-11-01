@@ -1,5 +1,44 @@
 # Verification and device acceptance
 
+## November 1 smart EPUB tag chips (local first stage)
+
+User approves implementation after the feasibility proposal, starting clean at
+`b99d32c2`; no push/release/import/version/device-install authorization. Existing
+Bigme slot `711d507e` / `6df633e0` and immutable public Beta 26 are unchanged.
+No runtime file added: integration/query/search/library-settings/host/i18n only,
+with root tests/docs. Existing profile schema stores versioned tag rules; the
+existing independent tag cache stores bounded derived snapshots, never book or
+reading data. All-local and selected-library scopes remain distinct.
+
+Focused cases exercise literal Unicode/punctuation/case, AND/OR deduplication,
+invalid/future/empty rules, one-pass scope/origin handling, cache-only misses and
+changed stamps without archive opens, guarded pill holds, staged Save/Cancel,
+stable IDs, exact manual tag entry, stale/concurrent edits, scope/cache isolation,
+native producer arguments, deferred visible-chip work/TTL, parked vs active
+reader owners, opening guards and unrelated global-search opening, registered
+source privacy and Swedish strings. The real native SQLite supplement adds a
+combined AND/OR parameterization test, including SQL metacharacters and Unicode.
+The actual native UIManager scheduler regression is retained (30 total EPUB
+cases with the supplement), including slow-archive cancellation after repaint.
+
+Private evidence: `test-results/tag-smart-chips-20261101/`. Initial full run
+used system Python without Pillow and is rejected; use the existing isolated
+Pillow environment plus sequential TMPDIR=/tmp full gates. Final full/package
+results are appended after verification. No physical font/touch/footer fit,
+keyboard, orientation, full-library latency, changed-file/user-refresh or Home
+pin acceptance is inferred from headless tests. No new device speedup claim.
+
+Sequential full Lua/LuaJIT gates pass 133 Python tests/four unchanged source
+cache exclusions, 100 root Lua files, 533 Bookshelf suites/zero failures/three
+documented native-SQLite exclusions and 13 SimpleUI files. Map 403, syntax 1,151;
+43 translation catalogs pass. After the last immutable-label capture refinement,
+rerun all final root tests under both interpreters, not only the focused cases.
+The focused final editor/source suite has 12 cases, including the actual native
+MenuHost's nested choice/summary refresh/Cancel path; 29 regular EPUB cases,
+30 with the actual native scheduler, plus six real SQLite cases pass. No new
+skip exception. These are desktop/native-service supplements, not a physical
+reader test. Package identity/inventory follow the clean implementation commit.
+
 ## November 1 aggregate offline index / progressive results (local follow-up)
 
 User explicitly proceeds beyond the already installed step-1/2 candidate.

@@ -133,6 +133,13 @@ function M.tagSections(owner, book, modal)
                 origin = book.filepath,
                 open_book = function(file, record) owner:_openBook(record or { filepath = file }) end,
             })
+        end, on_hold = function()
+            if not current() or state.render ~= render or local_state.busy then return end
+            require("adapters/orbitui_library_settings").tagChip{
+                tag = tag, tags = local_state.tags, profile = owner.profile_key,
+                is_current = function() return current() and state.render == render and not local_state.busy end,
+                on_saved = function() if current() then modal:onClose() end end,
+            }
         end }
     end
     local_pills[#local_pills + 1] = { label = _(local_state.busy and "Loading…"
@@ -150,7 +157,7 @@ function M.tagSections(owner, book, modal)
         end }
     local sections = {{ title = _("EPUB tags (offline)"), pills = local_pills,
         note = local_state.error or (local_state.tags and #local_state.tags == 0 and _("No separate tags embedded in this EPUB. Standard EPUB subjects are shown as genres below."))
-            or _("Read tags from the file, then tap a tag to search EPUBs on this device across all library profiles. No account or connection is needed. Nothing is synced or edited.") }}
+            or _("Tap a local EPUB tag to search. Long-press to save a smart chip, optionally combining tags. No account or connection is needed; nothing is synced or edited.") }}
     if Integration.bookOrbitEnabled("tags") then sections[#sections + 1] = remote end
     return sections
 end

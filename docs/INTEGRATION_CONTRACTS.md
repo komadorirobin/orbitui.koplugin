@@ -1168,6 +1168,33 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+November 1 approved smart-tag-chip first stage: long-press ONLY an offline EPUB
+pill to draft a named chip in an existing enabled library. Rules are versioned,
+literal case-sensitive AND/OR sets, 1–16 tags; do not reinterpret genres,
+collections or server-only BookOrbit tags. Scope is an explicit selected library
+or all local libraries; normal unsaved tag search remains all-profile. Draft,
+Cancel and stale/closed/replaced owners write nothing. Save preserves stable
+chip/profile IDs, roots, unrelated fields and saved appearance; no file/tag,
+reading-data or remote changes. Existing chip rename/order/remove/Home-pin paths
+remain native. A standalone virtual library is not part of this stage.
+
+Render only bounded stat-checked derived matches, never full scans/archives or
+network work. The visible chip may defer one cache-only index check, throttled
+60s and retired on source/navigation/reader transitions. Explicit swipe-down or
+settings Update reuses progressive/cancelable search, retiring an automatic
+check first. Unknown/changed cache entries remain unknown, not negative hits;
+SQL batch parameterization and 128-file/16-tag limits apply to combined rules
+in one pass. Store snapshots separately from rules and reading data, under the
+existing disposable tag-cache namespace; scope/home/depth identity prevents
+cross-library reuse. A 32-snapshot memory bound and 400-hit cap apply. Display
+Indexed/Indexed (400+) and explain that Refresh checks missing/changed files;
+never present a cached set as a completed current-library index. Native explicit
+path producers retain sorting/filtering/visible-only covers and real opening.
+Recheck a cached match before opening, without restricting unrelated shared
+search openers. Parked-reader shelves remain usable; active-reader work retires.
+All owned controls/help are SV/EN. Headless checks are not native-font/device
+performance acceptance, and local implementation is not release authorization.
+
 October 31 user-approved local-first extension: a distinct offline EPUB-tags
 section comes first in Tags. Explicit Read/Refresh reads EPUB 2/3 namespaced
 `bookorbit:tags` JSON; standard dc:subject remains a native genre, not a copied

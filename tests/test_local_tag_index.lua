@@ -71,6 +71,20 @@ H.test("index parameterization protects literal paths/tags and prefetch is bound
     H.eq(index.prefetch({ "/other-profile/not-requested.epub" }, 1, tag)[attack], nil)
     assert(index.close())
 end)
+H.test("real SQLite combines literal AND/OR predicates in one bounded batch with no duplicate rows", function()
+    local M = fresh(); local index = assert(M.openEmbeddedTagIndex())
+    local names = { tag, "x' OR 1=1 --" }
+    index.put("/a.epub", "a", names); index.put("/b.epub", "b", { tag }); index.put("/c.epub", "c", {})
+    assert(index.flush())
+    local rule = { version = 1, mode = "all", tags = names }
+    local rows = assert(index.prefetch({ "/a.epub", "/b.epub", "/c.epub" }, 1, rule))
+    H.eq(rows["/a.epub"].matches, true); H.eq(rows["/b.epub"].matches, false); H.eq(rows["/c.epub"].matches, false)
+    rule.mode = "any"
+    rows = assert(index.prefetch({ "/a.epub", "/b.epub", "/c.epub" }, 1, rule))
+    H.eq(rows["/a.epub"].matches, true); H.eq(rows["/b.epub"].matches, true); H.eq(rows["/c.epub"].matches, false)
+    rule.tags = { "ÅLAND & 日本語" }; H.eq(index.prefetch({ "/a.epub" }, 1, rule)["/a.epub"].matches, false)
+    assert(index.close())
+end)
 H.test("a missing epoch marker cannot revive rows from any previous index generation", function()
     local M = fresh(); local index = assert(M.openEmbeddedTagIndex())
     index.put("/local/a.epub", "same", { "Old" }); assert(index.close())

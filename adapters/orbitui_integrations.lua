@@ -472,6 +472,38 @@ end
 
 local tag_disk
 local index_failed = false
+-- Literal EPUB tags, never the native collection/genre filter language.
+-- A compact bounded rule is shared by saved chips and the explicit search.
+function M.embeddedTagRule(value)
+    if type(value) == "string" then value = { version = 1, mode = "all", tags = { value } } end
+    if type(value) ~= "table" or value.version ~= 1 or (value.mode ~= "all" and value.mode ~= "any")
+            or not array(value.tags, 16) or #value.tags == 0 then return nil end
+    local tags, seen = {}, {}
+    for _, tag in ipairs(value.tags) do
+        if type(tag) ~= "string" or #tag > 800 or not tag:find("%S") or tag:find("%c") then return nil end
+        if not seen[tag] then tags[#tags + 1] = tag; seen[tag] = true end
+    end
+    table.sort(tags)
+    return { version = 1, mode = value.mode, tags = tags }
+end
+
+function M.embeddedTagMatches(tags, rule)
+    rule = M.embeddedTagRule(rule)
+    if not rule or not tags then return false end
+    local set = {}; for _, tag in ipairs(tags) do set[tag] = true end
+    for _, tag in ipairs(rule.tags) do
+        if rule.mode == "all" and not set[tag] then return false end
+        if rule.mode == "any" and set[tag] then return true end
+    end
+    return rule.mode == "all"
+end
+
+function M.embeddedTagSnapshot(key, value)
+    tag_disk = tag_disk or require("lib/bookshelf_keyed_cache").new("orbitui_epub_tags", 1)
+    if value then return tag_disk.write("shelf_v1:" .. key, value) end
+    return tag_disk.read("shelf_v1:" .. key)
+end
+
 local function tagStamp(attrs)
     if attrs and attrs.mode == "file" then
         return tostring(attrs.modification) .. ":" .. tostring(attrs.change) .. ":" .. tostring(attrs.size)
@@ -520,12 +552,19 @@ function M.openEmbeddedTagIndex(existing_only)
     end
     function store.prefetch(files, first, tag)
         if not db or index_failed then return nil end
+        local rule = M.embeddedTagRule(tag)
+        if not rule then return nil end
         local ok_read, out = pcall(function()
-            local marks, args = {}, { tag, epoch }
+            local marks, args, predicates = {}, {}, {}
+            for _, name in ipairs(rule.tags) do
+                predicates[#predicates + 1] = "EXISTS(SELECT 1 FROM tags t WHERE t.fp=f.fp AND t.tag=?)"
+                args[#args + 1] = name
+            end
+            args[#args + 1] = epoch
             for i = first, math.min(first + 127, #files) do
                 marks[#marks + 1] = "?"; args[#args + 1] = files[i]
             end
-            local stmt = db:prepare("SELECT f.fp,f.stamp,EXISTS(SELECT 1 FROM tags t WHERE t.fp=f.fp AND t.tag=?) "
+            local stmt = db:prepare("SELECT f.fp,f.stamp,(" .. table.concat(predicates, rule.mode == "all" and " AND " or " OR ") .. ") "
                 .. "FROM files f WHERE f.epoch=? AND f.fp IN (" .. table.concat(marks, ",") .. ")")
             local unpack_fn = unpack or table.unpack
             stmt:bind(unpack_fn(args))
@@ -575,7 +614,7 @@ function M.openEmbeddedTagIndex(existing_only)
     return store
 end
 
-function M.embeddedTags(file, refresh, defer_index)
+function M.embeddedTags(file, refresh, defer_index, cache_only)
     local fs = require("libs/libkoreader-lfs")
     local attrs = type(file) == "string" and file:sub(1, 1) == "/" and fs.attributes(file)
     if not attrs or attrs.mode ~= "file" then return nil, "missing" end
@@ -592,6 +631,7 @@ function M.embeddedTags(file, refresh, defer_index)
             if valid then return cached.tags, nil, true, stamp end
         end
     end
+    if cache_only then return nil, "unindexed", true end
     local ok, tags, err = pcall(epubMetadata, file)
     if not ok or not tags then return nil, err or "invalid_epub" end
     local after = fs.attributes(file)
@@ -649,13 +689,16 @@ function M.embeddedTagRequest(source, task, current, done)
     }
     local cancelled, finished = false, false
     local files, cursor, paths, skipped, truncated = nil, 1, {}, 0, false
+    local rule = not task.file and M.embeddedTagRule(task.rule or task.tag)
+    local stamps, unindexed = {}, 0
     local index, indexed, index_end, pending = nil, {}, 0, 0
     local last_update, last_flush, last_matches = time.now(), time.now(), 0
     local function snapshot()
         local out = {}; for i, file in ipairs(paths) do out[i] = file end
-        return { paths = out, skipped = skipped, truncated = truncated,
+        local copied = {}; for file, stamp in pairs(stamps) do copied[file] = stamp end
+        return { paths = out, stamps = copied, unindexed = unindexed, skipped = skipped, truncated = truncated,
             scanned = cursor - 1, total = files and #files or 0,
-            complete = files ~= nil and cursor > #files and not truncated }
+            complete = files ~= nil and cursor > #files and not truncated and unindexed == 0 }
     end
     local function finish(body, err)
         if finished then return end
@@ -674,6 +717,7 @@ function M.embeddedTagRequest(source, task, current, done)
         if not current() then finish(); return end
         if cancelled or progress and not UI:isWidgetShown(progress) then control.cancel(); return end
         if source and not source:current() then finish(nil, "stale"); return end
+        if not task.file and not rule then finish(nil, "invalid_epub"); return end
         if not files then
             local ok, value = pcall(function()
                 if task.file then return { task.file } end
@@ -686,12 +730,17 @@ function M.embeddedTagRequest(source, task, current, done)
                         end
                     end
                 end
-                add(nil)
-                for _, profile in ipairs(Profiles.list()) do add(Profiles.scope(profile)) end
+                if task.profile then
+                    local profile = assert(Profiles.get(task.profile), "missing library")
+                    add(Profiles.scope(profile))
+                else
+                    add(nil)
+                    for _, profile in ipairs(Profiles.list()) do add(Profiles.scope(profile)) end
+                end
                 table.sort(out)
                 -- Validate the clicked book first so an initial result need
                 -- not wait for unrelated archives. Still scan ALL profiles.
-                if type(task.origin) == "string" and task.origin:sub(1, 1) == "/" and task.origin:lower():match("%.epub$") then
+                if not task.profile and type(task.origin) == "string" and task.origin:sub(1, 1) == "/" and task.origin:lower():match("%.epub$") then
                     if seen[task.origin] then
                         for i, file in ipairs(out) do if file == task.origin then table.remove(out, i); break end end
                     end
@@ -709,7 +758,7 @@ function M.embeddedTagRequest(source, task, current, done)
             if not file then finish(snapshot()); return end
             if index and index_failed then index.close(); index, indexed = nil, {} end
             if index and not task.refresh and cursor > index_end then
-                indexed = index.prefetch(files, cursor, task.tag)
+                indexed = index.prefetch(files, cursor, task.rule or task.tag)
                 index_end = cursor + 127
                 if not indexed then index.close(); index, indexed = nil, {} end
             end
@@ -717,20 +766,17 @@ function M.embeddedTagRequest(source, task, current, done)
             if hit and tagStamp(require("libs/libkoreader-lfs").attributes(file)) ~= hit.stamp then hit = nil end
             local tags, err, cached, stamp
             if hit and not task.refresh then
-                tags, cached = hit.matches and { task.tag } or {}, true
+                tags, cached, stamp = hit.matches and rule.tags or {}, true, hit.stamp
             else
-                tags, err, cached, stamp = M.embeddedTags(file, task.refresh, not task.file)
+                tags, err, cached, stamp = M.embeddedTags(file, task.refresh, not task.file, task.cache_only)
                 if index and tags then index.put(file, stamp, tags); pending = pending + 1 end
             end
             if task.file then finish(tags and { tags = tags } or nil, err); return end
-            if not tags then skipped = skipped + 1
-            else
-                for _, tag in ipairs(tags) do
-                    if tag == task.tag then
-                        if #paths == 400 then truncated = true; finish(snapshot()); return end
-                        paths[#paths + 1] = file; break
-                    end
-                end
+            if not tags then
+                if err == "unindexed" then unindexed = unindexed + 1 else skipped = skipped + 1 end
+            elseif M.embeddedTagMatches(tags, rule) then
+                if #paths == 400 then truncated = true; finish(snapshot()); return end
+                paths[#paths + 1], stamps[file] = file, stamp
             end
             cursor = cursor + 1
             if not cached or time.to_us(time.since(start)) >= 8000 then break end

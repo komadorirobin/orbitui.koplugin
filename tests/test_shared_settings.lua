@@ -25,7 +25,7 @@ package.loaded["adapters/orbitui_updates"] = {
 }
 local search_opts, panel_args, shelf_menu, installed, dashboard_installed
 package.loaded["core/orbitui_search"] = { show = function(opts) search_opts = opts or true end }
-package.loaded["core/orbitui_shelf_query"] = { capture = function(w)
+package.loaded["core/orbitui_shelf_query"] = { tagWidget = function() end, capture = function(w)
     return { chip = w.chip, profile = w.profile_key }
 end }
 package.loaded["adapters/orbitui_book_panel"] = { show = function(file, opts) panel_args = { file, opts } end,

@@ -4,7 +4,8 @@ local VIEW_KEY = "orbitui_browse_views"
 local local_sources = { folder = true, folder_flat = true, library = true, all = true,
     recent = true, latest = true, authors = true, series = true, genres = true,
     favorites = true, collections = true, collection = true, next = true, bookorbit_want = true,
-    single_series = true, author = true, genre = true, format = true, rating = true, language = true }
+    single_series = true, author = true, genre = true, format = true, rating = true, language = true,
+    orbitui_epub_tags = true }
 local fields = { sort = { title = true, author = true, date_added = true, last_opened = true, series = true },
     filter = { all = true, unread = true, reading = true, barely = true, finished = true },
     view = { covers = true, list = true, spines = true, compact = true, compact_two = true } }

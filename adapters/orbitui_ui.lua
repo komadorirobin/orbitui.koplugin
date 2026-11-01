@@ -5,6 +5,7 @@ M.modules = {
     ["infra/sui_core"] = true,
     ["infra/sui_config"] = true,
     ["lib/bookshelf_profiles"] = true,
+    ["lib/bookshelf_sources"] = true,
     ["features/sui_quickactions"] = true,
     ["sui_bookshelf_bridge"] = true,
     ["features/library/sui_book_hold_dialog"] = true,
@@ -91,6 +92,8 @@ function M.wrap(name, module)
         require("adapters/orbitui_navbar").config(module)
     elseif name == "lib/bookshelf_profiles" then
         require("adapters/orbitui_libraries").profiles(module)
+    elseif name == "lib/bookshelf_sources" then
+        require("core/orbitui_shelf_query").tagSources(module)
     elseif name == "features/sui_quickactions" then
         require("adapters/orbitui_libraries").actions(module)
     elseif name == "sui_bookshelf_bridge" then
@@ -131,6 +134,7 @@ function M.wrap(name, module)
         require("adapters/orbitui_cover_labels").widget(module)
         require("adapters/orbitui_shelf_sort").widget(module)
         require("adapters/orbitui_shelf_sort").browsing(module)
+        require("core/orbitui_shelf_query").tagWidget(module)
         require("adapters/orbitui_series_boxes").widget(module)
         require("adapters/orbitui_book_bindings").widget(module)
         require("adapters/orbitui_series_titles").widget(module)
@@ -197,6 +201,7 @@ function M.wrap(name, module)
         module.preserve_legacy = true
     elseif name == "lib/bookshelf_book_repository" then
         require("adapters/orbitui_shelf_sort").repository(module)
+        require("core/orbitui_shelf_query").tagRepository(module)
     elseif name == "lib/bookshelf_sort_engine" then
         require("adapters/orbitui_shelf_sort").engine(module)
     elseif name == "lib/bookshelf_theme_pack" then

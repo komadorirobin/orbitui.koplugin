@@ -106,6 +106,25 @@ igen. Funktionen ingår i Beta 26.
 
 ### Optional BookOrbit features
 
+**Local development follow-up (not in published Beta 26):** long-press a local
+EPUB tag in the book's **Tags** tab to create a named smart chip in an existing
+library. Combine up to 16 exact tags with **AND** or **OR**, within that library
+or all local libraries. Opening a chip checks cached tags only; the **Indexed**
+footer is not a claim of complete indexing. Swipe down or use **Update tag
+matches…** in its settings to read missing/changed EPUB tags, with progressive
+results and Stop. The first 400 matches are shown; a capped chip says **400+**.
+Chips retain normal rename/order/remove and Home-pinning controls. No book is
+copied, moved or edited, and no BookOrbit account/server patch is needed.
+
+**Svenska, lokal utvecklingsversion (inte publicerad Beta 26):** långtryck på en
+lokal EPUB-tagg i bokens **Tags/Taggar**-flik för att skapa ett namngivet chip.
+Kombinera högst 16 exakta taggar med **OCH/ELLER** i valt bibliotek eller alla
+lokala bibliotek. Chipet visar **Indexerade** träffar utan att automatiskt läsa
+alla EPUB-filer. Svep nedåt eller välj **Uppdatera taggträffar…** för att läsa
+saknade/ändrade taggar. Sökningen kan stoppas; gränsen är 400 träffar och markeras
+med **400+**. Vanliga chipinställningar och visning på Hem fungerar även här.
+Inga böcker flyttas/redigeras och inget BookOrbit-konto eller servertillägg krävs.
+
 **OrbitUI settings > Integrations > BookOrbit** has a master switch and
 independent controls for the BookOrbit list, manual status actions and online
 tags, available from Beta 23. They do not disable the separate BookOrbit plugin's

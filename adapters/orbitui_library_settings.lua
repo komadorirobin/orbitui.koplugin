@@ -23,14 +23,15 @@ local function changed()
     refresh()
 end
 
-local function input(title, value, save, allow_empty)
+local function input(title, value, save, allow_empty, exact)
     local dialog
     dialog = require("ui/widget/inputdialog"):new{
         title = title, input = value or "",
         buttons = {{
             { text = _("Cancel"), id = "close", callback = function() ui():close(dialog) end },
             { text = _("Save"), is_enter_default = true, callback = function()
-                local text = (dialog:getInputText() or ""):match("^%s*(.-)%s*$")
+                local text = dialog:getInputText() or ""
+                if not exact then text = text:match("^%s*(.-)%s*$") end
                 if text == "" and not allow_empty then return end
                 ui():close(dialog)
                 save(text)
@@ -198,7 +199,127 @@ function M.folders(key)
 end
 
 local sourceLabels = { folder = "Folder", latest = "Recently added", authors = "Authors", series = "Series",
-    recent = "Recent", favorites = "Favorites", next = "Next unread in series", bookorbit_want = "BookOrbit Want to Read" }
+    recent = "Recent", favorites = "Favorites", next = "Next unread in series", bookorbit_want = "BookOrbit Want to Read",
+    orbitui_epub_tags = "Smart EPUB tag chip" }
+
+local tagHelp = "This chip uses local EPUB tags, not genres, collections or server-only tags. Opening it checks cached tags without reading every EPUB. Indexed matches may be incomplete. Swipe down on the chip or choose Update tag matches to read missing or changed files. Stop keeps checked results. Matches update when you refresh; no books are copied, moved or edited."
+
+function M.tagChip(opts)
+    opts = opts or {}
+    local Query, I = require("core/orbitui_shelf_query"), require("adapters/orbitui_integrations")
+    local P = profiles()
+    local target = opts.profile or (P.list()[1] or {}).key
+    local existing = opts.id and P.chip(P.get(target), opts.id)
+    if opts.id and (not existing or not Query.tagKey(existing.source)) then return end
+    local source = existing and Model.copy(existing.source)
+        or { kind = Query.tag_kind, version = 1, profile = target, scope = "library", rule = I.embeddedTagRule(opts.tag) }
+    if not source.rule or not P.get(target) then
+        require("core/orbitui_context").notify(_("Add a library before creating a tag chip.")); return
+    end
+    local name = existing and existing.label or opts.tag
+    local expected = existing and Query.tagKey(existing.source)
+    local expected_label = existing and existing.label
+    local generation, host = ui()._simpleui_navigation_generation, nil
+    local function current()
+        if host and host._closed or generation ~= ui()._simpleui_navigation_generation
+                or opts.is_current and not opts.is_current() or not P.get(target) then return false end
+        if opts.id then
+            local chip = P.chip(P.get(target), opts.id)
+            if not chip or chip.label ~= expected_label or Query.tagKey(chip.source) ~= expected then return false end
+        end
+        return true
+    end
+    local function guarded(fn)
+        return function(...) if current() then return fn(...) end end
+    end
+    local function addTag(tag)
+        local rule = Model.copy(source.rule)
+        rule.tags[#rule.tags + 1] = tag
+        local valid = I.embeddedTagRule(rule)
+        if valid then source.rule = valid; refresh()
+        else require("core/orbitui_context").notify(_("Use 1–16 exact tag names, without empty names or control characters.")) end
+    end
+    local function build()
+        if not current() then return {} end
+        local rows = {
+            info(_("EPUB tags (offline)")),
+            { text = _("Name") .. ": " .. name, callback = guarded(function()
+                input(_("Shelf name"), name, guarded(function(text) name = text; refresh() end))
+            end) },
+        }
+        if not opts.id then
+            rows[#rows + 1] = { text = _("Library") .. ": " .. P.get(target).label, sub_item_table_func = function()
+                local out = {}
+                for _i, profile in ipairs(P.list()) do
+                    local key = profile.key
+                    out[#out + 1] = { text = profile.label, radio = true, checked_func = function() return target == key end,
+                        callback = guarded(function() target, source.profile = key, key; refresh() end) }
+                end
+                return out
+            end }
+        end
+        rows[#rows + 1] = { text = _("Search scope") .. ": " .. _(source.scope == "library" and "Selected library" or "All local libraries"), sub_item_table = {
+            { text = _("Selected library"), radio = true, checked_func = function() return source.scope == "library" end,
+                callback = guarded(function() source.scope = "library"; refresh() end) },
+            { text = _("All local libraries"), radio = true, checked_func = function() return source.scope == "all" end,
+                callback = guarded(function() source.scope = "all"; refresh() end) },
+        } }
+        rows[#rows + 1] = { text = _("Match tags") .. ": " .. _(source.rule.mode == "all" and "All selected tags (AND)" or "At least one tag (OR)"), sub_item_table = {
+            { text = _("All selected tags (AND)"), radio = true, checked_func = function() return source.rule.mode == "all" end,
+                callback = guarded(function() source.rule.mode = "all"; refresh() end) },
+            { text = _("At least one tag (OR)"), radio = true, checked_func = function() return source.rule.mode == "any" end,
+                callback = guarded(function() source.rule.mode = "any"; refresh() end) },
+        } }
+        local picked = {}
+        for _i, tag in ipairs(source.rule.tags) do
+            picked[tag] = true
+            rows[#rows + 1] = { text = _("Remove tag") .. ": " .. tag, enabled_func = function() return #source.rule.tags > 1 end,
+                callback = guarded(function()
+                    for i, value in ipairs(source.rule.tags) do if value == tag then table.remove(source.rule.tags, i); break end end
+                    refresh()
+                end) }
+        end
+        local additions = {{ text = _("Enter exact tag name…"), callback = guarded(function()
+            input(_("Exact EPUB tag name"), "", guarded(addTag), false, true)
+        end) }}
+        for _i, tag in ipairs(opts.tags or {}) do
+            if not picked[tag] then additions[#additions + 1] = { text = tag, callback = guarded(function() addTag(tag) end) } end
+        end
+        rows[#rows + 1] = { text = _("Add tag…"), sub_item_table = additions }
+        rows[#rows + 1] = { text = _("About indexed matches"), callback = guarded(function()
+            require("core/orbitui_context").notify(_(tagHelp))
+        end) }
+        rows[#rows + 1] = { text = _("Save chip"), callback = guarded(function()
+            source.rule = I.embeddedTagRule(source.rule)
+            if not source.rule then return end
+            local saved_id = opts.id
+            P.edit(target, function(section)
+                if saved_id then
+                    local chip = P.chip(section, saved_id)
+                    local replacement = Model.copy(chip.source)
+                    for _i, field in ipairs{ "kind", "version", "profile", "scope", "rule" } do
+                        replacement[field] = Model.copy(source[field])
+                    end
+                    chip.source, chip.label = replacement, name
+                else
+                    local n, used = tonumber(section.next_shelf_id) or 1, {}
+                    for _, chip in ipairs(section.chips) do used[chip.key] = true end
+                    while used["shelf_" .. n] do n = n + 1 end
+                    saved_id, section.next_shelf_id = "shelf_" .. n, n + 1
+                    section.chips[#section.chips + 1] = { key = saved_id, label = name, source = Model.copy(source) }
+                end
+            end)
+            require("lib/bookshelf_menu_host").close(host)
+            changed()
+            if opts.on_saved then opts.on_saved(target, saved_id) end
+            require("core/orbitui_context").notify(_("Tag chip saved. Open it for indexed matches; swipe down to update missing tags."))
+        end) }
+        rows[#rows + 1] = { text = _("Cancel"), callback = function() require("lib/bookshelf_menu_host").close(host) end }
+        return rows
+    end
+    host = menu(_(opts.id and "Edit tag chip" or "Create tag chip"), build)
+    return host
+end
 
 local function addShelf(key, kind, path, default_label)
     input(_("Shelf name"), kind == "folder" and path:match("([^/]+)$") or _(default_label), function(label)
@@ -256,6 +377,21 @@ function M.shelfItems(key, id)
     if chip.source.kind == "folder" then
         rows[#rows + 1] = { text = _("Folder") .. ": " .. chip.source.id, callback = function()
             folder(chip.source.id, function(path) shelfFolder(key, id, chip.source.id, path) end)
+        end }
+    end
+    if chip.source.kind == "orbitui_epub_tags" then
+        rows[#rows + 1] = info(require("core/orbitui_shelf_query").tagStatus(chip.source))
+        rows[#rows + 1] = { text = _("Edit tag chip"), callback = function() M.tagChip{ profile = key, id = id } end }
+        rows[#rows + 1] = { text = _("Update tag matches…"), callback = function()
+            local Query = require("core/orbitui_shelf_query")
+            local expected = Query.tagKey(chip.source)
+            Query.tagRefresh(chip.source, { is_current = function()
+                local current = p.chip(p.get(key), id)
+                return current and Query.tagKey(current.source) == expected
+            end })
+        end }
+        rows[#rows + 1] = { text = _("About indexed matches"), callback = function()
+            require("core/orbitui_context").notify(_(tagHelp))
         end }
     end
     rows[#rows + 1] =

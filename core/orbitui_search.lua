@@ -335,9 +335,12 @@ local function tagSearch(tag, opts)
     opts = opts or {}
     local Integration = require("adapters/orbitui_integrations")
     local embedded = opts.embedded == true
+    local rule = embedded and Integration.embeddedTagRule(opts.rule or tag)
+    if embedded and not rule then return end
     local title = embedded and _("EPUB tags (offline)") or _("BookOrbit tags")
     local intro = embedded and _("Only EPUBs on this device. All library profiles are included; the library's scan-depth setting applies. No connection is needed.")
         or _("Only BookOrbit-linked books on this device. All library profiles are included.")
+    if embedded and opts.profile then intro = _("Only EPUBs in the selected library. The scan-depth setting applies. No connection is needed.") end
     local function failureText(err)
         if embedded and err == "stale" then return _("Library folders changed. Refresh and try again.") end
         return embedded and Integration.embeddedTagError(err) or Integration.bookOrbitError(err)
@@ -353,6 +356,7 @@ local function tagSearch(tag, opts)
     local function current()
         return not retired and modal and UI:isWidgetShown(modal)
             and request == session and generation == UI._simpleui_navigation_generation
+            and (not opts.is_current or opts.is_current())
     end
     local function available(file) return fs.attributes(file, "mode") == "file" end
     local function filter()
@@ -380,6 +384,7 @@ local function tagSearch(tag, opts)
         local function update(result, failure, partial)
             if not current() then return end
             if result then
+                if opts.on_result then opts.on_result(result) end
                 data_session = source
                 local previous = {}; for _, book in ipairs(records) do previous[book.filepath] = book end
                 records = {}
@@ -409,7 +414,8 @@ local function tagSearch(tag, opts)
             update(result, failure, false)
         end
         if embedded then
-            worker = Integration.embeddedTagRequest(source, { tag = tag, origin = opts.origin, refresh = reread == true,
+            worker = Integration.embeddedTagRequest(source, { tag = tag, rule = rule, profile = opts.profile,
+                origin = opts.origin, refresh = reread == true,
                 on_progress = function(result) update(result, nil, true) end }, current, done)
         else Integration.bookOrbitRequest(source, function(s) return s:matches(tag) end, current, done) end
     end
@@ -427,8 +433,7 @@ local function tagSearch(tag, opts)
         if not available(book.filepath) then Context.notify(_("This book is no longer on the device.")); return false end
         if embedded then
             local tags = Integration.embeddedTags(book.filepath)
-            local matches = false
-            for _, value in ipairs(tags or {}) do if value == tag then matches = true; break end end
+            local matches = Integration.embeddedTagMatches(tags, rule)
             if not matches then Context.notify(_("This file's tags changed or could not be read. Refresh the results.")); return false end
         end
         return true
@@ -444,13 +449,14 @@ local function tagSearch(tag, opts)
             if not current() or busy then return end
             UI:show(require("ui/widget/confirmbox"):new{
                 sui_native = true, _sui_keep_homescreen = true,
-                text = _("Reread tags from every EPUB on this device? This can take a long time. Normal Refresh reuses cached tags for unchanged files. No books or reading data are edited."),
+                text = opts.profile and _("Reread tags from every EPUB in this library? This can take a long time. Normal Refresh reuses cached tags. No books or reading data are edited.")
+                    or _("Reread tags from every EPUB on this device? This can take a long time. Normal Refresh reuses cached tags for unchanged files. No books or reading data are edited."),
                 ok_text = _("Reread all EPUB tags…"), ok_callback = function() fetch(true) end,
             })
         end }}
     end
     modal = require("lib/bookshelf_library_modal"):new{ _sui_keep_homescreen = true, config = {
-        title = title .. ": " .. tag,
+        title = title .. ": " .. (rule and table.concat(rule.tags, rule.mode == "all" and " + " or " / ") or tag),
         intro = intro,
         search_placeholder = function() return _("Filter by filename") end,
         on_search_submit = function(value)
@@ -482,7 +488,10 @@ local function tagSearch(tag, opts)
             end
         end,
         footer_rows = footer,
-        on_closed = function() retired = true; if worker then worker.cancel(); worker = nil end end,
+        on_closed = function()
+            retired = true; if worker then worker.cancel(); worker = nil end
+            if opts.on_closed then opts.on_closed() end
+        end,
     } }
     UI:show(modal)
     fetch()

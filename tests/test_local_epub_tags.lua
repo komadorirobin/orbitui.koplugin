@@ -124,6 +124,44 @@ local function flush(count)
         if count then count = count - 1 end
     end
 end
+H.test("combined literal rules use AND or OR, deduplicate and reject malformed/future rules", function()
+    local both = { version = 1, mode = "all", tags = { tag, other, tag } }
+    H.eq(#Integration.embeddedTagRule(both).tags, 2)
+    H.eq(Integration.embeddedTagMatches({ tag }, both), false)
+    H.eq(Integration.embeddedTagMatches({ tag, other }, both), true)
+    both.mode = "any"; H.eq(Integration.embeddedTagMatches({ other }, both), true)
+    H.eq(Integration.embeddedTagMatches({ "other" }, both), false)
+    for _, invalid in ipairs{ {}, { version = 2, mode = "all", tags = { tag } },
+            { version = 1, mode = "none", tags = { tag } }, { version = 1, mode = "any", tags = {} },
+            { version = 1, mode = "all", tags = { "\n" } } } do
+        H.eq(Integration.embeddedTagRule(invalid), nil)
+    end
+end)
+H.test("cache-only smart-chip checks never open missing/changed archives or invent complete results", function()
+    reset()
+    assert(Integration.embeddedTags("/books/a.epub"))
+    local result
+    Integration.embeddedTagRequest(Integration.embeddedTagSession(), { tag = tag, cache_only = true,
+        on_progress = function() end }, function() return true end, function(value) result = value end)
+    flush(); H.eq(opened, 1); H.eq(#result.paths, 1); H.eq(result.unindexed, 2); H.eq(result.complete, false)
+    H.eq(result.stamps["/books/a.epub"], "1:1:" .. files["/books/a.epub"].size)
+    files["/books/a.epub"].change = 2
+    Integration.embeddedTagRequest(nil, { tag = tag, cache_only = true, on_progress = function() end },
+        function() return true end, function(value) result = value end)
+    flush(); H.eq(opened, 1); H.eq(#result.paths, 0); H.eq(result.unindexed, 3)
+end)
+H.test("combined scoped scans read each EPUB once and never include an origin outside the selected library", function()
+    reset()
+    add("/profile/a.epub", opf('["Åland & 日本語","Other","Other"]'))
+    local P, previous = package.loaded["lib/bookshelf_profiles"]
+    previous = P.get; P.get = function(key) return key == "a" and { key = key, roots = roots } end
+    local result
+    Integration.embeddedTagRequest(Integration.embeddedTagSession(), {
+        rule = { version = 1, mode = "all", tags = { tag, other } }, profile = "a", origin = "/outside/a.epub",
+        on_progress = function() end }, function() return true end, function(value) result = value end)
+    flush(); H.eq(opened, 2); H.eq(#result.paths, 1); H.eq(result.paths[1], "/profile/a.epub")
+    P.get = previous
+end)
 H.test("safe archive reads always close and use stat-keyed disposable local cache", function()
     reset()
     local file = "/books/a.epub"
@@ -256,6 +294,44 @@ H.test("local result actions retain real reader paths and refuse a changed tag/f
     modal.config.on_cell_tap(book); H.eq(opened_file, nil)
     book = modal.config.item_at(2)
     modal.config.on_cell_tap(book); H.eq(opened_file, book.filepath)
+end)
+H.test("local tag holds carry literal choices and guarded owners; remote tags are not saved as offline rules", function()
+    reset()
+    local Panel = require("adapters/orbitui_book_panel")
+    local section, captured
+    local modal = { shown = true, _tabs = {{ id = "tags" }}, _active_tab = 1 }
+    local owner = { profile_key = "a" }
+    function modal:rebuildTab() section = Panel.tagSections(owner, { filepath = "/books/a.epub" }, self)[1] end
+    modal:rebuildTab(); section.pills[1].on_tap(); flush()
+    local old = package.loaded["adapters/orbitui_library_settings"]
+    package.loaded["adapters/orbitui_library_settings"] = { tagChip = function(opts) captured = opts end }
+    local hold = section.pills[1].on_hold
+    hold(); H.eq(captured.tag, tag); H.eq(captured.profile, "a"); H.eq(captured.is_current(), true)
+    modal:rebuildTab(); H.eq(captured.is_current(), false)
+    captured = nil; hold(); H.eq(captured, nil)
+    package.loaded["adapters/orbitui_library_settings"] = old
+end)
+H.test("a saved combined chip refresh retires preview work, persists checked scoped results and survives restart", function()
+    reset()
+    add("/profile/a.epub", opf('["Åland & 日本語","Other","Other"]'))
+    local P = package.loaded["lib/bookshelf_profiles"]
+    local get = P.get
+    P.get = function(key) return key == "a" and { key = key, roots = roots } end
+    local Q = require("core/orbitui_shelf_query")
+    local source = { kind = Q.tag_kind, version = 1, profile = "a", scope = "library",
+        rule = { version = 1, mode = "all", tags = { tag, other } } }
+    local active, closed = true, 0
+    Q.tagCheck(source, function() return active end)
+    local modal = Q.tagRefresh(source, { is_current = function() return active end,
+        on_closed = function() closed = closed + 1 end })
+    flush(); H.eq(modal.config.item_count(), 1); H.eq(Q.tagPaths(source)[1], "/profile/a.epub")
+    H.eq(opened, 2) -- one pass over the fake scoped inventory, not one per tag
+    local restarted = assert(loadfile(root .. "/core/orbitui_shelf_query.lua"))()
+    H.eq(restarted.tagPaths(source)[1], "/profile/a.epub")
+    active = false
+    modal.config.footer_rows[1][1].on_tap(); flush(); H.eq(opened, 2)
+    modal:onClose(); H.eq(closed, 1)
+    P.get = get
 end)
 H.test("normal Refresh reuses valid tags, rechecks changed/deleted files and retries previous failures", function()
     reset()

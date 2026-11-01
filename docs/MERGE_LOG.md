@@ -4,6 +4,28 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-01 — smart offline tag chips (local first stage)
+
+User approves the proposed first stage at `b99d32c2`: hold a local EPUB tag to
+save a named chip in an existing library, combine literal tags with AND/OR and
+choose selected-library/all-local scope. No upstream merge, push/publication,
+new beta or device install is inferred. Keep the prior installed candidate and
+public Beta 26 untouched. No new installed path, component edit/pin, schema
+migration, library root, BookOrbit API, file/tag/reading-data write or sync owner.
+
+Host adapters/core add a guarded draft editor and registered local source. Reuse
+native explicit-path sorting/filtering/page/cover/opening and existing Home
+pinning. Saved query settings and bounded disposable membership snapshots are
+separate. Render reads only saved stat-validated matches; a visible chip schedules
+a throttled, incremental cache-only check. Missing/changed EPUBs need explicit
+Update, which uses the existing progressive Stop/Refresh modal and retires the
+automatic check. One parameterized index pass evaluates up to 16 tags, not one
+archive scan per tag. Indexed/400+ labels and help disclose partial membership.
+All controls/help are SV/EN; server-only tags remain a separate optional source.
+Reader return/shared search, stale owners, scope changes and cancellation have
+focused regressions. TESTING records final suite/package evidence and open
+physical font/touch/latency/reader acceptance, not a measured device speedup.
+
 ## 2026-11-01 — local offline aggregate index and progressive tag results
 
 User approves proceeding after step 1/2; start clean at `56924edc` on the same

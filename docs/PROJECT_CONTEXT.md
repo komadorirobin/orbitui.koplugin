@@ -22,6 +22,24 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- **Smart EPUB tag chips are a LOCAL follow-up, not a new public beta.**
+  User approves the proposed first stage: hold an offline Tags pill to create
+  a named chip in an existing enabled library, with literal AND/OR rules (up to
+  16 tags), selected-library/all-local scope and SV/EN editing. No virtual root,
+  book move/copy/tag write, server-only tag alias, sync writer, upstream import,
+  version bump or new installed file. Saved rules use existing profile settings;
+  bounded derived snapshots use the existing independent EPUB-tag cache.
+  Rendering reads validated saved matches only. The visible chip defers a
+  cache-only, owner-safe incremental check (60s throttle); missing/changed EPUB
+  archives require explicit swipe-down/settings Update. A native measured footer
+  says Indexed (400+ when capped); settings explain incompleteness. Reuse native
+  explicit-path filtering/sorting/page/cover hydration and existing Home pins.
+  Manual updates retire automatic work; reader opening rechecks cached results
+  without blocking unrelated global-search routes or parked-reader returns.
+  Local tests/package verification are recorded in TESTING; no device install,
+  push or publication is authorized by this request. The preceding installed
+  `711d507e` / `6df633e0` candidate below is unchanged on Bigme.
+
 - **Offline index/progressive results are installed as a LOCAL test candidate.**
   Final source `711d507e`, exact ZIP
   `6df633e02b10dbad03341e3fd71de94cdac6fb05916b1c5b72a5c7ddaa7c50d5`.
