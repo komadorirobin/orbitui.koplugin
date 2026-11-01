@@ -44,7 +44,7 @@ H.test("malformed JSON/XML, DTDs, control tags and oversized metadata fail close
 end)
 
 local files, documents, disk, queue, roots, opened, closed, extracted, written, last_widget
-local elapsed, cache_cost, delays
+local elapsed, cache_cost, cache_reads, delays
 local UI = { _simpleui_navigation_generation = 1,
     show = function(_, w) w.shown = true; last_widget = w end,
     close = function(_, w) w.shown = false end,
@@ -61,7 +61,7 @@ package.loaded["ui/widget/confirmbox"] = H.widget()
 package.loaded["device"] = { screen = { getWidth = function() return 600 end, getHeight = function() return 800 end } }
 package.loaded["lib/bookshelf_keyed_cache"] = { new = function(name, version)
     H.eq(name, "orbitui_epub_tags"); H.eq(version, 1)
-    return { read = function(file) elapsed = elapsed + cache_cost; return disk[file] end,
+    return { read = function(file) elapsed = elapsed + cache_cost; cache_reads = cache_reads + 1; return disk[file] end,
         write = function(file, entry) disk[file] = entry; written = written + 1 end }
 end }
 package.loaded["libs/libkoreader-lfs"] = { attributes = function(file, field)
@@ -111,7 +111,7 @@ end
 local function reset()
     files, documents, disk, queue, roots = {}, {}, {}, {}, { "/profile" }
     opened, closed, extracted, written = 0, 0, 0, 0
-    elapsed, cache_cost, delays = 0, 0, {}
+    elapsed, cache_cost, cache_reads, delays = 0, 0, 0, {}
     add("/books/a.epub", opf('["Åland & 日本語"]'))
     add("/profile/a.epub", opf('["Åland & 日本語"]', true))
     add("/books/untagged.epub", opf('[]'))
@@ -240,7 +240,7 @@ H.test("existing Tags tab displays local pills offline and opens the shared loca
     retired(); flush(); H.eq(section.pills[1].label, tag)
     retired(); flush(); H.eq(opened, 1)
     section.pills[1].on_tap(); H.eq(modal._dismissed, true)
-    flush(); H.eq(last_widget.shown, false)
+    flush(); H.eq(getmetatable(last_widget), Modal); H.eq(last_widget.shown, true) -- inline search, no blocking notice
 end)
 H.test("local result actions retain real reader paths and refuse a changed tag/file", function()
     reset()
@@ -285,6 +285,113 @@ H.test("full reread is a separate confirmed local action and stale confirmations
     action.on_tap(); confirm = last_widget
     modal:onClose(); confirm.ok_callback(); flush(); H.eq(opened, 6)
 end)
+H.test("inline matches are usable before completion; stopping keeps honest partial results and Refresh continues", function()
+    reset()
+    for i = 1, 80 do add("/books/z" .. i .. ".epub", opf('[]')) end
+    local modal = require("core/orbitui_search").embeddedTag(tag)
+    H.eq(last_widget, modal); H.eq(modal.config.footer_rows[1][1].label_func(), "Stop search")
+    flush(1); H.eq(modal.config.item_count(), 1)
+    assert(modal.config.intro:find("1 of 83 files", 1, true))
+    assert(modal.config.intro:find("incomplete", 1, true))
+    modal.config.footer_rows[1][1].on_tap()
+    H.eq(modal.config.item_count(), 1); H.eq(modal.config.footer_rows[1][1].label_func(), "Refresh")
+    assert(modal.config.intro:find("Search stopped", 1, true))
+    flush(); H.eq(opened, 1)
+    modal.config.footer_rows[1][1].on_tap(); flush()
+    H.eq(opened, 83); H.eq(modal.config.item_count(), 2)
+    assert(not modal.config.intro:find("incomplete", 1, true))
+end)
+H.test("opening a checked partial match retires the worker and cannot read more archives", function()
+    reset()
+    local opened_file
+    local modal = require("core/orbitui_search").embeddedTag(tag, { open_book = function(file) opened_file = file end })
+    flush(1); H.eq(modal.config.item_count(), 1)
+    modal.config.on_cell_tap(modal.config.item_at(1))
+    H.eq(opened_file, "/books/a.epub"); flush(); H.eq(opened, 1)
+end)
+H.test("changed scope clears partial results and reports stale work rather than complete-looking matches", function()
+    reset()
+    local modal = require("core/orbitui_search").embeddedTag(tag)
+    flush(1); H.eq(modal.config.item_count(), 1)
+    roots = { "/new" }; flush()
+    H.eq(modal.config.item_count(), 0)
+    H.eq(modal.config.intro, "Library folders changed. Refresh and try again.")
+end)
+H.test("progress snapshots do not alias worker paths and updates are throttled", function()
+    reset(); cache_cost = .009
+    for i = 1, 80 do add("/books/z" .. i .. ".epub", opf('[]')) end
+    local last, calls, result
+    Integration.embeddedTagRequest(Integration.embeddedTagSession(), { tag = tag, on_progress = function(body)
+        if last then assert(elapsed - last >= .25) end
+        last, calls = elapsed, (calls or 0) + 1
+        body.paths[1] = "REMOTE://must-not-poison-worker"
+    end }, function() return true end, function(body) result = body end)
+    flush(); assert(calls > 1 and calls < 10)
+    H.eq(result.paths[1], "/books/a.epub"); H.eq(result.complete, true)
+    H.eq(result.scanned, 83); H.eq(result.total, 83)
+end)
+H.test("the clicked EPUB is checked first without narrowing or duplicating the all-profile search", function()
+    reset()
+    add("/outside/clicked.epub", opf('["Åland & 日本語"]'))
+    local first, result
+    Integration.embeddedTagRequest(Integration.embeddedTagSession(), { tag = tag, origin = "/outside/clicked.epub",
+        on_progress = function(body) first = first or body.paths[1] end }, function() return true end,
+        function(body) result = body end)
+    flush(1); H.eq(first, "/outside/clicked.epub"); flush()
+    H.eq(#result.paths, 3); H.eq(opened, 4)
+end)
+H.test("aggregate-index hits avoid per-file disk reads; changed and failed files still use the EPUB provider", function()
+    reset()
+    local original = Integration.openEmbeddedTagIndex
+    local rows, commits, saves = {}, 0, 0
+    Integration.openEmbeddedTagIndex = function()
+        local staged = {}
+        return { prefetch = function(list, first, query)
+            local out = {}
+            for i = first, math.min(first + 127, #list) do
+                local row = rows[list[i]]
+                if row then
+                    local match = false; for _, value in ipairs(row.tags) do if value == query then match = true end end
+                    out[list[i]] = { stamp = row.stamp, matches = match }
+                end
+            end
+            return out
+        end, put = function(file, stamp, tags) staged[file] = { stamp = stamp, tags = tags }; saves = saves + 1 end,
+        flush = function() for file, row in pairs(staged) do rows[file] = row end; staged = {}; commits = commits + 1; return true end,
+        close = function() for file, row in pairs(staged) do rows[file] = row end; commits = commits + 1 end }
+    end
+    local result
+    local function run()
+        Integration.embeddedTagRequest(Integration.embeddedTagSession(), { tag = tag }, function() return true end,
+            function(body) result = body end); flush()
+    end
+    run(); H.eq(saves, 3); H.eq(#result.paths, 2)
+    opened, cache_reads = 0, 0
+    run(); H.eq(opened, 0); H.eq(cache_reads, 0); H.eq(#result.paths, 2)
+    -- Single-book explicit reread updates a same-stamp indexed entry too.
+    local file = "/books/a.epub"
+    documents[file][2].data = opf('[]'); documents[file][2].size = #opf('[]')
+    Integration.embeddedTags(file, true)
+    run(); H.eq(#result.paths, 1)
+    files["/profile/a.epub"].change = 2; documents["/profile/a.epub"] = nil
+    run(); H.eq(result.skipped, 1); H.eq(#result.paths, 0)
+    run(); H.eq(result.skipped, 1) -- not a negative cached success
+    assert(commits > 0)
+    Integration.openEmbeddedTagIndex = original
+end)
+H.test("an unavailable index falls back to file tags rather than a successful empty search", function()
+    reset()
+    local original, closed_index = Integration.openEmbeddedTagIndex, false
+    Integration.openEmbeddedTagIndex = function()
+        return { prefetch = function() return nil end, close = function() closed_index = true end }
+    end
+    local result
+    Integration.embeddedTagRequest(Integration.embeddedTagSession(), { tag = tag }, function() return true end,
+        function(body) result = body end)
+    flush(); H.eq(closed_index, true); H.eq(#result.paths, 2); H.eq(result.complete, true)
+    H.eq(opened, 3)
+    Integration.openEmbeddedTagIndex = original
+end)
 H.test("native dialog interception preserves tag progress identity, completion and cancellation", function()
     local old_show, old_close = UI.show, UI.close
     local Info, Toast = package.loaded["ui/widget/infomessage"], H.widget()
@@ -321,6 +428,7 @@ H.test("all embedded-tag strings have Swedish translations while literal tags st
     H.eq(_("EPUB tags (offline)"), "EPUB-taggar (offline)")
     H.eq(_("Read EPUB tags"), "Läs EPUB-taggar"); H.eq(_(tag), tag)
     H.eq(_("Reread all EPUB tags…"), "Läs om alla EPUB-taggar…")
+    H.eq(_("Stop search"), "Stoppa sökning")
     G_reader_settings = old
 end)
 -- Optional supplement uses the unmodified native KOReader archive reader and

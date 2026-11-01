@@ -1,5 +1,55 @@
 # Verification and device acceptance
 
+## November 1 aggregate offline index / progressive results (local follow-up)
+
+User explicitly proceeds beyond the already installed step-1/2 candidate.
+Start clean at `56924edc`; no upstream import, push/tag/release, public ZIP
+replacement, version bump, installed file slot or BookOrbit server change.
+Separate lazy SQLite stores derived paths/stamps/literal tags only, under
+`cache/bookshelf/orbitui_epub_tag_index_v1.sqlite3`; it never opens BIM/reading
+databases. 128-path bound SQL batches replace per-file zstd reads, with actual
+mtime/ctime/size validation before every hit. Transactions checkpoint <=32
+successful entries and close on completion/cancel/retirement; empty tags are
+known entries, not failures. A tiny independent epoch marker retires prior SQL
+rows after faults/marker loss without deleting caches. No automatic background
+indexer or network calls. The originating local EPUB is checked first, without
+narrowing scope. Inline checked/total notices identify partial results; Stop
+keeps checked matches and completed work, Refresh resumes through valid caches,
+and actual opening still rechecks the file/tag. Single-book native notices and
+online BookOrbit matching are unchanged.
+
+Focused worker/UI tests cover incremental changes, failures, exact tags, owned
+native progress, index hit/miss/fallback, same-stamp manual reread updates,
+partial open/stop/retry/stale-scope behavior and throttled nonaliasing snapshots.
+An optional real KOReader ljsqlite3 supplement exercises SQLite persistence,
+empty tags/replacement, binary Unicode/literal parameterization, 128-path reads,
+1,305 entries, missing-marker generations, atomic injected-commit rollback,
+25ms locking and read-fault fallback without DB deletion. It is run explicitly
+under LuaJIT; plain Lua reports the optional native exclusion, not a fake SQL
+pass. Broader full/sealed gates and physical outcomes are recorded when done.
+
+First actual-native Bigme worker experiment loads isolated old/new source on the
+unchanged installed step-1/2 runtime, same 300 real already-cached local EPUBs:
+
+| Run | Previous step | Aggregate index | Per-file cache reads |
+| --- | ---: | ---: | --- |
+| 1 | 186.3ms | 56.2ms | 300 vs 1 generation read |
+| 2 | 280.4ms | 75.4ms | 300 vs 1 generation read |
+| 3 | 260.1ms | 74.4ms | 300 vs 1 generation read |
+
+Medians 260.1 -> 74.4ms (~3.5x) for this warmed 300-file worker only, with no
+archive opens/skips. First index fill takes 687.7ms and 301 cache reads. A
+sequential 30-file forced reread takes 622.1 vs 736.2ms, both opening 30 archives;
+index writes add work, and storage is not cold-controlled. Enumeration/modal
+paint are excluded. This experiment predates only origin-priority validation,
+which its no-origin requests do not exercise. Do not combine its numbers with
+earlier hardware/cache conditions or claim complete first-library acceptance.
+
+Private evidence: `test-results/tag-index-20261101/`. Both automatic sync owners
+are backed up/paused/hash-verified before launching KOReader. No books open in
+the worker experiment. The temporary worker diagnostic is already outside
+patches after normal quit; final package/UI/state restoration follows.
+
 ## November 1 offline tag-search optimization (local step 1/2)
 
 User approves the staged optimization proposal: begin with cache-aware normal

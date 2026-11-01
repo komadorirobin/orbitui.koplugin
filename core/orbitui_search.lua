@@ -345,6 +345,7 @@ local function tagSearch(tag, opts)
     local UI, Screen = require("ui/uimanager"), require("device").screen
     local fs = require("libs/libkoreader-lfs")
     local modal, retired, busy, data_session = nil, false, false, nil
+    local worker
     local records, visible, query = {}, {}, ""
     local generation = UI._simpleui_navigation_generation
     session = session + 1
@@ -376,27 +377,40 @@ local function tagSearch(tag, opts)
         records, visible, data_session = {}, {}, nil
         modal.config.intro = intro
         modal:refresh()
-        local function done(result, failure)
-            busy = false
+        local function update(result, failure, partial)
+            if not current() then return end
             if result then
                 data_session = source
+                local previous = {}; for _, book in ipairs(records) do previous[book.filepath] = book end
+                records = {}
                 for _, file in ipairs(result.paths) do
-                    if available(file) then records[#records + 1] = { filepath = file, filename = file:match("([^/]+)$") or file } end
+                    if available(file) then records[#records + 1] = previous[file] or { filepath = file, filename = file:match("([^/]+)$") or file } end
                 end
                 table.sort(records, function(a, b) return M.lower(a.filepath) < M.lower(b.filepath) end)
                 modal.config.intro = intro
+                if embedded and (partial or failure == "cancelled") then
+                    modal.config.intro = intro .. " " .. string.format(_(failure == "cancelled"
+                        and "Search stopped: %d of %d files checked. Results are incomplete. Refresh to continue."
+                        or "Checking EPUB tags: %d of %d files. Results are incomplete."), result.scanned, result.total)
+                end
                 if result.truncated then modal.config.intro = modal.config.intro .. " " .. _("Showing the first 400 matches.") end
                 if (result.skipped or 0) > 0 then
                     modal.config.intro = modal.config.intro .. " " .. string.format(_("%d EPUBs could not be read; results may be incomplete. Refresh to retry."), result.skipped)
                 end
             else
+                records, data_session = {}, nil
                 modal.config.intro = failure == "cancelled" and _("Search cancelled. Tap Refresh to try again.")
                     or failureText(failure)
             end
-            filter(); modal.page = 1; modal:refresh()
+            filter(); if not partial then modal.page = 1 end; modal:refresh()
+        end
+        local function done(result, failure)
+            busy, worker = false, nil
+            update(result, failure, false)
         end
         if embedded then
-            Integration.embeddedTagRequest(source, { tag = tag, origin = opts.origin, refresh = reread == true }, current, done)
+            worker = Integration.embeddedTagRequest(source, { tag = tag, origin = opts.origin, refresh = reread == true,
+                on_progress = function(result) update(result, nil, true) end }, current, done)
         else Integration.bookOrbitRequest(source, function(s) return s:matches(tag) end, current, done) end
     end
     local function bookMeta(book)
@@ -409,7 +423,7 @@ local function tagSearch(tag, opts)
         return book
     end
     local function canOpen(book)
-        if type(book) ~= "table" or not current() or busy or not data_session or not data_session:current() then return false end
+        if type(book) ~= "table" or not current() or busy and not embedded or not data_session or not data_session:current() then return false end
         if not available(book.filepath) then Context.notify(_("This book is no longer on the device.")); return false end
         if embedded then
             local tags = Integration.embeddedTags(book.filepath)
@@ -419,10 +433,14 @@ local function tagSearch(tag, opts)
         end
         return true
     end
-    local footer = {{ { label = _("Refresh"), on_tap = function() fetch(false) end },
+    local footer = {{ { label = _("Refresh"), label_func = function()
+        return _(embedded and busy and "Stop search" or "Refresh")
+    end, on_tap = function()
+        if embedded and busy and worker then worker.cancel() else fetch(false) end
+    end },
         { label = _("Close"), on_tap = function() if current() then modal:onClose() end end } }}
     if embedded then
-        footer[#footer + 1] = {{ label = _("Reread all EPUB tags…"), on_tap = function()
+        footer[#footer + 1] = {{ label = _("Reread all EPUB tags…"), enabled_when = function() return not busy end, on_tap = function()
             if not current() or busy then return end
             UI:show(require("ui/widget/confirmbox"):new{
                 sui_native = true, _sui_keep_homescreen = true,
@@ -458,10 +476,13 @@ local function tagSearch(tag, opts)
             open(book.filepath, bookMeta(book))
         end,
         cell_long_tap = function(book)
-            if canOpen(book) then require("adapters/orbitui_book_panel").show(book.filepath, { open_book = opts.open_book }) end
+            if canOpen(book) then
+                if embedded and worker then worker.cancel() end
+                require("adapters/orbitui_book_panel").show(book.filepath, { open_book = opts.open_book })
+            end
         end,
         footer_rows = footer,
-        on_closed = function() retired = true end,
+        on_closed = function() retired = true; if worker then worker.cancel(); worker = nil end end,
     } }
     UI:show(modal)
     fetch()

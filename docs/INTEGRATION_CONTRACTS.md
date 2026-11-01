@@ -1188,8 +1188,28 @@ cache hits or 8ms per UI turn (whichever comes first), and at most one uncached
 archive attempt per turn. Yield through a positive 1ms timer, not a chain of
 already-due tasks. Keep native progress ownership and per-turn current-owner,
 navigation, cancellation and library-identity checks. Successful entries survive
-cancellation; transient failures do not become negative hits. This step adds no
-persistent aggregate index, new cache namespace, file slot or background sync.
+cancellation; transient failures do not become negative hits.
+
+The separately approved November 1 follow-up adds the offline-only derived
+`cache/bookshelf/orbitui_epub_tag_index_v1.sqlite3`. No new installed module,
+settings migration, network/indexing daemon or BIM/reading-data connection.
+Open lazily on explicit search, check up to 128 file stamps/membership records
+per parameterized SQLite batch, and validate each actual file's mtime/ctime/size
+before using a hit. Known empty tag lists are positive entries; errors are not.
+Checkpoint up to 32 successfully derived entries per short transaction and on
+normal cancellation/retirement. Single-book rereads update existing index rows.
+A tiny separately persisted generation marker invalidates old rows after SQL
+faults or marker loss; never delete/recreate a faulty database or user cache.
+Failures fall back to the ordinary EPUB/tag cache path, not a successful empty
+answer. No file may be omitted because it has no index row or online link.
+
+Search uses inline, throttled checked/total progress instead of a blocking
+InfoMessage. Prioritize the clicked local EPUB but include all profiles/depth.
+Expose checked partial matches before completion, with an explicit incomplete
+notice. Stop search retains checked matches and durable successes; Refresh
+revalidates and continues. Opening/holding a partial match rechecks membership
+and retires background work. Source/navigation retirement clears stale results.
+Keep single-book read notices native/modal and online BookOrbit behavior intact.
 Cancellation/closed/navigation/scope owners retire work; unreadable-file counts
 and the 400-hit cap are visible. Recheck membership/file before opening via the
 original reader callback. No covers/network/remote metadata or reading-state

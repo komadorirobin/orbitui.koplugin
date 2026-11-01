@@ -4,6 +4,29 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-01 — local offline aggregate index and progressive tag results
+
+User approves proceeding after step 1/2; start clean at `56924edc` on the same
+acceptance branch. No push/release/import/version/installed-path authorization
+is inferred. Host adapter/search/i18n add a lazily opened separate derived
+SQLite index, bounded parameterized reads/transactions, stat-checked entries,
+durable cancellation successes and an independent fault-generation marker.
+Never delete caches, open another feature's database, index remotely, use an
+online account, or convert errors into negative cached results. Preserve
+existing per-file cache and explicit full-reread behavior. C10 records the
+approved offline-only persistence extension, not an online BookOrbit index.
+
+Native search becomes inline-progressive: checked partial matches are explicit,
+Stop retains them, Refresh revalidates, and partial opening still checks actual
+membership and retires work. Prioritize the clicked local EPUB, never narrow
+all-profile scope. Native single-file notices/online BookOrbit remain unchanged.
+Both focused interpreter suites and actual KOReader SQLite supplements pass.
+Preliminary Bigme native-worker warm 300-path medians 260.1 ->74.4ms (~3.5x),
+cache reads 300->1, no archive opens/skips; no enumeration/UI/cold-library claim.
+Separate forced rereads are slightly slower with index writes in this experiment.
+Full/sealed/physical package gates and final restoration are recorded in TESTING.
+Raw configs/evidence stay private in `test-results/tag-index-20261101/`.
+
 ## 2026-11-01 — offline tag-search cache and scheduling optimization (local)
 
 User approves the staged proposal, beginning with cache reuse and UI-turn

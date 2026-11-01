@@ -22,6 +22,26 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- **Offline aggregate index / progressive results follow-up (local).** User
+  says Gå vidare after the installed step-1/2 candidate; no push/release/import
+  authorization. Work starts at `56924edc`, same branch. Host integration/search/
+  i18n only: separate lazy derived SQLite index, 128-path parameterized reads,
+  native stat validation, <=32-entry checkpoint transactions, known-empty rows,
+  no negative errors and existing-index updates on single-file reread. A small
+  keyed-cache generation marker retires old SQL rows after faults/marker loss;
+  fallback never deletes caches or touches BIM/reading data. Inline progress
+  exposes only checked partial matches, marks incompleteness and supports Stop/
+  Refresh/partial open/close/navigation retirement. Clicked local EPUB first,
+  all profiles/depth still included. No new installed file, version, component
+  pin, asset, sync owner or BookOrbit API change. Focused Lua/LuaJIT plus real
+  native-SQLite tests cover these contracts. Preliminary actual-native Bigme
+  300-file warm worker comparison: previous step 186.3/280.4/260.1ms vs index
+  56.2/75.4/74.4ms; medians 260.1 ->74.4ms (~3.5x). Separate cache reads 300->1,
+  no archive opens/skips; initial index fill 687.7ms. Enumeration/UI excluded;
+  do not multiply with prior-run speedups or claim first-library completion.
+  Full gates, sealed bytes, actual-scope UI/cancellation checks and targeted
+  sync restoration follow. Evidence: `test-results/tag-index-20261101/`.
+
 - **Offline tag-search optimization, local step 1/2 (not published).** User
   approves cache-aware Refresh and bounded cache-hit batching before an aggregate
   index. Ordinary result Refresh no longer forces every archive to reopen;
