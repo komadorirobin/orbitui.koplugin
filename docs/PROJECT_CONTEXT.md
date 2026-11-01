@@ -22,6 +22,28 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- **The three acceptance fixes are implemented and locally device-tested.**
+  Exact source `1502f632`, sealed local ZIP
+  `4d66d68a5a74bc89e0667f997ce11c7e7b9b9f74658c6f508ac65c81794be221`;
+  no version bump, push, publication, upstream import or public ZIP replacement.
+  Bigme accepts this separate slot with pending=0 and public Beta 26 as rollback;
+  all 2,000 installed paths verify before/after. Seven-app paging/hold works
+  and survives restart. Offline EPUB tag loading and actual scan cancellation
+  work; whole-library search is still too slow for acceptance (cache entries
+  advance, but the long first scan is explicitly cancelled, not marked passed).
+  Eight single-book refreshes (SVG/PNG/JPEG/coverless, safe mode off/on) commit
+  without extraction warnings or cover loss; reopen/restart keeps the covers.
+  Both full suites, all 43 catalogs, sealed roots, native minimum/current input/
+  pager, EPUB/archive, raster/night and real SQLite supplements pass. Restored
+  original six-app/unset preference, safe mode off, navigation, last-file/fonts,
+  sync and own history/Hardcover additions only; all six restoration hashes
+  match. Old reading rows/events, all 50 KOSync queue rows and BookOrbit sync
+  state are unchanged; one permitted synthetic statistics book remains.
+  Fixtures are archived outside roots; KOReader is normally closed. Initial
+  premature activation during copying caused a failed startup; it is excluded,
+  then all files are verified before a clean retry. Details/limits in TESTING;
+  do not claim full tag-result, UI-polish or 1.0 acceptance.
+
 - User authorizes fixing the three acceptance findings and retesting, **not**
   push/publication or another upstream merge. Branch
   `fix/beta26-acceptance-20261101` starts at `8f0ceff2` with the preceding local

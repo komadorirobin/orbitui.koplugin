@@ -1,5 +1,90 @@
 # Verification and device acceptance
 
+## November 1 acceptance fixes (local, not published)
+
+User approves fixing the three findings below and device retesting. Exact
+source is `1502f632` on `fix/beta26-acceptance-20261101`, sealed local ZIP
+`4d66d68a5a74bc89e0667f997ce11c7e7b9b9f74658c6f508ac65c81794be221`.
+VERSION stays Beta 26 for this explicitly local candidate; no push, new tag,
+release, upstream pin or public-archive replacement. Public ZIP remains
+`6800190ab077407f2fa5d42bc276ee52fdcb6ca33b44441a389fe1571f92817d`.
+Evidence: private/ignored `test-results/beta26-acceptance-fixes-20261101/`.
+
+Implementation is restricted to three runtime files:
+
+- Assign only the widget return of the actual app pager to the container.
+- Respect `sui_native` in native-widget interception, preserving progress
+  identity/lifecycle while ordinary notices still use the facade.
+- Route explicitly requested Android single/bulk metadata refresh through the
+  existing transactional no-fork queue regardless of safe-mode preference.
+  Automatic extraction still follows that preference; no preference is changed
+  by code. Switching safe mode off removes automatic pending work only. Existing
+  cover data survives decoder failure, coverless results or a rolled-back write.
+
+New real-pager/interceptor/queue regression tests fail against the original
+runtime and pass after the changes. Both full Lua/LuaJIT suites pass (133 Python
+tests/four optional skips, 98 root files, 533 Bookshelf suites/zero failures/
+three normal SQLite exclusions, 13 SimpleUI files, 1,149 syntax/map 403).
+All 43 catalogs pass. The affected suites cover 22 app, 12 EPUB-tag and 29 cover
+cases; the optional real SQLite commit/BLOB/rollback supplement adds the 30th
+cover case. Both-interpreter sealed-root suites, native minimum/current input/
+pager/Trapper/VerticalSpan and real EPUB/archive and grey/RGB/night/raster checks
+pass. Primitives remain fakes where documented; these are not every physical
+UI route. Packaging verifies the unchanged 2,000 installed paths, bootstrap,
+source pins, translations and assets. Only the three runtime files, manifest
+and verification notes differ from the public ZIP.
+
+Physical Bigme HiBreak / KOReader v2026.07.1 results:
+
+- Add a seventh installed app through the native picker; page 1 -> 2 and hold
+  the overflow module without a crash. Restart and use page 2 again: passes.
+  The original unset legacy-six preference and Settings shortcut are restored.
+- Open a valid synthetic EPUB's Tags tab and read its two literal embedded
+  tags: passes, progress closes and pills appear. Start full local matching and
+  tap Cancel: the notice closes and the modal reports cancellation correctly.
+  The full first-library scan advances its disk cache (observed 778 -> 843
+  entries), but is explicitly cancelled after several minutes to continue other
+  tests. **Whole-library completion/result opening/performance is not accepted**;
+  do not describe this remaining slowness as the repaired identity/self-cancel
+  bug, or count a cancelled scan as a result-list pass. A long literal tag also
+  overflows the modal title and needs polish.
+- Refresh SVG, PNG, JPEG and intentionally coverless synthetic EPUBs separately,
+  first with original safe mode off, then with it temporarily on: **eight
+  successful refresh invalidations**, no local-extraction warnings, process
+  survives and all three covers remain visible. SVG is the opened/parked book;
+  raster controls remain unopened. Covers also survive normal quit/restart.
+  Safe mode is restored off. A read-only 1.3 GB BIM-cache pull is interrupted
+  and named `bookinfo.safe-off.incomplete.sqlite3`; it is not a complete backup,
+  restored database or evidence of a full BIM-row comparison.
+
+Installation incident: the first activation was started before the background
+ADB copy finished, producing the expected missing-module startup failure. This
+is an operator staging error, not a new accepted runtime failure. Quit normally,
+finish copying, verify all 2,000 paths, clear only this test attempt's boot marker
+and retry cleanly. The complete candidate is accepted with pending=0; public 26
+remains its rollback. Final inventory again passes all 2,000 paths. No live
+component file is intentionally patched and no diagnostic patch is installed.
+
+Sync is paused **before launch**, including the previously missed bundled
+KOSync writer; the installed Hardcover writer guard is hash-verified. No KOSync
+pull/push attempt appears in this run's capture. Both 50-row KOSync queue and
+BookOrbit's sync-state table compare exactly to their snapshots. The local
+Hardcover autolink and history addition belong only to the synthetic SVG;
+filtering them yields exact original data. Every pre-existing statistics book
+row and event is unchanged, all new events belong to one synthetic book, and
+SQLite integrity is OK. Preserve that permitted test statistics row, not reset
+the DB. Restore only selected original preferences/links/history after normal
+shutdown, preserving current unrelated caches. All six pushed restoration files
+are hash-verified. Fixtures/sidecar have host and outside-library device archives;
+KOReader is left **closed** with the fixed local candidate installed. This is not
+a remote server audit or permission to drain old queues.
+
+Remaining baseline UI polish (stale app-editor header, partial Swedish labels,
+app-picker return destination), full large-library tag results/performance,
+obscured-search refresh routes, deeper safety/failure recovery and the broader
+1.0 checklist remain open. No new controlled speed, memory, e-ink-panel, Boox or
+release/OTA acceptance claim is made by these three targeted repairs.
+
 ## November 1 Beta 26 physical acceptance pass (blockers found)
 
 User authorizes separate synthetic test books, backups and temporary sync
