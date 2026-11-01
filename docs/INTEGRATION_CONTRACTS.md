@@ -322,6 +322,29 @@ Tests: `test_upstream_20261016` and the native cache/index suites.
 
 ## C05: Synchronization has explicit owners
 
+November 1 status import (user-approved local follow-up): the optional status
+subswitch defaults OFF, unlike the existing unset-preserves-behavior flags.
+Import uses authenticated GET-only `read-statuses v1`, explicit saved native
+match IDs in 200-ID batches, no catalog enumeration/index/cover/download work.
+Host initialization only schedules after paint. Automatic attempts have a
+durable account-scoped 15-minute throttle and never enable Wi-Fi. UI input
+cancels the invisible worker and is resent by native Trapper. Account, policy,
+link generation, navigation, suspend and native-sync guards gate adoption.
+No DocSettings:open in a worker: it can delete corrupt sidecars. Nonrepairing
+reads plus parent-only atomic replacement preserve unrelated fields and existing
+backups; competing candidates/temp files are protected. At most four changed
+sidecars per UI slice. Active/parked files, pending Undo, changed signatures,
+newer local days and ambiguous same-day conflicts are skipped. Neutral remote
+Unread/WTR never reset a read. Completion dates use the supplied finish date,
+not today's date. No progress/history/statistics/rating/review write or event.
+The existing BookOrbit state manager acknowledges only imported canonical
+status fields to avoid echo as a fresh native completion; no POST/PUT/PATCH or
+Hardcover call is introduced. Native sync keeps its own choices and ownership.
+Unchanged native canonical statuses require no sidecar I/O and never reverse
+unsynced local edits. Visual caches retire without forced Manga/Home rebuilds.
+Tests: `test_bookorbit_status_import`, optional pinned native Sidecar payload
+builder, exact-base server DTO/controller/scoped SQL and combined-extras suites.
+
 October 31 BookOrbit settings: the OrbitUI master controls only its own list,
 manual menu actions and online-tag requests. It never changes the external
 plugin's progress sync, credentials, foreign preferences or undo-protection

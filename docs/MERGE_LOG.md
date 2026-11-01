@@ -4,6 +4,25 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-01 — optional BookOrbit status import, local follow-up
+
+User says Kör to the optional deferred status-check proposal, then explicitly
+approves a local read-only API extension in BookOrbit Extras. Start at
+`27db18a4`; preserve Beta 27 version/dist, artwork, both upstream pins and all
+2,000 runtime paths. No push, release, upstream merge or server deployment.
+Status checks are off by default, delayed after paint, throttled 15 minutes
+and restricted to saved current-account native matches. GET batches of 200,
+nonrepairing child reads and parent-only bounded atomic publication preserve
+positions/history/rating/review. C05 records canonical acknowledgements to the
+existing sync owner, stale/Undo/local-day conflicts and no new remote writer.
+Settings and help are SV/EN. Normal navigation refreshes invalidated caches;
+there is no forced expensive Manga/Home rebuild. Exact source API extension
+targets BookOrbit 3.6.0, requires no migration and composes with existing
+undo/tags through the checked helper. It is not deployed or published.
+Focused client/native-source, timezone and exact-server tests are described in
+TESTING. ADB is disconnected, so physical timing/layout/acceptance remains an
+explicit release gate, not a claimed result.
+
 ## 2026-11-01 — all-library tag-index manager and Beta 27 preparation
 
 User explicitly approves the separate index manager, followed by push and a new

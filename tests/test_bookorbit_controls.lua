@@ -55,7 +55,8 @@ local function drain() while #queue > 0 do table.remove(queue, 1)() end end
 H.test("unset flags preserve existing behaviour and settings inspection stays passive", function()
     reset()
     local rows = Integration.bookOrbitItems()
-    H.eq(#rows, 10); H.eq(#queue, 0); H.eq(client_calls, 0); H.eq(writes, 0)
+    H.eq(#rows, 11); H.eq(#queue, 0); H.eq(client_calls, 0); H.eq(writes, 0)
+    H.eq(Integration.bookOrbitEnabled("status"), false)
     assert(Integration.bookOrbitEnabled("want") and Integration.bookOrbitEnabled("actions") and Integration.bookOrbitEnabled("tags"))
     H.eq(rows[1].text, "BookOrbit: Detected (not connection-tested)")
 end)
@@ -189,7 +190,7 @@ H.test("extras help describes the reviewed source package without deploying or d
     local original_notify = context.notify
     context.notify = function(text) notice = text end
     local rows = Integration.bookOrbitItems()
-    rows[#rows].callback()
+    rows[10].callback()
     context.notify = original_notify
     assert(notice:find("3.6.0", 1, true) and notice:find("3.2.0", 1, true))
     assert(notice:find("does not install, disable or deploy", 1, true))

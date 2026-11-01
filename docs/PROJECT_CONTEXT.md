@@ -22,6 +22,24 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-01
 
+- **LOCAL follow-up after Beta 27: optional BookOrbit read-status import.**
+  Latest user approves local implementation and a local read-only API addition
+  in `bookorbit-extras`, not a push/release/deployment/import. Host lifecycle
+  schedules work after paint, opt-in defaults OFF. GET-only 200-ID batches,
+  15-minute attempt throttle, saved native matches only; no library traversal,
+  document engine, cover work or new runtime path. Child reads are nonrepairing;
+  parent atomically publishes at most four changed sidecars per turn, preserving
+  positions/history/rating/review, and acknowledges canonical status with the
+  existing native state manager. Same-day/newer/unknown local conflicts,
+  open/parked reader, pending Undo, stale accounts/links, competing sidecar
+  copies and existing temp files fail closed. Caches invalidate without an
+  automatic heavy shelf/Home rebuild. Existing native sync preferences remain
+  unchanged. Settings/help SV/EN under Integrations > BookOrbit, Update now,
+  last success and session outcome. Server `status.patch` targets exact 3.6.0
+  `a96ff0c`; no migration or production changes. ADB has no connected device;
+  physical latency/rendering/acceptance is still pending. Public Beta 27's
+  source/version/ZIP and upstream pins are unchanged.
+
 - **Beta 27 is public**, source/tag `617848a8` / `v0.1.0-beta.27` after the
   explicit request to build all-library indexing and publish pending work.
   ZIP `7f4d19ba5d544a8659c526a8ff5b8bd66e4762cc04285614dd224768ded2b05d`,

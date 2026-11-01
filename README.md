@@ -106,6 +106,32 @@ igen. Funktionen ingår i Beta 26.
 
 ### Optional BookOrbit features
 
+**Local, unpublished follow-up:** **Integrations > BookOrbit > Import reading
+status from BookOrbit** adds an off-by-default, deferred GET-only importer for
+saved device matches. Automatic attempts are throttled to 15 minutes; Update
+now and the last successful check are available in the same page. Requires
+the separate `read-statuses v1` extension for exact BookOrbit 3.6.0, built
+locally in BookOrbit Extras; nothing has been deployed or released yet.
+No EPUB indexing, cover work, downloads or new remote writer. Open/parked
+books, pending Undo and newer/ambiguous same-day local changes are protected.
+Unread/Want to Read do not reset local reading. Position, history, ratings and
+reviews stay unchanged. Unchanged canonical statuses need no sidecar I/O;
+changed statuses are published in slices, with caches refreshed on normal
+navigation rather than forcing a heavy Manga rebuild. Conflicts/ambiguous
+metadata copies are skipped, not resolved automatically. Bigme timing/UI
+acceptance remains pending; headless tests are not device measurements.
+
+**Lokalt och opublicerat:** Under **Integrationer > BookOrbit > Hämta lässtatus
+från BookOrbit** finns en avstängd bakgrundsfunktion för redan kopplade böcker.
+Den kontrollerar status högst var 15:e minut efter att Hem/hyllan visas, med
+manuell uppdatering och tid för senaste lyckade kontroll. Kräver det nya
+servertillägget `read-statuses v1`; ingen server har ändrats. Ingen indexering,
+omslagshämtning eller ny skrivare till server/Hardcover. Öppna böcker, väntande
+ångring och nyare/osäkra ändringar samma dag skyddas. Position och historik
+ändras inte. Oförändrad status kräver ingen läsning av lokala bokinställningar.
+Visningen uppdateras vid vanlig navigering, utan en framtvingad tung
+Manga-ombyggnad. Mätning och visuell kontroll på Bigmen återstår.
+
 **Beta 27 — smart offline tag chips:** long-press a local
 EPUB tag in the book's **Tags** tab to create a named smart chip in an existing
 library. Combine up to 16 exact tags with **AND** or **OR**, within that library

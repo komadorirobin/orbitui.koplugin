@@ -1,4 +1,5 @@
--- Settings inspection stays passive. Tag requests below require a user action.
+-- Settings inspection stays passive. Online tags require a user action;
+-- reading-status checks additionally require the explicit opt-in below.
 local _ = require("core/orbitui_i18n")
 local M = {}
 local policy_generation = 0
@@ -7,6 +8,7 @@ local policy_keys = {
     want = "simpleui_orbitui_bookorbit_want",
     actions = "simpleui_orbitui_bookorbit_actions",
     tags = "simpleui_orbitui_bookorbit_tags",
+    status = "simpleui_orbitui_bookorbit_status",
 }
 local function store() return require("infra/sui_store") end
 function M.bookOrbitEnabled(feature)
@@ -15,11 +17,13 @@ function M.bookOrbitEnabled(feature)
     local ok, settings = pcall(store)
     if not ok then return false end
     if settings:readSetting(policy_keys.enabled) == false then return false end
+    if feature == "status" then return settings:readSetting(policy_keys.status) == true end
     return not feature or settings:readSetting(assert(policy_keys[feature])) ~= false
 end
 function M.setBookOrbitEnabled(feature, value)
     store():saveSetting(assert(policy_keys[feature]), value == true)
     policy_generation = policy_generation + 1
+    if M.statusImport then M.statusImport.policyChanged() end
     local engine = package.loaded["engines/sui_screen_engine"]
     if engine and engine.markAllStale then engine.markAllStale() end
     local widget = package.loaded["lib/bookshelf_widget"]
@@ -102,7 +106,7 @@ function M.bookOrbitItems(close)
     local rows = {
         { text = "BookOrbit: " .. _(entries[1].available and "Detected (not connection-tested)" or "Not detected"),
             callback = function() info("Install and connect the separate BookOrbit KOReader plugin. This page never tests a connection automatically. A successful list refresh verifies only that request, not every optional server feature.") end },
-        toggle("enabled", "Enable BookOrbit features in OrbitUI", "Controls OrbitUI's BookOrbit lists, menu actions and online tags only. BookOrbit's own reading-progress sync is unchanged. Saved lists, sources and layouts are kept."),
+        toggle("enabled", "Enable BookOrbit features in OrbitUI", "Controls OrbitUI's BookOrbit lists, menu actions, online tags and optional status import only. BookOrbit's own reading-progress sync is unchanged. Saved lists, sources and layouts are kept."),
         toggle("want", "Want to read [BookOrbit]", "Shows the BookOrbit Want to Read list, matched to books already on this device. It does not download books. This source needs the connected BookOrbit plugin, not the optional tags or undo server patch."),
         { text = _("Refresh whenever Home opens"), checked_func = function()
                 return store():readSetting("simpleui_bookorbit_want_auto_refresh") ~= false end,
@@ -131,6 +135,10 @@ function M.bookOrbitItems(close)
         { text = _("BookOrbit extras: installation & compatibility"), callback = function()
             info("Optional device and server patches are documented at github.com/komadorirobin/bookorbit-extras. Online tag matching requires its server API addition; embedded EPUB tags do not. Undo opening requires both the device patch and a compatible server extension. The reviewed BookOrbit 3.6.0 source package supports tags and undo together; never use the old 3.2.0 overlay on a newer server. The Hardcover single-writer device patch leaves BookOrbit as the automatic writer. OrbitUI does not install, disable or deploy these patches. Do not remove undo support while a protected opening is pending; resolve it with the patch first.") end },
     }
+    rows[#rows + 1] = { text = _("Import reading status from BookOrbit…"), callback = function()
+        if close then close() end
+        M.statusImport.showSettings()
+    end }
     return rows
 end
 local help = {
@@ -922,6 +930,430 @@ function M.startEmbeddedTagIndex(mode, resume, current, changed, replace_invalid
     end)
     function controller.cancel() if not retired then controller.worker.cancel() end end
     return controller
+end
+
+-- Optional status import. Reuse this installed path; API-1 has no spare paths.
+-- The worker performs GETs/reads only. Sidecar publication belongs to the UI
+-- process, in small slices, never to a fork that can outlive cancellation.
+do
+    local S = {}; M.statusImport = S
+    local RESULT = "simpleui_orbitui_bookorbit_status_result"
+    local ATTEMPT = "simpleui_orbitui_bookorbit_status_attempt"
+    local INTERVAL, BATCH = 15 * 60, 200
+    local owners = setmetatable({}, { __mode = "k" })
+    local timer, busy, epoch, sleeping = nil, nil, 0, false
+    local statuses = { read = "complete", skimmed = "complete", reading = "reading",
+        rereading = "reading", on_hold = "abandoned", abandoned = "abandoned" }
+    local function UI() return require("ui/uimanager") end
+    local function identity(client)
+        if not client or type(client.server_url) ~= "string" or type(client.username) ~= "string"
+                or type(client.userkey) ~= "string" then return end
+        return require("ffi/sha2").sha256(client.server_url .. "\n" .. client.username .. "\n" .. client.userkey)
+    end
+    local function activeFile(file)
+        local reader = package.loaded["apps/reader/readerui"]
+        local live = reader and reader.instance
+        return live and live.document and live.document.file == file
+    end
+    local function protected(file)
+        local all = G_reader_settings and G_reader_settings:readSetting("bookorbit_openings")
+        if all == nil then return false end
+        if type(all) ~= "table" then return true end
+        for _, account in pairs(all) do
+            if type(account) ~= "table" then return true end
+            local row = account.opening
+            if row and (type(row) ~= "table" or (row.file == file and row.phase ~= "done" and row.phase ~= "undone")) then return true end
+        end
+        return false
+    end
+    local function visible()
+        if sleeping then return false end
+        local top = UI():getTopmostVisibleWidget()
+        return top and (top.name == "homescreen" or top.name == "bookshelf")
+    end
+    local function idle(plugin)
+        if type(plugin.getSyncCoordinatorStatus) ~= "function" then return false end
+        local status = plugin:getSyncCoordinatorStatus()
+        return type(status) == "table" and not status.current and (status.pending_count or 0) == 0
+    end
+    local function day(value)
+        if type(value) ~= "string" then return end
+        local y, m, d = value:match("^(%d%d%d%d)%-(%d%d)%-(%d%d)$")
+        y, m, d = tonumber(y), tonumber(m), tonumber(d)
+        if not y or y < 1970 or y > 2100 or m < 1 or m > 12 or d < 1 or d > 31 then return end
+        local t = os.time{ year = y, month = m, day = d, hour = 12 }
+        if t and os.date("%Y-%m-%d", t) == value then return y, m, d end
+    end
+    local function instant(value)
+        if type(value) ~= "string" then return end
+        local date, h, m, s = value:match("^(%d%d%d%d%-%d%d%-%d%d)T(%d%d):(%d%d):(%d%d)%.%d%d%dZ$")
+        local y, mo, d = day(date)
+        h, m, s = tonumber(h), tonumber(m), tonumber(s)
+        if not y or h > 23 or m > 59 or s > 59 then return end
+        -- Gregorian civil date -> UTC epoch, independent of host DST/timezone.
+        local yy = y - (mo <= 2 and 1 or 0)
+        local era = math.floor(yy / 400); local yo = yy - era * 400
+        local mp = mo + (mo > 2 and -3 or 9)
+        local days = era * 146097 + yo * 365 + math.floor(yo / 4) - math.floor(yo / 100)
+            + math.floor((153 * mp + 2) / 5) + d - 1 - 719468
+        return days * 86400 + h * 3600 + m * 60 + s
+    end
+    function S.decide(summary, remote, now)
+        if type(remote.status) ~= "string" or (not statuses[remote.status]
+                and remote.status ~= "unread" and remote.status ~= "want_to_read") then return nil, "invalid" end
+        local status = statuses[remote.status]
+        if not status then return nil, "ignored" end -- Unread/WTR never erase a local read.
+        local updated = instant(remote.updatedAt)
+        if not updated or updated > now + 300 then return nil, "invalid" end
+        if summary.status == status then return nil, "unchanged" end
+        if summary.modified ~= nil then
+            local y, m, d = day(summary.modified)
+            if not y then return nil, "conflict" end
+            -- KOReader timestamps status only to a local calendar DAY. Refuse
+            -- same-day/ambiguous conflicts instead of inventing last-writer wins.
+            local after_day = os.time{ year = y, month = m, day = d + 1, hour = 0 }
+            if not after_day or updated < after_day + 60 then return nil, "conflict" end
+        elseif summary.status and summary.status ~= "new" then return nil, "conflict" end
+        local date = remote.updatedAt:sub(1, 10)
+        if status == "complete" and remote.finishedAt ~= nil then
+            local finished = instant(remote.finishedAt)
+            if not finished or finished > now + 300 then return nil, "invalid" end
+            date = remote.finishedAt:sub(1, 10)
+        end
+        return { status = status, modified = date }
+    end
+    local function signature(ds)
+        local summary = ds:readSetting("summary") or {}
+        assert(type(summary) == "table", "invalid summary")
+        -- Includes reading positions: a local read during a GET also retires it.
+        local fields = { summary.status, summary.modified, ds:readSetting("percent_finished"),
+            ds:readSetting("last_xpointer"), ds:readSetting("last_page"), ds:readSetting("partial_md5_checksum") }
+        local parts = {}
+        for i = 1, 6 do parts[i] = tostring(fields[i]) end
+        return table.concat(parts, "\0"), summary
+    end
+    local function readSidecar(file)
+        local DS = require("docsettings")
+        local source = DS:findSidecarFile(file, true)
+        if not source then return end
+        assert(type(source) == "string" and source:sub(1, 1) == "/" and source ~= file
+            and source:match("%.lua$"), "invalid sidecar path")
+        local attr = require("libs/libkoreader-lfs").symlinkattributes(source)
+        if not attr or attr.mode ~= "file" or type(attr.size) ~= "number" or attr.size > 4 * 1024 * 1024 then return end
+        local fs = require("libs/libkoreader-lfs")
+        if DS.getSidecarDir and DS.getSidecarFilename and DS.isHashLocationEnabled then
+            local locations = { "doc", "dir" }
+            if DS.isHashLocationEnabled() then locations[#locations + 1] = "hash" end
+            local alternatives = { file .. ".kpdfview.lua" }
+            for _, location in ipairs(locations) do
+                local directory = DS:getSidecarDir(file, location)
+                local candidate = directory .. "/" .. DS.getSidecarFilename(file)
+                alternatives[#alternatives + 1] = candidate
+                alternatives[#alternatives + 1] = candidate .. ".old"
+            end
+            alternatives[#alternatives + 1] = DS:getSidecarDir(file, "doc") .. "/" .. file:match("([^/]+)$") .. ".lua"
+            if DS.getHistoryPath then alternatives[#alternatives + 1] = DS:getHistoryPath(file) end
+            -- Native open() resolves competing locations/backups by MRU and
+            -- may repair corruption. Do not let an automatic import turn an
+            -- older preferred copy into the newest authoritative reading data.
+            for _, candidate in ipairs(alternatives) do
+                if candidate ~= source and candidate ~= source .. ".old" and fs.symlinkattributes(candidate) then return end
+            end
+        end
+        -- DocSettings:open() can DELETE invalid candidates, even in a child.
+        -- Its light reader neither repairs nor creates files. Keep that rule
+        -- in the parent too; atomically replace only this validated sidecar.
+        return DS.openSettingsFile(source), source
+    end
+    local function capture()
+        local guard = M.bookOrbitGuard("status")
+        if not guard then return nil, "disabled" end
+        local plugin = require("core/orbitui_context").plugin("bookorbit")
+        if not plugin or not plugin.isLoggedIn or not plugin:isLoggedIn() then return nil, "unavailable" end
+        if not idle(plugin) then return nil, "busy" end
+        local client = plugin:newClient()
+        local key = identity(client)
+        local manager = require("bookorbit_state_manager")
+        if not key or type(client.request) ~= "function" or type(client.query) ~= "function"
+                or type(manager.session) ~= "function" or type(manager.commit) ~= "function"
+                or type(manager.generation) ~= "function" then return nil, "unsupported" end
+        local session = { client = client, key = key, plugin = plugin, manager = manager,
+            generation = manager.generation(), epoch = epoch, guard = guard }
+        function session:current()
+            return self.epoch == epoch and self.guard() and not sleeping
+                and require("core/orbitui_context").plugin("bookorbit") == plugin
+                and identity(plugin:newClient()) == key and manager.generation() == self.generation
+                and idle(plugin)
+        end
+        return session
+    end
+    local function refresh(changed)
+        if not next(changed) then return end
+        local repo = package.loaded["lib/bookshelf_book_repository"]
+        local shared = package.loaded["modules/module_books_shared"]
+        for file in pairs(changed) do
+            require("ui/widget/booklist").setBookInfoCacheProperty(file, "status", changed[file])
+            if repo and repo.invalidateProgressCache then repo.invalidateProgressCache(file) end
+            if shared and shared.invalidateSidecarCache then shared.invalidateSidecarCache(file) end
+        end
+        if repo and repo.invalidateBookCache then repo.invalidateBookCache("bookorbit-status-import") end
+        local engine = package.loaded["engines/sui_screen_engine"]
+        if engine and engine.markAllStale then engine.markAllStale() end
+        local widget = package.loaded["lib/bookshelf_widget"]
+        if widget and widget.live then widget.live._metadata_dirty_force_full_refresh = true end
+        -- No rebuild, cover decode or full Home/config invalidation here.
+    end
+    local function acknowledge(job)
+        if not next(job.ack) then return end
+        local s = job.session
+        -- A local canonical-state acknowledgement prevents the existing native
+        -- sync owner from echoing this import as a fresh completion. No upload.
+        if require("core/orbitui_context").plugin("bookorbit") ~= s.plugin
+                or identity(s.plugin:newClient()) ~= s.key then job.ack = {}; return end
+        local expected = s.manager.generation()
+        local result = s.manager.commit(expected, function(state)
+            for digest, entry in pairs(job.ack) do
+                local book = state.books[digest]
+                if book and book.file == entry.file and bookId(book.bookId) == entry.id
+                        and book.statusSynced == entry.synced and book.statusSyncedModified == entry.synced_date then
+                    book.statusSyncedKnown, book.statusSynced = true, entry.value.status
+                    book.statusSyncedModified = entry.value.modified
+                end
+            end
+        end)
+        assert(result, "canonical acknowledgement failed")
+        s.generation, job.ack = s.manager.generation(), {}
+    end
+    local arm
+    local function finish(job, reason)
+        if busy ~= job then return end
+        local ok = pcall(acknowledge, job)
+        pcall(refresh, job.changed)
+        busy = nil
+        local result = { account = job.session.key, at = os.time(), changed = job.count,
+            skipped = job.skipped, error = not ok and "storage" or reason }
+        if not result.error then store():saveSetting(RESULT, result) end
+        S.last = result
+        if job.done then job.done(result) end
+        arm(60)
+    end
+    local function worker(job, task, done)
+        require("adapters/orbitui_updates").runTask(function()
+            job.session.client.subprocess_depth = 1 -- Child only; no nested API worker.
+            return task()
+        end, false, function(result)
+            if busy ~= job then return end
+            local ok, current = pcall(job.session.current, job.session)
+            if not ok or not current then finish(job, "retired"); return end
+            if not result or not result.ok then finish(job, "interrupted"); return end
+            local safe = pcall(done, result.value)
+            if not safe then finish(job, "invalid") end
+        end)
+    end
+    local function links(job)
+        local candidates, ids, owners_by_file = {}, {}, {}
+        for digest, book in pairs(job.session.manager.session().books) do
+            local id, file = bookId(book.bookId), book.file
+            if id and type(digest) == "string" and #digest == 32 and digest:match("^%x+$")
+                    and type(file) == "string" and file:sub(1, 1) == "/" then
+                if candidates[id] then candidates[id] = false
+                elseif candidates[id] == nil then candidates[id] = { id = id, file = file, digest = digest,
+                    synced = book.statusSynced, synced_date = book.statusSyncedModified, known = book.statusSyncedKnown == true } end
+                if owners_by_file[file] then owners_by_file[file] = false
+                elseif owners_by_file[file] == nil then owners_by_file[file] = id end
+            end
+        end
+        for id, entry in pairs(candidates) do
+            if entry and owners_by_file[entry.file] == id then ids[#ids + 1] = entry end
+            assert(#ids <= 50000, "too many matched files")
+        end
+        table.sort(ids, function(a, b) return a.id < b.id end)
+        return ids
+    end
+    local nextBatch
+    local function apply(job, rows, index)
+        local safe, current = pcall(job.session.current, job.session)
+        if not safe or not current or not visible() then finish(job, "retired"); return end
+        local ok = pcall(function()
+            for i = index, math.min(index + 3, #rows) do
+                local entry = rows[i]
+                local attr = require("libs/libkoreader-lfs").attributes(entry.file)
+                if not activeFile(entry.file) and not protected(entry.file) and attr and attr.mode == "file"
+                        and attr.size == entry.size and attr.modification == entry.mtime then
+                    local ds, source = readSidecar(entry.file)
+                    local sig, summary
+                    if ds then sig, summary = signature(ds) end
+                    if ds and source == entry.sidecar and sig == entry.signature
+                            and ds:readSetting("partial_md5_checksum") == entry.digest then
+                        local copy = {}; for key, value in pairs(summary) do copy[key] = value end
+                        copy.status, copy.modified = entry.value.status, entry.value.modified
+                        local data = {}; for key, value in pairs(ds.data) do data[key] = value end
+                        data.summary = copy
+                        assert(not require("libs/libkoreader-lfs").symlinkattributes(source .. ".tmp"), "sidecar temp exists")
+                        require("orbitui_bootstrap").atomicWrite(source, "return " .. require("dump")(data, nil, true) .. "\n")
+                        job.count = job.count + 1; job.changed[entry.file] = copy.status
+                        job.ack[entry.digest] = entry
+                    else job.skipped = job.skipped + 1 end
+                else job.skipped = job.skipped + 1 end
+            end
+        end)
+        if not ok then finish(job, "storage"); return end
+        if index + 4 <= #rows then UI():scheduleIn(.05, function() apply(job, rows, index + 4) end)
+        else
+            if not pcall(acknowledge, job) then finish(job, "storage"); return end
+            local invalidated = pcall(refresh, job.changed)
+            if invalidated then job.changed = {} end
+            UI():scheduleIn(.05, function() nextBatch(job) end)
+        end
+    end
+    nextBatch = function(job)
+        if busy ~= job then return end
+        if not job.session:current() or not visible() then finish(job, "retired"); return end
+        if job.index > #job.links then finish(job); return end
+        local batch = {}
+        for i = job.index, math.min(job.index + BATCH - 1, #job.links) do batch[#batch + 1] = job.links[i] end
+        job.index = job.index + #batch
+        worker(job, function()
+            local ids, allowed = {}, {}
+            local fs = require("libs/libkoreader-lfs")
+            for _, entry in ipairs(batch) do
+                ids[#ids + 1], allowed[entry.id] = tostring(entry.id), entry
+            end
+            if #ids == 0 then return { items = {}, skipped = #batch } end
+            local client = job.session.client
+            local body, err = client:request("GET", client:query("/koreader/plugin/catalog/read-statuses", { ids = table.concat(ids, ",") }))
+            if not body then return { error = (err == 404 and "server_support" or "network") } end
+            assert(type(body) == "table" and body.version == 1 and array(body.items, #ids), "invalid response")
+            local found, seen, skipped = {}, {}, 0
+            for _, row in ipairs(body.items) do
+                assert(type(row) == "table", "invalid row")
+                local id = bookId(row.id); local entry = allowed[id]
+                assert(entry and not seen[id], "unexpected identity"); seen[id] = true
+                -- An unchanged canonical status needs no sidecar read. In
+                -- particular, do not undo an intentional unsynced local edit.
+                assert(type(row.status) == "string" and (statuses[row.status] or row.status == "unread"
+                    or row.status == "want_to_read"), "invalid status")
+                assert(instant(row.updatedAt), "invalid status date")
+                if statuses[row.status] and not (entry.known and entry.synced == statuses[row.status]) then
+                    local attr = fs.attributes(entry.file)
+                    if attr and attr.mode == "file" then
+                        local ds, source = readSidecar(entry.file)
+                        if ds then entry.signature, entry.summary = signature(ds) end
+                        if ds and ds:readSetting("partial_md5_checksum") == entry.digest then
+                            local value, why = S.decide(entry.summary, row, os.time())
+                            assert(why ~= "invalid", "invalid status date")
+                            if value then
+                                entry.summary, entry.value = nil, value
+                                entry.sidecar = source
+                                entry.size, entry.mtime = attr.size, attr.modification
+                                found[#found + 1] = entry
+                            elseif why == "conflict" then skipped = skipped + 1 end
+                        else skipped = skipped + 1 end
+                    else skipped = skipped + 1 end
+                end
+            end
+            return { items = found, skipped = skipped }
+        end, function(result)
+            assert(type(result) == "table", "invalid worker result")
+            if result.error then finish(job, result.error); return end
+            assert(array(result.items, BATCH), "invalid candidates")
+            job.skipped = job.skipped + (result.skipped or 0)
+            apply(job, result.items, 1)
+        end)
+    end
+    function S.request(opts)
+        opts = opts or {}
+        if busy then return false, "busy" end
+        if not visible() then return false, "not_visible" end
+        if not M.bookOrbitEnabled("status") then return false, "disabled" end
+        if not require("ui/network/manager"):isOnline() then return false, "offline" end
+        local ok, session, err = pcall(capture)
+        if not ok or not session then return false, err or "unavailable" end
+        local attempt = store():readSetting(ATTEMPT)
+        if not opts.force and type(attempt) == "table" and attempt.account == session.key
+                and type(attempt.at) == "number" and math.abs(os.time() - attempt.at) < INTERVAL then return false, "throttled" end
+        store():saveSetting(ATTEMPT, { account = session.key, at = os.time() })
+        local job = { session = session, index = 1, count = 0, skipped = 0, changed = {}, ack = {}, done = opts.done }
+        busy = job
+        worker(job, function() return links(job) end, function(result)
+            assert(array(result, 50000), "invalid links")
+            job.links = result; nextBatch(job)
+        end)
+        return true
+    end
+    arm = function(delay)
+        if timer then UI():unschedule(timer); timer = nil end
+        if sleeping or not next(owners) or not M.bookOrbitEnabled("status") then return end
+        timer = function()
+            timer = nil
+            if not busy then
+                local ok = pcall(S.request)
+                if not ok and busy then finish(busy, "unavailable") end
+            end
+            if not busy then arm(60) end
+        end
+        UI():scheduleIn(delay, timer)
+    end
+    function S.started(owner) owners[owner] = true; arm(2) end
+    function S.stopped(owner)
+        owners[owner] = nil
+        if not next(owners) then epoch = epoch + 1 end
+        arm(2)
+    end
+    function S.policyChanged() epoch = epoch + 1; arm(2) end
+    function S.event(handler)
+        if handler == "onSuspend" then sleeping = true; epoch = epoch + 1
+        elseif handler == "onResume" then sleeping = false
+        elseif handler == "onShowingReader" or handler == "onSetupShowReader" or handler == "onReaderReady"
+                or handler == "onSetRotationMode" then epoch = epoch + 1 end
+        arm(2)
+    end
+    function S.isRunning() return busy ~= nil end
+    function S.items()
+        local result = store():readSetting(RESULT)
+        local plugin = require("core/orbitui_context").plugin("bookorbit")
+        local ok, key = pcall(function() return identity(plugin and plugin:newClient()) end)
+        if not ok or type(result) ~= "table" or not key or result.account ~= key
+                or type(result.at) ~= "number" or result.at ~= result.at or result.at <= 0
+                or result.at > 32503680000 then result = nil end
+        local errors = {
+            server_support = "The server needs the read-statuses v1 extension. No server was changed.",
+            network = "Status check failed: connection or server unavailable.",
+            invalid = "Status check stopped: unsupported or invalid response.",
+            interrupted = "Status check interrupted; it will be retried later.",
+            retired = "Status check retired after navigation, account or local-state changes.",
+            storage = "Status check stopped: local data could not be safely saved.",
+        }
+        local recent = S.last and S.last.account == key and S.last
+        local report = recent and recent.error and _(errors[recent.error] or "Status check failed: connection or server unavailable.")
+            or (recent and string.format(_("Reading status: %d updated, %d protected or conflicting."), recent.changed, recent.skipped))
+            or _("No status check in this session")
+        return {
+            { text = _("Automatic reading-status import"), checked_func = function() return M.bookOrbitEnabled("status") end,
+                enabled_func = function() return M.bookOrbitEnabled() end,
+                callback = function() M.setBookOrbitEnabled("status", not M.bookOrbitEnabled("status")) end },
+            { text = _("Update reading status now"), enabled_func = function() return M.bookOrbitEnabled("status") and not busy end,
+                callback = function(shim)
+                    shim.closeMenu()
+                    UI():scheduleIn(.2, function()
+                        local started = S.request{ force = true, done = function(r)
+                            require("core/orbitui_context").notify(r.error and _("Reading status could not be fully imported. Existing reading data is kept; check server support and try again.")
+                                or string.format(_("Reading status: %d updated, %d protected or conflicting."), r.changed, r.skipped))
+                        end }
+                        if not started then require("core/orbitui_context").notify(_("Reading-status import is unavailable or offline. Open Home or a shelf and try again.")) end
+                    end)
+                end },
+            { text = string.format(_("Last successful status check: %s"), result and os.date("%Y-%m-%d %H:%M", result.at) or _("Never")) },
+            { text = report },
+            { text = _("How reading-status import works"), callback = function()
+                require("core/orbitui_context").notify(_("Off by default. After Home or a shelf is visible, checks saved BookOrbit matches at most every 15 minutes. No EPUB scan, cover reload, download or remote write. Requires the read-statuses v1 server extension. Offline, unsupported servers and interrupted checks keep local data. Open books, pending Undo, newer local status and ambiguous same-day changes are protected. Unread/Want to Read never reset a local read; page position, history, ratings and reviews are unchanged. Previously imported books remain imported when disabled. BookOrbit's own sync preferences are untouched."))
+            end },
+        }
+    end
+    function S.showSettings()
+        return require("lib/bookshelf_menu_host").show{ title = _("Import reading status from BookOrbit"),
+            item_table = S.items(), on_back = function() require("adapters/orbitui_settings").open("bookorbit") end }
+    end
 end
 
 return M

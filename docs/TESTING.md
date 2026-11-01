@@ -1,5 +1,52 @@
 # Verification and device acceptance
 
+## November 1 optional BookOrbit status import (LOCAL, unpublished)
+
+User approves the OrbitUI implementation and explicitly approves building the
+read-only server extension locally in BookOrbit Extras. No release, push,
+upstream import, device installation or production deployment is authorized.
+Beta 27 public bytes/version/pins stay unchanged. ADB reports no connected
+device; startup/return/Manga latency and native layout are NOT remeasured.
+
+`test_bookorbit_status_import` exercises 3,000 saved matches: zero work before
+the deferred startup callback, 15 GET-only batches of 200, four-sidecar maximum
+per publication slice and zero sidecar reads/writes on an unchanged repeat.
+It tests conservative local dates, native status mappings, neutral statuses,
+malformed/unexpected/duplicate IDs, missing/inaccessible rows, unsupported
+servers, cancellation/partial failures, stale accounts/credentials/links,
+policy off/on, navigation/suspend/native coordinator guards, active/parked
+readers, pending Undo, file/sidecar races, corrupt/missing identity, atomic
+write errors, competing metadata copies and temp files. Other reading fields
+remain unchanged. The nonrepairing sidecar reader never calls native
+DocSettings:open; sidecars above 4 MiB, conflicting locations or symlinks are
+protected rather than reparsed/repaired. Existing backups are not rewritten.
+
+Run the same suite with `BOOKORBIT_STATUS_SOURCE` pointing at the cached exact
+BookOrbit plugin 2.1.0 source `a96ff0c` for its additional real native
+`buildStatePayload` assertion: an acknowledged imported completion yields no
+new status upload. This is source-level integration, not a live server test.
+The existing native Trapper input-resend tests cover the reused quiet worker.
+Timezone checks include Europe/Stockholm and Pacific/Honolulu. Synthetic I/O
+counts do not establish real hardware latency or energy use.
+
+The exact-3.6.0 GET endpoint in Extras has strict 1..200 safe-ID DTO validation,
+KOReader auth/GET/no-store controller checks, per-user/library/present/content
+scope with status-only SQL selection, canonical timestamps and no side effects.
+Status-only DTO/controller/service/SQL suites pass 194 tests. Combined
+undo+tags+status source suites pass 1,058 tests in 44 files; server typecheck
+and targeted ESLint pass. Six exact-source preparation-helper tests cover
+status-only, unchanged `both`, all-three composition, complete source export,
+dirty-checkout/archive protection and wrong target rejection. No database
+migration, production data/credentials or external Hardcover records are used.
+
+Before activation/publication: build/deploy the separate server addition only
+with explicit approval; back up sidecars/native sync state; use synthetic test
+books to verify native menus, first-tap cancellation, status badges, return
+to both libraries and account/Undo protection. Measure enabled/disabled
+startup and warm/cold Library/Manga with slow/offline responses. Current
+cache invalidation deliberately waits for normal navigation rather than
+forcing an expensive Manga/Home rebuild after each import.
+
 ## November 1 tag-index manager / Beta 27 release gates
 
 User approves explicit all-library offline indexing and publication of pending

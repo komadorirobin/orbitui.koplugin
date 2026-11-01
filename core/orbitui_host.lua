@@ -29,12 +29,15 @@ function M.attach(owner, classes, loader, root)
         if instance.init then instance:init() end
     end
     M.performanceStarted(owner)
+    require("adapters/orbitui_integrations").statusImport.started(owner)
 end
 
 function M.detach(owner, loader)
     local navbar = package.loaded["adapters/orbitui_navbar"]
     if navbar then navbar.quickControlsEvent("teardown", owner.ui) end
     M.performanceStopped(owner)
+    local integrations = package.loaded["adapters/orbitui_integrations"]
+    if integrations then integrations.statusImport.stopped(owner) end
     local libraries = package.loaded["adapters/orbitui_libraries"]
     local bookshelf = owner._orbitui_components and owner._orbitui_components.bookshelf
     if bookshelf and libraries and libraries.unwireReaderMenu then
@@ -66,6 +69,8 @@ function M.propagate(owner, event, report)
     local navbar = package.loaded["adapters/orbitui_navbar"]
     if navbar then navbar.quickControlsEvent(event.handler, owner.ui) end
     M.performanceEvent(event.handler)
+    local integrations = package.loaded["adapters/orbitui_integrations"]
+    if integrations then integrations.statusImport.event(event.handler) end
     for _, instance in ipairs(owner) do
         local ok, consumed = pcall(instance.handleEvent, instance, event)
         if not ok then
