@@ -24,6 +24,19 @@ Beta 29 public assets remain immutable. Automated/package results and physical
 acceptance gaps are recorded in TESTING and ignored local evidence under
 `test-results/status-report-20261101/`.
 
+Candidate `e3f2ce14` and private ZIP `10568ac9` pass both complete scripts,
+all 43 catalogs, 1,164 syntax files, 405 identities, both sealed roots and native
+input/Trapper/span/SQLite/EPUB/UIManager/night/contrast supplements. Importer:
+26 normal / 28 supplemented tests; 1,080 status/date combinations retain exact
+Beta 29 decision/legacy-reason returns. Exact optimized source/manifest checks
+pass at the unchanged 2,000 API-1 paths. Only the adapter, owned SV translations
+and four documentation files differ in the ZIP. Bootstrap/version/pins/assets/
+components and all public Beta 29 dist/checksum bytes stay unchanged. Seven new
+blobs exclude held artwork. Verification-only documentation does not rebuild
+the private same-version archive. No push/publication/device/server change;
+native TextViewer delegation is headless-tested, physical Close/Back/scroll and
+the actual causes of this device's 469 skips remain unverified.
+
 ## 2026-11-01 — explicit Beta 29 publication request
 
 After the Bookshelf 6.2.0 merge/push and explicit disclosure of outstanding

@@ -19,6 +19,27 @@ bounds and read-only bilingual viewer delegation. Worker return values are
 copied to avoid assuming parent/child shared tables. Exact evidence and final
 full/sealed/package checks: `test-results/status-report-20261101/`.
 
+Verified candidate `e3f2ce14f86bdaf972bb142037c9e92466e3bc11`: both complete
+Lua/LuaJIT scripts pass 133 Python tests (four inherited skips), all 102 root
+files, 542 Bookshelf suites (zero failures, three inherited SQLite skips) and
+13 SimpleUI files. All 43 catalogs, 1,164 syntax files and 405 module identities
+pass. The importer has 26 normal tests, 28 with the pinned native no-echo payload
+builder and 1,080-combination counterfactual against the immutable Beta 29
+decider (same first two returns, including writes refused). Both sealed roots
+and minimum/current native input/Trapper/span, real SQLite/EPUB/UIManager and
+Android/frame raster/night/contrast supplements pass.
+
+Private same-version verification ZIP
+`10568ac9393f7ddfa4b466d6e54bfac4c5d7c482e66332970d39c834112b2e36`,
+9,420,987 bytes / 27,847,957 expanded, manifest
+`6447e864fe1288fc75ec434a5bbf6ee4eed5f1eafb82b471ecf152a5fd83baa7`,
+has exactly the old 2,000 API-1 paths / 1,999 inventory entries and exact
+optimized candidate-source bytes. Bootstrap/version/pins/assets/components are
+unchanged. Seven new source blobs exclude the held artwork. Public dist ZIP
+and checksum are restored byte-for-byte (`60fc00b3`). This private ZIP is test
+evidence only: never publish it as a replacement Beta 29. Later documentation
+receipts do not rebuild its bytes. No push/release/device/server operation.
+
 Physical acceptance remains open: on Bigme/Boox run a manual status check, open
 Integrations > BookOrbit > Import reading status > Status check details, verify
 scroll/Close/Back, SV/EN and the actual reasons for this device's skipped files.

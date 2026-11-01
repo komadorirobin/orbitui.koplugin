@@ -34,6 +34,12 @@ and correct this file in the same change.
   entries without device evidence. Beta 29/version/pins/public bytes remain
   unchanged; no push/publication/device/server operation in this step. See
   TESTING/MERGE_LOG and `test-results/status-report-20261101/` for verification.
+  Candidate `e3f2ce14` / private verification ZIP `10568ac9` passes both full
+  scripts, 43 catalogs, 28 importer supplements (including 1,080 unchanged
+  Beta 29 decisions), sealed/native/package/source checks at exactly 2,000
+  paths. Public dist `60fc00b3` is restored. New physical viewer acceptance and
+  this device's actual skip causes remain open. Do not release the private
+  same-version test ZIP as replacement Beta 29 bytes.
 
 - **Beta 29 is public**, source/tag `98be962a` / `v0.1.0-beta.29`, published
   **2026-11-01 21:59:45 UTC** after the explicit user request and disclosed
