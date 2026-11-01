@@ -41,13 +41,51 @@ those are not controlled cold-storage samples and are not a promised reread
 speedup. No whole-library first-scan, uncached Manga, tap-to-paint, memory,
 physical panel, final installed-modal or 1.0 acceptance is inferred.
 
-The diagnostic patch is moved outside patches after normal quit; no book was
-opened. Pause BookOrbit and bundled KOSync flags before launch; confirm their
-original state, then restore only those fields after testing. Original history,
-all 50 KOSync queue rows and BookOrbit sync state compare byte-for-byte before/
-after the benchmark. Raw configs/results stay private under ignored
-`test-results/tag-performance-20261101/`. Candidate packaging/UI verification and
-final restoration are recorded below when complete; do not claim them early.
+Final source is **`a936b718`**, sealed local ZIP
+**`2ac22d61f6cdd7eeba95e35e7855b7f5479e326d60136bdf6b7bf19e391521d5`**.
+This same-version development candidate never replaces public Beta 26 bytes.
+All-root sealed tests pass in both interpreters; archive/compression and all
+2,000 installed-path/hash checks pass. Relative to public, only the preceding
+three acceptance repairs, these three host runtime files, four existing
+verification/contract docs and manifest differ. Bootstrap/pins/assets/catalogs
+are unchanged; held artwork is absent. Package goes into a separate version
+slot, completely copied and hash-verified BEFORE activation. Bootstrap accepts
+pending=0, with the preceding `4d66d68a` acceptance-fix slot as rollback; public
+Beta 26's slot is retained too. All 2,000 paths verify again after normal quit.
+
+An explicitly temporary UI harness exercises the exact sealed search/integration
+source with an isolated two-synthetic-EPUB catalog, actual native modal/cells/
+confirmation/progress/cache/archive, and fixture-only display labels. It never
+patches the live repository or opens a document. Native SV controls show two
+matches; actual Refresh requests `refresh=false`; cancelling reread confirmation
+starts no new request; confirming sends `refresh=true` and returns two matches.
+Close returns Home. English has headless translation coverage only. This is
+native UI routing/layout proof, NOT actual whole-library enumeration/result
+completion, title-metadata hydration, opening, rotation or physical-panel proof.
+Those limits and first-scan latency remain open. No persistent aggregate tag
+index or progressive results are implemented by these first two steps.
+
+Both diagnostic patches are moved outside patches after normal quit; no book
+was opened. Both automatic sync flags were paused BEFORE launch, then restored
+with only original lastdir additionally restored. Preserve Ereader Patch
+Manager's normal newer check timestamp; all other reader and KOSync fields
+compare to their originals. Both pushed restoration hashes match. Original
+history, all 50 KOSync queue rows and BookOrbit sync state compare byte-for-byte
+before/after BOTH launches. KOReader is left normally closed with the new local
+slot installed. Synthetic fixtures and recoverable harnesses remain outside
+library roots/patches. No reading/cache reset or production server change.
+Raw configs/results stay private under ignored
+`test-results/tag-performance-20261101/`. No push/tag/release. Verification-only
+descendants must not rebuild or replace this sealed tested candidate.
+
+Additional counterfactual runs load the previous sealed runtime, relax ONLY the
+test timer assertion and independently reproduce the semantic regressions:
+83 scheduled per-file delays rather than 2 bounded-batch delays, and 6 archive
+opens rather than 4 after retrying the one failed file through ordinary Refresh.
+The old runtime fails both tests; current/sealed source passes. The first
+counterfactual attempt accidentally let the test header prepend current source;
+its false passes were discarded, the root selection corrected, and only the
+verified old-root failures are used as regression evidence.
 
 ## November 1 acceptance fixes (local, not published)
 

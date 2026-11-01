@@ -31,8 +31,21 @@ modal rendering are excluded. No whole-library completion or 1.0 claim.
 Before launch, back up configs and pause both automatic sync owners. No books
 are opened; original history/50-row KOSync queue/BookOrbit sync state remain
 byte-identical after normal quit. Instrumentation is moved outside patches.
-Final source/ZIP/UI verification and targeted sync restoration follow in
-TESTING. Evidence stays private under `test-results/tag-performance-20261101/`.
+Final source `a936b718` seals to local ZIP
+`2ac22d61f6cdd7eeba95e35e7855b7f5479e326d60136bdf6b7bf19e391521d5`.
+Both sealed-root interpreter gates and package checks pass. All 2,000 paths are
+fully staged/verified before activation and again after normal quit. Bootstrap
+accepts pending=0; preceding local acceptance fixes remain rollback and public
+26 stays retained/immutable. A temporary isolated two-fixture catalog verifies
+the exact candidate's native SV result/Refresh/confirmation-cancel/confirmed
+reread/Close routes without opening a book or altering the live repository;
+it is not full-library/rotation/hydration acceptance. Diagnostics are inactive.
+Original sync flags and lastdir are restored/hash-verified, retaining only the
+normal patch-manager check timestamp; existing history/queue/sync state remain
+byte-identical. KOReader is normally closed with the local candidate installed.
+Independent old-sealed semantic counterfactuals reproduce both cache/timer
+regressions; the initially misrouted counterfactual is discarded. More evidence
+and limits are in TESTING and private `test-results/tag-performance-20261101/`.
 No push, release, upstream merge or aggregate index is performed/authorized by
 this first step. Preserve the immutable public Beta 26 archive.
 

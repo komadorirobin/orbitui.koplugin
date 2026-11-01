@@ -35,11 +35,17 @@ and correct this file in the same change.
   queue/archive/zstd scans of the same 300 cached local EPUBs take old
   4174.8/3731.7/3734.6ms vs new 542.8/611.1/561.9ms, zero archive opens/errors.
   This is a warm 300-file worker comparison, not whole-library cold completion,
-  tap-to-paint or an installed final-package acceptance. Temporary instrumentation
-  is already moved out of patches; no books opened. Both sync owners are paused
-  before launch; original history, 50-row queue and BookOrbit sync state compare
-  byte-for-byte after normal quit. Final packaging/UI checks and sync-flag
-  restoration follow; no push/release is authorized. Aggregate indexing and
+  tap-to-paint or whole-library acceptance. Exact source `a936b718`, sealed local
+  ZIP `2ac22d61f6cdd7eeba95e35e7855b7f5479e326d60136bdf6b7bf19e391521d5`
+  is installed/accepted with pending=0 and preceding `4d66d68a` local fixes as
+  rollback; all 2,000 paths verify before/after. Sealed-root suites pass both
+  interpreters. Native SV modal tests use an isolated two-fixture catalog:
+  matches, normal Refresh, cancelled confirmation, confirmed reread and Close
+  pass; no book opens. Both diagnostics are outside patches and KOReader is
+  normally closed. Both sync flags and original lastdir are restored/hash-verified;
+  only Ereader Patch Manager's normal check timestamp is retained. Original
+  history, 50-row queue and BookOrbit sync state remain byte-identical. Public
+  archive is unchanged; no push/release is authorized. Aggregate indexing and
   progressive result presentation remain later steps. Private evidence:
   `test-results/tag-performance-20261101/`.
 
