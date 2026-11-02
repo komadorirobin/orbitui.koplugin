@@ -22,6 +22,18 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-02
 
+- **Bookshelf-OS retired from active inspiration monitoring.** User explicitly
+  requests removing the unavailable reference. GitHub's fresh API returns 404;
+  this does not distinguish deletion from a private repository. Prior Inspiration
+  watch `41282377404` has a Bookshelf-OS fetch failure. The separate Upstream
+  watch `41393454748` instead rejects a stale `main` report. Only the configured
+  Bookshelf-OS source is removed; the five remaining reference mappings/pins,
+  monitor guards and historical attribution stay intact. OrbitUI settings cards
+  and quick controls are not removed. Offline filtering/removal tests and a
+  fresh five-reference read-only collection pass. User also approves moving
+  toward RC1/feature freeze; preparation and publication gates are tracked
+  separately. No device is currently connected through ADB.
+
 - **Reviewed documentation-only Bookshelf merge pushed to main, unreleased.** Fresh
   05:07 UTC check finds exactly two commits through
   `b512cd906cc494cc8d32ed6b9bdb582c12fe1078`; SimpleUI `fdf83c7d` is current.

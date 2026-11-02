@@ -10,11 +10,6 @@
       ]
     },
     {
-      "id": "bookshelf-os", "repository": "taiminator/Bookshelf-OS", "branch": "main",
-      "reviewed_commit": "072bfc6e852e9f0ef86c1530b4ac237c60a4d636", "release_watch": true,
-      "ideas": [{"idea": "Category-card settings and quick controls (release-only reference)", "relationship": "design-reference", "orbitui": "adapters/orbitui_settings.lua; adapters/orbitui_navbar.lua", "paths": ["README.md"]}]
-    },
-    {
       "id": "cyberui", "repository": "EmirErtorer/CyberUI.koplugin", "branch": "main",
       "reviewed_commit": "78ba21caec0ad42b41427544a85ffb44a6bd85e7",
       "ideas": [{"idea": "Demand-driven statistics and timing diagnostics", "relationship": "design-reference", "orbitui": "core/orbitui_host.lua", "paths": ["cyberui/data/stats.lua", "cyberui/data/statsdb.lua", "cyberui/data/statsscope.lua", "cyberui/perf.lua"]}]

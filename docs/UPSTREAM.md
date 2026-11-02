@@ -34,15 +34,16 @@ first baseline deliberately starts at the October 30 reviewed tree and does
 not notify about all earlier history. Update it only after explicitly reviewing
 the pending matches; do not automatically advance it or any `sources.json` pin.
 
-References: Kobold (search/collections), Bookshelf-OS (settings cards/quick
-controls), CyberUI (demand-driven stats/diagnostics), ProjectTitle (metadata/
+References: Kobold (search/collections), CyberUI (demand-driven stats/diagnostics), ProjectTitle (metadata/
 cover efficiency), Zen-OS (cache budgets/metadata snapshots). VOS is explicitly
-**review-only**, not a claim of borrowed implementation. All six are design
+**review-only**, not a claim of borrowed implementation. All five are design
 references; no third-party plugin/assets or executable dependency is imported.
-Bookshelf-OS currently has only README in its branch and no published source
-files to filter: its README and latest stable release/asset signature are
-observed, with a permanent manual-code-review warning. No ZIP is executed or
-downloaded by the watcher. A release-only change is not claimed as a source scan.
+On November 2 the user retires the Bookshelf-OS watch after its public repository
+becomes unavailable (fresh GitHub API 404, not proof whether deleted or private).
+Only its configured observation is removed; historical attribution, local
+category-card settings and quick controls remain. The other five mappings/pins
+are unchanged. No ZIP is executed or downloaded by the watcher. Generic optional
+release-signature support stays tested, but no retired repository is requested.
 
 Local read-only check:
 

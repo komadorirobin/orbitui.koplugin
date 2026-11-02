@@ -91,7 +91,8 @@ class InspirationTests(unittest.TestCase):
 
     def test_configuration_exact_files_and_local_destinations_exist(self):
         sources = w.load_sources(ROOT / "scripts/inspiration-sources.json")
-        self.assertEqual(len(sources), 6)
+        self.assertEqual({s["id"] for s in sources}, {"kobold", "cyberui", "vos", "projecttitle", "zen-os"})
+        self.assertNotIn("taiminator/Bookshelf-OS", {s["repository"] for s in sources})
         for source in sources:
             for idea in source["ideas"]:
                 for path in idea["orbitui"].split("; "):
@@ -116,6 +117,22 @@ class InspirationTests(unittest.TestCase):
             r = w.collect_reference(FakeGit(), api, source)
         self.assertEqual(r["status"], "error"); self.assertEqual(r["errors"][0]["phase"], "release")
         self.assertEqual(api.writes, [], "collection must never post anything")
+
+    def test_retired_reference_leaves_dashboard_once_without_erasing_remaining_sources(self):
+        api, r = FakeAPI(), report()
+        retired = copy.deepcopy(r["references"][0])
+        retired.update(id="bookshelf-os", repository="taiminator/Bookshelf-OS", status="error", matches=[],
+                       errors=[{"phase": "fetch", "message": "Repository unavailable"}])
+        r["references"].append(retired)
+        w.publish(api, "owner/orbitui", r)
+        self.assertIn("## bookshelf-os", api.issues[0]["body"])
+        r["references"].pop()
+        w.publish(api, "owner/orbitui", r)
+        self.assertNotIn("## bookshelf-os", api.issues[0]["body"])
+        self.assertIn("## example", api.issues[0]["body"])
+        self.assertEqual(len(api.comments), 1)
+        w.publish(api, "owner/orbitui", r)
+        self.assertEqual(len(api.comments), 1, "unchanged retained sources must not repeat the removal notice")
 
     def test_matching_list_is_complete_but_dashboard_is_bounded(self):
         r = report(); item = r["references"][0]

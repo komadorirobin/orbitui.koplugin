@@ -4,6 +4,22 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-02 — retire unavailable Bookshelf-OS inspiration source
+
+User asks to remove Bookshelf-OS from monitoring after agreeing to the RC1
+direction. Fresh GitHub API returns 404 for `taiminator/Bookshelf-OS`; report
+unavailability, not an unproven deletion/private-state diagnosis. Prior
+Inspiration watch `41282377404` fails fetching this source. The separately
+mentioned Upstream watch failure `41393454748` is a stale-main publication
+guard, not Bookshelf-OS. Remove only that one entry from the export-ignored
+inspiration manifest; preserve all five other references/pins, generic release
+signature support and historical design attribution. Local category-card
+settings/quick controls remain unchanged. Eleven offline monitor tests pass,
+including one-time dashboard removal without duplicate comments; a fresh
+read-only collection of all five retained references succeeds. No code/assets
+from any reference are imported or removed. RC version/publication is a
+separate step; physical testing is unavailable with the current empty ADB list.
+
 ## 2026-11-02 — reviewed Bookshelf module-documentation merge (main push only)
 
 User requests "Merga upstream" from clean `f0769cd9`, including the previously
