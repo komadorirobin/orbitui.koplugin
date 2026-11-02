@@ -10,8 +10,8 @@ Retiring the unavailable Bookshelf-OS inspiration source is separate monitoring
 maintenance (`ffd6b56b`); the five remaining references collect successfully.
 Existing settings cards/quick controls and historical attribution remain.
 
-Publication is a distinct approval/verification gate; RC1 must be a prerelease
-in preview, never stable. Do not infer stable 1.0 approval from this preparation
+The user separately chooses "Publicera RC1 efter tester", with physical gates
+still open. RC1 must be a prerelease in preview, never stable. Do not infer stable 1.0 approval from this preparation
 or from a green CI result. Evidence: `test-results/rc1-20261102/`. No ADB device
 is connected at preparation; no physical RC1 test or installation is claimed.
 
@@ -22,6 +22,32 @@ Beta 29 -> RC1. New OTA tests require RC1 > Beta 29, RC2 > RC1, stable 1.0 > RC1
 draft exclusion and preview-only discovery. Stable release/channel state stays
 unchanged. New monitor tests remove the retired source once without repeated
 dashboard comments; retained mappings/pins and generic guards remain unchanged.
+
+Exact candidate `66410c3b0f939b99f9eb7fa1990490d58caeca5a` passes both full
+scripts: 134 Python tests/four inherited skips, 102 root files, 542 Bookshelf
+suites/zero failures/three inherited SQLite skips, and 13 SimpleUI files. All
+43 catalogs, 1,164 syntax files and 405 canonical identities pass. Both sealed
+roots/native minimum/current input/Trapper/span, real SQLite/EPUB/UIManager and
+Android/frame night/contrast checks pass, including 28 importer supplements and
+1,080 Beta 29 decision comparisons. Native actual Beta 5/9/28/29 installers pass
+upgrade/restart/code rollback, interrupted recovery, external snapshots and
+obsolete-runtime cleanup; major RC1 discovery is not inferred only from new code.
+
+Sealed ZIP
+`dfc2cceda1249aa5459eafdaf136d98ae5c45bbca717e6d56d406e4f8fef6282`,
+9,430,364 bytes / 27,875,101 expanded; manifest
+`ca79767f43ae4481c18c01b871c3a15333d1d0859c48ef4d0d2df337f2338791`.
+Exact optimized source projection, all 1,999 inventoried files and identical
+2,000 API-1 paths pass. Core/adapters/components/assets/bootstrap and source
+pins are byte-unchanged from reviewed `bf59c980`; only the VERSION/user docs and
+monitoring configuration/tests change. Five retained reference mappings/pins
+are exactly unchanged, and fresh collection succeeds. Main monitoring removal
+`ffd6b56b` has green runtime CI **41396006527** and Inspiration watch
+**41396007373**. Initial history audit covers 14 new blobs with no held bitmap;
+Gitleaks finds no secrets. Preserve these candidate bytes through verification
+receipts. Main/tag CI, draft download/byte checks, public assets, preview/stable
+selection, public-byte native OTA and old-release/tag immutability remain
+publication gates. No physical device/server acceptance is implied.
 
 ### Physical exit criteria (all open for the exact RC1 bytes)
 

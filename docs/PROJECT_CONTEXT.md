@@ -30,9 +30,17 @@ and correct this file in the same change.
   changes are included. README/OTA/migration and the RC acceptance plan are
   updated in existing paths; same 2,000 API-1 files/bootstrap/assets/languages.
   RC discovery/major-version ordering/preview-only behavior get explicit tests.
-  Public release approval is asked separately; neither preparation nor CI is
-  stable 1.0/device acceptance. No ADB device is connected, so all physical RC1
+  User separately approves "Publicera RC1 efter tester" as a preview GitHub
+  prerelease; neither preparation nor CI is stable 1.0/device acceptance.
+  No ADB device is connected, so all physical RC1
   gates remain open. See TESTING, MERGE_LOG and `test-results/rc1-20261102/`.
+  Exact candidate `66410c3b` seals as `dfc2cced` / 9,430,364 bytes, exactly
+  2,000 API-1 paths. Both full scripts, 43 catalogs, sealed/native supplements,
+  Beta 5/9/28/29 old-installer scenarios and source/history/secret audits pass.
+  Runtime implementation/pins/assets/bootstrap are unchanged from reviewed main;
+  only metadata/docs and monitoring configuration/tests change. Main/tag CI and
+  draft/public/channel/immutability gates follow before publication. Verification
+  receipts do not rebuild the candidate. The physical RC checklist remains open.
 
 - **Bookshelf-OS retired from active inspiration monitoring.** User explicitly
   requests removing the unavailable reference. GitHub's fresh API returns 404;

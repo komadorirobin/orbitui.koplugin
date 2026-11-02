@@ -27,6 +27,20 @@ asked separately; do not create a public RC/tag without the answer. Exact
 automated/sealed/native/package/source/history results follow in TESTING and
 `test-results/rc1-20261102/`. Prior public releases must remain immutable.
 
+The user separately answers "Publicera RC1 efter tester": explicit GitHub
+preview prerelease authorization, not stable 1.0 or a device/server install.
+Candidate `66410c3b` / ZIP `dfc2cced` (9,430,364 bytes) passes both full scripts
+(134 Python/four inherited skips, 102 root files, 542 Bookshelf/zero failures/
+three inherited skips, 13 SimpleUI files), 43 catalogs, 1,164 syntax files,
+405 identities, both sealed roots/native supplements and actual Beta 5/9/28/29
+upgrade/restart/rollback/recovery/external-snapshot/cleanup. Exact optimized
+source/manifest/2,000-path, unchanged runtime/pins/bootstrap/assets/languages
+and five-reference mapping checks pass. Initial 14 outgoing blobs exclude held
+artwork; Gitleaks finds no secrets. Monitoring removal `ffd6b56b` is pushed;
+runtime CI **41396006527** and Inspiration watch **41396007373** pass. Next:
+audited main/tag push and exact-byte draft/public/channel/old-tag/release checks.
+Do not rebuild candidate bytes for verification-only documentation receipts.
+
 ## 2026-11-02 — retire unavailable Bookshelf-OS inspiration source
 
 User asks to remove Bookshelf-OS from monitoring after agreeing to the RC1
