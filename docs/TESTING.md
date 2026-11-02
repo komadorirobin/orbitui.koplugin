@@ -49,6 +49,30 @@ receipts. Main/tag CI, draft download/byte checks, public assets, preview/stable
 selection, public-byte native OTA and old-release/tag immutability remain
 publication gates. No physical device/server acceptance is implied.
 
+### Publication receipt — preview only
+
+Published **2026-11-02 06:05:57 UTC** after the approved gates:
+[OrbitUI 1.0.0-rc.1](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v1.0.0-rc.1),
+release **431117603**, `draft=false`, `prerelease=true`, not latest/stable.
+Annotated tag `v1.0.0-rc.1` resolves to exact candidate `66410c3b`; the
+documentation-only verification descendant `a7781a9e` is pushed to main.
+Main CI **41397184439** and exact-tag CI **41397184468** pass both Lua/LuaJIT
+matrix jobs, including Linux native OTA. The existing draft is recovered by
+numeric ID after tag lookup returns 404; no second draft or replacement is
+created. Both draft assets and anonymous public HTTPS downloads match the
+sealed candidate ZIP/checksum byte-for-byte. Assets **700697376/700697377**
+retain the hashes/sizes above; public dist is the same RC1 bytes, not rebuilt
+for documentation receipts.
+
+Fresh release discovery selects RC1 only for preview; no stable 1.0 exists.
+All 83 previous releases and 139 old tag refs remain unchanged. After
+publication, native actual Beta 9/28/29 installers pass discovery and download
+from public HTTPS assets, verified extraction, activation/restart/code rollback,
+interrupted recovery, external snapshots and obsolete-runtime cleanup. These
+are headless native installer tests, not installation on a reader. Final
+source/history/artwork/secret checks pass; no physical device, real-book sync
+write or server deployment occurs. All physical exit criteria below stay open.
+
 ### Physical exit criteria (all open for the exact RC1 bytes)
 
 1. **Install and recovery:** fresh setup plus Beta 29 -> RC1 on the target

@@ -41,6 +41,22 @@ runtime CI **41396006527** and Inspiration watch **41396007373** pass. Next:
 audited main/tag push and exact-byte draft/public/channel/old-tag/release checks.
 Do not rebuild candidate bytes for verification-only documentation receipts.
 
+**Publication completed 2026-11-02 06:05:57 UTC.** Audited main `a7781a9e`
+and exact candidate tag `v1.0.0-rc.1` -> `66410c3b` are pushed. Main/tag CI
+**41397184439 / 41397184468** pass both matrix jobs. Existing draft
+**431117603** is recovered by numeric ID after a draft tag lookup returns 404;
+no duplicate creation/replacement. Downloaded draft assets match sealed bytes
+before publishing that same release as preview prerelease, not stable/latest.
+Anonymous public ZIP/checksum match `dfc2cced` / 9,430,364 bytes; asset IDs
+**700697376/700697377**. Preview selects RC1; stable remains absent. All 83
+previous releases and 139 old tag refs are unchanged. Native actual Beta
+9/28/29 installers then pass discovery/download using the public HTTPS files,
+activation/restart/code rollback, interrupted recovery, external snapshots and
+obsolete-runtime cleanup. Public dist now matches RC1, not an earlier beta.
+Verification receipts do not rebuild or move the immutable candidate/tag/assets.
+Feature freeze remains active; all physical acceptance gates stay open. No
+device installation, real-book sync mutation or server deployment is performed.
+
 ## 2026-11-02 — retire unavailable Bookshelf-OS inspiration source
 
 User asks to remove Bookshelf-OS from monitoring after agreeing to the RC1

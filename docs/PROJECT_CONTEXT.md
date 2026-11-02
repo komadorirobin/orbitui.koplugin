@@ -22,7 +22,7 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-02
 
-- **RC1 preparation and feature freeze, not stable 1.0.** User approves the
+- **RC1 is public in preview; feature freeze active, not stable 1.0.** User approves the
   proposed RC1 direction; VERSION becomes `1.0.0-rc.1` on
   `release/1.0.0-rc.1-20261102`, based on `bf59c980`. Exact reviewed component
   pins remain Bookshelf `b512cd90` / SimpleUI `fdf83c7d`; no feature import,
@@ -38,9 +38,16 @@ and correct this file in the same change.
   2,000 API-1 paths. Both full scripts, 43 catalogs, sealed/native supplements,
   Beta 5/9/28/29 old-installer scenarios and source/history/secret audits pass.
   Runtime implementation/pins/assets/bootstrap are unchanged from reviewed main;
-  only metadata/docs and monitoring configuration/tests change. Main/tag CI and
-  draft/public/channel/immutability gates follow before publication. Verification
-  receipts do not rebuild the candidate. The physical RC checklist remains open.
+  only metadata/docs and monitoring configuration/tests change. Published
+  **2026-11-02 06:05:57 UTC** as `v1.0.0-rc.1`, source `66410c3b`, release
+  **431117603**, prerelease only. Verified main `a7781a9e` CI **41397184439** and
+  exact-tag CI **41397184468** pass both matrix jobs. Draft and anonymous public
+  ZIP/checksum downloads match the sealed bytes; preview selects RC1 and stable
+  stays absent. All 83 previous releases and 139 old tag refs remain unchanged.
+  Native Beta 9/28/29 installers also pass discovery/download from public HTTPS
+  files, restart/rollback/recovery/snapshot/cleanup. Public dist is now RC1
+  `dfc2cced`; verification receipts do not rebuild it. No device installation or
+  server change; the physical RC checklist remains open.
 
 - **Bookshelf-OS retired from active inspiration monitoring.** User explicitly
   requests removing the unavailable reference. GitHub's fresh API returns 404;
@@ -54,7 +61,7 @@ and correct this file in the same change.
   toward RC1/feature freeze; preparation and publication gates are tracked
   separately. No device is currently connected through ADB.
 
-- **Reviewed documentation-only Bookshelf merge pushed to main, unreleased.** Fresh
+- **Reviewed documentation-only Bookshelf merge, now included in RC1.** Fresh
   05:07 UTC check finds exactly two commits through
   `b512cd906cc494cc8d32ed6b9bdb582c12fe1078`; SimpleUI `fdf83c7d` is current.
   Unsquashed import `1882a227` changes only module README API-release/surface/
@@ -74,8 +81,7 @@ and correct this file in the same change.
   passes. This documentation receipt does not rebuild private/public bytes or
   authorize a beta/tag/OTA/device/server action.
 
-- **Status-import reporting follow-up, included in the maintenance result but
-  unreleased.** User approves fixing
+- **Status-import reporting follow-up, now public in RC1.** User approves fixing
   the misleading "0 updated, 469 protected or conflicting" summary. Existing
   import/write rules, OFF default, batches/throttle/owners remain unchanged.
   New SV/EN details separate unchanged server/local status, missing local files/
