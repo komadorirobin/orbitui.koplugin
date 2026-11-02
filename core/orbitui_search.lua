@@ -356,13 +356,14 @@ local function tagSearch(tag, opts)
     session = session + 1
     local request = session
     local function alive()
-        return not retired and modal and UI:isWidgetShown(modal)
+        return not retired and modal ~= nil and UI:isWidgetShown(modal)
     end
-    local function current()
-        return alive() and not sleeping
+    local function validView()
+        return not retired and not sleeping
             and request == session and generation == UI._simpleui_navigation_generation
-            and (not opts.is_current or opts.is_current())
+            and (not opts.is_current or opts.is_current()) or false
     end
+    local function current() return alive() and validView() end
     local function render()
         if alive() and not sleeping then modal:refresh() end
     end
@@ -457,13 +458,13 @@ local function tagSearch(tag, opts)
     local footer = {{ { label = _("Refresh"), label_func = function()
         return _(embedded and busy and "Stop search" or "Refresh")
     end, enabled_when = function()
-        return current() or embedded and busy and worker ~= nil
+        return validView() or embedded and busy and worker ~= nil
     end, on_tap = function()
         if embedded and busy and worker then worker.cancel() else fetch(false) end
     end },
         { label = _("Close"), on_tap = function() if alive() then modal:onClose() end end } }}
     if embedded then
-        footer[#footer + 1] = {{ label = _("Reread all EPUB tags…"), enabled_when = function() return current() and not busy end, on_tap = function()
+        footer[#footer + 1] = {{ label = _("Reread all EPUB tags…"), enabled_when = function() return validView() and not busy end, on_tap = function()
             if not current() or busy then return end
             modal:onClose()
             M.tagIndex{ confirm_reread = true }
@@ -543,11 +544,12 @@ function M.tagIndex(opts)
     local status, failure = I.embeddedTagIndexStatus()
     local generation = UI._simpleui_navigation_generation
     local function alive()
-        return not retired and modal and UI:isWidgetShown(modal)
+        return not retired and modal ~= nil and UI:isWidgetShown(modal)
     end
-    local function current()
-        return alive() and not sleeping and generation == UI._simpleui_navigation_generation
+    local function validView()
+        return not retired and not sleeping and generation == UI._simpleui_navigation_generation
     end
+    local function current() return alive() and validView() end
     local function render()
         if current() then modal:refresh() end
     end
@@ -612,14 +614,14 @@ function M.tagIndex(opts)
             return require("lib/bookshelf_picker_cell").render({ label = counts, subtitle = text }, dimen)
         end,
         footer_rows = {
-            {{ label = _("Update tag index"), enabled_when = function() return current() and not busy end,
+            {{ label = _("Update tag index"), enabled_when = function() return validView() and not busy end,
                 on_tap = function() if failure == "invalid_job" then confirm("update") else start("update", false) end end },
              { label = _("Continue indexing"), enabled_when = function()
-                return current() and not busy and status ~= nil and status.current_scope and status.phase ~= "complete"
+                return validView() and not busy and status ~= nil and status.current_scope and status.phase ~= "complete"
              end, on_tap = function() start(nil, true) end }},
-            {{ label = _("Reread all EPUB tags…"), enabled_when = function() return current() and not busy end,
+            {{ label = _("Reread all EPUB tags…"), enabled_when = function() return validView() and not busy end,
                 on_tap = function() confirm("reread") end },
-             { label = _("Pause indexing"), enabled_when = function() return current() and busy end,
+             { label = _("Pause indexing"), enabled_when = function() return validView() and busy end,
                 on_tap = function() if current() and worker then worker.cancel() end end }},
             {{ label = _("Close"), on_tap = function() if alive() then modal:onClose() end end }},
         },

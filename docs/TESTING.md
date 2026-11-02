@@ -44,10 +44,14 @@ their existing paths. New labels/help are Swedish/English.
 Evidence: `test-results/rc1-tag-fix-20261102/`. Both complete scripts pass
 134 Python tests/four inherited optional skips, 103 root files, 542 Bookshelf
 suites/zero failures/three inherited SQLite skips and 13 SimpleUI files;
-43 catalogs pass. Latest modified-root checks include 45 local-tag cases,
+43 catalogs pass. Latest modified-root checks include 46 local-tag cases,
 16 BookOrbit-tag cases and nine shelf-reveal cases under Lua/LuaJIT. Native
 real SQLite, libarchive/EPUB/JSON and UIManager input supplements pass (47 local
-tag cases with native supplements). Reveal tests execute the native profile
+tag cases before the eager-footer follow-up; 48 with that regression). A
+construction-time regression also checks real native footer evaluation order:
+Update must be enabled before show, while Pause/Continue stay disabled. Work
+still requires a shown owner; only button construction uses the valid-view
+guard without requiring the not-yet-shown modal. Reveal tests execute the native profile
 location, folder ordering, hydration and selected-file methods, including
 repeated selection with reader opening forbidden. Native font/panel/touch,
 physical sleep/wake at full 3,341 files, actual cover/description/selected-cover

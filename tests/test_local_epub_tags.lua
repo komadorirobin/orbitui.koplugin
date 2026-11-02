@@ -701,6 +701,19 @@ H.test("index manager opens passively, exposes real pause/resume actions and ign
     manager:onClose(); flush(); H.eq(opened, 4)
     H.eq(Integration.embeddedTagIndexStatus().phase, "paused")
 end)
+H.test("native eager footer construction enables Update before show, without enabling Pause or Continue", function()
+    reset()
+    local init, initial = Modal.init
+    Modal.init = function(self)
+        local rows = self.config.footer_rows
+        initial = { rows[1][1].enabled_when(), rows[1][2].enabled_when(), rows[2][2].enabled_when() }
+    end
+    local modal = require("core/orbitui_search").tagIndex()
+    Modal.init = init
+    H.eq(initial[1], true); H.eq(initial[2], false); H.eq(initial[3], false)
+    H.eq(opened, 0); H.eq(#queue, 0)
+    modal:onClose()
+end)
 H.test("navigation retirement pauses the index manager, releases ownership and always permits Close", function()
     reset()
     local generation = UI._simpleui_navigation_generation
