@@ -163,6 +163,17 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+November 2 merge-only request reviews Bookshelf master
+`b512cd906cc494cc8d32ed6b9bdb582c12fe1078`, two commits after `78f582fd`:
+`c6cb8c1d` / `b512cd90`. Both change only `micromodules/README.md`: API
+availability by release, shelf surfaces and host/self-sized/bare/start-menu
+sizing responsibilities. Unsquashed import `1882a227` is conflict-free; no
+runtime, dependency, asset, setting or hook changes. SimpleUI `fdf83c7d` is
+already current. Preserve every existing OrbitUI adaptation and the previously
+local status-reporting follow-up. VERSION/public Beta 29 stays unchanged. The
+standing audited main push includes that tested reporting work, not a release,
+device install or server operation. See TESTING/MERGE_LOG for results.
+
 November 1, after Beta 28: merge-only request integrates Bookshelf **6.2.0**,
 exact master `78f582fd8e4f2612b2d41498e6878af90d30f31e` (23 commits after
 `0d976875`). SimpleUI remains `fdf83c7d`, already current. Unsquashed import

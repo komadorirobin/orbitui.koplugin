@@ -20,7 +20,19 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-01
+## Snapshot: 2026-11-02
+
+- **Reviewed documentation-only Bookshelf merge, main push stage.** Fresh
+  05:07 UTC check finds exactly two commits through
+  `b512cd906cc494cc8d32ed6b9bdb582c12fe1078`; SimpleUI `fdf83c7d` is current.
+  Unsquashed import `1882a227` changes only module README API-release/surface/
+  sizing guidance. No runtime, dependency, asset, migration or hook changes.
+  Keep all hosted contracts, plus the previously local status-report follow-up
+  below. Standing authorization covers the audited verified main push, not a
+  release/OTA/device/server operation. VERSION and public Beta 29 assets stay
+  unchanged. Tests/package/audit results: TESTING/MERGE_LOG and
+  `test-results/upstream-20261102/`. No new visual change or measured speedup;
+  physical status-view and original skip-reason acceptance remain open.
 
 - **Local, unreleased status-import reporting follow-up.** User approves fixing
   the misleading "0 updated, 469 protected or conflicting" summary. Existing

@@ -4,6 +4,30 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-02 — reviewed Bookshelf module-documentation merge (main push only)
+
+User requests "Merga upstream" from clean `f0769cd9`, including the previously
+approved local status-reporting follow-up. Fresh read-only collection at
+05:07 UTC finds exactly two missing Bookshelf commits, `c6cb8c1d` and
+`b512cd906cc494cc8d32ed6b9bdb582c12fe1078`; SimpleUI `fdf83c7d` has none.
+Review of both commits and their full net diff finds only
+`micromodules/README.md` changes: first release for module APIs, shelf rendering
+surface and the default/exception sizing responsibilities. No runtime code,
+new file, dependency, migration, license, asset or native hook changes.
+Unsquashed subtree import `1882a227` is clean on
+`maintenance/upstream-20261102`; integrated pin advances separately, original
+fork provenance stays intact. C01-C11 and all hosted adaptations are retained.
+
+The outgoing maintenance result also includes `e3f2ce14` / `f0769cd9`, the
+status-reporting change tested in the preceding entry. No new implementation
+is added during this merge. All languages/assets, API-1 limits/bootstrap,
+installed paths, reading/settings/sync/patch owners and VERSION/public Beta 29
+bytes stay unchanged. Scope is the standing audited main push only: no tag,
+release/OTA channel, device installation or server deployment. Evidence and
+final local/sealed/native/package/history/secret checks are recorded in TESTING
+and `test-results/upstream-20261102/`. Physical reporting-view acceptance and
+the actual causes of this device's 469 skips remain open.
+
 ## 2026-11-01 — local reading-status result reporting follow-up
 
 After Beta 29, user reports "0 updated, 469 protected or conflicting" and

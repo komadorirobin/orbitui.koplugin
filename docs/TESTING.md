@@ -1,5 +1,27 @@
 # Verification and device acceptance
 
+## November 2 documentation-only upstream merge (main push only)
+
+Fresh collection finds Bookshelf `b512cd906cc494cc8d32ed6b9bdb582c12fe1078`,
+two commits after `78f582fd`; SimpleUI `fdf83c7d` already current. Complete
+commit/net-diff review: only `micromodules/README.md`, no runtime implementation,
+new path/asset/dependency/migration/hook change. Unsquashed import `1882a227`
+is conflict-free; the pin advances separately. Every C01-C11 adaptation and
+the earlier, locally tested status-reporting follow-up remain intact. This
+request includes a verified main push, not a new beta/tag/OTA, server or device
+operation. VERSION/public Beta 29 remains immutable.
+
+Evidence: `test-results/upstream-20261102/`. Rerun both full scripts, all 43
+catalogs, exact sealed roots and native supplements (including the 28 importer
+tests with its native no-echo payload and immutable Beta 29 decision baseline).
+Validate source/manifest hashes and identical 2,000 API-1 paths, no new runtime
+code versus `f0769cd9`, unchanged bootstrap/assets/components except the reviewed
+README. Check native older-installer upgrade/rollback and all outgoing history/
+secrets before main push. Restore the public dist ZIP/checksum afterwards.
+Physical reporting scroll/Close/Back/legibility and original 469 skip causes
+remain unverified; no speed improvement or new visible feature is attributed
+to the two upstream documentation commits. Final results are recorded below.
+
 ## November 1 status-import reporting follow-up (local, unreleased)
 
 User approves correcting the ambiguous skipped summary after Beta 29. No
