@@ -22,6 +22,18 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-02
 
+- **RC2 publication approved; release checks in progress.** User says "Pusha
+  och publicera" after the disclosed local fix/device-test gap. Prepare
+  `1.0.0-rc.2` as a preview prerelease only, preserving RC1 and older tags/assets.
+  Include exactly the tested tag-lifecycle/shelf-reveal implementation below;
+  no new runtime implementation, upstream import or device/server action.
+  Feature freeze, pins, API-1 / 2,000 paths and external sync owners remain.
+  Repeat exact release-source/full/sealed/native/older-installer checks, audit
+  outgoing history/artwork/secrets, then require main/tag CI and draft/public
+  exact-byte/channel/immutability gates. Physical Bigme/Boox sleep/index/reveal
+  acceptance remains open, not inferred from publication. Evidence:
+  `test-results/rc2-20261102/`; final publication receipt follows.
+
 - **RC1 tag-search lifecycle fix and shelf reveal implemented locally, unreleased.**
   User reports the visible offline tag search stuck at 2,090/3,341 after device
   sleep; Stop search and Close highlight but do nothing. No ADB device is

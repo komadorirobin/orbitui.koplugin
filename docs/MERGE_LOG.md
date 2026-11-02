@@ -4,6 +4,21 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-02 — RC2 publication authorized after local tag fixes
+
+User requests "Pusha och publicera" after the local fix and its disclosed lack
+of physical Bigme testing. Prepare `1.0.0-rc.2` in preview only; stable 1.0 is
+not authorized. Start at `8272a042`, retain exact tested tag lifecycle/reveal
+implementation (`cca558c4`) and reviewed Bookshelf `b512cd90` / SimpleUI
+`fdf83c7d` pins. No additional runtime work, upstream import, cache schema,
+default/sync/reading-state, bootstrap, component or artwork changes. Update
+existing SV/EN presentation paths and test RC2 discovery/order/draft exclusion.
+Feature freeze continues; all physical lifecycle/full-library/reveal and
+update/recovery gates remain open. Publication changes neither device nor
+server. Exact automated/sealed/native/package/history/secret and main/tag CI,
+draft/public bytes, channel/old-release immutability results follow in TESTING
+and `test-results/rc2-20261102/`. RC1 and older public assets/tags are immutable.
+
 ## 2026-11-02 — local RC1 tag lifecycle fix and shelf-preview navigation
 
 After the user reports a result modal stuck at 2,090/3,341 following sleep,

@@ -1,5 +1,29 @@
 # Verification and device acceptance
 
+## 1.0.0-rc.2 — publication checks
+
+User explicitly requests push/publication after the local implementation and
+disclosed physical-test gap. Prepare preview-only `1.0.0-rc.2`, not stable 1.0,
+from `8272a042`; no new implementation or upstream import. The tested local
+tag lifecycle fix/shelf-reveal behavior below is retained exactly. VERSION,
+SV/EN release presentation and explicit RC2 discovery/order tests change only.
+Keep reviewed pins, components/assets/bootstrap, installed path set, reading
+data, cache schemas and external BookOrbit/Hardcover/MAL/patch ownership intact.
+Evidence: `test-results/rc2-20261102/`.
+
+Gates: both full scripts/translations; sealed roots/native input/SQLite/EPUB/
+UIManager and presentation supplements; native older-installers including RC1
+-> RC2 discovery, activation/restart/rollback/recovery; exact source/manifest/
+2,000-path and outgoing history/artwork/secret audits. Main and exact-tag CI must
+pass before publishing the byte-checked draft. Download anonymous public assets,
+verify preview selects RC2/stable ignores it, and confirm all old tags/releases
+including RC1 are unchanged. Do not rebuild the frozen package for verification
+receipts. No physical device install, actual reading/sync mutation or server
+deployment is authorized here. Physical sleep/wake during all 3,341 files,
+Close/Continue, selected cover/description, cold/warm/parked transitions and
+on-device update/recovery remain open. The earlier synthetic reproduction does
+not establish the exact trigger on this device or stable-1.0 acceptance.
+
 ## RC1 tag-search stall and shelf reveal — local fix, device retest open
 
 November 2 user report: offline tag-result modal stays at 2,090/3,341; Stop

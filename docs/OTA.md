@@ -7,6 +7,53 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 1.0.0-rc.2
+
+**Release candidate, not stable 1.0.** Publishes the explicitly approved tag
+lifecycle fix and tag-result navigation change, without another upstream merge.
+Bookshelf stays `b512cd90`; SimpleUI stays `fdf83c7d`. Feature freeze continues.
+
+- A retired tag search/index manager no longer leaves a permanently busy
+  dialog with a dead Close. Closing uses its own visible lifetime, not the
+  expired background-work generation. Unsafe actions are disabled with an
+  explanation to reopen a changed view; stale work cannot adopt results.
+- Sleep pauses offline tag search/indexing, keeps completed reads, releases
+  derived index ownership and avoids painting while asleep. No automatic wake
+  scan. Continue/Refresh reuses valid entries; reopen first if navigation changed.
+- Tapping a title in offline or BookOrbit tag results selects the actual book
+  on its Bookshelf profile/folder/page with cover/description, not ReaderUI.
+  Repeated selection cannot open the book. Long-press still opens book details;
+  other search/reader actions are unchanged. Missing/filtered targets fail safely.
+
+Existing settings, caches, reading progress/history, artwork/languages and
+BookOrbit/Hardcover/MAL/patch ownership remain. Status import retains its OFF
+default and safety rules; no server is deployed. Bootstrap API 1 and exactly
+2,000 installed paths are preserved. Old public releases/tags are immutable.
+Update via **preview** and restart KOReader; stable must ignore RC2. Automated
+and native headless tests do not close physical acceptance: verify sleep/wake
+during all 3,341 EPUBs, pause/continue/Close, actual selected-cover/description
+layout, cold/warm/parked transitions and on-device update/recovery on Bigme/Boox.
+The exact cause on the user's device is not proven by the synthetic reproduction.
+
+**Svenska: testkandidat, inte stabil 1.0.** RC2 innehåller den godkända fixen
+och ändringen av titeltryck i taggträffar. Funktionsfrys gäller fortfarande;
+ingen ny upstream-merge. Stäng fungerar även när bakgrundsarbetet blivit
+inaktuellt. En ändrad vy förklarar att den behöver öppnas igen. Vila pausar
+lokal taggsökning/indexering utan automatisk återstart; redan lästa taggar
+behålls. Fortsätt/Uppdatera återanvänder giltiga poster.
+
+Titeltryck i lokala eller BookOrbit-taggträffar visar och markerar boken på rätt
+profil/mapp/sida i bokhyllan, med omslag/beskrivning, utan att öppna läsvyn.
+Upprepade tryck öppnar inte boken; långtryck öppnar fortfarande bokdetaljer.
+Övriga sök- och läsåtgärder är oförändrade. Saknade/filtrerade mål hanteras säkert.
+Läsdata, inställningar, cache, bilder, språk och externa synkägare behålls;
+ingen server ändras. API-1 och 2 000 installationsfiler är kvar. Använd
+**förhandskanalen** och starta om KOReader. RC1 och äldre releaser ersätts inte.
+Fysisk testning på Bigme/Boox återstår: vila under hela indexeringen av 3 341
+filer, paus/fortsätt/Stäng, markerat omslag/beskrivning, kall/varm/parkering samt
+riktig uppdatering/återställning. Automattester bevisar inte exakt vad som
+utlöste felet på enheten och är inte ett godkännande för stabil 1.0.
+
 ## OrbitUI 1.0.0-rc.1
 
 **Release candidate, not stable 1.0.** This starts a feature freeze for targeted
