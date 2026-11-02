@@ -1238,6 +1238,31 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+November 2 explicit bug-fix and tag-hit navigation approval during the RC
+freeze: a work-generation guard must not disable Close on a still-visible
+tag-result/index modal. Retired local work releases busy state, closes/flushed
+derived index ownership, and cannot adopt stale results or navigate. Suspend
+pauses local search/indexing; no painting while asleep, startup daemon or
+automatic resume. Saved successful reads remain reusable. A stale view explains
+that it must be reopened, disabling start/reread rather than leaving enabled
+no-op actions; its Close stays available. Journal failures stay explicit.
+
+Tapping a LOCAL FILE in either offline EPUB or online BookOrbit tag results
+now reveals/selects it on its actual Bookshelf profile/folder/page with its
+cover/description, NOT ReaderUI. Revalidate the source/tag/file first and retire
+the worker before navigation. Resolve the collapsed destination size; spine
+capacity is not a real page boundary, so anchor the actual target. Handle
+unprofiled books through the native folder listing without making profiles or
+clearing filters. Missing/filtered targets explain failure, never select/open a
+different book. Do not use native _previewBook as a pure preview API: repeated
+calls can open the reader. Set ephemeral preview/selection explicitly and
+rebuild only the visible shelf after its normal owner transition. No reading
+status/progress/history/sync, permanent chip/profile creation or settings reset.
+Long-press book details and unrelated ordinary search/reader actions retain
+their existing behavior. All new help/errors are SV/EN. This supersedes only
+the earlier tag-result single-tap reader-opener requirement below. Publication
+and real device sleep/reveal acceptance are separate decisions.
+
 November 1 explicit index-manager approval: **Settings > Bookshelf > Tags and
 indexing** is a passive SV/EN page until Update, Continue or confirmed Reread.
 Its local-only all-configured-library worker shares scan depth, bounded archive/

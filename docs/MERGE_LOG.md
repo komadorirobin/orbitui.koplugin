@@ -4,6 +4,34 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-02 — local RC1 tag lifecycle fix and shelf-preview navigation
+
+After the user reports a result modal stuck at 2,090/3,341 following sleep,
+synthetic navigation invalidation reproduces the stuck busy state/dead guarded
+Close without proving the exact device trigger. The user explicitly requests
+the fix and a narrow freeze exception: tag-hit title taps should select/reveal
+the book in Bookshelf with its cover/description, not open ReaderUI. Implement
+in existing core/adapters only. Visible lifetime owns Close; expired work
+releases busy/index ownership, never adopts stale results. Suspend pauses
+local search/indexing, keeps completed cache reads, avoids sleeping repaint and
+never autoresumes. Changed views explain reopening instead of enabled no-op
+start actions; valid views support explicit Refresh/Continue. No cache wipe,
+schema/default/sync/pin/bootstrap/component/assets/language removal.
+
+Both local and BookOrbit tag titles now retire search work and reveal the
+actual file on its native profile/folder/page, with collapsed-size pagination,
+spine target anchoring, explicit non-opening hero/selection and unprofiled
+native-folder fallback. Repeated preview must never invoke _previewBook's
+second-call opening. Existing long-press details and unrelated search/readers
+stay unchanged. Missing/filtered/deleted/stale/hidden/active-reader targets
+cannot silently select/read a different book. SV/EN help and regressions cover
+the user count, suspend/wake, Stop/Close before/after retirement, cache reuse,
+and nine native-method shelf-reveal scenarios. Both full scripts, 43 catalogs
+and latest targeted/native SQLite/EPUB/UIManager checks pass; private package
+checks follow in TESTING. All affected physical RC gates remain open. This is
+local implementation only: no push/publication, VERSION bump, RC2 tag, device
+installation, real-book/remote sync write or server action in this request.
+
 ## 2026-11-02 — 1.0.0-rc.1 preparation and feature freeze
 
 User approves moving to RC1 and the proposed feature freeze, and requests the

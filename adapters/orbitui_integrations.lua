@@ -740,7 +740,8 @@ function M.embeddedTagRequest(source, task, current, done)
         finished = true
         if index then index.close(); index = nil end
         if progress and UI:isWidgetShown(progress) then UI:close(progress) end
-        if current() then done(body, err) end
+        if current() then done(body, err)
+        elseif task.on_retired then task.on_retired() end
     end
     local control = { cancel = function()
         cancelled = true
@@ -895,16 +896,19 @@ function M.startEmbeddedTagIndex(mode, resume, current, changed, replace_invalid
         job.phase = phase
         return tagCache().write("index_job_v1", job) ~= false
     end
-    local function retire()
+    local function retire(err)
         if retired then return end
         retired, active_index = true, nil
-        save(nil, "paused")
+        local saved = save(nil, "paused")
         M.invalidateEmbeddedTagSnapshots()
+        -- Release controls even after work ownership expires. The recipient
+        -- may clear busy/Close state, but must not adopt stale running work.
+        changed(M.embeddedTagIndexStatus(), saved and err or "journal_failed")
     end
     local function valid()
         if retired then return false end
-        if not current() then retire(); return false end
-        if not source:current() then retire(); changed(M.embeddedTagIndexStatus(), "stale"); return false end
+        if not current() then retire("cancelled"); return false end
+        if not source:current() then retire("stale"); return false end
         return true
     end
     controller.worker = M.embeddedTagRequest(source, { index_only = true, refresh = job.mode == "reread",

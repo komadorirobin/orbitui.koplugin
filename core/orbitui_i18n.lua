@@ -1,5 +1,9 @@
 -- OrbitUI-owned strings, independent of the two upstream translation catalogs.
 local sv = {
+    ["Tap a title to select the book on its shelf."] = "Tryck på en titel för att markera boken i bokhyllan.",
+    ["Library view changed. Close and reopen this page to continue. Completed tag reads are kept."] = "Biblioteksvyn har ändrats. Stäng och öppna sidan igen för att fortsätta. Redan lästa taggar behålls.",
+    ["Search paused. Close and reopen the tag search to continue. Completed tag reads are kept."] = "Sökningen har pausats. Stäng och öppna taggsökningen igen för att fortsätta. Redan lästa taggar behålls.",
+    ["Could not find this book on the shelf. Check the library folders and filters."] = "Kunde inte hitta boken i bokhyllan. Kontrollera bibliotekets mappar och filter.",
     ["Image contrast"] = "Bildkontrast",
     ["Covers and ornaments contrast boost"] = "Kontrastförstärkning för omslag och dekorationer",
     ["Wallpaper contrast"] = "Bakgrundsbildens kontrast",

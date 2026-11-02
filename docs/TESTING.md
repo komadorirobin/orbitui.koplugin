@@ -1,5 +1,62 @@
 # Verification and device acceptance
 
+## RC1 tag-search stall and shelf reveal — local fix, device retest open
+
+November 2 user report: offline tag-result modal stays at 2,090/3,341; Stop
+search and Close visibly respond but perform no action after device sleep.
+The screenshot is the result search, not the separate explicit index manager.
+No connected ADB device; the exact on-device trigger/logs remain unverified.
+
+Diagnostic `test-results/rc1-tag-stall-20261102.lua` injects checks into the
+unchanged local-tag fixture. With 3,341 mock EPUBs, it advances 2,090 reads,
+changes `_simpleui_navigation_generation` while leaving the modal shown, then
+drains tasks and invokes both footer callbacks. The worker retires without
+clearing the view's busy state; Stop search remains and guarded Close no-ops.
+Direct native modal close works and all 2,090 written cache entries remain.
+The index manager also retains a dead guarded Close after such invalidation.
+Both Lua/LuaJIT pass the 38 existing cases and these two diagnostic assertions;
+these assertions reproduce defects, not a fix or physical sleep acceptance.
+No runtime implementation, tag/assets/release, device or user data is changed.
+Do not infer a damaged EPUB or lost reading data from the frozen count.
+
+The user subsequently requests the fix and title-tap navigation to the book's
+actual shelf, selected with cover/description rather than opening ReaderUI.
+Local implementation separates visible-modal lifetime from work validity.
+Stale work releases busy controls/index ownership and never adopts results;
+Close is always usable while its own modal is shown. Suspend pauses/checkpoints
+without painting or automatic wake work; explicit Continue/Refresh reuses
+successful reads. A changed navigation generation asks to reopen the page and
+disables unsafe start/reread controls. Stop also settles stale work before its
+queued callback notices invalidation. Existing tag cache/database schemas stay.
+
+Local and BookOrbit tag hits recheck source/file and local membership, retire
+the search, and use the normal shelf transition plus native folder/page
+resolution. Selection/hero preview is set explicitly; native _previewBook can
+open on a repeated call and is deliberately never used. Resolve pagination
+after collapsing an expanded view; spine pages anchor the actual target, not
+an estimated capacity. Unprofiled hits use the actual native folder listing
+without creating permanent profiles/chips or clearing filters. Missing files,
+missing/filtered targets, hidden/unavailable shelves, superseded requests and
+newly active readers cannot open/select another book. Parked-reader shelves
+remain supported. Long-press details and non-tag reader/search actions retain
+their existing paths. New labels/help are Swedish/English.
+
+Evidence: `test-results/rc1-tag-fix-20261102/`. Both complete scripts pass
+134 Python tests/four inherited optional skips, 103 root files, 542 Bookshelf
+suites/zero failures/three inherited SQLite skips and 13 SimpleUI files;
+43 catalogs pass. Latest modified-root checks include 45 local-tag cases,
+16 BookOrbit-tag cases and nine shelf-reveal cases under Lua/LuaJIT. Native
+real SQLite, libarchive/EPUB/JSON and UIManager input supplements pass (47 local
+tag cases with native supplements). Reveal tests execute the native profile
+location, folder ordering, hydration and selected-file methods, including
+repeated selection with reader opening forbidden. Native font/panel/touch,
+physical sleep/wake at full 3,341 files, actual cover/description/selected-cover
+layout on Bigme/Boox and real cold/warm/parked navigation still need device
+retests before this RC1 blocker can be closed. No publication, device install,
+reading-data mutation or server deployment. Private packaging results follow;
+public RC1 bytes/tag/version must not be replaced by this local same-version
+verification candidate.
+
 ## 1.0.0-rc.1 — frozen candidate and 1.0 exit criteria
 
 User approves the RC1 direction/feature freeze on November 2. Candidate source

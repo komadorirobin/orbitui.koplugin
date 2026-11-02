@@ -215,6 +215,22 @@ mappar och sökdjup gäller. Räknare visar lästa, återanvända och misslyckad
 filer; oläsbara filer blir inte falska tomträffar. Sökningar/chip behåller sin
 visningsgräns på 400 träffar, även om fler böcker är indexerade.
 
+**Next candidate (local, not in published RC1):** sleep pauses offline tag
+search/indexing without automatically restarting it on wake. Completed reads
+are kept; Continue resumes the index manager. If navigation changed, Close
+still works and the page explains that it must be reopened. Tapping a title in
+either local or BookOrbit tag results selects the book on its actual shelf,
+showing its cover/description without opening it for reading. Long-press still
+opens book details; other search/reader open actions are unchanged.
+
+**Nästa kandidat (lokalt, inte i publicerade RC1):** vila pausar lokal
+taggsökning/indexering utan automatisk återstart. Redan lästa taggar behålls;
+Fortsätt återupptar indexeringen. Om navigationen ändrats fungerar Stäng ändå,
+och sidan förklarar att den behöver öppnas igen. Ett titeltryck i lokala eller
+BookOrbit-taggträffar markerar boken i rätt bokhylla och visar omslag/beskrivning
+utan att öppna läsvyn. Långtryck öppnar fortfarande bokdetaljer; övriga
+sök- och läsåtgärder är oförändrade.
+
 **OrbitUI settings > Integrations > BookOrbit** has a master switch and
 independent controls for the BookOrbit list, manual status actions and online
 tags, available from Beta 23. They do not disable the separate BookOrbit plugin's

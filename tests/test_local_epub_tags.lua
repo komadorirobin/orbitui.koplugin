@@ -301,10 +301,12 @@ H.test("existing Tags tab displays local pills offline and opens the shared loca
     section.pills[1].on_tap(); H.eq(modal._dismissed, true)
     flush(); H.eq(getmetatable(last_widget), Modal); H.eq(last_widget.shown, true) -- inline search, no blocking notice
 end)
-H.test("local result actions retain real reader paths and refuse a changed tag/file", function()
+H.test("local result actions reveal real shelf paths without reading and refuse a changed tag/file", function()
     reset()
     local opened_file
-    local modal = require("core/orbitui_search").embeddedTag(tag, { open_book = function(file) opened_file = file end })
+    local modal = require("core/orbitui_search").embeddedTag(tag, {
+        open_book = function() error("a tag result must not open ReaderUI") end,
+        reveal_book = function(file) opened_file = file end })
     flush(); H.eq(modal.config.item_count(), 2)
     local book = modal.config.item_at(1)
     modal.config.cell_renderer(book, { w = 200, h = 50 })
@@ -405,13 +407,27 @@ H.test("inline matches are usable before completion; stopping keeps honest parti
     H.eq(opened, 83); H.eq(modal.config.item_count(), 2)
     assert(not modal.config.intro:find("incomplete", 1, true))
 end)
-H.test("opening a checked partial match retires the worker and cannot read more archives", function()
+H.test("revealing a checked partial match retires the worker and cannot read more archives", function()
     reset()
     local opened_file
-    local modal = require("core/orbitui_search").embeddedTag(tag, { open_book = function(file) opened_file = file end })
+    local modal = require("core/orbitui_search").embeddedTag(tag, {
+        open_book = function() error("a tag result must not open ReaderUI") end,
+        reveal_book = function(file) opened_file = file end })
     flush(1); H.eq(modal.config.item_count(), 1)
     modal.config.on_cell_tap(modal.config.item_at(1))
     H.eq(opened_file, "/books/a.epub"); flush(); H.eq(opened, 1)
+end)
+H.test("default tag navigation reveals the shelf only once and never delegates to an injected reader opener", function()
+    reset()
+    local Context = require("core/orbitui_context")
+    local reveal, calls, target = Context.revealBook, 0
+    Context.revealBook = function(file) calls, target = calls + 1, file end
+    local modal = require("core/orbitui_search").embeddedTag(tag, {
+        open_book = function() error("must not open reader") end })
+    flush(1); local book = modal.config.item_at(1)
+    modal.config.on_cell_tap(book); modal.config.on_cell_tap(book); flush()
+    H.eq(calls, 1); H.eq(target, book.filepath); H.eq(opened, 1)
+    Context.revealBook = reveal
 end)
 H.test("changed scope clears partial results and reports stale work rather than complete-looking matches", function()
     reset()
@@ -420,6 +436,63 @@ H.test("changed scope clears partial results and reports stale work rather than 
     roots = { "/new" }; flush()
     H.eq(modal.config.item_count(), 0)
     H.eq(modal.config.intro, "Library folders changed. Refresh and try again.")
+end)
+H.test("a retired visible search releases Stop and Close at 2090 of 3341 without discarding successful reads", function()
+    reset()
+    local generation = UI._simpleui_navigation_generation
+    for i = 1, 3338 do add(string.format("/books/z%04d.epub", i), opf('[]')) end
+    archive_cost = .3
+    local modal = require("core/orbitui_search").embeddedTag(tag)
+    flush(2090); H.eq(opened, 2090)
+    assert(modal.config.intro:find("2090 of 3341 files", 1, true))
+    UI._simpleui_navigation_generation = generation + 1
+    flush(); H.eq(opened, 2090); H.eq(#queue, 0)
+    H.eq(modal.config.footer_rows[1][1].label_func(), "Refresh")
+    H.eq(modal.config.footer_rows[1][1].enabled_when(), false)
+    H.eq(modal.config.item_count(), 0) -- no stale match adoption
+    assert(modal.config.intro:find("Search paused", 1, true))
+    modal.config.footer_rows[1][2].on_tap(); H.eq(modal.shown, false)
+    local saved = 0
+    for file in pairs(disk) do if file:sub(1, 1) == "/" then saved = saved + 1 end end
+    H.eq(saved, 2090)
+    UI._simpleui_navigation_generation = generation
+end)
+H.test("Stop also settles a stale search before its queued worker notices navigation", function()
+    reset()
+    local generation = UI._simpleui_navigation_generation
+    local modal = require("core/orbitui_search").embeddedTag(tag)
+    flush(1)
+    UI._simpleui_navigation_generation = generation + 1
+    modal.config.footer_rows[1][1].on_tap()
+    H.eq(modal.config.footer_rows[1][1].label_func(), "Refresh")
+    flush(); H.eq(opened, 1)
+    modal.config.footer_rows[1][2].on_tap(); H.eq(modal.shown, false)
+    UI._simpleui_navigation_generation = generation
+end)
+H.test("sleep pauses a search without painting or autoresuming; explicit Refresh reuses completed reads", function()
+    reset()
+    local modal = require("core/orbitui_search").embeddedTag(tag)
+    flush(1)
+    local refresh, paints = modal.refresh, 0
+    modal.refresh = function() paints = paints + 1 end
+    modal:onSuspend(); flush(); H.eq(opened, 1); H.eq(paints, 0)
+    H.eq(modal.config.footer_rows[1][1].label_func(), "Refresh")
+    modal:onResume(); flush(); H.eq(opened, 1); H.eq(paints, 1)
+    modal.config.footer_rows[1][1].on_tap(); flush(); H.eq(opened, 3)
+    H.eq(modal.config.item_count(), 2)
+    modal.refresh = refresh; modal:onClose()
+end)
+H.test("sleep plus navigation leaves a closable search with no stale result action", function()
+    reset()
+    local generation = UI._simpleui_navigation_generation
+    local modal = require("core/orbitui_search").embeddedTag(tag, {
+        reveal_book = function() error("retired match must not navigate") end })
+    flush(1); local book = modal.config.item_at(1)
+    modal:onSuspend(); UI._simpleui_navigation_generation = generation + 1
+    modal:onResume(); flush(); H.eq(opened, 1)
+    modal.config.on_cell_tap(book)
+    modal.config.footer_rows[1][2].on_tap(); H.eq(modal.shown, false)
+    UI._simpleui_navigation_generation = generation
 end)
 H.test("progress snapshots do not alias worker paths and updates are throttled", function()
     reset(); cache_cost = .009
@@ -628,6 +701,36 @@ H.test("index manager opens passively, exposes real pause/resume actions and ign
     manager:onClose(); flush(); H.eq(opened, 4)
     H.eq(Integration.embeddedTagIndexStatus().phase, "paused")
 end)
+H.test("navigation retirement pauses the index manager, releases ownership and always permits Close", function()
+    reset()
+    local generation = UI._simpleui_navigation_generation
+    local modal = require("core/orbitui_search").tagIndex()
+    modal.config.footer_rows[1][1].on_tap(); flush(1)
+    UI._simpleui_navigation_generation = generation + 1
+    flush(); H.eq(opened, 1)
+    H.eq(Integration.embeddedTagIndexStatus().phase, "paused")
+    H.eq(modal.config.footer_rows[2][2].enabled_when(), false)
+    assert(modal.config.intro():find("Close and reopen", 1, true))
+    modal.config.footer_rows[3][1].on_tap(); H.eq(modal.shown, false)
+    local next_modal = require("core/orbitui_search").tagIndex()
+    next_modal.config.footer_rows[1][2].on_tap(); flush(); H.eq(opened, 3)
+    H.eq(Integration.embeddedTagIndexStatus().phase, "complete")
+    next_modal:onClose(); UI._simpleui_navigation_generation = generation
+end)
+H.test("sleep checkpoints and pauses explicit indexing without a sleeping paint or automatic wake scan", function()
+    reset()
+    local modal = require("core/orbitui_search").tagIndex()
+    modal.config.footer_rows[1][1].on_tap(); flush(1)
+    local refresh, paints = modal.refresh, 0
+    modal.refresh = function() paints = paints + 1 end
+    modal:onSuspend(); flush(); H.eq(opened, 1); H.eq(paints, 0)
+    H.eq(Integration.embeddedTagIndexStatus().phase, "paused")
+    modal:onResume(); flush(); H.eq(opened, 1); H.eq(paints, 1)
+    H.eq(modal.config.footer_rows[1][2].enabled_when(), true)
+    modal.config.footer_rows[1][2].on_tap(); flush(); H.eq(opened, 3)
+    H.eq(Integration.embeddedTagIndexStatus().phase, "complete")
+    modal.refresh = refresh; modal:onClose()
+end)
 if os.getenv("ORBITUI_NATIVE_UI_MANAGER") then
     H.test("native handleInput polls cancellation between slow archive reads after repaint", function()
         for _, index_only in ipairs{ false, true } do
@@ -714,6 +817,10 @@ H.test("all embedded-tag strings have Swedish translations while literal tags st
     H.eq(_("Pause indexing"), "Pausa indexering")
     H.eq(string.format(_("%d of %d EPUB files checked"), 3001, 3342), "3001 av 3342 EPUB-filer kontrollerade")
     H.eq(_("Stop search"), "Stoppa sökning")
+    H.eq(_("Tap a title to select the book on its shelf."), "Tryck på en titel för att markera boken i bokhyllan.")
+    assert(_("Search paused. Close and reopen the tag search to continue. Completed tag reads are kept."):find("Sökningen har pausats", 1, true))
+    assert(_("Library view changed. Close and reopen this page to continue. Completed tag reads are kept."):find("Biblioteksvyn har ändrats", 1, true))
+    assert(_("Could not find this book on the shelf. Check the library folders and filters."):find("Kunde inte hitta", 1, true))
     G_reader_settings = old
 end)
 -- Optional supplement uses the unmodified native KOReader archive reader and

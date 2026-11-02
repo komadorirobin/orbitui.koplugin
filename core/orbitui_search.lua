@@ -341,6 +341,7 @@ local function tagSearch(tag, opts)
     local intro = embedded and _("Only EPUBs on this device. All library profiles are included; the library's scan-depth setting applies. No connection is needed.")
         or _("Only BookOrbit-linked books on this device. All library profiles are included.")
     if embedded and opts.profile then intro = _("Only EPUBs in the selected library. The scan-depth setting applies. No connection is needed.") end
+    intro = intro .. " " .. _("Tap a title to select the book on its shelf.")
     local function failureText(err)
         if embedded and err == "stale" then return _("Library folders changed. Refresh and try again.") end
         return embedded and Integration.embeddedTagError(err) or Integration.bookOrbitError(err)
@@ -348,15 +349,29 @@ local function tagSearch(tag, opts)
     local UI, Screen = require("ui/uimanager"), require("device").screen
     local fs = require("libs/libkoreader-lfs")
     local modal, retired, busy, data_session = nil, false, false, nil
+    local sleeping, paused = false, false
     local worker
     local records, visible, query = {}, {}, ""
     local generation = UI._simpleui_navigation_generation
     session = session + 1
     local request = session
-    local function current()
+    local function alive()
         return not retired and modal and UI:isWidgetShown(modal)
+    end
+    local function current()
+        return alive() and not sleeping
             and request == session and generation == UI._simpleui_navigation_generation
             and (not opts.is_current or opts.is_current())
+    end
+    local function render()
+        if alive() and not sleeping then modal:refresh() end
+    end
+    local function retireWork()
+        busy, worker, paused = false, nil, true
+        if not alive() then return end
+        records, visible, data_session = {}, {}, nil
+        modal.config.intro = _("Search paused. Close and reopen the tag search to continue. Completed tag reads are kept.")
+        render()
     end
     local function available(file) return fs.attributes(file, "mode") == "file" end
     local function filter()
@@ -377,7 +392,7 @@ local function tagSearch(tag, opts)
             if ok then source = value end
         else source, err = Integration.bookOrbitSession() end
         if not source then modal.config.intro = failureText(err); modal:refresh(); return end
-        busy = true
+        busy, paused = true, false
         records, visible, data_session = {}, {}, nil
         modal.config.intro = intro
         modal:refresh()
@@ -416,6 +431,7 @@ local function tagSearch(tag, opts)
         if embedded then
             worker = Integration.embeddedTagRequest(source, { tag = tag, rule = rule, profile = opts.profile,
                 origin = opts.origin, refresh = reread == true,
+                on_retired = retireWork,
                 on_progress = function(result) update(result, nil, true) end }, current, done)
         else Integration.bookOrbitRequest(source, function(s) return s:matches(tag) end, current, done) end
     end
@@ -440,12 +456,14 @@ local function tagSearch(tag, opts)
     end
     local footer = {{ { label = _("Refresh"), label_func = function()
         return _(embedded and busy and "Stop search" or "Refresh")
+    end, enabled_when = function()
+        return current() or embedded and busy and worker ~= nil
     end, on_tap = function()
         if embedded and busy and worker then worker.cancel() else fetch(false) end
     end },
-        { label = _("Close"), on_tap = function() if current() then modal:onClose() end end } }}
+        { label = _("Close"), on_tap = function() if alive() then modal:onClose() end end } }}
     if embedded then
-        footer[#footer + 1] = {{ label = _("Reread all EPUB tags…"), enabled_when = function() return not busy end, on_tap = function()
+        footer[#footer + 1] = {{ label = _("Reread all EPUB tags…"), enabled_when = function() return current() and not busy end, on_tap = function()
             if not current() or busy then return end
             modal:onClose()
             M.tagIndex{ confirm_reread = true }
@@ -473,9 +491,11 @@ local function tagSearch(tag, opts)
         end,
         on_cell_tap = function(book)
             if not canOpen(book) then return end
+            local reveal = opts.reveal_book or Context.revealBook
             modal:onClose()
-            local open = opts.open_book or Context.openBook
-            open(book.filepath, bookMeta(book))
+            -- A tag hit is navigation/preview, never a ReaderUI open (even
+            -- when a caller supplied its usual open_book callback).
+            reveal(book.filepath)
         end,
         cell_long_tap = function(book)
             if canOpen(book) then
@@ -489,6 +509,19 @@ local function tagSearch(tag, opts)
             if opts.on_closed then opts.on_closed() end
         end,
     } }
+    function modal:onSuspend()
+        if not embedded then return end
+        sleeping = true
+        if worker then worker.cancel() end
+    end
+    function modal:onResume()
+        if not embedded then return end
+        sleeping = false
+        if busy and not current() then
+            if worker then worker.cancel() end
+            retireWork()
+        elseif paused then render() end
+    end
     UI:show(modal)
     fetch()
     return modal
@@ -506,16 +539,28 @@ function M.tagIndex(opts)
     opts = opts or {}
     local I, UI = require("adapters/orbitui_integrations"), require("ui/uimanager")
     local modal, worker, retired, busy = nil, nil, false, false
+    local sleeping = false
     local status, failure = I.embeddedTagIndexStatus()
     local generation = UI._simpleui_navigation_generation
+    local function alive()
+        return not retired and modal and UI:isWidgetShown(modal)
+    end
     local function current()
-        return not retired and modal and UI:isWidgetShown(modal) and generation == UI._simpleui_navigation_generation
+        return alive() and not sleeping and generation == UI._simpleui_navigation_generation
     end
     local function render()
         if current() then modal:refresh() end
     end
     local function update(value, err)
-        if not current() then return end
+        -- Retirement must release controls even for an expired generation.
+        -- Never paint or adopt running work for a stale/sleeping owner.
+        if not current() then
+            busy, worker = false, nil
+            if not alive() then return end
+            status, failure = I.embeddedTagIndexStatus(), err ~= "cancelled" and err or nil
+            if not sleeping then modal:refresh() end
+            return
+        end
         status, failure = value, err ~= "cancelled" and err or nil
         busy = value and value.phase == "running" and not err or false
         if not busy then worker = nil end
@@ -540,6 +585,9 @@ function M.tagIndex(opts)
         })
     end
     local function summary()
+        if generation ~= UI._simpleui_navigation_generation then
+            return _("Library view changed. Close and reopen this page to continue. Completed tag reads are kept.")
+        end
         if failure then
             if failure == "stale" then return _("Library folders or scan depth changed. Start a new index update.") end
             if failure == "invalid_job" then return _("The saved indexing job is unreadable or from a newer version. Starting a new job requires confirmation; tag caches are kept.") end
@@ -564,19 +612,31 @@ function M.tagIndex(opts)
             return require("lib/bookshelf_picker_cell").render({ label = counts, subtitle = text }, dimen)
         end,
         footer_rows = {
-            {{ label = _("Update tag index"), enabled_when = function() return not busy end,
+            {{ label = _("Update tag index"), enabled_when = function() return current() and not busy end,
                 on_tap = function() if failure == "invalid_job" then confirm("update") else start("update", false) end end },
              { label = _("Continue indexing"), enabled_when = function()
-                return not busy and status ~= nil and status.current_scope and status.phase ~= "complete"
+                return current() and not busy and status ~= nil and status.current_scope and status.phase ~= "complete"
              end, on_tap = function() start(nil, true) end }},
-            {{ label = _("Reread all EPUB tags…"), enabled_when = function() return not busy end,
+            {{ label = _("Reread all EPUB tags…"), enabled_when = function() return current() and not busy end,
                 on_tap = function() confirm("reread") end },
-             { label = _("Pause indexing"), enabled_when = function() return busy end,
+             { label = _("Pause indexing"), enabled_when = function() return current() and busy end,
                 on_tap = function() if current() and worker then worker.cancel() end end }},
-            {{ label = _("Close"), on_tap = function() if current() then modal:onClose() end end }},
+            {{ label = _("Close"), on_tap = function() if alive() then modal:onClose() end end }},
         },
         on_closed = function() retired = true; if worker then worker.cancel(); worker = nil end end,
     } }
+    function modal:onSuspend()
+        sleeping = true
+        if worker then worker.cancel() end
+    end
+    function modal:onResume()
+        sleeping = false
+        if worker and not current() then worker.cancel() end
+        if alive() then
+            status = I.embeddedTagIndexStatus()
+            modal:refresh()
+        end
+    end
     UI:show(modal)
     if opts.confirm_reread then confirm("reread") end
     return modal

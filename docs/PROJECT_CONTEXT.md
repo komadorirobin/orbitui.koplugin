@@ -22,6 +22,31 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-02
 
+- **RC1 tag-search lifecycle fix and shelf reveal implemented locally, unreleased.**
+  User reports the visible offline tag search stuck at 2,090/3,341 after device
+  sleep; Stop search and Close highlight but do nothing. No ADB device is
+  connected. A synthetic navigation-generation change while that modal remains
+  shown reproduces both dead controls and a stopped worker at the same counts
+  under Lua and LuaJIT; the index manager has the same stale-Close condition.
+  This confirms a code path, not that sleep caused the user's exact incident.
+  User explicitly approves the fix and a narrow UX change during the freeze:
+  tag-result title taps reveal/select the book on its shelf, not ReaderUI.
+  Close now checks view lifetime rather than expired work ownership. Retired
+  work releases busy/index ownership; sleep pauses without painting/autoresume.
+  Existing successful cache entries survive; stale views explain reopening.
+  Offline and online tag results use a guarded native-profile/folder/page
+  reveal, with collapsed-size pagination and target anchoring in spine mode.
+  Explicit preview avoids native _previewBook's second-call reader opening;
+  long-press details and unrelated reader/search callbacks remain unchanged.
+  Native local-file checks/supersession/missing-target/active-reader guards,
+  SV/EN help and regressions are added without new installed paths, component
+  source/pin/default/bootstrap/assets/sync/reading-data changes. Both complete
+  scripts and 43 catalogs pass; latest targeted/native archive/SQLite/UIManager
+  tests also pass. Package verification follows before handoff. Device sleep/
+  full-library/reveal acceptance remains open; no RC2 release, push, device
+  installation or server action is authorized in this step. Evidence:
+  `test-results/rc1-tag-fix-20261102/` and earlier diagnostic reproduction.
+
 - **RC1 is public in preview; feature freeze active, not stable 1.0.** User approves the
   proposed RC1 direction; VERSION becomes `1.0.0-rc.1` on
   `release/1.0.0-rc.1-20261102`, based on `bf59c980`. Exact reviewed component

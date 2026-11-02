@@ -206,23 +206,25 @@ package.loaded["lib/bookshelf_book_repository"] = { buildBookMeta = function(fil
     return { filepath = file, title = "Book " .. file, author = "Author" }
 end }
 package.loaded["lib/bookshelf_picker_cell"] = { render = function(record) return record end }
-H.test("tag results paginate natively and hydrate only visible local books, with original reader actions", function()
+H.test("online tag results hydrate visible local books and reveal the shelf instead of opening ReaderUI", function()
     reset(30)
     local opened, open_record
-    local modal = Search.bookOrbitTag(tag, { open_book = function(file, record) opened, open_record = file, record end })
+    local modal = Search.bookOrbitTag(tag, {
+        open_book = function() error("a tag result must not open ReaderUI") end,
+        reveal_book = function(file) opened = file end })
     H.eq(metadata, 0); flush(); H.eq(metadata, 0)
     H.eq(modal.config.grid_cols, 1); H.eq(modal.config.item_count(), 4)
     local book = modal.config.item_at(1)
     H.eq(modal.config.cell_renderer(book, {}).subtitle, "Author"); H.eq(metadata, 1)
     modal.config.on_search_submit("14.epub"); H.eq(modal.config.item_count(), 1)
     book = modal.config.item_at(1)
-    modal.config.on_cell_tap(book); H.eq(opened, "/books/14.epub"); H.eq(open_record.filepath, opened)
+    modal.config.on_cell_tap(book); H.eq(opened, "/books/14.epub")
     modal.config.footer_rows[1][1].on_tap(); flush(); H.eq(#requests, 1)
 end)
 H.test("closed, replaced, changed-account and removed-file result callbacks cannot navigate", function()
     reset(14)
     local opened = 0
-    local modal = Search.bookOrbitTag(tag, { open_book = function() opened = opened + 1 end })
+    local modal = Search.bookOrbitTag(tag, { reveal_book = function() opened = opened + 1 end })
     flush()
     local book = modal.config.item_at(1)
     files[book.filepath] = nil; modal.config.on_cell_tap(book); H.eq(opened, 0)
