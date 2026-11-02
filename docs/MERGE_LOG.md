@@ -28,6 +28,19 @@ final local/sealed/native/package/history/secret checks are recorded in TESTING
 and `test-results/upstream-20261102/`. Physical reporting-view acceptance and
 the actual causes of this device's 469 skips remain open.
 
+Candidate `c2237ca3` / private ZIP `be284f81` (9,423,713 bytes) passes both
+full scripts, 43 catalogs, syntax/module identity checks, both sealed roots and
+native input/Trapper/span/SQLite/EPUB/UIManager/night/contrast suites. Importer
+28-case supplements retain all 1,080 baseline decisions. Native Beta 5/9/27/28
+installer scenarios pass upgrade/restart/rollback/recovery/snapshot/cleanup.
+Exact source/manifest/path/provenance/artwork checks pass at the old 2,000
+API-1 files. Public dist/checksum `60fc00b3` are restored. Initial outgoing
+audit covers 17 blobs; Gitleaks reports no leaks in five non-merge commits.
+Fresh watch finds no missing commits in either component. No runtime change
+versus pre-merge `f0769cd9`, apart from the documented source pin/docs. The
+verified result proceeds to the standing main push; no publication/device/
+server action or new measured speedup is implied. CI/push receipt follows.
+
 ## 2026-11-01 — local reading-status result reporting follow-up
 
 After Beta 29, user reports "0 updated, 469 protected or conflicting" and

@@ -22,6 +22,30 @@ Physical reporting scroll/Close/Back/legibility and original 469 skip causes
 remain unverified; no speed improvement or new visible feature is attributed
 to the two upstream documentation commits. Final results are recorded below.
 
+Verified source `c2237ca3b99fb46ebb00bd6d9a0298283b4c3473`: both full scripts
+pass 133 Python tests/four inherited skips, all 102 root files, 542 Bookshelf
+suites/zero failures/three inherited SQLite skips and 13 SimpleUI files. All
+43 catalogs, 1,164 syntax files and 405 module identities pass. Both sealed
+roots and minimum/current native input/Trapper/span, real SQLite/EPUB/UIManager
+and Android/frame night/contrast supplements pass; importer supplements remain
+28 cases including 1,080 Beta 29 decision comparisons. Native older-installer
+scenarios from Beta 5/9/27/28 pass verified extraction, activation/restart/code
+rollback, interrupted recovery, external snapshots and obsolete-runtime cleanup.
+
+Private same-version ZIP
+`be284f8139780d44de7cc2b017421badb52b094585fc72915d605d2017f92943`,
+9,423,713 bytes / 27,856,571 expanded; manifest
+`82330898a04fa6c1625f6eb0de306fdad19afe203f0a59f3c740744b490cc871`.
+Exact optimized source projection, all 1,999 inventory sizes/hashes, identical
+2,000 installed paths, unchanged bootstrap/assets/module map and provenance
+pass. The merge adds no runtime code versus `f0769cd9`; existing status-report
+work is the only new runtime versus public Beta 29. Initial outgoing history
+audit checks 17 new blobs for held artwork; Gitleaks scans five non-merge
+commits with no leaks. Fresh read-only watch finds zero missing commits in both
+components. Public Beta 29 ZIP/checksum are restored byte-for-byte (`60fc00b3`).
+No public release, tag, OTA channel, device or server change. Verification-only
+receipts do not rebuild the private candidate. Final push/CI status follows.
+
 ## November 1 status-import reporting follow-up (local, unreleased)
 
 User approves correcting the ambiguous skipped summary after Beta 29. No

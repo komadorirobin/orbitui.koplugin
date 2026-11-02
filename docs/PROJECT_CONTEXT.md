@@ -33,8 +33,14 @@ and correct this file in the same change.
   unchanged. Tests/package/audit results: TESTING/MERGE_LOG and
   `test-results/upstream-20261102/`. No new visual change or measured speedup;
   physical status-view and original skip-reason acceptance remain open.
+  Candidate `c2237ca3` / private ZIP `be284f81` passes both full scripts,
+  43 catalogs, both sealed roots/native suites, four older-installer scenarios
+  and exact 2,000-path/source/history/secret checks. Fresh watch shows zero
+  missing commits. Public dist `60fc00b3` is restored. Main push/CI receipt
+  follows separately; no beta/tag/OTA/device/server action is authorized.
 
-- **Local, unreleased status-import reporting follow-up.** User approves fixing
+- **Status-import reporting follow-up, included in the maintenance result but
+  unreleased.** User approves fixing
   the misleading "0 updated, 469 protected or conflicting" summary. Existing
   import/write rules, OFF default, batches/throttle/owners remain unchanged.
   New SV/EN details separate unchanged server/local status, missing local files/
