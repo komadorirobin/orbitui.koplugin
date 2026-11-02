@@ -1240,7 +1240,7 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 November 2 explicit bug-fix and tag-hit navigation approval during the RC
 freeze: a work-generation guard must not disable Close on a still-visible
-tag-result/index modal. Retired local work releases busy state, closes/flushed
+tag-result/index modal. Retired local work releases busy state, closes/flushes
 derived index ownership, and cannot adopt stale results or navigate. Suspend
 pauses local search/indexing; no painting while asleep, startup daemon or
 automatic resume. Saved successful reads remain reusable. A stale view explains

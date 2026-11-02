@@ -32,6 +32,19 @@ checks follow in TESTING. All affected physical RC gates remain open. This is
 local implementation only: no push/publication, VERSION bump, RC2 tag, device
 installation, real-book/remote sync write or server action in this request.
 
+Final source `cca558c4` (initial `8d89a04f` plus the eager native-button
+construction guard) passes both complete scripts again, 43 catalogs, both
+sealed root suites and native SQLite/EPUB/UIManager supplements. 46 local-tag
+cases (48 with native), 16 BookOrbit-tag and nine native-method reveal cases;
+103 root files / 542 Bookshelf suites / 13 SimpleUI files, zero new failures.
+Private ZIP `61b90676` / 9,438,262 bytes passes exact source/manifest/inventory
+checks at the identical 2,000 API-1 paths. Components/pins/assets/bootstrap/
+VERSION/status-import implementation remain byte-unchanged. Held-artwork/history
+and Gitleaks audits pass. Public RC1 ZIP `dfc2cced` and tag `66410c3b` remain
+untouched. This same-version ZIP is private verification evidence only; never
+replace published RC1 with it. Documentation receipts do not rebuild it, and
+device lifecycle/reveal/full-library acceptance remains open. No push/release.
+
 ## 2026-11-02 — 1.0.0-rc.1 preparation and feature freeze
 
 User approves moving to RC1 and the proposed feature freeze, and requests the

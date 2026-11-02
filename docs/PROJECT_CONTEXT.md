@@ -42,7 +42,11 @@ and correct this file in the same change.
   SV/EN help and regressions are added without new installed paths, component
   source/pin/default/bootstrap/assets/sync/reading-data changes. Both complete
   scripts and 43 catalogs pass; latest targeted/native archive/SQLite/UIManager
-  tests also pass. Package verification follows before handoff. Device sleep/
+  tests also pass on exact sealed source `cca558c4`, private ZIP `61b90676`
+  (9,438,262 bytes), same 2,000 API-1 paths. Exact source/manifest/bootstrap/
+  component/pin/artwork/history/secret audits pass; status-import implementation
+  remains byte-unchanged. Public dist stays RC1 `dfc2cced`, not the private
+  same-version verification archive. Device sleep/
   full-library/reveal acceptance remains open; no RC2 release, push, device
   installation or server action is authorized in this step. Evidence:
   `test-results/rc1-tag-fix-20261102/` and earlier diagnostic reproduction.

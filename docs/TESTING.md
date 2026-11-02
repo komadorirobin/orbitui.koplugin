@@ -46,20 +46,34 @@ Evidence: `test-results/rc1-tag-fix-20261102/`. Both complete scripts pass
 suites/zero failures/three inherited SQLite skips and 13 SimpleUI files;
 43 catalogs pass. Latest modified-root checks include 46 local-tag cases,
 16 BookOrbit-tag cases and nine shelf-reveal cases under Lua/LuaJIT. Native
-real SQLite, libarchive/EPUB/JSON and UIManager input supplements pass (47 local
-tag cases before the eager-footer follow-up; 48 with that regression). A
-construction-time regression also checks real native footer evaluation order:
+real SQLite, libarchive/EPUB/JSON and UIManager input supplements pass (48 local
+tag cases with native supplements). A construction-time regression simulates
+eager native footer evaluation:
 Update must be enabled before show, while Pause/Continue stay disabled. Work
 still requires a shown owner; only button construction uses the valid-view
-guard without requiring the not-yet-shown modal. Reveal tests execute the native profile
+guard without requiring the not-yet-shown modal. Reveal tests execute native profile
 location, folder ordering, hydration and selected-file methods, including
 repeated selection with reader opening forbidden. Native font/panel/touch,
 physical sleep/wake at full 3,341 files, actual cover/description/selected-cover
 layout on Bigme/Boox and real cold/warm/parked navigation still need device
 retests before this RC1 blocker can be closed. No publication, device install,
-reading-data mutation or server deployment. Private packaging results follow;
-public RC1 bytes/tag/version must not be replaced by this local same-version
-verification candidate.
+reading-data mutation or server deployment.
+
+Final private candidate `cca558c4bbfe0d957ee88bde8869342b7369e232` (after
+initial implementation `8d89a04f`) passes BOTH complete scripts again, all
+43 catalogs, 1,165 syntax files / 405 module identities, both complete sealed
+root suites and the native SQLite/EPUB/UIManager supplements. Private ZIP
+`61b90676a596462961e6aff8c7f1642fb06762dce9324a879e28abcdc6616f63`,
+9,438,262 bytes / 27,899,750 expanded; manifest
+`a4c3e5c7403c343c0454e822a70bc3816cc5f37189560c59fbac9fd633c174a3`.
+All 1,999 inventory sizes/hashes match the exact optimized source, with
+identical 2,000 installed paths / bootstrap API 1. Component sources, pins,
+artwork, bootstrap, VERSION and the status-import implementation are byte
+unchanged. History/artwork and Gitleaks checks pass; no leaks found. Public
+dist remains original RC1 `dfc2cced`, and its tag remains `66410c3b`. Do not
+publish this private same-version archive as replacement RC1. Verification-only
+documentation receipts do not rebuild it. No push, tag/release/CI dispatch,
+device install or server operation; affected physical acceptance stays open.
 
 ## 1.0.0-rc.1 — frozen candidate and 1.0 exit criteria
 
