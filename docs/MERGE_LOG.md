@@ -41,6 +41,14 @@ versus pre-merge `f0769cd9`, apart from the documented source pin/docs. The
 verified result proceeds to the standing main push; no publication/device/
 server action or new measured speedup is implied. CI/push receipt follows.
 
+Audited fast-forward `78e67985..cb976654` to `origin/main` completes,
+including the earlier status-report implementation. CI **41392861973** passes
+both Lua/LuaJIT matrix jobs, complete suites/translations/package and Linux
+native OTA verification. Upstream-watch **41392861974** passes. Source/hash/
+history/secret and public-dist checks pass again before the push. This receipt
+is documentation-only and never rebuilds the candidate archive. No new beta,
+tag/OTA channel, device/server action or physical acceptance is implied.
+
 ## 2026-11-01 — local reading-status result reporting follow-up
 
 After Beta 29, user reports "0 updated, 469 protected or conflicting" and

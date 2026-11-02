@@ -22,7 +22,7 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-02
 
-- **Reviewed documentation-only Bookshelf merge, main push stage.** Fresh
+- **Reviewed documentation-only Bookshelf merge pushed to main, unreleased.** Fresh
   05:07 UTC check finds exactly two commits through
   `b512cd906cc494cc8d32ed6b9bdb582c12fe1078`; SimpleUI `fdf83c7d` is current.
   Unsquashed import `1882a227` changes only module README API-release/surface/
@@ -36,8 +36,11 @@ and correct this file in the same change.
   Candidate `c2237ca3` / private ZIP `be284f81` passes both full scripts,
   43 catalogs, both sealed roots/native suites, four older-installer scenarios
   and exact 2,000-path/source/history/secret checks. Fresh watch shows zero
-  missing commits. Public dist `60fc00b3` is restored. Main push/CI receipt
-  follows separately; no beta/tag/OTA/device/server action is authorized.
+  missing commits. Public dist `60fc00b3` is restored. Audited fast-forward
+  main `cb976654` includes the status-report work. CI **41392861973** passes
+  both matrix jobs, including Linux native OTA; upstream-watch **41392861974**
+  passes. This documentation receipt does not rebuild private/public bytes or
+  authorize a beta/tag/OTA/device/server action.
 
 - **Status-import reporting follow-up, included in the maintenance result but
   unreleased.** User approves fixing

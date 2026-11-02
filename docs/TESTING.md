@@ -46,6 +46,15 @@ components. Public Beta 29 ZIP/checksum are restored byte-for-byte (`60fc00b3`).
 No public release, tag, OTA channel, device or server change. Verification-only
 receipts do not rebuild the private candidate. Final push/CI status follows.
 
+Audited main push `78e67985..cb976654` completes. Runtime/source CI
+**[41392861973](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/41392861973)**
+passes both matrix jobs, including full suites, translations, packaging and
+Linux native OTA. Upstream-watch **41392861974** passes. The final pre-push
+audit checks 20 outgoing blobs with no held artwork and Gitleaks finds no
+secrets. This documentation-only receipt does not rebuild the private candidate
+or change public dist/checksum bytes. No beta/tag/OTA/device/server publication
+or physical status-view acceptance; the original 469 skip causes remain unknown.
+
 ## November 1 status-import reporting follow-up (local, unreleased)
 
 User approves correcting the ambiguous skipped summary after Beta 29. No
