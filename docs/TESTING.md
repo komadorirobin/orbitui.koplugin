@@ -1,5 +1,74 @@
 # Verification and device acceptance
 
+## 1.0.0-rc.1 — frozen candidate and 1.0 exit criteria
+
+User approves the RC1 direction/feature freeze on November 2. Candidate source
+starts at main `bf59c980`, retains Bookshelf `b512cd90` / SimpleUI `fdf83c7d`,
+and includes the already reviewed status-reporting fix. No additional runtime
+feature, upstream import, default/sync/data migration or bootstrap change.
+Retiring the unavailable Bookshelf-OS inspiration source is separate monitoring
+maintenance (`ffd6b56b`); the five remaining references collect successfully.
+Existing settings cards/quick controls and historical attribution remain.
+
+Publication is a distinct approval/verification gate; RC1 must be a prerelease
+in preview, never stable. Do not infer stable 1.0 approval from this preparation
+or from a green CI result. Evidence: `test-results/rc1-20261102/`. No ADB device
+is connected at preparation; no physical RC1 test or installation is claimed.
+
+Automated gates: both complete Lua/LuaJIT scripts, 43 catalogs, sealed all-root
+tests/native supplements, exact source/manifest/path/bootstrap/artwork/secret
+audits, and older-installer upgrade/restart/rollback/recovery including public
+Beta 29 -> RC1. New OTA tests require RC1 > Beta 29, RC2 > RC1, stable 1.0 > RC1,
+draft exclusion and preview-only discovery. Stable release/channel state stays
+unchanged. New monitor tests remove the retired source once without repeated
+dashboard comments; retained mappings/pins and generic guards remain unchanged.
+
+### Physical exit criteria (all open for the exact RC1 bytes)
+
+1. **Install and recovery:** fresh setup plus Beta 29 -> RC1 on the target
+   device. Preserve settings, standalone rollback, book sidecars/history and
+   optional-plugin state. Exercise real restart/code rollback and a controlled
+   interrupted update with independently verified backups; never deliberately
+   corrupt the user's only working installation.
+2. **Everyday reading:** Home -> Library/Manga -> actual EPUB/CBZ -> native menu
+   fast return to the right profile/chip/folder/page. Book details/metadata
+   refresh, bookmark/end-of-book, rotation and suspend/resume, including a
+   parked reader and repeated navigation. No reproduced crash, wrong-book/profile
+   opening or loss/reset of reading data. Check both SV/EN controls and Close/Back.
+3. **Large library:** finish a full 3,000+ EPUB tag index, not a partial counter;
+   pause/resume after restart, retry errors, open AND/OR tag chips and partial/
+   completed results. Record actual cold and warm Library/Manga tap-to-paint
+   timings and memory; agree acceptable behavior rather than inventing a speed
+   claim from a headless benchmark. Bounded memory/no repeated stalls matter.
+4. **E-ink presentation:** Bigme and, separately, Boox light/dark/night, colour/
+   monochrome where available, covers, cards, footer hitboxes, picker swipes,
+   dock clearance and long text. Native raster tests do not prove panel quality.
+5. **Optional integrations:** confirm experimental status-import results and
+   the real reason for the prior 469 skips using its new details. Test native
+   BookOrbit/Hardcover/MAL/patch compatibility only with explicitly approved
+   isolated fixtures/sync controls; no real-book remote mutation, duplicate
+   completion or forced overwrite is authorized here. Missing server extensions
+   and OFF settings must remain safe. Features not accepted stay experimental.
+6. **Soak/sign-off:** several days of ordinary reading on the same frozen
+   candidate, with no unreviewed feature merges in between. Record actual
+   versions/ZIP hashes/devices/results. Re-test affected gates after each fix;
+   elapsed time alone does not close a failed or unrun item. Stable 1.0 needs a
+   separate explicit decision after blocking crash/data-loss/navigation/update
+   findings are resolved.
+
+**Svenska:** RC1 innebär funktionsfrys, inte enhetsgodkännande eller stabil 1.0.
+Alla fysiska punkter ovan är öppna för just RC1. Kontrollera säker installation/
+uppgradering/återställning med bevarade läsdata, normal Hem–Bibliotek/Manga–bok–
+snabbåtergång, bokdetaljer/metadata, bokmärken/utläsning, rotation och vila. Slutför
+taggindexeringen av 3 000+ EPUB-filer, prova paus/omstart/fel och kombinerade
+taggchip. Mät kall/varm öppning och minne på enheten. Prova nattläge, färger,
+omslag, knappar och menyer på Bigme respektive Boox, på svenska och engelska.
+BookOrbit-statusens 469 överhopp behöver en ny kontroll för sin faktiska orsak;
+inget skydd får kringgås. Integrationstester använder bara separat godkända
+testböcker och synkkontroller. Kör samma frysta bygge några dagars vanlig läsning;
+en fix kräver omtest. Otestade punkter blir inte godkända av väntan. Publicerad
+RC ska ligga i förhandskanalen; stabil 1.0 kräver ett separat klartecken.
+
 ## November 2 documentation-only upstream merge (main push only)
 
 Fresh collection finds Bookshelf `b512cd906cc494cc8d32ed6b9bdb582c12fe1078`,

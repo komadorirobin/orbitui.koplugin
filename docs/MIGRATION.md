@@ -1,9 +1,10 @@
 # Installing, switching and returning safely
 
-OrbitUI Beta 1 replaces the standalone SimpleUI and Bookshelf plugins with one
+OrbitUI replaces the standalone SimpleUI and Bookshelf plugins with one
 combined plugin. Neither original plugin is required for a fresh installation.
 Existing users can retain their settings and artwork, with the limits below.
-This is a public beta, not an exhaustive device-compatibility certification.
+The 1.0 release candidates remain prereleases, not exhaustive device-compatibility
+certifications. No migration or reading-data reset is added for RC1.
 
 ## Before installing
 
@@ -16,7 +17,7 @@ This is a public beta, not an exhaustive device-compatibility certification.
 2. Start KOReader, disable **SimpleUI and Bookshelf** in the plugin manager
    (whichever are installed), then restart. Do not delete their files/settings.
 3. Fully exit KOReader. Download **orbitui.koplugin.zip** from the
-   [OrbitUI release](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v0.1.0-beta.1),
+   [OrbitUI release](https://github.com/komadorirobin/orbitui.koplugin/releases),
    extract it into KOReader's `plugins/` directory and start KOReader again.
    The correct path is `plugins/orbitui.koplugin/main.lua`, with no extra wrapper.
 4. Enable OrbitUI and restart if necessary. Fresh users get a setup guide;
@@ -29,7 +30,7 @@ another name ending in `.koplugin` is not a safe way to disable it.
 
 ## What is preserved
 
-| Data | Behavior in Beta 1 |
+| Data | Preserved behavior |
 | --- | --- |
 | SimpleUI preferences and Home layout | Reused at `settings/simpleui/sui_settings.lua`, not reset to a demonstration layout. |
 | Older Bookshelf / existing OrbitUI preferences | Continue using `settings/bookshelf.lua` and related flat files. |

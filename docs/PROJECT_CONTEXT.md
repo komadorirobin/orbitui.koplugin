@@ -22,6 +22,18 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-02
 
+- **RC1 preparation and feature freeze, not stable 1.0.** User approves the
+  proposed RC1 direction; VERSION becomes `1.0.0-rc.1` on
+  `release/1.0.0-rc.1-20261102`, based on `bf59c980`. Exact reviewed component
+  pins remain Bookshelf `b512cd90` / SimpleUI `fdf83c7d`; no feature import,
+  migration/default/sync change or runtime implementation. Existing status-report
+  changes are included. README/OTA/migration and the RC acceptance plan are
+  updated in existing paths; same 2,000 API-1 files/bootstrap/assets/languages.
+  RC discovery/major-version ordering/preview-only behavior get explicit tests.
+  Public release approval is asked separately; neither preparation nor CI is
+  stable 1.0/device acceptance. No ADB device is connected, so all physical RC1
+  gates remain open. See TESTING, MERGE_LOG and `test-results/rc1-20261102/`.
+
 - **Bookshelf-OS retired from active inspiration monitoring.** User explicitly
   requests removing the unavailable reference. GitHub's fresh API returns 404;
   this does not distinguish deletion from a private repository. Prior Inspiration

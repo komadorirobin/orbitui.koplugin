@@ -4,6 +4,29 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-02 — 1.0.0-rc.1 preparation and feature freeze
+
+User approves moving to RC1 and the proposed feature freeze, and requests the
+separate Bookshelf-OS monitoring removal below. Start at clean main `bf59c980`
+on `release/1.0.0-rc.1-20261102`. Retain exact Bookshelf `b512cd90` and SimpleUI
+`fdf83c7d`; do not merge more upstream features. VERSION `1.0.0-rc.1` is a
+prerelease candidate, never stable 1.0. Runtime implementation is unchanged;
+the already-reviewed BookOrbit status-reporting fix is now in the candidate.
+Add explicit Beta 29 -> RC1 / RC2 / stable ordering, draft exclusion and
+preview-only selection tests, without changing OTA/bootstrap behavior.
+
+The freeze permits reviewed fixes, tests/docs and explicitly approved maintenance,
+not automatic imports or inspiration features. Existing README/OTA/migration/
+TESTING paths describe the scope, SV/EN user notes and exact device exit criteria.
+All C01-C11 owners, defaults, settings/reading data, assets/languages, API-1
+bootstrap and 2,000 installed paths remain. No connected ADB device, install,
+real-book sync mutation or server deployment. Test availability is not physical
+sign-off: full large-library indexing, core reading/return/lifecycle, e-ink,
+real upgrade/recovery and write-safe integrations stay open. Publication is
+asked separately; do not create a public RC/tag without the answer. Exact
+automated/sealed/native/package/source/history results follow in TESTING and
+`test-results/rc1-20261102/`. Prior public releases must remain immutable.
+
 ## 2026-11-02 — retire unavailable Bookshelf-OS inspiration source
 
 User asks to remove Bookshelf-OS from monitoring after agreeing to the RC1

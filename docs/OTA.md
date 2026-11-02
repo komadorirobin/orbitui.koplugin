@@ -7,6 +7,60 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 1.0.0-rc.1
+
+**Release candidate, not stable 1.0.** This starts a feature freeze for targeted
+acceptance testing. The reviewed Bookshelf pin is `b512cd90` (documentation-only
+follow-up after 6.2.0); SimpleUI stays `fdf83c7d`. No additional upstream import,
+redesign, cache/settings migration or new synchronization owner.
+
+Compared with Beta 29, **Integrations > BookOrbit > Import reading status >
+Status check details** separates local-equal and unchanged server statuses,
+missing files/reading data, protected entries, newer-local conflicts and statuses
+not imported by policy. Same-day/unknown dates remain protected. Counts persist;
+up to 50 sanitized basename/reason samples stay only in session memory. Legacy
+reports ask for a new check rather than inventing a reason for old skips.
+No guard is relaxed, no extra EPUB/sidecar work is added to report rendering or
+the canonical-unchanged path, and no server/Hardcover write is introduced.
+Status import stays experimental and OFF by default with the same server API
+requirement; this release does not deploy that API or change native sync choices.
+
+The unavailable Bookshelf-OS reference is removed from inspiration monitoring.
+Kobold, CyberUI, VOS, ProjectTitle and Zen-OS retain their exact mappings/pins.
+Historical attribution and existing settings-category cards/quick controls stay.
+The separate stale-main upstream report guard is unchanged.
+
+Home/Bento, Library/Manga profiles, opening/fast return, local tags/indexing,
+shelves/series/artwork, optional add-ons and external plugin/patch ownership
+retain their existing behavior. The stable API-1 bootstrap and exactly 2,000
+installed paths remain; no original asset/language or old public release changes.
+Once published, update through **preview**, then restart KOReader. Stable-channel
+selection must ignore RC1. Fresh install, real-device OTA/recovery, complete
+3,000+ book indexing, sleep/rotation/night/menu/stress and write-safe optional
+integration checks are still outstanding. No physical-device sign-off or speed
+improvement is claimed. See TESTING for the exact RC acceptance checklist.
+
+**Svenska: testkandidat, inte stabil 1.0.** RC1 inleder funktionsfrys inför
+riktad testning. Bookshelf är granskat till `b512cd90` (bara dokumentation efter
+6.2.0); SimpleUI ligger kvar på `fdf83c7d`. Ingen ytterligare upstream-merge,
+ny design, migrering eller synkägare. Under **Integrationer > BookOrbit > Hämta
+lässtatus > Detaljer om statuskontrollen** skiljs oförändrat, saknade filer/
+läsdata, skyddade poster, nyare lokal status och avsiktligt ej importerade statusar
+åt. Osäkra datum skyddas fortfarande. Bara antalen sparas; högst 50 filnamn/
+orsaker visas tillfälligt. Äldre rapporter behöver en ny kontroll för orsakerna.
+Ingen extra bokskanning, uppluckrad skrivregel eller skrivning till server/
+Hardcover. Statusimport är fortsatt experimentell, avstängd som standard och
+kräver sitt separata servertillägg. Ingen server driftsätts av denna release.
+
+Bookshelf-OS tas bort enbart ur inspirationsbevakningen. De andra fem källorna,
+historiken, inställningskorten och snabbkontrollerna behålls. Hem/Manga, profiler,
+taggar/indexering, boköppning/snabbåtergång, utseende, tillägg och externa plugins/
+patchar ändras inte. API-1 och alla 2 000 installationsfiler, bilder, språk och
+tidigare releaser behålls. När RC1 är publicerad: använd **förhandskanalen** och
+starta om KOReader. RC1 ska aldrig väljas av stabila kanalen. Fysiska Bigme/
+Boox-tester, full indexering av 3 000+ böcker, uppdatering/återställning och
+säkra integrationstester återstår. En grön automattest är inte enhetsgodkännande.
+
 ## OrbitUI 0.1.0-beta.29
 
 Beta 29 publishes the reviewed **Bookshelf 6.2.0** merge at `78f582fd`.

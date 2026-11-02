@@ -12,6 +12,16 @@ history without the held bitmap before releasing.
 Experimental KOReader Lua plugin combining the published user forks of SimpleUI
 and Bookshelf. Keep the original repositories and their update channels intact.
 
+## 1.0 release-candidate freeze (2026-11-02)
+
+The user approves the RC1 direction and a feature freeze. Keep the reviewed
+SimpleUI/Bookshelf pins and existing behavior fixed while validating RC1. Limit
+new work to reproducible fixes, tests, release documentation and explicitly
+approved maintenance. Monitoring remains observation-only; do not pull in new
+features/design references during the freeze without a new explicit decision.
+RC labels never imply physical acceptance or stable 1.0 approval. Record the
+exact candidate tested and remaining device gates in docs/TESTING.md.
+
 Start new work by reading `docs/PROJECT_CONTEXT.md`. It is the durable current
 state map after the original development conversation was lost; update it when a
 change makes its snapshot, architecture, risks or next milestones materially

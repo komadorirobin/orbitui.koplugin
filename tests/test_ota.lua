@@ -18,6 +18,17 @@ H.test("semantic versions order alpha beta rc and stable correctly", function()
     assert(not OTA.newer("0.1.0", "0.1.0"))
     assert(not OTA.version("1.2.3-injected/path"))
 end)
+H.test("the 1.0 release candidate upgrades Beta 29 but never becomes a stable-channel release", function()
+    assert(OTA.newer("1.0.0-rc.1", "0.1.0-beta.29"))
+    assert(OTA.newer("1.0.0-rc.2", "1.0.0-rc.1"))
+    assert(OTA.newer("1.0.0", "1.0.0-rc.1"))
+    assert(not OTA.newer("1.0.0-rc.1", "1.0.0"))
+    local list = { release("0.1.0-beta.29", true), release("1.0.0-rc.1", true) }
+    H.eq(OTA.select(list, true).version, "1.0.0-rc.1")
+    H.eq(OTA.select(list, false), nil)
+    list[#list + 1] = release("1.0.0-rc.2", true); list[#list].draft = true
+    H.eq(OTA.select(list, true).version, "1.0.0-rc.1")
+end)
 H.test("preview channel finds prereleases but stable channel never downgrades to one", function()
     local list = { release("0.1.0-alpha.10", true), release("0.1.0-alpha.2", true) }
     H.eq(OTA.select(list, true).version, "0.1.0-alpha.10")
