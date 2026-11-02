@@ -24,6 +24,32 @@ Close/Continue, selected cover/description, cold/warm/parked transitions and
 on-device update/recovery remain open. The earlier synthetic reproduction does
 not establish the exact trigger on this device or stable-1.0 acceptance.
 
+Exact source `e3aa55c817fe66883a33b5300a16981dd4d5d698` passes both full
+scripts: 134 Python tests/four inherited optional skips, 103 root Lua files,
+542 Bookshelf suites/zero failures/three inherited SQLite skips and 13 SimpleUI
+files. All 43 catalogs, 1,165 syntax files and 405 canonical identities pass.
+Both complete sealed root suites and native minimum/current input/ButtonDialog/
+Trapper/TrapWidget/span, real SQLite/EPUB/JSON/UIManager and Android/frame night/
+contrast/raster supplements pass. The 46 local-tag cases become 48 with native
+supplements; nine native-method reveal scenarios and existing importer native
+sidecar/decision-baseline supplements remain green. Real previous installers
+Beta 5/9/29 and RC1 pass native extraction/hash, offered update (including
+RC1 -> RC2), activation/restart/code rollback, truncated recovery, external
+snapshot and obsolete-runtime cleanup. Old input ZIPs match GitHub digests.
+
+Sealed RC2 ZIP
+`783431f03b15e53ba91c5cc0812520a1827a9657bc9443c5f05f6199b795a11b`,
+9,440,887 bytes / 27,908,346 expanded; manifest
+`b9f6749dce98c766e74ba7d7e5c85c309813b8f3d4f725b2eb0c437f1521ec55`.
+All 1,999 inventory hashes/sizes match the exact optimized source; exactly
+the same 2,000 API-1 installed paths as RC1. Tested-fix runtime, components,
+pins/assets/bootstrap/languages and the status-import implementation are
+byte-unchanged. Initial audit covers 26 outgoing blobs, no held bitmap; Gitleaks
+finds no secrets. Public RC1 ZIP/checksum `dfc2cced` is restored after private
+packaging. Receipts do not rebuild this candidate. Proceed to audited main/tag
+push, exact CI/draft/public/channel/old-release immutability gates; physical
+acceptance is still open.
+
 ## RC1 tag-search stall and shelf reveal — local fix, device retest open
 
 November 2 user report: offline tag-result modal stays at 2,090/3,341; Stop

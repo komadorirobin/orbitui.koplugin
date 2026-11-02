@@ -33,6 +33,13 @@ and correct this file in the same change.
   exact-byte/channel/immutability gates. Physical Bigme/Boox sleep/index/reveal
   acceptance remains open, not inferred from publication. Evidence:
   `test-results/rc2-20261102/`; final publication receipt follows.
+  Exact candidate `e3aa55c8` / ZIP `783431f0` (9,440,887 bytes) passes both
+  complete scripts, 43 catalogs, sealed roots/native supplements and actual
+  Beta 5/9/29/RC1 installer scenarios, including RC1 -> RC2 discovery/restart/
+  rollback/recovery. Same 2,000 API-1 paths; exact source/manifest/pin/artwork/
+  history/secret checks pass. Runtime implementation is byte-identical to
+  tested `cca558c4`; only release metadata/docs/ordering tests change. Public
+  RC1 dist is preserved while main/tag CI and draft/public checks follow.
 
 - **RC1 tag-search lifecycle fix and shelf reveal implemented locally, unreleased.**
   User reports the visible offline tag search stuck at 2,090/3,341 after device

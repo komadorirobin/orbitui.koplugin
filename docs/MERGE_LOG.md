@@ -19,6 +19,19 @@ server. Exact automated/sealed/native/package/history/secret and main/tag CI,
 draft/public bytes, channel/old-release immutability results follow in TESTING
 and `test-results/rc2-20261102/`. RC1 and older public assets/tags are immutable.
 
+Candidate `e3aa55c8` / ZIP `783431f0` (9,440,887 bytes) passes both complete
+scripts (134 Python/four inherited skips, 103 root files, 542 Bookshelf/zero
+failures/three inherited SQLite skips, 13 SimpleUI files), 43 catalogs, sealed
+roots/native supplements and Beta 5/9/29/RC1 actual installers. RC1 -> RC2
+discovery, extraction/hash, activation/restart/code rollback, interrupted
+recovery, external snapshots and cleanup pass. Exact optimized source/inventory,
+same 2,000 API-1 paths and unchanged tested-fix runtime/components/pins/artwork/
+bootstrap/languages/status-import checks pass. Initial 26 outgoing blobs exclude
+held artwork; Gitleaks finds no secrets. Public dist stays original RC1
+`dfc2cced` during staging. Audited main/tag push and exact CI/draft/public bytes/
+preview-only/old-release checks follow; verification receipts do not rebuild the
+candidate. No physical acceptance/device/server action is implied.
+
 ## 2026-11-02 — local RC1 tag lifecycle fix and shelf-preview navigation
 
 After the user reports a result modal stuck at 2,090/3,341 following sleep,
