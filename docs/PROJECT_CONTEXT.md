@@ -22,7 +22,7 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-02
 
-- **RC2 publication approved; release checks in progress.** User says "Pusha
+- **RC2 is public in preview; feature freeze continues.** User says "Pusha
   och publicera" after the disclosed local fix/device-test gap. Prepare
   `1.0.0-rc.2` as a preview prerelease only, preserving RC1 and older tags/assets.
   Include exactly the tested tag-lifecycle/shelf-reveal implementation below;
@@ -32,16 +32,25 @@ and correct this file in the same change.
   outgoing history/artwork/secrets, then require main/tag CI and draft/public
   exact-byte/channel/immutability gates. Physical Bigme/Boox sleep/index/reveal
   acceptance remains open, not inferred from publication. Evidence:
-  `test-results/rc2-20261102/`; final publication receipt follows.
+  `test-results/rc2-20261102/`.
   Exact candidate `e3aa55c8` / ZIP `783431f0` (9,440,887 bytes) passes both
   complete scripts, 43 catalogs, sealed roots/native supplements and actual
   Beta 5/9/29/RC1 installer scenarios, including RC1 -> RC2 discovery/restart/
   rollback/recovery. Same 2,000 API-1 paths; exact source/manifest/pin/artwork/
   history/secret checks pass. Runtime implementation is byte-identical to
   tested `cca558c4`; only release metadata/docs/ordering tests change. Public
-  RC1 dist is preserved while main/tag CI and draft/public checks follow.
+  RC1 dist is preserved during staging. Published **2026-11-02 10:12:48 UTC**,
+  release **431307659**, tag `v1.0.0-rc.2` -> `e3aa55c8`. Verified main
+  `e0229482` CI **41426196528** and exact-tag CI **41426197224** pass both
+  matrix jobs. Draft and anonymous public ZIP/checksum match `783431f0`;
+  public dist is now those RC2 bytes. Preview advances RC1 -> RC2, stable
+  remains absent; all 84 previous releases and 141 old tag refs are unchanged.
+  Native actual Beta 9/29/RC1 installers also pass discovery/download from
+  public HTTPS assets, activation/restart/rollback/recovery/snapshot/cleanup.
+  Documentation-only receipts do not rebuild the frozen source/tag/assets.
+  No device/server action; physical acceptance remains open.
 
-- **RC1 tag-search lifecycle fix and shelf reveal implemented locally, unreleased.**
+- **RC1 tag-search lifecycle fix and shelf reveal, now included in public RC2.**
   User reports the visible offline tag search stuck at 2,090/3,341 after device
   sleep; Stop search and Close highlight but do nothing. No ADB device is
   connected. A synthetic navigation-generation change while that modal remains
@@ -66,8 +75,9 @@ and correct this file in the same change.
   component/pin/artwork/history/secret audits pass; status-import implementation
   remains byte-unchanged. Public dist stays RC1 `dfc2cced`, not the private
   same-version verification archive. Device sleep/
-  full-library/reveal acceptance remains open; no RC2 release, push, device
-  installation or server action is authorized in this step. Evidence:
+  full-library/reveal acceptance remains open. At that local implementation
+  stage no release/push/device/server action was authorized; the separate RC2
+  publication approval above supersedes only the push/release limitation. Evidence:
   `test-results/rc1-tag-fix-20261102/` and earlier diagnostic reproduction.
 
 - **RC1 is public in preview; feature freeze active, not stable 1.0.** User approves the

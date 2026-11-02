@@ -50,6 +50,30 @@ packaging. Receipts do not rebuild this candidate. Proceed to audited main/tag
 push, exact CI/draft/public/channel/old-release immutability gates; physical
 acceptance is still open.
 
+### RC2 publication receipt — preview only
+
+Published **2026-11-02 10:12:48 UTC**:
+[OrbitUI 1.0.0-rc.2](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v1.0.0-rc.2),
+release **431307659**, `draft=false`, `prerelease=true`, not latest/stable.
+Tag resolves to exact tested source `e3aa55c8`; audited main verification
+descendant `e0229482` is pushed with it atomically. Main CI **41426196528** and
+exact-tag CI **41426197224** pass all four matrix jobs, including Linux native
+OTA checks. Draft ZIP/checksum assets **701308095 / 701308093** are downloaded
+and byte-checked before publishing that same release once. Anonymous public
+downloads match the sealed candidate hashes/sizes above; public dist now
+matches RC2 `783431f0`, not RC1 or a private same-version verification build.
+
+Fresh discovery advances preview RC1 -> RC2; stable remains absent. All 84
+previous releases and 141 old tag refs, including RC1, remain unchanged.
+After publication, native actual Beta 9/29/RC1 installers pass discovery and
+download from public HTTPS assets, exact extraction/hash verification,
+activation/restart/code rollback, truncated-download recovery, external
+snapshots and obsolete-runtime cleanup. These are headless native tests, not
+a reader installation. Final source/history/artwork/secret checks pass; no
+device, real-book sync mutation or server deployment. Verification-only docs
+do not rebuild/move the immutable candidate/tag/assets. Physical RC2 sleep/
+full-library/reveal and all other affected acceptance gates remain open.
+
 ## RC1 tag-search stall and shelf reveal — local fix, device retest open
 
 November 2 user report: offline tag-result modal stays at 2,090/3,341; Stop

@@ -32,6 +32,21 @@ held artwork; Gitleaks finds no secrets. Public dist stays original RC1
 preview-only/old-release checks follow; verification receipts do not rebuild the
 candidate. No physical acceptance/device/server action is implied.
 
+**Published 2026-11-02 10:12:48 UTC.** Audited main `e0229482` and exact
+candidate tag `v1.0.0-rc.2` -> `e3aa55c8` are pushed atomically. Main/tag CI
+**41426196528 / 41426197224** pass both matrix jobs each, including Linux
+native OTA. Draft **431307659** assets **701308095 / 701308093** are downloaded
+and byte-checked before publishing that same release as preview prerelease,
+not stable/latest. Anonymous public ZIP/checksum match `783431f0` / 9,440,887
+bytes; public dist now holds those exact RC2 bytes. Preview advances RC1 -> RC2,
+stable remains absent. All 84 prior releases and 141 old tag refs, including
+RC1, are unchanged. Native actual Beta 9/29/RC1 installers then pass public
+HTTPS discovery/download, extraction/hash, activation/restart/code rollback,
+interrupted recovery, external snapshots and obsolete-runtime cleanup. No
+physical reader installation or server/real-book mutation occurs. Frozen
+candidate/tag/assets are not rebuilt/moved for documentation receipts. Feature
+freeze and all affected physical acceptance gates remain in force.
+
 ## 2026-11-02 — local RC1 tag lifecycle fix and shelf-preview navigation
 
 After the user reports a result modal stuck at 2,090/3,341 following sleep,
