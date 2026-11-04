@@ -39,6 +39,12 @@ and correct this file in the same change.
   scenarios including RC2. Same 2,000 paths/API1; implementation byte-identical
   to RC2. Source/history/artwork/secret checks pass. Main/tag CI, draft/public
   assets/channel/immutability and public-byte installer checks remain gates.
+  **Published stable/latest 2026-11-04 06:02:21 UTC**, release **433563970**,
+  `v1.0.0` -> `71ba3342`, ZIP `79fec788`; main/tag CI
+  **41782513993 / 41782513892** pass. Draft/public bytes, stable/preview/latest
+  and all 85 prior releases/143 public tag refs pass. Actual Beta 9/29/RC2
+  public-HTTPS installer scenarios pass. Public dist is stable 1.0; no reader/
+  server action. Keep immutable 1.0 and its maintenance branch separate from 1.1.
 
 - **RC2 is public in preview; feature freeze continues.** User says "Pusha
   och publicera" after the disclosed local fix/device-test gap. Prepare

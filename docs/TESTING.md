@@ -39,6 +39,20 @@ outgoing blobs exclude held artwork; Gitleaks is clean. Main/tag CI and draft/
 public parity/channel/old-release immutability plus public-byte native checks
 remain publication gates. No new physical-reader/server test is claimed.
 
+Published **2026-11-04 06:02:21 UTC** as stable/latest
+[v1.0.0](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v1.0.0),
+release **433563970**, source/tag `71ba3342`; main verification `220c7cb2`.
+Main/tag CI **41782513993 / 41782513892** pass all four matrix jobs. Draft and
+anonymous public ZIP/checksum match the frozen source above; assets
+**708419761 / 708419760**. Both stable and preview select 1.0; GitHub latest is
+1.0. All 85 older releases and 143 old public tag refs are unchanged. An unrelated
+local-only Bookshelf `v1.0.0` tag (`41276cc3`) is preserved as
+`upstream/bookshelf/v1.0.0` before creating OrbitUI's public tag; no old remote
+tag is replaced. Actual Beta 9/29/RC2 installers also pass public-HTTPS
+discovery/download, extraction/hash, activation/restart/rollback, interrupted
+recovery, external snapshots and cleanup. Public dist holds those exact bytes.
+Receipts do not rebuild the immutable source/archive. No reader/server changed.
+
 ## 1.0.0-rc.2 — publication checks
 
 User explicitly requests push/publication after the local implementation and

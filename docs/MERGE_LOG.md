@@ -34,6 +34,17 @@ unchanged prior releases/tags. Documentation receipts do not rebuild the source
 candidate/tag/archive. General user acceptance is the physical basis; no new
 agent-run device/server acceptance is invented.
 
+**Stable published 2026-11-04 06:02:21 UTC**, release **433563970**, tag
+`v1.0.0` -> `71ba3342`, ZIP `79fec788`. Main/tag CI
+**41782513993 / 41782513892** pass both jobs each. Downloaded draft and public
+assets match; stable/preview/latest select 1.0. All 85 previous releases and
+143 remote tag refs remain unchanged. The old local-only Bookshelf v1.0 tag is
+retained under `upstream/bookshelf/v1.0.0`; it was never a public OrbitUI tag.
+Actual Beta 9/29/RC2 native installers pass public-HTTPS discovery/download and
+all activation/restart/rollback/recovery/snapshot/cleanup phases. No device or
+server touched; frozen package is not rebuilt for this receipt. Preserve the
+1.0 maintenance branch before starting the separately approved upstream work.
+
 ## 2026-11-02 — RC2 publication authorized after local tag fixes
 
 User requests "Pusha och publicera" after the local fix and its disclosed lack
