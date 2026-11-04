@@ -58,6 +58,7 @@ local function start()
                 cancel()
                 request = nil
                 M.rows, M.invalidated = current.rows, false
+                M.fingerprint = current.fingerprint
                 opts.done(current.rows, current.fingerprint)
             else
                 ui:scheduleIn(0.02, current.tick)
@@ -74,6 +75,12 @@ local function start()
 end
 
 function M.request(opts)
+    -- Revalidate completed memory after a later library extraction (581),
+    -- without restoring upstream's blocking full-table SELECT.
+    if M.rows then
+        local now = opts.fingerprint()
+        if now and now ~= M.fingerprint then M.rows, M.invalidated = nil, true end
+    end
     request = opts
     start()
 end
@@ -86,7 +93,7 @@ end
 function M.invalidate()
     cancel()
     request = nil
-    M.rows, M.invalidated = nil, true
+    M.rows, M.invalidated, M.fingerprint = nil, true, nil
 end
 
 return M

@@ -209,4 +209,16 @@ t.test("a covered shelf cannot restart maintenance when the reader resumes", fun
     w:_startStatusTimer() -- the ordinary hot-return path, timer already armed
     assert(state.metadata and state.covers)
 end)
+t.test("a later BIM fingerprint retires completed memory and refreshes in bounded windows", function()
+    local r = fresh()
+    r.setActive(true); request(r); drain()
+    assert(r.fingerprint == "db-1" and published == 1)
+    fingerprint = "db-2"
+    request(r)
+    assert(not r.rows and #queue == 1 and published == 1)
+    drain()
+    assert(r.rows and r.fingerprint == "db-2" and published == 2)
+    r.invalidate()
+    assert(r.fingerprint == nil)
+end)
 t.done()

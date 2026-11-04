@@ -164,6 +164,29 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+November 4, AFTER stable 1.0.0 publication: the user approves the staged strategy
+and a separate 1.1 beta. Review Bookshelf master `d47edfcc7c160691417235201595ab12cdffbdfe`
+(53 commits, 62 files) and SimpleUI main `633ffbff73a5975156106016fd60b534e42a4f9f`
+(five commits, four files). Unsquashed imports `a6f8ff31` / `ecd3e0e8` retain
+cooperative metadata refresh and lossless embedded Critter assets in conflicts.
+Advance only these reviewed pins. Preserve maintenance/1.0 and its immutable tag.
+
+C04/C08: retain read-only blob-free SQL windows/visibility cancellation; port
+the moved-BIM/series invalidation intent without a synchronous full-table scan.
+Publication-date source reads are intentionally deferred in hosted OrbitUI on
+ALL platforms until their fork queue has ownership/cancellation/Android safety.
+Cached/curated/manual dates, sort and token remain usable; explicit local dates
+never modify EPUBs, reading sidecars or remote status. C08: defer native folder
+deletion in the host: it purges sidecars before fallible filesystem deletion.
+Standalone component behavior is preserved. C07/C10: keep late wallpaper page/
+tab/close callbacks inert and cap pathological native fit allocations. Retain
+night/dock/series/ornament settings, local BookOrbit Tags and lazy technical
+details. Two new helpers are exact-source lazy embeds (24 total, 407 canonical
+identities), not new API-1 paths. New labels/help are SV/EN. No new sync owner,
+server/device installation or stable-byte replacement. Targeted/full/sealed/
+native/older-installer and publication receipts: TESTING/MERGE_LOG, evidence
+`test-results/upstream-20261104/`. Physical new-UI acceptance is outstanding.
+
 November 2 merge-only request reviews Bookshelf master
 `b512cd906cc494cc8d32ed6b9bdb582c12fe1078`, two commits after `78f582fd`:
 `c6cb8c1d` / `b512cd90`. Both change only `micromodules/README.md`: API

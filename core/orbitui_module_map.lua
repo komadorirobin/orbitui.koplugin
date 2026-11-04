@@ -263,6 +263,8 @@ local map = {
     ["lib/bookshelf_plural_guard"] = "components/bookshelf/lib/bookshelf_plural_guard.lua",
     ["lib/bookshelf_popup_kit"] = "components/bookshelf/lib/bookshelf_popup_kit.lua",
     ["lib/bookshelf_profiles"] = "components/bookshelf/lib/bookshelf_profiles.lua",
+    ["lib/bookshelf_pubdate"] = "components/bookshelf/lib/bookshelf_pubdate.lua",
+    ["lib/bookshelf_published"] = "components/bookshelf/lib/bookshelf_published.lua",
     ["lib/bookshelf_quotes"] = "components/bookshelf/lib/bookshelf_quotes.lua",
     ["lib/bookshelf_reader_buttons"] = "components/bookshelf/lib/bookshelf_reader_buttons.lua",
     ["lib/bookshelf_reader_layout"] = "components/bookshelf/lib/bookshelf_reader_layout.lua",
@@ -483,7 +485,10 @@ return M\
 -- the editor is not up to host the page (tests, a caller outside it).\
 --\
 -- Blocks ({ type = ..., ... }):\
---   summary   text: what the shelf will do, in a sentence (the strip's lead)\
+--   summary   text: what the shelf will do, in a sentence (the strip's lead);\
+--             actions { {icon, label, callback} }: labelled buttons at its\
+--             right (a folder's Move, Rename, Delete), on a line of their own\
+--             under it when they don't fit beside it\
 --   heading   text, tag (optional: a word in a badge at the right, OR)\
 --   hint      text: grey\
 --   chips     items { {text, icon, on, enabled, callback} }: cards sized to\
@@ -627,8 +632,29 @@ Page._shortenPath = shortenPath   -- for tests\
 local R = {}\
 \
 function R.summary(ctx, b)\
-    return require(\"ui/widget/textboxwidget\"):new{ text = b.text or \"\", width = ctx.w,\
-        face = ctx.face, fgcolor = Blitbuffer.COLOR_BLACK, bgcolor = ctx.bg }\
+    local btns, focus = HorizontalGroup:new{ align = \"center\" }, {}\
+    for i, a in ipairs(b.actions or {}) do\
+        if i > 1 then btns[#btns + 1] = HorizontalSpan:new{ width = Space.px(10) } end\
+        local btn = Kit.headerButton{ text = a.label, icon = a.icon, font_size = ctx.fs,\
+            on_tap = a.callback }\
+        btns[#btns + 1] = btn\
+        focus[#focus + 1] = btn\
+    end\
+    local function textW(w)\
+        return require(\"ui/widget/textboxwidget\"):new{ text = b.text or \"\", width = w,\
+            face = ctx.face, fgcolor = Blitbuffer.COLOR_BLACK, bgcolor = ctx.bg }\
+    end\
+    if #focus == 0 then return textW(ctx.w) end\
+    ctx.layout[#ctx.layout + 1] = focus\
+    -- Beside the text when the text keeps a line to itself there; else the\
+    -- buttons take a line of their own under it, at the right.\
+    local bw = btns:getSize().w\
+    local probe = TextWidget:new{ text = b.text or \"\", face = ctx.face }\
+    if probe:getSize().w + ctx.gap + bw <= ctx.w then\
+        return leftRight(textW(ctx.w - bw - ctx.gap), btns, ctx.w)\
+    end\
+    return VerticalGroup:new{ align = \"left\", textW(ctx.w), VerticalSpan:new{ width = Space.px(10) },\
+        leftRight(nil, btns, ctx.w) }\
 end\
 \
 -- tag: a word on a grey tag at the line's right end (a filter list's OR,\
@@ -880,7 +906,7 @@ end\
 \
 -- option(b, w) -> a card with its title and a grey line, and link buttons\
 -- inside it at the right.\
-function Ctx:option(b, w)\
+function Ctx:option(b, w, min_h)\
     local pad = Space.px(12)\
     local inner = w - 2 * pad\
     local links = HorizontalGroup:new{ align = \"center\" }\
@@ -912,6 +938,7 @@ function Ctx:option(b, w)\
     end\
     local h = math.max(vg:getSize().h, links:getSize().h) + 2 * Space.px(b.desc and 12 or 6)\
     if not b.desc then h = math.max(h, self:cardH()) end\
+    h = math.max(h, min_h or 0)\
     local body = (#links > 0) and leftRight(vg, links, inner) or vg\
     local cell = tapCard(body, w, h, b.on, b.callback, b.enabled, nil, nil, true)\
     table.insert(focus, 1, cell)\
@@ -1021,9 +1048,21 @@ local function stack(ctx, blocks, spacing)\
                 stacked[a_] = s_\
                 if b_ then stacked[b_] = s_ end\
             end\
+            -- A pair of options is one height too: the taller one's, so a\
+            -- description that wraps doesn't leave its partner short and\
+            -- sitting lower (the folder menu's Move and Rename, PW5).\
+            local pair_h = {}\
+            for j = 1, #run, 2 do\
+                local a_, b_ = run[j], run[j + 1]\
+                if b_ and a_.type == \"option\" and b_.type == \"option\" then\
+                    local ha = ctx:option(a_, half_w):getSize().h\
+                    local hb = ctx:option(b_, ctx.w - half_w - ctx.gap):getSize().h\
+                    pair_h[a_], pair_h[b_] = math.max(ha, hb), math.max(ha, hb)\
+                end\
+            end\
             wdg = halves(ctx, run, function(x, w)\
                 if x.type == \"row\" then return ctx:row(x, w, stacked[x]) end\
-                if x.type == \"option\" then return ctx:option(x, w) end\
+                if x.type == \"option\" then return ctx:option(x, w, pair_h[x]) end\
                 local saved = ctx.w\
                 ctx.w = w\
                 local out = R[x.type](ctx, x)\
@@ -1193,6 +1232,13 @@ function Page.toButtons(model)\
             local t = b.type\
             if t == \"summary\" or t == \"heading\" or t == \"hint\" then\
                 rows[#rows + 1] = { { text = b.text, enabled = false } }\
+                if b.actions and #b.actions > 0 then\
+                    local row = {}\
+                    for _j, a in ipairs(b.actions) do\
+                        row[#row + 1] = { text = a.label, callback = a.callback }\
+                    end\
+                    rows[#rows + 1] = row\
+                end\
             elseif t == \"pills\" then\
                 local row = {}\
                 for _j, it in ipairs(b.items or {}) do\
@@ -3252,7 +3298,7 @@ return M\
 --\
 -- KOReader's menu (TouchMenu) flashes the whole screen as it closes, against\
 -- ghosting, whenever the file browser or a book is under it. Over the shelf\
--- it refreshes only where it was, with no flash (maintainer: \"is that\
+-- it refreshes the screen with no flash (maintainer: \"is that\
 -- necessary?\"). That covers stepping the menu aside for a slider or the\
 -- Theme library too, which flashed as the picker opened. Over a book or the\
 -- file browser, KOReader's own flash as ever.\
@@ -3282,22 +3328,18 @@ function M.install(TouchMenu, deps)\
         end\
         local UIManager = deps.UIManager or require(\"ui/uimanager\")\
         local GZ = deps.GZ or require(\"lib/bookshelf_gesture_zones\")\
-        local Screen = deps.Screen or require(\"device\").screen\
         local d = self.dimen\
         local shelf = d and d.w and GZ.shelfBelow(self.show_parent or self)\
         if not shelf then\
             if orig then return orig(self, ...) end\
             return\
         end\
-        -- The menu's frame and a little round it (its border).\
-        local m = Screen:scaleBySize(8)\
-        local x0, y0 = math.max(0, d.x - m), math.max(0, d.y - m)\
-        local x1 = math.min(Screen:getWidth(), d.x + d.w + m)\
-        local y1 = math.min(Screen:getHeight(), d.y + d.h + m)\
-        local region = { x = x0, y = y0, w = x1 - x0, h = y1 - y0 }\
-        local ok_g, Geom = pcall(require, \"ui/geometry\")\
-        if ok_g and Geom and Geom.new then region = Geom:new(region) end\
-        UIManager:setDirty(nil, \"ui\", region)\
+        -- The whole screen, as KOReader's own refresh is, but \"ui\" rather\
+        -- than \"flashui\": no flash. Not just the menu's area: a menu item\
+        -- may open a dialog that asks for no refresh of its own, during its\
+        -- callback or on the next tick (other plugins' do), and only a\
+        -- whole-screen refresh in this pass reaches it (572).\
+        UIManager:setDirty(nil, \"ui\")\
     end\
     TouchMenu.onCloseWidget = wrapped\
     return function()\
@@ -3320,6 +3362,633 @@ function M.release(owner)\
         release()\
         release = nil\
     end\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_pubdate"] = "-- bookshelf_pubdate.lua\
+-- A book's publication date, read out of the file itself, for %published.\
+--\
+-- KOReader's engines do not hand one over: crengine's getDocumentProps stops\
+-- at title, authors, language, series, description, keywords and identifiers,\
+-- and BookInfoManager stores no more than that. So each format is read here,\
+-- the cheapest way that format allows, and none of them renders anything:\
+--\
+--   EPUB        the OPF's dc:date (Dublin Core), preferring one marked as the\
+--               publication; dcterms:issued after that\
+--   FB2         publish-info's year (the edition), then title-info's date\
+--   CBZ/CBR/CB7 ComicInfo.xml's Year, Month and Day\
+--   MOBI/AZW3   EXTH record 106, \"publishingdate\"\
+--   PDF         the Info dictionary's CreationDate, the nearest a PDF has\
+--\
+-- The date is whatever someone put there on purpose. For a re-issued classic\
+-- that is often the edition's date rather than the first printing\
+-- (maintainer: \"issue date is still better than no date\").\
+--\
+-- Everything returns nil on any surprise. read() is meant to run in a forked\
+-- child (lib/bookshelf_published), so libarchive and MuPDF memory goes back\
+-- to the system when it exits.\
+\
+local M = {}\
+\
+-- ── Dates ──────────────────────────────────────────────────────────────────\
+\
+-- A year nobody means: calibre writes 0101-01-01 for \"no publication date\",\
+-- and an empty field can come through as 0000. Real publication years in\
+-- ebook metadata are well inside this range.\
+local MIN_YEAR, MAX_YEAR = 1000, 2999\
+\
+local function validYear(y)\
+    y = tonumber(y)\
+    return y and y >= MIN_YEAR and y <= MAX_YEAR and y or nil\
+end\
+\
+-- parseDate(s) -> \"YYYY\", \"YYYY-MM\" or \"YYYY-MM-DD\" | nil\
+-- Takes ISO dates and timestamps (2010-05-04T00:00:00+00:00), compact ones\
+-- (20100504, and PDF's D:20100504120000Z) and, failing those, the first\
+-- standalone four-digit year in free text (\"1 Jan 1869\").\
+function M.parseDate(s)\
+    if type(s) ~= \"string\" then return nil end\
+    s = s:gsub(\"^%s+\", \"\"):gsub(\"%s+$\", \"\")\
+    if s == \"\" then return nil end\
+    local y, mo, d = s:match(\"^D?:?(%d%d%d%d)(%d%d)(%d%d)\")\
+    if not y then\
+        y, mo, d = s:match(\"^(%d%d%d%d)%-(%d%d?)%-(%d%d?)\")\
+    end\
+    if not y then\
+        y, mo = s:match(\"^(%d%d%d%d)%-(%d%d?)\")\
+    end\
+    if not y then\
+        y = s:match(\"^D?:?(%d%d%d%d)\")\
+    end\
+    if not y then\
+        y = s:match(\"%f[%d](%d%d%d%d)%f[%D]\")\
+        mo, d = nil, nil\
+    end\
+    y = validYear(y)\
+    if not y then return nil end\
+    mo, d = tonumber(mo), tonumber(d)\
+    if not mo or mo < 1 or mo > 12 then return string.format(\"%04d\", y) end\
+    if not d or d < 1 or d > 31 then return string.format(\"%04d-%02d\", y, mo) end\
+    return string.format(\"%04d-%02d-%02d\", y, mo, d)\
+end\
+\
+-- year(date) -> \"YYYY\" | nil\
+function M.year(date)\
+    return type(date) == \"string\" and date:match(\"^(%d%d%d%d)\") or nil\
+end\
+\
+-- ── Per-format parsers (pure: text in, date out) ──────────────────────────\
+\
+local function unescape(s)\
+    return (s:gsub(\"<!%[CDATA%[(.-)%]%]>\", \"%1\"):gsub(\"<[^>]*>\", \"\"))\
+end\
+\
+local function attr(attrs, name)\
+    return attrs:match(name .. '%s*=%s*\"([^\"]*)\"')\
+        or attrs:match(name .. \"%s*=%s*'([^']*)'\")\
+end\
+\
+-- fromOpf(opf) -> date | nil\
+-- Preference, best first: a dc:date marked as the publication (EPUB 2's\
+-- opf:event), a dc:date with no event (calibre's, and EPUB 3's, which is the\
+-- publication by definition), dcterms:issued, then any other event except a\
+-- modification.\
+function M.fromOpf(opf)\
+    if type(opf) ~= \"string\" or opf == \"\" then return nil end\
+    local best, best_rank\
+    local function offer(text, rank)\
+        local date = M.parseDate(unescape(text or \"\"))\
+        if date and (not best_rank or rank < best_rank) then\
+            best, best_rank = date, rank\
+        end\
+    end\
+    for attrs, text in opf:gmatch(\"<%s*dc:date([^>]*)>(.-)</%s*dc:date%s*>\") do\
+        local event = (attr(attrs, \"opf:event\") or attr(attrs, \"event\") or \"\"):lower()\
+        if event == \"publication\" or event == \"original-publication\" then\
+            offer(text, 1)\
+        elseif event == \"\" then\
+            offer(text, 2)\
+        elseif not event:find(\"modif\", 1, true) then\
+            offer(text, 4)\
+        end\
+    end\
+    for attrs, text in opf:gmatch(\"<%s*meta([^>]*)>(.-)</%s*meta%s*>\") do\
+        local prop = attr(attrs, \"property\") or attr(attrs, \"name\")\
+        if prop == \"dcterms:issued\" then offer(text, 3) end\
+    end\
+    -- An EPUB 2 <meta name=\"dcterms:issued\" content=\"...\"/> carries its value\
+    -- in an attribute.\
+    for attrs in opf:gmatch(\"<%s*meta([^>]*)/>\") do\
+        if (attr(attrs, \"name\") or attr(attrs, \"property\")) == \"dcterms:issued\" then\
+            offer(attr(attrs, \"content\"), 3)\
+        end\
+    end\
+    return best\
+end\
+\
+-- fromFb2(xml) -> date | nil\
+-- publish-info's year is the edition in hand, the closest match to what an\
+-- EPUB's dc:date means; title-info's date (when the work was written) is the\
+-- fallback. document-info's date is when the FB2 file was made, so never.\
+function M.fromFb2(xml)\
+    if type(xml) ~= \"string\" or xml == \"\" then return nil end\
+    local publish = xml:match(\"<%s*publish%-info[^>]*>(.-)</%s*publish%-info%s*>\")\
+    if publish then\
+        local date = M.parseDate(unescape(publish:match(\"<%s*year[^>]*>(.-)</%s*year%s*>\") or \"\"))\
+        if date then return date end\
+    end\
+    local title = xml:match(\"<%s*title%-info[^>]*>(.-)</%s*title%-info%s*>\")\
+    if title then\
+        local attrs, text = title:match(\"<%s*date([^>]*)>(.-)</%s*date%s*>\")\
+        if attrs then\
+            return M.parseDate(attr(attrs, \"value\") or \"\") or M.parseDate(unescape(text))\
+        end\
+        attrs = title:match(\"<%s*date([^>]*)/>\")\
+        if attrs then return M.parseDate(attr(attrs, \"value\") or \"\") end\
+    end\
+    return nil\
+end\
+\
+-- fromComicInfo(xml) -> date | nil\
+function M.fromComicInfo(xml)\
+    if type(xml) ~= \"string\" or xml == \"\" then return nil end\
+    local function field(name)\
+        return tonumber((xml:match(\"<%s*\" .. name .. \"%s*>%s*(%-?%d+)%s*</%s*\" .. name .. \"%s*>\")))\
+    end\
+    local y = validYear(field(\"Year\"))\
+    if not y then return nil end\
+    local mo, d = field(\"Month\"), field(\"Day\")\
+    if mo and mo >= 1 and mo <= 12 then\
+        if d and d >= 1 and d <= 31 then\
+            return string.format(\"%04d-%02d-%02d\", y, mo, d)\
+        end\
+        return string.format(\"%04d-%02d\", y, mo)\
+    end\
+    return string.format(\"%04d\", y)\
+end\
+\
+-- fromPdfInfo(meta) -> date | nil, meta being MuPDF's getMetadata() table.\
+function M.fromPdfInfo(meta)\
+    if type(meta) ~= \"table\" then return nil end\
+    return M.parseDate(meta.creationDate)\
+end\
+\
+-- Big-endian unsigned integers out of a byte string, 0-based offsets.\
+local function u16(s, o)\
+    local a, b = s:byte(o + 1, o + 2)\
+    if not b then return nil end\
+    return a * 256 + b\
+end\
+local function u32(s, o)\
+    local a, b, c, d = s:byte(o + 1, o + 4)\
+    if not d then return nil end\
+    return ((a * 256 + b) * 256 + c) * 256 + d\
+end\
+\
+-- fromMobi(head) -> date | nil\
+-- head: the start of the file, enough to cover record 0 (PDB header, the\
+-- record list, the MOBI header and its EXTH block).\
+function M.fromMobi(head)\
+    if type(head) ~= \"string\" or #head < 86 then return nil end\
+    local rec0 = u32(head, 78)\
+    if not rec0 then return nil end\
+    if head:sub(rec0 + 17, rec0 + 20) ~= \"MOBI\" then return nil end\
+    local mobi_len = u32(head, rec0 + 20)\
+    local flags = u32(head, rec0 + 128)\
+    if not (mobi_len and flags) then return nil end\
+    -- Bit 0x40 says an EXTH block follows the MOBI header.\
+    if math.floor(flags / 64) % 2 ~= 1 then return nil end\
+    local exth = rec0 + 16 + mobi_len\
+    if head:sub(exth + 1, exth + 4) ~= \"EXTH\" then return nil end\
+    local count = u32(head, exth + 8)\
+    if not count then return nil end\
+    local pos = exth + 12\
+    for _i = 1, math.min(count, 500) do\
+        local rtype, rlen = u32(head, pos), u32(head, pos + 4)\
+        if not (rtype and rlen) or rlen < 8 then return nil end\
+        if rtype == 106 then\
+            return M.parseDate(head:sub(pos + 9, pos + rlen))\
+        end\
+        pos = pos + rlen\
+    end\
+    return nil\
+end\
+\
+-- ── File readers (impure; run in the child) ────────────────────────────────\
+\
+local function lowerExt(fp)\
+    local l = fp:lower()\
+    if l:match(\"%.fb2%.zip$\") then return \"fb2.zip\" end\
+    return l:match(\"%.([%w]+)$\")\
+end\
+\
+local function readHead(fp, n)\
+    local fh = io.open(fp, \"rb\")\
+    if not fh then return nil end\
+    local s = fh:read(n)\
+    fh:close()\
+    return s\
+end\
+\
+-- withArchive(fp, fn) -> fn(rd)'s result. The reader goes back on every\
+-- path (see lib/bookshelf_pagemap_probe for why that matters).\
+local function withArchive(fp, fn)\
+    local Archiver = require(\"ffi/archiver\")\
+    local rd = Archiver.Reader:new()\
+    if not rd:open(fp) then return nil end\
+    for _ in rd:iterate() do end -- luacheck: ignore\
+    local ok, res = pcall(fn, rd)\
+    pcall(function() rd:close() end)\
+    if not ok then return nil end\
+    return res\
+end\
+\
+local function findEntry(rd, pred)\
+    for _i, e in ipairs(rd.entries) do\
+        if type(e) == \"table\" and type(e.path) == \"string\" and pred(e.path) then\
+            return e.path\
+        end\
+    end\
+    return nil\
+end\
+\
+local READERS = {}\
+\
+READERS.epub = function(fp)\
+    return withArchive(fp, function(rd)\
+        local container = rd.entries[\"META-INF/container.xml\"]\
+                          and rd:extractToMemory(\"META-INF/container.xml\")\
+        local opf_path = container and container:match('full%-path%s*=%s*\"([^\"]+)\"')\
+        if opf_path then\
+            opf_path = opf_path:gsub(\"%%(%x%x)\", function(h) return string.char(tonumber(h, 16)) end)\
+        end\
+        if not (opf_path and rd.entries[opf_path]) then\
+            opf_path = findEntry(rd, function(p) return p:lower():match(\"%.opf$\") end)\
+        end\
+        if not opf_path then return nil end\
+        return M.fromOpf(rd:extractToMemory(opf_path))\
+    end)\
+end\
+\
+local function comic(fp)\
+    return withArchive(fp, function(rd)\
+        local key = findEntry(rd, function(p)\
+            return p:lower():match(\"^comicinfo%.xml$\") or p:lower():match(\"/comicinfo%.xml$\")\
+        end)\
+        return key and M.fromComicInfo(rd:extractToMemory(key)) or nil\
+    end)\
+end\
+READERS.cbz, READERS.cbr, READERS.cb7, READERS.cbt = comic, comic, comic, comic\
+\
+-- The description, where both dates live, comes before the body and the\
+-- base64 images: the first 256 KB is plenty and spares reading a large file.\
+READERS.fb2 = function(fp)\
+    return M.fromFb2(readHead(fp, 256 * 1024))\
+end\
+READERS[\"fb2.zip\"] = function(fp)\
+    return withArchive(fp, function(rd)\
+        local key = findEntry(rd, function(p) return p:lower():match(\"%.fb2$\") end)\
+        return key and M.fromFb2(rd:extractToMemory(key)) or nil\
+    end)\
+end\
+\
+local function mobi(fp)\
+    return M.fromMobi(readHead(fp, 256 * 1024))\
+end\
+READERS.mobi, READERS.azw, READERS.azw3, READERS.prc = mobi, mobi, mobi, mobi\
+\
+READERS.pdf = function(fp)\
+    local mupdf = require(\"ffi/mupdf\")\
+    local ok, doc = pcall(mupdf.openDocument, fp)\
+    if not (ok and doc) then return nil end\
+    local ok_m, meta = pcall(function() return doc:getMetadata() end)\
+    pcall(function() doc:close() end)\
+    return ok_m and M.fromPdfInfo(meta) or nil\
+end\
+\
+-- handles(fp) -> boolean: is there a reader for this file's format?\
+function M.handles(fp)\
+    return type(fp) == \"string\" and READERS[lowerExt(fp) or \"\"] ~= nil\
+end\
+\
+-- read(fp) -> date | nil\
+function M.read(fp)\
+    if type(fp) ~= \"string\" then return nil end\
+    local reader = READERS[lowerExt(fp) or \"\"]\
+    if not reader then return nil end\
+    local ok, date = pcall(reader, fp)\
+    return ok and date or nil\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_published"] = "-- bookshelf_published.lua\
+-- %published: a book's publication year, from the best source it has.\
+--\
+--   1. calibre's pubdate (metadata.calibre, when Read calibre metadata.calibre\
+--      is on): someone curated it\
+--   2. the OPDS catalog: a catalog entry's dc:issued while browsing, and the\
+--      same date saved at download (lib/bookshelf_widget's download flow)\
+--   3. the book file itself (lib/bookshelf_pubdate), read once and kept in\
+--      the book facts database\
+--\
+-- Nothing here runs unless a template names %published: the expander is the\
+-- only caller. A book whose file has not been read yet shows nothing on its\
+-- first paint and is queued; the queue is read in a forked child, a page at\
+-- a time, and the rows that gained a date are repainted in place\
+-- (on_filled). A render never opens a book file, and never stats one.\
+--\
+-- The date is not re-read when a file changes under the same path: Refresh\
+-- metadata on the book clears it (forget), and an OPDS re-download replaces it.\
+\
+local M = {}\
+\
+local BATCH = 40          -- books per child\
+local DELAY = 0.5         -- seconds: let the page finish painting first\
+local POLL = 0.25         -- seconds between checks on the child\
+local TIMEOUT = 60        -- seconds before a stuck child is killed\
+\
+local _pending = {}       -- fp -> true, waiting for a child\
+local _order = {}         -- the same fps, first queued first\
+local _asked = {}         -- fp -> true: queued or read this session\
+local _running = false\
+local _armed = false\
+local _broken = false     -- a fork failed: stop asking for the session\
+\
+-- Set by the shelf: function(fps) repaints those books where they show.\
+M.on_filled = nil\
+\
+local function facts()\
+    local ok, F = pcall(require, \"lib/bookshelf_book_facts_db\")\
+    return ok and F or nil\
+end\
+\
+local function pubdate()\
+    return require(\"lib/bookshelf_pubdate\")\
+end\
+\
+local function localPath(b)\
+    local fp = b and b.filepath\
+    if type(fp) ~= \"string\" or fp == \"\" or fp:find(\"^OPDS://\") then return nil end\
+    return fp\
+end\
+\
+local function uiManager()\
+    local ok, UIManager = pcall(require, \"ui/uimanager\")\
+    return ok and UIManager or nil\
+end\
+\
+-- ── The background read ────────────────────────────────────────────────────\
+\
+-- spawn(batch, done): reads every file in batch in a forked child and calls\
+-- done({ [fp] = { date = \"YYYY...\" | \"\", mtime = n } }) on the main process,\
+-- or done(nil) when the child could not be started. Replaced in tests.\
+function M._spawn(batch, done)\
+    local ok_u, util = pcall(require, \"ffi/util\")\
+    local UIManager = uiManager()\
+    if not (ok_u and util and util.runInSubProcess and UIManager) then\
+        return done(nil)\
+    end\
+    local pid, fd = util.runInSubProcess(function(_pid, write_fd)\
+        local lfs = require(\"libs/libkoreader-lfs\")\
+        local P = require(\"lib/bookshelf_pubdate\")\
+        local lines = {}\
+        for i, fp in ipairs(batch) do\
+            local date = P.read(fp) or \"\"\
+            local mtime = lfs.attributes(fp, \"modification\") or 0\
+            lines[i] = date .. \"\\t\" .. tostring(mtime)\
+        end\
+        util.writeToFD(write_fd, table.concat(lines, \"\\n\") .. \"\\n\", true)\
+    end, true)\
+    if not pid or not fd then return done(nil) end\
+    local waited = 0\
+    local function check()\
+        if util.isSubProcessDone(pid) then\
+            local out = util.readAllFromFD(fd) or \"\"\
+            local res, k = {}, 0\
+            for line in out:gmatch(\"([^\\n]*)\\n\") do\
+                k = k + 1\
+                local fp = batch[k]\
+                local date, mtime = line:match(\"^([^\\t]*)\\t(%d+)$\")\
+                if fp and date then\
+                    res[fp] = { date = date, mtime = tonumber(mtime) }\
+                end\
+            end\
+            return done(res)\
+        end\
+        waited = waited + POLL\
+        if waited >= TIMEOUT then\
+            pcall(util.terminateSubProcess, pid)\
+            -- Reap it later; the batch counts as answered with nothing so it\
+            -- is not asked again this session.\
+            UIManager:scheduleIn(1, function() pcall(util.isSubProcessDone, pid) end)\
+            -- Closes our end; the killed child's end is already gone.\
+            pcall(util.readAllFromFD, fd)\
+            return done({})\
+        end\
+        UIManager:scheduleIn(POLL, check)\
+    end\
+    UIManager:scheduleIn(POLL, check)\
+end\
+\
+local run\
+\
+local function finish(res)\
+    _running = false\
+    if res == nil then\
+        _broken = true\
+        return\
+    end\
+    local F = facts()\
+    local filled = {}\
+    -- put reads a row it has not seen before writing it (so a date never\
+    -- blanks a page count): the batch's rows in one query, not forty. On a\
+    -- PW5 the forty reads held the UI for ~100 ms a batch.\
+    if F and F.prefetch then\
+        local fps = {}\
+        for fp in pairs(res) do fps[#fps + 1] = fp end\
+        pcall(F.prefetch, fps)\
+    end\
+    for fp, r in pairs(res) do\
+        -- A date the reader set while this batch was being read stands.\
+        local e = F and F.get(fp)\
+        if F and not (e and e.pdm == M.USER_MTIME) then F.put(fp, { pd = r.date, pdm = r.mtime }) end\
+        if r.date ~= \"\" then filled[#filled + 1] = fp end\
+    end\
+    if F and next(res) and F.flushSoon then F.flushSoon() end\
+    -- The Published sort remembers each record's year; new dates void that.\
+    if #filled > 0 then\
+        pcall(function() require(\"lib/bookshelf_sort_engine\").clearPublishedMemo() end)\
+    end\
+    if #filled > 0 and M.on_filled then\
+        pcall(M.on_filled, filled)\
+    end\
+    if #_order > 0 then run() end\
+end\
+\
+run = function()\
+    if _running or _broken or #_order == 0 then return end\
+    local batch = {}\
+    while #batch < BATCH and #_order > 0 do\
+        local fp = table.remove(_order, 1)\
+        _pending[fp] = nil\
+        batch[#batch + 1] = fp\
+    end\
+    _running = true\
+    local ok = pcall(M._spawn, batch, finish)\
+    if not ok then finish(nil) end\
+end\
+\
+local function arm()\
+    if _armed or _running then return end\
+    local UIManager = uiManager()\
+    if not UIManager then return end\
+    _armed = true\
+    UIManager:scheduleIn(DELAY, function()\
+        _armed = false\
+        run()\
+    end)\
+end\
+\
+-- enqueue(fp): read this book's file in the background, once a session.\
+function M.enqueue(fp)\
+    if M.orbitui_defer_file_reads then return end\
+    if _broken or _asked[fp] then return end\
+    _asked[fp] = true\
+    _pending[fp] = true\
+    _order[#_order + 1] = fp\
+    arm()\
+end\
+\
+-- ── The lookup ─────────────────────────────────────────────────────────────\
+\
+-- A date the reader set (setUserDate) is stored like a read one, its file\
+-- mtime replaced by this marker: nothing that re-reads or replaces a date\
+-- (Refresh metadata, a changed file, an OPDS download, a background read)\
+-- touches a row carrying it.\
+M.USER_MTIME = -1\
+\
+-- stored(fp) -> the facts row's date fields, or nil. Every stored date at\
+-- once (one query a session), not a query per book: a shelf sorted by year\
+-- asks for all of them.\
+local function stored(fp)\
+    local F = facts()\
+    if not F then return nil end\
+    local map = F.publishedMap and F.publishedMap()\
+    if map then return map[fp] end\
+    return F.get(fp)\
+end\
+\
+-- info(book) -> date, source\
+-- The date %published and the Publication year sort use, as stored (a year,\
+-- year-month or year-month-day), and where it came from, in the order they\
+-- win: \"user\" (the reader's own), \"hardcover\" (Use Hardcover metadata: the\
+-- work's first-published year), \"calibre\", \"catalog\" (an OPDS catalogue's),\
+-- \"file\" (read from the book; read in the background the first time). With\
+-- no date: nil and \"none\" (the file was read and has none) or \"pending\" (not\
+-- read yet, and now queued; or a format with no reader).\
+-- opts.ignore_user: the book's own date, the reader's left aside. The\
+-- reader's date is stored in place of the file's, so with one set the file's\
+-- is not known: nil, \"pending\", and nothing queued (the background read\
+-- would not replace the reader's date anyway); the caller reads the file.\
+function M.info(b, opts)\
+    if type(b) ~= \"table\" then return nil, \"none\" end\
+    local P = pubdate()\
+    local fp = localPath(b)\
+    local e = fp and stored(fp)\
+    local user = e and e.pdm == M.USER_MTIME\
+    if user and not (opts and opts.ignore_user) and e.pd and e.pd ~= \"\" then return e.pd, \"user\" end\
+    if user then e = nil end\
+    if P.year(b.hardcover_published) then return P.parseDate(b.hardcover_published), \"hardcover\" end\
+    local cal = b.calibre\
+    if type(cal) == \"table\" and P.year(cal.pubdate) then return P.parseDate(cal.pubdate), \"calibre\" end\
+    if P.year(b.published) then return P.parseDate(b.published), \"catalog\" end\
+    if not fp then return nil, \"none\" end\
+    if e and e.pd ~= nil then\
+        if e.pd ~= \"\" then return e.pd, \"file\" end\
+        return nil, \"none\"\
+    end\
+    -- Hosted OrbitUI defers the unowned automatic fork queue. Cached/user/\
+    -- Hardcover/calibre/OPDS dates remain usable without file I/O or repaint\
+    -- work behind a reader. Standalone Bookshelf retains native behavior.\
+    if M.orbitui_defer_file_reads then return nil, \"unavailable\" end\
+    if user then return nil, \"pending\" end\
+    if P.handles(fp) then M.enqueue(fp) return nil, \"pending\" end\
+    return nil, \"none\"\
+end\
+\
+-- forRecord(book) -> \"YYYY\" | \"\"\
+function M.forRecord(b)\
+    local date = M.info(b)\
+    return pubdate().year(date) or \"\"\
+end\
+\
+-- userDate(fp) -> the date the reader set, or nil.\
+function M.userDate(fp)\
+    local e = type(fp) == \"string\" and stored(fp)\
+    if e and e.pdm == M.USER_MTIME and e.pd and e.pd ~= \"\" then return e.pd end\
+    return nil\
+end\
+\
+-- setUserDate(fp, text) -> true, or false for text that is not a date.\
+-- nil or \"\" clears it: the file is read for its date again.\
+function M.setUserDate(fp, text)\
+    local F = facts()\
+    if not (F and type(fp) == \"string\") then return false end\
+    if text == nil or text == \"\" then\
+        local e = stored(fp)\
+        if e and e.pdm == M.USER_MTIME then\
+            F.put(fp, { pd = false, pdm = false })\
+            _asked[fp] = nil\
+            if F.flushSoon then F.flushSoon() end\
+        end\
+        return true\
+    end\
+    local date = pubdate().parseDate(text)\
+    if not date then return false end\
+    F.put(fp, { pd = date, pdm = M.USER_MTIME })\
+    _asked[fp] = true\
+    if F.flushSoon then F.flushSoon() end\
+    return true\
+end\
+\
+-- remember(fp, date): a date known from elsewhere (an OPDS download), kept\
+-- as if the file had been read.\
+function M.remember(fp, date, mtime)\
+    local F = facts()\
+    date = pubdate().parseDate(date)\
+    if not (F and type(fp) == \"string\" and date) then return end\
+    local e = stored(fp)\
+    if e and e.pdm == M.USER_MTIME then return end\
+    F.put(fp, { pd = date, pdm = mtime or false })\
+    _asked[fp] = true\
+end\
+\
+-- forget(fp): Refresh metadata, or a file the stale sweep saw change\
+-- (both through Repo.forgetBook). The date is read again next time only when\
+-- the file is not the one it came from: an unchanged file would give the same\
+-- answer, and a date an OPDS download carried over is not in the file at all.\
+function M.forget(fp, mtime)\
+    local F = facts()\
+    if not (F and type(fp) == \"string\") then return end\
+    local e = F.get(fp)\
+    if not (e and e.pd ~= nil) then return end\
+    if e.pdm == M.USER_MTIME then return end\
+    if mtime == nil then\
+        local ok, lfs = pcall(require, \"libs/libkoreader-lfs\")\
+        mtime = ok and lfs and lfs.attributes(fp, \"modification\") or nil\
+    end\
+    if e.pdm and mtime and e.pdm == mtime then return end\
+    F.put(fp, { pd = false, pdm = false })\
+    _asked[fp] = nil\
+end\
+\
+-- For the tests.\
+function M._reset()\
+    _pending, _order, _asked = {}, {}, {}\
+    _running, _armed, _broken = false, false, false\
+    M.on_filled = nil\
 end\
 \
 return M\

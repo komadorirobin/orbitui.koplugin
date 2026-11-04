@@ -167,6 +167,14 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+November 4 reviewed 1.1 import: upstream's moved-BIM/series fix must retain the
+host's cooperative eight-row, blob-free, read-only refresh and visibility/cancel
+guards. Track the completed fingerprint, refresh again after later extraction,
+and invalidate grouped shelves without starting a blocking whole-table SELECT.
+The new publication-date fork queue remains deferred in hosted OrbitUI until an
+owned/cancellable/Android-safe path exists. Cached/curated/user dates remain
+usable; unavailable file lookup is explicit, never a false empty/completed scan.
+
 November 1 Bookshelf 6.2: image contrast is opt-in, applied once to retained
 decoded/scaled copies, not per framebuffer paint. Propagate boosted-copy marks
 and never persist boosted pixels as raw disk artwork. Contrast participates in
@@ -1046,6 +1054,15 @@ screens keep independent layouts and refresh targets. Regression coverage:
 `tests/test_simpleui_upstream_20261006.lua`.
 
 ## C08: Assets, data and recovery
+
+November 4: do not expose new folder deletion in hosted OrbitUI while native
+cleanup purges sidecars BEFORE fallible folder removal. Move/rename remain.
+New publication-date display facts add columns without recreating a database;
+local date editing does not rewrite EPUBs, read status or external services.
+Keep 1.0 stable/tag/assets separate from 1.1 previews and use exact lazy helper
+embeds to preserve old API-1 inventories/bootstrap. Wallpaper page/tab/close
+retirement prevents stale settings writes, and extreme fit allocations fall
+back safely without rewriting saved preferences or original images.
 
 The October 25 Bookshelf 6.0 migrations are copy-only while hosted: retain the
 old main-file ornament-deck snapshot and its auxiliary-store copy when SQLite

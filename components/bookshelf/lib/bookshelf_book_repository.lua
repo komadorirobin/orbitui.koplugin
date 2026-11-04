@@ -4297,7 +4297,8 @@ local function _getLightMetaCache(home, depth)
     local fresh
     if _lightmeta_refresh.rows then
         row_map = _lightmeta_refresh.rows
-        fresh = true
+        local fp = _bimDbFingerprint()
+        fresh = fp == nil or fp == _lightmeta_refresh.fingerprint
         row_source = "memory-refresh"
     elseif row_entry and row_entry.expires_at > now then
         row_map = row_entry.rows

@@ -313,7 +313,7 @@ end
 H.test("the real single-book Refresh metadata callback delegates with either Android safety preference", function()
   for _, state in ipairs({ true, false }) do
     local w = fixture(); safe = state; local text = source("components/bookshelf/lib/bookshelf_widget.lua")
-    local body = assert(text:match('local refresh_btn = ({ text = _%("Refresh metadata"%).-})\n    local select_btn'))
+    local body = assert(text:match('local refresh_btn = (%b{})'))
     local env = setmetatable({ bw = w, book = { filepath = "/a.epub" }, _ = function(s) return s end,
         closeModal = function() calls.modal_closed = true end }, { __index = _G })
     rows["/a.epub"] = { title = "Keep until ready" }

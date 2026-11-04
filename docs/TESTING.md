@@ -1,5 +1,28 @@
 # Verification and device acceptance
 
+## 1.1.0-beta.1 — reviewed upstream, physical retest pending
+
+Separate stage explicitly approved after stable 1.0. Sources Bookshelf `d47edfcc`
+/ SimpleUI `633ffbff`; imported independently, stable maintenance/1.0 and public
+1.0/RC2 stay immutable. Keep C01-C11, existing API-1/bootstrap/path/art/language
+sets and sync owners. New metadata fingerprints/group invalidation preserve
+cooperative read-only windows. File-date automatic jobs and folder-delete are
+deferred only in the host for lifecycle/data safety, not silently enabled.
+Targeted tests execute the new actual lookup/queue boundary, metadata reload,
+allocation math and wallpaper late page/tab/close callbacks; the native refresh
+suite covers a moved BIM after completion. Existing native tests cover the new
+facts, year sort, parser, render guard, cover match and wallpaper paths.
+
+Required: both full scripts, translations, exact lazy source parity/2,000 paths,
+sealed roots/native supplements, real SQLite facts and actual older installers
+including stable 1.0. Outgoing history/artwork/secrets, main/tag CI, downloaded
+draft/public byte parity, immutable previous releases/tags and stable/latest
+remaining 1.0 must pass before preview publication. Evidence:
+`test-results/upstream-20261104/`. No physical Bigme/Boox 1.1 install or server
+change. New book-menu/date/year sorting, CJK titles, wallpaper fit/night/paging,
+large-library indexing, real reader-return/suspend need device testing. Expected
+benefits from upstream benchmarks are not measured OrbitUI/Bigme improvements.
+
 ## 1.0.0 — stable promotion of user-accepted RC2
 
 On November 4 the user reports RC2 stable/good/ready and approves the strategy:

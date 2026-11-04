@@ -315,6 +315,7 @@ function WB.show(key, on_change, on_closed)
     -- A card or a footer button: used at once, behind the picker, which
     -- stays open for the next.
     local function pick(item)
+        if self.closed then return end
         WB.choose(key, item)
         self.changed = true
         if on_change then pcall(on_change) end
@@ -341,19 +342,26 @@ function WB.show(key, on_change, on_closed)
         -- there (WB.GRID_SHARE of the screen's height, whatever its DPI).
         rows_per_page = function() return LibraryModal.rowsForShare(WB.GRID_SHARE) end,
         chip_strip = chips,
-        on_chip_tap = function(k) self.chip = k; self.items = items() end,
+        on_chip_tap = function(k)
+            if self.closed then return end
+            if self.settle then UIManager:unschedule(self.settle); self.settle = nil end
+            self.chip = k; self.items = items()
+        end,
         -- One picture a page (portrait): the page on screen is the choice,
         -- used once the pages stop turning, so flicking through decodes
         -- only the picture landed on, not each one passed.
         on_page_shown = function(page)
             if WB.perPage() ~= 1 then return end
             if self.settle then UIManager:unschedule(self.settle) end
-            self.settle = function()
+            local settle
+            settle = function()
+                if self.closed or self.settle ~= settle then return end
                 self.settle = nil
                 local item = modal and self.items[page]
                 if item and not WB.inUse(key, item) then pick(item) end
             end
-            UIManager:scheduleIn(WB.SETTLE_S, self.settle)
+            self.settle = settle
+            UIManager:scheduleIn(WB.SETTLE_S, settle)
         end,
         cell_renderer = function(item, dimen) return renderCell(key, item, dimen) end,
         -- A tap uses the picture at once, behind the picker, which stays open
@@ -365,6 +373,7 @@ function WB.show(key, on_change, on_closed)
         -- However it closes: one full refresh if the picture changed, to
         -- clear what the quick per-tap updates leave on e-ink.
         on_closed = function()
+            self.closed = true
             -- A page still settling when the picker closes is not chosen.
             if self.settle then UIManager:unschedule(self.settle); self.settle = nil end
             if self.changed then UIManager:setDirty("all", "full") end
@@ -378,6 +387,7 @@ function WB.show(key, on_change, on_closed)
         footer_rows = { {
             { key = "scaling", label_func = function() return WB.scalingLabel() end,
               on_tap = function()
+                  if self.closed then return end
                   WB.nextScaling()
                   self.changed = true
                   if on_change then pcall(on_change) end

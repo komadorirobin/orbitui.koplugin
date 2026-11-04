@@ -168,6 +168,7 @@ end
 
 -- enqueue(fp): read this book's file in the background, once a session.
 function M.enqueue(fp)
+    if M.orbitui_defer_file_reads then return end
     if _broken or _asked[fp] then return end
     _asked[fp] = true
     _pending[fp] = true
@@ -223,6 +224,10 @@ function M.info(b, opts)
         if e.pd ~= "" then return e.pd, "file" end
         return nil, "none"
     end
+    -- Hosted OrbitUI defers the unowned automatic fork queue. Cached/user/
+    -- Hardcover/calibre/OPDS dates remain usable without file I/O or repaint
+    -- work behind a reader. Standalone Bookshelf retains native behavior.
+    if M.orbitui_defer_file_reads then return nil, "unavailable" end
     if user then return nil, "pending" end
     if P.handles(fp) then M.enqueue(fp) return nil, "pending" end
     return nil, "none"

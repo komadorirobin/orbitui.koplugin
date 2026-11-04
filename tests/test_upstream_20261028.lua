@@ -98,6 +98,11 @@ H.test("whole Sprite renders embedded PNGs through minimum-reader data API and r
         ["ui/renderimage"] = render, ["ui/widget/widget"] = H.widget(),
         ["libs/libkoreader-lfs"] = lfs, logger = { warn = function() error("decode failed") end },
         ["modules/critter/assets"] = assets,
+        ["features/sui_style"] = { COLOR = { gray = "shadow" } },
+        ["infra/sui_aa_paint"] = { fillRect = function(_, _, _, w, h, color)
+            assert(w > 0 and h > 0); H.eq(color, "shadow")
+            calls.shadows = (calls.shadows or 0) + 1
+        end },
         ["infra/sui_raster_cache"] = { get = function(_, key, builder, ...)
             if not cache[key] then cache[key] = builder(...) end
             return cache[key]
@@ -120,6 +125,8 @@ H.test("whole Sprite renders embedded PNGs through minimum-reader data API and r
     end
     H.eq(#calls, 12); H.eq(painted[1], "invert"); H.eq(painted[2], "dither-alpha")
     H.eq(painted[3], "invert")
+    Sprite:new{ path = entry.files.neutral, max_w = 100, max_h = 100, shadow = true }:paintTo(dst, 10, 20)
+    H.eq(calls.shadows, 3)
     Sprite:new{ path = entry.files.neutral, max_w = 24, max_h = 24 }
     H.eq(#calls, 14, "small box retains native rescale branch")
     Sprite:new{ path = "/custom.png", max_w = 100, max_h = 100 }

@@ -22,6 +22,19 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-04
 
+- **Separate 1.1 preview cycle in progress, after stable release.** Approved
+  upstream review/imports `a6f8ff31` / `ecd3e0e8` integrate Bookshelf `d47edfcc`
+  (53 commits) and SimpleUI `633ffbff` (five). Keep bounded metadata refresh,
+  now with completed-fingerprint/group invalidation. New year sort/curated dates,
+  book-menu/wallpaper improvements and cache/cover/text fixes remain distinct
+  from stable. Defer unsafe unowned automatic file-date forks and premature
+  sidecar deletion in new folder-delete while hosted. Preserve standalone
+  fallbacks, native/canonical aliases, preload, SV/EN, all art/settings/sync
+  owners. Two new exact lazy helpers: 407 identities/24 embeds, same 2,000 paths.
+  VERSION 1.1.0-beta.1 is preview only; no new physical acceptance or measured
+  speedup. Stable/tag 1.0/maintenance branch stay fixed. TESTING/MERGE_LOG and
+  `test-results/upstream-20261104/` hold execution/publication receipts.
+
 - **Stable 1.0 promotion and separate 1.1 cycle approved.** The user reports
   RC2 stable/good/ready and says "Kör" to the proposed release strategy. Promote
   exactly RC2's runtime to 1.0.0 after release checks; only version/docs/channel

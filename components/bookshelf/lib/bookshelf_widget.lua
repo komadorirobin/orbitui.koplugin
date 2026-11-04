@@ -24148,7 +24148,7 @@ function BookshelfWidget:_buildBookEditTab(book, modal, avail_w, avail_h)
         local back_text
         if user_set then
             local own = Published.info(book, { ignore_user = true })
-            if not own then
+            if not own and not Published.orbitui_defer_file_reads then
                 local ok_r, read = pcall(function()
                     local P = require("lib/bookshelf_pubdate")
                     return P.read(book.filepath)
@@ -24324,6 +24324,7 @@ function BookshelfWidget:_buildBookEditTab(book, modal, avail_w, avail_h)
     local function pubText()
         local date, src = require("lib/bookshelf_published").info(book)
         if not date then
+            if src == "unavailable" then return _("File date lookup deferred in OrbitUI"), nil, false, src end
             if src == "pending" then return _("Checking the file\xE2\x80\xA6"), nil, false, src end
             return _("None in the file"), nil, false, src
         end
@@ -27757,6 +27758,7 @@ function BookshelfWidget:_openGroupMenu(group, kind)
             { icon = "\xEE\xA2\xBF", label = _("Delete\xE2\x80\xA6"),   -- delete
               callback = act(function() MoveFlow().deleteFolder{ bw = bw_ref, folder_path = group.path } end) },
         }
+        if self.orbitui_allow_folder_delete == false then table.remove(strip_actions, 3) end
     elseif (kind == "author" or kind == "series" or kind == "genre" or kind == "tag")
            and type(source_id) == "string" and source_id ~= "" then
         -- Per-kind label so a user holding an author stack sees "Set author

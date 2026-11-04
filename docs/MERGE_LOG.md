@@ -4,6 +4,36 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-04 — reviewed upstream for separate 1.1 preview
+
+After publishing/verifying stable 1.0 and preserving maintenance/1.0 at `2d77cb98`,
+execute the user's approved second stage on development/1.1-upstream-20261104.
+Fresh 06:04 UTC observation matches reviewed Bookshelf `d47edfcc` / SimpleUI
+`633ffbff`, 53/five missing commits. Review complete commit lists, runtime diff,
+new modules, additive facts columns, settings/hooks and licenses. Imports
+`a6f8ff31` / `ecd3e0e8` preserve unsquashed provenance. Two repository/test conflicts
+keep cooperative metadata windows instead of restoring synchronous reads; the
+Critter dependency conflict keeps both embedded assets and new shadow styling.
+
+Port upstream's same-session series refresh through bounded SQL windows and
+completed fingerprint checks. Keep new facts/cover-colour retention, filtered
+folder light-map work, title fitting, wallpaper scaling/previews and book-menu/
+publication-year controls. Two explicit safety deferrals: automatic file-date
+fork jobs lack hosted lifecycle/Android guards, and folder-delete purges
+sidecars before a fallible purge. Disable those new paths only while hosted,
+explain deferred date lookup, retain cached/curated/local dates and standalone
+fallback. Close/tab/page timers cannot save late wallpaper choices; extreme
+scaling allocations are bounded. This is integration review, not blind feature
+import or original-reading-data modification.
+
+All C01-C11 owners, profiles/settings, Home/Manga/series/ornaments, local tags,
+reader return and external sync/patches remain. New labels/help are SV/EN. Lazy
+helpers rise 22 -> 24, canonical identities 405 -> 407 with the SAME 2,000 API-1
+installed paths; no asset/language removal or bootstrap limit change. Runtime
+version is 1.1.0-beta.1, never a replacement stable 1.0 archive. Tests/CI/package/
+old-installer/publication receipts follow; no physical 1.1 acceptance or Bigme
+speedup is claimed. No device/server deployment.
+
 ## 2026-11-04 — stable 1.0 promotion; upstream reserved for 1.1
 
 User reports RC2 stable and ready for release, then approves the proposed staged

@@ -44,6 +44,7 @@ M.modules = {
     ["lib/bookshelf_wallpaper"] = true,
     ["lib/bookshelf_color"] = true,
     ["lib/bookshelf_tokens"] = true,
+    ["lib/bookshelf_published"] = true,
 }
 
 local function settingsEntry(items, old_key)
@@ -67,6 +68,10 @@ function M.wrap(name, module)
             return (native:gsub("BookOrbit Want to Read", "Want to read [BookOrbit]")
                 :gsub("BookOrbit Vill läsa", "Vill läsa [BookOrbit]"))
         end
+    elseif name == "lib/bookshelf_published" then
+        -- No new Android fork or unowned background scan during paint.
+        -- Cached/curated years and explicit local date edits are retained.
+        module.orbitui_defer_file_reads = true
     elseif name == "lib/bookshelf_tokens" then
         require("adapters/orbitui_shelf_sort").tokens(module)
     elseif name == "features/sui_wallpaper" or name == "lib/bookshelf_wallpaper" then
@@ -121,6 +126,9 @@ function M.wrap(name, module)
             return require("adapters/orbitui_book_panel").collection(name, { on_saved = on_saved })
         end
     elseif name == "lib/bookshelf_widget" then
+        -- Native delete purges sidecars before a fallible folder purge. Do not
+        -- expose that new destructive flow until it can preserve failed deletes.
+        module.orbitui_allow_folder_delete = false
         local launch = module._launchReader
         if launch then
             module._launchReader = function(self, file, ...)

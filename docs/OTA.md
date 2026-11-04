@@ -7,6 +7,51 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 1.1.0-beta.1
+
+Separate preview cycle after stable 1.0.0; not a replacement of its runtime or
+assets. Bookshelf 53 commits through `d47edfcc` (6.3.2), SimpleUI five through
+`633ffbff`, imported separately with full ancestry. Publication-year sort/tokens
+and local display-date editing, the revised book menu, wallpaper Stretch/Crop
+to fill/Fit to screen and miniature-screen previews join fixes for stale series
+metadata, filtered-folder queries, cover refresh and retained facts/spine colours.
+Cover Deck budgets non-Latin titles more conservatively; Critter adds shadows.
+Upstream performance measurements are not OrbitUI/Bigme measurements.
+
+Hosted safeguards: retain cancellable blob-free metadata windows and profile
+scope instead of upstream's blocking whole-table refresh; revalidate completed
+memory against BIM and retire group caches after refresh. The unowned automatic
+publication-date fork queue is deferred on all hosted platforms: existing cached,
+Hardcover/calibre/OPDS and user dates work, but missing file dates explain the
+deferral rather than showing endless Checking. Explicit date edits affect local
+display facts, not EPUB metadata/sidecars/server status. New folder deletion is
+not offered by OrbitUI because native cleanup removes sidecars before a fallible
+folder purge. Standalone component fallback remains intact. Wallpaper timers
+retire on tab/page/close; extreme fit allocations are bounded.
+
+All new owned labels/help are SV/EN. Two new helper sources are exact lazy
+embedded strings, keeping all 2,000 API-1 paths/bootstrap/assets/languages and
+canonical/preload aliases. Existing Home/Manga/profile/series/ornament settings,
+reader-return and BookOrbit/Hardcover/MAL/patch owners remain. New facts columns
+are additive; no database recreation or reading-data migration. No device/server
+installation. Preview only; stable/latest remains 1.0.0. New UI, wallpaper/night,
+year sort/date editing, full indexing and reader/sleep/return need physical tests.
+
+**Svenska:** Separat förhandsversion efter stabil 1.0.0, inte ersatta stabila
+filer. Bookshelf 6.3.2 och SimpleUI-fixar ger sortering efter utgivningsår, egna
+lokala visningsdatum, ny bokmeny, bakgrundsskalning/förhandsbilder och fixar för
+metadata, filtrerade mappar, omslag och bokryggarnas färger. Titlar med exempelvis
+japanska tecken kortas säkrare i Cover Deck; läskompanjonen får skuggor.
+
+Våra avbrytbara metadatajobb, profiler, bokmärken/läsdata, språk/bilder och
+externa synkägare behålls. Automatisk datumläsning ur filer är uppskjuten; redan
+kända datum och datum från Hardcover/Calibre/OPDS samt egna visningsdatum fungerar.
+Okända datum förklarar begränsningen. Den nya mappraderingen erbjuds inte ännu,
+eftersom misslyckad radering kan förlora sidodata. Bakgrundsväljarens sena anrop
+stängs säkert och extrema bildallokeringar begränsas. Inga böcker, EPUB-taggar
+eller serverstatusar skrivs av datumfunktionen. Endast förhandskanalen; stabil
+1.0.0 behålls. Den nya vyn och livscykeln behöver testas på riktig enhet.
+
 ## OrbitUI 1.0.0
 
 First stable release, explicitly approved after the user reports RC2 stable and

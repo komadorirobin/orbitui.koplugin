@@ -1958,6 +1958,10 @@ function M.fitLayout(iw, ih, w, h, mode)
     local sx, sy = w / iw, h / ih
     local s = (mode == "fill") and math.max(sx, sy) or math.min(sx, sy)
     local dw, dh = math.floor(iw * s + 0.5), math.floor(ih * s + 0.5)
+    -- An extreme aspect ratio must not request an unbounded native allocation.
+    -- Fall back to the old screen-sized stretch; keep the saved fit preference.
+    if dw ~= dw or dh ~= dh or dw > 32768 or dh > 32768
+            or dw * dh > 4 * w * h then return nil end
     if mode == "fill" then
         dw, dh = math.max(dw, w), math.max(dh, h)
     else
