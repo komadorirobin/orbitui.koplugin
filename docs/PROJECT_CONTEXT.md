@@ -34,6 +34,11 @@ and correct this file in the same change.
   beta cycle. Keep a 1.0 maintenance branch. General RC2 sign-off is recorded as
   reported acceptance, not invented per-scenario/multi-device test results.
   Evidence: `test-results/stable1-20261104/`; TESTING/MERGE_LOG govern receipts.
+  Exact stable source `71ba3342` / ZIP `79fec788` (9,444,672 bytes) passes both
+  full scripts, 43 catalogs, sealed/native and five actual older-installer local
+  scenarios including RC2. Same 2,000 paths/API1; implementation byte-identical
+  to RC2. Source/history/artwork/secret checks pass. Main/tag CI, draft/public
+  assets/channel/immutability and public-byte installer checks remain gates.
 
 - **RC2 is public in preview; feature freeze continues.** User says "Pusha
   och publicera" after the disclosed local fix/device-test gap. Prepare

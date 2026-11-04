@@ -20,6 +20,25 @@ Stable and preview select 1.0 over RC2; subsequent 1.1 prereleases cannot enter
 stable. Evidence: `test-results/stable1-20261104/`. Results are recorded below
 after execution, not assumed from prior green RC2 runs.
 
+Exact candidate `71ba334216801ab8392921963531e77d1b95a62c` passes both complete
+scripts: 134 Python tests/four inherited skips, 103 root Lua files, 542 Bookshelf
+suites/zero failures/three inherited SQLite skips, and 13 SimpleUI files. All
+43 catalogs, 1,165 syntax files and 405 canonical identities pass. Both sealed
+root runs and native minimum/current input/dialog/Trapper/span, real SQLite/
+EPUB/UIManager and Android/frame raster/night supplements pass. Actual Beta
+5/9/29/RC1/RC2 installers pass local discovery/extraction/hash, activation/restart,
+code rollback, interrupted recovery, external snapshots and obsolete-code cleanup.
+
+Frozen ZIP `79fec78864b901457458c7f4286475c70b1653fc4549edb767c0599f90b1d66f`,
+9,444,672 bytes / 27,920,797 expanded; manifest
+`321dc6f49ccd9002e21c19a34e920fe4a40d99a03b73bd8739a79c5e5903f538`.
+Exact optimized source projection and all identical 2,000 API-1 paths pass.
+Runtime/components/pins/artwork/bootstrap are byte-identical to RC2. Only
+VERSION/README/existing release docs differ inside the package. Nine initial
+outgoing blobs exclude held artwork; Gitleaks is clean. Main/tag CI and draft/
+public parity/channel/old-release immutability plus public-byte native checks
+remain publication gates. No new physical-reader/server test is claimed.
+
 ## 1.0.0-rc.2 — publication checks
 
 User explicitly requests push/publication after the local implementation and

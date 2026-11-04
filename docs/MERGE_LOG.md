@@ -24,6 +24,16 @@ cycle, preserving a 1.0 maintenance branch. No optional-server deployment or
 device installation is authorized by the release workflow. Results/receipts:
 TESTING.md and `test-results/stable1-20261104/`.
 
+Stable candidate `71ba3342` / ZIP `79fec788` (9,444,672 bytes) passes both full
+scripts, 43 catalogs, sealed/native supplements and actual Beta 5/9/29/RC1/RC2
+local installer scenarios. Identical 2,000 API-1 paths and exact source projection;
+all runtime/components/pins/artwork/bootstrap bytes match RC2. Nine new history
+blobs exclude held artwork; Gitleaks finds no leaks. Publication still requires
+main/tag CI, downloaded draft/public parity, stable/preview selection and
+unchanged prior releases/tags. Documentation receipts do not rebuild the source
+candidate/tag/archive. General user acceptance is the physical basis; no new
+agent-run device/server acceptance is invented.
+
 ## 2026-11-02 — RC2 publication authorized after local tag fixes
 
 User requests "Pusha och publicera" after the local fix and its disclosed lack
