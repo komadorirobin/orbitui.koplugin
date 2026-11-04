@@ -106,7 +106,7 @@ t.test("refresh completion saves rows and invalidates derived metadata only", fu
         _invalidateCustomMetaGate = function() gate = gate + 1 end,
         Repo = { invalidateBookCache = function(reason)
             assert(reason == "metadata-refresh"); invalidated = invalidated + 1
-        end },
+        end, invalidateSeriesCache = function() end },
     }
     compile(sched_body, env)()
     assert(requested and saved == nil, "requesting refresh must not do I/O")
@@ -122,7 +122,8 @@ t.test("a failed snapshot save does not block derived-cache invalidation", funct
         _lightmeta_refresh = { request = function(opts) requested = opts end },
         _saveRowSnapshot = function() error("disk full") end,
         _invalidateCustomMetaGate = function() end,
-        Repo = { invalidateBookCache = function() invalidated = true end },
+        Repo = { invalidateBookCache = function() invalidated = true end,
+            invalidateSeriesCache = function() end },
     }
     compile(sched_body, env)()
     requested.done({ ["/b/c"] = {} }, "v2:100:5")

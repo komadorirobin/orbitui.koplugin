@@ -2025,6 +2025,7 @@ local function _fetchBookEnrichment(book_id, edition_id, opts)
                 cached_tags
                 book_series { position series { name } }
                 pages
+                release_year
                 rating
                 ratings_count
                 reviews_count
@@ -2057,6 +2058,7 @@ local function _fetchBookEnrichment(book_id, edition_id, opts)
                 cached_tags
                 book_series { position series { name } }
                 pages
+                release_year
                 rating
                 ratings_count
                 reviews_count
@@ -2110,6 +2112,10 @@ local function _fetchBookEnrichment(book_id, edition_id, opts)
         -- refreshBook writes it back into the link store, which is where
         -- linkedPages() / the bulk page-count scan read from.
         pages = tonumber(edition and edition.pages) or tonumber(data.book.pages),
+        -- The work's first publication year, not the linked edition's (a 2014
+        -- reprint of Dracula is still 1897): %published and the Publication
+        -- year sort, under Use Hardcover metadata.
+        published_year = tonumber(data.book.release_year),
         fetched_at = os.time(),
     }
 end
@@ -2499,6 +2505,11 @@ function Hardcover.applyMetadata(book)
             book.series = enrichment.series_name
         end
     end
+    -- Read by lib/bookshelf_published ahead of calibre and the file. A link
+    -- made before 6.3.2 has no year until its metadata is refreshed.
+    if tonumber(enrichment.published_year) and tonumber(enrichment.published_year) > 0 then
+        book.hardcover_published = tostring(math.floor(tonumber(enrichment.published_year)))
+    end
     if type(enrichment.genres) == "table" and #enrichment.genres > 0 then
         local max = tonumber(BookshelfSettings.read("hardcover_max_genres")) or 5
         if max < 0 then max = 0 end
@@ -2583,6 +2594,11 @@ function Hardcover.enrichBook(book)
     -- Expose the Hardcover genre list to the book-detail source chip bar even
     -- when the global "Use Hardcover metadata" toggle is off, so a per-book
     -- source choice can pick Hardcover for one book. Capped like applyMetadata.
+    -- Read by lib/bookshelf_published ahead of calibre and the file. A link
+    -- made before 6.3.2 has no year until its metadata is refreshed.
+    if tonumber(enrichment.published_year) and tonumber(enrichment.published_year) > 0 then
+        book.hardcover_published = tostring(math.floor(tonumber(enrichment.published_year)))
+    end
     if type(enrichment.genres) == "table" and #enrichment.genres > 0 then
         local max = tonumber(BookshelfSettings.read("hardcover_max_genres")) or 5
         if max < 0 then max = 0 end
