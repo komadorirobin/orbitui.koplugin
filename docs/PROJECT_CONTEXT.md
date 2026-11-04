@@ -22,7 +22,7 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-04
 
-- **Final 1.1 picker regression: publish beta.2, NOT beta.1.** A last actual
+- **1.1.0-beta.2 is public in preview; stable/latest remains 1.0.0.** A last actual
   callback test reproduces a page timer overriding a direct choice. Cancel it
   on direct card/header choice and reject closed-page scheduling. Keep pushed
   beta.1 tag/source `867a1da5` immutable; draft 433577941 is not published.
@@ -36,6 +36,14 @@ and correct this file in the same change.
   24 helpers/407 identities; source/artwork/bootstrap/sync/history/secrets pass.
   Verified unpublished beta.1 draft is deleted; tag/ZIP/metadata/tests retained.
   Main/tag CI, draft/public/channel/immutability/live installer gates remain.
+  **Published 2026-11-04 06:38:01 UTC**, release **433586379**,
+  `v1.1.0-beta.2` -> `3d908e42`, ZIP `0d033933`, main/tag CI
+  **41786359176 / 41786359029** pass. Exact draft/public assets, preview beta.2/
+  stable-latest 1.0, all 86 old releases/147 old tag refs and actual Beta
+  9/29/RC2/stable1.0 public-HTTPS installer scenarios pass. Both source pins are
+  caught up at the final watch. Public dist is beta.2; stable 1.0 bytes and
+  maintenance branch are retained. No device/server action or new physical 1.1
+  acceptance. Do not rebuild/move frozen sources/tags/assets for receipt docs.
 
 - **Separate 1.1 preview cycle in progress, after stable release.** Approved
   upstream review/imports `a6f8ff31` / `ecd3e0e8` integrate Bookshelf `d47edfcc`

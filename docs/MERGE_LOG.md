@@ -27,6 +27,19 @@ fails on beta.1 and passes after the fix. Delete only verified unpublished draft
 live. Stable 1.0 bytes/maintenance stay fixed. Main/tag CI and draft/public/
 channel/old-release/live installer gates still precede final publication.
 
+**Preview published 2026-11-04 06:38:01 UTC**, release **433586379**,
+`v1.1.0-beta.2` -> `3d908e42`, ZIP `0d033933`. Main/tag CI
+**41786359176 / 41786359029** pass both jobs each. Draft/public bytes and
+assets **708505713/708505714** match the frozen archive. Stable/latest remain
+1.0.0, preview advances to beta.2; all 86 older releases and 147 old tag refs
+remain unchanged, including beta.1's preserved tag. Actual Beta 9/29/RC2/stable1.0
+installers pass public HTTPS discovery/download and all native activation/
+restart/rollback/recovery/snapshot/cleanup phases. Fresh upstream watch is caught
+up. Public dist is beta.2; stable bytes and maintenance/1.0 are preserved. This
+receipt does not rebuild/move frozen source/tag/assets or imply new physical
+device/server acceptance. No user-device, real-book remote write or server
+deployment occurs.
+
 ## 2026-11-04 — reviewed upstream for separate 1.1 preview
 
 After publishing/verifying stable 1.0 and preserving maintenance/1.0 at `2d77cb98`,

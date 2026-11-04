@@ -32,6 +32,20 @@ exact target/assets; its metadata, bytes/tests and public beta.1 tag are retaine
 Main/tag CI, exact downloaded draft/public bytes, stable/latest isolation,
 unchanged previous tags/releases and live native installer checks remain gates.
 
+**Published 2026-11-04 06:38:01 UTC** as preview-only
+[v1.1.0-beta.2](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v1.1.0-beta.2),
+release **433586379**, source/tag `3d908e42`; verified main `149fc23f`.
+Main/tag CI **41786359176 / 41786359029** pass all four jobs. Downloaded draft
+and anonymous public ZIP/checksum match `0d033933`; assets **708505713/708505714**.
+Preview selects beta.2; stable and GitHub latest stay 1.0.0. All 86 prior
+releases and 147 old tag refs (including unpublished beta.1) are unchanged.
+Actual Beta 9/29/RC2/stable1.0 installers pass anonymous public-HTTPS discovery/
+download, extraction/hash, activation/restart/code rollback, interrupted recovery,
+external snapshots and cleanup. Fresh watch is caught up on both reviewed pins.
+Public dist now holds the beta.2 bytes, with stable 1.0 retained separately.
+Frozen source/tag/assets are not rebuilt for this receipt. No reader/server
+changed; new 1.1 physical UI/lifecycle and timing acceptance remain open.
+
 ## 1.1.0-beta.1 — reviewed upstream, physical retest pending
 
 Separate stage explicitly approved after stable 1.0. Sources Bookshelf `d47edfcc`
