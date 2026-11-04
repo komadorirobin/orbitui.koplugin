@@ -22,6 +22,15 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-04
 
+- **Final 1.1 picker regression: publish beta.2, NOT beta.1.** A last actual
+  callback test reproduces a page timer overriding a direct choice. Cancel it
+  on direct card/header choice and reject closed-page scheduling. Keep pushed
+  beta.1 tag/source `867a1da5` immutable; draft 433577941 is not published.
+  VERSION becomes 1.1.0-beta.2 with no extra upstream/data/asset/sync/boot work.
+  Repeat complete gates on corrected bytes; previous beta.1 evidence stays
+  historical. Evidence: `test-results/preview11-beta2-20261104/`. Stable 1.0 and
+  maintenance/1.0 remain fixed; new 1.1 physical UI testing remains outstanding.
+
 - **Separate 1.1 preview cycle in progress, after stable release.** Approved
   upstream review/imports `a6f8ff31` / `ecd3e0e8` integrate Bookshelf `d47edfcc`
   (53 commits) and SimpleUI `633ffbff` (five). Keep bounded metadata refresh,

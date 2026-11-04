@@ -1,5 +1,18 @@
 # Verification and device acceptance
 
+## 1.1.0-beta.2 — final explicit-choice timer regression
+
+An extra actual-picker test fails on beta.1 before publication: a pending page
+selection overrides an explicit choice. Direct card/header choices now cancel
+the pending timer; a captured closed-page handler cannot arm new work. Preserve
+the public beta.1 tag/source, never publish its draft; beta.2 carries this narrow
+fix plus version/docs. No new upstream import, assets/sync/data/boot change.
+The complete beta.1 checks below remain historical evidence, not proof of this
+new fix. Repeat both full scripts/catalogs, sealed/native/package/source/history/
+secrets, older-installer and main/tag CI/draft/public/channel/immutability gates
+on beta.2. Evidence: `test-results/preview11-beta2-20261104/`. Same 1.1 physical
+new-UI gaps and hosted safety deferrals; stable 1.0 remains untouched.
+
 ## 1.1.0-beta.1 — reviewed upstream, physical retest pending
 
 Separate stage explicitly approved after stable 1.0. Sources Bookshelf `d47edfcc`

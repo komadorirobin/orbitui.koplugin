@@ -4,6 +4,18 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-04 — final wallpaper race; unpublished beta.1 superseded by beta.2
+
+Before publication, one added actual-picker callback test reproduces a pending
+page settle overriding a direct choice (expected two writes, got three). Keep
+the pushed v1.1.0-beta.1 tag/source `867a1da5` immutable and do NOT publish draft
+433577941. Beta.2 only fixes direct-choice timer cancellation/closed-page arming
+and updates this regression/release version/docs. No additional upstream import,
+asset, setting/default, reading/sync/boot change. Stable 1.0 remains untouched.
+The user-approved separate 1.1 preview publication continues with the corrected
+candidate after fresh full/sealed/native/package/CI/public gates. Preserve the
+initial beta.1 evidence; evidence for beta.2 is `test-results/preview11-beta2-20261104/`.
+
 ## 2026-11-04 — reviewed upstream for separate 1.1 preview
 
 After publishing/verifying stable 1.0 and preserving maintenance/1.0 at `2d77cb98`,

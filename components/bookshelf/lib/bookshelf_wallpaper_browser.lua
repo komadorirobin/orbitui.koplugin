@@ -316,6 +316,8 @@ function WB.show(key, on_change, on_closed)
     -- stays open for the next.
     local function pick(item)
         if self.closed then return end
+        -- A direct card/header choice wins over a pending page preview.
+        if self.settle then UIManager:unschedule(self.settle); self.settle = nil end
         WB.choose(key, item)
         self.changed = true
         if on_change then pcall(on_change) end
@@ -351,6 +353,7 @@ function WB.show(key, on_change, on_closed)
         -- used once the pages stop turning, so flicking through decodes
         -- only the picture landed on, not each one passed.
         on_page_shown = function(page)
+            if self.closed then return end
             if WB.perPage() ~= 1 then return end
             if self.settle then UIManager:unschedule(self.settle) end
             local settle

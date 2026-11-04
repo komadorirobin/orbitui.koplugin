@@ -7,7 +7,17 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
-## OrbitUI 1.1.0-beta.1
+## OrbitUI 1.1.0-beta.2
+
+Supersedes the never-published beta.1 draft. A final reproduced picker race
+showed a delayed page selection overriding an explicit card/header choice.
+Direct choices now cancel that timer; callbacks after Close cannot arm new work.
+Beta.1's pushed tag stays unchanged; no beta.1 release/OTA was published.
+
+**Svenska:** Ersätter det aldrig publicerade beta.1-utkastet. Ett sista test
+återskapade hur ett väntande sidval kunde skriva över ett manuellt val i
+bakgrundsväljaren. Manuella val avbryter nu timern; stängda vyer startar inga nya
+jobb. Den pushade beta.1-taggen flyttas inte och ingen beta.1-OTA publicerades.
 
 Separate preview cycle after stable 1.0.0; not a replacement of its runtime or
 assets. Bookshelf 53 commits through `d47edfcc` (6.3.2), SimpleUI five through

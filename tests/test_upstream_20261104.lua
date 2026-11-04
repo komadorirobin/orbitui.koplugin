@@ -95,10 +95,13 @@ H.test("retired wallpaper page, tab and Close callbacks cannot save late choices
     queue[#queue](); H.eq(choices, 1)
     modal.config.on_page_shown(1); local tab = queue[#queue]
     modal.config.on_chip_tap("new"); tab(); H.eq(choices, 1)
+    modal.config.on_page_shown(1); local before_tap = queue[#queue]
+    modal.config.on_cell_tap({}); H.eq(choices, 2)
+    before_tap(); H.eq(choices, 2)
     modal.config.on_page_shown(1); local late = queue[#queue]
     modal.config.on_closed(); late()
     modal.config.on_cell_tap({}); modal.config.footer_rows[1][1].on_tap()
-    H.eq(choices, 1); H.eq(scales, 0)
+    H.eq(choices, 2); H.eq(scales, 0)
 end)
 H.test("new folder-delete action remains standalone-only pending recoverable cleanup", function()
     local source = read("components/bookshelf/lib/bookshelf_widget.lua")
