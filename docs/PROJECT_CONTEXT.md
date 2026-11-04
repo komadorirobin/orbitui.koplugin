@@ -30,6 +30,12 @@ and correct this file in the same change.
   Repeat complete gates on corrected bytes; previous beta.1 evidence stays
   historical. Evidence: `test-results/preview11-beta2-20261104/`. Stable 1.0 and
   maintenance/1.0 remain fixed; new 1.1 physical UI testing remains outstanding.
+  Corrected source `3d908e42` / ZIP `0d033933` (9,482,898 bytes) passes fresh
+  complete Lua/LuaJIT/catalogs, both sealed roots/native, actual SQLite and five
+  older-installer local scenarios including stable 1.0. Same 2,000 paths/API1,
+  24 helpers/407 identities; source/artwork/bootstrap/sync/history/secrets pass.
+  Verified unpublished beta.1 draft is deleted; tag/ZIP/metadata/tests retained.
+  Main/tag CI, draft/public/channel/immutability/live installer gates remain.
 
 - **Separate 1.1 preview cycle in progress, after stable release.** Approved
   upstream review/imports `a6f8ff31` / `ecd3e0e8` integrate Bookshelf `d47edfcc`

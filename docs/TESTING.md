@@ -13,6 +13,25 @@ secrets, older-installer and main/tag CI/draft/public/channel/immutability gates
 on beta.2. Evidence: `test-results/preview11-beta2-20261104/`. Same 1.1 physical
 new-UI gaps and hosted safety deferrals; stable 1.0 remains untouched.
 
+Corrected candidate `3d908e4247b953196684d6b6ae88f8adccc2a41d` passes fresh full
+Lua/LuaJIT scripts: 134 Python/four inherited skips, 104 root files, 549 Bookshelf
+suites/zero failures/three inherited skips, 13 SimpleUI files, 43 catalogs and
+1,175 syntax files. Both sealed root/native supplements, 20/100/seven actual
+SQLite cases and actual Beta 5/9/29/RC2/stable1.0 local installer scenarios pass.
+The new actual-picker direct-choice test fails before the fix and passes under
+both interpreters afterward. No additional skip or physical test is claimed.
+
+Frozen ZIP `0d033933261b5a715c744c46b6dbf33d2ef00154f2943e60a8ab5acbd1be9dea`,
+9,482,898 bytes / 28,055,513 expanded; manifest
+`96182f8f249ddc6ce42a2d734764478145240fe06077d720b693b3503715ebf1`.
+Exact source projection and identical 2,000 paths/API1/24 helpers/407 identities
+pass, original artwork/bootstrap/sync owners unchanged. Initial 217 new blobs
+exclude held artwork; 60 commits pass Gitleaks. Public dist remains stable 1.0
+during staging. Unpublished draft 433577941 is deleted only after checking its
+exact target/assets; its metadata, bytes/tests and public beta.1 tag are retained.
+Main/tag CI, exact downloaded draft/public bytes, stable/latest isolation,
+unchanged previous tags/releases and live native installer checks remain gates.
+
 ## 1.1.0-beta.1 — reviewed upstream, physical retest pending
 
 Separate stage explicitly approved after stable 1.0. Sources Bookshelf `d47edfcc`

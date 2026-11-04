@@ -16,6 +16,17 @@ The user-approved separate 1.1 preview publication continues with the corrected
 candidate after fresh full/sealed/native/package/CI/public gates. Preserve the
 initial beta.1 evidence; evidence for beta.2 is `test-results/preview11-beta2-20261104/`.
 
+Candidate `3d908e42` / ZIP `0d033933` (9,482,898 bytes) passes fresh complete
+Lua/LuaJIT, 43 catalogs, both sealed roots/native supplements and actual Beta
+5/9/29/RC2/stable1.0 local installer scenarios. Same 104 root/549 Bookshelf/13
+SimpleUI tests, zero new skips; actual SQLite passes 20/100/seven cases. Source/
+2,000-path/API1/helper/artwork/bootstrap/sync checks pass; 217 initial outgoing
+blobs exclude held artwork, and Gitleaks passes 60 commits. The added regression
+fails on beta.1 and passes after the fix. Delete only verified unpublished draft
+433577941, retaining its tag/ZIP/metadata/test evidence; no beta.1 OTA ever went
+live. Stable 1.0 bytes/maintenance stay fixed. Main/tag CI and draft/public/
+channel/old-release/live installer gates still precede final publication.
+
 ## 2026-11-04 — reviewed upstream for separate 1.1 preview
 
 After publishing/verifying stable 1.0 and preserving maintenance/1.0 at `2d77cb98`,
