@@ -20,7 +20,20 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-02
+## Snapshot: 2026-11-04
+
+- **Stable 1.0 promotion and separate 1.1 cycle approved.** The user reports
+  RC2 stable/good/ready and says "Kör" to the proposed release strategy. Promote
+  exactly RC2's runtime to 1.0.0 after release checks; only version/docs/channel
+  regressions change. Do not import the backlog into stable. Fresh observation:
+  Bookshelf 53 commits to `d47edfcc`, SimpleUI five to `633ffbff`. Review of the
+  fix paths finds no demonstrated stable-release blocker: facts invalidation
+  loses derived facts, not original sidecars; render-cap and missing-file/menu
+  fixes are useful but do not justify adding unaccepted implementation to 1.0.
+  User also approves reviewing/merging upstream afterward into a separate 1.1
+  beta cycle. Keep a 1.0 maintenance branch. General RC2 sign-off is recorded as
+  reported acceptance, not invented per-scenario/multi-device test results.
+  Evidence: `test-results/stable1-20261104/`; TESTING/MERGE_LOG govern receipts.
 
 - **RC2 is public in preview; feature freeze continues.** User says "Pusha
   och publicera" after the disclosed local fix/device-test gap. Prepare

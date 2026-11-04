@@ -35,6 +35,19 @@ H.test("the 1.0 release candidate upgrades Beta 29 but never becomes a stable-ch
     assert(OTA.newer("1.0.0", "1.0.0-rc.2"))
     assert(not OTA.newer("1.0.0-rc.2", "1.0.0"))
 end)
+H.test("stable 1.0 promotes RC2 while a later 1.1 beta stays preview-only", function()
+    local list = { release("1.0.0-rc.2", true) }
+    list[#list + 1] = release("1.0.0", false)
+    H.eq(OTA.select(list, false).version, "1.0.0")
+    H.eq(OTA.select(list, true).version, "1.0.0")
+    assert(OTA.newer("1.0.0", "1.0.0-rc.2"))
+    list[#list + 1] = release("1.1.0-beta.1", true)
+    H.eq(OTA.select(list, false).version, "1.0.0")
+    H.eq(OTA.select(list, true).version, "1.1.0-beta.1")
+    list[#list].draft = true
+    H.eq(OTA.select(list, true).version, "1.0.0")
+end)
+
 H.test("preview channel finds prereleases but stable channel never downgrades to one", function()
     local list = { release("0.1.0-alpha.10", true), release("0.1.0-alpha.2", true) }
     H.eq(OTA.select(list, true).version, "0.1.0-alpha.10")

@@ -3,8 +3,13 @@
 OrbitUI replaces the standalone SimpleUI and Bookshelf plugins with one
 combined plugin. Neither original plugin is required for a fresh installation.
 Existing users can retain their settings and artwork, with the limits below.
-The 1.0 release candidates remain prereleases, not exhaustive device-compatibility
-certifications. No migration or reading-data reset is added for RC1.
+Stable 1.0.0 uses the same runtime implementation as the user-accepted RC2.
+No new migration or reading-data reset is added. Stable does not mean exhaustive
+device-compatibility certification; keep independent backups as described below.
+
+**Svenska:** Stabil 1.0.0 har samma funktionskod som den användargodkända RC2.
+Ingen ny migrering eller nollställning av läsdata. Behåll en egen säkerhetskopia;
+releasen är inte en certifiering av alla enheter.
 
 ## Before installing
 

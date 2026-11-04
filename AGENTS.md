@@ -12,9 +12,15 @@ history without the held bitmap before releasing.
 Experimental KOReader Lua plugin combining the published user forks of SimpleUI
 and Bookshelf. Keep the original repositories and their update channels intact.
 
-## 1.0 release-candidate freeze (2026-11-02)
+## 1.0 stable / separate 1.1 development (2026-11-04)
 
-The user approves the RC1 direction and a feature freeze. Keep the reviewed
+The user accepts RC2 as stable and approves promoting its unchanged runtime to
+1.0.0 after final release checks. Keep 1.0 runtime/source pins frozen; import the
+reviewed upstream backlog only afterward in a separate 1.1 preview cycle.
+Critical 1.0 fixes belong on a maintenance branch and require targeted retesting.
+General RC2 acceptance does not certify every device/checklist or optional sync.
+
+The earlier RC1 direction established a feature freeze. Keep the reviewed
 SimpleUI/Bookshelf pins and existing behavior fixed while validating RC1. Limit
 new work to reproducible fixes, tests, release documentation and explicitly
 approved maintenance. Monitoring remains observation-only; do not pull in new

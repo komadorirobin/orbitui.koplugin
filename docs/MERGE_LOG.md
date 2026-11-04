@@ -4,6 +4,26 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-04 — stable 1.0 promotion; upstream reserved for 1.1
+
+User reports RC2 stable and ready for release, then approves the proposed staged
+strategy with "Kör". Publish 1.0.0 with exactly RC2's runtime implementation;
+only version/release documentation/channel regression tests change. Keep
+Bookshelf `b512cd90`, SimpleUI `fdf83c7d`, bootstrap/API 1, all installed paths,
+artwork, settings/sidecars/cache ownership and external sync behavior. General
+RC2 user acceptance is not fabricated per-test/device acceptance.
+
+Read-only upstream review observes 53 Bookshelf commits through `d47edfcc` and
+five SimpleUI commits through `633ffbff`. Changes include publication-year and
+book-menu/wallpaper features, plus facts cache invalidation, render limits,
+missing-file extraction, menu refresh, filtered-folder and text-fit fixes. No
+demonstrated release-blocking original reading-data loss or security fix is
+identified; derived facts invalidation does not delete source sidecars. Keep
+these out of accepted 1.0. Review/import afterward into a separate 1.1 preview
+cycle, preserving a 1.0 maintenance branch. No optional-server deployment or
+device installation is authorized by the release workflow. Results/receipts:
+TESTING.md and `test-results/stable1-20261104/`.
+
 ## 2026-11-02 — RC2 publication authorized after local tag fixes
 
 User requests "Pusha och publicera" after the local fix and its disclosed lack

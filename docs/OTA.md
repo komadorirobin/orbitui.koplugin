@@ -7,6 +7,42 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 1.0.0
+
+First stable release, explicitly approved after the user reports RC2 stable and
+ready. The runtime implementation, components, artwork, bootstrap API 1 and
+source pins are identical to RC2 (`e3aa55c8`). Only version/release documentation
+and channel regression coverage change. Bookshelf stays `b512cd90`; SimpleUI
+stays `fdf83c7d`. The observed upstream backlog is NOT part of stable 1.0.
+
+Includes the connected Home/Reading dashboard and Library/Manga, configurable
+profiles/navigation, shared details/search/settings, offline EPUB tag indexing
+and tag shelves, optional ornament packs and separately owned integrations.
+RC2's tag-dialog lifecycle/sleep pause and non-opening shelf-reveal fixes remain.
+No book/sidecar/history/reset, new cache/settings migration, sync writer, server
+deployment or bootstrap change. Optional BookOrbit status import stays
+experimental and OFF by default, with its existing server requirement/guards.
+
+Stable and preview channels may select 1.0.0 over RC2; preview may later select
+1.1 betas while stable remains on 1.0.x. Restart KOReader after updating. Use
+the full runtime ZIP, not GitHub's source archive, and back up first. Old release
+assets/tags remain immutable. Package/source parity, both full interpreters,
+translations and native older-installer activation/rollback/recovery are checked
+again. General user acceptance of RC2 does not establish every historical
+Bigme/Boox, 3,341-file index, on-device recovery or optional-service test; detailed
+coverage and unrun scenarios stay explicit in TESTING.md.
+
+**Svenska:** Första stabila releasen, godkänd efter att användaren bekräftat att
+RC2 är stabil och redo. Samma funktionskod, komponenter, bilder, API-1 och pins
+som RC2; upstream-nyheterna hålls till en separat 1.1-beta. Hem/Läsöversikt,
+Bibliotek/Manga, profiler, taggar, bokdetaljer och integrationer fungerar som
+tidigare. RC2:s fixar för paus/Stäng och markering på bokhyllan ingår.
+Ingen ny läsdatamigrering, nollställning, synkägare eller serverdriftsättning.
+BookOrbit-statusimport förblir experimentell och avstängd som standard.
+Uppdatera via stabil eller förhandskanalen och starta om KOReader. Hämta hela
+plugin-ZIP:en och säkerhetskopiera först. Godkännandet gäller RC2:s beprövade
+användning, inte en ny certifiering av alla enheter eller testscenarier.
+
 ## OrbitUI 1.0.0-rc.2
 
 **Release candidate, not stable 1.0.** Publishes the explicitly approved tag

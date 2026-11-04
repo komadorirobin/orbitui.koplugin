@@ -1,5 +1,25 @@
 # Verification and device acceptance
 
+## 1.0.0 — stable promotion of user-accepted RC2
+
+On November 4 the user reports RC2 stable/good/ready and approves the strategy:
+promote its unchanged runtime to stable 1.0, then integrate upstream separately
+for 1.1 beta. This is general user acceptance and explicit stable publication
+approval, not a claim that the agent ran all historical physical exit criteria.
+No device/server is touched by release preparation. Record unrun model-specific,
+full-library/soak/recovery and optional-integration cases honestly; status import
+remains experimental/OFF. Existing RC1/RC2 test receipts are historical, not
+overwritten to suggest additional tests took place.
+
+Release gates: runtime/components/pins/assets/bootstrap byte parity with exact
+RC2 `e3aa55c8`; only VERSION/release documentation/tests change. Both full
+Lua/LuaJIT scripts, all catalogs, sealed/native supplements, 2,000 API-1 paths,
+old native installers including RC2, exact source/hash/history/artwork/secrets,
+main/tag CI, draft/public asset parity and unchanged previous releases/tags.
+Stable and preview select 1.0 over RC2; subsequent 1.1 prereleases cannot enter
+stable. Evidence: `test-results/stable1-20261104/`. Results are recorded below
+after execution, not assumed from prior green RC2 runs.
+
 ## 1.0.0-rc.2 — publication checks
 
 User explicitly requests push/publication after the local implementation and
