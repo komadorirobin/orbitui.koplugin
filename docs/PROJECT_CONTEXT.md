@@ -34,6 +34,12 @@ and correct this file in the same change.
   VERSION 1.1.0-beta.1 is preview only; no new physical acceptance or measured
   speedup. Stable/tag 1.0/maintenance branch stay fixed. TESTING/MERGE_LOG and
   `test-results/upstream-20261104/` hold execution/publication receipts.
+  Exact source `867a1da5` / ZIP `877ce353` (9,480,927 bytes) passes both full
+  scripts, 43 catalogs, 104 root/549 Bookshelf suites, sealed/native supplements,
+  actual SQLite and five older native installer scenarios including stable 1.0.
+  Same 2,000 paths/API1; source/artwork/bootstrap/sync/history/secrets pass.
+  Fresh watch is caught up. Main/tag CI and draft/public/channel/immutability/
+  public-byte installer checks remain gates. Public dist stays stable 1.0.
 
 - **Stable 1.0 promotion and separate 1.1 cycle approved.** The user reports
   RC2 stable/good/ready and says "Kör" to the proposed release strategy. Promote

@@ -34,6 +34,18 @@ version is 1.1.0-beta.1, never a replacement stable 1.0 archive. Tests/CI/packag
 old-installer/publication receipts follow; no physical 1.1 acceptance or Bigme
 speedup is claimed. No device/server deployment.
 
+Candidate `867a1da5` / ZIP `877ce353` (9,480,927 bytes) passes both full scripts,
+43 catalogs, 104 root tests, 549 Bookshelf suites/zero failures/three inherited
+SQLite skips, 13 SimpleUI files and 1,175 syntax checks. Both sealed roots/native
+supplements and actual Beta 5/9/29/RC2/stable1.0 local installer phases pass.
+Actual SQLite adds 20 facts/100 OPDS/seven deck passes. Exact source projection,
+all unchanged 2,000 paths, 24 lazy helpers/407 identities, original artwork,
+bootstrap and sync owners pass; 206 new blobs exclude held artwork and 58
+commits pass Gitleaks. No added skip allowance. Fresh watch is caught up on both
+reviewed pins. Keep public dist on stable 1.0 until separate preview publication;
+main/tag CI, draft/public hashes, stable/latest isolation and old releases/tags
+remain mandatory. Documentation receipts never rebuild/move frozen bytes.
+
 ## 2026-11-04 — stable 1.0 promotion; upstream reserved for 1.1
 
 User reports RC2 stable and ready for release, then approves the proposed staged

@@ -23,6 +23,30 @@ change. New book-menu/date/year sorting, CJK titles, wallpaper fit/night/paging,
 large-library indexing, real reader-return/suspend need device testing. Expected
 benefits from upstream benchmarks are not measured OrbitUI/Bigme improvements.
 
+Exact candidate `867a1da5f6b0881f72377ec669304a40aac27679` passes both complete
+scripts: 134 Python/four inherited optional skips, 104 root Lua files, 549
+Bookshelf suites/zero failures/three inherited SQLite skips, 13 SimpleUI files,
+43 catalogs and 1,175 syntax files. Both sealed roots/native minimum/current
+input/dialog/Trapper/span, real SQLite/EPUB/UIManager and Android/frame/night/
+raster supplements pass. Actual SQLite source suites separately pass 20 facts,
+100 OPDS and seven ornament-deck cases. No new skip allowance. Updated test
+fixtures retain the Android refresh callback (balanced table extraction), new
+Critter dependencies/shadow checks and exact 24-helper/407-identity assertions.
+
+Frozen ZIP `877ce353a2050cbc2b580a3ca1eed17b1c1868f2b27091dc0eaa271dd2732fad`,
+9,480,927 bytes / 28,049,356 expanded; manifest
+`4c20bc82bf71deb3a8de639e58dc0311289dfc3dea09a786ad6bc5c7f2eab12e`.
+Exact source projection, all identical 2,000 installed paths, lazy helper parity,
+unchanged original artwork/bootstrap/reading-sync owners and reviewed provenance
+pass. All 206 initial outgoing blobs exclude held artwork; Gitleaks finds no
+leaks across 58 commits. Fresh watch reports zero missing commits for both pins.
+Actual Beta 5/9/29/RC2/stable-1.0 native installers pass local discovery/hash/
+extraction, activation/restart/code rollback, interrupted recovery, external
+snapshots and obsolete-code cleanup. Public dist is restored to stable 1.0 during
+staging. Main/tag CI, draft/public parity, preview-only selection/stable/latest
+1.0, previous tag/release immutability and public-byte installer checks remain
+publication gates. Candidate bytes are frozen; receipts do not rebuild them.
+
 ## 1.0.0 — stable promotion of user-accepted RC2
 
 On November 4 the user reports RC2 stable/good/ready and approves the strategy:
