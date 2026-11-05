@@ -16,6 +16,35 @@ SV/EN portrait/landscape Series/Volumes, first-volume preview with filters,
 Stop/Close/sleep during indexing/grouping and real menu refresh/reader returns.
 Stable 1.0 and its maintenance branch/assets must remain immutable.
 
+**Published 2026-11-05 11:01:37 UTC** as `v1.1.0-beta.3`, release
+**435083775**, frozen source **cac8233a88ef8f2436aa586d78b2f9f186405f8c**.
+Both complete scripts pass: 134 Python tests/four existing skips, 106 root Lua
+files, 549 Bookshelf suites/zero failures/three native-runtime exclusions,
+13 SimpleUI files, 1,177 syntax files and 43 catalogs/zero failures. All sealed
+root suites repeat under Lua/LuaJIT; actual native input/Trapper/VerticalSpan,
+grey/RGB/CBB/software night and archive/JSON/UIManager supplements pass.
+The series suite has 19 ordinary/20 real-SQLite cases, the tag-index supplement
+passes seven, native tag search passes 48, and Bookshelf's actual SQLite facts/
+OPDS/ornament decks pass 20/100/seven. The new navpager regression fails on
+the pre-import source and passes after import. No exception baseline is raised.
+
+ZIP **9,495,686 bytes**, expanded **28,099,240**, SHA-256
+`dbaa735a634072aaf79f0d260dd9b43442602ce59bb651255a6fa251b1cbdb97`;
+manifest SHA-256 `bf3340ad3874a2c78c0c2d067e73c000547b12dfa75cdaefb1484f78087563fc`.
+Exact source projection, unchanged 2,000 API1 paths/24 lazy helpers/407 module
+identities, original assets/bootstrap/sync owners and 31 outgoing blobs pass.
+Gitleaks reports no leaks across the outgoing source history. Actual Beta
+5/9/29/RC2/stable1.0/beta.2 installers pass local scenarios. Main/tag CI
+**42014846339 / 42014845959** pass all four matrix jobs. Draft and anonymous
+public downloads match frozen assets **713078387 / 713078393**. All **87** older
+releases and **149** old tag refs remain unchanged. Actual Beta 9/29/RC2/
+stable1.0/beta.2 installers pass public TLS discovery/download, hash/extraction,
+activation/restart/rollback/interruption/recovery/snapshot/cleanup checks.
+Preview selects beta.3; stable/latest remains 1.0.0 and maintenance/1.0 stays
+2d77cb98. Final watch has zero pending commits for both pins. Public dist now
+matches beta.3. Receipt docs do not rebuild/move frozen source/tag/assets.
+No ADB/device/server action or new physical/performance acceptance is claimed.
+
 ## 2026-11-05 local tag discovery: Series / Volumes
 
 Local feature work from public 07c1c09d, not a new publication or device test.

@@ -9,6 +9,14 @@ The original standalone OTA channels are not redirected or modified.
 
 ## OrbitUI 1.1.0-beta.3
 
+Published 2026-11-05 11:01:37 UTC, release 435083775, frozen source/tag
+`cac8233a` / `v1.1.0-beta.3`. ZIP SHA-256
+`dbaa735a634072aaf79f0d260dd9b43442602ce59bb651255a6fa251b1cbdb97`
+(9,495,686 bytes). All main/tag CI jobs, exact draft/public bytes, old-release
+immutability, channel selection and five actual older public-HTTPS installer
+scenarios pass; full verification is in TESTING. Preview only; stable/latest
+1.0.0 remains unchanged. Physical acceptance remains separate.
+
 Preview only, after the user's explicit merge/publication request. Stable 1.0.0
 and all older tags/assets remain unchanged. Includes the previously local
 Series / Volumes tag-results feature: remember the tab per origin library,

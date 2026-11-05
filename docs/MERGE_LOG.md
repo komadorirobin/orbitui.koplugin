@@ -32,6 +32,23 @@ Series/Volumes lifecycle and physical acceptance gaps remain. Full exact-source,
 sealed/native/old-installer/history/secrets/CI/draft/public/channel gates precede
 publication. Evidence: test-results/preview11-beta3-20261105.
 
+**Published 2026-11-05 11:01:37 UTC**, release **435083775**, immutable tag
+`v1.1.0-beta.3` -> **cac8233a**, ZIP **dbaa735a** (9,495,686 bytes). Fresh
+complete Lua/LuaJIT/catalog gates pass, 106 root/549 native Bookshelf/13 SimpleUI
+files, sealed root/native supplements, actual SQLite and six older local OTA
+installers. The foreign-menu counterfactual fails before the native fix and
+passes afterward. Exact-source/path/artwork/bootstrap/sync/history/secret audits
+pass, with 31 outgoing blobs and no raised failure baselines. Main/tag CI
+**42014846339 / 42014845959** pass all four jobs. Draft/public frozen assets
+**713078387 / 713078393** verify byte-for-byte; all **87** older releases and
+**149** old tag refs are unchanged. Actual Beta 9/29/RC2/stable1.0/beta.2
+installers pass public HTTPS discovery/download and native activation/recovery/
+rollback/snapshot/cleanup checks. Preview advances to beta.3; stable/latest
+1.0.0, its source/assets and maintenance/1.0 remain fixed. Final upstream watch
+is caught up for both pins. Public dist matches beta.3. This receipt changes
+documentation only, not frozen source/tag/assets or device/server state; the
+physical gates remain open. Detailed counts/hashes are in TESTING.
+
 ## 2026-11-05 — local series-level tag discovery (no import or release)
 
 The user approves Series / Volumes tabs for local manga discovery, preserving

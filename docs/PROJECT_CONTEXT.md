@@ -34,6 +34,17 @@ and correct this file in the same change.
   Volumes and new menu refresh acceptance remain outstanding, not inferred
   from automated checks. Stable/latest 1.0 and old releases stay immutable.
   Evidence: test-results/preview11-beta3-20261105.
+  **Published 2026-11-05 11:01:37 UTC**, release 435083775, tag/source
+  v1.1.0-beta.3 / cac8233a; ZIP dbaa735a (9,495,686 bytes). Both full scripts,
+  43 catalogs, 106 sealed root files under both interpreters, native/SQLite
+  supplements and six older local installer scenarios pass. Main/tag CI
+  42014846339 / 42014845959 pass all four jobs. Draft/anonymous public bytes
+  match; all 87 previous releases/149 previous tag refs remain unchanged.
+  Actual Beta 9/29/RC2/stable1.0/beta.2 public-HTTPS installer scenarios pass.
+  Preview selects beta.3; stable/latest and maintenance/1.0 remain fixed. Both
+  upstream pins are current at final watch; public dist is beta.3. No device/
+  server action or new physical acceptance. Receipt docs do not rebuild or
+  retag the frozen release.
 
 - **Historical local Series / Volumes implementation before beta.3.** User's
   "Kör!" authorises implementing the two views, not a new upstream merge,
