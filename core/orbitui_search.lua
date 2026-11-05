@@ -341,7 +341,6 @@ local function tagSearch(tag, opts)
     local intro = embedded and _("Only EPUBs on this device. All library profiles are included; the library's scan-depth setting applies. No connection is needed.")
         or _("Only BookOrbit-linked books on this device. All library profiles are included.")
     if embedded and opts.profile then intro = _("Only EPUBs in the selected library. The scan-depth setting applies. No connection is needed.") end
-    intro = intro .. " " .. _("Tap a title to select the book on its shelf.")
     local function failureText(err)
         if embedded and err == "stale" then return _("Library folders changed. Refresh and try again.") end
         return embedded and Integration.embeddedTagError(err) or Integration.bookOrbitError(err)
@@ -352,6 +351,21 @@ local function tagSearch(tag, opts)
     local sleeping, paused = false, false
     local worker
     local records, visible, query = {}, {}, ""
+    local Series = require("core/orbitui_shelf_query")
+    local series_state, series_paused, base_intro = nil, false, intro
+    local view_profile = opts.view_profile or opts.profile
+    if not view_profile and opts.origin then
+        local ok, key = pcall(require("lib/bookshelf_profiles").matchFile, opts.origin)
+        if ok then view_profile = key end
+    end
+    local preference = "orbitui_tag_result_view_" .. (view_profile or "all")
+    local ok_store, store = pcall(require, "lib/bookshelf_settings_store")
+    local ok_saved, saved = pcall(function() return ok_store and store.read(preference) end)
+    local view = ok_saved and (saved == "series" or saved == "volumes") and saved
+        or (view_profile == "manga" or view_profile == "comics") and "series" or "volumes"
+    local function dropSeries()
+        if series_state then series_state.cancel(); series_state = nil end
+    end
     local generation = UI._simpleui_navigation_generation
     session = session + 1
     local request = session
@@ -365,13 +379,40 @@ local function tagSearch(tag, opts)
     end
     local function current() return alive() and validView() end
     local function render()
-        if alive() and not sleeping then modal:refresh() end
+        if alive() and not sleeping then
+            modal.config.intro = base_intro
+            if view == "series" and (data_session or base_intro == intro) then
+                modal.config.intro = modal.config.intro .. " " .. _("Tap a series to show it on its shelf with its first available volume selected.")
+                if series_state and series_state.busy then
+                    modal.config.intro = modal.config.intro .. " " .. _("Grouping cached series metadata… No EPUB files are opened.")
+                elseif series_state and series_state.unavailable then
+                    modal.config.intro = modal.config.intro .. " " .. _("Some series metadata is unavailable. Unknown books remain listed separately; update library metadata and refresh.")
+                end
+            elseif data_session or base_intro == intro then
+                modal.config.intro = modal.config.intro .. " " .. _("Tap a title to select the book on its shelf.")
+            end
+            modal:refresh()
+        end
+    end
+    local function ensureSeries()
+        if view ~= "series" or not data_session or not current() then return end
+        if not series_state then
+            series_state = Series.tagSeriesSession{
+                current = function() return current() and data_session and data_session:current() end,
+                profile = opts.profile,
+                inventory = function() return data_session and data_session.inventory end,
+                changed = render,
+            }
+        end
+        series_state.update(records)
+        if not series_paused then series_state.start() end
     end
     local function retireWork()
         busy, worker, paused = false, nil, true
+        dropSeries()
         if not alive() then return end
         records, visible, data_session = {}, {}, nil
-        modal.config.intro = _("Search paused. Close and reopen the tag search to continue. Completed tag reads are kept.")
+        base_intro = _("Search paused. Close and reopen the tag search to continue. Completed tag reads are kept.")
         render()
     end
     local function available(file) return fs.attributes(file, "mode") == "file" end
@@ -379,10 +420,13 @@ local function tagSearch(tag, opts)
         visible = {}
         if data_session and not data_session:current() then
             records, data_session = {}, nil
-            modal.config.intro = failureText("stale")
+            dropSeries(); base_intro = failureText("stale")
+            modal.config.intro = base_intro
         end
-        for _, book in ipairs(records) do
-            if M.lower(book.filename):find(M.lower(query), 1, true) then visible[#visible + 1] = book end
+        local rows = view == "series" and series_state and series_state.rows() or records
+        for _, book in ipairs(rows) do
+            local text = table.concat({ book.filename or "", book.title or "", book.author or "" }, " ")
+            if M.lower(text):find(M.lower(query), 1, true) then visible[#visible + 1] = book end
         end
     end
     local function fetch(reread)
@@ -392,11 +436,12 @@ local function tagSearch(tag, opts)
             local ok, value = pcall(Integration.embeddedTagSession)
             if ok then source = value end
         else source, err = Integration.bookOrbitSession() end
-        if not source then modal.config.intro = failureText(err); modal:refresh(); return end
-        busy, paused = true, false
+        if not source then base_intro = failureText(err); render(); return end
+        busy, paused, series_paused = true, false, false
+        dropSeries()
         records, visible, data_session = {}, {}, nil
-        modal.config.intro = intro
-        modal:refresh()
+        base_intro = intro
+        render()
         local function update(result, failure, partial)
             if not current() then return end
             if result then
@@ -408,22 +453,24 @@ local function tagSearch(tag, opts)
                     if available(file) then records[#records + 1] = previous[file] or { filepath = file, filename = file:match("([^/]+)$") or file } end
                 end
                 table.sort(records, function(a, b) return M.lower(a.filepath) < M.lower(b.filepath) end)
-                modal.config.intro = intro
+                base_intro = intro
                 if embedded and (partial or failure == "cancelled") then
-                    modal.config.intro = intro .. " " .. string.format(_(failure == "cancelled"
+                    base_intro = intro .. " " .. string.format(_(failure == "cancelled"
                         and "Search stopped: %d of %d files checked. Results are incomplete. Refresh to continue."
                         or "Checking EPUB tags: %d of %d files. Results are incomplete."), result.scanned, result.total)
                 end
-                if result.truncated then modal.config.intro = modal.config.intro .. " " .. _("Showing the first 400 matches.") end
+                if result.truncated then base_intro = base_intro .. " " .. _("Showing the first 400 matches.")
+                    .. " " .. _("Series are grouped from those matching volumes only.") end
                 if (result.skipped or 0) > 0 then
-                    modal.config.intro = modal.config.intro .. " " .. string.format(_("%d EPUBs could not be read; results may be incomplete. Refresh to retry."), result.skipped)
+                    base_intro = base_intro .. " " .. string.format(_("%d EPUBs could not be read; results may be incomplete. Refresh to retry."), result.skipped)
                 end
             else
                 records, data_session = {}, nil
-                modal.config.intro = failure == "cancelled" and _("Search cancelled. Tap Refresh to try again.")
+                dropSeries()
+                base_intro = failure == "cancelled" and _("Search cancelled. Tap Refresh to try again.")
                     or failureText(failure)
             end
-            filter(); if not partial then modal.page = 1 end; modal:refresh()
+            ensureSeries(); filter(); if not partial then modal.page = 1 end; render()
         end
         local function done(result, failure)
             busy, worker = false, nil
@@ -456,11 +503,16 @@ local function tagSearch(tag, opts)
         return true
     end
     local footer = {{ { label = _("Refresh"), label_func = function()
-        return _(embedded and busy and "Stop search" or "Refresh")
+        return _((embedded and busy or series_state and series_state.busy) and "Stop search" or "Refresh")
     end, enabled_when = function()
         return validView() or embedded and busy and worker ~= nil
     end, on_tap = function()
-        if embedded and busy and worker then worker.cancel() else fetch(false) end
+        if embedded and busy and worker then
+            series_paused = true
+            if series_state then series_state.pause() end
+            worker.cancel()
+        elseif series_state and series_state.busy then series_paused = true; series_state.pause(); render()
+        else fetch(false) end
     end },
         { label = _("Close"), on_tap = function() if alive() then modal:onClose() end end } }}
     if embedded then
@@ -473,7 +525,16 @@ local function tagSearch(tag, opts)
     modal = require("lib/bookshelf_library_modal"):new{ _sui_keep_homescreen = true, config = {
         title = title .. ": " .. (rule and table.concat(rule.tags, rule.mode == "all" and " + " or " / ") or tag),
         intro = intro,
-        search_placeholder = function() return _("Filter by filename") end,
+        tabs = {{ key = "series", label = _("Series", nil, "tag-results") }, { key = "volumes", label = _("Volumes") }},
+        initial_tab = view,
+        on_tab_change = function(key)
+            if not current() or (key ~= "series" and key ~= "volumes") then return end
+            view, query, series_paused = key, "", false
+            if key == "volumes" and series_state then series_state.pause() end
+            if ok_store and store.saveDeferred then pcall(store.saveDeferred, preference, key) end
+            ensureSeries(); filter(); render()
+        end,
+        search_placeholder = function() return _(view == "series" and "Filter by series, title or author" or "Filter by filename") end,
         on_search_submit = function(value)
             if not current() then return end
             query = value or ""; filter(); modal.page = 1; modal:refresh()
@@ -486,11 +547,39 @@ local function tagSearch(tag, opts)
             return require("lib/bookshelf_picker_cell").render({ label = _(busy and "Loading…" or "No matches.") }, { w = w, h = h })
         end,
         cell_renderer = function(book, dimen)
-            bookMeta(book)
-            return require("lib/bookshelf_picker_cell").render({ label = book.title or book.filename,
+            if book.tag_series then
+                local note = string.format(_("%d matching volumes · %d available"), #book.matched, #book.members)
+                local first = book.members[1]
+                if first and tonumber(first.series_num) and tonumber(first.series_num) > 1 then
+                    note = note .. " · " .. _("Volume 1 is not in cached metadata")
+                elseif not first or not tonumber(first.series_num) then
+                    note = note .. " · " .. _("Volume order is unknown")
+                end
+                return Series.tagSeriesCell(book, dimen, (book.author and book.author .. " · " or "") .. note)
+            end
+            if view == "volumes" then bookMeta(book) end
+            local label = book.title or book.filename
+            if view == "series" and book.tag_section_first then
+                label = _(book.tag_section == "standalone" and "Standalone books" or "Unknown series metadata") .. " — " .. label
+            end
+            return require("lib/bookshelf_picker_cell").render({ label = label,
                 subtitle = book.author or book.filename }, dimen)
         end,
         on_cell_tap = function(book)
+            if book.tag_series then
+                if not current() or not data_session or not data_session:current() then return end
+                if not series_state or not series_state.finished or series_state.unavailable then
+                    Context.notify(_("Series metadata is not complete yet. Wait, refresh, or switch to Volumes.")); return
+                end
+                local matching = false
+                for _, member in ipairs(book.matched) do if canOpen(member) then matching = true; break end end
+                if not matching then return end
+                local source = data_session
+                local reveal = opts.reveal_series or Context.revealSeries
+                modal:onClose()
+                reveal(book, { is_current = function() return source:current() end })
+                return
+            end
             if not canOpen(book) then return end
             local reveal = opts.reveal_book or Context.revealBook
             modal:onClose()
@@ -499,6 +588,16 @@ local function tagSearch(tag, opts)
             reveal(book.filepath)
         end,
         cell_long_tap = function(book)
+            if book.tag_series then
+                if series_state and series_state.finished and not series_state.unavailable then
+                    local first = book.matched[1]
+                    if canOpen(first) then
+                        if embedded and worker then worker.cancel() end
+                        require("adapters/orbitui_book_panel").show(book.filepath, { open_book = opts.open_book })
+                    end
+                end
+                return
+            end
             if canOpen(book) then
                 if embedded and worker then worker.cancel() end
                 require("adapters/orbitui_book_panel").show(book.filepath, { open_book = opts.open_book })
@@ -506,11 +605,12 @@ local function tagSearch(tag, opts)
         end,
         footer_rows = footer,
         on_closed = function()
-            retired = true; if worker then worker.cancel(); worker = nil end
+            retired = true; dropSeries(); if worker then worker.cancel(); worker = nil end
             if opts.on_closed then opts.on_closed() end
         end,
     } }
     function modal:onSuspend()
+        dropSeries()
         if not embedded then return end
         sleeping = true
         if worker then worker.cancel() end
@@ -521,7 +621,7 @@ local function tagSearch(tag, opts)
         if busy and not current() then
             if worker then worker.cancel() end
             retireWork()
-        elseif paused then render() end
+        elseif paused then render() else ensureSeries(); render() end
     end
     UI:show(modal)
     fetch()

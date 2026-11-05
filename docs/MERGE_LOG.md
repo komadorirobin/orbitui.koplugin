@@ -4,6 +4,38 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-05 — local series-level tag discovery (no import or release)
+
+The user approves Series / Volumes tabs for local manga discovery, preserving
+the existing tag search and shelf-preview tap. Branch
+feature/tag-series-results-20261105 starts at public 07c1c09d. Neither upstream
+pin, VERSION, public ZIP, bootstrap nor sync/server/device state is changed.
+
+The shared offline/online result modal remembers its view per origin library
+without narrowing search scope. Manga defaults to Series. Only already checked
+volume matches admit a series: AND/OR rules remain per file; the existing
+400-volume cap remains disclosed. Group identity includes series, authors and
+profile, with separate one-shot and unknown-metadata sections. Show matching
+versus locally available volume counts and honest missing-first/order warnings.
+
+Host grouping is ephemeral and cancellation-owned. Prefer already cached BIM
+rows; otherwise open a separate read-only text-only SQLite connection using
+bound filenames. Process at most eight files/8ms per turn and reserve native
+input after visible repaints. The small native tagTextMeta seam preserves
+custom/Calibre/BIM priority while disabling EPUB repair/enrichment/cover/progress
+reads; cachedTagInfo cannot initiate a batch load or walk. Only visible series
+rows request native-owned or borrowed cover thumbnails. The optional modal
+initial_tab keeps ordinary pickers' previous default. The tag worker shares
+only its ephemeral inventory, not another persistent index.
+
+A series tap first revalidates a matching volume/source and then selects the
+first local indexed member in a pinned native series drill on its real profile,
+even when that first volume itself lacks the tag. It never opens ReaderUI.
+Retain native filters and explicitly fail missing targets; no permanent shelf,
+sidecar/progress/history write or remote sync owner is added. All new labels are
+SV/EN. Automated verification and remaining physical gates are in TESTING;
+evidence belongs to test-results/tag-series-20261105.
+
 ## 2026-11-04 — final wallpaper race; unpublished beta.1 superseded by beta.2
 
 Before publication, one added actual-picker callback test reproduces a pending

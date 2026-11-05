@@ -1,6 +1,214 @@
 local M = {}
 M.tag_kind = "orbitui_epub_tags"
 
+-- Discovery groups are ephemeral text, not a second tag index. Keep authors
+-- and profile identity so identically named series cannot merge by accident.
+function M.tagSeriesKey(book, profile)
+    local name = type(book.series_name) == "string" and book.series_name:match("^%s*(.-)%s*$")
+    if not name or name == "" then return end
+    local authors = {}
+    for _, value in ipairs(book.authors or {}) do authors[#authors + 1] = value end
+    table.sort(authors)
+    local out = {}
+    for _, value in ipairs{ profile or "", name, table.concat(authors, "\n") } do
+        out[#out + 1] = #value .. ":" .. value
+    end
+    return table.concat(out, "|")
+end
+
+function M.tagVolumeLess(a, b)
+    local an, bn = tonumber(a.series_num), tonumber(b.series_num)
+    if an ~= bn then
+        if an == nil then return false end
+        if bn == nil then return true end
+        return an < bn
+    end
+    return a.filepath < b.filepath
+end
+
+-- Read at most eight indexed text rows per turn, on a separate RO connection.
+-- The library inventory is shared with the tag worker where available. No
+-- archive, document, cover, network request or settings write belongs here.
+function M.tagSeriesSession(opts)
+    local UI, fs = require("ui/uimanager"), require("libs/libkoreader-lfs")
+    local Repo, Profiles = require("lib/bookshelf_book_repository"), require("lib/bookshelf_profiles")
+    local state = { busy = false, groups = {}, metadata = {}, unavailable = false }
+    local records, inventory, cursor, conn, stmt, tick, retired = {}, nil, 1, nil, nil, nil, false
+    local time = require("ui/time")
+    local dirty, last_paint = true, time.now()
+    local function close()
+        if stmt then pcall(stmt.close, stmt); stmt = nil end
+        if conn then pcall(conn.close, conn); conn = nil end
+    end
+    function state.cancel()
+        retired, state.busy = true, false
+        if tick and UI.unschedule then UI:unschedule(tick) end
+        close()
+    end
+    function state.pause()
+        state.busy = false
+        if tick and UI.unschedule then UI:unschedule(tick) end
+        close()
+    end
+    function state.update(items)
+        records, dirty = items, true
+    end
+    function state.rows()
+        if not dirty then return state.result or {} end
+        local out, groups, singles, unknown = {}, {}, {}, {}
+        for _, book in ipairs(records) do
+            local meta = state.metadata[book.filepath]
+            local key = meta and meta._tag_series_key
+            if key then
+                local group = groups[key]
+                if not group then
+                    local members = state.groups[key]
+                    table.sort(members, M.tagVolumeLess)
+                    group = { tag_series = true, series_name = meta.series_name, title = meta.series_name,
+                        authors = meta.authors, author = (meta.authors or {})[1], profile = meta._tag_profile,
+                        members = members, filepath = members[1].filepath, filename = meta.series_name,
+                        matched = {}, key = key }
+                    groups[key], out[#out + 1] = group, group
+                end
+                group.matched[#group.matched + 1] = book
+            else
+                local item = {}; for k, v in pairs(book) do item[k] = v end
+                if meta then item.title, item.author = meta.title, (meta.authors or {})[1] end
+                item.tag_section = meta and meta._tag_known and "standalone" or "unknown"
+                local list = item.tag_section == "standalone" and singles or unknown
+                list[#list + 1] = item
+            end
+        end
+        local function less(a, b) return (a.title or a.filename or a.filepath) < (b.title or b.filename or b.filepath) end
+        table.sort(out, less); table.sort(singles, less); table.sort(unknown, less)
+        for _, list in ipairs{ singles, unknown } do
+            for i, book in ipairs(list) do book.tag_section_first = i == 1; out[#out + 1] = book end
+        end
+        state.result, dirty = out, false
+        return out
+    end
+    function state.start()
+        if retired or state.busy or state.finished then return end
+        state.busy, state.unavailable = true, false
+        tick = function()
+            if retired then return end
+            if not state.busy then return end
+            if not opts.current() then state.cancel(); return end
+            local ok = pcall(function()
+                if not inventory then
+                    inventory = opts.inventory and opts.inventory()
+                    if not inventory then
+                        local roots = {}
+                        for _, profile in ipairs(Profiles.list()) do
+                            if not opts.profile or profile.key == opts.profile then
+                                for _, path in ipairs(profile.roots) do roots[#roots + 1] = path end
+                            end
+                        end
+                        if not opts.profile then
+                            local home = G_reader_settings and G_reader_settings:readSetting("home_dir")
+                            if type(home) == "string" then roots[#roots + 1] = home end
+                        end
+                        inventory = #roots > 0 and Repo.getAllFilepaths({ roots = roots }) or {}
+                    end
+                    local paths, seen = {}, {}
+                    for _, list in ipairs{ records, inventory } do
+                        for _, item in ipairs(list) do
+                            local file = type(item) == "table" and item.filepath or item
+                            if type(file) == "string" and file:sub(1, 1) == "/" and not seen[file] then
+                                paths[#paths + 1], seen[file] = file, true
+                            end
+                        end
+                    end
+                    inventory = paths
+                end
+                local started = time.now()
+                for _i = 1, 8 do
+                    local file = inventory[cursor]
+                    if not file then state.busy, state.finished = false, true; close(); break end
+                    if fs.attributes(file, "mode") == "file" then
+                        local info = Repo.cachedTagInfo and Repo.cachedTagInfo(file)
+                        if not info then
+                            if not conn then
+                                local path = require("datastorage"):getSettingsDir() .. "/bookinfo_cache.sqlite3"
+                                conn = require("lua-ljsqlite3/init").open(path, "ro")
+                                conn:exec("PRAGMA busy_timeout=0;")
+                                stmt = conn:prepare("SELECT title,authors,series,series_index,has_meta FROM bookinfo "
+                                    .. "WHERE directory=? AND filename=? AND in_progress=0 LIMIT 1")
+                            end
+                            local directory, filename = file:match("^(.*[/])([^/]+)$")
+                            local row = stmt:reset():bind(directory, filename):step()
+                            info = row and { title = row[1], authors = row[2], series = row[3], series_index = row[4], has_meta = row[5] }
+                        end
+                        local meta = Repo.tagTextMeta(file, info)
+                        local profile = Profiles.matchFile(file)
+                        meta._tag_profile, meta._tag_known = profile, info ~= nil and tonumber(info.has_meta) ~= 0
+                        meta._tag_series_key = M.tagSeriesKey(meta, profile)
+                        state.metadata[file] = meta
+                        if meta._tag_series_key then
+                            local group = state.groups[meta._tag_series_key] or {}
+                            state.groups[meta._tag_series_key] = group
+                            group[#group + 1] = meta
+                        end
+                    end
+                    cursor = cursor + 1
+                    if time.to_us(time.since(started)) >= 8000 then break end
+                end
+            end)
+            dirty = true
+            if not ok then state.unavailable, state.busy = true, false; close() end
+            local paint = not state.busy or time.to_us(time.since(last_paint)) >= 250000
+            if paint then
+                last_paint = time.now(); opts.changed()
+                -- Start the input window after the pending repaint, not
+                -- before a slow e-ink paint makes the timer already due.
+                if UI.forceRePaint then UI:forceRePaint() end
+            end
+            if state.busy then UI:scheduleIn(paint and .05 or .001, tick) end
+        end
+        UI:scheduleIn(.001, tick)
+    end
+    return state
+end
+
+-- Only visible series rows request a thumbnail. Borrow cached buffers; own
+-- fresh BIM covers exactly as the native book-menu header does.
+function M.tagSeriesCell(group, dimen, subtitle)
+    local item = { label = group.title, subtitle = subtitle }
+    local cell = require("lib/bookshelf_picker_cell")
+    if not (dimen.w and dimen.h) then return cell.render(item, dimen) end
+    local width, height = math.floor(dimen.h * .55), math.max(1, dimen.h - 12)
+    local ok, cache = pcall(require, "lib/bookshelf_scaled_cover_cache")
+    local bb = ok and cache:get(group.filepath)
+    local disposable = not bb
+    if not bb then
+        local success, value = pcall(require("lib/bookshelf_book_repository").getCoverBB, group.filepath)
+        if success then bb = value end
+    end
+    if not bb then return cell.render(item, dimen) end
+    local bw, bh = bb:getWidth(), bb:getHeight()
+    local scale = math.min(width / bw, height / bh)
+    local image_w, image_h = math.max(1, math.floor(bw * scale)), math.max(1, math.floor(bh * scale))
+    if disposable and ok and cache.put then
+        -- Progress refreshes must not decode the same four full-size covers
+        -- again. Keep only the thumbnail in the existing canonical cache.
+        local scaled, small = pcall(function()
+            return require("ui/renderimage"):scaleBlitBuffer(bb, image_w, image_h)
+        end)
+        if scaled and small then
+            if small ~= bb then bb:free() end
+            bb = small
+            cache:put(group.filepath, bb)
+            disposable = false
+        end
+    end
+    local Image = require("ui/widget/imagewidget")
+    local Horizontal = require("ui/widget/horizontalgroup")
+    local Center = require("ui/widget/container/centercontainer")
+    local thumb = Image:new{ image = bb, image_disposable = disposable, width = image_w, height = image_h, scale_factor = 0 }
+    return Horizontal:new{ align = "center", Center:new{ dimen = require("ui/geometry"):new{ w = width + 8, h = dimen.h }, thumb },
+        cell.render(item, { w = math.max(1, dimen.w - width - 8), h = dimen.h }) }
+end
+
 -- Saved rules are settings; these bounded snapshots are disposable cache data.
 -- Rendering never walks a library, opens EPUBs or starts a worker. Only the
 -- visible chip schedules a cache-only check; explicit Refresh may read EPUBs.
@@ -129,6 +337,7 @@ function M.tagRefresh(source, opts)
     state.busy = false
     return require("core/orbitui_search").embeddedTag(rule.tags[1], {
         rule = rule, profile = source.scope == "library" and source.profile or nil,
+        view_profile = source.profile,
         open_book = opts.open_book,
         is_current = function() return M.tagKey(source) == key and (not opts.is_current or opts.is_current()) end,
         on_result = function(result) M.tagResult(source, result) end,

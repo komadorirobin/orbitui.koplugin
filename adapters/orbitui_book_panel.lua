@@ -101,6 +101,7 @@ function M.tagSections(owner, book, modal)
             if not current() or state.render ~= render or state.busy or not state.session or not state.session:current() then return end
             modal:onClose()
             require("core/orbitui_search").bookOrbitTag(tag, {
+                origin = book.filepath, view_profile = owner.profile_key,
                 open_book = function(file, record) owner:_openBook(record or { filepath = file }) end,
             })
         end }
@@ -131,6 +132,7 @@ function M.tagSections(owner, book, modal)
             modal:onClose()
             require("core/orbitui_search").embeddedTag(tag, {
                 origin = book.filepath,
+                view_profile = owner.profile_key,
                 open_book = function(file, record) owner:_openBook(record or { filepath = file }) end,
             })
         end, on_hold = function()

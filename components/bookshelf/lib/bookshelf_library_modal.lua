@@ -63,6 +63,9 @@ function LibraryModal:init()
     -- Pre-populate runtime state from config defaults
     if self.config.tabs and #self.config.tabs > 0 then
         self.active_tab = self.config.tabs[1].key
+        for _, tab in ipairs(self.config.tabs) do
+            if tab.key == self.config.initial_tab then self.active_tab = tab.key; break end
+        end
     end
     -- Default chip = the explicit is_active=true winner. When chips
     -- advertise explicit is_active values but none is true (e.g. gallery

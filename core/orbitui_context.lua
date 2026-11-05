@@ -63,7 +63,7 @@ end
 
 -- A reveal is not a tap: native _previewBook opens an already-previewed book
 -- on its second call. Set the preview explicitly, without any ReaderUI action.
-function M.revealBook(file)
+function M.revealBook(file, opts)
     local fs = require("libs/libkoreader-lfs")
     local _ = require("core/orbitui_i18n")
     local function available()
@@ -109,6 +109,30 @@ function M.revealBook(file)
                 end
             end
         end
+        if found and opts and opts.series then
+            local series, books = opts.series, {}
+            for _, member in ipairs(series.members or {}) do
+                if Profiles.matchFile(member.filepath) == profile
+                        and fs.attributes(member.filepath, "mode") == "file" then
+                    books[#books + 1] = member
+                end
+            end
+            local parent = widget._cursor
+            widget._drilldown_path[#widget._drilldown_path + 1] = {
+                kind = "series", label = series.series_name, parent_cursor = parent,
+                payload = { series_name = series.series_name, books = books, _series_box = true },
+            }
+            local items = widget:_jumpScanList() or {}
+            found = false
+            for i, item in ipairs(items) do
+                if (item.filepath or item.fp) == file then
+                    local size = widget:_viewSize()
+                    widget._cursor = math.floor((i - 1) / size) * size + 1
+                    widget.page = math.floor((i - 1) / size) + 1
+                    found = true; break
+                end
+            end
+        end
         if found then
             if widget:_isSpineMode() then
                 -- Spine capacity is an upper bound, not a real page size.
@@ -130,7 +154,19 @@ function M.revealBook(file)
         if not found then
             M.notify(_("Could not find this book on the shelf. Check the library folders and filters."))
         end
-    end, { defer_profile = true })
+    end, { defer_profile = true, is_current = opts and opts.is_current })
+end
+
+function M.revealSeries(group, opts)
+    if type(group) ~= "table" or type(group.members) ~= "table" then return false end
+    local fs, Profiles = require("libs/libkoreader-lfs"), require("lib/bookshelf_profiles")
+    for _, book in ipairs(group.members) do
+        if Profiles.matchFile(book.filepath) == group.profile and fs.attributes(book.filepath, "mode") == "file" then
+            return M.revealBook(book.filepath, { series = group, is_current = opts and opts.is_current })
+        end
+    end
+    M.notify(require("core/orbitui_i18n")("This book is no longer on the device."))
+    return false
 end
 
 return M

@@ -1,5 +1,17 @@
 -- OrbitUI-owned strings, independent of the two upstream translation catalogs.
 local sv = {
+    ["Volumes"] = "Volymer",
+    ["Filter by series, title or author"] = "Filtrera på serie, titel eller författare",
+    ["Tap a series to show it on its shelf with its first available volume selected."] = "Tryck på en serie för att visa den i bokhyllan med första tillgängliga volymen markerad.",
+    ["Grouping cached series metadata… No EPUB files are opened."] = "Grupperar cachade serieuppgifter… Inga EPUB-filer öppnas.",
+    ["Some series metadata is unavailable. Unknown books remain listed separately; update library metadata and refresh."] = "Vissa serieuppgifter saknas. Böcker med okänd serie visas separat. Uppdatera bibliotekets metadata och uppdatera sedan träffarna.",
+    ["Series are grouped from those matching volumes only."] = "Serieträffarna bygger bara på dessa matchande volymer.",
+    ["%d matching volumes · %d available"] = "%d matchande volymer · %d tillgängliga",
+    ["Volume 1 is not in cached metadata"] = "Volym 1 saknas i cachade metadata",
+    ["Volume order is unknown"] = "Volymordningen är okänd",
+    ["Standalone books"] = "Fristående böcker",
+    ["Unknown series metadata"] = "Okända serieuppgifter",
+    ["Series metadata is not complete yet. Wait, refresh, or switch to Volumes."] = "Serieuppgifterna är inte färdiglästa. Vänta, uppdatera träffarna eller byt till Volymer.",
     ["File date lookup deferred in OrbitUI"] = "Uppslag av datum i filen är tills vidare avstängt i OrbitUI",
     ["Publication year"] = "Utgivningsår",
     ["Published"] = "Utgiven",
@@ -1357,11 +1369,14 @@ local sv = {
     ["Showing the first 400 matches. Narrow your search for more specific results."] = "Visar de första 400 träffarna. Precisera sökningen för ett mer avgränsat resultat.",
 }
 
-return function(text, language)
+return function(text, language, context)
     -- Display names only. Persistent module/source/collection IDs never change.
     if text == "BookOrbit Want to Read" then text = "Want to read [BookOrbit]" end
     if text == "To Be Read" then text = "Want to read [Local]" end
     local lang = language or (G_reader_settings and G_reader_settings:readSetting("language")) or "en"
-    if type(lang) == "string" and lang:match("^sv") then return sv[text] or text end
+    if type(lang) == "string" and lang:match("^sv") then
+        if context == "tag-results" and text == "Series" then return "Serier" end
+        return sv[text] or text
+    end
     return text
 end

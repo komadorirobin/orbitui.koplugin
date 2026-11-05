@@ -20,7 +20,21 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-04
+## Snapshot: 2026-11-05
+
+- **Local Series / Volumes tag discovery approved; not published.** User's
+  "Kör!" authorises implementing the two views, not a new upstream merge,
+  push/release or device deployment. Branch feature/tag-series-results-20261105
+  starts from public 07c1c09d. Group checked tag hits by series/author/profile,
+  keep standalone/unknown books visible, preserve volume-level AND/OR and cap.
+  Per-origin remembered tabs do not change all-library scope. Manga defaults
+  to Series. Reuse warm BIM rows, otherwise bounded read-only text lookups;
+  never an EPUB scan or new index. First local series volume may be untagged;
+  a tap reveals its pinned series drill/cover/description, never the reader.
+  Keep lifecycle guards, SV/EN, native cover ownership, unchanged pins/version/
+  bootstrap/API1 inventory/artwork/sync. Tests/evidence are recorded in
+  TESTING/MERGE_LOG and test-results/tag-series-20261105. Physical UI/timing
+  acceptance remains open. Public preview beta.2 and stable 1.0 stay unchanged.
 
 - **1.1.0-beta.2 is public in preview; stable/latest remains 1.0.0.** A last actual
   callback test reproduces a page timer overriding a direct choice. Cancel it

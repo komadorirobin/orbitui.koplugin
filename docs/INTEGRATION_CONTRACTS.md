@@ -1255,6 +1255,38 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+November 5 approved discovery extension adds **Series / Volumes** tabs to the
+same offline/BookOrbit tag-result modal. Group only the volume-level predicate's
+checked hits (including unchanged AND/OR semantics and the disclosed 400-volume
+cap). Series identity includes the exact trimmed series name, sorted authors
+and library profile; one-shots and unknown metadata remain separate visible
+sections. Counts distinguish matching volumes from locally indexed available
+members, not a remote series' publication/completion total. A volume one
+missing from cached metadata or unknown numeric order is explicit.
+
+The Manga-origin default is Series; other origins keep Volumes. Remember only
+the explicit view choice per origin library, without narrowing an all-profile
+search or rewriting chips. Tab switches neither rescan tags nor reread EPUBs.
+Group metadata is ephemeral, sourced from an already warm raw BIM map or a
+separate read-only, blob-free, bound-query connection, at most eight files or
+8ms per turn. Keep native custom/Calibre/BIM precedence but disable EPUB series
+repair and progress/provider/genre/cover derivations. Drain a visible repaint
+before the positive input window; Close, Stop, hidden tab, sleep and stale
+navigation retire/pause the worker and close its own handles. Only visible
+series rows request cover thumbnails and retain native ownership semantics.
+
+One valid matching member admits a series; its first locally indexed available
+member may be untagged. A tap retires work and uses the existing guarded shelf
+reveal, opening a pinned, profile-scoped native series drill with that member's
+cover/description selected, never ReaderUI. Do not invent metadata from folder
+names, combine tags across different volumes, merge same-named authors/libraries,
+erase reading state or add a persistent index/server extension. Incomplete or
+failed grouping cannot claim the correct first volume or navigate as complete.
+SV/EN labels and help are host-owned; the native modal's optional initial_tab
+must leave other pickers unchanged. Coverage: test_tag_series, test_tag_reveal
+and existing local/online/tag-chip/native modal suites. Physical rendering,
+touch/sleep and Bigme timing remain separate acceptance checks.
+
 November 2 explicit bug-fix and tag-hit navigation approval during the RC
 freeze: a work-generation guard must not disable Close on a still-visible
 tag-result/index modal. Retired local work releases busy state, closes/flushes

@@ -786,6 +786,9 @@ function M.embeddedTagRequest(source, task, current, done)
             end)
             if not ok then finish(nil, "invalid_epub"); return end
             files = value
+            -- Ephemeral shared inventory for optional series discovery. Never
+            -- serialize it into tag snapshots or widen the tag predicate.
+            if source and not task.file then source.inventory = files end
             if not task.file then index = M.openEmbeddedTagIndex() end
         end
         local start = time.now()

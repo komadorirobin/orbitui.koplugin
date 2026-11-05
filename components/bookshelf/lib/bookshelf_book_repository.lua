@@ -450,7 +450,7 @@ end
 --
 -- Returns a table so callers can pick what they need; every field may be nil
 -- except title, which always resolves (filename last).
-local function _resolveTextMeta(filepath, cb, info, cp)
+local function _resolveTextMeta(filepath, cb, info, cp, cached_only)
     info = info or {}
     local out = {}
 
@@ -485,11 +485,11 @@ local function _resolveTextMeta(filepath, cb, info, cp)
     elseif info.series and not out.series_num then
         out.series_num = info.series:match(" #(%d+)$")
     end
-    out.series_name, out.series_num = seriesFromInfoOrEpub(
+    if not cached_only then out.series_name, out.series_num = seriesFromInfoOrEpub(
         filepath, out.series_name, out.series_num,
         _cpText(cp, "title")
             or (cb and type(cb.title) == "string" and cb.title ~= "" and cb.title)
-            or info.title)
+            or info.title) end
 
     -- Authors. Custom and BIM store one string (newline-separated for
     -- several); Calibre stores an array.
@@ -1684,6 +1684,15 @@ end
 -- ~1-2s on a 2000-book Calibre library. _buildBookMetaLight stays the
 -- per-book entry point (used when a caller doesn't want to materialize
 -- the whole map, and as the fallback path inside the cache builder).
+-- Host tag discovery supplies text-only cached BIM rows. Preserve the native
+-- custom/Calibre/BIM precedence without EPUB repair, enrichment or covers.
+function Repo.tagTextMeta(filepath, info)
+    local text = _resolveTextMeta(filepath, _calibreMetadataFor(filepath), info,
+        _customPropsFor(filepath), true)
+    text.filepath = filepath
+    return text
+end
+
 local function _buildLightMetaFromInfo(fp, info)
     info = info or {}
     local cb = _calibreMetadataFor(fp)
@@ -4535,6 +4544,13 @@ function Repo.lightMetaFor(filepath)
     local depth = BookshelfSettings.read("latest_walk_depth") or 3
     local cache = _getLightMetaCache(home, depth)
     return cache and cache[filepath] or nil
+end
+
+-- A passive peek, unlike batchRowFor/lightMetaFor: never start a walk, whole
+-- table SELECT, snapshot decode or EPUB repair for a tag-result renderer.
+function Repo.cachedTagInfo(filepath)
+    local rows = _lightmeta_refresh.rows or (_light_meta_rows_cache and _light_meta_rows_cache.rows)
+    return rows and rows[filepath] or nil
 end
 
 -- Flat list of every book filepath in the library: the same depth-capped

@@ -1,5 +1,30 @@
 # Verification and device acceptance
 
+## 2026-11-05 local tag discovery: Series / Volumes
+
+Local feature work from public 07c1c09d, not a new publication or device test.
+The focused tag-series suite covers grouping and author/profile identity,
+numeric order/unknown indexes, first untagged local volume, one-shots/unknown
+metadata, warm zero-SQL grouping, bounded slow turns, read-only bound-query
+failure/retry, paused/retired handles, native text-priority/no-EPUB repair,
+actual native initial-tab construction, remembered tab/no-rescan callbacks,
+missing-first warnings, close/sleep/stop, and borrowed/owned cover aspect and
+lifetime. The retained reveal suite now executes the native jump-list series
+branch, pinned membership, actual selected cover/description, missing first
+members and stale deferred navigation without ReaderUI.
+
+Optional real SQLite supplement:
+`ORBITUI_NATIVE_SQLITE_DIR=$PWD/test-results/upstream-20261025/koreader/common luajit tests/test_tag_series.lua`.
+It creates a disposable text-only BIM fixture, exercises quoted Unicode bound
+paths on the actual KOReader SQLite implementation, and compares database bytes
+before/after discovery. Logs: test-results/tag-series-20261105.
+
+Required physical acceptance remains: Bigme/Boox portrait/landscape and SV/EN
+tab labels/thumbnail/long warnings, switching while checking, slow metadata
+Stop/Close/sleep, one-shot and metadata-incomplete rows, returning from a pinned
+series with filters, and cold/warm timings on the real manga library. No new
+device speedup, unattended nightly pass or release is claimed.
+
 ## 1.1.0-beta.2 — final explicit-choice timer regression
 
 An extra actual-picker test fails on beta.1 before publication: a pending page

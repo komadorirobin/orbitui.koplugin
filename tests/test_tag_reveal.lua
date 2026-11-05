@@ -157,4 +157,35 @@ H.test("a missing or filtered folder target reports failure rather than previewi
     Context.revealBook("/books/Series/99.epub"); flush()
     H.eq(previews, 0); H.eq(selected, nil); H.eq(#notices, 1); H.eq(opens, 0)
 end)
+H.test("a series result reveals a pinned series drill with its first local member selected, without opening", function()
+    reset()
+    local members = {
+        { filepath = "/manga/Series/1.epub", series_name = "Hirayasumi", series_num = 1 },
+        { filepath = "/manga/Series/2.epub", series_name = "Hirayasumi", series_num = 2 },
+    }
+    assert(Context.revealSeries{ profile = "manga", series_name = "Hirayasumi", members = members })
+    flush()
+    H.eq(actual.profile_key, "manga"); H.eq(#actual._drilldown_path, 2)
+    local tip = actual._drilldown_path[2]
+    H.eq(tip.kind, "series"); H.eq(tip.payload._series_box, true)
+    H.eq(#tip.payload.books, 2); H.eq(selected, members[1].filepath)
+    H.eq(actual._preview_book.description, "Description"); H.eq(opens, 0)
+    H.eq(members[1].filepath, "/manga/Series/1.epub")
+end)
+H.test("missing first volumes fall back only to another available member of the same series and profile", function()
+    reset(); files["/manga/Series/1.epub"] = nil
+    assert(Context.revealSeries{ profile = "manga", series_name = "S", members = {
+        { filepath = "/manga/Series/1.epub" }, { filepath = "/books/Series/1.epub" },
+        { filepath = "/manga/Series/2.epub" },
+    } })
+    flush(); H.eq(selected, "/manga/Series/2.epub")
+    H.eq(#actual._drilldown_path[2].payload.books, 1); H.eq(opens, 0)
+end)
+H.test("retired series navigation cannot reposition a visible shelf after its source changes", function()
+    reset()
+    local current = true
+    assert(Context.revealSeries({ profile = "manga", series_name = "S", members = {{ filepath = "/manga/Series/1.epub" }} },
+        { is_current = function() return current end }))
+    current = false; flush(); H.eq(previews, 0); H.eq(builds, 0); H.eq(opens, 0)
+end)
 H.finish()
