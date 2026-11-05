@@ -164,6 +164,14 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+November 5 reviewed preview follow-up: Bookshelf d47edfcc is already current;
+SimpleUI two commits through 4bf2d2c5 restrict navpager work to its live chooser
+or injected menus and add a conflicting cover-icon patch name. Preserve the
+host's read-only compatibility replacement, refresh its exact embedded source,
+and retain C02/C06 ownership. No new helper path, asset, migration or sync owner.
+Tests: test_upstream_20261105 and retained test_runtime. Separate 1.1 beta.3;
+stable 1.0 is unchanged. Physical refresh/series-view acceptance remains open.
+
 November 4, AFTER stable 1.0.0 publication: the user approves the staged strategy
 and a separate 1.1 beta. Review Bookshelf master `d47edfcc7c160691417235201595ab12cdffbdfe`
 (53 commits, 62 files) and SimpleUI main `633ffbff73a5975156106016fd60b534e42a4f9f`

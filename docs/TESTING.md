@@ -1,5 +1,21 @@
 # Verification and device acceptance
 
+## 2026-11-05 reviewed SimpleUI follow-up / 1.1.0-beta.3
+
+User explicitly requests merge and publication in the separate preview cycle.
+Candidate includes local Series / Volumes work plus SimpleUI 4bf2d2c5's two
+reviewed fixes; Bookshelf d47edfcc has no pending commits. Five tests execute
+the actual native navpager function against foreign/chooser/injected/replaced
+owners and disabled preferences; existing runtime tests retain read-only patch
+compatibility. Both full scripts, catalogs, exact sealed Lua/LuaJIT/native
+supplements, actual SQLite tag-series/index/Bookshelf suites, old native OTA
+installers, source/path/artwork/bootstrap/history/secret audits and main/tag CI
+are gates, not assumed results. Evidence: test-results/preview11-beta3-20261105.
+No device/server installation or physical acceptance implied. Outstanding:
+SV/EN portrait/landscape Series/Volumes, first-volume preview with filters,
+Stop/Close/sleep during indexing/grouping and real menu refresh/reader returns.
+Stable 1.0 and its maintenance branch/assets must remain immutable.
+
 ## 2026-11-05 local tag discovery: Series / Volumes
 
 Local feature work from public 07c1c09d, not a new publication or device test.

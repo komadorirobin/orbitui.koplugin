@@ -7,6 +7,39 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 1.1.0-beta.3
+
+Preview only, after the user's explicit merge/publication request. Stable 1.0.0
+and all older tags/assets remain unchanged. Includes the previously local
+Series / Volumes tag-results feature: remember the tab per origin library,
+default Manga to Series, keep standalone/unknown-metadata rows and group only
+checked matching volumes by series/author/profile. Counts mean matching versus
+locally indexed volumes, not the server's full series. Missing-first/unknown-order
+warnings and the existing 400-volume match limit are explicit. Switching views
+reuses the tag scan and bounded read-only cached metadata. A series tap reveals
+the first available locally indexed volume in the proper native shelf/series
+preview, even if that volume lacks the tag; it never opens ReaderUI.
+
+SimpleUI integrates two reviewed commits through `4bf2d2c5`: foreign menus no
+longer update the navbar subtitle/arrows, avoiding competing refreshes. File
+chooser/injected menu paging remains native. The added incompatible cover-icon
+patch entry is retained as upstream source only: OrbitUI's canonical/legacy
+compatibility shim still cannot rename/disable patches. Bookshelf remains
+`d47edfcc` (already caught up). API1/bootstrap, 2,000 installed paths, artwork,
+settings/reading data and all sync owners remain unchanged. No device/server
+deployment or measured Bigme speedup. Physical SV/EN, rotation, sleep/indexing,
+series-preview/filter and menu refresh acceptance remain outstanding.
+
+**Svenska:** Ny förhandsversion med **Serier / Volymer** i taggträffarna. Manga
+visar Serier som standard och valt läge minns per ursprungsbibliotek. Fristående
+böcker och okänd metadata hålls synliga; antal gäller lokalt indexerade volymer,
+inte en komplett serverkatalog. Varningar visas när första volymen eller ordningen
+saknas i metadata. Ett tryck markerar första tillgängliga indexerade volymen i
+rätt serie/bokhylla, utan att öppna boken. Flikbyte gör ingen ny taggskanning.
+SimpleUI hindrar orelaterade menyer från att rita om nederlisten. OrbitUI ändrar
+inte dina patchval. Bookshelf är redan ikapp. Stabil 1.0, läsdata, inställningar,
+bilder och synkägare behålls. De nya vyerna behöver provas på riktig enhet.
+
 ## OrbitUI 1.1.0-beta.2
 
 Supersedes the never-published beta.1 draft. A final reproduced picker race

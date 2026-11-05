@@ -4,6 +4,34 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-05 — reviewed SimpleUI follow-up and 1.1 beta.3 preparation
+
+User explicitly requests upstream merge and next release. Keep stable 1.0
+immutable and publish only the next 1.1 preview after gates. Start clean at
+e0763b73 on maintenance/upstream-beta3-20261105; origin/main remains 07c1c09d.
+Include approved local Series / Volumes implementation 37f2d3d and its receipt.
+Fresh watch: Bookshelf d47edfcc is current; SimpleUI has exactly two commits,
+84f0d160 (foreign-menu navpager refresh guard) and 4bf2d2c5 (cover-icon patch
+catalog). Review full commits/net diff: two Lua files only, no dependencies,
+asset/license removals, data migrations, server or synchronization changes.
+
+Import exact 4bf2d2c5605d4172c5283e224450854d0b72219b with unsquashed subtree
+ancestry; no textual conflicts. C02/C06/C07/C09: native chooser/injected menus
+retain subtitle/arrows/targeted page paint; unrelated menus keep their own
+pagination without scheduling navbar work. OrbitUI's existing canonical/legacy
+compatibility shim stays read-only, so upstream's catalog addition cannot
+rename/disable any user patch. Refresh the exact lazy embedded catalog source
+and SimpleUI pin only; preserve original import provenance and all API1 paths.
+Five new regressions execute the actual native navpager function, including
+foreign menus, coalesced live chooser paging, injected overlay targeting,
+replaced chooser and disabled preferences. Retain runtime shim tests.
+
+VERSION becomes 1.1.0-beta.3 with SV/EN release notes. No device/server action
+or new measured speedup. Existing 1.1 date-fork/folder-delete safety deferrals,
+Series/Volumes lifecycle and physical acceptance gaps remain. Full exact-source,
+sealed/native/old-installer/history/secrets/CI/draft/public/channel gates precede
+publication. Evidence: test-results/preview11-beta3-20261105.
+
 ## 2026-11-05 — local series-level tag discovery (no import or release)
 
 The user approves Series / Volumes tabs for local manga discovery, preserving

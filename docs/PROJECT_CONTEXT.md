@@ -22,7 +22,20 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-05
 
-- **Local Series / Volumes tag discovery approved; not published.** User's
+- **User authorizes reviewed merge and next release: 1.1.0-beta.3 preview.**
+  Branch maintenance/upstream-beta3-20261105 includes local Series / Volumes
+  commits 37f2d3d/e0763b73. Fresh watch: Bookshelf d47edfcc has no new commits;
+  SimpleUI two commits to 4bf2d2c5. Reviewed exact unsquashed import retains
+  foreign-menu navpager guard and updated cover-patch catalog; hosted read-only
+  compatibility shim remains unchanged, never disabling patches. Regenerate
+  the exact embedded helper string, with no new API1 paths or bootstrap/artwork/
+  settings/reading-data/sync change. Complete source/sealed/native/installer/
+  history/secret/CI/public-byte gates precede publication. Physical Series/
+  Volumes and new menu refresh acceptance remain outstanding, not inferred
+  from automated checks. Stable/latest 1.0 and old releases stay immutable.
+  Evidence: test-results/preview11-beta3-20261105.
+
+- **Historical local Series / Volumes implementation before beta.3.** User's
   "Kör!" authorises implementing the two views, not a new upstream merge,
   push/release or device deployment. Branch feature/tag-series-results-20261105
   starts from public 07c1c09d. Group checked tag hits by series/author/profile,

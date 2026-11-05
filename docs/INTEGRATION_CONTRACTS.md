@@ -24,6 +24,13 @@ Source: `main.lua`, `core/orbitui_plugin.lua`, `core/orbitui_guard.lua`, `core/o
 
 ## C02: Navigation and close ownership
 
+November 5 SimpleUI follow-up: only the live file chooser or explicitly
+navbar-injected menus may update navbar subtitles/arrows. Foreign menus retain
+native pagination without competing bar refreshes. Preserve targeted injected
+page-info paint, coalesced live page state and existing hook ownership/teardown.
+The upstream cover-icon compatibility catalog remains inert in hosted OrbitUI:
+canonical and legacy callers cannot rename/disable patches (C06).
+
 Home belongs to SimpleUI; configured library sections belong to Bookshelf.
 Keep the dock's active item, profile roots and current drilldown consistent.
 Do not let a generic Show/PathChanged event steal a destination already chosen
