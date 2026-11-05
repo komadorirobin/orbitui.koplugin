@@ -19,6 +19,24 @@ It creates a disposable text-only BIM fixture, exercises quoted Unicode bound
 paths on the actual KOReader SQLite implementation, and compares database bytes
 before/after discovery. Logs: test-results/tag-series-20261105.
 
+Local candidate **37f2d3d304cb9a4e172bbe879fe59ac43848152c** is committed.
+Both full scripts pass: 134 Python tests/four existing skips, 105 root Lua
+files, 549 Bookshelf suites/zero failures/three native-runtime exclusions,
+13 SimpleUI files, 1,176 syntax files and 43 catalogs/zero new failures.
+The final sealed archive repeats all 105 root files under both interpreters;
+the series suite passes 19 cases normally and 20 with real SQLite. Native
+libarchive/JSON/UIManager tag-search supplementation passes 48 cases, and the
+retained real SQLite tag-index suite passes. The native reveal suite passes
+12 cases. One-commit Gitleaks scan reports no leaks.
+
+Development-only ZIP: **9,492,169 bytes**, SHA-256
+`80743ebb79f76b3a31344285d4e8f044b28d01039229ff24ce435c8b281bc5d9`.
+Sealed source/manifest/recovery checks pass with exactly the same **2,000**
+installed paths/API1. No upstream pin, bootstrap, resource or version change.
+This is NOT a replacement beta.2 release: public dist retains SHA-256
+`0d033933261b5a715c744c46b6dbf33d2ef00154f2943e60a8ab5acbd1be9dea`.
+No push, public release, external message, ADB installation or server action.
+
 Required physical acceptance remains: Bigme/Boox portrait/landscape and SV/EN
 tab labels/thumbnail/long warnings, switching while checking, slow metadata
 Stop/Close/sleep, one-shot and metadata-incomplete rows, returning from a pinned

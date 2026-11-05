@@ -35,6 +35,10 @@ and correct this file in the same change.
   bootstrap/API1 inventory/artwork/sync. Tests/evidence are recorded in
   TESTING/MERGE_LOG and test-results/tag-series-20261105. Physical UI/timing
   acceptance remains open. Public preview beta.2 and stable 1.0 stay unchanged.
+  Local implementation 37f2d3d passes both full gates, 43 catalogs, sealed
+  Lua/LuaJIT roots, 20 actual SQLite series cases and 48 native tag cases.
+  Development archive 80743ebb is 9,492,169 bytes with the same 2,000 API1
+  paths. No push/release/device/server action; public dist stays 0d033933.
 
 - **1.1.0-beta.2 is public in preview; stable/latest remains 1.0.0.** A last actual
   callback test reproduces a page timer overriding a direct choice. Cancel it

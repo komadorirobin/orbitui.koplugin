@@ -36,6 +36,14 @@ sidecar/progress/history write or remote sync owner is added. All new labels are
 SV/EN. Automated verification and remaining physical gates are in TESTING;
 evidence belongs to test-results/tag-series-20261105.
 
+Verification: committed source 37f2d3d passes both full scripts, 43 catalogs,
+all sealed root suites under Lua/LuaJIT, 20 actual SQLite series cases and 48
+native archive/JSON/UIManager tag cases. The native reveal suite passes 12.
+No leaks in the local source commit. Development archive SHA 80743ebb, 9,492,169
+bytes, retains exactly 2,000 installed paths/API1; VERSION and the public beta.2
+ZIP remain unchanged. No push/release/device/server action or new measured
+reader performance. Detailed counts and physical gates are in TESTING.
+
 ## 2026-11-04 — final wallpaper race; unpublished beta.1 superseded by beta.2
 
 Before publication, one added actual-picker callback test reproduces a pending
