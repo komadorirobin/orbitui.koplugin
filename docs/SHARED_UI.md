@@ -157,7 +157,11 @@ The strip is below the hero/chips and above the footer/dock; it does not reduce
 cover/row width. It hides for date/progress/nonalphabetical sorts, a single
 page, an opened series, remote/unsupported sources and two-column lists.
 Short layouts label fewer positions but retain every letter's drag position
-and large-letter feedback. Dragging never scans metadata or opens a book.
+and large-letter feedback. Owned label padding is zero; stride follows actual
+regular/bold text height, not requested point size. Cached measured fitting
+keeps normal/selected/bubble letters within their bounds at high DPI and tight
+margins without silently dropping an oversized label. Dragging never scans
+metadata or opens a book.
 Explicit release uses the same scoped native metadata as a letter jump and
 may take time on a cold library. No automatic index or new cache is created.
 

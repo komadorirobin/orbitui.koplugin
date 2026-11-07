@@ -40,12 +40,12 @@ package.loaded["ui/event"] = { new = function(_, name, ...)
 end }
 package.loaded.logger = { dbg = function() end, warn = function() end }
 package.loaded.gettext = function(s) return s end
-local width, height, touch = 600, 800, true
+local width, height, touch, font_scale = 600, 800, true, 1
 local Screen = { getWidth = function() return width end, getHeight = function() return height end,
-    scaleBySize = function(_, n) return n end }
+    scaleBySize = function(_, n) return math.floor(n * font_scale + .5) end }
 package.loaded.device = { screen = Screen, hasKeys = function() return false end,
     isTouchDevice = function() return touch end }
-local top, queue, dirty, notices, reads, writes, draws = nil, {}, {}, {}, 0, 0, {}
+local top, queue, dirty, notices, reads, writes, draws, glyphs = nil, {}, {}, {}, 0, 0, {}, {}
 local UI = { getTopmostVisibleWidget = function() return top end,
     scheduleIn = function(_, delay, fn) queue[#queue + 1] = { fn = fn, delay = delay } end,
     unschedule = function(_, fn) for i = #queue, 1, -1 do if queue[i].fn == fn then table.remove(queue, i) end end end,
@@ -76,12 +76,59 @@ package.loaded["lib/bookshelf_sort_engine"] = { sortKeyValue = function(book, ke
     return book[key] or book.title
 end }
 local Text = Widget:extend{}
-function Text:getSize() return { w = #self.text * 2, h = math.min(10, self.face) } end
-function Text:paintTo(bb, x, y) bb:paintRect(x, y, 1, 1, self.fgcolor) end
+local native_metrics = os.getenv("ORBITUI_NATIVE_TEXT_METRICS")
+native_metrics = native_metrics and assert(loadfile(native_metrics))()
+local function textSize(text, face, bold, padding)
+    if native_metrics then
+        local metrics = assert(native_metrics[bold and "bold" or "regular"][face.size])
+        return { w = math.ceil(assert(metrics.widths[text])), h = metrics.height + 2 * padding }
+    end
+    local count = #text:gsub("[\128-\191]", "")
+    return { w = math.ceil(count * face.size * (bold and .9 or .8)),
+        h = math.ceil(face.size * 1.4) + 2 * padding }
+end
+function Text:getSize() return textSize(self.text, self.face, self.bold, self.padding or Screen:scaleBySize(2)) end
+function Text:paintTo(bb, x, y)
+    local d = self:getSize()
+    glyphs[#glyphs + 1] = { text = self.text, x = x, y = y, w = d.w, h = d.h, size = self.face.size }
+    bb:paintRect(x, y, d.w, d.h, self.fgcolor)
+end
 function Text:free() self.freed = true end
-package.loaded["lib/bookshelf_colour_text"] = Text
-package.loaded["ui/font"] = { getFace = function(_, _, size) return size end }
+package.loaded["ui/font"] = { getFace = function(_, _, size)
+    local pixels = Screen:scaleBySize(size)
+    return { size = pixels, ftsize = { getHeightAndAscender = function()
+        if native_metrics then
+            local m = assert(native_metrics.regular[pixels]); return m.height, m.ascender
+        end
+        return pixels * 1.4, pixels * 1.1
+    end } }
+end, getAdjustedFace = function(_, face, bold) return face, bold end }
 package.loaded["ffi/blitbuffer"] = { COLOR_BLACK = 0, COLOR_WHITE = 255 }
+local native_text = os.getenv("ORBITUI_NATIVE_TEXT_WIDGET_FILE")
+if native_text then
+    -- Actual TextWidget size/padding/paint control flow, with deterministic
+    -- font services (optionally measured from real FreeType fonts). This is
+    -- not a claim to run native glyph shaping or a physical e-ink panel.
+    package.loaded["ui/widget/widget"] = Widget
+    package.loaded["ui/size"] = setmetatable({}, { __index = function(_, k)
+        if k == "padding" then return { small = Screen:scaleBySize(2) } end
+    end })
+    package.loaded.optmath = { round = function(n) return math.floor(n + .5) end }
+    package.loaded.dbg = { guard = function() end }
+    package.loaded.util = package.loaded.util or {}
+    G_reader_settings = { nilOrTrue = function() return false end, readSetting = function() return "en" end }
+    package.loaded["ui/rendertext"] = {
+        sizeUtf8Text = function(_, _, _, face, text, _, bold) return { x = textSize(text, face, bold, 0).w } end,
+        renderUtf8Text = function(_, target, x, baseline, face, text, _, bold, color)
+            local _, ascender = face.ftsize:getHeightAndAscender()
+            local y, d = baseline - math.floor(ascender + .5), textSize(text, face, bold, 0)
+            glyphs[#glyphs + 1] = { text = text, x = x, y = y, w = d.w, h = d.h, size = face.size }
+            target:paintRect(x, y, d.w, d.h, color)
+        end,
+    }
+    Text = assert(loadfile(native_text))()
+end
+package.loaded["lib/bookshelf_colour_text"] = Text
 local bb = { paintRect = function(_, x, y, w, h, color)
     draws[#draws + 1] = { x = x, y = y, w = w, h = h, color = color }
 end }
@@ -120,9 +167,9 @@ local function flush(limit)
     end
 end
 local function reset(enabled)
-    saved, notices, queue, dirty, draws = {}, {}, {}, {}, {}
+    saved, notices, queue, dirty, draws, glyphs = {}, {}, {}, {}, {}, {}
     reads, writes, fail, partial = 0, 0, false, nil
-    width, height, touch, profile, drill, source_kind = 600, 800, true, "manga", nil, "folder"
+    width, height, touch, font_scale, profile, drill, source_kind = 600, 800, true, 1, "manga", nil, "folder"
     sort = { { key = "title" } }; UI._simpleui_navigation_generation = 1
     items = { { title = "Apple" }, { title = "Banana" }, { title = "C" }, { title = "D" },
         { title = "E" }, { title = "F" }, { title = "G" }, { title = "Manga" }, { title = "Åland" }, { title = "Ön" } }
@@ -166,6 +213,52 @@ H.test("enabled strip only consumes existing side margin, not hero, footer or sh
     H.eq(w._shelf_dims.PAD, 18); H.eq(w._shelf_dims.content_w, nil)
     H.eq(reads, 0); H.eq(writes, 0)
     gesture(w, "tap", 100); H.eq(reads, 0); H.eq(w[1][2].events, 1)
+end)
+H.test("resting letters really paint with font line metrics and native default padding", function()
+    local w = reset(true); w:paintTo(bb)
+    assert(#glyphs >= 10, "active strip has no visible letters")
+    H.eq(reads, 0); H.eq(writes, 0); H.eq(w.rebuilds, 1)
+end)
+H.test("selected strip letter and large feedback fit their actual measured bounds", function()
+    local w, strip = reset(true); gesture(w, "pan", at(strip, "M")); w:paintTo(bb)
+    local bar, bubble = false, false
+    for _, g in ipairs(glyphs) do
+        if g.text == "M" then
+            if g.x >= strip.rect.x then bar = true else bubble = true end
+        end
+    end
+    assert(bar and bubble, "selected letter vanished from strip or feedback")
+    H.eq(reads, 0); H.eq(w.swaps, 0)
+end)
+H.test("high DPI and narrow capped margins retain visible fitted letters", function()
+    for _, scale in ipairs{ 1, 1.5, 2, 3 } do
+        local w = reset(true)
+        width, height, font_scale = 1200, 1600, scale
+        w._shelf_dims.PAD, w._shelf_dims.wipe_rows_top = 36, 600
+        w:_rebuild(); local strip = assert(w._orbitui_alphabet)
+        w:paintTo(bb); assert(#glyphs >= 5, "font scaling hid every label")
+        for _, g in ipairs(glyphs) do
+            assert(g.x >= strip.rect.x and g.x + g.w <= strip.rect.x + strip.rect.w)
+            assert(g.y >= strip.rect.y and g.y + g.h <= strip.rect.y + strip.rect.h)
+        end
+        H.eq(reads, 0); H.eq(writes, 0)
+    end
+end)
+H.test("the smallest supported margin shrinks wide letters without losing or reallocating them", function()
+    local w = reset(true); w._shelf_dims.PAD = 8; w:_rebuild()
+    local strip = assert(w._orbitui_alphabet)
+    gesture(w, "pan", at(strip, "W"), strip.rect.x + strip.rect.w / 2); w:paintTo(bb)
+    local fitted = false
+    for _, g in ipairs(glyphs) do
+        if g.x >= strip.rect.x then
+            assert(g.w <= strip.rect.w)
+            if g.text == "W" and g.size < 11 then fitted = true end
+        end
+    end
+    assert(fitted, "wide letter was omitted rather than fitted")
+    local function count() local n = 0; for _ in pairs(strip.labels) do n = n + 1 end; return n end
+    local before = count(); for _ = 1, 10 do w:paintTo(bb) end
+    H.eq(count(), before); H.eq(reads, 0); H.eq(writes, 0)
 end)
 H.test("dragging is coalesced, clipped and performs no scans or page changes", function()
     local w, strip = reset(true)

@@ -1,5 +1,30 @@
 # Verification and device acceptance
 
+## 2026-11-07 local alphabet-label visibility fix
+
+User reports the beta.4 margin accepts drags but shows no letters. No ADB/device
+connection is used. The old scalar-font stub returned height <= 10 and tests
+checked surface fills, not that any text actually painted. A realistic scaled
+line-height/default-padding model reproduces zero visible letters on the exact
+old beta.4 adapter. Actual KOReader TextWidget from v2026.03 and current
+9040116701c888889bd35233b23b83283be66745 are tested separately against bundled Inter's FreeType
+line height/ascender/advance measurements. Native size/padding control flow is
+real; font services and glyph painting are test stand-ins, not native shaping
+or physical e-ink proof. The old beta.4 archive fails the new visible-text
+assertion; the fix passes. Preserve exact reference SHA in the evidence folder.
+
+Owned labels use padding=0; measured regular/bold line height determines label
+stride, and bounded cached size fitting handles width/height of the normal
+label, selected row and large feedback. No forced-height clipping or silently
+skipped oversized text. All touch positions, cover/row geometry, data producers,
+source pins, settings/sync owners, bootstrap/API1 and user reading data remain.
+Four new regressions assert real visible glyph calls at rest/selection, DPI and
+narrow-margin fit plus stable text-cache size on repaint. Standard count is 26;
+actual grey/RGB/CBB/software supplement adds the 27th. Evidence:
+test-results/alphabet-visibility-20261107. Full scripts/catalogs/native/package
+gates remain required. No publication, tag, push, device/server change or new
+physical acceptance is inferred. VERSION/public beta.4/dist remain unchanged.
+
 ## 2026-11-07 1.1.0-beta.4 preview release
 
 User explicitly requests the next beta with the completed local alphabet strip.

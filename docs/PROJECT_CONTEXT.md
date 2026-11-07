@@ -22,6 +22,21 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-07
 
+- **Local alphabet-label visibility fix; not published.** User reports beta.4's
+  strip responds to dragging but is invisible. Reproduce zero painted letters
+  with realistic native line metrics/default padding and with minimum/current
+  TextWidget sizing plus bundled Inter's actual FreeType metrics. The old test
+  stub capped height at ten pixels and never asserted visible text. Set owned
+  label padding to zero, derive label stride from measured regular/bold heights
+  and fit actual width/height before painting (including selected slot/bubble).
+  Preserve margin/input geometry, scoped jumps, clipped repaint/lifecycle and
+  zero metadata reads during drag. Add realistic metric, visibility, selected/
+  bubble, DPI/narrow-margin and bounded-cache regressions. Full source/native/
+  package checks are recorded in TESTING; physical Bigme confirmation remains
+  open. No VERSION/pin/component/asset/bootstrap/sync/device/server/publication
+  change. Public beta.4/dist b5692f54 is immutable. Evidence:
+  test-results/alphabet-visibility-20261107.
+
 - **1.1.0-beta.4 is public in preview.** User authorizes the next beta with the
   completed alphabet strip below; no additional upstream merge or device/server
   deployment. Published 2026-11-07 15:33:18 UTC, release 437660137, frozen

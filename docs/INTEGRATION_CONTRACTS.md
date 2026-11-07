@@ -1277,7 +1277,10 @@ missing letters keep the shelf and restore repository flags. Retire owned
 timers on close/suspend/rebuild and guard visible owner/navigation/dimensions;
 covered/retired callbacks cannot draw or navigate. Restore interrupted bubble
 on return without overwriting a newer screen. Preserve future/sibling view
-preferences and all existing input/reader/sync owners. Coverage:
+preferences and all existing input/reader/sync owners. Owned label padding is
+zero; use measured regular/bold text height for spacing and bounded cached
+width/height fitting, not point-size estimates or forced clipping. Assert that
+letters actually paint, not merely that surfaces/gestures work. Coverage:
 test_alphabet_strip, retained shelf-sort/series/navigation/native input/raster
 suites. Native-font/Bigme drag/night/rotation/gesture ergonomics remain physical
 acceptance, not implied by headless verification.

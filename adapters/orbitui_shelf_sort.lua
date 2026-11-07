@@ -531,20 +531,34 @@ local function alphabetWidgets()
         local slot = r.h / #self.letters
         local size = math.max(7, math.min(11, math.floor(slot / Screen:scaleBySize(1))))
         self.labels = self.labels or {}
-        local function label(text, rect, font_size, selected)
+        local function measured(text, font_size, selected)
             local key = text .. ":" .. font_size .. ":" .. tostring(selected)
             local t = self.labels[key]
             if not t then
                 t = Text:new{ text = text, face = Font:getFace("cfont", font_size), bold = selected,
-                    fgcolor = selected and paper or ink, bgcolor = selected and ink or paper }
+                    padding = 0, fgcolor = selected and paper or ink, bgcolor = selected and ink or paper }
                 self.labels[key] = t
             end
-            local d = t:getSize()
-            if d.w <= rect.w and d.h <= rect.h then t:paintTo(bb, rect.x + math.floor((rect.w - d.w) / 2), rect.y + math.floor((rect.h - d.h) / 2)) end
+            return t, t:getSize()
+        end
+        local function label(text, rect, font_size, selected)
+            -- Font:getFace scales by DPI; TextWidget's line height is NOT
+            -- its requested point size. Fit measured text instead of silently
+            -- omitting it, including the selected slot and large feedback.
+            for candidate = font_size, 1, -1 do
+                local t, d = measured(text, candidate, selected)
+                if d.w <= rect.w and d.h <= rect.h then
+                    t:paintTo(bb, rect.x + math.floor((rect.w - d.w) / 2), rect.y + math.floor((rect.h - d.h) / 2))
+                    return
+                end
+            end
         end
         bb:paintRect(r.x, r.y, r.w, r.h, paper)
-        -- On short layouts label fewer positions, but keep all letters touchable.
-        local stride = math.max(1, math.ceil(Screen:scaleBySize(size + 2) / slot))
+        -- Use native regular AND bold line metrics, not size+2: the latter
+        -- could fit our old stub while every real TextWidget was too tall.
+        local _, regular = measured("Å", size, false)
+        local _, bold = measured("Å", size, true)
+        local stride = math.max(1, math.ceil((math.max(regular.h, bold.h) + Screen:scaleBySize(2)) / slot))
         for i, letter in ipairs(self.letters) do
             local rect = { x = r.x, y = r.y + math.floor((i - 1) * slot), w = r.w, h = math.ceil(slot) }
             if letter == self.letter then bb:paintRect(rect.x, rect.y, rect.w, rect.h, ink) end

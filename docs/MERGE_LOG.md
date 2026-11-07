@@ -4,6 +4,26 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-07 — local alphabet text-visibility correction
+
+User's beta.4 strip accepts gestures but has no visible labels. Reproduce the
+symptom without a device: the old point-size estimate and default TextWidget
+padding make every label exceed its row, so the painter omits it. The previous
+stub hid the problem by reporting height <= 10; existing pixel tests proved
+surface contrast/clipping but not visible glyphs. The exact beta.4 archive fails
+a new visible-text regression with actual KOReader TextWidget and bundled
+Inter's real FreeType sizing measurements. Native shaping/panel output is not
+run and the exact user's font/device cause is not physically confirmed.
+
+Minimal adapter-only fix: padding=0 on owned labels, measured regular/bold line
+height for stride and cached bounded width/height fitting for strip/selected/
+bubble text. Four regressions cover visibility, scaled/narrow labels and no
+reallocation on repeated paints. Keep all margins/input/lifecycle/scoped data
+behavior, SV/EN, components/pins/assets/API1/bootstrap/settings/sync intact.
+Full/native/package receipts: TESTING and test-results/alphabet-visibility-20261107.
+No new version, push, release, device/server installation or physical acceptance
+is authorized by the bug report alone. Keep public beta.4/dist immutable.
+
 ## 2026-11-07 — 1.1.0-beta.4 publication approved
 
 User asks for a new beta after the completed local alphabet-strip work. Prepare
