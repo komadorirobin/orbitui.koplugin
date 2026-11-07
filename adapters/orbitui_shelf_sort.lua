@@ -577,6 +577,7 @@ function M.attachAlphabet(widget)
         if widget[1]._orbitui_alphabet_layer then
             local old = widget[1][1]
             widget[1] = widget[1][2]
+            widget._orbitui_alphabet = nil
             old:cancel()
             local after = UI.tickAfterNext or UI.nextTick
             after(UI, function() old:free() end)

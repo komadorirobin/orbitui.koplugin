@@ -280,6 +280,13 @@ H.test("covered drag restores on next visible paint without resurrecting a hidde
     top = w; w:paintTo(bb); assert(not w._orbitui_alphabet.retired)
     assert(#dirty > count); H.eq(dirty[#dirty].rect, strip.bubble)
 end)
+H.test("removing an inactive layer clears its old state and frees only its own text", function()
+    local w, strip = reset(true); w:paintTo(bb)
+    local count = 0; for _ in pairs(strip.labels) do count = count + 1 end; assert(count > 0)
+    strip:cancel(); Adapter.saveView(Query.capture(), "alphabet", false)
+    Adapter.attachAlphabet(w); H.eq(w._orbitui_alphabet, nil)
+    H.eq(w[1]._orbitui_alphabet_layer, nil); flush(); H.eq(strip.labels, nil)
+end)
 H.test("landscape and tight margins stay inside the dock-safe viewport", function()
     local w = reset(true); width, height = 1200, 600
     w._shelf_dims.PAD = 36; w._shelf_dims.wipe_rows_top = 150; w:_rebuild()

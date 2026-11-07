@@ -309,11 +309,13 @@ H.test("host teardown restores only its own menu and never unwires a newer owner
     live(); H.eq(calls.fast, nil); H.eq(calls.native_close, nil)
 end)
 H.test("the hosted launch seam records the actual path without changing the native open or callback", function()
+    local alphabet_calls = 0
     local modules, saved = { "appearance", "shelf_themes", "cover_labels", "shelf_sort", "series_boxes",
         "book_bindings", "series_titles", "navbar", "android_covers" }, {}
     for _, name in ipairs(modules) do
         local id = "adapters/orbitui_" .. name; saved[id] = package.loaded[id]
-        package.loaded[id] = { widget = function() end, browsing = function() end }
+        package.loaded[id] = { widget = function() end, browsing = function() end,
+            alphabet = function() H.eq(name, "shelf_sort"); alphabet_calls = alphabet_calls + 1 end }
     end
     local after = function() end
     local W = { _commitBookStatus = function() end,
@@ -321,6 +323,7 @@ H.test("the hosted launch seam records the actual path without changing the nati
             H.eq(self._orbitui_reader_file, file); H.eq(cb, after); return "native-open-result"
         end }
     Adapter.wrap("lib/bookshelf_widget", W)
+    H.eq(alphabet_calls, 1)
     local obj = setmetatable({}, { __index = W })
     H.eq(obj:_launchReader("/books/real.epub", after), "native-open-result")
     H.eq(obj._orbitui_reader_file, "/books/real.epub")
