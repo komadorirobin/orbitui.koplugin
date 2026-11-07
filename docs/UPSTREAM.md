@@ -164,6 +164,33 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+November 7 merge-only request reviews Bookshelf 6.3.3 master
+c014b133d9575525b2576ab76c65586b8ba3fd83 (three commits/six files) and SimpleUI
+3.0.3 main 4426601f6ccf44488d18a8fcee8fbc47c76905eb (seven commits/nine files).
+Unsquashed imports 71894ea3/ac06c803 retain local catalog-only additions in the
+single POT conflict. No new runtime file, artwork, dependency or data migration.
+Re-embed the popup kit's exact waitForPanel source, without changing API1 paths.
+
+C07/C10: adopt the zero-border native-tab crop so text/icon feedback on Cover
+paging has real painted bounds; retain scroll-container regions, HTML, lazy
+technical details and native close/focus ownership. Refresh waits for panel
+submission (or native short yield), not the full e-ink update. SimpleUI facets
+follow file-browser collation without reordering series volumes. Arrange
+Collections gets its native lexical/natural ascending/descending choices back;
+guard current window/FM/collection/path/navigation and keep the sorting popup
+native so automatic sheet conversion cannot change its identity. Own-save
+native table rebuilds remain usable; retired choices cannot save. Correct only
+incoming Italian PO syntax: a missing header terminator and 50 lost plural
+indices, retaining all translation text and the zero-exception catalog gate.
+
+Preserve prior local word suggestions, alphabet visibility, Home/Manga/profile/
+series/ornament/BookOrbit/MAL/patch owners and prior safety deferrals. Advance
+only the two reviewed pins; VERSION, public beta.5/dist and stable 1.0 stay
+unchanged. The request includes an audited main push, not a release/device/server
+operation. Tests and final receipts: TESTING/MERGE_LOG; evidence:
+test-results/upstream-20261107. Physical Cover paging, notice/collection touch/
+font/sleep/rotation acceptance and Bigme timing remain outstanding.
+
 November 5 reviewed preview follow-up: Bookshelf d47edfcc is already current;
 SimpleUI two commits through 4bf2d2c5 restrict navpager work to its live chooser
 or injected menus and add a conflicting cover-icon patch name. Preserve the

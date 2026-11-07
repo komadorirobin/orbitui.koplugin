@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: simpleui\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-10-28 23:22+0000\n"
-"PO-Revision-Date: 2026-11-06 00:33+0000
+"PO-Revision-Date: 2026-11-06 00:33+0000\n"
 "Last-Translator: Tremonz\n"
 "Language-Team: Italian (Italy)\n"
 "Language: it_IT\n"
@@ -8685,266 +8685,266 @@ msgstr "⬆ Aggiornamento disponibile: %s"
 msgid "  (%d left)"
 msgid_plural "  (%d left)"
 msgstr[0] "  (%d rimasto)"
-msgstr "  (%d rimasti)"
+msgstr[1] "  (%d rimasti)"
 
 #: modules/module_reading_goals.lua:1212
 msgid "  Set Goal  (%d book in %s)"
 msgid_plural "  Set Goal  (%d books in %s)"
 msgstr[0] "  Imposta obiettivo  (%d libro in %s)"
-msgstr "  Imposta obiettivo  (%d libro in %s)"
+msgstr[1] "  Imposta obiettivo  (%d libro in %s)"
 
 #: modules/reading_stats/width_sheet.lua:100
 msgid "%1 column"
 msgid_plural "%1 columns"
 msgstr[0] ""
-msgstr "Colonna %1"
+msgstr[1] "Colonna %1"
 
 #: modules/module_reading_goals.lua:731 screens/sui_stats_windows.lua:769
 msgid "%d book"
 msgid_plural "%d books"
 msgstr[0] "%d libro"
-msgstr "%d libro"
+msgstr[1] "%d libro"
 
 #: modules/critter/phrases.lua:81
 msgid "%d book finished this year"
 msgid_plural "%d books finished this year"
 msgstr[0] ""
-msgstr "%d libro completato quest'anno"
+msgstr[1] "%d libro completato quest'anno"
 
 #: modules/module_reading_goals.lua:1161
 msgid "%d book in %s"
 msgid_plural "%d books in %s"
 msgstr[0] "%d libro in %s"
-msgstr "%d libro in %s"
+msgstr[1] "%d libro in %s"
 
 #: screens/sui_stats_windows.lua:1219
 msgid "%d book read"
 msgid_plural "%d books read"
 msgstr[0] ""
-msgstr "%d libro letto"
+msgstr[1] "%d libro letto"
 
 #: modules/critter/dialog.lua:505
 msgid "%d book this year. How's the goal looking?"
 msgid_plural "%d books this year. How's the goal looking?"
 msgstr[0] ""
-msgstr "%d libro quest'anno. Come procede l'obiettivo?"
+msgstr[1] "%d libro quest'anno. Come procede l'obiettivo?"
 
 #: modules/critter/phrases.lua:174
 msgid "%d book to go for your goal."
 msgid_plural "%d books to go for your goal."
 msgstr[0] ""
-msgstr "Manca %d libro al tuo obiettivo."
+msgstr[1] "Manca %d libro al tuo obiettivo."
 
 #: infra/sui_book_stats.lua:190 screens/sui_stats_windows.lua:1734
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d giorno"
-msgstr "%d giorno"
+msgstr[1] "%d giorno"
 
 #: modules/critter/reaction_lines.lua:312
 msgid "%d day away. I counted."
 msgid_plural "%d days away. I counted."
 msgstr[0] ""
-msgstr "%d giorno lontano. Ho tenuto il conto."
+msgstr[1] "%d giorno lontano. Ho tenuto il conto."
 
 #: modules/critter/phrases.lua:147
 msgid "%d day of reading in a row."
 msgid_plural "%d days of reading in a row."
 msgstr[0] ""
-msgstr "%d giorno consecutivo di lettura."
+msgstr[1] "%d giorno consecutivo di lettura."
 
 #: screens/insights/sui_insights_charts.lua:141
 msgid "%d day read"
 msgid_plural "%d days read"
 msgstr[0] ""
-msgstr "%d giorno di lettura"
+msgstr[1] "%d giorno di lettura"
 
 #: modules/critter/phrases.lua:77
 msgid "%d day strong!"
 msgid_plural "%d days strong!"
 msgstr[0] ""
-msgstr "%d giorno alla grande!"
+msgstr[1] "%d giorno alla grande!"
 
 #: modules/critter/reaction_lines.lua:353
 msgid "%d day! I thought you'd moved."
 msgid_plural "%d days! I thought you'd moved."
 msgstr[0] ""
-msgstr "%d giorno! Pensavo ti fossi trasferito."
+msgstr[1] "%d giorno! Pensavo ti fossi trasferito."
 
 #: modules/critter/reaction_lines.lua:332
 msgid "%d day! Where were you?"
 msgid_plural "%d days! Where were you?"
 msgstr[0] ""
-msgstr "%d giorno! Ma dov'eri finito?"
+msgstr[1] "%d giorno! Ma dov'eri finito?"
 
 #: modules/critter/phrases.lua:247
 msgid "%d day, your longest streak yet."
 msgid_plural "%d days, your longest streak yet."
 msgstr[0] ""
-msgstr "%d giorno, la tua serie più lunga di sempre."
+msgstr[1] "%d giorno, la tua serie più lunga di sempre."
 
 #: features/sui_quickactions.lua:1566 features/sui_quickactions.lua:2879
 #: features/sui_quickactions.lua:2900
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d elemento"
-msgstr "%d elemento"
+msgstr[1] "%d elemento"
 
 #: modules/critter/reaction_lines.lua:131
 msgid "%d minute of reading."
 msgid_plural "%d minutes of reading."
 msgstr[0] ""
-msgstr "%d minuto di lettura."
+msgstr[1] "%d minuto di lettura."
 
 #: modules/critter/phrases.lua:230
 msgid "%d minute read today!"
 msgid_plural "%d minutes read today!"
 msgstr[0] ""
-msgstr "%d minuto letto oggi!"
+msgstr[1] "%d minuto letto oggi!"
 
 #: modules/critter/reaction_lines.lua:156
 msgid "%d minute without surfacing."
 msgid_plural "%d minutes without surfacing."
 msgstr[0] ""
-msgstr "%d minuto senza riemergere."
+msgstr[1] "%d minuto senza riemergere."
 
 #: modules/critter/reaction_lines.lua:152
 msgid "%d minute! Did you eat?"
 msgid_plural "%d minutes! Did you eat?"
 msgstr[0] ""
-msgstr "%d minuto! Ma hai mangiato?"
+msgstr[1] "%d minuto! Ma hai mangiato?"
 
 #: modules/critter/reaction_lines.lua:111
 msgid "%d minute. A sneaky one."
 msgid_plural "%d minutes. A sneaky one."
 msgstr[0] ""
-msgstr "%d minuto. Una lettura furtiva."
+msgstr[1] "%d minuto. Una lettura furtiva."
 
 #: modules/critter/phrases.lua:189
 msgid "%d of %d book."
 msgid_plural "%d of %d books."
 msgstr[0] ""
-msgstr "%d di %d libro."
+msgstr[1] "%d di %d libro."
 
 #: modules/critter/challenge.lua:206
 msgid "%d of %d minute so far."
 msgid_plural "%d of %d minutes so far."
 msgstr[0] ""
-msgstr "%d di %d minuto finora."
+msgstr[1] "%d di %d minuto finora."
 
 #: modules/critter/challenge.lua:209
 msgid "%d of %d page so far."
 msgid_plural "%d of %d pages so far."
 msgstr[0] ""
-msgstr "%d di %d pagina finora."
+msgstr[1] "%d di %d pagina finora."
 
 #: modules/critter/dialog.lua:542
 msgid "%d page today. Where did it take you?"
 msgid_plural "%d pages today. Where did they take you?"
 msgstr[0] ""
-msgstr "%d pagina oggi. Dove ti ha portato?"
+msgstr[1] "%d pagina oggi. Dove ti ha portato?"
 
 #: modules/critter/phrases.lua:238
 msgid "%d page turned today!"
 msgid_plural "%d pages turned today!"
 msgstr[0] ""
-msgstr "%d pagina voltata oggi!"
+msgstr[1] "%d pagina voltata oggi!"
 
 #: screens/sui_stats_windows.lua:1737
 msgid "%d week"
 msgid_plural "%d weeks"
 msgstr[0] "%d settimana"
-msgstr "%d settimana"
+msgstr[1] "%d settimana"
 
 #: modules/critter/reaction_lines.lua:269
 msgid "%d year of pages and snacks."
 msgid_plural "%d years of pages and snacks."
 msgstr[0] ""
-msgstr "%d anno di pagine e spuntini."
+msgstr[1] "%d anno di pagine e spuntini."
 
 #: modules/critter/reaction_lines.lua:265
 msgid "%d year together!"
 msgid_plural "%d years together!"
 msgstr[0] ""
-msgstr "%d anno insieme!"
+msgstr[1] "%d anno insieme!"
 
 #: modules/module_reading_goals.lua:729
 msgid "%d/%d book"
 msgid_plural "%d/%d books"
 msgstr[0] "%d/%d libro"
-msgstr "%d/%d libro"
+msgstr[1] "%d/%d libro"
 
 #: modules/module_collections.lua:549
 msgid "(%d collection)"
 msgid_plural "(%d collections)"
 msgstr[0] "(%d collezione)"
-msgstr "(%d collezione)"
+msgstr[1] "(%d collezione)"
 
 #: modules/module_quick_actions.lua:447
 msgid "(%d/%d — %d left)"
 msgid_plural "(%d/%d — %d left)"
 msgstr[0] "(%d/%d — %d rimasto)"
-msgstr "(%d/%d — %d rimasti)"
+msgstr[1] "(%d/%d — %d rimasti)"
 
 #: screens/sui_stats_windows.lua:1917
 msgid "Day read"
 msgid_plural "Days read"
 msgstr[0] ""
-msgstr "Giorno di lettura"
+msgstr[1] "Giorno di lettura"
 
 #: screens/sui_stats_windows.lua:2437
 msgid "Freeze available"
 msgid_plural "Freezes available"
 msgstr[0] ""
-msgstr "Blocco disponibile"
+msgstr[1] "Blocco disponibile"
 
 #: features/sui_quickactions.lua:2402
 msgid "Group (%d item)"
 msgid_plural "Group (%d items)"
 msgstr[0] "Gruppo (%d elemento)"
-msgstr "Gruppo (%d elemento)"
+msgstr[1] "Gruppo (%d elemento)"
 
 #: modules/critter/phrases.lua:217
 msgid "It's been %d day."
 msgid_plural "It's been %d days."
 msgstr[0] ""
-msgstr "È passato %d giorno."
+msgstr[1] "È passato %d giorno."
 
 #: screens/sui_quicksettings_bar.lua:1533
 msgid "Maximum of %d slot reached. Remove one first."
 msgid_plural "Maximum of %d slots reached. Remove one first."
 msgstr[0] "Numero massimo di %d posto raggiunto. Rimuovine uno prima."
-msgstr "Raggiunto il massimo di %d slot. Rimuovine prima uno."
+msgstr[1] "Raggiunto il massimo di %d slot. Rimuovine prima uno."
 
 #: modules/critter/phrases.lua:252
 msgid "Milestone: %d day!"
 msgid_plural "Milestone: %d days!"
 msgstr[0] ""
-msgstr "Traguardo: %d giorno!"
+msgstr[1] "Traguardo: %d giorno!"
 
 #: modules/critter/dialog.lua:423
 msgid "Our streak is at %d day. No pressure."
 msgid_plural "Our streak is at %d days. No pressure."
 msgstr[0] ""
-msgstr "La nostra serie è a quota %d giorno. Nessuna pressione."
+msgstr[1] "La nostra serie è a quota %d giorno. Nessuna pressione."
 
 #: screens/sui_stats_windows.lua:1930
 msgid "Page read"
 msgid_plural "Pages read"
 msgstr[0] ""
-msgstr "Pagina letta"
+msgstr[1] "Pagina letta"
 
 #: modules/critter/challenge.lua:194
 msgid "Read %d minute today?"
 msgid_plural "Read %d minutes today?"
 msgstr[0] ""
-msgstr "Vuoi leggere %d minuto oggi?"
+msgstr[1] "Vuoi leggere %d minuto oggi?"
 
 #: modules/critter/challenge.lua:196
 msgid "Read %d page today?"
 msgid_plural "Read %d pages today?"
 msgstr[0] ""
-msgstr "Vuoi leggere %d pagina oggi?"
+msgstr[1] "Vuoi leggere %d pagina oggi?"
 
 #: screens/sui_menu.lua:37
 msgid ""
@@ -8965,38 +8965,38 @@ msgstr[1] ""
 msgid "The maximum of %d action per module has been reached. Remove one first."
 msgid_plural "The maximum of %d actions per module has been reached. Remove one first."
 msgstr[0] "Raggiunto il massimo di %d azione per modulo. Rimuovine una prima."
-msgstr "È stato raggiunto il limite massimo di %d azioni per modulo. Rimuovine prima una."
+msgstr[1] "È stato raggiunto il limite massimo di %d azioni per modulo. Rimuovine prima una."
 
 #: modules/critter/menu.lua:95
 msgid "The maximum of %d decoration per side has been reached. Remove one first."
 msgid_plural "The maximum of %d decorations per side has been reached. Remove one first."
 msgstr[0] ""
-msgstr "È stato raggiunto il massimo di %d decorazioni per lato. Rimuovine prima una."
+msgstr[1] "È stato raggiunto il massimo di %d decorazioni per lato. Rimuovine prima una."
 
 #: features/sui_quickactions.lua:1636 features/sui_quickactions.lua:2844
 msgid "The maximum of %d quick action has been reached. Delete one first."
 msgid_plural "The maximum of %d quick actions has been reached. Delete one first."
 msgstr[0] "Raggiunto il massimo di %d azione rapida. Eliminane una prima."
-msgstr "È stato raggiunto il limite massimo di %d azioni rapide. Eliminane prima una."
+msgstr[1] "È stato raggiunto il limite massimo di %d azioni rapide. Eliminane prima una."
 
 #: screens/sui_menu.lua:366
 msgid "The maximum of %d tab has been reached. Remove one first."
 msgid_plural "The maximum of %d tabs has been reached. Remove one first."
 msgstr[0] "Numero massimo di %d scheda raggiunto. Rimuovine una prima."
-msgstr "È stato raggiunto il massimo di %d schede. Rimuovine prima una."
+msgstr[1] "È stato raggiunto il massimo di %d schede. Rimuovine prima una."
 
 #: modules/reading_stats/module_reading_stats.lua:459
 #: modules/reading_stats/module_reading_stats.lua:486
 msgid "day"
 msgid_plural "days"
 msgstr[0] ""
-msgstr "giorno"
+msgstr[1] "giorno"
 
 #: modules/reading_stats/module_reading_stats.lua:457
 msgid "day streak"
 msgid_plural "days streak"
 msgstr[0] "giorno consecutivo"
-msgstr "giorni consecutivi"
+msgstr[1] "giorni consecutivi"
 
 #~ msgid "ALL TIME"
 #~ msgstr "SEMPRE"

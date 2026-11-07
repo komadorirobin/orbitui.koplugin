@@ -22,6 +22,27 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-07
 
+- **Reviewed upstream merge; main push authorized, no release.** User requests
+  upstream after the local word suggestions. Branch maintenance/upstream-20261107
+  starts at fe284249; origin/main was e0cad59b. Freeze/review Bookshelf 6.3.3
+  c014b133 (three commits) and SimpleUI 3.0.3 4426601f (seven commits), imported
+  unsquashed in 71894ea3/ac06c803. Keep local POT additions in its one conflict.
+  Cover-tab paging gains a measured crop for text/icon feedback, scroll bodies
+  keep their own region, and refresh notices wait for panel submission/short
+  yield. SimpleUI facets follow native collation while series preserve volume
+  order; collection arrangement regains four explicit sort choices with guarded
+  current-owner callbacks/native popup identity. Repair only the incoming
+  Italian header/plural syntax; no translation text or failure allowance is
+  discarded. Popup helper is regenerated as an exact lazy embed: unchanged
+  24 helpers/407 canonical identities/2,000 API1 paths. No new runtime module,
+  asset, dependency, migration, sync owner or bootstrap/version change.
+  Preserve word suggestions/alphabet visibility plus prior profile/Home/Manga/
+  series/ornament/BookOrbit/MAL/patch behavior and 1.1 date/delete safety deferrals.
+  Both complete scripts/catalogs/sealed/native/source/history/secret/CI gates
+  precede the authorized push. No new beta/tag/release/device/server action;
+  stable/latest 1.0 and public beta.5/dist remain fixed. Physical checks remain
+  open; see TESTING/MERGE_LOG and test-results/upstream-20261107.
+
 - **Local opt-in search word suggestions; not published.** After confirming
   beta.5's alphabet strip now works on Bigme, user requests the next reviewed
   Library GUI idea. The confirmation covers that visibility report only, not

@@ -4,6 +4,51 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-07 — reviewed Bookshelf 6.3.3 / SimpleUI 3.0.3 (merge/main push only)
+
+User explicitly requests upstream; standing authority includes an audited
+origin/main push, NOT a version bump/tag/release/OTA or device/server operation.
+Start clean at fe284249 on maintenance/upstream-20261107, preserving approved,
+previously local word suggestions 8c6e9ec0. Origin/main was e0cad59b.
+
+Review the complete incoming histories and runtime/net diffs: Bookshelf
+c014b133d9575525b2576ab76c65586b8ba3fd83, three commits after d47edfcc, six files;
+SimpleUI 4426601f6ccf44488d18a8fcee8fbc47c76905eb, seven after 4bf2d2c5, nine
+files. No new runtime files/assets/dependencies/licenses/settings migration or
+synchronization changes. Exact unsquashed subtree imports are 71894ea3/ac06c803.
+The sole textual conflict is POT-only: retain OrbitUI's appended messages and
+the new upstream sort entries, not blanket ours/theirs.
+
+C02/C07/C10: adopt real painted native-tab crop bounds for Cover text/icon tap
+feedback, preserving scroll-container crop regions, HTML bodies, lazy technical
+details and original focus/resource lifecycle. Share popup-kit waitForPanel
+with Refresh: wait only for panel submission or native short yield before
+rebuild, not a hardware refresh-completion delay. Native facet folders/books
+follow chosen file-browser collation; series keep numeric reading order.
+Arrangement regains lexical/natural ascending/descending choices. Explicit
+sorts retain original entry/metadata identities and native collection callbacks.
+Guard window/FM/collection/path/navigation, close the owned popup with its
+window and opt it out of hosted NativeSheets conversion. Native own-save table
+replacements do not disable later moves/sorts; stale choices cannot write.
+
+The incoming Italian catalog fails msgfmt: missing header terminator plus
+50 plural msgstr lines lost their [1] index. Repair only that syntax, retaining
+all translated message bytes, source identities and legal notices. All 43
+catalogs must pass without any new baseline exemption. Other translation work
+is adopted unchanged. Regenerate the popup kit's exact embedded source; keep
+24 helpers/407 module identities and the same 2,000 installed paths.
+
+All C01-C11 owners, word suggestions, alphabet visibility, library/Home/Manga/
+series/ornaments/night and BookOrbit/Hardcover/MAL/patch seams remain. Preserve
+the hosted file-date/folder-delete deferrals, VERSION/public beta.5 ZIP and
+stable/latest 1.0. Tests include actual complete modal assembly and native
+UIManager repaint/invert boundaries, an exact premerge failure counterfactual,
+whole Arrange module/footer/sort callbacks, repeated own-save rebuilds, retired
+owners and facet collation/series order, alongside new upstream regressions.
+Both full scripts/catalogs/sealed/native/old-installer/source/history/secret and
+main CI precede final receipt. No physical Bigme speedup or new acceptance is
+inferred. Evidence: test-results/upstream-20261107.
+
 ## 2026-11-07 — local search word suggestions approved
 
 User confirms beta.5 alphabet visibility and requests the next Library GUI

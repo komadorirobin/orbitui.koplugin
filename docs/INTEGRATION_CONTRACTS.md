@@ -1262,6 +1262,17 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+November 7 reviewed 6.3.3/3.0.3 maintenance: a bare native Cover-tab body must be
+inside the painted zero-border crop frame; preserve a scroll body's own crop
+region and HTML ownership. Both native text repaint and icon inversion need
+real bounds, not just a source-shape assertion. Refresh waits for panel
+submission (or native short yield) before rebuilding. SimpleUI facet collation
+must not alphabetize series volume order. Restored Arrange sort choices retain
+native callbacks/record identities and native popup identity under sheet
+conversion. Retired/covered/replaced owners cannot save, while table replacements
+caused by the editor's own native save must allow subsequent moves/sorts.
+No preference/reading-data/sync/renderer migration accompanies these fixes.
+
 November 7 approved word completion is independent host code in shared search,
 opt-in/default OFF with SV/EN labels/help. Three native suggestion buttons fill
 only the final word, with at least two characters, cursor at end and no active

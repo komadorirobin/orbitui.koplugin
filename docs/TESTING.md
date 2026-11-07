@@ -1,5 +1,36 @@
 # Verification and device acceptance
 
+## 2026-11-07 reviewed Bookshelf 6.3.3 / SimpleUI 3.0.3 merge
+
+Merge-only request, including the standing audited main push and prior local
+word-suggestion source, not a beta/tag/release/device/server change. Exact
+targets c014b133/4426601f, imports 71894ea3/ac06c803. Retain local POT messages;
+repair incoming Italian header/50 plural indices without deleting translations
+or relaxing msgfmt. The changed popup kit must be regenerated in its existing
+exact lazy embed; same 24 helpers/407 identities/2,000 paths/bootstrap/assets.
+VERSION/public beta.5/dist and stable/latest 1.0 remain unchanged.
+
+Eight host regressions execute actual full book-modal assembly, complete native
+Arrange module/showArrange footer callbacks and actual virtual-list producer.
+Check Cover text/icon crop feedback, scroll crop/HTML/resource ownership,
+four sorts/metadata identity, repeated native own-save table replacement,
+closed/covered/replaced/FM/path/navigation guards, native popup identity,
+gettext labels and repaired plural syntax. Native UIManager repaint/invert
+from v2025.08 and 9040116701c888889bd35233b23b83283be66745 add a ninth case:
+the exact old modal fails text/icon feedback, while the new one passes. Widget
+painting is a fixture; no physical glyph/panel output is implied. Retain all
+word-suggestion/alphabet/tag/reader/settings/night/external-owner tests.
+Upstream adds two cover-crop and two refresh-notice tests, including panel
+submission and fallback-yield ordering. Full interpreter/catalog/sealed/native/
+older-installer/source/history/secret/CI results are recorded below.
+
+Physical Bigme/Boox Cover paging (tap-flash on/off), scroll/detail tabs and close,
+refresh notice/shelf return, collection sorts/reordering, SV/EN fonts/keyboard,
+night/sleep/rotation and actual timings remain open. Neither the MediaTek Kindle
+report nor desktop tests prove a Bigme speedup. No reading data, accounts,
+external sync writer, installed patch or production server is changed.
+Evidence: test-results/upstream-20261107.
+
 ## 2026-11-07 local search word suggestions
 
 User confirms beta.5 alphabet visibility now works on Bigme and requests the

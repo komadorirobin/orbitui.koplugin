@@ -103,14 +103,14 @@ filter ändras inte. Felet återskapas i automattester på beta.4; korrigeringen
 är nu bekräftad av användaren på Bigme. Bredare prov med typsnitt, nattläge och
 rotation på Bigme/Boox återstår.
 
-**Local development, not yet released:** optional **Word suggestions** in
+**Development code, not yet released:** optional **Word suggestions** in
 **Search OrbitUI**, OFF by default. Complete the last word from already cached
 local titles/authors/series; tap one of up to three suggestions, then Search.
 Two characters and cursor at the end are required. Hold the toggle for help.
 Coverage follows the chosen scope and can be incomplete while caches are cold;
 there are no new file scans, EPUB reads or network requests while typing.
 
-**Lokalt under utveckling, ännu inte publicerat:** valfria **Ordförslag** i
+**Utvecklingskod, ännu inte släppt:** valfria **Ordförslag** i
 **Sök i OrbitUI**, avstängda som standard. Komplettera sista ordet från redan
 cachade lokala titlar/författare/serier. Tryck på ett av högst tre förslag,
 sedan Sök. Skriv minst två tecken med markören i slutet. Långtryck på reglaget

@@ -47,22 +47,52 @@ end
 
 local function present(sort_widget)
     local source = sort_widget.item_table
+    local fm = package.loaded["apps/filemanager/filemanager"].instance
+    local manager = fm.collections
+    local slot = manager.coll_list and manager.coll_list.item_table == source and "coll_list" or "booklist_menu"
+    local target, expected_table = manager[slot], source
+    local path = target.path
+    local generation = UIManager._simpleui_navigation_generation
+    local win, popup, retired
+    local function current()
+        local file_manager = package.loaded["apps/filemanager/filemanager"]
+        return not retired and win and not win._closed
+            and generation == UIManager._simpleui_navigation_generation
+            and file_manager and file_manager.instance == fm
+            and fm.collections == manager and target and manager[slot] == target
+            and target.item_table == expected_table and target.path == path
+    end
+    local function visible(owner)
+        return UIManager:getTopmostVisibleWidget() == owner
+    end
+    local function closePopup()
+        local dialog = popup
+        popup = nil
+        if dialog then UIManager:close(dialog) end
+    end
     local items  = {}
     for _i, entry in ipairs(source) do
         items[#items + 1] = { text = entry.text, orig_item = entry }
     end
 
     local function applyChange(arranged)
+        if not current() or not visible(win._wrapper) then return end
         for i, item in ipairs(arranged) do source[i] = item.orig_item end
         sort_widget.callback()
+        -- Native collection callbacks rebuild their displayed item table after
+        -- EVERY own save. Adopt that new identity, not an unrelated later one.
+        target = manager[slot]
+        expected_table = target and target.item_table
     end
 
-    SUIWindow.showArrange{
+    win = SUIWindow.showArrange{
         title     = sort_widget.title,
         items     = items,
+        on_close  = function() retired = true; closePopup() end,
         footer    = {
             text   = _("Sort"),
             on_tap = function(ctx)
+                if not current() or popup or not visible(win._wrapper) then return end
                 local dialog
                 local buttons = {}
                 for _i, choice in ipairs(SORT_CHOICES) do
@@ -70,14 +100,19 @@ local function present(sort_widget)
                         text     = choice[1],
                         align    = "left",
                         callback = function()
-                            UIManager:close(dialog)
+                            if not current() or popup ~= dialog or not visible(dialog) then return end
+                            closePopup()
+                            if not current() or not visible(win._wrapper) then return end
                             sortItems(items, choice[2], choice[3])
                             applyChange(items)
                             ctx.repaint()
                         end,
                     }}
                 end
-                dialog = ButtonDialog:new{ shrink_unneeded_width = true, buttons = buttons }
+                -- Keep the native identity: hosted NativeSheets otherwise
+                -- replaces ButtonDialog with a different window (C10).
+                dialog = ButtonDialog:new{ sui_native = true, shrink_unneeded_width = true, buttons = buttons }
+                popup = dialog
                 UIManager:show(dialog)
             end,
         },
