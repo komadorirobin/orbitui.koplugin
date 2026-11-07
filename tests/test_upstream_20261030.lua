@@ -186,8 +186,10 @@ H.test("folder warm-up runs one bounded visible entry per tick and cancels on pa
     H.eq(probes, 65) -- one first attempt, then at most 64 entries
 end)
 H.test("plural header parser supports Swedish and chained Slavic and ternary forms", function()
-    local source = part(read("infra/sui_i18n"), "local function parsePluralExpression", "local function parsePO")
-    local parse = run(source .. "\nreturn parsePluralExpression")
+    local source = part(read("infra/sui_i18n"), "local function parsePluralExpression", "-- Language detection")
+    local parse, parsePO = run(source .. "\nreturn parsePluralExpression, parsePO", {
+        util = { trim = function(s) return (s:gsub("^%s*(.-)%s*$", "%1")) end },
+    })
     local sv = assert(parse("nplurals=2; plural=(n != 1);"))
     H.eq(sv(1), 0); H.eq(sv(2), 1); H.eq(sv(0), 1)
     local ru = assert(parse("nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;"))
@@ -195,9 +197,9 @@ H.test("plural header parser supports Swedish and chained Slavic and ternary for
     local nested = assert(parse("nplurals=3; plural=n==1 ? n<2 ? 0 : 1 : 2;"))
     H.eq(nested(1), 0); H.eq(nested(5), 2)
     for _, lang in ipairs({ "ru", "pl", "cs", "lt_LT", "uk" }) do
-        local f = assert(io.open(root .. "/components/simpleui/locale/" .. lang .. ".po"))
-        local po = f:read("*a"); f:close()
-        local fn = assert(parse(assert(po:match('Plural%-Forms: (.-)\\n'))), lang)
+        -- Exercise the actual PO reader, including legal wrapped header lines.
+        local entries, fn = parsePO(root .. "/components/simpleui/locale/" .. lang .. ".po")
+        assert(entries and next(entries), lang); assert(fn, lang)
         for n = 0, 200 do
             local expected
             if lang == "cs" then expected = n == 1 and 0 or (n >= 2 and n <= 4 and 1 or 2)
