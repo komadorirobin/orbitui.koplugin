@@ -4,6 +4,17 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-07 — 1.1.0-beta.5 visibility fix publication approved
+
+User explicitly answers yes to pushing/publishing the next beta once tests
+pass. Include the local measured-label fix below, version/docs/preview-order
+regression only. No new upstream merge, pin/component/bootstrap/API1/asset/
+reading-data/sync-owner or device/server change. Fresh complete/sealed/native/
+older-installer/source/history/secret/CI/draft/public/channel gates precede
+publication; stable/latest 1.0 and old releases/assets remain immutable.
+Physical visible-font/gesture/night/rotation confirmation remains open.
+Evidence: test-results/preview11-beta5-20261107.
+
 ## 2026-11-07 — local alphabet text-visibility correction
 
 User's beta.4 strip accepts gestures but has no visible labels. Reproduce the

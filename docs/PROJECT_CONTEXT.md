@@ -22,6 +22,14 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-07
 
+- **User authorizes publishing visibility fix in 1.1.0-beta.5.** Keep the
+  reviewed fix below and bump version/docs/channel regression only; no new
+  upstream, device/server or stable/latest change. Repeat complete scripts,
+  catalogs, exact source/sealed/native/old-installer/history/secrets and CI/
+  draft/public byte gates. Physical Bigme confirmation remains outstanding.
+  Evidence: test-results/preview11-beta5-20261107. Earlier local notes describe
+  the implementation stage, not the final publication state.
+
 - **Local alphabet-label visibility fix; not published.** User reports beta.4's
   strip responds to dragging but is invisible. Reproduce zero painted letters
   with realistic native line metrics/default padding and with minimum/current

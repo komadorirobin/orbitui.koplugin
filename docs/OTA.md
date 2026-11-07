@@ -7,6 +7,33 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 1.1.0-beta.5
+
+User-approved preview correction for beta.4's active but invisible letter strip.
+Its old layout estimated height from point size, while actual TextWidget line
+metrics and default vertical padding exceeded the slot; oversized text was
+silently skipped. Own labels now use padding=0, measured regular/bold heights
+determine stride, and bounded cached width/height fitting covers normal and
+selected labels plus large feedback. Touch mapping, right-margin/content
+geometry, sorting/filtering, lifecycle and data producers are unchanged.
+The exact beta.4 adapter fails a visible-text assertion with actual minimum/
+current KOReader TextWidget and FreeType metrics from bundled Inter; the fix
+passes. Native shaping and the user's physical Bigme output remain unverified.
+
+**Svenska:** Fixar att bokstavslisten kan reagera på dragning utan att bokstäverna
+syns. Den gamla beräkningen missade typsnittets faktiska höjd och textmarginaler;
+för stor text ritades inte. Nu mäts texten och storlek/radavstånd anpassas, även
+för markerad bokstav och den stora återkopplingen. Pekytor, hyllans utrymme och
+sortering/filter ändras inte. Automattestet återskapar felet i beta.4 och passerar
+med fixen; synligheten behöver fortfarande bekräftas på riktig enhet.
+
+Preview only, no additional upstream merge, component/source-pin/bootstrap/API1/
+asset/sync/data change or device/server deployment. Stable/latest 1.0 and all
+older versions remain immutable. The strip stays opt-in with SV/EN controls.
+Both complete scripts/catalogs, exact source/package/sealed/native/older-OTA/
+history/secrets, main/tag CI and draft/public-byte/channel gates precede
+publication. Evidence: test-results/preview11-beta5-20261107; TESTING/MERGE_LOG.
+
 ## OrbitUI 1.1.0-beta.4
 
 Published **2026-11-07 15:33:18 UTC**, release **437660137**, frozen source/tag

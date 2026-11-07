@@ -1,5 +1,17 @@
 # Verification and device acceptance
 
+## 2026-11-07 1.1.0-beta.5 visibility-correction release
+
+User explicitly approves push/publication after green gates. Include the local
+label correction below, VERSION/docs and preview-order regression only. Repeat
+both full scripts/43 catalogs on exact committed source, all sealed roots,
+minimum/current input AND native TextWidget/real bundled-font sizing, native
+raster/SQLite/archive supplements and eight older local installers (adding
+beta.4). Require source/artwork/history/secrets, main/tag CI, exact draft/public
+assets and stable/preview/latest/old-release immutability checks. Evidence:
+test-results/preview11-beta5-20261107. Physical Bigme/Boox confirmation is not
+inferred; no new upstream or device/server action. Stable/latest 1.0 unchanged.
+
 ## 2026-11-07 local alphabet-label visibility fix
 
 User reports the beta.4 margin accepts drags but shows no letters. No ADB/device

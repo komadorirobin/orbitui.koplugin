@@ -56,6 +56,12 @@ H.test("alphabet beta advances preview only and an unpublished draft stays hidde
     H.eq(OTA.select(list, true).version, "1.1.0-beta.4")
     H.eq(OTA.select(list, false).version, "1.0.0")
     assert(OTA.newer("1.1.0-beta.4", "1.1.0-beta.3"))
+    list[4] = release("1.1.0-beta.5", true); list[4].draft = true
+    H.eq(OTA.select(list, true).version, "1.1.0-beta.4")
+    list[4].draft = false
+    H.eq(OTA.select(list, true).version, "1.1.0-beta.5")
+    H.eq(OTA.select(list, false).version, "1.0.0")
+    assert(OTA.newer("1.1.0-beta.5", "1.1.0-beta.4"))
 end)
 
 H.test("preview channel finds prereleases but stable channel never downgrades to one", function()
