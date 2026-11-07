@@ -44,6 +44,13 @@ and correct this file in the same change.
   is authorized by this step. Verification and physical gaps: TESTING; evidence:
   test-results/search-word-suggestions-20261107. Stable/latest 1.0 and public
   beta.5/dist remain immutable.
+  Final executable candidate **8c6e9ec0** passes both complete scripts/43 catalogs,
+  108 sealed roots in Lua/LuaJIT, 14 ordinary/16 actual-dialog suggestion cases
+  against v2025.08/v2026.03/current and retained native input/alphabet supplements.
+  Development ZIP **57c9a4f7**, 9,522,853 bytes, same 2,000 installed paths, exact
+  source/manifest; history/artwork/secrets pass. Desktop synthetic checks are
+  not device measurements. No publication/device action; dist remains 2cc94f4f.
+  Receipt docs do not rebuild or replace that private same-version artifact.
 
 - **1.1.0-beta.5 is public in preview: alphabet-label visibility fix.** User
   explicitly approves publication. Published 2026-11-07 17:17:30 UTC, release

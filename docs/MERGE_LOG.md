@@ -32,6 +32,20 @@ VERSION, sources/bootstrap/API1, assets, public beta.5/dist and stable/latest
 does not authorize the later ghosting/reading-filter ideas or a new merge.
 Evidence: test-results/search-word-suggestions-20261107.
 
+Final executable source **8c6e9ec0** passes both fresh full scripts: 134 Python/
+four unchanged optional skips, 108 roots, 549 Bookshelf/zero failed/three normal
+native SQLite exclusions, 13 SimpleUI files, 1,179 syntax and all 43 catalogs.
+All 108 sealed roots repeat in Lua/LuaJIT. Fourteen suggestion cases, sixteen
+with actual InputDialog/InputText, pass against v2025.08/v2026.03/current in
+both interpreters; retained native quick-controls/alphabet supplements pass.
+The actual repository regression suite is 271 cases. Private development ZIP
+**57c9a4f7** is 9,522,853 bytes/28,187,564 expanded, exact committed source with
+the same 2,000 API1 paths/24 helpers/407 identities. Artwork/bootstrap/pins/sync,
+held-artwork/outgoing-secret checks pass. Desktop-only synthetic CPU/memory
+numbers are in TESTING, not Bigme or end-to-end claims. Public beta.5/dist
+2cc94f4f remains unchanged; no push/tag/release/device/server action. Verification
+receipt docs do not rebuild or retag the frozen private candidate.
+
 ## 2026-11-07 — 1.1.0-beta.5 visibility fix publication approved
 
 User explicitly answers yes to pushing/publishing the next beta once tests

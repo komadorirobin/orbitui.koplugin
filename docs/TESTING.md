@@ -21,7 +21,8 @@ the actual warm scoped cursor with filesystem access made fatal; invalidation
 retires snapshots and uncached/remote/different sources cannot widen scope.
 
 Supplement runs actual KOReader InputDialog construction and InputText edit/
-Unicode cursor/keyboard APIs from v2026.03 and current
+Unicode cursor/keyboard APIs from the declared v2025.08 baseline, recommended
+v2026.03 and current
 9040116701c888889bd35233b23b83283be66745, under Lua/LuaJIT. Containers/font metrics/
 buttons are fixtures; this is not native glyph shaping or physical rendering.
 Fixture portrait/landscape/DPI sizes must retain input/control/keyboard room.
@@ -30,6 +31,30 @@ reruns are required before handoff; final results go below. Evidence:
 test-results/search-word-suggestions-20261107. Physical Bigme/Boox suggestion
 visibility, keyboard ergonomics, real fonts/night, sleep/rotation and device
 latency/memory remain open. No device speedup or publication is claimed.
+
+**Final local candidate: 8c6e9ec0a42f60228b909b880ac21e60007ceaa9.** Both fresh
+complete scripts pass on that executable source: 134 Python tests/four unchanged
+optional skips, 108 root files, 549 Bookshelf suites/zero failures/three normal
+native SQLite exclusions, 13 SimpleUI files, 1,179 syntax files, 407 module-map
+identities and 43 catalogs. The actual repository suite has 271 cases including
+the passive cursor regression. All 108 root files repeat from the sealed ZIP
+under Lua/LuaJIT. Suggestions have 14 ordinary/16 actual-dialog cases; all three
+native dialog/text versions pass in both interpreters on sealed bytes. Retained
+minimum/current quick-control and measured alphabet-input supplements also pass.
+
+Development-only same-version ZIP: **9,522,853 bytes**, expanded **28,187,564**,
+SHA-256 `57c9a4f752aff5e763b3789014d63c1d37346e053fecd621e11eff2423ff1f02`;
+manifest `cf871c6c8e6f0be40c050d77a51390cb88a441b21d977d1f537601322ac8036c`.
+Exact committed-source projection, unchanged 2,000 API1 paths/24 embedded helpers,
+artwork/bootstrap/pins/sync owners and outgoing held-artwork/secret checks pass.
+Public dist remains beta.5 **2cc94f4f**. This private archive is not a replacement
+beta.5 release/OTA, and receipt docs do not rebuild or retag its frozen bytes.
+
+Synthetic 3,341-book desktop checks retain about 895–975 KiB; build CPU is
+61–81ms, eight-row turns <=0.46ms and prefix lookup mean <=0.004ms in these runs.
+These exclude intentional cooperative timer waits, are not end-to-end latency
+or Bigme results, and do not certify device font/rendering/gesture acceptance.
+No push, tag, release, ADB, server deployment or external sync test is performed.
 
 ## 2026-11-07 1.1.0-beta.5 visibility-correction release
 
