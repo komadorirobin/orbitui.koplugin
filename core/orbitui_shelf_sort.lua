@@ -167,4 +167,41 @@ function M.sortKeyValue(native, item, key)
     return native(item, key)
 end
 
+-- Navigation only: never sort, fold Å/Ä/Ö into A/O, or hydrate a book here.
+function M.alphabetLetters(reverse)
+    local letters = { "#" }
+    for byte = 65, 90 do letters[#letters + 1] = string.char(byte) end
+    for _, letter in ipairs{ "Å", "Ä", "Ö" } do letters[#letters + 1] = letter end
+    if reverse then
+        local out = {}; for i = #letters, 1, -1 do out[#out + 1] = letters[i] end
+        return out
+    end
+    return letters
+end
+local letter_folds = {}
+for letter, variants in pairs{ A = "àáâãÀÁÂÃæÆ", E = "èéêëÈÉÊË", I = "ìíîïÌÍÎÏ",
+        O = "òóôõøÒÓÔÕØœŒ", U = "ùúûüÙÚÛÜ", Y = "ýÿÝŸ", C = "çÇ", N = "ñÑ", S = "ß" } do
+    for char in variants:gmatch("[\194-\244][\128-\191]*") do letter_folds[char] = letter end
+end
+function M.alphabetBucket(value)
+    if type(value) ~= "string" then return "#" end
+    local char = value:match("^%s*([%z\1-\127\194-\244][\128-\191]*)")
+    if char == "å" or char == "Å" then return "Å" end
+    if char == "ä" or char == "Ä" then return "Ä" end
+    if char == "ö" or char == "Ö" then return "Ö" end
+    if char and char:match("^[A-Za-z]$") then return char:upper() end
+    return letter_folds[char] or "#"
+end
+function M.alphabetAt(y, rect, letters)
+    if not tonumber(y) or not rect or not rect.h or rect.h <= 0 or #letters == 0 then return end
+    local index = math.max(1, math.min(#letters, math.floor((y - rect.y) * #letters / rect.h) + 1))
+    return letters[index]
+end
+function M.alphabetTarget(items, key, letter, sort_key)
+    for i, item in ipairs(items) do
+        if not item.shelf_module and not item.shelf_slot and not item.blank
+                and M.alphabetBucket(sort_key(item._series_sort_book or item, key)) == letter then return i end
+    end
+end
+
 return M

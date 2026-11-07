@@ -20,7 +20,28 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-05
+## Snapshot: 2026-11-07
+
+- **Local opt-in alphabet strip approved; not published.** User asks to start
+  with the letter-strip idea after reviewing Library GUI main acda0adb. Branch
+  feature/alphabet-strip-20261107 starts at public 13087a61. Independent host
+  code, no imported engine/assets or source pin change. Footer counter ▾ >
+  Sort, filter & view > Alphabet strip enables it per existing view identity,
+  default OFF. Right margin only; existing hero/chips/rows/footer/dock geometry
+  is unchanged. Tap or drag/release uses native sort keys and the current
+  filtered/boxed list, Å/Ä/Ö distinct and other-script/numeric # fallback.
+  No metadata/cover/EPUB reads, book opening or shelf rebuild while dragging.
+  Release uses existing explicit scoped producers; not an automatic indexing
+  worker. Native module visual slots and variable spine cursors are retained.
+  Hide nonalphabetical, single-page, one-series, remote and two-column-list
+  contexts; never change sorting to make the strip appear. Guard current owner,
+  navigation generation, dimensions, close/suspend/rebuild and deferred jumps.
+  Native clipped fast refreshes touch the strip/bubble, not a global paint hook.
+  New labels/help are SV/EN. No VERSION/bootstrap/API1/new installed paths,
+  settings migration, reading/sync/server/device change or new publication.
+  Tests and physical gaps: TESTING/MERGE_LOG; evidence in
+  test-results/alphabet-strip-20261107. Physical fonts, drag ergonomics, theme/
+  night/rotation, interrupted gestures and Bigme timings remain unaccepted.
 
 - **User authorizes reviewed merge and next release: 1.1.0-beta.3 preview.**
   Branch maintenance/upstream-beta3-20261105 includes local Series / Volumes

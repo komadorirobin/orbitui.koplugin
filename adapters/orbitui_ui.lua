@@ -148,6 +148,7 @@ function M.wrap(name, module)
         require("adapters/orbitui_series_titles").widget(module)
         require("adapters/orbitui_navbar").widget(module)
         require("adapters/orbitui_android_covers").widget(module)
+        require("adapters/orbitui_shelf_sort").alphabet(module)
         local Host = require("core/orbitui_host")
         for key, label in pairs({ _rebuild = "shelf", _paginateNext = "next", _paginatePrev = "previous",
                 _launchReader = "open" }) do Host.timeMethod(module, key, label) end

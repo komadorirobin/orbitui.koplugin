@@ -1262,6 +1262,26 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+November 7 approved alphabet navigation is opt-in per existing native view
+identity, default OFF, SV/EN. Its InputContainer occupies the existing right
+margin below hero/chips and above footer/dock; do not replan/rescale books or
+change saved sorting to show it. Nonalphabetical, single-page, opened-series,
+remote/unsupported and two-column-list contexts hide it. Native sort keys keep
+article/curated/series-block identities and current filter/profile scope;
+Å/Ä/Ö remain separate. Untyped scripts/numbers use #, without inventing metadata.
+Drag coalesces letter feedback and uses native clipped strip/bubble refreshes:
+no list query, cover/EPUB read, new index, network, settings write, shelf rebuild
+or book opening. Only explicit tap/release uses native light jump producers,
+with module visual-slot mapping and actual variable-spine cursors. Failures/
+missing letters keep the shelf and restore repository flags. Retire owned
+timers on close/suspend/rebuild and guard visible owner/navigation/dimensions;
+covered/retired callbacks cannot draw or navigate. Restore interrupted bubble
+on return without overwriting a newer screen. Preserve future/sibling view
+preferences and all existing input/reader/sync owners. Coverage:
+test_alphabet_strip, retained shelf-sort/series/navigation/native input/raster
+suites. Native-font/Bigme drag/night/rotation/gesture ergonomics remain physical
+acceptance, not implied by headless verification.
+
 November 5 approved discovery extension adds **Series / Volumes** tabs to the
 same offline/BookOrbit tag-result modal. Group only the volume-level predicate's
 checked hits (including unchanged AND/OR semantics and the disclosed 400-volume

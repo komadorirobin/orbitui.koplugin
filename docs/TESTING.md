@@ -1,5 +1,32 @@
 # Verification and device acceptance
 
+## 2026-11-07 local alphabet strip (not released)
+
+Feature approved on feature/alphabet-strip-20261107 from public 13087a61.
+test_alphabet_strip has 19 standard cases: Unicode/#/ÅÄÖ/reverse/native sort
+keys and proxies, default-off/untouched geometry and settings, gesture routing,
+coalesced zero-read/no-rebuild drag, release outside strip, scoped quick filters,
+missing/error/partial data, real native module visual-slot mapping, fixed-profile
+folder priority, actual spine cursor semantics, unsupported contexts, stale/
+covered/closed/rotated/suspended owners, interrupted bubble restoration, visible
+resume, landscape/tight margins and future/per-place bilingual preferences.
+
+Both Lua and LuaJIT pass with actual minimum/current KOReader InputContainer/
+WidgetContainer modules. An optional 20th real Blitbuffer/ClipBB supplement
+passes grey/RGB x CBB/software x inverse, including IS_ANDROID=1: outside pixels
+and target buffer flags stay unchanged and bubble/strip contrast remains.
+These use stubbed font glyphs, not physical font shaping/screenshots. Evidence:
+test-results/alphabet-strip-20261107. Full/sealed/package verification remains a
+gate before completion; no source pin, bootstrap, installed path, public dist,
+VERSION, user-device or server change is authorized in this turn.
+
+Required physical checks: SV/EN portrait/landscape and large UI/fonts; right
+margin/thumb ergonomics and short-layout letter density; Manga series boxes,
+Oneshots/folders, quick filters/reverse, module grids and page-footer/dock hit
+boundaries; release outside the strip, missing letters, reader/menu interruption,
+sleep/resume/rotation and day/night/theme contrast/ghosting. Compare cold/warm
+explicit-jump timing; automated zero-read drag is not a measured device gain.
+
 ## 2026-11-05 reviewed SimpleUI follow-up / 1.1.0-beta.3
 
 User explicitly requests merge and publication in the separate preview cycle.

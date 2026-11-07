@@ -143,6 +143,36 @@ all original user data, artwork, bootstrap and installed paths remain unchanged.
 Physical Boox/Bigme fonts, touch, paging, compact rows, transitions, rotation,
 sleep and the retained local night fix still require device acceptance.
 
+### Alphabet strip (local November 7 follow-up, not released)
+
+In Bookshelf, tap the footer counter **▾ > Sort, filter & view > Alphabet strip**.
+This is OFF by default and saved only for this profile/chip/opened group or
+folder, like the other view preferences. Drag in the right margin to see a
+large letter, then release to jump; tapping also works. It follows native
+title/author/series keys, including article handling and series boxes, without
+changing the sorting. Å/Ä/Ö are separate; numbers and untransliterated scripts
+use #. If a letter has no match, the current shelf stays put.
+
+The strip is below the hero/chips and above the footer/dock; it does not reduce
+cover/row width. It hides for date/progress/nonalphabetical sorts, a single
+page, an opened series, remote/unsupported sources and two-column lists.
+Short layouts label fewer positions but retain every letter's drag position
+and large-letter feedback. Dragging never scans metadata or opens a book.
+Explicit release uses the same scoped native metadata as a letter jump and
+may take time on a cold library. No automatic index or new cache is created.
+
+**Svenska:** Tryck på sidräknaren **▾ > Sortering, filter och vy > Bokstavslist**.
+Valet är avstängt från början och gäller bara den här vyn. Dra längs listen och
+släpp för att hoppa, eller tryck på en bokstav. Å, Ä och Ö har egna positioner;
+# används för siffror och övriga skriftsystem utan translitterering. Listen
+ändrar inte sorteringen och öppnar inga böcker. Vissa vyer/sorteringar döljer
+listen enligt ovan. Ingen metadata läses under dragningen; ett uttryckligt
+hopp kan däremot behöva hämta metadata från den befintliga lokala cachen.
+
+Independent design implementation after inspecting Library GUI acda0adb;
+no imported engine/assets or upstream merge. All controls/help are SV/EN.
+No publication/device/server action. Physical acceptance remains outstanding.
+
 ### Local Kobold design follow-up (October 30; not published)
 
 Search adds **Recent searches** (ten local query/scope pairs, explicit Clear)

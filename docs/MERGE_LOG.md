@@ -4,6 +4,44 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-07 — local alphabet-strip implementation (not imported/released)
+
+User approves starting with the alphabet strip from the reviewed Library GUI
+ideas. Start clean from public 13087a61 on feature/alphabet-strip-20261107.
+Reference main acda0adbc3035b91d43ffe674b17409b28f9b781 was inspected, not merged
+or executed. Write independent host logic in existing shelf-sort core/adapter
+and its existing canonical UI seam. No component source change, new installed
+file, helper embed, source pin, asset, bootstrap or version change.
+
+Optional Alphabet strip / Bokstavslist lives in the footer counter's Sort,
+filter & view menu, using the existing versioned per-place prefs (default OFF,
+future/unknown data preserved, sibling/profile views independent). It uses the
+existing right margin below the hero/chips and above footer/dock, never steals
+content width or changes the row planner. A native InputContainer layer catches
+only strip gestures; native content/menus keep their input owners. Dragging
+coalesces at 60ms, changes only letter feedback, has no producers/covers/EPUBs/
+network/settings/reader work and requests native clipped fast strip/bubble
+refreshes. Text widgets are bounded and owned by that layer.
+
+Release/tap uses native scoped light producers and sortKeyValue, including
+curated/article/series proxies. Keep quick filters and current profile/drill,
+module-filled grid visual slots, compacted series and actual spine item cursors.
+Never change sort or open ReaderUI. Nonalphabetical, single-page, one-series,
+remote/unsupported and two-column lists hide the strip. Å/Ä/Ö stay distinct;
+other accents map to their base letter and untransliterated scripts/numbers
+use #. Missing letters/read failures retain the shelf and explain the result.
+Restore repository flags after errors. No new index or silent background scan;
+the explicit jump may still cost a native metadata query.
+
+Retire callbacks on rebuild/page replacement/close/suspend and guard visible
+owner, navigation generation and screen dimensions. Suspended/covered/stale
+owners cannot navigate or draw; an interrupted bubble is restored on visible
+paint/return. Preserve native nil return positions and existing user preferences.
+C02/C04/C07/C10 and external sync owners remain. All owned labels/help are
+Swedish/English. Targeted standard/native input and raster checks are in TESTING;
+full/sealed/package gates remain required. No public/device/server action or
+measured Bigme performance claim. Evidence: test-results/alphabet-strip-20261107.
+
 ## 2026-11-05 — reviewed SimpleUI follow-up and 1.1 beta.3 preparation
 
 User explicitly requests upstream merge and next release. Keep stable 1.0
