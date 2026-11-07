@@ -9,6 +9,17 @@ The original standalone OTA channels are not redirected or modified.
 
 ## OrbitUI 1.1.0-beta.5
 
+Published **2026-11-07 17:17:30 UTC**, release **437717781**, frozen source/tag
+**38cadd99 / v1.1.0-beta.5**. ZIP SHA-256
+`2cc94f4fc3596627f5e49ee7449b7889e00b01c2110adb94b01eb2f399d1eb03`
+(9,514,172 bytes). Both complete scripts/catalogs, sealed/native/old-installer/
+history/secret gates and all four main/tag CI jobs **42395143967 / 42395143921**
+pass. CI-built runtime manifest matches; downloaded draft/public bytes are
+exact. All 89 old releases/153 previous tag refs, stable/latest 1.0 and
+maintenance/1.0 remain unchanged. Preview/public dist is beta.5. Seven older
+actual installers also pass public-HTTPS upgrade/recovery scenarios (TESTING).
+Physical Bigme confirmation remains outstanding.
+
 User-approved preview correction for beta.4's active but invisible letter strip.
 Its old layout estimated height from point size, while actual TextWidget line
 metrics and default vertical padding exceeded the slot; oversized text was

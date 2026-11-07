@@ -15,6 +15,21 @@ publication; stable/latest 1.0 and old releases/assets remain immutable.
 Physical visible-font/gesture/night/rotation confirmation remains open.
 Evidence: test-results/preview11-beta5-20261107.
 
+**Published 2026-11-07 17:17:30 UTC**, release **437717781**, immutable tag
+`v1.1.0-beta.5` -> **38cadd99**, ZIP **2cc94f4f** (9,514,172 bytes). Both complete
+scripts/43 catalogs, 107 sealed Lua/LuaJIT roots, 26 ordinary/27 raster alphabet
+cases, minimum/current native TextWidget/input with real Inter sizing and
+SQLite/archive/night supplements pass. Exact old beta.4 fails the new visible-
+text assertion; corrected source passes. Eight actual older local installers
+pass. Source/manifest/2,000 API1 paths/components/pins/artwork/bootstrap/sync,
+held-artwork history and two-commit secret scans pass. Main/tag CI
+**42395143967 / 42395143921** pass all four jobs; CI's runtime manifest matches.
+Draft/anonymous public assets match, IDs **721356970 / 721356971**. All **89** old
+releases and **153** previous tag refs are unchanged. Preview selects beta.5;
+stable/latest 1.0 and maintenance/1.0 stay fixed. Public dist matches beta.5;
+seven older actual installers pass public-HTTPS scenarios (TESTING). No device/server action
+or new physical acceptance. Receipt docs never rebuild/move frozen bytes/tags.
+
 ## 2026-11-07 — local alphabet text-visibility correction
 
 User's beta.4 strip accepts gestures but has no visible labels. Reproduce the

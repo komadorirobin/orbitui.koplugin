@@ -22,13 +22,22 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-07
 
-- **User authorizes publishing visibility fix in 1.1.0-beta.5.** Keep the
-  reviewed fix below and bump version/docs/channel regression only; no new
-  upstream, device/server or stable/latest change. Repeat complete scripts,
-  catalogs, exact source/sealed/native/old-installer/history/secrets and CI/
-  draft/public byte gates. Physical Bigme confirmation remains outstanding.
-  Evidence: test-results/preview11-beta5-20261107. Earlier local notes describe
-  the implementation stage, not the final publication state.
+- **1.1.0-beta.5 is public in preview: alphabet-label visibility fix.** User
+  explicitly approves publication. Published 2026-11-07 17:17:30 UTC, release
+  437717781, frozen source/tag 38cadd99 / v1.1.0-beta.5, ZIP 2cc94f4f
+  (9,514,172 bytes). Only measured-label correction below plus version/docs/
+  channel regression; no new upstream/components/pins/assets/bootstrap/API1/
+  settings/reading-data/sync/device/server change. Both full scripts/43 catalogs,
+  107 sealed roots in Lua/LuaJIT, 26 standard/27 raster alphabet cases, actual
+  minimum/current TextWidget/input with real bundled-font measurements and
+  native SQLite/archive/night supplements pass. Eight actual older local OTA
+  installers pass. Main/tag CI 42395143967 / 42395143921 pass all four jobs;
+  CI's runtime manifest matches. Draft/public bytes are exact, all 89 older
+  releases/153 tag refs unchanged. Preview selects beta.5, stable/latest 1.0
+  and maintenance/1.0 stay fixed; public dist matches beta.5. Seven actual older
+  installers pass public-HTTPS scenarios (TESTING). Bigme confirmation is open.
+  Evidence: test-results/preview11-beta5-20261107. Receipt docs never rebuild/
+  retag frozen release bytes; earlier local-only notes are historical.
 
 - **Local alphabet-label visibility fix; not published.** User reports beta.4's
   strip responds to dragging but is invisible. Reproduce zero painted letters

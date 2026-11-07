@@ -12,6 +12,48 @@ assets and stable/preview/latest/old-release immutability checks. Evidence:
 test-results/preview11-beta5-20261107. Physical Bigme/Boox confirmation is not
 inferred; no new upstream or device/server action. Stable/latest 1.0 unchanged.
 
+**Published 2026-11-07 17:17:30 UTC**, release **437717781**, immutable source
+**38cadd99f09d692f11c7cbb491e0682abfdfa8f2** / `v1.1.0-beta.5`.
+Fresh full scripts pass under Lua/LuaJIT: 134 Python tests/four unchanged
+optional skips, 107 root files, 549 Bookshelf suites/zero failures/three normal
+native SQLite exclusions, 13 SimpleUI files, 1,178 syntax files and 43 catalogs.
+All 107 sealed roots repeat under both interpreters. The alphabet suite now
+has 26 ordinary/27 native-raster cases, with actual minimum/current input AND
+TextWidget size/padding control flow against bundled Inter's real FreeType
+line metrics/advances. Grey/RGB/CBB/software/inverse/Android, Trapper/VerticalSpan,
+archive/JSON/UIManager and actual SQLite tag-index/series/Bookshelf facts/OPDS/
+ornament-deck supplements pass. Font services/glyph painting remain test stand-
+ins, not native glyph shaping or physical display proof. A fresh counterfactual
+in each interpreter on the exact public beta.4 archive fails specifically with
+"active strip has no visible letters"; fixed source passes. Earlier pre-version
+Lua verification completed; its LuaJIT run was deliberately stopped before the
+version bump and is not counted as a release gate. Fresh exact-source logs are
+under preview11-beta5-20261107, not the preliminary visibility folder.
+
+ZIP **9,514,172 bytes**, expanded **28,157,249**, SHA-256
+`2cc94f4fc3596627f5e49ee7449b7889e00b01c2110adb94b01eb2f399d1eb03`;
+manifest `366a3bbd42dd3433f9fc665d9da6a7e7c15ee47d465d12c95398cecf80d59cf1`.
+The clean-commit package script reproduces it. Exact source projection/manifest,
+same 2,000 API1 paths/24 lazy helpers/407 canonical identities, original artwork/
+components/pins/bootstrap/external sync owners and 14 outgoing blobs pass.
+Gitleaks finds no leaks in the two outgoing source commits; no raised baseline.
+Eight actual older local installers (0.1 beta5/9/29, RC2, stable1.0, 1.1 beta2/3/4)
+pass full validation/activation/restart/rollback/interruption/recovery/external
+snapshot/obsolete-cleanup scenarios. Main/tag CI **42395143967 / 42395143921**
+pass all four jobs; main LuaJIT's independent artifact validates and has the
+identical runtime manifest. Draft/anonymous public assets match frozen bytes
+and GitHub digests, asset IDs **721356970 / 721356971**. All **89** older releases
+and **153** old tag refs remain unchanged. Preview selects beta.5; stable/latest
+1.0 and maintenance/1.0 (2d77cb98) stay fixed. Public dist is verified beta.5.
+Seven actual older installers (0.1 beta9/29, RC2, stable1.0, 1.1 beta2/3/4)
+also pass public-HTTPS discovery/download plus full native validation/activation/
+restart/rollback/interruption/recovery/snapshot/cleanup scenarios. Legacy 0.1
+beta5 passes locally; its old latest-release discovery is not counted as a
+preview-HTTPS check. Final public bytes remain the exact frozen ZIP. Receipt
+docs never rebuild/move frozen release source/tag/assets. No ADB/device/server
+action or new physical acceptance is claimed; please confirm visible labels on
+Bigme/Boox with the user's actual UI font/scale/theme and interrupted gestures.
+
 ## 2026-11-07 local alphabet-label visibility fix
 
 User reports the beta.4 margin accepts drags but shows no letters. No ADB/device
@@ -19,8 +61,8 @@ connection is used. The old scalar-font stub returned height <= 10 and tests
 checked surface fills, not that any text actually painted. A realistic scaled
 line-height/default-padding model reproduces zero visible letters on the exact
 old beta.4 adapter. Actual KOReader TextWidget from v2026.03 and current
-9040116701c888889bd35233b23b83283be66745 are tested separately against bundled Inter's FreeType
-line height/ascender/advance measurements. Native size/padding control flow is
+9040116701c888889bd35233b23b83283be66745 are tested separately against bundled
+Inter's FreeType line height/ascender/advance measurements. Native size/padding control flow is
 real; font services and glyph painting are test stand-ins, not native shaping
 or physical e-ink proof. The old beta.4 archive fails the new visible-text
 assertion; the fix passes. Preserve exact reference SHA in the evidence folder.
