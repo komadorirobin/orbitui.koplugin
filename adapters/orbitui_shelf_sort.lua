@@ -596,8 +596,15 @@ function M.attachAlphabet(widget)
     if not context then remove(); return end
     local shown = widget:_isSpineMode() and widget._spine_shown or widget:_viewSize()
     if not shown or (widget._total_items or 0) <= shown then remove(); return end
-    if widget._orbitui_alphabet and not widget._orbitui_alphabet.retired then return end
     local width, height = Screen:getWidth(), Screen:getHeight()
+    local previous = widget._orbitui_alphabet
+    if previous and not previous.retired then
+        if previous.generation == UI._simpleui_navigation_generation
+                and previous.epoch == widget._orbitui_alphabet_epoch
+                and previous.width == width and previous.height == height
+                and previous.context.identity == context.identity then return end
+        previous:cancel()
+    end
     local strip_w = math.min(d.PAD or 0, Screen:scaleBySize(22))
     local top = math.max(0, d.wipe_rows_top or 0)
     local bottom = height - widget:_simpleUIReservedBottom() - widget:_paginationFooterReserveHeight()
@@ -658,7 +665,7 @@ function M.alphabet(widget)
         if (self._orbitui_alphabet or self._orbitui_alphabet_restore)
                 and visible(self) and not self._suppress_transition_paint then
             local strip = self._orbitui_alphabet
-            if strip and strip.retired then M.attachAlphabet(self) end
+            if strip and not strip:current() then M.attachAlphabet(self) end
             local restore = self._orbitui_alphabet_restore
             if restore then
                 self._orbitui_alphabet_restore = nil
