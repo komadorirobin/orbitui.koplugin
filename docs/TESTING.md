@@ -1,5 +1,36 @@
 # Verification and device acceptance
 
+## 2026-11-07 local search word suggestions
+
+User confirms beta.5 alphabet visibility now works on Bigme and requests the
+next Library GUI review item, local word suggestions. This is implementation
+approval, not permission for a new merge/push/release/device/server change.
+The reported alphabet success is not blanket font/night/rotation/sleep QA.
+Independent host logic, with a minimal passive Bookshelf cache cursor, stays in
+existing runtime paths. VERSION/public beta.5 ZIP, upstream pins, artwork,
+bootstrap/API1, reading data and external sync owners remain unchanged.
+
+`test_search_suggestions` covers accents/spelling/multiword completion, two-
+character threshold, no mid-text/selection overwrite, no automatic book/search
+launch, opt-in/SV labels, duplicate/path/large-metadata bounds, a synthetic
+3,341-book vocabulary, eight-candidate turns, positive timers, typing debounce,
+exact current source/filter/sort/profile scope, deleted scopes and missing caches,
+retirement after close/sleep/rotation/cover/navigation/metadata/replacement,
+keyboard retention and still-usable Close. The component regression exercises
+the actual warm scoped cursor with filesystem access made fatal; invalidation
+retires snapshots and uncached/remote/different sources cannot widen scope.
+
+Supplement runs actual KOReader InputDialog construction and InputText edit/
+Unicode cursor/keyboard APIs from v2026.03 and current
+9040116701c888889bd35233b23b83283be66745, under Lua/LuaJIT. Containers/font metrics/
+buttons are fixtures; this is not native glyph shaping or physical rendering.
+Fixture portrait/landscape/DPI sizes must retain input/control/keyboard room.
+Full source scripts, catalogs, clean committed-source ZIP and sealed root/native
+reruns are required before handoff; final results go below. Evidence:
+test-results/search-word-suggestions-20261107. Physical Bigme/Boox suggestion
+visibility, keyboard ergonomics, real fonts/night, sleep/rotation and device
+latency/memory remain open. No device speedup or publication is claimed.
+
 ## 2026-11-07 1.1.0-beta.5 visibility-correction release
 
 User explicitly approves push/publication after green gates. Include the local

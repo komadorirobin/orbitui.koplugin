@@ -8686,6 +8686,63 @@ local function _bySourceCacheKey(source, filter, sort_priority, scope)
     return table.concat(parts, "|")
 end
 
+-- OrbitUI word completion: a passive, short-lived cursor over WARM membership
+-- and text only. Never validate/walk/stat, load snapshots/BIM/sidecars, derive
+-- lazy light records or call a registered source here. Missing current-source
+-- shapes fail closed instead of quietly using its whole profile. false means
+-- one uncached candidate; nil means end. The host budgets each cursor step.
+function Repo.cachedSearchSnapshot(scope, query)
+    local home = HomeDir.get() or "/"
+    local depth = BookshelfSettings.read("latest_walk_depth") or 3
+    local lists = {}
+    if query then
+        local source = query.source
+        if not source or source.kind == "opds" or source.kind == "bookorbit_want" then return end
+        local paths = _bySource_cache[_bySourceCacheKey(source, query.filter, query.sort, scope)]
+        if not paths then return end
+        lists[1] = paths
+    else
+        for _, root in ipairs(_scopeRoots(scope) or { home }) do
+            local entry = _walk_cache[root .. ":" .. tostring(depth)]
+            if not entry then return end
+            lists[#lists + 1] = entry.list
+        end
+    end
+    local generation = Repo.dataGeneration()
+    local meta_cache, walk_cache, source_cache = _light_meta_cache, _walk_cache, _bySource_cache
+    local light = _light_meta_cache[home .. ":" .. tostring(depth)]
+    local rows = _lightmeta_refresh.rows or (_light_meta_rows_cache and _light_meta_rows_cache.rows)
+    local list_index, item_index = 1, 0
+    return {
+        current = function()
+            return generation == Repo.dataGeneration() and meta_cache == _light_meta_cache
+                and walk_cache == _walk_cache and source_cache == _bySource_cache
+                and light == _light_meta_cache[home .. ":" .. tostring(depth)]
+                and rows == (_lightmeta_refresh.rows or (_light_meta_rows_cache and _light_meta_rows_cache.rows))
+                and home == (HomeDir.get() or "/")
+                and depth == (BookshelfSettings.read("latest_walk_depth") or 3)
+        end,
+        next = function()
+            local list = lists[list_index]
+            item_index = item_index + 1
+            while list and item_index > #list do
+                list_index, item_index = list_index + 1, 1
+                list = lists[list_index]
+            end
+            if not list then return end
+            local candidate = list[item_index]
+            local fp = type(candidate) == "table" and candidate.fp or candidate
+            if type(fp) ~= "string" or fp:match("^%a+://") then return false end
+            local record = light and rawget(light.map, fp) -- no __index hydration
+            local info = record or (rows and rows[fp])
+            if not info or (not record and (info.ignore_meta == 1 or info.ignore_meta == true)) then return false end
+            -- Deliberately exclude cached cover objects, descriptions and progress.
+            return { filepath = fp, title = info.title, authors = info.authors,
+                author = info.author, series = info.series_name or info.series }
+        end,
+    }
+end
+
 -- Nav-tile cover borrow (see the opds branch of getBySource below): how many
 -- of a not-yet-drilled subcatalog's cached child entries to STAT (via
 -- OpdsCovers.cachedPath) while scanning for the first one with an

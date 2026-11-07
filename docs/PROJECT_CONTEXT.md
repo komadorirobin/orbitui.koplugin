@@ -22,6 +22,29 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-07
 
+- **Local opt-in search word suggestions; not published.** After confirming
+  beta.5's alphabet strip now works on Bigme, user requests the next reviewed
+  Library GUI idea. The confirmation covers that visibility report only, not
+  every theme/font/rotation/sleep checklist. Branch
+  feature/search-word-suggestions-20261107 starts at public e0cad59b. Independent
+  host vocabulary/completion in the existing search module; no imported engine,
+  assets, new runtime path, pin/version/bootstrap/API1 or sync changes. Search
+  OrbitUI > Word suggestions is default OFF; hold the toggle for SV/EN help.
+  Three native buttons complete only the final word (two-letter minimum,
+  cursor at end/no selection), preserving spelling/diacritics and the preceding
+  query. Tap fills text with keyboard retained, never searches/opens a book.
+  A minimal native repository passive-cursor seam exposes only already warm
+  scoped membership/text: no walk/stat/SQLite/snapshot/EPUB/cover/provider/network
+  work. Missing current-source cache fails closed, never widens to the profile.
+  Suggestions are explicitly partial/cache-only, not guaranteed search hits.
+  Vocabulary is ephemeral and bounded; cooperative eight-candidate/8ms turns,
+  positive input windows, 180ms typing debounce and bounded prefix lookup.
+  Close/sleep/rotation/covered/replaced/navigation/data changes retire callbacks;
+  normal Search and Close remain usable. No push/release/device/server action
+  is authorized by this step. Verification and physical gaps: TESTING; evidence:
+  test-results/search-word-suggestions-20261107. Stable/latest 1.0 and public
+  beta.5/dist remain immutable.
+
 - **1.1.0-beta.5 is public in preview: alphabet-label visibility fix.** User
   explicitly approves publication. Published 2026-11-07 17:17:30 UTC, release
   437717781, frozen source/tag 38cadd99 / v1.1.0-beta.5, ZIP 2cc94f4f
@@ -35,7 +58,8 @@ and correct this file in the same change.
   CI's runtime manifest matches. Draft/public bytes are exact, all 89 older
   releases/153 tag refs unchanged. Preview selects beta.5, stable/latest 1.0
   and maintenance/1.0 stay fixed; public dist matches beta.5. Seven actual older
-  installers pass public-HTTPS scenarios (TESTING). Bigme confirmation is open.
+  installers pass public-HTTPS scenarios (TESTING). User now confirms the strip
+  works on Bigme; other physical acceptance remains open.
   Evidence: test-results/preview11-beta5-20261107. Receipt docs never rebuild/
   retag frozen release bytes; earlier local-only notes are historical.
 

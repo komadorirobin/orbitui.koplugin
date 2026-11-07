@@ -4,6 +4,7 @@ local Query = require("core/orbitui_shelf_query")
 local Context = require("core/orbitui_context")
 local HISTORY = "orbitui_search_history"
 local TYPOS = "orbitui_search_typos"
+local SUGGESTIONS = "orbitui_search_word_suggestions"
 local session = 0
 M.sorts = { { id = "relevance", text = "Relevance" }, { id = "title", text = "Title" },
     { id = "author", text = "Author" }, { id = "series", text = "Series" } }
@@ -80,6 +81,243 @@ local function characters(text, limit)
         if limit and #out >= limit then break end
     end
     return out
+end
+
+function M.suggestionsEnabled()
+    local settings = store()
+    return settings and settings:get(SUGGESTIONS) == true or false
+end
+
+-- Independent, ephemeral vocabulary; no files, DB, covers or search producers.
+-- Each book contributes a word once. Bounds cover broken/huge metadata too.
+function M.wordVocabulary()
+    local entries, keys, seen, count = {}, {}, {}, 0
+    local stopped = {}
+    for word in ("the and for with from this that vol volume och att ett med fran " ..
+            "som till den det der die das und les des une los las"):gmatch("%S+") do stopped[word] = true end
+    local vocabulary = { entries = entries, keys = keys }
+    function vocabulary:add(book)
+        if not book or type(book.filepath) ~= "string" or count >= 10000 or seen[book.filepath] then return end
+        seen[book.filepath], count = true, count + 1
+        local in_book = {}
+        local function add(text)
+            if type(text) ~= "string" then return end
+            local last = math.min(#text, 512)
+            -- Do not cut a valid UTF-8 character at the field byte budget.
+            while last > 0 and text:byte(last + 1) and text:byte(last + 1) >= 128
+                    and text:byte(last + 1) <= 191 do last = last - 1 end
+            local clipped = #text > last
+            text = text:sub(1, last)
+            if clipped then text = text:gsub("%S+$", "") end -- no invented partial words
+            text = text:gsub("[/\\]", " "):gsub("–", " "):gsub("—", " ")
+                :gsub("’", " "):gsub("“", " "):gsub("”", " ")
+            -- Punctuation separates tokens; retain the original Unicode spelling.
+            for word in text:gmatch("[^%s%c%p]+") do
+                local key = M.normalize(word)
+                if not key:find("%s") and not key:find("%d") and not stopped[key]
+                        and #word <= 96 and #characters(word) >= 3 and not in_book[key] then
+                    in_book[key] = true
+                    local entry = entries[key]
+                    if entry then entry.count = entry.count + 1
+                    elseif #keys < 12000 then
+                        keys[#keys + 1] = key
+                        entries[key] = { text = word, count = 1, length = #characters(word) }
+                    end
+                end
+            end
+        end
+        add(book.title)
+        local names = book.authors or book.author
+        if type(names) == "table" then
+            for i = 1, math.min(8, #names) do add(names[i]) end
+        else add(names) end
+        add(book.series_name or book.series)
+    end
+    function vocabulary:finish() table.sort(keys); self.ready = true end
+    return vocabulary
+end
+
+-- Complete only the final word, with the cursor at the end and no selection.
+-- No byte arithmetic on cursor positions (KOReader uses Unicode character positions).
+function M.completionPrefix(text, cursor, selection)
+    if type(text) ~= "string" or #text > 512 or selection
+            or cursor ~= #characters(text) + 1 then return end
+    local before, word = text:match("^(.-)([^%s%c%p]+)$")
+    if not word or #characters(word) < 2 or #word > 96 then return end
+    return M.normalize(word), before, word
+end
+
+function M.wordSuggestions(vocabulary, text, cursor, selection)
+    local prefix = M.completionPrefix(text, cursor, selection)
+    if not prefix or not vocabulary or not vocabulary.ready then return {} end
+    local keys, entries = vocabulary.keys, vocabulary.entries
+    local lo, hi = 1, #keys + 1
+    while lo < hi do
+        local mid = math.floor((lo + hi) / 2)
+        if keys[mid] < prefix then lo = mid + 1 else hi = mid end
+    end
+    local out = {}
+    -- A broad two-letter prefix must not scan the entire vocabulary per key.
+    for i = lo, math.min(#keys, lo + 255) do
+        local key = keys[i]
+        if key:sub(1, #prefix) ~= prefix then break end
+        if key ~= prefix then out[#out + 1] = entries[key] end
+    end
+    table.sort(out, function(a, b)
+        if a.count ~= b.count then return a.count > b.count end
+        if a.length ~= b.length then return a.length < b.length end
+        return a.text < b.text
+    end)
+    return { out[1] and out[1].text, out[2] and out[2].text, out[3] and out[3].text }
+end
+
+function M.completeWord(text, cursor, word, selection)
+    local prefix, before = M.completionPrefix(text, cursor, selection)
+    if not prefix or type(word) ~= "string" or M.normalize(word):sub(1, #prefix) ~= prefix then return end
+    return before .. word .. " "
+end
+
+local function suggestionSnapshot(scope_id, ref)
+    local Profiles = require("lib/bookshelf_profiles")
+    local scope, query
+    if scope_id == "current" then
+        query = Query.resolve(ref)
+        if not query then return end
+        scope = query.scope
+        -- Use the exact warm native shape, never a new getBySource call.
+        local source = query.source
+        query = { source = {}, filter = query.filter, sort = query.sort }
+        for key, value in pairs(source) do query.source[key] = value end
+        if query.source.kind == "folder" then query.source.kind = "folder_flat"
+        elseif query.source.kind == "all" then query.source.kind = "library" end
+    elseif scope_id ~= "all" then
+        local profile = Profiles.get(scope_id)
+        if not profile then return end
+        scope = Profiles.scope(profile)
+    end
+    local Repo = require("lib/bookshelf_book_repository")
+    return Repo.cachedSearchSnapshot and Repo.cachedSearchSnapshot(scope, query)
+end
+
+-- Native InputDialog extension on this instance only. Fixed native buttons
+-- handle fitting, focus, night mode and touch; no reinit/reopened keyboard per key.
+function M.attachWordSuggestions(dialog, opts)
+    local UI = opts.ui
+    local pending, retired, vocabulary, snapshot = nil, false, nil, nil
+    local width, height
+    local function dimensions()
+        local ok, Device = pcall(require, "device")
+        if ok and Device.screen then return Device.screen:getWidth(), Device.screen:getHeight() end
+    end
+    width, height = dimensions()
+    local function valid()
+        if retired or not opts.current() or (UI.isWidgetShown and not UI:isWidgetShown(dialog)) then return false end
+        if UI.getTopmostVisibleWidget then
+            local top = UI:getTopmostVisibleWidget()
+            top = top and (top.widget or top)
+            local keyboard = dialog._input_widget and dialog._input_widget.keyboard
+            if top and top ~= dialog and top ~= keyboard then return false end
+        end
+        local w, h = dimensions()
+        return w == width and h == height
+            and (not snapshot or snapshot.current())
+    end
+    local function retire()
+        retired = true
+        if pending and UI.unschedule then UI:unschedule(pending) end
+        pending, vocabulary, snapshot = nil, nil, nil
+    end
+    local function schedule(delay, fn)
+        if pending then UI:unschedule(pending) end
+        pending = function()
+            pending = nil
+            local ok = pcall(function() if valid() then fn() else retire() end end)
+            if not ok then retire() end
+        end
+        UI:scheduleIn(delay, pending)
+    end
+    local choices, choice_text = {}, nil
+    local function inputState()
+        local widget = dialog._input_widget
+        return dialog:getInputText(), widget and widget.charpos,
+            widget and (widget.do_select or widget.selection_start_pos ~= nil)
+    end
+    local function paint()
+        if not valid() then retire(); return end
+        local text, cursor, selection = inputState()
+        local next_choices = M.wordSuggestions(vocabulary, text, cursor, selection)
+        local changed = false
+        for i = 1, 3 do
+            local button = dialog.button_table and dialog.button_table:getButtonById("orbitui_word_" .. i)
+            if button then
+                local label = next_choices[i] or (i == 1 and _("Word suggestions") or "—")
+                if choices[i] ~= next_choices[i] or choice_text == nil then
+                    button:setText(label, button.width)
+                    button:enableDisable(next_choices[i] ~= nil)
+                    changed = true
+                end
+            end
+        end
+        choices, choice_text = next_choices, text
+        if changed then dialog:refreshButtons() end
+    end
+    dialog.strike_callback = function()
+        if not valid() then retire(); return end
+        -- Do not cancel the bounded vocabulary producer on every keystroke.
+        if vocabulary and vocabulary.ready then schedule(0.18, paint) end
+    end
+    for i = 1, 3 do
+        local index = i
+        local button = dialog.buttons[#dialog.buttons][i]
+        button.callback = function()
+            if not valid() then retire(); return end
+            local text, cursor, selection = inputState()
+            if text ~= choice_text or not choices[index] then return end
+            local completed = M.completeWord(text, cursor, choices[index], selection)
+            if not completed then return end
+            dialog:setInputText(completed, true, false)
+            dialog._input_widget:goToEnd()
+            paint() -- explicit choice only fills input; never a reader/search launch
+        end
+        local native = dialog.button_table and dialog.button_table:getButtonById("orbitui_word_" .. i)
+        if native then native.callback = button.callback end
+    end
+    -- InputDialog passes the hook to InputText during init; this is an instance
+    -- assignment after init, not a global native class replacement.
+    if dialog._input_widget then dialog._input_widget.strike_callback = dialog.strike_callback end
+    for _, name in ipairs{ "onClose", "onCloseWidget", "onSuspend", "onSetRotationMode" } do
+        local original = dialog[name]
+        dialog[name] = function(self, ...)
+            retire()
+            if original then return original(self, ...) end
+        end
+    end
+    if not UI.scheduleIn or not UI.unschedule then return end
+    schedule(0.05, function()
+        local ok, value = pcall(opts.snapshot)
+        snapshot = ok and type(value) == "table" and type(value.next) == "function"
+            and type(value.current) == "function" and value or nil
+        if not snapshot then paint(); return end
+        vocabulary = M.wordVocabulary()
+        local ticks = 0
+        local function step()
+            local ok = pcall(function()
+                local started = os.clock()
+                for _i = 1, 8 do
+                    local book = snapshot.next()
+                    ticks = ticks + 1
+                    if book == nil or ticks > 10000 then
+                        vocabulary:finish(); paint(); return
+                    end
+                    if book then vocabulary:add(book) end
+                    if os.clock() - started >= 0.008 then break end
+                end
+                schedule(0.01, step)
+            end)
+            if not ok then retire() end -- optional completion cannot break Search/Close
+        end
+        if valid() then step() else retire() end
+    end)
 end
 local function distance(query, target, cap)
     local n = #query
@@ -784,7 +1022,7 @@ function M.show(opts)
         local dialog
         local selected
         for _i, item in ipairs(scopes) do if item.id == scope_id then selected = item.text end end
-        dialog = require("ui/widget/inputdialog"):new{
+        local definition = {
             title = _("Search OrbitUI"), input = prefill or "",
             buttons = {
                 {{ text = _("Search in") .. ": " .. selected, callback = function()
@@ -883,17 +1121,43 @@ function M.show(opts)
                         if not settings then return end
                         settings:set(TYPOS, not M.typosEnabled())
                         UIManager:close(dialog); input(query)
+                    end },
+                    { text = _("Word suggestions") .. ": " .. _(M.suggestionsEnabled() and "On" or "Off"),
+                    hold_callback = function()
+                        Context.notify(_("Complete the last word from cached local titles, authors and series. Tap a suggestion to fill it in, then Search. Suggestions need two letters, the cursor at the end and warm metadata in the selected scope. They can be incomplete; no files or network are read. Reopen search after sleep or rotation."))
+                    end,
+                    callback = function()
+                        local query = dialog:getInputText()
+                        local settings = store()
+                        if not settings then return end
+                        settings:set(SUGGESTIONS, not M.suggestionsEnabled())
+                        UIManager:close(dialog); input(query)
                     end }},
             },
         }
+        if M.suggestionsEnabled() then
+            local row = {}
+            for i = 1, 3 do
+                row[i] = { id = "orbitui_word_" .. i, text = i == 1 and _("Word suggestions") or "—",
+                    enabled = false, callback = function() end }
+            end
+            definition.buttons[#definition.buttons + 1] = row
+        end
+        dialog = require("ui/widget/inputdialog"):new(definition)
         for _i, row in ipairs(dialog.buttons) do
             for _j, button in ipairs(row) do
                 if button.callback then button.callback = guarded(button.callback, function() return dialog end) end
+                if button.hold_callback then button.hold_callback = guarded(button.hold_callback, function() return dialog end) end
             end
         end
         active = dialog
         UIManager:show(dialog)
         dialog:onShowKeyboard()
+        if M.suggestionsEnabled() then
+            M.attachWordSuggestions(dialog, { ui = UIManager,
+                current = function() return current() and active == dialog end,
+                snapshot = function() return suggestionSnapshot(scope_id, opts.ref) end })
+        end
         return dialog
     end
     return input(opts.query)

@@ -1262,6 +1262,26 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+November 7 approved word completion is independent host code in shared search,
+opt-in/default OFF with SV/EN labels/help. Three native suggestion buttons fill
+only the final word, with at least two characters, cursor at end and no active
+selection. Preserve preceding text and Unicode spelling; never automatically
+submit, open a reader, change scope or record suggestions in search history.
+Keep the keyboard and native button fitting/focus/night-mode ownership.
+
+Build a bounded, ephemeral vocabulary from passive warm native membership/text
+only. No automatic walk/stat/SQL/snapshot/EPUB/cover/provider/network reads,
+metadata writers or new persistent index/installed paths. Current-shelf shape
+must include its source/filter/sort/scope exactly; a missing warm shape gives
+no suggestions, never another library's vocabulary. Explain cached/incomplete
+coverage; completions are not guaranteed matches. Limit each producer turn to
+eight candidates or 8ms with positive input windows; debounce typing and bound
+prefix candidates. Close, suspend, rotation, hidden/covered/replaced owner,
+navigation and native cache/data retirement stop work and stale choices. Do not
+disable ordinary Search/Close when suggestions retire. Native minimum/current
+dialog/edit/cursor APIs, scoped cache/no-I/O and large-library cases supplement
+mock tests; physical fonts/keyboard/rotation/sleep/timing remain device gates.
+
 November 7 approved alphabet navigation is opt-in per existing native view
 identity, default OFF, SV/EN. Its InputContainer occupies the existing right
 margin below hero/chips and above footer/dock; do not replan/rescale books or

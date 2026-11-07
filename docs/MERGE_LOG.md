@@ -4,6 +4,34 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-07 — local search word suggestions approved
+
+User confirms beta.5 alphabet visibility and requests the next Library GUI
+inspiration-list item. Branch feature/search-word-suggestions-20261107 starts
+at public e0cad59b. Independent implementation, no upstream import or pin change.
+Read-only reference was Library GUI acda0adbc3035b91d43ffe674b17409b28f9b781;
+no engine/assets/code are copied. Existing core search owns vocabulary, native
+dialog controls and lifecycle; Bookshelf adds only a passive cached-membership/
+text cursor. No new installed files, persistent index or hidden I/O on typing.
+
+Default OFF; toggle/hold-help SV/EN. At most three completions for the final
+two-or-more-character word, only at cursor end without selection. Tap fills
+query, retains keyboard and does not submit/open a book. Cache-only/incomplete
+coverage is explicit; current-source misses fail closed instead of suggesting
+from a whole profile. Cap 10,000 candidates/12,000 words/512 bytes per field/
+eight authors; process at most eight candidates or 8ms per positive timer and
+debounce 180ms. Binary prefix lookup inspects at most 256 candidates. No new
+walk/stat/SQL/snapshot/EPUB/cover/provider/network, metadata edits or sync writer.
+Close/sleep/rotation/covered/replaced/navigation/cache-generation changes retire
+owned work; ordinary Search and Close retain authority. Component/root/native
+minimum/current/large-library tests and final package results live in TESTING.
+The user's physical confirmation is visibility-only, not whole device QA.
+
+VERSION, sources/bootstrap/API1, assets, public beta.5/dist and stable/latest
+1.0 remain unchanged. No GitHub push/tag/release, server or ADB action. This step
+does not authorize the later ghosting/reading-filter ideas or a new merge.
+Evidence: test-results/search-word-suggestions-20261107.
+
 ## 2026-11-07 — 1.1.0-beta.5 visibility fix publication approved
 
 User explicitly answers yes to pushing/publishing the next beta once tests

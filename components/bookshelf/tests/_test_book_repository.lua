@@ -1910,6 +1910,51 @@ test("walk cache: second call inside TTL skips lfs.dir; invalidate forces re-wal
            "expected lfs.dir to be called after invalidate, got 0 extra calls")
 end)
 
+test("host word suggestions passively peek warm scoped text and retire on invalidation", function()
+    Repo.invalidateWalkCache()
+    _G._test_settings = { home_dir = "/suggest", bookshelf_latest_walk_depth = 1 }
+    local lfs = package.loaded["libs/libkoreader-lfs"]
+    lfs.dir = function()
+        local names, i = { ".", "..", "a.epub", "b.epub" }, 0
+        return function() i = i + 1; return names[i] end
+    end
+    lfs.attributes = function(fp, key)
+        local attr = { mode = fp == "/suggest" and "directory" or "file", modification = 1, size = 10 }
+        return key and attr[key] or attr
+    end
+    _G._test_bim_data = {
+        ["/suggest/a.epub"] = { title = "Hirayasumi", authors = "Keigo", has_meta = 1 },
+        ["/suggest/b.epub"] = { title = "Dragon", authors = "Robin", has_meta = 1 },
+    }
+    _G._test_bim_batch_rows = {
+        { "/suggest/", "/suggest/" }, { "a.epub", "b.epub" },
+        { "Hirayasumi", "Dragon" }, { "Keigo", "Robin" }, {}, {}, {}, {}, {}, {}, {}, { 1, 1 },
+    }
+    assert(Repo.cachedSearchSnapshot() == nil, "cold cache must not scan")
+    local source = { kind = "folder_flat", id = "/suggest" }
+    Repo.getBySource(source, nil, nil, 0, 10, nil, { light_only = true })
+    local old_dir, old_attr = lfs.dir, lfs.attributes
+    lfs.dir = function() error("completion must not walk") end
+    lfs.attributes = function() error("completion must not stat") end
+    local snap = assert(Repo.cachedSearchSnapshot())
+    assert(snap.current())
+    local first = snap.next()
+    assert(first and first.title == "Hirayasumi")
+    assert(first.cover_bb == nil and first.description == nil and first.percent_finished == nil)
+    assert(snap.next().title == "Dragon" and snap.next() == nil)
+    assert(Repo.cachedSearchSnapshot({ roots = { "/other" } }) == nil, "no profile widening")
+    assert(Repo.cachedSearchSnapshot(nil, { source = { kind = "genre", id = "absent" } }) == nil)
+    assert(Repo.cachedSearchSnapshot(nil, { source = { kind = "opds" } }) == nil)
+    assert(Repo.cachedSearchSnapshot(nil, { source = { kind = "bookorbit_want" } }) == nil)
+    local scoped = assert(Repo.cachedSearchSnapshot(nil, { source = source }))
+    assert(scoped.next().filepath == "/suggest/a.epub", "reuse exact warm source shape")
+    Repo.invalidateBookCache()
+    assert(not snap.current(), "metadata retirement invalidates the cursor")
+    lfs.dir, lfs.attributes = old_dir, old_attr
+    _G._test_bim_batch_rows = nil
+    Repo.invalidateWalkCache()
+end)
+
 test("getSeriesGroups: cache skips lfs walk; bbs rebuilt fresh per call", function()
     Repo.invalidateWalkCache() -- also clears the series cache
 
