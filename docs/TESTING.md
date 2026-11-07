@@ -13,6 +13,42 @@ test-results/preview11-beta4-20261107. Stable/latest 1.0, old tags and assets
 remain immutable. Physical alphabet gates listed below remain outstanding;
 headless automation does not imply Bigme/Boox acceptance or measured gains.
 
+**Published 2026-11-07 15:33:18 UTC**, release **437660137**, immutable source
+**b65e909819452057de158035db87dca3dde2a3cf** / `v1.1.0-beta.4`.
+Fresh complete scripts pass under Lua and LuaJIT: 134 Python tests/four existing
+optional skips, 107 root Lua files, 549 Bookshelf suites/zero failures/three
+normal native SQLite exclusions, 13 SimpleUI files, 1,178 syntax files and all
+43 catalogs. All 107 sealed roots repeat in both interpreters; 22 ordinary/
+23 actual raster alphabet cases, minimum/current native input, Trapper/
+VerticalSpan, grey/RGB/CBB/software/inverse/Android, archive/JSON/UIManager,
+SQLite tag index/series and actual Bookshelf facts/OPDS/ornament decks pass.
+Fonts remain stubbed in raster supplements; no physical shaping/timing claim.
+Seven actual older native installers (Beta 5/9/29/RC2/stable1.0/beta.2/beta.3)
+pass local discovery/hash/extraction/activation/restart/rollback/interruption/
+recovery/external snapshot/obsolete-cleanup checks on the final package.
+
+ZIP **9,509,281 bytes**, expanded **28,142,626**, SHA-256
+`b5692f542d895e3390f42d317d515aff91fcf7e8b1000ff449fb17e0e4e71c91`;
+manifest `24dfaf64f99d06e74a8087b1420fc620213611c428e39630e46db34b32cd514c`.
+The clean-commit package script reproduces the frozen ZIP. Exact source
+projection/manifest, 2,000 paths/API1, 24 lazy helpers/407 canonical identities,
+unchanged components/source pins/bootstrap/assets/external sync owners and all
+27 outgoing blobs pass. Gitleaks finds no leaks across six outgoing commits;
+no raised exception baseline. Main/tag CI **42386627139 / 42386627270** pass all
+four jobs. Main LuaJIT's independently built artifact validates and has the
+identical runtime manifest (ZIP container encoding differs). Both downloaded
+draft/anonymous public assets match frozen bytes and GitHub digests, asset IDs
+**721083800 / 721083799**. All **88** older releases and **151** old tag refs
+remain unchanged. Preview selects beta.4; stable/latest remains 1.0 and
+maintenance/1.0 remains 2d77cb98. Public dist is the verified beta.4 bytes.
+Six actual older installers (Beta 9/29/RC2/stable1.0/beta.2/beta.3) also pass
+public-HTTPS discovery/download and the full native validation/activation/
+restart/rollback/interruption/recovery/snapshot/cleanup scenarios. Beta 5's
+local scenario passes; its older latest-release discovery is not counted as a
+preview-HTTPS test. Final public runtime bytes remain the exact frozen ZIP.
+Receipt documentation does not rebuild or retag the frozen release. No device/
+server action; all physical alphabet acceptance gaps below remain open.
+
 ## 2026-11-07 local alphabet strip (not released)
 
 Feature approved on feature/alphabet-strip-20261107 from public 13087a61.

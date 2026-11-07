@@ -22,13 +22,20 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-07
 
-- **User authorizes 1.1.0-beta.4 preview publication.** Include the completed
-  local alphabet-strip work below; no additional upstream merge or device/server
-  deployment. VERSION and SV/EN release notes advance, stable/latest 1.0 remains
-  fixed. Fresh complete/sealed/native/older-installer/source/history/secret/CI/
-  draft/public/channel gates precede publication. Physical font/gesture/night/
-  sleep/rotation and timing acceptance remains open. Evidence:
-  test-results/preview11-beta4-20261107. Older local-only notes are historical.
+- **1.1.0-beta.4 is public in preview.** User authorizes the next beta with the
+  completed alphabet strip below; no additional upstream merge or device/server
+  deployment. Published 2026-11-07 15:33:18 UTC, release 437660137, frozen
+  source/tag b65e9098 / v1.1.0-beta.4. ZIP b5692f54 (9,509,281 bytes), unchanged
+  2,000 API1 paths/bootstrap/components/pins/artwork/sync owners. Both full
+  scripts, 43 catalogs, 107 sealed roots in Lua/LuaJIT, native input/raster/
+  SQLite/archive and seven older local installers pass. Main/tag CI
+  42386627139 / 42386627270 pass all four jobs. Draft/public bytes match and
+  all 88 older releases/151 tag refs remain unchanged. Preview selects beta.4;
+  stable/latest 1.0 and maintenance/1.0 stay fixed. Public dist matches beta.4.
+  Six older actual installers pass public-HTTPS scenarios (TESTING). Physical
+  font/gesture/night/sleep/rotation and timing acceptance remains open. Evidence:
+  test-results/preview11-beta4-20261107. Receipt docs never rebuild/retag frozen
+  release bytes. Older local-only notes are historical.
 
 - **Local opt-in alphabet strip approved; not published.** User asks to start
   with the letter-strip idea after reviewing Library GUI main acda0adb. Branch

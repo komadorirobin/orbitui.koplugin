@@ -16,6 +16,22 @@ main/tag CI and draft/public byte/channel/immutability gates. Keep stable/latest
 sleep/reader-return and timing acceptance stays open. Evidence:
 test-results/preview11-beta4-20261107.
 
+**Published 2026-11-07 15:33:18 UTC**, release **437660137**, immutable tag
+`v1.1.0-beta.4` -> **b65e9098**, ZIP **b5692f54** (9,509,281 bytes). Both full
+scripts/43 catalogs pass, 107 sealed Lua/LuaJIT roots, minimum/current input,
+22 ordinary/23 raster alphabet cases and native SQLite/archive/night supplements.
+Seven actual older local installers pass. Clean source/package projection,
+2,000 API1 paths, original assets/components/pins/bootstrap/sync owners, outgoing
+held-artwork and six-commit secret scans pass. Main/tag CI
+**42386627139 / 42386627270** pass all four jobs; CI's runtime manifest matches.
+Draft and anonymous public assets are exact, IDs **721083800 / 721083799**.
+All **88** old releases/**151** previous tag refs remain unchanged. Preview
+advances to beta.4; stable/latest 1.0 and maintenance/1.0 stay fixed. Public dist
+matches beta.4; six older actual installers pass public-HTTPS scenarios, with
+receipts in TESTING. No additional upstream merge,
+device/server action or new physical acceptance. Receipt-only docs do not
+rebuild/move frozen source/tag/assets. Physical letter-strip gates remain open.
+
 ## 2026-11-07 — local alphabet-strip implementation (not imported/released)
 
 User approves starting with the alphabet strip from the reviewed Library GUI

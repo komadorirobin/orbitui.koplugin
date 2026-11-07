@@ -9,6 +9,17 @@ The original standalone OTA channels are not redirected or modified.
 
 ## OrbitUI 1.1.0-beta.4
 
+Published **2026-11-07 15:33:18 UTC**, release **437660137**, frozen source/tag
+**b65e9098 / v1.1.0-beta.4**. ZIP SHA-256
+`b5692f542d895e3390f42d317d515aff91fcf7e8b1000ff449fb17e0e4e71c91`
+(9,509,281 bytes). Main/tag CI **42386627139 / 42386627270**, full/sealed/
+native/local-installer gates, draft/public bytes, preview/stable/latest selection
+and all 88 older releases/151 old tag refs pass. CI's built runtime manifest
+matches the frozen package. Public dist is beta.4; stable/latest 1.0 and its
+maintenance branch are unchanged. Six older actual installers also pass public-
+HTTPS upgrade/recovery scenarios (TESTING).
+No user-device/server action or new physical acceptance.
+
 User-requested preview release of the independently implemented alphabet strip.
 OFF by default, per existing view: footer counter ▾ > Sort, filter & view >
 Alphabet strip. Tap a letter or drag to preview a large letter, then release to
