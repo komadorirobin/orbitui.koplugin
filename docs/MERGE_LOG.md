@@ -4,6 +4,18 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-07 — 1.1.0-beta.4 publication approved
+
+User asks for a new beta after the completed local alphabet-strip work. Prepare
+1.1.0-beta.4 from ad210728; no new upstream merge, source pin, component change
+or user-device/server action. Existing alphabet work is retained, default OFF,
+SV/EN. Update version/docs and preview-channel regression; require fresh full/
+sealed/native/old-installer/history/artwork/secret checks, clean exact-source ZIP,
+main/tag CI and draft/public byte/channel/immutability gates. Keep stable/latest
+1.0 and older tags/assets fixed. Physical letter-strip font/drag/night/rotation/
+sleep/reader-return and timing acceptance stays open. Evidence:
+test-results/preview11-beta4-20261107.
+
 ## 2026-11-07 — local alphabet-strip implementation (not imported/released)
 
 User approves starting with the alphabet strip from the reviewed Library GUI

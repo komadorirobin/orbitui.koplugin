@@ -7,6 +7,41 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 1.1.0-beta.4
+
+User-requested preview release of the independently implemented alphabet strip.
+OFF by default, per existing view: footer counter ▾ > Sort, filter & view >
+Alphabet strip. Tap a letter or drag to preview a large letter, then release to
+jump in the current native sorted/filtered list. Å/Ä/Ö are distinct; other Latin
+accents use the base letter, untransliterated scripts/numbers use #. Native
+article/curated keys, module visual slots and spine item cursors are preserved.
+No reading/metadata/cover/index/network work or shelf rebuild during dragging;
+the explicit jump can query cached native metadata. No new index or worker.
+
+The strip occupies spare right-margin space, not cover/content width. Hide it
+for nonalphabetical, one-page, opened-series, remote, two-column and too-tight
+contexts. Current-owner/nav-generation/dimension guards cancel stale gestures
+on rebuild, reader/menu interruption, sleep and rotation. Monochrome feedback
+follows native page paint space. Native input/raster tests are not physical
+font shaping, ghosting, drag ergonomics or Bigme performance acceptance.
+
+**Svenska:** Valfri **Bokstavslist**, avstängd som standard. Aktivera per vy via
+**sidräknaren ▾ > Sortering, filter och vy > Bokstavslist**. Tryck på en bokstav,
+eller dra för att visa en stor bokstav och släpp för att hoppa i samma sorterade/
+filtrerade hylla. Å/Ä/Ö hålls isär. Dragning läser ingen metadata och bygger inte
+om hyllan; ett uttryckligt hopp kan fråga den befintliga metadatacachen. Listen
+använder ledig högermarginal och döljs när vyn/sorteringen saknar stöd. Ingen ny
+indexering startas. Svenska/engelska finns; gester, typsnitt, nattläge, rotation,
+vila/återgång och kalla/varma hopptider behöver fortfarande enhetstestas.
+
+Stable/latest 1.0.0 and all older tags/assets stay immutable. No new upstream
+merge: Bookshelf d47edfcc / SimpleUI 4bf2d2c5, provenance and component files
+unchanged. API1/bootstrap, 2,000 paths, artwork, reading data, existing settings
+and sync owners remain. No device/server deployment. Full/sealed/native/older
+installer, source/history/secrets, CI and exact draft/public/channel gates are
+required before publication; receipts: TESTING/MERGE_LOG and
+test-results/preview11-beta4-20261107.
+
 ## OrbitUI 1.1.0-beta.3
 
 Published 2026-11-05 11:01:37 UTC, release 435083775, frozen source/tag

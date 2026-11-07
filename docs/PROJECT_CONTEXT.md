@@ -22,6 +22,14 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-07
 
+- **User authorizes 1.1.0-beta.4 preview publication.** Include the completed
+  local alphabet-strip work below; no additional upstream merge or device/server
+  deployment. VERSION and SV/EN release notes advance, stable/latest 1.0 remains
+  fixed. Fresh complete/sealed/native/older-installer/source/history/secret/CI/
+  draft/public/channel gates precede publication. Physical font/gesture/night/
+  sleep/rotation and timing acceptance remains open. Evidence:
+  test-results/preview11-beta4-20261107. Older local-only notes are historical.
+
 - **Local opt-in alphabet strip approved; not published.** User asks to start
   with the letter-strip idea after reviewing Library GUI main acda0adb. Branch
   feature/alphabet-strip-20261107 starts at public 13087a61. Independent host

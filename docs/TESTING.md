@@ -1,5 +1,18 @@
 # Verification and device acceptance
 
+## 2026-11-07 1.1.0-beta.4 preview release
+
+User explicitly requests the next beta with the completed local alphabet strip.
+No additional upstream merge: component source/pins stay fixed. VERSION/SV/EN
+release notes and preview-order regression change; full Lua/LuaJIT scripts,
+43 catalogs, exact committed source/manifest/path/artwork/bootstrap/sync checks,
+sealed root/native input/raster/SQLite/archive supplements, seven actual older
+local installers (adding beta.3), outgoing history/secrets and main/tag CI are
+gates before draft/public byte verification. Evidence:
+test-results/preview11-beta4-20261107. Stable/latest 1.0, old tags and assets
+remain immutable. Physical alphabet gates listed below remain outstanding;
+headless automation does not imply Bigme/Boox acceptance or measured gains.
+
 ## 2026-11-07 local alphabet strip (not released)
 
 Feature approved on feature/alphabet-strip-20261107 from public 13087a61.
