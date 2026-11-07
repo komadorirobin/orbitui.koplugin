@@ -48,6 +48,13 @@ and correct this file in the same change.
   service now scales once, preserving the native external-file stamp and
   non-fill/standalone fallback. Actual minimum/current ImageWidget control
   and native buffers reproduce 20 -> 1 scaler calls, not a device speed ratio.
+  Final executable **20167c74** passes both fresh complete scripts/43 catalogs:
+  110 roots, 551 Bookshelf/zero failures/three normal native SQLite exclusions,
+  13 SimpleUI, 1,184 syntax; sealed roots and retained native supplements pass.
+  Private ZIP **81865063**, 9,548,338 bytes, exact source/2,000 API1 paths;
+  source/history/artwork/secrets pass. No push/CI/release/device/server action;
+  public beta.5/dist **2cc94f4f** and stable/latest 1.0 are unchanged. Actual
+  Bigme opening-time/RSS/visual acceptance remains open; no new ADB connection.
 
 - **Reviewed upstream merge; main push authorized, no release.** User requests
   upstream after the local word suggestions. Branch maintenance/upstream-20261107

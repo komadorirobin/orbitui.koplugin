@@ -44,6 +44,20 @@ baseline/fixed call counts and unchanged pixels. Keep the native external-file
 stamp, fallback, non-fill geometry and standalone behavior. This is a specific
 work reduction, not a claim of twenty-times-faster opening or measured Bigme RAM.
 
+Final executable **20167c74** passes both fresh complete scripts: 134 Python/four
+unchanged optional skips, 110 roots, 551 Bookshelf/zero failures/three normal
+native SQLite exclusions, 13 SimpleUI files, 1,184 syntax and 43 catalogs.
+Sealed roots repeat in Lua/LuaJIT; ten ordinary/eleven actual minimum/current
+ImageWidget/native-buffer cases and retained native input/quick-controls/
+measured-font alphabet/night supplements pass. Exact old renderer reproduces
+20 scales, fixed one 1. Private ZIP **81865063**, 9,548,338 bytes, exact committed
+source, same 2,000 API1 paths/24 helpers/407 identities, held-artwork/secret audits
+and unchanged assets/bootstrap/pins/metadata/sync pass. This is not a replacement
+beta.5 OTA; public dist stays **2cc94f4f**. No push, tag, CI, release, device or
+server change. Physical first/warm timings/RSS/visual acceptance remain open.
+Earlier preliminary artifacts/logs and final candidate are separate; receipt
+docs never rebuild or retag its frozen bytes. Full hashes/limits: TESTING.
+
 ## 2026-11-07 — reviewed Bookshelf 6.3.3 / SimpleUI 3.0.3 (merge/main push only)
 
 User explicitly requests upstream; standing authority includes an audited

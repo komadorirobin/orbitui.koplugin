@@ -54,6 +54,29 @@ acceptance remain open. Do not promise faster cold library opening. No source
 pin, bootstrap/API1 path, VERSION/public beta.5/dist or stable/latest 1.0 change.
 Evidence: test-results/cover-thumbnails-20261108.
 
+**Final executable candidate: 20167c742a23afe1a5d2e7c926edf1a90b4cbeb1.**
+Both fresh complete scripts pass: 134 Python tests/four unchanged optional skips,
+110 root files, 551 Bookshelf suites/zero failures/three normal native SQLite
+exclusions, 13 SimpleUI files, 1,184 syntax files and 43 catalogs. All 110 root
+files run again with the sealed root under Lua/LuaJIT. Ten new ordinary cases,
+eleven with actual minimum/current ImageWidget and native buffers, pass; the
+exact old external renderer reproduces twenty scaler calls and the fixed one
+uses one. Retained minimum/current quick-controls/measured-font alphabet and
+grey/RGB/CBB/software/inverted/Android night supplements pass. Earlier initial
+full logs precede the external-cover fix and are not counted as final gates.
+
+Private same-version archive: **9,548,338 bytes**, expanded **28,257,033**,
+SHA-256
+81865063f9ab712c7b37d7a56d35a9937fb06cf1b7005b0bd064d78118da75f1;
+manifest d24cc9bdc3688af5c78b35b17f6e8bf1fdf760664688cdc58e3d00c1b5d2bb11.
+Exact committed-source projection, the same 2,000 API1 paths/24 helpers/407
+canonical identities, original artwork/bootstrap/pins/metadata/sync owners and
+outgoing held-artwork/secret checks pass. Removing only the optional seams
+reproduces the exact baseline component bytes. Receipt docs do not rebuild or
+replace this frozen private artifact. Public beta.5/dist remains 2cc94f4f;
+stable/latest 1.0 is unchanged. No push, CI run, tag, release, OTA publication,
+ADB write, real-book change, server deployment or new physical acceptance.
+
 ## 2026-11-07 reviewed Bookshelf 6.3.3 / SimpleUI 3.0.3 merge
 
 Merge-only request, including the standing audited main push and prior local
