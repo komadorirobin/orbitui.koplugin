@@ -20,7 +20,7 @@ description). Its source field also pins large canonical buffers after their
 own native cache drops them. Add independent core reuse with the existing shared
 LRU (96 entries/normal 12 MiB; one oversized newest entry stays usable), weak
 source identity and explicit geometry/type/stride/inverse/rotation guards.
-The component has only an optional two-line service seam; standalone remains
+The component has only two small optional service seams; standalone remains
 unchanged. Use the same scaler/arguments, no altered pixels/aspect/crop/quality,
 no forced native free/GC. Source drop(fp), contrast/dropMemory, clear and repeated
 teardown invalidate only derived copies; native nils/errors/results survive.
@@ -28,7 +28,7 @@ External owners win, initialization is lazy, existing adaptive policy applies.
 
 No VERSION/source pin/module-map/helper/asset/bootstrap/API1/runtime-path,
 profile/settings/cache migration, reading/status/sync, production server or
-device change. Nine root regressions/ten with actual minimum/current ImageWidget
+device change. Ten root regressions/eleven with actual minimum/current ImageWidget
 methods and real grey/RGB/CBB/software buffers exercise native helper, complete
 warm-cover renderer, retention, byte limits, failure/retry, stale pixels and
 lifetimes. Existing metadata/navigation/cover/policy tests remain. Synthetic
@@ -36,6 +36,13 @@ work/reference accounting excludes RSS/UI/disk/device latency; full and sealed
 results follow in TESTING. No connected ADB device; actual Bigme opening speed,
 memory pressure and visual acceptance remain open. No push/release authorized.
 Evidence: test-results/cover-thumbnails-20261108.
+
+Also reproduce a warm external replacement-cover downscale on EVERY rebuild.
+Twenty repeated renders now call the same native scaler once instead of twenty
+times; actual minimum/current ImageWidget with native buffers confirms the
+baseline/fixed call counts and unchanged pixels. Keep the native external-file
+stamp, fallback, non-fill geometry and standalone behavior. This is a specific
+work reduction, not a claim of twenty-times-faster opening or measured Bigme RAM.
 
 ## 2026-11-07 — reviewed Bookshelf 6.3.3 / SimpleUI 3.0.3 (merge/main push only)
 

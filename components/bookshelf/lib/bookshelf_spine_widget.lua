@@ -2311,7 +2311,11 @@ function SpineWidget:_renderCover(bb)
                     width            = img_w,
                     height           = img_h,
                 }
-                if not self.cover_fill then img_args.scale_factor = 0 end
+                if not self.cover_fill then img_args.scale_factor = 0
+                elseif SpineWidget.coverThumbFor
+                        and (cached:getWidth() ~= img_w or cached:getHeight() ~= img_h) then
+                    img_args.image = SpineWidget.coverThumbFor(ck, cached, img_w, img_h) or cached
+                end
                 return self:_wrapCoverInCard(
                     ImageWidget:new(img_args), card_w, card_h, border)
             end

@@ -31,7 +31,7 @@ and correct this file in the same change.
   batched/lazy/shared metadata and canonical RAM/disk/hero/thumbnail tiers already
   exist; do not add a second whole-library index or pretend these are new.
   One reproduced defect: native exact-size thumbnail reuse is FIFO, and each
-  entry strongly pins its larger source. Add a two-line optional component seam
+  entry strongly pins its larger source. Add two small optional renderer seams
   and independent core service using the existing shared LRU, max 96 entries/
   normal 12 MiB budget, weak source identity plus geometry/type/inverse/rotation/
   stride checks. Keep one oversized newest entry usable like other native LRUs.
@@ -39,10 +39,15 @@ and correct this file in the same change.
   dropMemory/contrast, clear and repeated teardown retire only derived copies.
   External owners win; initialization is lazy and existing memory-pressure
   policy applies without saved-setting changes. No new runtime path/helper/
-  module-map/pin/bootstrap/version/asset/sync change. Nine standard/ten native
+  module-map/pin/bootstrap/version/asset/sync change. Ten standard/eleven native
   minimum/current ImageWidget/grey-RGB/CBB/software cases and synthetic reference/
   work accounting are in TESTING. No ADB device is available; no measured Bigme
   opening-time/RSS gain. Evidence: test-results/cover-thumbnails-20261108.
+  External replacement covers also bypassed thumbnail reuse on the warm path:
+  twenty repeated smaller-slot renders scaled twenty times. The same bounded
+  service now scales once, preserving the native external-file stamp and
+  non-fill/standalone fallback. Actual minimum/current ImageWidget control
+  and native buffers reproduce 20 -> 1 scaler calls, not a device speed ratio.
 
 - **Reviewed upstream merge; main push authorized, no release.** User requests
   upstream after the local word suggestions. Branch maintenance/upstream-20261107

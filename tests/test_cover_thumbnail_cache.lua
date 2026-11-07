@@ -163,6 +163,33 @@ H.test("the complete native warm-cover renderer uses the service without decodin
     end
     H.eq(calls.art, 1)
 end)
+H.test("external replacement covers reuse exact-size copies instead of rescaling on every rebuild", function()
+    local class, calls = fixture()
+    local source, stamp = buffer(400, 600), "/external/v1"
+    class.externalCoverKey = function() return stamp end
+    compile(render_cover, { SpineWidget = class, CARD_BORDER = 2,
+        ScaledCoverCache = { get = function(_, key) H.eq(key, stamp); return source end },
+        _thumbFor = class._thumbFor,
+        _getRepo = function() error("unexpected external-cover decode") end,
+        ImageWidget = { new = function(_, args)
+            -- Native ImageWidget scales a supplied larger bitmap during _render.
+            if args.image:getWidth() ~= args.width or args.image:getHeight() ~= args.height then
+                args.image = package.loaded["ui/renderimage"]:scaleBlitBuffer(
+                    args.image, args.width, args.height, args.image_disposable)
+            end
+            return args
+        end } })
+    local widget = setmetatable({ book = { filepath = "/book", cover_image_path = "/external.jpg" }, cover_fill = true,
+        _cardDimensions = function() return 64, 94 end,
+        _wrapCoverInCard = function(_, image) return image end }, { __index = class })
+    local first = widget:_renderCover()
+    local last
+    for _i = 1, 19 do last = widget:_renderCover() end
+    H.eq(calls.art, 1, "external cover must scale once, not once per rebuild")
+    H.eq(last.image, first.image)
+    stamp, source = "/external/v2", buffer(400, 600, "replacement")
+    assert(widget:_renderCover().image ~= first.image); H.eq(calls.replacement, 1)
+end)
 local native_image = os.getenv("ORBITUI_NATIVE_THUMB_IMAGE_WIDGET")
 local native_bb = os.getenv("ORBITUI_NATIVE_BB_DIR")
 if jit and native_image and native_bb then
@@ -210,6 +237,27 @@ if jit and native_image and native_bb then
                         image_disposable = false, width = 40, height = 60 }
                     H.eq(scales, 1); H.eq(src:getInverse(), inverse); H.eq(second._bb_disposable, false)
                     first:free(); H.eq(second._bb:getWidth(), 40)
+                    local function exerciseExternal(owner, code)
+                        owner.externalCoverKey = function() return "/native-external-stamp" end
+                        compile(code, { SpineWidget = owner, CARD_BORDER = 2, ImageWidget = image,
+                            ScaledCoverCache = { get = function() return src end } })
+                        local w = setmetatable({ book = { cover_image_path = "/external.jpg" }, cover_fill = true,
+                            _cardDimensions = function() return 44, 64 end,
+                            _wrapCoverInCard = function(_, img) return img end }, { __index = owner })
+                        local before = scales
+                        for _i = 1, 20 do
+                            local img = w:_renderCover()
+                            H.eq(img._bb:getPixel(10, 15):getColor8().a, ref:getPixel(10, 15):getColor8().a)
+                            img:free()
+                        end
+                        return scales - before
+                    end
+                    local old_spine = os.getenv("ORBITUI_NATIVE_THUMB_BASELINE")
+                    if old_spine then
+                        local old_render = assert(read(old_spine):match("(function SpineWidget:_renderCover%(bb%).-\nend)\n"))
+                        H.eq(exerciseExternal({}, old_render), 20, "exact baseline must reproduce repeat scaling")
+                    end
+                    H.eq(exerciseExternal(class, render_cover), 1, "new external covers must reuse scaled pixels")
                     local weak = setmetatable({ src }, { __mode = "v" })
                     src = nil; collectgarbage("collect"); collectgarbage("collect"); H.eq(weak[1], nil)
                     require("infra/sui_memory").reset(); H.eq(second._bb:getHeight(), 60)

@@ -175,7 +175,7 @@ auto-execution configured; this still needs real KOReader verification.
 ## C04: Bounded background work and cache correctness
 
 November 8 approved local cover-reuse maintenance: exact-size Bookshelf copies
-delegate through an optional two-line renderer seam to the existing shared LRU,
+delegate through small optional renderer seams to the existing shared LRU,
 not another source/disk cache. Normal cap 12 MiB/96 entries; retain the newest
 oversized image, borrow pixels and report releases through existing Memory.
 Source references are weak; current source identity, geometry, stride, type,
@@ -188,6 +188,9 @@ reattachment resets work, and external thumbnail owners win. No new metadata
 index, invalidation suppression, eager worker, settings/reading/sync writer or
 installed path. Source/cache/native ImageWidget and real-buffer supplements
 remain separate from physical Bigme timing/RSS/image-pressure acceptance.
+The warm external replacement-cover path uses the same service only for
+fill-mode downscales; retain its native path/mtime/size key, original geometry,
+aspect-preserving fallback and standalone behavior. No extra stat or decoding.
 
 November 4 reviewed 1.1 import: upstream's moved-BIM/series fix must retain the
 host's cooperative eight-row, blob-free, read-only refresh and visibility/cancel

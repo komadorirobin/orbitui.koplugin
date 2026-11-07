@@ -12,19 +12,23 @@ test_cover_thumbnail_cache executes the actual native helper and complete
 warm-cover renderer. The exact baseline fails hot-entry promotion, proving its
 queue is FIFO, not LRU. The new shared byte-bounded LRU uses weak source identity
 so derived copies cannot pin larger canonical buffers; geometry/type/rotation/
-inverse/strides must still match. Nine ordinary cases cover reuse, independent
+inverse/strides must still match. Ten ordinary cases cover reuse, independent
 size/identity, failure/retry, 24-colour-cover working set, 12 MiB/96-entry limits
 (one oversized newest entry remains usable), surgical native invalidations/
 return-nils/errors, live borrowed widgets, repeated teardown and external owners.
 The loader regression verifies both explicit module adapters without eager work.
 
-Optional tenth case runs actual ImageWidget _loadimage/_render/free from
+Optional eleventh case runs actual ImageWidget _loadimage/_render/free from
 v2025.08 and 9040116701c888889bd35233b23b83283be66745 with real native grey/RGB
 Blitbuffers, CBB/software and normal/inverse modes. Compare every output pixel
 and borrowed-image lifetime, reuse and weak cdata-source collection. Native BB
 scaling stands in for RenderImage's scaler: this is not MuPDF performance or
 physical rendering acceptance. No source pixels, saved budgets, disk-cache/
 contrast policy, metadata/reading/sync owner or installed paths change.
+This also executes the complete native external-cover path with minimum/current
+ImageWidget: frozen d1b6754e scales twenty times across twenty warm smaller-slot
+renders; the optimized path scales once. Compare pixels and replacement stamps,
+retaining fill/non-fill/standalone behavior. No measured device latency follows.
 
 Reproduce work/reference accounting with:
 
