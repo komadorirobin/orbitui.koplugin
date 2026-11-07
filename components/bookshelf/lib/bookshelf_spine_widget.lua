@@ -1141,6 +1141,8 @@ end
 local THUMB_CAP = 96
 local _thumbs, _thumb_order = {}, {}
 local function _thumbFor(fp, src, w, h)
+    -- Optional host-owned bounded reuse; standalone Bookshelf stays unchanged.
+    if SpineWidget.coverThumbFor then return SpineWidget.coverThumbFor(fp, src, w, h) end
     local key = fp .. "|" .. w .. "x" .. h
     local e = _thumbs[key]
     if e and e.src == src then return e.bb end

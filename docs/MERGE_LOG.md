@@ -4,6 +4,39 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — local exact-size cover reuse maintenance (no import/publication)
+
+User approves investigating Library GUI's metadata/cover reuse ideas. Start
+clean at main d1b6754e on performance/library-cache-20261108; both prior main
+CI 42421134956 and upstream monitor 42421134933 succeeded. Reference remains
+read-only Library GUI acda0adbc3035b91d43ffe674b17409b28f9b781. No upstream code,
+engine, artwork, cache format or benchmark numbers are imported. Existing native
+metadata batching/lazy records/shared derivations and cover RAM/disk/hero/exact-
+size reuse are already present; no speculative duplicate index/cache is added.
+
+The actual thumbnail helper fails a new counterfactual: hitting a recently used
+entry does not promote it, so the next arrival evicts it (FIFO despite the LRU
+description). Its source field also pins large canonical buffers after their
+own native cache drops them. Add independent core reuse with the existing shared
+LRU (96 entries/normal 12 MiB; one oversized newest entry stays usable), weak
+source identity and explicit geometry/type/stride/inverse/rotation guards.
+The component has only an optional two-line service seam; standalone remains
+unchanged. Use the same scaler/arguments, no altered pixels/aspect/crop/quality,
+no forced native free/GC. Source drop(fp), contrast/dropMemory, clear and repeated
+teardown invalidate only derived copies; native nils/errors/results survive.
+External owners win, initialization is lazy, existing adaptive policy applies.
+
+No VERSION/source pin/module-map/helper/asset/bootstrap/API1/runtime-path,
+profile/settings/cache migration, reading/status/sync, production server or
+device change. Nine root regressions/ten with actual minimum/current ImageWidget
+methods and real grey/RGB/CBB/software buffers exercise native helper, complete
+warm-cover renderer, retention, byte limits, failure/retry, stale pixels and
+lifetimes. Existing metadata/navigation/cover/policy tests remain. Synthetic
+work/reference accounting excludes RSS/UI/disk/device latency; full and sealed
+results follow in TESTING. No connected ADB device; actual Bigme opening speed,
+memory pressure and visual acceptance remain open. No push/release authorized.
+Evidence: test-results/cover-thumbnails-20261108.
+
 ## 2026-11-07 — reviewed Bookshelf 6.3.3 / SimpleUI 3.0.3 (merge/main push only)
 
 User explicitly requests upstream; standing authority includes an audited

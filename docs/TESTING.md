@@ -1,5 +1,55 @@
 # Verification and device acceptance
 
+## 2026-11-08 local Library-GUI-inspired thumbnail reuse
+
+User approves investigating metadata/cover reuse and implementing justified
+optimizations. This is not a merge/push/release/device/server request. Baseline
+d1b6754e, performance/library-cache-20261108; stable 1.0 and public beta.5 remain
+immutable. Existing batched/lazy/shared text, canonical RAM/disk, hero and
+exact-size thumbnail caches are retained, not credited as new work.
+
+test_cover_thumbnail_cache executes the actual native helper and complete
+warm-cover renderer. The exact baseline fails hot-entry promotion, proving its
+queue is FIFO, not LRU. The new shared byte-bounded LRU uses weak source identity
+so derived copies cannot pin larger canonical buffers; geometry/type/rotation/
+inverse/strides must still match. Nine ordinary cases cover reuse, independent
+size/identity, failure/retry, 24-colour-cover working set, 12 MiB/96-entry limits
+(one oversized newest entry remains usable), surgical native invalidations/
+return-nils/errors, live borrowed widgets, repeated teardown and external owners.
+The loader regression verifies both explicit module adapters without eager work.
+
+Optional tenth case runs actual ImageWidget _loadimage/_render/free from
+v2025.08 and 9040116701c888889bd35233b23b83283be66745 with real native grey/RGB
+Blitbuffers, CBB/software and normal/inverse modes. Compare every output pixel
+and borrowed-image lifetime, reuse and weak cdata-source collection. Native BB
+scaling stands in for RenderImage's scaler: this is not MuPDF performance or
+physical rendering acceptance. No source pixels, saved budgets, disk-cache/
+contrast policy, metadata/reading/sync owner or installed paths change.
+
+Reproduce work/reference accounting with:
+
+    lua tests/benchmark_cover_thumbnails.lua
+    luajit tests/benchmark_cover_thumbnails.lua
+
+Mixed symbolic trace: 769 requests, baseline 389 scales / optimized 385 (four
+unnecessary hot-image scales removed, not a general latency claim). After cold
+source references are dropped and collected, old thumbnails keep 95 sources
+representing 91,200,000 pixel bytes; the new cache keeps zero source references.
+This is reference/nominal-pixel-byte accounting, NOT measured RSS or device RAM
+saved, and excludes canonical buffers still legitimately held elsewhere. Both
+paths scale a 24-cover colour page once each across 264 repeated requests.
+For 200 larger colour copies the new cache retains 52 entries/12,480,000 bytes;
+the old 96-entry queue would retain 23,040,000 thumbnail bytes plus its sources.
+Fixtures use symbolic buffers, so no emulator/UI/SQLite/disk/e-ink timings follow.
+
+Both complete scripts/catalogs and a clean committed-source same-version archive
+plus sealed/native reruns must pass before readiness. Results follow below.
+No ADB device is connected: Bigme first/warm Library and Manga timings, real
+memory pressure/RSS, custom/contrast/night/rotation/sleep visual and touch
+acceptance remain open. Do not promise faster cold library opening. No source
+pin, bootstrap/API1 path, VERSION/public beta.5/dist or stable/latest 1.0 change.
+Evidence: test-results/cover-thumbnails-20261108.
+
 ## 2026-11-07 reviewed Bookshelf 6.3.3 / SimpleUI 3.0.3 merge
 
 Merge-only request, including the standing audited main push and prior local

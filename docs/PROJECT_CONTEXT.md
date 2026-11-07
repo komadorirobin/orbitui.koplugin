@@ -20,7 +20,29 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-07
+## Snapshot: 2026-11-08
+
+- **Local Library-GUI-inspired thumbnail cache maintenance; not pushed/released.**
+  User approves investigating metadata/cover reuse after clarifying that the
+  performance reference was Library GUI, not Bookshelf's publication-year
+  benchmark. Branch performance/library-cache-20261108 starts clean at published
+  main d1b6754e (November 7 CI 42421134956 and upstream watch 42421134933 passed).
+  No merge/push/release/ADB/server action is authorized by this step. Native
+  batched/lazy/shared metadata and canonical RAM/disk/hero/thumbnail tiers already
+  exist; do not add a second whole-library index or pretend these are new.
+  One reproduced defect: native exact-size thumbnail reuse is FIFO, and each
+  entry strongly pins its larger source. Add a two-line optional component seam
+  and independent core service using the existing shared LRU, max 96 entries/
+  normal 12 MiB budget, weak source identity plus geometry/type/inverse/rotation/
+  stride checks. Keep one oversized newest entry usable like other native LRUs.
+  Original scaler arguments/pixels/borrowing remain; native source drop,
+  dropMemory/contrast, clear and repeated teardown retire only derived copies.
+  External owners win; initialization is lazy and existing memory-pressure
+  policy applies without saved-setting changes. No new runtime path/helper/
+  module-map/pin/bootstrap/version/asset/sync change. Nine standard/ten native
+  minimum/current ImageWidget/grey-RGB/CBB/software cases and synthetic reference/
+  work accounting are in TESTING. No ADB device is available; no measured Bigme
+  opening-time/RSS gain. Evidence: test-results/cover-thumbnails-20261108.
 
 - **Reviewed upstream merge; main push authorized, no release.** User requests
   upstream after the local word suggestions. Branch maintenance/upstream-20261107

@@ -121,6 +121,22 @@ H.test("updaters are resolved through OrbitUI even after cache eviction", functi
     H.eq(sui.hasUpdate(), false)
     H.eq(sui.scheduleAutoCheck(), nil)
 end)
+H.test("the real loader installs lazy thumbnail reuse and native source-cache invalidations", function()
+    local load, calls = loadfile, 0
+    _G.loadfile = function(path)
+        if path == root .. "/components/bookshelf/lib/bookshelf_spine_widget.lua" then
+            return function() calls = calls + 1; return {} end
+        end
+        return load(path)
+    end
+    local ok, cover = pcall(require, "lib/bookshelf_spine_widget")
+    _G.loadfile = load
+    assert(ok, cover); H.eq(calls, 1)
+    H.eq(type(cover.coverThumbFor), "function"); H.eq(cover._orbitui_cover_thumbnails, nil)
+    H.eq(require("lib/bookshelf_spine_widget"), cover)
+    local cache = require("lib/bookshelf_scaled_cover_cache")
+    H.eq(cache._orbitui_thumbnail_invalidation, true)
+end)
 H.test("same-root install is idempotent and a second root is rejected", function()
     local n = #(package.searchers or package.loaders)
     Runtime.install(root, map)

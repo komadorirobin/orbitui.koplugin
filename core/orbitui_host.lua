@@ -159,6 +159,79 @@ function M.shareLightMetadata(repo)
     end
 end
 
+-- Exact-size copies already produced by Bookshelf's native renderer. Reuse
+-- the shared byte-bounded LRU rather than the component's FIFO, and do not
+-- pin the much larger canonical source after its own cache has evicted it.
+-- No pixels, disk-cache policy, saved budget or scaling algorithm changes.
+local thumbnail_caches = setmetatable({}, { __mode = "k" })
+function M.coverThumbnails(widget)
+    if widget.coverThumbFor then return end -- an external owner wins
+    local cache, Memory, registered
+    local function reset()
+        if cache then cache:clear() end
+        registered = false
+    end
+    widget.coverThumbFor = function(fp, src, w, h)
+        if type(fp) ~= "string" or fp == "" or not src
+                or type(w) ~= "number" or type(h) ~= "number"
+                or w < 1 or h < 1 or w ~= w or h ~= h
+                or w == math.huge or h == math.huge then return nil end
+        if not cache then
+            Memory = require("infra/sui_memory")
+            cache = require("infra/sui_lru").new{ max_entries = 96, max_bytes = 12 * MiB }
+            thumbnail_caches[cache] = true
+            widget._orbitui_cover_thumbnails = cache
+            M.performanceCache(cache, "thumbnail")
+        end
+        if not registered then Memory.onReset(reset); registered = true end
+        local ok, sw, sh, kind, rotation, inverse, stride, pixel_stride = pcall(function()
+            return src:getWidth(), src:getHeight(), src.getType and src:getType(),
+                src.getRotation and src:getRotation(), src.getInverse and src:getInverse(),
+                tonumber(src.stride), tonumber(src.pixel_stride)
+        end)
+        if not ok then return nil end
+        local key = w .. "x" .. h
+        local hit = cache:get(key, fp)
+        if hit and hit.source[1] == src and hit.sw == sw and hit.sh == sh
+                and hit.kind == kind and hit.rotation == rotation
+                and hit.inverse == inverse and hit.stride == stride
+                and hit.pixel_stride == pixel_stride then return hit.bb end
+        local success, scaled = pcall(function()
+            return require("ui/renderimage"):scaleBlitBuffer(src, w, h, false)
+        end)
+        if not (success and scaled) then return nil end
+        local bytes = Memory.bbBytes(scaled)
+        if bytes > 0 then
+            cache:put(key, {
+                bb = scaled, source = setmetatable({ src }, { __mode = "v" }),
+                sw = sw, sh = sh, kind = kind, rotation = rotation, inverse = inverse,
+                stride = stride, pixel_stride = pixel_stride,
+            }, bytes, fp)
+        end
+        return scaled
+    end
+end
+
+-- The original source cache still owns refresh, contrast changes and disk
+-- deletion. Retire only our derived copies, preserving native nils/errors.
+function M.thumbnailSourceCache(module)
+    if module._orbitui_thumbnail_invalidation then return end
+    module._orbitui_thumbnail_invalidation = true
+    for _, key in ipairs{ "drop", "dropMemory", "clear" } do
+        local native = module[key]
+        if type(native) == "function" then
+            module[key] = function(self, ...)
+                local fp = ...
+                for cache in pairs(thumbnail_caches) do
+                    if key == "drop" then pcall(cache.removeScope, cache, fp)
+                    else pcall(cache.clear, cache) end
+                end
+                return native(self, ...)
+            end
+        end
+    end
+end
+
 local function memory()
     local util = package.loaded.util
     if not util then local ok, loaded = pcall(require, "util"); if ok then util = loaded end end

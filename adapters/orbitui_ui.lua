@@ -84,6 +84,7 @@ function M.wrap(name, module)
         require("core/orbitui_host").performanceCache(module, "home")
     elseif name == "lib/bookshelf_scaled_cover_cache" then
         require("core/orbitui_host").performanceCache(module, "shelf")
+        require("core/orbitui_host").thumbnailSourceCache(module)
     elseif name == "engines/sui_screen_engine" then
         require("core/orbitui_host").timeMethod(module, "_open", "home")
         require("core/orbitui_host").timeMethod(module, "openBook", "open")
@@ -188,6 +189,7 @@ function M.wrap(name, module)
         end
     elseif name == "lib/bookshelf_spine_widget" then
         require("adapters/orbitui_cover_labels").cover(module)
+        require("core/orbitui_host").coverThumbnails(module)
     elseif name == "lib/bookshelf_spine_shelf" then
         require("adapters/orbitui_book_bindings").renderer(module)
     elseif name == "lib/bookshelf_series_boxes" then

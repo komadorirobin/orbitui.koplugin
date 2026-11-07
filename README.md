@@ -118,6 +118,16 @@ för hjälp. Förslagen följer vald avgränsning men kan vara ofullständiga n�
 cachen är kall. Inga nya filskanningar, EPUB-läsningar eller nätanrop görs
 medan du skriver.
 
+**Development only:** shelf/list exact-size cover copies use byte-bounded LRU
+reuse without retaining their larger source buffers. Rendering, image quality,
+native disk caches and saved cover budgets stay unchanged. This is not a
+measured Bigme Library/Manga opening-time improvement.
+
+**Endast utvecklingskod:** hyllans/listans storleksanpassade omslagskopior
+återanvänds med en bytebegränsad LRU-cache utan att hålla kvar de större
+källbilderna. Rendering, bildkvalitet, diskcache och sparade omslagsbudgetar
+ändras inte. Snabbare öppning av Bibliotek/Manga på Bigme är ännu inte uppmätt.
+
 **Since 1.1.0-beta.4:** optional **Alphabet strip**, OFF by default. Enable it
 per view through **footer counter ▾ > Sort, filter & view > Alphabet strip**.
 Tap a letter, or drag to preview a large letter and release to jump within the
