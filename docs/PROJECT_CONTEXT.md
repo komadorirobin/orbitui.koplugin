@@ -42,6 +42,13 @@ and correct this file in the same change.
   Tests and physical gaps: TESTING/MERGE_LOG; evidence in
   test-results/alphabet-strip-20261107. Physical fonts, drag ergonomics, theme/
   night/rotation, interrupted gestures and Bigme timings remain unaccepted.
+  Local source ce918297 passes final sealed roots under both interpreters,
+  22 standard/23 raster alphabet cases, native minimum/current input and six
+  actual older local installer scenarios; complete scripts/43 catalogs pass.
+  Development ZIP 55ca742e is 9,506,144 bytes, same 2,000 API1 paths. Source/
+  artwork/history/secrets pass. VERSION/public beta.3 dist dbaa735a remain
+  unchanged. No push/release/tag/device/server action. This is not an offered
+  beta.3 replacement; receipt docs do not rebuild the frozen private archive.
 
 - **User authorizes reviewed merge and next release: 1.1.0-beta.3 preview.**
   Branch maintenance/upstream-beta3-20261105 includes local Series / Volumes

@@ -3,22 +3,47 @@
 ## 2026-11-07 local alphabet strip (not released)
 
 Feature approved on feature/alphabet-strip-20261107 from public 13087a61.
-test_alphabet_strip has 19 standard cases: Unicode/#/ÅÄÖ/reverse/native sort
+test_alphabet_strip has 22 standard cases: Unicode/#/ÅÄÖ/reverse/native sort
 keys and proxies, default-off/untouched geometry and settings, gesture routing,
 coalesced zero-read/no-rebuild drag, release outside strip, scoped quick filters,
 missing/error/partial data, real native module visual-slot mapping, fixed-profile
 folder priority, actual spine cursor semantics, unsupported contexts, stale/
 covered/closed/rotated/suspended owners, interrupted bubble restoration, visible
-resume, landscape/tight margins and future/per-place bilingual preferences.
+resume, first-tap ownership after reader/navigation return, dark page paint
+space, owned text cleanup, landscape/tight margins and future/per-place
+bilingual preferences.
 
 Both Lua and LuaJIT pass with actual minimum/current KOReader InputContainer/
-WidgetContainer modules. An optional 20th real Blitbuffer/ClipBB supplement
+WidgetContainer modules. An optional 23rd real Blitbuffer/ClipBB supplement
 passes grey/RGB x CBB/software x inverse, including IS_ANDROID=1: outside pixels
 and target buffer flags stay unchanged and bubble/strip contrast remains.
 These use stubbed font glyphs, not physical font shaping/screenshots. Evidence:
-test-results/alphabet-strip-20261107. Full/sealed/package verification remains a
-gate before completion; no source pin, bootstrap, installed path, public dist,
-VERSION, user-device or server change is authorized in this turn.
+test-results/alphabet-strip-20261107. No source pin, bootstrap, installed path,
+public dist, VERSION, user-device or server change is authorized in this turn.
+
+Verification complete locally. Both full scripts and 43 catalogs pass: 134
+Python tests/four existing skips, 107 root files, 549 unchanged Bookshelf
+suites/zero failures/three normal native SQLite exclusions, 13 SimpleUI files
+and 1,178 syntax files. The launch fixture now supplies/asserts the new adapter
+hook; no failure baseline is raised. After the final palette/reader-return
+follow-ups, frozen candidate **ce918297ab6dc95de035d036c2db209f36fd136b** repeats
+all 107 sealed root files in Lua/LuaJIT, including 22 ordinary/23 raster alphabet
+cases, minimum/current native input, Trapper/VerticalSpan, real SQLite tag index/
+series, native archive/JSON/UIManager tags and CBB/software grey/RGB supplements.
+Components themselves remain byte-identical. Six actual older native installers
+(Beta 5/9/29/RC2/stable1.0/beta.2) pass local validation/activation/restart/
+rollback/interruption/snapshot/cleanup scenarios on that final archive.
+
+Private development ZIP **9,506,144 bytes**, expanded **28,133,591**, SHA-256
+`55ca742e65606c8bfb5b2727d6fee2a19af573bccd0e78f03e5cc84e13b4e1b5`;
+manifest `8ab1b0d6d1280adb1be401acf095d3cf46540bdb3e2811842e432d5adef5d0ae`.
+Exact-source projection, original artwork, unchanged API1/bootstrap/module map/
+2,000 paths/components/pins/sync owners and outgoing held-artwork/secret scans
+pass. Public dist remains beta.3 SHA dbaa735a. The private archive retains the
+unchanged VERSION for testing only: it is NOT a replacement beta.3 release or
+OTA. No push, public release/tag, CI publication, ADB or server action. Earlier
+candidate evidence is preserved under initial-e2e; receipt docs do not rebuild
+the frozen private archive. Physical gates below remain outstanding.
 
 Required physical checks: SV/EN portrait/landscape and large UI/fonts; right
 margin/thumb ergonomics and short-layout letter density; Manga series boxes,

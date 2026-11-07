@@ -42,6 +42,22 @@ Swedish/English. Targeted standard/native input and raster checks are in TESTING
 full/sealed/package gates remain required. No public/device/server action or
 measured Bigme performance claim. Evidence: test-results/alphabet-strip-20261107.
 
+Verification: both full scripts/43 catalogs pass, 134 Python/four existing skips,
+107 root/549 unchanged Bookshelf/13 SimpleUI files, 1,178 syntax files; no raised
+exceptions. Extend the launch fixture for the new alphabet hook and assert one
+registration. Final palette follows native page paint-space luminance rather
+than putting white chrome on a manually dark shelf. Renewal on reader/nav
+return prevents an untouched old generation from swallowing the first tap.
+Frozen **ce918297** repeats all final sealed roots in Lua/LuaJIT, 22 standard/
+23 raster alphabet cases, real minimum/current input, native UI/archive/SQLite/
+night supplements and six older local native OTA installer scenarios. Private
+ZIP **55ca742e** (9,506,144 bytes) keeps exactly 2,000 API1 paths and unchanged
+components/pins/artwork/bootstrap/sync owners. Exact source/history/held-artwork/
+secret checks pass. Earlier archive evidence stays under initial-e2e. Public
+dist remains **dbaa735a** and VERSION is unchanged; the private archive is not
+an offered beta.3 replacement. No push/release/tag/device/server action or new
+physical acceptance. Receipt docs do not rebuild the frozen private artifact.
+
 ## 2026-11-05 — reviewed SimpleUI follow-up and 1.1 beta.3 preparation
 
 User explicitly requests upstream merge and next release. Keep stable 1.0
