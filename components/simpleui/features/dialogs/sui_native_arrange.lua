@@ -111,7 +111,10 @@ local function present(sort_widget)
                 end
                 -- Keep the native identity: hosted NativeSheets otherwise
                 -- replaces ButtonDialog with a different window (C10).
-                dialog = ButtonDialog:new{ sui_native = true, shrink_unneeded_width = true, buttons = buttons }
+                dialog = ButtonDialog:new{
+                    sui_native = true, shrink_unneeded_width = true, buttons = buttons,
+                    tap_close_callback = function() if popup == dialog then popup = nil end end,
+                }
                 popup = dialog
                 UIManager:show(dialog)
             end,

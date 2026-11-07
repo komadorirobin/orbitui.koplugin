@@ -20,7 +20,13 @@ local sv = { ["Sort"] = "Sortera", ["Sort A to Z"] = "Sortera A till Ö",
     ["Sort Z to A"] = "Sortera Ö till A", ["Sort A to Z (natural)"] = "Sortera A till Ö (naturligt)",
     ["Sort Z to A (natural)"] = "Sortera Ö till A (naturligt)" }
 package.loaded.gettext = function(s) return locale == "sv" and sv[s] or s end
-package.loaded["ui/widget/buttondialog"], package.loaded["ui/widget/sortwidget"] = W, SortWidget
+local Dialog = W:extend{}
+local native_dialog = os.getenv("ORBITUI_NATIVE_ARRANGE_DIALOG_FILE")
+if native_dialog then
+    compile(assert(read(native_dialog):match("(function ButtonDialog:onClose%(%).-\nend)\n")),
+        { ButtonDialog = Dialog, UIManager = UI })
+end
+package.loaded["ui/widget/buttondialog"], package.loaded["ui/widget/sortwidget"] = Dialog, SortWidget
 package.loaded["ui/uimanager"], package.loaded.logger = UI, { warn = function() end }
 function Window:new(o)
     opts = o; win = { _wrapper = {} }
@@ -91,6 +97,16 @@ H.test("retired, covered or replaced sort dialogs cannot save to an old collecti
         else package.loaded["apps/filemanager/filemanager"] = nil end
         popup.buttons[3][1].callback(); H.eq(saves, 0, why); H.eq(f.source[1].file, "/10")
     end
+end)
+H.test("dismissed native sort popup reopens without reviving its stale buttons", function()
+    local f = fixture(); f.footer.on_tap(); local old = stack[#stack]
+    if native_dialog then old:onClose()
+    else old.tap_close_callback(); UI:close(old) end
+    H.eq(stack[#stack], f.win._wrapper)
+    f.footer.on_tap(); local popup = stack[#stack]; assert(popup ~= old)
+    H.eq(#popup.buttons, 4)
+    old.tap_close_callback(); old.buttons[3][1].callback(); H.eq(saves, 0)
+    popup.buttons[3][1].callback(); H.eq(saves, 1); H.eq(f.source[1].file, "/1")
 end)
 H.test("arrange moves keep native callbacks and foreign SortWidgets stay native", function()
     local f = fixture(); local items = f.opts.items
