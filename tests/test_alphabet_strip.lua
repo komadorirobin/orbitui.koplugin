@@ -287,6 +287,12 @@ H.test("removing an inactive layer clears its old state and frees only its own t
     Adapter.attachAlphabet(w); H.eq(w._orbitui_alphabet, nil)
     H.eq(w[1]._orbitui_alphabet_layer, nil); flush(); H.eq(strip.labels, nil)
 end)
+H.test("a pinned dark page gets dark strip paper without changing night mode or saved settings", function()
+    local w = reset(true)
+    w._pageGroundColor = function() return { getColor8 = function() return { a = 10 } end } end
+    w:_rebuild(); H.eq(w._orbitui_alphabet.paper, 0); H.eq(w._orbitui_alphabet.ink, 255)
+    H.eq(writes, 0); H.eq(reads, 0)
+end)
 H.test("landscape and tight margins stay inside the dock-safe viewport", function()
     local w = reset(true); width, height = 1200, 600
     w._shelf_dims.PAD = 36; w._shelf_dims.wipe_rows_top = 150; w:_rebuild()

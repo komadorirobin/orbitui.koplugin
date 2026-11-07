@@ -465,6 +465,14 @@ local function alphabetWidgets()
     end
     function AlphabetStrip:init()
         self.letters = Order.alphabetLetters(self.context.reverse)
+        -- A monochrome navigation surface follows the native page's PAINT
+        -- space, including a pinned dark theme with device inversion OFF.
+        local BB = require("ffi/blitbuffer")
+        self.ink, self.paper = BB.COLOR_BLACK, BB.COLOR_WHITE
+        if self.owner._pageGroundColor then
+            local ok, value = pcall(function() return self.owner:_pageGroundColor():getColor8().a end)
+            if ok and value < 128 then self.ink, self.paper = BB.COLOR_WHITE, BB.COLOR_BLACK end
+        end
         self.ges_events = {}
         for event, gesture in pairs{ LetterTap = "tap", LetterPan = "pan", LetterRelease = "pan_release",
                 LetterSwipe = "swipe", LetterHold = "hold", LetterHoldPan = "hold_pan", LetterHoldRelease = "hold_release" } do
@@ -518,8 +526,8 @@ local function alphabetWidgets()
     end
     function AlphabetStrip:paintTo(bb)
         if self.retired then return end
-        local BB, Font, Text = require("ffi/blitbuffer"), require("ui/font"), require("lib/bookshelf_colour_text")
-        local r, ink, paper = self.rect, BB.COLOR_BLACK, BB.COLOR_WHITE
+        local Font, Text = require("ui/font"), require("lib/bookshelf_colour_text")
+        local r, ink, paper = self.rect, self.ink, self.paper
         local slot = r.h / #self.letters
         local size = math.max(7, math.min(11, math.floor(slot / Screen:scaleBySize(1))))
         self.labels = self.labels or {}
