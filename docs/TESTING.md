@@ -10,13 +10,14 @@ or relaxing msgfmt. The changed popup kit must be regenerated in its existing
 exact lazy embed; same 24 helpers/407 identities/2,000 paths/bootstrap/assets.
 VERSION/public beta.5/dist and stable/latest 1.0 remain unchanged.
 
-Eight host regressions execute actual full book-modal assembly, complete native
+Nine host regressions execute actual full book-modal assembly, complete native
 Arrange module/showArrange footer callbacks and actual virtual-list producer.
 Check Cover text/icon crop feedback, scroll crop/HTML/resource ownership,
 four sorts/metadata identity, repeated native own-save table replacement,
 closed/covered/replaced/FM/path/navigation guards, native popup identity,
-gettext labels and repaired plural syntax. Native UIManager repaint/invert
-from v2025.08 and 9040116701c888889bd35233b23b83283be66745 add a ninth case:
+dismiss/reopen without reviving old callbacks, gettext labels and repaired plural
+syntax. Native UIManager repaint/invert from v2025.08 and
+9040116701c888889bd35233b23b83283be66745 add a tenth case:
 the exact old modal fails text/icon feedback, while the new one passes. Widget
 painting is a fixture; no physical glyph/panel output is implied. Retain all
 word-suggestion/alphabet/tag/reader/settings/night/external-owner tests.
@@ -30,6 +31,40 @@ night/sleep/rotation and actual timings remain open. Neither the MediaTek Kindle
 report nor desktop tests prove a Bigme speedup. No reading data, accounts,
 external sync writer, installed patch or production server is changed.
 Evidence: test-results/upstream-20261107.
+
+**Final executable candidate: 99dd847a14f5a3525a8c8f2c34fe96603a67de41.**
+Both complete scripts pass on this final runtime: 134 Python tests/four unchanged
+optional skips, 109 root files, 551 Bookshelf suites/zero failures/three normal
+native SQLite exclusions, 13 SimpleUI files, 1,182 syntax files and 43 catalogs.
+All 109 root files repeat from the sealed archive under Lua/LuaJIT. The nine
+new cases pass; all ten with actual minimum/current UIManager and native dialog
+Close pass in both interpreters, including the premerge failure counterfactual.
+Retained native input/quick-control/measured-font alphabet, all three native
+suggestion-dialog versions, Trapper/VerticalSpan, SQLite tag/series, native EPUB
+archive and grey/RGB/software/CBB/inverted/Android night supplements pass.
+
+Earlier full attempts exposed stale 6.3.2 version expectations and a test-only
+single-line PO-header assumption. Update the version assertion to 6.3.3 and
+exercise the real PO reader with the now-wrapped Russian header; no runtime
+parser or failure baseline is relaxed. A preliminary full Lua pass preceded
+the final dismiss/reopen correction and is not counted above. The final Lua
+and LuaJIT logs both include that correction; all checks use the frozen candidate.
+
+Private development-only, same-version archive: **9,542,014 bytes**, expanded
+**28,238,338**, SHA-256
+`79615586858a41b5ccf70ae8341c0890a46da45bf62f63308e21c129f8f7c14b`;
+manifest `572382740ba3a56a9f2e49a6790caf5dcdccabbdace97dd92d17ef03e0463ce7`.
+Exact committed-source projection, original 2,000 API1 paths/24 lazy helpers/
+407 identities, unsquashed reviewed pins, artwork/bootstrap/sync owners and
+all outgoing held-artwork/secret checks pass. Eight actual older local OTA
+installers (0.1 beta5/9/29, RC2, stable1.0, 1.1 beta2/3/4) pass validation,
+activation/restart/rollback/interruption/recovery/external snapshot/obsolete
+cleanup. No public-HTTPS upgrade to this private same-version candidate exists.
+Read-only final upstream observation sees both reviewed tips current/zero missing
+commits. Main CI is verified after the audited push; logs remain in the evidence
+directory. Receipt docs never rebuild or retag this archive. Public beta.5/dist
+2cc94f4f, stable/latest 1.0 and maintenance/1.0 remain unchanged. No physical
+device, production server, release, OTA channel, reading or external sync action.
 
 ## 2026-11-07 local search word suggestions
 

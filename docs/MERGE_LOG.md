@@ -49,6 +49,23 @@ Both full scripts/catalogs/sealed/native/old-installer/source/history/secret and
 main CI precede final receipt. No physical Bigme speedup or new acceptance is
 inferred. Evidence: test-results/upstream-20261107.
 
+Final executable candidate **99dd847a** also handles native sort-popup dismissal:
+cancel/outside Close releases only that popup; reopening works and old buttons
+cannot save or clear a newer popup. Root tests update the expected component
+version and use the actual PO reader for wrapped headers, without loosening
+catalog/runtime checks. Both final complete scripts pass: 134 Python/four
+unchanged optional skips, 109 roots, 551 Bookshelf/zero failed/three normal
+native SQLite exclusions, 13 SimpleUI files, 1,182 syntax and 43 catalogs.
+Sealed roots repeat in Lua/LuaJIT; nine new cases/ten with actual minimum/current
+UIManager/native dialog Close and all retained native supplements pass. Eight
+older actual local installers pass. Private ZIP **79615586**, 9,542,014 bytes,
+same 2,000 API1 paths/24 helpers/407 identities, exact committed source, original
+artwork/bootstrap/sync owners and outgoing history/secret audits pass. The final
+observation reports zero missing commits for both reviewed tips. Main push is
+the authorized delivery; its CI is checked afterward. Public beta.5/dist and
+stable/latest 1.0 are unchanged. No new release or physical/device/server/sync
+action. Receipt docs do not rebuild or replace the frozen private archive.
+
 ## 2026-11-07 — local search word suggestions approved
 
 User confirms beta.5 alphabet visibility and requests the next Library GUI

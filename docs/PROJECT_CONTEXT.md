@@ -38,10 +38,21 @@ and correct this file in the same change.
   asset, dependency, migration, sync owner or bootstrap/version change.
   Preserve word suggestions/alphabet visibility plus prior profile/Home/Manga/
   series/ornament/BookOrbit/MAL/patch behavior and 1.1 date/delete safety deferrals.
-  Both complete scripts/catalogs/sealed/native/source/history/secret/CI gates
-  precede the authorized push. No new beta/tag/release/device/server action;
+  Local complete scripts/catalogs/sealed/native/source/history/secret gates
+  precede the authorized push; main CI is checked afterward. No new beta/tag/release/device/server action;
   stable/latest 1.0 and public beta.5/dist remain fixed. Physical checks remain
   open; see TESTING/MERGE_LOG and test-results/upstream-20261107.
+  Final executable **99dd847a** passes both full scripts: 109 roots, 551
+  Bookshelf suites/zero failed/three normal native SQLite exclusions, 13 SimpleUI,
+  1,182 syntax and 43 catalogs. All sealed roots, nine new cases/ten with actual
+  minimum/current repaint/invert/native dialog Close, retained native supplements
+  and eight older local installers pass. Sort cancel/dismiss can reopen without
+  stale buttons; tests use real PO parsing for wrapped headers and expect 6.3.3.
+  Private ZIP **79615586**, 9,542,014 bytes, exact source/2,000 API1 paths;
+  history/artwork/secrets pass. Final upstream check: zero missing commits.
+  Main-only delivery includes the previously local word suggestions; older
+  local-only notes below describe their original implementation step, not a
+  separate public release. Public beta.5/dist stays **2cc94f4f**.
 
 - **Local opt-in search word suggestions; not published.** After confirming
   beta.5's alphabet strip now works on Bigme, user requests the next reviewed
