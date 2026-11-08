@@ -6,6 +6,26 @@ does not imply a public release or successful device testing.
 
 ## 2026-11-08 — 1.1.0-beta.12 preview publication authorized
 
+Published **2026-11-08 22:13:26 UTC**, release **438555721**, frozen source/tag
+**4d2f3507 / v1.1.0-beta.12**. Public ZIP SHA-256
+`7fc47a3958e4ed0f25c90444339bdfdf7725f7e3155288d8560f03a9a8877525`
+(9,634,943 bytes / 28,551,046 expanded), manifest **0cff5d08**, API1/exact
+2,000 paths. Both full scripts/43 catalogs and all 116 sealed roots in Lua/
+LuaJIT pass: 134 Python/four usual art-source skips, 1,195 syntax files,
+551 Bookshelf suites/zero failures/three usual SQLite skips and all 13 SimpleUI
+files. Minimum/current native sandbox/Font fixtures pass 19 cases in both
+interpreters; native input/FFI/frozen Silverfish matrices and retained menu/
+SQLite/EPUB/thumbnail/search checks pass. All four main/tag CI jobs
+**42528779452 / 42528781196** pass; all four payloads match every frozen file.
+Source/history/held-art/redacted-secret and draft/public exact-byte checks pass.
+Fifteen actual older installers pass offline; fourteen pass anonymous public-
+HTTPS upgrade/restart/code rollback/recovery, including beta.11, in temporary
+installations only. All 96 earlier releases/167 tag refs and stable/latest/
+maintenance1.0 unchanged. Preview/public dist is beta.12. No real device/plugin
+install, server or independent catalog operation. Physical Bigme font/touch/
+colour/night/rotation/wake and full-plugin lifecycle acceptance remain pending.
+Following publication receipt changes docs only; frozen tag/assets unchanged.
+
 User requests a new beta after viewing the local composition schematic.
 Branch release/1.1.0-beta.12-20261108 starts at fa670875; preserve ed456402
 runtime. VERSION/README/release docs and preview/draft-selection regression only.
@@ -17,7 +37,7 @@ actual older installers including beta.11, history/art/secrets, exact four
 main/tag CI payloads and draft/public bytes/channel checks precede activation.
 Physical Bigme/full-plugin acceptance remains pending; schematic previews do
 not certify actual text/taps/lifecycle. Evidence preview11-beta12-20261108;
-TESTING/OTA receipts follow.
+TESTING/OTA contain matching publication receipts above.
 
 ## 2026-11-08 — local reading companion composition
 

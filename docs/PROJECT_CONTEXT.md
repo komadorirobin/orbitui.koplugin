@@ -22,7 +22,7 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
-- **1.1.0-beta.12 preview publication authorized.** User requests a new beta
+- **1.1.0-beta.12 preview published.** User requests a new beta
   after viewing the schematic composition. Branch release/1.1.0-beta.12-20261108
   starts at fa670875, retaining ed456402 runtime: companion left, centered text,
   cover right. Only VERSION/README/release docs and draft/preview regression.
@@ -35,8 +35,21 @@ and correct this file in the same change.
   preview11-beta12-20261108; receipts follow. Prior local-only restrictions are
   superseded only for this release. Physical Bigme acceptance remains pending;
   no actual device install, server or independent catalog operation.
+  **Published 2026-11-08 22:13:26 UTC**, release **438555721**, frozen source/
+  tag **4d2f3507 / v1.1.0-beta.12**, public ZIP **7fc47a39** / 9,634,943
+  bytes, manifest **0cff5d08**, API1/exact 2,000 paths. Both complete scripts/
+  43 catalogs, all 116 sealed roots in Lua/LuaJIT, minimum/current native
+  sandbox/Font/Silverfish and retained native regressions pass. All four
+  main/tag CI jobs **42528779452 / 42528781196** pass; four payloads match every
+  frozen file. Source/history/held-art/secrets/draft/public byte checks pass.
+  Fifteen actual old installers pass offline; fourteen pass anonymous public-
+  HTTPS upgrades/restart/rollback/recovery, including beta.11, in temporary
+  installations. All 96 previous releases/167 tag refs and stable/latest/
+  maintenance1.0 unchanged; public dist/preview is beta.12. No actual device/
+  plugin install, server or independent catalog operation. Physical Bigme/
+  full-plugin acceptance remains pending. Following receipt changes docs only.
 
-- **Local reading companion composition; not published.** User's beta.11 photo
+- **Reading companion composition (local phase; published in beta.12).** User's beta.11 photo
   requests a right-hand cover and better use of space. Branch
   fix/silverfish-card-composition-20261108 starts at fdaf02e1. Full-height
   creature left, vertically centered middle text stack, native portrait cover
