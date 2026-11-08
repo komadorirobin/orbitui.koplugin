@@ -18,6 +18,38 @@ user's device/server. Full physical Bigme font/layout/tap/colour/night/wake/
 rotation and complete external-plugin lifecycle remain pending. Evidence
 test-results/preview11-beta11-20261108; frozen/public receipts follow.
 
+Published **2026-11-08 21:32:02 UTC**, release **438533738**, frozen source/tag
+**d9b0f54ec9124c9e3cc183ed66c4e6a699f5e039 / v1.1.0-beta.11**, annotated tag
+object **bef7123b**. Public ZIP SHA-256
+`e204872ef6798fde7d999f17e20dfd2abd9d1b8860830451d4be65359de4bee1`,
+9,630,353 bytes / 28,531,773 expanded, manifest **742cf005**, API1/exact 2,000
+installed paths. Both full scripts pass: 134 Python/four usual optional art-source
+skips, 1,195 syntax files, 116 root files, 551 Bookshelf suites/zero failures/
+three usual native SQLite skips and all 13 SimpleUI files. All 43 catalogs pass.
+All 116 root files repeat from the frozen sealed package in Lua/LuaJIT.
+Native minimum/current sandbox/Font fixtures pass 16 each in both interpreters;
+native input/FFI/frozen Silverfish matrices pass 24 dashboard / 17 companion
+cases, and frozen public Home methods pass 18 in both interpreters. Retained
+20-case native menu, text/input/Trapper/SQLite/EPUB/search/thumbnail/night
+supplements pass. These are service-boundary checks, not physical acceptance.
+
+All four main/tag CI jobs **42525307604 / 42525329181** pass on the frozen
+candidate; every installed payload file from all four artifacts matches.
+Downloaded draft/public assets match the frozen bytes/API digests. Draft lookup
+uses the authenticated release list/id and asset endpoints; publication and
+asset/channel checks use anonymous HTTPS afterward. Fourteen actual older
+installers pass offline native extraction/hash/activation/restart/rollback/
+recovery; thirteen also pass anonymous public-HTTPS upgrades against published
+bytes, including beta.10. The oldest Beta 5 remains the offline-only case.
+Only isolated temporary installations are used, never the user's installation.
+
+All 95 older release records/assets and 165 old tag refs remain unchanged;
+stable/latest1.0 and maintenance1.0 unchanged. Exact source/inventory/held-art/
+redacted-secret gates pass; public dist/preview is beta.11. No actual device/
+plugin install, server operation or independent catalog publication. Physical
+Bigme font/layout/touch/colour/night/wake/rotation and complete external-plugin
+acceptance remain pending. This following receipt changes docs only.
+
 ## 2026-11-08 — local beta.10 Silverfish card correction
 
 Base 2a2108ac; branch fix/silverfish-card-layout. User's photo shows no cat and

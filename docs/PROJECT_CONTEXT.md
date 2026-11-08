@@ -35,6 +35,18 @@ and correct this file in the same change.
   test-results/preview11-beta11-20261108; receipts follow. Earlier local-only
   restrictions are superseded only for this requested release, not physical
   acceptance, an actual plugin/device install or an independent catalog release.
+  **Published 2026-11-08 21:32:02 UTC**, release **438533738**, frozen source/
+  tag **d9b0f54e / v1.1.0-beta.11**, public ZIP **e204872e** / 9,630,353
+  bytes, manifest **742cf005**, API1/exact 2,000 paths. Both full scripts/43
+  catalogs, sealed/native sandbox/Font/Silverfish/menu/source/history/secrets
+  pass. All four main/tag CI jobs **42525307604 / 42525329181** pass and all
+  four payloads match every frozen file. Draft/public assets are byte-identical.
+  Fourteen actual old installers pass offline; thirteen pass anonymous public-
+  HTTPS upgrade/restart/rollback/recovery, including beta.10. All 95 previous
+  releases/165 old tag refs and stable/latest/maintenance1.0 unchanged; public
+  dist/preview is beta.11. No real device/plugin install, server or catalog
+  operation. Physical Bigme/full-plugin acceptance remains pending. Following
+  receipt changes docs only.
 
 - **Local beta.10 Silverfish reading-card correction; not published.** User's
   Bigme photo shows the unsupported-version fallback and tiny text. Branch
