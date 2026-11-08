@@ -22,7 +22,7 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
-- **1.1.0-beta.6 publication authorized; release verification in progress.** User
+- **1.1.0-beta.6 published 2026-11-08 12:56:30 UTC.** User
   explicitly requests push and a new beta after the local module-library report,
   including the disclosed desktop-only/Bigme gaps. Release branch starts at
   479c4d84. Ship preserved thumbnail reuse, dashboard cards/catalog and the
@@ -34,6 +34,19 @@ and correct this file in the same change.
   matching CI and verified draft/public bytes. Evidence preview11-beta6-20261108.
   Historical local-only entries below describe their original implementation;
   this authorized release supersedes those publication restrictions only.
+  Frozen tag/source **26924cc2**, release **438244122**, public ZIP **a198828f**,
+  9,580,403 bytes. All local/full/sealed/native/43-catalog/source/history/secret
+  gates and both main/tag CI runs **42482149058 / 42482148698** pass (four jobs).
+  Both CI payloads match every frozen runtime file. Draft/public downloads
+  match; all 90 older releases/155 tag refs and stable/latest/maintenance1.0
+  remain unchanged. Nine actual older installers pass offline native checks;
+  eight also pass real anonymous public-HTTPS discovery/download/recovery,
+  including beta.5. Public dist is beta.6. Physical full-plugin/Bigme and device
+  latency/RSS gates remain open. This following receipt is docs-only.
+  Separate observation watch **42482149200** reports Kobold history divergence
+  (23 ahead/12 behind baseline 556dad48, merge base 4f725f22); no baseline reset
+  or code import. This is not a beta runtime test failure. Silverfish observation
+  succeeds; no automatic compatibility approval or independent catalog publish.
 
 - **Local curated module-library prototype; not pushed/released.** User approves
   trying a mini store from the dashboard picker. Branch feature/module-library-20261108

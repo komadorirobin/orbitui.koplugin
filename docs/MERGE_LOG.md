@@ -6,6 +6,22 @@ does not imply a public release or successful device testing.
 
 ## 2026-11-08 — 1.1.0-beta.6 preview publication authorized
 
+Published **2026-11-08 12:56:30 UTC**, release **438244122**, immutable tag/source
+**26924cc2**. ZIP **a198828f**, 9,580,403 bytes, exact source/API1/2,000 files.
+Both complete scripts/43 catalogs, sealed/native/actual Silverfish archive,
+old-installer/history/artwork/secrets gates and four main/tag CI jobs
+**42482149058 / 42482148698** pass. CI payloads match all frozen files; downloaded
+draft/public assets are exact. Nine actual older installers pass offline and
+eight pass public-HTTPS upgrade/recovery, including beta.5. All 90 earlier
+releases/155 tag refs and stable/latest/maintenance1.0 remain unchanged. Public
+dist is beta.6. No source pin/import, independent catalog, device/plugin install
+or server operation is added. This following receipt changes docs only.
+
+Separate observation watch **42482149200** flags Kobold history divergence;
+GitHub confirms 23 ahead/12 behind reviewed 556dad48, merge base 4f725f22.
+Keep its baseline for manual review; no automatic reset/import. This external
+history check is not a runtime beta CI failure. Silverfish observation passes.
+
 User requests push and a new beta after being told that the module-library,
 dashboard and thumbnail work is local/desktop-tested with Bigme gates open.
 Release branch starts at 479c4d84; include all that preserved work plus reviewed

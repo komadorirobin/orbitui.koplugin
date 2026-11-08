@@ -19,6 +19,35 @@ required before handoff. Independent module catalog remains unpublished.
 Publication receipts follow here and in OTA/MERGE_LOG; evidence
 test-results/preview11-beta6-20261108. Stable/latest 1.0 is not promoted/changed.
 
+Published **2026-11-08 12:56:30 UTC**, release **438244122**, tag/source
+**26924cc2f6583749a905005a9b9cfa7738b73259**. Both full scripts pass: 134 Python
+tests/four unchanged optional source-art skips, all 112 root suites, 551
+Bookshelf suites/zero failures/three normal native SQLite exclusions, 13
+SimpleUI files, 1,189 syntax checks and 43 translation catalogs. Sealed roots
+repeat under Lua/LuaJIT plus retained native TextWidget/input/Trapper/night/
+SQLite/EPUB, three search-widget API versions, current/minimum cover-reuse and
+both 21-case dashboard/Silverfish adapter supplements. Real pinned Silverfish
+ZIP smoke verifies hashes/extraction/licenses/user data without initializing
+the pet. No new physical acceptance is claimed.
+
+Public archive **a198828f4c48110b5b3d9084376f46971e1da4c299f359b7cb65e5942cc81746**,
+9,580,403 bytes, expanded 28,359,397; exact source projection/API1/2,000 files.
+Main/tag CI **42482149058 / 42482148698** pass all four jobs. Both downloaded
+CI payloads match every packaged file and manifest **6a4a6738**. Authenticated
+draft and anonymous public assets match exactly; nine earlier actual installers
+pass offline and eight pass real public-HTTPS discovery/download/activation/
+restart/rollback/cancel/external snapshot/cleanup recovery, including current
+beta.5. Preview resolves beta.6, stable/latest stays 1.0.0; 90 older releases,
+155 previous tag refs and maintenance/1.0 are unchanged. Source/history/held-art/
+secrets pass. This later documentation receipt does not replace published bytes.
+
+Non-gating observation watch **42482149200** fails its Kobold history check.
+GitHub compare independently confirms **diverged**, 23 commits ahead/12 behind
+the reviewed 556dad48, merge base 4f725f22. Do not reset that baseline or import
+code automatically. Silverfish's source/release observation succeeds. This
+external-history warning is separate from the four successful beta CI jobs;
+record it rather than presenting every repository workflow as green.
+
 ## 2026-11-08 local module-library prototype
 
 User approves trying the curated executable-plugin catalog, not publication or

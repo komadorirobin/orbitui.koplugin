@@ -9,6 +9,21 @@ The original standalone OTA channels are not redirected or modified.
 
 ## OrbitUI 1.1.0-beta.6
 
+Published **2026-11-08 12:56:30 UTC**, release **438244122**, frozen source/tag
+**26924cc2 / v1.1.0-beta.6**. ZIP SHA-256
+`a198828f4c48110b5b3d9084376f46971e1da4c299f359b7cb65e5942cc81746`
+(9,580,403 bytes). Full/sealed/native/translation/source/history/secret gates
+and all four main/tag CI jobs **42482149058 / 42482148698** pass. Both CI-built
+payloads match all files; downloaded draft/public bytes are exact. Nine old
+actual installers pass native upgrades/recovery; eight also pass anonymous
+public-HTTPS scenarios, including beta.5. All 90 older releases/155 previous tag
+refs, stable/latest 1.0 and maintenance/1.0 remain unchanged. Preview/dist is
+beta.6. No physical-device/server/plugin installation is performed.
+
+The separate observation-only inspiration watch flags a diverged Kobold source
+history, not a runtime/build failure; its reviewed baseline is retained for
+manual review. No new source import or automatic baseline reset is implied.
+
 User-requested preview release of the previously local dashboard-module,
 curated-catalog and thumbnail-reuse work, plus the already reviewed November 7
 upstream/settings/search improvements on main. No additional upstream merge,
