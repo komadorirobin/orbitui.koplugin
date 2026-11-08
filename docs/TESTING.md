@@ -19,6 +19,33 @@ placements and new-add/off/restart/ordinary-full Home visual checks remain
 physical acceptance gates. Evidence test-results/preview11-beta9-20261108;
 frozen verification receipts follow.
 
+Published **2026-11-08 16:54:56 UTC**, release **438380489**, frozen source/tag
+**3632d18dc27b9d4e6a641bd014d3f73254467ca9 / v1.1.0-beta.9** (annotated tag
+object **7161dd8b**). Public ZIP SHA-256
+`d171ea5f26640fde4076537d82f85fe8895251cef72984ae9012ce65a102d105`,
+9,609,810 bytes / 28,460,434 expanded, manifest **75df6d3d**, exact 2,000 paths.
+Both complete scripts pass: 134 Python tests/four unchanged optional source-art
+skips, 115 root files, 551 Bookshelf suites/zero failures/three usual native
+SQLite skips, all 13 SimpleUI files and 1,193 Lua syntax checks. All 43 catalogs
+pass. Sealed roots repeat in Lua/LuaJIT, including 18-case frozen Silverfish
+public Home-method coverage and both 23-case actual native input/FFI dashboard
+adapter supplements; the existing native menu, BookOrbit API, text/buffer/
+thumbnail/search/SQLite/EPUB supplements also pass. Boundary fixtures remain
+distinct from physical Bigme or full-plugin/server acceptance.
+
+All four main/tag CI jobs **42501824036 / 42501823791** pass on the exact
+candidate. Every installed file from all four CI payloads matches; downloaded
+draft/public assets match checksums and exact bytes. Twelve actual older
+installers pass offline native extraction/hash/activation/restart/rollback/
+recovery; eleven also pass anonymous real public-HTTPS discovery/download/
+recovery, including beta.8. Only isolated temporary installations are used.
+All 93 previous releases/assets and 161 previous tag refs are unchanged;
+stable/latest1.0 and maintenance1.0 remain unchanged. Source/history/held-art/
+secrets gates pass; public dist is beta.9. No actual device/plugin install,
+BookOrbit-server operation or independent catalog publication. New Silverfish
+add/off/restart/ordinary-full Home drawing/touch/wake/rotation remains a Bigme
+gate, not waived by this publication. This following receipt changes docs only.
+
 ## 2026-11-08 — local Silverfish default placement
 
 Base bbbc85d9, branch fix/silverfish-default-placement-20261108. User approves

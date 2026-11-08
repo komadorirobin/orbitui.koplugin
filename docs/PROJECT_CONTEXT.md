@@ -34,6 +34,17 @@ and correct this file in the same change.
   or independent module-catalog publication. Evidence preview11-beta9-20261108;
   receipts follow. Earlier local-only restrictions below are superseded only
   for this explicitly requested publication, not physical acceptance.
+  **Published 2026-11-08 16:54:56 UTC**, release **438380489**, frozen
+  source/tag **3632d18d / v1.1.0-beta.9**, public ZIP **d171ea5f**,
+  9,609,810 bytes, manifest **75df6d3d**, API1/exact 2,000 paths. Both full
+  scripts/43 catalogs, sealed/native/frozen Home API/source/history/secret
+  gates pass. All four main/tag CI jobs **42501824036 / 42501823791** pass;
+  all four payloads match every frozen file. Draft/public downloads are exact.
+  Twelve actual old installers pass offline; eleven also pass anonymous
+  public-HTTPS upgrade/restart/rollback/recovery, including beta.8. All 93
+  prior releases/161 tag refs and stable/latest/maintenance1.0 unchanged;
+  public dist is beta.9. No real device/plugin or server operation, independent
+  catalog or full-plugin acceptance. Following receipt is docs-only.
 
 - **Local Silverfish default-placement fix; not pushed/released.** User's
   beta.8 photos show a standalone Silverfish sibling after the full-page

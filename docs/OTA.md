@@ -9,6 +9,18 @@ The original standalone OTA channels are not redirected or modified.
 
 ## OrbitUI 1.1.0-beta.9
 
+Published **2026-11-08 16:54:56 UTC**, release **438380489**, frozen source/tag
+**3632d18d / v1.1.0-beta.9**. Public ZIP SHA-256
+`d171ea5f26640fde4076537d82f85fe8895251cef72984ae9012ce65a102d105`
+(9,609,810 bytes). Both full scripts/43 catalogs, frozen sealed/native/public
+Home API/source/history/secrets gates and all four main/tag CI jobs
+**42501824036 / 42501823791** pass; all four payloads match every frozen file.
+Downloaded draft/public assets are exact. Twelve actual old installers pass
+offline; eleven pass anonymous public-HTTPS upgrade/recovery, including beta.8.
+All 93 older releases/161 tag refs and stable/latest/maintenance1.0 unchanged.
+Preview/public dist is beta.9. No physical device/plugin install, server or
+independent catalog operation; full-plugin/Bigme acceptance remains pending.
+
 User-requested preview bugfix release from cfebd307, preserving the locally
 tested Silverfish placement fix f60bcf98. No new upstream merge, component/pin,
 plugin archive/save, bootstrap/API1, artwork, server or device operation.

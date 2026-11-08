@@ -6,6 +6,19 @@ does not imply a public release or successful device testing.
 
 ## 2026-11-08 — 1.1.0-beta.9 preview publication authorized
 
+Published **2026-11-08 16:54:56 UTC**, release **438380489**, frozen tag/source
+**3632d18d**, public ZIP **d171ea5f**, 9,609,810 bytes, manifest **75df6d3d**.
+Both full scripts/43 catalogs, frozen sealed/native/Silverfish public Home API,
+exact-source/inventory/history/held-art/secrets checks pass. All four main/tag
+CI jobs **42501824036 / 42501823791** pass; every file in all four payloads
+matches. Draft/public assets match exactly. Twelve actual old installers pass
+offline; eleven pass real anonymous public-HTTPS upgrade/restart/rollback/
+recovery, including beta.8, only in isolated temporary folders. All 93 previous
+release records/assets and 161 old tag refs remain unchanged, as do stable/
+latest1.0 and maintenance1.0. Preview/dist is beta.9. No actual device/plugin
+install, server operation or independent catalog publish. Physical Bigme/full
+plugin acceptance remains pending. This following receipt changes docs only.
+
 User requests a new beta after the local report discloses pending physical
 Bigme acceptance. Branch release/1.1.0-beta.9-20261108 starts at cfebd307;
 preserve runtime f60bcf98 and its tests. VERSION beta.9, release documentation
