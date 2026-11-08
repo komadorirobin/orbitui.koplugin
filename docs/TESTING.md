@@ -20,6 +20,30 @@ Physical source lists/membership/link coverage/menus, SV/EN/day/night/sleep and
 Bigme latency/RSS remain open; no measured speed or universal compatibility claim.
 Receipts and exact frozen candidate follow here and in OTA/MERGE_LOG.
 
+Published **2026-11-08 14:21:06 UTC**, release **438291937**, frozen source/tag
+**c9366f527f7121a3743a267d4a6202d3e47d27d6 / v1.1.0-beta.7**. ZIP SHA-256
+`c5befabd597cbb6811d17c8c48aa852902d3d3e269a6526f06b94fe7c9b5fc17`,
+9,597,006 bytes / 28,415,693 expanded, manifest **eff14dab**, API1/2,000 paths.
+Both complete scripts pass: 134 Python/four unchanged optional source-art skips,
+113 root files, 551 Bookshelf suites/zero failures/three usual native SQLite
+skips, 13 SimpleUI files, 1,191 Lua syntax and 43 translation catalogs. Sealed
+roots repeat in Lua/LuaJIT, including the 18-case native frozen BookOrbit method
+supplement; native minimum/current input/FFI dashboard plus exact Silverfish
+adapters pass all 23 cases each. Existing native TextWidget/Trapper/night/
+SQLite/EPUB/thumbnail/search and owned module-store tests also pass.
+
+All four main/tag CI jobs **42488973659 / 42488973545** succeed on that exact
+source; payloads from both interpreters in both runs match every frozen file.
+Downloaded draft/public ZIP/checksum and release fields are exact. Ten actual
+older installers pass native archive/hash/activation/restart/rollback/recovery
+offline; nine also pass anonymous public-HTTPS discovery/download/recovery,
+including public beta.6. These run in temporary test folders, not the Bigme.
+All 91 older release records/assets and 157 previous tag refs remain unchanged.
+Stable/latest 1.0.0 and maintenance/1.0 are unchanged; public dist is beta.7.
+Source/manifest/history/new-blob/artwork/secrets checks pass. No actual
+BookOrbit-server, plugin/device install or physical acceptance. Following
+verification receipt changes docs only; physical/live-server gates stay open.
+
 ## 2026-11-08 — local BookOrbit dashboard source cards
 
 Branch feature/bookorbit-dashboard-rows-20261108, base edf54516. No upstream,

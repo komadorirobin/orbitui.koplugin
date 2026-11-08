@@ -9,6 +9,18 @@ The original standalone OTA channels are not redirected or modified.
 
 ## OrbitUI 1.1.0-beta.7
 
+Published **2026-11-08 14:21:06 UTC**, release **438291937**, frozen source/tag
+**c9366f52 / v1.1.0-beta.7**. ZIP SHA-256
+`c5befabd597cbb6811d17c8c48aa852902d3d3e269a6526f06b94fe7c9b5fc17`
+(9,597,006 bytes). Both full scripts/43 catalogs, sealed/native/frozen API/
+source/history/secrets checks and all four main/tag CI jobs
+**42488973659 / 42488973545** pass. Every file from all four CI payloads matches;
+downloaded draft/public assets are exact. Ten actual older installers pass
+offline native upgrades/recovery; nine also pass anonymous public-HTTPS paths,
+including beta.6. All 91 old releases/157 old tag refs and stable/latest/
+maintenance1.0 remain unchanged. Preview/public dist is beta.7. No real-device
+or BookOrbit-server test/installation is performed.
+
 User-requested preview publication of the locally built BookOrbit source cards,
 starting at 72190eaa. No new upstream merge, independent module-catalog release,
 server change or device/plugin installation. Stable/latest 1.0.0 and all earlier

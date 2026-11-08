@@ -6,6 +6,17 @@ does not imply a public release or successful device testing.
 
 ## 2026-11-08 — 1.1.0-beta.7 preview publication authorized
 
+Published **2026-11-08 14:21:06 UTC**, release **438291937**, frozen tag/source
+**c9366f52**, public ZIP **c5befabd**, 9,597,006 bytes, manifest **eff14dab**.
+Both full scripts/43 catalogs, final sealed/native/frozen BookOrbit/exact
+Silverfish boundary, source/history/artwork/secret/API1/file-count gates pass.
+All four main/tag CI jobs **42488973659 / 42488973545** succeed; all four
+payloads match every frozen file. Draft/public downloaded bytes are exact.
+Ten actual older installers pass offline, nine public-HTTPS paths also pass,
+including beta.6. All 91 older releases/157 tag refs and stable/latest/
+maintenance1.0 remain unchanged; public dist is beta.7. No device/server or
+independent catalog operation. This following receipt changes docs only.
+
 User requests push and the next beta after the local card report states that
 Bigme and live-server acceptance remain pending. Preserve 72190eaa and its
 BookOrbit shelf/smartscope cards; no new upstream merge or component source/pin

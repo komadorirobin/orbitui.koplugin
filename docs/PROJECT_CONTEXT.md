@@ -22,7 +22,7 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
-- **1.1.0-beta.7 preview publication authorized.** User requests push and the
+- **1.1.0-beta.7 published 2026-11-08 14:21:06 UTC.** User requests push and the
   next beta after the BookOrbit-card report explicitly disclosed desktop-only
   evidence and pending real Bigme/server checks. Release branch starts at
   72190eaa; include those local cards only, no new upstream/import/pin change.
@@ -35,6 +35,16 @@ and correct this file in the same change.
   activation. Evidence preview11-beta7-20261108; receipts follow in TESTING/
   MERGE_LOG/OTA. Earlier local-only entries describe their original implementation;
   this authorization supersedes their publication restrictions only.
+  Frozen tag/source **c9366f52 / v1.1.0-beta.7**, release **438291937**, public
+  ZIP **c5befabd**, 9,597,006 bytes, manifest **eff14dab**, exact 2,000 paths.
+  Both full scripts/43 catalogs, sealed/native/frozen API/source/history/secret
+  checks and all four main/tag CI jobs **42488973659 / 42488973545** pass.
+  All four CI payloads match every frozen file; draft/public downloaded bytes
+  are exact. Ten actual older installers pass offline, nine also pass anonymous
+  public-HTTPS discovery/download/restart/rollback/recovery, including beta.6.
+  All 91 older releases/157 tag refs and stable/latest/maintenance1.0 unchanged;
+  public dist is beta.7. No Bigme/BookOrbit-server operations or new physical
+  acceptance. This subsequent verification receipt changes docs only.
 
 - **Local BookOrbit dashboard source cards; not pushed/released.** User approves
   shelves/smartscopes as independent local-files-only cards. Branch
