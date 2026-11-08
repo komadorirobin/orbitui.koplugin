@@ -26,6 +26,30 @@ Existing manual placements are deliberately not migrated, including an old
 overflowing placement. Silverfish files, saves and screensaver options remain
 untouched; VERSION and public beta.8/dist are unchanged.
 
+Verification receipt: frozen **f60bcf9872994a7e8a353bb7b68290e9b222fb49**.
+Both complete scripts pass: 134 Python tests/four unchanged optional source-art
+skips, 115 root files, 551 Bookshelf suites/zero failures/three usual native
+SQLite skips, all 13 SimpleUI files and 1,193 Lua syntax checks. All 43 catalogs
+pass. Private sealed package repeats all 115 roots in Lua and LuaJIT; the frozen
+public Silverfish Home-method case makes 18 focused tests in each interpreter.
+Both minimum/current native input plus real FFI Blitbuffer dashboard supplements
+pass all 23 cases, including the actual unmodified Silverfish SimpleUI and
+Bookshelf adapter draw/input paths with service/font/pet-state fixtures.
+The real Silverfish painter needs native Blitbuffer: an initial overly broad
+optional-source environment used the schematic mock lacking paintRect, which
+failed as expected of that mock. The intended native-buffer matrix passes;
+diagnostic evidence is retained, not treated as physical or full-plugin proof.
+
+Private ZIP SHA-256
+`dfec7d8a598e05774c6644a5edc14f9b5003ce639308e935fd8c07b20fb20996`,
+9,607,453 bytes / 28,451,771 expanded, manifest **b7bfc82a**, API1/exact
+2,000 paths. All hashes and every projected source byte match the frozen
+commit. Only the two executable adapters differ from public beta.8, plus
+documentation (the OTA receipt was already in base bbbc85d9). Component/pin/
+asset/bootstrap/VERSION bytes unchanged. Held-art new-blob and redacted secret
+checks pass; public dist stays **fd4d58e1**. This following receipt is docs-only.
+No public operation, actual Bigme install/test or server call was performed.
+
 ## 2026-11-08 — 1.1.0-beta.8 release candidate
 
 User explicitly requests push/new beta after the local report discloses pending

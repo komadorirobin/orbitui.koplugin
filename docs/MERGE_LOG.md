@@ -35,6 +35,18 @@ archive modification, global require replacement, setting reset or migration.
 Bootstrap/API1, 27/407 helpers/identities, 2,000-path budget, VERSION and public
 dist remain fixed. TESTING records verification and the pending Bigme gate.
 
+Frozen runtime **f60bcf98**, private ZIP **dfec7d8a**, 9,607,453 bytes /
+28,451,771 expanded, manifest **b7bfc82a**, exact 2,000 installed paths. Both
+full scripts/43 catalogs and all 115 sealed root files in Lua/LuaJIT pass;
+18-case frozen Silverfish public API and both 23-case native input/FFI dashboard
+supplements pass. Exact projected source/inventory, unchanged bootstrap/
+component/pins/assets/VERSION/public dist, held-art new-blob and redacted
+secret checks pass. Only the two executable adapters differ from published
+beta.8; remaining payload differences are documentation, including the prior
+bbbc85d9 beta.8 OTA receipt. No push/release, real device/plugin install or
+server operation. Physical/full-plugin gate remains open. This subsequent
+verification receipt changes docs only, not the frozen runtime/package.
+
 ## 2026-11-08 — 1.1.0-beta.8 preview publication authorized
 
 Published **2026-11-08 15:06:47 UTC**, release **438317954**, frozen tag/source

@@ -37,6 +37,13 @@ and correct this file in the same change.
   for placement. Tests/packaging and physical limits are recorded in TESTING
   and MERGE_LOG; evidence silverfish-placement-20261108. This turn authorizes
   local implementation/testing only, not push, release or device installation.
+  Frozen runtime **f60bcf98**, private ZIP **dfec7d8a** / 9,607,453 bytes,
+  exact 2,000 paths. Both complete scripts/43 catalogs and all 115 sealed
+  root files in Lua/LuaJIT pass; 18-case frozen Home API and both 23-case
+  native input/FFI Silverfish dashboard supplements pass. Source inventory,
+  held-art/new-blob and redacted secret checks pass. Public beta.8/dist remains
+  **fd4d58e1**; full-plugin/physical Bigme acceptance is still outstanding.
+  Following verification receipt is docs-only.
 
 - **1.1.0-beta.8 preview publication authorized.** User explicitly requests
   push/new beta after the local fix and crash-log confirmation; real Bigme
