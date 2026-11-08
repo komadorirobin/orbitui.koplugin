@@ -27,6 +27,27 @@ Schematic Chrome previews use real sprites but synthetic covers/approximate
 fonts, not actual Bigme screenshots. Physical text/taps/colour/night/rotation/
 wake and complete Silverfish lifecycle remain pending.
 
+Verification receipt: frozen **ed456402166dc949fa5ec2c551fe87d26cca0bbe**,
+private ZIP SHA-256
+`c34ba77c32da0e727f6e2412ed12549a9c8f488d26d69060f667247d0c629b72`,
+9,633,509 bytes / 28,543,532 expanded, manifest **fbaaa2ad**, API1/exact 2,000
+paths. Both complete scripts pass: 134 Python/four usual optional art-source
+skips, 1,195 syntax files, 116 root files, 551 Bookshelf suites/zero failures/
+three usual native SQLite skips and all 13 SimpleUI files. All 43 catalogs pass.
+All 116 root files repeat from the frozen sealed payload in Lua/LuaJIT.
+Minimum/current native sandbox/Font fixtures pass 19 cases in both interpreters;
+native input/FFI/frozen Silverfish matrices pass 24 dashboard / 20 companion /
+18 placement cases each. Schematic full/half/landscape previews were inspected
+after measured-title compaction. Covers retain SH's existing fixed portrait
+shape: this changes placement, not the component's original-image stretch/crop
+policy. Frozen beta.11 fails the new left-to-right geometry regression.
+
+Exact source projection/inventory and six-file scope pass; all other runtime
+bytes (including components/pins/art/bootstrap) match public beta.11. New-blob
+held-art and redacted gitleaks gates pass. Public dist remains **e204872e**.
+No public push/release, device install, server or catalog operation. Physical
+Bigme/font/lifecycle gates above remain open. Following receipt is docs only.
+
 ## 2026-11-08 — 1.1.0-beta.11 release candidate
 
 User requests the next beta after the local fix report discloses pending

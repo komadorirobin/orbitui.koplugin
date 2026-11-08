@@ -25,7 +25,7 @@ and correct this file in the same change.
 - **Local reading companion composition; not published.** User's beta.11 photo
   requests a right-hand cover and better use of space. Branch
   fix/silverfish-card-composition-20261108 starts at fdaf02e1. Full-height
-  creature left, vertically centered middle text stack, aspect-preserving cover
+  creature left, vertically centered middle text stack, native portrait cover
   right. Name/stage share a row; title/author and percentage/companion statistics
   stay together above the progress bar. Secondary text uses normal contrast.
   Reuse the native title widget's measured height to remove unused title lines,
@@ -36,6 +36,14 @@ and correct this file in the same change.
   No push/release/ADB/server or independent catalog operation. C10/TESTING hold
   tests and physical gaps; evidence silverfish-composition-20261108. Same
   28/407 helpers/identities and 2,000 paths; frozen/package receipts follow.
+  Frozen **ed456402**, private ZIP **c34ba77c** / 9,633,509 bytes, manifest
+  **fbaaa2ad**, API1/exact 2,000 paths. Both complete scripts/43 catalogs and
+  all 116 sealed roots in Lua/LuaJIT pass. Minimum/current native sandbox/Font
+  fixtures pass 19 each in both interpreters; input/FFI/frozen Silverfish
+  matrices pass 24 dashboard / 20 companion / 18 placement cases each.
+  Exact source/inventory/held-art/redacted-secret gates pass. Public beta.11/
+  dist stays **e204872e**; no actual device install/publication. Following
+  verification receipt changes docs only.
 
 - **1.1.0-beta.11 preview publication authorized.** User requests a new beta
   after the local fix report explicitly discloses pending physical Bigme tests.

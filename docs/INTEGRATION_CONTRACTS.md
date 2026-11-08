@@ -1859,7 +1859,7 @@ schematic checks are not physical Bigme/full-plugin acceptance.
 
 November 8 user-requested beta.11 composition supersedes the companion-local
 header placement above. Creature uses the left inner height; book cover is on
-the right, aspect-preserving and vertically centered. Middle text is one
+the right, using the native portrait-cover proportions and vertically centered. Middle text is one
 centered stack: name/stage, book title, author, percentage/statistics, progress
 bar. Use the already-built native title widget's measured height, reuse that
 widget, and retire invalid provisional measurements safely. Never infer wrapping

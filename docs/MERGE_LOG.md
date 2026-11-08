@@ -20,6 +20,15 @@ push/release/device/server change. Tests/private package and physical limits
 are recorded in TESTING; evidence silverfish-composition-20261108. No physical
 acceptance claim follows from service fixtures or schematic previews.
 
+Verification: frozen **ed456402**, private ZIP **c34ba77c**, 9,633,509 bytes,
+manifest **fbaaa2ad**, API1/exact 2,000 paths. Both complete scripts/43 catalogs
+and all 116 sealed roots in Lua/LuaJIT pass. Native minimum/current sandbox/Font
+fixtures pass 19 each in both interpreters; input/FFI/frozen Silverfish matrices
+pass 24 dashboard / 20 companion / 18 placement cases each. Source/inventory/
+held-art/redacted-secret audits pass. The native portrait-cover shape is kept;
+no new original-image aspect policy. Public beta.11/dist stays **e204872e**.
+No device/server action or publication. Following receipt changes docs only.
+
 ## 2026-11-08 — 1.1.0-beta.11 preview publication authorized
 
 Published **2026-11-08 21:32:02 UTC**, release **438533738**, frozen source/tag
