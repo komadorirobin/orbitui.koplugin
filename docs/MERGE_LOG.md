@@ -6,6 +6,19 @@ does not imply a public release or successful device testing.
 
 ## 2026-11-08 — 1.1.0-beta.8 preview publication authorized
 
+Published **2026-11-08 15:06:47 UTC**, release **438317954**, frozen tag/source
+**564243a0**, public ZIP **fd4d58e1**, 9,601,664 bytes, manifest **0eff173b**.
+Both complete scripts/43 catalogs, sealed roots/native menu and other native
+supplements, exact source/history/artwork/secrets/API1/path-count gates pass.
+All four main/tag CI jobs **42492684427 / 42492684728** succeed on that source;
+every file in all four payloads matches. Draft/public downloaded assets match.
+Eleven actual older installers pass offline; ten pass anonymous public-HTTPS
+upgrade/restart/rollback/recovery, including beta.7, in isolated temporary
+folders. All 92 old release records/assets and 159 old tag refs remain unchanged.
+Preview/dist is beta.8; stable/latest1.0 and maintenance1.0 remain unchanged.
+No real device/plugin installation or BookOrbit-server operation. Physical
+Bigme retesting remains pending. This following receipt changes docs only.
+
 User requests push/new beta after the local regression-fix report and
 crash(9).log confirmation of the exact numeric-translator call at module-store
 line 98 on beta.7. That log contains no separate fatal shelf-picker traceback;

@@ -9,6 +9,17 @@ The original standalone OTA channels are not redirected or modified.
 
 ## OrbitUI 1.1.0-beta.8
 
+Published **2026-11-08 15:06:47 UTC**, release **438317954**, frozen source/tag
+**564243a0 / v1.1.0-beta.8**. Public ZIP SHA-256
+`fd4d58e180ef2e3420d6c55da4a95f89871225dca1f321b9887bad83841016d2`
+(9,601,664 bytes). Full dual-interpreter/43-catalog/sealed/native/source/
+history/secret checks and all four main/tag CI jobs **42492684427 /
+42492684728** pass; every CI payload file matches. Draft/public downloads are
+exact. Eleven actual old installers pass offline; ten also pass anonymous
+public-HTTPS upgrade/recovery, including beta.7. All 92 older releases/159
+tag refs and stable/latest/maintenance1.0 remain unchanged. Preview/public dist
+is beta.8. No physical device/plugin install or BookOrbit-server operation.
+
 User-requested preview bugfix release from d76326f7; no new upstream merge.
 Fixes the blank BookOrbit sources after refresh, an uncaught error when
 reopening cached sources, the empty Module library, and the row/carousel

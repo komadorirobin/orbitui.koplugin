@@ -33,6 +33,16 @@ and correct this file in the same change.
   downloaded draft/public-byte/channel gates precede activation. Evidence
   preview11-beta8-20261108; receipts follow. Prior local-only restrictions
   below are superseded only for this explicitly requested publication.
+  **Published 2026-11-08 15:06:47 UTC**, release **438317954**, frozen
+  source/tag **564243a0 / v1.1.0-beta.8**, public ZIP **fd4d58e1**,
+  9,601,664 bytes, manifest **0eff173b**, API1/2,000 paths. Both full scripts,
+  43 catalogs, sealed/native/menu/source/history/secret gates and all four
+  main/tag CI jobs **42492684427 / 42492684728** pass. All four CI payloads
+  match every frozen file; draft/public downloads are exact. Eleven actual
+  old installers pass offline; ten also pass anonymous public-HTTPS upgrade/
+  recovery, including beta.7. All 92 previous releases/159 tag refs and
+  stable/latest/maintenance1.0 unchanged; public dist is beta.8. No device/
+  server operation or new physical acceptance. Following receipt is docs-only.
 
 - **Local beta.7 catalog-menu regression fix; not pushed/released.** User's
   Bigme photos/report show blank BookOrbit sources after refresh, a crash on

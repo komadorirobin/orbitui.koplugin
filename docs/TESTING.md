@@ -21,6 +21,30 @@ No real device/server install/test. Bigme source/module/display retests and
 live source membership/link coverage remain open. Evidence
 test-results/preview11-beta8-20261108; frozen receipts follow.
 
+Published **2026-11-08 15:06:47 UTC**, release **438317954**, frozen source/tag
+**564243a0aac0099e0163222583b69dd285cb5680 / v1.1.0-beta.8**. ZIP SHA-256
+`fd4d58e180ef2e3420d6c55da4a95f89871225dca1f321b9887bad83841016d2`,
+9,601,664 bytes / 28,431,029 expanded, manifest **0eff173b**, API1/2,000 paths.
+Both complete scripts pass: 134 Python tests/four unchanged optional source-art
+skips, 114 root files, 551 Bookshelf suites/zero failures/three usual native
+SQLite skips, all 13 SimpleUI files and 1,192 Lua syntax checks. All 43 catalogs
+pass. Frozen sealed roots repeat under Lua and LuaJIT with real menu regressions
+in SV/EN and the existing frozen native BookOrbit API/input/TextWidget/buffer/
+thumbnail/SQLite/EPUB/search supplements. Headless service/display fixtures
+remain distinct from physical Bigme/live-server acceptance.
+
+All four main/tag CI jobs **42492684427 / 42492684728** pass on the exact
+candidate; all 2,000 file payloads from each job match the frozen package.
+Draft/public downloads and checksums are exact. Eleven actual older public
+installers pass native extraction/hash/activation/restart/rollback/recovery;
+ten also pass anonymous real public-HTTPS discovery/download/recovery,
+including beta.7. These operate only in temporary test folders. All 92 previous
+release records/assets and 159 previous tag refs are unchanged. Stable/latest
+1.0.0 and maintenance1.0 remain unchanged; public dist is beta.8. Outgoing
+held-artwork/new-blob and redacted gitleaks scans pass. No real device/plugin
+install or server operation. The following receipt is docs-only; physical
+source-picker/module-library/display-choice retests remain outstanding.
+
 ## 2026-11-08 — local beta.7 catalog-menu regression fix
 
 Runtime **eab9256f**, branch fix/dashboard-catalog-menus-20261108, base c820a54b.
