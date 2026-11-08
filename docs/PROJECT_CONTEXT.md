@@ -22,6 +22,19 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **1.1.0-beta.6 publication authorized; release verification in progress.** User
+  explicitly requests push and a new beta after the local module-library report,
+  including the disclosed desktop-only/Bigme gaps. Release branch starts at
+  479c4d84. Ship preserved thumbnail reuse, dashboard cards/catalog and the
+  already reviewed main backlog since public beta.5; no new upstream merge.
+  VERSION beta.6, preview prerelease only; stable 1.0/latest/maintenance and old
+  tags/releases/assets are immutable. Component pins stay Bookshelf c014b133 /
+  SimpleUI 4426601f. No independent module-catalog release, real device/plugin
+  install or server operation. Tests/package/audits precede main/tag push,
+  matching CI and verified draft/public bytes. Evidence preview11-beta6-20261108.
+  Historical local-only entries below describe their original implementation;
+  this authorized release supersedes those publication restrictions only.
+
 - **Local curated module-library prototype; not pushed/released.** User approves
   trying a mini store from the dashboard picker. Branch feature/module-library-20261108
   starts at 82f76b75, preserving previous dashboard/thumbnail work. Separate

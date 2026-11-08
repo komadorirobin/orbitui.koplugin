@@ -7,6 +7,62 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 1.1.0-beta.6
+
+User-requested preview release of the previously local dashboard-module,
+curated-catalog and thumbnail-reuse work, plus the already reviewed November 7
+upstream/settings/search improvements on main. No additional upstream merge,
+server deployment or device installation is part of this publication. Stable
+1.0.0/latest and all previously published tags/assets remain unchanged.
+
+- Reading dashboard: add compatible SimpleUI/Bookshelf cards or native action
+  shortcuts through + or Cards and content > Add module. Arrange, resize,
+  hide/remove and independent pages support up to 16 added cards per screen.
+  Keep ordinary Home layouts/book actions; refresh only the requesting visible
+  card and retire its callbacks/minute hooks across page/close/sleep.
+- Get more modules opens the curated Module library, initially official
+  Silverfish 2.0.0. Explicit first install, pinned archive/hash/source/license
+  disclosure and restart; never overwrite/adopt/enable an existing plugin or
+  reset its data. Updates/removal remain manual. The badge means desktop
+  adapter testing only, not full-plugin safety or physical Bigme certification.
+  No Silverfish code/art is bundled. An independent catalog is supported but
+  has not been published; its explicit check retains the bundled entry.
+- Native cover thumbnails: bounded LRU-derived copies no longer strongly pin
+  larger sources; external covers reuse warm downscales. Native cache/contrast/
+  source teardown invalidates derived copies. Desktop repeat-render fixtures
+  reduce scaler calls from 20 to 1; this is not a measured device speedup.
+- Optional Word suggestions in Search OrbitUI, OFF by default, complete the
+  final word from cached local titles/authors/series without typing-time scans
+  or network. Already reviewed Bookshelf 6.3.3 and SimpleUI 3.0.3 include cover-tab
+  refresh/feedback fixes, native facet ordering and collection arrange choices.
+
+**Svenska:** Läsöversikt får +/Lägg till modul för kompatibla pluginkort och
+åtgärdsgenvägar. Ändra storlek, ordna/dölj/ta bort kort och använd egna sidor.
+Hämta fler moduler öppnar Modulbibliotek med versionslåst Silverfish 2.0.0.
+Installation kräver bekräftelse och omstart; befintliga plugins/sparfiler lämnas
+orörda. Uppdatering och avinstallation görs manuellt. Bara adaptrarna är testade
+på dator, inte hela pluginet på Bigme. Silverfishs eget gränssnitt är engelska/
+portugisiska; OrbitUIs katalog och reglage finns på svenska och engelska.
+Omslagens miniatyrer återanvänds bättre utan att hålla stora original i minnet;
+ingen hastighetsvinst på enheten är ännu uppmätt. Valfria Ordförslag är avstängda
+som standard. Tidigare granskade upstream-fixar följer också med; ingen ny
+upstream-merge eller serverdriftsättning görs i denna publicering.
+
+Update from beta.5 through the preview channel and restart. API1/bootstrap
+stay fixed at 2,000 installed files, using 26 exact lazy helper sources/407
+canonical identities. Preserve separate settings/reading-data backups: adding
+dashboard cards opts that screen into config v2, which older builds cannot
+edit but must preserve. Code rollback does not undo layout or third-party data
+migrations and does not uninstall a separately installed plugin. Existing source
+headings, profiles, ornaments, sync ownership and plugin saves are retained.
+Physical Bigme module/install/lifecycle/UI and real opening-time/RSS checks
+remain outstanding. This is an experimental prerelease, not stable 1.1.
+
+Full dual-interpreter, translation, sealed/native/archive/older-installer,
+source/history/artwork/secrets, main/tag CI, draft/public-byte and channel checks
+precede public activation. Evidence: test-results/preview11-beta6-20261108;
+TESTING/MERGE_LOG retain the exact candidate and physical limits.
+
 ## OrbitUI 1.1.0-beta.5
 
 Published **2026-11-07 17:17:30 UTC**, release **437717781**, frozen source/tag

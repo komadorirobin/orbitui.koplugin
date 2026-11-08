@@ -1,5 +1,24 @@
 # Verification and device acceptance
 
+## 2026-11-08 — 1.1.0-beta.6 release candidate
+
+User requests push and a new beta after the module-library desktop-only report.
+Preserve 479c4d84 runtime and earlier reviewed main backlog; only version/release
+documentation and OTA-channel coverage change here. No new upstream import or
+pin/asset/bootstrap/reading/sync/server change. Existing 26/407 lazy helpers and
+2,000 API1 path cap remain. New explicit first-install catalog and dashboard
+cards still need physical Bigme/complete Silverfish acceptance; thumbnail
+improvement is a desktop scaler-call result, not measured device latency/RSS.
+
+Run both complete scripts/43 catalogs, sealed roots and retained native input/
+TextWidget/Trapper/night/SQLite/EPUB/thumbnail/dashboard/exact Silverfish archive
+checks. Test actual old installers including latest public beta.5 to the new
+version; source/artwork/history/secrets/package and old release/tag immutability
+gates precede push. Main/tag CI and exact downloaded draft/public bytes are
+required before handoff. Independent module catalog remains unpublished.
+Publication receipts follow here and in OTA/MERGE_LOG; evidence
+test-results/preview11-beta6-20261108. Stable/latest 1.0 is not promoted/changed.
+
 ## 2026-11-08 local module-library prototype
 
 User approves trying the curated executable-plugin catalog, not publication or

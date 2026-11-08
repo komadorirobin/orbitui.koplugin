@@ -4,6 +4,22 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — 1.1.0-beta.6 preview publication authorized
+
+User requests push and a new beta after being told that the module-library,
+dashboard and thumbnail work is local/desktop-tested with Bigme gates open.
+Release branch starts at 479c4d84; include all that preserved work plus reviewed
+main changes since beta.5 (optional word suggestions and November 7 upstream).
+No new upstream merge or pin change: Bookshelf c014b133, SimpleUI 4426601f.
+Only VERSION/release docs/channel coverage change for this release. SV/EN notes
+state the catalog's first-install-only/manual-update and adapter-only evidence,
+third-party full-access/native risk, pending physical gates and no measured
+device speed claim. No independent module catalog, device/plugin install or
+server deployment is authorized or performed by this publication.
+Full/package/sealed/native/old-installer/source/history/artwork/secret gates,
+main/tag CI and draft/public-byte/channel/immutability checks precede delivery.
+Publish preview only; never rewrite prior releases/tags or stable/latest 1.0.
+
 ## 2026-11-08 — local curated module library (no import/publication)
 
 User approves trying a dashboard mini store. Preserve all local dashboard and

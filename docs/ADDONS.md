@@ -5,7 +5,7 @@ ornament packs; see [below](#executable-module-library-local-11-development).
 
 ## Executable module library (local 1.1 development)
 
-Not in public beta.5; not published or installed on a device by this work.
+Included in the 1.1.0-beta.6 preview; no device installation by this work.
 Hold Reading dashboard → Add module… → Get more modules… (or use +).
 Open Silverfish → Information and test scope before choosing Install plugin.
 After restarting KOReader, enable the plugin through KOReader's native manager

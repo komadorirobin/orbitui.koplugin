@@ -63,7 +63,7 @@ functionality, not a claim that OrbitUI invented the Home screen, library,
 series boxes, themes or ornament system. [The feature guide](docs/FEATURES.md)
 explains the extra controls and where to find them.
 
-**Local 1.1 development — not in the published beta.5 yet:** Reading dashboard
+**1.1.0-beta.6 preview:** Reading dashboard
 can host compatible SimpleUI/Bookshelf plugin cards and action shortcuts.
 Tap **+**, or use **Cards and content → Add module…**. Long-press a plugin card
 to resize/hide/remove it; **Arrange cards** sets its position. Extra cards use
@@ -74,7 +74,7 @@ restart; existing plugins are never overwritten. Updates/removal remain manual;
 plugin data stays theirs. Silverfish's existing adapters
 are the first desktop compatibility check, not Bigme certification.
 
-**Svenska, lokal 1.1-utveckling — ännu inte i publicerad beta.5:** Lägg till
+**Svenska, förhandsversion 1.1.0-beta.6:** Lägg till
 kompatibla pluginmoduler eller åtgärdsgenvägar via **+** i Läsöversikt eller
 **Kort och innehåll → Lägg till modul…**. Håll inne ett pluginkort för att ändra
 storlek, dölja eller ta bort det; **Ordna kort** bestämmer placeringen. Fler kort
@@ -125,14 +125,14 @@ filter ändras inte. Felet återskapas i automattester på beta.4; korrigeringen
 är nu bekräftad av användaren på Bigme. Bredare prov med typsnitt, nattläge och
 rotation på Bigme/Boox återstår.
 
-**Development code, not yet released:** optional **Word suggestions** in
+**Also in 1.1.0-beta.6:** optional **Word suggestions** in
 **Search OrbitUI**, OFF by default. Complete the last word from already cached
 local titles/authors/series; tap one of up to three suggestions, then Search.
 Two characters and cursor at the end are required. Hold the toggle for help.
 Coverage follows the chosen scope and can be incomplete while caches are cold;
 there are no new file scans, EPUB reads or network requests while typing.
 
-**Utvecklingskod, ännu inte släppt:** valfria **Ordförslag** i
+**Också i 1.1.0-beta.6:** valfria **Ordförslag** i
 **Sök i OrbitUI**, avstängda som standard. Komplettera sista ordet från redan
 cachade lokala titlar/författare/serier. Tryck på ett av högst tre förslag,
 sedan Sök. Skriv minst två tecken med markören i slutet. Långtryck på reglaget
@@ -140,12 +140,12 @@ för hjälp. Förslagen följer vald avgränsning men kan vara ofullständiga n�
 cachen är kall. Inga nya filskanningar, EPUB-läsningar eller nätanrop görs
 medan du skriver.
 
-**Development only:** shelf/list exact-size cover copies use byte-bounded LRU
+**In 1.1.0-beta.6:** shelf/list exact-size cover copies use byte-bounded LRU
 reuse without retaining their larger source buffers. Rendering, image quality,
 native disk caches and saved cover budgets stay unchanged. This is not a
 measured Bigme Library/Manga opening-time improvement.
 
-**Endast utvecklingskod:** hyllans/listans storleksanpassade omslagskopior
+**I 1.1.0-beta.6:** hyllans/listans storleksanpassade omslagskopior
 återanvänds med en bytebegränsad LRU-cache utan att hålla kvar de större
 källbilderna. Rendering, bildkvalitet, diskcache och sparade omslagsbudgetar
 ändras inte. Snabbare öppning av Bibliotek/Manga på Bigme är ännu inte uppmätt.
