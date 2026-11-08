@@ -547,9 +547,14 @@ function M.content(widget, p, ctx, data)
             local owner = ctx._screen_widget
             if widget._modules_suspended or owner and owner._suspended or require("device").screen_saver_mode then return end
             if widget:modulesVisible(generation) then
-                for _, tick in ipairs(ticks) do tick() end
+                for _, tick in ipairs(ticks) do
+                    if not widget:modulesVisible(generation) then break end
+                    tick()
+                end
             end
-            require("ui/uimanager"):scheduleIn(60, widget._module_tick)
+            if not widget._disposed and not widget._modules_suspended and generation == widget._module_generation then
+                require("ui/uimanager"):scheduleIn(60, widget._module_tick)
+            end
         end
         require("ui/uimanager"):scheduleIn(60, widget._module_tick)
     end

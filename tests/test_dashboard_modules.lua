@@ -318,6 +318,14 @@ H.test("covered, parked, sleeping and disposed views do no module tick or deferr
     v:free(); H.eq(scheduled[tick], nil)
     fn(); H.eq(refreshes, count); tick(); H.eq(ticks, before + 1)
 end)
+H.test("a module closing the view inside its minute hook cannot resurrect the timer", function()
+    local v = view(only(entry("bookshelf", "pet")))
+    local previous = micro.on_minute
+    micro.on_minute = function() v:free() end
+    local tick = v._module_tick
+    tick(); H.eq(scheduled[tick], nil)
+    micro.on_minute = previous
+end)
 H.test("missing modules keep a selectable placeholder and removal never unregisters the plugin", function()
     local c = only(entry("simpleui", "absent"))
     local v = view(c)
