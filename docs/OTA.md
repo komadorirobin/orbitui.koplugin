@@ -7,6 +7,33 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 1.1.0-beta.8
+
+User-requested preview bugfix release from d76326f7; no new upstream merge.
+Fixes the blank BookOrbit sources after refresh, an uncaught error when
+reopening cached sources, the empty Module library, and the row/carousel
+chooser. Three numeric loop indices shadowed the translator. The device log
+confirms the exact module-store error in published beta.7. Eight native menu
+regressions reproduce failures against frozen beta.7 and pass with the fix
+in Swedish and English; protected-show tests now require completed builds.
+
+**Svenska:** Fixar den tomma BookOrbit-källistan efter hämtning, kraschen när
+sparade källor öppnas igen, det tomma Modulbiblioteket och valet omslagsrad/
+karusell. Orsaken var tre loopvariabler som skymde översättningsfunktionen.
+Din logg bekräftar modulbiblioteksfelet. Befintliga källor, kort, inställningar
+och plugindata bevaras. Inga ändringar av server, synk eller installationsregler.
+
+Update via preview and restart KOReader; back up settings and reading data
+separately. Source cards retain config v3's downgrade limitations described
+in beta.7. No cache reset, component/pin/art/bootstrap/API1 or data change.
+Stable/latest 1.0 and all earlier tags/assets stay immutable; 27 exact lazy
+helpers / 407 identities and 2,000 installed paths remain. No device install
+or BookOrbit-server operation. Full dual-interpreter, catalogs, sealed/native,
+actual older-installer, source/history/secrets, exact main/tag CI and downloaded
+draft/public bytes/channel checks precede activation. Physical Bigme retesting
+is still pending; automated fixtures are not real-device acceptance.
+Evidence: test-results/preview11-beta8-20261108; TESTING/MERGE_LOG retain receipts.
+
 ## OrbitUI 1.1.0-beta.7
 
 Published **2026-11-08 14:21:06 UTC**, release **438291937**, frozen source/tag

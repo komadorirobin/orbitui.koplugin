@@ -22,6 +22,18 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **1.1.0-beta.8 preview publication authorized.** User explicitly requests
+  push/new beta after the local fix and crash-log confirmation; real Bigme
+  retesting remains disclosed. Release branch starts at d76326f7. Preserve
+  the three-index fix and regression tests only; no new upstream/component/
+  pin/art/bootstrap/API1/data/server/device change. VERSION beta.8,
+  preview/prerelease only; stable/latest/maintenance1.0 and previous tags/assets
+  immutable, 27/407 helpers/identities and 2,000 paths. Full/package/sealed/
+  native/actual older-installer/history/secrets and exact main/tag CI plus
+  downloaded draft/public-byte/channel gates precede activation. Evidence
+  preview11-beta8-20261108; receipts follow. Prior local-only restrictions
+  below are superseded only for this explicitly requested publication.
+
 - **Local beta.7 catalog-menu regression fix; not pushed/released.** User's
   Bigme photos/report show blank BookOrbit sources after refresh, a crash on
   reopening, and an empty module library. Branch

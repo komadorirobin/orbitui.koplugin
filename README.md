@@ -63,7 +63,22 @@ functionality, not a claim that OrbitUI invented the Home screen, library,
 series boxes, themes or ornament system. [The feature guide](docs/FEATURES.md)
 explains the extra controls and where to find them.
 
-**1.1.0-beta.7 preview:** Add BookOrbit shelves and smartscopes as independent
+**1.1.0-beta.8 preview:** fixes beta.7's empty BookOrbit source picker after
+refresh, its crash when reopening saved sources, the blank Module library and
+the cover-row/carousel chooser. Three loop indices accidentally shadowed the
+translator. Existing sources, cards and plugin data are preserved. Regression
+tests reproduce the failures in public beta.7 and pass in Swedish and English;
+physical Bigme retesting remains pending. Update through preview and restart.
+[Release notes](docs/OTA.md#orbitui-110-beta8).
+
+**Svenska, förhandsversion 1.1.0-beta.8:** fixar den tomma BookOrbit-källistan
+efter uppdatering, kraschen vid återöppning, det tomma Modulbiblioteket och
+valet omslagsrad/karusell. Tre loopvariabler krockade med översättningsfunktionen.
+Sparade källor, kort och plugindata behålls. Felet är återskapat i beta.7 och
+automattestat på svenska och engelska; nytt Bigme-test återstår. Uppdatera via
+förhandskanalen och starta om KOReader.
+
+**Included since 1.1.0-beta.7:** Add BookOrbit shelves and smartscopes as independent
 Reading dashboard cards: **+ → BookOrbit shelves and smartscopes → Refresh
 shelves and smartscopes**. Multiple cards, custom titles/sizes and cover
 row/carousel views. Only exact BookOrbit-linked files already on this device;

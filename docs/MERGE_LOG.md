@@ -4,6 +4,24 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — 1.1.0-beta.8 preview publication authorized
+
+User requests push/new beta after the local regression-fix report and
+crash(9).log confirmation of the exact numeric-translator call at module-store
+line 98 on beta.7. That log contains no separate fatal shelf-picker traceback;
+cached-source direct taps are reproduced by native menu tests. Release branch
+starts at d76326f7; preserve executable eab9256f and its tests. VERSION beta.8,
+SV/EN release notes and preview/draft selection coverage only; no new upstream,
+component/pin/art/bootstrap/API1/cache/data/sync-owner or server/device change.
+
+Full Lua/LuaJIT, 43 catalogs, frozen sealed/native/menu regressions, real older
+public installers including beta.7, source/history/held-art/secrets, exact
+main/tag CI and downloaded draft/public assets/channels must pass before
+publication. Prior tags/releases/assets and stable/latest/maintenance1.0 remain
+immutable; 27/407 helpers/identities, 2,000 paths. No actual device/plugin install
+or server operation. Physical Bigme retesting remains outstanding. Evidence
+test-results/preview11-beta8-20261108; TESTING/OTA receipts follow.
+
 ## 2026-11-08 — local beta.7 BookOrbit/module-library menu fix
 
 Base c820a54b, branch fix/dashboard-catalog-menus-20261108, executable eab9256f.

@@ -1,5 +1,26 @@
 # Verification and device acceptance
 
+## 2026-11-08 — 1.1.0-beta.8 release candidate
+
+User explicitly requests push/new beta after the local report discloses pending
+physical retesting. Start at d76326f7, preserving runtime eab9256f and tests;
+VERSION/release notes/OTA selection coverage only. No upstream/component/pin/
+artwork/bootstrap/API1/data/cache/sync-owner or device/server change. Freeze
+stable/latest/maintenance1.0 and all old tags/assets, 27/407 helpers/identities
+and exactly 2,000 installed paths.
+
+Required before activation: both full scripts/43 catalogs; frozen sealed roots,
+real native menu regressions and existing native supplements; actual older
+public installers including beta.7 in isolated temporary directories; exact
+source/manifest/hash, outgoing history/artwork/secrets, main/tag CI payload
+identity and downloaded draft/public assets; preview beta.8 vs stable/latest1.0
+selection and old-release/tag immutability. Crash(9).log independently confirms
+the exact beta.7 module-store numeric-translator error, not a separate fatal
+shelf stack. Native fixture tests reproduce the cached-source tap crash.
+No real device/server install/test. Bigme source/module/display retests and
+live source membership/link coverage remain open. Evidence
+test-results/preview11-beta8-20261108; frozen receipts follow.
+
 ## 2026-11-08 — local beta.7 catalog-menu regression fix
 
 Runtime **eab9256f**, branch fix/dashboard-catalog-menus-20261108, base c820a54b.
