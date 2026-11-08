@@ -39,6 +39,15 @@ and correct this file in the same change.
   Native real-archive desktop smoke passes without starting the pet; full tests,
   sealed package/audits and device gaps recorded in TESTING/MERGE_LOG. No public
   beta.5/dist, stable 1.0, ADB installation, existing plugins or server changes.
+  Final executable **3276a058**: both complete scripts pass (134 Python/four
+  optional exclusions, 112 roots, 551 Bookshelf/zero fail/three normal native
+  exclusions, 13 SimpleUI, 1,189 syntax and 43 catalogs). Sealed roots repeat in
+  Lua/LuaJIT, 12 store/18 runtime cases, native official ZIP and both 21-case
+  dashboard/Silverfish supplements pass. Actual public Beta 20 API1 installer
+  accepts candidate/restart/rollback/recovery; same-version beta.5 correctly
+  offers no OTA. Private ZIP **ddd93563**, 9,577,127 bytes, exact frozen source,
+  2,000 paths with two helper/new-host path exchanges. History/artwork/secret
+  checks pass. Physical full-plugin/UI gates remain open; no publication.
 
 - **Local pluggable Reading dashboard; not pushed/released.** User approves the
   generic module picker proposal with Silverfish as first compatibility target.

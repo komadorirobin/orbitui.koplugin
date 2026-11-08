@@ -28,6 +28,16 @@ asset/bootstrap/VERSION change, no push/release/ADB/server operation. Native
 official-archive smoke and deterministic suite pass; final full/package/audit
 receipts and physical gates are in TESTING, evidence module-library-20261108.
 
+Final executable **3276a058** passes both full scripts/43 catalogs and all 112
+sealed roots under Lua/LuaJIT, 12 store/18 runtime cases, actual official ZIP
+without pet initialization, both 21-case native dashboard adapter checks and
+Beta 20's real old API1 installer/restart/rollback/recovery. Private ZIP
+**ddd93563**, 9,577,127 bytes, exact source and 2,000 installed paths; held-art,
+outgoing history/secret checks pass. Public beta.5/dist **2cc94f4f**, stable 1.0
+and all devices/services remain unchanged. A beta.5-to-same-version check
+correctly refuses an OTA; this archive is development-only, not a beta release.
+This following receipt changes documentation only.
+
 ## 2026-11-08 — local pluggable dashboard (no import/publication)
 
 User approves the generic installed-module picker proposal. Preserve local

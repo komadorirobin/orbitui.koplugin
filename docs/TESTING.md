@@ -35,6 +35,27 @@ save/screensaver and dashboard fonts/touch/night/rotation/sleep. Manual update/
 rollback/removal is a documented first-version limitation. No independent
 catalog has been published; its no-catalog/bundled fallback message is expected.
 
+Final executable **3276a058ef9e2e3899c7c1ce1c87c92142f03f05** passes both complete
+scripts: 134 Python tests/four unchanged optional source-art exclusions, all
+112 root suites, 551 Bookshelf suites/zero failures/three normal native SQLite
+exclusions, 13 SimpleUI files, 1,189 syntax checks and 43 translation catalogs.
+All 112 sealed roots repeat in Lua/LuaJIT; 12 module-store cases, 18 runtime
+cases and both minimum/current native dashboard/Silverfish adapters (21 each)
+pass. Sealed native real-archive smoke passes without executing pet code.
+Public Beta 20's actual API1 installer accepts/extracts/verifies this private
+candidate and passes activation/restart/code rollback/truncation/external
+snapshot/cleanup recovery. A same-version beta.5-to-beta.5 attempt correctly
+offers no update; no public OTA path to this private candidate exists.
+
+Private development archive: **ddd935630e5cf150de58162bc514d2cde0fd02aa040debae3f83e7d32f3fbb7d**,
+9,577,127 bytes, 2,000 installed paths, exact source projection and API1. Only
+the two new host paths replace the two unchanged helper source paths now lazily
+embedded; 26 helper sources/407 identities. Pins, component bytes, assets,
+bootstrap and VERSION match the starting source. Public dist **2cc94f4f** and
+stable/preview releases are untouched. Outgoing artwork/history/secret audits
+pass (62 blobs, seven local commits); documentation receipt follows without
+executable changes. No push/release, device/plugin install or server operation.
+
 ## 2026-11-08 local pluggable Reading dashboard
 
 User approves the generic module picker, with Silverfish as first compatibility
