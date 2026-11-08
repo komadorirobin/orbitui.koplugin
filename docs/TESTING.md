@@ -35,6 +35,23 @@ Both full scripts, 43 catalogs, exact clean committed-source private ZIP/sealed
 root/native reruns and source/history/art/secret audits are required. Results
 are recorded below after completion. Evidence: test-results/dashboard-modules-20261108.
 
+Final executable **7c02737e**: both full scripts pass (134 Python/four unchanged
+optional source-asset skips, 111 root suites, 551 Bookshelf/zero failures/three
+normal native SQLite exclusions, 13 SimpleUI files and 1,185 syntax checks).
+The final sealed candidate repeats all 111 roots in Lua/LuaJIT and runs 19
+ordinary/21 minimum-current native input/FFI/Silverfish cases. The exact earlier
+ffa20542 candidate fails the close-during-minute-hook regression; the final
+candidate does not rearm that retired timer. All 43 catalogs validate, with
+unchanged upstream header warnings. No failure allowance is added.
+
+Private same-version development ZIP **3a72094e**, 9,561,420 bytes: exact frozen
+7c02737e source projection, same 2,000 public API1 paths/24 embedded helpers/407
+canonical identities. Components/pins/bootstrap/assets and public beta.5/dist
+remain unchanged. Outgoing history checks 37 blobs against the artwork hold;
+Gitleaks scans five local outgoing commits without findings. This is NOT a beta
+publication, a device install, a Bigme speed measurement or physical acceptance.
+Receipt-only documentation does not rebuild or retag that private artifact.
+
 Physical gates (no device is installed/used by this task): install Silverfish
 separately in a test setup, restart, add either card through +/SV/EN menus;
 resize/move across pages, tap to open/return, restart retaining layout and pet;

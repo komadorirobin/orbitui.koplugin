@@ -47,6 +47,10 @@ and correct this file in the same change.
   Bookshelf adapter checks with native minimum/current input and FFI buffers;
   creature/font/asset services are fixtures, not a pet-engine/device test.
   Tests/evidence and physical gates: docs/TESTING, test-results/dashboard-modules-20261108.
+  Final executable **7c02737e**; both full scripts/catalogs pass, final sealed
+  111 roots repeat in Lua/LuaJIT and 19 ordinary/21 native-Silverfish cases pass.
+  Private ZIP **3a72094e**, 9,561,420 bytes, exact source and unchanged 2,000
+  API1 paths/24 helpers/407 identities; history/artwork/secret audits pass.
   Public beta.5/dist, stable 1.0, real device and BookOrbit server are unchanged.
 
 - **Local Library-GUI-inspired thumbnail cache maintenance; not pushed/released.**

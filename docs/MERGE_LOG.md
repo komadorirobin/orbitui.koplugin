@@ -31,6 +31,14 @@ through unmodified adapters and actual minimum/current native input/FFI buffers;
 pet/font/sprite services remain fixtures, no external code/assets are imported.
 Full verification/source/package receipts and physical limitations: TESTING.
 
+Final executable **7c02737e** passes frozen sealed 111 roots under Lua/LuaJIT,
+19 ordinary/21 native-Silverfish cases; both complete scripts and 43 catalogs
+pass with the existing optional exclusions. A counterfactual against ffa20542
+reproduces a timer resurrected after its plugin closed the host; final teardown
+guards it. Private ZIP **3a72094e** (9,561,420 bytes) is exact frozen source,
+same 2,000 API1 paths/24 helpers/407 identities. Source/history/held-artwork/
+secrets pass. No push/release/physical device or server action was performed.
+
 ## 2026-11-08 — local exact-size cover reuse maintenance (no import/publication)
 
 User approves investigating Library GUI's metadata/cover reuse ideas. Start
