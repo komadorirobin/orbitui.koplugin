@@ -22,6 +22,19 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **1.1.0-beta.9 preview publication authorized.** User requests a new beta
+  after the local Silverfish report explicitly discloses pending physical
+  retesting. Branch release/1.1.0-beta.9-20261108 starts at cfebd307, preserving
+  runtime f60bcf98. VERSION beta.9 and release docs/channel coverage only;
+  no additional upstream/component/pin/art/bootstrap/API1/data/server/device
+  change. Full/package/sealed/native/frozen Home API/actual older-installer/
+  history/secrets, exact main/tag CI and verified draft/public assets/channels
+  must pass. Stable/latest/maintenance1.0 and prior tags/assets immutable;
+  27/407 helpers/identities and 2,000 paths. No actual device/plugin install
+  or independent module-catalog publication. Evidence preview11-beta9-20261108;
+  receipts follow. Earlier local-only restrictions below are superseded only
+  for this explicitly requested publication, not physical acceptance.
+
 - **Local Silverfish default-placement fix; not pushed/released.** User's
   beta.8 photos show a standalone Silverfish sibling after the full-page
   Reading dashboard, drawing over the dock. User approves placing new cards

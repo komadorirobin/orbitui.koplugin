@@ -1,5 +1,24 @@
 # Verification and device acceptance
 
+## 2026-11-08 — 1.1.0-beta.9 release candidate
+
+User requests a new beta after the local report explicitly discloses pending
+Bigme testing. Start cfebd307, preserving f60bcf98's Silverfish default-placement
+fix. VERSION/release docs/preview draft-selection coverage only; no additional
+upstream/component/pin/art/bootstrap/API1/data/sync/server/device operation.
+Freeze stable/latest/maintenance1.0 and old tags/assets, exact 2,000 paths and
+27/407 lazy helpers/module identities.
+
+Before activation: both full scripts/43 catalogs, frozen sealed Lua/LuaJIT
+roots and native supplements, exact frozen Silverfish public Home-method tests,
+actual older installers including beta.8, source/inventory/history/artwork/
+secrets, exact main/tag CI payload identity, downloaded draft/public assets,
+preview beta.9 versus stable/latest1.0 and previous release/tag immutability.
+No full-plugin/actual Bigme install or live server call; retained existing
+placements and new-add/off/restart/ordinary-full Home visual checks remain
+physical acceptance gates. Evidence test-results/preview11-beta9-20261108;
+frozen verification receipts follow.
+
 ## 2026-11-08 — local Silverfish default placement
 
 Base bbbc85d9, branch fix/silverfish-default-placement-20261108. User approves

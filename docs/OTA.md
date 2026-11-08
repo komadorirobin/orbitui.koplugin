@@ -7,6 +7,41 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 1.1.0-beta.9
+
+User-requested preview bugfix release from cfebd307, preserving the locally
+tested Silverfish placement fix f60bcf98. No new upstream merge, component/pin,
+plugin archive/save, bootstrap/API1, artwork, server or device operation.
+Stable/latest1.0 and previous tags/assets remain unchanged.
+
+New explicit Silverfish Home additions become a SimpleUI card inside Reading
+dashboard, not a sibling after that full-height module. On ordinary Home, use
+a new page unless matching live portrait geometry proves room. Fresh registry
+defaults are opt-in in memory only; saved native/legacy/Custom Screen choices
+and existing dashboard titles/size/hidden/order are preserved. Silverfish's
+public Home getter/add/off recognizes the dashboard card across restart and
+avoids duplicates. Native layout APIs still own order, enable flags and refresh.
+No builds/scans/network for placement, private fork, pet save modification or
+screensaver takeover. Existing manually placed cards are deliberately not moved.
+
+**Svenska:** Nya Silverfish-kort hamnar i Läsöversikt, inte under den i docken.
+På vanligt Hem får kortet en egen sida om det inte säkert finns utrymme.
+Redan sparade placeringar och anpassningar behålls, liksom alla Silverfish-data
+och skärmsläckarval. Hem-valet fungerar för på/av och omstart utan dubletter.
+En gammal överlappande placering rättas inte automatiskt: ta bort och lägg till
+kortet igen, eller justera placeringen manuellt. Inget plugin installeras om.
+
+Update through preview and restart KOReader. Back up settings/reading data
+separately; code rollback does not undo settings or third-party data. Dashboard
+config v2/v3 retains the downgrade limits described in beta.6/7. Exact 2,000
+installed paths, 27 lazy helpers/407 identities and bootstrap/API1 unchanged.
+Both full interpreters/43 catalogs, frozen sealed/native/frozen Silverfish
+methods, actual older installers, source/history/artwork/secrets, exact main/tag
+CI payloads and draft/public-byte/channel checks precede activation. Only the
+native adapters/public Home methods were desktop-tested, not the full plugin
+or actual Bigme drawing/touch/wake/rotation. Physical acceptance remains pending.
+Evidence: test-results/preview11-beta9-20261108; TESTING/MERGE_LOG receipts follow.
+
 ## OrbitUI 1.1.0-beta.8
 
 Published **2026-11-08 15:06:47 UTC**, release **438317954**, frozen source/tag

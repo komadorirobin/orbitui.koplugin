@@ -4,6 +4,24 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — 1.1.0-beta.9 preview publication authorized
+
+User requests a new beta after the local report discloses pending physical
+Bigme acceptance. Branch release/1.1.0-beta.9-20261108 starts at cfebd307;
+preserve runtime f60bcf98 and its tests. VERSION beta.9, release documentation
+and preview/draft selection coverage only. No upstream merge, component/pin,
+Silverfish archive/save, bootstrap/API1/assets/data or actual device/server
+change. Existing edited placements are deliberately preserved, not migrated.
+27/407 helpers/identities and 2,000 installed paths remain unchanged.
+
+Both complete interpreters/43 catalogs, frozen sealed roots/native adapters/
+exact Silverfish public Home methods, actual older public installers including
+beta.8, source/history/held-art/secrets, exact main/tag CI and downloaded draft/
+public bytes/channels must pass before activation. Prior tags/releases/assets
+and stable/latest/maintenance1.0 stay immutable. No full-plugin or physical
+Bigme acceptance is implied, and no independent catalog is published. Evidence
+test-results/preview11-beta9-20261108; TESTING/OTA receipts follow.
+
 ## 2026-11-08 — local Silverfish default-placement fix
 
 User's beta.8 photos show Silverfish painted over the dock, with Reading
