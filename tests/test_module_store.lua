@@ -225,6 +225,22 @@ H.test("plugin root follows native discovery without changing custom search path
     s = Adapter.store(); H.eq(#s.roots,3); settings.plugins_disabled={silverfish=true}
     H.eq(settings.plugins_disabled.silverfish,true)
 end)
+H.test("real bundled catalog builds visible adapter rows and deferred details without a protected show hiding errors", function()
+    reset()
+    for _, language in ipairs{ "en", "sv" } do
+        settings.language = language
+        local tr = require("core/orbitui_i18n")
+        local rows = Adapter.items(nil, {})
+        H.eq(#rows, 2)
+        H.eq(rows[1].text, tr("Check reviewed catalog"))
+        H.eq(rows[2].text, "Silverfish 2.0.0 · " .. tr("Desktop adapter test"))
+        local details = rows[2].sub_item_table_func()
+        H.eq(details[2].text_func(), tr("Not installed"))
+        H.eq(details[3].enabled_func(), true)
+        H.eq(settings.plugins_disabled.silverfish, true, "catalog must not enable a disabled plugin")
+    end
+    settings.language = nil
+end)
 H.test("download requires confirmation and cancellation cannot commit; busy prevents duplicate jobs", function()
     reset(); local p=pack(); local original=Adapter.store; local commits=0
     Adapter.store=function() return {cleanup=function()end,prepare=function()return{}end,activate=function()commits=commits+1 end} end
@@ -238,18 +254,19 @@ end)
 H.test("catalog closing retires late repaints and reopening performs fresh verification", function()
     reset(); local on_close, ctx
     local original = Adapter.store
-    local checks = 0
+    local checks, built = 0, 0
     Adapter.store = function() return {catalog=function()return M.bundled()end,status=function() checks=checks+1; return "missing" end} end
     package.loaded["screens/sui_settings_window"] = {show=function(_,closed,nav)
         on_close=closed; ctx={repaint=function() repaint=repaint+1 end}
         local build=nav[1].params.items_func
+        local previous_checks = checks
         local items=build(ctx); build(ctx)
-        H.eq(checks,1) -- no repeat hashes on repaint
-        items[1].callback(); on_close(); return {}
+        H.eq(checks,previous_checks+1) -- no repeat hashes on repaint
+        items[1].callback(); on_close(); built = built + 1; return {}
     end}
-    Adapter.show(); local old=repaint
+    Adapter.show(); H.eq(built, 1, "protected show must not hide a failed builder"); local old=repaint
     task.done({ok=true,value=nil}); H.eq(repaint,old)
-    Adapter.show(); H.eq(checks,2)
+    Adapter.show(); H.eq(built, 2); H.eq(checks,2)
     task.done({ok=true,value=nil}); Adapter.store=original
 end)
 H.test("owned catalog wording is bilingual and external names/state stay unchanged", function()

@@ -53,7 +53,7 @@ function M.bookOrbitSources(refresh, choose)
         end },
     }
     local types = { libraries = "Library", collections = "Shelf", ["smart-scopes"] = "Smartscope" }
-    for _, source in ipairs(sources) do
+    for _i, source in ipairs(sources) do
         local selected = source
         items[#items + 1] = { text = _(types[selected.section]) .. ": " .. selected.title,
             callback = function() choose(selected) end }
@@ -114,7 +114,7 @@ function M.moduleItems(id, refresh, pfx)
         end }
         items[#items + 1] = { text = _("Display"), sub_item_table_func = function()
             local choices = {}
-            for _, spec in ipairs({ { "row", "Cover row" }, { "carousel", "Carousel" } }) do
+            for _i, spec in ipairs({ { "row", "Cover row" }, { "carousel", "Carousel" } }) do
                 local mode, title = spec[1], spec[2]
                 choices[#choices + 1] = { text = _(title), checked_func = function()
                     local e = Model.module(dashboard().readConfig(pfx), id)

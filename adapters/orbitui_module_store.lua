@@ -85,7 +85,7 @@ end
 function M.items(refresh, cached)
     local s, items = M.store(), {}
     items[1] = { text = _("Check reviewed catalog"), callback = function() M.check(refresh) end }
-    for _, entry in ipairs(s:catalog().plugins) do
+    for _i, entry in ipairs(s:catalog().plugins) do
         local p = entry
         -- Verification is explicit, never in Home's paint or startup path.
         local function status()
