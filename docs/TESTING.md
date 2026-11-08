@@ -1,5 +1,25 @@
 # Verification and device acceptance
 
+## 2026-11-08 — 1.1.0-beta.10 release candidate
+
+User requests preview publication from 8b40cb29 after local reports disclose
+physical Bigme gaps. Preserve runtime d971b338; VERSION beta.10, README/docs
+and explicit preview/draft selection coverage only. No extra upstream merge,
+component/pin/art/bootstrap/API1/data/server/device or catalog operation.
+Same 28 helpers/407 identities/2,000-path cap, with the reviewed one-path
+adapter/helper exchange from beta.9. Stable/latest/maintenance1.0 and all
+prior releases/tags/assets remain immutable. Do not remove existing duplicates.
+
+Required gates: both complete scripts/43 catalogs, exact frozen-source sealed
+roots and native supplements, 20-case SV/EN native menu regression, real frozen
+Silverfish drawing/Home APIs, actual old installers including beta.9, source/
+history/held-art/secrets, exact main/tag CI and every payload byte, downloaded
+draft/public assets, preview beta.10 vs stable/latest1.0 and prior release/tag
+immutability. Only isolated temporary installations are used, not the user's
+device or a BookOrbit server. Physical layout/checkmark/toast/tap/night/colour/
+wake/rotation and complete Silverfish lifecycle remain pending. Evidence
+test-results/preview11-beta10-20261108; frozen/public receipts follow.
+
 ## 2026-11-08 — local dashboard card feedback/removal
 
 Base cd8c862b, branch fix/dashboard-card-feedback-20261108; preserve the

@@ -22,6 +22,21 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **1.1.0-beta.10 preview publication authorized.** User requests a new beta
+  after both local reports disclose pending physical Bigme tests. Branch
+  release/1.1.0-beta.10-20261108 starts at 8b40cb29; retain runtime d971b338
+  and the optional Silverfish card. VERSION beta.10, README/release docs and
+  preview/draft-selection regression only; no further upstream/component/pin/
+  art/bootstrap/API1/data/server/device changes. Stable/latest/maintenance1.0
+  and all prior tags/assets immutable. Same 28/407 helpers/identities and 2,000
+  installed paths; one reviewed adapter/helper path exchange from beta.9.
+  Full/package/sealed/native/menu/frozen Silverfish/actual older-installer/
+  history/secret gates and exact main/tag CI plus downloaded draft/public
+  bytes/channels must pass. No independent module-catalog publication or
+  physical/full-plugin certification. Evidence preview11-beta10-20261108;
+  receipts follow. Earlier local-only restrictions below are superseded only
+  for this explicit publication, not device acceptance or duplicate cleanup.
+
 - **Local dashboard add/remove feedback fix; not pushed/released.** User
   reports silent BookOrbit source additions causing duplicates, stale removal
   menus and misleading Unavailable labels. Branch

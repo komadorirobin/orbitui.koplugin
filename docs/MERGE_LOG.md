@@ -4,6 +4,26 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — 1.1.0-beta.10 preview publication authorized
+
+User requests the next beta after local dashboard feedback and optional
+Silverfish implementation/verification reports explicitly disclose physical
+Bigme gaps. Branch release/1.1.0-beta.10-20261108 starts at 8b40cb29. Preserve
+runtime d971b338; VERSION/README/release docs and preview/draft-selection
+regression only. No new upstream/component/pin/art/bootstrap/API1/data/server/
+device change, automatic duplicate cleanup or independent catalog publication.
+28 helpers/407 identities/2,000 installed paths; beta.9's pure drill-rekey path
+is offset by the new card adapter. Existing layouts/duplicates/reading data
+remain; low-level independent placement is preserved. Stable/latest1.0 and
+maintenance1.0 plus all previous tags/releases/assets are immutable.
+
+Full Lua/LuaJIT/43 catalogs, frozen sealed/native/menu/frozen Silverfish,
+actual older installers including beta.9, exact source/history/artwork/secrets,
+main/tag CI payload identity and draft/public byte/channel verification must
+precede activation. No physical Bigme/full-plugin or live-server acceptance
+is inferred; no actual installation. Evidence preview11-beta10-20261108;
+TESTING/OTA receipts follow after publication.
+
 ## 2026-11-08 — local dashboard card feedback and removal fix
 
 User's Bigme report/photo: source selection saves silently, repeated taps

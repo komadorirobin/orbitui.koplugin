@@ -7,6 +7,54 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 1.1.0-beta.10
+
+User-requested preview release from 8b40cb29, including the locally tested
+optional reading companion and dashboard add/remove feedback fixes. No new
+upstream merge, component/pin import, artwork, bootstrap/API1, server or device
+change. Stable/latest1.0 and all previously published tags/assets stay fixed.
+
+Dashboard source additions show a saved confirmation and BookOrbit checkmarks.
+Repeated picker taps on the same account/section/id cannot create another card
+on this screen. Existing duplicates and independent low-level placements are
+retained, not automatically removed. Remove card is one deliberate action,
+with feedback and return to the rebuilt list; stale controls cannot remove a
+replacement reusing its row id. Failed saves/full/future layouts never show
+success. Healthy empty BookOrbit sources and usable offline caches no longer
+receive a false Unavailable label from optional-plugin registry resolution.
+
+Add **Currently reading + Silverfish** through **Reading dashboard > + > Home
+modules (SimpleUI)** or the ordinary Home module picker. It is a separate
+opt-in choice with KOReader's cover/title/author/progress/resume and the active
+companion's name/stage/sprite. Tap book to resume, companion to open Silverfish.
+Continue reading and existing placements remain unchanged. Requires separately
+installed/enabled public **Silverfish 2.0.0** and restart; unreviewed versions
+explain why instead of calling guessed APIs. No plugin fork/file edit, copied
+art, save reads/writes or duplicate progression. Colours follow its native
+renderer/KOReader setting. Late and absent covers use native completion/change
+polling; visible-page refresh reuses the existing minute owner.
+
+**Svenska:** BookOrbit-kort får kvittens och källorna en bock när de lagts till.
+Upprepade tryck skapar inga dubbletter. Ta bort kort återgår direkt till den
+uppdaterade listan och visar kvittens; ingen extra borttagningsmeny behövs.
+Felaktig Inte tillgänglig-märkning är rättad. Befintliga dubbletter är orörda.
+Det nya valfria **Läser just nu + Silverfish** kombinerar bokomslag/läsprogress
+och din aktiva figur. **Fortsätt läsa ersätts inte.** Lägg till under
+**Läsöversikt > + > Hem-moduler (SimpleUI)**; Silverfish 2.0.0 behöver vara
+installerat och aktiverat separat. Ingen fork eller ändring av sparfiler.
+
+Update via preview and restart KOReader; back up settings/reading data
+separately. Code rollback never reverts settings or third-party data.
+Dashboard v2/v3 downgrade limits from beta.6/7 remain. Exact 2,000 installed
+paths/API1 are retained; a pure drill-rekey helper becomes an exact-source lazy
+embed to offset the new adapter (28 helpers/407 canonical identities).
+Both full interpreters/43 catalogs, frozen sealed/native/menu/Silverfish,
+actual older installers, source/history/artwork/secrets, exact main/tag CI and
+downloaded draft/public bytes/channel checks precede activation. No full-plugin
+or physical Bigme font/touch/colour/night/wake/rotation acceptance is implied;
+those checks remain pending. No live BookOrbit-server or real-device operation.
+Evidence: test-results/preview11-beta10-20261108; verification receipts follow.
+
 ## OrbitUI 1.1.0-beta.9
 
 Published **2026-11-08 16:54:56 UTC**, release **438380489**, frozen source/tag
