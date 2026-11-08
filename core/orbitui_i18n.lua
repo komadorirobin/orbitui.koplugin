@@ -1,5 +1,18 @@
 -- OrbitUI-owned strings, independent of the two upstream translation catalogs.
 local sv = {
+    ["Currently reading + Silverfish"] = "Läser just nu + Silverfish",
+    ["Enable Silverfish and restart KOReader to show your companion here."] = "Aktivera Silverfish och starta om KOReader för att visa din läskompis här.",
+    ["This Silverfish version is not supported by this card. Update OrbitUI or use Silverfish's own card."] = "Den här Silverfish-versionen stöds inte av kortet. Uppdatera OrbitUI eller använd Silverfishs eget kort.",
+    ["Silverfish is not ready. Open Silverfish, then reopen this page."] = "Silverfish är inte redo. Öppna Silverfish och öppna sedan den här sidan igen.",
+    ["Days: %s · Books: %s · Gen: %s"] = "Dagar: %s · Böcker: %s · Gen: %s",
+    ["Ash Cat"] = "Ash Cat",
+    ["Egg"] = "Ägg",
+    ["Nymph"] = "Nymf",
+    ["Young"] = "Ung",
+    ["Adult"] = "Vuxen",
+    ["Elder"] = "Åldring",
+    ["Kitten"] = "Kattunge",
+    ["Companion"] = "Läskompis",
     ["BookOrbit shelves and smartscopes"] = "BookOrbit-hyllor och smartscopes",
     ["Reading dashboard cards from BookOrbit shelves and smartscopes. Only linked books on this device are shown. Saved results appear first; visible cards refresh in the background at most every 15 minutes. No books are downloaded and no reading status is sent. Requires the BookOrbit catalog API, not an extras server patch."] = "Kort i läsöversikten från BookOrbit-hyllor och smartscopes. Bara länkade böcker på enheten visas. Sparade träffar visas direkt; synliga kort uppdateras i bakgrunden högst var 15:e minut. Inga böcker hämtas och ingen lässtatus skickas. Kräver BookOrbits katalog-API, inte något extras-servertillägg.",
     ["Refresh shelves and smartscopes"] = "Uppdatera hyllor och smartscopes",

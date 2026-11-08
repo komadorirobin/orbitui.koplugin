@@ -1805,6 +1805,26 @@ screensaver takeover, reset or global resolver replacement. Tests:
 test_silverfish_placement and optional frozen Silverfish/native-input/FFI
 dashboard supplement; full-plugin and physical acceptance remain separate.
 
+November 8 user-approved additional Currently reading + Silverfish module:
+keep Continue reading/the native currently module and existing placements
+unchanged. The new descriptor orbitui_reading_silverfish defaults off; reuse
+the native registry and dashboard's existing kind-qualified opt-in picker.
+KOReader owns current file, metadata, cover, progress and resume. Borrow only
+already-loaded public Silverfish 2.0.0 APIs/state for the active creature;
+fail closed for unreviewed versions, mismatched state/species or missing APIs.
+Never initialize the plugin, advance progression, read/write saves, switch
+global species, copy artwork, replace plugin files or capture its full UI.
+Use its original UI on companion tap. OrbitUI owns the bounded presentation,
+localized labels and separate book action; missing companions do not remove
+book data. Clip sprite errors locally and retire stale paint/input references.
+Native cover polling preserves (all_done, changed), including a mounted
+module's private context, missing/late covers and failed providers. Only
+current visible-page modules refresh through the existing minute owner;
+no independent background timer. No automatic layout migration or module
+installation. Tests: test_silverfish_reading, test_dashboard_modules, existing
+placement/dashboard/runtime suites and frozen native input/FFI drawing
+supplements. Physical Bigme lifecycle/font/touch/wake/night checks remain open.
+
 ## C11: Author-bound ornaments
 
 User-approved change, October 19, 2026: optional data-only add-ons supersede the

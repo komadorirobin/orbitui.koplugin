@@ -6,6 +6,26 @@ change. Device acceptance is still pending.
 
 ## Controls
 
+### Optional reading companion card
+
+**Currently reading + Silverfish / Läser just nu + Silverfish** is an
+additional module, not a replacement for Continue reading. Add it through
+**Reading dashboard > + > Home modules (SimpleUI)**, or the ordinary Home
+module picker. Full width is recommended; placement and removal affect only
+this card. Existing modules and layouts are not changed automatically.
+
+The card combines KOReader's current/recent book cover, title/author and
+progress with the active Silverfish companion's name, stage and sprite.
+Tap the book to resume; tap the companion to open Silverfish. Enable the
+separately installed public Silverfish **2.0.0** and restart KOReader first.
+Missing/unsupported versions display an explanation; later versions require
+an OrbitUI compatibility review. Colour follows the existing Silverfish
+renderer and KOReader's colour setting, otherwise it draws in greyscale.
+OrbitUI never forks/changes Silverfish, copies its artwork, reads/writes its
+saves or advances its development. Native polling supplies late covers and
+only visible dashboard cards use the existing minute refresh. Physical-device
+acceptance remains pending; see TESTING for exact automated evidence.
+
 ### BookOrbit integration settings (Beta 23)
 
 **Integrations > BookOrbit / Integrationer > BookOrbit** is a stable searchable

@@ -1,5 +1,41 @@
 # Verification and device acceptance
 
+## 2026-11-08 — local Currently reading + Silverfish card
+
+User approves local implementation of an additional optional card, not a
+Continue reading replacement, push/release or actual device install. Base
+eb35fbad, branch feature/silverfish-reading-card-20261108. Evidence under
+test-results/silverfish-reading-20261108. Components/pins/assets/bootstrap/
+VERSION/public beta.9 ZIP stay fixed. Exact source embedding of the pure
+drill-rekey helper preserves 407 identities/2,000 API1 paths with 28 embeds.
+
+Fourteen focused cases cover opt-in/no initial writes, active cat/silverfish
+state, missing/future/mismatched APIs, retired references, bounded half/full/
+landscape/tiny geometry, native metadata/cover/progress and independent book/
+pet taps, late/absent covers and native poll completion, service/paint errors,
+disabled/sleep/park/disposal and translated/high-DPI text. Optional actual
+minimum/current InputContainer + FFI Blitbuffer uses the frozen official
+Silverfish 2.0.0 d3da0797 source (archive SHA 959d6179) without main init or
+save I/O: both species paint in RGB32/BB8, actual colour pixels are present
+only on RGB, outside pixels stay white and pet state is unchanged. This is
+the fifteenth case, not a full-plugin integration or physical-device test.
+The 22-case dashboard suite adds visibility/generation/private-context cover
+polling, pending/done/change flags and failed provider retirement. Its actual
+frozen SimpleUI/Bookshelf adapter supplement has 24 cases. Existing placement
+tests retain the public Home-toggle/default-placement regression.
+
+Private schematic previews were inspected for cat and silverfish: real sprite
+data, synthetic cover and approximate fonts; NOT screenshots or native-font
+acceptance. Full scripts, 43 catalogs, frozen private sealed inventory/source
+projection, both sealed root matrices, native supplements and artwork/secret
+checks are required before handoff; verification receipt follows.
+
+Physical gates: add/remove/full/half placement, real-font long title/name and
+touch boundaries, book/pet open/return, asynchronous cover, colour toggle/night,
+sleep/wake/rotation, plugin disable/re-enable/restart and all pre-existing
+hero/native/currently layouts. No ADB/server operation or public distribution
+is performed in this task; headless tests cannot certify these device gates.
+
 ## 2026-11-08 — 1.1.0-beta.9 release candidate
 
 User requests a new beta after the local report explicitly discloses pending

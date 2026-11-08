@@ -88,7 +88,8 @@ H.test("module catalog file budget uses exact lazy Bookshelf helper identities",
     local open = io.open
     io.open = function(path, ...)
         if path == root .. "/components/bookshelf/lib/bookshelf_module_breaker.lua"
-            or path == root .. "/components/bookshelf/lib/bookshelf_module_layout.lua" then return nil end
+            or path == root .. "/components/bookshelf/lib/bookshelf_module_layout.lua"
+            or path == root .. "/components/bookshelf/lib/bookshelf_drill_rekey.lua" then return nil end
         return open(path, ...)
     end
     local ok, err = pcall(function()
@@ -98,6 +99,10 @@ H.test("module catalog file budget uses exact lazy Bookshelf helper identities",
         H.eq(layout.key(false), "at"); H.eq(layout.key(true), "at_land")
         local boxes, changed = layout.resolveFor({}, { cols=2, rows=2 })
         H.eq(#boxes, 0); H.eq(changed, false)
+        local rekey = require("lib/bookshelf_drill_rekey")
+        local path = {{payload={book_fps={"/old"}}}}
+        H.eq(rekey.apply(path, "/old", "/new"), 1)
+        H.eq(path[1].payload.book_fps[1], "/new")
     end)
     io.open = open; assert(ok, err)
 end)

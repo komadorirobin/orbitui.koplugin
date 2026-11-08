@@ -223,6 +223,7 @@ function M.wrap(name, module)
     elseif name == "modules/moduleregistry" then
         require("adapters/orbitui_home_shelves").install(module)
         require("adapters/orbitui_dashboard").install(module)
+        require("adapters/orbitui_silverfish").install(module)
         require("adapters/orbitui_module_store").registry(module)
     elseif name == "infra/sui_layout" then
         require("adapters/orbitui_module_store").layout(module)

@@ -174,17 +174,19 @@ function M.buildModule(entry, w, h, ctx)
     local def = M.resolveModule(entry)
     if not def then return nil end
     if entry.kind == "action" then return nil, def end
-    local child, regions
+    local child, regions, args
     local ok, err = pcall(function()
         -- A shallow child context prevents module-local caches/geometry from
         -- overwriting the dashboard's context. Native data owners stay borrowed.
-        local args = {}
+        args = {}
         for k, v in pairs(ctx) do args[k] = v end
         -- Native Clock writes its mounted-widget bookkeeping here. Keep that
         -- private to the card, never replace another Home clock's live slots.
         if ctx._screen_widget then args._screen_widget = setmetatable({}, { __index = ctx._screen_widget }) end
         args.col_w, args.grow_h, args.width, args.height = w, h, w, h
-        if entry.kind == "simpleui" then child = def.build(w, args)
+        if entry.kind == "simpleui" then
+            args.orbitui_dashboard_hosted = true
+            child = def.build(w, args)
         else
             args.entry = { id = entry.id, module = entry.ref }
             args.config = require("lib/bookshelf_module_kit").entryConfig(args.entry)
@@ -203,7 +205,7 @@ function M.buildModule(entry, w, h, ctx)
         require("logger").warn("OrbitUI dashboard: module build failed", entry.id, err)
         return nil
     end
-    return child, def, regions
+    return child, def, regions, args
 end
 
 function M.tapModule(entry, def, ctx, regions, x, y)

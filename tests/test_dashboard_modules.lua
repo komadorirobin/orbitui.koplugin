@@ -289,6 +289,25 @@ H.test("guard catches paint/input failures, preserves the fallback and frees eve
     H.eq(guard:handleEvent({ handler = "onSomething" }), false)
     H.eq(guard.failed, true); guard:free()
 end)
+H.test("native cover polling reaches only mounted visible plugin cards and survives a failed provider", function()
+    local updates,ready=0,false
+    registry.register({id="late_covers",name="Cover card",build=mod.build,
+        updateCovers=function(child,args) assert(not child.freed);H.eq(args.orbitui_dashboard_hosted,true);updates=updates+1;return ready,ready end})
+    local v,ctx,data=view(only(entry("simpleui","late_covers","page"),entry("simpleui","external_pet","page")))
+    local changed,done=v:refreshCovers();H.eq(changed,false);H.eq(done,false);H.eq(updates,1)
+    top={};H.eq(v:refreshCovers(),false);H.eq(updates,1);top=ctx._screen_widget
+    v:onSuspend();H.eq(v:refreshCovers(),false);H.eq(updates,1);v:onResume()
+    v._module_page=2;v:replaceContent(ctx,data);H.eq(v:refreshCovers(),false);H.eq(updates,1)
+    v._module_page=1;v:replaceContent(ctx,data)
+    ready=true;changed,done=v:refreshCovers();assert(changed and done);H.eq(updates,2)
+    changed,done=v:refreshCovers();H.eq(changed,false);assert(done);H.eq(updates,2)
+    v:replaceContent(ctx,data);assert(v:refreshCovers());H.eq(updates,3)
+    v:replaceContent(ctx,data)
+    registry.get("late_covers").updateCovers=function() error("provider unavailable") end
+    changed,done=v:refreshCovers();H.eq(changed,false);assert(done)
+    v:free();H.eq(v:refreshCovers(),false)
+    registry.unregister("late_covers")
+end)
 H.test("only current-page modules build; page changes retire ticks and queued refresh callbacks", function()
     local c = only(entry("simpleui", "external_pet", "page"), entry("bookshelf", "pet", "page"))
     local before = built

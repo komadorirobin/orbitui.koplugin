@@ -168,6 +168,7 @@ function Dashboard:replaceContent(ctx, data)
     if self._module_tick then require("ui/uimanager"):unschedule(self._module_tick); self._module_tick = nil end
     self._dashboard_ctx, self._dashboard_data = ctx, data
     self._actions, self._cover_slots, self._held = {}, {}, nil
+    self._module_cover_slots = {}
     self._hero_apply_colour = nil
     self._swipe_areas = {}
     self._module_generation = (self._module_generation or 0) + 1
@@ -181,7 +182,7 @@ function Dashboard:replaceContent(ctx, data)
 end
 
 function Dashboard:refreshCovers()
-    local changed = false
+    local changed, all_done = false, true
     for _, slot in ipairs(self._cover_slots) do
         local image = SH.getBookCover(slot.file, slot.area.w, slot.area.h, false)
         if image then
@@ -192,9 +193,22 @@ function Dashboard:refreshCovers()
             old:free()
             if slot.hero and self._hero_apply_colour then self._hero_apply_colour(image) end
             changed = true
+        else
+            local config = package.loaded["infra/sui_config"]
+            if not (config and config.isCoverMissing and config.isCoverMissing(slot.file)) then all_done = false end
         end
     end
-    return changed
+    for _, slot in ipairs(self._module_cover_slots or {}) do
+        if not slot.child or not slot.clip or slot.clip.failed or slot.clip.disposed then slot.done = true end
+        if not slot.done and self:modulesVisible(self._module_generation) and slot.child and slot.clip and not slot.clip.failed and not slot.clip.disposed
+                and slot.def and type(slot.def.updateCovers) == "function" then
+            local ok, done, updated = pcall(slot.def.updateCovers, slot.child, slot.args)
+            slot.done = not ok or done == true
+            if ok and (updated == true or updated == nil and done) then changed = true end
+        end
+        if not slot.done and slot.def and type(slot.def.updateCovers) == "function" then all_done = false end
+    end
+    return changed, all_done
 end
 
 function M.content(widget, p, ctx, data)
@@ -547,6 +561,8 @@ function M.content(widget, p, ctx, data)
             local inset, top = p.pad, math.max(px(32), p.pad * 2)
             local w, h = math.max(1, area.w - inset * 2), math.max(1, area.h - top - inset)
             local args, pending, building, index, clip, def, regions, refreshModule
+            local cover_slot = {}
+            widget._module_cover_slots[#widget._module_cover_slots + 1] = cover_slot
             local revision = 0
             local function makeClip()
                 revision = revision + 1
@@ -555,14 +571,17 @@ function M.content(widget, p, ctx, data)
                 for k, v in pairs(ctx) do args[k] = v end
                 args.refresh_fn = function() if born == revision then refreshModule() end end
                 building = true
-                local child
-                child, def, regions = Sources.buildModule(selected, w, h, args)
+                local child, child_args
+                child, def, regions, child_args = Sources.buildModule(selected, w, h, args)
                 building = false
                 local fallback = UI.makeTextBox{ text = selected.kind == "action" and def and _("Tap to open")
                         or _("Module unavailable. Long-press to configure."),
                     face = Style.getStyledFace(nil, 14 / (Screen:scaleBySize(1000) / 1000), "regular"),
                     width = w, max_lines = 3, height_adjust = true }
-                return Sources.moduleContainer(child, fallback, w, h, paper)
+                local guarded = Sources.moduleContainer(child, fallback, w, h, paper)
+                cover_slot.child, cover_slot.clip, cover_slot.def, cover_slot.args = child, guarded, def, child_args
+                cover_slot.done = nil
+                return guarded
             end
             refreshModule = function()
                 if building or pending or not widget:modulesVisible(generation) then return end

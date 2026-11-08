@@ -40,7 +40,7 @@ for name, path in pairs(source_map) do
     else expect(path) end
 end
 for name in pairs(embedded) do assert(source_map[name], "Unknown embedded module: " .. name) end
-assert(embedded_count == 27, "Expected twenty-seven reviewed embedded modules")
+assert(embedded_count == 28, "Expected twenty-eight reviewed embedded modules")
 for _, path in ipairs({
     "main.lua", "_meta.lua", "orbitui_bootstrap.lua", "VERSION", "manifest.json", "LICENSE", "README.md", "sources.json",
     "docs/MIGRATION.md", "docs/TESTING.md", "docs/UPSTREAM.md",
@@ -54,7 +54,7 @@ for _, path in ipairs({
     "core/orbitui_icons.lua", "core/orbitui_material_catalogue.lua", "adapters/orbitui_icons.lua",
     "adapters/orbitui_navbar.lua",
     "core/orbitui_libraries.lua", "adapters/orbitui_libraries.lua",
-    "adapters/orbitui_dashboard_sources.lua", "adapters/orbitui_dashboard_settings.lua",
+    "adapters/orbitui_dashboard_sources.lua", "adapters/orbitui_dashboard_settings.lua", "adapters/orbitui_silverfish.lua",
     "adapters/orbitui_bookorbit_rows.lua",
     "adapters/orbitui_library_settings.lua",
     "core/orbitui_setup.lua", "adapters/orbitui_setup.lua", "adapters/orbitui_integrations.lua",

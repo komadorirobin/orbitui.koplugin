@@ -4,6 +4,35 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — local Currently reading + Silverfish card
+
+User approves a separate additional choice, explicitly not replacing Continue
+reading. Base eb35fbad; branch feature/silverfish-reading-card-20261108.
+Adapter-owned opt-in SimpleUI registry entry orbitui_reading_silverfish shares
+the existing native/dashboard picker and kind-qualified placement schema.
+No automatic add/migration, component source/pin import, push/publication,
+actual device operation or server work. The original hero/currently modules
+and Silverfish's own card, save/settings and screensaver behavior are retained.
+
+Own a Brood-inspired bounded card layout with KOReader's actual book cover,
+title/author/progress/resume plus read-only active companion name/stage,
+sprite and days/books/generation. Reuse already-loaded frozen public 2.0.0
+state/species/drawing functions only; no plugin init, save I/O, progression,
+global species switch, full-window capture, copied art or external file edit.
+Companion taps open its existing UI. Guard exact version/API, state/instance/
+species replacement, retired inputs, tiny geometry and sprite paint failures.
+Missing/unsupported plugins explain why while leaving the book independent.
+Use the existing visible-page minute owner and native cover poll. The latter
+passes each module's private build context and preserves (all_done, changed),
+including pending/absent covers and provider errors; no extra timer/scanner.
+
+The pure canonical lib/bookshelf_drill_rekey source becomes an exact lazy
+embed, offsetting the adapter within the unchanged API1/2,000-path cap:
+28 embedded helpers, 407 module identities. Bootstrap, VERSION, component/
+pin/artwork bytes and public beta.9/dist unchanged. Tests/limitations and
+frozen private package receipt belong in TESTING. No physical Bigme or full
+Silverfish certification is implied by boundary/native-renderer tests.
+
 ## 2026-11-08 — 1.1.0-beta.9 preview publication authorized
 
 Published **2026-11-08 16:54:56 UTC**, release **438380489**, frozen tag/source

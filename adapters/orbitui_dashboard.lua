@@ -319,7 +319,8 @@ function M.updateStats(widget, ctx)
 end
 
 function M.updateCovers(widget)
-    return widget:refreshCovers()
+    local changed, all_done = widget:refreshCovers()
+    return all_done, changed
 end
 
 return M

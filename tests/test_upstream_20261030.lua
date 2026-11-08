@@ -30,7 +30,7 @@ H.test("all reviewed embedded sources are valid Lua and retain the path-map API"
         count = count + 1; assert(map[name]); assert((loadstring or load)(source))
         H.eq(source, read(name))
     end
-    H.eq(count, 27)
+    H.eq(count, 28)
     local n = 0; for _, path in pairs(map) do H.eq(type(path), "string"); n = n + 1 end
     H.eq(n, 407)
 end)

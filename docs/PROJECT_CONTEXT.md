@@ -22,6 +22,25 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **Local optional Currently reading + Silverfish card; not pushed/released.**
+  User explicitly keeps Continue reading unchanged and approves a separate
+  module with cover, title/progress and the active companion. Branch
+  feature/silverfish-reading-card-20261108 starts at eb35fbad. New opt-in
+  native registry descriptor orbitui_reading_silverfish is available through
+  the dashboard's Home modules picker or ordinary Home module picker. Reuse
+  only already-loaded, checked public Silverfish 2.0.0 state/species/drawing
+  APIs; never initialize it, read/write saves, advance development, copy art,
+  modify its files or maintain a fork. KOReader owns the actual book and
+  resume action; companion tap opens Silverfish. Missing/unreviewed APIs
+  show a reason without changing existing placements. Bounded local paint/
+  input, native late-cover polling and visible-page minute refresh reuse
+  existing owners. C10/TESTING record checks and outstanding physical gates.
+  A pure drill-rekey helper is exact-source lazy embedded to offset the new
+  adapter: 28/407 helpers/identities, unchanged 2,000 API1 paths. Components,
+  pins, artwork, bootstrap, VERSION and public beta.9/dist stay unchanged.
+  Local implementation/testing only; no push, release, ADB or server work.
+  Evidence test-results/silverfish-reading-20261108; receipts follow.
+
 - **1.1.0-beta.9 preview publication authorized.** User requests a new beta
   after the local Silverfish report explicitly discloses pending physical
   retesting. Branch release/1.1.0-beta.9-20261108 starts at cfebd307, preserving
