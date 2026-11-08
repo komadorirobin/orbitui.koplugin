@@ -67,16 +67,23 @@ explains the extra controls and where to find them.
 can host compatible SimpleUI/Bookshelf plugin cards and action shortcuts.
 Tap **+**, or use **Cards and content → Add module…**. Long-press a plugin card
 to resize/hide/remove it; **Arrange cards** sets its position. Extra cards use
-separate dashboard pages, not smaller and smaller text. Install external plugins
-separately; their updates and data stay theirs. Silverfish's existing adapters
+separate dashboard pages, not smaller and smaller text. **Add module… → Get more
+modules…** opens a small curated **Module library**, initially Silverfish 2.0.0.
+It installs only the pinned reviewed archive, after confirmation and with a
+restart; existing plugins are never overwritten. Updates/removal remain manual;
+plugin data stays theirs. Silverfish's existing adapters
 are the first desktop compatibility check, not Bigme certification.
 
 **Svenska, lokal 1.1-utveckling — ännu inte i publicerad beta.5:** Lägg till
 kompatibla pluginmoduler eller åtgärdsgenvägar via **+** i Läsöversikt eller
 **Kort och innehåll → Lägg till modul…**. Håll inne ett pluginkort för att ändra
 storlek, dölja eller ta bort det; **Ordna kort** bestämmer placeringen. Fler kort
-får egna sidor i Läsöversikt. Pluginen installeras separat och behåller sina
-egna data. Silverfish är skrivbordstestat; prov på Bigmen återstår.
+får egna sidor i Läsöversikt. **Lägg till modul… → Hämta fler moduler…** öppnar
+ett litet **Modulbibliotek**, först med Silverfish 2.0.0. Det installerar bara
+versionslåsta granskade arkiv efter bekräftelse och kräver omstart. Befintliga
+plugins skrivs aldrig över; uppdatering och avinstallation görs manuellt.
+Pluginens egna data behålls. Bara Silverfish-adaptrarna är skrivbordstestade;
+prov av hela pluginet på Bigmen återstår. [Detaljer](docs/ADDONS.md#executable-module-library-local-11-development).
 
 ### Local books first, online services optional
 

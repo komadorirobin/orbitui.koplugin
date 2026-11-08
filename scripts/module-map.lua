@@ -7,6 +7,7 @@ local embedded_names = {
     "lib/bookshelf_popup_kit", "lib/bookshelf_slider",
     "lib/bookshelf_image_contrast", "lib/bookshelf_menu_close_refresh",
     "lib/bookshelf_pubdate", "lib/bookshelf_published",
+    "lib/bookshelf_module_breaker", "lib/bookshelf_module_layout",
     "features/sui_menu_hide", "features/sui_patch_compat", "infra/sui_migrations",
     "modules/critter/book", "modules/critter/game_lines", "modules/critter/games",
     "modules/critter/menu", "modules/critter/panel_row", "modules/critter/settings",

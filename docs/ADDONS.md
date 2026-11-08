@@ -1,5 +1,87 @@
 # Ornament add-ons
 
+The executable **Module library** prototype is separate from these data-only
+ornament packs; see [below](#executable-module-library-local-11-development).
+
+## Executable module library (local 1.1 development)
+
+Not in public beta.5; not published or installed on a device by this work.
+Hold Reading dashboard → Add module… → Get more modules… (or use +).
+Open Silverfish → Information and test scope before choosing Install plugin.
+After restarting KOReader, enable the plugin through KOReader's native manager
+if needed and add its existing SimpleUI or Bookshelf card in the picker.
+
+**Svenska:** Håll inne Läsöversikt → Lägg till modul… → Hämta fler moduler…
+(eller använd +). Läs **Information och testomfattning** före installation.
+Starta om KOReader, aktivera vid behov pluginet i den vanliga pluginhanteraren
+och välj sedan dess kort i modulväljaren. Märket **Adaptertestad på dator**
+är varken en säkerhetscertifiering eller ett test av hela pluginet på Bigme.
+Först stöds bara nyinstallation; uppdatering och avinstallation görs manuellt.
+Inget befintligt plugin skrivs över och inga sparfiler ändras av katalogen.
+Silverfishs eget gränssnitt är på engelska/portugisiska, inte svenska.
+
+The bundled first entry is upstream Silverfish 2.0.0, commit d3da0797b6e51ee73afdb4da6745b297b3a19830,
+asset silverfish-v2.0.0.zip (842,889 bytes), SHA-256
+959d61798e1d4ad4899ea220103492cb95d8c24fc5e7b874566855914c6e38f8.
+Download comes directly from the author's GitHub release; OrbitUI redistributes
+no pet code or artwork. Preserve all six archive-level documentation/license
+files inside the installed plugin's orbitui-catalog-docs directory; plugin
+contents themselves stay byte-for-byte unchanged. Code is GPL-3.0, characters,
+art and writing CC BY-NC-SA 4.0, fonts/data have their own included notices.
+Noncommercial artwork terms are not a blanket commercial-use permission.
+
+Test evidence is scoped to the two existing dashboard adapters at the recorded
+OrbitUI revision/native widget fixtures, not all plugin features, user patches,
+KOReader versions or physical devices. See TESTING. No badge certifies absence
+of malicious code/native crashes. Plugins run with KOReader's file/network
+access, may own startup/screensaver behavior and are **not sandboxed**. HTTPS
+and pinned SHA-256 check artifact integrity against our reviewed catalog, not
+publisher trust or future runtime safety. The catalog publisher is trusted to
+select executable code; it is not an open marketplace or arbitrary-URL loader.
+
+The executable store (core/adapters orbitui_module_store) has its own JSON
+registry under settings/orbitui/module-store and hidden, nondiscoverable
+staging under the destination plugins directory. Ornament extension/URL rules
+are unchanged. No downloaded Lua is required/dofiled during verification;
+source compilation alone checks syntax. Plain files only, exact expected
+plugin root, no links/traversal/case-duplicate paths/nested .koplugin/native
+binaries, bounded entry/file/total bytes. Only explicit first installs publish
+a new .koplugin directory by rename after a durable inventory intent; KOReader
+already completed discovery and loads it only on restart. Cancelled work stays
+inactive; a later install cleans only owned abandoned staging. Existing plugin
+directories (including legacy traca.koplugin or extra search-path duplicates),
+disabled preferences and plugin-owned settings are never overwritten/adopted.
+
+Installed hashes are checked only when the catalog opens or explicitly refreshes;
+no startup/paint/background whole-plugin scan. Another updater's modified files
+show **version unverified**, with no forced downgrade/reinstall. Updating,
+rollback and removal are deliberately manual in this first prototype. To recover
+from a bad third-party plugin, disable it in KOReader's native plugin manager;
+if KOReader will not start, move only that plugin's directory outside all plugin
+search paths while KOReader is stopped. Back up the plugin's own data before
+manual version changes: code rollback does not roll back its data migrations.
+Silverfish owns settings/traca.lua and its screensaver choices; this installer
+neither backs up nor resets those. No automatic uninstaller purges save files.
+
+**Independent catalogs:** Check reviewed catalog explicitly looks for published
+non-prerelease modules-N releases on komadorirobin/orbitui.koplugin, with exact
+module-catalog.json asset URL and matching increasing revision. There is no
+separate catalog published yet; the bundled entry remains available, and the
+UI says so. Catalog API/schema is 1, max 32 entries. Same revision changes,
+version reuse with different bytes and per-plugin downgrade (even after an
+entry was removed) are rejected. This channel never selects a plugin's latest
+release. Catalog publication requires review and separate authorization; no
+CI release action is added. The existing observation-only inspiration workflow
+now has a local Silverfish adapter/source/license mapping and release-asset
+watch. Pushing later activates that observation, not an install/update or
+automatic compatibility approval. Remote catalog entries still require tests
+and explicit user install consent. Bilingual owned labels and disclosures are
+kept separate from upstream plugin translations. Each catalog entry must include
+English and Swedish description, license and saved-data disclosures, including
+entries delivered independently of OrbitUI.
+
+## Ornament manager
+
 OrbitUI's installer no longer contains ornament artwork. Fresh installations do
 not seed ornaments, including the upstream template/cactus. Existing folders,
 reader overrides, placement keys and theme selections are not removed.

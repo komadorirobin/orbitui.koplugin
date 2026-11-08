@@ -84,6 +84,23 @@ H.test("an invalid real override cannot silently fall back to an embedded module
     package.loaded["modules/critter/book"] = nil
     H.eq(ok, false); assert(tostring(err):find("intentional override parse error", 1, true))
 end)
+H.test("module catalog file budget uses exact lazy Bookshelf helper identities", function()
+    local open = io.open
+    io.open = function(path, ...)
+        if path == root .. "/components/bookshelf/lib/bookshelf_module_breaker.lua"
+            or path == root .. "/components/bookshelf/lib/bookshelf_module_layout.lua" then return nil end
+        return open(path, ...)
+    end
+    local ok, err = pcall(function()
+        local breaker = require("lib/bookshelf_module_breaker")
+        H.eq(breaker.guard(function() return 42 end), true)
+        local layout = require("lib/bookshelf_module_layout")
+        H.eq(layout.key(false), "at"); H.eq(layout.key(true), "at_land")
+        local boxes, changed = layout.resolveFor({}, { cols=2, rows=2 })
+        H.eq(#boxes, 0); H.eq(changed, false)
+    end)
+    io.open = open; assert(ok, err)
+end)
 H.test("direct canonical and legacy patch-compat callers cannot rename patches", function()
     local rename = os.rename
     os.rename = function() error("patch rename forbidden") end

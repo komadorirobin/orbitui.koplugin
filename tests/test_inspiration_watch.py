@@ -91,7 +91,10 @@ class InspirationTests(unittest.TestCase):
 
     def test_configuration_exact_files_and_local_destinations_exist(self):
         sources = w.load_sources(ROOT / "scripts/inspiration-sources.json")
-        self.assertEqual({s["id"] for s in sources}, {"kobold", "cyberui", "vos", "projecttitle", "zen-os"})
+        self.assertEqual({s["id"] for s in sources}, {"kobold", "cyberui", "vos", "projecttitle", "zen-os", "silverfish"})
+        silverfish = next(s for s in sources if s["id"] == "silverfish")
+        self.assertTrue(silverfish["release_watch"])
+        self.assertEqual(silverfish["reviewed_commit"], "d3da0797b6e51ee73afdb4da6745b297b3a19830")
         self.assertNotIn("taiminator/Bookshelf-OS", {s["repository"] for s in sources})
         for source in sources:
             for idea in source["ideas"]:

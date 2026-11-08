@@ -19,7 +19,7 @@ H.test("all lazy helpers preserve canonical source bytes and API-1 module identi
         local f=io.open(root.."/"..assert(map[name]),"rb")
         if f then H.eq(f:read("*a"),source,name); f:close() end
     end
-    H.eq(count,24)
+    H.eq(count,26)
     for _,name in ipairs({"book_actions_layout","editor_page","link_panel","page_dialog",
             "picker_sort","popup_kit","slider","image_contrast","menu_close_refresh"}) do
         assert(embedded["lib/bookshelf_"..name],name)

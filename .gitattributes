@@ -45,3 +45,5 @@
 /components/bookshelf/lib/bookshelf_menu_close_refresh.lua export-ignore
 /components/bookshelf/lib/bookshelf_pubdate.lua export-ignore
 /components/bookshelf/lib/bookshelf_published.lua export-ignore
+/components/bookshelf/lib/bookshelf_module_breaker.lua export-ignore
+/components/bookshelf/lib/bookshelf_module_layout.lua export-ignore

@@ -1,5 +1,40 @@
 # Verification and device acceptance
 
+## 2026-11-08 local module-library prototype
+
+User approves trying the curated executable-plugin catalog, not publication or
+device installation. Branch feature/module-library-20261108 above 82f76b75.
+test_module_store covers pinned/bounded catalog/source/test scope, rollback and
+same-version/revision reuse including removal history, unknown artifact refusal,
+staging vs commit, no downloaded execution, original ZIP recheck and tampered
+payload replacement, legacy/manual/extra-path/link conflicts, partial cancellation,
+changed-code status, checksum/corrupt state/foreign plan, destination race, disk
+full/failed rename retry, protected save fixture, unsafe paths/duplicates/links/
+native binary/bytecode/syntax/missing entry points/size limits, separate catalog
+channel, native plugin search-path preservation/disabled preferences, explicit
+consent/single-flight/cancelled task, per-open verification cache, late closed
+repaint retirement, and SV/EN scope wording. Current suite: 12 cases both Lua/LJ.
+
+scripts/smoke-module-store.lua exercises real filesystem/libarchive/SHA-256/JSON
+using the exact downloaded official Silverfish 2.0.0 archive 959d6179, only in
+new ignored test-results/module-library-20261108/native.* directories. Compile
+but never initialize main/_meta/pet. Verify pinned adapter hashes, license files,
+new-directory rename, changed-version refusal, user save and personal-note
+preservation. Activation CPU ~0.12 s on this desktop, **not** a Bigme timing.
+No native binaries/plugin dependencies are installed into the user's KOReader.
+The earlier full dashboard native minimum/current input/BlitBuffer adapter
+evidence remains a separate fixture-scoped check, not full Silverfish approval.
+
+Full scripts, translations, sealed source/package/API1/hash and outgoing
+history/artwork/secret audits must pass before handoff. Public dist/beta.5 stays
+fixed. Package uses 26 exact lazy helpers/407 identities, two source paths
+exchanged for the new host core/adapter; no API1/bootstrap/pin/asset changes.
+Physical gates: Bigme installer UI pagination/SV-EN, online/offline/cancel/free
+space, restart/native plugin disable/legacy conflict, real Silverfish welcome/
+save/screensaver and dashboard fonts/touch/night/rotation/sleep. Manual update/
+rollback/removal is a documented first-version limitation. No independent
+catalog has been published; its no-catalog/bundled fallback message is expected.
+
 ## 2026-11-08 local pluggable Reading dashboard
 
 User approves the generic module picker, with Silverfish as first compatibility

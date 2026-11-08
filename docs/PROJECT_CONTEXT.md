@@ -22,6 +22,24 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **Local curated module-library prototype; not pushed/released.** User approves
+  trying a mini store from the dashboard picker. Branch feature/module-library-20261108
+  starts at 82f76b75, preserving previous dashboard/thumbnail work. Separate
+  executable core/adapter, SV/EN Get more modules, pinned official Silverfish
+  2.0.0 archive 959d6179 (842,889 bytes) and adapter-desktop-only evidence.
+  Explicit first installs/next restart; no overwriting existing/manual/legacy
+  plugins, automatic latest update/enable/removal, save migration or pet code
+  import. JSON inventory intent, bounded source-only ZIP/hash verification,
+  hidden owned staging, conservative extra-path conflict checks and changed-file
+  unverified status. Independent reviewed modules-N catalog supported but none
+  published; explicit check says so. Local observation-only Silverfish mapping
+  and release watch never alter catalog pins/approval. Two pure Bookshelf helpers
+  are now exact lazy embeds (26/407), offsetting two runtime files within API1
+  cap 2,000; component bytes/pins/bootstrap/assets/VERSION remain unchanged.
+  Native real-archive desktop smoke passes without starting the pet; full tests,
+  sealed package/audits and device gaps recorded in TESTING/MERGE_LOG. No public
+  beta.5/dist, stable 1.0, ADB installation, existing plugins or server changes.
+
 - **Local pluggable Reading dashboard; not pushed/released.** User approves the
   generic module picker proposal with Silverfish as first compatibility target.
   Work on feature/dashboard-modules-20261108 above the preserved local thumbnail

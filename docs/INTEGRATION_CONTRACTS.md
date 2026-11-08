@@ -449,6 +449,23 @@ and server-backed Want to Read remains usable. No live credentials in tests.
 
 ## C06: External plugin and patch compatibility
 
+November 8 approved local module-library prototype is a separate executable
+store, not an extension of data-only ornament permissions. Explicit first
+installs only, pinned official archive/source/checksum and scoped desktop adapter
+evidence; no certification, automatic/latest upgrade, overwrite/adoption/enable,
+data migration or uninstall. Stage outside discoverable .koplugin roots, validate
+bounded plain-source/archive paths without executing metadata, then publish one
+new directory for next restart. Check legacy and extra lookup-path conflicts.
+Keep plugin updater/screensaver/save ownership. Changed managed files become
+unverified; do not force a downgrade. JSON catalog updates are explicit, trusted,
+separate from OrbitUI runtime, rollback/reuse guarded and initially unpublished.
+Remote code is not sandboxed. No startup/paint/network scan or physical-device
+claim; UI is SV/EN. Existing observation-only watcher may report Silverfish
+adapter/license/release changes but cannot approve or install them. C08 recovery:
+durable inventory intent, abandoned owned staging only, preserve all plugin data.
+Two pure native helpers become exact-source lazy embeds (26/407) to offset two
+host runtime files; unchanged API1 bootstrap/2,000-file limit and source pins.
+
 November 1 Bookshelf 6.2 menu-close refresh is shared by live host owners, not
 an unreleased global component-init mutation. Last-owner release restores the
 method only while it is our wrapper; a later external wrapper survives with

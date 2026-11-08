@@ -129,6 +129,9 @@ function M.pickerItems(refresh, pfx)
             return rows
         end }
     end
+    items[#items + 1] = { text = _("Get more modules…"), callback = function()
+        require("adapters/orbitui_module_store").show(pfx)
+    end }
     return items
 end
 

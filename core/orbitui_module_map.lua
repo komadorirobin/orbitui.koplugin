@@ -4002,6 +4002,201 @@ end\
 \
 return M\
 ",
+    ["lib/bookshelf_module_breaker"] = "--[[\
+Open-crash breaker for the start menu.\
+\
+A micro-module's render runs on every menu open. Two cheap protections:\
+\
+  * guard(fn): runs the render under pcall, so a Lua error degrades to a\
+    fallback \"(error)\" row instead of taking down the whole build. It does NO\
+    disk writes - this is the hot path (once per module per open) and the\
+    earlier per-render arm/disarm of a persisted marker flushed the 100 KB+\
+    bookshelf.lua to e-ink storage twice per module, which dominated the menu's\
+    open time (~115ms floor per module on PW5). Prevention now lives in\
+    safeText (lib/bookshelf_text_safe), so per-module crash pinning isn't worth\
+    a flush per render.\
+\
+  * armOpen / endOpen / openCrashed: ONE persisted \"open in progress\" marker.\
+    Armed before the menu is shown, cleared once the first paint returns. If a\
+    paint-pass segfault (or a render hard-crash safeText didn't prevent) kills\
+    the app before the clear, the marker survives on disk and the next open\
+    detects it and comes up in SAFE MODE (all modules suppressed) so the user\
+    can still get in. Two writes per open, total.\
+\
+The store is injected (read/save/delete, matching lib/bookshelf_settings_store)\
+so the logic is unit-testable without KOReader's LuaSettings.\
+]]\
+\
+local M = {}\
+\
+-- \"An open is in progress and hasn't completed a paint yet.\" Survives a crash\
+-- because the real store flushes on save.\
+M.OPEN_KEY = \"start_menu_open_inflight\"\
+\
+-- Run a module render under pcall. Returns (true, result) or (false, err).\
+-- No store access: the hot path stays off disk.\
+function M.guard(fn)\
+    local ok, res = pcall(fn)\
+    if not ok then return false, res end\
+    return true, res\
+end\
+\
+-- Mark that an open is in progress (before the menu is shown). Durable: the\
+-- real store flushes, so it survives a crash before the first paint.\
+function M.armOpen(store)\
+    store.save(M.OPEN_KEY, true)\
+end\
+\
+-- Clear the open marker once the first paint has succeeded.\
+function M.endOpen(store)\
+    store.delete(M.OPEN_KEY)\
+end\
+\
+-- True if an open armed but never completed a paint (it crashed). Read at the\
+-- start of the next open, BEFORE armOpen re-arms it.\
+function M.openCrashed(store)\
+    return store.read(M.OPEN_KEY) == true\
+end\
+\
+--[[\
+Light-touch crash marker for the HOME-SCREEN hero micro-module grid.\
+\
+The hero repaints on every shelf render - far more often than the start menu\
+opens - so the start-menu marker (a key in the 100KB+ settings store, flushed\
+to e-ink on every save) is too heavy here. The hero marker is instead a 0-byte\
+sentinel FILE: arming creates it, surviving the paint removes it. That's a\
+directory-entry write, not a settings flush, and it's just as durable against a\
+segfault (the kernel keeps buffered writes across a process crash; only a power\
+cut would lose them, which this doesn't defend against).\
+\
+Semantics mirror armOpen/endOpen/openCrashed: arm before the hero paints, clear\
+once the paint returns; if the file survives to the next launch the paint\
+crashed, so the home screen comes up with the cover hero (modules suppressed)\
+instead of locking the user out (issue #163). Path is resolved lazily and\
+guarded so the standalone test runner (no DataStorage) can still load this.\
+]]\
+function M.heroMarkerPath()\
+    local ok, DataStorage = pcall(require, \"datastorage\")\
+    if ok and DataStorage then\
+        return require(\"lib/bookshelf_paths\").cacheFile(\"hero_inflight\")\
+    end\
+    return nil\
+end\
+\
+-- Create the sentinel (arm). No-op if the path is unavailable.\
+function M.armFile(path)\
+    if not path then return end\
+    local f = io.open(path, \"w\")\
+    if f then f:close() end\
+end\
+\
+-- Remove the sentinel - the paint survived (or we're recovering from a crash).\
+function M.endFile(path)\
+    if path then os.remove(path) end\
+end\
+\
+-- True if the sentinel survived a previous arm, i.e. the paint crashed before\
+-- endFile ran. Uses lfs when present, else an io.open probe.\
+function M.fileCrashed(path)\
+    if not path then return false end\
+    local ok_lfs, lfs = pcall(require, \"libs/libkoreader-lfs\")\
+    if ok_lfs and lfs and lfs.attributes then\
+        return lfs.attributes(path, \"mode\") ~= nil\
+    end\
+    local f = io.open(path, \"r\")\
+    if f then f:close(); return true end\
+    return false\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_module_layout"] = "--[[\
+Stored micro-module entries > the boxes a surface draws.\
+\
+Each entry keeps its grid position on the entry itself: `at` for portrait,\
+`at_land` for landscape (see Grid.boxesFrom). This module decides, for one\
+build, where every entry goes and whether any of that is worth saving:\
+\
+  - placing an entry that has no position yet (a newly added module)  SAVE\
+  - the one-time upgrade from the old row packer (migration)          SAVE\
+  - seeding the landscape layout the first time landscape is drawn    SAVE\
+  - re-homing modules that don't fit a smaller grid than they were\
+    laid out on (settings restored onto another device, a shorter\
+    top panel)                                                        NEVER\
+\
+The last one is render-time only, so growing the grid back restores the\
+layout exactly as it was. Pure: no KOReader requires, no settings access; the\
+caller saves `items` when `changed` comes back true.\
+]]\
+local Grid = require(\"lib/bookshelf_module_grid\")\
+\
+local M = {}\
+\
+function M.key(landscape)\
+    return landscape and \"at_land\" or \"at\"\
+end\
+\
+--- resolveFor(items, dims, opts) -> render_boxes, changed\
+---   opts.landscape  draw the landscape layout\
+---   opts.migrated   the one-time upgrade already ran for this surface\
+---   opts.legacy()   -> { {id, page, px_w, px_h}, ... } the old packer's output\
+---   opts.size_for(item) -> w, h  size for an entry placed fresh\
+---   opts.page       page a fresh entry should land on first (default 1)\
+--- Mutates `items` (positions; legacy size/page cleared on migration) only for\
+--- work that should be saved, and reports it through `changed`.\
+function M.resolveFor(items, dims, opts)\
+    opts = opts or {}\
+    local key = M.key(opts.landscape)\
+    local size_for = opts.size_for or function() return 1, 1 end\
+    local boxes, unplaced = Grid.boxesFrom(items, key)\
+    local changed = false\
+\
+    if #items > 0 and #boxes == 0 and opts.landscape then\
+        -- Landscape seed: the portrait layout in reading order (then anything\
+        -- portrait hasn't placed either), flowed onto the landscape grid. A\
+        -- device that has only shown landscape since the upgrade has no\
+        -- portrait layout yet: seed from the old packer's layout instead.\
+        local pboxes, punplaced = Grid.boxesFrom(items, \"at\")\
+        if #pboxes == 0 and not opts.migrated and opts.legacy then\
+            boxes = Grid.snapLegacy(opts.legacy(), dims)\
+            Grid.writeBack(items, boxes, key)\
+            return Grid.resolve(boxes, dims), true\
+        end\
+        -- Shrink portrait boxes to this grid's edges first (as drawing them\
+        -- would), so a module sized to \"the rest of the row\" stays on its row.\
+        local seq = Grid.readingOrder((Grid.resolve(pboxes, dims)))\
+        for _i, it in ipairs(punplaced) do\
+            local w, h = size_for(it)\
+            seq[#seq + 1] = { id = it.id, page = 1, col = 1, row = 1, w = w, h = h }\
+        end\
+        boxes = Grid.flow(seq, dims, 1)\
+        Grid.writeBack(items, boxes, key)\
+        changed = true\
+    elseif #items > 0 and #boxes == 0 and not opts.landscape\
+            and not opts.migrated and opts.legacy then\
+        -- One-time upgrade from the old row packer.\
+        boxes = Grid.snapLegacy(opts.legacy(), dims)\
+        Grid.writeBack(items, boxes, key)\
+        if not M.preserve_legacy then\
+            for _i, it in ipairs(items) do it.size, it.page = nil, nil end\
+        end\
+        changed = true\
+    elseif #unplaced > 0 then\
+        for _i, it in ipairs(unplaced) do\
+            local w, h = size_for(it)\
+            local b = Grid.placeNew(boxes, dims, it.id, w, h, opts.page or 1)\
+            boxes[#boxes + 1] = b\
+        end\
+        Grid.writeBack(items, boxes, key)\
+        changed = true\
+    end\
+\
+    local render = Grid.resolve(boxes, dims)\
+    return render, changed\
+end\
+\
+return M\
+",
     ["features/sui_menu_hide"] = "-- sui_menu_hide.lua — Simple UI\
 --\
 -- Hides chosen tabs, submenus and items of the File Manager and Reader menus.\

@@ -125,11 +125,24 @@ v2, which older OrbitUI builds show as unsupported without overwriting it.
 **Svenska:** Tryck på **+**, håll inne en yta utan bokomslag eller gå till
 **Hem (SimpleUI) → Läsöversikt → Kort och innehåll → Lägg till modul…**. Välj
 **Hem-moduler (SimpleUI)**, **Hyllmoduler (Bookshelf)** eller **Åtgärdsgenvägar**.
-Installera Silverfish separat och starta om KOReader. Håll inne pluginkortet för
+Installera Silverfish separat eller via **Hämta fler moduler…** och starta om KOReader. Håll inne pluginkortet för
 storlek, synlighet och borttagning; placera det via **Ordna kort**. Välj **Hel
 sida** om innehållet beskärs. Borttagning av ett kort avinstallerar inte pluginet
 och raderar inte dess data. Äldre OrbitUI-versioner kan inte redigera den nya
 kortlayouten, men ska inte skriva över den.
+
+The local **Get more modules… / Hämta fler moduler…** prototype offers a separate
+executable-plugin catalog, initially the official Silverfish 2.0.0 release.
+Its badge means desktop adapter testing, not full-plugin safety/device approval.
+No automatic installation, latest-version chasing, overwrite, enable, downgrade,
+uninstall or save migration. Explicit consent, SHA-256, bounded plain-file ZIP
+extraction, source compilation without execution, isolated staging and one
+new-directory rename precede restart. Check catalog shows no publication yet;
+a reviewed JSON catalog can later ship independently through modules-N releases.
+Existing/legacy conflicts remain manual. Another updater's changed files show
+unverified; status is refreshed on catalog open/explicit refresh, not Home paint.
+Own UI is SV/EN; Silverfish itself remains upstream English/Portuguese.
+See ADDONS for trust limits, licenses, data and manual recovery.
 
 ## Shelf and series presentation
 

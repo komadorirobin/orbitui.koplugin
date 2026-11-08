@@ -4,6 +4,30 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — local curated module library (no import/publication)
+
+User approves trying a dashboard mini store. Preserve all local dashboard and
+thumbnail commits; new feature/module-library-20261108 starts at 82f76b75.
+C06/C08 additive prototype: separate executable installer and native paginated
+SV/EN module picker entry, first installs only with explicit trust/scope/license/
+source disclosure. Exact official Silverfish 2.0.0 asset 959d6179, reviewed commit
+d3da0797, 842,889 bytes; no code/art imported into OrbitUI. Desktop adapter badge
+is not full-plugin/device certification. No automatic latest update, overwrite,
+adoption, enable, removal or saved-data migration. Hidden staging, bounded plain
+ZIP/source compilation without execution, checksum and fresh final extraction,
+durable inventory intent and new-directory rename for next restart. Existing
+manual/legacy/extra-root conflicts are kept; changed files become unverified.
+
+Independent reviewed modules-N JSON catalog supports explicit updates with
+rollback/revision/version guards; none is published yet. Existing monitoring
+gets local Silverfish adapter/license/source and release-asset observation only;
+no watcher can advance pins/install. Two pure unmodified Bookshelf helpers
+module_breaker/module_layout move to exact lazy source embeds (26/407), offsetting
+two host runtime paths and retaining API1 limit 2,000. No source/component/pin/
+asset/bootstrap/VERSION change, no push/release/ADB/server operation. Native
+official-archive smoke and deterministic suite pass; final full/package/audit
+receipts and physical gates are in TESTING, evidence module-library-20261108.
+
 ## 2026-11-08 — local pluggable dashboard (no import/publication)
 
 User approves the generic installed-module picker proposal. Preserve local

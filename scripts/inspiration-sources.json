@@ -2,6 +2,13 @@
   "schema": 1,
   "references": [
     {
+      "id": "silverfish", "repository": "theusmaoliveiras/silverfish-koreader", "branch": "main",
+      "reviewed_commit": "d3da0797b6e51ee73afdb4da6745b297b3a19830", "release_watch": true,
+      "ideas": [
+        {"idea": "Dashboard card adapter compatibility (not full plugin certification)", "relationship": "review-only", "orbitui": "adapters/orbitui_dashboard_sources.lua; core/orbitui_module_store.lua", "paths": ["silverfish.koplugin/traca_simpleui.lua", "silverfish.koplugin/traca_bookshelf.lua", "silverfish.koplugin/bookshelf_modules/traca.lua", "silverfish.koplugin/main.lua", "silverfish.koplugin/_meta.lua", "silverfish.koplugin/traca_versao.lua", "LICENSE", "LICENSE-ART.md"]}
+      ]
+    },
+    {
       "id": "kobold", "repository": "unitreign/kobold", "branch": "main",
       "reviewed_commit": "556dad48145dea61b4451746223b3879808d0d22",
       "ideas": [
