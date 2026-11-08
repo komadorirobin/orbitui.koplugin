@@ -40,6 +40,13 @@ and correct this file in the same change.
   component/pin, bootstrap/API1, VERSION/public dist, ADB/server or existing
   settings migration. Same 28/407 helpers/identities and 2,000-path budget.
   Evidence test-results/dashboard-card-feedback-20261108; receipts follow.
+  Frozen runtime **d971b338**, private ZIP **8de318f3** / 9,622,807 bytes,
+  manifest **90068e27**, exact 2,000 paths. Both complete scripts/43 catalogs
+  and all 116 sealed roots in Lua/LuaJIT pass, including the 20-case menu
+  suite; minimum/current native input/FFI supplements pass 15/24/18 cases.
+  Exact source projection/inventory, new-history held-art and redacted-secret
+  audits pass. Public beta.9/dist remains **d171ea5f**. No real device/server
+  operation or distribution; this following receipt is docs-only.
 
 - **Local optional Currently reading + Silverfish card; not pushed/released.**
   User explicitly keeps Continue reading unchanged and approves a separate

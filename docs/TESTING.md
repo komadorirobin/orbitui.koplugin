@@ -31,6 +31,26 @@ gates: checked source and toast visibility, fast repeat taps, removal/back/
 pagination, failure messages, native touch/fonts/night and ordinary/Custom
 Screen entry points. Headless native-navigation code is not device acceptance.
 
+Verification receipt: frozen
+**d971b3380f3d1121275f171348dc8b051f021262**. Both complete scripts pass:
+134 Python tests/four unchanged optional source-art skips, 116 root Lua files,
+551 Bookshelf suites/zero failures/three usual native SQLite skips, all 13
+SimpleUI files, 1,195 syntax files and all 43 translation catalogs. All 116
+sealed roots repeat in Lua/LuaJIT, including the final 20-case native menu/
+navigation suite. Both minimum/current native input plus FFI matrices pass
+15 reading-card, 24 dashboard and 18 placement cases each. These are code/
+boundary regressions, not physical touch/font or full-plugin acceptance.
+
+Private ZIP SHA-256
+`8de318f30b465efdae6596532cb059d4e6eb598fe4f63e885ce7ab2f863b4bf4`,
+9,622,807 bytes / 28,503,866 expanded, manifest **90068e27**, exact 2,000 API1
+installed paths / 28 embedded helpers / 407 canonical identities. Every
+sealed file matches the exact committed-source projection and manifest.
+New-history held-art/redacted gitleaks checks pass. Components/pins/assets/
+bootstrap/VERSION/public beta.9 dist remain unchanged; public ZIP still
+**d171ea5f**. No push/release, real layout cleanup, device or server call.
+This following receipt changes docs only; physical gates above remain open.
+
 ## 2026-11-08 — local Currently reading + Silverfish card
 
 User approves local implementation of an additional optional card, not a

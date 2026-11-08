@@ -40,6 +40,18 @@ extend the existing regression suite. TESTING records final verification and
 physical limits. Components/pins/assets/bootstrap/VERSION/public beta.9 dist
 and 28 helpers/407 identities/2,000 API1 paths remain unchanged.
 
+Verification: frozen **d971b3380f3d1121275f171348dc8b051f021262**; private
+ZIP **8de318f3**, 9,622,807 bytes / 28,503,866 expanded, manifest **90068e27**,
+exact 2,000 installed paths. Both complete scripts/43 catalogs and all 116
+sealed root files pass in Lua/LuaJIT, including all 20 menu cases. Both
+minimum/current native input/FFI supplements pass 15 reading-card / 24
+dashboard / 18 placement cases. Projected source/inventory/new-blob held-art/
+redacted-secret checks pass. Protected components/pins/assets/bootstrap/
+VERSION/public beta.9 dist bytes are unchanged (**d171ea5f** public ZIP).
+No push/tag/release, actual user-layout cleanup, device or server action.
+Physical Bigme feedback/touch/navigation acceptance remains pending. This
+following receipt changes docs only.
+
 ## 2026-11-08 — local Currently reading + Silverfish card
 
 User approves a separate additional choice, explicitly not replacing Continue
