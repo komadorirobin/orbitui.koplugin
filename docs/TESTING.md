@@ -20,6 +20,41 @@ device or a BookOrbit server. Physical layout/checkmark/toast/tap/night/colour/
 wake/rotation and complete Silverfish lifecycle remain pending. Evidence
 test-results/preview11-beta10-20261108; frozen/public receipts follow.
 
+Published **2026-11-08 19:28:20 UTC**, release **438466180**, frozen source/tag
+**65bad370e95a3382544ccdddf215025e9be0395e / v1.1.0-beta.10**, annotated tag
+object **332b5420**. Public ZIP SHA-256
+`83157ee1f0801e0d5173053b0e2e3c6812b2582c6716583f46ef09294893f679`,
+9,625,340 bytes / 28,513,546 expanded, manifest **d09ba311**, exact 2,000 paths.
+Both complete scripts pass: 134 Python tests/four unchanged optional source-art
+skips, 116 root files, 551 Bookshelf suites/zero failures/three usual native
+SQLite skips, all 13 SimpleUI files and 1,195 syntax files. All 43 catalogs
+pass. Sealed roots repeat in Lua/LuaJIT with actual frozen BookOrbit methods;
+20-case SV/EN menu/navigation, frozen public Silverfish Home methods and both
+native input/FFI matrices (24 dashboard / 15 companion cases), existing native
+menu/text/buffer/thumbnail/search/SQLite/EPUB/Trapper supplements all pass.
+Boundary fixtures are not full-plugin or physical Bigme/server certification.
+
+All four main/tag CI jobs **42514809970 / 42514810638** pass on the exact
+candidate; every installed payload byte from all four CI artifacts matches.
+Downloaded draft/public ZIP and checksum match the frozen bytes and API
+digests. Draft lookup by the public tag endpoint returned 404 as expected for
+an unpublished draft; authenticated release-list/id lookup and download were
+used before verified publication. Thirteen actual old installers pass offline
+native extraction/hash/activation/restart/rollback/recovery, including beta.9,
+using isolated temporary installations. The reviewed adapter/helper path
+exchange preserves the 2,000-file API1 cap and 28/407 helpers/identities.
+Twelve of those actual older installers also pass anonymous real public-HTTPS
+discovery/download/validation/activation/restart/rollback/recovery against the
+published bytes, including beta.9. The oldest Beta 5 is the offline-only case.
+These tests use temporary installations and never touch the user's device.
+
+All 94 previous release records/assets and 163 tag refs remain unchanged;
+stable/latest1.0 and maintenance1.0 unchanged. Exact source/inventory/new-blob
+held-art/redacted-secret checks pass. Public dist is beta.10. No actual device/
+plugin install, BookOrbit-server operation, independent catalog publication or
+duplicate cleanup. Physical Bigme/full-plugin gates above remain outstanding.
+This following receipt changes docs only.
+
 ## 2026-11-08 — local dashboard card feedback/removal
 
 Base cd8c862b, branch fix/dashboard-card-feedback-20261108; preserve the

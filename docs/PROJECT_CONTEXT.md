@@ -36,6 +36,19 @@ and correct this file in the same change.
   physical/full-plugin certification. Evidence preview11-beta10-20261108;
   receipts follow. Earlier local-only restrictions below are superseded only
   for this explicit publication, not device acceptance or duplicate cleanup.
+  **Published 2026-11-08 19:28:20 UTC**, release **438466180**, frozen tag/
+  source **65bad370 / v1.1.0-beta.10**, public ZIP **83157ee1**, 9,625,340
+  bytes, manifest **d09ba311**, API1/exact 2,000 paths. Both full scripts/43
+  catalogs, sealed/native/menu/frozen Silverfish/source/history/secrets pass.
+  All four main/tag CI jobs **42514809970 / 42514810638** pass and all four
+  payloads match every frozen file. Draft/public assets are byte-identical.
+  Thirteen actual old installers pass offline; twelve also pass anonymous
+  public-HTTPS upgrade/restart/rollback/recovery, including beta.9. All 94 old
+  releases/163 old tag refs and stable/latest/maintenance1.0 unchanged; preview/
+  dist is beta.10. Public-HTTPS upgrade verification is recorded in TESTING.
+  No actual device/plugin install, server operation or independent catalog
+  publication; Bigme/full-plugin acceptance remains pending. Following receipt
+  changes docs only.
 
 - **Local dashboard add/remove feedback fix; not pushed/released.** User
   reports silent BookOrbit source additions causing duplicates, stale removal

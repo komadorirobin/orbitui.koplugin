@@ -6,6 +6,20 @@ does not imply a public release or successful device testing.
 
 ## 2026-11-08 — 1.1.0-beta.10 preview publication authorized
 
+Published **2026-11-08 19:28:20 UTC**, release **438466180**, frozen source/tag
+**65bad370**, public ZIP **83157ee1**, 9,625,340 bytes, manifest **d09ba311**,
+API1/exact 2,000 paths. Both full scripts/43 catalogs, sealed/native/menu/
+frozen Silverfish/source/history/secrets pass. All four main/tag CI jobs
+**42514809970 / 42514810638** pass; all four payloads match every frozen file.
+Downloaded draft/public assets match exactly. Thirteen actual older installers
+pass offline; twelve also pass anonymous public-HTTPS upgrade/restart/rollback/
+recovery, including beta.9, only in isolated temporary installations.
+All 94 older releases/assets and 163 prior tag refs, stable/latest1.0 and
+maintenance1.0 unchanged. Public dist/preview is beta.10. Public-HTTPS upgrade
+results are recorded in TESTING. No real device/plugin install, server or
+independent catalog operation. Physical/full-plugin acceptance remains open;
+this following receipt changes docs only.
+
 User requests the next beta after local dashboard feedback and optional
 Silverfish implementation/verification reports explicitly disclose physical
 Bigme gaps. Branch release/1.1.0-beta.10-20261108 starts at 8b40cb29. Preserve
