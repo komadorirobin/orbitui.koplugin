@@ -22,6 +22,20 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **1.1.0-beta.12 preview publication authorized.** User requests a new beta
+  after viewing the schematic composition. Branch release/1.1.0-beta.12-20261108
+  starts at fa670875, retaining ed456402 runtime: companion left, centered text,
+  cover right. Only VERSION/README/release docs and draft/preview regression.
+  No further upstream/component/pin/art/bootstrap/API1/device/server/catalog
+  change. Stable/latest/maintenance1.0 and older releases/tags/assets immutable.
+  Same 28/407 helpers/identities, exact 2,000 paths. Both complete scripts/43
+  catalogs, frozen sealed/native sandbox/Font/Silverfish/retained regressions,
+  actual older installers including beta.11, history/art/secrets, exact main/tag
+  CI and verified draft/public bytes/channels precede activation. Evidence
+  preview11-beta12-20261108; receipts follow. Prior local-only restrictions are
+  superseded only for this release. Physical Bigme acceptance remains pending;
+  no actual device install, server or independent catalog operation.
+
 - **Local reading companion composition; not published.** User's beta.11 photo
   requests a right-hand cover and better use of space. Branch
   fix/silverfish-card-composition-20261108 starts at fdaf02e1. Full-height

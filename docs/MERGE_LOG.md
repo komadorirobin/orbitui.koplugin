@@ -4,6 +4,21 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — 1.1.0-beta.12 preview publication authorized
+
+User requests a new beta after viewing the local composition schematic.
+Branch release/1.1.0-beta.12-20261108 starts at fa670875; preserve ed456402
+runtime. VERSION/README/release docs and preview/draft-selection regression only.
+No additional upstream/component/pin/art/bootstrap/API1/data/device/server or
+independent catalog operation. Stable/latest/maintenance1.0 and prior published
+releases/tags/assets stay immutable; same 28/407 helpers/identities, 2,000 paths.
+Both full suites/43 catalogs, frozen sealed/native sandbox/Font/Silverfish,
+actual older installers including beta.11, history/art/secrets, exact four
+main/tag CI payloads and draft/public bytes/channel checks precede activation.
+Physical Bigme/full-plugin acceptance remains pending; schematic previews do
+not certify actual text/taps/lifecycle. Evidence preview11-beta12-20261108;
+TESTING/OTA receipts follow.
+
 ## 2026-11-08 — local reading companion composition
 
 Base fdaf02e1; branch fix/silverfish-card-composition-20261108. User requests

@@ -1,5 +1,33 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.1.0-beta.12
+
+User-requested preview release of the locally verified ed456402 composition,
+after inspecting its schematic layout. Full-height companion left, vertically
+centered text in the middle and native portrait cover right. Name/stage share
+a row; title/author and percentage/companion statistics stay together above
+the bar. Native measured title height removes unused lines; compact cards omit
+secondary rows before sacrificing readability. Normal-contrast secondary text.
+Tap creature/name for Silverfish; title/cover resumes the book. Continue reading,
+saved placements and Silverfish files/progression remain unchanged. Requires
+separately installed/enabled public Silverfish 2.0.0; no fork or copied artwork.
+
+**Svenska:** ny layout för **Läser just nu + Silverfish**: större figur till
+vänster, samlad text i mitten och bokomslag till höger. Uppdatera via
+förhandskanalen och starta om KOReader. Test på själva Bigmen återstår.
+
+No additional upstream/component/pin/art/bootstrap/API1/device/server/catalog
+operation. Stable/latest/maintenance1.0 and all older releases/tags/assets stay
+immutable. API1, exact 2,000 paths and 28 lazy helpers/407 identities retained.
+Both full scripts/43 catalogs, frozen sealed/native sandbox/Font/Silverfish,
+retained menu/SQLite/EPUB/search checks, actual older installers, history/art/
+secrets, exact main/tag CI and draft/public bytes/channels precede activation.
+Physical Bigme font/touch/colour/night/rotation/wake and full-plugin lifecycle
+acceptance remain pending. Schematic previews are not device screenshots.
+Back up settings/reading data separately: code rollback does not restore them
+or third-party data. Dashboard v2/v3 downgrade limits from beta.6/7 still apply.
+Evidence: test-results/preview11-beta12-20261108; publication receipts follow.
+
 ## First installation
 
 Download **orbitui.koplugin.zip**, not GitHub's source-code archive, from an

@@ -1,5 +1,23 @@
 # Verification and device acceptance
 
+## 2026-11-08 — 1.1.0-beta.12 release candidate
+
+User requests a new beta after seeing the schematic composition preview;
+physical Bigme acceptance remains explicitly pending. Branch
+release/1.1.0-beta.12-20261108 starts at fa670875, preserving ed456402 runtime.
+Only VERSION/README/release docs and preview/draft regression are added. No
+new upstream/component/pin/art/bootstrap/API1/device/server/catalog change.
+Stable/latest/maintenance1.0 and prior tags/assets remain immutable; same
+28/407 helpers/identities and exact 2,000 paths.
+
+Required: both complete scripts/43 catalogs, all frozen sealed roots, native
+minimum/current sandbox/Font/Silverfish, retained input/menu/SQLite/EPUB/search
+checks, actual old installers including beta.11, history/art/secrets, exact four
+main/tag CI payloads and verified draft/public bytes/channels. Only isolated
+temporary installations, not the user's device/server. Physical font/touch/
+colour/night/rotation/wake and complete third-party lifecycle remain pending.
+Evidence: test-results/preview11-beta12-20261108; frozen/public receipts follow.
+
 ## 2026-11-08 — local reading companion composition
 
 Base fdaf02e1; branch fix/silverfish-card-composition-20261108. User's beta.11
