@@ -1,5 +1,31 @@
 # Verification and device acceptance
 
+## 2026-11-08 — local BookOrbit dashboard source cards
+
+Branch feature/bookorbit-dashboard-rows-20261108, base edf54516. No upstream,
+release/push/version, actual device/plugin install or server operation. Public
+beta.6/dist and stable1.0 remain unchanged. Native catalog sources and exact
+local stable links only; no extras patch or new sync writer. New root adapter
+exchanges one runtime path with a lossless folder-label embed (27/407, API1 cap
+2,000 unchanged). Existing v1/v2 placements remain valid; new cards require v3.
+
+Focused `test_bookorbit_rows.lua` covers passive cached paint, source discovery,
+all three native filter IDs, complete/repeating pagination, stable local-only
+mapping and ambiguity/deletion, request coalescing/TTL, account/key/policy/map/
+suspend/navigation retirement, offline/cancellation/unsupported clients, missing
+sources, malformed descriptors/cache, v3 independent placements and SV/EN.
+`test_dashboard_modules.lua` adds real host row-subtree refresh/free/paging,
+native book tap/hold, carousel and hidden-page guards without rebuilding peer
+modules. Full Lua/LuaJIT, catalogs, sealed package and minimum/current native
+widget/buffer checks follow. Evidence test-results/bookorbit-rows-20261108.
+
+Pending physical/live gates: actual BookOrbit catalog responses on the user's
+connection; source refresh and rename/removal; library/collection/smartscope
+membership; stale/offline and account switch; link coverage for real local
+downloads; cover row/carousel/size/edit menus in SV/EN and day/night; swipe,
+hold, suspend/resume and read-return; measured Bigme start/latency/RSS. Headless
+and frozen-source adapter tests are not a server or Bigme acceptance result.
+
 ## 2026-11-08 — 1.1.0-beta.6 release candidate
 
 User requests push and a new beta after the module-library desktop-only report.

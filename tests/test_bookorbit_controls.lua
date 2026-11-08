@@ -55,7 +55,7 @@ local function drain() while #queue > 0 do table.remove(queue, 1)() end end
 H.test("unset flags preserve existing behaviour and settings inspection stays passive", function()
     reset()
     local rows = Integration.bookOrbitItems()
-    H.eq(#rows, 11); H.eq(#queue, 0); H.eq(client_calls, 0); H.eq(writes, 0)
+    H.eq(#rows, 12); H.eq(#queue, 0); H.eq(client_calls, 0); H.eq(writes, 0)
     H.eq(Integration.bookOrbitEnabled("status"), false)
     assert(Integration.bookOrbitEnabled("want") and Integration.bookOrbitEnabled("actions") and Integration.bookOrbitEnabled("tags"))
     H.eq(rows[1].text, "BookOrbit: Detected (not connection-tested)")
@@ -90,12 +90,12 @@ H.test("the actual settings callbacks reopen the same page and keep disabled sub
     end }
     local rows = Integration.bookOrbitItems(function() closed = closed + 1 end)
     assert(rows[2].checked_func() and rows[2].enabled_func())
-    rows[8].callback(); H.eq(saved.simpleui_orbitui_bookorbit_actions, false)
+    rows[9].callback(); H.eq(saved.simpleui_orbitui_bookorbit_actions, false)
     rows[2].callback(); H.eq(saved.simpleui_orbitui_bookorbit_enabled, false)
-    H.eq(rows[8].enabled_func(), false)
-    rows[8].callback(); H.eq(saved.simpleui_orbitui_bookorbit_actions, false)
+    H.eq(rows[9].enabled_func(), false)
+    rows[9].callback(); H.eq(saved.simpleui_orbitui_bookorbit_actions, false)
     rows[2].callback(); H.eq(saved.simpleui_orbitui_bookorbit_enabled, true)
-    H.eq(rows[8].checked_func(), false); H.eq(closed, 3); H.eq(reopened, 3)
+    H.eq(rows[9].checked_func(), false); H.eq(closed, 3); H.eq(reopened, 3)
     package.loaded["adapters/orbitui_settings"] = old_settings
 end)
 H.test("policy changes retire Home data and defer shelf rebuilds without changing position", function()
@@ -190,7 +190,7 @@ H.test("extras help describes the reviewed source package without deploying or d
     local original_notify = context.notify
     context.notify = function(text) notice = text end
     local rows = Integration.bookOrbitItems()
-    rows[10].callback()
+    rows[11].callback()
     context.notify = original_notify
     assert(notice:find("3.6.0", 1, true) and notice:find("3.2.0", 1, true))
     assert(notice:find("does not install, disable or deploy", 1, true))

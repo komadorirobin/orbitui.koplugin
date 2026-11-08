@@ -101,10 +101,23 @@ M.stat_order = { "pages_today", "reading_today", "streak", "week" }
 M.module_limit = 16
 
 function M.moduleId(kind, ref)
-    if (kind == "simpleui" or kind == "bookshelf" or kind == "action")
+    if (kind == "simpleui" or kind == "bookshelf" or kind == "action" or kind == "bookorbit")
             and type(ref) == "string" and #ref > 0 and #ref <= 256 and not ref:find("[%c]") then
         return "module:" .. kind .. ":" .. ref
     end
+end
+
+-- Persist only stable catalog IDs and a one-way account fingerprint, never
+-- credentials, request URLs or executable smartscope rules.
+function M.bookOrbitSource(source)
+    if type(source) ~= "table" or type(source.account) ~= "string"
+            or #source.account ~= 64 or source.account:find("[^a-f0-9]")
+            or not ({ libraries = true, collections = true, ["smart-scopes"] = true })[source.section]
+            or type(source.id) ~= "number" or source.id <= 0 or source.id >= 9007199254740992
+            or source.id ~= math.floor(source.id) or type(source.title) ~= "string"
+            or #source.title > 512 or source.title:find("%c") then return end
+    local title = M.normalizeHeading(source.title)
+    if title then return { account = source.account, section = source.section, id = source.id, title = title } end
 end
 
 function M.module(config, id)
@@ -130,7 +143,7 @@ function M.config(raw, legacy)
             new = { kind = "native", id = "new_books" },
         }, goal = "auto" }
     if raw == nil then return result end
-    if type(raw) ~= "table" or (raw.version ~= 1 and raw.version ~= 2) then
+    if type(raw) ~= "table" or (raw.version ~= 1 and raw.version ~= 2 and raw.version ~= 3) then
         -- A downgrade must not silently replace a newer configuration.
         result.unsupported = true
         for _, card in ipairs(M.heading_cards) do result.hidden[card.key] = true end
@@ -145,12 +158,21 @@ function M.config(raw, legacy)
                 label = type(entry.label) == "string" and #entry.label <= 512 and M.normalizeHeading(entry.label) or nil,
                 width = entry.width == 1 and 1 or 2,
                 size = (entry.size == "tall" or entry.size == "page") and entry.size or "normal" }
+            if entry.kind == "bookorbit" then
+                local added = result.modules[#result.modules]
+                added.source = M.bookOrbitSource(entry.source)
+                added.view = entry.view == "carousel" and "carousel" or "row"
+            end
             defaults[#defaults + 1] = id
             result.hidden[id] = type(raw.hidden) == "table" and raw.hidden[id] == true or nil
         end
     end
     -- Older OrbitUI builds fail closed rather than silently discarding cards.
     result.version = (#result.modules > 0 or raw.version == 2) and 2 or 1
+    for _, entry in ipairs(result.modules) do
+        if entry.kind == "bookorbit" then result.version = 3 end
+    end
+    if raw.version == 3 then result.version = 3 end
     result.order = ordered(raw.order, defaults)
     result.stats_order = ordered(raw.stats_order, M.stat_order)
     for _, card in ipairs(M.heading_cards) do

@@ -186,8 +186,9 @@ function Dashboard:refreshCovers()
         local image = SH.getBookCover(slot.file, slot.area.w, slot.area.h, false)
         if image then
             image.overlap_offset = { slot.area.x, slot.area.y }
-            local old = self[1][slot.index]
-            self[1][slot.index] = image
+            local parent = slot.parent or self[1]
+            local old = parent[slot.index]
+            parent[slot.index] = image
             old:free()
             if slot.hero and self._hero_apply_colour then self._hero_apply_colour(image) end
             changed = true
@@ -198,6 +199,7 @@ end
 
 function M.content(widget, p, ctx, data)
     local root = Overlap:new{ dimen = Geom:new{ w = p.w, h = p.h }, allow_mirroring = false }
+    local target, card_scope = root, nil
     local ink, paper, muted = BB.COLOR_BLACK, BB.COLOR_WHITE, BB.COLOR_DARK_GRAY
     local coloured = Model.colourMode(data.colour) ~= "off" and M.colourSupported()
     widget.dithered = coloured or nil
@@ -209,7 +211,7 @@ function M.content(widget, p, ctx, data)
     local function px(n) return math.max(1, math.floor(n * p.scale)) end
     local function add(child, x, y)
         child.overlap_offset = { x, y }
-        root[#root + 1] = child
+        target[#target + 1] = child
         return child
     end
     local function box(r, fill, border, key)
@@ -243,6 +245,7 @@ function M.content(widget, p, ctx, data)
     local function action(r, tap, hold)
         local item = rect(r.x, r.y, r.w, r.h)
         item.tap, item.hold = tap, hold
+        item.row_card = card_scope
         widget._actions[#widget._actions + 1] = item
     end
     local function settings(id)
@@ -262,7 +265,8 @@ function M.content(widget, p, ctx, data)
         local image = makeCover(fp, r, ctx)
         if image then
             add(image, r.x, r.y)
-            widget._cover_slots[#widget._cover_slots + 1] = { file = fp, area = r, index = #root, hero = hero }
+            widget._cover_slots[#widget._cover_slots + 1] = {
+                file = fp, area = r, index = #target, parent = target, hero = hero, row_card = card_scope }
         end
         bookAction(r, fp)
         return image
@@ -410,19 +414,19 @@ function M.content(widget, p, ctx, data)
     local owner = ctx._screen_widget or widget
     owner._orbitui_dashboard_pages = owner._orbitui_dashboard_pages or {}
     owner._orbitui_dashboard_sources = owner._orbitui_dashboard_sources or {}
-    local function shelf(key, label, files, failed, module)
-        local area = p[key]
+    local function shelf(key, label, files, failed, module, extra)
+        local area = extra and p.cards[key] or p[key]
         if not area then return end
-        local source = data.config and data.config.sources[key]
+        local source = extra and extra.source or data.config and data.config.sources[key]
         if source then
-            local identity = Model.sourceKey(source)
+            local identity = extra and table.concat({ source.account, source.section, source.id, extra.view }, ":") or Model.sourceKey(source)
             if owner._orbitui_dashboard_sources[key] ~= identity then
                 owner._orbitui_dashboard_pages[key] = 1
                 owner._orbitui_dashboard_sources[key] = identity
             end
         end
         box(area, nil, nil, key)
-        local count = 3
+        local count = extra and extra.view == "carousel" and 1 or 3
         local pages = math.max(1, math.ceil(#files / count))
         local page = math.min(pages, math.max(1, owner._orbitui_dashboard_pages[key] or 1))
         owner._orbitui_dashboard_pages[key] = page
@@ -433,13 +437,18 @@ function M.content(widget, p, ctx, data)
             local next_page = math.max(1, math.min(pages, page + delta))
             if next_page == page then return end
             owner._orbitui_dashboard_pages[key] = next_page
-            widget:replaceContent(ctx, data)
+            if extra then extra.redraw() else widget:replaceContent(ctx, data) end
             require("ui/uimanager"):setDirty(ctx._screen_widget or widget, "ui", widget.dimen)
         end
         local swipe_area = rect(area.x, area.y, area.w, area.h)
-        swipe_area.turn = turn
+        swipe_area.turn, swipe_area.row_card = turn, card_scope
         widget._swipe_areas[#widget._swipe_areas + 1] = swipe_area
         text(heading(key, label), area.x + p.pad, area.y + p.pad, area.w - 2 * p.pad, 13, true)
+        if extra then
+            action(rect(area.x, area.y, area.w, px(65)), function() widget:editModules(key) end,
+                function() widget:editModules(key) end)
+            text("[BookOrbit] " .. extra.caption, area.x + p.pad, area.y + p.pad + px(22), area.w - 2 * p.pad, 10, false, muted)
+        end
         if pages > 1 then
             local button_w = px(52)
             local indicator_w = math.min(px(76), area.w - 2 * p.pad - 2 * button_w)
@@ -460,20 +469,23 @@ function M.content(widget, p, ctx, data)
             action(rect(nav_x + button_w + indicator_w, nav_y, button_w, nav_h), function() turn(1) end)
         end
         if #files == 0 then
-            text(failed and _("Could not load books.") or _("No books to show yet."),
-                area.x + p.pad, area.y + px(50), area.w - p.pad * 2, 14, false, muted, 3)
-            action(area, settings(data.config and Model.id or module))
+            text(extra and (extra.error and require("adapters/orbitui_bookorbit_rows").message(extra.error)
+                    or _("No linked books from this source on this device."))
+                    or (failed and _("Could not load books.") or _("No books to show yet.")),
+                area.x + p.pad, area.y + px(extra and 75 or 50), area.w - p.pad * 2, 14, false, muted, 3)
+            action(area, extra and function() widget:editModules(key) end or settings(data.config and Model.id or module))
             return
         end
         local slot_w = math.floor((area.w - 2 * p.pad - 2 * p.gap) / count)
-        local max_h = nav_y - area.y - p.pad - px(34)
+        local cover_top = px(extra and 65 or 34)
+        local max_h = math.max(3, nav_y - area.y - p.pad - cover_top)
         local cw = math.floor(math.min(slot_w, max_h * 2 / 3))
         local ch = math.floor(cw * 3 / 2)
         for i = 1, count do
             local fp = files[(page - 1) * count + i]
-            if fp then
+            if fp and (not extra or require("adapters/orbitui_bookorbit_rows").fileExists(fp)) then
                 cover(fp, rect(area.x + p.pad + (i - 1) * (slot_w + p.gap) + math.floor((slot_w - cw) / 2),
-                    area.y + px(34) + p.pad + math.floor((max_h - ch) / 2), cw, ch))
+                    area.y + cover_top + p.pad + math.floor((max_h - ch) / 2), cw, ch))
             end
         end
     end
@@ -486,6 +498,47 @@ function M.content(widget, p, ctx, data)
         local area = p.cards[entry.id]
         if area then
             local selected = entry
+            if entry.kind == "bookorbit" then
+                local Rows = require("adapters/orbitui_bookorbit_rows")
+                local index, group, redraw
+                local function draw()
+                    for _, list in ipairs({ widget._actions, widget._cover_slots, widget._swipe_areas }) do
+                        for i = #list, 1, -1 do if list[i].row_card == selected.id then table.remove(list, i) end end
+                    end
+                    local previous = target
+                    group = Overlap:new{ dimen = Geom:new{ w = p.w, h = p.h }, allow_mirroring = false }
+                    group.overlap_offset = { 0, 0 }
+                    target, card_scope = group, selected.id
+                    local snapshot = Rows.snapshot(selected.source)
+                    shelf(selected.id, (selected.label or selected.source and selected.source.title or _("Source")) .. " [BookOrbit]",
+                        snapshot.files, nil, nil, { source = selected.source, view = selected.view,
+                            caption = Rows.caption(snapshot), error = snapshot.error, redraw = function() redraw() end })
+                    target, card_scope = previous, nil
+                    return group
+                end
+                redraw = function()
+                    if not widget:modulesVisible(generation) then return end
+                    local old = group
+                    root[index] = draw()
+                    old:free()
+                    local d = widget.dimen
+                    require("ui/uimanager"):setDirty(ctx._screen_widget or widget, "ui",
+                        Geom:new{ x = (d.x or 0) + area.x, y = (d.y or 0) + area.y, w = area.w, h = area.h })
+                end
+                root[#root + 1] = draw(); index = #root
+                -- Schedule after building. No network or ID-map construction
+                -- in paint; retired/hidden cards cannot commit or redraw Home.
+                local function refreshRow()
+                    if not widget:modulesVisible(generation) then return end
+                    Rows.refresh(selected.source, { source_required = true,
+                        current = function() return widget:modulesVisible(generation) end,
+                        on_done = function(result)
+                            if result.error ~= "stale" then redraw() end
+                        end })
+                end
+                ticks[#ticks + 1] = refreshRow
+                require("ui/uimanager"):nextTick(refreshRow)
+            else
             box(area, nil, nil, entry.id)
             title(entry.label or entry.ref, area)
             local inset, top = p.pad, math.max(px(32), p.pad * 2)
@@ -539,6 +592,7 @@ function M.content(widget, p, ctx, data)
                 end
             end, require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false
                 and function() widget:editModules(selected.id) end or nil)
+            end
         end
     end
     if #ticks > 0 then

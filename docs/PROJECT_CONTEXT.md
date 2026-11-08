@@ -22,6 +22,28 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **Local BookOrbit dashboard source cards; not pushed/released.** User approves
+  shelves/smartscopes as independent local-files-only cards. Branch
+  feature/bookorbit-dashboard-rows-20261108 starts at edf54516 (published beta.6
+  receipt). Native catalogSection/catalogBooks and read-only stable on-device
+  links; library/collection/smartScope IDs, no copied rules/server extension,
+  metadata guesses, manifest/directory scans, downloads or status writes.
+  Multiple cards, source/title/size and row/carousel picker, SV/EN, dedicated
+  integrations rows switch under existing master. Cache is account/credential
+  fingerprint-bound; no client construction/stat sweep/HTTP during build/paint.
+  Visible-only scheduled native subprocess work, 15-minute success TTL, one-minute
+  failure backoff, coalesced/serialized jobs, exact source existence check,
+  complete bounded pagination and generation/account/policy/mount/sleep guards.
+  Cache survives failures/disable; a missing source suppresses old membership.
+  Only each row's subtree redraws/pages; other modules/timers stay mounted.
+  v3 placement config makes older builds fail closed, preserving settings on
+  downgrade; existing v1/v2 pages unchanged until explicitly adding a source card.
+  One new runtime adapter offset by exact lazy embedding of the pure existing
+  folder-label helper: 27/407 helpers/identities, 2,000 API1 path cap unchanged.
+  Pins/bootstrap/assets/VERSION/public beta.6/dist/stable1.0, real Bigme and
+  server unchanged. Tests/evidence and acceptance gates: TESTING/MERGE_LOG,
+  test-results/bookorbit-rows-20261108.
+
 - **1.1.0-beta.6 published 2026-11-08 12:56:30 UTC.** User
   explicitly requests push and a new beta after the local module-library report,
   including the disclosed desktop-only/Bigme gaps. Release branch starts at

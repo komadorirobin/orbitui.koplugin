@@ -429,6 +429,73 @@ H.test("all owned new picker and recovery wording is translated without renaming
     end
 end)
 
+H.test("BookOrbit rows refresh and page only their own subtree, retaining native book tap and hold", function()
+    queued = {}
+    local previous = package.loaded["adapters/orbitui_bookorbit_rows"]
+    local requests, files = {}, { "/a", "/b", "/c", "/d" }
+    package.loaded["adapters/orbitui_bookorbit_rows"] = {
+        snapshot = function() return { files = files, at = 1234 } end,
+        caption = function() return "4 on device · cached" end,
+        fileExists = function() return true end,
+        refresh = function(source, opts) requests[#requests + 1] = opts; H.eq(source.id, 7) end,
+    }
+    local shared = package.loaded["modules/module_books_shared"]
+    shared.getBookCover = function(file, w, h) return W:new{ width = w, height = h, file = file } end
+    local e = entry("bookorbit", "row-1", "normal", 1)
+    e.source = { account = string.rep("a", 64), section = "collections", id = 7, title = "Favorites" }
+    local c = only(e, entry("simpleui", "external_pet", "normal", 1))
+    local v, ctx = view(c)
+    local count, generation = built, v._module_generation
+    H.eq(#requests, 0); H.eq(#v._cover_slots, 3)
+    local queue = queued; queued = {}; for _, fn in ipairs(queue) do fn() end
+    H.eq(#requests, 1)
+    local group = v._cover_slots[1].parent
+    requests[1].on_done{ ok = true }
+    H.eq(v._module_generation, generation); H.eq(built, count); H.eq(group.freed, true)
+    H.eq(#v._cover_slots, 3)
+    local fp, held
+    ctx.open_fn = function(file) fp = file end
+    ctx.hold_fn = function(file, module) held = file; H.eq(module, Model.id) end
+    local slot = v._cover_slots[1].area
+    local pos = { pos = { x = slot.x + 1, y = slot.y + 1 } }
+    v:onDashboardTap(nil, pos); H.eq(fp, "/a")
+    saved.simpleui_hs_settings_on_hold = true
+    v:onDashboardHold(nil, pos); v:onDashboardHoldRelease(); H.eq(held, "/a")
+    local area = v._plan.cards[e.id]
+    v:onSwipe(nil, { pos = { x = area.x+2, y = area.y+100 }, direction = "west" })
+    H.eq(ctx._screen_widget._orbitui_dashboard_pages[e.id], 2)
+    H.eq(#v._cover_slots, 1); H.eq(v._cover_slots[1].file, "/d")
+    H.eq(built, count); H.eq(v._module_generation, generation)
+    assert(v:refreshCovers()); H.eq(v._cover_slots[1].parent.freed, nil)
+    top = {}; local before = #requests; v._module_tick(); H.eq(#requests, before)
+    top = ctx._screen_widget; v:free()
+    H.eq(requests[1].current(), false)
+    requests[1].on_done{ ok = true }; H.eq(built, count)
+    package.loaded["adapters/orbitui_bookorbit_rows"] = previous
+end)
+H.test("BookOrbit carousel has independent paging and hidden pages never schedule a request", function()
+    queued = {}
+    local previous = package.loaded["adapters/orbitui_bookorbit_rows"]
+    local calls = 0
+    package.loaded["adapters/orbitui_bookorbit_rows"] = {
+        snapshot = function() return { files = { "/a", "/b" } } end,
+        caption = function() return "Cached" end, fileExists = function() return true end,
+        refresh = function() calls = calls + 1 end,
+    }
+    local e = entry("bookorbit", "row-1", "page"); e.view = "carousel"
+    e.source = { account = string.rep("a",64), section = "smart-scopes", id = 8, title = "Scope" }
+    local v, ctx, data = view(only(entry("simpleui","external_pet","page"), e))
+    H.eq(#queued, 0); H.eq(calls, 0)
+    v._module_page = 2; v:replaceContent(ctx, data)
+    H.eq(#v._cover_slots, 1); H.eq(#queued, 1)
+    local fn = table.remove(queued); fn(); H.eq(calls, 1)
+    local area = v._plan.cards[e.id]
+    v:onSwipe(nil,{pos={x=area.x+3,y=area.y+100},direction="west"})
+    H.eq(v._cover_slots[1].file, "/b")
+    H.eq(ctx._screen_widget._orbitui_dashboard_pages[e.id], 2)
+    v:free(); package.loaded["adapters/orbitui_bookorbit_rows"] = previous
+end)
+
 local silverfish = os.getenv("ORBITUI_SILVERFISH_ROOT")
 if silverfish then
     -- Full, unmodified external adapters from the reviewed frozen checkout.

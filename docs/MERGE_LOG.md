@@ -4,6 +4,45 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — local BookOrbit shelf/smartscope dashboard cards
+
+User approves independent BookOrbit source cards with cached-first asynchronous
+refresh and only device books. Start edf54516 on
+feature/bookorbit-dashboard-rows-20261108. No upstream merge, pin advancement,
+push, version/release, device installation or server work authorized here.
+The already available native catalog API supplies libraries/collections/
+smart-scopes and source-filtered books; the server alone owns smartscope rules.
+Use only exact stable BookOrbit file links in its read-only compute map API,
+not title guesses or an unscoped Library Sync manifest. Confirm source visibility
+before sending a filtered query; fetch all bounded pages (10,000 books/1,000
+sources), reject repeats/partial responses and retain previous cache on failure.
+
+An explicit dashboard picker adds independent placements, optionally duplicate
+sources, with titles/sizes and cover row/carousel; SV/EN wording and separate
+BookOrbit rows toggle retain the existing master and Want to Read policies.
+Account/credential SHA256 fingerprint only, no saved credentials or request URLs.
+Persist at most 32 owned source snapshots/2 MiB of path text, evicting only this
+new feature's older cache rows. Disable does not delete cache. Definite missing
+sources keep but suppress old membership. Snapshot paint/build does no client,
+directory/manifest/map scan or filesystem sweep; only displayed covers are
+existence-checked. IDs/maps/path checks run in native asynchronous subprocesses;
+refuse client versions that would silently fall back to blocking HTTP.
+Coalesce/serialize queued work; guard policy generation, connection fingerprint,
+manager generation, mounted visible observers and suspend. Native read-only map
+computation is not adopted/written back. Success TTL 15 minutes; retries back off
+one minute and manual refresh bypasses TTL. Per-card subtree redraw/paging retains
+other native modules and their timers. No Wi-Fi enable, book downloads, sidecar,
+reading status/progress or third-party sync writes.
+
+New v3 config fails closed on beta.6/older instead of losing new card sources;
+existing v1/v2 stays unchanged until explicitly adding one. Preserve unsupported
+future settings and ordinary Home/Custom layouts. One adapter path is balanced
+by exact-source embedding of pure lib/bookshelf_folder_label; 27 embedded helpers,
+407 canonical identities and unchanged 2,000-file API1/bootstrap limit. Original
+helper bytes, component pins/assets, VERSION and public dist are unchanged.
+Validation results and physical/live-server limits are recorded in TESTING.
+Evidence: test-results/bookorbit-rows-20261108. No publication in this step.
+
 ## 2026-11-08 — 1.1.0-beta.6 preview publication authorized
 
 Published **2026-11-08 12:56:30 UTC**, release **438244122**, immutable tag/source

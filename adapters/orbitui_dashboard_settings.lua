@@ -5,13 +5,24 @@ local M = {}
 local function dashboard() return require("adapters/orbitui_dashboard") end
 local function label(key, config)
     local entry = Model.module(config, key)
-    if entry then return entry.label or entry.ref end
+    if entry then
+        if entry.kind == "bookorbit" then return (entry.label or entry.source and entry.source.title or _("Source")) .. " [BookOrbit]" end
+        return entry.label or entry.ref
+    end
     if key == "stats" then return _("Reading statistics") end
     if config.sources[key] then return Sources.label(config.sources[key]) end
     for _i, card in ipairs(Model.heading_cards) do if card.key == key then return _(card.label) end end
 end
 
 function M.add(entry, refresh, pfx)
+    if entry.kind == "bookorbit" then
+        if not Model.bookOrbitSource(entry.source) then return false end
+        -- Placements are independent, even when they share a remote source.
+        local c, serial = dashboard().readConfig(pfx), 1
+        while Model.module(c, Model.moduleId("bookorbit", "row-" .. serial)) do serial = serial + 1 end
+        entry = { kind = "bookorbit", ref = "row-" .. serial, source = entry.source,
+            label = entry.label, view = entry.view }
+    end
     local id = Model.moduleId(entry.kind, entry.ref)
     if not id then return false end
     local current = dashboard().readConfig(pfx)
@@ -19,9 +30,35 @@ function M.add(entry, refresh, pfx)
     return dashboard().editConfig(pfx, function(c)
         if Model.module(c, id) or #c.modules >= Model.module_limit then return end
         c.modules[#c.modules + 1] = { id = id, kind = entry.kind, ref = entry.ref,
-            label = entry.label, width = 2, size = "normal" }
+            label = entry.label, width = 2, size = "normal", source = entry.source, view = entry.view }
         c.order[#c.order + 1] = id
     end, refresh)
+end
+
+function M.bookOrbitSources(refresh, choose)
+    local Rows = require("adapters/orbitui_bookorbit_rows")
+    local sources, err, at = Rows.catalog()
+    local items = {
+        { text = _("Refresh shelves and smartscopes"), callback = function()
+            Rows.refresh(nil, { force = true, on_done = function(result)
+                if refresh then refresh() end
+                require("core/orbitui_context").notify(result.ok
+                    and _("BookOrbit sources refreshed. Select a source below.") or Rows.message(result.error))
+            end })
+        end },
+        { text = at and string.format(_("Saved sources: %s"), os.date("%Y-%m-%d %H:%M", at))
+                or (err and Rows.message(err) or _("Refresh the source list, then select a shelf or smartscope.")), dim = true },
+        { text = _("About BookOrbit cards"), callback = function()
+            require("core/orbitui_context").notify(_("Only BookOrbit-linked files already on this device are shown. Smartscope rules run on the server. Results are cached; visible cards refresh in the background at most every 15 minutes. No downloads, reading-status writes or extras server patch. Books missing a BookOrbit file link are not guessed from their titles."))
+        end },
+    }
+    local types = { libraries = "Library", collections = "Shelf", ["smart-scopes"] = "Smartscope" }
+    for _, source in ipairs(sources) do
+        local selected = source
+        items[#items + 1] = { text = _(types[selected.section]) .. ": " .. selected.title,
+            callback = function() choose(selected) end }
+    end
+    return items
 end
 
 function M.moduleItems(id, refresh, pfx)
@@ -54,7 +91,47 @@ function M.moduleItems(id, refresh, pfx)
             end) },
     }
     local entry = Model.module(dashboard().readConfig(pfx), id)
-    if entry and entry.kind == "simpleui" then
+    if entry and entry.kind == "bookorbit" then
+        local Rows = require("adapters/orbitui_bookorbit_rows")
+        items[#items + 1] = { text = _("Source") .. ": " .. (entry.source and entry.source.title or _("Unavailable")),
+            sub_item_table_func = function()
+                return M.bookOrbitSources(refresh, function(source)
+                    edit(function(e) e.source = source end)()
+                end)
+            end }
+        items[#items + 1] = { text = _("Card title…"), callback = function()
+            local UI, dialog = require("ui/uimanager")
+            local current = Model.module(dashboard().readConfig(pfx), id)
+            dialog = require("ui/widget/inputdialog"):new{ title = _("Card title"), input = current and current.label or "",
+                description = _("Leave empty to use the BookOrbit source name. The BookOrbit label is always shown."),
+                buttons = {{ { text = _("Cancel"), callback = function() UI:close(dialog) end },
+                    { text = _("Save"), is_enter_default = true, callback = function()
+                        local value = dialog:getInputText()
+                        UI:close(dialog)
+                        edit(function(e) e.label = type(value) == "string" and #value <= 512 and Model.normalizeHeading(value) or nil end)()
+                    end } }} }
+            UI:show(dialog); dialog:onShowKeyboard()
+        end }
+        items[#items + 1] = { text = _("Display"), sub_item_table_func = function()
+            local choices = {}
+            for _, spec in ipairs({ { "row", "Cover row" }, { "carousel", "Carousel" } }) do
+                local mode, title = spec[1], spec[2]
+                choices[#choices + 1] = { text = _(title), checked_func = function()
+                    local e = Model.module(dashboard().readConfig(pfx), id)
+                    return e and e.view == mode
+                end, callback = edit(function(e) e.view = mode end) }
+            end
+            return choices
+        end }
+        items[#items + 1] = { text = _("Refresh this BookOrbit card"), callback = function()
+            local e = Model.module(dashboard().readConfig(pfx), id)
+            Rows.refresh(e and e.source, { force = true, source_required = true, on_done = function(result)
+                if refresh then refresh() end
+                require("core/orbitui_context").notify(result.ok and _("BookOrbit card refreshed.") or Rows.message(result.error))
+            end })
+        end }
+        items[#items + 1] = { text = Rows.caption(Rows.snapshot(entry.source)), dim = true }
+    elseif entry and entry.kind == "simpleui" then
         local def = Sources.resolveModule(entry)
         if def and def.getMenuItems then
             items[#items + 1] = { text = _("Module settings…"),
@@ -129,6 +206,13 @@ function M.pickerItems(refresh, pfx)
             return rows
         end }
     end
+    items[#items + 1] = { text = _("BookOrbit shelves and smartscopes"), enabled_func = function()
+        return #dashboard().readConfig(pfx).modules < Model.module_limit
+    end, sub_item_table_func = function()
+        return M.bookOrbitSources(refresh, function(source)
+            M.add({ kind = "bookorbit", source = source }, refresh, pfx)
+        end)
+    end }
     items[#items + 1] = { text = _("Get more modules…"), callback = function()
         require("adapters/orbitui_module_store").show(pfx)
     end }
@@ -138,11 +222,12 @@ end
 -- Use the existing paginated/settings shell, not an unbounded button dialog.
 -- Defer Home rebuilding until the editor closes; never rebuild a buried view.
 function M.show(pfx, ctx, id)
-    local changed = false
+    local changed, alive = false, true
     return require("screens/sui_settings_window"):show(function()
+        alive = false
         if changed and ctx.refresh_fn then ctx.refresh_fn() end
     end, {{ id = "nested_menu", params = { title = _("Reading dashboard"), items_func = function(menu_ctx)
-        local refresh = function() changed = true; menu_ctx.repaint() end
+        local refresh = function() changed = true; if alive then menu_ctx.repaint() end end
         if id == "add" then return M.pickerItems(refresh, pfx) end
         if id and Model.module(dashboard().readConfig(pfx), id) then return M.moduleItems(id, refresh, pfx) end
         return M.items(refresh, pfx, require("engines/sui_window").makeCtxMenu(menu_ctx))

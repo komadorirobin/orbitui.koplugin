@@ -9,6 +9,7 @@ local policy_keys = {
     actions = "simpleui_orbitui_bookorbit_actions",
     tags = "simpleui_orbitui_bookorbit_tags",
     status = "simpleui_orbitui_bookorbit_status",
+    rows = "simpleui_orbitui_bookorbit_rows",
 }
 local function store() return require("infra/sui_store") end
 function M.bookOrbitEnabled(feature)
@@ -108,6 +109,7 @@ function M.bookOrbitItems(close)
             callback = function() info("Install and connect the separate BookOrbit KOReader plugin. This page never tests a connection automatically. A successful list refresh verifies only that request, not every optional server feature.") end },
         toggle("enabled", "Enable BookOrbit features in OrbitUI", "Controls OrbitUI's BookOrbit lists, menu actions, online tags and optional status import only. BookOrbit's own reading-progress sync is unchanged. Saved lists, sources and layouts are kept."),
         toggle("want", "Want to read [BookOrbit]", "Shows the BookOrbit Want to Read list, matched to books already on this device. It does not download books. This source needs the connected BookOrbit plugin, not the optional tags or undo server patch."),
+        toggle("rows", "BookOrbit shelves and smartscopes", "Reading dashboard cards from BookOrbit shelves and smartscopes. Only linked books on this device are shown. Saved results appear first; visible cards refresh in the background at most every 15 minutes. No books are downloaded and no reading status is sent. Requires the BookOrbit catalog API, not an extras server patch."),
         { text = _("Refresh whenever Home opens"), checked_func = function()
                 return store():readSetting("simpleui_bookorbit_want_auto_refresh") ~= false end,
             enabled_func = function() return M.bookOrbitEnabled("want") end,

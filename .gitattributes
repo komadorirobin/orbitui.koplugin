@@ -47,3 +47,4 @@
 /components/bookshelf/lib/bookshelf_published.lua export-ignore
 /components/bookshelf/lib/bookshelf_module_breaker.lua export-ignore
 /components/bookshelf/lib/bookshelf_module_layout.lua export-ignore
+/components/bookshelf/lib/bookshelf_folder_label.lua export-ignore

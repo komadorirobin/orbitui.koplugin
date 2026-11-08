@@ -232,6 +232,35 @@ igen. Funktionen ingår i Beta 26.
 
 ### Optional BookOrbit features
 
+**Local development, not yet released:** Reading dashboard **+ → BookOrbit
+shelves and smartscopes → Refresh shelves and smartscopes** lists sources from
+the connected BookOrbit plugin's catalog API. Select a library, shelf or
+smartscope to add a card; repeat for more cards. Tap its heading (or hold its
+background) to change source, title, size, cover row/carousel or refresh it.
+Smartscope rules run on BookOrbit, not in KOReader. Only exact BookOrbit-linked
+files already on the device are shown; unlinked local copies and server-only
+books are not guessed or downloaded. Cached results appear first. Visible
+cards refresh asynchronously, at most every 15 minutes, and only their own
+subtrees redraw. No scan/HTTP while painting, no automatic Wi-Fi activation or
+reading-status writes. A separate switch under **Integrations → BookOrbit**
+disables these cards without changing the Want to Read switch, links or layout.
+No extras server patch is required; an older plugin/server without the native
+catalog/subprocess APIs needs an update. Desktop/fixture tested only; physical
+Bigme and live server acceptance remain pending.
+
+**Lokal utveckling, ännu inte släppt:** **Läsöversikt → + → BookOrbit-hyllor
+och smartscopes → Uppdatera hyllor och smartscopes** visar källor från det
+anslutna BookOrbit-pluginets katalog-API. Lägg till flera kort med olika källor.
+Tryck på rubriken eller långtryck på kortets bakgrund för att ändra källa,
+rubrik, storlek, omslagsrad/karusell eller uppdatera. Bara BookOrbit-länkade
+filer som finns på enheten visas; olänkade kopior gissas inte fram och inget
+laddas ned. Servern utvärderar smartscopes. Sparade träffar visas direkt och
+synliga kort uppdateras i bakgrunden högst var 15:e minut utan att bygga om
+resten av Hem. Funktionen har en egen av/på-brytare under **Integrationer →
+BookOrbit** och kräver inget extras-servertillägg, men ett tillräckligt nytt
+BookOrbit-plugin/server. Ingen lässtatus skickas. Dator-/fixturtestat, ännu inte
+verifierat på Bigmen eller mot den riktiga servern.
+
 **Beta 28 (experimental):** **Integrations > BookOrbit > Import reading
 status from BookOrbit** adds an off-by-default, deferred GET-only importer for
 saved device matches. Automatic attempts are throttled to 15 minutes; Update
