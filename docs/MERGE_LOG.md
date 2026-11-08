@@ -33,6 +33,16 @@ pin/artwork bytes and public beta.9/dist unchanged. Tests/limitations and
 frozen private package receipt belong in TESTING. No physical Bigme or full
 Silverfish certification is implied by boundary/native-renderer tests.
 
+Verification: frozen **043b41ec985b59c7146207de8dfd9be6c1314fa3**, private
+ZIP **a0bd23a9**, 9,618,765 bytes / 28,490,313 expanded, manifest **12201352**,
+2,000 installed paths. Both full scripts/43 catalogs and all 116 sealed root
+files in Lua/LuaJIT pass; minimum/current actual input/FFI supplements pass
+15 reading-card / 24 dashboard / 18 placement cases each. Projected committed
+source/inventory/new-blob held-art/redacted-secret audits pass. Protected
+component/pin/artwork/bootstrap/VERSION/public dist bytes are unchanged.
+Public beta.9 ZIP remains **d171ea5f**. This following receipt is docs-only;
+no physical, public distribution or server action, and no full-plugin approval.
+
 ## 2026-11-08 — 1.1.0-beta.9 preview publication authorized
 
 Published **2026-11-08 16:54:56 UTC**, release **438380489**, frozen tag/source

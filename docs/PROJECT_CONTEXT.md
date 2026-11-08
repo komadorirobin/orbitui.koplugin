@@ -40,6 +40,13 @@ and correct this file in the same change.
   pins, artwork, bootstrap, VERSION and public beta.9/dist stay unchanged.
   Local implementation/testing only; no push, release, ADB or server work.
   Evidence test-results/silverfish-reading-20261108; receipts follow.
+  Frozen runtime **043b41ec**, private ZIP **a0bd23a9** / 9,618,765 bytes,
+  manifest **12201352**, exact 2,000 paths. Both complete scripts/43 catalogs
+  and all 116 sealed root files in Lua/LuaJIT pass. Minimum/current native
+  input/FFI matrices pass 15 reading-card, 24 dashboard and 18 placement cases
+  each. Exact source projection/new-blob held-art/redacted-secret gates pass;
+  public beta.9/dist stays **d171ea5f**. Schematic inspection is not native
+  font/device acceptance. Following verification receipt changes docs only.
 
 - **1.1.0-beta.9 preview publication authorized.** User requests a new beta
   after the local Silverfish report explicitly discloses pending physical

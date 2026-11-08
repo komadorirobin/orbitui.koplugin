@@ -36,6 +36,26 @@ sleep/wake/rotation, plugin disable/re-enable/restart and all pre-existing
 hero/native/currently layouts. No ADB/server operation or public distribution
 is performed in this task; headless tests cannot certify these device gates.
 
+Verification receipt: frozen
+**043b41ec985b59c7146207de8dfd9be6c1314fa3**. Both complete scripts pass:
+134 Python tests/four unchanged optional source-art skips, 116 root Lua files,
+551 Bookshelf suites/zero failures/three usual native SQLite skips, all 13
+SimpleUI files, 1,195 syntax files and all 43 translation catalogs. All 116
+sealed root files repeat successfully in Lua/LuaJIT. Both minimum/current
+native input plus FFI matrices pass 15 reading-card, 24 dashboard and 18
+placement cases each. The card's real sprite-renderer supplement covers both
+species in RGB32/BB8; service/font/pet-state boundaries remain fixtures.
+
+Private sealed ZIP SHA-256
+`a0bd23a9cd3980d87d75253ad64d1fc060d0864d7366950218e05969591e51d3`,
+9,618,765 bytes / 28,490,313 expanded, manifest **12201352**, 1,999 projected
+source files plus manifest = exact 2,000 API1 paths. Every sealed byte matches
+the frozen committed source projection; 28 embedded helpers/407 identities
+verify. New-history held-art and redacted gitleaks checks pass. Component/
+pin/artwork/bootstrap/VERSION/public dist remain unchanged; public beta.9 ZIP
+is still **d171ea5f**. No push/tag/release, ADB/plugin install or server call.
+This following receipt changes docs only and does not waive physical gates.
+
 ## 2026-11-08 — 1.1.0-beta.9 release candidate
 
 User requests a new beta after the local report explicitly discloses pending
