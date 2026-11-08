@@ -24,6 +24,7 @@ M.modules = {
     ["lib/bookshelf_theme_pack"] = true,
     ["lib/bookshelf_theme_menu"] = true,
     ["modules/moduleregistry"] = true,
+    ["infra/sui_layout"] = true,
     ["integrations/sui_bookorbit_want"] = true,
     ["lib/bookshelf_bookorbit_want_source"] = true,
     ["modules/module_bookorbit_want"] = true,
@@ -222,6 +223,9 @@ function M.wrap(name, module)
     elseif name == "modules/moduleregistry" then
         require("adapters/orbitui_home_shelves").install(module)
         require("adapters/orbitui_dashboard").install(module)
+        require("adapters/orbitui_module_store").registry(module)
+    elseif name == "infra/sui_layout" then
+        require("adapters/orbitui_module_store").layout(module)
     elseif name == "integrations/sui_bookorbit_want" then
         require("adapters/orbitui_dashboard").wrapWantProvider(module)
         require("adapters/orbitui_integrations").wantProvider(module)

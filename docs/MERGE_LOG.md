@@ -4,6 +4,37 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — local Silverfish default-placement fix
+
+User's beta.8 photos show Silverfish painted over the dock, with Reading
+dashboard and Silverfish as sibling Home modules. User approves routing new
+Silverfish additions into the dashboard, or onto a new ordinary Home page if
+there is insufficient room, without moving existing edited placements. Base
+bbbc85d9; branch fix/silverfish-default-placement-20261108. No upstream/pin/
+component import, public push/release, device operation or server work.
+
+The official frozen Silverfish v2.0.0 public Home setter always appends its
+native traca_cartao to page one. Its default-on registry descriptor can also
+append itself through legacy module order. OrbitUI's existing module-store
+adapter now hooks the canonical registry/layout APIs: only a new first-page
+placement is routed, using stable module:simpleui:traca_cartao in the bounded
+dashboard when available, otherwise a new page unless matching live portrait
+geometry proves ordinary Home has room. Never build or scan to estimate size.
+Inactive, future or full dashboards fail closed to an ordinary new page.
+Existing native placements/moves, Custom Screens, card titles/hidden/size/order
+and plugin state survive unchanged. New registrations are in-memory opt-in,
+without persisting a preference or changing the plugin descriptor itself.
+
+Wrap only the identified plugin instance's public Home toggle so its getter,
+repeated add, off and restart recognize the dashboard card and do not duplicate
+it. Use native layout methods directly, avoiding Silverfish's legacy fallback
+writer after a modern save error; restore the staged OrbitUI card config if
+native save throws. This is not a filesystem transaction for partial native
+store failures. No full-plugin init, screensaver takeover, pet save access,
+archive modification, global require replacement, setting reset or migration.
+Bootstrap/API1, 27/407 helpers/identities, 2,000-path budget, VERSION and public
+dist remain fixed. TESTING records verification and the pending Bigme gate.
+
 ## 2026-11-08 — 1.1.0-beta.8 preview publication authorized
 
 Published **2026-11-08 15:06:47 UTC**, release **438317954**, frozen tag/source

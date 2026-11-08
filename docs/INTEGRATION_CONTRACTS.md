@@ -1790,6 +1790,21 @@ third-party code. Tests: test_dashboard_modules plus existing dashboard/config/
 demand/colour; optional frozen Silverfish/native input/FFI supplement. Bigme
 visual/touch/language/night/rotation/sleep/native plugin lifecycle remains open.
 
+November 8 user-approved Silverfish default-placement correction: explicit
+new first-page Home additions go into the existing Reading dashboard as its
+kind-qualified SimpleUI card, never as a sibling after that full-page module.
+Without an active supported dashboard/card slot, use a new Home page unless
+matching live ordinary portrait geometry proves room. No builds/scans/network
+for placement. Existing native/legacy/custom placements and edited dashboard
+cards are not migrated. Fresh Silverfish registrations are in-memory opt-in;
+preserve all saved choices. Adapt only the identified plugin instance's public
+Home toggle to recognize/add/remove the dashboard card, avoiding duplicates
+or a legacy boolean fallback after native save failure. Native layout APIs
+still own order, enable deltas and refresh. No plugin fork/archive/save edit,
+screensaver takeover, reset or global resolver replacement. Tests:
+test_silverfish_placement and optional frozen Silverfish/native-input/FFI
+dashboard supplement; full-plugin and physical acceptance remain separate.
+
 ## C11: Author-bound ornaments
 
 User-approved change, October 19, 2026: optional data-only add-ons supersede the

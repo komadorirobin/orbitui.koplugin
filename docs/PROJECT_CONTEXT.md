@@ -22,6 +22,22 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **Local Silverfish default-placement fix; not pushed/released.** User's
+  beta.8 photos show a standalone Silverfish sibling after the full-page
+  Reading dashboard, drawing over the dock. User approves placing new cards
+  inside the dashboard, or on a separate Home page when ordinary Home lacks
+  proven room, preserving existing manual placements. Branch
+  fix/silverfish-default-placement-20261108 starts at bbbc85d9. Only explicit
+  canonical registry/layout seams and the existing module-store adapter change;
+  no Silverfish fork/archive/save, component/pin, bootstrap/API1, VERSION,
+  public dist or upstream change. Fresh Silverfish is opt-in in the in-memory
+  native registry; its public Home toggle understands dashboard placement.
+  Saved native/custom/legacy choices and edited dashboard cards are retained.
+  Native layout APIs retain refresh/order/enable ownership; no build/scan/HTTP
+  for placement. Tests/packaging and physical limits are recorded in TESTING
+  and MERGE_LOG; evidence silverfish-placement-20261108. This turn authorizes
+  local implementation/testing only, not push, release or device installation.
+
 - **1.1.0-beta.8 preview publication authorized.** User explicitly requests
   push/new beta after the local fix and crash-log confirmation; real Bigme
   retesting remains disclosed. Release branch starts at d76326f7. Preserve

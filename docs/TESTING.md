@@ -1,5 +1,31 @@
 # Verification and device acceptance
 
+## 2026-11-08 — local Silverfish default placement
+
+Base bbbc85d9, branch fix/silverfish-default-placement-20261108. User approves
+local implementation, not push/publication or an actual device install.
+Seventeen focused Lua/LuaJIT cases cover new dashboard routing, stable native
+and edited placements, hidden/title/size preservation, disabled/future/full
+fallbacks, measured roomy/full ordinary Home, unknown/rotation geometry,
+Custom Screens, idempotence, failed saves/removal and unchanged other data.
+Complete native registry/Layout source is used for legacy defaults, copy/
+membership/enable/order/removal/refresh/restart checks; builders/services are
+fixtures. The eighteenth optional case extracts the exact public Home methods
+from frozen official Silverfish v2.0.0 main.lua (d3da0797), without initializing
+the plugin or loading its saves: the unwrapped control reproduces the sibling
+after the full-page dashboard; the adapted add/get/remove route passes.
+Routed-card plans are bounded in portrait, landscape and small body viewports.
+
+Full scripts, catalogs, private sealed package/source inventory and native
+input/FFI clipped Silverfish adapter checks are required before handoff; their
+receipts follow here. Evidence test-results/silverfish-placement-20261108.
+Do not certify the full plugin, hardware drawing/touch, actual wake/rotation or
+the user's saved layout from headless geometry/input tests. Bigme retesting
+of new installation/add/off/restart and ordinary/full Home remains outstanding.
+Existing manual placements are deliberately not migrated, including an old
+overflowing placement. Silverfish files, saves and screensaver options remain
+untouched; VERSION and public beta.8/dist are unchanged.
+
 ## 2026-11-08 — 1.1.0-beta.8 release candidate
 
 User explicitly requests push/new beta after the local report discloses pending
