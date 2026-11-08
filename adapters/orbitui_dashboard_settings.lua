@@ -3,6 +3,30 @@ local Sources = require("adapters/orbitui_dashboard_sources")
 local _ = require("core/orbitui_i18n")
 local M = {}
 local function dashboard() return require("adapters/orbitui_dashboard") end
+local function notify(message) require("core/orbitui_context").notify(message) end
+local function sourceCard(source, pfx)
+    source = Model.bookOrbitSource(source)
+    if not source then return end
+    for _, entry in ipairs(dashboard().readConfig(pfx).modules) do
+        local other = entry.kind == "bookorbit" and entry.source
+        if other and other.account == source.account and other.section == source.section and other.id == source.id then
+            return entry.id
+        end
+    end
+end
+local function addFromPicker(entry, refresh, pfx)
+    local ok, added = pcall(function()
+        if entry.kind == "bookorbit" and sourceCard(entry.source, pfx) then return "exists" end
+        return M.add(entry, refresh, pfx)
+    end)
+    if ok and added == "exists" then
+        notify(_("This source already has a card. Manage it in Cards and content."))
+    elseif ok and added then
+        notify(string.format(_("Card added: %s"), entry.label or entry.source and entry.source.title or entry.ref))
+        return true
+    else notify(_("Could not add the card. Check the card limit and reopen the menu.")) end
+    return false
+end
 local function label(key, config)
     local entry = Model.module(config, key)
     if entry then
@@ -35,7 +59,7 @@ function M.add(entry, refresh, pfx)
     end, refresh)
 end
 
-function M.bookOrbitSources(refresh, choose)
+function M.bookOrbitSources(refresh, choose, checked)
     local Rows = require("adapters/orbitui_bookorbit_rows")
     local sources, err, at = Rows.catalog()
     local items = {
@@ -56,17 +80,26 @@ function M.bookOrbitSources(refresh, choose)
     for _i, source in ipairs(sources) do
         local selected = source
         items[#items + 1] = { text = _(types[selected.section]) .. ": " .. selected.title,
+            checked_func = checked and function() return checked(selected) end or nil,
             callback = function() choose(selected) end }
     end
     return items
 end
 
-function M.moduleItems(id, refresh, pfx)
+function M.moduleItems(id, refresh, pfx, navigation)
+    if not Model.module(dashboard().readConfig(pfx), id) then
+        return {{ text = _("Card removed."), dim = true }}
+    end
+    local stop = navigation and type(navigation.current) == "function" and navigation.current()
+    local did_remove = false
     local function edit(fn)
-        return function() dashboard().editConfig(pfx, function(c)
-            local entry = Model.module(c, id)
-            if entry then fn(entry, c) end
-        end, refresh) end
+        return function()
+            if not Model.module(dashboard().readConfig(pfx), id) then return false end
+            return dashboard().editConfig(pfx, function(c)
+                local entry = Model.module(c, id)
+                if entry then fn(entry, c) end
+            end, refresh)
+        end
     end
     local items = {
         { text = _("Show card"), checked_func = function() return Model.visible(dashboard().readConfig(pfx), id) end,
@@ -84,11 +117,21 @@ function M.moduleItems(id, refresh, pfx)
             return choices
         end },
         { text = _("Remove card"), help_text = _("Removes only this dashboard card, not the plugin or its data."),
-            callback = edit(function(_, c)
-                for i = #c.modules, 1, -1 do if c.modules[i].id == id then table.remove(c.modules, i) end end
-                for i = #c.order, 1, -1 do if c.order[i] == id then table.remove(c.order, i) end end
-                c.hidden[id] = nil
-            end) },
+            callback = function()
+                if did_remove then return end
+                if stop and navigation.current() ~= stop then return end
+                if not Model.module(dashboard().readConfig(pfx), id) then return end
+                local ok, removed = pcall(edit(function(_, c)
+                    for i = #c.modules, 1, -1 do if c.modules[i].id == id then table.remove(c.modules, i) end end
+                    for i = #c.order, 1, -1 do if c.order[i] == id then table.remove(c.order, i) end end
+                    c.hidden[id] = nil
+                end))
+                if ok and removed then
+                    did_remove = true
+                    if stop and navigation.current() == stop and navigation.pop then navigation.pop() end
+                    notify(_("Card removed."))
+                elseif not ok then notify(_("Could not remove the card. Reopen the menu and try again.")) end
+            end },
     }
     local entry = Model.module(dashboard().readConfig(pfx), id)
     if entry and entry.kind == "bookorbit" then
@@ -177,9 +220,9 @@ function M.pickerItems(refresh, pfx)
                             require("ui/uimanager"):show(require("ui/widget/confirmbox"):new{
                                 text = _("This module uses the network. Add it to the dashboard?")
                                     .. "\n" .. table.concat(entry.network, "\n"),
-                                ok_callback = function() M.add(entry, refresh, pfx) end,
+                                ok_callback = function() addFromPicker(entry, refresh, pfx) end,
                             })
-                        else M.add(entry, refresh, pfx) end
+                        else addFromPicker(entry, refresh, pfx) end
                     end }
             end
             if #rows == 0 then rows[1] = { text = _("No compatible modules available. Enable the plugin and restart KOReader."),
@@ -196,7 +239,7 @@ function M.pickerItems(refresh, pfx)
                     qa.showQuickActionDialog(plugin, nil, function()
                         for _, ref in ipairs(qa.getCustomQAList()) do
                             if not before[ref] then
-                                M.add({ kind = "action", ref = ref, label = qa.getEntry(ref).label }, refresh, pfx)
+                                addFromPicker({ kind = "action", ref = ref, label = qa.getEntry(ref).label }, refresh, pfx)
                                 return
                             end
                         end
@@ -210,8 +253,8 @@ function M.pickerItems(refresh, pfx)
         return #dashboard().readConfig(pfx).modules < Model.module_limit
     end, sub_item_table_func = function()
         return M.bookOrbitSources(refresh, function(source)
-            M.add({ kind = "bookorbit", source = source }, refresh, pfx)
-        end)
+            addFromPicker({ kind = "bookorbit", source = source }, refresh, pfx)
+        end, function(source) return sourceCard(source, pfx) ~= nil end)
     end }
     items[#items + 1] = { text = _("Get more modules…"), callback = function()
         require("adapters/orbitui_module_store").show(pfx)
@@ -335,9 +378,16 @@ function M.items(refresh, pfx, ctx_menu)
         items[#items + 1] = { text_func = function()
             local c = dashboard().readConfig(pfx)
             local current = Model.module(c, id)
-            return label(id, c) .. (current and Sources.resolveModule(current) and "" or " · " .. _("Unavailable"))
+            if not current then return _("Card removed.") end
+            local available
+            if current.kind == "bookorbit" then
+                local snapshot = require("adapters/orbitui_bookorbit_rows").snapshot(current.source)
+                available = not snapshot.error or #snapshot.files > 0
+            else available = Sources.resolveModule(current) ~= nil end
+            return label(id, c) .. (available and "" or " · " .. _("Unavailable"))
                 .. (Model.visible(c, id) and "" or " (" .. _("Off") .. ")")
-        end, sub_item_table_func = function() return M.moduleItems(id, refresh, pfx) end }
+        end, enabled_func = function() return Model.module(dashboard().readConfig(pfx), id) ~= nil end,
+            sub_item_table_func = function(navigation) return M.moduleItems(id, refresh, pfx, navigation) end }
     end
     items[#items + 1] = { text = _("Restore card layout"), callback = function()
         require("ui/uimanager"):show(require("ui/widget/confirmbox"):new{

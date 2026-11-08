@@ -1,5 +1,36 @@
 # Verification and device acceptance
 
+## 2026-11-08 — local dashboard card feedback/removal
+
+Base cd8c862b, branch fix/dashboard-card-feedback-20261108; preserve the
+previous local Silverfish work. Local fix/testing only, not push, release,
+ADB/server changes or automatic duplicate cleanup. Evidence under
+test-results/dashboard-card-feedback-20261108. Components/pins/assets/
+bootstrap/VERSION/public dist and 28 helpers/407 identities/2,000 paths stay
+fixed. Runtime/package/full-suite verification receipts follow below.
+
+test_dashboard_catalog_menus now has 20 SV/EN cases using the exact pinned
+SimpleUI MenuTable, settings-screen builders, navigation, row taps and repaint
+code; widget/text/frame/provider/store boundaries are fixtures, not a real
+device display. New cases cover persisted add feedback/checkmarks, repeated
+retained callbacks, account/type/id/prefix identity and renamed sources,
+existing independent duplicates, one-action removal/parent return/direct
+editor replacement, no writes from radio inference or back, recycled row ids,
+failed saves without false success or navigation, full/future-layout safety,
+actual unavailable errors versus healthy/usable offline-cache labels. The
+existing source-refresh/reopen/store/plugin details and child Display menu
+cases remain required. An initial general stop guard blocked Display edits
+in its child menu; the final guard is Remove-only and all cases pass. No raw
+provider/store exception is shown to users.
+
+Required before handoff: both complete interpreters, all 43 catalogs, private
+sealed ZIP inventory/exact source projection and sealed root matrices, actual
+native input/FFI Silverfish supplements, redacted secret/new-blob held-art
+checks. No public OTA/real user files are changed. Pending physical Bigme
+gates: checked source and toast visibility, fast repeat taps, removal/back/
+pagination, failure messages, native touch/fonts/night and ordinary/Custom
+Screen entry points. Headless native-navigation code is not device acceptance.
+
 ## 2026-11-08 — local Currently reading + Silverfish card
 
 User approves local implementation of an additional optional card, not a

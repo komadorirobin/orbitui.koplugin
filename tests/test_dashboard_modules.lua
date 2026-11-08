@@ -6,6 +6,7 @@ local Sources = require("adapters/orbitui_dashboard_sources")
 local Settings = require("adapters/orbitui_dashboard_settings")
 local Dashboard = require("adapters/orbitui_dashboard")
 local saved, writes, refreshes, shown = {}, 0, 0
+package.loaded["core/orbitui_context"] = { notify = function(message) assert(type(message) == "string") end }
 local pfx, other = "simpleui_hs_", "simpleui_cs_other_"
 package.loaded["infra/sui_store"] = {
     readSetting = function(_, key) return saved[key] end,

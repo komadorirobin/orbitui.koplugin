@@ -1,5 +1,10 @@
 -- OrbitUI-owned strings, independent of the two upstream translation catalogs.
 local sv = {
+    ["Card added: %s"] = "Kort tillagt: %s",
+    ["Card removed."] = "Kortet har tagits bort.",
+    ["This source already has a card. Manage it in Cards and content."] = "Källan har redan ett kort. Hantera det i Kort och innehåll.",
+    ["Could not add the card. Check the card limit and reopen the menu."] = "Kortet kunde inte läggas till. Kontrollera gränsen för antal kort och öppna menyn igen.",
+    ["Could not remove the card. Reopen the menu and try again."] = "Kortet kunde inte tas bort. Öppna menyn igen och försök på nytt.",
     ["Currently reading + Silverfish"] = "Läser just nu + Silverfish",
     ["Enable Silverfish and restart KOReader to show your companion here."] = "Aktivera Silverfish och starta om KOReader för att visa din läskompis här.",
     ["This Silverfish version is not supported by this card. Update OrbitUI or use Silverfish's own card."] = "Den här Silverfish-versionen stöds inte av kortet. Uppdatera OrbitUI eller använd Silverfishs eget kort.",

@@ -22,6 +22,25 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **Local dashboard add/remove feedback fix; not pushed/released.** User
+  reports silent BookOrbit source additions causing duplicates, stale removal
+  menus and misleading Unavailable labels. Branch
+  fix/dashboard-card-feedback-20261108 starts at cd8c862b, retaining the
+  separately approved local Silverfish card. Picker actions now report saved
+  additions/failures and mark sources already added to this screen. Repeated
+  picker taps are idempotent by account/section/id; low-level independent
+  placements, existing duplicates and other screens are retained. Remove is
+  a single explicit action with feedback and return to Cards and content,
+  not a second removal submenu. Retired successful callbacks cannot remove
+  a newly reused row id; missing entries have no active controls. BookOrbit
+  availability uses its passive snapshot, not third-party registry lookup;
+  cached usable results remain available offline. Twenty SV/EN native menu/
+  navigation fixture cases cover these paths, failed saves and full/future
+  layouts. C10/TESTING hold receipts and remaining physical gates. No upstream,
+  component/pin, bootstrap/API1, VERSION/public dist, ADB/server or existing
+  settings migration. Same 28/407 helpers/identities and 2,000-path budget.
+  Evidence test-results/dashboard-card-feedback-20261108; receipts follow.
+
 - **Local optional Currently reading + Silverfish card; not pushed/released.**
   User explicitly keeps Continue reading unchanged and approves a separate
   module with cover, title/progress and the active companion. Branch

@@ -29,7 +29,7 @@ package.loaded.device = { screen = Screen, hasDPad = function() return false end
 for _, path in ipairs{
     "container/bottomcontainer", "container/centercontainer", "container/framecontainer",
     "container/inputcontainer", "container/leftcontainer", "container/rightcontainer",
-    "linewidget", "overlapgroup", "verticalspan", "horizontalspan", "buttondialog", "eventlistener",
+    "linewidget", "overlapgroup", "verticalspan", "horizontalspan", "buttondialog", "eventlistener", "sortwidget",
 } do package.loaded["ui/widget/" .. path] = W end
 package.loaded["ui/widget/verticalgroup"], package.loaded["ui/widget/horizontalgroup"] = VG, HG
 package.loaded["ui/widget/textwidget"], package.loaded["ui/widget/textboxwidget"] = Text, Text
@@ -60,6 +60,8 @@ package.loaded["infra/sui_config"] = { isNavpagerEnabled = function() return fal
 package.loaded["infra/sui_layout"] = { load = function() return { pages = {} } end }
 package.loaded["features/dialogs/sui_bento_sheet"], package.loaded["infra/sui_bento"] = {}, {}
 package.loaded["modules/moduleregistry"] = { list = function() return {} end }
+package.loaded["lib/bookshelf_start_menu_modules"] = { keys = function() return {} end }
+package.loaded["features/sui_quickactions"] = { allIds=function() return {} end, getCustomQAList=function() return {} end }
 package.loaded["infra/sui_store"] = {
     readSetting = function(_, k) return saved[k] end,
     saveSetting = function(_, k, v) saved[k] = v end,
@@ -78,25 +80,30 @@ local Settings = require("adapters/orbitui_dashboard_settings")
 local Dashboard = require("adapters/orbitui_dashboard")
 local Store = require("adapters/orbitui_module_store")
 local StoreModel = require("core/orbitui_module_store")
-local catalog, finish, requests, selected, verifications = {}, nil, 0, nil, 0
+local catalog, finish, requests, selected, verifications, row_error, row_files = {}, nil, 0, nil, 0, nil, {}
 local source = { account = string.rep("a", 64), section = "collections", id = 7, title = "日常 · Slice of life" }
 package.loaded["adapters/orbitui_bookorbit_rows"] = {
     catalog = function() return catalog, nil, #catalog > 0 and 1794132000 or nil end,
     refresh = function(_, opts) requests = requests + 1; finish = opts.on_done end,
-    snapshot = function() return { files = {} } end, caption = function() return "Cached" end,
+    snapshot = function() return { files = row_files, error = row_error } end, caption = function() return "Cached" end,
 }
 Store.store = function() return { catalog = function() return StoreModel.bundled() end,
     status = function() verifications = verifications + 1; return "missing" end } end
 local function reset(lang)
     language, saved, warnings, notices, windows = lang or "en", {}, {}, {}, {}
-    catalog, finish, requests, selected, verifications = {}, nil, 0, nil, 0
+    catalog, finish, requests, selected, verifications, row_error, row_files = {}, nil, 0, nil, 0, nil, {}
 end
 local function text(widget)
     if widget.text then return widget.text end
     for _, child in ipairs(widget) do local t = text(child); if t then return t end end
 end
 local function row(win, title)
-    for _, widget in ipairs(win.rows) do if text(widget) == title then return widget end end
+    local function contains(widget)
+        if widget.text == title then return true end
+        for _, child in ipairs(widget) do if contains(child) then return true end end
+        return false
+    end
+    for _, widget in ipairs(win.rows) do if contains(widget) then return widget end end
     error("Missing visible row: " .. title .. "; " .. table.concat(warnings, " / "))
 end
 local function tap(win, title)
@@ -118,6 +125,115 @@ local function openSources()
     } }})
 end
 for _, lang in ipairs{ "en", "sv" } do
+    H.test(lang .. ": native add shows feedback and a checked source; retained repeated taps never duplicate it", function()
+        reset(lang);catalog = { source }
+        local pfx, refreshed = "simpleui_hs_", 0
+        local win = Settings.show(pfx, { refresh_fn=function() refreshed=refreshed+1 end }, "add")
+        tap(win, tr("BookOrbit shelves and smartscopes"))
+        local chosen=row(win,tr("Shelf") .. ": " .. source.title)[1].onTap
+        chosen();H.eq(#Dashboard.readConfig(pfx).modules,1)
+        H.eq(notices[1],string.format(tr("Card added: %s"),source.title))
+        local sources=Settings.pickerItems(function() end,pfx)[4].sub_item_table_func()
+        H.eq(sources[4].checked_func(),true)
+        chosen();tap(win,tr("Shelf") .. ": " .. source.title)
+        H.eq(#Dashboard.readConfig(pfx).modules,1)
+        H.eq(notices[#notices],tr("This source already has a card. Manage it in Cards and content."))
+        H.eq(requests,0);H.eq(refreshed,0);healthy(win,4)
+        win:close();H.eq(refreshed,1)
+    end)
+    H.test(lang .. ": source identity is account/type/id scoped, ignores renames and preserves independent placements", function()
+        reset(lang);catalog={source}
+        local pfx="simpleui_hs_"
+        assert(Settings.add({kind="bookorbit",source=source},function() end,pfx))
+        assert(Settings.add({kind="bookorbit",source=source,label="Existing duplicate"},function() end,pfx))
+        local function choose(s,prefix)
+            catalog={s};local rows=Settings.pickerItems(function() end,prefix)[4].sub_item_table_func()
+            rows[4].callback();return rows[4].checked_func()
+        end
+        local renamed={account=source.account,section=source.section,id=source.id,title="Renamed"}
+        H.eq(choose(renamed,pfx),true);H.eq(#Dashboard.readConfig(pfx).modules,2)
+        local scope={account=source.account,section="smart-scopes",id=source.id,title=source.title}
+        choose(scope,pfx);H.eq(#Dashboard.readConfig(pfx).modules,3)
+        local account={account=string.rep("b",64),section=source.section,id=source.id,title=source.title}
+        choose(account,pfx);H.eq(#Dashboard.readConfig(pfx).modules,4)
+        choose(source,"other_");H.eq(#Dashboard.readConfig("other_").modules,1)
+        H.eq(#Dashboard.readConfig(pfx).modules,4);H.eq(requests,0)
+    end)
+    H.test(lang .. ": remove is one action, immediately returns to cards and old callbacks cannot delete again", function()
+        reset(lang);local pfx="simpleui_hs_"
+        assert(Settings.add({kind="bookorbit",source=source},function() end,pfx))
+        local id=Dashboard.readConfig(pfx).modules[1].id
+        local title=source.title .. " [BookOrbit]"
+        local win=Settings.show(pfx,{},nil)
+        -- Native rendering probes child menus to infer radio labels: that must not remove anything.
+        H.eq(#Dashboard.readConfig(pfx).modules,1);row(win,title)
+        tap(win,title);H.eq(#Dashboard.readConfig(pfx).modules,1)
+        local depth=#win._nav_stack;local remove=row(win,tr("Remove card"))[1].onTap
+        remove();H.eq(#Dashboard.readConfig(pfx).modules,0)
+        H.eq(#win._nav_stack,depth-1);H.eq(notices[1],tr("Card removed."));H.eq(#warnings,0)
+        H.eq(pcall(row,win,title),false)
+        local config=saved[pfx .. "orbitui_dashboard_config"]
+        remove();H.eq(saved[pfx .. "orbitui_dashboard_config"],config);H.eq(#notices,1)
+        local rows=Settings.moduleItems(id,function() error("removed card must not edit") end,pfx)
+        H.eq(#rows,1);H.eq(rows[1].text,tr("Card removed."));H.eq(rows[1].callback,nil)
+        assert(Settings.add({kind="bookorbit",source=source},function() end,pfx))
+        remove();H.eq(#Dashboard.readConfig(pfx).modules,1);H.eq(#notices,1)
+    end)
+    H.test(lang .. ": removing one existing duplicate preserves its peer, other prefixes and non-card data", function()
+        reset(lang);local pfx="simpleui_hs_"
+        for i=1,2 do assert(Settings.add({kind="bookorbit",source=source},function() end,pfx)) end
+        assert(Settings.add({kind="bookorbit",source=source},function() end,"other_"))
+        saved.foreign_sync={keep=true}
+        local c=Dashboard.readConfig(pfx);local removed,kept=c.modules[1].id,c.modules[2].id
+        local other=saved.other_orbitui_dashboard_config
+        local win=Settings.show(pfx,{},removed);local remove=row(win,tr("Remove card"))[1].onTap;remove()
+        c=Dashboard.readConfig(pfx);H.eq(#c.modules,1);H.eq(c.modules[1].id,kept)
+        H.eq(require("core/orbitui_dashboard").module(c,removed),nil)
+        H.eq(saved.other_orbitui_dashboard_config,other);H.eq(saved.foreign_sync.keep,true)
+        H.eq(#warnings,0,table.concat(warnings," / "));row(win,source.title .. " [BookOrbit]")
+        assert(Settings.add({kind="bookorbit",source=source},function() end,pfx))
+        H.eq(Dashboard.readConfig(pfx).modules[2].id,removed)
+        remove();H.eq(#Dashboard.readConfig(pfx).modules,2)
+    end)
+    H.test(lang .. ": failed saves never report success or leave the remove screen; actual source errors alone show unavailable", function()
+        reset(lang);local pfx="simpleui_hs_";catalog={source}
+        Dashboard.readConfig(pfx)
+        local st=package.loaded["infra/sui_store"];local save=st.saveSetting
+        local rows=Settings.pickerItems(function() end,pfx)[4].sub_item_table_func()
+        st.saveSetting=function() error("simulated save failure") end
+        rows[4].callback();H.eq(#Dashboard.readConfig(pfx).modules,0)
+        H.eq(notices[1],tr("Could not add the card. Check the card limit and reopen the menu."))
+        st.saveSetting=save;assert(Settings.add({kind="bookorbit",source=source},function() end,pfx))
+        local id=Dashboard.readConfig(pfx).modules[1].id
+        local win=Settings.show(pfx,{},nil);row(win,source.title .. " [BookOrbit]")
+        row_error="offline";win:_repaint();row(win,source.title .. " [BookOrbit] · " .. tr("Unavailable"))
+        row_files={"/cached.epub"};win:_repaint();row(win,source.title .. " [BookOrbit]")
+        row_error=nil;win:_repaint();tap(win,source.title .. " [BookOrbit]")
+        local depth=#win._nav_stack;st.saveSetting=function() error("simulated save failure") end
+        tap(win,tr("Remove card"));H.eq(#Dashboard.readConfig(pfx).modules,1);H.eq(#win._nav_stack,depth)
+        H.eq(notices[#notices],tr("Could not remove the card. Reopen the menu and try again."))
+        row(win,tr("Remove card"));H.eq(#warnings,0)
+        st.saveSetting=save
+        for _,value in ipairs(notices) do assert(not value:find("simulated",1,true)) end
+    end)
+    H.test(lang .. ": retained add callbacks respect full and future layouts without success or data loss", function()
+        reset(lang);local pfx="simpleui_hs_";catalog={source}
+        local choose=Settings.pickerItems(function() end,pfx)[4].sub_item_table_func()[4].callback
+        local config=Dashboard.readConfig(pfx)
+        local model=require("core/orbitui_dashboard")
+        for i=1,model.module_limit do
+            local ref="card-" .. i;local id=model.moduleId("action",ref)
+            config.modules[i]={id=id,kind="action",ref=ref};config.order[#config.order+1]=id
+        end
+        saved[pfx .. "orbitui_dashboard_config"]=config;choose()
+        H.eq(#Dashboard.readConfig(pfx).modules,model.module_limit)
+        H.eq(saved[pfx .. "orbitui_dashboard_config"],config)
+        local future={version=99,keep={unchanged=true}}
+        saved[pfx .. "orbitui_dashboard_config"]=future;choose()
+        H.eq(saved[pfx .. "orbitui_dashboard_config"],future)
+        H.eq(#notices,2)
+        for _,notice in ipairs(notices) do H.eq(notice,tr("Could not add the card. Check the card limit and reopen the menu.")) end
+    end)
     H.test(lang .. ": opening the source submenu with an existing cache does not throw from native tap", function()
         reset(lang); catalog = { source }
         local win = openSources(); healthy(win, 1)

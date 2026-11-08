@@ -1297,6 +1297,25 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+November 8 reported dashboard card-menu correction: picker additions show
+saved success/failure feedback, and BookOrbit sources show checked membership
+for this screen. Repeated picker taps cannot create another card for the same
+account/section/id; names are not identities. Preserve existing duplicates,
+other prefixes and independent low-level placements/source reassignment;
+never run automatic cleanup. Network confirmation stays explicit. Remove is
+one deliberate action affecting only the exact card/order/hidden entry, with
+feedback and return to the updated card list, not another remove submenu.
+Builders/radio inference/back never execute removal. Retired successful
+callbacks cannot remove a new placement reusing its id; missing entries have
+no live controls. Failed saves/full/future formats never report success or
+overwrite unsupported layouts. Keep native child-menu edits and deferred Home
+refresh. Built-in BookOrbit cards derive availability from passive snapshots,
+not optional plugin registries; healthy empty sources and usable offline
+caches remain available. No network during paint/selection, book/sync/plugin
+save changes or automatic layout migration. Tests: dashboard_catalog_menus,
+dashboard_modules, bookorbit_rows and existing dashboard suites; native menu/
+navigation fixtures remain distinct from physical Bigme acceptance.
+
 November 7 reviewed 6.3.3/3.0.3 maintenance: a bare native Cover-tab body must be
 inside the painted zero-border crop frame; preserve a scroll body's own crop
 region and HTML ownership. Both native text repaint and icon inversion need

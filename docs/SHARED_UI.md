@@ -26,6 +26,18 @@ saves or advances its development. Native polling supplies late covers and
 only visible dashboard cards use the existing minute refresh. Physical-device
 acceptance remains pending; see TESTING for exact automated evidence.
 
+### Adding and removing dashboard cards
+
+Dashboard card additions display a saved confirmation. In **BookOrbit shelves
+and smartscopes**, a checkmark means that source already has a card on this
+screen; repeated taps do not create duplicates. Existing duplicate placements
+are kept, not automatically deleted. **Cards and content > [card] > Remove
+card** is one removal action with feedback and an immediate updated list;
+there is no second removal submenu. Only that placement is removed, not its
+plugin, books or data. Failed saves show an error instead of success. Healthy
+BookOrbit cards are not labelled Unavailable merely because they are not an
+external module; usable cached results remain available offline.
+
 ### BookOrbit integration settings (Beta 23)
 
 **Integrations > BookOrbit / Integrationer > BookOrbit** is a stable searchable

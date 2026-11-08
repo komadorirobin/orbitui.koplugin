@@ -4,6 +4,42 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — local dashboard card feedback and removal fix
+
+User's Bigme report/photo: source selection saves silently, repeated taps
+create many identical placements, Remove leaves its old controls visible
+and BookOrbit cards are labelled Unavailable. Branch
+fix/dashboard-card-feedback-20261108 starts at cd8c862b and preserves the
+previously approved local Silverfish addition. No upstream import, public
+push/release, device/server operation or automatic data/layout cleanup.
+
+Own adapter-only picker feedback and checked source membership. Guard repeated
+picker selection by account/section/id within the current prefix, including
+renames and hidden cards; do not delete existing duplicates or change the
+low-level independent-placement/source-reassignment model. Success messages
+follow a successful save; failed/full/future layouts get a failure message,
+without exposing raw errors. Native network confirmation remains in place.
+
+Remove is one explicit action, deletes only its exact id/hidden/order entry,
+notifies and pops the nested card editor to its rebuilt parent list. A direct
+card editor rebuilds as Cards and content instead of leaving the window.
+Missing entries have no active controls, stale parent rows are safe/disabled,
+and a successful old remove cannot delete a new placement reusing the same id.
+Menu building/radio inference/back alone never remove anything. Keep original
+deferred Home refresh ownership. Native build/display tests exposed that a
+general navigation-stop guard would wrongly block edits in child Display
+menus; restrict that guard to Remove and retain the existing child actions.
+
+BookOrbit built-in row cards no longer go through optional plugin registry
+resolution to derive availability. Read their passive snapshot; empty but
+healthy sources and usable offline caches are not Unavailable. Real failures
+without cached results retain the warning. No network/provider render on
+picker selection or menu paint, no books/plugin saves/sync/server writes.
+Twenty SV/EN native menu/navigation cases (presentation/service fixtures)
+extend the existing regression suite. TESTING records final verification and
+physical limits. Components/pins/assets/bootstrap/VERSION/public beta.9 dist
+and 28 helpers/407 identities/2,000 API1 paths remain unchanged.
+
 ## 2026-11-08 — local Currently reading + Silverfish card
 
 User approves a separate additional choice, explicitly not replacing Continue
