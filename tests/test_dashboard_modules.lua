@@ -467,6 +467,9 @@ H.test("BookOrbit rows refresh and page only their own subtree, retaining native
     local background = { pos = { x = area.x+1, y = area.y+100 } }
     v:onDashboardHold(nil,background); v:onDashboardHoldRelease(); H.eq(configured,e.id)
     configured, saved.simpleui_hs_settings_on_hold = nil, false
+    -- Preferences are captured by a rendered card, like native hosted modules;
+    -- settings normally rebuild Home. A card-only redraw must apply them too.
+    requests[1].on_done{ ok = true }
     H.eq(v:onDashboardHold(nil,background), nil); v:onDashboardHoldRelease(); H.eq(configured,nil)
     saved.simpleui_hs_settings_on_hold = true
     v:onSwipe(nil, { pos = { x = area.x+2, y = area.y+100 }, direction = "west" })
