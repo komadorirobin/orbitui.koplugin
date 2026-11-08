@@ -1,5 +1,44 @@
 # Verification and device acceptance
 
+## 2026-11-08 — local beta.7 catalog-menu regression fix
+
+Runtime **eab9256f**, branch fix/dashboard-catalog-menus-20261108, base c820a54b.
+No upstream/component/pin/bootstrap/assets/API1/version/publication change.
+Only three loop-variable renames in the dashboard settings/module-store
+adapters; source caches, account links, reading data, translations and installer
+policy are untouched. This is a private same-version validation package, not
+an OTA to install over beta.7.
+
+Eight new SV/EN cases load the complete real SimpleUI SettingsWindow and
+SUIWindow engine, including MenuTable, ListRow, input, navigation and repaint's
+actual protected builders. Display/font/service boundaries and final frame
+attachment are substituted; native text shaping, physical touch/display and
+the server are not tested. Every case fails against the frozen public beta.7
+payload under Lua and LuaJIT with the numeric `_` call. Cached source submenu
+taps throw uncaught, while refresh/catalog builds log an error and leave no
+rows. The three minimal renames make all eight pass in both interpreters:
+cached/new source lists, refresh/notification dismiss/back/reenter/selection,
+all source types/Unicode names, bundled module/details/cache lifetime, and
+row/carousel callbacks with readback. Errors swallowed by native pcall must
+now fail assertions. Store suite adds direct real bundled-row construction
+and completed-show checks (13 cases); provider suite remains 17 cases.
+
+Both sealed Lua/LuaJIT runs pass all **114 root files**, including these native
+menu regressions. Both complete scripts pass: **134 Python tests** (four
+unchanged optional source-art skips), 114 root files, **551 Bookshelf suites /
+zero failures / three usual native SQLite skips**, all 13 SimpleUI files and
+**1,192 Lua syntax** checks. All **43** translation catalogs pass.
+
+Private ZIP **49fd2f18**, 9,598,129 bytes / 28,419,697 expanded, manifest
+**56cc03b0**, exact **2,000 installed paths**. Inventory and every projected
+source byte/hash pass; only the two executable adapter files differ from the
+published runtime (plus manifest and already-existing c820a54b receipt docs).
+Bootstrap/component bytes/pins/assets/VERSION and public dist **c5befabd** are
+unchanged. New-blob held-artwork check passes. Evidence:
+test-results/dashboard-catalog-menus-20261108. No real device/plugin install,
+server request/deployment, push or publication. Physical source-picker,
+module-library and display-choice retests on Bigme remain pending.
+
 ## 2026-11-08 — 1.1.0-beta.7 release candidate
 
 User explicitly requests push/publication after the local BookOrbit-card report

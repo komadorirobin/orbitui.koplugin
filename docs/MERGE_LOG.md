@@ -4,6 +4,33 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — local beta.7 BookOrbit/module-library menu fix
+
+Base c820a54b, branch fix/dashboard-catalog-menus-20261108, executable eab9256f.
+User reports empty sources after successful refresh, a crash when reopening
+the populated picker, and a blank module library. In two OrbitUI adapters,
+three numeric loop indices named `_` shadowed the translator. Initial empty
+sources work, but populated labels throw; native repaint catches the error
+and leaves blank chrome, while direct submenu taps can throw uncaught. The
+module library throws on its first bundled entry; the same bug affects the
+row/carousel chooser. Rename those three indices only, retaining data/APIs.
+
+New test_dashboard_catalog_menus loads complete native SimpleUI settings-window
+and engine code, retaining real MenuTable/ListRow/input/navigation/repaint
+error handling; only display/font/service boundaries and final frame attachment
+are substituted. Eight SV/EN cases reproduce failures against the frozen public
+beta.7 payload and pass with the fix. They assert visible rows, no builder
+warnings, refresh/dismiss/back/reopen/selection, cached reopening without HTTP,
+module details and persisted display choices. The existing store suite now
+calls the real bundled adapter directly and requires protected shows to finish;
+its cumulative verification assertion is corrected rather than swallowed.
+
+Verification details and physical limits: TESTING; evidence
+test-results/dashboard-catalog-menus-20261108. No upstream merge/pin/component,
+cache/settings reset, installer/sync policy, asset/bootstrap/API1/version or
+public dist change. Private candidate validation is not a release. No push,
+device/plugin installation, server call/deployment or new physical acceptance.
+
 ## 2026-11-08 — 1.1.0-beta.7 preview publication authorized
 
 Published **2026-11-08 14:21:06 UTC**, release **438291937**, frozen tag/source

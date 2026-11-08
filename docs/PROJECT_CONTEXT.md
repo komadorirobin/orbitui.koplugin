@@ -22,6 +22,22 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **Local beta.7 catalog-menu regression fix; not pushed/released.** User's
+  Bigme photos/report show blank BookOrbit sources after refresh, a crash on
+  reopening, and an empty module library. Branch
+  fix/dashboard-catalog-menus-20261108 starts at c820a54b; runtime eab9256f.
+  Three loop indices shadowed the translation function: populated source
+  labels, bundled module labels/deferred callbacks, and row/carousel choices.
+  Rename only those indices. Real SimpleUI SettingsWindow/MenuTable/ListRow/
+  input/navigation reproduce all three faults against frozen public beta.7
+  in SV/EN, including the unhandled cached-source tap; fixed paths pass.
+  Older protected-show test could swallow both a builder error and its own
+  incorrect cumulative assertion; now require completed builds plus direct
+  bundled-catalog rows. No cache/reset, HTTP/sync/installer policy, upstream,
+  component/pin/bootstrap/API1/assets/version or public dist change.
+  Private sealed runtime retains exactly 2,000 paths; tests/receipt and physical
+  limits in TESTING/MERGE_LOG. No device, server, push or publication operation.
+
 - **1.1.0-beta.7 published 2026-11-08 14:21:06 UTC.** User requests push and the
   next beta after the BookOrbit-card report explicitly disclosed desktop-only
   evidence and pending real Bigme/server checks. Release branch starts at
