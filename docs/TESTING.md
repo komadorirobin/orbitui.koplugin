@@ -1,5 +1,25 @@
 # Verification and device acceptance
 
+## 2026-11-08 — 1.1.0-beta.7 release candidate
+
+User explicitly requests push/publication after the local BookOrbit-card report
+disclosed outstanding real Bigme/live-server gates. Start at 72190eaa; only
+version/release notes and OTA-channel coverage change from the preserved feature.
+No new upstream/pin/component/artwork/bootstrap/API1 or sync-owner change. Keep
+27 exact lazy helpers/407 canonical identities, 2,000 installed files and all
+previous public tags/assets, stable/latest and maintenance1.0 unchanged.
+
+Run both full scripts/43 catalogs, sealed Lua/LuaJIT roots, real frozen BookOrbit
+catalog methods and minimum/current native input/buffer dashboard supplements.
+Verify actual older public installers (including beta.6), source/package/hash/
+history/artwork/secrets, exact main/tag CI payloads, downloaded draft/public
+assets and preview/stable/latest selection before publishing. Native installer
+checks use isolated temporary folders, not the device. No actual plugin install
+or server operation. Evidence test-results/preview11-beta7-20261108.
+Physical source lists/membership/link coverage/menus, SV/EN/day/night/sleep and
+Bigme latency/RSS remain open; no measured speed or universal compatibility claim.
+Receipts and exact frozen candidate follow here and in OTA/MERGE_LOG.
+
 ## 2026-11-08 — local BookOrbit dashboard source cards
 
 Branch feature/bookorbit-dashboard-rows-20261108, base edf54516. No upstream,

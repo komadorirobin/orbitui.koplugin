@@ -7,6 +7,63 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 1.1.0-beta.7
+
+User-requested preview publication of the locally built BookOrbit source cards,
+starting at 72190eaa. No new upstream merge, independent module-catalog release,
+server change or device/plugin installation. Stable/latest 1.0.0 and all earlier
+published tags/assets remain immutable. Bookshelf c014b133 / SimpleUI 4426601f
+and all component bytes, artwork and API1/bootstrap stay fixed.
+
+Add independent cards through **Reading dashboard → + → BookOrbit shelves and
+smartscopes → Refresh shelves and smartscopes**. Choose a library, shelf or
+smartscope from the connected BookOrbit catalog. Several cards, custom titles,
+half/full/tall/page sizes, cover rows or a one-cover carousel, native book
+tap/hold and independent swipe/arrow paging. The server evaluates rules; only
+exact stable BookOrbit-linked files already on this device are shown. Unlinked
+copies are not guessed and server-only books are not downloaded. No new extras
+server extension, reading-status/progress writes, directory/manifest scan or
+automatic Wi-Fi activation. A native catalog/subprocess-capable BookOrbit plugin
+and server are required; unsupported versions give a reason rather than block.
+
+Cached results appear immediately without constructing a client or sweeping
+files in widget build/paint. Visible cards refresh asynchronously with a
+15-minute success TTL; failed automatic attempts back off one minute. Request
+coalescing, bounded complete pagination and account/policy/map/mount/sleep guards
+keep retired requests from committing. Only the requesting row subtree redraws;
+other modules and timers stay mounted. A definite removed/inaccessible source
+suppresses its saved membership. Cached results survive transient errors and
+disable. **Integrations → BookOrbit → BookOrbit shelves and smartscopes** is
+separate from Want to Read and the external plugin's own sync preferences.
+
+**Svenska:** Lägg till flera egna kort via **Läsöversikt → + → BookOrbit-hyllor
+och smartscopes → Uppdatera hyllor och smartscopes**. Välj källa och justera
+rubrik/storlek eller omslagsrad/karusell via rubriken eller långtryck på kortets
+bakgrund. Bara BookOrbit-länkade böcker som finns på enheten visas. Servern
+utvärderar reglerna; inget laddas ned, ingen lässtatus skickas och inget nytt
+extras-servertillägg behövs. Sparade träffar visas direkt, synliga kort uppdateras
+i bakgrunden högst var 15:e minut och bara det berörda kortet ritas om.
+Av/på finns separat under Integrationer → BookOrbit. För gammalt plugin/server
+ger förklaring; OrbitUI slår inte på Wi-Fi. Svenska och engelska finns.
+
+Update via **preview** and restart KOReader. Back up settings and reading data
+separately. Explicitly adding a BookOrbit card opts that screen into dashboard
+config v3: beta.6/older fail closed and preserve it, rather than silently dropping
+new source selections. Code rollback does not revert layout/cache or third-party
+data; restore a matching settings backup to edit that page on older code.
+Existing v1/v2 layouts remain unchanged until adding a new source card.
+One new adapter path is balanced by lossless lazy embedding of the existing
+folder-label helper: 27 helpers/407 canonical identities, 2,000 installed files,
+unchanged API1/bootstrap. No existing settings, links or reading-data reset.
+
+This is a prerelease. Full Lua/LuaJIT, 43 catalogs, sealed/native/frozen BookOrbit
+methods, old-installer/source/history/artwork/secrets and main/tag CI gates must
+pass before verified draft/public-byte activation. Physical Bigme and live-server
+source/membership/link coverage, menus/day/night, suspend/read-return and measured
+start/latency/RSS remain unverified. No device speed or universal server
+compatibility claim. Evidence: test-results/preview11-beta7-20261108;
+TESTING/MERGE_LOG retain results and the exact frozen source.
+
 ## OrbitUI 1.1.0-beta.6
 
 Published **2026-11-08 12:56:30 UTC**, release **438244122**, frozen source/tag

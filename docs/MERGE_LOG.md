@@ -4,6 +4,27 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — 1.1.0-beta.7 preview publication authorized
+
+User requests push and the next beta after the local card report states that
+Bigme and live-server acceptance remain pending. Preserve 72190eaa and its
+BookOrbit shelf/smartscope cards; no new upstream merge or component source/pin
+advance. Change VERSION/release docs/channel assertions only for this release.
+SV/EN notes describe exact BookOrbit-linked local-only files, no downloads,
+server-evaluated rules, cached-first async visible refresh, per-card redraw,
+separate integration switch and native API requirements, with no extras patch
+or status/sync writer. Config v3 downgrade preservation and independent settings
+backup requirements are explicit. API1/bootstrap/assets unchanged; one adapter/
+folder-label embed exchange retains 2,000 paths and 27/407 helpers/identities.
+
+Both full interpreters/catalogs, sealed/native/frozen BookOrbit method tests,
+old actual installers, source/history/artwork/secret/package gates precede
+main/tag push; exact successful CI and verified draft/public bytes precede
+public activation. Stable/latest/maintenance1.0 and all previous release assets/
+tag refs remain unchanged. No device/plugin install, server deployment or
+independent module catalog publication. Evidence preview11-beta7-20261108;
+TESTING/OTA receipts follow. Physical/live gates are not waived or certified.
+
 ## 2026-11-08 — local BookOrbit shelf/smartscope dashboard cards
 
 User approves independent BookOrbit source cards with cached-first asynchronous

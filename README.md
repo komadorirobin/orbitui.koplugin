@@ -63,7 +63,26 @@ functionality, not a claim that OrbitUI invented the Home screen, library,
 series boxes, themes or ornament system. [The feature guide](docs/FEATURES.md)
 explains the extra controls and where to find them.
 
-**1.1.0-beta.6 preview:** Reading dashboard
+**1.1.0-beta.7 preview:** Add BookOrbit shelves and smartscopes as independent
+Reading dashboard cards: **+ → BookOrbit shelves and smartscopes → Refresh
+shelves and smartscopes**. Multiple cards, custom titles/sizes and cover
+row/carousel views. Only exact BookOrbit-linked files already on this device;
+cached-first, visible-only asynchronous refresh, no downloads/status writes or
+new extras server patch. Separate integration switch, Swedish/English controls.
+Requires a connected BookOrbit plugin with native catalog/background APIs.
+Desktop-tested; actual Bigme and live-server acceptance remain pending.
+[Release and rollback notes](docs/OTA.md#orbitui-110-beta7).
+
+**Svenska, förhandsversion 1.1.0-beta.7:** Lägg till BookOrbit-hyllor och
+smartscopes som egna kort via **Läsöversikt → + → BookOrbit-hyllor och
+smartscopes → Uppdatera hyllor och smartscopes**. Flera kort med egna rubriker,
+storlekar och omslagsrad/karusell. Bara BookOrbit-länkade filer på enheten visas;
+sparade träffar först, uppdatering i bakgrunden för synliga kort, inga
+nedladdningar/lässtatusskrivningar eller nytt extras-servertillägg. Egen
+av/på-brytare under Integrationer, svenska/engelska. Kräver anslutet BookOrbit-
+plugin med katalog-/bakgrunds-API. Datorprovat; Bigme- och liveservertest återstår.
+
+**Included since 1.1.0-beta.6:** Reading dashboard
 can host compatible SimpleUI/Bookshelf plugin cards and action shortcuts.
 Tap **+**, or use **Cards and content → Add module…**. Long-press a plugin card
 to resize/hide/remove it; **Arrange cards** sets its position. Extra cards use
@@ -232,7 +251,7 @@ igen. Funktionen ingår i Beta 26.
 
 ### Optional BookOrbit features
 
-**Local development, not yet released:** Reading dashboard **+ → BookOrbit
+**1.1.0-beta.7 preview:** Reading dashboard **+ → BookOrbit
 shelves and smartscopes → Refresh shelves and smartscopes** lists sources from
 the connected BookOrbit plugin's catalog API. Select a library, shelf or
 smartscope to add a card; repeat for more cards. Tap its heading (or hold its
@@ -248,7 +267,7 @@ No extras server patch is required; an older plugin/server without the native
 catalog/subprocess APIs needs an update. Desktop/fixture tested only; physical
 Bigme and live server acceptance remain pending.
 
-**Lokal utveckling, ännu inte släppt:** **Läsöversikt → + → BookOrbit-hyllor
+**Förhandsversion 1.1.0-beta.7:** **Läsöversikt → + → BookOrbit-hyllor
 och smartscopes → Uppdatera hyllor och smartscopes** visar källor från det
 anslutna BookOrbit-pluginets katalog-API. Lägg till flera kort med olika källor.
 Tryck på rubriken eller långtryck på kortets bakgrund för att ändra källa,

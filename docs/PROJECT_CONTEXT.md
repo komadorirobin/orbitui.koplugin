@@ -22,6 +22,20 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **1.1.0-beta.7 preview publication authorized.** User requests push and the
+  next beta after the BookOrbit-card report explicitly disclosed desktop-only
+  evidence and pending real Bigme/server checks. Release branch starts at
+  72190eaa; include those local cards only, no new upstream/import/pin change.
+  VERSION beta.7, preview/prerelease only; stable/latest/maintenance1.0 and all
+  previous tags/assets immutable. Component pins stay c014b133 / 4426601f,
+  bootstrap/API1/assets/component bytes fixed, 27/407 helpers/identities and
+  2,000 paths. No device/plugin install, independent catalog or server work.
+  Full/package/sealed/native/frozen API/old-installer/source/history/secret
+  gates, exact main/tag CI and draft/public-byte/channel verification precede
+  activation. Evidence preview11-beta7-20261108; receipts follow in TESTING/
+  MERGE_LOG/OTA. Earlier local-only entries describe their original implementation;
+  this authorization supersedes their publication restrictions only.
+
 - **Local BookOrbit dashboard source cards; not pushed/released.** User approves
   shelves/smartscopes as independent local-files-only cards. Branch
   feature/bookorbit-dashboard-rows-20261108 starts at edf54516 (published beta.6
