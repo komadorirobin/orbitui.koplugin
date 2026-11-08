@@ -43,6 +43,12 @@ and correct this file in the same change.
   Pins/bootstrap/assets/VERSION/public beta.6/dist/stable1.0, real Bigme and
   server unchanged. Tests/evidence and acceptance gates: TESTING/MERGE_LOG,
   test-results/bookorbit-rows-20261108.
+  Frozen **8a5af49b** (runtime 2e6024be), private ZIP **c3fbacca**, 9,593,528
+  bytes, exact source and 2,000 paths. Full scripts/43 catalogs pass; final
+  sealed 113 roots repeat in Lua/LuaJIT, 18-case frozen native BookOrbit API
+  supplement, both 21-case native widget/buffer dashboard checks and actual
+  beta.5 native installer/restart/rollback/recovery pass. Public dist remains
+  a198828f; physical/live-server gates open. Following receipt is docs-only.
 
 - **1.1.0-beta.6 published 2026-11-08 12:56:30 UTC.** User
   explicitly requests push and a new beta after the local module-library report,

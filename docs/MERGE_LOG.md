@@ -43,6 +43,17 @@ helper bytes, component pins/assets, VERSION and public dist are unchanged.
 Validation results and physical/live-server limits are recorded in TESTING.
 Evidence: test-results/bookorbit-rows-20261108. No publication in this step.
 
+Final frozen source **8a5af49b**, executable change **2e6024be**; private ZIP
+**c3fbacca**, 9,593,528 bytes, manifest **0545b9f4**. Both full scripts/catalogs,
+final sealed 113 root files in Lua/LuaJIT, 18 focused cases including frozen
+native BookOrbit API/filter methods, both 21-case minimum/current native
+input/FFI dashboard supplements, and actual beta.5 native installer/recovery
+pass. Exact source/hash/file-count/new-blob/held-artwork checks pass; component
+bytes/pins/bootstrap/assets/VERSION and public dist **a198828f** unchanged.
+A first-row/fresh-catalog TTL regression is covered; background edits remain
+card-scoped and obey the rendered hold preference. No Bigme/live-server
+acceptance claim. This subsequent evidence receipt changes only docs.
+
 ## 2026-11-08 — 1.1.0-beta.6 preview publication authorized
 
 Published **2026-11-08 12:56:30 UTC**, release **438244122**, immutable tag/source

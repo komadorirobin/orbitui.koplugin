@@ -16,8 +16,29 @@ suspend/navigation retirement, offline/cancellation/unsupported clients, missing
 sources, malformed descriptors/cache, v3 independent placements and SV/EN.
 `test_dashboard_modules.lua` adds real host row-subtree refresh/free/paging,
 native book tap/hold, carousel and hidden-page guards without rebuilding peer
-modules. Full Lua/LuaJIT, catalogs, sealed package and minimum/current native
-widget/buffer checks follow. Evidence test-results/bookorbit-rows-20261108.
+modules. Evidence test-results/bookorbit-rows-20261108.
+
+Final frozen candidate **8a5af49b** (executable change 2e6024be), private ZIP
+**c3fbacca**, 9,593,528 bytes / 28,404,179 expanded, manifest **0545b9f4**.
+Both full scripts pass: 134 Python/four unchanged optional source-art skips,
+113 root files, 551 Bookshelf suites/zero failures/three usual native SQLite
+skips, 13 SimpleUI files, 1,191 Lua syntax and all 43 catalogs. Final frozen
+sealed roots repeat under Lua and LuaJIT after the final UI/test correction;
+all 113 root files pass in each interpreter. Focused provider suite is 17
+cases, or 18 with the real frozen BookOrbit API/params methods from a96ff0c8;
+those exact methods are exercised GET-only against fixtures, never the server.
+Both minimum/current native input plus real FFI buffers pass all 21 dashboard
+cases. A fresh source catalog must not delay a new row; failed requests keep
+cached files and show a reason. Hold preference changes apply through normal
+card/layout redraw, not by mutating already-rendered controls in tests.
+
+Source/manifest/hash projection, helper byte identity, 2,000 installed files,
+held-artwork/new-blob audits and unchanged bootstrap/component source/pins/
+assets/VERSION pass. Public beta.6 dist stays byte-identical **a198828f**.
+Actual public beta.5 installer passes native archive/hash/activation/restart,
+rollback and truncated-download recovery in isolated temporary directories;
+no user install. This same-version private candidate is not a new public OTA.
+The following receipt changes docs only. Physical/live limits below remain.
 
 Pending physical/live gates: actual BookOrbit catalog responses on the user's
 connection; source refresh and rename/removal; library/collection/smartscope
