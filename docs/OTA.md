@@ -7,6 +7,38 @@ OrbitUI release. Follow `MIGRATION.md`: back up settings and patches, disable
 standalone Bookshelf and SimpleUI, restart, install OrbitUI and restart again.
 The original standalone OTA channels are not redirected or modified.
 
+## OrbitUI 1.1.0-beta.11
+
+User-requested preview release from 6c53fa2e, preserving the locally tested
+companion-card fix a094bbe9. No additional upstream merge, component/pin,
+artwork, bootstrap/API1, device/server or independent catalog operation.
+Stable/latest 1.0 and all published releases/tags/assets remain immutable.
+
+**Currently reading + Silverfish:** accept KOReader's normal callable event
+wrapper without bypassing its error boundary. This fixes the false unsupported
+version fallback hiding the active cat/silverfish. Keep all reviewed public
+2.0.0/version/state/species checks. Font sizing follows density/width instead
+of shrinking with a shallow row; cover/book use the full inner height and the
+companion's name/stage have their own column. Compact titles/reasons truncate
+within their bounds. Continue reading and saved placements are unchanged;
+no Silverfish fork, file edits, artwork copying or save/progression writes.
+
+**Svenska:** rättar den saknade figuren och den pyttelilla texten i **Läser just
+nu + Silverfish**. Större text och högre omslag i breda, låga kort; Fortsätt
+läsa och dina placeringar är oförändrade. Silverfish 2.0.0 installeras/aktiveras
+separat. Uppdatera via förhandskanalen och starta om KOReader.
+
+Back up settings/reading data separately; code rollback does not restore them
+or third-party data. Dashboard v2/v3 downgrade limits from beta.6/7 still apply.
+28 lazy helpers/407 identities, exact 2,000 paths and API1/bootstrap retained.
+Both full interpreters/43 catalogs, frozen sealed/native sandbox/Font/Silverfish,
+actual older installers, history/artwork/secrets, exact main/tag CI payloads and
+draft/public byte/channel checks precede activation. Physical Bigme font/touch,
+colour/night, rotation/wake and full-plugin acceptance remain pending; this is
+not a real-device speed/safety certification. No actual installation or live
+server operation. Evidence test-results/preview11-beta11-20261108; receipts
+follow in TESTING/MERGE_LOG.
+
 ## OrbitUI 1.1.0-beta.10
 
 Published **2026-11-08 19:28:20 UTC**, release **438466180**, frozen source/tag

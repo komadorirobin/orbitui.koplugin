@@ -4,6 +4,20 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — 1.1.0-beta.11 preview publication authorized
+
+User requests a new beta after the local fix report explicitly discloses
+physical Bigme gaps. Branch release/1.1.0-beta.11-20261108 starts at 6c53fa2e.
+Preserve a094bbe9 runtime; VERSION/README/release docs and preview/draft
+regression only. No new upstream, component/pin/art/bootstrap/API1, settings,
+device/server or catalog operation. Stable/latest/maintenance1.0 and all prior
+published tags/assets remain immutable; 28/407 helpers/identities, 2,000 paths.
+Both full suites/43 catalogs, frozen sealed/native sandbox/Font/Silverfish,
+actual older installers including beta.10, history/artwork/secrets, exact main/
+tag CI payloads and verified draft/public bytes/channels precede activation.
+No physical Bigme/full-plugin acceptance is inferred. Evidence
+test-results/preview11-beta11-20261108; TESTING/OTA receipts follow.
+
 ## 2026-11-08 — local beta.10 Silverfish card compatibility/layout fix
 
 Base 2a2108ac; branch fix/silverfish-card-layout. User reports missing cat and

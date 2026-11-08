@@ -1,5 +1,23 @@
 # Verification and device acceptance
 
+## 2026-11-08 — 1.1.0-beta.11 release candidate
+
+User requests the next beta after the local fix report discloses pending
+physical Bigme acceptance. Branch release/1.1.0-beta.11-20261108 starts at
+6c53fa2e; runtime a094bbe9 is retained. VERSION/README/release docs and explicit
+preview/draft regression only; no new upstream/component/pin/art/bootstrap/API1/
+data/device/server/catalog change. 28 lazy helpers/407 identities, exact 2,000
+paths. Stable/latest/maintenance1.0 and all prior tags/assets stay immutable.
+
+Required: both full scripts/43 catalogs, all frozen sealed roots, minimum/
+current native sandbox/Font/Silverfish plus retained native/menu/SQLite/EPUB/
+thumbnail/search checks, actual old installers including beta.10, source/
+history/held-art/secrets, exact main/tag CI payloads, draft/public bytes and
+channel/immutability checks. Only isolated temporary installations, not the
+user's device/server. Full physical Bigme font/layout/tap/colour/night/wake/
+rotation and complete external-plugin lifecycle remain pending. Evidence
+test-results/preview11-beta11-20261108; frozen/public receipts follow.
+
 ## 2026-11-08 — local beta.10 Silverfish card correction
 
 Base 2a2108ac; branch fix/silverfish-card-layout. User's photo shows no cat and

@@ -22,6 +22,20 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **1.1.0-beta.11 preview publication authorized.** User requests a new beta
+  after the local fix report explicitly discloses pending physical Bigme tests.
+  Branch release/1.1.0-beta.11-20261108 starts at 6c53fa2e; retain runtime
+  a094bbe9. VERSION/README/release docs and preview/draft-selection regression
+  only; no further upstream/component/pin/art/bootstrap/API1/data/server/device
+  or catalog change. Stable/latest/maintenance1.0 and prior releases/tags/assets
+  immutable. Same 28/407 helpers/identities and exact 2,000 paths. Both full
+  scripts/43 catalogs, frozen sealed/native sandbox/Font/Silverfish, older
+  installers including beta.10, history/secrets, exact main/tag CI and verified
+  draft/public bytes/channels precede activation. Evidence under
+  test-results/preview11-beta11-20261108; receipts follow. Earlier local-only
+  restrictions are superseded only for this requested release, not physical
+  acceptance, an actual plugin/device install or an independent catalog release.
+
 - **Local beta.10 Silverfish reading-card correction; not published.** User's
   Bigme photo shows the unsupported-version fallback and tiny text. Branch
   fix/silverfish-card-layout starts at 2a2108ac. KOReader's PluginLoader wraps
