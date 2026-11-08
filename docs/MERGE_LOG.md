@@ -1,5 +1,9 @@
 # Reviewed import and merge log
 
+This log is the durable handoff between development conversations. It records
+approved imports, not merely upstream commits seen by the monitor. An entry
+does not imply a public release or successful device testing.
+
 ## 2026-11-08 — local beta.10 Silverfish card compatibility/layout fix
 
 Base 2a2108ac; branch fix/silverfish-card-layout. User reports missing cat and
@@ -17,9 +21,14 @@ full/sealed/native receipts are in TESTING and
 test-results/silverfish-card-layout-20261108. Headless native-code/service
 fixtures and schematic inspection do not establish physical Bigme acceptance.
 
-This log is the durable handoff between development conversations. It records
-approved imports, not merely upstream commits seen by the monitor. An entry
-does not imply a public release or successful device testing.
+Verification: frozen **a094bbe9**, private ZIP **6cec9a44**, 9,628,809 bytes,
+manifest **0b130f45**, unchanged API1/exact 2,000 paths. Both full scripts/43
+catalogs pass; all 116 root files repeat from the final sealed payload in
+Lua/LuaJIT. Minimum/current native sandbox + Font fixtures pass 16 each in
+both interpreters; native input/FFI/frozen Silverfish matrices pass 24 dashboard,
+17 companion and 18 placement cases each. Exact-source/inventory, new-blob
+held-art and redacted-secret audits pass; public beta.10/dist stays 83157ee1.
+No real device install or publication. The following receipt is docs only.
 
 ## 2026-11-08 — 1.1.0-beta.10 preview publication authorized
 

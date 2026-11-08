@@ -37,6 +37,14 @@ and correct this file in the same change.
   the fix. C10/TESTING record scope and receipts. Evidence under
   test-results/silverfish-card-layout-20261108; physical Bigme fonts/layout/
   touch/wake/night and full-plugin lifecycle still need acceptance.
+  Frozen fix **a094bbe9**, private ZIP **6cec9a44** / 9,628,809 bytes, manifest
+  **0b130f45**, API1/exact 2,000 paths. Both full scripts/43 catalogs and all
+  116 sealed roots in Lua/LuaJIT pass. Native minimum/current sandbox/Font
+  fixtures pass 16 each in both interpreters; input/FFI/frozen Silverfish
+  matrices pass 24 dashboard / 17 companion / 18 placement cases each.
+  Exact source/inventory/held-art/redacted-secret gates pass; public beta.10/
+  dist stays **83157ee1**. No actual device install or publication; following
+  verification receipt changes docs only.
 
 - **1.1.0-beta.10 preview publication authorized.** User requests a new beta
   after both local reports disclose pending physical Bigme tests. Branch

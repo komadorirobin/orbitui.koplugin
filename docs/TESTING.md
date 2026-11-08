@@ -26,6 +26,23 @@ uses synthetic cover/approximate font services, not a native device screenshot.
 Physical Bigme full/half card fonts/clipping/taps, night/colour, rotation/wake
 and complete external-plugin lifecycle remain unverified.
 
+Verification receipt: frozen **a094bbe92f0511d51bc2044ce91144faa96a5b92**,
+private ZIP SHA-256
+`6cec9a44d5e4c69b9bc009279f9db8b7cdb562ea94520a160a43f173e6e03398`,
+9,628,809 bytes / 28,524,861 expanded, manifest **0b130f45**, API1/exact
+2,000 installed paths. Both full scripts pass: 134 Python/four usual optional
+art-source skips, 1,195 syntax files, 116 root files, 551 Bookshelf suites/
+zero failures/three usual native SQLite skips, all 13 SimpleUI files. All 43
+catalogs pass. All 116 root files repeat against the final sealed payload in
+Lua and LuaJIT. Minimum/current native PluginLoader + Font service fixtures
+pass 16 cases in both interpreters; native InputContainer/FFI/real frozen
+Silverfish matrices pass 24 dashboard, 17 companion and 18 placement cases each.
+The source-only six-file delta/inventory is exact; all other runtime files,
+including components/pins/art/bootstrap, match public beta.10 byte for byte.
+New history contains no held artwork or redacted secret matches; gitleaks
+passes. Public dist stays **83157ee1**. No push/release/ADB/server action or
+physical acceptance is implied. This following verification receipt is docs only.
+
 ## 2026-11-08 — 1.1.0-beta.10 release candidate
 
 User requests preview publication from 8b40cb29 after local reports disclose
