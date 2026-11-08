@@ -22,6 +22,21 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **Local reading companion composition; not published.** User's beta.11 photo
+  requests a right-hand cover and better use of space. Branch
+  fix/silverfish-card-composition-20261108 starts at fdaf02e1. Full-height
+  creature left, vertically centered middle text stack, aspect-preserving cover
+  right. Name/stage share a row; title/author and percentage/companion statistics
+  stay together above the progress bar. Secondary text uses normal contrast.
+  Reuse the native title widget's measured height to remove unused title lines,
+  not character-count guesses or another shaping pass. Compact cards omit
+  secondary rows before shrinking fonts. Companion/name taps open Silverfish;
+  title/cover resume the book. Continue reading, placements, saves, progression,
+  source pins/components/art/bootstrap/API1/VERSION/public dist stay unchanged.
+  No push/release/ADB/server or independent catalog operation. C10/TESTING hold
+  tests and physical gaps; evidence silverfish-composition-20261108. Same
+  28/407 helpers/identities and 2,000 paths; frozen/package receipts follow.
+
 - **1.1.0-beta.11 preview publication authorized.** User requests a new beta
   after the local fix report explicitly discloses pending physical Bigme tests.
   Branch release/1.1.0-beta.11-20261108 starts at 6c53fa2e; retain runtime

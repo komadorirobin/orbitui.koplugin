@@ -1,5 +1,32 @@
 # Verification and device acceptance
 
+## 2026-11-08 — local reading companion composition
+
+Base fdaf02e1; branch fix/silverfish-card-composition-20261108. User's beta.11
+photo requests the cover on the right and a coherent layout. Creature left,
+centered text stack, cover right; normal-contrast secondary text and native
+measured title height instead of unused title slots. Compact heights omit
+secondary rows, not essential title/progress or readable font sizes. Existing
+Continue reading/layout/settings/plugin-state contracts remain. No upstream,
+component/pin/art/bootstrap/API1/VERSION/public dist, push/release/ADB/server
+operation. Evidence test-results/silverfish-composition-20261108; frozen/full/
+package receipts follow. Public beta.11 stays e204872e.
+
+Nineteen ordinary cases cover existing boundaries plus full-height left/right
+anchors, centered stack and cover, pairwise text-slot nonintersection, compact
+row priorities, measured-title resource reuse/recentering, invalid measurement
+fallback/free-once and distinct creature/name/title/cover native gestures.
+The optional frozen Silverfish 2.0.0 native-input/FFI supplement adds a twentieth
+case across 1236x300, 600x300 and 1680x430 RGB32/BB8 frames for both species:
+real sprites, unchanged pet state, every outside-card pixel stays white; the
+cat has at least 180 painted pixels of height in the shallow full-width case.
+Minimum/current KOReader sandbox and Font code are service-boundary fixtures.
+The native TextBox height-adjust/getSize contract was inspected at 87262332;
+shaping/line-count/FreeType services are not certified by deterministic fixtures.
+Schematic Chrome previews use real sprites but synthetic covers/approximate
+fonts, not actual Bigme screenshots. Physical text/taps/colour/night/rotation/
+wake and complete Silverfish lifecycle remain pending.
+
 ## 2026-11-08 — 1.1.0-beta.11 release candidate
 
 User requests the next beta after the local fix report discloses pending

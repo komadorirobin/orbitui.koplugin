@@ -4,6 +4,22 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — local reading companion composition
+
+Base fdaf02e1; branch fix/silverfish-card-composition-20261108. User requests
+right-hand book cover and better use of the beta.11 card's space. Keep creature
+full-height left, book cover right, and one centered text stack between them.
+Shared name/stage and percentage/statistics rows, normal text contrast and
+measured native title height eliminate fragmented columns/unused title lines.
+Reuse the measured widget; safely free invalid provisional ones. Compact cards
+omit secondary rows without miniature fonts. Name/creature opens Silverfish;
+title/cover resumes KOReader. C10 records the deliberate composition change;
+all save/progression/plugin ownership and Continue reading/placements remain.
+No source/pin/component/art/bootstrap/API1/VERSION/public dist, new runtime path,
+push/release/device/server change. Tests/private package and physical limits
+are recorded in TESTING; evidence silverfish-composition-20261108. No physical
+acceptance claim follows from service fixtures or schematic previews.
+
 ## 2026-11-08 — 1.1.0-beta.11 preview publication authorized
 
 Published **2026-11-08 21:32:02 UTC**, release **438533738**, frozen source/tag

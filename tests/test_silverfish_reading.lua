@@ -4,7 +4,7 @@ local H=require("tests/helpers")
 local M=require("adapters/orbitui_silverfish")
 local Model=require("core/orbitui_dashboard")
 local now=1800000000
-local pet, active, rows, paints, opens, reads, covers, ready, warnings
+local pet, active, rows, paints, opens, reads, covers, ready, warnings, measured_title_h
 local sandbox
 local loader=os.getenv("ORBITUI_NATIVE_PLUGIN_LOADER")
 if loader then
@@ -31,6 +31,7 @@ end
 package.loaded.logger={warn=function() warnings=(warnings or 0)+1 end,dbg=function() end}
 local function reset()
     paints, opens, reads, covers, warnings=0,0,0,0,0
+    measured_title_h=nil
     active={id="gato"}
     pet={estado={especie="gato",nome="Franz 日本語",letras=5000,barriga=80,humor=80,
         nascimento=now-86400*4,geracao=2,livro_corrente="Wrong stale title",ultimo_arquivo="/wrong",
@@ -107,7 +108,7 @@ end)
 H.test("all geometry is bounded in half/full, portrait/landscape and tiny viewports",function()
     for _,size in ipairs{{1264,520},{600,320},{300,200},{1680,430},{120,90},{1,1}} do
         local p=M.plan(size[1],size[2]);local previous
-        for _,key in ipairs{"cover","pet","book"} do
+        for _,key in ipairs{"pet","book","cover"} do
             local r=p[key]
             assert(r.x>=0 and r.y>=0 and r.w>0 and r.h>0)
             assert(r.x+r.w<=p.w and r.y+r.h<=p.h,key)
@@ -115,6 +116,33 @@ H.test("all geometry is bounded in half/full, portrait/landscape and tiny viewpo
             previous=r
         end
     end
+end)
+H.test("composition keeps a full-height creature left, a centered text stack and the cover right without intersections",function()
+    for _,size in ipairs{{1236,200,2},{1236,250,2},{1236,300,2},{1236,400,2},{1236,660,2},{600,300,2},{1680,430,2},{300,200,1}} do
+        local p=M.plan(size[1],size[2],size[3]);assert(p.readable)
+        assert(p.pet.x+p.pet.w<p.book.x)
+        assert(p.book.x+p.book.w<p.cover.x)
+        assert(p.pet.h>=p.cover.h,"name must not reduce the creature's height")
+        assert(math.abs(p.pet.y+p.pet.h/2-(p.cover.y+p.cover.h/2))<=1)
+        assert(math.abs(p.pet.y+p.pet.h/2-(p.book.y+p.book.h/2))<=1)
+        local function separate(a,b)
+            return a.x+a.w<=b.x or b.x+b.w<=a.x or a.y+a.h<=b.y or b.y+b.h<=a.y
+        end
+        local keys={"name","stage","title","author","percent","metrics","bar"}
+        for i,key in ipairs(keys) do
+            local r=p[key]
+            if r then
+                assert(r.x>=p.book.x and r.x+r.w<=p.book.x+p.book.w,key)
+                assert(r.y>=p.book.y and r.y+r.h<=p.book.y+p.book.h,key)
+                for j=1,i-1 do if p[keys[j]] then assert(separate(r,p[keys[j]]),key.." overlaps "..keys[j]) end end
+            end
+        end
+    end
+    local p=M.plan(1236,300,2)
+    assert(p.pet.h>=240);H.eq(p.title_lines,1);assert(p.author)
+    H.eq(M.plan(1236,400,2).title_lines,2)
+    H.eq(M.plan(1236,250,2).author,nil)
+    H.eq(M.plan(1236,200,2).companion,nil)
 end)
 
 -- Actual bounded container and optional minimum/current native input + FFI
@@ -189,6 +217,12 @@ end
 local function label(args)
     local v=W:new{kind="text",text=args.text,width=args.width,height=args.height or args.face.size*1.3,
         face=args.face,bold=args.bold,fgcolor=args.fgcolor,max_lines=args.max_lines}
+    if args.height_adjust then
+        if measured_title_h~=nil then v.height=measured_title_h
+        elseif os.getenv("ORBITUI_CARD_PREVIEW_DIR") and args.text=="Actual KOReader book" then
+            v.height=math.ceil(args.face.size*1.3) -- explicit one-line fixture, not runtime wrapping logic
+        end
+    end
     labels[#labels+1]=v;return v
 end
 -- Font:getFace applies density scaling itself; model that at the service
@@ -236,6 +270,30 @@ H.test("native book data, cover placeholder and progress coexist with pet info a
     assert(found["Actual KOReader book"] and found["39%"] and found["Franz 日本語"])
     H.eq(found["Wrong stale title"],nil);assert(equal(pet.estado,before));v:free()
 end)
+H.test("short native title measurements close reserved-line gaps, recenter the stack and reuse the measured widget",function()
+    reset();measured_title_h=23
+    local original=M.plan(618,330,1)
+    local v,card=build{hosted=true}
+    local title=labels[1]
+    H.eq(card.plan.title.h,23)
+    assert(card.plan.book.h<original.book.h)
+    assert(card.plan.book.y>original.book.y)
+    H.eq(card.plan.author.y,card.plan.title.y+23+4)
+    local copies=0
+    for _,child in ipairs(card.group) do if child==title then copies=copies+1 end end
+    H.eq(copies,1);H.eq(title.freed,nil)
+    H.eq(title.overlap_offset[2],card.plan.title.y)
+    v:free();H.eq(title.freed,true)
+end)
+H.test("invalid native text measurements retire the provisional widget and use a bounded fallback",function()
+    for _,height in ipairs{-1,0,math.huge} do
+        reset();measured_title_h=height
+        local v,card=build{hosted=true}
+        H.eq(labels[1].freed,true)
+        assert(card.plan.title.h>0 and card.plan.title.h<card.plan.book.h)
+        v:free()
+    end
+end)
 H.test("book and pet taps are independent through hosted and standalone native gesture frames",function()
     for _,hosted in ipairs{true,false} do
         reset();sandboxPet();local wrapped=pet.onMostrarTraca
@@ -249,9 +307,17 @@ H.test("book and pet taps are independent through hosted and standalone native g
         local gx,gy=30+r.x+2,40+r.y+2
         if not native_input then gx,gy=dx+r.x+2,dy+r.y+2 end
         assert(tap(v,card,gx,gy));H.eq(opens,1);H.eq(pet.onMostrarTraca,wrapped)
+        r=card.plan.companion
+        gx,gy=30+r.x+2,40+r.y+2
+        if not native_input then gx,gy=dx+r.x+2,dy+r.y+2 end
+        assert(tap(v,card,gx,gy));H.eq(opens,2)
         gx,gy=30+card.plan.cover.x+2,40+card.plan.cover.y+2
         if not native_input then gx,gy=dx+card.plan.cover.x+2,dy+card.plan.cover.y+2 end
-        assert(tap(v,card,gx,gy));H.eq(opens,11)
+        assert(tap(v,card,gx,gy));H.eq(opens,12)
+        r=card.plan.title
+        gx,gy=30+r.x+2,40+r.y+2
+        if not native_input then gx,gy=dx+r.x+2,dy+r.y+2 end
+        assert(tap(v,card,gx,gy));H.eq(opens,22)
         v:free();bb:free()
     end
 end)
@@ -310,7 +376,7 @@ end)
 H.test("high-DPI fonts are converted to points once and localized card text leaves pet names unchanged",function()
     reset();screen.scaleBySize=function(_,n) return n*2 end
     local v=build{hosted=true,width=1236,height=660}
-    H.eq(labels[1].face.points,24);H.eq(labels[1].face.size,48);v:free();screen.scaleBySize=function(_,n) return n end
+    H.eq(labels[1].face.points,22);H.eq(labels[1].face.size,44);v:free();screen.scaleBySize=function(_,n) return n end
     G_reader_settings={readSetting=function() return "sv" end}
     local s=assert(M.snapshot(now));H.eq(s.name,"Franz 日本語");H.eq(s.stage,"Ash Cat · Kattunge")
     H.eq(require("core/orbitui_i18n")("Currently reading + Silverfish"),"Läser just nu + Silverfish")
@@ -333,9 +399,9 @@ H.test("wide shallow high-DPI card has readable fonts, full-height cover and vis
             assert(pos[2]+l.height<=size[2],l.text)
         end
         if size[1]>1000 then
-            H.eq(labels[1].face.size,48)
+            H.eq(labels[1].face.size,44)
             local found=false
-            for _,l in ipairs(labels) do if l.text:match("^Lång") then H.eq(l.face.size,36);H.eq(l.max_lines,size[2]>=400 and 2 or 1);found=true end end
+            for _,l in ipairs(labels) do if l.text:match("^Lång") then H.eq(l.face.size,44);H.eq(l.max_lines,size[2]>=400 and 2 or 1);found=true end end
             assert(found)
         end
         v:free()
@@ -368,29 +434,35 @@ if frozen then
             Species.use(id);pet.estado.especie=id=="gato" and id or nil
             local before=copy(pet.estado)
             local s=assert(M.snapshot(now));H.eq(s.species,id)
+            for _,size in ipairs{{1236,300},{600,300},{1680,430}} do
             for _,kind in ipairs{BB.TYPE_BBRGB32,BB.TYPE_BB8} do
                 screen.scaleBySize=function(_,n) return n*2 end
-                local v,card=build{hosted=true,width=1236,height=300}
-                local bb=BB.new(1300,400,kind)
+                local v,card=build{hosted=true,width=size[1],height=size[2]}
+                local bb=BB.new(size[1]+64,size[2]+80,kind)
                 bb:fill(BB.COLOR_WHITE);v:paintTo(bb,30,40)
                 H.eq(v.failed,nil);assert(equal(pet.estado,before))
-                local coloured,drawn=0,0
+                local coloured,drawn,min_y,max_y=0,0,math.huge,0
                 local r=card.plan.pet
                 for y=40+r.y,40+r.y+r.h-1 do
                     for x=30+r.x,30+r.x+r.w-1 do
                         local c=bb:getPixel(x,y):getColorRGB32()
-                        if c.r~=255 or c.g~=255 or c.b~=255 then drawn=drawn+1 end
+                        if c.r~=255 or c.g~=255 or c.b~=255 then drawn=drawn+1;min_y=math.min(min_y,y);max_y=math.max(max_y,y) end
                         if c.r~=c.g or c.g~=c.b then coloured=coloured+1 end
                     end
                 end
                 assert(drawn>0,"real sprite must be visible")
+                if id=="gato" and size[1]==1236 then assert(max_y-min_y>=180,"cat must be substantially larger than beta.11") end
                 if kind==BB.TYPE_BBRGB32 then assert(coloured>0,"real colour sprite must be visible") else H.eq(coloured,0) end
-                H.eq(bb:getPixel(0,0):getColor8().a,255)
-                H.eq(bb:getPixel(1299,399):getColor8().a,255)
+                for y=0,size[2]+79 do for x=0,size[1]+63 do
+                    if x<30 or x>=30+size[1] or y<40 or y>=40+size[2] then H.eq(bb:getPixel(x,y):getColor8().a,255) end
+                end end
                 local preview=os.getenv("ORBITUI_CARD_PREVIEW_DIR")
-                if preview and kind==BB.TYPE_BBRGB32 then assert(loadfile(preview.."/preview.lua"))(card,preview.."/"..id..".svg") end
+                if preview and kind==BB.TYPE_BBRGB32 then
+                    assert(loadfile(preview.."/preview.lua"))(card,preview.."/"..id.."-"..size[1]..".svg")
+                end
                 v:free();bb:free()
                 screen.scaleBySize=function(_,n) return n end
+            end
             end
         end
     end)

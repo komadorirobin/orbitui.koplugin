@@ -1857,6 +1857,21 @@ actual minimum/current PluginLoader sandbox and Font density code, plus real
 frozen sprite painting at wide shallow high-DPI geometry; service-boundary and
 schematic checks are not physical Bigme/full-plugin acceptance.
 
+November 8 user-requested beta.11 composition supersedes the companion-local
+header placement above. Creature uses the left inner height; book cover is on
+the right, aspect-preserving and vertically centered. Middle text is one
+centered stack: name/stage, book title, author, percentage/statistics, progress
+bar. Use the already-built native title widget's measured height, reuse that
+widget, and retire invalid provisional measurements safely. Never infer wrapping
+from byte/character counts or leave unused title-line holes. Keep readable fonts
+and normal text contrast; omit author/companion-label rows in compact heights
+before sacrificing title/progress or making fonts miniature. Tap creature or
+name/stage for Silverfish; title/cover for KOReader. No automatic layout/data
+migration, extra metadata reads, plugin saves, background timers or downloads.
+Tests add slot containment/nonintersection, centered anchors, measured-height
+reuse/fallback, full/half/landscape and real frozen sprite/pixel containment;
+physical font/wake/night/touch acceptance remains separate.
+
 ## C11: Author-bound ornaments
 
 User-approved change, October 19, 2026: optional data-only add-ons supersede the
