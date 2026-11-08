@@ -13,6 +13,12 @@ local function livePet()
     local ss = package.loaded["ui/screensaver"]
     return type(ss) == "table" and ss.traca_instancia or nil
 end
+local function callable(fn)
+    -- KOReader's PluginLoader replaces on* functions with HandlerSandbox
+    -- objects. Keep that error boundary instead of unwrapping the handler.
+    local mt = type(fn) == "table" and getmetatable(fn)
+    return type(fn) == "function" or type(mt) == "table" and type(mt.__call) == "function"
+end
 
 function M.snapshot(now)
     local pet = livePet()
@@ -25,7 +31,7 @@ function M.snapshot(now)
             or type(draw.pintarSprite) ~= "function" or type(draw.sprite) ~= "function"
             or type(state) ~= "table" or type(state.fase) ~= "function" or type(state.sprite) ~= "function"
             or type(species) ~= "table" or type(species.current) ~= "function"
-            or type(species.texto) ~= "function" or type(pet.onMostrarTraca) ~= "function" then
+            or type(species.texto) ~= "function" or not callable(pet.onMostrarTraca) then
         return nil, _("This Silverfish version is not supported by this card. Update OrbitUI or use Silverfish's own card.")
     end
     local ok, result = pcall(function()
@@ -75,6 +81,7 @@ function M.current(s)
         return s and livePet() == s.pet and s.pet.estado == s.state
             and package.loaded.traca_versao == s.version and s.version.numero == "2.0.0" and s.version.publica == true
             and package.loaded.traca_desenho == s.draw and package.loaded.traca_species == s.species_module
+            and callable(s.pet.onMostrarTraca)
             and (s.state.especie or "traca") == s.species and s.species_module.current().id == s.species
     end)
     return ok and result == true
@@ -89,24 +96,28 @@ function M.getHeight(ctx)
 end
 
 -- Fixed, card-local rectangles. The two original reading modules are unrelated.
-function M.plan(w, h)
+function M.plan(w, h, dpi)
     w, h = math.max(1, math.floor(w)), math.max(1, math.floor(h))
-    local scale = math.min(w / 618, h / 330)
-    local pad = math.max(1, math.floor(14 * scale))
-    local header = math.floor(h * .27)
-    local body_h = math.max(1, h - header - 2 * pad)
-    local cover_w = math.max(1, math.floor(math.min(w * .23, body_h * 2 / 3)))
+    -- Fonts follow display density, not a wide card's short aspect ratio.
+    -- Reserve the full card height for the cover/book; only the companion
+    -- column needs a name/stage header. Compact cards elide text, not shrink it.
+    local scale = math.min(w / 618, finite(dpi) and dpi > 0 and dpi or 1)
+    local pad = math.max(1, math.floor(12 * scale))
+    local header = math.ceil(58 * scale)
+    local body_h = math.max(1, h - 2 * pad - math.ceil(5 * scale))
+    local cover_w = math.max(1, math.floor(math.min(w * .22, body_h * 2 / 3)))
     local cover_h = math.max(1, math.floor(cover_w * 3 / 2))
-    local pet_x, pet_w = pad + cover_w + pad, math.max(1, math.floor(w * .26))
+    local pet_x, pet_w = pad + cover_w + pad, math.max(1, math.floor(w * .30))
     local tx = pet_x + pet_w + pad
     local function rect(x, y, width, height)
         x, y = math.max(0, math.min(w - 1, x)), math.max(0, math.min(h - 1, y))
         return { x = x, y = y, w = math.max(1, math.min(w - x, width)), h = math.max(1, math.min(h - y, height)) }
     end
     return { w = w, h = h, scale = scale, pad = pad, header = header,
-        cover = rect(pad, header + math.floor((body_h - cover_h) / 2), cover_w, cover_h),
-        pet = rect(pet_x, header, pet_w, body_h),
-        book = rect(tx, header, math.max(1, w - tx - 2 * pad), body_h) }
+        companion = rect(pet_x, pad, pet_w, body_h),
+        cover = rect(pad, pad + math.floor((body_h - cover_h) / 2), cover_w, cover_h),
+        pet = rect(pet_x, pad + header, pet_w, math.max(1, body_h - header)),
+        book = rect(tx, pad, math.max(1, w - tx - 2 * pad), body_h) }
 end
 
 local Card, Sprite
@@ -156,8 +167,9 @@ function M.build(w, ctx)
     local Frame, Style, UI = require("ui/widget/container/framecontainer"), require("features/sui_style"), require("infra/sui_core")
     local SH, Sources = require("modules/module_books_shared"), require("adapters/orbitui_dashboard_sources")
     local h = finite(ctx.height) and ctx.height > 0 and ctx.height or M.getHeight(ctx)
-    local p = M.plan(w, h)
-    if p.w < 120 or p.h < 90 then
+    local dpi = require("device").screen:scaleBySize(1000) / 1000
+    local p = M.plan(w, h, dpi)
+    if p.w < 120 or p.h < math.max(90, 100 * p.scale) then
         return Sources.moduleContainer(nil, Overlap:new{dimen=Geom:new{w=1,h=1}}, p.w, p.h, BB.COLOR_WHITE)
     end
     local card = Card:new{ dimen = Geom:new{ w = p.w, h = p.h }, ctx = ctx, plan = p }
@@ -167,13 +179,13 @@ function M.build(w, ctx)
         child.overlap_offset = { x, y }; group[#group + 1] = child; return child
     end
     local function label(value, x, y, width, size, bold, lines, color)
-        local dpi = require("device").screen:scaleBySize(1000) / 1000
-        local face, is_bold = Style.getStyledFace(nil, math.max(7, size * p.scale) / dpi, bold and "bold" or "regular")
+        local pixels = math.max(7, size * p.scale)
+        local face, is_bold = Style.getStyledFace(nil, pixels / dpi, bold and "bold" or "regular")
         local args = { text = value or "", face = face, bold = is_bold, padding = 0,
             fgcolor = color or BB.COLOR_BLACK, width = math.max(1, math.floor(width)), max_width = math.max(1, math.floor(width)) }
         if lines then
             args.max_lines, args.height_adjust, args.height_overflow_show_ellipsis = lines, false, true
-            args.height = math.max(1, math.floor(size * p.scale * 1.4 * lines))
+            args.height = math.max(1, math.floor(pixels * 1.4 * lines))
             return add(UI.makeTextBox(args, true), x, y)
         end
         return add(UI.makeColoredText(args), x, y)
@@ -188,9 +200,11 @@ function M.build(w, ctx)
     frame(shadow, shadow, BB.COLOR_BLACK, 0); frame(0, 0, BB.COLOR_WHITE, math.max(1, math.floor(p.scale * 2)))
     local pet, reason = M.snapshot()
     card.pet = pet
-    label(pet and pet.name or "Silverfish", p.pad, p.pad, p.w - 3 * p.pad, 24, true)
-    label(pet and pet.stage or reason, p.pad, p.pad + math.floor(34 * p.scale), p.w - 3 * p.pad, 12, false,
-        pet and nil or 2, BB.COLOR_DARK_GRAY)
+    local c = p.companion
+    label(pet and pet.name or "Silverfish", c.x, c.y, c.w, 24, true, 1)
+    local reason_y = c.y + math.ceil(34 * p.scale)
+    label(pet and pet.stage or reason, c.x, reason_y, c.w, 13, false,
+        pet and 1 or math.max(1, math.floor((c.h - 34 * p.scale) / (13 * p.scale * 1.4))), BB.COLOR_DARK_GRAY)
     if pet then
         local sprite = Sprite:new{ pet = pet, w = p.pet.w, h = p.pet.h }
         add(Sources.moduleContainer(sprite, Overlap:new{ dimen = Geom:new{ w=1,h=1 } },
@@ -210,18 +224,28 @@ function M.build(w, ctx)
             if not loaded then image = nil end
         end
         if image then add(image, p.cover.x, p.cover.y); card.cover_index = #group end
-        label(text(data.title, _("Untitled")), p.book.x, p.book.y, p.book.w, 17, true, 2)
-        label(text(data.authors, ""), p.book.x, p.book.y + math.floor(50 * p.scale), p.book.w, 12, false, 1, BB.COLOR_DARK_GRAY)
+        local title_lines = p.book.h >= 170 * p.scale and 2 or 1
+        local title_h = math.ceil(18 * p.scale * 1.4 * title_lines)
+        label(text(data.title, _("Untitled")), p.book.x, p.book.y, p.book.w, 18, true, title_lines)
+        local author_y = p.book.y + title_h + math.ceil(5 * p.scale)
+        if p.book.h >= 105 * p.scale then
+            label(text(data.authors, ""), p.book.x, author_y, p.book.w, 13, false, 1, BB.COLOR_DARK_GRAY)
+        end
         local percent = require("core/orbitui_dashboard").fraction(data.percent)
-        label(SH.pctStr(percent), p.book.x, p.book.y + math.floor(78 * p.scale), p.book.w, 13, true)
-        add(UI.progressBar(p.book.w, percent, math.max(1, math.floor(4 * p.scale)), BB.COLOR_BLACK, BB.COLOR_LIGHT_GRAY),
-            p.book.x, p.book.y + math.floor(101 * p.scale))
+        local bottom = p.book.y + p.book.h
+        local bar_y = bottom - math.ceil((pet and 29 or 8) * p.scale)
+        local percent_y = bar_y - math.ceil(24 * p.scale)
+        if percent_y >= author_y then
+            label(SH.pctStr(percent), p.book.x, percent_y, p.book.w, 14, true, 1)
+            add(UI.progressBar(p.book.w, percent, math.max(1, math.floor(4 * p.scale)), BB.COLOR_BLACK, BB.COLOR_LIGHT_GRAY),
+                p.book.x, bar_y)
+        end
     else
         label(_("No books to show yet."), p.book.x, p.book.y, p.book.w, 15, false, 2)
     end
     if pet then
         label(string.format(_("Days: %s · Books: %s · Gen: %s"), pet.days or "—", pet.finished or "—", pet.generation),
-            p.book.x, p.book.y + p.book.h - math.floor(32 * p.scale), p.book.w, 10, false, 2, BB.COLOR_DARK_GRAY)
+            p.book.x, p.book.y + p.book.h - math.ceil(17 * p.scale), p.book.w, 11, false, 1, BB.COLOR_DARK_GRAY)
     end
     card.ges_events = { ReadingPetTap = { require("ui/gesturerange"):new{ ges = "tap", range = function() return card.dimen end } } }
     if ctx.orbitui_dashboard_hosted then return card end

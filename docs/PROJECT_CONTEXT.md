@@ -22,6 +22,22 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **Local beta.10 Silverfish reading-card correction; not published.** User's
+  Bigme photo shows the unsupported-version fallback and tiny text. Branch
+  fix/silverfish-card-layout starts at 2a2108ac. KOReader's PluginLoader wraps
+  onMostrarTraca in a callable HandlerSandbox table; accept that public event
+  boundary without unwrapping/bypassing it, retaining all version/state/species
+  checks. Fonts now follow density/available width rather than short card
+  height; the cover uses full height, companion header stays in its own column
+  and compact book titles elide instead of becoming miniature. No placement/
+  Continue reading/settings/plugin-save changes or upstream/pin/bootstrap/API1/
+  VERSION/public-dist/ADB/server operations. Same 28/407 helpers/identities and
+  2,000 installed paths. New regression fails on frozen beta.10; exact native
+  PluginLoader/Font service and frozen Silverfish drawing supplements cover
+  the fix. C10/TESTING record scope and receipts. Evidence under
+  test-results/silverfish-card-layout-20261108; physical Bigme fonts/layout/
+  touch/wake/night and full-plugin lifecycle still need acceptance.
+
 - **1.1.0-beta.10 preview publication authorized.** User requests a new beta
   after both local reports disclose pending physical Bigme tests. Branch
   release/1.1.0-beta.10-20261108 starts at 8b40cb29; retain runtime d971b338

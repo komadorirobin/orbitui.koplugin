@@ -5,6 +5,18 @@ local M=require("adapters/orbitui_silverfish")
 local Model=require("core/orbitui_dashboard")
 local now=1800000000
 local pet, active, rows, paints, opens, reads, covers, ready, warnings
+local sandbox
+local loader=os.getenv("ORBITUI_NATIVE_PLUGIN_LOADER")
+if loader then
+    local f=assert(io.open(loader));local source=f:read("*a");f:close()
+    local code=assert(source:match("(local HandlerSandbox = { mt = {} }.-)\nlocal PluginLoader ="))
+    sandbox=assert((loadstring or load)("local dbg={}; local logger={err=function() end};\n"..code.."\nreturn sandboxPluginEventHandlers"))()
+end
+local function sandboxPet()
+    if sandbox then sandbox(pet);return end
+    local original=pet.onMostrarTraca
+    pet.onMostrarTraca=setmetatable({}, {__call=function(_,instance,...) return original(instance,...) end})
+end
 local function copy(t)
     if type(t)~="table" then return t end
     local out={};for k,v in pairs(t) do out[k]=copy(v) end;return out
@@ -53,6 +65,16 @@ H.test("snapshot reads the active cat without changing save data, clocks, book s
     active={id="traca"};pet.estado.especie=nil
     package.loaded.traca_estado.fase=function() return {nome="ovo"} end
     H.eq(assert(M.snapshot(now)).stage,"Silverfish · Egg")
+end)
+H.test("KOReader sandboxed event handlers are accepted without unwrapping or calling them during snapshot",function()
+    reset();sandboxPet()
+    H.eq(type(pet.onMostrarTraca),"table")
+    local wrapped=pet.onMostrarTraca
+    local before=copy(pet.estado)
+    local s=assert(M.snapshot(now));assert(M.current(s));H.eq(opens,0)
+    H.eq(pet.onMostrarTraca,wrapped);assert(equal(before,pet.estado))
+    pet.onMostrarTraca={};H.eq(M.current(s),false)
+    local absent,reason=M.snapshot(now);H.eq(absent,nil);assert(reason)
 end)
 H.test("missing, unreviewed, mismatched, failed and malformed pet APIs give a reason without loading anything",function()
     for _,why in ipairs{"missing","future","private","method","species","phase","rows","blank"} do
@@ -151,12 +173,32 @@ function Range:match(g)
 end
 package.loaded["ui/gesturerange"]=Range
 local labels={}
+local native_font=os.getenv("ORBITUI_NATIVE_FONT")
+if native_font then
+    local saved={}
+    for _,name in ipairs{"fontlist","ffi/freetype","util"} do saved[name]=package.loaded[name] end
+    local settings=G_reader_settings
+    G_reader_settings={nilOrTrue=function() return true end,has=function() return false end}
+    package.loaded.fontlist={fontdir="fonts",getFontList=function() return {} end}
+    package.loaded["ffi/freetype"]={newFaceSize=function() return {} end}
+    package.loaded.util={splitFilePathName=function(path) return "",path end}
+    native_font=assert(loadfile(native_font))()
+    for _,name in ipairs{"fontlist","ffi/freetype","util"} do package.loaded[name]=saved[name] end
+    G_reader_settings=settings
+end
 local function label(args)
     local v=W:new{kind="text",text=args.text,width=args.width,height=args.height or args.face.size*1.3,
         face=args.face,bold=args.bold,fgcolor=args.fgcolor,max_lines=args.max_lines}
     labels[#labels+1]=v;return v
 end
-package.loaded["features/sui_style"]={getStyledFace=function(_,size) return {size=size} end}
+-- Font:getFace applies density scaling itself; model that at the service
+-- boundary rather than accidentally treating point sizes as physical pixels.
+package.loaded["features/sui_style"]={getStyledFace=function(_,size)
+    if native_font then
+        local face=native_font:getFace("cfont",size);face.points=face.orig_size;return face
+    end
+    return {size=math.floor(screen:scaleBySize(size)+.5),points=size}
+end}
 package.loaded["infra/sui_core"]={getContentHeight=function() return 1400 end,
     makeColoredText=label,makeTextBox=label,progressBar=function(w,value,h) return W:new{kind="bar",width=w,height=h,pct=value} end}
 local SH={getBookData=function(file,prefetched,opts)
@@ -196,7 +238,8 @@ H.test("native book data, cover placeholder and progress coexist with pet info a
 end)
 H.test("book and pet taps are independent through hosted and standalone native gesture frames",function()
     for _,hosted in ipairs{true,false} do
-        reset();local v,card=build{hosted=hosted}
+        reset();sandboxPet();local wrapped=pet.onMostrarTraca
+        local v,card=build{hosted=hosted}
         local bb=BB.new(800,500,native_bb and BB.TYPE_BB8 or 1)
         v:paintTo(bb,30,40)
         local dx,dy=hosted and 30 or 0,hosted and 40 or 0
@@ -205,7 +248,7 @@ H.test("book and pet taps are independent through hosted and standalone native g
         local r=card.plan.pet
         local gx,gy=30+r.x+2,40+r.y+2
         if not native_input then gx,gy=dx+r.x+2,dy+r.y+2 end
-        assert(tap(v,card,gx,gy));H.eq(opens,1)
+        assert(tap(v,card,gx,gy));H.eq(opens,1);H.eq(pet.onMostrarTraca,wrapped)
         gx,gy=30+card.plan.cover.x+2,40+card.plan.cover.y+2
         if not native_input then gx,gy=dx+card.plan.cover.x+2,dy+card.plan.cover.y+2 end
         assert(tap(v,card,gx,gy));H.eq(opens,11)
@@ -267,18 +310,50 @@ end)
 H.test("high-DPI fonts are converted to points once and localized card text leaves pet names unchanged",function()
     reset();screen.scaleBySize=function(_,n) return n*2 end
     local v=build{hosted=true,width=1236,height=660}
-    H.eq(labels[1].face.size,24);v:free();screen.scaleBySize=function(_,n) return n end
+    H.eq(labels[1].face.points,24);H.eq(labels[1].face.size,48);v:free();screen.scaleBySize=function(_,n) return n end
     G_reader_settings={readSetting=function() return "sv" end}
     local s=assert(M.snapshot(now));H.eq(s.name,"Franz 日本語");H.eq(s.stage,"Ash Cat · Kattunge")
     H.eq(require("core/orbitui_i18n")("Currently reading + Silverfish"),"Läser just nu + Silverfish")
     G_reader_settings=nil
+end)
+H.test("wide shallow high-DPI card has readable fonts, full-height cover and visible companion allocation",function()
+    reset();sandboxPet();screen.scaleBySize=function(_,n) return n*2 end
+    local original=SH.getBookData
+    SH.getBookData=function() return {title=string.rep("Lång boktitel 日本語 ",20),authors=string.rep("Författare ",12),percent=.44} end
+    for _,size in ipairs{{1236,300},{1236,400},{1236,660},{600,300}} do
+        local v,card=build{hosted=true,width=size[1],height=size[2]}
+        assert(card.pet,"sandbox must not hide the cat")
+        local p=card.plan
+        assert(p.cover.h>=math.min(size[2]*.7,size[1]*.3),"cover should not lose a global header's height")
+        assert(p.pet.h>=size[2]*.4,"companion should have a substantial drawing region")
+        for _,l in ipairs(labels) do
+            assert(l.face.size>=10*p.scale,"never shrink by aspect ratio")
+            local pos=l.overlap_offset
+            assert(pos[1]>=0 and pos[2]>=0 and pos[1]+l.width<=size[1])
+            assert(pos[2]+l.height<=size[2],l.text)
+        end
+        if size[1]>1000 then
+            H.eq(labels[1].face.size,48)
+            local found=false
+            for _,l in ipairs(labels) do if l.text:match("^Lång") then H.eq(l.face.size,36);H.eq(l.max_lines,size[2]>=400 and 2 or 1);found=true end end
+            assert(found)
+        end
+        v:free()
+    end
+    for _,height in ipairs{120,200,250,300} do
+        package.loaded["ui/screensaver"]=nil
+        local v,card=build{hosted=true,width=1236,height=height,no_book=true}
+        for _,l in ipairs(labels) do assert(l.overlap_offset[2]+l.height<=height,"unavailable reason stays bounded") end
+        v:free()
+    end
+    SH.getBookData=original;screen.scaleBySize=function(_,n) return n end
 end)
 local frozen=os.getenv("ORBITUI_SILVERFISH_ROOT")
 if frozen then
     package.path=frozen.."/?.lua;"..package.path
     H.test("real frozen Silverfish state/species/sprite renderer draws both species without mutating pet state",function()
         assert(native_bb,"real Silverfish drawing requires the native buffer supplement")
-        reset()
+        reset();sandboxPet()
         package.loaded["traca_lingua"]=nil
         require("traca_lingua").forcar("en")
         package.loaded["ui/font"]={getFace=function(_,_,size) return {size=size} end}
@@ -294,8 +369,9 @@ if frozen then
             local before=copy(pet.estado)
             local s=assert(M.snapshot(now));H.eq(s.species,id)
             for _,kind in ipairs{BB.TYPE_BBRGB32,BB.TYPE_BB8} do
-                local v,card=build{hosted=true}
-                local bb=BB.new(800,500,kind)
+                screen.scaleBySize=function(_,n) return n*2 end
+                local v,card=build{hosted=true,width=1236,height=300}
+                local bb=BB.new(1300,400,kind)
                 bb:fill(BB.COLOR_WHITE);v:paintTo(bb,30,40)
                 H.eq(v.failed,nil);assert(equal(pet.estado,before))
                 local coloured,drawn=0,0
@@ -310,10 +386,11 @@ if frozen then
                 assert(drawn>0,"real sprite must be visible")
                 if kind==BB.TYPE_BBRGB32 then assert(coloured>0,"real colour sprite must be visible") else H.eq(coloured,0) end
                 H.eq(bb:getPixel(0,0):getColor8().a,255)
-                H.eq(bb:getPixel(799,499):getColor8().a,255)
+                H.eq(bb:getPixel(1299,399):getColor8().a,255)
                 local preview=os.getenv("ORBITUI_CARD_PREVIEW_DIR")
                 if preview and kind==BB.TYPE_BBRGB32 then assert(loadfile(preview.."/preview.lua"))(card,preview.."/"..id..".svg") end
                 v:free();bb:free()
+                screen.scaleBySize=function(_,n) return n end
             end
         end
     end)

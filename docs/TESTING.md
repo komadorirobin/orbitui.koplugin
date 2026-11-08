@@ -1,5 +1,31 @@
 # Verification and device acceptance
 
+## 2026-11-08 — local beta.10 Silverfish card correction
+
+Base 2a2108ac; branch fix/silverfish-card-layout. User's photo shows no cat and
+miniature labels. The new sandbox regression fails against frozen beta.10 at
+snapshot with the exact unsupported-version message: onMostrarTraca is a
+callable HandlerSandbox table after KOReader loads the plugin. The fix retains
+that wrapper and all other version/state/species safety checks. Density-aware
+fonts and full-height cover/book columns replace height-driven miniature
+geometry. Existing placements/Continue reading/plugin saves remain unchanged.
+No publication, version bump, component/pin/art/bootstrap/API1/ADB/server work.
+Evidence test-results/silverfish-card-layout-20261108; full/package receipts
+follow. Public beta.10 ZIP remains 83157ee1.
+
+Sixteen ordinary cases include sandboxed snapshot/tap and stale non-callable
+handlers, correct point-to-pixel conversion, shallow 1236x300 at 2x density,
+long titles/authors, half-width/tall geometry and bounded unavailable/tiny
+states. Supplement uses the unmodified HandlerSandbox definitions from native
+PluginLoader v2025.10 (87262332) and current master a3ebf281, and native Font
+code with FreeType/font-list service fixtures. Native InputContainer/FFI and
+the frozen official Silverfish 2.0.0 renderer add a seventeenth case: cat and
+silverfish really paint in RGB32/BB8, through sandboxed events, with unchanged
+pet state at 1236x300 and no out-of-card painting. Schematic Chrome render
+uses synthetic cover/approximate font services, not a native device screenshot.
+Physical Bigme full/half card fonts/clipping/taps, night/colour, rotation/wake
+and complete external-plugin lifecycle remain unverified.
+
 ## 2026-11-08 — 1.1.0-beta.10 release candidate
 
 User requests preview publication from 8b40cb29 after local reports disclose

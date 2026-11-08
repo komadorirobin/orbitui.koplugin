@@ -1844,6 +1844,19 @@ installation. Tests: test_silverfish_reading, test_dashboard_modules, existing
 placement/dashboard/runtime suites and frozen native input/FFI drawing
 supplements. Physical Bigme lifecycle/font/touch/wake/night checks remain open.
 
+November 8 beta.10 photo correction: the original plugin's onMostrarTraca
+event may be KOReader's callable HandlerSandbox table, not a plain function.
+Accept the callable boundary and invoke it unchanged; never unwrap the handler
+or relax reviewed-version/state/species checks. Reject missing/non-callable
+events on snapshot and stale paint/tap. Card-local typography uses density and
+width, never a shallow full-width row's height to miniaturize text. Give cover
+and book the full inner height, keep name/stage above the companion only, and
+elide compact titles/reasons within their allocation. Tiny allocations remain
+bounded/inert. Preserve existing placements and Continue reading. Test the
+actual minimum/current PluginLoader sandbox and Font density code, plus real
+frozen sprite painting at wide shallow high-DPI geometry; service-boundary and
+schematic checks are not physical Bigme/full-plugin acceptance.
+
 ## C11: Author-bound ornaments
 
 User-approved change, October 19, 2026: optional data-only add-ons supersede the

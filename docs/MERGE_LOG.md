@@ -1,5 +1,22 @@
 # Reviewed import and merge log
 
+## 2026-11-08 — local beta.10 Silverfish card compatibility/layout fix
+
+Base 2a2108ac; branch fix/silverfish-card-layout. User reports missing cat and
+tiny text in the separate reading companion card. Frozen beta.10 reproduces
+the unsupported fallback when KOReader's PluginLoader wraps onMostrarTraca
+in its normal HandlerSandbox. Accept callable event objects without unwrapping
+them; all version/state/species checks and the original event boundary stay.
+Full-height cover/book layout, a companion-local header and density/width
+typography replace height-driven miniaturization. Compact titles truncate;
+tiny/reason allocations remain bounded. C10 is clarified; no other integration
+ownership, layout/settings/save migration, Continue reading replacement,
+component/upstream/source pin/art/bootstrap/API1/version/public-dist change.
+Local fix only: no push/release/device/server action. Evidence and required
+full/sealed/native receipts are in TESTING and
+test-results/silverfish-card-layout-20261108. Headless native-code/service
+fixtures and schematic inspection do not establish physical Bigme acceptance.
+
 This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
