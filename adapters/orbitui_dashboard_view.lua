@@ -445,8 +445,11 @@ function M.content(widget, p, ctx, data)
         widget._swipe_areas[#widget._swipe_areas + 1] = swipe_area
         text(heading(key, label), area.x + p.pad, area.y + p.pad, area.w - 2 * p.pad, 13, true)
         if extra then
+            local edit = function() widget:editModules(key) end
+            local hold = require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false and edit or nil
+            action(area, edit, hold)
             action(rect(area.x, area.y, area.w, px(65)), function() widget:editModules(key) end,
-                function() widget:editModules(key) end)
+                hold)
             text("[BookOrbit] " .. extra.caption, area.x + p.pad, area.y + p.pad + px(22), area.w - 2 * p.pad, 10, false, muted)
         end
         if pages > 1 then
