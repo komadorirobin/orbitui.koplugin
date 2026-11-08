@@ -63,6 +63,21 @@ functionality, not a claim that OrbitUI invented the Home screen, library,
 series boxes, themes or ornament system. [The feature guide](docs/FEATURES.md)
 explains the extra controls and where to find them.
 
+**Local 1.1 development — not in the published beta.5 yet:** Reading dashboard
+can host compatible SimpleUI/Bookshelf plugin cards and action shortcuts.
+Tap **+**, or use **Cards and content → Add module…**. Long-press a plugin card
+to resize/hide/remove it; **Arrange cards** sets its position. Extra cards use
+separate dashboard pages, not smaller and smaller text. Install external plugins
+separately; their updates and data stay theirs. Silverfish's existing adapters
+are the first desktop compatibility check, not Bigme certification.
+
+**Svenska, lokal 1.1-utveckling — ännu inte i publicerad beta.5:** Lägg till
+kompatibla pluginmoduler eller åtgärdsgenvägar via **+** i Läsöversikt eller
+**Kort och innehåll → Lägg till modul…**. Håll inne ett pluginkort för att ändra
+storlek, dölja eller ta bort det; **Ordna kort** bestämmer placeringen. Fler kort
+får egna sidor i Läsöversikt. Pluginen installeras separat och behåller sina
+egna data. Silverfish är skrivbordstestat; prov på Bigmen återstår.
+
 ### Local books first, online services optional
 
 **1.0.0 — first stable release.** Promotes the same runtime implementation as

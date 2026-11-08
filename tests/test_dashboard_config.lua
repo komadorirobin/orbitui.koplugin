@@ -226,7 +226,7 @@ H.test("source and goal menus edit only this screen and preserve headings and or
     local shelf = choices[6].sub_item_table_func()[1]
     shelf.callback(); H.eq(shelf.checked_func(), true)
     local items = Config.items(nil, custom)
-    H.eq(#items, 12)
+    H.eq(#items, 13)
     items[3].sub_item_table_func()[1].callback() -- hero off
     H.eq(Dashboard.readConfig(custom).hidden.hero, true)
     local goal = items[9].sub_item_table_func()[3].sub_item_table_func()

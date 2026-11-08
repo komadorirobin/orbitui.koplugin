@@ -1,5 +1,48 @@
 # Verification and device acceptance
 
+## 2026-11-08 local pluggable Reading dashboard
+
+User approves the generic module picker, with Silverfish as first compatibility
+target. Branch feature/dashboard-modules-20261108 preserves the local thumbnail
+work (5e4a3468); no merge, push, release, ADB installation or server change.
+Keep public beta.5/dist and stable 1.0 unchanged. No source pin, artwork, native
+component, dependency, bootstrap/API1/path or VERSION change.
+
+test_dashboard_modules covers explicit/per-screen/non-destructive bounded adds,
+v1/v2 and missing-plugin normalization, late register/unregister through the
+real SimpleUI registry, picker-only discovery/no preview render, custom action
+set/list shapes, inherited demand without standalone enable, pagination/sizing/
+nonoverlap, actual native Bookshelf render(ctx), private child/clock context,
+malformed builders/freeing, native action routing, contained paint/input errors,
+coalesced cell-only refresh and stale child/page/closed callbacks. Verify visible
+minute hooks, suspend/park/cover, placeholders/holds/remove, native action editor,
+deferred settings close refresh/no unrelated layout writes, network-card consent,
+and all owned SV/EN labels/help. Existing dashboard suites cover the original
+512 visibility configurations and book/cover/swipe/goal/night/colour behavior.
+
+Optional ORBITUI_SILVERFISH_ROOT points to an external, frozen checkout's
+silverfish.koplugin directory, never packaged. Freeze Silverfish 2.0.0 commit
+d3da0797b6e51ee73afdb4da6745b297b3a19830. Execute its complete unmodified
+traca_simpleui.lua and bookshelf_modules/traca.lua/traca_bookshelf.lua: real
+registration, render geometry, clipped drawing and own-plugin opening. Stub only
+the pet state/sprite/font services; don't start its main.lua or read/write a real
+pet. Optional minimum/current ORBITUI_NATIVE_INPUT_DIR runs complete native
+WidgetContainer/InputContainer, not just direct callbacks. ORBITUI_NATIVE_BB_DIR
+and ORBITUI_NATIVE_BB_LIB exercise native FFI/C blitter clipping. This is desktop
+API/pixel containment, NOT full Silverfish/Android/e-ink/font/performance proof.
+
+Both full scripts, 43 catalogs, exact clean committed-source private ZIP/sealed
+root/native reruns and source/history/art/secret audits are required. Results
+are recorded below after completion. Evidence: test-results/dashboard-modules-20261108.
+
+Physical gates (no device is installed/used by this task): install Silverfish
+separately in a test setup, restart, add either card through +/SV/EN menus;
+resize/move across pages, tap to open/return, restart retaining layout and pet;
+disable/remove the external plugin and check recovery without save loss. Test
+native fonts, greyscale/colour/night, orientation, suspend/resume while a card or
+editor is open, action navigation and large-library first/warm Home performance.
+Confirm ordinary clocks/layouts and original cover holds/row swipes remain intact.
+
 ## 2026-11-08 local Library-GUI-inspired thumbnail reuse
 
 User approves investigating metadata/cover reuse and implementing justified

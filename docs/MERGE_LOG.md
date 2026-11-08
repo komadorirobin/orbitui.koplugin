@@ -4,6 +4,33 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-08 — local pluggable dashboard (no import/publication)
+
+User approves the generic installed-module picker proposal. Preserve local
+thumbnail candidate/receipt 5e4a3468; feature/dashboard-modules-20261108. Extend
+C04/C06/C07/C08/C10 additively: existing public registries, not a Silverfish
+fork. No component import, pin, asset, installed runtime path, bootstrap or
+version change. No push/release/ADB/server action is authorized here.
+
+Explicit SV/EN +/hold/settings picker adds SimpleUI cards, non-hero-only
+Bookshelf micro modules and native action shortcuts. Per-screen stable ids,
+bounded v2 config, independent three-row pages, sizes/order/hide/remove and
+missing/failing placeholders preserve existing pages, native data, sources,
+headings, colours and book actions. Dynamic-instance/hero-only modules stay
+in their native editors; plugin-specific logic/data/languages remain external.
+Declaring network cards requires confirmation. Reuse the native action creator
+and Home navigator; don't write another screen's layout from module settings.
+
+Build only current-page cards and inherit selected data needs. Native clip/tap
+translation contains drawing/input; Lua failures are handled without a sandbox
+claim. Isolate mounted clock fields, coalesce refresh to its own cell, and guard
+widget/page/child generations. Visible minute hooks retire across sleep/park/
+cover/page/close; no recurring registry scan, new sync owner or paint-time fetch.
+Frozen Silverfish 2.0.0 d3da0797 supplies the first external compatibility checks
+through unmodified adapters and actual minimum/current native input/FFI buffers;
+pet/font/sprite services remain fixtures, no external code/assets are imported.
+Full verification/source/package receipts and physical limitations: TESTING.
+
 ## 2026-11-08 — local exact-size cover reuse maintenance (no import/publication)
 
 User approves investigating Library GUI's metadata/cover reuse ideas. Start

@@ -33,15 +33,17 @@ end
 M.needs = {
     recent = function(pfx)
         local config = M.readConfig(pfx)
-        if Model.visible(config, "ongoing") then return 30 end
+        local demand = Sources.moduleNeed(config, pfx, "recent")
+        if Model.visible(config, "ongoing") then return math.max(30, demand) end
         for _, id in ipairs({ "want", "new" }) do
             local source = config.sources[id]
-            if Model.visible(config, id) and source.kind == "native" and source.id == "recent" then return 30 end
+            if Model.visible(config, id) and source.kind == "native" and source.id == "recent" then return math.max(30, demand) end
         end
-        return Model.visible(config, "hero") and 1 or 0
+        return math.max(demand, Model.visible(config, "hero") and 1 or 0)
     end,
     stats = function(pfx)
         local config = M.readConfig(pfx)
+        if Sources.moduleNeed(config, pfx, "stats") then return true end
         for _, id in ipairs(Model.stat_order) do
             if Model.visible(config, id) then return true end
         end
@@ -49,9 +51,14 @@ M.needs = {
     end,
     books = function(pfx)
         local config = M.readConfig(pfx)
-        return Model.visible(config, "goal") and not hardcoverGoal(config, pfx)
+        return Sources.moduleNeed(config, pfx, "books")
+            or Model.visible(config, "goal") and not hardcoverGoal(config, pfx)
     end,
 }
+for _, kind in ipairs({ "status", "records", "year", "charts" }) do
+    local need = kind
+    M.needs[need] = function(pfx) return Sources.moduleNeed(M.readConfig(pfx), pfx, need) end
+end
 
 function M.editConfig(pfx, edit, refresh)
     local config = M.readConfig(pfx)

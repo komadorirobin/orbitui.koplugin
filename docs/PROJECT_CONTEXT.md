@@ -22,6 +22,33 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-08
 
+- **Local pluggable Reading dashboard; not pushed/released.** User approves the
+  generic module picker proposal with Silverfish as first compatibility target.
+  Work on feature/dashboard-modules-20261108 above the preserved local thumbnail
+  candidate/receipt 5e4a3468; no upstream/push/publication/device/server authority.
+  Extend existing dashboard model/adapters only: public SimpleUI registry cards,
+  Bookshelf non-hero-only micro modules, and native QA/custom action shortcuts.
+  No per-plugin fork, code/art import, new runtime path/helper or bootstrap/pin/
+  version/installed-file change. Picker is reached by +, hold or Cards and content;
+  all owned wording/help/search is SV/EN. Explicit per-screen placements use a
+  bounded 16-card v2 config (v1 remains unchanged until adding); old builds fail
+  closed. Half/full/tall/page sizing and mixed ordering use three-row pages with
+  independent paging. Retain original book actions, sources/headings/colours,
+  Home/Custom layouts and plugin saves. Missing/failing modules stay removable.
+  Build only current-page cards; existing declarative needs feed Home preparation.
+  Clip actual widgets with native translated tap forwarding and guarded Lua
+  build/paint/input/free. Coalesced per-card refreshes have widget/page/child
+  generation guards; private mounted-state proxies preserve ordinary clocks.
+  Visible minute hooks/clock hints retire on sleep/park/covered/page/close.
+  Registry enumeration is picker-only; no new scan/provider fetch during paint.
+  Standalone plugins still own their code, data, timers and possible native risks;
+  this is not a sandbox/blanket compatibility promise. Silverfish frozen 2.0.0
+  d3da0797b6e51ee73afdb4da6745b297b3a19830 passes real unmodified SimpleUI and
+  Bookshelf adapter checks with native minimum/current input and FFI buffers;
+  creature/font/asset services are fixtures, not a pet-engine/device test.
+  Tests/evidence and physical gates: docs/TESTING, test-results/dashboard-modules-20261108.
+  Public beta.5/dist, stable 1.0, real device and BookOrbit server are unchanged.
+
 - **Local Library-GUI-inspired thumbnail cache maintenance; not pushed/released.**
   User approves investigating metadata/cover reuse after clarifying that the
   performance reference was Library GUI, not Bookshelf's publication-year

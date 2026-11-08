@@ -85,6 +85,52 @@ Goals can use the local annual goal or the optional Hardcover integration.
 BookOrbit and Hardcover remain optional; this dashboard is not a remote-book
 download client. Other SimpleUI Home modules and Custom Screens remain available.
 
+### Plugin cards (local 1.1 development, not yet released)
+
+Tap **+** in the dashboard, long-press a non-book area, or open **Home (SimpleUI)
+→ Reading dashboard → Cards and content → Add module…**. The picker groups
+**Home modules (SimpleUI)**, **Shelf modules (Bookshelf)** and **Action shortcuts**.
+It enumerates the existing public registries without preview-rendering cards or
+adding a download/install system. Declared network cards ask before being added.
+
+Install and enable [Silverfish](https://github.com/theusmaoliveiras/silverfish-koreader)
+separately and restart KOReader. Its existing Home card or adaptive Bookshelf
+card can then be selected; tapping opens Silverfish itself. OrbitUI neither
+copies its creature engine/assets nor changes its save or screensaver settings.
+Desktop checks use Silverfish 2.0.0 source d3da0797; Android acceptance is pending.
+Its own language support remains the plugin's, not an OrbitUI translation.
+
+Long-press an added card for half-width, full-width, tall or whole-page sizing,
+visibility or removal. **Arrange cards** moves it among the built-in blocks;
+statistics remain one group. Up to 16 added cards use at most three rows per
+dashboard page. Dashboard page arrows are separate from Home and book-row arrows.
+Book-cover long-press actions in the original dashboard cards are unchanged.
+Missing/broken modules retain a configurable placeholder. Removal deletes only
+the placement, never the plugin, its data or the ordinary Home module settings.
+SimpleUI module settings are explicitly shared with that screen's ordinary
+module. Dynamic-instance modules and Bookshelf-only action/shelf/ornament cards
+stay in their native layout editors; use an action shortcut to launch a plugin
+without a compatible card. **Create shortcut…** reuses SimpleUI's existing
+action/Dispatcher/plugin-action editor and native Home navigation.
+
+Only the current page's added cards are built. Refreshes are coalesced and replace
+only the requesting card; no new whole-library scan or independent sync writer.
+Minute hooks run only while visible, stop during suspend and are retired on
+page changes/close. Lua errors are contained, but arbitrary third-party code is
+not sandboxed or protected against native crashes/infinite loops. Oversized
+content is clipped rather than painted over other cards; choose a larger size.
+Existing layouts need no migration. Adding a card opts that screen into config
+v2, which older OrbitUI builds show as unsupported without overwriting it.
+
+**Svenska:** Tryck på **+**, håll inne en yta utan bokomslag eller gå till
+**Hem (SimpleUI) → Läsöversikt → Kort och innehåll → Lägg till modul…**. Välj
+**Hem-moduler (SimpleUI)**, **Hyllmoduler (Bookshelf)** eller **Åtgärdsgenvägar**.
+Installera Silverfish separat och starta om KOReader. Håll inne pluginkortet för
+storlek, synlighet och borttagning; placera det via **Ordna kort**. Välj **Hel
+sida** om innehållet beskärs. Borttagning av ett kort avinstallerar inte pluginet
+och raderar inte dess data. Äldre OrbitUI-versioner kan inte redigera den nya
+kortlayouten, men ska inte skriva över den.
+
 ## Shelf and series presentation
 
 **Appearance > Shelf preset** offers three policies:

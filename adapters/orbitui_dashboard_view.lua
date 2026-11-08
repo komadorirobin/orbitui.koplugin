@@ -71,6 +71,29 @@ local function hit(area, x, y)
     return x >= area.x and x < area.x + area.w and y >= area.y and y < area.y + area.h
 end
 
+function Dashboard:modulesVisible(generation)
+    if self._disposed or self._modules_suspended or generation ~= self._module_generation then return false end
+    if require("device").screen_saver_mode then return false end
+    local owner = self._dashboard_ctx and self._dashboard_ctx._screen_widget
+    if owner and (owner._suspended or owner._parked) then return false end
+    local ui = require("ui/uimanager")
+    return not (owner and ui.getTopmostVisibleWidget) or ui:getTopmostVisibleWidget() == owner
+end
+
+function Dashboard:onSuspend()
+    self._modules_suspended = true
+    if self._module_tick then require("ui/uimanager"):unschedule(self._module_tick) end
+end
+
+function Dashboard:onResume()
+    self._modules_suspended = false
+    if self._module_tick then
+        local ui = require("ui/uimanager")
+        ui:unschedule(self._module_tick)
+        ui:scheduleIn(60, self._module_tick)
+    end
+end
+
 local function makeCover(fp, r, ctx)
     local image = SH.getBookCover(fp, r.w, r.h, false)
     if not image then
@@ -85,7 +108,7 @@ function Dashboard:onDashboardTap(_, ges)
     local x, y = ges.pos.x - self.dimen.x, ges.pos.y - self.dimen.y
     for i = #self._actions, 1, -1 do
         local action = self._actions[i]
-        if hit(action, x, y) then action.tap(); return true end
+        if hit(action, x, y) then action.tap(x - action.x, y - action.y); return true end
     end
 end
 
@@ -97,6 +120,9 @@ function Dashboard:onDashboardHold(_, ges)
         local action = self._actions[i]
         if action.hold and hit(action, x, y) then self._held = action.hold; return true end
     end
+    if require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") == false then return end
+    self._held = function() self:editModules() end
+    return true
 end
 
 function Dashboard:onDashboardHoldRelease()
@@ -105,6 +131,22 @@ function Dashboard:onDashboardHoldRelease()
     self._held = nil
     held()
     return true
+end
+
+function Dashboard:editModules(id)
+    if self._disposed then return end
+    local generation = self._module_generation
+    local ctx = self._dashboard_ctx
+    require("adapters/orbitui_dashboard_settings").show(ctx.pfx, { refresh_fn = function()
+        if not self._disposed and generation == self._module_generation and ctx.refresh_fn then ctx.refresh_fn() end
+    end }, id)
+end
+
+function Dashboard:free(full)
+    if self._disposed then return end
+    self._disposed = true
+    if self._module_tick then require("ui/uimanager"):unschedule(self._module_tick) end
+    Input.free(self, full)
 end
 
 -- SimpleUI routes interior swipes here, keeping screen-edge gestures intact.
@@ -123,11 +165,18 @@ end
 
 function Dashboard:replaceContent(ctx, data)
     local old = self[1]
+    if self._module_tick then require("ui/uimanager"):unschedule(self._module_tick); self._module_tick = nil end
     self._dashboard_ctx, self._dashboard_data = ctx, data
     self._actions, self._cover_slots, self._held = {}, {}, nil
     self._hero_apply_colour = nil
     self._swipe_areas = {}
-    self[1] = M.content(self, Model.plan(self.dimen.w, self.dimen.h, data.config), ctx, data)
+    self._module_generation = (self._module_generation or 0) + 1
+    local owner = ctx._screen_widget
+    local p = Model.plan(self.dimen.w, self.dimen.h, data.config,
+        self._module_page or owner and owner._orbitui_dashboard_module_page)
+    self._module_page, self._plan = p.page, p
+    if owner then owner._orbitui_dashboard_module_page = p.page end
+    self[1] = M.content(self, p, ctx, data)
     if old then old:free() end
 end
 
@@ -226,12 +275,32 @@ function M.content(widget, p, ctx, data)
     end
 
     local date = os.date("*t")
-    text(_(Model.greeting(date.hour)), 0, 0, p.w - px(58), 23, true)
+    text(_(Model.greeting(date.hour)), 0, 0, p.w - px(112), 23, true)
     text(string.format("%d %s %d", date.day, _(MONTHS[date.month]), date.year),
-        0, px(31), p.w - px(58), 13, false, muted)
-    local search = rect(p.w - px(54), 0, px(54), p.header_h)
+        0, px(31), p.w - px(112), 13, false, muted)
+    local search = rect(p.w - px(54), 0, px(54), px(52))
     text(_("Search"), search.x, px(14), search.w, 13, true)
     action(search, function() require("core/orbitui_search").show() end)
+    local add_area = rect(p.w - px(108), 0, px(48), px(52))
+    text("+", add_area.x + px(12), px(8), add_area.w, 26, true)
+    action(add_area, function() widget:editModules("add") end)
+    if (p.pages or 1) > 1 then
+        -- These are dashboard pages, independent of Home and book-row pagers.
+        local row = math.max(26, math.floor(p.header_h * .40))
+        local y = p.header_h - row
+        text(string.format("%d / %d", p.page, p.pages), p.w / 2 - px(25), y, px(55), 14, true)
+        local function turn(delta)
+            local next_page = math.max(1, math.min(p.pages, p.page + delta))
+            if next_page == p.page then return end
+            widget._module_page = next_page
+            widget:replaceContent(ctx, data)
+            require("ui/uimanager"):setDirty(ctx._screen_widget or widget, "ui", widget.dimen)
+        end
+        text("<", 0, y, px(42), 21, true, p.page > 1 and ink or muted)
+        text(">", p.w - px(42), y, px(42), 21, true, p.page < p.pages and ink or muted)
+        action(rect(0, y, px(54), row), function() turn(-1) end)
+        action(rect(p.w - px(54), y, px(54), row), function() turn(1) end)
+    end
 
     -- Hero: covers stay in colour; only the surrounding card is dark.
     -- Night cards share light ink on a dark surface. The day-only hero
@@ -410,6 +479,80 @@ function M.content(widget, p, ctx, data)
     end
     shelf("want", data.source_labels and data.source_labels.want or _("BookOrbit Want to Read"), data.want, data.want_error, "bookorbit_want")
     shelf("new", data.source_labels and data.source_labels.new or _("Recently added"), data.new, data.new_error, "new_books")
+    local Sources = require("adapters/orbitui_dashboard_sources")
+    local generation = widget._module_generation
+    local ticks = {}
+    for _i, entry in ipairs(data.config and data.config.modules or {}) do
+        local area = p.cards[entry.id]
+        if area then
+            local selected = entry
+            box(area, nil, nil, entry.id)
+            title(entry.label or entry.ref, area)
+            local inset, top = p.pad, math.max(px(32), p.pad * 2)
+            local w, h = math.max(1, area.w - inset * 2), math.max(1, area.h - top - inset)
+            local args, pending, building, index, clip, def, regions, refreshModule
+            local revision = 0
+            local function makeClip()
+                revision = revision + 1
+                local born = revision
+                args = {}
+                for k, v in pairs(ctx) do args[k] = v end
+                args.refresh_fn = function() if born == revision then refreshModule() end end
+                building = true
+                local child
+                child, def, regions = Sources.buildModule(selected, w, h, args)
+                building = false
+                local fallback = UI.makeTextBox{ text = selected.kind == "action" and def and _("Tap to open")
+                        or _("Module unavailable. Long-press to configure."),
+                    face = Style.getStyledFace(nil, 14 / (Screen:scaleBySize(1000) / 1000), "regular"),
+                    width = w, max_lines = 3, height_adjust = true }
+                return Sources.moduleContainer(child, fallback, w, h, paper)
+            end
+            refreshModule = function()
+                if building or pending or not widget:modulesVisible(generation) then return end
+                pending = true
+                require("ui/uimanager"):nextTick(function()
+                    pending = false
+                    if not widget:modulesVisible(generation) then return end
+                    local previous = clip
+                    clip = makeClip()
+                    clip.overlap_offset = { area.x + inset, area.y + top }
+                    root[index] = clip
+                    previous:free()
+                    local d = widget.dimen
+                    require("ui/uimanager"):setDirty(ctx._screen_widget or widget, "ui",
+                        Geom:new{ x = (d.x or 0) + area.x + inset, y = (d.y or 0) + area.y + top, w = w, h = h })
+                end)
+            end
+            clip = makeClip()
+            if clip[1] ~= clip.fallback and def and (def.on_minute or def.wants_minute_tick
+                    or selected.kind == "simpleui" and def.scheduleRefresh) then
+                ticks[#ticks + 1] = function() Sources.tickModule(selected, def, refreshModule) end
+            end
+            add(clip, area.x + inset, area.y + top)
+            index = #root
+            action(area, function(x, y)
+                if not def or clip.failed then widget:editModules(selected.id)
+                else
+                    Sources.tapModule(selected, def, args, regions,
+                        x - inset - (clip._child_dx or 0), y - top - (clip._child_dy or 0))
+                end
+            end, require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false
+                and function() widget:editModules(selected.id) end or nil)
+        end
+    end
+    if #ticks > 0 then
+        widget._module_tick = function()
+            if widget._disposed or generation ~= widget._module_generation then return end
+            local owner = ctx._screen_widget
+            if widget._modules_suspended or owner and owner._suspended or require("device").screen_saver_mode then return end
+            if widget:modulesVisible(generation) then
+                for _, tick in ipairs(ticks) do tick() end
+            end
+            require("ui/uimanager"):scheduleIn(60, widget._module_tick)
+        end
+        require("ui/uimanager"):scheduleIn(60, widget._module_tick)
+    end
     if p.cards and not next(p.cards) then
         text(_(data.config.unsupported and "This dashboard needs a newer OrbitUI version."
             or "No cards selected. Tap to configure."), p.pad, p.header_h + p.gap,

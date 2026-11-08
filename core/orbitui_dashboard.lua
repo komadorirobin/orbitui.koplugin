@@ -98,6 +98,18 @@ end
 
 M.block_order = { "hero", "stats", "ongoing", "goal", "want", "new" }
 M.stat_order = { "pages_today", "reading_today", "streak", "week" }
+M.module_limit = 16
+
+function M.moduleId(kind, ref)
+    if (kind == "simpleui" or kind == "bookshelf" or kind == "action")
+            and type(ref) == "string" and #ref > 0 and #ref <= 256 and not ref:find("[%c]") then
+        return "module:" .. kind .. ":" .. ref
+    end
+end
+
+function M.module(config, id)
+    for _, entry in ipairs(config.modules or {}) do if entry.id == id then return entry end end
+end
 
 local function ordered(value, defaults)
     local result, allowed = {}, {}
@@ -113,18 +125,33 @@ end
 
 function M.config(raw, legacy)
     local result = { version = 1, order = copy(M.block_order), stats_order = copy(M.stat_order),
-        hidden = {}, sources = {
+        hidden = {}, modules = {}, sources = {
             want = legacy and { kind = "bookorbit" } or { kind = "native", id = "tbr" },
             new = { kind = "native", id = "new_books" },
         }, goal = "auto" }
     if raw == nil then return result end
-    if type(raw) ~= "table" or raw.version ~= 1 then
+    if type(raw) ~= "table" or (raw.version ~= 1 and raw.version ~= 2) then
         -- A downgrade must not silently replace a newer configuration.
         result.unsupported = true
         for _, card in ipairs(M.heading_cards) do result.hidden[card.key] = true end
         return result
     end
-    result.order = ordered(raw.order, M.block_order)
+    local defaults, seen = copy(M.block_order), {}
+    for _, entry in ipairs(type(raw.modules) == "table" and raw.modules or {}) do
+        local id = type(entry) == "table" and M.moduleId(entry.kind, entry.ref)
+        if id and not seen[id] and #result.modules < M.module_limit then
+            seen[id] = true
+            result.modules[#result.modules + 1] = { id = id, kind = entry.kind, ref = entry.ref,
+                label = type(entry.label) == "string" and #entry.label <= 512 and M.normalizeHeading(entry.label) or nil,
+                width = entry.width == 1 and 1 or 2,
+                size = (entry.size == "tall" or entry.size == "page") and entry.size or "normal" }
+            defaults[#defaults + 1] = id
+            result.hidden[id] = type(raw.hidden) == "table" and raw.hidden[id] == true or nil
+        end
+    end
+    -- Older OrbitUI builds fail closed rather than silently discarding cards.
+    result.version = (#result.modules > 0 or raw.version == 2) and 2 or 1
+    result.order = ordered(raw.order, defaults)
     result.stats_order = ordered(raw.stats_order, M.stat_order)
     for _, card in ipairs(M.heading_cards) do
         result.hidden[card.key] = type(raw.hidden) == "table" and raw.hidden[card.key] == true or nil
@@ -191,7 +218,7 @@ function M.withPage(layout, enabled)
     return result
 end
 
-function M.plan(w, h, config)
+function M.plan(w, h, config, page)
     w, h = math.max(1, math.floor(w)), math.max(1, math.floor(h))
     local scale = math.min(w / 600, h / 730)
     local gap = math.max(2, math.floor(10 * scale))
@@ -230,6 +257,11 @@ function M.plan(w, h, config)
     end
     local weight = { hero = 38, stats = #stats <= 2 and 19 or 38,
         ongoing = 27, goal = 27, want = 35, new = 35 }
+    local extras = {}
+    for _, entry in ipairs(config.modules or {}) do
+        extras[entry.id] = entry
+        weight[entry.id] = entry.size == "tall" and 55 or 35
+    end
     for _, id in ipairs(config.order) do
         if id == "stats" and #stats > 0 or id ~= "stats" and M.visible(config, id) then
             blocks[#blocks + 1] = id
@@ -238,12 +270,34 @@ function M.plan(w, h, config)
     for _, id in ipairs(M.block_order) do plan[id] = nil end
     plan.stats, plan.cards = {}, {}
     if #blocks == 0 then return plan end
-    local rows, total = {}, 0
-    for i = 1, #blocks, 2 do
+    local rows, total, i = {}, 0, 1
+    while i <= #blocks do
         local a, b = blocks[i], blocks[i + 1]
-        local size = math.max(weight[a], b and weight[b] or 0)
-        rows[#rows + 1] = { a, b, weight = size }
-        total = total + size
+        local wide = extras[a] and (extras[a].width == 2 or extras[a].size == "page")
+        if wide or b and extras[b] and (extras[b].width == 2 or extras[b].size == "page") then b = nil end
+        local size = math.max(weight[a] or 35, b and weight[b] or 0)
+        rows[#rows + 1] = { a, b, weight = size, own_page = extras[a] and extras[a].size == "page" }
+        i = i + (b and 2 or 1)
+    end
+    -- At most three rows per page. Existing six-block layouts are unchanged.
+    local pages, current = {}, {}
+    for _, row in ipairs(rows) do
+        if #current == 3 or row.own_page and #current > 0 then
+            pages[#pages + 1], current = current, {}
+        end
+        current[#current + 1] = row
+        if row.own_page then pages[#pages + 1], current = current, {} end
+    end
+    if #current > 0 then pages[#pages + 1] = current end
+    plan.pages = math.max(1, #pages)
+    page = tonumber(page) or 1
+    if page ~= page then page = 1 end
+    plan.page = math.min(plan.pages, math.max(1, math.floor(page)))
+    rows = pages[plan.page] or {}
+    for _, row in ipairs(rows) do total = total + row.weight end
+    if plan.pages > 1 then
+        header = header + math.max(28, math.floor(38 * scale))
+        plan.header_h = header
     end
     local available = h - header - #rows * gap
     local y = header + gap

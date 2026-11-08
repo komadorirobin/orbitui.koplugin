@@ -1746,6 +1746,33 @@ from `tests/dashboard_preview.lua` uses synthetic covers/approximate text, not
 real-device output. Check native fonts/touch, offline cache, rotation, night
 mode, sleep/resume and book-close updates on the Bigme before device acceptance.
 
+November 8 user-approved pluggable dashboard extends the six original blocks
+only after an explicit add. Reuse public SimpleUI and Bookshelf module registries,
+not a private Silverfish fork or arbitrary require path from saved data. Native
+dynamic-instance and hero-only/shelf-owned editors stay with their existing
+owners. Generic shortcuts use registered QA/custom actions and native Home
+navigation; creation reuses its existing action editor. No automatic plugin
+install, remote sync, screensaver takeover or changed plugin save/settings.
+SV/EN picker is reachable through +, hold and dashboard settings. Preserve the
+original book-cover holds, independent book-row paging and edge/Home gestures.
+Cards have stable kind-qualified ids; per-screen config v2 accepts at most 16
+additions with half/full/tall/whole-page sizes. v1 default geometry/data choices
+are unchanged; older builds must not discard a v2 layout. Arrange preserves
+missing-plugin placements, headings and sources. Removal affects only that card.
+Overflow uses independent three-row dashboard pages; content never overpaints
+its card. Failures/missing plugins show a removable placeholder. SimpleUI module
+options explicitly share native settings, without saving an unrelated layout.
+Only visible-page additions build. Selected SimpleUI declarative data needs are
+included without enabling a standalone placement. Enumerate only in the picker;
+use lazy cached owner lookup during builds, never discovery/network during paint.
+Borrow native data; isolate mounted clock fields. Guard widget/page/child callback
+generations; coalesce a module refresh into that cell only. Visible minute hooks
+and clock hints stop during suspend/park/cover and retire on page/close. Catch
+Lua build/paint/input/free failures without claiming to sandbox native/infinite
+third-party code. Tests: test_dashboard_modules plus existing dashboard/config/
+demand/colour; optional frozen Silverfish/native input/FFI supplement. Bigme
+visual/touch/language/night/rotation/sleep/native plugin lifecycle remains open.
+
 ## C11: Author-bound ornaments
 
 User-approved change, October 19, 2026: optional data-only add-ons supersede the
