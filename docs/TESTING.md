@@ -1,5 +1,23 @@
 # Verification and device acceptance
 
+## 2026-11-09 — stable 1.1 promotion; upstream reserved for 1.2
+
+User reports everything working well and explicitly requests stable 1.1 first,
+then an upstream merge and new beta. Promote beta.12's unchanged runtime from
+ed2f42e3 on release/1.1.0-20261109: VERSION, README, release docs and channel
+regression only. Preserve components/pins/art/bootstrap/API1, all 2,000 paths,
+settings, sidecars, caches, plugin placements and external sync owners.
+General user acceptance is not a fabricated per-test/device acceptance matrix.
+No actual device/server install is authorized or performed by this workflow.
+
+Both complete scripts/43 catalogs, sealed/native regressions, exact beta.12
+runtime/source projection, older real installers including beta.12, history/
+held-art/secrets, exact main/tag CI and draft/public bytes/channels must pass.
+Publish only a new stable v1.1.0, make it latest; keep all old tags/assets and
+maintenance/1.0 immutable. Preserve maintenance/1.1 at the stable source before
+merging upstream in a separate 1.2 preview cycle. No Bookshelf 6.4 enters 1.1.
+Evidence: test-results/stable11-20261109; frozen/public receipts follow.
+
 ## 2026-11-08 — 1.1.0-beta.12 release candidate
 
 Published **2026-11-08 22:13:26 UTC**, release **438555721**, frozen source/tag

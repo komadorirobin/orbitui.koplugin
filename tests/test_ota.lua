@@ -48,6 +48,20 @@ H.test("stable 1.0 promotes RC2 while a later 1.1 beta stays preview-only", func
     H.eq(OTA.select(list, true).version, "1.0.0")
 end)
 
+H.test("stable 1.1 promotes accepted beta12 and later 1.2 remains preview only", function()
+    local list = { release("1.0.0", false), release("1.1.0-beta.12", true), release("1.1.0", false) }
+    list[3].draft = true
+    H.eq(OTA.select(list, false).version, "1.0.0")
+    H.eq(OTA.select(list, true).version, "1.1.0-beta.12")
+    list[3].draft = false
+    H.eq(OTA.select(list, false).version, "1.1.0")
+    H.eq(OTA.select(list, true).version, "1.1.0")
+    assert(OTA.newer("1.1.0", "1.1.0-beta.12"))
+    list[4] = release("1.2.0-beta.1", true)
+    H.eq(OTA.select(list, false).version, "1.1.0")
+    H.eq(OTA.select(list, true).version, "1.2.0-beta.1")
+end)
+
 H.test("alphabet beta advances preview only and an unpublished draft stays hidden", function()
     local list = { release("1.0.0", false), release("1.1.0-beta.3", true), release("1.1.0-beta.4", true) }
     list[3].draft = true

@@ -20,7 +20,19 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-08
+## Snapshot: 2026-11-09
+
+- **Stable 1.1 first, upstream and 1.2 beta afterward — explicitly approved.**
+  User reports everything working well and requests stable 1.1, followed by a
+  reviewed upstream merge/new beta. Release from ed2f42e3 with beta.12 runtime
+  unchanged; only VERSION/README/docs/channel tests. No source/component/pin/
+  art/bootstrap/API1/data/device/server change. Both full/sealed/native suites,
+  43 catalogs, exact source/beta.12 parity, older installers, history/art/secrets,
+  exact main/tag CI and draft/public/channel verification precede publication.
+  Make new v1.1.0 stable/latest; prior tags/assets and maintenance/1.0 immutable.
+  Preserve maintenance/1.1 before importing upstream into separate 1.2 preview.
+  General user acceptance is not agent-run or per-test device certification.
+  Evidence stable11-20261109; receipts follow.
 
 - **1.1.0-beta.12 preview published.** User requests a new beta
   after viewing the schematic composition. Branch release/1.1.0-beta.12-20261108
