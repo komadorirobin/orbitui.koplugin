@@ -28,7 +28,7 @@ shelf preset before applying them. Existing installations start with Keep existi
 Changing folder references does not move book files. Custom library buttons can
 be selected in the guide or **Navigation & bars**.
 
-## Optional BookOrbit integrations (Beta 23)
+## Optional BookOrbit integrations
 
 Open **Integrations > BookOrbit / Integrationer > BookOrbit** for the master
 switch and separate list, manual status-action and online-tag switches. Unset
@@ -85,7 +85,7 @@ Goals can use the local annual goal or the optional Hardcover integration.
 BookOrbit and Hardcover remain optional; this dashboard is not a remote-book
 download client. Other SimpleUI Home modules and Custom Screens remain available.
 
-### Plugin cards (local 1.1 development, not yet released)
+### Plugin cards and Module library (included in 1.1)
 
 Tap **+** in the dashboard, long-press a non-book area, or open **Home (SimpleUI)
 → Reading dashboard → Cards and content → Add module…**. The picker groups
@@ -131,7 +131,7 @@ sida** om innehållet beskärs. Borttagning av ett kort avinstallerar inte plugi
 och raderar inte dess data. Äldre OrbitUI-versioner kan inte redigera den nya
 kortlayouten, men ska inte skriva över den.
 
-The local **Get more modules… / Hämta fler moduler…** prototype offers a separate
+The **Get more modules… / Hämta fler moduler…** prototype offers a separate
 executable-plugin catalog, initially the official Silverfish 2.0.0 release.
 Its badge means desktop adapter testing, not full-plugin safety/device approval.
 No automatic installation, latest-version chasing, overwrite, enable, downgrade,
@@ -143,6 +143,17 @@ Existing/legacy conflicts remain manual. Another updater's changed files show
 unverified; status is refreshed on catalog open/explicit refresh, not Home paint.
 Own UI is SV/EN; Silverfish itself remains upstream English/Portuguese.
 See ADDONS for trust limits, licenses, data and manual recovery.
+
+### Currently reading + Silverfish (included in 1.1)
+
+Add the separate **Currently reading + Silverfish / Läser just nu + Silverfish**
+module through the Home module picker or the Reading dashboard's **Add module…**
+picker. It leaves Continue reading and existing placements unchanged. The active
+companion sits on the left, reading information in the middle and the book cover
+on the right. Companion/name taps open Silverfish; the title/cover resume the book.
+Install and enable the reviewed public Silverfish 2.0.0 separately and restart.
+OrbitUI uses checked public APIs, not a fork or copied artwork, and never advances
+the creature or changes its save. Missing/unsupported APIs show a reason instead.
 
 ## Shelf and series presentation
 
@@ -192,8 +203,8 @@ not a mandatory whole-theme replacement. [Picker instructions and credits](ICONS
 
 ## Updates and compatibility
 
-Use **Uppdatera OrbitUI** for the whole plugin, with preview releases enabled
-for the beta. Both embedded component update menus lead there. Original standalone
+Use **Uppdatera OrbitUI** for the whole plugin: stable for 1.1 releases, or opt
+into preview for the next beta cycle. Both embedded component menus lead there. Original standalone
 repositories and their update channels are unchanged. Add-on updates use their
 separate menu. [OTA and recovery](OTA.md).
 

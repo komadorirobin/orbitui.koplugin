@@ -4,6 +4,25 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-09 — stable 1.1 README presentation refresh
+
+User explicitly requests a modestly promotional README that highlights OrbitUI's
+own additions, not just the upstream foundations. Replace the accumulated beta
+diary with a stable 1.1 landing page: connected Home/library, independent library
+sections, Reading dashboard/plugin cards, offline tag/index/smart-chip and Series/
+Volumes workflow, alphabet/word suggestions, optional BookOrbit cards/status/tags,
+Silverfish companion, Android shortcuts, shelf/ornament/MAL/icon choices and OTA.
+Keep original creators prominent and distinguish upstream foundations, optional
+external plugins/patches, experimental status import and device-test limits.
+Fix stale installation/app-store links and remove obsolete beta-status claims.
+Refresh the feature guide's obsolete unreleased labels and document the companion.
+
+Documentation only on a separate worktree based on 4a6cc814 while the 1.2 subtree
+merge is unresolved. No runtime/version/pin/art/bootstrap/API1 change, no frozen
+release ZIP/tag replacement, no maintenance branch movement. Local Markdown
+target/anchor checks and whitespace audit precede the requested main push; the
+1.2 branch will incorporate this documentation without replacing stable assets.
+
 ## 2026-11-09 — stable 1.1 promotion; upstream reserved for 1.2
 
 Published **2026-11-09 05:07:44 UTC**, release **438759601**, source/tag
