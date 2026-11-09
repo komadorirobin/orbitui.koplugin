@@ -4,6 +4,17 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-09 — 1.2.0-beta.1 release freeze
+
+User-requested upstream beta after stable 1.1.0. Freeze ace1e222 runtime;
+following changes are VERSION/README/release docs and channel regression only.
+Repeat complete suites, sealed/native fixtures, real older installers and
+source/history/art/secrets audits before main/tag push. Verify exact four CI
+jobs/payloads and draft/public assets/channels; activate only a new prerelease.
+Stable/latest 1.1, maintenance branches and all older releases remain immutable.
+No device/server/catalog operation. Physical checks and measured Bigme timing
+remain pending. Evidence upstream-20261109; receipts follow completed gates.
+
 ## 2026-11-09 — reviewed Bookshelf 6.4.1, separate 1.2 preview
 
 After stable 1.1 publication and maintenance/1.1 preservation at 16cae997,

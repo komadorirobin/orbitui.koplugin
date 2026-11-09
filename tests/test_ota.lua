@@ -62,6 +62,18 @@ H.test("stable 1.1 promotes accepted beta12 and later 1.2 remains preview only",
     H.eq(OTA.select(list, true).version, "1.2.0-beta.1")
 end)
 
+H.test("upstream 1.2 beta is hidden while draft and never changes stable 1.1", function()
+    local list = { release("1.1.0", false), release("1.2.0-beta.1", true) }
+    list[2].draft = true
+    H.eq(OTA.select(list, true).version, "1.1.0")
+    H.eq(OTA.select(list, false).version, "1.1.0")
+    list[2].draft = false
+    H.eq(OTA.select(list, true).version, "1.2.0-beta.1")
+    H.eq(OTA.select(list, false).version, "1.1.0")
+    assert(OTA.newer("1.2.0-beta.1", "1.1.0"))
+    assert(not OTA.newer("1.1.0", "1.2.0-beta.1"))
+end)
+
 H.test("alphabet beta advances preview only and an unpublished draft stays hidden", function()
     local list = { release("1.0.0", false), release("1.1.0-beta.3", true), release("1.1.0-beta.4", true) }
     list[3].draft = true

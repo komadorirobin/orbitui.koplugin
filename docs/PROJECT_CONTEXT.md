@@ -22,6 +22,13 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-09
 
+- **1.2.0-beta.1 release freeze.** After ace1e222, only VERSION, README,
+  release docs and channel regression change. All full/sealed/native/installer/
+  source/history/CI/draft/public gates precede publication. Keep latest stable
+  1.1.0 and both maintenance branches unchanged. No device/server/catalog
+  operation; newly merged physical/performance acceptance remains pending.
+  Evidence upstream-20261109; frozen/public receipts follow verification.
+
 - **Reviewed 1.2 upstream integration in progress.** Stable 1.1 is public and
   maintenance/1.1 is preserved at 16cae997. Bookshelf 60 commits through 6.4.1
   3fe9702d imported unsquashed as 68f2fcf3; SimpleUI 4426601f is unchanged.

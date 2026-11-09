@@ -1,5 +1,32 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.2.0-beta.1
+
+User-authorized preview after stable 1.1.0, retaining the reviewed upstream
+adaptations in ace1e222. Bookshelf 6.4.1 (3fe9702d) is integrated; SimpleUI
+3.0.3 (4426601f) was already current. VERSION/README/release documentation and
+draft-channel regression only after that feature base. Stable/latest 1.1.0,
+both maintenance branches and all previous tags/assets remain unchanged.
+
+Lighter scoped shelf lists/metadata/cover work and quiet-time extraction updates,
+optional equal/same-sized books, spine text scale, Plain/Spines series boxes,
+Covers/List series tiles and Decades/date controls. Preserve OrbitUI Home/dock,
+sections, series/MAL/ornaments, BookOrbit and Silverfish owners and saved data.
+The host deliberately defers the new whole-page pixel cache/build-ahead,
+competing bytecode searcher and navigation-file split until their memory/
+identity/rollback contracts are proven. Expected performance benefits are not
+measured Bigme speedups. API1, identical 2,000 paths, 33 embedded helpers/412
+canonical identities; no artwork or device/server/catalog operation.
+
+Both full suites/43 catalogs, exact frozen source/inventory, sealed/native
+regressions, actual older installers including stable 1.1, history/art/secrets,
+all four exact main/tag CI jobs and draft/public bytes/channels must pass.
+Publish only new v1.2.0-beta.1 as a prerelease, never latest. Physical Bigme
+font/layout/touch/rotation/wake/night and large-library timing/resource checks
+remain pending. Back up settings/reading data separately; code rollback does
+not restore them or third-party data. Evidence: test-results/upstream-20261109.
+Frozen/public receipts follow only after verification.
+
 ## OrbitUI 1.1.0
 
 Published **2026-11-09 05:07:44 UTC**, release **438759601**, source/tag

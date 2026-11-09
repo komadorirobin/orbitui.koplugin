@@ -17,6 +17,12 @@ top. Please support and credit the original creators.
 | [Feature guide](docs/FEATURES.md)
 | [Report a problem](https://github.com/komadorirobin/orbitui.koplugin/issues)
 
+**Trying the next version?** [1.2.0-beta.1](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v1.2.0-beta.1)
+integrates Bookshelf 6.4.1: lighter cover/metadata work, optional book-size and
+series-box styles, and Decades browsing. It preserves OrbitUI's sections, Home,
+tags and integrations. New-device/layout/performance checks are still pending;
+**1.1.0 remains the stable release**. See the release notes before switching.
+
 > **OrbitUI replaces the standalone SimpleUI and Bookshelf plugins.**
 > Neither is required separately. If either is installed, disable it and restart
 > KOReader before installing OrbitUI. Never run them alongside OrbitUI. Keep

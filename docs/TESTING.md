@@ -1,5 +1,18 @@
 # Verification and device acceptance
 
+## 2026-11-09 — 1.2.0-beta.1 release freeze
+
+Freeze the reviewed ace1e222 runtime, with only VERSION/README/release docs and
+draft/preview channel regression. Repeat both complete suites on this exact
+candidate; then validate all 117 sealed root files in Lua and LuaJIT, retained
+native minimum/current input/Font/sandbox/raster/Silverfish/SQLite/EPUB/search/
+thumbnail matrices, 17 actual older installers offline and 16 through anonymous
+public HTTPS after publication. No actual device/server installation.
+All earlier releases/tags, latest stable 1.1 and maintenance branches must stay
+unchanged. API1/exact 2,000 paths, source/history/art/secrets, exact CI and
+draft/public asset/channel checks precede activation. Evidence and receipts:
+test-results/upstream-20261109. Newly merged physical checks remain pending.
+
 ## 2026-11-09 — reviewed 6.4.1 integration for the 1.2 preview
 
 After stable 1.1, import Bookshelf 3fe9702d in unsquashed 68f2fcf3, keep SimpleUI
