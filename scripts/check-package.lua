@@ -40,7 +40,7 @@ for name, path in pairs(source_map) do
     else expect(path) end
 end
 for name in pairs(embedded) do assert(source_map[name], "Unknown embedded module: " .. name) end
-assert(embedded_count == 28, "Expected twenty-eight reviewed embedded modules")
+assert(embedded_count == 33, "Expected thirty-three reviewed embedded modules")
 for _, path in ipairs({
     "main.lua", "_meta.lua", "orbitui_bootstrap.lua", "VERSION", "manifest.json", "LICENSE", "README.md", "sources.json",
     "docs/MIGRATION.md", "docs/TESTING.md", "docs/UPSTREAM.md",

@@ -3,7 +3,9 @@
 ## 2026-11-09 — 1.2.0-beta.1 release freeze
 
 Freeze the reviewed ace1e222 runtime, with only VERSION/README/release docs and
-draft/preview channel regression. Repeat both complete suites on this exact
+draft/preview channel regression plus the package checker's explicit 28 → 33
+embedded-helper expectation. This is a development-only assertion, not another
+runtime change. Repeat both complete suites on this exact
 candidate; then validate all 117 sealed root files in Lua and LuaJIT, retained
 native minimum/current input/Font/sandbox/raster/Silverfish/SQLite/EPUB/search/
 thumbnail matrices, 17 actual older installers offline and 16 through anonymous
