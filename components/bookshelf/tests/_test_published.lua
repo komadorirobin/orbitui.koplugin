@@ -32,9 +32,23 @@ package.loaded["lib/bookshelf_pubdate"] = dofile("lib/bookshelf_pubdate.lua")
 local Published = dofile("lib/bookshelf_published.lua")
 package.loaded["lib/bookshelf_published"] = Published
 
+-- The settings store: the date reader's version, current unless a test says
+-- otherwise (a stored "no date" from an older reader is read again).
+local store = {}
+package.loaded["lib/bookshelf_settings_store"] = {
+    read = function(k) return store[k] end,
+    save = function(k, v) store[k] = v end,
+}
+package.loaded["lib/bookshelf_book_facts_db"].publishedMap = function()
+    local m = {}
+    for fp, e in pairs(rows) do if e.pd ~= nil then m[fp] = { pd = e.pd, pdm = e.pdm } end end
+    return m
+end
+
 local spawned
 local function reset()
     rows, scheduled, spawned, flushes, mtimes = {}, {}, {}, 0, {}
+    store = { pubdate_reader_version = Published.READER_VERSION }
     Published._reset()
     Published._spawn = function(batch, done) spawned[#spawned + 1] = { batch = batch, done = done } end
 end
@@ -64,6 +78,25 @@ t.test("a stored date shows its year; a stored empty shows nothing and is not re
     eq(Published.forRecord({ filepath = "/b/b.epub" }), "")
     tick()
     eq(#spawned, 0)
+end)
+
+-- A stored "no date" is the old reader's answer: when the reader learns a new
+-- form (dcterms:date), those books are read again, once; a found date, and a
+-- date the reader typed in, are kept.
+t.test("a newer date reader reads the books an older one found no date in, once", function()
+    reset()
+    store.pubdate_reader_version = nil
+    rows["/b/none.epub"] = { pd = "", pdm = 5 }
+    rows["/b/found.epub"] = { pd = "1923", pdm = 5 }
+    rows["/b/user.epub"] = { pd = "1850", pdm = Published.USER_MTIME }
+    eq(Published.forRecord({ filepath = "/b/found.epub" }), "1923")
+    eq(select(2, Published.info({ filepath = "/b/none.epub" })), "pending")
+    eq(Published.forRecord({ filepath = "/b/user.epub" }), "1850")
+    eq(store.pubdate_reader_version, Published.READER_VERSION)
+    tick()
+    eq(#spawned, 1)
+    eq(#spawned[1].batch, 1)
+    eq(spawned[1].batch[1], "/b/none.epub")
 end)
 
 t.test("an unread book shows nothing, is queued once, and fills in the background", function()
@@ -111,6 +144,22 @@ t.test("a long queue goes in batches, one child at a time", function()
     eq(#spawned, 1); eq(#spawned[1].batch, 40)
     spawned[1].done({})
     eq(#spawned, 2); eq(#spawned[2].batch, 5)
+end)
+
+t.test("busy while books wait or a batch is read; the last batch's news says it is done", function()
+    reset()
+    eq(Published.busy(), false)
+    local busy_at = {}
+    Published.on_filled = function() busy_at[#busy_at + 1] = Published.busy() end
+    for i = 1, 45 do Published.forRecord({ filepath = "/b/" .. i .. ".epub" }) end
+    eq(Published.busy(), true, "books queued, not busy")
+    tick()
+    eq(Published.busy(), true, "a batch being read, not busy")
+    spawned[1].done({ ["/b/1.epub"] = { date = "1901", mtime = 1 } })
+    eq(busy_at[1], true, "five books still to read, told it was done")
+    spawned[2].done({ ["/b/41.epub"] = { date = "1902", mtime = 1 } })
+    eq(busy_at[2], false, "the last batch, told more were coming")
+    eq(Published.busy(), false)
 end)
 
 t.test("a fork that fails stops asking for the session", function()
