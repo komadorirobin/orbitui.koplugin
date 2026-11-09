@@ -174,6 +174,18 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+November 9 / 1.2 reviewed boundary: retained light-list keys include section,
+roots/depth and data generation; Decades source/group restoration uses the same
+scope as other local groups. New extraction/collector callbacks must retire on
+stop/sleep/close, including callbacks delivered after unschedule. Hosted OrbitUI
+defers the new whole-page row/pixel cache and its page build-ahead: a page-count
+bound is not a colour-buffer byte bound, and native offscreen output includes
+the host dock band. Native source behavior/tests stay available, but no hosted
+setting enables this deferred owner. Sized-cover/light metadata improvements
+remain active, with the existing exact-source thumbnail LRU and invalidations.
+The competing mtime/size bytecode searcher and destructive position.lua split
+are also deferred (C01/C08); existing navigation keys remain rollback-readable.
+
 November 8 approved local cover-reuse maintenance: exact-size Bookshelf copies
 delegate through small optional renderer seams to the existing shared LRU,
 not another source/disk cache. Normal cap 12 MiB/96 entries; retain the newest

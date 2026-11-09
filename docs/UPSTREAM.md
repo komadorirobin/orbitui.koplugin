@@ -164,6 +164,20 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+November 9, after stable 1.1: review Bookshelf 60 master commits from c014b133
+through **3fe9702d** (6.4.1, 147 net files). Unsquashed import **68f2fcf3** and
+separate adaptations preserve C01–C11; SimpleUI **4426601f** has no delta.
+Full details: MERGE_LOG/TESTING, evidence upstream-20261109. Keep API1's exact
+2,000 paths with five exact-source lazy helpers (33/412). Scope retained light
+lists/Decades and styles by section; retire new workers on navigation/suspend.
+Preserve cover/binding/series/MAL/title/dock/ornament and all external owners.
+Defer native bytecode-searcher/position-file migration and whole-page pixels/
+build-ahead in the host until canonical OTA/rollback, byte budgets and dock
+painting are proven. Keep prior file-date/folder-delete deferrals. Adopt bounded
+wallpaper source cropping and checked C stdio without deleting the previous
+valid cover before rename. Stable 1.1/maintenance1.1 remain immutable while
+the separately authorized 1.2 preview is tested and published.
+
 November 7 merge-only request reviews Bookshelf 6.3.3 master
 c014b133d9575525b2576ab76c65586b8ba3fd83 (three commits/six files) and SimpleUI
 3.0.3 main 4426601f6ccf44488d18a8fcee8fbc47c76905eb (seven commits/nine files).

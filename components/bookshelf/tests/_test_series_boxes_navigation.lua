@@ -200,12 +200,12 @@ t.test("the editor toggle changes only its own draft and uses the existing live-
         local button=page.control("Series boxes")
         assert(button,"series-box toggle missing")
         local old=button.active
-        button.on_pick(not old)
+        button.on_pick(old == "off" and "cover" or "off")
         eq(page.applied(),1)
         return old,page.control("Series boxes").active
     end
     local before,after=toggle(a)
-    eq(before,false); eq(after,true)
+    eq(before,"off"); eq(after,"cover")
     eq(a.series_boxes,true); eq(b.series_boxes,nil)
     toggle(a); eq(a.series_boxes,nil)
 end)

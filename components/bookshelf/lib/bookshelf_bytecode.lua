@@ -157,6 +157,10 @@ end
 -- cache_dir where the copies go; both found when not given.
 function M.install(root, cache_dir)
     if M._installed then return end
+    local ok, Paths = pcall(require, "lib/bookshelf_paths")
+    -- The host's canonical/preload/exact embedded loaders must retain priority.
+    -- mtime/size alone cannot distinguish OTA activation from code rollback.
+    if ok and Paths.deferBytecodeCache then return end
     _root = root or (debug.getinfo(1, "S").source:match("^@(.+/)lib/[^/]+$"))
     if not _root then return end
     if not cache_dir then

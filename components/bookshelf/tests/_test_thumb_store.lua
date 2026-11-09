@@ -24,7 +24,7 @@ local body = assert(SW:match("\nlocal function _thumbFor%(fp, src, w, h%)\n(.-)\
 
 local made, derived = 0, {}
 local env = setmetatable({
-    ScaledCoverCache = SCC,
+    ScaledCoverCache = SCC, SpineWidget = {},
     _derived = function(src, copy) derived[copy] = src; return copy end,
     require = function(n)
         if n == "ui/renderimage" then

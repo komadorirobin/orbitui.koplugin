@@ -301,6 +301,7 @@ function M.applyMemoryPolicy()
         if shelf then
             if shelf._cancelPreload then shelf:_cancelPreload() end
             if shelf._cancelChipPreload then shelf:_cancelChipPreload() end
+            if shelf._pageAheadCancel then shelf:_pageAheadCancel() end
         end
     end
 end

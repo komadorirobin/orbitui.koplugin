@@ -173,11 +173,11 @@ t.test("binding and series boxes remain independent live-applied page controls",
     local draft={id="soft",view_mode="spines"}
     local page=dofile("tests/_editor_view_fixture.lua")({},draft)
     eq(page.control("Book binding").active,"hardcover")
-    eq(page.control("Series boxes").active,false)
+    eq(page.control("Series boxes").active,"off")
     page.control("Book binding").on_pick("paperback"); eq(draft.book_binding,"paperback"); eq(draft.series_boxes,nil)
-    page.control("Series boxes").on_pick(true); eq(draft.series_boxes,true); eq(draft.book_binding,"paperback")
+    page.control("Series boxes").on_pick("cover"); eq(draft.series_boxes,true); eq(draft.book_binding,"paperback")
     page.control("Book binding").on_pick("hardcover"); eq(draft.book_binding,nil); eq(draft.series_boxes,true)
-    page.control("Series boxes").on_pick(false); eq(draft.series_boxes,nil); eq(page.applied(),4)
+    page.control("Series boxes").on_pick("off"); eq(draft.series_boxes,nil); eq(page.applied(),4)
 end)
 
 t.test("host-owned bindings replace the native control rather than duplicating it", function()

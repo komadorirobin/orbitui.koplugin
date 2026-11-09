@@ -32,7 +32,8 @@ local function geometry(pct, aspect, row_h, width, dpi, face_out)
         PLANK_INSET_UNITS = tonumber(assert(shelf_source:match("SpineShelf%.PLANK_INSET_UNITS%s*=%s*([%d.]+)"))) }
     compile(plank_source .. "\n" .. inset_source, { SpineShelf = SS, Screen = Screen })()
     local h = Layout.spineHeight(row_h, aspect)
-    local env = { h = h, aspect = aspect, budget = row_h, bk = {},
+    local env = { h = h, aspect = aspect, height_aspect = aspect, shape_pages = 300,
+        text_k = 1, budget = row_h, bk = {},
         BookBinding = { resolve = function() return "hardcover" end },
         face_out = face_out ~= false, SpineLayout = Layout, SpineShelf = SS,
         Screen = Screen, auto_thick = Layout.autoThickness(row_h / dpi),

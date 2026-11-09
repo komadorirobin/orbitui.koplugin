@@ -8337,16 +8337,19 @@ function Repo._decadeLabel(key)
     return require("lib/bookshelf_pubdate_format").decadeLabel(n)
 end
 
-function Repo.getDecades(limit, offset, sort_priority_override, filter, opts)
+function Repo.getDecades(limit, offset, sort_priority_override, scope_or_filter, maybe_filter, maybe_opts)
+    local scope, filter, opts
+    sort_priority_override, scope, filter, opts =
+        _resolveScopeFilterOpts(sort_priority_override, scope_or_filter, maybe_filter, maybe_opts)
     local _t0 = _gettime()
     local home  = HomeDir.get() or "/"
     local depth = BookshelfSettings.read("latest_walk_depth") or 3
-    local key   = (home or "/") .. ":" .. tostring(depth or 0)
+    local key   = _cacheKeyForScope(home, depth, scope)
     local now   = os.time()
     local cached = Repo._decades_cache[key]
     local _hit = cached
     if not _hit then
-        local list = _buildGroups("decade", Repo._decadeKey, false)
+        local list = _buildGroups("decade", Repo._decadeKey, false, scope)
         Repo._decades_cache[key] = {
             groups     = _cacheGroupShapes(list, "decade"),
             expires_at = now + SERIES_CACHE_TTL,
@@ -8615,7 +8618,7 @@ function Repo.findGroup(kind, name, scope, shelf)
         elseif kind == "format"   then Repo.getFormats(0, 0);                  cache = _formats_cache[key]
         elseif kind == "rating"   then Repo.getRatings(0, 0);                  cache = _ratings_cache[key]
         elseif kind == "language" then Repo.getLanguages(0, 0, nil, scope);    cache = _languages_cache[key]
-        elseif kind == "decade"   then Repo.getDecades(0, 0);                  cache = Repo._decades_cache[key]
+        elseif kind == "decade"   then Repo.getDecades(0, 0, nil, scope);      cache = Repo._decades_cache[key]
         end
         if not cache then return nil end
     end
@@ -9606,7 +9609,7 @@ function Repo.getBySource(source, filter, sort_priority, offset, limit, scope_or
     if kind == "formats"   then return Repo.getFormats(limit, offset, sort_priority, filter, opts) end
     if kind == "ratings"   then return Repo.getRatings(limit, offset, sort_priority, filter, opts) end
     if kind == "languages" then return Repo.getLanguages(limit, offset, sort_priority, scope, filter, opts) end
-    if kind == "decades"   then return Repo.getDecades(limit, offset, sort_priority, filter, opts) end
+    if kind == "decades"   then return Repo.getDecades(limit, offset, sort_priority, scope, filter, opts) end
 
     -- Custom kinds: walk the library and apply a predicate filter.
     -- Results are cached by (source, filter, sort_priority) so pagination

@@ -122,6 +122,7 @@ local map = {
     ["lib/bookshelf_bookorbit_want_source"] = "components/bookshelf/lib/bookshelf_bookorbit_want_source.lua",
     ["lib/bookshelf_builtin_sources"] = "components/bookshelf/lib/bookshelf_builtin_sources.lua",
     ["lib/bookshelf_bulk_actions"] = "components/bookshelf/lib/bookshelf_bulk_actions.lua",
+    ["lib/bookshelf_bytecode"] = "components/bookshelf/lib/bookshelf_bytecode.lua",
     ["lib/bookshelf_cap_centre"] = "components/bookshelf/lib/bookshelf_cap_centre.lua",
     ["lib/bookshelf_changelog"] = "components/bookshelf/lib/bookshelf_changelog.lua",
     ["lib/bookshelf_chip_bar"] = "components/bookshelf/lib/bookshelf_chip_bar.lua",
@@ -246,6 +247,7 @@ local map = {
     ["lib/bookshelf_ornaments"] = "components/bookshelf/lib/bookshelf_ornaments.lua",
     ["lib/bookshelf_pack_editor"] = "components/bookshelf/lib/bookshelf_pack_editor.lua",
     ["lib/bookshelf_pacman_sprite"] = "components/bookshelf/lib/bookshelf_pacman_sprite.lua",
+    ["lib/bookshelf_page_cache"] = "components/bookshelf/lib/bookshelf_page_cache.lua",
     ["lib/bookshelf_page_count_dialog"] = "components/bookshelf/lib/bookshelf_page_count_dialog.lua",
     ["lib/bookshelf_page_dialog"] = "components/bookshelf/lib/bookshelf_page_dialog.lua",
     ["lib/bookshelf_page_wipe"] = "components/bookshelf/lib/bookshelf_page_wipe.lua",
@@ -264,6 +266,7 @@ local map = {
     ["lib/bookshelf_popup_kit"] = "components/bookshelf/lib/bookshelf_popup_kit.lua",
     ["lib/bookshelf_profiles"] = "components/bookshelf/lib/bookshelf_profiles.lua",
     ["lib/bookshelf_pubdate"] = "components/bookshelf/lib/bookshelf_pubdate.lua",
+    ["lib/bookshelf_pubdate_format"] = "components/bookshelf/lib/bookshelf_pubdate_format.lua",
     ["lib/bookshelf_published"] = "components/bookshelf/lib/bookshelf_published.lua",
     ["lib/bookshelf_quotes"] = "components/bookshelf/lib/bookshelf_quotes.lua",
     ["lib/bookshelf_reader_buttons"] = "components/bookshelf/lib/bookshelf_reader_buttons.lua",
@@ -275,6 +278,7 @@ local map = {
     ["lib/bookshelf_render_guard"] = "components/bookshelf/lib/bookshelf_render_guard.lua",
     ["lib/bookshelf_reviews_modal"] = "components/bookshelf/lib/bookshelf_reviews_modal.lua",
     ["lib/bookshelf_round_corner"] = "components/bookshelf/lib/bookshelf_round_corner.lua",
+    ["lib/bookshelf_scale"] = "components/bookshelf/lib/bookshelf_scale.lua",
     ["lib/bookshelf_scaled_cover_cache"] = "components/bookshelf/lib/bookshelf_scaled_cover_cache.lua",
     ["lib/bookshelf_scan_progress"] = "components/bookshelf/lib/bookshelf_scan_progress.lua",
     ["lib/bookshelf_selection"] = "components/bookshelf/lib/bookshelf_selection.lua",
@@ -286,6 +290,7 @@ local map = {
     ["lib/bookshelf_shadow_assets"] = "components/bookshelf/lib/bookshelf_shadow_assets.lua",
     ["lib/bookshelf_shelf_modules"] = "components/bookshelf/lib/bookshelf_shelf_modules.lua",
     ["lib/bookshelf_shelf_row"] = "components/bookshelf/lib/bookshelf_shelf_row.lua",
+    ["lib/bookshelf_slice"] = "components/bookshelf/lib/bookshelf_slice.lua",
     ["lib/bookshelf_slider"] = "components/bookshelf/lib/bookshelf_slider.lua",
     ["lib/bookshelf_snug_scroll"] = "components/bookshelf/lib/bookshelf_snug_scroll.lua",
     ["lib/bookshelf_sort_engine"] = "components/bookshelf/lib/bookshelf_sort_engine.lua",
@@ -498,6 +503,9 @@ return M\
 --             allow_none (a tap on the active one un-picks it): label at the\
 --             left, the control at the right (full width with no label)\
 --   stepper   label, value (text), on_dec, on_inc: label, then  -  value  +\
+--             big, on_big_dec, on_big_inc (optional): \"-N\" \"+N\" grey cards\
+--             outside them, as the slider's big step (a margin, an offset:\
+--             a number with no range for a slider)\
 --   slider    label (optional), value, min, max, step, default, format(v),\
 --             on_change(v), big, big_label: the label and the value, then\
 --             -  track  +  (-10 and +10 cards with big), with\
@@ -798,8 +806,25 @@ function R.stepper(ctx, b)\
     local plus = ctx:nudgeCard(Kit.PLUS, b.on_inc, h)\
     local value = CenterContainer:new{ dimen = Geom:new{ w = Space.px(84), h = h },\
         ctx:text(b.value, { bold = true }) }\
-    ctx.layout[#ctx.layout + 1] = { minus, plus }\
-    local ctl = HorizontalGroup:new{ align = \"center\", minus, value, plus }\
+    if not b.big then\
+        ctx.layout[#ctx.layout + 1] = { minus, plus }\
+        local ctl = HorizontalGroup:new{ align = \"center\", minus, value, plus }\
+        return labelled(ctx, b.label, ctl)\
+    end\
+    -- The big step outside, labelled with it (\"-10\" \"+10\"), as the slider's.\
+    local label = tostring(b.big)\
+    local glyph_face = Font:getFace(\"symbols\", math.max(10, ctx.fs - 4))\
+    local function bigCard(glyph, callback)\
+        return Kit.button{ text = label, face = ctx.small, icon_glyph = glyph,\
+            icon_face = glyph_face, gap = Space.px(2), pad_h = Space.px(8), card = true,\
+            height = h, instant = true, on_tap = callback }\
+    end\
+    local big_minus = bigCard(Kit.MINUS, b.on_big_dec)\
+    local big_plus = bigCard(Kit.PLUS, b.on_big_inc)\
+    local gap = function() return HorizontalSpan:new{ width = Space.px(6) } end\
+    ctx.layout[#ctx.layout + 1] = { big_minus, minus, plus, big_plus }\
+    local ctl = HorizontalGroup:new{ align = \"center\",\
+        big_minus, gap(), minus, value, plus, gap(), big_plus }\
     return labelled(ctx, b.label, ctl)\
 end\
 \
@@ -1506,6 +1531,11 @@ return M\
 --                                 laid out afresh on every refresh()\
 --     footer = { { text, callback, enabled_func, primary } ... } (optional)\
 --     on_close = function()       the X, a tap outside, Back (after closing)\
+--     on_back = function()        a page inside a menu (STYLE.md, Pages): a back\
+--                                 chevron and \"Back\" at the left of the title,\
+--                                 and the Back key goes back too; closes the\
+--                                 dialog, then on_back (which opens the\
+--                                 page it came from). The X still leaves.\
 --     on_tap_outside = function() a tap outside goes here instead of on_close,\
 --                                 and it closes the dialog (a slider: Done)\
 --     dismissable = false         a tap outside does nothing (a nudge: rapid\
@@ -1535,6 +1565,7 @@ local PageDialog = InputContainer:extend{\
     page     = nil,\
     footer   = nil,\
     on_close = nil,\
+    on_back  = nil,\
     dismissable = true,\
     anchor   = nil,\
     at_bottom = nil,\
@@ -1630,9 +1661,12 @@ function PageDialog:_build()\
         width = self.width, title = self:_titleText(),\
         with_bottom_line = true, bottom_v_padding = 0,\
         close_callback = function() self:_dismiss() end,\
+        left_icon = self.on_back and \"chevron.left\" or nil,\
+        left_icon_tap_callback = self.on_back and function() self:_back() end or nil,\
         show_parent = self,\
     }\
     require(\"lib/bookshelf_popup_kit\").centreTitle(title_bar)\
+    if self.on_back then require(\"lib/bookshelf_popup_kit\").backLabel(title_bar) end\
     local footer, footer_btns\
     if self.footer and #self.footer > 0 then\
         footer, footer_btns = self:_footerRow(self.width)\
@@ -1722,8 +1756,15 @@ function PageDialog:onTapClose(_arg, ges)\
     return true\
 end\
 \
+-- _back(): close, then the page it came from (on_back).\
+function PageDialog:_back()\
+    UIManager:close(self)\
+    self.on_back()\
+end\
+\
+-- The Back key: back a page when there is one, else as the X.\
 function PageDialog:onClose()\
-    self:_dismiss()\
+    if self.on_back then self:_back() else self:_dismiss() end\
     return true\
 end\
 \
@@ -2856,7 +2897,8 @@ end\
 -- ticks(o) -> the values marked under the track: the ends and Default.\
 function Slider.ticks(o)\
     local out, seen = {}, {}\
-    for _i, v in ipairs({ o.min, o.default, o.max }) do\
+    -- Not ipairs: with no default it stopped at the hole and dropped the max.\
+    for _i, v in pairs({ o.min, o.default, o.max }) do\
         if v and not seen[v] then seen[v] = true; out[#out + 1] = v end\
     end\
     table.sort(out)\
@@ -3461,7 +3503,8 @@ end\
 -- fromOpf(opf) -> date | nil\
 -- Preference, best first: a dc:date marked as the publication (EPUB 2's\
 -- opf:event), a dc:date with no event (calibre's, and EPUB 3's, which is the\
--- publication by definition), dcterms:issued, then any other event except a\
+-- publication by definition), dcterms:issued, dcterms:date (some EPUB 3\
+-- store files carry nothing else), then any other event except a\
 -- modification.\
 function M.fromOpf(opf)\
     if type(opf) ~= \"string\" or opf == \"\" then return nil end\
@@ -3484,14 +3527,15 @@ function M.fromOpf(opf)\
     end\
     for attrs, text in opf:gmatch(\"<%s*meta([^>]*)>(.-)</%s*meta%s*>\") do\
         local prop = attr(attrs, \"property\") or attr(attrs, \"name\")\
-        if prop == \"dcterms:issued\" then offer(text, 3) end\
+        if prop == \"dcterms:issued\" then offer(text, 3)\
+        elseif prop == \"dcterms:date\" then offer(text, 3.5) end\
     end\
     -- An EPUB 2 <meta name=\"dcterms:issued\" content=\"...\"/> carries its value\
     -- in an attribute.\
     for attrs in opf:gmatch(\"<%s*meta([^>]*)/>\") do\
-        if (attr(attrs, \"name\") or attr(attrs, \"property\")) == \"dcterms:issued\" then\
-            offer(attr(attrs, \"content\"), 3)\
-        end\
+        local prop = attr(attrs, \"name\") or attr(attrs, \"property\")\
+        if prop == \"dcterms:issued\" then offer(attr(attrs, \"content\"), 3)\
+        elseif prop == \"dcterms:date\" then offer(attr(attrs, \"content\"), 3.5) end\
     end\
     return best\
 end\
@@ -3860,6 +3904,10 @@ local function arm()\
     end)\
 end\
 \
+-- busy() -> true while books are still waiting to be read or a batch is\
+-- being read: the shelf holds its regroup until the reads are done.\
+function M.busy() return _running or #_order > 0 end\
+\
 -- enqueue(fp): read this book's file in the background, once a session.\
 function M.enqueue(fp)\
     if M.orbitui_defer_file_reads then return end\
@@ -3878,12 +3926,39 @@ end\
 -- touches a row carrying it.\
 M.USER_MTIME = -1\
 \
+-- The date reader's version (lib/bookshelf_pubdate). A stored \"no date\" is\
+-- that reader's answer, so when it learns a new form (2: EPUB 3's\
+-- dcterms:date) the books it found nothing in are read again, once: they\
+-- would otherwise stay dateless until Refresh metadata. Bump with the reader.\
+M.READER_VERSION = 2\
+local _migrated = false\
+\
+local function migrate(F)\
+    _migrated = true\
+    -- No queue is active in the host, so neither drop cached \"no date\" facts\
+    -- nor rewrite the reader version from an ordinary paint/sort operation.\
+    if M.orbitui_defer_file_reads then return end\
+    local ok, Store = pcall(require, \"lib/bookshelf_settings_store\")\
+    if not (ok and Store and Store.read and Store.save) then return end\
+    if (tonumber(Store.read(\"pubdate_reader_version\")) or 1) >= M.READER_VERSION then return end\
+    local map = F.publishedMap and F.publishedMap()\
+    if not map then return end\
+    local stale = {}\
+    for fp, e in pairs(map) do\
+        if e.pd == \"\" and e.pdm ~= M.USER_MTIME then stale[#stale + 1] = fp end\
+    end\
+    for _i, fp in ipairs(stale) do F.put(fp, { pd = false, pdm = false }) end\
+    if #stale > 0 and F.flushSoon then F.flushSoon() end\
+    Store.save(\"pubdate_reader_version\", M.READER_VERSION)\
+end\
+\
 -- stored(fp) -> the facts row's date fields, or nil. Every stored date at\
 -- once (one query a session), not a query per book: a shelf sorted by year\
 -- asks for all of them.\
 local function stored(fp)\
     local F = facts()\
     if not F then return nil end\
+    if not _migrated then migrate(F) end\
     local map = F.publishedMap and F.publishedMap()\
     if map then return map[fp] end\
     return F.get(fp)\
@@ -3996,6 +4071,7 @@ end\
 -- For the tests.\
 function M._reset()\
     _pending, _order, _asked = {}, {}, {}\
+    _migrated = false\
     _running, _armed, _broken = false, false, false\
     M.on_filled = nil\
 end\
@@ -4326,6 +4402,473 @@ function Rekey.countPath(list, fp)\
 end\
 \
 return Rekey\
+",
+    ["lib/bookshelf_bytecode"] = "-- lib/bookshelf_bytecode.lua\
+-- Our modules load from compiled bytecode kept on the device.\
+--\
+-- Every start parsed ~3 MB of our Lua source. On a PW3 the seven largest\
+-- files took 268 ms to parse against 17 ms to load as bytecode (which is\
+-- also ~40% of the size to read from flash). install() puts a searcher\
+-- ahead of the file searchers: for lib/bookshelf_* it loads a bytecode copy\
+-- keyed on the source file's mtime and size, and on a miss compiles the\
+-- source as usual and stores the copy for next time.\
+--\
+-- The copy is string.dump of the same VM's own compile, so it is only ever\
+-- read by the VM that wrote it (the folder is named for it), and it keeps\
+-- the debug info: file names and line numbers in errors are the source's.\
+-- A copy that will not load (cut short by a power loss) is passed over and\
+-- written again. Nothing is written on a nearly full disk.\
+local M = {}\
+\
+M.PREFIX   = \"lib/bookshelf_\"\
+-- Below this much free space, no copies are written (the source still loads).\
+M.MIN_FREE = 24 * 1024 * 1024\
+\
+local _root, _dir, _free_ok\
+\
+local function lfs()\
+    local ok, l = pcall(require, \"libs/libkoreader-lfs\")\
+    return ok and l or nil\
+end\
+\
+-- vmTag() -> a folder name for this VM: a copy is only for the VM that made it.\
+function M.vmTag()\
+    local ok, J = pcall(require, \"jit\")\
+    local tag = (ok and type(J) == \"table\" and J.version) and (J.version .. \"-\" .. tostring(J.arch)) or \"lua\"\
+    return (tag:gsub(\"[^%w%.%-]\", \"_\"))\
+end\
+\
+-- Seam: compile a source file (loadfile).\
+M._compile = function(path) return loadfile(path) end\
+\
+local function freeOk(dir)\
+    if _free_ok ~= nil then return _free_ok end\
+    _free_ok = true\
+    pcall(function()\
+        local ffi = require(\"ffi\")\
+        pcall(ffi.cdef, [[\
+            struct bookshelf_bc_statvfs { unsigned long f_bsize, f_frsize, f_blocks, f_bfree, f_bavail,\
+                f_files, f_ffree, f_favail, f_fsid, f_flag, f_namemax; int __f_spare[6]; };\
+            int statvfs(const char *path, struct bookshelf_bc_statvfs *buf);\
+        ]])\
+        local st = ffi.new(\"struct bookshelf_bc_statvfs\")\
+        if ffi.C.statvfs(dir, st) == 0 then\
+            _free_ok = tonumber(st.f_bavail) * tonumber(st.f_frsize) >= M.MIN_FREE\
+        end\
+    end)\
+    return _free_ok\
+end\
+\
+local function mkdirs(L, path)\
+    local acc = path:sub(1, 1) == \"/\" and \"/\" or \"\"\
+    for part in path:gmatch(\"[^/]+\") do\
+        acc = acc .. part .. \"/\"\
+        if not L.attributes(acc) then L.mkdir(acc) end\
+    end\
+    return L.attributes(path) ~= nil\
+end\
+\
+local function store(L, dir, base, file, fn)\
+    if not mkdirs(L, dir) or not freeOk(dir) then return end\
+    local ok, code = pcall(string.dump, fn)\
+    if not ok or not code then return end\
+    local tmp = dir .. \"/.\" .. file .. \".tmp\"\
+    local f = io.open(tmp, \"wb\")\
+    if not f then return end\
+    local wrote = f:write(code)\
+    f:close()\
+    if not wrote or not os.rename(tmp, dir .. \"/\" .. file) then os.remove(tmp); return end\
+    -- The copies of earlier versions of this module.\
+    pcall(function()\
+        local prefix = base .. \"-\"\
+        for name in L.dir(dir) do\
+            if name ~= file and name:sub(1, #prefix) == prefix and name:sub(-5) == \".luac\" then\
+                os.remove(dir .. \"/\" .. name)\
+            end\
+        end\
+    end)\
+end\
+\
+-- _search(name) -> a loader for one of our modules, or nil to let the usual\
+-- searchers have it.\
+function M._search(name)\
+    if type(name) ~= \"string\" or name:sub(1, #M.PREFIX) ~= M.PREFIX or not _root then return nil end\
+    local L = lfs()\
+    if not L then return nil end\
+    local src = _root .. name .. \".lua\"\
+    local a = L.attributes(src)\
+    if not (a and a.mode == \"file\" and a.modification and a.size) then return nil end\
+    local base = (name:gsub(\"[^%w_]\", \"_\"))\
+    local file = string.format(\"%s-%d-%d.luac\", base, a.modification, a.size)\
+    local dir = _dir .. \"/\" .. M.vmTag()\
+    local cached = dir .. \"/\" .. file\
+    if L.attributes(cached) then\
+        local fn = loadfile(cached)\
+        if fn then return fn end\
+    end\
+    local fn, err = M._compile(src)\
+    if not fn then\
+        error(string.format(\"error loading module '%s' from file '%s':\\n\\t%s\", name, src, tostring(err)), 0)\
+    end\
+    pcall(store, L, dir, base, file, fn)\
+    return fn\
+end\
+\
+-- data(src, tag, build) -> build(src), a flat table of strings, numbers and\
+-- booleans, kept as bytecode keyed on src's mtime and size and read back\
+-- from that on later starts. A .po parsed on every start was ~140 ms of a\
+-- PW3's. Anything else (a nested table, nil) is handed back and not kept.\
+local function serialize(t)\
+    local parts = { \"return {\" }\
+    for k, v in pairs(t) do\
+        local tk, tv = type(k), type(v)\
+        if not ((tk == \"string\" or tk == \"number\") and (tv == \"string\" or tv == \"number\" or tv == \"boolean\")) then\
+            return nil\
+        end\
+        parts[#parts + 1] = string.format(\"[%s]=%s,\", (tk == \"string\") and string.format(\"%q\", k) or tostring(k),\
+            (tv == \"string\") and string.format(\"%q\", v) or tostring(v))\
+    end\
+    parts[#parts + 1] = \"}\"\
+    return table.concat(parts, \"\\n\")\
+end\
+\
+function M.data(src, tag, build)\
+    local L = lfs()\
+    local a = L and _dir and L.attributes(src)\
+    if not (a and a.mode == \"file\" and a.modification and a.size) then return build(src) end\
+    local base = \"data_\" .. (tostring(tag):gsub(\"[^%w_]\", \"_\"))\
+    local file = string.format(\"%s-%d-%d.luac\", base, a.modification, a.size)\
+    local dir = _dir .. \"/\" .. M.vmTag()\
+    local cached = dir .. \"/\" .. file\
+    if L.attributes(cached) then\
+        local fn = loadfile(cached)\
+        local ok, t = false, nil\
+        if fn then ok, t = pcall(fn) end\
+        if ok and type(t) == \"table\" then return t end\
+    end\
+    local t = build(src)\
+    if type(t) == \"table\" then\
+        pcall(function()\
+            local code = serialize(t)\
+            if not code then return end\
+            local fn = (loadstring or load)(code, \"=\" .. base)\
+            if fn then store(L, dir, base, file, fn) end\
+        end)\
+    end\
+    return t\
+end\
+\
+-- install([root, cache_dir]): root is the plugin folder (ending in \"/\"),\
+-- cache_dir where the copies go; both found when not given.\
+function M.install(root, cache_dir)\
+    if M._installed then return end\
+    local ok, Paths = pcall(require, \"lib/bookshelf_paths\")\
+    -- The host's canonical/preload/exact embedded loaders must retain priority.\
+    -- mtime/size alone cannot distinguish OTA activation from code rollback.\
+    if ok and Paths.deferBytecodeCache then return end\
+    _root = root or (debug.getinfo(1, \"S\").source:match(\"^@(.+/)lib/[^/]+$\"))\
+    if not _root then return end\
+    if not cache_dir then\
+        local ok, DataStorage = pcall(require, \"datastorage\")\
+        if not ok then return end\
+        cache_dir = DataStorage:getDataDir() .. \"/cache/bookshelf/bytecode\"\
+    end\
+    _dir = cache_dir\
+    local searchers = package.loaders or package.searchers\
+    table.insert(searchers, 2, M._search)\
+    M._installed = true\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_page_cache"] = "--[[--\
+The last few shelf pages a page turn left, kept so turning back to one costs\
+no rebuild: its row widgets as built (their own render caches with them) and\
+the page state the build set on the shelf (where the next page starts, the\
+books shown, the badges). A page turn back and forth is the common case this\
+serves; one that builds a page from nothing is unchanged.\
+\
+The cache is only ever right between plain page turns. Anything else that\
+changes a shelf (a rebuild, a refresh of covers or statuses, a setting, the\
+selection, a non-turn swap) clears it, and the key carries what a page shows\
+(the shelf, the drill, the cursor, the items, the data generation, night\
+mode, the geometry), so a stale page is a miss, never a hit.\
+\
+  local PageCache = require(\"lib/bookshelf_page_cache\")\
+  local pc = PageCache.new()\
+  PageCache.put(pc, { key = k, rows = rows, state = state })\
+  local e = PageCache.take(pc, k)   -- removed from the cache: it is live again\
+  PageCache.clear(pc)               -- frees every kept page\
+]]\
+\
+local M = {}\
+\
+-- Six pages: the one just left, the one built ahead of the next turn, and\
+-- the pages of the shelves switched away from (each switch also builds the\
+-- new shelf's next page ahead, so four left room for one other shelf).\
+-- Each holds its row widgets and their renders; a turn's page its pixels\
+-- too (2 MB on a PW5), a page kept by a switch none.\
+M.MAX = 6\
+\
+-- Off switch, for tests and the rig's comparison runs.\
+M.enabled = true\
+\
+function M.new()\
+    return { list = {} }\
+end\
+\
+local function free(entry)\
+    for _i, w in ipairs(entry.rows or {}) do\
+        if w and w.free then pcall(function() w:free() end) end\
+    end\
+    entry.rows = nil\
+    if entry.px and entry.px.bb and entry.px.bb.free then pcall(function() entry.px.bb:free() end) end\
+    entry.px = nil\
+end\
+M._free = free\
+\
+-- take(pc, key) -> the entry kept under key, removed from the cache; nil on\
+-- a miss (or with the cache switched off).\
+function M.take(pc, key)\
+    if not (pc and key and M.enabled) then return nil end\
+    for i, e in ipairs(pc.list) do\
+        if e.key == key then\
+            table.remove(pc.list, i)\
+            return e\
+        end\
+    end\
+    return nil\
+end\
+\
+-- has(pc, key) -> true when a page is kept under key (left in the cache).\
+function M.has(pc, key)\
+    if not (pc and key and M.enabled) then return false end\
+    for _i, e in ipairs(pc.list) do\
+        if e.key == key then return true end\
+    end\
+    return false\
+end\
+\
+-- put(pc, entry): keep entry (newest first); the oldest beyond MAX is freed.\
+-- An entry under a key already kept replaces it.\
+function M.put(pc, entry)\
+    if not (pc and entry and entry.key and M.enabled) then\
+        if entry then free(entry) end\
+        return\
+    end\
+    for i = #pc.list, 1, -1 do\
+        if pc.list[i].key == entry.key then\
+            free(table.remove(pc.list, i))\
+        end\
+    end\
+    table.insert(pc.list, 1, entry)\
+    while #pc.list > M.MAX do\
+        free(table.remove(pc.list))\
+    end\
+end\
+\
+-- clear(pc): free every kept page.\
+function M.clear(pc)\
+    if not pc then return end\
+    for _i, e in ipairs(pc.list) do free(e) end\
+    pc.list = {}\
+end\
+\
+function M.size(pc) return pc and #pc.list or 0 end\
+\
+return M\
+",
+    ["lib/bookshelf_pubdate_format"] = "-- bookshelf_pubdate_format.lua\
+-- A stored publication date (\"YYYY\", \"YYYY-MM\" or \"YYYY-MM-DD\", the shapes\
+-- lib/bookshelf_pubdate's parseDate keeps) shown in a strftime-style layout:\
+-- %published{%d %B %Y}, the book menu's Publish date row, and the decade a\
+-- book goes in on the Decades shelf.\
+--\
+-- os.date cannot do this: it formats a timestamp, and a Kindle's 32-bit\
+-- time_t starts in December 1901, after most public-domain books' dates. So\
+-- the fields are formatted here, and the weekday is worked out from the date.\
+--\
+-- A date has only the parts its source knew: calibre, Hardcover and OPDS\
+-- catalogues give a year. A layout that asks for a part the date lacks gets\
+-- the short form instead (\"Feb 2016\", \"2016\"), the same one the book menu\
+-- shows, rather than a day nobody recorded.\
+--\
+-- Pure apart from the optional name translation (lib/bookshelf_localdate,\
+-- KOReader's own day and month translations), so it can be lifted elsewhere.\
+\
+local M = {}\
+\
+local MONTHS = { \"January\", \"February\", \"March\", \"April\", \"May\", \"June\", \"July\",\
+                 \"August\", \"September\", \"October\", \"November\", \"December\" }\
+local MONTHS_SHORT = { \"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\",\
+                       \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\" }\
+local DAYS = { \"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", \"Saturday\" }\
+local DAYS_SHORT = { \"Sun\", \"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\" }\
+\
+-- An English name in the interface language. Looked up per call, not cached:\
+-- the module is also loaded outside KOReader (tests), where there is none.\
+local function tr(name)\
+    local ok, L = pcall(require, \"lib/bookshelf_localdate\")\
+    if ok and type(L) == \"table\" and L.localize then return L.localize(name) or name end\
+    return name\
+end\
+\
+-- parts(date) -> y, m, d as numbers (m and d nil when the date has none).\
+local function parts(date)\
+    if type(date) ~= \"string\" then return nil end\
+    local y, m, d = date:match(\"^(%d%d%d%d)%-?(%d*)%-?(%d*)$\")\
+    y, m, d = tonumber(y), tonumber(m), tonumber(d)\
+    if not y then return nil end\
+    if not m or m < 1 or m > 12 then return y end\
+    if not d or d < 1 or d > 31 then return y, m end\
+    return y, m, d\
+end\
+\
+-- weekday(y, m, d) -> 0 (Sunday) to 6. Sakamoto's method: proleptic\
+-- Gregorian, any year, no clock involved.\
+local SAKAMOTO = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 }\
+local function weekday(y, m, d)\
+    if m < 3 then y = y - 1 end\
+    return (y + math.floor(y / 4) - math.floor(y / 100) + math.floor(y / 400)\
+            + SAKAMOTO[m] + d) % 7\
+end\
+\
+-- What each code needs, and how it prints.\
+local NEEDS = { Y = 1, y = 1, m = 2, B = 2, b = 2, d = 3, e = 3, A = 3, a = 3, [\"-d\"] = 3 }\
+local CODES = {\
+    Y = function(y) return string.format(\"%04d\", y) end,\
+    y = function(y) return string.format(\"%02d\", y % 100) end,\
+    m = function(_, m) return string.format(\"%02d\", m) end,\
+    B = function(_, m) return tr(MONTHS[m]) end,\
+    b = function(_, m) return tr(MONTHS_SHORT[m]) end,\
+    d = function(_, _, d) return string.format(\"%02d\", d) end,\
+    [\"-d\"] = function(_, _, d) return tostring(d) end,\
+    e = function(_, _, d) return string.format(\"%2d\", d) end,\
+    A = function(y, m, d) return tr(DAYS[weekday(y, m, d) + 1]) end,\
+    a = function(y, m, d) return tr(DAYS_SHORT[weekday(y, m, d) + 1]) end,\
+}\
+\
+-- short(date) -> \"18 Feb 2016\", \"Feb 2016\" or \"2016\"; \"\" for no date. A\
+-- string that is not a stored date comes back as it is.\
+function M.short(date)\
+    if date == nil or date == \"\" then return \"\" end\
+    local y, m, d = parts(date)\
+    if not y then return tostring(date) end\
+    if d then return string.format(\"%02d %s %04d\", d, tr(MONTHS_SHORT[m]), y) end\
+    if m then return string.format(\"%s %04d\", tr(MONTHS_SHORT[m]), y) end\
+    return string.format(\"%04d\", y)\
+end\
+\
+-- format(date, spec) -> the date in spec's layout; the short form when the\
+-- date lacks a part spec asks for; \"\" for no date.\
+function M.format(date, spec)\
+    local y, m, d = parts(date)\
+    if not y then return \"\" end\
+    spec = tostring(spec or \"\")\
+    local have = d and 3 or m and 2 or 1\
+    -- One pass to see what the layout asks for (\"%%\" is a literal percent).\
+    for code in spec:gmatch(\"%%(%-?.)\") do\
+        local need = NEEDS[code]\
+        if need and need > have then return M.short(date) end\
+    end\
+    return (spec:gsub(\"%%(%-?.)\", function(code)\
+        if code == \"%\" then return \"%\" end\
+        local f = CODES[code]\
+        if f then return f(y, m, d) end\
+        -- \"%-x\" for an x we do not know: give back exactly what was typed.\
+        return \"%\" .. code\
+    end))\
+end\
+\
+-- decade(date) -> 1850 for any date in 1850-1859; nil for no date.\
+function M.decade(date)\
+    local y = parts(date)\
+    return y and (y - y % 10) or nil\
+end\
+\
+-- decadeLabel(1850) -> \"1850s\"\
+function M.decadeLabel(decade)\
+    return string.format(\"%ds\", decade)\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_scale"] = "-- lib/bookshelf_scale.lua\
+-- Scale.cover(src, w, h) -> a new w x h copy of a cover; src is untouched.\
+--\
+-- Two scalers, each cheaper for a different job. Blitbuffer:scale is a\
+-- per-pixel Lua loop: its cost follows the OUTPUT (on a PW5 ~0.4 us a pixel,\
+-- 40 ms for a 259x390 shelf cover). MuPDF's follows the SOURCE (10-14 ms for\
+-- a 597x901 cover, whatever the target). So MuPDF for a downscale to more\
+-- than a twentieth of the source, the Lua loop for a small thumbnail -- and\
+-- for every upscale, the direction MuPDF is documented to corrupt on Kindle.\
+local M = {}\
+\
+-- MuPDF once the output is more than 1/RATIO of the source (the measured\
+-- crossover: a 597x901 cover breaks even near a 130x195 target).\
+local RATIO = 20\
+\
+local Mupdf -- nil = not tried, false = unavailable\
+\
+function M.cover(src, w, h)\
+    w, h = math.floor(w), math.floor(h)\
+    local sw, sh = src:getWidth(), src:getHeight()\
+    if w <= sw and h <= sh and w * h * RATIO > sw * sh then\
+        if Mupdf == nil then\
+            local ok, m = pcall(require, \"ffi/mupdf\")\
+            Mupdf = ok and m or false\
+        end\
+        if Mupdf then\
+            local ok, out = pcall(Mupdf.scaleBlitBuffer, src, w, h)\
+            if ok and out then return out end\
+        end\
+    end\
+    return src:scale(w, h)\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_slice"] = "-- lib/bookshelf_slice.lua\
+-- Work that cannot stop by itself, run in steps.\
+--\
+-- Background work on the shelf runs in the UI thread, and a swipe that\
+-- arrives during a step waits for it. Building the next page ahead was one\
+-- step however many covers it decoded: 0.5-0.8 s on a Series shelf on a PW5.\
+-- Slice.start(fn) runs fn in a coroutine; Slice.step(job, over) resumes it\
+-- until it finishes or a Slice.check() inside finds over() true, then hands\
+-- the step back. Code calls check() only where pausing is safe (before a\
+-- cover decode, between rows). Outside a slice check() does nothing, so an\
+-- ordinary page turn is untouched.\
+local M = {}\
+\
+local current -- { co, over } of the step running now\
+\
+-- start(fn) -> job\
+function M.start(fn)\
+    return { co = coroutine.create(fn) }\
+end\
+\
+-- step(job, over) -> finished, ok, err\
+function M.step(job, over)\
+    local prev = current\
+    current = { co = job.co, over = over }\
+    local ok, err = coroutine.resume(job.co)\
+    current = prev\
+    if not ok then return true, false, err end\
+    return coroutine.status(job.co) == \"dead\", true\
+end\
+\
+-- check(): pause here when the step's time is up.\
+function M.check()\
+    local c = current\
+    if not c or coroutine.running() ~= c.co then return end\
+    -- Never through a C boundary (a sort comparator, say), where a yield\
+    -- raises instead.\
+    if coroutine.isyieldable and not coroutine.isyieldable() then return end\
+    if c.over() then coroutine.yield() end\
+end\
+\
+return M\
 ",
     ["features/sui_menu_hide"] = "-- sui_menu_hide.lua — Simple UI\
 --\

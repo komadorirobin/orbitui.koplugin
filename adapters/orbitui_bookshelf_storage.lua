@@ -49,7 +49,8 @@ local function ensureParent(path)
     return path
 end
 
-M.paths = { preserveReaderSettings = true, preserveLegacyOrnamentDecks = true }
+M.paths = { preserveReaderSettings = true, preserveLegacyOrnamentDecks = true,
+    preserveLegacyPosition = true, deferBytecodeCache = true }
 function M.paths.settingsDir() return ds():getSettingsDir() .. "/bookshelf" end
 function M.paths.cacheDir() return ds():getDataDir() .. "/cache/bookshelf" end
 function M.paths.settingsFile(name)
@@ -76,6 +77,7 @@ function M.wrapStore(store)
     if useNativeLayout() then return store end
     local read, save, defer = store.read, store.save, store.saveDeferred
     local delete, flush, generation = store.delete, store.flush, store.generation
+    local flushPending = store.flushPending
     local isTrue, nilOrTrue = store.isTrue, store.nilOrTrue
     local changed, dirty = 0, false
     local function write(key, value, deferred)
@@ -109,6 +111,12 @@ function M.wrapStore(store)
     function store.flush()
         flush()
         if dirty then G_reader_settings:flush(); dirty = false end
+    end
+    if flushPending then
+        function store.flushPending()
+            flushPending()
+            if dirty then G_reader_settings:flush(); dirty = false end
+        end
     end
     function store.generation() return generation() + changed end
     function store.isTrue(key)

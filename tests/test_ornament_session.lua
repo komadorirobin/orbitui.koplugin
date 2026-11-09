@@ -252,6 +252,8 @@ H.test("native page signatures see the shuffle before caching the first rendered
         _spineSkip = function() return 0 end, _spinePageFirsts = function() error("Unexpected replan") end,
         _ornKey = widgetMethod("_ornKey"), _ornSig = widgetMethod("_ornSig"),
         _ornFirstState = widgetMethod("_ornFirstState"), _ornDrill = function() return nil end,
+        _ornRemember = widgetMethod("_ornRemember"), _ornSavedSig = widgetMethod("_ornSavedSig"),
+        _ornSaved = widgetMethod("_ornSaved"),
     }
     local start = widgetMethod("_ornStartState")
     H.eq(start(widget).n, 0)

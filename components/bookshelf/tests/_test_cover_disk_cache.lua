@@ -501,6 +501,8 @@ end)
 t.test("failed pixel writes retain the previous usable cover and close the file", function()
     Cache.clear(); Cache.MAX_BYTES = 1000
     assert(Cache.store("/books/diskfull", makeBB(16, 16, 7)))
+    local stdio = Cache._stdio
+    Cache._stdio = false -- this case injects a Lua file write failure
     local open, file_closed = io.open, false
     io.open = function(path, mode)
         if mode == "wb" and path:match("%.tmp$") then
@@ -514,9 +516,27 @@ t.test("failed pixel writes retain the previous usable cover and close the file"
     end
     local stored = Cache.store("/books/diskfull", makeBB(16, 16, 9))
     io.open = open
+    Cache._stdio = stdio
     assert(not stored and file_closed)
     assert(Cache.load("/books/diskfull").data[0] == 7)
     Cache.setActive(false)
+end)
+t.test("short C writes and failed C close retain the previous cover", function()
+    Cache.clear(); Cache.MAX_BYTES = 1000
+    assert(Cache.store("/books/c-full", makeBB(16, 16, 7)))
+    local stdio = Cache._stdio
+    for _, close_fails in ipairs({ false, true }) do
+        local closes = 0
+        Cache._stdio = { C = {
+            fopen = function() return {} end,
+            fwrite = function(_, _, size) return close_fails and size or 0 end,
+            fclose = function() closes = closes + 1; return close_fails and -1 or 0 end,
+        } }
+        local stored = Cache.store("/books/c-full", makeBB(16, 16, 9))
+        Cache._stdio = stdio
+        assert(not stored and closes == 1)
+        assert(Cache.load("/books/c-full").data[0] == 7)
+    end
 end)
 Cache._auto = false
 package.loaded["ui/uimanager"] = nil

@@ -65,11 +65,14 @@ H.test("explicit metadata reload keeps cooperative refresh and retires grouped c
     assert(next(env._light_meta_cache) == nil and env._light_meta_rows_cache == nil)
 end)
 H.test("wallpaper fit bounds native allocation without changing normal geometry", function()
-    local M = {}
+    local M = { FILL_DECODE_SCREENS = 4 }
     run(assert(read("components/bookshelf/lib/bookshelf_wallpaper.lua"):match(
         "(function M.fitLayout%b().-\nend)")), { M = M })
-    H.eq(M.fitLayout(1, 1000000000, 1200, 1600, "fill"), nil)
-    H.eq(M.fitLayout(1000000000, 1, 1200, 1600, "fill"), nil)
+    for _, size in ipairs({ { 1, 1000000000 }, { 1000000000, 1 } }) do
+        local w, h, x, y, crop = M.fitLayout(size[1], size[2], 1200, 1600, "fill")
+        H.eq(w, 1200); H.eq(h, 1600); H.eq(x, 0); H.eq(y, 0)
+        assert(crop and crop[3] <= size[1] and crop[4] <= size[2])
+    end
     local w, h, x, y = M.fitLayout(1000, 1000, 1200, 1600, "fill")
     H.eq(w, 1600); H.eq(h, 1600); H.eq(x, -200); H.eq(y, 0)
     w, h, x, y = M.fitLayout(1000, 1000, 1200, 1600, "fit")

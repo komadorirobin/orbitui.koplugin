@@ -129,7 +129,9 @@ end
 
 local function subStoreFor(key)
     if type(key) ~= "string" then return nil end
-    if POSITION_KEYS[key] then return pos() end
+    -- Hosted OTA/code rollback still reads the existing settings keys. Do not
+    -- remove their old copies or silently split a second navigation owner.
+    if POSITION_KEYS[key] and not Paths.preserveLegacyPosition then return pos() end
     if key == "ornament_decks" then return od() end
     if key:sub(1, 12) == "micromodule_" then return mm() end
     if key == "hardcover_links" then return hc() end

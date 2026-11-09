@@ -264,6 +264,14 @@ function Box:_initSlipcase()
         self.more = TextWidget:new{ text = more_text,
             face = countFace(shape.label_size, font), padding = 0 }
     end
+    if self.preserve_cover_aspect then self:_fitSlipcaseCount(shape, font, more_text) end
+    -- Plain fronts have labels but no sticker: do not even resolve/decode a
+    -- custom series image or build a cover that will never be painted.
+    if shape.plain then
+        self.st_w, self.st_h, self.st_dx, self.st_dy = self.art_w, self.art_h, 0, 0
+        self:_initSlipcaseName(entry, shape, font)
+        return
+    end
     -- The series' own image, when it has one (set from its long-press menu,
     -- or found in the image library's series/ folder), in place of the first
     -- cover: the box set's front, as on its stack in covers view.
@@ -300,28 +308,35 @@ function Box:_initSlipcase()
     local SpineWidget = require("lib/bookshelf_spine_widget")
     local cover_w, cover_h = self.st_w, self.st_full_h
     if self.preserve_cover_aspect then
-        local count_size = shape.label_size
-        local head_room = shape.rise - shape.wall_top
-        local label_gap = math.max(2, Screen:scaleBySize(3))
-        while (self.count:getSize().w + (self.more and self.more:getSize().w + label_gap or 0) > self.art_w
-                or (shape.count_in_heads and self.count:getSize().h > head_room - 2)) and count_size > 1 do
-            local text = self.count.text
-            self.count:free()
-            count_size = count_size - 1
-            self.count = TextWidget:new{ text = text, face = countFace(count_size, font), padding = 0 }
-            if self.more then
-                self.more:free()
-                self.more = TextWidget:new{ text = more_text, face = countFace(count_size, font), padding = 0 }
-            end
-        end
-        local E = STICKER_EDGE_PX
-        self.count_band_h = shape.count_in_heads and 0 or math.min(math.max(0, self.art_h - 2 * E - 1),
-            self.count:getSize().h + math.max(2, Screen:scaleBySize(3)))
         cover_w, cover_h = self:_fitSticker(aspect)
         -- Remove only the native tile's border, not pixels from the cover.
         self.art_crop = SpineWidget.CARD_BORDER
     end
     self:_makeArtCover(cover_w, cover_h)
+    self:_initSlipcaseName(entry, shape, font)
+end
+
+function Box:_fitSlipcaseCount(shape, font, more_text)
+    local count_size = shape.label_size
+    local head_room = shape.rise - shape.wall_top
+    local label_gap = math.max(2, Screen:scaleBySize(3))
+    while (self.count:getSize().w + (self.more and self.more:getSize().w + label_gap or 0) > self.art_w
+            or (shape.count_in_heads and self.count:getSize().h > head_room - 2)) and count_size > 1 do
+        local text = self.count.text
+        self.count:free()
+        count_size = count_size - 1
+        self.count = TextWidget:new{ text = text, face = countFace(count_size, font), padding = 0 }
+        if self.more then
+            self.more:free()
+            self.more = TextWidget:new{ text = more_text, face = countFace(count_size, font), padding = 0 }
+        end
+    end
+    local E = STICKER_EDGE_PX
+    self.count_band_h = shape.count_in_heads and 0 or math.min(math.max(0, self.art_h - 2 * E - 1),
+        self.count:getSize().h + math.max(2, Screen:scaleBySize(3)))
+end
+
+function Box:_initSlipcaseName(entry, shape, font)
     if shape.title_on_cover then return end -- An optional host painter owns the inset title.
     local room = math.max(1, self.art_w - 2 * shape.pad)
     if shape.name_lines then

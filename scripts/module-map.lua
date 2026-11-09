@@ -10,6 +10,8 @@ local embedded_names = {
     "lib/bookshelf_module_breaker", "lib/bookshelf_module_layout",
     "lib/bookshelf_folder_label",
     "lib/bookshelf_drill_rekey",
+    "lib/bookshelf_bytecode", "lib/bookshelf_page_cache",
+    "lib/bookshelf_pubdate_format", "lib/bookshelf_scale", "lib/bookshelf_slice",
     "features/sui_menu_hide", "features/sui_patch_compat", "infra/sui_migrations",
     "modules/critter/book", "modules/critter/game_lines", "modules/critter/games",
     "modules/critter/menu", "modules/critter/panel_row", "modules/critter/settings",

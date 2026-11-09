@@ -17,7 +17,8 @@ local rb = assert(W:match("\nfunction BookshelfWidget:_rebuild%(%)\n(.-)\nend\n"
 t.test("the fallback to the first shelf left syncs the theme again", function()
     local i = assert(rb:find("self.chip = active_chips[1].key", 1, true))
     local j = assert(rb:find('BookshelfSettings.saveDeferred("active_chip", self.chip)', i, true))
-    local block = rb:sub(i, j + 200)
+    local finish = assert(rb:find("-- Append a search", j, true))
+    local block = rb:sub(i, finish)
     assert(block:find("self:_syncShelfTheme()", 1, true), "the shelf fallen back to wears the gone shelf's theme")
 end)
 

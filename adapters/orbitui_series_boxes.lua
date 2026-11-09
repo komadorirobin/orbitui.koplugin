@@ -122,6 +122,11 @@ local function nativeTab(self)
 end
 
 function M.widget(widget)
+    local coverBoxes = widget._coverSeriesBoxes
+    if coverBoxes then widget._coverSeriesBoxes = function(self)
+        if require("adapters/orbitui_appearance").policy().boxes == "off" then return false end
+        return coverBoxes(self)
+    end end
     -- Presets change policy, never the saved per-shelf choices or box design.
     widget._seriesBoxesEnabled = function(self)
         local last, tab = tip(self), nativeTab(self)

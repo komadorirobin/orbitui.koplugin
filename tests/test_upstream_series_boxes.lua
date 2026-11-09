@@ -52,7 +52,7 @@ local function widget(raw)
     }
     for _, name in ipairs({"_prepareSpineItems", "_spineCachedFetch", "_spineItemsSig",
             "_spineUpdateBookCounts", "_serializeDrillPath", "_restoreDrillPath",
-            "_applyWithinGroupSort"}) do
+            "_applyWithinGroupSort", "_coverSeriesBoxes", "_seriesBoxPage"}) do
         w[name] = method(name, {Repo = Repo, SPINE_ALL_LIMIT = 10000,
             FolderLabel = {display = function(label) return label end}})
     end

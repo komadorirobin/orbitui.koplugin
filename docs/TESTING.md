@@ -1,5 +1,33 @@
 # Verification and device acceptance
 
+## 2026-11-09 — reviewed 6.4.1 integration for the 1.2 preview
+
+After stable 1.1, import Bookshelf 3fe9702d in unsquashed 68f2fcf3, keep SimpleUI
+4426601f. Separate adaptations retain the host's profile/dock/navigation/series/
+binding/ornament/external owners and conservative migration/background gates.
+New whole-page pixels/build-ahead, bytecode-searcher and position-file split are
+deferred in the host; stock source tests still exercise their native behavior.
+Five new exact-source helpers keep 33 embedded / 412 identities and API1's
+unchanged 2,000 installed paths. No artwork, settings, sidecar/cache reset or
+device/server operation. Stable tags/assets/maintenance branches are unchanged.
+
+New checks cover canonical/embedded source identity, no competing bytecode
+searcher/cache writes, deferred page cache, late closed/suspended callbacks,
+section/root-sensitive list keys, new profile styles/SV labels, old navigation
+keys and flushPending reader persistence, scoped Decades/restore and Lua/C
+disk-full/close failures preserving the previous cover. Retained native partial
+fixtures are updated for actual new dependencies/control values, not skipped.
+No new test exclusions. Both complete scripts/43 catalogs, frozen sealed roots,
+minimum/current native sandbox/Font/input/raster/Silverfish/SQLite/EPUB/search,
+actual old installers, source/history/art/secrets and exact CI/draft/public
+gates must pass before publication; evidence upstream-20261109.
+
+Physical Bigme font/layout/touch/rotation/wake/night, new style/Decades controls,
+large-library extraction/cropping and resource/timing checks remain outstanding.
+General beta.12 acceptance covers stable 1.1, not these newly merged paths.
+Expected cache/metadata benefits are not measured Bigme speedups. Frozen and
+publication receipts follow only after the corresponding checks complete.
+
 ## 2026-11-09 — stable 1.1 promotion; upstream reserved for 1.2
 
 Published **2026-11-09 05:07:44 UTC**, release **438759601**, source/tag

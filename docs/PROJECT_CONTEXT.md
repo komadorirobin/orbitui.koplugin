@@ -22,6 +22,21 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-09
 
+- **Reviewed 1.2 upstream integration in progress.** Stable 1.1 is public and
+  maintenance/1.1 is preserved at 16cae997. Bookshelf 60 commits through 6.4.1
+  3fe9702d imported unsquashed as 68f2fcf3; SimpleUI 4426601f is unchanged.
+  Stable README refresh f53840db is public (CI 42566976676 green) and merged
+  separately into this branch. Follow-up adaptations preserve C01–C11: scoped
+  lists/decades/styles, host bindings/dock/series/ornaments, cancellable background
+  work, atomic disk-cache failures and SV/EN. Five new helpers are exact-source
+  embedded (33/412), keeping the identical 2,000 API1 paths. Host defers new
+  bytecode searcher, position-file split and whole-page cache/build-ahead; prior
+  automatic publication-file reads/folder-delete deferrals remain. No saved
+  data reset, new sync owner, device/server operation or stable-byte replacement.
+  Full/sealed/native/older-installer/source/history/CI/public gates precede
+  the explicitly authorized 1.2.0-beta.1 publication. Bigme timings and new UI
+  acceptance remain unmeasured/unverified. Evidence upstream-20261109.
+
 - **Stable 1.1 README refresh requested during the separate 1.2 merge.**
   Replace the historical beta diary with a current, moderately promotional
   overview and stable install links. Highlight OrbitUI's own connected workflow,

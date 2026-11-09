@@ -157,6 +157,7 @@ t.test("a shelf of shelves' own shelves warm one per step BEFORE it, and only af
     }
     local env = setmetatable({
         BookshelfSettings = { nilOrTrue = function() return true end },
+        _androidSafeModeEnabled = function() return false end,
         UIManager = { scheduleIn = function() scheduled = scheduled + 1 end },
         CHIP_PRELOAD_DELAY_S = 1,
         require = function(n)

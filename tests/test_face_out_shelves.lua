@@ -24,6 +24,7 @@ end
 -- Exercise the native normalization and geometry helpers without loading the
 -- rendering stack; the component suites cover full planning and pagination.
 local SS = { BOOK_GAP_DP = 0, GROUP_GAP_DP = 12,
+    spineTextScale = function() return 1 end,
     endMargin = function(h) return math.floor(h / 10) end }
 local model = assert(source("bookshelf_spine_shelf"):match(
     "(SpineShelf%.FACE_REASONS.-)\n%-%- recentSetForItems"))
@@ -43,6 +44,8 @@ local Widget = Integration.wrap("lib/bookshelf_widget", {
     _spineFaceOut = function() error("Legacy face-out rules must not apply") end,
     _spineFaceRecent = widgetMethod("_spineFaceRecent"),
     _spinePlanBase = widgetMethod("_spinePlanBase"),
+    _spineSameSize = function() return nil end,
+    _seriesBoxStyle = function() return nil end,
     _layoutPrimitives = function() return {} end,
     _rowGap = function() return 12 end,
     _ornDrill = function() return nil end,

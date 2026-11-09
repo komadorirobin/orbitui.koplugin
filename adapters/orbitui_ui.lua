@@ -46,6 +46,7 @@ M.modules = {
     ["lib/bookshelf_color"] = true,
     ["lib/bookshelf_tokens"] = true,
     ["lib/bookshelf_published"] = true,
+    ["lib/bookshelf_page_cache"] = true,
 }
 
 local function settingsEntry(items, old_key)
@@ -73,6 +74,12 @@ function M.wrap(name, module)
         -- No new Android fork or unowned background scan during paint.
         -- Cached/curated years and explicit local date edits are retained.
         module.orbitui_defer_file_reads = true
+    elseif name == "lib/bookshelf_page_cache" then
+        -- Whole-page pixels/row trees are bounded by count upstream, not by
+        -- colour-buffer bytes, and include the host dock's painted band.
+        -- Defer this new cache/build-ahead owner until those two contracts
+        -- are verified; native thumbnail/list reuse remains available.
+        module.enabled = false
     elseif name == "lib/bookshelf_tokens" then
         require("adapters/orbitui_shelf_sort").tokens(module)
     elseif name == "features/sui_wallpaper" or name == "lib/bookshelf_wallpaper" then
@@ -154,7 +161,7 @@ function M.wrap(name, module)
         local Host = require("core/orbitui_host")
         for key, label in pairs({ _rebuild = "shelf", _paginateNext = "next", _paginatePrev = "previous",
                 _launchReader = "open" }) do Host.timeMethod(module, key, label) end
-        for _, key in ipairs({ "_schedulePreload", "_queueWarmForVisible" }) do
+        for _, key in ipairs({ "_schedulePreload", "_queueWarmForVisible", "_pageAheadArm" }) do
             local original = module[key]
             if original then module[key] = function(self, ...)
                 if Host.allowSpeculation() then return original(self, ...) end

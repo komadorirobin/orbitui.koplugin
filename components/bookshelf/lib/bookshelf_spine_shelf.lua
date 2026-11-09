@@ -2422,7 +2422,7 @@ function SpineBookSlot:_renderIntoAt(bb, x, y, night)
                               _tintColor(look, _rampF(i, spine_w), night))
         end
         _paintBorderRGB32(bb, x, body_top, spine_w, spine_h - edge_h, hairline,
-                          skin and _tintColor(e.look, 0.8, night) or _boardColor(e.look, night))
+                          skin and _bindingTint(e.look, 0.8, night, skin) or _boardColor(e.look, night))
     end
     if e.body ~= false and skin and skin.accent then
         -- A plain jacket with a small cover-coloured headband, not raised ribs.

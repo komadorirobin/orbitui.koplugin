@@ -77,26 +77,21 @@ local function rig(opts)
         _rebuild = function() log.rebuilds = log.rebuilds + 1 end,
         _opdsEnsureCovers = function() log.rearms = (log.rearms or 0) + 1 end,
         _opdsLookaheadItem = function()
-            local left = (opts.lookahead_pages or 0) - (log.pages_queued or 0)
+            local allowance = opts.lookahead_pages or opts.pages_ahead
+                or (opts.plan and math.max(0, opts.plan - 1)) or 0
+            local left = allowance - (log.pages_queued or 0)
             if left <= 0 then return nil end
             log.pages_queued = (log.pages_queued or 0) + 1
+            local url = log.last_store_url or "https://c/list"
             return { kind = "page", server_key = "srv",
-                     feed_url = "https://c/list",
-                     fetch_url = "https://c/list?p=" .. (log.pages_queued + 2),
+                     feed_url = url,
+                     fetch_url = url .. "?p=" .. (log.pages_queued + 2),
                      plan = opts.plan or 6, timeouts = {} }
         end,
         -- Seeded exactly as _opdsEnsureCovers does before starting a chain:
         -- the step compares the token it was handed against this, so a rig
         -- that leaves it nil makes every step read as superseded.
         _opds_cover_token = opts.token or 7,
-        -- The page after the one that just landed, while there is one.
-        _opdsLookaheadItem = function()
-            log.lookahead = (log.lookahead or 0) + 1
-            local n = log.lookahead + 2
-            if opts.pages_ahead and n > opts.pages_ahead + 1 then return nil end
-            return { kind = "page", server_key = "srv", feed_url = "https://c/feed",
-                     fetch_url = "https://c/feed?p=" .. n, plan = opts.plan }
-        end,
     }
     BookshelfWidget.live = self_tbl
     local env = {
@@ -130,11 +125,6 @@ local function rig(opts)
             log.stored[#log.stored + 1] = url
             return true
         end,
-        _storeFeedPage            = function(_sk, store_url, fetch_url, _body)
-            if opts.page_store_fails then return false end
-            log.paged[#log.paged + 1] = { store_url = store_url, fetch_url = fetch_url }
-            return true
-        end,
         -- A resolved folder that turned out to hold one book hands back the
         -- cover work that book created; a folder holding several returns nil.
         -- opts.resolved_covers maps feed url -> record id to queue.
@@ -147,7 +137,10 @@ local function rig(opts)
         -- A lookahead page item lands through this; opts.page_store_fails
         -- maps fetch url -> true.
         _storeFeedPage            = function(sk, feed_url, fetch_url, body)
-            if opts.page_store_fails and opts.page_store_fails[fetch_url] then return false end
+            if opts.page_store_fails == true or
+                    (type(opts.page_store_fails) == "table" and opts.page_store_fails[fetch_url]) then return false end
+            log.paged[#log.paged + 1] = { store_url = feed_url, fetch_url = fetch_url }
+            log.last_store_url = feed_url
             log.pages = log.pages or {}
             log.pages[#log.pages + 1] = fetch_url
             return true

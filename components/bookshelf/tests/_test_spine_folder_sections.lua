@@ -88,6 +88,7 @@ local function dispatch(profile, spine, drilled)
     local obj = {
         chip = "manga", profile = profile and {} or nil, _cursor = 7,
         _viewSize = function() return 10 end,
+        _coverSeriesBoxes = function() return false end,
         _profileScope = function() return profile and scope or nil end,
         _profileChip = function() return profile and { kind = "folder", path = "/lib/Manga" } end,
     }

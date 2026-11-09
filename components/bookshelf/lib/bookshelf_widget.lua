@@ -1167,6 +1167,17 @@ function BookshelfWidget:_profileSettingKey()
     return "active_chip"
 end
 
+-- Retained lists/deal fingerprints must never alias identically named chips
+-- in independent sections, including an edited root set on the same section.
+function BookshelfWidget:_profileCacheKey()
+    if not self.profile then return "" end
+    local parts = { tostring(self.profile.key), tostring(BookshelfSettings.read("latest_walk_depth")) }
+    for _, root in ipairs(self.profile.roots or {}) do
+        parts[#parts + 1] = type(root) == "table" and tostring(root.path) or tostring(root)
+    end
+    return table.concat(parts, "\0")
+end
+
 local function _normFolderPath(path)
     if type(path) ~= "string" or path == "" then return nil end
     return path:gsub("/+$", "")
@@ -4273,7 +4284,8 @@ local BIM_APPLY_GAP_S = 2.5
 -- at once; then at most once per BIM_APPLY_GAP_S, the rest collected.
 function BookshelfWidget:_applyExtractionReady()
     local acc = self._bim_ready_acc
-    if self._closed or not acc or not next(acc.paths) then return end
+    if self._closed or self._orbitui_suspended or not acc or not next(acc.paths) then return end
+    if UIManager.getTopmostVisibleWidget and UIManager:getTopmostVisibleWidget() ~= self then return end
     if not (self._inner_vgroup and self._shelf_dims) then return end
     local wait = (self._bim_applied_at or -math.huge) + BIM_APPLY_GAP_S - _gettime()
     -- And not while the reader swipes: a redraw is 0.5-1 s nothing can
@@ -4281,10 +4293,13 @@ function BookshelfWidget:_applyExtractionReady()
     wait = math.max(wait, self:_inputBusyFor())
     if wait > 0 then
         if not self._bim_apply_fn then
-            self._bim_apply_fn = function()
+            local apply
+            apply = function()
+                if self._bim_apply_fn ~= apply then return end
                 self._bim_apply_fn = nil
                 self:_applyExtractionReady()
             end
+            self._bim_apply_fn = apply
             UIManager:scheduleIn(wait, self._bim_apply_fn)
         end
         return
@@ -4806,7 +4821,35 @@ function BookshelfWidget:_fetchChipItems(n, want_all)
             { kind = "opds", id = pay.server_key, feed_url = pay.feed_url },
             nil, nil, offset, LIMIT, fetch_opts)
     end
-    local profile_chip = self:_profileChip(self.chip)
+    local profile_chip = self._profileChip and self:_profileChip(self.chip)
+    local box_source = profile_chip and profile_chip.source or (not self.profile and tab and tab.source)
+    if profile_chip and not box_source then
+        if profile_chip.kind == "folder" then box_source = { kind = "folder", id = profile_chip.path }
+        elseif profile_chip.kind == "latest" then box_source = { kind = "latest" } end
+    end
+    -- Gather only a complete, light, scoped book list before counting series
+    -- tiles. A folder/group or a partial/paged result retains its native view.
+    if not tip and box_source and self:_coverSeriesBoxes() then
+        local all, hint
+        local config = profile_chip or tab or {}
+        if profile_scope then
+            all, hint = Repo.getBySource(box_source, config.filter,
+                config.sort_priority, 0, SPINE_ALL_LIMIT, profile_scope, { light_only = true })
+        else
+            all, hint = Repo.getBySource(box_source, config.filter, config.sort_priority,
+                0, SPINE_ALL_LIMIT, { light_only = true })
+        end
+        local whole = type(all) == "table" and not (hint and hint > #all)
+        if whole then
+            for _, it in ipairs(all) do
+                if type(it) ~= "table" or not it.filepath then whole = false; break end
+            end
+        end
+        if whole then
+            local books = require("lib/bookshelf_series_boxes").prepare(all, Repo.lightMetaFor)
+            return self:_seriesBoxPage(books, true, want_all, n)
+        end
+    end
     if profile_chip and profile_chip.kind == "folder" then
         if Repo.spine_light then
             local sopts = {}
@@ -9083,7 +9126,8 @@ end
 -- when it is Equal height, else nil (Varied, the default: each book's own
 -- height and thickness). See SpineShelf.bookShape.
 function BookshelfWidget:_spineSameSize()
-    local tab = require("lib/bookshelf_tab_model").getById(self.chip)
+    local tab = (self._profileShelfSettings and self:_profileShelfSettings())
+        or require("lib/bookshelf_tab_model").getById(self.chip)
     local v = tab and tab.spine_same_size
     if v == true or v == "height" then return v end
     return nil
@@ -9105,13 +9149,15 @@ end
 -- _seriesBoxStyle() -> "spines" for the spine-out box (Series boxes:
 -- Spines), else nil (the slipcase, with a cover or Plain).
 function BookshelfWidget:_seriesBoxStyle()
-    local tab = require("lib/bookshelf_tab_model").getById(self.chip)
+    local tab = (self._profileShelfSettings and self:_profileShelfSettings())
+        or require("lib/bookshelf_tab_model").getById(self.chip)
     return (tab and tab.series_boxes == "spines") and "spines" or nil
 end
 
 -- _seriesBoxPlain() -> true when this shelf's series boxes have a plain front.
 function BookshelfWidget:_seriesBoxPlain()
-    local tab = require("lib/bookshelf_tab_model").getById(self.chip)
+    local tab = (self._profileShelfSettings and self:_profileShelfSettings())
+        or require("lib/bookshelf_tab_model").getById(self.chip)
     return (tab and tab.series_boxes == "plain") or nil
 end
 
@@ -9123,7 +9169,7 @@ end
 function BookshelfWidget:_coverSeriesBoxes()
     if self:_isSpineMode() then return false end
     local TabModel = require("lib/bookshelf_tab_model")
-    local tab = TabModel.getById(self.chip)
+    local tab = (self._profileShelfSettings and self:_profileShelfSettings()) or TabModel.getById(self.chip)
     if not (tab and tab.series_boxes) or self:_opdsEffectiveTab() then return false end
     local path = self._drilldown_path or {}
     local tip = path[#path]
@@ -9168,6 +9214,8 @@ function BookshelfWidget:_spineCachedFetch(n)
     -- it every turn, which refetched every turn (device log: 10s builds).
     -- Chip edits invalidate explicitly; the TTL bounds everything else.
     local key = tostring(self.chip) .. "|" .. tip_sig
+    if self._profileCacheKey then key = key .. "|profile:" .. self:_profileCacheKey() end
+    local data_gen = Repo and Repo.dataGeneration and Repo.dataGeneration() or nil
     -- The shelf's modules stand in the list (ShelfModules.insertItems): a
     -- move, a resize, an addition is a different list.
     local mods = self._activeShelfModules and self:_activeShelfModules()
@@ -9201,7 +9249,8 @@ function BookshelfWidget:_spineCachedFetch(n)
     -- A fetch-mode source's level (issue 588) is the source's own list:
     -- kept until something expires it (sourceChanged, a refresh, an edit, a
     -- book closing), not for 30 s. Its age says nothing about it.
-    if c and c.key == key and ((c.paged and c.at > 0) or (os.time() - c.at) <= 30) then
+    if c and c.key == key and c.data_gen == data_gen
+            and ((c.paged and c.at > 0) or (os.time() - c.at) <= 30) then
         self._spine_fetch_live = true
         return c.items, nil
     end
@@ -9253,7 +9302,7 @@ function BookshelfWidget:_spineCachedFetch(n)
         end
     end
     self._spine_fetch_live = true
-    self._spine_fetch_cache = { key = key, items = items, at = os.time(), items_sig = sig,
+    self._spine_fetch_cache = { key = key, items = items, at = os.time(), items_sig = sig, data_gen = data_gen,
                                 paged = (self._spineListFromPagedSource
                                          and self:_spineListFromPagedSource()) or nil,
                                 page_orn = page_orn,
@@ -9648,7 +9697,8 @@ function BookshelfWidget:_ornSavedSig(key, dims)
         local Deck = require("lib/bookshelf_ornament_deck")
         local TP = require("lib/bookshelf_theme_pack")
         local names = {}
-        for i, e in ipairs(Deck.order(Orn.listFor(TP.ornamentsFor(self.chip)), self.chip)) do names[i] = e.name end
+        local shelf = self.themeShelfId and self:themeShelfId() or self.chip
+        for i, e in ipairs(Deck.order(Orn.listFor(TP.ornamentsFor(shelf)), shelf)) do names[i] = e.name end
         return table.concat({ Deck.levelOf(Orn.frequency()), table.concat(names, "\1"),
             TP.shelfKey and TP.shelfKey() or "" }, "\3")
     end)
@@ -11286,8 +11336,9 @@ function BookshelfWidget:_collectWhenQuiet(orphans)
     local t_start = _gettime()
     local run
     run = function()
+        if self._collect_fn ~= run then return end
         self._collect_fn = nil
-        if self._closed then return end
+        if self._closed or self._orbitui_suspended then return end
         -- A method, not BACKGROUND_QUIET_S: that local is declared below.
         local busy = self:_inputBusyFor()
         if busy > 0 then
@@ -11362,10 +11413,12 @@ end
 -- when a page must not come from the cache at all (a D-pad focus or a
 -- selection paints into the rows).
 function BookshelfWidget:_pageCacheKey(items, d, n_shelves)
+    if not require("lib/bookshelf_page_cache").enabled then return nil end
     if self._focus_zone ~= nil then return nil end
     if self._selection and self._selection.isActive and self._selection:isActive() then return nil end
     local parts = {
-        tostring(self.chip), self:_viewMode() or "?", tostring(self._cursor),
+        tostring(self.chip), self._profileCacheKey and self:_profileCacheKey() or "",
+        self:_viewMode() or "?", tostring(self._cursor),
         tostring(self:_isSpineMode() and self:_spineSkip() or 0), tostring(n_shelves),
         tostring(d.content_w), tostring(d.shelf_h), tostring(d.book_gap or d.PAD),
         tostring(Repo.dataGeneration and Repo.dataGeneration() or 0),
@@ -11639,9 +11692,11 @@ end
 -- _footerAnchor(d) -> the footer row for the page at the cursor, in its
 -- screen-anchor BottomContainer, ready for the overlap group.
 function BookshelfWidget:_footerAnchor(d)
+    if not d.footer_overlap_idx then return nil end
     local BottomContainer = require("ui/widget/container/bottomcontainer")
     return BottomContainer:new{
-        dimen = Geom:new{ w = self.width, h = self.height - d.FOOTER_BOTTOM_MARGIN },
+        dimen = Geom:new{ w = self.width,
+            h = self.height - self:_simpleUIReservedBottom() - d.FOOTER_BOTTOM_MARGIN },
         self:_buildFooterRow(d.content_w, self._total_pages, d.FOOTER_H),
     }
 end
@@ -11681,8 +11736,8 @@ function BookshelfWidget:_pagePlace(d, n_shelves, items, rows, footer)
         end
     end
     local og = self._overlap_group
-    old.footer = og and og[d.footer_overlap_idx]
-    if og then og[d.footer_overlap_idx] = footer end
+    old.footer = og and d.footer_overlap_idx and og[d.footer_overlap_idx]
+    if og and d.footer_overlap_idx then og[d.footer_overlap_idx] = footer end
     if vg.resetLayout then vg:resetLayout() end
     if og and og.resetLayout then og:resetLayout() end
     return old
@@ -11695,7 +11750,7 @@ function BookshelfWidget:_pageUnplace(d, n_shelves, old)
         vg[idx] = old.rows[r]
         if old.gaps[r] then vg[idx + 1] = old.gaps[r] end
     end
-    if og then og[d.footer_overlap_idx] = old.footer end
+    if og and d.footer_overlap_idx then og[d.footer_overlap_idx] = old.footer end
     if vg.resetLayout then vg:resetLayout() end
     if og and og.resetLayout then og:resetLayout() end
 end
@@ -11835,6 +11890,7 @@ end
 -- _pageAheadRun(): one step of the build; the next is scheduled after it.
 function BookshelfWidget:_pageAheadRun()
     self._page_ahead_fn = nil
+    if self._closed or self._orbitui_suspended then self:_pageAheadCancel(); return end
     local busy = self:_inputBusyFor(PAGE_AHEAD_QUIET_S)
     if busy > 0 then
         self._page_ahead_fn = function() self:_pageAheadRun() end
@@ -14788,6 +14844,19 @@ function BookshelfWidget:_startStatusTimer(background_active)
     Repo.setMetadataRefreshActive(background_active ~= false)
     local disk_cache = package.loaded["lib/bookshelf_cover_disk_cache"]
     if disk_cache then disk_cache.setActive(background_active ~= false) end
+    -- Stop retires the timer, not already completed extraction results. Apply
+    -- them after the shelf is visible again, never synchronously on hot return.
+    if background_active ~= false and self._bim_ready_acc and not self._bim_apply_fn
+            and not self._closed and not self._orbitui_suspended then
+        local apply
+        apply = function()
+            if self._bim_apply_fn ~= apply then return end
+            self._bim_apply_fn = nil
+            self:_applyExtractionReady()
+        end
+        self._bim_apply_fn = apply
+        UIManager:scheduleIn(0.3, apply)
+    end
     -- Restart the file poll here, as the counterpart to _stopStatusTimer's
     -- _cancelFilePoll. Every path that pauses the shelf funnels through that
     -- cancel -- onSuspend, onCloseWidget, _launchReader -- but only _rebuild
@@ -14856,6 +14925,10 @@ function BookshelfWidget:_startStatusTimer(background_active)
 end
 
 function BookshelfWidget:_stopStatusTimer()
+    self:_pageAheadCancel()
+    for _, key in ipairs({ "_collect_fn", "_bim_apply_fn" }) do
+        if self[key] then UIManager:unschedule(self[key]); self[key] = nil end
+    end
     Repo.setMetadataRefreshActive(false)
     local disk_cache = package.loaded["lib/bookshelf_cover_disk_cache"]
     if disk_cache then disk_cache.setActive(false) end
@@ -15132,6 +15205,7 @@ local function flushOpenPickers()
 end
 
 function BookshelfWidget:onSuspend()
+    self._orbitui_suspended = true
     self:_stopStatusTimer()
     -- Suspend can be followed by a SIGTERM (Kindle frame switch) that never
     -- reaches onCloseWidget, so land deferred nav state here too.
@@ -15149,6 +15223,7 @@ function BookshelfWidget:onFlushSettings()
 end
 
 function BookshelfWidget:onResume()
+    self._orbitui_suspended = nil
     -- Resume is broadcast to covered widgets too. Do not restart database
     -- and disk maintenance behind a reader or another home screen.
     self:_startStatusTimer(UIManager:getTopmostVisibleWidget() == self)

@@ -14,7 +14,7 @@ local H = dofile("tests/_helpers.lua")
 local t, eq = H.runner(), H.eq
 local src = io.open("lib/bookshelf_book_repository.lua"):read("*a")
 
-local WALK = assert(src:match("\nlocal function walkBooks%(root, depth, out, current_depth, dirs, listings%)\n(.-)\nend\n"),
+local WALK = assert(src:match("\nlocal function walkBooks%(root, depth, out, current_depth, dirs, listings, work%)\n(.-)\nend\n"),
     "walkBooks moved")
 local SUPPORTED = { epub = true, pdf = true, html = true, cbz = true }
 

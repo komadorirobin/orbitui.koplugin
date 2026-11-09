@@ -7870,18 +7870,27 @@ end)
 local function withDecadeLibrary(dates, fn)
     Repo.invalidateWalkCache()
     Repo.invalidateSeriesCache()
-    local files = { ".", ".." }
+    local tree = { ["/lib"] = { ".", ".." } }
     local bim = {}
     for fp in pairs(dates) do
-        files[#files + 1] = fp:match("[^/]+$")
+        local dir = fp:match("^(.*)/[^/]+$")
+        local parent = dir
+        while not tree[parent] do
+            tree[parent] = { ".", ".." }
+            local up, name = parent:match("^(.*)/([^/]+)$")
+            tree[up] = tree[up] or { ".", ".." }
+            tree[up][#tree[up] + 1] = name
+            parent = up
+        end
+        tree[dir][#tree[dir] + 1] = fp:match("[^/]+$")
         bim[fp] = { title = fp:match("([^/]+)%.epub$"), authors = "A" }
     end
     package.loaded["libs/libkoreader-lfs"].dir = function(path)
-        local f = (path == "/lib") and files or { ".", ".." }
+        local f = tree[path] or { ".", ".." }
         local i = 0; return function() i = i + 1; return f[i] end
     end
-    package.loaded["libs/libkoreader-lfs"].attributes = function(_fp, key)
-        if key == "mode" then return "file" end; return 0
+    package.loaded["libs/libkoreader-lfs"].attributes = function(fp, key)
+        if key == "mode" then return tree[fp] and "directory" or "file" end; return 0
     end
     _G._test_bim_data = bim
     _G._test_settings = { home_dir = "/lib", bookshelf_latest_walk_depth = 1 }
@@ -7921,6 +7930,25 @@ test("getDecades: books go in the decade of their year; no year is Unknown", fun
         for _i, g in ipairs(out) do by[g.series_name] = g end
         assert(by["1850s"] and #by["1850s"].books == 2, "1850s should hold 2 books: " .. names(out))
         assert(by["Unknown"] and #by["Unknown"].books == 1, "Unknown should hold 1 book: " .. names(out))
+    end)
+end)
+
+test("getDecades and restored groups never leak another profile's roots", function()
+    withDecadeLibrary({
+        ["/lib/Prose/a.epub"] = "1951", ["/lib/Prose/b.epub"] = "1993",
+        ["/lib/Manga/c.epub"] = "1991",
+    }, function()
+        local prose, manga = { roots = { "/lib/Prose" } }, { roots = { "/lib/Manga" } }
+        Repo.getDecades(10, 0) -- warm the unscoped shapes first
+        local a, ac = Repo.getBySource({ kind = "decades" }, nil, nil, 0, 10, prose)
+        local b, bc = Repo.getBySource({ kind = "decades" }, nil, nil, 0, 10, manga)
+        assert(ac == 2 and bc == 1 and #a == 2 and #b == 1)
+        local pa = Repo.findGroup("decade", "1990s", prose)
+        local mb = Repo.findGroup("decade", "1990s", manga)
+        assert(#pa.books == 1 and pa.books[1].filepath == "/lib/Prose/b.epub")
+        assert(#mb.books == 1 and mb.books[1].filepath == "/lib/Manga/c.epub")
+        assert(Repo.findGroup("decade", "1950s", manga) == nil)
+        assert(#Repo.getDecades(10, 0, nil, prose) == 2)
     end)
 end)
 

@@ -163,7 +163,7 @@ source_file:close()
 local function widgetMethods()
     local state, methods = {}, {}
     local env = {
-        BookshelfWidget = methods, os = os,
+        BookshelfWidget = methods, os = os, ipairs = ipairs,
         Repo = { setMetadataRefreshActive = function(active) state.metadata = active end },
         package = { loaded = { ["lib/bookshelf_cover_disk_cache"] = {
             setActive = function(active) state.covers = active end,
@@ -184,6 +184,7 @@ local function widgetMethods()
     methods._startFilePoll = function() end
     methods._cancelFilePoll = function() end
     methods._cancelPreload = function() end
+    methods._pageAheadCancel = function() end
     methods._cancelChipPreload = function() end
     methods._flushNavStateNow = function() end
     return methods, state

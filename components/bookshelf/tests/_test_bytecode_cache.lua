@@ -30,7 +30,8 @@ end
 -- A tiny lfs for the module when the real one is not installed.
 package.loaded["libs/libkoreader-lfs"] = lfs_ok and lfs or {
     attributes = function(path)
-        local p = io.popen('stat -c "%Y %s %F" "' .. path .. '" 2>/dev/null')
+        local p = io.popen('(gstat -c "%Y %s %F" "' .. path .. '" 2>/dev/null || stat -c "%Y %s %F" "'
+            .. path .. '" 2>/dev/null)')
         local l = p:read("*l"); p:close()
         if not l then return nil end
         local m, s, kind = l:match("^(%d+) (%d+) (.+)$")

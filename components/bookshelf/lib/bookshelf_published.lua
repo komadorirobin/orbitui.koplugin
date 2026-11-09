@@ -197,6 +197,9 @@ local _migrated = false
 
 local function migrate(F)
     _migrated = true
+    -- No queue is active in the host, so neither drop cached "no date" facts
+    -- nor rewrite the reader version from an ordinary paint/sort operation.
+    if M.orbitui_defer_file_reads then return end
     local ok, Store = pcall(require, "lib/bookshelf_settings_store")
     if not (ok and Store and Store.read and Store.save) then return end
     if (tonumber(Store.read("pubdate_reader_version")) or 1) >= M.READER_VERSION then return end

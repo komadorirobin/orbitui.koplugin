@@ -6,13 +6,19 @@ package.loaded.logger = { dbg = function() end, warn = function() end }
 local Host = require("core/orbitui_host")
 local function read(path) local f = assert(io.open(path)); local s = f:read("*a"); f:close(); return s end
 local function compile(code, env)
+    if env.ScaledCoverCache and not env.ScaledCoverCache.getSized then
+        env.ScaledCoverCache.getSized = function() return nil end
+    end
     setmetatable(env, { __index = _G })
     if setfenv then return setfenv(assert(loadstring(code)), env)() end
     return assert(load(code, "actual thumbnail path", "t", env))()
 end
 local native_source = read(os.getenv("ORBITUI_OLD_THUMB_SOURCE")
     or root .. "/components/bookshelf/lib/bookshelf_spine_widget.lua")
-local body = assert(native_source:match("(local THUMB_CAP =.-\nSpineWidget%._thumbFor = _thumbFor)"))
+local body = assert(native_source:match("(local THUMB_CAP =.-\nSpineWidget%._thumbFor = _thumbFor)")
+    or native_source:match("(local function _thumbFor%b().-\nSpineWidget%._thumbFor = _thumbFor)"))
+local shape = native_source:match("(local SAME_SHAPE_TOL =.-\nSpineWidget%._sameShape = _sameShape)")
+if shape then body = shape .. "\n" .. body end
 local function buffer(w, h, id, bpp)
     local b = { stride = w * (bpp or 4), id = id or "art", rotation = 0, inverse = 0, kind = bpp or 4 }
     function b:getWidth() return w end
@@ -144,6 +150,7 @@ H.test("installation is lazy idempotent and preserves external thumbnail owners"
     H.eq(class._orbitui_cover_thumbnails, nil)
 end)
 local render_cover = assert(native_source:match("(function SpineWidget:_renderCover%(bb%).-\nend)\n"))
+if shape then render_cover = "local _sameShape = SpineWidget._sameShape\n" .. render_cover end
 H.test("the complete native warm-cover renderer uses the service without decoding or owning its pixels", function()
     local class, calls = fixture()
     local source = buffer(400, 600)

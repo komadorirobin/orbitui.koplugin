@@ -2361,7 +2361,7 @@ function Editor:_pickGroupDisplay(draft, on_change, chrome)
     -- Series boxes for Covers and List (issue 503): On or Off over the same
     -- setting the Spines page styles, so On keeps a style chosen there.
     local function seriesBoxesRow(pick, add)
-        if no_spines then return end
+        if no_spines or self.series_boxes_external then return end
         add(onOff(pick, _("Series boxes"), draft.series_boxes, function(v)
             if v then draft.series_boxes = draft.series_boxes or true
             else draft.series_boxes = nil end

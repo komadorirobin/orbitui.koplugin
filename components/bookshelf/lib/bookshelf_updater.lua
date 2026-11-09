@@ -285,7 +285,7 @@ end
 -- and sends back one short line with what the check reads -- not the whole
 -- payload, which (release notes and all) could fill the pipe before the
 -- parent, reading once the child is done, empties it.
-local LATEST_URL = "https://api.github.com/repos/AndyHazz/bookshelf.koplugin/releases/latest"
+local LATEST_URL = API_REPO_BASE .. "/releases/latest"
 local FETCH_POLL_S, FETCH_TIMEOUT_S = 0.5, 30
 
 -- _latestLine(release) -> "tag\tdraft\tprerelease\tzip_url\n" ("\n" for none).

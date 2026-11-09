@@ -4,6 +4,54 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-09 — reviewed Bookshelf 6.4.1, separate 1.2 preview
+
+After stable 1.1 publication and maintenance/1.1 preservation at 16cae997,
+review master c014b133 → 3fe9702d74435ab94133b4beb3d0f1c28dfffb6f:
+60 commits, 147 net files. SimpleUI main 4426601f remains current (3.0.3).
+Unsquashed subtree import 68f2fcf3 preserves history; 16 conflicted files are
+resolved by combining the host's profile/dock/caption/binding/series/ornament/
+failure-recovery behavior with upstream changes, not whole-file ours/theirs.
+Stable README refresh f53840db is merged separately by 6c623f96. Advance only
+the Bookshelf pin; imported provenance, maintenance branches and stable assets
+remain unchanged. Adaptations and tests are a separate following commit.
+
+User-facing: sized-cover/shape reuse, lighter metadata and directory work,
+visible-page/throttled extraction updates, incremental quiet-time collection,
+retained light shelf lists, optional equal-height/same-sized books, spine text
+scale, Plain/Spines series-box styles, opt-in series tiles in Covers/List,
+Decades/date formatting, safe bounded wallpaper cropping and metadata/UI fixes.
+These are upstream additions, not invented OrbitUI features or measured Bigme
+speedups. Keep per-section choices, Classic/Minimal policies, cover proportions,
+natural spines, count/MAL/title resource ownership and SimpleUI docking.
+
+C01/C02/C04/C08 adaptations: five helpers use exact-source lazy embeds (33
+total, 412 canonical identities), keeping API1's identical 2,000 installed
+paths. Defer the new competing mtime/size bytecode searcher and destructive
+navigation-key split in hosted mode; deferred reader-key writes also flush
+through flushPending. Retained list/deal keys include section/root identity;
+data generations retire stale lists. Decade sources/restoration are scoped.
+New extraction/collector callbacks retire on stop/sleep/close, including late
+callbacks. Host defers the new whole-page pixel/row cache and page build-ahead:
+native count bounds are not colour-byte budgets and its painted region includes
+the host dock. No toggle silently enables it. Thumbnail/list reuse still runs.
+
+C05/C06/C07/C10/C11: no new sync writer, automatic device/server patch, Silverfish
+save/placement change or BookOrbit/MAL/Hardcover ownership change. Profile book
+size/styles persist independently; Minimal does not enable series tiles.
+Plain fronts never decode hidden custom art; bindings retain host tint and
+aggregate counts. C stdio cover writes retain atomic sibling rename, checked
+writes/closes and old-file recovery; tests inject both Lua and C failures.
+Keep publication-file scanning/folder deletion deferred; while scanning is
+deferred, do not rewrite its reader version or discard cached no-date facts.
+Keep bounded wallpaper output while adopting upstream source cropping. All new
+control labels use SV/EN. Preserve every artwork/license/catalog and the held-art
+exclusion. Native test fixtures follow reviewed API changes, with no new skips.
+
+Tests/receipts and remaining physical font/touch/rotation/wake/night/large-library
+gates are in TESTING. Evidence: test-results/upstream-20261109. Publication is
+authorized as a new 1.2 beta, not a replacement of 1.1 or device acceptance.
+
 ## 2026-11-09 — stable 1.1 README presentation refresh
 
 User explicitly requests a modestly promotional README that highlights OrbitUI's

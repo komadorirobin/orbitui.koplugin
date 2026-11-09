@@ -1966,13 +1966,12 @@ function M.fitLayout(iw, ih, w, h, mode)
     local sx, sy = w / iw, h / ih
     local s = (mode == "fill") and math.max(sx, sy) or math.min(sx, sy)
     local dw, dh = math.floor(iw * s + 0.5), math.floor(ih * s + 0.5)
-    -- An extreme aspect ratio must not request an unbounded native allocation.
-    -- Fall back to the old screen-sized stretch; keep the saved fit preference.
-    if dw ~= dw or dh ~= dh or dw > 32768 or dh > 32768
-            or dw * dh > 4 * w * h then return nil end
+    -- Keep extreme source shapes on the bounded crop path below; never ask
+    -- the decoder for the huge intermediate fill dimensions.
+    if dw ~= dw or dh ~= dh or dw == math.huge or dh == math.huge then return nil end
     if mode == "fill" then
         dw, dh = math.max(dw, w), math.max(dh, h)
-        if dw * dh > M.FILL_DECODE_SCREENS * w * h then
+        if dw > 32768 or dh > 32768 or dw * dh > (M.FILL_DECODE_SCREENS or 4) * w * h then
             local cw = math.max(1, math.min(iw, math.floor(w / s + 0.5)))
             local ch = math.max(1, math.min(ih, math.floor(h / s + 0.5)))
             return w, h, 0, 0,
@@ -1980,6 +1979,7 @@ function M.fitLayout(iw, ih, w, h, mode)
         end
     else
         dw, dh = math.max(1, math.min(dw, w)), math.max(1, math.min(dh, h))
+        if dw > 32768 or dh > 32768 then return nil end
     end
     return dw, dh, math.floor((w - dw) / 2), math.floor((h - dh) / 2)
 end
