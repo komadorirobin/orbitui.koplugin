@@ -2,6 +2,34 @@
 
 ## OrbitUI 1.2.0-beta.1
 
+Published **2026-11-09 06:01:52 UTC**, release **438785778**, frozen source/tag
+**93d879bf / v1.2.0-beta.1** (annotated tag object **385b8a9b**). Public ZIP
+SHA-256 `25f988ce381dce6b524bd3de8dd140de53d155e624da4cf20b728435fb089c88`,
+9,695,479 bytes / 28,767,906 expanded; manifest **4ff774d9**, API1/exact 2,000
+unchanged installed paths, 33 embedded helpers/412 identities. Runtime remains
+ace1e222; release preparation also updates the development package checker's
+explicit helper count, not runtime behavior.
+
+Both complete frozen suites pass: 134 Python/four usual art-source skips,
+1,233 syntax files, all 117 root files, 583 Bookshelf suites/zero failures/three
+usual SQLite exclusions and all 13 SimpleUI files. The three excluded suites
+also pass separately against real SQLite (9/20/100 cases). All 43 catalogs,
+117 sealed roots in Lua/LuaJIT, retained minimum/current native sandbox/Font/
+input/raster/Silverfish/SQLite/EPUB/search/thumbnail checks pass. All four exact
+main/tag CI jobs **42570125844 / 42570125824** pass and every CI payload file
+matches the frozen ZIP. Source/history/held-art/redacted-secret audits cover
+377 outgoing blobs; exact draft/public bytes and checksums pass.
+
+Seventeen actual older installers pass offline; sixteen pass anonymous public-
+HTTPS discovery, native archive/SHA verification, restart, code rollback and
+recovery in isolated temporary installs, including stable 1.1. Initial GitHub
+504 responses clear on retry; normal public URLs and unmodified older clients
+then pass. No published file is replaced. All 98 older releases/171 remote tag
+refs, stable/latest 1.1.0 and both maintenance branches remain unchanged.
+Public dist/preview is 1.2.0-beta.1. No actual device/server/catalog operation;
+new physical Bigme layout/lifecycle/resource/timing acceptance remains pending.
+This following receipt is docs only; frozen tag/assets are never rebuilt.
+
 User-authorized preview after stable 1.1.0, retaining the reviewed upstream
 adaptations in ace1e222. Bookshelf 6.4.1 (3fe9702d) is integrated; SimpleUI
 3.0.3 (4426601f) was already current. VERSION/README/release documentation and

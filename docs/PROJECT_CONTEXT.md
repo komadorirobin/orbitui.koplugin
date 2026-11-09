@@ -22,6 +22,20 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-09
 
+- **1.2.0-beta.1 preview is public.** Published 06:01:52 UTC, release
+  438785778, source/tag 93d879bf / v1.2.0-beta.1; ZIP 25f988ce, 9,695,479
+  bytes, manifest 4ff774d9, API1/exact 2,000 paths. Bookshelf 6.4.1 integration
+  ace1e222 is retained. Both frozen scripts/43 catalogs, sealed/native suites,
+  real SQLite, all four exact main/tag CI jobs 42570125844 / 42570125824,
+  source/history/art/secrets and draft/public byte checks pass. Seventeen real
+  older installers pass offline; sixteen pass anonymous public-HTTPS upgrades/
+  restart/rollback/recovery, including stable 1.1. Transient GitHub 504s clear
+  without client/asset changes. All 98 old releases/171 tag refs and maintenance
+  branches remain unchanged; latest/stable stays 1.1.0, preview/dist is beta.1.
+  README's stable 1.1 presentation is public. No real device/server/catalog
+  operation; new physical Bigme acceptance and timings remain pending. Full
+  receipts in OTA/TESTING/MERGE_LOG; following receipt changes docs only.
+
 - **1.2.0-beta.1 release freeze.** After ace1e222, only VERSION, README,
   release docs and channel regression change. All full/sealed/native/installer/
   source/history/CI/draft/public gates precede publication. Keep latest stable
@@ -29,7 +43,7 @@ and correct this file in the same change.
   operation; newly merged physical/performance acceptance remains pending.
   Evidence upstream-20261109; frozen/public receipts follow verification.
 
-- **Reviewed 1.2 upstream integration in progress.** Stable 1.1 is public and
+- **Reviewed 1.2 upstream integration (now published above).** Stable 1.1 is public and
   maintenance/1.1 is preserved at 16cae997. Bookshelf 60 commits through 6.4.1
   3fe9702d imported unsquashed as 68f2fcf3; SimpleUI 4426601f is unchanged.
   Stable README refresh f53840db is public (CI 42566976676 green) and merged

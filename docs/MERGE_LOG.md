@@ -6,6 +6,20 @@ does not imply a public release or successful device testing.
 
 ## 2026-11-09 — 1.2.0-beta.1 release freeze
 
+**Published 06:01:52 UTC**, release **438785778**, source/tag **93d879bf /
+v1.2.0-beta.1**, ZIP **25f988ce** / 9,695,479 bytes, manifest **4ff774d9**,
+API1/exact 2,000 paths. Both complete frozen scripts/43 catalogs and sealed/
+native matrices pass; separate real SQLite suites pass. Exact main/tag CI
+**42570125844 / 42570125824** and all four payloads match. Seventeen real older
+installers pass offline; sixteen pass anonymous public-HTTPS discovery/upgrade/
+restart/rollback/recovery, including stable 1.1, after transient GitHub 504s
+clear. Source/history/held-art/secrets and exact draft/public bytes/channels
+pass. All 98 old releases/171 tag refs, stable/latest 1.1.0 and both maintenance
+branches remain immutable. Runtime is ace1e222; the release's package assertion
+also changes 28 → 33 embedded helpers. No actual device/server/catalog operation;
+new physical acceptance/timings remain pending. Full receipt in OTA.md. This
+following documentation commit does not rebuild or replace frozen assets.
+
 User-requested upstream beta after stable 1.1.0. Freeze ace1e222 runtime;
 following changes are VERSION/README/release docs and channel regression only.
 Repeat complete suites, sealed/native fixtures, real older installers and

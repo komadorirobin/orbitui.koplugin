@@ -2,6 +2,20 @@
 
 ## 2026-11-09 — 1.2.0-beta.1 release freeze
 
+**Published:** 93d879bf / v1.2.0-beta.1, release 438785778 at 06:01:52 UTC;
+public ZIP **25f988ce**, manifest **4ff774d9**, 9,695,479 bytes, exact 2,000
+API1 paths. Both frozen scripts pass (134 Python/four usual skips, 1,233 syntax,
+117 roots, 583 Bookshelf/zero failures/three usual SQLite exclusions, 13 SimpleUI).
+Separate real SQLite suites pass 9/20/100 cases; 43 catalogs and all sealed/
+native matrices pass. Exact main/tag CI **42570125844 / 42570125824** and all
+four payloads match. Seventeen older installers pass offline; sixteen pass
+anonymous public-HTTPS upgrade/restart/rollback/recovery, including stable 1.1.
+Initial external 504s resolve on retry, without changing clients/assets. Source/
+history/held-art/secrets and exact draft/public bytes/channels pass. All 98 old
+releases/171 tag refs, stable/latest 1.1 and maintenance/1.0/1.1 stay unchanged.
+Detailed frozen/public receipt: OTA.md. No actual device/server install; new
+physical and measured Bigme performance checks remain pending.
+
 Freeze the reviewed ace1e222 runtime, with only VERSION/README/release docs and
 draft/preview channel regression plus the package checker's explicit 28 → 33
 embedded-helper expectation. This is a development-only assertion, not another
