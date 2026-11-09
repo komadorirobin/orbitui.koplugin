@@ -22,6 +22,16 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-09
 
+- **Stable 1.1 README refresh requested during the separate 1.2 merge.**
+  Replace the historical beta diary with a current, moderately promotional
+  overview and stable install links. Highlight OrbitUI's own connected workflow,
+  sections/dashboard, local tags/index/smart chips/series results, alphabet/
+  suggestions, optional BookOrbit and Silverfish cards, Android shortcuts and
+  presentation/add-on/update refinements. Retain prominent upstream attribution,
+  experimental/external requirements, preservation and test limitations. README/
+  feature guide/receipts only; frozen stable code/tag/assets and maintenance
+  branches unchanged. Prepared separately from the unresolved subtree import.
+
 - **Stable 1.1 first, upstream and 1.2 beta afterward — explicitly approved.**
   User reports everything working well and requests stable 1.1, followed by a
   reviewed upstream merge/new beta. Release from ed2f42e3 with beta.12 runtime
