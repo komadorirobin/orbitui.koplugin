@@ -33,6 +33,17 @@ and correct this file in the same change.
   Preserve maintenance/1.1 before importing upstream into separate 1.2 preview.
   General user acceptance is not agent-run or per-test device certification.
   Evidence stable11-20261109; receipts follow.
+  **Stable published 2026-11-09 05:07:44 UTC**, release **438759601**,
+  source/tag **16cae997 / v1.1.0**, ZIP **b625a25f** / 9,637,693 bytes,
+  manifest **d7e754e2**, exact 2,000 API1 paths. Runtime equals beta.12.
+  Both full scripts/43 catalogs, sealed/native regressions and four main/tag
+  CI jobs **42564959769 / 42565018766** pass; exact source/draft/public/CI bytes,
+  history/held-art/secrets verified. Sixteen actual older installers pass offline;
+  fifteen pass anonymous public-HTTPS upgrades/restart/rollback/recovery,
+  including beta.12. All 97 old releases/169 tag refs and maintenance/1.0 are
+  unchanged. Stable/preview/latest select 1.1.0; public dist is stable 1.1.
+  Preserve maintenance/1.1 at 16cae997 before importing upstream. No new device/
+  server install or per-test physical certification. Following receipt is docs only.
 
 - **1.1.0-beta.12 preview published.** User requests a new beta
   after viewing the schematic composition. Branch release/1.1.0-beta.12-20261108

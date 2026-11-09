@@ -2,6 +2,25 @@
 
 ## 2026-11-09 — stable 1.1 promotion; upstream reserved for 1.2
 
+Published **2026-11-09 05:07:44 UTC**, release **438759601**, source/tag
+**16cae997 / v1.1.0**. Public ZIP SHA-256
+`b625a25f8e66bd658d9d171921086ee429dc935449201e3222eb0e0175c41cbb`,
+9,637,693 bytes / 28,560,718 expanded, manifest **d7e754e2**, API1/exact 2,000
+paths. Implementation/runtime bytes equal accepted beta.12; version/README/docs
+only differ. Both complete scripts/43 catalogs, all 116 sealed roots in Lua/
+LuaJIT and retained native sandbox/Font/input/raster/Silverfish/menu/SQLite/EPUB/
+search/thumbnail checks pass. All four main/tag CI jobs
+**42564959769 / 42565018766** pass; every CI payload file matches the frozen
+package. Source/held-art/history/redacted-secret and exact draft/public assets
+pass. Sixteen actual older installers pass offline; fifteen pass anonymous
+public-HTTPS upgrade/restart/rollback/recovery in isolated temporary installs,
+including beta.12. All 97 old releases/169 remote tag refs and maintenance/1.0
+stay unchanged; stable/preview/latest select 1.1.0. No actual device/server
+install; user general acceptance is the physical basis, not invented per-test
+certification. The old local-only Bookshelf v1.1.0 tag (347334cb) is preserved
+at upstream/bookshelf/v1.1.0; no public OrbitUI tag was replaced. This receipt
+changes docs only and never rebuilds/replaces frozen assets.
+
 User reports everything working well and explicitly requests stable 1.1 first,
 then an upstream merge and new beta. Promote beta.12's unchanged runtime from
 ed2f42e3 on release/1.1.0-20261109: VERSION, README, release docs and channel
