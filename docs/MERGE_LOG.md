@@ -35,6 +35,14 @@ gate receipts are recorded in TESTING. No device test/install, push, publication
 server or version change. Existing unpublished updater work is retained, and
 this private candidate must not replace public same-labelled beta assets.
 
+Frozen **4457d52a** passes both complete Lua/LuaJIT gates (126 root suites,
+583 Bookshelf/zero failures, 13 SimpleUI; existing skips only), both sealed-root
+repeats and minimum/current native supplements. Private ZIP **94143f86**,
+9,779,636 bytes, passes all runtime/path/manifest/source-projection checks;
+same 2,000 API1 files and public dist **25f988ce** unchanged. All 146 outgoing
+blobs through frozen source pass the held-art audit. This later receipt is
+documentation-only; exact boundaries and hashes are recorded in TESTING.
+
 ## 2026-11-10 — independent local updater panel, no upstream import
 
 User approves the BookOrbit-inspired visual prototype and implementation,

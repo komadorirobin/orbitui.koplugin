@@ -42,8 +42,32 @@ Unicode service boundaries remain stubbed, legacy text shaping is used, and
 SVG icon rasters are not part of this local harness. Native illustrations use
 fixture text/bitmaps, not private books or a real device screenshot.
 
-Private evidence: `test-results/reader-bottom-panel-20261110/`. Full-suite and
-sealed-package receipts are recorded with the frozen candidate after gates.
+**Frozen gates:** source **4457d52a76dfea76f3e30fee7cd7d7cb102dc1de** passes
+both complete `scripts/test.sh` runs, sequentially, Lua and LuaJIT: 134 Python
+tests/four existing source-art skips, 1,242 syntax files, all 126 root suites,
+583 Bookshelf suites/zero failures/three usual SQLite exclusions and 13 SimpleUI
+files. All 43 catalogs and 349 static settings phrases pass. All 126 roots
+repeat under both interpreters against the extracted sealed runtime. The
+minimum/current native controller supplements pass 27 cases per version and
+interpreter. No new test exclusion or bypass is introduced.
+
+**Private package:** `test-results/reader-bottom-panel-20261110/candidate.zip`,
+SHA-256 **94143f86b72ad36d9d77ad7b0515f5eba8c4d7d27f3c0b946618bad787927f2c**,
+9,779,636 bytes, expanded 29,052,673; manifest **8df3a26b**. The native runtime
+archive checker, complete ZIP/manifest hashes and source-exact projection
+(existing PO location-comment transform only) pass. Same 2,000 API1 files,
+33 embedded helpers and 412 identities; public path set, bootstrap, VERSION,
+source pins/artwork and public dist **25f988ce** are unchanged. All 146 outgoing
+blobs through the frozen source pass the held-art SHA audit. No new native OTA
+transaction is tested for this sheet-only change; the prior updater receipt
+is separate. This same-labelled private beta.1 package must not replace the
+public release. A later documentation-only receipt commit does not rebuild or
+change these frozen package bytes.
+
+Private evidence: `test-results/reader-bottom-panel-20261110/`, particularly
+`final-lua.log`, `final-luajit.log`, `sealed-lua.log`, `sealed-luajit.log`,
+`native-controller-*.log`, `render-native.lua`, `test-provider-contracts.lua`
+and `audit.json`.
 No claim of physical Bigme touch/e-ink/RGB/night/sleep/rotation/memory-pressure,
 default MuPDF cover scaling, complete provider startup/authentication, actual
 generation/spoiler behavior or BookOrbit/Hardcover sync acceptance is made.

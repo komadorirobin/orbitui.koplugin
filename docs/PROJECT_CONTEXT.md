@@ -40,6 +40,11 @@ and correct this file in the same change.
   native. See C10, FEATURES, TESTING and MERGE_LOG for contracts and receipts.
   No device/server change, push, release, pin/watch/version or public dist
   change is authorized/performed; the earlier device candidate is unchanged.
+  Frozen **4457d52a** / private package **94143f86** passes both complete
+  Lua/LuaJIT gates, 126 sealed-root repeats per interpreter, native navigation/
+  raster/gesture/borrowed-image supplements and exact package/held-art audits.
+  Same 2,000 API1 files; new sheet/provider behavior still needs physical Bigme
+  acceptance. The subsequent receipt commit changes documentation only.
 
 - **BookOrbit-inspired updater panel, local implementation only.** User approved
   the visual prototype and implementation, explicitly including the appearance,
