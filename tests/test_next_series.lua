@@ -11,7 +11,7 @@ local function chunk(bytes, env)
 end
 local source = read("components/bookshelf/lib/bookshelf_book_repository.lua")
 local native = assert(source:match("(function Repo.getNextUnreadInSeries%b().-\nend)"))
-local queue, saved, books, history, profiles, root_home, clock, generation
+local queue, saved, books, history, profiles, root_home, clock, generation, painted
 local writes, warms, cancels, metadata_reads, progress_reads, queries, grid_loads, builds, frees, refreshes, opens, holds
 local owner, UI, last_child, broken, slow, scheduled, returned, Shelves
 local Repo = {}
@@ -45,8 +45,15 @@ package.loaded["libs/libkoreader-lfs"] = { attributes = function(file, key)
     return books[file] and (key == "mode" and "file" or { mode = "file" })
 end }
 local W = H.widget()
+local new = W.new
+function W:new(opts)
+    local widget = new(self, opts)
+    painted[#painted + 1] = widget
+    return widget
+end
 function W:getSize() return self.dimen or { w = self.width or 500, h = 120 } end
-function W:free() frees = frees + 1 end
+function W:free() self.freed = true; frees = frees + 1 end
+function W:paintTo() end
 for _, name in ipairs{ "ui/widget/container/centercontainer", "ui/widget/textboxwidget", "ui/geometry" } do package.loaded[name] = W end
 package.loaded["lib/bookshelf_clip_container"] = W
 package.loaded["ui/font"] = { getFace = function() return {} end }
@@ -116,7 +123,7 @@ package.preload["engines/sui_book_grid"] = function()
     end }
 end
 local function reset()
-    queue, saved, books, history, scheduled = {}, {}, {}, {}, {}
+    queue, saved, books, history, scheduled, painted = {}, {}, {}, {}, {}, {}
     profiles = {{ key = "manga", label = "Manga", roots = { "/manga" } }, { key = "books", label = "Books", roots = { "/books" } }}
     root_home, clock, generation = "/books", 0, 1
     writes, warms, cancels, metadata_reads, progress_reads, queries, grid_loads, builds, frees = 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -132,6 +139,8 @@ local function add(path, series, num, pct, status, author, time)
     if time then history[#history + 1] = { file = path, time = time } end
 end
 local function flush(limit)
+    -- Native Home first mounts the tree, then paints it; a menu may cover it.
+    for _, widget in ipairs(painted) do if not widget.freed then widget:paintTo() end end
     local n = 0
     while #queue > 0 and (not limit or n < limit) do
         assert(n < 50000, "worker never settled")
@@ -186,6 +195,18 @@ H.test("module previews without a real owner never start work or poison a later 
     mod.build(500, ctx); flush(); H.eq(warms, 0); H.eq(Shelves.nextState(ctx.pfx).phase, "idle")
     ctx = context(); ctx.preview = true; mod.build(500, ctx); flush(); H.eq(warms, 0)
     ctx.preview = nil; mod.build(500, ctx); flush(); H.eq(queries, 1)
+end)
+H.test("a menu-covered placement or explicit refresh waits for a visible mounted paint", function()
+    local mod = fixture(); local ctx = context(); owner.covered = true
+    local widget = mod.build(500, ctx)
+    H.eq(#queue, 0); flush(); H.eq(warms, 0); H.eq(Shelves.nextState().phase, "idle")
+    owner.covered = false; flush(); H.eq(Shelves.nextState().phase, "ready"); H.eq(queries, 1)
+    owner.covered = true
+    mod.getMenuItems({ pfx=ctx.pfx, refresh=function() end })[1].callback()
+    local replacement = mod.build(500, ctx); widget:free(); flush()
+    H.eq(Shelves.nextState().phase, "idle"); H.eq(queries, 1)
+    owner.covered = false; replacement:paintTo(); H.eq(queries, 1)
+    flush(); H.eq(Shelves.nextState().phase, "ready"); H.eq(queries, 2)
 end)
 H.test("different author and library series identities cannot select one another's unread volume", function()
     local mod = fixture()
@@ -243,7 +264,7 @@ end)
 H.test("progress preparation yields within eight operations or eight milliseconds even across 3341 volumes", function()
     local mod = fixture()
     for i = 1, 3341 do add("/manga/large" .. i .. ".epub", "Large", i, i == 1 and 1 or 0) end
-    slow = true; mod.build(500, context())
+    slow = true; mod.build(500, context()):paintTo()
     local turns = 0
     while #queue > 0 do
         local before = progress_reads; flush(1)

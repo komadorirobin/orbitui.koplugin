@@ -53,6 +53,10 @@ function M.widget()
         if o.init then o:init() end
         return o
     end
+    function Widget:setMaxWidth(width)
+        self.max_width = width
+        if self.free then self:free() end
+    end
     function Widget:propagateEvent(event)
         for _, child in ipairs(self) do
             if child:handleEvent(event) then return true end

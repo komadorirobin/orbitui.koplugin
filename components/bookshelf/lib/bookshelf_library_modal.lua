@@ -605,11 +605,15 @@ function LibraryModal:_renderTitleBar(content_width, modal_w)
             HorizontalSpan:new{ width = Space.px(8) }, x_btn }
     end
 
+    -- A LeftContainer positions but does not clip its child. Bound the native
+    -- TextWidget itself so a long search/tag title cannot paint over the tabs.
+    local title_width = math.max(1, content_width - right_widget:getSize().w)
+    title_w:setMaxWidth(math.max(1, title_width - Space.px(8)))
     -- Title left, tab segments right, with the gap absorbed by a flexible spacer.
     local row = HorizontalGroup:new{
         align = "center",
         LeftContainer:new{
-            dimen = Geom:new{ w = content_width - right_widget:getSize().w, h = title_bar_h },
+            dimen = Geom:new{ w = title_width, h = title_bar_h },
             title_w,
         },
         right_widget,

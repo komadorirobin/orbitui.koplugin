@@ -398,7 +398,17 @@ function M.nextModule()
             end
             if free then return free(self, ...) end
         end
-        if owner and not ctx.preview then prepareNext(state) end
+        -- Settings rebuild their underlying screen while the menu still owns
+        -- input. Starting here immediately pauses the worker behind that menu.
+        -- A mounted, visible paint may enqueue once; painting never walks or
+        -- reads metadata, and a canceled/suspended job is not auto-resumed.
+        local paint = widget.paintTo
+        widget.paintTo = function(self, ...)
+            if state.phase == "idle" and state.lease == lease and not ctx.preview and nextLive(state) then
+                prepareNext(state)
+            end
+            if paint then return paint(self, ...) end
+        end
         return widget
     end
     next_module = module
