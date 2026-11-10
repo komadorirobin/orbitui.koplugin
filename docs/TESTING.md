@@ -1,5 +1,33 @@
 # Verification and device acceptance
 
+## 2026-11-10 — beta.2 publication with disclosed physical wake gap
+
+User requests publication after the completed recovery report explicitly states
+that touch after sleep/wake is still unverified. Final frozen source **9caa3511**,
+tag **v1.2.0-beta.2**, ZIP **d7abac63**, manifest **ef715f75**, published release
+**440990827** at **22:26:05 UTC**. Public assets equal the reviewed draft bytes.
+The only differences from physically exercised 64c61bac are README and four
+documentation files; all executable/assets bytes are identical. The unresolved
+physical test stays disclosed in both README and release notes. No device was
+accessed or changed during publication; the earlier restored state remains the
+last observed state, not a claim about subsequent user activity or startup.
+
+Fresh complete suites pass in Lua and LuaJIT: 134 Python/four usual source-art
+skips, 1,243 syntax files, 127 roots, 583 Bookshelf suites/zero failures/three
+usual SQLite exclusions, 13 SimpleUI files. Both 127-root sealed-package repeats
+and 43 catalogs pass. Eighteen real older installers pass offline, including
+stable 1.1 and public beta.1. Exact source projection, unchanged 2,000 API1 paths,
+art/bootstrap/pins and all 192 outgoing blobs/secret checks pass. All four exact
+main/tag CI jobs (runs **42913635771 / 42913630361**) pass and their complete
+payload bytes match the frozen ZIP. Native selector with anonymous public API
+metadata selects preview beta.2 and stable 1.1.0. All 99 prior releases/173 remote
+tag refs and both maintenance branches remain unchanged. Seventeen actual older
+installers pass anonymous public-HTTPS discovery/download, native archive/hash
+validation, restart, code rollback and recovery in isolated temporary installs;
+this includes stable 1.1 and public beta.1. No production reader/server is used
+for these upgrade tests. Evidence: test-results/preview12-beta2-20261110,
+including installers-live.json and the individual live logs.
+
 ## 2026-11-10 — fresh physical ADB verification / beta.2 preparation
 
 **Later publication authority:** after receiving the recovery report and the

@@ -4,6 +4,25 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-10 — publish 1.2.0-beta.2 after explicit acceptance of wake-test gap
+
+No upstream import. User explicitly requests the beta after the disclosed
+incomplete physical post-wake touch check and completed device recovery.
+Published **22:26:05 UTC**, release **440990827**, frozen source/tag
+**9caa3511 / v1.2.0-beta.2**, public ZIP **d7abac63**, manifest **ef715f75**.
+Runtime equals physically exercised 64c61bac; only README/recovery/publication
+documentation differs. Complete/sealed/catalog/source/history/art/secret gates,
+18 offline older installers and all four exact main/tag CI jobs pass. Every
+CI payload and downloaded draft/public asset matches. Anonymous native channels
+select preview beta.2/stable 1.1.0; 99 prior releases/173 remote tag refs and
+maintenance branches are unchanged. Seventeen actual older installers also pass
+anonymous public-HTTPS discovery/install/restart/rollback/recovery in temporary
+local installations, including stable 1.1 and public beta.1.
+No device/server operation, X-Ray installation or AI request in this release
+workflow. Physical wake/input remains a documented gap. This later receipt
+is docs-only and cannot rebuild or replace the frozen tag/assets. Full receipts
+and evidence paths are in OTA/TESTING.
+
 ## 2026-11-10 — authorized physical QA and conditional beta.2
 
 Later user request "Pusha betan", after the recovery/remaining-wake-test report,

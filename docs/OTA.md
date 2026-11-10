@@ -1,6 +1,37 @@
 # OrbitUI releases and OTA
 
-## OrbitUI 1.2.0-beta.2 — conditional release preparation
+## OrbitUI 1.2.0-beta.2
+
+Published **2026-11-10 22:26:05 UTC**, release **440990827**, frozen source/tag
+**9caa3511 / v1.2.0-beta.2** (annotated tag object **b630aba2**). Public ZIP
+SHA-256 `d7abac63c97b05e5a7b6b77d6ee3d20b9d6ebd16cc92e13eab422200e07ffd5f`,
+9,791,979 bytes / 29,091,602 expanded; manifest **ef715f75**, API1/exact 2,000
+unchanged installed paths. All executable/assets bytes equal the physically
+tested private **64c61bac**; only README and four documentation files differ.
+
+Both complete frozen Lua/LuaJIT runs pass (134 Python/four existing art-source
+skips, 1,243 syntax files, 127 roots, 583 Bookshelf suites/zero failures/three
+usual SQLite exclusions, 13 SimpleUI files), plus all 43 catalogs and 127 sealed
+roots per interpreter. Eighteen actual older installers pass offline. Exact
+source/path/art/bootstrap/pin and all 192 outgoing blobs/secret checks pass.
+All four main/tag CI jobs **42913635771 / 42913630361** pass; every CI payload
+file matches the frozen package. Authenticated draft and anonymous public ZIP/
+checksum assets match byte-for-byte. Anonymous native channel selection keeps
+stable/latest at 1.1.0 and advances preview to beta.2. All 99 prior releases,
+173 prior remote tag refs and both maintenance branches are unchanged.
+
+Published on the user's explicit request after disclosing the incomplete
+physical post-wake touch check. This remains a documented verification gap,
+not a passing result or a proven UI defect. No device/server install, upstream
+merge, X-Ray installation or AI request occurred during publication. Public
+network tests also pass with seventeen actual older installers: anonymous HTTPS
+discovery/download, native archive/hash validation, restart, code rollback and
+recovery in isolated temporary installations, including stable 1.1 and beta.1.
+Evidence is private under test-results/preview12-beta2-20261110.
+This receipt changes documentation only;
+the frozen tag and published assets must never be rebuilt or replaced.
+
+The following preparation/recovery checkpoints describe the earlier stages.
 
 **Later user approval:** "Pusha betan" authorizes publication as a prerelease
 after the disclosed incomplete physical wake/input check and completed recovery.

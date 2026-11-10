@@ -22,7 +22,25 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-10
 
-- **Beta.2 publication now explicitly authorized with the known wake-test gap.**
+- **Current public preview: 1.2.0-beta.2**, published 2026-11-10 22:26:05 UTC,
+  release 440990827, frozen source/tag **9caa3511 / v1.2.0-beta.2**. Public ZIP
+  **d7abac63**, manifest **ef715f75**, exact same 2,000 API1 installed paths.
+  Runtime equals the physically exercised private 64c61bac candidate; only
+  README/recovery/publication documentation differs. Both complete suites,
+  127 sealed roots per interpreter, 43 catalogs, 18 actual older offline
+  installers, 192 outgoing-blob art/secret checks and all four exact main/tag
+  CI jobs pass; every CI payload matches. Draft/public assets are byte-exact,
+  anonymous native channel selection chooses beta.2 for preview and 1.1.0 for
+  stable. All 99 prior releases/173 remote tag refs and maintenance branches
+  remain unchanged. Seventeen actual older installers also pass anonymous
+  public-HTTPS discovery, verified install/restart, code rollback and recovery
+  in isolated temporary installations, including stable 1.1 and public beta.1.
+  User explicitly accepts publication with physical post-wake touch still
+  unverified. That limitation remains in README/release notes; no inferred
+  passing device result. The restored device was not accessed or changed during
+  publication. See OTA/TESTING for exact receipts and historical checkpoints.
+
+- **Beta.2 publication authority with the known wake-test gap.**
   After recovery and the explanation that physical post-wake input remains
   unverified, the user requests "Pusha betan". This supersedes the earlier
   conditional hold for that disclosed device gate only. Publish a new
@@ -30,10 +48,10 @@ and correct this file in the same change.
   exact main/tag CI, draft/public and actual older-installer checks pass.
   Document the unresolved physical wake/input check; do not claim a passing
   test or install/change the restored device. No upstream merge, server change,
-  X-Ray installation, AI request or stable/latest change. Frozen publication
-  bytes and final receipt follow; earlier checkpoints below are historical.
+  X-Ray installation, AI request or stable/latest change. The frozen publication
+  receipt is above; the checkpoints below describe earlier stages.
 
-- **Latest recovery/publication gate:** beta.2 frozen source **0e2ed636**, private
+- **Historical recovery/publication gate:** beta.2 frozen source **0e2ed636**, private
   ZIP **64c61bac**, remains withheld after incomplete post-wake physical-input
   acceptance. Recovery is now complete with KOReader closed: all five fresh
   preference/history files match their pre-session bytes; all 193 real book
