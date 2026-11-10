@@ -30,6 +30,28 @@ tap and long-press results, rotate, stop/sleep midway, refresh after reindexing,
 and confirm native descriptions/covers/selection. Do not claim public readiness
 or update stable/preview OTA based on these local checks alone.
 
+**Local verification receipt:** frozen source **ee3d5cf5** passes both complete
+`scripts/test.sh` runs: 134 Python tests/four pre-existing source-art skips,
+1,233 syntax files, all 117 root suites, 583 Bookshelf suites/zero failures/
+three usual native SQLite exclusions, and all 13 SimpleUI files. All 43
+translation catalogs pass. Repeat all 117 roots from the sealed payload in Lua
+and LuaJIT; real SQLite scoring/index passes 10, series passes 29 including the
+native RO query, and actual libarchive/native-input EPUB tests pass 55. No new
+test exclusion. The source/frozen tests include the recommendations' empty-set
+no-metadata-walk and repeated-paint no-rerank checks.
+
+Private development ZIP **88192babd00817032942f7314e547f9222d2fe20dc955d85b4ee08415b48d8af**,
+9,703,716 bytes, manifest **6e755bc2**, API1/exact 2,000 installed paths, same
+33 embedded helpers/412 canonical module identities. Inventory/hash/size and
+every byte match the committed source after approved PO-location reduction.
+Exactly ten installed source/document paths change; bootstrap, components,
+source pins, VERSION, art/fonts/languages and public dist stay byte-identical.
+Held-art checks and redacted Gitleaks pass. This ZIP intentionally retains the
+old version label for **private verification only**, not a replacement for the
+public beta.1 asset. Following receipt changes documentation only and does not
+rebuild it. No push/publication/device/server operation; physical checks above
+remain pending.
+
 ## 2026-11-09 — 1.2.0-beta.1 release freeze
 
 **Published:** 93d879bf / v1.2.0-beta.1, release 438785778 at 06:01:52 UTC;

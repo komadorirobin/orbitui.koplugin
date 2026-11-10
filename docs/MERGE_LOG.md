@@ -28,6 +28,16 @@ components, artwork/fonts/languages and stable/maintenance/public preview
 assets remain untouched. No push/tag/release/device/server operation authorized
 or performed in this step.
 
+Frozen implementation **ee3d5cf5** passes both complete Lua/LuaJIT scripts,
+43 catalogs and all 117 sealed roots in both interpreters. Native SQLite
+index/series/EPUB-input supplements pass 10/29/55. Private development ZIP
+**88192bab**, 9,703,716 bytes, manifest **6e755bc2**, API1/exact 2,000 paths;
+all bytes and ten changed installed paths match the exact source projection.
+No new test exclusion. Source/pins/art/history and redacted Gitleaks pass;
+public dist remains **25f988ce**. Receipt changes docs only, not the frozen
+artifact. Actual Bigme presentation/timings, real manga coverage and lifecycle
+acceptance remain pending; no publication or physical installation is implied.
+
 ## 2026-11-09 — 1.2.0-beta.1 release freeze
 
 **Published 06:01:52 UTC**, release **438785778**, source/tag **93d879bf /

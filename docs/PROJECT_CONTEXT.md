@@ -36,6 +36,12 @@ and correct this file in the same change.
   assets or dependency imported. No upstream/pin/version/public-dist/device/
   server/watch change; stable 1.1.0 and public preview beta.1 stay unchanged.
   C10/FEATURES/TESTING/MERGE_LOG record the local work and physical gaps.
+  Frozen **ee3d5cf5** passes both full scripts/43 catalogs and all 117 sealed
+  root suites in Lua/LuaJIT; separate native SQLite/series/EPUB-input suites
+  pass 10/29/55. Private ZIP **88192bab**, 9,703,716 bytes, manifest **6e755bc2**,
+  same 33/412 helpers/identities and API1/exact 2,000 paths. Exact-source/path/
+  art/secret gates pass. Receipt commit changes docs only; no beta.1 replacement
+  or physical acceptance. Public dist remains **25f988ce**.
 
 - **1.2.0-beta.1 preview is public.** Published 06:01:52 UTC, release
   438785778, source/tag 93d879bf / v1.2.0-beta.1; ZIP 25f988ce, 9,695,479
