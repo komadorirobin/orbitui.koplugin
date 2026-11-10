@@ -1,5 +1,70 @@
 # Verification and device acceptance
 
+## 2026-11-10 — local BookOrbit-inspired updater panel
+
+User approved the visual prototype and local implementation after emphasizing
+the panel's appearance, not only combining dialogs. No publication, version
+bump, upstream merge or device installation is authorized/performed here.
+Independent host implementation, idea reference BookOrbit main **022f9d10**;
+no source/assets/dependency import. Existing settings/rollback menu and initial
+checking message remain; the available-to-restart transaction uses the new panel.
+
+Frozen source **4a7b8d08b1c2371d38a6c850031b1ac8c7b45f1e** includes 36fad29e
+and the native modal gesture-registration correction 4a7b8d08. Two new suites
+cover 14 panel/controller and six progress/release-note cases, under Lua and
+LuaJIT. The HTTP suite has nine cases, including actual written-byte callbacks
+and callback/size-limit failure isolation. Native Trapper/TrapWidget supplement
+has seven cases under both interpreters: quiet tap/hold/swipe/pan-release resend,
+visible cancellation, and reuse of an already-shown panel with explicit cancel,
+child termination/FD reaping, one callback and no replay to a book underneath.
+Process/FD primitives are simulated in that supplement; native coroutine/input
+ownership is not replaced by a test implementation.
+Controller tests reject stale buttons/polls, double install, pre-launch cancel,
+late success after cancel/suspend/close, and changed active-selection ownership.
+Failure can retry; activation and restart remain separately deferred/explicit.
+
+**Frozen desktop gates:** both final `scripts/test.sh` runs pass, Lua and
+LuaJIT: 134 Python tests/four existing source-art skips, 1,240 syntax files,
+all 124 root suites, 583 Bookshelf suites/zero failures/three usual SQLite
+exclusions and 13 SimpleUI files. The final sealed package repeats all 124
+roots under both interpreters with its root configured. All 43 catalogs pass.
+No new exclusion is introduced. Earlier exploratory runs are not the frozen
+receipt; final logs are `frozen-lua.log` and `frozen-luajit.log` in the private
+evidence directory below.
+
+**Native raster/input boundary:** the unmodified v2026.07.1 APK widget tree,
+FreeType/Noto metrics, RenderText, BlitBuffer and GestureRange/Event dispatcher
+run locally with device/process/UI scheduling, font enumeration/cache and basic
+Unicode-service stubs. Legacy text shaping is used, not XText. Software renders
+were inspected at 1264×1680 for available/downloading/verifying/installed/failed,
+plus landscape/narrow/high-density layouts. Synthetic native button dispatch
+passes at 1264×1680@2, 1680×1264@2, 320×480@1, 320×240@1 and 600×800@2.5.
+It caught and corrected the extra nesting in the modal tap-range registration;
+the root regression now asserts the native direct-entry shape. Raster review
+also corrected TextBox background patches and rectangular preselect inversion:
+the primary button is genuinely rounded black with white text. Short bodies
+reserve the native vertical scrollbar, expose the cropping owner and retain
+fixed visible actions without an unnecessary horizontal scrollbar. Unit
+geometry/expanded-notes cases cover SV/EN and the same size matrix. Backdrop
+copy is limited to one, at most 16 MiB conservatively, and freed on close/rotate.
+This is **not** physical Bigme touch/e-ink/RGB/night/sleep/rotation acceptance or
+an end-to-end network OTA on a real device. Existing b0dffacc device state stays
+unchanged, and prior feature acceptance does not certify this new UI.
+
+**Private package:** `test-results/update-panel-20261110/final-candidate.zip`,
+SHA-256 **1ce9831711eb800ca17f636ff4a6882bfd84182451b28eaee8a47002bda50aaa**,
+9,767,127 bytes, expanded 29,012,788; manifest **34223f77**. Same 2,000 API1
+files, 33 embedded helpers/412 identities, source-exact projection with only
+the approved PO location-comment transform. Public path set, bootstrap,
+VERSION, sources/pins/artwork and public dist **25f988ce** are unchanged.
+Native SHA/archive/real-filesystem smoke passes with real starting packages
+1.1.0 and Beta 12: upgrade/activation/restart/rollback, truncated download,
+external snapshot verification and interrupted obsolete-runtime cleanup retain
+their guards. The 131 outgoing blobs through frozen source pass the held-art
+SHA audit; redacted Gitleaks finds no leak in 23 outgoing commits. The private
+same-labelled beta.1 ZIP must never replace the public release. This receipt
+is documentation-only and does not alter/rebuild the frozen package bytes.
+
 ## 2026-11-10 — Bigme Aleph-feature verification and two local corrections
 
 User-authorized USB/wireless device testing, isolated EPUBs and temporary sync

@@ -37,8 +37,11 @@ and correct this file in the same change.
   buttons, canceled/closed jobs and changed active selections cannot activate.
   Quiet startup tasks retain invisible-resend input ownership. TLS, package/hash/
   manifest/path checks, original bootstrap, rollback, settings and restart
-  authority stay intact. Exact desktop/native-render/package receipts and device
-  limitations belong in TESTING/MERGE_LOG. VERSION, public dist **25f988ce**,
+  authority stay intact. Frozen **4a7b8d08**, private package **1ce98317** passes
+  both full Lua/LuaJIT runs, 124 sealed-root suites per interpreter, native
+  software rendering/gesture replay and older native installer/rollback smoke.
+  Exact receipts and physical-device limits are in TESTING/MERGE_LOG. VERSION,
+  public dist **25f988ce**,
   all pins/artwork and the device's accepted private **b0dffacc** remain unchanged.
   This work is not pushed, published or installed on Bigme; its visual/touch,
   sleep/rotation and actual OTA acceptance remain separate gates.

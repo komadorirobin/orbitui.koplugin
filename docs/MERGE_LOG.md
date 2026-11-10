@@ -4,6 +4,36 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-10 — independent local updater panel, no upstream import
+
+User approves the BookOrbit-inspired visual prototype and implementation,
+including its appearance. Branch `feature/update-panel-20261110` starts at
+**f906773fa**; source freezes at **4a7b8d08** after implementation **36fad29e**
+and a native-dispatch correction. Idea reference BookOrbit main **022f9d10**
+is not a source/assets/dependency import or a changed provenance/watch pin.
+
+The existing host updater path gains a lazy native panel: installed/new version
+comparison, expandable bounded plain notes, grayscale rounded framing, outlined
+secondary/dark primary pills, progress, verification, cancellation, retry and
+explicit restart. Short screens scroll the body, not the actions. One bounded
+backdrop is owned/freed. Optional per-job atomic numeric status files throttle
+progress to five-percent/256-KiB changes; no credentials/URLs/body in that IPC.
+Native Trapper retains worker termination/reaping and quiet resend ownership.
+Activation stays in the parent after verification, canceled/closed/stale job
+guards and a fresh active-slot check. Existing TLS/hash/archive/inventory/
+bootstrap/rollback and settings authority are not replaced by progress UI.
+
+Two new root suites cover 20 cases, plus HTTP callback and native Trapper
+coverage. Actual native software raster/event replay caught the modal range
+nesting mismatch and confirmed real primary/Cancel/Later dispatch across five
+screen geometries. It does not certify physical e-ink/night/RGB, wake/rotation,
+XText or actual network OTA on Bigme. TESTING records both passing final full suites,
+sealed 124-root repeats and exact package/native installer/audit receipts.
+Private package **1ce98317**, 9,767,127 bytes, retains the exact 2,000 API1 path
+set, original bootstrap and pinned modules. Same-labelled public **25f988ce**
+must not be replaced by this private beta.1 build. No device, server, version,
+push, tag or release operation occurred. Prior accepted b0dffacc stays on Bigme.
+
 ## 2026-11-10 — Bigme device verification, local heading/Next corrections
 
 User authorizes testing five local Aleph-inspired features and optimizations
