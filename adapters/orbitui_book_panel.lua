@@ -893,7 +893,7 @@ function M.readerPins()
                 local confirm
                 confirm = require("ui/widget/confirmbox"):new{ text = _("Remove this reference? Bookmarks are not affected."),
                     ok_callback = function()
-                        s.confirm = nil
+                        if s.confirm == confirm then s.confirm = nil end
                         if active() and P.remove(ui, entry.id) then P.show(ui) end
                     end }
                 UI:show(track(s, "confirm", confirm))
