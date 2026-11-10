@@ -6,6 +6,12 @@ does not imply a public release or successful device testing.
 
 ## 2026-11-10 — authorized physical QA and conditional beta.2
 
+Later user request "Pusha betan", after the recovery/remaining-wake-test report,
+authorizes a beta.2 prerelease with that disclosed device gap. All software,
+package, history/art/secrets, exact CI, draft/public and older-installer gates
+remain. No new upstream import or device/server action. Final frozen/public
+receipts follow after actual verification, not before.
+
 No upstream import. User requests ADB tests and push/new beta only if successful.
 Fresh isolated fixture tests verify native reader entry/tools/settings/provider
 navigation and ongoing-book switching; details and limits are in TESTING.

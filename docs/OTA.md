@@ -2,6 +2,14 @@
 
 ## OrbitUI 1.2.0-beta.2 — conditional release preparation
 
+**Later user approval:** "Pusha betan" authorizes publication as a prerelease
+after the disclosed incomplete physical wake/input check and completed recovery.
+This supersedes the earlier conditional hold for that device check only; every
+software/package/history/art/secret, exact main/tag CI, draft/public byte/channel
+and actual older-installer gate still applies. Clearly disclose the remaining
+wake/input limitation. Do not install on the device, merge upstream, alter the
+server, replace old assets or change stable/latest 1.1.0 in this release.
+
 User requests physical ADB tests and authorizes a new beta only after passing
 checks. No upstream merge. This preview combines the five reviewed Aleph-inspired
 features (Next in series, local similar books/series, pinned references, reader

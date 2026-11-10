@@ -22,6 +22,17 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-10
 
+- **Beta.2 publication now explicitly authorized with the known wake-test gap.**
+  After recovery and the explanation that physical post-wake input remains
+  unverified, the user requests "Pusha betan". This supersedes the earlier
+  conditional hold for that disclosed device gate only. Publish a new
+  1.2.0-beta.2 prerelease after the complete software/package/history/art/secret,
+  exact main/tag CI, draft/public and actual older-installer checks pass.
+  Document the unresolved physical wake/input check; do not claim a passing
+  test or install/change the restored device. No upstream merge, server change,
+  X-Ray installation, AI request or stable/latest change. Frozen publication
+  bytes and final receipt follow; earlier checkpoints below are historical.
+
 - **Latest recovery/publication gate:** beta.2 frozen source **0e2ed636**, private
   ZIP **64c61bac**, remains withheld after incomplete post-wake physical-input
   acceptance. Recovery is now complete with KOReader closed: all five fresh

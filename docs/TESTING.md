@@ -2,6 +2,14 @@
 
 ## 2026-11-10 — fresh physical ADB verification / beta.2 preparation
 
+**Later publication authority:** after receiving the recovery report and the
+explicit outstanding physical post-wake-input limitation, the user says
+"Pusha betan". A new beta.2 prerelease is authorized with that known gap,
+subject to all software/package/history/art/secret, exact CI, draft/public and
+older-installer gates. Do not turn incomplete physical observations into a
+passing result. No further device changes or wireless sleep tests are needed
+for publication. Final frozen/public receipts follow separately.
+
 **Recovery completed after reconnect, publication still withheld:** KOReader
 was confirmed fully closed. The fresh before.tgz SHA was revalidated and a new
 small after.tgz captured preferences/statistics before any restoration. SQLite

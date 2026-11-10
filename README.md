@@ -23,6 +23,8 @@ discovery, optional Next in series and Finish forecast cards, plus a redesigned
 updater. It retains the Bookshelf 6.4.1 integration and your existing setup.
 See the release notes for scoped Bigme tests and remaining compatibility limits;
 **1.1.0 remains the stable release**. See the release notes before switching.
+Physical touch after sleep/wake still needs verification with a stable connection.
+The preview is published with that limitation, not as an all-tests-passed build.
 
 > **OrbitUI replaces the standalone SimpleUI and Bookshelf plugins.**
 > Neither is required separately. If either is installed, disable it and restart
