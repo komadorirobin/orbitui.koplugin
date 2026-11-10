@@ -68,6 +68,39 @@ av OrbitUIs funktioner, inte BookOrbits egen progressionssynk. EPUB-taggar finns
 kvar offline. Serverpatchar är frivilliga, versionsbundna och installeras av
 administratören separat. Hantera skyddade öppningar innan ångra-stöd tas bort.
 
+## Next in series
+
+Add **Next in series / Nästa i serien** from Home's Books module picker, or
+through **Cards and content > Add card > Home modules (SimpleUI)** in the
+Reading dashboard. It is optional and initially off; it never replaces
+Continue reading or changes the existing Home layout automatically.
+
+The card uses Bookshelf's native next-volume selection: prefer a volume in
+progress; otherwise choose the next unread local volume after the latest
+completed one, in a series already started. Unstarted and fully completed
+series are not random recommendations. Decimal volume numbers retain their
+normal order. The card keeps different authors' and libraries' series separate.
+Tap a cover to read through the normal KOReader opener; hold it for the usual
+configured cover action, including book details. BookOrbit/Hardcover continue
+to own their existing sync hooks, not this card.
+
+Long-press the module for **Library** (all libraries or one configured section),
+**Refresh next volumes**, row/column controls and ordinary cover styling.
+This uses indexed series metadata and local reading status, not the tag index,
+an account or a server. Missing cached metadata is reported in the module's
+options. A placeholder explains missing folders, empty results or an error;
+none of those states fall back to unrelated recent books.
+
+Preparation runs after the initial render: cooperative folder prewarming,
+bounded read-only text metadata, and the native selection in small yielding
+progress batches. Completed results are reused in memory; only visible covers
+are rendered. Sleep, hiding, navigation, rotation and removal retire the work;
+paused preparation needs explicit Refresh. Closing a module releases its screen
+references. Library/status invalidation or explicit Refresh prepares a new
+snapshot. Results are limited to 400 series after native ranking, not 400
+input volumes. The card writes only its explicit library/style preferences;
+it never marks a book read, moves files or adds a second progress database.
+
 ## Local similar books and series
 
 In a local EPUB's **Tags / Taggar** tab, choose **Find similar books and

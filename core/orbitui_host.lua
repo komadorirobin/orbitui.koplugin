@@ -75,6 +75,8 @@ function M.propagate(owner, event, report)
     M.performanceEvent(event.handler)
     local integrations = package.loaded["adapters/orbitui_integrations"]
     if integrations then integrations.statusImport.event(event.handler) end
+    local shelves = package.loaded["adapters/orbitui_home_shelves"]
+    if shelves and shelves.nextEvent then shelves.nextEvent(event.handler) end
     for _, instance in ipairs(owner) do
         local ok, consumed = pcall(instance.handleEvent, instance, event)
         if not ok then

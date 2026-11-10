@@ -22,6 +22,24 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-10
 
+- **Local Next in series Home module, not published.** User requests the next
+  Aleph-list point after local recommendations. Branch
+  `feature/next-series-home-20261110` starts at **9f2cc4af**, retaining point 1.
+  Lazy opt-in registry id `orbitui_next_series` is available on Home and as a
+  dashboard SimpleUI card; no existing placement/Continue reading change.
+  All configured libraries or one explicit section; own per-screen style.
+  Cooperative prewarming + bounded RO cached text feeds the same native
+  next-volume selector through small optional records/checkpoint/identity
+  seams. Preserve default shelf behavior; prioritize current then next unread
+  in started series, separate author/profile identities and decimal order.
+  Eight memory snapshots, rank before 400-series output cap, lifecycle/page/
+  data-generation guards and safe native opener/hold ownership. No tag-index
+  requirement, AI/server/account, network, reading-data writer, new runtime
+  path or dependency. Native progress/facts caches keep their prior owner.
+  C10/FEATURES/TESTING/MERGE_LOG record the implementation and physical gaps;
+  no upstream/pin/version/public-dist/device/server/watch change. Stable 1.1
+  and public preview beta.1 remain unchanged. Final local checks follow.
+
 - **Local similar-books/series feature, not published.** User approves point 1
   from the Aleph review. In the existing offline Tags section, an explicit
   action ranks local EPUBs by distinct common literal tags; Books/Series reuse

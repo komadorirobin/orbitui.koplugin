@@ -8635,27 +8635,35 @@ function Repo.getNextUnreadInSeries(limit, offset, scope, opts)
     local _t0 = _gettime()
     local home  = HomeDir.get() or "/"
     local depth = BookshelfSettings.read("latest_walk_depth") or 3
-    local cands = candidatesForScope(home, depth, scope)
-    local light_cache = _getLightMetaCache(home, depth)
+    -- Optional host-prepared metadata and cooperative checkpoints. The native
+    -- shelf keeps its existing inputs/selection; Home can prepare text in
+    -- bounded RO batches and yield between progress reads instead of putting
+    -- a cold walk/whole-table metadata load on its first paint.
+    local prepared = opts and opts.records
+    local cands = prepared or candidatesForScope(home, depth, scope)
+    local light_cache = not prepared and _getLightMetaCache(home, depth)
+    local checkpoint = opts and opts.checkpoint
     local natsort = require("sort").natsort_cmp()
 
     local read_time = {}
     for _, entry in ipairs(getReadHistory().hist) do
         local t = entry.time or 0
         if t > (read_time[entry.file] or 0) then read_time[entry.file] = t end
+        if checkpoint then checkpoint() end
     end
 
     local groups, order = {}, {}
     for _, c in ipairs(cands) do
-        local book = _lightMetaForFp(light_cache, c.fp)
+        local book = prepared and c or _lightMetaForFp(light_cache, c.fp)
         if book and book.series_name then
             local pct, status = Repo.readProgress(book.filepath)
             local sname = book.series_name
-            local group = groups[sname]
+            local identity = opts and opts.series_key and opts.series_key(book) or sname
+            local group = groups[identity]
             if not group then
                 group = { series_name = sname, books = {} }
-                groups[sname] = group
-                order[#order + 1] = sname
+                groups[identity] = group
+                order[#order + 1] = identity
             end
             group.books[#group.books + 1] = {
                 filepath   = book.filepath,
@@ -8666,6 +8674,7 @@ function Repo.getNextUnreadInSeries(limit, offset, scope, opts)
                 read_time  = read_time[book.filepath] or 0,
             }
         end
+        if checkpoint then checkpoint() end
     end
 
     local function book_cmp(a, b)
@@ -8678,8 +8687,8 @@ function Repo.getNextUnreadInSeries(limit, offset, scope, opts)
     end
 
     local picks = {}
-    for _, sname in ipairs(order) do
-        local books = groups[sname].books
+    for _, identity in ipairs(order) do
+        local sname, books = groups[identity].series_name, groups[identity].books
         table.sort(books, book_cmp)
 
         local latest_completed_idx, latest_completed_time = nil, 0
@@ -8702,6 +8711,7 @@ function Repo.getNextUnreadInSeries(limit, offset, scope, opts)
                 latest_completed_time = math.max(latest_completed_time, b.read_time or 0)
             end
             if b.read_time and b.read_time > 0 then started = true end
+            if checkpoint then checkpoint() end
         end
 
         local pick = in_progress
@@ -8714,8 +8724,10 @@ function Repo.getNextUnreadInSeries(limit, offset, scope, opts)
                     pick = b
                     break
                 end
+                if checkpoint then checkpoint() end
             end
         end
+        if checkpoint then checkpoint() end
         if pick then
             picks[#picks + 1] = {
                 filepath = pick.filepath,
@@ -8730,7 +8742,9 @@ function Repo.getNextUnreadInSeries(limit, offset, scope, opts)
         if a.latest_completed_time ~= b.latest_completed_time then
             return a.latest_completed_time > b.latest_completed_time
         end
-        return (a.series_name or ""):lower() < (b.series_name or ""):lower()
+        local an, bn = (a.series_name or ""):lower(), (b.series_name or ""):lower()
+        if an ~= bn then return an < bn end
+        return opts and opts.series_key and a.filepath < b.filepath or false
     end)
 
     offset = offset or 0

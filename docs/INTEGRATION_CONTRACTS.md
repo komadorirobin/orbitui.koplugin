@@ -1309,6 +1309,41 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+November 10 approved Aleph-list point 2: a separate opt-in **Next in series**
+Home module, also discoverable through the dashboard's existing SimpleUI
+module registry. Registration, enumeration, sizing and preview must not scan
+files, open BIM/documents, require a book renderer eagerly, save placements or
+replace Continue reading. Use stable id `orbitui_next_series`, default OFF,
+independent per-screen native styling and an optional explicit library key.
+Missing/disabled sections fail closed, never broaden to all books. No new
+installed paths, persistent results/index, external dependency or sync owner.
+
+Only an explicitly placed visible card may defer cooperative folder prewarming.
+Share native cached inventories and C10's eight-row/8ms separate RO text
+discovery; no document/EPUB repair, bulk cover load or synchronous cold metadata
+SELECT on paint. Prepare records and run the actual native
+`getNextUnreadInSeries` with optional host records/checkpoints/series identity:
+unmodified native callers retain their original inputs and rules. Yield at
+eight operations or 8ms between history/progress/volume/group steps; in-memory
+native group sorting remains native. Existing repository progress/facts caches
+stay their existing owner, never a new reading-data writer. Prioritize a current
+volume, then a next local unread volume in a started series. Keep numeric
+ordering and exact author/profile identities; no title guessing or merging
+homonymous series. Known missing metadata is omitted and disclosed in options.
+
+Cache at most eight screen snapshots, with repository generation plus
+profile/root/home/depth identity. Coalesce rebuild ownership without letting an
+old free/canceled/already-dequeued callback stop its replacement. Native Home
+and dashboard page changes, hidden/covered/freed/parked/sleeping owners, reader
+and rotation events retire tasks/RO handles and reject stale taps/holds.
+Explicit refresh retries pause/error; waking does not autoresume a canceled
+preparation. Finished snapshots retain paths only, not closed screen/context/
+cover references. Cap output at 400 series after full native selection and
+disclose the cap in options. Missing folders, unknown metadata, failure and a
+genuine empty result remain distinct, never a Recent/whole-library fallback.
+Normal native cover opening/hold/appearance/paging ownership remains; no
+automatic reading-status/network action. Owned labels/help are SV/EN.
+
 November 10 approved local recommendations (Aleph inspiration, independent
 OrbitUI code): expose Find similar books and series in the existing offline
 EPUB-tags section, not a new Home card or replacement for Continue reading.

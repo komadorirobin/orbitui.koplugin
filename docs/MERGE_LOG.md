@@ -4,6 +4,30 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-10 — Next in series Home card (Aleph-list point 2)
+
+User requests the next list item after the local tag recommendation feature.
+Branch `feature/next-series-home-20261110` starts at **9f2cc4af**; point 1 is
+preserved. Reference remains Aleph **89419f6f**, whose README lists Up next in
+series among local Home widgets. No Aleph code/assets/dependency are imported.
+OrbitUI uses its own Home registry/grid/dashboard adapters and actual native
+Bookshelf selection, with optional prepared-record/checkpoint/identity seams.
+This is a local feature adaptation, not a source-pin/import/watch advance.
+
+The lazy default-OFF module/card uses safe per-screen library choice and no
+automatic placements. Cooperative native prewarm, bounded RO metadata and
+yielding progress preparation keep whole-library work off initial rendering.
+Preserve stock shelf calls, normal book opener/hold, decimals, current/next
+selection and author/profile separation. C10 records finite memory, full scan
+before the 400-series output limit, missing metadata/error/empty distinctions,
+source/page/lifecycle/generation guards, stale callback isolation and screen
+release. SV/EN and focused 3,341-volume/503-series/CBZ/PDF tests accompany it.
+No new reading-state index or network writer; native disposable progress/facts
+caches remain native. Tests/package receipts and physical gaps are in TESTING.
+No merge, push, version/release/OTA replacement, device/server operation or
+inspiration-watch change is authorized or performed. Both local features remain
+unpublished; public beta.1/stable 1.1 and maintenance branches are untouched.
+
 ## 2026-11-10 — independent local tag recommendations (not an import)
 
 User approves point 1 from the Aleph inspiration review: similar local books

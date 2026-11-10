@@ -1,5 +1,17 @@
 -- OrbitUI-owned strings, independent of the two upstream translation catalogs.
 local sv = {
+    ["Next in series"] = "Nästa i serien",
+    ["All libraries"] = "Alla bibliotek",
+    ["Refresh next volumes"] = "Uppdatera nästa volymer",
+    ["About next in series"] = "Om Nästa i serien",
+    ["Continue a volume in progress, otherwise show the next unread local volume in a started series. Different authors and libraries stay separate. Preparation runs in small steps; no BookOrbit account or server is needed. Long-press a cover for book details."] = "Fortsätt med en pågående volym, annars visas nästa olästa lokala volym i en påbörjad serie. Olika författare och bibliotek hålls isär. Listan förbereds i små steg. Inget BookOrbit-konto eller någon server behövs. Långtryck på ett omslag för bokdetaljer.",
+    ["%d books have no cached metadata. Refresh library metadata for complete series results."] = "%d böcker saknar cachade metadata. Uppdatera bibliotekets metadata för fullständiga serieträffar.",
+    ["Showing the first 400 series."] = "Visar de första 400 serierna.",
+    ["Preparing next volumes… Long-press for options."] = "Förbereder nästa volymer… Långtryck för alternativ.",
+    ["Series preparation paused. Long-press and choose Refresh next volumes."] = "Serieförberedelsen har pausats. Långtryck och välj Uppdatera nästa volymer.",
+    ["Could not prepare series. Long-press to refresh, or check library metadata."] = "Kunde inte förbereda serierna. Långtryck för att uppdatera, eller kontrollera bibliotekets metadata.",
+    ["Choose library folders before using Next in series."] = "Välj biblioteksmappar innan du använder Nästa i serien.",
+    ["No started series to continue in the indexed books."] = "Inga påbörjade serier att fortsätta med bland de indexerade böckerna.",
     ["Find similar books and series…"] = "Hitta liknande böcker och serier…",
     ["Similar books and series"] = "Liknande böcker och serier",
     ["Series discovery paused. Tap Refresh to continue."] = "Seriegrupperingen har pausats. Tryck Uppdatera för att fortsätta.",

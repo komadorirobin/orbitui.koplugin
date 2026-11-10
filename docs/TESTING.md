@@ -1,5 +1,39 @@
 # Verification and device acceptance
 
+## 2026-11-10 — local Next in series module
+
+Approved Aleph-list point 2 after the recommendation work; branch
+`feature/next-series-home-20261110`, based on **9f2cc4af**. No publication,
+upstream merge or actual device/server install. The earlier recommendation
+feature remains included and unpublished.
+
+`test_next_series` runs the actual native next-volume method with prepared
+metadata, not a separate selection algorithm. Sixteen cases cover lazy/off
+registration, untouched layouts/settings, preview with no owner/no work,
+zero synchronous scan/status reads from build, first in-progress then next
+unread, author/profile homonyms, per-screen library choices/deleted profiles,
+source/data/page/owner/file guards, warm/metadata/progress retirement, sleep
+without autoresume, canceled-but-already-dequeued callback isolation, 3,341
+volumes with injected slow progress reads, genuine empty/missing metadata/
+transient errors with explicit retry, actual dashboard-proxy ownership,
+free-once/screen-reference release, CBZ/PDF candidates and 503 series capped
+only after native ranking, finite snapshot eviction, decimals and SV/EN.
+Existing whole repository tests retain the default non-prepared shelf path.
+
+Required verification: both complete scripts, all 43 catalogs, native SQLite/
+metadata/EPUB-input supplements and a sealed committed private ZIP with exact
+source/path/hash checks, followed by all 118 root suites in both interpreters.
+Evidence: ignored `test-results/next-series-home-20261110/`; frozen receipt
+follows. No new installed path/module identity or API1 budget increase.
+
+Physical Bigme follow-up remains pending: add/remove/reorder on Home and the
+dashboard, stock/half/full-width/landscape cover geometry, chapter/reader return
+after finishing a volume, changing local status, CBZ series, library selection,
+module paging, rapid page switches, covered settings, sleep/resume and explicit
+refresh. Measure real preparation/input/reader-return times rather than claiming
+desktop timings are device improvements. No public build is certified by these
+headless/native desktop checks alone.
+
 ## 2026-11-10 — local similar books and series
 
 Approved point 1 from the Aleph review; branch
