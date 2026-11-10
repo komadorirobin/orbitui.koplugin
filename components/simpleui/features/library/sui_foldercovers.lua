@@ -650,7 +650,6 @@ local function _installFileDialogButton(BookInfoManager)
                         connect_folder         = file,
                         connect_subfolders     = M.getRecursiveCover(),
                         connect_scan_on_show   = true,
-                        empty_message          = _("No books found in this folder."),
                     }
                 end,
             }}
