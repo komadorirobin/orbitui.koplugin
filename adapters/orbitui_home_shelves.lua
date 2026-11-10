@@ -359,6 +359,15 @@ function M.nextModule()
         local lease = { owner = owner, ctx = ctx, pfx = pfx, navigation = UI._simpleui_navigation_generation,
             page = owner and owner._current_page, dashboard = ctx.orbitui_dashboard_hosted,
             dashboard_page = owner and owner._orbitui_dashboard_module_page }
+        local previous = state.lease
+        -- Native Home can free a card before rebuilding it in the same UI
+        -- turn (including its post-open correction). Transfer only within the
+        -- same screen/page/navigation, never across reader/sleep/page changes.
+        if state.running and (not previous or previous.owner ~= owner
+                or previous.navigation ~= lease.navigation or previous.page ~= lease.page
+                or previous.dashboard ~= lease.dashboard or previous.dashboard_page ~= lease.dashboard_page) then
+            stopNext(state); state.phase = "paused"
+        end
         state.lease = lease
         local child = {}; for k, value in pairs(ctx) do child[k] = value end
         child["_row_fps_" .. NEXT_ID] = nil
@@ -393,8 +402,17 @@ function M.nextModule()
             if lease.disposed then return end
             lease.disposed = true
             if state.lease == lease then
-                if state.running then stopNext(state); state.phase = "paused" end
-                state.lease = nil
+                if state.running then
+                    -- Disposed leases immediately fail nextLive(). Give the
+                    -- synchronous replacement build one UI turn to adopt the
+                    -- job; without a replacement, retire normally. No hidden
+                    -- work can pass the live guard while the card is absent.
+                    UI:scheduleIn(.001, function()
+                        if state.lease == lease then
+                            stopNext(state); state.phase, state.lease = "paused", nil
+                        end
+                    end)
+                else state.lease = nil end
             end
             if free then return free(self, ...) end
         end

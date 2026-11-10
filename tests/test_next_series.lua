@@ -208,6 +208,21 @@ H.test("a menu-covered placement or explicit refresh waits for a visible mounted
     owner.covered = false; replacement:paintTo(); H.eq(queries, 1)
     flush(); H.eq(Shelves.nextState().phase, "ready"); H.eq(queries, 2)
 end)
+H.test("native same-turn free-before-build correction transfers work without resuming a retired page", function()
+    local mod = fixture(); local ctx = context()
+    for i=1,40 do add("/manga/extra"..i..".epub","Extra",i) end
+    local old=mod.build(500,ctx); flush(3)
+    H.eq(Shelves.nextState().phase,"loading")
+    old:free(); local replacement=mod.build(500,ctx)
+    flush(); H.eq(Shelves.nextState().phase,"ready"); H.eq(warms,1); H.eq(queries,1)
+    replacement:free(); H.eq(Shelves.nextState().lease,nil)
+
+    mod=fixture(); ctx=context(); owner._current_page=1
+    for i=1,40 do add("/manga/extra"..i..".epub","Extra",i) end
+    old=mod.build(500,ctx); flush(3); local reads=metadata_reads
+    old:free(); owner._current_page=2; mod.build(500,ctx); flush()
+    H.eq(Shelves.nextState().phase,"paused"); H.eq(queries,0); H.eq(metadata_reads,reads)
+end)
 H.test("different author and library series identities cannot select one another's unread volume", function()
     local mod = fixture()
     add("/manga/S1.epub", "Same", 1, 1, "finished", "Author A", 300)
