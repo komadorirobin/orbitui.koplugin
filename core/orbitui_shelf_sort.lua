@@ -161,6 +161,77 @@ function M.seriesShapes(shapes, priority)
     return keys
 end
 
+-- Only the repository's immutable, cover-free group shapes may enter here.
+-- Scope identity is the native group-array identity; the filtered input order
+-- is compared too, so a different filter/participation rule never reuses it.
+-- Keep four orders / 8,192 member slots at most, not hydrated books or pixels.
+function M.seriesOrderCache()
+    local entries, slots = {}, 0
+    local generation, settings, signature
+    local static = { title = true, author_surname = true, author_name = true,
+        series_name = true, series_combined = true, series_or_title = true,
+        filename = true, series_index = true, book_count = true,
+        date_added = true, last_opened = true }
+    return function(shapes, priority, token, data_gen, settings_gen)
+        if not M.enabled(priority) then return nil end
+        local engine = require("lib/bookshelf_sort_engine")
+        local sig = engine.keySignature and engine.keySignature()
+        if type(token) ~= "table" or data_gen == nil or settings_gen == nil or sig == nil then
+            return M.seriesShapes(shapes, priority)
+        end
+        if generation ~= data_gen or settings ~= settings_gen or signature ~= sig then
+            entries, slots = {}, 0
+            generation, settings, signature = data_gen, settings_gen, sig
+        end
+        local parts = {}
+        for _, level in ipairs(priority) do
+            -- Dynamic/third-party comparators retain their original path.
+            if not static[level.key] then return M.seriesShapes(shapes, priority) end
+            parts[#parts + 1] = level.key .. (level.reverse and ":R" or ":F")
+        end
+        local order, now = table.concat(parts, "|"), os.time()
+        for i = #entries, 1, -1 do
+            local hit = entries[i]
+            if now < hit.at or now - hit.at >= 30 then
+                slots = slots - hit.slots; table.remove(entries, i)
+            elseif hit.token[1] == token and hit.order == order and #hit.input == #shapes then
+                local same = true
+                for j, shape in ipairs(shapes) do
+                    if hit.input[j] ~= shape then same = false; break end
+                end
+                if same then
+                    table.remove(entries, i); entries[#entries + 1] = hit
+                    local keys = {}
+                    for j, shape in ipairs(hit.sorted) do
+                        shapes[j] = shape
+                        -- The caller owns its key records, not our cache's.
+                        keys[shape] = copyRecord(hit.keys[shape])
+                    end
+                    return keys
+                end
+            end
+        end
+        local input, cost = {}, 0
+        for i, shape in ipairs(shapes) do
+            input[i] = shape
+            cost = cost + math.max(1, #(shape.books_meta or shape.books or {}))
+        end
+        local keys = M.seriesShapes(shapes, priority) -- exceptions/failed work are never cached
+        if cost > 8192 or #shapes > 1024 then return keys end
+        while #entries > 0 and (#entries >= 4 or slots + cost > 8192) do
+            slots = slots - entries[1].slots; table.remove(entries, 1)
+        end
+        local sorted, owned = {}, {}
+        for i, shape in ipairs(shapes) do
+            sorted[i], owned[shape] = shape, copyRecord(keys[shape])
+        end
+        entries[#entries + 1] = { token = setmetatable({ token }, { __mode = "v" }), order = order, input = input,
+            sorted = sorted, keys = owned, at = now, slots = cost }
+        slots = slots + cost
+        return keys
+    end
+end
+
 function M.sortKeyValue(native, item, key)
     local record = item and item._orbitui_shelf_sort
     if record then return native(record, series_keys[key] and "title" or key) end

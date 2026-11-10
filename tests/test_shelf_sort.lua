@@ -1,4 +1,5 @@
-package.path = "./?.lua;./components/bookshelf/?.lua;" .. package.path
+local root = os.getenv("ORBITUI_TEST_ROOT") or "."
+package.path = root .. "/?.lua;" .. root .. "/components/bookshelf/?.lua;./?.lua;" .. package.path
 local H = require("tests/helpers")
 package.loaded.logger = { dbg = function() end, warn = function() end }
 local Engine = require("lib/bookshelf_sort_engine")
@@ -120,7 +121,7 @@ H.test("nonalphabetical and empty priorities retain native order unchanged", fun
 end)
 
 local function source()
-    local f = assert(io.open("components/bookshelf/lib/bookshelf_book_repository.lua"))
+    local f = assert(io.open(root .. "/components/bookshelf/lib/bookshelf_book_repository.lua"))
     local s = f:read("*a"); f:close(); return s
 end
 local function compile(code, env)
@@ -295,5 +296,183 @@ H.test("quick bookcase sorting retains the native Moberg series blocks and volum
     H.eq(ids(result), "r,u1,u2,u3,u4,z")
     H.eq(ids(books), "z,r,u4,u2,u3,u1", "native metadata list remains unchanged")
     package.loaded["core/orbitui_shelf_query"] = saved_query
+end)
+
+local function countedSorts(fn)
+    local native, calls = table.sort, 0
+    table.sort = function(...) calls = calls + 1; return native(...) end
+    local ok, value = pcall(fn)
+    table.sort = native
+    assert(ok, value)
+    return calls, value
+end
+local function cacheFixture()
+    local groups, singles = shapes()
+    for _, single in ipairs(singles) do single.standalone = true end
+    local function input() return { groups[1], singles[1], singles[2] } end
+    return Sort.seriesOrderCache(), groups, input
+end
+H.test("prepared series orders avoid all warm sorts and return separately owned keys", function()
+    local order, token, input = cacheFixture()
+    local cold, keys = countedSorts(function() return order(input(), alpha, token, 1, 1) end)
+    assert(cold > 0)
+    keys[token[1]].title = "Do not leak"
+    local warm, fresh = countedSorts(function() return order(input(), alpha, token, 1, 1) end)
+    H.eq(warm, 0); H.eq(fresh[token[1]].title, "Utvandrarna")
+    fresh[token[1]].title = "Still owned"
+    H.eq(order(input(), alpha, token, 1, 1)[token[1]].title, "Utvandrarna")
+    H.eq(token[1].title, nil); H.eq(token[1]._orbitui_shelf_sort, nil)
+end)
+H.test("scope token, filtered membership and tie order are part of prepared series identity", function()
+    local order, token, input = cacheFixture()
+    order(input(), alpha, token, 1, 1)
+    assert(countedSorts(function() return order(input(), alpha, {}, 1, 1) end) > 0)
+    assert(countedSorts(function() return order({token[1]}, alpha, token, 1, 1) end) > 0)
+    local reordered = input(); reordered[2], reordered[3] = reordered[3], reordered[2]
+    assert(countedSorts(function() return order(reordered, alpha, token, 1, 1) end) > 0)
+    H.eq(countedSorts(function() return order(input(), alpha, token, 1, 1) end), 0)
+end)
+H.test("data and settings generations retire old metadata and reading-dependent orders", function()
+    local order, token, input = cacheFixture()
+    order(input(), alpha, token, 1, 1)
+    token[1].series_name = "Changed series"
+    local calls, keys = countedSorts(function() return order(input(), alpha, token, 2, 1) end)
+    assert(calls > 0); H.eq(keys[token[1]].title, "Changed series")
+    assert(countedSorts(function() return order(input(), alpha, token, 2, 2) end) > 0)
+    H.eq(countedSorts(function() return order(input(), alpha, token, 2, 2) end), 0)
+    local reversed = {{key="title", reverse=true}}
+    assert(countedSorts(function() return order(input(), reversed, token, 2, 2) end) > 0)
+    local list = input(); order(list, reversed, token, 2, 2)
+    H.eq(list[1].id, "z"); H.eq(list[2].id, "r")
+end)
+H.test("native collation signature changes retire prepared orders even at the same data generation", function()
+    local order, token, input = cacheFixture()
+    local native, sig = Engine.keySignature, "articles"
+    Engine.keySignature = function() return sig end
+    order(input(), alpha, token, 1, 1)
+    H.eq(countedSorts(function() return order(input(), alpha, token, 1, 1) end), 0)
+    sig = "pinyin"
+    local calls = countedSorts(function() return order(input(), alpha, token, 1, 1) end)
+    Engine.keySignature = native
+    assert(calls > 0)
+end)
+H.test("dynamic sorts and callers without a repository token never use prepared orders", function()
+    local order, token, input = cacheFixture()
+    for _ = 1, 2 do
+        assert(countedSorts(function() return order(input(), alpha, nil, 1, 1) end) > 0)
+        assert(countedSorts(function() return order(input(), alpha, token, nil, 1) end) > 0)
+        assert(countedSorts(function() return order(input(), {{key="title"},{key="rating"}}, token, 1, 1) end) > 0)
+        H.eq(order(input(), {{key="last_opened"}}, token, 1, 1), nil)
+    end
+end)
+H.test("prepared series work is bounded by entries, members and absolute age", function()
+    local order, token, input = cacheFixture()
+    local tokens = {token, {}, {}, {}, {}}
+    for _, id in ipairs(tokens) do order(input(), alpha, id, 1, 1) end
+    H.eq(countedSorts(function() return order(input(), alpha, tokens[5], 1, 1) end), 0)
+    assert(countedSorts(function() return order(input(), alpha, tokens[1], 1, 1) end) > 0)
+    local big = {series_name="Big", books_meta={}}
+    for i = 1, 8193 do big.books_meta[i] = {filepath="/large/"..i, title="Volume", series_num=i} end
+    for _ = 1, 2 do assert(countedSorts(function() return order({big}, alpha, token, 1, 1) end) > 0) end
+    for i = 3001, 8193 do big.books_meta[i] = nil end
+    local large_tokens = {{}, {}, {}}
+    for _, id in ipairs(large_tokens) do order({big}, alpha, id, 1, 1) end
+    assert(countedSorts(function() return order({big}, alpha, large_tokens[1], 1, 1) end) > 0,
+        "aggregate member budget, not just a per-entry limit")
+    local native, now = os.time, 1000
+    os.time = function() return now end
+    local ok, err = pcall(function()
+        order(input(), alpha, token, 2, 1)
+        now = 1029; H.eq(countedSorts(function() return order(input(), alpha, token, 2, 1) end), 0)
+        now = 1030; assert(countedSorts(function() return order(input(), alpha, token, 2, 1) end) > 0)
+        now = 1; assert(countedSorts(function() return order(input(), alpha, token, 2, 1) end) > 0)
+    end)
+    os.time = native; assert(ok, err)
+end)
+H.test("prepared orders do not pin their whole source array or cache failed work", function()
+    local order, token, input = cacheFixture()
+    local weak = setmetatable({token}, {__mode="v"})
+    local list = input()
+    order(list, alpha, token, 1, 1)
+    token, input = nil, nil
+    collectgarbage("collect"); collectgarbage("collect")
+    H.eq(weak[1], nil)
+    local native, reason = Sort.seriesShapes, {}
+    Sort.seriesShapes = function() error(reason) end
+    local id = {}
+    local ok, err = pcall(order, list, alpha, id, 2, 1)
+    Sort.seriesShapes = native
+    H.eq(ok, false); H.eq(err, reason)
+    assert(countedSorts(function() return order(list, alpha, id, 2, 1) end) > 0)
+end)
+H.test("large-series fixture sorts once rather than repeating work for every page", function()
+    local groups, members = {}, 0
+    for s = 1, 235 do
+        local group = {series_name="Series "..s, books_meta={}}
+        for v = 1, 14 + (s <= 51 and 1 or 0) do
+            group.books_meta[#group.books_meta+1] = book(s.."-"..v, "Volume "..v, "Author "..s, group.series_name, v)
+            members = members + 1
+        end
+        groups[#groups+1] = group
+    end
+    local order = Sort.seriesOrderCache()
+    for pass = 1, 3 do
+        local list = {}; for i, g in ipairs(groups) do list[i] = g end
+        local calls = countedSorts(function() return order(list, title_order, groups, 1, 1) end)
+        H.eq(calls, pass == 1 and 236 or 0)
+        H.eq(#list, 235); H.eq(members, 3341)
+    end
+end)
+
+H.test("actual query skips redundant flat sorts but retains bookcase, grouped and foreign-source ownership", function()
+    local saved_query, saved_repo, saved_sources = package.loaded["core/orbitui_shelf_query"],
+        package.loaded["lib/bookshelf_book_repository"], package.loaded["lib/bookshelf_sources"]
+    package.loaded["core/orbitui_shelf_query"] = nil
+    local query = require("core/orbitui_shelf_query")
+    local producer_sort, cached, foreign, grouped = nil, nil, false, false
+    local _, books = fixture()
+    query.resolve = function() return {source={kind="library"}, scope={roots={"/lib"}}} end
+    package.loaded["lib/bookshelf_sources"] = {get=function() return foreign and {} or nil end}
+    package.loaded["lib/bookshelf_book_repository"] = {getBySource=function(_, _, priority, _, _, _, opts)
+        H.eq(opts.light_only, true)
+        producer_sort = priority
+        if grouped then return {{books=books, books_meta=books}} end
+        if cached then return cached end
+        local list = {}; for i, b in ipairs(books) do list[i] = b end
+        if #priority > 0 then Engine.sort(list, priority) end
+        cached = list; return list
+    end, readProgress=function() return 0, "new" end}
+    local first = countedSorts(function() return Adapter.browseBooks({}, {sort="title"}, false, false) end)
+    H.eq(first, 1)
+    local warm, result = countedSorts(function() return Adapter.browseBooks({}, {sort="title"}, false, false) end)
+    H.eq(warm, 0); H.eq(#result, 6)
+    local filtered = Adapter.browseBooks({}, {sort="title", filter="unread"}, false, false)
+    H.eq(#filtered, 6)
+    H.eq(producer_sort[1].key, "title")
+    cached = nil
+    local block_calls, blocks = countedSorts(function() return Adapter.browseBooks({}, {sort="author"}, false, true) end)
+    H.eq(#producer_sort, 0); H.eq(ids(blocks), "r,u1,u2,u3,u4,z"); assert(block_calls > 0)
+    foreign, cached = true, nil
+    local foreign_calls = countedSorts(function() return Adapter.browseBooks({}, {sort="title"}, false, false) end)
+    H.eq(foreign_calls, 2)
+    foreign, grouped, cached = false, true, nil
+    assert(countedSorts(function() return Adapter.browseBooks({}, {sort="title"}, false, false) end) > 0)
+    package.loaded["core/orbitui_shelf_query"], package.loaded["lib/bookshelf_book_repository"],
+        package.loaded["lib/bookshelf_sources"] = saved_query, saved_repo, saved_sources
+end)
+H.test("metadata replacement and lazy date keys still receive their required final sort", function()
+    local saved_query, saved_repo = package.loaded["core/orbitui_shelf_query"],
+        package.loaded["lib/bookshelf_book_repository"]
+    local a = {filepath="/a", title="Z", date_added=100, last_opened=400}
+    local b = {filepath="/b", title="A", date_added=200, last_opened=300}
+    package.loaded["core/orbitui_shelf_query"] = {books=function()
+        return {{filepath="/a"}, {filepath="/b"}}, nil, true
+    end}
+    package.loaded["lib/bookshelf_book_repository"] = {lightMetaFor=function(fp) return fp == "/a" and a or b end}
+    local calls, result = countedSorts(function() return Adapter.browseBooks({}, {sort="title"}, false, false) end)
+    H.eq(calls, 1); H.eq(result[1], b)
+    H.eq(Adapter.browseBooks({}, {sort="last_opened"}, false, false)[1], a)
+    H.eq(Adapter.browseBooks({}, {sort="date_added"}, false, false)[1], b)
+    package.loaded["core/orbitui_shelf_query"], package.loaded["lib/bookshelf_book_repository"] = saved_query, saved_repo
 end)
 H.finish()

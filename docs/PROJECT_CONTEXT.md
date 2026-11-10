@@ -22,6 +22,81 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-10
 
+- **Local series/browse sort maintenance, not published.** User approves the
+  recommended first stage after the Aleph performance review. Branch
+  `performance/series-order-20261110` starts at **3dce4cc54**, retaining all five
+  unpublished Aleph-inspired features and the review notes. Independent host
+  code caches prepared bookcase series orders only for native immutable light
+  shapes. One optional third hook argument supplies the native group-array
+  identity; no standalone behavior change. Exact filtered input sequence,
+  full priority, repository data generation, settings generation and native
+  collation signature must match. Four orders/8,192 aggregate member slots,
+  max 1,024 shapes and thirty-second absolute age; source-array token is weak,
+  no hydrated books/covers, caller key records are separate and failures retry.
+  Dynamic/unknown secondary sorts keep the old path. Flat native browse lists
+  preserve proven producer order rather than re-sort after filtering; physical
+  bookcase blocks may defer the redundant flat pass to the final block sort.
+  Registered/unknown sources, group flattening, replaced path-only metadata
+  and lazy date keys retain their required final sorting. No persistent index,
+  setting, sync/data writer, worker, runtime path, upstream/pin/version/public
+  asset/device/server/watch change. Synthetic 235-series/3,341-volume fixture
+  counts 236 sorts cold, zero on both warm calls; full native repository tests
+  cover page reuse, metadata/progress/group retirement and scope isolation.
+  `test_shelf_sort` has 24 cases; `test_library_performance` has 10. Full frozen/
+  sealed verification follows in TESTING/MERGE_LOG. Bigme latency/RSS/UI remain
+  unmeasured; no physical acceptance or publication is implied. Tag validation
+  sharing, dashboard demand normalization and finer no-change redraws remain
+  review backlog, not implemented by this stage.
+
+- **Performance review backlog, retained at the user's request.** First two
+  candidates have the local stage above; remaining candidates are not implemented.
+  Read-only review of **3dce4cc54** identified four candidates, in priority order:
+  (1) `core/orbitui_shelf_sort.seriesShapes` copies/sorts every series' members
+  and recreates proxy keys even on cached `_seriesReadout` calls before visible
+  pagination; a synthetic actual-function/native-comparator fixture with 235
+  series/3,341 volumes repeated 11,116 volume comparisons on each of three calls.
+  (2) Custom `adapters/orbitui_shelf_sort.browseBooks` requests producer sorting,
+  then sorts again after filtering; the fetch override repeats whole-list work
+  before slicing a page. A real Query/adapter fixture with a stubbed native
+  sorted producer counted two complete sorts per call. Flat-list ordering,
+  series blocks and date proxies require separate correctness checks before
+  removing a pass. (3) `core/orbitui_shelf_query.tagPaths` repeats per-path stat
+  validation on each call: a 400-result fixture counted 400 checks every time.
+  Consider sharing validation only within the same owned build/data generation;
+  retain scope/stamp/deletion checks and fresh validation on explicit opening.
+  (4) Dashboard needs probes repeatedly normalize configuration and resolve the
+  same selected modules: seven probes/16 selected modules counted seven config
+  normalizations and 112 resolutions. Prefer one owned build context, not a
+  persistent unversioned cache. The 8 library-performance, 4 dashboard-demand
+  and 12 tag-chip regressions passed. These are desktop synthetic work counts,
+  not Bigme latency/RSS measurements or implementation approval. Existing shared
+  light-metadata, bounded thumbnail, stats-demand and reader-return caches stay
+  intact; incremental previous-search-results filtering remains deferred.
+
+- **Aleph performance idea review, observation only.** Fresh remote HEAD
+  **73b0d178a438606e8e5391ebb6a7e40151b4dd73** was inspected separately from
+  the earlier five feature references at 89419f6f; no pin/watch/import advances.
+  `aleph_local.lua:421` caches prepared author/series lists and volume order
+  per index/sort. An actual `groupEntries` fixture with primitive providers
+  stubbed counted 236 sorts/3,341 state derivations on the first 235-series/
+  3,341-volume call, then zero/zero on both warm calls. This supports candidate
+  (1), not a whole-app speed comparison. Its scan completion keeps the old
+  index/order and skips board rebuild/redraw when relevant book state is
+  unchanged (`aleph_local.lua:206`, `aleph_browser.lua:1208`). Consider precise
+  change categories instead of blanket invalidation, but do not copy its
+  limited equality predicate: OrbitUI must include tags, authors, custom
+  metadata, profiles, collections and reading-state owners as applicable.
+  `aleph_board_data.lua:705` reuses derived board-book records and memoizes
+  selected lazy fields within a build; adapt only immutable/read-only derived
+  data, never share the mutable native records our copies deliberately isolate.
+  Visible-cover priority and coalesced redraws (`aleph_browser.lua:119`) are
+  useful principles but already partly present in native queues. Bounded
+  scaled-cover caching and DB/WAL-aware statistics memoization also already
+  exist here; do not present them as new gains or copy Aleph's synchronous
+  one-second DB wait/100 ms CPU scan slices into our tighter lifecycle budgets.
+  No Aleph code/assets were imported, runtime changed, device/server contacted
+  or source/version/public asset changed. Only this durable review note changed.
+
 - **Local finish forecast, not published.** User requests the next Aleph-list
   point, now point 5. Branch `feature/finish-forecast-20261110` starts at
   **979f19009** and retains all four prior local features. Optional default-OFF

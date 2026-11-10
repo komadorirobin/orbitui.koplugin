@@ -6440,7 +6440,7 @@ local function _seriesReadout(group_shapes, standalone_shapes, filter,
     -- OrbitUI bookcase ordering compares series titles and standalone titles
     -- together, without changing the cached shapes or other display modes.
     local shelf_keys = Repo.spine_light and Repo.orderShelfSeries
-        and Repo.orderShelfSeries(sorted, sk)
+        and Repo.orderShelfSeries(sorted, sk, group_shapes)
     if not shelf_keys then table.sort(sorted, _groupShapeCmp(sk)) end
     local total = #sorted
     local out   = {}

@@ -174,6 +174,26 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+November 10 approved local series/browse sorting maintenance: prepared series
+orders may reuse only native immutable, cover-free shapes, keyed by native
+group-array identity (weak token), exact pre-sort filtered shape sequence,
+complete priority, repository data/settings generations and native collation
+signature. Cap four orders/8,192 aggregate member slots/1,024 shapes and thirty
+seconds absolute age, rejecting backwards-clock hits. Return independent key
+records; never retain hydrated books/pixels or suppress metadata/progress/scope
+invalidation. Dynamic/third-party secondary sorts and missing identity fall back.
+The optional third `orderShelfSeries` argument is the native group-array token;
+standalone code without this hook remains unchanged. A flat-list query may
+prove its explicit native order only for known native flat predicates, never a
+registered/fetch owner or flattened group. The host may skip its redundant
+sort only with that proof and unchanged metadata, or defer a native flat pass
+when the host will perform its required bookcase block sort. Preserve source
+filters, scope, numeric volume order, lazy date proxies, missing-metadata repair,
+fresh visible-only cover hydration and all original failure/opening behavior.
+No new disk cache, settings, background owner or reading/sync writer. Tests:
+`test_shelf_sort` and full native `test_library_performance`; physical Bigme
+opening/page latency, RSS, letter jumps and suspend/return remain device gates.
+
 November 9 / 1.2 reviewed boundary: retained light-list keys include section,
 roots/depth and data generation; Decades source/group restoration uses the same
 scope as other local groups. New extraction/collector callbacks must retire on

@@ -76,14 +76,19 @@ function M.browseBooks(ref, prefs, with_counts, bookcase)
     local key = ({ author = "author_surname", series = "series_combined" })[prefs.sort] or prefs.sort
     local priority = key and { { key = key,
         reverse = prefs.sort == "last_opened" or prefs.sort == "date_added" }, { key = "title" } }
-    local books, err = require("core/orbitui_shelf_query").books(ref, { sort = priority })
+    local books, err, producer_ordered = require("core/orbitui_shelf_query").books(ref,
+        { sort = priority, defer_flat_sort = bookcase and require("core/orbitui_shelf_sort").enabled(priority) })
     if err then return nil, err end
     local Repo = require("lib/bookshelf_book_repository")
     local counts, selected = { all = #books, unread = 0, reading = 0, barely = 0, finished = 0 }, {}
+    local replaced = false
     for _, book in ipairs(books) do
         -- Light group members may be path-only. Reuse the native metadata map
         -- before comparing them, never attach covers to a whole-list query.
-        if not book.title and Repo.lightMetaFor then book = Repo.lightMetaFor(book.filepath) or book end
+        if not book.title and Repo.lightMetaFor then
+            local light = Repo.lightMetaFor(book.filepath)
+            if light and light ~= book then book, replaced = light, true end
+        end
         local status
         if with_counts or (prefs.filter and prefs.filter ~= "all") then
             status = M.bookStatus(book, Repo)
@@ -107,7 +112,9 @@ function M.browseBooks(ref, prefs, with_counts, bookcase)
             local ordered = Order.folderEntries(entries, priority)
             selected = {}
             for i, entry in ipairs(ordered) do selected[i] = entry.rec end
-        else require("lib/bookshelf_sort_engine").sort(selected, priority) end
+        elseif dates or replaced or not producer_ordered then
+            require("lib/bookshelf_sort_engine").sort(selected, priority)
+        end
         if TokenRecord then
             for i, book in ipairs(selected) do selected[i] = TokenRecord.unwrap(book) end
         end
@@ -305,7 +312,12 @@ function M.repository(repo)
     require("core/orbitui_host").shareLightMetadata(repo)
     local Sort = require("core/orbitui_shelf_sort")
     repo.orderShelfSections = Sort.folderEntries
-    repo.orderShelfSeries = Sort.seriesShapes
+    local order = Sort.seriesOrderCache()
+    repo.orderShelfSeries = function(shapes, priority, groups)
+        return order(shapes, priority, groups,
+            repo.dataGeneration and repo.dataGeneration(),
+            repo._storeGeneration and repo._storeGeneration())
+    end
 end
 
 function M.engine(engine)

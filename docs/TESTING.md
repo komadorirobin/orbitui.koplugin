@@ -1,5 +1,49 @@
 # Verification and device acceptance
 
+## 2026-11-10 — local series order and browse sort maintenance
+
+Approved first performance stage, branch `performance/series-order-20261110`,
+base **3dce4cc54**; all five local feature stages and previous review notes are
+retained. Only host sort/query integration and one optional native group-token
+argument change at runtime. No new installed paths/helpers/identities, source
+pin/version/public asset, persistent cache/settings, device/server/watch change.
+
+`test_shelf_sort` has 24 cases: existing Moberg/decimal/reverse/block/author/
+natural/article/letter/scope/flag/real-readout contracts, zero warm sort work,
+separate caller keys, source/filter/input-order/generation/settings/collation
+identity, dynamic/missing-identity fallbacks, four-entry and aggregate 8,192-
+member bounds, oversize refusal, TTL/backwards clock, weak source retention,
+error retry, 235-series/3,341-volume cold/warm work counts, real Query with a
+stubbed producer and registered/group/date/metadata-replacement fallbacks.
+Both interpreters pass. The large fixture counts 236 sort calls cold, zero on
+each of two warm reads; it is not a Bigme timing or whole-application benchmark.
+
+`test_library_performance` now has 10 cases, retaining shared text derivation
+and label safeguards. Two additions load the entire native repository with its
+real source/cache/filter/sort/light-map/readout/hydration code and primitive
+filesystem, persistence, sidecar and BIM fixtures. Native flat browse counts
+one cold Engine sort and zero warm; bookcase defers the flat pass, source scope
+does not widen, local status filters reflect a subsequent native invalidation.
+Native series page flips do no new sorts; progress generation, new group
+identity and metadata refresh retire prepared keys, and another scope stays
+empty. No cover buffer is retained. The changed shelf-sort test honors the
+sealed-root environment for both host modules and native readout source.
+
+Before marking locally ready: both full scripts/43 catalogs, frozen private
+API1 package with unchanged exact 2,000 paths and 33/412 helpers/identities,
+root matrix with sealed root configured, retained minimum/current reader-panel/
+pin/forecast/real-SQLite/index/series/native EPUB-input supplements, exact source
+projection, held-art/history and redacted-secret audit. Receipt follows under
+ignored series-order-20261110. Private beta.1-labelled verification bytes must
+never replace the public beta.1 ZIP; public dist must remain **25f988ce**.
+
+Physical Bigme gates: compare cold/warm Library/Manga opening and page changes
+at 3,000+ EPUBs; mixed series/standalone/filter/hide-single behavior, letter
+jumps, author/title/reverse/date sorting, profile switching and metadata/status
+edits, sleep/rotation/reader return and memory pressure. Existing custom covers,
+ornaments/dock and BookOrbit/Hardcover owners must remain intact. No device
+speedup, physical acceptance or publication is inferred from desktop counts.
+
 ## 2026-11-10 — local finish forecast
 
 Approved Aleph-list point 5, branch `feature/finish-forecast-20261110`, base

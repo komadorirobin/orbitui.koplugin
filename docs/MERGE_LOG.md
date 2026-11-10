@@ -4,6 +4,45 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-10 — local prepared series orders and browse sort reuse
+
+User approves the performance review's recommended first stage. Branch
+`performance/series-order-20261110` starts at **3dce4cc54**, preserving the five
+unpublished Aleph-inspired stages and the user-requested durable review notes.
+Aleph **73b0d178** supplied a cache-lifetime idea only; no source, assets,
+dependency or source/watch pin imported. No merge/push/release, installation,
+server operation or new setting is authorized or performed.
+
+Independent `core/orbitui_shelf_sort` service retains at most four prepared
+orders/8,192 aggregate member slots/1,024 shapes, thirty seconds absolute age.
+Require immutable native light group identity, exact filtered input sequence,
+priority, repository data generation, settings generation and native collation
+signature; weak source-array token, separate caller key records, no covers or
+hydrated books. Unknown/dynamic sorts and missing identity use the old path;
+failed work is never cached. The sole component change adds its group-array
+identity as an optional third argument to the existing host sort hook. Native
+filters, participation/degradation, pagination, hydration and standalone output
+stay native. C04 documents this seam and its limits.
+
+Shared Query can report proven explicit native flat ordering after flattening
+only where the native source registry confirms no external owner. Browse keeps
+that order through a local status filter; bookcase alphabetical mode can defer
+the otherwise redundant flat producer sort to its final block sort. Registered/
+unknown/legacy/group sources, path-only record replacement and lazy date keys
+keep their required final sorts. No list/result/reading-state cache is added.
+
+Focused tests: 24 shelf-sort and 10 library-performance cases in Lua/LuaJIT,
+including the whole native repository with primitive filesystem/BIM services
+stubbed. A synthetic 235-series/3,341-volume case counts 236 initial sorts and
+zero on both warm reads. Native flat browsing sorts once cold and zero warm;
+scope, metadata/progress/group invalidation, ownership, collation, bounds, TTL,
+failures and dynamic fallbacks are covered. These are work counts, not measured
+Bigme latency/RSS. Full/sealed/native/source/path/art/secret receipts follow in
+TESTING. VERSION/public dist, bootstrap, stable/preview, pins, artwork, device,
+server and watch state stay unchanged. Tag/dashboard/no-change redraw ideas
+remain separate backlog; incremental previous-search-result filtering is still
+deferred at the user's earlier request.
+
 ## 2026-11-10 — finish forecast (Aleph-list point 5)
 
 User asks for the next point after the local compact reader panel. Branch

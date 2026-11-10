@@ -1,5 +1,8 @@
 local M = {}
 M.tag_kind = "orbitui_epub_tags"
+local flat_native_sort = { library = true, folder_flat = true, single_series = true,
+    author = true, genre = true, format = true, rating = true, language = true,
+    collection = true }
 
 -- Discovery groups are ephemeral text, not a second tag index. Keep authors
 -- and profile identity so identically named series cannot merge by accident.
@@ -565,6 +568,16 @@ function M.books(ref, opts)
     -- and sorting pipeline. Never walk folders or decode covers in UI code.
     if source.kind == "folder" then source.kind = "folder_flat"
     elseif source.kind == "all" then source.kind = "library" end
+    -- Only native flat predicates have an explicit-sort contract here. Group
+    -- flattening, legacy Recent/Latest/Favourites and registered fetch sources
+    -- do not prove a globally sorted book list. Unknown owners stay unchanged.
+    local function nativeFlat()
+        local sources = package.loaded["lib/bookshelf_sources"]
+        return flat_native_sort[source.kind] and type(sources) == "table"
+            and type(sources.get) == "function" and not sources.get(source.kind)
+    end
+    local deferred = opts and opts.defer_flat_sort and opts.sort and nativeFlat()
+    local producer_sort = deferred and {} or query.sort
     local items
     if source.kind == "next" then
         items = Repo.getNextUnreadInSeries(math.huge, 0, query.scope, { light_only = true })
@@ -572,15 +585,16 @@ function M.books(ref, opts)
         if source.kind == "bookorbit_want" then
             source.paths, source.id = require("lib/bookshelf_bookorbit_want_source").snapshot()
         end
-        items = Repo.getBySource(source, query.filter, query.sort, 0, math.huge,
+        items = Repo.getBySource(source, query.filter, producer_sort, 0, math.huge,
             query.scope, { light_only = true })
     end
-    local books, seen = {}, {}
+    local books, seen, grouped = {}, {}, false
     local function add(item)
         if item.filepath and not seen[item.filepath] and not item.filepath:match("^OPDS://") then
             seen[item.filepath] = true
             books[#books + 1] = item
         elseif item.books then
+            grouped = true
             local members = item.books_meta or item.books
             if query.sort and #query.sort > 1 then
                 local priority = {}
@@ -593,7 +607,8 @@ function M.books(ref, opts)
         end
     end
     for _, item in ipairs(items or {}) do add(item) end
-    return books
+    return books, nil, not deferred and not grouped and opts and opts.sort and #opts.sort > 0
+        and nativeFlat() or false
 end
 
 function M.paths(ref)

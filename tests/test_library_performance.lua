@@ -111,6 +111,82 @@ H.test("real scoped shelf and global series-box lookup reuse derivation without 
     assert(repo.lightMetaFor(f.books[1])); H.eq(f.derivations(), before + 1)
 end)
 
+H.test("full native flat producer sorts once cold and not again on warm browse pages", function()
+    local Query = require("core/orbitui_shelf_query")
+    local Adapter = require("adapters/orbitui_shelf_sort")
+    local Engine = require("lib/bookshelf_sort_engine")
+    local old_resolve, old_repo, native_sort = Query.resolve,
+        package.loaded["lib/bookshelf_book_repository"], Engine.sort
+    local calls, scope = 0, { roots = { "/home" } }
+    Query.resolve = function() return {source={kind="library"}, scope=scope} end
+    package.loaded["lib/bookshelf_book_repository"] = repo
+    Engine.sort = function(...) calls = calls + 1; return native_sort(...) end
+    repo.invalidateBookCache("sort performance fixture")
+    local cold = Adapter.browseBooks({}, {sort="title"}, false, false)
+    H.eq(calls, 1); H.eq(#cold, 40)
+    calls = 0
+    local warm = Adapter.browseBooks({}, {sort="title"}, false, false)
+    H.eq(calls, 0); H.eq(#warm, #cold)
+    for i, b in ipairs(warm) do H.eq(b.filepath, cold[i].filepath); H.eq(b.cover_bb, nil) end
+    scope = {roots={"/not-this-library"}}
+    H.eq(#Adapter.browseBooks({}, {sort="title"}, false, false), 0)
+    scope = {roots={"/home"}}
+    calls = 0
+    Adapter.browseBooks({}, {sort="author"}, false, true)
+    H.eq(calls, 0, "bookcase owns the one block sort; producer must not sort flat books first")
+    local native_progress = repo.readProgress
+    repo.readProgress = function(fp) return fp == f.books[1] and .5 or 0, "reading" end
+    local filtered = Adapter.browseBooks({}, {sort="title", filter="reading"}, false, false)
+    H.eq(#filtered, 1); H.eq(filtered[1].filepath, f.books[1])
+    repo.readProgress = function() return 1, "complete" end
+    repo.invalidateProgressCache()
+    H.eq(#Adapter.browseBooks({}, {sort="title", filter="reading"}, false, false), 0)
+    repo.readProgress, Query.resolve, Engine.sort = native_progress, old_resolve, native_sort
+    package.loaded["lib/bookshelf_book_repository"] = old_repo
+end)
+
+H.test("full native series pages reuse order and retire it on progress, metadata and group invalidation", function()
+    local Adapter = require("adapters/orbitui_shelf_sort")
+    local native_derive, native_sort, native_spine = repo.deriveLightRecord, table.sort, repo.spine_light
+    local name, calls = "Series A", 0
+    repo.deriveLightRecord = function(fp, info, rows, build)
+        local b = native_derive(fp, info, rows, build)
+        local n = tonumber(fp:match("b(%d+)"))
+        b.series_name, b.series_num = n <= 20 and name or "Series Z", n
+        return b
+    end
+    Adapter.repository(repo)
+    repo.spine_light = true
+    repo.invalidateWalkCache()
+    local priority, scope = {{key="title"}}, {roots={"/home"}}
+    table.sort = function(...) calls = calls + 1; return native_sort(...) end
+    local ok, err = pcall(function()
+        local first, total = repo.getSeriesGroups(1, 0, priority, scope, nil, {light_only=true})
+        assert(calls > 0); H.eq(total, 2); H.eq(first[1].series_name, "Series A")
+        first[1]._orbitui_shelf_sort.title = "Caller mutation"
+        calls = 0
+        local second = repo.getSeriesGroups(1, 1, priority, scope, nil, {light_only=true})
+        H.eq(calls, 0); H.eq(second[1].series_name, "Series Z")
+        first = repo.getSeriesGroups(1, 0, priority, scope, nil, {light_only=true})
+        H.eq(calls, 0); H.eq(first[1]._orbitui_shelf_sort.title, "Series A")
+        repo.invalidateProgressCache(f.books[1]); calls = 0
+        repo.getSeriesGroups(1, 0, priority, scope, nil, {light_only=true})
+        assert(calls > 0, "same shape token but new data generation must retire keys")
+        repo.invalidateSeriesCache(); calls = 0
+        repo.getSeriesGroups(1, 0, priority, scope, nil, {light_only=true})
+        assert(calls > 0, "new native shape identity must not hit an old order")
+        name = "Series B"; repo.invalidateLightMeta(); repo.invalidateSeriesCache(); calls = 0
+        first = repo.getSeriesGroups(1, 0, priority, scope, nil, {light_only=true})
+        assert(calls > 0); H.eq(first[1]._orbitui_shelf_sort.title, "Series B")
+        local outside, outside_total = repo.getSeriesGroups(1, 0, priority,
+            {roots={"/not-this-library"}}, nil, {light_only=true})
+        H.eq(#outside, 0); H.eq(outside_total, 0)
+    end)
+    table.sort, repo.deriveLightRecord, repo.spine_light = native_sort, native_derive, native_spine
+    repo.invalidateWalkCache()
+    assert(ok, err)
+end)
+
 -- Actual label-counterfactual method and native protected pin. No replacement
 -- renderer or geometry approximation is used by the optimization.
 local widget_source = read(root .. "/components/bookshelf/lib/bookshelf_widget.lua")
