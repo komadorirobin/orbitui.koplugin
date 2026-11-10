@@ -379,6 +379,55 @@ function M.duration(seconds)
     return string.format("%dh %02dm", math.floor(minutes / 60), minutes % 60)
 end
 
+-- Forecasts are estimates from this book's recent recorded reading, never
+-- another status store. Complete calendar days avoid a partial-today bias.
+function M.forecastWindow(now)
+    local t = os.date("*t", now)
+    return os.time{ year = t.year, month = t.month, day = t.day - 14, hour = 0 },
+        os.time{ year = t.year, month = t.month, day = t.day, hour = 0 }
+end
+
+function M.finishForecast(data, events, now)
+    local function finite(v) return type(v) == "number" and v == v and v > -math.huge and v < math.huge end
+    if type(data) ~= "table" or not finite(data.percent) or data.percent < 0 or data.percent > 1 then
+        return { phase = "missing" }
+    end
+    if data.percent == 1 or data.status == "complete" or data.status == "finished" then return { phase = "finished" } end
+    if data.status == "abandoned" then return { phase = "onhold" } end
+    if data.percent == 0 then return { phase = "unstarted" } end
+    if not finite(data.pages) or data.pages < 1 or data.pages > 1000000 or data.pages % 1 ~= 0 then return { phase = "missing" } end
+    if type(events) ~= "table" or #events > 4096 then return { phase = "limited" } end
+    local since, until_time = M.forecastWindow(now)
+    local pages, days, seconds, active = {}, {}, 0, 0
+    for _, e in ipairs(events) do
+        if finite(e.start_time) and e.start_time >= since and e.start_time < until_time
+                and finite(e.duration) and e.duration > 0 and finite(e.total_pages)
+                and e.total_pages >= 1 and e.total_pages <= 1000000 and e.total_pages % 1 == 0
+                and finite(e.page) and e.page >= 1 and e.page <= e.total_pages and e.page % 1 == 0 then
+            local duration = math.min(120, e.duration)
+            local date = os.date("%Y-%m-%d", e.start_time)
+            if not days[date] then days[date] = true; active = active + 1 end
+            seconds = seconds + duration
+            -- Raw page_stat_data has different pagination histories. Only
+            -- use matching page counts for page speed, not mixed units or
+            -- the potentially expanding native page_stat view.
+            if e.total_pages == data.pages then pages[e.page] = math.min(120, (pages[e.page] or 0) + duration) end
+        end
+    end
+    local count, capped = 0, 0
+    for _, duration in pairs(pages) do count, capped = count + 1, capped + duration end
+    local result = { phase = "insufficient", active_days = active, sample_pages = count, daily_secs = seconds / 14 }
+    if count < 10 or capped < 300 then return result end
+    result.remaining_secs = math.ceil(capped / count * data.pages * (1 - data.percent))
+    if active < 3 or seconds < 300 then return result end
+    local remaining_days = math.max(1, math.ceil(result.remaining_secs / result.daily_secs))
+    if remaining_days > 365 then result.phase = "distant"; return result end
+    local t = os.date("*t", now)
+    result.date = os.date("%Y-%m-%d", os.time{ year = t.year, month = t.month, day = t.day + remaining_days, hour = 12 })
+    result.days, result.phase = remaining_days, "ready"
+    return result
+end
+
 function M.greeting(hour)
     if hour < 5 or hour >= 18 then return "Good evening" end
     if hour < 12 then return "Good morning" end

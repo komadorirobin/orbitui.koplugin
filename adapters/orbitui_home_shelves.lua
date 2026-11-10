@@ -124,6 +124,17 @@ function M.module(pin)
 end
 
 function M.install(registry)
+    if not registry._orbitui_finish_forecast then
+        registry._orbitui_finish_forecast = true
+        local descriptor = { id = "orbitui_finish_forecast", name = _("Finish forecast"), label = _("Finish forecast"),
+            enabled_key = "orbitui_finish_forecast_enabled", default_on = false, category = "books",
+            is_book_mod = true, needs = { recent = 1 }, text_elems = { "label" } }
+        for _i, method in ipairs{ "build", "getHeight", "getMenuItems" } do
+            local name = method
+            descriptor[name] = function(...) return M.forecastModule()[name](...) end
+        end
+        registry.register(descriptor)
+    end
     if not registry._orbitui_next_series then
         registry._orbitui_next_series = true
         -- Register a lazy descriptor, not the cover renderer or a query.
@@ -391,6 +402,230 @@ function M.nextModule()
         return widget
     end
     next_module = module
+    return module
+end
+
+-- One explicit, opt-in module, not a new statistics owner. Keep the existing
+-- installed path set; no database/index creation, history or document walks.
+local forecast_states, forecast_order, forecast_module, forecast_sleeping = {}, {}, nil, false
+local FORECAST_ID = "orbitui_finish_forecast"
+local function forecastLocalFile(file)
+    return type(file) == "string" and file:sub(1, 1) == "/" and #file <= 4096
+        and not file:find("[%c]") and not file:find("/%.%./")
+end
+local function forecastFingerprint(paths)
+    local lfs, parts = require("libs/libkoreader-lfs"), {}
+    for _, path in ipairs(paths) do
+        local a = lfs.symlinkattributes(path)
+        parts[#parts + 1] = path .. ":" .. (a and table.concat({ a.mode or "", a.size or 0, a.modification or 0 }, ":") or "missing")
+    end
+    return table.concat(parts, "\0")
+end
+function M.forecastRead(file, now)
+    local result, conn, watch, before
+    local ok, err = pcall(function()
+        if not forecastLocalFile(file) then result = { phase = "empty" }; return end
+        local Config, lfs = require("infra/sui_config"), require("libs/libkoreader-lfs")
+        if Config.isStatsSyncGuarded() then result = { phase = "sync" }; return end
+        local path = Config.getStatsDbPath()
+        watch = { file, path, path .. "-wal" }
+        local DS = require("docsettings")
+        local source = DS:findSidecarFile(file)
+        if source then watch[#watch + 1] = source end
+        before = forecastFingerprint(watch)
+        local fa, a = lfs.attributes(file), source and lfs.symlinkattributes(source)
+        if not fa or fa.mode ~= "file" or not a or a.mode ~= "file" or type(a.size) ~= "number" or a.size <= 0 or a.size > 512 * 1024 then
+            result = { phase = "missing" }; return
+        end
+        if fa.modification and a.modification and fa.modification > a.modification then
+            result = { phase = "changed" }; return -- reopen a replaced/edited book before trusting its old sidecar
+        end
+        local ds = DS.openSettingsFile(source) -- native light reader; never repairing open/close/flush
+        local props, summary = ds:readSetting("doc_props"), ds:readSetting("summary")
+        local data = { percent = ds:readSetting("percent_finished"), pages = ds:readSetting("doc_pages"),
+            status = type(summary) == "table" and summary.status or nil }
+        local title = type(props) == "table" and props.title
+        data.title = type(title) == "string" and title or file:match("([^/]+)$")
+        local Model = require("core/orbitui_dashboard")
+        result = Model.finishForecast(data, {}, now)
+        result.title = data.title
+        if result.phase ~= "insufficient" then return end
+        local md5 = ds:readSetting("partial_md5_checksum")
+        if type(md5) ~= "string" or #md5 ~= 32 or md5:find("[^a-fA-F0-9]") then result.phase = "missing"; return end
+        local db = lfs.symlinkattributes(path)
+        if not db or db.mode ~= "file" then result.phase = "unavailable"; return end
+        -- Private short-lived RO handle: the shared opener may create indexes
+        -- and wait three seconds; this reader must do neither.
+        conn = require("lua-ljsqlite3/init").open(path, "ro")
+        conn:exec("PRAGMA query_only=ON; PRAGMA busy_timeout=40;")
+        local book = conn:exec(string.format("SELECT id, pages FROM book WHERE md5='%s' ORDER BY last_open DESC, id DESC LIMIT 1", md5:lower()))
+        local id, pages = book and tonumber(book[1] and book[1][1]), book and tonumber(book[2] and book[2][1])
+        if not id or id ~= id or id < 1 or id >= 9007199254740992 or id % 1 ~= 0 then result.phase = "missing"; return end
+        if pages ~= data.pages then result.phase = "pagination"; return end
+        local since, until_time = Model.forecastWindow(now)
+        local rows = conn:exec(string.format([[SELECT page, start_time, duration, total_pages
+            FROM page_stat_data INDEXED BY page_stat_data_start_time WHERE id_book=%d AND start_time>=%d AND start_time<%d
+            ORDER BY start_time DESC LIMIT 4097]], id, since, until_time))
+        local events = {}
+        for i = 1, rows and rows[1] and #rows[1] or 0 do
+            events[i] = { page = tonumber(rows[1][i]), start_time = tonumber(rows[2][i]),
+                duration = tonumber(rows[3][i]), total_pages = tonumber(rows[4][i]) }
+        end
+        result = Model.finishForecast(data, events, now); result.title = data.title
+    end)
+    if conn then
+        local closed, failure = pcall(conn.close, conn)
+        if not closed then ok, err = false, failure end
+    end
+    if not ok then require("logger").warn("OrbitUI forecast unavailable:", err); return { phase = "error" } end
+    if watch and before ~= forecastFingerprint(watch) then return { phase = "changed" } end
+    return result, watch, before
+end
+local function stopForecast(state)
+    if state.job then state.job.cancelled = true; require("ui/uimanager"):unschedule(state.job.step); state.job = nil end
+end
+function M.forecastEvent(handler)
+    if handler == "onResume" then forecast_sleeping = false; return end
+    if handler == "onSuspend" then forecast_sleeping = true end
+    local invalid = handler == "onCloseDocument" or handler == "onReaderReady" or handler == "onBookMetadataChanged"
+        or handler == "onBookStatusChanged" or handler == "onBookInfoChanged"
+    if invalid or handler == "onSuspend" or handler == "onShowingReader" or handler == "onSetupShowReader"
+            or handler == "onSetRotationMode" or handler == "onScreenResize" or handler == "onTeardown" then
+        for _, state in pairs(forecast_states) do
+            local pending = state.job ~= nil or state.phase == "loading"
+            stopForecast(state); state.lease = nil
+            if invalid then state.result = nil; state.phase = state.file and "idle" or "empty"
+            elseif pending then state.result = nil; state.phase = "paused" end
+        end
+    end
+end
+function M.forecastState(pfx, file)
+    pfx = pfx or "simpleui_hs_"
+    local state = forecast_states[pfx]
+    if not state or state.file ~= file then
+        if state then stopForecast(state); state.lease = nil end
+        state = { file = file, phase = file and "idle" or "empty" }; forecast_states[pfx] = state
+        for i = #forecast_order, 1, -1 do if forecast_order[i] == pfx then table.remove(forecast_order, i) end end
+        forecast_order[#forecast_order + 1] = pfx
+        while #forecast_order > 8 do
+            local old = table.remove(forecast_order, 1); stopForecast(forecast_states[old]); forecast_states[old].lease = nil; forecast_states[old] = nil
+        end
+    elseif state.result and (os.time() >= state.expires or state.day ~= os.date("%Y-%m-%d")
+            or state.watch and state.fingerprint ~= forecastFingerprint(state.watch)) then
+        state.phase, state.result = "idle", nil
+    end
+    return state
+end
+local function forecastTarget(ctx)
+    local file = ctx.current_fp or (ctx.recent_fps or {})[1]
+    if forecastLocalFile(file) then return file end
+end
+local function forecastLive(state, lease)
+    local UI, owner = require("ui/uimanager"), lease.owner
+    return forecast_states[lease.pfx] == state and state.lease == lease and not lease.disposed and not forecast_sleeping
+        and owner and not owner._closed and not owner._suspended and not owner._parked and not require("device").screen_saver_mode
+        and UI:isWidgetShown(owner) and UI:getTopmostVisibleWidget() == owner
+        and lease.navigation == UI._simpleui_navigation_generation and lease.page == owner._current_page
+        and (not lease.dashboard or lease.dashboard_page == owner._orbitui_dashboard_module_page)
+        and forecastTarget(lease.ctx) == state.file
+end
+function M.forecastModule()
+    if forecast_module then return forecast_module end
+    local Model = require("core/orbitui_dashboard")
+    local messages = { idle = "Preparing finish forecast…", loading = "Preparing finish forecast…",
+        empty = "Open a local book to see its finish forecast.", paused = "Forecast paused. Long-press and choose Refresh forecast.",
+        missing = "Saved reading data is unavailable. Long-press for details.",
+        unavailable = "Enable Reading statistics and collect some reading data first.",
+        insufficient = "A forecast needs 10 pages, five minutes and three reading days in the last 14 complete days.",
+        limited = "Too much recent data for this bounded forecast. No partial estimate is shown.",
+        pagination = "Page counts changed. Read more with the current layout before forecasting.",
+        changed = "Reading data changed during preparation. Long-press to refresh.",
+        sync = "Statistics sync is in progress. Refresh the forecast afterward.",
+        error = "Could not read the forecast. Long-press to retry.",
+        finished = "This book is already finished.", onhold = "This book is on hold.",
+        unstarted = "Start reading this book before estimating its finish.",
+        distant = "At this pace, the estimate is more than a year away." }
+    local function refresh(ctx)
+        local state = forecast_states[ctx.pfx or "simpleui_hs_"]
+        if state then stopForecast(state); state.phase, state.result = state.file and "idle" or "empty", nil end
+        if ctx.refresh then ctx.refresh() elseif ctx.refresh_fn then ctx.refresh_fn() end
+    end
+    local module = { id = FORECAST_ID, name = _("Finish forecast"), label = _("Finish forecast"),
+        enabled_key = FORECAST_ID .. "_enabled", default_on = false, category = "books", is_book_mod = true,
+        needs = { recent = 1 }, text_elems = { "label" },
+        getHeight = function() return require("device").screen:scaleBySize(180) end,
+        getMenuItems = function(ctx) return {
+            { text = _("Refresh forecast"), callback = function() refresh(ctx) end },
+            { text = _("About finish forecast"), callback = function() Context.notify(_("Estimates use this book's recorded reading in the last 14 complete calendar days, including days without reading. At least 10 pages, five minutes and three active days are required. Page speed uses only the current page count and caps recorded page time at two minutes; other pagination still contributes to daily time. Today's partial day is excluded. The date is approximate, not a deadline. Enable KOReader Reading statistics to keep collecting data. No BookOrbit account, network or new reading-data store is used.")) end },
+        } end }
+    module.build = function(w, ctx)
+        local UI, Screen = require("ui/uimanager"), require("device").screen
+        local owner = ctx._screen_widget
+        if ctx.orbitui_dashboard_hosted and owner then owner = (getmetatable(owner) or {}).__index or owner end
+        local preview = ctx.preview or not owner
+        local state = preview and { phase = "empty" } or M.forecastState(ctx.pfx, forecastTarget(ctx))
+        stopForecast(state)
+        if state.phase == "loading" then state.phase = "idle" end
+        local lease = { owner = owner, ctx = ctx, pfx = ctx.pfx or "simpleui_hs_", page = owner and owner._current_page,
+            navigation = UI._simpleui_navigation_generation, dashboard = ctx.orbitui_dashboard_hosted,
+            dashboard_page = owner and owner._orbitui_dashboard_module_page }
+        state.lease = lease
+        local data = state.result or { phase = state.phase }
+        local height = ctx.orbitui_dashboard_hosted and ctx.height or module.getHeight(ctx)
+        height = math.max(1, height or module.getHeight(ctx))
+        local pad = math.min(Screen:scaleBySize(8), math.floor(w / 8), math.floor(height / 8))
+        local inner, usable = math.max(1, w - 2 * pad), math.max(1, height - 2 * pad)
+        local pre = state.file and ctx.prefetched and ctx.prefetched[state.file]
+        local title = type(pre) == "table" and type(pre.title) == "string" and pre.title or data.title
+        title = type(title) == "string" and title:gsub("[%c]", " ") or _("Finish forecast")
+        if #title > 300 then
+            local limit = 300
+            while title:byte(limit + 1) >= 128 and title:byte(limit + 1) < 192 do limit = limit - 1 end
+            title = title:sub(1, limit) .. "…"
+        end
+        local function duration(secs) return secs < 60 and _("<1 min") or Model.duration(secs) end
+        local value = data.phase == "ready" and string.format(_("Around %s"), data.date) or _(messages[data.phase] or messages.error)
+        local detail = data.remaining_secs and string.format(_("About %s of reading left"), duration(data.remaining_secs)) or ""
+        local basis = data.phase == "ready" and string.format(_("%s/day on this book · last 14 complete days"),
+            duration(data.daily_secs)) or _("Approximate estimate · local reading data only")
+        local lines, heights = { title, value, detail, basis }, { .20, .32, .20, .28 }
+        local group = require("ui/widget/verticalgroup"):new{ align = "left" }
+        local fs = { 18, 20, 16, 14 }
+        for i, text in ipairs(lines) do
+            group[#group + 1] = require("ui/widget/textboxwidget"):new{ text = text, width = inner,
+                height = math.max(1, math.floor(usable * heights[i])), height_adjust = false,
+                height_overflow_show_ellipsis = true, face = require("ui/font"):getFace("cfont", fs[i]), bold = i == 2 }
+        end
+        local widget = require("lib/bookshelf_clip_container"):new{ w = w, h = height,
+            require("ui/widget/container/framecontainer"):new{ padding = pad, bordersize = 0, group } }
+        local free = widget.free
+        widget.free = function(self, ...)
+            if lease.disposed then return end
+            lease.disposed = true
+            if state.lease == lease then
+                stopForecast(state); if state.phase == "loading" then state.phase = "paused" end; state.lease = nil
+            end
+            if free then return free(self, ...) end
+        end
+        if state.phase == "idle" and owner and not ctx.preview and not forecast_sleeping then
+            local job = {}; state.job, state.phase = job, "loading"
+            job.step = function()
+                if job.cancelled or state.job ~= job then return end
+                if not forecastLive(state, lease) then stopForecast(state); state.phase = "paused"; return end
+                local ok, result, watch, stamp = pcall(M.forecastRead, state.file, os.time())
+                if not ok or type(result) ~= "table" or type(result.phase) ~= "string" then
+                    require("logger").warn("OrbitUI forecast failed:", result); result = { phase = "error" }
+                end
+                if job.cancelled or state.job ~= job or not forecastLive(state, lease) then return end
+                state.job, state.result, state.phase = nil, result, result.phase
+                state.watch, state.fingerprint, state.expires, state.day = watch, stamp, os.time() + 300, os.date("%Y-%m-%d")
+                if ctx.refresh_fn then ctx.refresh_fn() end
+            end
+            UI:scheduleIn(.05, job.step)
+        end
+        return widget
+    end
+    forecast_module = module
     return module
 end
 

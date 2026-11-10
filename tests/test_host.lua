@@ -131,4 +131,21 @@ H.test("reader panel retirement failure cannot swallow reference/component event
     H.eq(loader.loaded_plugins.simpleui, nil)
     package.loaded["adapters/orbitui_book_panel"], package.loaded.logger = old_panel, old_logger
 end)
+H.test("forecast retirement failure cannot swallow next-series/component events or alias cleanup", function()
+    local owner, loader, calls = fixture(true)
+    local old_shelves, old_logger = package.loaded["adapters/orbitui_home_shelves"], package.loaded.logger
+    local reports, next_events, warnings = 0, 0, 0
+    package.loaded["adapters/orbitui_home_shelves"] = {
+        forecastEvent = function() error("forecast cleanup failure") end,
+        nextEvent = function() next_events = next_events + 1 end,
+    }
+    package.loaded.logger = { warn = function() warnings = warnings + 1 end }
+    Host.propagate(owner, { handler = "onCloseDocument", args = { "done" } }, function(name)
+        H.eq(name, "finish-forecast"); reports = reports + 1
+    end)
+    H.eq(reports, 1); H.eq(next_events, 1); H.eq(calls[3], "bookshelf:done"); H.eq(calls[4], "simpleui:done")
+    Host.detach(owner, loader); H.eq(warnings, 1); H.eq(owner.ui.bookshelf, nil)
+    H.eq(loader.loaded_plugins.simpleui, nil)
+    package.loaded["adapters/orbitui_home_shelves"], package.loaded.logger = old_shelves, old_logger
+end)
 H.finish()

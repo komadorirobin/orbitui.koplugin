@@ -35,6 +35,11 @@ function M.attach(owner, classes, loader, root)
 end
 
 function M.detach(owner, loader)
+    local shelves = package.loaded["adapters/orbitui_home_shelves"]
+    if shelves and shelves.forecastEvent then
+        local ok, err = pcall(shelves.forecastEvent, "onTeardown")
+        if not ok then require("logger").warn("OrbitUI forecast cleanup failed:", err) end
+    end
     local panel = package.loaded["adapters/orbitui_book_panel"]
     if panel and panel.readerToolsEvent then
         local ok, err = pcall(panel.readerToolsEvent, "onTeardown", owner.ui)
@@ -94,6 +99,10 @@ function M.propagate(owner, event, report)
     local integrations = package.loaded["adapters/orbitui_integrations"]
     if integrations then integrations.statusImport.event(event.handler) end
     local shelves = package.loaded["adapters/orbitui_home_shelves"]
+    if shelves and shelves.forecastEvent then
+        local ok, err = pcall(shelves.forecastEvent, event.handler)
+        if not ok then report("finish-forecast", err) end
+    end
     if shelves and shelves.nextEvent then shelves.nextEvent(event.handler) end
     for _, instance in ipairs(owner) do
         local ok, consumed = pcall(instance.handleEvent, instance, event)

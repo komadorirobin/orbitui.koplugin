@@ -1,5 +1,56 @@
 # Verification and device acceptance
 
+## 2026-11-10 — local finish forecast
+
+Approved Aleph-list point 5, branch `feature/finish-forecast-20261110`, base
+**979f19009**, retaining the four unpublished local features. Existing adapter/
+model paths only; no component/pin/version/public asset/device/server/watch
+change or new installed identity/path. The API1 inventory remains at 2,000.
+
+`test_finish_forecast` has 21 ordinary cases: book-specific fourteen-calendar-
+day pace including inactive days, no partial today/future/old samples, DST and
+year rollover, pagination separation with retained daily time, sample and
+active-day thresholds, repeat/idle caps, malformed/nonfinite values, no date
+for missing/unread/paused/finished/large-horizon/over-limit data; lazy/default-
+OFF registration and no-write placements, zero forecast reads in build/height/
+preview, one deferred RO handle/close and warm reuse, sync/unsafe/large/missing/
+changed-file/injected-checksum/pagination errors, explicit retry, no remote
+worker, old-job/window/free and preview isolation, modal/parked/hidden/target/
+page/navigation retirement, sleep/rotation/teardown without waking autoretry,
+native close/metadata and DB/sidecar/expiry/day invalidation, real dashboard
+proxy ownership, tiny/high-DPI bounded SV/EN text with no double font scale,
+eight-state eviction, completed snapshot reuse after sleep/rotation, and
+unexpected provider failure settling out of Loading.
+Host coverage separately checks failure isolation from Next/component/aliases.
+
+Two optional real SQLite cases use actual native createDB/schema statements
+from minimum v2025.08 peeled **c00df15aeee73b4fdb0475d26fd3fa3c315f3f8f** and
+reviewed current **01ccbd790d6269301ad523e75c45f62d022a6d7b** statistics sources.
+They check checksum/other-book/today exclusion, exact expected estimate, unchanged
+DB bytes and real RO write refusal; query plan must use the native time index,
+and pagination/stale checksum/4,097-event sentinel cannot return partial dates.
+That is 23 forecast cases per baseline under LuaJIT. Run ordinary tests in both
+interpreters and Stockholm/UTC; native tests use Stockholm to exercise DST.
+Filesystem/sidecar payloads, font metrics, widgets and event loop remain stubs,
+not a device or fully emulated KOReader. Source contract review caught native
+page_stat's pagination expansion and Font:getFace's built-in scaling; neither
+is duplicated or bypassed. The SQLite lock timeout is not a CPU time limit.
+
+Before marking locally ready: both complete scripts/43 catalogs, all 121 roots
+in Lua/LuaJIT from a frozen sealed private ZIP, native forecast/panel/reference
+and retained SQLite/metadata/EPUB-input supplements, exact source/path/hash/
+manifest/API1 and held-art/history/redacted-secret checks. Receipt follows;
+evidence is ignored finish-forecast-20261110. Private beta.1-labelled verification
+bytes must never replace the existing public beta.1 asset.
+
+Physical Bigme checks remain: add/remove/reorder on Home and dashboard, normal/
+half-width/narrow/landscape SV/EN/day/night legibility and no dock overflow;
+real statistics permissions/WAL/busy/sync handling, book switching and return,
+font/margin changes, status changes, sparse/new books and midnight refresh;
+sleep/rotation/covering settings during preparation and explicit retry. Confirm
+native profiles and BookOrbit/Hardcover still own save/status/progress sync.
+Measure actual cold/warm latency; no desktop pass is a measured Bigme speedup.
+
 ## 2026-11-10 — local compact reader panel
 
 Approved Aleph-list point 4; branch `feature/reader-panel-20261110`, base

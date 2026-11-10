@@ -22,6 +22,29 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-10
 
+- **Local finish forecast, not published.** User requests the next Aleph-list
+  point, now point 5. Branch `feature/finish-forecast-20261110` starts at
+  **979f19009** and retains all four prior local features. Optional default-OFF
+  `orbitui_finish_forecast` Home module and ordinary dashboard module choice;
+  no automatic placement or Continue reading replacement. A deferred local
+  RO statistics query estimates remaining reading time and a date from this
+  book's last fourteen complete calendar days, including inactive days. Require
+  ten distinct pages/five capped minutes at the current pagination and three
+  active reading days before a date. No cross-book daily-time substitution,
+  today's partial day, mixed pagination speed or invented default pace. Bound
+  input to 4,096 events via the native time index; disclose insufficient data,
+  pagination mismatch, sync/error/oversized input and >one-year horizons.
+  Use native nonrepairing sidecar reading and a private short-lived RO SQLite
+  handle with a 40 ms lock wait, not the shared index-creating opener. No schema,
+  statistics/history/reading-status writes, file moves, network or account.
+  Cache only eight memory states/five minutes with file/sidecar/DB/WAL/day
+  checks and owned job/lease/page/navigation/sleep guards. Height/discovery/
+  preview/render run no forecast DB/sidecar queries; no-owner previews cannot
+  retire a real placement. Existing native context preparation retains its
+  owner. C10/FEATURES/TESTING/MERGE_LOG record limits and physical gaps;
+  frozen verification follows. No new runtime path/module identity, component,
+  source pin/version/public asset/device/server/watch change or publication.
+
 - **Local compact reader panel, not published.** User approves Aleph-list
   point 4; branch `feature/reader-panel-20261110` starts at **7c6a6fc0**,
   retaining the three earlier local features. Independent lazy extension of
@@ -96,9 +119,10 @@ and correct this file in the same change.
   redacted-secret checks pass; public dist remains **25f988ce**. Receipt only
   updates docs, not the frozen ZIP. No Bigme presentation/timing acceptance.
 
-- **Remaining Aleph review idea, not implemented/authorized here:** finish
-  forecast. Keep it separate from the four local stages above. Do not silently
-  replace native reader menus, headers, bookmarks or their existing patches.
+- **All five selected Aleph review ideas now have local implementations.**
+  None is public or physically accepted yet. Keep their verification stages
+  distinct; no automatic release, source import or replacement of native
+  menus, headers, bookmarks and their existing patches follows from this work.
 
 - **Local similar-books/series feature, not published.** User approves point 1
   from the Aleph review. In the existing offline Tags section, an explicit

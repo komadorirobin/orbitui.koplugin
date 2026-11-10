@@ -68,6 +68,46 @@ av OrbitUIs funktioner, inte BookOrbits egen progressionssynk. EPUB-taggar finns
 kvar offline. Serverpatchar är frivilliga, versionsbundna och installeras av
 administratören separat. Hantera skyddade öppningar innan ångra-stöd tas bort.
 
+## Finish forecast (local development)
+
+Add **Finish forecast / Läsprognos** through Home's Books module picker, or
+**Cards and content > Add card > Home modules (SimpleUI)** in the Reading
+dashboard. It is optional and initially off, not a replacement for Continue
+reading. The card follows the current/recent local book and shows approximate
+reading time left, a possible finish date and the daily pace used.
+
+The estimate uses that book's KOReader Reading statistics for the last fourteen
+complete calendar days. Days without reading count too; today's partial day
+and time spent on other books do not inflate the pace. A date requires at
+least ten distinct pages/five capped reading minutes with the current page
+count, plus three active days. Old pagination may contribute daily reading
+time, but not page speed after a font/margin change. Individual page-time
+samples are capped at two minutes. These are estimates, not deadlines; habits,
+rereading and content difficulty can change the outcome. No date is fabricated
+when data is insufficient, pagination mismatches or the horizon exceeds a year.
+
+Enable KOReader's **Reading statistics** to keep collecting data. No BookOrbit
+account or server is needed, and this card never marks a book finished or writes
+statistics. Preparation starts after the card renders, not while browsing its
+picker. Only one book's recent event window is queried, up to 4,096 events;
+larger windows show a limit message instead of a partial prediction. The module
+does not scan the library, open documents/covers or contact a network. Existing
+SimpleUI context preparation remains unchanged. Memory-only results expire
+after five minutes, on day/data changes or native reader/metadata events.
+
+Long-press for **Refresh forecast / Uppdatera prognosen** and an explanation.
+Sleep, rotation, covering dialogs and navigation retire pending work; resume
+does not restart paused preparation automatically. Refresh after a Statistics
+sync or when retrying an error. Unknown/unreadable data is not repaired/reset.
+Home/dashboard layouts and native profiles/bookmarks/sync remain untouched.
+Local development only; not yet published or accepted on the physical Bigme.
+
+**Svenska:** Lägg till Läsprognos som en egen modul eller ett kort. Den visar
+ungefär när just den här boken kan bli utläst, utifrån dess egen registrerade
+läsning under två hela veckor. Saknas underlag får du ett tydligt besked i
+stället för ett påhittat datum. Funktionen är lokal, valfri och ändrar inte
+lässtatus. Långtryck för att uppdatera prognosen eller läsa hur den räknas.
+
 ## Compact reader panel (local development)
 
 In an open book, choose **Tools > Reader panel / Verktyg > Läsarpanel**, or

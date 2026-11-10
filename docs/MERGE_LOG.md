@@ -4,6 +4,38 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-10 — finish forecast (Aleph-list point 5)
+
+User asks for the next point after the local compact reader panel. Branch
+`feature/finish-forecast-20261110` starts at **979f19009**, retaining all four
+unpublished stages. Aleph **89419f6f** remains an idea reference only: README
+lists Finish forecast; no implementation/assets/dependency or source pin import.
+All five selected ideas are now implemented locally, not automatically released.
+
+Independent optional default-OFF Home module/dashboard choice in the existing
+home-shelves adapter and dashboard model, with no new installed path at API1's
+cap. Follow one current/recent book; defer local nonrepairing sidecar and private
+RO statistics reads until a real visible card has rendered. No shared DB opener
+(it creates an index), schema, status/statistics/history writer, file/cover/
+document/library walk, network or account. Existing native context preparation
+retains ownership. C10 records ten matching-pagination pages/five capped minutes,
+three active days, fourteen complete calendar days including inactive ones,
+two-minute page cap, no today/cross-book default pace, native time-index query
+and 4,097-row sentinel, unknown/error/sync/pagination/long-horizon feedback.
+Native page_stat's rescaling view is deliberately not queried; mismatched
+pagination cannot contaminate page speed. DST-safe calendar dates are estimates,
+never deadlines or completion/status changes.
+
+Native schemas/read-only/query-plan tests supplement the bounded pure model,
+SV/EN module/lease/cache/lifecycle/error tests. Results stay in eight memory
+slots/five minutes with day/source/DB/WAL/native-event invalidation. No startup/
+picker query, preview ownership theft, stale dequeued work, double font scaling
+or hidden automatic retry. Only native component/menu/input/sync owners remain.
+TESTING records exact test boundaries and physical gates. Frozen/full/sealed/
+source/art/secret receipt follows. Stable/public preview/dist, VERSION, pins,
+components/art/bootstrap, maintenance and device/server/watch state stay fixed;
+no push, tag, release, installation or physical acceptance is implied.
+
 ## 2026-11-10 — compact reader panel (Aleph-list point 4)
 
 User approves the next described point: optional native reader tools, Also

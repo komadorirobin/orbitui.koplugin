@@ -1309,6 +1309,52 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+November 10 approved Aleph-list point 5: independent optional Finish forecast
+Home module, also selectable through the existing dashboard module registry.
+Use stable id `orbitui_finish_forecast`, default OFF, no automatic placement,
+Continue reading replacement, status writer, schema/index, account or network.
+Keep native recent-context preparation owned by SimpleUI; forecast discovery,
+height/preview/build itself must do no sidecar/DB query or document/cover open.
+Only a live visible owner schedules preparation after rendering. Preview and
+no-owner contexts must never cancel/replace a real placement's job or lease.
+
+Use native findSidecarFile/openSettingsFile, not repairing DocSettings:open,
+flush/close or history mutation. Refuse nonplain/symlink/over-512-KiB metadata,
+untrusted checksums, a book newer than its sidecar and mismatched DB/sidecar
+page counts. Query a private, short-lived read-only SQLite handle; never call
+the shared index-creating opener, checkpoint/migrate or write statistics.
+Respect Statistics sync guard; 40 ms busy timeout bounds lock waits, not CPU.
+Select the latest native book row for its validated 32-hex checksum, use the
+native start-time index for a fourteen-complete-calendar-day window and accept
+at most 4,096 events. A 4,097th sentinel means no partial prediction. One
+bounded synchronous SQLite query is not preemptible; no Bigme timing claim.
+
+Page-speed sample uses only matching total_pages, ten distinct pages and at
+least 300 seconds after a 120-second cap per page. Other valid pagination may
+contribute capped daily reading time, but never to the page-speed divisor.
+Date also requires three active days; divide this book's reading seconds by
+all fourteen days, including inactive ones. Exclude partial today/future/old
+events and malformed/nonfinite/out-of-range values. Never substitute global
+reading time, another book, a fabricated default speed or page units after
+reflow. Date is approximate, rounded upward and advanced by local calendar
+days at noon (DST safe), not a deadline or completion/status change. No exact
+date beyond one year. Explain insufficient/finished/unread/onhold/missing/
+pagination/limit/sync/error/changed/paused states and allow explicit Refresh.
+
+Eight in-memory states max, five-minute/day/file/sidecar/DB/WAL invalidation,
+no persistent forecast data. Close RO handles on success/error before refresh.
+Owned job tokens and leases reject canceled/dequeued/old-widget work; guard
+real owner, parked/hidden/modal, current book, Home/dashboard page and navigation
+generation before and after reading. Suspend/rotation/teardown/navigation
+retire; resume does not automatically retry paused work. Native close/metadata
+events invalidate for the next normal build. Fixed native clips/bounded text
+prevent tiny cards painting over the dock; Font:getFace scales fonts once.
+Host cleanup errors cannot swallow component/Next events or alias cleanup.
+No installed-path/identity/API1, component/pin/watch/version/publication change.
+Tests: test_finish_forecast, test_host; actual native SQLite with minimum/
+current statistics schemas and read-only/query-plan/byte checks is separate
+from physical Bigme rendering, latency, permissions/WAL/sync acceptance.
+
 November 10 approved Aleph-list point 4: an optional compact reader panel in
 the existing book-panel adapter, not a replacement menu, header or reader.
 The reader-only Tools entry and `orbitui_reader_panel` Dispatcher action must
