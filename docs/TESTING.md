@@ -53,6 +53,32 @@ sleep/rotation/covering settings during preparation and explicit retry. Confirm
 native profiles and BookOrbit/Hardcover still own save/status/progress sync.
 Measure actual cold/warm latency; no desktop pass is a measured Bigme speedup.
 
+**Frozen local receipt:** **84100440fd2b1d8f20a1434fe1cca0ee40eb6542** (initial
+490e2f66 plus explicit-refresh/visible-paint correction) passes both complete
+scripts: 134 Python tests/four pre-existing source-art skips, 1,237 syntax
+files, all 121 roots, 583 Bookshelf suites/zero failures/three usual SQLite
+exclusions and all 13 SimpleUI files. No new exclusion. All 121 roots repeat
+against the sealed runtime in both interpreters. Forecast passes 22 ordinary
+cases in Lua/LuaJIT and UTC/Stockholm, and 24 with real SQLite plus each native
+minimum/current schema under LuaJIT/Stockholm. Retained minimum/current panel
+and reference supplements pass 25/29 in both interpreters; real SQLite index/
+series and native libarchive/input supplements pass 10/29/55. All 43 catalogs
+pass. The native SUI menu was reviewed: its refresh keeps the modal open, so
+an explicit forecast refresh waits for visible paint, enqueues once, reads
+nothing in paint and never closes a foreign modal or retries paused work.
+
+Private ZIP **ef9e73dbfea0e5d5788b851fddb4c6c4ee3c5222d30557c189f5d8e19405f728**,
+9,745,585 bytes, expanded 28,944,726; manifest **d58f1ca0**, API1/exact 2,000
+paths, unchanged 33 embedded helpers/412 canonical identities. Every installed
+byte matches the frozen source projection; exactly nine adapter/core/doc paths
+change from 979f19009, plus two excluded tests. Components, pins, VERSION,
+art/fonts/bootstrap and public dist remain unchanged (**25f988ce**). All 81
+frozen outgoing blobs pass held-art checks; redacted Gitleaks finds no secrets.
+Evidence: final-full-{lua,luajit}.log, final-sealed.log, translations-final.log,
+source-audit-final.json, gitleaks-final.log under finish-forecast-20261110.
+Following receipt changes docs only, not the frozen artifact. No publication,
+installation/server/watch operation or physical acceptance occurred.
+
 ## 2026-11-10 — local compact reader panel
 
 Approved Aleph-list point 4; branch `feature/reader-panel-20261110`, base

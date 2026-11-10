@@ -36,6 +36,20 @@ source/art/secret receipt follows. Stable/public preview/dist, VERSION, pins,
 components/art/bootstrap, maintenance and device/server/watch state stay fixed;
 no push, tag, release, installation or physical acceptance is implied.
 
+Frozen **84100440** includes the native SUI menu correction: explicit refresh
+waits while covered, and the mounted card enqueues once on visible paint,
+preserving native paint arguments/results without doing SQL there or closing
+another window. Both final full scripts pass: 134 Python/four usual skips,
+1,237 syntax, 121 roots, 583 Bookshelf/zero failures/three usual SQLite
+exclusions and 13 SimpleUI files. All 121 sealed roots pass in both interpreters;
+forecast 22 ordinary/24 real-SQLite/native-schema cases, retained panel/pins
+25/29 and SQLite/metadata/input 10/29/55 supplements pass, with 43 catalogs
+and no new exclusion. Private ZIP **ef9e73db**, 9,745,585 bytes, manifest
+**d58f1ca0**, same API1/exact 2,000 paths and 33/412 counts. Exact source/nine
+intended installed paths/held-art/history/redacted-secret checks pass. Public
+dist remains **25f988ce**. This receipt updates docs only, not frozen bytes.
+All five local features remain unpublished and physical Bigme gates remain.
+
 ## 2026-11-10 — compact reader panel (Aleph-list point 4)
 
 User approves the next described point: optional native reader tools, Also

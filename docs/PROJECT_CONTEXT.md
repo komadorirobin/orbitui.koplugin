@@ -41,8 +41,17 @@ and correct this file in the same change.
   checks and owned job/lease/page/navigation/sleep guards. Height/discovery/
   preview/render run no forecast DB/sidecar queries; no-owner previews cannot
   retire a real placement. Existing native context preparation retains its
-  owner. C10/FEATURES/TESTING/MERGE_LOG record limits and physical gaps;
-  frozen verification follows. No new runtime path/module identity, component,
+  owner. Native SUI refresh may rebuild Home behind its modal; the owned card
+  waits for visible paint to enqueue once, never reading SQL in paint or
+  automatically retrying paused work. Frozen **84100440** passes both complete
+  scripts/43 catalogs and all 121 sealed roots in Lua/LuaJIT. Forecast passes
+  22 ordinary/24 real-SQLite native-schema cases; retained panel/reference
+  supplements pass 25/29 and SQLite/metadata/input 10/29/55. Private ZIP
+  **ef9e73db**, 9,745,585 bytes, manifest **d58f1ca0**, exact 2,000 paths and
+  unchanged 33/412 counts. Source/path/art/history/secrets pass; public dist
+  stays **25f988ce**. C10/FEATURES/TESTING/MERGE_LOG record limits and physical
+  gaps. Following receipt changes docs only, not frozen package bytes.
+  No new runtime path/module identity, component,
   source pin/version/public asset/device/server/watch change or publication.
 
 - **Local compact reader panel, not published.** User approves Aleph-list

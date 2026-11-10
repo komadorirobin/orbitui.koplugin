@@ -96,6 +96,8 @@ SimpleUI context preparation remains unchanged. Memory-only results expire
 after five minutes, on day/data changes or native reader/metadata events.
 
 Long-press for **Refresh forecast / Uppdatera prognosen** and an explanation.
+Close settings to let a requested refresh prepare the visible card; the module
+does not automatically close a menu or read statistics behind it.
 Sleep, rotation, covering dialogs and navigation retire pending work; resume
 does not restart paused preparation automatically. Refresh after a Statistics
 sync or when retrying an error. Unknown/unreadable data is not repaired/reset.
