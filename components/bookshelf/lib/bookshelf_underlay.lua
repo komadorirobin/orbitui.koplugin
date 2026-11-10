@@ -317,6 +317,13 @@ function M.install(bw)
             local res = pack_values(pcall(close, um, window, ...))
             _restoring = false
             if not res[1] then error(res[2], 0) end
+            -- Redraw restored status only while this underlay still owns the shelf.
+            local bw = _bw
+            if sleepScreen(window) and bw and bw._wakeStatusRefresh and um.nextTick then
+                um:nextTick(function()
+                    if state.active and _bw == bw then bw:_wakeStatusRefresh() end
+                end)
+            end
             return unpack_values(res, 2, res.n)
         end
         return close(um, window, ...)
