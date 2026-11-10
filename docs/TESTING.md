@@ -1,5 +1,42 @@
 # Verification and device acceptance
 
+## 2026-11-10 — post-beta.2 upstream merge, no release
+
+Source **105974ed** integrates Bookshelf f99a5bc4 (6.4.2) and SimpleUI a2b677bc
+(3.0.3) with the separate adaptations documented in MERGE_LOG. Both complete
+`scripts/test.sh` gates pass: 134 Python tests/four unchanged optional source-art
+skips, 1,251 syntax files, 128 root suites, 588 Bookshelf suites/zero failures/
+three usual SQLite exclusions, and 13 SimpleUI files. All 43 catalogs pass.
+Both 128-root sealed repeats pass. New rapid colour-buffer, stale timer,
+drop/requeue, owned/borrowed queue and incomplete connected-collection query
+tests pass; extracted-source fixtures use the actual newly shared helpers.
+
+Private same-version development ZIP **c9421fe1**, manifest **06a139c9**,
+9,836,220 bytes / 29,224,187 expanded, has exactly the existing 2,000 API1
+installed paths, 1,999 manifest records, 35 exact-source embedded helpers and
+414 module identities. Every file matches the exact source projection and
+manifest hash/size. Artwork/fonts/bootstrap/entrypoints/VERSION remain byte-
+identical. All 157 outgoing implementation blobs, including unsquashed upstream
+ancestry, pass held-art and secret-pattern checks; Gitleaks finds no leaks.
+Final documentation-only commits require re-audit before the standing main push.
+
+Actual public stable 1.1 and beta.1 installers pass native libarchive/SHA
+validation, missing-module rejection, activation/restart/code rollback,
+truncated recovery, external snapshot/restart/persistent rollback and safe
+interrupted obsolete-file cleanup in isolated temporary installations.
+Attempting the same-version private candidate through the public beta.2
+installer correctly stops at "No newer version to install"; this is not a
+beta.2 upgrade claim and no version check was bypassed. A future released
+version needs its own beta.2 upgrade test. Public dist is restored byte-for-byte
+to **d7abac63**, and no release asset is replaced.
+
+No device/ADB, production server or real reading/sync data is accessed. Bigme
+visual colour/night/wake behavior and latency gains remain unmeasured; retain
+the earlier physical post-wake touch gap. Native full-page/build-ahead stays
+deferred in the host. Aleph-inspired book-info sketches are discussion only,
+not executable plugin changes. Evidence: ignored
+`test-results/upstream-20261110-post-beta2/`.
+
 ## 2026-11-10 — beta.2 publication with disclosed physical wake gap
 
 User requests publication after the completed recovery report explicitly states

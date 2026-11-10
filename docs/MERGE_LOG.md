@@ -41,9 +41,20 @@ Silverfish, reader panel and C01–C11 ownership remain.
 Regression fixtures now load the actual extracted external-cover/face-out
 helpers and wall clock. Installed-version assertion advances to 6.4.2. Add
 hosted rescan/page-generation, incomplete-metadata, rapid colour-queue, stale
-timer, drop/requeue and ownership regressions. Verification receipts follow
-after final gates. No runtime artwork or Aleph code/assets are imported.
+timer, drop/requeue and ownership regressions. No runtime artwork or Aleph code/assets are imported.
 Full-page/compact book-information mockups are discussion-only.
+
+Source **105974ed** passes both full Lua/LuaJIT gates: 134 Python/four unchanged
+optional skips, 1,251 syntax files, 128 roots, 588 Bookshelf suites/zero failed/
+three usual exclusions, 13 SimpleUI files; 43 catalogs and both 128-root sealed
+repeats pass. Private ZIP **c9421fe1**, manifest **06a139c9**, 9,836,220 bytes,
+29,224,187 expanded, preserves all 2,000 installed paths, artwork/bootstrap and
+VERSION. Exact source/hash/size projection and 157 outgoing implementation-blob
+art/secret checks pass; Gitleaks is clean. Stable 1.1 and beta.1 actual native
+installers pass upgrade/restart/rollback/recovery. Public beta.2 correctly refuses
+the same-version private candidate; no version guard bypass or beta.2-upgrade
+claim. Public dist restored to **d7abac63**. Documentation-only receipts are
+re-audited before main push. No device/speed acceptance; see TESTING for gaps.
 
 ## 2026-11-10 — publish 1.2.0-beta.2 after explicit acceptance of wake-test gap
 

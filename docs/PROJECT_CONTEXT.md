@@ -31,7 +31,10 @@ and correct this file in the same change.
   from emptying connected collections. Automatic rule rescan at hosted startup
   is deferred. Registry: 35 exact-source embeds/414 identities, unchanged API1
   inventory. No version/tag/release/device/server change; beta.2 stays frozen.
-  Final software/package/history checks belong in TESTING/MERGE_LOG. Aleph
+  Complete Lua/LuaJIT gates, 128 sealed roots per interpreter, 43 catalogs,
+  stable 1.1/beta.1 native upgrade/recovery and source/history/art/secret checks
+  pass; private ZIP **c9421fe1**, public dist restored to **d7abac63**. Physical
+  checks/speed claims remain open. Exact receipts are in TESTING/MERGE_LOG. Aleph
   full-page versus compact details are design-only suggestions, not implemented
   features. Existing tag actions, reviews, highlights and external owners must
   remain if a later redesign is approved.
