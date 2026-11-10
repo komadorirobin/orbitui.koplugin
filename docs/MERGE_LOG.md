@@ -28,6 +28,15 @@ geometry/event replay includes the new Reading settings row. Exact final gates,
 private package hashes and physical-device limits are in TESTING. No X-Ray
 installation, push, release or public OTA change is authorized/performed here.
 
+Frozen **e96e6abf** passes both complete Lua/LuaJIT gates (127 roots, 583
+Bookshelf/zero failures, 13 SimpleUI; existing skips only), both sealed-root
+repeats, fourteen whole-native-config cases per interpreter and native sheet
+raster/event replay. Private package **15a4c642**, 9,784,560 bytes, passes ZIP/
+manifest/source-projection/path/size audits, with the same 2,000 API1 files,
+untouched bootstrap/pins/VERSION and public dist **25f988ce**. All 163 outgoing
+blobs through frozen source pass the held-art audit. Physical acceptance remains
+open. This receipt is documentation-only; exact hashes/boundaries are in TESTING.
+
 ## 2026-11-10 — reader bottom sheet and optional native X-Ray handoff
 
 Local implementation, not an upstream import. User approves the bottom-panel

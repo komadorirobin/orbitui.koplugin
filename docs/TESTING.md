@@ -33,9 +33,30 @@ plus borrowed bitmap cleanup with the native legacy scaler. Icon SVG rasters,
 XText/MuPDF, e-ink/night/RGB, actual sleep/rotation/input/plugin interaction and
 external progress sync still require physical acceptance on Bigme.
 
-Private evidence: `test-results/reader-bottom-default-20261110/`. Frozen full-
-gate/package receipts are added after verification. The earlier **94143f86**
-package remains a distinct predecessor and is not silently rebuilt.
+**Frozen gates:** source **e96e6abf4b050c34a42c5b8dd89cc62204b648ef** passes
+both sequential complete `scripts/test.sh` runs, Lua and LuaJIT: 134 Python
+tests/four existing source-art skips, 1,243 syntax files, all 127 root suites,
+583 Bookshelf suites/zero failures/three usual SQLite exclusions and 13 SimpleUI
+files. All 43 catalogs and 349 static settings phrases pass. All 127 roots
+repeat against the extracted sealed runtime under both interpreters; the
+whole native-config supplement passes fourteen cases per interpreter. No new
+exclusion. Actual routing/renderer behavior still requires physical acceptance.
+
+**Private package:** `test-results/reader-bottom-default-20261110/candidate.zip`,
+SHA-256 **15a4c642308a8bbeacd5eae565a960b326f20848aa370937fb6f69e6001ce52a**,
+9,784,560 bytes, expanded 29,069,744; manifest **b2c0040c**. ZIP, native archive
+checker, exact source projection and complete manifest/size/SHA checks pass.
+Same 2,000 API1 files, 33 embedded helpers/412 identities; original bootstrap,
+public paths, VERSION, pins/artwork and public dist **25f988ce** unchanged.
+All 163 outgoing blobs through frozen source pass the held-art SHA audit.
+This is a private same-labelled beta.1 build, not permission to replace the
+public asset or an end-to-end OTA transaction test. The earlier **94143f86**
+package remains a distinct predecessor and is not silently rebuilt. A later
+documentation-only receipt commit does not rebuild these frozen bytes.
+
+Private evidence: `test-results/reader-bottom-default-20261110/`, including
+`final-lua.log`, `final-luajit.log`, `sealed-*.log`, `native-routing-*.log`,
+`render-native.lua`, native PGM/PNG fixture output, `audit.json` and ZIP test.
 
 ## 2026-11-10 — local reader bottom panel and optional X-Ray integrations
 

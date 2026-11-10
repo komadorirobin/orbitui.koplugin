@@ -37,6 +37,11 @@ and correct this file in the same change.
   No component/pin/watch/version/public dist or device/server change, no X-Ray
   install, push or publication. See C10, FEATURES and the new TESTING/MERGE_LOG
   entry for this deliberate entry-policy amendment and candidate receipts.
+  Frozen **e96e6abf** / private ZIP **15a4c642** passes both complete Lua/LuaJIT
+  gates, 127 sealed-root repeats per interpreter, native config/raster/input
+  supplements and package/source/held-art audits. Same 2,000 API1 files and
+  unchanged public dist **25f988ce**; native physical acceptance is still open.
+  A later documentation-only receipt does not rebuild the frozen candidate.
 
 - **Reader bottom panel and optional X-Ray selection, local only.** User approves
   the visual bottom-panel design and requests both standalone X-Ray and
