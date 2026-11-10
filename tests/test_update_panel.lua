@@ -156,6 +156,8 @@ H.test("stale buttons cannot start another update or restart after their panel w
 end)
 H.test("outside taps stay modal, and Back or explicit cancellation never reaches the book underneath", function()
     local p = fixture(); p:setState("downloading")
+    H.eq(p.ges_events.Outside[1].kind,"gesture") -- Native InputContainer calls :match directly on each entry.
+    H.eq(p.ges_events.Outside[1].ges,"tap")
     p:onOutside(nil,{pos={x=0,y=0}}); H.eq(f.closed, 0); H.eq(p.cancel_requested, nil)
     p:onClose(); H.eq(p.cancel_requested, true); H.eq(p.phase, "cancelling"); H.eq(f.closed, 0)
 end)

@@ -221,7 +221,7 @@ function M.openPanel(options)
         local size = self[1]:getSize()
         self.panel_rect = Geom:new{ x = math.floor((sw - size.w) / 2), y = math.max(margin, math.floor((sh - size.h) / 2)), w = size.w, h = size.h }
         self.dimen = Geom:new{ x = 0, y = 0, w = sw, h = sh }
-        self.ges_events.Outside = {{ require("ui/gesturerange"):new{ ges = "tap", range = self.dimen } }}
+        self.ges_events.Outside = { require("ui/gesturerange"):new{ ges = "tap", range = self.dimen } }
         self.key_events.Close = {{ "Back" }, { "Esc" }}
         self.selected = { x = 1, y = 1 }
     end
