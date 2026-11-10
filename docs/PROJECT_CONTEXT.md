@@ -39,6 +39,17 @@ and correct this file in the same change.
   C10/FEATURES/TESTING/MERGE_LOG record the implementation and physical gaps;
   no upstream/pin/version/public-dist/device/server/watch change. Stable 1.1
   and public preview beta.1 remain unchanged. Final local checks follow.
+  Frozen **246275a9** passes both complete scripts/43 catalogs and all 118
+  sealed roots in Lua/LuaJIT; Next's 16 cases and native 10/29/55 supplements
+  pass. Private ZIP **ad515ecb**, 9,712,384 bytes, manifest **a71cfe66**, same
+  33/412 helpers/identities and API1/exact 2,000 paths. Exact-source/path/art/
+  redacted-secret checks pass; public dist remains **25f988ce**. Receipt only
+  updates docs, not the frozen ZIP. No Bigme presentation/timing acceptance.
+
+- **Remaining Aleph review ideas, not implemented/authorized here:** a pinned
+  pages/images drawer, compact reader tools/Also reading panel, finish forecast.
+  Keep them separate from the two completed local stages above. Do not silently
+  replace native reader menus, headers, bookmarks or their existing patches.
 
 - **Local similar-books/series feature, not published.** User approves point 1
   from the Aleph review. In the existing offline Tags section, an explicit

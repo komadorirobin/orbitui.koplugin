@@ -34,6 +34,28 @@ refresh. Measure real preparation/input/reader-return times rather than claiming
 desktop timings are device improvements. No public build is certified by these
 headless/native desktop checks alone.
 
+**Frozen local receipt:** **246275a9** passes both complete Lua/LuaJIT scripts:
+134 Python tests/four pre-existing source-art skips, 1,234 syntax files, all
+118 roots, 583 Bookshelf suites/zero failures/three usual SQLite exclusions,
+and all 13 SimpleUI files. No new exclusion. The 16 Next-specific cases pass
+in both interpreters, and all 118 roots repeat from the sealed payload. Real
+SQLite scoring/index/series and actual libarchive/native-input supplements
+pass 10/29/55. The native unprepared repository tests still pass all 280 cases;
+the placeholder also uses the existing fixed-size native clip and a bounded
+TextBox, never an unconstrained message over another row/dock. All 43 catalogs
+pass. Physical presentation/input timings remain unmeasured.
+
+Private ZIP **ad515ecb6d1a1167bcd7d57cdbc91bf3110d8d117b951e898971e40b8b49ac78**,
+9,712,384 bytes; manifest **a71cfe66**, API1/exact 2,000 installed paths,
+same 33 embedded helpers/412 canonical module identities. Inventory, sizes,
+hashes and every byte match the exact source projection after approved PO
+reference reduction. Exactly nine installed source/doc paths change from the
+prior local feature; unrelated components, pins, VERSION, art/fonts/languages,
+bootstrap and public dist stay unchanged. Held-art/history checks and redacted
+Gitleaks pass. This old-version-labelled ZIP is **private verification only**,
+not a replacement public beta.1 asset. Following receipt changes docs only;
+no push/release/device/server operation.
+
 ## 2026-11-10 — local similar books and series
 
 Approved point 1 from the Aleph review; branch

@@ -28,6 +28,17 @@ No merge, push, version/release/OTA replacement, device/server operation or
 inspiration-watch change is authorized or performed. Both local features remain
 unpublished; public beta.1/stable 1.1 and maintenance branches are untouched.
 
+Frozen **246275a9** adds the existing native fixed-size clip/bounded TextBox
+for empty/loading/error cards, so narrow modules cannot paint over the next
+row/dock. Both complete scripts, 43 catalogs, all 118 sealed roots in Lua/
+LuaJIT, Next's 16 cases, native 10/29/55 supplements and the stock 280-case
+repository suite pass, with no new exclusion. Private ZIP **ad515ecb**,
+9,712,384 bytes, manifest **a71cfe66**, API1/exact 2,000 paths and same 33/412
+helpers/identities. Exact byte projection/nine changed installed paths and
+held-art/source/history/redacted-secret gates pass. Public dist remains
+**25f988ce**. Receipt changes docs only; physical Bigme layout/lifecycle/timings
+remain pending, and no publication/install is implied.
+
 ## 2026-11-10 — independent local tag recommendations (not an import)
 
 User approves point 1 from the Aleph inspiration review: similar local books
