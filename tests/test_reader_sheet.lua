@@ -12,6 +12,7 @@ function W:_init()
 end
 function W:free() for _, child in ipairs(self) do if child.free then child:free() end end end
 function W:setText(copy) self.text = copy end
+function W:getScrollbarWidth() return f.scrollbar_width or 3 * math.floor(6 * f.scale + .5) end
 function W:getSize()
     if self.kind == "text" then
         local size = self.face.pixel_size
@@ -88,7 +89,7 @@ local function bounded(p)
     T.eq(r.y + r.h, f.height, "bottom anchored")
     if p.cropping_widget then
         local c = p.cropping_widget
-        assert(c[1]:getSize().w <= c.dimen.w - math.floor(18 * f.scale + .5), "native scrollbar needs reserved width")
+        assert(c[1]:getSize().w <= c.dimen.w - c:getScrollbarWidth(), "native scrollbar needs its actual reserved width")
     end
     local function walk(widget)
         if widget.kind == "button" and widget.label_widget then
@@ -110,6 +111,15 @@ T.test("native bottom sheet fits portrait, landscape, narrow and dense English/S
             local p = fixture(dimensions[1], dimensions[2], dimensions[3], lang, tab); bounded(p)
             T.eq(p.name, "orbitui_reader_panel"); assert(p.modal); T.eq(f.writes, 0)
         end end
+    end
+end)
+T.test("rounded and retained pre-rotation native scrollbar widths never create horizontal overflow", function()
+    for _, tab in ipairs{ "tools", "ongoing" } do
+        local p, opts = fixture(1264, 951, 1.58, "sv", tab)
+        bounded(p)
+        f.scrollbar_width = 42 -- Native class may have been loaded at a larger scale.
+        p:rebuild(); bounded(p)
+        assert(p.cropping_widget)
     end
 end)
 T.test("selected tab is black and enabled rather than disabled gray; optional AI uses a native rich row", function()

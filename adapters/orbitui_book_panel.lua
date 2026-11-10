@@ -1305,7 +1305,11 @@ function M.readerSheet(options)
         self.layout[#self.layout + 1] = tabs
         top[#top + 1] = space(compact and 8 or 14)
         local body = V:new{ align = "left" }
-        local bodyw = inner - (reserve_scrollbar and px(18) or 0)
+        -- The native class retains its own (possibly pre-rotation) scaled bar
+        -- width. Scaling 18 again can also round differently from 3 * scale(6),
+        -- leaving a one-pixel overflow and an unwanted horizontal scrollbar.
+        local scrollbarw = reserve_scrollbar and require("ui/widget/container/scrollablecontainer"):getScrollbarWidth() or 0
+        local bodyw = inner - scrollbarw
         local function append(widget) body[#body + 1] = widget end
         local function icon(name)
             return require("ui/widget/iconwidget"):new{ file = root .. "/assets/material-symbols/icons/300/" .. name .. ".svg",

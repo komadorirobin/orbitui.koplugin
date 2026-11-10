@@ -28,6 +28,7 @@ function W:paintTo() end
 function W:contains(pos) return pos.x >= self.x and pos.x < self.x + self.w and pos.y >= self.y and pos.y < self.y + self.h end
 
 local f, U, language
+function W:getScrollbarWidth() return f.scrollbar_width or 3 * math.floor(6 * f.scale + .5) end
 local release = { version = "1.2.0-beta.2", notes = "Local recommendations\nReading references\nLess repeated sorting", zip = { size = 1000 } }
 local function fixture(width, height, scale, lang)
     f = { width = width or 1264, height = height or 1680, scale = scale or 2, shown = {}, tasks = {},
@@ -109,7 +110,7 @@ local function bounded(panel)
     assert(panel.panel_rect.x >= 0 and panel.panel_rect.y >= 0)
     if panel.cropping_widget then
         local scroll = panel.cropping_widget
-        assert(scroll[1]:getSize().w <= scroll.dimen.w - math.floor(18*f.scale+.5),
+        assert(scroll[1]:getSize().w <= scroll.dimen.w - scroll:getScrollbarWidth(),
             "scrolling must reserve the native vertical bar, without horizontal scrolling")
     end
 end
@@ -130,6 +131,15 @@ H.test("all states and expanded release text fit portrait, short, narrow and hig
             for _, phase in ipairs{ "downloading", "verifying", "installed", "failed", "cancelling" } do p:setState(phase); bounded(p) end
         end
     end
+end)
+H.test("expanded notes reserve a rounded or pre-rotation native scrollbar width", function()
+    local original = release.notes
+    release.notes = ("A bounded release note line.\n"):rep(200)
+    local p = fixture(1264, 951, 1.58)
+    p.news_open = true; p:setState("available"); bounded(p); assert(p.cropping_widget)
+    f.scrollbar_width = 42
+    p:setState("available"); bounded(p); assert(p.cropping_widget)
+    release.notes = original
 end)
 H.test("a panel owns at most one bounded backdrop and releases it on close and rotation", function()
     local p = fixture()

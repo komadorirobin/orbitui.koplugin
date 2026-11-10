@@ -124,7 +124,8 @@ function M.openPanel(options)
         local top = V:new{ align = "left", header, space(px(short and 4 or 6)),
             text(subtitle, 14, false, BB.COLOR_DARK_GRAY, nil, px(short and 28 or 46)), space(px(short and 10 or 18)) }
         local body = V:new{ align = "left" }
-        local body_width = inner - (reserve_scrollbar and px(18) or 0)
+        local scrollbarw = reserve_scrollbar and require("ui/widget/container/scrollablecontainer"):getScrollbarWidth() or 0
+        local body_width = inner - scrollbarw
         text_width = body_width
         local function append(widget) body[#body + 1] = widget end
         local function note(copy) append(text(copy, 14, false, BB.COLOR_DARK_GRAY)) end
