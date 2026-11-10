@@ -1,5 +1,52 @@
 # Verification and device acceptance
 
+## 2026-11-10 — local compact reader panel
+
+Approved Aleph-list point 4; branch `feature/reader-panel-20261110`, base
+**7c6a6fc0**. The previous three unpublished features are retained. No source
+pin, upstream, version/public asset, device/server or watch change. Existing
+adapter path only; API1 stays at its 2,000-path cap and 33/412 module counts.
+
+`test_reader_panel` has 21 ordinary cases covering lazy/no-write/no-hook tools,
+correct native module/arguments/callable sandbox/error fallback, explicit
+deferred Also reading, four-entry/8 ms cooperative work, slow reads, 3,341
+history entries capped at 200, twelve-result cap, Unicode/custom titles,
+current/duplicate/remote/hidden/dim/deleted/completed exclusion, corrupt/large/
+missing/symlink sidecar refusal, native one-argument reader switch without Home
+override or manual reader close, fresh file/status/history/hidden guards,
+newer unfinished progress, native ask/cancel/confirm-close-once, stale/double
+confirmation, old window/job identity, foreign-modal in-place pause/retry,
+sleep/rotation/reflow/navigation/close without reopen, settings/document/
+generation/replaced-reader guards, history errors/retry and SV/EN. Entrypoint
+checks reader-only menu/action and no tools/history factory on ReaderReady;
+host checks panel retirement errors cannot swallow reference/component events
+or alias cleanup. Prior reader-reference tests remain included.
+
+Optional native supplements use minimum v2025.08 peeled **c00df15aeee73b4fdb0475d26fd3fa3c315f3f8f**
+and reviewed current **01ccbd790d6269301ad523e75c45f62d022a6d7b** sources.
+All allowlisted handler names are checked; actual Search/BookInfo/GoTo entry
+handlers execute with their inner UI/document boundaries explicit. Whole
+DocSettings discovery/light reader covers doc/central/legacy/custom titles,
+never repairing open/close. Whole ButtonDialog and ConfirmBox constructors
+exercise real OK-before-close ordering. That makes 25 focused cases in both
+interpreters/baselines. Font metrics, filesystem payloads, native renderer/
+document engines and event loop remain stubbed; this is not Android emulation.
+
+Before marking locally ready, require both complete scripts, 43 catalogs, all
+120 sealed root files in Lua/LuaJIT, native panel/reference and retained real
+SQLite/metadata/EPUB-input supplements, exact source/path/manifest/API1 audit,
+held-art/history and redacted secret checks. Frozen receipt follows. Evidence
+is ignored `test-results/reader-panel-20261110/`; private old-version-labelled
+verification ZIP must never replace the public beta.1 asset.
+
+Physical Bigme follow-up: SV/EN portrait/landscape/long-title layout and native
+scrolling, touch/Back/outside/keyboard focus, each native tool and reference
+drawer, real sidecar sizes/permissions/central metadata, cancel/rotate/sleep
+while preparing and explicit refresh. Switch among EPUB/PDF/CBZ from different
+reading profiles; verify native margins/font/position, correct original Home/
+shelf return, ask-before-open and normal BookOrbit/Hardcover save/sync. Measure
+real UI/preparation/switch times. No headless pass establishes those results.
+
 ## 2026-11-10 — local reader reference drawer
 
 Approved Aleph-list point 3, branch `feature/reader-pin-drawer-20261110`, base

@@ -1309,6 +1309,46 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+November 10 approved Aleph-list point 4: an optional compact reader panel in
+the existing book-panel adapter, not a replacement menu, header or reader.
+The reader-only Tools entry and `orbitui_reader_panel` Dispatcher action must
+stay lazy on ReaderReady. Tools call only the live native TOC, bookmarks,
+full-text-search input, book-info and go-to-page modules, plus the owned
+reference drawer; preserve HandlerSandbox callable-table semantics and native
+close/focus ownership. Missing tools are disabled; isolate errors without
+swallowing component events/alias cleanup. No global menu/class wrapper.
+
+Also reading starts only on an explicit tab/Refresh tap: inspect at most 200
+native history entries and show at most twelve other unfinished local books.
+Yield after four entries or an 8 ms budget (one native filesystem read is not
+preemptible). Exclude current/duplicate/remote/hidden/dim/deleted/complete/
+abandoned entries; progress must be finite and strictly between zero and one.
+Use native sidecar discovery and `DocSettings.openSettingsFile`, never the
+repairing `DocSettings:open`, close/flush, history reload/mutation, whole-library
+walk, cover/archive/document open, network or a new index/schema. Refuse
+symlinked/nonplain/oversized sidecars (512 KiB); custom title reads are bounded
+to 256 KiB and otherwise fall back to doc_props/filename. Missing metadata and
+bounded coverage are disclosed, not repaired. Tools rendering performs no
+history or sidecar reads. No reading-data/settings writer belongs to this panel.
+
+Before a result opens, recheck live reader/document/settings/navigation,
+active window/optional matching confirmation, file stat, history membership,
+hidden status and fresh unfinished state. Use **native ReaderUI:showReader**
+with the file as its only explicit argument; do not use the Home-oriented
+ScreenEngine opener, set a new Bridge return origin, manually close/create a
+reader or bypass native ShowingReader/ReaderReady/profile/save/sync ownership.
+Retain ask-before-open. Native ConfirmBox calls OK before closing itself;
+detach only its matching ownership so it is closed exactly once. Retire only
+owned windows/jobs/confirmations, reject replaced/dequeued callbacks and do not
+raise new windows over a foreign modal. Covered work pauses in place with
+explicit retry; sleep, reader replacement, close, reflow, rotation and Home/
+shelf navigation retire it, and resume never reopens. No default placement,
+installed file/identity/API1 increase or source pin/watch/version change.
+Tests: test_reader_panel, test_entrypoint, test_host; optional whole minimum/
+current native handlers, dialog/confirmation and doc/central/legacy/custom
+light-reader supplements. Stub font/document/render boundaries are not Bigme
+touch/keyboard/visual/performance/profile/sync acceptance.
+
 November 10 approved Aleph-list point 3: a lazy, explicit per-book reader
 reference drawer in the existing book-panel adapter, not a replacement reader,
 header, bookmark manager or globally wrapped image viewer. Native reader menu

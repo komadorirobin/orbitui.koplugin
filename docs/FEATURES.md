@@ -68,6 +68,37 @@ av OrbitUIs funktioner, inte BookOrbits egen progressionssynk. EPUB-taggar finns
 kvar offline. Serverpatchar är frivilliga, versionsbundna och installeras av
 administratören separat. Hantera skyddade öppningar innan ångra-stöd tas bort.
 
+## Compact reader panel (local development)
+
+In an open book, choose **Tools > Reader panel / Verktyg > Läsarpanel**, or
+assign the reader gesture action **OrbitUI: reader panel / OrbitUI: läsarpanel**.
+It is optional: your normal KOReader menus, header and gestures are unchanged.
+**Tools / Verktyg** gives shortcuts to the native table of contents, bookmarks,
+in-book search, book information, go-to-page dialog and the reference drawer.
+Unavailable tools are disabled; the original native menus remain accessible.
+
+**Also reading / Pågående böcker** shows up to twelve other unfinished local
+books from the latest 200 history entries, with title and saved percentage.
+This is a recent-reading list, not a scan of every book or a server list.
+Preparation starts only when you open that tab, in small yielding batches;
+no covers/documents are opened and no progress is changed just to build it.
+Unavailable reading data is reported instead of repaired. Sleep, rotation,
+reader changes and close retire the work; a covering dialog pauses preparation
+and **Refresh / Uppdatera** retries explicitly. Nothing opens automatically.
+
+Tap a book to resume through KOReader's normal book-opening lifecycle. The
+native ask-before-open preference is respected, and file/status changes are
+rechecked first. Native reading profiles, return origin, save and external
+BookOrbit/Hardcover sync keep their existing owners. This adds no new sync
+service, reading-state database or automatic startup work. Local test build;
+not published or physically accepted on the Bigme yet.
+
+**Svenska:** Läsarpanelen är ett extra alternativ, inte en ersättning för
+KOReaders menyer. Verktyg öppnar de vanliga läsfunktionerna. Pågående böcker
+visar nyligen lästa, ännu inte avslutade lokala filer och återupptar dem på
+vanligt sätt. Listan förbereds först när du väljer fliken; inget nätverk eller
+helbiblioteksindex behövs. Gamla eller saknade läsuppgifter skrivs inte om.
+
 ## Pinned reading references (local development)
 
 In an open book, use **Tools > Pinned references / Verktyg > Fästa referenser**.

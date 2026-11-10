@@ -36,6 +36,10 @@ end
 
 function M.detach(owner, loader)
     local panel = package.loaded["adapters/orbitui_book_panel"]
+    if panel and panel.readerToolsEvent then
+        local ok, err = pcall(panel.readerToolsEvent, "onTeardown", owner.ui)
+        if not ok then require("logger").warn("OrbitUI reader panel cleanup failed:", err) end
+    end
     if panel and panel.readerPinEvent then
         local ok, err = pcall(panel.readerPinEvent, "onTeardown", owner.ui)
         if not ok then require("logger").warn("OrbitUI reference cleanup failed:", err) end
@@ -76,6 +80,10 @@ end
 
 function M.propagate(owner, event, report)
     local panel = package.loaded["adapters/orbitui_book_panel"]
+    if panel and panel.readerToolsEvent then
+        local ok, err = pcall(panel.readerToolsEvent, event.handler, owner.ui)
+        if not ok then report("reader-panel", err) end
+    end
     if panel and panel.readerPinEvent then
         local ok, err = pcall(panel.readerPinEvent, event.handler, owner.ui)
         if not ok then report("reader-references", err) end

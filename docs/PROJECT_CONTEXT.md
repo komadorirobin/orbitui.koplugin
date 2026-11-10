@@ -22,6 +22,27 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-10
 
+- **Local compact reader panel, not published.** User approves Aleph-list
+  point 4; branch `feature/reader-panel-20261110` starts at **7c6a6fc0**,
+  retaining the three earlier local features. Independent lazy extension of
+  the existing book-panel adapter, no component/source pin or installed path
+  added. Reader-only Tools menu and Dispatcher action expose two tabs:
+  native reader tools (TOC, bookmarks, in-book search, book info, references,
+  go-to-page) and Also reading. Native menus/header/reader hooks remain.
+  Only an explicit Also reading tap prepares up to twelve unfinished local
+  books from the latest 200 history entries, max four records/8 ms budget per
+  cooperative tick. Read native sidecars/custom titles with the non-repairing
+  light reader; never open documents, scan the library, load covers, write
+  reading data or request a network during preparation. Missing data and
+  paused/failed work are visible and retryable. Explicit selection revalidates
+  file/status/history and calls native ReaderUI:showReader without forcing a
+  Home return origin; ask-before-open, profiles and native sync keep ownership.
+  Window/job/confirmation/reader/document/navigation guards prevent late work
+  or stale actions across sleep, reflow, rotation, close and replacement.
+  C10/FEATURES/TESTING/MERGE_LOG record tests and physical gaps; full frozen
+  verification follows. Stable/preview/public dist, VERSION, source pins,
+  art, device/server and watch state are unchanged. No publication authorized.
+
 - **Local reader reference drawer, not published.** User requests Aleph-list
   point 3; branch `feature/reader-pin-drawer-20261110` starts at **3b4fcf22**,
   retaining the two earlier local features. Independent lazy implementation in
@@ -69,9 +90,8 @@ and correct this file in the same change.
   redacted-secret checks pass; public dist remains **25f988ce**. Receipt only
   updates docs, not the frozen ZIP. No Bigme presentation/timing acceptance.
 
-- **Remaining Aleph review ideas, not implemented/authorized here:** compact
-  reader tools/Also reading panel and finish forecast. Keep them separate from
-  the three local stages above. Do not silently
+- **Remaining Aleph review idea, not implemented/authorized here:** finish
+  forecast. Keep it separate from the four local stages above. Do not silently
   replace native reader menus, headers, bookmarks or their existing patches.
 
 - **Local similar-books/series feature, not published.** User approves point 1

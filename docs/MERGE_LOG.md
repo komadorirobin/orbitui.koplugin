@@ -4,6 +4,38 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-10 — compact reader panel (Aleph-list point 4)
+
+User approves the next described point: optional native reader tools, Also
+reading and access to pinned references. Branch `feature/reader-panel-20261110`
+starts at **7c6a6fc0**, preserving all three local unpublished stages. Aleph
+**89419f6f** is an idea reference only; no source/assets imported or pin/watch
+advanced. The remaining finish-forecast idea is not implemented/authorized.
+
+Extend the existing book-panel adapter lazily rather than adding an installed
+path at the API1 cap. Reader-only Tools menu/Dispatcher action opens native
+ButtonDialog tabs; native TOC/bookmarks/search/info/go-to and the owned drawer
+retain their own UI. HandlerSandbox callable tables are respected. Explicit
+Also reading reads bounded native sidecars/custom titles with the nonrepairing
+light reader, not DocSettings:open. Four records/8 ms budget per yielding tick,
+200-history input cap/twelve unfinished local results, missing/error/pause
+feedback and explicit retry; no whole-library scan, cover/document opening,
+reading-data writer, network or startup work. C10 records the limits/guards.
+
+Explicit book switching calls native ReaderUI:showReader, not the Home-oriented
+ScreenEngine opener: preserve return origin, profiles and native save/sync.
+Revalidate live owner/window/history/file/status; keep ask-before-open and
+native ConfirmBox's OK-before-close ownership. Stale jobs/windows/confirms
+cannot retire/open replacements. Foreign-modal preparation pauses in place;
+close/reflow/sleep/rotation/navigation retire without auto-reopen. Independent
+host cleanup failure protection preserves existing component/reference events.
+
+Focused native min/current handler/dialog/light-reader checks and remaining
+physical limits are in TESTING. Full frozen/sealed/source/path/art/secret
+verification receipt follows. Stable 1.1/public beta.1, VERSION, source pins,
+components/art/bootstrap, maintenance and public dist stay untouched. No push,
+release, installation, server operation or new physical acceptance is implied.
+
 ## 2026-11-10 — reader reference drawer (Aleph-list point 3)
 
 User requests the next point after the two completed local stages. New branch

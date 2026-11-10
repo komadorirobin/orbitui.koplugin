@@ -66,6 +66,14 @@ function OrbitUI:onReaderReady()
         title = _("OrbitUI: pinned references"), reader = true })
     Dispatcher:registerAction("orbitui_pin_page", { category = "none", event = "OrbitUIPinPage",
         title = _("OrbitUI: pin current page"), reader = true })
+    Dispatcher:registerAction("orbitui_reader_panel", { category = "none", event = "OrbitUIReaderPanel",
+        title = _("OrbitUI: reader panel"), reader = true })
+end
+
+function OrbitUI:onOrbitUIReaderPanel()
+    if not self._orbitui_error and self.ui.document then
+        require("adapters/orbitui_book_panel").readerTools().show(self.ui)
+    end
 end
 
 function OrbitUI:onOrbitUIReaderPins()
@@ -103,6 +111,8 @@ function OrbitUI:addToMainMenu(items)
     }
     if not self._orbitui_error and self.ui.document then
         local _ = require("core/orbitui_i18n")
+        items.orbitui_reader_panel = { text = _("Reader panel"), sorting_hint = "tools",
+            callback = function() self:onOrbitUIReaderPanel() end }
         items.orbitui_reader_pins = { text = _("Pinned references"), sorting_hint = "tools",
             sub_item_table = {
                 { text = _("Open reference drawer"), callback = function() self:onOrbitUIReaderPins() end },

@@ -112,4 +112,23 @@ H.test("reference retirement failure cannot swallow component events or alias cl
     H.eq(loader.loaded_plugins.simpleui, nil)
     package.loaded["adapters/orbitui_book_panel"], package.loaded.logger = old_panel, old_logger
 end)
+H.test("reader panel retirement failure cannot swallow reference/component events or alias cleanup", function()
+    local owner, loader, calls = fixture(true)
+    local old_panel, old_logger = package.loaded["adapters/orbitui_book_panel"], package.loaded.logger
+    local reported, warnings, pins = 0, 0, 0
+    package.loaded["adapters/orbitui_book_panel"] = {
+        readerToolsEvent = function() error("panel close failure") end,
+        readerPinEvent = function(handler, ui)
+            H.eq(ui, owner.ui); assert(handler == "onCloseDocument" or handler == "onTeardown"); pins = pins + 1
+        end,
+    }
+    package.loaded.logger = { warn = function() warnings = warnings + 1 end }
+    Host.propagate(owner, { handler = "onCloseDocument", args = { "done" } }, function(name)
+        H.eq(name, "reader-panel"); reported = reported + 1
+    end)
+    H.eq(reported, 1); H.eq(pins, 1); H.eq(calls[3], "bookshelf:done"); H.eq(calls[4], "simpleui:done")
+    Host.detach(owner, loader); H.eq(warnings, 1); H.eq(pins, 2); H.eq(owner.ui.bookshelf, nil)
+    H.eq(loader.loaded_plugins.simpleui, nil)
+    package.loaded["adapters/orbitui_book_panel"], package.loaded.logger = old_panel, old_logger
+end)
 H.finish()

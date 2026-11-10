@@ -977,6 +977,301 @@ function M.readerPins()
     return P
 end
 
+-- Explicit reader tools / Also reading. Reuse the existing adapter path and
+-- native dialogs, not a second reader/menu renderer or an automatic Home scan.
+function M.readerTools()
+    if M._reader_tools then return M._reader_tools end
+    local T = {}
+    M._reader_tools = T
+    local _ = require("core/orbitui_i18n")
+    local UI = require("ui/uimanager")
+    local states = setmetatable({}, { __mode = "k" })
+    local asleep = false
+    local actions = {
+        { "toc", "onShowToc", "Table of contents" },
+        { "bookmark", "onShowBookmark", "Bookmarks" },
+        { "search", "onShowFulltextSearchInput", "Search in book" },
+        { "bookinfo", "onShowBookInfo", "Book information" },
+        { "pins", nil, "Pinned references" },
+        { "gotopage", "onShowGotoDialog", "Go to page" },
+    }
+    local function callable(fn)
+        return type(fn) == "function" or type(fn) == "table" and type((getmetatable(fn) or {}).__call) == "function"
+    end
+    local function clip(text, length)
+        text = type(text) == "string" and text:gsub("[%c]", " ") or ""
+        if #text <= length then return text end
+        while length > 0 do
+            local b = text:byte(length + 1)
+            if not b or b < 128 or b >= 192 then break end
+            length = length - 1
+        end
+        return text:sub(1, length) .. "…"
+    end
+    local function localFile(file)
+        return type(file) == "string" and file:sub(1, 1) == "/" and #file <= 4096
+            and not file:find("[%c]") and not file:find("/%.%./")
+    end
+    local function notify(text) Context.notify(_(text)) end
+    local function live(s)
+        local R = package.loaded["apps/reader/readerui"]
+        return not asleep and not s.closed and states[s.ui] == s and R and R.instance == s.ui
+            and s.ui.document == s.document and s.document.file == s.file
+            and s.ui.doc_settings == s.settings and UI:isWidgetShown(s.ui)
+            and s.generation == UI._simpleui_navigation_generation
+    end
+    local function active(s, allowed)
+        local top = UI:getTopmostVisibleWidget()
+        return live(s) and s.window and UI:isWidgetShown(s.window)
+            and (top == s.window or allowed ~= nil and top == allowed)
+    end
+    local function cancel(s)
+        if s.job then s.job.cancelled = true; UI:unschedule(s.job.step); s.job = nil end
+    end
+    function T.retire(ui)
+        local s = states[ui]; if not s then return end
+        s.closed = true; states[ui] = nil; s.confirm_token = nil; cancel(s)
+        for _, key in ipairs{ "confirm", "window" } do
+            local w = s[key]; s[key] = nil; if w then UI:close(w) end
+        end
+    end
+    function T.event(handler, ui)
+        if handler == "onSuspend" or handler == "onShowingReader" then
+            if handler == "onSuspend" then asleep = true end
+            for owner in pairs(states) do T.retire(owner) end
+        elseif handler == "onResume" then asleep = false
+        elseif handler == "onCloseDocument" or handler == "onTeardown" or handler == "onSetRotationMode"
+                or handler == "onScreenResize" or handler == "onChangeSize" or handler == "onDocumentRerendered"
+                or handler == "onShowBookshelf" or handler == "onOpenBookshelfProfile"
+                or handler == "onShowHomescreen" or handler == "onGoHome" then T.retire(ui) end
+    end
+    local function stamp(file)
+        local a = require("libs/libkoreader-lfs").attributes(file)
+        if a and a.mode == "file" then return tostring(a.modification) .. ":" .. tostring(a.size) end
+    end
+    local function plainSettings(DS, path, max)
+        if not localFile(path) then return end
+        local a = require("libs/libkoreader-lfs").symlinkattributes(path)
+        if a and a.mode == "file" and type(a.size) == "number" and a.size > 0 and a.size <= max then
+            -- Native light reader, never DocSettings:open/close/flush/repair.
+            return DS.openSettingsFile(path)
+        end
+    end
+    local function readBook(file)
+        local before = stamp(file); if not before then return end
+        local DS = require("docsettings")
+        local source = DS:findSidecarFile(file)
+        local ds = plainSettings(DS, source, 512 * 1024); if not ds then return end
+        local pct = ds:readSetting("percent_finished")
+        local summary, props = ds:readSetting("summary") or {}, ds:readSetting("doc_props") or {}
+        if type(pct) ~= "number" or pct ~= pct or type(summary) ~= "table" or type(props) ~= "table" then return end
+        if pct <= 0 or pct >= 1 then return false end
+        if summary.status == "complete" or summary.status == "finished" or summary.status == "abandoned" then return false end
+        local custom = DS.findCustomMetadataFile and DS:findCustomMetadataFile(file)
+        if custom then
+            local cds = plainSettings(DS, custom, 256 * 1024)
+            local overrides = cds and cds:readSetting("custom_props")
+            if type(overrides) == "table" then
+                props = { title = overrides.title ~= nil and overrides.title or props.title }
+            end
+        end
+        if before ~= stamp(file) then return end
+        return { file = file, stamp = before, percent = pct,
+            title = clip(props.title, 160) ~= "" and clip(props.title, 160) or clip(file:match("([^/]+)$"), 160) }
+    end
+    local function historyRecord(file, time)
+        local hist = require("readhistory").hist or {}
+        local Hidden = require("features/library/sui_recent_hidden")
+        if Hidden.isHidden(file) then return false end
+        for i = 1, math.min(#hist, 200) do
+            local entry = hist[i]
+            if type(entry) == "table" and entry.file == file and entry.time == time and not entry.dim then return true end
+        end
+        return false
+    end
+    local function failure(id, err)
+        require("logger").warn("OrbitUI reader panel action failed:", id, err)
+        notify("This reader tool is unavailable. Use KOReader's normal menu instead.")
+    end
+    local function open(s, entry)
+        if not active(s) then return end
+        local function commit(allowed)
+            if not active(s, allowed) then return end
+            local ok, fresh = pcall(function()
+                if historyRecord(entry.file, entry.time) then return readBook(entry.file) end
+            end)
+            if not ok or not fresh or fresh.stamp ~= entry.stamp then
+                notify("This book or its reading status changed. Refresh Also reading before opening it."); return
+            end
+            local R = package.loaded["apps/reader/readerui"]
+            -- No Home prepareReturn override: switching from a reader preserves
+            -- the existing origin. Native ShowingReader/close/ReaderReady owns
+            -- saving, profile autoexec and normal external progress sync.
+            if s.confirm == allowed then s.confirm = nil end -- native ConfirmBox closes itself after OK
+            T.retire(s.ui)
+            if M._reader_pins then M._reader_pins.retire(s.ui) end
+            local opened, err = pcall(function() R:showReader(entry.file) end)
+            if not opened then failure("open", err) end
+        end
+        if G_reader_settings and G_reader_settings:isTrue("file_ask_to_open") then
+            local token = {}; s.confirm_token = token
+            local confirm = require("ui/widget/confirmbox"):new{
+                text = _("Open this book?") .. "\n\n" .. entry.title,
+                ok_callback = function()
+                    if s.confirm_token == token then s.confirm_token = nil; commit(s.confirm) end
+                end,
+                cancel_callback = function() if s.confirm_token == token then s.confirm_token = nil end end,
+            }
+            s.confirm = confirm
+            local native = confirm.onCloseWidget
+            confirm.onCloseWidget = function(this, ...)
+                if s.confirm == this then s.confirm = nil end
+                if native then return native(this, ...) end
+            end
+            UI:show(confirm)
+        else commit() end
+    end
+    local function action(s, entry)
+        if not active(s) then return end
+        if entry[1] == "pins" then
+            T.retire(s.ui); M.readerPins().show(s.ui); return
+        end
+        local target = s.ui[entry[1]]
+        if not target or not callable(target[entry[2]]) then failure(entry[1], "missing handler"); return end
+        T.retire(s.ui)
+        local ok, err = pcall(function() return target[entry[2]](target) end)
+        if not ok then failure(entry[1], err) end
+    end
+    local function draw(s)
+        local rows, window = {}, nil
+        local function button(id, text, callback, enabled)
+            return { id = id, text = text, enabled = enabled ~= false, callback = function()
+                if s.window == window and active(s) then callback() end
+            end }
+        end
+        rows[1] = {
+            button("tools", _("Tools"), function() T.show(s.ui) end, s.tab ~= "tools"),
+            button("ongoing", _("Also reading"), function() T.show(s.ui, "ongoing") end, s.tab ~= "ongoing"),
+        }
+        if s.tab == "tools" then
+            for i = 1, #actions, 2 do
+                local row = {}
+                for j = i, math.min(i + 1, #actions) do
+                    local entry = actions[j]
+                    local target = s.ui[entry[1]]
+                    row[#row + 1] = button(entry[1], _(entry[3]), function() action(s, entry) end,
+                        entry[1] == "pins" or target and callable(target[entry[2]]) or false)
+                end
+                rows[#rows + 1] = row
+            end
+        else
+            for _, book in ipairs(s.books) do
+                local entry = book
+                rows[#rows + 1] = { button("book:" .. entry.file,
+                    string.format("%s · %.0f%%", entry.title, entry.percent * 100), function() open(s, entry) end) }
+            end
+            local status = s.phase == "loading" and _("Checking recent reading data…")
+                or s.phase == "paused" and _("Preparation paused. Tap Refresh to retry.")
+                or s.phase == "error" and _("Could not read recent books. Tap Refresh to retry.")
+                or #s.books == 0 and _("No other unfinished books in the checked recent files.")
+                or _("Up to 12 unfinished books from the latest 200 history entries. Only local files are checked.")
+            rows[#rows + 1] = {{ id = "state_status", text = status, enabled = false }}
+            if s.missing > 0 then rows[#rows + 1] = {{
+                text = string.format(_("%d reading-data records were unavailable."), s.missing), enabled = false }} end
+            rows[#rows + 1] = { button("refresh", _("Refresh"), function() T.show(s.ui, "ongoing") end) }
+        end
+        rows[#rows + 1] = { button("close", _("Close"), function() T.retire(s.ui) end) }
+        local Screen = require("device").screen
+        local props = type(s.ui.doc_props) == "table" and s.ui.doc_props or {}
+        local title = clip(props.display_title or props.title, 160)
+        if title == "" then title = clip(s.file:match("([^/]+)$"), 160) end
+        window = require("ui/widget/buttondialog"):new{ name = "orbitui_reader_panel",
+            title = _("Reader panel") .. "\n" .. title,
+            buttons = rows, width = math.floor(math.min(Screen:getWidth(), Screen:getHeight()) * .9), rows_per_page = 6 }
+        local original = window.onCloseWidget
+        window.onCloseWidget = function(this, ...)
+            if s.window == this then s.window = nil; cancel(s); s.closed = true; states[s.ui] = nil end
+            if original then return original(this, ...) end
+        end
+        local old = s.window; s.window = window
+        UI:show(window)
+        if old then UI:close(old) end -- old close cannot retire its replacement
+        return window
+    end
+    local function prepare(s)
+        local job = { index = 1, seen = { [s.file] = true }, records = {} }
+        s.job = job
+        local clock = require("ui/time")
+        local function pause()
+            cancel(s); s.phase = "paused"
+            local b = s.window and s.window.getButtonById and s.window:getButtonById("state_status")
+            if b and b.setText then b:setText(_("Preparation paused. Tap Refresh to retry.")); UI:setDirty(s.window, "ui") end
+        end
+        job.step = function()
+            if job.cancelled or s.job ~= job then return end
+            if not live(s) then T.retire(s.ui); return end
+            if not active(s) then pause(); return end
+            local ok, err = pcall(function()
+                local hist = require("readhistory").hist
+                if type(hist) ~= "table" then error("missing reading history") end
+                if not job.history then
+                    job.history = hist
+                    for i = 1, math.min(#hist, 200) do
+                        local e = hist[i]
+                        job.records[i] = type(e) == "table" and { file = e.file, time = e.time, dim = e.dim } or false
+                    end
+                end
+                assert(hist == job.history, "reading history replaced")
+                local start, count = clock.now(), 0
+                local Hidden = require("features/library/sui_recent_hidden")
+                while job.index <= #job.records and #s.books < 12 do
+                    local record, current = job.records[job.index], hist[job.index]
+                    job.index = job.index + 1; count = count + 1
+                    if record then
+                        assert(type(current) == "table" and current.file == record.file
+                            and current.time == record.time and current.dim == record.dim, "reading history changed")
+                        local file = record.file
+                        if localFile(file) and not job.seen[file] and not record.dim and not Hidden.isHidden(file) then
+                            job.seen[file] = true
+                            local read, book = pcall(readBook, file)
+                            if read and book then book.time = record.time; s.books[#s.books + 1] = book
+                            elseif not read or book == nil then s.missing = s.missing + 1 end
+                        end
+                    end
+                    if count >= 4 or clock.to_us(clock.since(start)) >= 8000 then break end
+                end
+            end)
+            if not ok then
+                require("logger").warn("OrbitUI reader panel preparation failed:", err)
+                cancel(s); s.phase = "error"; draw(s)
+            elseif job.index > #job.records or #s.books >= 12 then
+                cancel(s); s.phase = "ready"; draw(s)
+            else UI:scheduleIn(.01, job.step) end
+        end
+        UI:scheduleIn(.01, job.step)
+    end
+    function T.show(ui, tab)
+        if not ui or not ui.document or not ui.doc_settings or not localFile(ui.document.file) then return end
+        T.retire(ui)
+        local s = { ui = ui, document = ui.document, file = ui.document.file, settings = ui.doc_settings,
+            generation = UI._simpleui_navigation_generation, tab = tab == "ongoing" and "ongoing" or "tools",
+            phase = "loading", books = {}, missing = 0 }
+        states[ui] = s
+        if not live(s) then states[ui] = nil; return end
+        local top = UI:getTopmostVisibleWidget()
+        if top and (top.name == "bookshelf" or top.name == "homescreen" or top.name == "filemanager") then states[ui] = nil; return end
+        if M._reader_pins then M._reader_pins.retire(ui) end
+        local window = draw(s)
+        if s.tab == "ongoing" then prepare(s) end
+        return window
+    end
+    return T
+end
+
+function M.readerToolsEvent(handler, ui)
+    if M._reader_tools then M._reader_tools.event(handler, ui) end
+end
+
 function M.readerPinEvent(handler, ui)
     if M._reader_pins then M._reader_pins.event(handler, ui) end
 end
