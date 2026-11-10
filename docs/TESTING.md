@@ -48,6 +48,37 @@ edits, sleep/rotation/reader return and memory pressure. Existing custom covers,
 ornaments/dock and BookOrbit/Hardcover owners must remain intact. No device
 speedup, physical acceptance or publication is inferred from desktop counts.
 
+**Frozen local receipt:** source **771119c5d608c8ca927e1591ff15553ba4b3ff81**
+(initial 831e81e1 plus native cursor-save correction) passes both full scripts:
+134 Python tests/four pre-existing source-art skips, 1,237 syntax files,
+all 121 root suites, 583 Bookshelf suites/zero failures/three usual native
+SQLite exclusions and 13 SimpleUI files. All 43 catalogs pass; no new exclusion.
+All 121 roots repeat with the sealed root configured in Lua/LuaJIT, including
+24 shelf-sort/10 library-performance cases against the sealed host and actual
+native repository/readout/nav-persistence code. Retained panel/pin supplements
+pass 25/29 in both interpreters and minimum/current baselines; forecast passes
+22 ordinary cases in both interpreters and UTC/Stockholm, 24 with real SQLite
+and each native schema; index/series/native EPUB-input supplements pass 10/29/55.
+
+Private verification ZIP SHA-256
+**064053a48563e292b13c4718fb23bcfd93cdf7886120b3f7bda0f26aa4e5ebee**,
+9,753,270 bytes, expanded 28,967,347; manifest **d86239ae**, API1/exact same
+2,000 paths, unchanged 33 embedded helpers/412 canonical module identities.
+Every manifest byte matches frozen source projection; exactly eight intended
+installed paths change from 3dce4cc54 and two excluded tests. Source audit checks
+103 outgoing frozen blobs with no held artwork; redacted Gitleaks finds no
+secrets. Public dist remains **25f988ce**; VERSION/pins/bootstrap/art/stable/
+preview/device/server/watch state stay fixed. Following receipt changes docs
+only, not frozen ZIP bytes. Full/native limits and physical gates above remain.
+
+Evidence: final-full-{lua,luajit}.log, sealed.log, translations.log,
+source-audit-final.json and gitleaks-final.log under series-order-20261110.
+One concurrent full-suite attempt hit the existing Python artwork builder's
+shared-file race (empty-file digest during the other builder's write). It is
+retained as parallel-collision-full-luajit.log; rerunning after the other
+Python phase completed passes all 134 cases. No suppression/baseline/test or
+artwork change was made for this collision; the final worktree is clean.
+
 ## 2026-11-10 — local finish forecast
 
 Approved Aleph-list point 5, branch `feature/finish-forecast-20261110`, base

@@ -52,6 +52,20 @@ all four deferred cursor/page saves, while collation/metadata/progress edits
 still retire the relevant keys. No navigation persistence or user setting is
 suppressed to achieve the reuse.
 
+Frozen **771119c5** (initial 831e81e1 plus cursor-save correction) passes both
+complete scripts: 134 Python/four existing source-art skips, 1,237 syntax,
+121 roots, 583 Bookshelf suites/zero failures/three usual SQLite exclusions,
+13 SimpleUI files and 43 catalogs. The 121-root matrix with sealed root
+configured and retained minimum/current panel/pins/forecast, real SQLite index/
+series and native EPUB-input supplements pass in their supported interpreters.
+Private ZIP **064053a4**, 9,753,270 bytes, manifest **d86239ae**, exact source,
+unchanged 2,000 API1 paths/33 helpers/412 identities. Eight intended installed
+paths and two excluded tests change; held-art/history/redacted-secret checks
+pass. Public dist stays **25f988ce**. A parallel Python artwork-builder fixture
+collision is retained in the evidence; nonoverlapping rerun passes with no
+exclusion or artwork/code change. Receipt is docs only; no push/publication,
+device/server/watch action or physical speed/acceptance claim.
+
 ## 2026-11-10 — finish forecast (Aleph-list point 5)
 
 User asks for the next point after the local compact reader panel. Branch

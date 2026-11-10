@@ -45,8 +45,15 @@ and correct this file in the same change.
   asset/device/server/watch change. Synthetic 235-series/3,341-volume fixture
   counts 236 sorts cold, zero on both warm calls; full native repository tests
   cover page reuse, metadata/progress/group retirement and scope isolation.
-  `test_shelf_sort` has 24 cases; `test_library_performance` has 10. Full frozen/
-  sealed verification follows in TESTING/MERGE_LOG. Bigme latency/RSS/UI remain
+  `test_shelf_sort` has 24 cases; `test_library_performance` has 10. Frozen
+  **771119c5** passes both full scripts/43 catalogs and the 121-root matrix with
+  sealed root configured, plus retained minimum/current reader/pin/forecast,
+  real SQLite/index/series/native EPUB-input supplements. Private ZIP
+  **064053a4**, 9,753,270 bytes, manifest **d86239ae**, same 2,000 API1 paths and
+  33/412 counts. Exact source/eight installed paths/held-art/history/secret
+  checks pass; public dist remains **25f988ce**. Receipt changes docs only,
+  not frozen package bytes. Full boundaries are in TESTING/MERGE_LOG.
+  Bigme latency/RSS/UI remain
   unmeasured; no physical acceptance or publication is implied. Tag validation
   sharing, dashboard demand normalization and finer no-change redraws remain
   review backlog, not implemented by this stage.
