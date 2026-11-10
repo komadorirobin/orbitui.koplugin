@@ -48,6 +48,7 @@ local W = H.widget()
 function W:getSize() return self.dimen or { w = self.width or 500, h = 120 } end
 function W:free() frees = frees + 1 end
 for _, name in ipairs{ "ui/widget/container/centercontainer", "ui/widget/textboxwidget", "ui/geometry" } do package.loaded[name] = W end
+package.loaded["lib/bookshelf_clip_container"] = W
 package.loaded["ui/font"] = { getFace = function() return {} end }
 package.loaded.logger = { warn = function() end, dbg = function() end }
 package.loaded["core/orbitui_context"] = { notify = function() end, refresh = function() refreshes = refreshes + 1 end }
@@ -169,6 +170,8 @@ H.test("Next rendering starts no synchronous library work; the native query choo
     local mod = fixture(); local ctx = context(); local widget = mod.build(500, ctx)
     H.eq(warms, 0); H.eq(metadata_reads, 0); H.eq(progress_reads, 0); H.eq(queries, 0); H.eq(builds, 0)
     H.eq(widget[1].text, "Preparing next volumes… Long-press for options.")
+    H.eq(widget.h, widget[1].height); H.eq(widget[1].height_adjust, false)
+    H.eq(widget[1].height_overflow_show_ellipsis, true)
     flush(); local state = Shelves.nextState(ctx.pfx)
     H.eq(state.phase, "ready"); H.eq(#state.files, 2); H.eq(state.files[1], "/manga/A02.epub")
     H.eq(state.files[2], "/books/B02.epub"); H.eq(queries, 1); H.eq(refreshes, 1); H.eq(writes, 0)

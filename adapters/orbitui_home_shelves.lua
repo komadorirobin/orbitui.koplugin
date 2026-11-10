@@ -368,9 +368,13 @@ function M.nextModule()
                 paused = "Series preparation paused. Long-press and choose Refresh next volumes.",
                 error = "Could not prepare series. Long-press to refresh, or check library metadata.",
                 folders = "Choose library folders before using Next in series.", ready = "No started series to continue in the indexed books." }
-            widget = require("ui/widget/container/centercontainer"):new{
-                dimen = require("ui/geometry"):new{ w = w, h = module.getGridHeight(ctx) },
+            local height = math.max(1, module.getGridHeight(ctx))
+            -- Native TextBox may grow to at least one font line. Retain the
+            -- existing fixed-size clip even for very narrow/tiny cards, so
+            -- a loading/error message cannot paint over the next row/dock.
+            widget = require("lib/bookshelf_clip_container"):new{ w = w, h = height,
                 require("ui/widget/textboxwidget"):new{ text = _(messages[state.phase]), width = w,
+                    height = height, height_adjust = false, height_overflow_show_ellipsis = true,
                     face = require("ui/font"):getFace("cfont", 16), alignment = "center" } }
         end
         local free = widget.free
