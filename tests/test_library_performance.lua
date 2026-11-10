@@ -148,6 +148,17 @@ end)
 H.test("full native series pages reuse order and retire it on progress, metadata and group invalidation", function()
     local Adapter = require("adapters/orbitui_shelf_sort")
     local native_derive, native_sort, native_spine = repo.deriveLightRecord, table.sort, repo.spine_light
+    local Store = package.loaded["lib/bookshelf_settings_store"]
+    local native_generation, native_save, nav_generation = Store.generation, Store.saveDeferred, 1
+    Store.generation = function() return nav_generation end
+    Store.saveDeferred = function() nav_generation = nav_generation + 1 end
+    local method = assert(read(root .. "/components/bookshelf/lib/bookshelf_widget.lua")
+        :match("(function BookshelfWidget:_persistNavState%(%).-)\nend")) .. "\nend"
+    local persist = compile(method .. "\nreturn BookshelfWidget._persistNavState",
+        {BookshelfWidget={}, BookshelfSettings=Store})
+    local navigation = {chip="series", _cursor=1, page=1,
+        _serializeDrillPath=function() return {} end, _scheduleNavFlush=function() end}
+    persist(navigation)
     local name, calls = "Series A", 0
     repo.deriveLightRecord = function(fp, info, rows, build)
         local b = native_derive(fp, info, rows, build)
@@ -165,8 +176,12 @@ H.test("full native series pages reuse order and retire it on progress, metadata
         assert(calls > 0); H.eq(total, 2); H.eq(first[1].series_name, "Series A")
         first[1]._orbitui_shelf_sort.title = "Caller mutation"
         calls = 0
+        navigation._cursor, navigation.page = 2, 2
+        persist(navigation)
+        H.eq(nav_generation, 9, "real nav method performs four deferred setting saves per page")
         local second = repo.getSeriesGroups(1, 1, priority, scope, nil, {light_only=true})
-        H.eq(calls, 0); H.eq(second[1].series_name, "Series Z")
+        H.eq(calls, 0, "unrelated saved cursor/page must not expire sorted series")
+        H.eq(second[1].series_name, "Series Z")
         first = repo.getSeriesGroups(1, 0, priority, scope, nil, {light_only=true})
         H.eq(calls, 0); H.eq(first[1]._orbitui_shelf_sort.title, "Series A")
         repo.invalidateProgressCache(f.books[1]); calls = 0
@@ -183,6 +198,7 @@ H.test("full native series pages reuse order and retire it on progress, metadata
         H.eq(#outside, 0); H.eq(outside_total, 0)
     end)
     table.sort, repo.deriveLightRecord, repo.spine_light = native_sort, native_derive, native_spine
+    Store.generation, Store.saveDeferred = native_generation, native_save
     repo.invalidateWalkCache()
     assert(ok, err)
 end)

@@ -29,8 +29,11 @@ and correct this file in the same change.
   code caches prepared bookcase series orders only for native immutable light
   shapes. One optional third hook argument supplies the native group-array
   identity; no standalone behavior change. Exact filtered input sequence,
-  full priority, repository data generation, settings generation and native
-  collation signature must match. Four orders/8,192 aggregate member slots,
+  full priority, repository data generation and native collation signature
+  must match. Do not use the blanket store generation: native cursor/page saves
+  bump it four times per page. Relevant key settings are in the native signature;
+  real `_persistNavState` tests verify warm reuse across those saves.
+  Four orders/8,192 aggregate member slots,
   max 1,024 shapes and thirty-second absolute age; source-array token is weak,
   no hydrated books/covers, caller key records are separate and failures retry.
   Dynamic/unknown secondary sorts keep the old path. Flat native browse lists

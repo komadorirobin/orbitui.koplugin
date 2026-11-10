@@ -167,21 +167,24 @@ end
 -- Keep four orders / 8,192 member slots at most, not hydrated books or pixels.
 function M.seriesOrderCache()
     local entries, slots = {}, 0
-    local generation, settings, signature
+    local generation, signature
     local static = { title = true, author_surname = true, author_name = true,
         series_name = true, series_combined = true, series_or_title = true,
         filename = true, series_index = true, book_count = true,
         date_added = true, last_opened = true }
-    return function(shapes, priority, token, data_gen, settings_gen)
+    return function(shapes, priority, token, data_gen)
         if not M.enabled(priority) then return nil end
         local engine = require("lib/bookshelf_sort_engine")
         local sig = engine.keySignature and engine.keySignature()
-        if type(token) ~= "table" or data_gen == nil or settings_gen == nil or sig == nil then
+        if type(token) ~= "table" or data_gen == nil or sig == nil then
             return M.seriesShapes(shapes, priority)
         end
-        if generation ~= data_gen or settings ~= settings_gen or signature ~= sig then
+        -- Store.generation also changes for every saved cursor/page. Only the
+        -- actual key settings belong here; priority and shape identity cover
+        -- sort levels, participation, metadata sources and profile changes.
+        if generation ~= data_gen or signature ~= sig then
             entries, slots = {}, 0
-            generation, settings, signature = data_gen, settings_gen, sig
+            generation, signature = data_gen, sig
         end
         local parts = {}
         for _, level in ipairs(priority) do

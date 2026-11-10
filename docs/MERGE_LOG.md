@@ -16,8 +16,8 @@ server operation or new setting is authorized or performed.
 Independent `core/orbitui_shelf_sort` service retains at most four prepared
 orders/8,192 aggregate member slots/1,024 shapes, thirty seconds absolute age.
 Require immutable native light group identity, exact filtered input sequence,
-priority, repository data generation, settings generation and native collation
-signature; weak source-array token, separate caller key records, no covers or
+priority, repository data generation and native collation signature; weak
+source-array token, separate caller key records, no covers or
 hydrated books. Unknown/dynamic sorts and missing identity use the old path;
 failed work is never cached. The sole component change adds its group-array
 identity as an optional third argument to the existing host sort hook. Native
@@ -42,6 +42,15 @@ TESTING. VERSION/public dist, bootstrap, stable/preview, pins, artwork, device,
 server and watch state stay unchanged. Tag/dashboard/no-change redraw ideas
 remain separate backlog; incremental previous-search-result filtering is still
 deferred at the user's earlier request.
+
+Final review caught an overly broad initial guard: Store.generation changes
+four times per native `_persistNavState` page save, defeating the cache on real
+page flips. Final identity uses actual sort priority, native key signature,
+native shape/filtered-sequence identity and data generation instead. A whole
+native repository + real `_persistNavState` regression checks warm reuse across
+all four deferred cursor/page saves, while collation/metadata/progress edits
+still retire the relevant keys. No navigation persistence or user setting is
+suppressed to achieve the reuse.
 
 ## 2026-11-10 — finish forecast (Aleph-list point 5)
 

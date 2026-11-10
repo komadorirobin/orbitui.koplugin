@@ -332,13 +332,15 @@ H.test("scope token, filtered membership and tie order are part of prepared seri
     assert(countedSorts(function() return order(reordered, alpha, token, 1, 1) end) > 0)
     H.eq(countedSorts(function() return order(input(), alpha, token, 1, 1) end), 0)
 end)
-H.test("data and settings generations retire old metadata and reading-dependent orders", function()
+H.test("data generation retires old metadata while unrelated cursor saves retain order", function()
     local order, token, input = cacheFixture()
     order(input(), alpha, token, 1, 1)
     token[1].series_name = "Changed series"
     local calls, keys = countedSorts(function() return order(input(), alpha, token, 2, 1) end)
     assert(calls > 0); H.eq(keys[token[1]].title, "Changed series")
-    assert(countedSorts(function() return order(input(), alpha, token, 2, 2) end) > 0)
+    -- An extra former blanket-settings token must not expire the order:
+    -- native Store.generation changes on every saved page/cursor too.
+    H.eq(countedSorts(function() return order(input(), alpha, token, 2, 2) end), 0)
     H.eq(countedSorts(function() return order(input(), alpha, token, 2, 2) end), 0)
     local reversed = {{key="title", reverse=true}}
     assert(countedSorts(function() return order(input(), reversed, token, 2, 2) end) > 0)

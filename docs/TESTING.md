@@ -11,8 +11,9 @@ pin/version/public asset, persistent cache/settings, device/server/watch change.
 `test_shelf_sort` has 24 cases: existing Moberg/decimal/reverse/block/author/
 natural/article/letter/scope/flag/real-readout contracts, zero warm sort work,
 separate caller keys, source/filter/input-order/generation/settings/collation
-identity, dynamic/missing-identity fallbacks, four-entry and aggregate 8,192-
-member bounds, oversize refusal, TTL/backwards clock, weak source retention,
+identity (not blanket cursor-write generations), dynamic/missing-identity
+fallbacks, four-entry and aggregate 8,192-member bounds, oversize refusal,
+TTL/backwards clock, weak source retention,
 error retry, 235-series/3,341-volume cold/warm work counts, real Query with a
 stubbed producer and registered/group/date/metadata-replacement fallbacks.
 Both interpreters pass. The large fixture counts 236 sort calls cold, zero on
@@ -26,7 +27,10 @@ one cold Engine sort and zero warm; bookcase defers the flat pass, source scope
 does not widen, local status filters reflect a subsequent native invalidation.
 Native series page flips do no new sorts; progress generation, new group
 identity and metadata refresh retire prepared keys, and another scope stays
-empty. No cover buffer is retained. The changed shelf-sort test honors the
+empty. The actual native `_persistNavState` method executes its four deferred
+setting saves per page; they do not expire the order, while native collation
+signature changes still do. No cover buffer is retained. The changed shelf-sort
+test honors the
 sealed-root environment for both host modules and native readout source.
 
 Before marking locally ready: both full scripts/43 catalogs, frozen private

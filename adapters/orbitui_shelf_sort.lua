@@ -315,8 +315,7 @@ function M.repository(repo)
     local order = Sort.seriesOrderCache()
     repo.orderShelfSeries = function(shapes, priority, groups)
         return order(shapes, priority, groups,
-            repo.dataGeneration and repo.dataGeneration(),
-            repo._storeGeneration and repo._storeGeneration())
+            repo.dataGeneration and repo.dataGeneration())
     end
 end
 

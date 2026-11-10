@@ -177,9 +177,13 @@ auto-execution configured; this still needs real KOReader verification.
 November 10 approved local series/browse sorting maintenance: prepared series
 orders may reuse only native immutable, cover-free shapes, keyed by native
 group-array identity (weak token), exact pre-sort filtered shape sequence,
-complete priority, repository data/settings generations and native collation
-signature. Cap four orders/8,192 aggregate member slots/1,024 shapes and thirty
-seconds absolute age, rejecting backwards-clock hits. Return independent key
+complete priority, repository data generation and native collation signature.
+Never key on the blanket Store.generation: cursor/page persistence bumps it
+four times each page, and must not defeat warm reuse. Relevant key settings
+are in the native signature; source/participation changes retain native shape
+and filtered-sequence ownership. Cap four orders/8,192 aggregate member slots/
+1,024 shapes and thirty seconds absolute age, rejecting backwards-clock hits.
+Return independent key
 records; never retain hydrated books/pixels or suppress metadata/progress/scope
 invalidation. Dynamic/third-party secondary sorts and missing identity fall back.
 The optional third `orderShelfSeries` argument is the native group-array token;
