@@ -1,5 +1,28 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.2.0-beta.2 — conditional release preparation
+
+User requests physical ADB tests and authorizes a new beta only after passing
+checks. No upstream merge. This preview combines the five reviewed Aleph-inspired
+features (Next in series, local similar books/series, pinned references, reader
+panel and Finish forecast), scoped series-order optimizations, the redesigned
+updater, default bottom-menu entry, original Reading settings escape and optional
+X-Ray/KOAssistant routing. References are ideas, not imported Aleph code/assets.
+Existing SimpleUI/Bookshelf pins, artwork, bootstrap/API1 and 2,000 installed
+paths are preserved. Stable/latest 1.1.0 and old tags/assets must not change.
+
+The fresh Bigme session has exercised native reader tools, tap/swipe entry,
+immediate opt-out/re-enable, ongoing pagination/confirmation and KOAssistant's
+native chooser without generation. A short-viewport test found a spurious
+horizontal scrollbar: use the native retained scrollbar width, not a newly
+scaled constant. Corrected sealed bytes must be retested before publication.
+Physical acceptance is scoped, not all-device/all-plugin certification; X-Ray
+is explicitly not installed, no AI request or production sync test is allowed.
+Full Lua/LuaJIT, sealed/source/history/art/secret audits, older actual installers,
+exact main/tag CI, draft/public bytes and channel checks remain release gates.
+Private evidence: test-results/device-reader-bottom-20261110/session.LZ5U1q.
+Publication receipts will follow without rebuilding an already-published tag.
+
 ## OrbitUI 1.2.0-beta.1
 
 Published **2026-11-09 06:01:52 UTC**, release **438785778**, frozen source/tag

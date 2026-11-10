@@ -1428,7 +1428,8 @@ functionality if the richer renderer is unavailable. Never silently certify a
 fallback as a successful rich render. Only an already-loaded RAM cover-cache
 hit may supply a borrowed image: retain its reference, never dispose the
 cache's buffer or request an upscale, extraction, decode or new cache/index.
-Uncached covers stay placeholders. Body scrolling reserves the native bar;
+Uncached covers stay placeholders. Body scrolling reserves the native bar's
+actual getScrollbarWidth(), including its retained pre-rotation scaling;
 fixed tabs/close/footer remain accessible. Revision guards reject old page
 buttons; pause updates only its fixed-height status label, not the modal stack.
 The optional Library button follows ReaderMenu's native onClose/showFileManager

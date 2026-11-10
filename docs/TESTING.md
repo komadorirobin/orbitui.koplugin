@@ -1,5 +1,35 @@
 # Verification and device acceptance
 
+## 2026-11-10 — fresh physical ADB verification / beta.2 preparation
+
+User authorizes testing through ADB and publication only after passing checks.
+Fresh closed-app backup validated (2,433 safe regular-file/directory entries;
+SHA256 7a5f36be324b505d1f340332c47b1bbb75d4e4f9836894dd57778d35fb6c07f1).
+Private evidence/backups: test-results/device-reader-bottom-20261110/session.LZ5U1q.
+Only seven new uniquely named test EPUBs may be opened by the temporary safety
+guard. Automatic sync/update plugins and Silverfish are temporarily disabled;
+KOAssistant stays active with fixture auto-X-Ray off. No X-Ray installation,
+credential setup, AI generation or production sync operation.
+
+Initial frozen 15a4c642 slot passes all 1,999 on-device manifest SHA checks and
+starts healthy. Actual ADB touch/swipe reaches the native sheet, not fallback;
+default-on does not write a preference. Native Reading settings opens without
+recursion. Physical settings checkbox immediately switches to native and back;
+Auto selects actual KOAssistant, whose native scope/cache chooser opens without
+execution. Forced missing X-Ray is disabled and Hide removes its row. All six
+native tool destinations open, six other fixture books appear over two pages,
+and native ask-before-open cancellation/commit preserve the expected reader.
+Library follows the native close/FileManager route. Screenshots and private
+command receipts distinguish actual events from diagnostics.
+
+The Bigme asynchronously letterboxes a landscape Activity to 1264x951 while
+reporting display rotation zero. The actual shorter surface exposes horizontal
+overflow because a fresh scale(18) is not the native class's retained
+3*scale(6). Fix a762aa87 reserves getScrollbarWidth() in both panels and adds
+rounded/stale-scale regression cases. This is a reproduced finding, not a
+passing final candidate: corrected sealed package, physical scroll/touch,
+wake, updater UI, restoration and final publication gates are still pending.
+
 ## 2026-11-10 — default bottom entry and native Reading settings
 
 User explicitly approves default-on bottom entry, a disable switch and a

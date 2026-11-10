@@ -4,6 +4,22 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-10 — authorized physical QA and conditional beta.2
+
+No upstream import. User requests ADB tests and push/new beta only if successful.
+Fresh isolated fixture tests verify native reader entry/tools/settings/provider
+navigation and ongoing-book switching; details and limits are in TESTING.
+The actual short Android surface exposes scrollbar reservation rounding and
+retained pre-rotation density. Host-only fix a762aa87 uses native
+getScrollbarWidth() in both sheets; regressions exercise both causes. Components,
+pins, artwork/bootstrap/API1 and installed paths remain unchanged.
+
+Prepare 1.2.0-beta.2 with README/feature-guide updates and preview/draft channel
+regression. No public release has occurred at this preparation stage. Corrected
+sealed-device retests, temporary-preference restoration, complete local/sealed
+gates, old installers, history/art/secrets, exact CI and draft/public checks are
+required. Never replace public beta.1 bytes or promote stable/latest 1.1.0.
+
 ## 2026-11-10 — default bottom entry with native reading-settings escape
 
 User explicitly requests **default on**, with a disable switch, rather than

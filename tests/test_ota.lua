@@ -74,6 +74,18 @@ H.test("upstream 1.2 beta is hidden while draft and never changes stable 1.1", f
     assert(not OTA.newer("1.1.0", "1.2.0-beta.1"))
 end)
 
+H.test("reader-panel beta advances preview only after publication", function()
+    local list = { release("1.1.0", false), release("1.2.0-beta.1", true), release("1.2.0-beta.2", true) }
+    list[3].draft = true
+    H.eq(OTA.select(list, true).version, "1.2.0-beta.1")
+    H.eq(OTA.select(list, false).version, "1.1.0")
+    list[3].draft = false
+    H.eq(OTA.select(list, true).version, "1.2.0-beta.2")
+    H.eq(OTA.select(list, false).version, "1.1.0")
+    assert(OTA.newer("1.2.0-beta.2", "1.2.0-beta.1"))
+    assert(not OTA.newer("1.2.0-beta.1", "1.2.0-beta.2"))
+end)
+
 H.test("alphabet beta advances preview only and an unpublished draft stays hidden", function()
     local list = { release("1.0.0", false), release("1.1.0-beta.3", true), release("1.1.0-beta.4", true) }
     list[3].draft = true

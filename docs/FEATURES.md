@@ -68,7 +68,7 @@ av OrbitUIs funktioner, inte BookOrbits egen progressionssynk. EPUB-taggar finns
 kvar offline. Serverpatchar är frivilliga, versionsbundna och installeras av
 administratören separat. Hantera skyddade öppningar innan ångra-stöd tas bort.
 
-## Finish forecast (local development)
+## Finish forecast (1.2 preview)
 
 Add **Finish forecast / Läsprognos** through Home's Books module picker, or
 **Cards and content > Add card > Home modules (SimpleUI)** in the Reading
@@ -102,7 +102,8 @@ Sleep, rotation, covering dialogs and navigation retire pending work; resume
 does not restart paused preparation automatically. Refresh after a Statistics
 sync or when retrying an error. Unknown/unreadable data is not repaired/reset.
 Home/dashboard layouts and native profiles/bookmarks/sync remain untouched.
-Local development only; not yet published or accepted on the physical Bigme.
+Available in the 1.2 preview. Estimates depend on sufficient matching local
+statistics; an insufficient-data message is not a failed prediction.
 
 **Svenska:** Lägg till Läsprognos som en egen modul eller ett kort. Den visar
 ungefär när just den här boken kan bli utläst, utifrån dess egen registrerade
@@ -110,7 +111,7 @@ läsning under två hela veckor. Saknas underlag får du ett tydligt besked i
 stället för ett påhittat datum. Funktionen är lokal, valfri och ändrar inte
 lässtatus. Långtryck för att uppdatera prognosen eller läsa hur den räknas.
 
-## Reader bottom panel and optional X-Ray (local development)
+## Reader bottom panel and optional X-Ray (1.2 preview)
 
 In an open book, the normal bottom-menu tap/upward swipe now opens OrbitUI's
 reader panel by default, respecting KOReader's existing tap/swipe activation
@@ -147,8 +148,9 @@ native ask-before-open preference is respected, and file/status changes are
 rechecked first. Native reading profiles, return origin, save and external
 BookOrbit/Hardcover sync keep their existing owners. This adds no new sync
 service, reading-state database or automatic startup work. The Library shortcut
-uses KOReader's native reader-to-file-manager route. Local test build;
-not published or physically accepted on the Bigme yet.
+uses KOReader's native reader-to-file-manager route. See TESTING for the exact
+Bigme checks and limits; other devices and standalone X-Ray remain separate
+acceptance cases.
 
 Under **OrbitUI settings > Integrations > Reader panel & X-Ray**, choose
 **Automatic (X-Ray first)**, **X-Ray**, **KOAssistant** or **Hide**. The default
@@ -175,7 +177,7 @@ välja **Automatiskt (X-Ray först)**, **X-Ray**, **KOAssistant** eller **Dölj*
 Ingen plugin installeras eller aktiveras av detta. KOAssistant öppnar sin egen
 X-Ray-väljare; AI-generering sker bara via pluginets egna uttryckliga åtgärder.
 
-## Pinned reading references (local development)
+## Pinned reading references (1.2 preview)
 
 In an open book, use **Tools > Pinned references / Verktyg > Fästa referenser**.
 **Pin current page / Fäst aktuell sida** saves a reference separately from
@@ -205,15 +207,16 @@ book; removing an image reference also removes its unshared owned snapshot.
 Missing/unknown-format data is preserved rather than reset. Pin changes follow
 KOReader's ordinary save/close lifecycle; force-killing before a save can lose
 the newest reference. Sleep, rotation and reader close retire previews/capture;
-waking does not reopen a drawer. This feature is not yet published or accepted
-on the physical Bigme; existing Continue reading/layouts remain unchanged.
+waking does not reopen a drawer. Existing Continue reading/layouts remain
+unchanged. Scoped Bigme fixture checks are recorded in TESTING, not a claim of
+universal PDF/CBZ/device acceptance.
 
 **Svenska:** Fästa referenser ligger separat från bokmärken. Förhandsvisning
 flyttar inte läspositionen; det gör bara Gå till sidan. Fäst en sida eller ett
 textutdrag, eller välj bildkommandot före ett långtryck för att spara en lokal
 bildkopia. Bokmärken, header-patch och vanlig bildvisning behåller sina ägare.
-Säkerhetskopiera både sidofilerna och mappen med bildkopior. Lokalt testbygge;
-ännu inte publicerat eller provat på Bigmen.
+Säkerhetskopiera både sidofilerna och mappen med bildkopior. Funktionen ingår i
+1.2-förhandsversionen; se testanteckningarna för provade fall och begränsningar.
 
 ## Next in series
 

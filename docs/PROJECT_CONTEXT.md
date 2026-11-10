@@ -22,6 +22,21 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-10
 
+- **Conditional beta.2 / physical reader-panel session in progress.** User now
+  authorizes ADB tests, then push/publication only if they pass. Fresh isolated
+  fixture session, automatic sync/Silverfish temporarily disabled, no X-Ray
+  install or AI generation. Native tap/swipe, original Reading settings,
+  immediate opt-out/re-enable, six tool routes, six ongoing books/two pages,
+  confirmation cancel/commit and KOAssistant chooser work. Bigme's Android
+  landscape request asynchronously creates a shorter letterboxed app surface;
+  this exposed an unnecessary horizontal scrollbar. Fix a762aa87 reserves the
+  native class's actual retained scrollbar width in both new panels and adds
+  rounding/pre-rotation regressions. Beta.2 preparation is local only; corrected
+  sealed bytes, lifecycle/resource checks, restoration and all release gates
+  must pass before publication. See the newest TESTING/OTA/MERGE_LOG entries;
+  earlier local-only receipts below describe their historical stage, not a ban
+  on the user's later explicitly authorized device/release work.
+
 - **Default bottom-menu entry and native Reading settings escape, local only.**
   User explicitly requests OrbitUI as the default bottom menu (superseding the
   suggested default-off compromise), a visible Reading settings… row below
