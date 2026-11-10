@@ -27,6 +27,27 @@ function M.newer(left, right)
     return false
 end
 
+-- Plain bounded display copy only. Release text never becomes markup, a link,
+-- a script, an asset URL or an instruction to the installer.
+function M.releaseNotes(body)
+    if type(body) ~= "string" then return nil end
+    local lines, bytes = {}, 0
+    local bounded = body:sub(1, 8192)
+    if #body > 8192 then bounded = bounded:match("^(.*)[\r\n]") or "" end
+    for raw_line in bounded:gmatch("[^\r\n]+") do
+        local line = raw_line:gsub("[%z\1-\8\11\12\14-\31\127]", "")
+            :gsub("!%b[]%b()", ""):gsub("%[([^%]]+)%]%b()", "%1")
+            :gsub("^%s*[#>*%-]+%s*", ""):gsub("`", ""):gsub("%*%*", "")
+            :gsub("^%s+", ""):gsub("%s+$", "")
+        if line ~= "" and not line:find("[<>]") and not line:match("^https?://") then
+            if bytes + #line > 1800 then break end
+            lines[#lines + 1], bytes = line, bytes + #line
+            if #lines == 8 then break end
+        end
+    end
+    return #lines > 0 and table.concat(lines, "\n") or nil
+end
+
 function M.select(releases, preview)
     assert(type(releases) == "table", "Invalid GitHub releases response")
     local best
@@ -34,7 +55,8 @@ function M.select(releases, preview)
         local parts, version = M.version(release.tag_name)
         if parts and not release.draft and (preview or (not release.prerelease and parts[4] == 4)) then
             if not best or M.newer(version, best.version) then
-                best = { version = version, tag = release.tag_name, assets = release.assets or {} }
+                best = { version = version, tag = release.tag_name, assets = release.assets or {},
+                    notes = M.releaseNotes(release.body) }
             end
         end
     end
@@ -440,7 +462,75 @@ function M.activateExternal(context, plan)
 end
 
 -- No activation here. A killed subprocess can only leave inactive staging data.
-function M.prepare(context, release)
+-- A newly-created, exclusively owned transient directory. No shared status
+-- filename, URLs, settings or credentials cross this optional progress channel.
+-- Unknown leftovers are never reused/deleted. A failed channel cannot make an
+-- otherwise valid update fail, and a late cancelled child cannot recreate it.
+local progress_id = 0
+function M.progressChannel(context)
+    local ok, channel = pcall(function()
+        local fs = require("libs/libkoreader-lfs")
+        assert(fs.symlinkattributes(context.root, "mode") == "directory")
+        local path
+        for _i = 1, 32 do
+            progress_id = progress_id + 1
+            local candidate = context.root .. "/.orbitui-progress-" .. os.time() .. "-" .. progress_id
+            if fs.mkdir(candidate) then path = candidate; break end
+        end
+        assert(path)
+        local closed, last, file = false, nil, path .. "/status"
+        local function plain() return fs.symlinkattributes(path, "mode") == "directory" end
+        return {
+            write = function(value)
+                if closed or not plain() then return end
+                if type(value) ~= "table" then return end
+                local phase, received, total = value.phase, value.received or 0, value.total or 0
+                if phase ~= "downloading" and phase ~= "verifying" then return end
+                if type(received) ~= "number" or type(total) ~= "number" or received ~= received or total ~= total
+                        or received < 0 or total < 0 or received > MAX_ZIP or total > MAX_ZIP
+                        or received % 1 ~= 0 or total % 1 ~= 0 then return end
+                local bucket = total > 0 and math.floor(received * 20 / total) or math.floor(received / 262144)
+                local key = phase .. ":" .. bucket
+                if key == last then return end
+                last = key
+                local attr = fs.symlinkattributes(file .. ".next")
+                if attr and attr.mode ~= "file" then return end
+                local f = io.open(file .. ".next", "wb")
+                if not f then return end
+                local written = f:write(string.format("%s %d %d\n", phase, received, total))
+                local done = f:close()
+                local target = fs.symlinkattributes(file)
+                if written and done and plain() and (not target or target.mode == "file") then os.rename(file .. ".next", file) end
+            end,
+            read = function()
+                if closed or not plain() then return end
+                local attr = fs.symlinkattributes(file)
+                if not attr or attr.mode ~= "file" or attr.size > 128 then return end
+                local f = io.open(file, "rb")
+                if not f then return end
+                local data = f:read(129); f:close()
+                local phase, received, total = (data or ""):match("^(%a+) (%d+) (%d+)\n$")
+                received, total = tonumber(received), tonumber(total)
+                if (phase == "downloading" or phase == "verifying") and received and total
+                        and received <= MAX_ZIP and total <= MAX_ZIP then
+                    return { phase = phase, received = received, total = total }
+                end
+            end,
+            close = function()
+                if closed then return end
+                closed = true
+                if not plain() then return end
+                for _, name in ipairs{ file, file .. ".next" } do
+                    if fs.symlinkattributes(name, "mode") == "file" then os.remove(name) end
+                end
+                fs.rmdir(path) -- Unknown/replaced entries are retained, not recursively removed.
+            end,
+        }
+    end)
+    return ok and channel or nil
+end
+
+function M.prepare(context, release, on_progress)
     local HTTP = require("core/orbitui_http")
     local state = Boot.state(context.root)
     assert(not state.pending and state.current == context.slot, "Restart before updating again")
@@ -451,8 +541,13 @@ function M.prepare(context, release)
     local digest, filename = sum:match("^([0-9a-f]+)%s+([^%s]+)%s*$")
     assert(digest and #digest == 64 and filename == M.ASSET, "Invalid release checksum file")
     local zip = work .. "/update.zip"
-    local received = HTTP.get(release.zip.url, zip, MAX_ZIP)
+    local function report(phase, received)
+        if on_progress then pcall(on_progress, { phase = phase, received = received or 0, total = release.zip.size }) end
+    end
+    report("downloading")
+    local received = HTTP.get(release.zip.url, zip, MAX_ZIP, function(count) report("downloading", count) end)
     assert(received == release.zip.size, "Downloaded ZIP size mismatch")
+    report("verifying", received)
     assert(M.hashFile(zip) == digest, "Downloaded ZIP checksum mismatch")
     local staging = work .. "/runtime"
     mkdir(staging)

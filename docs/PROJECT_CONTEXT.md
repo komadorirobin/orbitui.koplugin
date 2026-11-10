@@ -22,6 +22,27 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-10
 
+- **BookOrbit-inspired updater panel, local implementation only.** User approved
+  the visual prototype and implementation, explicitly including the appearance,
+  not just one combined dialog. Branch `feature/update-panel-20261110` starts at
+  **f906773fa**. An independent lazy native-widget panel in the existing updater
+  adapter provides available/version comparison, expandable plain release notes,
+  download, package verification, cancel/retry and explicit restart states.
+  Rounded white framing, outlined/black pill buttons, bounded lightened backdrop
+  and a scrollable body with fixed actions follow the approved grayscale design.
+  No BookOrbit code/assets/dependency imported; reference main **022f9d10** is an
+  idea reference only. Child-to-parent progress uses a per-job disposable numeric
+  status file, throttled to five-percent/256-KiB changes. It is optional and never
+  authorizes activation. Native Trapper still owns cancellation/reaping; stale
+  buttons, canceled/closed jobs and changed active selections cannot activate.
+  Quiet startup tasks retain invisible-resend input ownership. TLS, package/hash/
+  manifest/path checks, original bootstrap, rollback, settings and restart
+  authority stay intact. Exact desktop/native-render/package receipts and device
+  limitations belong in TESTING/MERGE_LOG. VERSION, public dist **25f988ce**,
+  all pins/artwork and the device's accepted private **b0dffacc** remain unchanged.
+  This work is not pushed, published or installed on Bigme; its visual/touch,
+  sleep/rotation and actual OTA acceptance remain separate gates.
+
 - **Bigme feature verification and local corrections completed; not published.**
   After the safe USB pause, the user returned and confirmed KOReader exited.
   A fresh wireless-session backup, not the morning's settings, is the restore

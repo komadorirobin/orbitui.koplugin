@@ -96,7 +96,7 @@ local function caFile()
 end
 
 -- Called only inside Trapper's subprocess. Never disable TLS verification.
-function M.get(url, target, limit)
+function M.get(url, target, limit, on_progress)
     local http = require("socket.http")
     local https = require("ssl.https")
     local socketutil = require("socketutil")
@@ -115,7 +115,11 @@ function M.get(url, target, limit)
                 count = count + #chunk
                 if count > limit then return nil, "Download exceeds size limit" end
                 if os.time() - started > timeout then return nil, "Download timed out" end
-                if output then return output:write(chunk) end
+                if output then
+                    local written, write_error = output:write(chunk)
+                    if written and on_progress then pcall(on_progress, count) end
+                    return written, write_error
+                end
                 parts[#parts + 1] = chunk
                 return 1
             end

@@ -554,6 +554,18 @@ Tests: `test_series_rating`, `test_upstream_series_boxes`.
 
 ## C07: Presentation and preferences
 
+November 10 approved updater design: the available/download/verify/cancel/error/
+restart views share an independent, lazy native-widget panel in the existing
+adapter. Preserve rounded monochrome framing, outlined secondary and genuinely
+dark rounded primary buttons (not rectangular `preselect` inversion), SV/EN copy,
+bounded plain release notes, version comparison and explicit restart. Short
+screens scroll only the body, reserve native scrollbar width and retain visible
+actions; expose the cropping owner for native input-feedback clipping. Own/free
+at most one bounded backdrop; rotation and close release it. Modal taps must not
+open books behind the panel. Queued buttons from an older layout are inert.
+No BookOrbit plugin/code/assets dependency is introduced. Desktop raster checks
+are not physical Bigme contrast/touch or sleep/rotation acceptance.
+
 November 1 Bookshelf 6.2 retains OrbitUI's night-tone and RGB inverse guards:
 raw RGB rounding suppresses inversion only on Android/CBB, never software, and
 restores the flag after errors, including nested host wrappers. New footer
@@ -1236,6 +1248,20 @@ Tests: `tests/test_backup.lua`, `test_runtime.lua`, `scripts/check-package.lua`.
 Recovery procedure: `MIGRATION.md`.
 
 ## C09: Reviewed imports and explicit releases
+
+November 10 updater presentation work preserves the original bootstrap/API 1,
+2,000 installed paths and public same-labelled package. Optional numeric progress
+never changes installer authority: child downloads/prepares, parent verifies its
+job and unchanged active selection before activation, then restart is explicit.
+Native Trapper owns termination/reaping; canceled, closed or superseded jobs may
+not activate even if a late successful result arrives. Quiet startup maintenance
+keeps native invisible-resend mode. Each progress channel exclusively creates
+its own directory, uses bounded atomic numeric packets and only removes known
+plain files in that directory; replaced/unknown entries stay untouched. Missing
+progress storage or display errors do not weaken TLS/checksum/inventory/path/
+bootstrap checks or invalidate an otherwise safe update. Five-percent/256-KiB
+throttling bounds repaints; no invented percentage when total size is unknown.
+Approved implementation is local only, not push/release/device-install approval.
 
 November 1 post-Beta-28 merge-only request retains the public Beta 28 archive,
 VERSION and stable bootstrap/API 1. Two new Bookshelf 6.2 helpers are exact-source

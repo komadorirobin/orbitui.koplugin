@@ -97,5 +97,19 @@ if native_trapper and native_widget then
         for _ = 1, 8 do if not f.tick() then break end end
         H.eq(#f.events, 0); H.eq(f.killed, 1); H.eq(f.callbacks, 1)
     end)
+    H.test("native Trapper reuses the shown update panel and cancels only through its explicit owner", function()
+        local f, U = fixture()
+        local panel = {}; local UI = package.loaded["ui/uimanager"]
+        UI:show(panel)
+        U.runTask(function() error("parent must not execute download") end, panel, function(result)
+            H.eq(result.cancelled,true); f.callbacks = f.callbacks + 1
+        end)
+        for _ = 1, 4 do if panel.dismiss_callback then break end; f.tick() end
+        H.eq(f.trap,panel); assert(panel.dismiss_callback)
+        panel.dismiss_callback()
+        for _ = 1, 8 do if not f.tick() then break end end
+        H.eq(f.killed,1); H.eq(f.closed_fd,1); H.eq(#f.events,0); H.eq(f.callbacks,1)
+        H.eq(f.trap,panel) -- Trapper did not create/close a second modal.
+    end)
 end
 H.finish()

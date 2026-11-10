@@ -142,5 +142,19 @@ H.test("HTTP diagnostic messages follow the reader language", function()
     assert(not ok and tostring(err):find("GitHub begränsar", 1, true))
     G_reader_settings = old
 end)
+H.test("download progress reports actual written bytes without weakening limits or retaining failed callbacks", function()
+    local path, seen = os.tmpname(), {}
+    fixture(); responses = {{ code = 200, body = "data" }}
+    H.eq(HTTP.get("https://api.github.com/file", path, 4, function(count) seen[#seen + 1] = count end),4)
+    H.eq(#seen,1); H.eq(seen[1],4); assert(timeout_reset)
+    fixture(); responses = {{ code = 200, body = "data" }}
+    H.eq(HTTP.get("https://api.github.com/file", path, 4, function() error("display unavailable") end),4)
+    assert(timeout_reset)
+    fixture(); responses = {{ code = 200, body = "oversized" }}
+    local called = false
+    assert(not pcall(HTTP.get,"https://api.github.com/file",path,4,function() called=true end))
+    H.eq(called,false); assert(timeout_reset)
+    assert(os.remove(path))
+end)
 io.open = old_open
 H.finish()

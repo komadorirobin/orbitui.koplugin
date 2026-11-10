@@ -1,6 +1,21 @@
 package.path = "./?.lua;" .. package.path
 local H = require("tests/helpers")
 local Updates = require("adapters/orbitui_updates")
+-- This suite exercises the controller. The real native-widget construction and
+-- interaction contracts have their own test_update_panel suite.
+local function panelStub(U)
+    U.openPanel = function(options)
+        local panel = options
+        function panel:setState(phase, fields)
+            self.phase = phase
+            for key, value in pairs(fields or {}) do self[key] = value end
+        end
+        function panel:progressed(value) self.phase = value.phase end
+        return panel
+    end
+    return U
+end
+panelStub(Updates)
 local messages = {}
 package.loaded["ui/uimanager"] = { show = function(_, msg) messages[#messages + 1] = msg.text end }
 package.loaded["ui/widget/infomessage"] = { new = function(_, msg) return msg end }
@@ -73,7 +88,7 @@ H.test("cancellation never invokes installation activation", function()
     Boot.activate = previous
 end)
 H.test("external installation also activates only in the deferred main-process callback", function()
-    local U, queue, activated = dofile("adapters/orbitui_updates.lua"), {}, false
+    local U, queue, activated = panelStub(dofile("adapters/orbitui_updates.lua")), {}, false
     local candidate = { slot = string.rep("b", 64), version = "1.0.2" }
     local previous = package.loaded["core/orbitui_ota"]
     package.loaded["core/orbitui_ota"] = {
@@ -101,7 +116,7 @@ H.test("external installation also activates only in the deferred main-process c
     package.loaded["core/orbitui_ota"] = previous
 end)
 H.test("rate-limit errors survive Trapper safely and suppress new checks until their deadline", function()
-    local U, queue, calls, messages_before = dofile("adapters/orbitui_updates.lua"), {}, 0, #messages
+    local U, queue, calls, messages_before = panelStub(dofile("adapters/orbitui_updates.lua")), {}, 0, #messages
     local Boot = require("orbitui_bootstrap")
     local old_state, old_ota, old_time, old_settings = Boot.state, package.loaded["core/orbitui_ota"], os.time, G_reader_settings
     local now, fail, saved = 1000, true, {}
@@ -143,7 +158,7 @@ H.test("rate-limit errors survive Trapper safely and suppress new checks until t
     Boot.state, package.loaded["core/orbitui_ota"], os.time, G_reader_settings = old_state, old_ota, old_time, old_settings
 end)
 local function startupFixture(mode)
-    local U = dofile("adapters/orbitui_updates.lua")
+    local U = panelStub(dofile("adapters/orbitui_updates.lua"))
     local Boot = require("orbitui_bootstrap")
     local old_health, old_state = Boot.healthy, Boot.state
     local old_ota, old_logger, old_settings = package.loaded["core/orbitui_ota"], package.loaded.logger, G_reader_settings
