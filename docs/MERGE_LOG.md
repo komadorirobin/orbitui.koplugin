@@ -20,6 +20,15 @@ sealed-device retests, temporary-preference restoration, complete local/sealed
 gates, old installers, history/art/secrets, exact CI and draft/public checks are
 required. Never replace public beta.1 bytes or promote stable/latest 1.1.0.
 
+Frozen **0e2ed636 / 64c61bac** passes complete/sealed/native gates, exact
+package/source/art/pin/bootstrap/history/secret audits and eighteen actual older
+offline installers. Corrected on-device compact scroll/config and updater UI
+fixtures pass. Wireless ADB loses its port during the remaining wake work;
+physical post-wake input/restoration are not accepted. Publication is withheld.
+Latest TESTING/PROJECT_CONTEXT checkpoint describes the still-active temporary
+settings/guard and fresh-session-only recovery. This later receipt is docs only
+and does not rebuild/change the frozen private ZIP or public beta.1 assets.
+
 ## 2026-11-10 — default bottom entry with native reading-settings escape
 
 User explicitly requests **default on**, with a disable switch, rather than

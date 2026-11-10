@@ -22,6 +22,22 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-10
 
+- **Latest recovery/publication gate:** beta.2 frozen source **0e2ed636**, private
+  ZIP **64c61bac**, is physically installed/healthy with accepted **b0dffacc**
+  retained as previous. Both complete suites, 127 sealed roots per interpreter,
+  native supplements/43 catalogs/source-history-art-secrets and 18 actual older
+  offline installers pass. Physical six-tool routes, corrected compact scrolling
+  and native config tap, and updater UI-fixture actions pass. Wireless ADB twice
+  loses its port during wake work; no passing physical post-wake input claim and
+  **no push/tag/draft/publication**. User is being asked for the new port and
+  closed KOReader for recovery. Temporary preferences/history/plugin disables
+  and QA guard are **not yet restored**. Use only the fresh session.LZ5U1q
+  backup and its prepared restore helper; compare real stats, never rewind DB.
+  If handing back before final acceptance, select retained accepted b0dffacc
+  safely and preserve new/old slots. See newest TESTING checkpoint for exact
+  receipts, serial-vs-ambiguous diagnostics, resolution restoration and remaining
+  device gates. Public dist remains the unchanged beta.1 **25f988ce**.
+
 - **Conditional beta.2 / physical reader-panel session in progress.** User now
   authorizes ADB tests, then push/publication only if they pass. Fresh isolated
   fixture session, automatic sync/Silverfish temporarily disabled, no X-Ray

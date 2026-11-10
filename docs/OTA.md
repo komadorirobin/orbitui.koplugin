@@ -23,6 +23,15 @@ exact main/tag CI, draft/public bytes and channel checks remain release gates.
 Private evidence: test-results/device-reader-bottom-20261110/session.LZ5U1q.
 Publication receipts will follow without rebuilding an already-published tag.
 
+Local gate receipt: frozen **0e2ed636** / private **64c61bac**, exact 2,000 paths,
+both complete and sealed suites/43 catalogs/native/source/history/art/secrets
+and eighteen older offline installers pass. Physical tool/compact/updater UI
+checks pass, but wireless ADB loses its port during wake verification. Conditional
+device acceptance/restoration remains incomplete; **nothing is pushed or
+published**. TESTING/PROJECT_CONTEXT record the recovery checkpoint. Do not use
+these partial receipts as authority to create a tag/release, and never replace
+public beta.1's same-labelled assets with either earlier private candidate.
+
 ## OrbitUI 1.2.0-beta.1
 
 Published **2026-11-09 06:01:52 UTC**, release **438785778**, frozen source/tag

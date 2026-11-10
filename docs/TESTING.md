@@ -2,6 +2,54 @@
 
 ## 2026-11-10 — fresh physical ADB verification / beta.2 preparation
 
+**Current checkpoint (before recovery):** frozen beta.2 source **0e2ed636**,
+ZIP **64c61bac5d34ea762c7bc749be1c8ceebeca061664be4084f01f0f228669c09b**,
+manifest **38176bbc**, 29,079,526 expanded bytes, same exact 2,000 API1 paths.
+Both complete Lua/LuaJIT gates pass: 134 Python/four existing source-art skips,
+1,243 syntax files, 127 root suites, 583 Bookshelf suites/zero failures/three
+usual SQLite exclusions, 13 SimpleUI files and 43 catalogs. Both 127-root sealed
+repeats and fourteen whole-native-config cases per interpreter pass. Real native
+widget/font/BB checks now include the retained scrollbar width and fractional
+scaling, with no horizontal bar. Eighteen actual older installers, including
+public stable 1.1 and beta.1, pass offline in temporary local installs. Exact
+source/path/art/bootstrap/pin audit and 179 outgoing blobs/secret scan pass.
+
+All 1,999 beta.2 manifest files were SHA-verified on Bigme. Its activation record
+was read back healthy, current **64c61bac**, previous **b0dffacc**, pending=0.
+All six physical tool routes pass again. Actual controlled 1264x951 Android
+viewport checks verify vertical-only scroll, zero horizontal offset, scrolling
+to Reading settings and a physical tap opening native ConfigDialog. System
+resolution reset is verified byte-for-byte, then an explicit native portrait
+request restores the 1264x1680 app surface. Android's delayed landscape Activity
+request had initially retained a letterboxed surface after resolution reset;
+that was a test-driver restoration issue, not a claimed passing first attempt.
+The independent updater UI fixture passes physical notes/primary/progress/
+Cancel/Later actions; it performs no real download or activation. These are UI
+fixtures, not a certificate for real network downloads or AI generation.
+
+**Do not publish yet.** Wireless ADB has twice stopped accepting its old port
+during the suspend/resume work. Suspend retires the sheet and native resume is
+observed after bringing the Activity forward. A direct diagnostic callback
+opens the sheet, but physical post-wake input is not reliably verified before
+the connection disappears. Do not infer a UI regression or a passing wake test
+from that. Some exploratory diagnostic commands overlapped a polling reader;
+those ambiguous observations are excluded from acceptance. The controlled
+physical tool/compact/updater scripts and complete gates above ran serially.
+Retest wake/input with a stable connection, ideally USB, before declaring the
+conditional publication gate green. No push, tag, draft or public release.
+
+**Recovery still required at this checkpoint:** user has been asked for the
+current ADB port and a closed KOReader. Temporary sync/Silverfish disables,
+fixture history/preferences and the fixture-only opening guard remain active;
+do not claim restoration. Fresh before.tgz remains the sole authority, never
+the earlier morning/wireless backups. Private restore.py first backs up current
+state and compares non-fixture statistics without rolling the DB back, then
+can restore the five fresh preference/history files and move the owned QA patch
+out of autoload. Reread active state/slots before any code selection. If stopping
+without final acceptance, return to the retained previously accepted b0dffacc
+code, preserve both snapshots and current reading data, and record restoration
+receipts before handing back the device. Neither X-Ray nor AI requests occurred.
+
 User authorizes testing through ADB and publication only after passing checks.
 Fresh closed-app backup validated (2,433 safe regular-file/directory entries;
 SHA256 7a5f36be324b505d1f340332c47b1bbb75d4e4f9836894dd57778d35fb6c07f1).
