@@ -36,7 +36,14 @@ and correct this file in the same change.
   are tested; no waking autoreopen, automatic pinning or floating badge.
   No new installed paths/identities, source pin/version/public-dist/device/
   server/watch change. C10, FEATURES, TESTING and MERGE_LOG give limits/gaps;
-  full/sealed/native verification receipts follow. Not physically accepted.
+  frozen **7b16e5d9** passes both complete scripts, 43 catalogs and all 119
+  sealed root suites in Lua/LuaJIT. Reference tests pass 26 ordinary/29 with
+  whole minimum/current native modules; retained supplements pass 10/29/55.
+  Private ZIP **b8b5c245**, 9,725,063 bytes, manifest **a62883ca**, exact 2,000
+  paths and unchanged 33/412 helper/identity counts. Source/path/art/history/
+  secret audits pass, including identity guards for already-dequeued capture
+  timeouts and replaced windows/confirmations. Public dist remains **25f988ce**.
+  Receipt changes docs only, not the frozen ZIP. Not physically accepted.
 
 - **Local Next in series Home module, not published.** User requests the next
   Aleph-list point after local recommendations. Branch

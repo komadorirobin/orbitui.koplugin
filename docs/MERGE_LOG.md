@@ -32,6 +32,19 @@ device/server installation or watch change. Stable 1.1/public beta.1 and
 maintenance branches stay unchanged; all three Aleph-inspired features remain
 local and unpublished. Verification receipt follows the frozen candidate.
 
+Frozen **7b16e5d9** includes per-arm callback tokens and replacement drawer/
+list/confirmation ownership, so dequeued old timers/controls cannot capture,
+close or unlink a replacement. Both full final scripts, 43 catalogs, all 119
+sealed roots in both interpreters, 26 ordinary/29 whole-module native reference
+cases at minimum/current and retained 10/29/55 native supplements pass. No
+new exclusion; 134 Python/four usual skips, 1,235 syntax, 583 Bookshelf/zero
+failures/three usual SQLite exclusions, 13 SimpleUI files. Private ZIP
+**b8b5c245**, 9,725,063 bytes, manifest **a62883ca**, same API1/exact 2,000 paths
+and 33/412 module counts. Exact byte projection/nine changed installed paths,
+outgoing held-art and redacted-secret audits pass. Public dist stays
+**25f988ce**. This receipt updates docs only, not frozen package bytes; no
+publication or installation and no physical acceptance are implied.
+
 ## 2026-11-10 — Next in series Home card (Aleph-list point 2)
 
 User requests the next list item after the local tag recommendation feature.

@@ -50,6 +50,30 @@ force-kills are not a persistence guarantee. Unreferenced snapshot slots left
 by an interrupted pre-flush session are protected, not silently purged. No
 physical acceptance or public release is implied by headless results.
 
+**Frozen local receipt:** source **7b16e5d9** (initial 89758b2a plus capture/
+retired-window isolation d073581e and replacement-confirmation ownership)
+passes both final complete scripts: 134 Python tests/four pre-existing
+source-art skips, 1,235 syntax files, all 119 root files, 583 Bookshelf
+suites/zero failures/three usual SQLite exclusions and all 13 SimpleUI files.
+No new exclusion. Focused references pass 26 ordinary/29 native-supplement
+cases, minimum/current in both Lua and LuaJIT. Both interpreters repeat all
+119 roots against the sealed runtime; retained real SQLite/index/series and
+native libarchive/input supplements pass 10/29/55. All 43 catalogs pass.
+
+Private ZIP **b8b5c2450172382a57b42ebe9c298e34ce51c7fed753c13c565eef146b049ac6**,
+9,725,063 bytes, expanded 28,872,056; manifest **a62883ca**, API1/exact
+2,000 installed paths, unchanged 33 embeds/412 canonical identities. Exact
+source bytes/path set/manifest sizes/hashes and all outgoing blobs pass the
+held-art audit; redacted Gitleaks finds no secrets. Exactly nine installed
+adapter/core/doc paths change from 3b4fcf22, and three excluded tests are added/
+updated; unrelated components, pins, art/fonts, bootstrap and VERSION remain.
+Public dist is still **25f988ce**. Evidence: final-full-{lua,luajit}.log,
+final-sealed.log, translations-final.log, source-audit-final.json and
+gitleaks-final.log under ignored reader-pins-20261110. The old-version-labelled
+ZIP is private verification only, never a beta.1 public replacement. This
+following receipt changes docs only, not the frozen artifact. All three stages
+remain unpublished; no device or server was touched and physical gaps remain.
+
 ## 2026-11-10 — local Next in series module
 
 Approved Aleph-list point 2 after the recommendation work; branch
