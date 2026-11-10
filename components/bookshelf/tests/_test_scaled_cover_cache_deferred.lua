@@ -167,4 +167,50 @@ t.test("the shelf flushes them on suspend and on KOReader's settings flush", fun
         "flushCoverWrites does not reach the cache")
 end)
 
+t.test("rapid colour paging bounds pending bytes and entries and frees owned copies", function()
+    reset(); boost = 35
+    local first
+    for i = 1, 100 do
+        Cache:put("/bounded/" .. i, bb(1024, 1024))
+        if i == 1 then first = Cache._write_bb["/bounded/1"] end
+        assert(Cache._write_bytes <= Cache.DISK_WRITE_MAX_BYTES)
+        assert(#Cache._write_q <= Cache.DISK_WRITE_MAX_ITEMS)
+    end
+    assert(first.freed)
+    eq(disk.stores, 0)
+    Cache:clear(); eq(Cache._write_bytes, 0); eq(#Cache._write_q, 0)
+end)
+
+t.test("drop and requeue leave no tombstones; stale callbacks cannot drain new work", function()
+    reset()
+    Cache:put("/a", bb(10, 10))
+    local stale = Cache._write_fn
+    Cache:drop("/a")
+    eq(#Cache._write_q, 0); eq(Cache._write_fn, nil)
+    for i = 1, 100 do Cache:put("/a", bb(10, 10)); Cache:drop("/a") end
+    Cache:put("/new", bb(10, 10))
+    local current = Cache._write_fn
+    now = now + 10; stale()
+    eq(Cache._write_fn, current); eq(disk.stores, 0)
+    current(); eq(disk.stores, 1)
+end)
+
+t.test("an idle step writes at most two covers, and memory reset cancels the rest", function()
+    reset()
+    local borrowed = bb(10, 10)
+    for i = 1, 5 do Cache:put("/small/" .. i, borrowed) end
+    now = now + 3; Cache._write_fn()
+    eq(disk.stores, 2); eq(#Cache._write_q, 3)
+    local stale = Cache._write_fn
+    Cache:dropMemory(); stale()
+    eq(disk.stores, 2); eq(Cache._write_bytes, 0); eq(Cache._write_fn, nil)
+    assert(not borrowed.freed, "a borrowed cache buffer was freed")
+end)
+
+t.test("oversized optional disk copy is discarded rather than blocking the page", function()
+    reset(); boost = 35
+    Cache:put("/huge", bb(4096, 4096))
+    eq(#Cache._write_q, 0); eq(disk.stores, 0); eq(Cache._write_fn, nil)
+end)
+
 t.done()

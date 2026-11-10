@@ -11866,10 +11866,11 @@ end
 -- a start missed this way: the light-meta refresh moved the generation a few
 -- seconds after the page was built.
 function BookshelfWidget:_onDataGeneration()
-    if self._closed or self._ahead_regen_fn then return end
+    if self._closed or self._orbitui_suspended or self._ahead_regen_fn then return end
+    if not require("lib/bookshelf_page_cache").enabled then return end
     self._ahead_regen_fn = function()
         self._ahead_regen_fn = nil
-        if not self._closed then self:_pageAheadArm(self._page_ahead_dir or 1) end
+        if not self._closed and not self._orbitui_suspended then self:_pageAheadArm(self._page_ahead_dir or 1) end
     end
     UIManager:scheduleIn(PAGE_AHEAD_DELAY_S, self._ahead_regen_fn)
 end
@@ -15290,7 +15291,7 @@ end
 -- battery and wifi as they are now, not as the device slept (issue 596).
 -- Only with the shelf on top; the panel refresh stays on the status.
 function BookshelfWidget:_wakeStatusRefresh()
-    if self._closed or UIManager:getTopmostVisibleWidget() ~= self then return end
+    if self._closed or self._orbitui_suspended or UIManager:getTopmostVisibleWidget() ~= self then return end
     -- As the minute tick does: a micro grid's clocks, then the status line.
     if self._hero_mode == "micro" and not self._expanded then
         require("lib/bookshelf_hero_modules").tickClocks(self)

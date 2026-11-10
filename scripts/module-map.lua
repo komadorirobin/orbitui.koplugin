@@ -17,6 +17,7 @@ local embedded_names = {
     "modules/critter/menu", "modules/critter/panel_row", "modules/critter/settings",
     "modules/critter/state", "modules/critter/voice_lines", "modules/critter/voice_phrases",
     "screens/sui_bluetooth",
+    "features/library/sui_rule_collections", "features/library/sui_sort_sheet",
 }
 local map = {}
 local files = assert(io.popen("git ls-files --cached --others --exclude-standard components/bookshelf components/simpleui"))

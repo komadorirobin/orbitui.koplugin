@@ -4796,8 +4796,7 @@ function SpineShelf.plan(items, opts)
             -- left the cover a whole spine's top edge taller than its
             -- neighbours, because a book's thickness is far smaller than its
             -- cover width.
-            face_h = h - SpineLayout.topEdgeHeight(h, height_aspect, Screen:scaleBySize(5))
-            if face_h < Screen:scaleBySize(24) then face_h = Screen:scaleBySize(24) end
+            face_h, w = SpineShelf.faceOutCover(budget, aspect, height_aspect)
             -- Match rowWidget's face-out standing budget, including its push
             -- back on the plank. Enlarging the cover must also enlarge its slot.
             h, face_h, depth = SpineLayout.scaleFaceOut(h, face_h, depth, aspect,

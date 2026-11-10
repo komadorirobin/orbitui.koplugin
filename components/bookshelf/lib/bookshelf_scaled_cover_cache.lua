@@ -119,6 +119,10 @@ local ScaledCoverCache = {
 ScaledCoverCache.DISK_WRITE_DELAY_S  = 2     -- quiet before writing (no new covers)
 ScaledCoverCache.DISK_WRITE_BUDGET_S = 0.03  -- per step, after the first write
 ScaledCoverCache.DISK_WRITE_TICK_S   = 0.2   -- between steps
+-- OrbitUI: rapid paging must not retain an unbounded second colour cache.
+ScaledCoverCache.DISK_WRITE_MAX_BYTES = 8 * 1024 * 1024
+ScaledCoverCache.DISK_WRITE_MAX_ITEMS = 16
+ScaledCoverCache.DISK_WRITE_MAX_STEP = 2
 
 -- Default RAM budget, by device memory ----------------------------------
 --
@@ -432,26 +436,56 @@ end
 -- the waiting copy; drop and clear cancel it; flushWrites writes them all.
 -- owned: bb is a raw copy made for the write, freed once written or cancelled.
 function ScaledCoverCache:_queueWrite(filepath, bb, UM, owned)
-    if not self._write_bb[filepath] then
-        self._write_q[#self._write_q + 1] = filepath
-    else
-        self:_cancelWrite(filepath)
+    self:_cancelWrite(filepath)
+    local bytes = _bbBytes(bb)
+    if bytes <= 0 or bytes ~= bytes or bytes > self.DISK_WRITE_MAX_BYTES then
+        if owned then pcall(function() bb:free() end) end
+        return -- Optional disk cache: never force a large write onto the turn.
     end
+    while #self._write_q >= self.DISK_WRITE_MAX_ITEMS
+            or (self._write_bytes or 0) + bytes > self.DISK_WRITE_MAX_BYTES do
+        self:_cancelWrite(self._write_q[1])
+    end
+    self._write_q[#self._write_q + 1] = filepath
     self._write_bb[filepath] = bb
     self._write_own[filepath] = owned or nil
+    self._write_sizes = self._write_sizes or {}
+    self._write_sizes[filepath] = bytes
+    self._write_bytes = (self._write_bytes or 0) + bytes
     self._write_after = _gettime() + ScaledCoverCache.DISK_WRITE_DELAY_S
-    if not self._write_fn then
-        self._write_fn = function() self:_writeStep(UM) end
-        UM:scheduleIn(ScaledCoverCache.DISK_WRITE_DELAY_S, self._write_fn)
+    self:_armWrite(UM, ScaledCoverCache.DISK_WRITE_DELAY_S)
+end
+
+function ScaledCoverCache:_armWrite(UM, delay)
+    if self._write_fn then return end
+    local fn
+    fn = function()
+        if self._write_fn ~= fn then return end -- dequeued before cancellation
+        self:_writeStep(UM)
     end
+    self._write_fn, self._write_um = fn, UM
+    UM:scheduleIn(delay, fn)
+end
+
+function ScaledCoverCache:_stopWriteTimer()
+    local fn, um = self._write_fn, self._write_um
+    self._write_fn, self._write_um = nil, nil
+    if fn and um and um.unschedule then um:unschedule(fn) end
 end
 
 -- _cancelWrite(filepath): the waiting copy is not written; a raw copy made
--- for it is freed. Its place in the order stays (an empty slot is skipped).
+-- for it is freed. Remove its slot too, so repeated drop/requeue is bounded.
 function ScaledCoverCache:_cancelWrite(filepath)
     local bb = self._write_bb[filepath]
     if bb and self._write_own[filepath] then pcall(function() bb:free() end) end
     self._write_bb[filepath], self._write_own[filepath] = nil, nil
+    self._write_bytes = math.max(0, (self._write_bytes or 0)
+        - (self._write_sizes and self._write_sizes[filepath] or 0))
+    if self._write_sizes then self._write_sizes[filepath] = nil end
+    for i = #self._write_q, 1, -1 do
+        if self._write_q[i] == filepath then table.remove(self._write_q, i) end
+    end
+    if #self._write_q == 0 then self:_stopWriteTimer() end
 end
 
 -- _writeQueued(filepath): the waiting copy, written now and let go.
@@ -467,25 +501,25 @@ function ScaledCoverCache:_writeStep(UM)
     if #self._write_q == 0 then return end
     local wait = self._write_after - _gettime()
     if wait > 0 then
-        self._write_fn = function() self:_writeStep(UM) end
-        UM:scheduleIn(wait, self._write_fn)
+        self:_armWrite(UM, wait)
         return
     end
     local deadline = _gettime() + ScaledCoverCache.DISK_WRITE_BUDGET_S
-    local first = true
-    while #self._write_q > 0 and (first or _gettime() < deadline) do
-        first = false
-        self:_writeQueued(table.remove(self._write_q, 1))
+    local count = 0
+    while #self._write_q > 0 and count < self.DISK_WRITE_MAX_STEP
+            and (count == 0 or _gettime() < deadline) do
+        count = count + 1
+        self:_writeQueued(self._write_q[1])
     end
     if #self._write_q > 0 then
-        self._write_fn = function() self:_writeStep(UM) end
-        UM:scheduleIn(ScaledCoverCache.DISK_WRITE_TICK_S, self._write_fn)
+        self:_armWrite(UM, ScaledCoverCache.DISK_WRITE_TICK_S)
     end
 end
 
 -- flushWrites(): every disk copy still waiting, now (suspend, exit): one not
 -- written is a cover decoded again next session.
 function ScaledCoverCache:flushWrites()
+    self:_stopWriteTimer()
     local q = self._write_q
     self._write_q = {}
     for _i, fp in ipairs(q) do self:_writeQueued(fp) end
@@ -599,6 +633,8 @@ end
 -- them at the new strength). The widgets on screen still hold their buffers,
 -- so they are counted as orphans for the next reclaim rather than freed.
 function ScaledCoverCache:dropMemory()
+    self:_stopWriteTimer()
+    while self._write_q[1] do self:_cancelWrite(self._write_q[1]) end
     self:_szReset()
     self._orphan_bytes = (self._orphan_bytes or 0) + (self._bytes or 0)
     self._cache = {}
@@ -667,6 +703,7 @@ end
 -- we do NOT explicitly free; live widgets may still be holding bbs.
 -- LuaJIT will reclaim once every reference is gone.
 function ScaledCoverCache:clear()
+    self:_stopWriteTimer()
     logger.dbg(string.format(
         "[bookshelf perf] ScaledCoverCache: clear hits=%d puts=%d evictions=%d disk_hits=%d disk_writes=%d",
         self._hits, self._puts, self._evictions, self._disk_hits, self._disk_writes))

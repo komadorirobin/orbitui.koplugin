@@ -23,6 +23,7 @@ local shelf_source = source("bookshelf_spine_shelf")
 local block = assert(shelf_source:match("(        local w_dp, w, depth, face_h[^\n]*\n.-)\n        local series_num"))
 local plank_source = assert(shelf_source:match("(function SpineShelf.plankUnit.-)\n%-%- badgeDrop"))
 local inset_source = assert(shelf_source:match("(function SpineShelf.plankInset.-\nend)"))
+local face_source = assert(shelf_source:match("(function SpineShelf.faceOutCover.-\nend)"))
 
 -- Exercise the real planning block, including the same plank clearance used
 -- by rowWidget, without loading the native framebuffer/cover decoder.
@@ -30,7 +31,8 @@ local function geometry(pct, aspect, row_h, width, dpi, face_out)
     local Screen = { scaleBySize = function(_, v) return math.floor(v * dpi + 0.5) end }
     local SS = { VIEW_SIN = Layout.VIEW_SIN, thicknessPages = function() return 300 end,
         PLANK_INSET_UNITS = tonumber(assert(shelf_source:match("SpineShelf%.PLANK_INSET_UNITS%s*=%s*([%d.]+)"))) }
-    compile(plank_source .. "\n" .. inset_source, { SpineShelf = SS, Screen = Screen })()
+    compile(plank_source .. "\n" .. inset_source .. "\n" .. face_source,
+        { SpineShelf = SS, SpineLayout = Layout, Screen = Screen })()
     local h = Layout.spineHeight(row_h, aspect)
     local env = { h = h, aspect = aspect, height_aspect = aspect, shape_pages = 300,
         text_k = 1, budget = row_h, bk = {},

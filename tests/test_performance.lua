@@ -25,6 +25,7 @@ local home = { _lru = LRU.new{ max_bytes = 32 * MiB, max_entries = 100 } }
 package.loaded["infra/sui_cover_cache"] = home
 package.loaded["lib/bookshelf_cover_disk_cache"] = false
 package.preload["lib/bookshelf_cover_disk_cache"] = function() return false end
+package.preload["lib/bookshelf_gettime"] = function() return function() return clock end end
 local shelf = dofile("components/bookshelf/lib/bookshelf_scaled_cover_cache.lua")
 package.loaded["lib/bookshelf_scaled_cover_cache"] = shelf
 shelf:setByteBudget(32 * MiB)

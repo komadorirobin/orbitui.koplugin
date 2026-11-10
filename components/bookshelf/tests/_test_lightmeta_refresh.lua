@@ -164,6 +164,9 @@ local function widgetMethods()
     local state, methods = {}, {}
     local env = {
         BookshelfWidget = methods, os = os, ipairs = ipairs,
+        _gettime = function() return 0 end,
+        PAGE_AHEAD_WAKE_WINDOW_S = 120,
+        flushCoverWrites = function() state.cover_writes_flushed = true end,
         Repo = { setMetadataRefreshActive = function(active) state.metadata = active end },
         package = { loaded = { ["lib/bookshelf_cover_disk_cache"] = {
             setActive = function(active) state.covers = active end,
@@ -185,6 +188,8 @@ local function widgetMethods()
     methods._cancelFilePoll = function() end
     methods._cancelPreload = function() end
     methods._pageAheadCancel = function() end
+    methods._pageAheadArm = function() end
+    methods._wakeStatusRefresh = function() end
     methods._cancelChipPreload = function() end
     methods._flushNavStateNow = function() end
     return methods, state
@@ -196,6 +201,7 @@ t.test("widget suspend/resume pauses both maintenance jobs", function()
     w:onSuspend()
     assert(not state.metadata and not state.covers)
     assert(state.pickers_flushed)
+    assert(state.cover_writes_flushed)
     state.topmost = w
     w:onResume()
     assert(state.metadata and state.covers)

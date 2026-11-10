@@ -113,6 +113,8 @@ function M.wrap(name, module)
     elseif name == "sui_bookshelf_bridge" then
         require("adapters/orbitui_libraries").bridge(module)
     elseif name == "infra/sui_patches" then
+        -- New rule collections rescan on explicit opening, not during startup.
+        module.orbitui_defer_rule_startup = true
         -- Both embedded plugins used to replace this callback independently,
         -- before KOReader recreated it on the first menu build.
         module.wireReaderMenuFMTab = function(_plugin, reader)

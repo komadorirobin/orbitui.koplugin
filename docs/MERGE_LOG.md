@@ -4,6 +4,47 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-10 — post-beta.2 reviewed upstream, merge only
+
+User requests merging upstream while testing published beta.2, then asks for
+design ideas based on Aleph book details. No release/version/tag or device work.
+Branch merge/upstream-20261110-post-beta2 starts at **be0a2170**. Unsquashed
+Bookshelf import **1b7621d3** advances 3fe9702d →
+**f99a5bc43a0e65cc8f47f83b095289b998ff7978**, 6.4.2, fourteen commits/29 net
+files. Unsquashed SimpleUI import **0b6f7ac7** advances 4426601f →
+**a2b677bc015610e625a5eaef928602719cce6a88**, still 3.0.3, twelve commits/42 net
+files. Original fork provenance remains in sources.json.
+
+Bookshelf brings deferred raw-cover disk writes, shared face-out sizing and
+external-cover access, safer RGB/night paint, immediate wake status refresh,
+wall-clock timing and deferred series expand/collapse persistence. Preserve
+OrbitUI's custom cover-size/plank geometry and series-box eligibility, exact
+source thumbnail reuse, underlay return/error preservation and close cleanup.
+Use the upstream base face-out sizing helper before OrbitUI's existing scaling.
+The native page-ahead feature remains disabled in hosted OrbitUI, including
+new data-generation notifications; no claim that its measured upstream gains
+apply here. Add 8 MiB/16-buffer/two-writes-per-step queue bounds, stale-callback
+identity, slot removal and proper owned/borrowed release. Memory drop retires
+pending work; suspend/close flush only the bounded queue.
+
+SimpleUI brings tab sorting, connected/fixed collections, reading-goal layout,
+localized critter names and duration-string fixes. Resolve critter menu conflict
+with localized labels AND the existing per-screen Settings argument. Retain
+local-only Swedish/Chinese catalog entries. The new getMatchingFiles completion
+result prevents rule-sync from treating a failed query as empty membership.
+Do not rescan all rules automatically at hosted startup; explicit rule actions
+and scan-on-show preference remain. Embed the two new helpers in the existing
+registry: 35 exact-source helpers, 414 canonical identities, no new installed
+paths. Existing host feature defaults, profiles, BookOrbit/MAL/Hardcover,
+Silverfish, reader panel and C01–C11 ownership remain.
+
+Regression fixtures now load the actual extracted external-cover/face-out
+helpers and wall clock. Installed-version assertion advances to 6.4.2. Add
+hosted rescan/page-generation, incomplete-metadata, rapid colour-queue, stale
+timer, drop/requeue and ownership regressions. Verification receipts follow
+after final gates. No runtime artwork or Aleph code/assets are imported.
+Full-page/compact book-information mockups are discussion-only.
+
 ## 2026-11-10 — publish 1.2.0-beta.2 after explicit acceptance of wake-test gap
 
 No upstream import. User explicitly requests the beta after the disclosed

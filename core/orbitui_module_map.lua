@@ -48,7 +48,9 @@ local map = {
     ["features/library/sui_metadata_providers"] = "components/simpleui/features/library/sui_metadata_providers.lua",
     ["features/library/sui_metadata_source"] = "components/simpleui/features/library/sui_metadata_source.lua",
     ["features/library/sui_recent_hidden"] = "components/simpleui/features/library/sui_recent_hidden.lua",
+    ["features/library/sui_rule_collections"] = "components/simpleui/features/library/sui_rule_collections.lua",
     ["features/library/sui_series_grouping"] = "components/simpleui/features/library/sui_series_grouping.lua",
+    ["features/library/sui_sort_sheet"] = "components/simpleui/features/library/sui_sort_sheet.lua",
     ["features/library/sui_virtual_path"] = "components/simpleui/features/library/sui_virtual_path.lua",
     ["features/sui_accent_picker"] = "components/simpleui/features/sui_accent_picker.lua",
     ["features/sui_arrange"] = "components/simpleui/features/sui_arrange.lua",
@@ -6853,6 +6855,47 @@ local M = {}\
 \
 local MAX_NAME_CHARS = 20\
 \
+local _CRITTER_NAMES = {\
+    argos   = function() return _(\"Argos\") end,\
+    chonk   = function() return _(\"Chonk\") end,\
+    frankie = function() return _(\"Frankie\") end,\
+    hazel   = function() return _(\"Hazel\") end,\
+    sholmes = function() return _(\"Sholmes\") end,\
+    suey    = function() return _(\"Suey\") end,\
+    tulu    = function() return _(\"Tulu\") end,\
+    vlad    = function() return _(\"Vlad\") end,\
+}\
+\
+local function critterName(entry)\
+    if not entry then return \"\" end\
+    local name = _CRITTER_NAMES[entry.id]\
+    if name then return name() end\
+    return entry.name\
+end\
+\
+local _DECOR_NAMES = {\
+    book_stack    = function() return _(\"Book stack\") end,\
+    bookcase      = function() return _(\"Bookcase\") end,\
+    candle_shelf  = function() return _(\"Candle shelf\") end,\
+    cat_pot       = function() return _(\"Cat pot\") end,\
+    coffee        = function() return _(\"Coffee\") end,\
+    corkboard     = function() return _(\"Corkboard\") end,\
+    hanging_plant = function() return _(\"Hanging plant\") end,\
+    lamp          = function() return _(\"Lamp\") end,\
+    picture       = function() return _(\"Picture\") end,\
+    pillow        = function() return _(\"Pillow\") end,\
+    plant         = function() return _(\"Plant\") end,\
+    plant_shelf   = function() return _(\"Plant shelf\") end,\
+    window        = function() return _(\"Window\") end,\
+}\
+\
+local function decorName(entry)\
+    if not entry then return \"\" end\
+    local name = _DECOR_NAMES[entry.id]\
+    if name then return name() end\
+    return entry.name\
+end\
+\
 local function makeCritterItem(refresh, Settings)\
     local function get()\
         local entry = Assets.get(Settings.pick())\
@@ -6862,14 +6905,14 @@ local function makeCritterItem(refresh, Settings)\
         text_func  = function() return _(\"Critter\") end,\
         value_func = function()\
             local entry = Assets.get(Settings.pick())\
-            return entry and entry.name or \"\"\
+            return entry and critterName(entry) or \"\"\
         end,\
         sub_item_table_func = function()\
             Assets.relist()\
             Assets.ensureUserDir()\
             local options = {}\
             for _i, entry in ipairs(Assets.list()) do\
-                options[#options + 1] = { value = entry.id, label = entry.name }\
+                options[#options + 1] = { value = entry.id, label = critterName(entry) }\
             end\
             local rows = Config.appendRadioItems({}, {\
                 options = options,\
@@ -6940,7 +6983,7 @@ local function makeDecorItem(ctx_menu, refresh, Settings)\
         pool   = function()\
             local pool = {}\
             for _i, entry in ipairs(Assets.decorList()) do\
-                pool[#pool + 1] = { id = entry.id, label = entry.name }\
+                pool[#pool + 1] = { id = entry.id, label = decorName(entry) }\
             end\
             return pool\
         end,\
@@ -8499,6 +8542,426 @@ end\
 function M.reset()\
     _backend, _kobo_dest = nil, nil\
     _state, _state_time = nil, 0\
+end\
+\
+return M\
+",
+    ["features/library/sui_rule_collections"] = "-- sui_rule_collections.lua — Simple UI\
+-- Collections connected to a metadata rule instead of a real folder: the\
+-- books under a base folder that match an author/series/tags trail (a\
+-- virtual library leaf, a facet group or an in-folder series group).\
+--\
+-- The rule lives in the collection settings, next to KOReader's connected\
+-- folders, and is rescanned whenever KOReader rescans those folders. A rescan\
+-- mirrors the rule: matching books are added (honouring the collection's\
+-- \"add\" filter) and books that no longer match are removed, except books\
+-- that belong to a real folder connected to the same collection.\
+--\
+-- Rule (coll_settings[name][RuleCollections.KEY]):\
+--   base_dir      folder whose books are matched\
+--   trail         { {dimension=, value=}, ... }, as in FilterState\
+--   subfolders    match the whole subtree (true) or base_dir only (false)\
+--   scan_on_show  rescan when the collection is opened\
+--\
+-- Public API\
+-- ----------\
+--   RuleCollections.KEY\
+--   RuleCollections.new(base_dir, trail, subfolders) -> rule\
+--   RuleCollections.get(coll_name)                   -> rule | nil\
+--   RuleCollections.sync(rc, coll_name, is_showing)  -> added, removed\
+--   RuleCollections.syncAll(rc)                      -- rescans and saves every rule\
+--   RuleCollections.label(rule)                      -> text for folder lists\
+--   RuleCollections.flags(rule)                      -> subfolders/scan markers | nil\
+--   RuleCollections.open(rule, ui)                   -- shows the rule's books\
+\
+local ffiUtil = require(\"ffi/util\")\
+local lfs     = require(\"libs/libkoreader-lfs\")\
+local util    = require(\"util\")\
+\
+local Config         = require(\"infra/sui_config\")\
+local FilterState    = require(\"features/library/sui_filter_state\")\
+local MetadataSource = require(\"features/library/sui_metadata_source\")\
+local VirtualPath    = require(\"features/library/sui_virtual_path\")\
+\
+local RuleCollections = {}\
+\
+RuleCollections.KEY = \"simpleui_rule\"\
+\
+local function stripSlash(path)\
+    return (path:gsub(\"(.)/+$\", \"%1\"))\
+end\
+\
+function RuleCollections.new(base_dir, trail, subfolders)\
+    local copy = {}\
+    for i, entry in ipairs(trail) do\
+        copy[i] = { dimension = entry.dimension, value = entry.value }\
+    end\
+    return {\
+        base_dir     = stripSlash(base_dir),\
+        trail        = copy,\
+        subfolders   = subfolders and true or false,\
+        scan_on_show = true,\
+    }\
+end\
+\
+function RuleCollections.get(coll_name)\
+    local settings = require(\"readcollection\").coll_settings[coll_name]\
+    return settings and settings[RuleCollections.KEY]\
+end\
+\
+-- File types and statuses of the collection's \"add\" filter.\
+local function addFilter(settings)\
+    local filter = util.tableGetValue(settings, \"filter\", \"add\")\
+    if not filter then return nil, nil end\
+    local types\
+    if filter.filetype then\
+        types = {}\
+        for filetype in util.gsplit(filter.filetype, \",\") do\
+            types[util.trim(filetype)] = true\
+        end\
+    end\
+    return types, filter.status\
+end\
+\
+local function passesAddFilter(file, filename, types, statuses)\
+    if filename:sub(1, 2) == \"._\" then return false end\
+    if types then\
+        local _name, ext = require(\"apps/filemanager/filemanagerutil\").splitFileNameType(filename)\
+        if not types[ext] then return false end\
+    elseif not require(\"document/documentregistry\"):hasProvider(filename) then\
+        return false\
+    end\
+    if statuses then\
+        return statuses[require(\"ui/widget/booklist\").getBookStatus(file)] and true or false\
+    end\
+    return true\
+end\
+\
+-- True when `file` lies in a real folder connected to the collection.\
+local function inConnectedFolder(file, folders)\
+    if not folders then return false end\
+    for folder, folder_settings in pairs(folders) do\
+        local prefix = stripSlash(ffiUtil.realpath(folder) or folder) .. \"/\"\
+        if file:sub(1, #prefix) == prefix\
+                and (folder_settings.subfolders or not file:find(\"/\", #prefix + 1, true)) then\
+            return true\
+        end\
+    end\
+    return false\
+end\
+\
+-- Books matching the rule, in display order, as { {file, filename}, ... }\
+-- keyed by real path too. nil when the rule cannot be evaluated (folder\
+-- missing, metadata unavailable or not indexed): the collection is then left\
+-- untouched rather than emptied.\
+local function matchedBooks(rule)\
+    local base_dir = rule.base_dir\
+    if not (base_dir and lfs.attributes(base_dir, \"mode\") == \"directory\") then return nil end\
+    local ok_bim, bim = pcall(require, \"bookinfomanager\")\
+    if not (ok_bim and bim) then return nil end\
+    local all, complete = MetadataSource.getMatchingFiles(bim, base_dir, nil)\
+    if complete == false or #all == 0 then return nil end\
+\
+    local state = FilterState.new(base_dir)\
+    for _i, entry in ipairs(rule.trail) do\
+        FilterState.addFilter(state, entry.dimension, entry.value)\
+    end\
+    local rows, matched_complete = MetadataSource.getMatchingFiles(bim, base_dir, state)\
+    if matched_complete == false then return nil end\
+    local last = rule.trail[#rule.trail]\
+    MetadataSource.sortFiles(rows, last and last.dimension)\
+\
+    local books = {}\
+    for _i, row in ipairs(rows) do\
+        local path = row[1]\
+        if (rule.subfolders or path:match(\"^(.*)/[^/]+$\") == base_dir)\
+                and lfs.attributes(path, \"mode\") == \"file\" then\
+            local file = ffiUtil.realpath(path) or path\
+            if not books[file] then\
+                books[file] = true\
+                books[#books + 1] = { file, row[2] }\
+            end\
+        end\
+    end\
+    return books\
+end\
+\
+-- Rescans the rule of `coll_name` into rc.coll, without saving.\
+function RuleCollections.sync(rc, coll_name, is_showing)\
+    local settings = rc.coll_settings[coll_name]\
+    local rule = settings and settings[RuleCollections.KEY]\
+    local coll = rc.coll[coll_name]\
+    if not (rule and coll) or (is_showing and not rule.scan_on_show) then return 0, 0 end\
+    local books = matchedBooks(rule)\
+    if not books then return 0, 0 end\
+\
+    local types, statuses = addFilter(settings)\
+    local added, removed = 0, 0\
+    for _i, book in ipairs(books) do\
+        local file = book[1]\
+        if not coll[file] and passesAddFilter(file, book[2], types, statuses) then\
+            rc:addItem(file, coll_name)\
+            added = added + 1\
+        end\
+    end\
+    for file in pairs(coll) do\
+        if not books[file] and not inConnectedFolder(file, settings.folders) then\
+            rc:removeItem(file, coll_name, true)\
+            removed = removed + 1\
+        end\
+    end\
+    return added, removed\
+end\
+\
+function RuleCollections.syncAll(rc)\
+    local changed\
+    for coll_name, settings in pairs(rc.coll_settings) do\
+        if settings[RuleCollections.KEY] then\
+            local added, removed = RuleCollections.sync(rc, coll_name)\
+            if added + removed > 0 then\
+                changed = changed or {}\
+                changed[coll_name] = true\
+            end\
+        end\
+    end\
+    if changed then rc:write(changed) end\
+end\
+\
+function RuleCollections.label(rule)\
+    local Browse = require(\"features/library/sui_library_browse\")\
+    local parts = { rule.base_dir }\
+    for _i, entry in ipairs(rule.trail) do\
+        parts[#parts + 1] = Browse.getModeLabel(entry.dimension) or entry.dimension\
+        parts[#parts + 1] = VirtualPath.displayValue(entry.value)\
+    end\
+    return table.concat(parts, \" › \")\
+end\
+\
+-- Same markers KOReader shows for connected folders.\
+function RuleCollections.flags(rule)\
+    local marks = {}\
+    if rule.scan_on_show then marks[#marks + 1] = Config.nerdIconChar(\"nerd:F441\") end\
+    if rule.subfolders then marks[#marks + 1] = Config.nerdIconChar(\"nerd:F114\") end\
+    return marks[1] and table.concat(marks, \" \") or nil\
+end\
+\
+-- Opens the rule's books: the library leaf when the library browser is on,\
+-- otherwise the base folder.\
+function RuleCollections.open(rule, ui)\
+    local fc = ui and ui.file_chooser\
+    if not fc then\
+        ui:onClose()\
+        ui:showFileManager(rule.base_dir .. \"/\")\
+        return\
+    end\
+    local Browse = require(\"features/library/sui_library_browse\")\
+    local last = rule.trail[#rule.trail]\
+    if rule.subfolders and last and last.value ~= false and Browse.isEnabled() then\
+        local prefix = FilterState.new(rule.base_dir)\
+        for i = 1, #rule.trail - 1 do\
+            FilterState.addFilter(prefix, rule.trail[i].dimension, rule.trail[i].value)\
+        end\
+        Browse.navigateToLeaf(ui, last.dimension, last.value, {\
+            base_dir     = rule.base_dir,\
+            filter_state = prefix,\
+        })\
+    else\
+        fc:changeToPath(rule.base_dir)\
+    end\
+end\
+\
+return RuleCollections\
+",
+    ["features/library/sui_sort_sheet"] = "-- sui_sort_sheet.lua — Simple UI\
+-- Sort options of a library tab, shown on a long press of the tab.\
+--\
+-- The sheet reads and writes KOReader's own sort settings (collate,\
+-- reverse_collate, collate_mixed) through the file manager's handlers, so the\
+-- file browser and every library tab share one sort order.\
+--\
+-- It also registers the \"number of books\" collate in FileChooser.collates:\
+-- metadata folders (Authors/Series/Tags) are sorted by the number of books\
+-- they hold; everything else falls back to the name.\
+--\
+--   SortSheet.install() / SortSheet.uninstall()  — register / remove the collate\
+--   SortSheet.show(fm, mode)                     — show the sheet for a browse mode\
+--   SortSheet.sortsFacetFolders(id)              — whether a collate orders metadata folders\
+\
+local ffiUtil     = require(\"ffi/util\")\
+local T           = ffiUtil.template\
+local _           = require(\"infra/sui_i18n\").translate\
+local ActionSheet = require(\"engines/sui_action_sheet\")\
+\
+local M = {}\
+\
+local COUNT_ID = \"sui_count\"\
+\
+-- Collates that sort the metadata folders of the Authors/Series/Tags tabs.\
+local FACET_COLLATES = { \"strcoll\", \"natural\", COUNT_ID }\
+\
+local COUNT_COLLATE = {\
+    text              = _(\"number of books\"),\
+    menu_order        = 150,\
+    can_collate_mixed = true,\
+    init_sort_func    = function()\
+        return function(a, b)\
+            local ca, cb = a.nb_sub_files, b.nb_sub_files\
+            if ca ~= cb then\
+                if not ca then return false end\
+                if not cb then return true end\
+                return ca > cb\
+            end\
+            return ffiUtil.strcoll(a.text, b.text)\
+        end\
+    end,\
+}\
+\
+function M.install()\
+    local FileChooser = require(\"ui/widget/filechooser\")\
+    FileChooser.collates[COUNT_ID] = COUNT_COLLATE\
+end\
+\
+-- A saved \"sui_count\" left behind falls back to the name in getCollate().\
+function M.uninstall()\
+    local FileChooser = require(\"ui/widget/filechooser\")\
+    if FileChooser.collates[COUNT_ID] == COUNT_COLLATE then\
+        FileChooser.collates[COUNT_ID] = nil\
+    end\
+end\
+\
+-- True when the collate `id` can sort metadata folders: their attributes are\
+-- placeholders, so date, access and size collates would leave them unordered.\
+function M.sortsFacetFolders(id)\
+    for _i, facet_id in ipairs(FACET_COLLATES) do\
+        if facet_id == id then return true end\
+    end\
+    return false\
+end\
+\
+-- Most buttons on one segments row; longer groups wrap onto further rows.\
+local ROW_MAX = 3\
+\
+-- Groups of the file-browser collates, each with the short button label of\
+-- its collates. The sheet title shows the full name of the current one.\
+local function _libraryGroups()\
+    return {\
+        { title = _(\"Name\"), collates = {\
+            { \"strcoll\", _(\"Alphabetical\") }, { \"natural\", _(\"Natural\") } } },\
+        { title = _(\"Date\"), collates = {\
+            { \"access\", _(\"Last read\") }, { \"date\", _(\"Modified\") } } },\
+        { title = _(\"Progress\"), collates = {\
+            { \"percent_unopened_first\", _(\"Unopened first\") },\
+            { \"percent_unopened_last\",  _(\"Unopened last\") },\
+            { \"percent_natural\",        _(\"Finished last\") } } },\
+        { title = _(\"File\"), collates = {\
+            { \"size\", _(\"Size\") }, { \"type\", _(\"Type\") } } },\
+        { title = _(\"Metadata\"), collates = {\
+            { \"title\", _(\"Title\") }, { \"authors\", _(\"Authors\") }, { \"series\", _(\"Series\") },\
+            { \"keywords\", _(\"Keywords\") }, { \"rating\", _(\"Rating\") } } },\
+    }\
+end\
+\
+-- The collates of a metadata tab, as one untitled group.\
+local function _facetGroups()\
+    return { { collates = {\
+        { \"strcoll\", _(\"Alphabetical\") }, { \"natural\", _(\"Natural\") }, { COUNT_ID, _(\"Book count\") } } } }\
+end\
+\
+-- Groups offered for `mode`, keeping only the collates that exist. Collates\
+-- of the file browser that no group names are listed under \"Other\" with their\
+-- own name; the book count only orders metadata folders, so it is left out.\
+local function _groups(fc, mode)\
+    local groups, out, named = mode == \"normal\" and _libraryGroups() or _facetGroups(), {}, {}\
+    for _i, group in ipairs(groups) do\
+        local present = {}\
+        for _j, c in ipairs(group.collates) do\
+            named[c[1]] = true\
+            if fc.collates[c[1]] then present[#present + 1] = c end\
+        end\
+        if #present > 0 then\
+            out[#out + 1] = { title = group.title, collates = present }\
+        end\
+    end\
+    if mode == \"normal\" then\
+        local other = {}\
+        for _i, id in ipairs((require(\"apps/filemanager/filemanager\").getSortByActions())) do\
+            if not named[id] and id ~= COUNT_ID then\
+                other[#other + 1] = { id, fc.collates[id].text }\
+            end\
+        end\
+        if #other > 0 then out[#out + 1] = { title = _(\"Other\"), collates = other } end\
+    end\
+    return out\
+end\
+\
+function M.show(fm, mode)\
+    local fc = fm and fm.file_chooser\
+    if not fc then return end\
+\
+    local win\
+\
+    local function title()\
+        local collate = fc:getCollate()\
+        return T(_(\"Sort by: %1\"), collate.text)\
+    end\
+\
+    local function buildSections()\
+        local collate, current = fc:getCollate()\
+        local sections = {}\
+        for _i, group in ipairs(_groups(fc, mode)) do\
+            if group.title then\
+                sections[#sections + 1] = { type = \"note\", text = group.title }\
+            end\
+            local row\
+            for j, c in ipairs(group.collates) do\
+                if (j - 1) % ROW_MAX == 0 then\
+                    row = { type = \"segments\", items = {} }\
+                    sections[#sections + 1] = row\
+                end\
+                local id = c[1]\
+                row.items[#row.items + 1] = {\
+                    text     = c[2],\
+                    selected = id == current,\
+                    callback = function()\
+                        if id ~= current then fm:onSetSortBy(id) end\
+                        win:update{ title = title(), sections = buildSections() }\
+                    end,\
+                }\
+            end\
+        end\
+\
+        local reverse = G_reader_settings:isTrue(\"reverse_collate\")\
+        local toggles = { {\
+            text     = _(\"Reverse sorting\"),\
+            toggle   = reverse,\
+            callback = function()\
+                fm:onSetReverseSorting(not reverse)\
+                win:update{ sections = buildSections() }\
+            end,\
+        } }\
+        if mode == \"normal\" then\
+            local mixed = G_reader_settings:isTrue(\"collate_mixed\")\
+            toggles[#toggles + 1] = {\
+                text     = _(\"Folders and files mixed\"),\
+                enabled  = collate.can_collate_mixed or false,\
+                toggle   = collate.can_collate_mixed and mixed or false,\
+                callback = function()\
+                    fm:onSetMixedSorting(not mixed)\
+                    win:update{ sections = buildSections() }\
+                end,\
+            }\
+        end\
+\
+        sections[#sections + 1] = ActionSheet.list(toggles)\
+        return sections\
+    end\
+\
+    win = ActionSheet.show{\
+        name     = \"sui_win_sort\",\
+        title    = title(),\
+        icon     = \"sort\",\
+        sections = buildSections(),\
+    }\
 end\
 \
 return M\

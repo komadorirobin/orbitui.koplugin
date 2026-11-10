@@ -22,6 +22,20 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-10
 
+- **Post-beta.2 reviewed upstream merge (no new release).** User requests an
+  upstream merge while testing beta.2, plus design exploration of Aleph's book
+  details. Bookshelf **f99a5bc4 / 6.4.2** and SimpleUI **a2b677bc / 3.0.3**
+  are imported unsquashed (**1b7621d3 / 0b6f7ac7**). Separate adaptations cap
+  deferred cover writes, preserve custom series/cover geometry, keep hosted
+  whole-page/build-ahead deferred, and prevent incomplete metadata queries
+  from emptying connected collections. Automatic rule rescan at hosted startup
+  is deferred. Registry: 35 exact-source embeds/414 identities, unchanged API1
+  inventory. No version/tag/release/device/server change; beta.2 stays frozen.
+  Final software/package/history checks belong in TESTING/MERGE_LOG. Aleph
+  full-page versus compact details are design-only suggestions, not implemented
+  features. Existing tag actions, reviews, highlights and external owners must
+  remain if a later redesign is approved.
+
 - **Current public preview: 1.2.0-beta.2**, published 2026-11-10 22:26:05 UTC,
   release 440990827, frozen source/tag **9caa3511 / v1.2.0-beta.2**. Public ZIP
   **d7abac63**, manifest **ef715f75**, exact same 2,000 API1 installed paths.

@@ -164,6 +164,19 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+November 10 post-beta.2 merge-only: Bookshelf **f99a5bc4** (6.4.2, fourteen
+commits/29 net files) and SimpleUI **a2b677bc** (3.0.3, twelve commits/42 net
+files), imported unsquashed as **1b7621d3 / 0b6f7ac7**. Keep the hosted
+whole-page/build-ahead and bytecode/date/delete deferrals. Bound the new cover
+disk-write queue by bytes/items and retire late callbacks; retain custom cover
+size/series-box/thumbnail geometry. Connected collections fail closed on
+incomplete metadata and do not rescan automatically at hosted startup.
+Two exact-source lazy SimpleUI helpers bring the registry to 35 embeds/414
+identities without changing API1's exact 2,000 paths. Public beta.2, VERSION,
+bootstrap, artwork and stable remain unchanged. See MERGE_LOG/TESTING for
+verification and device gaps. This request also authorizes design exploration
+of Aleph book details, not implementation or import of Aleph runtime/assets.
+
 November 9, after stable 1.1: review Bookshelf 60 master commits from c014b133
 through **3fe9702d** (6.4.1, 147 net files). Unsquashed import **68f2fcf3** and
 separate adaptations preserve C01–C11; SimpleUI **4426601f** has no delta.

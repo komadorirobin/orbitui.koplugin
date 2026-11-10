@@ -111,13 +111,15 @@ local function matchedBooks(rule)
     if not (base_dir and lfs.attributes(base_dir, "mode") == "directory") then return nil end
     local ok_bim, bim = pcall(require, "bookinfomanager")
     if not (ok_bim and bim) then return nil end
-    if #MetadataSource.getMatchingFiles(bim, base_dir, nil) == 0 then return nil end
+    local all, complete = MetadataSource.getMatchingFiles(bim, base_dir, nil)
+    if complete == false or #all == 0 then return nil end
 
     local state = FilterState.new(base_dir)
     for _i, entry in ipairs(rule.trail) do
         FilterState.addFilter(state, entry.dimension, entry.value)
     end
-    local rows = MetadataSource.getMatchingFiles(bim, base_dir, state)
+    local rows, matched_complete = MetadataSource.getMatchingFiles(bim, base_dir, state)
+    if matched_complete == false then return nil end
     local last = rule.trail[#rule.trail]
     MetadataSource.sortFiles(rows, last and last.dimension)
 

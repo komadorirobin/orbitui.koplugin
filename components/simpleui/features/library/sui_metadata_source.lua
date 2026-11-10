@@ -340,9 +340,10 @@ end
 -- itself is never touched here, so a caller sorting by one active_dimension
 -- can never corrupt the result another caller expects in a different order.
 function MetadataSource.getMatchingFiles(bim, base_dir, filter_state)
-    if not bim or not base_dir then return {} end
+    if not bim or not base_dir then return {}, false end
     syncWithDatabase()
-    return copyArray(matchingRows(bim, base_dir, filter_state))
+    local rows, complete = matchingRows(bim, base_dir, filter_state)
+    return copyArray(rows), complete ~= false
 end
 
 -- ---------------------------------------------------------------------------

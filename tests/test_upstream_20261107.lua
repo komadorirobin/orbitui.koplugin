@@ -213,14 +213,21 @@ end)
 local gen = assert(read(root .. "/components/simpleui/features/library/sui_library_browse.lua")
     :match("(FileChooser.genItemTable = function%(fc, dirs, fls, path%).-\n        end)\n"))
 local level, leaf, reverse, mixed, collate_reads = "file_list", "author", false, true, 0
+local sort_map = dofile(root .. "/core/orbitui_module_map.lua")
+local sort_source = getmetatable(sort_map).orbitui_embedded["features/library/sui_sort_sheet"]
+local sort_facets = compile("local M = {}; local COUNT_ID = 'sui_count'; "
+    .. assert(sort_source:match("(local FACET_COLLATES = [^\n]+)")) .. "\n"
+    .. assert(sort_source:match("(function M.sortsFacetFolders.-\nend)"))
+    .. "\nreturn M", {})
 compile(gen, { FileChooser = FC, orig = function() return { { text = "native" } } end,
+    SortSheet = sort_facets,
     VirtualPath = { isVirtual = function(p) return p == "meta" end,
         parse = function() return nil, { trail = { { dimension = leaf } } }, nil, level end, parentOf = function() return "parent" end },
     BD = { mirroredUILayout = function() return false end }, _is_windows = false,
     G_reader_settings = { isTrue = function() return reverse end } })
 local fc = setmetatable({ _browse_by_meta_entry_path = "meta", getCollate = function()
     collate_reads = collate_reads + 1
-    return mixed and FC.collates.natural or { id = "date", can_collate_mixed = false }
+    return mixed and FC.collates.natural or { id = "date", can_collate_mixed = false }, mixed and "natural" or "date"
 end }, { __index = FC })
 H.test("facets and nonseries books follow native reverse and natural collation", function()
     level, leaf, reverse, mixed = "file_list", "author", true, true

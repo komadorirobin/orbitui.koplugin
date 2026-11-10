@@ -1518,6 +1518,8 @@ function M.patchCollections(plugin)
     -- KOReader rescans connected folders when it first reads the collections,
     -- before these hooks exist; rules get that rescan once the UI is up.
     UIManager:nextTick(function()
+        if M.orbitui_defer_rule_startup or rawget(FMColl, COLLECTIONS_STATE) ~= state
+                or not next(state.users) then return end
         local ok2, err = pcall(RuleCollections.syncAll, RC)
         if not ok2 then logger.warn("simpleui: rule collections startup rescan:", tostring(err)) end
     end)

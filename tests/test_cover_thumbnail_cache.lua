@@ -150,6 +150,9 @@ H.test("installation is lazy idempotent and preserves external thumbnail owners"
     H.eq(class._orbitui_cover_thumbnails, nil)
 end)
 local render_cover = assert(native_source:match("(function SpineWidget:_renderCover%(bb%).-\nend)\n"))
+-- Upstream 6.4.2 shares the actual external-cover path with its warm-up.
+render_cover = assert(native_source:match("(function SpineWidget.externalCover%([^\n]*\n.-\nend)\n"))
+    .. "\n" .. render_cover
 if shape then render_cover = "local _sameShape = SpineWidget._sameShape\n" .. render_cover end
 H.test("the complete native warm-cover renderer uses the service without decoding or owning its pixels", function()
     local class, calls = fixture()

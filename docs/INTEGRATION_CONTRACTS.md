@@ -174,6 +174,17 @@ auto-execution configured; this still needs real KOReader verification.
 
 ## C04: Bounded background work and cache correctness
 
+November 10 post-beta.2 upstream: the new raw-cover disk-write queue is capped
+at 8 MiB/16 buffers and at most two writes per 30 ms-budgeted step after two
+quiet seconds. Oversized/evicted optional disk copies are skipped, not written
+synchronously during navigation. Only owned raw copies may be freed; borrowed
+render buffers remain owned by the native cache. Cancel removes queue slots,
+bytes and timer identity, so drop/requeue cannot accumulate tombstones and a
+late canceled callback cannot drain new work. Memory-drop/clear retire the
+queue; suspend/exit flush at most that bounded queue. No absolute per-write
+latency promise is made. Hosted data-generation notifications may not arm
+the deferred whole-page/build-ahead owner; asleep/closed refreshes retire.
+
 November 10 approved local series/browse sorting maintenance: prepared series
 orders may reuse only native immutable, cover-free shapes, keyed by native
 group-array identity (weak token), exact pre-sort filtered shape sequence,
@@ -1145,6 +1156,13 @@ screens keep independent layouts and refresh targets. Regression coverage:
 
 ## C08: Assets, data and recovery
 
+November 10 post-beta.2 upstream: connected SimpleUI collections remain an
+explicit user choice. Hosted startup does not automatically synchronize every
+stored rule. Both the base metadata query and filtered query must complete
+before membership changes; a query failure must not look like an empty result
+and remove existing members. Manual/open synchronization respects the native
+scan-on-show preference. No migration of existing collections is implied.
+
 November 4: do not expose new folder deletion in hosted OrbitUI while native
 cleanup purges sidecars BEFORE fallible folder removal. Move/rename remain.
 New publication-date display facts add columns without recreating a database;
@@ -1248,6 +1266,13 @@ Tests: `tests/test_backup.lua`, `test_runtime.lua`, `scripts/check-package.lua`.
 Recovery procedure: `MIGRATION.md`.
 
 ## C09: Reviewed imports and explicit releases
+
+November 10 post-beta.2 merge-only advances only the reviewed upstream pins
+to Bookshelf f99a5bc4 and SimpleUI a2b677bc. Preserve public beta.2/VERSION,
+original bootstrap and the exact 2,000 installed API1 paths: rule-collections
+and sort-sheet are exact-source lazy embeds (35 total/414 canonical identities).
+Use a private candidate for seal/upgrade checks, then restore public dist bytes.
+Standing audited main push is not a new beta, release or device install.
 
 November 10 updater presentation work preserves the original bootstrap/API 1,
 2,000 installed paths and public same-labelled package. Optional numeric progress
