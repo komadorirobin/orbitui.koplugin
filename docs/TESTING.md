@@ -1,5 +1,53 @@
 # Verification and device acceptance
 
+## 2026-11-10 — local reader reference drawer
+
+Approved Aleph-list point 3, branch `feature/reader-pin-drawer-20261110`, base
+**3b4fcf22**. The earlier two local stages remain included and unpublished.
+No upstream merge, pin/version/public asset change, device/server installation
+or watch activation. No new installed path; API1 remains at its 2,000-path cap.
+
+`test_reader_pins` initially has 25 normal cases: lazy/idempotent non-writing
+registration, unique native selection button, UTF-8 excerpts, EPUB/PDF/CBZ
+location ownership, duplicate/cap/read-only/corrupt/future-store preservation,
+native back-stack jump only on explicit action, fresh reflow resolution,
+engine/digest/current-reader/navigation/parked guards, asynchronous stale
+thumbnail batches, cache-pixel copy/free and cancellation, native list/Back/
+outside controls, immediate confirmed removal, image arm timeout and ordinary
+native nil argument/result retention, later external wrapper/button ownership,
+static/oversized/absent/failed images, unused snapshot slots, symlink refusal,
+rollback, missing/redirected snapshot directories, viewer copy/free, short
+screens, rotation/reflow/close/sleep without autoreopen. Entrypoint coverage
+adds reader-only menus/Dispatcher actions with no pin reads or previews on
+ReaderReady. Native pin/bookmark/header and normal reader hooks are untouched.
+
+Optional whole-module supplements use KOReader minimum v2025.08 peeled source
+**c00df15aeee73b4fdb0475d26fd3fa3c315f3f8f** and reviewed current master
+**01ccbd790d6269301ad523e75c45f62d022a6d7b**, not moving runtime dependencies.
+They exercise actual highlight extension and cached/queued/canceled thumbnail
+protocols plus real container sizing/RTL right alignment, making 28 focused
+cases. Container checks retain explicit stub font/button metrics.
+IPC/render/document engines remain explicit
+stub boundaries, not a full emulator or Android acceptance. Review of native
+RenderImage caught its default free-original behavior; capture passes false
+explicitly, and tests enforce it. Evidence is ignored reader-pins-20261110.
+
+Required before calling locally ready: both complete scripts, 43 catalogs,
+all 119 root files from the frozen private ZIP in Lua/LuaJIT, both native
+reader supplements and retained SQLite/metadata/EPUB-input supplements, exact
+source/inventory/path/art/history/secret audits. Freeze receipt follows.
+
+Physical Bigme checks remain required: SV/EN portrait/landscape legibility,
+drawer/native button focus/tap/outside/Back, day/night image/page contrast,
+actual native subprocess completion/cancellation, repeated image pin/zoom/
+remove/restart, read-only/full storage, EPUB font/margin reflow, PDF/CBZ page
+previews, sleep/rotation while loading, native back navigation, manga/header
+patch coexistence and unchanged BookOrbit/Hardcover progress. Verify actual
+settings+sidecar backup/restore for image references. Normal close flushes;
+force-kills are not a persistence guarantee. Unreferenced snapshot slots left
+by an interrupted pre-flush session are protected, not silently purged. No
+physical acceptance or public release is implied by headless results.
+
 ## 2026-11-10 — local Next in series module
 
 Approved Aleph-list point 2 after the recommendation work; branch

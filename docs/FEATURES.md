@@ -68,6 +68,46 @@ av OrbitUIs funktioner, inte BookOrbits egen progressionssynk. EPUB-taggar finns
 kvar offline. Serverpatchar är frivilliga, versionsbundna och installeras av
 administratören separat. Hantera skyddade öppningar innan ångra-stöd tas bort.
 
+## Pinned reading references (local development)
+
+In an open book, use **Tools > Pinned references / Verktyg > Fästa referenser**.
+**Pin current page / Fäst aktuell sida** saves a reference separately from
+bookmarks. Selected text has a **Pin reference / Fäst referens** action too.
+Open the right-hand drawer to preview a page or read an excerpt, move between
+references, open their list, expand/zoom, or remove one with confirmation.
+Only **Go to page / Gå till sidan** moves the book; it uses KOReader's normal
+back stack so you can return. No new badge covers your header or manga ribbon.
+Two reader gesture actions are available: **OrbitUI: pinned references** and
+**OrbitUI: pin current page**. Nothing is pinned just by opening a book.
+
+For an EPUB image, choose **Pin an EPUB image… / Fäst en EPUB-bild…**, close the
+message, then long-press the image within 30 seconds. This one explicit capture
+saves a local static copy, up to 1024 pixels per side/2 MiB. It accepts decoded
+images up to four megapixels; unsupported images can instead be referenced by
+pinning their page. Subsequent long-presses use ordinary native image viewing.
+PDF/CBZ pages are supported through page references, not embedded-image capture.
+The first version has a twelve-reference limit per book and no automatic pins,
+network sync, export, cross-book drawer or floating badge. Page preview uses
+KOReader's thumbnail service; unavailable previews remain distinct from a
+valid location, and EPUB xpointers are resolved again after reflow.
+
+References are stored under `orbitui_reader_pins` in the book's normal sidecar.
+Image copies live under `settings/orbitui/reader-pins/`; include that folder as
+well as sidecars in backups. Removing a reference never removes a bookmark or
+book; removing an image reference also removes its unshared owned snapshot.
+Missing/unknown-format data is preserved rather than reset. Pin changes follow
+KOReader's ordinary save/close lifecycle; force-killing before a save can lose
+the newest reference. Sleep, rotation and reader close retire previews/capture;
+waking does not reopen a drawer. This feature is not yet published or accepted
+on the physical Bigme; existing Continue reading/layouts remain unchanged.
+
+**Svenska:** Fästa referenser ligger separat från bokmärken. Förhandsvisning
+flyttar inte läspositionen; det gör bara Gå till sidan. Fäst en sida eller ett
+textutdrag, eller välj bildkommandot före ett långtryck för att spara en lokal
+bildkopia. Bokmärken, header-patch och vanlig bildvisning behåller sina ägare.
+Säkerhetskopiera både sidofilerna och mappen med bildkopior. Lokalt testbygge;
+ännu inte publicerat eller provat på Bigmen.
+
 ## Next in series
 
 Add **Next in series / Nästa i serien** from Home's Books module picker, or

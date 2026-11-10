@@ -505,4 +505,473 @@ function M.collection(name, opts)
     return modal, draft
 end
 
+-- Reader reference drawer. Kept lazy in this existing book-panel adapter to
+-- retain the API-1 installed path budget. No Aleph implementation or assets.
+function M.readerPins()
+    if M._reader_pins then return M._reader_pins end
+    local P = {}
+    M._reader_pins = P
+    local _ = require("core/orbitui_i18n")
+    local UI = require("ui/uimanager")
+    local states = setmetatable({}, { __mode = "k" })
+    local KEY, BUTTON, LIMIT = "orbitui_reader_pins", "zz_orbitui_pin_reference", 12
+    local function notify(text) Context.notify(_(text)) end
+    local function integer(n, max)
+        return type(n) == "number" and n >= 1 and n <= (max or 1e9) and n == math.floor(n)
+    end
+    local function short(s, max) return type(s) == "string" and #s > 0 and #s <= max end
+    local function truncate(text, n)
+        while n > 0 do
+            local next_byte = text:byte(n + 1)
+            if not next_byte or next_byte < 128 or next_byte >= 192 then break end
+            n = n - 1
+        end
+        return text:sub(1, n)
+    end
+    local function live(s)
+        local R = package.loaded["apps/reader/readerui"]
+        local top = UI:getTopmostVisibleWidget()
+        local name = top and top.name
+        if name == "bookshelf" or name == "homescreen" or name == "filemanager" then return false end
+        return not s.closed and not s.sleeping and s.ui.document == s.document
+            and s.ui.doc_settings == s.settings and (not R or R.instance == s.ui)
+            and UI:isWidgetShown(s.ui)
+    end
+    local function store(s)
+        local data = s.settings:readSetting(KEY)
+        if data == nil then return { version = 1, next_id = 1, entries = {} } end
+        -- Unknown/corrupt versions are preserved, not repaired or overwritten.
+        if type(data) ~= "table" or data.version ~= 1 or not integer(data.next_id)
+                or type(data.entries) ~= "table" or #data.entries > LIMIT then return end
+        local seen, count = {}, 0
+        for k, entry in pairs(data.entries) do
+            if not integer(k, #data.entries) or type(entry) ~= "table" or not integer(entry.id)
+                    or seen[entry.id] or entry.id >= data.next_id
+                    or (entry.engine ~= "rolling" and entry.engine ~= "paging")
+                    or (entry.engine == "rolling" and not short(entry.location, 4096))
+                    or (entry.engine == "paging" and not integer(entry.location))
+                    or (entry.kind ~= "page" and entry.kind ~= "text" and entry.kind ~= "image")
+                    or (entry.kind == "text" and not short(entry.text, 4096))
+                    or (entry.text ~= nil and not short(entry.text, 4096))
+                    or (entry.digest ~= nil and not short(entry.digest, 256)) then return end
+            if entry.kind == "image" and (not short(entry.image_key, 64) or #entry.image_key ~= 64
+                    or entry.image_key:find("[^0-9a-f]") or not integer(entry.slot, LIMIT)) then return end
+            seen[entry.id] = true
+            count = count + 1
+        end
+        if count ~= #data.entries then return end
+        return data
+    end
+    local function clone(data)
+        local result = { version = 1, next_id = data.next_id, entries = {} }
+        for i, entry in ipairs(data.entries) do
+            local copy = {}; for k, v in pairs(entry) do copy[k] = v end
+            result.entries[i] = copy
+        end
+        return result
+    end
+    local function save(s, data)
+        if not live(s) then return false end
+        local ok, result = pcall(s.settings.saveSetting, s.settings, KEY, data)
+        if not ok or result == false then notify("Could not save the reference. Nothing was removed."); return false end
+        -- Only this namespaced setting; native ReaderUI owns normal flushing.
+        return true
+    end
+    local function page(s, entry)
+        if (s.ui.rolling and "rolling" or "paging") ~= entry.engine then return end
+        local digest = s.settings:readSetting("partial_md5_checksum")
+        if entry.digest and entry.digest ~= digest then return end
+        local ok, p = pcall(function()
+            local n = entry.engine == "rolling" and s.document:getPageFromXPointer(entry.location) or entry.location
+            return integer(n) and n <= s.document:getPageCount() and n or nil
+        end)
+        if ok then return p end
+    end
+    local function snapshotPath(entry)
+        local dir = require("datastorage"):getSettingsDir()
+        local fs = require("libs/libkoreader-lfs")
+        for _, part in ipairs{ "orbitui", "reader-pins", entry.image_key } do
+            dir = dir .. "/" .. part
+            local a = fs.symlinkattributes(dir)
+            if not a or a.mode ~= "directory" then return end
+        end
+        return dir .. "/slot" .. entry.slot .. ".png"
+    end
+    local function removeSnapshot(entry)
+        if entry.kind ~= "image" then return end
+        local path = snapshotPath(entry)
+        if not path then return end
+        local attrs = require("libs/libkoreader-lfs").symlinkattributes(path)
+        if attrs and attrs.mode == "file" then os.remove(path) end
+    end
+    local function releasePreview(w)
+        local child = w.preview and w.preview[1]
+        if child and child.free then child:free() end
+        if w.bb then w.bb:free(); w.bb = nil end
+    end
+    local function cancelPreview(s)
+        if s.batch and s.ui.thumbnail then s.ui.thumbnail:cancelPageThumbnailRequests(s.batch) end
+        s.batch = nil
+    end
+    local function closeWindow(s, key)
+        local w = s[key]
+        if w then s[key] = nil; UI:close(w) end
+    end
+    local function track(s, key, widget)
+        s[key] = widget
+        local original = widget.onCloseWidget
+        widget.onCloseWidget = function(this, ...)
+            if s[key] == this then s[key] = nil end
+            if original then return original(this, ...) end
+        end
+        return widget
+    end
+    function P.disarm(s)
+        if s.expiry then UI:unschedule(s.expiry); s.expiry = nil end
+        s.armed = nil
+        if s.hold_wrapper and s.ui.highlight.onHold == s.hold_wrapper then
+            s.ui.highlight.onHold = s.hold_original
+        end
+        s.hold_wrapper, s.hold_original = nil, nil
+    end
+    function P.retire(ui, detach)
+        local s = states[ui]; if not s then return end
+        P.disarm(s); cancelPreview(s)
+        for _, key in ipairs{ "viewer", "drawer", "list", "confirm" } do closeWindow(s, key) end
+        if detach then
+            s.closed = true
+            local h = ui.highlight
+            if h and h._highlight_buttons and h._highlight_buttons[BUTTON] == s.button then
+                h:removeFromHighlightDialog(BUTTON)
+            end
+            states[ui] = nil
+        end
+    end
+    function P.event(handler, ui)
+        local s = states[ui]; if not s then return end
+        if handler == "onCloseDocument" or handler == "onTeardown" then P.retire(ui, true)
+        elseif handler == "onSuspend" then P.retire(ui); s.sleeping = true
+        elseif handler == "onResume" then s.sleeping = false -- never reopen a retired panel
+        elseif handler == "onSetRotationMode" or handler == "onScreenResize"
+                or handler == "onChangeSize" or handler == "onDocumentRerendered"
+                or handler == "onShowBookshelf" or handler == "onOpenBookshelfProfile"
+                or handler == "onShowHomescreen" or handler == "onGoHome" then P.retire(ui) end
+    end
+    local function capture(s, text, location)
+        if not live(s) then return end
+        local engine = s.ui.rolling and "rolling" or "paging"
+        if not location then
+            local ok, current = pcall(function()
+                return s.ui.rolling and s.document:getXPointer() or s.ui:getCurrentPage()
+            end)
+            if not ok then return end
+            location = current
+        end
+        if (engine == "rolling" and not short(location, 4096)) or (engine == "paging" and not integer(location)) then return end
+        return { engine = engine, location = location, kind = text and "text" or "page",
+            text = text and truncate(text, 4096) or nil, digest = s.settings:readSetting("partial_md5_checksum") }
+    end
+    local function append(s, entry)
+        local data = store(s)
+        if not data then notify("Saved references use an unsupported format. They were left untouched."); return false end
+        for _, old in ipairs(data.entries) do
+            if entry.kind ~= "image" and old.kind == entry.kind and old.engine == entry.engine
+                    and old.location == entry.location and old.text == entry.text then
+                notify("This reference is already pinned."); return false
+            end
+        end
+        if #data.entries >= LIMIT or data.next_id >= 1e9 then notify("This book already has 12 references. Remove one first."); return false end
+        data = clone(data); entry.id = data.next_id; data.next_id = data.next_id + 1
+        table.insert(data.entries, entry)
+        if save(s, data) then notify("Reference pinned. Open Pinned references in the reading menu."); return true end
+        return false
+    end
+    function P.pin(ui, text, location)
+        if text ~= nil and (type(text) ~= "string" or #text == 0) then return false end
+        local s = P.attach(ui)
+        local entry = s and capture(s, text, location)
+        return entry and append(s, entry) or false
+    end
+    local function imageSnapshot(s, position)
+        local entry = capture(s); if not entry then return false end
+        local data = store(s)
+        if not data then notify("Saved references use an unsupported format. They were left untouched."); return false end
+        if #data.entries >= LIMIT then notify("This book already has 12 references. Remove one first."); return false end
+        local image, scaled, filename
+        local ok = pcall(function()
+            image = s.document:getImageFromPosition(position, false, false)
+            assert(image and type(image) ~= "function" and image.getWidth and image.getHeight, "No static image")
+            local w, h = image:getWidth(), image:getHeight()
+            assert(integer(w, 16384) and integer(h, 16384) and w * h <= 4 * 1024 * 1024, "Image too large")
+            local ratio = math.min(1, 1024 / w, 1024 / h)
+            scaled = require("ui/renderimage"):scaleBlitBuffer(image,
+                math.max(1, math.floor(w * ratio)), math.max(1, math.floor(h * ratio)), false)
+            assert(scaled, "Scaling failed")
+            entry.image_key = require("ffi/sha2").sha256(s.document.file)
+            local fs = require("libs/libkoreader-lfs")
+            local dir = require("datastorage"):getSettingsDir()
+            for _, part in ipairs{ "orbitui", "reader-pins", entry.image_key } do
+                dir = dir .. "/" .. part
+                local a = fs.symlinkattributes(dir)
+                assert(not a or a.mode == "directory", "Snapshot folder is not a plain directory")
+                if not a then assert(fs.mkdir(dir), "Cannot create snapshot folder") end
+            end
+            for slot = 1, LIMIT do
+                entry.slot = slot
+                local path = snapshotPath(entry)
+                if not fs.symlinkattributes(path) then filename = path; break end
+            end
+            assert(filename, "Snapshot slots full")
+            assert(scaled:writePNG(filename) ~= false, "PNG write failed")
+            local attr = fs.symlinkattributes(filename)
+            assert(attr and attr.mode == "file" and attr.size > 0 and attr.size <= 2 * 1024 * 1024, "Snapshot too large")
+        end)
+        if scaled and scaled ~= image then scaled:free() end
+        if type(image) == "function" then pcall(image, false) -- defensive scalable-image release
+        elseif image and image.free then image:free() end
+        if not ok then
+            if filename then os.remove(filename) end -- only the newly created, never adopted, file
+            notify("Could not pin this image. Use Pin current page instead. Static EPUB images up to 4 megapixels are supported.")
+            return false
+        end
+        entry.kind = "image"
+        if append(s, entry) then return true end
+        removeSnapshot(entry)
+        return false
+    end
+    function P.armImage(ui)
+        local s = P.attach(ui)
+        if not s or not live(s) or not ui.rolling or not ui.highlight
+                or type(ui.highlight.onHold) ~= "function" then return false end
+        P.retire(ui); s.armed = true
+        local generation = UI._simpleui_navigation_generation
+        local highlight = ui.highlight
+        s.hold_original = highlight.onHold
+        local original = s.hold_original
+        local wrapper
+        wrapper = function(this, ...)
+            if not s.armed then return original(this, ...) end
+            local _arg, ges = ...
+            P.disarm(s)
+            if not live(s) or generation ~= UI._simpleui_navigation_generation then return false end
+            local pos = ges and ges.pos and ui.view:screenToPageTransform(ges.pos)
+            if not pos then notify("No image here. Try Pin current page instead."); return true end
+            imageSnapshot(s, pos)
+            return true
+        end
+        s.hold_wrapper = wrapper; highlight.onHold = wrapper
+        s.expiry = function() if s.armed then P.disarm(s) end end
+        UI:scheduleIn(30, s.expiry)
+        notify("Long-press an EPUB image within 30 seconds to pin a local copy. Ordinary image viewing is unchanged afterwards.")
+        return true
+    end
+    function P.attach(ui)
+        if not ui or not ui.document or not ui.doc_settings then return end
+        if states[ui] then return states[ui] end
+        local s = { ui = ui, document = ui.document, settings = ui.doc_settings }
+        states[ui] = s
+        local h = ui.highlight
+        if h and h.addToHighlightDialog and h.removeFromHighlightDialog
+                and h._highlight_buttons and not h._highlight_buttons[BUTTON] then
+            s.button = function(this)
+                return { text = _("Pin reference"), callback = function()
+                    if not live(s) then return end
+                    local selected = this.selected_text
+                    if not selected or not short(selected.text, 65536) then return end
+                    local loc = s.ui.rolling and type(selected.pos0) == "string" and selected.pos0 or nil
+                    P.pin(ui, selected.text, loc)
+                    if this.highlight_dialog then UI:close(this.highlight_dialog); this.highlight_dialog = nil end
+                    this:clear()
+                end }
+            end
+            h:addToHighlightDialog(BUTTON, s.button)
+        end
+        return s
+    end
+    local function entryById(s, id)
+        local data = store(s)
+        for i, entry in ipairs(data and data.entries or {}) do if entry.id == id then return entry, i, data end end
+    end
+    function P.remove(ui, id)
+        local s = states[ui]; if not s or not live(s) then return false end
+        local entry, i, data = entryById(s, id); if not entry then return false end
+        data = clone(data); table.remove(data.entries, i)
+        if not save(s, data) then return false end
+        local shared = false
+        for _, other in ipairs(data.entries) do
+            if entry.kind == "image" and other.image_key == entry.image_key and other.slot == entry.slot then shared = true end
+        end
+        if not shared then removeSnapshot(entry) end
+        return true
+    end
+    function P.jump(ui, id)
+        local s = states[ui]; if not s or not live(s) then return false end
+        local entry = entryById(s, id)
+        if not entry or not page(s, entry) then notify("This reference cannot be located in the current book layout."); return false end
+        P.retire(ui)
+        ui.link:addCurrentLocationToStack()
+        if entry.engine == "rolling" then ui.rolling:onGotoXPointer(entry.location)
+        else ui.paging:onGotoPage(entry.location) end
+        return true
+    end
+    function P.list(ui)
+        local s = P.attach(ui); if not s or not live(s) then return end
+        P.retire(ui)
+        local data = store(s)
+        if not data then notify("Saved references use an unsupported format. They were left untouched."); return end
+        local buttons = {}
+        for i = #data.entries, 1, -1 do
+            local entry = data.entries[i]
+            local label = entry.kind == "image" and _("Image") or entry.kind == "text" and _("Text excerpt") or _("Page")
+            local n = page(s, entry)
+            buttons[#buttons + 1] = {{ text = label .. " · " .. (n and tostring(n) or "?")
+                .. (entry.text and (" · " .. truncate(entry.text, 80):gsub("%s+", " ")) or ""),
+                callback = function() closeWindow(s, "list"); P.show(ui, entry.id) end }}
+        end
+        if #buttons == 0 then buttons[1] = {{ text = _("No references pinned in this book."), enabled = false }} end
+        buttons[#buttons + 1] = {{ text = _("Pin current page"), callback = function()
+            closeWindow(s, "list"); P.pin(ui)
+        end }, { text = _("Close"), callback = function() closeWindow(s, "list") end }}
+        track(s, "list", require("ui/widget/buttondialog"):new{ title = _("Pinned references"), buttons = buttons,
+            width = math.floor(require("device").screen:getWidth() * .85), rows_per_page = 6 })
+        UI:show(s.list)
+    end
+    function P.show(ui, id)
+        local s = P.attach(ui); if not s or not live(s) then return end
+        local data = store(s)
+        if not data then notify("Saved references use an unsupported format. They were left untouched."); return end
+        if #data.entries == 0 then return P.list(ui) end
+        local entry, index = entryById(s, id or data.entries[#data.entries].id)
+        if not entry then return end
+        P.retire(ui)
+        local Screen = require("device").screen
+        local Geom = require("ui/geometry")
+        local w = math.floor(Screen:getWidth() * .74)
+        local h = math.floor(Screen:getHeight() * .9)
+        local pad = math.max(4, Screen:scaleBySize(8))
+        local inner = w - pad * 2 - 2
+        local W = require("ui/widget/focusmanager")
+        local window = W:new{ name = "orbitui_reader_pin_drawer", modal = true }
+        s.drawer = window
+        local generation = UI._simpleui_navigation_generation
+        local function active()
+            return s.drawer == window and not window.closed and live(s)
+                and generation == UI._simpleui_navigation_generation
+        end
+        local function textWidget(text, height)
+            return require("ui/widget/textboxwidget"):new{ text = text, width = inner, height = height,
+                height_adjust = false, height_overflow_show_ellipsis = true,
+                face = require("ui/font"):getFace("smallinfofont") }
+        end
+        local page_number = page(s, entry)
+        local heading = textWidget(string.format("%s · %d/%d · %s %s", _("Pinned references"), index,
+            #data.entries, _("Page"), page_number and tostring(page_number) or "?"), Screen:scaleBySize(45))
+        local function button(text, callback, enabled) return { text = _(text), callback = function()
+            if active() then callback() end
+        end, enabled = enabled ~= false } end
+        local controls = require("ui/widget/buttontable"):new{ width = inner, buttons = {
+            { button("Previous", function() P.show(ui, data.entries[index == 1 and #data.entries or index - 1].id) end),
+              button("Next", function() P.show(ui, data.entries[index == #data.entries and 1 or index + 1].id) end),
+              button("List", function() P.list(ui) end) },
+            { button("Go to page", function() P.jump(ui, entry.id) end, page_number ~= nil),
+              button("Expand reference", function()
+                if entry.kind == "text" then
+                    local viewer = require("ui/widget/textviewer"):new{ title = _("Text excerpt"), text = entry.text }
+                    UI:show(track(s, "viewer", viewer)); return
+                end
+                if not window.bb then notify("The preview is not ready. Close and reopen the drawer to retry."); return end
+                local image = window.bb:copy()
+                track(s, "viewer", require("ui/widget/imageviewer"):new{ image = image,
+                    image_disposable = true, title_text = _("Pinned references"), fullscreen = true })
+                UI:show(s.viewer)
+              end) },
+            { button("Remove reference", function()
+                local confirm
+                confirm = require("ui/widget/confirmbox"):new{ text = _("Remove this reference? Bookmarks are not affected."),
+                    ok_callback = function()
+                        s.confirm = nil
+                        if active() and P.remove(ui, entry.id) then P.show(ui) end
+                    end }
+                UI:show(track(s, "confirm", confirm))
+              end), button("Close", function() closeWindow(s, "drawer") end) },
+        } }
+        window.layout = controls.layout
+        local preview_h = h - pad * 2 - 2 - heading:getSize().h - controls:getSize().h
+        if preview_h < Screen:scaleBySize(50) then
+            s.drawer = nil
+            if heading.free then heading:free() end
+            if controls.free then controls:free() end
+            return P.list(ui) -- native scrolling list on unusually short screens
+        end
+        window.preview = require("ui/widget/container/centercontainer"):new{
+            dimen = Geom:new{ w = inner, h = preview_h },
+            textWidget(entry.kind == "text" and entry.text or _("Loading reference…"), preview_h),
+        }
+        local clip = require("lib/bookshelf_clip_container"):new{ w = inner, h = preview_h, window.preview }
+        local frame = require("ui/widget/container/framecontainer"):new{ padding = pad, margin = 0, bordersize = 1,
+            background = require("ffi/blitbuffer").COLOR_WHITE,
+            require("ui/widget/verticalgroup"):new{ align = "left", heading, clip, controls },
+        }
+        window[1] = require("ui/widget/container/rightcontainer"):new{
+            dimen = Geom:new{ w = Screen:getWidth(), h = Screen:getHeight() }, allow_mirroring = false, frame }
+        window.onClose = function() closeWindow(s, "drawer"); return true end
+        window.onCloseWidget = function()
+            if window.closed then return end
+            window.closed = true
+            if s.drawer == window then s.drawer = nil end
+            if s.batch == window.batch then cancelPreview(s) end
+            releasePreview(window)
+            UI:setDirty(nil, "flashui")
+        end
+        window.key_events = window.key_events or {}
+        window.key_events.Close = {{ require("device").input.group.Back }}
+        window.ges_events = { Outside = { require("ui/gesturerange"):new{
+            ges = "tap", range = Geom:new{ x = 0, y = 0, w = Screen:getWidth(), h = Screen:getHeight() } } } }
+        window.onOutside = function(_, _arg, ges)
+            if ges.pos.x < Screen:getWidth() - w then window:onClose() end
+            return true
+        end
+        UI:show(window)
+        local function showImage(image)
+            if not active() then if image then image:free() end; return end
+            releasePreview(window)
+            window.bb = image
+            window.preview[1] = image and require("ui/widget/imagewidget"):new{
+                image = image, image_disposable = false, width = inner, height = preview_h,
+                scale_factor = 0, original_in_nightmode = entry.kind == "image",
+            } or textWidget(_("Preview unavailable. You can still use Go to page if the location is valid."), preview_h)
+            UI:setDirty(window, "ui")
+        end
+        if entry.kind == "image" then
+            local path = snapshotPath(entry)
+            local a = path and require("libs/libkoreader-lfs").symlinkattributes(path)
+            local ok, image = pcall(function()
+                if a and a.mode == "file" and a.size <= 2 * 1024 * 1024 then
+                    return require("ui/renderimage"):renderImageFile(path, false, math.min(inner, 1024), math.min(preview_h, 1024))
+                end
+            end)
+            showImage(ok and image or nil)
+        elseif entry.kind == "page" then
+            if page_number and ui.thumbnail and ui.thumbnail.getPageThumbnail then
+                local batch = {}; s.batch = batch; window.batch = batch
+                local ok = pcall(ui.thumbnail.getPageThumbnail, ui.thumbnail, page_number,
+                    math.max(1, math.min(inner, 1024)), math.max(1, math.min(preview_h, 1024)), batch,
+                    function(tile, returned)
+                        if returned ~= s.batch or not active() then return end
+                        -- Copy cache-owned pixels: eviction/other native requesters retain ownership.
+                        local copied, image = pcall(function() return tile and tile.bb and tile.bb:copy() end)
+                        showImage(copied and image or nil)
+                    end)
+                if not ok then cancelPreview(s); showImage(nil) end
+            else showImage(nil) end
+        end
+        return window
+    end
+    return P
+end
+
+function M.readerPinEvent(handler, ui)
+    if M._reader_pins then M._reader_pins.event(handler, ui) end
+end
+
 return M

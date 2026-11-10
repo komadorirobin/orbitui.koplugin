@@ -98,4 +98,18 @@ H.test("aborting a partial initialization drops aliases and event recipients", f
     H.eq(owner.ui.bookshelf, nil)
     H.eq(loader.loaded_plugins.simpleui, nil)
 end)
+H.test("reference retirement failure cannot swallow component events or alias cleanup", function()
+    local owner, loader, calls = fixture(true)
+    local old_panel, old_logger = package.loaded["adapters/orbitui_book_panel"], package.loaded.logger
+    local reported, warnings = 0, 0
+    package.loaded["adapters/orbitui_book_panel"] = { readerPinEvent = function() error("close failure") end }
+    package.loaded.logger = { warn = function() warnings = warnings + 1 end }
+    Host.propagate(owner, { handler = "onCloseDocument", args = { "done" } }, function(name)
+        H.eq(name, "reader-references"); reported = reported + 1
+    end)
+    H.eq(reported, 1); H.eq(calls[3], "bookshelf:done"); H.eq(calls[4], "simpleui:done")
+    Host.detach(owner, loader); H.eq(warnings, 1); H.eq(owner.ui.bookshelf, nil)
+    H.eq(loader.loaded_plugins.simpleui, nil)
+    package.loaded["adapters/orbitui_book_panel"], package.loaded.logger = old_panel, old_logger
+end)
 H.finish()

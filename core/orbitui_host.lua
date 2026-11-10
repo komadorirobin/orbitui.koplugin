@@ -35,6 +35,11 @@ function M.attach(owner, classes, loader, root)
 end
 
 function M.detach(owner, loader)
+    local panel = package.loaded["adapters/orbitui_book_panel"]
+    if panel and panel.readerPinEvent then
+        local ok, err = pcall(panel.readerPinEvent, "onTeardown", owner.ui)
+        if not ok then require("logger").warn("OrbitUI reference cleanup failed:", err) end
+    end
     local refresh = package.loaded["lib/bookshelf_menu_close_refresh"]
     if refresh and refresh.release then refresh.release(owner) end
     local navbar = package.loaded["adapters/orbitui_navbar"]
@@ -70,6 +75,11 @@ function M.abort(owner, loader)
 end
 
 function M.propagate(owner, event, report)
+    local panel = package.loaded["adapters/orbitui_book_panel"]
+    if panel and panel.readerPinEvent then
+        local ok, err = pcall(panel.readerPinEvent, event.handler, owner.ui)
+        if not ok then report("reader-references", err) end
+    end
     local navbar = package.loaded["adapters/orbitui_navbar"]
     if navbar then navbar.quickControlsEvent(event.handler, owner.ui) end
     M.performanceEvent(event.handler)

@@ -57,6 +57,29 @@ function OrbitUI:onTeardown()
     Host.detach(self, require("pluginloader"))
 end
 
+function OrbitUI:onReaderReady()
+    if self._orbitui_error or not self.ui.document then return end
+    require("adapters/orbitui_book_panel").readerPins().attach(self.ui)
+    local Dispatcher = require("dispatcher")
+    local _ = require("core/orbitui_i18n")
+    Dispatcher:registerAction("orbitui_reader_pins", { category = "none", event = "OrbitUIReaderPins",
+        title = _("OrbitUI: pinned references"), reader = true })
+    Dispatcher:registerAction("orbitui_pin_page", { category = "none", event = "OrbitUIPinPage",
+        title = _("OrbitUI: pin current page"), reader = true })
+end
+
+function OrbitUI:onOrbitUIReaderPins()
+    if not self._orbitui_error and self.ui.document then
+        require("adapters/orbitui_book_panel").readerPins().show(self.ui)
+    end
+end
+
+function OrbitUI:onOrbitUIPinPage()
+    if not self._orbitui_error and self.ui.document then
+        require("adapters/orbitui_book_panel").readerPins().pin(self.ui)
+    end
+end
+
 function OrbitUI:addToMainMenu(items)
     items.orbitui = {
         text = "OrbitUI",
@@ -78,6 +101,19 @@ function OrbitUI:addToMainMenu(items)
             { text = Updates.menuLabel, callback = Updates.show },
         },
     }
+    if not self._orbitui_error and self.ui.document then
+        local _ = require("core/orbitui_i18n")
+        items.orbitui_reader_pins = { text = _("Pinned references"), sorting_hint = "tools",
+            sub_item_table = {
+                { text = _("Open reference drawer"), callback = function() self:onOrbitUIReaderPins() end },
+                { text = _("Reference list"), callback = function()
+                    require("adapters/orbitui_book_panel").readerPins().list(self.ui)
+                end },
+                { text = _("Pin current page"), callback = function() self:onOrbitUIPinPage() end },
+                { text = _("Pin an EPUB image…"), enabled = self.ui.rolling ~= nil,
+                    callback = function() require("adapters/orbitui_book_panel").readerPins().armImage(self.ui) end },
+            } }
+    end
 end
 
 return OrbitUI

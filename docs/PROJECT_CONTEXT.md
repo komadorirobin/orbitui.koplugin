@@ -22,6 +22,22 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-10
 
+- **Local reader reference drawer, not published.** User requests Aleph-list
+  point 3; branch `feature/reader-pin-drawer-20261110` starts at **3b4fcf22**,
+  retaining the two earlier local features. Independent lazy implementation in
+  the existing book-panel adapter; no Aleph source/assets imported. Explicit
+  reader-menu/gesture commands, native text-selection extension and one-shot
+  EPUB image capture. Per-book namespaced sidecar references, twelve-entry cap;
+  page previews use native thumbnails without changing the live reading
+  position. Only Go to page uses native back/jump. Image copies are bounded and
+  stored in settings/orbitui/reader-pins, which needs inclusion in backups.
+  Bookmarks/native pinned_page/header/userpatch/sync ownership is unchanged.
+  Preview/capture/window/resource retirement and third-party wrapper ownership
+  are tested; no waking autoreopen, automatic pinning or floating badge.
+  No new installed paths/identities, source pin/version/public-dist/device/
+  server/watch change. C10, FEATURES, TESTING and MERGE_LOG give limits/gaps;
+  full/sealed/native verification receipts follow. Not physically accepted.
+
 - **Local Next in series Home module, not published.** User requests the next
   Aleph-list point after local recommendations. Branch
   `feature/next-series-home-20261110` starts at **9f2cc4af**, retaining point 1.
@@ -46,9 +62,9 @@ and correct this file in the same change.
   redacted-secret checks pass; public dist remains **25f988ce**. Receipt only
   updates docs, not the frozen ZIP. No Bigme presentation/timing acceptance.
 
-- **Remaining Aleph review ideas, not implemented/authorized here:** a pinned
-  pages/images drawer, compact reader tools/Also reading panel, finish forecast.
-  Keep them separate from the two completed local stages above. Do not silently
+- **Remaining Aleph review ideas, not implemented/authorized here:** compact
+  reader tools/Also reading panel and finish forecast. Keep them separate from
+  the three local stages above. Do not silently
   replace native reader menus, headers, bookmarks or their existing patches.
 
 - **Local similar-books/series feature, not published.** User approves point 1

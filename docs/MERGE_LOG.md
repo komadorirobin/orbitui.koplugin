@@ -4,6 +4,34 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-10 — reader reference drawer (Aleph-list point 3)
+
+User requests the next point after the two completed local stages. New branch
+`feature/reader-pin-drawer-20261110` starts at **3b4fcf22**. Aleph **89419f6f**
+remains an idea reference only: no code/assets/dependency imported. Native
+KOReader minimum/current sources reviewed for highlight extension, thumbnail
+requests/cancellation, xpointer/paging, image viewer and buffer ownership.
+Minimum lacks the newer native pinned-page feature; OrbitUI therefore never
+writes native pinned_page at either baseline. All existing pin/bookmark/header
+and sync owners remain. This is not an upstream import or pin/watch advance.
+
+The explicit reader-only menu/gesture drawer previews pinned pages, text and
+bounded local static EPUB image copies. No automatic badge/header insertion,
+network, scan, hidden ReaderUI or live-position preview round trip. Only Go
+to page invokes normal native link/back/jump. Existing adapter is extended
+lazily to avoid a new installed path at the API1 cap. C10 records the per-book
+12-reference namespace, 4096-byte UTF-8 excerpts, protected/validated snapshot
+slots, 4MP decode/1024px/2MiB limits, native persistence/backup boundaries,
+stale callback and window/buffer/wrapper retirement. Reference removal confirms
+and updates immediately without touching a bookmark. Native default image
+scaling frees the input; explicit false avoids duplicate frees.
+
+Focused/root/native/full/package audits and remaining physical gaps are in
+TESTING. No push, merge, public version/tag/release/OTA replacement, actual
+device/server installation or watch change. Stable 1.1/public beta.1 and
+maintenance branches stay unchanged; all three Aleph-inspired features remain
+local and unpublished. Verification receipt follows the frozen candidate.
+
 ## 2026-11-10 — Next in series Home card (Aleph-list point 2)
 
 User requests the next list item after the local tag recommendation feature.

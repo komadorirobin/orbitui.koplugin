@@ -112,4 +112,21 @@ H.test("unknown setup state blocks initialization before component defaults or a
     H.eq(#fm, 0)
     assert(fm._orbitui_error:find("unsupported setup", 1, true))
 end)
+H.test("reference drawer menu/actions are reader-only and do not run previews on ready", function()
+    fixture()
+    local actions = {}
+    package.loaded.dispatcher = { registerAction = function(_, id, action) actions[id] = action end }
+    local class = dofile(root .. "/main.lua")
+    local fm = instantiate(class)
+    local items = {}; fm:addToMainMenu(items); H.eq(items.orbitui_reader_pins, nil)
+    local reader = instantiate(class, { file = "/books/test.epub" })
+    reader.ui.doc_settings = { readSetting = function() error("no pin reads on ReaderReady") end }
+    reader:onReaderReady()
+    assert(actions.orbitui_reader_pins.reader and actions.orbitui_pin_page.reader)
+    items = {}; reader:addToMainMenu(items)
+    H.eq(#items.orbitui_reader_pins.sub_item_table, 4)
+    H.eq(items.orbitui_reader_pins.sub_item_table[4].enabled, false)
+    reader._orbitui_error = "failed"
+    items = {}; reader:addToMainMenu(items); H.eq(items.orbitui_reader_pins, nil)
+end)
 H.finish()

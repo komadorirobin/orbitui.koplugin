@@ -1309,6 +1309,44 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+November 10 approved Aleph-list point 3: a lazy, explicit per-book reader
+reference drawer in the existing book-panel adapter, not a replacement reader,
+header, bookmark manager or globally wrapped image viewer. Native reader menu
+and reader-only Dispatcher actions expose it; no floating badge, layout change,
+automatic capture/preview or scanning on ReaderReady. Register a uniquely named
+native highlight-dialog button per reader, and remove it only if still ours.
+Native/foreign pins, annotations, bookmark ribbons and all reading/sync keys
+remain untouched. Only an explicit Go to page uses the native link back stack
+and rolling/paging jump. Preview requests use the native thumbnail service
+(which renders in its own child), never a hidden ReaderUI or a live-position
+round trip. Copy cache-owned pixels; cancel only our own batch, reject stale
+callbacks and free owned pixels/viewers on close/rotation/reflow/sleep/teardown.
+Navigation generations, current reader/document/settings ownership and parked
+Home/shelf checks prevent late preview/jump/capture. Resume does not reopen.
+
+Persist only `orbitui_reader_pins` version 1 in native document settings, max
+12 entries. Resolve EPUB xpointers again per view; paging references use actual
+pages. Digest/engine mismatch or unresolved locations never guess a new page.
+Preserve unsupported/malformed stores and existing native flush ownership.
+Text excerpts are bounded to 4096 UTF-8-safe bytes. Explicit EPUB image capture
+temporarily arms one per-instance long-press wrapper for 30 seconds; normal
+native arguments/results, later wrappers and their ownership survive retirement.
+Static native decode only; reject over four megapixels, scale with explicit
+non-freeing ownership to max 1024 per side and reject snapshots over 2 MiB.
+Only allocate unused 1..12 files in plain owned directories under settings/
+orbitui/reader-pins; never adopt/overwrite/symlink-traverse an existing image.
+Rollback only the new file on failed append; explicit reference removal deletes
+only an unshared validated snapshot. No generic directory cleanup/migration.
+Include snapshot storage in backup instructions. Native sidecar flushing means
+forced kills can leave an unreferenced slot; occupied files remain protected.
+Unknown/full stores require user action rather than eviction/reset. No network,
+new runtime path/dependency/schema outside the namespaced per-book value or
+upstream/watch/version change. SV/EN controls, short-screen native scrolling
+fallback, fixed preview bounds and original image night-mode semantics remain.
+Tests: test_reader_pins, test_entrypoint, existing host/reader suites; actual
+minimum/current native highlight/thumbnail modules are optional supplements.
+Physical Bigme touch/render/IPC/rotation/night/reader-return acceptance remains.
+
 November 10 approved Aleph-list point 2: a separate opt-in **Next in series**
 Home module, also discoverable through the dashboard's existing SimpleUI
 module registry. Registration, enumeration, sizing and preview must not scan
