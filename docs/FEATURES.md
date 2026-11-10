@@ -68,6 +68,30 @@ av OrbitUIs funktioner, inte BookOrbits egen progressionssynk. EPUB-taggar finns
 kvar offline. Serverpatchar är frivilliga, versionsbundna och installeras av
 administratören separat. Hantera skyddade öppningar innan ångra-stöd tas bort.
 
+## Local similar books and series
+
+In a local EPUB's **Tags / Taggar** tab, choose **Find similar books and
+series… / Hitta liknande böcker och serier…**. Recommendations use exact
+embedded EPUB tags across your configured libraries, ranked by the number of
+distinct shared tags. The current book and its series are excluded. No AI,
+BookOrbit account, server extension or network connection is required.
+
+Switch between **Series / Serier** and **Books / Böcker** without rescanning
+tags. Manga/comics starts on Series. A series uses its best matching volume's
+score, not the sum of its volumes, so a long series does not win merely by
+having more volumes. Same-named series by different authors remain distinct.
+Tapping selects the book on its shelf; a series selects its first locally
+available volume, which need not carry the matching tag. Nothing starts reading
+automatically.
+
+Other books use only current indexed tags. Missing/stale tags and unavailable
+cached series metadata are disclosed, not guessed from genres or titles. Use
+**Update tag index… / Uppdatera taggindex…** for fuller coverage; existing
+library metadata must also be indexed for safe series identification. The
+source EPUB may be read on your explicit request. Only the best 400 results
+are displayed after ranking/grouping; the scan is not cut off at 400 volumes.
+Stop/Close remain usable, and sleep does not automatically restart the work.
+
 ## Optional Reading dashboard
 
 Under **Reading dashboard**, enable the extra first Home page. It does not

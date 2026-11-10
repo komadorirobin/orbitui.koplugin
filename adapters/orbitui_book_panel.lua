@@ -157,6 +157,17 @@ function M.tagSections(owner, book, modal)
                 refresh()
             end)
         end }
+    if type(book.filepath) == "string" and book.filepath:sub(1, 1) == "/" and book.filepath:lower():match("%.epub$") then
+        local_pills[#local_pills + 1] = { label = _("Find similar books and series…"), link = true,
+            on_tap = function()
+                if not current() or state.render ~= render or local_state.busy then return end
+                modal:onClose()
+                require("core/orbitui_search").similarBooks(book.filepath, {
+                    title = book.title, view_profile = owner.profile_key,
+                    open_book = function(file, record) owner:_openBook(record or { filepath = file }) end,
+                })
+            end }
+    end
     local sections = {{ title = _("EPUB tags (offline)"), pills = local_pills,
         note = local_state.error or (local_state.tags and #local_state.tags == 0 and _("No separate tags embedded in this EPUB. Standard EPUB subjects are shown as genres below."))
             or _("Tap a local EPUB tag to search. Long-press to save a smart chip, optionally combining tags. No account or connection is needed; nothing is synced or edited.") }}

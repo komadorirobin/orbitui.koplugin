@@ -573,13 +573,17 @@ local function tagSearch(tag, opts)
     opts = opts or {}
     local Integration = require("adapters/orbitui_integrations")
     local embedded = opts.embedded == true
+    local similar = opts.similar == true
     local rule = embedded and Integration.embeddedTagRule(opts.rule or tag)
-    if embedded and not rule then return end
-    local title = embedded and _("EPUB tags (offline)") or _("BookOrbit tags")
+    if embedded and not rule and not similar then return end
+    local title = similar and _("Similar books and series") or embedded and _("EPUB tags (offline)") or _("BookOrbit tags")
     local intro = embedded and _("Only EPUBs on this device. All library profiles are included; the library's scan-depth setting applies. No connection is needed.")
         or _("Only BookOrbit-linked books on this device. All library profiles are included.")
     if embedded and opts.profile then intro = _("Only EPUBs in the selected library. The scan-depth setting applies. No connection is needed.") end
+    if similar then intro = _("Local recommendations ranked by shared EPUB tags, across your libraries. The current book and its series are excluded. Only current indexed tags are used; no AI or server is needed.") end
     local function failureText(err)
+        if similar and err == "no_tags" then return _("This EPUB has no separate embedded tags. Add tags to the EPUB and update the tag index. Genres are not used as substitute tags.") end
+        if similar and err == "stale" then return _("Library metadata or tags changed. Refresh and try again.") end
         if embedded and err == "stale" then return _("Library folders changed. Refresh and try again.") end
         return embedded and Integration.embeddedTagError(err) or Integration.bookOrbitError(err)
     end
@@ -591,18 +595,21 @@ local function tagSearch(tag, opts)
     local records, visible, query = {}, {}, ""
     local Series = require("core/orbitui_shelf_query")
     local series_state, series_paused, base_intro = nil, false, intro
+    local similar_snapshot
+    local result_capped, missing_metadata = false, false
     local view_profile = opts.view_profile or opts.profile
     if not view_profile and opts.origin then
         local ok, key = pcall(require("lib/bookshelf_profiles").matchFile, opts.origin)
         if ok then view_profile = key end
     end
-    local preference = "orbitui_tag_result_view_" .. (view_profile or "all")
+    local preference = (similar and "orbitui_similar_result_view_" or "orbitui_tag_result_view_") .. (view_profile or "all")
     local ok_store, store = pcall(require, "lib/bookshelf_settings_store")
     local ok_saved, saved = pcall(function() return ok_store and store.read(preference) end)
     local view = ok_saved and (saved == "series" or saved == "volumes") and saved
         or (view_profile == "manga" or view_profile == "comics") and "series" or "volumes"
     local function dropSeries()
         if series_state then series_state.cancel(); series_state = nil end
+        similar_snapshot = nil
     end
     local generation = UI._simpleui_navigation_generation
     session = session + 1
@@ -616,24 +623,36 @@ local function tagSearch(tag, opts)
             and (not opts.is_current or opts.is_current()) or false
     end
     local function current() return alive() and validView() end
+    local filter
     local function render()
         if alive() and not sleeping then
+            if similar and filter then filter() end
             modal.config.intro = base_intro
+            if similar then
+                if result_capped then modal.config.intro = modal.config.intro .. " " .. _("Showing the best 400 results.") end
+                if missing_metadata then modal.config.intro = modal.config.intro .. " " .. _("Some cached series metadata is missing. Those books are not recommended; update library metadata and refresh.") end
+            end
             if view == "series" and (data_session or base_intro == intro) then
                 modal.config.intro = modal.config.intro .. " " .. _("Tap a series to show it on its shelf with its first available volume selected.")
-                if series_state and series_state.busy then
+                if series_state and series_state.busy and not similar then
                     modal.config.intro = modal.config.intro .. " " .. _("Grouping cached series metadata… No EPUB files are opened.")
-                elseif series_state and series_state.unavailable then
+                elseif series_state and series_state.unavailable and not similar then
                     modal.config.intro = modal.config.intro .. " " .. _("Some series metadata is unavailable. Unknown books remain listed separately; update library metadata and refresh.")
                 end
             elseif data_session or base_intro == intro then
                 modal.config.intro = modal.config.intro .. " " .. _("Tap a title to select the book on its shelf.")
             end
+            if similar and series_state and series_state.busy then
+                modal.config.intro = modal.config.intro .. " " .. _("Grouping cached series metadata… No EPUB files are opened.")
+            elseif similar and series_paused and series_state and not series_state.finished then
+                modal.config.intro = modal.config.intro .. " " .. _("Series discovery paused. Tap Refresh to continue.")
+            end
             modal:refresh()
         end
     end
     local function ensureSeries()
-        if view ~= "series" or not data_session or not current() then return end
+        if view ~= "series" and not similar or not data_session or not current() then return end
+        if similar and #records == 0 then dropSeries(); return end
         if not series_state then
             series_state = Series.tagSeriesSession{
                 current = function() return current() and data_session and data_session:current() end,
@@ -654,7 +673,7 @@ local function tagSearch(tag, opts)
         render()
     end
     local function available(file) return fs.attributes(file, "mode") == "file" end
-    local function filter()
+    filter = function()
         visible = {}
         if data_session and not data_session:current() then
             records, data_session = {}, nil
@@ -662,9 +681,25 @@ local function tagSearch(tag, opts)
             modal.config.intro = base_intro
         end
         local rows = view == "series" and series_state and series_state.rows() or records
+        result_capped, missing_metadata = false, false
+        if similar then
+            -- Native count/repaint/filter callbacks may repeat. Rank once per
+            -- checked snapshot/view, not on every paint or text submission.
+            local finished, unavailable = series_state and series_state.finished, series_state and series_state.unavailable
+            if not similar_snapshot or similar_snapshot.records ~= records or similar_snapshot.discovery ~= series_state
+                    or similar_snapshot.view ~= view or similar_snapshot.finished ~= finished
+                    or similar_snapshot.unavailable ~= unavailable then
+                local ranked, incomplete = Series.similarRows(records, series_state, opts.origin, view)
+                similar_snapshot = { records = records, discovery = series_state, view = view,
+                    finished = finished, unavailable = unavailable, rows = ranked, incomplete = incomplete }
+            end
+            rows, missing_metadata = similar_snapshot.rows, similar_snapshot.incomplete
+        end
         for _, book in ipairs(rows) do
             local text = table.concat({ book.filename or "", book.title or "", book.author or "" }, " ")
-            if M.lower(text):find(M.lower(query), 1, true) then visible[#visible + 1] = book end
+            if M.lower(text):find(M.lower(query), 1, true) then
+                if not similar or #visible < 400 then visible[#visible + 1] = book else result_capped = true end
+            end
         end
     end
     local function fetch(reread)
@@ -675,6 +710,15 @@ local function tagSearch(tag, opts)
             if ok then source = value end
         else source, err = Integration.bookOrbitSession() end
         if not source then base_intro = failureText(err); render(); return end
+        if similar then
+            local Repo = require("lib/bookshelf_book_repository")
+            local revision = Repo.dataGeneration()
+            local source_current = source.current
+            source.current = function(self)
+                return source_current(self) and revision == Repo.dataGeneration()
+                    and (not self.similar_revision or self.similar_revision == Integration.embeddedTagSnapshotRevision())
+            end
+        end
         busy, paused, series_paused = true, false, false
         dropSeries()
         records, visible, data_session = {}, {}, nil
@@ -688,7 +732,12 @@ local function tagSearch(tag, opts)
                 local previous = {}; for _, book in ipairs(records) do previous[book.filepath] = book end
                 records = {}
                 for _, file in ipairs(result.paths) do
-                    if available(file) then records[#records + 1] = previous[file] or { filepath = file, filename = file:match("([^/]+)$") or file } end
+                    if available(file) then
+                        local record = previous[file] or { filepath = file, filename = file:match("([^/]+)$") or file }
+                        record.similar_score = result.scores and result.scores[file]
+                        record.similar_stamp = result.stamps and result.stamps[file]
+                        records[#records + 1] = record
+                    end
                 end
                 table.sort(records, function(a, b) return M.lower(a.filepath) < M.lower(b.filepath) end)
                 base_intro = intro
@@ -701,6 +750,9 @@ local function tagSearch(tag, opts)
                     .. " " .. _("Series are grouped from those matching volumes only.") end
                 if (result.skipped or 0) > 0 then
                     base_intro = base_intro .. " " .. string.format(_("%d EPUBs could not be read; results may be incomplete. Refresh to retry."), result.skipped)
+                end
+                if similar and (result.unindexed or 0) > 0 then
+                    base_intro = base_intro .. " " .. string.format(_("%d EPUBs have no current cached tags. Update the tag index for complete recommendations."), result.unindexed)
                 end
             else
                 records, data_session = {}, nil
@@ -716,7 +768,7 @@ local function tagSearch(tag, opts)
         end
         if embedded then
             worker = Integration.embeddedTagRequest(source, { tag = tag, rule = rule, profile = opts.profile,
-                origin = opts.origin, refresh = reread == true,
+                origin = opts.origin, refresh = reread == true, similar = similar,
                 on_retired = retireWork,
                 on_progress = function(result) update(result, nil, true) end }, current, done)
         else Integration.bookOrbitRequest(source, function(s) return s:matches(tag) end, current, done) end
@@ -734,8 +786,25 @@ local function tagSearch(tag, opts)
         if type(book) ~= "table" or not current() or busy and not embedded or not data_session or not data_session:current() then return false end
         if not available(book.filepath) then Context.notify(_("This book is no longer on the device.")); return false end
         if embedded then
-            local tags = Integration.embeddedTags(book.filepath)
-            local matches = Integration.embeddedTagMatches(tags, rule)
+            if similar and (not series_state or not series_state.finished or series_state.unavailable) then return false end
+            local matches
+            if similar then
+                local origin_meta, meta = series_state.metadata[opts.origin], series_state.metadata[book.filepath]
+                if book.filepath == opts.origin or not origin_meta or not origin_meta._tag_known or not meta or not meta._tag_known then return false end
+                local origin_key = Series.tagSeriesKey(origin_meta, "")
+                if origin_key and origin_key == Series.tagSeriesKey(meta, "") then return false end
+                -- The aggregate index is authoritative for this checked
+                -- snapshot too: a pruned per-file JSON cache must not make
+                -- valid SQL-backed recommendations unselectable.
+                for _, checked in ipairs(records) do
+                    if checked.filepath == book.filepath then
+                        matches = (checked.similar_score or 0) > 0
+                            and Integration.embeddedTagIsCurrent(book.filepath, checked.similar_stamp)
+                            and Integration.embeddedTagIsCurrent(opts.origin, data_session.similar_stamp)
+                        break
+                    end
+                end
+            else matches = Integration.embeddedTagMatches(Integration.embeddedTags(book.filepath), rule) end
             if not matches then Context.notify(_("This file's tags changed or could not be read. Refresh the results.")); return false end
         end
         return true
@@ -754,39 +823,42 @@ local function tagSearch(tag, opts)
     end },
         { label = _("Close"), on_tap = function() if alive() then modal:onClose() end end } }}
     if embedded then
-        footer[#footer + 1] = {{ label = _("Reread all EPUB tags…"), enabled_when = function() return validView() and not busy end, on_tap = function()
+        footer[#footer + 1] = {{ label = _(similar and "Update tag index…" or "Reread all EPUB tags…"), enabled_when = function() return validView() and not busy end, on_tap = function()
             if not current() or busy then return end
             modal:onClose()
-            M.tagIndex{ confirm_reread = true }
+            M.tagIndex{ confirm_reread = not similar }
         end }}
     end
     modal = require("lib/bookshelf_library_modal"):new{ _sui_keep_homescreen = true, config = {
-        title = title .. ": " .. (rule and table.concat(rule.tags, rule.mode == "all" and " + " or " / ") or tag),
+        title = title .. ": " .. (similar and (opts.title or opts.origin:match("([^/]+)$"))
+            or rule and table.concat(rule.tags, rule.mode == "all" and " + " or " / ") or tag),
         intro = intro,
-        tabs = {{ key = "series", label = _("Series", nil, "tag-results") }, { key = "volumes", label = _("Volumes") }},
+        tabs = {{ key = "series", label = _("Series", nil, "tag-results") }, { key = "volumes", label = _(similar and "Books" or "Volumes") }},
         initial_tab = view,
         on_tab_change = function(key)
             if not current() or (key ~= "series" and key ~= "volumes") then return end
             view, query, series_paused = key, "", false
-            if key == "volumes" and series_state then series_state.pause() end
+            if key == "volumes" and series_state and not similar then series_state.pause() end
             if ok_store and store.saveDeferred then pcall(store.saveDeferred, preference, key) end
             ensureSeries(); filter(); render()
         end,
         search_placeholder = function() return _(view == "series" and "Filter by series, title or author" or "Filter by filename") end,
         on_search_submit = function(value)
             if not current() then return end
-            query = value or ""; filter(); modal.page = 1; modal:refresh()
+            query = value or ""; filter(); modal.page = 1
+            if similar then render() else modal:refresh() end
         end,
         grid_cols = 1, rows_per_page = 4,
         cells_per_page = function() return Screen:getWidth() > Screen:getHeight() and 3 or 4 end,
         item_count = function() filter(); return #visible end,
         item_at = function(index) return visible[index] end,
         empty_state = function(w, h)
-            return require("lib/bookshelf_picker_cell").render({ label = _(busy and "Loading…" or "No matches.") }, { w = w, h = h })
+            return require("lib/bookshelf_picker_cell").render({ label = _((busy or similar and series_state and series_state.busy) and "Loading…" or "No matches.") }, { w = w, h = h })
         end,
         cell_renderer = function(book, dimen)
             if book.tag_series then
                 local note = string.format(_("%d matching volumes · %d available"), #book.matched, #book.members)
+                if similar then note = string.format(_("Shared tags: %d · Available volumes: %d"), book.similar_score, #book.members) end
                 local first = book.members[1]
                 if first and tonumber(first.series_num) and tonumber(first.series_num) > 1 then
                     note = note .. " · " .. _("Volume 1 is not in cached metadata")
@@ -795,13 +867,14 @@ local function tagSearch(tag, opts)
                 end
                 return Series.tagSeriesCell(book, dimen, (book.author and book.author .. " · " or "") .. note)
             end
-            if view == "volumes" then bookMeta(book) end
+            if view == "volumes" and not similar then bookMeta(book) end
             local label = book.title or book.filename
             if view == "series" and book.tag_section_first then
                 label = _(book.tag_section == "standalone" and "Standalone books" or "Unknown series metadata") .. " — " .. label
             end
             return require("lib/bookshelf_picker_cell").render({ label = label,
-                subtitle = book.author or book.filename }, dimen)
+                subtitle = similar and ((book.author and book.author .. " · " or "")
+                    .. string.format(_("Shared tags: %d"), book.similar_score)) or book.author or book.filename }, dimen)
         end,
         on_cell_tap = function(book)
             if book.tag_series then
@@ -851,6 +924,10 @@ local function tagSearch(tag, opts)
         dropSeries()
         if not embedded then return end
         sleeping = true
+        if similar then
+            series_paused, paused = true, true
+            base_intro = _("Search paused. Close and reopen the tag search to continue. Completed tag reads are kept.")
+        end
         if worker then worker.cancel() end
     end
     function modal:onResume()
@@ -872,6 +949,13 @@ function M.embeddedTag(tag, opts)
     for key, value in pairs(opts or {}) do options[key] = value end
     options.embedded = true
     return tagSearch(tag, options)
+end
+
+function M.similarBooks(file, opts)
+    if type(file) ~= "string" or file:sub(1, 1) ~= "/" or not file:lower():match("%.epub$") then return end
+    local options = {}; for key, value in pairs(opts or {}) do options[key] = value end
+    options.embedded, options.similar, options.origin = true, true, file
+    return tagSearch(nil, options)
 end
 
 function M.tagIndex(opts)

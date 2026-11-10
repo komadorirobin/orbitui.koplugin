@@ -530,6 +530,22 @@ function M.embeddedTagMatches(tags, rule)
     return rule.mode == "all"
 end
 
+-- Recommendations compare distinct, literal EPUB tags. They do not widen the
+-- 16-tag saved-rule language or reinterpret native genres/collections.
+function M.embeddedTagScore(tags, origin_tags)
+    if not array(tags, 200) or not array(origin_tags, 200) then return nil end
+    local wanted, seen, score = {}, {}, 0
+    for _, tag in ipairs(origin_tags) do
+        if type(tag) ~= "string" or #tag > 800 or not tag:find("%S") or tag:find("%c") then return nil end
+        wanted[tag] = true
+    end
+    for _, tag in ipairs(tags) do
+        if type(tag) ~= "string" or #tag > 800 or not tag:find("%S") or tag:find("%c") then return nil end
+        if wanted[tag] and not seen[tag] then score = score + 1; seen[tag] = true end
+    end
+    return score
+end
+
 function M.embeddedTagSnapshot(key, value)
     tag_disk = tag_disk or require("lib/bookshelf_keyed_cache").new("orbitui_epub_tags", 1)
     if value then return tag_disk.write("shelf_v1:" .. key, value) end
@@ -540,6 +556,10 @@ local function tagStamp(attrs)
     if attrs and attrs.mode == "file" then
         return tostring(attrs.modification) .. ":" .. tostring(attrs.change) .. ":" .. tostring(attrs.size)
     end
+end
+
+function M.embeddedTagIsCurrent(file, stamp)
+    return type(stamp) == "string" and stamp == tagStamp(require("libs/libkoreader-lfs").attributes(file))
 end
 
 -- Derived, disposable data ONLY, never BIM/reading/settings databases. Open on
@@ -613,6 +633,37 @@ function M.openEmbeddedTagIndex(existing_only)
         end)
         if not ok_read then return failed() end
         return out
+    end
+    function store.similar(files, first, tags)
+        if not db or index_failed or not M.embeddedTagScore({}, tags) or #tags == 0 then return nil end
+        -- COUNT returns at most 128 small rows, not a potentially enormous
+        -- file/tag join. At most 200 source tags + 128 paths are bound values.
+        local stmt
+        local success, rows = pcall(function()
+            local names, paths, args = {}, {}, {}
+            for _, tag in ipairs(tags) do names[#names + 1] = "?"; args[#args + 1] = tag end
+            args[#args + 1] = epoch
+            for i = first, math.min(first + 127, #files) do
+                paths[#paths + 1] = "?"; args[#args + 1] = files[i]
+            end
+            if #paths == 0 then return {} end
+            stmt = db:prepare("SELECT f.fp,f.stamp,(SELECT COUNT(*) FROM tags t WHERE t.fp=f.fp AND t.tag IN ("
+                .. table.concat(names, ",") .. ")) FROM files f WHERE f.epoch=? AND f.fp IN ("
+                .. table.concat(paths, ",") .. ")")
+            stmt:bind((unpack or table.unpack)(args))
+            local out, row = {}, stmt:step()
+            while row do
+                local score = tonumber(row[3])
+                assert(type(row[1]) == "string" and type(row[2]) == "string"
+                    and score and score >= 0 and score <= #tags and score % 1 == 0)
+                out[row[1]] = { stamp = row[2], score = score }
+                row = stmt:step()
+            end
+            return out
+        end)
+        if stmt then pcall(stmt.close, stmt) end
+        if not success then return failed() end
+        return rows
     end
     function store.put(file, stamp, tags)
         if not db or index_failed then return end
@@ -725,6 +776,8 @@ function M.embeddedTagRequest(source, task, current, done)
     local cancelled, finished = false, false
     local files, cursor, paths, skipped, truncated = nil, 1, {}, 0, false
     local rule = not task.file and not task.index_only and M.embeddedTagRule(task.rule or task.tag)
+    local similar, origin_tags, origin_stamp, origin_revision = task.similar == true, nil, nil, nil
+    local scores = {}
     local stamps, unindexed = {}, 0
     local reread, reused = 0, 0
     local index, indexed, index_end, pending = nil, {}, 0, 0
@@ -733,6 +786,10 @@ function M.embeddedTagRequest(source, task, current, done)
         local out = {}; for i, file in ipairs(paths) do out[i] = file end
         local copied = {}; for file, stamp in pairs(stamps) do copied[file] = stamp end
         return { paths = out, stamps = copied, unindexed = unindexed, skipped = skipped, truncated = truncated,
+            scores = similar and (function()
+                local out_scores = {}; for file, score in pairs(scores) do out_scores[file] = score end
+                return out_scores
+            end)() or nil, source_tag_count = origin_tags and #origin_tags,
             reread = reread, reused = reused,
             scanned = cursor - 1, total = files and #files or 0,
             complete = files ~= nil and cursor > #files and not truncated and unindexed == 0 }
@@ -755,7 +812,24 @@ function M.embeddedTagRequest(source, task, current, done)
         if not current() then finish(); return end
         if cancelled or progress and not UI:isWidgetShown(progress) then control.cancel(); return end
         if source and not source:current() then finish(nil, "stale"); return end
-        if not task.file and not task.index_only and not rule then finish(nil, "invalid_epub"); return end
+        if similar then
+            if task.file or task.index_only then finish(nil, "invalid_epub"); return end
+            if not origin_tags then
+                local err, source_cached
+                origin_tags, err, source_cached, origin_stamp = M.embeddedTags(task.origin, false, true)
+                if not origin_tags then finish(nil, err); return end
+                if #origin_tags == 0 then finish(nil, "no_tags"); return end
+                origin_revision = M.embeddedTagSnapshotRevision()
+                if source then
+                    source.similar_tags, source.similar_stamp = origin_tags, origin_stamp
+                    source.similar_revision = origin_revision
+                end
+                -- One explicitly requested source archive is the whole turn.
+                UI:scheduleIn(.001, step); return
+            end
+            if origin_stamp ~= tagStamp(require("libs/libkoreader-lfs").attributes(task.origin))
+                    or origin_revision ~= M.embeddedTagSnapshotRevision() then finish(nil, "stale"); return end
+        elseif not task.file and not task.index_only and not rule then finish(nil, "invalid_epub"); return end
         if not files then
             local ok, value = pcall(function()
                 if task.file then return { task.file } end
@@ -791,7 +865,7 @@ function M.embeddedTagRequest(source, task, current, done)
             -- Ephemeral shared inventory for optional series discovery. Never
             -- serialize it into tag snapshots or widen the tag predicate.
             if source and not task.file then source.inventory = files end
-            if not task.file then index = M.openEmbeddedTagIndex() end
+            if not task.file then index = M.openEmbeddedTagIndex(similar) end
         end
         local start = time.now()
         for _i = 1, 32 do
@@ -799,23 +873,30 @@ function M.embeddedTagRequest(source, task, current, done)
             if not file then finish(snapshot()); return end
             if index and index_failed then index.close(); index, indexed = nil, {} end
             if index and not task.refresh and cursor > index_end then
-                indexed = index.prefetch(files, cursor, not task.index_only and (task.rule or task.tag) or nil)
+                if similar then indexed = index.similar and index.similar(files, cursor, origin_tags)
+                else indexed = index.prefetch(files, cursor, not task.index_only and (task.rule or task.tag) or nil) end
                 index_end = cursor + 127
                 if not indexed then index.close(); index, indexed = nil, {} end
             end
             local hit = indexed[file]
             if hit and tagStamp(require("libs/libkoreader-lfs").attributes(file)) ~= hit.stamp then hit = nil end
             local tags, err, cached, stamp
+            local score
             if hit and not task.refresh then
-                tags, cached, stamp = not task.index_only and hit.matches and rule.tags or {}, true, hit.stamp
+                if similar then tags, score = {}, hit.score
+                else tags = not task.index_only and hit.matches and rule.tags or {} end
+                cached, stamp = true, hit.stamp
             else
-                tags, err, cached, stamp = M.embeddedTags(file, task.refresh, not task.file, task.cache_only, task.run, task.index_only)
+                tags, err, cached, stamp = M.embeddedTags(file, task.refresh, not task.file, similar or task.cache_only, task.run, task.index_only)
                 if index and tags then index.put(file, stamp, tags); pending = pending + 1 end
+                if similar and tags then score = M.embeddedTagScore(tags, origin_tags) end
             end
             if task.file then finish(tags and { tags = tags } or nil, err); return end
             if not tags then
                 if err == "unindexed" then unindexed = unindexed + 1 else skipped = skipped + 1 end
-            elseif not task.index_only and M.embeddedTagMatches(tags, rule) then
+            elseif similar and score and score > 0 and file ~= task.origin then
+                paths[#paths + 1], stamps[file], scores[file] = file, stamp, score
+            elseif not similar and not task.index_only and M.embeddedTagMatches(tags, rule) then
                 if #paths == 400 then truncated = true; finish(snapshot()); return end
                 paths[#paths + 1], stamps[file] = file, stamp
             end

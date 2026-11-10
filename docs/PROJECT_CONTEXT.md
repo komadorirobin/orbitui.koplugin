@@ -20,7 +20,22 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-09
+## Snapshot: 2026-11-10
+
+- **Local similar-books/series feature, not published.** User approves point 1
+  from the Aleph review. In the existing offline Tags section, an explicit
+  action ranks local EPUBs by distinct common literal tags; Books/Series reuse
+  passive cached/RO series discovery and exclude the current series across
+  profiles. MAX volume score avoids inflating long series. Reuse existing
+  stat/epoch-checked SQLite batches (128 paths/200 source tags), fall back only
+  to existing caches, scan all candidates then cap the ranked view at 400.
+  Missing tags/metadata are disclosed with an explicit tag-index action.
+  No AI/server/network, reader auto-open, new index/schema/runtime path, Home
+  replacement or data migration. Native stop/close/sleep/navigation guards and
+  separate view preferences remain. Independent OrbitUI code; no Aleph source,
+  assets or dependency imported. No upstream/pin/version/public-dist/device/
+  server/watch change; stable 1.1.0 and public preview beta.1 stay unchanged.
+  C10/FEATURES/TESTING/MERGE_LOG record the local work and physical gaps.
 
 - **1.2.0-beta.1 preview is public.** Published 06:01:52 UTC, release
   438785778, source/tag 93d879bf / v1.2.0-beta.1; ZIP 25f988ce, 9,695,479

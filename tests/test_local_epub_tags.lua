@@ -282,6 +282,116 @@ H.test("unreadable EPUBs are counted honestly and the result cap is disclosed", 
     Integration.embeddedTagRequest(Integration.embeddedTagSession(), { tag = tag }, function() return true end, function(value) result = value end)
     flush(); H.eq(#result.paths, 400); H.eq(result.truncated, true)
 end)
+H.test("similarity counts distinct literal tags, supports 200 source tags and rejects malformed arrays", function()
+    H.eq(Integration.embeddedTagScore({ tag, tag, other }, { tag, tag }), 1)
+    H.eq(Integration.embeddedTagScore({ "other", "ÅLAND & 日本語" }, { tag, other }), 0)
+    H.eq(Integration.embeddedTagScore({}, { tag }), 0)
+    local many = {}; for i = 1, 200 do many[i] = "Tag " .. i end
+    H.eq(Integration.embeddedTagScore(many, many), 200)
+    many[201] = "Too many"; H.eq(Integration.embeddedTagScore({}, many), nil)
+    for _, invalid in ipairs{ { 1 }, { "bad\n" }, { string.rep("x", 801) }, { " " }, { [2] = tag } } do
+        H.eq(Integration.embeddedTagScore(invalid, { tag }), nil)
+        H.eq(Integration.embeddedTagScore({}, invalid), nil)
+    end
+    H.eq(Integration.embeddedTagScore(nil, { tag }), nil)
+end)
+H.test("similarity opens only the explicitly selected source; missing and stale candidates remain unindexed", function()
+    reset()
+    add("/books/a.epub", opf('["Åland & 日本語","Other","Other"]'))
+    assert(Integration.embeddedTags("/profile/a.epub", false, true))
+    assert(Integration.embeddedTags("/books/untagged.epub", false, true))
+    add("/books/stale.epub", opf('["Åland & 日本語"]'))
+    assert(Integration.embeddedTags("/books/stale.epub", false, true)); files["/books/stale.epub"].change = 2
+    add("/books/cold.epub", opf('["Åland & 日本語"]'))
+    opened, closed = 0, 0
+    local result, failure
+    local source = Integration.embeddedTagSession()
+    Integration.embeddedTagRequest(source, { similar = true, origin = "/books/a.epub", on_progress = function() end },
+        function() return true end, function(body, err) result, failure = body, err end)
+    flush(1); H.eq(opened, 1); H.eq(result, nil)
+    flush(); H.eq(failure, nil); H.eq(opened, 1); H.eq(closed, 1)
+    H.eq(#result.paths, 1); H.eq(result.paths[1], "/profile/a.epub")
+    H.eq(result.scores["/profile/a.epub"], 1); H.eq(result.scores["/books/a.epub"], nil)
+    H.eq(result.source_tag_count, 2); H.eq(result.unindexed, 2); H.eq(result.complete, false)
+    H.eq(#source.inventory, 5); H.eq(#source.similar_tags, 2)
+    H.eq(Integration.embeddedTagIsCurrent("/profile/a.epub", result.stamps["/profile/a.epub"]), true)
+    disk["/profile/a.epub"] = nil -- SQL score/stamp remains valid without the per-file JSON cache
+    H.eq(Integration.embeddedTagIsCurrent("/profile/a.epub", result.stamps["/profile/a.epub"]), true)
+    files["/profile/a.epub"].change = 2
+    H.eq(Integration.embeddedTagIsCurrent("/profile/a.epub", result.stamps["/profile/a.epub"]), false)
+    H.eq(Integration.embeddedTagIsCurrent("/missing.epub", "1:1:0"), false)
+end)
+H.test("similarity cancellation and scope retirement stop before any candidate archive can open", function()
+    for _, mode in ipairs{ "cancel", "scope", "navigation" } do
+        reset(); local body, failure, current, retired = nil, nil, true, 0
+        local worker = Integration.embeddedTagRequest(Integration.embeddedTagSession(), { similar = true,
+            origin = "/books/a.epub", on_progress = function() end, on_retired = function() retired = retired + 1 end },
+            function() return current end, function(value, err) body, failure = value, err end)
+        flush(1); H.eq(opened, 1)
+        if mode == "cancel" then worker.cancel()
+        elseif mode == "scope" then roots = { "/other" }
+        else current = false end
+        flush(); H.eq(opened, 1)
+        if mode == "cancel" then H.eq(failure, "cancelled"); H.eq(body.complete, false)
+        elseif mode == "scope" then H.eq(failure, "stale")
+        else H.eq(retired, 1); H.eq(body, nil) end
+    end
+end)
+H.test("similarity scans beyond 400 matching volumes so late better matches can rank first", function()
+    reset()
+    add("/books/a.epub", opf('["Åland & 日本語","Other","Other"]'))
+    for i = 1, 3341 do
+        local file = "/books/" .. i .. ".epub"
+        add(file, opf('["Åland & 日本語"]')); assert(Integration.embeddedTags(file, false, true))
+    end
+    add("/books/z-best.epub", opf('["Åland & 日本語","Other","Other"]'))
+    assert(Integration.embeddedTags("/books/z-best.epub", false, true))
+    opened = 0
+    local result
+    Integration.embeddedTagRequest(Integration.embeddedTagSession(), { similar = true, origin = "/books/a.epub",
+        on_progress = function(body) body.scores["/books/z-best.epub"] = -100 end }, function() return true end,
+        function(body) result = body end)
+    flush(); H.eq(result.scanned, 3345); H.eq(#result.paths, 3342)
+    H.eq(result.scores["/books/z-best.epub"], 2); H.eq(result.truncated, false); H.eq(opened, 1)
+end)
+H.test("similarity rejects tagless sources without scanning and retires changed source stamps or tag revisions", function()
+    reset()
+    local body, failure
+    Integration.embeddedTagRequest(nil, { similar = true, origin = "/books/untagged.epub", on_progress = function() end },
+        function() return true end, function(value, err) body, failure = value, err end)
+    flush(); H.eq(body, nil); H.eq(failure, "no_tags"); H.eq(opened, 1)
+    for _, change in ipairs{ function() files["/books/a.epub"].change = 2 end,
+            function() Integration.invalidateEmbeddedTagSnapshots() end } do
+        reset(); body, failure = nil, nil
+        Integration.embeddedTagRequest(nil, { similar = true, origin = "/books/a.epub", on_progress = function() end },
+            function() return true end, function(value, err) body, failure = value, err end)
+        flush(1); change(); flush(); H.eq(body, nil); H.eq(failure, "stale"); H.eq(opened, 1)
+    end
+end)
+H.test("similarity uses bounded aggregate score batches without per-candidate cache reads or archive opens", function()
+    reset(); assert(Integration.embeddedTags("/books/a.epub", false, true))
+    for i = 1, 300 do add("/books/" .. i .. ".epub", opf('["Åland & 日本語"]')) end
+    local original, batches, close_count = Integration.openEmbeddedTagIndex, 0, 0
+    Integration.openEmbeddedTagIndex = function(existing)
+        H.eq(existing, true)
+        return { similar = function(paths, first, tags)
+            batches = batches + 1; H.eq(tags[1], tag)
+            local rows = {}
+            for i = first, math.min(first + 127, #paths) do
+                local file = paths[i]
+                rows[file] = { stamp = "1:1:" .. files[file].size, score = file:find("untagged", 1, true) and 0 or 1 }
+            end
+            return rows
+        end, close = function() close_count = close_count + 1 end }
+    end
+    opened, cache_reads = 0, 0
+    local result
+    Integration.embeddedTagRequest(nil, { similar = true, origin = "/books/a.epub", on_progress = function() end },
+        function() return true end, function(body) result = body end)
+    flush(); Integration.openEmbeddedTagIndex = original
+    H.eq(batches, 3); H.eq(opened, 0); H.eq(cache_reads, 1); H.eq(close_count, 1)
+    H.eq(#result.paths, 301); H.eq(result.complete, true)
+end)
 local Modal = H.widget()
 function Modal:refresh() end
 function Modal:onClose() self.shown = false; self.config.on_closed() end
@@ -300,6 +410,29 @@ H.test("existing Tags tab displays local pills offline and opens the shared loca
     retired(); flush(); H.eq(opened, 1)
     section.pills[1].on_tap(); H.eq(modal._dismissed, true)
     flush(); H.eq(getmetatable(last_widget), Modal); H.eq(last_widget.shown, true) -- inline search, no blocking notice
+end)
+H.test("similar-books entry is passive, local EPUB-only and rejects stale tag-panel callbacks", function()
+    reset()
+    local Panel, Search = require("adapters/orbitui_book_panel"), require("core/orbitui_search")
+    local original, calls, section, got = Search.similarBooks, 0, nil, nil
+    Search.similarBooks = function(file, opts) calls = calls + 1; got = { file, opts } end
+    local modal = { _tabs = {{ id = "tags" }}, _active_tab = 1, shown = true }
+    function modal:onClose() self._dismissed = true; self.shown = false end
+    local owner, book = { profile_key = "manga" }, { filepath = "/books/a.epub", title = "Source" }
+    section = Panel.tagSections(owner, book, modal)[1]
+    H.eq(opened, 0); local stale = section.pills[#section.pills].on_tap
+    section = Panel.tagSections(owner, book, modal)[1]
+    stale(); H.eq(calls, 0)
+    H.eq(section.pills[#section.pills].label, "Find similar books and series…")
+    section.pills[#section.pills].on_tap(); H.eq(calls, 1); H.eq(got[1], book.filepath)
+    H.eq(got[2].title, "Source"); H.eq(got[2].view_profile, "manga"); H.eq(modal.shown, false)
+    for _, path in ipairs{ "OPDS://remote.epub", "/books/a.pdf" } do
+        local other_modal = { _tabs = {{ id = "tags" }}, _active_tab = 1, shown = true }
+        for _, pill in ipairs(Panel.tagSections(owner, { filepath = path }, other_modal)[1].pills) do
+            assert(pill.label ~= "Find similar books and series…")
+        end
+    end
+    H.eq(opened, 0); Search.similarBooks = original
 end)
 H.test("local result actions reveal real shelf paths without reading and refuse a changed tag/file", function()
     reset()

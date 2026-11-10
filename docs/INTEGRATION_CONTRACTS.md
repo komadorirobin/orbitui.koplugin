@@ -1309,6 +1309,39 @@ Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
 
+November 10 approved local recommendations (Aleph inspiration, independent
+OrbitUI code): expose Find similar books and series in the existing offline
+EPUB-tags section, not a new Home card or replacement for Continue reading.
+Explicit source read only; compare distinct literal embedded tags, up to the
+existing 200-tag EPUB limit. Keep saved AND/OR smart rules at 16 tags and online
+BookOrbit matching unchanged. No genres/subjects/collections/title guesses,
+network/provider, additional index/schema, automatic background job, cover
+prefetch, document engine or reading/metadata/file writer.
+
+Reuse current stat/epoch-checked tag-index scores in bound batches of at most
+128 paths plus 200 source tags; known zero differs from absent/stale/error.
+Fallback reads existing per-file caches only, not unindexed candidate archives.
+Missing coverage is disclosed with an explicit existing index-manager action.
+Retain 32 cache candidates/8ms turns and positive post-paint input windows.
+Scan the whole configured inventory before limiting the ranked view to 400;
+do not cut the input off at the ordinary tag-search hit cap.
+
+Reuse bounded passive cached/RO metadata discovery for both Books and Series.
+Exclude the source path and its exact trimmed series/sorted-author identity
+across profiles, but preserve profile identity for grouping other series.
+Series score is MAX of checked matching volume scores, never volume-count sum
+or a union pretending tags coexist in one volume. Preserve first local-volume
+selection, decimal order and missing-order labels. Unknown source metadata
+cannot safely recommend anything; unknown candidate metadata is omitted with
+help. Reveal/hold requires checked membership, live stamps for source/candidate,
+tag revision, repository data generation, library and native navigation owner.
+Valid aggregate hits must remain selectable even if their per-file JSON cache
+was pruned. No reader opens on a result tap. Views have independent per-profile
+preferences and no automatic changes to existing tag-result preferences.
+Close/cancel/navigation/sleep retire owned handles; sleep does not automatically
+resume recommendations. All owned labels/help are SV/EN. Desktop/package proof
+is not Bigme acceptance or publication authorization.
+
 November 8 reported dashboard card-menu correction: picker additions show
 saved success/failure feedback, and BookOrbit sources show checked membership
 for this screen. Repeated picker taps cannot create another card for the same

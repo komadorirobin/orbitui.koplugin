@@ -1,5 +1,17 @@
 -- OrbitUI-owned strings, independent of the two upstream translation catalogs.
 local sv = {
+    ["Find similar books and series…"] = "Hitta liknande böcker och serier…",
+    ["Similar books and series"] = "Liknande böcker och serier",
+    ["Series discovery paused. Tap Refresh to continue."] = "Seriegrupperingen har pausats. Tryck Uppdatera för att fortsätta.",
+    ["Library metadata or tags changed. Refresh and try again."] = "Bibliotekets metadata eller taggar har ändrats. Uppdatera och försök igen.",
+    ["Local recommendations ranked by shared EPUB tags, across your libraries. The current book and its series are excluded. Only current indexed tags are used; no AI or server is needed."] = "Lokala rekommendationer utifrån gemensamma EPUB-taggar i dina bibliotek. Den aktuella boken och dess serie utesluts. Bara aktuella indexerade taggar används. Ingen AI eller server behövs.",
+    ["This EPUB has no separate embedded tags. Add tags to the EPUB and update the tag index. Genres are not used as substitute tags."] = "EPUB-filen saknar separata inbäddade taggar. Lägg till taggar i filen och uppdatera taggindexet. Genrer används inte som ersättning för taggar.",
+    ["Showing the best 400 results."] = "Visar de 400 bästa träffarna.",
+    ["Some cached series metadata is missing. Those books are not recommended; update library metadata and refresh."] = "Vissa cachade serieuppgifter saknas. De böckerna rekommenderas inte. Uppdatera bibliotekets metadata och uppdatera sedan träffarna.",
+    ["%d EPUBs have no current cached tags. Update the tag index for complete recommendations."] = "%d EPUB-filer saknar aktuella cachade taggar. Uppdatera taggindexet för fullständiga rekommendationer.",
+    ["Update tag index…"] = "Uppdatera taggindex…",
+    ["Shared tags: %d · Available volumes: %d"] = "Gemensamma taggar: %d · Tillgängliga volymer: %d",
+    ["Shared tags: %d"] = "Gemensamma taggar: %d",
     ["Card added: %s"] = "Kort tillagt: %s",
     ["Card removed."] = "Kortet har tagits bort.",
     ["This source already has a card. Manage it in Cards and content."] = "Källan har redan ett kort. Hantera det i Kort och innehåll.",

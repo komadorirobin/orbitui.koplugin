@@ -31,6 +31,7 @@ package.loaded["lib/bookshelf_profiles"] = {
 package.loaded["lib/bookshelf_book_repository"] = {
     getAllFilepaths = function() return inventory end,
     tagTextMeta = function(file, info)
+        info = info or {}
         return { filepath = file, title = info.title or file, authors = info.authors and { info.authors } or {},
             series_name = info.series, series_num = info.series_index }
     end,
@@ -235,8 +236,53 @@ H.test("native text resolution honours custom and Calibre series without repairi
     H.eq(book.authors[1], "Curated"); H.eq(calls, 0)
 end)
 
+H.test("similar series exclude the source across profiles, preserve author identity and use maximum volume score", function()
+    reset()
+    local origin = add("/manga/current.epub", "Current", 1, "A")
+    local own = add("/books/current02.epub", "Current", 2, "A"); own.similar_score = 10
+    local homonym = add("/manga/homonym.epub", "Current", 1, "B"); homonym.similar_score = 2
+    add("/manga/other01.epub", "Other", 1)
+    local other = add("/manga/other02.epub", "Other", 2); other.similar_score = 3
+    local records = { own, homonym, other }
+    for i = 1, 30 do
+        local row = add("/manga/large" .. i .. ".epub", "Large", i); row.similar_score = 1; records[#records + 1] = row
+    end
+    local state = start(records); H.eq(#Q.similarRows(records, state, origin.filepath, "series"), 0); flush()
+    local before = reads
+    local rows = Q.similarRows(records, state, origin.filepath, "series")
+    H.eq(#rows, 3); H.eq(rows[1].title, "Other"); H.eq(rows[1].similar_score, 3)
+    H.eq(rows[1].filepath, "/manga/other01.epub"); H.eq(#rows[1].matched, 1); H.eq(#rows[1].members, 2)
+    H.eq(rows[2].authors[1], "B"); H.eq(rows[3].title, "Large"); H.eq(rows[3].similar_score, 1)
+    H.eq(#Q.similarRows(records, state, origin.filepath, "volumes"), 32)
+    H.eq(reads, before); H.eq(other.title, nil) -- sorting/rendering must not mutate the shared checked records
+end)
+H.test("similar books rank standalone titles by score then title with no fabricated metadata", function()
+    reset()
+    local origin = add("/books/source.epub")
+    local records = {}
+    for _, name in ipairs{ "Z", "A", "B" } do
+        local row = add("/books/" .. name .. ".epub"); row.similar_score = name == "B" and 3 or 2
+        records[#records + 1] = row
+    end
+    local unknown = add("/books/unknown.epub", nil, nil, nil, true); unknown.similar_score = 50
+    records[#records + 1] = unknown
+    local state = start(records); flush()
+    local rows, incomplete = Q.similarRows(records, state, origin.filepath, "volumes")
+    H.eq(incomplete, true); H.eq(#rows, 3); H.eq(rows[1].title, "B.epub"); H.eq(rows[2].title, "A.epub")
+    H.eq(rows[1].tag_section_first, false)
+    state.metadata[origin.filepath]._tag_known = false
+    rows, incomplete = Q.similarRows(records, state, origin.filepath, "series")
+    H.eq(#rows, 0); H.eq(incomplete, true)
+    state.unavailable = true
+    rows, incomplete = Q.similarRows(records, state, origin.filepath, "series")
+    H.eq(#rows, 0); H.eq(incomplete, true)
+end)
+
 -- Exercise the shared dialog callbacks, not just the grouping helper.
 local prefs, tag_reads, reveals, series_reveals, latest
+local similar_paths, similar_scores, tag_revision, metadata_revision, request_failure
+tag_revision, metadata_revision = "r1", 1
+package.loaded["lib/bookshelf_book_repository"].dataGeneration = function() return metadata_revision end
 UI.show = function(_, modal) modal.shown = true end
 UI.close = function(_, modal) modal.shown = false end
 UI.isWidgetShown = function(_, modal) return modal and modal.shown end
@@ -260,15 +306,29 @@ package.loaded["adapters/orbitui_integrations"] = {
     embeddedTagSession = function()
         return { inventory = inventory, current = function() return active end }
     end,
-    embeddedTagRequest = function(_, _, current, done)
+    embeddedTagRequest = function(source, task, current, done)
         tag_reads = tag_reads + 1
+        if task.similar then
+            source.similar_revision, source.similar_tags, source.similar_stamp = tag_revision, { "Slice of life" }, "source"
+        end
         UI:scheduleIn(.001, function()
-            if current() then done({ paths = { "/manga/02.epub", "/manga/10.epub" }, scanned = 3, total = 3 }) end
+            if current() then
+                if task.similar and request_failure then done(nil, request_failure)
+                else
+                    local stamps = {}; for _, file in ipairs(similar_paths or {}) do stamps[file] = "checked" end
+                    done({ paths = task.similar and similar_paths or { "/manga/02.epub", "/manga/10.epub" },
+                        scores = task.similar and similar_scores or nil, stamps = stamps, scanned = #inventory, total = #inventory })
+                end
+            end
         end)
         return { cancel = function() end }
     end,
     embeddedTags = function() return { "Slice of life" } end,
     embeddedTagMatches = function() return true end,
+    embeddedTagSnapshotRevision = function() return tag_revision end,
+    embeddedTagScore = function(tags) return tags and 1 end,
+    embeddedTagIsCurrent = function(file, stamp) return files[file] and not files[file].changed and type(stamp) == "string" end,
+    embeddedTagError = function() return "Tag read failed" end,
 }
 local Context = require("core/orbitui_context")
 Context.notify = function() end
@@ -328,6 +388,115 @@ H.test("Stop, Close and sleep retire metadata work without rescanning tags on ta
     for i = 11, 40 do add("/manga/extra" .. i .. ".epub", "Extra", i) end
     flush(2); before = reads; modal:onSuspend(); flush(); H.eq(reads, before)
     modal:onClose(); modal:onResume(); flush(); H.eq(reads, before)
+end)
+
+local function similarDialog(opts, extras)
+    reset(); prefs, tag_reads, reveals, series_reveals = {}, 0, 0, 0
+    tag_revision, metadata_revision, request_failure = "r1", 1, nil
+    add("/manga/source.epub", "Current", 1)
+    add("/manga/source02.epub", "Current", 2)
+    add("/manga/01.epub", "Other", 1)
+    add("/manga/02.epub", "Other", 2)
+    add("/books/single.epub")
+    similar_paths, similar_scores = { "/manga/source02.epub", "/manga/02.epub", "/books/single.epub" },
+        { ["/manga/source02.epub"] = 3, ["/manga/02.epub"] = 1, ["/books/single.epub"] = 2 }
+    for i = 1, extras or 0 do
+        local path = "/books/extra" .. i .. ".epub"; add(path)
+        similar_paths[#similar_paths + 1], similar_scores[path] = path, 1
+    end
+    opts = opts or {}; opts.title, opts.view_profile = "Source", "manga"
+    return Search.similarBooks("/manga/source.epub", opts)
+end
+H.test("recommendation modal uses native tabs, ranked scores and separate preferences without opening books", function()
+    local modal = similarDialog({ open_book = function() error("must not open a reader") end })
+    H.eq(tag_reads, 1); H.eq(reads, 0); H.eq(modal.config.initial_tab, "series")
+    H.eq(modal.config.tabs[2].label, "Books"); flush()
+    H.eq(modal.config.item_count(), 2); H.eq(modal.config.item_at(1).filepath, "/books/single.epub")
+    H.eq(modal.config.item_at(2).filepath, "/manga/01.epub")
+    local rendered = modal.config.cell_renderer(modal.config.item_at(2), {})
+    assert(rendered.subtitle:find("Shared tags: 1 · Available volumes: 2", 1, true))
+    local before = reads
+    modal.config.on_tab_change("volumes"); H.eq(modal.config.item_count(), 2)
+    H.eq(modal.config.item_at(2).filepath, "/manga/02.epub"); H.eq(tag_reads, 1); H.eq(reads, before)
+    H.eq(prefs.orbitui_similar_result_view_manga, "volumes"); H.eq(prefs.orbitui_tag_result_view_manga, nil)
+    local first = modal.config.item_at(1)
+    modal.config.item_count(); modal.config.item_count(); H.eq(modal.config.item_at(1), first)
+    modal.config.on_search_submit("single"); H.eq(modal.config.item_count(), 1)
+    local I = package.loaded["adapters/orbitui_integrations"]
+    local old_tags = I.embeddedTags
+    I.embeddedTags = function() error("selection must use checked SQL scores/stamps, not open a candidate archive/cache") end
+    modal.config.on_cell_tap(modal.config.item_at(1)); H.eq(reveals, 1); H.eq(modal.shown, false)
+    I.embeddedTags = old_tags
+end)
+H.test("recommendations reveal a series' first local volume but refuse self-series, stale metadata and tag revisions", function()
+    local modal = similarDialog(); flush()
+    modal.config.on_cell_tap({ filepath = "/manga/source02.epub" }); H.eq(reveals, 0)
+    modal.config.on_cell_tap(modal.config.item_at(2)); H.eq(series_reveals, 1); H.eq(reveals, 0)
+    for _, change in ipairs{ function() metadata_revision = metadata_revision + 1 end,
+            function() tag_revision = "r2" end,
+            function() files["/books/single.epub"].changed = true end,
+            function() files["/manga/source.epub"].changed = true end } do
+        modal = similarDialog(); flush(); local row = modal.config.item_at(1)
+        change(); modal.config.on_cell_tap(row); H.eq(reveals, 0)
+        if metadata_revision ~= 1 or tag_revision ~= "r1" then H.eq(modal.config.item_count(), 0) end
+        modal:onClose()
+    end
+end)
+H.test("recommendations cap only after ranking, and surface missing metadata without a second user action", function()
+    local modal = similarDialog(nil, 450); similar_scores[similar_paths[#similar_paths]] = 10; flush()
+    H.eq(modal.config.item_count(), 400); H.eq(modal.config.item_at(1).similar_score, 10)
+    assert(modal.config.intro:find("Showing the best 400 results.", 1, true))
+    modal.config.on_search_submit("single"); H.eq(modal.config.item_count(), 1)
+    assert(not modal.config.intro:find("Showing the best 400 results.", 1, true)); modal:onClose()
+    modal = similarDialog(); files["/manga/source.epub"].unknown = true; flush()
+    H.eq(modal.config.item_count(), 0)
+    assert(modal.config.intro:find("Some cached series metadata is missing.", 1, true)); modal:onClose()
+    modal = similarDialog(); fail = true; flush()
+    H.eq(modal.config.item_count(), 0)
+    assert(modal.config.intro:find("Some cached series metadata is missing.", 1, true)); modal:onClose()
+end)
+H.test("recommendations stop or sleep while discovering metadata without automatic wake scanning", function()
+    for _, sleep in ipairs{ false, true } do
+        local modal = similarDialog(nil, 40); flush(2); local before = reads
+        H.eq(modal.config.item_count(), 0)
+        if sleep then modal:onSuspend(); flush(); modal:onResume()
+        else
+            modal.config.footer_rows[1][1].on_tap()
+            assert(modal.config.intro:find("Series discovery paused.", 1, true))
+        end
+        flush(); H.eq(reads, before)
+        H.eq(modal.config.footer_rows[1][1].label_func(), "Refresh")
+        modal.config.footer_rows[1][2].on_tap(); H.eq(modal.shown, false)
+        flush(); H.eq(reads, before)
+    end
+end)
+H.test("tagless recommendations have actionable help and index update is explicit, not a forced reread", function()
+    local modal = similarDialog(); request_failure = "no_tags"; flush()
+    assert(modal.config.intro:find("Genres are not used as substitute tags.", 1, true)); H.eq(reads, 0)
+    local original, called = Search.tagIndex, nil
+    Search.tagIndex = function(opts) called = opts end
+    H.eq(modal.config.footer_rows[2][1].label, "Update tag index…")
+    modal.config.footer_rows[2][1].on_tap(); H.eq(called.confirm_reread, false); H.eq(modal.shown, false)
+    Search.tagIndex = original
+    H.eq(Search.similarBooks("OPDS://source.epub"), nil); H.eq(Search.similarBooks("/source.pdf"), nil)
+end)
+H.test("an empty checked recommendation set does not walk metadata for the entire library", function()
+    local modal = similarDialog(nil, 40); similar_paths = {}; flush()
+    H.eq(modal.config.item_count(), 0); H.eq(reads, 0); H.eq(connections, 0); H.eq(#queue, 0)
+    modal:onClose()
+end)
+H.test("recommendation strings have Swedish/English coverage without translating tag values", function()
+    local _ = require("core/orbitui_i18n")
+    for _i, text in ipairs{ "Find similar books and series…", "Similar books and series", "Update tag index…",
+        "Library metadata or tags changed. Refresh and try again.",
+        "Series discovery paused. Tap Refresh to continue.",
+        "Showing the best 400 results.", "Shared tags: %d", "Shared tags: %d · Available volumes: %d",
+        "%d EPUBs have no current cached tags. Update the tag index for complete recommendations.",
+        "Some cached series metadata is missing. Those books are not recommended; update library metadata and refresh.",
+        "This EPUB has no separate embedded tags. Add tags to the EPUB and update the tag index. Genres are not used as substitute tags.",
+        "Local recommendations ranked by shared EPUB tags, across your libraries. The current book and its series are excluded. Only current indexed tags are used; no AI or server is needed." } do
+        assert(_(text, "sv") ~= text); H.eq(_(text, "en"), text)
+    end
 end)
 
 H.test("visible series thumbnails preserve aspect and never free a borrowed cover", function()

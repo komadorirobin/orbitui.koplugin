@@ -1,5 +1,35 @@
 # Verification and device acceptance
 
+## 2026-11-10 — local similar books and series
+
+Approved point 1 from the Aleph review; branch
+`feature/local-similar-books-20261110`, based on 2bfe9bee. No publication,
+device/server install, upstream merge, version bump or watch activation.
+
+Focused coverage exercises exact/deduplicated case-sensitive Unicode tags,
+malformed arrays and the 200-tag source bound; source-only archive reads,
+cache misses/stale stamps and SQL fallback; 3,341 matching volumes with a
+better late match beyond the ordinary 400-hit cap; cancellation/source-revision/
+root/navigation retirement; real SQLite score queries with injection strings,
+128-path batches, all 200 tags, epoch loss and database failure. UI/ranking
+cases cover MAX-not-sum series scoring, cross-profile own-series exclusion,
+different-author homonyms, first untagged local volume, standalone ties,
+unknown source/candidate metadata, post-ranking caps, native modal callbacks,
+separate preferences, filtering, passive Tags entry, safe reveal, stale actions,
+pruned per-file JSON caches, Stop/Close/sleep without auto-resume, explicit
+index management, tagless help and SV/EN. Existing tag/BookOrbit semantics stay
+under their retained regression suites.
+
+Run both complete scripts, 43 catalogs, native SQLite/tag-series and actual
+libarchive/native input supplements; freeze a committed local candidate and
+verify its sealed runtime/inventory plus all root suites in both interpreters.
+Evidence: ignored `test-results/local-similar-20261110/`; final receipt follows.
+Headless/native desktop tests are not measured Bigme timings or visual/device
+acceptance. Physical follow-up: use real manga tags, compare Books/Series,
+tap and long-press results, rotate, stop/sleep midway, refresh after reindexing,
+and confirm native descriptions/covers/selection. Do not claim public readiness
+or update stable/preview OTA based on these local checks alone.
+
 ## 2026-11-09 — 1.2.0-beta.1 release freeze
 
 **Published:** 93d879bf / v1.2.0-beta.1, release 438785778 at 06:01:52 UTC;

@@ -26,6 +26,50 @@ function M.tagVolumeLess(a, b)
     return a.filepath < b.filepath
 end
 
+-- Rank checked volume-level scores, never sum a series' volumes or union
+-- their tags. Existing discovery metadata supplies identities and the first
+-- locally available volume; no extra metadata/cover/provider read is needed.
+function M.similarRows(records, discovery, origin, view)
+    if not discovery or not discovery.finished or discovery.unavailable then return {}, discovery and discovery.unavailable or false end
+    local source = discovery.metadata[origin]
+    if not source or not source._tag_known then return {}, true end
+    local source_key = source and M.tagSeriesKey(source, "")
+    local candidates = view == "series" and discovery.rows() or records
+    local out, incomplete = {}, false
+    for _, book in ipairs(candidates) do
+        local meta = book.tag_series and book or discovery.metadata[book.filepath]
+        local same_series = source_key and meta and source_key == M.tagSeriesKey(meta, "")
+        if book.filepath ~= origin and not same_series then
+            local item = {}; for k, v in pairs(book) do item[k] = v end
+            item.similar_score = tonumber(book.similar_score) or 0
+            if book.tag_series then
+                item.similar_score = 0
+                for _, match in ipairs(book.matched) do
+                    local checked = discovery.metadata[match.filepath]
+                    if checked and checked._tag_known then
+                        item.similar_score = math.max(item.similar_score, tonumber(match.similar_score) or 0)
+                    else incomplete = true end
+                end
+            elseif meta and meta._tag_known then
+                item.title, item.author = meta.title, (meta.authors or {})[1]
+            else
+                item.similar_score, incomplete = 0, true
+            end
+            if item.similar_score > 0 then out[#out + 1] = item end
+        end
+    end
+    table.sort(out, function(a, b)
+        if a.similar_score ~= b.similar_score then return a.similar_score > b.similar_score end
+        local at, bt = a.title or a.filename or a.filepath, b.title or b.filename or b.filepath
+        if at ~= bt then return at < bt end
+        return a.filepath < b.filepath
+    end)
+    -- The old series renderer groups unknown/standalone rows into contiguous
+    -- sections. Ranked recommendations deliberately interleave those rows.
+    for _, item in ipairs(out) do item.tag_section_first = false end
+    return out, incomplete
+end
+
 -- Read at most eight indexed text rows per turn, on a separate RO connection.
 -- The library inventory is shared with the tag worker where available. No
 -- archive, document, cover, network request or settings write belongs here.

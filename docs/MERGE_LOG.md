@@ -4,6 +4,30 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-10 — independent local tag recommendations (not an import)
+
+User approves point 1 from the Aleph inspiration review: similar local books
+and series. Branch `feature/local-similar-books-20261110` starts at 2bfe9bee.
+Idea reference: [Aleph at 89419f6f](https://github.com/lara-2-ko/aleph.koplugin/tree/89419f6fdb14d160d5139069cc5af3783fe01bca),
+whose reviewed similarity flow counts common genres and excludes its current
+series. No Aleph source/assets/dependency are copied/imported. OrbitUI instead
+implements exact embedded-tag similarity using its existing derived cache and
+native tag/series panel ownership. This is not an upstream-baseline advance or
+an inspiration-watch activation.
+
+C10 records 200-tag/128-path scoring, source-only explicit archive reads,
+cache-only candidates, rank-before-cap, MAX-not-sum series scores, own-series
+exclusion across profiles, safe cached-metadata selection, missing coverage,
+native lifecycle/SV/EN and no new reading-data/network owner. Tags navigation
+remains a shelf preview, never automatic reader opening; Continue reading and
+Home layouts stay unchanged. Tests/evidence and physical gaps are in TESTING.
+Only existing runtime files, tests and documentation change. The 33 embedded
+helpers/412 module identities and API1 runtime path budget remain unchanged;
+frozen package verification is required. VERSION, public dist, source pins,
+components, artwork/fonts/languages and stable/maintenance/public preview
+assets remain untouched. No push/tag/release/device/server operation authorized
+or performed in this step.
+
 ## 2026-11-09 — 1.2.0-beta.1 release freeze
 
 **Published 06:01:52 UTC**, release **438785778**, source/tag **93d879bf /

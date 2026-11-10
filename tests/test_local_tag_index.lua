@@ -94,6 +94,44 @@ H.test("index manager stamp-only batches reuse known tagless rows without a tag 
     H.eq(rows["/missing.epub"], nil); H.eq(rows["/a.epub"].matches, false)
     assert(index.close())
 end)
+H.test("real similarity SQL counts exact distinct tags without duplicate, case or injection inflation", function()
+    local M = fresh(); local index = assert(M.openEmbeddedTagIndex())
+    local attack = "/local/'; DROP TABLE tags;--.epub"
+    index.put(attack, "safe", { tag, "x' OR 1=1 --", "Other" })
+    index.put("/one.epub", "one", { tag }); index.put("/empty.epub", "empty", {})
+    assert(index.flush())
+    local rows = assert(index.similar({ attack, "/one.epub", "/empty.epub", "/unknown.epub" }, 1,
+        { tag, tag, "x' OR 1=1 --", "other" }))
+    H.eq(rows[attack].score, 2); H.eq(rows[attack].stamp, "safe")
+    H.eq(rows["/one.epub"].score, 1); H.eq(rows["/empty.epub"].score, 0); H.eq(rows["/unknown.epub"], nil)
+    H.eq(index.similar({ attack }, 1, { "ÅLAND & 日本語" })[attack].score, 0)
+    H.eq(index.similar({ attack }, 1, {}), nil); assert(index.close())
+end)
+H.test("real similarity SQL supports 200 source tags and bounds each path window to 128 rows", function()
+    local M = fresh(); local index = assert(M.openEmbeddedTagIndex())
+    local tags, files = {}, {}
+    for i = 1, 200 do tags[i] = "Tag " .. i end
+    for i = 1, 260 do
+        files[i] = "/local/" .. i .. ".epub"; index.put(files[i], tostring(i), i == 260 and tags or { tags[1] })
+        if i % 32 == 0 then assert(index.flush()) end
+    end
+    assert(index.flush())
+    local rows = assert(index.similar(files, 1, tags)); local count = 0
+    for _key in pairs(rows) do count = count + 1 end
+    H.eq(count, 128); H.eq(rows[files[129]], nil)
+    rows = assert(index.similar(files, 257, tags)); H.eq(rows[files[260]].score, 200)
+    tags[201] = "Too many"; H.eq(index.similar(files, 1, tags), nil)
+    assert(index.close())
+end)
+H.test("similarity cannot revive old-epoch scores and database errors are not an empty recommendation", function()
+    local M = fresh(); local index = assert(M.openEmbeddedTagIndex())
+    index.put("/a.epub", "same", { tag }); assert(index.close())
+    markers = {}; M = module(); index = assert(M.openEmbeddedTagIndex())
+    H.eq(index.similar({ "/a.epub" }, 1, { tag })["/a.epub"], nil)
+    local db = SQL.open(dbpath()); db:exec("DROP TABLE tags;"); db:close()
+    H.eq(index.similar({ "/a.epub" }, 1, { tag }), nil)
+    H.eq(M.openEmbeddedTagIndex(), nil)
+end)
 H.test("a missing epoch marker cannot revive rows from any previous index generation", function()
     local M = fresh(); local index = assert(M.openEmbeddedTagIndex())
     index.put("/local/a.epub", "same", { "Old" }); assert(index.close())
