@@ -36,6 +36,17 @@ verification receipt follows. Stable 1.1/public beta.1, VERSION, source pins,
 components/art/bootstrap, maintenance and public dist stay untouched. No push,
 release, installation, server operation or new physical acceptance is implied.
 
+Frozen **a5172c48** passes both full scripts (134 Python/four usual skips,
+1,236 syntax, 120 roots, 583 Bookshelf/zero failures/three usual exclusions,
+13 SimpleUI), 43 catalogs and all 120 sealed roots in Lua/LuaJIT. Focused
+panel 21 ordinary/25 min/current native cases, retained reference 29 and real
+SQLite/index/series/native-input 10/29/55 supplements pass, with no new
+exclusion. Private ZIP **c59d6995**, 9,733,861 bytes, manifest **402393c3**,
+same API1/exact 2,000 paths and 33/412 counts. Exact source/nine intended
+installed paths/held-art/history/redacted-secret checks pass. Public dist is
+unchanged **25f988ce**. This receipt changes docs only, not frozen bytes.
+All four local features remain unpublished and physical Bigme gates remain.
+
 ## 2026-11-10 — reader reference drawer (Aleph-list point 3)
 
 User requests the next point after the two completed local stages. New branch

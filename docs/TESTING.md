@@ -47,6 +47,28 @@ reading profiles; verify native margins/font/position, correct original Home/
 shelf return, ask-before-open and normal BookOrbit/Hardcover save/sync. Measure
 real UI/preparation/switch times. No headless pass establishes those results.
 
+**Frozen local receipt:** **a5172c481c5f424c200e73e8559c82108f67610e** passes
+both complete scripts: 134 Python tests/four pre-existing source-art skips,
+1,236 syntax files, all 120 roots, 583 Bookshelf suites/zero failures/three
+usual SQLite exclusions and all 13 SimpleUI files. No new exclusion. Both
+interpreters repeat all 120 roots from the sealed runtime; panel cases pass
+21 ordinary/25 with minimum/current native supplements. Retained reference
+supplements pass 29 at both baselines/interpreters; actual SQLite index/series
+and libarchive/native-input supplements pass 10/29/55. All 43 catalogs pass.
+
+Private ZIP **c59d6995a0bec3a143a291627a5e112a253e551876f728be7af7da84a7178a4f**,
+9,733,861 bytes, expanded 28,904,794; manifest **402393c3**, API1/exact 2,000
+paths and unchanged 33 embeds/412 identities. Every installed byte matches
+the frozen source projection; only nine intended adapter/core/doc paths
+change from 7c6a6fc0, plus three excluded test files. Unrelated components,
+VERSION, pins, art/fonts and bootstrap remain unchanged. All 63 outgoing
+blobs pass the held-art audit, and redacted Gitleaks reports no leaks. Public
+dist remains **25f988ce**. Evidence: full-{lua,luajit}.log, sealed.log,
+native-{minimum,current}-{lua,luajit}.log, translations.log,
+source-audit.json and gitleaks.log under reader-panel-20261110. Following
+receipt changes docs only; the private beta.1-labelled artifact is never a
+public replacement. No publication/install or physical acceptance occurred.
+
 ## 2026-11-10 — local reader reference drawer
 
 Approved Aleph-list point 3, branch `feature/reader-pin-drawer-20261110`, base

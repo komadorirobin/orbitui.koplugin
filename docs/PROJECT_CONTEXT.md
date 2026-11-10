@@ -39,8 +39,14 @@ and correct this file in the same change.
   Home return origin; ask-before-open, profiles and native sync keep ownership.
   Window/job/confirmation/reader/document/navigation guards prevent late work
   or stale actions across sleep, reflow, rotation, close and replacement.
-  C10/FEATURES/TESTING/MERGE_LOG record tests and physical gaps; full frozen
-  verification follows. Stable/preview/public dist, VERSION, source pins,
+  Frozen **a5172c48** passes both complete scripts, 43 catalogs, all 120
+  sealed roots in both interpreters and 21 ordinary/25 min/current native
+  panel cases. Retained references/native supplements pass 29 and 10/29/55.
+  Private ZIP **c59d6995**, 9,733,861 bytes, manifest **402393c3**, exact 2,000
+  paths and unchanged 33/412 counts. Source/path/held-art/history/secrets pass;
+  public dist is still **25f988ce**. C10/FEATURES/TESTING/MERGE_LOG record limits
+  and physical gaps. Receipt changes docs only, not frozen package bytes.
+  Stable/preview/public dist, VERSION, source pins,
   art, device/server and watch state are unchanged. No publication authorized.
 
 - **Local reader reference drawer, not published.** User requests Aleph-list
