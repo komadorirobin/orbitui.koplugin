@@ -22,6 +22,43 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-10
 
+- **Bigme feature verification and local corrections completed; not published.**
+  After the safe USB pause, the user returned and confirmed KOReader exited.
+  A fresh wireless-session backup, not the morning's settings, is the restore
+  authority. They explicitly approved fixing/retesting the two findings and
+  retaining a passing private candidate. Frozen runtime **28115129** / ZIP
+  **b0dffacc** is now active, healthy (pending=0), with the unchanged public
+  **25f988ce** slot retained as previous. No push, version bump, publication,
+  upstream/pin or server change occurred. Both full Lua/LuaJIT suites, 122 roots
+  with the sealed root configured, retained native supplements, package/source/
+  held-art/history/secret audits pass; TESTING/MERGE_LOG contain exact receipts.
+  Native modal headings now constrain the actual TextWidget before paint.
+  Next starts from visible paint, survives native same-turn free-before-build,
+  and previews cannot retire live work. On-device initial preparation, real
+  long-press > Items > Refresh, covered-menu idle, uncovered ready and reader
+  return now work. Native similarity tabs exclude the origin series and group
+  the two-volume fixture; page/text/image references persist across restarts,
+  page preview leaves page 6 unchanged, explicit jump reaches page 1, native
+  reader tools open, and the actual settled Also reading button switches
+  between fixtures. Forecast reaches ready after explicit retry of its safe
+  changed-data state; insufficient fixture data does not invent an estimate.
+  A short Android sleep/wake recovers Home and retained ready data; long sleep,
+  rotation/memory pressure and external sync remain separate acceptance gates.
+  All four fresh-session preference/history files were restored byte-for-byte;
+  test libraries/layouts and temporary plugin disables are removed from active
+  configuration. KOReader is closed, the diagnostic patch is outside autoload,
+  no boot marker remains. All 193 non-fixture book rows and 25,874 page-stat rows
+  match the new pre-session database exactly; the DB was not rolled back.
+  Isolated EPUBs/sidecars/pin snapshots and test-only statistics are retained.
+  Controlled native queries for 237 series reduced warm sorts 238→0 and median
+  query time **9.897→0.987 ms** with identical names. A/B/A software first-paint
+  timings do **not** establish faster whole-Library/Manga opening. Private
+  evidence/backups/screenshots live under `test-results/bigme-aleph-20261110/`,
+  final evidence in `wireless-resume/`. Do not reuse old settings, ports or
+  pairing codes for a later session. The same-labelled private beta.1 ZIP must
+  never replace the public asset. This is scoped device verification, not
+  blanket compatibility or release approval.
+
 - **Local series/browse sort maintenance, not published.** User approves the
   recommended first stage after the Aleph performance review. Branch
   `performance/series-order-20261110` starts at **3dce4cc54**, retaining all five
@@ -53,8 +90,8 @@ and correct this file in the same change.
   33/412 counts. Exact source/eight installed paths/held-art/history/secret
   checks pass; public dist remains **25f988ce**. Receipt changes docs only,
   not frozen package bytes. Full boundaries are in TESTING/MERGE_LOG.
-  Bigme latency/RSS/UI remain
-  unmeasured; no physical acceptance or publication is implied. Tag validation
+  The later device receipt above measures the warm query, not a whole-Manga
+  opening improvement; no blanket physical acceptance/publication is implied. Tag validation
   sharing, dashboard demand normalization and finer no-change redraws remain
   review backlog, not implemented by this stage.
 

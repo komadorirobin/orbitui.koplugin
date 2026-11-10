@@ -1,5 +1,94 @@
 # Verification and device acceptance
 
+## 2026-11-10 — Bigme Aleph-feature verification and two local corrections
+
+User-authorized USB/wireless device testing, isolated EPUBs and temporary sync
+pause; retain the candidate only if checks pass. After the safe USB pause,
+KOReader was explicitly exited and a new wireless-session backup became the
+restore authority. The user separately approved locally fixing/retesting the
+overlapping similarity heading and Next-in-series pause; no push/publication.
+
+Frozen runtime **28115129a7f01ee65392d8aab57d94ccc2ec15f3** contains commits
+73c7fc03, db18494e and 28115129. The actual native modal TextWidget is bounded
+after tabs/optional Close width is known; a LeftContainer alone does not clip it.
+Next preparation starts from mounted visible paint, not build behind a menu.
+The native post-open correction frees a loading card immediately before its
+same-turn replacement build: ownership may transfer only with the same owner,
+navigation/page/dashboard identity. Disposed leases fail liveness immediately;
+without replacement, deferred retirement stops work. Private previews cannot
+replace/stop the live lease. Four new title-bound cases and three additional
+Next cases cover these findings (19 Next cases total). No upstream pins change.
+
+**Desktop gates:** both full `scripts/test.sh` runs (Lua and LuaJIT) pass: 134
+Python tests/four existing source-art skips, 1,238 syntax files, all 122 root
+suites, 583 Bookshelf suites/zero failures/three usual SQLite exclusions and
+13 SimpleUI files. All 43 catalogs pass. Both interpreters repeat all 122 roots
+with the sealed final package root configured. Retained minimum/current native
+panel/pins supplements pass 25/29; forecast passes 22 ordinary cases across
+UTC/Stockholm and both interpreters, 24 with real SQLite/native schemas under
+LuaJIT. Real index/series/EPUB-input supplements pass 10/29/55. No new skip.
+
+**Bigme HiBreak, Android 14 / KOReader v2026.07.1, 1264×1680:**
+
+- Similarity result heading visibly ellipsizes before native tabs. Actual tab
+  taps return three ranked fixture volumes or one two-volume series plus a
+  standalone; origin book/series is excluded. Missing cached tags are explained
+  rather than triggering extraction or pretending completeness.
+- Next reaches ready on initial paint and after reader return. Actual native
+  long-press > Items > Refresh leaves work idle while covered, then completes
+  when closed; the card no longer sticks paused on native post-open rebuild.
+- Page/text/image references created through the original device session
+  persist over full restart/candidate changes. Native page preview keeps page
+  6 unchanged; explicit jump moves 6→1. Native TOC/bookmarks/search/book-info/
+  goto dialogs open. The settled Also reading button really switches Garden
+  to Lantern at saved page 6, rather than merely displaying the list.
+- Forecast reads two real books without opening them in ReaderUI; mounted
+  Nattsäsong card reports ~2h43 remaining / approximate November 21 after
+  explicit retry of the changed-data guard. The fixture reports insufficient
+  data. Guard/retry feedback is intentional, not a promised immediate estimate.
+- Short Android sleep/wake recovers native Home; ready snapshots remain and
+  reopening the test Home/refreshing Next works. Long sleep, rotation, memory
+  pressure, all theme/font combinations and optional external-sync paths are
+  not certified by this session. No real book was opened in ReaderUI.
+
+**Measured performance boundary:** on the real 237-series dataset, five warm
+native-query calls in each arm have identical returned names. Optimized median
+is **0.987 ms**, zero table.sort calls; control **9.897 ms**, 238 sorts/2,829 rows.
+The ~6.7-second cold metadata preparation is not an improvement claim. Whole
+Manga request/tap-to-first-*software*-paint A/B/A medians after cold reads are
+400 / 282 / 304 ms; respective cold values 7,451 / 1,441 / 1,588 ms. Warmup and
+device variability prevent claiming faster whole Library/Manga opening. This
+does not measure physical e-ink settling, battery use or long-run RSS.
+
+**Private package:** SHA-256
+**b0dffacc210a40c718c457851063745bc8d034516d41eb517dfa942d49eaa4f8**,
+9,754,829 bytes, expanded 28,972,973; manifest **15f54a8c**, same 2,000 API1
+files/33 helpers/412 identities and original bootstrap. All manifest entries
+match the frozen source projection; only the home-shelves adapter and native
+modal change at runtime from 064053a4 (plus three previously committed docs).
+All 1,999 payload hashes were checked in an inactive device slot before
+activation. Held-art check over 115 outgoing blobs and redacted Gitleaks over
+20 commits pass. Public dist remains **25f988ce**; VERSION, stable/preview,
+artwork, upstream/watch pins and server stay unchanged. Never substitute this
+same-labelled private beta.1 package for the public asset.
+
+**Final cleanup:** final b0dffacc slot is healthy/pending=0, public 25f988ce is
+previous. Root settings, history, Bookshelf and SimpleUI settings match the
+fresh wireless backup byte-for-byte, including original sync/start settings;
+test profiles/layouts are no longer configured. All **193** non-fixture book
+rows and **25,874** non-fixture page-stat rows are exactly unchanged in the
+closed databases; no reading DB rollback was used. Isolated fixture EPUBs,
+sidecars/pin images and test-only statistics remain for reproduction. KOReader
+is closed; unique diagnostic patch moved outside autoload, no boot marker.
+Before/after archives remain private and include credentials: do not publish.
+
+Evidence: ignored `test-results/bigme-aleph-20261110/`, especially
+`wireless-resume/{final-full-lua,final-full-luajit,final-sealed}.log`,
+`source-audit-final.json`, `gitleaks-final.log`, `statistics-comparison.json`,
+`device-events-final.log`, screenshots and fresh before/after archives. Earlier
+064053a4/0a1f14cf trials are diagnostic failures, not the accepted final bytes.
+Receipt-only documentation follows the frozen runtime; no release authorized.
+
 ## 2026-11-10 — local series order and browse sort maintenance
 
 Approved first performance stage, branch `performance/series-order-20261110`,

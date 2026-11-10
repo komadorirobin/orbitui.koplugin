@@ -4,6 +4,53 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-10 — Bigme device verification, local heading/Next corrections
+
+User authorizes testing five local Aleph-inspired features and optimizations
+on their Bigme, with isolated books, temporary sync pause and restoration. They
+approve keeping a passing test candidate. A requested safe USB pause first
+restores public 25f988ce and settings; after returning, a new closed-app wireless
+backup supersedes morning preferences. They explicitly approve correcting and
+retesting the two findings, with no push/publication.
+
+Local commits **73c7fc03**, **db18494e**, **28115129** bound native modal title
+paint, defer Next work until uncovered paint, carry its lease across native
+same-turn free-before-build only for identical ownership/navigation/page, and
+isolate previews from live preparation. The intermediate initial paint-only
+fix did not solve the device pause: tracing found native ScreenEngine's
+post-open correction frees/rebuilds the loading card. This is addressed and
+retested, not suppressed by a test-only liveness bypass. Source changes are
+limited to one adapter, one native header method and regression stubs/tests.
+
+Frozen **28115129a7f01ee65392d8aab57d94ccc2ec15f3**, private ZIP **b0dffacc**,
+9,754,829 bytes, manifest **15f54a8c**, passes both full scripts, all 122 roots
+with sealed root configured, retained minimum/current native supplements,
+43 catalogs, exact source/path/API1/held-art/history and redacted-secret gates.
+Full counts/package hash and device limitations are in TESTING. Bootstrap,
+VERSION/public dist **25f988ce**, upstream/watch pins and server stay fixed.
+
+Device retests verify clipped heading/native similarity tabs, original-series
+exclusion/grouping, mounted Next initial/long-press refresh/reader return,
+persistent page/text/image references/native thumbnail without page movement,
+explicit jump, native reader tools and actual Also reading fixture switch.
+Forecast reaches ready on explicit retry after a safe changed-data result;
+short sleep/wake recovers Home. No real book was opened through ReaderUI.
+Controlled warm native query median is 0.987 vs 9.897 ms, sorts 0 vs 238, same
+237 series. A/B/A software first-paint data do not prove faster whole Manga
+or Library opening; cold cache/IO dominates. No physical e-ink/RSS/long-night
+or optional sync compatibility claim.
+
+Per the user's conditional preference, final b0dffacc remains active/healthy,
+public 25f988ce retained as previous. All four fresh-session preferences/history
+restore hashes match; temporary test profile/layout/plugin disables are gone.
+Closed DB comparison proves all 193 non-fixture books/25,874 page rows unchanged
+without rolling back the reading DB. Test EPUBs/sidecars/pin snapshots and
+test-only stats remain isolated. KOReader is closed, the diagnostic patch is
+outside autoload, no boot marker. Private evidence/backups (credentials) stay
+ignored under `test-results/bigme-aleph-20261110/wireless-resume/`. No upstream
+merge, push, version/tag/release/OTA or server operation performed. This receipt
+updates documentation only, not frozen candidate bytes.
+
 ## 2026-11-10 — local prepared series orders and browse sort reuse
 
 User approves the performance review's recommended first stage. Branch
