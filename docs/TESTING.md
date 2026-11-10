@@ -7,7 +7,7 @@ Approved Aleph-list point 5, branch `feature/finish-forecast-20261110`, base
 model paths only; no component/pin/version/public asset/device/server/watch
 change or new installed identity/path. The API1 inventory remains at 2,000.
 
-`test_finish_forecast` has 21 ordinary cases: book-specific fourteen-calendar-
+`test_finish_forecast` has 22 ordinary cases: book-specific fourteen-calendar-
 day pace including inactive days, no partial today/future/old samples, DST and
 year rollover, pagination separation with retained daily time, sample and
 active-day thresholds, repeat/idle caps, malformed/nonfinite values, no date
@@ -20,7 +20,9 @@ page/navigation retirement, sleep/rotation/teardown without waking autoretry,
 native close/metadata and DB/sidecar/expiry/day invalidation, real dashboard
 proxy ownership, tiny/high-DPI bounded SV/EN text with no double font scale,
 eight-state eviction, completed snapshot reuse after sleep/rotation, and
-unexpected provider failure settling out of Loading.
+unexpected provider failure settling out of Loading. Explicit refresh behind
+native SUI settings waits for uncovered paint and only enqueues once; native
+paint arguments/returns survive, and paused work does not silently retry.
 Host coverage separately checks failure isolation from Next/component/aliases.
 
 Two optional real SQLite cases use actual native createDB/schema statements
@@ -29,7 +31,7 @@ reviewed current **01ccbd790d6269301ad523e75c45f62d022a6d7b** statistics sources
 They check checksum/other-book/today exclusion, exact expected estimate, unchanged
 DB bytes and real RO write refusal; query plan must use the native time index,
 and pagination/stale checksum/4,097-event sentinel cannot return partial dates.
-That is 23 forecast cases per baseline under LuaJIT. Run ordinary tests in both
+That is 24 forecast cases per baseline under LuaJIT. Run ordinary tests in both
 interpreters and Stockholm/UTC; native tests use Stockholm to exercise DST.
 Filesystem/sidecar payloads, font metrics, widgets and event loop remain stubs,
 not a device or fully emulated KOReader. Source contract review caught native

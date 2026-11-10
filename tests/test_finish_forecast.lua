@@ -86,6 +86,7 @@ end
 local W = H.widget()
 function W:getSize() return { w = self.w or self.width or 500, h = self.h or self.height or 20 } end
 function W:free() frees = frees + 1 end
+function W:paintTo(...) return "native", nil, select("#", ...) end
 for _, name in ipairs{ "ui/widget/verticalgroup", "ui/widget/textboxwidget", "ui/widget/container/framecontainer", "lib/bookshelf_clip_container" } do package.loaded[name] = W end
 package.loaded["ui/font"] = { getFace = function(_, _, size) assert(size <= 20, "Font:getFace already scales its size"); return { size = size } end }
 package.loaded["infra/sui_store"] = { readSetting = function(_, key) return saved[key] end,
@@ -262,6 +263,21 @@ H.test("unexpected provider failures settle into an error instead of leaving a f
     mod.build(500, c); drain(); H.eq(Shelves.forecastState(c.pfx, file).phase, "error"); H.eq(refreshes, 1)
     Shelves.forecastRead = original
     mod.getMenuItems(c)[1].callback(); mod.build(500, c); drain(); H.eq(Shelves.forecastState(c.pfx, file).phase, "ready")
+end)
+H.test("explicit refresh under a SUI menu waits for visible paint, enqueues once and preserves native paint arguments/results", function()
+    local mod = fixture(); local c = ctx(); mod.build(500, c); drain(); H.eq(opens, 1)
+    owner.covered = true
+    -- The native menu refresh rebuilds Home before it closes itself.
+    mod.getMenuItems(c)[1].callback(); local refreshed = mod.build(500, c)
+    H.eq(#queue, 0); refreshed:paintTo({}, nil, 2); H.eq(#queue, 0); H.eq(opens, 1)
+    owner.covered = false
+    local first, second, count = refreshed:paintTo({}, nil, 2)
+    H.eq(first, "native"); H.eq(second, nil); H.eq(count, 3); H.eq(#queue, 1); H.eq(opens, 1)
+    refreshed:paintTo({}, 1, 2); H.eq(#queue, 1); drain(); H.eq(opens, 2)
+    -- Losing visibility after enqueue pauses it; merely painting again is not a retry.
+    mod.getMenuItems(c)[1].callback(); local pending = mod.build(500, c); owner.covered = true; drain()
+    owner.covered = false; pending:paintTo({}, 0, 0); drain(); H.eq(opens, 2)
+    H.eq(Shelves.forecastState(c.pfx, file).phase, "paused")
 end)
 
 local native = os.getenv("ORBITUI_NATIVE_SQLITE_DIR")

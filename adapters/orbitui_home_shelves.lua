@@ -607,7 +607,8 @@ function M.forecastModule()
             end
             if free then return free(self, ...) end
         end
-        if state.phase == "idle" and owner and not ctx.preview and not forecast_sleeping then
+        local function prepareVisible()
+            if state.phase ~= "idle" or preview or not forecastLive(state, lease) then return end
             local job = {}; state.job, state.phase = job, "loading"
             job.step = function()
                 if job.cancelled or state.job ~= job then return end
@@ -623,6 +624,16 @@ function M.forecastModule()
             end
             UI:scheduleIn(.05, job.step)
         end
+        -- SUI settings refresh their underlying Home while still modal.
+        -- Leave an explicit refresh idle until its mounted card is visible;
+        -- a paint can enqueue once, but never read metadata/SQL itself.
+        -- Never auto-retry a paused/canceled job or touch a foreign modal.
+        local paint = widget.paintTo
+        widget.paintTo = function(self, ...)
+            prepareVisible()
+            if paint then return paint(self, ...) end
+        end
+        prepareVisible()
         return widget
     end
     forecast_module = module

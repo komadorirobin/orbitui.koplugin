@@ -1317,6 +1317,11 @@ Keep native recent-context preparation owned by SimpleUI; forecast discovery,
 height/preview/build itself must do no sidecar/DB query or document/cover open.
 Only a live visible owner schedules preparation after rendering. Preview and
 no-owner contexts must never cancel/replace a real placement's job or lease.
+Native SUI module settings can refresh Home while the modal stays open. An
+explicit Refresh remains idle until its current mounted card is visible;
+its instance-only paint wrapper may enqueue one deferred job, never read
+metadata/SQL in paint, close/raise a modal or auto-retry paused work. Preserve
+the original paint arguments/results and old-widget retirement identity.
 
 Use native findSidecarFile/openSettingsFile, not repairing DocSettings:open,
 flush/close or history mutation. Refuse nonplain/symlink/over-512-KiB metadata,
