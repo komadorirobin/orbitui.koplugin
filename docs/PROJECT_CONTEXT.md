@@ -22,6 +22,25 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-10
 
+- **Reader bottom panel and optional X-Ray selection, local only.** User approves
+  the visual bottom-panel design and requests both standalone X-Ray and
+  KOAssistant support, automatic X-Ray-first priority, manual provider/Hide
+  setting and explicitly no X-Ray installation on Bigme. Branch
+  `feature/reader-bottom-panel-20261110` starts from **f2d21383**. Independent
+  native rendering stays in the existing book-panel adapter: title/author,
+  reading position/chapter, black selected tabs, tool tiles, four prepared
+  ongoing-book rows per page and a native file-manager shortcut. Covers borrow
+  only already-cached RAM bitmaps with no upscale/extraction/disposal. The
+  history controller's bounds, lightweight reads, ask-before-open, lifecycle,
+  modal ownership and native reader switch remain. The sole new setting is
+  `orbitui_reader_ai`, under Integrations > Reader panel & X-Ray. Probing does
+  not load/activate a plugin; a forced absent provider is disabled. X-Ray opens
+  its native menu; KOAssistant opens its validated X-Ray cache/scope chooser,
+  not an immediate AI request. Provider consent/cost/spoiler behavior remains
+  native. See C10, FEATURES, TESTING and MERGE_LOG for contracts and receipts.
+  No device/server change, push, release, pin/watch/version or public dist
+  change is authorized/performed; the earlier device candidate is unchanged.
+
 - **BookOrbit-inspired updater panel, local implementation only.** User approved
   the visual prototype and implementation, explicitly including the appearance,
   not just one combined dialog. Branch `feature/update-panel-20261110` starts at

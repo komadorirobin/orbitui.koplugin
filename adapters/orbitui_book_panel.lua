@@ -977,8 +977,333 @@ function M.readerPins()
     return P
 end
 
--- Explicit reader tools / Also reading. Reuse the existing adapter path and
--- native dialogs, not a second reader/menu renderer or an automatic Home scan.
+-- Optional, already-instantiated reader integrations. Never require a plugin,
+-- activate a disabled one, inspect its keys or run an AI action while probing.
+local reader_ai_key = "orbitui_reader_ai"
+local reader_ai_labels = { auto = "Automatic (X-Ray first)", xray = "X-Ray", koassistant = "KOAssistant", off = "Hide" }
+local function readerCallable(fn)
+    local mt = type(fn) == "table" and getmetatable(fn)
+    return type(fn) == "function" or type(mt) == "table" and type(mt.__call) == "function"
+end
+function M.readerAIChoice()
+    local value = G_reader_settings and G_reader_settings:readSetting(reader_ai_key)
+    return reader_ai_labels[value] and value or "auto"
+end
+function M.readerAI(ui)
+    local choice = M.readerAIChoice()
+    if choice == "off" or not ui or not ui.document then return end
+    local function find(name)
+        local p = rawget(ui, name)
+        local loader = package.loaded.pluginloader
+        if not p and loader and readerCallable(loader.getPluginInstance) then
+            local ok, found = pcall(loader.getPluginInstance, loader, name)
+            if ok then p = found end
+        end
+        if type(p) ~= "table" or p.ui ~= ui or p.disabled == true or p._disabled == true then return end
+        if name == "xray" and readerCallable(p.showFullXRayMenu) then return p end
+        if name == "koassistant" and readerCallable(p.showCacheActionPopup) and readerCallable(p.executeBookLevelAction)
+                and type(p.action_service) == "table" and readerCallable(p.action_service.getAction) then return p end
+    end
+    for _, name in ipairs(choice == "auto" and { "xray", "koassistant" } or { choice }) do
+        local p = find(name)
+        if p then return { id = name, label = name == "xray" and "X-Ray" or "X-Ray · KOAssistant", plugin = p } end
+    end
+    if choice ~= "auto" then return { id = choice, label = reader_ai_labels[choice], unavailable = true } end
+end
+function M.openReaderAI(ui, selected)
+    local current = M.readerAI(ui)
+    local R = package.loaded["apps/reader/readerui"]
+    if not selected or not current or current.unavailable or current.plugin ~= selected.plugin
+            or current.id ~= selected.id or not R or R.instance ~= ui then return false end
+    local p, file = current.plugin, ui.document.file
+    if current.id == "xray" then p:showFullXRayMenu(); return true end
+    local action = p.action_service:getAction("book", "xray")
+    -- An edited/custom action must not turn a navigation shortcut into an
+    -- immediate model request. The native cache/scope popup owns consent.
+    if type(action) ~= "table" or action.cache_as_xray ~= true or action.enabled == false then return false end
+    p:showCacheActionPopup(action, "xray", function()
+        local fresh = M.readerAI(ui)
+        if R.instance == ui and ui.document and ui.document.file == file
+                and fresh and fresh.plugin == p and fresh.id == "koassistant" then p:executeBookLevelAction("xray") end
+    end)
+    return true
+end
+function M.readerAIItems(changed)
+    local _ = require("core/orbitui_i18n")
+    local rows = {{ text = _("X-Ray in the reader panel"), enabled = false }, {
+        text = _("Automatic uses active X-Ray first, then KOAssistant. Opening the panel never generates AI data."), enabled = false }}
+    for _i, value in ipairs{ "auto", "xray", "koassistant", "off" } do
+        local choice = value
+        rows[#rows + 1] = { text = _(reader_ai_labels[choice]), radio = true,
+            checked_func = function() return M.readerAIChoice() == choice end,
+            callback = function()
+                if not G_reader_settings then return end
+                G_reader_settings:saveSetting(reader_ai_key, choice)
+                if changed then changed() end
+            end }
+    end
+    return rows
+end
+
+-- Native bottom sheet. Only presentation belongs here: controller-owned
+-- callbacks retain all reader/history/confirmation checks. No work in paint,
+-- no cover extraction, plugin loading or reading-data writes.
+function M.readerSheet(options)
+    local UI, Screen = require("ui/uimanager"), require("device").screen
+    local BB, Geom, Font = require("ffi/blitbuffer"), require("ui/geometry"), require("ui/font")
+    local Frame, Text = require("ui/widget/container/framecontainer"), require("ui/widget/textboxwidget")
+    local V, H = require("ui/widget/verticalgroup"), require("ui/widget/horizontalgroup")
+    local VS, HS = require("ui/widget/verticalspan"), require("ui/widget/horizontalspan")
+    local Button, Center = require("ui/widget/button"), require("ui/widget/container/centercontainer")
+    local _ = require("core/orbitui_i18n")
+    local px = function(n) return math.max(1, Screen:scaleBySize(n)) end
+    local source = debug.getinfo(1, "S").source
+    local root = source:match("^@(.+)/adapters/[^/]+$") or "."
+    local Sheet = require("ui/widget/focusmanager"):extend{ name = "orbitui_reader_panel", modal = true }
+    local function clean(value)
+        if type(value) == "table" then
+            local names = {}; for i = 1, math.min(4, #value) do if type(value[i]) == "string" then names[#names + 1] = value[i] end end
+            value = table.concat(names, ", ")
+        end
+        if type(value) ~= "string" then return "" end
+        value = value:gsub("[%c]", " ")
+        if #value <= 512 then return value end
+        local n = 512
+        while value:byte(n + 1) and value:byte(n + 1) >= 128 and value:byte(n + 1) < 192 do n = n - 1 end
+        return value:sub(1, n) .. "…"
+    end
+    local function call(owner, method, ...)
+        if not owner or not readerCallable(owner[method]) then return end
+        local ok, value = pcall(owner[method], owner, ...)
+        if ok then return value end
+    end
+    local function number(value)
+        return type(value) == "number" and value == value and value >= 0 and value <= 1e8 and value or nil
+    end
+    function Sheet:close() if not self.closed then UI:close(self) end end
+    function Sheet:onClose() self:close(); return true end
+    function Sheet:onOutside(_, gesture)
+        if not self.panel_rect:contains(gesture.pos) then self:close() end
+        return true
+    end
+    function Sheet:onSuspend() self:close() end
+    function Sheet:onScreenResize() self:close() end
+    Sheet.onSetRotationMode = Sheet.onScreenResize
+    function Sheet:onCloseWidget() self.closed = true; UI:setDirty("all", "ui") end
+    function Sheet:getButtonById(id) return self.native_buttons[id] end
+    function Sheet:rebuild(reserve_scrollbar)
+        if self[1] then self[1]:free(); self[1] = nil end
+        self.layout, self.native_buttons = {}, {}
+        self.revision = (self.revision or 0) + 1
+        local revision = self.revision
+        local sw, sh = Screen:getWidth(), Screen:getHeight()
+        local margin, border = px(10), px(1)
+        local width = math.min(px(620), sw - 2 * margin)
+        local pad = math.min(px(18), math.floor(width / 16))
+        local inner = width - 2 * (pad + border)
+        local compact = sh < px(430)
+        local function space(n) return VS:new{ width = px(n) } end
+        local function gap(n) return HS:new{ width = px(n) } end
+        local function text(copy, size, bold, w, maxh, color)
+            local opts = { text = clean(copy), width = w, face = Font:getFace("cfont", size), bold = bold,
+                fgcolor = color or BB.COLOR_BLACK, bgcolor = BB.COLOR_WHITE, height_overflow_show_ellipsis = true }
+            local widget = Text:new(opts)
+            if maxh and widget:getSize().h > maxh then
+                widget:free(); opts.height, opts.height_adjust = maxh, false; widget = Text:new(opts)
+            end
+            return widget
+        end
+        local function cover(file, w, h)
+            -- Borrow a strong reference only from the already-loaded RAM cache.
+            -- A cache miss stays a placeholder; never open an EPUB or a database.
+            local cached = package.loaded["infra/sui_cover_cache"]
+            local bb = call(cached, "get", file)
+            local bw, bh = number(call(bb, "getWidth")), number(call(bb, "getHeight"))
+            local child
+            if bw and bh and bw > 0 and bh > 0 then
+                local ratio = math.min(1, w / bw, h / bh)
+                child = require("ui/widget/imagewidget"):new{ image = bb, image_disposable = false,
+                    width = math.max(1, math.floor(bw * ratio)), height = math.max(1, math.floor(bh * ratio)) }
+            else
+                child = text(_("Book"), 12, false, w - px(4), h, BB.COLOR_DARK_GRAY)
+            end
+            return Center:new{ dimen = Geom:new{ w = w, h = h }, child }
+        end
+        local function progress(w, pct)
+            return require("ui/widget/progresswidget"):new{ width = w, height = px(3),
+                percentage = math.max(0, math.min(1, number(pct) or 0)), margin_h = 0, margin_v = 0,
+                bordersize = 0, bgcolor = BB.COLOR_LIGHT_GRAY, fillcolor = BB.COLOR_BLACK }
+        end
+        local specs = {}
+        for _, row in ipairs(self.buttons) do for _, spec in ipairs(row) do if spec.id then specs[spec.id] = spec end end end
+        local function button(id, copy, w, h, primary, content, cb)
+            local spec = specs[id] or {}
+            local enabled = spec.enabled ~= false
+            local b = Button:new{ text = copy, width = w,
+                height = math.max(h, px(28), content and content:getSize().h or 0), padding_h = px(6), padding_v = px(7),
+                margin = 0, bordersize = 0, radius = px(8), background = primary and BB.COLOR_BLACK or nil,
+                text_font_size = compact and 14 or 16, avoid_text_truncation = false, enabled = enabled,
+                callback = function()
+                    if self.closed or self.revision ~= revision or not UI:isWidgetShown(self)
+                            or UI:getTopmostVisibleWidget() ~= self then return end
+                    if cb then cb() elseif spec.callback then spec.callback() end
+                end }
+            if content then
+                b.label_widget:free(); b.label_widget = content; b.label_container[1] = content
+            elseif primary then b.label_widget.fgcolor, b.label_widget.bgcolor = BB.COLOR_WHITE, BB.COLOR_BLACK end
+            self.native_buttons[id] = b
+            return b
+        end
+        local top = V:new{ align = "left" }
+        local closew, coverw, coverh = px(34), px(42), px(compact and 46 or 63)
+        local headtext = V:new{ align = "left",
+            text(self.title, compact and 18 or 20, true, inner - coverw - closew - px(12), px(compact and 27 or 54)),
+            space(3), text(self.author, 14, false, inner - coverw - closew - px(12), px(21), BB.COLOR_DARK_GRAY) }
+        local close = button("close", "×", closew, px(24))
+        top[#top + 1] = H:new{ align = "top", cover(self.file, coverw, coverh), gap(12), headtext, close }
+        self.layout[#self.layout + 1] = { close }
+        local page = number(call(self.ui, "getCurrentPage"))
+        local count = number(call(self.ui.document, "getPageCount"))
+        local pct = page and count and count > 0 and math.min(1, page / count) or nil
+        if not compact and pct then
+            top[#top + 1] = space(10)
+            local leftw = math.floor(inner / 2)
+            top[#top + 1] = H:new{ align = "center",
+                text(string.format("%.0f%%", pct * 100), 16, true, leftw, px(25)),
+                text(string.format(_("Page %d of %d"), page, count), 14, false, inner - leftw, px(25), BB.COLOR_DARK_GRAY) }
+            top[#top + 1] = space(6); top[#top + 1] = progress(inner, pct)
+            local chapter = call(self.ui.toc, "getTocTitleByPage", page)
+            local remaining = number(call(self.ui.toc, "getChapterPagesLeft", page))
+            if type(chapter) == "string" and chapter ~= "" then
+                top[#top + 1] = space(7)
+                top[#top + 1] = text(chapter .. (remaining and (" · " .. string.format(_("%d pages left in chapter"), remaining)) or ""),
+                    13, false, inner, px(22), BB.COLOR_DARK_GRAY)
+            end
+        end
+        top[#top + 1] = space(compact and 8 or 14)
+        local tabw = math.floor((inner - px(6)) / 2)
+        -- Selected tabs stay readable and actionable, never native disabled gray.
+        local tabs = {}
+        for _i, id in ipairs{ "tools", "ongoing" } do
+            local spec = specs[id]; local was = spec.enabled; spec.enabled = true
+            tabs[#tabs + 1] = button(id, id == "tools" and _("This book") or _("Also reading"), tabw, px(24), self.tab == id)
+            spec.enabled = was
+        end
+        top[#top + 1] = H:new{ align = "center", tabs[1], gap(6), tabs[2] }
+        self.layout[#self.layout + 1] = tabs
+        top[#top + 1] = space(compact and 8 or 14)
+        local body = V:new{ align = "left" }
+        local bodyw = inner - (reserve_scrollbar and px(18) or 0)
+        local function append(widget) body[#body + 1] = widget end
+        local function icon(name)
+            return require("ui/widget/iconwidget"):new{ file = root .. "/assets/material-symbols/icons/300/" .. name .. ".svg",
+                width = px(22), height = px(22) }
+        end
+        local function richRow(id, heading, detail, art, rowh)
+            local spec = specs[id] or {}
+            local fg = spec.enabled == false and BB.COLOR_DARK_GRAY or BB.COLOR_BLACK
+            local labelw = bodyw - px(72)
+            local label = V:new{ align = "left", text(heading, 16, true, labelw, px(25), fg) }
+            if detail then label[#label + 1] = space(3); label[#label + 1] = detail end
+            local content = H:new{ align = "center", art, gap(12), label,
+                text("›", 22, false, px(16), px(30), fg) }
+            return button(id, "", bodyw, px(rowh), false, content)
+        end
+        if self.tab == "tools" then
+            local tiles, focus = H:new{ align = "center" }, {}
+            local tilew = math.floor((bodyw - px(12)) / 3)
+            for i, id in ipairs{ "toc", "bookmark", "search" } do
+                local spec = specs[id]
+                local content = V:new{ align = "center", icon(({ "menu_book", "bookmark", "search" })[i]), space(6),
+                    text(spec.text, 14, true, tilew - px(12), px(40), spec.enabled == false and BB.COLOR_DARK_GRAY or nil) }
+                local b = button(id, "", tilew, px(66), false, content)
+                if i > 1 then tiles[#tiles + 1] = gap(6) end
+                tiles[#tiles + 1] = b; focus[#focus + 1] = b
+            end
+            append(tiles); self.layout[#self.layout + 1] = focus
+            for _, row in ipairs{ { "bookinfo", "info" }, { "pins", "collections_bookmark" }, { "gotopage", "auto_stories" }, { "reader_ai", "manage_search" } } do
+                local spec = specs[row[1]]
+                if spec then
+                    append(space(4))
+                    local b = richRow(row[1], spec.text, nil, Center:new{ dimen = Geom:new{ w = px(32), h = px(30) }, icon(row[2]) }, 34)
+                    append(b); self.layout[#self.layout + 1] = { b }
+                end
+            end
+        else
+            local pages = math.max(1, math.ceil(#self.books / 4))
+            self.page = math.min(self.page or 1, pages)
+            for i = (self.page - 1) * 4 + 1, math.min(#self.books, self.page * 4) do
+                local book = self.books[i]
+                local labelw = bodyw - px(72)
+                local detail = V:new{ align = "left", text((book.author ~= "" and (book.author .. " · ") or "")
+                    .. string.format("%.0f%%", book.percent * 100), 13, false, labelw, px(20), BB.COLOR_DARK_GRAY),
+                    space(5), progress(labelw, book.percent) }
+                local b = richRow("book:" .. book.file, book.title, detail, cover(book.file, px(32), px(52)), 58)
+                append(b); append(space(3)); self.layout[#self.layout + 1] = { b }
+            end
+            if pages > 1 then
+                local function turn(delta) self.page = self.page + delta; self:rebuild(); UI:setDirty(self, "ui") end
+                local prev = button("prev", "‹", px(42), px(20), false, nil, function() if self.page > 1 then turn(-1) end end)
+                local nextb = button("next", "›", px(42), px(20), false, nil, function() if self.page < pages then turn(1) end end)
+                append(H:new{ align = "center", prev, text(string.format("%d / %d", self.page, pages), 13, false,
+                    bodyw - px(84), px(23), BB.COLOR_DARK_GRAY), nextb })
+                self.layout[#self.layout + 1] = { prev, nextb }
+            end
+            local status = specs.state_status
+            if status then
+                append(space(6))
+                local note = Text:new{ text = status.text, width = bodyw, face = Font:getFace("cfont", 12),
+                    height = px(54), height_adjust = false, height_overflow_show_ellipsis = true,
+                    fgcolor = BB.COLOR_DARK_GRAY, bgcolor = BB.COLOR_WHITE }
+                -- The controller may pause beneath a foreign modal. Update only
+                -- this label; never rebuild/raise the sheet over that modal.
+                function note:setText(copy) Text.setText(self, clean(copy)) end
+                self.native_buttons.state_status = note; append(note)
+            end
+            if self.missing > 0 then
+                append(space(4)); append(text(string.format(_("%d reading-data records were unavailable."), self.missing),
+                    12, false, bodyw, px(36), BB.COLOR_DARK_GRAY))
+            end
+        end
+        local footer = V:new{ align = "left", space(compact and 6 or 12) }
+        local refreshw = specs.refresh and px(106) or 0
+        if specs.library then
+            local lib = button("library", _("Library"), inner - refreshw, px(24))
+            local row = H:new{ align = "center", lib }
+            local focus = { lib }
+            if specs.refresh then
+                local refresh = button("refresh", _("Refresh"), refreshw, px(24))
+                row[#row + 1] = refresh; focus[#focus + 1] = refresh
+            end
+            footer[#footer + 1] = row; self.layout[#self.layout + 1] = focus
+        elseif specs.refresh then
+            local refresh = button("refresh", _("Refresh"), inner, px(24))
+            footer[#footer + 1] = refresh; self.layout[#self.layout + 1] = { refresh }
+        end
+        local maxbody = math.max(px(24), sh - margin - 2 * (pad + border) - top:getSize().h - footer:getSize().h)
+        local content = body
+        self.cropping_widget = nil
+        if body:getSize().h > maxbody then
+            if not reserve_scrollbar then top:free(); body:free(); footer:free(); return self:rebuild(true) end
+            content = require("ui/widget/container/scrollablecontainer"):new{
+                dimen = Geom:new{ w = inner, h = maxbody }, show_parent = self, body }
+            self.cropping_widget = content
+        end
+        self[1] = Frame:new{ padding = pad, bordersize = border, radius = px(16), background = BB.COLOR_WHITE,
+            V:new{ align = "left", top, content, footer } }
+        local size = self[1]:getSize()
+        self.panel_rect = Geom:new{ x = math.floor((sw - size.w) / 2), y = sh - size.h, w = size.w, h = size.h }
+        self.dimen = Geom:new{ x = 0, y = 0, w = sw, h = sh }
+        self.ges_events.Outside = { require("ui/gesturerange"):new{ ges = "tap", range = self.dimen } }
+        self.key_events.Close = {{ "Back" }, { "Esc" }}
+        self.selected = { x = 1, y = 1 }
+    end
+    function Sheet:paintTo(bb, x, y) self[1]:paintTo(bb, self.panel_rect.x + (x or 0), self.panel_rect.y + (y or 0)) end
+    function Sheet:init() self:rebuild() end
+    return Sheet:new(options)
+end
+
+-- Explicit reader tools / Also reading. No global reader/menu replacement.
 function M.readerTools()
     if M._reader_tools then return M._reader_tools end
     local T = {}
@@ -1072,11 +1397,17 @@ function M.readerTools()
             local cds = plainSettings(DS, custom, 256 * 1024)
             local overrides = cds and cds:readSetting("custom_props")
             if type(overrides) == "table" then
-                props = { title = overrides.title ~= nil and overrides.title or props.title }
+                props = { title = overrides.title ~= nil and overrides.title or props.title,
+                    authors = overrides.authors ~= nil and overrides.authors or props.authors }
             end
         end
         if before ~= stamp(file) then return end
-        return { file = file, stamp = before, percent = pct,
+        local author = props.authors
+        if type(author) == "table" then
+            local names = {}; for i = 1, math.min(#author, 4) do if type(author[i]) == "string" then names[#names + 1] = author[i] end end
+            author = table.concat(names, ", ")
+        end
+        return { file = file, stamp = before, percent = pct, author = clip(author, 160),
             title = clip(props.title, 160) ~= "" and clip(props.title, 160) or clip(file:match("([^/]+)$"), 160) }
     end
     local function historyRecord(file, time)
@@ -1164,6 +1495,19 @@ function M.readerTools()
                 end
                 rows[#rows + 1] = row
             end
+            local selected = M.readerAI(s.ui)
+            if selected then
+                rows[#rows + 1] = { button("reader_ai", _(selected.label)
+                    .. (selected.unavailable and (" · " .. _("Unavailable")) or ""), function()
+                    local fresh = M.readerAI(s.ui)
+                    if not fresh or fresh.plugin ~= selected.plugin or fresh.id ~= selected.id or fresh.unavailable then
+                        notify("The selected X-Ray integration is unavailable. Check OrbitUI settings."); return
+                    end
+                    T.retire(s.ui)
+                    local ok, result = pcall(M.openReaderAI, s.ui, selected)
+                    if not ok or not result then failure("reader_ai", "unavailable integration") end
+                end, not selected.unavailable) }
+            end
         else
             for _, book in ipairs(s.books) do
                 local entry = book
@@ -1180,14 +1524,29 @@ function M.readerTools()
                 text = string.format(_("%d reading-data records were unavailable."), s.missing), enabled = false }} end
             rows[#rows + 1] = { button("refresh", _("Refresh"), function() T.show(s.ui, "ongoing") end) }
         end
+        if callable(s.ui.onClose) and callable(s.ui.showFileManager) then
+            rows[#rows + 1] = { button("library", _("Library"), function()
+                T.retire(s.ui)
+                local ok, err = pcall(function()
+                    -- Same native route as ReaderMenu's file-manager shortcut.
+                    s.ui:onClose(); s.ui:showFileManager(s.file)
+                end)
+                if not ok then failure("library", err) end
+            end) }
+        end
         rows[#rows + 1] = { button("close", _("Close"), function() T.retire(s.ui) end) }
         local Screen = require("device").screen
         local props = type(s.ui.doc_props) == "table" and s.ui.doc_props or {}
         local title = clip(props.display_title or props.title, 160)
         if title == "" then title = clip(s.file:match("([^/]+)$"), 160) end
-        window = require("ui/widget/buttondialog"):new{ name = "orbitui_reader_panel",
-            title = _("Reader panel") .. "\n" .. title,
-            buttons = rows, width = math.floor(math.min(Screen:getWidth(), Screen:getHeight()) * .9), rows_per_page = 6 }
+        local ok, sheet = pcall(M.readerSheet, { title = title, ui = s.ui, author = props.authors,
+            file = s.file, books = s.books, tab = s.tab, phase = s.phase, missing = s.missing, buttons = rows })
+        if ok then window = sheet else
+            require("logger").warn("OrbitUI reader sheet unavailable; using native dialog:", sheet)
+            window = require("ui/widget/buttondialog"):new{ name = "orbitui_reader_panel",
+                title = _("Reader panel") .. "\n" .. title,
+                buttons = rows, width = math.floor(math.min(Screen:getWidth(), Screen:getHeight()) * .9), rows_per_page = 6 }
+        end
         local original = window.onCloseWidget
         window.onCloseWidget = function(this, ...)
             if s.window == this then s.window = nil; cancel(s); s.closed = true; states[s.ui] = nil end

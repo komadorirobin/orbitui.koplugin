@@ -110,17 +110,20 @@ läsning under två hela veckor. Saknas underlag får du ett tydligt besked i
 stället för ett påhittat datum. Funktionen är lokal, valfri och ändrar inte
 lässtatus. Långtryck för att uppdatera prognosen eller läsa hur den räknas.
 
-## Compact reader panel (local development)
+## Reader bottom panel and optional X-Ray (local development)
 
 In an open book, choose **Tools > Reader panel / Verktyg > Läsarpanel**, or
 assign the reader gesture action **OrbitUI: reader panel / OrbitUI: läsarpanel**.
 It is optional: your normal KOReader menus, header and gestures are unchanged.
-**Tools / Verktyg** gives shortcuts to the native table of contents, bookmarks,
+The bottom-anchored native sheet has the current title/author, reading position,
+chapter and a clearly selected **This book / Den här boken** tab. It gives shortcuts to the native table of contents, bookmarks,
 in-book search, book information, go-to-page dialog and the reference drawer.
 Unavailable tools are disabled; the original native menus remain accessible.
 
 **Also reading / Pågående böcker** shows up to twelve other unfinished local
-books from the latest 200 history entries, with title and saved percentage.
+books from the latest 200 history entries, four per page, with title, author and
+saved percentage. Covers use only images already in OrbitUI's RAM cache; an
+uncached book gets a placeholder, not an extraction task.
 This is a recent-reading list, not a scan of every book or a server list.
 Preparation starts only when you open that tab, in small yielding batches;
 no covers/documents are opened and no progress is changed just to build it.
@@ -132,14 +135,31 @@ Tap a book to resume through KOReader's normal book-opening lifecycle. The
 native ask-before-open preference is respected, and file/status changes are
 rechecked first. Native reading profiles, return origin, save and external
 BookOrbit/Hardcover sync keep their existing owners. This adds no new sync
-service, reading-state database or automatic startup work. Local test build;
+service, reading-state database or automatic startup work. The Library shortcut
+uses KOReader's native reader-to-file-manager route. Local test build;
 not published or physically accepted on the Bigme yet.
+
+Under **OrbitUI settings > Integrations > Reader panel & X-Ray**, choose
+**Automatic (X-Ray first)**, **X-Ray**, **KOAssistant** or **Hide**. The default
+is Automatic without writing a new preference: an active reader-owned
+[standalone X-Ray](https://github.com/ultimatejimmy/xray.koplugin) instance takes
+priority, otherwise an active [KOAssistant](https://github.com/zeeyado/koassistant.koplugin)
+instance provides its own X-Ray chooser. With neither, no shortcut is shown.
+A forced unavailable provider stays disabled instead of silently switching.
+OrbitUI does not install, enable or load either plugin, copy credentials or
+generate AI data on panel opening. Each provider owns its native menus, cached
+artifacts, spoiler rules and explicit generation/update actions. Generation
+may incur the provider's normal costs; this is not free AI or shared data.
 
 **Svenska:** Läsarpanelen är ett extra alternativ, inte en ersättning för
 KOReaders menyer. Verktyg öppnar de vanliga läsfunktionerna. Pågående böcker
 visar nyligen lästa, ännu inte avslutade lokala filer och återupptar dem på
 vanligt sätt. Listan förbereds först när du väljer fliken; inget nätverk eller
 helbiblioteksindex behövs. Gamla eller saknade läsuppgifter skrivs inte om.
+Under **OrbitUIs inställningar > Integrationer > Läsarpanel och X-Ray** kan du
+välja **Automatiskt (X-Ray först)**, **X-Ray**, **KOAssistant** eller **Dölj**.
+Ingen plugin installeras eller aktiveras av detta. KOAssistant öppnar sin egen
+X-Ray-väljare; AI-generering sker bara via pluginets egna uttryckliga åtgärder.
 
 ## Pinned reading references (local development)
 

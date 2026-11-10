@@ -1,5 +1,53 @@
 # Verification and device acceptance
 
+## 2026-11-10 — local reader bottom panel and optional X-Ray integrations
+
+User approves the bottom-panel prototype, both optional providers and a setting
+with Automatic/X-Ray/KOAssistant/Hide. Automatic prefers active standalone
+X-Ray, then KOAssistant; neither hides the row. **Do not install X-Ray on the
+Bigme.** No device install/test, publication, version, pin/watch/upstream or
+server operation is part of this local implementation. The earlier accepted
+device candidate and public dist remain unchanged.
+
+New root coverage: eight reader-AI policy cases and six sheet cases, plus one
+settings discovery/radio-refresh case and two controller handoff/native-Library
+cases (23 reader-controller cases total). Tests cover automatic/forced/missing/
+disabled/foreign-reader providers, callable HandlerSandbox methods, no eager
+plugin load/preference write/model call, protected KOAssistant cache action,
+stale reader/file/provider callbacks, live native handoff, modal retirement,
+four-book paging without rescans, borrowed-cache ownership/no upscale, fixed
+pause label and SV/EN layouts. Selected tabs are enabled black/white, not gray
+disabled controls. Existing native opener/ask-before-open/profile/return/sync
+owners are retained rather than simulated as new business logic.
+
+**Native supplement:** original standalone X-Ray showFullXRayMenu from commit
+0d8865a8185aaa74d649951f8f80090d01431529 and KOAssistant 0.24.1/c014efe9
+showCacheActionPopup execute locally at their native navigation boundaries.
+X-Ray chooses its reader/standalone menu; KOAssistant takes the native X-Ray
+scope branch with or without a cache entry, without invoking execution.
+This does not load either complete plugin or test an AI account/request.
+
+The retained v2026.07.1 APK widget tree, FreeType/Noto, RenderText, BlitBuffer,
+native Button/GestureRange/Event dispatch render the actual sheet at
+1264×1680@2, 1680×1264@2, 320×480@1, 320×240@1 and 600×800@2.5.
+Geometry checks caught native plain-button wrapping and rich-label height
+differences; final labels stay in their buttons, sheets stay on-screen and
+short bodies reserve a vertical scrollbar, with fixed tabs/close/footer.
+Native rich-row taps, optional-AI handoff tap and stale pagination callbacks
+are replayed where fully visible; fixed Close dispatch is tested at every
+size. Native ImageWidget additionally paints/scales/frees a borrowed large or
+too-small fixture bitmap without freeing the cache's memory. This uses the
+native legacy scaler, not untested MuPDF scaling. Basic platform/font-cache/
+Unicode service boundaries remain stubbed, legacy text shaping is used, and
+SVG icon rasters are not part of this local harness. Native illustrations use
+fixture text/bitmaps, not private books or a real device screenshot.
+
+Private evidence: `test-results/reader-bottom-panel-20261110/`. Full-suite and
+sealed-package receipts are recorded with the frozen candidate after gates.
+No claim of physical Bigme touch/e-ink/RGB/night/sleep/rotation/memory-pressure,
+default MuPDF cover scaling, complete provider startup/authentication, actual
+generation/spoiler behavior or BookOrbit/Hardcover sync acceptance is made.
+
 ## 2026-11-10 — local BookOrbit-inspired updater panel
 
 User approved the visual prototype and local implementation after emphasizing

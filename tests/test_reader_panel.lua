@@ -270,6 +270,31 @@ H.test("owned labels and long titles are bounded in Swedish and English", functi
     H.eq(top().width, 540); language = "en"; Tools.show(reader); H.eq(find("toc").text, "Table of contents")
 end)
 
+H.test("optional AI handoff closes the owned panel first, rejects stale providers and isolates failures", function()
+    fixture()
+    reader.xray = { ui = reader, showFullXRayMenu = function()
+        H.eq(top(), reader); calls[#calls + 1] = { "xray" }
+    end }
+    Tools.show(reader); find("reader_ai").callback(); H.eq(calls[1][1], "xray"); H.eq(reads, 0)
+    Tools.show(reader); local stale = find("reader_ai")
+    reader.xray = nil; stale.callback(); H.eq(#calls, 1); assert(#notices > 0)
+    reader.xray = { ui = reader, showFullXRayMenu = function() error("plugin error") end }
+    Tools.show(reader); find("reader_ai").callback(); H.eq(top(), reader); H.eq(#calls, 1)
+end)
+H.test("Library follows the native close/showFileManager route once and cancels owned pending work", function()
+    fixture(); book("/books/a.epub", .2)
+    reader.onClose = function(self)
+        H.eq(self, reader); H.eq(top(), reader); R.instance = nil; calls[#calls + 1] = { "close-reader" }
+    end
+    reader.showFileManager = function(self, file)
+        H.eq(self, reader); H.eq(file, "/books/current.epub"); H.eq(calls[1][1], "close-reader")
+        calls[#calls + 1] = { "native-filemanager", file }
+    end
+    Tools.show(reader, "ongoing"); local button = find("library")
+    button.callback(); H.eq(#calls, 2); drain(); H.eq(reads, 0)
+    button.callback(); H.eq(#calls, 2)
+end)
+
 local native_dir = os.getenv("ORBITUI_NATIVE_READER_PANEL")
 if native_dir then
     local function loadNative(name, overrides)

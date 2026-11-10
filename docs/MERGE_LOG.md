@@ -4,6 +4,37 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-10 — reader bottom sheet and optional native X-Ray handoff
+
+Local implementation, not an upstream import. User approves the bottom-panel
+prototype and both providers, X-Ray-first Automatic, explicit provider/Hide
+choice and **no X-Ray installation on Bigme**. Branch
+`feature/reader-bottom-panel-20261110`, parent **f2d21383**. All code stays in
+existing host paths; no component code or pin/watch/artwork changes.
+Native sheet rendering adds bounded metadata/position/chapters, black selected
+tabs, tool tiles, four rich recent-book rows per page, cached-only borrowed
+covers and the same native file-manager route as ReaderMenu. The bounded lazy
+controller, modal/reader/file/navigation/confirmation guards, native opener,
+progress/profile/return/sync ownership are retained. No scan during paging.
+
+`orbitui_reader_ai` is an explicit global choice, lazily read with Automatic
+default and refreshed radio feedback. Probe only active live reader instances;
+never install/enable/require third-party code. Forced missing disables rather
+than selecting another plugin. X-Ray's showFullXRayMenu is reviewed at
+**0d8865a8185aaa74d649951f8f80090d01431529**; KOAssistant **0.24.1 / c014efe9**
+uses its native showCacheActionPopup after checking the action remains an
+enabled cache_as_xray action. OrbitUI initiates no generation on navigation;
+native UI owns scope, viewing, spoiler policy and explicit AI requests/cost.
+No source/assets from Aleph or either provider are imported into the runtime.
+
+Two new root suites cover eight provider-policy and six sheet cases; settings
+navigation adds one radio/discovery regression. Existing reader-controller
+regressions remain. Private original-method and native raster/input supplements
+live under `test-results/reader-bottom-panel-20261110/`; boundaries and final
+gate receipts are recorded in TESTING. No device test/install, push, publication,
+server or version change. Existing unpublished updater work is retained, and
+this private candidate must not replace public same-labelled beta assets.
+
 ## 2026-11-10 — independent local updater panel, no upstream import
 
 User approves the BookOrbit-inspired visual prototype and implementation,

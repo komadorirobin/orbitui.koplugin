@@ -1419,6 +1419,36 @@ reference drawer; preserve HandlerSandbox callable-table semantics and native
 close/focus ownership. Missing tools are disabled; isolate errors without
 swallowing component events/alias cleanup. No global menu/class wrapper.
 
+November 10 approved reader-bottom-sheet follow-up: independent native widgets,
+bottom anchored, bounded header/position/chapters, readable black selected tabs,
+native tool tiles and four prepared book records per page. Preserve the lazy
+controller and all guards below; a native ButtonDialog fallback retains safe
+functionality if the richer renderer is unavailable. Never silently certify a
+fallback as a successful rich render. Only an already-loaded RAM cover-cache
+hit may supply a borrowed image: retain its reference, never dispose the
+cache's buffer or request an upscale, extraction, decode or new cache/index.
+Uncached covers stay placeholders. Body scrolling reserves the native bar;
+fixed tabs/close/footer remain accessible. Revision guards reject old page
+buttons; pause updates only its fixed-height status label, not the modal stack.
+The optional Library button follows ReaderMenu's native onClose/showFileManager
+route only after a live explicit tap. No Home-origin override or global hook.
+
+The optional AI row probes only already-instantiated live reader-owned plugins,
+never requires/loads/enables/installs them. The user explicitly approves one
+namespaced preference (`orbitui_reader_ai`): auto (unset/invalid default), xray,
+koassistant or off. Auto prefers active standalone X-Ray then KOAssistant;
+neither hides the row, forced missing stays disabled without silent fallback.
+Changing this choice writes only that preference, with refreshed radio feedback
+in Integrations > Reader panel & X-Ray. Standalone X-Ray uses its native
+showFullXRayMenu. KOAssistant uses showCacheActionPopup only after checking
+the selected book/xray action is enabled and cache_as_xray=true, so a custom
+action cannot turn a navigation tap into immediate model execution. Native
+provider UI owns viewing, scope/spoiler handling and explicit generation/costs.
+Revalidate provider/reader/file before any handed-back explicit execution.
+No credential/config migration or shared artifact/schema claims. X-Ray is
+explicitly NOT installed on the user's device in this task. API review is not
+physical acceptance, nor permission to release/install.
+
 Also reading starts only on an explicit tab/Refresh tap: inspect at most 200
 native history entries and show at most twelve other unfinished local books.
 Yield after four entries or an 8 ms budget (one native filesystem read is not
@@ -1428,9 +1458,10 @@ Use native sidecar discovery and `DocSettings.openSettingsFile`, never the
 repairing `DocSettings:open`, close/flush, history reload/mutation, whole-library
 walk, cover/archive/document open, network or a new index/schema. Refuse
 symlinked/nonplain/oversized sidecars (512 KiB); custom title reads are bounded
-to 256 KiB and otherwise fall back to doc_props/filename. Missing metadata and
+to 256 KiB (title and author) and otherwise fall back to doc_props/filename. Missing metadata and
 bounded coverage are disclosed, not repaired. Tools rendering performs no
-history or sidecar reads. No reading-data/settings writer belongs to this panel.
+history or sidecar reads. No reading-data writer belongs to this panel; the
+explicit integration preference above is the sole new settings write.
 
 Before a result opens, recheck live reader/document/settings/navigation,
 active window/optional matching confirmation, file stat, history membership,
