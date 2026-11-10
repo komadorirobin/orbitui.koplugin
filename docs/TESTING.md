@@ -2,7 +2,34 @@
 
 ## 2026-11-10 — fresh physical ADB verification / beta.2 preparation
 
-**Current checkpoint (before recovery):** frozen beta.2 source **0e2ed636**,
+**Recovery completed after reconnect, publication still withheld:** KOReader
+was confirmed fully closed. The fresh before.tgz SHA was revalidated and a new
+small after.tgz captured preferences/statistics before any restoration. SQLite
+quick_check passes; all 193 non-fixture book rows and 25,875 page-stat rows match
+the fresh pre-session database exactly. No statistics DB was restored. All five
+original files (settings.reader.lua, history.lua, settings/simpleui/sui_settings.lua,
+settings/bookshelf.lua and settings/koassistant_settings.lua) were restored and
+verified byte-for-byte. This restores the user's original plugin/sync preferences.
+The exact owned QA guard was moved outside patches autoload to the isolated test
+directory; no queued command.lua/command.next remains. Isolated test EPUBs,
+sidecars and test-only statistics remain; no real books or version slots deleted.
+
+All 2,000 retained accepted b0dffacc runtime/manifest-file hashes and the original
+root entrypoints/bootstrap were verified before code selection. While closed,
+the unchanged bootstrap's own state serializer prepared current=b0dffacc,
+previous=64c61bac, pending=1; Android staging/readback/atomic rename selected it.
+No boot marker remains. Pending is deliberately for the next normal native
+startup to confirm, not a claim of a new observed boot after restoration.
+KOReader remains closed, physical resolution is 1264x1680 with no override, and
+both accepted/candidate slots plus every other existing slot are preserved.
+Private restore-receipt.json, accepted-recovery-inventory.log and
+recovery-complete.json record the completed checks. The helper tolerates SQLite's
+normal removal of optional WAL/SHM on clean shutdown. A local serializer CLI
+argument mistake stopped before any device activation write; the file-based
+invocation then passed. No more wireless sleep tests. Remaining physical wake/
+input acceptance needs a stable connection, ideally USB. No push/tag/release.
+
+**Earlier checkpoint (before recovery):** frozen beta.2 source **0e2ed636**,
 ZIP **64c61bac5d34ea762c7bc749be1c8ceebeca061664be4084f01f0f228669c09b**,
 manifest **38176bbc**, 29,079,526 expanded bytes, same exact 2,000 API1 paths.
 Both complete Lua/LuaJIT gates pass: 134 Python/four existing source-art skips,

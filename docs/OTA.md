@@ -26,11 +26,21 @@ Publication receipts will follow without rebuilding an already-published tag.
 Local gate receipt: frozen **0e2ed636** / private **64c61bac**, exact 2,000 paths,
 both complete and sealed suites/43 catalogs/native/source/history/art/secrets
 and eighteen older offline installers pass. Physical tool/compact/updater UI
-checks pass, but wireless ADB loses its port during wake verification. Conditional
-device acceptance/restoration remains incomplete; **nothing is pushed or
-published**. TESTING/PROJECT_CONTEXT record the recovery checkpoint. Do not use
+checks pass, but wireless ADB loses its port during wake verification. At that
+checkpoint, device acceptance/restoration remains incomplete; **nothing is
+pushed or published**. TESTING/PROJECT_CONTEXT record the recovery checkpoint. Do not use
 these partial receipts as authority to create a tag/release, and never replace
 public beta.1's same-labelled assets with either earlier private candidate.
+
+Recovery subsequently completed: five original preference/history files are
+byte-exact, all 193 real book rows/25,875 real page-stat rows are unchanged, DB
+not rolled back, QA guard outside autoload and no pending QA command. Retained
+accepted b0dffacc passed all 2,000 file hashes and is selected while closed with
+64c61bac retained as previous; pending=1 awaits the user's next normal startup.
+Physical resolution is restored; all slots/backups preserved. This removes the
+recovery blocker, **not** the incomplete post-wake physical-input release gate.
+Retest with a stable connection, preferably USB; do not publish from partial
+wireless observations. No public bytes or refs were changed.
 
 ## OrbitUI 1.2.0-beta.1
 

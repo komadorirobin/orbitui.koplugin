@@ -23,20 +23,27 @@ and correct this file in the same change.
 ## Snapshot: 2026-11-10
 
 - **Latest recovery/publication gate:** beta.2 frozen source **0e2ed636**, private
-  ZIP **64c61bac**, is physically installed/healthy with accepted **b0dffacc**
-  retained as previous. Both complete suites, 127 sealed roots per interpreter,
+  ZIP **64c61bac**, remains withheld after incomplete post-wake physical-input
+  acceptance. Recovery is now complete with KOReader closed: all five fresh
+  preference/history files match their pre-session bytes; all 193 real book
+  rows and 25,875 real page-stat rows are unchanged, without DB rollback.
+  The owned diagnostic patch is outside autoload, no queued QA command remains,
+  and physical resolution is 1264x1680 without override. Retained accepted
+  **b0dffacc** was verified against all 2,000 manifest/manifest-file hashes and
+  selected atomically, preserving **64c61bac** as previous and every code slot.
+  Its next normal native startup must clear pending=1; the app was not reopened
+  after restoring real preferences. Both complete suites, 127 sealed roots per
+  interpreter,
   native supplements/43 catalogs/source-history-art-secrets and 18 actual older
   offline installers pass. Physical six-tool routes, corrected compact scrolling
   and native config tap, and updater UI-fixture actions pass. Wireless ADB twice
   loses its port during wake work; no passing physical post-wake input claim and
-  **no push/tag/draft/publication**. User is being asked for the new port and
-  closed KOReader for recovery. Temporary preferences/history/plugin disables
-  and QA guard are **not yet restored**. Use only the fresh session.LZ5U1q
-  backup and its prepared restore helper; compare real stats, never rewind DB.
-  If handing back before final acceptance, select retained accepted b0dffacc
-  safely and preserve new/old slots. See newest TESTING checkpoint for exact
-  receipts, serial-vs-ambiguous diagnostics, resolution restoration and remaining
-  device gates. Public dist remains the unchanged beta.1 **25f988ce**.
+  **no push/tag/draft/publication**. No more wireless sleep tests; use a stable
+  connection, ideally USB, for the remaining wake/input gate. Fresh session.LZ5U1q
+  before/after archives and recovery-complete.json remain private recovery
+  evidence, never earlier-session preferences. See newest TESTING checkpoint
+  for exact receipts, serial-vs-ambiguous diagnostics and remaining device gates.
+  Public dist remains the unchanged beta.1 **25f988ce**.
 
 - **Conditional beta.2 / physical reader-panel session in progress.** User now
   authorizes ADB tests, then push/publication only if they pass. Fresh isolated

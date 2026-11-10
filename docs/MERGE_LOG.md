@@ -29,6 +29,16 @@ Latest TESTING/PROJECT_CONTEXT checkpoint describes the still-active temporary
 settings/guard and fresh-session-only recovery. This later receipt is docs only
 and does not rebuild/change the frozen private ZIP or public beta.1 assets.
 
+Recovery after reconnect is now complete and documented in TESTING: five
+original files byte-exact, 193 non-fixture book rows/25,875 page-stat rows
+unchanged without DB rollback, QA guard outside autoload, no queued diagnostic
+command, physical resolution restored. All 2,000 retained accepted-slot hashes
+pass; b0dffacc is atomically selected while closed, 64c61bac retained as previous,
+pending confirmation at next normal startup. No code slots deleted, no app
+restart after restoring real preferences. Remaining post-wake physical-input
+acceptance requires a stable connection; publication remains withheld. This is
+another local documentation-only receipt, not an upstream import or release.
+
 ## 2026-11-10 — default bottom entry with native reading-settings escape
 
 User explicitly requests **default on**, with a disable switch, rather than
