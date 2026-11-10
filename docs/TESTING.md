@@ -7,7 +7,7 @@ Approved Aleph-list point 3, branch `feature/reader-pin-drawer-20261110`, base
 No upstream merge, pin/version/public asset change, device/server installation
 or watch activation. No new installed path; API1 remains at its 2,000-path cap.
 
-`test_reader_pins` initially has 25 normal cases: lazy/idempotent non-writing
+`test_reader_pins` has 26 normal cases: lazy/idempotent non-writing
 registration, unique native selection button, UTF-8 excerpts, EPUB/PDF/CBZ
 location ownership, duplicate/cap/read-only/corrupt/future-store preservation,
 native back-stack jump only on explicit action, fresh reflow resolution,
@@ -25,12 +25,14 @@ Optional whole-module supplements use KOReader minimum v2025.08 peeled source
 **c00df15aeee73b4fdb0475d26fd3fa3c315f3f8f** and reviewed current master
 **01ccbd790d6269301ad523e75c45f62d022a6d7b**, not moving runtime dependencies.
 They exercise actual highlight extension and cached/queued/canceled thumbnail
-protocols plus real container sizing/RTL right alignment, making 28 focused
+protocols plus real container sizing/RTL right alignment, making 29 focused
 cases. Container checks retain explicit stub font/button metrics.
 IPC/render/document engines remain explicit
 stub boundaries, not a full emulator or Android acceptance. Review of native
 RenderImage caught its default free-original behavior; capture passes false
 explicitly, and tests enforce it. Evidence is ignored reader-pins-20261110.
+Capture timers/hold wrappers and closed drawer/list controls have identity
+tokens: an already-dequeued old callback cannot retire or reopen a replacement.
 
 Required before calling locally ready: both complete scripts, 43 catalogs,
 all 119 root files from the frozen private ZIP in Lua/LuaJIT, both native

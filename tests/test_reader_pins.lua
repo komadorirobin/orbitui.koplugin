@@ -256,6 +256,19 @@ H.test("image arm expires and preserves native nil arguments/results", function(
     local a, b, c = wrapper(reader.highlight, nil, nil, 5)
     H.eq(a, nil); H.eq(b, 3); H.eq(c, "native")
 end)
+H.test("already-dequeued old timeouts, holds and window controls cannot retire replacements", function()
+    fixture(); P.armImage(reader)
+    local old_expiry, old_hold = tasks[1], reader.highlight.onHold
+    P.armImage(reader); local current_hold = reader.highlight.onHold
+    old_expiry(); H.eq(reader.highlight.onHold, current_hold)
+    old_hold(reader.highlight, nil, nil); H.eq(native_holds, 1); H.eq(reader.highlight.onHold, current_hold)
+    tasks[1](); P.pin(reader)
+    local old_drawer = P.show(reader); local new_drawer = P.show(reader)
+    old_drawer:onClose(); H.eq(top(), new_drawer)
+    P.list(reader); local old_list = top(); P.list(reader); local new_list = top()
+    old_list.buttons[1][1].callback(); H.eq(top(), new_list)
+    H.eq(#jumps, 0)
+end)
 H.test("later external image/highlight wrappers survive cleanup with ours inert", function()
     fixture(); P.attach(reader); P.armImage(reader)
     local ours = reader.highlight.onHold

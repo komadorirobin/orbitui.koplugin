@@ -743,14 +743,15 @@ function M.readerPins()
         local s = P.attach(ui)
         if not s or not live(s) or not ui.rolling or not ui.highlight
                 or type(ui.highlight.onHold) ~= "function" then return false end
-        P.retire(ui); s.armed = true
+        local arm = {}
+        P.retire(ui); s.armed = arm
         local generation = UI._simpleui_navigation_generation
         local highlight = ui.highlight
         s.hold_original = highlight.onHold
         local original = s.hold_original
         local wrapper
         wrapper = function(this, ...)
-            if not s.armed then return original(this, ...) end
+            if s.armed ~= arm then return original(this, ...) end
             local _arg, ges = ...
             P.disarm(s)
             if not live(s) or generation ~= UI._simpleui_navigation_generation then return false end
@@ -760,7 +761,7 @@ function M.readerPins()
             return true
         end
         s.hold_wrapper = wrapper; highlight.onHold = wrapper
-        s.expiry = function() if s.armed then P.disarm(s) end end
+        s.expiry = function() if s.armed == arm then P.disarm(s) end end
         UI:scheduleIn(30, s.expiry)
         notify("Long-press an EPUB image within 30 seconds to pin a local copy. Ordinary image viewing is unchanged afterwards.")
         return true
@@ -819,21 +820,24 @@ function M.readerPins()
         P.retire(ui)
         local data = store(s)
         if not data then notify("Saved references use an unsupported format. They were left untouched."); return end
-        local buttons = {}
+        local buttons, list = {}, nil
         for i = #data.entries, 1, -1 do
             local entry = data.entries[i]
             local label = entry.kind == "image" and _("Image") or entry.kind == "text" and _("Text excerpt") or _("Page")
             local n = page(s, entry)
             buttons[#buttons + 1] = {{ text = label .. " · " .. (n and tostring(n) or "?")
                 .. (entry.text and (" · " .. truncate(entry.text, 80):gsub("%s+", " ")) or ""),
-                callback = function() closeWindow(s, "list"); P.show(ui, entry.id) end }}
+                callback = function()
+                    if s.list == list then closeWindow(s, "list"); P.show(ui, entry.id) end
+                end }}
         end
         if #buttons == 0 then buttons[1] = {{ text = _("No references pinned in this book."), enabled = false }} end
         buttons[#buttons + 1] = {{ text = _("Pin current page"), callback = function()
-            closeWindow(s, "list"); P.pin(ui)
-        end }, { text = _("Close"), callback = function() closeWindow(s, "list") end }}
-        track(s, "list", require("ui/widget/buttondialog"):new{ title = _("Pinned references"), buttons = buttons,
-            width = math.floor(require("device").screen:getWidth() * .85), rows_per_page = 6 })
+            if s.list == list then closeWindow(s, "list"); P.pin(ui) end
+        end }, { text = _("Close"), callback = function() if s.list == list then closeWindow(s, "list") end end }}
+        list = require("ui/widget/buttondialog"):new{ title = _("Pinned references"), buttons = buttons,
+            width = math.floor(require("device").screen:getWidth() * .85), rows_per_page = 6 }
+        track(s, "list", list)
         UI:show(s.list)
     end
     function P.show(ui, id)
@@ -914,7 +918,10 @@ function M.readerPins()
         }
         window[1] = require("ui/widget/container/rightcontainer"):new{
             dimen = Geom:new{ w = Screen:getWidth(), h = Screen:getHeight() }, allow_mirroring = false, frame }
-        window.onClose = function() closeWindow(s, "drawer"); return true end
+        window.onClose = function()
+            if s.drawer == window then closeWindow(s, "drawer") end
+            return true
+        end
         window.onCloseWidget = function()
             if window.closed then return end
             window.closed = true
