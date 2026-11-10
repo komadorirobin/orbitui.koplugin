@@ -1410,11 +1410,12 @@ Tests: test_finish_forecast, test_host; actual native SQLite with minimum/
 current statistics schemas and read-only/query-plan/byte checks is separate
 from physical Bigme rendering, latency, permissions/WAL/sync acceptance.
 
-November 10 approved Aleph-list point 4: an optional compact reader panel in
-the existing book-panel adapter, not a replacement menu, header or reader.
+November 10 approved Aleph-list point 4: a compact reader panel in the existing
+book-panel adapter, not a replacement config dialog, header or reader. The
+initial optional-only entry policy is amended explicitly below.
 The reader-only Tools entry and `orbitui_reader_panel` Dispatcher action must
 stay lazy on ReaderReady. Tools call only the live native TOC, bookmarks,
-full-text-search input, book-info and go-to-page modules, plus the owned
+full-text-search input, book-info, go-to-page and original ReaderConfig modules, plus the owned
 reference drawer; preserve HandlerSandbox callable-table semantics and native
 close/focus ownership. Missing tools are disabled; isolate errors without
 swallowing component events/alias cleanup. No global menu/class wrapper.
@@ -1433,9 +1434,36 @@ buttons; pause updates only its fixed-height status label, not the modal stack.
 The optional Library button follows ReaderMenu's native onClose/showFileManager
 route only after a live explicit tap. No Home-origin override or global hook.
 
+November 10 explicit user amendment: **default-on bottom-gesture entry**, with
+an immediate opt-out under Reader panel & X-Ray, replaces the earlier optional-
+only entry/default-off suggestion. `orbitui_reader_bottom_panel` defaults on
+unless explicitly false; never write the default or alter native activation/
+reading preferences. ReaderReady installs only two wrappers on the live
+reader's own config instance (onTapShowConfigMenu/onSwipeShowConfigMenu), not
+its class or onShowConfigMenu. Keep all native touch-zone IDs, geometry,
+overrides and north-only/tap/swipe rules, including extended pan zones. Off
+delegates captured native callable handlers with exact arguments/returns;
+the next eligible gesture changes immediately without restart. Direct native
+keyboard/Dispatcher ShowConfigMenu stays native. The new **Reading settings…**
+row below Go to page closes only the owned panel and calls untouched native
+onShowConfigMenu, so original margins/fonts/config panels stay reachable with
+no recursion. No component or native source import/modification.
+
+Bottom entry stops native selection indication, disables hinting for the owned
+modal, emits HandledAsSwipe to stop an in-flight pan and restores hinting once
+on close, only for the same reader/document/config/settings. No hint/event is
+sent to a replacement reader. Covered/parked/stale/asleep readers cannot open
+either menu through captured gesture wrappers. Owned partial work is retired
+on failure, with hinting restored before native fallback. Reader replacement,
+close and teardown restore original raw/inherited method slots only while
+still owned; never clobber a later third-party wrapper. Any captured wrapper
+left in another wrapper's chain becomes a native delegate for a still-live
+reader and is inert after reader replacement. Rotation keeps native touch-zone
+registration and closes the old owned sheet; resume never opens anything.
+
 The optional AI row probes only already-instantiated live reader-owned plugins,
-never requires/loads/enables/installs them. The user explicitly approves one
-namespaced preference (`orbitui_reader_ai`): auto (unset/invalid default), xray,
+never requires/loads/enables/installs them. The AI namespaced preference
+(`orbitui_reader_ai`) is auto (unset/invalid default), xray,
 koassistant or off. Auto prefers active standalone X-Ray then KOAssistant;
 neither hides the row, forced missing stays disabled without silent fallback.
 Changing this choice writes only that preference, with refreshed radio feedback
@@ -1461,7 +1489,7 @@ symlinked/nonplain/oversized sidecars (512 KiB); custom title reads are bounded
 to 256 KiB (title and author) and otherwise fall back to doc_props/filename. Missing metadata and
 bounded coverage are disclosed, not repaired. Tools rendering performs no
 history or sidecar reads. No reading-data writer belongs to this panel; the
-explicit integration preference above is the sole new settings write.
+two explicit namespaced choices above are the only new settings writes.
 
 Before a result opens, recheck live reader/document/settings/navigation,
 active window/optional matching confirmation, file stat, history membership,
@@ -1474,8 +1502,9 @@ detach only its matching ownership so it is closed exactly once. Retire only
 owned windows/jobs/confirmations, reject replaced/dequeued callbacks and do not
 raise new windows over a foreign modal. Covered work pauses in place with
 explicit retry; sleep, reader replacement, close, reflow, rotation and Home/
-shelf navigation retire it, and resume never reopens. No default placement,
-installed file/identity/API1 increase or source pin/watch/version change.
+shelf navigation retire it, and resume never reopens. Other than the approved
+bottom-gesture default, no default placement, installed file/identity/API1
+increase or source pin/watch/version change.
 Tests: test_reader_panel, test_entrypoint, test_host; optional whole minimum/
 current native handlers, dialog/confirmation and doc/central/legacy/custom
 light-reader supplements. Stub font/document/render boundaries are not Bigme

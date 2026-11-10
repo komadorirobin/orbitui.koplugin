@@ -1,5 +1,42 @@
 # Verification and device acceptance
 
+## 2026-11-10 — default bottom entry and native Reading settings
+
+User explicitly approves default-on bottom entry, a disable switch and a
+Reading settings… escape to KOReader's original config dialog. This supersedes
+the prior optional/default-off suggestion. Local implementation only; no
+device install/test, push/publication, native/component import, pin/watch,
+version, public dist or server change. No X-Ray installation.
+
+New routing suite has twelve cases: default on/no write, unchanged native
+config/keyboard entry, tap/swipe/north activation rules, exact native callable
+arguments/return arity when off, immediate re-enable, nonrecursive config
+escape, idempotent ReaderReady, rotation/sleep/resume, foreign modal/parked/
+replaced reader/document/settings/config/file, raw/inherited method cleanup,
+later wrapper preservation, renderer-failure fallback, one-shot guarded
+hinting restoration and the explicit single-key switch. Entrypoint verifies
+lazy attachment and real host teardown. Existing 23-case reader suite now
+includes config as an allowed native action; native geometry/settings tests
+include the new row and immediately refreshed opt-out/AI radio controls.
+
+Optional whole-ReaderConfig supplement uses the actual retained v2026.07.1 APK
+source (full method bodies, not copied implementations): all six unchanged
+native touch-zone closures route tap and north pan to OrbitUI, disabling goes
+back to native ConfigDialog, direct onShowConfigMenu is nonrecursive, and
+DisableHinting/HandledAsSwipe/RestoreHinting plus last-panel persistence are
+retained. UI/ConfigDialog/Device/Event are stubbed at the native boundary;
+this is not end-to-end physical gesture delivery. Two supplements yield
+fourteen cases total per interpreter. The actual native sheet/font/BB/Button/
+GestureRange software harness from the prior receipt adds the new row, and
+checks five size/density layouts, fixed Close and visible config/tool dispatch,
+plus borrowed bitmap cleanup with the native legacy scaler. Icon SVG rasters,
+XText/MuPDF, e-ink/night/RGB, actual sleep/rotation/input/plugin interaction and
+external progress sync still require physical acceptance on Bigme.
+
+Private evidence: `test-results/reader-bottom-default-20261110/`. Frozen full-
+gate/package receipts are added after verification. The earlier **94143f86**
+package remains a distinct predecessor and is not silently rebuilt.
+
 ## 2026-11-10 — local reader bottom panel and optional X-Ray integrations
 
 User approves the bottom-panel prototype, both optional providers and a setting

@@ -66,7 +66,7 @@ local function fixture(sw, sh, scale, lang, tab, count)
     end
     local selected = tab or "tools"
     spec("tools", "Tools", selected ~= "tools"); spec("ongoing", "Also reading", selected ~= "ongoing")
-    for _, id in ipairs{ "toc", "bookmark", "search", "bookinfo", "pins", "gotopage", "close", "library" } do spec(id) end
+    for _, id in ipairs{ "toc", "bookmark", "search", "bookinfo", "pins", "gotopage", "config", "close", "library" } do spec(id) end
     spec("reader_ai", "X-Ray · KOAssistant")
     local books = {}
     for i = 1, count or 12 do
@@ -117,6 +117,7 @@ T.test("selected tab is black and enabled rather than disabled gray; optional AI
     local tab = p:getButtonById("tools")
     assert(tab.enabled); T.eq(tab.background, 0); T.eq(tab.label_widget.fgcolor, 255)
     assert(p:getButtonById("reader_ai").label_container[1])
+    assert(p:getButtonById("config").label_container[1])
     p:getButtonById("reader_ai").callback(); T.eq(f.actions[1], "reader_ai")
 end)
 T.test("four-book pages reuse prepared records without rescanning; old buttons cannot fire after a page turn", function()

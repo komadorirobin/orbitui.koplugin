@@ -4,6 +4,30 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-10 — default bottom entry with native reading-settings escape
+
+User explicitly requests **default on**, with a disable switch, rather than
+the earlier suggested default-off compromise. This deliberately amends C10's
+optional-only entry policy, not native reading settings or menu internals.
+Parent **d30bb4c5**, same `feature/reader-bottom-panel-20261110` branch. No
+upstream/component import, pin/watch, version, device or server operation.
+
+`orbitui_reader_bottom_panel` is on unless explicitly false, with no default
+write. Two per-reader-instance gesture wrappers respect the original zones,
+tap/swipe activation and north-only pan/swipe. Off takes effect immediately
+through the captured callable native handlers. The actual onShowConfigMenu
+is never wrapped: direct native keyboard/Dispatcher actions and the added
+Reading settings… row below Go to page still open the original config dialog.
+Hinting/selection/pan lifecycle, modal/asleep/parked/replaced reader guards,
+fallback and raw/inherited/later-wrapper teardown ownership are explicit.
+Only host paths change; no new installed file or identity.
+
+New routing unit and optional whole-native ReaderConfig coverage accompany
+updated reader/controller, entrypoint, layout and settings tests. Native sheet
+geometry/event replay includes the new Reading settings row. Exact final gates,
+private package hashes and physical-device limits are in TESTING. No X-Ray
+installation, push, release or public OTA change is authorized/performed here.
+
 ## 2026-11-10 — reader bottom sheet and optional native X-Ray handoff
 
 Local implementation, not an upstream import. User approves the bottom-panel

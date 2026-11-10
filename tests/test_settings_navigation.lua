@@ -300,18 +300,28 @@ H.test("native translator bridge preserves pre-existing translations and never r
 end)
 H.test("reader integration settings are bilingual, lazy and refresh their radio choices in place", function()
     local old, changed = G_reader_settings, 0
-    local selected
-    G_reader_settings = { readSetting = function(_, key) if key == "language" then return lang end; return selected end,
-        saveSetting = function(_, key, value) H.eq(key, "orbitui_reader_ai"); selected = value; changed = changed + 1 end }
+    local selected, bottom
+    G_reader_settings = { readSetting = function(_, key)
+        if key == "language" then return lang elseif key == "orbitui_reader_bottom_panel" then return bottom end
+        return selected
+    end, saveSetting = function(_, key, value)
+        if key == "orbitui_reader_ai" then selected = value
+        else H.eq(key, "orbitui_reader_bottom_panel"); bottom = value end
+        changed = changed + 1
+    end }
     lang = "sv"; hit("Läsarpanel", "reader_panel"); hit("KOAssistant", "reader_panel")
-    lang = "en"; hit("Reader panel", "reader_panel"); hit("X-Ray", "reader_panel")
+    hit("bottenmeny", "reader_panel")
+    lang = "en"; hit("Reader panel", "reader_panel"); hit("X-Ray", "reader_panel"); hit("reading settings", "reader_panel")
     Settings.open("integrations"); find(latest().item_table, "reader_panel").callback()
     local first = latest()
-    H.eq(changed, 0); H.eq(#first.item_table, 7)
-    assert(first.item_table[4].checked_func()) -- scope, heading, help, Automatic
-    first.item_table[6].callback()
+    H.eq(changed, 0); H.eq(#first.item_table, 9)
+    assert(first.item_table[2].checked_func()); assert(first.item_table[6].checked_func())
+    first.item_table[8].callback()
     H.eq(selected, "koassistant"); H.eq(changed, 1); assert(first.closed)
-    assert(latest() ~= first and latest().item_table[6].checked_func())
+    assert(latest() ~= first and latest().item_table[8].checked_func())
+    latest().item_table[2].callback(); H.eq(bottom, false); H.eq(changed, 2)
+    assert(not latest().item_table[2].checked_func()); assert(latest().item_table[8].checked_func())
+    latest().item_table[2].callback(); H.eq(bottom, true); H.eq(changed, 3)
     G_reader_settings = old
 end)
 H.finish()

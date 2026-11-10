@@ -59,7 +59,9 @@ end
 
 function OrbitUI:onReaderReady()
     if self._orbitui_error or not self.ui.document then return end
-    require("adapters/orbitui_book_panel").readerPins().attach(self.ui)
+    local panel = require("adapters/orbitui_book_panel")
+    panel.readerPins().attach(self.ui)
+    panel.readerBottomMenu().attach(self.ui)
     local Dispatcher = require("dispatcher")
     local _ = require("core/orbitui_i18n")
     Dispatcher:registerAction("orbitui_reader_pins", { category = "none", event = "OrbitUIReaderPins",

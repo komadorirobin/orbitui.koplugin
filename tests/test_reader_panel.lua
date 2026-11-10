@@ -87,7 +87,8 @@ local function fixture()
     end }
     package.loaded["apps/reader/readerui"] = R
     for _, action in ipairs{ { "toc", "onShowToc" }, { "bookmark", "onShowBookmark" },
-        { "search", "onShowFulltextSearchInput" }, { "bookinfo", "onShowBookInfo" }, { "gotopage", "onShowGotoDialog" } } do
+        { "search", "onShowFulltextSearchInput" }, { "bookinfo", "onShowBookInfo" }, { "gotopage", "onShowGotoDialog" },
+        { "config", "onShowConfigMenu" } } do
         local id, method = action[1], action[2]
         local target = {}; reader[id] = target
         target[method] = function(self, ...)
@@ -116,7 +117,7 @@ H.test("panel is lazy, tools do not scan or save and no menu/header hook is repl
     H.eq(reader.onClose, nil); H.eq(reader.view, nil); H.eq(reader.document.file, "/books/current.epub")
 end)
 H.test("each allowed native tool receives the right live module, no arguments and no lingering panel", function()
-    for _, id in ipairs{ "toc", "bookmark", "search", "bookinfo", "gotopage", "pins" } do
+    for _, id in ipairs{ "toc", "bookmark", "search", "bookinfo", "gotopage", "pins", "config" } do
         fixture(); Tools.show(reader); find(id).callback(); H.eq(calls[1][1], id); H.eq(top(), reader)
     end
 end)

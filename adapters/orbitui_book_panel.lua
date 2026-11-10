@@ -1045,6 +1045,118 @@ function M.readerAIItems(changed)
     return rows
 end
 
+local reader_bottom_key = "orbitui_reader_bottom_panel"
+function M.readerBottomEnabled()
+    return not G_reader_settings or G_reader_settings:readSetting(reader_bottom_key) ~= false
+end
+function M.readerPanelItems(changed)
+    local _ = require("core/orbitui_i18n")
+    local rows = {{ text = _("Use OrbitUI as the bottom menu"), checked_func = M.readerBottomEnabled,
+        callback = function()
+            if not G_reader_settings then return end
+            G_reader_settings:saveSetting(reader_bottom_key, not M.readerBottomEnabled())
+            if changed then changed() end
+        end }, { text = _("Reading settings… opens KOReader's original bottom menu. Turn this switch off to keep the original bottom gestures."),
+        enabled = false }}
+    for _i, row in ipairs(M.readerAIItems(changed)) do rows[#rows + 1] = row end
+    return rows
+end
+
+-- Redirect only the two gesture-entry methods on this reader's config instance.
+-- Keep native zones, activation preferences, keyboard/Dispatcher ShowConfigMenu
+-- and the actual config dialog untouched. No class/global hook or default write.
+function M.readerBottomMenu()
+    if M._reader_bottom then return M._reader_bottom end
+    local B, states, sleeping = {}, setmetatable({}, { __mode = "k" }), false
+    M._reader_bottom = B
+    local function current(s)
+        local R = package.loaded["apps/reader/readerui"]
+        return R and R.instance == s.ui and s.ui.config == s.config
+            and s.ui.document == s.document and s.ui.doc_settings == s.settings
+            and s.document.file == s.file
+    end
+    function B.detach(ui)
+        local s = states[ui]; if not s then return end
+        s.detached = true; states[ui] = nil
+        for method, entry in pairs(s.methods) do
+            if s.config[method] == entry.wrapper then s.config[method] = entry.raw end
+        end
+    end
+    function B.event(handler, ui)
+        if handler == "onSuspend" then sleeping = true
+        elseif handler == "onResume" then sleeping = false
+        elseif handler == "onShowingReader" then for owner in pairs(states) do B.detach(owner) end
+        elseif handler == "onCloseDocument" or handler == "onTeardown" then B.detach(ui) end
+    end
+    function B.attach(ui)
+        if not ui or type(ui.config) ~= "table" or ui.config.ui ~= ui or not ui.document or not ui.doc_settings then return end
+        local old = states[ui]
+        if old and current(old) then return end
+        B.detach(ui)
+        local config = ui.config
+        if not readerCallable(config.onTapShowConfigMenu) or not readerCallable(config.onSwipeShowConfigMenu) then return end
+        local s = { ui = ui, config = config, document = ui.document, file = ui.document.file,
+            settings = ui.doc_settings, methods = {} }
+        states[ui] = s
+        local UI = require("ui/uimanager")
+        local function event(name)
+            if readerCallable(ui.handleEvent) then ui:handleEvent(require("ui/event"):new(name)) end
+        end
+        local function open()
+            if sleeping or not UI:isWidgetShown(ui) or UI:getTopmostVisibleWidget() ~= ui then return end
+            local hinted = false
+            local ok, window = pcall(function()
+                if ui.keyselection and readerCallable(ui.keyselection.stopHighlightIndicator) then
+                    ui.keyselection:stopHighlightIndicator(true)
+                end
+                hinted = true; event("DisableHinting")
+                return M.readerTools().show(ui)
+            end)
+            local function restore()
+                if hinted then
+                    hinted = false
+                    if current(s) then pcall(event, "RestoreHinting") end
+                end
+            end
+            if ok and window then
+                local original = window.onCloseWidget
+                window.onCloseWidget = function(this, ...)
+                    restore()
+                    if original then return original(this, ...) end
+                end
+                -- Native ReaderConfig consumes an in-flight pan too. Do not
+                -- leave a page scroll running underneath the modal sheet.
+                pcall(event, "HandledAsSwipe")
+                return true
+            end
+            restore()
+            if M._reader_tools then pcall(M._reader_tools.retire, ui) end
+            if not ok then require("logger").warn("OrbitUI bottom menu unavailable; retaining native menu:", window) end
+            return false
+        end
+        for _i, method in ipairs{ "onTapShowConfigMenu", "onSwipeShowConfigMenu" } do
+            local entry = { original = config[method], raw = rawget(config, method) }
+            s.methods[method] = entry
+            local swipe = method == "onSwipeShowConfigMenu"
+            entry.wrapper = function(owner, ...)
+                if owner ~= config or not current(s) then return end
+                if sleeping or not UI:isWidgetShown(ui) or UI:getTopmostVisibleWidget() ~= ui then return end
+                if s.detached or not M.readerBottomEnabled() then return entry.original(owner, ...) end
+                local gesture = ...
+                if swipe and (owner.activation_menu == "tap" or not gesture or gesture.direction ~= "north")
+                        or not swipe and owner.activation_menu == "swipe" then return entry.original(owner, ...) end
+                local opened = open()
+                if opened == false and current(s) and UI:isWidgetShown(ui) and UI:getTopmostVisibleWidget() == ui then
+                    return entry.original(owner, ...) -- Failed renderer: retain the native escape hatch.
+                end
+                return opened
+            end
+            config[method] = entry.wrapper
+        end
+    end
+    return B
+end
+
 -- Native bottom sheet. Only presentation belongs here: controller-owned
 -- callbacks retain all reader/history/confirmation checks. No work in paint,
 -- no cover extraction, plugin loading or reading-data writes.
@@ -1221,7 +1333,8 @@ function M.readerSheet(options)
                 tiles[#tiles + 1] = b; focus[#focus + 1] = b
             end
             append(tiles); self.layout[#self.layout + 1] = focus
-            for _, row in ipairs{ { "bookinfo", "info" }, { "pins", "collections_bookmark" }, { "gotopage", "auto_stories" }, { "reader_ai", "manage_search" } } do
+            for _, row in ipairs{ { "bookinfo", "info" }, { "pins", "collections_bookmark" }, { "gotopage", "auto_stories" },
+                    { "config", "menu_book" }, { "reader_ai", "manage_search" } } do
                 local spec = specs[row[1]]
                 if spec then
                     append(space(4))
@@ -1319,6 +1432,7 @@ function M.readerTools()
         { "bookinfo", "onShowBookInfo", "Book information" },
         { "pins", nil, "Pinned references" },
         { "gotopage", "onShowGotoDialog", "Go to page" },
+        { "config", "onShowConfigMenu", "Reading settings…" },
     }
     local function callable(fn)
         return type(fn) == "function" or type(fn) == "table" and type((getmetatable(fn) or {}).__call) == "function"
@@ -1628,6 +1742,7 @@ function M.readerTools()
 end
 
 function M.readerToolsEvent(handler, ui)
+    if M._reader_bottom then M._reader_bottom.event(handler, ui) end
     if M._reader_tools then M._reader_tools.event(handler, ui) end
 end
 

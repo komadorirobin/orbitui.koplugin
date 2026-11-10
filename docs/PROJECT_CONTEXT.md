@@ -22,6 +22,22 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-10
 
+- **Default bottom-menu entry and native Reading settings escape, local only.**
+  User explicitly requests OrbitUI as the default bottom menu (superseding the
+  suggested default-off compromise), a visible Reading settings… row below
+  Go to page and a global opt-out. `orbitui_reader_bottom_panel` is on unless
+  explicitly false; opening settings/ReaderReady never writes a default.
+  Same feature branch, parent **d30bb4c5**. Two gesture methods are wrapped on
+  each live reader's own config instance, never its class/actual config dialog.
+  Native zones/activation and direct keyboard/Dispatcher config actions stay
+  unchanged. The opt-out delegates native handlers immediately; Reading
+  settings opens untouched onShowConfigMenu without recursion. Native selection,
+  pan cancellation and hinting are paired with guarded close/restore; stale,
+  modal/parked/asleep/replaced readers and teardown ownership are tested.
+  No component/pin/watch/version/public dist or device/server change, no X-Ray
+  install, push or publication. See C10, FEATURES and the new TESTING/MERGE_LOG
+  entry for this deliberate entry-policy amendment and candidate receipts.
+
 - **Reader bottom panel and optional X-Ray selection, local only.** User approves
   the visual bottom-panel design and requests both standalone X-Ray and
   KOAssistant support, automatic X-Ray-first priority, manual provider/Hide

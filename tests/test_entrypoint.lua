@@ -122,7 +122,11 @@ H.test("reader panel/reference menus and actions are reader-only and stay lazy o
     H.eq(items.orbitui_reader_panel, nil)
     local reader = instantiate(class, { file = "/books/test.epub" })
     reader.ui.doc_settings = { readSetting = function() error("no pin reads on ReaderReady") end }
+    local tap, swipe, native = function() end, function() end, function() end
+    reader.ui.config = { ui = reader.ui, onTapShowConfigMenu = tap, onSwipeShowConfigMenu = swipe, onShowConfigMenu = native }
     reader:onReaderReady()
+    assert(reader.ui.config.onTapShowConfigMenu ~= tap and reader.ui.config.onSwipeShowConfigMenu ~= swipe)
+    H.eq(reader.ui.config.onShowConfigMenu, native)
     assert(actions.orbitui_reader_pins.reader and actions.orbitui_pin_page.reader)
     assert(actions.orbitui_reader_panel.reader)
     H.eq(actions.orbitui_reader_panel.event, "OrbitUIReaderPanel")
@@ -135,5 +139,6 @@ H.test("reader panel/reference menus and actions are reader-only and stay lazy o
     reader._orbitui_error = "failed"
     items = {}; reader:addToMainMenu(items); H.eq(items.orbitui_reader_pins, nil)
     H.eq(items.orbitui_reader_panel, nil)
+    reader:onTeardown(); H.eq(reader.ui.config.onTapShowConfigMenu, tap); H.eq(reader.ui.config.onSwipeShowConfigMenu, swipe)
 end)
 H.finish()

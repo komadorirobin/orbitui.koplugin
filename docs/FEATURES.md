@@ -112,9 +112,20 @@ lässtatus. Långtryck för att uppdatera prognosen eller läsa hur den räknas.
 
 ## Reader bottom panel and optional X-Ray (local development)
 
-In an open book, choose **Tools > Reader panel / Verktyg > Läsarpanel**, or
-assign the reader gesture action **OrbitUI: reader panel / OrbitUI: läsarpanel**.
-It is optional: your normal KOReader menus, header and gestures are unchanged.
+In an open book, the normal bottom-menu tap/upward swipe now opens OrbitUI's
+reader panel by default, respecting KOReader's existing tap/swipe activation
+preference. **Reading settings… / Läsinställningar…**, below **Go to page**,
+opens KOReader's untouched original menu for margins, fonts and other reading
+adjustments. Under **OrbitUI settings > Integrations > Reader panel & X-Ray**,
+turn off **Use OrbitUI as the bottom menu** to restore the native bottom entry
+immediately, with no restart or preference reset. The default is enabled without
+writing a setting; an explicit off is preserved.
+
+**Tools > Reader panel / Verktyg > Läsarpanel** and the reader gesture action
+**OrbitUI: reader panel / OrbitUI: läsarpanel** remain available in either mode.
+Normal top menus, header, other gestures and direct native ShowConfigMenu
+keyboard/Dispatcher actions are unchanged. The native config dialog and its
+reading settings are not replaced or reimplemented.
 The bottom-anchored native sheet has the current title/author, reading position,
 chapter and a clearly selected **This book / Den här boken** tab. It gives shortcuts to the native table of contents, bookmarks,
 in-book search, book information, go-to-page dialog and the reference drawer.
@@ -151,8 +162,11 @@ generate AI data on panel opening. Each provider owns its native menus, cached
 artifacts, spoiler rules and explicit generation/update actions. Generation
 may incur the provider's normal costs; this is not free AI or shared data.
 
-**Svenska:** Läsarpanelen är ett extra alternativ, inte en ersättning för
-KOReaders menyer. Verktyg öppnar de vanliga läsfunktionerna. Pågående böcker
+**Svenska:** OrbitUIs panel är nu standard vid öppning av bottenmenyn i en bok.
+**Läsinställningar…** öppnar KOReaders vanliga meny med marginaler, typsnitt och
+övriga läsinställningar. Stäng av **Använd OrbitUI som bottenmeny** under
+**Integrationer > Läsarpanel och X-Ray** för att återgå till originalet direkt.
+Övriga menyer och inställningar behålls. Pågående böcker
 visar nyligen lästa, ännu inte avslutade lokala filer och återupptar dem på
 vanligt sätt. Listan förbereds först när du väljer fliken; inget nätverk eller
 helbiblioteksindex behövs. Gamla eller saknade läsuppgifter skrivs inte om.
