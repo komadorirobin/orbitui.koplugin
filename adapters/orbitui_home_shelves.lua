@@ -353,9 +353,10 @@ function M.nextModule()
     module.updateStats = nil -- membership, not only the percentage, may change
     module.build = function(w, ctx)
         local pfx, UI = ctx.pfx or "simpleui_hs_", require("ui/uimanager")
-        local state = M.nextState(pfx)
         local owner = ctx._screen_widget
         if ctx.orbitui_dashboard_hosted and owner then owner = (getmetatable(owner) or {}).__index or owner end
+        local preview = ctx.preview or not owner
+        local state = preview and { phase = "idle", files = {} } or M.nextState(pfx)
         local lease = { owner = owner, ctx = ctx, pfx = pfx, navigation = UI._simpleui_navigation_generation,
             page = owner and owner._current_page, dashboard = ctx.orbitui_dashboard_hosted,
             dashboard_page = owner and owner._orbitui_dashboard_module_page }
@@ -422,7 +423,7 @@ function M.nextModule()
         -- reads metadata, and a canceled/suspended job is not auto-resumed.
         local paint = widget.paintTo
         widget.paintTo = function(self, ...)
-            if state.phase == "idle" and state.lease == lease and not ctx.preview and nextLive(state) then
+            if state.phase == "idle" and state.lease == lease and not preview and nextLive(state) then
                 prepareNext(state)
             end
             if paint then return paint(self, ...) end

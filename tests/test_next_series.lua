@@ -223,6 +223,16 @@ H.test("native same-turn free-before-build correction transfers work without res
     old:free(); owner._current_page=2; mod.build(500,ctx); flush()
     H.eq(Shelves.nextState().phase,"paused"); H.eq(queries,0); H.eq(metadata_reads,reads)
 end)
+H.test("a module preview never replaces the live placement or cancels its preparation", function()
+    local mod=fixture(); local ctx=context()
+    for i=1,40 do add("/manga/extra"..i..".epub","Extra",i) end
+    mod.build(500,ctx); flush(3)
+    local state=Shelves.nextState(); local lease=state.lease
+    local preview=context(); preview.preview=true
+    mod.build(500,preview):free()
+    H.eq(state.lease,lease); H.eq(state.phase,"loading")
+    flush(); H.eq(state.phase,"ready"); H.eq(warms,1); H.eq(queries,1)
+end)
 H.test("different author and library series identities cannot select one another's unread volume", function()
     local mod = fixture()
     add("/manga/S1.epub", "Same", 1, 1, "finished", "Author A", 300)
