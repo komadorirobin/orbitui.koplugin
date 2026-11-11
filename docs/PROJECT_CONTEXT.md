@@ -22,11 +22,15 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Reading-goal source readability.** The Hardcover caption under the
+  progress bar uses larger type and primary ink in both dashboard layouts.
+  Verified on the Bigme's cover staircase in private slot **7cb0b352**,
+  with **c69de3ef** as rollback.
+
 - **Dashboard date and footer readability.** The date and time remaining
   use larger bold text. The Silverfish statistics use larger regular text.
   All three use primary ink. USB screenshots on the Bigme verify the change
-  on Robin's current wallpaper. Active private slot **c69de3ef** retains
-  **a2840fcf** as rollback.
+  on Robin's current wallpaper. Tested in private slot **c69de3ef**.
 
 - **Optional cover staircase on the Bigme.** Layout option 2 combines the
   current and ongoing books, with Silverfish on the right and time remaining

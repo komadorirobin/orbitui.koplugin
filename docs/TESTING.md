@@ -1,5 +1,23 @@
 # Verification and device acceptance
 
+## 2026-11-11 — reading-goal source readability on Bigme
+
+Reading-goal captions use larger type and primary ink in both dashboard
+layouts. Dashboard checks verify the caption size, colour and card bounds.
+Desktop KOReader widgets painted at 1232×1360, 480×540 and 800×480.
+
+On the Bigme's cover staircase, the Hardcover caption is larger and darker
+and the progress bar matches the before screenshot. The dashboard and
+wallpaper preferences, history, collections and crash-log size matched.
+
+Source **8ad5a4f7dd82f28025501fb44a31c8726dd0b29c**, private ZIP
+**7cb0b352ead657a0066580fec6eecbbc49136b1c9a9bd46cd97e45f3bedb3f02**.
+The full Lua gate passed with the optional SQLite skips, and the focused
+dashboard suite passed against the sealed runtime in Lua and LuaJIT.
+Archive integrity and the same 2,000 Android paths and their hashes
+were verified. The build is active with **c69de3ef** as rollback.
+Evidence is in `test-results/dashboard-hardcover-contrast-20261111/`.
+
 ## 2026-11-11 — dashboard date and footer readability on Bigme
 
 The date and remaining time use larger bold text, and the Silverfish
