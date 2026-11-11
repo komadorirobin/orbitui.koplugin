@@ -22,6 +22,13 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Current public preview 1.2.0-beta.3.** Published 2026-11-11
+  14:56:02 UTC as release **441829686** from frozen source **c7c23b25**.
+  Public ZIP **f21e96f1** passed anonymous download and native OTA checks
+  from stable 1.1.0 and the two earlier 1.2 previews. The Bigme was used for
+  the main-view and wake checks, with the final Inter and header changes
+  verified on desktop. See OTA for exact validation and Actions status.
+
 - **Dashboard header refinement.** Search and the plus share a centred
   row, and Straight cover row uses the bundled Inter font by default.
   An active custom UI font takes precedence. Native desktop renders passed.
@@ -212,7 +219,7 @@ and correct this file in the same change.
   approved November 11 overview now builds on the full-page sketch. Existing
   tag actions, reviews, highlights and external owners remain intact.
 
-- **Current public preview: 1.2.0-beta.2**, published 2026-11-10 22:26:05 UTC,
+- **Previous public preview 1.2.0-beta.2**, published 2026-11-10 22:26:05 UTC,
   release 440990827, frozen source/tag **9caa3511 / v1.2.0-beta.2**. Public ZIP
   **d7abac63**, manifest **ef715f75**, exact same 2,000 API1 installed paths.
   Runtime equals the physically exercised private 64c61bac candidate; only

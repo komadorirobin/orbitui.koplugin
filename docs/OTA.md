@@ -2,6 +2,23 @@
 
 ## OrbitUI 1.2.0-beta.3
 
+Published **2026-11-11 14:56:02 UTC**, release **441829686**, frozen
+source/tag **c7c23b25 / v1.2.0-beta.3**. Public ZIP SHA-256
+`f21e96f12f048c1a4adc1985b22302e5f03a5220ca997e31076bd50cf883a97a`,
+9,883,374 bytes and 2,000 installed files. The anonymous ZIP and checksum
+match the draft. Native channel selection offers beta.3 in preview and
+1.1.0 in stable.
+
+Both full local suites passed, along with 129 sealed suites per interpreter
+and all 43 translation catalogs. Exact package projection, 180 outgoing
+blobs and the artwork, bootstrap and reviewed source pins passed the audit.
+The actual 1.1.0, 1.2.0-beta.1 and 1.2.0-beta.2 installers passed offline and
+anonymous HTTPS upgrade, rollback and recovery checks. All 100 earlier
+releases, 175 tag refs and the maintenance branches matched the baseline.
+Main and tag Actions runs **43042179044 / 43042176783** were still
+installing runner dependencies at verification time.
+Evidence is under `test-results/preview12-beta3-20261111/`.
+
 This preview includes the straight cover row dashboard, airy book overview,
 redesigned search and tag results, updated settings and editing sheets, and
 remaining reading time in the reader panel and supported Home cards. The
