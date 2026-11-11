@@ -1,5 +1,21 @@
 # Verification and device acceptance
 
+## 2026-11-11 — ordinary book search
+
+Local source **560735b6a6a64d5ef17299f660f064ce8842c001**, private archive
+**51ac5d675d2b0e698a2448154b51eb1e9d3ead556d53c75594e09ed32dc716b8**.
+The complete test gate and five focused search/tag suites with the sealed
+runtime path pass under Lua and LuaJIT. ZIP integrity, exact source projection,
+updater file count, asset set and public archive verified.
+
+The desktop KOReader widget harness uses fixture results and rasterized
+bundled icons. At 1264×1680 it verifies both entry and results layouts, with
+additional narrow and landscape cases in Swedish and English. Native gestures
+cover sort and scope selection, submitting edited text, opening Search
+options and submitting back to the same sheet, long-press book details and
+scoped series drilldown. Physical Bigme verification is pending. The render,
+test logs and private archive are in local `test-results/book-search-20261111/`.
+
 ## 2026-11-11 — similar results, card settings and settings categories
 
 Local source **b7a20cac70b1edb5b93cd1497d9984d8e4c98f0c**, private archive
