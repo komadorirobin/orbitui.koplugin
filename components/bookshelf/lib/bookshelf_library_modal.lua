@@ -28,6 +28,69 @@ local Space = require("lib/bookshelf_space")
 local BFont = require("lib/bookshelf_fonts")
 local PopupKit = require("lib/bookshelf_popup_kit")
 local _ = require("lib/bookshelf_i18n").gettext
+local H = require("ui/widget/horizontalgroup")
+local px = Space.px
+local ink_secondary, surface_tint
+local source = debug.getinfo(1, "S").source
+local icon_root = (source:match("^@(.+)/components/bookshelf/lib/[^/]+$") or ".")
+    .. "/assets/material-symbols/icons/300/"
+
+local function gap(n) return HorizontalSpan:new{ width = px(n) } end
+local function space(n) return VerticalSpan:new{ width = px(n) } end
+local function sheetColors()
+    if not ink_secondary then
+        ink_secondary, surface_tint = Blitbuffer.Color8(0x55), Blitbuffer.Color8(0xF3)
+    end
+    return ink_secondary, surface_tint
+end
+local function sheetText(value, width, size, bold, color, max_height, alignment, background)
+    local Text = require("ui/widget/textboxwidget")
+    local face, weight = BFont:getFace("cfont", size, { bold = bold })
+    if max_height and face.size * 1.22 > max_height then
+        size = math.max(1, math.floor(size * max_height / (face.size * 1.22)))
+        face, weight = BFont:getFace("cfont", size, { bold = bold })
+    end
+    local options = { text = tostring(value or ""):gsub("[%c]", " "), width = math.max(1, width),
+        face = face, bold = weight, fgcolor = color or Blitbuffer.COLOR_BLACK,
+        bgcolor = background or (color and color == Blitbuffer.COLOR_WHITE and Blitbuffer.COLOR_BLACK or Blitbuffer.COLOR_WHITE),
+        alignment = alignment or "left", line_height = 0.14, height_overflow_show_ellipsis = true }
+    local widget = Text:new(options)
+    if max_height and widget:getSize().h > max_height then
+        while widget.line_height_px + widget.line_glyph_extra_height > max_height and size > 1 do
+            widget:free()
+            size = size - 1
+            options.face, options.bold = BFont:getFace("cfont", size, { bold = bold })
+            widget = Text:new(options)
+        end
+        local height = math.max(widget.line_height_px, max_height - widget.line_glyph_extra_height)
+        widget:free()
+        options.height, options.height_adjust = height, false
+        widget = Text:new(options)
+    end
+    return widget
+end
+
+local function sheetIcon(name, size)
+    return require("ui/widget/iconwidget"):new{ file = icon_root .. name .. ".svg", width = px(size), height = px(size) }
+end
+
+local function sheetRule(width)
+    return FrameContainer:new{ padding = 0, padding_bottom = px(1), bordersize = 0,
+        background = Blitbuffer.COLOR_LIGHT_GRAY, HorizontalSpan:new{ width = width } }
+end
+
+local function sheetButton(w, h, child, tap, opts)
+    opts = opts or {}
+    local border = opts.outline and px(1) or 0
+    local button = require("ui/widget/button"):new{ text = "", width = w, height = h - 2 * border, padding = 0,
+        padding_h = 0, padding_v = 0, margin = 0, radius = px(opts.radius or 8),
+        bordersize = border, background = opts.fill, enabled = opts.enabled ~= false,
+        callback = tap }
+    button.label_widget:free()
+    button.label_widget, button.label_container[1] = child, child
+    if opts.outline then button.frame.color = Blitbuffer.COLOR_GRAY end
+    return button
+end
 
 -- Uniform gap applied everywhere below the title bar separator.
 local MARGIN = Space.px(10)
@@ -214,8 +277,100 @@ function LibraryModal:onClose()
         back.on_tap()
         return true
     end
+    if self.config and self.config.sheet and self.config.sheet.on_back then
+        self.config.sheet.on_back()
+        return true
+    end
     UIManager:close(self)
     return true
+end
+
+-- The opt-in sheet keeps the same native paging, input and gesture dispatch.
+-- All icon/cover work here is limited to the rows on the current page.
+function LibraryModal.sheetRow(row, dimen)
+    local ink_secondary, surface_tint = sheetColors()
+    local w, h = dimen.w, dimen.h
+    local left, right, head = {}, {}, row.group and px(23) or 0
+    if row.cover then
+        local cw, ch = px(33), math.max(1, math.min(px(46), h - head - px(4)))
+        local image
+        local cache = package.loaded["infra/sui_cover_cache"]
+        local bb = cache and row.file and cache:get(row.file)
+        if bb and bb:getWidth() > 0 and bb:getHeight() > 0 then
+            local scale = math.min(cw / bb:getWidth(), ch / bb:getHeight(), 1)
+            image = require("ui/widget/imagewidget"):new{ image = bb, image_disposable = false,
+                width = math.max(1, math.floor(bb:getWidth() * scale)), height = math.max(1, math.floor(bb:getHeight() * scale)) }
+        else
+            local initial = tostring(row.title):match("^[%z\1-\127\194-\244][\128-\191]*") or ""
+            image = sheetText(initial:upper(), cw - px(4), 14, true, ink_secondary, ch, "center", surface_tint)
+        end
+        local tile = FrameContainer:new{ padding = 0, bordersize = px(1), color = Blitbuffer.COLOR_GRAY,
+            radius = px(4), background = surface_tint,
+            CenterContainer:new{ dimen = Geom:new{ w = cw, h = ch }, image } }
+        if row.stack then
+            tile = FrameContainer:new{ padding = 0, padding_right = px(2), padding_bottom = px(2),
+                bordersize = 0, radius = px(4), background = Blitbuffer.COLOR_GRAY, tile }
+        end
+        left = { tile, gap(11) }
+    elseif row.icon then left = { sheetIcon(row.icon, 22), gap(12) } end
+    if row.checked ~= nil then
+        right = { gap(10), FrameContainer:new{ padding = 0, radius = px(4), bordersize = px(1),
+            background = row.checked and Blitbuffer.COLOR_BLACK or nil,
+            CenterContainer:new{ dimen = Geom:new{ w = px(19), h = px(19) },
+                sheetText(row.checked and "✓" or "", px(16), 13, true, Blitbuffer.COLOR_WHITE, px(19), "center") } } }
+    elseif row.chevron ~= false then right = { gap(10), sheetIcon("chevron_right", 18) } end
+    local tw = w
+    for _, side in ipairs({ left, right }) do
+        for _, widget in ipairs(side) do tw = tw - widget:getSize().w end
+    end
+    local desc = row.subtitle
+    local note_width = row.note and tw >= px(310) and math.min(px(156), math.floor(tw * 0.36)) or nil
+    if note_width then tw = tw - note_width - px(8)
+    elseif row.note then desc = desc and desc ~= "" and (row.note .. " · " .. desc) or row.note end
+    local available_h = math.max(3, h - head - px(4))
+    local title_h = math.min(px(23), desc and desc ~= "" and math.floor(available_h * 0.58) or available_h)
+    local copy = VerticalGroup:new{ align = "left", sheetText(row.title, tw, 16, true, nil, title_h) }
+    if desc and desc ~= "" then
+        copy[#copy + 1] = space(2)
+        copy[#copy + 1] = sheetText(desc, tw, 13, false, ink_secondary,
+            math.max(1, math.min(px(19), available_h - title_h - px(2))))
+    end
+    local line = H:new{ align = "center" }
+    for _, widget in ipairs(left) do line[#line + 1] = widget end
+    line[#line + 1] = copy
+    if note_width then
+        line[#line + 1] = gap(8)
+        line[#line + 1] = sheetText(row.note, note_width, 13, false, ink_secondary, math.min(available_h, px(35)), "right")
+    end
+    for _, widget in ipairs(right) do line[#line + 1] = widget end
+    local body = VerticalGroup:new{ align = "left" }
+    if row.group then
+        body[#body + 1] = space(2)
+        body[#body + 1] = sheetText(row.group, w, 13, true, ink_secondary, px(20))
+        body[#body + 1] = VerticalSpan:new{ width = math.max(0, head - px(2) - body[2]:getSize().h) }
+    end
+    body[#body + 1] = CenterContainer:new{ dimen = Geom:new{ w = w, h = h - head - px(1) }, line }
+    body[#body + 1] = sheetRule(w)
+    return body
+end
+
+function LibraryModal.showSheet(config)
+    local sheet = LibraryModal:new{ _sui_keep_homescreen = true, config = {
+        title = config.title, sheet = config, grid_cols = 1, no_search = true,
+        cells_per_page = 1, on_closed = config.on_closed,
+        item_count = function() return #config.rows end,
+        item_at = function(index) return config.rows[index] end,
+        cell_renderer = function(row, dimen)
+            local display = setmetatable({}, { __index = row })
+            if row.get_checked then display.checked = row.get_checked() == true end
+            if row.get_subtitle then display.subtitle = row.get_subtitle() end
+            if not row.action then display.chevron = false end
+            return LibraryModal.sheetRow(display, dimen)
+        end,
+        on_cell_tap = function(row) if row.action then row.action() end end,
+    } }
+    UIManager:show(sheet)
+    return sheet
 end
 
 -- _cellsPerPage(content_w) -> config.cells_per_page, or as many rows as fill
@@ -498,6 +653,11 @@ function LibraryModal:_buildFrame()
     -- Width of inner content (search box, chip strip, cards, etc.) once the
     -- per-section MARGIN insets are applied in refresh().
     self.content_w = self.modal_w - 2 * MARGIN
+    if self.config.sheet then
+        self.modal_w = math.min(px(608), math.floor(Screen:getWidth() * 0.93))
+        self._sheet_inset = math.min(px(21), math.floor(self.modal_w * 0.045))
+        self.content_w = self.modal_w - 2 * self._sheet_inset
+    end
 
     -- Frame has zero left/right padding so the title bar separator can run
     -- edge-to-edge. Each non-title section wraps itself in MARGIN padding
@@ -515,6 +675,7 @@ function LibraryModal:_buildFrame()
         background = Blitbuffer.COLOR_WHITE,
         VerticalGroup:new{ align = "left" },
     }
+    if self.config.sheet and not over then self.frame.radius = px(19) end
     -- The footer's buttons run to the frame's edge and paint square white
     -- boxes: draw the rounded border again over them, or its bottom corners
     -- are cut off.
@@ -781,7 +942,8 @@ function LibraryModal:_renderSearchInput(content_width)
     -- Input + button borders. Use Size.border.default (thicker than thin)
     -- so the focused-black border reads as a strong outline rather than a
     -- hairline that could pass for unfocused-gray on glance.
-    local input_border = PopupKit.BORDER
+    local modern = self.config.sheet
+    local input_border = modern and 0 or PopupKit.BORDER
     local input_padding = Space.padding.default
     local input_overhead = 2 * (input_border + input_padding)
 
@@ -800,12 +962,15 @@ function LibraryModal:_renderSearchInput(content_width)
         }
         return tw, tw:getSize().w + 2 * btn_pad_h + 2 * input_border
     end
-    local search_label, search_btn_w = measureLabel(_("Search"))
+    local search_copy = _("Search")
+    local search_label, search_btn_w = measureLabel(search_copy)
     -- ✕ (U+2715 MULTIPLICATION X) reads as a deliberate close/clear glyph,
     -- where × (U+00D7 MULTIPLICATION SIGN) reads as math typography.
     -- Bold weight balances the visual mass against the longer Search label.
     local clear_label, clear_btn_w = measureLabel("\xE2\x9C\x95", { bold = true })
-    local input_w = content_width - search_btn_w - clear_btn_w - 2 * gap - input_overhead
+    search_label:free(); clear_label:free()
+    if modern then search_btn_w, clear_btn_w = px(37), px(33) end
+    local input_w = content_width - search_btn_w - clear_btn_w - input_overhead - 2 * (modern and px(1) or gap)
 
     -- Persist the InputText across refreshes so the keyboard's reference to
     -- it stays valid. Rebuilding it on every refresh leaves the keyboard
@@ -867,7 +1032,7 @@ function LibraryModal:_renderSearchInput(content_width)
         styleField(input)
     else
         local desired = self.search_query or ""
-        if self._search_input:getText() ~= desired then
+        if (not self.config.sheet or not self._search_input.focused) and self._search_input:getText() ~= desired then
             self._search_input:setText(desired)
         end
     end
@@ -882,24 +1047,31 @@ function LibraryModal:_renderSearchInput(content_width)
             pad_h = btn_pad_h, on_tap = on_tap }
     end
 
-    local search_btn = chipButton(_("Search"), function()
+    local function submit()
         local q = self._search_input and self._search_input:getText() or ""
         self:_dismissKeyboard()
         self:_onSearchSubmit(q)
-    end)
-    local clear_btn = chipButton("\xE2\x9C\x95", function()
+    end
+    local function clear()
         self:_dismissKeyboard()
         if self._search_input then self._search_input:setText("") end
         self:_onSearchSubmit("")
-    end)
+    end
+    if modern then
+        local search = sheetButton(search_btn_w, row_h, sheetIcon("search", 18), submit)
+        local clear_button = sheetButton(clear_btn_w, row_h, sheetIcon("close", 15), clear)
+        self._strip_build[#self._strip_build + 1] = { search, self._search_input, clear_button }
+        return FrameContainer:new{ padding = 0, bordersize = px(1), color = Blitbuffer.COLOR_GRAY, radius = px(8),
+            H:new{ align = "center", search, self._search_input, clear_button } }
+    end
 
     return HorizontalGroup:new{
         align = "center",
         self._search_input,
         HorizontalSpan:new{ width = gap },
-        search_btn,
+        chipButton(search_copy, submit),
         HorizontalSpan:new{ width = gap },
-        clear_btn,
+        chipButton("\xE2\x9C\x95", clear),
     }
 end
 
@@ -1170,7 +1342,8 @@ function LibraryModal:_renderGridArea(content_width, area_height)
     -- the (cols-1)*MARGIN subtraction the columns butt right up against
     -- each other and the cards lose their card-ness.
     local cell_w = math.floor((content_width - (cols - 1) * MARGIN) / cols)
-    local cell_h = math.floor((area_height - (rows - 1) * MARGIN) / rows)
+    local row_gap = self.config.sheet and 0 or MARGIN
+    local cell_h = math.floor((area_height - (rows - 1) * row_gap) / rows)
 
     -- Clamp dpad focus to valid range (items may have been removed).
     if self._dpad_idx and self._dpad_idx > total then
@@ -1229,7 +1402,9 @@ function LibraryModal:_renderGridArea(content_width, area_height)
                         GestureRange:new{ ges = "tap", range = ic.dimen }
                     }
                     -- The card shows pressed at once, then the tap acts.
-                    ic.onTapSelect = function()
+                    ic.onTapSelect = function(_, _, gesture)
+                        if self.config.sheet and item.group and gesture
+                                and gesture.pos.y - ic.dimen.y < px(23) then return true end
                         -- config.select_on_tap: a tap marks the card picked at
                         -- once (the Theme library), which is its feedback; a
                         -- pressed look first was one paint too many.
@@ -1260,7 +1435,7 @@ function LibraryModal:_renderGridArea(content_width, area_height)
             table.insert(hg, cell_widget)
             in_row = in_row + 1
             if in_row >= cols then
-                if #vg > 0 then table.insert(vg, VerticalSpan:new{ width = MARGIN }) end
+                if #vg > 0 and row_gap > 0 then table.insert(vg, VerticalSpan:new{ width = row_gap }) end
                 table.insert(vg, hg)
                 hg = HorizontalGroup:new{ align = "top" }
                 in_row = 0
@@ -1268,7 +1443,7 @@ function LibraryModal:_renderGridArea(content_width, area_height)
         end
     end
     if in_row > 0 then
-        if #vg > 0 then table.insert(vg, VerticalSpan:new{ width = MARGIN }) end
+        if #vg > 0 and row_gap > 0 then table.insert(vg, VerticalSpan:new{ width = row_gap }) end
         table.insert(vg, hg)
     end
     -- Top-align the grid: a partially-filled page (e.g. Dynamic with 4
@@ -1320,6 +1495,7 @@ function LibraryModal:_renderPagination(content_width)
         page        = self.page,
         total_pages = total_pages,
         show_parent = self,
+        text_chevrons = self.config.sheet ~= nil,
         on_goto     = function(p) self.page = p; self:refresh() end,
     }
 
@@ -1402,6 +1578,144 @@ function LibraryModal:_repaintIfResized(old)
     UIManager:setDirty("all", "ui", Geom:new{ x = old.x, y = old.y, w = old.w, h = old.h })
 end
 
+function LibraryModal:_refreshSheet()
+    local c, sheet, w = self.config, self.config.sheet, self.content_w
+    local old, sh = self._shown_rect, Device.screen:getHeight()
+    local total = c.item_count()
+    local compact = sh < px(480)
+    local muted, surface_tint = sheetColors()
+    local body = VerticalGroup:new{ align = "left", space(compact and 9 or 17) }
+    local function append(widget, after)
+        body[#body + 1] = widget
+        if after then body[#body + 1] = space(after) end
+    end
+    local function run(fn)
+        return function() if UIManager:isWidgetShown(self) then self:_dismissKeyboard(); fn() end end
+    end
+    local function action(a, width, height, icon, outline, trailing)
+        local content_w = width - px(outline and 8 or 2) - (icon and px(22) or 0)
+        local label = a.label_func and a.label_func() or a.label
+        local enabled = not a.enabled_when or a.enabled_when()
+        local copy = sheetText(label, content_w, 13, true, not enabled and Blitbuffer.COLOR_DARK_GRAY or nil,
+            height - px(outline and 4 or 2), icon and "left" or "center")
+        if icon then
+            local mark = sheetIcon(icon, 16)
+            copy = trailing and H:new{ align = "center", copy, gap(6), mark }
+                or H:new{ align = "center", mark, gap(6), copy }
+        end
+        return sheetButton(width, height, copy, run(a.on_tap), { outline = outline, enabled = enabled })
+    end
+    self._strip_build, self._footer_layout = {}, nil
+    if sheet.back then
+        local back = action({ label = sheet.back, on_tap = sheet.on_back }, math.min(w, px(240)), px(27), "chevron_left")
+        append(back, 3)
+        self._strip_build[#self._strip_build + 1] = { back }
+    end
+    local closew = px(compact and 35 or 42)
+    local heading_w = w - closew - px(12)
+    local heading = VerticalGroup:new{ align = "left",
+        sheetText(sheet.title or c.title, heading_w, compact and 22 or 26, true, nil, px(compact and 50 or 61)) }
+    if sheet.subtitle then
+        heading[#heading + 1] = space(3)
+        heading[#heading + 1] = sheetText(sheet.subtitle, heading_w, 14, false, muted, px(20))
+    end
+    local close = sheetButton(closew, closew, sheetIcon("close", 19), run(function() UIManager:close(self) end), { outline = true })
+    append(H:new{ align = "top", heading, gap(12), close }, compact and 6 or 13)
+    self._strip_build[#self._strip_build + 1] = { close }
+
+    if sheet.identity then
+        local identity = sheet.identity
+        local iconw, pad = px(24), px(11)
+        local textw = w - iconw - 3 * pad
+        append(FrameContainer:new{ padding = pad, bordersize = 0, radius = px(9),
+            background = surface_tint,
+            H:new{ align = "center", sheetIcon(identity.icon, 24), gap(11),
+                VerticalGroup:new{ align = "left", sheetText(identity.title, textw, 17, true, nil, px(41), nil, surface_tint),
+                    space(2), sheetText(identity.subtitle, textw, 13, false, muted, px(19), nil, surface_tint) } } }, 8)
+    end
+    if c.tabs then
+        local width, height, border = math.floor((w - 2 * px(1)) / #c.tabs), px(compact and 32 or 39), px(1)
+        local segments = H:new{ align = "center" }
+        local controls = {}
+        for _, tab in ipairs(c.tabs) do
+            local key, label = tab.key, tab.label
+            if sheet.tab_count then
+                local count = sheet.tab_count(key)
+                if count then label = string.format("%s · %d", label, count) end
+            end
+            local active = key == self.active_tab
+            local segment = sheetButton(width, height,
+                sheetText(label, width - px(10), 15, true, active and Blitbuffer.COLOR_WHITE or nil, px(21), "center"),
+                run(function() self:_onTabSelect(key) end), { fill = active and Blitbuffer.COLOR_BLACK or nil, radius = 7 })
+            segments[#segments + 1], controls[#controls + 1] = segment, segment
+        end
+        append(FrameContainer:new{ bordersize = border, padding = 0, radius = px(8), segments }, compact and 4 or 8)
+        self._strip_build[#self._strip_build + 1] = controls
+    end
+    if not c.no_search then append(self:_renderSearchInput(w), compact and 4 or 8) end
+    if sheet.details then
+        local details = action({ label = sheet.details(), on_tap = function()
+            local viewer
+            local buttons = {{ { text = _("Close"), callback = function() UIManager:close(viewer) end } }}
+            local extra = c.footer_rows[2] and c.footer_rows[2][1]
+            if extra and (not extra.enabled_when or extra.enabled_when()) then
+                table.insert(buttons[1], 1, { text = extra.label, callback = function()
+                    UIManager:close(viewer); extra.on_tap()
+                end })
+            end
+            viewer = require("ui/widget/textviewer"):new{ title = sheet.details_title, text = c.intro,
+                justified = false, buttons_table = buttons }
+            UIManager:show(viewer)
+        end }, w, px(compact and 30 or 36), "chevron_right", false, true)
+        append(details)
+        append(sheetRule(w), 3)
+        self._strip_build[#self._strip_build + 1] = { details }
+    end
+    self._strip_layout = self._strip_build
+    if not self:_stripPos() and self._focus_zone == "strip" then self._focus_zone = "grid" end
+
+    local footer, footer_h = nil, 0
+    local a = sheet.action or c.footer_rows and c.footer_rows[1][1]
+    if a then
+        local hint = sheet.hint
+        local aw = hint and math.min(px(156), math.floor(w * 0.39)) or math.min(px(195), w)
+        local b = action(a, aw, px(compact and 32 or 39), sheet.action_icon, not sheet.action_disclosure)
+        local row = H:new{ align = "center" }
+        if hint then
+            row[#row + 1] = sheetText(hint, w - aw - px(10), 13, false, muted, px(34))
+            row[#row + 1] = gap(10)
+        end
+        row[#row + 1] = b
+        footer = VerticalGroup:new{ align = "left", sheetRule(w), space(compact and 4 or 9), row }
+        footer_h = footer:getSize().h
+        self._footer_layout = {{ b }}
+    end
+    self.frame.padding_bottom = px(compact and 8 or 17)
+    local room = sh - px(15) - self.frame.padding_bottom - 2 * self.frame.bordersize - body:getSize().h - footer_h - px(12)
+    local target = px(sheet.row_height or 56)
+    local rows = math.max(1, math.min(sheet.max_rows or 5, math.floor(room / target)))
+    local paginate = total > rows
+    if paginate then rows = math.max(1, math.min(rows, math.floor((room - px(37)) / target))) end
+    self._fill_rows = math.min(math.max(1, total), rows)
+    self.page = math.min(self.page, math.max(1, math.ceil(total / self._fill_rows)))
+    local pagination = paginate and self:_renderPagination(w)
+    local nav_h = pagination and pagination:getSize().h or 0
+    local cell_h = math.max(1, math.min(target, math.floor((room - nav_h) / self._fill_rows)))
+    local list = self:_renderGridArea(w, self._fill_rows * cell_h)
+    -- VerticalGroup caches measured offsets. Compose the final group after
+    -- measuring the chrome so late additions always get fresh offsets.
+    local content = VerticalGroup:new{ align = "left", body, list }
+    if pagination then content[#content + 1] = pagination end
+    if footer then content[#content + 1] = space(compact and 3 or 7); content[#content + 1] = footer end
+    self.frame[1] = H:new{ align = "top", HorizontalSpan:new{ width = self._sheet_inset }, content,
+        HorizontalSpan:new{ width = self._sheet_inset } }
+    self:_repaintIfResized(old)
+    local focused = self._focus_zone == "strip" and self:_stripPos()
+        or self._focus_zone == "footer" and self._footer_layout and self._footer_layout[1][1]
+    if focused and focused.onFocus then focused:onFocus() end
+    self:_dirty()
+end
+
 -- Swipe paging, same convention as the main shelf: west = next, east = prev.
 -- _total_pages is set by the grid/list area render; clamp so a swipe at an
 -- edge is a no-op. Returns true to consume the gesture.
@@ -1422,6 +1736,7 @@ function LibraryModal:onSwipePrevPage()
 end
 
 function LibraryModal:refresh()
+    if self.config.sheet then return self:_refreshSheet() end
     local Screen = Device.screen
     local HorizontalGroup = require("ui/widget/horizontalgroup")
     local cw = self.content_w

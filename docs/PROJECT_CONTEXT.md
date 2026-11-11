@@ -22,6 +22,14 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Three modern native sheets, local.** Similar books/series and tag
+  results share a more readable two-tab list with a compact progress disclosure.
+  Dashboard module settings group visibility, heading, size and module options,
+  with removal behind confirmation. Settings category gateways group the
+  existing routes and link directly to settings search. Native screenshots use
+  fixture data at the Bigme's resolution and at smaller viewport sizes.
+  Device verification for this batch is pending.
+
 - **Current-book time and dashboard module headings.** The Bigme's ordinary
   Currently Reading already has native Time remaining, explicitly off in its
   Home settings. The user requests enabling it and authorizes a private USB

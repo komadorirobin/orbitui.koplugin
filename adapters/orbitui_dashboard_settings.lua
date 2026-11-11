@@ -130,6 +130,7 @@ function M.moduleItems(id, refresh, pfx, navigation)
                     did_remove = true
                     if stop and navigation.current() == stop and navigation.pop then navigation.pop() end
                     notify(_("Card removed."))
+                    return true
                 elseif not ok then notify(_("Could not remove the card. Reopen the menu and try again.")) end
             end },
     }
@@ -268,9 +269,85 @@ function M.pickerItems(refresh, pfx)
     return items
 end
 
--- Use the existing paginated/settings shell, not an unbounded button dialog.
+local function cardSheet(pfx, ctx, id, parent_open)
+    local UI = require("ui/uimanager")
+    local Sheets = require("lib/bookshelf_library_modal")
+    local panel, changed, closed
+    local function close()
+        if panel and not closed then UI:close(panel) end
+    end
+    local function back()
+        close()
+        if not parent_open then M.show(pfx, ctx) end
+    end
+    local rows
+    local function refresh()
+        if closed then return end
+        changed = true
+        if panel and Model.module(dashboard().readConfig(pfx), id) then
+            panel.config.sheet.rows = rows()
+            panel.config.sheet.identity.title = label(id, dashboard().readConfig(pfx))
+            panel:refresh()
+        end
+    end
+    local function choices(item)
+        return require("screens/sui_settings_window"):show(nil, {{ id = "nested_menu", params = {
+            title = item.text, items_func = item.sub_item_table_func,
+        } }}, { pfx = pfx or "simpleui_hs_" })
+    end
+    rows = function()
+        local items = M.moduleItems(id, refresh, pfx)
+        local entry = Model.module(dashboard().readConfig(pfx), id)
+        local out = {{ title = items[1].text, group = _("Display"),
+            subtitle = _("Show this card in the reading dashboard."),
+            get_checked = items[1].checked_func, action = items[1].callback }}
+        local first = 4
+        if entry.kind == "simpleui" and items[first] and items[first]._sui_section_label_toggle then
+            local heading = items[first]
+            out[#out + 1] = { title = heading.text, subtitle = _("The heading above this card."),
+                get_checked = heading.checked_func, action = heading.callback }
+            first = first + 1
+        end
+        local size = items[2]
+        out[#out + 1] = { title = size.text, action = function() choices(size) end, get_subtitle = function()
+            for _, option in ipairs(size.sub_item_table_func()) do if option.checked_func() then return option.text end end
+        end }
+        for i = first, #items do
+            local item = items[i]
+            out[#out + 1] = { title = item.text, group = i == first and _("Module") or nil,
+                subtitle = item.help_text,
+                action = item.callback or item.sub_item_table_func and function() choices(item) end }
+        end
+        return out
+    end
+    panel = Sheets.showSheet{
+        title = _("Card settings"), back = _("Reading dashboard"), on_back = back,
+        identity = { title = label(id, dashboard().readConfig(pfx)), icon = "menu_book",
+            subtitle = (not pfx or pfx == "simpleui_hs_") and (_("Home") .. " · " .. _("Reading dashboard")) or _("Reading dashboard") },
+        rows = rows(), row_height = 66, max_rows = 8,
+        action_icon = "expand_more", action_disclosure = true,
+        action = { label = _("Remove card…"), on_tap = function()
+            local remove = M.moduleItems(id, refresh, pfx)[3]
+            if not remove then return end
+            UI:show(require("ui/widget/confirmbox"):new{
+                text = remove.help_text, ok_text = remove.text,
+                ok_callback = function() if not closed and remove.callback() then close() end end,
+            })
+        end },
+        on_closed = function()
+            closed = true
+            if changed and ctx.refresh_fn then ctx.refresh_fn() end
+        end,
+    }
+    return panel
+end
+
+-- The picker and overview keep their paginated settings shell.
 -- Defer Home rebuilding until the editor closes; never rebuild a buried view.
 function M.show(pfx, ctx, id)
+    if id and id ~= "add" and Model.module(dashboard().readConfig(pfx), id) then
+        return cardSheet(pfx, ctx, id)
+    end
     local changed, alive = false, true
     return require("screens/sui_settings_window"):show(function()
         alive = false
@@ -278,7 +355,6 @@ function M.show(pfx, ctx, id)
     end, {{ id = "nested_menu", params = { title = _("Reading dashboard"), items_func = function(menu_ctx)
         local refresh = function() changed = true; if alive then menu_ctx.repaint() end end
         if id == "add" then return M.pickerItems(refresh, pfx) end
-        if id and Model.module(dashboard().readConfig(pfx), id) then return M.moduleItems(id, refresh, pfx) end
         return M.items(refresh, pfx, require("engines/sui_window").makeCtxMenu(menu_ctx))
     end } }}, { pfx = pfx or "simpleui_hs_", pfx_qa = (pfx or "simpleui_hs_") .. "qa_" })
 end
@@ -393,7 +469,11 @@ function M.items(refresh, pfx, ctx_menu)
             return label(id, c) .. (available and "" or " · " .. _("Unavailable"))
                 .. (Model.visible(c, id) and "" or " (" .. _("Off") .. ")")
         end, enabled_func = function() return Model.module(dashboard().readConfig(pfx), id) ~= nil end,
-            sub_item_table_func = function(navigation) return M.moduleItems(id, refresh, pfx, navigation) end }
+            keep_menu_open = true, callback = function()
+                if Model.module(dashboard().readConfig(pfx), id) then
+                    cardSheet(pfx, { refresh_fn = refresh }, id, true)
+                end
+            end }
     end
     items[#items + 1] = { text = _("Restore card layout"), callback = function()
         require("ui/uimanager"):show(require("ui/widget/confirmbox"):new{

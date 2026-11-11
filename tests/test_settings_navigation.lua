@@ -20,6 +20,13 @@ package.loaded["lib/bookshelf_menu_host"] = {
     show = function(opts) shown[#shown + 1] = opts; return opts end,
     close = function(host) host.closed = true end,
 }
+package.loaded["lib/bookshelf_library_modal"] = {
+    showSheet = function(config)
+        local panel = { config = { sheet = config } }
+        UI:show(panel)
+        return panel
+    end,
+}
 package.loaded["ui/widget/buttondialog"] = { new = function(_, dialog) return dialog end }
 package.loaded["ui/widget/inputdialog"] = { new = function(_, dialog)
     dialog.getInputText = function(self) return self.input end
@@ -169,8 +176,23 @@ end)
 H.test("Back returns through canonical categories instead of closing the entire settings tree", function()
     Settings.open("panel", { profile = "prose" })
     H.eq(latest().parent_title, "Bookshelf"); latest().on_back()
-    H.eq(latest().title, "OrbitUI settings / Bookshelf"); latest().on_back()
+    local category = dialogs[#dialogs]
+    H.eq(category.config.sheet.title, "Bookshelf"); category.config.sheet.on_back()
+    assert(category.closed)
     H.eq(latest().title, "OrbitUI settings")
+end)
+H.test("the Navigation sheet matches its grouped routes and category search returns to it", function()
+    local panel = Settings.open("navigation", { profile = "comics" })
+    local sheet = panel.config.sheet
+    H.eq(sheet.title, "Navigation & interface"); H.eq(#sheet.rows, 6)
+    H.eq(sheet.rows[1].group, "Navigation"); H.eq(sheet.rows[3].id, "reader")
+    H.eq(sheet.rows[4].group, "Appearance & shortcuts"); H.eq(sheet.rows[6].id, "quick_actions")
+    sheet.action.on_tap()
+    assert(panel.closed)
+    local dialog = dialogs[#dialogs]
+    H.eq(dialog.title, "Search settings")
+    dialog.buttons[1][1].callback()
+    H.eq(dialogs[#dialogs].config.sheet.title, "Navigation & interface")
 end)
 H.test("the real menu host distinguishes nested Back, parent Back and explicit close-all", function()
     local mocked = package.loaded["lib/bookshelf_menu_host"]
@@ -312,7 +334,10 @@ H.test("reader integration settings are bilingual, lazy and refresh their radio 
     lang = "sv"; hit("Läsarpanel", "reader_panel"); hit("KOAssistant", "reader_panel")
     hit("bottenmeny", "reader_panel")
     lang = "en"; hit("Reader panel", "reader_panel"); hit("X-Ray", "reader_panel"); hit("reading settings", "reader_panel")
-    Settings.open("integrations"); find(latest().item_table, "reader_panel").callback()
+    local integration = Settings.open("integrations")
+    for _, row in ipairs(integration.config.sheet.rows) do
+        if row.id == "reader_panel" then row.action(); break end
+    end
     local first = latest()
     H.eq(changed, 0); H.eq(#first.item_table, 9)
     assert(first.item_table[2].checked_func()); assert(first.item_table[6].checked_func())

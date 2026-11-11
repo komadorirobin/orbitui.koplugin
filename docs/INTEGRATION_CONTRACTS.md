@@ -598,15 +598,29 @@ The following approved visual experiment omits the overview's "About this book"
 and "Tags" headings only. Retain section spacing, the small "From EPUB" source
 label and the separate BookOrbit source identity; no tag action changes.
 
+November 11 approved the next three layouts. Similar books/series, embedded
+tag results and BookOrbit tag results use the opt-in rounded LibraryModal
+sheet. Books/volumes and Series remain separate, counts come from the checked
+snapshot, full progress/error text and the index action are accessible in
+Search details, and Stop/Refresh and Close remain reachable in either tab.
+Use already-loaded thumbnail buffers read-only, with a letter tile on a miss.
+Results retain their original reveal/hold routing and worker lifecycle.
+The dashboard's individual module card editor groups display controls and
+module options, retains the provider's own editor, and confirms removing the
+exact card before writing. Refresh the dashboard when the card editor closes.
+The five settings categories use grouped native link rows with a scope line,
+Back and Search settings. Their destinations continue to own the existing
+toggles, native controls and preferences.
+
 Shared design direction, not blanket authorization to replace all menus:
 
 | Surface | Direction / next step | Must preserve |
 | --- | --- | --- |
 | Book overview | Airy cover/title hierarchy, facts, description, visible rounded chips | Native actions, source choices, read/open lifecycle |
 | Reader panel and updater | Existing rounded native panels are the baseline | Gesture ownership, cancellation, focus, fixed footer |
-| Tag/search results | Next candidate: readable title/author/series rows and quieter progress/status blocks | Partial results, Series/Volumes tabs, Stop/Close, reveal-not-open |
-| Card/module/collection menus | Then align headings, action placement and immediate feedback | MenuHost refresh/back semantics, duplicate guards, external callbacks |
-| Settings | Then group/help/spacing polish, keeping advanced native controls | Check/radio state, search, holds, scope, existing values |
+| Tag/search results | Similarity and tag sheets use compact title/author/series rows and a progress disclosure | Partial results, Series/Volumes tabs, Stop/Close, reveal-not-open |
+| Card/module/collection menus | Individual dashboard module editor has grouped controls and explicit removal | Refresh/back semantics, duplicate guards, external callbacks |
+| Settings | Grouped category gateways with a scope line and search | Check/radio state, search, holds, scope, existing values |
 | Home, shelves and dock | Align only shared chrome after the above is accepted | Personal layouts, covers, ornaments, themes, fonts, aspect ratios |
 
 Use a small hierarchy (title, section, body, secondary metadata), consistent

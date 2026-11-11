@@ -396,6 +396,7 @@ local Modal = H.widget()
 function Modal:refresh() end
 function Modal:onClose() self.shown = false; self.config.on_closed() end
 package.loaded["lib/bookshelf_library_modal"] = Modal
+function Modal.sheetRow(row) return row end
 package.loaded["lib/bookshelf_picker_cell"] = { render = function(value) return value end }
 H.test("existing Tags tab displays local pills offline and opens the shared local result modal", function()
     reset()
@@ -532,9 +533,11 @@ H.test("inline matches are usable before completion; stopping keeps honest parti
     flush(1); H.eq(modal.config.item_count(), 1)
     assert(modal.config.intro:find("1 of 83 files", 1, true))
     assert(modal.config.intro:find("incomplete", 1, true))
+    H.eq(modal.config.sheet.details(), "Checking EPUB tags · 1 of 83")
     modal.config.footer_rows[1][1].on_tap()
     H.eq(modal.config.item_count(), 1); H.eq(modal.config.footer_rows[1][1].label_func(), "Refresh")
     assert(modal.config.intro:find("Search stopped", 1, true))
+    H.eq(modal.config.sheet.details(), "Search stopped · Partial results")
     flush(); H.eq(opened, 1)
     modal.config.footer_rows[1][1].on_tap(); flush()
     H.eq(opened, 83); H.eq(modal.config.item_count(), 2)

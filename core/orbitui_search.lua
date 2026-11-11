@@ -594,8 +594,10 @@ local function tagSearch(tag, opts)
     local worker
     local records, visible, query = {}, {}, ""
     local Series = require("core/orbitui_shelf_query")
+    local LibraryModal = require("lib/bookshelf_library_modal")
     local series_state, series_paused, base_intro = nil, false, intro
     local similar_snapshot
+    local progress, status_error
     local result_capped, missing_metadata = false, false
     local view_profile = opts.view_profile or opts.profile
     if not view_profile and opts.origin then
@@ -673,31 +675,39 @@ local function tagSearch(tag, opts)
         render()
     end
     local function available(file) return fs.attributes(file, "mode") == "file" end
+    local function similarRows(key)
+        -- Rank each tab at most once per checked snapshot, including when
+        -- drawing the inactive tab's count. This uses cached metadata only.
+        local finished, unavailable = series_state and series_state.finished, series_state and series_state.unavailable
+        if not similar_snapshot or similar_snapshot.records ~= records or similar_snapshot.discovery ~= series_state
+                or similar_snapshot.finished ~= finished or similar_snapshot.unavailable ~= unavailable then
+            similar_snapshot = { records = records, discovery = series_state, finished = finished,
+                unavailable = unavailable, views = {} }
+        end
+        local cached = similar_snapshot.views[key]
+        if not cached then
+            local rows, incomplete = Series.similarRows(records, series_state, opts.origin, key)
+            cached = { rows = rows, incomplete = incomplete }
+            similar_snapshot.views[key] = cached
+        end
+        return cached.rows, cached.incomplete
+    end
     filter = function()
         visible = {}
         if data_session and not data_session:current() then
             records, data_session = {}, nil
             dropSeries(); base_intro = failureText("stale")
+            progress, status_error = nil, base_intro
             modal.config.intro = base_intro
         end
-        local rows = view == "series" and series_state and series_state.rows() or records
         result_capped, missing_metadata = false, false
+        local rows
         if similar then
-            -- Native count/repaint/filter callbacks may repeat. Rank once per
-            -- checked snapshot/view, not on every paint or text submission.
-            local finished, unavailable = series_state and series_state.finished, series_state and series_state.unavailable
-            if not similar_snapshot or similar_snapshot.records ~= records or similar_snapshot.discovery ~= series_state
-                    or similar_snapshot.view ~= view or similar_snapshot.finished ~= finished
-                    or similar_snapshot.unavailable ~= unavailable then
-                local ranked, incomplete = Series.similarRows(records, series_state, opts.origin, view)
-                similar_snapshot = { records = records, discovery = series_state, view = view,
-                    finished = finished, unavailable = unavailable, rows = ranked, incomplete = incomplete }
-            end
-            rows, missing_metadata = similar_snapshot.rows, similar_snapshot.incomplete
-        end
+            rows, missing_metadata = similarRows(view)
+        else rows = view == "series" and series_state and series_state.rows() or records end
+        local needle = M.lower(query)
         for _, book in ipairs(rows) do
-            local text = table.concat({ book.filename or "", book.title or "", book.author or "" }, " ")
-            if M.lower(text):find(M.lower(query), 1, true) then
+            if needle == "" or M.lower(table.concat({ book.filename or "", book.title or "", book.author or "" }, " ")):find(needle, 1, true) then
                 if not similar or #visible < 400 then visible[#visible + 1] = book else result_capped = true end
             end
         end
@@ -709,7 +719,7 @@ local function tagSearch(tag, opts)
             local ok, value = pcall(Integration.embeddedTagSession)
             if ok then source = value end
         else source, err = Integration.bookOrbitSession() end
-        if not source then base_intro = failureText(err); render(); return end
+        if not source then base_intro = failureText(err); status_error = base_intro; render(); return end
         if similar then
             local Repo = require("lib/bookshelf_book_repository")
             local revision = Repo.dataGeneration()
@@ -723,10 +733,13 @@ local function tagSearch(tag, opts)
         dropSeries()
         records, visible, data_session = {}, {}, nil
         base_intro = intro
+        progress, status_error = nil, nil
         render()
         local function update(result, failure, partial)
             if not current() then return end
             if result then
+                progress = { scanned = result.scanned, total = result.total, skipped = result.skipped or 0,
+                    unindexed = result.unindexed or 0, stopped = failure == "cancelled", partial = partial }
                 if opts.on_result then opts.on_result(result) end
                 data_session = source
                 local previous = {}; for _, book in ipairs(records) do previous[book.filepath] = book end
@@ -759,6 +772,7 @@ local function tagSearch(tag, opts)
                 dropSeries()
                 base_intro = failure == "cancelled" and _("Search cancelled. Tap Refresh to try again.")
                     or failureText(failure)
+                status_error = base_intro
             end
             ensureSeries(); filter(); if not partial then modal.page = 1 end; render()
         end
@@ -829,11 +843,46 @@ local function tagSearch(tag, opts)
             M.tagIndex{ confirm_reread = not similar }
         end }}
     end
-    modal = require("lib/bookshelf_library_modal"):new{ _sui_keep_homescreen = true, config = {
-        title = title .. ": " .. (similar and (opts.title or opts.origin:match("([^/]+)$"))
-            or rule and table.concat(rule.tags, rule.mode == "all" and " + " or " / ") or tag),
+    local subject = similar and (opts.title or opts.origin:match("([^/]+)$"))
+        or rule and table.concat(rule.tags, rule.mode == "all" and " + " or " / ") or tag
+    local function scoreLabel(book)
+        if not similar then return end
+        return book.similar_score == 1 and _("1 shared tag") or string.format(_("%d shared tags"), book.similar_score)
+    end
+    modal = LibraryModal:new{ _sui_keep_homescreen = true, config = {
+        title = title .. ": " .. subject,
+        sheet = { title = title, subtitle = similar and string.format(_("Based on %s · Local EPUB tags"), subject) or subject,
+            details_title = _("Search details"), hint = _("Tap a result to show it on its shelf."), action_icon = "refresh",
+            tab_count = function(key)
+                if not data_session then return end
+                if similar then
+                    if not series_state or not series_state.finished or series_state.unavailable then return end
+                    if query ~= "" then return key == view and #visible or nil end
+                    return math.min(400, #similarRows(key))
+                end
+                if key == "series" and (not series_state or not series_state.finished or series_state.unavailable) then return end
+                if key == view then return #visible end
+                if query == "" then return key == "volumes" and #records or #series_state.rows() end
+            end,
+            details = function()
+                if status_error then return _("Search needs attention · Details") end
+                if paused then return _("Search paused · Details") end
+                if progress and progress.stopped then return _("Search stopped · Partial results") end
+                if series_paused then return _("Search paused · Details") end
+                if progress and progress.partial and progress.scanned and progress.total then
+                    return string.format(_("Checking EPUB tags · %d of %d"), progress.scanned, progress.total)
+                end
+                if series_state and series_state.busy then return _("Grouping series…") end
+                if busy then return _("Searching…") end
+                if progress and progress.unindexed > 0 then
+                    return string.format(_("Partly indexed · %d EPUBs remaining"), progress.unindexed)
+                end
+                if missing_metadata or progress and progress.skipped > 0 then return _("Some data is missing · Details") end
+                return _(embedded and "Local EPUB tag index" or "Local books linked to BookOrbit")
+            end,
+        },
         intro = intro,
-        tabs = {{ key = "series", label = _("Series", nil, "tag-results") }, { key = "volumes", label = _(similar and "Books" or "Volumes") }},
+        tabs = {{ key = "volumes", label = _(similar and "Books" or "Volumes") }, { key = "series", label = _("Series", nil, "tag-results") }},
         initial_tab = view,
         on_tab_change = function(key)
             if not current() or (key ~= "series" and key ~= "volumes") then return end
@@ -853,28 +902,37 @@ local function tagSearch(tag, opts)
         item_count = function() filter(); return #visible end,
         item_at = function(index) return visible[index] end,
         empty_state = function(w, h)
-            return require("lib/bookshelf_picker_cell").render({ label = _((busy or similar and series_state and series_state.busy) and "Loading…" or "No matches.") }, { w = w, h = h })
+            return LibraryModal.sheetRow({ title = _((busy or similar and series_state and series_state.busy)
+                and "Loading…" or "No matches."), chevron = false }, { w = w, h = h })
         end,
         cell_renderer = function(book, dimen)
             if book.tag_series then
                 local note = string.format(_("%d matching volumes · %d available"), #book.matched, #book.members)
-                if similar then note = string.format(_("Shared tags: %d · Available volumes: %d"), book.similar_score, #book.members) end
+                if similar then note = string.format(_("Matching volumes: %d"), #book.matched) end
                 local first = book.members[1]
                 if first and tonumber(first.series_num) and tonumber(first.series_num) > 1 then
                     note = note .. " · " .. _("Volume 1 is not in cached metadata")
                 elseif not first or not tonumber(first.series_num) then
                     note = note .. " · " .. _("Volume order is unknown")
                 end
-                return Series.tagSeriesCell(book, dimen, (book.author and book.author .. " · " or "") .. note)
+                return LibraryModal.sheetRow({ title = book.title, subtitle = (book.author and book.author .. " · " or "") .. note,
+                    cover = true, stack = true, file = book.filepath,
+                    note = scoreLabel(book) }, dimen)
             end
             if view == "volumes" and not similar then bookMeta(book) end
             local label = book.title or book.filename
             if view == "series" and book.tag_section_first then
                 label = _(book.tag_section == "standalone" and "Standalone books" or "Unknown series metadata") .. " — " .. label
             end
-            return require("lib/bookshelf_picker_cell").render({ label = label,
-                subtitle = similar and ((book.author and book.author .. " · " or "")
-                    .. string.format(_("Shared tags: %d"), book.similar_score)) or book.author or book.filename }, dimen)
+            local meta = series_state and series_state.metadata[book.filepath]
+            local subtitle = book.author or book.filename
+            if meta and meta.series_name and meta.series_name ~= "" then
+                local series = meta.series_name
+                if meta.series_num then series = series .. ", " .. string.format(_("Volume %s"), meta.series_num) end
+                subtitle = book.author and book.author .. " · " .. series or series
+            end
+            return LibraryModal.sheetRow({ title = label, subtitle = subtitle, cover = true, file = book.filepath,
+                note = scoreLabel(book) }, dimen)
         end,
         on_cell_tap = function(book)
             if book.tag_series then

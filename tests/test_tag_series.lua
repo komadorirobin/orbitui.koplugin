@@ -288,6 +288,7 @@ UI.close = function(_, modal) modal.shown = false end
 UI.isWidgetShown = function(_, modal) return modal and modal.shown end
 UI._simpleui_navigation_generation = 1
 local Modal = {}
+function Modal.sheetRow(row) return row end
 function Modal:new(opts)
     local modal = { config = opts.config, active_tab = opts.config.initial_tab, page = 1 }
     function modal:refresh() self.config.item_count() end
@@ -410,11 +411,14 @@ end
 H.test("recommendation modal uses native tabs, ranked scores and separate preferences without opening books", function()
     local modal = similarDialog({ open_book = function() error("must not open a reader") end })
     H.eq(tag_reads, 1); H.eq(reads, 0); H.eq(modal.config.initial_tab, "series")
-    H.eq(modal.config.tabs[2].label, "Books"); flush()
+    H.eq(modal.config.tabs[1].label, "Books"); flush()
     H.eq(modal.config.item_count(), 2); H.eq(modal.config.item_at(1).filepath, "/books/single.epub")
     H.eq(modal.config.item_at(2).filepath, "/manga/01.epub")
     local rendered = modal.config.cell_renderer(modal.config.item_at(2), {})
-    assert(rendered.subtitle:find("Shared tags: 1 · Available volumes: 2", 1, true))
+    H.eq(rendered.note, "1 shared tag")
+    H.eq(modal.config.sheet.tab_count("series"), 2)
+    H.eq(modal.config.sheet.tab_count("volumes"), 2)
+    assert(rendered.subtitle:find("Matching volumes: 1", 1, true))
     local before = reads
     modal.config.on_tab_change("volumes"); H.eq(modal.config.item_count(), 2)
     H.eq(modal.config.item_at(2).filepath, "/manga/02.epub"); H.eq(tag_reads, 1); H.eq(reads, before)

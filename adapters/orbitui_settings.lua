@@ -646,7 +646,9 @@ function M.search(query, opts)
         enabled_func = function() return false end } end
     if #rows == 1 then rows[#rows + 1] = { text = _("No matching settings. Try a shorter word or a category name."),
         enabled_func = function() return false end } end
-    result_host = host(_("Search settings"), rows, "__root__"); return result_host
+    result_host = host(_("Search settings"), rows, "__root__", opts and opts.cancel_to
+        and { return_to = opts.cancel_to, return_label = opts.cancel_label })
+    return result_host
 end
 local function withSettings(profile, action)
     local request = settings_request
@@ -793,10 +795,69 @@ function M.quickStartItems(close)
     end
     return rows
 end
+local category_groups = {
+    navigation = {
+        { "Navigation", "bookshelf_navigation", "bars", "reader" },
+        { "Appearance & shortcuts", "interface", "quick_controls", "quick_actions" },
+    },
+    home = {{ "Layout & content", "home_layout", "home_screens", "home_dashboard", "home_shelves" },
+        { "Appearance & behaviour", "home_options", "home_advanced" }},
+    bookshelf = {{ "Library", "libraries", "book_search", "tag_index" },
+        { "Appearance", "book_overview", "panel", "covers", "themes", "preset", "bookshelf_text", "bookshelf_advanced" }},
+    integrations = {{ "Reading & sync", "bookorbit", "reader_panel", "hardcover", "connections" },
+        { "Library add-ons", "addons" }},
+    system = {{ "Maintenance", "updates", "maintenance", "performance" }, { "Help", "quick_start", "setup", "recovery" }},
+}
+local category_icons = {
+    bookshelf_navigation = "shelves", bars = "view_agenda", reader = "menu_book", interface = "format_size",
+    quick_controls = "tune", quick_actions = "power_settings_new", home_layout = "grid_view", home_screens = "view_carousel",
+    home_dashboard = "view_agenda", home_shelves = "shelves", home_options = "image", home_advanced = "settings",
+    libraries = "shelves", book_search = "search", tag_index = "bookmark", book_overview = "menu_book",
+    panel = "view_agenda", covers = "image", themes = "image", preset = "view_carousel", bookshelf_text = "format_size",
+    bookshelf_advanced = "settings", bookorbit = "sync", reader_panel = "menu_book", hardcover = "auto_stories",
+    connections = "link", addons = "apps", updates = "refresh", maintenance = "tune", performance = "settings",
+    quick_start = "menu_book", setup = "help", recovery = "history",
+}
+local function categorySheet(n, opts, Modal)
+    local UI = require("ui/uimanager")
+    local rows, panel = {}, nil
+    local function navigate(fn)
+        UI:close(panel)
+        return fn()
+    end
+    for _i, section in ipairs(category_groups[n.id]) do
+        for i = 2, #section do
+            local child = by_id[section[i]]
+            rows[#rows + 1] = { id = child.id, title = _(child.id == "bookshelf_navigation" and "Bookshelf button" or child.label),
+                group = i == 2 and _(section[1]) or nil, icon = category_icons[child.id],
+                subtitle = child.id == "bookshelf_navigation" and _("Choose where the library button leads.") or nil,
+                action = function() navigate(function() return M.open(child.id, { profile = opts and opts.profile }) end) end }
+        end
+    end
+    local back = opts and opts.return_to or M.show
+    local function returnHere() return M.open(n.id, opts) end
+    local scope = n.id == "navigation" and _("Applies to shared OrbitUI navigation.") or M.scopeRow(n.scope).text
+    panel = Modal.showSheet{
+        title = _(n.label), subtitle = scope, back = opts and opts.return_label or _("OrbitUI settings"),
+        on_back = function() navigate(back) end, rows = rows, row_height = 65, max_rows = 8,
+        action_icon = "search", action = { label = _("Search settings"), on_tap = function()
+            navigate(function()
+                return M.search(nil, { profile = opts and opts.profile, cancel_to = returnHere, cancel_label = _(n.label) })
+            end)
+        end },
+        on_closed = function() require("adapters/orbitui_appearance").refreshVisible() end,
+    }
+    return panel
+end
+
 function M.open(id, opts)
     beginRequest()
     local n = assert(by_id[id], "Unknown settings page")
     local profile = opts and opts.profile
+    if category_groups[id] then
+        local ok, Modal = pcall(require, "lib/bookshelf_library_modal")
+        if ok and Modal.showSheet then return categorySheet(n, opts, Modal) end
+    end
     if n.target then return M.library(profile, nil, "panel", n.target, opts) end
     if n.screen then return nativeHome(n.screen) end
     if id == "reader_menu" then

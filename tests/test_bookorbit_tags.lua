@@ -197,6 +197,7 @@ H.test("Tags loads explicitly, stays in its existing native tab and retires old 
     Search.bookOrbitTag = original
 end)
 local Modal = H.widget()
+function Modal.sheetRow(row) return row end
 function Modal:refresh() self.refreshes = (self.refreshes or 0) + 1 end
 function Modal:onClose() self.config.on_closed() end
 package.loaded["lib/bookshelf_library_modal"] = Modal

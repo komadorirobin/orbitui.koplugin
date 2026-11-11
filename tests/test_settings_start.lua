@@ -66,16 +66,27 @@ end
 local HS = W:extend{ free = false }
 function HS:getSize() return { w = self.width, h = 0 } end
 local Text = W:extend{}
+function Text:init()
+    self.line_height_px = math.ceil(self.face.size * 1.3)
+    self.line_glyph_extra_height = 0
+end
 function Text:getSize()
     -- Conservative UTF-8 character count and wrapping proxy, not KOReader shaping.
     local _, chars = self.text:gsub("[^\128-\191]", "")
     local intrinsic = chars * self.face.size * 0.57
     local width = self.width or math.min(self.max_width or math.huge, intrinsic)
     local lines = math.max(1, math.ceil(intrinsic / math.max(1,width)))
-    return { w = width, h = math.ceil(lines * self.face.size * 1.3) }
+    return { w = width, h = self.height or math.ceil(lines * self.face.size * 1.3) }
 end
 local Button = W:extend{}
-function Button:getSize() return { w = self.width, h = Screen:scaleBySize(42) } end
+function Button:init()
+    self.label_widget = W:new{}
+    self.label_container = W:new{ self.label_widget }
+    self.frame = W:new{}
+end
+function Button:getSize()
+    return { w = self.width, h = self.height and self.height + 2 * (self.bordersize or 0) or Screen:scaleBySize(42) }
+end
 function Button:onFocus() self.focused = true end
 local fonts = { getFace = function(_, _, size, opts) return { size = Screen:scaleBySize(size) }, opts and opts.bold end }
 for path, class in pairs({
@@ -89,7 +100,8 @@ for path, class in pairs({
 package.loaded["ui/gesturerange"] = W
 package.loaded["ui/font"] = fonts
 package.loaded["ui/size"] = { border = { window = 1, button = 1 }, line = { thin = 1 } }
-package.loaded["ffi/blitbuffer"] = { COLOR_WHITE = "white", COLOR_BLACK = "black", COLOR_DARK_GRAY = "gray" }
+package.loaded["ffi/blitbuffer"] = { Color8 = tostring,
+    COLOR_WHITE = "white", COLOR_BLACK = "black", COLOR_DARK_GRAY = "gray" }
 package.loaded["ffi/util"] = { template = function(s) return s end }
 local translate = require("core/orbitui_i18n")
 package.loaded["lib/bookshelf_i18n"] = { gettext = translate }
@@ -177,13 +189,13 @@ H.test("self-sized editor pickers retain their own card height without exceeding
     end
     width, height, scale = 600, 800, 1
 end)
-H.test("tap closes cards before opening the same native category; Back reconstructs the card start", function()
+H.test("tap closes cards before opening the native category sheet; Back reconstructs the card start", function()
     local m = show()
     m.config.on_cell_tap(m.config.item_at(1))
     assert(m.closed)
-    local host = hosts[#hosts]
-    assert(host.title:find(translate("Home (SimpleUI)"), 1, true))
-    host.on_back()
+    local category = shown[#shown]
+    H.eq(category.config.sheet.title, translate("Home (SimpleUI)"))
+    category:onClose(); assert(category.closed)
     H.eq(shown[#shown].name, "orbitui_settings_start")
 end)
 H.test("closed/replaced roots and repeated taps cannot open stale categories", function()
@@ -213,8 +225,8 @@ H.test("search results keep their query Back route; late search callbacks never 
     local result = hosts[#hosts]
     H.eq(result.title, translate("Search settings"))
     result.item_table[2].callback()
-    local target = hosts[#hosts]
-    target.on_back(); H.eq(hosts[#hosts].title, translate("Search settings"))
+    local target = shown[#shown]
+    target:onClose(); H.eq(hosts[#hosts].title, translate("Search settings"))
     hosts[#hosts].on_back(); H.eq(shown[#shown].name, "orbitui_settings_start")
     local before = #hosts
     dialog.buttons[1][2].callback(); H.eq(#hosts, before)

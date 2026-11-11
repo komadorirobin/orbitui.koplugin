@@ -41,7 +41,19 @@ package.loaded["ffi/blitbuffer"], package.loaded["ffi/util"] = {}, { template = 
 package.loaded.logger = { dbg = function() end, warn = function(...)
     warnings[#warnings + 1] = table.concat({...}, " ")
 end }
-package.loaded["ui/uimanager"] = { nextTick = function() end, setDirty = function() end }
+local sheet, confirmation
+local function showConfirmation(_, widget) confirmation = widget end
+package.loaded["ui/uimanager"] = { nextTick = function() end, setDirty = function() end,
+    show = showConfirmation,
+    close = function(_, widget)
+        widget.closed = true
+        if widget.config and widget.config.sheet.on_closed then widget.config.sheet.on_closed() end
+    end }
+package.loaded["ui/widget/confirmbox"] = W
+package.loaded["lib/bookshelf_library_modal"] = { showSheet = function(config)
+    sheet = { config = { sheet = config }, refresh = function() end }
+    return sheet
+end }
 package.loaded["infra/sui_backdrop"] = { RoundedFrame = W }
 package.loaded["infra/sui_i18n"] = { translate = tr }
 package.loaded["infra/sui_datenames"] = {}
@@ -92,6 +104,8 @@ Store.store = function() return { catalog = function() return StoreModel.bundled
 local function reset(lang)
     language, saved, warnings, notices, windows = lang or "en", {}, {}, {}, {}
     catalog, finish, requests, selected, verifications, row_error, row_files = {}, nil, 0, nil, 0, nil, {}
+    sheet, confirmation = nil, nil
+    package.loaded["ui/uimanager"].show = showConfirmation
 end
 local function text(widget)
     if widget.text then return widget.text end
@@ -159,7 +173,7 @@ for _, lang in ipairs{ "en", "sv" } do
         choose(source,"other_");H.eq(#Dashboard.readConfig("other_").modules,1)
         H.eq(#Dashboard.readConfig(pfx).modules,4);H.eq(requests,0)
     end)
-    H.test(lang .. ": remove is one action, immediately returns to cards and old callbacks cannot delete again", function()
+    H.test(lang .. ": remove asks once, returns to cards and old callbacks cannot delete again", function()
         reset(lang);local pfx="simpleui_hs_"
         assert(Settings.add({kind="bookorbit",source=source},function() end,pfx))
         local id=Dashboard.readConfig(pfx).modules[1].id
@@ -168,9 +182,13 @@ for _, lang in ipairs{ "en", "sv" } do
         -- Native rendering probes child menus to infer radio labels: that must not remove anything.
         H.eq(#Dashboard.readConfig(pfx).modules,1);row(win,title)
         tap(win,title);H.eq(#Dashboard.readConfig(pfx).modules,1)
-        local depth=#win._nav_stack;local remove=row(win,tr("Remove card"))[1].onTap
+        local depth=#win._nav_stack
+        H.eq(sheet.config.sheet.action.label,tr("Remove card…"))
+        sheet.config.sheet.action.on_tap();H.eq(#Dashboard.readConfig(pfx).modules,1)
+        H.eq(confirmation.ok_text,tr("Remove card"))
+        local remove=confirmation.ok_callback
         remove();H.eq(#Dashboard.readConfig(pfx).modules,0)
-        H.eq(#win._nav_stack,depth-1);H.eq(notices[1],tr("Card removed."));H.eq(#warnings,0)
+        assert(sheet.closed);H.eq(#win._nav_stack,depth);H.eq(notices[1],tr("Card removed."));H.eq(#warnings,0)
         H.eq(pcall(row,win,title),false)
         local config=saved[pfx .. "orbitui_dashboard_config"]
         remove();H.eq(saved[pfx .. "orbitui_dashboard_config"],config);H.eq(#notices,1)
@@ -186,11 +204,13 @@ for _, lang in ipairs{ "en", "sv" } do
         saved.foreign_sync={keep=true}
         local c=Dashboard.readConfig(pfx);local removed,kept=c.modules[1].id,c.modules[2].id
         local other=saved.other_orbitui_dashboard_config
-        local win=Settings.show(pfx,{},removed);local remove=row(win,tr("Remove card"))[1].onTap;remove()
+        local editor=Settings.show(pfx,{},removed)
+        editor.config.sheet.action.on_tap()
+        local remove=confirmation.ok_callback;remove()
         c=Dashboard.readConfig(pfx);H.eq(#c.modules,1);H.eq(c.modules[1].id,kept)
         H.eq(require("core/orbitui_dashboard").module(c,removed),nil)
         H.eq(saved.other_orbitui_dashboard_config,other);H.eq(saved.foreign_sync.keep,true)
-        H.eq(#warnings,0,table.concat(warnings," / "));row(win,source.title .. " [BookOrbit]")
+        H.eq(#warnings,0,table.concat(warnings," / "));assert(editor.closed)
         assert(Settings.add({kind="bookorbit",source=source},function() end,pfx))
         H.eq(Dashboard.readConfig(pfx).modules[2].id,removed)
         remove();H.eq(#Dashboard.readConfig(pfx).modules,2)
@@ -210,9 +230,10 @@ for _, lang in ipairs{ "en", "sv" } do
         row_files={"/cached.epub"};win:_repaint();row(win,source.title .. " [BookOrbit]")
         row_error=nil;win:_repaint();tap(win,source.title .. " [BookOrbit]")
         local depth=#win._nav_stack;st.saveSetting=function() error("simulated save failure") end
-        tap(win,tr("Remove card"));H.eq(#Dashboard.readConfig(pfx).modules,1);H.eq(#win._nav_stack,depth)
+        sheet.config.sheet.action.on_tap();confirmation.ok_callback()
+        H.eq(#Dashboard.readConfig(pfx).modules,1);H.eq(#win._nav_stack,depth)
         H.eq(notices[#notices],tr("Could not remove the card. Reopen the menu and try again."))
-        row(win,tr("Remove card"));H.eq(#warnings,0)
+        assert(not sheet.closed);H.eq(#warnings,0)
         st.saveSetting=save
         for _,value in ipairs(notices) do assert(not value:find("simulated",1,true)) end
     end)
@@ -279,8 +300,11 @@ for _, lang in ipairs{ "en", "sv" } do
         reset(lang)
         assert(Settings.add({ kind = "bookorbit", source = source }, function() end, "simpleui_hs_"))
         local id = Dashboard.readConfig("simpleui_hs_").modules[1].id
-        local win = Settings.show("simpleui_hs_", {}, id)
-        tap(win, tr("Display")); healthy(win, 2)
+        local editor = Settings.show("simpleui_hs_", {}, id)
+        for _, item in ipairs(editor.config.sheet.rows) do
+            if item.title == tr("Display") then item.action(); break end
+        end
+        local win = windows[#windows]; healthy(win, 2)
         row(win, tr("Cover row")); tap(win, tr("Carousel")); healthy(win, 2)
         H.eq(Dashboard.readConfig("simpleui_hs_").modules[1].view, "carousel")
         tap(win, tr("Cover row")); H.eq(Dashboard.readConfig("simpleui_hs_").modules[1].view, "row")
