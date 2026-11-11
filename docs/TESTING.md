@@ -1,5 +1,36 @@
 # Verification and device acceptance
 
+## 2026-11-11 — USB release review and screenshot set
+
+The Bigme booted the verified private ZIP
+**bf8946df5c9cd832c89e42b2a22399c3390bcacb57a58f3afad74222494d050c**
+from source **70e9be85ed05dee0b44a994ce643ba687cbb4f2e** after all
+2,000 installed hashes matched. The straight cover row, library, manga
+series, alphabet jump, Next in series, ordinary search results, airy book
+overview, classic Book details and local EPUB tag read were exercised on
+the device. One early Manga dock tap needed a repeat during initial
+library loading. Settled Library-to-Manga and Home-to-Manga after waking
+both worked. The airy overview displays the active profile name “Books”
+in the back control on this Swedish configuration.
+
+The reader checks used separate EPUBs with syncing and statistics
+temporarily disabled. A bottom tap opened the reader panel. Also reading
+listed three fixture books, and Reading settings opened the native config
+panel. Android sleep retired the reader sheet. The physical reader page
+remained open and a new bottom tap reopened the sheet after wake.
+
+All twelve original settings, history and recovery files were restored and
+hash-verified with KOReader stopped. The final device is on Home with the
+healthy candidate and **7a665991** as rollback. The crash log stayed at
+14,785 bytes. The isolated installer check from published 1.1.0 passed
+archive verification, activation, rollback and recovery. The new setup
+default was covered by the isolated settings fixtures below.
+
+Seven native screenshots at 1264×1680 are in
+`test-results/release-adb-20261111/orbitui-skarmbilder.zip`. The reader
+panel screenshot uses a synthetic book. Network integration and a fresh
+physical installation were outside this review.
+
 ## 2026-11-11 — fresh setup defaults to Straight cover row
 
 The first-run setup guide preselects Reading dashboard with Straight cover

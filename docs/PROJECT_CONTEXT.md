@@ -22,6 +22,12 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **USB release review and new screenshots.** Bigme verification covered
+  Home, the two shelves, search, book details, the reader panel and touch
+  after Android sleep on both Home and a fixture book. The healthy private
+  slot is now **bf8946df**, with **7a665991** as rollback. See TESTING for
+  the capture set, restored preferences and observed limitations.
+
 - **Fresh-install dashboard default.** The setup guide preselects Reading
   dashboard with Straight cover row and saves the layout when the user applies
   the reviewed setup. Pending setup can be resumed from settings with the
