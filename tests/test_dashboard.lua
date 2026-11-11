@@ -291,7 +291,7 @@ H.test("cover staircase keeps the classic setup and puts reading time beside the
     saved[key] = original
 end)
 
-H.test("staircase book columns have aligned descending covers and independent tap and hold actions", function()
+H.test("staircase book columns have even gaps, aligned descending covers and independent book actions", function()
     local layout_key = "simpleui_hs_orbitui_dashboard_layout"
     saved[layout_key] = "cover_stairs"
     local result = Dashboard.readData(ctx)
@@ -315,6 +315,7 @@ H.test("staircase book columns have aligned descending covers and independent ta
         current.dimen.x, current.dimen.y = 0, 0
         local p = current._plan
         local bottom, previous_h, count, time_shown = nil, math.huge, 0, false
+        local previous_right, smallest_gap, largest_gap = nil, math.huge, 0
         local remaining, pet_stats, goal_source
         local date = current[1][2]
         H.eq(date.fgcolor, "black")
@@ -328,6 +329,11 @@ H.test("staircase book columns have aligned descending covers and independent ta
                 assert(size.h < previous_h)
                 bottom = bottom or y + size.h
                 H.eq(y + size.h, bottom)
+                if previous_right then
+                    local gap = x - previous_right
+                    smallest_gap, largest_gap = math.min(smallest_gap, gap), math.max(largest_gap, gap)
+                end
+                previous_right = x + size.w
                 previous_h, count = size.h, count + 1
             end
             if child.text == "27 min" then time_shown = true end
@@ -336,6 +342,7 @@ H.test("staircase book columns have aligned descending covers and independent ta
             if child.text == result.goal.source then goal_source = child end
         end
         H.eq(count, 4)
+        assert(smallest_gap > 0 and largest_gap - smallest_gap <= 1)
         assert(time_shown)
         for _, label in ipairs({ assert(remaining), assert(pet_stats) }) do
             H.eq(label.fgcolor, "black")

@@ -347,14 +347,37 @@ function M.content(widget, p, ctx, data)
         local step = math.min(px(18), math.floor(cover_h / 6))
         local compact = cover_h < 22 or other_w < 26
 
+        local columns, free_w = {}, right - left - other_w
+        for i = 1, 4 do
+            local w = i == 1 and first_w or other_w
+            local h = compact and 0 or math.min(cover_h - step * (i - 1), math.floor(w * 1.35))
+            local cw = math.floor(h * 2 / 3)
+            columns[i] = { x = i == 1 and left or other_x + (i - 2) * (other_w + gap),
+                w = w, cover_w = cw, cover_h = h }
+            if i < 4 then free_w = free_w - cw end
+        end
+        if not compact then
+            -- Equalise the gaps between cover edges while reserving a full title
+            -- column on the right. Reuse the anchors for text and hit targets.
+            local x = left
+            for i, col in ipairs(columns) do
+                col.x = x
+                if i < 4 then
+                    local spacing = math.floor(free_w * i / 3) - math.floor(free_w * (i - 1) / 3)
+                    col.w = col.cover_w + spacing - gap
+                    x = x + col.cover_w + spacing
+                end
+            end
+            first_w, other_x = columns[1].w, columns[2].x
+        end
         text(heading("hero", _("Currently reading")), left, top, first_w, 17, true)
         text(heading("ongoing", _("Also reading")), other_x, top, right - other_x, 17, true)
-        local function column(book, x, w, index)
-            local is_current = index == 0
+        local function column(book, index)
+            local col = columns[index]
+            local x, w = col.x, col.w
+            local is_current = index == 1
             if not compact then
-                local h = math.min(cover_h - step * index, math.floor(w * 1.35))
-                local cw = math.floor(h * 2 / 3)
-                cover(book.file, rect(x, base - h, cw, h), false, true)
+                cover(book.file, rect(x, base - col.cover_h, col.cover_w, col.cover_h), false, true)
             end
             local y = compact and cover_top or title_y
             text(book.data.title, x, y, w, 15, true, ink, is_current and 1 or 2)
@@ -366,12 +389,12 @@ function M.content(widget, p, ctx, data)
             if not compact then text(string.format("%d %%", progress), x, pct_y, w, 13, false) end
             bookAction(rect(x, cover_top, w, math.max(1, (is_current and bottom or foot_y) - cover_top)), book.file)
         end
-        if data.current then column(data.current, left, first_w, 0)
+        if data.current then column(data.current, 1)
         else text(_("Open a book to start reading."), left, cover_top, first_w, 13, false, muted, 2) end
         if #data.ongoing == 0 then
             text(_("No other books in progress."), other_x, cover_top, right - other_x, 13, false, muted, 2)
         end
-        for i, book in ipairs(data.ongoing) do column(book, other_x + (i - 1) * (other_w + gap), other_w, i) end
+        for i, book in ipairs(data.ongoing) do column(book, i + 1) end
 
         if has_footer and not compact then
             add(UI.solidBar(right - left, px(1), BB.COLOR_LIGHT_GRAY), left, foot_y)
