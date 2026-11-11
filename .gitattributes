@@ -34,6 +34,7 @@
 /components/simpleui/screens/sui_bluetooth.lua export-ignore
 /components/simpleui/features/library/sui_rule_collections.lua export-ignore
 /components/simpleui/features/library/sui_sort_sheet.lua export-ignore
+/components/simpleui/features/library/cover_editor/*.lua export-ignore
 # Bookshelf 6.1 helpers use the same exact-source lazy registry, not new API-1 paths.
 /components/bookshelf/STYLE.md export-ignore
 /components/bookshelf/lib/bookshelf_book_actions_layout.lua export-ignore

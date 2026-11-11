@@ -9465,6 +9465,12 @@ msgstr "Öppna en bok en gång för att lista läsarens meny"
 msgid "Make sure you can still open Simple UI settings, e.g. with a quick action."
 msgstr "Se till att du fortfarande kan öppna OrbitUI-inställningarna, till exempel via en snabbåtgärd."
 
+msgid "Apply File Manager Layout to Reader"
+msgstr "Använd filhanterarens menylayout i läsaren"
+
+msgid "Hide and show the Reader menu items shared with the File Manager as they are in the File Manager?"
+msgstr "Ska gemensamma menypunkter visas och döljas på samma sätt i läsaren som i filhanteraren?"
+
 msgid "Show All Items"
 msgstr "Visa alla menypunkter"
 

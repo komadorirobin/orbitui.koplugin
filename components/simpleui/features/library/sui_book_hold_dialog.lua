@@ -233,6 +233,9 @@ end
 
 -- "Book cover": opens the cover window, which views and changes the cover.
 local function coverItem(ctx)
+    if M.orbitui_keep_native_cover then
+        return Rows.tag(filemanagerutil.genBookCoverButton(ctx.path, ctx.book_props, ctx.close), "cover")
+    end
     return {
         text     = _("Book cover"),
         sui_icon = "cover",

@@ -91,16 +91,17 @@ H.test("whole Sprite renders embedded PNGs through minimum-reader data API and r
             calls[#calls + 1] = "file"; return bitmap(48, 48)
         end,
     }
-    local screen = { night_mode = true, sw_dithering = true }
+    local screen = { night_mode = true, sw_dithering = true, scaleBySize = function(_, n) return n end }
     local deps = {
         ["ffi/blitbuffer"] = { TYPE_BB8A = 8, TYPE_BBRGB32 = 32 },
         device = { screen = screen }, ["ui/geometry"] = { new = function(_, v) return v end },
         ["ui/renderimage"] = render, ["ui/widget/widget"] = H.widget(),
         ["libs/libkoreader-lfs"] = lfs, logger = { warn = function() error("decode failed") end },
         ["modules/critter/assets"] = assets,
-        ["features/sui_style"] = { COLOR = { gray = "shadow" } },
-        ["infra/sui_aa_paint"] = { fillRect = function(_, _, _, w, h, color)
+        ["features/sui_style"] = { COLOR = { gray_soft = "shadow" } },
+        ["infra/sui_aa_paint"] = { fillRect = function(_, x, y, w, h, color)
             assert(w > 0 and h > 0); H.eq(color, "shadow")
+            assert(x >= 10 and x + w <= 106 and y >= 20 and y + h <= 118)
             calls.shadows = (calls.shadows or 0) + 1
         end },
         ["infra/sui_raster_cache"] = { get = function(_, key, builder, ...)
@@ -125,7 +126,9 @@ H.test("whole Sprite renders embedded PNGs through minimum-reader data API and r
     end
     H.eq(#calls, 12); H.eq(painted[1], "invert"); H.eq(painted[2], "dither-alpha")
     H.eq(painted[3], "invert")
-    Sprite:new{ path = entry.files.neutral, max_w = 100, max_h = 100, shadow = true }:paintTo(dst, 10, 20)
+    local shadowed = Sprite:new{ path = entry.files.neutral, max_w = 100, max_h = 100, shadow = true }
+    H.eq(shadowed.dimen.h, 98)
+    shadowed:paintTo(dst, 10, 20)
     H.eq(calls.shadows, 3)
     Sprite:new{ path = entry.files.neutral, max_w = 24, max_h = 24 }
     H.eq(#calls, 14, "small box retains native rescale branch")

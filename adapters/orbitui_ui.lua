@@ -125,6 +125,9 @@ function M.wrap(name, module)
                 or widget.name == "ReaderUI")
         end
     elseif name == "features/library/sui_book_hold_dialog" then
+        -- Keep the existing cover action until SimpleUI's editor can replace
+        -- a custom cover safely and coordinate with the Bookshelf cache.
+        module.orbitui_keep_native_cover = true
         local show = module.show
         module.show = function(file, opts)
             if opts and opts.file_chooser then return show(file, opts) end

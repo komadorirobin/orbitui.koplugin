@@ -30,6 +30,11 @@ local map = {
     ["features/dialogs/sui_native_inputs"] = "components/simpleui/features/dialogs/sui_native_inputs.lua",
     ["features/dialogs/sui_native_sheets"] = "components/simpleui/features/dialogs/sui_native_sheets.lua",
     ["features/dialogs/sui_native_widgets"] = "components/simpleui/features/dialogs/sui_native_widgets.lua",
+    ["features/library/cover_editor/sui_cover_net"] = "components/simpleui/features/library/cover_editor/sui_cover_net.lua",
+    ["features/library/cover_editor/sui_cover_search"] = "components/simpleui/features/library/cover_editor/sui_cover_search.lua",
+    ["features/library/cover_editor/sui_cover_sources"] = "components/simpleui/features/library/cover_editor/sui_cover_sources.lua",
+    ["features/library/cover_editor/sui_cover_store"] = "components/simpleui/features/library/cover_editor/sui_cover_store.lua",
+    ["features/library/cover_editor/sui_cover_window"] = "components/simpleui/features/library/cover_editor/sui_cover_window.lua",
     ["features/library/sui_bim_stamp"] = "components/simpleui/features/library/sui_bim_stamp.lua",
     ["features/library/sui_book_hold_dialog"] = "components/simpleui/features/library/sui_book_hold_dialog.lua",
     ["features/library/sui_cover_finder"] = "components/simpleui/features/library/sui_cover_finder.lua",
@@ -5032,17 +5037,45 @@ local function applyLive(target)\
     if menu and menu.tab_item_table ~= nil then MenuHooks.refresh(menu, target) end\
 end\
 \
---- Hides or shows one id of a target.\
-function M.setHidden(target, id, hidden)\
-    local set = {}\
-    for k in pairs(M.getHidden(target)) do set[k] = true end\
-    set[id] = hidden and true or nil\
+-- Stores the hidden set of a target and applies it to the running menu.\
+local function writeHidden(target, set)\
     if next(set) then\
         SUISettings:set(settingKey(target), set)\
     else\
         SUISettings:del(settingKey(target))\
     end\
     applyLive(target)\
+end\
+\
+--- Hides or shows one id of a target.\
+function M.setHidden(target, id, hidden)\
+    local set = {}\
+    for k in pairs(M.getHidden(target)) do set[k] = true end\
+    set[id] = hidden and true or nil\
+    writeHidden(target, set)\
+end\
+\
+--- Hidden set for the reader that mirrors the File Manager: every id present in\
+--- both trees takes its File Manager state; ids only in the reader keep theirs.\
+function M.mirrorHidden(fm_tree, reader_tree, fm_hidden, reader_hidden)\
+    local fm_ids = {}\
+    local function collect(nodes)\
+        for _i, node in ipairs(nodes) do\
+            fm_ids[node.id] = true\
+            if node.children then collect(node.children) end\
+        end\
+    end\
+    collect(fm_tree)\
+    local set = {}\
+    for k in pairs(reader_hidden) do set[k] = true end\
+    local function apply(nodes)\
+        for _i, node in ipairs(nodes) do\
+            if fm_ids[node.id] then set[node.id] = fm_hidden[node.id] == true or nil end\
+            if node.children then apply(node.children) end\
+        end\
+    end\
+    apply(reader_tree)\
+    return set\
 end\
 \
 --- Shows every hidden entry again, in both menus.\
@@ -5261,11 +5294,7 @@ function M.uninstall(owner)\
 end\
 \
 local function showProtectedNotice()\
-    local InfoMessage = require(\"ui/widget/infomessage\")\
-    require(\"ui/uimanager\"):show(InfoMessage:new{\
-        text    = _(\"This item can't be hidden\"),\
-        timeout = 3,\
-    })\
+    require(\"infra/sui_core\").Notify.toast(_(\"This item can't be hidden\"))\
 end\
 \
 -- Checkbox row that shows or hides `node`. A protected node is always shown.\
@@ -5454,31 +5483,51 @@ end\
 function M.makeMenuItems(ctx_menu)\
     local is_sui = ctx_menu and ctx_menu.is_sui or false\
     buildLiveMenus()\
-    local fm_row = makeContextRow(MenuHooks.TARGET.FM, _(\"File Manager\"),\
-        _(\"Open the File Manager once to list its menu\"), is_sui)\
-    local reader_row = makeContextRow(MenuHooks.TARGET.READER, _(\"Reader\"),\
-        _(\"Open a book once to list the Reader menu\"), is_sui)\
+    local missing_fm    = _(\"Open the File Manager once to list its menu\")\
+    local missing_reader = _(\"Open a book once to list the Reader menu\")\
+    local fm_row = makeContextRow(MenuHooks.TARGET.FM, _(\"File Manager\"), missing_fm, is_sui)\
+    local reader_row = makeContextRow(MenuHooks.TARGET.READER, _(\"Reader\"), missing_reader, is_sui)\
     reader_row.separator = true\
     local note = _(\"Make sure you can still open Simple UI settings, e.g. with a quick action.\")\
+    -- Asks to confirm `action`; the counts shown on the rows are stale once it runs.\
+    local function confirmThen(touch_menu, text, action)\
+        require(\"features/dialogs/sui_dialogs\").confirm{\
+            text        = text,\
+            ok_callback = function()\
+                action()\
+                if is_sui then\
+                    if ctx_menu.refresh then ctx_menu.refresh() end\
+                elseif touch_menu and touch_menu.updateItems then\
+                    touch_menu:updateItems()\
+                end\
+            end,\
+        }\
+    end\
     return {\
         fm_row,\
         reader_row,\
         {\
+            text     = _(\"Apply File Manager Layout to Reader\"),\
+            callback = function(touch_menu)\
+                local fm_tree     = M.loadTree(MenuHooks.TARGET.FM)\
+                local reader_tree = M.loadTree(MenuHooks.TARGET.READER)\
+                if not fm_tree or not reader_tree then\
+                    require(\"infra/sui_core\").Notify.toast(fm_tree and missing_reader or missing_fm)\
+                    return\
+                end\
+                confirmThen(touch_menu,\
+                    _(\"Hide and show the Reader menu items shared with the File Manager as they are in the File Manager?\"),\
+                    function()\
+                        local set = M.mirrorHidden(fm_tree, reader_tree,\
+                            M.getHidden(MenuHooks.TARGET.FM), M.getHidden(MenuHooks.TARGET.READER))\
+                        writeHidden(MenuHooks.TARGET.READER, set)\
+                    end)\
+            end,\
+        },\
+        {\
             text     = _(\"Show All Items\"),\
             callback = function(touch_menu)\
-                local ConfirmBox = require(\"ui/widget/confirmbox\")\
-                require(\"ui/uimanager\"):show(ConfirmBox:new{\
-                    text        = _(\"Show all hidden menu items again?\"),\
-                    ok_callback = function()\
-                        M.clearAll()\
-                        -- The counts shown on the rows are stale once the box closes.\
-                        if is_sui then\
-                            if ctx_menu.refresh then ctx_menu.refresh() end\
-                        elseif touch_menu and touch_menu.updateItems then\
-                            touch_menu:updateItems()\
-                        end\
-                    end,\
-                })\
+                confirmThen(touch_menu, _(\"Show all hidden menu items again?\"), M.clearAll)\
             end,\
             separator = true,\
         },\
@@ -8965,6 +9014,1191 @@ function M.show(fm, mode)\
 end\
 \
 return M\
+",
+    ["features/library/cover_editor/sui_cover_net"] = "-- sui_cover_net.lua — Simple UI\
+-- Blocking HTTP GET helpers for the online cover search. Requests use\
+-- KOReader's socket timeouts and stop reading past a size cap, so a slow or\
+-- misbehaving server cannot hang the reader or fill its memory.\
+--\
+-- Public API\
+--   CoverNet.get(url)      -> body | nil, err\
+--   CoverNet.getJson(url)  -> table | nil\
+--   CoverNet.resetAnswered()\
+--   CoverNet.answered()    -> requests a server answered (any HTTP status)\
+--                             since resetAnswered(); 0 means none got through\
+\
+local logger = require(\"logger\")\
+\
+local CoverNet = {}\
+\
+-- Largest response body read into memory (a cover is well below this).\
+local MAX_BODY = 8 * 1024 * 1024\
+\
+local answered = 0\
+\
+function CoverNet.resetAnswered() answered = 0 end\
+function CoverNet.answered() return answered end\
+\
+-- socketutil.table_sink that aborts once more than MAX_BODY bytes came in.\
+local function cappedSink(socketutil, chunks)\
+    local sink = socketutil.table_sink(chunks)\
+    local received = 0\
+    return function(chunk, err)\
+        if chunk then\
+            received = received + #chunk\
+            if received > MAX_BODY then return nil, \"response too large\" end\
+        end\
+        return sink(chunk, err)\
+    end\
+end\
+\
+function CoverNet.get(url)\
+    local http       = require(\"socket.http\")\
+    local socket     = require(\"socket\")\
+    local socketutil = require(\"socketutil\")\
+    local chunks = {}\
+    socketutil:set_timeout(socketutil.LARGE_BLOCK_TIMEOUT, socketutil.LARGE_TOTAL_TIMEOUT)\
+    local ok, code = pcall(function()\
+        return socket.skip(1, http.request{\
+            url      = url,\
+            method   = \"GET\",\
+            headers  = { [\"User-Agent\"] = socketutil.USER_AGENT },\
+            sink     = cappedSink(socketutil, chunks),\
+            redirect = true,\
+        })\
+    end)\
+    socketutil:reset_timeout()\
+    -- A numeric code is a server's answer; anything else failed on the way.\
+    if ok and type(code) == \"number\" then answered = answered + 1 end\
+    if not ok then\
+        logger.warn(\"SimpleUI cover search: request failed\", url, code)\
+        return nil, tostring(code)\
+    end\
+    if code ~= 200 then\
+        logger.dbg(\"SimpleUI cover search: HTTP\", code, url)\
+        return nil, \"http \" .. tostring(code)\
+    end\
+    return table.concat(chunks)\
+end\
+\
+function CoverNet.getJson(url)\
+    local body = CoverNet.get(url)\
+    if not body then return nil end\
+    local ok, data = pcall(require(\"json\").decode, body)\
+    if ok and type(data) == \"table\" then return data end\
+end\
+\
+return CoverNet\
+",
+    ["features/library/cover_editor/sui_cover_search"] = "-- sui_cover_search.lua — Simple UI\
+-- \"Search online\" screen of the cover window: a form with the query\
+-- (editable) and the Apple Books opt-in, and a Search button. The query is a\
+-- title and author, searched with the book's ISBN when it has one, or an\
+-- ISBN, which finds only that edition. The covers\
+-- found open in a sheet over the window, as pages of thumbnails with their\
+-- source and size; a tap selects a cover and the sheet's button applies it.\
+--\
+-- The search runs behind KOReader's Wi-Fi prompt and a progress notice that\
+-- a tap cancels; the covers found until then are kept. Thumbnails are decoded once per search and\
+-- freed when replaced or when the window closes; closing the sheet keeps\
+-- them, so the results can be shown again without searching.\
+--\
+-- Public API\
+--   local search = CoverSearch.new{ file, book, apply = function(path) end }\
+--     apply runs when the sheet's button is tapped, with the chosen image\
+--   search:build(ctx)   -> widgets of the screen\
+--   search:footer(ctx)  -> footer widget\
+--   search:run(ctx)     -- runs the search, then shows the results\
+--   search:free()\
+\
+local CenterContainer = require(\"ui/widget/container/centercontainer\")\
+local Device          = require(\"device\")\
+local Font            = require(\"ui/font\")\
+local FrameContainer  = require(\"ui/widget/container/framecontainer\")\
+local Geom            = require(\"ui/geometry\")\
+local HorizontalGroup = require(\"ui/widget/horizontalgroup\")\
+local HorizontalSpan  = require(\"ui/widget/horizontalspan\")\
+local ImageWidget     = require(\"ui/widget/imagewidget\")\
+local Size            = require(\"ui/size\")\
+local T               = require(\"ffi/util\").template\
+local TextWidget      = require(\"ui/widget/textwidget\")\
+local VerticalGroup   = require(\"ui/widget/verticalgroup\")\
+local VerticalSpan    = require(\"ui/widget/verticalspan\")\
+local I18n            = require(\"infra/sui_i18n\")\
+local _               = I18n.translate\
+local N_              = I18n.ngettext\
+local Screen          = Device.screen\
+\
+local ActionSheet  = require(\"engines/sui_action_sheet\")\
+local PageNav      = require(\"engines/sui_page_nav\")\
+local SUIWindow    = require(\"engines/sui_window\")\
+local SUIStyle     = require(\"features/sui_style\")\
+local SUISettings  = require(\"infra/sui_store\")\
+local UI           = require(\"infra/sui_core\")\
+local CoverSources = require(\"features/library/cover_editor/sui_cover_sources\")\
+\
+local CoverSearch = {}\
+CoverSearch.__index = CoverSearch\
+\
+local APPLE_KEY = \"simpleui_cover_search_apple\"\
+local COVER_ASPECT = 1.5\
+local PAGE_ROWS = 2\
+\
+-- Columns and cell width of a result grid `inner_w` wide.\
+local function gridGeometry(ctx, inner_w)\
+    local gap      = ctx.SZ(Screen:scaleBySize(8))\
+    local min_cell = ctx.SZ(Screen:scaleBySize(90))\
+    local cols     = math.max(2, math.min(4, math.floor((inner_w + gap) / (min_cell + gap))))\
+    local cell_w   = math.floor((inner_w - gap * (cols - 1)) / cols)\
+    return cols, cell_w, math.floor(cell_w * COVER_ASPECT), gap\
+end\
+\
+local function captionFace(ctx)\
+    return Font:getFace(SUIStyle.FACE_REGULAR, ctx.SZ(SUIStyle.FS_CAPTION))\
+end\
+\
+function CoverSearch.new(opts)\
+    local self = setmetatable({}, CoverSearch)\
+    self.apply = opts.apply\
+    local book = opts.book\
+    self.query = book.authors ~= \"\" and (book.title .. \" \" .. book.authors) or book.title\
+    self.isbn  = CoverSources.isbnOf(opts.file)\
+    self.results  = nil   -- nil until a search ran\
+    self.selected = nil\
+    self.page     = 1\
+    return self\
+end\
+\
+function CoverSearch:free()\
+    if self.sheet then self.sheet:close() end\
+    for _i, c in ipairs(self.results or {}) do\
+        if c.thumb then c.thumb:free() end\
+    end\
+    self.results, self.selected = nil, nil\
+    CoverSources.clearCache()\
+end\
+\
+function CoverSearch:run(ctx)\
+    -- Thumbnails fit the sheet's cells inside the selection frame, so they\
+    -- are drawn at their own size.\
+    self.sheet_w = SUIWindow.stackedWidth()\
+    local _cols, cell_w, cell_h = gridGeometry(ctx, SUIWindow.innerWidth(self.sheet_w))\
+    local frame = 2 * Size.border.thick\
+    local function search()\
+        local typed_isbn = CoverSources.parseIsbn(self.query)\
+        UI.Notify.progress(function(progress)\
+            return CoverSources.search{\
+                query         = typed_isbn and \"\" or self.query,\
+                isbn          = typed_isbn or self.isbn,\
+                include_apple = SUISettings:isTrue(APPLE_KEY),\
+                thumb_w       = cell_w - frame,\
+                thumb_h       = cell_h - frame,\
+                on_progress   = progress,\
+            }\
+        end, function(results, cancelled, offline)\
+            -- Frees the previous thumbnails; their files were already cleared.\
+            for _i, c in ipairs(self.results or {}) do\
+                if c.thumb then c.thumb:free() end\
+            end\
+            -- A search that found nothing because it was cancelled or reached\
+            -- no server leaves the form as it was before the first search.\
+            local unfinished = #results == 0 and (cancelled or offline)\
+            self.results, self.selected, self.page = not unfinished and results or nil, nil, 1\
+            ctx.repaint()\
+            if unfinished then\
+                UI.Notify.toast(cancelled and _(\"Search cancelled\")\
+                    or _(\"Could not reach the cover services. Check your connection.\"))\
+            elseif #results > 0 then\
+                self:showResults()\
+            end\
+        end)\
+    end\
+    local NetworkMgr = require(\"infra/sui_config\").getNetworkMgr()\
+    if NetworkMgr then\
+        -- Connected is enough: without internet the search reports it.\
+        NetworkMgr:runWhenConnected(search)\
+    else\
+        search()\
+    end\
+end\
+\
+-- One result: the thumbnail framed (thick frame when selected), then the\
+-- source and the image size. The thumbnail is drawn at its own size; it is\
+-- only scaled down when the sheet's cells shrank since the search (rotation).\
+function CoverSearch:buildCell(ctx, index, cell_w, cell_h)\
+    local c = self.results[index]\
+    local selected = self.selected == index\
+    local border = selected and Size.border.thick or Size.border.thin\
+    local thumb_w, thumb_h = c.thumb:getWidth(), c.thumb:getHeight()\
+    local scale = math.min(1, (cell_w - 2 * Size.border.thick) / thumb_w,\
+        (cell_h - 2 * Size.border.thick) / thumb_h)\
+    local image = ImageWidget:new{\
+        image            = c.thumb,\
+        image_disposable = false,\
+        width            = math.max(1, math.floor(thumb_w * scale)),\
+        height           = math.max(1, math.floor(thumb_h * scale)),\
+    }\
+    local face = captionFace(ctx)\
+    local cell = VerticalGroup:new{\
+        align = \"center\",\
+        CenterContainer:new{\
+            dimen = Geom:new{ w = cell_w, h = cell_h },\
+            FrameContainer:new{\
+                bordersize = border,\
+                color      = SUIStyle.COLOR.text_primary,\
+                padding    = 0,\
+                margin     = 0,\
+                image,\
+            },\
+        },\
+        VerticalSpan:new{ width = ctx.SZ(Screen:scaleBySize(4)) },\
+        TextWidget:new{\
+            text      = c.source,\
+            face      = face,\
+            bold      = selected,\
+            max_width = cell_w,\
+        },\
+        UI.makeColoredText{\
+            text      = string.format(\"%d × %d\", c.width, c.height),\
+            face      = face,\
+            fgcolor   = SUIStyle.COLOR.text_dim,\
+            max_width = cell_w,\
+        },\
+    }\
+    return SUIWindow.Input.tapable(cell, {\
+        on_tap = function()\
+            self.selected = index\
+            self.sheet:update{ footer = self:sheetFooter() }\
+        end,\
+    }, Geom:new{ w = cell_w, h = cell:getSize().h })\
+end\
+\
+-- Centred page indicator with its chevrons; they are D-pad focus stops.\
+function CoverSearch:buildPager(ctx, npages)\
+    local face  = PageNav.indicatorFace(UI.getLandscapeFactor())\
+    local row_h = PageNav.rowHeight(face)\
+    local pager, stops = PageNav.buildPager(self.page, npages, row_h,\
+        TextWidget:new{ text = string.format(\"%d/%d\", self.page, npages), face = face },\
+        Size.padding.large,\
+        function(delta)\
+            self.page = self.page + delta\
+            self.sheet:repaint()\
+        end,\
+        true)\
+    for _i, stop in ipairs(stops) do\
+        local _w, focused = SUIWindow.Input.focusStop(stop.widget,\
+            { on_select = stop.widget.onTapPageNav })\
+        stop.widget._kb_focused = focused\
+    end\
+    return CenterContainer:new{\
+        dimen = Geom:new{ w = ctx.inner_w, h = row_h },\
+        pager,\
+    }\
+end\
+\
+-- Current page of the result grid: PAGE_ROWS rows (one when two do not fit\
+-- the sheet), every page as tall as a full one, and the pager below.\
+function CoverSearch:buildGrid(ctx)\
+    local cols, cell_w, cell_h, gap = gridGeometry(ctx, ctx.inner_w)\
+    local row_h = cell_h + ctx.SZ(Screen:scaleBySize(4))\
+        + 2 * SUIStyle.faceHeight(captionFace(ctx)) + gap\
+    local rows = PAGE_ROWS\
+    if ctx.page_h and rows * row_h > ctx.page_h then rows = 1 end\
+    local per_page = rows * cols\
+    local npages = math.ceil(#self.results / per_page)\
+    self.page = math.max(1, math.min(self.page, npages))\
+\
+    local grid = VerticalGroup:new{ align = \"left\" }\
+    local first = (self.page - 1) * per_page + 1\
+    local last  = math.min(first + per_page - 1, #self.results)\
+    for row_first = first, last, cols do\
+        local row = HorizontalGroup:new{ align = \"top\" }\
+        for i = row_first, math.min(row_first + cols - 1, last) do\
+            if i > row_first then row[#row + 1] = HorizontalSpan:new{ width = gap } end\
+            row[#row + 1] = self:buildCell(ctx, i, cell_w, cell_h)\
+        end\
+        grid[#grid + 1] = VerticalGroup:new{\
+            align = \"left\",\
+            row,\
+            VerticalSpan:new{ width = gap },\
+        }\
+    end\
+    if npages > 1 then\
+        local missing = rows - math.ceil((last - first + 1) / cols)\
+        if missing > 0 then grid[#grid + 1] = VerticalSpan:new{ width = missing * row_h } end\
+        grid[#grid + 1] = self:buildPager(ctx, npages)\
+    end\
+    return grid\
+end\
+\
+function CoverSearch:sheetFooter()\
+    local chosen = self.selected and self.results[self.selected]\
+    return {\
+        {\
+            text     = _(\"Cancel\"),\
+            callback = function() self.sheet:close() end,\
+        },\
+        {\
+            text     = _(\"Use this cover\"),\
+            primary  = true,\
+            enabled  = chosen ~= nil,\
+            callback = function()\
+                self.sheet:close()\
+                self.apply(chosen.path)\
+            end,\
+        },\
+    }\
+end\
+\
+-- Opens the sheet of results over the window.\
+function CoverSearch:showResults()\
+    local n = #self.results\
+    self.sheet = ActionSheet.show{\
+        name     = \"sui_win_cover_results\",\
+        width    = self.sheet_w,\
+        title    = T(N_(\"%1 cover found\", \"%1 covers found\", n), n),\
+        sections = {\
+            { type = \"widget\", build = function(ctx) return self:buildGrid(ctx) end },\
+        },\
+        footer   = self:sheetFooter(),\
+        on_close = function() self.sheet = nil end,\
+    }\
+end\
+\
+function CoverSearch:build(ctx)\
+    local widgets = {\
+        SUIWindow.ListRow{\
+            inner_w   = ctx.inner_w,\
+            title     = self.query,\
+            -- The book's ISBN, used unless the query is an ISBN itself.\
+            subtitle  = self.isbn and not CoverSources.parseIsbn(self.query)\
+                and T(_(\"ISBN %1\"), self.isbn) or nil,\
+            right_icon = \"edit\",\
+            on_tap    = function()\
+                require(\"features/dialogs/sui_dialogs\").prompt{\
+                    title       = _(\"Search covers\"),\
+                    description = _(\"Title, author or ISBN\"),\
+                    value       = self.query,\
+                    ok_text     = _(\"Search\"),\
+                    on_submit   = function(query)\
+                        self.query = query\
+                        self:run(ctx)\
+                    end,\
+                }\
+            end,\
+        },\
+        SUIWindow.ListRow{\
+            inner_w  = ctx.inner_w,\
+            title    = _(\"Include Apple Books\"),\
+            subtitle = _(\"Artwork is subject to Apple's terms of use\"),\
+            checked  = SUISettings:isTrue(APPLE_KEY),\
+            on_tap   = function()\
+                SUISettings:set(APPLE_KEY, not SUISettings:isTrue(APPLE_KEY))\
+                ctx.repaint()\
+            end,\
+        },\
+    }\
+    if not self.results then return widgets end\
+    local n = #self.results\
+    widgets[#widgets + 1] = SUIWindow.ListRow{\
+        inner_w   = ctx.inner_w,\
+        title     = n == 0 and _(\"No covers found.\")\
+            or T(N_(\"Show %1 cover\", \"Show %1 covers\", n), n),\
+        enabled   = n > 0,\
+        on_tap    = n > 0 and function() self:showResults() end or nil,\
+        separator = false,\
+    }\
+    return widgets\
+end\
+\
+function CoverSearch:footer(ctx)\
+    return SUIWindow.CenteredButtonFooter(ctx, {\
+        text   = _(\"Search\"),\
+        on_tap = function() self:run(ctx) end,\
+    })\
+end\
+\
+return CoverSearch\
+",
+    ["features/library/cover_editor/sui_cover_sources"] = "-- sui_cover_sources.lua — Simple UI\
+-- Online cover search: asks Open Library, Google Books and, when enabled,\
+-- Apple Books for covers of a book, downloads each one, and returns the\
+-- portrait images found, largest first.\
+--\
+-- Each source is queried by ISBN (the exact edition) when the book has one,\
+-- then by free text. A source that fails, is rate limited or finds nothing is\
+-- skipped. Downloads are decoded one at a time: the full image only lives\
+-- long enough to read its size and scale it to a thumbnail, and the file is\
+-- kept in a cache folder (cleared on every search) for when it is applied.\
+--\
+-- Public API\
+--   CoverSources.isbnOf(file)   -> ISBN string | nil\
+--   CoverSources.parseIsbn(s)   -> ISBN string | nil (checked)\
+--   CoverSources.search(opts)   -> { candidate, ... }, cancelled, offline\
+--     offline: no request reached a server (no network or no internet)\
+--     opts.query          string    free-text query (title and author)\
+--     opts.isbn           string?\
+--     opts.include_apple  bool\
+--     opts.thumb_w/h      number    thumbnail bounds\
+--     opts.on_progress    function(text) -> false to cancel\
+--   candidate = { path, width, height, filesize, source, thumb }\
+--     thumb is a Blitbuffer owned by the caller\
+--   CoverSources.clearCache()\
+\
+local DataStorage = require(\"datastorage\")\
+local T           = require(\"ffi/util\").template\
+local lfs         = require(\"libs/libkoreader-lfs\")\
+local logger      = require(\"logger\")\
+local util        = require(\"util\")\
+local _           = require(\"infra/sui_i18n\").translate\
+\
+local CoverNet = require(\"features/library/cover_editor/sui_cover_net\")\
+\
+local CoverSources = {}\
+\
+local MAX_PER_SOURCE = 4\
+\
+local function cacheDir()\
+    return DataStorage:getDataDir() .. \"/cache/simpleui/cover_search\"\
+end\
+\
+function CoverSources.clearCache()\
+    local dir = cacheDir()\
+    local ok, iter, dir_obj = pcall(lfs.dir, dir)\
+    if not ok then return end\
+    for name in iter, dir_obj do\
+        if name ~= \".\" and name ~= \"..\" then os.remove(dir .. \"/\" .. name) end\
+    end\
+end\
+\
+local function encode(s)\
+    return (tostring(s):gsub(\"[^%w%-%._~]\", function(c)\
+        return string.format(\"%%%02X\", c:byte())\
+    end))\
+end\
+\
+-- ---------------------------------------------------------------------------\
+-- ISBN\
+-- ---------------------------------------------------------------------------\
+\
+-- The ISBN written in `s` (10 or 13 characters, spaces and hyphens allowed),\
+-- as its bare characters, when its check digit is right; else nil.\
+function CoverSources.parseIsbn(s)\
+    local isbn = s:gsub(\"[%s%-]\", \"\"):upper()\
+    local sum = 0\
+    if isbn:match(\"^97[89]%d%d%d%d%d%d%d%d%d%d$\") then\
+        for i = 1, 13 do\
+            sum = sum + tonumber(isbn:sub(i, i)) * (i % 2 == 1 and 1 or 3)\
+        end\
+        return sum % 10 == 0 and isbn or nil\
+    end\
+    if isbn:match(\"^%d%d%d%d%d%d%d%d%d[%dX]$\") then\
+        for i = 1, 10 do\
+            local c = isbn:sub(i, i)\
+            sum = sum + (c == \"X\" and 10 or tonumber(c)) * (11 - i)\
+        end\
+        return sum % 11 == 0 and isbn or nil\
+    end\
+end\
+\
+-- First ISBN in a document's identifiers: a labelled one, else any bare\
+-- 13-digit ISBN.\
+local function isbnFromIdentifiers(identifiers)\
+    if type(identifiers) ~= \"string\" or identifiers == \"\" then return nil end\
+    for value in identifiers:lower():gmatch(\"isbn[^%dx]*([%dx][%dx%s%-]+)\") do\
+        local isbn = CoverSources.parseIsbn(value)\
+        if isbn then return isbn end\
+    end\
+    for value in identifiers:gmatch(\"97[89][%d%-]+\") do\
+        local isbn = CoverSources.parseIsbn(value)\
+        if isbn then return isbn end\
+    end\
+end\
+\
+-- Identifiers stored when the book was opened, else read from the file's\
+-- metadata (without rendering it).\
+function CoverSources.isbnOf(file)\
+    local BookList = require(\"ui/widget/booklist\")\
+    local identifiers\
+    if BookList.hasBookBeenOpened(file) then\
+        local props = BookList.getDocSettings(file):readSetting(\"doc_props\")\
+        identifiers = props and props.identifiers\
+    end\
+    if not identifiers then\
+        local DocumentRegistry = require(\"document/documentregistry\")\
+        local ok, props = pcall(function()\
+            local doc = DocumentRegistry:openDocument(file)\
+            if not doc then return nil end\
+            local loaded = not doc.loadDocument or doc:loadDocument(false)\
+            local result = loaded and doc:getProps() or nil\
+            doc:close()\
+            return result\
+        end)\
+        identifiers = ok and props and props.identifiers\
+    end\
+    return isbnFromIdentifiers(identifiers)\
+end\
+\
+-- ---------------------------------------------------------------------------\
+-- Sources: each returns the cover URLs it found, best match first\
+-- ---------------------------------------------------------------------------\
+\
+local function openLibrary(query, isbn)\
+    local urls = {}\
+    if isbn then\
+        -- default=false answers 404 instead of a blank image when there is none.\
+        urls[#urls + 1] = \"https://covers.openlibrary.org/b/isbn/\" .. isbn .. \"-L.jpg?default=false\"\
+    end\
+    if query ~= \"\" then\
+        local data = CoverNet.getJson(\"https://openlibrary.org/search.json?q=\" .. encode(query)\
+            .. \"&limit=8&fields=cover_i\")\
+        for _i, doc in ipairs(data and type(data.docs) == \"table\" and data.docs or {}) do\
+            if #urls >= MAX_PER_SOURCE then break end\
+            if tonumber(doc.cover_i) then\
+                urls[#urls + 1] = \"https://covers.openlibrary.org/b/id/\" .. doc.cover_i .. \"-L.jpg\"\
+            end\
+        end\
+    end\
+    return urls\
+end\
+\
+-- Largest image a Google Books imageLinks table offers. The thumbnail link\
+-- serves a larger rendition when its zoom cap and page-curl effect are\
+-- dropped and a width is requested.\
+local function googleImage(links)\
+    if type(links) ~= \"table\" then return nil end\
+    local url = links.extraLarge or links.large or links.medium\
+    if url then\
+        return (url:gsub(\"^http:\", \"https:\"):gsub(\"&edge=curl\", \"\"))\
+    end\
+    url = links.small or links.thumbnail or links.smallThumbnail\
+    if type(url) ~= \"string\" then return nil end\
+    url = url:gsub(\"^http:\", \"https:\"):gsub(\"&edge=curl\", \"\"):gsub(\"&zoom=%d\", \"\")\
+    return url .. \"&fife=w1200\"\
+end\
+\
+local function googleBooks(query, isbn)\
+    local queries = {}\
+    if isbn then queries[#queries + 1] = \"isbn:\" .. isbn end\
+    if query ~= \"\" then queries[#queries + 1] = query end\
+    local urls = {}\
+    for _i, q in ipairs(queries) do\
+        local data = CoverNet.getJson(\"https://www.googleapis.com/books/v1/volumes?q=\"\
+            .. encode(q) .. \"&maxResults=8\")\
+        for _j, item in ipairs(data and type(data.items) == \"table\" and data.items or {}) do\
+            if #urls >= MAX_PER_SOURCE then return urls end\
+            local url = googleImage(item.volumeInfo and item.volumeInfo.imageLinks)\
+            if url then urls[#urls + 1] = url end\
+        end\
+    end\
+    return urls\
+end\
+\
+-- The artwork link's size segment is rewritten to a large box; the server\
+-- answers with the largest size it has, up to that box.\
+local function appleBooks(query, isbn)\
+    local terms = {}\
+    if isbn then terms[#terms + 1] = isbn end\
+    if query ~= \"\" then terms[#terms + 1] = query end\
+    local urls = {}\
+    for _i, term in ipairs(terms) do\
+        local data = CoverNet.getJson(\"https://itunes.apple.com/search?media=ebook&limit=8&term=\"\
+            .. encode(term))\
+        for _j, result in ipairs(data and type(data.results) == \"table\" and data.results or {}) do\
+            if #urls >= MAX_PER_SOURCE then return urls end\
+            local art = result.artworkUrl100\
+            if type(art) == \"string\" then\
+                urls[#urls + 1] = (art:gsub(\"/%d+x%d+bb%.\", \"/1200x1200bb.\"))\
+            end\
+        end\
+    end\
+    return urls\
+end\
+\
+local SOURCES = {\
+    { id = \"openlibrary\", name = \"Open Library\", fetch = openLibrary },\
+    { id = \"google\",      name = \"Google Books\", fetch = googleBooks },\
+    { id = \"apple\",       name = \"Apple Books\",  fetch = appleBooks, opt_in = true },\
+}\
+\
+-- ---------------------------------------------------------------------------\
+-- Downloads\
+-- ---------------------------------------------------------------------------\
+\
+-- File extension of image data, from its signature.\
+local function imageExt(data)\
+    if data:sub(1, 3) == \"\\xFF\\xD8\\xFF\" then return \"jpg\" end\
+    if data:sub(1, 8) == \"\\x89PNG\\r\\n\\26\\n\" then return \"png\" end\
+    if data:sub(1, 4) == \"RIFF\" and data:sub(9, 12) == \"WEBP\" then return \"webp\" end\
+    if data:sub(1, 3) == \"GIF\" then return \"gif\" end\
+end\
+\
+-- Downloads and decodes one cover; nil when it is not a usable portrait image.\
+local function fetchCandidate(url, seq, opts, seen)\
+    local data = CoverNet.get(url)\
+    local ext = data and imageExt(data)\
+    if not ext then return nil end\
+    local hash = require(\"ffi/sha2\").md5(data)\
+    if seen[hash] then return nil end\
+    seen[hash] = true\
+\
+    local RenderImage = require(\"ui/renderimage\")\
+    local ok, bb = pcall(RenderImage.renderImageData, RenderImage, data, #data, false)\
+    if not (ok and bb) then return nil end\
+    local w, h = bb:getWidth(), bb:getHeight()\
+    -- Covers are portrait (or square); wider images are banners or wrong hits.\
+    if w > h then\
+        bb:free()\
+        return nil\
+    end\
+    local scale = math.min(opts.thumb_w / w, opts.thumb_h / h, 1)\
+    local thumb = RenderImage:scaleBlitBuffer(bb,\
+        math.max(1, math.floor(w * scale)), math.max(1, math.floor(h * scale)))\
+\
+    local path = cacheDir() .. \"/\" .. seq .. \".\" .. ext\
+    local f = io.open(path, \"wb\")\
+    if not (f and f:write(data)) then\
+        if f then f:close() end\
+        thumb:free()\
+        logger.warn(\"SimpleUI cover search: could not write\", path)\
+        return nil\
+    end\
+    f:close()\
+    return { path = path, width = w, height = h, filesize = #data, thumb = thumb }\
+end\
+\
+function CoverSources.search(opts)\
+    local query = util.trim(opts.query or \"\")\
+    local progress = opts.on_progress or function() return true end\
+    CoverSources.clearCache()\
+    util.makePath(cacheDir())\
+    CoverNet.resetAnswered()\
+\
+    local pending = {}\
+    for _i, source in ipairs(SOURCES) do\
+        if not source.opt_in or (source.id == \"apple\" and opts.include_apple) then\
+            if progress(T(_(\"Searching %1\"), source.name)) == false then return {}, true end\
+            local ok, urls = pcall(source.fetch, query, opts.isbn)\
+            if ok then\
+                for _j, url in ipairs(urls) do\
+                    pending[#pending + 1] = { url = url, source = source.name }\
+                end\
+            else\
+                logger.warn(\"SimpleUI cover search:\", source.id, urls)\
+            end\
+        end\
+    end\
+\
+    local results, seen, seen_url = {}, {}, {}\
+    local cancelled = false\
+    for i, item in ipairs(pending) do\
+        if progress(T(_(\"Downloading covers %1/%2\"), i, #pending)) == false then\
+            cancelled = true\
+            break\
+        end\
+        if not seen_url[item.url] then\
+            seen_url[item.url] = true\
+            local ok, candidate = pcall(fetchCandidate, item.url, i, opts, seen)\
+            if ok and candidate then\
+                candidate.source = item.source\
+                results[#results + 1] = candidate\
+            elseif not ok then\
+                logger.warn(\"SimpleUI cover search:\", item.url, candidate)\
+            end\
+        end\
+    end\
+    table.sort(results, function(a, b) return a.width * a.height > b.width * b.height end)\
+    return results, cancelled, CoverNet.answered() == 0\
+end\
+\
+return CoverSources\
+",
+    ["features/library/cover_editor/sui_cover_store"] = "-- sui_cover_store.lua — Simple UI\
+-- Reads and changes a book's cover through KOReader's own custom-cover\
+-- mechanism (a `cover.<ext>` file in the book's sidecar folder), so a change\
+-- shows everywhere covers are drawn, inside and outside Simple UI.\
+--\
+-- Every change first saves the cover it replaces in an undo slot, one per\
+-- book, so the last change can be undone (and the undo itself undone). The\
+-- slot is keyed by the book's partial MD5, so it survives the book being\
+-- moved or renamed; it holds either the replaced custom image or a marker\
+-- meaning \"the book's own cover\".\
+--\
+-- Public API\
+--   CoverStore.load(file)                -> { bb, custom_path, width, height, filesize }\
+--                                           bb is owned by the caller (free it);\
+--                                           width/height are the image's own size\
+--   CoverStore.apply(file, image_path)   -> ok   use an image as the book's cover\
+--   CoverStore.restoreOriginal(file)     -> ok   back to the book's own cover\
+--   CoverStore.canUndo(file)             -> bool\
+--   CoverStore.undo(file)                -> ok   swap the cover with the undo slot\
+\
+local DataStorage = require(\"datastorage\")\
+local DocSettings = require(\"docsettings\")\
+local Event       = require(\"ui/event\")\
+local UIManager   = require(\"ui/uimanager\")\
+local ffiutil     = require(\"ffi/util\")\
+local lfs         = require(\"libs/libkoreader-lfs\")\
+local logger      = require(\"logger\")\
+local util        = require(\"util\")\
+\
+local CoverStore = {}\
+\
+-- Undo slots kept at most; the oldest are dropped beyond this.\
+local MAX_UNDO_SLOTS = 50\
+local EMBEDDED_MARKER = \"embedded\"\
+\
+local function undoDir()\
+    return DataStorage:getDataDir() .. \"/cache/simpleui/cover_undo\"\
+end\
+\
+local function bookKey(file)\
+    return util.partialMD5(file)\
+end\
+\
+-- Path of the undo slot of `key`, or nil. Slots are \"<key>.<ext>\" (one dot\
+-- after the key), which keeps the transient \"<key>.swap.<ext>\" out.\
+local function findSlot(key)\
+    local dir = undoDir()\
+    local ok, iter, dir_obj = pcall(lfs.dir, dir)\
+    if not ok then return nil end\
+    local prefix = key .. \".\"\
+    for name in iter, dir_obj do\
+        if name:sub(1, #prefix) == prefix and not name:find(\".\", #prefix + 1, true) then\
+            return dir .. \"/\" .. name\
+        end\
+    end\
+end\
+\
+-- Drops the oldest slots beyond MAX_UNDO_SLOTS.\
+local function pruneSlots()\
+    local dir = undoDir()\
+    local ok, iter, dir_obj = pcall(lfs.dir, dir)\
+    if not ok then return end\
+    local slots = {}\
+    for name in iter, dir_obj do\
+        if name ~= \".\" and name ~= \"..\" then\
+            local path = dir .. \"/\" .. name\
+            slots[#slots + 1] = { path = path, mtime = lfs.attributes(path, \"modification\") or 0 }\
+        end\
+    end\
+    if #slots <= MAX_UNDO_SLOTS then return end\
+    table.sort(slots, function(a, b) return a.mtime < b.mtime end)\
+    for i = 1, #slots - MAX_UNDO_SLOTS do os.remove(slots[i].path) end\
+end\
+\
+-- Saves the book's current cover in its undo slot, replacing any earlier one.\
+local function saveUndo(file, key)\
+    local old = findSlot(key)\
+    if old then os.remove(old) end\
+    util.makePath(undoDir())\
+    local custom = DocSettings:findCustomCoverFile(file)\
+    if custom then\
+        local dest = undoDir() .. \"/\" .. key .. \".\" .. util.getFileNameSuffix(custom):lower()\
+        if ffiutil.copyFile(custom, dest) ~= nil then\
+            logger.warn(\"SimpleUI cover: could not save undo copy of\", custom)\
+        end\
+    else\
+        local f = io.open(undoDir() .. \"/\" .. key .. \".\" .. EMBEDDED_MARKER, \"w\")\
+        if f then f:close() end\
+    end\
+    pruneSlots()\
+end\
+\
+-- Cover columns of a book info row, cleared so the cover is extracted again.\
+local BOOKINFO_COVER_RESET = {\
+    cover_fetched   = false,\
+    has_cover       = false,\
+    cover_sizetag   = false,\
+    cover_w         = false,\
+    cover_h         = false,\
+    cover_bb_type   = false,\
+    cover_bb_stride = false,\
+    cover_bb_data   = false,\
+}\
+\
+-- Tells the open document, the book info cache and every screen that the\
+-- cover changed. Only the cover of the book info row is cleared: its title,\
+-- authors and series stay known while the cover is extracted again, so lists\
+-- grouped or filtered by them keep the book.\
+local function notifyChanged(file)\
+    local ReaderUI = package.loaded[\"apps/reader/readerui\"]\
+    local reader = ReaderUI and ReaderUI.instance\
+    if reader and reader.doc_settings and reader.document and reader.document.file == file then\
+        reader.doc_settings:getCustomCoverFile(true)\
+    end\
+    local ok, BookInfoManager = pcall(require, \"bookinfomanager\")\
+    if ok and BookInfoManager then\
+        BookInfoManager:setBookInfoProperties(file, BOOKINFO_COVER_RESET)\
+    end\
+    UIManager:broadcastEvent(Event:new(\"BookMetadataChanged\"))\
+end\
+\
+local function writeCustom(file, image_path)\
+    local old = DocSettings:findCustomCoverFile(file)\
+    if old then os.remove(old) end\
+    return DocSettings:flushCustomCover(file, image_path) == true\
+end\
+\
+local function removeCustom(file)\
+    local old = DocSettings:findCustomCoverFile(file)\
+    if not old then return true end\
+    if not os.remove(old) then return false end\
+    DocSettings.removeSidecarDir((util.splitFilePathName(old)))\
+    return true\
+end\
+\
+-- A custom image is decoded at its own size (opening it as a document would\
+-- scale it to the screen); the book's own cover comes from the document.\
+function CoverStore.load(file)\
+    local custom_path = DocSettings:findCustomCoverFile(file)\
+    local ok, bb = pcall(function()\
+        if custom_path then\
+            return require(\"ui/renderimage\"):renderImageFile(custom_path, false)\
+        end\
+        local BookInfo = require(\"apps/filemanager/filemanagerbookinfo\")\
+        local ReaderUI = package.loaded[\"apps/reader/readerui\"]\
+        local reader   = ReaderUI and ReaderUI.instance\
+        local document = reader and reader.document\
+        if document and document.file ~= file then document = nil end\
+        return BookInfo:getCoverImage(document, file, true)\
+    end)\
+    if not ok then\
+        logger.warn(\"SimpleUI cover: could not load cover of\", file, bb)\
+        bb = nil\
+    end\
+    return {\
+        bb          = bb,\
+        custom_path = custom_path,\
+        width       = bb and bb:getWidth(),\
+        height      = bb and bb:getHeight(),\
+        filesize    = custom_path and lfs.attributes(custom_path, \"size\"),\
+    }\
+end\
+\
+function CoverStore.apply(file, image_path)\
+    local key = bookKey(file)\
+    if key then saveUndo(file, key) end\
+    local ok = writeCustom(file, image_path)\
+    notifyChanged(file)\
+    return ok\
+end\
+\
+function CoverStore.restoreOriginal(file)\
+    local key = bookKey(file)\
+    if key then saveUndo(file, key) end\
+    local ok = removeCustom(file)\
+    notifyChanged(file)\
+    return ok\
+end\
+\
+function CoverStore.canUndo(file)\
+    local key = bookKey(file)\
+    return key ~= nil and findSlot(key) ~= nil\
+end\
+\
+function CoverStore.undo(file)\
+    local key = bookKey(file)\
+    local slot = key and findSlot(key)\
+    if not slot then return false end\
+    -- Move the slot aside so saving the current cover cannot overwrite it.\
+    local ext  = util.getFileNameSuffix(slot)\
+    local swap = undoDir() .. \"/\" .. key .. \".swap.\" .. ext\
+    if not os.rename(slot, swap) then return false end\
+    saveUndo(file, key)\
+    local ok\
+    if ext == EMBEDDED_MARKER then\
+        ok = removeCustom(file)\
+    else\
+        ok = writeCustom(file, swap)\
+    end\
+    os.remove(swap)\
+    notifyChanged(file)\
+    return ok\
+end\
+\
+return CoverStore\
+",
+    ["features/library/cover_editor/sui_cover_window"] = "-- sui_cover_window.lua — Simple UI\
+-- \"Book cover\" window: shows a book's current cover with where it comes from\
+-- and its size, and the actions that change it (online search, an image\
+-- from the device, undo of the last change, the book's own cover). A tap on\
+-- the cover shows it full screen. The online search is a second screen.\
+--\
+-- The decoded cover is kept for the window's life, shared by the preview and\
+-- the full-screen view, and freed when it is replaced or the window closes.\
+--\
+-- Public API\
+--   CoverWindow.show(file, opts)\
+--     opts.on_change  function?  called after the cover changed\
+\
+local CenterContainer  = require(\"ui/widget/container/centercontainer\")\
+local Device           = require(\"device\")\
+local DocumentRegistry = require(\"document/documentregistry\")\
+local Font             = require(\"ui/font\")\
+local FrameContainer   = require(\"ui/widget/container/framecontainer\")\
+local Geom             = require(\"ui/geometry\")\
+local HorizontalGroup  = require(\"ui/widget/horizontalgroup\")\
+local HorizontalSpan   = require(\"ui/widget/horizontalspan\")\
+local ImageWidget      = require(\"ui/widget/imagewidget\")\
+local Size             = require(\"ui/size\")\
+local TextWidget       = require(\"ui/widget/textwidget\")\
+local UIManager        = require(\"ui/uimanager\")\
+local VerticalGroup    = require(\"ui/widget/verticalgroup\")\
+local VerticalSpan     = require(\"ui/widget/verticalspan\")\
+local util             = require(\"util\")\
+local _                = require(\"infra/sui_i18n\").translate\
+local Screen           = Device.screen\
+\
+local CoverPlaceholder = require(\"engines/sui_cover_placeholder\")\
+local SUIWindow        = require(\"engines/sui_window\")\
+local SUIStyle         = require(\"features/sui_style\")\
+local UI               = require(\"infra/sui_core\")\
+local CoverSearch      = require(\"features/library/cover_editor/sui_cover_search\")\
+local CoverStore       = require(\"features/library/cover_editor/sui_cover_store\")\
+\
+local CoverWindow = {}\
+\
+local COVER_ASPECT = 1.5\
+local PREVIEW_FRACTION = 0.28  -- of the window's inner width\
+\
+-- The cover fitted into a w × h box, in a thin frame, centred in a column w\
+-- wide and as tall as the framed image.\
+local function buildPreview(cover, book, w, h)\
+    if not cover.bb then\
+        return CoverPlaceholder.build(w, h, book.title, book.authors)\
+    end\
+    local border = Size.border.thin\
+    local scale  = math.min((w - 2 * border) / cover.width, (h - 2 * border) / cover.height)\
+    local img_h  = math.max(1, math.floor(cover.height * scale))\
+    local image = ImageWidget:new{\
+        image            = cover.bb,\
+        image_disposable = false,\
+        width            = math.max(1, math.floor(cover.width * scale)),\
+        height           = img_h,\
+    }\
+    return CenterContainer:new{\
+        dimen = Geom:new{ w = w, h = img_h + 2 * border },\
+        FrameContainer:new{\
+            bordersize = border,\
+            color      = SUIStyle.COLOR.text_primary,\
+            padding    = 0,\
+            margin     = 0,\
+            image,\
+        },\
+    }\
+end\
+\
+-- One \"label  value\" line of the details column.\
+local function detailLine(label, value, face, max_w)\
+    local label_w = UI.makeColoredText{\
+        text    = label,\
+        face    = face,\
+        fgcolor = SUIStyle.COLOR.text_dim,\
+    }\
+    local gap = Size.span.horizontal_default\
+    return HorizontalGroup:new{\
+        align = \"center\",\
+        label_w,\
+        HorizontalSpan:new{ width = gap },\
+        TextWidget:new{\
+            text      = value,\
+            face      = face,\
+            max_width = math.max(1, max_w - label_w:getSize().w - gap),\
+        },\
+    }\
+end\
+\
+local function sourceText(cover)\
+    if cover.custom_path then return _(\"Custom image\") end\
+    if cover.bb then return _(\"Book file\") end\
+    return _(\"No cover\")\
+end\
+\
+-- Preview on the left, title, author and cover details on the right. A tap\
+-- on the preview (or Press when it has the focus) runs `on_view`.\
+local function buildHeader(ctx, cover, book, on_view)\
+    local SZ = ctx.SZ\
+    local preview_w = math.floor(ctx.inner_w * PREVIEW_FRACTION)\
+    local preview_h = math.floor(preview_w * COVER_ASPECT)\
+    local gap       = SZ(Screen:scaleBySize(16))\
+    local text_w    = math.max(1, ctx.inner_w - preview_w - gap)\
+\
+    local title_face  = Font:getFace(SUIStyle.FACE_REGULAR, SZ(SUIStyle.FS_BODY))\
+    local detail_face = Font:getFace(SUIStyle.FACE_REGULAR, SZ(SUIStyle.FS_DETAIL))\
+\
+    local info = VerticalGroup:new{ align = \"left\" }\
+    info[#info + 1] = TextWidget:new{\
+        text      = book.title,\
+        face      = title_face,\
+        bold      = true,\
+        max_width = text_w,\
+    }\
+    if book.authors and book.authors ~= \"\" then\
+        info[#info + 1] = UI.makeColoredText{\
+            text      = book.authors,\
+            face      = detail_face,\
+            fgcolor   = SUIStyle.COLOR.text_dim,\
+            max_width = text_w,\
+        }\
+    end\
+    info[#info + 1] = VerticalSpan:new{ width = SZ(Screen:scaleBySize(12)) }\
+    info[#info + 1] = detailLine(_(\"Source\"), sourceText(cover), detail_face, text_w)\
+    if cover.width and cover.height then\
+        info[#info + 1] = detailLine(_(\"Dimensions\"),\
+            string.format(\"%d × %d\", cover.width, cover.height), detail_face, text_w)\
+    end\
+    if cover.filesize then\
+        info[#info + 1] = detailLine(_(\"File size\"),\
+            util.getFriendlySize(cover.filesize), detail_face, text_w)\
+    end\
+\
+    local preview = buildPreview(cover, book, preview_w, preview_h)\
+    if cover.bb then\
+        preview = SUIWindow.Input.tapable(preview, { on_tap = on_view },\
+            Geom:new{ w = preview_w, h = preview:getSize().h })\
+    end\
+\
+    return VerticalGroup:new{\
+        align = \"left\",\
+        VerticalSpan:new{ width = SZ(Screen:scaleBySize(12)) },\
+        HorizontalGroup:new{\
+            align = \"top\",\
+            preview,\
+            HorizontalSpan:new{ width = gap },\
+            info,\
+        },\
+        VerticalSpan:new{ width = SZ(Screen:scaleBySize(8)) },\
+    }\
+end\
+\
+function CoverWindow.show(file, opts)\
+    opts = opts or {}\
+    local SH   = require(\"modules/module_books_shared\")\
+    local book = SH.getBookData(file)\
+    local state = {}\
+\
+    local function reload()\
+        if state.cover and state.cover.bb then state.cover.bb:free() end\
+        state.cover    = CoverStore.load(file)\
+        state.can_undo = CoverStore.canUndo(file)\
+    end\
+\
+    local win\
+    -- Runs a cover change, then shows the new cover (back on the main screen\
+    -- when `back` is set) and refreshes the caller.\
+    local function change(fn, back)\
+        if not fn() then\
+            UI.Notify.toast(_(\"Could not change the cover.\"))\
+        end\
+        reload()\
+        if back then win:pop() else win:repaint() end\
+        if opts.on_change then opts.on_change() end\
+    end\
+\
+    local function searchOnline(ctx)\
+        state.search = state.search or CoverSearch.new{\
+            file  = file,\
+            book  = book,\
+            apply = function(path)\
+                change(function() return CoverStore.apply(file, path) end, true)\
+            end,\
+        }\
+        ctx.push(\"search\")\
+        if not state.search.results then state.search:run(ctx) end\
+    end\
+\
+    local function showFullScreen()\
+        local ImageViewer = require(\"ui/widget/imageviewer\")\
+        UIManager:show(ImageViewer:new{\
+            image            = state.cover.bb,\
+            image_disposable = false,\
+            with_title_bar   = false,\
+            fullscreen       = true,\
+        })\
+    end\
+\
+    local function chooseFromDevice()\
+        local AssetBrowser = require(\"engines/sui_asset_browser\")\
+        UIManager:show(AssetBrowser:new{\
+            path       = (util.splitFilePathName(file)),\
+            extensions = DocumentRegistry.image_ext,\
+            title      = _(\"Choose cover image\"),\
+            onConfirm  = function(path)\
+                change(function() return CoverStore.apply(file, path) end)\
+            end,\
+        })\
+    end\
+\
+    local function confirmRestore()\
+        require(\"features/dialogs/sui_dialogs\").confirm{\
+            text        = _(\"Restore the book's original cover?\"),\
+            ok_text     = _(\"Restore\"),\
+            ok_callback = function()\
+                change(function() return CoverStore.restoreOriginal(file) end)\
+            end,\
+        }\
+    end\
+\
+    local function buildRoot(ctx)\
+        local cover = state.cover\
+        return {\
+            buildHeader(ctx, cover, book, showFullScreen),\
+            SUIWindow.ListRow{\
+                inner_w   = ctx.inner_w,\
+                title     = _(\"Search online\"),\
+                show_chevron = true,\
+                on_tap    = function() searchOnline(ctx) end,\
+            },\
+            SUIWindow.ListRow{\
+                inner_w   = ctx.inner_w,\
+                title     = _(\"Choose from device\"),\
+                on_tap    = chooseFromDevice,\
+            },\
+            SUIWindow.ListRow{\
+                inner_w   = ctx.inner_w,\
+                title     = _(\"Undo last change\"),\
+                enabled   = state.can_undo,\
+                on_tap    = function()\
+                    change(function() return CoverStore.undo(file) end)\
+                end,\
+            },\
+            SUIWindow.ListRow{\
+                inner_w   = ctx.inner_w,\
+                title     = _(\"Restore original cover\"),\
+                enabled   = cover.custom_path ~= nil,\
+                on_tap    = confirmRestore,\
+                separator = false,\
+            },\
+        }\
+    end\
+\
+    reload()\
+    win = SUIWindow:new{\
+        name          = \"sui_win_book_cover\",\
+        icon          = \"cover\",\
+        title         = _(\"Book cover\"),\
+        screen_titles = { search = _(\"Search online\") },\
+        auto_height_per_screen = true,\
+        navpager_mode = require(\"infra/sui_config\").isNavpagerEnabled(),\
+        screens       = {\
+            __root__ = buildRoot,\
+            search   = function(ctx) return state.search:build(ctx) end,\
+        },\
+        screen_footers = {\
+            search = function(ctx) return state.search:footer(ctx) end,\
+        },\
+        on_close      = function()\
+            if state.cover and state.cover.bb then state.cover.bb:free() end\
+            if state.search then state.search:free() end\
+            state.cover, state.search = nil, nil\
+        end,\
+    }\
+    win:show()\
+    return win\
+end\
+\
+return CoverWindow\
 ",
 }
 return setmetatable(map, { orbitui_embedded = embedded })

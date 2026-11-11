@@ -30,9 +30,9 @@ H.test("all reviewed embedded sources are valid Lua and retain the path-map API"
         count = count + 1; assert(map[name]); assert((loadstring or load)(source))
         H.eq(source, read(name))
     end
-    H.eq(count, 35)
+    H.eq(count, 40)
     local n = 0; for _, path in pairs(map) do H.eq(type(path), "string"); n = n + 1 end
-    H.eq(n, 414)
+    H.eq(n, 419)
 end)
 H.test("Critter defaults copy only and per-screen picks topics and decorations survive", function()
     local data = { simpleui_hs_critter_pick = "hazel", custom_critter_pick = "suey",
@@ -86,6 +86,51 @@ H.test("menu pruning restores order and protects shared settings and Quick Setti
     local tree = hide.extractTree({ { id = "tab", { id = "dynamic", text_func = function()
         error("must not inspect native values/providers") end } } })
     H.eq(tree[1].children[1].text, "dynamic")
+end)
+H.test("menu visibility copy only affects shared IDs and preserves access to OrbitUI settings", function()
+    local deps = { ["infra/sui_store"] = store({}), ["infra/sui_i18n"] = {
+        translate = function(s) return s end, ngettext = function(s) return s end },
+        ["infra/sui_menu_hooks"] = {} }
+    local hide = run(read("features/sui_menu_hide"), { require = function(n) return assert(deps[n], n) end })
+    local settings = { id = "orbitui_settings" }
+    local reader = { { id = "tools", settings, { id = "reader_only" },
+        { id = "shared_show" }, { id = "shared_hide" } } }
+    local file_manager = { { id = "tools", { id = "shared_show" }, { id = "shared_hide" },
+        { id = "fm_only" } } }
+    local fm_hidden = { tools = true, shared_hide = true, fm_only = true }
+    local reader_hidden = { reader_only = true, shared_show = true }
+    local copy = hide.mirrorHidden(hide.extractTree(file_manager), hide.extractTree(reader), fm_hidden, reader_hidden)
+    H.eq(copy.reader_only, true)
+    H.eq(copy.shared_show, nil)
+    H.eq(copy.shared_hide, true)
+    H.eq(copy.fm_only, nil)
+    H.eq(reader_hidden.shared_show, true)
+    hide.prune(reader, copy)
+    H.eq(#reader, 1)
+    H.eq(reader[1][1], settings)
+    H.eq(reader[1][2].id, "shared_show")
+    H.eq(#reader[1], 2)
+end)
+H.test("hosted file browser keeps the native cover action", function()
+    local source = read("features/library/sui_book_hold_dialog")
+    local module = { show = function() end }
+    require("adapters/orbitui_ui").wrap("features/library/sui_book_hold_dialog", module)
+    local ctx = { path = "book.epub", book_props = {}, close = function() end }
+    local native = { text = "Cover" }
+    local coverItem = run(part(source, "local function coverItem(ctx)", "-- Rows of the book actions")
+        .. "return coverItem", {
+        M = module, _ = function(s) return s end,
+        filemanagerutil = { genBookCoverButton = function(path, props, close)
+            H.eq(path, ctx.path); H.eq(props, ctx.book_props); H.eq(close, ctx.close)
+            return native
+        end },
+        Rows = { tag = function(item, icon) item.sui_icon = icon; return item end },
+        require = function() error("must not load the new editor in hosted mode") end,
+    })
+    H.eq(coverItem(ctx), native)
+    H.eq(native.sui_icon, "cover")
+    module.orbitui_keep_native_cover = nil
+    H.eq(coverItem(ctx).text, "Book cover")
 end)
 H.test("menu hiding teardown restores both live menus and cancels deferred snapshots", function()
     local data, steps, queued, unscheduled = {}, {}, {}, 0
@@ -259,7 +304,7 @@ H.test("Critter panel suggestions cannot open a book after a newer reader or nav
     table.remove(queue, 1)(); H.eq(opens, 1)
 end)
 H.test("raw alpha scan respects both pixel strides and row padding", function()
-    local code = part(read("modules/critter/sprite"), "local function transparentFoot", "-- RasterCache entry")
+    local code = part(read("modules/critter/sprite"), "local function alphaLayout", "-- Pixel unit")
     for _, bpp in ipairs({ 2, 4 }) do
         local bytes, stride = {}, bpp * 3 + 4
         for i = 0, stride * 4 - 1 do bytes[i] = 255 end
@@ -269,12 +314,23 @@ H.test("raw alpha scan respects both pixel strides and row padding", function()
             __add = function(_, n) return pointer(offset + n) end,
             __index = function(_, n) return bytes[offset + n] end,
         }) end
-        local scan = run(code .. "\nreturn transparentFoot", { has_ffi = true,
+        bytes[stride + bpp - 1] = 0
+        bytes[stride + 3 * bpp - 1] = 0
+        local scan, base = run(code .. "\nreturn transparentFoot, baseSpan", {
+            has_ffi = true,
             ffi = { cast = function() return pointer(0) end },
             Blitbuffer = { TYPE_BB8A = 2, TYPE_BBRGB32 = 4 } })
-        H.eq(scan({ data = bytes, stride = stride, getType = function() return bpp end,
+        local image = { data = bytes, stride = stride, getType = function() return bpp end,
             getWidth = function() return 3 end, getHeight = function() return 4 end,
-            getPixel = function() error("raw scan must not allocate pixel wrappers") end }), 2)
+            getPixel = function() error("raw scan must not allocate pixel wrappers") end }
+        H.eq(scan(image), 2)
+        local left, right = base(image, 2, 1)
+        H.eq(left, 1)
+        H.eq(right, 2)
+        image.data = nil
+        left, right = base(image, 2, 1)
+        H.eq(left, 0)
+        H.eq(right, 3)
     end
 end)
 H.test("new visible menu and page-turn controls translate in Swedish without global gettext replacement", function()
@@ -285,6 +341,7 @@ H.test("new visible menu and page-turn controls translate in Swedish without glo
     local i18n = run(read("infra/sui_i18n"), { require = function(n) return assert(deps[n], n) end,
         G_reader_settings = { readSetting = function() return "sv" end } })
     for _, text in ipairs({ "Hide Menu Items", "Show this menu", "Show All Items", "Reader",
+        "Apply File Manager Layout to Reader",
         "Pages turned", "Total pages turned", "Show Tiny Critter", "Tiny Critter Settings", "Let's play", "Guess the author" }) do
         assert(i18n.translate(text) ~= text, text)
     end

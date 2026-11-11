@@ -118,12 +118,12 @@ local function transparentFoot(bb)
 end
 
 -- Horizontal span [left, right) of the opaque pixels in the `rows` rows above
--- the `foot` transparent ones: the base the image stands on. The full width
--- for a bitmap without alpha.
+-- the `foot` transparent ones: the base the image stands on. Use the full
+-- width when raw alpha data is unavailable.
 local function baseSpan(bb, foot, rows)
     local w, h = bb:getWidth(), bb:getHeight()
     local step, alpha_at = alphaLayout(bb)
-    if not step then return 0, w end
+    if not step or not has_ffi or not bb.data then return 0, w end
     local data, stride = ffi.cast("uint8_t *", bb.data), bb.stride
     local left, right = w, 0
     for py = math.max(0, h - foot - rows), h - foot - 1 do
@@ -200,6 +200,7 @@ end
 -- widget), with its bottom on the bottom of the widget.
 function Sprite:_paintShadow(bb, x, y, entry)
     local unit = unitOf(self.pixel)
+    if self.dimen.h < SHADOW_ROWS * unit then return end
     local left  = math.max(0, entry.base_l - SHADOW_PAD * unit)
     local right = math.min(entry.w, entry.base_r + SHADOW_PAD * unit)
     local half  = (right - left) / 2
