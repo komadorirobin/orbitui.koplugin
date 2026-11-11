@@ -248,8 +248,10 @@ function M.content(widget, p, ctx, data)
     local function textFace(size, bold)
         -- Geometry is already in device pixels; Font:getFace scales by DPI.
         local dpi = Screen:scaleBySize(1000) / 1000
-        return Style.getStyledFace(nil, math.max(7, size * p.scale) / dpi,
-            bold and "bold" or "regular")
+        local face, widget_bold = Style.getStyledFace(nil, math.max(7, size * p.scale) / dpi,
+            bold == true and "bold" or "regular")
+        -- Pass through KOReader's lighter, synthesized bold on the regular face.
+        return face, type(bold) == "string" and bold or widget_bold
     end
     local function lineHeight(face)
         return math.floor(face.size * 1.3 + .5)
@@ -347,9 +349,10 @@ function M.content(widget, p, ctx, data)
         local top, bottom = r.y + p.pad, r.y + r.h - p.pad
         local gap = px(10)
         local percent_size, time_size, book_size = 14, 14, 18
+        local time_bold = data.time_left and require("ui/font").FORCE_SYNTHETIZED_BOLD
         local pet_name_size, pet_detail_size = 14, 12
         local percent_h = textBlockHeight(textFace(percent_size, true), 1)
-        local time_h = data.time_left and textBlockHeight(textFace(time_size, true), 1) + px(2) or 0
+        local time_h = data.time_left and textBlockHeight(textFace(time_size, time_bold), 1) + px(2) or 0
         local book_h = data.current and textBlockHeight(textFace(book_size, true), 2) or 0
         local name_h = pet and textBlockHeight(textFace(pet_name_size, true), 1) or 0
         local detail_h = pet and textBlockHeight(textFace(pet_detail_size, false), 1) or 0
@@ -380,7 +383,7 @@ function M.content(widget, p, ctx, data)
             local y = footer_y + gap
             local book_w = pet and math.floor(width * .49) or width
             if data.current then
-                if data.time_left then text(data.time_left, left, y, book_w, time_size, true, ink, 1, true) end
+                if data.time_left then text(data.time_left, left, y, book_w, time_size, time_bold, ink, 1, true) end
                 text(data.current.data.title, left, y + time_h, book_w, book_size, true, ink, 2, true)
                 bookAction(rect(left, footer_y, book_w, bottom - footer_y), data.current.file)
             end

@@ -235,9 +235,11 @@ for _, id in ipairs({ "ui/geometry", "ui/widget/container/framecontainer", "ui/w
     "ui/widget/overlapgroup", "ui/gesturerange" }) do package.loaded[id] = Widget end
 package.loaded["ffi/blitbuffer"] = { COLOR_BLACK = "black", COLOR_WHITE = "white", COLOR_DARK_GRAY = "#555",
     COLOR_GRAY = "#aaa", COLOR_LIGHT_GRAY = "#ddd" }
+local Font = { FORCE_SYNTHETIZED_BOLD = "FORCE_SYNTHETIZED_BOLD" }
+package.loaded["ui/font"] = Font
 package.loaded["features/sui_style"] = { getStyledFace = function(_, size, variant)
     local pixels = math.floor(size * dpi)
-    return { size = pixels, ftsize = { getHeightAndAscender = function() return pixels end } }, variant == "bold"
+    return { size = pixels, variant = variant, ftsize = { getHeightAndAscender = function() return pixels end } }, variant == "bold"
 end }
 local shown_dialog
 package.loaded["ui/uimanager"] = {
@@ -444,6 +446,9 @@ H.test("straight cover row keeps the last title below time and shares a panel fo
         H.eq(labels[data.current.data.authors], nil)
         for _, book in ipairs(data.ongoing) do H.eq(labels[book.data.title], nil) end
         local time, title = assert(labels[data.time_left]), assert(labels[data.current.data.title])
+        H.eq(time.face.variant, "regular")
+        H.eq(time.bold, Font.FORCE_SYNTHETIZED_BOLD)
+        H.eq(title.face.variant, "bold")
         H.eq(title.max_lines, 2)
         assert(time.overlap_offset[2] + time:getSize().h <= title.overlap_offset[2])
         assert(title.overlap_offset[2] + title:getSize().h <= p.ladder.y + p.ladder.h)
