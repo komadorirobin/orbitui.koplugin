@@ -316,10 +316,13 @@ function LibraryModal.sheetRow(row, dimen)
         left = { tile, gap(11) }
     elseif row.icon then left = { sheetIcon(row.icon, 22), gap(12) } end
     if row.checked ~= nil then
+        local size = px(19)
+        local area = Geom:new{ w = size, h = size }
+        local mark = row.checked and CenterContainer:new{ dimen = area,
+            sheetText("✓", px(16), 13, true, Blitbuffer.COLOR_WHITE, size, "center") }
+            or WidgetContainer:new{ dimen = area }
         right = { gap(10), FrameContainer:new{ padding = 0, radius = px(4), bordersize = px(1),
-            background = row.checked and Blitbuffer.COLOR_BLACK or nil,
-            CenterContainer:new{ dimen = Geom:new{ w = px(19), h = px(19) },
-                sheetText(row.checked and "✓" or "", px(16), 13, true, Blitbuffer.COLOR_WHITE, px(19), "center") } } }
+            background = row.checked and Blitbuffer.COLOR_BLACK or Blitbuffer.COLOR_WHITE, mark } }
     elseif row.trailing then
         right = { gap(10), sheetText(row.trailing, math.min(px(80), math.floor(w * 0.23)),
             13, false, ink_secondary, px(28), "right") }

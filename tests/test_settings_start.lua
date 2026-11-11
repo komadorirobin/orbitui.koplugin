@@ -141,6 +141,30 @@ local function inspect(widget, fn)
     for _, child in ipairs(widget) do inspect(child, fn) end
 end
 
+H.test("sheet checkbox has an empty white interior when off and a white check on black when on", function()
+    local checked = false
+    local row = { title = "Show card heading", get_checked = function() return checked end,
+        action = function() checked = not checked end }
+    local sheet = Base.showSheet{ title = "Card settings", rows = { row } }
+    local function box()
+        local result
+        local rendered = sheet.config.cell_renderer(row, { w = 300, h = 64 })
+        inspect(rendered, function(widget)
+            if widget.radius == 4 and getmetatable(widget) == Frame then result = widget end
+        end)
+        return assert(result)
+    end
+    local off = box()
+    H.eq(off.background, "white"); H.eq(off[1][1], nil)
+    sheet.config.on_cell_tap(row)
+    local on = box()
+    H.eq(on.background, "black"); H.eq(on[1][1].text, "✓"); H.eq(on[1][1].fgcolor, "white")
+    H.eq(on:getSize().w, off:getSize().w); H.eq(on:getSize().h, off:getSize().h)
+    sheet.config.on_cell_tap(row)
+    H.eq(box().background, "white")
+    sheet:onClose()
+end)
+
 H.test("five static bilingual cards use existing category IDs and assets without preference writes", function()
     for _, lang in ipairs({ "en", "sv_SE" }) do
         locale = lang
