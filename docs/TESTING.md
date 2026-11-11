@@ -5,7 +5,9 @@
 Targeted `test_book_overview` covers twelve EN/SV viewport combinations, body
 font size up to 40, retained scrollbar width, one cache-only tag lookup/metadata
 build, borrowed/owned cover cleanup, tag tap/hold, stale revisions, native-tab
-handoff, close/read ordering, sleep/rotation and preference opt-out.
+handoff, close/read ordering, sleep/rotation, preference opt-out and blank-area
+gesture containment. Native blank-area tap/hold/swipe/multiswipe dispatch also
+passes; button feedback explicitly points to the overview's cropping owner.
 `test_shared_book_panel` exercises the actual native factory with/without the
 host seam, explicit Information-tab selection and nonrecursive handoff.
 Existing tag/search/controller suites remain regression gates.
@@ -21,9 +23,21 @@ Both complete `scripts/test.sh` runs pass with Lua and LuaJIT: 134 Python tests
 (four unchanged optional source-art skips), 1,252 syntax files, 129 root suites,
 588 Bookshelf suites/zero failures/three usual SQLite exclusions and 13 SimpleUI
 files. The final targeted overview, native factory and 69 online/local-tag tests
-also pass after the cache-prefill adjustment. Package verification is recorded
-below when complete. No device has been changed. Physical touch/hold scrolling,
-real cover sources, large
+also pass after the cache-prefill adjustment. The final gesture-guard runtime
+is committed separately as **e54d132c**. Both 129-root suites pass again against
+the final sealed archive (including all seven overview regressions).
+
+Private same-version development ZIP **6e15d9f7**, manifest **a6ef107e**, contains
+exactly the unchanged 2,000 API1 installed paths/1,999 manifest records,
+35 exact-source embedded modules and 414 module identities. Archive syntax,
+hash/size, exact source projection, held-art scan of all 15 new implementation
+blobs and Gitleaks pass. Assets, fonts, entrypoints, bootstrap, VERSION and source
+pins are unchanged. Public dist has been restored byte-for-byte to **d7abac63**;
+no public asset is replaced. This is package validation, not a new-version OTA
+upgrade or device acceptance claim. Later documentation-only receipts do not
+change the candidate runtime.
+
+No device has been changed. Physical touch/hold scrolling, real cover sources, large
 metadata and tag sets, Home/shelf/reader return context, font/night/colour and
 suspend/rotation still need acceptance before a public beta unless the user
 explicitly accepts disclosed limitations. Existing beta.2 wake-test limitations

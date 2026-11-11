@@ -21,6 +21,10 @@ chip implementations. A cache miss requires the existing explicit tag tools,
 not implicit extraction. C07/C10 record this approved presentation change and
 the bounded shared-design roadmap. No Aleph source or assets are imported.
 
+Implementation **c394a333**, passive-empty copy **5bf91028** and gesture/feedback
+containment **e54d132c** remain local. Private ZIP **6e15d9f7** has the unchanged
+API1 inventory and exact runtime/source projection; public dist is **d7abac63**.
+Both full interpreter gates and both final 129-root sealed repeats pass.
 Targeted layout/lifecycle tests and local actual-widget raster/gesture checks
 cover small/landscape/high-DPI layouts, stale buttons, metadata read counts,
 native-tab routing and bitmap lifetimes. Full gate results and remaining

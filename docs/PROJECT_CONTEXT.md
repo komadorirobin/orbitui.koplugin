@@ -31,7 +31,10 @@ and correct this file in the same change.
   actions keep the existing native tabs and owners. One per-file validated tag
   cache peek is allowed on opening either overview or Tags; no implicit archive
   read, scan or network fetch. Existing shelf/header appearances are untouched.
-  Full verification and physical acceptance are separate gates; see TESTING.
+  Complete Lua/LuaJIT checks and both 129-root sealed repeats pass; runtime
+  **e54d132c**, private ZIP **6e15d9f7**, exact unchanged API1 inventory. Actual
+  KOReader widget raster/geometry/gesture checks pass locally. Physical
+  acceptance remains separate; see TESTING. Public dist stays **d7abac63**.
   No version, push, release, installed-device or server change is authorized in
   this step. Current public preview remains beta.2. The staged design direction
   and remaining surfaces are recorded under C07, not a global UI rewrite.
