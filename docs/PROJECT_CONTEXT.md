@@ -30,12 +30,12 @@ and correct this file in the same change.
   while the new SimpleUI editor's write and cache behavior is reviewed.
   Bookshelf remains at **f99a5bc4 / 6.4.2**. See MERGE_LOG and TESTING.
 
-- **Current public preview 1.2.0-beta.3.** Published 2026-11-11
-  14:56:02 UTC as release **441829686** from frozen source **c7c23b25**.
-  Public ZIP **f21e96f1** passed anonymous download and native OTA checks
-  from stable 1.1.0 and the two earlier 1.2 previews. The Bigme was used for
-  the main-view and wake checks, with the final Inter and header changes
-  verified on desktop. See OTA for exact validation and Actions status.
+- **Current public preview 1.2.0-beta.4.** Published 2026-11-11
+  21:50:01 UTC as release **442225986** from frozen source **b71daf107**.
+  Public ZIP **0c1230a1** passed anonymous download and native OTA checks
+  from 1.1.0, beta.2 and beta.3. It includes the Home refinement below and
+  the reviewed SimpleUI maintenance. The Bigme checked the Home files in a
+  private build. See OTA for the release checks and device scope.
 
 - **Dashboard header refinement.** Search and the plus share a centred
   row, and Straight cover row uses the bundled Inter font by default.

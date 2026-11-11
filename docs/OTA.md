@@ -1,5 +1,29 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.2.0-beta.4
+
+Published **2026-11-11 21:50:01 UTC**, release **442225986**, frozen
+source/tag **b71daf107 / v1.2.0-beta.4**. Public ZIP SHA-256
+`0c1230a19ff2f4bffa6deda8e2308b725c8ad1389b92b9ad2ab5ec4315f5aef2`,
+9,877,771 bytes and 2,000 installed files. The anonymous ZIP and checksum
+match the draft and tested package. OrbitUI's selector offers 1.2.0-beta.4
+in preview and 1.1.0 in stable.
+
+The preview includes the Home refinements and SimpleUI maintenance through
+**e6eb04720**. The five changed Home runtime files match the private Bigme
+build byte for byte. Both shelf pagers worked independently on the Bigme.
+One Recently added cover used a placeholder after paging and returned after
+a KOReader restart. The combined release was tested locally. Its SimpleUI
+menu, folder placeholder and Critter changes still need physical checks.
+
+Both full local suites, 129 sealed root suites per interpreter and all 43
+translation catalogs passed. The exact source projection, outgoing history,
+artwork, bootstrap and source pins passed inspection. The 1.1.0,
+1.2.0-beta.2 and 1.2.0-beta.3 installers passed offline and anonymous HTTPS
+upgrade and recovery checks. All 101 prior release records, 177 existing
+tag refs and both maintenance branches matched the baseline.
+Evidence is under `test-results/preview12-beta4-20261111/`.
+
 ## OrbitUI 1.2.0-beta.3
 
 Published **2026-11-11 14:56:02 UTC**, release **441829686**, frozen
