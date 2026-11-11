@@ -22,6 +22,14 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Straight cover row on the Bigme.** The new dashboard option shows four
+  equal covers with percentages, the last-opened book title below the reading
+  estimate, and Silverfish on the right. Want to read and Recently added
+  share a card with separate overlapping stacks and independent pagination.
+  Reading today and the goal sit underneath. Classic and Cover staircase are
+  still available. Verified over USB in active private slot **8e3f4685**,
+  with **17391840** as rollback. See TESTING for the layout and gesture checks.
+
 - **Readable authors and two-line staircase titles.** The current author's
   name uses larger primary ink and follows the measured title. Titles are
   capped at two lines with ellipsis. The reserved space keeps percentages

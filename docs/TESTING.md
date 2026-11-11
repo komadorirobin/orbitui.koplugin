@@ -1,5 +1,33 @@
 # Verification and device acceptance
 
+## 2026-11-11 — straight cover row and shared book stacks on Bigme
+
+The approved straight-row layout shows only percentages beneath the four
+covers. The last-opened title uses up to two lines beneath the reading
+estimate, opposite Silverfish. Want to read and Recently added sit in a
+shared white card above Reading today and the goal. Each stack keeps its
+source, book actions, arrow controls and swipe pagination.
+
+The Bigme displayed four 225-pixel covers with three 96-pixel gaps. The
+native layout menu switched to Straight cover row. The Recently added
+arrows turned and restored its page while Want to read stayed unchanged.
+Holding the first cover opened its book details. The dashboard matched after
+restart. History and collections were byte-identical, and SimpleUI settings
+differed only in the layout selection and BookOrbit's Want to Read cache
+timestamp. The crash log stayed at 14,785 bytes.
+
+Desktop KOReader widgets painted one-, two- and three-line title fixtures at
+1232×1360, 480×540 and 800×480. The overlong fixture used an ellipsis. Full
+Lua and LuaJIT gates passed with the optional SQLite skips. Both focused
+dashboard suites passed against the sealed runtime in each interpreter.
+Archive integrity, the unchanged API 1 inventory and all 2,000 Android file
+hashes passed.
+
+Source **d9754b1be90ec99f9b904074209ade1cb124fd00**, private ZIP
+**8e3f4685468d2140ffe1bf53de2863ddfa7bb53a109a147b7384f5f188d41f60**.
+The selected build is active with **17391840** as rollback. Public dist was
+unchanged. Evidence is in `test-results/dashboard-cover-row-20261111/`.
+
 ## 2026-11-11 — staircase title wrapping and readable author
 
 The current book can use two title lines. Longer titles end with an
