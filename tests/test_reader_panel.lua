@@ -50,7 +50,15 @@ G_reader_settings = { readSetting = function(_, key, default) if key == "languag
 UI = {
     isWidgetShown = function(_, item) for _, w in ipairs(UI.stack) do if w == item then return true end end; return false end,
     getTopmostVisibleWidget = function() return UI.stack[#UI.stack] end,
-    show = function(_, item) UI.stack[#UI.stack + 1] = item end,
+    topdown_widgets_iter = function()
+        local i = #UI.stack + 1
+        return function() i = i - 1; return UI.stack[i] end
+    end,
+    show = function(_, item)
+        local i = #UI.stack
+        while i > 0 and UI.stack[i].toast and not item.toast do i = i - 1 end
+        table.insert(UI.stack, i + 1, item)
+    end,
     close = function(_, item)
         closes[item] = (closes[item] or 0) + 1
         if item.onCloseWidget then item:onCloseWidget() end
@@ -134,6 +142,33 @@ H.test("tools tabs start Also reading only after an explicit tap and yield betwe
     Tools.show(reader); find("ongoing").callback(); H.eq(reads, 0); H.eq(#queue, 1)
     tick(); H.eq(reads, 4); H.eq(#queue, 1); H.eq(#books(), 0)
     drain(); H.eq(#books(), 12); H.eq(reads, 12)
+end)
+H.test("foreground tabs and scanning work through passive overlays, while a modal blocks actions", function()
+    fixture(); book("/books/a.epub", .2); local tools = Tools.show(reader)
+    UI:show{ toast = true }
+    find("ongoing", tools).callback(); drain()
+    H.eq(#books(UI.stack[2]), 1)
+    local result = find("book:/books/a.epub", UI.stack[2]); UI:show{}
+    result.callback(); H.eq(#calls, 0)
+end)
+H.test("a visible stale tab refreshes only over its own reader and stale book actions do not open", function()
+    fixture(); book("/books/a.epub", .2); local old = Tools.show(reader)
+    local ongoing = find("ongoing", old)
+    UI._simpleui_navigation_generation = 2
+    ongoing.callback(); drain(); H.eq(#books(), 1)
+    ongoing.callback(); H.eq(#queue, 0)
+    UI._simpleui_navigation_generation = 3
+    find("book:/books/a.epub").callback(); H.eq(#calls, 0); H.eq(top(), reader)
+
+    old = Tools.show(reader)
+    UI._simpleui_navigation_generation = 4
+    table.insert(UI.stack, 2, { name = "bookshelf" })
+    find("ongoing", old).callback(); H.eq(#queue, 0); H.eq(top().name, "bookshelf")
+    old = Tools.show(reader); H.eq(old, nil)
+    table.remove(UI.stack)
+    old = Tools.show(reader); local close = find("close", old)
+    UI._simpleui_navigation_generation = 5
+    close.callback(); H.eq(top(), reader)
 end)
 H.test("slow single sidecar reads cannot become a whole-history UI tick", function()
     fixture(); slow = true; for i = 1, 10 do book("/books/b" .. i .. ".epub", .2) end

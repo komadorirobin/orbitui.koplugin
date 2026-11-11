@@ -1342,6 +1342,18 @@ local function readerCallable(fn)
     local mt = type(fn) == "table" and getmetatable(fn)
     return type(fn) == "function" or type(mt) == "table" and type(mt.__call) == "function"
 end
+-- KOReader dispatches touches through toast overlays to the foreground panel.
+local function readerForeground(UI, below)
+    if UI.topdown_widgets_iter then
+        local found = below == nil
+        for widget in UI:topdown_widgets_iter() do
+            if found and not widget.invisible and not widget.toast then return widget end
+            if widget == below then found = true end
+        end
+    elseif not below then
+        return UI:getTopmostVisibleWidget()
+    end
+end
 function M.readerAIChoice()
     local value = G_reader_settings and G_reader_settings:readSetting(reader_ai_key)
     return reader_ai_labels[value] and value or "auto"
@@ -1650,7 +1662,7 @@ function M.readerSheet(options)
                 avoid_text_truncation = false, enabled = enabled,
                 callback = function()
                     if self.closed or self.revision ~= revision or not UI:isWidgetShown(self)
-                            or UI:getTopmostVisibleWidget() ~= self then return end
+                            or readerForeground(UI) ~= self then return end
                     if cb then cb() elseif spec.callback then spec.callback() end
                 end }
             if content then
@@ -1891,18 +1903,21 @@ function M.readerTools()
             and not file:find("[%c]") and not file:find("/%.%./")
     end
     local function notify(text) Context.notify(_(text)) end
-    local function live(s)
+    local function sameReader(s)
         local R = package.loaded["apps/reader/readerui"]
         return not asleep and not s.closed and states[s.ui] == s and R and R.instance == s.ui
             and s.ui.document == s.document and s.document.file == s.file
             and s.ui.doc_settings == s.settings and UI:isWidgetShown(s.ui)
-            and s.generation == UI._simpleui_navigation_generation
     end
-    local function active(s, allowed)
-        local top = UI:getTopmostVisibleWidget()
-        return live(s) and s.window and UI:isWidgetShown(s.window)
+    local function live(s)
+        return sameReader(s) and s.generation == UI._simpleui_navigation_generation
+    end
+    local function foreground(s, allowed)
+        local top = readerForeground(UI)
+        return states[s.ui] == s and s.window and UI:isWidgetShown(s.window)
             and (top == s.window or allowed ~= nil and top == allowed)
     end
+    local function active(s, allowed) return live(s) and foreground(s, allowed) end
     local function cancel(s)
         if s.job then s.job.cancelled = true; UI:unschedule(s.job.step); s.job = nil end
     end
@@ -2030,7 +2045,13 @@ function M.readerTools()
         local rows, window = {}, nil
         local function button(id, text, callback, enabled)
             return { id = id, text = text, enabled = enabled ~= false, callback = function()
-                if s.window == window and active(s) then callback() end
+                if s.window ~= window or not foreground(s) then return end
+                if id == "close" or live(s) then return callback() end
+                -- A fresh tab or refresh may recover an old navigation snapshot,
+                -- but only over the same reader. Never reuse a stale book action.
+                if (id == "tools" or id == "ongoing" or id == "refresh") and sameReader(s)
+                        and readerForeground(UI, window) == s.ui then return callback() end
+                T.retire(s.ui)
             end }
         end
         rows[1] = {
@@ -2170,7 +2191,7 @@ function M.readerTools()
             phase = "loading", books = {}, missing = 0 }
         states[ui] = s
         if not live(s) then states[ui] = nil; return end
-        local top = UI:getTopmostVisibleWidget()
+        local top = readerForeground(UI)
         if top and (top.name == "bookshelf" or top.name == "homescreen" or top.name == "filemanager") then states[ui] = nil; return end
         if M._reader_pins then M._reader_pins.retire(ui) end
         local window = draw(s)
