@@ -391,6 +391,12 @@ Install and enable the reviewed public Silverfish 2.0.0 separately and restart.
 OrbitUI uses checked public APIs, not a fork or copied artwork, and never advances
 the creature or changes its save. Missing/unsupported APIs show a reason instead.
 
+The Silverfish card shows approximate time left when KOReader has reading
+statistics for that book. On the ordinary **Currently Reading** module, choose
+**Items > Statistics > Time remaining**. To hide only a SimpleUI module's
+heading, use **Appearance > Show section label**, or **Show card heading** in
+its Reading dashboard card editor. This does not hide the card itself.
+
 ## Shelf and series presentation
 
 **Appearance > Shelf preset** offers three policies:

@@ -2269,6 +2269,15 @@ installation. Tests: test_silverfish_reading, test_dashboard_modules, existing
 placement/dashboard/runtime suites and frozen native input/FFI drawing
 supplements. Physical Bigme lifecycle/font/touch/wake/night checks remain open.
 
+November 11 user-approved remaining-time line: request the existing native
+current-book stats preparation from standalone or visible dashboard placements.
+Use a file-matched snapshot and positive observed average; if no data, omit
+the line, never use a fallback pace or open the database from build/paint.
+Keep the standard Currently Reading control and user-customized stats order.
+Dashboard-hosted SimpleUI module headings honor the same native hide key as
+standalone modules, with a direct card-editor toggle and no layout/schema change.
+Keep BookOrbit source labels independent and visible.
+
 November 8 beta.10 photo correction: the original plugin's onMostrarTraca
 event may be KOReader's callable HandlerSandbox table, not a plain function.
 Accept the callable boundary and invoke it unchanged; never unwrap the handler

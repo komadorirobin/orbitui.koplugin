@@ -22,6 +22,16 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Current-book time and dashboard module headings.** The Bigme's ordinary
+  Currently Reading already has native Time remaining, explicitly off in its
+  Home settings. The user requests enabling it and authorizes a private USB
+  test install. Silverfish now draws a compact approximate remaining-time line
+  only with a matching native current-book stats snapshot and usable progress;
+  native Home and hosted cards share that preparation, with no query in card
+  build or paint. The dashboard honors each SimpleUI module's existing heading
+  preference and exposes it directly in the card editor. BookOrbit source
+  attribution, card placement, and custom stat ordering are unchanged.
+
 - **Local reader-panel visual correction and time left, not released.** User
   approves correcting the implementation against the accepted bottom-sheet
   sketch and asks about missing Aleph-inspired time left. Restore the black

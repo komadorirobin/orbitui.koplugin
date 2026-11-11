@@ -15,6 +15,14 @@ package.loaded["infra/sui_store"] = {
 }
 package.loaded.logger = { warn = function() end, dbg = function() end }
 package.loaded["infra/sui_i18n"] = { translate = function(s) return s end }
+package.loaded["infra/sui_config"] = {
+    isLabelHidden = function(id) return saved["simpleui_hide_label_" .. id] == true end,
+    makeLabelToggleItem = function(id, refresh)
+        local key = "simpleui_hide_label_" .. id
+        return { checked_func = function() return saved[key] ~= true end,
+            callback = function() saved[key] = saved[key] ~= true and true or nil; refresh() end }
+    end,
+}
 local registry = H.componentModule(root, "modules/moduleregistry")
 package.loaded["modules/moduleregistry"] = registry
 local W = H.widget()
@@ -34,7 +42,7 @@ function W:paintTo(bb, x, y)
 end
 local built, taps, ticks, child_args = 0, 0, 0
 local mod = { id = "external_pet", name = "Pet", default_on = false,
-    needs = { stats = true, recent = function(prefix) H.eq(prefix, pfx); return 17 end, charts = true },
+    needs = { stats = true, recent = function(prefix) H.eq(prefix, pfx); return 17 end, charts = true, current_book_stats = true },
     build = function(w, ctx)
         built, child_args = built + 1, ctx
         ctx.foreign_cache = true
@@ -126,8 +134,10 @@ H.test("selected SimpleUI data demands are inherited without enabling a standalo
     H.eq(registry.isEnabled(mod, pfx), false)
     H.eq(Dashboard.needs.stats(pfx), true); H.eq(Dashboard.needs.recent(pfx), 17)
     H.eq(Dashboard.needs.books(pfx), false); H.eq(Dashboard.needs.charts(pfx), true)
+    H.eq(Dashboard.needs.current_book_stats(pfx), true)
     c.hidden[c.modules[1].id] = true
     H.eq(Dashboard.needs.stats(pfx), false); H.eq(Dashboard.needs.recent(pfx), 0)
+    H.eq(Dashboard.needs.current_book_stats(pfx), false)
     H.eq(Sources.resolveModule(entry("simpleui", Model.id)), nil)
 end)
 H.test("all sizes and extra pages are bounded, nonoverlapping and keep every selected card", function()
@@ -323,6 +333,25 @@ H.test("only current-page modules build; page changes retire ticks and queued re
     H.eq(scheduled[tick], nil)
     queued[1](); queued = {}; H.eq(refreshes, count)
     tick(); H.eq(ticks, 1)
+    v:free()
+end)
+H.test("hosted native module heading is reversible and hiding it gives the module back its space", function()
+    local e = entry("simpleui", "external_pet")
+    local c = only(e)
+    local v, ctx, data = view(c)
+    local height, id = child_args.height, e.id
+    local area = v._plan.cards[id]
+    local items = Settings.moduleItems(id, changed, pfx)
+    local toggle
+    for _, item in ipairs(items) do if item.text == "Show card heading" then toggle = item end end
+    assert(toggle and toggle.checked_func()); toggle.callback()
+    H.eq(toggle.checked_func(), false); assert(not Sources.moduleHeadingVisible(e))
+    assert(Sources.moduleHeadingVisible(entry("bookshelf", "external_pet")))
+    v:replaceContent(ctx,data)
+    assert(child_args.height > height)
+    H.eq(v._plan.cards[id].h, area.h); H.eq(#Dashboard.readConfig(pfx).modules, 1)
+    toggle.callback(); assert(toggle.checked_func())
+    v:replaceContent(ctx,data); H.eq(child_args.height, height)
     v:free()
 end)
 H.test("covered, parked, sleeping and disposed views do no module tick or deferred refresh work", function()

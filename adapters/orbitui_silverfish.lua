@@ -3,8 +3,9 @@
 local _ = require("core/orbitui_i18n")
 local M = { id = "orbitui_reading_silverfish", enabled_key = "orbitui_reading_silverfish_enabled",
     default_on = false, category = "books", has_covers = true, is_book_mod = true,
-    owns_chrome = true, needs = { recent = 1 }, wants_minute_tick = true }
+    owns_chrome = true, needs = { recent = 1, current_book_stats = true }, wants_minute_tick = true }
 M.name = _("Currently reading + Silverfish")
+M.label = M.name
 local function finite(n) return type(n) == "number" and n == n and math.abs(n) < 1e12 end
 local function text(s, fallback)
     return type(s) == "string" and #s <= 512 and s:gsub("[%c]", " ") or fallback
@@ -96,7 +97,7 @@ function M.getHeight(ctx)
 end
 
 -- Fixed, card-local rectangles. The two original reading modules are unrelated.
-function M.plan(w, h, dpi, measured_title_h)
+function M.plan(w, h, dpi, measured_title_h, show_time)
     w, h = math.max(1, math.floor(w)), math.max(1, math.floor(h))
     -- Three visual anchors: full-height creature, one coherent text stack,
     -- right-aligned cover. Typography follows density, never the row's height.
@@ -122,6 +123,9 @@ function M.plan(w, h, dpi, measured_title_h)
     local show_header = header_h + line(22) + footer_h + bar_h + 2 * gap + small_gap <= body_h
     if not show_header then header_h = 0 end
     local fixed = (show_header and header_h + gap or 0) + gap + small_gap + footer_h + bar_h
+    local time_h = line(14)
+    local time_visible = show_time and fixed + line(22) + small_gap + time_h <= body_h
+    if time_visible then fixed = fixed + small_gap + time_h end
     local show_author = fixed + line(22) + small_gap + author_h <= body_h
     if not show_author then author_h = 0 end
     if show_author then fixed = fixed + small_gap + author_h end
@@ -159,7 +163,24 @@ function M.plan(w, h, dpi, measured_title_h)
     p.metrics = rect(tx + percent_w + gap, y + math.floor((footer_h - line(12)) / 2),
         tw - percent_w - gap, line(12))
     p.bar = rect(tx, y + footer_h + small_gap, tw, bar_h)
+    if time_visible then p.time = rect(tx, p.bar.y + bar_h + small_gap, tw, time_h) end
     return p
+end
+
+function M.timeLeft(ctx, file, data)
+    local sample = ctx.currently_book_stats
+    local stats = type(sample) == "table" and sample.fp == file and sample.stats
+    if type(stats) ~= "table" or not finite(stats.avg_time) or stats.avg_time <= 0
+            or not finite(data.pages) or data.pages < 1 or not finite(data.percent)
+            or data.percent < 0 or data.percent >= 1 or data.status == "complete" or data.status == "abandoned" then return nil end
+    local BookStats = require("infra/sui_book_stats")
+    local seconds = BookStats.secondsLeft(stats, data)
+    if not finite(seconds) or seconds <= 0 then return nil end
+    return string.format(_("About %s left"), seconds < 60 and _("<1 min") or BookStats.formatDuration(seconds))
+end
+
+function M.getMenuItems(ctx)
+    return { require("infra/sui_config").makeLabelToggleItem(M.id, ctx.refresh, ctx._ or _) }
 end
 
 local Card, Sprite
@@ -224,16 +245,18 @@ function M.build(w, ctx)
     end
     local file = type(ctx.current_fp) == "string" and ctx.current_fp
         or type(ctx.recent_fps) == "table" and ctx.recent_fps[1]
-    local data, title_widget = {}, nil
+    local data, title_widget, time = {}, nil, nil
     if type(file) == "string" and file ~= "" then
         local ok, result = pcall(SH.getBookData, file, ctx.prefetched and ctx.prefetched[file], { skip_description = true })
         if ok and type(result) == "table" then data = result end
+        time = M.timeLeft(ctx, file, data)
+        if time then p = M.plan(w, h, dpi, nil, true) end
         -- Use the native text widget's measured height, not byte/character
         -- counts. Retain this very widget: no second shaping pass or resource.
         title_widget = newLabel(text(data.title, _("Untitled")), p.title, 22, true, p.title_lines, true)
         local measured, size = pcall(title_widget.getSize, title_widget)
         if measured and type(size) == "table" and finite(size.h) and size.h > 0 and size.h <= p.title.h then
-            p = M.plan(w, h, dpi, size.h)
+            p = M.plan(w, h, dpi, size.h, time ~= nil)
         else
             title_widget:free(); title_widget = nil
         end
@@ -282,6 +305,7 @@ function M.build(w, ctx)
         local percent = require("core/orbitui_dashboard").fraction(data.percent)
         label(SH.pctStr(percent), p.percent, 14, true)
         add(UI.progressBar(p.bar.w, percent, p.bar.h, BB.COLOR_BLACK, BB.COLOR_LIGHT_GRAY), p.bar.x, p.bar.y)
+        if time then label(time, p.time, 14) end
     else
         label(_("No books to show yet."), p.empty, 15, false, 2)
     end

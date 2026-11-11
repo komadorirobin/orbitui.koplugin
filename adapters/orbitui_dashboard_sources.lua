@@ -110,6 +110,14 @@ function M.resolveModule(entry)
     return ok and result or nil
 end
 
+-- The dashboard owns the frame but respects the same per-module heading
+-- setting as Home. Explicit source titles (such as BookOrbit) are separate.
+function M.moduleHeadingVisible(entry)
+    if entry.kind ~= "simpleui" then return true end
+    local config = require("infra/sui_config")
+    return not config.isLabelHidden(entry.ref)
+end
+
 function M.moduleChoices(kind)
     local choices = {}
     local ok, err = pcall(function()

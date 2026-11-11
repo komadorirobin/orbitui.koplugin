@@ -1848,6 +1848,21 @@ function ScreenWidget:_prefetchBooks()
         { exclude_current = SH.isCurrentExcluded(self._pfx) })
 end
 
+-- Shared native snapshot for cards describing the current (or first recent)
+-- book. It is built outside module paint and never opens its own connection.
+local function currentBookStats(conn, current, recent, prefetched, force)
+    local fp = current or (recent and recent[1])
+    local data = fp and prefetched and prefetched[fp]
+    local md5 = type(data) == "table" and data.partial_md5_checksum
+    if not fp then return nil end
+    local stats
+    if conn and type(md5) == "string" and #md5 == 32 and not md5:find("[^a-fA-F0-9]") then
+        local ok, module = pcall(require, "modules/module_currently")
+        if ok and module.fetchBookStatsForCtx then stats = module.fetchBookStatsForCtx(md5, conn, force) end
+    end
+    return { fp = fp, stats = stats }
+end
+
 -- ---------------------------------------------------------------------------
 -- _buildCtx — constructs the module build context for the current render.
 -- ---------------------------------------------------------------------------
@@ -1965,7 +1980,9 @@ function ScreenWidget:_buildCtx()
 
     -- "currently" always needs the DB when active (all its stats are DB-backed).
     -- The "recent" module shows no DB-backed stats, so it is excluded.
-    local wants_db = show_c or coverdeck_needs_db or wants_stats or needs_db
+    local needs_current_book_stats = (show_c and mod_c.needsDbStats(cfg.currently.show))
+        or Registry.wantsData(self._pfx, "current_book_stats")
+    local wants_db = show_c or coverdeck_needs_db or wants_stats or needs_db or needs_current_book_stats
 
     if wants_db and not self._db_conn and not self._defer_stats then
         -- openStatsDB returns nil while a Statistics cloud sync is in progress.
@@ -2072,26 +2089,8 @@ function ScreenWidget:_buildCtx()
 
     -- Pre-compute Currently Reading book stats to move the DB query off the
     -- hot paint path (md5 is already in prefetched_data — no extra IO).
-    local currently_book_stats = nil
-    if mod_c and Registry.isEnabled(mod_c, self._pfx) and self._db_conn and bs.current_fp then
-        if mod_c.needsDbStats(cfg.currently.show) then
-            local pe_c  = bs.prefetched_data and bs.prefetched_data[bs.current_fp]
-            local c_md5 = type(pe_c) == "table" and pe_c.partial_md5_checksum
-            if c_md5 then
-                -- pcall(require) resolves the module even on the very first render,
-                -- before build() has had a chance to load it. require() is
-                -- idempotent — subsequent calls return the cached module at zero
-                -- extra cost.
-                local mc_ok, mc_mod = pcall(require, "modules/module_currently")
-                if mc_ok and mc_mod and mc_mod.fetchBookStatsForCtx then
-                    currently_book_stats = {
-                        fp    = bs.current_fp,
-                        stats = mc_mod.fetchBookStatsForCtx(c_md5, self._db_conn, not self._defer_stats),
-                    }
-                end
-            end
-        end
-    end
+    local currently_book_stats = needs_current_book_stats and currentBookStats(
+        self._db_conn, bs.current_fp, bs.recent_fps, bs.prefetched_data, not self._defer_stats) or nil
 
     local self_ref = self
     return {
@@ -2100,6 +2099,7 @@ function ScreenWidget:_buildCtx()
         _needs_records         = needs_records,
         _needs_year            = needs_year,
         _needs_charts          = needs_charts,
+        _needs_current_book_stats = needs_current_book_stats,
         year_str               = year_str,   -- cached once per render; re-used by async tick
         landscape_factor       = landscape_factor,
         pfx                    = self._pfx,
@@ -3397,16 +3397,9 @@ function ScreenWidget:_scheduleDataRefresh(stats_only)
             end
 
             Perf.mark("data refresh: global stats done")
-            local MC = package.loaded["modules/module_currently"]
-            if MC and MC.fetchBookStatsForCtx and self._ctx_cache.current_fp then
-                local pe = self._ctx_cache.prefetched and self._ctx_cache.prefetched[self._ctx_cache.current_fp]
-                local md5 = pe and pe.partial_md5_checksum
-                if md5 then
-                    self._ctx_cache.currently_book_stats = {
-                        fp = self._ctx_cache.current_fp,
-                        stats = MC.fetchBookStatsForCtx(md5, self._db_conn, true)
-                    }
-                end
+            if self._ctx_cache._needs_current_book_stats then
+                self._ctx_cache.currently_book_stats = currentBookStats(self._db_conn,
+                    self._ctx_cache.current_fp, self._ctx_cache.recent_fps, self._ctx_cache.prefetched, true)
             end
 
             local MCD = package.loaded["modules/module_coverdeck"]

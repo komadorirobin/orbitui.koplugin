@@ -557,8 +557,9 @@ function M.content(widget, p, ctx, data)
                 require("ui/uimanager"):nextTick(refreshRow)
             else
             box(area, nil, nil, entry.id)
-            title(entry.label or entry.ref, area)
-            local inset, top = p.pad, math.max(px(32), p.pad * 2)
+            local show_heading = Sources.moduleHeadingVisible(entry)
+            if show_heading then title(entry.label or entry.ref, area) end
+            local inset, top = p.pad, show_heading and math.max(px(32), p.pad * 2) or p.pad
             local w, h = math.max(1, area.w - inset * 2), math.max(1, area.h - top - inset)
             local args, pending, building, index, clip, def, regions, refreshModule
             local cover_slot = {}

@@ -55,7 +55,7 @@ M.needs = {
             or Model.visible(config, "goal") and not hardcoverGoal(config, pfx)
     end,
 }
-for _, kind in ipairs({ "status", "records", "year", "charts" }) do
+for _, kind in ipairs({ "status", "records", "year", "charts", "current_book_stats" }) do
     local need = kind
     M.needs[need] = function(pfx) return Sources.moduleNeed(M.readConfig(pfx), pfx, need) end
 end

@@ -176,6 +176,12 @@ function M.moduleItems(id, refresh, pfx, navigation)
         items[#items + 1] = { text = Rows.caption(Rows.snapshot(entry.source)), dim = true }
     elseif entry and entry.kind == "simpleui" then
         local def = Sources.resolveModule(entry)
+        if def then
+            local label = require("infra/sui_config").makeLabelToggleItem(entry.ref, refresh or function() end, _)
+            label.text = _("Show card heading")
+            label.help_text = _("Settings are shared with this module on other Home pages.")
+            items[#items + 1] = label
+        end
         if def and def.getMenuItems then
             items[#items + 1] = { text = _("Module settings…"),
                 help_text = _("Settings are shared with this module on other Home pages."), callback = function()

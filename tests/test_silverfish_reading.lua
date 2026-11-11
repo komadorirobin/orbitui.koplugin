@@ -249,10 +249,45 @@ local function build(opts)
     opts=opts or {};labels={}
     local c={current_fp="/actual.epub",prefetched={untouched=true},open_fn=function(file) H.eq(file,"/actual.epub");opens=opens+10 end,
         orbitui_dashboard_hosted=opts.hosted,height=opts.height or 330,_screen_widget={}}
+    c.currently_book_stats = opts.stats
     if opts.no_book then c.current_fp=nil end
     local v=M.build(opts.width or 618,c)
     return v,v.orbitui_reading_pet or v,c
 end
+H.test("time left shares observed per-book stats, is bounded, and never reads another book or opens the DB",function()
+    reset()
+    local previous_config, previous_i18n, previous_data = package.loaded["infra/sui_config"], package.loaded["infra/sui_i18n"], SH.getBookData
+    package.loaded["infra/sui_config"] = { openStatsDB = function() error("must not query on build or paint") end }
+    package.loaded["infra/sui_i18n"] = { translate = function(s) return s end }
+    package.loaded["infra/sui_book_stats"] = H.componentModule(root, "infra/sui_book_stats")
+    local data = { title = "Test", authors = "Author", pages = 200, percent = .5, avg_time = 100 }
+    SH.getBookData = function() return data end
+    local sample = { fp = "/actual.epub", stats = { avg_time = 54 } }
+    G_reader_settings = { readSetting = function() return "sv" end }
+    for _,size in ipairs{{618,330},{1264,420},{320,190}} do
+        local v,card = build{hosted=true,width=size[1],height=size[2],stats=sample}
+        assert(card.plan.time and card.plan.time.y >= card.plan.bar.y + card.plan.bar.h)
+        assert(card.plan.time.y + card.plan.time.h <= card.plan.h)
+        local found, metrics
+        for _,label in ipairs(labels) do
+            if label.text == "Ca 1h 30m kvar" then found = label end
+            if label.text:find("Dagar:",1,true) then metrics = label end
+        end
+        assert(found and metrics,"both time and companion metrics must fit")
+        v:free()
+    end
+    H.eq(M.timeLeft({},sample.fp,data),nil)
+    H.eq(M.timeLeft({currently_book_stats=sample},"/other.epub",data),nil)
+    data.status = "complete"; H.eq(M.timeLeft({currently_book_stats=sample},sample.fp,data),nil)
+    data.status = "abandoned"; H.eq(M.timeLeft({currently_book_stats=sample},sample.fp,data),nil)
+    data.status=nil; sample.stats.avg_time=math.huge; H.eq(M.timeLeft({currently_book_stats=sample},sample.fp,data),nil)
+    sample.stats.avg_time=54; data.percent=.995
+    H.eq(M.timeLeft({currently_book_stats=sample},sample.fp,data),"Ca <1 min kvar")
+    G_reader_settings=nil
+    SH.getBookData=previous_data
+    package.loaded["infra/sui_config"], package.loaded["infra/sui_i18n"] = previous_config, previous_i18n
+    package.loaded["infra/sui_book_stats"] = nil
+end)
 local function tap(v,card,x,y)
     local gesture={ges="tap",pos={x=x,y=y}}
     if native_input then
