@@ -298,6 +298,7 @@ H.test("staircase book columns have aligned descending covers and independent ta
     saved[layout_key] = "classic"
     result.stats = { today_secs = 27 * 60 }
     result.time_left = "About 2h 37m left"
+    result.goal = { value = 206, target = 300, metric = "book", source = "Hardcover" }
     local Silverfish = require("adapters/orbitui_silverfish")
     local snapshot, spriteWidget = Silverfish.snapshot, Silverfish.spriteWidget
     Silverfish.snapshot = function()
@@ -314,7 +315,7 @@ H.test("staircase book columns have aligned descending covers and independent ta
         current.dimen.x, current.dimen.y = 0, 0
         local p = current._plan
         local bottom, previous_h, count, time_shown = nil, math.huge, 0, false
-        local remaining, pet_stats
+        local remaining, pet_stats, goal_source
         local date = current[1][2]
         H.eq(date.fgcolor, "black")
         H.eq(date.face.size, math.floor(math.max(7, 16 * p.scale)))
@@ -332,6 +333,7 @@ H.test("staircase book columns have aligned descending covers and independent ta
             if child.text == "27 min" then time_shown = true end
             if child.text == result.time_left then remaining = child end
             if child.text == "Days: 3 · Books: 0 · Gen: 1" then pet_stats = child end
+            if child.text == result.goal.source then goal_source = child end
         end
         H.eq(count, 4)
         assert(time_shown)
@@ -340,6 +342,13 @@ H.test("staircase book columns have aligned descending covers and independent ta
             assert(label.overlap_offset[2] + label:getSize().h <= p.ladder.y + p.ladder.h)
         end
         assert(remaining.overlap_offset[1] + remaining:getSize().w < pet_stats.overlap_offset[1])
+        if goal_source then
+            H.eq(goal_source.fgcolor, "black")
+            H.eq(goal_source.face.size, math.floor(math.max(7, 13 * p.scale)))
+            assert(goal_source.overlap_offset[2] + goal_source:getSize().h <= p.goal.y + p.goal.h)
+        else
+            assert(viewport[1] < 600 or viewport[2] < 600)
+        end
         for _, slot in ipairs(current._cover_slots) do
             if slot.area.y < p.ladder.y + p.ladder.h then
                 local pos = { pos = { x = slot.area.x + 1, y = slot.area.y + 1 } }

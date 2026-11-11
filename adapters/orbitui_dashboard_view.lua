@@ -499,15 +499,15 @@ function M.content(widget, p, ctx, data)
             local offset = amount and amount:getSize().w + px(7) or 0
             if w - offset > px(24) then text(_(unit), x + offset, y + px(9), w - offset, 12, false, muted) end
             local by = math.max(y + math.max(16, px(32)), r.y + r.h - p.pad - px(25))
-            if by + math.max(14, px(20)) <= r.y + r.h then
+            if by + math.max(17, px(25)) <= r.y + r.h then
                 bar(x, by, w, progress, false, "goal")
-                text(caption, x, by + px(7), w, 11, false, muted)
+                text(caption, x, by + px(7), w, 13, false)
             end
         else
             text(count, x, r.y + px(43), w, 28, true)
             text(_(unit), x, r.y + px(80), w, 13, false, muted)
             bar(x, r.y + r.h - p.pad - px(30), w, progress, false, "goal")
-            text(caption, x, r.y + r.h - p.pad - px(17), w, 11, false, muted)
+            text(caption, x, r.y + r.h - p.pad - px(19), w, 13, false)
         end
     else
         text(_("No cached goal yet. Tap to configure."), r.x + p.pad,
