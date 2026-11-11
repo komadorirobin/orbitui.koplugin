@@ -22,6 +22,13 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Ordinary book search, local.** The rounded native search sheet holds the
+  editable query, scope and sort above separate book and group results. The
+  existing search options dialog remains reachable from the footer. Search is
+  explicit and keeps existing scope, ranking and book-opening behavior.
+  The layout has a native desktop render in the Bigme's resolution. Physical
+  device verification is pending.
+
 - **Three modern native sheets, local.** Similar books/series and tag
   results share a more readable two-tab list with a compact progress disclosure.
   Dashboard module settings group visibility, heading, size and module options,

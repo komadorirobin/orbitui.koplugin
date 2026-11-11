@@ -488,85 +488,202 @@ function M.search(text, scope_id, ref, sort, forgiving)
     return results, truncated, nil, groups
 end
 
-function M.results(text, scope_id, ref, opts)
-    opts = opts or {}
+local openSearchOptions
+local group_views = {
+    folders = { title = "Folders", icon = "folder", open = "_expandFolder" },
+    authors = { title = "Authors", icon = "menu_book", open = "_expandAuthor" },
+    series = { title = "Series", icon = "shelves", open = "_expandSeries" },
+    genres = { title = "Genres", icon = "library_books", open = "_expandGenre" },
+}
+
+local function openBookSearch(Modal, opts, submitted)
     local UI = require("ui/uimanager")
     local navigation = UI._simpleui_navigation_generation
     session = session + 1
-    local request, retired = session, false
+    local request, retired, modal, picker = session, false, nil, nil
+    local scope_id = opts.scope or (opts.ref and opts.ref.profile) or "all"
+    local sort_id = "relevance"
+    for _i, sort in ipairs(M.sorts) do if sort.id == opts.sort then sort_id = sort.id; break end end
+    local function scopeChoices()
+        return M.scopes(opts.ref)
+    end
+    local function scopeLabel(id)
+        for _i, scope in ipairs(scopeChoices()) do if scope.id == id then return scope.text end end
+    end
+    if not scopeLabel(scope_id) then
+        if opts.scope then Context.notify(_("This shelf is no longer available.")); return end
+        scope_id = "all"
+    end
+
+    local rows, summary, empty, revision = {}, nil, nil, 0
     local function current()
         return not retired and request == session and navigation == UI._simpleui_navigation_generation
+            and modal and UI:isWidgetShown(modal)
     end
-    local ok, books, truncated, err, groups = pcall(M.search, text, scope_id, ref, opts.sort)
-    if not ok or err then
-        if not ok then require("logger").warn("OrbitUI search:", books) end
-        Context.notify(_(err == "missing" and "This shelf is no longer available." or "Could not load books."))
-        return
+    local function interactive()
+        if not current() or picker then return false end
+        if not UI.getTopmostVisibleWidget then return true end
+        local top = UI:getTopmostVisibleWidget()
+        local input = modal._search_input
+        return top == modal or (input and top == input.keyboard)
     end
-    local saved, failure = pcall(M.remember, text, scope_id)
-    if not saved then require("logger").warn("OrbitUI search history:", failure) end
-    local Window = require("engines/sui_window")
-    local window = Window:new{
-        name = "sui_win_orbitui_search", title = _("Search results") .. ": " .. text,
-        position = "bottom",
-        navpager_mode = require("infra/sui_config").isNavpagerEnabled(),
-        on_close = function() retired = true end,
-        screens = { __root__ = function(ctx)
-            local rows = {}
-            if #books == 0 and #(groups or {}) == 0 then
-                rows[#rows + 1] = Window.ListRow{ inner_w = ctx.inner_w, title = _("No matches.") }
+    local function apply(text)
+        rows, summary, empty = {}, nil, nil
+        revision = revision + 1
+        text = (text or ""):match("^%s*(.-)%s*$")
+        if text == "" then return true end
+        local ok, books, truncated, err, groups = pcall(M.search, text, scope_id, opts.ref, sort_id)
+        if not ok or err then
+            if not ok then require("logger").warn("OrbitUI search:", books) end
+            empty = _(err == "missing" and "This shelf is no longer available." or "Could not load books.")
+            return false
+        end
+        local saved, failure = pcall(M.remember, text, scope_id)
+        if not saved then require("logger").warn("OrbitUI search history:", failure) end
+        local last_category
+        for _i, hit in ipairs(groups or {}) do
+            local record, category = hit.record, hit.category
+            local view = group_views[category]
+            local count = record.books and #record.books or 0
+            local subtitle
+            if count > 0 then
+                local count_label = category == "series" and (count == 1 and "%d volume" or "%d volumes")
+                    or (count == 1 and "%d book" or "%d books")
+                subtitle = string.format(_(count_label), count)
+                if category == "series" and record.books_meta and record.books_meta[1] then
+                    local name = author(record.books_meta[1])
+                    if name ~= "" then subtitle = name .. " · " .. subtitle end
+                end
             end
-            if truncated then
-                rows[#rows + 1] = Window.ListRow{ inner_w = ctx.inner_w,
-                    title = _("Showing the first 400 matches. Narrow your search for more specific results.") }
-            end
-            for _i, item in ipairs(groups or {}) do
-                local group = item.record
-                rows[#rows + 1] = Window.ListRow{
-                    inner_w = ctx.inner_w, title = group.label or group.series_name or group.path,
-                    show_chevron = true, separator = true,
+            rows[#rows + 1] = { record = record, open_group = view.open, revision = revision,
+                group = category ~= last_category and _(view.title, nil, category == "series" and "tag-results" or nil) or nil,
+                title = record.label or record.series_name or record.path, subtitle = subtitle,
+                cover = true, stack = category == "series", cover_icon = view.icon }
+            last_category = category
+        end
+        for i, book in ipairs(books) do
+            local volume = tonumber(book.series_num or book.series_index)
+            rows[#rows + 1] = { record = book, revision = revision,
+                title = book.title or book.filename or book.filepath, subtitle = author(book),
+                group = i == 1 and _("Books") or nil, cover = true, file = book.filepath,
+                cover_mark = volume and volume > 0 and volume < 1000 and tostring(volume) or nil,
+                trailing = _("Open") }
+        end
+        local n_groups = #(groups or {})
+        local count = string.format(_(#books == 1 and "%d book" or "%d books"), #books)
+        if n_groups > 0 then
+            local label = last_category == "series" and groups[1].category == "series"
+                and (n_groups == 1 and "1 series" or "%d series")
+                or (n_groups == 1 and "%d group" or "%d groups")
+            count = count .. " · " .. string.format(_(label), n_groups)
+        end
+        summary = truncated and (count .. " · " .. _("Showing the first 400 matches.")) or count
+        empty = #rows == 0 and _("No matches.") or nil
+        return true
+    end
+
+    local function fieldText()
+        return modal._search_input and modal._search_input:getText() or modal.search_query or ""
+    end
+    local function change(text, scope, sort)
+        if not current() then return end
+        scope_id, sort_id = scope, sort
+        modal:_onSearchSubmit(text)
+    end
+    local function choose(title, choices, selected, setter)
+        if not interactive() then return end
+        local text, buttons, dialog = fieldText(), {}, nil
+        for _i, option in ipairs(choices) do
+            local id = option.id
+            buttons[#buttons + 1] = {{ text = option.text, checked_func = function() return id == selected end,
+                callback = function()
+                    if picker ~= dialog or not current() then return end
+                    UI:close(dialog)
+                    if id ~= selected then setter(text, id) end
+                end }}
+        end
+        buttons[#buttons + 1] = {{ text = _("Cancel"), callback = function()
+            if picker == dialog then UI:close(dialog) end
+        end }}
+        dialog = require("ui/widget/buttondialog"):new{ title = title, buttons = buttons }
+        local on_close = dialog.onCloseWidget
+        function dialog:onCloseWidget()
+            if picker == self then picker = nil end
+            if on_close then on_close(self) end
+        end
+        picker = dialog
+        UI:show(dialog)
+    end
+
+    if submitted and not apply(opts.query) then Context.notify(empty); return end
+    modal = Modal:new{ name = "sui_win_orbitui_search", _sui_keep_homescreen = true,
+        search_query = opts.query, config = {
+        title = _("Search OrbitUI"),
+        sheet = {
+            max_rows = 6, row_height = 64,
+            filters = {
+                { title = _("Search in"), label_func = function() return scopeLabel(scope_id) or _("Unavailable scope") end,
                     on_tap = function()
-                        if not current() then return end
-                        ctx.close()
-                        Context.withShelf(scope_id ~= "all" and scope_id or nil, function(shelf)
-                            local methods = { folders = "_expandFolder", authors = "_expandAuthor",
-                                series = "_expandSeries", genres = "_expandGenre" }
-                            shelf[methods[item.category]](shelf, group)
-                        end)
-                    end,
-                }
+                        choose(_("Search in"), scopeChoices(), scope_id, function(text, id) change(text, id, sort_id) end)
+                    end },
+                { title = _("Sort by"), label_func = function()
+                    for _i, sort in ipairs(M.sorts) do if sort.id == sort_id then return _(sort.text) end end
+                end, on_tap = function()
+                    local choices = {}
+                    for _i, sort in ipairs(M.sorts) do choices[#choices + 1] = { id = sort.id, text = _(sort.text) } end
+                    choose(_("Sort results"), choices, sort_id, function(text, id) change(text, scope_id, id) end)
+                end },
+            },
+            hint = function() return summary end,
+            action_icon = "settings",
+            action = { label = _("Search options"), on_tap = function()
+                if not interactive() then return end
+                openSearchOptions{ query = fieldText(), scope = scope_id, sort = sort_id, ref = opts.ref,
+                    is_current = current, on_submit = change }
+            end },
+        },
+        search_min_chars = 1,
+        search_placeholder = function() return _("Title, author or filename") end,
+        on_search_submit = function(text) if interactive() then apply(text) end end,
+        grid_cols = 1, cells_per_page = 6,
+        item_count = function() return #rows end,
+        item_at = function(index) return rows[index] end,
+        cell_renderer = Modal.sheetRow,
+        empty_state = function(w, h)
+            if empty then return Modal.sheetRow({ title = empty, chevron = false }, { w = w, h = h }) end
+        end,
+        on_cell_tap = function(row)
+            if row.revision ~= revision or not interactive() then return end
+            local record = row.record
+            modal:onClose()
+            if row.open_group then
+                Context.withShelf(scope_id ~= "all" and scope_id or nil, function(shelf)
+                    shelf[row.open_group](shelf, record)
+                end, { is_current = function() return request == session end })
+            else
+                (opts.open_book or Context.openBook)(record.filepath, record)
             end
-            for _i, book in ipairs(books) do
-                local author = book.author or book.authors
-                if type(author) == "table" then author = table.concat(author, ", ") end
-                rows[#rows + 1] = Window.ListRow{
-                    inner_w = ctx.inner_w, title = book.title or book.filename or book.filepath,
-                    subtitle = author,
-                    right_value = _("Open"), separator = true,
-                    on_tap = function()
-                        if current() then (opts.open_book or Context.openBook)(book.filepath, book) end
-                    end,
-                    on_hold = function()
-                        if not current() then return end
-                        require("adapters/orbitui_book_panel").show(book.filepath, { open_book = opts.open_book })
-                    end,
-                }
-            end
-            return rows
-        end },
-        screen_footers = { __root__ = function(ctx)
-            local sort_label = _("Relevance")
-            for _i, item in ipairs(M.sorts) do if item.id == opts.sort then sort_label = _(item.text) end end
-            return Window.CenteredButtonFooter(ctx, { text = string.format(_("%d books"), #books)
-                .. " · " .. sort_label .. " ▾", on_tap = function()
-                if not current() then return end
-                ctx.close()
-                M.show{ query = text, scope = scope_id, ref = ref, open_book = opts.open_book, sort = opts.sort }
-            end })
-        end },
-    }
-    window:show()
-    return window
+        end,
+        cell_long_tap = function(row)
+            if row.revision ~= revision or row.open_group or not interactive() then return end
+            modal:_dismissKeyboard()
+            require("adapters/orbitui_book_panel").show(row.record.filepath, { open_book = opts.open_book })
+        end,
+        on_closed = function() retired = true end,
+    } }
+    UI:show(modal)
+    if not submitted and modal._search_input then
+        modal._search_input:focus()
+        modal._search_input:onShowKeyboard()
+    end
+    return modal
+end
+
+function M.results(text, scope_id, ref, opts)
+    opts = opts or {}
+    return openBookSearch(require("lib/bookshelf_library_modal"), {
+        query = text, scope = scope_id, ref = ref, sort = opts.sort, open_book = opts.open_book,
+    }, true)
 end
 
 local function tagSearch(tag, opts)
@@ -1124,17 +1241,22 @@ function M.tagIndex(opts)
     return modal
 end
 
-function M.show(opts)
+openSearchOptions = function(opts)
     opts = opts or {}
     local UIManager = require("ui/uimanager")
-    session = session + 1
+    if not opts.is_current then session = session + 1 end
     local request, native_generation = session, UIManager._simpleui_navigation_generation
     local active
     local function current()
         return request == session and native_generation == UIManager._simpleui_navigation_generation
+            and (not opts.is_current or opts.is_current())
     end
     local function guarded(fn, owner)
-        return function(...) if current() and active == owner() then return fn(...) end end
+        return function(...)
+            local widget = owner()
+            if current() and active == widget
+                    and (not UIManager.isWidgetShown or UIManager:isWidgetShown(widget)) then return fn(...) end
+        end
     end
     local function pickerDialog(title, rows)
         local picker
@@ -1165,7 +1287,7 @@ function M.show(opts)
         local selected
         for _i, item in ipairs(scopes) do if item.id == scope_id then selected = item.text end end
         local definition = {
-            title = _("Search OrbitUI"), input = prefill or "",
+            title = _(opts.on_submit and "Search options" or "Search OrbitUI"), input = prefill or "",
             buttons = {
                 {{ text = _("Search in") .. ": " .. selected, callback = function()
                     local query = dialog:getInputText()
@@ -1185,15 +1307,16 @@ function M.show(opts)
                 end }},
                 {
                     { text = _("Cancel"), id = "close", callback = function()
-                        session = session + 1; UIManager:close(dialog)
+                        active = nil; UIManager:close(dialog)
                     end },
                     { text = _("Search"), is_enter_default = true, callback = function()
                         local query = (dialog:getInputText() or ""):match("^%s*(.-)%s*$")
                         if query == "" then return end
                         UIManager:close(dialog)
                         UIManager:nextTick(function()
-                            if not current() then return end
-                            M.results(query, scope_id, opts.ref, { sort = sort_id, open_book = opts.open_book })
+                            if not current() or active ~= dialog then return end
+                            if opts.on_submit then opts.on_submit(query, scope_id, sort_id)
+                            else M.results(query, scope_id, opts.ref, { sort = sort_id, open_book = opts.open_book }) end
                         end)
                     end },
                 },
@@ -1303,6 +1426,12 @@ function M.show(opts)
         return dialog
     end
     return input(opts.query)
+end
+
+function M.show(opts)
+    local ok, Modal = pcall(require, "lib/bookshelf_library_modal")
+    if ok and type(Modal) == "table" and Modal.sheetRow then return openBookSearch(Modal, opts or {}, false) end
+    return openSearchOptions(opts)
 end
 
 local search = M.search

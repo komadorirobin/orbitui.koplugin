@@ -612,13 +612,22 @@ The five settings categories use grouped native link rows with a scope line,
 Back and Search settings. Their destinations continue to own the existing
 toggles, native controls and preferences.
 
+The approved ordinary book search uses the same opt-in LibraryModal sheet.
+The query, library/shelf scope and sort stay above the grouped results. Search
+on submission or an explicit change of scope/sort, including any pending text.
+Keep the existing matcher, capped-after-ranking results and scope validation.
+Book taps open through the original reader callback, holds open book details,
+and group taps use the existing shelf drilldown in the selected scope. Search
+options retain the native dialog for history, typo tolerance and word
+suggestions. Submitting from it updates the same results sheet.
+
 Shared design direction, not blanket authorization to replace all menus:
 
 | Surface | Direction / next step | Must preserve |
 | --- | --- | --- |
 | Book overview | Airy cover/title hierarchy, facts, description, visible rounded chips | Native actions, source choices, read/open lifecycle |
 | Reader panel and updater | Existing rounded native panels are the baseline | Gesture ownership, cancellation, focus, fixed footer |
-| Tag/search results | Similarity and tag sheets use compact title/author/series rows and a progress disclosure | Partial results, Series/Volumes tabs, Stop/Close, reveal-not-open |
+| Tag/search results | Ordinary search keeps query, scope and sort above the results. Similarity and tag sheets use compact title/author/series rows and a progress disclosure | Ordinary book open/hold and scoped group drilldown. Tag partial results, Series/Volumes tabs, Stop/Close and shelf reveal |
 | Card/module/collection menus | Individual dashboard module editor has grouped controls and explicit removal | Refresh/back semantics, duplicate guards, external callbacks |
 | Settings | Grouped category gateways with a scope line and search | Check/radio state, search, holds, scope, existing values |
 | Home, shelves and dock | Align only shared chrome after the above is accepted | Personal layouts, covers, ornaments, themes, fonts, aspect ratios |

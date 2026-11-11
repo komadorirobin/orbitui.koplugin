@@ -300,9 +300,11 @@ function LibraryModal.sheetRow(row, dimen)
             local scale = math.min(cw / bb:getWidth(), ch / bb:getHeight(), 1)
             image = require("ui/widget/imagewidget"):new{ image = bb, image_disposable = false,
                 width = math.max(1, math.floor(bb:getWidth() * scale)), height = math.max(1, math.floor(bb:getHeight() * scale)) }
+        elseif row.cover_icon then
+            image = sheetIcon(row.cover_icon, 16)
         else
             local initial = tostring(row.title):match("^[%z\1-\127\194-\244][\128-\191]*") or ""
-            image = sheetText(initial:upper(), cw - px(4), 14, true, ink_secondary, ch, "center", surface_tint)
+            image = sheetText(row.cover_mark or initial:upper(), cw - px(4), 14, true, ink_secondary, ch, "center", surface_tint)
         end
         local tile = FrameContainer:new{ padding = 0, bordersize = px(1), color = Blitbuffer.COLOR_GRAY,
             radius = px(4), background = surface_tint,
@@ -318,6 +320,9 @@ function LibraryModal.sheetRow(row, dimen)
             background = row.checked and Blitbuffer.COLOR_BLACK or nil,
             CenterContainer:new{ dimen = Geom:new{ w = px(19), h = px(19) },
                 sheetText(row.checked and "✓" or "", px(16), 13, true, Blitbuffer.COLOR_WHITE, px(19), "center") } } }
+    elseif row.trailing then
+        right = { gap(10), sheetText(row.trailing, math.min(px(80), math.floor(w * 0.23)),
+            13, false, ink_secondary, px(28), "right") }
     elseif row.chevron ~= false then right = { gap(10), sheetIcon("chevron_right", 18) } end
     local tw = w
     for _, side in ipairs({ left, right }) do
@@ -1076,7 +1081,7 @@ function LibraryModal:_renderSearchInput(content_width)
 end
 
 function LibraryModal:_onSearchSubmit(q)
-    if not q or #q < 2 then
+    if not q or #q < (self.config.search_min_chars or 2) then
         self.search_query = nil
     else
         self.search_query = q
@@ -1653,6 +1658,21 @@ function LibraryModal:_refreshSheet()
         self._strip_build[#self._strip_build + 1] = controls
     end
     if not c.no_search then append(self:_renderSearchInput(w), compact and 4 or 8) end
+    if sheet.filters then
+        local gap_w = px(9)
+        local width = math.floor((w - gap_w * (#sheet.filters - 1)) / #sheet.filters)
+        local filters = H:new{ align = "top" }
+        local controls = {}
+        for i, filter in ipairs(sheet.filters) do
+            if i > 1 then filters[#filters + 1] = HorizontalSpan:new{ width = gap_w } end
+            local button = action(filter, width, px(compact and 30 or 40), "expand_more", true, true)
+            filters[#filters + 1] = VerticalGroup:new{ align = "left",
+                sheetText(filter.title, width, 13, false, muted, px(20)), space(3), button }
+            controls[#controls + 1] = button
+        end
+        append(filters, compact and 5 or 11)
+        self._strip_build[#self._strip_build + 1] = controls
+    end
     if sheet.details then
         local details = action({ label = sheet.details(), on_tap = function()
             local viewer
@@ -1678,6 +1698,7 @@ function LibraryModal:_refreshSheet()
     local a = sheet.action or c.footer_rows and c.footer_rows[1][1]
     if a then
         local hint = sheet.hint
+        if type(hint) == "function" then hint = hint() end
         local aw = hint and math.min(px(156), math.floor(w * 0.39)) or math.min(px(195), w)
         local b = action(a, aw, px(compact and 32 or 39), sheet.action_icon, not sheet.action_disclosure)
         local row = H:new{ align = "center" }

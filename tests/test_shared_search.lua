@@ -152,8 +152,17 @@ end)
 
 local shown, queued, notifications = {}, {}, {}
 local UI = { show = function(_, d) shown[#shown + 1] = d end,
-    close = function(_, d) d.closed = true end,
-    nextTick = function(_, fn) queued[#queued + 1] = fn end }
+    close = function(_, d)
+        if d.closed then return end
+        d.closed = true
+        if d.onCloseWidget then d:onCloseWidget() end
+    end,
+    nextTick = function(_, fn) queued[#queued + 1] = fn end,
+    isWidgetShown = function(_, d) return d and not d.closed end,
+    getTopmostVisibleWidget = function()
+        for i = #shown, 1, -1 do if not shown[i].closed then return shown[i] end end
+    end,
+}
 package.loaded["ui/uimanager"] = UI
 local Dialog = H.widget()
 function Dialog:getInputText() return self.input end
@@ -163,23 +172,46 @@ package.loaded["ui/widget/buttondialog"] = Dialog
 package.loaded["ui/widget/infomessage"] = Dialog
 local Context = require("core/orbitui_context")
 Context.notify = function(text) notifications[#notifications + 1] = text end
-H.test("scope picker preserves typed query and opens the keyboard", function()
-    local input = Search.show{ query = "Hikaru", ref = ref }
-    H.eq(input.keyboard, true)
-    input.buttons[1][1].callback()
-    local picker = shown[#shown]
-    picker.buttons[3][1].callback()
-    local next_input = shown[#shown]
-    H.eq(next_input.input, "Hikaru")
-    assert(next_input.buttons[1][1].text:find(Profiles.get("comics").label, 1, true))
-    H.eq(input.closed, true)
+local Modal = H.widget()
+function Modal.sheetRow(row) return row end
+function Modal:init()
+    self._search_input = { text = self.search_query or "",
+        getText = function(input) return input.text end,
+        focus = function(input) input.focused = true end,
+        onShowKeyboard = function(input) input.keyboard_shown = true end }
+end
+function Modal:_onSearchSubmit(text)
+    self.search_query, self._search_input.text, self.page = text, text or "", 1
+    self.config.on_search_submit(text)
+end
+function Modal:_dismissKeyboard() self._search_input.keyboard_shown = false end
+function Modal:onClose() UI:close(self) end
+function Modal:onCloseWidget() self.config.on_closed() end
+package.loaded["lib/bookshelf_library_modal"] = Modal
+
+H.test("scope and sort stay above the same results and apply the typed query explicitly", function()
+    local modal = Search.show{ ref = ref }
+    H.eq(modal._search_input.keyboard_shown, true)
+    local filters = modal.config.sheet.filters
+    H.eq(filters[1].label_func(), "Entire library")
+    modal._search_input.text = "Hikaru"
+    modal.page = 3
+    filters[1].on_tap()
+    local scope = shown[#shown]
+    scope.buttons[3][1].callback()
+    H.eq(scope.closed, true); H.eq(modal.closed, nil)
+    H.eq(modal.search_query, "Hikaru"); H.eq(modal.page, 1)
+    H.eq(filters[1].label_func(), Profiles.get("comics").label)
+    H.eq(search_call.text, "Hikaru"); H.eq(search_call.scope.roots, Profiles.get("comics").roots)
+    filters[2].on_tap()
+    local sort = shown[#shown]
+    sort.buttons[3][1].callback()
+    H.eq(filters[2].label_func(), "Author")
+    H.eq(shown[#shown], sort); H.eq(sort.closed, true)
+    scope.buttons[2][1].callback()
+    H.eq(filters[1].label_func(), Profiles.get("comics").label)
+    modal:onClose()
 end)
-local Window = H.widget()
-function Window:show() self.shown = true end
-Window.ListRow = function(opts) return opts end
-Window.CenteredButtonFooter = function(_, opts) return opts end
-package.loaded["engines/sui_window"] = Window
-package.loaded["infra/sui_config"] = { isNavpagerEnabled = function() return true end }
 H.test("results use the same book panel and retain the caller's reader-opening path", function()
     search_records = { { filepath = "/book", title = "Book" } }
     local opened, held, opened_book
@@ -187,18 +219,42 @@ H.test("results use the same book panel and retain the caller's reader-opening p
     package.loaded["adapters/orbitui_book_panel"] = { show = function(file, opts)
         held = file; H.eq(opts.open_book, open)
     end }
-    local win = Search.results("Book", "all", nil, { open_book = open })
-    local rows = win.screens.__root__{ inner_w = 600 }
-    rows[1].on_hold(); H.eq(held, "/book")
-    rows[1].on_tap(); H.eq(opened, "/book")
+    local modal = Search.results("Book", "all", nil, { open_book = open })
+    local row = modal.config.item_at(1)
+    modal.config.cell_long_tap(row); H.eq(held, "/book")
+    modal.config.on_cell_tap(row); H.eq(opened, "/book")
+    assert(modal.closed)
     H.eq(opened_book, search_records[1])
 end)
 H.test("empty and unavailable search results provide explicit feedback", function()
     search_records = {}
-    local win = Search.results("Missing", "all")
-    H.eq(win.screens.__root__{ inner_w = 600 }[1].title, "No matches.")
+    local modal = Search.results("Missing", "all")
+    H.eq(modal.config.empty_state(600, 60).title, "No matches.")
+    modal:onClose()
     H.eq(Search.results("Book", "current", { chip = "gone" }), nil)
     H.eq(notifications[#notifications], "This shelf is no longer available.")
+end)
+H.test("stale results are inert and series still drill into the selected library", function()
+    search_records = { { filepath = "/book", title = "Book" } }
+    local modal = Search.results("Book", "comics", nil, { open_book = function() error("stale result opened") end })
+    local stale = modal.config.item_at(1)
+    modal:_onSearchSubmit(nil)
+    H.eq(modal.config.item_count(), 0); H.eq(modal.config.sheet.hint(), nil)
+    modal.config.on_cell_tap(stale)
+    local series = { series_name = "Series", books = { { filepath = "/book" } } }
+    local repo = package.loaded["lib/bookshelf_book_repository"]
+    local search, withShelf, opened = repo.searchAll, Context.withShelf
+    repo.searchAll = function() return { series = { series }, books = search_records } end
+    Context.withShelf = function(profile, open, opts)
+        H.eq(profile, "comics"); assert(opts.is_current())
+        open{ _expandSeries = function(_, record) opened = record end }
+    end
+    modal:_onSearchSubmit("S")
+    H.eq(modal.config.item_at(1).subtitle, "1 volume")
+    H.eq(modal.config.sheet.hint(), "1 book · 1 series")
+    modal.config.on_cell_tap(modal.config.item_at(1))
+    H.eq(opened, series); assert(modal.closed)
+    repo.searchAll, Context.withShelf = search, withShelf
 end)
 local saved = {}
 package.loaded["infra/sui_store"] = {
@@ -240,7 +296,9 @@ H.test("relevance ranking precedes the cap rather than discarding a late exact h
 end)
 H.test("sort and history choices retain the query and never widen a missing scope", function()
     Search.remember("Old", "deleted")
-    local input = Search.show{ query = "Typed", scope = "comics" }
+    local modal = Search.show{ query = "Typed", scope = "comics" }
+    modal.config.sheet.action.on_tap()
+    local input = shown[#shown]
     input.buttons[3][1].callback()
     shown[#shown].buttons[3][1].callback()
     local next_input = shown[#shown]
@@ -253,7 +311,9 @@ H.test("sort and history choices retain the query and never widen a missing scop
     H.eq(Search.show{ scope = "deleted" }, nil)
 end)
 H.test("a deferred search cannot cover a newer native navigation destination", function()
-    local input = Search.show{ query = "Book" }
+    local modal = Search.show{ query = "Book" }
+    modal.config.sheet.action.on_tap()
+    local input = shown[#shown]
     input.buttons[2][2].callback()
     UI._simpleui_navigation_generation = 1234
     local before = #shown
@@ -263,7 +323,9 @@ end)
 H.test("history is paged without losing full queries and old controls become inert", function()
     Search.clearHistory()
     for i = 1, 10 do Search.remember("Query " .. i, "all") end
-    local input = Search.show{ query = "Typed" }
+    local modal = Search.show{ query = "Typed" }
+    modal.config.sheet.action.on_tap()
+    local input = shown[#shown]
     input.buttons[4][1].callback()
     local first = shown[#shown]
     H.eq(#first.buttons, 8)
@@ -275,5 +337,9 @@ H.test("history is paged without losing full queries and old controls become ine
     first.buttons[1][1].callback(); H.eq(#shown, before)
     second.buttons[1][1].callback()
     H.eq(shown[#shown].input, "Query 5")
+    shown[#shown].buttons[2][2].callback()
+    table.remove(queued, 1)()
+    H.eq(modal.search_query, "Query 5")
+    H.eq(UI:getTopmostVisibleWidget(), modal)
 end)
 H.finish()
