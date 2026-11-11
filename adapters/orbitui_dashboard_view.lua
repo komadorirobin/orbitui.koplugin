@@ -259,7 +259,7 @@ function M.content(widget, p, ctx, data)
         local glyph_h = face.ftsize:getHeightAndAscender()
         return lines * line_h + math.max(0, math.ceil(glyph_h - line_h))
     end
-    local function text(value, x, y, w, size, bold, color, lines, fit_height)
+    local function text(value, x, y, w, size, bold, color, lines, fit_height, alignment)
         if w < 1 then return end
         local face, is_bold = textFace(size, bold)
         local args = { text = tostring(value or ""), face = face, bold = is_bold,
@@ -268,6 +268,7 @@ function M.content(widget, p, ctx, data)
             args.max_lines, args.height_adjust = lines, fit_height or false
             args.height = (fit_height and lineHeight(face) or math.ceil(face.size * 1.3)) * lines
             args.height_overflow_show_ellipsis = true
+            args.alignment = alignment
             return add(UI.makeTextBox(args, true), x, y)
         end
         return add(UI.makeColoredText(args), x, y)
@@ -337,7 +338,68 @@ function M.content(widget, p, ctx, data)
     end
 
     local r = p.ladder
-    if r then
+    if r and p.cover_row then
+        local Silverfish = require("adapters/orbitui_silverfish")
+        local pet = Silverfish.snapshot()
+        box(r, paper, BB.COLOR_LIGHT_GRAY, "hero")
+        local left, right = r.x + p.pad, r.x + r.w - p.pad
+        local width = right - left
+        local top, bottom = r.y + p.pad, r.y + r.h - p.pad
+        local gap = px(10)
+        local percent_size, time_size, book_size = 14, 14, 18
+        local pet_name_size, pet_detail_size = 14, 12
+        local percent_h = textBlockHeight(textFace(percent_size, true), 1)
+        local time_h = data.time_left and textBlockHeight(textFace(time_size, true), 1) + px(2) or 0
+        local book_h = data.current and textBlockHeight(textFace(book_size, true), 2) or 0
+        local name_h = pet and textBlockHeight(textFace(pet_name_size, true), 1) or 0
+        local detail_h = pet and textBlockHeight(textFace(pet_detail_size, false), 1) or 0
+        local footer_h = math.max(time_h + book_h, name_h + 2 * detail_h)
+        local footer_y = footer_h > 0 and bottom - footer_h - gap or bottom
+        local percent_y = footer_y - percent_h - px(5)
+        local cover_base = percent_y - px(5)
+        local cover_w = math.min(math.floor((width - 3 * gap) / 4),
+            math.floor((cover_base - top) * 2 / 3))
+        local cover_h = math.floor(cover_w * 3 / 2)
+        local free_w = width - 4 * cover_w
+        local function column(book, index)
+            local x = left + (index - 1) * cover_w + math.floor((index - 1) * free_w / 3)
+            cover(book.file, rect(x, cover_base - cover_h, cover_w, cover_h), false, true)
+            local percent = math.floor(Model.fraction(book.data.percent) * 100 + .5)
+            text(string.format("%d %%", percent), x, percent_y, cover_w, percent_size, true, ink, 1, true)
+            bookAction(rect(x, cover_base - cover_h, cover_w, footer_y - cover_base + cover_h), book.file)
+        end
+        if cover_w >= px(12) then
+            if data.current then column(data.current, 1) end
+            for i, book in ipairs(data.ongoing) do column(book, i + 1) end
+        end
+        if not data.current and #data.ongoing == 0 then
+            text(_("Open a book to start reading."), left, top, width, 15, false, muted, 2)
+        end
+        if footer_h > 0 and footer_y >= top then
+            add(UI.solidBar(width, px(1), BB.COLOR_LIGHT_GRAY), left, footer_y)
+            local y = footer_y + gap
+            local book_w = pet and math.floor(width * .49) or width
+            if data.current then
+                if data.time_left then text(data.time_left, left, y, book_w, time_size, true, ink, 1, true) end
+                text(data.current.data.title, left, y + time_h, book_w, book_size, true, ink, 2, true)
+                bookAction(rect(left, footer_y, book_w, bottom - footer_y), data.current.file)
+            end
+            if pet then
+                local pet_x = data.current and left + book_w + gap or left
+                local sprite_w = px(31)
+                local text_right = right - sprite_w - px(5)
+                local function rightLabel(value, yy, size, bold)
+                    text(value, pet_x, yy, text_right - pet_x, size, bold, ink, 1, true, "right")
+                end
+                rightLabel(pet.name, y, pet_name_size, true)
+                rightLabel(pet.stage, y + name_h, pet_detail_size)
+                rightLabel(string.format(_("Days: %s · Books: %s · Gen: %s"),
+                    pet.days or "—", pet.finished or "—", pet.generation), y + name_h + detail_h, pet_detail_size)
+                add(Silverfish.spriteWidget(pet, sprite_w, footer_h, paper), right - sprite_w, y)
+                action(rect(pet_x, footer_y, right - pet_x, bottom - footer_y), function() Silverfish.openPet(pet) end)
+            end
+        end
+    elseif r then
         local Silverfish = require("adapters/orbitui_silverfish")
         local pet = Silverfish.snapshot()
         box(r, paper, BB.COLOR_LIGHT_GRAY, "hero")
@@ -534,7 +596,9 @@ function M.content(widget, p, ctx, data)
             local y = r.y + p.pad + math.max(17, px(27))
             local amount = text(count, x, y, w, 25, true)
             local offset = amount and amount:getSize().w + px(7) or 0
-            if w - offset > px(24) then text(_(unit), x + offset, y + px(9), w - offset, 12, false, muted) end
+            if not p.cover_row and w - offset > px(24) then
+                text(_(unit), x + offset, y + px(9), w - offset, 12, false, muted)
+            end
             local by = math.max(y + math.max(16, px(32)), r.y + r.h - p.pad - px(25))
             if by + math.max(17, px(25)) <= r.y + r.h then
                 bar(x, by, w, progress, false, "goal")
@@ -557,6 +621,14 @@ function M.content(widget, p, ctx, data)
     local owner = ctx._screen_widget or widget
     owner._orbitui_dashboard_pages = owner._orbitui_dashboard_pages or {}
     owner._orbitui_dashboard_sources = owner._orbitui_dashboard_sources or {}
+    if p.cover_shelves then
+        local area = p.cover_shelves
+        box(area, paper, BB.COLOR_LIGHT_GRAY)
+        if p.want and p.new then
+            add(UI.solidBar(px(1), area.h - 2 * p.pad, BB.COLOR_LIGHT_GRAY),
+                math.floor((p.want.w + p.new.x) / 2), area.y + p.pad)
+        end
+    end
     local function shelf(key, label, files, failed, module, extra)
         local area = extra and p.cards[key] or p[key]
         if not area then return end
@@ -568,7 +640,8 @@ function M.content(widget, p, ctx, data)
                 owner._orbitui_dashboard_sources[key] = identity
             end
         end
-        box(area, nil, nil, key)
+        local stacked = not extra and p.cover_shelves ~= nil
+        if not stacked then box(area, nil, nil, key) end
         local count = extra and extra.view == "carousel" and 1 or 3
         local pages = math.max(1, math.ceil(#files / count))
         local page = math.min(pages, math.max(1, owner._orbitui_dashboard_pages[key] or 1))
@@ -586,6 +659,41 @@ function M.content(widget, p, ctx, data)
         local swipe_area = rect(area.x, area.y, area.w, area.h)
         swipe_area.turn, swipe_area.row_card = turn, card_scope
         widget._swipe_areas[#widget._swipe_areas + 1] = swipe_area
+        if stacked then
+            local x, w = area.x + p.pad, area.w - 2 * p.pad
+            local label_h = math.max(px(40), textBlockHeight(textFace(15, true), 1))
+            local footer_y = area.y + area.h - p.pad - label_h
+            local control_w = pages > 1 and px(39) or 0
+            text(heading(key, label), x, footer_y + px(7), w - 2 * control_w, 15, true)
+            for i, control in ipairs({ { "‹", -1, page > 1 }, { "›", 1, page < pages } }) do
+                if control[3] then
+                    local control_x = x + w - (3 - i) * control_w
+                    local arrow = text(control[1], control_x, footer_y, control_w, 24, true)
+                    arrow.overlap_offset[1] = control_x + math.floor((control_w - arrow:getSize().w) / 2)
+                    action(rect(control_x, footer_y, control_w, label_h), function() turn(control[2]) end)
+                end
+            end
+            if #files == 0 then
+                text(failed and _("Could not load books.") or _("No books to show yet."),
+                    x, area.y + p.pad + px(8), w, 14, false, muted, 2)
+                action(area, settings(data.config and Model.id or module))
+                return
+            end
+            local base = footer_y - px(3)
+            local cw = math.floor(math.min(w * .385, (base - area.y - p.pad) * 2 / 3))
+            if cw < px(6) then return end
+            local offset = math.floor(cw * .78)
+            -- Paint back to front so the cover and tap order match where they overlap.
+            for i = count, 1, -1 do
+                local fp = files[(page - 1) * count + i]
+                if fp then
+                    local ww = math.max(1, math.floor(cw * (1 - (i - 1) * .08)))
+                    local hh = math.floor(ww * 3 / 2)
+                    cover(fp, rect(x + (i - 1) * offset, base - hh, ww, hh))
+                end
+            end
+            return
+        end
         text(heading(key, label), area.x + p.pad, area.y + p.pad, area.w - 2 * p.pad, 13, true)
         if extra then
             local edit = function() widget:editModules(key) end

@@ -894,8 +894,9 @@ local sv = {
     ["Dashboard layout"] = "Layout för Läsöversikt",
     ["Classic"] = "Klassisk",
     ["Cover staircase"] = "Omslagstrappa",
-    ["Cover staircase brings the current and ongoing books together, with reading time today beside your goal. Your classic layout is kept."] =
-        "Omslagstrappan samlar boken du läser just nu och dina pågående böcker. Dagens lästid visas bredvid läsmålet. Din klassiska layout sparas.",
+    ["Straight cover row"] = "Rak omslagsrad",
+    ["Cover layouts bring the current and ongoing books together. Straight cover row also groups Want to read and Recently added."] =
+        "Omslagslayouterna samlar boken du läste senast och dina pågående böcker. Rak omslagsrad samlar också Vill läsa och Nya böcker.",
     ["Accents"] = "Accenter",
     ["Tinted cards"] = "Tonade kort",
     ["Colours affect only this reading dashboard. Monochrome screens keep greyscale. Layout, headings and book sources are kept."] = "Färgerna gäller bara den här läsöversikten. Svartvita skärmar behåller gråskalan. Layout, rubriker och bokkällor behålls.",

@@ -126,6 +126,9 @@ local SH = {
 }
 package.loaded["modules/module_books_shared"] = SH
 local UI = { MOD_GAP = 12, getContentHeight = function() return 800 end,
+    solidBar = function(w, h)
+        return Widget:new{ kind = "line", dimen = { w = w, h = h } }
+    end,
     progressBar = function(w, pct, h, fg, bg)
         assert(w > 0 and h > 0 and pct >= 0 and pct <= 1)
         return Widget:new{ kind = "bar", pct = pct, color = fg, background = bg, dimen = { w = w, h = h } }
@@ -311,9 +314,6 @@ H.test("staircase book columns have even gaps, aligned descending covers and ind
     Silverfish.spriteWidget = function(_, w, h)
         return Widget:new{ kind = "pet", dimen = { w = w, h = h } }
     end
-    UI.solidBar = function(w, h)
-        return Widget:new{ kind = "line", dimen = { w = w, h = h } }
-    end
     for _i, viewport in ipairs({ { 600, 730 }, { 300, 400 }, { 800, 480 }, { 1264, 1400 } }) do
         local current = View.build(viewport[1], viewport[2], ctx, result)
         current.dimen.x, current.dimen.y = 0, 0
@@ -388,6 +388,104 @@ H.test("staircase book columns have even gaps, aligned descending covers and ind
         current:free()
     end
     Silverfish.snapshot, Silverfish.spriteWidget = snapshot, spriteWidget
+end)
+
+H.test("straight cover row keeps the last title below time and shares a panel for independent stacks", function()
+    local layout_key = "simpleui_hs_orbitui_dashboard_layout"
+    local previous = saved[layout_key]
+    local choices = Dashboard.layoutItem(function() end, ctx.pfx).sub_item_table
+    choices[3].callback()
+    assert(choices[3].checked_func())
+    H.eq(Dashboard.layout(ctx.pfx), "cover_row")
+    H.eq(Dashboard.needs.current_book_stats(ctx.pfx), true)
+    local data = Dashboard.readData(ctx)
+    saved[layout_key] = previous
+    data.stats = { today_secs = 5 * 60 }
+    data.time_left = "About 2h 37m left"
+    data.current.data = { title = "A long title\nacross two lines", authors = "The Author", percent = .57 }
+    data.want = { "/want/1", "/want/2", "/want/3", "/want/4" }
+    data.new = { "/new/1", "/new/2", "/new/3", "/new/4" }
+    data.source_labels = { want = "Want to read", new = "Recently added" }
+    local Silverfish = require("adapters/orbitui_silverfish")
+    local snapshot, spriteWidget, openPet = Silverfish.snapshot, Silverfish.spriteWidget, Silverfish.openPet
+    local pet_opened = false
+    Silverfish.snapshot = function()
+        return { name = "Franz", stage = "Ash Cat · Kitten", days = 3, finished = 0, generation = 1 }
+    end
+    Silverfish.spriteWidget = function(_, w, h)
+        return Widget:new{ kind = "pet", dimen = { w = w, h = h } }
+    end
+    Silverfish.openPet = function() pet_opened = true end
+    for _, viewport in ipairs({ { 600, 730 }, { 300, 400 }, { 800, 480 }, { 1264, 1400 } }) do
+        local local_ctx = { _screen_widget = {}, open_fn = ctx.open_fn, hold_fn = ctx.hold_fn }
+        local current = View.build(viewport[1], viewport[2], local_ctx, data)
+        current.dimen.x, current.dimen.y = 0, 0
+        local p, labels, percentages = current._plan, {}, 0
+        local covers, shelf_frames = {}, 0
+        assert(p.ladder.y + p.ladder.h < p.cover_shelves.y)
+        assert(p.cover_shelves.y + p.cover_shelves.h < p.reading_today.y)
+        H.eq(p.reading_today.y, p.goal.y)
+        for _, child in ipairs(current[1]) do
+            local x, y = child.overlap_offset[1], child.overlap_offset[2]
+            local size = child:getSize()
+            assert(x >= 0 and y >= 0 and x + size.w <= p.w and y + size.h <= p.h, child.text or child.kind)
+            if child.text then
+                labels[child.text] = child
+                if child.text:match("^%d+ %%$") then percentages = percentages + 1 end
+            end
+            if y == p.cover_shelves.y and size.h == p.cover_shelves.h then
+                H.eq(size.w, p.cover_shelves.w)
+                shelf_frames = shelf_frames + 1
+            end
+        end
+        for _, slot in ipairs(current._cover_slots) do covers[slot.file] = slot.area end
+        H.eq(percentages, 4)
+        H.eq(shelf_frames, 1)
+        H.eq(labels[data.current.data.authors], nil)
+        for _, book in ipairs(data.ongoing) do H.eq(labels[book.data.title], nil) end
+        local time, title = assert(labels[data.time_left]), assert(labels[data.current.data.title])
+        H.eq(title.max_lines, 2)
+        assert(time.overlap_offset[2] + time:getSize().h <= title.overlap_offset[2])
+        assert(title.overlap_offset[2] + title:getSize().h <= p.ladder.y + p.ladder.h)
+        local first, previous_cover = covers["/current"], covers["/current"]
+        for _, book in ipairs(data.ongoing) do
+            local next_cover = assert(covers[book.file])
+            H.eq(next_cover.h, first.h)
+            H.eq(next_cover.w, first.w)
+            H.eq(next_cover.y, first.y)
+            local gap = next_cover.x - previous_cover.x - first.w
+            assert(math.abs(gap - (p.w - 2 * p.pad - 4 * first.w) / 3) < 1)
+            previous_cover = next_cover
+        end
+        local want, behind = covers["/want/1"], covers["/want/2"]
+        assert(want.x < behind.x and behind.x < want.x + want.w)
+        H.eq(want.y + want.h, behind.y + behind.h)
+        assert(want.y + want.h < labels[data.source_labels.want].overlap_offset[2])
+        local shared = { pos = { x = behind.x, y = behind.y + 1 } }
+        assert(current:onDashboardTap(nil, shared))
+        H.eq(opened, "/want/1")
+        assert(current:onDashboardHold(nil, shared))
+        assert(current:onDashboardHoldRelease())
+        H.eq(held, "/want/1")
+        assert(current:onDashboardTap(nil, { pos = { x = title.overlap_offset[1], y = title.overlap_offset[2] } }))
+        H.eq(opened, data.current.file)
+        local name = assert(labels.Franz)
+        pet_opened = false
+        assert(current:onDashboardTap(nil, { pos = { x = name.overlap_offset[1], y = name.overlap_offset[2] } }))
+        assert(pet_opened)
+        assert(current:onSwipe(nil, { direction = "west", pos = { x = want.x, y = want.y } }))
+        H.eq(local_ctx._screen_widget._orbitui_dashboard_pages.want, 2)
+        H.eq(local_ctx._screen_widget._orbitui_dashboard_pages.new, 1)
+        local first_want, first_new
+        for _, slot in ipairs(current._cover_slots) do
+            if slot.file:match("^/want/") then first_want = slot.file end
+            if slot.file:match("^/new/") then first_new = slot.file end
+        end
+        H.eq(first_want, "/want/4")
+        H.eq(first_new, "/new/1")
+        current:free()
+    end
+    Silverfish.snapshot, Silverfish.spriteWidget, Silverfish.openPet = snapshot, spriteWidget, openPet
 end)
 
 H.test("closing a dashboard layout change rebuilds the data context", function()

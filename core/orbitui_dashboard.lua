@@ -1,6 +1,10 @@
 -- Geometry and layout edits are independent of KOReader's widget/cache owners.
 local M = { id = "orbitui_dashboard" }
 
+function M.isCoverLayout(layout)
+    return layout == "cover_stairs" or layout == "cover_row"
+end
+
 -- OrbitUI's own card palette; no BookOrbit code, palettes or assets imported.
 -- Stable card IDs keep colours attached to content when cards are reordered.
 local CARD_INK = {
@@ -273,10 +277,12 @@ function M.plan(w, h, config, page, layout)
         new = rect(col + gap, bottom_y, right_w, bottom_h),
     }
     if not config then return plan end
-    local staircase = layout == "cover_stairs" and not config.unsupported
+    local cover_layout = M.isCoverLayout(layout) and not config.unsupported
+    local cover_row = cover_layout and layout == "cover_row"
+    plan.cover_row = cover_row
     local blocks, stats = {}, {}
     for _, id in ipairs(config.stats_order) do
-        if M.visible(config, id) and not (staircase and id == "reading_today") then stats[#stats + 1] = id end
+        if M.visible(config, id) and not (cover_layout and id == "reading_today") then stats[#stats + 1] = id end
     end
     local weight = { hero = 38, stats = #stats <= 2 and 19 or 38,
         ongoing = 27, goal = 27, want = 35, new = 35 }
@@ -286,7 +292,7 @@ function M.plan(w, h, config, page, layout)
         weight[entry.id] = entry.size == "tall" and 55 or 35
     end
     for _, id in ipairs(config.order) do
-        local fixed = staircase and (id == "hero" or id == "ongoing" or id == "goal" or id == "want" or id == "new"
+        local fixed = cover_layout and (id == "hero" or id == "ongoing" or id == "goal" or id == "want" or id == "new"
             or id == "module:simpleui:orbitui_reading_silverfish")
         if not fixed and (id == "stats" and #stats > 0 or id ~= "stats" and M.visible(config, id)) then
             blocks[#blocks + 1] = id
@@ -294,7 +300,7 @@ function M.plan(w, h, config, page, layout)
     end
     for _, id in ipairs(M.block_order) do plan[id] = nil end
     plan.stats, plan.cards = {}, {}
-    if #blocks == 0 and not staircase then return plan end
+    if #blocks == 0 and not cover_layout then return plan end
     local rows, total, i = {}, 0, 1
     while i <= #blocks do
         local a, b = blocks[i], blocks[i + 1]
@@ -306,15 +312,16 @@ function M.plan(w, h, config, page, layout)
     end
     -- At most three rows per page. Existing six-block layouts are unchanged.
     local pages, current = {}, {}
-    if staircase then
-        local first = {
-            { "ladder", weight = 54 },
-            { "reading_today", M.visible(config, "goal") and "goal" or nil, weight = 17 },
-        }
+    if cover_layout then
         local want, new = M.visible(config, "want"), M.visible(config, "new")
+        local reading = { "reading_today", M.visible(config, "goal") and "goal" or nil, weight = 17 }
+        local first = { { "ladder", weight = cover_row and 50 or 54 } }
+        if not cover_row then first[#first + 1] = reading end
         if want or new then
-            first[3] = { want and "want" or "new", want and new and "new" or nil, weight = 29 }
+            first[#first + 1] = { want and "want" or "new", want and new and "new" or nil,
+                weight = cover_row and 33 or 29, shared_shelves = cover_row }
         end
+        if cover_row then first[#first + 1] = reading end
         pages[1] = first
     end
     for _, row in ipairs(rows) do
@@ -339,6 +346,7 @@ function M.plan(w, h, config, page, layout)
     local y = header + gap
     for index, row in ipairs(rows) do
         local rh = index == #rows and h - y or math.floor(available * row.weight / total)
+        if row.shared_shelves then plan.cover_shelves = rect(0, y, w, rh) end
         for side, id in ipairs(row) do
             local r = rect(side == 1 and 0 or col + gap, y, row[2] and (side == 1 and col or right_w) or w, rh)
             if id == "stats" then

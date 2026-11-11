@@ -472,10 +472,10 @@ function M.items(refresh, pfx, ctx_menu)
             arrange("stats_order", _("Arrange statistics"), refresh, pfx, ctx_menu)
         end },
     }
-    local staircase = dashboard().layout(pfx) == "cover_stairs"
+    local cover_layout = Model.isCoverLayout(dashboard().layout(pfx))
     for index, card in ipairs(Model.heading_cards) do
         local key, heading_index = card.key, index
-        local fixed = staircase and key == "reading_today"
+        local fixed = cover_layout and key == "reading_today"
         local item = { text_func = function()
             local current = dashboard().readConfig(pfx)
             return Model.heading(dashboard().readHeadings(pfx), key, label(key, current))
@@ -507,7 +507,7 @@ function M.items(refresh, pfx, ctx_menu)
             end
             return rows
         end }
-        if not staircase or (key ~= "hero" and key ~= "ongoing") then items[#items + 1] = item end
+        if not cover_layout or (key ~= "hero" and key ~= "ongoing") then items[#items + 1] = item end
     end
     items[#items + 1] = { text = _("Add module…"),
         help_text = _("Choose a card supplied by an installed plugin, a Home module, or an action shortcut. Plugins stay separate. More cards use extra dashboard pages."),
