@@ -1,5 +1,22 @@
 # Verification and device acceptance
 
+## 2026-11-11 — fresh setup defaults to Straight cover row
+
+The first-run setup guide preselects Reading dashboard with Straight cover
+row. Applying the draft enables the dashboard, makes it the first Home
+page and saves the layout. The setup tests cover the first FileManager
+prompt, the review, confirmation, cancellation, reopening pending setup
+from settings, a saved Classic choice, selecting File browser, and the
+upgrade and skipped states.
+
+Source **70e9be85ed05dee0b44a994ce643ba687cbb4f2e**, private ZIP
+**bf8946df5c9cd832c89e42b2a22399c3390bcacb57a58f3afad74222494d050c**.
+The full Lua and LuaJIT suites passed with the optional SQLite skips.
+Both setup suites also passed against the sealed runtime in each interpreter.
+The runtime ZIP passed package validation. Fresh setup was tested with
+isolated settings fixtures. Evidence is in
+`test-results/dashboard-default-20261111/`.
+
 ## 2026-11-11 — lighter remaining-time label on Bigme
 
 Straight cover row uses KOReader's synthesized bold on the regular face for
