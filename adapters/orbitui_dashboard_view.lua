@@ -331,7 +331,7 @@ function M.content(widget, p, ctx, data)
         local pet = Silverfish.snapshot()
         box(r, paper, BB.COLOR_LIGHT_GRAY, "hero")
         local left, right = r.x + p.pad, r.x + r.w - p.pad
-        local top, bottom = r.y + p.pad, r.y + r.h - p.pad
+        local cover_top, bottom = r.y + p.pad, r.y + r.h - p.pad
         local gap = math.max(3, px(10))
         local first_w = math.floor((right - left - 3 * gap) * .30)
         local other_x = left + first_w + gap
@@ -339,7 +339,6 @@ function M.content(widget, p, ctx, data)
         local has_footer = pet or data.time_left
         local foot_h = has_footer and math.max(30, px(48)) or 0
         local foot_y = bottom - foot_h
-        local cover_top = top + math.max(15, px(26))
         local pct_y = foot_y - math.max(14, px(22))
         local title_y = pct_y - math.max(24, px(43))
         local base = title_y - px(6)
@@ -370,8 +369,6 @@ function M.content(widget, p, ctx, data)
             end
             first_w, other_x = columns[1].w, columns[2].x
         end
-        text(heading("hero", _("Currently reading")), left, top, first_w, 17, true)
-        text(heading("ongoing", _("Also reading")), other_x, top, right - other_x, 17, true)
         local function column(book, index)
             local col = columns[index]
             local x, w = col.x, col.w

@@ -472,19 +472,17 @@ function M.items(refresh, pfx, ctx_menu)
             arrange("stats_order", _("Arrange statistics"), refresh, pfx, ctx_menu)
         end },
     }
+    local staircase = dashboard().layout(pfx) == "cover_stairs"
     for index, card in ipairs(Model.heading_cards) do
         local key, heading_index = card.key, index
-        local function fixedInStaircase()
-            return (key == "hero" or key == "ongoing" or key == "reading_today")
-                and dashboard().layout(pfx) == "cover_stairs"
-        end
-        items[#items + 1] = { text_func = function()
+        local fixed = staircase and key == "reading_today"
+        local item = { text_func = function()
             local current = dashboard().readConfig(pfx)
             return Model.heading(dashboard().readHeadings(pfx), key, label(key, current))
-                .. ((fixedInStaircase() or Model.visible(current, key)) and "" or " (" .. _("Off") .. ")")
+                .. ((fixed or Model.visible(current, key)) and "" or " (" .. _("Off") .. ")")
         end, sub_item_table_func = function()
             local rows = {}
-            if not fixedInStaircase() then
+            if not fixed then
                 rows[1] = { text = _("Show card"), checked_func = function() return Model.visible(dashboard().readConfig(pfx), key) end,
                     callback = function() dashboard().editConfig(pfx, function(c)
                         c.hidden[key] = not c.hidden[key] or nil
@@ -509,6 +507,7 @@ function M.items(refresh, pfx, ctx_menu)
             end
             return rows
         end }
+        if not staircase or (key ~= "hero" and key ~= "ongoing") then items[#items + 1] = item end
     end
     items[#items + 1] = { text = _("Add module…"),
         help_text = _("Choose a card supplied by an installed plugin, a Home module, or an action shortcut. Plugins stay separate. More cards use extra dashboard pages."),

@@ -277,7 +277,7 @@ H.test("new configuration strings switch language without changing saved ids or 
     H.eq(Dashboard.readHeadings(home).want, "My own label")
 end)
 
-H.test("the staircase editor reports its fixed cards without changing classic visibility", function()
+H.test("the staircase editor hides classic heading controls without changing the saved layout", function()
     local before = saved[key(custom)]
     local classic = Dashboard.readConfig(custom)
     classic.hidden.hero, classic.hidden.reading_today, classic.hidden.ongoing = true, true, true
@@ -288,13 +288,16 @@ H.test("the staircase editor reports its fixed cards without changing classic vi
         H.eq(items[index].sub_item_table_func()[1].text, "Show card")
     end
     Dashboard.setLayout(custom, "cover_stairs", function() end)
-    for _, index in ipairs({ 3, 5, 8 }) do
-        assert(not items[index].text_func():find("(Off)", 1, true))
-        H.eq(#items[index].sub_item_table_func(), 1)
-    end
+    local staircase_items = Config.items(function() end, custom)
+    H.eq(#staircase_items, #items - 2)
+    local reading_today = staircase_items[4]
+    assert(not reading_today.text_func():find("(Off)", 1, true))
+    H.eq(#reading_today.sub_item_table_func(), 1)
     H.eq(saved[key(custom)], classic)
     Dashboard.setLayout(custom, "classic", function() end)
-    assert(items[5].text_func():find("(Off)", 1, true))
+    local restored = Config.items(function() end, custom)
+    H.eq(#restored, #items)
+    for _, index in ipairs({ 3, 5, 8 }) do assert(restored[index].text_func():find("(Off)", 1, true)) end
     saved[key(custom)] = before
 end)
 

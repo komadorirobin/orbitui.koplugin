@@ -299,6 +299,7 @@ H.test("staircase book columns have even gaps, aligned descending covers and ind
     result.stats = { today_secs = 27 * 60 }
     result.time_left = "About 2h 37m left"
     result.goal = { value = 206, target = 300, metric = "book", source = "Hardcover" }
+    result.headings.hero, result.headings.ongoing = "Current heading fixture", "Ongoing heading fixture"
     local Silverfish = require("adapters/orbitui_silverfish")
     local snapshot, spriteWidget = Silverfish.snapshot, Silverfish.spriteWidget
     Silverfish.snapshot = function()
@@ -324,8 +325,10 @@ H.test("staircase book columns have even gaps, aligned descending covers and ind
         for _, child in ipairs(current[1]) do
             local x, y = child.overlap_offset[1], child.overlap_offset[2]
             local size = child:getSize()
+            assert(child.text ~= result.headings.hero and child.text ~= result.headings.ongoing)
             assert(x >= 0 and y >= 0 and x + size.w <= p.w and y + size.h <= p.h, child.text or child.kind)
             if child.kind == "cover" and y < p.ladder.y + p.ladder.h then
+                if count == 0 and viewport[1] == 1264 then H.eq(y, p.ladder.y + p.pad) end
                 assert(size.h < previous_h)
                 bottom = bottom or y + size.h
                 H.eq(y + size.h, bottom)
