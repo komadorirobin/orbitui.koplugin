@@ -1,5 +1,28 @@
 # Verification and device acceptance
 
+## 2026-11-11 — staircase title wrapping and readable author
+
+The current book can use two title lines. Longer titles end with an
+ellipsis, and the larger primary-ink author line follows the measured
+title. The layout reserves both lines and the author, including native
+glyph overhang. The percentages share their previous vertical position.
+
+Native desktop KOReader widgets rendered one-line, two-line and overlong
+titles at 1232×1360, 480×540 and 800×480. All nine renders retained the
+author and aligned percentages. Only the overlong fixture used an ellipsis.
+The physical Bigme check used the actual current book and verified its
+darker author, the slightly smaller covers and 110–111 pixel cover gaps.
+Wallpaper, saved headings, layout, history, collections and the crash-log
+size matched the pre-test state.
+
+Final source **1786ba7f6ac4da57a7c36c08298cbcb86054491a**, private ZIP
+**173918409355cb9a6e0394cfea3f56223ebeccfd22dad3501c02c7904fdd9fcd**.
+The full Lua gate passed with the optional SQLite skips. The focused
+dashboard suite passed against the sealed runtime in Lua and LuaJIT.
+Archive integrity, 2,000 identical Android paths and all their hashes were
+verified. The build is active with **b59355db** as rollback.
+Evidence is in `test-results/dashboard-cover-author-20261111/`.
+
 ## 2026-11-11 — heading-free cover staircase on Bigme
 
 The cover staircase skips the current and ongoing headings and uses their

@@ -22,11 +22,18 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Readable authors and two-line staircase titles.** The current author's
+  name uses larger primary ink and follows the measured title. Titles are
+  capped at two lines with ellipsis. The reserved space keeps percentages
+  aligned and leaves slightly smaller covers. Desktop KOReader widgets
+  verified the overflow cases. USB verified the real dashboard in active
+  private slot **17391840**, with **b59355db** as rollback.
+
 - **Cover staircase without section headings.** The cover staircase omits
   the current and ongoing headings and uses the recovered space for larger
   covers. Their gaps measured 82–83 pixels on the Bigme. The direct
-  dashboard editor hides those heading controls in this layout. Active
-  private slot **b59355db** retains **36c59799** as rollback.
+  dashboard editor hides those heading controls in this layout. Verified in
+  private slot **b59355db** before the title and author changes.
 
 - **Even cover staircase spacing.** Covers keep their descending sizes and
   share a baseline. The measured gaps on the Bigme were 112–113 pixels with
