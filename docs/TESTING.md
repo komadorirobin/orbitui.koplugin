@@ -1,5 +1,24 @@
 # Verification and device acceptance
 
+## 2026-11-11 — collection, module picker, tag index and shelf editor
+
+Local source **29a5c71a7ca0fc40a0378550455f0f5a0f21de05**, private archive
+**af5fdc1b8b28e24b2b9883b517576ccbb8c035b076310d5ebd6817f92581c56f**.
+The full gate passes under Lua and LuaJIT, with the three existing optional
+KOReader/SQLite skips. Seven focused suites also pass under both interpreters
+against the sealed runtime.
+ZIP integrity, exact source projection, the 2000 installed files, the asset
+set and unchanged public archive were verified.
+
+KOReader desktop widgets rendered fixture data in Swedish at 1264×1680 and
+320×240, and in English at 800×600. Interactions covered adding and removing
+books as a draft and saving once, opening the catalog and category, resuming
+the index with the D-pad and pausing it by touch, and visiting the four shelf
+sections without writing preferences. On the short screen, the shelf actions
+dialog also fits and remains reachable. The contact sheet, logs and private
+archive are in local `test-results/editing-views-20261111/`. Physical Bigme
+verification is pending.
+
 ## 2026-11-11 — ordinary book search
 
 Local source **560735b6a6a64d5ef17299f660f064ce8842c001**, private archive
