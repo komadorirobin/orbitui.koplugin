@@ -164,6 +164,17 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+November 11 post-beta.3 merge-only: SimpleUI **e6eb04720** adds visibility
+copying between native menus, File Manager folder placeholders, Home cover
+cache invalidation on cover reset, and Tiny Critter drawing updates.
+Bookshelf **f99a5bc4** is already current. Keep the previous native cover
+action in the hosted File Manager and the OrbitUI/Bookshelf cover picker on
+the shelf. The new SimpleUI editor removes the current sidecar cover before
+its replacement succeeds and uses a separate undo/cache path. Keep its five
+source modules as lazy embeds to preserve all 2,000 API-1 installed paths.
+Retain the sprite fallback for buffers without readable raw alpha data and
+keep floor shadows within widget bounds. See MERGE_LOG and TESTING for receipts.
+
 November 10 post-beta.2 merge-only: Bookshelf **f99a5bc4** (6.4.2, fourteen
 commits/29 net files) and SimpleUI **a2b677bc** (3.0.3, twelve commits/42 net
 files), imported unsquashed as **1b7621d3 / 0b6f7ac7**. Keep the hosted

@@ -1,5 +1,28 @@
 # Verification and device acceptance
 
+## 2026-11-11 — post-beta.3 SimpleUI maintenance
+
+Candidate source **b2f68f22c3e7e949372f0cf60ab8db1656d76610**, private ZIP
+**cf92f6453baf06b19b32be6c81544bcdb2b7f56d87b3c1c6712fefef57f45cbf**,
+manifest **4a6635054af1ece352fd74e306b5578f27d7489f58384640944853b91a7eba77**.
+The 9,874,612-byte archive has 2,000 installed paths including the manifest.
+Its file inventory, bootstrap, assets, exact-source projection and 40 embedded
+modules passed inspection. Both complete Lua and LuaJIT gates passed with
+134 Python tests (four optional source-pixel checks skipped), 1,257 syntax
+checks, 129 root suites, 588 Bookshelf suites (three standard SQLite
+exclusions) and 13 SimpleUI suites. All 129 root suites passed again against
+the sealed runtime under both interpreters. All 43 catalogs passed. The actual
+stable 1.1.0 and 1.2 beta.1/beta.2 installers passed offline upgrade, restart,
+rollback and interrupted-transfer recovery. The published beta.3 archive
+and local dist retain SHA-256 **f21e96f1**.
+
+The menu tests cover shared-ID visibility, reader-only entries and protected
+settings, plus the old file-browser cover action. The Critter tests cover
+embedded and custom sprites, raw-alpha stride, the fallback without raw
+alpha and shadow bounds. Physical Bigme menu confirmation, folder fallback
+and Critter rendering remain open. Evidence is in
+`test-results/upstream-20261111-post-beta3/`.
+
 ## 2026-11-11 — dashboard header alignment and Inter
 
 In the supplied 1264×1680 screenshot, the visible centre of the plus glyph

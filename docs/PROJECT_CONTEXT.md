@@ -22,6 +22,14 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **SimpleUI maintenance after beta.3.** The reviewed SimpleUI baseline is
+  **e6eb04720**. The Hide Menu Items settings can copy visibility for entries
+  shared by the File Manager and Reader. File Manager folders whose books
+  lack cover art display their name on the placeholder. Tiny Critter has
+  revised bubble tails and shadows. OrbitUI keeps its existing cover actions
+  while the new SimpleUI editor's write and cache behavior is reviewed.
+  Bookshelf remains at **f99a5bc4 / 6.4.2**. See MERGE_LOG and TESTING.
+
 - **Current public preview 1.2.0-beta.3.** Published 2026-11-11
   14:56:02 UTC as release **441829686** from frozen source **c7c23b25**.
   Public ZIP **f21e96f1** passed anonymous download and native OTA checks

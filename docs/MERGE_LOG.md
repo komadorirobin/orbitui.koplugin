@@ -4,6 +4,33 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-11 — post-beta.3 reviewed SimpleUI, merge only
+
+Reviewed both tracked branches from OrbitUI **1dce2852**. Bookshelf
+**f99a5bc43a0e65cc8f47f83b095289b998ff7978** (6.4.2) was already integrated.
+SimpleUI 3.0.3 advances from **a2b677bc** through five commits to
+**e6eb047207141cc7c7e95dd3c4b150fdde1a786f**. Import **2ff37d20** is an
+unsquashed subtree merge. Resolve the five catalog conflicts by retaining
+local active entries and removing obsolete entries. Preserve both fork
+anchors and licenses.
+
+The shared native menu entries can mirror File Manager visibility in Reader
+after confirmation. Reader-only entries, the OrbitUI settings entry and
+Quick Settings retain their existing protections. File Manager placeholders
+use the folder name for folders whose books have no usable art. SimpleUI
+invalidates cached covers when the cover columns are reset. Tiny Critter
+adopts the revised bubble and shadow shapes, preserving its raw-alpha
+fallback and omitting shadows that exceed the widget height.
+
+The new SimpleUI editor deletes an existing sidecar cover before writing
+the replacement and uses a separate undo path. In hosted OrbitUI, preserve
+the native File Manager cover action and the existing OrbitUI/Bookshelf picker.
+The five new modules are exact-source lazy embeds. No new active network or
+sync path is introduced. Home dashboard, Library/Manga shelves, profiles,
+ornaments and external plugin ownership retain the existing OrbitUI routes.
+The published beta.3 and stable 1.1.0 stay on their existing tags.
+See TESTING for the archive checks and remaining device coverage.
+
 ## 2026-11-11 — reader-panel visual correction and live time left
 
 User approves correcting the bottom sheet to the previously accepted sketch

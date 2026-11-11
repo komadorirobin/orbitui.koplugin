@@ -1248,6 +1248,14 @@ screens keep independent layouts and refresh targets. Regression coverage:
 
 ## C08: Assets, data and recovery
 
+The November 11 SimpleUI cover-editor import retains the existing native
+File Manager cover action in OrbitUI. The standalone component can expose
+its new editor. Hosted activation needs a replacement that preserves the
+current custom cover on write failure and coordinates with Bookshelf's
+cover choice and invalidation paths. The current bookshelf picker and
+BookOrbit/Hardcover ownership remain in use. Home invalidates its cover
+cache when the existing BookInfoManager path clears the cover columns.
+
 November 10 post-beta.2 upstream: connected SimpleUI collections remain an
 explicit user choice. Hosted startup does not automatically synchronize every
 stored rule. Both the base metadata query and filtered query must complete
@@ -1358,6 +1366,11 @@ Tests: `tests/test_backup.lua`, `test_runtime.lua`, `scripts/check-package.lua`.
 Recovery procedure: `MIGRATION.md`.
 
 ## C09: Reviewed imports and explicit releases
+
+November 11 post-beta.3 advances SimpleUI to e6eb04720. The five new
+modules use the existing exact-source registry (40 embeds, 419 canonical
+identities), preserving API 1 and all 2,000 installed paths. The audited
+main push and private package check leave the published preview at beta.3.
 
 November 10 post-beta.2 merge-only advances only the reviewed upstream pins
 to Bookshelf f99a5bc4 and SimpleUI a2b677bc. Preserve public beta.2/VERSION,
