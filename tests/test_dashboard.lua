@@ -299,6 +299,8 @@ H.test("staircase book columns have even gaps, aligned descending covers and ind
     result.stats = { today_secs = 27 * 60 }
     result.time_left = "About 2h 37m left"
     result.goal = { value = 206, target = 300, metric = "book", source = "Hardcover" }
+    local book_title, book_author = "A long title\nthat spans two lines\nand keeps going", "The Author"
+    result.current = { file = result.current.file, data = { title = book_title, authors = book_author, percent = .57 } }
     result.headings.hero, result.headings.ongoing = "Current heading fixture", "Ongoing heading fixture"
     local Silverfish = require("adapters/orbitui_silverfish")
     local snapshot, spriteWidget = Silverfish.snapshot, Silverfish.spriteWidget
@@ -317,7 +319,7 @@ H.test("staircase book columns have even gaps, aligned descending covers and ind
         local p = current._plan
         local bottom, previous_h, count, time_shown = nil, math.huge, 0, false
         local previous_right, smallest_gap, largest_gap = nil, math.huge, 0
-        local remaining, pet_stats, goal_source
+        local remaining, pet_stats, goal_source, current_title, current_author, percent_y
         local date = current[1][2]
         H.eq(date.fgcolor, "black")
         H.eq(date.face.size, math.floor(math.max(7, 16 * p.scale)))
@@ -343,10 +345,23 @@ H.test("staircase book columns have even gaps, aligned descending covers and ind
             if child.text == result.time_left then remaining = child end
             if child.text == "Days: 3 · Books: 0 · Gen: 1" then pet_stats = child end
             if child.text == result.goal.source then goal_source = child end
+            if child.text == book_title then current_title = child end
+            if child.text == book_author then current_author = child end
+            if child.text and child.text:match("^%d+ %%$") then
+                percent_y = percent_y or y
+                H.eq(y, percent_y)
+            end
         end
         H.eq(count, 4)
         assert(smallest_gap > 0 and largest_gap - smallest_gap <= 1)
         assert(time_shown)
+        H.eq(current_title.max_lines, 2)
+        H.eq(current_title.height_adjust, true)
+        H.eq(current_title.height_overflow_show_ellipsis, true)
+        H.eq(current_author.fgcolor, "black")
+        H.eq(current_author.face.size, math.floor(math.max(7, 14 * p.scale)))
+        assert(current_title.overlap_offset[2] + current_title:getSize().h < current_author.overlap_offset[2])
+        assert(current_author.overlap_offset[2] + current_author:getSize().h < percent_y)
         for _, label in ipairs({ assert(remaining), assert(pet_stats) }) do
             H.eq(label.fgcolor, "black")
             assert(label.overlap_offset[2] + label:getSize().h <= p.ladder.y + p.ladder.h)

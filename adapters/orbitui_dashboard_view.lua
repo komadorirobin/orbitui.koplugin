@@ -245,17 +245,23 @@ function M.content(widget, p, ctx, data)
         if coloured then frame.paintTo = M.paintColourCard end
         return add(frame, r.x, r.y)
     end
-    local function text(value, x, y, w, size, bold, color, lines)
-        if w < 1 then return end
+    local function textFace(size, bold)
         -- Geometry is already in device pixels; Font:getFace scales by DPI.
         local dpi = Screen:scaleBySize(1000) / 1000
-        local face, is_bold = Style.getStyledFace(nil, math.max(7, size * p.scale) / dpi,
+        return Style.getStyledFace(nil, math.max(7, size * p.scale) / dpi,
             bold and "bold" or "regular")
+    end
+    local function lineHeight(face)
+        return math.floor(face.size * 1.3 + .5)
+    end
+    local function text(value, x, y, w, size, bold, color, lines, fit_height)
+        if w < 1 then return end
+        local face, is_bold = textFace(size, bold)
         local args = { text = tostring(value or ""), face = face, bold = is_bold,
             fgcolor = color or ink, width = math.floor(w), max_width = math.floor(w) }
         if lines then
-            args.max_lines, args.height_adjust = lines, false
-            args.height = math.ceil(face.size * 1.3) * lines
+            args.max_lines, args.height_adjust = lines, fit_height or false
+            args.height = (fit_height and lineHeight(face) or math.ceil(face.size * 1.3)) * lines
             args.height_overflow_show_ellipsis = true
             return add(UI.makeTextBox(args, true), x, y)
         end
@@ -340,7 +346,14 @@ function M.content(widget, p, ctx, data)
         local foot_h = has_footer and math.max(30, px(48)) or 0
         local foot_y = bottom - foot_h
         local pct_y = foot_y - math.max(14, px(22))
-        local title_y = pct_y - math.max(24, px(43))
+        local author = data.current and require("infra/sui_text").formatAuthors(data.current.data.authors)
+        local title_size, author_size = 15, 14
+        local author_gap = px(2)
+        local title_h = 2 * lineHeight(textFace(title_size, true))
+        local author_h = author and (lineHeight(textFace(author_size, false)) + author_gap) or 0
+        -- Reserve two lines plus the current book's author so all percentages
+        -- stay aligned, even when the first title wraps.
+        local title_y = pct_y - title_h - author_h - px(4)
         local base = title_y - px(6)
         local cover_h = math.min(base - cover_top, math.floor(first_w * 1.35))
         local step = math.min(px(18), math.floor(cover_h / 6))
@@ -377,10 +390,9 @@ function M.content(widget, p, ctx, data)
                 cover(book.file, rect(x, base - col.cover_h, col.cover_w, col.cover_h), false, true)
             end
             local y = compact and cover_top or title_y
-            text(book.data.title, x, y, w, 15, true, ink, is_current and 1 or 2)
-            if is_current and not compact then
-                text(require("infra/sui_text").formatAuthors(book.data.authors) or "",
-                    x, y + px(22), w, 12, false, muted)
+            local title_label = text(book.data.title, x, y, w, title_size, true, ink, 2, true)
+            if is_current and author and title_label and not compact then
+                text(author, x, y + title_label:getSize().h + author_gap, w, author_size, false, ink, 1, true)
             end
             local progress = math.floor(Model.fraction(book.data.percent) * 100 + .5)
             if not compact then text(string.format("%d %%", progress), x, pct_y, w, 13, false) end
