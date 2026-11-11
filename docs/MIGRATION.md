@@ -131,10 +131,10 @@ folder or label changes. Newly selected folders must exist; temporarily absent
 old roots (for example on removable storage) may remain unchanged.
 
 The guide appears automatically only on a fresh installation, in FileManager,
-not while a book is opening. It offers the local Reading dashboard and a small
-Home/library/power bar, applied only after confirmation. The dashboard is an
-additional page, not a replacement layout. Existing Home pages and File browser
-are alternative launch targets. Bar buttons appear in selection order and obey
+not while a book is opening. It preselects Reading dashboard with Straight cover
+row and a small Home/library/power bar. Review and apply to add the dashboard as
+the first Home page. Existing Home pages and File browser are alternative launch
+targets. Bar buttons appear in selection order and obey
 the native bar limit (including navigation-pager mode); two buttons are required
 when building a bar with this guide. More advanced choices remain in Navigation
 & bars. Adding a library section does not silently add a button to an existing
@@ -144,8 +144,8 @@ Before components create defaults, `settings/orbitui/setup.lua` records version 
 and a `pending` or `kept` status. Existing Bookshelf/SimpleUI files (including
 native Bookshelf's `settings/bookshelf/settings.lua`, `.old` backups, or legacy
 global preferences) select `kept`: upgrades are not prompted
-and their choices are left alone. The user can open the guide manually, with
-all choices initially set to Keep existing. On a fresh install, Cancel leaves
+and their choices are left alone. For these users, the manual guide starts
+with Keep existing. On a fresh install, Cancel leaves
 setup pending for the next launch; Skip automatic setup stops automatic prompts
 but does not prevent opening the guide from settings. A reader-first launch
 defers the prompt until FileManager is available. Unknown setup schemas block

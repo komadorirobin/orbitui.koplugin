@@ -124,8 +124,9 @@ Library roots and configured scan depth determine coverage.
 
 ## Make Home useful to you
 
-The optional **Reading dashboard** adds a Home page without replacing your
-existing pages. Choose its cards, headings, colours, order and row sources:
+On a fresh install, the setup guide preselects **Reading dashboard** with
+**Straight cover row**. Review and apply to add it as the first Home page.
+Choose its cards, headings, colours, order and row sources:
 local To Be Read, new books, history, collections, saved shelves or BookOrbit.
 Each book row has its own paging arrows and swipe navigation.
 

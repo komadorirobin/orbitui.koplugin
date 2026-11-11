@@ -65,6 +65,7 @@ local function snapshot()
         tabs = Libraries.copy(require("infra/sui_config").loadTabConfig()),
         start = G_reader_settings:readSetting("start_with"),
         dashboard = sui():readSetting("simpleui_hs_orbitui_dashboard_enabled"),
+        dashboard_layout = sui():readSetting("simpleui_hs_orbitui_dashboard_layout"),
         appearance = require("adapters/orbitui_appearance").current() }
 end
 
@@ -197,11 +198,19 @@ local function libraryItems(session)
 end
 
 local home_names = { keep = "Keep existing", dashboard = "Reading dashboard", home = "Existing Home pages", files = "File browser" }
+local function homeLabel(draft, choice)
+    local label = _(home_names[choice])
+    if choice == "dashboard" and draft.dashboard_layout == "cover_row" then
+        label = label .. " · " .. _("Straight cover row")
+    end
+    return label
+end
+
 local function homeItems(session)
     local rows = {}
     for _i, id in ipairs({ "keep", "dashboard", "home", "files" }) do
         local value = id
-        rows[#rows + 1] = { text = _(home_names[value]), radio = true,
+        rows[#rows + 1] = { text = homeLabel(session.draft, value), radio = true,
             checked_func = function() return session.draft.home == value end,
             callback = function() session.draft.home = value end }
     end
@@ -289,7 +298,7 @@ local function review(session)
     local ok, err = pcall(plan, session)
     if not ok then info(session, errorText(err)); return end
     local draft, lines = session.draft, { _("Review setup") }
-    lines[#lines + 1] = _("Start screen") .. ": " .. _(home_names[draft.home])
+    lines[#lines + 1] = _("Start screen") .. ": " .. homeLabel(draft, draft.home)
     lines[#lines + 1] = _("Shelf preset") .. ": " .. (draft.appearance == "keep" and _("Keep existing")
         or require("adapters/orbitui_appearance").label(draft.appearance))
     if draft.appearance ~= "keep" then
@@ -312,21 +321,18 @@ local function review(session)
     })
 end
 
-function M.show(owner, fresh)
+function M.show(owner)
     M.prepare()
     if active then return active.host end
-    local session = { owner = owner or current_owner, draft = Model.draft(snapshot()), children = {}, watched = {} }
-    if fresh then
-        session.draft.home, session.draft.bar = "dashboard", "custom"
-        session.draft.tabs = { "homescreen", "orbitui_bookshelf", "power" }
-    end
+    local pending = state:readSetting("setup").status == "pending"
+    local session = { owner = owner or current_owner, draft = Model.draft(snapshot(), pending), children = {}, watched = {} }
     active = session
     local rows = {
         { text = _("About this guide"), callback = function()
             info(session, _("Choose folders, library sections, a start screen and bottom-bar buttons. Nothing is applied until you review and confirm. All online integrations are optional."))
         end },
         { text = _("Library sections and folders"), sub_item_table_func = function() return libraryItems(session) end },
-        { text_func = function() return _("Start screen") .. ": " .. _(home_names[session.draft.home]) end,
+        { text_func = function() return _("Start screen") .. ": " .. homeLabel(session.draft, session.draft.home) end,
             sub_item_table_func = function() return homeItems(session) end },
         { text = _("Bottom bar"), sub_item_table_func = function() return barItems(session) end },
         { text = _("Optional integrations"), sub_item_table_func = function()
@@ -345,7 +351,7 @@ function M.show(owner, fresh)
         { text = _("Review and apply"), callback = function() review(session) end },
         { text = _("Cancel (keep settings)"), callback = function() require("lib/bookshelf_menu_host").close(session.host) end },
     }
-    if state:readSetting("setup").status == "pending" then
+    if pending then
         rows[#rows + 1] = { text = _("Skip automatic setup"), callback = function()
             state:saveSetting("setup", { version = 1, status = "skipped" }); state:flush()
             require("lib/bookshelf_menu_host").close(session.host)
@@ -366,7 +372,7 @@ function M.started(owner)
         if not owner._orbitui_setup_alive or current_owner ~= owner or offered
             or state:readSetting("setup").status ~= "pending" then return end
         offered = true
-        local ok, err = pcall(M.show, owner, true)
+        local ok, err = pcall(M.show, owner)
         if not ok then
             require("logger").warn("OrbitUI setup could not open", err)
             ui():show(require("ui/widget/infomessage"):new{

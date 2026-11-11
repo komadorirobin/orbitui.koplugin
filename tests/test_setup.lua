@@ -59,6 +59,7 @@ H.test("dashboard adds a separate page without changing existing pages, sources 
     H.eq(by_key.simpleui_layout.pages[1].modules[1], "orbitui_dashboard")
     assert(Model.equal(by_key.simpleui_layout.pages[2], current.layout.pages[1]))
     H.eq(by_key.simpleui_hs_orbitui_dashboard_enabled, true)
+    H.eq(by_key.simpleui_hs_orbitui_dashboard_layout, nil)
     assert(not by_key.simpleui_hs_book_close_target)
     assert(not by_key.simpleui_hs_orbitui_dashboard_config)
     for _, id in ipairs(by_key.simpleui_hs_module_order) do assert(id ~= "__page_break__") end

@@ -11,9 +11,15 @@ function M.equal(a, b)
     return true
 end
 
-function M.draft(snapshot)
-    return { original = Libraries.copy(snapshot), libraries = Libraries.copy(snapshot.libraries),
+function M.draft(snapshot, fresh)
+    local draft = { original = Libraries.copy(snapshot), libraries = Libraries.copy(snapshot.libraries),
         home = "keep", bar = "keep", appearance = "keep", tabs = Libraries.copy(snapshot.tabs or {}) }
+    if fresh then
+        draft.home, draft.bar = "dashboard", "custom"
+        draft.tabs = { "homescreen", "orbitui_bookshelf", "power" }
+        if snapshot.dashboard_layout == nil then draft.dashboard_layout = "cover_row" end
+    end
+    return draft
 end
 
 function M.add(draft, label, path)
@@ -74,6 +80,9 @@ function M.plan(draft, current, options)
         local layout = Dashboard.withPage(current.layout, true)
         set("simpleui", "simpleui_layout", layout)
         set("simpleui", "simpleui_hs_orbitui_dashboard_enabled", true)
+        if draft.dashboard_layout and current.dashboard_layout == nil then
+            set("simpleui", "simpleui_hs_orbitui_dashboard_layout", draft.dashboard_layout)
+        end
         -- Keep the native module-order setting in sync without resetting modules.
         local order, seen = {}, {}
         for _, page in ipairs(layout.pages) do
