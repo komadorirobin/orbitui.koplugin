@@ -182,7 +182,7 @@ function M.tagSections(owner, book, modal, cached)
                 })
             end }
     end
-    local sections = {{ title = _("EPUB tags (offline)"), pills = local_pills,
+    local sections = {{ title = _("EPUB tags (offline)"), pills = local_pills, loaded = local_state.tags ~= nil,
         note = local_state.error or (local_state.tags and #local_state.tags == 0 and _("No separate tags embedded in this EPUB. Standard EPUB subjects are shown as genres below."))
             or _("Tap a local EPUB tag to search. Long-press to save a smart chip, optionally combining tags. No account or connection is needed; nothing is synced or edited.") }}
     if Integration.bookOrbitEnabled("tags") then sections[#sections + 1] = remote end
@@ -524,7 +524,13 @@ function M.bookPage(owner, record, options, classic)
                 end
             end
             flush()
-            if visible == 0 then body[#body + 1] = text(section.note or _("No tags available."), 14, false, w, px(60), BB.COLOR_DARK_GRAY) end
+            if visible == 0 then
+                local note = section_i > 1 and _("Open tag tools to load BookOrbit tags.")
+                    or not book.filepath:lower():match("%.epub$") and _("Genres and collections are available in tag tools.")
+                    or section.loaded and _("No separate EPUB tags. Genres and collections are available in tag tools.")
+                    or _("EPUB tags are not cached yet. Open tag tools to read them.")
+                body[#body + 1] = text(note, 14, false, w, nil, BB.COLOR_DARK_GRAY)
+            end
             body[#body + 1] = space(8)
         end
         -- Explicit refresh, online loads and similarity tools stay in Tags.
