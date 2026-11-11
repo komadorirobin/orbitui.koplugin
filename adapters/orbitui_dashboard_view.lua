@@ -300,7 +300,7 @@ function M.content(widget, p, ctx, data)
     local date = os.date("*t")
     text(_(Model.greeting(date.hour)), 0, 0, p.w - px(112), 23, true)
     text(string.format("%d %s %d", date.day, _(MONTHS[date.month]), date.year),
-        0, px(31), p.w - px(112), 13, false, muted)
+        0, px(30), p.w - px(112), 16, true)
     local search = rect(p.w - px(54), 0, px(54), px(52))
     text(_("Search"), search.x, px(14), search.w, 13, true)
     action(search, function() require("core/orbitui_search").show() end)
@@ -337,7 +337,7 @@ function M.content(widget, p, ctx, data)
         local other_x = left + first_w + gap
         local other_w = math.floor((right - other_x - 2 * gap) / 3)
         local has_footer = pet or data.time_left
-        local foot_h = has_footer and math.max(28, px(45)) or 0
+        local foot_h = has_footer and math.max(30, px(48)) or 0
         local foot_y = bottom - foot_h
         local cover_top = top + math.max(15, px(26))
         local pct_y = foot_y - math.max(14, px(22))
@@ -375,17 +375,17 @@ function M.content(widget, p, ctx, data)
 
         if has_footer and not compact then
             add(UI.solidBar(right - left, px(1), BB.COLOR_LIGHT_GRAY), left, foot_y)
-            if data.time_left then text(data.time_left, left, foot_y + px(12), first_w, 12, false, muted) end
+            if data.time_left then text(data.time_left, left, foot_y + px(11), first_w, 15, true) end
             if pet then
                 local sprite_w = px(31)
                 local tx = right - sprite_w - gap
                 local function rightLabel(value, y, size, bold)
-                    local label = text(value, other_x, y, tx - other_x, size, bold, bold and ink or muted)
+                    local label = text(value, other_x, y, tx - other_x, size, bold)
                     if label then label.overlap_offset[1] = tx - math.min(tx - other_x, label:getSize().w) end
                 end
                 rightLabel(pet.name .. "  " .. pet.stage, foot_y + px(6), 13, true)
                 rightLabel(string.format(_("Days: %s · Books: %s · Gen: %s"),
-                    pet.days or "—", pet.finished or "—", pet.generation), foot_y + px(25), 11)
+                    pet.days or "—", pet.finished or "—", pet.generation), foot_y + px(25), 14)
                 add(Silverfish.spriteWidget(pet, sprite_w, foot_h - px(5), paper), right - sprite_w, foot_y + px(5))
                 action(rect(other_x, foot_y, right - other_x, foot_h), function() Silverfish.openPet(pet) end)
             end

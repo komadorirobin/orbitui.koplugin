@@ -298,6 +298,14 @@ H.test("staircase book columns have aligned descending covers and independent ta
     saved[layout_key] = "classic"
     result.stats = { today_secs = 27 * 60 }
     result.time_left = "About 2h 37m left"
+    local Silverfish = require("adapters/orbitui_silverfish")
+    local snapshot, spriteWidget = Silverfish.snapshot, Silverfish.spriteWidget
+    Silverfish.snapshot = function()
+        return { name = "Franz", stage = "Ash Cat · Kitten", days = 3, finished = 0, generation = 1 }
+    end
+    Silverfish.spriteWidget = function(_, w, h)
+        return Widget:new{ kind = "pet", dimen = { w = w, h = h } }
+    end
     UI.solidBar = function(w, h)
         return Widget:new{ kind = "line", dimen = { w = w, h = h } }
     end
@@ -306,6 +314,11 @@ H.test("staircase book columns have aligned descending covers and independent ta
         current.dimen.x, current.dimen.y = 0, 0
         local p = current._plan
         local bottom, previous_h, count, time_shown = nil, math.huge, 0, false
+        local remaining, pet_stats
+        local date = current[1][2]
+        H.eq(date.fgcolor, "black")
+        H.eq(date.face.size, math.floor(math.max(7, 16 * p.scale)))
+        assert(date.overlap_offset[2] + date:getSize().h <= p.ladder.y)
         for _, child in ipairs(current[1]) do
             local x, y = child.overlap_offset[1], child.overlap_offset[2]
             local size = child:getSize()
@@ -317,9 +330,16 @@ H.test("staircase book columns have aligned descending covers and independent ta
                 previous_h, count = size.h, count + 1
             end
             if child.text == "27 min" then time_shown = true end
+            if child.text == result.time_left then remaining = child end
+            if child.text == "Days: 3 · Books: 0 · Gen: 1" then pet_stats = child end
         end
         H.eq(count, 4)
         assert(time_shown)
+        for _, label in ipairs({ assert(remaining), assert(pet_stats) }) do
+            H.eq(label.fgcolor, "black")
+            assert(label.overlap_offset[2] + label:getSize().h <= p.ladder.y + p.ladder.h)
+        end
+        assert(remaining.overlap_offset[1] + remaining:getSize().w < pet_stats.overlap_offset[1])
         for _, slot in ipairs(current._cover_slots) do
             if slot.area.y < p.ladder.y + p.ladder.h then
                 local pos = { pos = { x = slot.area.x + 1, y = slot.area.y + 1 } }
@@ -332,6 +352,7 @@ H.test("staircase book columns have aligned descending covers and independent ta
         end
         current:free()
     end
+    Silverfish.snapshot, Silverfish.spriteWidget = snapshot, spriteWidget
 end)
 
 H.test("closing a dashboard layout change rebuilds the data context", function()
