@@ -22,6 +22,11 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Dashboard header refinement.** Search and the plus share a centred
+  row, and Straight cover row uses the bundled Inter font by default.
+  An active custom UI font takes precedence. Native desktop renders passed.
+  Private ZIP **0d2d0047** awaits the physical Bigme check.
+
 - **USB release review and new screenshots.** Bigme verification covered
   Home, the two shelves, search, book details, the reader panel and touch
   after Android sleep on both Home and a fixture book. The healthy private

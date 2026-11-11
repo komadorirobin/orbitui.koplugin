@@ -1,5 +1,26 @@
 # Verification and device acceptance
 
+## 2026-11-11 — dashboard header alignment and Inter
+
+In the supplied 1264×1680 screenshot, the visible centre of the plus glyph
+was 6.5 pixels below Search. The new dashboard header centres Search in
+its tap area and draws the plus on the same row. Straight cover row now
+uses the bundled Inter 18pt family unless a custom UI font is active.
+
+Native KOReader desktop widgets rendered both languages at 1232×1360,
+480×540 and 800×480. Visible centres of the two actions differed by at
+most one pixel. The bundled regular and bold faces were resolved through
+SimpleUI's style resolver with an isolated font registry. Two-line
+titles and overflow ellipses were checked at each size.
+
+Both complete Lua and LuaJIT suites passed with the optional SQLite skips.
+The dashboard and module suites passed again against the sealed runtime in
+both interpreters. Source **6be7cf45dcd3345e6bddfea68080db82f8aa1341**,
+private ZIP **0d2d004721e89784ea457233f6c3c03a0396688c9465eafea2277cc442e48055**.
+Package validation passed. The Bigme was disconnected during this change.
+Native before-and-after captures are in
+`test-results/dashboard-header-type-20261111/`.
+
 ## 2026-11-11 — USB release review and screenshot set
 
 The Bigme booted the verified private ZIP
