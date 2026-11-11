@@ -1,5 +1,26 @@
 # Verification and device acceptance
 
+## 2026-11-11 — heading-free cover staircase on Bigme
+
+The cover staircase skips the current and ongoing headings and uses their
+space for taller covers. The dashboard editor hides the corresponding
+heading controls in this layout. Checks cover the saved classic layout,
+cover alignment, book gestures and missing heading text at four sizes.
+Desktop KOReader widgets painted at 1232×1360, 480×540 and 800×480.
+
+On the Bigme at 1264×1680, the four covers each gained 30 visible pixels in
+width and the gaps measured 82, 83 and 83 pixels. Home and the dashboard
+editor were checked over USB. Wallpaper, saved heading settings, layout,
+history, collections and crash-log size matched the pre-test state.
+
+Source **e44bf3fe0694eda1448950035b52e391abee5625**, private ZIP
+**b59355dbebea33debfe801c57a02ab128631d91484dc61955a504657199ed340**.
+The full Lua gate passed with the optional SQLite skips. Both focused
+dashboard suites passed against the sealed runtime in Lua and LuaJIT.
+Archive integrity, 2,000 identical Android paths and all their hashes were
+verified. The build is active with **36c59799** as rollback.
+Evidence is in `test-results/dashboard-cover-heading-20261111/`.
+
 ## 2026-11-11 — even cover staircase spacing on Bigme
 
 The staircase distributes the gaps between cover edges, preserves the cover

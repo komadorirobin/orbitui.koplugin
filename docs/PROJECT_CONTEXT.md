@@ -22,11 +22,17 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Cover staircase without section headings.** The cover staircase omits
+  the current and ongoing headings and uses the recovered space for larger
+  covers. Their gaps measured 82–83 pixels on the Bigme. The direct
+  dashboard editor hides those heading controls in this layout. Active
+  private slot **b59355db** retains **36c59799** as rollback.
+
 - **Even cover staircase spacing.** Covers keep their descending sizes and
-  share a baseline. The measured gaps on the Bigme are now 112–113 pixels.
+  share a baseline. The measured gaps on the Bigme were 112–113 pixels with
+  the headings still present.
   The text and tap targets follow their covers, and the last title retains
-  a full column. Tested in active private slot **36c59799**, with
-  **7cb0b352** as rollback.
+  a full column. Tested in private slot **36c59799**.
 
 - **Reading-goal source readability.** The Hardcover caption under the
   progress bar uses larger type and primary ink in both dashboard layouts.
