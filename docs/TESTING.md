@@ -1,5 +1,33 @@
 # Verification and device acceptance
 
+## 2026-11-11 — cover staircase with Reading today on Bigme
+
+The separate dashboard layout preference retains the classic card
+configuration. The new first page uses the current book and three distinct
+ongoing books, their native cover and action handlers, optional Silverfish,
+Reading today, the reading goal and the two existing book rows. Additional
+cards retain dashboard pagination. Geometry and actions were exercised in
+four sizes and the desktop KOReader widgets painted representative data at
+1232×1360 and 480×540.
+
+USB testing at 1264×1680 verified the cover staircase, time remaining, goal
+and both book rows on one screen, opening Silverfish, opening the correct
+book details by hold, paging New books and returning to the classic layout.
+The first test showed 0 minutes after switching from a classic page with
+the reading-time card disabled. The selector now rebuilds the data context,
+and the final build showed the live 5 minutes immediately after switching
+and again after a normal exit and restart. The classic configuration,
+history and collections matched the pre-test copies.
+
+Final source **f151c9b42d51de3a0fbea471b66cf662be47103b**, private ZIP
+**a2840fcf966c7ff3460a9ca85ccf8f110d222aadd6923bf1cd901ebd602b7f60**.
+Full Lua and LuaJIT gates passed with the optional SQLite skips. Four
+focused suites passed against the sealed runtime in each interpreter.
+Archive integrity, 2,000 identical installed paths and all Android file
+hashes verified. The layout remains selected on the healthy private slot
+with **49cc5423** as rollback. The crash log stayed at 14,785 bytes.
+Device receipts are in `test-results/dashboard-cover-stairs-20261111/`.
+
 ## 2026-11-11 — unchecked sheet boxes on Bigme
 
 Reproduced the report in the Silverfish card settings on **43a0b927**.
