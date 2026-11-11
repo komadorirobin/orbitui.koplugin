@@ -1,5 +1,39 @@
 # Verification and device acceptance
 
+## 2026-11-11 — USB Bigme editing and navigation acceptance
+
+The user requested physical testing. At 1264×1680 on the Bigme, the initial
+**29a5c71a / af5fdc1b** slot passed staged collection add/remove and Save,
+all four shelf editor sections and a persisted List selection on a test shelf.
+The native index completed 90 isolated EPUBs, paused by touch at 20, and
+paused again at 27 when the device slept. After waking, the primary action
+resumed the same reread job to 90/90 with zero failures. Tag search opened
+from a book overview and selected its result in the shelf. Ordinary search,
+the reader bottom sheet, and its native Reading settings handoff worked on
+fixture books. The Similar results showed three books and two grouped rows
+on the tagged fixtures. Settings Navigation opened the native Bars page.
+
+The physical Back key initially exposed Advanced SimpleUI settings from a
+module category. **3be519f797b360b5dab43a4c95df185be237ec4a** makes the first
+nested screen the native window's root when launched from an OrbitUI sheet.
+The Android Back key and the on-screen chevron now return to the originating
+sheet. Retested Home and BookOrbit category routes, the module catalog, card
+size Back, and adding and removing a temporary Clock card with confirmation.
+BookOrbit network refresh, plugin installation and AI execution were outside
+these local checks. The existing shelf display subpicker still shows mixed
+English and Swedish labels and a tight Automatic counter label on the Bigme.
+
+The final private archive **5f5fd74c8fd6dd4bb481a042d7172cd5e46ed8c9ce01bdfe1e087ea1f7a82a52**
+passed package/source projection and 2,000 Android path hashes before
+activation. Both full Lua/LuaJIT gates passed, with the usual optional skips.
+The slot started healthy and the original **56904a9a** remains rollback.
+Six original preference, collection and history files were restored and
+hash-verified with KOReader stopped. Four rolling `.old` files containing
+fixture data were set to copies of those restored originals. The QA patch
+was taken out of autoload, the test files and isolated tag cache were moved
+out of the library, and the crash-log size stayed at 14,785 bytes. Local
+evidence and receipts are under `test-results/device-editing-views-20261111/`.
+
 ## 2026-11-11 — collection, module picker, tag index and shelf editor
 
 Local source **29a5c71a7ca0fc40a0378550455f0f5a0f21de05**, private archive

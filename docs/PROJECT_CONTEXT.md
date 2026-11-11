@@ -29,7 +29,11 @@ and correct this file in the same change.
   primary action. The shelf editor groups source, filter, sort and appearance
   while retaining its existing preference writes and live shelf preview.
   Desktop KOReader widget checks cover all four in portrait, short and landscape
-  layouts. Physical Bigme verification is pending.
+  layouts. USB testing passed on the Bigme, including a pause/wake/resume of
+  the index. A native submenu Back fix was verified on the device. The active
+  private slot **5f5fd74c** retains **56904a9a** as rollback. The pre-test
+  settings and history are restored. See TESTING for the tested paths and
+  remaining limitations.
 
 - **Ordinary book search, local.** The rounded native search sheet holds the
   editable query, scope and sort above separate book and group results. The
