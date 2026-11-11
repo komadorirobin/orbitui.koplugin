@@ -1,5 +1,20 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.2.0-beta.3
+
+This preview includes the straight cover row dashboard, airy book overview,
+redesigned search and tag results, updated settings and editing sheets, and
+remaining reading time in the reader panel and supported Home cards. The
+fresh setup guide preselects the dashboard with the straight cover row.
+The stable channel continues to offer 1.1.0.
+
+The Bigme USB review covered the main views, touch after waking on Home and
+in the reader, and the reader panel with separate EPUB fixtures. The final
+Inter and header alignment refinements were checked with native desktop
+KOReader widgets. A fresh physical installation and those last visual
+refinements still need device coverage. See TESTING for the tested builds
+and fixtures.
+
 ## OrbitUI 1.2.0-beta.2
 
 Published **2026-11-10 22:26:05 UTC**, release **440990827**, frozen source/tag
