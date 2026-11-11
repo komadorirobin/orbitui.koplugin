@@ -34,8 +34,11 @@ and correct this file in the same change.
   native Statistics average and getTimeForPages formatter, respecting native
   page flows/duration format. No extra SQL/sidecar/network query or default
   speed; missing data is explained. This is separate from the optional Home
-  Finish forecast/date calculation. Native widget/formatter checks and eleven
-  focused Lua/LuaJIT cases pass; full/package receipts follow in TESTING.
+  Finish forecast/date calculation. Native widget/formatter checks, eleven
+  focused cases, both complete gates and all 129 sealed root suites per
+  interpreter pass. Runtime **bba87174**, private ZIP **315ad835**, manifest
+  **fdc30fd7**; unchanged exact API1 inventory. Public dist stays **d7abac63**.
+  Full receipts and the remaining physical check are in TESTING.
   No device, version, upstream or public-release action in this step.
 
 - **Local airy book-info implementation, not released.** User chooses the
@@ -51,10 +54,11 @@ and correct this file in the same change.
   pass, as do the complete Lua/LuaJIT gates and focused sealed repeats. Revised
   runtime **f816d804**, private ZIP **cdf88a61**, unchanged API1 inventory;
   public dist remains **d7abac63**. Receipts are in TESTING. No public beta yet.
-  Current visual experiment removes only the overview headings "About this
+  Subsequent visual experiment removes only the overview headings "About this
   book" and "Tags", retaining spacing and the EPUB/BookOrbit source labels.
   Native layout checks and targeted Lua/LuaJIT tests pass; this working-tree
-  preview is not included in the last sealed archive above.
+  preview is absent from the older sealed archive above and is now retained in
+  the reader-panel candidate **bba87174 / 315ad835**.
   A default-on, reversible overview shows cover, status/rating, a compact facts
   row, description and two rows of clickable offline tag chips. Explicit
   refresh/online tag tools, reviews, metadata, highlights, cover selection and

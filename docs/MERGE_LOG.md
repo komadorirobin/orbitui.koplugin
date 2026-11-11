@@ -20,8 +20,11 @@ Reuse native duration/page-flow methods in memory, without a statistics query,
 initialization, fabricated default, date prediction or writer. Preserve the
 previously approved book-overview heading-removal experiment in this candidate.
 No upstream import, component source, source-pin, asset, installed-path/API1,
-version, push, release, device or server change. See TESTING for verification
-and the separate physical acceptance limit.
+version, push, release, device or server change. Both complete gates and 129
+sealed root suites per interpreter pass; native widget/formatter/geometry/
+gesture checks cover six viewport/scaling configurations. Runtime **bba87174**,
+private ZIP **315ad835**, exact unchanged API1 inventory and public dist
+**d7abac63**. See TESTING for verification and the physical acceptance limit.
 
 ## 2026-11-11 — correct the book overview against the approved sketch
 

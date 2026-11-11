@@ -24,7 +24,16 @@ Both complete interpreter gates pass: 134 Python tests/four unchanged optional
 art skips, 1,252 syntax files, 129 root suites, 588 Bookshelf suites/zero failures/
 three usual SQLite exclusions and 13 SimpleUI files. A final one-pixel dense-DPI
 tile-padding correction is followed by the stricter eleven-case focused repeat
-and native geometry/gesture checks. Package/sealed receipts follow below.
+and native geometry/gesture checks. All 129 root suites then pass against the
+final sealed runtime under both interpreters. Package validation and exact
+source projection pass: source **bba871746a14eeb9723e784aecccea5cb146191a**,
+private ZIP **315ad8350436bc0ba0cb45b28bf3837e397eb5f6e0f08e32f69d69c5fff25176**,
+manifest **fdc30fd7add06d284b7e784795021f70265896f1e1cdcc15298b370120ea12eb**.
+Same 2,000 installed paths/1,999 payload entries, 35 embedded modules/414
+identities; assets, bootstrap, version and source pins are unchanged. All 38
+new blobs since the branch base pass the held-art check. Public dist is restored
+byte-for-byte to **d7abac63**. Later receipt-only documentation is not a runtime
+change. Final logs/audit/candidate are retained in the private evidence folder.
 No physical acceptance, installation, public version/push/release or server
 change is implied. Previous book-overview heading removal is preserved.
 
