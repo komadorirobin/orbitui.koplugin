@@ -974,6 +974,7 @@ function SettingsWindow:show(on_close, nav_path, state)
     local screens = buildScreens(st)
     local titles  = makeScreenTitles(st)
     if self.orbitui_settings_titles then self.orbitui_settings_titles(titles, st) end
+    local return_to_parent = st.orbitui_back_to_parent and nav_path and #nav_path > 0
 
     local win = SUI:new{
         name           = "sui_win_settings",
@@ -982,6 +983,7 @@ function SettingsWindow:show(on_close, nav_path, state)
         screen_titles  = titles,
         navpager_mode  = Config.isNavpagerEnabled(),
         on_close       = wrapped_on_close,
+        on_back        = return_to_parent and function() end or nil,
         nav_path       = nav_path,
         position       = "bottom",
         screen_footers = {
@@ -1050,7 +1052,9 @@ function SettingsWindow:show(on_close, nav_path, state)
         },
     }
 
-    if initial_screen and screens[initial_screen] then
+    if return_to_parent then
+        table.remove(win._nav_stack, 1)
+    elseif initial_screen and screens[initial_screen] then
         win._nav_stack[#win._nav_stack + 1] = { id = initial_screen, params = {} }
     end
     win:show()

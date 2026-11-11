@@ -196,14 +196,14 @@ function M.moduleItems(id, refresh, pfx, navigation)
                             if ok and type(rows) == "table" then return rows end
                             return {{ text = _("Unavailable"), enabled_func = function() return false end }}
                         end,
-                    } }}, { pfx = pfx or "simpleui_hs_" })
+                    } }}, { pfx = pfx or "simpleui_hs_", orbitui_back_to_parent = true })
                 end }
         end
     end
     return items
 end
 
-function M.pickerItems(refresh, pfx)
+function M.pickerItems(refresh, pfx, return_to_parent)
     if dashboard().readConfig(pfx).unsupported then
         return {{ text = _("This dashboard needs a newer OrbitUI version."), enabled_func = function() return false end }}
     end
@@ -264,7 +264,7 @@ function M.pickerItems(refresh, pfx)
         end, function(source) return sourceCard(source, pfx) ~= nil end)
     end }
     items[#items + 1] = { text = _("Get more modules…"), callback = function()
-        require("adapters/orbitui_module_store").show(pfx)
+        require("adapters/orbitui_module_store").show(pfx, return_to_parent)
     end }
     return items
 end
@@ -272,7 +272,7 @@ end
 local function pickerSheet(pfx, ctx)
     local UI = require("ui/uimanager")
     local Sheets = require("lib/bookshelf_library_modal")
-    local items, panel, closed, changed = M.pickerItems(nil, pfx), nil, false, false
+    local items, panel, closed, changed = M.pickerItems(nil, pfx, true), nil, false, false
     local function current()
         return not closed and (not UI.getTopmostVisibleWidget or UI:getTopmostVisibleWidget() == panel)
     end
@@ -287,7 +287,8 @@ local function pickerSheet(pfx, ctx)
                 local item = M.pickerItems(refresh, pfx)[index]
                 return item and item.sub_item_table_func and item.sub_item_table_func()
                     or {{ text = _("Unavailable"), dim = true }}
-            end } }}, { pfx = pfx or "simpleui_hs_", pfx_qa = (pfx or "simpleui_hs_") .. "qa_" })
+            end } }}, { pfx = pfx or "simpleui_hs_", pfx_qa = (pfx or "simpleui_hs_") .. "qa_",
+                orbitui_back_to_parent = true })
     end
     local rows, action
     if #items == 1 then
@@ -342,7 +343,7 @@ local function cardSheet(pfx, ctx, id, parent_open)
     local function choices(item)
         return require("screens/sui_settings_window"):show(nil, {{ id = "nested_menu", params = {
             title = item.text, items_func = item.sub_item_table_func,
-        } }}, { pfx = pfx or "simpleui_hs_" })
+        } }}, { pfx = pfx or "simpleui_hs_", orbitui_back_to_parent = true })
     end
     rows = function()
         local items = M.moduleItems(id, refresh, pfx)

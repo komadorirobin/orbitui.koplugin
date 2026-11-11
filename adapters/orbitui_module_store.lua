@@ -313,7 +313,7 @@ function M.items(refresh, cached)
     end
     return items
 end
-function M.show(pfx)
+function M.show(pfx, return_to_parent)
     protected(function()
         local alive, cached = true, {}
         return require("screens/sui_settings_window"):show(function() alive = false end, {{ id = "nested_menu", params = {
@@ -323,7 +323,7 @@ function M.show(pfx)
                     if alive and ctx.repaint then ctx.repaint() end
                 end, cached)
             end,
-        } }}, { pfx = pfx or "simpleui_hs_" })
+        } }}, { pfx = pfx or "simpleui_hs_", orbitui_back_to_parent = return_to_parent })
     end)
 end
 return M
