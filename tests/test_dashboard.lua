@@ -233,7 +233,8 @@ for _, id in ipairs({ "ui/geometry", "ui/widget/container/framecontainer", "ui/w
 package.loaded["ffi/blitbuffer"] = { COLOR_BLACK = "black", COLOR_WHITE = "white", COLOR_DARK_GRAY = "#555",
     COLOR_GRAY = "#aaa", COLOR_LIGHT_GRAY = "#ddd" }
 package.loaded["features/sui_style"] = { getStyledFace = function(_, size, variant)
-    return { size = math.floor(size * dpi) }, variant == "bold"
+    local pixels = math.floor(size * dpi)
+    return { size = pixels, ftsize = { getHeightAndAscender = function() return pixels end } }, variant == "bold"
 end }
 local shown_dialog
 package.loaded["ui/uimanager"] = {

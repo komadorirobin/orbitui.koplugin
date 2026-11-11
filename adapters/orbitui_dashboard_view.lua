@@ -254,6 +254,11 @@ function M.content(widget, p, ctx, data)
     local function lineHeight(face)
         return math.floor(face.size * 1.3 + .5)
     end
+    local function textBlockHeight(face, lines)
+        local line_h = lineHeight(face)
+        local glyph_h = face.ftsize:getHeightAndAscender()
+        return lines * line_h + math.max(0, math.ceil(glyph_h - line_h))
+    end
     local function text(value, x, y, w, size, bold, color, lines, fit_height)
         if w < 1 then return end
         local face, is_bold = textFace(size, bold)
@@ -349,8 +354,8 @@ function M.content(widget, p, ctx, data)
         local author = data.current and require("infra/sui_text").formatAuthors(data.current.data.authors)
         local title_size, author_size = 15, 14
         local author_gap = px(2)
-        local title_h = 2 * lineHeight(textFace(title_size, true))
-        local author_h = author and (lineHeight(textFace(author_size, false)) + author_gap) or 0
+        local title_h = textBlockHeight(textFace(title_size, true), 2)
+        local author_h = author and (textBlockHeight(textFace(author_size, false), 1) + author_gap) or 0
         -- Reserve two lines plus the current book's author so all percentages
         -- stay aligned, even when the first title wraps.
         local title_y = pct_y - title_h - author_h - px(4)
