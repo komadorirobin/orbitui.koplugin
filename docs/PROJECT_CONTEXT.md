@@ -27,8 +27,9 @@ and correct this file in the same change.
   estimate, and Silverfish on the right. Want to read and Recently added
   share a card with separate overlapping stacks and independent pagination.
   Reading today and the goal sit underneath. Classic and Cover staircase are
-  still available. Verified over USB in active private slot **8e3f4685**,
-  with **17391840** as rollback. See TESTING for the layout and gesture checks.
+  still available. The estimated time now uses KOReader's synthesized bold
+  on the regular face. Verified over USB in active private slot **7a665991**,
+  with **8e3f4685** as rollback. See TESTING for the layout and gesture checks.
 
 - **Readable authors and two-line staircase titles.** The current author's
   name uses larger primary ink and follows the measured title. Titles are

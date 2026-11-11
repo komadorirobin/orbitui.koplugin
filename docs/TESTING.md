@@ -1,5 +1,24 @@
 # Verification and device acceptance
 
+## 2026-11-11 — lighter remaining-time label on Bigme
+
+Straight cover row uses KOReader's synthesized bold on the regular face for
+the estimate. On the Bigme the new label had about 12% less total ink in the
+same screenshot region. The title and the rest of the dashboard matched the
+previous rendering. The precise weight depends on KOReader's font renderer,
+especially at small sizes with XText disabled.
+
+The full Lua and LuaJIT gates passed with the optional SQLite skips. Both
+dashboard test runs passed in the sealed runtime. The archive and all
+2,000 installed files were verified. User settings, history and collections
+matched across the restart apart from the permitted BookOrbit cache timestamp
+refresh. The crash log stayed at 14,785 bytes.
+
+Source **c73e1122db32989fbad56ede52e89b8965e54b37**, private ZIP
+**7a665991f4da1503e96b92a1344bc1c46f8b16df66fd04e27a3b6de435a6d5fd**.
+The slot is active with **8e3f4685** as rollback. Evidence is in
+`test-results/dashboard-cover-time-weight-20261111/`.
+
 ## 2026-11-11 — straight cover row and shared book stacks on Bigme
 
 The approved straight-row layout shows only percentages beneath the four
