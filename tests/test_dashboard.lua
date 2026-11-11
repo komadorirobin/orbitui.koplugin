@@ -334,6 +334,40 @@ H.test("staircase book columns have aligned descending covers and independent ta
     end
 end)
 
+H.test("closing a dashboard layout change rebuilds the data context", function()
+    local window = package.loaded["screens/sui_settings_window"]
+    local old_window_show, old_engine = window.show, package.loaded["engines/sui_window"]
+    local close, rows, repaint = nil, nil, 0
+    window.show = function(_, on_close, screens)
+        close = on_close
+        rows = screens[1].params.items_func{ repaint = function() repaint = repaint + 1 end }
+    end
+    package.loaded["engines/sui_window"] = { makeCtxMenu = function() return {} end }
+    local rebuilt, cached = 0, 0
+    local local_ctx = { pfx = ctx.pfx, refresh_fn = function() cached = cached + 1 end,
+        _screen_widget = { _refreshImmediate = function(_, keep_cache)
+            H.eq(keep_cache, false)
+            rebuilt = rebuilt + 1
+        end } }
+    local current = View.build(600, 730, local_ctx, Dashboard.readData(ctx))
+    current:editModules()
+    rows[1].sub_item_table[2].callback()
+    H.eq(repaint, 1)
+    H.eq(rebuilt, 0)
+    close()
+    H.eq(rebuilt, 1)
+    H.eq(cached, 0)
+    current:editModules()
+    rows[1].sub_item_table[1].callback()
+    rows[1].sub_item_table[2].callback()
+    close()
+    H.eq(rebuilt, 1)
+    H.eq(cached, 1)
+    Dashboard.setLayout(ctx.pfx, "classic", function() end)
+    current:free()
+    window.show, package.loaded["engines/sui_window"] = old_window_show, old_engine
+end)
+
 local data = Dashboard.readData(ctx)
 local widget
 

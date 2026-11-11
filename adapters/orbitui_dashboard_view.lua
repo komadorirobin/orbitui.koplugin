@@ -137,8 +137,13 @@ function Dashboard:editModules(id)
     if self._disposed then return end
     local generation = self._module_generation
     local ctx = self._dashboard_ctx
-    require("adapters/orbitui_dashboard_settings").show(ctx.pfx, { refresh_fn = function()
-        if not self._disposed and generation == self._module_generation and ctx.refresh_fn then ctx.refresh_fn() end
+    require("adapters/orbitui_dashboard_settings").show(ctx.pfx, { refresh_fn = function(layout_changed)
+        if self._disposed or generation ~= self._module_generation then return end
+        local owner = ctx._screen_widget
+        -- The new layout can ask for statistics or recent books that were
+        -- hidden in the classic layout's cached context.
+        if layout_changed and owner and owner._refreshImmediate then owner:_refreshImmediate(false)
+        elseif ctx.refresh_fn then ctx.refresh_fn() end
     end }, id)
 end
 
@@ -430,7 +435,8 @@ function M.content(widget, p, ctx, data)
     local stats = data.stats
     local tiles = {
         { "Pages today", tostring(stats.today_pages or 0), "pages", "pages_today" },
-        { "Reading today", Model.duration(stats.today_secs, p.ladder ~= nil), "reading time", "reading_today" },
+        { "Reading today", p.ladder and stats.today_secs == nil and "—"
+            or Model.duration(stats.today_secs, p.ladder ~= nil), "reading time", "reading_today" },
         { "Reading streak", tostring(stats.streak or 0), "days in a row", "streak" },
         { "This week", Model.duration(stats.week_secs), "reading time", "week" },
     }

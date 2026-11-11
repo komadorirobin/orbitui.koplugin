@@ -399,10 +399,11 @@ function M.show(pfx, ctx, id)
     if id and id ~= "add" and Model.module(dashboard().readConfig(pfx), id) then
         return cardSheet(pfx, ctx, id)
     end
+    local initial_layout = dashboard().layout(pfx)
     local changed, alive = false, true
     return require("screens/sui_settings_window"):show(function()
         alive = false
-        if changed and ctx.refresh_fn then ctx.refresh_fn() end
+        if changed and ctx.refresh_fn then ctx.refresh_fn(dashboard().layout(pfx) ~= initial_layout) end
     end, {{ id = "nested_menu", params = { title = _("Reading dashboard"), items_func = function(menu_ctx)
         local refresh = function() changed = true; if alive then menu_ctx.repaint() end end
         local items = M.items(refresh, pfx, require("engines/sui_window").makeCtxMenu(menu_ctx))
