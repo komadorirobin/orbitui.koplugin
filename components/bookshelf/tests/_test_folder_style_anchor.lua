@@ -36,7 +36,7 @@ assert(body, "could not find Editor:_pickGroupDisplay - renamed?")
 -- every chip picker. Extracted too, rather than stubbed: the arithmetic is
 -- what this suite is about, and a stub would pass while the real one crashed
 -- KOReader again.
-local anchor_src = src:match("\n(local function _highAnchor%(get_dialog%)\n.-\nend)\n")
+local anchor_src = src:match("\n(local function _highAnchor%(get_dialog, compact%)\n.-\nend)\n")
 assert(anchor_src, "could not find _highAnchor - renamed?")
 
 -- A PW5: 1236x1648 at 264 DPI, where scaleBySize(1) is about 2px.
@@ -274,6 +274,16 @@ t.test("the picker still stays high enough to leave the shelf visible", function
     local rect = openAnchor()
     assert(rect.y > 0 and rect.y < math.floor(SCREEN_H / 4),
            "anchor y drifted out of the hero band: " .. tostring(rect.y))
+end)
+
+t.test("the compact editor uses the full screen height and stays centred", function()
+    local anchor = env._highAnchor(function() return { width = DIALOG_W } end, true)
+    for _, mirrored in ipairs({ false, true }) do
+        local rect, pop_down = anchor()
+        local left, top = ensureAnchor(rect, pop_down, mirrored, false)
+        eq(left, math.floor((SCREEN_W - DIALOG_W) / 2), "left edge:")
+        eq(top, 0, "top edge:")
+    end
 end)
 
 t.done()
