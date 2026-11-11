@@ -463,6 +463,11 @@ function M.needsDbStats(show)
     return show.stats and (show.book_days or show.book_time or show.book_remaining) or false
 end
 
+-- Hosted cards aren't enabled as standalone modules on the native screen.
+function M.wantsCurrentBookStats(pfx)
+    return M.needsDbStats(_readShow(pfx or "simpleui_hs_"))
+end
+
 -- Exposed for pre-computation in _buildCtx (sui_homescreen.lua).
 -- Mirrors module_coverdeck.fetchBookStatsForCtx.
 -- Returns the stats table or nil; does NOT set ctx.db_conn_fatal (no ctx here).

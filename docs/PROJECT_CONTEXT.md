@@ -28,7 +28,10 @@ and correct this file in the same change.
   test install. Silverfish now draws a compact approximate remaining-time line
   only with a matching native current-book stats snapshot and usable progress;
   native Home and hosted cards share that preparation, with no query in card
-  build or paint. The dashboard honors each SimpleUI module's existing heading
+  build or paint for Silverfish. The ordinary hosted card requests the same
+  first recent book when no standalone Currently Reading module is placed;
+  otherwise the dashboard could show it empty even with reading history.
+  The dashboard honors each SimpleUI module's existing heading
   preference and exposes it directly in the card editor. BookOrbit source
   attribution, card placement, and custom stat ordering are unchanged.
 

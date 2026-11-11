@@ -166,6 +166,12 @@ function M.moduleNeed(config, pfx, need)
         if entry.kind == "simpleui" and not config.hidden[entry.id] then
             local def = M.resolveModule(entry)
             local value = def and type(def.needs) == "table" and def.needs[need]
+            if def and entry.ref == "currently" then
+                -- Native Home normally requests this module's context only
+                -- when the standalone module is placed on the screen.
+                if need == "recent" then value = 1
+                elseif need == "current_book_stats" then value = def.wantsCurrentBookStats end
+            end
             local ok = true
             if type(value) == "function" then ok, value = pcall(value, pfx) end
             if ok then
@@ -194,6 +200,9 @@ function M.buildModule(entry, w, h, ctx)
         args.col_w, args.grow_h, args.width, args.height = w, h, w, h
         if entry.kind == "simpleui" then
             args.orbitui_dashboard_hosted = true
+            if entry.ref == "currently" and not args.current_fp then
+                args.current_fp = args.recent_fps and args.recent_fps[1]
+            end
             child = def.build(w, args)
         else
             args.entry = { id = entry.id, module = entry.ref }

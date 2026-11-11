@@ -188,6 +188,27 @@ H.test("bad builds are contained and newly returned malformed widgets are freed"
     H.eq(child.freed, true)
     registry.unregister("broken")
 end)
+H.test("standalone-disabled Currently Reading gets its own hosted recent demand and matching book", function()
+    local selected = entry("simpleui", "currently")
+    local enabled, args = true, nil
+    registry.register({ id = "currently", name = "Currently Reading", default_on = false,
+        wantsCurrentBookStats = function(prefix) H.eq(prefix, pfx); return enabled end,
+        build = function(_, ctx) args = ctx; return W:new{} end })
+    local config = only(selected)
+    H.eq(Sources.moduleNeed(config, pfx, "recent"), 1)
+    H.eq(Sources.moduleNeed(config, pfx, "current_book_stats"), true)
+    enabled = false; H.eq(Sources.moduleNeed(config, pfx, "current_book_stats"), false)
+    config.hidden[selected.id] = true
+    H.eq(Sources.moduleNeed(config, pfx, "recent"), 0)
+    local ctx = { recent_fps = { "/recent.epub" }, currently_book_stats = { fp = "/recent.epub" } }
+    local w = assert(Sources.buildModule(selected, 250, 100, ctx))
+    H.eq(args.current_fp, "/recent.epub"); H.eq(args.currently_book_stats, ctx.currently_book_stats)
+    H.eq(ctx.current_fp, nil); w:free()
+    ctx.current_fp = "/native-current.epub"
+    w = assert(Sources.buildModule(selected, 250, 100, ctx))
+    H.eq(args.current_fp, ctx.current_fp); w:free()
+    registry.unregister("currently")
+end)
 H.test("native actions retain Home navigation and Bookshelf tap regions", function()
     local routed
     Sources.tapModule(entry("action", "launch_pet"), {}, { on_qa_tap = function(ref) routed = ref end })
