@@ -88,6 +88,10 @@ function M.current(s)
     return ok and result == true
 end
 
+function M.openPet(pet)
+    if M.current(pet) then pcall(pet.pet.onMostrarTraca, pet.pet) end
+end
+
 function M.getHeight(ctx)
     local screen = require("device").screen
     local owner = ctx and ctx._screen_widget
@@ -201,7 +205,7 @@ local function widgets()
         if x < 0 or y < 0 or x >= self.dimen.w or y >= self.dimen.h then return false end
         local function hit(r) return r and x >= r.x and x < r.x + r.w and y >= r.y and y < r.y + r.h end
         if hit(self.plan.pet) or hit(self.plan.companion) then
-            if M.current(self.pet) then pcall(self.pet.pet.onMostrarTraca, self.pet.pet) end
+            M.openPet(self.pet)
         elseif self.file and self.ctx.open_fn then
             self.ctx.open_fn(self.file)
         end
@@ -222,6 +226,13 @@ local function widgets()
             x + math.floor((self.w - b[3] * size) / 2) - b[1] * size,
             y + math.floor((self.h - b[4] * size) / 2) - b[2] * size, size)
     end
+end
+
+function M.spriteWidget(pet, w, h, background)
+    widgets()
+    local sprite = Sprite:new{ pet = pet, w = w, h = h }
+    local fallback = require("ui/widget/overlapgroup"):new{ dimen = require("ui/geometry"):new{ w = 1, h = 1 } }
+    return require("adapters/orbitui_dashboard_sources").moduleContainer(sprite, fallback, w, h, background)
 end
 
 function M.build(w, ctx)
@@ -285,9 +296,7 @@ function M.build(w, ctx)
     if pet then label(pet.stage, p.stage, 13)
     else label(reason, p.pet, 13, false, math.max(1, math.floor(p.pet.h / (13 * p.scale * 1.4)))) end
     if pet then
-        local sprite = Sprite:new{ pet = pet, w = p.pet.w, h = p.pet.h }
-        add(Sources.moduleContainer(sprite, Overlap:new{ dimen = Geom:new{ w=1,h=1 } },
-            p.pet.w, p.pet.h, BB.COLOR_WHITE), p.pet.x, p.pet.y)
+        add(M.spriteWidget(pet, p.pet.w, p.pet.h, BB.COLOR_WHITE), p.pet.x, p.pet.y)
     end
     if type(file) == "string" and file ~= "" then
         card.file = file

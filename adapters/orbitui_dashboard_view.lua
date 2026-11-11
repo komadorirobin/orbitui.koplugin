@@ -174,7 +174,7 @@ function Dashboard:replaceContent(ctx, data)
     self._module_generation = (self._module_generation or 0) + 1
     local owner = ctx._screen_widget
     local p = Model.plan(self.dimen.w, self.dimen.h, data.config,
-        self._module_page or owner and owner._orbitui_dashboard_module_page)
+        self._module_page or owner and owner._orbitui_dashboard_module_page, data.layout)
     self._module_page, self._plan = p.page, p
     if owner then owner._orbitui_dashboard_module_page = p.page end
     self[1] = M.content(self, p, ctx, data)
@@ -275,14 +275,14 @@ function M.content(widget, p, ctx, data)
             dark and paper or (palette and native(palette.accent)) or ink,
             dark and BB.COLOR_DARK_GRAY or BB.COLOR_LIGHT_GRAY), x, y)
     end
-    local function cover(fp, r, hero)
+    local function cover(fp, r, hero, column_tap)
         local image = makeCover(fp, r, ctx)
         if image then
             add(image, r.x, r.y)
             widget._cover_slots[#widget._cover_slots + 1] = {
                 file = fp, area = r, index = #target, parent = target, hero = hero, row_card = card_scope }
         end
-        bookAction(r, fp)
+        if not column_tap then bookAction(r, fp) end
         return image
     end
     local function title(label, r, dark)
@@ -320,10 +320,78 @@ function M.content(widget, p, ctx, data)
         action(rect(p.w - px(54), y, px(54), row), function() turn(1) end)
     end
 
+    local r = p.ladder
+    if r then
+        local Silverfish = require("adapters/orbitui_silverfish")
+        local pet = Silverfish.snapshot()
+        box(r, paper, BB.COLOR_LIGHT_GRAY, "hero")
+        local left, right = r.x + p.pad, r.x + r.w - p.pad
+        local top, bottom = r.y + p.pad, r.y + r.h - p.pad
+        local gap = math.max(3, px(10))
+        local first_w = math.floor((right - left - 3 * gap) * .30)
+        local other_x = left + first_w + gap
+        local other_w = math.floor((right - other_x - 2 * gap) / 3)
+        local has_footer = pet or data.time_left
+        local foot_h = has_footer and math.max(28, px(45)) or 0
+        local foot_y = bottom - foot_h
+        local cover_top = top + math.max(15, px(26))
+        local pct_y = foot_y - math.max(14, px(22))
+        local title_y = pct_y - math.max(24, px(43))
+        local base = title_y - px(6)
+        local cover_h = math.min(base - cover_top, math.floor(first_w * 1.35))
+        local step = math.min(px(18), math.floor(cover_h / 6))
+        local compact = cover_h < 22 or other_w < 26
+
+        text(heading("hero", _("Currently reading")), left, top, first_w, 17, true)
+        text(heading("ongoing", _("Also reading")), other_x, top, right - other_x, 17, true)
+        local function column(book, x, w, index)
+            local is_current = index == 0
+            if not compact then
+                local h = math.min(cover_h - step * index, math.floor(w * 1.35))
+                local cw = math.floor(h * 2 / 3)
+                cover(book.file, rect(x, base - h, cw, h), false, true)
+            end
+            local y = compact and cover_top or title_y
+            text(book.data.title, x, y, w, 15, true, ink, is_current and 1 or 2)
+            if is_current and not compact then
+                text(require("infra/sui_text").formatAuthors(book.data.authors) or "",
+                    x, y + px(22), w, 12, false, muted)
+            end
+            local progress = math.floor(Model.fraction(book.data.percent) * 100 + .5)
+            if not compact then text(string.format("%d %%", progress), x, pct_y, w, 13, false) end
+            bookAction(rect(x, cover_top, w, math.max(1, (is_current and bottom or foot_y) - cover_top)), book.file)
+        end
+        if data.current then column(data.current, left, first_w, 0)
+        else text(_("Open a book to start reading."), left, cover_top, first_w, 13, false, muted, 2) end
+        if #data.ongoing == 0 then
+            text(_("No other books in progress."), other_x, cover_top, right - other_x, 13, false, muted, 2)
+        end
+        for i, book in ipairs(data.ongoing) do column(book, other_x + (i - 1) * (other_w + gap), other_w, i) end
+
+        if has_footer and not compact then
+            add(UI.solidBar(right - left, px(1), BB.COLOR_LIGHT_GRAY), left, foot_y)
+            if data.time_left then text(data.time_left, left, foot_y + px(12), first_w, 12, false, muted) end
+            if pet then
+                local sprite_w = px(31)
+                local tx = right - sprite_w - gap
+                local function rightLabel(value, y, size, bold)
+                    local label = text(value, other_x, y, tx - other_x, size, bold, bold and ink or muted)
+                    if label then label.overlap_offset[1] = tx - math.min(tx - other_x, label:getSize().w) end
+                end
+                rightLabel(pet.name .. "  " .. pet.stage, foot_y + px(6), 13, true)
+                rightLabel(string.format(_("Days: %s · Books: %s · Gen: %s"),
+                    pet.days or "—", pet.finished or "—", pet.generation), foot_y + px(25), 11)
+                add(Silverfish.spriteWidget(pet, sprite_w, foot_h - px(5), paper), right - sprite_w, foot_y + px(5))
+                action(rect(other_x, foot_y, right - other_x, foot_h), function() Silverfish.openPet(pet) end)
+            end
+        end
+    end
+
     -- Hero: covers stay in colour; only the surrounding card is dark.
     -- Night cards share light ink on a dark surface. The day-only hero
     -- emphasis must not become a bright white hole when the frame inverts.
-    local r, dark = p.hero, data.dark and not Screen.night_mode
+    local dark = data.dark and not Screen.night_mode
+    r = p.hero
     if r then
     local hero_frame = box(r, dark and ink or nil, dark and ink or nil, "hero")
     if coloured then
@@ -362,17 +430,21 @@ function M.content(widget, p, ctx, data)
     local stats = data.stats
     local tiles = {
         { "Pages today", tostring(stats.today_pages or 0), "pages", "pages_today" },
-        { "Reading today", Model.duration(stats.today_secs), "reading time", "reading_today" },
+        { "Reading today", Model.duration(stats.today_secs, p.ladder ~= nil), "reading time", "reading_today" },
         { "Reading streak", tostring(stats.streak or 0), "days in a row", "streak" },
         { "This week", Model.duration(stats.week_secs), "reading time", "week" },
     }
     for i, tile in ipairs(tiles) do
-        r = p.stats[i]
+        r = p.stats[i] or p.cards and p.cards[tile[4]]
         if r then
         box(r, nil, nil, tile[4])
         title(heading(tile[4], _(tile[1])), r)
-        text(tile[2], r.x + p.pad, r.y + math.floor(r.h * 0.40), r.w - p.pad * 2, 23, true)
-        text(_(tile[3]), r.x + p.pad, r.y + r.h - p.pad - px(15), r.w - p.pad * 2, 11, false, muted)
+        if p.ladder then
+            text(tile[2], r.x + p.pad, r.y + p.pad + math.max(17, px(27)), r.w - p.pad * 2, 25, true)
+        else
+            text(tile[2], r.x + p.pad, r.y + math.floor(r.h * 0.40), r.w - p.pad * 2, 23, true)
+            text(_(tile[3]), r.x + p.pad, r.y + r.h - p.pad - px(15), r.w - p.pad * 2, 11, false, muted)
+        end
         action(r, settings("reading_stats"))
         end
     end
@@ -411,15 +483,29 @@ function M.content(widget, p, ctx, data)
         local unit = ({ book = "books", books = "books", page = "pages", pages = "pages",
             hour = "hours", minute = "minutes" })[goal.metric] or "completed"
         local value, target = tonumber(goal.value) or 0, tonumber(goal.target) or 0
-        text(string.format("%s / %s", value, target > 0 and tostring(target) or "-"),
-            r.x + p.pad, r.y + px(43), r.w - p.pad * 2, 28, true)
-        text(_(unit), r.x + p.pad, r.y + px(80), r.w - p.pad * 2, 13, false, muted)
-        bar(r.x + p.pad, r.y + r.h - p.pad - px(30), r.w - p.pad * 2, target > 0 and value / target or 0, false, "goal")
-        text(target <= 0 and _("Set a reading goal") or
-            (value >= target and _("Goal reached") or goal.source),
-            r.x + p.pad, r.y + r.h - p.pad - px(17), r.w - p.pad * 2, 11, false, muted)
+        local x, w = r.x + p.pad, r.w - p.pad * 2
+        local caption = target <= 0 and _("Set a reading goal") or (value >= target and _("Goal reached") or goal.source)
+        local progress = target > 0 and value / target or 0
+        local count = string.format("%s / %s", value, target > 0 and tostring(target) or "-")
+        if p.ladder then
+            local y = r.y + p.pad + math.max(17, px(27))
+            local amount = text(count, x, y, w, 25, true)
+            local offset = amount and amount:getSize().w + px(7) or 0
+            if w - offset > px(24) then text(_(unit), x + offset, y + px(9), w - offset, 12, false, muted) end
+            local by = math.max(y + math.max(16, px(32)), r.y + r.h - p.pad - px(25))
+            if by + math.max(14, px(20)) <= r.y + r.h then
+                bar(x, by, w, progress, false, "goal")
+                text(caption, x, by + px(7), w, 11, false, muted)
+            end
+        else
+            text(count, x, r.y + px(43), w, 28, true)
+            text(_(unit), x, r.y + px(80), w, 13, false, muted)
+            bar(x, r.y + r.h - p.pad - px(30), w, progress, false, "goal")
+            text(caption, x, r.y + r.h - p.pad - px(17), w, 11, false, muted)
+        end
     else
-        text(_("No cached goal yet. Tap to configure."), r.x + p.pad, r.y + px(46),
+        text(_("No cached goal yet. Tap to configure."), r.x + p.pad,
+            r.y + (p.ladder and p.pad + math.max(17, px(27)) or px(46)),
             r.w - p.pad * 2, 14, false, muted, 3)
     end
     action(r, settings(goal and goal.module or "hardcover"))
@@ -501,8 +587,10 @@ function M.content(widget, p, ctx, data)
         for i = 1, count do
             local fp = files[(page - 1) * count + i]
             if fp and (not extra or require("adapters/orbitui_bookorbit_rows").fileExists(fp)) then
-                cover(fp, rect(area.x + p.pad + (i - 1) * (slot_w + p.gap) + math.floor((slot_w - cw) / 2),
-                    area.y + cover_top + p.pad + math.floor((max_h - ch) / 2), cw, ch))
+                local width = p.ladder and not extra and math.max(1, math.floor(cw * (1 - (i - 1) * .06))) or cw
+                local height = math.floor(width * 3 / 2)
+                cover(fp, rect(area.x + p.pad + (i - 1) * (slot_w + p.gap) + math.floor((slot_w - width) / 2),
+                    area.y + cover_top + p.pad + math.floor((max_h - ch) / 2) + ch - height, width, height))
             end
         end
     end

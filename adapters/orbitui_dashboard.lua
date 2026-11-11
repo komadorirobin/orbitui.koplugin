@@ -10,6 +10,33 @@ local M = {
 
 local function store() return require("infra/sui_store") end
 
+function M.layout(pfx)
+    return store():readSetting((pfx or "simpleui_hs_") .. "orbitui_dashboard_layout") == "cover_stairs"
+        and "cover_stairs" or "classic"
+end
+
+function M.layoutItem(refresh, pfx)
+    pfx = pfx or "simpleui_hs_"
+    local choices = {}
+    for _i, entry in ipairs({ { "classic", "Classic" }, { "cover_stairs", "Cover staircase" } }) do
+        local id = entry[1]
+        choices[#choices + 1] = { text = _(entry[2]), checked_func = function() return M.layout(pfx) == id end,
+            callback = function() M.setLayout(pfx, id, refresh) end }
+    end
+    return { text = _("Dashboard layout"), help_text = _(
+        "Cover staircase brings the current and ongoing books together, with reading time today beside your goal. Your classic layout is kept."),
+        sub_item_table = choices }
+end
+
+function M.setLayout(pfx, layout, refresh)
+    if layout ~= "classic" and layout ~= "cover_stairs" then return end
+    if M.layout(pfx) == layout then return end
+    store():saveSetting((pfx or "simpleui_hs_") .. "orbitui_dashboard_layout", layout)
+    if refresh then refresh() else
+        require("screens/sui_homescreen").rebuildLayout({ keep_wallpaper = true })
+    end
+end
+
 function M.readConfig(pfx)
     pfx = pfx or "simpleui_hs_"
     local key = pfx .. "orbitui_dashboard_config"
@@ -34,7 +61,7 @@ M.needs = {
     recent = function(pfx)
         local config = M.readConfig(pfx)
         local demand = Sources.moduleNeed(config, pfx, "recent")
-        if Model.visible(config, "ongoing") then return math.max(30, demand) end
+        if Model.visible(config, "ongoing") or M.layout(pfx) == "cover_stairs" then return math.max(30, demand) end
         for _, id in ipairs({ "want", "new" }) do
             local source = config.sources[id]
             if Model.visible(config, id) and source.kind == "native" and source.id == "recent" then return math.max(30, demand) end
@@ -43,7 +70,7 @@ M.needs = {
     end,
     stats = function(pfx)
         local config = M.readConfig(pfx)
-        if Sources.moduleNeed(config, pfx, "stats") then return true end
+        if M.layout(pfx) == "cover_stairs" or Sources.moduleNeed(config, pfx, "stats") then return true end
         for _, id in ipairs(Model.stat_order) do
             if Model.visible(config, id) then return true end
         end
@@ -57,7 +84,10 @@ M.needs = {
 }
 for _, kind in ipairs({ "status", "records", "year", "charts", "current_book_stats" }) do
     local need = kind
-    M.needs[need] = function(pfx) return Sources.moduleNeed(M.readConfig(pfx), pfx, need) end
+    M.needs[need] = function(pfx)
+        return need == "current_book_stats" and M.layout(pfx) == "cover_stairs"
+            or Sources.moduleNeed(M.readConfig(pfx), pfx, need)
+    end
 end
 
 function M.editConfig(pfx, edit, refresh)
@@ -213,6 +243,7 @@ function M.menuItems(refresh, pfx, ctx_menu)
             return require("adapters/orbitui_dashboard_settings").items(refresh, pfx, ctx_menu)
         end },
         M.colourItem(refresh, pfx),
+        M.layoutItem(refresh, pfx),
     }
 end
 
@@ -248,6 +279,8 @@ end
 
 function M.readData(ctx)
     local config = M.readConfig(ctx.pfx)
+    local layout = not config.unsupported and M.layout(ctx.pfx) or "classic"
+    local staircase = layout == "cover_stairs"
     local function visible(id) return Model.visible(config, id) end
     local function read(fp)
         return require("modules/module_books_shared").getBookData(fp,
@@ -273,11 +306,13 @@ function M.readData(ctx)
             target = require("infra/sui_goals").get("annual"),
             module = "reading_goals", metric = "book", source = "KOReader" }
     end
+    local current = (staircase or visible("hero")) and fp and { file = fp, data = read(fp) } or nil
     return {
-        current = visible("hero") and fp and { file = fp, data = read(fp) } or nil,
-        ongoing = visible("ongoing") and Model.ongoing(visible("hero") and fp or nil, ctx.recent_fps, read, 3) or {},
+        current = current,
+        ongoing = (staircase or visible("ongoing")) and Model.ongoing(current and current.file, ctx.recent_fps, read, 3) or {},
+        time_left = staircase and current and require("adapters/orbitui_silverfish").timeLeft(ctx, current.file, current.data) or nil,
         want = want, new = new, want_error = want_error, new_error = new_error,
-        config = config,
+        config = config, layout = layout,
         source_labels = { want = visible("want") and Sources.label(config.sources.want) or nil,
             new = visible("new") and Sources.label(config.sources.new) or nil },
         stats = ctx.stats or {}, goal = goal, hardcover = hc_enabled,

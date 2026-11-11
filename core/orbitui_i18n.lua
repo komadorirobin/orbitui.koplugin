@@ -891,6 +891,11 @@ local sv = {
     ["4. Check fast reader return"] = "4. Kontrollera snabb återgång från läsvyn",
     ["Open a book from the chosen shelf and use the cabinet/file-browser button in the reading menu. A safe prepared shelf returns to its profile, chip and position; otherwise the book closes normally."] = "Öppna en bok från den valda hyllan och använd arkivskåps-/filbläddrarknappen i läsmenyn. En säkert förberedd hylla återgår till sin profil, sitt chip och sin position; annars stängs boken normalt.",
     ["Card colours"] = "Kortfärger",
+    ["Dashboard layout"] = "Layout för Läsöversikt",
+    ["Classic"] = "Klassisk",
+    ["Cover staircase"] = "Omslagstrappa",
+    ["Cover staircase brings the current and ongoing books together, with reading time today beside your goal. Your classic layout is kept."] =
+        "Omslagstrappan samlar boken du läser just nu och dina pågående böcker. Dagens lästid visas bredvid läsmålet. Din klassiska layout sparas.",
     ["Accents"] = "Accenter",
     ["Tinted cards"] = "Tonade kort",
     ["Colours affect only this reading dashboard. Monochrome screens keep greyscale. Layout, headings and book sources are kept."] = "Färgerna gäller bara den här läsöversikten. Svartvita skärmar behåller gråskalan. Layout, rubriker och bokkällor behålls.",

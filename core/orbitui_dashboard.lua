@@ -240,7 +240,7 @@ function M.withPage(layout, enabled)
     return result
 end
 
-function M.plan(w, h, config, page)
+function M.plan(w, h, config, page, layout)
     w, h = math.max(1, math.floor(w)), math.max(1, math.floor(h))
     local scale = math.min(w / 600, h / 730)
     local gap = math.max(2, math.floor(10 * scale))
@@ -273,9 +273,10 @@ function M.plan(w, h, config, page)
         new = rect(col + gap, bottom_y, right_w, bottom_h),
     }
     if not config then return plan end
+    local staircase = layout == "cover_stairs" and not config.unsupported
     local blocks, stats = {}, {}
     for _, id in ipairs(config.stats_order) do
-        if M.visible(config, id) then stats[#stats + 1] = id end
+        if M.visible(config, id) and not (staircase and id == "reading_today") then stats[#stats + 1] = id end
     end
     local weight = { hero = 38, stats = #stats <= 2 and 19 or 38,
         ongoing = 27, goal = 27, want = 35, new = 35 }
@@ -285,13 +286,15 @@ function M.plan(w, h, config, page)
         weight[entry.id] = entry.size == "tall" and 55 or 35
     end
     for _, id in ipairs(config.order) do
-        if id == "stats" and #stats > 0 or id ~= "stats" and M.visible(config, id) then
+        local fixed = staircase and (id == "hero" or id == "ongoing" or id == "goal" or id == "want" or id == "new"
+            or id == "module:simpleui:orbitui_reading_silverfish")
+        if not fixed and (id == "stats" and #stats > 0 or id ~= "stats" and M.visible(config, id)) then
             blocks[#blocks + 1] = id
         end
     end
     for _, id in ipairs(M.block_order) do plan[id] = nil end
     plan.stats, plan.cards = {}, {}
-    if #blocks == 0 then return plan end
+    if #blocks == 0 and not staircase then return plan end
     local rows, total, i = {}, 0, 1
     while i <= #blocks do
         local a, b = blocks[i], blocks[i + 1]
@@ -303,6 +306,17 @@ function M.plan(w, h, config, page)
     end
     -- At most three rows per page. Existing six-block layouts are unchanged.
     local pages, current = {}, {}
+    if staircase then
+        local first = {
+            { "ladder", weight = 54 },
+            { "reading_today", M.visible(config, "goal") and "goal" or nil, weight = 17 },
+        }
+        local want, new = M.visible(config, "want"), M.visible(config, "new")
+        if want or new then
+            first[3] = { want and "want" or "new", want and new and "new" or nil, weight = 29 }
+        end
+        pages[1] = first
+    end
     for _, row in ipairs(rows) do
         if #current == 3 or row.own_page and #current > 0 then
             pages[#pages + 1], current = current, {}
@@ -373,10 +387,10 @@ function M.ongoing(current, paths, read, limit)
     return result
 end
 
-function M.duration(seconds)
+function M.duration(seconds, spaced)
     local minutes = math.max(0, math.floor((tonumber(seconds) or 0) / 60))
-    if minutes < 60 then return tostring(minutes) .. "m" end
-    return string.format("%dh %02dm", math.floor(minutes / 60), minutes % 60)
+    if minutes < 60 then return tostring(minutes) .. (spaced and " min" or "m") end
+    return string.format(spaced and "%d h %02d min" or "%dh %02dm", math.floor(minutes / 60), minutes % 60)
 end
 
 -- Forecasts are estimates from this book's recent recorded reading, never

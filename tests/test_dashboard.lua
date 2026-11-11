@@ -246,6 +246,94 @@ package.loaded["ui/widget/inputdialog"] = Widget:extend{
     onShowKeyboard = function(self) self.keyboard_shown = true end,
 }
 local View = require("adapters/orbitui_dashboard_view")
+
+H.test("cover staircase keeps the classic setup and puts reading time beside the goal", function()
+    local key = "simpleui_hs_orbitui_dashboard_config"
+    local original = saved[key]
+    local classic = Model.config(original)
+    local pet_id = Model.moduleId("simpleui", "orbitui_reading_silverfish")
+    local extra_id = Model.moduleId("action", "search")
+    classic.modules = {
+        { id = pet_id, kind = "simpleui", ref = "orbitui_reading_silverfish", width = 2 },
+        { id = extra_id, kind = "action", ref = "search", width = 2 },
+    }
+    classic.order = { pet_id, "hero", "stats", "ongoing", "goal", "want", "new", extra_id }
+    classic.hidden = { hero = true, ongoing = true, reading_today = true, streak = true, week = true }
+    saved[key] = classic
+    local changed = 0
+    local choices = Dashboard.layoutItem(function() changed = changed + 1 end, ctx.pfx).sub_item_table
+    choices[2].callback()
+    H.eq(Dashboard.layout(ctx.pfx), "cover_stairs")
+    H.eq(Dashboard.layout("other_"), "classic")
+    H.eq(Dashboard.needs.recent(ctx.pfx), 30)
+    H.eq(Dashboard.needs.stats(ctx.pfx), true)
+    H.eq(Dashboard.needs.current_book_stats(ctx.pfx), true)
+    local result = Dashboard.readData(ctx)
+    H.eq(result.current.file, "/current")
+    H.eq(#result.ongoing, 3)
+    H.eq(result.time_left, nil)
+    local p = Model.plan(600, 730, result.config, 1, result.layout)
+    H.eq(p.ladder.w, 600)
+    H.eq(p.reading_today.x, 0)
+    H.eq(p.goal.y, p.reading_today.y)
+    H.eq(p.goal.x, p.reading_today.w + p.gap)
+    H.eq(p.want.y, p.new.y)
+    H.eq(p.cards[pet_id], nil)
+    local overflow = Model.plan(600, 730, result.config, 2, result.layout)
+    H.eq(overflow.cards.reading_today, nil)
+    assert(overflow.cards[extra_id] and overflow.cards.pages_today)
+    choices[1].callback()
+    H.eq(Dashboard.layout(ctx.pfx), "classic")
+    H.eq(changed, 2)
+    H.eq(saved[key], classic)
+    local p_classic = Model.plan(600, 730, Dashboard.readConfig(ctx.pfx))
+    assert(p_classic.cards[pet_id] and p_classic.ladder == nil)
+    saved[key] = original
+end)
+
+H.test("staircase book columns have aligned descending covers and independent tap and hold actions", function()
+    local layout_key = "simpleui_hs_orbitui_dashboard_layout"
+    saved[layout_key] = "cover_stairs"
+    local result = Dashboard.readData(ctx)
+    saved[layout_key] = "classic"
+    result.stats = { today_secs = 27 * 60 }
+    result.time_left = "About 2h 37m left"
+    UI.solidBar = function(w, h)
+        return Widget:new{ kind = "line", dimen = { w = w, h = h } }
+    end
+    for _i, viewport in ipairs({ { 600, 730 }, { 300, 400 }, { 800, 480 }, { 1264, 1400 } }) do
+        local current = View.build(viewport[1], viewport[2], ctx, result)
+        current.dimen.x, current.dimen.y = 0, 0
+        local p = current._plan
+        local bottom, previous_h, count, time_shown = nil, math.huge, 0, false
+        for _, child in ipairs(current[1]) do
+            local x, y = child.overlap_offset[1], child.overlap_offset[2]
+            local size = child:getSize()
+            assert(x >= 0 and y >= 0 and x + size.w <= p.w and y + size.h <= p.h, child.text or child.kind)
+            if child.kind == "cover" and y < p.ladder.y + p.ladder.h then
+                assert(size.h < previous_h)
+                bottom = bottom or y + size.h
+                H.eq(y + size.h, bottom)
+                previous_h, count = size.h, count + 1
+            end
+            if child.text == "27 min" then time_shown = true end
+        end
+        H.eq(count, 4)
+        assert(time_shown)
+        for _, slot in ipairs(current._cover_slots) do
+            if slot.area.y < p.ladder.y + p.ladder.h then
+                local pos = { pos = { x = slot.area.x + 1, y = slot.area.y + 1 } }
+                assert(current:onDashboardTap(nil, pos))
+                H.eq(opened, slot.file)
+                assert(current:onDashboardHold(nil, pos))
+                assert(current:onDashboardHoldRelease())
+                H.eq(held, slot.file)
+            end
+        end
+        current:free()
+    end
+end)
+
 local data = Dashboard.readData(ctx)
 local widget
 

@@ -405,7 +405,9 @@ function M.show(pfx, ctx, id)
         if changed and ctx.refresh_fn then ctx.refresh_fn() end
     end, {{ id = "nested_menu", params = { title = _("Reading dashboard"), items_func = function(menu_ctx)
         local refresh = function() changed = true; if alive then menu_ctx.repaint() end end
-        return M.items(refresh, pfx, require("engines/sui_window").makeCtxMenu(menu_ctx))
+        local items = M.items(refresh, pfx, require("engines/sui_window").makeCtxMenu(menu_ctx))
+        if not dashboard().readConfig(pfx).unsupported then table.insert(items, 1, dashboard().layoutItem(refresh, pfx)) end
+        return items
     end } }}, { pfx = pfx or "simpleui_hs_", pfx_qa = (pfx or "simpleui_hs_") .. "qa_" })
 end
 
