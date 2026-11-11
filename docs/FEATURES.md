@@ -21,19 +21,22 @@ or the current supported local shelf; remote catalogue search remains separate.
 
 ## Airy book information (local development; not in public beta.2)
 
-The new default overview puts a book's cover, author, reading status, rating and
+The new default overview puts a book's cover, author, reading status, star rating and
 available series/language/format facts above its description and offline EPUB
 tags. Tap a tag to find local books/series; hold it to make a saved chip or shelf.
-The overview shows at most two tag rows. **All tags and tag tools** opens the
+The overview shows at most two tag rows. **View all tags** opens the
 complete existing Tags view, including explicit EPUB refresh, similarity search
 and optional BookOrbit tag loading. Already indexed EPUB tags appear from the
 validated local cache; opening this page does not read unindexed EPUBs, scan the
 library or contact a server.
 
 **Full description**, **Reviews**, **File information**, **Cover** and
-**Actions…** lead to the existing native tabs, including highlights when present
-and registered plugin/file actions. Read/Continue and Close remain accessible
-while the main content scrolls. Explicit edit/review/tag/cover shortcuts still
+the **••• menu** lead to the existing native tabs, including highlights when present
+and registered plugin/file actions. The stars open your own review/rating;
+the status button opens the native editor. Read/Continue sits beside the cover;
+small screens also keep a compact reading button below the scrolling content.
+**Overview text size** under Book information page adjusts the preview separately
+from the complete Description tab's own zoom. Explicit edit/review/tag/cover shortcuts still
 open their requested native view. To keep the classic tabbed default, disable
 **Bookshelf > Book information page > Use the airy book information page** in
 OrbitUI settings. Existing Home/shelf/dock layouts are unchanged.

@@ -252,6 +252,9 @@ H.test("real default detail factory enters the host overview; explicit tab hando
     assert(page.overview); H.eq(calls,1); H.eq(Widget.live,actual)
     local native = page.native{ active = "information", classic = true }
     H.eq(calls,1); H.eq(native.tabs[native.active_tab].id,"information")
+    local own_rating = page.native{ active = "rating", classic = true }
+    H.eq(own_rating.tabs[own_rating.active_tab].id,"reviews")
+    H.eq(own_rating.tabs[own_rating.active_tab].active_source,1)
     Panel.bookPageEnabled = function() return false end
     local fallback = Panel.show(file); H.eq(fallback.overview,nil); H.eq(calls,1)
     Panel.bookPage, Panel.bookPageEnabled = real_page, real_enabled

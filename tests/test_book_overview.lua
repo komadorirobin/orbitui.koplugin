@@ -7,6 +7,7 @@ function W:_init()
     if self.kind == "button" then self.label_widget = W:new{}; self.label_container = W:new{ self.label_widget } end
 end
 function W:free() for _, c in ipairs(self) do if c.free then c:free() end end end
+function W:resetLayout() end
 function W:getScrollbarWidth() return f.bar or math.floor(18 * f.scale + .5) end
 function W:getSize()
     if self.kind == "text" or self.kind == "label" then
@@ -16,7 +17,7 @@ function W:getSize()
     elseif self.kind == "button" then return { w = self.width, h = self.height + 2 * (self.padding_v + self.bordersize) }
     elseif self.kind == "vspan" then return { w = 0, h = self.width }
     elseif self.kind == "hspan" then return { w = self.width, h = 0 }
-    elseif self.kind == "scroll" or self.kind == "center" then return self.dimen
+    elseif self.kind == "scroll" or self.kind == "center" or self.kind == "line" then return self.dimen
     elseif self.kind == "image" then return { w = self.width, h = self.height } end
     local w, h = 0, 0
     for _, c in ipairs(self) do
@@ -38,10 +39,10 @@ local function fixture(width, height, scale, language, owned)
         ["ui/widget/textboxwidget"] = "text", ["ui/widget/textwidget"] = "label", ["ui/widget/verticalgroup"] = "vertical",
         ["ui/widget/horizontalgroup"] = "horizontal", ["ui/widget/verticalspan"] = "vspan", ["ui/widget/horizontalspan"] = "hspan",
         ["ui/widget/button"] = "button", ["ui/widget/container/centercontainer"] = "center",
-        ["ui/widget/container/scrollablecontainer"] = "scroll", ["ui/widget/imagewidget"] = "image", ["ui/geometry"] = "geom", ["ui/gesturerange"] = "gesture",
+        ["ui/widget/container/scrollablecontainer"] = "scroll", ["ui/widget/imagewidget"] = "image", ["ui/widget/linewidget"] = "line", ["ui/geometry"] = "geom", ["ui/gesturerange"] = "gesture",
     } do package.loaded[path] = W:extend{ kind = kind } end
     package.loaded["lib/bookshelf_fonts"] = { getFace = function(_, _, size) return { size = size * f.scale } end }
-    package.loaded["ffi/blitbuffer"] = { COLOR_BLACK = 0, COLOR_WHITE = 255, COLOR_DARK_GRAY = 85 }
+    package.loaded["ffi/blitbuffer"] = { COLOR_BLACK = 0, COLOR_WHITE = 255, COLOR_DARK_GRAY = 85, COLOR_LIGHT_GRAY = 204 }
     package.loaded.device = { screen = { getWidth = function() return f.width end, getHeight = function() return f.height end,
         scaleBySize = function(_, n) return math.floor(n * f.scale + .5) end } }
     local UI = { _simpleui_navigation_generation = 1, setDirty = function() end,
@@ -112,7 +113,7 @@ T.test("tag tap searches locally; long press preserves chip creation and revisio
     T.eq(f.search[2].view_profile,"manga"); T.eq(f.opens,0)
 end)
 T.test("native tabs take over with one final close callback and the same lightweight owner", function()
-    for _, id in ipairs{"description","tags","reviews","information","cover","actions"} do
+    for _, id in ipairs{"description","tags","reviews","rating","information","cover","actions"} do
         local p, owner = fixture(); p:getButtonById(id).callback(); T.eq(f.closed,0); T.eq(#f.tabs,1)
         T.eq(f.tabs[1].active,id == "actions" and "edit" or id); assert(f.tabs[1].classic)
         assert(owner._orbitui_modal.native); f.tabs[1].on_close(); T.eq(f.closed,1)

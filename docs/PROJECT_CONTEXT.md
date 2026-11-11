@@ -25,13 +25,21 @@ and correct this file in the same change.
 - **Local airy book-info implementation, not released.** User chooses the
   full-page/airy sketch and approves implementation plus a broader presentation
   review. Branch `feature/book-info-modern-20261111` starts at `702e9c8c`.
+  After comparing the first rendering with the sketch, the user approves a
+  visual correction from **571640b3**: 132dp cover, adjacent Read/status actions,
+  personal stars, quiet back/ellipsis navigation, thin divided value-first
+  facts, 16pt preview and 13pt regular rounded tags. Normal-height screens keep
+  the book header visible; short/dense screens retain a compact fixed Read
+  fallback. Preview text size has a separate explicit 12–40 setting and does
+  not change native description zoom. Real-widget raster/gesture/scroll checks
+  pass; updated full/package receipts are in TESTING. No public beta yet.
   A default-on, reversible overview shows cover, status/rating, a compact facts
   row, description and two rows of clickable offline tag chips. Explicit
   refresh/online tag tools, reviews, metadata, highlights, cover selection and
   actions keep the existing native tabs and owners. One per-file validated tag
   cache peek is allowed on opening either overview or Tags; no implicit archive
   read, scan or network fetch. Existing shelf/header appearances are untouched.
-  Complete Lua/LuaJIT checks and both 129-root sealed repeats pass; runtime
+  Initial implementation's complete Lua/LuaJIT checks and both 129-root sealed repeats pass; runtime
   **e54d132c**, private ZIP **6e15d9f7**, exact unchanged API1 inventory. Actual
   KOReader widget raster/geometry/gesture checks pass locally. Physical
   acceptance remains separate; see TESTING. Public dist stays **d7abac63**.

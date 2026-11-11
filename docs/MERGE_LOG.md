@@ -4,6 +4,22 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-11 — correct the book overview against the approved sketch
+
+User notes that the native rendering looks worse than the accepted airy sketch,
+then approves correcting it and showing a real native rendering before a beta.
+Continue the same local feature branch from **571640b3**. Restore the larger
+cover, light profile/back navigation, adjacent Read/status actions, personal
+stars, divided value-first facts, 16pt preview and 13pt regular rounded tags.
+Use #555 for secondary copy. The overview gets its own explicit 12–40 text-size
+setting, preserving the full native description zoom. Normal-height screens
+retain the hero above scrolling content; short/dense screens scroll it with a
+compact fixed Read fallback. Native measurement/paint revealed and corrected a
+group-layout cache invalidation issue and glyph/button-height mismatches.
+Native personal-star navigation selects the user's review source explicitly.
+No upstream, version, public push/release or device/server change. See TESTING
+for final native raster, regression and private-package receipts.
+
 ## 2026-11-11 — airy book-info page, local feature work only
 
 User selects the airy full-page concept and approves building it plus reviewing

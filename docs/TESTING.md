@@ -1,5 +1,23 @@
 # Verification and device acceptance
 
+## 2026-11-11 — revise the overview against the accepted sketch
+
+User approves correcting the first native rendering's visual mismatch before
+any beta. The same actual-widget harness renders the revised title/cover/read/
+stars/facts/description/tag hierarchy at 1264x1680@2 SV, 1680x1264@2 EN,
+320x240@1 SV and 600x800@2.5 SV. Normal and long-title fixtures pass actual label
+bounds, full-screen/body geometry, native blank-area gestures and Read dispatch.
+Scrolling to the bottom leaves the real Read button in the same visible place
+in both header-fixed and short-screen layouts. Borrowed image lifetime passes.
+The 1264x1680 PNG was visually checked against the original sketch; the image
+is a local native-widget rendering with placeholder cover and fixture metadata.
+
+Existing overview/controller tests pass after updating their native LineWidget
+fixture. The actual native factory routes the personal stars to the personal
+review source even when Hardcover reviews are present. Full interpreter and
+package results follow once complete. The device and public beta.2 remain
+unchanged; the original physical acceptance gaps below still apply.
+
 ## 2026-11-11 — airy book overview, local development
 
 Targeted `test_book_overview` covers twelve EN/SV viewport combinations, body

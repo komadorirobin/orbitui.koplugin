@@ -54,6 +54,10 @@ function M.widget(widget)
         local _ = require("core/orbitui_i18n")
         local selected = args.tabs[args.active_tab] and args.tabs[args.active_tab].id
         if opts and opts.active == "information" then selected = "information" end
+        if opts and opts.active == "rating" then
+            selected = "reviews"
+            for _i, tab in ipairs(args.tabs) do if tab.id == "reviews" then tab.active_source = 1 end end
+        end
         for _i, tab in ipairs(args.tabs) do if tab.id == "tags" then tab.label = _("Tags") end end
         -- Keep all native tabs, plugin actions, sources and their close/open
         -- lifecycle. The new read-only page is built only when selected.
@@ -321,6 +325,11 @@ local book_page_key = "orbitui_book_overview"
 function M.bookPageEnabled()
     return not G_reader_settings or G_reader_settings:readSetting(book_page_key) ~= false
 end
+function M.bookPageFontSize()
+    local size = tonumber(require("lib/bookshelf_settings_store").read("orbitui_overview_font_size", 16)) or 16
+    if size ~= size then size = 16 end
+    return math.max(12, math.min(40, math.floor(size)))
+end
 function M.bookPageItems(changed)
     local _ = require("core/orbitui_i18n")
     return {{ text = _("Use the airy book information page"), checked_func = M.bookPageEnabled,
@@ -328,7 +337,18 @@ function M.bookPageItems(changed)
             if not G_reader_settings then return end
             G_reader_settings:saveSetting(book_page_key, not M.bookPageEnabled())
             if changed then changed() end
-        end }, { text = _("Covers, description and tags in one overview. Actions opens the existing editor; turn this off to use the classic tabbed view."), enabled = false }}
+        end }, { text = _("Covers, description and tags in one overview. The ••• menu opens the existing editor. Turn this off to use the classic tabbed view."), enabled = false },
+        { text = string.format(_("Overview text size: %d"), M.bookPageFontSize()), callback = function()
+            local UI = require("ui/uimanager")
+            UI:show(require("ui/widget/spinwidget"):new{
+                title_text = _("Book overview text size"), value = M.bookPageFontSize(),
+                value_min = 12, value_max = 40, value_step = 1, default_value = 16,
+                callback = function(spin)
+                    require("lib/bookshelf_settings_store").save("orbitui_overview_font_size", spin.value)
+                    if changed then UI:nextTick(changed) end
+                end,
+            })
+        end }}
 end
 
 -- Presentation only: native tabs retain every editing/source/plugin action.
@@ -336,6 +356,7 @@ end
 function M.bookPage(owner, record, options, classic)
     local UI, Screen = require("ui/uimanager"), require("device").screen
     local BB, Geom, Font = require("ffi/blitbuffer"), require("ui/geometry"), require("lib/bookshelf_fonts")
+    local muted = BB.COLOR_GRAY_5 or BB.COLOR_DARK_GRAY
     local Frame, Text = require("ui/widget/container/framecontainer"), require("ui/widget/textboxwidget")
     local V, H = require("ui/widget/verticalgroup"), require("ui/widget/horizontalgroup")
     local VS, HS = require("ui/widget/verticalspan"), require("ui/widget/horizontalspan")
@@ -404,7 +425,8 @@ function M.bookPage(owner, record, options, classic)
     function Page:onFocusMove(args)
         local result = require("ui/widget/focusmanager").onFocusMove(self, args)
         local scroll, sel = self.cropping_widget, self.selected
-        if scroll and scroll._is_scrollable and sel and sel.y > 1 and sel.y < #self.layout then
+        if scroll and scroll._is_scrollable and sel and self.body_focus
+                and sel.y >= self.body_focus.from and sel.y <= self.body_focus.to then
             local item = self.layout[sel.y] and self.layout[sel.y][sel.x]
             local d, view = item and item.dimen, scroll.dimen
             if d and d.y and view and view.y then
@@ -427,22 +449,26 @@ function M.bookPage(owner, record, options, classic)
         local w = inner - Scroll:getScrollbarWidth()
         local function space(n) return VS:new{ width = px(n) } end
         local function gap(n) return HS:new{ width = px(n) } end
-        local function text(copy, size, bold, width, maxh, color)
+        local function text(copy, size, bold, width, maxh, color, alignment)
             local face, face_bold = Font:getFace("cfont", size)
             local opts = { text = clean(copy, 12000), width = width, face = face, bold = bold or face_bold,
-                fgcolor = color or BB.COLOR_BLACK, bgcolor = BB.COLOR_WHITE, height_overflow_show_ellipsis = true }
+                fgcolor = color or BB.COLOR_BLACK, bgcolor = BB.COLOR_WHITE, alignment = alignment or "left",
+                height_overflow_show_ellipsis = true }
             local item = Text:new(opts)
             if maxh and item:getSize().h > maxh then
                 item:free(); opts.height, opts.height_adjust = maxh, false; item = Text:new(opts)
             end
             return item
         end
-        local function button(id, copy, width, callback, primary, hold, content)
-            local b = Button:new{ text = clean(copy), width = width, height = math.max(px(30), content and content:getSize().h or 0),
+        local function button(id, copy, width, callback, primary, hold, content, style)
+            style = style or {}
+            local b = Button:new{ text = clean(copy), width = width, height = math.max(px(style.height or 26), content and content:getSize().h or 0),
                 show_parent = self,
-                padding_h = px(6), padding_v = px(7), margin = 0, bordersize = (content or id == "close") and 0 or px(1), radius = px(8),
+                padding_h = px(style.pad_h or 8), padding_v = style.pad_v == 0 and 0 or px(style.pad_v or 6),
+                margin = 0, bordersize = (content or style.plain) and 0 or px(1), radius = px(style.radius or 10),
                 background = primary and BB.COLOR_BLACK or nil,
-                text_font_size = 16, avoid_text_truncation = false,
+                text_font_size = style.size or 15, text_font_bold = primary or style.bold == true,
+                align = style.align or "center", avoid_text_truncation = false,
                 callback = function() if self:current(revision) then callback() end end,
                 hold_callback = hold and function() if self:current(revision) then hold() end end }
             if content then
@@ -451,65 +477,120 @@ function M.bookPage(owner, record, options, classic)
             self.native_buttons[id] = b; return b
         end
         local function rowButton(id, copy, tab)
-            local content = H:new{ align = "center", text(copy, 16, false, w - px(36)), gap(8), text("›", 20, false, px(10)) }
-            local b = button(id, "", w, function() self:openTab(tab) end, false, nil, content)
+            local content = H:new{ align = "center", text(copy, 14, false, w - px(38)), gap(8), text("›", 18, false, px(10)) }
+            local b = button(id, "", w, function() self:openTab(tab) end, false, nil, content, { height = 22, pad_v = 4 })
             self.layout[#self.layout + 1] = { b }; return b
         end
-        local close = button("close", "×", px(44), function() self:onClose() end)
-        local top = V:new{ align = "left", H:new{ align = "center",
-            text(_("Book information"), 18, true, inner - px(44), px(54)), close }, space(12) }
-        self.layout[#self.layout + 1] = { close }
+        local Line = require("ui/widget/linewidget")
+        local function rule(width, height)
+            return Line:new{ dimen = Geom:new{ w = width, h = height or px(1) }, background = BB.COLOR_LIGHT_GRAY }
+        end
+        local label = owner.profile and clean(owner.profile.label) or ""
+        if label == "" then label = _("Library") end
+        local close = button("close", "‹  " .. label, inner - px(44), function() self:onClose() end, false, nil, nil,
+            { size = 14, plain = true, align = "left", pad_v = 0, height = 30 })
+        local actions = button("actions", "•••", px(44), function() self:openTab("edit") end, false, nil, nil,
+            { plain = true, size = 18, pad_v = 0, height = 30 })
+        local top = V:new{ align = "left", H:new{ align = "center", close, actions } }
+        self.layout[#self.layout + 1] = { close, actions }
         local body = V:new{ align = "left" }
-        local coverw = math.min(px(112), math.floor(w * .29))
+        local fixed_hero = sh >= px(600)
+        local coverw = math.min(px(132), math.floor(w * .29))
         local coverh = math.floor(coverw * 1.5)
         local art
         if self.cover then
             local ratio = math.min(1, coverw / self.cover:getWidth(), coverh / self.cover:getHeight())
             art = require("ui/widget/imagewidget"):new{ image = self.cover, image_disposable = false,
                 width = math.max(1, math.floor(self.cover:getWidth() * ratio)), height = math.max(1, math.floor(self.cover:getHeight() * ratio)) }
-        else art = text(_("No cover"), 14, false, coverw - px(8), coverh, BB.COLOR_DARK_GRAY) end
+        else art = text(_("No cover"), 14, false, coverw - px(8), coverh, muted) end
         local cover = Center:new{ dimen = Geom:new{ w = coverw, h = coverh }, art }
-        local titlew = w - coverw - px(18)
-        local hero = V:new{ align = "left", text(clean(book.title) ~= "" and book.title or book.filename or _("Book"),
-            26, true, titlew, px(142)), space(7), text(authors, 17, false, titlew, px(70), BB.COLOR_DARK_GRAY), space(14) }
+        local titlew = w - coverw - px(22)
+        local hero = V:new{ align = "left" }
+        if clean(book.series_name) ~= "" then
+            local kicker = book.series_name .. (tonumber(book.series_num) and (" · " .. string.format(_("Volume %s"), book.series_num)) or "")
+            hero[#hero + 1] = text(kicker, 11, false, titlew, px(17), muted)
+            hero[#hero + 1] = space(4)
+        end
+        hero[#hero + 1] = text(clean(book.title) ~= "" and book.title or book.filename or _("Book"), 28, true, titlew, px(78))
+        hero[#hero + 1] = space(4)
+        hero[#hero + 1] = text(authors, 16, false, titlew, px(44), muted)
+        hero[#hero + 1] = space(9)
         local state = status == "finished" and _("Finished") or status == "abandoned" and _("On hold")
             or pct > 0 and string.format(_("%d%% read"), math.floor(pct * 100 + .5)) or _("Not started")
-        hero[#hero + 1] = text(state, 16, true, titlew)
         local score = tonumber(rating or book.rating)
-        if score and score >= 1 and score <= 5 then
-            hero[#hero + 1] = space(7)
-            hero[#hero + 1] = text(string.format(_("Your rating: %s / 5"), score), 14, false, titlew, nil, BB.COLOR_DARK_GRAY)
+        score = score and score == score and math.max(0, math.min(5, math.floor(score))) or 0
+        local stars = {}; for i = 1, 5 do stars[i] = i <= score and "★" or "☆" end
+        local rating_button = button("rating", table.concat(stars, " "), titlew, function() self:openTab("rating") end,
+            false, nil, nil, { size = 22, plain = true, align = "left", pad_v = 0, height = 36 })
+        hero[#hero + 1] = rating_button; self.layout[#self.layout + 1] = { rating_button }
+        hero[#hero + 1] = space(4)
+        hero[#hero + 1] = text(state, 13, false, titlew, nil, muted)
+        local function open() self:onClose(); owner:_openBook(book) end
+        local read_copy = pct > 0 and status ~= "finished" and _("Continue reading") or _("Read now")
+        local statew = titlew >= px(260) and math.min(px(128), math.floor(titlew * .38)) or 0
+        local read = button(fixed_hero and "read" or "hero_read", read_copy, titlew - (statew > 0 and statew + px(8) or 0), open, true)
+        local hero_actions = H:new{ align = "center", read }
+        local hero_focus = { read }
+        if statew > 0 then
+            local state_copy = status == "finished" and _("Finished") or status == "abandoned" and _("On hold")
+                or pct > 0 and _("Reading now") or _("Not started")
+            local state_button = button("status", state_copy .. " ›", statew, function() self:openTab("edit") end,
+                false, nil, nil, { size = 13, radius = 20 })
+            hero_actions[#hero_actions + 1] = gap(8); hero_actions[#hero_actions + 1] = state_button
+            hero_focus[#hero_focus + 1] = state_button
         end
-        body[#body + 1] = H:new{ align = "top", cover, gap(18), hero }
+        hero[#hero + 1] = VS:new{ width = math.max(px(12), coverh - hero:getSize().h - hero_actions:getSize().h) }
+        hero[#hero + 1] = hero_actions
+        hero:resetLayout()
+        self.layout[#self.layout + 1] = hero_focus
+        local jacket = H:new{ align = "top", cover, gap(22), hero }
+        if fixed_hero then
+            top[#top + 1] = space(20); top[#top + 1] = jacket; top[#top + 1] = space(24)
+            self.body_focus = { from = #self.layout + 1 }
+        else
+            top[#top + 1] = space(12)
+            body[#body + 1] = jacket; body[#body + 1] = space(24)
+            self.body_focus = { from = 2 }
+        end
         local facts = {}
         local function fact(label, value) value = clean(value, 512); if value ~= "" then facts[#facts + 1] = { _(label), value } end end
-        fact("Series", book.series_name or book.series)
-        if #facts > 0 and book.series_name and tonumber(book.series_num) then facts[1][2] = facts[1][2] .. " · " .. tostring(book.series_num) end
+        if clean(book.series_name or book.series) ~= "" and tonumber(book.series_num) then
+            fact("In series", string.format(_("Volume %s"), book.series_num))
+        else fact("Series", book.series_name or book.series) end
         fact("Language", book.lang or book.language)
         fact("Format", clean(book.format) ~= "" and book.format:upper() or (book.filepath:match("%.([^./]+)$") or ""):upper())
         if #facts > 0 then
-            body[#body + 1] = space(22)
+            body[#body + 1] = rule(w); body[#body + 1] = space(14)
             local wide = w >= px(390)
-            local cellw = wide and math.floor((w - (#facts - 1) * px(10)) / #facts) or w
+            local cellw = wide and math.floor((w - (#facts - 1) * px(25)) / #facts) or w
             local strip = wide and H:new{ align = "top" } or V:new{ align = "left" }
+            local cells, cellh = {}, 0
             for i, value in ipairs(facts) do
-                if i > 1 then strip[#strip + 1] = wide and gap(10) or space(10) end
-                strip[#strip + 1] = V:new{ align = "left", text(value[1], 13, false, cellw, nil, BB.COLOR_DARK_GRAY),
-                    space(4), text(value[2], 16, true, cellw, px(65)) }
+                cells[i] = V:new{ align = "left", text(value[2], 16, true, cellw, px(44)), space(3),
+                    text(value[1], 12, false, cellw, nil, muted) }
+                cellh = math.max(cellh, cells[i]:getSize().h)
             end
-            body[#body + 1] = strip
+            for i, cell in ipairs(cells) do
+                if i > 1 then
+                    if wide then strip[#strip + 1] = gap(12); strip[#strip + 1] = rule(px(1), cellh); strip[#strip + 1] = gap(12)
+                    else strip[#strip + 1] = space(10) end
+                end
+                strip[#strip + 1] = cell
+            end
+            body[#body + 1] = strip; body[#body + 1] = space(14); body[#body + 1] = rule(w)
         end
         body[#body + 1] = space(24)
-        body[#body + 1] = text(_("About this book"), 18, true, w); body[#body + 1] = space(9)
-        local base = tonumber(require("lib/bookshelf_settings_store").read("desc_font_size", 20)) or 20
-        if base ~= base then base = 20 end
-        base = math.max(12, math.min(40, base))
-        body[#body + 1] = text(description ~= "" and description or _("No description available."), base, false, w, px(base * 5.4))
-        if description ~= "" then body[#body + 1] = space(10); body[#body + 1] = rowButton("description", _("Full description"), "description") end
-        body[#body + 1] = space(24); body[#body + 1] = text(_("Tags"), 18, true, w); body[#body + 1] = space(8)
+        body[#body + 1] = text(_("About this book"), 16, true, w); body[#body + 1] = space(8)
+        local base = M.bookPageFontSize()
+        body[#body + 1] = text(description ~= "" and description or _("No description available."), base, false, w, px(base * 6), muted)
+        if description ~= "" then body[#body + 1] = space(6); body[#body + 1] = rowButton("description", _("Full description"), "description") end
+        body[#body + 1] = space(22)
         for section_i, section in ipairs(M.tagSections(owner, book, self, true)) do
-            body[#body + 1] = text(section_i == 1 and _("EPUB tags (offline)") or section.title, 13, false, w, nil, BB.COLOR_DARK_GRAY)
-            body[#body + 1] = space(8)
+            local heading = section_i == 1 and _("Tags") or "BookOrbit"
+            local source = section_i == 1 and _("From EPUB") or _("Optional")
+            body[#body + 1] = H:new{ align = "center", text(heading, 16, true, math.floor(w * .6)),
+                text(source, 12, false, w - math.floor(w * .6), nil, muted, "right") }
+            body[#body + 1] = space(10)
             local line, focus, used, lines, visible = H:new{ align = "center" }, {}, 0, 1, 0
             local function flush()
                 if #focus > 0 then body[#body + 1] = line; self.layout[#self.layout + 1] = focus; body[#body + 1] = space(7) end
@@ -517,11 +598,12 @@ function M.bookPage(owner, record, options, classic)
             end
             for i, pill in ipairs(section.pills) do
                 if not pill.link then
-                    local probe = require("ui/widget/textwidget"):new{ text = clean(pill.label, 800), face = Font:getFace("cfont", 16) }
+                    local probe = require("ui/widget/textwidget"):new{ text = clean(pill.label, 800), face = Font:getFace("cfont", 13) }
                     local width = math.min(w, probe:getSize().w + px(24)); probe:free()
                     if used > 0 and used + px(8) + width > w then flush(); lines = lines + 1 end
                     if lines > 2 then break end
-                    local b = button("tag:" .. section_i .. ":" .. i, pill.label, width, pill.on_tap, false, pill.on_hold)
+                    local b = button("tag:" .. section_i .. ":" .. i, pill.label, width, pill.on_tap, false, pill.on_hold,
+                        nil, { size = 13, radius = 20, height = 24 })
                     if used > 0 then line[#line + 1] = gap(8); used = used + px(8) end
                     line[#line + 1] = b; focus[#focus + 1] = b; used = used + width; visible = visible + 1
                 end
@@ -532,21 +614,28 @@ function M.bookPage(owner, record, options, classic)
                     or not book.filepath:lower():match("%.epub$") and _("Genres and collections are available in tag tools.")
                     or section.loaded and _("No separate EPUB tags. Genres and collections are available in tag tools.")
                     or _("EPUB tags are not cached yet. Open tag tools to read them.")
-                body[#body + 1] = text(note, 14, false, w, nil, BB.COLOR_DARK_GRAY)
+                body[#body + 1] = text(note, 13, false, w, nil, muted)
             end
             body[#body + 1] = space(8)
         end
         -- Explicit refresh, online loads and similarity tools stay in Tags.
-        body[#body + 1] = rowButton("tags", _("All tags and tag tools"), "tags"); body[#body + 1] = space(22)
+        body[#body + 1] = rowButton("tags", _("View all tags"), "tags"); body[#body + 1] = space(20)
+        body[#body + 1] = rule(w); body[#body + 1] = space(10)
+        local more, more_focus = H:new{ align = "center" }, {}
+        local morew = math.floor(w / 3)
         for _i, action in ipairs{{ "reviews", "Reviews" }, { "information", "File information" }, { "cover", "Cover" }} do
-            body[#body + 1] = rowButton(action[1], _(action[2]), action[1]); body[#body + 1] = space(7)
+            local b = button(action[1], _(action[2]), morew, function() self:openTab(action[1]) end, false, nil, nil,
+                { size = 13, plain = true, height = 24 })
+            more[#more + 1] = b; more_focus[#more_focus + 1] = b
         end
-        local half = math.floor((inner - px(10)) / 2)
-        local read = button("read", pct > 0 and status ~= "finished" and _("Continue reading") or _("Read now"), half,
-            function() self:onClose(); owner:_openBook(book) end, true)
-        local actions = button("actions", _("Actions…"), inner - half - px(10), function() self:openTab("edit") end)
-        local footer = V:new{ align = "left", space(12), H:new{ align = "center", read, gap(10), actions } }
-        self.layout[#self.layout + 1] = { read, actions }
+        body[#body + 1] = more; self.layout[#self.layout + 1] = more_focus
+        self.body_focus.to = #self.layout
+        local footer = V:new{ align = "left" }
+        if not fixed_hero then
+            local quick = button("read", read_copy, inner, open, true, nil, nil, { height = 28, pad_v = 4 })
+            footer[#footer + 1] = space(8); footer[#footer + 1] = quick
+            self.layout[#self.layout + 1] = { quick }
+        end
         local maxh = math.max(1, sh - 2 * pad - top:getSize().h - footer:getSize().h)
         self.cropping_widget = Scroll:new{ dimen = Geom:new{ w = inner, h = maxh }, show_parent = self, body }
         self[1] = Frame:new{ padding = pad, margin = 0, bordersize = 0, background = BB.COLOR_WHITE,
@@ -563,7 +652,7 @@ function M.bookPage(owner, record, options, classic)
     function Page:init()
         self.navigation = UI._simpleui_navigation_generation
         if owner._orbituiDetailCover then
-            local success, bb, owned = pcall(owner._orbituiDetailCover, owner, book, px(126))
+            local success, bb, owned = pcall(owner._orbituiDetailCover, owner, book, px(132))
             if success and bb then
                 local valid, cw, ch = pcall(function() return bb:getWidth(), bb:getHeight() end)
                 if valid and type(cw) == "number" and type(ch) == "number" and cw > 0 and ch > 0 then self.cover, self.owned_cover = bb, owned

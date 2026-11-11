@@ -573,13 +573,27 @@ review/highlight/cover requests still go straight to their tabs. Remote/OPDS
 details retain their original read-only path. Native cover policy owns the
 thumbnail: never consume a shelf record's disposable bb; release only an owned
 source once, after its widgets, and retain borrowed source buffers through
-rebuild/close. Unknown facts stay absent, description text retains the existing
-description-size preference, title/author/tag labels truncate safely, and a
-scrolling body must not cover fixed Close/Read/Actions controls. Native actual
+rebuild/close. Unknown facts stay absent, title/author/tag labels truncate safely,
+and a scrolling body must not cover the navigation or reading controls. Native actual
 scrollbar width, cropped feedback, focus scrolling, stale-layout/navigation
 guards and suspend/rotation cleanup are required. Selecting a tag reuses the
 existing local result navigation; a long press keeps saved chip/shelf workflows.
 No new similarity carousel, automatic recommendation scan or background fetch.
+
+November 11 visual correction, approved after comparison with the sketch:
+preserve the 132dp cover / 28pt title / 16pt body / 13pt regular pill hierarchy,
+quiet profile/back navigation and ellipsis actions, a five-star personal rating
+and a facts strip with thin dividers and values above secondary labels. Tapping
+the rating selects the native personal review source, not Hardcover reviews.
+Read and native status access sit beside the cover. On normal-height screens
+the book header stays above the scrolling body; small/dense screens scroll the
+header and retain a compact fixed Read button. Focus scrolling tracks the actual
+body rows in either layout. Reset native group geometry after measuring and
+appending the hero's bottom-aligned actions. Overview preview size is independent
+(`orbitui_overview_font_size`, default 16, 12–40, explicit setting); the original
+Description tab's saved size remains unchanged. Dark-gray body text is #555,
+not KOReader's much lighter COLOR_DARK_GRAY (#888). No recommendation placeholders
+are added to the real view. The user reviews a native rendering before any beta.
 
 Shared design direction, not blanket authorization to replace all menus:
 
