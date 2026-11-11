@@ -22,10 +22,15 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Even cover staircase spacing.** Covers keep their descending sizes and
+  share a baseline. The measured gaps on the Bigme are now 112–113 pixels.
+  The text and tap targets follow their covers, and the last title retains
+  a full column. Tested in active private slot **36c59799**, with
+  **7cb0b352** as rollback.
+
 - **Reading-goal source readability.** The Hardcover caption under the
   progress bar uses larger type and primary ink in both dashboard layouts.
-  Verified on the Bigme's cover staircase in private slot **7cb0b352**,
-  with **c69de3ef** as rollback.
+  Verified on the Bigme's cover staircase in private slot **7cb0b352**.
 
 - **Dashboard date and footer readability.** The date and time remaining
   use larger bold text. The Silverfish statistics use larger regular text.

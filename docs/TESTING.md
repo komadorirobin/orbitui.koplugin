@@ -1,5 +1,26 @@
 # Verification and device acceptance
 
+## 2026-11-11 — even cover staircase spacing on Bigme
+
+The staircase distributes the gaps between cover edges, preserves the cover
+sizes and reserves the last title column. Titles and book gestures follow
+the new positions. Dashboard checks verify spacing, common bottom alignment,
+and separate tap and hold actions at four sizes. Desktop KOReader widgets
+painted at 1232×1360, 480×540 and 800×480.
+
+On the Bigme at 1264×1680, the visible gaps changed from 142, 88 and 108
+pixels to 112, 113 and 113 pixels. A long-press on the moved second cover
+opened the correct book details and returned to Home. The dashboard and
+wallpaper preferences, history, collections and crash-log size matched.
+
+Source **5371c55ffce2df6026d8aee39aa28859c7d887e0**, private ZIP
+**36c59799863e993874c5b5f69fad38dcadf7501e9e5305ba5a0cd4e8c320dabc**.
+The full Lua gate passed with the optional SQLite skips. The focused
+dashboard suite passed against the sealed runtime in Lua and LuaJIT.
+Archive integrity and the same 2,000 Android paths and their hashes
+were verified. The build is active with **7cb0b352** as rollback.
+Evidence is in `test-results/dashboard-cover-spacing-20261111/`.
+
 ## 2026-11-11 — reading-goal source readability on Bigme
 
 Reading-goal captions use larger type and primary ink in both dashboard
