@@ -580,16 +580,18 @@ function M.bookPage(owner, record, options, classic)
             body[#body + 1] = strip; body[#body + 1] = space(14); body[#body + 1] = rule(w)
         end
         body[#body + 1] = space(24)
-        body[#body + 1] = text(_("About this book"), 16, true, w); body[#body + 1] = space(8)
         local base = M.bookPageFontSize()
         body[#body + 1] = text(description ~= "" and description or _("No description available."), base, false, w, px(base * 6), muted)
         if description ~= "" then body[#body + 1] = space(6); body[#body + 1] = rowButton("description", _("Full description"), "description") end
         body[#body + 1] = space(22)
         for section_i, section in ipairs(M.tagSections(owner, book, self, true)) do
-            local heading = section_i == 1 and _("Tags") or "BookOrbit"
             local source = section_i == 1 and _("From EPUB") or _("Optional")
-            body[#body + 1] = H:new{ align = "center", text(heading, 16, true, math.floor(w * .6)),
-                text(source, 12, false, w - math.floor(w * .6), nil, muted, "right") }
+            if section_i == 1 then
+                body[#body + 1] = text(source, 12, false, w, nil, muted, "right")
+            else
+                body[#body + 1] = H:new{ align = "center", text("BookOrbit", 16, true, math.floor(w * .6)),
+                    text(source, 12, false, w - math.floor(w * .6), nil, muted, "right") }
+            end
             body[#body + 1] = space(10)
             local line, focus, used, lines, visible = H:new{ align = "center" }, {}, 0, 1, 0
             local function flush()
@@ -1553,6 +1555,29 @@ function M.readerSheet(options)
     local function number(value)
         return type(value) == "number" and value == value and value >= 0 and value <= 1e8 and value or nil
     end
+    local function position(ui, file)
+        local p = {}
+        if not ui or not ui.document or ui.document.file ~= file then return p end
+        p.page, p.count = number(call(ui, "getCurrentPage")), number(call(ui.document, "getPageCount"))
+        if not p.page or not p.count or p.count == 0 or p.page > p.count then return p end
+        p.percent = p.page / p.count
+        p.chapter = clean(call(ui.toc, "getTocTitleByPage", p.page))
+        p.chapter_left = number(call(ui.toc, "getChapterPagesLeft", p.page, true))
+        local left = number(call(ui.document, "getTotalPagesLeft", p.page)) or (p.count - p.page)
+        -- Same live formatter/page-flow semantics as KOReader's footer. Never
+        -- query statistics/history here, nor display its default (unobserved)
+        -- half-max-sec speed as if it were a measured estimate.
+        local stats = ui.statistics
+        if not stats or stats.ui ~= ui or stats.document ~= ui.document or not stats.is_doc
+                or not stats.settings or not stats.settings.is_enabled
+                or not number(stats.avg_time) or stats.avg_time <= 0
+                or ((number(stats.book_read_pages) or 0) + (number(stats.mem_read_pages) or 0)) == 0 then return p end
+        if left <= p.count then p.book_time = clean(call(stats, "getTimeForPages", left)) end
+        if p.chapter_left and p.chapter_left <= p.count then
+            p.chapter_time = clean(call(stats, "getTimeForPages", p.chapter_left))
+        end
+        return p
+    end
     function Sheet:close() if not self.closed then UI:close(self) end end
     function Sheet:onClose() self:close(); return true end
     function Sheet:onOutside(_, gesture)
@@ -1572,14 +1597,16 @@ function M.readerSheet(options)
         local sw, sh = Screen:getWidth(), Screen:getHeight()
         local margin, border = px(10), px(1)
         local width = math.min(px(620), sw - 2 * margin)
-        local pad = math.min(px(18), math.floor(width / 16))
-        local inner = width - 2 * (pad + border)
         local compact = sh < px(430)
+        local pad = math.min(px(compact and 10 or 18), math.floor(width / 16))
+        local inner = width - 2 * (pad + border)
         local function space(n) return VS:new{ width = px(n) } end
         local function gap(n) return HS:new{ width = px(n) } end
-        local function text(copy, size, bold, w, maxh, color)
+        local function text(copy, size, bold, w, maxh, color, alignment)
             local opts = { text = clean(copy), width = w, face = Font:getFace("cfont", size), bold = bold,
-                fgcolor = color or BB.COLOR_BLACK, bgcolor = BB.COLOR_WHITE, height_overflow_show_ellipsis = true }
+                fgcolor = color or BB.COLOR_BLACK, bgcolor = color and color == BB.COLOR_WHITE and BB.COLOR_BLACK or BB.COLOR_WHITE,
+                alignment = alignment or "left",
+                height_overflow_show_ellipsis = true }
             local widget = Text:new(opts)
             if maxh and widget:getSize().h > maxh then
                 widget:free(); opts.height, opts.height_adjust = maxh, false; widget = Text:new(opts)
@@ -1607,15 +1634,26 @@ function M.readerSheet(options)
                 percentage = math.max(0, math.min(1, number(pct) or 0)), margin_h = 0, margin_v = 0,
                 bordersize = 0, bgcolor = BB.COLOR_LIGHT_GRAY, fillcolor = BB.COLOR_BLACK }
         end
+        local function icon(name, size)
+            return require("ui/widget/iconwidget"):new{ file = root .. "/assets/material-symbols/icons/300/" .. name .. ".svg",
+                width = px(size or 22), height = px(size or 22) }
+        end
+        local function rule(w)
+            return Frame:new{ padding = 0, padding_bottom = px(1), bordersize = 0, background = BB.COLOR_LIGHT_GRAY,
+                HS:new{ width = w } }
+        end
         local specs = {}
         for _, row in ipairs(self.buttons) do for _, spec in ipairs(row) do if spec.id then specs[spec.id] = spec end end end
-        local function button(id, copy, w, h, primary, content, cb)
+        local function button(id, copy, w, h, primary, content, cb, style)
             local spec = specs[id] or {}
             local enabled = spec.enabled ~= false
+            style = style or {}
             local b = Button:new{ text = copy, width = w,
-                height = math.max(h, px(28), content and content:getSize().h or 0), padding_h = px(6), padding_v = px(7),
-                margin = 0, bordersize = 0, radius = px(8), background = primary and BB.COLOR_BLACK or nil,
-                text_font_size = compact and 14 or 16, avoid_text_truncation = false, enabled = enabled,
+                height = math.max(h, content and content:getSize().h or 0), padding_h = style.pad_h and px(style.pad_h) or 0,
+                padding_v = px(style.pad_v or 7), margin = 0, bordersize = style.outline and px(1) or 0,
+                radius = px(style.radius or 8), background = primary and BB.COLOR_BLACK or nil,
+                text_font_size = style.font or 13, text_font_bold = primary or false,
+                avoid_text_truncation = false, enabled = enabled,
                 callback = function()
                     if self.closed or self.revision ~= revision or not UI:isWidgetShown(self)
                             or UI:getTopmostVisibleWidget() ~= self then return end
@@ -1628,41 +1666,72 @@ function M.readerSheet(options)
             return b
         end
         local top = V:new{ align = "left" }
-        local closew, coverw, coverh = px(34), px(42), px(compact and 46 or 63)
-        local headtext = V:new{ align = "left",
-            text(self.title, compact and 18 or 20, true, inner - coverw - closew - px(12), px(compact and 27 or 54)),
-            space(3), text(self.author, 14, false, inner - coverw - closew - px(12), px(21), BB.COLOR_DARK_GRAY) }
-        local close = button("close", "×", closew, px(24))
-        top[#top + 1] = H:new{ align = "top", cover(self.file, coverw, coverh), gap(12), headtext, close }
+        local closew, coverw, coverh = px(34), px(compact and 36 or 48), px(compact and 48 or 72)
+        local headw = inner - coverw - closew - px(14)
+        local p = self.position
+        local headtext = V:new{ align = "left", text(self.title, compact and 18 or 20, true, headw, px(compact and 27 or 54)) }
+        if not compact then
+            headtext[#headtext + 1] = space(3)
+            headtext[#headtext + 1] = text(self.author, 14, false, headw, px(21), BB.COLOR_DARK_GRAY)
+        end
+        if p.percent then
+            headtext[#headtext + 1] = space(6)
+            headtext[#headtext + 1] = Frame:new{ padding = 0, padding_left = px(8), padding_right = px(8),
+                padding_top = px(3), padding_bottom = px(3), bordersize = 0, radius = px(10), background = BB.COLOR_BLACK,
+                text(string.format("%s · %.0f %%", _("Reading now"), p.percent * 100), 11, true,
+                    math.min(headw - px(16), px(106)), px(17), BB.COLOR_WHITE) }
+        end
+        if compact and p.book_time and p.book_time ~= "" then
+            headtext[#headtext + 1] = space(3)
+            headtext[#headtext + 1] = text(string.format(_("About %s left"), p.book_time), 11, false,
+                headw, px(18), BB.COLOR_DARK_GRAY)
+        end
+        local close = button("close", "", closew, px(24), false, icon("close", 20))
+        top[#top + 1] = H:new{ align = "top", cover(self.file, coverw, coverh), gap(14), headtext, close }
         self.layout[#self.layout + 1] = { close }
-        local page = number(call(self.ui, "getCurrentPage"))
-        local count = number(call(self.ui.document, "getPageCount"))
-        local pct = page and count and count > 0 and math.min(1, page / count) or nil
-        if not compact and pct then
-            top[#top + 1] = space(10)
-            local leftw = math.floor(inner / 2)
-            top[#top + 1] = H:new{ align = "center",
-                text(string.format("%.0f%%", pct * 100), 16, true, leftw, px(25)),
-                text(string.format(_("Page %d of %d"), page, count), 14, false, inner - leftw, px(25), BB.COLOR_DARK_GRAY) }
-            top[#top + 1] = space(6); top[#top + 1] = progress(inner, pct)
-            local chapter = call(self.ui.toc, "getTocTitleByPage", page)
-            local remaining = number(call(self.ui.toc, "getChapterPagesLeft", page))
-            if type(chapter) == "string" and chapter ~= "" then
-                top[#top + 1] = space(7)
-                top[#top + 1] = text(chapter .. (remaining and (" · " .. string.format(_("%d pages left in chapter"), remaining)) or ""),
-                    13, false, inner, px(22), BB.COLOR_DARK_GRAY)
+        if not compact and p.percent then
+            top[#top + 1] = space(14)
+            local boxw = inner - px(26)
+            local function positionRow(art, heading, value, estimate)
+                local words = V:new{ align = "left",
+                    H:new{ align = "center", text(heading, 12, false, math.floor(boxw * .52), px(20)),
+                        text(value, 12, true, boxw - math.floor(boxw * .52) - px(28), px(20), nil, "right") } }
+                if estimate and estimate ~= "" then
+                    words[#words + 1] = space(3)
+                    words[#words + 1] = text(string.format(_("About %s left"), estimate), 11, false,
+                        boxw - px(28), px(18), BB.COLOR_DARK_GRAY, "right")
+                end
+                return H:new{ align = "center", icon(art, 18), gap(10), words }
             end
+            local facts = V:new{ align = "left", space(9), positionRow("menu_book", _("This book"),
+                string.format(_("Page %d of %d"), p.page, p.count), p.book_time) }
+            if p.chapter ~= "" then
+                facts[#facts + 1] = space(9); facts[#facts + 1] = rule(boxw); facts[#facts + 1] = space(9)
+                facts[#facts + 1] = positionRow("bookmark", p.chapter,
+                    p.chapter_left and string.format(_("%d pages left"), p.chapter_left) or "", p.chapter_time)
+            end
+            if not p.book_time or p.book_time == "" then
+                facts[#facts + 1] = space(5)
+                facts[#facts + 1] = text(_("More reading statistics are needed to estimate time left."), 11, false,
+                    boxw, px(32), BB.COLOR_DARK_GRAY)
+            end
+            facts[#facts + 1] = space(9)
+            top[#top + 1] = Frame:new{ padding = 0, padding_left = px(12), padding_right = px(12),
+                bordersize = px(1), color = BB.COLOR_DARK_GRAY, radius = px(12), facts }
         end
         top[#top + 1] = space(compact and 8 or 14)
-        local tabw = math.floor((inner - px(6)) / 2)
+        local tabw = math.floor((inner - 2 * border) / 2)
         -- Selected tabs stay readable and actionable, never native disabled gray.
         local tabs = {}
         for _i, id in ipairs{ "tools", "ongoing" } do
             local spec = specs[id]; local was = spec.enabled; spec.enabled = true
-            tabs[#tabs + 1] = button(id, id == "tools" and _("This book") or _("Also reading"), tabw, px(24), self.tab == id)
+            local label = id == "tools" and _("This book") or (_("Also reading") .. (#self.books > 0 and (" | " .. #self.books) or ""))
+            tabs[#tabs + 1] = button(id, label, id == "tools" and tabw or inner - 2 * border - tabw,
+                px(22), self.tab == id, nil, nil, { radius = 9 })
             spec.enabled = was
         end
-        top[#top + 1] = H:new{ align = "center", tabs[1], gap(6), tabs[2] }
+        top[#top + 1] = Frame:new{ padding = 0, bordersize = border, radius = px(10),
+            H:new{ align = "center", tabs[1], tabs[2] } }
         self.layout[#self.layout + 1] = tabs
         top[#top + 1] = space(compact and 8 or 14)
         local body = V:new{ align = "left" }
@@ -1672,38 +1741,36 @@ function M.readerSheet(options)
         local scrollbarw = reserve_scrollbar and require("ui/widget/container/scrollablecontainer"):getScrollbarWidth() or 0
         local bodyw = inner - scrollbarw
         local function append(widget) body[#body + 1] = widget end
-        local function icon(name)
-            return require("ui/widget/iconwidget"):new{ file = root .. "/assets/material-symbols/icons/300/" .. name .. ".svg",
-                width = px(22), height = px(22) }
-        end
         local function richRow(id, heading, detail, art, rowh)
             local spec = specs[id] or {}
             local fg = spec.enabled == false and BB.COLOR_DARK_GRAY or BB.COLOR_BLACK
-            local labelw = bodyw - px(72)
-            local label = V:new{ align = "left", text(heading, 16, true, labelw, px(25), fg) }
+            local labelw = bodyw - art:getSize().w - px(40)
+            local label = V:new{ align = "left", text(heading, 14, detail ~= nil, labelw, px(detail and 42 or 24), fg) }
             if detail then label[#label + 1] = space(3); label[#label + 1] = detail end
-            local content = H:new{ align = "center", art, gap(12), label,
+            local content = H:new{ align = "center", art, gap(12), label, gap(12),
                 text("›", 22, false, px(16), px(30), fg) }
             return button(id, "", bodyw, px(rowh), false, content)
         end
         if self.tab == "tools" then
             local tiles, focus = H:new{ align = "center" }, {}
-            local tilew = math.floor((bodyw - px(12)) / 3)
+            local tilew = math.floor((bodyw - px(16)) / 3)
             for i, id in ipairs{ "toc", "bookmark", "search" } do
                 local spec = specs[id]
-                local content = V:new{ align = "center", icon(({ "menu_book", "bookmark", "search" })[i]), space(6),
-                    text(spec.text, 14, true, tilew - px(12), px(40), spec.enabled == false and BB.COLOR_DARK_GRAY or nil) }
-                local b = button(id, "", tilew, px(66), false, content)
-                if i > 1 then tiles[#tiles + 1] = gap(6) end
+                local label = i == 1 and _("Contents") or spec.text
+                local content = V:new{ align = "center", icon(({ "menu_book", "bookmark", "search" })[i]), space(8),
+                    text(label, 12, false, tilew - 2 * (px(6) + px(1)), px(34), spec.enabled == false and BB.COLOR_DARK_GRAY or nil, "center") }
+                local b = button(id, "", tilew, px(62), false, content, nil, { outline = true, pad_h = 6, radius = 11 })
+                if i > 1 then tiles[#tiles + 1] = gap(8) end
                 tiles[#tiles + 1] = b; focus[#focus + 1] = b
             end
             append(tiles); self.layout[#self.layout + 1] = focus
+            local have_row = false
             for _, row in ipairs{ { "bookinfo", "info" }, { "pins", "collections_bookmark" }, { "gotopage", "auto_stories" },
-                    { "config", "menu_book" }, { "reader_ai", "manage_search" } } do
+                    { "config", "settings" }, { "reader_ai", "manage_search" } } do
                 local spec = specs[row[1]]
                 if spec then
-                    append(space(4))
-                    local b = richRow(row[1], spec.text, nil, Center:new{ dimen = Geom:new{ w = px(32), h = px(30) }, icon(row[2]) }, 34)
+                    append(have_row and rule(bodyw) or space(8)); have_row = true
+                    local b = richRow(row[1], spec.text, nil, Center:new{ dimen = Geom:new{ w = px(32), h = px(30) }, icon(row[2]) }, 36)
                     append(b); self.layout[#self.layout + 1] = { b }
                 end
             end
@@ -1712,45 +1779,58 @@ function M.readerSheet(options)
             self.page = math.min(self.page or 1, pages)
             for i = (self.page - 1) * 4 + 1, math.min(#self.books, self.page * 4) do
                 local book = self.books[i]
-                local labelw = bodyw - px(72)
+                local labelw = bodyw - px(76)
                 local detail = V:new{ align = "left", text((book.author ~= "" and (book.author .. " · ") or "")
-                    .. string.format("%.0f%%", book.percent * 100), 13, false, labelw, px(20), BB.COLOR_DARK_GRAY),
+                    .. string.format("%.0f%%", book.percent * 100), 11, false, labelw, px(18), BB.COLOR_DARK_GRAY),
                     space(5), progress(labelw, book.percent) }
-                local b = richRow("book:" .. book.file, book.title, detail, cover(book.file, px(32), px(52)), 58)
-                append(b); append(space(3)); self.layout[#self.layout + 1] = { b }
+                local b = richRow("book:" .. book.file, book.title, detail, cover(book.file, px(36), px(54)), 54)
+                append(b); append(rule(bodyw)); self.layout[#self.layout + 1] = { b }
             end
             if pages > 1 then
                 local function turn(delta) self.page = self.page + delta; self:rebuild(); UI:setDirty(self, "ui") end
-                local prev = button("prev", "‹", px(42), px(20), false, nil, function() if self.page > 1 then turn(-1) end end)
-                local nextb = button("next", "›", px(42), px(20), false, nil, function() if self.page < pages then turn(1) end end)
-                append(H:new{ align = "center", prev, text(string.format("%d / %d", self.page, pages), 13, false,
-                    bodyw - px(84), px(23), BB.COLOR_DARK_GRAY), nextb })
+                local prev = button("prev", "‹", px(42), px(24), false, nil, function() if self.page > 1 then turn(-1) end end)
+                local nextb = button("next", "›", px(42), px(24), false, nil, function() if self.page < pages then turn(1) end end)
+                append(H:new{ align = "center", text(string.format(_("%d–%d of %d"), (self.page - 1) * 4 + 1,
+                    math.min(#self.books, self.page * 4), #self.books), 11, false,
+                    bodyw - px(84), px(23), BB.COLOR_DARK_GRAY), prev, nextb })
                 self.layout[#self.layout + 1] = { prev, nextb }
             end
             local status = specs.state_status
             if status then
                 append(space(6))
-                local note = Text:new{ text = status.text, width = bodyw, face = Font:getFace("cfont", 12),
-                    height = px(54), height_adjust = false, height_overflow_show_ellipsis = true,
+                local summary = self.phase == "ready" and #self.books > 0 and (self.missing > 0
+                    and (self.missing == 1 and _("One record could not be checked")
+                        or string.format(_("%d records could not be checked"), self.missing)) or _("About this list")) or status.text
+                local note = Text:new{ text = summary, width = bodyw - px(58), face = Font:getFace("cfont", 11),
+                    height = px(32), height_adjust = false, height_overflow_show_ellipsis = true,
                     fgcolor = BB.COLOR_DARK_GRAY, bgcolor = BB.COLOR_WHITE }
                 -- The controller may pause beneath a foreign modal. Update only
                 -- this label; never rebuild/raise the sheet over that modal.
-                function note:setText(copy) Text.setText(self, clean(copy)) end
-                self.native_buttons.state_status = note; append(note)
-            end
-            if self.missing > 0 then
-                append(space(4)); append(text(string.format(_("%d reading-data records were unavailable."), self.missing),
-                    12, false, bodyw, px(36), BB.COLOR_DARK_GRAY))
+                local full_status = status.text
+                function note:setText(copy) full_status = clean(copy); Text.setText(self, full_status) end
+                local info = button("list_info", "", bodyw, px(32), false,
+                    H:new{ align = "center", icon("info", 16), gap(10), note, gap(10), text("›", 18, false, px(22), px(24)) },
+                    function()
+                        local scope = _("Up to 12 unfinished books from the latest 200 history entries. Only local files are checked.")
+                        local copy = full_status == scope and scope or full_status .. "\n\n" .. scope
+                        if self.missing > 0 then copy = copy .. "\n\n" .. string.format(_("%d reading-data records were unavailable."), self.missing) end
+                        UI:show(require("ui/widget/infomessage"):new{ text = copy })
+                    end)
+                self.native_buttons.state_status = note; append(info); self.layout[#self.layout + 1] = { info }
             end
         end
-        local footer = V:new{ align = "left", space(compact and 6 or 12) }
-        local refreshw = specs.refresh and px(106) or 0
+        local footer = V:new{ align = "left", space(compact and 6 or 12), rule(inner) }
+        local refreshw = specs.refresh and px(46) or 0
         if specs.library then
-            local lib = button("library", _("Library"), inner - refreshw, px(24))
+            local libw = inner - refreshw - (specs.refresh and px(1) or 0)
+            local lib = button("library", "", libw, px(30), false, H:new{ align = "center", icon("library_books", 20), gap(12),
+                text(_("Library"), 13, false, libw - px(60), px(24)), text("›", 20, false, px(28), px(26)) })
             local row = H:new{ align = "center", lib }
             local focus = { lib }
             if specs.refresh then
-                local refresh = button("refresh", _("Refresh"), refreshw, px(24))
+                local refresh = button("refresh", "", refreshw, px(30), false, icon("refresh", 22))
+                row[#row + 1] = Frame:new{ padding = 0, padding_right = px(1), bordersize = 0,
+                    background = BB.COLOR_LIGHT_GRAY, VS:new{ width = px(30) } }
                 row[#row + 1] = refresh; focus[#focus + 1] = refresh
             end
             footer[#footer + 1] = row; self.layout[#self.layout + 1] = focus
@@ -1777,7 +1857,7 @@ function M.readerSheet(options)
         self.selected = { x = 1, y = 1 }
     end
     function Sheet:paintTo(bb, x, y) self[1]:paintTo(bb, self.panel_rect.x + (x or 0), self.panel_rect.y + (y or 0)) end
-    function Sheet:init() self:rebuild() end
+    function Sheet:init() self.position = position(self.ui, self.file); self:rebuild() end
     return Sheet:new(options)
 end
 

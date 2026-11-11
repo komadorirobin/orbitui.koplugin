@@ -594,6 +594,9 @@ appending the hero's bottom-aligned actions. Overview preview size is independen
 Description tab's saved size remains unchanged. Dark-gray body text is #555,
 not KOReader's much lighter COLOR_DARK_GRAY (#888). No recommendation placeholders
 are added to the real view. The user reviews a native rendering before any beta.
+The following approved visual experiment omits the overview's "About this book"
+and "Tags" headings only. Retain section spacing, the small "From EPUB" source
+label and the separate BookOrbit source identity; no tag action changes.
 
 Shared design direction, not blanket authorization to replace all menus:
 
@@ -1521,6 +1524,21 @@ fixed tabs/close/footer remain accessible. Revision guards reject old page
 buttons; pause updates only its fixed-height status label, not the modal stack.
 The optional Library button follows ReaderMenu's native onClose/showFileManager
 route only after a live explicit tap. No Home-origin override or global hook.
+
+November 11 approved visual correction restores the accepted sketch's reading
+badge, outlined position/segmented tabs/tool tiles, regular divided action rows,
+compact paged book rows and icon footer. Keep original Reading settings and the
+optional AI action accessible. Coverage/missing-record explanation belongs
+behind an explicit information row, not a permanent large warning; its fixed
+label must still accept an in-place pause update while another modal is above.
+Book/chapter time left is a once-per-sheet in-memory snapshot of the matching
+reader/document's enabled native Statistics instance, requiring observed pages
+and a finite positive average. Use native getTotalPagesLeft, chapter flow rules
+and getTimeForPages/duration preference; never query DB/history, force statistics
+initialization, fabricate a default speed or write reading data. Missing data
+has honest explanatory copy. Short screens keep book time in the compact header.
+This live estimate is distinct from the optional bounded Home Finish forecast;
+it neither computes a finish date nor inherits that card's fourteen-day query.
 
 November 10 explicit user amendment: **default-on bottom-gesture entry**, with
 an immediate opt-out under Reader panel & X-Ray, replaces the earlier optional-

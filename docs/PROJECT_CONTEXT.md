@@ -22,6 +22,22 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Local reader-panel visual correction and time left, not released.** User
+  approves correcting the implementation against the accepted bottom-sheet
+  sketch and asks about missing Aleph-inspired time left. Restore the black
+  reading badge, framed two-row position, joined tabs with prepared-list count,
+  outlined tool tiles, regular divided action rows, compact four-book pages and
+  icon footer. Keep Reading settings and optional X-Ray/KOAssistant. List scope
+  and missing-record detail are explicit behind a compact information row;
+  pause still updates its fixed-height label without raising/rebuilding a modal.
+  Book/chapter time uses only the current reader's already-loaded, observed
+  native Statistics average and getTimeForPages formatter, respecting native
+  page flows/duration format. No extra SQL/sidecar/network query or default
+  speed; missing data is explained. This is separate from the optional Home
+  Finish forecast/date calculation. Native widget/formatter checks and eleven
+  focused Lua/LuaJIT cases pass; full/package receipts follow in TESTING.
+  No device, version, upstream or public-release action in this step.
+
 - **Local airy book-info implementation, not released.** User chooses the
   full-page/airy sketch and approves implementation plus a broader presentation
   review. Branch `feature/book-info-modern-20261111` starts at `702e9c8c`.
@@ -35,6 +51,10 @@ and correct this file in the same change.
   pass, as do the complete Lua/LuaJIT gates and focused sealed repeats. Revised
   runtime **f816d804**, private ZIP **cdf88a61**, unchanged API1 inventory;
   public dist remains **d7abac63**. Receipts are in TESTING. No public beta yet.
+  Current visual experiment removes only the overview headings "About this
+  book" and "Tags", retaining spacing and the EPUB/BookOrbit source labels.
+  Native layout checks and targeted Lua/LuaJIT tests pass; this working-tree
+  preview is not included in the last sealed archive above.
   A default-on, reversible overview shows cover, status/rating, a compact facts
   row, description and two rows of clickable offline tag chips. Explicit
   refresh/online tag tools, reviews, metadata, highlights, cover selection and

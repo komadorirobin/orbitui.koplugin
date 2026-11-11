@@ -30,7 +30,10 @@ function W:getSize()
         if self.kind == "horizontal" then w, h = w + size.w, math.max(h, size.h)
         else w, h = math.max(w, size.w), h + size.h end
     end
-    if self.kind == "frame" then w, h = w + 2 * (self.padding + self.bordersize), h + 2 * (self.padding + self.bordersize) end
+    if self.kind == "frame" then
+        w = w + 2 * self.bordersize + (self.padding_left or self.padding) + (self.padding_right or self.padding)
+        h = h + 2 * self.bordersize + (self.padding_top or self.padding) + (self.padding_bottom or self.padding)
+    end
     return { w = w, h = h }
 end
 function W:paintTo() end
@@ -46,6 +49,7 @@ local function fixture(sw, sh, scale, lang, tab, count)
         ["ui/widget/horizontalspan"] = "hspan", ["ui/widget/button"] = "button",
         ["ui/widget/container/centercontainer"] = "center", ["ui/widget/container/scrollablecontainer"] = "scroll",
         ["ui/widget/progresswidget"] = "progress", ["ui/widget/iconwidget"] = "icon", ["ui/widget/imagewidget"] = "image",
+        ["ui/widget/infomessage"] = "info",
         ["ui/geometry"] = "geom", ["ui/gesturerange"] = "gesture",
     } do package.loaded[path] = W:extend{ kind = kind } end
     package.loaded["ui/font"] = { getFace = function(_, _, size) return { pixel_size = size * f.scale } end }
@@ -53,12 +57,17 @@ local function fixture(sw, sh, scale, lang, tab, count)
     package.loaded.device = { screen = { getWidth = function() return f.width end, getHeight = function() return f.height end,
         scaleBySize = function(_, n) return math.floor(n * f.scale + .5) end } }
     local UI = { setDirty = function() end, close = function(_, w) w:onCloseWidget() end,
+        show = function(_, w) f.top = w; f.dialog_count = (f.dialog_count or 0) + 1 end,
         isWidgetShown = function(_, w) return f.shown == w end, getTopmostVisibleWidget = function() return f.top or f.shown end }
     package.loaded["ui/uimanager"] = UI
     package.loaded["infra/sui_cover_cache"] = nil
     local ui = { document = { file = "/books/current.epub", getPageCount = function() return 269 end },
         getCurrentPage = function() return 148 end,
         toc = { getTocTitleByPage = function() return "III · En mycket lång kapitelrubrik" end, getChapterPagesLeft = function() return 29 end } }
+    ui.statistics = { ui = ui, document = ui.document, is_doc = true, settings = { is_enabled = true },
+        avg_time = 45, book_read_pages = 100, mem_read_pages = 2,
+        getTimeForPages = function(_, pages) f.times = f.times or {}; f.times[#f.times + 1] = pages; return pages .. " min" end,
+        getPageTimeTotalStats = function() error("must not query statistics") end }
     local buttons = {}
     local function spec(id, copy, enabled)
         local b = { id = id, text = copy or id, enabled = enabled ~= false,
@@ -96,7 +105,7 @@ local function bounded(p)
             local size = widget.label_widget:getSize()
             -- Plain stub labels have no measured text; rich native content does.
             if #widget.label_widget > 0 then
-                assert(size.w <= widget.width and size.h <= widget.height,
+                assert(size.w <= widget.width - 2 * (widget.padding_h + widget.bordersize) and size.h <= widget.height,
                     "rich content must fit its native button: " .. widget.width .. "x" .. widget.height .. " / " .. size.w .. "x" .. size.h)
             end
         end
@@ -130,6 +139,50 @@ T.test("selected tab is black and enabled rather than disabled gray; optional AI
     assert(p:getButtonById("config").label_container[1])
     p:getButtonById("reader_ai").callback(); T.eq(f.actions[1], "reader_ai")
 end)
+T.test("outlined tiles, framed position and joined tabs retain the approved visual hierarchy", function()
+    local p = fixture()
+    for _, id in ipairs{ "toc", "bookmark", "search" } do
+        local b = p:getButtonById(id)
+        T.eq(b.bordersize, 2); T.eq(b.radius, 22)
+    end
+    T.eq(p:getButtonById("tools").text_font_size, 13)
+    local frames = 0
+    local function walk(w)
+        if w.kind == "frame" and w.bordersize == 2 and (w.radius == 24 or w.radius == 20) then frames = frames + 1 end
+        for _, child in ipairs(w) do walk(child) end
+    end
+    walk(p[1]); T.eq(frames, 2, "position box and joined tabs must keep their outlines")
+end)
+T.test("time left uses current-book observed in-memory statistics and native page-flow semantics only once", function()
+    local p, opts = fixture()
+    T.eq(p.position.book_time, "121 min"); T.eq(p.position.chapter_time, "29 min")
+    T.eq(#f.times, 2); p:rebuild(); T.eq(#f.times, 2, "no repeated work while paging/rebuilding")
+    opts.ui.document.getTotalPagesLeft = function() return 80 end
+    opts.ui.toc.getChapterPagesLeft = function(_, page, hidden) T.eq(page, 148); assert(hidden); return 12 end
+    p = M.readerSheet(opts); T.eq(p.position.book_time, "80 min"); T.eq(p.position.chapter_time, "12 min")
+    T.eq(f.writes, 0)
+end)
+T.test("missing, disabled, unobserved, foreign, non-finite or broken statistics never produce a fabricated estimate", function()
+    for _, change in ipairs{
+        function(ui) ui.statistics = nil end,
+        function(ui) ui.statistics.settings.is_enabled = false end,
+        function(ui) ui.statistics.book_read_pages, ui.statistics.mem_read_pages = 0, 0 end,
+        function(ui) ui.statistics.ui = {} end,
+        function(ui) ui.statistics.document = {} end,
+        function(ui) ui.statistics.is_doc = false end,
+        function(ui) ui.statistics.avg_time = 0/0 end,
+        function(ui) ui.statistics.avg_time = math.huge end,
+        function(ui) ui.statistics.avg_time = -1 end,
+        function(ui) ui.statistics.getTimeForPages = function() error("unavailable") end end,
+        function(ui) ui.document.file = "/foreign.epub" end,
+    } do
+        local _, opts = fixture(); change(opts.ui); f.times = {}
+        local p = M.readerSheet(opts)
+        assert(not p.position.book_time or p.position.book_time == "")
+        assert(not p.position.chapter_time or p.position.chapter_time == "")
+        T.eq(#f.times, 0); T.eq(f.writes, 0); bounded(p)
+    end
+end)
 T.test("four-book pages reuse prepared records without rescanning; old buttons cannot fire after a page turn", function()
     local p = fixture(nil, nil, nil, nil, "ongoing")
     assert(p:getButtonById("book:/books/4.epub")); T.eq(p:getButtonById("book:/books/5.epub"), nil)
@@ -154,6 +207,19 @@ T.test("pause status changes in place with fixed height and no new dialog", func
     local note = p:getButtonById("state_status"); local height = note:getSize().h
     note:setText("Förberedelsen har pausats. Tryck Uppdatera för att försöka igen.")
     T.eq(note:getSize().h, height); T.eq(p.panel_rect, rect); T.eq(p.revision, revision)
+end)
+T.test("list information is compact, explicit and safe to update under its own disclosure", function()
+    local p = fixture(nil, nil, nil, "sv", "ongoing")
+    local note, revision = p:getButtonById("state_status"), p.revision
+    T.eq(note.text, "1 post kunde inte kontrolleras"); T.eq(f.dialog_count, nil)
+    p:getButtonById("list_info").callback()
+    T.eq(f.dialog_count, 1); assert(f.top.text:find("200", 1, true))
+    local modal = f.top
+    note:setText("Förberedelsen har pausats. Tryck Uppdatera för att försöka igen.")
+    T.eq(p.revision, revision); T.eq(f.top, modal); T.eq(f.dialog_count, 1)
+    p:getButtonById("list_info").callback(); T.eq(f.dialog_count, 1, "covered panel cannot open another disclosure")
+    f.top = nil; p:getButtonById("list_info").callback()
+    assert(f.top.text:find("pausats", 1, true)); T.eq(f.writes, 0)
 end)
 T.test("covers borrow only loaded RAM bitmaps, never upscale or dispose the cache owner", function()
     local _, opts = fixture()

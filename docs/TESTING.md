@@ -1,5 +1,41 @@
 # Verification and device acceptance
 
+## 2026-11-11 — reader-panel visual correction and live time left
+
+Eleven focused reader-sheet tests pass under Lua and LuaJIT. They cover the
+outlined visual hierarchy; portrait/landscape/narrow/high-DPI EN/SV bounds;
+retained native scrollbar width; current-book and native page-flow time-left
+snapshot with no repeated work on rebuild; absent/disabled/unobserved/foreign/
+nonfinite/broken statistics; explicit information disclosure and in-place
+pause under a foreign modal; stale paging/buttons; and borrowed RAM covers.
+
+The retained private native harness now uses actual KOReader IconWidget and
+ImageWidget instead of blank icon stubs. Only its unavailable macOS SVG decoder
+is replaced by offline Chrome rasterizations of the real repository SVGs.
+Frame/Button/TextBox/FreeType/scroll/gesture/bitmap behavior is native. The time
+formatter executes the actual extracted native Statistics:getTimeForPages
+function and native datetime module, with fixture observations and no plugin
+database initialization. Actual label bounds, bottom anchoring, gesture/page
+dispatch and borrowed-cover lifetime pass at 1264x1680@2, 1680x1264@2,
+1264x951@1.58, 320x480@1, 320x240@1 and 600x800@2.5, including missing-statistics
+copy. Images use placeholder gray covers and fixture data, not a Bigme session.
+Private evidence remains under test-results/reader-bottom-panel-20261110.
+Both complete interpreter gates pass: 134 Python tests/four unchanged optional
+art skips, 1,252 syntax files, 129 root suites, 588 Bookshelf suites/zero failures/
+three usual SQLite exclusions and 13 SimpleUI files. A final one-pixel dense-DPI
+tile-padding correction is followed by the stricter eleven-case focused repeat
+and native geometry/gesture checks. Package/sealed receipts follow below.
+No physical acceptance, installation, public version/push/release or server
+change is implied. Previous book-overview heading removal is preserved.
+
+## 2026-11-11 — preview without description/tag headings
+
+Working-tree visual experiment removes only the overview's two section titles.
+The same four native viewport/gesture/scroll checks pass, as do the existing
+seven overview tests under Lua and LuaJIT. Visually inspected `no-headings.png`
+retains the source label and spacing. No new full gate, package, device change
+or release is claimed for this cosmetic preview; the last sealed build follows.
+
 ## 2026-11-11 — revise the overview against the accepted sketch
 
 User approves correcting the first native rendering's visual mismatch before

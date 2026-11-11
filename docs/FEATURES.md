@@ -92,6 +92,13 @@ administratören separat. Hantera skyddade öppningar innan ångra-stöd tas bor
 
 ## Finish forecast (1.2 preview)
 
+The locally revised reader bottom panel also shows approximate book/chapter
+**time left** using the open book's already-loaded native Reading statistics
+and preferred duration format. Without observed reading data it explains that
+more statistics are needed, rather than inventing a speed. This adds no query
+on opening the panel. It is separate from the optional Home forecast below:
+the panel estimates a reading duration, not a calendar finish date.
+
 Add **Finish forecast / Läsprognos** through Home's Books module picker, or
 **Cards and content > Add card > Home modules (SimpleUI)** in the Reading
 dashboard. It is optional and initially off, not a replacement for Continue

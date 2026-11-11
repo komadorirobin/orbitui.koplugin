@@ -4,6 +4,25 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-11 — reader-panel visual correction and live time left
+
+User approves correcting the bottom sheet to the previously accepted sketch
+and asks why time left is missing. The earlier Home Finish forecast exists,
+but no time source was connected to the reader sheet. Restore the sketch's
+visual hierarchy without changing native action routes, bottom-gesture opt-out,
+history preparation, AI preference or bitmap ownership. Compact explicit list
+information replaces permanent coverage/warning paragraphs. Native status
+updates remain fixed-height and do not raise/rebuild the panel under a modal.
+
+Add current-book and chapter time from the matching live native Statistics
+instance, only with finite positive observed average and enabled statistics.
+Reuse native duration/page-flow methods in memory, without a statistics query,
+initialization, fabricated default, date prediction or writer. Preserve the
+previously approved book-overview heading-removal experiment in this candidate.
+No upstream import, component source, source-pin, asset, installed-path/API1,
+version, push, release, device or server change. See TESTING for verification
+and the separate physical acceptance limit.
+
 ## 2026-11-11 — correct the book overview against the approved sketch
 
 User notes that the native rendering looks worse than the accepted airy sketch,
