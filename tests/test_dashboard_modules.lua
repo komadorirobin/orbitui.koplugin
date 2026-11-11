@@ -279,7 +279,8 @@ end
 package.loaded["lib/bookshelf_clip_container"] = H.componentModule(root, "lib/bookshelf_clip_container")
 package.loaded["features/sui_style"] = { getStyledFace = function(_, size) return { size = size } end }
 local function text(args) return W:new{ text = args.text, width = args.width, height = 20 } end
-package.loaded["infra/sui_core"] = { makeColoredText = text, makeTextBox = text }
+package.loaded["infra/sui_core"] = { makeColoredText = text, makeTextBox = text,
+    solidBar = function(w, h) return W:new{ width = w, height = h } end }
 package.loaded["modules/module_books_shared"] = {}
 local View = require("adapters/orbitui_dashboard_view")
 local function view(c)

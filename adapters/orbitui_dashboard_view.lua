@@ -245,10 +245,17 @@ function M.content(widget, p, ctx, data)
         if coloured then frame.paintTo = M.paintColourCard end
         return add(frame, r.x, r.y)
     end
+    local font_family
+    if p.cover_row then
+        local fonts = require("infra/sui_fonts")
+        if not require("infra/sui_store"):readSetting(fonts.KEY_ENABLED) then
+            font_family = fonts.FAMILY
+        end
+    end
     local function textFace(size, bold)
         -- Geometry is already in device pixels; Font:getFace scales by DPI.
         local dpi = Screen:scaleBySize(1000) / 1000
-        local face, widget_bold = Style.getStyledFace(nil, math.max(7, size * p.scale) / dpi,
+        local face, widget_bold = Style.getStyledFace(font_family, math.max(7, size * p.scale) / dpi,
             bold == true and "bold" or "regular")
         -- Pass through KOReader's lighter, synthesized bold on the regular face.
         return face, type(bold) == "string" and bold or widget_bold
@@ -316,10 +323,22 @@ function M.content(widget, p, ctx, data)
     text(string.format("%d %s %d", date.day, _(MONTHS[date.month]), date.year),
         0, px(30), p.w - px(112), 16, true)
     local search = rect(p.w - px(54), 0, px(54), px(52))
-    text(_("Search"), search.x, px(14), search.w, 13, true)
+    local search_label = text(_("Search"), search.x, search.y, search.w, 13, true)
+    local measured = search_label:getSize()
+    search_label.overlap_offset = {
+        search.x + math.floor((search.w - measured.w) / 2),
+        search.y + math.floor((search.h - measured.h) / 2),
+    }
     action(search, function() require("core/orbitui_search").show() end)
+
     local add_area = rect(p.w - px(108), 0, px(48), px(52))
-    text("+", add_area.x + px(12), px(8), add_area.w, 26, true)
+    -- Center the plus itself on the same row, independent of font baselines.
+    local plus_size, stroke = px(12), px(2)
+    local inset = math.floor((plus_size - stroke) / 2)
+    local plus_x = add_area.x + math.floor((add_area.w - plus_size) / 2)
+    local plus_y = add_area.y + math.floor((add_area.h - plus_size) / 2)
+    add(UI.solidBar(plus_size, stroke, ink), plus_x, plus_y + inset)
+    add(UI.solidBar(stroke, plus_size, ink), plus_x + inset, plus_y)
     action(add_area, function() widget:editModules("add") end)
     if (p.pages or 1) > 1 then
         -- These are dashboard pages, independent of Home and book-row pagers.

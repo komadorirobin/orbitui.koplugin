@@ -237,9 +237,12 @@ package.loaded["ffi/blitbuffer"] = { COLOR_BLACK = "black", COLOR_WHITE = "white
     COLOR_GRAY = "#aaa", COLOR_LIGHT_GRAY = "#ddd" }
 local Font = { FORCE_SYNTHETIZED_BOLD = "FORCE_SYNTHETIZED_BOLD" }
 package.loaded["ui/font"] = Font
-package.loaded["features/sui_style"] = { getStyledFace = function(_, size, variant)
+local Fonts = { KEY_ENABLED = "simpleui_ui_font_enabled", FAMILY = "Inter 18pt" }
+package.loaded["infra/sui_fonts"] = Fonts
+package.loaded["features/sui_style"] = { getStyledFace = function(family, size, variant)
     local pixels = math.floor(size * dpi)
-    return { size = pixels, variant = variant, ftsize = { getHeightAndAscender = function() return pixels end } }, variant == "bold"
+    return { size = pixels, family = family, variant = variant,
+        ftsize = { getHeightAndAscender = function() return pixels end } }, variant == "bold"
 end }
 local shown_dialog
 package.loaded["ui/uimanager"] = {
@@ -424,6 +427,7 @@ H.test("straight cover row keeps the last title below time and shares a panel fo
         current.dimen.x, current.dimen.y = 0, 0
         local p, labels, percentages = current._plan, {}, 0
         local covers, shelf_frames = {}, 0
+        local add
         assert(p.ladder.y + p.ladder.h < p.cover_shelves.y)
         assert(p.cover_shelves.y + p.cover_shelves.h < p.reading_today.y)
         H.eq(p.reading_today.y, p.goal.y)
@@ -435,6 +439,7 @@ H.test("straight cover row keeps the last title below time and shares a panel fo
                 labels[child.text] = child
                 if child.text:match("^%d+ %%$") then percentages = percentages + 1 end
             end
+            if child.kind == "line" and y < p.header_h and size.h > size.w then add = child end
             if y == p.cover_shelves.y and size.h == p.cover_shelves.h then
                 H.eq(size.w, p.cover_shelves.w)
                 shelf_frames = shelf_frames + 1
@@ -446,6 +451,12 @@ H.test("straight cover row keeps the last title below time and shares a panel fo
         H.eq(labels[data.current.data.authors], nil)
         for _, book in ipairs(data.ongoing) do H.eq(labels[book.data.title], nil) end
         local time, title = assert(labels[data.time_left]), assert(labels[data.current.data.title])
+        local search = assert(labels.Search)
+        assert(add, "missing vertical stroke of the add icon")
+        local function centerY(label) return label.overlap_offset[2] + label:getSize().h / 2 end
+        assert(math.abs(centerY(search) - centerY(add)) <= 0.5)
+        H.eq(search.face.family, Fonts.FAMILY)
+        H.eq(title.face.family, Fonts.FAMILY)
         H.eq(time.face.variant, "regular")
         H.eq(time.bold, Font.FORCE_SYNTHETIZED_BOLD)
         H.eq(title.face.variant, "bold")
@@ -490,6 +501,12 @@ H.test("straight cover row keeps the last title below time and shares a panel fo
         H.eq(first_new, "/new/1")
         current:free()
     end
+    local custom_font_setting = saved[Fonts.KEY_ENABLED]
+    saved[Fonts.KEY_ENABLED] = true
+    local custom = View.build(600, 730, ctx, data)
+    H.eq(custom[1][1].face.family, nil)
+    custom:free()
+    saved[Fonts.KEY_ENABLED] = custom_font_setting
     Silverfish.snapshot, Silverfish.spriteWidget, Silverfish.openPet = snapshot, spriteWidget, openPet
 end)
 
