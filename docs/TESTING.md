@@ -1,5 +1,27 @@
 # Verification and device acceptance
 
+## 2026-11-11 — dashboard date and footer readability on Bigme
+
+The date and remaining time use larger bold text, and the Silverfish
+statistics use larger regular text. All three use primary ink. The staircase
+footer has extra height and retains right-aligned companion details. The
+focused dashboard suite checks the label ink and placement at four sizes.
+Desktop KOReader widgets painted at 1232×1360, 480×540 and 800×480.
+
+On the Bigme at 1264×1680, before and after screenshots confirm stronger ink
+for all three labels against the same wallpaper and the same staircase
+layout. History, collections, wallpaper preferences and the crash-log size
+matched the pre-test state.
+
+Source **49905f570597354ca7c795c1f52930cb48f52af0**, private ZIP
+**c69de3ef770117af7a96b636103101384bf0817435b626f0f09403c38909c10e**.
+The full Lua gate passed with the optional SQLite skips. The focused suite
+passed against the sealed runtime in Lua and LuaJIT.
+Archive integrity, 2,000 identical installed paths and all Android file
+hashes verified. The device remains on the healthy private slot with
+**a2840fcf** as rollback. Evidence is in
+`test-results/dashboard-contrast-20261111/`.
+
 ## 2026-11-11 — cover staircase with Reading today on Bigme
 
 The separate dashboard layout preference retains the classic card

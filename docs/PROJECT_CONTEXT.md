@@ -22,14 +22,20 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Dashboard date and footer readability.** The date and time remaining
+  use larger bold text. The Silverfish statistics use larger regular text.
+  All three use primary ink. USB screenshots on the Bigme verify the change
+  on Robin's current wallpaper. Active private slot **c69de3ef** retains
+  **a2840fcf** as rollback.
+
 - **Optional cover staircase on the Bigme.** Layout option 2 combines the
   current and ongoing books, with Silverfish on the right and time remaining
   under the current book. Reading today and the half-width goal sit above the
   existing book rows. The native layout selector preserves the classic card
   configuration. Changing layout rebuilds the screen data context so newly
   requested reading statistics are available immediately. Verified by USB,
-  including cold restart. Active private slot **a2840fcf** retains **49cc5423**
-  as rollback. See TESTING for source and archive receipts.
+  including cold restart, in **a2840fcf**. See TESTING for source and archive
+  receipts.
 
 - **Shared sheet checkbox contrast.** The unchecked box in card settings now
   has a light empty interior and dark outline. Both states were verified in
