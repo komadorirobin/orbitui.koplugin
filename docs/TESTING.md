@@ -1,5 +1,27 @@
 # Verification and device acceptance
 
+## 2026-11-11 — unchecked sheet boxes on Bigme
+
+Reproduced the report in the Silverfish card settings on **43a0b927**.
+The empty white-text widget painted its own black background, even with no
+checkmark. The shared sheet row now draws only the outline and light interior
+when unchecked. KOReader widget raster tests verify both fills and the mark
+at 1264×1680 and 480×640. Actual widget taps verify off/on/off with identical
+geometry. The focused sealed settings, catalog and collection suites pass in
+both interpreters. The full Lua and LuaJIT gates pass with the usual optional
+SQLite skips.
+
+Fixed source **3c1e3e19b15318f7f624ba6595fadb4f684bc108**, private ZIP
+**49cc5423d97d4c21b0bf7e16f0c00aed17692fa5f79cc99396b56f40e8644f49**.
+Verified the runtime projection and all 2,000 Android files. Opened the same
+Silverfish settings on Bigme after cold start and compared the actual screen
+pixels: the checked box kept its dark fill and light mark, the unchecked box
+had a light interior and dark border. The heading and visibility choices were
+left as found. History and collections remained byte-identical. The ordinary
+startup refresh advanced the BookOrbit list's saved refresh timestamp.
+The device remains on the healthy private slot, with **43a0b927** as rollback.
+Evidence is in `test-results/checkbox-20261111/`.
+
 ## 2026-11-11 — unresponsive Also reading tab on Bigme
 
 Observed the reported dead taps on **5f5fd74c**. Both the tab and close button

@@ -22,12 +22,17 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Shared sheet checkbox contrast.** The unchecked box in card settings now
+  has a light empty interior and dark outline. Both states were verified in
+  Silverfish card settings on the Bigme. Active private slot **49cc5423**
+  retains **43a0b927** as rollback.
+
 - **Reader panel tab recovery.** The reported dead taps were observed on the
   Bigme. Controlled stale-generation and passive-toast cases reproduced the
   same symptom on the prior slot. The fixed reader panel accepts explicit tab
   changes over the same reader, matches KOReader toast event routing, and keeps
-  old book actions guarded. USB test slot **43a0b927** is healthy with
-  **5f5fd74c** as rollback. Preferences, history and their backed-up recovery
+  old book actions guarded. USB test slot **43a0b927** passed and remains
+  available as rollback. Preferences, history and their backed-up recovery
   copies were restored and verified.
 
 - **Editing and maintenance layouts, local.** Collection membership, local

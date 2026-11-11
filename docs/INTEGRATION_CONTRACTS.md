@@ -608,6 +608,8 @@ Results retain their original reveal/hold routing and worker lifecycle.
 The dashboard's individual module card editor groups display controls and
 module options, retains the provider's own editor, and confirms removing the
 exact card before writing. Refresh the dashboard when the card editor closes.
+Shared sheet rows draw an unchecked box as an empty light interior with a
+dark outline, and a checked box as a dark interior with a light checkmark.
 The five settings categories use grouped native link rows with a scope line,
 Back and Search settings. Their destinations continue to own the existing
 toggles, native controls and preferences.
