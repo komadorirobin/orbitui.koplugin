@@ -126,8 +126,8 @@ local SH = {
 }
 package.loaded["modules/module_books_shared"] = SH
 local UI = { MOD_GAP = 12, getContentHeight = function() return 800 end,
-    solidBar = function(w, h)
-        return Widget:new{ kind = "line", dimen = { w = w, h = h } }
+    solidBar = function(w, h, color)
+        return Widget:new{ kind = "line", color = color, dimen = { w = w, h = h } }
     end,
     progressBar = function(w, pct, h, fg, bg)
         assert(w > 0 and h > 0 and pct >= 0 and pct <= 1)
@@ -140,6 +140,7 @@ local function makeText(args)
     local text_w = math.min(args.width, math.ceil(glyphs * args.face.size * .55))
     args.dimen = { w = args.max_lines and args.width or text_w,
         h = args.height or math.ceil(args.face.size * 1.2) }
+    args.getBaseline = function(self) return self.face.size end
     return Widget:new(args)
 end
 UI.makeTextBox, UI.makeColoredText = makeText, makeText
@@ -239,7 +240,8 @@ local Font = { FORCE_SYNTHETIZED_BOLD = "FORCE_SYNTHETIZED_BOLD" }
 package.loaded["ui/font"] = Font
 local Fonts = { KEY_ENABLED = "simpleui_ui_font_enabled", FAMILY = "Inter 18pt" }
 package.loaded["infra/sui_fonts"] = Fonts
-package.loaded["features/sui_style"] = { getStyledFace = function(family, size, variant)
+package.loaded["ui/widget/iconwidget"] = Widget
+package.loaded["features/sui_style"] = { slotIconWidget = function() end, getStyledFace = function(family, size, variant)
     local pixels = math.floor(size * dpi)
     return { size = pixels, family = family, variant = variant,
         ftsize = { getHeightAndAscender = function() return pixels end } }, variant == "bold"
@@ -395,7 +397,7 @@ H.test("staircase book columns have even gaps, aligned descending covers and ind
     Silverfish.snapshot, Silverfish.spriteWidget = snapshot, spriteWidget
 end)
 
-H.test("straight cover row keeps the last title below time and shares a panel for independent stacks", function()
+H.test("straight cover row keeps the last title below time and frames both cover stacks", function()
     local layout_key = "simpleui_hs_orbitui_dashboard_layout"
     local previous = saved[layout_key]
     local choices = Dashboard.layoutItem(function() end, ctx.pfx).sub_item_table
@@ -405,7 +407,8 @@ H.test("straight cover row keeps the last title below time and shares a panel fo
     H.eq(Dashboard.needs.current_book_stats(ctx.pfx), true)
     local data = Dashboard.readData(ctx)
     saved[layout_key] = previous
-    data.stats = { today_secs = 5 * 60 }
+    data.stats = { today_secs = 5 * 60, streak = 4, week_secs = 3 * 3600 + 40 * 60 }
+    data.config.hidden.streak, data.config.hidden.week = true, true
     data.time_left = "About 2h 37m left"
     data.current.data = { title = "A long title\nacross two lines", authors = "The Author", percent = .57 }
     data.want = { "/want/1", "/want/2", "/want/3", "/want/4" }
@@ -426,11 +429,18 @@ H.test("straight cover row keeps the last title below time and shares a panel fo
         local current = View.build(viewport[1], viewport[2], local_ctx, data)
         current.dimen.x, current.dimen.y = 0, 0
         local p, labels, percentages = current._plan, {}, 0
-        local covers, shelf_frames = {}, 0
-        local add
-        assert(p.ladder.y + p.ladder.h < p.cover_shelves.y)
-        assert(p.cover_shelves.y + p.cover_shelves.h < p.reading_today.y)
-        H.eq(p.reading_today.y, p.goal.y)
+        local covers, frames = {}, {}
+        local add, search, greeting, date, pet_sprite, divider
+        assert(p.ladder.y + p.ladder.h < p.want.y)
+        assert(p.want.y + p.want.h < p.streak.y)
+        H.eq(p.want.y, p.new.y)
+        H.eq(p.want.x + p.want.w + p.gap, p.new.x)
+        H.eq(p.reading_today, nil)
+        H.eq(p.streak.y, p.goal.y)
+        H.eq(p.week.y, p.goal.y)
+        H.eq(p.streak.w + p.gap, p.week.x)
+        H.eq(p.week.x + p.week.w + p.gap, p.goal.x)
+        H.eq(p.goal.x + p.goal.w, p.w)
         for _, child in ipairs(current[1]) do
             local x, y = child.overlap_offset[1], child.overlap_offset[2]
             local size = child:getSize()
@@ -440,22 +450,44 @@ H.test("straight cover row keeps the last title below time and shares a panel fo
                 if child.text:match("^%d+ %%$") then percentages = percentages + 1 end
             end
             if child.kind == "line" and y < p.header_h and size.h > size.w then add = child end
-            if y == p.cover_shelves.y and size.h == p.cover_shelves.h then
-                H.eq(size.w, p.cover_shelves.w)
-                shelf_frames = shelf_frames + 1
+            if child.icon == "appbar.search" then search = child end
+            if child.kind == "pet" then pet_sprite = child end
+            if child.text and y == 0 then greeting = child end
+            if child.text and y == math.floor(30 * p.scale) then date = child end
+            if child.kind == "line" and size.w == p.ladder.w - 2 * p.pad then divider = child end
+            if child.bordersize then
+                H.eq(child.color, "#555")
+                H.eq(child.bordersize, math.max(1, math.floor(p.scale * 2)))
+                frames[x .. "," .. y] = size.w
             end
         end
         for _, slot in ipairs(current._cover_slots) do covers[slot.file] = slot.area end
         H.eq(percentages, 4)
-        H.eq(shelf_frames, 1)
+        for _, area in ipairs({ p.ladder, p.want, p.new, p.streak, p.week, p.goal }) do
+            H.eq(frames[area.x .. "," .. area.y], area.w)
+        end
+        H.eq(divider.color, "#555")
+        H.eq(divider:getSize().h, math.max(1, math.floor(p.scale * 1.5)))
+        local divide_y = divider.overlap_offset[2]
+        local percent = labels["57 %"]
+        assert(percent.overlap_offset[2] + percent:getSize().h <= divide_y)
+        assert(divide_y + divider:getSize().h <= labels[data.time_left].overlap_offset[2])
+        assert(labels["Reading streak"] and labels["4"] and labels["This week"] and labels["3 h 40 min"])
+        local unit, amount = assert(labels.days), labels["4"]
+        H.eq(unit.fgcolor, "black")
+        H.eq(unit.overlap_offset[2] + unit:getBaseline(), amount.overlap_offset[2] + amount:getBaseline())
+        H.eq(labels["Reading today"], nil)
         H.eq(labels[data.current.data.authors], nil)
         for _, book in ipairs(data.ongoing) do H.eq(labels[book.data.title], nil) end
         local time, title = assert(labels[data.time_left]), assert(labels[data.current.data.title])
-        local search = assert(labels.Search)
+        H.eq(labels.Search, nil)
+        assert(search, "missing native search icon")
         assert(add, "missing vertical stroke of the add icon")
         local function centerY(label) return label.overlap_offset[2] + label:getSize().h / 2 end
         assert(math.abs(centerY(search) - centerY(add)) <= 0.5)
-        H.eq(search.face.family, Fonts.FAMILY)
+        H.eq(search:getSize().w, math.floor(24 * p.scale))
+        H.eq(search.alpha, true)
+        H.eq(add:getSize().h, math.floor(16 * p.scale))
         H.eq(title.face.family, Fonts.FAMILY)
         H.eq(time.face.variant, "regular")
         H.eq(time.bold, Font.FORCE_SYNTHETIZED_BOLD)
@@ -464,6 +496,17 @@ H.test("straight cover row keeps the last title below time and shares a panel fo
         assert(time.overlap_offset[2] + time:getSize().h <= title.overlap_offset[2])
         assert(title.overlap_offset[2] + title:getSize().h <= p.ladder.y + p.ladder.h)
         local first, previous_cover = covers["/current"], covers["/current"]
+        H.eq(greeting.overlap_offset[1], first.x)
+        H.eq(date.overlap_offset[1], first.x)
+        local name, stage, metrics = labels.Franz, labels["Ash Cat · Kitten"], labels["Days: 3 · Books: 0 · Gen: 1"]
+        local inner_bottom = p.ladder.y + p.ladder.h - p.pad
+        local function bottom(child) return child.overlap_offset[2] + child:getSize().h end
+        assert(bottom(name) <= stage.overlap_offset[2] and bottom(stage) <= metrics.overlap_offset[2])
+        H.eq(bottom(metrics), inner_bottom)
+        H.eq(pet_sprite.overlap_offset[2], name.overlap_offset[2])
+        H.eq(bottom(pet_sprite), inner_bottom)
+        assert(pet_sprite:getSize().w > math.floor(31 * p.scale))
+        assert(title.overlap_offset[1] + title:getSize().w < name.overlap_offset[1])
         for _, book in ipairs(data.ongoing) do
             local next_cover = assert(covers[book.file])
             H.eq(next_cover.h, first.h)
@@ -476,7 +519,14 @@ H.test("straight cover row keeps the last title below time and shares a panel fo
         local want, behind = covers["/want/1"], covers["/want/2"]
         assert(want.x < behind.x and behind.x < want.x + want.w)
         H.eq(want.y + want.h, behind.y + behind.h)
-        assert(want.y + want.h < labels[data.source_labels.want].overlap_offset[2])
+        for _, shelf in ipairs({ "want", "new" }) do
+            local area, first_cover = p[shelf], covers["/" .. shelf .. "/1"]
+            local heading = labels[data.source_labels[shelf]]
+            H.eq(first_cover.h, math.floor(first_cover.w * 3 / 2))
+            assert(first_cover.y >= area.y + p.pad)
+            assert(first_cover.y + first_cover.h < heading.overlap_offset[2])
+            assert(bottom(heading) < area.y + area.h)
+        end
         local shared = { pos = { x = behind.x, y = behind.y + 1 } }
         assert(current:onDashboardTap(nil, shared))
         H.eq(opened, "/want/1")
@@ -485,7 +535,6 @@ H.test("straight cover row keeps the last title below time and shares a panel fo
         H.eq(held, "/want/1")
         assert(current:onDashboardTap(nil, { pos = { x = title.overlap_offset[1], y = title.overlap_offset[2] } }))
         H.eq(opened, data.current.file)
-        local name = assert(labels.Franz)
         pet_opened = false
         assert(current:onDashboardTap(nil, { pos = { x = name.overlap_offset[1], y = name.overlap_offset[2] } }))
         assert(pet_opened)
@@ -501,6 +550,10 @@ H.test("straight cover row keeps the last title below time and shares a panel fo
         H.eq(first_new, "/new/1")
         current:free()
     end
+    local overflow = Model.plan(600, 730, data.config, 2, data.layout)
+    H.eq(overflow.page, 2)
+    assert(overflow.cards.pages_today)
+    for _, key in ipairs({ "reading_today", "streak", "week" }) do H.eq(overflow.cards[key], nil) end
     local custom_font_setting = saved[Fonts.KEY_ENABLED]
     saved[Fonts.KEY_ENABLED] = true
     local custom = View.build(600, 730, ctx, data)
@@ -1063,6 +1116,11 @@ H.test("Swedish dashboard strings translate while other locales retain English",
     G_reader_settings = { readSetting = function() return "sv_SE" end }
     H.eq(translate("Reading dashboard"), "Läsöversikt")
     H.eq(translate("Continue reading"), "Fortsätt läsa")
+    H.eq(translate("Reading streak"), "Lässvit")
+    H.eq(translate("This week"), "Denna vecka")
+    H.eq(translate("day"), "dag")
+    H.eq(translate("days"), "dagar")
+    H.eq(translate("day in a row"), "dag i rad")
     H.eq(translate("October"), "oktober")
     H.eq(Dashboard.menuItems()[3].text, "Rubriker")
     H.eq(Dashboard.headingItems()[9].text_func(), "Nya böcker: Automatisk")

@@ -79,7 +79,7 @@ end
 
 -- Persists a stale-safe snapshot of `state` to the in-memory settings table
 -- only (see the cross-process persistence note above) — never touches disk
--- itself. Only final scalar fields are stored, not the whole `result` table:
+-- itself. Only final display fields are stored, not the whole `result` table:
 -- `_changed`/`_has_books` describe a transition relative to in-memory state
 -- that a fresh process has no baseline for, so they are not persisted.
 local function _persistStaleStats(state)
@@ -92,6 +92,7 @@ local function _persistStaleStats(state)
         today_pages   = state.today_pages,
         week_secs     = state.week_secs,
         week_pages    = state.week_pages,
+        week_series   = state.week_series,
         avg_secs      = state.avg_secs,
         avg_pages     = state.avg_pages,
         month_secs    = state.month_secs,
@@ -192,13 +193,16 @@ local function fetchTimeSeries(conn, window_since, year_start, today_start,
                 COALESCE(sum(CASE WHEN d >= '%s' THEN sd ELSE 0 END), 0),
                 COALESCE(sum(CASE WHEN d >= '%s' THEN pg ELSE 0 END), 0),
                 COALESCE(sum(CASE WHEN d >= '%s' THEN sd ELSE 0 END), 0),
-                COALESCE(sum(CASE WHEN d >= '%s' THEN pg ELSE 0 END), 0)
+                COALESCE(sum(CASE WHEN d >= '%s' THEN pg ELSE 0 END), 0),
+                COALESCE(group_concat(CASE WHEN d BETWEEN '%s' AND '%s'
+                    THEN strftime('%%w', d) || ':' || sd END), '')
             FROM day_buckets;
         ]], window_since,
             today_str,    today_str,
             week_date,    week_date,
             rolling7_date, rolling7_date,
-            month_date,   month_date))
+            month_date,   month_date,
+            week_date,    today_str))
         if rw and rw[1] and rw[1][1] then
             r.today_secs     = rownum(rw[1][1])
             r.today_pages    = rownum(rw[2] and rw[2][1])
@@ -210,6 +214,15 @@ local function fetchTimeSeries(conn, window_since, year_start, today_start,
             r.avg_pages      = math.floor(r.rolling7_pages / 7)
             r.month_secs     = rownum(rw[7] and rw[7][1])
             r.month_pages    = rownum(rw[8] and rw[8][1])
+            -- Reuse the grouped days of the short-window query for the Home chart.
+            local packed = rw[9] and rw[9][1]
+            if type(packed) == "string" then
+                local secs = { 0, 0, 0, 0, 0, 0, 0 }
+                for day, duration in packed:gmatch("([0-6]):([^,]+)") do
+                    secs[(tonumber(day) + 6) % 7 + 1] = rownum(duration)
+                end
+                r.week_series = { start = week_date, secs = secs }
+            end
         end
 
         Perf.mark("stats: short windows query done")
@@ -1367,6 +1380,7 @@ function SP.get(db_conn, year_str, needs_books)
             today_pages   = _cache.today_pages,
             week_secs     = _cache.week_secs,
             week_pages    = _cache.week_pages,
+            week_series   = _cache.week_series,
             avg_secs      = _cache.avg_secs,
             avg_pages     = _cache.avg_pages,
             month_secs    = _cache.month_secs,
@@ -1396,7 +1410,7 @@ function SP.get(db_conn, year_str, needs_books)
     -- Compute timestamps once, shared by all sub-queries.
     local start_today = now - (t.hour * 3600 + t.min * 60 + t.sec)
     -- t.wday: 1=Sunday, 2=Monday, ..., 7=Saturday -> days since Monday = (t.wday-2) % 7
-    local week_start     = start_today - ((t.wday - 2) % 7) * 86400
+    local week_start = os.time{ year = t.year, month = t.month, day = t.day - (t.wday - 2) % 7, hour = 0 }
     local rolling7_start = start_today - 6 * 86400
     local month_start = os.time{ year = t.year, month = t.month, day = 1,
                                   hour = 0,     min  = 0,  sec = 0 }
@@ -1456,6 +1470,7 @@ function SP.get(db_conn, year_str, needs_books)
         result.today_pages = ts.today_pages
         result.week_secs   = ts.week_secs
         result.week_pages  = ts.week_pages
+        result.week_series = timeseries_ok and ts.week_series or nil
         result.avg_secs    = ts.avg_secs
         result.avg_pages   = ts.avg_pages
         result.month_secs  = ts.month_secs

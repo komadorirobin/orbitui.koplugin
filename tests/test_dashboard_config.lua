@@ -254,6 +254,22 @@ H.test("native and SimpleUI arrange dialogs save current config without overwrit
     arrange.on_change(arrange.items)
     H.eq(Dashboard.readConfig(custom).stats_order[1], "week")
     H.eq(Dashboard.readConfig(home).stats_order[1], "pages_today")
+
+    local cover = "simpleui_cs_cover_"
+    saved[cover .. "orbitui_dashboard_layout"] = "cover_row"
+    items = Config.items(nil, cover, { show_arrange = function(args) arrange = args end })
+    items[2].callback()
+    H.eq(#arrange.items, 3)
+    H.eq(arrange.items[1].orig_item, "pages_today")
+    H.eq(arrange.items[2].orig_item, "streak")
+    H.eq(arrange.items[3].orig_item, "week")
+    arrange.items[2], arrange.items[3] = arrange.items[3], arrange.items[2]
+    arrange.on_change(arrange.items)
+    local config = Dashboard.readConfig(cover)
+    H.eq(config.stats_order[2], "reading_today")
+    local plan = Model.plan(600, 730, config, 1, "cover_row")
+    H.eq(plan.week.x, 0)
+    H.eq(plan.streak.x, plan.week.w + plan.gap)
 end)
 
 H.test("layout restore needs confirmation and retains source choices and labels", function()

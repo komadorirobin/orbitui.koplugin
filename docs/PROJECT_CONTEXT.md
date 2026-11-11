@@ -54,14 +54,17 @@ and correct this file in the same change.
   same defaults. Completed, skipped and existing installations keep their
   saved preferences. See TESTING for the fresh and upgrade cases.
 
-- **Straight cover row on the Bigme.** The new dashboard option shows four
-  equal covers with percentages, the last-opened book title below the reading
-  estimate, and Silverfish on the right. Want to read and Recently added
-  share a card with separate overlapping stacks and independent pagination.
-  Reading today and the goal sit underneath. Classic and Cover staircase are
-  still available. The estimated time now uses KOReader's synthesized bold
-  on the regular face. Verified over USB in active private slot **7a665991**,
-  with **8e3f4685** as rollback. See TESTING for the layout and gesture checks.
+- **Straight cover row on the Bigme.** Four equal covers and their
+  percentages sit above the time estimate, last-opened title and Silverfish.
+  The lower row shows Reading streak, This week and the reading goal.
+  Streak dots and Monday–Sunday bars use KOReader's local statistics.
+  Active private slot **3cca42bc** shows Want to read and Recently added
+  in separate framed cards with their own overlapping stack and pager.
+  A darker rule separates the top covers and percentages from the reading
+  details. On the Bigme the shelf headings and arrows sit 10 pixels lower
+  and the cover stacks reach 10 pixels farther down. Both pagers work
+  independently. One Recently added cover fell back to a placeholder
+  after paging and returned on restart. **86729d16** remains the rollback.
 
 - **Readable authors and two-line staircase titles.** The current author's
   name uses larger primary ink and follows the measured title. Titles are

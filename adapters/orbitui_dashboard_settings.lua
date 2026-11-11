@@ -444,11 +444,18 @@ end
 
 local function arrange(field, title, refresh, pfx, ctx_menu)
     local config, items = dashboard().readConfig(pfx), {}
-    for _, key in ipairs(config[field]) do items[#items + 1] = { text = label(key, config), orig_item = key } end
+    local layout, positions = dashboard().layout(pfx), {}
+    for index, key in ipairs(config[field]) do
+        if field ~= "stats_order" or Model.statPlacement(layout, key) then
+            items[#items + 1] = { text = label(key, config), orig_item = key }
+            positions[#positions + 1] = index
+        end
+    end
     local function save(ordered)
         dashboard().editConfig(pfx, function(c)
             c[field] = {}
-            for _, item in ipairs(ordered or items) do c[field][#c[field] + 1] = item.orig_item end
+            for i, key in ipairs(config[field]) do c[field][i] = key end
+            for i, item in ipairs(ordered or items) do c[field][positions[i]] = item.orig_item end
         end, refresh)
     end
     if ctx_menu and ctx_menu.show_arrange then
@@ -472,10 +479,12 @@ function M.items(refresh, pfx, ctx_menu)
             arrange("stats_order", _("Arrange statistics"), refresh, pfx, ctx_menu)
         end },
     }
-    local cover_layout = Model.isCoverLayout(dashboard().layout(pfx))
+    local layout = dashboard().layout(pfx)
+    local cover_layout = Model.isCoverLayout(layout)
     for index, card in ipairs(Model.heading_cards) do
         local key, heading_index = card.key, index
-        local fixed = cover_layout and key == "reading_today"
+        local placement = Model.statPlacement(layout, key)
+        local fixed = placement == "front"
         local item = { text_func = function()
             local current = dashboard().readConfig(pfx)
             return Model.heading(dashboard().readHeadings(pfx), key, label(key, current))
@@ -507,7 +516,9 @@ function M.items(refresh, pfx, ctx_menu)
             end
             return rows
         end }
-        if not cover_layout or (key ~= "hero" and key ~= "ongoing") then items[#items + 1] = item end
+        if placement and (not cover_layout or (key ~= "hero" and key ~= "ongoing")) then
+            items[#items + 1] = item
+        end
     end
     items[#items + 1] = { text = _("Add module…"),
         help_text = _("Choose a card supplied by an installed plugin, a Home module, or an action shortcut. Plugins stay separate. More cards use extra dashboard pages."),

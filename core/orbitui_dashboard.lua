@@ -5,6 +5,17 @@ function M.isCoverLayout(layout)
     return layout == "cover_stairs" or layout == "cover_row"
 end
 
+-- Cover layouts place some statistics in their own row on the first page.
+function M.statPlacement(layout, key)
+    if layout == "cover_row" then
+        if key == "reading_today" then return nil end
+        if key == "streak" or key == "week" then return "front" end
+    elseif layout == "cover_stairs" and key == "reading_today" then
+        return "front"
+    end
+    return "group"
+end
+
 -- OrbitUI's own card palette; no BookOrbit code, palettes or assets imported.
 -- Stable card IDs keep colours attached to content when cards are reordered.
 local CARD_INK = {
@@ -282,7 +293,9 @@ function M.plan(w, h, config, page, layout)
     plan.cover_row = cover_row
     local blocks, stats = {}, {}
     for _, id in ipairs(config.stats_order) do
-        if M.visible(config, id) and not (cover_layout and id == "reading_today") then stats[#stats + 1] = id end
+        if M.visible(config, id) and M.statPlacement(cover_layout and layout, id) == "group" then
+            stats[#stats + 1] = id
+        end
     end
     local weight = { hero = 38, stats = #stats <= 2 and 19 or 38,
         ongoing = 27, goal = 27, want = 35, new = 35 }
@@ -314,12 +327,16 @@ function M.plan(w, h, config, page, layout)
     local pages, current = {}, {}
     if cover_layout then
         local want, new = M.visible(config, "want"), M.visible(config, "new")
-        local reading = { "reading_today", M.visible(config, "goal") and "goal" or nil, weight = 17 }
+        local reading = { weight = 17 }
+        for _, id in ipairs(config.stats_order) do
+            if M.statPlacement(layout, id) == "front" then reading[#reading + 1] = id end
+        end
+        if M.visible(config, "goal") then reading[#reading + 1] = "goal" end
         local first = { { "ladder", weight = cover_row and 50 or 54 } }
         if not cover_row then first[#first + 1] = reading end
         if want or new then
             first[#first + 1] = { want and "want" or "new", want and new and "new" or nil,
-                weight = cover_row and 33 or 29, shared_shelves = cover_row }
+                weight = cover_row and 33 or 29 }
         end
         if cover_row then first[#first + 1] = reading end
         pages[1] = first
@@ -346,9 +363,10 @@ function M.plan(w, h, config, page, layout)
     local y = header + gap
     for index, row in ipairs(rows) do
         local rh = index == #rows and h - y or math.floor(available * row.weight / total)
-        if row.shared_shelves then plan.cover_shelves = rect(0, y, w, rh) end
         for side, id in ipairs(row) do
-            local r = rect(side == 1 and 0 or col + gap, y, row[2] and (side == 1 and col or right_w) or w, rh)
+            local x = math.floor((w + gap) * (side - 1) / #row)
+            local next_x = math.floor((w + gap) * side / #row)
+            local r = rect(x, y, next_x - gap - x, rh)
             if id == "stats" then
                 local sh = #stats <= 2 and rh or math.floor((rh - gap) / 2)
                 for si, key in ipairs(stats) do

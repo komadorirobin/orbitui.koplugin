@@ -277,7 +277,13 @@ if native_input then
     package.loaded["ui/widget/container/inputcontainer"] = assert(loadfile(native_input .. "/inputcontainer.lua"))()
 end
 package.loaded["lib/bookshelf_clip_container"] = H.componentModule(root, "lib/bookshelf_clip_container")
-package.loaded["features/sui_style"] = { getStyledFace = function(_, size) return { size = size } end }
+package.loaded["features/sui_style"] = {
+    getStyledFace = function(_, size) return { size = size } end,
+    slotIconWidget = function(id, size)
+        H.eq(id, "sui_search")
+        return W:new{ width = size, height = size }
+    end,
+}
 local function text(args) return W:new{ text = args.text, width = args.width, height = 20 } end
 package.loaded["infra/sui_core"] = { makeColoredText = text, makeTextBox = text,
     solidBar = function(w, h) return W:new{ width = w, height = h } end }
@@ -424,6 +430,11 @@ H.test("dashboard page buttons, plus and hold preferences stay independent of Ho
     H.eq(ctx._screen_widget._current_page, nil)
     local plus = v._actions[2]
     v:onDashboardTap(nil, { pos = { x = plus.x+2, y = plus.y+2 } }); H.eq(chosen, "add")
+    local old_search = package.loaded["core/orbitui_search"]
+    package.loaded["core/orbitui_search"] = { show = function() chosen = "search" end }
+    local search = v._actions[1]
+    v:onDashboardTap(nil, { pos = { x = search.x+2, y = search.y+2 } }); H.eq(chosen, "search")
+    package.loaded["core/orbitui_search"] = old_search
     v:free()
     local rebuilt = View.build(600, 730, ctx, data)
     H.eq(rebuilt._plan.page, 2)

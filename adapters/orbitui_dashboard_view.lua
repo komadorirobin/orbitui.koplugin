@@ -235,12 +235,13 @@ function M.content(widget, p, ctx, data)
     end
     local function box(r, fill, border, key)
         local palette = colours(key)
+        local stroke = px(p.cover_row and 2 or 1)
         local frame = Frame:new{
             dimen = Geom:new{ w = r.w, h = r.h }, width = r.w, height = r.h,
-            margin = 0, padding = 0, radius = px(12), bordersize = px(1),
+            margin = 0, padding = 0, radius = px(12), bordersize = stroke,
             background = fill or (palette and native(palette.fill)) or paper,
-            color = border or (palette and native(palette.border)) or BB.COLOR_GRAY,
-            Overlap:new{ dimen = Geom:new{ w = r.w - 2 * px(1), h = r.h - 2 * px(1) } },
+            color = p.cover_row and BB.COLOR_DARK_GRAY or border or (palette and native(palette.border)) or BB.COLOR_GRAY,
+            Overlap:new{ dimen = Geom:new{ w = r.w - 2 * stroke, h = r.h - 2 * stroke } },
         }
         if coloured then frame.paintTo = M.paintColourCard end
         return add(frame, r.x, r.y)
@@ -319,21 +320,27 @@ function M.content(widget, p, ctx, data)
     end
 
     local date = os.date("*t")
-    text(_(Model.greeting(date.hour)), 0, 0, p.w - px(112), 23, true)
+    local header_left = p.cover_row and p.pad or 0
+    local header_width = p.w - px(112) - header_left
+    text(_(Model.greeting(date.hour)), header_left, 0, header_width, 23, true)
     text(string.format("%d %s %d", date.day, _(MONTHS[date.month]), date.year),
-        0, px(30), p.w - px(112), 16, true)
+        header_left, px(30), header_width, 16, true)
     local search = rect(p.w - px(54), 0, px(54), px(52))
-    local search_label = text(_("Search"), search.x, search.y, search.w, 13, true)
-    local measured = search_label:getSize()
-    search_label.overlap_offset = {
+    -- The native search icon has padding inside its SVG viewBox.
+    local search_size = px(24)
+    local search_icon = Style.slotIconWidget("sui_search", search_size, ink)
+        or require("ui/widget/iconwidget"):new{
+            icon = "appbar.search", width = search_size, height = search_size,
+        }
+    search_icon.alpha = true
+    local measured = search_icon:getSize()
+    add(search_icon,
         search.x + math.floor((search.w - measured.w) / 2),
-        search.y + math.floor((search.h - measured.h) / 2),
-    }
+        search.y + math.floor((search.h - measured.h) / 2))
     action(search, function() require("core/orbitui_search").show() end)
 
     local add_area = rect(p.w - px(108), 0, px(48), px(52))
-    -- Center the plus itself on the same row, independent of font baselines.
-    local plus_size, stroke = px(12), px(2)
+    local plus_size, stroke = px(16), px(1.5)
     local inset = math.floor((plus_size - stroke) / 2)
     local plus_x = add_area.x + math.floor((add_area.w - plus_size) / 2)
     local plus_y = add_area.y + math.floor((add_area.h - plus_size) / 2)
@@ -362,20 +369,21 @@ function M.content(widget, p, ctx, data)
     if r and p.cover_row then
         local Silverfish = require("adapters/orbitui_silverfish")
         local pet = Silverfish.snapshot()
-        box(r, paper, BB.COLOR_LIGHT_GRAY, "hero")
+        box(r, paper, nil, "hero")
         local left, right = r.x + p.pad, r.x + r.w - p.pad
         local width = right - left
         local top, bottom = r.y + p.pad, r.y + r.h - p.pad
         local gap = px(10)
         local percent_size, time_size, book_size = 14, 14, 18
         local time_bold = data.time_left and require("ui/font").FORCE_SYNTHETIZED_BOLD
-        local pet_name_size, pet_detail_size = 14, 12
+        local pet_name_size, pet_detail_size = 16, 13
         local percent_h = textBlockHeight(textFace(percent_size, true), 1)
         local time_h = data.time_left and textBlockHeight(textFace(time_size, time_bold), 1) + px(2) or 0
         local book_h = data.current and textBlockHeight(textFace(book_size, true), 2) or 0
         local name_h = pet and textBlockHeight(textFace(pet_name_size, true), 1) or 0
         local detail_h = pet and textBlockHeight(textFace(pet_detail_size, false), 1) or 0
-        local footer_h = math.max(time_h + book_h, name_h + 2 * detail_h)
+        local pet_h = pet and name_h + 2 * detail_h + 2 * px(3) or 0
+        local footer_h = math.max(time_h + book_h, pet_h)
         local footer_y = footer_h > 0 and bottom - footer_h - gap or bottom
         local percent_y = footer_y - percent_h - px(5)
         local cover_base = percent_y - px(5)
@@ -398,7 +406,7 @@ function M.content(widget, p, ctx, data)
             text(_("Open a book to start reading."), left, top, width, 15, false, muted, 2)
         end
         if footer_h > 0 and footer_y >= top then
-            add(UI.solidBar(width, px(1), BB.COLOR_LIGHT_GRAY), left, footer_y)
+            add(UI.solidBar(width, px(1.5), BB.COLOR_DARK_GRAY), left, footer_y)
             local y = footer_y + gap
             local book_w = pet and math.floor(width * .49) or width
             if data.current then
@@ -408,15 +416,16 @@ function M.content(widget, p, ctx, data)
             end
             if pet then
                 local pet_x = data.current and left + book_w + gap or left
-                local sprite_w = px(31)
+                local sprite_w = math.max(1, math.min(footer_h, math.floor((right - pet_x) / 4)))
                 local text_right = right - sprite_w - px(5)
+                local line_gap = math.floor((footer_h - name_h - 2 * detail_h) / 2)
                 local function rightLabel(value, yy, size, bold)
                     text(value, pet_x, yy, text_right - pet_x, size, bold, ink, 1, true, "right")
                 end
                 rightLabel(pet.name, y, pet_name_size, true)
-                rightLabel(pet.stage, y + name_h, pet_detail_size)
+                rightLabel(pet.stage, y + name_h + line_gap, pet_detail_size)
                 rightLabel(string.format(_("Days: %s · Books: %s · Gen: %s"),
-                    pet.days or "—", pet.finished or "—", pet.generation), y + name_h + detail_h, pet_detail_size)
+                    pet.days or "—", pet.finished or "—", pet.generation), bottom - detail_h, pet_detail_size)
                 add(Silverfish.spriteWidget(pet, sprite_w, footer_h, paper), right - sprite_w, y)
                 action(rect(pet_x, footer_y, right - pet_x, bottom - footer_y), function() Silverfish.openPet(pet) end)
             end
@@ -554,12 +563,46 @@ function M.content(widget, p, ctx, data)
     end
 
     local stats = data.stats
+    local cover_summary = p.cover_row and p.ladder ~= nil
+    local function summaryChart(key, x, y, w, bottom)
+        local available = bottom - y
+        if available < 6 then return end
+        local palette = colours(key)
+        local color = palette and native(palette.accent) or muted
+        if key == "streak" and type(stats.streak_week) == "table" and #stats.streak_week >= 7 then
+            local Charts = require("engines/sui_stats_charts")
+            local size, gap = Charts.fitDots(7, w, available, px(12))
+            if size then
+                local recent = { (table.unpack or unpack)(stats.streak_week, #stats.streak_week - 6) }
+                add(Charts.weekDots{ states = recent, size = size, gap = gap, color = color }, x, bottom - size)
+            end
+        elseif key == "week" and type(stats.week_series) == "table" then
+            local today = (date.wday - 2) % 7 + 1
+            local monday = os.date("%Y-%m-%d", os.time{
+                year = date.year, month = date.month, day = date.day - today + 1, hour = 12,
+            })
+            local series = stats.week_series
+            if series.start == monday and type(series.secs) == "table" and #series.secs == 7 then
+                local Charts = require("engines/sui_stats_charts")
+                local bar_w, gap = Charts.fitBars(7, w, px(19))
+                if bar_w then
+                    local chart = Charts.bars{
+                        values = series.secs, bar_w = bar_w, gap = gap,
+                        avail_h = math.min(available, px(29)), color = color, highlight = today,
+                    }
+                    if chart then add(chart, x, bottom - chart:getSize().h) end
+                end
+            end
+        end
+    end
     local tiles = {
         { "Pages today", tostring(stats.today_pages or 0), "pages", "pages_today" },
         { "Reading today", p.ladder and stats.today_secs == nil and "—"
             or Model.duration(stats.today_secs, p.ladder ~= nil), "reading time", "reading_today" },
-        { "Reading streak", tostring(stats.streak or 0), "days in a row", "streak" },
-        { "This week", Model.duration(stats.week_secs), "reading time", "week" },
+        { "Reading streak", cover_summary and stats.streak == nil and "—" or tostring(stats.streak or 0),
+            stats.streak == 1 and "day in a row" or "days in a row", "streak" },
+        { "This week", cover_summary and stats.week_secs == nil and "—"
+            or Model.duration(stats.week_secs, cover_summary), "reading time", "week" },
     }
     for i, tile in ipairs(tiles) do
         r = p.stats[i] or p.cards and p.cards[tile[4]]
@@ -567,7 +610,20 @@ function M.content(widget, p, ctx, data)
         box(r, nil, nil, tile[4])
         title(heading(tile[4], _(tile[1])), r)
         if p.ladder then
-            text(tile[2], r.x + p.pad, r.y + p.pad + math.max(17, px(27)), r.w - p.pad * 2, 25, true)
+            local x, y, w = r.x + p.pad, r.y + p.pad + math.max(17, px(27)), r.w - p.pad * 2
+            local amount = text(tile[2], x, y, w, 25, true)
+            if cover_summary and amount then
+                local size = amount:getSize()
+                if tile[4] == "streak" and stats.streak ~= nil then
+                    local offset = size.w + px(6)
+                    local unit = text(_(stats.streak == 1 and "day" or "days"), x + offset, y, w - offset, 15, false)
+                    if unit then
+                        unit.overlap_offset[2] = y + (amount._inner or amount):getBaseline()
+                            - (unit._inner or unit):getBaseline()
+                    end
+                end
+                summaryChart(tile[4], x, y + size.h + px(4), w, r.y + r.h - p.pad)
+            end
         else
             text(tile[2], r.x + p.pad, r.y + math.floor(r.h * 0.40), r.w - p.pad * 2, 23, true)
             text(_(tile[3]), r.x + p.pad, r.y + r.h - p.pad - px(15), r.w - p.pad * 2, 11, false, muted)
@@ -643,14 +699,6 @@ function M.content(widget, p, ctx, data)
     local owner = ctx._screen_widget or widget
     owner._orbitui_dashboard_pages = owner._orbitui_dashboard_pages or {}
     owner._orbitui_dashboard_sources = owner._orbitui_dashboard_sources or {}
-    if p.cover_shelves then
-        local area = p.cover_shelves
-        box(area, paper, BB.COLOR_LIGHT_GRAY)
-        if p.want and p.new then
-            add(UI.solidBar(px(1), area.h - 2 * p.pad, BB.COLOR_LIGHT_GRAY),
-                math.floor((p.want.w + p.new.x) / 2), area.y + p.pad)
-        end
-    end
     local function shelf(key, label, files, failed, module, extra)
         local area = extra and p.cards[key] or p[key]
         if not area then return end
@@ -662,8 +710,8 @@ function M.content(widget, p, ctx, data)
                 owner._orbitui_dashboard_sources[key] = identity
             end
         end
-        local stacked = not extra and p.cover_shelves ~= nil
-        if not stacked then box(area, nil, nil, key) end
+        local stacked = p.cover_row and not extra
+        box(area, stacked and paper or nil, nil, key)
         local count = extra and extra.view == "carousel" and 1 or 3
         local pages = math.max(1, math.ceil(#files / count))
         local page = math.min(pages, math.max(1, owner._orbitui_dashboard_pages[key] or 1))
@@ -684,7 +732,8 @@ function M.content(widget, p, ctx, data)
         if stacked then
             local x, w = area.x + p.pad, area.w - 2 * p.pad
             local label_h = math.max(px(40), textBlockHeight(textFace(15, true), 1))
-            local footer_y = area.y + area.h - p.pad - label_h
+            local footer_pad = math.max(px(4), p.pad - px(6))
+            local footer_y = area.y + area.h - footer_pad - label_h
             local control_w = pages > 1 and px(39) or 0
             text(heading(key, label), x, footer_y + px(7), w - 2 * control_w, 15, true)
             for i, control in ipairs({ { "‹", -1, page > 1 }, { "›", 1, page < pages } }) do

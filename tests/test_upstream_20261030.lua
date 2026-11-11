@@ -280,12 +280,17 @@ H.test("page-turn totals reuse the existing aggregate query without changing dis
     local conn = { exec = function(_, sql)
         queries[#queries + 1] = sql
         if fail then error("database is locked") end
-        if #queries == 1 then return { { 40 }, { 2 }, { 90 }, { 3 }, { 90 }, { 3 }, { 90 }, { 3 } } end
+        if #queries == 1 then
+            return { { 40 }, { 2 }, { 90 }, { 3 }, { 90 }, { 3 }, { 90 }, { 3 }, { "5:40,1:50" } }
+        end
         return { { 100 }, { 200 }, { 8 }, { 3 } }
     end }
     local stats, err = fetch(conn, 1, 2, 3, "2026-10-30", "2026-10-26", "2026-10-01", "2026-10-24")
     H.eq(err, nil); H.eq(#queries, 2); H.eq(stats.today_pages, 2); H.eq(stats.total_turns, 8)
     H.eq(stats.today_turns, 3); assert(queries[2]:find("start_time >= 3", 1, true))
+    H.eq(stats.week_series.start, "2026-10-26")
+    H.eq(table.concat(stats.week_series.secs, ","), "50,0,0,0,40,0,0")
+    assert(queries[1]:find("d BETWEEN '2026-10-26' AND '2026-10-30'", 1, true))
     fail = true; local _, failure = fetch(conn, 1, 2, 3, "today", "week", "month", "rolling")
     assert(failure:find("database is locked", 1, true)) -- no successful-zero signal
 end)
