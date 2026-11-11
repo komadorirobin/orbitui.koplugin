@@ -17,8 +17,10 @@ retain the hero above scrolling content; short/dense screens scroll it with a
 compact fixed Read fallback. Native measurement/paint revealed and corrected a
 group-layout cache invalidation issue and glyph/button-height mismatches.
 Native personal-star navigation selects the user's review source explicitly.
-No upstream, version, public push/release or device/server change. See TESTING
-for final native raster, regression and private-package receipts.
+Source **f816d804**, private ZIP **cdf88a61**. Both complete interpreter gates,
+targeted sealed suites and package/source/unchanged-inventory checks pass.
+Public dist remains **d7abac63**. No upstream, version, public push/release or
+device/server change. See TESTING for native raster and verification receipts.
 
 ## 2026-11-11 — airy book-info page, local feature work only
 

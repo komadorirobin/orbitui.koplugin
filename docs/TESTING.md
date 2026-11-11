@@ -14,9 +14,21 @@ is a local native-widget rendering with placeholder cover and fixture metadata.
 
 Existing overview/controller tests pass after updating their native LineWidget
 fixture. The actual native factory routes the personal stars to the personal
-review source even when Hardcover reviews are present. Full interpreter and
-package results follow once complete. The device and public beta.2 remain
-unchanged; the original physical acceptance gaps below still apply.
+review source even when Hardcover reviews are present. Both complete Lua/LuaJIT
+gates pass: 134 Python tests/four unchanged optional art skips, 1,252 syntax
+files, 129 root suites, 588 Bookshelf suites/zero failures/three usual SQLite
+exclusions and 13 SimpleUI files. The overview, shared native factory and
+online/local tag suites also pass against the sealed archive in both interpreters.
+
+Runtime source **f816d804**, private ZIP **cdf88a61**, manifest **4e61a0d3**.
+Package validation and exact source projection pass with the unchanged 2,000
+API1 installed paths, 1,999 manifest entries, 35 embedded modules and 414 module
+identities. Assets/fonts/entrypoints/bootstrap/VERSION/source pins are unchanged,
+and all 27 new implementation blobs since the branch base pass the held-art
+check. Public dist remains **d7abac63**. Evidence uses the `revised-*` logs,
+archive and rendering in the existing private book-overview evidence folder.
+Later documentation receipts do not change the runtime. The device and public
+beta.2 remain unchanged; the original physical acceptance gaps below still apply.
 
 ## 2026-11-11 — airy book overview, local development
 

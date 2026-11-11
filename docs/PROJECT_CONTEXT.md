@@ -32,7 +32,9 @@ and correct this file in the same change.
   the book header visible; short/dense screens retain a compact fixed Read
   fallback. Preview text size has a separate explicit 12–40 setting and does
   not change native description zoom. Real-widget raster/gesture/scroll checks
-  pass; updated full/package receipts are in TESTING. No public beta yet.
+  pass, as do the complete Lua/LuaJIT gates and focused sealed repeats. Revised
+  runtime **f816d804**, private ZIP **cdf88a61**, unchanged API1 inventory;
+  public dist remains **d7abac63**. Receipts are in TESTING. No public beta yet.
   A default-on, reversible overview shows cover, status/rating, a compact facts
   row, description and two rows of clickable offline tag chips. Explicit
   refresh/online tag tools, reviews, metadata, highlights, cover selection and
