@@ -34,6 +34,11 @@ and correct this file in the same change.
   The dashboard honors each SimpleUI module's existing heading
   preference and exposes it directly in the card editor. BookOrbit source
   attribution, card placement, and custom stat ordering are unchanged.
+  Final runtime **264c6ca3**, private ZIP **56904a9a**, is active and healthy
+  on the Bigme, with public beta.2 **d7abac63** retained as rollback. Both
+  cards show the same actual estimate; the temporary ordinary card used for
+  verification was removed and the original arrangement checked. Nothing
+  was pushed or published. See TESTING for the exact install receipt.
 
 - **Local reader-panel visual correction and time left, not released.** User
   approves correcting the implementation against the accepted bottom-sheet

@@ -1,5 +1,40 @@
 # Verification and device acceptance
 
+## 2026-11-11 — current-book time and per-module headings on Bigme
+
+User requests time left on both Currently Reading cards and explicitly
+authorizes a private USB install. Standard Currently Reading already had the
+native time item; its Home visibility preference was off. With KOReader exited
+normally, back up settings/history and set only that flag to true. Silverfish
+uses a shared file-matched native statistics snapshot, with no DB read in its
+build/paint. Its optional bounded estimate keeps the progress and pet metrics.
+The same native per-module heading preference now controls the dashboard
+wrapper; the card editor exposes it directly and frees the heading inset.
+
+Intermediate **cb6a0e1d / d0865e22** showed the time on the physical Silverfish
+card; toggling its heading off/on worked. A temporary standard dashboard card
+exposed a missing current-book context when the standalone module was disabled.
+The final host supplies the first recent book in the child context and requests
+native stats only when its visible items need them, without enabling or moving
+the standalone module. Both complete gates and all 129 root suites per
+interpreter against the sealed final archive passed. The 20 Silverfish and 24
+dashboard-module cases include narrow layout, no/unmatched stats, independent
+heading toggles and hosted-current fallback. Existing optional art/SQLite skips
+are unchanged.
+
+Final source **264c6ca3ab905136ac6c0c254d6f80841e7ad7c8**, private ZIP
+**56904a9a424ea8be8d9d1172ddafee4d19e6f043e7883c36028af671437d32df**,
+manifest **cd8f5f0dd32793523e01c32ceab594b13ff4ab8055717cdbcab4a4759c76f3d0**.
+Package, exact projection, unchanged API1 inventory and all 2,000 staged
+Android file hashes verified before selecting the slot. Final cold startup
+reached pending=0 with public beta.2 **d7abac63** as previous. Both cards visibly
+reported the same 2h 38m estimate. Remove the exact temporary dashboard card;
+readback confirms original layout, heading preferences, statistics order and
+style, with the requested time flag still enabled. History is byte-identical;
+no book was opened. Device screenshots and final logs are in the private
+current-cards evidence folder. No broader device acceptance, public package,
+version, upstream pin, push or release change.
+
 ## 2026-11-11 — reader-panel visual correction and live time left
 
 Eleven focused reader-sheet tests pass under Lua and LuaJIT. They cover the
