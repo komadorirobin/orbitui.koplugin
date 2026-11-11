@@ -22,6 +22,14 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Reader panel tab recovery.** The reported dead taps were observed on the
+  Bigme. Controlled stale-generation and passive-toast cases reproduced the
+  same symptom on the prior slot. The fixed reader panel accepts explicit tab
+  changes over the same reader, matches KOReader toast event routing, and keeps
+  old book actions guarded. USB test slot **43a0b927** is healthy with
+  **5f5fd74c** as rollback. Preferences, history and their backed-up recovery
+  copies were restored and verified.
+
 - **Editing and maintenance layouts, local.** Collection membership, local
   additions and pending edits now have separate tabs and explicit Save. The
   Add module gateway groups installed module types, BookOrbit sources and the
@@ -30,8 +38,8 @@ and correct this file in the same change.
   while retaining its existing preference writes and live shelf preview.
   Desktop KOReader widget checks cover all four in portrait, short and landscape
   layouts. USB testing passed on the Bigme, including a pause/wake/resume of
-  the index. A native submenu Back fix was verified on the device. The active
-  private slot **5f5fd74c** retains **56904a9a** as rollback. The pre-test
+  the index. A native submenu Back fix was verified on the device in private
+  slot **5f5fd74c**, now the reader-panel fix's rollback slot. The pre-test
   settings and history are restored. See TESTING for the tested paths and
   remaining limitations.
 

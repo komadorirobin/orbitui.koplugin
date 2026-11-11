@@ -1,5 +1,27 @@
 # Verification and device acceptance
 
+## 2026-11-11 — unresponsive Also reading tab on Bigme
+
+Observed the reported dead taps on **5f5fd74c**. Both the tab and close button
+gave native feedback without acting. Android Back followed by a reopen loaded
+seven books. The triggering event on that first real-book sheet was not
+instrumented. Two isolated reproductions on the same hardware and old code
+used a stale navigation generation and a passive native toast. Both reproduced
+the ignored tab through a real ADB touch event.
+
+Fixed source **1913ac4d412b90614c3ebc2fb0cd19a1e0877308**, private ZIP
+**43a0b92790a080a201e977524dcfb29477cc0537031ca6ff2b0cb6ffae33b5a5**.
+Actual Bigme touches verified recovery from the stale snapshot, all five
+fixture results, paging, switching back, refreshing under a toast and closing
+under both conditions. Tests retain the foreign-modal and stale-book guards.
+Full Lua/LuaJIT gates, focused sealed reader suites with both saved native
+sources, package projection and 2,000 Android hashes pass. Startup cleared
+pending; rollback is **5f5fd74c**. The ten backed-up files, including original
+preferences, history and rolling recovery copies, match byte for byte. The QA
+bridge was removed from autoload, the fixture folder moved under cache, and
+the crash-log size stayed unchanged. Local evidence is under
+`test-results/ongoing-tab-20261111/`.
+
 ## 2026-11-11 — USB Bigme editing and navigation acceptance
 
 The user requested physical testing. At 1264×1680 on the Bigme, the initial

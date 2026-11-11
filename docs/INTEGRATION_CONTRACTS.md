@@ -1648,6 +1648,11 @@ explicit retry; sleep, reader replacement, close, reflow, rotation and Home/
 shelf navigation retire it, and resume never reopens. Other than the approved
 bottom-gesture default, no default placement, installed file/identity/API1
 increase or source pin/watch/version change.
+Match native input dispatch by ignoring passive toasts when finding the
+foreground reader sheet. A generation change still invalidates old book/tool
+actions. A fresh tab or Refresh tap can rebuild only if the same live reader
+is directly below the foreground sheet. The owned foreground sheet can close
+even with a stale navigation snapshot. Foreign modals still block actions.
 Tests: test_reader_panel, test_entrypoint, test_host; optional whole minimum/
 current native handlers, dialog/confirmation and doc/central/legacy/custom
 light-reader supplements. Stub font/document/render boundaries are not Bigme
