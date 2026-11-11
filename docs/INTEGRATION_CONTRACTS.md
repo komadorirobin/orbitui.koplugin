@@ -565,6 +565,42 @@ Tests: `test_series_rating`, `test_upstream_series_boxes`.
 
 ## C07: Presentation and preferences
 
+November 11 approved airy book-info page: use a white/black native full-page
+overview as the default for ordinary local book details, with a reversible
+`orbitui_book_overview=false` preference under Bookshelf > Book information page.
+Do not rewrite any existing preference on entry. Explicit native edit/tag/
+review/highlight/cover requests still go straight to their tabs. Remote/OPDS
+details retain their original read-only path. Native cover policy owns the
+thumbnail: never consume a shelf record's disposable bb; release only an owned
+source once, after its widgets, and retain borrowed source buffers through
+rebuild/close. Unknown facts stay absent, description text retains the existing
+description-size preference, title/author/tag labels truncate safely, and a
+scrolling body must not cover fixed Close/Read/Actions controls. Native actual
+scrollbar width, cropped feedback, focus scrolling, stale-layout/navigation
+guards and suspend/rotation cleanup are required. Selecting a tag reuses the
+existing local result navigation; a long press keeps saved chip/shelf workflows.
+No new similarity carousel, automatic recommendation scan or background fetch.
+
+Shared design direction, not blanket authorization to replace all menus:
+
+| Surface | Direction / next step | Must preserve |
+| --- | --- | --- |
+| Book overview | Airy cover/title hierarchy, facts, description, visible rounded chips | Native actions, source choices, read/open lifecycle |
+| Reader panel and updater | Existing rounded native panels are the baseline | Gesture ownership, cancellation, focus, fixed footer |
+| Tag/search results | Next candidate: readable title/author/series rows and quieter progress/status blocks | Partial results, Series/Volumes tabs, Stop/Close, reveal-not-open |
+| Card/module/collection menus | Then align headings, action placement and immediate feedback | MenuHost refresh/back semantics, duplicate guards, external callbacks |
+| Settings | Then group/help/spacing polish, keeping advanced native controls | Check/radio state, search, holds, scope, existing values |
+| Home, shelves and dock | Align only shared chrome after the above is accepted | Personal layouts, covers, ornaments, themes, fonts, aspect ratios |
+
+Use a small hierarchy (title, section, body, secondary metadata), consistent
+24/12/8-ish DPI-scaled spacing, light outlines and dark primary actions. Do not
+conflate disabled with selected, shrink text to force every feature onto one
+screen, or globally skin third-party/native KOReader dialogs. Missing/empty,
+loading/partial, failure and destructive-confirmation states need equal care.
+Implementation stays in lazy adapters with narrow component seams; centralize
+genuinely shared primitives only after a second surface demonstrates the need.
+These principles are a staged roadmap; only the overview changes in this step.
+
 November 10 approved updater design: the available/download/verify/cancel/error/
 restart views share an independent, lazy native-widget panel in the existing
 adapter. Preserve rounded monochrome framing, outlined secondary and genuinely
@@ -1383,6 +1419,18 @@ without exposing raw bodies, headers or signed URLs and without activation.
 Coverage: `test_update_menus`, `test_updates`, `test_http`.
 
 ## C10: Shared panels, search, settings and Home shelves
+
+November 11 overview extends the earlier Tags-only presentation contract:
+already indexed local EPUB tags may also appear on the book overview. The
+existing Tags tab and all its tools remain reachable, including explicit
+BookOrbit loads. Opening either view may call `embeddedTags(file,false,true,true)`
+once: this validates one per-file cache against the source stamp and never opens
+an archive, updates an index or starts a request. A miss is not a claim that the
+EPUB has no tags. Native subjects/genres and BookOrbit tags remain distinct.
+Closing to a native tab transfers the original final-close callback once and
+keeps the actual shelf/lightweight controller; it must not initialize a second
+hidden shelf or lose userpatch/plugin actions. The native Information tab must
+be selectable by ID even after the host inserts it among native tabs.
 
 November 10 approved Aleph-list point 5: independent optional Finish forecast
 Home module, also selectable through the existing dashboard module registry.

@@ -4,6 +4,29 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-11 — airy book-info page, local feature work only
+
+User selects the airy full-page concept and approves building it plus reviewing
+the broader UI direction. No import, source-pin, version, release, main push,
+device installation or server action in this step. Branch
+`feature/book-info-modern-20261111` starts at `702e9c8c`.
+
+The existing host book-panel adapter owns the lazy native overview, settings
+toggle and SV/EN labels. Two small Bookshelf seams reuse its thumbnail policy
+with explicit bitmap ownership and allow default local details to enter the host
+overview after the remote-book guard. Explicit native tabs remain unchanged.
+The lightweight Home controller is retained; native-tab handoff carries the
+original close callback exactly once. All cached tag actions keep their search/
+chip implementations. A cache miss requires the existing explicit tag tools,
+not implicit extraction. C07/C10 record this approved presentation change and
+the bounded shared-design roadmap. No Aleph source or assets are imported.
+
+Targeted layout/lifecycle tests and local actual-widget raster/gesture checks
+cover small/landscape/high-DPI layouts, stale buttons, metadata read counts,
+native-tab routing and bitmap lifetimes. Full gate results and remaining
+physical-device checks are recorded in TESTING. Only the book overview is
+implemented; search/settings/Home redesigns are not silently included.
+
 ## 2026-11-10 — post-beta.2 reviewed upstream, merge only
 
 User requests merging upstream while testing published beta.2, then asks for

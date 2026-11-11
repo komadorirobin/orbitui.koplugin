@@ -395,6 +395,7 @@ local nodes = {
     { "libraries", "Libraries & shelves", "bookshelf", "mixed", "biblioteksavdelningar profiler profiles mappar folders chip chips filters filter sortering sorting ordna bibliotek order libraries ordna chip order chips placera före place before källa source" },
     { "book_search", "Search books", "bookshelf", "mixed", "böcker boksökning books library search stavfel typo accent diakritiska" },
     { "tag_index", "Tags and indexing", "bookshelf", "bookshelf", "taggar tags epub indexera indexering indexing omläsning reread uppdatera pause pausa fortsätt resume" },
+    { "book_overview", "Book information page", "bookshelf", "navigation", "bokinfo bokinformation boksida luftig klassisk flikar airy classic tabs overview layout" },
     { "panel", "Book panel at the top", "bookshelf", "bookshelf", "toppanel hero bokinformation baksidestext tags interactive" },
     { "covers", "Covers & book information", "bookshelf", "bookshelf", "omslag upplösning resolution metadata indexering indexing" },
     { "themes", "Themes, backgrounds & ornaments", "bookshelf", "theme", "tema färger colors bakgrund wallpaper plank hyllplan dekorationer" },
@@ -825,6 +826,9 @@ function M.open(id, opts)
     elseif id == "bookorbit" then extra = require("adapters/orbitui_integrations").bookOrbitItems(close)
     elseif id == "reader_panel" then extra = require("adapters/orbitui_book_panel").readerPanelItems(function()
         close(); M.open("reader_panel", opts)
+    end)
+    elseif id == "book_overview" then extra = require("adapters/orbitui_book_panel").bookPageItems(function()
+        close(); M.open("book_overview", opts)
     end)
     elseif id == "performance" then
         extra = M.performanceItems()

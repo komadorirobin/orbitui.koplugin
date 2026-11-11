@@ -23874,6 +23874,11 @@ local function _headerThumbBB(filepath, fresh, thumb_w)
     return nil
 end
 
+-- Host overview: reuse the thumbnail policy, never the shelf's one-shot bb.
+function BookshelfWidget:_orbituiDetailCover(book, width)
+    return _headerThumbBB(book.filepath, { cover_image_path = book.cover_image_path }, width)
+end
+
 -- _headerCardBook(book, fresh) -> the record the book menu's cover card draws.
 -- A plain spine's page record is light: it carries no has_cover, and the card
 -- reads that as "no cover" and draws the text placeholder (575). The menu's
@@ -27409,6 +27414,10 @@ function BookshelfWidget:_showBookDetail(book, opts)
         if self:_sourceRemote(book) then self:_showSourceInfo(book) return end
         self:_showRemoteBookInfo(book)
         return
+    end
+    if not opts.active and not opts.classic and self.orbitui_detail_view then
+        local overview = self:orbitui_detail_view(book, opts)
+        if overview then return overview end
     end
     local ReadCollection = require("readcollection")
     local in_collections = ReadCollection.getCollectionsWithFile

@@ -1,5 +1,34 @@
 # Verification and device acceptance
 
+## 2026-11-11 — airy book overview, local development
+
+Targeted `test_book_overview` covers twelve EN/SV viewport combinations, body
+font size up to 40, retained scrollbar width, one cache-only tag lookup/metadata
+build, borrowed/owned cover cleanup, tag tap/hold, stale revisions, native-tab
+handoff, close/read ordering, sleep/rotation and preference opt-out.
+`test_shared_book_panel` exercises the actual native factory with/without the
+host seam, explicit Information-tab selection and nonrecursive handoff.
+Existing tag/search/controller suites remain regression gates.
+
+Private `test-results/book-overview-20261111/render-native.lua` uses retained
+actual KOReader native widgets, fonts, clipping and GestureRange, with fixture
+book/tag data only. 1264x1680@2, 1680x1264@2, 320x240@1 and 600x800@2.5 render
+and geometry/borrowed-cover/native-Read-event checks pass. The normal portrait
+PNG was visually inspected and spacing adjusted to expose the two tag rows.
+This is not a screenshot from the Bigme and the cover is a fixture placeholder.
+
+Both complete `scripts/test.sh` runs pass with Lua and LuaJIT: 134 Python tests
+(four unchanged optional source-art skips), 1,252 syntax files, 129 root suites,
+588 Bookshelf suites/zero failures/three usual SQLite exclusions and 13 SimpleUI
+files. The final targeted overview, native factory and 69 online/local-tag tests
+also pass after the cache-prefill adjustment. Package verification is recorded
+below when complete. No device has been changed. Physical touch/hold scrolling,
+real cover sources, large
+metadata and tag sets, Home/shelf/reader return context, font/night/colour and
+suspend/rotation still need acceptance before a public beta unless the user
+explicitly accepts disclosed limitations. Existing beta.2 wake-test limitations
+remain. No performance claim is made from desktop timing.
+
 ## 2026-11-10 — post-beta.2 upstream merge, no release
 
 Source **105974ed** integrates Bookshelf f99a5bc4 (6.4.2) and SimpleUI a2b677bc

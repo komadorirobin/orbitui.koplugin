@@ -39,12 +39,21 @@ function M.information(book)
     return table.concat(rows, "\n")
 end
 function M.widget(widget)
-    widget.orbitui_tag_sections = function(self, book, modal)
-        return M.tagSections(self, book, modal)
+    widget.orbitui_detail_view = function(self, book, opts)
+        if not M.bookPageEnabled() then return end
+        return M.bookPage(self, book, opts, function(next_opts)
+            -- Bypass a lightweight controller's wrapping method: its close
+            -- callback is already carried in opts, and must run only once.
+            return widget._showBookDetail(self, book, next_opts)
+        end)
     end
-    widget.orbitui_detail_args = function(self, book, args)
+    widget.orbitui_tag_sections = function(self, book, modal)
+        return M.tagSections(self, book, modal, true)
+    end
+    widget.orbitui_detail_args = function(self, book, args, opts)
         local _ = require("core/orbitui_i18n")
         local selected = args.tabs[args.active_tab] and args.tabs[args.active_tab].id
+        if opts and opts.active == "information" then selected = "information" end
         for _i, tab in ipairs(args.tabs) do if tab.id == "tags" then tab.label = _("Tags") end end
         -- Keep all native tabs, plugin actions, sources and their close/open
         -- lifecycle. The new read-only page is built only when selected.
@@ -72,7 +81,7 @@ function M.widget(widget)
 end
 
 local tag_states = setmetatable({}, { __mode = "k" })
-function M.tagSections(owner, book, modal)
+function M.tagSections(owner, book, modal, cached)
     local _ = require("core/orbitui_i18n")
     local Integration = require("adapters/orbitui_integrations")
     local UI = require("ui/uimanager")
@@ -80,6 +89,10 @@ function M.tagSections(owner, book, modal)
     local state = tag_states[modal]
     if not state then
         state = { navigation = UI._simpleui_navigation_generation }
+        if cached then
+            -- One validated per-file cache peek, never an EPUB read/index job.
+            state.embedded = { tags = Integration.embeddedTags(book.filepath, false, true, true) }
+        end
         tag_states[modal] = state
     end
     state.render = (state.render or 0) + 1
@@ -89,6 +102,7 @@ function M.tagSections(owner, book, modal)
             and state.navigation == UI._simpleui_navigation_generation
     end
     local function refresh()
+        if current() and modal.orbitui_overview then modal:rebuild(); UI:setDirty(modal, "ui"); return end
         local tab = modal._tabs and modal._tabs[modal._active_tab]
         if current() and modal.rebuildTab and tab and tab.id == "tags" then modal:rebuildTab() end
     end
@@ -300,7 +314,251 @@ function M.show(file, opts)
         Context.notify(require("core/orbitui_i18n")("Could not load books."))
         return
     end
-    return M.controller(file, opts):_showBookDetail(book, { active = "edit" })
+    return M.controller(file, opts):_showBookDetail(book)
+end
+
+local book_page_key = "orbitui_book_overview"
+function M.bookPageEnabled()
+    return not G_reader_settings or G_reader_settings:readSetting(book_page_key) ~= false
+end
+function M.bookPageItems(changed)
+    local _ = require("core/orbitui_i18n")
+    return {{ text = _("Use the airy book information page"), checked_func = M.bookPageEnabled,
+        callback = function()
+            if not G_reader_settings then return end
+            G_reader_settings:saveSetting(book_page_key, not M.bookPageEnabled())
+            if changed then changed() end
+        end }, { text = _("Covers, description and tags in one overview. Actions opens the existing editor; turn this off to use the classic tabbed view."), enabled = false }}
+end
+
+-- Presentation only: native tabs retain every editing/source/plugin action.
+-- One book's cached metadata and tags, never a library scan or network request.
+function M.bookPage(owner, record, options, classic)
+    local UI, Screen = require("ui/uimanager"), require("device").screen
+    local BB, Geom, Font = require("ffi/blitbuffer"), require("ui/geometry"), require("lib/bookshelf_fonts")
+    local Frame, Text = require("ui/widget/container/framecontainer"), require("ui/widget/textboxwidget")
+    local V, H = require("ui/widget/verticalgroup"), require("ui/widget/horizontalgroup")
+    local VS, HS = require("ui/widget/verticalspan"), require("ui/widget/horizontalspan")
+    local Button, Center = require("ui/widget/button"), require("ui/widget/container/centercontainer")
+    local Scroll = require("ui/widget/container/scrollablecontainer")
+    local Repo, Tokens = require("lib/bookshelf_book_repository"), require("lib/bookshelf_tokens")
+    local _ = require("core/orbitui_i18n")
+    options = options or {}
+    local px = function(n) return math.max(1, Screen:scaleBySize(n)) end
+    local function clean(value, limit)
+        if type(value) ~= "string" then return "" end
+        value = value:gsub("[%c]", " ")
+        local n = limit or 2048
+        if #value <= n then return value end
+        while value:byte(n + 1) and value:byte(n + 1) >= 128 and value:byte(n + 1) < 192 do n = n - 1 end
+        return value:sub(1, n) .. "…"
+    end
+    local book = {}
+    local ok, fresh = pcall(Repo.buildBookMeta, record.filepath, { want_cover = false })
+    for k, v in pairs(ok and type(fresh) == "table" and fresh or {}) do book[k] = v end
+    for k, v in pairs(record) do if v ~= nil then book[k] = v end end
+    book.cover_bb = nil -- the shelf's one-shot image must never be borrowed
+    local read_ok, pct, status, rating = pcall(Repo.readProgress, book.filepath)
+    pct = read_ok and tonumber(pct) or 0
+    if not pct or pct ~= pct then pct = 0 end
+    pct = math.max(0, math.min(1, pct))
+    local authors = clean(book.author)
+    if authors == "" and type(book.authors) == "table" then
+        local names = {}; for i = 1, math.min(8, #book.authors) do names[#names + 1] = clean(book.authors[i], 256) end
+        authors = table.concat(names, ", ")
+    end
+    local description = Tokens.cleanDescription(clean(book.description, 12000)) or ""
+    local Page = require("ui/widget/focusmanager"):extend{
+        name = "orbitui_book_overview", modal = true, orbitui_overview = true,
+        _sui_keep_homescreen = owner._orbitui_detail_only or nil,
+    }
+    function Page:current(revision)
+        return not self._closed and (not revision or revision == self.revision)
+            and self.navigation == UI._simpleui_navigation_generation
+            and UI:isWidgetShown(self) and UI:getTopmostVisibleWidget() == self
+    end
+    function Page:onClose() if not self._closed then UI:close(self) end; return true end
+    function Page:onCloseWidget()
+        if self._closed then return end
+        self._closed = true
+        if self[1] then self[1]:free(); self[1] = nil end
+        if self.owned_cover and self.cover then self.cover:free() end
+        self.cover = nil
+        UI:setDirty("all", "ui")
+        if not self.handoff and options.on_close then options.on_close() end
+    end
+    function Page:onSuspend() return self:onClose() end
+    function Page:onScreenResize() return self:onClose() end
+    Page.onSetRotationMode = Page.onScreenResize
+    function Page:onShowingReader() return self:onClose() end
+    function Page:openTab(id)
+        if not self:current() then return end
+        self.handoff = true; self:onClose()
+        local modal = classic{ active = id, classic = true, on_close = options.on_close }
+        if owner._orbitui_detail_only then owner._orbitui_modal = modal end
+        return modal
+    end
+    function Page:getButtonById(id) return self.native_buttons[id] end
+    function Page:onFocusMove(args)
+        local result = require("ui/widget/focusmanager").onFocusMove(self, args)
+        local scroll, sel = self.cropping_widget, self.selected
+        if scroll and scroll._is_scrollable and sel and sel.y > 1 and sel.y < #self.layout then
+            local item = self.layout[sel.y] and self.layout[sel.y][sel.x]
+            local d, view = item and item.dimen, scroll.dimen
+            if d and d.y and view and view.y then
+                if d.y < view.y then scroll:_scrollBy(0, d.y - view.y - px(8))
+                elseif d.y + d.h > view.y + view.h then scroll:_scrollBy(0, d.y + d.h - view.y - view.h + px(8)) end
+            end
+        end
+        return result
+    end
+    function Page:rebuild()
+        if self._closed then return end
+        if self[1] then self[1]:free(); self[1] = nil end
+        self.revision = (self.revision or 0) + 1
+        local revision = self.revision
+        self.layout, self.native_buttons = {}, {}
+        local sw, sh = Screen:getWidth(), Screen:getHeight()
+        local pad = math.min(px(24), math.floor(sw / 16))
+        local inner = sw - 2 * pad
+        -- Reserve the native scrollbar's actual width, including after rotate.
+        local w = inner - Scroll:getScrollbarWidth()
+        local function space(n) return VS:new{ width = px(n) } end
+        local function gap(n) return HS:new{ width = px(n) } end
+        local function text(copy, size, bold, width, maxh, color)
+            local face, face_bold = Font:getFace("cfont", size)
+            local opts = { text = clean(copy, 12000), width = width, face = face, bold = bold or face_bold,
+                fgcolor = color or BB.COLOR_BLACK, bgcolor = BB.COLOR_WHITE, height_overflow_show_ellipsis = true }
+            local item = Text:new(opts)
+            if maxh and item:getSize().h > maxh then
+                item:free(); opts.height, opts.height_adjust = maxh, false; item = Text:new(opts)
+            end
+            return item
+        end
+        local function button(id, copy, width, callback, primary, hold, content)
+            local b = Button:new{ text = clean(copy), width = width, height = math.max(px(30), content and content:getSize().h or 0),
+                padding_h = px(6), padding_v = px(7), margin = 0, bordersize = (content or id == "close") and 0 or px(1), radius = px(8),
+                background = primary and BB.COLOR_BLACK or nil,
+                text_font_size = 16, avoid_text_truncation = false,
+                callback = function() if self:current(revision) then callback() end end,
+                hold_callback = hold and function() if self:current(revision) then hold() end end }
+            if content then
+                b.label_widget:free(); b.label_widget = content; b.label_container[1] = content
+            elseif primary then b.label_widget.fgcolor, b.label_widget.bgcolor = BB.COLOR_WHITE, BB.COLOR_BLACK end
+            self.native_buttons[id] = b; return b
+        end
+        local function rowButton(id, copy, tab)
+            local content = H:new{ align = "center", text(copy, 16, false, w - px(36)), gap(8), text("›", 20, false, px(10)) }
+            local b = button(id, "", w, function() self:openTab(tab) end, false, nil, content)
+            self.layout[#self.layout + 1] = { b }; return b
+        end
+        local close = button("close", "×", px(44), function() self:onClose() end)
+        local top = V:new{ align = "left", H:new{ align = "center",
+            text(_("Book information"), 18, true, inner - px(44), px(54)), close }, space(12) }
+        self.layout[#self.layout + 1] = { close }
+        local body = V:new{ align = "left" }
+        local coverw = math.min(px(112), math.floor(w * .29))
+        local coverh = math.floor(coverw * 1.5)
+        local art
+        if self.cover then
+            local ratio = math.min(1, coverw / self.cover:getWidth(), coverh / self.cover:getHeight())
+            art = require("ui/widget/imagewidget"):new{ image = self.cover, image_disposable = false,
+                width = math.max(1, math.floor(self.cover:getWidth() * ratio)), height = math.max(1, math.floor(self.cover:getHeight() * ratio)) }
+        else art = text(_("No cover"), 14, false, coverw - px(8), coverh, BB.COLOR_DARK_GRAY) end
+        local cover = Center:new{ dimen = Geom:new{ w = coverw, h = coverh }, art }
+        local titlew = w - coverw - px(18)
+        local hero = V:new{ align = "left", text(clean(book.title) ~= "" and book.title or book.filename or _("Book"),
+            26, true, titlew, px(142)), space(7), text(authors, 17, false, titlew, px(70), BB.COLOR_DARK_GRAY), space(14) }
+        local state = status == "finished" and _("Finished") or status == "abandoned" and _("On hold")
+            or pct > 0 and string.format(_("%d%% read"), math.floor(pct * 100 + .5)) or _("Not started")
+        hero[#hero + 1] = text(state, 16, true, titlew)
+        local score = tonumber(rating or book.rating)
+        if score and score >= 1 and score <= 5 then
+            hero[#hero + 1] = space(7)
+            hero[#hero + 1] = text(string.format(_("Your rating: %s / 5"), score), 14, false, titlew, nil, BB.COLOR_DARK_GRAY)
+        end
+        body[#body + 1] = H:new{ align = "top", cover, gap(18), hero }
+        local facts = {}
+        local function fact(label, value) value = clean(value, 512); if value ~= "" then facts[#facts + 1] = { _(label), value } end end
+        fact("Series", book.series_name or book.series)
+        if #facts > 0 and book.series_name and tonumber(book.series_num) then facts[1][2] = facts[1][2] .. " · " .. tostring(book.series_num) end
+        fact("Language", book.lang or book.language)
+        fact("Format", clean(book.format) ~= "" and book.format:upper() or (book.filepath:match("%.([^./]+)$") or ""):upper())
+        if #facts > 0 then
+            body[#body + 1] = space(22)
+            local wide = w >= px(390)
+            local cellw = wide and math.floor((w - (#facts - 1) * px(10)) / #facts) or w
+            local strip = wide and H:new{ align = "top" } or V:new{ align = "left" }
+            for i, value in ipairs(facts) do
+                if i > 1 then strip[#strip + 1] = wide and gap(10) or space(10) end
+                strip[#strip + 1] = V:new{ align = "left", text(value[1], 13, false, cellw, nil, BB.COLOR_DARK_GRAY),
+                    space(4), text(value[2], 16, true, cellw, px(65)) }
+            end
+            body[#body + 1] = strip
+        end
+        body[#body + 1] = space(24)
+        body[#body + 1] = text(_("About this book"), 18, true, w); body[#body + 1] = space(9)
+        local base = tonumber(require("lib/bookshelf_settings_store").read("desc_font_size", 20)) or 20
+        if base ~= base then base = 20 end
+        base = math.max(12, math.min(40, base))
+        body[#body + 1] = text(description ~= "" and description or _("No description available."), base, false, w, px(base * 5.4))
+        if description ~= "" then body[#body + 1] = space(10); body[#body + 1] = rowButton("description", _("Full description"), "description") end
+        body[#body + 1] = space(24); body[#body + 1] = text(_("Tags"), 18, true, w); body[#body + 1] = space(8)
+        for section_i, section in ipairs(M.tagSections(owner, book, self, true)) do
+            body[#body + 1] = text(section_i == 1 and _("EPUB tags (offline)") or section.title, 13, false, w, nil, BB.COLOR_DARK_GRAY)
+            body[#body + 1] = space(8)
+            local line, focus, used, lines, visible = H:new{ align = "center" }, {}, 0, 1, 0
+            local function flush()
+                if #focus > 0 then body[#body + 1] = line; self.layout[#self.layout + 1] = focus; body[#body + 1] = space(7) end
+                line, focus, used = H:new{ align = "center" }, {}, 0
+            end
+            for i, pill in ipairs(section.pills) do
+                if not pill.link then
+                    local probe = require("ui/widget/textwidget"):new{ text = clean(pill.label, 800), face = Font:getFace("cfont", 16) }
+                    local width = math.min(w, probe:getSize().w + px(24)); probe:free()
+                    if used > 0 and used + px(8) + width > w then flush(); lines = lines + 1 end
+                    if lines > 2 then break end
+                    local b = button("tag:" .. section_i .. ":" .. i, pill.label, width, pill.on_tap, false, pill.on_hold)
+                    if used > 0 then line[#line + 1] = gap(8); used = used + px(8) end
+                    line[#line + 1] = b; focus[#focus + 1] = b; used = used + width; visible = visible + 1
+                end
+            end
+            flush()
+            if visible == 0 then body[#body + 1] = text(section.note or _("No tags available."), 14, false, w, px(60), BB.COLOR_DARK_GRAY) end
+            body[#body + 1] = space(8)
+        end
+        -- Explicit refresh, online loads and similarity tools stay in Tags.
+        body[#body + 1] = rowButton("tags", _("All tags and tag tools"), "tags"); body[#body + 1] = space(22)
+        for _i, action in ipairs{{ "reviews", "Reviews" }, { "information", "File information" }, { "cover", "Cover" }} do
+            body[#body + 1] = rowButton(action[1], _(action[2]), action[1]); body[#body + 1] = space(7)
+        end
+        local half = math.floor((inner - px(10)) / 2)
+        local read = button("read", pct > 0 and status ~= "finished" and _("Continue reading") or _("Read now"), half,
+            function() self:onClose(); owner:_openBook(book) end, true)
+        local actions = button("actions", _("Actions…"), inner - half - px(10), function() self:openTab("edit") end)
+        local footer = V:new{ align = "left", space(12), H:new{ align = "center", read, gap(10), actions } }
+        self.layout[#self.layout + 1] = { read, actions }
+        local maxh = math.max(1, sh - 2 * pad - top:getSize().h - footer:getSize().h)
+        self.cropping_widget = Scroll:new{ dimen = Geom:new{ w = inner, h = maxh }, show_parent = self, body }
+        self[1] = Frame:new{ padding = pad, margin = 0, bordersize = 0, background = BB.COLOR_WHITE,
+            V:new{ align = "left", top, self.cropping_widget, footer } }
+        self.dimen = Geom:new{ x = 0, y = 0, w = sw, h = sh }
+        self.key_events.Close = {{ "Back" }, { "Esc" }}
+        self.selected = { x = 1, y = 1 }
+    end
+    function Page:init()
+        self.navigation = UI._simpleui_navigation_generation
+        if owner._orbituiDetailCover then
+            local success, bb, owned = pcall(owner._orbituiDetailCover, owner, book, px(126))
+            if success and bb then
+                local valid, cw, ch = pcall(function() return bb:getWidth(), bb:getHeight() end)
+                if valid and type(cw) == "number" and type(ch) == "number" and cw > 0 and ch > 0 then self.cover, self.owned_cover = bb, owned
+                elseif owned then bb:free() end
+            end
+        end
+        self:rebuild()
+    end
+    local page = Page:new{}; UI:show(page); return page
 end
 
 -- Content drafts touch one native collection only, never book files, metadata,

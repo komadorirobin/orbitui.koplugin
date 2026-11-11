@@ -103,8 +103,9 @@ H.test("Home opens the actual Bookshelf panel without initializing or owning a s
     H.eq(controller._orbitui_detail_only, true)
     H.eq(controller.profile_key, "prose")
     H.eq(modal._sui_keep_homescreen, true)
-    H.eq(modal.tabs[modal.active_tab].id, "edit")
-    H.eq(modal.tabs[modal.active_tab].widget_builder(), "native-edit")
+    H.eq(modal.tabs[modal.active_tab].id, "description") -- no host overview hook in this native fixture
+    local edit; for _, tab in ipairs(modal.tabs) do if tab.id == "edit" then edit = tab end end
+    H.eq(edit.widget_builder(), "native-edit")
     H.eq(cache_reads, 1)
     H.eq(#queue, 0)
 end)
@@ -237,5 +238,22 @@ H.test("library transition timeout reports failure without touching a hidden she
     flush()
     assert(shown[#shown].text:find("Could not open the library", 1, true))
     actual.shown = true
+end)
+H.test("real default detail factory enters the host overview; explicit tab handoff cannot recurse", function()
+    local real_page, real_enabled = Panel.bookPage, Panel.bookPageEnabled
+    local calls = 0
+    Panel.bookPageEnabled = function() return true end
+    Panel.bookPage = function(owner, book, opts, classic)
+        calls = calls + 1
+        return { overview = true, bw = owner, native = classic, book = book, opts = opts }
+    end
+    Panel.widget(Widget)
+    local page = Panel.show(file)
+    assert(page.overview); H.eq(calls,1); H.eq(Widget.live,actual)
+    local native = page.native{ active = "information", classic = true }
+    H.eq(calls,1); H.eq(native.tabs[native.active_tab].id,"information")
+    Panel.bookPageEnabled = function() return false end
+    local fallback = Panel.show(file); H.eq(fallback.overview,nil); H.eq(calls,1)
+    Panel.bookPage, Panel.bookPageEnabled = real_page, real_enabled
 end)
 H.finish()

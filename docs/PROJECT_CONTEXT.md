@@ -20,7 +20,21 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-10
+## Snapshot: 2026-11-11
+
+- **Local airy book-info implementation, not released.** User chooses the
+  full-page/airy sketch and approves implementation plus a broader presentation
+  review. Branch `feature/book-info-modern-20261111` starts at `702e9c8c`.
+  A default-on, reversible overview shows cover, status/rating, a compact facts
+  row, description and two rows of clickable offline tag chips. Explicit
+  refresh/online tag tools, reviews, metadata, highlights, cover selection and
+  actions keep the existing native tabs and owners. One per-file validated tag
+  cache peek is allowed on opening either overview or Tags; no implicit archive
+  read, scan or network fetch. Existing shelf/header appearances are untouched.
+  Full verification and physical acceptance are separate gates; see TESTING.
+  No version, push, release, installed-device or server change is authorized in
+  this step. Current public preview remains beta.2. The staged design direction
+  and remaining surfaces are recorded under C07, not a global UI rewrite.
 
 - **Post-beta.2 reviewed upstream merge (no new release).** User requests an
   upstream merge while testing beta.2, plus design exploration of Aleph's book
@@ -35,9 +49,9 @@ and correct this file in the same change.
   stable 1.1/beta.1 native upgrade/recovery and source/history/art/secret checks
   pass; private ZIP **c9421fe1**, public dist restored to **d7abac63**. Physical
   checks/speed claims remain open. Exact receipts are in TESTING/MERGE_LOG. Aleph
-  full-page versus compact details are design-only suggestions, not implemented
-  features. Existing tag actions, reviews, highlights and external owners must
-  remain if a later redesign is approved.
+  full-page versus compact details were design-only at that merge; the separately
+  approved November 11 overview now builds on the full-page sketch. Existing
+  tag actions, reviews, highlights and external owners remain intact.
 
 - **Current public preview: 1.2.0-beta.2**, published 2026-11-10 22:26:05 UTC,
   release 440990827, frozen source/tag **9caa3511 / v1.2.0-beta.2**. Public ZIP
