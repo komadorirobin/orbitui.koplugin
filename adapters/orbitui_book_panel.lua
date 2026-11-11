@@ -391,6 +391,8 @@ function M.bookPage(owner, record, options, classic)
     function Page:onScreenResize() return self:onClose() end
     Page.onSetRotationMode = Page.onScreenResize
     function Page:onShowingReader() return self:onClose() end
+    -- Blank areas belong to this full-screen modal, never to the shelf below.
+    function Page:onBookOverviewInput() return true end
     function Page:openTab(id)
         if not self:current() then return end
         self.handoff = true; self:onClose()
@@ -437,6 +439,7 @@ function M.bookPage(owner, record, options, classic)
         end
         local function button(id, copy, width, callback, primary, hold, content)
             local b = Button:new{ text = clean(copy), width = width, height = math.max(px(30), content and content:getSize().h or 0),
+                show_parent = self,
                 padding_h = px(6), padding_v = px(7), margin = 0, bordersize = (content or id == "close") and 0 or px(1), radius = px(8),
                 background = primary and BB.COLOR_BLACK or nil,
                 text_font_size = 16, avoid_text_truncation = false,
@@ -549,6 +552,11 @@ function M.bookPage(owner, record, options, classic)
         self[1] = Frame:new{ padding = pad, margin = 0, bordersize = 0, background = BB.COLOR_WHITE,
             V:new{ align = "left", top, self.cropping_widget, footer } }
         self.dimen = Geom:new{ x = 0, y = 0, w = sw, h = sh }
+        self.ges_events.BookOverviewInput = {}
+        for _i, gesture in ipairs{ "tap", "hold", "hold_release", "swipe", "multiswipe", "pan", "pan_release" } do
+            self.ges_events.BookOverviewInput[#self.ges_events.BookOverviewInput + 1] =
+                require("ui/gesturerange"):new{ ges = gesture, range = self.dimen }
+        end
         self.key_events.Close = {{ "Back" }, { "Esc" }}
         self.selected = { x = 1, y = 1 }
     end

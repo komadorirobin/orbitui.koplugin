@@ -38,7 +38,7 @@ local function fixture(width, height, scale, language, owned)
         ["ui/widget/textboxwidget"] = "text", ["ui/widget/textwidget"] = "label", ["ui/widget/verticalgroup"] = "vertical",
         ["ui/widget/horizontalgroup"] = "horizontal", ["ui/widget/verticalspan"] = "vspan", ["ui/widget/horizontalspan"] = "hspan",
         ["ui/widget/button"] = "button", ["ui/widget/container/centercontainer"] = "center",
-        ["ui/widget/container/scrollablecontainer"] = "scroll", ["ui/widget/imagewidget"] = "image", ["ui/geometry"] = "geom",
+        ["ui/widget/container/scrollablecontainer"] = "scroll", ["ui/widget/imagewidget"] = "image", ["ui/geometry"] = "geom", ["ui/gesturerange"] = "gesture",
     } do package.loaded[path] = W:extend{ kind = kind } end
     package.loaded["lib/bookshelf_fonts"] = { getFace = function(_, _, size) return { size = size * f.scale } end }
     package.loaded["ffi/blitbuffer"] = { COLOR_BLACK = 0, COLOR_WHITE = 255, COLOR_DARK_GRAY = 85 }
@@ -131,5 +131,10 @@ end)
 T.test("classic view is a reversible opt-out; opening settings writes nothing", function()
     fixture(); assert(M.bookPageEnabled()); local rows = M.bookPageItems()
     T.eq(f.writes,0); rows[1].callback(); assert(not M.bookPageEnabled()); rows[1].callback(); assert(M.bookPageEnabled())
+end)
+T.test("all blank-area gestures stay in the overview and button feedback has the cropping owner", function()
+    local p = fixture(); T.eq(#p.ges_events.BookOverviewInput,7); assert(p:onBookOverviewInput())
+    for _, g in ipairs(p.ges_events.BookOverviewInput) do T.eq(g.range,p.dimen) end
+    for _, b in pairs(p.native_buttons) do T.eq(b.show_parent,p) end
 end)
 T.finish()
