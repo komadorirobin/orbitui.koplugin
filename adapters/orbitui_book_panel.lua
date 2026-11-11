@@ -730,7 +730,7 @@ function M.collection(name, opts)
     opts = opts or {}
     local _ = require("core/orbitui_i18n")
     local UI = require("ui/uimanager")
-    local Screen = require("device").screen
+    local Modal = require("lib/bookshelf_library_modal")
     local text_ok, Text = pcall(require, "infra/sui_text")
     local display_name = text_ok and Text.truncate(name, 48) or name
     local collections = require("readcollection")
@@ -768,8 +768,8 @@ function M.collection(name, opts)
             local author = book.author or book.authors or ""
             if type(author) == "table" then author = table.concat(author, ", ") end
             local text = Search.lower((book.title or file) .. " " .. author .. " " .. file)
-            local include = tab == "members" and draft:contains(file)
-                or tab == "add" and not draft:contains(file) and q ~= ""
+            local include = tab == "members" and (draft.baseline[file] or draft:contains(file))
+                or tab == "add" and not draft.baseline[file] and q ~= ""
                 or tab == "changes" and draft.changes[file] ~= nil
             local matches = true
             for word in q:gmatch("%S+") do
@@ -779,32 +779,9 @@ function M.collection(name, opts)
         end
         Search.sortBooks(visible, sort, query)
     end
-    local function refresh(reset_page)
-        if not current() then return end
-        recompute()
-        local plus, minus = draft:counts()
-        modal.config.intro = display_name .. "\n" .. string.format(_("%d to add · %d to remove. Changes apply only when you Save."), plus, minus)
-        if tab == "add" then modal.config.intro = modal.config.intro .. " " .. _("Search to find books to add.") end
-        if reset_page then modal.page = 1 end
-        modal:refresh()
-    end
     local function close() if current() then modal:onClose() end end
     local views = { { key = "members", label = _("In collection") },
         { key = "add", label = _("Add books") }, { key = "changes", label = _("Changes") } }
-    local function chooseView()
-        if not current() then return end
-        local picker, buttons = nil, {}
-        for _i, view in ipairs(views) do
-            buttons[#buttons + 1] = {{ text = view.label, callback = function()
-                UI:close(picker)
-                if not current() then return end
-                tab = view.key; query = ""; modal.search_query = nil; refresh(true)
-            end }}
-        end
-        buttons[#buttons + 1] = {{ text = _("Cancel"), callback = function() UI:close(picker) end }}
-        picker = require("ui/widget/buttondialog"):new{ title = _("Show books"), buttons = buttons, sui_native = true }
-        UI:show(picker)
-    end
     local function save()
         if not current() then return end
         local saved, err = draft:save()
@@ -817,12 +794,36 @@ function M.collection(name, opts)
         Repo.invalidateBookCache("collections")
         Context.refresh()
         if opts.on_saved then opts.on_saved() end
+        Context.notify(_("Collection updated."))
     end
     recompute()
-    modal = require("lib/bookshelf_library_modal"):new{ config = {
+    modal = Modal:new{ _sui_keep_homescreen = true, config = {
         title = _("Manage books"),
-        intro = display_name .. "\n" .. string.format(_("%d to add · %d to remove. Changes apply only when you Save."), 0, 0),
+        sheet = { subtitle = display_name,
+            status = function()
+                local plus, minus = draft:counts()
+                return string.format(_("%d to add · %d to remove. Changes apply only when you Save."), plus, minus)
+            end,
+            filters = {{ title = _("Sort by"), label_func = function() return _(sort == "title" and "Title" or "Author") end,
+                on_tap = function()
+                    if not current() then return end
+                    sort = sort == "title" and "author" or "title"
+                    modal.page = 1; recompute(); modal:refresh()
+                end }},
+            actions = function() return {
+                { label = _("Cancel"), on_tap = close },
+                { label = _("Save"), primary = true, on_tap = save,
+                    enabled_when = function() return current() and next(draft.changes) ~= nil end },
+            } end,
+        },
+        tabs = views,
+        on_tab_change = function(key)
+            if not current() then return end
+            tab, query = key, ""
+            recompute()
+        end,
         search_placeholder = function() return _("Title, author or filename") end,
+        search_min_chars = 1,
         on_search_submit = function(value)
             if not current() then return end
             value = value or "" -- native clear/short-query callback supplies nil
@@ -831,37 +832,30 @@ function M.collection(name, opts)
                 if not success then Context.notify(_("Could not load books.")); return end
                 add(matches)
             end
-            query = value; refresh(true)
+            query = value; recompute()
         end,
-        grid_cols = 1, rows_per_page = 4,
-        cells_per_page = function() return Screen:getWidth() > Screen:getHeight() and 3 or 4 end,
+        grid_cols = 1, cells_per_page = 5,
         empty_state = function(width, height)
-            return require("lib/bookshelf_picker_cell").render({ label = _("No matches."),
-                subtitle = tab == "add" and _("Search to find books to add.") or "" }, { w = width, h = height })
+            local copy = tab == "changes" and query == "" and _("No changes to show.")
+                or tab == "add" and query == "" and _("Search to find books to add.") or _("No matches.")
+            return Modal.sheetRow({ title = copy, chevron = false }, { w = width, h = height })
         end,
         item_count = function() return #visible end,
         item_at = function(index) return visible[index] end,
         cell_renderer = function(book, dimen)
-            local selected = draft:contains(book.filepath)
-            return require("lib/bookshelf_picker_cell").render({
-                label = (selected and "✓ " or "+ ") .. (book.title or book.filepath),
-                subtitle = draft.changes[book.filepath] == false and _("Will be removed")
-                    or draft.changes[book.filepath] == true and _("Will be added")
-                    or (selected and _("In collection") or _("Tap to add")),
-            }, dimen, { selected = selected, tint = draft.changes[book.filepath] == false })
+            local author = book.author or book.authors
+            if type(author) == "table" then author = table.concat(author, ", ") end
+            local change = draft.changes[book.filepath]
+            local checked
+            if change == nil then checked = draft:contains(book.filepath) end
+            return Modal.sheetRow({ title = book.title or book.filepath, subtitle = author, cover = true,
+                file = book.filepath, checked = checked,
+                trailing = change == false and _("To remove") or change == true and _("To add") or nil }, dimen)
         end,
         on_cell_tap = function(book)
             if not current() then return end
-            draft:toggle(book.filepath); refresh(false)
+            draft:toggle(book.filepath); recompute(); modal:refresh()
         end,
-        footer_rows = {
-            { { label_func = function()
-                for _i, view in ipairs(views) do if view.key == tab then return view.label .. "…" end end
-            end, on_tap = chooseView },
-            { label_func = function() return _("Sort results") .. ": " .. _(sort == "title" and "Title" or "Author") end,
-                on_tap = function() if current() then sort = sort == "title" and "author" or "title"; refresh(true) end end }},
-            { { label = _("Cancel"), on_tap = close }, { label = _("Save"), primary = true, on_tap = save } },
-        },
         on_closed = function() retired = true end,
     } }
     UI:show(modal)

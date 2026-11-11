@@ -22,6 +22,15 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-11
 
+- **Editing and maintenance layouts, local.** Collection membership, local
+  additions and pending edits now have separate tabs and explicit Save. The
+  Add module gateway groups installed module types, BookOrbit sources and the
+  catalog. The EPUB tag index shows a progress bar and the current phase's
+  primary action. The shelf editor groups source, filter, sort and appearance
+  while retaining its existing preference writes and live shelf preview.
+  Desktop KOReader widget checks cover all four in portrait, short and landscape
+  layouts. Physical Bigme verification is pending.
+
 - **Ordinary book search, local.** The rounded native search sheet holds the
   editable query, scope and sort above separate book and group results. The
   existing search options dialog remains reachable from the footer. Search is

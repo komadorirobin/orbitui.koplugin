@@ -269,6 +269,55 @@ function M.pickerItems(refresh, pfx)
     return items
 end
 
+local function pickerSheet(pfx, ctx)
+    local UI = require("ui/uimanager")
+    local Sheets = require("lib/bookshelf_library_modal")
+    local items, panel, closed, changed = M.pickerItems(nil, pfx), nil, false, false
+    local function current()
+        return not closed and (not UI.getTopmostVisibleWidget or UI:getTopmostVisibleWidget() == panel)
+    end
+    local function openCategory(index, title)
+        local alive = true
+        return require("screens/sui_settings_window"):show(function() alive = false end,
+            {{ id = "nested_menu", params = { title = title, items_func = function(menu_ctx)
+                local function refresh()
+                    changed = true
+                    if alive and menu_ctx.repaint then menu_ctx.repaint() end
+                end
+                local item = M.pickerItems(refresh, pfx)[index]
+                return item and item.sub_item_table_func and item.sub_item_table_func()
+                    or {{ text = _("Unavailable"), dim = true }}
+            end } }}, { pfx = pfx or "simpleui_hs_", pfx_qa = (pfx or "simpleui_hs_") .. "qa_" })
+    end
+    local rows, action
+    if #items == 1 then
+        rows = {{ title = items[1].text }}
+    else
+        rows = {}
+        local icons = { "home", "shelves", "link", "sync" }
+        for index, icon in ipairs(icons) do
+            local item = items[index]
+            rows[index] = { title = item.text, icon = icon,
+                group = index == 1 and _("Modules on this device") or index == 4 and _("Book sources") or nil,
+                action = function()
+                    if current() and (not item.enabled_func or item.enabled_func()) then openCategory(index, item.text) end
+                end }
+        end
+        local catalog = items[#items]
+        action = { label = catalog.text, on_tap = function() if current() then catalog.callback() end end }
+    end
+    panel = Sheets.showSheet{
+        title = _("Add module"), back = _("Reading dashboard"),
+        on_back = function() if current() then UI:close(panel) end end,
+        rows = rows, row_height = 68, action = action, action_icon = "download",
+        on_closed = function()
+            closed = true
+            if changed and ctx.refresh_fn then ctx.refresh_fn() end
+        end,
+    }
+    return panel
+end
+
 local function cardSheet(pfx, ctx, id, parent_open)
     local UI = require("ui/uimanager")
     local Sheets = require("lib/bookshelf_library_modal")
@@ -342,9 +391,10 @@ local function cardSheet(pfx, ctx, id, parent_open)
     return panel
 end
 
--- The picker and overview keep their paginated settings shell.
+-- The card overview keeps its paginated settings shell.
 -- Defer Home rebuilding until the editor closes; never rebuild a buried view.
 function M.show(pfx, ctx, id)
+    if id == "add" then return pickerSheet(pfx, ctx) end
     if id and id ~= "add" and Model.module(dashboard().readConfig(pfx), id) then
         return cardSheet(pfx, ctx, id)
     end
@@ -354,7 +404,6 @@ function M.show(pfx, ctx, id)
         if changed and ctx.refresh_fn then ctx.refresh_fn() end
     end, {{ id = "nested_menu", params = { title = _("Reading dashboard"), items_func = function(menu_ctx)
         local refresh = function() changed = true; if alive then menu_ctx.repaint() end end
-        if id == "add" then return M.pickerItems(refresh, pfx) end
         return M.items(refresh, pfx, require("engines/sui_window").makeCtxMenu(menu_ctx))
     end } }}, { pfx = pfx or "simpleui_hs_", pfx_qa = (pfx or "simpleui_hs_") .. "qa_" })
 end
@@ -454,7 +503,7 @@ function M.items(refresh, pfx, ctx_menu)
     end
     items[#items + 1] = { text = _("Add module…"),
         help_text = _("Choose a card supplied by an installed plugin, a Home module, or an action shortcut. Plugins stay separate. More cards use extra dashboard pages."),
-        sub_item_table_func = function() return M.pickerItems(refresh, pfx) end }
+        keep_menu_open = true, callback = function() pickerSheet(pfx, { refresh_fn = refresh }) end }
     for _i, entry in ipairs(config.modules) do
         local id = entry.id
         items[#items + 1] = { text_func = function()

@@ -353,12 +353,11 @@ H.test("collection contents use the complete native modal including clear, keybo
             modal:_onSearchSubmit("Book")
             modal:onSwipeNextPage(); H.eq(modal.page, 2)
             modal:onGridFocusDown(); modal:onGridPress()
-            modal.config.footer_rows[1][1].on_tap()
-            local picker = shown[#shown]; picker.buttons[2][1].callback()
+            modal:_onTabSelect("add")
             H.eq(modal.config.item_count(), 0)
             modal:_onSearchSubmit("")
             modal:onClose(); assert(modal.closed)
-            modal.config.footer_rows[2][2].on_tap() -- retired Save does nothing
+            modal.config.sheet.actions()[2].on_tap() -- retired Save does nothing
         end
     end
     width, height, scale, locale = 600, 800, 1, "en"

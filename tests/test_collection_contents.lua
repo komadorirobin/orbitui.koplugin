@@ -66,6 +66,7 @@ end }
 package.loaded["ui/uimanager"] = UI
 package.loaded.device = { screen = { getWidth = function() return 600 end, getHeight = function() return 800 end } }
 local Modal = H.widget()
+function Modal.sheetRow(row) return row end
 function Modal:refresh() self.refreshes = (self.refreshes or 0) + 1 end
 function Modal:onClose() UI:close(self) end
 package.loaded["lib/bookshelf_library_modal"] = Modal
@@ -82,19 +83,26 @@ require("core/orbitui_context").refresh = function() end
 local notifications = {}
 require("core/orbitui_context").notify = function(s) notifications[#notifications + 1] = s end
 local function view(config, index)
-    config.footer_rows[1][1].on_tap(); shown.buttons[index][1].callback()
+    config.on_tab_change(config.tabs[index].key)
 end
 H.test("native modal supports search, staged changes, sorting and Cancel without writes", function()
     local modal, draft = Panel.collection("TBR")
     local config, before = modal.config, writes
+    local member = config.item_at(1)
+    config.on_cell_tap(member)
+    H.eq(config.cell_renderer(member, {}).trailing, "To remove")
+    config.on_cell_tap(member)
+    H.eq(next(draft.changes), nil)
     view(config, 2); config.on_search_submit(nil); config.on_search_submit("Author Found")
     H.eq(config.item_count(), 1); H.eq(config.item_at(1).filepath, "/found")
     config.on_cell_tap(config.item_at(1)); H.eq(draft:contains("/found"), true)
+    H.eq(config.item_count(), 1)
     view(config, 3); H.eq(config.item_count(), 1)
-    assert(config.intro:find("1 to add", 1, true))
-    config.footer_rows[1][2].on_tap(); assert(config.footer_rows[1][2].label_func():find("Author", 1, true))
-    config.footer_rows[2][1].on_tap(); H.eq(writes, before)
-    config.footer_rows[2][2].on_tap(); H.eq(writes, before, "retired Save must be inert")
+    assert(config.sheet.status():find("1 to add", 1, true))
+    config.sheet.filters[1].on_tap(); H.eq(config.sheet.filters[1].label_func(), "Author")
+    local actions = config.sheet.actions()
+    actions[1].on_tap(); H.eq(writes, before)
+    actions[2].on_tap(); H.eq(writes, before, "retired Save must be inert")
     H.eq(RC.coll.TBR["/found"], nil)
 end)
 H.test("native modal Save delegates once and refreshes only after success", function()
@@ -103,7 +111,7 @@ H.test("native modal Save delegates once and refreshes only after success", func
     local config, before = modal.config, writes
     view(config, 2); config.on_search_submit("Found")
     config.on_cell_tap(config.item_at(1))
-    config.footer_rows[2][2].on_tap()
+    config.sheet.actions()[2].on_tap()
     H.eq(writes, before + 1); H.eq(refreshed, 1); H.eq(modal.shown, false)
     assert(RC.coll.TBR["/found"])
 end)

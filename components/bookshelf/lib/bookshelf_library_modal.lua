@@ -185,7 +185,7 @@ function LibraryModal:init()
     -- shows it there (when on the page shown, else on the page's first cell)
     -- rather than moving it. For a picker that marks its choice with a frame
     -- of its own, where a ring seeded on another cell looked like that mark.
-    if Device:hasDPad() and self.config.cell_renderer then
+    if Device:hasDPad() and (self.config.cell_renderer or self.config.sheet) then
         -- No ring until the first key press, on any picker: seeded on the
         -- first card, it looked like that card was the one chosen (the
         -- outline that marks the one in use). The first press shows it.
@@ -575,7 +575,7 @@ function LibraryModal:onGridPress()
     if self._focus_zone == "footer" then
         local row = self._footer_layout and self._footer_layout[self._footer_row or 1]
         local btn = row and row[self._footer_col or 1]
-        if btn and btn.callback then btn.callback() end
+        if btn and btn.enabled ~= false and btn.callback then btn.callback() end
         return true
     end
     if not self._dpad_idx then return true end
@@ -1587,7 +1587,7 @@ function LibraryModal:_refreshSheet()
     local c, sheet, w = self.config, self.config.sheet, self.content_w
     local old, sh = self._shown_rect, Device.screen:getHeight()
     local total = c.item_count()
-    local compact = sh < px(480)
+    local compact = sh < Device.screen:scaleBySize(480)
     local muted, surface_tint = sheetColors()
     local body = VerticalGroup:new{ align = "left", space(compact and 9 or 17) }
     local function append(widget, after)
@@ -1601,14 +1601,17 @@ function LibraryModal:_refreshSheet()
         local content_w = width - px(outline and 8 or 2) - (icon and px(22) or 0)
         local label = a.label_func and a.label_func() or a.label
         local enabled = not a.enabled_when or a.enabled_when()
-        local copy = sheetText(label, content_w, 13, true, not enabled and Blitbuffer.COLOR_DARK_GRAY or nil,
+        local primary = a.primary and enabled
+        local ink = primary and Blitbuffer.COLOR_WHITE or not enabled and Blitbuffer.COLOR_DARK_GRAY or nil
+        local copy = sheetText(label, content_w, 13, true, ink,
             height - px(outline and 4 or 2), icon and "left" or "center")
         if icon then
             local mark = sheetIcon(icon, 16)
             copy = trailing and H:new{ align = "center", copy, gap(6), mark }
                 or H:new{ align = "center", mark, gap(6), copy }
         end
-        return sheetButton(width, height, copy, run(a.on_tap), { outline = outline, enabled = enabled })
+        return sheetButton(width, height, copy, run(a.on_tap), { outline = outline and not primary,
+            fill = primary and Blitbuffer.COLOR_BLACK or nil, enabled = enabled })
     end
     self._strip_build, self._footer_layout = {}, nil
     if sheet.back then
@@ -1673,6 +1676,22 @@ function LibraryModal:_refreshSheet()
         append(filters, compact and 5 or 11)
         self._strip_build[#self._strip_build + 1] = controls
     end
+    if sheet.status then
+        append(sheetText(sheet.status(), w, 13, false, muted, px(32)), 4)
+    end
+    if sheet.progress then
+        local progress = sheet.progress()
+        append(sheetText(progress.status, w, 14, false, muted, px(compact and 36 or 52)), 8)
+        append(sheetText(progress.title, w, 23, true, nil, px(36)), 8)
+        if progress.fraction then
+            append(require("ui/widget/progresswidget"):new{ width = w, height = px(7),
+                percentage = progress.fraction, margin_h = 0, margin_v = 0, bordersize = 0,
+                bgcolor = Blitbuffer.COLOR_LIGHT_GRAY, fillcolor = Blitbuffer.COLOR_BLACK }, 8)
+        end
+        if progress.detail then
+            append(sheetText(progress.detail, w, 13, false, muted, px(35)), 4)
+        end
+    end
     if sheet.details then
         local details = action({ label = sheet.details(), on_tap = function()
             local viewer
@@ -1695,21 +1714,33 @@ function LibraryModal:_refreshSheet()
     if not self:_stripPos() and self._focus_zone == "strip" then self._focus_zone = "grid" end
 
     local footer, footer_h = nil, 0
+    local actions = sheet.actions and sheet.actions()
     local a = sheet.action or c.footer_rows and c.footer_rows[1][1]
-    if a then
+    if actions or a then
         local hint = sheet.hint
         if type(hint) == "function" then hint = hint() end
-        local aw = hint and math.min(px(156), math.floor(w * 0.39)) or math.min(px(195), w)
-        local b = action(a, aw, px(compact and 32 or 39), sheet.action_icon, not sheet.action_disclosure)
+        local height = px(compact and 32 or 39)
+        local controls = {}
         local row = H:new{ align = "center" }
-        if hint then
-            row[#row + 1] = sheetText(hint, w - aw - px(10), 13, false, muted, px(34))
-            row[#row + 1] = gap(10)
+        if actions then
+            local aw = math.floor((w - px(9) * (#actions - 1)) / #actions)
+            for i, entry in ipairs(actions) do
+                if i > 1 then row[#row + 1] = gap(9) end
+                local button = action(entry, aw, height, nil, true)
+                row[#row + 1], controls[#controls + 1] = button, button
+            end
+        else
+            local aw = hint and math.min(px(156), math.floor(w * 0.39)) or math.min(px(195), w)
+            if hint then
+                row[#row + 1] = sheetText(hint, w - aw - px(10), 13, false, muted, px(34))
+                row[#row + 1] = gap(10)
+            end
+            local button = action(a, aw, height, sheet.action_icon, not sheet.action_disclosure)
+            row[#row + 1], controls[1] = button, button
         end
-        row[#row + 1] = b
         footer = VerticalGroup:new{ align = "left", sheetRule(w), space(compact and 4 or 9), row }
         footer_h = footer:getSize().h
-        self._footer_layout = {{ b }}
+        self._footer_layout = { controls }
     end
     self.frame.padding_bottom = px(compact and 8 or 17)
     local room = sh - px(15) - self.frame.padding_bottom - 2 * self.frame.bordersize - body:getSize().h - footer_h - px(12)
@@ -1722,7 +1753,9 @@ function LibraryModal:_refreshSheet()
     local pagination = paginate and self:_renderPagination(w)
     local nav_h = pagination and pagination:getSize().h or 0
     local cell_h = math.max(1, math.min(target, math.floor((room - nav_h) / self._fill_rows)))
-    local list = self:_renderGridArea(w, self._fill_rows * cell_h)
+    local list
+    if total > 0 or not sheet.progress then list = self:_renderGridArea(w, self._fill_rows * cell_h)
+    else self._total_pages = 1 end
     -- VerticalGroup caches measured offsets. Compose the final group after
     -- measuring the chrome so late additions always get fresh offsets.
     local content = VerticalGroup:new{ align = "left", body, list }
@@ -1732,7 +1765,8 @@ function LibraryModal:_refreshSheet()
         HorizontalSpan:new{ width = self._sheet_inset } }
     self:_repaintIfResized(old)
     local focused = self._focus_zone == "strip" and self:_stripPos()
-        or self._focus_zone == "footer" and self._footer_layout and self._footer_layout[1][1]
+        or self._focus_zone == "footer" and self._footer_layout
+            and self._footer_layout[1][self:_clampFooterCol(1, self._footer_col or 1)]
     if focused and focused.onFocus then focused:onFocus() end
     self:_dirty()
 end

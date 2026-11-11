@@ -621,6 +621,19 @@ and group taps use the existing shelf drilldown in the selected scope. Search
 options retain the native dialog for history, typo tolerance and word
 suggestions. Submitting from it updates the same results sheet.
 
+The November 11 editing layouts extend the opt-in sheet to collection contents,
+the dashboard's Add module gateway and the EPUB tag index. Collection membership,
+local search and pending changes have separate tabs. Use the existing draft for
+staging and undo. Validate and write only on Save. The module gateway groups
+local modules and BookOrbit sources, then opens the existing category or catalog
+with its installer, refresh and back behavior. The index displays progress and
+one primary action for the current phase. Keep explicit start, pause and resume,
+the saved scope, the force-reread confirmation and the existing suspend/close
+ownership. OrbitUI's shelf editor groups Source, Filter, Sort and Appearance
+above the existing preview and apply-as-you-edit controls. Available filters and
+source-specific actions still depend on the existing shelf type. Move the shelf
+commands into a compact actions dialog on short screens.
+
 Shared design direction, not blanket authorization to replace all menus:
 
 | Surface | Direction / next step | Must preserve |
@@ -628,7 +641,8 @@ Shared design direction, not blanket authorization to replace all menus:
 | Book overview | Airy cover/title hierarchy, facts, description, visible rounded chips | Native actions, source choices, read/open lifecycle |
 | Reader panel and updater | Existing rounded native panels are the baseline | Gesture ownership, cancellation, focus, fixed footer |
 | Tag/search results | Ordinary search keeps query, scope and sort above the results. Similarity and tag sheets use compact title/author/series rows and a progress disclosure | Ordinary book open/hold and scoped group drilldown. Tag partial results, Series/Volumes tabs, Stop/Close and shelf reveal |
-| Card/module/collection menus | Individual dashboard module editor has grouped controls and explicit removal | Refresh/back semantics, duplicate guards, external callbacks |
+| Card/module/collection menus | Grouped picker and card settings, collection membership and pending-change tabs | Refresh/back semantics, duplicate guards, staged saves, external callbacks |
+| EPUB tag index and shelf editor | Phase-based index controls and separate shelf sections | Persisted index progress, explicit reread, native shelf settings and preview |
 | Settings | Grouped category gateways with a scope line and search | Check/radio state, search, holds, scope, existing values |
 | Home, shelves and dock | Align only shared chrome after the above is accepted | Personal layouts, covers, ornaments, themes, fonts, aspect ratios |
 
@@ -639,7 +653,7 @@ screen, or globally skin third-party/native KOReader dialogs. Missing/empty,
 loading/partial, failure and destructive-confirmation states need equal care.
 Implementation stays in lazy adapters with narrow component seams; centralize
 genuinely shared primitives only after a second surface demonstrates the need.
-These principles are a staged roadmap; only the overview changes in this step.
+Apply these principles to the approved surfaces above.
 
 November 10 approved updater design: the available/download/verify/cancel/error/
 restart views share an independent, lazy native-widget panel in the existing

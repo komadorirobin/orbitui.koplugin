@@ -457,12 +457,17 @@ H.test("the native editor defers Home refresh until close and never writes anoth
     package.loaded["engines/sui_window"] = { makeCtxMenu = function() return { show_arrange = function() end } end }
     local before, paints = refreshes, 0
     local menu_ctx = { repaint = function() paints = paints + 1 end }
+    local previous_top = top
+    package.loaded["lib/bookshelf_library_modal"] = { showSheet = function(config) top = config; return config end }
     local handle = Settings.show(pfx, { refresh_fn = changed }, "add")
+    handle.rows[2].action()
     H.eq(args.nav[1].id, "nested_menu"); H.eq(args.state.pfx, pfx)
-    local choices = args.nav[1].params.items_func(menu_ctx)[2].sub_item_table_func()
+    local choices = args.nav[1].params.items_func(menu_ctx)
     choices[1].callback()
     H.eq(refreshes, before); H.eq(paints, 1)
-    handle.on_close(); H.eq(refreshes, before + 1)
+    args.on_close(); H.eq(refreshes, before)
+    handle.on_closed(); H.eq(refreshes, before + 1)
+    top = previous_top
     local id = Model.moduleId("simpleui", "external_pet")
     mod.getMenuItems = function(ctx) H.eq(ctx.pfx, pfx); return {{ text = "Native plugin settings" }} end
     local items = Settings.moduleItems(id, changed, pfx)

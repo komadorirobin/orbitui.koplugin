@@ -142,8 +142,12 @@ for _, lang in ipairs{ "en", "sv" } do
     H.test(lang .. ": native add shows feedback and a checked source; retained repeated taps never duplicate it", function()
         reset(lang);catalog = { source }
         local pfx, refreshed = "simpleui_hs_", 0
-        local win = Settings.show(pfx, { refresh_fn=function() refreshed=refreshed+1 end }, "add")
-        tap(win, tr("BookOrbit shelves and smartscopes"))
+        local panel = Settings.show(pfx, { refresh_fn=function() refreshed=refreshed+1 end }, "add")
+        local spec = panel.config.sheet
+        H.eq(spec.rows[1].group, tr("Modules on this device")); H.eq(spec.rows[4].group, tr("Book sources"))
+        H.eq(spec.action.label, tr("Get more modules…"))
+        spec.rows[4].action()
+        local win = windows[#windows]
         local chosen=row(win,tr("Shelf") .. ": " .. source.title)[1].onTap
         chosen();H.eq(#Dashboard.readConfig(pfx).modules,1)
         H.eq(notices[1],string.format(tr("Card added: %s"),source.title))
@@ -153,7 +157,8 @@ for _, lang in ipairs{ "en", "sv" } do
         H.eq(#Dashboard.readConfig(pfx).modules,1)
         H.eq(notices[#notices],tr("This source already has a card. Manage it in Cards and content."))
         H.eq(requests,0);H.eq(refreshed,0);healthy(win,4)
-        win:close();H.eq(refreshed,1)
+        win:close();H.eq(refreshed,0)
+        spec.on_back();H.eq(refreshed,1)
     end)
     H.test(lang .. ": source identity is account/type/id scoped, ignores renames and preserves independent placements", function()
         reset(lang);catalog={source}

@@ -1137,7 +1137,7 @@ function M.tagIndex(opts)
     opts = opts or {}
     local I, UI = require("adapters/orbitui_integrations"), require("ui/uimanager")
     local modal, worker, retired, busy = nil, nil, false, false
-    local sleeping = false
+    local sleeping, pausing = false, false
     local status, failure = I.embeddedTagIndexStatus()
     local generation = UI._simpleui_navigation_generation
     local function alive()
@@ -1154,7 +1154,7 @@ function M.tagIndex(opts)
         -- Retirement must release controls even for an expired generation.
         -- Never paint or adopt running work for a stale/sleeping owner.
         if not current() then
-            busy, worker = false, nil
+            busy, worker, pausing = false, nil, false
             if not alive() then return end
             status, failure = I.embeddedTagIndexStatus(), err ~= "cancelled" and err or nil
             if not sleeping then modal:refresh() end
@@ -1162,7 +1162,7 @@ function M.tagIndex(opts)
         end
         status, failure = value, err ~= "cancelled" and err or nil
         busy = value and value.phase == "running" and not err or false
-        if not busy then worker = nil end
+        if not busy then worker, pausing = nil, false end
         render()
     end
     local function start(mode, resume, replace_invalid)
@@ -1192,35 +1192,79 @@ function M.tagIndex(opts)
             if failure == "invalid_job" then return _("The saved indexing job is unreadable or from a newer version. Starting a new job requires confirmation; tag caches are kept.") end
             return _("Indexing could not continue. Check free space and try again. Completed tag reads are kept.")
         end
+        if pausing then return _("Pausing indexing…") end
         if not status then return _("No indexing job yet. Choose Update tag index to check all configured libraries.") end
         if not status.current_scope then return _("Library folders or scan depth changed. Start a new index update.") end
         local phase = ({ running = "Indexing…", paused = "Indexing paused. Continue when ready.",
             complete = "Tag indexing complete.", errors = "Indexing finished with unreadable files. Continue to retry them." })[status.phase]
         return _(phase or "Indexing paused. Continue when ready.")
     end
+    local function updateIndex()
+        if failure == "invalid_job" then confirm("update") else start("update", false) end
+    end
+    local function canContinue()
+        return not busy and status ~= nil and status.current_scope and status.phase ~= "complete"
+            and failure ~= "invalid_job" and failure ~= "stale"
+    end
+    local function showOptions()
+        if not current() or busy then return end
+        local dialog
+        local function run(fn)
+            return function()
+                if not UI:isWidgetShown(dialog) then return end
+                UI:close(dialog)
+                if current() and not busy then fn() end
+            end
+        end
+        local buttons = {
+            {{ text = _("Reread all EPUB tags…"), callback = run(function() confirm("reread") end) }},
+            {{ text = _("About tag indexing"), callback = run(function()
+                Context.notify(_("All configured libraries at the current scan depth, without a 400-file limit. No account needed. Closing pauses; completed reads are kept. Pause before replacing EPUB files."))
+            end) }},
+            {{ text = _("Cancel"), callback = function() UI:close(dialog) end }},
+        }
+        if canContinue() then
+            table.insert(buttons, 1, {{ text = _("Start a new index update"), callback = run(updateIndex) }})
+        end
+        dialog = require("ui/widget/buttondialog"):new{ title = _("Index options"), buttons = buttons,
+            sui_native = true, _sui_keep_homescreen = true }
+        UI:show(dialog)
+    end
+    local function primaryAction()
+        if busy then return {
+            label = _(pausing and "Pausing indexing…" or "Pause indexing"), primary = true,
+            enabled_when = function() return validView() and worker ~= nil and not pausing end,
+            on_tap = function()
+                if not current() or not worker or pausing then return end
+                pausing = true
+                worker.cancel()
+                render()
+            end,
+        } end
+        if canContinue() then return {
+            label = _("Continue indexing"), primary = true, enabled_when = validView,
+            on_tap = function() start(nil, true) end,
+        } end
+        return { label = _("Update tag index"), primary = true, enabled_when = validView, on_tap = updateIndex }
+    end
     modal = require("lib/bookshelf_library_modal"):new{ _sui_keep_homescreen = true, config = {
         title = _("Tags and indexing"),
-        -- The native picker subtitle is single-line; phase/errors need the
-        -- modal's wrapping hint instead, not a newline that would be clipped.
-        intro = function() return summary() .. "\n\n" .. _("All configured libraries at the current scan depth, without a 400-file limit. No account needed. Closing pauses; completed reads are kept. Pause before replacing EPUB files.") end,
-        no_search = true, grid_cols = 1, rows_per_page = 1,
-        item_count = function() return 1 end, item_at = function() return true end,
-        cell_renderer = function(_value, dimen)
-            local counts = status and string.format(_("%d of %d EPUB files checked"), status.scanned, status.total) or _("Ready to index")
-            local text = status and string.format(_("Read: %d · Reused: %d · Failed: %d"), status.reread, status.reused, status.skipped) or ""
-            return require("lib/bookshelf_picker_cell").render({ label = counts, subtitle = text }, dimen)
-        end,
-        footer_rows = {
-            {{ label = _("Update tag index"), enabled_when = function() return validView() and not busy end,
-                on_tap = function() if failure == "invalid_job" then confirm("update") else start("update", false) end end },
-             { label = _("Continue indexing"), enabled_when = function()
-                return validView() and not busy and status ~= nil and status.current_scope and status.phase ~= "complete"
-             end, on_tap = function() start(nil, true) end }},
-            {{ label = _("Reread all EPUB tags…"), enabled_when = function() return validView() and not busy end,
-                on_tap = function() confirm("reread") end },
-             { label = _("Pause indexing"), enabled_when = function() return validView() and busy end,
-                on_tap = function() if current() and worker then worker.cancel() end end }},
-            {{ label = _("Close"), on_tap = function() if alive() then modal:onClose() end end }},
+        no_search = true, grid_cols = 1,
+        item_count = function() return 0 end,
+        sheet = {
+            subtitle = _("All configured libraries · Local EPUB tags"),
+            progress = function() return {
+                status = summary(),
+                title = status and string.format(_("%d of %d EPUB files checked"), status.scanned, status.total)
+                    or _("Ready to index"),
+                fraction = status and status.total > 0 and math.max(0, math.min(1, status.scanned / status.total)) or nil,
+                detail = status and string.format(_("Read: %d · Reused: %d · Failed: %d"), status.reread, status.reused, status.skipped),
+            } end,
+            actions = function() return {
+                { label = _("Index options"), on_tap = showOptions,
+                    enabled_when = function() return validView() and not busy end },
+                primaryAction(),
+            } end,
         },
         on_closed = function() retired = true; if worker then worker.cancel(); worker = nil end end,
     } }

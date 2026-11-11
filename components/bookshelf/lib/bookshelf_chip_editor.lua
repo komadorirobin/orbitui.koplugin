@@ -47,7 +47,7 @@ local Editor = {}
 -- did exactly that on opening the style picker. The centring the older
 -- versions will not do for us is done here instead, which is also the same
 -- placement on both.
-local function _highAnchor(get_dialog)
+local function _highAnchor(get_dialog, compact)
     return function()
         local d  = get_dialog()
         -- The width comes off the LAID-OUT dialog: MovableContainer sets its
@@ -63,7 +63,7 @@ local function _highAnchor(get_dialog)
             -- `left + content_w > screen_w` branch, hanging a too-wide dialog
             -- off the LEFT edge (title first) rather than the right.
             x = math.floor((Screen:getWidth() - dw) / 2),
-            y = Space.px(96),
+            y = compact and 0 or Space.px(96),
             -- w matches the dialog so a mirrored (RTL) layout, which takes the
             -- other branch (left = x + w - content_w), lands on that same
             -- centred x instead of a dialog's width to the left of it. h stays
@@ -866,7 +866,10 @@ function Editor:editTab(tab_id, opts)
 
     local sw       = Screen:getWidth()
     local sh       = Screen:getHeight()
-    local dialog_w = math.floor(math.min(sw, sh) * 0.85)
+    local compact = Editor.orbitui_editor_sections and sh < Screen:scaleBySize(440)
+    local front = { compact = compact, section = 1 }
+    local dialog_w = compact and math.min(math.floor(sw * 0.93), Screen:scaleBySize(608))
+        or math.floor(math.min(sw, sh) * 0.85)
 
     -- `dialog` is declared above, with discardNew, which closes it.
     local frame
@@ -933,8 +936,8 @@ function Editor:editTab(tab_id, opts)
     local LeftContainer = require("ui/widget/container/leftcontainer")
     local HorizontalSpan = require("ui/widget/horizontalspan")
     local VerticalSpan = require("ui/widget/verticalspan")
-    local FS = 20
-    local inset = Space.px(16)
+    local FS = compact and 15 or 20
+    local inset = Space.px(compact and 8 or 16)
     local content_w = dialog_w - 2 * inset
     local function cellText(c)
         if c.text_func then return c.text_func() end
@@ -1015,7 +1018,8 @@ function Editor:editTab(tab_id, opts)
         local stacked = {}
         for _i, row in ipairs(rows) do
             local n = #row
-            if n > 1 and (content_w - (n - 1) * gap) / n < Screen:scaleBySize(160) then
+            local min_width = compact and Screen:scaleBySize(126) or Screen:scaleBySize(160)
+            if n > 1 and (content_w - (n - 1) * gap) / n < min_width then
                 for _j, c in ipairs(row) do stacked[#stacked + 1] = { c } end
             else
                 stacked[#stacked + 1] = row
@@ -1228,6 +1232,7 @@ function Editor:editTab(tab_id, opts)
 
     rebuild = function()
         if #pages > 0 then return renderPage(pages[#pages]) end
+        local compact = front.compact
         -- Sized as the rest of the editor's symbol buttons.
         local CHEV_SIZE  = 28
 
@@ -1901,23 +1906,79 @@ function Editor:editTab(tab_id, opts)
             if c.footer_text then foot_cells[#foot_cells + 1] = c
             else strip_cells[#strip_cells + 1] = c end
         end
-        local left, left_focus = group(top_row)
-        local right, right_focus = group(strip_cells)
-        local strip_focus = {}
-        for _i, w in ipairs(left_focus) do strip_focus[#strip_focus + 1] = w end
-        for _i, w in ipairs(right_focus) do strip_focus[#strip_focus + 1] = w end
-        if #strip_focus > 0 then layout[#layout + 1] = strip_focus end
-        local strip = Kit.headerRow{ width = dialog_w, inset = inset,
-            left = left, buttons = right and { right } or nil }
+        local strip, strip_focus = nil, {}
+        if not compact then
+            local left, left_focus = group(top_row)
+            local right, right_focus = group(strip_cells)
+            for _i, w in ipairs(left_focus) do strip_focus[#strip_focus + 1] = w end
+            for _i, w in ipairs(right_focus) do strip_focus[#strip_focus + 1] = w end
+            if #strip_focus > 0 then layout[#layout + 1] = strip_focus end
+            strip = Kit.headerRow{ width = dialog_w, inset = inset,
+                left = left, buttons = right and { right } or nil }
+        end
+
+        local section_picker
+        local sections_labels
+        if Editor.orbitui_editor_sections then
+            sections_labels = Editor.orbitui_editor_sections()
+            local appearance = compact and {{ view_cell, look_row[1] }} or {{ view_cell }, look_row}
+            local sections = { {{ source_row[1] }}, {}, { sort_row }, appearance }
+            if #shelf_row > 0 then sections[2][1] = shelf_row end
+            for _i, row in ipairs(src_rows or {}) do sections[3][#sections[3] + 1] = row end
+            if #sections[front.section] == 0 then front.section = 1 end
+            middle = sections[front.section]
+            if is_new and not hasSource() then
+                table.insert(middle, 1, {{ text = _("Choose a source to keep this new shelf."), enabled = false }})
+            end
+            local segments = {}
+            for i, label in ipairs(sections_labels) do
+                if #sections[i] > 0 then segments[#segments + 1] = { key = i, label = label } end
+            end
+            section_picker = VerticalGroup:new{ align = "left" }
+            local per_row = content_w < Screen:scaleBySize(320) and 2 or #segments
+            for start = 1, #segments, per_row do
+                local choices = {}
+                for i = start, math.min(start + per_row - 1, #segments) do
+                    choices[#choices + 1] = segments[i]
+                end
+                local control, focus = Kit.segmented{ items = choices, active = front.section, width = content_w,
+                    face = require("lib/bookshelf_fonts"):getFace("cfont", compact and 14 or 16), pad_v = Space.px(8),
+                    on_pick = function(key) front.section = key; rebuild() end }
+                if start > 1 then section_picker[#section_picker + 1] = VerticalSpan:new{ width = Space.px(4) } end
+                section_picker[#section_picker + 1] = control
+                layout[#layout + 1] = focus[1]
+            end
+        end
 
         local rows_vg = buildCards(middle, layout, false)
+        if section_picker then
+            rows_vg = VerticalGroup:new{ align = "left", section_picker,
+                VerticalSpan:new{ width = Space.px(10) }, rows_vg }
+        end
 
         -- The foot: KOReader's own button row, edge to edge (as a
         -- ButtonDialog's), Delete | New shelf | Close.
         local foot_row = {}
-        for _i, c in ipairs(foot_cells) do
-            foot_row[#foot_row + 1] = { text = c.footer_text, enabled = cellEnabled(c),
-                callback = c.callback }
+        if compact then
+            foot_row[1] = { text = sections_labels.actions, callback = function()
+                local actions, row, menu = {}, {}, nil
+                for _i, items in ipairs({ top_row, strip_cells, foot_cells, { look_row[2] } }) do
+                    for _j, item in ipairs(items) do
+                        row[#row + 1] = { text = item.footer_text or cellText(item), enabled = cellEnabled(item),
+                            callback = function() UIManager:close(menu); item.callback() end }
+                        if #row == 2 then actions[#actions + 1] = row; row = {} end
+                    end
+                end
+                if #row > 0 then actions[#actions + 1] = row end
+                menu = require("ui/widget/buttondialog"):new{
+                    title = sections_labels.actions, width = dialog_w, buttons = Kit.uiFontButtons(actions) }
+                UIManager:show(menu)
+            end }
+        else
+            for _i, c in ipairs(foot_cells) do
+                foot_row[#foot_row + 1] = { text = c.footer_text, enabled = cellEnabled(c),
+                    callback = c.callback }
+            end
         end
         foot_row[#foot_row + 1] = { text = _("Close"), callback = function() finish() end }
         local foot = require("ui/widget/buttontable"):new{
@@ -1935,19 +1996,18 @@ function Editor:editTab(tab_id, opts)
 
         -- One FocusManager over the strip and the cards, so keys move through
         -- them (GitHub issue 361); it repaints the dialog when focus moves.
+        local body = VerticalGroup:new{ align = "left" }
+        if strip then body[#body + 1] = strip end
+        body[#body + 1] = VerticalSpan:new{ width = inset }
+        body[#body + 1] = FrameContainer:new{ bordersize = 0, padding = 0,
+            padding_left = inset, padding_right = inset, padding_bottom = inset, rows_vg }
+        body[#body + 1] = require("ui/widget/linewidget"):new{ background = Blitbuffer.COLOR_GRAY,
+            dimen = Geom:new{ w = dialog_w, h = Size.line.medium } }
+        body[#body + 1] = foot
         local button_table = FocusManager:new{
             layout = layout,
             show_parent = dialog,
-            VerticalGroup:new{ align = "left",
-                strip,
-                VerticalSpan:new{ width = inset },
-                FrameContainer:new{ bordersize = 0, padding = 0,
-                    padding_left = inset, padding_right = inset, padding_bottom = inset,
-                    rows_vg },
-                require("ui/widget/linewidget"):new{ background = Blitbuffer.COLOR_GRAY,
-                    dimen = Geom:new{ w = dialog_w, h = Size.line.medium } },
-                foot,
-            },
+            body,
         }
         -- FocusManager repaints `show_parent or self` on a D-pad move, and the
         -- body is not on the window stack, so without this the highlight never
@@ -1967,7 +2027,7 @@ function Editor:editTab(tab_id, opts)
             title_text = T(_("Editing shelf: %1"), draft.label)
         end
         local title_bar = TitleBar:new{
-            title_face = Kit.titleFace(),
+            title_face = compact and require("lib/bookshelf_fonts"):getFace("cfont", 17) or Kit.titleFace(),
             width             = dialog_w,
             title             = title_text,
             with_bottom_line  = true,
@@ -2080,7 +2140,7 @@ function Editor:editTab(tab_id, opts)
     -- container is held here for it to read rather than built inline.
     local movable = MovableContainer:new{
         frame,
-        anchor = _highAnchor(function() return dialog end),
+        anchor = _highAnchor(function() return dialog end, compact),
     }
     dialog.movable = movable
     -- Not centred: the anchor places it, from the screen's corner. Centred,

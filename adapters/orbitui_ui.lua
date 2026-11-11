@@ -215,6 +215,10 @@ function M.wrap(name, module)
         require("adapters/orbitui_cover_labels").settings(module)
     elseif name == "lib/bookshelf_chip_editor" then
         require("adapters/orbitui_appearance").editor(module)
+        module.orbitui_editor_sections = function()
+            local _ = require("core/orbitui_i18n")
+            return { _("Source"), _("Filter"), _("Sort"), _("Appearance"), actions = _("Shelf actions") }
+        end
         module.cover_text_external = true
         -- The host owns profile-qualified bindings, including Kanzenban.
         module.book_binding_external = true

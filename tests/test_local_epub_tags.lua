@@ -65,6 +65,7 @@ package.loaded["ui/time"] = { now = function() return elapsed end,
     since = function(start) return elapsed - start end, to_us = function(value) return value * 1000000 end }
 package.loaded["ui/widget/infomessage"] = H.widget()
 package.loaded["ui/widget/confirmbox"] = H.widget()
+package.loaded["ui/widget/buttondialog"] = H.widget()
 package.loaded["device"] = { screen = { getWidth = function() return 600 end, getHeight = function() return 800 end } }
 package.loaded["lib/bookshelf_keyed_cache"] = { new = function(name, version)
     H.eq(name, "orbitui_epub_tags"); H.eq(version, 1)
@@ -502,6 +503,14 @@ H.test("normal Refresh reuses valid tags, rechecks changed/deleted files and ret
     modal.config.footer_rows[1][1].on_tap(); flush()
     H.eq(opened, 6); H.eq(modal.config.item_count(), 2)
 end)
+local function indexAction(manager) return manager.config.sheet.actions()[2] end
+local function indexReread(manager)
+    manager.config.sheet.actions()[1].on_tap()
+    for _i, row in ipairs(last_widget.buttons) do
+        if row[1].text == "Reread all EPUB tags…" then row[1].callback(); return last_widget end
+    end
+    error("missing reread action")
+end
 H.test("full reread is a separate confirmed local action and stale confirmations cannot start work", function()
     reset()
     local modal = require("core/orbitui_search").embeddedTag(tag)
@@ -519,9 +528,9 @@ H.test("full reread is a separate confirmed local action and stale confirmations
     H.eq(confirm.sui_native, true)
     UI:close(confirm) -- Cancelling confirmation does not touch any archive/cache.
     H.eq(opened, 3); H.eq(#queue, 0)
-    manager.config.footer_rows[2][1].on_tap(); last_widget.ok_callback(); flush()
+    indexReread(manager).ok_callback(); flush()
     H.eq(opened, 6); H.eq(Integration.embeddedTagIndexStatus().phase, "complete")
-    manager.config.footer_rows[2][1].on_tap(); confirm = last_widget
+    confirm = indexReread(manager)
     manager:onClose(); confirm.ok_callback(); flush(); H.eq(opened, 6)
     UI.show = show
 end)
@@ -821,19 +830,19 @@ H.test("index manager opens passively, exposes real pause/resume actions and ign
     local manager = require("core/orbitui_search").tagIndex()
     H.eq(opened, 0); H.eq(#queue, 0); H.eq(manager.config.title, "Tags and indexing")
     H.eq(manager.config.no_search, true)
-    local rows = manager.config.footer_rows
-    H.eq(rows[1][2].enabled_when(), false) -- native buttons treat nil as enabled
-    rows[1][1].on_tap(); H.eq(rows[2][2].enabled_when(), true)
-    flush(1); rows[2][2].on_tap(); flush()
-    H.eq(opened, 1); H.eq(rows[1][2].enabled_when(), true)
-    local cell = manager.config.cell_renderer(true, { w = 500, h = 500 })
-    assert(cell.subtitle:find("Read: 1", 1, true))
-    assert(manager.config.intro():find("paused", 1, true))
-    rows[1][2].on_tap(); flush(); H.eq(opened, 3); H.eq(rows[1][2].enabled_when(), false)
-    rows[2][1].on_tap(); local confirm = last_widget
+    H.eq(indexAction(manager).label, "Update tag index")
+    indexAction(manager).on_tap(); H.eq(indexAction(manager).label, "Pause indexing")
+    flush(1); indexAction(manager).on_tap(); flush()
+    H.eq(opened, 1); H.eq(indexAction(manager).label, "Continue indexing")
+    local progress = manager.config.sheet.progress()
+    assert(progress.detail:find("Read: 1", 1, true))
+    assert(progress.status:find("paused", 1, true))
+    H.eq(progress.fraction, 1 / 3)
+    indexAction(manager).on_tap(); flush(); H.eq(opened, 3); H.eq(indexAction(manager).label, "Update tag index")
+    local confirm = indexReread(manager)
     H.eq(confirm.sui_native, true); manager:onClose(); confirm.ok_callback(); flush(); H.eq(opened, 3)
     manager = require("core/orbitui_search").tagIndex()
-    manager.config.footer_rows[2][1].on_tap(); last_widget.ok_callback(); flush(1)
+    indexReread(manager).ok_callback(); flush(1)
     manager:onClose(); flush(); H.eq(opened, 4)
     H.eq(Integration.embeddedTagIndexStatus().phase, "paused")
 end)
@@ -841,12 +850,12 @@ H.test("native eager footer construction enables Update before show, without ena
     reset()
     local init, initial = Modal.init
     Modal.init = function(self)
-        local rows = self.config.footer_rows
-        initial = { rows[1][1].enabled_when(), rows[1][2].enabled_when(), rows[2][2].enabled_when() }
+        local action = indexAction(self)
+        initial = { action.enabled_when(), action.label }
     end
     local modal = require("core/orbitui_search").tagIndex()
     Modal.init = init
-    H.eq(initial[1], true); H.eq(initial[2], false); H.eq(initial[3], false)
+    H.eq(initial[1], true); H.eq(initial[2], "Update tag index")
     H.eq(opened, 0); H.eq(#queue, 0)
     modal:onClose()
 end)
@@ -854,29 +863,29 @@ H.test("navigation retirement pauses the index manager, releases ownership and a
     reset()
     local generation = UI._simpleui_navigation_generation
     local modal = require("core/orbitui_search").tagIndex()
-    modal.config.footer_rows[1][1].on_tap(); flush(1)
+    indexAction(modal).on_tap(); flush(1)
     UI._simpleui_navigation_generation = generation + 1
     flush(); H.eq(opened, 1)
     H.eq(Integration.embeddedTagIndexStatus().phase, "paused")
-    H.eq(modal.config.footer_rows[2][2].enabled_when(), false)
-    assert(modal.config.intro():find("Close and reopen", 1, true))
-    modal.config.footer_rows[3][1].on_tap(); H.eq(modal.shown, false)
+    H.eq(indexAction(modal).enabled_when(), false)
+    assert(modal.config.sheet.progress().status:find("Close and reopen", 1, true))
+    modal:onClose(); H.eq(modal.shown, false)
     local next_modal = require("core/orbitui_search").tagIndex()
-    next_modal.config.footer_rows[1][2].on_tap(); flush(); H.eq(opened, 3)
+    indexAction(next_modal).on_tap(); flush(); H.eq(opened, 3)
     H.eq(Integration.embeddedTagIndexStatus().phase, "complete")
     next_modal:onClose(); UI._simpleui_navigation_generation = generation
 end)
 H.test("sleep checkpoints and pauses explicit indexing without a sleeping paint or automatic wake scan", function()
     reset()
     local modal = require("core/orbitui_search").tagIndex()
-    modal.config.footer_rows[1][1].on_tap(); flush(1)
+    indexAction(modal).on_tap(); flush(1)
     local refresh, paints = modal.refresh, 0
     modal.refresh = function() paints = paints + 1 end
     modal:onSuspend(); flush(); H.eq(opened, 1); H.eq(paints, 0)
     H.eq(Integration.embeddedTagIndexStatus().phase, "paused")
     modal:onResume(); flush(); H.eq(opened, 1); H.eq(paints, 1)
-    H.eq(modal.config.footer_rows[1][2].enabled_when(), true)
-    modal.config.footer_rows[1][2].on_tap(); flush(); H.eq(opened, 3)
+    H.eq(indexAction(modal).label, "Continue indexing")
+    indexAction(modal).on_tap(); flush(); H.eq(opened, 3)
     H.eq(Integration.embeddedTagIndexStatus().phase, "complete")
     modal.refresh = refresh; modal:onClose()
 end)
