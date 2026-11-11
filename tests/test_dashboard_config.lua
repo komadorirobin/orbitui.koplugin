@@ -277,6 +277,27 @@ H.test("new configuration strings switch language without changing saved ids or 
     H.eq(Dashboard.readHeadings(home).want, "My own label")
 end)
 
+H.test("the staircase editor reports its fixed cards without changing classic visibility", function()
+    local before = saved[key(custom)]
+    local classic = Dashboard.readConfig(custom)
+    classic.hidden.hero, classic.hidden.reading_today, classic.hidden.ongoing = true, true, true
+    saved[key(custom)] = classic
+    local items = Config.items(function() end, custom)
+    for _, index in ipairs({ 3, 5, 8 }) do
+        assert(items[index].text_func():find("(Off)", 1, true))
+        H.eq(items[index].sub_item_table_func()[1].text, "Show card")
+    end
+    Dashboard.setLayout(custom, "cover_stairs", function() end)
+    for _, index in ipairs({ 3, 5, 8 }) do
+        assert(not items[index].text_func():find("(Off)", 1, true))
+        H.eq(#items[index].sub_item_table_func(), 1)
+    end
+    H.eq(saved[key(custom)], classic)
+    Dashboard.setLayout(custom, "classic", function() end)
+    assert(items[5].text_func():find("(Off)", 1, true))
+    saved[key(custom)] = before
+end)
+
 H.test("card colour choices are per screen, default off and preserve all existing configuration", function()
     local config = saved[key(home)]
     local heading = saved[home .. "orbitui_dashboard_heading_want"]

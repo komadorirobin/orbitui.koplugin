@@ -473,18 +473,23 @@ function M.items(refresh, pfx, ctx_menu)
     }
     for index, card in ipairs(Model.heading_cards) do
         local key, heading_index = card.key, index
+        local function fixedInStaircase()
+            return (key == "hero" or key == "ongoing" or key == "reading_today")
+                and dashboard().layout(pfx) == "cover_stairs"
+        end
         items[#items + 1] = { text_func = function()
             local current = dashboard().readConfig(pfx)
             return Model.heading(dashboard().readHeadings(pfx), key, label(key, current))
-                .. (Model.visible(current, key) and "" or " (" .. _("Off") .. ")")
+                .. ((fixedInStaircase() or Model.visible(current, key)) and "" or " (" .. _("Off") .. ")")
         end, sub_item_table_func = function()
-            local rows = {
-                { text = _("Show card"), checked_func = function() return Model.visible(dashboard().readConfig(pfx), key) end,
+            local rows = {}
+            if not fixedInStaircase() then
+                rows[1] = { text = _("Show card"), checked_func = function() return Model.visible(dashboard().readConfig(pfx), key) end,
                     callback = function() dashboard().editConfig(pfx, function(c)
                         c.hidden[key] = not c.hidden[key] or nil
-                    end, refresh) end },
-                dashboard().headingItems(refresh, pfx)[heading_index],
-            }
+                    end, refresh) end }
+            end
+            rows[#rows + 1] = dashboard().headingItems(refresh, pfx)[heading_index]
             if key == "want" or key == "new" then
                 rows[#rows + 1] = { text_func = function()
                     return _("Book source") .. ": " .. Sources.label(dashboard().readConfig(pfx).sources[key])
