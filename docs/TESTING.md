@@ -1,5 +1,23 @@
 # Verification and device acceptance
 
+## 2026-11-11 — similar results, card settings and settings categories
+
+Local source **b7a20cac70b1edb5b93cd1497d9984d8e4c98f0c**, private archive
+**32e12a0df83550a2d0a2c4358dc135caa63e06b01559930759381c4a5218f10a**.
+The complete test gate passes under Lua and LuaJIT, with the existing optional
+skips. ZIP integrity, source projection, updater file count, unchanged asset
+set and public archive verified. The seven focused settings/dashboard/tag
+suites pass under both interpreters with the sealed runtime path supplied.
+
+Rendered the approved layouts with KOReader widgets and fixture data at
+1264×1680, with additional narrow, short and landscape cases in Swedish and
+English. Desktop widget tests cover native tab taps, filter submission,
+the search-details and tag-index entry point, result reveal, card toggling and
+routing into the existing Bars settings.
+The fixture rasterizes bundled SVGs separately on macOS. Physical Bigme
+verification is pending. See local `test-results/modern-views-20261111/` for
+the preview, render harness, archive and receipts.
+
 ## 2026-11-11 — current-book time and per-module headings on Bigme
 
 User requests time left on both Currently Reading cards and explicitly
