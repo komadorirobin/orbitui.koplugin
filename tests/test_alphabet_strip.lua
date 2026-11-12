@@ -219,6 +219,35 @@ H.test("resting letters really paint with font line metrics and native default p
     assert(#glyphs >= 10, "active strip has no visible letters")
     H.eq(reads, 0); H.eq(writes, 0); H.eq(w.rebuilds, 1)
 end)
+H.test("the alphabet strip defaults to transparent and accepts a solid background per view", function()
+    local w, strip = reset(true)
+    local function backgroundDrawn()
+        local area = w._orbitui_alphabet.rect
+        for _, draw in ipairs(draws) do
+            if draw.x == area.x and draw.y == area.y and draw.w == area.w and draw.h == area.h then
+                return draw.color
+            end
+        end
+    end
+    w:paintTo(bb)
+    H.eq(backgroundDrawn(), nil)
+    assert(#glyphs > 0)
+    Adapter.saveView(Query.capture(), "alphabet_background", true)
+    Adapter.attachAlphabet(w)
+    assert(w._orbitui_alphabet ~= strip and strip.retired)
+    draws = {}
+    w:paintTo(bb)
+    H.eq(backgroundDrawn(), w._orbitui_alphabet.paper)
+    profile = "books"
+    H.eq(Adapter.viewPrefs(Query.capture()).alphabet_background, nil)
+    profile = "manga"
+    Adapter.saveView(Query.capture(), "alphabet_background", false)
+    Adapter.attachAlphabet(w)
+    draws = {}
+    w:paintTo(bb)
+    H.eq(backgroundDrawn(), nil)
+    H.eq(w._cursor, 1); H.eq(reads, 0); H.eq(w.rebuilds, 1)
+end)
 H.test("selected strip letter and large feedback fit their actual measured bounds", function()
     local w, strip = reset(true); gesture(w, "pan", at(strip, "M")); w:paintTo(bb)
     local bar, bubble = false, false
@@ -435,10 +464,16 @@ if jit and raster then
             for _, cbb in ipairs{ false, true } do
                 BB:setUseCBB(cbb)
                 for _, inverse in ipairs{ 0, 1 } do
-                    local w, strip = reset(true); gesture(w, "pan", at(strip, "M"))
+                    local w, strip = reset(true)
                     local target = BB.new(width, height, kind)
                     target:paintRect(0, 0, width, height, BB.Color8(82)); target:setInverse(inverse)
                     local before = target:getPixel(10, 10):getColor8().a
+                    strip:paintTo(Clip.new(target, { strip.rect }))
+                    H.eq(target:getPixel(strip.rect.x + 1, strip.rect.y + 1):getColor8().a, before)
+                    Adapter.saveView(Query.capture(), "alphabet_background", true)
+                    Adapter.attachAlphabet(w)
+                    strip = w._orbitui_alphabet
+                    gesture(w, "pan", at(strip, "M"))
                     strip:paintTo(Clip.new(target, { strip.rect, strip.bubble }))
                     H.eq(target:getPixel(10, 10):getColor8().a, before)
                     H.eq(target:getInverse(), inverse)

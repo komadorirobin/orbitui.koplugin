@@ -28,6 +28,13 @@ local BB = { COLOR_WHITE = ink(255), COLOR_BLACK = ink(0), TYPE_BB8 = 1,
     getUseCBB = function() return cbb end,
     ColorRGB32 = function(r, g, b, alpha) local v = ink(r); v.alpha = alpha; return v end }
 package.loaded["ffi/blitbuffer"] = BB
+local wallpaper_settings = {}
+package.loaded["infra/sui_store"] = {
+    readSetting = function(_, key) return wallpaper_settings[key] end,
+    nilOrTrue = function(_, key) return wallpaper_settings[key] ~= false end,
+    saveSetting = function(_, key, value) wallpaper_settings[key] = value end,
+}
+local lighten_key = "simpleui_style_wallpaper_opacity"
 local function target(w, h)
     return { ops = {}, getWidth = function() return w or 40 end,
         getHeight = function() return h or 60 end,
@@ -130,6 +137,56 @@ H.test("blur caches distinguish the night overlay without mutating the cached so
     modes(false, false); assert(m.frost(target(), 0, 0, 10, 10)); H.eq(builds, 2)
 end)
 
+H.test("wallpaper checkbox defaults on and shares the saved SimpleUI strength", function()
+    H.eq(A.wallpaperLighten(), 50)
+    H.eq(next(wallpaper_settings), nil)
+    wallpaper_settings[lighten_key] = 70
+    local updates = 0
+    local item = A.wallpaperSofteningItem(function() updates = updates + 1 end)
+    assert(item.checked_func())
+    item.callback()
+    H.eq(item.checked_func(), false)
+    H.eq(A.wallpaperLighten(true), 70)
+    H.eq(A.wallpaperLighten(), 0)
+    item.callback()
+    H.eq(A.wallpaperLighten(), 70)
+    H.eq(updates, 2)
+    wallpaper_settings[lighten_key] = 0
+    H.eq(item.checked_func(), false)
+    item.callback()
+    H.eq(A.wallpaperLighten(), 50)
+    wallpaper_settings = {}
+end)
+
+H.test("Bookshelf softens the cached raster once and replaces it when the setting changes", function()
+    local m = shelfWallpaper()
+    local native, softened = m._render, {}
+    m._render = function(...)
+        local bb = native(...)
+        bb.lightenRect = function(self, x, y, w, h, strength)
+            H.eq(x, 0); H.eq(y, 0); H.eq(w, 40); H.eq(h, 60)
+            softened[#softened + 1] = { self, strength }
+        end
+        return bb
+    end
+    A.wallpaper(m, true)
+    modes(false, false)
+    wallpaper_settings[lighten_key] = 70
+    local first = assert(m.bg("test", 40, 60, false))
+    H.eq(softened[1][1], first.bb); H.eq(softened[1][2], .7)
+    H.eq(m.bg("test", 40, 60, false), first)
+    first:paintTo(target(), 0, 0)
+    H.eq(#softened, 1)
+    local item = A.wallpaperSofteningItem(noop)
+    item.callback()
+    assert(m.bg("test", 40, 60, false) ~= first)
+    H.eq(#softened, 1)
+    item.callback()
+    assert(m.bg("test", 40, 60, false))
+    H.eq(#softened, 2); H.eq(softened[2][2], .7)
+    wallpaper_settings = {}
+end)
+
 H.test("SimpleUI full, legacy facade and partial eraser share one shading pass, day values remain saved", function()
     local saved = { simpleui_style_wallpaper_enabled=true, simpleui_style_wallpaper="picture" }
     local buffers = {}
@@ -166,6 +223,25 @@ H.test("SimpleUI full, legacy facade and partial eraser share one shading pass, 
     m.paintEraser(bb, 1, 2, 3, 4, 100); H.eq(dims, 3, "opaque chrome must not replay wallpaper")
     H.eq(saved.simpleui_style_wallpaper, "picture"); H.eq(saved.simpleui_style_wallpaper_enabled, true)
     local count=0; for _ in pairs(saved) do count=count+1 end; H.eq(count,2)
+
+    A.wallpaper(m, false)
+    modes(false, false)
+    wallpaper_settings[lighten_key] = 70
+    local lighten_calls = 0
+    bb.lightenRect = function(_, _, _, _, _, strength)
+        lighten_calls = lighten_calls + 1
+        H.eq(strength, .7)
+    end
+    m.paintBackground(bb, 0)
+    m.styleGetBgWidget():paintTo(bb, 0)
+    m.paintEraser(bb, 1, 2, 3, 4, 0)
+    H.eq(lighten_calls, 3)
+    A.wallpaperSofteningItem(noop).callback()
+    m.paintBackground(bb, 0)
+    m.paintEraser(bb, 1, 2, 3, 4, 0)
+    H.eq(lighten_calls, 3)
+    H.eq(m.styleGetWallpaperLighten(), 70)
+    wallpaper_settings = {}
 end)
 
 -- Optional real KOReader blitbuffer + C blitter. The pinned dependency remains

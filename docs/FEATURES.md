@@ -90,7 +90,7 @@ av OrbitUIs funktioner, inte BookOrbits egen progressionssynk. EPUB-taggar finns
 kvar offline. Serverpatchar är frivilliga, versionsbundna och installeras av
 administratören separat. Hantera skyddade öppningar innan ångra-stöd tas bort.
 
-## Finish forecast (1.2 preview)
+## Finish forecast (1.2)
 
 The locally revised reader bottom panel also shows approximate book/chapter
 **time left** using the open book's already-loaded native Reading statistics
@@ -131,7 +131,7 @@ Sleep, rotation, covering dialogs and navigation retire pending work; resume
 does not restart paused preparation automatically. Refresh after a Statistics
 sync or when retrying an error. Unknown/unreadable data is not repaired/reset.
 Home/dashboard layouts and native profiles/bookmarks/sync remain untouched.
-Available in the 1.2 preview. Estimates depend on sufficient matching local
+Available in OrbitUI 1.2. Estimates depend on sufficient matching local
 statistics; an insufficient-data message is not a failed prediction.
 
 **Svenska:** Lägg till Läsprognos som en egen modul eller ett kort. Den visar
@@ -140,7 +140,7 @@ läsning under två hela veckor. Saknas underlag får du ett tydligt besked i
 stället för ett påhittat datum. Funktionen är lokal, valfri och ändrar inte
 lässtatus. Långtryck för att uppdatera prognosen eller läsa hur den räknas.
 
-## Reader bottom panel and optional X-Ray (1.2 preview)
+## Reader bottom panel and optional X-Ray (1.2)
 
 In an open book, the normal bottom-menu tap/upward swipe now opens OrbitUI's
 reader panel by default, respecting KOReader's existing tap/swipe activation
@@ -206,7 +206,7 @@ välja **Automatiskt (X-Ray först)**, **X-Ray**, **KOAssistant** eller **Dölj*
 Ingen plugin installeras eller aktiveras av detta. KOAssistant öppnar sin egen
 X-Ray-väljare; AI-generering sker bara via pluginets egna uttryckliga åtgärder.
 
-## Pinned reading references (1.2 preview)
+## Pinned reading references (1.2)
 
 In an open book, use **Tools > Pinned references / Verktyg > Fästa referenser**.
 **Pin current page / Fäst aktuell sida** saves a reference separately from
@@ -424,6 +424,19 @@ Classic's manga/comics folder shelves can box an **Oneshots** directory, includi
 its nested title folders, without inventing series metadata. Linked manga can
 show a cached MyAnimeList community rating in a compact star/corner label; that
 integration requires its separate provider. It is not a personal rating.
+
+## Wallpaper
+
+The alphabet strip is transparent by default. Open **Sort, filter & view**
+from the shelf's page counter and enable **Solid background for alphabet
+strip** for a white background on light shelves or black on dark shelves.
+The choice is saved per view.
+
+**Soften wallpaper** is available in both the SimpleUI wallpaper display menu
+and the Bookshelf wallpaper menu. It applies the same amount of lightening to
+both views, even when you choose separate pictures. The default is 50%, and
+the **Lighten** setting in SimpleUI supplies the shared amount. The checkbox
+keeps that amount available when you switch the effect off.
 
 ## Optional ornaments and icons
 

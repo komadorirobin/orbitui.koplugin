@@ -2182,9 +2182,9 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
             return makeBackdropEntry(opts, ctx_menu)
         end
 
-        -- Wallpaper tint entry (0–99 %, no tint by default).
+        -- Wallpaper tint entry (0–99 %).
         local function tintItem(opts)
-            opts.default_value = 0
+            opts.default_value = opts.default_value or 0
             opts.value_max     = SUIWallpaper.TINT_MAX
             opts.format        = function(strength) return strength .. "%" end
             return strengthItem(opts)
@@ -2248,7 +2248,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
         -- Ordered as: source → image rendering and tint → opacity of the
         -- surfaces over the wallpaper.
         local function imageItems()
-            return {
+            local items = {
                 imageToggleItem(_("Stretch to fill screen"),
                     SUIWallpaper.styleGetWallpaperStretch, SUIWallpaper.styleSetWallpaperStretch),
                 imageToggleItem(_("Auto-rotate"),
@@ -2258,6 +2258,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                 tintItem({
                     title = _("Lighten"),
                     info  = _("Fades the wallpaper towards white to improve text readability."),
+                    default_value = SUIWallpaper.orbituiWallpaperLightenDefault,
                     get   = SUIWallpaper.styleGetWallpaperLighten,
                     set   = SUIWallpaper.styleSetWallpaperLighten,
                 }),
@@ -2268,6 +2269,10 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
                     set   = SUIWallpaper.styleSetWallpaperDarken,
                 }),
             }
+            if plugin.orbitui_wallpaper_softening then
+                table.insert(items, 4, plugin.orbitui_wallpaper_softening(makeBarRefresh(ctx_menu)))
+            end
+            return items
         end
 
         local function surfaceOpacityItems()

@@ -216,6 +216,7 @@ function M.wrap(name, module)
         require("adapters/orbitui_series_titles").boxWidget(module)
     elseif name == "lib/bookshelf_settings" then
         require("adapters/orbitui_cover_labels").settings(module)
+        require("adapters/orbitui_appearance").wallpaperSettings(module)
     elseif name == "lib/bookshelf_chip_editor" then
         require("adapters/orbitui_appearance").editor(module)
         module.orbitui_editor_sections = function()
@@ -260,6 +261,7 @@ function M.wrap(name, module)
         require("adapters/orbitui_navbar").hero(module)
     elseif name == "screens/sui_menu" then
         return function(plugin)
+            plugin.orbitui_wallpaper_softening = require("adapters/orbitui_appearance").wallpaperSofteningItem
             module(plugin)
             local build = plugin.addToMainMenu
             function plugin:addToMainMenu(items)

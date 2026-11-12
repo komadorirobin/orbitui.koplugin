@@ -6,10 +6,11 @@ local local_sources = { folder = true, folder_flat = true, library = true, all =
     favorites = true, collections = true, collection = true, next = true, bookorbit_want = true,
     single_series = true, author = true, genre = true, format = true, rating = true, language = true,
     orbitui_epub_tags = true }
+local boolean = { [true] = true, [false] = true }
 local fields = { sort = { title = true, author = true, date_added = true, last_opened = true, series = true },
     filter = { all = true, unread = true, reading = true, barely = true, finished = true },
     view = { covers = true, list = true, spines = true, compact = true, compact_two = true },
-    alphabet = { [true] = true, [false] = true } }
+    alphabet = boolean, alphabet_background = boolean }
 local function store() return package.loaded["infra/sui_store"] end
 local function reference(widget)
     local Query = require("core/orbitui_shelf_query")
@@ -147,7 +148,12 @@ function M.browseControls(widget, native_sort)
             require("core/orbitui_context").notify(_("Could not save this view. Other saved views are kept.")); return
         end
         if host then Host.close(host) end
-        refresh(widget)
+        if field == "alphabet" or field == "alphabet_background" then
+            widget:_rebuild()
+            ui:setDirty(widget, "ui")
+        else
+            refresh(widget)
+        end
     end
     local prefs = M.viewPrefs(ref)
     local ok, _books, err, counts = pcall(M.browseBooks, ref, prefs, true, widget._isSpineMode and widget:_isSpineMode())
@@ -184,12 +190,15 @@ function M.browseControls(widget, native_sort)
         { text = _("Alphabet strip"), checked_func = function() return M.viewPrefs(ref).alphabet == true end,
             help_text = _("Drag a letter and release to jump, or tap it. Uses the current shelf and sorting, including Å, Ä and Ö; no books are opened. Hidden for non-alphabetical sorting, a single page, an opened series and two-column lists. Saved only for this view."),
             callback = function()
-                if not current() then return end
-                if not M.saveView(ref, "alphabet", not (M.viewPrefs(ref).alphabet == true)) then
-                    require("core/orbitui_context").notify(_("Could not save this view. Other saved views are kept.")); return
-                end
-                Host.close(host)
-                widget:_rebuild(); ui:setDirty(widget, "ui")
+                change("alphabet", M.viewPrefs(ref).alphabet ~= true)
+            end },
+        { text = _("Solid background for alphabet strip"),
+            help_text = _("Show a solid background behind the letters in this view. It follows the shelf's light or dark appearance."),
+            enabled_func = function() return M.viewPrefs(ref).alphabet == true end,
+            checked_func = function() return M.viewPrefs(ref).alphabet_background == true end,
+            callback = function()
+                local view = M.viewPrefs(ref)
+                if view.alphabet == true then change("alphabet_background", view.alphabet_background ~= true) end
             end },
         { text = _("Go to page"), callback = function()
             if current() then Host.close(host); widget:_openPageJump() end
@@ -395,7 +404,8 @@ function M.alphabetContext(widget)
     return { ref = ref, prefs = prefs, key = key, reverse = not prefs.sort and level and level.reverse == true,
         identity = M.viewKey(ref) .. "|" .. key .. "|" .. tostring(level and level.reverse)
             .. "|" .. tostring(query.filter) .. "|" .. tostring(query.source.kind) .. "|" .. tostring(query.source.id)
-            .. "|" .. tostring(prefs.sort) .. "|" .. tostring(prefs.filter) }
+            .. "|" .. tostring(prefs.sort) .. "|" .. tostring(prefs.filter)
+            .. "|" .. tostring(prefs.alphabet_background == true) }
 end
 
 function M.alphabetJump(widget, context, letter)
@@ -547,7 +557,7 @@ local function alphabetWidgets()
             local t = self.labels[key]
             if not t then
                 t = Text:new{ text = text, face = Font:getFace("cfont", font_size), bold = selected,
-                    padding = 0, fgcolor = selected and paper or ink, bgcolor = selected and ink or paper }
+                    padding = 0, fgcolor = selected and paper or ink }
                 self.labels[key] = t
             end
             return t, t:getSize()
@@ -564,7 +574,7 @@ local function alphabetWidgets()
                 end
             end
         end
-        bb:paintRect(r.x, r.y, r.w, r.h, paper)
+        if self.context.prefs.alphabet_background then bb:paintRect(r.x, r.y, r.w, r.h, paper) end
         -- Use native regular AND bold line metrics, not size+2: the latter
         -- could fit our old stub while every real TextWidget was too tall.
         local _, regular = measured("Å", size, false)

@@ -20,7 +20,24 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-11
+## Snapshot: 2026-11-12
+
+- **Alphabet strip background (1.2).** Existing and new strips
+  default to transparent. A checkbox beside the strip toggle in Sort,
+  filter & view restores the theme-aware solid backing for that view.
+  Bigme USB verified both settings and a letter jump in private slot
+  **41c6466b**, with **63df910a** as rollback.
+
+- **Shared wallpaper softening (1.2).** Home and Bookshelf use
+  the same SimpleUI Lighten amount. The default is 50% for unset values.
+  Both wallpaper menus expose the same switch and save it separately from
+  the images and the retained amount. Bookshelf applies the fade once to its
+  cached raster, after its own image adjustments and before night inversion.
+  On the Bigme, toggling from Bookshelf and then from Home produced identical
+  exposed wallpaper pixels in the sampled strip in both states. The final
+  private slot **63df910a** booted with 70% lightening and reproduced the
+  on-state match. **3cca42bc** is its rollback. Screenshots and validation are
+  in `test-results/shared-wallpaper-20261112/`.
 
 - **SimpleUI maintenance after beta.3.** The reviewed SimpleUI baseline is
   **e6eb04720**. The Hide Menu Items settings can copy visibility for entries

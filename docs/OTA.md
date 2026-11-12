@@ -1,5 +1,15 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.2.0
+
+OrbitUI 1.2 moves the cover-first Reading dashboard, airy book overview,
+reader bottom panel, pinned references, local reading forecast and Next in
+series into the stable channel. It includes Bookshelf 6.4.2, reviewed
+SimpleUI maintenance, shared wallpaper softening and the transparent
+alphabet strip. The optional solid strip background is a per-view setting.
+Existing layouts and data carry over. The README gallery uses native
+English screenshots from the Bigme B7 Pro.
+
 ## OrbitUI 1.2.0-beta.4
 
 Published **2026-11-11 21:50:01 UTC**, release **442225986**, frozen

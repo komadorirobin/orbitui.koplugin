@@ -2,6 +2,60 @@ local Model = require("core/orbitui_appearance")
 local _ = require("core/orbitui_i18n")
 local M = {}
 local state
+local WALLPAPER_LIGHTEN = "simpleui_style_wallpaper_opacity"
+local WALLPAPER_SOFTEN = "simpleui_orbitui_soften_wallpaper"
+local DEFAULT_LIGHTEN = 50
+
+function M.wallpaperLighten(saved_amount)
+    local store = require("infra/sui_store")
+    if not saved_amount and not store:nilOrTrue(WALLPAPER_SOFTEN) then return 0 end
+    local amount = tonumber(store:readSetting(WALLPAPER_LIGHTEN)) or DEFAULT_LIGHTEN
+    if amount ~= amount then return DEFAULT_LIGHTEN end
+    return math.floor(math.max(0, math.min(99, amount)) + 0.5)
+end
+
+local function refreshWallpapers(menu)
+    local home = package.loaded["screens/sui_homescreen"]
+    if home then home.rebuildLayout({ keep_wallpaper = true }) end
+    local widget = package.loaded["lib/bookshelf_widget"]
+    local shelf = widget and widget.live
+    if shelf and not shelf._closed then
+        shelf._orbitui_navbar_pending = true
+        if require("ui/uimanager"):isWidgetShown(shelf) then
+            shelf:_rebuildIfSimpleUIContextChanged()
+        end
+    end
+    if menu and menu.updateItems then menu:updateItems() end
+end
+
+function M.wallpaperSofteningItem(refresh)
+    local update = refresh or refreshWallpapers
+    return {
+        text = _("Soften wallpaper"),
+        help_text = _("Applies to Home and Bookshelf. Set the amount with Lighten in the SimpleUI wallpaper settings."),
+        checked_func = function() return M.wallpaperLighten() > 0 end,
+        keep_menu_open = true,
+        callback = function(menu)
+            local store = require("infra/sui_store")
+            local enable = M.wallpaperLighten() == 0
+            if enable and M.wallpaperLighten(true) == 0 then
+                store:saveSetting(WALLPAPER_LIGHTEN, DEFAULT_LIGHTEN)
+            end
+            store:saveSetting(WALLPAPER_SOFTEN, enable)
+            update(menu)
+        end,
+    }
+end
+
+function M.wallpaperSettings(settings)
+    local native = settings._wallpaperMenu
+    if not native then return end
+    settings._wallpaperMenu = function(self)
+        local rows = native(self)
+        table.insert(rows, 3, M.wallpaperSofteningItem())
+        return rows
+    end
+end
 
 local function frameNight()
     return require("device").screen.night_mode == true
@@ -36,6 +90,8 @@ function M.paintNightBackdrop(bb, x, y, w, h, dark)
 end
 
 function M.wallpaper(module, shelf)
+    module.orbituiWallpaperLighten = M.wallpaperLighten
+    module.orbituiWallpaperLightenDefault = DEFAULT_LIGHTEN
     -- The dock follows KOReader, not a shelf's independently pinned Light
     -- look. Resolve native tone/ink together; do not mutate its shared surface.
     if not shelf and module.resolveBar and module.barSurface then

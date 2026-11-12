@@ -196,7 +196,11 @@ end
 function _HANDLE:paintTo(bb, x)
     if _styleGetBgWidget() then
         bb:blitFrom(_raster, x, 0, 0, 0, Screen:getWidth(), Screen:getHeight())
-        if M.orbituiBackdrop then M.orbituiBackdrop(bb, x, 0, Screen:getWidth(), Screen:getHeight()) end
+        if M.orbituiWallpaperLighten then
+            M.paintTint(bb, x, 0, Screen:getWidth(), Screen:getHeight())
+        elseif M.orbituiBackdrop then
+            M.orbituiBackdrop(bb, x, 0, Screen:getWidth(), Screen:getHeight())
+        end
     end
 end
 function _HANDLE:free() end -- the wallpaper module owns its single raster
@@ -341,7 +345,7 @@ end
 
 -- Tint strengths are applied at paint time (not baked into the raster); the caller refreshes the layout with the cache kept.
 function M.styleGetWallpaperLighten()
-    return _readTint(KEY_LIGHTEN)
+    return M.orbituiWallpaperLighten and M.orbituiWallpaperLighten(true) or _readTint(KEY_LIGHTEN)
 end
 function M.styleSetWallpaperLighten(val)
     _saveTint(KEY_LIGHTEN, val)
@@ -647,7 +651,8 @@ end
 -- reaches the screen as a darkening (and vice versa). The strengths are swapped
 -- in night mode so each setting keeps its on-screen meaning.
 function M.paintTint(bb, x, y, w, h)
-    local lighten, darken = _readTint(KEY_LIGHTEN), _readTint(KEY_DARKEN)
+    local lighten = M.orbituiWallpaperLighten and M.orbituiWallpaperLighten() or _readTint(KEY_LIGHTEN)
+    local darken = _readTint(KEY_DARKEN)
     if Screen.night_mode then lighten, darken = darken, lighten end
     if lighten > 0 then bb:lightenRect(x, y, w, h, lighten / 100) end
     if darken  > 0 then bb:darkenRect(x, y, w, h, darken / 100) end

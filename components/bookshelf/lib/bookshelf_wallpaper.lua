@@ -2144,7 +2144,9 @@ function M.bg(name, w, h, night)
     -- picture: applied once here, to the decoded copy (the disk copy stays
     -- raw), and in every key that copy is kept under, its blurs' included.
     local ImageContrast = require("lib/bookshelf_image_contrast")
-    local adjust = ImageContrast.wallpaperKey()
+    local native_adjust = ImageContrast.wallpaperKey()
+    local lighten = M.orbituiWallpaperLighten and M.orbituiWallpaperLighten() or 0
+    local adjust = native_adjust .. (lighten > 0 and ("|soften" .. lighten) or "")
     -- The night marker stays LAST: flipNight and frostFor read the held
     -- buffer's mode from the key's last two characters.
     -- The scaling, when it changes anything, is in every key the picture is
@@ -2193,7 +2195,7 @@ function M.bg(name, w, h, night)
         bb = M.toScreenType(bb)
         if dkey and diskCache() then pcall(diskCache().store, dkey, bb) end
     end
-    if adjust ~= "" then
+    if native_adjust ~= "" then
         pcall(function()
             -- Fit: the levels of the picture, not of its blank margins.
             local probe = bb
@@ -2205,6 +2207,11 @@ function M.bg(name, w, h, night)
             local b, c = ImageContrast.wallpaper()
             ImageContrast.applyLUT(bb, ImageContrast.wallpaperLUT(med or 128, b, c))
         end)
+    end
+    -- The shared fade is applied to the in-memory raster once. The raw disk
+    -- image, cover pixels and panel opacity stay outside this transformation.
+    if lighten > 0 then
+        bb:lightenRect(0, 0, bb:getWidth(), bb:getHeight(), lighten / 100)
     end
     if night and bb.invertRect then
         pcall(function() bb:invertRect(0, 0, bb:getWidth(), bb:getHeight()) end)
