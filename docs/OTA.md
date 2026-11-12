@@ -2,6 +2,22 @@
 
 ## OrbitUI 1.2.0
 
+Published **2026-11-12 12:43:24 UTC**, release **442933886**, frozen
+source/tag **5f1275918 / v1.2.0**. Public ZIP SHA-256
+`c68b6e56984dc4193a6fbdbf0199605f28d8dd3a43bb3af9cab4184c8c2ef827`,
+9,880,147 bytes and 2,000 installed files. Stable, preview and GitHub Latest
+select 1.2.0. The public ZIP and checksum match the verified draft and local
+package. The runtime code matches the private Bigme build **41c6466b**.
+The eight documentation screenshots are excluded from the install ZIP.
+
+The complete Lua and LuaJIT suites, 129 sealed root suites per interpreter
+and all 43 translation catalogs passed. The actual 1.1.0, 1.2.0-beta.3 and
+1.2.0-beta.4 installers passed both offline and public HTTPS upgrades and
+recovery. All 102 earlier releases, 179 existing tag refs and both
+maintenance branches matched the baseline. Package and device evidence is
+under `test-results/stable12-20261112/`. This receipt updates documentation
+only.
+
 OrbitUI 1.2 moves the cover-first Reading dashboard, airy book overview,
 reader bottom panel, pinned references, local reading forecast and Next in
 series into the stable channel. It includes Bookshelf 6.4.2, reviewed

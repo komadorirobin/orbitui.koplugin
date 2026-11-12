@@ -22,6 +22,13 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-12
 
+- **Current stable release 1.2.0.** Published 2026-11-12 at 12:43:24 UTC,
+  release **442933886**, frozen source **5f1275918**, public ZIP **c68b6e56**.
+  Stable and preview both offer 1.2.0. Public upgrades and recovery passed
+  from 1.1.0, beta.3 and beta.4. The README shows eight English screenshots
+  captured from the Bigme. The device is back on its original Swedish
+  preferences and private slot **41c6466b**. See OTA and TESTING.
+
 - **Alphabet strip background (1.2).** Existing and new strips
   default to transparent. A checkbox beside the strip toggle in Sort,
   filter & view restores the theme-aware solid backing for that view.
@@ -47,7 +54,7 @@ and correct this file in the same change.
   while the new SimpleUI editor's write and cache behavior is reviewed.
   Bookshelf remains at **f99a5bc4 / 6.4.2**. See MERGE_LOG and TESTING.
 
-- **Current public preview 1.2.0-beta.4.** Published 2026-11-11
+- **Previous preview 1.2.0-beta.4.** Published 2026-11-11
   21:50:01 UTC as release **442225986** from frozen source **b71daf107**.
   Public ZIP **0c1230a1** passed anonymous download and native OTA checks
   from 1.1.0, beta.2 and beta.3. It includes the Home refinement below and

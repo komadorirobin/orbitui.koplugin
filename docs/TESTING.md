@@ -1,5 +1,23 @@
 # Verification and device acceptance
 
+## 2026-11-12 — OrbitUI 1.2.0 screenshot and release verification
+
+On the Bigme B7 Pro, the private slot **41c6466b** exercised the Straight
+cover row, Library, Manga, alphabet jump, book overview, search, module
+picker and classic book actions in English. The release runtime code
+matches this device slot. Hiromi Kawakami's *Record of a Night Too Brief*
+supplied the cover and English synopsis. The reader-panel screenshots
+used a separate copy with synchronization and statistics disabled. Both
+reader tabs and the handoff to KOReader's reading settings worked.
+
+The native captures are 1264×1680. The README uses eight views, captured
+with a temporary cream book-pattern wallpaper. The original Swedish
+language, custom headings, wallpaper and history were restored and
+verified on the device. The history and original EPUB hashes matched and
+the crash log stayed at 14,785 bytes. The published ZIP was tested in
+isolated installer fixtures. The Bigme remained on the matching private
+runtime.
+
 ## 2026-11-11 — post-beta.3 SimpleUI maintenance
 
 Candidate source **b2f68f22c3e7e949372f0cf60ab8db1656d76610**, private ZIP
