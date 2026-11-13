@@ -7,11 +7,18 @@ additional choices; see the [README](../README.md) for installation and credits.
 
 ## One Home and library workflow
 
-Open **Tools > OrbitUI > OrbitUI settings** for the shared settings hub. Home
-uses SimpleUI; the visual library uses Bookshelf, with the same bottom bar and
-book-detail flow. Long-press a book on Home or in shared search to open its
-details. Reading status and metadata continue to use the underlying book data,
-not a new independent database of reading progress.
+Open the **OrbitUI** grid tab beside Quick Actions in KOReader’s top menu.
+**Home** holds the dashboard, cards and Home wallpaper. **Library** holds
+library folders, shelves, covers and themes. **Dock & interface** holds dock
+shortcuts and shared appearance. **Search settings** searches across sections.
+
+Long-press a dock icon to add, replace or remove a shortcut. Choose a library
+profile, folder, collection or quick action. **Dock & interface > Edit dock**
+lets you change the order. Fresh setups use Home, Library, History and Power.
+Existing setups keep their shortcuts, including Manga.
+
+Long-press a book on Home or in shared search to open its details. Reading
+status and metadata use the underlying book data.
 
 Long-press a shelf chip and select **Show this shelf on Home** to add a book row
 or cover carousel. The row follows that shelf's current membership and filters.
@@ -19,7 +26,7 @@ Arrange it with the Home layout editor. Removing the Home module does not delete
 the shelf or books. Shared search offers the entire library, a configured section
 or the current supported local shelf; remote catalogue search remains separate.
 
-## Airy book information (local development; not in public beta.2)
+## Airy book information
 
 The new default overview puts a book's cover, author, reading status, star rating and
 available series/language/format facts above its description and offline EPUB
@@ -38,7 +45,7 @@ small screens also keep a compact reading button below the scrolling content.
 **Overview text size** under Book information page adjusts the preview separately
 from the complete Description tab's own zoom. Explicit edit/review/tag/cover shortcuts still
 open their requested native view. To keep the classic tabbed default, disable
-**Bookshelf > Book information page > Use the airy book information page** in
+**Library > Book information page > Use the airy book information page** in
 OrbitUI settings. Existing Home/shelf/dock layouts are unchanged.
 
 ## Your folders, not someone else's setup
@@ -48,7 +55,7 @@ for comics, textbooks or anything else, or keep one library for everything.
 **Setup guide** lets you review folders, launch screen, bottom-bar buttons and
 shelf preset before applying them. Existing installations start with Keep existing.
 Changing folder references does not move book files. Custom library buttons can
-be selected in the guide or **Navigation & bars**.
+be selected in the guide or **Dock & interface**.
 
 ## Optional BookOrbit integrations
 
@@ -63,7 +70,7 @@ late response cannot overwrite OrbitUI's cache after a policy change.
 **Want to read [Local] / Vill läsa [Lokalt]** is the existing local To Be Read
 module, backed by KOReader's `To Be Read` collection. **Want to read [BookOrbit]
 / Vill läsa [BookOrbit]** is the separate server list matched to local files.
-Add either or both using **Home (SimpleUI) > Layout & modules**, or select the
+Add either or both using **Home > Layout & modules**, or select the
 source in the Reading dashboard. Disabling the online list never substitutes
 the local one. No automatic layout, membership or collection-name migration.
 
@@ -323,7 +330,7 @@ download client. Other SimpleUI Home modules and Custom Screens remain available
 
 ### Plugin cards and Module library (included in 1.1)
 
-Tap **+** in the dashboard, long-press a non-book area, or open **Home (SimpleUI)
+Tap **+** in the dashboard, long-press a non-book area, or open **Home
 → Reading dashboard → Cards and content → Add module…**. The picker groups
 **Home modules (SimpleUI)**, **Shelf modules (Bookshelf)** and **Action shortcuts**.
 It enumerates the existing public registries without preview-rendering cards or

@@ -26,12 +26,17 @@ releasen är inte en certifiering av alla enheter.
    extract it into KOReader's `plugins/` directory and start KOReader again.
    The correct path is `plugins/orbitui.koplugin/main.lua`, with no extra wrapper.
 4. Enable OrbitUI and restart if necessary. Fresh users get a setup guide;
-   existing component users can open **Tools > OrbitUI > OrbitUI settings >
+   existing component users can open **OrbitUI > System & maintenance >
    Setup guide** manually. Review choices before applying them.
 
 OrbitUI blocks startup if either standalone plugin is still enabled. Installing
 the ZIP does not automatically disable anything. Renaming a backup directory to
 another name ending in `.koplugin` is not a safe way to disable it.
+
+If KOReader reports **Component module already loaded**, use KOReader’s **Quit**
+command after disabling the standalone plugins, then reopen the app. If the
+error persists, include the exact module name, your KOReader and OrbitUI
+versions, and the names of relevant enabled plugins and patches in your report.
 
 ## What is preserved
 
@@ -65,9 +70,9 @@ are below. It does not replace the independent backup in step 1.
 
 ### Configurable library sections (stage 1)
 
-OrbitUI settings > Library sections edits saved library names, icons, folder
-roots, order and shelves. The same sections are available as bottom-bar actions
-under Navigation & bars. Long-press a shelf > Edit shelf edits its name and
+**OrbitUI > Library > Libraries & shelves** edits saved library names, icons,
+folder roots, order and shelves. Add a library to the dock by long-pressing a
+dock shortcut and choosing **Add shortcut**. Long-press a shelf > Edit shelf edits its name and
 folder-grouping options; Appearance keeps the existing Bookshelf style picker.
 Adding a folder shelf outside a section's current roots extends that section's
 scope. Changing a root repoints its descendant folder shelves but never moves
@@ -255,11 +260,10 @@ restart is required before switching implementations.
 
 ## Updating OrbitUI
 
-After the first manual installation, use **Tools > OrbitUI > Uppdatera OrbitUI**
-(the updater's current label).
-Embedded component update entries open the same common updater; they cannot
-install standalone packages. Preview releases are included by default on an
-alpha/beta installation. No predecessor update channel is redirected to OrbitUI.
+Open **OrbitUI > System & maintenance > Updates**. On 1.2.0, open the existing
+OrbitUI updater in **Tools**. Stable releases appear in both channels. Enable
+**Include preview releases** to receive prereleases. Restart KOReader after an
+update. OrbitUI's updater installs the combined plugin in a single step.
 
 Beta 1's native Bookshelf layout support is new. If you switch from a current
 standalone Bookshelf installation using `settings/bookshelf/settings.lua`, an
