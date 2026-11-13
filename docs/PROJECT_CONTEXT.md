@@ -31,6 +31,9 @@ shared chrome. The file browser has its own appearance route. A long press on
 a dock item opens shortcut actions. The dock editor also reorders items and
 offers shortcuts to profiles, folders, collections and registered actions.
 Fresh setup uses Home, Library, History and Power. Saved docks are preserved.
+The Bigme is running USB-tested candidate `2dd2ab286` in private slot
+`aa1a078a`, with `41c6466b` retained for rollback. Its original Swedish
+dock is restored. See TESTING for the exact runtime and device checks.
 
 - **Current stable release 1.2.0.** Published 2026-11-12 at 12:43:24 UTC,
   release **442933886**, frozen source **5f1275918**, public ZIP **c68b6e56**.

@@ -1,5 +1,26 @@
 # Verification and device acceptance
 
+## 2026-11-13 — Unified settings and dock on Bigme
+
+The USB test finished on local candidate `2dd2ab286`, ZIP SHA-256
+`aa1a078abb3fc349e989ea35d972c32c551c55f0cd9d9c71bc33ac730780c023`.
+The original Bigme runtime `41c6466b` remains the previous version.
+
+- Verified the Swedish OrbitUI top tab on Home and in a test EPUB. Opened
+  Home wallpaper settings and returned to the Home category. Opened the
+  Library category and reached it from the Manga start menu.
+- Verified long-press from Home, History and Library. Replaced Manga with
+  History, opened History, removed and added it, and reordered the dock.
+  Restored the saved Home, Library, Manga and Power shortcuts. The final
+  candidate also restored the start-menu route for saved dispatcher shortcuts.
+- Returned from the test EPUB to the file manager, then Home. Restored test
+  history, last-document fields and statistics after verifying that only the
+  fixture's statistics had changed. The final boot reached Home, and the
+  crash log was unchanged.
+- `sh scripts/test.sh` and ZIP validation passed. Fresh default dock order
+  was checked in the Kobo emulator. A fresh install on the Bigme and a
+  physical Kobo remain untested.
+
 ## 2026-11-12 — OrbitUI 1.2.0 screenshot and release verification
 
 On the Bigme B7 Pro, the private slot **41c6466b** exercised the Straight
