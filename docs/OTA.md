@@ -1,5 +1,23 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.3.0-beta.1
+
+Published **2026-11-13 11:55:41 UTC**, release **444170827**, frozen
+source/tag **98d5e3654 / v1.3.0-beta.1**. The public ZIP and checksum match
+the verified draft. ZIP SHA-256
+`fb8f2ceedb0c7937c75f0b524ae3d0caff5f7ac0757071532e840c98368e5b00`,
+9,887,441 bytes and 2,000 installed files. The updater selects this beta
+in preview and continues to offer **1.2.0** in stable.
+
+The release code matches the Bigme USB-tested build. It adds the shared
+OrbitUI tab beside Quick Actions and dock editing by long press. Fresh
+setups use Home, Library, History and Power. Saved docks keep their shortcuts.
+See TESTING for device coverage. Both complete Lua suites, 129 sealed
+root suites per interpreter and all 43 catalogs passed. Upgrade, restart
+and rollback passed with the actual 1.2.0 and 1.2.0-beta.4 installers in
+offline fixtures and via anonymous HTTPS. Evidence is under
+`test-results/preview13-beta1-20261113/`.
+
 ## OrbitUI 1.2.0
 
 Published **2026-11-12 12:43:24 UTC**, release **442933886**, frozen

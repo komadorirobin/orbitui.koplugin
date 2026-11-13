@@ -20,11 +20,12 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-12
+## Snapshot: 2026-11-13
 
-### Navigation proposal
+### Navigation in 1.3.0-beta.1
 
-The `design/unified-settings-dock` branch has an OrbitUI tab in KOReader’s
+The preview channel offers **1.3.0-beta.1** from **98d5e3654**, with the
+OrbitUI tab in KOReader’s
 top menu. Its settings routes use Home for the dashboard and cards, Library
 for shelves and library appearance, and Dock & interface for shortcuts and
 shared chrome. The file browser has its own appearance route. A long press on
@@ -38,10 +39,10 @@ exact runtimes and device checks.
 
 - **Current stable release 1.2.0.** Published 2026-11-12 at 12:43:24 UTC,
   release **442933886**, frozen source **5f1275918**, public ZIP **c68b6e56**.
-  Stable and preview both offer 1.2.0. Public upgrades and recovery passed
+  The stable channel offers 1.2.0. Public upgrades and recovery passed
   from 1.1.0, beta.3 and beta.4. The README shows eight English screenshots
-  captured from the Bigme. The device is back on its original Swedish
-  preferences and private slot **41c6466b**. See OTA and TESTING.
+  captured from the Bigme. The private stable test used slot **41c6466b**.
+  See OTA and TESTING.
 
 - **Alphabet strip background (1.2).** Existing and new strips
   default to transparent. A checkbox beside the strip toggle in Sort,
