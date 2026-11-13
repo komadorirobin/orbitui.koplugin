@@ -1167,7 +1167,8 @@ function M.registerMenu()
                 row.id = "orbitui_menu_" .. row.orbitui_id
                 tab[#tab + 1] = row
             end
-            table.insert(tabs, math.max(2, #tabs), tab)
+            -- The quick actions panel inserts itself first after menu hiding.
+            table.insert(tabs, 1, tab)
         end,
     }
 end

@@ -86,20 +86,27 @@ H.test("native component menus are absent and legacy events open the shared sett
     Settings.menuEntry().callback(); H.eq(shown.title, "OrbitUI settings")
     sui:onSimpleUISettingsWindow(); H.eq(shown.title, "OrbitUI settings")
 end)
-H.test("the protected settings entry becomes exactly one OrbitUI top tab", function()
+H.test("the protected OrbitUI tab follows quick actions and precedes native tabs", function()
     local hook
     package.loaded["infra/sui_menu_hooks"] = { ORDER = { MENU_HIDE = 5 }, register = function(s) hook = s end }
     local item = Settings.menuEntry()
     item.id = "orbitui_settings"
     package.loaded["ui/menusorter"] = { findById = function() return item end }
     Settings.registerMenu()
-    local tools, native = { id = "tools", item }, { id = "main" }
-    local menu = { ui = { simpleui = { _orbitui_owned = true } }, tab_item_table = { tools, native } }
-    hook.prepare(menu); hook.prepare(menu)
-    H.eq(#menu.tab_item_table, 3)
-    H.eq(#tools, 0); H.eq(menu.tab_item_table[3], native)
-    H.eq(menu.tab_item_table[2].id, "orbitui_settings_tab")
-    H.eq(menu.tab_item_table[2][1], item)
+    local first, tools, native = { id = "filemanager" }, { id = "tools", item }, { id = "main" }
+    local tabs = { first, tools, native }
+    local menu = { ui = { simpleui = { _orbitui_owned = true } }, tab_item_table = tabs }
+    hook.prepare(menu)
+    H.eq(tabs[1].id, "orbitui_settings_tab")
+    local quick_actions = { id = "_sui_qs_panel", _sui_qs_panel = true }
+    table.insert(tabs, 1, quick_actions) -- the panel hook runs after menu hiding
+    hook.prepare(menu)
+    H.eq(#tabs, 5)
+    H.eq(tabs[1], quick_actions)
+    H.eq(tabs[2][1], item)
+    H.eq(tabs[3], first)
+    H.eq(tabs[4], tools); H.eq(#tools, 0)
+    H.eq(tabs[5], native)
 end)
 H.test("legacy Home book-menu and search calls route to shared services", function()
     local hold = Integration.wrap("features/library/sui_book_hold_dialog", {})
