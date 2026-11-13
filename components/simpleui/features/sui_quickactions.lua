@@ -1337,27 +1337,24 @@ function QA.execute(id, ctx)
     end
 end
 
+function QA.bookshelfHoldEvent(id)
+    if not (id and id:match("^custom_qa_%d+$")) then return nil end
+    local cfg = SUISettings:get("simpleui_qa_" .. id) or {}
+    local action = cfg.dispatcher_action
+    if action == "open_bookshelf_prose" or action == "open_bookshelf_prose_start_menu" then
+        return "OpenBookshelfProseStartMenu"
+    end
+    if action == "open_bookshelf_comics" or action == "open_bookshelf_comics_start_menu" then
+        return "OpenBookshelfComicsStartMenu"
+    end
+end
+
 function QA.holdExecute(id, ctx)
     ctx = ctx or {}
     if not id then return false end
 
-    if id:match("^custom_qa_%d+$") then
-        local cfg = SUISettings:get("simpleui_qa_" .. id) or {}
-        local action = cfg.dispatcher_action
-        local event_name
-        if action == "open_bookshelf_prose" then
-            event_name = "OpenBookshelfProseStartMenu"
-        elseif action == "open_bookshelf_comics" then
-            event_name = "OpenBookshelfComicsStartMenu"
-        elseif action == "open_bookshelf_prose_start_menu" then
-            event_name = "OpenBookshelfProseStartMenu"
-        elseif action == "open_bookshelf_comics_start_menu" then
-            event_name = "OpenBookshelfComicsStartMenu"
-        end
-        if not event_name then return false end
-
-        return _broadcastBookshelfEvent(event_name, ctx)
-    end
+    local event_name = QA.bookshelfHoldEvent(id)
+    if event_name then return _broadcastBookshelfEvent(event_name, ctx) end
 
     local desc = _registry[id]
     local fn = desc and desc.hold_execute

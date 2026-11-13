@@ -255,4 +255,28 @@ H.test("dock editing keeps unavailable saved actions and accepts external destin
     H.eq(Nav.setAction("power", false), false)
 end)
 
+H.test("saved dispatcher shortcuts still offer the matching library start menu", function()
+    reset({ "homescreen", "custom_qa_1", "power" })
+    values.simpleui_qa_custom_qa_1 = { label = "My Manga", dispatcher_action = "open_bookshelf_comics" }
+    package.loaded["ui/widget/buttondialog"] = Widget
+    local event
+    local broadcast = UI.broadcastEvent
+    UI.broadcastEvent = function(_, value) event = value.name end
+    local dialog = Nav.shortcutMenu("custom_qa_1")
+    H.eq(dialog.buttons[5][1].text, "Open library start menu")
+    dialog.buttons[5][1].callback()
+    UI.broadcastEvent = broadcast
+    H.eq(event, "OpenBookshelfComicsStartMenu")
+    H.eq(values.simpleui_qa_custom_qa_1.label, "My Manga")
+end)
+
+H.test("legacy start-menu labels render as library actions without changing saved names", function()
+    local model = require("adapters/orbitui_ui").wrap("lib/bookshelf_start_menu_model", {})
+    local entry = { id = "sm_settings", label = "Bookshelf menu", internal = "settings" }
+    H.eq(model.displayLabel(entry), "Library settings")
+    H.eq(entry.label, "Bookshelf menu")
+    entry.label = "My shelves"
+    H.eq(model.displayLabel(entry), "My shelves")
+end)
+
 H.finish()

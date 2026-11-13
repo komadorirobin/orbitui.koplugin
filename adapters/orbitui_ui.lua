@@ -21,6 +21,7 @@ M.modules = {
     ["lib/bookshelf_module_layout"] = true,
     ["lib/bookshelf_book_repository"] = true,
     ["lib/bookshelf_action_exec"] = true,
+    ["lib/bookshelf_start_menu_model"] = true,
     ["lib/bookshelf_sort_engine"] = true,
     ["lib/bookshelf_theme_pack"] = true,
     ["lib/bookshelf_theme_menu"] = true,
@@ -113,6 +114,19 @@ function M.wrap(name, module)
                     { profile = widget and widget.profile_key })
             end
             return dispatch(entry, widget)
+        end
+    elseif name == "lib/bookshelf_start_menu_model" then
+        local labels = {
+            sm_settings = { "Bookshelf menu", "Library settings" },
+            sm_close = { "Exit bookshelf", "Exit library" },
+            sm_cal = { "Reading calendar", "Reading calendar" },
+            sm_wifi = { "Toggle Wi-Fi", "Wi-Fi connection" },
+            sm_night = { "Toggle night mode", "Night mode" },
+        }
+        module.displayLabel = function(entry)
+            local label = labels[entry.id]
+            if label and entry.label == label[1] then return require("core/orbitui_i18n")(label[2]) end
+            return entry.label
         end
     elseif name == "sui_bookshelf_bridge" then
         require("adapters/orbitui_libraries").bridge(module)

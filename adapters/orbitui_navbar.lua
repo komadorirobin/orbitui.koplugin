@@ -253,6 +253,7 @@ end
 
 function M.shortcutMenu(id, back)
     local UI, Config = require("ui/uimanager"), require("infra/sui_config")
+    local QA = require("features/sui_quickactions")
     local dialog
     local function edit() return M.editDock(back) end
     local function button(label, action, enabled)
@@ -277,11 +278,11 @@ function M.shortcutMenu(id, back)
                 return_label = _("Dock"), return_to = function() M.shortcutMenu(id, back) end,
             })
         end)
-    elseif id == "bookshelf_prose" or id == "bookshelf_comics"
+    elseif id == "bookshelf_prose" or id == "bookshelf_comics" or QA.bookshelfHoldEvent(id)
             or require("adapters/orbitui_libraries").navigationProfile(id) then
         buttons[#buttons + 1] = button("Open library start menu", function()
             local plugin = require("core/orbitui_context").plugin("simpleui")
-            require("features/sui_quickactions").holdExecute(id, { plugin = plugin, fm = plugin and plugin.ui })
+            QA.holdExecute(id, { plugin = plugin, fm = plugin and plugin.ui })
         end)
     end
     buttons[#buttons + 1] = button("Cancel", done)

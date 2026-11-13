@@ -26,6 +26,9 @@ local WidgetContainer = require("ui/widget/container/widgetcontainer")
 local logger          = require("logger")
 local Screen          = Device.screen
 local Model           = require("lib/bookshelf_start_menu_model")
+local function displayLabel(entry)
+    return (Model.displayLabel and Model.displayLabel(entry)) or entry.label or "?"
+end
 local Modules         = require("lib/bookshelf_start_menu_modules")
 local Breaker         = require("lib/bookshelf_module_breaker")
 local Store           = require("lib/bookshelf_settings_store")
@@ -505,7 +508,7 @@ function StartMenu:_measurePanelWidth(entries)
     for _i, e in ipairs(entries) do
         if e.type ~= "module" then
             local label_probe = TextWidget:new{
-                text = e.label or "?",
+                text = displayLabel(e),
                 face = self._row_face,
                 -- No max_width: measure the untruncated natural width.
             }
@@ -581,7 +584,7 @@ function StartMenu:_buildRow(entry, w, focused, in_flyout)
     local label_max = math.max(Screen:scaleBySize(40),
         w - self:_rowChromeWidth(entry.type == "folder"))
     local label = TextWidget:new{
-        text = entry.label or "?", face = self._row_face, fgcolor = fg,
+        text = displayLabel(entry), face = self._row_face, fgcolor = fg,
         max_width = label_max,
     }
     local group = HorizontalGroup:new{
