@@ -21,6 +21,10 @@ The original Bigme runtime `41c6466b` remains the previous version.
   was checked in the Kobo emulator. A fresh install on the Bigme and a
   physical Kobo remain untested.
 
+Follow-up `62086fa9d` moved OrbitUI directly after Quick Actions. On the Bigme,
+both tabs opened from Home in their new positions. The tested ZIP was
+`7a7ee33da214a80a5b6e80d0696fb33ed8ab70c2a0f5001b0ee8809692c415cc`.
+
 ## 2026-11-12 — OrbitUI 1.2.0 screenshot and release verification
 
 On the Bigme B7 Pro, the private slot **41c6466b** exercised the Straight
