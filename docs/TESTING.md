@@ -1,5 +1,13 @@
 # Verification and device acceptance
 
+## 2026-11-13 — OrbitUI 1.3.0 promotion
+
+The executable files and runtime assets match the published beta.1 and
+the USB-tested Bigme package below. The stable ZIP also opened the second
+top-menu tab and the dock editor on the emulated Kobo. No fresh physical
+installation was exercised for the promotion. See OTA for exact versions,
+hashes and installer coverage.
+
 ## 2026-11-13 — Unified settings and dock on Bigme
 
 The USB test finished on local candidate `2dd2ab286`, ZIP SHA-256

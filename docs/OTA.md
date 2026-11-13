@@ -1,5 +1,25 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.3.0
+
+Published **2026-11-13 19:00:45 UTC**, release **444620274**, frozen
+source/tag **23714b0e / v1.3.0**. Public ZIP SHA-256
+`c9b54f16cd2f48e0f485a95d1bf9e15077bb169abbfa7b428b85382189b86fa8`,
+9,887,891 bytes and 2,000 installed files. GitHub Latest and both OrbitUI
+channels offer 1.3.0. The public ZIP and checksum match the verified draft.
+
+The stable release uses the same code as beta.1 and the USB-tested Bigme
+build. The OrbitUI tab sits beside Quick Actions. Long-press a dock shortcut
+to add, replace or remove it. Fresh setups use Home, Library, History and
+Power. Saved docks keep their shortcuts. The English screenshots on the
+repository homepage show the menu and dock editor captured from 1.3.0 in
+the Kobo emulator.
+
+Both complete Lua suites, 129 sealed root suites per interpreter and all
+43 translation catalogs passed. Native installer checks covered 1.2.0
+and 1.3.0-beta.1 upgrades, restart and rollback. Package, installer and
+device evidence is under `test-results/stable13-20261113/`.
+
 ## OrbitUI 1.3.0-beta.1
 
 Published **2026-11-13 11:55:41 UTC**, release **444170827**, frozen

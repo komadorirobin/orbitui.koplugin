@@ -22,25 +22,25 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-13
 
-### Navigation in 1.3.0-beta.1
+### Navigation in 1.3.0
 
-The preview channel offers **1.3.0-beta.1** from **98d5e3654**, with the
-OrbitUI tab in KOReader’s
-top menu. Its settings routes use Home for the dashboard and cards, Library
+GitHub Latest and both updater channels offer stable **1.3.0** from
+**23714b0e**. The OrbitUI tab follows Quick Actions in KOReader’s top menu.
+Its settings routes use Home for the dashboard and cards, Library
 for shelves and library appearance, and Dock & interface for shortcuts and
 shared chrome. The file browser has its own appearance route. A long press on
 a dock item opens shortcut actions. The dock editor also reorders items and
 offers shortcuts to profiles, folders, collections and registered actions.
 Fresh setup uses Home, Library, History and Power. Saved docks are preserved.
-The Bigme is running USB-tested candidate `62086fa9d` in private slot
-`7a7ee33d`, with `aa1a078a` retained for rollback. The OrbitUI tab follows
-Quick Actions. The original Swedish dock is restored. See TESTING for the
-exact runtimes and device checks.
+The stable runtime code matches beta.1 and the USB-tested candidate
+`62086fa9d` in private slot `7a7ee33d`. The Bigme was last verified on that
+private build, with `aa1a078a` retained for rollback and its original Swedish
+dock restored. See TESTING for device checks and OTA for publication details.
 
-- **Current stable release 1.2.0.** Published 2026-11-12 at 12:43:24 UTC,
+- **Previous stable release 1.2.0.** Published 2026-11-12 at 12:43:24 UTC,
   release **442933886**, frozen source **5f1275918**, public ZIP **c68b6e56**.
-  The stable channel offers 1.2.0. Public upgrades and recovery passed
-  from 1.1.0, beta.3 and beta.4. The README shows eight English screenshots
+  Public upgrades and recovery passed from 1.1.0, beta.3 and beta.4.
+  The release added eight English screenshots to the README,
   captured from the Bigme. The private stable test used slot **41c6466b**.
   See OTA and TESTING.
 
