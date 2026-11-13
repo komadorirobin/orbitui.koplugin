@@ -312,7 +312,7 @@ H.test("actual native menu host exposes breadcrumb ancestors and preserves page/
     host._menu.page = 3
     host:_push("Advanced", {}, {})
     local location = host._menu.item_table[1]
-    assert(location.text:find("Bookshelf", 1, true)); assert(location.text:find("Advanced", 1, true))
+    assert(location.text:find("Library", 1, true)); assert(location.text:find("Advanced", 1, true))
     location.callback() -- choose an ancestor, not merely Back one level
     H.eq(#host._stack, 3)
     local panel_row

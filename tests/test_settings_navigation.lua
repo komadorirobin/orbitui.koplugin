@@ -80,7 +80,7 @@ H.test("the root is search plus exactly five translated task areas, never a grow
         lang = locale
         local rows = Settings.items()
         H.eq(#rows, 6)
-        H.eq(rows[2].text, translate("Home (SimpleUI)"))
+        H.eq(rows[2].text, translate("Home"))
         H.eq(rows[3].orbitui_id, "bookshelf"); H.eq(rows[6].orbitui_id, "system")
     end
 end)
@@ -141,7 +141,7 @@ H.test("the real genre checkbox changes only the existing tags field and repaint
     lang = "sv"; local before = writes
     Settings.open("panel", { profile = "prose" })
     local rows = latest().item_table
-    assert(rows[1].text:find("alla Bookshelf", 1, true))
+    assert(rows[1].text:find("alla bibliotek", 1, true))
     local genre = find(rows, "show_genres"); H.eq(genre.text, "Visa genrer"); H.eq(genre.checked_func(), true)
     genre.callback(); H.eq(genre.checked_func(), false); H.eq(writes, before + 1)
     H.eq(stored.hero_regions.tags.show_collections, false); H.eq(stored.hero_regions.tags.font_size, 17)
@@ -175,24 +175,25 @@ H.test("a search result opens its one live control, never changes the preference
 end)
 H.test("Back returns through canonical categories instead of closing the entire settings tree", function()
     Settings.open("panel", { profile = "prose" })
-    H.eq(latest().parent_title, "Bookshelf"); latest().on_back()
+    H.eq(latest().parent_title, "Library"); latest().on_back()
     local category = dialogs[#dialogs]
-    H.eq(category.config.sheet.title, "Bookshelf"); category.config.sheet.on_back()
+    H.eq(category.config.sheet.title, "Library"); category.config.sheet.on_back()
     assert(category.closed)
     H.eq(latest().title, "OrbitUI settings")
 end)
 H.test("the Navigation sheet matches its grouped routes and category search returns to it", function()
     local panel = Settings.open("navigation", { profile = "comics" })
     local sheet = panel.config.sheet
-    H.eq(sheet.title, "Navigation & interface"); H.eq(#sheet.rows, 6)
-    H.eq(sheet.rows[1].group, "Navigation"); H.eq(sheet.rows[3].id, "reader")
-    H.eq(sheet.rows[4].group, "Appearance & shortcuts"); H.eq(sheet.rows[6].id, "quick_actions")
+    H.eq(sheet.title, "Dock & interface"); H.eq(#sheet.rows, 8)
+    H.eq(sheet.rows[1].group, "Dock"); H.eq(sheet.rows[1].id, "dock")
+    H.eq(sheet.rows[3].group, "Shared interface"); H.eq(sheet.rows[6].id, "quick_actions")
+    H.eq(sheet.rows[8].id, "file_browser")
     sheet.action.on_tap()
     assert(panel.closed)
     local dialog = dialogs[#dialogs]
     H.eq(dialog.title, "Search settings")
     dialog.buttons[1][1].callback()
-    H.eq(dialogs[#dialogs].config.sheet.title, "Navigation & interface")
+    H.eq(dialogs[#dialogs].config.sheet.title, "Dock & interface")
 end)
 H.test("the real menu host distinguishes nested Back, parent Back and explicit close-all", function()
     local mocked = package.loaded["lib/bookshelf_menu_host"]
@@ -222,7 +223,7 @@ end)
 H.test("visible profile context is preserved but global BookShelf settings are honestly labelled global", function()
     local before = profile_changes
     Settings.open("panel"); H.eq(profile_changes, before); H.eq(widget.profile_key, "prose")
-    assert(latest().item_table[1].text:find("all Bookshelf", 1, true))
+    assert(latest().item_table[1].text:find("all libraries in OrbitUI", 1, true))
     Settings.open("panel", { profile = "comics" }); H.eq(current_profile, "comics")
 end)
 H.test("a newer settings destination cancels a deferred library opener before it can display stale settings", function()
@@ -247,8 +248,8 @@ H.test("native controls are selected by stable IDs and unclassified future contr
     local old = nativeSettings._coverDisplaySubItems
     nativeSettings._coverDisplaySubItems = function() return { { text = "Native child", sub_item_table = { { text = "Nested" } } } } end
     local sub = latest().item_table[2].sub_item_table_func()
-    H.eq(sub[1].text, "Applies to: all Bookshelf libraries"); H.eq(sub[2].text, "Native child")
-    H.eq(sub[2].sub_item_table_func()[1].text, "Applies to: all Bookshelf libraries")
+    H.eq(sub[1].text, "Applies to all libraries in OrbitUI."); H.eq(sub[2].text, "Native child")
+    H.eq(sub[2].sub_item_table_func()[1].text, "Applies to all libraries in OrbitUI.")
     nativeSettings._coverDisplaySubItems = old
     Settings.open("bookshelf_advanced"); H.eq(find(latest().item_table, "future").text, "Future upstream control")
     nativeSettings._settingsSubItems = build
@@ -257,10 +258,10 @@ H.test("SimpleUI titles distinguish Home, global controls and a named custom scr
     local state = { screen_id = "hs", pfx = "simpleui_hs_", layout_key = "simpleui_layout" }
     local titles = { pages = function() return "Pages" end, bars_settings = "Bars", style_settings = "Style" }
     Settings.homeTitles(titles, state)
-    H.eq(titles.home_screen_settings, "Home (SimpleUI)"); H.eq(titles.pages(), "Pages — Home (SimpleUI)")
-    H.eq(titles.bars_settings(), "Bars — All SimpleUI screens")
+    H.eq(titles.home_screen_settings, "Home"); H.eq(titles.pages(), "Pages — Home")
+    H.eq(titles.bars_settings, "Bars, buttons & start view")
     state.screen_id, state.screen_name = "custom_1", "My Manga"
-    H.eq(titles.pages(), "Pages — SimpleUI screen: My Manga")
+    H.eq(titles.pages(), "Pages — Screen: My Manga")
     H.eq(state.layout_key, "simpleui_layout"); H.eq(state.pfx, "simpleui_hs_")
 end)
 H.test("the complete SimpleUI settings window applies hosted titles before constructing or painting its native window", function()
@@ -288,13 +289,13 @@ H.test("the complete SimpleUI settings window applies hosted titles before const
     local native = loadWindow(); local standalone = native:show(nil, "pages")
     assert(standalone.painted); H.eq(standalone._nav_stack[2].id, "pages")
     local hosted = require("adapters/orbitui_ui").wrap("screens/sui_settings_window", loadWindow())
-    expected = "Advanced SimpleUI settings"
+    expected = "OrbitUI settings"
     local win = hosted:show(nil, "pages")
-    H.eq(win.screen_titles.home_screen_settings, "Home (SimpleUI)")
-    assert(win.screen_titles.pages():find("Home (SimpleUI)", 1, true))
-    lang = "sv"; expected = "Avancerade SimpleUI-inställningar"
+    H.eq(win.screen_titles.home_screen_settings, "Home")
+    H.eq(win.screen_titles.pages(), "Layout Editor — Home")
+    lang = "sv"; expected = "OrbitUI-inställningar"
     win = hosted:show(nil, "pages", { screen_id = "custom", screen_name = "Min egen skärm", pfx = "unchanged_" })
-    assert(win.screen_titles.pages():find("SimpleUI-skärm: Min egen skärm", 1, true))
+    assert(win.screen_titles.pages():find("Skärm: Min egen skärm", 1, true))
     H.eq(constructed, 3); lang = "en"
 end)
 H.test("book-panel shortcut preserves the real details action and cancellation writes nothing", function()

@@ -29,6 +29,7 @@ package.loaded["core/orbitui_runtime"] = {
     install = function() calls[#calls + 1] = "resolver" end,
     classes = function() return classes end,
 }
+package.loaded["infra/sui_menu_hooks"] = { ORDER = { MENU_HIDE = 5 }, register = function() end }
 local function fixture()
     messages, deferred, calls, discovered = {}, {}, {}, {}
     loader.loaded_plugins = {}
@@ -66,12 +67,17 @@ H.test("FileManager and reader each receive one component pair", function()
     fm:handleEvent{ handler = "onTeardown" }
     H.eq(loader.loaded_plugins.bookshelf, reader.ui.bookshelf)
 end)
-H.test("OrbitUI menu uses the shared update label and updater", function()
+H.test("one OrbitUI menu routes to settings; startup failures retain update access", function()
     fixture()
     local fm = instantiate(dofile(root .. "/main.lua"))
     local items = {}
     fm:addToMainMenu(items)
-    local update_item = items.orbitui.sub_item_table[#items.orbitui.sub_item_table]
+    H.eq(items.orbitui, nil)
+    H.eq(items.orbitui_settings.text, "OrbitUI")
+    H.eq(type(items.orbitui_settings.callback), "function")
+    fm._orbitui_error = "test failure"
+    fm:addToMainMenu(items)
+    local update_item = items.orbitui_settings.sub_item_table[2]
     H.eq(update_item.text, "Uppdatera OrbitUI")
     H.eq(update_item.callback, require("adapters/orbitui_updates").show)
 end)

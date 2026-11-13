@@ -170,7 +170,7 @@ H.test("five static bilingual cards use existing category IDs and assets without
         locale = lang
         local m = show()
         H.eq(m.config.item_count(), 5)
-        H.eq(m.config.item_at(1).text, translate("Home (SimpleUI)"))
+        H.eq(m.config.item_at(1).text, translate("Home"))
         H.eq(m.config.item_at(5).id, "system")
         for _, card in ipairs(Settings.startCards()) do
             assert(card.description ~= "")
@@ -218,7 +218,7 @@ H.test("tap closes cards before opening the native category sheet; Back reconstr
     m.config.on_cell_tap(m.config.item_at(1))
     assert(m.closed)
     local category = shown[#shown]
-    H.eq(category.config.sheet.title, translate("Home (SimpleUI)"))
+    H.eq(category.config.sheet.title, translate("Home"))
     category:onClose(); assert(category.closed)
     H.eq(shown[#shown].name, "orbitui_settings_start")
 end)

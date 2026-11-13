@@ -16,7 +16,7 @@ function M.draft(snapshot, fresh)
         home = "keep", bar = "keep", appearance = "keep", tabs = Libraries.copy(snapshot.tabs or {}) }
     if fresh then
         draft.home, draft.bar = "dashboard", "custom"
-        draft.tabs = { "homescreen", "orbitui_bookshelf", "power" }
+        draft.tabs = Libraries.copy(require("adapters/orbitui_navbar").default_tabs)
         if snapshot.dashboard_layout == nil then draft.dashboard_layout = "cover_row" end
     end
     return draft

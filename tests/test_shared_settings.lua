@@ -9,7 +9,7 @@ package.loaded["core/orbitui_context"] = {
     refresh = function() refreshes = refreshes + 1 end,
 }
 package.loaded["screens/sui_settings_window"] = { show = function(_, _, screen)
-    opened_screen = screen or "__root__"
+    opened_screen = screen[1].id
 end }
 package.loaded["lib/bookshelf_settings"] = {
     _settingsSubItems = function() return { { text = "Existing native setting" } } end,
@@ -47,7 +47,7 @@ H.test("shared settings expose five task areas, settings search and the sole upd
     H.eq(host.title, "OrbitUI settings")
     H.eq(#host.item_table, 6)
     H.eq(host.item_table[1].text, "Search settings")
-    H.eq(host.item_table[2].text, "Home (SimpleUI)")
+    H.eq(host.item_table[2].text, "Home")
     host.item_table[2].callback()
     H.eq(host.closed, true)
     H.eq(shown.item_table[2].orbitui_id, "home_layout")
@@ -61,13 +61,14 @@ H.test("shared settings expose five task areas, settings search and the sole upd
     Settings.open("interface"); H.eq(opened_screen, "style_settings")
     Settings.open("bars"); H.eq(opened_screen, "bars_settings")
     Settings.open("updates"); H.eq(updates, 1)
-    Settings.open("home_advanced"); H.eq(opened_screen, "__root__")
-    H.eq(host.item_table[3].text, "Bookshelf")
-    H.eq(host.item_table[4].text, "Navigation & interface")
+    Settings.open("home_advanced"); H.eq(opened_screen, "home_screen_settings")
+    Settings.open("file_browser"); H.eq(opened_screen, "library_settings")
+    H.eq(host.item_table[3].text, "Library")
+    H.eq(host.item_table[4].text, "Dock & interface")
     H.eq(host.item_table[5].text, "Integrations")
     H.eq(host.item_table[6].text, "System & maintenance")
 end)
-H.test("native component settings entries converge on one shared menu key", function()
+H.test("native component menus are absent and legacy events open the shared settings", function()
     local bs = { buildMenuItems = function(_, items)
         items.bookshelf_settings = { text = "Bookshelf settings" }
         items.bookshelf_action = { callback = function() end }
@@ -79,12 +80,26 @@ H.test("native component settings entries converge on one shared menu key", func
     end)
     installer(sui)
     local items = {}
-    bs:buildMenuItems(items); sui:addToMainMenu(items)
+    bs:addToMainMenu(items); sui:addToMainMenu(items)
     H.eq(items.bookshelf_settings, nil); H.eq(items.simpleui, nil)
-    assert(items.bookshelf_action.callback)
-    H.eq(items.orbitui_settings.text, "OrbitUI settings")
-    items.orbitui_settings.callback(); H.eq(shown.title, "OrbitUI settings")
+    H.eq(items.bookshelf_action, nil)
+    Settings.menuEntry().callback(); H.eq(shown.title, "OrbitUI settings")
     sui:onSimpleUISettingsWindow(); H.eq(shown.title, "OrbitUI settings")
+end)
+H.test("the protected settings entry becomes exactly one OrbitUI top tab", function()
+    local hook
+    package.loaded["infra/sui_menu_hooks"] = { ORDER = { MENU_HIDE = 5 }, register = function(s) hook = s end }
+    local item = Settings.menuEntry()
+    item.id = "orbitui_settings"
+    package.loaded["ui/menusorter"] = { findById = function() return item end }
+    Settings.registerMenu()
+    local tools, native = { id = "tools", item }, { id = "main" }
+    local menu = { ui = { simpleui = { _orbitui_owned = true } }, tab_item_table = { tools, native } }
+    hook.prepare(menu); hook.prepare(menu)
+    H.eq(#menu.tab_item_table, 3)
+    H.eq(#tools, 0); H.eq(menu.tab_item_table[3], native)
+    H.eq(menu.tab_item_table[2].id, "orbitui_settings_tab")
+    H.eq(menu.tab_item_table[2][1], item)
 end)
 H.test("legacy Home book-menu and search calls route to shared services", function()
     local hold = Integration.wrap("features/library/sui_book_hold_dialog", {})

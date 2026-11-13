@@ -975,6 +975,9 @@ function SettingsWindow:show(on_close, nav_path, state)
     local titles  = makeScreenTitles(st)
     if self.orbitui_settings_titles then self.orbitui_settings_titles(titles, st) end
     local return_to_parent = st.orbitui_back_to_parent and nav_path and #nav_path > 0
+    if return_to_parent and st.orbitui_title then
+        titles[nav_path[#nav_path].id] = st.orbitui_title
+    end
 
     local win = SUI:new{
         name           = "sui_win_settings",
@@ -983,7 +986,7 @@ function SettingsWindow:show(on_close, nav_path, state)
         screen_titles  = titles,
         navpager_mode  = Config.isNavpagerEnabled(),
         on_close       = wrapped_on_close,
-        on_back        = return_to_parent and function() end or nil,
+        on_back        = return_to_parent and (st.orbitui_on_back or function() end) or nil,
         nav_path       = nav_path,
         position       = "bottom",
         screen_footers = {

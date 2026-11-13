@@ -3486,7 +3486,9 @@ function M.applyFirstRunDefaults()
     def("simpleui_bar_enabled",  true)
     def("simpleui_topbar_enabled", true)
     def("simpleui_bar_mode",     "both")
-    def("simpleui_bar_tabs",     { "home", "sui_settings", "homescreen", "history", "power" })
+    local default_tabs = {}
+    for i, action in ipairs(M.DEFAULT_TABS) do default_tabs[i] = action end
+    def("simpleui_bar_tabs",     default_tabs)
     if SUISettings:get("simpleui_topbar_config") == nil then
         M.saveTopbarConfig({ side = { clock = "left", battery = "right", wifi = "right" }, order_left = { "clock" }, order_right = { "wifi", "battery" } })
     end

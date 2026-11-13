@@ -45,7 +45,8 @@ local store = {
     isTrue = function(_, k) return memory[k] == true end,
     flush = noop,
 }
-local Config = { saveTopbarConfig = noop }
+local Config = { saveTopbarConfig = noop,
+    DEFAULT_TABS = { "home", "sui_settings", "homescreen", "history", "power" } }
 local config_env = { M = Config, SUISettings = store, math_max = math.max,
     math_min = math.min, math_floor = math.floor,
     G_reader_settings = { readSetting = function(_, k) return native[k] end,

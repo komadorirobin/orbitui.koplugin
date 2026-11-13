@@ -3,6 +3,15 @@ local Icons = require("core/orbitui_icons")
 local VectorIcons = require("core/orbitui_vector_icons")
 local _ = require("core/orbitui_i18n")
 
+local dock_icons = {
+    homescreen = "pack-homescreen",
+    orbitui_bookshelf = "extra-bookshelf-alt",
+    bookshelf_prose = "extra-bookshelf-alt",
+    bookshelf_comics = "extra-rakuyomi-alt",
+    history = "pack-history",
+    power = "pack-power",
+}
+
 M.modules = {
     ["features/sui_style"] = true,
     ["features/sui_quickactions"] = true,
@@ -124,12 +133,23 @@ function M.wrap(name, module)
         local get_entry = module.getEntry
         module.getEntry = function(id)
             local entry = get_entry(id)
-            if id ~= "night_mode" then return entry end
+            local icon = dock_icons[id]
+            local key = type(id) == "string" and id:match("^orbitui_library_(.+)$")
+            if key then
+                local profile = require("lib/bookshelf_profiles").get(key)
+                if profile and (not profile.icon or profile.icon == "nerd:F02D") then
+                    icon = (key == "manga" or profile.label:lower() == "manga")
+                        and "extra-rakuyomi-alt" or "extra-bookshelf-alt"
+                end
+            end
+            if icon and module.getDefaultActionIcon(id) then icon = nil end
+            if not icon and id ~= "night_mode" then return entry end
             -- "Off" is not "unavailable" for the night-mode button. Copy the
             -- shared dynamic entry so Wi-Fi and other toggles keep their state.
             local visible = {}
             for k, v in pairs(entry) do visible[k] = v end
-            visible.dim = false
+            if icon then visible.icon = "solar-colour:" .. icon end
+            if id == "night_mode" then visible.dim = false end
             return visible
         end
         module.extraIconPickers = { {

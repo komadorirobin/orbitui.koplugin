@@ -32,6 +32,7 @@ function OrbitUI:init()
         local allowed, reason = Guard.check(self.ui)
         assert(allowed, reason)
         Host.attach(self, Runtime.classes(root), require("pluginloader"), root)
+        require("adapters/orbitui_settings").registerMenu()
         require("adapters/orbitui_setup").started(self)
         UIManager:nextTick(function() Updates.started() end)
     end)
@@ -91,26 +92,16 @@ function OrbitUI:onOrbitUIPinPage()
 end
 
 function OrbitUI:addToMainMenu(items)
-    items.orbitui = {
-        text = "OrbitUI",
-        sub_item_table = {
-            {
-                text = require("core/orbitui_i18n")("OrbitUI settings"),
-                callback = function() require("adapters/orbitui_settings").show() end,
-            },
-            {
-                text = "About this experimental build",
-                callback = function()
-                    self:notify("OrbitUI " .. require("orbitui_bootstrap").version(root)
-                        .. "\n\nBookshelf 6.0.0 + SimpleUI 3.0"
-                        .. "\n\nPreview build. Existing navigation is retained."
-                        .. "\nSettings snapshot: settings/orbitui/before-first-run/"
-                        .. (self._orbitui_error and ("\n\nStartup error: " .. self._orbitui_error) or ""))
-                end,
-            },
+    if self._orbitui_error then
+        items.orbitui_settings = { text = "OrbitUI", sorting_hint = "tools", sub_item_table = {
+            { text = require("core/orbitui_i18n")("Startup error"), callback = function()
+                self:notify(self._orbitui_error)
+            end },
             { text = Updates.menuLabel, callback = Updates.show },
-        },
-    }
+        } }
+    else
+        items.orbitui_settings = require("adapters/orbitui_settings").menuEntry()
+    end
     if not self._orbitui_error and self.ui.document then
         local _ = require("core/orbitui_i18n")
         items.orbitui_reader_panel = { text = _("Reader panel"), sorting_hint = "tools",

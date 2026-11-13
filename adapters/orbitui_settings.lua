@@ -384,14 +384,14 @@ local native_terms = {
 }
 -- END GENERATED SETTINGS SEARCH TERMS
 local nodes = {
-    { "home", "Home (SimpleUI)", nil, "home", "homescreen hemskärm startsida simpleui" },
+    { "home", "Home", nil, "home", "homescreen hemskärm startsida simpleui" },
     { "home_layout", "Layout & modules", "home", "home", "layout moduler widgets bento kolumner columns pages sidor", screen = "pages" },
     { "home_screens", "Custom screens", "home", "screens", "egna anpassade skärmar screens", screen = "custom_screens" },
     { "home_dashboard", "Reading dashboard", "home", "screens", "läsöversikt statistik mål goals kortfärger accenter tonade färg card colours colors accents tinted moduler plugins silverfish traca genvägar shortcuts lägg till add module" },
-    { "home_shelves", "Bookshelf shelves on Home", "home", "home", "bokhyllor carousel karusell bokrad book row" },
+    { "home_shelves", "Library shelves on Home", "home", "home", "bokhyllor carousel karusell bokrad book row" },
     { "home_options", "Wallpaper, presets & behaviour", "home", "home", "bakgrund wallpaper förinställningar beteende fast book closing", screen = "home_screen_settings" },
-    { "home_advanced", "Advanced SimpleUI settings", "home", "screens", "alla all settings statistik statistics", screen = "__root__" },
-    { "bookshelf", "Bookshelf", nil, "mixed", "bibliotek library böcker books manga prosa" },
+    { "home_critter", "Tiny Critter", "home", "screens", "kompis följeslagare companion", screen = "critter_settings" },
+    { "bookshelf", "Library", nil, "mixed", "bookshelf bibliotek böcker books manga prosa" },
     { "libraries", "Libraries & shelves", "bookshelf", "mixed", "biblioteksavdelningar profiler profiles mappar folders chip chips filters filter sortering sorting ordna bibliotek order libraries ordna chip order chips placera före place before källa source" },
     { "book_search", "Search books", "bookshelf", "mixed", "böcker boksökning books library search stavfel typo accent diakritiska" },
     { "tag_index", "Tags and indexing", "bookshelf", "bookshelf", "taggar tags epub indexera indexering indexing omläsning reread uppdatera pause pausa fortsätt resume" },
@@ -400,16 +400,19 @@ local nodes = {
     { "covers", "Covers & book information", "bookshelf", "bookshelf", "omslag upplösning resolution metadata indexering indexing" },
     { "themes", "Themes, backgrounds & ornaments", "bookshelf", "theme", "tema färger colors bakgrund wallpaper plank hyllplan dekorationer" },
     { "preset", "Shelf preset", "bookshelf", "bookshelf", "classic klassisk minimal bokboxar series boxes kanzenban" },
+    { "shelf_size", "Shelf size & top panel", "bookshelf", "bookshelf", "hyllstorlek rader kolumner rows columns layout hero storlek" },
     { "bookshelf_text", "Fonts & text size", "bookshelf", "bookshelf", "typsnitt teckenstorlek font size text" },
-    { "bookshelf_advanced", "Advanced Bookshelf settings", "bookshelf", "mixed", "listvy list view micromodules mikromoduler beteende behavior start menu sökning search" },
-    { "navigation", "Navigation & interface", nil, "navigation", "navigationsrad bottenmeny knappar buttons dock navbar bars pagination" },
-    { "bookshelf_navigation", "Bookshelf button & destinations", "navigation", "navigation", "bookshelf navigationsrad mål profile profil prose comics manga" },
+    { "bookshelf_advanced", "Advanced library settings", "bookshelf", "mixed", "listvy list view micromodules mikromoduler beteende behavior start menu sökning search" },
+    { "navigation", "Dock & interface", nil, "navigation", "navigation navigationsrad bottenmeny knappar buttons dock navbar bars pagination" },
+    { "dock", "Edit dock", "navigation", "navigation", "docka genvägar shortcuts add remove replace reorder lägga till ta bort ersätt ordna" },
+    { "bookshelf_navigation", "Library shortcut", "navigation", "navigation", "bookshelf navigationsrad mål profile profil prose comics manga" },
     { "bars", "Bars, buttons & start view", "navigation", "screens", "status titelrad title navigation pagination startvy", screen = "bars_settings" },
     { "quick_controls", "Quick controls", "navigation", "navigation", "snabbkontroller ljus belysning färgtemperatur warmth wifi wi-fi batteri klocka statusfält status light battery clock" },
     { "interface", "Icons, fonts & shared appearance", "navigation", "screens", "ikoner icon font färger colors stil style", screen = "style_settings" },
+    { "file_browser", "File browser appearance", "navigation", "file_browser", "filhanteraren mappar mosaik file manager browser mosaic", screen = "library_settings" },
     { "quick_actions", "Custom quick actions", "navigation", "screens", "snabbåtgärder gester gestures shortcuts", screen = "quick_actions_settings" },
     { "reader", "Opening books & returning", "navigation", "bookshelf", "läsare reader bokstängning close return återgång hot park" },
-    { "reader_menu", "Reader menu: fast return to Bookshelf", "reader", "navigation", "arkivskåp arkivknapp snabbstängning stäng boken file browser cabinet close button reader menu fast return" },
+    { "reader_menu", "Reader menu: fast return to Library", "reader", "navigation", "arkivskåp arkivknapp snabbstängning stäng boken file browser cabinet close button reader menu fast return" },
     { "integrations", "Integrations", nil, "integrations", "bookorbit hardcover myanimelist mal synk sync kopplingar" },
     { "reader_panel", "Reader panel & X-Ray", "integrations", "integrations", "läsarpanel bottenpanel bottenmeny läsinställningar marginaler bottom menu reading settings margins xray x-ray koassistant ai automatiskt automatic plugin" },
     { "bookorbit", "BookOrbit", "integrations", "integrations", "vill läsa want to read lokalt local taggar tags ångra öppning undo opening hardcover server api patch sync synk" },
@@ -421,9 +424,11 @@ local nodes = {
     { "maintenance", "Covers, metadata & troubleshooting", "system", "bookshelf", "saknade suddiga omslag cache index scan extrahera metadata felsökning" },
     { "safety", "Android safety & advanced cache settings", "performance", "bookshelf", "android safe mode säkerhetsläge prestanda performance mutex crash krasch cache" },
     { "performance", "Speed, memory & diagnostics", "system", "system", "snabbhetsläge snabb prestanda minne adaptiv responsive adaptive benchmark diagnostik rapport mätning measurement memory latency" },
-    { "quick_start", "Home and Bookshelf: quick guide", "system", "system", "introduktion guide komma igång hem simpleui bookshelf bibliotek profil chip navigation" },
+    { "quick_start", "Home, Library & dock guide", "system", "system", "introduktion guide komma igång hem simpleui bookshelf bibliotek profil chip navigation" },
     { "setup", "Setup guide", "system", "system", "startguide inställningar setup startvy" },
     { "recovery", "Backup & recovery information", "system", "system", "säkerhetskopia återställning backup restore settings" },
+    { "backup", "Export & restore settings", "system", "system", "exportera importera backup restore säkerhetskopiera återställning" },
+    { "about", "About OrbitUI", "system", "system", "om version attribution credits" },
 }
 local by_id = {}
 for _i, n in ipairs(nodes) do
@@ -451,9 +456,10 @@ for _i, list in ipairs({ regions, categories }) do
     end
 end
 local scopes = {
-    home = "Applies to: Home (SimpleUI)",
-    screens = "Applies to: SimpleUI screens; screen-specific editors identify their screen",
-    bookshelf = "Applies to: all Bookshelf libraries",
+    home = "Changes your Home screen.",
+    screens = "Applies to the screens named in each setting.",
+    bookshelf = "Applies to all libraries in OrbitUI.",
+    file_browser = "Applies to KOReader’s file browser.",
     navigation = "Applies to: shared OrbitUI navigation",
     theme = "Applies to: the selected theme and shelves using it",
     integrations = "Applies to: the selected integration",
@@ -547,9 +553,10 @@ local function host(title, rows, parent, opts)
             or (by_id[parent] and _(by_id[parent].label)) or _("OrbitUI settings")),
         close_callback = function() require("adapters/orbitui_appearance").refreshVisible() end }
 end
-local function nativeHome(screen)
-    if screen == "__root__" then screen = nil end
-    return require("screens/sui_settings_window"):show(nil, screen)
+local function nativeSettings(node, opts)
+    local back = opts and opts.return_to or function() M.open(node.parent) end
+    return require("screens/sui_settings_window"):show(nil, { { id = node.screen } },
+        { orbitui_back_to_parent = true, orbitui_on_back = back, orbitui_title = _(node.label) })
 end
 local function children(id, close, opts)
     local rows = {}
@@ -779,12 +786,12 @@ end
 
 function M.quickStartItems(close)
     local rows = {{ text = _("About this guide"), callback = function()
-        Context.notify(_("Home (SimpleUI) is your start screen. Bookshelf is the library view. A library profile chooses folders and shelves; chips are the tabs inside that profile. These are not KOReader reading profiles. Opening this guide changes nothing."))
+        Context.notify(_("Home shows your dashboard and cards. Library is where you browse books and shelves. The dock holds shortcuts and is shared between these views."))
     end }}
     for _i, step in ipairs({
         { "1. Choose library folders and chips", "libraries", "Choose a library profile, then edit each chip's Source/Folder. Library folders (advanced) define the whole profile's scope, not just one chip." },
-        { "2. Point the Bookshelf button at a profile", "bookshelf_navigation", "Choose Bookshelf for the navigation bar, then optionally select a library profile. Saved bars are kept until you edit them." },
-        { "3. Customize Home (SimpleUI)", "home_dashboard", "Reading dashboard belongs to Home (SimpleUI). Choose which cards and book sources to show independently of your Bookshelf profile." },
+        { "2. Choose your dock shortcuts", "dock", "Long-press a dock shortcut to add, replace or remove it." },
+        { "3. Customize Home", "home_dashboard", "Choose which cards and book sources to show on Home." },
         { "4. Check fast reader return", "reader_menu", "Open a book from the chosen shelf and use the cabinet/file-browser button in the reading menu. A safe prepared shelf returns to its profile, chip and position; otherwise the book closes normally." },
     }) do
         local id = step[2]
@@ -797,26 +804,37 @@ function M.quickStartItems(close)
 end
 local category_groups = {
     navigation = {
-        { "Navigation", "bookshelf_navigation", "bars", "reader" },
-        { "Appearance & shortcuts", "interface", "quick_controls", "quick_actions" },
+        { "Dock", "dock", "bookshelf_navigation" },
+        { "Shared interface", "bars", "interface", "quick_controls", "quick_actions", "reader" },
+        { "File browser", "file_browser" },
     },
     home = {{ "Layout & content", "home_layout", "home_screens", "home_dashboard", "home_shelves" },
-        { "Appearance & behaviour", "home_options", "home_advanced" }},
+        { "Appearance & behaviour", "home_options", "home_critter" }},
     bookshelf = {{ "Library", "libraries", "book_search", "tag_index" },
-        { "Appearance", "book_overview", "panel", "covers", "themes", "preset", "bookshelf_text", "bookshelf_advanced" }},
+        { "Appearance", "shelf_size", "book_overview", "panel", "covers", "themes", "preset", "bookshelf_text", "bookshelf_advanced" }},
     integrations = {{ "Reading & sync", "bookorbit", "reader_panel", "hardcover", "connections" },
         { "Library add-ons", "addons" }},
-    system = {{ "Maintenance", "updates", "maintenance", "performance" }, { "Help", "quick_start", "setup", "recovery" }},
+    system = {{ "Maintenance", "updates", "maintenance", "performance", "backup" },
+        { "Help", "quick_start", "setup", "recovery", "about" }},
+}
+local descriptions = {
+    home = "Dashboard, cards and Home wallpaper",
+    bookshelf = "Library folders, shelves, covers and themes",
+    navigation = "Dock shortcuts, bars and shared appearance",
+    integrations = "BookOrbit, Hardcover and add-ons",
+    system = "Updates, performance and troubleshooting",
 }
 local category_icons = {
-    bookshelf_navigation = "shelves", bars = "view_agenda", reader = "menu_book", interface = "format_size",
+    dock = "tune", bookshelf_navigation = "shelves", bars = "view_agenda", reader = "menu_book", interface = "format_size",
     quick_controls = "tune", quick_actions = "power_settings_new", home_layout = "grid_view", home_screens = "view_carousel",
-    home_dashboard = "view_agenda", home_shelves = "shelves", home_options = "image", home_advanced = "settings",
+    home_dashboard = "view_agenda", home_shelves = "shelves", home_options = "image", home_critter = "extension",
+    file_browser = "folder",
     libraries = "shelves", book_search = "search", tag_index = "bookmark", book_overview = "menu_book",
     panel = "view_agenda", covers = "image", themes = "image", preset = "view_carousel", bookshelf_text = "format_size",
     bookshelf_advanced = "settings", bookorbit = "sync", reader_panel = "menu_book", hardcover = "auto_stories",
     connections = "link", addons = "apps", updates = "refresh", maintenance = "tune", performance = "settings",
-    quick_start = "menu_book", setup = "help", recovery = "history",
+    quick_start = "menu_book", setup = "help", recovery = "history", backup = "history", about = "info",
+    shelf_size = "grid_view",
 }
 local function categorySheet(n, opts, Modal)
     local UI = require("ui/uimanager")
@@ -828,7 +846,7 @@ local function categorySheet(n, opts, Modal)
     for _i, section in ipairs(category_groups[n.id]) do
         for i = 2, #section do
             local child = by_id[section[i]]
-            rows[#rows + 1] = { id = child.id, title = _(child.id == "bookshelf_navigation" and "Bookshelf button" or child.label),
+            rows[#rows + 1] = { id = child.id, title = _(child.label),
                 group = i == 2 and _(section[1]) or nil, icon = category_icons[child.id],
                 subtitle = child.id == "bookshelf_navigation" and _("Choose where the library button leads.") or nil,
                 action = function() navigate(function() return M.open(child.id, { profile = opts and opts.profile }) end) end }
@@ -836,9 +854,8 @@ local function categorySheet(n, opts, Modal)
     end
     local back = opts and opts.return_to or M.show
     local function returnHere() return M.open(n.id, opts) end
-    local scope = n.id == "navigation" and _("Applies to shared OrbitUI navigation.") or M.scopeRow(n.scope).text
     panel = Modal.showSheet{
-        title = _(n.label), subtitle = scope, back = opts and opts.return_label or _("OrbitUI settings"),
+        title = _(n.label), subtitle = _(descriptions[n.id]), back = opts and opts.return_label or _("OrbitUI settings"),
         on_back = function() navigate(back) end, rows = rows, row_height = 65, max_rows = 8,
         action_icon = "search", action = { label = _("Search settings"), on_tap = function()
             navigate(function()
@@ -852,6 +869,7 @@ end
 
 function M.open(id, opts)
     beginRequest()
+    if id == "home_advanced" then id = "home_options" end
     local n = assert(by_id[id], "Unknown settings page")
     local profile = opts and opts.profile
     if category_groups[id] then
@@ -859,7 +877,16 @@ function M.open(id, opts)
         if ok and Modal.showSheet then return categorySheet(n, opts, Modal) end
     end
     if n.target then return M.library(profile, nil, "panel", n.target, opts) end
-    if n.screen then return nativeHome(n.screen) end
+    if n.screen then return nativeSettings(n, opts) end
+    if id == "shelf_size" then return withSettings(profile, function(S) return S:_openLayoutEditor() end) end
+    if id == "dock" then return require("adapters/orbitui_navbar").editDock(opts and opts.return_to
+        or function() M.open("navigation") end) end
+    if id == "about" then
+        local root = assert(debug.getinfo(1, "S").source:match("^@(.+)/adapters/orbitui_settings%.lua$"))
+        local version = require("orbitui_bootstrap").version(root)
+        return Context.notify("OrbitUI " .. version .. "\n\n" ..
+            _("OrbitUI builds on SimpleUI and Bookshelf for KOReader."))
+    end
     if id == "reader_menu" then
         return host(_(n.label), { M.scopeRow("navigation"),
             require("adapters/orbitui_libraries").readerMenuSetting() }, "reader", opts)
@@ -878,7 +905,8 @@ function M.open(id, opts)
     local current
     local function close() if current then require("lib/bookshelf_menu_host").close(current) end end
     local rows, extra = { M.scopeRow(n.scope) }
-    if id == "quick_controls" then extra = require("adapters/orbitui_navbar").quickControlsItems(close)
+    if id == "backup" then extra = require("features/sui_backup").makeMenuItems()
+    elseif id == "quick_controls" then extra = require("adapters/orbitui_navbar").quickControlsItems(close)
     elseif id == "libraries" then extra = require("adapters/orbitui_library_settings").items()
     elseif id == "home_dashboard" then extra = require("adapters/orbitui_dashboard").menuItems()
     elseif id == "home_shelves" then extra = require("adapters/orbitui_home_shelves").menuItems()
@@ -918,17 +946,17 @@ end
 -- Presentation only: no native settings/provider builders, current values or
 -- preference writes are needed to describe the five existing destinations.
 local start_cards = {
-    { "home", "home", "Layout, widgets and reading dashboard" },
-    { "bookshelf", "shelves", "Library profiles, shelves and covers" },
-    { "navigation", "tune", "Navigation bar, buttons and reader return" },
-    { "integrations", "extension", "BookOrbit, Hardcover and add-ons" },
-    { "system", "settings", "Updates, performance and troubleshooting" },
+    { "home", "home" },
+    { "bookshelf", "shelves" },
+    { "navigation", "tune" },
+    { "integrations", "extension" },
+    { "system", "settings" },
 }
 function M.startCards()
     local cards = {}
     for _i, card in ipairs(start_cards) do
         cards[#cards + 1] = { id = card[1], text = _(by_id[card[1]].label),
-            icon = card[2], description = _(card[3]) }
+            icon = card[2], description = _(descriptions[card[1]]) }
     end
     return cards
 end
@@ -1103,6 +1131,46 @@ function M.show(opts)
     if logger then logger.warn("OrbitUI: settings cards unavailable; using the settings list", modal) end
     return M.showList()
 end
+
+function M.menuEntry()
+    return { text = "OrbitUI", sorting_hint = "tools", callback = function() M.show() end }
+end
+
+function M.registerMenu()
+    local hooks = require("infra/sui_menu_hooks")
+    hooks.register{ id = "orbitui_settings_tab", order = hooks.ORDER.MENU_HIDE - 1,
+        prepare = function(menu)
+            local tabs = menu.tab_item_table
+            if not tabs or tabs._orbitui_settings_tab or not (menu.ui and menu.ui.simpleui
+                    and menu.ui.simpleui._orbitui_owned) then return end
+            local MenuSorter = require("ui/menusorter")
+            local item = MenuSorter:findById(tabs, "orbitui_settings")
+            if not item or not item.callback then return end
+            local function removeEntry(list)
+                for index, entry in ipairs(list) do
+                    if entry == item then table.remove(list, index); return true end
+                    if removeEntry(entry.sub_item_table or entry) then return true end
+                end
+            end
+            if not removeEntry(tabs) then return end
+            tabs._orbitui_settings_tab = true
+            item.text = _("OrbitUI settings")
+            item.separator = true
+            local icon = "appbar.contrast"
+            local ok, registered = pcall(function()
+                return require("features/sui_style").registerTabIconName("orbitui_menu",
+                    require("core/orbitui_icons").imageFile("material:apps:300"))
+            end)
+            if ok and registered then icon = registered end
+            local tab = { id = "orbitui_settings_tab", icon = icon, text = "OrbitUI", item }
+            for _, row in ipairs(M.items()) do
+                row.id = "orbitui_menu_" .. row.orbitui_id
+                tab[#tab + 1] = row
+            end
+            table.insert(tabs, math.max(2, #tabs), tab)
+        end,
+    }
+end
 function M.heroMenu(widget, book)
     beginRequest()
     local dialog
@@ -1118,20 +1186,17 @@ function M.heroMenu(widget, book)
     UI:show(dialog); return dialog
 end
 function M.homeTitles(titles, state)
-    titles.__root__ = _("Advanced SimpleUI settings")
-    titles.home_screen_settings = _("Home (SimpleUI)")
-    for _i, id in ipairs({ "bars_settings", "style_settings", "library_settings", "quick_actions_settings" }) do
-        local original = titles[id]
-        titles[id] = function(...)
-            local title = type(original) == "function" and original(...) or original or ""
-            return title .. " — " .. _("All SimpleUI screens")
-        end
-    end
+    titles.__root__ = _("OrbitUI settings")
+    titles.home_screen_settings = _("Home")
+    titles.library_settings = _("File browser appearance")
+    titles.bars_settings = _("Bars, buttons & start view")
+    titles.style_settings = _("Icons, fonts & shared appearance")
+    titles.quick_actions_settings = _("Custom quick actions")
     local original = titles.pages
     titles.pages = function(...)
         local title = type(original) == "function" and original(...) or original or _("Layout & modules")
-        local scope = state.screen_id == "hs" and _("Home (SimpleUI)")
-            or string.format(_("SimpleUI screen: %s"), state.screen_name or state.screen_id or "")
+        local scope = state.screen_id == "hs" and _("Home")
+            or string.format(_("Screen: %s"), state.screen_name or state.screen_id or "")
         return title .. " — " .. scope
     end
 end

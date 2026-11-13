@@ -1062,7 +1062,7 @@ function M.registerTouchZones(plugin, fm_self)
             for i = 1, center_n do
                 local w = widths[i + 1]
                 if x >= cursor_x and x < cursor_x + w then
-                    return tabs_snap[i]
+                    return tabs_snap[BD.mirroredUILayout() and center_n - i + 1 or i]
                 end
                 cursor_x = cursor_x + w
             end
@@ -1072,7 +1072,7 @@ function M.registerTouchZones(plugin, fm_self)
         for i = 1, num_tabs do
             local w = widths[i]
             if x >= cursor_x and x < cursor_x + w then
-                return tabs_snap[i]
+                return tabs_snap[BD.mirroredUILayout() and num_tabs - i + 1 or i]
             end
             cursor_x = cursor_x + w
         end
@@ -1240,6 +1240,9 @@ function M.registerTouchZones(plugin, fm_self)
         handler = function(ges)
             local held_action_id = navbar_hold_action_id
             navbar_hold_action_id = nil
+            if held_action_id and M.orbitui_hold_shortcut and M.orbitui_hold_shortcut(held_action_id) then
+                return true
+            end
             if held_action_id and _QA().holdExecute(held_action_id, {
                     plugin = plugin,
                     fm = fm_self,
@@ -1265,6 +1268,7 @@ function M.registerTouchZones(plugin, fm_self)
                 end
             end
             local action_id = _actionAtX(x)
+            if action_id and M.orbitui_hold_shortcut and M.orbitui_hold_shortcut(action_id) then return true end
             if action_id and _QA().holdExecute(action_id, {
                     plugin = plugin,
                     fm = fm_self,
@@ -1276,6 +1280,7 @@ function M.registerTouchZones(plugin, fm_self)
             if not SUISettings:nilOrTrue("simpleui_bar_settings_on_hold") then
                 return true
             end
+            if M.orbitui_hold_shortcut then return M.orbitui_hold_shortcut() end
             _showNavbarSettingsWindow(plugin)
             return true
         end,

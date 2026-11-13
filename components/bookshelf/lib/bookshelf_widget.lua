@@ -575,6 +575,15 @@ function BookshelfWidget:_handleSimpleUIBottomBarHold(ev)
     end
 
     local action_id, kind = self:_simpleUIBottomBarSlot(ev.pos)
+    if self.orbitui_dock_hold_enabled and self.orbitui_dock_hold_enabled() then
+        local held = self._orbitui_dock_held
+        self._orbitui_dock_held = ev.ges == "hold" and action_id or nil
+        if ev.ges == "hold" and action_id then return true end
+        if ev.ges == "hold_release" and (held or action_id) then
+            self:orbitui_dock_hold(held or action_id)
+            return true
+        end
+    end
     local sig = tostring(kind) .. ":" .. tostring(action_id)
     if ev.ges == "hold_release" and self._simpleui_bottom_hold_sig then
         self._simpleui_bottom_hold_sig = nil

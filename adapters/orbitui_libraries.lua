@@ -85,7 +85,7 @@ function M.actions(QA)
         end,
     }
     register{
-        id = require("adapters/orbitui_navbar").bookshelf_action, label = "Bookshelf", icon = "nerd:F02D",
+        id = require("adapters/orbitui_navbar").bookshelf_action, label = _("Library"), icon = "nerd:F02D",
         is_in_place = false,
         execute = function(ctx)
             local key = M.bookshelfTarget()

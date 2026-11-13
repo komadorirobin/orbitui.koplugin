@@ -50,9 +50,13 @@ the visual library, book details, themes and ornament system. OrbitUI connects
 them, then adds ways to organize and explore your books that are not part of
 either standalone project's default setup.
 
-- **One connected interface.** Move between Home and your library with a shared
-  bottom bar, book-detail panels, scoped search and a settings hub. Pin a shelf
-  to Home as a book row or carousel.
+- **One OrbitUI menu.** Open the grid icon in KOReader’s top menu. **Home** covers
+  the dashboard and cards. **Library** covers shelves, covers and themes.
+  **Dock & interface** covers shortcuts and shared appearance. Pin a library
+  shelf to Home as a book row or carousel.
+- **A dock you can edit in place.** Long-press any dock shortcut to add, replace
+  or remove a shortcut. Use **Edit dock** to reorder shortcuts. A fresh setup
+  starts with Home, Library, History and Power. Manga is an optional shortcut.
 - **A Reading dashboard you can build on.** Combine Continue reading, progress,
   statistics, goals and paginated book rows. Add compatible plugin cards,
   shortcuts or BookOrbit shelf cards; arrange and size them independently.
@@ -259,7 +263,8 @@ recommended by Bookshelf. Keep KOReader's **Cover browser** plugin enabled.
 5. Start KOReader, enable OrbitUI if needed and restart. On a fresh setup, the
    optional guide reviews folders, start screen, navigation buttons and preset
    before applying anything. Existing users keep their configuration.
-6. Open **Tools → OrbitUI → OrbitUI settings** to make it yours.
+6. Open **Tools → OrbitUI → OrbitUI settings** in 1.2.0. In the menu redesign,
+   open the **OrbitUI** tab with the grid icon in KOReader’s top menu.
 
 | Device | Typical plugins directory |
 | --- | --- |

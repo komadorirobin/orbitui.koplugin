@@ -76,7 +76,7 @@ local function actionChoices(draft)
         if not seen[id] then result[#result + 1], seen[id] = { id = id, label = label }, true end
     end
     add("homescreen", _("Home"))
-    add("orbitui_bookshelf", "Bookshelf")
+    add("orbitui_bookshelf", _("Library"))
     for _i, section in ipairs(draft.libraries.sections) do
         if section.enabled ~= false then
             add(require("adapters/orbitui_libraries").actionId(section.key), _(section.label))

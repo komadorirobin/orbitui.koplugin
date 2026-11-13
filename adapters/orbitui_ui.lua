@@ -20,6 +20,7 @@ M.modules = {
     ["lib/bookshelf_collection_manager"] = true,
     ["lib/bookshelf_module_layout"] = true,
     ["lib/bookshelf_book_repository"] = true,
+    ["lib/bookshelf_action_exec"] = true,
     ["lib/bookshelf_sort_engine"] = true,
     ["lib/bookshelf_theme_pack"] = true,
     ["lib/bookshelf_theme_menu"] = true,
@@ -49,14 +50,6 @@ M.modules = {
     ["lib/bookshelf_page_cache"] = true,
 }
 
-local function settingsEntry(items, old_key)
-    items[old_key] = nil
-    items.orbitui_settings = {
-        text = require("core/orbitui_i18n")("OrbitUI settings"), sorting_hint = "tools",
-        callback = function() require("adapters/orbitui_settings").show() end,
-    }
-end
-
 function M.wrap(name, module)
     if name == "infra/sui_i18n" then
         -- Only the embedded component's two source names; KOReader's global
@@ -66,6 +59,7 @@ function M.wrap(name, module)
             local _ = require("core/orbitui_i18n")
             if text == "BookOrbit Want to Read" then return _("Want to read [BookOrbit]") end
             if text == "To Be Read" then return _("Want to read [Local]") end
+            if text == "Tab: SimpleUI Quick Settings" then return _("Tab: Quick controls") end
             local native = translate(text)
             return (native:gsub("BookOrbit Want to Read", "Want to read [BookOrbit]")
                 :gsub("BookOrbit Vill läsa", "Vill läsa [BookOrbit]"))
@@ -110,6 +104,16 @@ function M.wrap(name, module)
         require("core/orbitui_shelf_query").tagSources(module)
     elseif name == "features/sui_quickactions" then
         require("adapters/orbitui_libraries").actions(module)
+        require("adapters/orbitui_navbar").actions(module)
+    elseif name == "lib/bookshelf_action_exec" then
+        local dispatch = module.dispatch
+        module.dispatch = function(entry, widget)
+            if type(entry) == "table" and entry.internal == "settings" then
+                return require("adapters/orbitui_settings").open("bookshelf",
+                    { profile = widget and widget.profile_key })
+            end
+            return dispatch(entry, widget)
+        end
     elseif name == "sui_bookshelf_bridge" then
         require("adapters/orbitui_libraries").bridge(module)
     elseif name == "infra/sui_patches" then
@@ -192,6 +196,7 @@ function M.wrap(name, module)
     elseif name == "lib/bookshelf_i18n" then
         local translate = module.gettext
         module.gettext = function(text)
+            if text == "Bookshelf" then return require("core/orbitui_i18n")("Library") end
             local native = translate(text)
             if native ~= text then return native end
             return require("core/orbitui_i18n")(text)
@@ -262,11 +267,12 @@ function M.wrap(name, module)
     elseif name == "screens/sui_menu" then
         return function(plugin)
             plugin.orbitui_wallpaper_softening = require("adapters/orbitui_appearance").wallpaperSofteningItem
+            plugin.orbitui_dock_menu_item = require("adapters/orbitui_navbar").menuItem
             module(plugin)
             local build = plugin.addToMainMenu
             function plugin:addToMainMenu(items)
                 build(self, items)
-                settingsEntry(items, "simpleui")
+                items.simpleui = nil
             end
         end
     end
@@ -283,11 +289,8 @@ function M.classes(bookshelf, simpleui)
     Host.timeMethod(bookshelf, "onCloseDocument", "close")
     Host.timeMethod(bookshelf, "onOpenBookshelfProfile", "library")
     Host.timeMethod(bookshelf, "_showAfterReaderReturn", "return_shelf")
-    local build = bookshelf.buildMenuItems
-    function bookshelf:buildMenuItems(items)
-        build(self, items)
-        settingsEntry(items, "bookshelf_settings")
-    end
+    function bookshelf:_extendMenuOrder() end
+    function bookshelf:addToMainMenu() end
     function simpleui:onSimpleUISettingsWindow()
         require("adapters/orbitui_settings").show()
         return true

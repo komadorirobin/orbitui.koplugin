@@ -346,6 +346,7 @@ SimpleUIPlugin.addToMainMenu = function(self, menu_items)
     end
 
     local function makeTabsItem(ctx_menu)
+        if plugin.orbitui_dock_menu_item then return plugin.orbitui_dock_menu_item(ctx_menu) end
         return Arrange.makeListItem{
             ctx_menu  = ctx_menu,
             title     = _("Tabs"),

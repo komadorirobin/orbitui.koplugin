@@ -131,7 +131,7 @@ function M.bookOrbitItems(close)
         { text = string.format(_("Last successful list refresh: %s"), last and os.date("%Y-%m-%d %H:%M", last) or _("Never")),
             callback = function() info("This timestamp describes the saved list, not the current connection. Disabling BookOrbit keeps its cache but stops OrbitUI from displaying or refreshing it.") end },
         { text = _("Want to read (local, no account)"), callback = function()
-            info("Want to read [Local] uses KOReader's local To Be Read collection. Add it through Home (SimpleUI) > Layout & modules, or choose it as a Reading dashboard source. It works offline and stays separate from Want to read [BookOrbit]; disabling BookOrbit never replaces one list with the other.") end },
+            info("Want to read [Local] uses KOReader's To Be Read collection. Add it under Home > Layout & modules, or choose it as a Reading dashboard source.") end },
         toggle("actions", "BookOrbit reading-status menu actions", "Shows OrbitUI's manual Add/Remove Want to Read actions for linked books. These actions DO change BookOrbit's read status (Want to Read / Unread). They are not automatic reading-progress sync."),
         toggle("tags", "Online BookOrbit tags", "Explicitly load tags for a linked book and find matching linked files on this device, across all profiles. Exact online tag matching needs the optional BookOrbit server API patch. Local EPUB tags remain available without BookOrbit or this switch."),
         { text = _("BookOrbit extras: installation & compatibility"), callback = function()

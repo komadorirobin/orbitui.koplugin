@@ -2,14 +2,16 @@
 local M = {}
 local _ = require("core/orbitui_i18n")
 M.bookshelf_action = "orbitui_bookshelf"
+M.default_tabs = { "homescreen", M.bookshelf_action, "history", "power" }
 
 function M.config(Config)
-    local entry = { id = M.bookshelf_action, label = "Bookshelf", icon = "nerd:F02D" }
+    local entry = { id = M.bookshelf_action, label = _("Library"), icon = "nerd:F02D" }
     Config.ACTION_BY_ID[entry.id] = entry
     Config.ALL_ACTIONS[#Config.ALL_ACTIONS + 1] = entry
     -- Defaults only: loadTabConfig still honours every explicitly saved bar.
-    Config.DEFAULT_TABS = { "homescreen", entry.id, "sui_settings", "history", "power" }
-    Config.NON_HOME_DEFAULTS = { entry.id, "sui_settings", "homescreen", "history", "power" }
+    Config.DEFAULT_TABS = M.default_tabs
+    Config.DEFAULT_NUM_TABS = #M.default_tabs
+    Config.NON_HOME_DEFAULTS = M.default_tabs
     Config.homeLabel = function() return _("File browser") end
     Config.ACTION_BY_ID.home.label = _("File browser")
 end
@@ -29,20 +31,45 @@ function M.hasAction(id)
     return false
 end
 
+function M.actions(QA)
+    if not QA.iterBuiltin then return end
+    for action in QA.iterBuiltin() do
+        if action.id == "sui_settings" then
+            action.label = "OrbitUI"
+            action.execute = function() return require("adapters/orbitui_settings").show() end
+            break
+        end
+    end
+end
+
+local function savedTabs(Config)
+    local tabs = require("infra/sui_store"):get("simpleui_bar_tabs")
+    -- Keep unavailable actions in the saved sequence. Some may come back
+    -- when a profile, plugin, or custom screen is enabled again.
+    if type(tabs) ~= "table" or #tabs < (Config.isNavpagerEnabled() and 1 or 2)
+            or #tabs > Config.effectiveMaxTabs() then
+        tabs = Config.loadTabConfig()
+    end
+    return require("core/orbitui_libraries").copy(tabs)
+end
+
 function M.setAction(id, enabled, replace)
     local Config = require("infra/sui_config")
-    local tabs = require("core/orbitui_libraries").copy(Config.loadTabConfig())
+    local QA = require("features/sui_quickactions")
+    local tabs, visible = savedTabs(Config), Config.loadTabConfig()
     for i, value in ipairs(tabs) do
         if value == id then
             if enabled then return true end
             local min = Config.isNavpagerEnabled() and 1 or 2
-            if #tabs <= min then return false, "minimum" end
+            local is_visible = false
+            for _, action in ipairs(visible) do if action == id then is_visible = true; break end end
+            if is_visible and #visible <= min then return false, "minimum" end
             table.remove(tabs, i)
             Config.saveTabConfig(tabs); M.changed(); return true
         end
     end
     if not enabled then return true end
-    if not Config.ACTION_BY_ID[id] then return false, "missing" end
+    if not QA.isRegistered(id) and not QA.getCustomQAValid()[id] then return false, "missing" end
     if replace then
         local found
         for i, value in ipairs(tabs) do if value == replace then tabs[i], found = id, true; break end end
@@ -50,6 +77,288 @@ function M.setAction(id, enabled, replace)
     elseif #tabs < Config.effectiveMaxTabs() then tabs[#tabs + 1] = id
     else return false, "full" end
     Config.saveTabConfig(tabs); M.changed(); return true
+end
+
+function M.moveAction(id, offset)
+    if offset ~= -1 and offset ~= 1 then return false end
+    local Config = require("infra/sui_config")
+    local tabs, visible = savedTabs(Config), Config.loadTabConfig()
+    local other
+    for i, action in ipairs(visible) do if action == id then other = visible[i + offset]; break end end
+    if not other then return false end
+    local from, to
+    for i, action in ipairs(tabs) do
+        if action == id then from = i elseif action == other then to = i end
+    end
+    if not (from and to) then return false end
+    tabs[from], tabs[to] = tabs[to], tabs[from]
+    Config.saveTabConfig(tabs); M.changed(); return true
+end
+
+local function dockNotice(reason)
+    local messages = {
+        minimum = "Keep at least two dock shortcuts, or one with page arrows.",
+        full = "The dock is full. Choose a shortcut to replace.",
+    }
+    require("core/orbitui_context").notify(_(messages[reason] or "The dock changed. Open the editor again."))
+end
+
+local function dockLabel(id)
+    return require("features/sui_quickactions").getEntry(id).label
+end
+
+local function dockSlotPicker(title, choose, back)
+    local UI, rows, panel = require("ui/uimanager"), {}
+    for _, id in ipairs(require("infra/sui_config").loadTabConfig()) do
+        local target = id
+        rows[#rows + 1] = { title = dockLabel(target), action = function()
+            UI:close(panel)
+            choose(target)
+        end }
+    end
+    panel = require("lib/bookshelf_library_modal").showSheet{
+        title = title, back = back and _("Dock"), on_back = back and function() UI:close(panel); back() end,
+        rows = rows,
+    }
+    return panel
+end
+
+function M.addShortcut(id, done)
+    local ok, reason = M.setAction(id, true)
+    if ok then
+        if done then done() end
+        return true
+    end
+    if reason ~= "full" then dockNotice(reason); return false end
+    return dockSlotPicker(_("Replace a dock shortcut"), function(target)
+        local replaced, failure = M.setAction(id, true, target)
+        if not replaced then return dockNotice(failure) end
+        if done then done() end
+    end)
+end
+
+local function dockPicker(replace, back, done)
+    local UI, Config, QA = require("ui/uimanager"), require("infra/sui_config"), require("features/sui_quickactions")
+    local profiles = require("lib/bookshelf_profiles")
+    local libraries = require("adapters/orbitui_libraries")
+    local profile_actions, active = {}, {}
+    for _, id in ipairs(Config.loadTabConfig()) do active[id] = true end
+    for _, profile in ipairs(profiles.list(true)) do profile_actions[libraries.actionId(profile.key)] = profile end
+    local device = require("device")
+    local rows, seen, panel = {}, {}, nil
+    local function available(id)
+        if id == "frontlight" then return device:hasFrontlight() end
+        if id == "bookshelf_prose" then return profiles.get("prose") ~= nil end
+        if id == "bookshelf_comics" then return profiles.get("comics") ~= nil end
+        if profile_actions[id] then return profiles.get(profile_actions[id].key) ~= nil end
+        if QA.getBrowseMode(id) then return require("features/library/sui_library_browse").isEnabled() end
+        return true
+    end
+    local function select(id, old)
+        local ok, reason = M.setAction(id, true, old)
+        if ok then
+            done()
+        elseif reason == "full" then
+            dockSlotPicker(_("Replace a dock shortcut"), function(target) select(id, target) end, function()
+                dockPicker(replace, back, done)
+            end)
+        else
+            dockNotice(reason); back()
+        end
+    end
+    local function customTarget(label, path, collection, old)
+        local ids = require("core/orbitui_libraries").copy(QA.getCustomQAList())
+        for _, id in ipairs(ids) do
+            local cfg = QA.getCustomQAConfig(id)
+            if (path and cfg.path == path) or (collection and cfg.collection == collection) then
+                return select(id, old)
+            end
+        end
+        local tabs = savedTabs(Config)
+        if not old and #tabs >= Config.effectiveMaxTabs() then
+            return dockSlotPicker(_("Replace a dock shortcut"), function(target)
+                customTarget(label, path, collection, target)
+            end, function() dockPicker(replace, back, done) end)
+        end
+        if old then
+            local found
+            for _, id in ipairs(tabs) do if id == old then found = true; break end end
+            if not found then dockNotice("changed"); return back() end
+        end
+        if #ids >= Config.MAX_CUSTOM_QA then
+            require("core/orbitui_context").notify(_("Your quick-action list is full."))
+            return back()
+        end
+        local id = QA.nextCustomQAId()
+        QA.saveCustomQAConfig(id, Config.sanitizeLabel(label) or label, path, collection)
+        ids[#ids + 1] = id
+        QA.saveCustomQAList(ids)
+        QA.invalidateCustomQACache()
+        return select(id, old)
+    end
+    local function pickFolder()
+        local picker = require("ui/widget/pathchooser"):new{
+            select_directory = true, select_file = false, show_files = false,
+            path = G_reader_settings:readSetting("home_dir") or "/",
+            onConfirm = function(path)
+                UI:close(panel)
+                if path ~= "/" then path = path:gsub("/+$", "") end
+                customTarget(path:match("([^/]+)$") or _("File browser"), path, nil, replace)
+            end,
+        }
+        UI:show(picker)
+    end
+    rows[1] = { title = _("Choose a folder…"), icon = "folder", action = pickFolder }
+    local collections = Config.getNonFavoritesCollections()
+    if #collections > 0 then
+        rows[#rows + 1] = { title = _("Choose a collection…"), icon = "collections_bookmark", action = function()
+            UI:close(panel)
+            local choices, picker = {}
+            for _, name in ipairs(collections) do
+                local collection = name
+                choices[#choices + 1] = { title = collection, action = function()
+                    UI:close(picker); customTarget(collection, nil, collection, replace)
+                end }
+            end
+            picker = require("lib/bookshelf_library_modal").showSheet{
+                title = _("Choose a collection…"), back = _("Add shortcut"), rows = choices,
+                on_back = function() UI:close(picker); dockPicker(replace, back, done) end,
+            }
+        end }
+    end
+    local function section(ids, label)
+        local group = _(label)
+        for _, id in ipairs(ids) do
+            if not seen[id] and not active[id] and available(id) then
+                local target = id
+                rows[#rows + 1] = { title = dockLabel(target), group = group, action = function()
+                    UI:close(panel); select(target, replace)
+                end }
+                group, seen[id] = nil, true
+            end
+        end
+    end
+    section({ "homescreen", M.bookshelf_action, "history", "collections", "home", "power", "sui_settings" }, "Common shortcuts")
+    local library_ids = {}
+    for _, profile in ipairs(profiles.list()) do library_ids[#library_ids + 1] = libraries.actionId(profile.key) end
+    section(library_ids, "Libraries")
+    section(Config.getCustomQAList(), "Your quick actions")
+    section(QA.allIds(), "More destinations")
+    panel = require("lib/bookshelf_library_modal").showSheet{
+        title = _(replace and "Replace shortcut" or "Add shortcut"),
+        back = _("Dock"), on_back = function() UI:close(panel); back() end, rows = rows,
+    }
+    return panel
+end
+
+function M.shortcutMenu(id, back)
+    local UI, Config = require("ui/uimanager"), require("infra/sui_config")
+    local dialog
+    local function edit() return M.editDock(back) end
+    local function button(label, action, enabled)
+        return {{ text = _(label), enabled = enabled ~= false, callback = function()
+            UI:close(dialog); action()
+        end }}
+    end
+    local function done() if back then edit() end end
+    local buttons = {
+        button("Add shortcut", function() dockPicker(nil, edit, done) end),
+        button("Replace shortcut", function() dockPicker(id, edit, done) end),
+        button("Remove from dock", function()
+            local ok, reason = M.setAction(id, false)
+            if not ok then dockNotice(reason) end
+            done()
+        end, #Config.loadTabConfig() > (Config.isNavpagerEnabled() and 1 or 2)),
+        button("Edit dock", edit),
+    }
+    if id == M.bookshelf_action then
+        buttons[#buttons + 1] = button("Library shortcut", function()
+            require("adapters/orbitui_settings").open("bookshelf_navigation", {
+                return_label = _("Dock"), return_to = function() M.shortcutMenu(id, back) end,
+            })
+        end)
+    elseif id == "bookshelf_prose" or id == "bookshelf_comics"
+            or require("adapters/orbitui_libraries").navigationProfile(id) then
+        buttons[#buttons + 1] = button("Open library start menu", function()
+            local plugin = require("core/orbitui_context").plugin("simpleui")
+            require("features/sui_quickactions").holdExecute(id, { plugin = plugin, fm = plugin and plugin.ui })
+        end)
+    end
+    buttons[#buttons + 1] = button("Cancel", done)
+    dialog = require("ui/widget/buttondialog"):new{
+        title = _("Dock") .. " · " .. dockLabel(id),
+        buttons = buttons,
+    }
+    dialog._sui_keep_homescreen = true
+    UI:show(dialog)
+    return dialog
+end
+
+function M.editDock(back)
+    local Config = require("infra/sui_config")
+    local Window = require("engines/sui_window")
+    local window
+    local function showPicker(old)
+        window:close()
+        local function reopen() M.editDock(back) end
+        return dockPicker(old, reopen, reopen)
+    end
+    local function chooseExistingDestination()
+        window:close()
+        return require("adapters/orbitui_settings").open("bookshelf_navigation", {
+            return_label = _("Dock"), return_to = function() return M.editDock(back) end,
+        })
+    end
+    window = Window:new{
+        name = "orbitui_dock_settings", icon = "settings", title = _("Edit dock"),
+        on_back = back, position = "bottom", auto_height = true,
+        screens = { __root__ = function(ctx)
+            local tabs, rows = Config.loadTabConfig(), {}
+            local can_remove = #tabs > (Config.isNavpagerEnabled() and 1 or 2)
+            for i, id in ipairs(tabs) do
+                local action = id
+                local function move(offset)
+                    return function() if M.moveAction(action, offset) then ctx.repaint() end end
+                end
+                rows[#rows + 1] = Window.ArrangeCard{
+                    inner_w = ctx.inner_w, title = dockLabel(action),
+                    on_move_up = i > 1 and move(-1) or nil,
+                    on_move_down = i < #tabs and move(1) or nil,
+                    on_delete = can_remove and function()
+                        local ok, reason = M.setAction(action, false)
+                        if ok then ctx.repaint() else dockNotice(reason) end
+                    end or nil,
+                    delete_icon = "remove", show_chevron = true, on_tap = function() showPicker(action) end,
+                }
+            end
+            if M.hasAction(M.bookshelf_action) then
+                rows[#rows + 1] = Window.ListRow{ inner_w = ctx.inner_w, title = _("Library shortcut"),
+                    subtitle = _("Choose where the library button leads."), show_chevron = true,
+                    on_tap = chooseExistingDestination }
+            end
+            return rows
+        end },
+        screen_footers = { __root__ = function(ctx)
+            return Window.CenteredButtonFooter(ctx, { text = _("Add shortcut"), on_tap = function() showPicker() end })
+        end },
+    }
+    window:show()
+    return window
+end
+
+function M.holdShortcut(id)
+    if id then return M.shortcutMenu(id) end
+    return M.editDock()
+end
+
+function M.menuItem(menu)
+    return { text = _("Edit dock"), keep_menu_open = true, callback = function()
+        M.editDock(menu and menu.refresh or nil)
+    end }
+end
+
+local function dockHoldEnabled()
+    return require("infra/sui_store"):nilOrTrue("simpleui_bar_settings_on_hold")
 end
 
 local function refreshShelf()
@@ -64,6 +373,11 @@ local function refreshShelf()
 end
 
 function M.bottombar(module)
+    module.orbitui_hold_shortcut = function(id)
+        if not dockHoldEnabled() then return false end
+        M.holdShortcut(id)
+        return true
+    end
     local rewrap = module.rewrapAllWidgets
     module.rewrapAllWidgets = function(plugin)
         rewrap(plugin)
@@ -72,6 +386,8 @@ function M.bottombar(module)
 end
 
 function M.widget(module)
+    module.orbitui_dock_hold_enabled = dockHoldEnabled
+    module.orbitui_dock_hold = function(_, id) M.holdShortcut(id) end
     module.orbitui_status_tap = function(self, ges)
         if self._expanded then return false end -- keep tap-to-restore behaviour
         local strip = self._hero_status_strip
@@ -394,7 +710,7 @@ function M.quickControlsItems(close)
             M.showQuickControls()
         end },
         { text = _("Tap status fields for quick controls"),
-            help_text = _("Optional on Home (SimpleUI) and Bookshelf. Tap a Home clock, battery, Wi-Fi or brightness field, or Bookshelf's status line. Existing long-press settings, custom gestures and full-screen return stay unchanged. You can also add the Quick controls action to your bar."),
+            help_text = _("Tap the clock, battery, Wi-Fi or brightness on Home, or the status line in Library. You can also add Quick controls to the dock."),
             checked_func = enabled, callback = function()
                 require("infra/sui_store"):saveSetting(QUICK_KEY, not enabled())
                 M.closeQuickControls()

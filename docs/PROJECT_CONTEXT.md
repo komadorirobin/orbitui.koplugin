@@ -22,6 +22,16 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-12
 
+### Navigation proposal
+
+The `design/unified-settings-dock` branch has an OrbitUI tab in KOReader’s
+top menu. Its settings routes use Home for the dashboard and cards, Library
+for shelves and library appearance, and Dock & interface for shortcuts and
+shared chrome. The file browser has its own appearance route. A long press on
+a dock item opens shortcut actions. The dock editor also reorders items and
+offers shortcuts to profiles, folders, collections and registered actions.
+Fresh setup uses Home, Library, History and Power. Saved docks are preserved.
+
 - **Current stable release 1.2.0.** Published 2026-11-12 at 12:43:24 UTC,
   release **442933886**, frozen source **5f1275918**, public ZIP **c68b6e56**.
   Stable and preview both offer 1.2.0. Public upgrades and recovery passed

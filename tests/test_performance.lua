@@ -218,7 +218,7 @@ H.test("performance and quick-guide menus are bilingual searchable read-only unt
     local opened, closed, original = nil, 0, Settings.open
     Settings.open = function(id) opened = id end
     Settings.quickStartItems(function() closed = closed + 1 end)[3].callback()
-    H.eq(opened, "bookshelf_navigation"); H.eq(closed, 1)
+    H.eq(opened, "dock"); H.eq(closed, 1)
     Settings.open = original
     local choices = Settings.performanceItems()[1].sub_item_table_func()
     choices[3].callback(); H.eq(Host.performanceMode(), "responsive")
