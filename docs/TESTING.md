@@ -25,9 +25,12 @@ BookOrbit progress guard was tested with the external Hardcover plugin at
 while metadata reads, local edition linking and explicit manual status
 actions remained available. No live account was used.
 
-Bigme ADB was unavailable. The spare Android emulator stalled while copying
-the ZIP to shared storage. Physical display behavior, device performance and
-the live BookOrbit-to-Hardcover progress round trip remain to be checked.
+The same runtime code later booted on the Bigme with all 2,000 files verified.
+The prior slot was retained for rollback. The live Hardcover and BookOrbit
+connections returned existing records for the same linked book, and the local
+BookOrbit progress guard was active. A newly written position through BookOrbit
+to Hardcover was outside this read-only check. An earlier Android emulator
+attempt stalled while copying the package to shared storage.
 Local evidence is under `test-results/bookshelf65-20261114/`.
 
 ## 2026-11-14 — OrbitUI settings and Bookshelf patches
