@@ -31,7 +31,11 @@ Touches verified More, Back and Pin reference after opening the selection
 menu with a fixture word, a single dictionary highlight with immediate close,
 footer colour, weight and bottom padding, and brightness steps at the upper
 end of the slider. The native reader-config method opened the panel; the
-ADB bottom-edge gestures used in this run did not open it reliably.
+follow-up ADB trace also verified real taps and north swipes reaching the
+native reader-config zones and opening the OrbitUI panel. Direct taps in
+the footer area were consumed by KOReader's native footer in both panel modes.
+A swipe from the extreme Android screen edge switched to the Android
+launcher without sending a gesture to KOReader.
 Syncery and HID shortcuts and the conflict checks ran with simulated plugin
 instances/discovery because those plugins were absent. Reading settings,
 history, collection and statistics files were restored byte for byte before
