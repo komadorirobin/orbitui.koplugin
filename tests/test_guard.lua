@@ -36,6 +36,12 @@ H.test("runtime UI markers still block after changing a disabled flag", function
     package.loaded.qui_utils = nil
     H.eq(#Guard.conflicts({ { name = "quickui", disabled = true } }), 0)
 end)
+H.test("Aleph and both ZenOS names are detected before startup", function()
+    local plugins = {{ name = "aleph" }, { name = "zen_ui" }, { name = "zenos" },
+        { name = "readingboard", onShowAleph = function() end }}
+    H.eq(table.concat(Guard.conflicts(plugins), ","), "aleph,zenos")
+    H.eq(#Guard.conflicts({ { name = "aleph", disabled = true } }), 0)
+end)
 H.test("discovery checks future plugins before their main.lua is loaded", function()
     package.loaded.pluginloader = {
         _discover = function() return { { name = "simpleui" } } end,

@@ -622,7 +622,9 @@ end
 -- cachedWalk). "" when no plugin adds a format, or the module is unavailable.
 _pluginFormatsFingerprint = function()
     local PF = _pluginFormats()
-    return PF and PF.fingerprint() or ""
+    local fingerprint = PF and PF.fingerprint() or ""
+    if Repo.orbitui_cb7_reader and Repo.orbitui_cb7_reader() then return fingerprint .. "|cb7" end
+    return fingerprint
 end
 end
 
@@ -642,7 +644,8 @@ _supportedExt = function(name)
         if not compound then return nil end
         return (SUPPORTED_EXT[compound] or _isPluginFormat(compound)) and compound or nil
     end
-    return (SUPPORTED_EXT[last] or _isPluginFormat(last)) and last or nil
+    return (SUPPORTED_EXT[last] or (last == "cb7" and Repo.orbitui_cb7_reader and Repo.orbitui_cb7_reader())
+        or _isPluginFormat(last)) and last or nil
 end
 
 -- Public wrapper so other modules (file-ops' unbounded folder walk) can ask
@@ -660,7 +663,7 @@ end
 -- one on its own (see the extraction kickoff in bookshelf_widget).
 function Repo.isPluginFormatFile(path)
     local ext = _supportedExt(path)
-    return ext ~= nil and not SUPPORTED_EXT[ext]
+    return ext ~= nil and not SUPPORTED_EXT[ext] and _isPluginFormat(ext)
 end
 end
 
@@ -1501,6 +1504,7 @@ function Repo.buildBookMeta(filepath, opts)
     if not info then
         info = _bimGetBookInfo(bim, filepath, want_cover) or {}
     end
+    if Repo.orbitui_comic_metadata then info = Repo.orbitui_comic_metadata(filepath, info) end
     -- Sticky-record cache. BIM's getBookInfo SELECT has a "WHERE
     -- in_progress=0" guard, so a row that's mid-extraction returns
     -- nil. Without this fallback, every cover-only re-extraction
@@ -1775,6 +1779,7 @@ end
 -- Host tag discovery supplies text-only cached BIM rows. Preserve the native
 -- custom/Calibre/BIM precedence without EPUB repair, enrichment or covers.
 function Repo.tagTextMeta(filepath, info)
+    if Repo.orbitui_comic_metadata then info = Repo.orbitui_comic_metadata(filepath, info) end
     local text = _resolveTextMeta(filepath, _calibreMetadataFor(filepath), info,
         _customPropsFor(filepath), true)
     text.filepath = filepath
@@ -1783,6 +1788,7 @@ end
 
 local function _buildLightMetaFromInfo(fp, info)
     info = info or {}
+    if Repo.orbitui_comic_metadata then info = Repo.orbitui_comic_metadata(fp, info) end
     local cb = _calibreMetadataFor(fp)
     local cp = _customPropsFor(fp)
 
@@ -3952,9 +3958,14 @@ cachedWalk = function(home, depth, work)
                 files_changed = true
             else
                 local old_set = {}
-                for i = 1, #entry.list do old_set[entry.list[i].fp] = true end
+                for i = 1, #entry.list do old_set[entry.list[i].fp] = entry.list[i] end
                 for i = 1, #fresh do
-                    if not old_set[fresh[i].fp] then files_changed = true; break end
+                    local current = fresh[i]
+                    local previous = old_set[current.fp]
+                    if not previous or (Repo.orbitui_comic_metadata and current.fp:lower():match("%.cb[zr7t]$")
+                            and (previous.mtime ~= current.mtime or previous.size ~= current.size)) then
+                        files_changed = true; break
+                    end
                 end
             end
         end

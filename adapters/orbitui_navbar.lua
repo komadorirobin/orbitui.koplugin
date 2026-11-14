@@ -549,6 +549,7 @@ local function lightControls(dialog, width, current)
             gap = scale(6), name_face = Font:getFace("smallinfofont"), name_bold = true }
         local controls = Slider.stepControls({ minus = function() commit(value - 1) end,
             plus = function() commit(value + 1) end }, scale)
+        controls.gap = (controls.gap or 0) + scale(4)
         slider = Slider:new{ width = Slider.barWidth(width, controls), height = controls.height,
             min = min, max = max, value = value, face = Font:getFace("smallinfofont"),
             on_change = commit, on_release = function()

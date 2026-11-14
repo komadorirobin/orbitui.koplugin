@@ -135,10 +135,34 @@ end)
 H.test("text selection stores xpointer/excerpt without creating a highlight", function()
     fixture(); P.attach(reader)
     reader.highlight.selected_text = { text = "a selected passage", pos0 = "xp:42" }
-    local fn = reader.highlight._highlight_buttons.zz_orbitui_pin_reference
+    local fn = reader.highlight._highlight_buttons["02_orbitui_pin_reference"]
     fn(reader.highlight).callback()
     H.eq(saved[key].entries[1].kind, "text"); H.eq(saved[key].entries[1].location, "xp:42")
     local w = P.show(reader); H.eq(w.preview[1].text, "a selected passage"); H.eq(#pending, 0); H.eq(#jumps, 0)
+end)
+H.test("native highlight menu can expand and go back without replacing registered actions", function()
+    fixture()
+    local h = reader.highlight
+    h.selected_text = { text = "passage", pos0 = "xp:42" }
+    local native = { ["02_highlight"] = function() return {} end, addon = function() return {} end }
+    h._highlight_buttons = native
+    local visible
+    local function show(this)
+        visible = {}
+        for id, spec in pairs(this._highlight_buttons) do visible[id] = spec() end
+    end
+    h.onShowHighlightMenu = show
+    P.attach(reader)
+    h:onShowHighlightMenu()
+    assert(visible["02_orbitui_pin_reference"])
+    H.eq(visible.addon, nil)
+    visible.zz_orbitui_highlight_more.callback()
+    assert(visible.addon)
+    visible["00_orbitui_highlight_back"].callback()
+    H.eq(visible.addon, nil)
+    H.eq(h._highlight_buttons, native)
+    P.retire(reader, true)
+    H.eq(h.onShowHighlightMenu, show)
 end)
 H.test("long UTF8 excerpts are cut at character boundaries", function()
     fixture(); assert(P.pin(reader, string.rep("å", 3000)))
@@ -279,9 +303,9 @@ H.test("later external image/highlight wrappers survive cleanup with ours inert"
     local external = function(this, ...) return ours(this, ...) end
     reader.highlight.onHold = external
     local external_button = function() end
-    reader.highlight._highlight_buttons.zz_orbitui_pin_reference = external_button
+    reader.highlight._highlight_buttons["02_orbitui_pin_reference"] = external_button
     P.retire(reader, true); H.eq(reader.highlight.onHold, external)
-    H.eq(reader.highlight._highlight_buttons.zz_orbitui_pin_reference, external_button)
+    H.eq(reader.highlight._highlight_buttons["02_orbitui_pin_reference"], external_button)
     external(reader.highlight, nil, nil); H.eq(native_holds, 1)
 end)
 H.test("sleep, rotation, reflow and reader close retire callbacks, owned windows and arm", function()
@@ -346,9 +370,9 @@ if native_dir then
         reader.highlight.addToHighlightDialog = Highlight.addToHighlightDialog
         reader.highlight.removeFromHighlightDialog = Highlight.removeFromHighlightDialog
         reader.highlight._highlight_buttons.original = function() end
-        P.attach(reader); assert(reader.highlight._highlight_buttons.zz_orbitui_pin_reference)
+        P.attach(reader); assert(reader.highlight._highlight_buttons["02_orbitui_pin_reference"])
         P.retire(reader, true); assert(reader.highlight._highlight_buttons.original)
-        H.eq(reader.highlight._highlight_buttons.zz_orbitui_pin_reference, nil)
+        H.eq(reader.highlight._highlight_buttons["02_orbitui_pin_reference"], nil)
     end)
     H.test("native thumbnail cache callback and cancellation protocol is compatible", function()
         fixture(); P.pin(reader)

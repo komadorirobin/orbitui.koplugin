@@ -342,4 +342,22 @@ H.test("history is paged without losing full queries and old controls become ine
     H.eq(modal.search_query, "Query 5")
     H.eq(UI:getTopmostVisibleWidget(), modal)
 end)
+H.test("repeated searches reuse book text and immediately pick up changed metadata", function()
+    local lower, calls = Search.lower, 0
+    Search.lower = function(text) calls = calls + 1; return lower(text) end
+    local book = { filepath = "/comics/cache.cbz", title = "Björk", authors = { "Svensson" }, genres = { "Manga" } }
+    local first = Search.matcher("manga", false)
+    local before = calls
+    H.eq(first(book), 0); H.eq(calls, before + 1)
+    local second = Search.matcher("björk", false)
+    before = calls
+    H.eq(second(book), 0); H.eq(calls, before)
+    book.genres[1] = "Mystery"
+    H.eq(first(book), nil)
+    H.eq(Search.matcher("mystery", false)(book), 0)
+    H.eq(Search.matcher("mystery", false)(book, nil, true), nil)
+    book.title = "Ny titel"
+    H.eq(second(book), nil)
+    Search.lower = lower
+end)
 H.finish()

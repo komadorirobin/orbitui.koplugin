@@ -1,17 +1,18 @@
 local M = {}
 local incompatible = {
-    projecttitle = true, zenos = true, burrow = true, quickui = true,
+    projecttitle = true, zenos = true, zen_ui = true, aleph = true, burrow = true, quickui = true,
     ["zzz-readermenuredesign"] = true,
 }
 local sentinels = {
     ptutil = "projecttitle", ["common/zen_logger"] = "zenos",
     burrow_util = "burrow", qui_utils = "quickui",
-    readermenuredesign_installer = "zzz-readermenuredesign",
+    readermenuredesign_installer = "zzz-readermenuredesign", aleph_opening = "aleph",
 }
 
 local function legacyName(plugin)
     local name = tostring(plugin.name or ""):lower()
-    if incompatible[name] then return name end
+    if incompatible[name] then return name == "zen_ui" and "zenos" or name end
+    if type(plugin.onShowAleph) == "function" then return "aleph" end
     if name:find("bookshelf", 1, true) or name:find("simpleui", 1, true) then
         return name
     end

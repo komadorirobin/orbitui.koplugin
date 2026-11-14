@@ -343,22 +343,48 @@ function M.typosEnabled()
     local settings = store()
     return not settings or settings:get(TYPOS) ~= false
 end
+
+-- Reuse the expensive Unicode transformations between queries. Compare the
+-- source text on every use, so a replacement or in-place metadata edit always
+-- takes effect, even when the native repository keeps the book's path.
+local search_text, search_text_count = {}, 0
+local function searchable(book, skip_genres)
+    local name = author(book)
+    local tags = not skip_genres and table.concat(book.genres or {}, " ") or ""
+    local title, series, filename = book.title or "", book.series_name or book.series or "", book.filename or ""
+    local path = book.filepath
+    local entry = path and search_text[path]
+    if entry and entry.title == title and entry.author == name and entry.series == series
+            and entry.filename == filename and entry.tags == tags then
+        return entry
+    end
+    local raw = table.concat({ title, name, series, filename }, " ")
+    if tags ~= "" then raw = raw .. " " .. tags end
+    entry = { title = title, author = name, series = series, filename = filename, tags = tags, raw = M.lower(raw) }
+    if type(path) == "string" and #path <= 4096 and #raw <= 512 then
+        if not search_text[path] then
+            if search_text_count >= 8192 then search_text, search_text_count = {}, 0 end
+            search_text_count = search_text_count + 1
+        end
+        search_text[path] = entry
+    end
+    return entry
+end
+
 function M.matcher(query, forgiving)
     local raw_words, words = {}, {}
     for word in M.lower(query):gmatch("%S+") do raw_words[#raw_words + 1] = word end
     for word in M.normalize(query):gmatch("%S+") do words[#words + 1] = { text = word, chars = characters(word, 65) } end
     local memo, memo_size = {}, 0
     return function(book, _native_words, skip_genres)
-        local parts = { book.title or "", author(book), book.series_name or book.series or "", book.filename or "" }
-        if not skip_genres then
-            for _, genre in ipairs(book.genres or {}) do parts[#parts + 1] = genre end
-        end
-        local raw = M.lower(table.concat(parts, " "))
+        local entry = searchable(book, skip_genres)
+        local raw = entry.raw
         local exact = true
         for _, word in ipairs(raw_words) do if not raw:find(word, 1, true) then exact = false; break end end
         if exact then return 0 end
         if not forgiving or #words == 0 then return end
-        local normalized, tokens = M.normalize(raw), nil
+        entry.normalized = entry.normalized or M.normalize(raw)
+        local normalized, tokens = entry.normalized, nil
         local edits = 0
         for _, word in ipairs(words) do
             if not normalized:find(word.text, 1, true) then

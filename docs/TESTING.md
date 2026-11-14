@@ -1,5 +1,25 @@
 # Verification and device acceptance
 
+## 2026-11-14 — Aleph 1.1-inspired refinements
+
+ComicInfo supplies archive metadata before the usual KOReader custom
+and Calibre overrides. Fixture archives exercised deflated CBZ, stored RAR
+(CBR), stored 7-Zip (CB7) and TAR (CBT) on the emulated Kobo's KOReader runtime.
+Its archive library cannot decode the tested LZMA-compressed CB7. Missing or
+unreadable metadata falls back to existing fields. Opening a CB7 also requires
+a registered document provider. The ZIP parser additionally passed stored and
+deflated CBZ checks using host LuaJIT.
+
+The 3,341-book matcher fixture transforms every book once, then makes zero
+book-text lowercase calls for the next two exact queries with the same input.
+Tests cover changed tags and titles, disabled integrations and stale shortcuts,
+selection menu navigation, dictionary save and footer settings. The reader
+panel and pin suites also passed with native modules from the emulator's
+KOReader build. The footer controls use KOReader's bottom status bar.
+Optional third-party device actions
+are exercised with test doubles. Physical-reader appearance and timings remain
+to be checked.
+
 ## 2026-11-13 — OrbitUI 1.3.0 promotion
 
 The executable files and runtime assets match the published beta.1 and

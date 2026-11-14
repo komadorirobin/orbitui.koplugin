@@ -22,6 +22,14 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-13
 
+- **Aleph 1.1-inspired refinements, local.** ComicInfo feeds OrbitUI's
+  existing library metadata resolution and respects KOReader custom fields
+  and Calibre metadata. Search reuses normalized book text with field checks
+  on every query. The UI guard recognizes Aleph and both ZenOS names. The
+  reader adds a compact text-selection menu, dictionary highlight feedback,
+  optional Syncery and Bluetooth HID actions, and native footer controls.
+  Physical-reader verification is pending. See TESTING for format scope.
+
 ### Navigation in 1.3.0
 
 GitHub Latest and both updater channels offer stable **1.3.0** from

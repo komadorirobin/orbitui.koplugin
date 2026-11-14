@@ -4317,6 +4317,11 @@ end
 -- the widget forces softRefresh down the heavy path on next return.
 function Bookshelf:onBookMetadataChanged(prop_updated)
     local Repo = require("lib/bookshelf_book_repository")
+    if self._orbitui_owned and (type(prop_updated) == "table" or prop_updated == "title"
+            or prop_updated == "authors" or prop_updated == "series" or prop_updated == "series_index"
+            or prop_updated == "keywords" or prop_updated == "description" or prop_updated == "language") then
+        Repo.invalidateLightMeta()
+    end
     -- Progress cache also stores summary.status -- drop the whole map.
     -- The event doesn't carry the filepath, so we can't be surgical.
     if Repo.invalidateProgressCache then

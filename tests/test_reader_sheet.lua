@@ -78,6 +78,10 @@ local function fixture(sw, sh, scale, lang, tab, count)
     spec("tools", "Tools", selected ~= "tools"); spec("ongoing", "Also reading", selected ~= "ongoing")
     for _, id in ipairs{ "toc", "bookmark", "search", "bookinfo", "pins", "gotopage", "config", "close", "library" } do spec(id) end
     spec("reader_ai", "X-Ray · KOAssistant")
+    spec("reader_footer", "Reader status bar")
+    spec("reader_hid", lang == "sv" and "Bluetooth · På" or "Bluetooth · On")
+    spec("reader_sync", lang == "sv" and "Synka nu" or "Sync now")
+    spec("reader_sync_progress", lang == "sv" and "Läspositioner i Syncery" or "Syncery progress")
     local books = {}
     for i = 1, count or 12 do
         local b = { file = "/books/" .. i .. ".epub", title = "The Long Library Book: Volume " .. i, author = "A test author", percent = i / 100 }

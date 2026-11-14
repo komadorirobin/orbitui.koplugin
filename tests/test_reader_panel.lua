@@ -424,5 +424,64 @@ if native_dir then
         package.loaded["ui/widget/buttondialog"], package.loaded["ui/widget/confirmbox"] = W, W
     end)
 end
+H.test("optional shortcuts only invoke the active native plugins after closing the panel", function()
+    fixture()
+    local function hit(id) return function(p)
+        H.eq(p.ui, reader); H.eq(top(), reader); calls[#calls + 1] = { id }
+    end end
+    reader.syncery = { ui = reader, syncNow = hit("sync"), onSynceryProgressBrowser = hit("progress") }
+    reader.hidpassthrough = { ui = reader, onHIDPassthroughToggle = hit("hid") }
+    Tools.show(reader); find("reader_sync").callback(); H.eq(calls[1][1], "sync")
+    Tools.show(reader); find("reader_sync_progress").callback(); H.eq(calls[2][1], "progress")
+    Tools.show(reader); find("reader_hid").callback(); H.eq(calls[3][1], "hid")
+    Tools.show(reader); local old = find("reader_sync")
+    reader.syncery.disabled = true; old.callback(); H.eq(#calls, 3)
+    Tools.show(reader); H.eq(top():getButtonById("reader_sync"), nil)
+end)
+H.test("dictionary highlight saves once via native close and detaches with its reader", function()
+    fixture()
+    local saved, closed = 0, 0
+    local button = { callback = function() saved = saved + 1; reader.dictionary.dict_window.save_highlight = true end }
+    local window = { ui = reader, highlight = {}, button_table = { getButtonById = function(_, id)
+        if id == "highlight" then return button end
+    end }, onClose = function(this) closed = closed + 1; UI:close(this) end }
+    local show = function(this) this.dict_window = window; UI:show(window); return "native" end
+    reader.dictionary = { showDict = show }
+    Panel.attachDictionary(reader)
+    H.eq(reader.dictionary:showDict(), "native")
+    button.callback(); button.callback()
+    H.eq(saved, 1); H.eq(closed, 1)
+    Panel.readerToolsEvent("onCloseDocument", reader)
+    H.eq(reader.dictionary.showDict, show)
+end)
+H.test("status-bar choices alter only native typography and margin or the OrbitUI ink", function()
+    fixture()
+    local old_save, old_read = G_reader_settings.saveSetting, G_reader_settings.readSetting
+    local saved, refreshed = {}, 0
+    G_reader_settings.saveSetting = function(_, key, value) saved[key] = value end
+    G_reader_settings.readSetting = function(this, key, default) return saved[key] or old_read(this, key, default) end
+    package.loaded["ffi/blitbuffer"] = { colorFromString = function(s) return s end }
+    local native = function(this) this.footer_text = {} end
+    local foot = { updateFooterFont = native, footer_text = {},
+        settings = { container_bottom_padding = 2, unrelated = true }, default_settings = { container_bottom_padding = 1 },
+        refreshFooter = function() refreshed = refreshed + 1 end }
+    local spin = package.loaded["ui/widget/spinwidget"]
+    package.loaded["ui/widget/spinwidget"] = W
+    reader.view = { footer = foot }
+    Panel.attachFooter(reader)
+    Tools.show(reader); find("reader_footer").callback()
+    top().buttons[1][2].callback(); H.eq(foot.footer_text.fgcolor, "#555555")
+    foot:updateFooterFont(); H.eq(foot.footer_text.fgcolor, "#555555")
+    Tools.show(reader); find("reader_footer").callback()
+    top().buttons[3][2].callback()
+    H.eq(saved.footer.text_font_bold, true); H.eq(saved.footer.unrelated, true)
+    Tools.show(reader); find("reader_footer").callback(); top().buttons[4][1].callback()
+    local picker = top(); UI:close(picker); picker.callback({ value = 7 })
+    H.eq(foot.bottom_padding, 7); H.eq(saved.footer.container_bottom_padding, 7)
+    H.eq(refreshed, 3)
+    Panel.readerToolsEvent("onCloseDocument", reader); H.eq(foot.updateFooterFont, native)
+    G_reader_settings.saveSetting, G_reader_settings.readSetting = old_save, old_read
+    package.loaded["ui/widget/spinwidget"] = spin
+end)
 Tools.retire(reader)
 H.finish()

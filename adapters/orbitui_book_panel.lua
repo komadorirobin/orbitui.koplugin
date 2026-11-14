@@ -90,10 +90,11 @@ function M.tagSections(owner, book, modal, cached)
     local Integration = require("adapters/orbitui_integrations")
     local UI = require("ui/uimanager")
     if not modal then return {} end
+    local comic = type(book.filepath) == "string" and book.filepath:lower():match("%.cb[zr7t]$")
     local state = tag_states[modal]
     if not state then
         state = { navigation = UI._simpleui_navigation_generation }
-        if cached then
+        if cached and not comic then
             -- One validated per-file cache peek, never an EPUB read/index job.
             state.embedded = { tags = Integration.embeddedTags(book.filepath, false, true, true) }
         end
@@ -141,6 +142,23 @@ function M.tagSections(owner, book, modal, cached)
     local remote = { title = _("BookOrbit tags (optional online source)"), pills = pills,
         note = state.error or (state.tags and #state.tags == 0 and _("No BookOrbit tags for this book."))
             or _("Tap a tag to find linked books on this device, across all library profiles. Tags are read-only; nothing is synced or edited.") }
+    if comic then
+        local comic_pills = {}
+        for _, tag in ipairs(book.genres or {}) do
+            local label = tag
+            comic_pills[#comic_pills + 1] = { label = label, on_tap = function()
+                if not current() or state.render ~= render then return end
+                modal:onClose()
+                require("core/orbitui_search").results(label, "all", nil, {
+                    open_book = function(file, record) owner:_openBook(record or { filepath = file }) end,
+                })
+            end }
+        end
+        local sections = { { title = _("Comic tags"), pills = comic_pills, loaded = true,
+            note = _("No tags for this comic.") } }
+        if Integration.bookOrbitEnabled("tags") then sections[#sections + 1] = remote end
+        return sections
+    end
     local local_state = state.embedded
     if not local_state then local_state = {}; state.embedded = local_state end
     local local_pills = {}
@@ -585,7 +603,7 @@ function M.bookPage(owner, record, options, classic)
         if description ~= "" then body[#body + 1] = space(6); body[#body + 1] = rowButton("description", _("Full description"), "description") end
         body[#body + 1] = space(22)
         for section_i, section in ipairs(M.tagSections(owner, book, self, true)) do
-            local source = section_i == 1 and _("From EPUB") or _("Optional")
+            local source = section_i == 1 and (section.title == _("Comic tags") and section.title or _("From EPUB")) or _("Optional")
             if section_i == 1 then
                 body[#body + 1] = text(source, 12, false, w, nil, muted, "right")
             else
@@ -871,7 +889,7 @@ function M.readerPins()
     local _ = require("core/orbitui_i18n")
     local UI = require("ui/uimanager")
     local states = setmetatable({}, { __mode = "k" })
-    local KEY, BUTTON, LIMIT = "orbitui_reader_pins", "zz_orbitui_pin_reference", 12
+    local KEY, BUTTON, MORE, LIMIT = "orbitui_reader_pins", "02_orbitui_pin_reference", "zz_orbitui_highlight_more", 12
     local function notify(text) Context.notify(_(text)) end
     local function integer(n, max)
         return type(n) == "number" and n >= 1 and n <= (max or 1e9) and n == math.floor(n)
@@ -1000,6 +1018,9 @@ function M.readerPins()
             local h = ui.highlight
             if h and h._highlight_buttons and h._highlight_buttons[BUTTON] == s.button then
                 h:removeFromHighlightDialog(BUTTON)
+            end
+            if h and s.menu_wrapper and h.onShowHighlightMenu == s.menu_wrapper then
+                h.onShowHighlightMenu = s.menu_original
             end
             states[ui] = nil
         end
@@ -1137,12 +1158,42 @@ function M.readerPins()
                     local selected = this.selected_text
                     if not selected or not short(selected.text, 65536) then return end
                     local loc = s.ui.rolling and type(selected.pos0) == "string" and selected.pos0 or nil
-                    P.pin(ui, selected.text, loc)
+                    if not P.pin(ui, selected.text, loc) then return end
                     if this.highlight_dialog then UI:close(this.highlight_dialog); this.highlight_dialog = nil end
                     this:clear()
                 end }
             end
             h:addToHighlightDialog(BUTTON, s.button)
+            if h._highlight_buttons["02_highlight"] and type(h.onShowHighlightMenu) == "function"
+                    and not h._highlight_buttons[MORE] then
+                local native = h.onShowHighlightMenu
+                s.menu_original = rawget(h, "onShowHighlightMenu")
+                local primary = { ["01_select"] = true, ["02_highlight"] = true, [BUTTON] = true,
+                    ["03_copy"] = true, ["04_add_note"] = true, ["06_dictionary"] = true }
+                local show
+                show = function(this, index, expanded)
+                    if not live(s) or not this.selected_text then return native(this, index) end
+                    local all = this._highlight_buttons
+                    local subset = {}
+                    for id, spec in pairs(all) do
+                        if id ~= MORE and (expanded or primary[id]) then subset[id] = spec end
+                    end
+                    subset[expanded and "00_orbitui_highlight_back" or MORE] = function()
+                        return { text = expanded and _("Back") or _("More…"), callback = function()
+                            if not live(s) or not this.selected_text then return end
+                            if this.highlight_dialog then UI:close(this.highlight_dialog); this.highlight_dialog = nil end
+                            show(this, index, not expanded)
+                        end }
+                    end
+                    this._highlight_buttons = subset
+                    local ok, value = pcall(native, this, index)
+                    this._highlight_buttons = all
+                    if not ok then error(value, 0) end
+                    return value
+                end
+                s.menu_wrapper = show
+                h.onShowHighlightMenu = show
+            end
         end
         return s
     end
@@ -1342,6 +1393,17 @@ local function readerCallable(fn)
     local mt = type(fn) == "table" and getmetatable(fn)
     return type(fn) == "function" or type(mt) == "table" and type(mt.__call) == "function"
 end
+local function readerPlugin(ui, name)
+    local plugin = rawget(ui, name)
+    local loader = package.loaded.pluginloader
+    if not plugin and loader and readerCallable(loader.getPluginInstance) then
+        local ok, found = pcall(loader.getPluginInstance, loader, name)
+        if ok then plugin = found end
+    end
+    if type(plugin) == "table" and plugin.ui == ui and plugin.disabled ~= true and plugin._disabled ~= true then
+        return plugin
+    end
+end
 -- KOReader dispatches touches through toast overlays to the foreground panel.
 local function readerForeground(UI, below)
     if UI.topdown_widgets_iter then
@@ -1362,13 +1424,8 @@ function M.readerAI(ui)
     local choice = M.readerAIChoice()
     if choice == "off" or not ui or not ui.document then return end
     local function find(name)
-        local p = rawget(ui, name)
-        local loader = package.loaded.pluginloader
-        if not p and loader and readerCallable(loader.getPluginInstance) then
-            local ok, found = pcall(loader.getPluginInstance, loader, name)
-            if ok then p = found end
-        end
-        if type(p) ~= "table" or p.ui ~= ui or p.disabled == true or p._disabled == true then return end
+        local p = readerPlugin(ui, name)
+        if not p then return end
         if name == "xray" and readerCallable(p.showFullXRayMenu) then return p end
         if name == "koassistant" and readerCallable(p.showCacheActionPopup) and readerCallable(p.executeBookLevelAction)
                 and type(p.action_service) == "table" and readerCallable(p.action_service.getAction) then return p end
@@ -1378,6 +1435,79 @@ function M.readerAI(ui)
         if p then return { id = name, label = name == "xray" and "X-Ray" or "X-Ray · KOAssistant", plugin = p } end
     end
     if choice ~= "auto" then return { id = choice, label = reader_ai_labels[choice], unavailable = true } end
+end
+
+local reader_shortcuts = {
+    { "reader_hid", "hidpassthrough", "Bluetooth", { "onHIDPassthroughToggle", "toggle" } },
+    { "reader_sync", "syncery", "Sync now", { "syncNow" } },
+    { "reader_sync_progress", "syncery", "Syncery progress", { "onSynceryProgressBrowser" } },
+}
+local function shortcut(ui, spec)
+    local plugin = readerPlugin(ui, spec[2])
+    if plugin then
+        for _, method in ipairs(spec[4]) do
+            if readerCallable(plugin[method]) then return plugin, plugin[method] end
+        end
+    end
+end
+
+local function shortcutLabel(plugin, spec)
+    local _ = require("core/orbitui_i18n")
+    local text = _(spec[3])
+    if spec[1] == "reader_hid" and readerCallable(plugin.isRunning) then
+        local ok, running = pcall(plugin.isRunning, plugin)
+        if ok then text = text .. " · " .. (running and _("On") or _("Off")) end
+    end
+    return text
+end
+
+local function readerComicProps(file, base)
+    if not file:lower():match("%.cb[zr7t]$") then return base end
+    local Providers = require("features/library/sui_metadata_providers")
+    local info = Providers.mergeComicInfo(file, base)
+    if info == base then return base end
+    local BookInfo = require("apps/filemanager/filemanagerbookinfo")
+    local props = BookInfo.extendProps(info, file)
+    props.display_title = props.title or info.title
+    return props
+end
+
+-- Scope the dictionary change to a shown lookup in this reader, including
+-- older KOReader releases whose button specifications are local to init().
+local reader_dictionary, dictionary_buttons = setmetatable({}, { __mode = "k" }), setmetatable({}, { __mode = "k" })
+function M.attachDictionary(ui)
+    local dictionary = ui.dictionary
+    if not dictionary or reader_dictionary[ui] or not readerCallable(dictionary.showDict) then return end
+    local original = rawget(dictionary, "showDict")
+    local show = dictionary.showDict
+    local UI = require("ui/uimanager")
+    local wrapper = function(this, ...)
+        local result = show(this, ...)
+        local window = this.dict_window
+        if not window or window.ui ~= ui or not window.highlight or not window.button_table
+                or not window.onClose or not UI:isWidgetShown(window) then return result end
+        local button = window.button_table:getButtonById("highlight")
+        if not button or not readerCallable(button.callback) or dictionary_buttons[button] then return result end
+        local callback = button.callback
+        local function save()
+            if not reader_dictionary[ui] then return callback() end
+            if not UI:isWidgetShown(window) or not ui.document then return end
+            if not window.save_highlight then callback() end
+            if window.save_highlight then window:onClose() end
+        end
+        dictionary_buttons[button] = true
+        button.callback = save
+        return result
+    end
+    reader_dictionary[ui] = { dictionary = dictionary, original = original, wrapper = wrapper }
+    dictionary.showDict = wrapper
+end
+
+local function detachDictionary(ui)
+    local state = ui and reader_dictionary[ui]
+    if not state then return end
+    if state.dictionary.showDict == state.wrapper then state.dictionary.showDict = state.original end
+    reader_dictionary[ui] = nil
 end
 function M.openReaderAI(ui, selected)
     local current = M.readerAI(ui)
@@ -1415,6 +1545,115 @@ function M.readerAIItems(changed)
 end
 
 local reader_bottom_key = "orbitui_reader_bottom_panel"
+local footer_color_key = "orbitui_reader_footer_color"
+local footer_hooks = setmetatable({}, { __mode = "k" })
+local function footerApply(footer)
+    if not footer.footer_text then return end
+    local color = G_reader_settings and G_reader_settings:readSetting(footer_color_key)
+    if type(color) ~= "string" or not color:match("^#%x%x%x%x%x%x$") then return end
+    local BB = require("ffi/blitbuffer")
+    local ink = BB.colorFromString(color)
+    local Screen = require("device").screen
+    if ink and Screen.isColorEnabled and not Screen:isColorEnabled() then ink = ink:getColor8() end
+    if ink then footer.footer_text.fgcolor = ink end
+end
+
+function M.attachFooter(ui)
+    local footer = ui.view and ui.view.footer
+    if not footer or not readerCallable(footer.updateFooterFont) or footer_hooks[ui] then return end
+    local native = footer.updateFooterFont
+    local hook = function(this, ...)
+        native(this, ...)
+        footerApply(this)
+    end
+    footer_hooks[ui] = { footer = footer, hook = hook, original = rawget(footer, "updateFooterFont") }
+    footer.updateFooterFont = hook
+    footerApply(footer)
+end
+
+local function detachFooter(ui)
+    local state = ui and footer_hooks[ui]
+    if not state then return end
+    if state.footer.updateFooterFont == state.hook then state.footer.updateFooterFont = state.original end
+    footer_hooks[ui] = nil
+end
+
+local function footerForOptions(ui)
+    local footer = ui.view and ui.view.footer
+    if footer and footer.footer_text and footer.settings and footer.default_settings
+            and readerCallable(footer.refreshFooter) and readerCallable(footer.updateFooterFont) then return footer end
+end
+local function footerOptions(ui)
+    local footer = footerForOptions(ui)
+    if not footer or not G_reader_settings then return end
+    local UI, Screen = require("ui/uimanager"), require("device").screen
+    local _ = require("core/orbitui_i18n")
+    local R = package.loaded["apps/reader/readerui"]
+    local document = ui.document
+    local function live()
+        return R and R.instance == ui and ui.document == document and ui.view and ui.view.footer == footer
+    end
+    local dialog
+    local function apply(key, value)
+        if not live() then return end
+        -- Use the same settings and methods as KOReader's status-bar menu.
+        local settings = {}
+        for name, current in pairs(footer.settings) do settings[name] = current end
+        settings[key] = value
+        footer.settings = settings
+        G_reader_settings:saveSetting("footer", settings)
+        if key == "container_bottom_padding" then footer.bottom_padding = Screen:scaleBySize(value)
+        else footer:updateFooterFont() end
+        footer:refreshFooter(true, true)
+    end
+    local colors = {}
+    local function setColor(value)
+        if not live() then return end
+        G_reader_settings:saveSetting(footer_color_key, value)
+        footer:updateFooterFont()
+        footerApply(footer)
+        footer:refreshFooter(true, false)
+    end
+    for _i, choice in ipairs{ { "Light gray", "#777777" }, { "Gray", "#555555" }, { "Black", "#000000" } } do
+        local label, color = choice[1], choice[2]
+        colors[#colors + 1] = { text = _(label), callback = function() UI:close(dialog); setColor(color) end }
+    end
+    local custom = { text = _("Default"), callback = function() UI:close(dialog); setColor(nil) end }
+    local color_row = { custom }
+    if Screen.isColorEnabled and Screen:isColorEnabled() then
+        color_row[#color_row + 1] = { text = _("Custom colour…"), callback = function()
+            UI:close(dialog)
+            local input
+            input = require("ui/widget/inputdialog"):new{
+                title = _("Status bar colour (#RRGGBB)"), input = G_reader_settings:readSetting(footer_color_key) or "#000000",
+                buttons = {{{ text = _("Cancel"), callback = function() UI:close(input) end },
+                    { text = _("Apply"), callback = function()
+                        local hex = input:getInputText()
+                        local r, g, b = tostring(hex):match("^#(%x%x)(%x%x)(%x%x)$")
+                        if not r or .2126 * tonumber(r, 16) + .7152 * tonumber(g, 16) + .0722 * tonumber(b, 16) > 127 then
+                            Context.notify(_("Choose a darker colour in #RRGGBB format.")); return
+                        end
+                        UI:close(input); setColor(hex)
+                    end }}},
+            }
+            UI:show(input); input:onShowKeyboard()
+        end }
+    end
+    dialog = require("ui/widget/buttondialog"):new{ title = _("Reader status bar"), buttons = {
+        colors, color_row,
+        {{ text = _("Regular"), callback = function() UI:close(dialog); apply("text_font_bold", false) end },
+         { text = _("Bold"), callback = function() UI:close(dialog); apply("text_font_bold", true) end }},
+        {{ text = _("Distance from bottom…"), callback = function()
+            UI:close(dialog)
+            UI:show(require("ui/widget/spinwidget"):new{ title_text = _("Distance from bottom"),
+                value = footer.settings.container_bottom_padding, value_min = 0, value_max = 49, value_step = 1,
+                default_value = footer.default_settings.container_bottom_padding,
+                callback = function(spin) apply("container_bottom_padding", spin.value) end })
+        end }},
+    }}
+    UI:show(dialog)
+end
+
 function M.readerBottomEnabled()
     return not G_reader_settings or G_reader_settings:readSetting(reader_bottom_key) ~= false
 end
@@ -1772,13 +2011,28 @@ function M.readerSheet(options)
             append(tiles); self.layout[#self.layout + 1] = focus
             local have_row = false
             for _, row in ipairs{ { "bookinfo", "info" }, { "pins", "collections_bookmark" }, { "gotopage", "auto_stories" },
-                    { "config", "settings" }, { "reader_ai", "manage_search" } } do
+                    { "config", "settings" }, { "reader_ai", "manage_search" }, { "reader_footer", "settings" } } do
                 local spec = specs[row[1]]
                 if spec then
                     append(have_row and rule(bodyw) or space(8)); have_row = true
                     local b = richRow(row[1], spec.text, nil, Center:new{ dimen = Geom:new{ w = px(32), h = px(30) }, icon(row[2]) }, 36)
                     append(b); self.layout[#self.layout + 1] = { b }
                 end
+            end
+            local quick = {}
+            for _i, spec in ipairs(reader_shortcuts) do
+                if specs[spec[1]] then quick[#quick + 1] = specs[spec[1]] end
+            end
+            if #quick > 0 then
+                local row, focus = H:new{ align = "center" }, {}
+                local width = math.floor((bodyw - px(8) * (#quick - 1)) / #quick)
+                for i, spec in ipairs(quick) do
+                    if i > 1 then row[#row + 1] = gap(8) end
+                    local label = text(spec.text, 11, false, width - px(10), px(36), nil, "center")
+                    local b = button(spec.id, "", width, px(36), false, label, nil, { outline = true })
+                    row[#row + 1], focus[#focus + 1] = b, b
+                end
+                append(space(8)); append(row); self.layout[#self.layout + 1] = focus
             end
         else
             local pages = math.max(1, math.ceil(#self.books / 4))
@@ -1960,6 +2214,12 @@ function M.readerTools()
         if type(pct) ~= "number" or pct ~= pct or type(summary) ~= "table" or type(props) ~= "table" then return end
         if pct <= 0 or pct >= 1 then return false end
         if summary.status == "complete" or summary.status == "finished" or summary.status == "abandoned" then return false end
+        if file:lower():match("%.cb[zr7t]$") then
+            local ok, comic = pcall(function()
+                return require("features/library/sui_metadata_providers").mergeComicInfo(file, props)
+            end)
+            if ok then props = comic end
+        end
         local custom = DS.findCustomMetadataFile and DS:findCustomMetadataFile(file)
         if custom then
             local cds = plainSettings(DS, custom, 256 * 1024)
@@ -2038,7 +2298,17 @@ function M.readerTools()
         local target = s.ui[entry[1]]
         if not target or not callable(target[entry[2]]) then failure(entry[1], "missing handler"); return end
         T.retire(s.ui)
-        local ok, err = pcall(function() return target[entry[2]](target) end)
+        local ok, err = pcall(function()
+            if entry[1] == "bookinfo" and s.file:lower():match("%.cb[zr7t]$") and target.show then
+                local base = s.ui.doc_props or {}
+                local props = readerComicProps(s.file, base)
+                if props ~= base then
+                    props.pages = s.settings:readSetting("doc_pages")
+                    return target:show(s.settings, props)
+                end
+            end
+            return target[entry[2]](target)
+        end)
         if not ok then failure(entry[1], err) end
     end
     local function draw(s)
@@ -2082,6 +2352,26 @@ function M.readerTools()
                     if not ok or not result then failure("reader_ai", "unavailable integration") end
                 end, not selected.unavailable) }
             end
+            local quick = {}
+            for _i, spec in ipairs(reader_shortcuts) do
+                local item = spec
+                local plugin, handler = shortcut(s.ui, item)
+                if plugin then
+                    quick[#quick + 1] = button(item[1], shortcutLabel(plugin, item), function()
+                        local current, invoke = shortcut(s.ui, item)
+                        if current ~= plugin or invoke ~= handler then return end
+                        T.retire(s.ui)
+                        local ok, err = pcall(invoke, current)
+                        if not ok then failure(item[1], err) end
+                    end)
+                end
+            end
+            if #quick > 0 then rows[#rows + 1] = quick end
+            if footerForOptions(s.ui) then
+                rows[#rows + 1] = { button("reader_footer", _("Reader status bar"), function()
+                    T.retire(s.ui); footerOptions(s.ui)
+                end) }
+            end
         else
             for _, book in ipairs(s.books) do
                 local entry = book
@@ -2111,6 +2401,8 @@ function M.readerTools()
         rows[#rows + 1] = { button("close", _("Close"), function() T.retire(s.ui) end) }
         local Screen = require("device").screen
         local props = type(s.ui.doc_props) == "table" and s.ui.doc_props or {}
+        local ok_props, comic_props = pcall(readerComicProps, s.file, props)
+        if ok_props then props = comic_props end
         local title = clip(props.display_title or props.title, 160)
         if title == "" then title = clip(s.file:match("([^/]+)$"), 160) end
         local ok, sheet = pcall(M.readerSheet, { title = title, ui = s.ui, author = props.authors,
@@ -2202,6 +2494,10 @@ function M.readerTools()
 end
 
 function M.readerToolsEvent(handler, ui)
+    if handler == "onCloseDocument" or handler == "onTeardown" then
+        detachDictionary(ui)
+        detachFooter(ui)
+    end
     if M._reader_bottom then M._reader_bottom.event(handler, ui) end
     if M._reader_tools then M._reader_tools.event(handler, ui) end
 end

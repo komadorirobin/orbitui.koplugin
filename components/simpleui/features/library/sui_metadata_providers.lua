@@ -1,6 +1,6 @@
 -- sui_metadata_providers.lua — Simple UI
 --
--- Supplies bibliographic metadata for CBZ chapter archives whose real
+-- Supplies bibliographic metadata for comic archives whose real
 -- title/author/series live in an embedded ComicInfo.xml rather than in
 -- the engine's native document properties.
 --
@@ -10,7 +10,7 @@
 --      usable cached row (avoids mass re-extract when a folder gains one file)
 --   2. extractBookInfo redirects recognized CBZs to the companion document
 --      provider when available, then merges ComicInfo.xml into the row
---   3. getBookInfo fills incomplete CBZ rows from ComicInfo.xml in-place and
+--   3. getBookInfo displays ComicInfo without rewriting existing rows and
 --      keeps a small text snapshot so the UI can still show title/author while
 --      a row is temporarily missing (in-progress extraction)
 --   4. extractInBackground never interrupts a running job: requests made while
@@ -75,8 +75,8 @@ end
 
 local CACHE_MAX = 128
 
-local function newCache()
-    return { map = {}, n = 0 }
+local function newCache(capacity)
+    return { map = {}, n = 0, capacity = capacity or CACHE_MAX }
 end
 
 local function cacheGet(c, key)
@@ -85,7 +85,7 @@ end
 
 local function cacheSet(c, key, value)
     if c.map[key] == nil then
-        if c.n >= CACHE_MAX then
+        if c.n >= c.capacity then
             c.map = {}
             c.n = 0
         end
@@ -205,7 +205,7 @@ end
 
 -- Read one named entry (store or deflate). entry_names is a list of
 -- acceptable names (first match wins, case-insensitive).
-local function readZipEntry(path, entry_names)
+local function readZipEntry(path, entry_names, max_size)
     if type(path) ~= "string" then return nil end
     if type(entry_names) == "string" then entry_names = { entry_names } end
     if type(entry_names) ~= "table" or #entry_names == 0 then return nil end
@@ -236,7 +236,7 @@ local function readZipEntry(path, entry_names)
 
     local cd_size   = u32(tail, eocd + 12)
     local cd_offset = u32(tail, eocd + 16)
-    if cd_size == 0 or cd_offset + cd_size > size then return fail() end
+    if cd_size == 0 or cd_size > 4 * 1024 * 1024 or cd_offset + cd_size > size then return fail() end
 
     file:seek("set", cd_offset)
     local cd = file:read(cd_size)
@@ -250,7 +250,8 @@ local function readZipEntry(path, entry_names)
         local extra_len   = u16(cd, i + 30)
         local comment_len = u16(cd, i + 32)
         local name = cd:sub(i + 46, i + 45 + name_len)
-        if want[name:lower()] then
+        local basename = name:match("[^/\\]+$") or name
+        if want[basename:lower()] then
             local_offset = u32(cd, i + 42)
             comp_method  = u16(cd, i + 10)
             comp_size    = u32(cd, i + 20)
@@ -259,7 +260,7 @@ local function readZipEntry(path, entry_names)
         end
         i = i + 46 + name_len + extra_len + comment_len
     end
-    if not local_offset then return fail() end
+    if not local_offset or comp_size > max_size or uncomp_size > max_size then return fail() end
 
     file:seek("set", local_offset)
     local lfh = file:read(30)
@@ -366,16 +367,26 @@ end
 -- ComicInfo.xml
 -- ---------------------------------------------------------------------------
 
-local COMICINFO_NAMES = { "ComicInfo.xml", "comicinfo.xml" }
+local COMICINFO_NAMES = { "comicinfo.xml" }
+local COMIC_FORMATS = { cbz = true, cbr = true, cb7 = true, cbt = true }
+local MAX_COMICINFO = 256 * 1024
+
+function Providers.isComic(path)
+    return type(path) == "string" and COMIC_FORMATS[path:lower():match("%.([^.]+)$")] == true
+end
 
 local function xmlText(xml, tag)
-    local value = xml:match("<" .. tag .. "%s*[^>]*>(.-)</" .. tag .. "%s*>")
+    local value = xml:match("<" .. tag .. "%s*>(.-)</" .. tag .. "%s*>")
+        or xml:match("<" .. tag .. "%s+[^>]*>(.-)</" .. tag .. "%s*>")
     if not value then return nil end
-    value = value:gsub("<.->", "")
-    value = value
-        :gsub("&lt;", "<"):gsub("&gt;", ">"):gsub("&amp;", "&")
-        :gsub("&quot;", '"'):gsub("&apos;", "'")
-        :gsub("^%s+", ""):gsub("%s+$", "")
+    local cdata = value:match("^%s*<!%[CDATA%[(.-)%]%]>%s*$")
+    if cdata then value = cdata
+    else
+        value = value:gsub("<.->", "")
+            :gsub("&lt;", "<"):gsub("&gt;", ">"):gsub("&quot;", '"')
+            :gsub("&apos;", "'"):gsub("&amp;", "&")
+    end
+    value = value:match("^%s*(.-)%s*$")
     if value == "" then return nil end
     return value
 end
@@ -386,9 +397,11 @@ local function parseComicInfoXml(xml)
     local title   = xmlText(xml, "Title")
     local series  = xmlText(xml, "Series")
     local number  = xmlText(xml, "Number")
+    local volume  = xmlText(xml, "Volume")
     local summary = xmlText(xml, "Summary")
     local language = xmlText(xml, "LanguageISO")
     local genre   = xmlText(xml, "Genre")
+    local tags    = xmlText(xml, "Tags")
 
     local authors = {}
     local function addAuthor(v)
@@ -407,12 +420,13 @@ local function parseComicInfoXml(xml)
     if title then
         info.title = title
     elseif series then
-        info.title = series
+        info.title = number and (series .. " #" .. number) or series
     end
     if series then info.series = series end
-    if number then info.series_index = tonumber(number) or number end
+    local index = number or volume
+    if index then info.series_index = tonumber(index) or index end
     if language then info.language = language end
-    if genre then info.keywords = genre end
+    info.keywords = genre and tags and (genre .. ", " .. tags) or genre or tags
     if summary then
         info.description = summary
         info.notes = summary
@@ -427,32 +441,62 @@ local function parseComicInfoXml(xml)
     return info
 end
 
-local comicinfo_cache = newCache()
+local comicinfo_cache = newCache(2048)
+local comicinfo_bytes = 0
+local function rememberComicInfo(path, stamp, props, size)
+    local old = cacheGet(comicinfo_cache, path)
+    local bytes = comicinfo_bytes - (old and old.bytes or 0) + size
+    if bytes > 4 * 1024 * 1024 or (not old and comicinfo_cache.n >= comicinfo_cache.capacity) then
+        comicinfo_cache, bytes = newCache(2048), size
+    end
+    comicinfo_bytes = bytes
+    cacheSet(comicinfo_cache, path, { stamp = stamp, props = props or false, bytes = size })
+end
 
 local function fileIdentity(path)
     local ok, lfs = pcall(require, "libs/libkoreader-lfs")
-    if not (ok and lfs) then return 0, 0 end
-    return lfs.attributes(path, "size") or 0,
-           lfs.attributes(path, "modification") or 0
+    return ok and lfs and lfs.attributes(path) or nil
 end
 
--- Returns a props table or nil. Results are cached per path+mtime+size.
-local function readComicInfoProps(path)
-    if not isCbz(path) then return nil end
+local function readArchiveComicInfo(path)
+    local archiver = require("ffi/archiver").Reader:new()
+    local ok, xml = pcall(function()
+        if not archiver:open(path) then return end
+        for entry in archiver:iterate() do
+            local name = entry.path:match("[^/\\]+$") or entry.path
+            if entry.mode == "file" and name:lower() == "comicinfo.xml" then
+                if entry.size and entry.size > 0 and entry.size <= MAX_COMICINFO then
+                    return archiver:extractToMemory(entry.path)
+                end
+                return
+            end
+        end
+    end)
+    pcall(archiver.close, archiver)
+    if ok then return xml end
+end
 
-    local size, mtime = fileIdentity(path)
+-- Cache both parsed metadata and absence until the archive changes.
+function Providers.readComicInfo(path)
+    if not Providers.isComic(path) then return nil end
+    local attr = fileIdentity(path)
+    if not attr or attr.mode ~= "file" or not attr.size or not attr.modification then return nil end
+    local stamp = table.concat({ attr.size, attr.modification, attr.change or 0, attr.ino or 0 }, ":")
+
     local cached = cacheGet(comicinfo_cache, path)
-    if cached and cached.size == size and cached.mtime == mtime then
+    if cached and cached.stamp == stamp then
         return cached.props or nil
     end
 
-    local xml = readZipEntry(path, COMICINFO_NAMES)
-    local props = xml and parseComicInfoXml(xml) or nil
-    cacheSet(comicinfo_cache, path, {
-        size = size,
-        mtime = mtime,
-        props = props or false,
-    })
+    local xml
+    if isCbz(path) then
+        xml = readZipEntry(path, COMICINFO_NAMES, MAX_COMICINFO)
+    else
+        local ok, data = pcall(readArchiveComicInfo, path)
+        if ok then xml = data end
+    end
+    local props = xml and #xml <= MAX_COMICINFO and parseComicInfoXml(xml) or nil
+    rememberComicInfo(path, stamp, props, props and #xml or 0)
     return props
 end
 
@@ -461,6 +505,19 @@ local BOOKINFO_KEYS = {
     "title", "authors", "series", "series_index",
     "language", "keywords", "description",
 }
+
+function Providers.mergeComicInfo(path, base)
+    if type(base) == "table" and base.ignore_meta == "Y" then return base end
+    local comic = Providers.readComicInfo(path)
+    if not comic then return base end
+    local info = {}
+    for k, value in pairs(base or {}) do info[k] = value end
+    for _, key in ipairs(BOOKINFO_KEYS) do
+        if comic[key] ~= nil then info[key] = comic[key] end
+    end
+    info.has_meta = "Y"
+    return info
+end
 
 local function bookinfoPatchFromComic(comic)
     if type(comic) ~= "table" then return nil end
@@ -480,7 +537,7 @@ local function enrichBookInfoFromComic(bim, filepath)
     if type(bim) ~= "table" or type(bim.setBookInfoProperties) ~= "function" then
         return false
     end
-    local patch = bookinfoPatchFromComic(readComicInfoProps(filepath))
+    local patch = bookinfoPatchFromComic(Providers.readComicInfo(filepath))
     if not patch then return false end
     return pcall(bim.setBookInfoProperties, bim, filepath, patch)
 end
@@ -571,7 +628,7 @@ local function getChapterArchiveProvider(path)
             local props = orig(self, ...)
             if type(props) ~= "table" then props = {} end
 
-            local comic = readComicInfoProps(self.file)
+            local comic = Providers.readComicInfo(self.file)
             if comic then
                 for key, value in pairs(comic) do
                     if value ~= nil and value ~= ""
@@ -838,8 +895,6 @@ function Providers.install()
     installExtractQueue(BookInfoManager, canSkipExtract)
 
     if type(orig_getBookInfo) == "function" then
-        local healed = newCache()
-
         -- OrbitUI C04/C08: contain recognized cache faults, but never delete
         -- the database/WAL or reset a shared connection automatically. Retry
         -- the real read next time; last known text remains available below.
@@ -868,31 +923,26 @@ function Providers.install()
                 local snap = snapshotMeta(bookinfo)
                 if snap then cacheSet(display_cache, filepath, snap) end
 
-                if isCbz(filepath) and not cacheGet(healed, filepath) then
-                    local incomplete = (not bookinfo.title or bookinfo.title == "")
-                        or (not bookinfo.authors or bookinfo.authors == "")
-                        or (not bookinfo.series or bookinfo.series == "")
-                    if incomplete then
-                        cacheSet(healed, filepath, true)
-                        if enrichBookInfoFromComic(self, filepath) then
-                            bookinfo = safeGetBookInfo(self, filepath, ...)
-                            if bookinfo then
-                                local snap2 = snapshotMeta(bookinfo)
-                                if snap2 then cacheSet(display_cache, filepath, snap2) end
-                            end
-                        end
-                    end
-                end
-                return bookinfo
+                return Providers.mergeComicInfo(filepath, bookinfo)
             end
 
             -- Row missing (never extracted, or temporarily replaced while
             -- in_progress). Serve last known text metadata when available.
             local snap = cacheGet(display_cache, filepath)
             if snap then
-                return syntheticFromSnapshot(snap)
+                return Providers.mergeComicInfo(filepath, syntheticFromSnapshot(snap))
             end
             return nil
+        end
+    end
+
+    local orig_getDocProps = BookInfoManager.getDocProps
+    if type(orig_getDocProps) == "function" then
+        function BookInfoManager:getDocProps(filepath, ...)
+            local base = orig_getDocProps(self, filepath, ...)
+            local props = Providers.mergeComicInfo(filepath, base)
+            if props == base then return base end
+            return require("apps/filemanager/filemanagerbookinfo").extendProps(props, filepath)
         end
     end
 

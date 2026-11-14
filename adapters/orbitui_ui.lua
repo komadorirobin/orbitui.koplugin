@@ -248,6 +248,14 @@ function M.wrap(name, module)
     elseif name == "lib/bookshelf_module_layout" then
         module.preserve_legacy = true
     elseif name == "lib/bookshelf_book_repository" then
+        module.orbitui_cb7_reader = function()
+            local registry = require("document/documentregistry")
+            return registry.filetype_provider and registry.filetype_provider.cb7
+        end
+        module.orbitui_comic_metadata = function(path, info)
+            if not path:lower():match("%.cb[zr7t]$") then return info end
+            return require("features/library/sui_metadata_providers").mergeComicInfo(path, info)
+        end
         require("adapters/orbitui_shelf_sort").repository(module)
         require("core/orbitui_shelf_query").tagRepository(module)
     elseif name == "lib/bookshelf_sort_engine" then
