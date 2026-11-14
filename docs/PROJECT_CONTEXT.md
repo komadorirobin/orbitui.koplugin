@@ -22,7 +22,7 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-14
 
-- **Bookshelf 6.5.0 merged for the next preview.** The integrated pin is
+- **Bookshelf 6.5.0 released in 1.4.0-beta.2.** The integrated pin is
   **3020b02c**. Bookshelf accepts its own optional Hardcover API key and can
   still reuse an enabled Hardcover or ShelfSync plugin. Robin’s BookOrbit
   progress policy stays in the personal KOReader patch. The unscoped library
@@ -52,7 +52,7 @@ and correct this file in the same change.
 ### Navigation in 1.3.0
 
 GitHub Latest and the stable updater channel offer **1.3.0** from
-**23714b0e**. The preview channel offers **1.4.0-beta.1**. The OrbitUI tab
+**23714b0e**. The preview channel offers **1.4.0-beta.2**. The OrbitUI tab
 follows Quick Actions in KOReader’s top menu.
 Its settings routes use Home for the dashboard and cards, Library
 for shelves and library appearance, and Dock & interface for shortcuts and

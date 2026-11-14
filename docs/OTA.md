@@ -1,5 +1,21 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.4.0-beta.2
+
+Published **2026-11-14 19:25:43 UTC**, release **445533564**, frozen
+source/tag **83852dd7 / v1.4.0-beta.2**. Public ZIP SHA-256
+`0b99763e31d4da9a96f6e0ba02a84296b22bd1170108957b5a50919154d88d47`,
+10,035,508 bytes and 2,000 installed files. The preview channel selects
+1.4.0-beta.2. GitHub Latest and the stable channel select 1.3.0.
+
+The public bytes match the verified draft. Both Lua suites, all 43 translation
+catalogs and tagged CI run **43631721109** passed. Native installer checks
+used the actual 1.4.0-beta.1 and 1.3.0 installers for offline and anonymous
+HTTPS discovery, activation, restart and code rollback. The executable
+runtime matches the private Bigme-tested slot **0870d2a2**. See TESTING for
+the read-only Hardcover and BookOrbit observations. Release verification
+is under `test-results/preview14-beta2-20261114/`.
+
 ## OrbitUI 1.4.0-beta.1
 
 Published **2026-11-14 14:13:52 UTC**, release **445340738**, frozen
