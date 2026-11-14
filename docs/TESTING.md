@@ -1,5 +1,35 @@
 # Verification and device acceptance
 
+## 2026-11-14 — Bookshelf 6.5.0
+
+The sealed source candidate **cb2f60c01** has the same installed path set
+as the published 1.4.0-beta.1. A native archive and SHA-256 check exercised
+upgrade from stable 1.3.0, rejection of a missing runtime module, activation,
+restart, rollback and interrupted-download recovery. The full Lua and LuaJIT
+runs each completed 615 Bookshelf suites with zero failures and three skips
+that require KOReader’s SQLite bindings. The OrbitUI and SimpleUI suites
+also passed. All 43 translation catalogs validated. The public version and channel still refer to their
+published builds.
+
+KOReader 2026.07.1 on the Tolino Vision Color emulator loaded both existing
+Bookshelf user patches, rendered disconnected Hardcover settings, created a
+KOReader collection shelf, added and reordered two fixture EPUBs, and opened
+OrbitUI’s book details and reader panel. The Time left sort put fixture
+estimates in ascending order and books without estimates last. The fixture
+supplied estimates directly. The device’s actual reading pace was not measured.
+
+Simulated Hardcover requests exercised existing Hardcover and ShelfSync
+connections, the opt-in Bookshelf client and edition repair. The personal
+BookOrbit progress guard was tested with the external Hardcover plugin at
+**fa352e7**. Native automatic status and progress calls were suppressed
+while metadata reads, local edition linking and explicit manual status
+actions remained available. No live account was used.
+
+Bigme ADB was unavailable. The spare Android emulator stalled while copying
+the ZIP to shared storage. Physical display behavior, device performance and
+the live BookOrbit-to-Hardcover progress round trip remain to be checked.
+Local evidence is under `test-results/bookshelf65-20261114/`.
+
 ## 2026-11-14 — OrbitUI settings and Bookshelf patches
 
 On the Tolino Vision Color emulator with KOReader 2026.07.1, the Custom

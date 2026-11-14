@@ -4,6 +4,35 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-14 — Bookshelf 6.5.0
+
+The user approved this import and asked to keep the BookOrbit-only progress
+policy personal. From preview baseline **2ec7b04f4**, unsquashed merge
+**57e147fe6** imports [Bookshelf 6.5.0](https://github.com/AndyHazz/bookshelf.koplugin/releases/tag/v6.5.0)
+at **3020b02c673789f30fdfce7fec665b32c0f73f97**, advancing from **f99a5bc43**
+and retaining both fork anchors. Hosted adaptation is **cb2f60c01**.
+
+C02, C04, C06, C07 and C09 cover the moved book popup, OPDS safe mode, empty
+shelf dock, cover painting and Hardcover integration. Local tag, book details,
+metadata refresh and folder-label behavior now follow the extracted widget
+methods. Profile browsing offers Time left. Hand-ordered collection shelves
+use Bookshelf’s editable tabs in Library without a fixed profile. Profile
+chips keep their separate scopes and settings.
+
+Hardcover uses the normal upstream provider precedence. The optional Bookshelf
+API key is explicit. Book and edition linking, ratings and metadata remain
+independent of progress synchronization. The original scan for embedded
+edition IDs can still repair existing links, using the upstream cancellable
+worker and reporting new and corrected links separately. Robin’s separate
+KOReader patch remains the sole local override for automatic Hardcover progress
+ownership. It is absent from the OrbitUI source and release package.
+
+Eighteen new helpers use the exact-source lazy registry. The API-1 archive
+still has the same 2,000 installed paths, including the manifest. The history
+audit identified one upstream test value with an invalid eight-byte HS256
+signature. The audit exception is scoped to that commit, file and line. No
+version bump or release is included in the merge. See TESTING for coverage.
+
 ## 2026-11-11 — post-beta.3 reviewed SimpleUI, merge only
 
 Reviewed both tracked branches from OrbitUI **1dce2852**. Bookshelf

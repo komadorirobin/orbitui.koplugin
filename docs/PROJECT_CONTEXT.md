@@ -22,6 +22,13 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-14
 
+- **Bookshelf 6.5.0 merged for the next preview.** The integrated pin is
+  **3020b02c**. Bookshelf accepts its own optional Hardcover API key and can
+  still reuse an enabled Hardcover or ShelfSync plugin. Robin’s BookOrbit
+  progress policy stays in the personal KOReader patch. The unscoped library
+  has hand-ordered collection shelves. OrbitUI’s shelf sort offers Time left.
+  See MERGE_LOG and TESTING for verification and remaining device coverage.
+
 - **Settings feedback, released in 1.4.0-beta.1.** Dock & interface opens the existing Custom
   quick actions editor. System Icons has a Tab: OrbitUI control under Tab Bar.
   With that control set to Default, `koreader/icons/orbitui_menu.svg`
@@ -88,7 +95,7 @@ dock restored. See TESTING for device checks and OTA for publication details.
   lack cover art display their name on the placeholder. Tiny Critter has
   revised bubble tails and shadows. OrbitUI keeps its existing cover actions
   while the new SimpleUI editor's write and cache behavior is reviewed.
-  Bookshelf remains at **f99a5bc4 / 6.4.2**. See MERGE_LOG and TESTING.
+  Bookshelf was at **f99a5bc4 / 6.4.2** for this maintenance pass. See MERGE_LOG and TESTING.
 
 - **Previous preview 1.2.0-beta.4.** Published 2026-11-11
   21:50:01 UTC as release **442225986** from frozen source **b71daf107**.
