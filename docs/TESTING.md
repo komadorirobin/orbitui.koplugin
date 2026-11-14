@@ -1,5 +1,21 @@
 # Verification and device acceptance
 
+## 2026-11-14 — OrbitUI settings and Bookshelf patches
+
+On the Tolino Vision Color emulator with KOReader 2026.07.1, the Custom
+quick actions page displayed its empty message and create button. An existing
+action appeared after repaint and opened the edit dialog. Back returned to
+Dock & interface. The native OrbitUI tab icon rendered different pixels
+immediately after selecting another SVG and restored its original pixels
+after reset. The restart confirmation returned exit code 85, and OrbitUI
+loaded again on the next launch.
+
+Bookshelf Bar Styles 1.0.0-beta.2 added its styles to the Bookshelf line editor
+and painted Cat & yarn at 58%. Progress Bookmarks 1.1.1 opened its settings
+through Advanced library settings and its overlay rendered in Cover View and
+face-out Spine View. The emulator used a separate KOReader data directory.
+The Android close-and-reopen flow was covered by the settings test.
+
 ## 2026-11-14 — Aleph 1.1-inspired refinements
 
 ComicInfo supplies archive metadata before the usual KOReader custom

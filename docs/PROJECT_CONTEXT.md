@@ -20,7 +20,15 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-13
+## Snapshot: 2026-11-14
+
+- **Settings feedback, local.** Dock & interface opens the existing Custom
+  quick actions editor. System Icons has a Tab: OrbitUI control under Tab Bar.
+  The OrbitUI app-bar tab offers KOReader's restart confirmation on supported
+  devices and a close-and-reopen flow on Android. The embedded Bookshelf
+  receives KOReader's registered plugin patch callbacks. Extra Bookshelf menu
+  entries from those patches appear under Advanced library settings.
+  See TESTING for emulator results and verified patch versions.
 
 - **Aleph 1.1-inspired refinements, local.** ComicInfo feeds OrbitUI's
   existing library metadata resolution and respects KOReader custom fields
