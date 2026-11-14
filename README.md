@@ -20,6 +20,10 @@ top. Please support and credit the original creators.
 **New in 1.3** · Open OrbitUI beside Quick Actions to change Home, Library or
 dock settings. Long-press a dock icon to add, replace or remove a shortcut.
 
+**[Try the 1.4 beta](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v1.4.0-beta.1)** ·
+The preview fixes Custom quick actions and adds an OrbitUI tab icon picker.
+With the picker set to Default, you can also supply `koreader/icons/orbitui_menu.svg`.
+
 > **OrbitUI replaces the standalone SimpleUI and Bookshelf plugins.**
 > Neither is required separately. If either is installed, disable it and restart
 > KOReader before installing OrbitUI. Never run them alongside OrbitUI. Keep
