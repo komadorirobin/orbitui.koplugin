@@ -120,7 +120,13 @@ function M.wrap(name, module)
                 label = function() return _("Tab: OrbitUI") end,
                 group = "sui_tabbar_icons",
                 tab_id = "orbitui_settings_tab",
-                default_icon = "material:apps:300",
+                icon_name = "orbitui_menu",
+                default_icon = function()
+                    local file = require("datastorage"):getDataDir() .. "/icons/orbitui_menu.svg"
+                    local lfs = require("libs/libkoreader-lfs")
+                    if lfs.attributes(file, "mode") == "file" then return file end
+                    return Icons.imageFile("material:apps:300")
+                end,
                 default_ko = "appbar.contrast",
                 use_source = true,
             }

@@ -461,15 +461,16 @@ function M.safeIconPath(path, fallback, slot_id)
     return path
 end
 
---- Default symbol glyph of `slot` for the current layout direction: its
---- `default_icon_rtl` in a mirrored layout when it has one, else `default_icon`.
---- nil when the slot has no default glyph.
+--- Default icon reference for the current layout direction. A slot may
+--- resolve its default on demand.
 local function _defaultIcon(slot)
     if not slot then return nil end
     if slot.default_icon_rtl and BD.mirroredUILayout() then
         return slot.default_icon_rtl
     end
-    return slot.default_icon
+    local icon = slot.default_icon
+    if type(icon) == "function" then return icon() end
+    return icon
 end
 
 --- Renderable icon reference for `id`: the stored override when it is valid,
@@ -863,14 +864,14 @@ function M.registerTabIconName(slot_id, path)
         return nil
     end
 
-    local name = "simpleui_" .. slot_id
+    local slot = _SLOT_BY_ID[slot_id]
+    local name = (slot and slot.icon_name) or ("simpleui_" .. slot_id)
     local cached = _TAB_ICON_NAME_CACHE[slot_id]
     if cached and cached.src == path and cached.name == name then
         return name -- already registered for this exact source
     end
 
     -- A source-backed slot keeps each selection's native image cache key.
-    local slot = _SLOT_BY_ID[slot_id]
     if not require("infra/sui_icon_registry").register(name, path, slot and slot.use_source) then
         logger.warn("simpleui/style: failed to register tab icon for " .. slot_id)
         return nil
@@ -913,8 +914,7 @@ function M.applyTabIcons(fm_or_table)
             local slot = _SLOT_BY_ID[slot_id]
             local raw  = M.getIcon(slot_id)
             local name = raw and M.registerTabIconName(slot_id, raw)
-            local default = _defaultIcon(slot)
-            if not name and default then name = M.registerTabIconName(slot_id, default) end
+            if not name then name = M.registerTabIconName(slot_id, _defaultIcon(slot)) end
             tab.icon = name or slot.default_ko or tab.icon
         end
     end

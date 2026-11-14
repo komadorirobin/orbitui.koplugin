@@ -24,6 +24,8 @@ and correct this file in the same change.
 
 - **Settings feedback, local.** Dock & interface opens the existing Custom
   quick actions editor. System Icons has a Tab: OrbitUI control under Tab Bar.
+  With that control set to Default, `koreader/icons/orbitui_menu.svg`
+  supplies the tab icon if present.
   The OrbitUI app-bar tab offers KOReader's restart confirmation on supported
   devices and a close-and-reopen flow on Android. The embedded Bookshelf
   receives KOReader's registered plugin patch callbacks. Extra Bookshelf menu

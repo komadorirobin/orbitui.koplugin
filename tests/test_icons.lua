@@ -24,7 +24,7 @@ local manager = {
     setDirty = function() dirty = dirty + 1 end,
 }
 local store, writes = {}, 0
-local copied = {}
+local copied, user_files = {}, {}
 local Image = Widget:extend{}
 function Image:init()
     if self.file then
@@ -59,7 +59,7 @@ package.loaded["ffi/util"] = { template = function(s) return s end,
     copyFile = function(src, dst) copied[dst] = src end }
 package.loaded["libs/libkoreader-lfs"] = {
     attributes = function(path, mode)
-        if copied[path] then return mode == "mode" and "file" or { mode = "file" } end
+        if copied[path] or user_files[path] then return mode == "mode" and "file" or { mode = "file" } end
         if path:match("^/fake") then return mode == "mode" and "directory" or { mode = "directory" } end
         local f = io.open(path, "rb")
         if f then f:close(); return mode == "mode" and "file" or { mode = "file" } end
@@ -268,7 +268,7 @@ H.test("native tabs register actual SVGs from names and previous OTA slots", fun
     H.eq(copied["/fake/icons/simpleui_sui_tab_setting.svg"], Icons.imageFile("material:settings:200"))
     H.eq(Style.registerTabIconName("sui_tab_tools", "nerd:F02D"), nil)
 end)
-H.test("OrbitUI tab uses its own icon slot and restores the default apps grid on reset", function()
+H.test("OrbitUI tab accepts orbitui_menu.svg and preserves saved picker choices", function()
     local tab = { id = "orbitui_settings_tab", icon = "appbar.contrast" }
     local IconWidget = require("ui/widget/iconwidget")
     local function resolvedFile()
@@ -280,15 +280,22 @@ H.test("OrbitUI tab uses its own icon slot and restores the default apps grid on
     H.eq(slot.label(), "Tab: OrbitUI")
     H.eq(slot.group, "sui_tabbar_icons")
     Style.applyTabIcons{ tab }
-    H.eq(tab.icon, "simpleui_orbitui_menu")
+    H.eq(tab.icon, "orbitui_menu")
     H.eq(resolvedFile(), Icons.imageFile("material:apps:300"))
+    local user_icon = "/fake/icons/orbitui_menu.svg"
+    user_files[user_icon] = true
+    Style.applyTabIcons{ tab }
+    H.eq(resolvedFile(), user_icon)
     Style.setIcon(slot.id, "material:settings")
     Style.applyTabIcons{ tab }
     H.eq(resolvedFile(), Icons.imageFile("material:settings"))
     Style.setIcon(slot.id, nil)
     Style.applyTabIcons{ tab }
+    H.eq(resolvedFile(), user_icon)
+    user_files[user_icon] = nil
+    Style.applyTabIcons{ tab }
     H.eq(resolvedFile(), Icons.imageFile("material:apps:300"))
-    H.eq(copied["/fake/icons/simpleui_orbitui_menu.svg"], nil)
+    H.eq(copied[user_icon], nil)
 end)
 H.test("both pickers render every Material weight with SVG and UI-face labels", function()
     for _, weight in ipairs(Icons.weights) do
