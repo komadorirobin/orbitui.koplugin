@@ -22,7 +22,7 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-14
 
-- **Settings feedback, local.** Dock & interface opens the existing Custom
+- **Settings feedback, released in 1.4.0-beta.1.** Dock & interface opens the existing Custom
   quick actions editor. System Icons has a Tab: OrbitUI control under Tab Bar.
   With that control set to Default, `koreader/icons/orbitui_menu.svg`
   supplies the tab icon if present.
@@ -30,9 +30,10 @@ and correct this file in the same change.
   devices and a close-and-reopen flow on Android. The embedded Bookshelf
   receives KOReader's registered plugin patch callbacks. Extra Bookshelf menu
   entries from those patches appear under Advanced library settings.
-  See TESTING for emulator results and verified patch versions.
+  See TESTING for emulator results and verified patch versions, and OTA
+  for the published ZIP and updater checks.
 
-- **Aleph 1.1-inspired refinements, local.** ComicInfo feeds OrbitUI's
+- **Aleph 1.1-inspired refinements, released in 1.4.0-beta.1.** ComicInfo feeds OrbitUI's
   existing library metadata resolution and respects KOReader custom fields
   and Calibre metadata. Search reuses normalized book text with field checks
   on every query. The UI guard recognizes Aleph and both ZenOS names. The
@@ -43,8 +44,9 @@ and correct this file in the same change.
 
 ### Navigation in 1.3.0
 
-GitHub Latest and both updater channels offer stable **1.3.0** from
-**23714b0e**. The OrbitUI tab follows Quick Actions in KOReader’s top menu.
+GitHub Latest and the stable updater channel offer **1.3.0** from
+**23714b0e**. The preview channel offers **1.4.0-beta.1**. The OrbitUI tab
+follows Quick Actions in KOReader’s top menu.
 Its settings routes use Home for the dashboard and cards, Library
 for shelves and library appearance, and Dock & interface for shortcuts and
 shared chrome. The file browser has its own appearance route. A long press on

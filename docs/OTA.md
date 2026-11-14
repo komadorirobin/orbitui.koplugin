@@ -1,5 +1,22 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.4.0-beta.1
+
+Published **2026-11-14 14:13:52 UTC**, release **445340738**, frozen
+source/tag **ce4b3267 / v1.4.0-beta.1**. Public ZIP SHA-256
+`3a633cb6f785984f44976d04c1f2b5f2c4b4b695daab6f1603c2a8dabb6decd9`,
+9,896,433 bytes and 2,000 installed files. The preview channel offers
+1.4.0-beta.1. GitHub Latest and the stable channel offer 1.3.0.
+
+The public ZIP and checksum match the verified draft. Both complete
+Lua runs, all 43 translation catalogs and the tagged CI run passed.
+The native installer tested the upgrade and rollback from 1.3.0 and
+1.3.0-beta.1. On the Android emulator, the packaged build loaded both
+Bookshelf patch hooks, rendered the custom app-bar icon, opened Custom
+quick actions and quit cleanly through its confirmation. KOReader opened
+again from Android. Evidence is under
+`test-results/preview14-beta1-20261114/`.
+
 ## OrbitUI 1.3.0
 
 Published **2026-11-13 19:00:45 UTC**, release **444620274**, frozen
