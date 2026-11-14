@@ -16,9 +16,27 @@ Tests cover changed tags and titles, disabled integrations and stale shortcuts,
 selection menu navigation, dictionary save and footer settings. The reader
 panel and pin suites also passed with native modules from the emulator's
 KOReader build. The footer controls use KOReader's bottom status bar.
-Optional third-party device actions
-are exercised with test doubles. Physical-reader appearance and timings remain
-to be checked.
+On Bigme B7 Pro, private ZIP **6dad26f0** from **7ba3d3ab5** passed
+file-by-file hash verification and healthy startup, retaining **7a7ee33d**
+for rollback. The Android archive reader parsed all six ComicInfo fixtures,
+including the LZMA-compressed CB7. That device had no registered CB7
+document provider. The native reader opened a test CBZ. Its title, series,
+volume, tags and synopsis appeared in Book information, and custom fields
+took precedence in the library and search. The fixture remained in the
+series after saving its finished status.
+
+The exact matcher loop over 3,341 fixtures took about 44 ms cold and 3 ms
+on each of two subsequent queries. This measures the matcher only.
+Touches verified More, Back and Pin reference after opening the selection
+menu with a fixture word, a single dictionary highlight with immediate close,
+footer colour, weight and bottom padding, and brightness steps at the upper
+end of the slider. The native reader-config method opened the panel; the
+ADB bottom-edge gestures used in this run did not open it reliably.
+Syncery and HID shortcuts and the conflict checks ran with simulated plugin
+instances/discovery because those plugins were absent. Reading settings,
+history, collection and statistics files were restored byte for byte before
+restart. The temporary harness was removed from autoload, the final restart
+reached Home, and the crash log was unchanged.
 
 ## 2026-11-13 — OrbitUI 1.3.0 promotion
 

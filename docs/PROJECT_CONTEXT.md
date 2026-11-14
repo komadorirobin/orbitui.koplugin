@@ -28,7 +28,8 @@ and correct this file in the same change.
   on every query. The UI guard recognizes Aleph and both ZenOS names. The
   reader adds a compact text-selection menu, dictionary highlight feedback,
   optional Syncery and Bluetooth HID actions, and native footer controls.
-  Physical-reader verification is pending. See TESTING for format scope.
+  Bigme verified the private **6dad26f0** ZIP with **7a7ee33d** for rollback.
+  See TESTING for archive coverage, matcher timings and gesture limits.
 
 ### Navigation in 1.3.0
 
