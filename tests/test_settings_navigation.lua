@@ -181,6 +181,45 @@ H.test("Back returns through canonical categories instead of closing the entire 
     assert(category.closed)
     H.eq(latest().title, "OrbitUI settings")
 end)
+H.test("advanced Library settings include extra Bookshelf menu rows and keep native tabs hidden", function()
+    local additions = { text = "Progress Bookmarks Patch Settings", sub_item_table_func = function()
+        return { { text = "Cover View" } }
+    end }
+    plugin.MENU_ORDER = { "bookshelf_settings", "bookshelf_progress_bookmarks" }
+    plugin._orbitui_native_menu_ids = { bookshelf_settings = true }
+    plugin.buildMenuItems = function(_, items)
+        items.bookshelf_settings = { text = "Legacy Settings" }
+        items.bookshelf_progress_bookmarks = additions
+    end
+    Settings.open("bookshelf_advanced")
+    local rows = latest().item_table
+    H.eq(rows[#rows].text, additions.text)
+    H.eq(rows[#rows].sub_item_table_func()[2].text, "Cover View")
+    for _, row in ipairs(rows) do assert(row.text ~= "Legacy Settings") end
+    plugin.MENU_ORDER, plugin._orbitui_native_menu_ids, plugin.buildMenuItems = nil, nil, nil
+end)
+H.test("restart uses the native confirmation and Android offers an explicit exit", function()
+    local old_device = package.loaded.device
+    local close_count, confirmed, sent = 0, 0, nil
+    local close = function() close_count = close_count + 1 end
+    UI.askForRestart = function(_, prompt)
+        H.eq(prompt, "Restart KOReader now?")
+        confirmed = confirmed + 1
+    end
+    UI.broadcastEvent = function(_, event) sent = event end
+    package.loaded["ui/event"] = { new = function(_, name) return name end }
+    package.loaded["ui/widget/confirmbox"] = { new = function(_, opts) return opts end }
+    package.loaded.device = { canRestart = function() return true end }
+    find(Settings.items(close), "restart").callback()
+    H.eq(confirmed, 1); H.eq(close_count, 1)
+    package.loaded.device = { canRestart = function() return false end, isAndroid = function() return true end }
+    local android = find(Settings.items(close), "restart")
+    H.eq(android.text, "Close KOReader"); android.callback(); H.eq(sent, nil)
+    local confirm = dialogs[#dialogs]
+    assert(confirm.text:find("reopen", 1, true)); confirm.ok_callback(); H.eq(sent, "Exit")
+    H.eq(close_count, 2)
+    package.loaded.device = old_device
+end)
 H.test("the Navigation sheet matches its grouped routes and category search returns to it", function()
     local panel = Settings.open("navigation", { profile = "comics" })
     local sheet = panel.config.sheet
@@ -297,6 +336,61 @@ H.test("the complete SimpleUI settings window applies hosted titles before const
     win = hosted:show(nil, "pages", { screen_id = "custom", screen_name = "Min egen skärm", pfx = "unchanged_" })
     assert(win.screen_titles.pages():find("Skärm: Min egen skärm", 1, true))
     H.eq(constructed, 3); lang = "en"
+end)
+H.test("the hosted Custom quick actions route builds the saved list and its create footer", function()
+    local deps, actions, opens = {}, {}, {}
+    local root_dir = root .. "/components/simpleui/"
+    local function loadNative(file)
+        return loadModule(root_dir .. file, { require = function(name) return deps[name] or {} end })
+    end
+    deps["ui/uimanager"] = UI
+    deps["infra/sui_i18n"] = { translate = translate }
+    deps["infra/sui_config"] = {
+        isNavpagerEnabled = function() return false end, ALL_ACTIONS = {}, ICON = {}, MAX_CUSTOM_QA = 5,
+        getCustomQAList = function() return actions end,
+        getCustomQAConfig = function() return { label = "My action", path = "/some/book.epub" } end,
+    }
+    deps["infra/sui_text"] = { truncateStart = function(value) return value end }
+    deps["infra/sui_layout"] = { load = function() return { pages = {} } end }
+    deps["engines/sui_window"] = {
+        paramsTitle = function(title) return title end,
+        makeCtxMenu = function() return { _ = translate } end,
+        RowPage = function(opts) return opts end,
+        new = function(_, opts)
+            opts._nav_stack = { { id = "__root__" }, opts.nav_path[1] }
+            opts._nav_stack[2].params = {}
+            opts.show = function() end
+            return opts
+        end,
+    }
+    local QA = loadNative("features/sui_quickactions.lua")
+    QA.showQuickActionDialog = function(active, id)
+        H.eq(active, plugin)
+        opens[#opens + 1] = id or "create"
+    end
+    deps["features/sui_quickactions"] = QA
+    local old_fm = package.loaded["apps/filemanager/filemanager"]
+    local old_window = package.loaded["screens/sui_settings_window"]
+    plugin.makeWallpaperMenuItems = function() end
+    package.loaded["apps/filemanager/filemanager"] = { instance = { _simpleui_plugin = plugin } }
+    package.loaded["screens/sui_settings_window"] = loadNative("screens/sui_settings_window.lua")
+    local sheet = Settings.open("quick_actions")
+    H.eq(#sheet._nav_stack, 1)
+    local frame = sheet._nav_stack[1]
+    H.eq(frame.id, "quick_actions_settings")
+    local ctx = { current = function() return frame end, inner_w = 500, repaint = function() end }
+    local empty = sheet.screens[frame.id](ctx)
+    H.eq(#empty.items, 0); H.eq(empty.empty_text, "No actions configured")
+    H.eq(frame.params.footer_text, "Create Quick Action")
+    assert(frame.params.footer_enabled()); frame.params.footer_action(ctx)
+    actions[1] = "custom_qa_1"
+    local saved = sheet.screens[frame.id](ctx)
+    H.eq(saved.items[1].text, "My action"); saved.items[1].on_tap()
+    H.eq(table.concat(opens, ","), "create,custom_qa_1")
+    sheet.on_back()
+    H.eq(dialogs[#dialogs].config.sheet.title, "Dock & interface")
+    package.loaded["apps/filemanager/filemanager"], package.loaded["screens/sui_settings_window"] = old_fm, old_window
+    plugin.makeWallpaperMenuItems = nil
 end)
 H.test("book-panel shortcut preserves the real details action and cancellation writes nothing", function()
     local book, details = { filepath = "/book.epub" }, 0

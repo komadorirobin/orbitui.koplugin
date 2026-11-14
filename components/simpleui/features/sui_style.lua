@@ -812,6 +812,13 @@ for _, s in ipairs(M.SLOTS) do
     if s.tab_id then _TAB_ID_TO_SLOT[s.tab_id] = s.id end
 end
 
+function M.addTabIconSlot(slot)
+    if _SLOT_BY_ID[slot.id] or _TAB_ID_TO_SLOT[slot.tab_id] then return end
+    M.SLOTS[#M.SLOTS + 1] = slot
+    _SLOT_BY_ID[slot.id] = slot
+    _TAB_ID_TO_SLOT[slot.tab_id] = slot.id
+end
+
 -- ---------------------------------------------------------------------------
 -- Tab-icon name registration
 -- ---------------------------------------------------------------------------
@@ -906,12 +913,10 @@ function M.applyTabIcons(fm_or_table)
         if slot_id then
             local slot = _SLOT_BY_ID[slot_id]
             local raw  = M.getIcon(slot_id)
-            if raw then
-                local name = M.registerTabIconName(slot_id, raw)
-                tab.icon = name or (slot and slot.default_ko) or tab.icon
-            elseif slot and slot.default_ko then
-                tab.icon = slot.default_ko
-            end
+            local name = raw and M.registerTabIconName(slot_id, raw)
+            local default = _defaultIcon(slot)
+            if not name and default then name = M.registerTabIconName(slot_id, default) end
+            tab.icon = name or slot.default_ko or tab.icon
         end
     end
 end

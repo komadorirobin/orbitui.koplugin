@@ -829,6 +829,7 @@ local function buildScreens(st)
         items = items or {}
 
         return SUI.RowPage{
+            ctx        = ctx,
             items      = items,
             inner_w    = ctx.inner_w,
             empty_text = params.empty_text,
@@ -847,6 +848,16 @@ local function buildScreens(st)
                 ctx.repaint()
             end,
         }
+    end
+
+    local function buildQuickActionsSettings(ctx)
+        local plugin = getPlugin()
+        if not plugin then
+            return SUI.RowPage{ inner_w = ctx.inner_w, empty_text = _("Quick actions are unavailable.") }
+        end
+        local QA = require("features/sui_quickactions")
+        ctx.current().params = QA.customQAListParams(plugin, makeCtxMenu(ctx), ctx)
+        return buildRowPage(ctx)
     end
 
     -- ── 2.12–2.16. Plugin-delegated screens ──────────────────────────────────
@@ -884,6 +895,7 @@ local function buildScreens(st)
         library_settings       = buildLibrarySettings,
         style_settings         = buildStyleSettings,
         critter_settings       = buildCritterSettings,
+        quick_actions_settings = buildQuickActionsSettings,
         about_settings         = buildAboutSettings,
         pages                  = buildPages,
         page_edit              = buildPageEdit,
@@ -913,6 +925,7 @@ local function makeScreenTitles(st)
         library_settings       = _("Library"),
         style_settings         = _("Style"),
         critter_settings       = _("Tiny Critter"),
+        quick_actions_settings = _("Custom Quick Actions"),
         about_settings         = _("About"),
         pages = function()
             return st.screen_id == "hs" and _("Layout Editor")

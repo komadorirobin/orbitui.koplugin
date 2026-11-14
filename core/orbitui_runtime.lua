@@ -107,6 +107,7 @@ function M.classes(root)
     assert(not require("lib/bookshelf_version_gate").tooOld(),
         "Update KOReader to v2025.08 or newer before using OrbitUI")
     local bookshelf = assert(dofile(root .. "/components/bookshelf/main.lua"))
+    bookshelf.path = root .. "/components/bookshelf"
     local simpleui = assert(dofile(root .. "/components/simpleui/main.lua"))
     require("adapters/orbitui_ui").classes(bookshelf, simpleui)
     component_classes = { bookshelf = bookshelf, simpleui = simpleui }

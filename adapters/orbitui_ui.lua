@@ -302,6 +302,10 @@ function M.wrap(name, module)
 end
 
 function M.classes(bookshelf, simpleui)
+    bookshelf._orbitui_native_menu_ids = {}
+    for _, id in ipairs(bookshelf.MENU_ORDER or {}) do
+        bookshelf._orbitui_native_menu_ids[id] = true
+    end
     require("adapters/orbitui_libraries").classes(bookshelf)
     function bookshelf:_wireFastFileBrowserTab()
         require("adapters/orbitui_libraries").wireReaderMenu(self.ui)

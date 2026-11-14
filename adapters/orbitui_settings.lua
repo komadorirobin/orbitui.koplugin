@@ -677,6 +677,25 @@ local function originalSettings(S, wanted)
     for _i, row in ipairs(rows) do if wanted[row.orbitui_id] then selected[#selected + 1] = row end end
     return selected
 end
+
+local function appendBookshelfExtensions(rows, plugin)
+    local native_ids = plugin and plugin._orbitui_native_menu_ids
+    if not native_ids then return end
+    local extensions = {}
+    for _, id in ipairs(plugin.MENU_ORDER or {}) do
+        if not native_ids[id] then extensions[#extensions + 1] = id end
+    end
+    if #extensions == 0 then return end
+    local items = {}
+    local ok, err = pcall(plugin.buildMenuItems, plugin, items)
+    if not ok then
+        require("logger").warn("OrbitUI: Bookshelf extension menu failed:", err)
+        return
+    end
+    for _, id in ipairs(extensions) do
+        if type(items[id]) == "table" then rows[#rows + 1] = items[id] end
+    end
+end
 function M.panelItems(S)
     local R, rows = require("lib/bookshelf_hero_regions"), {}
     local tags = {}
@@ -731,6 +750,7 @@ function M.library(profile, appearance, page, target, opts)
         }
         elseif page == "hardcover" then native = S:_hardcoverSubItems()
         else native = originalSettings(S) end
+        if page == "bookshelf_advanced" then appendBookshelfExtensions(native, S._plugin) end
         for _i, row in ipairs(scopedControls(native, page == "themes" and "theme"
                 or page == "bookshelf_advanced" and "mixed" or "bookshelf")) do
             if not target or row.orbitui_id == target then rows[#rows + 1] = row end
@@ -927,11 +947,35 @@ function M.open(id, opts)
     for _i, row in ipairs(extra or {}) do rows[#rows + 1] = row end
     current = host(_("OrbitUI settings") .. " / " .. _(n.label), rows, n.parent or "__root__", opts); return current
 end
+local function restartItem(close)
+    local device = package.loaded.device
+    if not device then return end
+    local android = device.isAndroid and device:isAndroid()
+    local restart = device.canRestart and device:canRestart()
+    if not restart and not android then return end
+    return {
+        orbitui_id = "restart", text = restart and _("Restart KOReader") or _("Close KOReader"),
+        callback = function()
+            if close then close() end
+            local UI = require("ui/uimanager")
+            if restart then
+                return UI:askForRestart(_("Restart KOReader now?"))
+            end
+            UI:show(require("ui/widget/confirmbox"):new{
+                text = _("Close KOReader, then reopen it from Android to finish restarting."),
+                ok_text = _("Close KOReader"),
+                ok_callback = function() UI:broadcastEvent(require("ui/event"):new("Exit")) end,
+            })
+        end,
+    }
+end
+
 function M.items(close)
     local rows = { { orbitui_id = "search", text = _("Search settings"), callback = function()
         if close then close() end; M.search()
     end } }
     for _i, row in ipairs(children(nil, close)) do rows[#rows + 1] = row end
+    rows[#rows + 1] = restartItem(close)
     return rows
 end
 function M.showList(opts)
@@ -1156,13 +1200,7 @@ function M.registerMenu()
             tabs._orbitui_settings_tab = true
             item.text = _("OrbitUI settings")
             item.separator = true
-            local icon = "appbar.contrast"
-            local ok, registered = pcall(function()
-                return require("features/sui_style").registerTabIconName("orbitui_menu",
-                    require("core/orbitui_icons").imageFile("material:apps:300"))
-            end)
-            if ok and registered then icon = registered end
-            local tab = { id = "orbitui_settings_tab", icon = icon, text = "OrbitUI", item }
+            local tab = { id = "orbitui_settings_tab", icon = "appbar.contrast", text = "OrbitUI", item }
             for _, row in ipairs(M.items()) do
                 row.id = "orbitui_menu_" .. row.orbitui_id
                 tab[#tab + 1] = row

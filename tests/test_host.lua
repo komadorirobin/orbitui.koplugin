@@ -36,6 +36,33 @@ H.test("reader aliases and names match KOReader's conventions", function()
     H.eq(owner[1].name, "readerbookshelf")
     H.eq(owner[2].ui, owner.ui)
 end)
+H.test("Bookshelf passes through the native patch hook with both components already allocated", function()
+    local calls = {}
+    local bookshelf = Widget:extend{ name = "bookshelf", init = function(self)
+        H.eq(self, self.ui.bookshelf)
+        assert(self.ui.simpleui)
+        calls[#calls + 1] = "bookshelf"
+    end }
+    local simpleui = Widget:extend{ init = function(self)
+        H.eq(self.ui.bookshelf:extraMenu(), "patched")
+        calls[#calls + 1] = "simpleui"
+    end }
+    local loader = { loaded_plugins = {}, createPluginInstance = function(self, class, attrs)
+        H.eq(class, bookshelf); H.eq(class.name, "bookshelf")
+        H.eq(self.loaded_plugins.bookshelf, attrs)
+        local ok, instance = pcall(class.new, class, attrs)
+        assert(ok, instance)
+        self.loaded_plugins[class.name] = instance
+        function class:extraMenu() return "patched" end
+        calls[#calls + 1] = "patch"
+        return ok, instance
+    end }
+    local owner = { ui = { document = {} } }
+    Host.attach(owner, { bookshelf = bookshelf, simpleui = simpleui }, loader, "/root")
+    H.eq(table.concat(calls, ","), "bookshelf,patch,simpleui")
+    H.eq(loader.loaded_plugins.bookshelf, owner.ui.bookshelf)
+    H.eq(owner.ui.bookshelf.name, "readerbookshelf")
+end)
 H.test("close-document events reach each component exactly once", function()
     local owner, _, calls = fixture()
     H.eq(Host.propagate(owner, { handler = "onCloseDocument", args = { "done" } }, error), false)

@@ -114,6 +114,16 @@ end
 
 function M.wrap(name, module)
     if name == "features/sui_style" then
+        if module.addTabIconSlot then
+            module.addTabIconSlot{
+                id = "orbitui_menu",
+                label = function() return _("Tab: OrbitUI") end,
+                group = "sui_tabbar_icons",
+                tab_id = "orbitui_settings_tab",
+                default_icon = "material:apps:300",
+                default_ko = "appbar.contrast",
+            }
+        end
         local safe, register = module.safeIconPath, module.registerTabIconName
         module.safeIconPath = function(path, fallback, slot)
             return safe(Icons.imageFile(path) or Icons.rebaseImage(path) or path, fallback, slot)

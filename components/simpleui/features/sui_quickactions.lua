@@ -1746,7 +1746,7 @@ end
 -- "Create Quick Action" footer, now that creating one belongs here rather
 -- than on the two-entry parent screen.
 -- ---------------------------------------------------------------------------
-function QA.sui_show_custom_qa_list(plugin, ctx_menu, ctx)
+function QA.customQAListParams(plugin, ctx_menu, ctx)
     local function get_rows()
         local rows = {}
 
@@ -1826,7 +1826,7 @@ function QA.sui_show_custom_qa_list(plugin, ctx_menu, ctx)
 
     local MAX_CUSTOM_QA = Config.MAX_CUSTOM_QA
 
-    ctx_menu.show_row_page({
+    return {
         title = ctx_menu._("Custom Quick Actions"),
         items_func = get_rows,
         empty_text = ctx_menu._("No actions configured"),
@@ -1848,7 +1848,11 @@ function QA.sui_show_custom_qa_list(plugin, ctx_menu, ctx)
                 ctx2.repaint()
             end)
         end
-    })
+    }
+end
+
+function QA.sui_show_custom_qa_list(plugin, ctx_menu, ctx)
+    ctx_menu.show_row_page(QA.customQAListParams(plugin, ctx_menu, ctx))
 end
 
 function QA.sui_build_qa_icons(plugin, ctx_menu, ctx)

@@ -25,8 +25,19 @@ function M.attach(owner, classes, loader, root)
     end
     for _, name in ipairs(names) do
         local instance = owner._orbitui_components[name]
-        if instance._init then instance:_init() end
-        if instance.init then instance:init() end
+        if name == "bookshelf" and loader.createPluginInstance then
+            -- The normal loader also dispatches registered KOReader userpatches.
+            -- Both aliases already exist, and Widget:new reuses this instance.
+            local called, ok, result = pcall(loader.createPluginInstance, loader, classes[name], instance)
+            if called then
+                assert(ok and result == instance, result)
+            else
+                require("logger").warn("OrbitUI: Bookshelf plugin hook failed:", ok)
+            end
+        else
+            if instance._init then instance:_init() end
+            if instance.init then instance:init() end
+        end
     end
     local refresh = package.loaded["lib/bookshelf_menu_close_refresh"]
     if refresh and refresh.acquire then refresh.acquire(owner) end
