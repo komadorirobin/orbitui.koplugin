@@ -880,6 +880,113 @@ function M.collection(name, opts)
     return modal, draft
 end
 
+local highlight_key = "orbitui_highlight_menu_order"
+local highlight_pin = "02_orbitui_pin_reference"
+local highlight_more = "zz_orbitui_highlight_more"
+local highlight_back = "00_orbitui_highlight_back"
+local highlight_edit = "zzz_orbitui_highlight_customize"
+local highlight_default = { "01_select", "02_highlight", highlight_pin, "03_copy", "04_add_note", "06_dictionary" }
+local highlight_labels = {
+    ["01_select"] = "Select", ["02_highlight"] = "Highlight", [highlight_pin] = "Pin reference",
+    ["03_copy"] = "Copy", ["04_add_note"] = "Add note", ["05_wikipedia"] = "Wikipedia",
+    ["06_dictionary"] = "Dictionary", ["07_translate"] = "Translate", ["12_search"] = "Search",
+}
+local observed_highlight_labels = setmetatable({}, { __mode = "k" })
+
+local function highlightActionId(id)
+    -- KOAssistant's numbered quick-action slots can point to different actions
+    -- when opening another book or editing its quick actions. Keep them in More.
+    return type(id) == "string" and #id > 0 and #id <= 128 and not id:find("%c")
+        and id ~= highlight_back and id ~= highlight_more and id ~= highlight_edit
+        and not id:match("^90_%d+_koassistant_slot$")
+end
+
+local function highlightOrder()
+    local saved = G_reader_settings and G_reader_settings:readSetting(highlight_key)
+    if type(saved) ~= "table" or #saved > #highlight_default then return highlight_default end
+    local seen = {}
+    local count = #saved
+    for i, id in pairs(saved) do
+        if type(i) ~= "number" or i < 1 or i > count or i % 1 ~= 0
+                or not highlightActionId(id) or seen[id] then return highlight_default end
+        seen[id] = true
+    end
+    for i = 1, count do if not saved[i] then return highlight_default end end
+    return saved
+end
+
+function M.highlightMenuItems(changed)
+    local _ = require("core/orbitui_i18n")
+    local R = package.loaded["apps/reader/readerui"]
+    local highlight = R and R.instance and R.instance.highlight
+    local registered = highlight and highlight._highlight_buttons
+    local observed = registered and observed_highlight_labels[registered]
+    local labels, ids = {}, {}
+    for id, name in pairs(highlight_labels) do labels[id] = _(name) end
+    for id, entry in pairs(observed or {}) do
+        if entry.factory == registered[id] then labels[id] = entry.text end
+    end
+    for id in pairs(labels) do ids[#ids + 1] = id end
+    table.sort(ids)
+    local active = highlightOrder()
+    local function save(id, position)
+        if not G_reader_settings or highlightOrder() ~= active then return end
+        local order = {}
+        for i, action in ipairs(active) do order[i] = action end
+        if not id then
+            table.remove(order, position)
+        else
+            for i, action in ipairs(order) do
+                if action == id then order[i] = order[position]; break end
+            end
+            order[position] = id
+        end
+        G_reader_settings:saveSetting(highlight_key, order)
+        changed()
+    end
+    local function picker(position)
+        local rows = {}
+        if active[position] then
+            rows[1] = { text = _("Remove"), callback = function() save(nil, position) end }
+        end
+        for _, id in ipairs(ids) do
+            local action = id
+            local elsewhere
+            for i, current in ipairs(active) do if current == action then elsewhere = i; break end end
+            if active[position] or not elsewhere then
+                rows[#rows + 1] = { text = labels[action], radio = true,
+                    checked_func = function() return active[position] == action end,
+                    callback = function()
+                        if active[position] ~= action then save(action, position) end
+                    end }
+            end
+        end
+        return rows
+    end
+    local rows = {}
+    for position, id in ipairs(active) do
+        local slot = position
+        local label = labels[id] or string.format(_("Unavailable action (%s)"), id)
+        rows[#rows + 1] = { text = string.format("%d. %s", slot, label),
+            sub_item_table_func = function() return picker(slot) end }
+    end
+    if #active < #highlight_default then
+        rows[#rows + 1] = { text = _("Add action…"),
+            sub_item_table_func = function() return picker(#active + 1) end }
+    end
+    rows[#rows + 1] = { text = _("Restore defaults"), enabled_func = function() return active ~= highlight_default end,
+        callback = function()
+            if not G_reader_settings or highlightOrder() ~= active then return end
+            G_reader_settings:delSetting(highlight_key)
+            changed()
+        end }
+    rows[#rows + 1] = { text = _("About the text selection menu"), callback = function()
+        Context.notify(_("Choose an action for each position. Choosing one already in the menu swaps the two.")
+            .. "\n\n" .. _("To add a plugin button, select text and open More…, then customize the menu from there."))
+    end }
+    return rows
+end
+
 -- Reader reference drawer. Kept lazy in this existing book-panel adapter to
 -- retain the API-1 installed path budget. No Aleph implementation or assets.
 function M.readerPins()
@@ -889,7 +996,7 @@ function M.readerPins()
     local _ = require("core/orbitui_i18n")
     local UI = require("ui/uimanager")
     local states = setmetatable({}, { __mode = "k" })
-    local KEY, BUTTON, MORE, LIMIT = "orbitui_reader_pins", "02_orbitui_pin_reference", "zz_orbitui_highlight_more", 12
+    local KEY, BUTTON, LIMIT = "orbitui_reader_pins", highlight_pin, 12
     local function notify(text) Context.notify(_(text)) end
     local function integer(n, max)
         return type(n) == "number" and n >= 1 and n <= (max or 1e9) and n == math.floor(n)
@@ -1165,20 +1272,50 @@ function M.readerPins()
             end
             h:addToHighlightDialog(BUTTON, s.button)
             if h._highlight_buttons["02_highlight"] and type(h.onShowHighlightMenu) == "function"
-                    and not h._highlight_buttons[MORE] then
+                    and not h._highlight_buttons[highlight_more] then
                 local native = h.onShowHighlightMenu
                 s.menu_original = rawget(h, "onShowHighlightMenu")
-                local primary = { ["01_select"] = true, ["02_highlight"] = true, [BUTTON] = true,
-                    ["03_copy"] = true, ["04_add_note"] = true, ["06_dictionary"] = true }
                 local show
                 show = function(this, index, expanded)
                     if not live(s) or not this.selected_text then return native(this, index) end
                     local all = this._highlight_buttons
                     local subset = {}
-                    for id, spec in pairs(all) do
-                        if id ~= MORE and (expanded or primary[id]) then subset[id] = spec end
+                    if expanded then
+                        local labels = {}
+                        observed_highlight_labels[all] = labels
+                        for id, spec in pairs(all) do
+                            if not highlight_labels[id] and highlightActionId(id) and type(spec) == "function" then
+                                local action, factory = id, spec
+                                subset[id] = function(...)
+                                    local button = factory(...)
+                                    local label = type(button) == "table" and button.text
+                                    if type(label) == "string" and #label <= 160 and label:find("%S") then
+                                        labels[action] = { text = label:gsub("%s+", " "), factory = factory }
+                                    end
+                                    return button
+                                end
+                            elseif id ~= highlight_more and id ~= highlight_back and id ~= highlight_edit then
+                                subset[id] = spec
+                            end
+                        end
+                        subset[highlight_edit] = function()
+                            return { text = _("Customize text selection menu"), callback = function()
+                                if not live(s) or not this.selected_text then return end
+                                this:onClose()
+                                require("adapters/orbitui_settings").open("highlight_menu")
+                            end }
+                        end
+                    else
+                        local order = highlightOrder()
+                        for i, id in ipairs(order) do
+                            local spec = all[id]
+                            if spec then
+                                local key = order == highlight_default and id or string.format("%02d_%s", i, id)
+                                subset[key] = spec
+                            end
+                        end
                     end
-                    subset[expanded and "00_orbitui_highlight_back" or MORE] = function()
+                    subset[expanded and highlight_back or highlight_more] = function()
                         return { text = expanded and _("Back") or _("More…"), callback = function()
                             if not live(s) or not this.selected_text then return end
                             if this.highlight_dialog then UI:close(this.highlight_dialog); this.highlight_dialog = nil end

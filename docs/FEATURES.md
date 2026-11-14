@@ -218,6 +218,12 @@ X-Ray-väljare; AI-generering sker bara via pluginets egna uttryckliga åtgärde
 In an open book, use **Tools > Pinned references / Verktyg > Fästa referenser**.
 **Pin current page / Fäst aktuell sida** saves a reference separately from
 bookmarks. Selected text has a **Pin reference / Fäst referens** action too.
+Choose up to six text selection shortcuts under **OrbitUI → Integrations →
+Reader panel & X-Ray → Customize text selection menu**. Choose an action
+already on the first page to swap its position. After selecting text,
+**More…** still shows the full menu and lets you add fixed plugin buttons
+such as KOAssistant's main button from there. KOAssistant's context-dependent
+quick actions remain available under **More…**.
 Open the right-hand drawer to preview a page or read an excerpt, move between
 references, open their list, expand/zoom, or remove one with confirmation.
 Only **Go to page / Gå till sidan** moves the book; it uses KOReader's normal

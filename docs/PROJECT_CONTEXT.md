@@ -20,7 +20,14 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-14
+## Snapshot: 2026-11-15
+
+- **Customizable text selection menu, local development.** The first page
+  can show up to six KOReader actions in the reader’s chosen order. The
+  editor is available from Reader panel & X-Ray and from More in a book.
+  More also keeps the full native action list. Fixed plugin buttons can be
+  selected there. KOAssistant’s numbered quick-action slots stay under
+  More because their action can change with the open book.
 
 - **Bookshelf 6.5.0 released in 1.4.0-beta.2.** The integrated pin is
   **3020b02c**. Bookshelf accepts its own optional Hardcover API key and can

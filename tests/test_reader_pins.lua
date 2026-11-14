@@ -164,6 +164,92 @@ H.test("native highlight menu can expand and go back without replacing registere
     P.retire(reader, true)
     H.eq(h.onShowHighlightMenu, show)
 end)
+H.test("text menu choices preserve callbacks, swap slots and keep the complete native menu", function()
+    fixture()
+    local old_settings, old_editor = G_reader_settings, package.loaded["adapters/orbitui_settings"]
+    local preference, refreshed, opened, invoked = nil, 0, 0, 0
+    G_reader_settings = { readSetting = function() return preference end,
+        saveSetting = function(_, name, value)
+            H.eq(name, "orbitui_highlight_menu_order"); preference = value
+        end,
+        delSetting = function(_, name) H.eq(name, "orbitui_highlight_menu_order"); preference = nil end }
+    package.loaded["adapters/orbitui_settings"] = {
+        open = function(id) H.eq(id, "highlight_menu"); opened = opened + 1 end,
+    }
+    local h = reader.highlight
+    local native, visible, order = {}, {}, {}
+    for _, builtin in ipairs{
+        { "01_select", "Select" }, { "02_highlight", "Highlight" }, { "03_copy", "Copy" },
+        { "04_add_note", "Add note" }, { "06_dictionary", "Dictionary" }, { "07_translate", "Translate" },
+    } do
+        local id, label = builtin[1], builtin[2]
+        native[id] = function() return { text = label } end
+    end
+    local predicate = function() return true end
+    native["15_fixture_plugin"] = function(this, index)
+        H.eq(this, h); H.eq(index, 42)
+        return { text = "Fixture plugin", show_in_highlight_dialog_func = predicate,
+            callback = function() invoked = invoked + 1 end }
+    end
+    native["90_01_koassistant_slot"] = function() return { text = "KOAssistant quick action" } end
+    h._highlight_buttons = native
+    h.onClose = function(this) this.selected_text = nil end
+    h.onShowHighlightMenu = function(this, index)
+        order, visible = {}, {}
+        local ids = {}
+        for id in pairs(this._highlight_buttons) do ids[#ids + 1] = id end
+        table.sort(ids)
+        for _, id in ipairs(ids) do
+            local button = this._highlight_buttons[id](this, index)
+            visible[button.text] = button; order[#order + 1] = button.text
+        end
+    end
+    local function show()
+        h.selected_text = { text = "passage" }; h:onShowHighlightMenu(42)
+        H.eq(h._highlight_buttons, native)
+        return table.concat(order, "|")
+    end
+    local function find(rows, label)
+        for _, row in ipairs(rows) do if row.text == label then return row end end
+        error("Missing row: " .. label)
+    end
+    local function editor() return Panel.highlightMenuItems(function() refreshed = refreshed + 1 end) end
+    local function choose(slot, label) find(editor()[slot].sub_item_table_func(), label).callback() end
+    P.attach(reader)
+    H.eq(show(), "Select|Highlight|Pin reference|Copy|Add note|Dictionary|More…")
+    assert(not find(editor(), "Restore defaults").enabled_func())
+    visible["More…"].callback()
+    assert(visible["Fixture plugin"] and visible.Translate and visible.Back and visible["KOAssistant quick action"])
+    H.eq(invoked, 0); H.eq(visible["Fixture plugin"].show_in_highlight_dialog_func, predicate)
+    visible["Customize text selection menu"].callback()
+    H.eq(opened, 1); H.eq(h.selected_text, nil)
+    for _, row in ipairs(editor()[2].sub_item_table_func()) do
+        assert(row.text ~= "KOAssistant quick action")
+    end
+    choose(4, "Translate")
+    choose(2, "Fixture plugin")
+    choose(1, "Translate") -- swap with slot 4
+    H.eq(show(), "Translate|Fixture plugin|Pin reference|Select|Add note|Dictionary|More…")
+    visible["Fixture plugin"].callback()
+    H.eq(invoked, 1)
+    choose(2, "Remove")
+    find(find(editor(), "Add action…").sub_item_table_func(), "Fixture plugin").callback()
+    H.eq(show(), "Translate|Pin reference|Select|Add note|Dictionary|Fixture plugin|More…")
+    h:removeFromHighlightDialog("15_fixture_plugin")
+    H.eq(show(), "Translate|Pin reference|Select|Add note|Dictionary|More…")
+    visible["More…"].callback()
+    assert(visible.Copy and visible.Highlight)
+    H.eq(visible["Fixture plugin"], nil)
+    H.eq(refreshed, 5)
+    find(editor(), "Restore defaults").callback()
+    H.eq(preference, nil)
+    H.eq(show(), "Select|Highlight|Pin reference|Copy|Add note|Dictionary|More…")
+    preference = {}
+    H.eq(show(), "More…")
+    preference = { "02_highlight", "02_highlight" }
+    H.eq(show(), "Select|Highlight|Pin reference|Copy|Add note|Dictionary|More…")
+    G_reader_settings, package.loaded["adapters/orbitui_settings"] = old_settings, old_editor
+end)
 H.test("long UTF8 excerpts are cut at character boundaries", function()
     fixture(); assert(P.pin(reader, string.rep("å", 3000)))
     local text = saved[key].entries[1].text

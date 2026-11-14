@@ -434,6 +434,7 @@ local nodes = {
     { "reader_menu", "Reader menu: fast return to Library", "reader", "navigation", "arkivskåp arkivknapp snabbstängning stäng boken file browser cabinet close button reader menu fast return" },
     { "integrations", "Integrations", nil, "integrations", "bookorbit hardcover myanimelist mal synk sync kopplingar" },
     { "reader_panel", "Reader panel & X-Ray", "integrations", "integrations", "läsarpanel bottenpanel bottenmeny läsinställningar marginaler bottom menu reading settings margins xray x-ray koassistant ai automatiskt automatic plugin" },
+    { "highlight_menu", "Customize text selection menu", "reader_panel", "system", "markera markeringsmeny textmarkering ordval ordbok dictionary highlight translate översätt fler copy" },
     { "bookorbit", "BookOrbit", "integrations", "integrations", "vill läsa want to read lokalt local taggar tags ångra öppning undo opening hardcover server api patch sync synk" },
     { "connections", "Connections & help", "integrations", "integrations", "bookorbit myanimelist mal anslutningar credentials" },
     { "hardcover", "Hardcover book information", "integrations", "bookshelf", "hardcover enrichment berikning api betyg rating omslag" },
@@ -952,8 +953,13 @@ function M.open(id, opts)
     elseif id == "bookshelf_navigation" then extra = require("adapters/orbitui_library_settings").navigationItems()
     elseif id == "connections" then extra = require("adapters/orbitui_integrations").items()
     elseif id == "bookorbit" then extra = require("adapters/orbitui_integrations").bookOrbitItems(close)
-    elseif id == "reader_panel" then extra = require("adapters/orbitui_book_panel").readerPanelItems(function()
-        close(); M.open("reader_panel", opts)
+    elseif id == "reader_panel" then
+        extra = require("adapters/orbitui_book_panel").readerPanelItems(function()
+            close(); M.open("reader_panel", opts)
+        end)
+        for _, row in ipairs(children(id, close, opts)) do extra[#extra + 1] = row end
+    elseif id == "highlight_menu" then extra = require("adapters/orbitui_book_panel").highlightMenuItems(function()
+        close(); M.open("highlight_menu", opts)
     end)
     elseif id == "book_overview" then extra = require("adapters/orbitui_book_panel").bookPageItems(function()
         close(); M.open("book_overview", opts)
@@ -964,7 +970,8 @@ function M.open(id, opts)
     elseif id == "quick_start" then extra = M.quickStartItems(close)
     else extra = children(id, close, opts) end
     for _i, row in ipairs(extra or {}) do rows[#rows + 1] = row end
-    current = host(_("OrbitUI settings") .. " / " .. _(n.label), rows, n.parent or "__root__", opts); return current
+    local title = id == "highlight_menu" and _(n.label) or _("OrbitUI settings") .. " / " .. _(n.label)
+    current = host(title, rows, n.parent or "__root__", opts); return current
 end
 local function restartItem(close)
     local device = package.loaded.device

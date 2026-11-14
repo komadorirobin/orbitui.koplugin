@@ -434,7 +434,7 @@ H.test("reader integration settings are bilingual, lazy and refresh their radio 
         if row.id == "reader_panel" then row.action(); break end
     end
     local first = latest()
-    H.eq(changed, 0); H.eq(#first.item_table, 9)
+    H.eq(changed, 0); H.eq(#first.item_table, 10)
     assert(first.item_table[2].checked_func()); assert(first.item_table[6].checked_func())
     first.item_table[8].callback()
     H.eq(selected, "koassistant"); H.eq(changed, 1); assert(first.closed)
@@ -443,5 +443,18 @@ H.test("reader integration settings are bilingual, lazy and refresh their radio 
     assert(not latest().item_table[2].checked_func()); assert(latest().item_table[8].checked_func())
     latest().item_table[2].callback(); H.eq(bottom, true); H.eq(changed, 3)
     G_reader_settings = old
+end)
+H.test("the text selection menu settings are searchable and reachable from the reader settings", function()
+    lang = "sv"; hit("textmarkeringsmenyn", "highlight_menu")
+    lang = "en"; hit("text selection menu", "highlight_menu")
+    local parent = Settings.open("reader_panel")
+    local rows = parent.item_table
+    local row = rows[#rows]
+    H.eq(row.text, "Customize text selection menu")
+    row.callback()
+    assert(parent.closed)
+    H.eq(latest().title, "Customize text selection menu")
+    H.eq(latest().item_table[2].text, "1. Select")
+    H.eq(latest().item_table[7].text, "6. Dictionary")
 end)
 H.finish()
