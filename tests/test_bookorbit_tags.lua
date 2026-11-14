@@ -237,8 +237,7 @@ H.test("closed, replaced, changed-account and removed-file result callbacks cann
 end)
 H.test("actual native Tags builder retains author/collection/genre/folder sections, focus, zoom and scroll geometry", function()
     reset(1)
-    local f = assert(io.open(root .. "/components/bookshelf/lib/bookshelf_widget.lua"))
-    local text = f:read("*a"); f:close()
+    local text = H.componentSource(root, "lib/bookshelf_widget_book_popup")
     local factory = assert(text:match("function BookshelfWidget:_showBookDetail%(book, opts%)\n(.-)\nend\n"))
     local primitives = H.widget()
     function primitives:getSize() return { w = self.width or 80, h = self.height or 20 } end

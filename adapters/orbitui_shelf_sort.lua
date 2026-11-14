@@ -7,7 +7,7 @@ local local_sources = { folder = true, folder_flat = true, library = true, all =
     single_series = true, author = true, genre = true, format = true, rating = true, language = true,
     orbitui_epub_tags = true }
 local boolean = { [true] = true, [false] = true }
-local fields = { sort = { title = true, author = true, date_added = true, last_opened = true, series = true },
+local fields = { sort = { title = true, author = true, date_added = true, last_opened = true, series = true, time_left = true },
     filter = { all = true, unread = true, reading = true, barely = true, finished = true },
     view = { covers = true, list = true, spines = true, compact = true, compact_two = true },
     alphabet = boolean, alphabet_background = boolean }
@@ -172,7 +172,7 @@ function M.browseControls(widget, native_sort)
     end
     local filter = prefs.filter or "all"
     local sort_names = { title = "Title", author = "Author", date_added = "Date added",
-        last_opened = "Last read", series = "Series" }
+        last_opened = "Last read", series = "Series", time_left = "Time left" }
     local filter_names = { all = "All", unread = "Unread", reading = "In progress", barely = "Barely started", finished = "Finished" }
     local view_names = { covers = "Covers", list = "List", spines = "Book spines",
         compact = "Compact list", compact_two = "Compact list · 2 columns" }
@@ -180,7 +180,8 @@ function M.browseControls(widget, native_sort)
         { text = string.format(_("%d books"), counts.all), enabled_func = function() return false end },
         { text = _("Sort by") .. ": " .. _(sort_names[prefs.sort] or "Shelf default"),
             sub_item_table = choices("sort", { { "title", "Title" }, { "author", "Author" },
-                { "date_added", "Date added" }, { "last_opened", "Last read" }, { "series", "Series" } }) },
+                { "date_added", "Date added" }, { "last_opened", "Last read" }, { "series", "Series" },
+                { "time_left", "Time left" } }) },
         { text = _("Filter") .. ": " .. _(filter_names[filter]),
             sub_item_table = choices("filter", { { "all", "All" }, { "unread", "Unread" },
                 { "reading", "In progress" }, { "barely", "Barely started" }, { "finished", "Finished" } }) },

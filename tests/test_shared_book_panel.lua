@@ -43,6 +43,7 @@ package.loaded["lib/bookshelf_book_repository"] = Repo
 -- primitives stubbed, rather than copying their behavior into the adapter test.
 local f = assert(io.open("components/bookshelf/lib/bookshelf_widget.lua"))
 local source = f:read("*a"); f:close()
+source = source .. H.componentSource(".", "lib/bookshelf_widget_book_popup")
 local function native(name, args)
     local body = assert(source:match("\nfunction BookshelfWidget:" .. name .. "%(" .. args .. "%)\n(.-)\nend\n"))
     local code = "return function(self, " .. args .. ")\n" .. body .. "\nend"

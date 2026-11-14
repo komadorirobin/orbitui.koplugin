@@ -463,7 +463,10 @@ H.test("native physical row puts the label above the page block without moving t
         .."local stand_h,inset,b,fh,surf = 200,5,10,4,16\nlocal tile,fx_here\n"..body
         .."\nreturn tile, fx_here end", {
             Screen=package.loaded["device"].screen, Space={px=function(n) return n end}, Geom=Geom,
-            SpineShelf={plankLift=function() return 20 end}, FaceOutTopBlock=block,
+            SpineShelf={plankLift=function() return 20 end},
+            FaceOutTopBlock={new=function(_,o)
+                o.test_page_block = true; return block:new(o)
+            end},
             OverlapGroup=block, FaceOutFeet=block, LiftShadow=block,
         })()
     local columns = compile("local SpineShelf={}\n" .. assert(src:match(
@@ -478,22 +481,25 @@ H.test("native physical row puts the label above the page block without moving t
                 text="Title",above=require("adapters/orbitui_cover_label_above").new,position="above"}
             end},selected)
             H.eq(labelled:getSize().h,plain:getSize().h)
+            local original_y, original_h = 0, nil
+            for _, child in ipairs(plain) do
+                original_y = original_y + child:getSize().h
+                if child[1] and child[1].spine_face_out then original_h = child[1].height; break end
+            end
             local label, label_y, cover_y, cover, y = nil,nil,nil,nil,0
             for _, child in ipairs(labelled) do
-                if child.cover then label=child; label_y=y end
+                if child.cover and not child.test_page_block then label=child; label_y=y end
                 if child[1] and child[1].spine_face_out then cover=child[1]; cover_y=y end
                 y=y+child:getSize().h
             end
             assert(label and cover); H.eq(label.cover,cover)
             H.eq(label_y+label:getSize().h+5,cover_y)
             H.eq(e._drawn_h,cover.height+5)
-            local original_h = math.min(h,190)
-            if selected and original_h+26>195 then original_h=169 end
             H.eq(cover.width,math.floor(100*cover.height/original_h))
             local col=columns(e,30,5)[1]
             H.eq(col.w,cover.width); H.eq(col.x,30+math.floor((100-cover.width)/2))
             H.eq(col.h,cover.height+5)
-            H.eq(cover_y+cover.height,195-(selected and 21 or 0))
+            H.eq(cover_y+cover.height,original_y)
             H.eq(cover.faceout_fx.below,fx.below)
             assert(label_y>=0); label:free()
         end

@@ -257,7 +257,7 @@ H.test("Book details renders through native tab switching, zoom, resize and clos
         local signature = args and args ~= "" and ("self, " .. args) or "self"
         return compile(constants .. "return function(" .. signature .. ")\n" .. body .. "\nend", env)
     end
-    local owner = { _headedHtmlBody = native(shelf_source, "BookshelfWidget", "_headedHtmlBody",
+    local owner = { _headedHtmlBody = native(H.componentSource(root, "lib/bookshelf_widget_book_popup"), "BookshelfWidget", "_headedHtmlBody",
         "modal, avail_w, avail_h, header, html, above") }
     Panel.widget(owner)
     local args = { tabs = { { id = "description", html = "<p>Description</p>" },
@@ -344,8 +344,7 @@ H.test("quick changes expire only native listing caches, not covers or persisted
     H.eq(Sort.viewPrefs(ref).view, "covers")
 end)
 H.test("actual native summary header keeps title, author and progress without stat/history detail IO", function()
-    local file = assert(io.open(root .. "/components/bookshelf/lib/bookshelf_widget.lua"))
-    local source = file:read("*a"); file:close()
+    local source = H.componentSource(root, "lib/bookshelf_widget_book_popup")
     local body = assert(source:match("function BookshelfWidget:_buildBookMenuHeader%(book, override_width, pill_specs, bookmark_action, opts%)\n(.-)\nend\n"))
     local text, W = {}, H.widget()
     function W:init() if self.text then text[#text + 1] = self.text; assert(self.width > 0) end end

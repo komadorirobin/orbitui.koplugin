@@ -206,7 +206,11 @@ local function rig(opts)
         OPDS_FETCH_CONCURRENCY = 3,
         OPDS_REFUSED_RETRIES = 3,
         OPDS_POOL_POLL         = 0.15,
-        _androidSafeModeEnabled = function() return opts.safe_mode == true end,
+        Device = { isAndroid = function() return opts.safe_mode == true end },
+        BookshelfSettings = { nilOrTrue = function(key)
+            assert(key == "android_safe_mode")
+            return true
+        end },
     }
 
     local fn = compile("local self, queue, token, state = ... ; " .. body, env)

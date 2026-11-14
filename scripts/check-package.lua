@@ -27,7 +27,10 @@ local map_pipe = assert(io.popen("unzip -p " .. quoted .. " 'orbitui.koplugin/co
 local map_bytes = map_pipe:read("*a"); assert(map_pipe:close())
 local sealed_map = assert((loadstring or load)(map_bytes))()
 local embedded = assert(getmetatable(sealed_map)).orbitui_embedded
+local source_embedded = assert(getmetatable(source_map)).orbitui_embedded
 local embedded_count = 0
+local expected_count = 0
+for _ in pairs(source_embedded) do expected_count = expected_count + 1 end
 for name, path in pairs(source_map) do
     assert(sealed_map[name] == path, "Sealed module identity differs: " .. name)
     if embedded[name] then
@@ -40,7 +43,7 @@ for name, path in pairs(source_map) do
     else expect(path) end
 end
 for name in pairs(embedded) do assert(source_map[name], "Unknown embedded module: " .. name) end
-assert(embedded_count == 40, "Expected forty reviewed embedded modules")
+assert(embedded_count == expected_count, "Sealed embedded module count differs")
 for _, path in ipairs({
     "main.lua", "_meta.lua", "orbitui_bootstrap.lua", "VERSION", "manifest.json", "LICENSE", "README.md", "sources.json",
     "docs/MIGRATION.md", "docs/TESTING.md", "docs/UPSTREAM.md",

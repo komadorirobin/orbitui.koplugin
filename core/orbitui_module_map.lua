@@ -142,6 +142,7 @@ local map = {
     ["lib/bookshelf_collection_order"] = "components/bookshelf/lib/bookshelf_collection_order.lua",
     ["lib/bookshelf_color"] = "components/bookshelf/lib/bookshelf_color.lua",
     ["lib/bookshelf_color_palette"] = "components/bookshelf/lib/bookshelf_color_palette.lua",
+    ["lib/bookshelf_colour_runs"] = "components/bookshelf/lib/bookshelf_colour_runs.lua",
     ["lib/bookshelf_colour_text"] = "components/bookshelf/lib/bookshelf_colour_text.lua",
     ["lib/bookshelf_count_badge"] = "components/bookshelf/lib/bookshelf_count_badge.lua",
     ["lib/bookshelf_cover_apply"] = "components/bookshelf/lib/bookshelf_cover_apply.lua",
@@ -150,8 +151,11 @@ local map = {
     ["lib/bookshelf_cover_grid_cell"] = "components/bookshelf/lib/bookshelf_cover_grid_cell.lua",
     ["lib/bookshelf_cover_label"] = "components/bookshelf/lib/bookshelf_cover_label.lua",
     ["lib/bookshelf_cover_label_editor"] = "components/bookshelf/lib/bookshelf_cover_label_editor.lua",
+    ["lib/bookshelf_cover_marks"] = "components/bookshelf/lib/bookshelf_cover_marks.lua",
     ["lib/bookshelf_cover_progress"] = "components/bookshelf/lib/bookshelf_cover_progress.lua",
     ["lib/bookshelf_cover_sources"] = "components/bookshelf/lib/bookshelf_cover_sources.lua",
+    ["lib/bookshelf_curated"] = "components/bookshelf/lib/bookshelf_curated.lua",
+    ["lib/bookshelf_curated_ui"] = "components/bookshelf/lib/bookshelf_curated_ui.lua",
     ["lib/bookshelf_derived_cache"] = "components/bookshelf/lib/bookshelf_derived_cache.lua",
     ["lib/bookshelf_drill_rekey"] = "components/bookshelf/lib/bookshelf_drill_rekey.lua",
     ["lib/bookshelf_editor_page"] = "components/bookshelf/lib/bookshelf_editor_page.lua",
@@ -182,7 +186,14 @@ local map = {
     ["lib/bookshelf_grid_container"] = "components/bookshelf/lib/bookshelf_grid_container.lua",
     ["lib/bookshelf_grid_margins"] = "components/bookshelf/lib/bookshelf_grid_margins.lua",
     ["lib/bookshelf_hardcover"] = "components/bookshelf/lib/bookshelf_hardcover.lua",
+    ["lib/bookshelf_hardcover_autolink"] = "components/bookshelf/lib/bookshelf_hardcover_autolink.lua",
+    ["lib/bookshelf_hardcover_client"] = "components/bookshelf/lib/bookshelf_hardcover_client.lua",
+    ["lib/bookshelf_hardcover_key"] = "components/bookshelf/lib/bookshelf_hardcover_key.lua",
+    ["lib/bookshelf_hardcover_key_ui"] = "components/bookshelf/lib/bookshelf_hardcover_key_ui.lua",
     ["lib/bookshelf_hardcover_match"] = "components/bookshelf/lib/bookshelf_hardcover_match.lua",
+    ["lib/bookshelf_hardcover_picker"] = "components/bookshelf/lib/bookshelf_hardcover_picker.lua",
+    ["lib/bookshelf_hardcover_picker_row"] = "components/bookshelf/lib/bookshelf_hardcover_picker_row.lua",
+    ["lib/bookshelf_hardcover_thumbs"] = "components/bookshelf/lib/bookshelf_hardcover_thumbs.lua",
     ["lib/bookshelf_hero_bar"] = "components/bookshelf/lib/bookshelf_hero_bar.lua",
     ["lib/bookshelf_hero_card"] = "components/bookshelf/lib/bookshelf_hero_card.lua",
     ["lib/bookshelf_hero_line_editor"] = "components/bookshelf/lib/bookshelf_hero_line_editor.lua",
@@ -267,6 +278,7 @@ local map = {
     ["lib/bookshelf_pinyin"] = "components/bookshelf/lib/bookshelf_pinyin.lua",
     ["lib/bookshelf_placeholders"] = "components/bookshelf/lib/bookshelf_placeholders.lua",
     ["lib/bookshelf_plank_browser"] = "components/bookshelf/lib/bookshelf_plank_browser.lua",
+    ["lib/bookshelf_plugin_button"] = "components/bookshelf/lib/bookshelf_plugin_button.lua",
     ["lib/bookshelf_plugin_formats"] = "components/bookshelf/lib/bookshelf_plugin_formats.lua",
     ["lib/bookshelf_plugin_scan"] = "components/bookshelf/lib/bookshelf_plugin_scan.lua",
     ["lib/bookshelf_plural_guard"] = "components/bookshelf/lib/bookshelf_plural_guard.lua",
@@ -285,9 +297,11 @@ local map = {
     ["lib/bookshelf_render_guard"] = "components/bookshelf/lib/bookshelf_render_guard.lua",
     ["lib/bookshelf_reviews_modal"] = "components/bookshelf/lib/bookshelf_reviews_modal.lua",
     ["lib/bookshelf_round_corner"] = "components/bookshelf/lib/bookshelf_round_corner.lua",
+    ["lib/bookshelf_run_text_box"] = "components/bookshelf/lib/bookshelf_run_text_box.lua",
     ["lib/bookshelf_scale"] = "components/bookshelf/lib/bookshelf_scale.lua",
     ["lib/bookshelf_scaled_cover_cache"] = "components/bookshelf/lib/bookshelf_scaled_cover_cache.lua",
     ["lib/bookshelf_scan_progress"] = "components/bookshelf/lib/bookshelf_scan_progress.lua",
+    ["lib/bookshelf_see_through"] = "components/bookshelf/lib/bookshelf_see_through.lua",
     ["lib/bookshelf_selection"] = "components/bookshelf/lib/bookshelf_selection.lua",
     ["lib/bookshelf_series_box_widget"] = "components/bookshelf/lib/bookshelf_series_box_widget.lua",
     ["lib/bookshelf_series_boxes"] = "components/bookshelf/lib/bookshelf_series_boxes.lua",
@@ -309,6 +323,7 @@ local map = {
     ["lib/bookshelf_spine_widget"] = "components/bookshelf/lib/bookshelf_spine_widget.lua",
     ["lib/bookshelf_stack_display"] = "components/bookshelf/lib/bookshelf_stack_display.lua",
     ["lib/bookshelf_stale_sweep"] = "components/bookshelf/lib/bookshelf_stale_sweep.lua",
+    ["lib/bookshelf_star_runs"] = "components/bookshelf/lib/bookshelf_star_runs.lua",
     ["lib/bookshelf_start_menu"] = "components/bookshelf/lib/bookshelf_start_menu.lua",
     ["lib/bookshelf_start_menu_edit"] = "components/bookshelf/lib/bookshelf_start_menu_edit.lua",
     ["lib/bookshelf_start_menu_model"] = "components/bookshelf/lib/bookshelf_start_menu_model.lua",
@@ -331,6 +346,9 @@ local map = {
     ["lib/bookshelf_wallpaper"] = "components/bookshelf/lib/bookshelf_wallpaper.lua",
     ["lib/bookshelf_wallpaper_browser"] = "components/bookshelf/lib/bookshelf_wallpaper_browser.lua",
     ["lib/bookshelf_widget"] = "components/bookshelf/lib/bookshelf_widget.lua",
+    ["lib/bookshelf_widget_book_popup"] = "components/bookshelf/lib/bookshelf_widget_book_popup.lua",
+    ["lib/bookshelf_widget_curated"] = "components/bookshelf/lib/bookshelf_widget_curated.lua",
+    ["lib/bookshelf_widget_opds"] = "components/bookshelf/lib/bookshelf_widget_opds.lua",
     ["lib/calibre_metadata"] = "components/bookshelf/lib/calibre_metadata.lua",
     ["lib/status_line"] = "components/bookshelf/lib/status_line.lua",
     ["lib/token_conformance"] = "components/bookshelf/lib/token_conformance.lua",
@@ -446,6 +464,27 @@ function M.arrange(specs, layout)\
         if ra or rb then return ra ~= nil end\
         return a._default_rank < b._default_rank\
     end)\
+    -- An action the saved order does not know sorted last. One that names a\
+    -- neighbor (a.after = that card's id) goes straight after it instead,\
+    -- so a card added by a later version shows up where it belongs, not\
+    -- under the fold of a reader who arranged their cards before it existed.\
+    if next(rank) then\
+        local moved = {}\
+        for _i, a in ipairs(out) do\
+            if a.after and not rank[a.id] then moved[#moved + 1] = a end\
+        end\
+        for _i, a in ipairs(moved) do\
+            local from, to\
+            for k, x in ipairs(out) do\
+                if x == a then from = k end\
+            end\
+            table.remove(out, from)\
+            for k, x in ipairs(out) do\
+                if x.id == a.after then to = k end\
+            end\
+            if to then table.insert(out, to + 1, a) else table.insert(out, from, a) end\
+        end\
+    end\
     local hidden = layout.hidden or {}\
     for _i, a in ipairs(out) do\
         a._default_rank = nil\
@@ -702,7 +741,59 @@ function R.hint(ctx, b)\
     return Kit.hintText(b.text or \"\", nil, ctx.w, nil, { face = ctx.small, bg = ctx.bg })\
 end\
 \
+-- fillPlan(n, width, gap, need) -> { widths, icons_only }: n cells of one\
+-- width across `width` with `gap` between them, what the division leaves\
+-- over on the last; icons_only when the widest cell's icon and label (need,\
+-- its padding in) is more than a cell holds.\
+local function fillPlan(n, width, gap, need)\
+    local w = math.floor((width - (n - 1) * gap) / math.max(1, n))\
+    local widths = {}\
+    for i = 1, n do widths[i] = w end\
+    if n > 0 then widths[n] = width - (n - 1) * gap - (n - 1) * w end\
+    return { widths = widths, icons_only = (need or 0) > w }\
+end\
+Page._fillPlan = fillPlan   -- for tests\
+\
+-- A chips block with fill: one row the page's whole width, its cells equal\
+-- and their contents centered: a set of moves that belong together (an\
+-- Arrange menu's six). Where the labels do not fit beside their icons (a\
+-- small screen), every cell shows its icon alone.\
+local function fillChips(ctx, b)\
+    local items = b.items or {}\
+    local face = ctx.chip_face\
+    local h = ctx:text(\"Hg\", { face = face }):getSize().h + 2 * Space.px(10)\
+    local pad = Space.px(6)\
+    local icon_face = Font:getFace(\"symbols\", math.max(10, ctx.fs - 2))\
+    local function content(it, icons_only, max_w)\
+        local ink = ctx:ink(it.on, it.enabled ~= false)\
+        local icon = it.icon and ctx:text(it.icon, { face = icon_face, fgcolor = ink })\
+        if icon and icons_only then return icon end\
+        local label = ctx:text(it.text, { bold = it.on, fgcolor = ink, face = face, max_width = max_w })\
+        if not icon then return label end\
+        return HorizontalGroup:new{ align = \"center\", icon, HorizontalSpan:new{ width = Space.px(6) }, label }\
+    end\
+    local need = 0\
+    for _i, it in ipairs(items) do\
+        need = math.max(need, content(it, false):getSize().w + 2 * pad)\
+    end\
+    local plan = fillPlan(#items, ctx.w, ctx.gap, need)\
+    local line, focus = HorizontalGroup:new{ align = \"top\" }, {}\
+    ctx.layout[#ctx.layout + 1] = focus\
+    for i, it in ipairs(items) do\
+        if i > 1 then line[#line + 1] = HorizontalSpan:new{ width = ctx.gap } end\
+        local cw = plan.widths[i]\
+        local card = Kit.card{ width = cw, height = h, on = it.on, padding_left = pad, padding_right = pad,\
+            CenterContainer:new{ dimen = Geom:new{ w = cw - 2 * pad, h = h },\
+                content(it, plan.icons_only, cw - 2 * pad) } }\
+        local cell = Kit.tapCell(card, cw, h, it.callback, it.enabled ~= false, nil, it.on ~= nil)\
+        cell.focus_radius = Kit.RADIUS\
+        line[#line + 1], focus[#focus + 1] = cell, cell\
+    end\
+    return line\
+end\
+\
 function R.chips(ctx, b)\
+    if b.fill then return fillChips(ctx, b) end\
     local vg = VerticalGroup:new{ align = \"left\" }\
     local line, line_w, focus = nil, 0, nil\
     local face = ctx.chip_face\
@@ -1743,7 +1834,9 @@ function PageDialog:over(tail)\
             local d = dialog.frame.dimen\
             if not (d and d.x) then return nil end\
             local size = dialog.frame:getSize()\
-            return { x = d.x, y = d.y, w = size.w, h = size.h }\
+            -- centre: this dialog is short and mid-screen; a taller page\
+            -- of it is centred on the screen (LibraryModal.overY).\
+            return { x = d.x, y = d.y, w = size.w, h = size.h, centre = true, }\
         end,\
         crumbs = table.concat(crumbs, \" \\xE2\\x80\\xBA \"),\
         on_exit = function() dialog:_dismiss() end,\
@@ -4498,6 +4591,24 @@ end\
 \
 -- _search(name) -> a loader for one of our modules, or nil to let the usual\
 -- searchers have it.\
+-- loadCopy(path) -> the chunk in a cached copy, or nil when it is not one of\
+-- our dumps. A dump starts with ESC; anything else is not run. That matters\
+-- most for an EMPTY file, which loadfile accepts as a chunk returning\
+-- nothing: a device that lost power just after a copy was written came back\
+-- with it at zero bytes, require handed out `true` for the module, and\
+-- KOReader died at every start until the file was deleted (PW5, 2026-11-12).\
+-- A copy that is no use is removed, so the next store replaces it.\
+local function loadCopy(path)\
+    local f = io.open(path, \"rb\")\
+    if not f then return nil end\
+    local head = f:read(1)\
+    f:close()\
+    local fn = (head == \"\\27\") and loadfile(path) or nil\
+    if not fn then os.remove(path) end\
+    return fn\
+end\
+M._loadCopy = loadCopy\
+\
 function M._search(name)\
     if type(name) ~= \"string\" or name:sub(1, #M.PREFIX) ~= M.PREFIX or not _root then return nil end\
     local L = lfs()\
@@ -4510,7 +4621,7 @@ function M._search(name)\
     local dir = _dir .. \"/\" .. M.vmTag()\
     local cached = dir .. \"/\" .. file\
     if L.attributes(cached) then\
-        local fn = loadfile(cached)\
+        local fn = loadCopy(cached)\
         if fn then return fn end\
     end\
     local fn, err = M._compile(src)\
@@ -4548,7 +4659,7 @@ function M.data(src, tag, build)\
     local dir = _dir .. \"/\" .. M.vmTag()\
     local cached = dir .. \"/\" .. file\
     if L.attributes(cached) then\
-        local fn = loadfile(cached)\
+        local fn = loadCopy(cached)\
         local ok, t = false, nil\
         if fn then ok, t = pcall(fn) end\
         if ok and type(t) == \"table\" then return t end\
@@ -4876,6 +4987,12178 @@ function M.check()\
 end\
 \
 return M\
+",
+    ["lib/bookshelf_colour_runs"] = "--[[\
+bookshelf_colour_runs.lua -- the parts of a text that take a colour of their own.\
+\
+A text widget draws in one ink. A \"run\" is a stretch of that text, counted in\
+characters, with its own colour: today the rating stars, which the reader can\
+give a colour in the theme's colour menu.\
+\
+Runs are found by looking for known strings (the book's own star row) in the\
+text as it is about to be drawn, after every transform a template goes\
+through. Nothing is added to the text itself, so every measurement made on it\
+stays right and no other reader of a template ever sees a marker.\
+\
+rects() turns the record a laid-out text keeps of its glyphs (which character\
+each came from, and its left and right edge on its line) into the rectangles a\
+run covers. That is how a run is coloured inside WRAPPED text: the text box\
+does its own line breaking and truncation, and tells us afterwards where the\
+characters landed.\
+]]\
+\
+local Runs = {}\
+\
+-- The byte offset of every character start, plus one past the end, so\
+-- starts[i] is where character i begins and #starts - 1 is the length.\
+local function charStarts(text)\
+    local starts, n = {}, 0\
+    for i = 1, #text do\
+        local b = text:byte(i)\
+        if b < 0x80 or b >= 0xC0 then\
+            n = n + 1\
+            starts[n] = i\
+        end\
+    end\
+    starts[n + 1] = #text + 1\
+    return starts\
+end\
+\
+function Runs.charLen(text)\
+    if type(text) ~= \"string\" or text == \"\" then return 0 end\
+    return #charStarts(text) - 1\
+end\
+\
+-- Every occurrence of each needle in `text`, as { s, e, colour } in characters\
+-- (inclusive), sorted, never overlapping: at a given place the first needle\
+-- that matches wins and the search carries on after it.\
+function Runs.find(text, needles, colour)\
+    local runs = {}\
+    if type(text) ~= \"string\" or text == \"\" or type(needles) ~= \"table\" then return runs end\
+    local list = {}\
+    for _, n in ipairs(needles) do\
+        if type(n) == \"string\" and n ~= \"\" then list[#list + 1] = n end\
+    end\
+    if #list == 0 then return runs end\
+    local hits = {}\
+    local pos = 1\
+    while pos <= #text do\
+        local best_s, best_e\
+        for _, n in ipairs(list) do\
+            local s0, e0 = text:find(n, pos, true)\
+            if s0 and (not best_s or s0 < best_s) then best_s, best_e = s0, e0 end\
+        end\
+        if not best_s then break end\
+        hits[#hits + 1] = { best_s, best_e }\
+        pos = best_e + 1\
+    end\
+    if #hits == 0 then return runs end\
+    -- Bytes to characters, in one pass over the text.\
+    local starts = charStarts(text)\
+    local ci = 1\
+    for _, h in ipairs(hits) do\
+        while starts[ci] < h[1] do ci = ci + 1 end\
+        local s = ci\
+        while starts[ci + 1] <= h[2] do ci = ci + 1 end\
+        runs[#runs + 1] = { s = s, e = ci, colour = colour }\
+    end\
+    return runs\
+end\
+\
+-- The run character `index` falls in, or nil.\
+function Runs.at(runs, index)\
+    for _, r in ipairs(runs) do\
+        if index >= r.s and index <= r.e then return r end\
+    end\
+    return nil\
+end\
+\
+-- lines: the laid-out text, one entry per line, each with `xglyphs` (absent on\
+-- an empty line): { text_index, x0, x1, no_drawing }. One rectangle per run\
+-- per line it reaches, line_h tall, covering its drawn glyphs (min and max of\
+-- their edges, so right-to-left text is covered too). A glyph the layout cut\
+-- off is not in the record and so has no rectangle.\
+function Runs.rects(lines, runs, line_h)\
+    local rects = {}\
+    if type(lines) ~= \"table\" or type(runs) ~= \"table\" or #runs == 0 then return rects end\
+    for li, line in ipairs(lines) do\
+        local glyphs = type(line) == \"table\" and line.xglyphs\
+        if glyphs then\
+            local open = {}   -- run -> its rectangle on this line\
+            for _, g in ipairs(glyphs) do\
+                if not g.no_drawing and g.text_index and g.x0 and g.x1 then\
+                    local r = Runs.at(runs, g.text_index)\
+                    if r then\
+                        local x0, x1 = g.x0, g.x1\
+                        if x1 < x0 then x0, x1 = x1, x0 end\
+                        local rect = open[r]\
+                        if not rect then\
+                            rect = { x = x0, x1 = x1, y = (li - 1) * line_h, h = line_h,\
+                                     colour = r.colour }\
+                            open[r] = rect\
+                            rects[#rects + 1] = rect\
+                        else\
+                            if x0 < rect.x then rect.x = x0 end\
+                            if x1 > rect.x1 then rect.x1 = x1 end\
+                        end\
+                    end\
+                end\
+            end\
+        end\
+    end\
+    for _, rect in ipairs(rects) do\
+        rect.w = rect.x1 - rect.x\
+        rect.x1 = nil\
+    end\
+    return rects\
+end\
+\
+return Runs\
+",
+    ["lib/bookshelf_cover_marks"] = "-- lib/bookshelf_cover_marks.lua\
+-- Which cover marks show on which kind of shelf (issue 597).\
+--\
+-- A mark is one of the things drawn on or over a book: the progress bar, the\
+-- reading bookmark, the page badge and so on. Each has two switches, one for\
+-- covers (the grid, and every other place a cover is drawn) and one for spine\
+-- shelves (a face-out cover there, and the small glyph a narrow spine carries\
+-- where it has one).\
+--\
+-- The covers switch is the setting the mark always had, where it had a plain\
+-- on/off one, so nothing stored changes meaning. The spine switch is new.\
+-- Left unset, a spine shelf looks as it did before there was one: most marks\
+-- follow the covers switch, the page badge stays off (a book's length is its\
+-- width there), the progress bar stays off (a face-out cover never had one),\
+-- and the series number stays on a spine's foot.\
+\
+local BookshelfSettings = require(\"lib/bookshelf_settings_store\")\
+\
+local M = {}\
+\
+-- covers / spines: the setting keys. covers_default: what an unset covers key\
+-- reads as. spines_default: what an unset spines key reads as; nil means\
+-- \"whatever covers says\".\
+local MARKS = {\
+    -- A face-out cover never drew a bar, so its switch starts off.\
+    progress_bar  = { covers = \"progress_bar_enabled\",       covers_default = true,\
+                      spines = \"progress_bar_spines\",        spines_default = false },\
+    bookmark      = { covers = \"progress_bookmark_enabled\",  covers_default = true,\
+                      spines = \"progress_bookmark_spines\" },\
+    finished_fade = { covers = \"finished_fade_enabled\",      covers_default = false,\
+                      spines = \"finished_fade_spines\" },\
+    favorite      = { covers = \"show_fav_badge\",             covers_default = true,\
+                      spines = \"show_fav_badge_spines\" },\
+    -- These four have a choice of style as well, with its own \"none\". The\
+    -- switches here are extra gates beside it, so they get keys of their own.\
+    page_badge    = { covers = \"progress_page_count_covers\", covers_default = true,\
+                      spines = \"progress_page_count_spines\", spines_default = false },\
+    done_badge    = { covers = \"progress_badge_covers\",      covers_default = true,\
+                      spines = \"progress_badge_spines\" },\
+    on_hold       = { covers = \"on_hold_covers\",             covers_default = true,\
+                      spines = \"on_hold_spines\" },\
+    series_num    = { covers = \"show_series_num_covers\",     covers_default = true,\
+                      spines = \"show_series_num_spines\",     spines_default = true },\
+}\
+\
+-- What the reader chose for this mark on this surface: true, false, or nil\
+-- when they have not chosen. For callers whose untouched behaviour is not the\
+-- one shown() falls back to.\
+function M.explicit(mark, surface)\
+    local m = MARKS[mark]\
+    if not m then return nil end\
+    local v = BookshelfSettings.read(surface == \"spines\" and m.spines or m.covers)\
+    if v == nil then return nil end\
+    return v == true\
+end\
+\
+-- Is this mark drawn on this surface (\"covers\" or \"spines\")? An unknown mark\
+-- is shown: this runs at paint time, where a typo should not be an error.\
+function M.shown(mark, surface)\
+    local m = MARKS[mark]\
+    if not m then return true end\
+    if surface == \"spines\" then\
+        local v = M.explicit(mark, \"spines\")\
+        if v ~= nil then return v end\
+        if m.spines_default ~= nil then return m.spines_default end\
+    end\
+    local v = M.explicit(mark, \"covers\")\
+    if v == nil then return m.covers_default end\
+    return v\
+end\
+\
+-- Flip one switch. A spine switch that has never been touched is written down\
+-- first when the covers one changes, so the switch beside it stays where the\
+-- reader saw it.\
+function M.set(mark, surface, on)\
+    local m = MARKS[mark]\
+    if not m then return end\
+    if surface == \"spines\" then\
+        BookshelfSettings.save(m.spines, on == true)\
+        return\
+    end\
+    if M.explicit(mark, \"spines\") == nil then\
+        BookshelfSettings.save(m.spines, M.shown(mark, \"spines\"))\
+    end\
+    BookshelfSettings.save(m.covers, on == true)\
+end\
+\
+-- \"both\", \"covers\", \"spines\" or \"none\": for a menu row's summary.\
+function M.where(mark)\
+    local c, s = M.shown(mark, \"covers\"), M.shown(mark, \"spines\")\
+    if c and s then return \"both\" end\
+    if c then return \"covers\" end\
+    if s then return \"spines\" end\
+    return \"none\"\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_curated"] = "-- lib/bookshelf_curated.lua\
+-- A hand-ordered shelf's books (issue 390).\
+--\
+-- A Curated shelf is a KOReader COLLECTION shown as a shelf: source =\
+-- { kind = \"collection\", id = <collection name> }, sorted by Collection\
+-- order. Nothing of its own is stored: the books and their order are the\
+-- collection's, so they show in KOReader's own collections, other plugins\
+-- see them, and KOReader keeps the paths right when a file moves or goes.\
+-- (A first version kept lists in a file of Bookshelf's own. The maintainer\
+-- asked whether a collection would do; it does, and better.)\
+--\
+-- This is the one place Bookshelf adds, removes and reorders a shelf's\
+-- books by hand, on KOReader's ReadCollection and lib/bookshelf_collection_order\
+-- (which writes a whole order and drops the cached shelves).\
+--\
+-- What a collection cannot hold is anything but files in an order. A later\
+-- layout that needs more (a book leaning on its neighbor, a pile lying flat)\
+-- keeps that beside the shelf, keyed by collection and path; the pieces that\
+-- stand among the books already do (tab.shelf_modules).\
+--\
+--   C.create(name) -> name | nil     C.exists(name)\
+--   C.add(name, fp)  C.remove(name, fp)  C.has(name, fp)  C.count(name)\
+--   C.books(name) -> { fp, ... } in the collection's order\
+--   C.ordered(name) -> does every book have a place of its own?\
+--   C.move(name, from, to [, shown])  C.setOrder(name, { fp, ... })\
+\
+local M = {}\
+\
+local function RC() return require(\"readcollection\") end\
+\
+local function coll(name)\
+    if type(name) ~= \"string\" or name == \"\" then return nil end\
+    local c = RC().coll\
+    c = type(c) == \"table\" and c[name]\
+    return type(c) == \"table\" and c or nil\
+end\
+\
+-- KOReader keys a collection's items by the file's REAL path, so a book\
+-- reached through a linked folder (/mnt/us on a Kindle is one) has to be\
+-- looked up by it: by the path the shelf holds it read as \"not on it\", and\
+-- adding it again sent it to the end.\
+local function real(fp)\
+    if type(fp) ~= \"string\" or fp == \"\" then return nil end\
+    local ok, util = pcall(require, \"ffi/util\")\
+    if ok and util and util.realpath then\
+        local ok_r, r = pcall(util.realpath, fp)\
+        if ok_r and type(r) == \"string\" and r ~= \"\" then return r end\
+    end\
+    return fp\
+end\
+\
+local function changed(reason)\
+    pcall(function()\
+        local Repo = require(\"lib/bookshelf_book_repository\")\
+        if Repo.invalidateBookCache then Repo.invalidateBookCache(reason) end\
+    end)\
+end\
+\
+function M.exists(name) return coll(name) ~= nil end\
+\
+-- create(name) -> the collection's name, made if it was not there. nil for\
+-- no name, or the favorites collection's (it has a shelf and a card of its\
+-- own).\
+function M.create(name)\
+    if type(name) ~= \"string\" then return nil end\
+    name = name:gsub(\"^%s+\", \"\"):gsub(\"%s+$\", \"\")\
+    if name == \"\" or name == RC().default_collection_name then return nil end\
+    if coll(name) then return name end\
+    local rc = RC()\
+    rc:addCollection(name)\
+    rc:write({ [name] = true })\
+    return name\
+end\
+\
+-- The collection's items as a list, in its order: by `order`, then by name\
+-- for the ones with none (a collection KOReader sorts itself stores no\
+-- order).\
+local function items(name)\
+    local c = coll(name)\
+    local out = {}\
+    if not c then return out end\
+    for key, it in pairs(c) do\
+        if type(it) == \"table\" then\
+            out[#out + 1] = { file = it.file or key, order = it.order,\
+                              text = tostring(it.text or it.file or key):lower() }\
+        end\
+    end\
+    table.sort(out, function(a, b)\
+        if a.order ~= nil and b.order ~= nil and a.order ~= b.order then return a.order < b.order end\
+        if (a.order == nil) ~= (b.order == nil) then return a.order ~= nil end\
+        if a.text ~= b.text then return a.text < b.text end\
+        return a.file < b.file\
+    end)\
+    return out\
+end\
+\
+function M.books(name)\
+    local out = {}\
+    for i, it in ipairs(items(name)) do out[i] = it.file end\
+    return out\
+end\
+\
+function M.count(name)\
+    local n = 0\
+    for _k in pairs(coll(name) or {}) do n = n + 1 end\
+    return n\
+end\
+\
+function M.has(name, fp)\
+    local c = coll(name)\
+    local key = real(fp)\
+    return c ~= nil and key ~= nil and c[key] ~= nil\
+end\
+\
+function M.indexOf(name, fp)\
+    local key = real(fp)\
+    for i, f in ipairs(M.books(name)) do if f == key then return i end end\
+    return nil\
+end\
+\
+-- ordered(name) -> true when every book has a place of its own (and no two\
+-- share one): the collection is hand-ordered. False for one KOReader sorts\
+-- itself, which stores no order until someone arranges it.\
+function M.ordered(name)\
+    local c = coll(name)\
+    if not c then return false end\
+    local settings = RC().coll_settings and RC().coll_settings[name]\
+    if settings and settings.collate then return false end\
+    local seen = {}\
+    for _k, it in pairs(c) do\
+        if type(it) ~= \"table\" or it.order == nil or seen[it.order] then return false end\
+        seen[it.order] = true\
+    end\
+    return true\
+end\
+\
+-- addMany(name, fps) -> how many went on, at the end, with ONE write (a\
+-- write a book was seconds for a big selection on a device). A book already\
+-- there, a file that is not on the device (KOReader raises on one) and a\
+-- collection that does not exist are all passed over.\
+function M.addMany(name, fps)\
+    local c = coll(name)\
+    if not c or type(fps) ~= \"table\" then return 0 end\
+    local ok_lfs, lfs = pcall(require, \"libs/libkoreader-lfs\")\
+    local rc, n = RC(), 0\
+    for _i, fp in ipairs(fps) do\
+        local key = real(fp)\
+        if key and not c[key] and not (ok_lfs and lfs and not lfs.attributes(key)) then\
+            if pcall(rc.addItem, rc, key, name) and c[key] then n = n + 1 end\
+        end\
+    end\
+    if n > 0 then\
+        rc:write({ [name] = true })\
+        changed(\"curated add: \" .. name)\
+    end\
+    return n\
+end\
+\
+function M.add(name, fp) return M.addMany(name, { fp }) == 1 end\
+\
+-- removeMany(name, fps) -> how many came off, with one write.\
+function M.removeMany(name, fps)\
+    local c = coll(name)\
+    if not c or type(fps) ~= \"table\" then return 0 end\
+    local rc, n = RC(), 0\
+    for _i, fp in ipairs(fps) do\
+        local key = real(fp)\
+        if key and c[key] ~= nil then\
+            -- no_write: the one write is below.\
+            local ok, gone = pcall(rc.removeItem, rc, key, name, true)\
+            if ok and gone then n = n + 1 end\
+        end\
+    end\
+    if n > 0 then\
+        rc:write({ [name] = true })\
+        changed(\"curated remove: \" .. name)\
+    end\
+    return n\
+end\
+\
+function M.remove(name, fp) return M.removeMany(name, { fp }) == 1 end\
+\
+-- setOrder(name, fps) -> true: the books in this order (lib/bookshelf_collection_order\
+-- .save, which also stops KOReader sorting the collection its own way and\
+-- drops the cached shelves). A path not on the shelf is ignored; a book\
+-- left out keeps its turn after the ones named.\
+function M.setOrder(name, fps)\
+    if not coll(name) or type(fps) ~= \"table\" then return false end\
+    local list = {}\
+    for _i, fp in ipairs(fps) do list[#list + 1] = { file = fp } end\
+    local CollectionOrder = require(\"lib/bookshelf_collection_order\")\
+    -- true: drop only this collection's cached shelves.\
+    return CollectionOrder.save(name, list, true) == true\
+end\
+\
+-- move(name, from, to [, shown]) -> true when the book at place `from`\
+-- ended up at `to`. shown: the order to start from when it is not the\
+-- collection's own (the shelf on screen, for a collection with no order yet,\
+-- or a shelf shown reversed): the places are places in THAT order, and it is\
+-- what gets written.\
+function M.move(name, from, to, shown)\
+    local books = shown or M.books(name)\
+    local n = #books\
+    if not (from and to) or from < 1 or from > n or to < 1 or to > n or from == to then return false end\
+    local out = {}\
+    for i, fp in ipairs(books) do out[i] = fp end\
+    local fp = table.remove(out, from)\
+    table.insert(out, to, fp)\
+    return M.setOrder(name, out)\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_curated_ui"] = "-- lib/bookshelf_curated_ui.lua\
+-- What a reader does with hand-ordered shelves (issue 390), away from the\
+-- shelf itself: put books on one from a book's menu (pick) and make a new\
+-- one on the way (newShelf). Also the rules for a book moving among the\
+-- pieces that stand on its shelf (step, applyStep, shiftFor*).\
+--\
+-- A hand-ordered shelf is a KOReader collection shown as a shelf: a tab\
+-- record whose source is { kind = \"collection\", id = <name> } with a\
+-- collection really behind it (a pinned tag is kind \"collection\" too, with\
+-- none). lib/bookshelf_curated changes its books. Moving one book along the\
+-- shelf it stands on is the shelf's own business (BookshelfWidget).\
+\
+local _ = require(\"lib/bookshelf_i18n\").gettext\
+local T = require(\"ffi/util\").template\
+\
+local UI = {}\
+\
+UI.ICON_ADD    = \"\\u{ECDA}\"   -- book-plus\
+UI.ICON_REMOVE = \"\\u{ECD8}\"   -- book-minus\
+UI.ICON_SHELF  = \"\\u{E7BA}\"   -- book-multiple\
+UI.ICON_FACE   = \"\\u{E7B9}\"   -- book: cover forward\
+-- The shelf's very start and end, for a book's and a pinned piece's menus;\
+-- the double chevrons beside them are a page (module_grid_session).\
+UI.ICON_FIRST  = \"\\u{ECFF}\"   -- page-first\
+UI.ICON_LAST   = \"\\u{ED00}\"   -- page-last\
+-- The ornaments' own icon everywhere else (bookshelf_ornaments.COLLECTION_ICON).\
+UI.ICON_ORNAMENT = \"\\u{F0F4}\"   -- coffee\
+UI.ICON_NEW    = \"\\u{EB11}\"   -- playlist-plus\
+\
+local function Curated() return require(\"lib/bookshelf_curated\") end\
+local function TabModel() return require(\"lib/bookshelf_tab_model\") end\
+\
+-- listOf(tab) -> the collection behind a shelf, when its books can be\
+-- placed by hand: one collection's shelf.\
+function UI.listOf(tab)\
+    local src = type(tab) == \"table\" and tab.source\
+    if type(src) ~= \"table\" then return nil end\
+    -- Not the Favorites shelf: the repository does not sort it by the\
+    -- collection's order, so a move there wrote an order no shelf showed.\
+    local name = src.kind == \"collection\" and src.id or nil\
+    if name and Curated().exists(name) then return name end\
+    return nil\
+end\
+\
+-- shelves() -> { { id, label, list }, ... }: the shelves a book can be put\
+-- on, in shelf order: each one collection's shelf. Favorites is left out\
+-- (the book menu has its own card for it), as are a module's own shelf and\
+-- one still being made. Two shelves on one collection are listed once.\
+function UI.shelves()\
+    local out, seen = {}, {}\
+    for _i, tab in ipairs(TabModel().load() or {}) do\
+        local src = tab.source\
+        if type(src) == \"table\" and src.kind == \"collection\" and not tab.pending\
+                and not TabModel().isCardOnly(tab) then\
+            local name = UI.listOf(tab)\
+            if name and not seen[name] then\
+                seen[name] = true\
+                out[#out + 1] = { id = tab.id, label = tab.label or name, list = name }\
+            end\
+        end\
+    end\
+    return out\
+end\
+\
+-- state(list, paths) -> \"all\" | \"some\" | \"none\" of these books are on it.\
+function UI.state(list, paths)\
+    local on = 0\
+    for _i, fp in ipairs(paths) do if Curated().has(list, fp) then on = on + 1 end end\
+    if on == 0 then return \"none\" end\
+    return on == #paths and \"all\" or \"some\"\
+end\
+\
+-- toggle(list, paths) -> how many books changed: every one of them goes on,\
+-- unless all are on already, when they come off.\
+function UI.toggle(list, paths)\
+    local C = Curated()\
+    if UI.state(list, paths) == \"all\" then return C.removeMany(list, paths) end\
+    return C.addMany(list, paths)\
+end\
+\
+-- freeName() -> a name for a shelf nobody named: \"My shelf\", or the first\
+-- \"My shelf N\" no collection has.\
+function UI.freeName()\
+    local label = _(\"My shelf\")\
+    local n = 2\
+    while Curated().exists(label) do label = T(_(\"My shelf %1\"), n); n = n + 1 end\
+    return label\
+end\
+\
+-- newShelf(label, after_id, view_mode) -> the new shelf's record, saved: a\
+-- shelf on a collection of that name (made if there is none; an existing one\
+-- is shown as it is), after the shelf `after_id` (else last). view_mode: the\
+-- look of the shelf the book was added from (\"covers\" | \"list\" | \"spines\"),\
+-- which the new one takes; else spines, where the order reads as a shelf\
+-- and ornaments stand among the books. As spines, each book faces out or\
+-- stands spine out as the reader chooses (Arrange). nil when the name\
+-- cannot be a collection's.\
+function UI.newShelf(label, after_id, view_mode)\
+    local TM = TabModel()\
+    local tabs = TM.load()\
+    label = type(label) == \"string\" and label:gsub(\"^%s+\", \"\"):gsub(\"%s+$\", \"\") or \"\"\
+    if label == \"\" then label = UI.freeName() end\
+    local name = Curated().create(label)\
+    if not name then return nil end\
+    local tab = TM.newTab(tabs, label)\
+    tab.pending = nil\
+    tab.source = { kind = \"collection\", id = name }\
+    local ok, Editor = pcall(require, \"lib/bookshelf_chip_editor\")\
+    tab.sort_priority = (ok and Editor and Editor.sourceSortDefaults and Editor.sourceSortDefaults(\"collection\"))\
+        or { { key = \"collection_order\", reverse = false }, { key = \"last_opened\", reverse = true } }\
+    tab.view_mode = (view_mode == \"covers\" or view_mode == \"list\") and view_mode or \"spines\"\
+    tab.spine_face_out = { chosen = true }\
+    -- No dealt ornaments: a hand-ordered shelf is arranged by pinning\
+    -- pieces where they belong (maintainer).\
+    tab.ornament_frequency = 0\
+    TM.insertAfter(tabs, after_id, tab)\
+    TM.save(tabs)\
+    return tab\
+end\
+\
+-- doneText(label, n, removed) -> what the reader is told once a tap in the\
+-- chooser has put `n` books on the shelf `label` (or taken them off).\
+function UI.doneText(label, n, removed)\
+    if removed then\
+        if n == 1 then return T(_(\"Taken off %1\"), label) end\
+        return T(_(\"%1 books taken off %2\"), n, label)\
+    end\
+    if n == 1 then return T(_(\"Added to %1\"), label) end\
+    return T(_(\"%1 books added to %2\"), n, label)\
+end\
+\
+-- _page(paths, on_change, on_new) -> the chooser's page: one card a shelf,\
+-- on when every book is on it; then a way to make a shelf. on_change(label,\
+-- n, removed) after a tap changed a list: which shelf, how many books, and\
+-- whether they came off; on_new() asks for a new shelf.\
+function UI._page(paths, on_change, on_new)\
+    local blocks = {}\
+    local shelves = UI.shelves()\
+    for _i, s in ipairs(shelves) do\
+        local st = UI.state(s.list, paths)\
+        local n = Curated().count(s.list)\
+        -- What a tap will do, on every card: a lit one takes the book OFF,\
+        -- under a window titled \"Add to shelf\".\
+        local desc\
+        if st == \"all\" then\
+            desc = #paths == 1 and _(\"This book is on it. Tap to take it off.\")\
+                or _(\"These books are on it. Tap to take them off.\")\
+        elseif st == \"some\" then desc = _(\"Some of these books are on it. Tap to add the rest.\")\
+        elseif n == 0 then desc = _(\"Empty. Tap to add.\")\
+        elseif n == 1 then desc = _(\"1 book. Tap to add.\")\
+        else desc = T(_(\"%1 books. Tap to add.\"), n) end\
+        blocks[#blocks + 1] = { type = \"option\", text = s.label, icon = UI.ICON_SHELF, desc = desc,\
+            on = st == \"all\",\
+            callback = function()\
+                local n = UI.toggle(s.list, paths)\
+                if n > 0 then on_change(s.label, n, st == \"all\") end\
+            end }\
+    end\
+    if #shelves == 0 then\
+        blocks[#blocks + 1] = { type = \"heading\", text = _(\"No shelves of your own yet\") }\
+    end\
+    blocks[#blocks + 1] = { type = \"option\", text = _(\"New shelf\") .. \"\\xE2\\x80\\xA6\", icon = UI.ICON_NEW,\
+        desc = #shelves == 0\
+            and _(\"A shelf of books you pick, in the order you place them: a home shelf, a to-be-read pile. Kept as a KOReader collection.\")\
+            or nil,\
+        callback = on_new }\
+    return { blocks = blocks }\
+end\
+\
+-- pick{ paths, after_id, view_mode, on_done }: the chooser, for one book or\
+-- many. A tap on a shelf does it, closes the chooser and says what was done\
+-- (it stayed open with the card lit, which read as the tap doing nothing:\
+-- maintainer); on_done(changed) as it closes. view_mode: the look on screen,\
+-- for a shelf made here (newShelf).\
+function UI.pick(opts)\
+    local paths = opts.paths or {}\
+    if #paths == 0 then return end\
+    local UIManager = require(\"ui/uimanager\")\
+    local changed = false\
+    local dialog\
+    local function finish(label, n, removed)\
+        changed = true\
+        -- Its own dismiss: that is what runs on_close (on_done).\
+        if dialog then dialog:_dismiss() end\
+        pcall(function()\
+            UIManager:show(require(\"ui/widget/notification\"):new{\
+                text = UI.doneText(label, n, removed == true) })\
+        end)\
+    end\
+    local onChange = finish\
+    local function askName()\
+        local InputDialog = require(\"ui/widget/inputdialog\")\
+        local Screen = require(\"device\").screen\
+        local input\
+        local function make()\
+            local name = input:getInputText()\
+            UIManager:close(input)\
+            local tab = UI.newShelf(name, opts.after_id, opts.view_mode)\
+            if not tab then\
+                UIManager:show(require(\"ui/widget/infomessage\"):new{\
+                    text = _(\"That name cannot be used for a shelf of your own.\"), timeout = 3 })\
+                return\
+            end\
+            -- An existing collection of that name may hold some already.\
+            Curated().addMany(tab.source.id, paths)\
+            opts.made_shelf = true\
+            finish(tab.label, #paths, false)\
+        end\
+        input = InputDialog:new{\
+            title = _(\"Shelf name\"),\
+            input = \"\",\
+            input_hint = _(\"My shelf\"),\
+            allow_newline = false,\
+            text_height = Screen:scaleBySize(40),\
+            buttons = { {\
+                { text = _(\"Cancel\"), id = \"close\", callback = function() UIManager:close(input) end },\
+                { text = _(\"Create\"), is_enter_default = true, callback = make },\
+            } },\
+        }\
+        UIManager:show(input)\
+        input:onShowKeyboard()\
+    end\
+    dialog = require(\"lib/bookshelf_page_dialog\").show{\
+        title = #paths == 1 and _(\"Add to shelf\") or T(_(\"Add %1 books to shelf\"), #paths),\
+        page = function() return UI._page(paths, onChange, askName) end,\
+        on_close = function()\
+            if opts.on_done then opts.on_done(changed, opts.made_shelf == true) end\
+        end,\
+    }\
+    return dialog\
+end\
+\
+-- ── A book among the pieces on its shelf ────────────────────────────────────\
+-- Pinned ornaments and other shelf modules sit `after` so many books (tab\
+-- .shelf_modules; ties keep list order). The books' order is the list's. The\
+-- two together are the shelf, so a step along it moves a book past the ONE\
+-- thing beside it, whichever kind that is.\
+\
+-- step(n_books, mods, idx, dir) -> what one step of book `idx` (its place\
+-- among the books) does, dir 1 right / -1 left, or nil at the shelf's end:\
+--   { kind = \"book\", to = <place> }                 swap with the next book\
+--   { kind = \"piece\", id, after, first = bool }     the piece hops over it\
+function UI.step(n_books, mods, idx, dir)\
+    if not (n_books and idx) or n_books < 1 or idx < 1 or idx > n_books then return nil end\
+    local beside = (dir == 1) and idx or (idx - 1)\
+    local piece\
+    for _i, m in ipairs(mods or {}) do\
+        if (tonumber(m.after) or 0) == beside then\
+            -- Right: the first of them is the one touching the book. Left:\
+            -- the last.\
+            if dir == 1 then piece = piece or m else piece = m end\
+        end\
+    end\
+    if piece then\
+        if dir == 1 then return { kind = \"piece\", id = piece.id, after = idx - 1, first = false } end\
+        return { kind = \"piece\", id = piece.id, after = idx, first = true }\
+    end\
+    local to = idx + dir\
+    if to < 1 or to > n_books then return nil end\
+    return { kind = \"book\", to = to }\
+end\
+\
+-- applyStep(mods, st): a \"piece\" step, on the module list itself. The piece\
+-- lands touching the book: last of the pieces before it, or first of those\
+-- after it.\
+function UI.applyStep(mods, st)\
+    if not (mods and st and st.kind == \"piece\") then return false end\
+    for i, m in ipairs(mods) do\
+        if m.id == st.id then\
+            table.remove(mods, i)\
+            m.after = st.after\
+            if st.first then table.insert(mods, 1, m) else mods[#mods + 1] = m end\
+            return true\
+        end\
+    end\
+    return false\
+end\
+\
+-- atEdge(mods, n_books, idx, dir) -> is the book already the very first (-1)\
+-- or last (1) thing on the shelf, pieces included?\
+function UI.atEdge(mods, n_books, idx, dir)\
+    if dir == 1 then\
+        if idx ~= n_books then return false end\
+        for _i, m in ipairs(mods or {}) do\
+            if (tonumber(m.after) or 0) >= n_books then return false end\
+        end\
+        return true\
+    end\
+    if idx ~= 1 then return false end\
+    for _i, m in ipairs(mods or {}) do\
+        if (tonumber(m.after) or 0) <= 0 then return false end\
+    end\
+    return true\
+end\
+\
+-- toEdge(mods, n_books, idx, dir) -> the book's new place: the very start\
+-- (-1) or end (1) of the shelf, ahead of or after every piece too. Changes\
+-- the module list; the caller moves the book among the books.\
+function UI.toEdge(mods, n_books, idx, dir)\
+    local to = (dir == 1) and n_books or 1\
+    if mods then\
+        if idx ~= to then\
+            UI.shiftForRemove(mods, idx)\
+            UI.shiftForInsert(mods, to)\
+        end\
+        -- The pieces still outside it come inside, keeping their order.\
+        local hop, rest = {}, {}\
+        for _i, m in ipairs(mods) do\
+            local a = tonumber(m.after) or 0\
+            if (dir == 1 and a >= n_books) or (dir ~= 1 and a <= 0) then hop[#hop + 1] = m\
+            else rest[#rest + 1] = m end\
+        end\
+        if #hop > 0 then\
+            for _i, m in ipairs(hop) do m.after = (dir == 1) and (n_books - 1) or 1 end\
+            for k = #mods, 1, -1 do mods[k] = nil end\
+            if dir == 1 then\
+                for _i, m in ipairs(rest) do mods[#mods + 1] = m end\
+                for _i, m in ipairs(hop) do mods[#mods + 1] = m end\
+            else\
+                for _i, m in ipairs(hop) do mods[#mods + 1] = m end\
+                for _i, m in ipairs(rest) do mods[#mods + 1] = m end\
+            end\
+        end\
+    end\
+    return to\
+end\
+\
+-- ── The move buttons, in either reading direction ───────────────────────────\
+-- In a right-to-left language KOReader mirrors the shelf's rows, so place 1\
+-- is at the right: \"Right\" has to move the book towards the right of the\
+-- SCREEN, a place back. Start and End stay the shelf's start and end.\
+\
+-- moveChips(mirrored) -> the six buttons in the order to hand the row:\
+-- { key, step = place change | nil, edge = -1 | 1 | nil, page = -1 | 1 | nil,\
+-- icon }: one job each. Start and End are the shelf's; the two Page buttons\
+-- put it first on the page before or after (a pinned ornament's menu has the\
+-- same six: maintainer). icon is \"first\" | \"page_prev\" | \"prev\" | \"next\" |\
+-- \"page_next\" | \"last\": the glyph pointing the way the book goes on screen.\
+-- The row is mirrored as it is laid out, so right to left the list comes\
+-- back to front, for Left to stand on the left.\
+function UI.moveChips(mirrored)\
+    if mirrored then\
+        return {\
+            { key = \"start\",     edge = -1, icon = \"last\" },\
+            { key = \"page_prev\", page = -1, icon = \"page_next\" },\
+            { key = \"right\",     step = -1, icon = \"next\" },\
+            { key = \"left\",      step = 1,  icon = \"prev\" },\
+            { key = \"page_next\", page = 1,  icon = \"page_prev\" },\
+            { key = \"end\",       edge = 1,  icon = \"first\" },\
+        }\
+    end\
+    return {\
+        { key = \"start\",     edge = -1, icon = \"first\" },\
+        { key = \"page_prev\", page = -1, icon = \"page_prev\" },\
+        { key = \"left\",      step = -1, icon = \"prev\" },\
+        { key = \"right\",     step = 1,  icon = \"next\" },\
+        { key = \"page_next\", page = 1,  icon = \"page_next\" },\
+        { key = \"end\",       edge = 1,  icon = \"last\" },\
+    }\
+end\
+\
+-- swipeStep(direction, mirrored) -> the place change of a swipe on the book.\
+function UI.swipeStep(direction, mirrored)\
+    local d = direction == \"east\" and 1 or direction == \"west\" and -1 or nil\
+    if d and mirrored then d = -d end\
+    return d\
+end\
+\
+-- ── Pieces stay beside their book ───────────────────────────────────────────\
+-- `after` is a count of books, so a book added, removed or moved anywhere\
+-- else (the chooser, KOReader's own collection view, a deleted file, a\
+-- second shelf on the collection) slid every piece along by one. Each piece\
+-- also remembers the book on its left (`anchor`: its path, or false for a\
+-- piece leading the shelf) and the count it had when it noted that\
+-- (`anchor_at`). When the shelf is next shown the count is put right from\
+-- the book. A count that no longer matches `anchor_at` was changed by\
+-- someone who knows nothing of anchors (the piece's own menu): it is\
+-- believed, and the piece takes the book now on its left.\
+\
+local function anchorOne(m, shown)\
+    local a = math.max(0, math.min(#shown, math.floor(tonumber(m.after) or 0)))\
+    local anchor = a > 0 and shown[a] or false\
+    local changed = m.anchor ~= anchor or m.anchor_at ~= a or m.after ~= a\
+    m.after, m.anchor, m.anchor_at = a, anchor, a\
+    return changed\
+end\
+\
+-- anchorPieces(mods, shown) -> true when anything was noted: every piece\
+-- takes the book on its left, from its count and the books as shown.\
+function UI.anchorPieces(mods, shown)\
+    local changed = false\
+    for _i, m in ipairs(mods or {}) do\
+        if anchorOne(m, shown) then changed = true end\
+    end\
+    return changed\
+end\
+\
+-- reconcilePieces(mods, shown) -> true when a count was put right. A piece\
+-- never anchored is left alone.\
+function UI.reconcilePieces(mods, shown)\
+    if not mods then return false end\
+    local at = {}\
+    for i, fp in ipairs(shown) do at[fp] = i end\
+    local changed = false\
+    for _i, m in ipairs(mods) do\
+        if m.anchor ~= nil then\
+            local idx = m.anchor and at[m.anchor] or nil\
+            if (tonumber(m.after) or 0) ~= m.anchor_at then\
+                -- Moved by something else since: its count is the truth.\
+                if anchorOne(m, shown) then changed = true end\
+            elseif m.anchor == false then\
+                if m.after ~= 0 then m.after, m.anchor_at = 0, 0; changed = true end\
+            elseif idx then\
+                if idx ~= m.after then m.after, m.anchor_at = idx, idx; changed = true end\
+            else\
+                -- Its book has gone from the shelf: it closes up to the\
+                -- book before that one.\
+                m.after = math.max(0, (tonumber(m.anchor_at) or 0) - 1)\
+                anchorOne(m, shown)\
+                changed = true\
+            end\
+        end\
+    end\
+    return changed\
+end\
+\
+-- A book left the shelf from place k, or one went in at place k: every piece\
+-- keeps the book on its left.\
+function UI.shiftForRemove(mods, k)\
+    for _i, m in ipairs(mods or {}) do\
+        local a = tonumber(m.after) or 0\
+        if a >= k then m.after = a - 1 end\
+    end\
+end\
+function UI.shiftForInsert(mods, k)\
+    for _i, m in ipairs(mods or {}) do\
+        local a = tonumber(m.after) or 0\
+        if a >= k then m.after = a + 1 end\
+    end\
+end\
+\
+return UI\
+",
+    ["lib/bookshelf_hardcover_autolink"] = "-- bookshelf_hardcover_autolink.lua\
+-- The bulk Hardcover auto-link: every unlinked book, by embedded identifier\
+-- or by a title and author search.\
+--\
+-- Progress goes in the shelf's status line with its Stop button, as Extract\
+-- page counts' does (lib/bookshelf_scan_progress): nothing covers the shelf\
+-- and only Stop stops the pass. It used to be a message box over the shelf\
+-- that any tap cancelled, with each request holding the screen while it ran.\
+--\
+-- It waits while a book is open (the device may sleep meanwhile) and carries\
+-- on back on the shelf.\
+--\
+-- The pass runs inside a Trapper coroutine. The Hardcover client is borrowed\
+-- from a sync plugin and sends each request from a forked child when it is\
+-- called from a coroutine, so the shelf keeps answering taps. The client's\
+-- own tap trap comes with that: a tap while a request is in flight reaches\
+-- the shelf AND aborts the request. Such a book is tried again (RETRIES)\
+-- before it counts as an error.\
+\
+local UIManager = require(\"ui/uimanager\")\
+local T         = require(\"ffi/util\").template\
+local _         = require(\"lib/bookshelf_i18n\").gettext\
+\
+local M = {}\
+\
+-- About two Hardcover calls per book that uses the network (find it, then\
+-- fetch its details), and Hardcover allows 60 a minute.\
+M.RATE = 2.5\
+-- Extra goes at a book whose request failed, before it is an error.\
+M.RETRIES = 2\
+-- With Bookshelf's own client Hardcover says on every reply how much of the\
+-- rate limit is left, so the pass waits for what it is told and no longer\
+-- than this between books when there are requests to spare.\
+M.OWN_MIN_WAIT = 0.5\
+-- A wait longer than this is the day's budget gone: the pass ends and says\
+-- so; nobody leaves a pass running until midnight UTC.\
+M.MAX_WAIT = 120\
+-- Books in a row that end in an error before the pass gives up: a dropped\
+-- connection should cost seconds, not three timeouts for every book left.\
+M.MAX_FAILED_RUN = 3\
+\
+-- Hand control back to UIManager, for `sec` seconds.\
+local function breathe(sec)\
+    local co = coroutine.running()\
+    UIManager:scheduleIn(sec or 0, function() coroutine.resume(co) end)\
+    coroutine.yield()\
+end\
+\
+-- Display name for the report: the book's title, else its file name.\
+local function nameFor(fp, meta)\
+    if meta and type(meta.title) == \"string\" and meta.title ~= \"\" then\
+        return meta.title\
+    end\
+    return (fp:match(\"([^/]+)$\") or fp):gsub(\"%.[^%.]+$\", \"\")\
+end\
+\
+-- attempt(fp, best_guess, edition_only) -> outcome, meta, details\
+--   \"linked\" | \"nomatch\" | \"noid\" (no request made) | \"error\" (worth retrying)\
+local function attempt(Hardcover, Repo, fp, best_guess, edition_only)\
+    if edition_only then\
+        local book = { filepath = fp }\
+        local existing = Hardcover.getLink(fp)\
+        local needs_relink = Hardcover.needsEmbeddedEditionRelink(book, existing)\
+        if needs_relink == nil then return \"noid\", book end\
+        if not needs_relink then return \"unchanged\", book end\
+        local ok, linked, hc = pcall(Hardcover.linkFromEmbeddedEditionId, book)\
+        if not ok then return \"error\", book end\
+        if not linked then\
+            if hc == \"No Hardcover match found for embedded edition ID\" then return \"nomatch\", book end\
+            return \"error\", book\
+        end\
+        local meta = (Repo.buildBookMeta and Repo.buildBookMeta(fp)) or book\
+        return \"linked\", meta, {\
+            title = type(hc) == \"table\" and hc.title or nil,\
+            action = existing and \"corrected\" or \"linked\",\
+        }\
+    end\
+    if best_guess then\
+        -- Needs title and author, so the record is built first.\
+        local meta = (Repo.buildBookMeta and Repo.buildBookMeta(fp)) or { filepath = fp }\
+        local ok_call, linked_ok, details = pcall(Hardcover.bestGuessLink, meta)\
+        if ok_call and linked_ok then return \"linked\", meta, details end\
+        -- An exception, a failed search or a failed link write is an ERROR,\
+        -- not a verdict about the book (issue 310's second finding).\
+        if not ok_call or (details ~= \"no_match\" and details ~= \"no_confident_match\") then\
+            return \"error\", meta\
+        end\
+        return \"nomatch\", meta\
+    end\
+    -- Exact: embedded ISBN / Hardcover id only.\
+    local book = { filepath = fp }\
+    local ids = Hardcover.getEmbeddedIdentifiers and Hardcover.getEmbeddedIdentifiers(book)\
+    if not ids then return \"noid\", book end\
+    local ok_call, linked_ok, hc = pcall(Hardcover.linkFromEmbeddedIdentifiers, book)\
+    if not ok_call then return \"error\", book end\
+    if linked_ok then\
+        local meta = (Repo.buildBookMeta and Repo.buildBookMeta(fp)) or book\
+        return \"linked\", meta, hc\
+    end\
+    return \"nomatch\", book\
+end\
+\
+-- run{ items = { filepath, ... }, best_guess = bool, shelf = widget or nil,\
+--      on_finish = function(st) }\
+-- -> false when another job holds the status line, else true.\
+-- st: i, cancelled, gave_up (three failed books in a row), rate_limited (the\
+--     day's Hardcover budget is spent), linked, no_match, no_id, errors,\
+--     linked_list, nomatch_list\
+function M.run(opts)\
+    local Progress = require(\"lib/bookshelf_scan_progress\")\
+    if Progress.active() then\
+        UIManager:show(require(\"ui/widget/infomessage\"):new{\
+            text = _(\"Another job is running. Try again when it has finished.\"), timeout = 3 })\
+        return false\
+    end\
+    local items = opts.items or {}\
+    local total = #items\
+    local best_guess = opts.best_guess and true or false\
+    local st = { i = 0, cancelled = false, linked_list = {}, nomatch_list = {} }\
+    local function title(i) return T(_(\"Linking book %1 of %2\"), i, total) end\
+\
+    require(\"ui/trapper\"):wrap(function()\
+        Progress.holdAwake(true)\
+        local job = Progress.begin{\
+            title = title(1),\
+            icons = Progress.BOOK_ICONS,\
+            shelf = function() return Progress.liveShelf(opts.shelf) end,\
+        }\
+        -- Bookshelf's own client runs each request under the job: the shelf\
+        -- keeps answering taps, and only Stop aborts a request in flight.\
+        local own\
+        local ok_run, err_run = xpcall(function()\
+            local Hardcover = require(\"lib/bookshelf_hardcover\")\
+            local Repo = require(\"lib/bookshelf_book_repository\")\
+            if Hardcover.source and Hardcover.source() == \"own\" then\
+                own = require(\"lib/bookshelf_hardcover_client\")\
+                own.trap = job\
+            end\
+            -- pace() -> false when there is no budget left to wait for.\
+            local function pace()\
+                if not own then breathe(M.RATE); return true end\
+                local wait = own.waitTime()\
+                if wait > M.MAX_WAIT then return false end\
+                breathe(math.max(M.OWN_MIN_WAIT, wait))\
+                return true\
+            end\
+            local failed_run = 0\
+            for i, fp in ipairs(items) do\
+                Progress.update{ title = title(i), fraction = (i - 1) / total }\
+                -- Not while a book is open (maintainer: it pauses there and\
+                -- carries on back on the shelf), as Extract page counts. The\
+                -- reader's session is not the pass's to keep awake.\
+                if Progress.reading and Progress.reading() then\
+                    Progress.holdAwake(false)\
+                    while Progress.reading() and not job.stopped do breathe(2) end\
+                    Progress.holdAwake(true)\
+                end\
+                if job.stopped then st.cancelled = true; break end\
+                st.i = i\
+                local outcome, meta, details\
+                for try = 0, M.RETRIES do\
+                    outcome, meta, details = attempt(Hardcover, Repo, fp, best_guess, opts.edition_only)\
+                    if outcome ~= \"error\" or try == M.RETRIES or job.stopped then break end\
+                    if not pace() then break end\
+                end\
+                if outcome == \"linked\" then\
+                    st.linked = (st.linked or 0) + 1\
+                    -- Details and the cover/description decision now, so the\
+                    -- book is complete in one pass.\
+                    pcall(Hardcover.refreshBook, meta, {})\
+                    local d = type(details) == \"table\" and details or {}\
+                    if d.action then\
+                        local key = d.action == \"corrected\" and \"corrected\" or \"new_links\"\
+                        st[key] = (st[key] or 0) + 1\
+                    end\
+                    local score\
+                    if tonumber(d.title_score) and tonumber(d.author_score) then\
+                        score = math.floor((d.title_score + d.author_score) / 2 + 0.5)\
+                    end\
+                    st.linked_list[#st.linked_list + 1] = {\
+                        name = nameFor(fp, meta), matched = d.title,\
+                        author = d.author, score = score, action = d.action,\
+                    }\
+                elseif outcome == \"nomatch\" then\
+                    st.no_match = (st.no_match or 0) + 1\
+                    st.nomatch_list[#st.nomatch_list + 1] = { name = nameFor(fp, meta) }\
+                elseif outcome == \"noid\" then\
+                    st.no_id = (st.no_id or 0) + 1\
+                elseif outcome == \"unchanged\" then\
+                    st.already_correct = (st.already_correct or 0) + 1\
+                else\
+                    st.errors = (st.errors or 0) + 1\
+                end\
+                failed_run = outcome == \"error\" and failed_run + 1 or 0\
+                if failed_run >= M.MAX_FAILED_RUN then\
+                    st.cancelled, st.gave_up = true, true\
+                    break\
+                end\
+                -- A book that made no request yields a tick now and then; one\
+                -- that did waits out Hardcover's rate.\
+                if outcome ~= \"noid\" and outcome ~= \"unchanged\" then\
+                    if not pace() then\
+                        st.cancelled, st.rate_limited = true, true\
+                        break\
+                    end\
+                elseif i % 25 == 0 then\
+                    breathe(0)\
+                end\
+            end\
+        end, debug.traceback)\
+        -- Whatever happened, the status line lets go of the job.\
+        if own then own.trap = nil end\
+        Progress.finish()\
+        Progress.holdAwake(false)\
+        if not ok_run then\
+            st.errors = (st.errors or 0) + 1\
+            require(\"logger\").warn(\"[bookshelf] Hardcover auto-link failed:\", tostring(err_run))\
+        end\
+        if opts.on_finish then opts.on_finish(st) end\
+    end)\
+    return true\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_hardcover_client"] = "-- bookshelf_hardcover_client.lua\
+-- Bookshelf's own Hardcover client: a GraphQL request with an API key\
+-- (lib/bookshelf_hardcover_key), and the handful of lookups the link pickers\
+-- and auto-link need. It answers to the same calls as the sync plugins'\
+-- clients (query, me, findBooks, findEditions, findBookByIdentifiers,\
+-- hydrateBooks), so lib/bookshelf_hardcover can use any of the three.\
+--\
+-- Nothing here runs by itself: every request is the end of something the\
+-- reader asked for.\
+--\
+-- The credential is one function's business (bearer()). An API key today; an\
+-- OAuth access token would be sent the same way, so a sign-in added later\
+-- changes that function and nothing else here.\
+--\
+-- Hardcover says how much of the rate limit is left on every reply\
+-- (RateLimit header). waitTime() turns that into \"seconds until the next\
+-- request may go\", so a bulk job paces itself and does not find the limit by\
+-- hitting it.\
+\
+local Client = { enabled = true }\
+\
+Client.URL = \"https://api.hardcover.app/v1/graphql\"\
+-- Seconds one request may take, and the block timeout inside it.\
+Client.TOTAL_TIMEOUT = 20\
+Client.BLOCK_TIMEOUT = 10\
+-- With no usable header on a 429: Hardcover refills one request a second.\
+Client.DEFAULT_BACKOFF = 10\
+-- A long job's status-line job (lib/bookshelf_scan_progress). When set and\
+-- the caller is in a coroutine, the request runs in a forked child under it:\
+-- the shelf keeps answering taps and only the job's Stop aborts the request.\
+Client.trap = nil\
+\
+local function now()\
+    local ok, gettime = pcall(require, \"lib/bookshelf_gettime\")\
+    return ok and gettime() or os.time()\
+end\
+\
+-- ── credential ──────────────────────────────────────────────────────────────\
+local function bearer()\
+    local ok, Key = pcall(require, \"lib/bookshelf_hardcover_key\")\
+    if not ok or not Key then return nil end\
+    return (Key.get())\
+end\
+\
+function Client:hasCredential() return bearer() ~= nil end\
+\
+-- ── rate limit ──────────────────────────────────────────────────────────────\
+local _rl = nil   -- { remaining, reset_at, daily_remaining, daily_reset_at }\
+\
+-- '\"Free (JWT)\";r=4;t=0, \"daily\";r=4304;t=2390'. Once the day's budget is\
+-- gone Hardcover sends only the \"daily\" entry.\
+local function readRateLimit(header, at)\
+    if type(header) ~= \"string\" then return nil end\
+    local out = {}\
+    for name, rest in header:gmatch('\"([^\"]*)\"([^,]*)') do\
+        local r = tonumber(rest:match(\"r=(%d+)\"))\
+        local tt = tonumber(rest:match(\"t=(%d+)\"))\
+        if r then\
+            if name == \"daily\" then\
+                out.daily_remaining, out.daily_reset_at = r, at + (tt or 0)\
+            else\
+                out.remaining, out.reset_at = r, at + (tt or 0)\
+            end\
+        end\
+    end\
+    return next(out) and out or nil\
+end\
+\
+-- rateLimit() -> { remaining, daily_remaining } as last heard, or nil.\
+function Client.rateLimit()\
+    if not _rl then return nil end\
+    return { remaining = _rl.remaining, daily_remaining = _rl.daily_remaining }\
+end\
+\
+-- waitTime() -> whole seconds until the next request may go. 0 when unknown.\
+function Client.waitTime()\
+    if not _rl then return 0 end\
+    local t = now()\
+    local wait = 0\
+    if _rl.daily_remaining == 0 and _rl.daily_reset_at then\
+        wait = math.max(wait, _rl.daily_reset_at - t)\
+    end\
+    if _rl.remaining == 0 and _rl.reset_at then\
+        wait = math.max(wait, _rl.reset_at - t)\
+    end\
+    return math.max(0, math.ceil(wait))\
+end\
+\
+function Client._resetRateLimit() _rl = nil end\
+\
+-- ── JSON nulls ──────────────────────────────────────────────────────────────\
+-- rapidjson decodes null to a sentinel, which is truthy: `title or \"\"` would\
+-- hand a userdata on. Everything downstream expects an absent field.\
+function Client._scrub(v, null)\
+    if type(v) ~= \"table\" then return v end\
+    for k, x in pairs(v) do\
+        if x == null then\
+            v[k] = nil\
+        elseif type(x) == \"table\" then\
+            Client._scrub(x, null)\
+        end\
+    end\
+    return v\
+end\
+\
+-- ── transport ───────────────────────────────────────────────────────────────\
+-- One POST. Runs in this process, or in a forked child (see Client.trap).\
+-- -> \"status\\nratelimit\\nbody\", so a child can hand it back as one string.\
+local function post(body, token)\
+    local http = require(\"socket.http\")\
+    local ltn12 = require(\"ltn12\")\
+    local socketutil = require(\"socketutil\")\
+    local sink = {}\
+    socketutil:set_timeout(Client.BLOCK_TIMEOUT, Client.TOTAL_TIMEOUT)\
+    local ok, _one, code, headers = pcall(http.request, {\
+        url = Client.URL,\
+        method = \"POST\",\
+        headers = {\
+            [\"Content-Type\"] = \"application/json\",\
+            [\"Content-Length\"] = tostring(#body),\
+            [\"User-Agent\"] = \"bookshelf.koplugin\",\
+            [\"Authorization\"] = \"Bearer \" .. token,\
+        },\
+        source = ltn12.source.string(body),\
+        sink = socketutil.table_sink(sink),\
+    })\
+    socketutil:reset_timeout()\
+    if not ok then return \"\\n\\n\" end\
+    local rl = type(headers) == \"table\" and headers[\"ratelimit\"] or \"\"\
+    return tostring(tonumber(code) or \"\") .. \"\\n\" .. tostring(rl or \"\") .. \"\\n\" .. table.concat(sink)\
+end\
+\
+-- _transport(request, token) -> status, reply table, ratelimit header\
+-- status nil: the request did not complete (no connection, timeout, Stop).\
+-- A seam for tests; everything above it is plain Lua.\
+function Client._transport(request, token)\
+    local rapidjson = require(\"rapidjson\")\
+    local body = rapidjson.encode(request)\
+    local raw\
+    local job = Client.trap\
+    if job and coroutine.running() then\
+        job.in_run = true\
+        local completed, out = require(\"ui/trapper\"):dismissableRunInSubprocess(function()\
+            return post(body, token)\
+        end, job, true)\
+        job.in_run = false\
+        raw = completed and out or nil\
+    else\
+        raw = post(body, token)\
+    end\
+    if type(raw) ~= \"string\" then return nil end\
+    local status, rl, text = raw:match(\"^([^\\n]*)\\n([^\\n]*)\\n(.*)$\")\
+    status = tonumber(status)\
+    if not status then return nil end\
+    local ok, reply = pcall(rapidjson.decode, text)\
+    reply = ok and type(reply) == \"table\" and Client._scrub(reply, rapidjson.null) or nil\
+    return status, reply, rl ~= \"\" and rl or nil\
+end\
+\
+-- query(query, variables) -> data | nil, err\
+-- err: { request_error = text, and one of no_key / auth_error / rate_limited\
+--        / completed = false } or { errors = { { message = } ... } }\
+function Client:query(query, variables)\
+    local token = bearer()\
+    if not token then\
+        return nil, { no_key = true, request_error = \"No Hardcover API key is set\" }\
+    end\
+    local request = { query = query }\
+    if type(variables) == \"table\" and next(variables) ~= nil then\
+        request.variables = variables\
+    end\
+    local at = now()\
+    local ok, status, reply, rl = pcall(Client._transport, request, token)\
+    if not ok then\
+        require(\"logger\").warn(\"[bookshelf] Hardcover request failed:\", tostring(status))\
+        return nil, { completed = false, request_error = \"The request to Hardcover failed\" }\
+    end\
+    local heard = readRateLimit(rl, at)\
+    if heard then _rl = heard end\
+    if not status then\
+        return nil, { completed = false, request_error = \"No response from Hardcover\" }\
+    end\
+    if status == 429 then\
+        if not heard then\
+            _rl = { remaining = 0, reset_at = at + Client.DEFAULT_BACKOFF }\
+        end\
+        return nil, { rate_limited = true, status_code = 429, request_error = \"Too Many Requests\" }\
+    end\
+    if status == 401 or status == 403 then\
+        return nil, { auth_error = status == 401, status_code = status,\
+            request_error = status == 401 and \"Hardcover rejected the API key\"\
+                or \"Hardcover refused the request\" }\
+    end\
+    if type(reply) == \"table\" then\
+        if type(reply.data) == \"table\" then return reply.data end\
+        if reply.errors or reply.error then\
+            return nil, { errors = reply.errors or { { message = tostring(reply.error) } },\
+                status_code = status }\
+        end\
+    end\
+    return nil, { status_code = status,\
+        request_error = \"Hardcover returned HTTP \" .. tostring(status) }\
+end\
+\
+-- ── lookups ─────────────────────────────────────────────────────────────────\
+local BOOK_FIELDS = [[\
+    book_id: id\
+    title\
+    release_year\
+    users_read_count\
+    pages\
+    book_series { position series { name } }\
+    contributions: cached_contributors\
+    cached_image\
+]]\
+\
+local EDITION_FIELDS = [[\
+    id\
+    title\
+    edition_format\
+    reading_format_id\
+    pages\
+    release_date\
+    users_count\
+    cached_image\
+    language { code2 language }\
+    publisher { name }\
+    book { ]] .. BOOK_FIELDS .. [[ }\
+]]\
+\
+local FORMATS = { [1] = \"Physical Book\", [2] = \"Audiobook\", [4] = \"E-Book\" }\
+\
+function Client:editionFormatName(edition_format, format_id)\
+    if type(edition_format) == \"string\" and edition_format ~= \"\" then return edition_format end\
+    return FORMATS[tonumber(format_id) or 0]\
+end\
+\
+-- An edition, as the book record it belongs to with the edition's own title,\
+-- pages, year, format and cover on top: the shape a link is made from.\
+local function asEdition(edition)\
+    local b = type(edition.book) == \"table\" and edition.book or {}\
+    b.edition_id = edition.id\
+    b.edition_format = Client:editionFormatName(edition.edition_format, edition.reading_format_id)\
+    b.reading_format_id = edition.reading_format_id\
+    b.filetype = b.edition_format or \"Physical Book\"\
+    b.cached_image = edition.cached_image or b.cached_image\
+    b.publisher = type(edition.publisher) == \"table\" and edition.publisher.name or nil\
+    b.release_year = type(edition.release_date) == \"string\"\
+        and edition.release_date:match(\"^(%d%d%d%d)\") or nil\
+    b.language = edition.language\
+    b.title = edition.title or b.title\
+    b.pages = edition.pages\
+    b.users_count = edition.users_count\
+    return b\
+end\
+\
+-- me() -> { id = } | nil, err\
+function Client:me()\
+    local data, err = self:query(\"{ me { id username } }\")\
+    if not data then return nil, err end\
+    local me = type(data.me) == \"table\" and (data.me[1] or data.me) or nil\
+    if type(me) ~= \"table\" or not me.id then return nil, { request_error = \"No account in the reply\" } end\
+    return me\
+end\
+\
+-- hydrateBooks(ids) -> books in the order of ids | nil, err\
+function Client:hydrateBooks(ids, _user_id)\
+    if type(ids) ~= \"table\" or #ids == 0 then return {} end\
+    local data, err = self:query(\
+        \"query ($ids: [Int!]) { books(where: { id: { _in: $ids }}) { \" .. BOOK_FIELDS .. \" } }\",\
+        { ids = ids })\
+    if not data or type(data.books) ~= \"table\" then return nil, err end\
+    local order = {}\
+    for i, id in ipairs(ids) do order[tonumber(id) or id] = i end\
+    table.sort(data.books, function(a, b)\
+        return (order[a.book_id] or math.huge) < (order[b.book_id] or math.huge)\
+    end)\
+    return data.books\
+end\
+\
+-- findBooks(title, author) -> books, best match first | nil, err\
+function Client:findBooks(title, author, _user_id)\
+    if type(title) ~= \"string\" or title:match(\"^%s*$\") then return {} end\
+    -- A subtitle skews Hardcover's search; the work is under the main title.\
+    title = title:gsub(\":.+\", \"\"):gsub(\"^%s+\", \"\"):gsub(\"%s+$\", \"\")\
+    local q = title\
+    if type(author) == \"string\" and author ~= \"\" then q = q .. \" \" .. author end\
+    local data, err = self:query(\
+        'query ($query: String!) { search(query: $query, per_page: 25, page: 1, query_type: \"Book\") { ids } }',\
+        { query = q })\
+    if not data then return nil, err or { request_error = \"No response from Hardcover\" } end\
+    local raw = type(data.search) == \"table\" and data.search.ids or nil\
+    local ids = {}\
+    for _i, id in ipairs(type(raw) == \"table\" and raw or {}) do\
+        ids[#ids + 1] = tonumber(id)\
+    end\
+    if #ids == 0 then return {} end\
+    return self:hydrateBooks(ids)\
+end\
+\
+-- findEditions(book_id) -> editions as book records | nil\
+-- Audiobooks are left out. E-books first, then the most widely held.\
+function Client:findEditions(book_id, _user_id)\
+    local data = self:query(\
+        \"query ($id: Int!) { editions(where: { book_id: { _eq: $id }, \"\
+        .. \"_or: [{ reading_format_id: { _is_null: true }}, { reading_format_id: { _neq: 2 }}] }, \"\
+        .. \"order_by: { users_count: desc_nulls_last }) { \" .. EDITION_FIELDS .. \" } }\",\
+        { id = tonumber(book_id) or book_id })\
+    if not data or type(data.editions) ~= \"table\" then return nil end\
+    local list = {}\
+    for i, e in ipairs(data.editions) do\
+        local rec = asEdition(e)\
+        rec._order = i\
+        list[#list + 1] = rec\
+    end\
+    table.sort(list, function(a, b)\
+        local ea, eb = a.reading_format_id == 4, b.reading_format_id == 4\
+        if ea ~= eb then return ea end\
+        local ua, ub = tonumber(a.users_count) or 0, tonumber(b.users_count) or 0\
+        if ua ~= ub then return ua > ub end\
+        return a._order < b._order\
+    end)\
+    for _i, rec in ipairs(list) do rec._order = nil end\
+    return list\
+end\
+\
+local function firstEdition(self, where, variables, decl)\
+    local data = self:query(\
+        \"query (\" .. decl .. \") { editions(where: \" .. where .. \", limit: 1) { \"\
+        .. EDITION_FIELDS .. \" } }\", variables)\
+    local e = data and type(data.editions) == \"table\" and data.editions[1] or nil\
+    return e and asEdition(e) or nil\
+end\
+\
+-- findBookByIdentifiers({ edition_id, book_slug, isbn_13, isbn_10 }) -> book | nil\
+function Client:findBookByIdentifiers(ids, _user_id)\
+    if type(ids) ~= \"table\" then return nil end\
+    local edition_id = tonumber(ids.edition_id)\
+    if edition_id then\
+        local b = firstEdition(self, \"{ id: { _eq: $id }}\", { id = edition_id }, \"$id: Int!\")\
+        if b then return b end\
+    end\
+    if type(ids.book_slug) == \"string\" and ids.book_slug ~= \"\" then\
+        local data = self:query(\
+            \"query ($slug: String!) { books(where: { slug: { _eq: $slug }}, limit: 1) { \"\
+            .. BOOK_FIELDS .. \" } }\", { slug = ids.book_slug })\
+        local b = data and type(data.books) == \"table\" and data.books[1] or nil\
+        if b then return b end\
+        -- A numeric \"slug\" is an edition id some tools write there.\
+        local as_edition = tonumber(ids.book_slug)\
+        if as_edition then\
+            b = firstEdition(self, \"{ id: { _eq: $id }}\", { id = as_edition }, \"$id: Int!\")\
+            if b then return b end\
+        end\
+    end\
+    local field = ids.isbn_13 and \"isbn_13\" or (ids.isbn_10 and \"isbn_10\") or nil\
+    if field then\
+        return firstEdition(self, \"{ \" .. field .. \": { _eq: $isbn }}\",\
+            { isbn = tostring(ids[field]) }, \"$isbn: String!\")\
+    end\
+    return nil\
+end\
+\
+return Client\
+",
+    ["lib/bookshelf_hardcover_key"] = "-- bookshelf_hardcover_key.lua\
+-- Where Bookshelf finds a Hardcover API key for its own client\
+-- (lib/bookshelf_hardcover_client).\
+--\
+-- In order: a key the reader gave Bookshelf itself, else one a sync plugin\
+-- already holds. A plugin's key is read from that plugin's own file every\
+-- session and never copied: Hardcover keys expire, and a silent copy would\
+-- go stale the day the reader renews theirs in the plugin. Keeping a copy\
+-- (so the key outlives the plugin) is something the reader asks for.\
+--\
+-- The plugins' files are READ AS TEXT and matched, never run: they are Lua\
+-- files in someone else's folder.\
+--\
+-- Bookshelf's own key is in a file of its own, not in the settings file\
+-- readers attach to bug reports. It is scrambled so it does not read at a\
+-- glance; that is NOT encryption. A device has no keystore, so any key to\
+-- decrypt with would sit in the file next door, and whoever can read one can\
+-- read the other.\
+--\
+-- A sync plugin's SIGN-IN tokens are not keys and are never used: they\
+-- expire within hours, and Hardcover gives them none of other readers'\
+-- reviews.\
+\
+local M = {}\
+\
+local OWN_FILE = \"hardcover_key\"\
+local MAGIC = \"bs1:\"\
+\
+local _memo        -- nil = not looked yet; { token =, source = } (token may be nil)\
+\
+local function readAll(path)\
+    local f = io.open(path, \"r\")\
+    if not f then return nil end\
+    local s = f:read(\"*a\")\
+    f:close()\
+    return type(s) == \"string\" and s or nil\
+end\
+\
+-- clean(text) -> the bare token, or nil. Takes a pasted \"Bearer \" prefix and\
+-- stray whitespace off. A token has no whitespace inside it.\
+function M.clean(text)\
+    if type(text) ~= \"string\" then return nil end\
+    local s = text:gsub(\"^%s+\", \"\"):gsub(\"%s+$\", \"\")\
+    s = s:gsub(\"^[Bb][Ee][Aa][Rr][Ee][Rr]%s+\", \"\")\
+    if s == \"\" or s:find(\"%s\") then return nil end\
+    return s\
+end\
+\
+-- ── scrambling (see the header: not encryption) ─────────────────────────────\
+local B64 = \"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/\"\
+local PAD = \"bookshelf.koplugin/hardcover\"\
+\
+local function xorByte(a, b)\
+    local r, p = 0, 1\
+    for _i = 1, 8 do\
+        local x, y = a % 2, b % 2\
+        if x ~= y then r = r + p end\
+        a, b, p = (a - x) / 2, (b - y) / 2, p * 2\
+    end\
+    return r\
+end\
+\
+local function mask(s)\
+    local out = {}\
+    for i = 1, #s do\
+        out[i] = string.char(xorByte(s:byte(i), PAD:byte((i - 1) % #PAD + 1)))\
+    end\
+    return table.concat(out)\
+end\
+\
+local function b64encode(s)\
+    local out = {}\
+    for i = 1, #s, 3 do\
+        local a, b, c = s:byte(i, i + 2)\
+        local n = a * 65536 + (b or 0) * 256 + (c or 0)\
+        local c1 = math.floor(n / 262144) % 64\
+        local c2 = math.floor(n / 4096) % 64\
+        local c3 = math.floor(n / 64) % 64\
+        local c4 = n % 64\
+        out[#out + 1] = B64:sub(c1 + 1, c1 + 1) .. B64:sub(c2 + 1, c2 + 1)\
+            .. (b and B64:sub(c3 + 1, c3 + 1) or \"=\")\
+            .. (c and B64:sub(c4 + 1, c4 + 1) or \"=\")\
+    end\
+    return table.concat(out)\
+end\
+\
+local function b64decode(s)\
+    if #s % 4 ~= 0 or s:find(\"[^%w%+/=]\") then return nil end\
+    local out = {}\
+    for i = 1, #s, 4 do\
+        local n, pad = 0, 0\
+        for j = 0, 3 do\
+            local ch = s:sub(i + j, i + j)\
+            local v\
+            if ch == \"=\" then\
+                v, pad = 0, pad + 1\
+            else\
+                v = B64:find(ch, 1, true)\
+                if not v then return nil end\
+                v = v - 1\
+            end\
+            n = n * 64 + v\
+        end\
+        local a = math.floor(n / 65536) % 256\
+        local b = math.floor(n / 256) % 256\
+        local c = n % 256\
+        out[#out + 1] = string.char(a) .. (pad < 2 and string.char(b) or \"\")\
+            .. (pad < 1 and string.char(c) or \"\")\
+    end\
+    return table.concat(out)\
+end\
+\
+local function ownPath()\
+    return require(\"lib/bookshelf_paths\").settingsFile(OWN_FILE)\
+end\
+\
+local function readOwn()\
+    local ok, body = pcall(function() return readAll(ownPath()) end)\
+    if not ok or not body then return nil end\
+    body = body:gsub(\"%s+$\", \"\")\
+    if body:sub(1, #MAGIC) ~= MAGIC then return nil end\
+    local raw = b64decode(body:sub(#MAGIC + 1))\
+    return raw and M.clean(mask(raw)) or nil\
+end\
+\
+-- ── the sync plugins' own files ─────────────────────────────────────────────\
+local function pluginDirs()\
+    local dirs, seen = {}, {}\
+    local function add(d)\
+        if type(d) ~= \"string\" or d == \"\" then return end\
+        d = d:gsub(\"/+$\", \"\")\
+        if not seen[d] then seen[d] = true; dirs[#dirs + 1] = d end\
+    end\
+    local ok, DataStorage = pcall(require, \"datastorage\")\
+    if ok and DataStorage then add(DataStorage:getDataDir() .. \"/plugins\") end\
+    local extra = G_reader_settings and G_reader_settings.readSetting\
+        and G_reader_settings:readSetting(\"extra_plugin_paths\") or nil\
+    if type(extra) == \"string\" then\
+        add(extra)\
+    elseif type(extra) == \"table\" then\
+        for _i, d in ipairs(extra) do add(d) end\
+    end\
+    return dirs\
+end\
+\
+local function tokenIn(text)\
+    return M.clean(text:match(\"token%s*=%s*\\\"([^\\\"]*)\\\"\") or text:match(\"token%s*=%s*'([^']*)'\"))\
+end\
+\
+local PLUGINS = {\
+    {\
+        id = \"hardcover\",\
+        find = function(dirs)\
+            for _i, d in ipairs(dirs) do\
+                for _j, name in ipairs({ \"hardcoverapp.koplugin\", \"hardcover.koplugin\" }) do\
+                    local body = readAll(d .. \"/\" .. name .. \"/hardcover_config.lua\")\
+                    local tok = body and tokenIn(body)\
+                    if tok then return tok end\
+                end\
+            end\
+        end,\
+    },\
+    {\
+        id = \"shelfsync\",\
+        find = function(dirs)\
+            for _i, d in ipairs(dirs) do\
+                local body = readAll(d .. \"/shelfsync.koplugin/shelfsync_config.lua\")\
+                -- Its config has a section per service; only Hardcover's.\
+                local section = body and body:match(\"hardcover%s*=%s*(%b{})\")\
+                local tok = section and tokenIn(section)\
+                if tok then return tok end\
+            end\
+            -- A key typed into its menu is in its settings file.\
+            local ok, DataStorage = pcall(require, \"datastorage\")\
+            if not ok or not DataStorage then return nil end\
+            local body = readAll(DataStorage:getSettingsDir() .. \"/hardcoversync_settings.lua\")\
+            return body and M.clean(body:match(\"%[\\\"api_token\\\"%]%s*=%s*\\\"([^\\\"]*)\\\"\")) or nil\
+        end,\
+    },\
+}\
+\
+local function fromPlugin()\
+    local dirs = pluginDirs()\
+    for _i, p in ipairs(PLUGINS) do\
+        local ok, tok = pcall(p.find, dirs)\
+        if ok and tok then return tok, p.id end\
+    end\
+    return nil\
+end\
+\
+local function resolve()\
+    if _memo then return _memo end\
+    local own = readOwn()\
+    if own then\
+        _memo = { token = own, source = \"own\" }\
+    else\
+        local tok, id = fromPlugin()\
+        _memo = { token = tok, source = tok and id or nil }\
+    end\
+    return _memo\
+end\
+\
+-- get() -> token, source (\"own\" | \"hardcover\" | \"shelfsync\") | nil\
+function M.get()\
+    local m = resolve()\
+    return m.token, m.source\
+end\
+\
+function M.available() return resolve().token ~= nil end\
+function M.hasOwn() return resolve().source == \"own\" end\
+\
+-- pluginSource() -> the id of a plugin that holds a key, or nil. Whatever\
+-- Bookshelf's own key is.\
+function M.pluginSource()\
+    local _tok, id = fromPlugin()\
+    return id\
+end\
+\
+-- set(text) -> true, or false when the text is no token or cannot be saved.\
+function M.set(text)\
+    local tok = M.clean(text)\
+    if not tok then return false end\
+    local ok = pcall(function()\
+        local f = assert(io.open(ownPath(), \"w\"))\
+        f:write(MAGIC, b64encode(mask(tok)), \"\\n\")\
+        f:close()\
+    end)\
+    M.invalidate()\
+    return ok\
+end\
+\
+function M.clear()\
+    pcall(function() os.remove(ownPath()) end)\
+    M.invalidate()\
+end\
+\
+-- A key is some 500 characters, more than anyone types on an e-reader. The\
+-- reader can put it in a text file in Bookshelf's settings folder instead.\
+local IMPORT_FILE = \"hardcover_api_key.txt\"\
+\
+function M.importPath()\
+    return require(\"lib/bookshelf_paths\").settingsFile(IMPORT_FILE)\
+end\
+\
+-- importFile() -> true when the file held a key, which is now Bookshelf's\
+-- own; the plain file is removed. A file with no key in it is left alone.\
+function M.importFile()\
+    local ok, body = pcall(function() return readAll(M.importPath()) end)\
+    if not ok or not body then return false end\
+    if not M.set(body) then return false end\
+    pcall(function() os.remove(M.importPath()) end)\
+    return true\
+end\
+\
+-- keepCopy() -> true when a plugin's key is now Bookshelf's own as well.\
+function M.keepCopy()\
+    local tok = fromPlugin()\
+    if not tok then return false end\
+    return M.set(tok)\
+end\
+\
+function M.invalidate() _memo = nil end\
+\
+return M\
+",
+    ["lib/bookshelf_hardcover_key_ui"] = "-- bookshelf_hardcover_key_ui.lua\
+-- The settings row and dialog for the Hardcover API key\
+-- (lib/bookshelf_hardcover_key holds it; lib/bookshelf_hardcover_client\
+-- sends it).\
+--\
+-- The dialog says where the key in use comes from and offers what applies:\
+-- enter one, read one from a file (a key is some 500 characters), keep a\
+-- copy of a sync plugin's, check it, remove Bookshelf's own. Checking is the\
+-- only thing here that goes online, and only when tapped.\
+\
+local UIManager = require(\"ui/uimanager\")\
+local T = require(\"ffi/util\").template\
+local _ = require(\"lib/bookshelf_i18n\").gettext\
+\
+local M = {}\
+\
+local function Key() return require(\"lib/bookshelf_hardcover_key\") end\
+\
+local function sourceText(source)\
+    if source == \"own\" then return _(\"Bookshelf's own\") end\
+    if source == \"hardcover\" then return _(\"from the Hardcover plugin\") end\
+    if source == \"shelfsync\" then return _(\"from your sync plugin\") end\
+    return _(\"not set\")\
+end\
+\
+local function isOn()\
+    local ok, Hardcover = pcall(require, \"lib/bookshelf_hardcover\")\
+    return ok and Hardcover and Hardcover.isAvailable() and true or false\
+end\
+\
+-- The plugin a key was found in, as it reads after \"from\": a name.\
+local function pluginName(source)\
+    if source == \"hardcover\" then return _(\"the Hardcover plugin\") end\
+    if source == \"shelfsync\" then return \"ShelfSync\" end\
+    return _(\"your sync plugin\")\
+end\
+\
+-- statusText() -> the settings row's text.\
+function M.statusText()\
+    local _tok, source = Key().get()\
+    if source and source ~= \"own\" and not isOn() then\
+        return T(_(\"Hardcover API key: %1\"), _(\"in a plugin that is off\"))\
+    end\
+    return T(_(\"Hardcover API key: %1\"), sourceText(source))\
+end\
+\
+local function info(text, timeout)\
+    UIManager:show(require(\"ui/widget/infomessage\"):new{ text = text, timeout = timeout })\
+end\
+\
+-- The key changed: Hardcover works out its client again, and the caller\
+-- redraws. `was_on`: whether Hardcover was available before the change (its\
+-- menu is built once, when KOReader starts).\
+local function changed(opts, was_on, text)\
+    local ok, Hardcover = pcall(require, \"lib/bookshelf_hardcover\")\
+    local on = false\
+    if ok and Hardcover then\
+        Hardcover.invalidateSource(true)\
+        on = Hardcover.isAvailable() and true or false\
+    end\
+    if on and not was_on then\
+        text = text .. \"\\n\\n\" .. _(\"Restart KOReader to see the Hardcover menu.\")\
+    end\
+    info(text)\
+    if opts.on_change then opts.on_change() end\
+end\
+\
+local function enterKey(opts)\
+    local InputDialog = require(\"ui/widget/inputdialog\")\
+    local dialog\
+    dialog = InputDialog:new{\
+        title = _(\"Hardcover API key\"),\
+        input = \"\",\
+        input_hint = _(\"Paste or type the key\"),\
+        buttons = { {\
+            { text = _(\"Cancel\"), id = \"close\", callback = function() UIManager:close(dialog) end },\
+            { text = _(\"Save\"), is_enter_default = true, callback = function()\
+                local was_on = isOn()\
+                if not Key().set(dialog:getInputText()) then\
+                    info(_(\"That does not look like a Hardcover API key.\"), 4)\
+                    return\
+                end\
+                UIManager:close(dialog)\
+                changed(opts, was_on, _(\"Key saved on this device.\"))\
+            end },\
+        } },\
+    }\
+    UIManager:show(dialog)\
+    dialog:onShowKeyboard()\
+end\
+\
+local function checkKey()\
+    require(\"lib/bookshelf_cover_fetch\").runWhenOnline(function()\
+        local me, err = require(\"lib/bookshelf_hardcover_client\"):me()\
+        if me then\
+            local name = type(me.username) == \"string\" and me.username ~= \"\" and me.username or nil\
+            info(name and T(_(\"Hardcover accepts this key (%1).\"), name)\
+                or _(\"Hardcover accepts this key.\"))\
+        else\
+            info(T(_(\"The key was not accepted: %1\"),\
+                type(err) == \"table\" and err.request_error or _(\"no reply\")))\
+        end\
+    end)\
+end\
+\
+-- open{ on_change = function() }\
+function M.open(opts)\
+    opts = opts or {}\
+    local K = Key()\
+    local _tok, source = K.get()\
+    local plugin = K.pluginSource()\
+    local title\
+    if source == \"own\" then\
+        title = _(\"Bookshelf has its own Hardcover API key, stored on this device.\")\
+    elseif source and not isOn() then\
+        -- The key is in a plugin's folder, and the plugin is not running.\
+        title = T(_(\"There is a Hardcover API key %1, but that plugin is switched off, and Hardcover with it.\"),\
+            sourceText(source))\
+    elseif source then\
+        title = T(_(\"Bookshelf is using the Hardcover API key %1. It is read from there each time and not copied.\"),\
+            sourceText(source))\
+    else\
+        title = T(_(\"No Hardcover API key. Get one at hardcover.app/account/api, then enter it here, or save it in a text file at:\\n%1\"),\
+            K.importPath())\
+    end\
+\
+    local ButtonDialog = require(\"ui/widget/buttondialog\")\
+    local dialog\
+    local function close() UIManager:close(dialog) end\
+    local buttons = {\
+        { { text = _(\"Enter key\\xE2\\x80\\xA6\"), callback = function() close(); enterKey(opts) end } },\
+        { { text = _(\"Read key from file\"), callback = function()\
+            local was_on = isOn()\
+            if K.importFile() then\
+                close()\
+                changed(opts, was_on, _(\"Key read and saved on this device. The file was removed.\"))\
+            else\
+                info(T(_(\"No key found. Save the key in a text file at:\\n%1\"), K.importPath()))\
+            end\
+        end } },\
+    }\
+    if plugin and source ~= \"own\" then\
+        -- Named for the plugin: \"the plugin's key\" told the maintainer\
+        -- nothing about whose key, or why he would want a copy.\
+        title = title .. \"\\n\\n\" .. _(\"Copying the key is only needed to use Hardcover without that plugin.\")\
+        buttons[#buttons + 1] = { { text = T(_(\"Copy the key from %1\"), pluginName(plugin)), callback = function()\
+            local was_on = isOn()\
+            if K.keepCopy() then\
+                close()\
+                changed(opts, was_on, _(\"Bookshelf now has its own copy of the key, and keeps working if the plugin is removed.\"))\
+            end\
+        end } }\
+    end\
+    if source then\
+        buttons[#buttons + 1] = { { text = _(\"Check key\"), callback = checkKey } }\
+    end\
+    if source == \"own\" then\
+        buttons[#buttons + 1] = { { text = _(\"Remove Bookshelf's key\"), callback = function()\
+            local was_on = isOn()\
+            K.clear()\
+            close()\
+            changed(opts, was_on, _(\"Bookshelf's key was removed.\"))\
+        end } }\
+    end\
+    buttons[#buttons + 1] = { { text = _(\"Close\"), callback = close } }\
+\
+    dialog = ButtonDialog:new{\
+        title = require(\"lib/bookshelf_menu_icons\").HARDCOVER .. \" \" .. _(\"Hardcover API key\") .. \"\\n\\n\" .. title,\
+        title_align = \"center\",\
+        buttons = buttons,\
+    }\
+    pcall(function() require(\"lib/bookshelf_gesture_zones\").passSwipesOn(dialog) end)\
+    UIManager:show(dialog)\
+end\
+\
+-- menuItem(on_change) -> a settings menu row.\
+function M.menuItem(on_change)\
+    return {\
+        text_func = M.statusText,\
+        keep_menu_open = true,\
+        help_text = _(\"Bookshelf can talk to Hardcover itself with an API key, with or without a sync plugin installed. A key your sync plugin already holds is used as it is. Get a key at hardcover.app/account/api.\"),\
+        callback = function(touchmenu_instance)\
+            M.open{ on_change = function()\
+                if on_change then on_change() end\
+                if touchmenu_instance and touchmenu_instance.updateItems then\
+                    touchmenu_instance:updateItems()\
+                end\
+            end }\
+        end,\
+    }\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_hardcover_picker"] = "-- bookshelf_hardcover_picker.lua\
+-- The list a reader picks a Hardcover book or edition from, when the client\
+-- is Bookshelf's own (lib/bookshelf_hardcover_client). On the library modal\
+-- every other Bookshelf picker uses, so it follows the theme. With a sync\
+-- plugin's client the list is that plugin's own dialog instead (see\
+-- _showPicker in lib/bookshelf_hardcover).\
+--\
+--   show{ title, records, active = { book_id = } | { edition_id = },\
+--         load = function() -> records | nil, err    -- instead of records:\
+--             the list is up at once saying \"Asking Hardcover\", and this\
+--             runs once that is on screen (it asks Hardcover, on this thread)\
+--         empty_text = what an empty answer says,\
+--         search = function(text) -> records | nil,   -- nil: not searchable\
+--         search_value = \"the text first searched\",\
+--         over = a LibraryModal config.over: a page of the menu it came\
+--             from, with its breadcrumb (PageDialog:over)\
+--         on_pick = function(record), on_close = function() }\
+--\
+-- A record is what the client hands back: a book, or an edition as a book\
+-- record with edition_id and the edition's own title, pages, year, format.\
+\
+local T = require(\"ffi/util\").template\
+local _ = require(\"lib/bookshelf_i18n\").gettext\
+\
+local M = {}\
+\
+local SEP = \" \\xC2\\xB7 \"    -- middle dot\
+\
+-- A text column narrower than this many widths of the title font, and the\
+-- grid drops a column.\
+M.MIN_TEXT_EMS = 8\
+-- The cover's share of a cell's width in one column.\
+M.ONE_COLUMN_COVER = 0.2\
+\
+local function authors(rec)\
+    local names = {}\
+    for _i, c in ipairs(type(rec.contributions) == \"table\" and rec.contributions or {}) do\
+        local n = type(c) == \"table\" and type(c.author) == \"table\" and c.author.name\
+        if type(n) == \"string\" and n ~= \"\" then names[#names + 1] = n end\
+    end\
+    if #names == 0 then return nil end\
+    if #names <= 2 then return table.concat(names, \", \") end\
+    return T(_(\"%1, %2 and others\"), names[1], names[2])\
+end\
+\
+local function series(rec)\
+    local first = type(rec.book_series) == \"table\" and rec.book_series[1]\
+    local name = type(first) == \"table\" and type(first.series) == \"table\" and first.series.name\
+    if type(name) ~= \"string\" or name == \"\" then return nil end\
+    return first.position and (name .. \" #\" .. tostring(first.position)) or name\
+end\
+\
+-- A count short enough for the cell's foot: 9,999 / 51k / 1.3M.\
+local function count(n)\
+    n = math.floor(n)\
+    if n >= 1000000 then\
+        -- Rounded by hand: \"%.1f\" gives 1.2 for 1,250,000 (a float a hair under).\
+        local tenths = math.floor(n / 100000 + 0.5)\
+        return tenths % 10 == 0 and string.format(\"%dM\", tenths / 10)\
+            or string.format(\"%d.%dM\", math.floor(tenths / 10), tenths % 10)\
+    elseif n >= 10000 then\
+        return string.format(\"%dk\", math.floor(n / 1000 + 0.5))\
+    end\
+    local s = tostring(n)\
+    if n >= 1000 then s = s:sub(1, -4) .. \",\" .. s:sub(-3) end\
+    return s\
+end\
+\
+-- describe(record) -> label, subtitle, stats (each nil when empty)\
+-- subtitle: who and which series (a book), or format, publisher and\
+-- language (an edition); stats: pages and how many read it, a line of its\
+-- own at the cell's foot.\
+function M.describe(rec)\
+    local label = type(rec.title) == \"string\" and rec.title ~= \"\" and rec.title or _(\"Untitled\")\
+    if rec.release_year then label = label .. \" (\" .. tostring(rec.release_year) .. \")\" end\
+    local parts = {}\
+    local function add(v) if v and v ~= \"\" then parts[#parts + 1] = v end end\
+    if rec.edition_id then\
+        -- Editions of one book share its author: what differs is the format,\
+        -- the publisher and the language.\
+        add(rec.edition_format)\
+        add(rec.publisher)\
+        add(type(rec.language) == \"table\" and rec.language.language or nil)\
+    else\
+        add(authors(rec))\
+        add(series(rec))\
+    end\
+    local stats = {}\
+    local pages = tonumber(rec.pages)\
+    if pages and pages > 0 then\
+        stats[#stats + 1] = pages == 1 and _(\"1 page\") or T(_(\"%1 pages\"), count(pages))\
+    end\
+    local n = tonumber(rec.edition_id and rec.users_count or rec.users_read_count)\
+    if n and n > 0 then\
+        if rec.edition_id then\
+            stats[#stats + 1] = n == 1 and _(\"1 reader\") or T(_(\"%1 readers\"), count(n))\
+        else\
+            stats[#stats + 1] = n == 1 and _(\"1 read\") or T(_(\"%1 reads\"), count(n))\
+        end\
+    end\
+    return label, #parts > 0 and table.concat(parts, SEP) or nil,\
+        #stats > 0 and table.concat(stats, SEP) or nil\
+end\
+\
+local function isActive(rec, active)\
+    if type(active) ~= \"table\" then return false end\
+    if active.edition_id then\
+        return tostring(rec.edition_id) == tostring(active.edition_id)\
+    end\
+    if active.book_id then\
+        return tostring(rec.book_id or rec.id) == tostring(active.book_id)\
+    end\
+    return false\
+end\
+\
+function M.show(spec)\
+    local UIManager = require(\"ui/uimanager\")\
+    local Screen = require(\"device\").screen\
+    local Row = require(\"lib/bookshelf_hardcover_picker_row\")\
+    local Thumbs = require(\"lib/bookshelf_hardcover_thumbs\")\
+    local LibraryModal = require(\"lib/bookshelf_library_modal\")\
+\
+    local records = type(spec.records) == \"table\" and spec.records or {}\
+    local note            -- a line over the list: searching, or why it is unchanged\
+    local picked\
+    local modal\
+    local closed = false\
+\
+    -- Covers arrive after the list is up (lib/bookshelf_hardcover_thumbs):\
+    -- the loader fetches what the page on screen is missing, and each one\
+    -- that lands redraws its own row.\
+    local function redraw(rec)\
+        if not closed and modal then modal:refreshCell(rec) end\
+    end\
+    -- A failed one redraws too: its cell then says No cover.\
+    local loader = Thumbs.newLoader{ on_loaded = redraw, on_failed = redraw }\
+    -- Two columns of four in portrait, three of two in landscape: a cover a\
+    -- third of the cell wide beside text that wraps (maintainer: the covers\
+    -- were \"quite small\" in one column of 64dp rows).\
+    -- Fewer columns when the text column would be too narrow to read: KOReader\
+    -- scales everything by the screen, so this only bites with a DPI override\
+    -- (bigger text; rig: the title on three lines, the author \"Ben...\"). The\
+    -- modal's width as LibraryModal makes it: 85% of the screen, or of its\
+    -- short side as a page of the Hardcover menu.\
+    local function landscape() return Screen:getWidth() > Screen:getHeight() end\
+    local function textEms(c)\
+        local Space = require(\"lib/bookshelf_space\")\
+        local sw, sh = Screen:getWidth(), Screen:getHeight()\
+        local gap = Space.px(10)\
+        local cw = math.floor((spec.over and math.min(sw, sh) or sw) * 0.85) - 2 * gap\
+        local cell = math.floor((cw - (c - 1) * gap) / c)\
+        local cover = Row.coverSize(cell)\
+        return (cell - cover - 3 * gap) / Space.px(17)\
+    end\
+    local function cols()\
+        local c = landscape() and 3 or 2\
+        while c > 1 and textEms(c) < M.MIN_TEXT_EMS do c = c - 1 end\
+        return c\
+    end\
+    local function rows() return landscape() and 2 or 4 end\
+    local function perPage() return cols() * rows() end\
+    -- One column: a narrower cover, or each cell is half cover.\
+    local function coverShare() return cols() == 1 and M.ONE_COLUMN_COVER or nil end\
+    local function wantPage()\
+        local per = perPage()\
+        local first = ((modal and modal.page or 1) - 1) * per + 1\
+        local page = {}\
+        for i = first, math.min(first + per - 1, #records) do page[#page + 1] = records[i] end\
+        loader:want(page)\
+    end\
+\
+    local config = {\
+        title          = spec.title,\
+        intro          = function() return note end,\
+        grid_cols      = cols(),\
+        cells_per_page = perPage,\
+        -- The cells' own height, not the modal's 64dp rows; less when the\
+        -- screen (or the menu page it opens in) has less room.\
+        area_height    = function(cw, room)\
+            local gap = require(\"lib/bookshelf_space\").px(10)\
+            local c, r = cols(), rows()\
+            local cell_w = math.floor((cw - (c - 1) * gap) / c)\
+            local want = r * Row.cellHeight(cell_w, coverShare()) + (r - 1) * gap\
+            if room and room < want then return room end\
+            return want\
+        end,\
+        on_page_shown  = function() wantPage() end,\
+        item_count     = function() return #records end,\
+        item_at        = function(idx) return records[idx] end,\
+        cell_renderer  = function(rec, dimen)\
+            local label, subtitle, stats = M.describe(rec)\
+            local url = Thumbs.urlOf(rec)\
+            local path = Thumbs.cached(url)\
+            -- No picture on Hardcover, or one that would not download: said\
+            -- so, where a blank box read as still loading (PW5).\
+            local none = not path and (url == nil or loader:hasFailed(url)) or nil\
+            return Row.render({ label = label, subtitle = subtitle, stats = stats,\
+                cover_path = path, no_cover = none }, dimen,\
+                { selected = isActive(rec, spec.active), cover_share = coverShare() })\
+        end,\
+        -- The list goes first, so the reader is not left looking at it while\
+        -- the link is made and the book's details are fetched; the caller\
+        -- hears it closed after that, and reopens on the new link.\
+        on_cell_tap    = function(rec)\
+            picked = rec\
+            UIManager:close(modal)\
+        end,\
+        -- One Close: the library modal draws a lone Close as the title\
+        -- bar's X, and Back on the keys runs it. Without it the list could\
+        -- only be left by picking something (device report).\
+        footer_actions = { {\
+            key = \"close\", label = _(\"Close\"),\
+            on_tap = function() UIManager:close(modal) end,\
+        } },\
+        on_closed      = function()\
+            closed = true\
+            loader:stop()\
+            -- A tick later: this runs while the list is still on the window\
+            -- stack, and a pick paints \"Linking\" on the menu under it.\
+            UIManager:nextTick(function()\
+                if picked and spec.on_pick then spec.on_pick(picked) end\
+                if spec.on_close then spec.on_close() end\
+            end)\
+        end,\
+        over           = spec.over,\
+    }\
+\
+    if spec.search then\
+        config.search_placeholder = function() return _(\"Search Hardcover\\xE2\\x80\\xA6\") end\
+        config.on_search_submit = function(q)\
+            if not q or q == \"\" then return end\
+            note = _(\"Searching Hardcover\\xE2\\x80\\xA6\")\
+            modal:refresh()\
+            -- The request runs on this thread; paint the line first.\
+            UIManager:forceRePaint()\
+            local ok, found = pcall(spec.search, q)\
+            if not ok or type(found) ~= \"table\" then\
+                note = _(\"Hardcover could not be searched. The list is unchanged.\")\
+            elseif #found == 0 then\
+                note = T(_(\"Nothing on Hardcover matches \\xE2\\x80\\x9C%1\\xE2\\x80\\x9D.\"), q)\
+            else\
+                records = found\
+                note = nil\
+                modal.page = 1\
+            end\
+            modal:refresh()\
+            wantPage()\
+        end\
+    else\
+        config.no_search = true\
+    end\
+\
+    -- Before the modal is made: it lays itself out then, and that layout is\
+    -- what is painted while the lookup runs (rig: a blank page).\
+    if spec.load then note = _(\"Asking Hardcover\\xE2\\x80\\xA6\") end\
+    modal = LibraryModal:new{ config = config, search_query = spec.search and spec.search_value or nil }\
+    if spec.load then\
+        UIManager:show(modal)\
+        UIManager:nextTick(function()\
+            if closed then return end\
+            -- On screen first: the lookup runs on this thread.\
+            UIManager:forceRePaint()\
+            local ok, found, err = pcall(spec.load)\
+            if closed then return end\
+            if not ok then found, err = nil, found end\
+            if type(found) ~= \"table\" then\
+                note = T(_(\"Hardcover could not be reached: %1\"), tostring(err or _(\"no reply\")))\
+            elseif #found == 0 then\
+                note = spec.empty_text or _(\"Nothing found on Hardcover.\")\
+            else\
+                records, note = found, nil\
+            end\
+            modal.page = 1\
+            modal:refresh()\
+            wantPage()\
+        end)\
+        return true\
+    end\
+    UIManager:show(modal)\
+    wantPage()\
+    return true\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_hardcover_picker_row"] = "-- bookshelf_hardcover_picker_row.lua\
+-- One cell of the Hardcover picker (lib/bookshelf_hardcover_picker): the\
+-- cover on the left, a third of the cell wide, then the title and the\
+-- detail line, both wrapping. The same card as every other picker's cell\
+-- (lib/bookshelf_picker_cell), with a picture.\
+--\
+-- cellHeight(w) -> the height of a cell w wide: its cover's, at 2:3.\
+-- render(item, dimen, opts) -> widget\
+--   item = { label =, subtitle =, stats =, cover_path = path | nil,\
+--            no_cover = true when there is none to come (a grey \"No cover\") }\
+--   stats (pages, reads) sits on one line at the foot of the text, lighter\
+--   and not bold, a size smaller when it would not fit, cut only if still not\
+--   opts = { selected = bool }\
+-- With no cover_path the cell keeps the cover's space as an outlined box, so\
+-- the text does not move when the picture arrives.\
+\
+local Blitbuffer      = require(\"ffi/blitbuffer\")\
+local FrameContainer  = require(\"ui/widget/container/framecontainer\")\
+local Geom            = require(\"ui/geometry\")\
+local HorizontalGroup = require(\"ui/widget/horizontalgroup\")\
+local HorizontalSpan  = require(\"ui/widget/horizontalspan\")\
+local TextBoxWidget   = require(\"ui/widget/textboxwidget\")\
+local VerticalGroup   = require(\"ui/widget/verticalgroup\")\
+local VerticalSpan    = require(\"ui/widget/verticalspan\")\
+local WidgetContainer = require(\"ui/widget/container/widgetcontainer\")\
+local BFont           = require(\"lib/bookshelf_fonts\")\
+local Space           = require(\"lib/bookshelf_space\")\
+\
+local Row = {}\
+\
+-- The cover's share of the cell's width.\
+Row.COVER_SHARE = 0.32\
+-- Lines the title may take before it is cut with an ellipsis.\
+Row.TITLE_LINES = 3\
+\
+local function vpad() return Space.px(5) end\
+\
+-- coverSize(cell_w, share) -> w, h of the cover in a cell that wide; share\
+-- defaults to COVER_SHARE (one column of wide cells passes a smaller one).\
+function Row.coverSize(cell_w, share)\
+    local w = math.max(8, math.floor(cell_w * (share or Row.COVER_SHARE)))\
+    return w, math.floor(w * 3 / 2)\
+end\
+\
+function Row.cellHeight(cell_w, share)\
+    local _w, h = Row.coverSize(cell_w, share)\
+    return h + 2 * vpad() + require(\"lib/bookshelf_popup_kit\").shadowSize()\
+end\
+\
+-- Wrapped text, at most max_h tall (ellipsis when cut). On the card's grey:\
+-- a text box paints its own background, white by default (rig: white\
+-- blocks on the grey card), and has no see-through mode.\
+local function wrapped(text, face, bold, width, max_h)\
+    local bg = require(\"lib/bookshelf_popup_kit\").STRIP_BG\
+    local box = TextBoxWidget:new{\
+        text = text, face = face, bold = bold, width = width,\
+        fgcolor = Blitbuffer.COLOR_BLACK, bgcolor = bg, alignment = \"left\",\
+    }\
+    if max_h and box:getSize().h > max_h then\
+        box:free()\
+        box = TextBoxWidget:new{\
+            text = text, face = face, bold = bold, width = width,\
+            fgcolor = Blitbuffer.COLOR_BLACK, bgcolor = bg, alignment = \"left\",\
+            height = max_h, height_overflow_show_ellipsis = true,\
+        }\
+    end\
+    return box\
+end\
+\
+-- The counts line: grey, regular weight, one line. A size down when it is\
+-- too wide; cut with an ellipsis only at the smallest.\
+Row.STATS_SIZES = { 13, 12, 11 }\
+local function statsLine(text, width)\
+    local TextWidget = require(\"lib/bookshelf_colour_text\")\
+    local w\
+    for i, size in ipairs(Row.STATS_SIZES) do\
+        if w then w:free() end\
+        local last = i == #Row.STATS_SIZES\
+        w = TextWidget:new{\
+            text = text, face = BFont:getFace(\"cfont\", size),\
+            fgcolor = Blitbuffer.COLOR_DARK_GRAY,\
+            max_width = last and width or nil,\
+        }\
+        if last or w:getSize().w <= width then return w end\
+    end\
+    return w\
+end\
+\
+-- The height of n lines of text in this face.\
+local function linesHeight(face, bold, n)\
+    local probe = TextBoxWidget:new{ text = \"Ag\", face = face, bold = bold, width = 400 }\
+    local h = probe:getSize().h\
+    probe:free()\
+    return h * n\
+end\
+\
+function Row.render(item, dimen, opts)\
+    opts = opts or {}\
+    local Kit = require(\"lib/bookshelf_popup_kit\")\
+    local inner_w = dimen.w - Kit.shadowSize()\
+    local inner_h = dimen.h - Kit.shadowSize()\
+    local pad, vp = Space.padding.large, vpad()\
+    local cover_w, cover_h = Row.coverSize(inner_w, opts.cover_share)\
+    -- A cell given less room than it asked for: the cover keeps its shape.\
+    if cover_h > inner_h - 2 * vp then\
+        cover_h = math.max(8, inner_h - 2 * vp)\
+        cover_w = math.floor(cover_h * 2 / 3)\
+    end\
+\
+    local cover\
+    if item.cover_path then\
+        local ok, bb = pcall(function()\
+            return require(\"lib/bookshelf_image_source\").loadImageCover(item.cover_path, cover_w, cover_h)\
+        end)\
+        if ok and bb then\
+            -- The bb is the image cache's: never freed by this widget.\
+            cover = require(\"ui/widget/imagewidget\"):new{\
+                image = bb, image_disposable = false,\
+                width = cover_w, height = cover_h,\
+            }\
+        end\
+    end\
+    if not cover and item.no_cover then\
+        -- None to come: grey, and says so (a white box reads as loading).\
+        local CenterContainer = require(\"ui/widget/container/centercontainer\")\
+        local TextWidget = require(\"lib/bookshelf_colour_text\")\
+        cover = FrameContainer:new{\
+            bordersize = 0, margin = 0, padding = 0,\
+            background = Blitbuffer.COLOR_LIGHT_GRAY,\
+            CenterContainer:new{\
+                dimen = Geom:new{ w = cover_w, h = cover_h },\
+                TextWidget:new{ text = require(\"lib/bookshelf_i18n\").gettext(\"No cover\"),\
+                    face = BFont:getFace(\"cfont\", 11), fgcolor = Blitbuffer.COLOR_DARK_GRAY,\
+                    max_width = cover_w - Space.px(4) },\
+            },\
+        }\
+    end\
+    if not cover then\
+        cover = FrameContainer:new{\
+            bordersize = Space.px(1), margin = 0, padding = 0,\
+            color = Blitbuffer.COLOR_GRAY,\
+            background = Blitbuffer.COLOR_WHITE,\
+            WidgetContainer:new{ dimen = Geom:new{\
+                w = cover_w - 2 * Space.px(1), h = cover_h - 2 * Space.px(1) } },\
+        }\
+    end\
+\
+    local text_w = inner_w - cover_w - 3 * pad\
+    local text_h = inner_h - 2 * vp\
+    local label_face, label_bold = BFont:getFace(\"cfont\", 17, { bold = true })\
+    local sub_face, sub_bold = BFont:getFace(\"cfont\", 14, { bold = true })\
+    -- The counts first: they keep their line at the foot, and the title\
+    -- and detail share what is above it.\
+    local stats = item.stats and item.stats ~= \"\" and statsLine(item.stats, text_w) or nil\
+    local stats_h = stats and (stats:getSize().h + Space.px(4)) or 0\
+    local top_h = text_h - stats_h\
+    local title = wrapped(item.label or \"\", label_face, label_bold, text_w,\
+        math.min(top_h, linesHeight(label_face, label_bold, Row.TITLE_LINES)))\
+    local lines = VerticalGroup:new{ align = \"left\", title }\
+    local left = top_h - title:getSize().h - Space.px(4)\
+    if item.subtitle and item.subtitle ~= \"\" and left > linesHeight(sub_face, sub_bold, 1) then\
+        lines[#lines + 1] = VerticalSpan:new{ width = Space.px(4) }\
+        lines[#lines + 1] = wrapped(item.subtitle, sub_face, sub_bold, text_w, left)\
+    end\
+    if stats then\
+        -- Down to the foot of the text column, level with the cover's foot.\
+        local used = 0\
+        for _i, w in ipairs(lines) do used = used + w:getSize().h end\
+        lines[#lines + 1] = VerticalSpan:new{ width = math.max(Space.px(4), text_h - used - stats:getSize().h) }\
+        lines[#lines + 1] = stats\
+    end\
+\
+    local cover_y = vp + math.floor((inner_h - 2 * vp - cover_h) / 2)\
+    local row = HorizontalGroup:new{\
+        align = \"top\",\
+        HorizontalSpan:new{ width = pad },\
+        VerticalGroup:new{ VerticalSpan:new{ width = cover_y }, cover },\
+        HorizontalSpan:new{ width = pad },\
+        VerticalGroup:new{ align = \"left\", VerticalSpan:new{ width = vp }, lines },\
+    }\
+    local card = Kit.card{\
+        WidgetContainer:new{ dimen = Geom:new{ w = inner_w, h = inner_h }, row },\
+    }\
+    if opts.selected then\
+        -- The linked one: the card in negative, as every picker marks its\
+        -- choice. The cover is put back, so it is not a photo negative.\
+        local paint = card.paintTo\
+        function card:paintTo(bb, x, y)\
+            paint(self, bb, x, y)\
+            local sz = self:getSize()\
+            Kit.invertRounded(bb, x, y, sz.w, sz.h, Kit.RADIUS)\
+            bb:invertRect(x + pad, y + cover_y, cover_w, cover_h)\
+        end\
+    end\
+    return card\
+end\
+\
+return Row\
+",
+    ["lib/bookshelf_hardcover_thumbs"] = "-- bookshelf_hardcover_thumbs.lua\
+-- Cover thumbnails for the Hardcover picker (lib/bookshelf_hardcover_picker).\
+--\
+-- The list opens at once, with text only, and each row's cover arrives when\
+-- it has been fetched: a small disk cache keyed by the image's address, and\
+-- a loader that downloads what the page on screen is missing. One download\
+-- at a time, each in a forked child, so the list keeps answering taps; the\
+-- loader only polls. A page turn replaces what is waiting. Closing the list\
+-- stops it.\
+--\
+-- These are fetched because the reader searched Hardcover and is looking at\
+-- the results: nothing here runs by itself.\
+\
+local UIManager = require(\"ui/uimanager\")\
+\
+local M = {}\
+\
+-- How often the loader looks at its child, and how long a child may take.\
+M.POLL_S = 0.25\
+M.TIMEOUT_S = 25\
+-- A cover not looked at for this long is removed from the cache.\
+M.KEEP_DAYS = 30\
+\
+local function now()\
+    local ok, gettime = pcall(require, \"lib/bookshelf_gettime\")\
+    return ok and gettime() or os.time()\
+end\
+\
+local function lfs() return require(\"libs/libkoreader-lfs\") end\
+\
+function M.cacheDir()\
+    return require(\"lib/bookshelf_paths\").cacheFile(\"covers/hardcover_picker\")\
+end\
+\
+-- urlOf(record) -> the record's cover address, or nil.\
+function M.urlOf(rec)\
+    local img = type(rec) == \"table\" and rec.cached_image or nil\
+    local url = type(img) == \"table\" and img.url or nil\
+    if type(url) ~= \"string\" or not url:match(\"^https?://\") then return nil end\
+    return url\
+end\
+\
+-- A file name from an address: two 32-bit running hashes, in hex. Not a\
+-- security boundary, only a name that two addresses do not share.\
+local function nameFor(url)\
+    local a, b = 5381, 52711\
+    for i = 1, #url do\
+        local c = url:byte(i)\
+        a = (a * 33 + c) % 4294967296\
+        b = (b * 31 + c * 7 + i) % 4294967296\
+    end\
+    return string.format(\"%08x%08x\", a, b)\
+end\
+\
+function M.pathFor(url)\
+    return M.cacheDir() .. \"/\" .. nameFor(url) .. \".img\"\
+end\
+\
+-- cached(url) -> the cover's path when it has been fetched, else nil.\
+function M.cached(url)\
+    if type(url) ~= \"string\" then return nil end\
+    local path = M.pathFor(url)\
+    local ok, attr = pcall(lfs().attributes, path)\
+    if ok and type(attr) == \"table\" and attr.mode == \"file\" and (attr.size or 0) > 0 then\
+        return path\
+    end\
+    return nil\
+end\
+\
+-- sweep(at): drop covers older than KEEP_DAYS, and half-written files.\
+function M.sweep(at)\
+    at = at or os.time()\
+    local dir = M.cacheDir()\
+    local names = {}\
+    local ok = pcall(function()\
+        for name in lfs().dir(dir) do names[#names + 1] = name end\
+    end)\
+    if not ok then return end\
+    for _i, name in ipairs(names) do\
+        if name ~= \".\" and name ~= \"..\" then\
+            local path = dir .. \"/\" .. name\
+            local attr = lfs().attributes(path)\
+            if type(attr) == \"table\" and attr.mode == \"file\"\
+                    and (name:match(\"%.tmp$\")\
+                        or (at - (attr.modification or at)) > M.KEEP_DAYS * 86400) then\
+                pcall(os.remove, path)\
+            end\
+        end\
+    end\
+end\
+\
+-- ── the child process (seams for tests) ─────────────────────────────────────\
+function M._spawn(url, path)\
+    local ffiutil = require(\"ffi/util\")\
+    local pid = ffiutil.runInSubProcess(function()\
+        pcall(function()\
+            require(\"lib/bookshelf_cover_fetch\").download(url, path, nil, nil,\
+                { block_timeout = 10, total_timeout = 20 })\
+        end)\
+    end)\
+    return pid or nil\
+end\
+\
+function M._done(pid)\
+    return require(\"ffi/util\").isSubProcessDone(pid)\
+end\
+\
+function M._kill(pid)\
+    local ffiutil = require(\"ffi/util\")\
+    ffiutil.terminateSubProcess(pid)\
+    -- Collect it, so no zombie is left; it may take a moment to die.\
+    local tries = 0\
+    local function reap()\
+        tries = tries + 1\
+        if not ffiutil.isSubProcessDone(pid) and tries < 20 then\
+            UIManager:scheduleIn(0.5, reap)\
+        end\
+    end\
+    reap()\
+end\
+\
+-- ── the loader ──────────────────────────────────────────────────────────────\
+local Loader = {}\
+Loader.__index = Loader\
+\
+local _swept = false\
+\
+-- newLoader{ on_loaded = function(record), on_failed = function(record) }\
+function M.newLoader(opts)\
+    if not _swept then\
+        _swept = true\
+        pcall(M.sweep)\
+    end\
+    local self = setmetatable({\
+        on_loaded = opts and opts.on_loaded,\
+        on_failed = opts and opts.on_failed,\
+        waiting   = {},     -- { url, ... } in page order\
+        listeners = {},     -- url -> { record, ... } on the page now\
+        failed    = {},     -- url -> true: would not download, this session\
+        current   = nil,    -- { url, path, handle, started }\
+        stopped   = false,\
+    }, Loader)\
+    self._poll = function() self:_tick() end\
+    return self\
+end\
+\
+-- want(records): the records on screen now. Their missing covers are\
+-- fetched, in order; whatever was waiting from another page is dropped.\
+function Loader:want(records)\
+    if self.stopped then return end\
+    self.waiting, self.listeners = {}, {}\
+    local queued = {}\
+    for _i, rec in ipairs(records or {}) do\
+        local url = M.urlOf(rec)\
+        if url and not self.failed[url] and not M.cached(url) then\
+            self.listeners[url] = self.listeners[url] or {}\
+            table.insert(self.listeners[url], rec)\
+            if not queued[url] and not (self.current and self.current.url == url) then\
+                queued[url] = true\
+                self.waiting[#self.waiting + 1] = url\
+            end\
+        end\
+    end\
+    self:_next()\
+end\
+\
+function Loader:_next()\
+    if self.stopped or self.current then return end\
+    local url = table.remove(self.waiting, 1)\
+    if not url then return end\
+    local path = M.pathFor(url)\
+    pcall(function() require(\"lib/bookshelf_fs\").ensureDir(M.cacheDir()) end)\
+    local ok, handle = pcall(M._spawn, url, path)\
+    if not ok or not handle then\
+        self.failed[url] = true\
+        return self:_next()\
+    end\
+    self.current = { url = url, path = path, handle = handle, started = now() }\
+    UIManager:scheduleIn(M.POLL_S, self._poll)\
+end\
+\
+function Loader:_tick()\
+    if self.stopped then return end\
+    local cur = self.current\
+    if not cur then return end\
+    local done = M._done(cur.handle)\
+    if not done and now() - cur.started > M.TIMEOUT_S then\
+        pcall(M._kill, cur.handle)\
+        done = true\
+    end\
+    if not done then\
+        UIManager:scheduleIn(M.POLL_S, self._poll)\
+        return\
+    end\
+    self.current = nil\
+    if M.cached(cur.url) then\
+        for _i, rec in ipairs(self.listeners[cur.url] or {}) do\
+            if self.on_loaded then pcall(self.on_loaded, rec) end\
+        end\
+    else\
+        self.failed[cur.url] = true\
+        for _i, rec in ipairs(self.listeners[cur.url] or {}) do\
+            if self.on_failed then pcall(self.on_failed, rec) end\
+        end\
+    end\
+    self.listeners[cur.url] = nil\
+    self:_next()\
+end\
+\
+-- hasFailed(url) -> true when that cover would not download this session.\
+function Loader:hasFailed(url)\
+    return url ~= nil and self.failed[url] == true\
+end\
+\
+-- stop(): the list closed. Ends the child in flight; nothing more is\
+-- announced.\
+function Loader:stop()\
+    if self.stopped then return end\
+    self.stopped = true\
+    UIManager:unschedule(self._poll)\
+    if self.current then\
+        pcall(M._kill, self.current.handle)\
+        self.current = nil\
+    end\
+    self.waiting, self.listeners = {}, {}\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_plugin_button"] = "-- lib/bookshelf_plugin_button.lua\
+-- The icon on a card in the book popup's Actions tab for a button another\
+-- plugin adds through FileManager:addFileDialogButtons.\
+--\
+-- A button can choose its own icon with `bookshelf_icon`: ONE glyph of\
+-- KOReader's bundled symbols font (its private use area, U+E000 to U+F8FF),\
+-- written as a UTF-8 string:\
+--\
+--     { text = _(\"Add to My Plugin\"), bookshelf_icon = \"\\xEE\\xA5\\x91\", callback = ... }\
+--\
+-- It is a field of its own, not `icon`, because KOReader's stock file dialog\
+-- reads `icon` as the NAME of an icon file and would look for a glyph by that\
+-- name. A button with no `bookshelf_icon`, or one that is not a single glyph,\
+-- gets the puzzle piece, as before.\
+--\
+-- After a button runs, the popup is redrawn (wrap below), so a button whose\
+-- label follows the book (\"Add to X\", then \"Remove from X\") shows its new state\
+-- at once.\
+\
+local M = {}\
+\
+M.DEFAULT = \"\\xEE\\xAC\\xB0\" -- U+EB30 mdi-puzzle\
+\
+-- One character of the symbols font's private use area, U+E000 to U+F8FF:\
+-- three UTF-8 bytes, EE 80 80 to EF A3 BF. That is what the font covers, and\
+-- the plugin's rule for every icon it draws: a glyph from outside it once\
+-- crashed a render on a PW5 (lib/bookshelf_menu_icons). Plain text (\"check\",\
+-- \"A\") is not a glyph, so a name that was meant for KOReader's own icon\
+-- lookup never draws as letters on the card.\
+local function isGlyph(s)\
+    if type(s) ~= \"string\" or #s ~= 3 then return false end\
+    local a, b, c = s:byte(1, 3)\
+    if c < 0x80 or c > 0xBF or b < 0x80 or b > 0xBF then return false end\
+    local cp = (a - 0xE0) * 0x1000 + (b - 0x80) * 0x40 + (c - 0x80)\
+    return (a == 0xEE or a == 0xEF) and cp >= 0xE000 and cp <= 0xF8FF\
+end\
+\
+-- icon(spec) -> the glyph to draw on the card for this button spec.\
+function M.icon(spec)\
+    local icon = type(spec) == \"table\" and spec.bookshelf_icon or nil\
+    if isGlyph(icon) then return icon end\
+    return M.DEFAULT\
+end\
+\
+-- wrap(callback, modal, UIManager) -> the function to give the card as its tap.\
+-- It runs the plugin's callback as it is, then redraws the popup on the next\
+-- tick, if it is still showing. A callback that opened the reader has closed\
+-- the popup by then, and there is nothing to redraw.\
+function M.wrap(callback, modal, UIManager)\
+    if type(callback) ~= \"function\" then return callback end\
+    return function(...)\
+        local a, b = callback(...)\
+        if modal and modal.rebuildTab and UIManager:isWidgetShown(modal) then\
+            UIManager:nextTick(function()\
+                if UIManager:isWidgetShown(modal) then modal:rebuildTab() end\
+            end)\
+        end\
+        return a, b\
+    end\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_run_text_box"] = "--[[\
+RunTextBox -- a wrapping text block in which some runs take their own colour.\
+\
+KOReader's TextBoxWidget breaks the text into lines, truncates it, and draws\
+it in ONE ink into a private bitmap. It also keeps, per line, a record of the\
+glyphs it placed: which character each came from and where it sits. So a run\
+of characters (lib/bookshelf_colour_runs: today the rating stars) can be\
+coloured after the fact, with the layout left entirely to KOReader:\
+\
+  1. the base class renders as it always does (black on white, the mask\
+     TransparentTextBox paints its ink through);\
+  2. the pixels under each run are copied into a small bitmap of their own and\
+     wiped from the main one;\
+  3. paint blends the main bitmap in the ink and each lifted piece in its\
+     run's colour.\
+\
+A run split by a line break is two pieces; glyphs the ellipsis cut are simply\
+not in the record. With KOReader's advanced text shaping turned off there is\
+no glyph record, nothing is lifted, and the stars stay in the ink.\
+\
+`runs` is a list of { s, e, colour } in characters of `text`. Without runs\
+this is a TransparentTextBox.\
+]]\
+local TransparentTextBox = require(\"lib/bookshelf_transparent_text\")\
+local TextBoxWidget      = require(\"ui/widget/textboxwidget\")\
+local Blitbuffer         = require(\"ffi/blitbuffer\")\
+local Runs               = require(\"lib/bookshelf_colour_runs\")\
+\
+local RunTextBox = TransparentTextBox:extend{\
+    runs    = nil,\
+    _lifted = nil,   -- { { x, y, w, h, bb, colour } }\
+}\
+\
+function RunTextBox:_freeLifted()\
+    if self._lifted then\
+        for _, piece in ipairs(self._lifted) do\
+            if piece.bb and piece.bb.free then piece.bb:free() end\
+        end\
+    end\
+    self._lifted = nil\
+end\
+\
+-- Copy each run's pixels out of the freshly rendered bitmap, rows first..last.\
+-- A piece is wiped from the main bitmap only once its copy exists, so a\
+-- failure part-way leaves every star drawn somewhere.\
+function RunTextBox:_liftRuns(first, last)\
+    self:_freeLifted()\
+    local m, lines = self._bb, self.vertical_string_list\
+    if not m or type(lines) ~= \"table\" or type(self.runs) ~= \"table\" or #self.runs == 0 then\
+        return\
+    end\
+    local shown = {}\
+    for i = first, last do shown[#shown + 1] = lines[i] or {} end\
+    local rects = Runs.rects(shown, self.runs, self.line_height_px or 0)\
+    if #rects == 0 then return end\
+    local bw, bh = m:getWidth(), m:getHeight()\
+    local lifted = {}\
+    self._lifted = lifted\
+    for _, r in ipairs(rects) do\
+        local x = math.max(0, math.floor(r.x))\
+        local y = math.max(0, r.y)\
+        local w = math.min(bw, math.ceil(r.x + r.w)) - x\
+        local h = math.min(bh, r.y + r.h) - y\
+        if w > 0 and h > 0 then\
+            local piece = Blitbuffer.new(w, h, Blitbuffer.TYPE_BB8)\
+            piece:blitFrom(m, 0, 0, x, y, w, h)\
+            piece:invertRect(0, 0, w, h)   -- black on white > coverage, once\
+            lifted[#lifted + 1] = { x = x, y = y, w = w, h = h, bb = piece, colour = r.colour }\
+            m:paintRect(x, y, w, h, Blitbuffer.COLOR_WHITE)\
+        end\
+    end\
+end\
+\
+function RunTextBox:_renderText(first, last)\
+    TextBoxWidget._renderText(self, first, last)\
+    if type(self.runs) == \"table\" and #self.runs > 0 then\
+        local ok = pcall(self._liftRuns, self, first, last)\
+        if not ok and self._lifted and #self._lifted == 0 then self._lifted = nil end\
+    else\
+        self:_freeLifted()\
+    end\
+end\
+\
+function RunTextBox:paintTo(bb, x, y)\
+    TransparentTextBox.paintTo(self, bb, x, y)\
+    if not self._lifted then return end\
+    local blend = require(\"lib/bookshelf_color\").blendInk\
+    for _, piece in ipairs(self._lifted) do\
+        pcall(blend, bb, piece.bb, x + piece.x, y + piece.y, piece.w, piece.h, piece.colour)\
+    end\
+end\
+\
+function RunTextBox:free(full)\
+    self:_freeLifted()\
+    return TextBoxWidget.free(self, full)\
+end\
+\
+return RunTextBox\
+",
+    ["lib/bookshelf_see_through"] = "-- lib/bookshelf_see_through.lua\
+-- A faded book is see-through: what was behind it is copied before it paints\
+-- and mixed back over it afterwards.\
+--\
+-- The fade used to be a white wash over the cover. On a white page that is\
+-- the same picture; over a wallpaper, a plank or a dark theme it is a pale\
+-- tint, not a book you can see the shelf through. Mixing in the pixels that\
+-- were actually there is right on any ground, and in night mode too (a mix\
+-- of two pictures inverts to the mix of the two inverted).\
+--\
+--   local keep = See.take(bb, x, y, w, h)   -- before the book paints\
+--   ... paint the book ...\
+--   See.put(keep, bb, 0.6)                  -- 0.6 of what was behind\
+--\
+-- One buffer the book's size in the target's own type and two blits a faded\
+-- book; nothing for a book that is not faded. Every step is guarded: a\
+-- target that cannot be read just leaves the book solid.\
+\
+local M = {}\
+\
+-- take(bb, x, y, w, h) -> keep | nil. The rect is cut to the target.\
+function M.take(bb, x, y, w, h)\
+    if not (type(bb) == \"table\" or type(bb) == \"userdata\" or type(bb) == \"cdata\") then return nil end\
+    if not (x and y and w and h) then return nil end\
+    local keep\
+    local ok = pcall(function()\
+        if not (bb.blitFrom and bb.getType and bb.getWidth) then return end\
+        local x0, y0 = math.max(0, x), math.max(0, y)\
+        local x1 = math.min(bb:getWidth(), x + w)\
+        local y1 = math.min(bb:getHeight(), y + h)\
+        local cw, ch = x1 - x0, y1 - y0\
+        if cw <= 0 or ch <= 0 then return end\
+        local Blitbuffer = require(\"ffi/blitbuffer\")\
+        local copy = Blitbuffer.new(cw, ch, bb:getType())\
+        copy:blitFrom(require(\"lib/bookshelf_clip_bb\").real(bb), 0, 0, x0, y0, cw, ch)\
+        keep = { bb = copy, x = x0, y = y0, w = cw, h = ch }\
+    end)\
+    if not ok then\
+        if keep and keep.bb and keep.bb.free then pcall(keep.bb.free, keep.bb) end\
+        return nil\
+    end\
+    return keep\
+end\
+\
+-- put(keep, bb, strength) -> true when the copy was mixed back. strength is\
+-- how much of what was behind shows (0..1). The keep is spent either way.\
+function M.put(keep, bb, strength)\
+    if not keep then return false end\
+    local done = false\
+    if strength and strength > 0 then\
+        done = pcall(function()\
+            bb:addblitFrom(keep.bb, keep.x, keep.y, 0, 0, keep.w, keep.h, math.min(1, strength))\
+        end)\
+    end\
+    if keep.bb and keep.bb.free then pcall(keep.bb.free, keep.bb) end\
+    keep.bb = nil\
+    return done and true or false\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_star_runs"] = "--[[\
+bookshelf_star_runs.lua -- a book's rating stars inside a text, and the colour\
+the reader gave them (issue 594).\
+\
+The rating tokens (%rating, %hardcover_stars) write a star row into whatever\
+template uses them: a line of the top panel, its description, a list row. To\
+colour those stars the text is searched, just before it is drawn, for the\
+exact rows the tokens write for THAT book. Nothing is added to the text, so\
+widths measured on it stay right, and stars a reader typed by hand or the\
+favourite mark are left alone (unless they spell out the book's own rating).\
+\
+inText is asked for every piece of every list row, so it gives up before any\
+lookup when the text holds no star glyph at all.\
+]]\
+local Runs = require(\"lib/bookshelf_colour_runs\")\
+\
+local M = {}\
+\
+-- The colour set for the rating stars, or nil: unset, the stars are drawn in\
+-- the text ink like everything round them.\
+function M.ink()\
+    local ok, CP = pcall(require, \"lib/bookshelf_cover_progress\")\
+    if not ok or type(CP) ~= \"table\" or not CP.resolvedColors then return nil end\
+    local ok_c, colors = pcall(CP.resolvedColors)\
+    if not ok_c or type(colors) ~= \"table\" then return nil end\
+    -- type(), not ~= nil: a Blitbuffer colour raises on a compare with nil.\
+    if type(colors.rating_star) == \"nil\" then return nil end\
+    return colors.rating_star\
+end\
+\
+-- The star rows the tokens write for this book, or nil when it has none.\
+function M.needles(book)\
+    if type(book) ~= \"table\" then return nil end\
+    local ok, Tokens = pcall(require, \"lib/bookshelf_tokens\")\
+    if not ok or type(Tokens) ~= \"table\" or type(Tokens.expanders) ~= \"table\" then return nil end\
+    local needles = {}\
+    for _i, name in ipairs({ \"rating\", \"hardcover_stars\" }) do\
+        local fn = Tokens.expanders[name]\
+        local row = fn and fn(book)\
+        if type(row) == \"string\" and row ~= \"\" then needles[#needles + 1] = row end\
+    end\
+    if #needles == 0 then return nil end\
+    return needles\
+end\
+\
+-- Every star glyph the tokens use starts with one of these byte pairs:\
+-- U+2605/2606 (E2 98 ..) and the Nerd Font stars U+F005/F006 (EF 80 ..) and\
+-- U+F123 (EF 84 ..).\
+local function mayHoldStars(text)\
+    return text:find(\"\\xE2\\x98\", 1, true) or text:find(\"\\xEF\\x80\", 1, true)\
+        or text:find(\"\\xEF\\x84\", 1, true)\
+end\
+\
+-- The runs of `text` that are this book's star rows, each carrying the star\
+-- colour, or nil: no stars in the text, no colour set, or an unrated book.\
+function M.inText(book, text)\
+    if type(text) ~= \"string\" or type(book) ~= \"table\" or not mayHoldStars(text) then\
+        return nil\
+    end\
+    local ink = M.ink()\
+    if type(ink) == \"nil\" then return nil end\
+    local needles = M.needles(book)\
+    if not needles then return nil end\
+    local runs = Runs.find(text, needles, ink)\
+    if #runs == 0 then return nil end\
+    return runs\
+end\
+\
+return M\
+",
+    ["lib/bookshelf_widget_book_popup"] = "-- bookshelf_widget_book_popup.lua\
+-- The shelf's book popup: its header (cover, title, pills), the Edit, Cover\
+-- and Reviews tabs, the description, and the rating and review setters they\
+-- call.\
+--\
+-- These are BookshelfWidget's own methods, kept in a file of their own (as\
+-- lib/bookshelf_widget_opds.lua is). The module returns an installer:\
+-- lib/bookshelf_widget.lua calls it once with the class, and every method\
+-- below is defined on that class exactly as if it were written there (`self`\
+-- is the shelf widget). The bodies sit at the left margin for that reason.\
+local InputContainer  = require(\"ui/widget/container/inputcontainer\")\
+local BookshelfSettings = require(\"lib/bookshelf_settings_store\")\
+local TextSegments    = require(\"lib/bookshelf_text_segments\")\
+local FrameContainer  = require(\"ui/widget/container/framecontainer\")\
+local VerticalGroup   = require(\"ui/widget/verticalgroup\")\
+local HorizontalGroup = require(\"ui/widget/horizontalgroup\")\
+local CenterContainer = require(\"ui/widget/container/centercontainer\")\
+local TextWidget      = require(\"lib/bookshelf_colour_text\")\
+local TextBoxWidget   = require(\"ui/widget/textboxwidget\")\
+local Geom            = require(\"ui/geometry\")\
+local GestureRange    = require(\"ui/gesturerange\")\
+local Size            = require(\"ui/size\")\
+local Space           = require(\"lib/bookshelf_space\")\
+local Font            = require(\"ui/font\")\
+local BFont           = require(\"lib/bookshelf_fonts\")\
+local UIManager       = require(\"ui/uimanager\")\
+local Blitbuffer      = require(\"ffi/blitbuffer\")\
+local Device          = require(\"device\")\
+local Screen          = Device.screen\
+local _               = require(\"lib/bookshelf_i18n\").gettext\
+local Repo            = require(\"lib/bookshelf_book_repository\")\
+local logger          = require(\"logger\")\
+local T               = require(\"ffi/util\").template\
+local PopupKit        = require(\"lib/bookshelf_popup_kit\")\
+local FolderLabel     = require(\"lib/bookshelf_folder_label\")\
+\
+return function(BookshelfWidget)\
+\
+-- _buildBookMenuHeader(book) -- header widget for the long-press menu,\
+-- shown above the action buttons via ButtonDialog:addWidget(). Replaces\
+-- the plain text title with a cover thumbnail (when available) next to\
+-- a stacked title / author / series text block. Falls back to text-only\
+-- when there's no cover_bb (BIM unavailable, file just imported, etc).\
+--\
+-- The cover_bb is sourced from a fresh Repo.buildBookMeta() call so it's\
+-- a one-time-use bb -- ImageWidget frees it after first paint, which\
+-- means the bb in `book` itself (potentially shared with other UI) is\
+-- never touched. Same disposable-bb invariant as the hero card.\
+-- Pick the book-detail header's thumbnail, and say WHO OWNS IT.\
+--\
+-- Returns (bb, disposable). `disposable = true` means the caller owns the bb\
+-- and is responsible for freeing it exactly once; `false` means some cache\
+-- owns it, and freeing it would corrupt every later paint of that cover.\
+-- Getting that pair wrong is silent until a cover turns to garbage, which is\
+-- why the choice lives in one named place instead of inline in the header.\
+--\
+-- Sources, in cost order:\
+--   1. external cover (Hardcover / user-picked)  -- ImageSource cache owns it\
+--   2. fresh.cover_bb                            -- one-shot, caller owns it\
+--   3. the scaled-cover cache                    -- the cache owns it\
+--   4. a fresh decode                            -- caller owns it\
+--\
+-- 3 exists because buildBookMeta asks BIM for the cover blob only when the\
+-- scaled-cover cache does NOT already hold the book. That skip is deliberate\
+-- (the shelf renders from that cache anyway), but it is true for every book\
+-- currently on screen -- which is every book this header can be opened from --\
+-- so source 2 is normally nil and without 3/4 the header lost its thumbnail\
+-- entirely.\
+--\
+-- 3 is guarded on width: a narrower cached bb would have to be UPSCALED, and\
+-- MuPDF upscale corrupts on Kindle.\
+local function _headerThumbBB(filepath, fresh, thumb_w)\
+    local ext_cover = fresh and fresh.cover_image_path\
+    if ext_cover then\
+        -- The header-sized copy, kept on disk (lib/bookshelf_derived_cache):\
+        -- an external cover is a full-size picture, and decoding it was ~40%\
+        -- of opening the book popup on the PW5, every session. A fresh bb,\
+        -- so the caller owns it (true).\
+        local Derived = require(\"lib/bookshelf_derived_cache\")\
+        local stamp = thumb_w and Derived.stamp(ext_cover)\
+        local key = stamp and (\"hthumb:\" .. thumb_w .. \"|\" .. stamp)\
+        local kept = key and Derived.bb(key)\
+        if kept then return kept, true end\
+        local ok_img, ImageSource = pcall(require, \"lib/bookshelf_image_source\")\
+        local bb = ok_img and ImageSource.loadImageNative(ext_cover) or nil\
+        if bb then\
+            local sw = key and bb.getWidth and bb:getWidth() or 0\
+            local sh = key and bb.getHeight and bb:getHeight() or 0\
+            if key and sw > thumb_w and sh > 0 then\
+                local th = math.max(1, math.floor(thumb_w * sh / sw + 0.5))\
+                local ok_s, small = pcall(function()\
+                    return require(\"ui/renderimage\"):scaleBlitBuffer(bb, thumb_w, th)\
+                end)\
+                if ok_s and small then\
+                    Derived.putBB(key, small)\
+                    return small, true\
+                end\
+            end\
+            return bb, false\
+        end\
+    end\
+    if fresh and fresh.cover_bb then return fresh.cover_bb, true end\
+    if not filepath then return nil end\
+    local ok_scc, SCC = pcall(require, \"lib/bookshelf_scaled_cover_cache\")\
+    local cached = ok_scc and SCC and SCC.get and SCC:get(filepath) or nil\
+    local cw = cached and (cached.w or (cached.getWidth and cached:getWidth()))\
+    if cached and cw and thumb_w and cw >= thumb_w then return cached, false end\
+    local ok_bb, bb = pcall(Repo.getCoverBB, filepath)\
+    if ok_bb and bb then return bb, true end\
+    return nil\
+end\
+\
+function BookshelfWidget:_orbituiDetailCover(book, width)\
+    return _headerThumbBB(book.filepath, { cover_image_path = book.cover_image_path }, width)\
+end\
+\
+-- _headerCardBook(book, fresh) -> the record the book menu's cover card draws.\
+-- A plain spine's page record is light: it carries no has_cover, and the card\
+-- reads that as \"no cover\" and draws the text placeholder (575). The menu's\
+-- own full record answers it; the shelf's record keeps everything else, and\
+-- is copied rather than changed.\
+function BookshelfWidget._headerCardBook(book, fresh)\
+    if book.has_cover ~= nil or type(fresh) ~= \"table\" or fresh == book then\
+        return book\
+    end\
+    local b = {}\
+    for k, v in pairs(book) do b[k] = v end\
+    b.has_cover = fresh.has_cover\
+    if b.cover_image_path == nil then b.cover_image_path = fresh.cover_image_path end\
+    return b\
+end\
+\
+function BookshelfWidget:_buildBookMenuHeader(book, override_width, pill_specs, bookmark_action, opts)\
+    if not book or not book.filepath then return nil end\
+    -- rich = the book-detail popup's header: +2pt detail fonts, a page count,\
+    -- \"Last read\" wording, and the folder path with the filename. The long-press\
+    -- menu (opts nil) keeps the compact original.\
+    local rich = opts and opts.rich or false\
+    -- band: the book menu's header ground (bookshelf_reviews_modal), which\
+    -- the text boxes paint behind their text, as they would white.\
+    local band = opts and opts.band or nil\
+    local Font           = require(\"ui/font\")\
+    local ImageWidget    = require(\"ui/widget/imagewidget\")\
+    local HorizontalGroup_   = require(\"ui/widget/horizontalgroup\")\
+    local HorizontalSpan_    = require(\"ui/widget/horizontalspan\")\
+    local VerticalGroup_     = require(\"ui/widget/verticalgroup\")\
+    local VerticalSpan_      = require(\"ui/widget/verticalspan\")\
+    local TextBoxWidget_     = require(\"ui/widget/textboxwidget\")\
+    local TextWidget_        = require(\"lib/bookshelf_colour_text\")\
+\
+    -- Caller can pass override_width (e.g. the collection manager, which\
+    -- nests inside the book menu and needs a narrower header).\
+    -- Match the dialog's added-widget width (= the button-table width) so\
+    -- the header fills exactly the button area -- neither narrower (margins\
+    -- around the cover) nor wider (margins around the buttons, which would\
+    -- grow the whole dialog). The book menu passes that width as\
+    -- override_width; the fallback mirrors ButtonDialog's own default width\
+    -- so a no-override caller still fits.\
+    local header_w = override_width\
+        or math.floor(math.min(Screen:getWidth(), Screen:getHeight()) * 0.9)\
+    -- Cover thumbnail is the visual anchor of the header; size it large\
+    -- enough that the title block on a real cover is legible, but not\
+    -- so large the menu starts to dominate the screen. Height is\
+    -- derived from the actual cover aspect once we've fetched the bb\
+    -- (a few lines down) so the FrameContainer matches the painted\
+    -- image exactly -- no horizontal or vertical letterboxing.\
+    -- The popup's (rich) cover follows the screen's size, not the UI scale;\
+    -- the compact header keeps its scaled size.\
+    local thumb_w  = rich and math.floor(math.min(Screen:getWidth(), Screen:getHeight()) * 0.15)\
+        or Screen:scaleBySize(110)\
+    local thumb_h  = math.floor(thumb_w * 1.5)  -- default 2:3 if no cover\
+    -- Cover<->text gap = the shelf's inter-column book gap, so the menu\
+    -- matches the main grid. The header's outer inset is supplied by the\
+    -- DIALOG's title_padding (the book menu sets it to this same gap), so we\
+    -- add NO frame inset here -- stacking a frame inset on the dialog's own\
+    -- padding was the doubling.\
+    local gap_w    = self:_bookGap(math.min(\
+        math.floor(Space.padding.fullscreen * 2 * 0.8),\
+        math.floor(Screen:getWidth() * 0.03)))\
+\
+    -- Rebuild the book record so we get an independent cover_bb that\
+    -- ImageWidget can own + free (cover_bb is one-shot per the\
+    -- feedback_image_disposable_shared_book memory; reusing the bb on\
+    -- `book` here would tear out from under whoever painted last).\
+    -- Wrap the ImageWidget in a thin FrameContainer so the cover has a\
+    -- 1dp border; without it pale covers (white sky, light typography)\
+    -- bleed straight into the dialog's white background and the\
+    -- thumbnail loses its rectangular shape.\
+    -- The rich header's card draws its cover from the cover cache: no cover\
+    -- decoded here for it (one per popup), only if the card fails (below).\
+    local fresh = Repo.buildBookMeta(book.filepath, rich and { want_cover = false } or nil) or book\
+    local thumb_widget\
+\
+    -- Which bb, and who owns it: see _headerThumbBB. External and cached\
+    -- covers come back non-disposable and must NOT reach owned_cover_bb below.\
+    -- A tap on the cover opens it full screen. The embedded bb is one-shot, so\
+    -- this reloads the cover for ImageViewer. The external cover comes from\
+    -- ImageSource's cache, so the viewer must NOT free it.\
+    local fp = book.filepath\
+    -- The external cover _headerThumbBB loads first. (This read a local\
+    -- of that helper, out of scope here, so the tap never found it.)\
+    local ext_for_viewer = fresh and fresh.cover_image_path\
+    local title_for_viewer = book.title or book.filename or \"\"\
+    local function previewCover()\
+        if ext_for_viewer then\
+            local ok_img, ImageSource = pcall(require, \"lib/bookshelf_image_source\")\
+            -- Native load: ImageViewer fits it to the screen preserving\
+            -- aspect. A fixed w*h resize here stretched the cover.\
+            local pv_bb = ok_img and ImageSource.loadImageNative(ext_for_viewer) or nil\
+            if pv_bb then\
+                UIManager:show(require(\"ui/widget/imageviewer\"):new{\
+                    image            = pv_bb,\
+                    image_disposable = false,  -- ImageSource cache owns it\
+                    title_text       = title_for_viewer,\
+                    fullscreen       = true,\
+                })\
+                return\
+            end\
+        end\
+        -- Embedded cover: load the FULL-resolution cover straight from the\
+        -- document, exactly like KOReader's native Book information > Cover\
+        -- image (filemanagerbookinfo:getCoverImage, which also picks up a\
+        -- DocSettings custom cover). The BIM cover_bb used as the fallback\
+        -- below is a grid-sized THUMBNAIL -- feeding it to ImageViewer\
+        -- upscales blurry, even at \"original size\" (#228). Guarded with a\
+        -- pcall + the thumbnail fallback so an older build still shows\
+        -- something.\
+        local ok_bi, BookInfo = pcall(require, \"apps/filemanager/filemanagerbookinfo\")\
+        if ok_bi and BookInfo and BookInfo.getCoverImage then\
+            local ok_bb, full_bb = pcall(function()\
+                return BookInfo:getCoverImage(nil, fp, false)\
+            end)\
+            if ok_bb and full_bb then\
+                UIManager:show(require(\"ui/widget/imageviewer\"):new{\
+                    image            = full_bb,\
+                    image_disposable = true,  -- getCoverPageImage bb is ours\
+                    title_text       = title_for_viewer,\
+                    fullscreen       = true,\
+                })\
+                return\
+            end\
+        end\
+        local preview = Repo.buildBookMeta(fp)\
+        if not preview or not preview.cover_bb then return end\
+        UIManager:show(require(\"ui/widget/imageviewer\"):new{\
+            image            = preview.cover_bb,\
+            image_disposable = true,\
+            title_text       = title_for_viewer,\
+            fullscreen       = true,\
+        })\
+    end\
+\
+    -- What is handed back for the modal to free: usually nothing (the popup's\
+    -- cover is the shelf's own card, below, which keeps its scaled bb in the\
+    -- cover cache, and the compact header's bb is ImageWidget's to free). The\
+    -- modal keeps the rich header for its life and paints it again, so a\
+    -- one-shot bb there (the card failed to build) is not ImageWidget's to\
+    -- free after a paint: the modal frees it as it closes.\
+    local owned_cover_bb\
+\
+    if rich then\
+        -- The popup draws the cover the way the shelf does (SpineWidget:\
+        -- corners, border and shadow as the reader set them), as the hero\
+        -- does, rather than a square-bordered thumbnail. Its width follows\
+        -- the screen, not the UI scale, so a large scale setting no longer\
+        -- grows the header and pushes the actions below it out of view\
+        -- (issues 442, 553). A 2:3 card, like the shelf's.\
+        local ok_sw, SpineWidget = pcall(require, \"lib/bookshelf_spine_widget\")\
+        if ok_sw and SpineWidget then\
+            local ok_card, card = pcall(function()\
+                return SpineWidget:new{\
+                    book   = BookshelfWidget._headerCardBook(book, fresh),\
+                    width  = thumb_w,\
+                    height = thumb_h,\
+                    on_tap = function() previewCover() end,\
+                    suppress_favorite_badge = true,\
+                }\
+            end)\
+            if ok_card then thumb_widget = card end\
+        end\
+    end\
+\
+    local thumb_bb, thumb_disposable\
+    if not thumb_widget then\
+        if rich then fresh = Repo.buildBookMeta(book.filepath) or fresh end\
+        thumb_bb, thumb_disposable = _headerThumbBB(book.filepath, fresh, thumb_w)\
+        if rich and thumb_disposable then\
+            owned_cover_bb, thumb_disposable = thumb_bb, false\
+        end\
+    end\
+    if thumb_bb then\
+        -- Resize the container to the cover's true aspect ratio so the\
+        -- image fills the frame with no letterboxing. The bb is a\
+        -- blitbuffer with .w/.h fields; falling back to 2:3 if either\
+        -- is missing keeps the layout sane for malformed covers.\
+        local bw = thumb_bb.w or (thumb_bb.getWidth and thumb_bb:getWidth())\
+        local bh = thumb_bb.h or (thumb_bb.getHeight and thumb_bb:getHeight())\
+        if bw and bh and bw > 0 then\
+            thumb_h = math.floor(thumb_w * (bh / bw))\
+        end\
+        local thumb_frame = FrameContainer:new{\
+            bordersize = Size.border.thin,\
+            padding    = 0,\
+            margin     = 0,\
+            ImageWidget:new{\
+                image            = thumb_bb,\
+                image_disposable = thumb_disposable,\
+                width            = thumb_w,\
+                height           = thumb_h,\
+                scale_factor     = 0,\
+            },\
+        }\
+        thumb_widget = InputContainer:new{\
+            dimen = Geom:new{\
+                w = thumb_w + 2 * Size.border.thin,\
+                h = thumb_h + 2 * Size.border.thin,\
+            },\
+            thumb_frame,\
+        }\
+        thumb_widget.ges_events = {\
+            Tap = { GestureRange:new{ ges = \"tap\", range = thumb_widget.dimen } },\
+        }\
+        thumb_widget.onTap = function()\
+            previewCover()\
+            return true\
+        end\
+    end\
+\
+    -- Bookmark link (#67): \"N bookmark(s) ›\" in the header's top-right\
+    -- corner, opening KOReader's bookmark browser. A text link rather than\
+    -- a bare icon -- clearer, and the count says what's there. Built only\
+    -- when bookmark_action is passed (book has annotations + browser\
+    -- available). Reserve its width off the text column so a long title\
+    -- doesn't run under it.\
+    local bm_link, bm_reserve = nil, 0\
+    if bookmark_action then\
+        local n = bookmark_action.count\
+        local bm_text = n == 1 and _(\"1 bookmark\") or T(_(\"%1 bookmarks\"), n)\
+        local bm_face, bm_bold = BFont:getFace(\"cfont\", 16, { bold = true })\
+        -- The chevron is a real glyph (U+E841 mdi-chevron-right) from the\
+        -- symbols/nerdfont face -- NOT an ASCII \">\" -- so it's its own widget:\
+        -- the count label's cfont doesn't carry that PUA codepoint.\
+        local bm_row = HorizontalGroup_:new{\
+            align = \"center\",\
+            TextWidget_:new{ text = bm_text, face = bm_face, bold = bm_bold },\
+            HorizontalSpan_:new{ width = Space.padding.small },\
+            TextWidget_:new{ text = \"\\xEE\\xA1\\x81\", face = BFont:getFace(\"symbols\", 20) },\
+        }\
+        local bm_frame = FrameContainer:new{\
+            bordersize = 0,\
+            margin     = 0,\
+            padding    = 0,\
+            bm_row,\
+        }\
+        local bm_sz = bm_frame:getSize()\
+        bm_link = InputContainer:new{\
+            dimen = Geom:new{ w = bm_sz.w, h = bm_sz.h },\
+            bm_frame,\
+        }\
+        bm_link.ges_events = {\
+            Tap = { GestureRange:new{ ges = \"tap\", range = bm_link.dimen } },\
+        }\
+        bm_link.onTap = function() bookmark_action.on_tap(); return true end\
+        bm_reserve = bm_sz.w + Space.padding.default\
+    end\
+    -- No frame inset: header_w (the dialog's added-widget width) is already\
+    -- inset from the button rows by the dialog's title_padding. The content\
+    -- fills it edge to edge; only the TITLE row reserves space for the\
+    -- bookmark link (below), overlaying the title's right-hand whitespace.\
+    -- The thumbnail's REAL width: its 1dp frame adds 2 * Size.border.thin to\
+    -- thumb_w, and leaving that out made the header that much wider than\
+    -- asked -- widening the whole book popup, so every tab stopped short of\
+    -- its right border and a tab's scrollbar floated off it (4px at 480dpi).\
+    local thumb_real_w = thumb_widget and thumb_widget:getSize().w or 0\
+    local text_w = thumb_widget and (header_w - thumb_real_w - gap_w) or header_w\
+\
+    -- Top of text column: title (bold) + author + one-line metadata\
+    -- strip (format · size · added · last opened) + filename. Series\
+    -- info is no longer rendered here -- it lives as a tappable pill\
+    -- in the nav strip below.\
+    local top_stack = VerticalGroup_:new{ align = \"left\" }\
+    local mtitle_face, mtitle_bold = BFont:getFace(\"smalltfont\", rich and 26 or 22, { bold = true })\
+    top_stack[#top_stack + 1] = TextBoxWidget_:new{\
+            bgcolor = band,\
+        text  = book.title or book.filename or _(\"(no title)\"),\
+        face  = mtitle_face,\
+        bold  = mtitle_bold,\
+        -- Title wraps before the top-right bookmark link (bm_reserve = 0\
+        -- when there's no link, so this is the full width otherwise).\
+        width = text_w - bm_reserve,\
+    }\
+    if book.author and book.author ~= \"\" then\
+        local mauthor_face, mauthor_bold = BFont:getFace(\"cfont\", rich and 22 or 18)\
+        top_stack[#top_stack + 1] = TextBoxWidget_:new{\
+            bgcolor = band,\
+            text  = book.author,\
+            face  = mauthor_face,\
+            bold  = mauthor_bold,\
+            width = text_w,\
+        }\
+    end\
+\
+    if opts and opts.summary_text then\
+        top_stack[#top_stack + 1] = TextBoxWidget_:new{\
+            text = opts.summary_text, face = BFont:getFace(\"cfont\", rich and 18 or 14),\
+            width = text_w,\
+        }\
+    else\
+    -- Metadata + filename block: cheap-to-fetch supporting detail in a\
+    -- compact bottom slice of the top stack. Each chunk skipped when\
+    -- its source is unavailable.\
+    local meta_face, meta_bold = BFont:getFace(\"cfont\", rich and 18 or 14)\
+    local ok_lfs, lfs = pcall(require, \"libs/libkoreader-lfs\")\
+    local size_bytes, mtime\
+    if ok_lfs and lfs and lfs.attributes then\
+        -- One stat for both fields: attributes(path) returns the full\
+        -- record, so asking twice with mode strings doubles the syscall.\
+        local attr = lfs.attributes(book.filepath)\
+        if attr then\
+            size_bytes = attr.size\
+            mtime      = attr.modification\
+        end\
+    end\
+    local function _fmt_size(bytes)\
+        if not bytes or bytes <= 0 then return nil end\
+        if bytes < 1024              then return string.format(\"%d B\", bytes) end\
+        if bytes < 1024 * 1024       then return string.format(\"%d KB\", math.floor(bytes / 1024 + 0.5)) end\
+        return string.format(\"%.1f MB\", bytes / 1024 / 1024)\
+    end\
+    local function _fmt_short_date(ts)\
+        if not ts or ts <= 0 then return nil end\
+        return os.date(\"%d %b %Y\", ts)\
+    end\
+    -- ReadHistory lookup for \"last opened\" timestamp -- KOReader's\
+    -- canonical source for \"when did the user last touch this book\"\
+    -- (Repo.readProgress returns rating + status but not last_opened).\
+    local function _last_opened(fp)\
+        local ok_rh, rh = pcall(require, \"readhistory\")\
+        if not (ok_rh and rh and rh.hist) then return nil end\
+        for _i, item in ipairs(rh.hist) do\
+            if item.file == fp then return item.time end\
+        end\
+        return nil\
+    end\
+    -- A small leading glyph from the symbols (nerdfont) face. The glyph is\
+    -- centred within ONE text-line's height (FA icons sit centred in a tall em\
+    -- box, so a raw top-align drops them below the text's cap line); the row is\
+    -- top-aligned, so a wrapping value keeps the glyph beside the first line.\
+    local CenterContainer_ = require(\"ui/widget/container/centercontainer\")\
+    local function _icon_row(glyph, text, one_line)\
+        local icon = TextWidget_:new{ text = glyph,\
+            face = BFont:getFace(\"symbols\", 15) }\
+        -- CenterContainer below centers on the glyph's full reported em-box,\
+        -- but this Nerd Font's calendar/file glyphs still sit visibly lower\
+        -- within that box than meta_face's own ink does within its box (measured\
+        -- ~4px low on a PW5) -- nudge the paint position up to compensate.\
+        -- getSize() is untouched, so the gap/width math below (which reads it)\
+        -- doesn't shift.\
+        local icon_nudge_up = Screen:scaleBySize(2)\
+        local orig_icon_paintTo = icon.paintTo\
+        function icon:paintTo(bb, x, y)\
+            orig_icon_paintTo(self, bb, x, y - icon_nudge_up)\
+        end\
+        local gap    = Space.px(6)\
+        local line_h = TextWidget_:new{ text = \"Ag\", face = meta_face }:getSize().h\
+        local icon_box = CenterContainer_:new{\
+            dimen = Geom:new{ w = icon:getSize().w, h = line_h },\
+            icon,\
+        }\
+        local avail = text_w - icon:getSize().w - gap\
+        local txt\
+        if one_line then\
+            -- One line, its start cut away rather than wrapped: a long path\
+            -- took three lines and squeezed the tabs below (maintainer).\
+            local function fits(t)\
+                local w = TextWidget_:new{ text = t, face = meta_face, bold = meta_bold }\
+                local ok = w:getSize().w <= avail\
+                w:free()\
+                return ok\
+            end\
+            txt = TextWidget_:new{\
+                text  = require(\"lib/bookshelf_text_fit\").pathOneLine(text, fits),\
+                face  = meta_face,\
+                bold  = meta_bold,\
+                max_width = avail,\
+            }\
+        else\
+            txt = TextBoxWidget_:new{\
+                bgcolor = band,\
+                text  = text,\
+                face  = meta_face,\
+                bold  = meta_bold,\
+                width = avail,\
+            }\
+        end\
+        return HorizontalGroup_:new{ align = \"top\",\
+            icon_box, HorizontalSpan_:new{ width = gap }, txt }\
+    end\
+\
+    local added_str = _fmt_short_date(mtime)\
+    local last_str  = _fmt_short_date(_last_opened(book.filepath))\
+\
+    -- Format · size · pages. In the compact header the dates ride along on this\
+    -- same row (the original one-line strip). The rich popup header leads with\
+    -- where the reader is in the book instead, then the file's details.\
+    local meta_parts = {}\
+    if book.format then meta_parts[#meta_parts + 1] = book.format end\
+    local size_str = _fmt_size(size_bytes)\
+    if size_str then meta_parts[#meta_parts + 1] = size_str end\
+    if rich then\
+        local pages = tonumber(book.page_count)  -- nil for un-rendered EPUBs\
+        if pages and pages > 0 then\
+            meta_parts[#meta_parts + 1] = T(_(\"%1 pages\"), pages)\
+        end\
+        if added_str then meta_parts[#meta_parts + 1] = _(\"Added\") .. \" \" .. added_str end\
+    else\
+        if added_str then meta_parts[#meta_parts + 1] = _(\"Added\") .. \" \" .. added_str end\
+        if last_str  then meta_parts[#meta_parts + 1] = _(\"Read\") .. \" \" .. last_str end\
+    end\
+\
+    -- Reading line (rich popup header only): the status, how far in, and when\
+    -- it was last read -- what the shelf's own badges and the hero say about\
+    -- the book, and what a reader looks for first. A slim bar below it while\
+    -- the book is under way.\
+    local reading_pct\
+    if rich then\
+        local ok_bl, BookList = pcall(require, \"ui/widget/booklist\")\
+        local status = ok_bl and BookList and BookList.getBookStatus\
+            and BookList.getBookStatus(book.filepath) or nil\
+        local pct, _st, _rating, page_count, page_num = Repo.readProgress(book.filepath)\
+        pct = tonumber(pct)\
+        local parts = {}\
+        if status == \"complete\" then\
+            parts[#parts + 1] = _(\"Finished\")\
+        elseif status == \"abandoned\" then\
+            parts[#parts + 1] = _(\"On hold\")\
+            if pct and pct > 0 then parts[#parts + 1] = T(_(\"%1% read\"), math.floor(pct * 100 + 0.5)) end\
+            reading_pct = pct\
+        elseif pct and pct > 0 then\
+            parts[#parts + 1] = T(_(\"%1% read\"), math.floor(pct * 100 + 0.5))\
+            page_num, page_count = tonumber(page_num), tonumber(page_count)\
+            if page_num and page_count and page_count > 0 then\
+                parts[#parts + 1] = T(_(\"page %1 of %2\"), page_num, page_count)\
+            end\
+            reading_pct = pct\
+        elseif last_str and status ~= \"new\" then\
+            -- Opened, no progress yet: \"Unopened\" beside a last-read date\
+            -- said two things at once.\
+            parts[#parts + 1] = _(\"Not started\")\
+        else\
+            parts[#parts + 1] = _(\"Unopened\")\
+        end\
+        if last_str and status ~= \"new\" then\
+            parts[#parts + 1] = T(_(\"Last read %1\"), last_str)\
+        end\
+        local rface, rbold = BFont:getFace(\"cfont\", 20, { bold = true })\
+        top_stack[#top_stack + 1] = VerticalSpan_:new{ width = Space.px(6) }\
+        top_stack[#top_stack + 1] = TextBoxWidget_:new{\
+            bgcolor = band,\
+            text  = table.concat(parts, \"  \\xC2\\xB7  \"),  -- middle-dot\
+            face  = rface,\
+            bold  = rbold,\
+            width = text_w,\
+        }\
+        if reading_pct then\
+            local ProgressWidget = require(\"ui/widget/progresswidget\")\
+            top_stack[#top_stack + 1] = VerticalSpan_:new{ width = Space.px(6) }\
+            top_stack[#top_stack + 1] = ProgressWidget:new{\
+                width      = math.floor(text_w * 0.6),\
+                height     = Space.px(8),\
+                percentage = math.max(0, math.min(1, reading_pct)),\
+                margin_h   = 0, margin_v = 0,\
+                radius     = 0,\
+                bordersize = Size.border.thin,\
+                bordercolor = Blitbuffer.COLOR_BLACK,\
+                fillcolor  = Blitbuffer.COLOR_BLACK,\
+                ticks      = nil,\
+            }\
+            top_stack[#top_stack + 1] = VerticalSpan_:new{ width = Space.px(4) }\
+        end\
+    end\
+\
+    if #meta_parts > 0 then\
+        top_stack[#top_stack + 1] = TextBoxWidget_:new{\
+            bgcolor = band,\
+            text  = table.concat(meta_parts, \"  \\xC2\\xB7  \"),  -- middle-dot\
+            face  = meta_face,\
+            bold  = meta_bold,\
+            fgcolor = rich and (band and require(\"lib/bookshelf_popup_kit\").DIM_ON_GREY or Blitbuffer.COLOR_DARK_GRAY) or nil,\
+            width = text_w,\
+        }\
+    end\
+\
+    -- Filename. The compact (long-press menu) header shows the basename only --\
+    -- the directory is reachable via the Folder pill. The rich (book-detail\
+    -- popup) header includes the folder path (relative to home_dir when under\
+    -- it, else the full path) and a leading file glyph.\
+    local fname = (book.filepath or \"\"):match(\"([^/]+)$\") or book.filepath or \"\"\
+    if rich and book.filepath then\
+        local shown = book.filepath\
+        local ok_gs, gs = pcall(function() return G_reader_settings end)\
+        local home = ok_gs and gs and require(\"lib/bookshelf_home_dir\").get()\
+        if type(home) == \"string\" then\
+            home = home:gsub(\"/+$\", \"\")\
+            if home ~= \"\" and shown:sub(1, #home + 1) == home .. \"/\" then\
+                shown = shown:sub(#home + 2)  -- strip \"home_dir/\"\
+            end\
+        end\
+        fname = shown\
+    end\
+    if rich then\
+        top_stack[#top_stack + 1] = _icon_row(\"\\xEF\\x80\\x96\", fname, true)  -- U+F016 file\
+    else\
+        top_stack[#top_stack + 1] = TextBoxWidget_:new{\
+            bgcolor = band,\
+            text  = fname,\
+            face  = meta_face,\
+            bold  = meta_bold,\
+            width = text_w,\
+        }\
+    end\
+\
+    end -- optional host summary keeps technical details in its own tab\
+\
+    -- Bottom-aligned pill strip: tappable nav facets (series, author,\
+    -- collections, genres, folder, rating). Each pill is a small\
+    -- bordered rounded rectangle, packed into rows that wrap to\
+    -- text_w. Pill text is rendered UPPERCASED (small-caps style) --\
+    -- KOReader's TextWidget has no small-caps font variant, so the\
+    -- uppercase fallback is the convention. TextSegments.upper is\
+    -- UTF-8-aware (Lua's :upper() leaves accented letters untouched,\
+    -- so \"videojáték\" would render \"VIDEOJáTéK\" -- issue #130).\
+    -- Padding is symmetric on\
+    -- both axes for a balanced look. Built only when the caller passes\
+    -- pill_specs -- the collection-manager call site for instance\
+    -- passes nil because it doesn't want nav-into-self affordances.\
+    local pill_group = VerticalGroup_:new{ align = \"left\" }\
+    if pill_specs and #pill_specs > 0 then\
+        local pill_face, pill_bold = BFont:getFace(\"cfont\", 13, { bold = true })\
+        local pill_pad_h  = Space.padding.default  -- L/R inner padding\
+        local pill_pad_v  = Space.padding.small    -- T/B inner padding\
+        local pill_gap    = Space.padding.default  -- between pills\
+        local MAX_PILL_ROWS = 2  -- bounds the header height when the\
+                                 -- caller pours dozens of pills at us;\
+                                 -- the overflow collapses into a single\
+                                 -- \"+N\" pill so the visible row count\
+                                 -- never grows past this cap.\
+\
+        -- #177: cap a single pill's label so a very long tag truncates\
+        -- (one line, ellipsis) inside text_w instead of spilling off-screen.\
+        local pill_label_max = math.max(1, text_w - 2 * pill_pad_h - 2 * Size.border.thin)\
+\
+        -- Build all pill widgets first so we know their widths up\
+        -- front (the packing pass needs them to greedily wrap).\
+        -- extra_pad widens a pill's L/R padding (and so its tap target) without\
+        -- touching the others -- used for the small \"+N\" overflow pill.\
+        local function _buildPill(label_text, on_tap_cb, extra_pad)\
+            local label_w = TextWidget_:new{\
+                text = TextSegments.upper(label_text or \"\"),\
+                face = pill_face,\
+                bold = pill_bold,\
+                max_width = pill_label_max,\
+            }\
+            -- Explicit white bg so the tap-feedback inversion has\
+            -- something to flip to black. Matches the hero pill builder.\
+            local frame = FrameContainer:new{\
+                bordersize     = Size.border.thin,\
+                background     = Blitbuffer.COLOR_WHITE,\
+                radius         = Space.radius.button,\
+                padding_left   = pill_pad_h + (extra_pad or 0),\
+                padding_right  = pill_pad_h + (extra_pad or 0),\
+                padding_top    = pill_pad_v,\
+                padding_bottom = pill_pad_v,\
+                margin         = 0,\
+                label_w,\
+            }\
+            local frame_size = frame:getSize()\
+            local pill = InputContainer:new{\
+                dimen = Geom:new{ w = frame_size.w, h = frame_size.h },\
+                frame,\
+            }\
+            pill.ges_events = {\
+                Tap = { GestureRange:new{ ges = \"tap\", range = pill.dimen } },\
+            }\
+            pill.onTap = function()\
+                -- Same instant-feedback pattern as the hero pill builder\
+                -- (BookshelfWidget:_buildPillGroup): invert, repaint into\
+                -- the fb, force a refresh-queue drain, then run the\
+                -- callback. Without the forceRePaint the highlight only\
+                -- queues and the callback's rebuild wipes it before any\
+                -- pixels reach the panel.\
+                if on_tap_cb and frame and frame.dimen then\
+                    frame.background = frame.background:invert()\
+                    label_w.fgcolor  = label_w.fgcolor:invert()\
+                    UIManager:widgetRepaint(frame, frame.dimen.x, frame.dimen.y)\
+                    UIManager:setDirty(nil, \"ui\", frame.dimen)\
+                    UIManager:forceRePaint()\
+                    on_tap_cb()\
+                elseif on_tap_cb then\
+                    on_tap_cb()\
+                end\
+                return true\
+            end\
+            return pill, frame_size.w\
+        end\
+\
+        local pill_widgets = {}\
+        for _i, spec in ipairs(pill_specs) do\
+            local on_tap = spec.on_tap  -- per-iteration capture\
+            local pill, pw = _buildPill(spec.label, on_tap)\
+            pill_widgets[#pill_widgets + 1] = { widget = pill, w = pw }\
+        end\
+\
+        -- Pack pills into rows (greedy, width-bounded). Stop once we\
+        -- hit MAX_PILL_ROWS; anything left becomes a \"+N\" pill that\
+        -- gets squeezed into the last row, dropping trailing pills if\
+        -- it doesn't fit.\
+        local rows = {}                 -- array of { pill_entries }\
+        local cur_row = {}\
+        local cur_w   = 0\
+        local stopped_at = nil          -- index of first pill that\
+                                        -- didn't fit (nil if all fit)\
+        for i, p in ipairs(pill_widgets) do\
+            local need = (cur_w == 0) and p.w or (cur_w + pill_gap + p.w)\
+            if need > text_w and cur_w > 0 then\
+                rows[#rows + 1] = cur_row\
+                if #rows >= MAX_PILL_ROWS then\
+                    stopped_at = i\
+                    cur_row = {}\
+                    cur_w   = 0\
+                    break\
+                end\
+                cur_row = {}\
+                cur_w   = 0\
+            end\
+            cur_row[#cur_row + 1] = p\
+            cur_w = (#cur_row == 1) and p.w or (cur_w + pill_gap + p.w)\
+        end\
+        if #cur_row > 0 and #rows < MAX_PILL_ROWS then\
+            rows[#rows + 1] = cur_row\
+            cur_row = nil\
+        end\
+\
+        -- If we stopped early, append a \"+N\" pill. Tapping it opens the combined\
+        -- book-detail popup (every facet, still tappable, above the description).\
+        -- All \"+N\" widgets here share one callback.\
+        if stopped_at then\
+            local more_cb = function() self:_showBookDetail(book, { active = \"tags\" }) end\
+            local more_extra = Screen:scaleBySize(8)\
+            local hidden = #pill_widgets - stopped_at + 1\
+            local more_pill, more_w = _buildPill(\"+\" .. hidden, more_cb, more_extra)\
+            -- Squeeze into the last row, evicting trailing pills if\
+            -- needed to make room.\
+            local last_row = rows[#rows]\
+            local last_w = 0\
+            for j, p in ipairs(last_row) do\
+                last_w = last_w + ((j == 1) and p.w or (pill_gap + p.w))\
+            end\
+            while #last_row > 0\
+                and (last_w + pill_gap + more_w) > text_w do\
+                local dropped = table.remove(last_row)\
+                hidden = hidden + 1\
+                last_w = last_w - dropped.w\
+                if #last_row > 0 then last_w = last_w - pill_gap end\
+                more_pill, more_w = _buildPill(\"+\" .. hidden, more_cb, more_extra)\
+            end\
+            last_row[#last_row + 1] = { widget = more_pill, w = more_w }\
+        end\
+\
+        -- Render rows into pill_group with vertical gaps between.\
+        for ri, row_pills in ipairs(rows) do\
+            local row_widget = HorizontalGroup_:new{ align = \"center\" }\
+            for j, p in ipairs(row_pills) do\
+                if j > 1 then\
+                    row_widget[#row_widget + 1] = HorizontalSpan_:new{\
+                        width = pill_gap,\
+                    }\
+                end\
+                row_widget[#row_widget + 1] = p.widget\
+            end\
+            if ri > 1 then\
+                pill_group[#pill_group + 1] = VerticalSpan_:new{\
+                    width = pill_gap,\
+                }\
+            end\
+            pill_group[#pill_group + 1] = row_widget\
+        end\
+    end\
+\
+    -- Compose the text column so the top block anchors at the top of\
+    -- the thumbnail and the filepath block anchors at the bottom.\
+    -- VerticalSpan with the leftover height grows in the middle so\
+    -- total column height matches the thumbnail. Without the explicit\
+    -- flex span, the column would compress to its natural height and\
+    -- the filepath would sit immediately under the title block.\
+    local top_h     = top_stack:getSize().h\
+    local fp_h      = pill_group:getSize().h\
+    -- Minimum vertical gap between the filename line and the pill\
+    -- strip, so the pills don't crowd the metadata when the cover is\
+    -- tall enough to let flex_h collapse to zero. Only enforced when\
+    -- pills exist; pill-less headers (collection manager's manage\
+    -- mode etc.) don't pay the gap.\
+    local has_pills = pill_specs and #pill_specs > 0\
+    local min_gap   = has_pills and Space.padding.large or 0\
+    local target_h  = thumb_widget and thumb_h or (top_h + min_gap + fp_h)\
+    local flex_h    = math.max(min_gap, target_h - top_h - fp_h)\
+    local text_stack = VerticalGroup_:new{\
+        align = \"left\",\
+        top_stack,\
+        VerticalSpan_:new{ width = flex_h },\
+        pill_group,\
+    }\
+\
+    local body\
+    if thumb_widget then\
+        -- text_stack now spans the cover's full height (top block of\
+        -- title/author/series, flex span, filepath at the bottom), so\
+        -- top-align is correct -- the column tops line up, the\
+        -- filepath sits flush with the cover's bottom edge.\
+        body = HorizontalGroup_:new{\
+            align = \"top\",\
+            thumb_widget,\
+            HorizontalSpan_:new{ width = gap_w },\
+            text_stack,\
+        }\
+    else\
+        body = text_stack\
+    end\
+    -- Vertical padding matches the existing horizontal frame padding so\
+    -- the cover doesn't sit flush against the dialog's top / bottom\
+    -- edges. ButtonDialog's title_group already contributes ~5dp of\
+    -- info_padding all around; this FrameContainer adds Size.padding.large\
+    -- on top + bottom so the cover gets a balanced visual frame\
+    -- (matching the left gap from dialog edge to cover).\
+    local header_frame = FrameContainer:new{\
+        bordersize = 0,\
+        margin     = 0,\
+        padding    = 0,\
+        body,\
+    }\
+    local result = header_frame\
+    if bm_link then\
+        -- Overlay the bookmark link in the top-right corner. RightContainer\
+        -- right-aligns it to the header width; the height-bounded dimen keeps\
+        -- it in the top band, and the link's own padding_top aligns it with\
+        -- the title. Same corner-anchoring idiom the hero card uses.\
+        local RightContainer = require(\"ui/widget/container/rightcontainer\")\
+        local OverlapGroup   = require(\"ui/widget/overlapgroup\")\
+        local hsize = header_frame:getSize()\
+        result = OverlapGroup:new{\
+            dimen = Geom:new{ w = hsize.w, h = hsize.h },\
+            header_frame,\
+            RightContainer:new{\
+                dimen = Geom:new{ w = hsize.w, h = bm_link:getSize().h },\
+                bm_link,\
+            },\
+        }\
+    end\
+    -- Expose the persistent cover bb (rich header only) so the caller frees it\
+    -- once the cached header is discarded.\
+    result._owned_cover_bb = owned_cover_bb\
+    -- Expose the cover thumb frame (stamps its painted dimen) so the detail\
+    -- popup can flex it open as tap feedback on its Open button.\
+    result._cover_thumb = thumb_widget and thumb_widget[1] or nil\
+    return result\
+end\
+\
+-- _buildPillSpecs(book, collection_set, close_cb) -> { { label, on_tap }, ... }\
+--\
+-- Shared pill-strip data builder used by the book menu AND the\
+-- Collection Manager. The two contexts disagree on which collections\
+-- to show:\
+--   - Book menu: actual saved membership (ReadCollection:getCollectionsWithFile)\
+--   - Collection Manager: DRAFT membership (toggles in flight, not yet saved)\
+-- so the caller passes whichever set is appropriate as a {name = true}\
+-- table.\
+--\
+-- close_cb is invoked AFTER each pill's drill action so the parent\
+-- dialog dismisses on tap. Tappable pills include: author, series,\
+-- collections, deduped genres, and folder.\
+function BookshelfWidget:_buildPillSpecs(book, collection_set, close_cb, filter)\
+    if not book then return {} end\
+    local bw   = self\
+    -- #99: optional per-category filter for the hero tags line. nil shows\
+    -- every category (the long-press book menu's pill strip passes nil, so\
+    -- it is unaffected). A category is hidden only when filter sets it\
+    -- explicitly false.\
+    local function _show(cat)\
+        return (filter == nil) or (filter[cat] ~= false)\
+    end\
+    local ReadCollection = require(\"readcollection\")\
+    local default_coll_name = ReadCollection.default_collection_name\
+    local function _wrap(drill_fn)\
+        return function()\
+            drill_fn()\
+            if close_cb then close_cb() end\
+        end\
+    end\
+    local function _navResetAndClose()\
+        bw._drilldown_path = {}\
+    end\
+\
+    local pill_specs = {}\
+\
+    -- 1. Author(s): one pill per co-author (book.authors, KOReader's own\
+    -- one-per-<dc:creator>-line split), not just book.author (= authors[1]),\
+    -- so a multi-author book doesn't silently lose every name but the\
+    -- first. Falls back to the single book.author field for older/simpler\
+    -- records that never populated the authors array. Display respects the\
+    -- \"Author name formatting\" setting so each pill matches the form used\
+    -- elsewhere (hero, Authors chip). Drilldown still keys on the RAW name\
+    -- so the lookup matches the group regardless of the display form.\
+    if _show(\"author\") then\
+        local names = (type(book.authors) == \"table\" and #book.authors > 0)\
+            and book.authors\
+            or (book.author and book.author ~= \"\" and { book.author } or nil)\
+        if names then\
+            local fmt = BookshelfSettings.read(\"author_format\") or \"auto\"\
+            local AuthorName\
+            if fmt ~= \"auto\" then\
+                local ok_a, mod = pcall(require, \"lib/bookshelf_author_name\")\
+                if ok_a then AuthorName = mod end\
+            end\
+            for _i = 1, #names do\
+                local author_name = names[_i]\
+                local display_author = author_name\
+                if AuthorName and AuthorName.formatted then\
+                    display_author = AuthorName.formatted(author_name, fmt)\
+                end\
+                pill_specs[#pill_specs + 1] = {\
+                    cat    = \"author\",\
+                    label  = display_author,\
+                    on_tap = _wrap(function()\
+                        local group = Repo.findGroup(\"author\", author_name)\
+                        if not group then\
+                            group = { kind = \"author\", series_name = author_name,\
+                                      books = { book }, latest = 0 }\
+                        end\
+                        _navResetAndClose()\
+                        -- `whole`: the pill asks for all of it, not the\
+                        -- shelf's filtered slice (GitHub issue 480).\
+                        bw:_expandAuthor(group, true)\
+                    end),\
+                }\
+            end\
+        end\
+    end\
+\
+    -- 2. Series -- appends \" #N\" when book.series_num is set so the\
+    -- pill reads \"[Southern Reach #2]\" rather than the bare series\
+    -- name. Tapping still drills into the series view; the number is\
+    -- decoration on the pill itself.\
+    if _show(\"series\") and book.series_name and book.series_name ~= \"\" then\
+        local series_name  = book.series_name\
+        local series_label = series_name\
+        if book.series_num then\
+            series_label = series_label .. \" #\" .. tostring(book.series_num)\
+        end\
+        pill_specs[#pill_specs + 1] = {\
+            cat    = \"series\",\
+            label  = series_label,\
+            on_tap = _wrap(function()\
+                local group = Repo.findGroup(\"series\", series_name)\
+                if not group then\
+                    group = { kind = \"series\", series_name = series_name,\
+                              books = { book }, latest = 0 }\
+                end\
+                _navResetAndClose()\
+                bw:_expandSeries(group, true)\
+            end),\
+        }\
+    end\
+\
+    -- 3. Collections (one pill per, sorted by name for stable order).\
+    -- The built-in \"favorites\" collection is intentionally excluded here:\
+    -- favourites has its own dedicated ★ button + cover badge, so a pill\
+    -- for it would be a duplicate UI affordance for the same toggle.\
+    -- Favourites is kept in the pill strip even though it has a dedicated\
+    -- ★ toggle button: the pill's role is NAVIGATION (tap to jump to the\
+    -- full favourites view), distinct from the button's TOGGLE role.\
+    local coll_names = {}\
+    for n, v in pairs(collection_set or {}) do\
+        if v then coll_names[#coll_names + 1] = n end\
+    end\
+    table.sort(coll_names, function(a, b) return a:lower() < b:lower() end)\
+    for _i, coll_name in ipairs(_show(\"collections\") and coll_names or {}) do\
+        local display = (coll_name == default_coll_name) and _(\"Favorites\") or coll_name\
+        pill_specs[#pill_specs + 1] = {\
+            cat    = \"collections\",\
+            label  = display,\
+            coll   = coll_name,\
+            on_tap = _wrap(function()\
+                local rc = require(\"readcollection\")\
+                local coll = rc.coll and rc.coll[coll_name]\
+                local books = {}\
+                if type(coll) == \"table\" then\
+                    for _file, item in pairs(coll) do\
+                        local fp = item.file or _file\
+                        if type(fp) == \"string\" then\
+                            books[#books + 1] = { filepath = fp }\
+                        end\
+                    end\
+                end\
+                _navResetAndClose()\
+                bw:_expandTag({ kind = \"tag\", series_name = coll_name,\
+                                books = books, latest = 0 }, true)\
+            end),\
+        }\
+    end\
+\
+    -- 4. Genres -- deduped against series name and collections so the\
+    -- same string doesn't render twice.\
+    if _show(\"genres\") and book.genres and #book.genres > 0 then\
+        local _seen = {}\
+        -- Only dedup against categories that are actually on screen: if\
+        -- series / collections are hidden, a genre that happens to match one\
+        -- isn't a visible duplicate, so let it show.\
+        if _show(\"series\") and book.series_name and book.series_name ~= \"\" then\
+            _seen[book.series_name:lower()] = true\
+        end\
+        for _i, coll_name in ipairs(_show(\"collections\") and coll_names or {}) do\
+            _seen[coll_name:lower()] = true\
+            -- Localised display too -- \"Favourites\" UI label could collide\
+            -- with a same-named genre.\
+            local display = (coll_name == default_coll_name) and _(\"Favorites\") or coll_name\
+            _seen[display:lower()] = true\
+        end\
+        for _i, genre_name in ipairs(book.genres) do\
+            local key = (genre_name or \"\"):lower()\
+            if key ~= \"\" and not _seen[key] then\
+                _seen[key] = true\
+                pill_specs[#pill_specs + 1] = {\
+                    cat    = \"genres\",\
+                    label  = genre_name,\
+                    on_tap = _wrap(function()\
+                        local group = Repo.findGroup(\"genre\", genre_name)\
+                        if not group then\
+                            group = { kind = \"genre\", series_name = genre_name,\
+                                      books = { book }, latest = 0 }\
+                        end\
+                        _navResetAndClose()\
+                        bw:_expandGenre(group, true)\
+                    end),\
+                }\
+            end\
+        end\
+    end\
+\
+    -- 5. Folder (skip when book sits at home_dir's top level).\
+    local parent_dir = book.filepath and book.filepath:match(\"^(.*)/[^/]+$\")\
+    local home_dir\
+    do\
+        local ok_gs, gs = pcall(function() return G_reader_settings end)\
+        if ok_gs and gs then\
+            home_dir = require(\"lib/bookshelf_home_dir\").get()\
+            if type(home_dir) == \"string\" then\
+                home_dir = home_dir:gsub(\"/+$\", \"\")\
+            end\
+        end\
+    end\
+    if _show(\"folder\") and parent_dir and parent_dir ~= \"\" and parent_dir ~= home_dir then\
+        local folder_label = FolderLabel.display(\
+            parent_dir:match(\"([^/]+)$\") or parent_dir)\
+        pill_specs[#pill_specs + 1] = {\
+            cat    = \"folder\",\
+            label  = folder_label,\
+            on_tap = _wrap(function()\
+                _navResetAndClose()\
+                bw:_expandFolder({ path = parent_dir, label = folder_label })\
+            end),\
+        }\
+    end\
+\
+    return pill_specs\
+end\
+\
+-- A section heading in the book popup's tabs: small uppercase text in dark\
+-- grey. It was a solid black bar, the heaviest thing on the screen, so the\
+-- headings outweighed the buttons they name; then a hairline, which ran to the\
+-- frame edges past controls that stop at the inset and so ended nowhere (book\
+-- popup redesign). Space now does the grouping. action (optional): a button\
+-- right-aligned in the heading row, which is row_w wide (default content_w\
+-- less the insets).\
+function BookshelfWidget:_sectionHeadingBar(text, content_w, font_size, inset)\
+    local FrameContainer = require(\"ui/widget/container/framecontainer\")\
+    local TextWidget     = require(\"lib/bookshelf_colour_text\")\
+    local face, bold = BFont:getFace(\"cfont\", math.max(10, (font_size or 18) - 4), { bold = true })\
+    local label = TextWidget:new{ text = TextSegments.upper(text), face = face, bold = bold,\
+        fgcolor = Blitbuffer.COLOR_DARK_GRAY }\
+    local pad_top, pad_bottom = Space.px(22), Space.px(10)\
+    local widget = label\
+    return FrameContainer:new{\
+        bordersize  = 0, margin = 0,\
+        padding_left = inset, padding_right = inset,\
+        padding_top = pad_top, padding_bottom = pad_bottom,\
+        widget,\
+    }\
+end\
+\
+-- _segmentedChips(items, active_key, on_pick, font_size, inset) -- a source\
+-- switch: the popup's rounded segmented control (lib/bookshelf_popup_kit) at\
+-- the source size, matching the Description and Reviews tabs' switches.\
+-- items = { {key=, label=}, ... }. Tapping an inactive cell fires\
+-- on_pick(key). Left-inset to align with the body text. Second return value:\
+-- the cells as one dpad row (see _buildPillGroup's focus_rows).\
+function BookshelfWidget:_segmentedChips(items, active_key, on_pick, font_size, inset)\
+    local FrameContainer = require(\"ui/widget/container/framecontainer\")\
+    local seg, focus_rows = PopupKit.segmented{\
+        items = items, active = active_key, on_pick = on_pick,\
+        face = PopupKit.sourceFace(font_size), pad_v = PopupKit.SOURCE_PAD_V,\
+    }\
+    return FrameContainer:new{\
+        bordersize = 0, margin = 0,\
+        padding_left = inset, padding_right = inset,\
+        padding_top = 0, padding_bottom = Space.px(12),\
+        seg,\
+    }, focus_rows\
+end\
+\
+-- _buildPillGroup(pill_specs, available_w, max_rows)\
+-- Render the same tappable pill strip used in the long-press book menu\
+-- as a self-contained widget that callers can drop into any layout.\
+-- Greedy width-bounded packing, capped at max_rows; overflow collapses\
+-- into a non-tappable \"+N\" pill. Returns a VerticalGroup (possibly\
+-- empty if pill_specs is empty / nil), plus a second return value:\
+-- focus_rows, the same row-wrapped pills (widgets only, left-to-right)\
+-- for callers that want dpad focus support -- see _buildPill's\
+-- onFocus/onUnfocus and FocusManager:mergeLayoutInVertical. Pure widget\
+-- builder — no state on self other than what the spec callbacks capture.\
+--\
+-- ink (optional): the strip is going over a painted ground (the dark\
+-- theme's page, or a wallpaper), so the pills carry no fill of their own\
+-- and draw border, label and underline in this colour. nil keeps the stock\
+-- white-filled pill for the popups, which sit on their own white panel.\
+-- The hero's column used to get this for free from a stencil over the\
+-- whole column, which turned a white fill into nothing and black into the\
+-- ink; the pills now say so themselves.\
+--\
+-- border (optional): the pill outline, Size.border.thin by default; the book\
+-- popup's Tags tab passes its button border so pills match its other controls.\
+function BookshelfWidget:_buildPillGroup(pill_specs, available_w, max_rows, base_size, align, gap, on_overflow, ink, border)\
+    local Font            = require(\"ui/font\")\
+    local TextWidget_     = require(\"lib/bookshelf_colour_text\")\
+    local FrameContainer_ = require(\"ui/widget/container/framecontainer\")\
+    local HorizontalGroup_ = require(\"ui/widget/horizontalgroup\")\
+    local HorizontalSpan_  = require(\"ui/widget/horizontalspan\")\
+    local VerticalGroup_   = require(\"ui/widget/verticalgroup\")\
+    local VerticalSpan_    = require(\"ui/widget/verticalspan\")\
+    local InputContainer_  = require(\"ui/widget/container/inputcontainer\")\
+    local GestureRange_    = require(\"ui/gesturerange\")\
+\
+    max_rows = max_rows or 2\
+    -- align controls horizontal placement of the pill block (#99). Rows\
+    -- align within the block; the block is then aligned within available_w\
+    -- by the wrapper at the end.\
+    local row_align = (align == \"center\" or align == \"right\") and align or \"left\"\
+    local pill_group = VerticalGroup_:new{ align = row_align }\
+    if not pill_specs or #pill_specs == 0 then return pill_group, {} end\
+\
+    local pill_face, pill_bold = BFont:getFace(\"cfont\", base_size or 14, { bold = true })\
+    -- A bit more than Size.padding.default: at default gave the label so\
+    -- little breathing room against the border it read as cramped.\
+    local pill_pad_h = Space.px(8)\
+    local pill_pad_v = Space.padding.small\
+    -- gap (optional) overrides the inter-pill / inter-row spacing; the tags\
+    -- sheet passes a larger value since it has room, while the space-tight\
+    -- hero/menu strips keep the default.\
+    local pill_gap   = gap or Space.padding.default\
+    -- #177: a single tag longer than the row would otherwise render at full\
+    -- natural width and spill off the screen edge (the packer only rejects a\
+    -- pill that isn't first in its row). Cap the label so one pill never exceeds\
+    -- available_w; TextWidget truncates with an ellipsis on one line (no wrap).\
+    local pill_border = border or Size.border.thin\
+    local pill_label_max = math.max(1, available_w - 2 * pill_pad_h - 2 * pill_border)\
+\
+    -- extra_pad widens a pill's L/R padding (and so its tap target) without\
+    -- touching the others -- used to make the small \"+N\" overflow pill easier\
+    -- to hit. link_style renders an action (e.g. \"Edit…\") inline with the\
+    -- data pills but styled as a link -- no border, underlined label --\
+    -- so it reads as an action rather than another tag.\
+    -- trailing (optional) is a glyph after the label, inside the pill (the\
+    -- Tags tab's edit mode puts a remove cross there).\
+    local function _buildPill(label_text, on_tap_cb, extra_pad, on_hold_cb, link_style, trailing)\
+        local trail_w, trail_gap\
+        if trailing then\
+            trail_w = TextWidget_:new{ text = trailing, face = pill_face, bold = pill_bold,\
+                fgcolor = ink }\
+            trail_gap = Space.px(10)\
+        end\
+        -- Upper-case label: centre its capitals, not its line box\
+        -- (lib/bookshelf_cap_centre), as the shelf chips do.\
+        local label_w = require(\"lib/bookshelf_cap_centre\").centre(TextWidget_:new{\
+            text = TextSegments.upper(label_text or \"\"),\
+            face = pill_face,\
+            bold = pill_bold,\
+            fgcolor = ink,  -- nil: TextWidget's own black\
+            max_width = math.max(1, pill_label_max\
+                - (trail_w and (trail_w:getSize().w + trail_gap) or 0)),\
+        })\
+        local content = label_w\
+        if trail_w then\
+            content = HorizontalGroup_:new{ align = \"center\",\
+                label_w, HorizontalSpan_:new{ width = trail_gap }, trail_w }\
+        end\
+        -- Explicit white bg so the tap-feedback inversion has something to\
+        -- invert to black (without this, the frame's transparent fill\
+        -- can't be flipped). Matches KOReader's Button feedback pattern.\
+        -- Over a ground there is deliberately NO fill, so what is behind\
+        -- the pill shows through; the tap feedback fills with the ink then.\
+        -- The border in the picked ink on every colour screen (Color.colourBorder).\
+        local frame = require(\"lib/bookshelf_color\").colourBorder(FrameContainer_:new{\
+            bordersize     = link_style and 0 or pill_border,\
+            background     = (not ink) and Blitbuffer.COLOR_WHITE or nil,\
+            color          = ink,  -- nil: FrameContainer's own black\
+            radius         = Space.radius.button,\
+            padding_left   = pill_pad_h + (extra_pad or 0),\
+            padding_right  = pill_pad_h + (extra_pad or 0),\
+            padding_top    = pill_pad_v,\
+            padding_bottom = pill_pad_v,\
+            margin         = 0,\
+            content,\
+        })\
+        local frame_size = frame:getSize()\
+        -- link_style paints the underline as an overlay inside the frame's\
+        -- own bottom padding (the same padding a bordered pill already\
+        -- reserves) instead of wrapping label_w in a taller container --\
+        -- that would grow this pill past its siblings' height and shift\
+        -- its text upward once the row vertically centres pills of\
+        -- different heights. Fixed black, never inverted on tap: a bordered\
+        -- pill's own border (FrameContainer's `color` field) is likewise\
+        -- left untouched by the bg/fg invert below, so it blends into the\
+        -- black fill instead of reading as a cutout -- the underline should\
+        -- do the same rather than flip to a visible white notch.\
+        if link_style then\
+            local ul_h     = Size.line.medium\
+            local ul_w     = label_w:getSize().w\
+            local ul_x_off = pill_pad_h + (extra_pad or 0)\
+            local ul_y_off = frame_size.h - ul_h\
+            function frame:paintTo(bb, x, y)\
+                FrameContainer_.paintTo(self, bb, x, y)\
+                require(\"lib/bookshelf_color\").paintRect(bb, x + ul_x_off, y + ul_y_off, ul_w, ul_h,\
+                    ink or Blitbuffer.COLOR_BLACK)\
+            end\
+        end\
+        local pill = InputContainer_:new{\
+            dimen = Geom:new{ w = frame_size.w, h = frame_size.h },\
+            frame,\
+        }\
+        -- A pill that does nothing (the Tags tab's others while one is being\
+        -- edited) is no stop for the keys (STYLE.md).\
+        pill._inert = not (on_tap_cb or on_hold_cb)\
+        pill.ges_events = {\
+            Tap = { GestureRange_:new{ ges = \"tap\", range = pill.dimen } },\
+        }\
+        if on_hold_cb then\
+            pill.ges_events.Hold = { GestureRange_:new{ ges = \"hold\", range = pill.dimen } }\
+            pill.onHold = function() on_hold_cb(); return true end\
+        end\
+        pill.onTap = function()\
+            -- Pre-callback tap feedback: invert the pill's bg/fg, paint\
+            -- the new state into the fb, drain the refresh queue with\
+            -- forceRePaint so the eink panel actually updates BEFORE\
+            -- the drilldown's rebuild runs. Modelled on KOReader's\
+            -- Button:_doFeedbackHighlight + forceRePaint pair\
+            -- (frontend/ui/widget/button.lua). The drilldown that\
+            -- follows rebuilds the widget tree, so no undo needed --\
+            -- the pill itself is gone by the next paint.\
+            if on_tap_cb and frame and frame.dimen then\
+                -- An unfilled pill over a ground has no background to invert:\
+                -- pressed, it fills with the ink and the label swaps to the\
+                -- ink's opposite so it stays legible ON that fill.\
+                frame.background = frame.background and frame.background:invert() or ink\
+                label_w.fgcolor  = label_w.fgcolor:invert()\
+                if trail_w then trail_w.fgcolor = trail_w.fgcolor:invert() end\
+                UIManager:widgetRepaint(frame, frame.dimen.x, frame.dimen.y)\
+                UIManager:setDirty(nil, \"ui\", frame.dimen)\
+                -- This is the critical bit -- without it, setDirty\
+                -- only QUEUES a refresh, and the queue doesn't drain\
+                -- until the next UIManager iteration. Meanwhile the\
+                -- callback below runs synchronously and queues its\
+                -- own paint, so the user never sees the highlight.\
+                UIManager:forceRePaint()\
+                on_tap_cb()\
+            elseif on_tap_cb then\
+                on_tap_cb()\
+            end\
+            return true\
+        end\
+        -- The keys' focus: the kit's ring along the pill's own edge\
+        -- (STYLE.md), not the pill inverted, which read as one chosen.\
+        require(\"lib/bookshelf_popup_kit\").ringFocus(pill, 0, Space.radius.button)\
+        return pill, frame_size.w\
+    end\
+\
+    -- Build all pills first so the packer knows widths up front.\
+    local pill_widgets = {}\
+    for _i, spec in ipairs(pill_specs) do\
+        local on_tap = spec.on_tap\
+        local pill, pw = _buildPill(spec.label, on_tap, nil, spec.on_hold, spec.link, spec.trailing)\
+        pill_widgets[#pill_widgets + 1] = { widget = pill, w = pw }\
+    end\
+\
+    -- Greedy width-bounded pack into rows; stop at max_rows and track\
+    -- the first index that didn't fit.\
+    local rows = {}\
+    local cur_row, cur_w = {}, 0\
+    local stopped_at\
+    for i, p in ipairs(pill_widgets) do\
+        local need = (cur_w == 0) and p.w or (cur_w + pill_gap + p.w)\
+        if need > available_w and cur_w > 0 then\
+            rows[#rows + 1] = cur_row\
+            if #rows >= max_rows then\
+                stopped_at = i\
+                cur_row, cur_w = {}, 0\
+                break\
+            end\
+            cur_row, cur_w = {}, 0\
+        end\
+        cur_row[#cur_row + 1] = p\
+        cur_w = (#cur_row == 1) and p.w or (cur_w + pill_gap + p.w)\
+    end\
+    if #cur_row > 0 and #rows < max_rows then\
+        rows[#rows + 1] = cur_row\
+    end\
+\
+    if stopped_at then\
+        -- The +N pill opens the overflow view (every pill, still tappable):\
+        -- on_overflow when the caller supplies one (e.g. the combined book-detail\
+        -- popup routes it to the full tags sheet on top of itself), else the bare\
+        -- tags sheet. All \"+N\" widgets share one callback over the full spec\
+        -- list, and get extra L/R padding for a bigger tap target.\
+        -- on_overflow opens the overflow view (the book-detail popup's Tags tab);\
+        -- nil leaves the \"+N\" non-tappable (no caller wants a bare list now).\
+        local more_cb = on_overflow\
+        local more_extra = Screen:scaleBySize(8)\
+        local hidden = #pill_widgets - stopped_at + 1\
+        local more_pill, more_w = _buildPill(\"+\" .. hidden, more_cb, more_extra)\
+        local last_row = rows[#rows]\
+        local last_w = 0\
+        for j, p in ipairs(last_row) do\
+            last_w = last_w + ((j == 1) and p.w or (pill_gap + p.w))\
+        end\
+        while #last_row > 0\
+                and (last_w + pill_gap + more_w) > available_w do\
+            local dropped = table.remove(last_row)\
+            hidden = hidden + 1\
+            last_w = last_w - dropped.w\
+            if #last_row > 0 then last_w = last_w - pill_gap end\
+            more_pill, more_w = _buildPill(\"+\" .. hidden, more_cb, more_extra)\
+        end\
+        last_row[#last_row + 1] = { widget = more_pill, w = more_w }\
+    end\
+\
+    -- Focus rows mirror `rows`' wrapping exactly (one dpad row per visual\
+    -- row, widgets left-to-right) so a caller can hand this straight to\
+    -- FocusManager:mergeLayoutInVertical (via a `{layout=...}` wrapper)\
+    -- without re-deriving the pack. Most callers (hero pills, menu strips)\
+    -- ignore this second return value.\
+    local focus_rows = {}\
+    for ri, row_pills in ipairs(rows) do\
+        local row_widget = HorizontalGroup_:new{ align = \"center\" }\
+        local focus_row = {}\
+        for j, p in ipairs(row_pills) do\
+            if j > 1 then\
+                row_widget[#row_widget + 1] = HorizontalSpan_:new{ width = pill_gap }\
+            end\
+            row_widget[#row_widget + 1] = p.widget\
+            if not p.widget._inert then focus_row[#focus_row + 1] = p.widget end\
+        end\
+        if ri > 1 then\
+            pill_group[#pill_group + 1] = VerticalSpan_:new{ width = pill_gap }\
+        end\
+        pill_group[#pill_group + 1] = row_widget\
+        if #focus_row > 0 then focus_rows[#focus_rows + 1] = focus_row end\
+    end\
+    -- row_align (set above) aligns each row WITHIN the block when rows have\
+    -- unequal widths. Aligning the whole block within the hero column is the\
+    -- caller's job (the hero wraps this in a Left/Centre/Right container at\
+    -- the authoritative column width).\
+    return pill_group, focus_rows\
+end\
+\
+-- _setBookRating(book, new_rating): persist the rating to the book's\
+-- DocSettings summary, refresh the per-file progress cache so reads\
+-- pick up the new value, and rebuild the hero so the star row updates.\
+-- new_rating is 1-5 or nil (to clear). Matches KOReader's BookStatusWidget\
+-- storage: summary.rating in the .sdr/metadata.X.lua sidecar.\
+-- _bookReview(book) / _setBookReview(book, text): the reader's own review,\
+-- KOReader's summary.note -- the field its book status page edits, so the\
+-- two stay one review (issues 238, 315). nil when there is none.\
+function BookshelfWidget:_bookReview(book)\
+    if not (book and book.filepath) or self:_isRemoteRecord(book) then return nil end\
+    local DocSettings = require(\"docsettings\")\
+    if DocSettings.hasSidecarFile and not DocSettings:hasSidecarFile(book.filepath) then\
+        return nil\
+    end\
+    local ok_ds, ds = pcall(function() return DocSettings:open(book.filepath) end)\
+    local summary = ok_ds and ds and ds:readSetting(\"summary\")\
+    local note = type(summary) == \"table\" and summary.note\
+    return (type(note) == \"string\" and note ~= \"\") and note or nil\
+end\
+\
+function BookshelfWidget:_setBookReview(book, text)\
+    if not (book and book.filepath) or self:_isRemoteRecord(book) then return end\
+    local DocSettings = require(\"docsettings\")\
+    local ok_ds, ds = pcall(function() return DocSettings:open(book.filepath) end)\
+    if not ok_ds or not ds then return end\
+    local summary = ds:readSetting(\"summary\") or {}\
+    summary.note = (type(text) == \"string\" and text:match(\"%S\")) and text or nil\
+    ds:saveSetting(\"summary\", summary)\
+    ds:flush()\
+end\
+\
+-- _editBookReview(book, on_saved): the dialog that writes the reader's own\
+-- review; on_saved runs after a save, to redraw whatever shows it.\
+function BookshelfWidget:_editBookReview(book, on_saved)\
+    local InputDialog = require(\"ui/widget/inputdialog\")\
+    local dlg\
+    dlg = InputDialog:new{\
+        title         = _(\"My review\"),\
+        input         = self:_bookReview(book) or \"\",\
+        scroll        = true,\
+        allow_newline = true,\
+        text_height   = Screen:scaleBySize(150),\
+        buttons = { {\
+            { text = _(\"Cancel\"), id = \"close\",\
+              callback = function() UIManager:close(dlg) end },\
+            { text = _(\"Save\"), is_enter_default = true,\
+              callback = function()\
+                  self:_setBookReview(book, dlg:getInputText())\
+                  UIManager:close(dlg)\
+                  if on_saved then on_saved() end\
+              end },\
+        } },\
+    }\
+    UIManager:show(dlg)\
+    dlg:onShowKeyboard()\
+end\
+\
+function BookshelfWidget:_setBookRating(book, new_rating, opts)\
+    if not book or not book.filepath then return end\
+    -- The hero's star row is reachable while a remote record is previewed.\
+    -- DocSettings:open + flush on an OPDS:// pseudo-path would CREATE a\
+    -- sidecar directory for a book that doesn't exist on this device.\
+    if self:_isRemoteRecord(book) then return end\
+    local DocSettings = require(\"docsettings\")\
+    local ok_ds, ds = pcall(function() return DocSettings:open(book.filepath) end)\
+    if not ok_ds or not ds then return end\
+    local summary = ds:readSetting(\"summary\") or {}\
+    summary.rating = new_rating  -- nil clears it\
+    ds:saveSetting(\"summary\", summary)\
+    ds:flush()\
+    -- Update the in-memory book record so the immediate rebuild reflects\
+    -- the new value without waiting for a fresh BIM read.\
+    book.rating = new_rating\
+    -- Refresh the per-file progress cache (it caches rating alongside\
+    -- pct/status). Otherwise the next read would return the stale value.\
+    if Repo.invalidateProgressCache then\
+        Repo.invalidateProgressCache(book.filepath)\
+    end\
+    -- Rebuild the hero so the star row redraws with the new state.\
+    -- _swapHeroInPlace would be lighter but the rating row builds inside\
+    -- _renderRight which the in-place swap doesn't re-run.\
+    --\
+    -- opts.skip_rebuild lets the staged-Apply path defer the rebuild\
+    -- so a multi-step apply (rating + status + collections + ...) only\
+    -- pays for one _rebuild + setDirty at the end of the loop rather\
+    -- than one per mutation. The cover-tap rating change still gets\
+    -- the immediate rebuild because it calls without opts.\
+    if not (opts and opts.skip_rebuild) then\
+        self:_rebuild()\
+        UIManager:setDirty(self, \"ui\")\
+    end\
+end\
+\
+-- _setBookRatingByPath(filepath, rating) — set a rating on a book by\
+-- filepath, without requiring the full Book table. Used by the bulk\
+-- actions module to apply a single rating across the selection.\
+-- Passes skip_rebuild = true so the bulk loop defers the single\
+-- _rebuild + setDirty to the caller after all mutations are done.\
+function BookshelfWidget:_setBookRatingByPath(filepath, rating)\
+    local fake_book = { filepath = filepath, rating = nil }\
+    self:_setBookRating(fake_book, rating, { skip_rebuild = true })\
+end\
+\
+-- Open a scrollable viewer with the full book description. Same\
+-- TextViewer the updater uses for release notes -- KOReader's stock\
+-- modal for \"here's some text, more than fits on screen, you can\
+-- scroll it.\" The description is run through cleanDescription to\
+-- strip HTML tags and decode entities; the viewer renders plain\
+-- text with paragraph breaks preserved.\
+-- _descriptionArgs(book) — build the ReviewsModal args (title + tabs/html_body\
+-- + on_tab_close) for a book's description(s), or nil when the book has no\
+-- usable description. Shared by _showFullDescription and the combined\
+-- book-detail popup (_showBookDetail).\
+function BookshelfWidget:_descriptionArgs(book)\
+    if not book then return nil end\
+    local Tokens = require(\"lib/bookshelf_tokens\")\
+    -- Render a raw description (either source) to HTML. Two shapes:\
+    --   * EPUB / Calibre blurbs are HTML (<p>, <b>, <br>, …) -> keep the markup\
+    --     via the shared sanitiser (whitelisted tags, attributes stripped).\
+    --   * Hardcover blurbs are PLAIN TEXT with \\n\\n paragraph breaks and no\
+    --     tags -> the HTML renderer would collapse those newlines into a single\
+    --     block, so convert paragraph/line breaks to HTML instead.\
+    -- A real tag is \"<\" immediately followed by an (optional \"/\" then a) letter\
+    -- -- e.g. <p> or </p>. This deliberately does NOT match prose like \"x < y\"\
+    -- (space after \"<\"), so plain-text blurbs with a stray angle bracket still\
+    -- take the plain-text path.\
+    local function toHtml(raw)\
+        if type(raw) ~= \"string\" or raw == \"\" then return nil end\
+        local html\
+        if raw:find(\"</?%a\") then html = Tokens.sanitiseReviewHtml(raw) end\
+        if not html or html:gsub(\"%s+\", \"\") == \"\" then\
+            local text = Tokens.cleanDescription(raw) or \"\"\
+            if text == \"\" then return nil end\
+            local esc = text:gsub(\"&\", \"&amp;\"):gsub(\"<\", \"&lt;\"):gsub(\">\", \"&gt;\")\
+            html = \"<p>\" .. (esc:gsub(\"\\n\\n+\", \"</p><p>\"):gsub(\"\\n\", \"<br>\")) .. \"</p>\"\
+        end\
+        return html\
+    end\
+\
+    -- The book's OWN (embedded / Calibre) description and Hardcover's. enrichBook\
+    -- stashes file_description (the original, even when Hardcover's is the one\
+    -- shown) and hardcover_description_text. For an un-enriched book there's no\
+    -- Hardcover text and book.description is its own.\
+    local file_desc\
+    if book.file_description ~= nil then\
+        file_desc = book.file_description\
+    elseif not book.hardcover_description then\
+        file_desc = book.description\
+    end\
+    local file_html = toHtml(file_desc)\
+    local hc_html   = toHtml(book.hardcover_description_text\
+        or (book.hardcover_description and book.description) or nil)\
+    if not file_html and not hc_html then return nil end\
+\
+    -- The hero intentionally shows only one secondary contributor to stay on\
+    -- one line. The full description view has room for every credited role.\
+    local function htmlEscape(value)\
+        return tostring(value or \"\"):gsub(\"&\", \"&amp;\")\
+            :gsub(\"<\", \"&lt;\"):gsub(\">\", \"&gt;\")\
+    end\
+    local credits = {}\
+    local author_names\
+    if type(book.authors) == \"table\" and #book.authors > 0 then\
+        author_names = table.concat(book.authors, \", \")\
+    elseif type(book.author) == \"string\" and book.author ~= \"\" then\
+        author_names = book.author\
+    end\
+    local function addCredit(label, value)\
+        if type(value) == \"string\" and value ~= \"\" then\
+            credits[#credits + 1] = \"<b>\" .. htmlEscape(label) .. \":</b> \"\
+                .. htmlEscape(value)\
+        end\
+    end\
+    addCredit(_(\"Author(s)\"), author_names)\
+    addCredit(_(\"Illustrator\"), book.illustrator)\
+    addCredit(_(\"Translator\"), book.translator)\
+    if #credits > 0 then\
+        local credits_html = \"<p>\" .. table.concat(credits, \"<br>\") .. \"</p>\"\
+        if file_html then file_html = credits_html .. file_html end\
+        if hc_html then hc_html = credits_html .. hc_html end\
+    end\
+\
+    local title = book.title or _(\"Description\")\
+    if book.author then title = title .. \" — \" .. book.author end\
+\
+    local args = { title = title }\
+    if file_html and hc_html then\
+        -- Both available: an Embedded / Hardcover toggle (a chip bar at the top\
+        -- of the Description tab). Default to whichever the hero currently shows.\
+        args.tabs = {\
+            -- \"Embedded\" = the book file's own (KOReader/EPUB/Calibre) field;\
+            -- \"Hardcover\" = the fetched blurb.\
+            { label = _(\"Embedded\"),  html = file_html },   -- 1 = book's own\
+            { label = _(\"Hardcover\"), html = hc_html },      -- 2 = Hardcover\
+        }\
+        args.active_tab = book.hardcover_description and 2 or 1\
+        -- On close, adopt the chosen source: switching the chip and closing\
+        -- changes what the hero (and the book's other surfaces) use -- same\
+        -- effect as the per-book \"Use Hardcover description\" toggle. Only writes\
+        -- when the choice actually changed.\
+        args.on_tab_close = function(active_idx)\
+            local use_hc = (active_idx == 2)\
+            if use_hc ~= (book.hardcover_description == true) then\
+                local ok_hc, Hardcover = pcall(require, \"lib/bookshelf_hardcover\")\
+                if ok_hc and Hardcover and Hardcover.setUseDescription then\
+                    Hardcover.setUseDescription(book.filepath, use_hc)\
+                    self:_refreshHardcoverEnrichmentView(\
+                        \"hardcover-use-description\", book.filepath)\
+                end\
+            end\
+        end\
+    else\
+        -- Single source: show it, and note Hardcover-sourced descriptions.\
+        args.html_body = hc_html or file_html\
+        if hc_html and not file_html then args.subtitle = _(\"(from Hardcover)\") end\
+    end\
+    return args\
+end\
+\
+-- Tapping the description opens the unified book-detail popup (pills always on\
+-- top, description + reviews tabs below) -- the pills are shown here too, not\
+-- only via the \"+N\" overflow.\
+function BookshelfWidget:_showFullDescription(book)\
+    return self:_showBookDetail(book)\
+end\
+\
+-- _commitBookStatus(book, status) — write a reading status (\"new\" | \"reading\" |\
+-- \"abandoned\" | \"complete\") to the book's DocSettings and bust the caches the\
+-- shelf + menu read. Immediate (no staging); the Edit tab uses it directly.\
+-- Mirrors the long-press menu's Apply-status step.\
+function BookshelfWidget:_commitBookStatus(book, status)\
+    if not (book and book.filepath and status) then return end\
+    -- If THIS book's reader is parked hot under the shelf, its in-memory\
+    -- DocSettings flush on the eventual real close would overwrite whatever\
+    -- we write here ('set to Unopened, the reading glyph stayed' - the\
+    -- parked flush restored status=reading afterwards). Finish the park\
+    -- first so its flush lands BEFORE ours; the park is only a resume\
+    -- optimisation for a book the user already closed.\
+    pcall(function()\
+        local Park = require(\"lib/bookshelf_reader_park\")\
+        if Park.isParked() and Park.parkedFile() == book.filepath then\
+            Park.runInFileManager(function() end)\
+        end\
+    end)\
+    local DocSettings = require(\"docsettings\")\
+    local ds = DocSettings:open(book.filepath)\
+    local summary = ds:readSetting(\"summary\") or {}\
+    summary.status   = status\
+    summary.modified = os.date(\"%Y-%m-%d\", os.time())  -- #66: stamp like KOReader\
+    ds:saveSetting(\"summary\", summary)\
+    if status == \"new\" then\
+        ds:delSetting(\"percent_finished\")\
+        ds:delSetting(\"last_xp\")\
+        ds:delSetting(\"last_page\")\
+    end\
+    ds:flush()\
+    Repo.invalidateProgressCache(book.filepath)\
+    Repo.invalidateBookCache(\"edit-status\")\
+    local ok_bl, BookList = pcall(require, \"ui/widget/booklist\")\
+    if ok_bl and BookList and BookList.resetBookInfoCache then\
+        BookList.resetBookInfoCache(book.filepath)\
+    end\
+end\
+\
+-- The book detail modal's scrolling tabs: flush-right bar, drawn as a rail\
+-- (lib/bookshelf_snug_scroll, shared with the Extract page counts dialog).\
+local SnugScroll = require(\"lib/bookshelf_snug_scroll\")\
+\
+-- Used by the Edit tab's infoRow (Hardcover row): a pre-built button,\
+-- centred in a cell row_h tall.\
+--\
+-- want_bottom_border: pass true when nothing below this row already closes\
+-- it off visually -- i.e. the next thing isn't another section's black\
+-- heading bar (whose top edge otherwise reads as this row's bottom border,\
+-- same reasoning as why the row has no top border of its own). Total\
+-- height always comes out to row_h either way, so callers don't need to\
+-- adjust their own sizing based on which case applies.\
+-- A minimal `{layout=...}` wrapper satisfying FocusManager:mergeLayoutInVertical's\
+-- contract (child.layout + child:disableFocusManagement) for a one-off custom\
+-- row that isn't itself a real FocusManager instance -- e.g. a single stock\
+-- Button, or a hand-built row of custom InputContainers (star ratings, tag\
+-- pills). disableFocusManagement is a no-op beyond recording the parent:\
+-- unlike a real FocusManager (ButtonTable), this wrapper never independently\
+-- owns a \"currently selected\" sub-widget to unfocus -- its rows are merged\
+-- straight into the caller's own layout and never interacted with directly.\
+local function focusRow(layout)\
+    return {\
+        layout = layout,\
+        disableFocusManagement = function(self, parent) self._parent = parent end,\
+    }\
+end\
+\
+function BookshelfWidget:_actionButtonColumn(btn, box_w, row_h, want_bottom_border)\
+    local LineWidget = require(\"ui/widget/linewidget\")\
+    local border_w = want_bottom_border and Size.line.medium or 0\
+    local cell_h = row_h - border_w\
+    local btn_cell = CenterContainer:new{\
+        dimen = Geom:new{ w = box_w, h = cell_h }, btn }\
+    if not want_bottom_border then return btn_cell end\
+    return VerticalGroup:new{ align = \"left\", btn_cell,\
+        LineWidget:new{ background = Blitbuffer.COLOR_GRAY,\
+            dimen = Geom:new{ w = box_w, h = border_w } } }\
+end\
+\
+-- _buildBookEditTab(book, modal, avail_w, avail_h) — the Edit tab body:\
+-- immediate-commit book actions (no draft / Apply / Cancel) grouped under\
+-- section headings (Reading status / Ratings / Collections / Hardcover / File &\
+-- metadata / Plugin actions). In-place actions (status, rating, favourite,\
+-- remove-from-history) rebuild the shelf and refresh this tab via\
+-- modal:rebuildTab(); surface-opening actions (Show info, Manage collections,\
+-- Reset, Delete, Refresh, Link Hardcover, Select) close the popup first.\
+-- All text (buttons, headings, stars) scales with the modal's +/- font size.\
+-- Hardcover reviews aren't here -- they're the Reviews tab.\
+-- _fmtPubDate(date) -> a stored publish date as the book menu shows it:\
+-- 18 Feb 2016, Feb 2016 or 2016 (year-month-day, year-month, year), the\
+-- month in the interface language: the short form %published{format} falls\
+-- back to as well (lib/bookshelf_pubdate_format).\
+function BookshelfWidget._fmtPubDate(date)\
+    if not tostring(date or \"\"):match(\"^%d%d%d%d\") then return date end\
+    return require(\"lib/bookshelf_pubdate_format\").short(date)\
+end\
+\
+function BookshelfWidget:_buildBookEditTab(book, modal, avail_w, avail_h)\
+    local bw = self\
+    local ScrollableContainer = require(\"ui/widget/container/scrollablecontainer\")\
+    local FrameContainer      = require(\"ui/widget/container/framecontainer\")\
+    local ReadCollection      = require(\"readcollection\")\
+    local TextWidget          = require(\"lib/bookshelf_colour_text\")\
+    local TextBoxWidget       = require(\"ui/widget/textboxwidget\")\
+    local InputContainer      = require(\"ui/widget/container/inputcontainer\")\
+    local HorizontalGroup     = require(\"ui/widget/horizontalgroup\")\
+    local HorizontalSpan      = require(\"ui/widget/horizontalspan\")\
+    local VerticalSpan        = require(\"ui/widget/verticalspan\")\
+    local GestureRange        = require(\"ui/gesturerange\")\
+\
+    -- Hydrate rating from the sidecar (shelf records skip it for speed).\
+    if book.rating == nil and book.filepath then\
+        local _pct, _st, fresh = Repo.readProgress(book.filepath)\
+        book.rating = fresh\
+    end\
+\
+    local font_size = (modal and modal.font_size) or 20\
+\
+    local function closeModal() if modal then UIManager:close(modal) end end\
+    local function refreshShelf() bw:_rebuild(); UIManager:setDirty(bw, \"ui\") end\
+    -- shelfSoon(): the shelf behind rebuilt 0.4 s after the last change, or\
+    -- as the popup closes if sooner, not before the popup can show a tap\
+    -- (a whole shelf, 200-600 ms on a PW5, came first; rapid star taps\
+    -- queued behind it). Kept on the popup: this tab is rebuilt per change.\
+    local function shelfSoon()\
+        if not modal then bw:_rebuild(); UIManager:setDirty(bw, \"ui\"); return end\
+        if not modal._shelf_fire then\
+            modal._shelf_fire = function()\
+                modal._shelf_owed = false\
+                bw:_rebuild(); UIManager:setDirty(bw, \"ui\")\
+            end\
+        end\
+        modal._shelf_owed = true\
+        UIManager:unschedule(modal._shelf_fire)\
+        UIManager:scheduleIn(0.4, modal._shelf_fire)\
+    end\
+    local function refreshInPlace()  -- commit done: this tab now, the shelf soon\
+        if modal and modal.rebuildTab then modal:rebuildTab() end\
+        shelfSoon()\
+    end\
+\
+    -- ── Hardcover availability + cached rating (read-only) ───────────────────\
+    local _ok_hc, _HC = pcall(require, \"lib/bookshelf_hardcover\")\
+    local hc_available = _ok_hc and _HC and _HC.isAvailable and _HC.isAvailable()\
+    -- The book's Hardcover link, as the menu names it (\"Dracula · Paperback\"):\
+    -- the Hardcover card is lit for it, and a line under the actions names it\
+    -- (the row at this tab's foot that said so went with the card).\
+    local hc_linked_label = book.filepath and _ok_hc and _HC and _HC.linkLabel\
+        and _HC.linkLabel(book.filepath) or nil\
+    local hc_linked = hc_linked_label ~= nil\
+    local hc_rating\
+    if hc_available and book.filepath then\
+        local link = _HC.getLink and _HC.getLink(book.filepath)\
+        local book_id = book.hardcover_book_id or (link and link.book_id)\
+        if book_id and _HC.getCachedRating then\
+            hc_rating = _HC.getCachedRating(book_id)\
+        end\
+    end\
+\
+    -- ── Show info ────────────────────────────────────────────────────────────\
+    local show_info = { text = _(\"Show info\"), callback = function()\
+        local lfs = require(\"libs/libkoreader-lfs\")\
+        if lfs.attributes(book.filepath, \"mode\") ~= \"file\" then\
+            UIManager:show(require(\"ui/widget/infomessage\"):new{\
+                text = _(\"File no longer exists. The bookshelf entry is stale.\"),\
+                timeout = 3 })\
+            return\
+        end\
+        closeModal()\
+        local function showBookInfo(info)\
+            if bw._orbitui_before_book_info then bw:_orbitui_before_book_info() end\
+            info:show(book.filepath)\
+            if bw._orbitui_after_book_info then bw:_orbitui_after_book_info(info.kvp_widget) end\
+        end\
+        -- Book info needs a live FileManager: its bookinfo module carries\
+        -- the `ui` context getDocProps reads (self.ui.coverbrowser). While a\
+        -- reader is parked there is no FileManager, so finish the park first\
+        -- (close the book, FM reborn under the shelf) then show -- same move\
+        -- as the menu tap. A bare FileManagerBookInfo:new{} has no ui and\
+        -- crashes in getDocProps.\
+        require(\"lib/bookshelf_reader_park\").runInFileManager(function(fm)\
+            fm = fm or require(\"apps/filemanager/filemanager\").instance\
+            if fm and fm.bookinfo then\
+                showBookInfo(fm.bookinfo)\
+            else\
+                -- Last resort (no FM at all -- shouldn't happen once the park\
+                -- has finished): a stub ui keeps getDocProps from indexing\
+                -- nil, so at least the info opens rather than crashing.\
+                showBookInfo(require(\"apps/filemanager/filemanagerbookinfo\"):new{ ui = {} })\
+            end\
+        end)\
+    end }\
+\
+    -- Favourite toggle keys off the default collection (Collections membership\
+    -- itself is shown/edited on the Tags tab, not here).\
+    local default_coll = ReadCollection.default_collection_name\
+\
+    local BookList = require(\"ui/widget/booklist\")\
+\
+    -- ── Favourite / Remove from history ──────────────────────────────────────\
+    local remove_history = { text = _(\"Remove from history\"), callback = function()\
+        pcall(function() require(\"readhistory\"):removeItemByPath(book.filepath) end)\
+        Repo.invalidateBookCache(\"edit-remove-history\")\
+        refreshInPlace()\
+        UIManager:show(require(\"ui/widget/notification\"):new{\
+            text = _(\"Removed from history\"), timeout = 1 })\
+    end }\
+    local function inFav()\
+        local s = ReadCollection:getCollectionsWithFile(book.filepath) or {}\
+        return s[default_coll] and true or false\
+    end\
+    local fav = {\
+        callback = function()\
+            if inFav() then\
+                pcall(function() ReadCollection:removeItem(book.filepath, default_coll) end)\
+            else\
+                pcall(function() ReadCollection:addItem(book.filepath, default_coll) end)\
+            end\
+            pcall(function() ReadCollection:write() end)\
+            pcall(function() Repo.invalidateFavoritesCache() end)\
+            refreshInPlace()\
+        end,\
+    }\
+\
+    -- ── File & metadata ──────────────────────────────────────────────────────\
+    local filemanagerutil = require(\"apps/filemanager/filemanagerutil\")\
+    local reset_btn = filemanagerutil.genResetSettingsButton(book.filepath, function()\
+        Repo.invalidateProgressCache(book.filepath)\
+        Repo.invalidateWalkCache()\
+        refreshShelf()\
+    end)\
+    reset_btn.text = _(\"Reset book data\\xE2\\x80\\xA6\")\
+    local orig_reset = reset_btn.callback\
+    reset_btn.callback = function() closeModal(); orig_reset() end\
+\
+    local delete_btn = { text = \"\\xE2\\x9C\\x95 \" .. _(\"Delete\"), callback = function()  -- ✕\
+        closeModal()\
+        local function afterDelete()\
+            Repo.invalidateProgressCache(book.filepath)\
+            Repo.invalidateWalkCache()\
+            bw:_scrubFromDrilldown(book.filepath)\
+            refreshShelf()\
+        end\
+        -- Delete goes through the FileManager's own delete dialog (sidecar +\
+        -- history + collections cleanup). That needs a live FM, so finish the\
+        -- park first when a reader is parked -- same rule as Show info. The\
+        -- confirmbox below is a defensive last resort only (no FM at all).\
+        require(\"lib/bookshelf_reader_park\").runInFileManager(function(fm)\
+            fm = fm or require(\"apps/filemanager/filemanager\").instance\
+            if fm and fm.showDeleteFileDialog then\
+                fm:showDeleteFileDialog(book.filepath, afterDelete)\
+            else\
+                UIManager:show(require(\"ui/widget/confirmbox\"):new{\
+                    text    = _(\"Delete file permanently?\") .. \"\\n\\n\" .. book.filepath,\
+                    ok_text = _(\"Delete\"),\
+                    ok_callback = function()\
+                        if os.remove(book.filepath) then\
+                            require(\"readhistory\"):fileDeleted(book.filepath)\
+                            ReadCollection:removeItem(book.filepath)\
+                            afterDelete()\
+                        else\
+                            UIManager:show(require(\"ui/widget/infomessage\"):new{\
+                                text = _(\"Failed to delete file.\"), icon = \"notice-warning\" })\
+                        end\
+                    end,\
+                })\
+            end\
+        end)\
+    end }\
+\
+    local refresh_btn = { text = _(\"Refresh metadata\"), callback = function()\
+        closeModal()\
+        if bw.orbitui_refreshMetadata and bw:orbitui_refreshMetadata({ book.filepath }) then return end\
+        local ok_bim, BIM = pcall(require, \"bookinfomanager\")\
+        -- Repo.bimDelete, not BIM's own: that one leaves a statement open,\
+        -- and the re-extraction's row was lost with it.\
+        if ok_bim and BIM and BIM.deleteBookInfo then\
+            Repo.bimDelete(BIM, book.filepath)\
+        end\
+        -- And from the batch rows, or the extraction check still finds it.\
+        Repo.forgetBook(book.filepath)\
+        -- Asked for: the cover comes back too, plugin format or not.\
+        bw:_allowCoverFetch(book.filepath)\
+        pcall(function() require(\"lib/bookshelf_scaled_cover_cache\"):drop(book.filepath) end)\
+        Repo.invalidateProgressCache(book.filepath)\
+        Repo.invalidateBookCache(\"refresh-metadata\")\
+        if bw._hero_current_memo and bw._hero_current_memo.fp == book.filepath then\
+            bw._hero_current_memo = nil\
+        end\
+        bw:_rebuild(); UIManager:setDirty(bw, \"ui\")\
+        UIManager:show(require(\"ui/widget/notification\"):new{\
+            text = _(\"Metadata refresh queued\"), timeout = 2 })\
+    end }\
+    -- The reader's own publish date (%published, the Publication year sort):\
+    -- wins over every source; empty goes back to the book's own. Opened from\
+    -- the Publish date row below the actions.\
+    local pubdate_btn = { callback = function()\
+        local Published = require(\"lib/bookshelf_published\")\
+        local function done()\
+            require(\"lib/bookshelf_sort_engine\").clearPublishedMemo()\
+            Repo.invalidateBookCache(\"publication-date\")\
+            bw:_rebuild(); UIManager:setDirty(bw, \"ui\")\
+            if modal and modal.rebuildTab then modal:rebuildTab() end\
+        end\
+        -- A date picker, not free text: the year, month and day spinners\
+        -- (a spinner's number can be tapped to type it). The extra button\
+        -- goes back to the book's own date, when the reader has set one.\
+        local cur = Published.info(book)\
+        local y, m, d = tostring(cur or \"\"):match(\"^(%d%d%d%d)%-?(%d*)%-?(%d*)$\")\
+        local now = os.date(\"*t\")\
+        local user_set = Published.userDate(book.filepath) ~= nil\
+        -- The way back names where it goes: the book's own date, which,\
+        -- with the reader's set, is read from the file now (one file, on\
+        -- this tap; the reader's date was stored in its place).\
+        local back_text\
+        if user_set then\
+            local own = Published.info(book, { ignore_user = true })\
+            if not own and not Published.orbitui_defer_file_reads then\
+                local ok_r, read = pcall(function()\
+                    local P = require(\"lib/bookshelf_pubdate\")\
+                    return P.read(book.filepath)\
+                end)\
+                own = ok_r and read or nil\
+            end\
+            back_text = own and T(_(\"Use the book's date (%1)\"), BookshelfWidget._fmtPubDate(own))\
+                or _(\"Use the book's date (none)\")\
+        end\
+        local DateTimeWidget = require(\"ui/widget/datetimewidget\")\
+        local picker\
+        -- Opens on the date shown (the reader's, else the book's); a year\
+        -- alone opens on 1 January. No date at all: today.\
+        picker = DateTimeWidget:new{\
+            year = tonumber(y) or now.year, year_min = 1000, year_max = now.year + 1,\
+            month = tonumber(m) or (y and 1 or now.month),\
+            day = tonumber(d) or (y and 1 or now.day),\
+            title_text = _(\"Publish date\"),\
+            ok_text = _(\"Set date\"),\
+            extra_text = back_text,\
+            extra_callback = user_set and function()\
+                Published.setUserDate(book.filepath, nil)\
+                UIManager:close(picker)\
+                done()\
+            end or nil,\
+            callback = function(t)\
+                Published.setUserDate(book.filepath,\
+                    string.format(\"%04d-%02d-%02d\", t.year, t.month, t.day))\
+                done()\
+            end,\
+        }\
+        UIManager:show(picker)\
+    end }\
+    local select_btn = { text = _(\"Select\"), callback = function()\
+        closeModal()\
+        if not bw._selection:isActive() then bw._selection:enterMode() end\
+        bw._selection:add(book.filepath)\
+        bw:_rebuild(); UIManager:setDirty(bw, \"ui\")\
+    end }\
+\
+    -- Move: disabled while this book is the open/parked document\
+    -- (moving the file under a live reader risks the close-time\
+    -- sidecar flush recreating data at the old path).\
+    local FileOpsMod = require(\"lib/bookshelf_file_ops\")\
+    local move_in_use = FileOpsMod.inUsePaths()[book.filepath] and true or false\
+    local move_btn = {\
+        text    = _(\"Move\\xE2\\x80\\xA6\"),\
+        enabled = not move_in_use,\
+        callback = function()\
+            closeModal()\
+            require(\"lib/bookshelf_move_flow\").moveBooks{\
+                bw    = bw,\
+                paths = { book.filepath },\
+            }\
+        end,\
+    }\
+\
+    -- Third-party file-dialog buttons (e.g. Incognito). Run their specs RAW --\
+    -- exactly as the old long-press menu did -- rather than wrapping them to\
+    -- close the popup first; a plugin callback that opens the reader triggers our\
+    -- onShowingReader handler, which closes the popup cleanly.\
+    local plugin_rows = bw:_fileDialogPluginRows(book.filepath)\
+\
+    local function favCardIcon(on)\
+        local star = require(\"lib/bookshelf_cover_progress\").favoriteIcon() == \"star\"\
+        if star then return on and \"\\xEE\\xAF\\x8D\" or \"\\xEE\\xAF\\x91\" end   -- star / star-outline\
+        return on and \"\\xEE\\xA7\\x90\" or \"\\xEE\\xA7\\x94\"                    -- heart / heart-outline\
+    end\
+\
+    -- ── Action tiles ─────────────────────────────────────────────────────────\
+    -- In the maintainer's order, built top to bottom as the grid reads.\
+    -- Icons are the bundled symbols font's Material Design glyphs (PUA, so\
+    -- safe in any UI font). Each has a stable id for the reader's own order\
+    -- (long-press a card); a reader who arranged them keeps that, and a card\
+    -- added since lands after its `after`.\
+    -- Labels of a like length, left to wrap on their own (maintainer: one\
+    -- line beside two looked uneven; a forced break would break badly at\
+    -- another font size).\
+    local tile_specs = {\
+        -- The reader's own mark (Favorites icon: a heart unless they chose\
+        -- the star), filled when it is a favourite, outlined when not.\
+        { id = \"favorite\", text = _(\"Favorite on/off\"), icon = favCardIcon(inFav()),\
+          on = inFav(), callback = fav.callback },\
+    }\
+    -- Curated shelves (issue 390), straight after Favorite: the way books get\
+    -- onto one. The chooser opens over this menu and stays while shelves are\
+    -- ticked; the card is lit when the book is on any of them. (Arranging a\
+    -- book on a hand-ordered shelf is a long-press on it there: _holdBook\
+    -- opens Arrange, which has a way back here.)\
+    do\
+        local CUI = require(\"lib/bookshelf_curated_ui\")\
+        local Curated = require(\"lib/bookshelf_curated\")\
+        local on_a_shelf = false\
+        for _i, sh in ipairs(CUI.shelves()) do\
+            if Curated.has(sh.list, book.filepath) then on_a_shelf = true; break end\
+        end\
+        tile_specs[#tile_specs + 1] = { id = \"shelf\", text = _(\"Add to a shelf\"), icon = CUI.ICON_ADD,\
+            after = \"favorite\",   -- its place in an order saved before it existed\
+            on = on_a_shelf,\
+            callback = function()\
+                CUI.pick{ paths = { book.filepath }, after_id = bw.chip,\
+                    view_mode = bw._viewMode and bw:_viewMode() or nil,\
+                    on_done = function(changed)\
+                        if not changed then return end\
+                        -- A spine shelf keeps its own list for a while.\
+                        if bw._expireSpineFetch then bw:_expireSpineFetch() end\
+                        refreshInPlace()\
+                    end }\
+            end }\
+    end\
+    tile_specs[#tile_specs + 1] = { id = \"info\", text = _(\"Show book info\"), icon = \"\\xEE\\xA7\\xBC\", -- information-outline\
+        callback = show_info.callback }\
+    -- Re-reads the book's own details and cover from the file; the reader's\
+    -- data stays.\
+    tile_specs[#tile_specs + 1] = { id = \"refresh\", text = _(\"Reload metadata\"), icon = \"\\xEE\\xAD\\x8F\", -- refresh\
+        callback = refresh_btn.callback }\
+    tile_specs[#tile_specs + 1] = { id = \"select\", text = _(\"Select multiple\"), icon = \"\\xEE\\xA0\\xB8\", -- checkbox-multiple-marked-outline\
+        callback = select_btn.callback }\
+    -- Hardcover: link this book, or change its link (the menu was reached\
+    -- from a row at the foot of this tab, half under the footer on a PW5).\
+    -- Always offered for a book on the device: with no way to reach\
+    -- Hardcover set up, the menu says what Hardcover is and how to connect.\
+    if not bw:_isRemoteRecord(book) then\
+        tile_specs[#tile_specs + 1] = {\
+            id = \"hardcover\", text = _(\"Hardcover link\"),\
+            on = hc_linked,\
+            icon = require(\"lib/bookshelf_menu_icons\").HARDCOVER,\
+            after = \"select\",   -- its place in an order saved before it existed\
+            callback = function()\
+                closeModal()\
+                UIManager:nextTick(function() bw:_openHardcoverMenu(book) end)\
+            end }\
+    end\
+    -- A record from a device library (Kindle #355, Kobo) is not a file the user\
+    -- put on the device: its path is the reader's own library entry, or a\
+    -- generated conversion of one. Delete would really remove the book from the\
+    -- Kindle, and Move would break the catalogue's idea of where it lives, so\
+    -- those actions go rather than being offered and failing.\
+    local device_library = book.is_kindle or book.is_kobo\
+    if not device_library then\
+        tile_specs[#tile_specs + 1] = { id = \"move\", text = _(\"Move book files\\xE2\\x80\\xA6\"), icon = \"\\xEE\\xA5\\x91\", -- folder-move\
+            enabled = move_btn.enabled, callback = move_btn.callback }\
+    end\
+    tile_specs[#tile_specs + 1] = { id = \"history\", text = remove_history.text, icon = \"\\xEE\\xA7\\x99\", -- history\
+        callback = remove_history.callback }\
+    -- The two that cannot be undone, last and together.\
+    if not device_library then\
+        tile_specs[#tile_specs + 1] = { id = \"reset\", text = reset_btn.text, icon = \"\\xEE\\x9D\\xAE\", -- backup-restore\
+            callback = reset_btn.callback }\
+        tile_specs[#tile_specs + 1] = { id = \"delete\", text = _(\"Delete book files\\xE2\\x80\\xA6\"), icon = \"\\xEE\\xA2\\xBF\", -- delete\
+            callback = delete_btn.callback }\
+    end\
+\
+    -- Third-party actions join the grid after ours, as cards. A button picks its\
+    -- own icon with `bookshelf_icon` (lib/bookshelf_plugin_button); one that does\
+    -- not gets the Action card's puzzle icon.\
+    for _ri, row in ipairs(plugin_rows or {}) do\
+        for _ci, spec in ipairs(row) do\
+            local enabled = spec.enabled\
+            if spec.enabled_func then enabled = spec.enabled_func() end\
+            local text = (spec.text_func and spec.text_func()) or spec.text or \"\"\
+            -- Keyed by the plugin's registration and the button's place in\
+            -- it, so a label that changes with the book (\"Add to X\" /\
+            -- \"Remove from X\") keeps its place and hidden flag, and two\
+            -- plugins' same label are two cards. A plugin added with no id:\
+            -- its label.\
+            local key = row._bs_id and (row._bs_id .. \"#\" .. _ci) or text\
+            tile_specs[#tile_specs + 1] = {\
+                id = \"plugin:\" .. key, text = text,\
+                icon = require(\"lib/bookshelf_plugin_button\").icon(spec),\
+                enabled = enabled ~= false,\
+                callback = require(\"lib/bookshelf_plugin_button\").wrap(spec.callback, modal, UIManager),\
+            }\
+        end\
+    end\
+\
+    -- The reader's own order. A long-press on any card starts arranging:\
+    -- every card shows (hidden ones greyed), a tap picks one, and the strip\
+    -- above moves or hides it. The state lives on the modal, so it survives\
+    -- the tab's rebuilds; each change is saved as it happens, flushed on Done.\
+    local Arr = require(\"lib/bookshelf_book_actions_layout\")\
+    local arranging = modal and modal._actions_edit\
+    local default_order = {}\
+    for i, a in ipairs(tile_specs) do default_order[i] = a.id end\
+    tile_specs = Arr.arrange(tile_specs, arranging or BookshelfSettings.read(Arr.KEY) or {})\
+    local all_tiles = tile_specs\
+    if not arranging then tile_specs = Arr.visible(tile_specs) end\
+    local function rebuildTab()\
+        if modal and modal.rebuildTab then modal:rebuildTab() end\
+    end\
+    local function keepArrangement(final)\
+        local val = { order = arranging.order, hidden = arranging.hidden }\
+        if final then BookshelfSettings.save(Arr.KEY, val)\
+        else BookshelfSettings.saveDeferred(Arr.KEY, val) end\
+    end\
+    local function startArranging(id)\
+        if not modal then return end\
+        local saved = BookshelfSettings.read(Arr.KEY) or {}\
+        local order, hidden = {}, {}\
+        for i, a in ipairs(all_tiles) do order[i] = a.id end\
+        for k, v in pairs(saved.hidden or {}) do hidden[k] = v end\
+        modal._actions_edit = { order = order, hidden = hidden, sel = id }\
+        rebuildTab()\
+    end\
+    local function pick(id)\
+        arranging.sel = id\
+        rebuildTab()\
+    end\
+\
+    -- The popup's shared controls (lib/bookshelf_popup_kit): the button\
+    -- outline and corner, and a tap target with a dpad focus highlight.\
+    local tile_border, tile_radius, tapCell = PopupKit.BORDER, PopupKit.RADIUS, PopupKit.tapCell\
+\
+    -- This is our own widget tree (not a ButtonDialog), so the body is a\
+    -- VerticalGroup we compose freely: small grey headings, and under each a\
+    -- control that draws its whole outline itself, inset from the frame.\
+    -- Thin scrollbar, minimal right reserve; SnugScroll.widen adds the couple\
+    -- of pixels that make it read as a bar beside the frame's border.\
+    local bar_w     = SnugScroll.widen(Screen:scaleBySize(3))\
+    local sb        = bar_w   -- SnugScroll reserves exactly the bar width (no gaps)\
+    local pad_top    = 0   -- first heading strip butts against the tab strip\
+    local pad_bottom = Space.px(20)\
+    -- Left inset = the modal's shared side pad, so heading text + info-row text\
+    -- line up with the tab strip and the description body.\
+    local inset      = (modal and modal._side_pad) or Space.px(28)\
+\
+    -- pubText() -> the date %published and the Publication year sort use, as\
+    -- stored (18 Feb 2016, Mar 1869 or 1869), and where it came from, so a\
+    -- date the book's file gives (often the ebook's own release, not the\
+    -- work's) reads as that; or why there is none (and nil).\
+    local function pubText()\
+        local date, src = require(\"lib/bookshelf_published\").info(book)\
+        if not date then\
+            if src == \"unavailable\" then return _(\"File date lookup deferred in OrbitUI\"), nil, false, src end\
+            if src == \"pending\" then return _(\"Checking the file\\xE2\\x80\\xA6\"), nil, false, src end\
+            return _(\"None in the file\"), nil, false, src\
+        end\
+        local text = BookshelfWidget._fmtPubDate(date)\
+        return text, ({\
+            user      = _(\"set by you\"),\
+            hardcover = _(\"from Hardcover\"),\
+            calibre   = _(\"from calibre\"),\
+            catalog   = _(\"from the catalog\"),\
+            file      = _(\"from the file\"),\
+        })[src], true\
+    end\
+    local pub_below = true\
+\
+    local function buildBody(content_w)\
+        local function heading(text)\
+            -- The FULL tab width (not the scroll-reduced content_w): getSize\
+            -- ignores it, so it can't widen the layout, and the scroll crop\
+            -- trims any overhang.\
+            return bw:_sectionHeadingBar(text, avail_w, font_size, inset)\
+        end\
+        local function padded(widget, top, bottom)\
+            return FrameContainer:new{\
+                bordersize = 0, margin = 0,\
+                padding_left = inset, padding_right = inset,\
+                padding_top = top, padding_bottom = bottom,\
+                widget,\
+            }\
+        end\
+        local vg = VerticalGroup:new{ align = \"left\" }\
+        -- Every focusable section/row, in visual top-to-bottom order, so the\
+        -- modal's dpad nav can chain across ALL of them -- not just the\
+        -- first ButtonTable (each one already builds its own `.layout`,\
+        -- see ui/widget/buttontable.lua; one-off custom rows below get a\
+        -- `{layout=...}` wrapper to match that same shape).\
+        local focus_tables = {}\
+\
+        -- 1. Reading status: one segmented control. It draws its own rounded\
+        -- outline and dividers, so it closes on itself instead of leaning on\
+        -- the frame edge or the next row to finish it (book popup redesign:\
+        -- the old full-width button grid left lines that ended nowhere).\
+        vg[#vg + 1] = heading(_(\"Reading status\"))\
+        do\
+            local items = {\
+                { label = _(\"Unopened\"), key = \"new\" },\
+                { label = _(\"Reading\"),  key = \"reading\" },\
+                { label = _(\"On hold\"),  key = \"abandoned\" },\
+                { label = _(\"Finished\"), key = \"complete\" },\
+            }\
+            local seg, seg_focus = PopupKit.segmented{\
+                items = items, active = BookList.getBookStatus(book.filepath),\
+                face = Font:getFace(\"cfont\", font_size), width = content_w - 2 * inset,\
+                on_pick = function(key)\
+                    bw:_commitBookStatus(book, key)\
+                    -- The header's reading line says the status too.\
+                    if modal and modal.dropHeader then modal:dropHeader() end\
+                    refreshInPlace()\
+                end,\
+            }\
+            focus_tables[#focus_tables + 1] = focusRow(seg_focus)\
+            vg[#vg + 1] = padded(seg, 0, 0)\
+        end\
+\
+        -- 2. Ratings: editable \"Your rating\" stars and, inline, the read-only\
+        -- Hardcover rating (same star glyphs + spacing; a half star where the\
+        -- rating lands on a half) plus the numeric value.\
+        -- nf-fa-star / star_half_empty / star_o (the half matches the hero glyphs).\
+        local STAR_FULL, STAR_HALF, STAR_EMPTY = \"\\xEF\\x80\\x85\", \"\\xEF\\x84\\xA3\", \"\\xEF\\x80\\x86\"\
+        -- In the three-column layout (below) the stars stand as tall as the\
+        -- publish date's button beside them, so the two read as one row: the\
+        -- size grows from the usual one until its row matches the button, as\
+        -- long as five stars still fit a column (a third with Hardcover's\
+        -- rating, a half without). Too narrow: the usual size.\
+        local star_size = font_size + 4\
+        do\
+            local cols_avail = content_w - 2 * inset\
+            local col_w = hc_rating and math.floor(cols_avail / 3) or math.floor(cols_avail / 2)\
+            local btn_h = TextWidget:new{ text = \"Hg\",\
+                face = BFont:getFace(\"cfont\", font_size, { bold = true }) }:getSize().h\
+                + 2 * Space.padding.small + 2 * Size.border.thin\
+            -- Matched on the star's INK, not its line: a glyph's line box has\
+            -- room above and below it, so matching the box left the stars two\
+            -- thirds the button's height. The ink is the rendered glyph's own\
+            -- bitmap (RenderText:getGlyph).\
+            local RenderText = require(\"ui/rendertext\")\
+            local pad = 2 * Space.px(3)   -- buildStar's padding, both sides\
+            for size = font_size + 4, font_size + 40 do\
+                local face = BFont:getFace(\"symbols\", size)\
+                local g = TextWidget:new{ text = \"\\xEF\\x80\\x85\", face = face }\
+                local gw = g:getSize().w\
+                g:free()\
+                -- A clear gap before the next column: two star rows side by\
+                -- side read as one long row without it.\
+                if (gw + pad) * 5 + Space.px(48) > col_w then break end\
+                star_size = size\
+                local ok_g, glyph = pcall(RenderText.getGlyph, RenderText, face, 0xF005)\
+                local ink = ok_g and glyph and glyph.bb and glyph.bb:getHeight() or 0\
+                if ink >= btn_h - 2 * Size.border.thin then break end\
+            end\
+        end\
+        -- A padded star glyph. With on_tap it's an interactive (tappable) star;\
+        -- without, just the padded glyph -- so interactive and read-only star rows\
+        -- get identical per-star spacing.\
+        local function buildStar(glyph, on_tap, on_hold)\
+            local tw = TextWidget:new{ text = glyph,\
+                face = BFont:getFace(\"symbols\", star_size), fgcolor = Blitbuffer.COLOR_BLACK }\
+            local frame = FrameContainer:new{\
+                bordersize = 0, margin = 0, padding = Space.px(3), tw }\
+            if not on_tap then return frame end\
+            local fsz = frame:getSize()\
+            local star = InputContainer:new{ dimen = Geom:new{ w = fsz.w, h = fsz.h }, frame }\
+            star.ges_events = { Tap = { GestureRange:new{ ges = \"tap\", range = star.dimen } } }\
+            star.onTap = function() on_tap(); return true end\
+            if on_hold then\
+                star.ges_events.Hold = { GestureRange:new{ ges = \"hold\", range = star.dimen } }\
+                star.onHold = function() on_hold(); return true end\
+            end\
+            -- The keys' focus: the kit's ring round the star (STYLE.md), not\
+            -- the star inverted, which read as a rating set.\
+            require(\"lib/bookshelf_popup_kit\").ringFocus(star, 0, Space.px(4))\
+            return star\
+        end\
+        -- Rating labels match the body text size (the number, collection names).\
+        local lbl_face = BFont:getFace(\"cfont\", font_size)\
+        local function lbl(text)\
+            return TextWidget:new{ text = text, face = lbl_face, fgcolor = Blitbuffer.COLOR_BLACK }\
+        end\
+        local cur = tonumber(book.rating) or 0\
+        if cur < 0 then cur = 0 elseif cur > 5 then cur = 5 end\
+        cur = math.floor(cur)\
+        -- The two rows' labels share one width, so the stars line up.\
+        local lbl_w = lbl(_(\"Your rating\")):getSize().w\
+        if hc_rating then lbl_w = math.max(lbl_w, lbl(_(\"Hardcover\")):getSize().w) end\
+        local LeftContainer = require(\"ui/widget/container/leftcontainer\")\
+        local function lblCell(text)\
+            local t = lbl(text)\
+            return LeftContainer:new{ dimen = Geom:new{ w = lbl_w, h = t:getSize().h }, t }\
+        end\
+        -- \"Your rating\": label + tappable stars.\
+        local your_group = HorizontalGroup:new{ align = \"center\" }\
+        your_group[#your_group + 1] = lblCell(_(\"Your rating\"))\
+        your_group[#your_group + 1] = HorizontalSpan:new{ width = Space.px(10) }\
+        local your_stars = {}\
+        for i = 1, 5 do\
+            local glyph = (i <= cur) and STAR_FULL or STAR_EMPTY\
+            local function setRating(newv)\
+                bw:_setBookRating(book, newv, { skip_rebuild = true }); book.rating = newv\
+                if modal and modal.rebuildTab then modal:rebuildTab() end\
+                shelfSoon()\
+            end\
+            local star = buildStar(glyph, function()\
+                setRating((i == cur) and nil or i)   -- tap current rating clears it\
+            end, cur > 0 and function()\
+                -- Long-press: clear the rating, after asking (a tap on the\
+                -- star of the rating set does too, but nothing says so).\
+                UIManager:show(require(\"ui/widget/confirmbox\"):new{\
+                    text = _(\"Clear your rating?\"),\
+                    ok_text = _(\"Clear\"),\
+                    ok_callback = function() setRating(nil) end,\
+                })\
+            end or nil)\
+            your_group[#your_group + 1] = star\
+            your_stars[#your_stars + 1] = star\
+        end\
+        -- One dpad row, left-to-right across the 5 stars.\
+        focus_tables[#focus_tables + 1] = focusRow({ your_stars })\
+\
+        local ratings_widget = your_group\
+        -- Hardcover's stars and its number, for the three-column layout.\
+        local hc_parts\
+        if hc_rating then\
+            -- The Hardcover stars tap through to the Reviews tab when present.\
+            local reviews_idx\
+            if modal and modal._tabs then\
+                for ti, t in ipairs(modal._tabs) do\
+                    if t.id == \"reviews\" and t.has_hardcover then reviews_idx = ti; break end\
+                end\
+            end\
+            -- Read-only stars built the same way as the user-rating stars (same\
+            -- per-star padding) so the two rows line up, with a half star where\
+            -- the rating falls on a half.\
+            local halves = math.floor(hc_rating * 2 + 0.5)  -- 0..10 half-units\
+            local hc_stars = HorizontalGroup:new{ align = \"center\" }\
+            for i = 1, 5 do\
+                local glyph = STAR_EMPTY\
+                if halves >= 2 * i then glyph = STAR_FULL\
+                elseif halves == 2 * i - 1 then glyph = STAR_HALF end\
+                hc_stars[#hc_stars + 1] = buildStar(glyph, nil)\
+            end\
+            local hc_stars_widget = hc_stars\
+            if reviews_idx and modal._switchTab then\
+                local fsz = hc_stars:getSize()\
+                local ic  = InputContainer:new{ dimen = Geom:new{ w = fsz.w, h = fsz.h }, hc_stars }\
+                ic.ges_events = { Tap = { GestureRange:new{ ges = \"tap\", range = ic.dimen } } }\
+                ic.onTap = function()\
+                    -- Hardcover's stars open Hardcover's reviews, not yours.\
+                    local rt = modal._tabs[reviews_idx]\
+                    if rt and rt.sources then rt._active_source = 2 end\
+                    modal:_switchTab(reviews_idx); return true\
+                end\
+                -- Dpad/keyboard focus highlight: ic is a plain InputContainer\
+                -- (no stock `invert`, unlike FrameContainer), so paint then\
+                -- pixel-invert on top -- the same idiom as InvertedFrame\
+                -- elsewhere in this file.\
+                ic._focused = false\
+                function ic:paintTo(bb, x, y)\
+                    InputContainer.paintTo(self, bb, x, y)\
+                    if self._focused then bb:invertRect(x, y, self.dimen.w, self.dimen.h) end\
+                end\
+                ic.onFocus = function() ic._focused = true; return true end\
+                ic.onUnfocus = function() ic._focused = false; return true end\
+                hc_stars_widget = ic\
+                focus_tables[#focus_tables + 1] = focusRow({ { ic } })\
+            end\
+            local hc_group = HorizontalGroup:new{ align = \"center\",\
+                lblCell(_(\"Hardcover\")),\
+                HorizontalSpan:new{ width = Space.px(10) },\
+                hc_stars_widget,\
+                HorizontalSpan:new{ width = Space.px(8) },\
+                TextWidget:new{ text = string.format(\"%.1f\", hc_rating),\
+                    face = BFont:getFace(\"cfont\", font_size), fgcolor = Blitbuffer.COLOR_BLACK },\
+            }\
+            -- Hardcover's under yours, always: the column beside them is the\
+            -- publish date's.\
+            ratings_widget = VerticalGroup:new{ align = \"left\",\
+                your_group, VerticalSpan:new{ width = Space.px(8) }, hc_group }\
+            hc_parts = { stars = hc_stars_widget, num = string.format(\"%.1f\", hc_rating) }\
+        end\
+\
+        -- The publish date beside the ratings: the date, where it came from,\
+        -- and Edit. Too narrow for two columns (a big zoom, a small screen):\
+        -- the ratings alone here and the date in a row of its own below the\
+        -- actions (pub_below).\
+        local pub_date_str, pub_from, pub_known, pub_src = pubText()\
+        -- Being read from the file now (queued as the tab asked): look again\
+        -- every couple of seconds while the menu is up, and show the date\
+        -- when it lands, rather than \"Checking\" until the menu is reopened.\
+        if pub_src == \"pending\" and modal and not modal._pub_watch then\
+            modal._pub_watch = true\
+            local tries = 0\
+            local function check()\
+                tries = tries + 1\
+                if not UIManager:isWidgetShown(modal) then modal._pub_watch = nil return end\
+                if require(\"lib/bookshelf_published\").info(book) then\
+                    modal._pub_watch = nil\
+                    if modal.rebuildTab then modal:rebuildTab() end\
+                elseif tries < 15 then\
+                    UIManager:scheduleIn(2, check)\
+                else\
+                    modal._pub_watch = nil\
+                end\
+            end\
+            UIManager:scheduleIn(2, check)\
+        end\
+        -- Half and half, so the date's column starts under the status\
+        -- control's third cell (On hold) and the two line up.\
+        -- Ratings too wide for half (a smaller screen, Hardcover's row with\
+        -- its number): the date starts where they end, if it still fits.\
+        local col_gap = Space.px(16)\
+        local avail   = content_w - 2 * inset\
+        local left_w  = math.max(math.floor(avail / 2), ratings_widget:getSize().w + col_gap)\
+        local right_w = avail - left_w\
+        -- The date is the button (pencil after it, no Edit label): the same\
+        -- button as infoRow's, its height from a bold line plus the pill\
+        -- padding and border. No date: Set date, the reason under it.\
+        local edit_btn = PopupKit.button{\
+            text       = pub_known and pub_date_str or _(\"Set date\"),\
+            face       = BFont:getFace(\"cfont\", font_size),\
+            icon_glyph = \"\\xEE\\xAB\\xAA\", -- nf-md-pencil, U+EAEA\
+            icon_face  = BFont:getFace(\"symbols\", font_size),\
+            icon_after = true,\
+            height     = TextWidget:new{ text = \"Hg\",\
+                face = BFont:getFace(\"cfont\", font_size, { bold = true }) }:getSize().h\
+                + 2 * Space.padding.small + 2 * Size.border.thin,\
+            on_tap     = pubdate_btn.callback,\
+        }\
+        -- tighten: pixels taken off the gap under the heading.\
+        local function colHeading(text, w, tighten)\
+            local face, bold = BFont:getFace(\"cfont\", math.max(10, font_size - 4), { bold = true })\
+            local t = TextWidget:new{ text = require(\"lib/bookshelf_text_segments\").upper(text),\
+                face = face, bold = bold, fgcolor = Blitbuffer.COLOR_DARK_GRAY, max_width = w }\
+            return FrameContainer:new{ bordersize = 0, margin = 0, padding = 0,\
+                padding_top = Space.px(22),\
+                padding_bottom = math.max(0, Space.px(10) - (tighten or 0)), t }\
+        end\
+        local function widest(texts, face)\
+            local m = 0\
+            for _i, t in ipairs(texts) do\
+                local w = TextWidget:new{ text = t, face = face }\
+                m = math.max(m, w:getSize().w); w:free()\
+            end\
+            return m\
+        end\
+        local body_face = BFont:getFace(\"cfont\", font_size)\
+        local btn_gap = Space.px(10)\
+        -- pubColumn(w) -> the publish date's column w wide: its heading, the\
+        -- date and its source, Edit flush right beside them (in line with the\
+        -- actions' right edge); nil when w is too narrow for them.\
+        local src_face = BFont:getFace(\"cfont\", math.max(10, font_size - 3))\
+        local function pubColumn(w, drop)\
+            -- Under the button, in grey: where the date came from, or why\
+            -- there is none. The button decides the layout, not the note\
+            -- (which may wrap), so it is the same from book to book.\
+            local note = pub_known and pub_from or (not pub_known and pub_date_str) or nil\
+            if edit_btn:getSize().w > w then return nil end\
+            local col = VerticalGroup:new{ align = \"left\", colHeading(_(\"Publish date\"), w) }\
+            if drop and drop > 0 then col[#col + 1] = VerticalSpan:new{ width = drop } end\
+            col[#col + 1] = edit_btn\
+            if note then\
+                col[#col + 1] = VerticalSpan:new{ width = Space.px(4) }\
+                col[#col + 1] = TextBoxWidget:new{ text = note,\
+                    face = src_face, fgcolor = Blitbuffer.COLOR_DARK_GRAY, width = w }\
+            end\
+            return col\
+        end\
+        local function row(cols, widths)\
+            local hg = HorizontalGroup:new{ align = \"top\" }\
+            for i, c in ipairs(cols) do\
+                hg[#hg + 1] = c\
+                if i < #cols then\
+                    hg[#hg + 1] = HorizontalSpan:new{ width = math.max(0, widths[i] - c:getSize().w) }\
+                end\
+            end\
+            return hg\
+        end\
+\
+        -- 1. Three columns in thirds: your rating, Hardcover, the publish\
+        -- date, each heading with its stars (or button) right under it. No\
+        -- Hardcover rating: two halves. Stars wider than their column (a\
+        -- smaller screen, a big zoom) go on to 2.\
+        local third = math.floor(avail / 3)\
+        local your_row = HorizontalGroup:new{ align = \"center\" }\
+        for _i, st in ipairs(your_stars) do your_row[#your_row + 1] = st end\
+        -- Hardcover's number goes in its heading (HARDCOVER · 4.2), so its\
+        -- column holds only the stars, as wide as yours.\
+        local hc_row\
+        if hc_parts then\
+            hc_row = HorizontalGroup:new{ align = \"center\", hc_parts.stars }\
+        end\
+        -- Your rating first, then Hardcover's, then the publish date; no\
+        -- Hardcover rating: yours and the date in halves, the date over the\
+        -- status control's third cell (On hold).\
+        local your_w = hc_row and third or math.floor(avail / 2)\
+        local pub_w  = avail - (hc_row and 2 * third or your_w)\
+        local pub3 = (your_row:getSize().w + col_gap <= your_w)\
+            and (not hc_row or hc_row:getSize().w + col_gap <= third)\
+            and pubColumn(pub_w)\
+        if pub3 then\
+            pub_below = false\
+            -- The stars centred on the date's button, so the row reads level.\
+            local bh = edit_btn:getSize().h\
+            local function level(w)\
+                local sz = w:getSize()\
+                return CenterContainer:new{ dimen = Geom:new{ w = sz.w, h = bh }, w }\
+            end\
+            your_row = level(your_row)\
+            if hc_row then hc_row = level(hc_row) end\
+            local cols = { VerticalGroup:new{ align = \"left\",\
+                colHeading(_(\"Your rating\"), your_w - col_gap), your_row } }\
+            local widths = { your_w }\
+            if hc_row then\
+                cols[#cols + 1] = VerticalGroup:new{ align = \"left\",\
+                    colHeading(_(\"Hardcover\") .. \" \\xC2\\xB7 \" .. hc_parts.num, third - col_gap), hc_row }\
+                widths[#widths + 1] = third\
+            end\
+            cols[#cols + 1] = pub3\
+            vg[#vg + 1] = padded(row(cols, widths), 0, 0)\
+            focus_tables[#focus_tables + 1] = focusRow({ { edit_btn } })\
+        else\
+            -- 2. Two columns: the ratings with their labels, Hardcover's under\
+            -- yours, and the date half way across (On hold), or where the\
+            -- ratings end if they are wider than half.\
+            -- \"Your rating\" is centred on its stars, which stand taller than\
+            -- the text: the gap under RATINGS gives up the difference, so its\
+            -- words sit as far under it as the date does under PUBLISH DATE;\
+            -- what the gap cannot give, the date's column drops by.\
+            local lift = math.floor((your_group:getSize().h - lbl(_(\"Your rating\")):getSize().h) / 2)\
+            local right = (ratings_widget:getSize().w + col_gap <= left_w)\
+                and pubColumn(right_w, math.max(0, lift - Space.px(10)))\
+            if right then\
+                pub_below = false\
+                local left = VerticalGroup:new{ align = \"left\",\
+                    colHeading(_(\"Ratings\"), left_w, lift), ratings_widget }\
+                vg[#vg + 1] = padded(row({ left, right }, { left_w }), 0, 0)\
+                focus_tables[#focus_tables + 1] = focusRow({ { edit_btn } })\
+            else\
+                -- 3. Stacked: the ratings here, the date in its own row below\
+                -- the actions.\
+                vg[#vg + 1] = heading(_(\"Ratings\"))\
+                vg[#vg + 1] = padded(ratings_widget, 0, 0)\
+            end\
+        end\
+\
+        -- An info row styled like a File-&-metadata button row: the value on the\
+        -- left (inset to align with the headings), then a bordered ChipButton\
+        -- on the right -- same style as the Tags tab's Edit button (pencil glyph\
+        -- after the label). Used by the Hardcover row.\
+        local function infoRow(text, btn_label, cb, want_bottom_border)\
+            local btn_w = Screen:scaleBySize(150)\
+            local edit_face = BFont:getFace(\"cfont\", font_size)\
+            -- Match the Tags-tab Edit button's height exactly (the Tags-tab\
+            -- pill height: bold cfont label + Size.padding.small + border.thin,\
+            -- top and bottom) so the two Edit buttons look identical.\
+            local pf = BFont:getFace(\"cfont\", font_size, { bold = true })\
+            local btn_h = TextWidget:new{ text = \"Hg\", face = pf }:getSize().h\
+                + 2 * Space.padding.small + 2 * Size.border.thin\
+            local btn = PopupKit.button{\
+                text       = btn_label,\
+                face       = edit_face,\
+                icon_glyph = \"\\xEE\\xAB\\xAA\", -- nf-md-pencil, U+EAEA\
+                icon_face  = BFont:getFace(\"symbols\", font_size),\
+                icon_after = true,\
+                height     = btn_h,\
+                on_tap     = cb,\
+            }\
+            local btn_h = btn:getSize().h\
+            -- Left cell: the value text, inset on the left to align with headings.\
+            local left_w = math.max(Screen:scaleBySize(60), content_w - btn_w)\
+            local txt = TextBoxWidget:new{ text = text,\
+                face  = BFont:getFace(\"cfont\", font_size),\
+                width = math.max(Screen:scaleBySize(40), left_w - inset - Space.px(8)) }\
+            -- Extra room OUTSIDE the button/text (not inside the button itself):\
+            -- same total top+bottom budget as Plugin actions' chip row\
+            -- (padded(rows_vg, 10, 20) below), so the two sections carry the\
+            -- same visual weight even though this row centres its content\
+            -- instead of stacking it top-down.\
+            local row_h = math.max(btn_h, txt:getSize().h)\
+                + Space.px(10) + Space.px(20)\
+            local top_pad = math.floor((row_h - txt:getSize().h) / 2)\
+            local left_cell = FrameContainer:new{\
+                bordersize = 0, margin = 0,\
+                padding_left = inset, padding_right = Space.px(8),\
+                padding_top = top_pad, padding_bottom = row_h - txt:getSize().h - top_pad,\
+                txt,\
+            }\
+            -- btn is a stock Button (native onFocus/onUnfocus) -- just needs\
+            -- registering as its own dpad row.\
+            focus_tables[#focus_tables + 1] = focusRow({ { btn } })\
+            return HorizontalGroup:new{ align = \"top\", left_cell,\
+                bw:_actionButtonColumn(btn, btn_w, row_h, want_bottom_border) }\
+        end\
+\
+        -- 3. Actions: the home screen's Action card look, an icon over a\
+        -- short label on a light grey card, in an even grid. \"On\" (a\
+        -- favourite) fills the card black.\
+        local actions_from, actions_focus_from = #vg + 1, #focus_tables + 1\
+        vg[#vg + 1] = heading(_(\"Actions\"))\
+        do\
+            local w   = content_w - 2 * inset\
+            local gap = Space.px(12)\
+            local icon_face  = BFont:getFace(\"symbols\", font_size + 10)\
+            local label_face = Font:getFace(\"cfont\", math.max(10, font_size - 3))\
+            local pad_v = Space.px(12)\
+            -- As many columns (5 at most) as leave every label two lines or\
+            -- fewer: a small screen or a big zoom drops to 4, 3, then 2.\
+            local function innerW(c)\
+                return math.floor((w - (c - 1) * gap) / c) - 2 * tile_border - 2 * Space.px(6)\
+            end\
+            -- A word joiner after each slash: \"Favorite on/off\" broke\
+            -- after \"on/\" on a PW5; a card keeps such a word whole.\
+            local function keepSlashWords(text) return (text:gsub(\"/\", \"/\\xE2\\x81\\xA0\")) end\
+            local function textH(text, tw)\
+                local tb = TextBoxWidget:new{ text = keepSlashWords(text), face = label_face, width = tw }\
+                local h = tb:getSize().h\
+                tb:free()\
+                return h\
+            end\
+            local cols = 5\
+            while cols > 2 do\
+                local iw, two = innerW(cols), 2 * textH(\"Ag\", innerW(cols))\
+                local fits = true\
+                for _i, a in ipairs(tile_specs) do\
+                    if textH(a.text, iw) > two then fits = false; break end\
+                end\
+                if fits then break end\
+                cols = cols - 1\
+            end\
+            local tile_w = math.floor((w - (cols - 1) * gap) / cols)\
+            local inner_w = innerW(cols)\
+            -- Build the contents first: every tile in the grid takes the\
+            -- tallest one's height, so the rows line up.\
+            local built, content_h = {}, 0\
+            for _i, a in ipairs(tile_specs) do\
+                -- Arranging: every card plain (no \"on\" fill), hidden ones grey.\
+                local on = a.on and not arranging\
+                local fg = (arranging and a.hidden and Blitbuffer.COLOR_GRAY)\
+                    or (arranging and Blitbuffer.COLOR_BLACK)\
+                    -- Grey, not dark grey: that reads as black (STYLE.md).\
+                    or ((a.enabled == false) and Blitbuffer.COLOR_GRAY)\
+                    or (on and Blitbuffer.COLOR_WHITE) or Blitbuffer.COLOR_BLACK\
+                local icon = TextWidget:new{ text = a.icon, face = icon_face, fgcolor = fg }\
+                local label = TextBoxWidget:new{ text = keepSlashWords(a.text), face = label_face,\
+                    width = inner_w, alignment = \"center\", fgcolor = fg,\
+                    bgcolor = on and Blitbuffer.COLOR_BLACK or PopupKit.STRIP_BG }\
+                local content = VerticalGroup:new{ align = \"center\",\
+                    CenterContainer:new{ dimen = Geom:new{ w = inner_w, h = icon:getSize().h }, icon },\
+                    VerticalSpan:new{ width = Space.px(4) },\
+                    label,\
+                }\
+                built[#built + 1] = content\
+                content_h = math.max(content_h, content:getSize().h)\
+            end\
+            local tile_h = content_h + 2 * pad_v + 2 * tile_border\
+            local grid = VerticalGroup:new{ align = \"left\" }\
+            local line, line_cells\
+            for i, a in ipairs(tile_specs) do\
+                if (i - 1) % cols == 0 then\
+                    if line then\
+                        grid[#grid + 1] = line\
+                        grid[#grid + 1] = VerticalSpan:new{ width = gap }\
+                        focus_tables[#focus_tables + 1] = focusRow({ line_cells })\
+                    end\
+                    line, line_cells = HorizontalGroup:new{ align = \"top\" }, {}\
+                else\
+                    line[#line + 1] = HorizontalSpan:new{ width = gap }\
+                end\
+                -- The kit's card: a hairline shadow (the light grey alone is\
+                -- faint on e-ink with no border), shown pressed while its tap\
+                -- acts. The picked card, while arranging, is outlined.\
+                local frame = PopupKit.card{\
+                    padding_top = pad_v + tile_border,\
+                    on = a.on and not arranging,\
+                    width = tile_w, height = tile_h,\
+                    outline = arranging and arranging.sel == a.id,\
+                    CenterContainer:new{\
+                        dimen = Geom:new{ w = tile_w,\
+                                          h = built[i]:getSize().h },\
+                        built[i],\
+                    },\
+                }\
+                local id = a.id\
+                local cell\
+                -- A choice drawn again to show it (picking a card to move,\
+                -- Favorite on and off) acts at once, no pressed look first\
+                -- (STYLE.md); an action that opens something is pressed.\
+                if arranging then\
+                    cell = tapCell(frame, tile_w, tile_h, function() pick(id) end, true,\
+                        function() pick(id) end, true)\
+                else\
+                    cell = tapCell(frame, tile_w, tile_h, a.callback, a.enabled,\
+                        function() startArranging(id) end, id == \"favorite\")\
+                end\
+                line[#line + 1] = cell\
+                line_cells[#line_cells + 1] = cell\
+            end\
+            if line then\
+                grid[#grid + 1] = line\
+                focus_tables[#focus_tables + 1] = focusRow({ line_cells })\
+            end\
+            vg[#vg + 1] = padded(grid, 0, 0)\
+        end\
+\
+\
+        -- Arranging shows the Actions alone, right under the strip.\
+        if arranging then\
+            local only, only_focus = VerticalGroup:new{ align = \"left\" }, {}\
+            for i = actions_from, #vg do only[#only + 1] = vg[i] end\
+            for i = actions_focus_from, #focus_tables do only_focus[#only_focus + 1] = focus_tables[i] end\
+            return only, only_focus\
+        end\
+\
+        -- 4. Publish date, when it did not fit beside the ratings: a row of\
+        -- its own, the date and its source, with Edit beside it.\
+        if pub_below then\
+            local d, from = pubText()\
+            vg[#vg + 1] = heading(_(\"Publish date\"))\
+            vg[#vg + 1] = infoRow(from and (d .. \" \\xC2\\xB7 \" .. from) or d, _(\"Edit\"), pubdate_btn.callback)\
+        end\
+\
+        -- 5. A linked book: one grey line under the actions naming the link\
+        -- (the Hardcover row that sat here went to an action card; the line\
+        -- keeps what it told). A tap on it opens the Hardcover menu.\
+        if hc_linked_label then\
+            local line = TextBoxWidget:new{\
+                text = T(_(\"Hardcover linked to: %1\"), hc_linked_label),\
+                face = BFont:getFace(\"cfont\", math.max(10, font_size - 3)),\
+                fgcolor = Blitbuffer.COLOR_DARK_GRAY, width = content_w - 2 * inset }\
+            local tap = InputContainer:new{ dimen = Geom:new{ w = line:getSize().w, h = line:getSize().h }, line }\
+            tap.ges_events = { TapHcLinked = { GestureRange:new{ ges = \"tap\",\
+                range = function() return tap.dimen end } } }\
+            function tap:onTapHcLinked()\
+                closeModal()\
+                UIManager:nextTick(function() bw:_openHardcoverMenu(book) end)\
+                return true\
+            end\
+            vg[#vg + 1] = VerticalSpan:new{ width = Space.px(10) }\
+            vg[#vg + 1] = padded(tap, 0, 0)\
+        end\
+\
+        return vg, focus_tables\
+    end\
+\
+    -- Full width first; if the body overflows the tab height it will scroll, so\
+    -- rebuild scrollbar-width narrower to leave the bar its own strip.\
+    --\
+    -- Measured on a PW5 before changing this: the two builds are NOT equal\
+    -- cost. The first is ~112ms and the second only ~17ms, because the font\
+    -- faces and text measurements are cached by then. So the \"wasted\" build is\
+    -- 17ms, not 112ms, and building narrow-first to avoid it merely swaps\
+    -- which case pays: this tab FITS here (939px into 1089px), so wide-first\
+    -- is the single-build path and inverting it made the common case slower.\
+    -- Leave it alone.\
+    -- Arranging: the move / hide / Done controls on the tab's strip, which\
+    -- stays put above the scrolling body.\
+    local strip, strip_focus\
+    if arranging then\
+        local sel = arranging.sel\
+        local function move(d)\
+            if not sel then return end\
+            arranging.order = Arr.move(arranging.order, sel, d)\
+            keepArrangement(false); rebuildTab()\
+        end\
+        local hidden_now = sel and arranging.hidden[sel]\
+        -- Greyed where they can't act (STYLE.md): back at the first card,\
+        -- on at the last, Hide for the last card showing.\
+        local at\
+        for i, id in ipairs(arranging.order) do if id == sel then at = i end end\
+        local back = PopupKit.headerButton{ icon = \"\\xEE\\xA1\\x80\", font_size = font_size, -- mdi-chevron-left\
+            icon_size = font_size, enabled = at ~= nil and at > 1, on_tap = function() move(-1) end }\
+        local fwd = PopupKit.headerButton{ icon = \"\\xEE\\xA1\\x81\", font_size = font_size, -- mdi-chevron-right\
+            icon_size = font_size, enabled = at ~= nil and at < #arranging.order,\
+            on_tap = function() move(1) end }\
+        local hide = PopupKit.headerButton{ text = hidden_now and _(\"Show\") or _(\"Hide\"),\
+            font_size = font_size,\
+            enabled = sel ~= nil and (hidden_now or Arr.canHide(all_tiles, arranging.hidden, sel)) and true or false,\
+            on_tap = function()\
+                if not sel then return end\
+                if hidden_now then\
+                    arranging.hidden[sel] = nil\
+                elseif Arr.canHide(all_tiles, arranging.hidden, sel) then\
+                    arranging.hidden[sel] = true\
+                else\
+                    return\
+                end\
+                keepArrangement(false); rebuildTab()\
+            end }\
+        -- Reset: the default order with nothing hidden.\
+        local reset = PopupKit.headerButton{ text = _(\"Reset\"), font_size = font_size,\
+            on_tap = function()\
+                local order = {}\
+                for i, id in ipairs(default_order) do order[i] = id end\
+                arranging.order, arranging.hidden = order, {}\
+                keepArrangement(false); rebuildTab()\
+            end }\
+        local done = PopupKit.headerButton{ text = _(\"Done\"), font_size = font_size, inverted = true,\
+            on_tap = function()\
+                keepArrangement(true)\
+                modal._actions_edit = nil\
+                rebuildTab()\
+            end }\
+        local gap = Space.px(10)\
+        strip = PopupKit.headerRow{ width = avail_w, inset = inset,\
+            left = HorizontalGroup:new{ align = \"center\",\
+                back, HorizontalSpan:new{ width = gap }, fwd,\
+                HorizontalSpan:new{ width = gap }, hide },\
+            buttons = { reset, done } }\
+        strip_focus = focusRow({ { back, fwd, hide, reset, done } })\
+    end\
+    local body_h = avail_h - (strip and strip:getSize().h or 0)\
+    local body, focus_tables = buildBody(avail_w)\
+    if body:getSize().h + pad_top + pad_bottom > body_h then\
+        body, focus_tables = buildBody(avail_w - sb)\
+    end\
+    if strip_focus then table.insert(focus_tables, 1, strip_focus) end\
+    local padded_body = FrameContainer:new{\
+        bordersize = 0, margin = 0,\
+        padding_left = 0, padding_right = 0,\
+        padding_top = pad_top, padding_bottom = pad_bottom,\
+        body,\
+    }\
+    local scroll = SnugScroll:new{\
+        dimen = Geom:new{ w = avail_w, h = body_h },\
+        scroll_bar_width = bar_w,\
+        show_parent = modal,\
+        padded_body,\
+    }\
+    local out = strip and VerticalGroup:new{ align = \"left\", strip, scroll } or scroll\
+    -- Every section's focusable row(s), in visual order, so the modal's\
+    -- FocusManager can chain dpad nav across the whole tab (see\
+    -- ReviewsModal:_assemble's handling of an ARRAY focus_tables).\
+    out.focus_tables = focus_tables\
+    -- The scroll the keys bring a focused row into view in\
+    -- (ReviewsModal:_scrollFocusIntoView).\
+    out.focus_scroll = scroll\
+    return out\
+end\
+\
+-- Native \"★★★★☆ 3.6 · 54 ratings · 14 reviews  [reload Refresh]\" header row for\
+-- the Reviews tab, sitting above its own HTML review list (_buildReviewsTab\
+-- below). The summary used to be part of that HTML with an inline \"Refresh\"\
+-- <a> link; moved out to a native row so Refresh gets real tap feedback\
+-- (pixel-inverts while the fetch is in flight) and its label can match the\
+-- summary text's own (zoom-adjustable) font size, using the same small-button\
+-- style as the Icons Library's search/close buttons (bookshelf_chip_button).\
+-- _reviewKeys(above, btn, on_chips, rest) -> the keys' rows of a review tab's\
+-- top: the source switch's cells (above.seg_rows), its button (Refresh,\
+-- Edit) on the same row when it sits on the chips' row (on_chips), else a\
+-- row of its own; then rest's rows. Fresh tables: merging into the popup's\
+-- layout takes them over.\
+local function _reviewKeys(above, btn, on_chips, rest)\
+    local rows, seg = {}, above and above.seg_rows and above.seg_rows[1]\
+    if seg then\
+        local r = {}\
+        for i, c in ipairs(seg) do r[i] = c end\
+        if on_chips and btn then r[#r + 1] = btn end\
+        rows[#rows + 1] = r\
+    end\
+    if btn and not (seg and on_chips) then rows[#rows + 1] = { btn } end\
+    for _i, r in ipairs(rest or {}) do rows[#rows + 1] = r end\
+    return rows\
+end\
+\
+function BookshelfWidget:_buildReviewsHeader(tab, modal, avail_w, refreshReviews, above)\
+    local HorizontalSpan = require(\"ui/widget/horizontalspan\")\
+    local VerticalSpan   = require(\"ui/widget/verticalspan\")\
+    local font_size = (modal and modal.font_size) or 20\
+    local inset = (modal and modal._side_pad) or Space.px(28)\
+    local content_w = avail_w - 2 * inset\
+\
+    -- Same read-only star glyphs as the Edit tab's Hardcover rating row, but\
+    -- sized to match the per-review stars below (REVIEW_CSS's \".stars\"\
+    -- rule, \"font-size: 1.15em\" of the HTML body's base size) rather than\
+    -- the Edit tab's own \"+4\" -- the two rows sit one above the other here,\
+    -- so a size mismatch reads as inconsistent glyph weight.\
+    local STAR_FULL, STAR_HALF, STAR_EMPTY = \"\\xEF\\x80\\x85\", \"\\xEF\\x84\\xA3\", \"\\xEF\\x80\\x86\"\
+    local star_face = BFont:getFace(\"symbols\", font_size * 1.15)\
+    local text_face = BFont:getFace(\"cfont\", font_size)\
+\
+    local left = HorizontalGroup:new{ align = \"center\" }\
+    local data = tab.data\
+    local rating = data and tonumber(data.rating)\
+    if rating and rating > 0 then\
+        local halves = math.floor(rating * 2 + 0.5)  -- 0..10 half-units\
+        for i = 1, 5 do\
+            local glyph = STAR_EMPTY\
+            if halves >= 2 * i then glyph = STAR_FULL\
+            elseif halves == 2 * i - 1 then glyph = STAR_HALF end\
+            -- No per-star padding here (unlike the Edit tab's tappable \"Your\
+            -- rating\" stars, which need the extra gap as a bigger touch\
+            -- target) -- read-only, so they sit flush like the per-review\
+            -- star rows in the HTML below.\
+            left[#left + 1] = TextWidget:new{\
+                text = glyph, face = star_face, fgcolor = Blitbuffer.COLOR_BLACK }\
+        end\
+        left[#left + 1] = HorizontalSpan:new{ width = Space.px(6) }\
+        left[#left + 1] = TextWidget:new{\
+            text = string.format(\"%.1f\", rating), face = text_face, fgcolor = Blitbuffer.COLOR_BLACK }\
+    end\
+    local function addStat(text)\
+        if #left > 0 then\
+            left[#left + 1] = TextWidget:new{\
+                text = \"  \\xC2\\xB7  \", face = text_face, fgcolor = Blitbuffer.COLOR_BLACK }\
+        end\
+        left[#left + 1] = TextWidget:new{ text = text, face = text_face, fgcolor = Blitbuffer.COLOR_BLACK }\
+    end\
+    if data and tonumber(data.ratings_count) and tonumber(data.ratings_count) > 0 then\
+        local n = tonumber(data.ratings_count)\
+        addStat(n == 1 and _(\"1 rating\") or string.format(_(\"%d ratings\"), n))\
+    end\
+    if data and tonumber(data.reviews_count) and tonumber(data.reviews_count) > 0 then\
+        local n = tonumber(data.reviews_count)\
+        addStat(n == 1 and _(\"1 review\") or string.format(_(\"%d reviews\"), n))\
+    end\
+\
+    -- Refresh chip: sized to the summary text's own line height so it reads as\
+    -- part of the same line, greyed while a fetch is in flight (black would\
+    -- say it is on, STYLE.md). The\
+    -- reload glyph is a Nerd Font PUA icon (nf-md-reload, U+EB52) rendered\
+    -- through the bundled \"symbols\" face -- a plain circular arrow, cleaner\
+    -- at this size than the stock document+arrow SVG icon.\
+    local refresh_btn = PopupKit.headerButton{\
+        text      = _(\"Refresh\"),\
+        icon      = \"\\xEE\\xAD\\x92\", -- nf-md-reload\
+        font_size = font_size,\
+        enabled   = not tab.busy,\
+        on_tap    = function() if not tab.busy then refreshReviews() end end,\
+    }\
+\
+    -- \"Include spoilers\": only when Hardcover has spoiler reviews for the book;\
+    -- off with every popup (tab.show_spoilers is never saved).\
+    local spoilers = data and type(data.spoiler_reviews) == \"table\" and #data.spoiler_reviews > 0\
+    local spoiler_cell\
+    if spoilers and tab.toggleSpoilers then\
+        local box = HorizontalGroup:new{ align = \"center\",\
+            TextWidget:new{ text = tab.show_spoilers and \"\\xEE\\xA0\\xB1\" or \"\\xEE\\xA0\\xB0\", -- checkbox marked / blank\
+                face = BFont:getFace(\"symbols\", font_size + 4), fgcolor = Blitbuffer.COLOR_BLACK },\
+            HorizontalSpan:new{ width = Space.px(8) },\
+            TextWidget:new{ text = _(\"Include spoilers\"), face = text_face, fgcolor = Blitbuffer.COLOR_BLACK },\
+        }\
+        local bs = box:getSize()\
+        -- A switch, drawn again to show it: at once (STYLE.md).\
+        spoiler_cell = PopupKit.tapCell(box, bs.w, bs.h, function() tab.toggleSpoilers() end,\
+            nil, nil, true)\
+    end\
+    -- withSpoilers(line): the line with the switch at its right end, or\
+    -- under it when they don't fit side by side.\
+    local function withSpoilers(line)\
+        if not spoiler_cell then return line end\
+        local lw, bw = line and line:getSize().w or 0, spoiler_cell:getSize().w\
+        if lw == 0 then\
+            return HorizontalGroup:new{ align = \"center\",\
+                HorizontalSpan:new{ width = math.max(0, content_w - bw) }, spoiler_cell }\
+        end\
+        if lw + Space.px(20) + bw <= content_w then\
+            return HorizontalGroup:new{ align = \"center\", line,\
+                HorizontalSpan:new{ width = content_w - lw - bw }, spoiler_cell }\
+        end\
+        return VerticalGroup:new{ align = \"left\", line,\
+            VerticalSpan:new{ width = Space.px(6) }, spoiler_cell }\
+    end\
+    local left_w, right_w = left:getSize().w, refresh_btn:getSize().w\
+    -- Under the source chips: Refresh joins the chips' own row, and stays\
+    -- there once the summary arrives -- the summary is a second line on the\
+    -- same strip. (The caller then skips its separate `above`.)\
+    local spoiler_rows = spoiler_cell and { { spoiler_cell } } or nil\
+    if above then\
+        local merged = self:_chipsWithButton(above, refresh_btn, avail_w, inset)\
+        if merged and left_w == 0 and not spoiler_cell then\
+            return merged, true, _reviewKeys(above, refresh_btn, true)\
+        end\
+        local seg = above.seg\
+        if merged and seg then\
+            local chips_row = HorizontalGroup:new{ align = \"center\", seg,\
+                HorizontalSpan:new{ width = content_w - seg:getSize().w - right_w }, refresh_btn }\
+            return PopupKit.withShadow(FrameContainer:new{\
+                bordersize = 0, margin = 0, width = avail_w,\
+                background = PopupKit.STRIP_BG,\
+                padding_left = inset, padding_right = inset,\
+                padding_top = Space.px(10), padding_bottom = Space.px(10),\
+                VerticalGroup:new{ align = \"left\",\
+                    chips_row, VerticalSpan:new{ width = Space.px(10) }, withSpoilers(left_w > 0 and left or nil) },\
+            }, avail_w), true, _reviewKeys(above, refresh_btn, true, spoiler_rows)\
+        end\
+    end\
+    local gap = Space.px(10)\
+    local row\
+    if left_w > 0 and left_w + gap + right_w <= content_w then\
+        row = HorizontalGroup:new{ align = \"center\",\
+            left, HorizontalSpan:new{ width = content_w - left_w - right_w }, refresh_btn }\
+    elseif left_w > 0 then\
+        -- Doesn't fit side by side (narrow screen / large zoom) -- stack.\
+        row = VerticalGroup:new{ align = \"left\",\
+            left, VerticalSpan:new{ width = Space.px(6) }, refresh_btn }\
+    else\
+        -- No rating data yet (still loading) -- just the button, flush right\
+        -- where it'll end up once the summary text appears.\
+        row = HorizontalGroup:new{ align = \"center\",\
+            HorizontalSpan:new{ width = math.max(0, content_w - right_w) }, refresh_btn }\
+    end\
+    -- The switch on its own line under the summary and Refresh.\
+    if spoiler_cell then\
+        row = VerticalGroup:new{ align = \"left\", row,\
+            VerticalSpan:new{ width = Space.px(10) }, withSpoilers(nil) }\
+    end\
+\
+    return PopupKit.withShadow(FrameContainer:new{\
+        bordersize = 0, margin = 0, width = avail_w,\
+        background = PopupKit.STRIP_BG,\
+        padding_left = inset, padding_right = inset,\
+        padding_top = Space.px(10), padding_bottom = Space.px(10),\
+        row,\
+    }, avail_w), false, _reviewKeys(above, refresh_btn, false, spoiler_rows)\
+end\
+\
+-- _buildReviewsTab: the Reviews tab's body -- the native header above, then\
+-- the review-list HTML in its own scroller sized to whatever height the\
+-- header leaves. A dedicated ScrollHtmlWidget rather than the modal's shared\
+-- one, so this tab's own native header can sit above it without disturbing\
+-- the shared scroller's fixed height used by the other (headerless) HTML tabs.\
+-- Its source switch, Refresh and Include spoilers take the keys.\
+function BookshelfWidget:_buildReviewsTab(tab, modal, avail_w, avail_h, refreshReviews, above)\
+    local header, merged, keys = self:_buildReviewsHeader(tab, modal, avail_w, refreshReviews, above)\
+    local body = self:_headedHtmlBody(modal, avail_w, avail_h, header, tab.html,\
+                                      (not merged) and above or nil)\
+    if keys and #keys > 0 then body.focus_tables = { focusRow(keys) } end\
+    return body\
+end\
+\
+-- _chipsWithButton(above, btn, avail_w, inset): the Reviews tab's source\
+-- chips with the header's button (Edit / Refresh) at the right end of the\
+-- same row, so the pair costs one row rather than two. nil when they do not\
+-- fit side by side.\
+function BookshelfWidget:_chipsWithButton(above, btn, avail_w, inset)\
+    local seg = above.seg\
+    if not seg then return nil end\
+    if seg:getSize().w + Space.px(10) + btn:getSize().w > avail_w - 2 * inset then return nil end\
+    return PopupKit.headerRow{ width = avail_w, inset = inset, left = seg, buttons = { btn } }\
+end\
+\
+-- _headedHtmlBody(modal, avail_w, avail_h, header, html, above): a native\
+-- header row, then `html` in its own scroller sized to what is\
+-- left. `above` (optional) sits over the header: the Reviews tab's source\
+-- chips. Shared by Hardcover's reviews and the reader's own.\
+function BookshelfWidget:_headedHtmlBody(modal, avail_w, avail_h, header, html, above)\
+    local ScrollHtmlWidget = require(\"ui/widget/scrollhtmlwidget\")\
+    local top = above and VerticalGroup:new{ align = \"left\", above, header } or header\
+    local header_h = top:getSize().h\
+    -- No rule between the header and the text: the popup draws lines only in\
+    -- its frame. Most of the shared body top padding is redundant under the\
+    -- header, so shrink it to a small residual rather than dropping it to 0\
+    -- (_buildSourcedBody's padding-top override, same technique).\
+    local css = modal._css .. string.format(\"\\nbody { padding-top: %dpx; }\", Space.px(8))\
+    -- Through the modal's _scroller, NOT a raw ScrollHtmlWidget: the stock\
+    -- widget claims every south swipe even with nothing above the fold, so\
+    -- swipe-down-to-close (issue 338) worked on every tab except this one.\
+    local opts = {\
+        html_body         = html or \"<p></p>\",\
+        css               = css,\
+        default_font_size = Screen:scaleBySize((modal and modal.font_size) or 20),\
+        width             = avail_w,\
+        height            = math.max(Screen:scaleBySize(80), avail_h - header_h),\
+        dialog            = modal,\
+    }\
+    local scroller = (modal and modal._scroller) and modal:_scroller(opts)\
+                     or ScrollHtmlWidget:new(opts)\
+    return VerticalGroup:new{ align = \"left\", top, scroller }\
+end\
+\
+-- _buildMyReviewBody(book, modal, avail_w, avail_h, above): the reader's own\
+-- review (issues 238, 315), KOReader's summary.note, with an Edit button in\
+-- the header row where Hardcover's has Refresh. With no review yet, a\
+-- \"Write a review\" button there instead. Read fresh on every build, so a save\
+-- followed by rebuildTab shows the new text.\
+function BookshelfWidget:_buildMyReviewBody(book, modal, avail_w, avail_h, above)\
+    local HorizontalSpan = require(\"ui/widget/horizontalspan\")\
+    local VerticalSpan   = require(\"ui/widget/verticalspan\")\
+    local Tokens         = require(\"lib/bookshelf_tokens\")\
+    local font_size = (modal and modal.font_size) or 20\
+    local inset = (modal and modal._side_pad) or Space.px(28)\
+    local content_w = avail_w - 2 * inset\
+    local text_face = BFont:getFace(\"cfont\", font_size)\
+    local review = self:_bookReview(book)\
+    local function edit()\
+        self:_editBookReview(book, function()\
+            if modal and modal.rebuildTab then modal:rebuildTab() end\
+        end)\
+    end\
+    local btn = PopupKit.headerButton{\
+        text      = review and _(\"Edit\") or _(\"Write a review\"),\
+        icon      = \"\\xEE\\xAB\\xAA\", -- nf-md-pencil, U+EAEA\
+        font_size = font_size,\
+        on_tap    = edit,\
+    }\
+    if not review then\
+        -- The header row alone: a grey note where the review will be, the\
+        -- button at the right end like every tab's own action.\
+        local col = VerticalGroup:new{ align = \"left\" }\
+        local on_chips = above and self:_chipsWithButton(above, btn, avail_w, inset)\
+        col[#col + 1] = on_chips or PopupKit.headerRow{ width = avail_w, inset = inset, buttons = { btn } }\
+        col[#col + 1] = FrameContainer:new{\
+            bordersize = 0, margin = 0,\
+            padding_left = inset, padding_right = inset,\
+            padding_top = Space.px(16), padding_bottom = 0,\
+            TextWidget:new{ text = _(\"No review yet.\"), face = text_face,\
+                fgcolor = Blitbuffer.COLOR_DARK_GRAY, max_width = content_w },\
+        }\
+        local used = 0\
+        for _i, w in ipairs(col) do used = used + w:getSize().h end\
+        if used < avail_h then col[#col + 1] = VerticalSpan:new{ width = avail_h - used } end\
+        local body = FrameContainer:new{ bordersize = 0, margin = 0, padding = 0,\
+            background = Blitbuffer.COLOR_WHITE, col }\
+        -- The source switch above it is not drawn here when the button\
+        -- has its own row: only the button then.\
+        body.focus_tables = { focusRow(on_chips and _reviewKeys(above, btn, true) or { { btn } }) }\
+        return body\
+    end\
+    -- Edit on the chips' row when they fit side by side, else a row of its\
+    -- own under them; the source switch and Edit take the keys.\
+    local on_chips = above and self:_chipsWithButton(above, btn, avail_w, inset)\
+    local header = on_chips or PopupKit.headerRow{ width = avail_w, inset = inset, buttons = { btn } }\
+    local body = self:_headedHtmlBody(modal, avail_w, avail_h, header, Tokens.myReviewHtml(review),\
+                                      (not on_chips) and above or nil)\
+    body.focus_tables = { focusRow(_reviewKeys(above, btn, on_chips ~= nil)) }\
+    return body\
+end\
+\
+-- _buildBookCoverTab — the Cover tab body: a toolbar (device picker + online\
+-- search) above a paginated grid of candidate covers. Local candidates are\
+-- cached on `state` for the modal's life; online ones live there after a search.\
+-- Tapping a cell applies it immediately (self:_applyCoverCandidate). Returns the\
+-- body with .focus_tables set for dpad nav. `state` is the cross-rebuild upvalue\
+-- from _showBookDetail; `modal` the live ReviewsModal (== show_parent).\
+function BookshelfWidget:_buildBookCoverTab(book, show_parent, avail_w, avail_h, state, modal)\
+    local VerticalGroup   = require(\"ui/widget/verticalgroup\")\
+    local HorizontalGroup = require(\"ui/widget/horizontalgroup\")\
+    local HorizontalSpan  = require(\"ui/widget/horizontalspan\")\
+    local VerticalSpan    = require(\"ui/widget/verticalspan\")\
+    local CenterContainer = require(\"ui/widget/container/centercontainer\")\
+    local FrameContainer  = require(\"ui/widget/container/framecontainer\")\
+    local TextWidget      = require(\"lib/bookshelf_colour_text\")\
+    local CoverApply      = require(\"lib/bookshelf_cover_apply\")\
+    local CoverGridCell   = require(\"lib/bookshelf_cover_grid_cell\")\
+    local Pagination      = require(\"lib/bookshelf_pagination\")\
+    local SpineWidget     = require(\"lib/bookshelf_spine_widget\")\
+    local bw = self\
+    -- show_parent IS the live ReviewsModal (see ReviewsModal:_activeBody). The\
+    -- `modal` upvalue from _showBookDetail is still nil during the modal's first\
+    -- _assemble (it's assigned only after ReviewsModal:new returns), so prefer\
+    -- show_parent -- always the current instance.\
+    modal = modal or show_parent\
+\
+    -- The body must fill the SAME region the other tabs do: full body height\
+    -- (avail_h) and the same left/right content inset (_side_pad). avail_w is the\
+    -- full modal width; other tabs inset their content by _side_pad. Matching it\
+    -- keeps the modal frame the same size across tabs -- otherwise a shorter/\
+    -- wider Cover body shrinks + recentres the whole modal and leaves the prior\
+    -- tab's pixels around it (the reported painting glitch).\
+    local side_pad  = (show_parent and show_parent._side_pad) or Space.px(28)\
+    local content_w = avail_w - 2 * side_pad\
+\
+    local _gettime = require(\"lib/bookshelf_gettime\")\
+    local t0 = _gettime()\
+    if not state.local_candidates then\
+        state.local_candidates = CoverApply.localCandidates(book)\
+        logger.dbg(string.format(\"[bookshelf perf] Cover tab: localCandidates %.0fms (%d)\",\
+            (_gettime() - t0) * 1000, #state.local_candidates))\
+    end\
+    local candidates = {}\
+    local seen_local = {}\
+    for _i, c in ipairs(state.local_candidates) do\
+        candidates[#candidates + 1] = c\
+        if c.filesize then\
+            seen_local[table.concat({ c.width or \"?\", c.height or \"?\", c.filesize }, \"\\1\")] = true\
+        end\
+    end\
+    if type(state.online_candidates) == \"table\" then\
+        for _i, c in ipairs(state.online_candidates) do\
+            -- Skip an online result that IS a local candidate (e.g. the cover\
+            -- just applied from this very search, now showing as \"Current\
+            -- cover\") so it doesn't appear twice.\
+            local key = c.filesize\
+                and table.concat({ c.width or \"?\", c.height or \"?\", c.filesize }, \"\\1\")\
+            if not (key and seen_local[key]) then\
+                candidates[#candidates + 1] = c\
+            end\
+        end\
+    end\
+    local total = #candidates\
+\
+    -- Toolbar: the two ways in as the tab's header buttons, at the right\
+    -- end of the first row like every tab's own actions.\
+    local base     = (modal and modal.font_size) or 18\
+    local device_btn = PopupKit.headerButton{ text = _(\"Choose from device\"),\
+        icon = \"\\xEE\\xA5\\x8E\", font_size = base, -- folder-image\
+        on_tap = function() bw:_pickBookCoverFromDevice(book, modal, state) end }\
+    local online_btn = PopupKit.headerButton{ text = _(\"Search online\\xE2\\x80\\xA6\"),\
+        icon = \"\\xEE\\xB8\\x8D\", font_size = base, -- search-web\
+        on_tap = function() bw:_searchOnlineCovers(book, state, modal) end }\
+    local strip = PopupKit.headerRow{ width = avail_w, inset = side_pad,\
+        buttons = { device_btn, online_btn } }\
+    local toolbar_h = strip:getSize().h\
+\
+    -- Grid geometry: 2-4 columns by width; rows to fill the height.\
+    local gap      = Space.px(10)\
+    local min_cell = Screen:scaleBySize(120)\
+    local n_cols   = math.max(2, math.min(4, math.floor((content_w + gap) / (min_cell + gap))))\
+    local cell_w   = math.floor((content_w - gap * (n_cols - 1)) / n_cols)\
+\
+    local caption_font = math.max(10, math.min((modal and modal.font_size) or 13, 15))\
+    local cap_h  = CoverGridCell.captionHeight(caption_font)\
+    local ring   = SpineWidget.SELECTED_BORDER\
+    -- Non-cover part of a cell (caption + gap + ring headroom top/bottom).\
+    local chrome = Space.px(4) + cap_h + 2 * ring\
+\
+    local top_pad     = 0              -- the strip sits right under the tab bar\
+    local tb_gap      = Space.px(12)    -- gap below the strip\
+    -- Space reserved below the grid for the pagination row plus a standard gap\
+    -- beneath it (matching the pagination spacing used elsewhere) so the page\
+    -- nav sits just off the modal's Close/Open footer, not jammed against it.\
+    local nav_bottom_pad = Space.padding.fullscreen\
+    local nav_reserve = Screen:scaleBySize(44) + nav_bottom_pad\
+    local grid_avail_h = math.max(1, avail_h - top_pad - toolbar_h - tb_gap - nav_reserve)\
+    -- Pack as many rows as fit while each cover stays at least ~1.05x its width\
+    -- tall (still portrait), so the grid FILLS the body instead of one tall row\
+    -- with dead space below. Capped by the candidate count so a handful of\
+    -- candidates don't leave an empty trailing row.\
+    local rows = 1\
+    for r = 1, 4 do\
+        local ch = math.floor((grid_avail_h - gap * (r - 1)) / r)\
+        if (ch - chrome) >= math.floor(cell_w * 1.05) then rows = r end\
+    end\
+    rows = math.min(rows, math.max(1, math.ceil(total / n_cols)))\
+    local cell_h = math.floor((grid_avail_h - gap * (rows - 1)) / rows)\
+    -- Cap cell height to a natural cover (2:3) so a single row of one or two\
+    -- candidates renders normal-sized covers, not full-body-height slabs. The\
+    -- unused space becomes the trailing fill spacer below.\
+    local cell_cap = math.floor(cell_w * 1.5) + chrome\
+    if cell_h > cell_cap then cell_h = cell_cap end\
+\
+    local page_size   = n_cols * rows\
+    local total_pages = math.max(1, math.ceil(total / math.max(1, page_size)))\
+    if state.page > total_pages then state.page = total_pages end\
+    if state.page < 1 then state.page = 1 end\
+\
+    local col = VerticalGroup:new{ align = \"center\" }\
+    col[#col + 1] = VerticalSpan:new{ width = tb_gap }\
+\
+    -- D-pad rows, top to bottom: the two buttons, then each grid row. focusRow\
+    -- takes a list of ROWS: a flat list made every cover cell a row of its own,\
+    -- so focus sat on an unpainted child and Press crashed (GitHub issue 361).\
+    local focus_tables = { focusRow({ { device_btn, online_btn } }) }\
+    if total == 0 then\
+        col[#col + 1] = CenterContainer:new{\
+            dimen = Geom:new{ w = content_w, h = math.max(cell_h, Screen:scaleBySize(80)) },\
+            TextWidget:new{\
+                text = _(\"No covers stored yet. Use Search online or Choose from device.\"),\
+                face = BFont:getFace(\"cfont\", 15),\
+                max_width = content_w - Space.px(20),\
+            },\
+        }\
+    else\
+        -- Build the grid as a FIXED-height block (rows * cell_h) so the\
+        -- pagination row below sits at the same Y on every page -- a final page\
+        -- with fewer rows pads the remainder rather than pulling the nav up.\
+        local grid = VerticalGroup:new{ align = \"center\" }\
+        local grid_h = 0\
+        local start_i = (state.page - 1) * page_size\
+        for r = 0, rows - 1 do\
+            local has_any = false\
+            for c = 0, n_cols - 1 do\
+                if candidates[start_i + r * n_cols + c + 1] then has_any = true break end\
+            end\
+            if not has_any then break end  -- remaining rows are the block padding\
+            local row_group = HorizontalGroup:new{ align = \"top\" }\
+            local row_layout = {}\
+            for c = 0, n_cols - 1 do\
+                local idx = start_i + r * n_cols + c + 1\
+                local cand = candidates[idx]\
+                if cand then\
+                    local cell = CoverGridCell.new{\
+                        width = cell_w, height = cell_h, candidate = cand,\
+                        font_size = caption_font,\
+                        on_tap = function(cc) bw:_applyCoverCandidate(book, cc, modal, state) end,\
+                    }\
+                    row_group[#row_group + 1] = cell\
+                    row_layout[#row_layout + 1] = cell\
+                else\
+                    row_group[#row_group + 1] = HorizontalSpan:new{ width = cell_w }\
+                end\
+                if c < n_cols - 1 then\
+                    row_group[#row_group + 1] = HorizontalSpan:new{ width = gap }\
+                end\
+            end\
+            if #grid > 0 then\
+                grid[#grid + 1] = VerticalSpan:new{ width = gap }; grid_h = grid_h + gap\
+            end\
+            grid[#grid + 1] = row_group; grid_h = grid_h + cell_h\
+            if #row_layout > 0 then focus_tables[#focus_tables + 1] = focusRow({ row_layout }) end\
+        end\
+        local grid_block_h = rows * cell_h + (rows - 1) * gap\
+        if grid_h < grid_block_h then\
+            grid[#grid + 1] = VerticalSpan:new{ width = grid_block_h - grid_h }\
+        end\
+        col[#col + 1] = grid\
+    end\
+\
+    if total_pages > 1 then\
+        local nav = Pagination.buildNav{\
+            page = state.page, total_pages = total_pages, show_parent = show_parent,\
+            -- Text chevrons: this nav lives inside the book-detail modal, whose\
+            -- cropping_widget routes icon-button flash through the raw\
+            -- widgetInvert/invertRect path that segfaulted on a PocketBook\
+            -- InkPad framebuffer. Text buttons use the bounds-safe repaint path.\
+            text_chevrons = true,\
+            on_goto = function(target)\
+                state.page = target\
+                if modal and modal.rebuildTab then modal:rebuildTab() end\
+            end,\
+        }\
+        local nav_h = nav:getSize().h\
+        -- Bottom-anchor the nav: push any leftover grid slack ABOVE it so it\
+        -- always sits exactly nav_bottom_pad above the footer, instead of the\
+        -- trailing fill piling up below it when the covers don't fill the\
+        -- height (which was making the gap balloon).\
+        local used = toolbar_h   -- the strip above the column\
+        for _i, ch in ipairs(col) do used = used + (ch.getSize and ch:getSize().h or 0) end\
+        local slack = avail_h - used - nav_h - nav_bottom_pad\
+        if slack > 0 then col[#col + 1] = VerticalSpan:new{ width = slack } end\
+        col[#col + 1] = CenterContainer:new{\
+            dimen = Geom:new{ w = content_w, h = nav_h }, nav,\
+        }\
+        col[#col + 1] = VerticalSpan:new{ width = nav_bottom_pad }\
+    end\
+\
+    -- Pad the column to the full body height so the modal frame matches the\
+    -- other tabs (they size their scroller to avail_h). Then inset horizontally\
+    -- by side_pad. The white background erases the whole region on every\
+    -- (re)assemble, so switching to/from this tab leaves no stale pixels.\
+    -- Sum children directly rather than calling col:getSize() mid-build --\
+    -- VerticalGroup caches its size/offsets on first getSize(), so measuring the\
+    -- group before appending the spacer would freeze the short height and ignore\
+    -- the pad (the VerticalGroup getSize caching gotcha).\
+    local used_h = toolbar_h   -- the strip above the column\
+    for _i, ch in ipairs(col) do\
+        used_h = used_h + (ch.getSize and ch:getSize().h or 0)\
+    end\
+    if used_h < avail_h then\
+        col[#col + 1] = VerticalSpan:new{ width = avail_h - used_h }\
+    end\
+    local framed = FrameContainer:new{\
+        bordersize = 0, margin = 0, padding = 0,\
+        padding_left = side_pad, padding_right = side_pad,\
+        background = Blitbuffer.COLOR_WHITE,\
+        col,\
+    }\
+    -- The controls strip runs edge to edge above the inset column.\
+    framed = VerticalGroup:new{ align = \"left\", strip, framed }\
+    logger.dbg(string.format(\"[bookshelf perf] Cover tab: build %.0fms (%d covers)\",\
+        (_gettime() - t0) * 1000, total))\
+    framed.focus_tables = focus_tables\
+    -- Expose the grid's pagination so the modal's horizontal swipe pages the\
+    -- covers first and only cycles tabs once you're off the end (see\
+    -- ReviewsModal:onSwipe). Absent when there's a single page.\
+    if total_pages > 1 then\
+        framed._pager = {\
+            page = state.page,\
+            total_pages = total_pages,\
+            goto_page = function(target)\
+                state.page = target\
+                if modal and modal.rebuildTab then modal:rebuildTab() end\
+            end,\
+        }\
+    end\
+    return framed\
+end\
+\
+-- Apply a tapped candidate as the book's cover (or revert to embedded), then\
+-- close + reopen the modal on the Cover tab so the (cached) header thumbnail and\
+-- the grid rings reflect the new active cover. Immediate-apply per the design.\
+-- `state` is the Cover tab's cross-rebuild table, threaded through the reopen.\
+function BookshelfWidget:_applyCoverCandidate(book, candidate, modal, state)\
+    if not (book and book.filepath and candidate) then return end\
+    local CoverApply = require(\"lib/bookshelf_cover_apply\")\
+    local ok, err\
+    if candidate.kind == \"embedded\" then\
+        ok, err = CoverApply.revertToEmbedded(book.filepath)\
+        -- BIM's cached cover_bb may still hold the previously-applied cover:\
+        -- while a custom cover was active, a shelf re-extract cached IT (BIM\
+        -- extracts the active DocSettings custom cover). With the custom cover\
+        -- now removed, the render falls back to that stale cover_bb, so the\
+        -- header/hero keep showing the old cover after \"revert to embedded\".\
+        -- Force a fresh extraction (custom gone -> embedded) so cover_bb is\
+        -- correct before the reopened modal's buildBookMeta reads it. delete +\
+        -- extract mirrors the stale-sweep's proven re-extract pattern.\
+        if ok then\
+            pcall(function()\
+                local BIM = require(\"bookinfomanager\")\
+                if BIM and BIM.extractBookInfo then\
+                    local sw = Screen:getWidth()\
+                    local cw = math.max(1, math.floor(sw * 0.5))\
+                    if BIM.deleteBookInfo then Repo.bimDelete(BIM, book.filepath) end\
+                    Repo.forgetBook(book.filepath)\
+                    BIM:extractBookInfo(book.filepath,\
+                        { max_cover_w = cw, max_cover_h = math.floor(cw * 1.5) })\
+                end\
+            end)\
+        end\
+    elseif not candidate.local_path then\
+        self:_hardcoverToast(_(\"That cover is unavailable\"))\
+        return\
+    else\
+        ok, err = CoverApply.apply(book.filepath, candidate.local_path,\
+                                   { label = candidate.source_label })\
+    end\
+    if not ok then\
+        self:_hardcoverToast(err and tostring(err) or _(\"Couldn't set the cover\"))\
+        return\
+    end\
+    -- Stop Hardcover auto-injecting its own cover over a manual pick on linked\
+    -- books (flag-only; the sidecar file is already handled here).\
+    local ok_hc, Hardcover = pcall(require, \"lib/bookshelf_hardcover\")\
+    if ok_hc and Hardcover and Hardcover.isAvailable and Hardcover.isAvailable()\
+            and Hardcover.getLink and Hardcover.getLink(book.filepath)\
+            and Hardcover.markUseCover then\
+        pcall(Hardcover.markUseCover, book.filepath, false)\
+    end\
+    self:_refreshSingleBookCover(book.filepath, \"cover-picker\")\
+\
+    -- Keep the grid order stable across the reopen. Re-deriving the local list\
+    -- inserts a new front-of-list \"Current cover\" (+ \"Previous cover\") and\
+    -- drops the applied online result from its slot, so the whole grid\
+    -- reshuffled on every apply. Instead, when the tapped candidate is one\
+    -- that's already on screen, reuse the cached lists and just move the active\
+    -- ring onto it -- dropping only entries whose file has since vanished (the\
+    -- removed custom cover after a revert) so no blank tile lingers. The fresh\
+    -- \"Current cover\"/\"Previous cover\" entries re-derive on the next open. An\
+    -- off-grid apply (device file picker) isn't in the lists, so fall back to\
+    -- re-deriving there or the new cover wouldn't appear at all.\
+    if type(state) == \"table\" then\
+        local function inList(list)\
+            if type(list) == \"table\" then\
+                for _i, c in ipairs(list) do if c == candidate then return true end end\
+            end\
+            return false\
+        end\
+        if inList(state.local_candidates) or inList(state.online_candidates) then\
+            local function reflag(list)\
+                if type(list) ~= \"table\" then return list end\
+                local kept = {}\
+                for _i, c in ipairs(list) do\
+                    if c.kind == \"embedded\" or CoverApply.fileSize(c.local_path) then\
+                        c.is_active = (c == candidate)\
+                        kept[#kept + 1] = c\
+                    end\
+                end\
+                return kept\
+            end\
+            state.local_candidates  = reflag(state.local_candidates)\
+            state.online_candidates = reflag(state.online_candidates)\
+        else\
+            state.local_candidates = nil  -- off-grid pick: re-derive so it shows\
+        end\
+    end\
+    local bw = self\
+    local fresh = Repo.buildBookMeta(book.filepath, { want_cover = true }) or book\
+    if modal then UIManager:close(modal) end\
+    UIManager:nextTick(function()\
+        bw:_showBookDetail(fresh, { active = \"cover\", cover_state = state })\
+    end)\
+    self:_hardcoverToast(candidate.kind == \"embedded\"\
+        and _(\"Reverted to embedded cover\") or _(\"Cover updated\"))\
+end\
+\
+-- File picker (any image) -> apply as cover. Same PathChooser shape as\
+-- _pickFolderImage; routes through _applyCoverCandidate so refresh/reopen match.\
+function BookshelfWidget:_pickBookCoverFromDevice(book, modal, state)\
+    if not (book and book.filepath) then return end\
+    local ImagePicker = require(\"lib/bookshelf_image_picker\")\
+    local bw = self\
+    local start_path = require(\"lib/bookshelf_home_dir\").get()\
+        or (book.filepath:match(\"^(.*)/[^/]+$\")) or \"/\"\
+    UIManager:show(ImagePicker.new{\
+        title            = _(\"Choose cover image\"),\
+        path             = start_path,\
+        onConfirm        = function(image_path)\
+            bw:_applyCoverCandidate(book,\
+                { kind = \"device\", local_path = image_path, source_label = _(\"Device\") },\
+                modal, state)\
+        end,\
+    })\
+end\
+\
+-- \"Search online\" -> fetch candidates (Wi-Fi-gated, user-initiated), then drop\
+-- them into the grid. Wrapped in Trapper so per-source progress shows and the\
+-- user can cancel; never auto-fetches (privacy invariant).\
+function BookshelfWidget:_searchOnlineCovers(book, state, modal)\
+    local CoverFetch = require(\"lib/bookshelf_cover_fetch\")\
+    local bw = self\
+    CoverFetch.runWhenOnline(function()\
+        local CoverSources = require(\"lib/bookshelf_cover_sources\")\
+        local ok_t, Trapper = pcall(require, \"ui/trapper\")\
+        local function run()\
+            local results = CoverSources.searchOnline(book)\
+            state.online_candidates = results\
+            state.page = 1\
+            if modal and not modal._dismissed and modal.rebuildTab then\
+                modal:rebuildTab()\
+            end\
+            if not results or #results == 0 then\
+                bw:_hardcoverToast(_(\"No cover matches found\"))\
+            end\
+        end\
+        if ok_t and Trapper and Trapper.wrap then\
+            Trapper:wrap(run)\
+        else\
+            run()\
+        end\
+    end, function(err)\
+        bw:_hardcoverToast(_(\"Cover search failed\"))\
+        logger.warn(\"[bookshelf cover] online search error\", tostring(err))\
+    end)\
+end\
+\
+-- _showBookDetail(book, opts) — the combined book-detail popup, a tabbed window:\
+-- the book/Hardcover Description tab(s), a Hardcover Reviews tab when linked,\
+-- a Tags tab (all the author / series / collections / genres / folder pills,\
+-- tappable to drill in), and an Edit tab (the book actions, immediate-commit\
+-- -- replaces the long-press ButtonDialog menu) LAST, since it's reached for\
+-- less often than the others. One tab body is mounted at a time, so the\
+-- native scrollers never fight each other. Replaces the separate description\
+-- / reviews modals and the standalone tags sheet.\
+-- opts.active = \"edit\" | \"tags\" | \"reviews\" picks the starting tab (default:\
+-- description, else Edit); opts.on_close fires once on dismiss.\
+function BookshelfWidget:_showBookDetail(book, opts)\
+    opts = opts or {}\
+    if not book or not book.filepath then return end\
+    -- Remote (OPDS) records have no sidecar, no collections and no file to act\
+    -- on, so every tab here would be inert at best and a file op on a\
+    -- pseudo-path at worst (the Edit tab offers Delete). Long-press gets the\
+    -- same read-only viewer the tap path shows. Path-prefix match, so a\
+    -- hero-hydrated record with its flags stripped is caught too.\
+    if self:_isRemoteRecord(book) then\
+        if self:_sourceRemote(book) then self:_showSourceInfo(book) return end\
+        self:_showRemoteBookInfo(book)\
+        return\
+    end\
+    if not opts.active and not opts.classic and self.orbitui_detail_view then\
+        local overview = self:orbitui_detail_view(book, opts)\
+        if overview then return overview end\
+    end\
+    local ReadCollection = require(\"readcollection\")\
+    local in_collections = ReadCollection.getCollectionsWithFile\
+        and ReadCollection:getCollectionsWithFile(book.filepath) or {}\
+    -- Favourites isn't editable through the Collection Manager (it has its\
+    -- own ★ toggle, see bookshelf_collection_manager's _orderedNames) and\
+    -- Save there doesn't preserve memberships outside its own list -- so\
+    -- don't show it as a collection pill in the Tags tab, where it would sit\
+    -- right above that Edit button.\
+    in_collections[ReadCollection.default_collection_name] = nil\
+    -- All categories (like the long-press menu); close_cb nil -- we close the\
+    -- popup explicitly so the drilldown tears the stack down before navigating.\
+    local pill_specs = self:_buildPillSpecs(book, in_collections, nil, nil)\
+\
+    local modal  -- forward ref so a pill tap closes the popup before navigating\
+\
+    -- Genre-source switching (Tags tab, Embedded/Hardcover chips) is cheap to\
+    -- preview live -- just a persisted preference write + a local pill-list\
+    -- swap -- but the shelf-wide consequences (which genre set this book\
+    -- contributes to elsewhere: the shelves it appears on, its hero tags)\
+    -- require invalidating the shared light-meta cache and a full shelf\
+    -- _rebuild. [bookshelf perf] logging showed that pair costing ~600-900ms,\
+    -- ~90% of a chip tap, entirely behind this modal while the user is just\
+    -- previewing sources. Deferred to modal close (Close or Open both route\
+    -- through onClose), and only paid if the source actually ended up\
+    -- different from what it was when the modal opened.\
+    local genre_source_at_open, genre_source_changed\
+    -- The Tags tab's edit mode, kept across its rebuildTab runs.\
+    local tags_editing = false\
+\
+    local tabs = {}\
+    local edit_idx, tags_idx, desc_idx, reviews_idx, cover_idx, highlights_idx\
+    -- Cover tab's cross-rebuild state (current page, cached candidate lists).\
+    -- An upvalue so pagination taps and \"Search online\" survive the tab's\
+    -- rebuildTab (which re-invokes the widget_builder). An apply tears the modal\
+    -- down and reopens; opts.cover_state carries this table across that reopen\
+    -- so a completed online search isn't lost (re-searching would re-download\
+    -- every candidate just to try a second cover).\
+    local cover_tab_state = (type(opts.cover_state) == \"table\" and opts.cover_state)\
+        or { page = 1 }\
+\
+    -- Edit tab spec: the book actions (the old long-press menu), immediate-\
+    -- commit, scrollable. show_parent is the live modal instance during\
+    -- build. Placed into `tabs` LAST (after Description/Reviews/Tags below)\
+    -- so it renders as the final tab, not the first.\
+    local edit_tab = {\
+        id = \"edit\",\
+        label = _(\"Edit\"),\
+        widget_builder = function(avail_w, avail_h, show_parent)\
+            return self:_buildBookEditTab(book, show_parent, avail_w, avail_h)\
+        end,\
+    }\
+\
+    -- Tags tab (appended LAST, after description + reviews): the pill set split\
+    -- into sections under the same black heading bars as the Edit tab (Author /\
+    -- Series / Collections / Genres / Folder), scrollable, each pill tappable\
+    -- (closes the popup then drills). Built lazily as a native widget body.\
+    local TAG_SECTIONS = {\
+        { cat = \"author\",      title = _(\"Author(s)\") },\
+        { cat = \"series\",      title = _(\"Series\") },\
+        { cat = \"collections\", title = _(\"Collections\") },\
+        { cat = \"genres\",      title = _(\"Genres\") },\
+        { cat = \"folder\",      title = _(\"Folder\") },\
+    }\
+    local tags_tab\
+    if #pill_specs > 0 or self.orbitui_tag_sections then\
+        tags_tab = {\
+            id = \"tags\",\
+            label = _(\"Tags\"),\
+            widget_builder = function(avail_w, avail_h, show_parent)\
+                local FrameContainer = require(\"ui/widget/container/framecontainer\")\
+                local HorizontalSpan = require(\"ui/widget/horizontalspan\")\
+                -- Group the specs by category, wrapping each tap to close first.\
+                local by_cat = {}\
+                for _i, s in ipairs(pill_specs) do\
+                    local cat  = s.cat or \"folder\"\
+                    local orig = s.on_tap\
+                    by_cat[cat] = by_cat[cat] or {}\
+                    by_cat[cat][#by_cat[cat] + 1] = {\
+                        label  = s.label,\
+                        coll   = s.coll,\
+                        on_tap = orig and function()\
+                            if modal then UIManager:close(modal) end\
+                            orig()\
+                        end or nil,\
+                    }\
+                end\
+                local lpad  = (show_parent and show_parent._side_pad)\
+                    or Space.px(20)\
+                local bar_w = SnugScroll.widen(Screen:scaleBySize(3))   -- flush snug scrollbar\
+                local base  = (show_parent and show_parent.font_size) or 18\
+                local pills_w   = avail_w - 2 * lpad - bar_w\
+                -- Every section's focusable row(s), in visual top-to-bottom\
+                -- order -- pillsFrame and the Edit headings register into this\
+                -- as they're called, so each section's own call site doesn't\
+                -- need to change. See ReviewsModal:_assemble's handling of an\
+                -- ARRAY focus_tables (bookshelf_reviews_modal.lua).\
+                local focus_tables = {}\
+                local function pillsFrame(specs, top_pad, ink)\
+                    local pills, focus_rows = self:_buildPillGroup(specs, pills_w, 9999, base, \"left\",\
+                        Space.px(8), nil, ink, PopupKit.BORDER)\
+                    if focus_rows and #focus_rows > 0 then\
+                        focus_tables[#focus_tables + 1] = focusRow(focus_rows)\
+                    end\
+                    return FrameContainer:new{\
+                        bordersize = 0, margin = 0,\
+                        padding_left = lpad, padding_right = lpad,\
+                        padding_top = top_pad or 0,\
+                        -- The next heading brings its own space above it\
+                        -- (self:_sectionHeadingBar), so only a little here.\
+                        padding_bottom = Space.px(4),\
+                        pills,\
+                    }\
+                end\
+                -- One Edit button for the whole tab, at the right end of the\
+                -- first heading. Editing puts a cross in each tag that can be\
+                -- removed (tap removes it) and a \"+ Add\" after each editable\
+                -- group; tags that can't be edited here go grey. Done ends it.\
+                local function heading(title)\
+                    return self:_sectionHeadingBar(title, avail_w, base, lpad)\
+                end\
+                local function editStrip()\
+                    local btn = PopupKit.headerButton{\
+                        text      = tags_editing and _(\"Done\") or _(\"Edit\"),\
+                        icon      = (not tags_editing) and \"\\xEE\\xAB\\xAA\" or nil, -- nf-md-pencil\
+                        font_size = base,\
+                        inverted  = tags_editing,\
+                        on_tap    = function()\
+                            tags_editing = not tags_editing\
+                            if modal and modal.rebuildTab then modal:rebuildTab() end\
+                        end,\
+                    }\
+                    focus_tables[#focus_tables + 1] = focusRow({ { btn } })\
+                    return PopupKit.headerRow{ width = avail_w, inset = lpad, buttons = { btn } }\
+                end\
+                -- Edit mode's version of a group: each removable tag gets a\
+                -- cross and removes itself on tap; \"+ Add\" goes last.\
+                local CROSS = \"\\xE2\\x9C\\x95\" -- U+2715\
+                local function editSpecs(list, on_remove, on_add)\
+                    local out = {}\
+                    for _i = 1, #list do\
+                        local it = list[_i]\
+                        out[#out + 1] = { label = it.label, trailing = CROSS,\
+                            on_tap = function() on_remove(it) end }\
+                    end\
+                    out[#out + 1] = { label = \"+ \" .. _(\"Add\"), on_tap = on_add }\
+                    return out\
+                end\
+                -- Tags that can't be edited here, while editing: grey, inert.\
+                local function inertSpecs(list)\
+                    local out = {}\
+                    for _i = 1, #(list or {}) do out[_i] = { label = list[_i].label } end\
+                    return out\
+                end\
+                -- A section's pills, or a grey note when it has none (e.g. \"Not\
+                -- in any collection.\"), or nothing.\
+                local function pillsOrNote(specs, empty_msg)\
+                    if specs and #specs > 0 then return pillsFrame(specs) end\
+                    if empty_msg and empty_msg ~= \"\" then\
+                        return FrameContainer:new{\
+                            bordersize = 0, margin = 0,\
+                            padding_left = lpad, padding_right = lpad,\
+                            padding_top = 0, padding_bottom = Space.px(4),\
+                            TextBoxWidget:new{ text = empty_msg,\
+                                face = BFont:getFace(\"cfont\", base),\
+                                fgcolor = Blitbuffer.COLOR_DARK_GRAY, width = pills_w },\
+                        }\
+                    end\
+                end\
+                -- Author(s) and Series side by side, each under its own\
+                -- heading, when both sit on one line and fit across; nil\
+                -- otherwise (they stack as the other sections do).\
+                local series_paired = false\
+                local function sideBySide(title_a, list_a, title_b, list_b)\
+                    if not (list_b and #list_b > 0) then return nil end\
+                    local gap = Space.px(40)\
+                    local ink = tags_editing and Blitbuffer.COLOR_GRAY or nil\
+                    local function block(title, list)\
+                        local pills, rows = self:_buildPillGroup(\
+                            tags_editing and inertSpecs(list) or list, pills_w, 9999, base, \"left\",\
+                            Space.px(8), nil, ink, PopupKit.BORDER)\
+                        if rows and #rows > 1 then return nil end\
+                        return VerticalGroup:new{ align = \"left\",\
+                            self:_sectionHeadingBar(title, pills_w, base, 0), pills }, rows\
+                    end\
+                    local a, rows_a = block(title_a, list_a)\
+                    local b, rows_b = block(title_b, list_b)\
+                    if not (a and b) or a:getSize().w + gap + b:getSize().w > pills_w then return nil end\
+                    local row = {}\
+                    for _i, w in ipairs(rows_a and rows_a[1] or {}) do row[#row + 1] = w end\
+                    for _i, w in ipairs(rows_b and rows_b[1] or {}) do row[#row + 1] = w end\
+                    if #row > 0 then focus_tables[#focus_tables + 1] = focusRow({ row }) end\
+                    return FrameContainer:new{\
+                        bordersize = 0, margin = 0,\
+                        padding_left = lpad, padding_right = lpad,\
+                        padding_top = 0, padding_bottom = Space.px(4),\
+                        HorizontalGroup:new{ align = \"top\", a, HorizontalSpan:new{ width = gap }, b },\
+                    }\
+                end\
+                -- The strip stays put above the scrolling sections, as on\
+                -- the other tabs.\
+                local strip = editStrip()\
+                local vg = VerticalGroup:new{ align = \"left\" }\
+                local sections = {}\
+                if self.orbitui_tag_sections then\
+                    for _, extra in ipairs(self:orbitui_tag_sections(book, show_parent) or {}) do\
+                        sections[#sections + 1] = { orbitui = extra }\
+                    end\
+                end\
+                for _, sec in ipairs(TAG_SECTIONS) do\
+                    sections[#sections + 1] = sec\
+                end\
+                for _s = 1, #sections do\
+                    local sec = sections[_s]\
+                    if sec.orbitui then\
+                        local extra = sec.orbitui\
+                        vg[#vg + 1] = self:_sectionHeadingBar(extra.title, avail_w, base, lpad)\
+                        if extra.note then\
+                            vg[#vg + 1] = FrameContainer:new{\
+                                bordersize = 0, margin = 0,\
+                                padding_left = lpad, padding_right = lpad,\
+                                padding_top = Space.px(10), padding_bottom = Space.px(6),\
+                                TextBoxWidget:new{ text = extra.note, width = pills_w,\
+                                    face = BFont:getFace(\"cfont\", base) },\
+                            }\
+                        end\
+                        vg[#vg + 1] = pillsFrame(extra.pills or {}, Space.px(10))\
+                    elseif sec.cat == \"genres\" then\
+                        -- Genres are special: a source chip bar (Embedded /\
+                        -- Calibre / Hardcover) over the SELECTED source's genres.\
+                        -- Picking a source persists a per-book preference and\
+                        -- re-resolves genres app-wide.\
+                        local srcs = book.genre_sources or {}\
+                        local function has(k) return type(srcs[k]) == \"table\" and #srcs[k] > 0 end\
+                        -- Always render the Genres section (even with no genres in\
+                        -- any source) so its inline Edit button stays reachable to\
+                        -- add the first tag -- previously it was hidden entirely,\
+                        -- leaving no way to add tags to an untagged book.\
+                        do\
+                            local pref = BookshelfSettings.genreSource\
+                                and BookshelfSettings.genreSource(book.filepath)\
+                            local active = (pref and (has(pref) or pref == \"embedded\") and pref)\
+                                or (has(\"hardcover\") and \"hardcover\")\
+                                or (has(\"calibre\")  and \"calibre\")\
+                                or \"embedded\"\
+                            -- Captured once: the widget_builder re-runs on every\
+                            -- modal:rebuildTab() (each chip tap), so `active` itself\
+                            -- already reflects the latest pick by the second run --\
+                            -- genre_source_at_open must only ever be set from the\
+                            -- FIRST run to stay a true \"at open\" baseline.\
+                            if genre_source_at_open == nil then\
+                                genre_source_at_open = active\
+                            end\
+                            vg[#vg + 1] = heading(sec.title)\
+                            -- Embedded is always offered (it's the editable source);\
+                            -- Calibre / Hardcover only when that source has genres.\
+                            local SRC = {\
+                                { key = \"embedded\",  label = _(\"Embedded\") },\
+                                { key = \"calibre\",   label = _(\"Calibre\") },\
+                                { key = \"hardcover\", label = _(\"Hardcover\") },\
+                            }\
+                            local items = {}\
+                            for _j = 1, #SRC do\
+                                if SRC[_j].key == \"embedded\" or has(SRC[_j].key) then\
+                                    items[#items + 1] = SRC[_j]\
+                                end\
+                            end\
+                            -- Pills for the active source's genres. When Embedded\
+                            -- is active they're editable: long-press removes a tag\
+                            -- and a trailing \"+ Add\" pill prompts for a new one.\
+                            -- Edits go to the shared KOReader Keywords override.\
+                            local editable = (active == \"embedded\")\
+                            -- The source-chip strip (Embedded/Calibre/Hardcover)\
+                            -- is built at the render tail below, because the Edit\
+                            -- button rides its row and needs editGenres (defined\
+                            -- further down) as its handler.\
+                            local function applyEdit(new_list)\
+                                Repo.setEmbeddedGenres(book.filepath, new_list)\
+                                book.genre_sources = book.genre_sources or {}\
+                                book.genre_sources.embedded = new_list\
+                                if active == \"embedded\" then\
+                                    book.genres = (#new_list > 0) and new_list or nil\
+                                end\
+                                self:_rebuild(); UIManager:setDirty(self, \"ui\")\
+                                if modal and modal.rebuildTab then modal:rebuildTab() end\
+                            end\
+                            local function withoutGenre(gname)\
+                                local new = {}\
+                                for _g2 = 1, #(srcs[active] or {}) do\
+                                    if srcs[active][_g2] ~= gname then new[#new + 1] = srcs[active][_g2] end\
+                                end\
+                                return new\
+                            end\
+                            local function addOne(name)\
+                                name = (name or \"\"):gsub(\"^%s+\", \"\"):gsub(\"%s+$\", \"\")\
+                                if name == \"\" then return end\
+                                local new = {}\
+                                local dup = false\
+                                for _g2 = 1, #(srcs[active] or {}) do\
+                                    new[#new + 1] = srcs[active][_g2]\
+                                    if srcs[active][_g2]:lower() == name:lower() then dup = true end\
+                                end\
+                                if not dup then new[#new + 1] = name end\
+                                applyEdit(new)\
+                            end\
+                            local function newTagDialog()\
+                                local InputDialog = require(\"ui/widget/inputdialog\")\
+                                local idlg\
+                                idlg = InputDialog:new{\
+                                    title = _(\"New tag\"), input = \"\",\
+                                    buttons = {{\
+                                        { text = _(\"Cancel\"), id = \"close\",\
+                                          callback = function() UIManager:close(idlg) end },\
+                                        { text = _(\"Add\"), is_enter_default = true,\
+                                          callback = function()\
+                                            local v = idlg:getInputText()\
+                                            UIManager:close(idlg); addOne(v)\
+                                          end },\
+                                    }},\
+                                }\
+                                UIManager:show(idlg)\
+                                idlg:onShowKeyboard()\
+                            end\
+                            -- Multi-select editor (mirrors the collections \"Edit…\"\
+                            -- model): the library's genre list UNION the book's\
+                            -- current tags, shown in the searchable grid picker\
+                            -- with the current tags pre-selected (inverted cells).\
+                            -- Tap toggles a cell, \"New tag…\" adds a novel one to\
+                            -- the selection, \"Apply\" commits the whole set in one\
+                            -- write. Falls back to free-text add if the modal\
+                            -- can't load.\
+                            local function editGenres()\
+                                local ok_lm, LibraryModal = pcall(require, \"lib/bookshelf_library_modal\")\
+                                if not (ok_lm and LibraryModal and LibraryModal.new) then\
+                                    newTagDialog(); return\
+                                end\
+                                local current = srcs[active] or {}\
+                                -- selection set: lowercase key -> canonical value.\
+                                local sel = {}\
+                                for _i = 1, #current do sel[current[_i]:lower()] = current[_i] end\
+                                -- candidates = current tags + library genres, deduped.\
+                                local choices, seen = {}, {}\
+                                local function addChoice(value, count)\
+                                    if not value or value == \"\" then return end\
+                                    local k = value:lower()\
+                                    if seen[k] then return end\
+                                    seen[k] = true\
+                                    choices[#choices + 1] = { value = value, label = value, count = count }\
+                                end\
+                                for _i = 1, #current do addChoice(current[_i]) end\
+                                local all = Repo.getGroupChoices and Repo.getGroupChoices(\"genre\") or {}\
+                                for _i = 1, #all do addChoice(all[_i].value, all[_i].count) end\
+                                local function sortChoices()\
+                                    table.sort(choices, function(a, b)\
+                                        return (a.label or \"\"):lower() < (b.label or \"\"):lower() end)\
+                                end\
+                                sortChoices()\
+                                local query, visible = nil, choices\
+                                local function recompute()\
+                                    if not query or query == \"\" then visible = choices; return end\
+                                    visible = {}\
+                                    for _i = 1, #choices do\
+                                        if (choices[_i].label or \"\"):lower():find(query:lower(), 1, true) then\
+                                            visible[#visible + 1] = choices[_i]\
+                                        end\
+                                    end\
+                                end\
+                                local modal2\
+                                local function commit()\
+                                    -- Retained current tags keep their order; newly\
+                                    -- selected ones append in (sorted) candidate order.\
+                                    local final, kept = {}, {}\
+                                    for _i = 1, #current do\
+                                        local k = current[_i]:lower()\
+                                        if sel[k] then final[#final + 1] = current[_i]; kept[k] = true end\
+                                    end\
+                                    for _i = 1, #choices do\
+                                        local v = choices[_i].value\
+                                        if sel[v:lower()] and not kept[v:lower()] then\
+                                            final[#final + 1] = v; kept[v:lower()] = true\
+                                        end\
+                                    end\
+                                    UIManager:close(modal2)\
+                                    applyEdit(final)\
+                                end\
+                                local function promptNewTag()\
+                                    local InputDialog = require(\"ui/widget/inputdialog\")\
+                                    local idlg\
+                                    idlg = InputDialog:new{\
+                                        title = _(\"New tag\"), input = \"\",\
+                                        buttons = {{\
+                                            { text = _(\"Cancel\"), id = \"close\",\
+                                              callback = function() UIManager:close(idlg) end },\
+                                            { text = _(\"Add\"), is_enter_default = true,\
+                                              callback = function()\
+                                                local v = (idlg:getInputText() or \"\")\
+                                                    :gsub(\"^%s+\", \"\"):gsub(\"%s+$\", \"\")\
+                                                UIManager:close(idlg)\
+                                                if v ~= \"\" then\
+                                                    addChoice(v); sel[v:lower()] = v\
+                                                    sortChoices(); recompute()\
+                                                    if modal2 then modal2.page = 1; modal2:refresh() end\
+                                                end\
+                                              end },\
+                                        }},\
+                                    }\
+                                    UIManager:show(idlg)\
+                                    idlg:onShowKeyboard()\
+                                end\
+                                modal2 = LibraryModal:new{ config = {\
+                                    title = _(\"Edit tags\"),\
+                                    search_placeholder = function() return _(\"Search\\xE2\\x80\\xA6\") end,\
+                                    on_search_submit = function(q)\
+                                        query = q; recompute()\
+                                        if modal2 then modal2.page = 1; modal2:refresh() end\
+                                    end,\
+                                    grid_cols = 2,\
+                                    cells_per_page = function()\
+                                        return Screen:getWidth() > Screen:getHeight() and 8 or 10\
+                                    end,\
+                                    item_count = function() return #visible end,\
+                                    item_at = function(idx) return visible[idx] end,\
+                                    cell_renderer = function(item, dimen)\
+                                        return require(\"lib/bookshelf_picker_cell\").render(item, dimen,\
+                                            { selected = sel[(item.value or \"\"):lower()] ~= nil })\
+                                    end,\
+                                    -- A tick marks it at once (no pressed look first).\
+                                    select_on_tap = true,\
+                                    on_cell_tap = function(item)\
+                                        local k = (item.value or \"\"):lower()\
+                                        if sel[k] then sel[k] = nil else sel[k] = item.value end\
+                                        if modal2 then modal2:refresh() end\
+                                    end,\
+                                    -- Same layout as the collection editor: \"+ New\
+                                    -- tag\" on the strip, Cancel/Save in the footer.\
+                                    header_actions = { { label = \"+ \" .. _(\"New tag\"), on_tap = promptNewTag } },\
+                                    footer_rows = {\
+                                        {\
+                                            { label = _(\"Cancel\"),\
+                                              on_tap = function() UIManager:close(modal2) end },\
+                                            { label = _(\"Save\"), primary = true, on_tap = commit },\
+                                        },\
+                                    },\
+                                } }\
+                                -- Cancel closes modal2 without ever calling applyEdit, so\
+                                -- nothing else clears the \"Edit…\" pill's tap-feedback invert\
+                                -- left over from opening this modal -- rebuild unconditionally\
+                                -- on any close (mirrors the collection editor's on_close),\
+                                -- not just the Save path.\
+                                local orig_on_close_widget = modal2.onCloseWidget\
+                                modal2.onCloseWidget = function(w)\
+                                    orig_on_close_widget(w)\
+                                    self:_rebuild(); UIManager:setDirty(self, \"ui\")\
+                                    if modal and modal.rebuildTab then modal:rebuildTab() end\
+                                end\
+                                UIManager:show(modal2)\
+                            end\
+                            -- Pin this genre as a nav chip (global -- surfaces\
+                            -- every book with the genre), mirroring the collection\
+                            -- \"Pin to shelf menu\". Splices the chip after the current\
+                            -- one and switches to it, like the stack-hold pin.\
+                            local function pinGenreChip(gname)\
+                                local TabModel = require(\"lib/bookshelf_tab_model\")\
+                                local tabs = TabModel.load()\
+                                local n = 1\
+                                while true do\
+                                    local cand, taken = \"custom_\" .. n, false\
+                                    for _i = 1, #tabs do\
+                                        if tabs[_i].id == cand then taken = true; break end\
+                                    end\
+                                    if not taken then break end\
+                                    n = n + 1\
+                                end\
+                                local new_id = \"custom_\" .. n\
+                                TabModel.insertAfter(tabs, self.chip, {\
+                                    id = new_id, label = gname, icon = nil,\
+                                    source = { kind = \"genre\", id = gname },\
+                                    filter = {},\
+                                    -- Most-recently-opened first (same default as\
+                                    -- a pinned collection chip), not the Genres\
+                                    -- tab's surname/series ordering.\
+                                    sort_priority = { { key = \"last_opened\", reverse = true } },\
+                                    enabled = true,\
+                                })\
+                                TabModel.save(tabs)\
+                                if modal then UIManager:close(modal) end\
+                                self:_clearDpadFocus()\
+                                self._drilldown_path = {}\
+                                self.chip = new_id\
+                                self._cursor = 1\
+                                self:_syncPageFromCursor()\
+                                BookshelfSettings.saveDeferred(\"active_chip\", new_id)\
+                                Repo.invalidateBookCache(\"create-chip\")\
+                                self:_rebuild(); UIManager:setDirty(self, \"ui\")\
+                            end\
+                            -- Rename this book's copy of the tag (per-book: edits\
+                            -- the Embedded keywords -- genres aren't a global entity\
+                            -- to rename across books). Replaces in place; a rename\
+                            -- onto an existing tag just collapses into it.\
+                            local function renameTag(gname)\
+                                local InputDialog = require(\"ui/widget/inputdialog\")\
+                                local idlg\
+                                idlg = InputDialog:new{\
+                                    title = _(\"Rename tag\"), input = gname,\
+                                    input_hint = _(\"New name\"),\
+                                    buttons = {{\
+                                        { text = _(\"Cancel\"), id = \"close\",\
+                                          callback = function() UIManager:close(idlg) end },\
+                                        { text = _(\"Rename\"), is_enter_default = true,\
+                                          callback = function()\
+                                            local newn = (idlg:getInputText() or \"\")\
+                                                :gsub(\"^%s+\", \"\"):gsub(\"%s+$\", \"\")\
+                                            UIManager:close(idlg)\
+                                            if newn == \"\" or newn == gname then return end\
+                                            local new, seen = {}, {}\
+                                            for _g2 = 1, #(srcs[active] or {}) do\
+                                                local g = srcs[active][_g2]\
+                                                local v = (g == gname) and newn or g\
+                                                if not seen[v:lower()] then\
+                                                    new[#new + 1] = v; seen[v:lower()] = true\
+                                                end\
+                                            end\
+                                            applyEdit(new)\
+                                          end },\
+                                    }},\
+                                }\
+                                UIManager:show(idlg)\
+                                idlg:onShowKeyboard()\
+                            end\
+                            -- Long-press menu, mirroring the collection editor's\
+                            -- hold menu. Editable (Embedded) source gets the full\
+                            -- 2x2 (Rename / Pin / Delete / Cancel); read-only\
+                            -- sources get Pin / Cancel only.\
+                            local function holdMenu(gname)\
+                                local ButtonDialog = require(\"ui/widget/buttondialog\")\
+                                local hold_dialog\
+                                local function hclose() UIManager:close(hold_dialog) end\
+                                local function doDelete()\
+                                    hclose()\
+                                    local ConfirmBox = require(\"ui/widget/confirmbox\")\
+                                    UIManager:show(ConfirmBox:new{\
+                                        text = T(_(\"Remove the tag \\\"%1\\\" from this book?\"), gname),\
+                                        ok_text = _(\"Remove\"),\
+                                        ok_callback = function() applyEdit(withoutGenre(gname)) end,\
+                                    })\
+                                end\
+                                local buttons\
+                                if editable then\
+                                    buttons = {\
+                                        { { text = _(\"Rename\"),\
+                                            callback = function() hclose(); renameTag(gname) end },\
+                                          { text = _(\"Pin to shelf menu\"),\
+                                            callback = function() hclose(); pinGenreChip(gname) end } },\
+                                        { { text = \"\\xE2\\x9C\\x95 \" .. _(\"Delete\"), callback = doDelete },\
+                                          { text = _(\"Cancel\"), callback = hclose } },\
+                                    }\
+                                else\
+                                    buttons = {\
+                                        { { text = _(\"Pin to shelf menu\"),\
+                                            callback = function() hclose(); pinGenreChip(gname) end },\
+                                          { text = _(\"Cancel\"), callback = hclose } },\
+                                    }\
+                                end\
+                                hold_dialog = ButtonDialog:new{\
+                                    title = _(\"Edit tag: \") .. gname,\
+                                    title_align = \"center\",\
+                                    use_info_style = false,\
+                                    width = math.floor(Screen:getWidth() * 0.7),\
+                                    buttons = buttons,\
+                                }\
+                                require(\"lib/bookshelf_gesture_zones\").passSwipesOn(hold_dialog)\
+                                UIManager:show(hold_dialog)\
+                            end\
+                            local gpills = {}\
+                            for _g = 1, #(srcs[active] or {}) do\
+                                local gname = srcs[active][_g]\
+                                gpills[#gpills + 1] = {\
+                                    label  = gname,\
+                                    on_tap = function()\
+                                        if modal then UIManager:close(modal) end\
+                                        local group = Repo.findGroup(\"genre\", gname)\
+                                            or { kind = \"genre\", series_name = gname,\
+                                                 books = { book }, latest = 0 }\
+                                        self._drilldown_path = {}\
+                                        self:_expandGenre(group, true)\
+                                    end,\
+                                    on_hold = function() holdMenu(gname) end,\
+                                }\
+                            end\
+                            -- Source switch (Embedded/Calibre/Hardcover) as its\
+                            -- own row when there's more than one source.\
+                            if #items > 1 then\
+                                local chip_cb = function(key)\
+                                    -- The expensive part (light-meta invalidation + a full\
+                                    -- shelf _rebuild -- ~600-900ms, ~90% of a tap) is\
+                                    -- deferred to modal close (see genre_source_changed);\
+                                    -- only the cheap per-book caches refresh now.\
+                                    BookshelfSettings.setGenreSource(book.filepath, key)\
+                                    Repo.invalidateBookCache(\"genre-source\")\
+                                    genre_source_changed = (key ~= genre_source_at_open)\
+                                    if modal and modal.rebuildTab then modal:rebuildTab() end\
+                                end\
+                                local source_chips, chips_focus_rows =\
+                                    self:_segmentedChips(items, active, chip_cb, base, lpad)\
+                                focus_tables[#focus_tables + 1] = focusRow(chips_focus_rows)\
+                                vg[#vg + 1] = source_chips\
+                            end\
+                            -- Editing: the Embedded source's tags are the\
+                            -- editable ones (and \"+ Add\" is the way to tag an\
+                            -- untagged book); Calibre / Hardcover go grey.\
+                            if tags_editing and editable then\
+                                vg[#vg + 1] = pillsFrame(editSpecs(gpills,\
+                                    function(it) applyEdit(withoutGenre(it.label)) end, editGenres))\
+                            elseif tags_editing then\
+                                if #gpills > 0 then\
+                                    vg[#vg + 1] = pillsFrame(inertSpecs(gpills), nil, Blitbuffer.COLOR_GRAY)\
+                                end\
+                            elseif #gpills > 0 then\
+                                vg[#vg + 1] = pillsFrame(gpills)\
+                            end\
+                        end\
+                    elseif sec.cat == \"collections\" then\
+                        -- Collections: the per-collection drill-in pills, then\
+                        -- a hairline + Edit button opening the collection\
+                        -- manager. Always shown (even with no memberships) so\
+                        -- the manager is reachable here -- this is the single\
+                        -- place collections are surfaced (the Edit tab no\
+                        -- longer duplicates them).\
+                        local specs = by_cat[sec.cat]\
+                        -- Refresh the membership in place: reassign the\
+                        -- captured pill_specs upvalue and rebuild the Tags\
+                        -- tab body (which re-reads it), so no flash from\
+                        -- closing/reopening the popup.\
+                        local function membershipChanged()\
+                            local rc = require(\"readcollection\")\
+                            in_collections = (rc.getCollectionsWithFile\
+                                and rc:getCollectionsWithFile(book.filepath)) or {}\
+                            in_collections[rc.default_collection_name] = nil\
+                            pill_specs = self:_buildPillSpecs(book, in_collections, nil, nil)\
+                            self:_rebuild(); UIManager:setDirty(self, \"ui\")\
+                            if modal and modal.rebuildTab then modal:rebuildTab() end\
+                        end\
+                        -- Leave the everything-modal OPEN behind the\
+                        -- collection dialog.\
+                        local function editCollections()\
+                            require(\"lib/bookshelf_collection_manager\").show{\
+                                book = book, bw = self, on_close = membershipChanged }\
+                        end\
+                        local function leaveCollection(it)\
+                            local rc = require(\"readcollection\")\
+                            -- addRemoveItemMultiple sets the book's whole\
+                            -- membership, so start from all of it (Favorites\
+                            -- included) and drop just this one.\
+                            local keep = rc:getCollectionsWithFile(book.filepath) or {}\
+                            keep[it.coll] = nil\
+                            rc:addRemoveItemMultiple(book.filepath, keep)\
+                            rc:write()\
+                            membershipChanged()\
+                        end\
+                        vg[#vg + 1] = heading(sec.title)\
+                        if tags_editing then\
+                            vg[#vg + 1] = pillsFrame(editSpecs(specs or {}, leaveCollection, editCollections))\
+                        else\
+                            vg[#vg + 1] = pillsOrNote(specs, _(\"Not in any collection.\"))\
+                        end\
+                    else\
+                        local specs = by_cat[sec.cat]\
+                        local pair = sec.cat == \"author\" and specs and #specs > 0\
+                            and sideBySide(sec.title, specs, _(\"Series\"), by_cat.series)\
+                        if pair then\
+                            vg[#vg + 1] = pair\
+                            series_paired = true\
+                        elseif specs and #specs > 0 and not (sec.cat == \"series\" and series_paired) then\
+                            vg[#vg + 1] = heading(sec.title)\
+                            if tags_editing then\
+                                vg[#vg + 1] = pillsFrame(inertSpecs(specs), nil, Blitbuffer.COLOR_GRAY)\
+                            else\
+                                vg[#vg + 1] = pillsFrame(specs)\
+                            end\
+                        end\
+                    end\
+                end\
+                local scroll = SnugScroll:new{\
+                    dimen = Geom:new{ w = avail_w,\
+                        h = math.max(1, avail_h - strip:getSize().h) },\
+                    scroll_bar_width = bar_w,\
+                    show_parent = show_parent,\
+                    vg,\
+                }\
+                local body = VerticalGroup:new{ align = \"left\", strip, scroll }\
+                body.focus_tables = focus_tables\
+                return body\
+            end,\
+        }\
+    end\
+\
+    -- 2. Description tab. When both the embedded and Hardcover descriptions\
+    -- exist, the single tab carries both as toggleable \"sources\" (an\
+    -- Embedded/Hardcover chip bar inside it) instead of a second top-level\
+    -- Hardcover tab -- making it obvious both are descriptions and keeping the\
+    -- tab strip short. The chosen source persists on close (on_source_close).\
+    local desc_args = self:_descriptionArgs(book) or {}\
+    if desc_args.tabs then\
+        desc_idx = #tabs + 1\
+        tabs[desc_idx] = {\
+            id = \"description\", label = _(\"Description\"),\
+            sources = {\
+                { label = desc_args.tabs[1].label, html = desc_args.tabs[1].html },\
+                { label = desc_args.tabs[2].label, html = desc_args.tabs[2].html },\
+            },\
+            active_source   = desc_args.active_tab or 1,\
+            on_source_close = desc_args.on_tab_close,\
+        }\
+    elseif desc_args.html_body then\
+        desc_idx = #tabs + 1\
+        tabs[desc_idx] = { id = \"description\", label = _(\"Description\"),\
+            html = desc_args.html_body }\
+    end\
+\
+    -- 3. Hardcover reviews tab, only when linked. Cache-first so the common case\
+    -- shows instantly; otherwise a \"Loading\" placeholder an async fetch fills in.\
+    local ok_hc, Hardcover = pcall(require, \"lib/bookshelf_hardcover\")\
+    local Tokens = require(\"lib/bookshelf_tokens\")\
+    local link = ok_hc and Hardcover and Hardcover.getLink\
+        and Hardcover.getLink(book.filepath) or nil\
+    local book_id = book.hardcover_book_id or (link and link.book_id)\
+    -- Only when the plugin is live: with it uninstalled/disabled we suppress all\
+    -- Hardcover.app data, so no community-reviews tab even if reviews are cached.\
+    local has_reviews = (ok_hc and Hardcover and Hardcover.isAvailable\
+        and Hardcover.isAvailable() and book_id) and true or false\
+    -- No title: the popup header already shows the book title/author. The\
+    -- rating/counts summary is a native row (_buildReviewsHeader), not part\
+    -- of this HTML -- only the review list itself renders here.\
+    -- With \"Include spoilers\" ticked, the spoiler reviews join the list, most\
+    -- liked first like the rest.\
+    local function reviewsListHtml(result, with_spoilers)\
+        local list = result and result.reviews\
+        local spoilers = result and result.spoiler_reviews\
+        if with_spoilers and type(spoilers) == \"table\" and #spoilers > 0 then\
+            local all = {}\
+            for _i, r in ipairs(list or {}) do all[#all + 1] = r end\
+            for _i, r in ipairs(spoilers) do all[#all + 1] = r end\
+            table.sort(all, function(a, b)\
+                return (tonumber(a.likes_count) or 0) > (tonumber(b.likes_count) or 0)\
+            end)\
+            list = all\
+        end\
+        -- A count with nothing under it: say why, not \"no reviews\".\
+        local empty_text\
+        if Hardcover.reviewsWithheld and Hardcover.reviewsWithheld(result) then\
+            empty_text = _(\"Hardcover does not show other readers' reviews to this kind of sign-in. Add a Hardcover API key to see them: Hardcover enrichment > Hardcover API key. You stay signed in.\")\
+        end\
+        return Tokens.reviewsHtml{ reviews = list, empty_text = empty_text }\
+    end\
+    local reviews_tab  -- forward ref: refreshReviews mutates it, its\
+                        -- widget_builder (below) reads it back each rebuild.\
+    -- The ONLY thing that fetches reviews (a network call that prompts for WiFi\
+    -- when offline) is the header's Refresh button -- never opening the popup\
+    -- and never just viewing the Reviews tab. This keeps battery/network use to\
+    -- explicit user action; opening a linked book to read its description no\
+    -- longer prompts for WiFi (issue 253). Cached reviews still show offline.\
+    -- `modal` is assigned after this closure is created but before Refresh can\
+    -- invoke it (upvalue, read at call time).\
+    local function refreshReviews()\
+        if not reviews_tab then return end\
+        reviews_tab.busy = true\
+        if modal and modal._active_tab == reviews_idx and modal.rebuildTab then\
+            modal:rebuildTab()\
+            -- fetchReviewsOnline's network call runs on this same thread with\
+            -- no yield back to UIManager's event loop, so the queued \"busy\"\
+            -- repaint would otherwise never actually hit the screen before it\
+            -- returns (KOReader only drains the paint queue between events).\
+            -- Force it now so the black-fill feedback is visible immediately.\
+            -- Same pre-paint pattern as the chip-strip's flashPending().\
+            UIManager:forceRePaint()\
+        end\
+        Hardcover.fetchReviewsOnline(book_id, {}, function(ok, result)\
+            if modal._dismissed then return end\
+            reviews_tab.busy = false\
+            if ok and type(result) == \"table\" then\
+                reviews_tab.data = result\
+                reviews_tab.html = reviewsListHtml(result, reviews_tab.show_spoilers)\
+            else\
+                reviews_tab.html = \"<p>\" .. _(\"Reviews couldn't be fetched.\") .. \"</p>\"\
+            end\
+            if modal._active_tab == reviews_idx and modal.rebuildTab then\
+                modal:rebuildTab()\
+            end\
+        end)\
+    end\
+    if has_reviews then\
+        local data, html\
+        local ok_cached, cached = Hardcover.fetchReviews(book_id, { cache_only = true })\
+        if ok_cached and type(cached) == \"table\" then\
+            data = cached\
+            html = reviewsListHtml(cached)\
+        else\
+            -- No cached reviews: invite an explicit fetch rather than loading\
+            -- automatically (that would hit the network on open -- issue 253).\
+            html = \"<p>\" .. _(\"Tap Refresh to load reviews.\") .. \"</p>\"\
+        end\
+        -- Hardcover's state: its fetched data, list HTML and busy flag.\
+        -- show_spoilers starts off with every popup and is never saved.\
+        reviews_tab = { data = data, html = html, show_spoilers = false }\
+        reviews_tab.toggleSpoilers = function()\
+            reviews_tab.show_spoilers = not reviews_tab.show_spoilers\
+            if reviews_tab.data then\
+                reviews_tab.html = reviewsListHtml(reviews_tab.data, reviews_tab.show_spoilers)\
+            end\
+            if modal and modal.rebuildTab then modal:rebuildTab() end\
+        end\
+    end\
+    -- The Reviews tab: the reader's own review, and Hardcover's when linked,\
+    -- switched by the same chip bar the Description tab uses. With only one\
+    -- of them there is no chip bar (maintainer: \"My review\" belongs with the\
+    -- reviews, not in the Edit tab).\
+    local mine = not self:_isRemoteRecord(book)\
+    if mine or has_reviews then\
+        reviews_idx = #tabs + 1\
+        local tab = { id = \"reviews\", has_hardcover = has_reviews }\
+        if mine and has_reviews then\
+            tab.label = _(\"Reviews\")\
+            tab.sources = { { label = _(\"My review\") }, { label = \"Hardcover\" } }\
+            -- Open on your own review when there is one, else Hardcover's;\
+            -- asked for the reviews (the hero's Hardcover link), Hardcover's.\
+            tab.active_source = (opts.active ~= \"reviews\" and self:_bookReview(book)) and 1 or 2\
+        else\
+            tab.label = mine and _(\"My review\") or _(\"Reviews\")\
+        end\
+        tab.widget_builder = function(avail_w, avail_h, show_parent)\
+            local chips = tab.sources and show_parent and show_parent._buildSourceChips\
+                and show_parent:_buildSourceChips(tab) or nil\
+            local src = tab.sources and (tab._active_source or tab.active_source) or (mine and 1 or 2)\
+            if src == 1 and mine then\
+                return self:_buildMyReviewBody(book, show_parent, avail_w, avail_h, chips)\
+            end\
+            return self:_buildReviewsTab(reviews_tab, show_parent, avail_w, avail_h, refreshReviews, chips)\
+        end\
+        tabs[reviews_idx] = tab\
+    end\
+\
+    -- Highlights, when the book has some: a scrolling list at the modal's\
+    -- font size, a tap opening the highlight with View in book\
+    -- (lib/bookshelf_book_highlights).\
+    local Highlights = require(\"lib/bookshelf_book_highlights\")\
+    local hl_count = (not self:_isRemoteRecord(book)) and Highlights.count(book.filepath) or 0\
+    if hl_count > 0 then\
+        highlights_idx = #tabs + 1\
+        tabs[highlights_idx] = {\
+            id = \"highlights\", label = _(\"Highlights\"),\
+            widget_builder = function(avail_w, avail_h, show_parent)\
+                return Highlights.buildTab(self, book.filepath, show_parent or modal, avail_w, avail_h)\
+            end,\
+        }\
+    end\
+\
+    -- Tags next-to-last.\
+    if tags_tab then\
+        tags_idx = #tabs + 1\
+        tabs[tags_idx] = tags_tab\
+    end\
+\
+    -- Edit next: the actions tab is reached for less often than Description/\
+    -- Reviews/Tags, so it sits toward the end of the strip rather than hogging\
+    -- the first (default-focus) slot.\
+    edit_idx = #tabs + 1\
+    tabs[edit_idx] = edit_tab\
+\
+    -- Cover tab LAST: pick the book's cover from local sources / the device /\
+    -- an online search. Native, paginated grid. Being last keeps its own\
+    -- left/right swipe pagination out of the way of the tab-cycling swipe until\
+    -- you page off the end (see ReviewsModal:onSwipe).\
+    cover_idx = #tabs + 1\
+    tabs[cover_idx] = {\
+        id = \"cover\", label = _(\"Cover\"),\
+        widget_builder = function(avail_w, avail_h, show_parent)\
+            return self:_buildBookCoverTab(book, show_parent, avail_w, avail_h,\
+                                           cover_tab_state, modal)\
+        end,\
+    }\
+\
+    if #tabs == 0 then return end  -- no pills, no description, no reviews\
+\
+    -- Active tab: edit / tags / reviews on request, else the description source\
+    -- the hero shows, else the Edit tab (always present).\
+    local active_tab\
+    if opts.active == \"edit\" and edit_idx then\
+        active_tab = edit_idx\
+    elseif opts.active == \"tags\" and tags_idx then\
+        active_tab = tags_idx\
+    elseif opts.active == \"reviews\" and reviews_idx then\
+        active_tab = reviews_idx\
+    elseif opts.active == \"cover\" and cover_idx then\
+        active_tab = cover_idx\
+    elseif opts.active == \"highlights\" and highlights_idx then\
+        active_tab = highlights_idx\
+    elseif desc_idx then\
+        active_tab = desc_idx  -- the chip bar defaults to the hero's source\
+    else\
+        active_tab = edit_idx or 1\
+    end\
+\
+    local args = {\
+        tabs       = tabs,\
+        bw         = self,\
+        _sui_keep_homescreen = self._orbitui_detail_only or nil,\
+        active_tab = active_tab,\
+        -- Flush the deferred genre-source invalidation (see\
+        -- genre_source_changed above) before the caller's own on_close --\
+        -- ReviewsModal:onClose runs this for BOTH the Close button and the\
+        -- Open button (Open routes through onClose first), so the shelf is\
+        -- caught up whichever way the popup closes.\
+        on_close   = function()\
+            -- A shelf rebuild still waiting for the taps to pause: now.\
+            if modal and modal._shelf_owed and modal._shelf_fire then\
+                UIManager:unschedule(modal._shelf_fire)\
+                modal._shelf_fire()\
+            end\
+            -- Closed while arranging the action cards (the X, Open): the\
+            -- arrangement so far is kept, as Done keeps it, and written now;\
+            -- each move was only in memory.\
+            local arr = modal and modal._actions_edit\
+            if arr then\
+                BookshelfSettings.save(require(\"lib/bookshelf_book_actions_layout\").KEY,\
+                    { order = arr.order, hidden = arr.hidden })\
+                modal._actions_edit = nil\
+            end\
+            if genre_source_changed then\
+                Repo.invalidateLightMeta()\
+                self:_rebuild(); UIManager:setDirty(self, \"ui\")\
+            end\
+            -- Empty the Cover tab's transient working dir (online search\
+            -- downloads + any older per-book cruft) so it\
+            -- doesn't pile up in the settings folder (issue 267). Applied\
+            -- covers live in the book's .sdr and are untouched. Fires only on a\
+            -- real dismiss/Open, NOT on the apply flow's reopen (that goes\
+            -- through UIManager:close -> onCloseWidget, which doesn't run\
+            -- on_close), so the carried online candidates survive that trip.\
+            pcall(function() require(\"lib/bookshelf_cover_apply\").resetWorkingCache() end)\
+            if opts.on_close then opts.on_close() end\
+        end,\
+        -- \"Open\" footer button opens the book in the reader (the popup closes\
+        -- first via onClose). _openBook handles stale files + the Kobo path.\
+        on_open    = function() self:_openBook(book) end,\
+        -- Cover + metadata header in place of a title bar. Rebuilt fresh on each\
+        -- layout by the modal (cover bb is one-shot); no pills here (Tags tab),\
+        -- no bookmark button.\
+        header_builder = function(avail_w, band)\
+            return self:_buildBookMenuHeader(book, avail_w, nil, nil, { rich = true, band = band })\
+        end,\
+    }\
+    -- The description-source choice (Embedded vs Hardcover) now persists via the\
+    -- Description tab's on_source_close (fired by the modal on dismiss), so no\
+    -- top-level on_tab_close mapping is needed here.\
+\
+    if self.orbitui_detail_args then self:orbitui_detail_args(book, args, opts) end\
+    local ReviewsModal = require(\"lib/bookshelf_reviews_modal\")\
+    modal = ReviewsModal:new(args)\
+    UIManager:show(modal)\
+    -- No fetch on open: reviews load only when the user taps Refresh on the\
+    -- Reviews tab (see refreshReviews / issue 253). Cached reviews, if any,\
+    -- are already shown from the cache_only peek above.\
+    return modal\
+end\
+\
+-- Hardcover reviews now live as a tab in the unified book-detail popup, so this\
+-- just opens that popup on the Reviews tab. opts.on_close reopens the caller\
+-- (e.g. the book menu) on dismiss.\
+function BookshelfWidget:_showHardcoverReviews(book, opts)\
+    opts = opts or {}\
+    self:_showBookDetail(book, { active = \"reviews\", on_close = opts.on_close })\
+end\
+\
+end\
+",
+    ["lib/bookshelf_widget_curated"] = "-- lib/bookshelf_widget_curated.lua\
+-- The shelf's side of hand-ordered shelves (issue 390): moving a book along\
+-- the shelf it stands on, taking it off, and standing an ornament beside it.\
+-- Installed onto BookshelfWidget (see the end of lib/bookshelf_widget.lua).\
+--\
+-- A hand-ordered shelf is a KOReader collection shown as a shelf (one\
+-- collection's shelf, or Favorites). Two things are kept in step:\
+--   the BOOKS and their order      the collection (lib/bookshelf_curated)\
+--   the PIECES standing among them tab.shelf_modules, each `after` so many\
+--                                  books (pinned ornaments, other modules)\
+-- Everything here works in SHELF ORDER, the order on screen, read from the\
+-- repository exactly as the shelf reads it: so a collection KOReader sorts\
+-- itself, a reversed shelf and a book whose file has gone all come out as\
+-- the reader sees them. A move writes that order, changed, back to the\
+-- collection. Arranging is offered only when the screen is the collection:\
+-- sorted by Collection order, with no filter.\
+\
+local UIManager = require(\"ui/uimanager\")\
+local Device    = require(\"device\")\
+local Screen    = Device.screen\
+local _         = require(\"lib/bookshelf_i18n\").gettext\
+\
+return function(BookshelfWidget)\
+\
+local function Curated()  return require(\"lib/bookshelf_curated\") end\
+local function CuratedUI() return require(\"lib/bookshelf_curated_ui\") end\
+local function TabModel() return require(\"lib/bookshelf_tab_model\") end\
+\
+-- _curatedList() -> collection name, tab when the shelf on screen can be\
+-- ordered by hand.\
+function BookshelfWidget:_curatedList()\
+    -- Fixed OrbitUI profiles do not use the global editable tabs.\
+    if self.profile or (self._drilldown_path and #self._drilldown_path > 0) then return nil end\
+    local tab = TabModel().getById(self.chip)\
+    local list = CuratedUI().listOf(tab)\
+    if not list then return nil end\
+    return list, tab\
+end\
+\
+-- _curatedArrangeable() -> true, reversed | false, why (\"sort\" | \"unordered\"\
+-- | \"boxes\").\
+-- A filter does not stop it: a book the filter hides keeps its slot in the\
+-- collection when the order is written (writeOrder), as a file gone from the\
+-- device does, and the moves are among the books on screen (maintainer,\
+-- PW5: a Home shelf on a collection, hiding On hold books, gave the book\
+-- menu on a long-press, not Arrange).\
+function BookshelfWidget:_curatedArrangeable()\
+    local list, tab = self:_curatedList()\
+    if not list then return false, \"kind\" end\
+    local first = type(tab.sort_priority) == \"table\" and tab.sort_priority[1]\
+    if not (first and first.key == \"collection_order\") then return false, \"sort\" end\
+    -- A collection with no order of its own (KOReader sorts it, by title\
+    -- say): placing a book would write the order on screen as the\
+    -- collection's and switch that sorting off. Only when asked\
+    -- (_curatedStartOrder).\
+    if not Curated().ordered(list) then return false, \"unordered\" end\
+    -- A shelf that boxes its series stands a whole series as one thing, in\
+    -- every view: the pieces count boxes there, the collection counts books.\
+    if tab.series_boxes then return false, \"boxes\" end\
+    return true, first.reverse == true\
+end\
+\
+-- The books in shelf order, as the shelf fetches them, and this book's\
+-- place among them.\
+-- Read once between changes: every change to a collection or to a shelf's\
+-- record moves the repository's cache epoch or the tab model's generation,\
+-- and a step asks for the order several times (the move, the page to show,\
+-- each button's state), each a record a book.\
+local _shown = {}\
+local function shelfOrder(tab, fp)\
+    local Repo = require(\"lib/bookshelf_book_repository\")\
+    local TM = TabModel()\
+    local key\
+    if Repo.cacheEpoch and TM.generation then\
+        key = tostring(tab.id) .. \"|\" .. tostring(Repo.cacheEpoch()) .. \"|\" .. tostring(TM.generation())\
+    end\
+    local books\
+    if key and _shown.key == key then\
+        books = {}\
+        for i, f in ipairs(_shown.books) do books[i] = f end\
+    else\
+        books = {}\
+        local page = Repo.getBySource(tab.source, tab.filter, tab.sort_priority, 0, 100000, { light_only = true })\
+        for i, b in ipairs(page or {}) do books[i] = b.filepath end\
+        if key then\
+            local keep = {}\
+            for i, f in ipairs(books) do keep[i] = f end\
+            _shown = { key = key, books = keep }\
+        end\
+    end\
+    local at\
+    if fp then\
+        for i, f in ipairs(books) do if f == fp then at = i; break end end\
+    end\
+    return books, at\
+end\
+\
+-- The shelf order, changed, written back as the collection's. The\
+-- collection may hold files the shelf does not show (gone from the device,\
+-- not a book): each keeps the slot it had, and the books shown are dealt\
+-- into the other slots in their new order. Left to the end, a move pushed\
+-- them to the back of KOReader's own view of the collection.\
+local function writeOrder(list, books, reversed)\
+    local n = #books\
+    local shown, seq = {}, {}\
+    for i = 1, n do\
+        local fp = reversed and books[n + 1 - i] or books[i]\
+        seq[i] = fp\
+        shown[fp] = true\
+    end\
+    local out, k = {}, 0\
+    for _i, fp in ipairs(Curated().books(list)) do\
+        if shown[fp] then\
+            k = k + 1\
+            out[#out + 1] = seq[k]\
+        else\
+            out[#out + 1] = fp\
+        end\
+    end\
+    -- Anything shown that the collection's own list did not name (it should\
+    -- not happen): after the rest, never dropped.\
+    for i = k + 1, n do out[#out + 1] = seq[i] end\
+    return Curated().setOrder(list, out)\
+end\
+\
+-- After a move made here: every piece notes the book now on its left, so\
+-- the next reading of the pieces (CuratedUI.reconcilePieces) leaves the\
+-- move standing; with the old note it sent each piece back beside the book\
+-- it had stood by. In memory, on the shelf's own record: the next save of\
+-- it carries the note, and no write is spent on it here.\
+local function reanchor(self, books)\
+    local tab = TabModel().getById(self.chip)\
+    local mods = tab and tab.shelf_modules\
+    if type(mods) == \"table\" and #mods > 0 then CuratedUI().anchorPieces(mods, books) end\
+end\
+\
+-- Are the shelf's pieces on screen? Not in list view, nor with Modules > On\
+-- the shelf off: the list stays on the shelf's record, and a step must not\
+-- hop a piece nobody can see.\
+local function piecesShown(self)\
+    if not self._activeShelfModules then return true end\
+    return self:_activeShelfModules() ~= nil\
+end\
+\
+-- withMods(self, fn) -> fn(mods) on the shelf's own module list (raw, so it\
+-- stays right while Modules > On the shelf is off); saved when fn returns\
+-- true.\
+local function withMods(self, fn)\
+    local TM = TabModel()\
+    local tabs = TM.load()\
+    for _i, t in ipairs(tabs) do\
+        if t.id == self.chip then\
+            local mods = type(t.shelf_modules) == \"table\" and t.shelf_modules or nil\
+            if fn(mods, t) then TM.save(tabs) end\
+            return\
+        end\
+    end\
+end\
+\
+-- _curatedStartOrder() -> true: the order on screen becomes the collection's\
+-- own, so its books can be placed by hand. For a collection KOReader was\
+-- sorting itself this switches that off: the reader asked.\
+function BookshelfWidget:_curatedStartOrder()\
+    local list, tab = self:_curatedList()\
+    local ok, why = self:_curatedArrangeable()\
+    if not list or ok or why ~= \"unordered\" then return false end\
+    local first = tab.sort_priority[1]\
+    return writeOrder(list, (shelfOrder(tab)), first.reverse == true)\
+end\
+\
+-- _curatedPlace(fp) -> the book's place in shelf order, of how many.\
+function BookshelfWidget:_curatedPlace(fp)\
+    local list, tab = self:_curatedList()\
+    if not (list and self:_curatedArrangeable()) then return nil end\
+    local books, at = shelfOrder(tab, fp)\
+    return at, #books\
+end\
+\
+-- _curatedCanStep(fp, dir) -> would a step do anything?\
+function BookshelfWidget:_curatedCanStep(fp, dir)\
+    local at, n = self:_curatedPlace(fp)\
+    if not at then return false end\
+    local tab = TabModel().getById(self.chip)\
+    return CuratedUI().step(n, piecesShown(self) and tab and tab.shelf_modules or nil, at, dir) ~= nil\
+end\
+\
+-- _curatedStep(fp, dir) -> true when the book moved one place along the\
+-- shelf (1 right, -1 left): past the book beside it, or past the piece.\
+function BookshelfWidget:_curatedStep(fp, dir)\
+    local list, tab = self:_curatedList()\
+    local ok, reversed = self:_curatedArrangeable()\
+    if not (list and ok) then return false end\
+    local books, at = shelfOrder(tab, fp)\
+    if not at then return false end\
+    local UI, moved = CuratedUI(), false\
+    local shown = piecesShown(self)\
+    withMods(self, function(mods)\
+        if not shown then mods = nil end\
+        local st = UI.step(#books, mods, at, dir)\
+        if not st then return false end\
+        moved = true\
+        if st.kind == \"piece\" then return UI.applyStep(mods, st) end\
+        books[at], books[st.to] = books[st.to], books[at]\
+        writeOrder(list, books, reversed)\
+        return false\
+    end)\
+    if moved then reanchor(self, books) end\
+    return moved\
+end\
+\
+-- _curatedToEdge(fp, dir) -> true when the book went to the shelf's start\
+-- (-1) or end (1). The pieces keep the books on their left.\
+function BookshelfWidget:_curatedToEdge(fp, dir)\
+    local list, tab = self:_curatedList()\
+    local ok, reversed = self:_curatedArrangeable()\
+    if not (list and ok) then return false end\
+    local books, at = shelfOrder(tab, fp)\
+    if not at then return false end\
+    local UI, to, moved = CuratedUI(), nil, false\
+    local shown = piecesShown(self)\
+    withMods(self, function(mods)\
+        if not shown then mods = nil end\
+        if UI.atEdge(mods, #books, at, dir) then return false end\
+        moved = true\
+        to = UI.toEdge(mods, #books, at, dir)\
+        return mods ~= nil\
+    end)\
+    if not moved then return false end\
+    if to ~= at then\
+        table.insert(books, to, table.remove(books, at))\
+        writeOrder(list, books, reversed)\
+    end\
+    reanchor(self, books)\
+    return true\
+end\
+\
+-- _curatedMoveTo(fp, target) -> true when the book went straight to the\
+-- place another book holds (that one and the books between move up one):\
+-- one write however far, where a step a place was a wait a place.\
+function BookshelfWidget:_curatedMoveTo(fp, target)\
+    local list, tab = self:_curatedList()\
+    local ok, reversed = self:_curatedArrangeable()\
+    if not (list and ok) or fp == target then return false end\
+    local books, at = shelfOrder(tab, fp)\
+    local to\
+    for i, f in ipairs(books) do if f == target then to = i; break end end\
+    if not (at and to) then return false end\
+    local UI = CuratedUI()\
+    local shown = piecesShown(self)\
+    withMods(self, function(mods)\
+        if not (shown and mods) then return false end\
+        UI.shiftForRemove(mods, at)\
+        UI.shiftForInsert(mods, to)\
+        return true\
+    end)\
+    table.insert(books, to, table.remove(books, at))\
+    writeOrder(list, books, reversed)\
+    reanchor(self, books)\
+    return true\
+end\
+\
+-- _curatedSwap(fp, other) -> true when the two books traded places (a\
+-- long-press on another book while arranging). No place changes hands but\
+-- theirs, so the pinned pieces stay where they stand.\
+function BookshelfWidget:_curatedSwap(fp, other)\
+    local list, tab = self:_curatedList()\
+    local ok, reversed = self:_curatedArrangeable()\
+    if not (list and ok) or fp == other then return false end\
+    local books, at = shelfOrder(tab, fp)\
+    local to\
+    for i, f in ipairs(books) do if f == other then to = i; break end end\
+    if not (at and to) then return false end\
+    books[at], books[to] = books[to], books[at]\
+    writeOrder(list, books, reversed)\
+    reanchor(self, books)\
+    return true\
+end\
+\
+-- _shelfSwap(a, b) -> true when two things on the shelf traded places: a\
+-- book and a pinned piece, or two pieces ({ book = fp } / { piece = id }).\
+-- Long-press while arranging (maintainer: \"the same with ornaments, between\
+-- ornaments and between ornaments and books\"). A book only moves on a shelf\
+-- that can be arranged; two pieces trade places on any shelf showing them.\
+function BookshelfWidget:_shelfSwap(a, b)\
+    if not piecesShown(self) then return false end\
+    local SM = require(\"lib/bookshelf_shelf_modules\")\
+    local list, tab = self:_curatedList()\
+    local books, reversed\
+    if a.book or b.book then\
+        local ok\
+        ok, reversed = self:_curatedArrangeable()\
+        if not (list and ok) then return false end\
+        books = shelfOrder(tab)\
+    elseif list then\
+        books = shelfOrder(tab)\
+    else\
+        -- Pieces alone: their places count books, and the books stay.\
+        books = {}\
+        local n = 0\
+        for _i, m in ipairs((tab or TabModel().getById(self.chip) or {}).shelf_modules or {}) do\
+            n = math.max(n, math.floor(tonumber(m.after) or 0))\
+        end\
+        for i = 1, n do books[i] = \"\\0\" .. i end\
+    end\
+    local swapped\
+    withMods(self, function(mods, t)\
+        local nb, nm = SM.swapPlaces(books, mods or {}, a, b)\
+        if not nb then return false end\
+        t.shelf_modules = #nm > 0 and nm or nil\
+        swapped = nb\
+        return true\
+    end)\
+    if not swapped then return false end\
+    if a.book or b.book then writeOrder(list, swapped, reversed) end\
+    if list then reanchor(self, swapped) end\
+    return true\
+end\
+\
+-- _curatedCanPage(fp, dir) -> is there a page before (-1) / after (1) the\
+-- one the book is on? An estimate from the page on screen, cheap enough to\
+-- light a button with; _curatedToPage works the place out.\
+function BookshelfWidget:_curatedCanPage(fp, dir)\
+    local at, n = self:_curatedPlace(fp)\
+    if not at then return false end\
+    local cursor = self._cursor or 1\
+    if self._isSpineMode and self:_isSpineMode() then\
+        if dir < 0 then return cursor > 1 end\
+        local c = self._spine_fetch_cache\
+        local total = (c and type(c.items) == \"table\" and #c.items) or self._total_items or n\
+        return cursor + (self._spine_shown or 0) <= total\
+    end\
+    -- Covers with pieces among them page by slots, not books.\
+    if self._activeShelfModules and self:_activeShelfModules() then return false end\
+    local view = math.max(1, self:_viewSize())\
+    local page = math.floor((at - 1) / view)\
+    if dir < 0 then return page >= 1 end\
+    return (page + 1) * view + 1 <= n\
+end\
+\
+-- _curatedToPage(fp, dir) -> true when the book went FIRST on the page after\
+-- (1) or before (-1) the one it is on. On a spine shelf the pages are what\
+-- the shelf plans: the next page's start is taken from the shelf WITHOUT the\
+-- book where it is now (the pages before its new place are then exactly\
+-- those, so the break in front of it holds); the previous page's from the\
+-- shelf as it stands. Covers and lists page by a fixed count.\
+function BookshelfWidget:_curatedToPage(fp, dir)\
+    local list, tab = self:_curatedList()\
+    local ok, reversed = self:_curatedArrangeable()\
+    if not (list and ok) then return false end\
+    local books, at = shelfOrder(tab, fp)\
+    if not at then return false end\
+    local to, lead_from, without\
+    if self._isSpineMode and self:_isSpineMode() then\
+        local c = self._spine_fetch_cache\
+        local items = c and c.items\
+        if type(items) ~= \"table\" then return false end\
+        local mypos\
+        without = {}\
+        for i = 1, #items do\
+            local it = items[i]\
+            if type(it) == \"table\" and it.filepath == fp then mypos = i\
+            else without[#without + 1] = it end\
+        end\
+        if not mypos then return false end\
+        local start\
+        if dir > 0 then\
+            local firsts = self._spineFirstsOf and self:_spineFirstsOf(without)\
+            if type(firsts) ~= \"table\" then return false end\
+            local cursor = self._cursor or 1\
+            local here = cursor - ((mypos < cursor) and 1 or 0)\
+            for i = 1, #firsts do\
+                if firsts[i] > here then start = firsts[i]; break end\
+            end\
+        else\
+            local ok_f, firsts = pcall(self._spinePageFirsts, self, true)\
+            if not ok_f or type(firsts) ~= \"table\" then return false end\
+            local page_start = 1\
+            for i = 1, #firsts do if firsts[i] <= mypos then page_start = firsts[i] end end\
+            for i = 1, #firsts do if firsts[i] < page_start then start = firsts[i] end end\
+            -- A place before the book's own: the same with or without it.\
+        end\
+        if not start then return false end\
+        local before = 0\
+        for i = 1, start - 1 do\
+            local it = without[i]\
+            if not (type(it) == \"table\" and it.shelf_module) then before = before + 1 end\
+        end\
+        to, lead_from = before + 1, start\
+    else\
+        if self._activeShelfModules and self:_activeShelfModules() then return false end\
+        local view = math.max(1, self:_viewSize())\
+        local page = math.floor((at - 1) / view)\
+        if dir > 0 then\
+            to = (page + 1) * view + 1\
+            if to > #books then return false end\
+        else\
+            if page < 1 then return false end\
+            to = (page - 1) * view + 1\
+        end\
+    end\
+    if to == at then return false end\
+    local UI = CuratedUI()\
+    local shown = piecesShown(self)\
+    withMods(self, function(mods)\
+        if not (shown and mods) then return false end\
+        UI.shiftForRemove(mods, at)\
+        UI.shiftForInsert(mods, to)\
+        -- A piece standing at the page's start, between the book and the\
+        -- books before it: the book goes in front, to lead the page.\
+        if lead_from and without then\
+            local at_or_after = {}\
+            for i = lead_from, #without do\
+                local it = without[i]\
+                if type(it) == \"table\" and it.shelf_module then at_or_after[it.shelf_module.id] = true end\
+            end\
+            for _i, m in ipairs(mods) do\
+                if at_or_after[m.id] and (tonumber(m.after) or 0) == to - 1 then m.after = to end\
+            end\
+        end\
+        return true\
+    end)\
+    table.insert(books, to, table.remove(books, at))\
+    writeOrder(list, books, reversed)\
+    reanchor(self, books)\
+    return true\
+end\
+\
+-- _curatedBookAt(pos) -> the path of the book drawn under a point on this\
+-- page, or nil.\
+function BookshelfWidget:_curatedBookAt(pos)\
+    if not (pos and self._shelfSlotRect) then return nil end\
+    -- In list view a book's slot is its cover thumbnail at the row's left;\
+    -- the row is the book (PW5: a tap on a title missed, and the tap went\
+    -- through to the list). The row is the cover's height, and the gap to\
+    -- the next row's cover belongs half to each.\
+    local list = self._viewMode and self:_viewMode() == \"list\"\
+    local slack = 0\
+    if list then\
+        local ok, Device = pcall(require, \"device\")\
+        slack = ok and Device.screen and Device.screen.scaleBySize\
+            and Device.screen:scaleBySize(8) or 8\
+    end\
+    for _i, item in ipairs(self._page_items or {}) do\
+        local fp = type(item) == \"table\" and item.filepath\
+        if fp then\
+            local r = self:_shelfSlotRect(fp)\
+            if r and r.x then\
+                if list then\
+                    if pos.y >= r.y - slack and pos.y < r.y + r.h + slack then return fp end\
+                elseif pos:intersectWith(r) then\
+                    return fp\
+                end\
+            end\
+        end\
+    end\
+    return nil\
+end\
+\
+-- _shelfPieceAt(pos) -> the shelf module (a pinned ornament, say) drawn\
+-- under a point on this page, as the shelf's record has it, or nil. A spine\
+-- shelf notes each piece's cell as it draws it (_spine_module_cells, which\
+-- can outlive a piece: only one still on the shelf's record counts).\
+function BookshelfWidget:_shelfPieceAt(pos)\
+    local cells = self._spine_module_cells\
+    if not (pos and type(cells) == \"table\") then return nil end\
+    local ok, SM = pcall(require, \"lib/bookshelf_shelf_modules\")\
+    local mods = ok and SM and SM.list(TabModel().getById(self.chip)) or nil\
+    for _i, m in ipairs(mods or {}) do\
+        local cell = cells[m.id]\
+        local r = cell and cell.dimen\
+        if r and r.x and pos:intersectWith(r) then return m end\
+    end\
+    return nil\
+end\
+\
+-- _curatedAtEdge(fp, dir) -> is the book already first (-1) / last (1)?\
+function BookshelfWidget:_curatedAtEdge(fp, dir)\
+    local at, n = self:_curatedPlace(fp)\
+    if not at then return true end\
+    local tab = TabModel().getById(self.chip)\
+    return CuratedUI().atEdge(piecesShown(self) and tab and tab.shelf_modules or nil, n, at, dir)\
+end\
+\
+-- _curatedTakeOff(fp) -> true when the book came off this shelf.\
+function BookshelfWidget:_curatedTakeOff(fp)\
+    local list, tab = self:_curatedList()\
+    if not (list and Curated().has(list, fp)) then return false end\
+    -- Its place on screen, when the screen is the list: the pieces close up.\
+    local at = self:_curatedPlace(fp)\
+    if at then\
+        local UI = CuratedUI()\
+        withMods(self, function(mods)\
+            if not mods then return false end\
+            UI.shiftForRemove(mods, at)\
+            return true\
+        end)\
+    end\
+    local gone = Curated().remove(list, fp)\
+    if gone and at then reanchor(self, (shelfOrder(tab))) end\
+    -- Its turn (spine out) goes with it: added again, it faces out.\
+    if gone then\
+        withMods(self, function(_mods, t)\
+            local v = t.spine_face_out\
+            if type(v) == \"table\" and type(v.spine) == \"table\" and v.spine[fp] then\
+                v.spine[fp] = nil\
+                return true\
+            end\
+            return false\
+        end)\
+    end\
+    return gone\
+end\
+\
+-- Face out or spine out, book by book: a spine shelf whose Face out is\
+-- \"Choose for each book\" (spine_face_out = { chosen = true, spine = { [path]\
+-- = true } }, read by SpineShelf.faceOutSpec). Every book faces out until it\
+-- is turned.\
+local function faceChoice(tab)\
+    local v = tab and tab.spine_face_out\
+    if type(v) == \"table\" and v.chosen == true and not v.all then return v end\
+    return nil\
+end\
+\
+-- _curatedFaceChoice() -> is the choice on offer on this shelf, now?\
+function BookshelfWidget:_curatedFaceChoice()\
+    local list, tab = self:_curatedList()\
+    if not list then return false end\
+    if not (self._isSpineMode and self:_isSpineMode()) then return false end\
+    return faceChoice(tab) ~= nil\
+end\
+\
+-- _curatedFacesOut(fp) -> does this book stand cover forward?\
+function BookshelfWidget:_curatedFacesOut(fp)\
+    local _list, tab = self:_curatedList()\
+    local v = faceChoice(tab)\
+    if not v then return false end\
+    return not (type(v.spine) == \"table\" and v.spine[fp])\
+end\
+\
+-- _curatedSetFaceOut(fp, on) -> true when the book was turned (and saved).\
+function BookshelfWidget:_curatedSetFaceOut(fp, on)\
+    if not fp or not self:_curatedList() then return false end\
+    local changed = false\
+    withMods(self, function(_mods, t)\
+        local v = faceChoice(t)\
+        if not v then return false end\
+        local spine = type(v.spine) == \"table\" and v.spine or {}\
+        local is_out = not spine[fp]\
+        if is_out == (on and true or false) then return false end\
+        spine[fp] = (not on) and true or nil\
+        v.spine = spine\
+        changed = true\
+        return true\
+    end)\
+    return changed\
+end\
+\
+-- _curatedStandPiece(fp, entry) -> the new module: an ornament pinned to the\
+-- right of this book.\
+function BookshelfWidget:_curatedStandPiece(fp, entry)\
+    if not (entry and entry.name) then return nil end\
+    local at = self:_curatedPlace(fp)\
+    if not at then return nil end\
+    local made\
+    withMods(self, function(mods, tab)\
+        mods = mods or {}\
+        tab.shelf_modules = mods\
+        local used = {}\
+        for _j, x in ipairs(mods) do used[x.id] = true end\
+        local k = 1\
+        while used[\"sm_\" .. k] do k = k + 1 end\
+        made = { id = \"sm_\" .. k, type = \"module\", module = \"ornament\",\
+                 ornament = entry.name, tap = entry.tap, after = at, w = 1 }\
+        -- First of the pieces after this book: touching it.\
+        table.insert(mods, 1, made)\
+        return true\
+    end)\
+    if made then\
+        local _l, tab = self:_curatedList()\
+        reanchor(self, (shelfOrder(tab)))\
+    end\
+    return made\
+end\
+\
+-- _curatedShow(fp): the shelf redrawn on the page that holds the book, with\
+-- the book picked out.\
+function BookshelfWidget:_curatedShow(fp)\
+    local at = self:_curatedPlace(fp)\
+    if at then\
+        local pos = at\
+        pcall(function()\
+            local SM = require(\"lib/bookshelf_shelf_modules\")\
+            for _i, m in ipairs(SM.list(TabModel().getById(self.chip)) or {}) do\
+                if (tonumber(m.after) or 0) < at then pos = pos + 1 end\
+            end\
+        end)\
+        local cursor = self._cursor or 1\
+        if self._isSpineMode and self:_isSpineMode() then\
+            local shown = self._spine_shown or 0\
+            -- At the page's first or last place, or off it: a move there can\
+            -- shift where the pages break (books differ in width), so the\
+            -- page comes from the map of the shelf AS IT NOW STANDS, the\
+            -- list fetched again first (the map is kept with the list, and\
+            -- read from the old one it put a book stepped right off page 1\
+            -- second on page 2). Inside the page the start cannot move, and\
+            -- the map, which plans the whole shelf, is not built.\
+            if pos <= cursor or pos >= cursor + shown - 1 then\
+                local from = pos\
+                self._spine_keep_cursor = true\
+                if self._expireSpineFetch then self:_expireSpineFetch() end\
+                if self._spineCachedFetch then pcall(self._spineCachedFetch, self, 400) end\
+                self._spine_keep_cursor = nil\
+                local ok, firsts = pcall(self._spinePageFirsts, self, true)\
+                if ok and type(firsts) == \"table\" then\
+                    for i = 1, #firsts do if firsts[i] <= pos then from = firsts[i] end end\
+                end\
+                self._cursor = math.max(1, from)\
+            end\
+        elseif not (self._activeShelfModules and self:_activeShelfModules()) then\
+            -- A cover shelf with pieces on it pages by SLOTS, not books:\
+            -- left where it is rather than turned to a wrong page.\
+            local view = math.max(1, self:_viewSize())\
+            if at < cursor or at >= cursor + view then\
+                self._cursor = math.floor((at - 1) / view) * view + 1\
+            end\
+        end\
+        if self._syncPageFromCursor then pcall(self._syncPageFromCursor, self) end\
+    end\
+    self._tap_selected_fp = fp\
+    self:_curatedRedraw()\
+end\
+\
+-- _curatedPieces() -> the shelf's module list, its pieces put back beside\
+-- their books (CuratedUI.reconcilePieces) when the collection changed since\
+-- they were last seen: a book added, removed or moved by something other\
+-- than these menus. Called as the shelf reads its modules. Nothing is\
+-- written here: the next save of the shelf's record carries it.\
+function BookshelfWidget:_curatedPieces(mods)\
+    local list, tab = self:_curatedList()\
+    mods = mods or (tab and tab.shelf_modules)\
+    if not (list and type(mods) == \"table\" and #mods > 0) then return mods end\
+    if not self:_curatedArrangeable() then return mods end\
+    local UI = CuratedUI()\
+    local books = shelfOrder(tab)\
+    UI.reconcilePieces(mods, books)\
+    -- A piece seen here for the first time notes the book on its left.\
+    for _i, m in ipairs(mods) do\
+        if m.anchor == nil then UI.anchorPieces({ m }, books) end\
+    end\
+    return mods\
+end\
+\
+-- _curatedRedraw(): the shelf's rows again, and only them: the top panel and\
+-- the menu over it are as they were, so nothing else is rebuilt or flashed\
+-- (a whole rebuild per step was most of a step's 300 ms on a PW5).\
+function BookshelfWidget:_curatedRedraw()\
+    -- A spine shelf keeps its own list for 30 seconds, keyed on the shelf\
+    -- and its pieces: a book moved past a book changes neither.\
+    if self._expireSpineFetch then self:_expireSpineFetch() end\
+    -- And composed pages for page turns, under a key that knows nothing of\
+    -- which books are turned spine out: a turn was drawn from the picture\
+    -- before it.\
+    if self._pageCacheClear then self:_pageCacheClear() end\
+    -- The page was chosen for the book just moved (_curatedShow). A list\
+    -- that comes back in another order is otherwise taken for one that\
+    -- reordered itself, and the cursor put back on the old page's first\
+    -- book (_anchorSpineCursor): one place off, after a step over a page's\
+    -- end.\
+    self._spine_keep_cursor = true\
+    if self._swapShelvesInPlace then\
+        self:_swapShelvesInPlace()\
+    else\
+        self:_rebuild()\
+        UIManager:setDirty(self, \"ui\")\
+    end\
+    self._spine_keep_cursor = nil\
+end\
+\
+-- _curatedUseShelfOrder(): sort this shelf by its collection's order.\
+function BookshelfWidget:_curatedUseShelfOrder()\
+    local TM = TabModel()\
+    local tabs = TM.load()\
+    for _i, t in ipairs(tabs) do\
+        if t.id == self.chip then\
+            local ok, Editor = pcall(require, \"lib/bookshelf_chip_editor\")\
+            t.sort_priority = (ok and Editor and Editor.sourceSortDefaults and Editor.sourceSortDefaults(\"collection\"))\
+                or { { key = \"collection_order\", reverse = false }, { key = \"last_opened\", reverse = true } }\
+        end\
+    end\
+    TM.save(tabs)\
+    pcall(function() require(\"lib/bookshelf_book_repository\").invalidateBookCache(\"shelf order\") end)\
+end\
+\
+-- _curatedArrangeShelf() -> the arrange menu, opened on the first book of\
+-- the page on screen (the shelf editor's Arrange button); nil when the page\
+-- shows no book of the collection.\
+function BookshelfWidget:_curatedArrangeShelf()\
+    local list = self:_curatedList()\
+    if not list then return nil end\
+    for _i, item in ipairs(self._page_items or {}) do\
+        if type(item) == \"table\" and item.filepath and Curated().has(list, item.filepath) then\
+            return self:_curatedMoveMenu(item)\
+        end\
+    end\
+    return nil\
+end\
+\
+-- _holdBook(book): a long-press on a book on the shelf. On a hand-ordered\
+-- shelf that can be arranged (or only waits for \"Place by hand\"), Arrange,\
+-- which has a way to the book menu; anywhere else the book menu\
+-- (maintainer: the Arrange card in the book menu goes, a long-press on the\
+-- shelf opens Arrange).\
+function BookshelfWidget:_holdBook(book)\
+    local fp = book and book.filepath\
+    local list = fp and self:_curatedList()\
+    if list and Curated().has(list, fp) then\
+        local ok, why = self:_curatedArrangeable()\
+        if ok or why == \"unordered\" then return self:_curatedMoveMenu(book) end\
+    end\
+    return self:_showBookDetail(book, { active = \"edit\" })\
+end\
+\
+-- _curatedMoveMenu(book): arranging a hand-ordered shelf, on the shelf.\
+-- Modeled on a pinned piece's menu (_spineModuleMenu): it opens clear of the\
+-- shelf and STAYS OPEN while books move. One book is picked up (lifted on\
+-- the shelf, named in the title). With it up:\
+--   the buttons            Start / Page / Left / Right / Page / End\
+--   a swipe on it          one place\
+--   a tap on another book  it goes to that book's place\
+--   a hold on another book that one is picked up instead\
+--   a swipe on the shelf   turns the page, the menu staying\
+-- A tap anywhere else closes it.\
+function BookshelfWidget:_curatedMoveMenu(book)\
+    local fp = book and book.filepath\
+    local list = self:_curatedList()\
+    if not (fp and list and Curated().has(list, fp)) then return end\
+    local bw = self\
+    local Session = require(\"lib/bookshelf_module_grid_session\")\
+    local UI = CuratedUI()\
+    -- Right to left: the shelf's rows are mirrored, place 1 at the right.\
+    local mirrored = false\
+    pcall(function() mirrored = require(\"ui/bidi\").mirroredUILayout() and true or false end)\
+    local d\
+    local title = book.title or _(\"Book\")\
+    -- The book picked up now (a hold on another book picks that one up).\
+    local cur_book = book\
+    local function book_now() return cur_book end\
+    -- \"Arrange: The Traveler\": the menu named, then the book picked up. The\
+    -- title bar cuts a long one at its end.\
+    local function titleText() return require(\"ffi/util\").template(_(\"Arrange: %1\"), title) end\
+    local function close() if d then UIManager:close(d) end end\
+    local function after(moved)\
+        if not moved then return end\
+        bw:_curatedShow(fp)\
+        if d then d:refresh() end\
+    end\
+    local function step(dir) after(bw:_curatedStep(fp, dir)) end\
+    local function edge(dir) after(bw:_curatedToEdge(fp, dir)) end\
+    local function takeOff()\
+        close()\
+        local _l, tab = bw:_curatedList()\
+        local gone = bw:_curatedTakeOff(fp)\
+        bw._tap_selected_fp = nil\
+        if gone then\
+            bw:_curatedRedraw()\
+            -- It leaves at once, with no question asked: say what happened\
+            -- and where, so a slip is seen and can be put right.\
+            pcall(function()\
+                local T = require(\"ffi/util\").template\
+                UIManager:show(require(\"ui/widget/notification\"):new{\
+                    text = T(_(\"Removed from the %1 collection\"),\
+                        (tab and tab.source and tab.source.id) or (tab and tab.label) or \"\") })\
+            end)\
+        end\
+    end\
+    -- The strip at the top: which collection the shelf is, and the two ways\
+    -- out of arranging (maintainer): the shelf's editor, and the book's menu\
+    -- for the book picked up (what a long-press opened before it opened\
+    -- this).\
+    local function strip()\
+        local T = require(\"ffi/util\").template\
+        local _l, tab = bw:_curatedList()\
+        local name = (tab and tab.source and tab.source.id) or \"\"\
+        return { { type = \"summary\", text = T(_(\"This shelf uses the %1 collection.\"), name),\
+            -- Edit shelf, then \"Edit\" with a book at the right, as a pinned\
+            -- piece's Arrange menu has \"Edit\" with its cup: the same two\
+            -- buttons in both, the icon the one that changes (maintainer).\
+            actions = {\
+                { label = _(\"Edit shelf\"), callback = function()\
+                    close()\
+                    local _l2, t2 = bw:_curatedList()\
+                    if t2 then\
+                        require(\"lib/bookshelf_chip_editor\"):editTab(t2.id, { bw = bw, on_change = function(info) bw:_afterChipEdit(info) end })\
+                    end\
+                end },\
+                { icon = \"\\xEE\\x9E\\xBD\", label = _(\"Edit\"), callback = function()   -- book-open-variant\
+                    close()\
+                    bw:_showBookDetail(book_now(), { active = \"edit\" })\
+                end },\
+            } } }\
+    end\
+    local function standPiece()\
+        require(\"lib/bookshelf_ornament_browser\").show(nil, {\
+            title = _(\"Choose an ornament\"),\
+            pick = function(entry)\
+                if bw:_curatedStandPiece(fp, entry) then\
+                    bw:_curatedShow(fp)\
+                    if d then d:refresh() end\
+                end\
+            end,\
+        })\
+    end\
+    local function page()\
+        local ok, why = bw:_curatedArrangeable()\
+        local blocks = {}\
+        if ok then\
+            -- Left and Right are the screen's, in either reading direction.\
+            -- The same six a pinned ornament's menu has (_spineModuleMenu).\
+            local ICON = { first = UI.ICON_FIRST, page_prev = Session.PAGE_PREV, prev = Session.CHEV_LEFT,\
+                           next = Session.CHEV_RIGHT, page_next = Session.PAGE_NEXT, last = UI.ICON_LAST }\
+            local TEXT = { start = _(\"Start\"), page_prev = _(\"Page\"), left = _(\"Left\"),\
+                           right = _(\"Right\"), page_next = _(\"Page\"), [\"end\"] = _(\"End\") }\
+            -- One row the menu's whole width, as the ornament's: the shelf's\
+            -- start and end at its ends, a page and a place between them\
+            -- (fill: equal cells, icons alone where the labels do not fit).\
+            local chips = {}\
+            for _i, c in ipairs(UI.moveChips(mirrored)) do\
+                chips[#chips + 1] = { icon = ICON[c.icon], text = TEXT[c.key],\
+                    enabled = (c.step and bw:_curatedCanStep(fp, c.step))\
+                        or (c.edge and not bw:_curatedAtEdge(fp, c.edge))\
+                        or (c.page and bw:_curatedCanPage(fp, c.page)) or false,\
+                    callback = function()\
+                        if c.step then step(c.step)\
+                        elseif c.page then after(bw:_curatedToPage(fp, c.page))\
+                        else edge(c.edge) end\
+                    end }\
+            end\
+            blocks[#blocks + 1] = { type = \"chips\", fill = true, items = chips }\
+            if Device:isTouchDevice() then\
+                -- A tap on another book picks that one up (no need to say).\
+                blocks[#blocks + 1] = { type = \"hint\",\
+                    text = _(\"Long-press another book or ornament to swap their places.\") }\
+            end\
+            local extras = {}\
+            -- Only where a piece would show: a spine shelf, with Modules > On\
+            -- the shelf on.\
+            local on_shelf = true\
+            pcall(function()\
+                local Store = require(\"lib/bookshelf_settings_store\")\
+                if Store.microOnShelf then on_shelf = Store.microOnShelf() and true or false end\
+            end)\
+            -- Add ornament last (after the book's own actions, maintainer).\
+            local add_ornament\
+            if on_shelf and bw._isSpineMode and bw:_isSpineMode() then\
+                add_ornament = { icon = UI.ICON_ORNAMENT, text = _(\"Add ornament\") .. \"\\xE2\\x80\\xA6\",\
+                    callback = standPiece }\
+            end\
+            -- Cover forward or spine out, this book (a spine shelf whose\
+            -- Face out is \"Choose for each book\"). Lit while it faces out.\
+            if bw:_curatedFaceChoice() then\
+                local out = bw:_curatedFacesOut(fp)\
+                table.insert(extras, 1, { icon = UI.ICON_FACE, text = _(\"Face out\"), on = out,\
+                    callback = function()\
+                        if bw:_curatedSetFaceOut(fp, not out) then\
+                            bw:_curatedShow(fp)\
+                            if d then d:refresh() end\
+                        end\
+                    end })\
+            end\
+            extras[#extras + 1] = { icon = UI.ICON_REMOVE, text = _(\"Remove from collection\"), callback = takeOff }\
+            extras[#extras + 1] = add_ornament\
+            blocks[#blocks + 1] = { type = \"chips\", items = extras }\
+        else\
+            local text\
+            if why == \"boxes\" then\
+                text = _(\"This shelf boxes each series together, so its books cannot be placed one by one. Turn series boxes off in the shelf editor to move books by hand.\")\
+            elseif why == \"unordered\" then\
+                text = _(\"This collection is not in an order of your own yet: KOReader may be sorting it. Placing books by hand starts from the order on screen, and turns KOReader's own sorting of this collection off.\")\
+            else\
+                text = _(\"This shelf is sorted another way, so its books cannot be moved by hand.\")\
+            end\
+            blocks[#blocks + 1] = { type = \"summary\", text = text }\
+            local items = {}\
+            if why == \"unordered\" then\
+                items[#items + 1] = { text = _(\"Place by hand\"), callback = function()\
+                    if bw:_curatedStartOrder() then\
+                        bw:_curatedShow(fp)\
+                        if d then d:refresh() end\
+                    end\
+                end }\
+            end\
+            if why == \"sort\" then\
+                items[#items + 1] = { text = _(\"Sort by collection order\"), callback = function()\
+                    bw:_curatedUseShelfOrder()\
+                    bw:_curatedShow(fp)\
+                    if d then d:refresh() end\
+                end }\
+            end\
+            items[#items + 1] = { icon = UI.ICON_REMOVE, text = _(\"Remove from collection\"), callback = takeOff }\
+            blocks[#blocks + 1] = { type = \"chips\", items = items }\
+            return { strip = strip(), blocks = blocks }\
+        end\
+        return { strip = strip(), blocks = blocks }\
+    end\
+    bw._tap_selected_fp = fp\
+    bw:_curatedRedraw()\
+    d = require(\"lib/bookshelf_page_dialog\").show{\
+        title = titleText,\
+        page = page,\
+        on_close = function()\
+            if bw._tap_selected_fp == fp then\
+                bw._tap_selected_fp = nil\
+                bw:_curatedRedraw()\
+            end\
+        end,\
+        anchor = function()\
+            local cw = d and d.frame and d.frame:getSize().w\
+            if not cw then return nil end\
+            if bw.hasTopPanel and bw:hasTopPanel() then\
+                return { x = math.floor((Screen:getWidth() - cw) / 2), y = 0, w = cw, h = Screen:scaleBySize(8) }\
+            end\
+            local r = bw._shelfSlotRect and bw:_shelfSlotRect(fp)\
+            if r and r.y and r.h then\
+                local gap = Screen:scaleBySize(16)\
+                return { x = math.floor((Screen:getWidth() - cw) / 2), y = r.y - gap, w = cw, h = r.h + 2 * gap }\
+            end\
+        end,\
+    }\
+    local function onSwipeBook(ges)\
+        local r = bw._shelfSlotRect and bw:_shelfSlotRect(fp)\
+        if not (r and r.x and ges and ges.pos and ges.pos:intersectWith(r)) then return false end\
+        local by = UI.swipeStep(ges.direction, mirrored)\
+        if not by then return false end\
+        step(by)\
+        return true\
+    end\
+    -- pickUp(other): that book is picked up instead, so a whole shelf can be\
+    -- arranged without leaving the menu.\
+    local function pickUp(other)\
+        for _i, item in ipairs(bw._page_items or {}) do\
+            if type(item) == \"table\" and item.filepath == other then\
+                title = item.title or title\
+                cur_book = item\
+            end\
+        end\
+        if cur_book.filepath ~= other then cur_book = { filepath = other, title = title } end\
+        fp = other\
+        bw._tap_selected_fp = fp\
+        bw:_curatedRedraw()\
+        d:refresh()\
+    end\
+    -- A tap on another book on the shelf: that one is picked up (maintainer:\
+    -- \"tapping another book should switch to arranging the tapped book\"). A\
+    -- tap on this book, or anywhere else off the menu, is the menu's own (it\
+    -- closes).\
+    local function onTapBook(ges)\
+        if not (ges and ges.pos) then return false end\
+        local frame = d.frame and d.frame.dimen\
+        if frame and ges.pos:intersectWith(frame) then return false end\
+        local target = bw:_curatedBookAt(ges.pos)\
+        if not target or target == fp or not Curated().has(list, target) then return false end\
+        pickUp(target)\
+        return true\
+    end\
+    -- A tap (or a hold) on a pinned piece: this menu gives way to the\
+    -- piece's own, which moves, adjusts and unpins it; a tap on a book from\
+    -- there comes back here (maintainer). The book is put down first.\
+    local function onTapPiece(ges)\
+        if not (ges and ges.pos and bw._shelfPieceAt and bw._spineModuleMenu) then return false end\
+        local frame = d.frame and d.frame.dimen\
+        if frame and ges.pos:intersectWith(frame) then return false end\
+        local piece = bw:_shelfPieceAt(ges.pos)\
+        if not piece then return false end\
+        d:_dismiss()\
+        bw:_spineModuleMenu(piece)\
+        return true\
+    end\
+    -- A hold on a pinned piece: the book and the piece trade places\
+    -- (maintainer), the book staying picked up.\
+    local function onHoldPiece(ges)\
+        if not (ges and ges.pos and bw._shelfPieceAt) or not bw:_curatedArrangeable() then return false end\
+        local frame = d.frame and d.frame.dimen\
+        if frame and ges.pos:intersectWith(frame) then return false end\
+        local piece = bw:_shelfPieceAt(ges.pos)\
+        if not piece then return false end\
+        after(bw:_shelfSwap({ book = fp }, { piece = piece.id }))\
+        return true\
+    end\
+    -- A hold on another book: the two trade places (maintainer: \"Long press\
+    -- another book to swap position\").\
+    local function onHoldBook(ges)\
+        if not (ges and ges.pos) or not bw:_curatedArrangeable() then return false end\
+        local frame = d.frame and d.frame.dimen\
+        if frame and ges.pos:intersectWith(frame) then return false end\
+        local other = bw:_curatedBookAt(ges.pos)\
+        if not other or other == fp or not Curated().has(list, other) then return false end\
+        after(bw:_curatedSwap(fp, other))\
+        return true\
+    end\
+    -- A swipe on the shelf, off the picked-up book: the page turns and the\
+    -- menu stays, so a book can be sent to a place on another page.\
+    local function onSwipeShelf(ges)\
+        if not (ges and ges.pos) then return false end\
+        local frame = d.frame and d.frame.dimen\
+        if frame and ges.pos:intersectWith(frame) then return false end\
+        local by = UI.swipeStep(ges.direction, mirrored)\
+        if not by then return false end\
+        if by == -1 then\
+            if bw._paginateNext then bw:_paginateNext() end\
+        elseif bw._paginatePrev then\
+            bw:_paginatePrev()\
+        end\
+        -- A page turn drops the shelf's own selection: the book is still up.\
+        bw._tap_selected_fp = fp\
+        for _i, item in ipairs(bw._page_items or {}) do\
+            if type(item) == \"table\" and item.filepath == fp then bw:_curatedRedraw(); break end\
+        end\
+        return true\
+    end\
+    local handle = d.handleEvent\
+    function d:handleEvent(event)\
+        local ev = event.handler == \"onGesture\" and event.args and event.args[1]\
+        if ev and ev.ges == \"swipe\" and (onSwipeBook(ev) or onSwipeShelf(ev)) then return true end\
+        if ev and ev.ges == \"tap\" and onTapPiece(ev) then return true end\
+        if ev and ev.ges == \"tap\" and onTapBook(ev) then return true end\
+        if ev and ev.ges == \"hold\" and onHoldPiece(ev) then return true end\
+        if ev and ev.ges == \"hold\" and onHoldBook(ev) then return true end\
+        return handle(self, event)\
+    end\
+    return d\
+end\
+\
+end\
+",
+    ["lib/bookshelf_widget_opds"] = "-- bookshelf_widget_opds.lua\
+-- The shelf's OPDS side: fetching and paging a catalogue's feeds, the cover\
+-- pool, search, the remote book popup, downloads and streaming, the start\
+-- folder and the drill into a subcatalogue.\
+--\
+-- These are BookshelfWidget's own methods, kept in a file of their own. The\
+-- module returns an installer: lib/bookshelf_widget.lua calls it once with the\
+-- class, and every method below is defined on that class exactly as if it\
+-- were written there (`self` is the shelf widget, and BookshelfWidget.live is\
+-- the real class field). The bodies sit at the left margin for that reason.\
+local BookshelfSettings = require(\"lib/bookshelf_settings_store\")\
+local FrameContainer  = require(\"ui/widget/container/framecontainer\")\
+local VerticalGroup   = require(\"ui/widget/verticalgroup\")\
+local HorizontalGroup = require(\"ui/widget/horizontalgroup\")\
+local CenterContainer = require(\"ui/widget/container/centercontainer\")\
+local TextWidget      = require(\"lib/bookshelf_colour_text\")\
+local TextBoxWidget   = require(\"ui/widget/textboxwidget\")\
+local Geom            = require(\"ui/geometry\")\
+local Size            = require(\"ui/size\")\
+local Space           = require(\"lib/bookshelf_space\")\
+local BFont           = require(\"lib/bookshelf_fonts\")\
+local UIManager       = require(\"ui/uimanager\")\
+local Device          = require(\"device\")\
+local Screen          = Device.screen\
+local _               = require(\"lib/bookshelf_i18n\").gettext\
+local Repo            = require(\"lib/bookshelf_book_repository\")\
+local logger          = require(\"logger\")\
+local T               = require(\"ffi/util\").template\
+local _gettime        = require(\"lib/bookshelf_gettime\")\
+\
+return function(BookshelfWidget)\
+\
+-- _markOpdsNav() - arm the one-shot \"the user caused the rebuild that is\
+-- about to happen\" flag. EVERY OPDS network call is gated on it: the shelf\
+-- rebuilds for plenty of reasons the user did not ask for (startup restore\
+-- with a persisted chip + cursor, the 5s sideload file-poll, a cover\
+-- landing, a settings change), and none of those may reach the network.\
+-- Armed by the navigation gestures only -- chip select, page turn, page\
+-- jump, swipe-down refresh -- and consumed by the next _opdsAfterPage.\
+function BookshelfWidget:_markOpdsNav()\
+    self._opds_nav_pending = true\
+end\
+\
+-- _opdsEffectiveTab() -> tab-like | nil\
+-- WHICH OPDS feed is the shelf actually showing right now? Every network\
+-- helper below needs the same answer, and it is not simply \"the active tab\":\
+-- drilling into a navigation entry puts a different feed on screen while the\
+-- chip underneath is unchanged. Resolved in the precedence _fetchChipItems\
+-- itself uses -- drill tip first, chip second:\
+--\
+--   * tip.kind == \"opds_nav\" -> a synthesised stand-in for the subcatalog the\
+--     user drilled into. It carries exactly the three fields the helpers read\
+--     off a tab (source.id, source.feed_url, label), so _opdsFetchMore /\
+--     _opdsRefresh work against a drilled feed with no change of their own.\
+--   * any OTHER tip kind (search, folder, a group) -> nil. That view is a\
+--     library view reachable from any chip; the feed is not what is rendered,\
+--     so no OPDS work applies. Same answer the old inline drill guards gave.\
+--   * no tip at all -> the real tab, when its source is an OPDS one.\
+--\
+-- Factored into one function deliberately: three hand-rolled copies of this\
+-- precedence is how the \"the drilled page doesn't fetch / refresh / show\
+-- covers\" rounds happen.\
+function BookshelfWidget:_opdsEffectiveTab()\
+    local path = self._drilldown_path or {}\
+    local tip  = path[#path]\
+    if tip then\
+        if tip.kind ~= \"opds_nav\" then return nil end\
+        local pay = tip.payload or {}\
+        if not (pay.server_key and pay.feed_url) then return nil end\
+        return {\
+            label  = tip.label,\
+            source = { kind = \"opds\", id = pay.server_key,\
+                       feed_url = pay.feed_url },\
+        }\
+    end\
+    local TabModel = require(\"lib/bookshelf_tab_model\")\
+    local tab = TabModel.getById(self.chip)\
+    if tab and tab.source and tab.source.kind == \"opds\" then return tab end\
+    return nil\
+end\
+\
+-- _opdsBatchSize() -> how many entries one fetch should pull: one screenful.\
+--\
+-- Exactly the page being rendered, so the first paint comes as fast as the\
+-- layout allows. It used to be max(view, a per-chip number), which was the\
+-- wrong shape in both directions - a small number made every page turn wait\
+-- on a round trip, a large one made the FIRST page wait on all of them - and\
+-- was chosen against a page size that changes underneath it when the shelf\
+-- expands.\
+--\
+-- A background lookahead was built here and REVERTED, because there is no\
+-- quiet way to fetch a feed yet. _opdsFetchMore is the user-facing fetch: it\
+-- runs inside Trapper and shows a modal \"Fetching...\" that yields for input,\
+-- and its tail re-clamps self._cursor and rebuilds. Driving it from a\
+-- background prefetch therefore blocked input on a page the user had already\
+-- been given, showed the message a second time on the next swipe, and moved\
+-- the cursor under a swipe in flight - the page slipping one further than\
+-- asked for.\
+--\
+-- Doing it properly needs a silent fetch path: no Trapper, no progress line,\
+-- no cursor arithmetic, and an abandon-on-navigation token like the cover\
+-- chain's. That is a real piece of work on a function whose every branch is\
+-- load-bearing, not a flag.\
+function BookshelfWidget:_opdsBatchSize()\
+    return self:_viewSize() or 24\
+end\
+\
+-- _opdsFeedRef(tab) -> server_key, feed_url  (nil when the tab is not a\
+-- resolvable catalog). One resolution shared by every caller that needs to\
+-- reach a chip's cached window; two copies of this drift the moment one of\
+-- them learns about a new source shape.\
+function BookshelfWidget:_opdsFeedRef(tab)\
+    if not (tab and tab.source and tab.source.id) then return nil end\
+    local ok_s, OpdsSource = pcall(require, \"lib/bookshelf_opds_source\")\
+    if not ok_s then return nil end\
+    local server = OpdsSource.getServer(tab.source.id)\
+    local feed_url = tab.source.feed_url or (server and server.url)\
+    if not feed_url then return nil end\
+    return tab.source.id, feed_url\
+end\
+\
+-- want_count sentinel: \"walk this feed until it actually ends\".\
+--\
+-- Every other want is derived from a cursor and is therefore a guess at how\
+-- much the reader is about to need, which is why they are all capped. This one\
+-- is a question the reader asked outright by tapping \"last page\" on a feed of\
+-- unknown length, and a cap would answer it with a number that is not the\
+-- answer. math.huge rather than a magic integer so the walk's own\
+-- `count < want_count` test needs no special case.\
+local FETCH_ALL = math.huge\
+\
+-- _opdsPrefsTab() -> the real CHIP behind the current view, or nil.\
+--\
+-- Not the same question as _opdsEffectiveTab, and the two must not be\
+-- confused. That one answers \"which feed is on screen\", and when the user has\
+-- drilled into a subcatalog it answers with a synthesised stand-in carrying\
+-- only label + source -- a table that has never been persisted and so holds\
+-- none of the chip's settings. This one answers \"whose settings govern that\
+-- view\", which is always the chip the drill started from: the catalog is what\
+-- was configured, and drilling into one of its subcatalogs does not leave it.\
+--\
+-- Returns nil for a non-OPDS chip, so every caller can hand the result\
+-- straight to bookshelf_opds_prefs (whose readers all treat nil as \"defaults\").\
+function BookshelfWidget:_opdsPrefsTab()\
+    local TabModel = require(\"lib/bookshelf_tab_model\")\
+    local tab = TabModel.getById(self.chip)\
+    if tab and tab.source and tab.source.kind == \"opds\" then return tab end\
+    return nil\
+end\
+\
+-- Fetch feed pages for an OPDS tab until the window covers want_count\
+-- entries (or the feed runs out), then rebuild. User-initiated only: chip\
+-- tap on an empty window, page-turn past the window, swipe-down refresh.\
+-- Trapper gives a cancellable progress line; runWhenOnline gates Wi-Fi\
+-- with a prompt, never silently.\
+--\
+-- replace = true (swipe-down refresh) fetches into a FRESH window instead of\
+-- extending the cached one, and only overwrites the persisted window once\
+-- the feed has actually given us entries. Resetting up front would empty the\
+-- chip the moment the user declined the Wi-Fi prompt -- runWhenOnline's\
+-- callback simply never fires -- leaving them worse off than before they\
+-- asked. No user action may leave the chip emptier than it started unless\
+-- the feed itself genuinely got smaller.\
+--\
+-- `tab` is a tab-LIKE, not necessarily a real one: only source.id,\
+-- source.feed_url and label are read off it. Inside a drilled navigation entry\
+-- the caller passes the stand-in _opdsEffectiveTab synthesises for the\
+-- subcatalog, and every line below works against it unchanged -- which is the\
+-- whole reason the drill needed no fetch machinery of its own.\
+-- on_done (optional): a ONE-SHOT continuation run at the very end of the tail,\
+-- after the rebuild and the cover pass, for a caller that has a decision to\
+-- make once the feed has actually landed (today: _expandOpdsNav deciding\
+-- between a book modal and a drill for a subcatalog nothing had fetched yet).\
+-- It never fires when the fetch never ran -- an unknown server, or a Wi-Fi\
+-- prompt the user declined, in which case runWhenOnline simply never calls\
+-- back -- which is the correct \"stay put\" in both cases. Nothing about the\
+-- marker discipline changes: the markers are already released above, and this\
+-- runs inside the same single synchronous run of the coroutine.\
+-- _opdsResetFlattenedChildren(server_key, win) -> how many were dropped\
+--\
+-- ISSUE 411. A category holding exactly one acquisition entry is rendered as\
+-- that book rather than as a folder (\"folder of one\"), which is what keeps\
+-- Gutenberg and ManyBooks usable -- they model every work as a subcatalog of\
+-- one. The decision is made from the CHILD feed, which is a separate cached\
+-- feed from the page being looked at.\
+--\
+-- That is the trap. Flattening removes the folder, and the drill-in is the\
+-- only route by which a child feed ever becomes the refresh target, so once a\
+-- tile has flattened nothing can reach its child feed again: a swipe-down\
+-- refreshes the feed on screen, the resolve pass skips anything already\
+-- fetched, and every other write is append-only. The tile stays the book it\
+-- was the day it was cached, for ever -- \"refreshing does not revert it back\
+-- to a folder even if more entries are added back\".\
+--\
+-- So an explicit refresh drops the child feeds its flattening decisions were\
+-- made from, and the resolve pass fetches them again on the next paint, which\
+-- is what a first visit already costs.\
+--\
+-- ONLY the ones that actually flattened. A folder that stayed a folder can\
+-- still be drilled into and refreshed there, so clearing its child as well\
+-- would be a round trip per tile for nothing. Same predicate as the render,\
+-- through Repo, so the two cannot disagree about what \"one entry\" means.\
+function BookshelfWidget:_opdsResetFlattenedChildren(server_key, win)\
+    if not (server_key and type(win) == \"table\") then return 0 end\
+    local n = 0\
+    pcall(function()\
+        local OpdsWindow = require(\"lib/bookshelf_opds_window\")\
+        -- The OLD window: this runs before the parent is reset, which is the\
+        -- only moment the pre-refresh page is still readable.\
+        local page = OpdsWindow.slice(win, 0, win.count or 0) or {}\
+        for _i = 1, #page do\
+            local rec = page[_i]\
+            local url = rec and rec.is_opds_nav and rec.opds and rec.opds.feed_url\
+            if url and Repo.opdsLoneChildBook(server_key, url) then\
+                OpdsWindow.reset(server_key, url)\
+                n = n + 1\
+            end\
+        end\
+    end)\
+    return n\
+end\
+\
+function BookshelfWidget:_opdsFetchMore(tab, want_count, replace, on_done)\
+    local OpdsSource = require(\"lib/bookshelf_opds_source\")\
+    local OpdsFeed   = require(\"lib/bookshelf_opds_feed\")\
+    local OpdsWindow = require(\"lib/bookshelf_opds_window\")\
+    local CoverFetch = require(\"lib/bookshelf_cover_fetch\")\
+    local Notification = require(\"ui/widget/notification\")\
+    local Trapper    = require(\"ui/trapper\")\
+    local server = OpdsSource.getServer(tab.source.id)\
+    if not server then return end\
+    local feed_url = tab.source.feed_url or server.url\
+    -- Bound the WALK, not the storage. \"Go to last page\" on a category\
+    -- advertising 10000 results computes a want of 10000 and the loop below\
+    -- would ask the server for page after page until its chain ran out -\
+    -- hundreds of round trips with a modal progress line up throughout. That\
+    -- happened on device.\
+    --\
+    -- Clamped here rather than at each caller because every caller derives\
+    -- want from a cursor, and a cursor can always be sent further than any one\
+    -- fetch should chase.\
+    --\
+    -- FETCH_ALL is the one exception, and it is exempt on purpose. It is not a\
+    -- cursor overshoot - it is the reader tapping \"last page\" on a feed of\
+    -- unknown length, which is a direct question (\"where does this end?\") that\
+    -- a cap can only answer wrongly. It is safe to leave unbounded precisely\
+    -- because it is explicit: the progress line counts up, a tap stops it\
+    -- within about a tenth of a second, and everything already fetched is\
+    -- kept, so the worst case of a long walk is that the reader ends it early.\
+    if want_count ~= FETCH_ALL then\
+        local _OW = require(\"lib/bookshelf_opds_window\")\
+        want_count = math.min(want_count or 0, _OW.MAX_FETCH_ENTRIES)\
+    end\
+    -- Per-catalog socket budget, resolved once for the whole walk rather than\
+    -- per page: every page of one fetch belongs to the same catalog, and the\
+    -- chip cannot change under a running coroutine. Read off the CHIP, not the\
+    -- effective tab - a drilled subcatalog's stand-in carries no settings.\
+    local feed_timeouts = require(\"lib/bookshelf_opds_prefs\")\
+        .timeouts(self:_opdsPrefsTab())\
+    -- Is `t` (an _opdsEffectiveTab result) the same feed this fetch is for?\
+    -- Compared on the RESOLVED url, not the raw field: a chip's own tab leaves\
+    -- source.feed_url nil and means \"the server's root url\", which is exactly\
+    -- what feed_url resolved to above, so a raw comparison would call the root\
+    -- feed a different feed from itself. Server id checked first, so falling\
+    -- back to the captured server's url is the right substitution.\
+    local function sameFeed(t)\
+        if not (t and t.source and t.source.id == tab.source.id) then return false end\
+        return (t.source.feed_url or server.url) == feed_url\
+    end\
+    CoverFetch.runWhenOnline(function()\
+        -- Liveness, same test the _opdsAfterPage / _opdsEnsureCovers deferrals\
+        -- make: the Wi-Fi prompt is modal and the user can answer it long after\
+        -- the shelf closed (or after a re-open replaced this widget). Every\
+        -- line below fetches, moves this widget's cursor and rebuilds it, so\
+        -- running it against a dead shelf is at best waste and at worst a\
+        -- Trapper progress line over whatever is on screen now.\
+        if BookshelfWidget.live ~= self then return end\
+        Trapper:wrap(function()\
+            -- Held for the whole fetch so any rebuild landing mid-fetch can't\
+            -- queue a second FETCH. It does NOT block the user: an explicit\
+            -- swipe-down refresh during a feed fetch is deliberately exempt\
+            -- (see _opdsRefresh, which reads only the download marker), and a\
+            -- navigation that lands here is queued rather than refused. A\
+            -- timestamp rather than a boolean:\
+            -- Trapper:info yields, so this body can't be pcall-wrapped (LuaJIT\
+            -- can't yield across a C-call boundary) and an error inside the\
+            -- coroutine would otherwise wedge the flag on for the rest of the\
+            -- session. It expires instead.\
+            --\
+            -- ...and WHICH feed the fetch is for, as the sameFeed predicate\
+            -- itself. _opdsAfterPage needs to tell \"the feed on screen is\
+            -- already being fetched\" (refuse, nothing to do) from \"some OTHER\
+            -- feed is being fetched\" (queue, see there) -- previously it could\
+            -- not, so a drill landing mid-fetch was refused as busy and left\
+            -- the user on an empty subcatalog, and an errored fetch blocked\
+            -- every feed for the full 120s. A predicate rather than the url\
+            -- string because the comparison is on the RESOLVED url: recomputing\
+            -- \"the chip's root feed\" at the far end would mean an\
+            -- OpdsSource.getServer -- a re-read and re-parse of the stock OPDS\
+            -- plugin's opds.lua -- on every page render.\
+            self._opds_fetch_started_at = os.time()\
+            self._opds_fetch_feed = sameFeed\
+            local _dbg_want = want_count\
+            -- Shape matches OpdsWindow.load's miss exactly, field for field:\
+            -- the two have to stay interchangeable since everything below\
+            -- treats `win` the same either way.\
+            -- \"Replace\" means the cached window may be WRONG rather than\
+            -- merely short, so it is emptied before the walk refills it.\
+            --\
+            -- It must still be a REAL handle. A window carries its own\
+            -- identity now (server_key + feed_url) and everything that writes\
+            -- reaches storage through it; the bare table this used to build\
+            -- had neither, so every append bound a nil key, SQLite rejected\
+            -- the row, and the walk fetched page after page into nothing. The\
+            -- shelf showed a progress message and then no change at all.\
+            -- REPLACE DOES NOT DESTROY THE CACHE UP FRONT.\
+            --\
+            -- It used to: reset, then walk. So a refresh that could not reach\
+            -- the server - offline, catalog down, a transient error - threw\
+            -- away a perfectly good cached feed and left the reader looking at\
+            -- \"No books yet\" over a shelf that had been full a second earlier.\
+            -- Refreshing is not a request to be shown nothing, and a cached\
+            -- feed is the only thing an OPDS chip HAS when offline.\
+            --\
+            -- Held until the first page actually lands instead (see\
+            -- pending_replace below), so the old window survives every way a\
+            -- refresh can fail.\
+            local pending_replace = replace or false\
+            local win = OpdsWindow.load(tab.source.id, feed_url)\
+            -- Follow the chain when we have it. When we do not AND the feed\
+            -- has never been seen to end, the chain is LOST rather than\
+            -- finished - start again from the top and re-walk. Dedupe is a\
+            -- unique index now, so re-treading known pages costs requests and\
+            -- adds nothing twice; the alternative is a category frozen at\
+            -- whatever it happens to hold, which is what a bug left behind on\
+            -- Internet Archive.\
+            --\
+            -- A replace always starts at the top, decided here rather than\
+            -- inferred from a window we have deliberately not cleared yet.\
+            local url\
+            if pending_replace then\
+                url = feed_url\
+            else\
+                url = OpdsWindow.fetchUrl(win, feed_url)\
+            end\
+            -- Consecutive unusable pages seen (parsed fine, zero usable\
+            -- records). Reset by any page that yields records; when it hits\
+            -- OpdsWindow.UNUSABLE_PAGE_LIMIT the category is judged unusable\
+            -- and the walk stops terminally.\
+            local unusable_streak = 0\
+            -- Did the walk end TERMINALLY (chain finished, or category judged\
+            -- unusable) rather than by error, cancel or want_count? Terminal\
+            -- ends mark the window complete, which clamps the promised page\
+            -- count to what is cached (OpdsWindow.slice).\
+            local terminal = false\
+            -- Every url fetched by THIS walk. A feed whose rel=next loops back\
+            -- on itself (Internet Archive's faceted feeds have returned a next\
+            -- pointing at the very page it came from) can never make progress:\
+            -- the refetched page dedupes to nothing, the window stops growing,\
+            -- and without this guard the walk refetched the same page once a\
+            -- second forever. Any url seen twice ends the chain terminally --\
+            -- everything reachable was already fetched the first time round.\
+            local seen_urls = {}\
+            -- What this walk can count as already held.\
+            --\
+            -- Not simply win.count while a replace is pending: those entries\
+            -- are about to be thrown away, so counting them against the target\
+            -- says the work is already done. That is exactly what happened -\
+            -- deferring the reset (below) left a category holding 25 entries\
+            -- measured against a batch of 24, the loop never ran, and\
+            -- swipe-down refresh silently did nothing at all. Zero until the\
+            -- old window is actually gone, then the real count.\
+            local function heldCount()\
+                return pending_replace and 0 or (win.count or 0)\
+            end\
+            -- Discard the tap that STARTED this fetch.\
+            --\
+            -- The progress message traps input so it can be dismissed, and it\
+            -- goes up within milliseconds of the tap that asked for the fetch -\
+            -- so on e-ink, where the release event arrives well after the\
+            -- widget exists, that same tap dismissed it. The walk was cancelled\
+            -- before its first page landed (\"stopped by the reader at 0\
+            -- entries\", twice in one session, neither of them the reader), the\
+            -- shelf rebuilt an empty window as \"No books yet\", and the next\
+            -- top-up quietly refilled it a second later. Drills got it worst:\
+            -- the tap on a category cancelled the very fetch it had just\
+            -- requested.\
+            --\
+            -- This is the same guard the stock widgets use as\
+            -- flush_events_on_show, and the same reason: 400ms for the refresh\
+            -- to actually land plus 400ms for a human to react to it.\
+            -- dismissableRunInSubprocess does not do it for a trap widget we\
+            -- pass in, so it is ours to do.\
+            if Device.input and Device.input.inhibitInputUntil then\
+                Device.input:inhibitInputUntil(true)\
+            end\
+            while url and heldCount() < want_count do\
+                if seen_urls[url] then\
+                    logger.dbg(\"[bookshelf perf] opds next-chain loop detected at\", url)\
+                    win.next_url = nil\
+                    terminal = true\
+                    break\
+                end\
+                seen_urls[url] = true\
+                -- Report progress THROUGH the walk, not just that a walk is\
+                -- happening. One fetch can be many feed pages -- a catalog\
+                -- serving 25 records a page needs eleven of them to satisfy a\
+                -- batch of 200 -- and a line that reads \"Fetching X…\" on every\
+                -- one of them is indistinguishable from eleven separate\
+                -- fetches, which is exactly how it was read on device. The\
+                -- count is what makes one long operation legible as one.\
+                -- The second line is the point of making cancel responsive: an\
+                -- operation the reader is allowed to stop should say so. It\
+                -- matters most on exactly the walk that takes longest - \"last\
+                -- page\" on a feed of unknown length, which is unbounded and\
+                -- can run for a while before the chain gives out.\
+                --\
+                -- One function because it is needed twice: at the top of every\
+                -- page, and again after a \"keep loading\", where Trapper:confirm\
+                -- has replaced the progress message with its ConfirmBox and\
+                -- closed it. Retrying without putting it back would leave the\
+                -- reader watching a frozen shelf with nothing to tap.\
+                local function showProgress()\
+                    if heldCount() > 0 then\
+                        return self:_showFetchProgress(\
+                            T(_(\"Fetching %1… (%2 books)\\n(Tap to cancel)\"),\
+                              tab.label or server.title, heldCount()))\
+                    end\
+                    return self:_showFetchProgress(\
+                        T(_(\"Fetching %1…\\n(Tap to cancel)\"),\
+                          tab.label or server.title))\
+                end\
+                if not showProgress() then break end\
+                -- Gated per request, not just the entry feed_url: a\
+                -- rel=next link came from the server's XML and could in\
+                -- principle hop to a foreign host, and credentials must\
+                -- only ever travel to the catalog's own origin.\
+                local same_origin = OpdsFeed.sameOrigin(server.url, url)\
+                -- OFF THE MAIN LOOP, so that \"tap to stop\" is true.\
+                --\
+                -- Fetching in-process blocks UIManager for the whole request -\
+                -- three to four seconds a page against Internet Archive - and\
+                -- Trapper only samples input during the 0.1s window inside\
+                -- info(). So a tap almost always landed while the main loop was\
+                -- blocked and was never seen: the reported \"tapping to cancel\
+                -- does nothing until you frantically tap everywhere\", which is\
+                -- exactly what having one narrow window per multi-second page\
+                -- feels like.\
+                --\
+                -- dismissableRunInSubprocess forks the request and hands\
+                -- control back to UIManager every 125ms (backing off to 1s),\
+                -- so a tap is acted on within about that, and the shelf stays\
+                -- painted underneath rather than frozen.\
+                --\
+                -- A dismissal here cancels outright, with no \"are you sure\".\
+                -- Trapper's own info() path raises a Paused/Continue/Abort box\
+                -- because a stray tap could throw away a long job; nothing is\
+                -- thrown away here, since every page is written to the database\
+                -- as it lands and the tail below keeps the window and lands the\
+                -- reader on the last page that has books. Cheap to undo, so it\
+                -- does not deserve a confirmation.\
+                local fetch_user = same_origin and server.username or nil\
+                local fetch_pass = same_origin and server.password or nil\
+                local fetch_url  = url\
+                local body, err\
+                local cancelled = false\
+                repeat\
+                    local retry = false\
+                    if Trapper.dismissableRunInSubprocess then\
+                        -- The task's own returns come back SPREAD, not packed:\
+                        -- the helper ends with `return completed,\
+                        -- unpack(ret_values, ...)`. Reading it as a table\
+                        -- indexed a string, so both values came back nil and\
+                        -- every fetch reported a failure with no error - a\
+                        -- pair no path in OpdsFeed.fetch can return.\
+                        local completed, b, e = Trapper:dismissableRunInSubprocess(\
+                            function()\
+                                return OpdsFeed.fetch(fetch_url, fetch_user,\
+                                                      fetch_pass, feed_timeouts)\
+                            end,\
+                            -- Trap on the progress message already on screen,\
+                            -- so the reader taps the thing they can see. Nil\
+                            -- falls back to an invisible trap widget, which\
+                            -- still catches the tap.\
+                            Trapper.current_widget)\
+                        if completed then\
+                            body, err = b, e\
+                        else\
+                            -- ASK before throwing the walk away. Trapper's own\
+                            -- info() path does this and it was right to; what\
+                            -- was wrong was that a blocked main loop made the\
+                            -- tap itself unreliable, so the prompt was\
+                            -- unreachable rather than unwanted. Sampling every\
+                            -- 125ms fixes the reaching; a tap on a shelf is\
+                            -- cheap enough to be accidental, so it still has to\
+                            -- be meant. ConfirmBox flushes pending events on\
+                            -- show, so the dismissing tap cannot answer it.\
+                            cancelled = Trapper:confirm(\
+                                heldCount() > 0\
+                                    and T(_(\"Stop loading %1?\\n%2 books so far.\"),\
+                                          tab.label or server.title, heldCount())\
+                                    or  T(_(\"Stop loading %1?\"),\
+                                          tab.label or server.title),\
+                                _(\"Keep loading\"), _(\"Stop\"))\
+                            -- Kept going: the request was killed with the\
+                            -- dismissal, so this page has to be asked for\
+                            -- again. Costs one round trip and nothing else -\
+                            -- re-treading a page dedupes to nothing. It cannot\
+                            -- go round the outer loop instead: seen_urls has\
+                            -- already recorded this url, and re-entering would\
+                            -- read as a self-referential rel=next chain and end\
+                            -- the walk.\
+                            retry = not cancelled\
+                            if retry and not showProgress() then\
+                                cancelled = true\
+                                retry = false\
+                            end\
+                        end\
+                    else\
+                        -- Ancient KOReader without the helper: fetch in-process.\
+                        -- Correct, just unresponsive to a cancel mid-request.\
+                        body, err = OpdsFeed.fetch(fetch_url, fetch_user,\
+                                                   fetch_pass, feed_timeouts)\
+                    end\
+                until not retry\
+                if cancelled then\
+                    logger.dbg(\"[bookshelf perf] opds walk: stopped by the reader at\",\
+                               (win.count or 0), \"entries\")\
+                    break\
+                end\
+                if not body then\
+                    Trapper:clear()\
+                    -- The toast says \"Couldn't reach <server>\" for everything\
+                    -- that isn't an auth rejection, which is the right thing to\
+                    -- tell a reader and useless in a bug report: a gateway\
+                    -- timeout from a catalog that is plainly up reads exactly\
+                    -- like a DNS failure. OpdsFeed.fetch already hands back the\
+                    -- HTTP status line as `err` (or \"network unreachable\" /\
+                    -- \"empty response\"), so log the pair rather than widening\
+                    -- the notification. dbg, not warn: an unreachable server is\
+                    -- a normal thing to hit offline, and the log is for the\
+                    -- session where someone is looking.\
+                    logger.dbg(\"[bookshelf] opds fetch failed:\", url, err)\
+                    -- Remembered for the EMPTY STATE. A toast is gone in three\
+                    -- seconds and the shelf underneath it then says \"No books\
+                    -- in Internet Archive yet\", which is a sentence about the\
+                    -- reader's own library and wrong in every particular: the\
+                    -- books are on someone else's server, there is no \"yet\",\
+                    -- and nothing was counted because nothing was fetched.\
+                    -- Keyed by url so a failure on one feed cannot explain\
+                    -- another feed's emptiness.\
+                    self._opds_fail_url = url\
+                    self._opds_fail_err = err\
+                    UIManager:show(Notification:new{\
+                        text = err == \"auth\"\
+                            and T(_(\"Authentication failed for %1\"), server.title)\
+                            or err == \"format\"\
+                            and T(_(\"%1 refused every format Bookshelf asked for\"), server.title)\
+                            or err == \"ratelimited\"\
+                            and T(_(\"%1 is limiting requests. Wait a minute and try again.\"), server.title)\
+                            or T(_(\"Couldn't reach %1\"), server.title),\
+                    })\
+                    break\
+                end\
+                -- The server answered, so whatever it last refused is history.\
+                if self._opds_fail_url == url then\
+                    self._opds_fail_url, self._opds_fail_err = nil, nil\
+                end\
+                local catalog = OpdsFeed.parse(body)\
+                local mapped = catalog and OpdsFeed.mapEntries(catalog, url, tab.source.id)\
+                -- Did the page carry any raw items at all? Separates a genuinely\
+                -- empty feed from one that HAS items this device just can't use.\
+                local raw_count = catalog and (\
+                    (catalog.publications and #catalog.publications or 0)\
+                    + (catalog.navigation and #catalog.navigation or 0)\
+                    + (catalog.entry and #catalog.entry or 0)) or 0\
+                logger.dbg(\"[bookshelf perf] opds page\", url,\
+                    \"records\", mapped and #mapped.records or -1,\
+                    \"raw\", raw_count,\
+                    \"next\", tostring((mapped and mapped.next_url) ~= nil))\
+                if not mapped then\
+                    -- Parse failure (transient): an HTML error page from a\
+                    -- throttling server (IA does this mid-chain) is the common\
+                    -- cause. Leave next_url ALONE so the chain stays\
+                    -- retryable - a later page turn resumes from the last\
+                    -- good checkpoint and reaches this page again. Nilling it\
+                    -- here and then saving the window (which the tail below\
+                    -- does) permanently amputated every page behind the\
+                    -- failure: the reported \"nothing loads after page 10 of\
+                    -- 15\".\
+                    if (win.count or 0) == 0 then\
+                        Trapper:clear()\
+                        UIManager:show(Notification:new{\
+                            text = T(_(\"No books found in %1\"), server.title),\
+                        })\
+                    end\
+                    break\
+                end\
+                if #mapped.records == 0 then\
+                    -- Parsed fine, but nothing on this page is usable. Do not\
+                    -- give up on the first one: a single mid-chain page of\
+                    -- unsupported entries (borrow-only, formats we can't\
+                    -- read) says nothing about the pages behind it, and\
+                    -- stopping here used to amputate them permanently. Skip\
+                    -- forward instead - up to UNUSABLE_PAGE_LIMIT consecutive\
+                    -- unusable pages, after which the category is judged\
+                    -- genuinely unusable (IA's all-borrow loan categories\
+                    -- advertise ~10000 items and every page maps to zero;\
+                    -- three in a row is enough to know the rest match).\
+                    unusable_streak = unusable_streak + 1\
+                    if mapped.next_url\
+                            and unusable_streak < OpdsWindow.UNUSABLE_PAGE_LIMIT then\
+                        url = mapped.next_url\
+                        -- No appendPage (nothing usable to add); loop again.\
+                    else\
+                        win.fetched_at = os.time()\
+                        win.next_url = nil\
+                        terminal = true\
+                        if (win.count or 0) == 0 then\
+                            Trapper:clear()\
+                            UIManager:show(Notification:new{\
+                                text = raw_count > 0\
+                                    and _(\"No downloadable titles in this category.\")\
+                                    or T(_(\"No books found in %1\"), server.title),\
+                            })\
+                        end\
+                        break\
+                    end\
+                else\
+                    -- The replacement has arrived, so now the old one can go.\
+                    -- Everything up to this line was reachable with the cached\
+                    -- window still intact, which is the point: a refresh that\
+                    -- never gets a page leaves the reader exactly where they\
+                    -- were rather than emptying the shelf.\
+                    if pending_replace then\
+                        -- The page's own flattening decisions were made from\
+                        -- OTHER feeds; drop those too or the refresh cannot\
+                        -- see them change (issue 411).\
+                        self:_opdsResetFlattenedChildren(tab.source.id, win)\
+                        OpdsWindow.reset(tab.source.id, feed_url)\
+                        win = OpdsWindow.load(tab.source.id, feed_url)\
+                        pending_replace = false\
+                    end\
+                    unusable_streak = 0\
+                    win.fetched_at = os.time()\
+                    OpdsWindow.appendPage(win, mapped)\
+                    url = win.next_url\
+                end\
+            end\
+            -- The chain ended by running out of next links (url == nil after a\
+            -- successful append), or a terminal stop above. NOT on error,\
+            -- cancel, or simply having covered want_count (url still set).\
+            if url == nil then terminal = true end\
+            if terminal then win.complete = true end\
+            Trapper:clear()\
+            -- A refresh that came back with nothing (server down, feed\
+            -- unreachable, user cancelled at the first page) keeps the\
+            -- window it already had.\
+            if not replace or (win.count or 0) > 0 then\
+                logger.dbg(string.format(\
+                    \"[bookshelf perf] opds walk END: entries=%d next=%s terminal=%s \"\
+                    .. \"complete=%s want=%s\", win.count or 0, tostring(win.next_url ~= nil),\
+                    tostring(terminal), tostring(win.complete), tostring(_dbg_want)))\
+                OpdsWindow.save(tab.source.id, feed_url, win)\
+            end\
+            -- No Repo.invalidateBookCache here: the OPDS branch of getBySource\
+            -- reads OpdsWindow (the settings store) on every call and never\
+            -- touches the walk / group / _bySource caches, so there is nothing\
+            -- stale to clear. Invalidating would only make the next tap on a\
+            -- LOCAL chip re-derive the whole library for free.\
+\
+            -- Paging forward left the cursor one page PAST the window (that\
+            -- overshoot is what asked for this fetch). If the fetch did not\
+            -- actually reach it -- server down, auth rejected, user cancelled,\
+            -- or the feed simply ended -- pull the cursor back onto the last\
+            -- page with books BEFORE rebuilding. Otherwise the user is stranded\
+            -- on a blank page in front of a perfectly good cached window, and\
+            -- _persistNavState saves that cursor for next launch. Skipped when\
+            -- a refresh declined to save (win is the discarded fresh one, not\
+            -- what will be rendered).\
+            -- A DECLINED Wi-Fi prompt never gets here (runWhenOnline simply\
+            -- never calls back); that case is caught by _maxCursor withholding\
+            -- the headroom from the next passive clamp instead.\
+            --\
+            -- Gated on the shelf STILL showing this feed, re-resolved rather\
+            -- than assumed. runWhenOnline can sit on a Wi-Fi prompt for many\
+            -- seconds with the shelf fully interactive underneath it, so the\
+            -- user can back out of the drill (or drill somewhere else) before\
+            -- this tail runs. The fetch and the save above are keyed off the\
+            -- CAPTURED feed and stay correct either way -- but the cursor\
+            -- belongs to whatever is on screen NOW, and measuring it against\
+            -- THIS window's entry count would yank the user to page 1 of a view\
+            -- that was never short. The overshoot this pull-back exists to\
+            -- repair went away with the navigation that abandoned it.\
+            local still_here  = sameFeed(self:_opdsEffectiveTab())\
+            local entry_count = win.count or 0\
+            if still_here and (not replace or entry_count > 0)\
+                    and self._cursor > entry_count then\
+                local view = self:_viewSize()\
+                local pages = math.max(1, math.ceil(entry_count / view))\
+                self._cursor = (pages - 1) * view + 1\
+                self:_syncPageFromCursor()\
+            end\
+            -- Released BEFORE the rebuild, not after. A navigation that landed\
+            -- while this fetch held the marker left the nav arm SET rather\
+            -- than spending it (see _opdsAfterPage), specifically so this\
+            -- rebuild can start the fetch it was refused; with the marker\
+            -- still held it would be refused again and the user would sit on\
+            -- an empty subcatalog until they touched something. Nothing can\
+            -- interleave between these lines and the rebuild -- one\
+            -- synchronous run of the coroutine -- so the \"no second fetch\
+            -- mid-fetch\" guarantee the marker exists for is unaffected: a\
+            -- rebuild with no arm set returns at the top of _opdsAfterPage.\
+            self._opds_fetch_started_at = nil\
+            self._opds_fetch_feed = nil\
+            self:_rebuild()\
+            UIManager:setDirty(self, \"ui\")\
+            -- The cover pass for this page. This rebuild is passive in the\
+            -- ordinary case (nothing re-armed the nav flag), so it renders\
+            -- from cache and runs no cover pass of its own -- this is the\
+            -- single pass, and its token stays current through to the repaint.\
+            -- In the queued case above it has just scheduled the next fetch\
+            -- instead, and that fetch runs its own pass against the fuller\
+            -- page; this one still fills whatever is on screen right now, and\
+            -- a superseded batch only loses its repaint, never its downloads.\
+            self:_opdsEnsureCovers()\
+            -- Last, so the continuation decides against the window this fetch\
+            -- just saved and a view it has already rebuilt. Gated on liveness\
+            -- only. NOT on still_here: the whole point of this continuation is\
+            -- to act on the feed THIS fetch just loaded, which is a DIFFERENT\
+            -- feed from the one on screen when the tap fired (tapping an\
+            -- uncached category fetches the child feed while the parent is\
+            -- still shown, then drills in). still_here compares the on-screen\
+            -- feed to the fetched one, so it is always false here and\
+            -- suppressed the drill entirely -- the reported \"have to tap the\
+            -- category twice\" (first tap fetched, second drilled). The narrow\
+            -- case it guarded (user navigates away during a Wi-Fi prompt, then\
+            -- gets drilled) is rare and Back-recoverable; correctness of the\
+            -- common one-tap drill wins.\
+            if on_done and BookshelfWidget.live == self then\
+                on_done()\
+            end\
+        end)\
+    end)\
+end\
+\
+-- _opdsWalkToEnd() - \"last page\" on a feed whose length nobody knows.\
+--\
+-- The footer can only offer a jump when there is a known last page to jump to.\
+-- On an OPDS feed there usually is not: totalResults is absent or a lie (see\
+-- OpdsWindow.slice), so the page count is a lower bound and the chevron used\
+-- to be disabled. Walking the chain is the only way to answer the question, so\
+-- that is what this does - unbounded, because a cap cannot answer \"where does\
+-- it end\", and stoppable, because an unbounded walk that could not be stopped\
+-- would be a trap.\
+--\
+-- Landing is the same for all three outcomes - reached the end, hit an error,\
+-- reader stopped it - because all three mean the same thing to someone looking\
+-- at a shelf: put me on the last page that has books.\
+function BookshelfWidget:_opdsWalkToEnd()\
+    local tab = self:_opdsEffectiveTab()\
+    if not tab or not tab.source or tab.source.kind ~= \"opds\" then return end\
+    local OpdsSource = require(\"lib/bookshelf_opds_source\")\
+    local OpdsWindow = require(\"lib/bookshelf_opds_window\")\
+    local server = OpdsSource.getServer(tab.source.id)\
+    if not server then return end\
+    local feed_url = tab.source.feed_url or server.url\
+    self:_opdsFetchMore(tab, FETCH_ALL, false, function()\
+        -- Counted back out of storage rather than captured before the walk:\
+        -- what landed is the only thing that decides where the reader goes,\
+        -- and the walk may have stopped anywhere.\
+        local n     = OpdsWindow.count(tab.source.id, feed_url)\
+        local view  = self:_viewSize() or 1\
+        local pages = math.max(1, math.ceil(n / view))\
+        self._cursor = (pages - 1) * view + 1\
+        self:_syncPageFromCursor()\
+        -- Armed, as every other page change arms it. _opdsAfterPage returns at\
+        -- its first line without it, so the page this lands on got no cover or\
+        -- nav-resolve pass at all: on a catalog that models each book as a\
+        -- one-entry subcatalog (Gutenberg does) the last page stayed a grid of\
+        -- unresolved folders until the reader paged away and back. There is no\
+        -- risk of it spending itself on a fetch - the walk it follows has just\
+        -- filled the window, so the page is usable and the silent branch takes\
+        -- it straight to the cover pass.\
+        self:_markOpdsNav()\
+        self:_swapShelvesInPlace()\
+    end)\
+end\
+\
+-- Swipe-down on an OPDS view: re-fetch the feed from the start, replacing\
+-- the cached window only if the fetch succeeds (see _opdsFetchMore's\
+-- replace mode -- the old window survives a declined Wi-Fi prompt or a\
+-- dead server untouched).\
+--\
+-- `tab` is the tab-LIKE _opdsEffectiveTab hands back, so a swipe-down inside a\
+-- drilled navigation entry re-pulls THAT subcatalog, not the chip's root feed.\
+-- No liveness guard of its own: this runs synchronously off the gesture and\
+-- everything deferred past a Wi-Fi prompt happens inside _opdsFetchMore, which\
+-- carries the guard.\
+function BookshelfWidget:_opdsRefresh(tab)\
+    local OpdsSource = require(\"lib/bookshelf_opds_source\")\
+    local server = OpdsSource.getServer(tab.source.id)\
+    if not server then return end\
+    -- The one path that reaches _opdsFetchMore without passing _opdsAfterPage's\
+    -- busy branch, so it needs its own check against a modal download holding\
+    -- Trapper. Reachable: the download's Trapper:info yields, and a swipe\
+    -- queued behind the blocking transfer is delivered in that window (the\
+    -- progress InfoMessage catches taps, not swipes), landing here while the\
+    -- download's coroutine is very much alive.\
+    --\
+    -- Deliberately narrower than _opdsFetchBusy: a swipe-down during a FEED\
+    -- fetch stays allowed exactly as it always has been -- that exemption is\
+    -- the whole point of the explicit refresh -- and _opdsFetchMore's own\
+    -- marker handling covers it. Narrower in WHICH marker it reads, not in how\
+    -- it reads it: _opdsDownloadBusy applies the same 120s expiry every other\
+    -- reader gets, so a wedged marker can't leave refresh permanently dead.\
+    if self:_opdsDownloadBusy() then\
+        UIManager:show(require(\"ui/widget/notification\"):new{\
+            text = _(\"The catalog is busy. Try again in a moment.\"),\
+        })\
+        return\
+    end\
+    -- Deliberately does NOT arm the nav flag: this calls _opdsFetchMore\
+    -- directly, so the gate has nothing to gate, and leaving it disarmed keeps\
+    -- the fetch's own tail rebuild passive (one cover pass, no second fetch).\
+    self:_opdsFetchMore(tab, self:_opdsBatchSize(), true)\
+end\
+\
+-- Gap between one background page fetch and the next. Not a throttle on the\
+-- server -- the fetches are serial anyway -- but the window in which UIManager\
+-- gets to process input, so a page turn lands promptly instead of queueing\
+-- behind the rest of the page's work. 0.2s is opds_plus's ImageLoader interval.\
+local OPDS_COVER_TICK = 0.2\
+-- Items to let land before repainting. Every repaint is a full _rebuild and,\
+-- on e-ink, a visible flash; painting per item costs more than it buys.\
+local OPDS_COVER_REBUILD_EVERY = 4\
+\
+-- ...EXCEPT THE FIRST ONE. Waiting for a full batch means nothing appears\
+-- until the second round of fetches lands - measured at roughly 2.5s on device\
+-- with three workers at ~1.3s a cover - so a new page sat blank and then\
+-- filled all at once. The first cover is the one that says \"this is working\",\
+-- and it earns a repaint on its own; after that the batch cadence takes over\
+-- and the rest arrive together anyway.\
+-- Ramped, not a flat batch: 1, then 2, then the full cadence. The first cover\
+-- says \"this is working\", the next couple keep saying it while the pipeline\
+-- warms, and only once several are already on screen does batching take over\
+-- to stop a full _rebuild (measured 141-887ms) running per cover. A flat\
+-- cadence made a page arrive in one lump; a flat 1 would spend more of the UI\
+-- thread repainting than fetching ever did.\
+local function _opdsPaintThreshold(painted)\
+    painted = painted or 0\
+    if painted < 1 then return 1 end\
+    if painted < 3 then return 2 end\
+    return OPDS_COVER_REBUILD_EVERY\
+end\
+\
+-- _storeChildFeed(server_key, feed_url, body) -> did anything get cached\
+-- Parse a nav tile's child feed and persist it as that feed's window. That is\
+-- the whole of \"resolving\" a folder: the repo's opds branch already flattens a\
+-- cached single-book child into the book at render time, so populating the\
+-- cache is all this has to do.\
+--\
+-- Returns false for a body that parsed to nothing usable, and stores nothing in\
+-- that case, so a throttled or error page leaves the tile unresolved and\
+-- retryable rather than caching an empty window that would read as \"fetched,\
+-- genuinely empty\" forever. Restored from 1477764^ unchanged; it was never the\
+-- part that failed.\
+local function _storeChildFeed(server_key, feed_url, body)\
+    if type(body) ~= \"string\" or body == \"\" then return false end\
+    local OpdsFeed   = require(\"lib/bookshelf_opds_feed\")\
+    local OpdsWindow = require(\"lib/bookshelf_opds_window\")\
+    local catalog = OpdsFeed.parse(body)\
+    local mapped = catalog and OpdsFeed.mapEntries(catalog, feed_url, server_key)\
+    if not (mapped and (#mapped.records > 0 or mapped.next_url)) then return false end\
+    local win = OpdsWindow.load(server_key, feed_url)\
+    win.fetched_at = os.time()\
+    OpdsWindow.appendPage(win, mapped)\
+    OpdsWindow.save(server_key, feed_url, win)\
+    return true\
+end\
+\
+-- _storeFeedPage(server_key, store_url, fetched_url, body) -> did records land\
+-- Append the NEXT page of a feed to that feed's own window.\
+--\
+-- Sibling of _storeChildFeed, and separate from it for two reasons. The window\
+-- is keyed by the feed the user is LOOKING at (store_url) while the body came\
+-- from its rel=next (fetched_url), and mapEntries has to resolve relative\
+-- hrefs against the url the body actually came from - passing one for both\
+-- would either file the page under the wrong key or resolve its links against\
+-- the wrong base.\
+--\
+-- fetched_at is deliberately NOT touched. It records when this feed was last\
+-- REFRESHED, which is what the five-minute expiry reads; appending page seven\
+-- does not make page one any newer, and stamping it here would let a deep\
+-- crawl hold a stale first page fresh forever.\
+local function _storeFeedPage(server_key, store_url, fetched_url, body)\
+    if type(body) ~= \"string\" or body == \"\" then return false end\
+    local OpdsFeed   = require(\"lib/bookshelf_opds_feed\")\
+    local OpdsWindow = require(\"lib/bookshelf_opds_window\")\
+    local catalog = OpdsFeed.parse(body)\
+    local mapped = catalog and OpdsFeed.mapEntries(catalog, fetched_url, server_key)\
+    if not (mapped and (#mapped.records > 0 or mapped.next_url)) then return false end\
+    local win = OpdsWindow.load(server_key, store_url)\
+    local before = win.count or 0\
+    OpdsWindow.appendPage(win, mapped)\
+    OpdsWindow.save(server_key, store_url, win)\
+    return (win.count or 0) > before\
+end\
+\
+-- _opdsNavResolveQueue(records, chip) -> { work items }, { skip set }\
+-- Nav tiles on this page whose child feed has never been fetched. The skip set\
+-- is those same tiles keyed by filepath, so the cover queue can leave them\
+-- alone: resolving one turns it into a book whose cover comes from the CHILD\
+-- feed, so fetching the tile's own thumbnail first is a download spent on a\
+-- tile that is about to stop existing.\
+--\
+-- Credentials are resolved here rather than at fetch time, and gated on\
+-- sameOrigin exactly as the feed fetch and the cover fetch are: a nav href came\
+-- out of the server's XML and could name any host.\
+local function _opdsNavResolveQueue(records, chip)\
+    local OpdsWindow = require(\"lib/bookshelf_opds_window\")\
+    local OpdsSource = require(\"lib/bookshelf_opds_source\")\
+    local OpdsFeed   = require(\"lib/bookshelf_opds_feed\")\
+    local Prefs      = require(\"lib/bookshelf_opds_prefs\")\
+    local timeouts   = Prefs.timeouts(chip)\
+    local queue, skip = {}, {}\
+    for _i, rec in ipairs(records) do\
+        if rec.is_opds_nav and rec.opds and rec.opds.feed_url\
+                and type(rec.filepath) == \"string\" then\
+            local sk = rec.filepath:match(\"^OPDS://([^/]+)/\")\
+            if sk then\
+                -- fetched_at is the self-limiting signal: a resolved child\
+                -- window persists, so a multi-item folder is fetched once,\
+                -- stays a folder, and is never fetched again. Without it this\
+                -- would re-fetch every folder on every pass.\
+                -- A tile that TELLS US it holds more than one item cannot be\
+                -- the one-book folder this is looking for, so fetching it can\
+                -- never change how it renders. Internet Archive's category\
+                -- tiles declare ~10000 apiece, and resolving eight of them cost\
+                -- 13 seconds on device for no visual change whatsoever.\
+                -- Unknown count still gets fetched -- most catalogs say\
+                -- nothing, and those are exactly the ones worth asking.\
+                local declared = tonumber(rec.nav_item_count)\
+                local one_book_possible = not declared or declared <= 1\
+                local win = OpdsWindow.load(sk, rec.opds.feed_url)\
+                if one_book_possible and (win.fetched_at or 0) <= 0 then\
+                    local server = OpdsSource.getServer(sk)\
+                    if server then\
+                        local same = OpdsFeed.sameOrigin(server.url, rec.opds.feed_url)\
+                        queue[#queue + 1] = {\
+                            kind       = \"resolve\",\
+                            server_key = sk,\
+                            feed_url   = rec.opds.feed_url,\
+                            user       = same and server.username or nil,\
+                            password   = same and server.password or nil,\
+                            timeouts   = timeouts,\
+                        }\
+                        skip[rec.filepath] = true\
+                    end\
+                end\
+            end\
+        end\
+    end\
+    return queue, skip\
+end\
+\
+-- _opdsResolvedCoverItem(server_key, feed_url) -> queue item | nil\
+-- The cover work a just-resolved folder created, ready to append to the queue\
+-- that is still running.\
+--\
+-- Resolving a one-book folder turns a tile into a BOOK, and that book has a\
+-- cover the queue was built before anyone knew about. The chain used to learn\
+-- this only at its very end, by re-arming and recomputing from the new page\
+-- shape - so on a catalog where every tile is a folder (Gutenberg's shape, and\
+-- ManyBooks'), not one cover could be fetched until the LAST resolve came\
+-- back. Twelve resolves at a second or two each is a shelf that stays blank\
+-- for the whole chain and then fills at once.\
+--\
+-- Appending here instead means the first resolve's cover is in flight while\
+-- the eleventh is still resolving: same requests, same order, but the page\
+-- starts filling seconds in. The tail re-arm stays as the backstop for\
+-- everything this cannot see (a resolved folder holding several books whose\
+-- own covers are wanted).\
+--\
+-- opdsLoneChildBook is the same predicate the render path flattens with, so\
+-- what gets queued here is exactly the record the next repaint will paint --\
+-- nil for a folder that turned out to hold more than one book, which correctly\
+-- stays a folder and has no cover of its own to fetch.\
+local function _opdsResolvedCoverItem(server_key, feed_url)\
+    local ok, lone = pcall(Repo.opdsLoneChildBook, server_key, feed_url)\
+    if not (ok and type(lone) == \"table\") then return nil end\
+    local OpdsCovers = require(\"lib/bookshelf_opds_covers\")\
+    if not OpdsCovers.cachePath(lone) then return nil end\
+    if not OpdsCovers.needsFetch(lone) then return nil end\
+    return { kind = \"cover\", rec = lone }\
+end\
+\
+-- Cover fill for an OPDS page. OFF by default and per catalog: the shelf does\
+-- NOT bulk-download remote cover images unless the chip asks it to.\
+--\
+-- Why the default is off. A full page of remote covers is a serial blocking\
+-- download; over a slow public catalog it made paging feel stuck, and the\
+-- covers themselves are often heavy. So the shelf shows the title+author\
+-- placeholder card and a cover is fetched only when a book is TAPPED\
+-- (_opdsFetchDetailCover, for the detail modal), which then also lands it on\
+-- that shelf cell on the next rebuild.\
+--\
+-- Why it is now switchable. That reasoning is about PUBLIC catalogs. On a\
+-- server on your own network the covers are a few milliseconds away and the\
+-- placeholders are just worse, and two users have now read tap-only covers as\
+-- the feature being broken. The batching, token and re-arm machinery below is\
+-- unchanged from when this ran unconditionally, so the opt-in path is the one\
+-- that was already proven on device rather than a fresh one.\
+-- Despite the name this drives ALL background page work, covers and nav-tile\
+-- resolution alike: one queue, one token, one abandon path, so the two can\
+-- never race each other or double the fetches in flight. Kept as the name every\
+-- render path already calls.\
+function BookshelfWidget:_opdsEnsureCovers()\
+    -- Effective, not active: a drilled navigation entry renders remote records\
+    -- exactly like the chip's root feed does, so its thumbnails have to fill\
+    -- too. Non-OPDS views resolve to nil and bail here as before.\
+    if not self:_opdsEffectiveTab() then return end\
+    -- The chip, not the effective tab: a drilled subcatalog's stand-in carries\
+    -- no settings (see _opdsPrefsTab), and the catalog's choice governs its\
+    -- subcatalogs too.\
+    local Prefs = require(\"lib/bookshelf_opds_prefs\")\
+    local chip  = self:_opdsPrefsTab()\
+    local want_covers  = Prefs.autoCovers(chip)\
+    local want_resolve = Prefs.resolveNav(chip)\
+    if not (want_covers or want_resolve) then return end\
+    local records = self._page_items\
+    if not records then return end\
+    -- Offline (or Wi-Fi off): skip rather than let each miss block the main\
+    -- loop on a socket timeout. isConnected() answers true on platforms with\
+    -- no Wi-Fi toggle, so desktop builds still fill their thumbnails. Never\
+    -- prompts -- a passive cover fill must not raise a Wi-Fi dialog.\
+    local ok_net, NetworkMgr = pcall(require, \"ui/network/manager\")\
+    if ok_net and NetworkMgr and NetworkMgr.isConnected\
+            and not NetworkMgr:isConnected() then\
+        return\
+    end\
+    -- \"Missing\" = has a thumbnail worth fetching (cachePath resolves - a\
+    -- deterministic name, no disk check) AND the repo did NOT already attach\
+    -- the record's OWN cover_image_path for it. The repo already did the one\
+    -- lfs stat per record this pass needs (OpdsCovers.cachedPath, inside\
+    -- getBySource); a second `not rec.has_cover` gate here would re-select\
+    -- every record on every pass, because the repo never sets has_cover for\
+    -- OPDS records (see the cover_image_path comment there) --\
+    -- rec.cover_image_path is the up-to-date signal instead.\
+    --\
+    -- rec.cover_borrowed is the exception: a nav tile with none of its own\
+    -- artwork yet borrows a child feed's cached cover so it isn't a bare\
+    -- placeholder (see the borrow in bookshelf_book_repository.lua's opds\
+    -- branch), but that borrow is not the tile's own download landing. Without\
+    -- also selecting borrowed records here, the borrow's non-nil\
+    -- cover_image_path would permanently look \"already fetched\" and the\
+    -- tile's own cover would never enter fetchMissing -- borrowed forever,\
+    -- never self-healing even once the tile's own artwork appears on disk.\
+    -- Once it does, the repo's own-cover check (which runs first and wins)\
+    -- fills cover_image_path from the tile's own cachedPath and leaves\
+    -- cover_borrowed unset, so this stops selecting it on the very next pass.\
+    local OpdsCovers = require(\"lib/bookshelf_opds_covers\")\
+    -- The resolve queue is BUILT first, because it decides which tiles the\
+    -- cover queue must skip -- but COVERS RUN FIRST.\
+    --\
+    -- They used to run second, on the reasoning that resolution changes the\
+    -- page shape so covers should follow it. That reasoning is already\
+    -- satisfied by the skip set: a tile queued for resolution is excluded from\
+    -- the cover queue, so every cover in it is one the page wants whatever\
+    -- resolution does. Meanwhile the cost of going second was severe and\
+    -- measured: on a page of folder tiles the whole first chain was eight nav\
+    -- fetches at 1.0-3.6s each, nine seconds that landed ZERO covers, and only\
+    -- the re-armed second chain fetched any. The shelf sat blank throughout\
+    -- and then filled at once.\
+    --\
+    -- Covers first means something appears in about a second, and the folder\
+    -- resolution -- which changes tiles the user can already see and read --\
+    -- happens behind it.\
+    -- The skip set the builder also returns is deliberately NOT taken: nav\
+    -- tiles now get their own thumbnail fetched as well as being resolved\
+    -- (see the cover queue below for the measurement that changed this).\
+    local resolve_queue = {}\
+    if want_resolve then\
+        resolve_queue = _opdsNavResolveQueue(records, chip)\
+    end\
+    local queue = {}\
+    if want_covers then\
+        for _i, rec in ipairs(records) do\
+            if rec.is_remote and (not rec.cover_image_path or rec.cover_borrowed)\
+                    and OpdsCovers.cachePath(rec) then\
+                    -- NOT skipped when the tile is also queued for resolution.\
+                    --\
+                    -- It used to be, to avoid downloading a thumbnail that\
+                    -- resolution might supersede. Measured cost of that\
+                    -- optimisation on device: a ManyBooks-style catalog is\
+                    -- ENTIRELY nav tiles, so the skip emptied the cover queue,\
+                    -- and the shelf sat blank for the whole eight-second\
+                    -- resolve chain before the re-arm fetched anything at all.\
+                    --\
+                    -- Those tiles carry their own thumbnails, and on the\
+                    -- catalogs that present each book as a folder that\
+                    -- thumbnail IS the book's cover - so fetching it shows the\
+                    -- right image about a second in, and resolution then\
+                    -- changes what the tile IS behind an already-populated\
+                    -- shelf. The waste is one image per tile whose resolved\
+                    -- book turns out to have a different cover url, which is\
+                    -- cheap and cached either way.\
+                queue[#queue + 1] = { kind = \"cover\", rec = rec }\
+            end\
+        end\
+    end\
+    for _i, item in ipairs(resolve_queue) do queue[#queue + 1] = item end\
+    -- FIRST in the queue, not last.\
+    --\
+    -- Last was the intuitive order - the page in front of the user matters\
+    -- more than the one after it - and it meant the item never ran at all. On\
+    -- Internet Archive a cover takes 3-5 seconds, so a chain of ten covers\
+    -- outlives the reader: they page before the queue reaches its final item,\
+    -- the token bumps, and the pool kills a lookahead that never started. The\
+    -- log said so plainly - the decision to fetch was made three times and not\
+    -- one kind=page worker was ever launched - while the blocking fetch it\
+    -- exists to prevent ran five seconds later every time.\
+    --\
+    -- Ordering only bites when the queue is longer than the pool is wide, and\
+    -- at ten wide a page of covers plus this one item nearly all start in the\
+    -- first wave anyway. So the real cost of going first is at most one cover\
+    -- deferred by one wave, against a modal progress dialog avoided.\
+    local ahead = self:_opdsLookaheadItem()\
+    if ahead then table.insert(queue, 1, ahead) end\
+    -- Bumped BEFORE the empty early return, not after it: an earlier chain may\
+    -- still be in flight for a page the user has since left, and if this pass\
+    -- returns without moving the token that chain still matches on completion\
+    -- and repaints a page it knows nothing about. Harmless as repaints go, but\
+    -- the guard is meant to be exact -- reaching this line at all means \"the\
+    -- current page's background work is now this pass's business\".\
+    self._opds_cover_token = (self._opds_cover_token or 0) + 1\
+    if #queue == 0 then return end\
+    local token = self._opds_cover_token\
+    UIManager:scheduleIn(OPDS_COVER_TICK, function()\
+        -- Teardown guard: the widget can be closed inside the window, and a\
+        -- blocking fetch against a torn-down shelf is pure waste. Same liveness\
+        -- test onCloseWidget maintains for _cover_settle_cb.\
+        if BookshelfWidget.live ~= self then return end\
+        -- Superseded guard: if the user paged (or drilled) within the window,\
+        -- a newer pass has bumped the token and owns the page now.\
+        if token ~= self._opds_cover_token then return end\
+        -- want_covers travels with the chain: a resolve that lands mid-run\
+        -- wants to queue the resolved book's cover, and on a catalog set to\
+        -- tap-only covers it must not. So does the pool width, resolved off\
+        -- the chip here rather than read again deeper in - a drilled\
+        -- subcatalog's stand-in carries no settings.\
+        self:_opdsCoverPool(queue, token,\
+                            { creds = {}, landed = 0, painted = 0, resolved = 0,\
+                              want_covers = want_covers,\
+                              concurrency  = Prefs.concurrency(chip) })\
+    end)\
+end\
+\
+-- How many background page fetches may be in flight at once is a PER-CATALOG\
+-- setting now (Prefs.concurrency / CONCURRENCY_OPTIONS, where the measurement\
+-- and the throttling history that set the default live). The chain carries the\
+-- resolved number on its state, so there is no second copy of it here to drift\
+-- out of step with the option list.\
+--\
+-- How far ahead of the cursor the cached window is kept, in screenfuls.\
+--\
+-- FIVE, raised from two once storage stopped costing anything. Appending a\
+-- page was 399ms of whole-store re-serialisation and is now about 1ms of\
+-- INSERT, so the only remaining cost of reading ahead is the round trip - and\
+-- that already happens in a forked worker that a page turn kills.\
+--\
+-- Why depth rather than bigger pages: the server decides page size and will\
+-- not be told otherwise. Measured - Gutenberg serves 25 and ignores count,\
+-- limit, length, per_page, page_size and items; Internet Archive returns\
+-- byte-identical responses for all of those and declares itemsPerPage 25 in\
+-- the feed itself. So the only lever the client has is how many pages it asks\
+-- for, and how quietly.\
+--\
+-- The walk stays sequential because it must: a page's url exists only in the\
+-- previous page's rel=next, so there is nothing to parallelise within one\
+-- feed. Each landed page queues the next, in the pool, until the depth is\
+-- satisfied.\
+local OPDS_LOOKAHEAD_VIEWS = 5\
+-- Ceiling on requests one lookahead run may spend, whatever the arithmetic\
+-- says. A server that serves two records a page would otherwise turn five\
+-- screens into fifty round trips; the reader gets what this buys and the rest\
+-- arrives on the next render.\
+local OPDS_LOOKAHEAD_MAX_REQUESTS = 6\
+\
+-- _opdsLookaheadItem() -> a \"page\" work item, or nil.\
+--\
+-- The second attempt at keeping a screen in hand. The first drove\
+-- _opdsFetchMore, which is the USER-FACING fetch - Trapper, a modal progress\
+-- line that yields for input, and a tail that re-clamps the cursor - so it\
+-- blocked input on a page already delivered and moved the shelf under a swipe\
+-- in flight.\
+--\
+-- This one rides the cover pool instead, which is already everything a\
+-- background fetch has to be: the request happens in a forked child so the UI\
+-- thread never blocks, the parent only parses and appends, a page turn kills\
+-- the workers via the token, and nothing it does touches the cursor or shows\
+-- a widget. Appending to the window is invisible until the user pages into it.\
+--\
+-- Declines whenever the answer might be someone else's: no rel=next (the feed\
+-- is complete), the window is already deep enough, or a user-facing fetch\
+-- holds the marker.\
+function BookshelfWidget:_opdsLookaheadItem()\
+    local tab = self:_opdsEffectiveTab()\
+    if not tab then return nil end\
+    if self:_opdsFetchBusy() then return nil end\
+    local server_key, feed_url = self:_opdsFeedRef(tab)\
+    if not server_key then return nil end\
+    local ok_w, OpdsWindow = pcall(require, \"lib/bookshelf_opds_window\")\
+    if not ok_w then return nil end\
+    local win = OpdsWindow.load(server_key, feed_url)\
+    if not win then return nil end\
+    -- Follow the chain when we have it. When we do not AND the feed has never\
+    -- been seen to end, the chain is LOST rather than finished, so start again\
+    -- from the top - the same rule the user-facing walk uses. Dedupe is a\
+    -- unique index, so re-treading a known page adds nothing twice and\
+    -- restores the next link for the run after this one.\
+    --\
+    -- Returning nil here instead was a dead end: once the top-up went silent\
+    -- for any page that already had books on it, a feed with no next link had\
+    -- nothing left that would ever fetch for it, and paging past what it held\
+    -- showed \"no books yet\" forever.\
+    local fetch_url = OpdsWindow.fetchUrl(win, feed_url)\
+    if not fetch_url then return nil end\
+    -- A catalog that has just refused us gets no BACKGROUND traffic until its\
+    -- window reopens. The lookahead is worth up to OPDS_LOOKAHEAD_MAX_REQUESTS\
+    -- on its own, and a server capped at three (Calibre-Web Automated, issue\
+    -- 434) never recovers while we keep spending the window we are waiting on\
+    -- -- which is what turned one refusal into a permanently empty shelf.\
+    -- A user-initiated fetch is deliberately NOT gated: someone pulling to\
+    -- refresh has asked for one request, and it is how we find out the window\
+    -- has reopened.\
+    local ok_rl, paced = pcall(function()\
+        return require(\"lib/bookshelf_opds_feed\").paceFor(fetch_url)\
+    end)\
+    if ok_rl and type(paced) == \"number\" and paced > 0 then\
+        logger.dbg(string.format(\
+            \"[bookshelf perf] opds lookahead: declined, origin paced at %.1fs\",\
+            paced))\
+        return nil\
+    end\
+    local have = win.count or 0\
+    local view = self:_viewSize() or 24\
+    local want = math.max(0, (self._cursor or 1) - 1)\
+                 + view * OPDS_LOOKAHEAD_VIEWS\
+    -- Cost the depth in REQUESTS, from the page size the server declared\
+    -- (itemsPerPage). It is the only thing the server lets us know about its\
+    -- pagination - it will not accept a page size, but it will tell us one -\
+    -- and without it a depth of five screens is an unknown number of round\
+    -- trips: four against a server serving 25, fifty against one serving two.\
+    --\
+    -- Capped so one run can never turn into a crawl. Whatever the cap leaves\
+    -- unfetched, the next render asks for again, so depth is still reached -\
+    -- just in bounded bites, with a page turn free to cancel between them.\
+    local per_page = win.items_per_page\
+    local plan = OPDS_LOOKAHEAD_MAX_REQUESTS\
+    if per_page and per_page > 0 and have < want then\
+        plan = math.min(plan, math.max(1, math.ceil((want - have) / per_page)))\
+    end\
+    logger.dbg(string.format(\
+        \"[bookshelf perf] opds lookahead: have=%d want=%d cursor=%s view=%d \"\
+        .. \"per_page=%s plan=%d next=%s decision=%s\",\
+        have, want, tostring(self._cursor), view, tostring(per_page), plan,\
+        tostring(win.next_url ~= nil), have >= want and \"deep enough\" or \"FETCH\"))\
+    if have >= want then return nil end\
+    local ok_s, OpdsSource = pcall(require, \"lib/bookshelf_opds_source\")\
+    if not ok_s then return nil end\
+    local server = OpdsSource.getServer(server_key)\
+    if not server then return nil end\
+    -- Credentials gated on same-origin exactly as the cover and resolve\
+    -- fetches are: a rel=next came out of the server's own feed and could\
+    -- name any host.\
+    local ok_f, OpdsFeed = pcall(require, \"lib/bookshelf_opds_feed\")\
+    local same = ok_f and OpdsFeed.sameOrigin(server.url, fetch_url)\
+    local Prefs = require(\"lib/bookshelf_opds_prefs\")\
+    return {\
+        kind       = \"page\",\
+        plan       = plan,          -- requests this run may spend\
+        server_key = server_key,\
+        feed_url   = feed_url,        -- where the records are FILED\
+        fetch_url  = fetch_url,       -- where the body comes FROM\
+        user       = same and server.username or nil,\
+        password   = same and server.password or nil,\
+        timeouts   = Prefs.timeouts(self:_opdsPrefsTab()),\
+    }\
+end\
+\
+-- How often the parent checks its workers. Short enough that a finished\
+-- download lands promptly, long enough that polling is not itself the cost.\
+local OPDS_POOL_POLL = 0.15\
+\
+-- How many times a REFUSED item goes back on the queue before it is given up\
+-- on. A refusal is not a failure of the request -- the same url will work\
+-- shortly -- so it is worth re-queueing, at the paced rate. Bounded so a\
+-- server that refuses everything ends the run rather than cycling forever;\
+-- three is enough to ride out a burst against a small window without the\
+-- run outliving the page it belongs to.\
+local OPDS_REFUSED_RETRIES = 3\
+\
+-- _opdsCoverPool(queue, token, state) - run the queue through forked workers\
+-- instead of one blocking fetch per tick.\
+--\
+-- Same contract as _opdsCoverStep, which it replaces when forking is available:\
+-- same queue of typed items, same token, same abandon-on-supersede, same\
+-- repaint cadence, same re-arm when something resolved. ONLY the fetching\
+-- moves off the UI thread - which is the whole point, because the fetching is\
+-- what was blocking it.\
+--\
+-- Each worker does exactly one item and reports through its pipe. A cover\
+-- worker writes the image to the cache path itself and pipes back only\
+-- \"1\"/\"\" - piping the bytes would mean holding a whole image in the parent to\
+-- write it out again. A resolve worker pipes its feed body, because the parent\
+-- is the one that must parse and store it (the child's memory is discarded).\
+--\
+-- Falls back to the sequential chain when forking is unavailable (Android) or\
+-- a fork fails mid-run, so no platform loses the feature.\
+function BookshelfWidget:_opdsCoverPool(queue, token, state)\
+    -- The same subprocess primitive powers BIM extraction and this pool. On\
+    -- affected Android renderers fork() can abort the process before Lua gets a\
+    -- chance to handle an error, so the plugin-wide safe-mode promise must\
+    -- cover OPDS too.\
+    if Device:isAndroid() and BookshelfSettings.nilOrTrue(\"android_safe_mode\") then\
+        return self:_opdsCoverStep(queue, 1, token, state)\
+    end\
+    local ok_ffi, ffiutil = pcall(require, \"ffi/util\")\
+    if not (ok_ffi and ffiutil and ffiutil.runInSubProcess) then\
+        return self:_opdsCoverStep(queue, 1, token, state)\
+    end\
+    local OpdsCovers = require(\"lib/bookshelf_opds_covers\")\
+    local OpdsFeed   = require(\"lib/bookshelf_opds_feed\")\
+    -- The pool's width. Starts at the measured opening bid and NARROWS on\
+    -- failure: halve on any timeout or error, floor of 1, and never widen\
+    -- again for the life of this chain.\
+    --\
+    -- Measurement says 10 scales cleanly on a healthy catalog and 16 collapses\
+    -- (see Prefs.CONCURRENCY). But only one catalog was reachable to measure,\
+    -- and the one that ISN'T -- Internet Archive -- is the one with a\
+    -- throttling history: an always-wide pool was removed once (1477764)\
+    -- because public catalogs answered a burst with half-filled pages. A fixed\
+    -- number cannot be right for both, so the pool watches what it gets back\
+    -- instead of trusting the constant.\
+    --\
+    -- Narrowing only, deliberately. Recovering mid-chain would re-widen into a\
+    -- server that has just said no, and a chain is one page of covers - the\
+    -- next page opens at full width again, so a server that was briefly busy\
+    -- is not punished for the rest of the session.\
+    local cap = state.concurrency\
+                or require(\"lib/bookshelf_opds_prefs\").CONCURRENCY\
+    local next_i, in_flight, fork_broken, fork_failed_i = 0, {}, false, nil\
+    state.t_begin = state.t_begin or _gettime()\
+    state.t_fetch = state.t_fetch or 0\
+    state.t_paint = state.t_paint or 0\
+    state.n_fetch = state.n_fetch or 0\
+\
+    -- How long to leave between launches, and when the next one may go. Zero\
+    -- for every healthy catalog. Seeded from what this origin has already\
+    -- taught us, so page two does not re-burst and learn it again -- which\
+    -- was the other half of why a capped server never recovered (issue 434).\
+    local pace, next_launch_at = 0, 0\
+    do\
+        local probe = queue[1]\
+        local u = probe and (probe.fetch_url or probe.feed_url or probe.cover_url)\
+        if u then pcall(function() pace = OpdsFeed.paceFor(u) or 0 end) end\
+        if pace > 0 then\
+            cap = 1\
+            logger.dbg(string.format(\
+                \"[bookshelf perf] opds pool: origin known slow, opening at cap=1 pace=%.1fs\",\
+                pace))\
+        end\
+    end\
+\
+    local function stillCurrent()\
+        return BookshelfWidget.live == self and token == self._opds_cover_token\
+    end\
+    local function paint(why)\
+        if not stillCurrent() then return end\
+        local t0 = _gettime()\
+        self:_rebuild()\
+        UIManager:setDirty(self, \"ui\")\
+        local ms = (_gettime() - t0) * 1000\
+        state.t_paint = state.t_paint + ms\
+        logger.dbg(string.format(\
+            \"[bookshelf perf] opds pool repaint: %s rebuild+dirty=%.0fms\", why, ms))\
+    end\
+    -- A worker whose output we read while it was still alive must still be\
+    -- reaped, or it lingers as a zombie for the rest of the session.\
+    local function collectLater(pid)\
+        local c\
+        c = function()\
+            if not ffiutil.isSubProcessDone(pid) then\
+                UIManager:scheduleIn(1, c)\
+            end\
+        end\
+        UIManager:scheduleIn(1, c)\
+    end\
+    local function launch(item, item_i)\
+        local payload\
+        if item.kind == \"resolve\" or item.kind == \"page\" then\
+            -- Both are \"fetch a feed body and hand it back for the parent to\
+            -- parse\". The child's memory is discarded, so it cannot store\
+            -- anything itself.\
+            payload = function(_pid, fd)\
+                local body, err = OpdsFeed.fetch(item.fetch_url or item.feed_url,\
+                                                 item.user, item.password,\
+                                                 item.timeouts)\
+                -- A refused worker has to SAY it was refused. The child's\
+                -- memory is discarded, so the back-off it recorded dies with\
+                -- it, and an empty pipe is indistinguishable from a timeout\
+                -- or an error page -- which the parent answers by narrowing\
+                -- and carrying on, i.e. by spending more of the window the\
+                -- server just asked us to stop spending (issue 434).\
+                if not body and err == \"ratelimited\" then\
+                    ffiutil.writeToFD(fd, OpdsFeed.RATE_LIMIT_MARKER, true)\
+                    return\
+                end\
+                ffiutil.writeToFD(fd, body or \"\", true)\
+            end\
+        else\
+            -- Plan resolved in the PARENT so the child cannot disagree about\
+            -- which url this cover is, where it caches, or whether credentials\
+            -- may travel to it (see OpdsCovers.fetchPlan).\
+            local plan = OpdsCovers.fetchPlan(item.rec, state.creds)\
+            if not plan then return false end\
+            -- Where this cover comes from, kept on the ITEM so the collector\
+            -- can attribute a refusal to an origin. A cover item carries no\
+            -- fetch_url or feed_url -- only the plan knows the url, and the\
+            -- plan does not survive into the parent's collect loop, so\
+            -- without this a refused cover recorded a back-off against nil\
+            -- and the pause was never taken.\
+            item.cover_url = plan.url\
+            payload = function(_pid, fd)\
+                local CoverFetch = require(\"lib/bookshelf_cover_fetch\")\
+                local got, err = CoverFetch.download(plan.url, plan.path, plan.user,\
+                                                     plan.password, plan.net_opts)\
+                -- Covers are where a capped server actually says no: a page\
+                -- of twenty books is twenty requests, against a root feed\
+                -- that is one. Reporting a refusal as a plain failure here\
+                -- left the back-off never triggered at all, so the run was\
+                -- narrowed rather than paused and the covers that had been\
+                -- refused were simply dropped (issue 434).\
+                if not got and err == \"ratelimited\" then\
+                    ffiutil.writeToFD(fd, OpdsFeed.RATE_LIMIT_MARKER, true)\
+                    return\
+                end\
+                ffiutil.writeToFD(fd, got and \"1\" or \"\", true)\
+            end\
+        end\
+        local pid, rfd = ffiutil.runInSubProcess(payload, true)\
+        if not pid then\
+            fork_broken = true\
+            fork_failed_i = item_i\
+            return false\
+        end\
+        in_flight[#in_flight + 1] =\
+            { pid = pid, fd = rfd, item = item, t0 = _gettime() }\
+        return true\
+    end\
+    local function fill()\
+        -- `pace` is the gap a refused origin has earned. At pace 0 (every\
+        -- healthy catalog) this loop is exactly what it always was.\
+        if pace > 0 and _gettime() < next_launch_at then return end\
+        while #in_flight < cap\
+                and next_i < #queue and not fork_broken do\
+            next_i = next_i + 1\
+            local item = queue[next_i]\
+            -- Tested POSITIVELY on \"cover\", not as \"anything that is not a\
+            -- resolve\". The negative form silently swallowed every later item\
+            -- kind: a page item carries no .rec, needsFetch(nil) is false, and\
+            -- \"not false\" skipped it as already-cached. The lookahead decided\
+            -- to fetch on every page turn for a whole session and not one\
+            -- worker was ever launched. A new kind must never be droppable by\
+            -- a branch that predates it.\
+            if item.kind == \"cover\" and not OpdsCovers.needsFetch(item.rec) then\
+                -- Already on disk: costs nothing, and must not occupy a worker.\
+            else\
+                launch(item, next_i)\
+                if pace > 0 then\
+                    next_launch_at = _gettime() + pace\
+                    return          -- one per interval while an origin is slow\
+                end\
+            end\
+        end\
+    end\
+\
+    local poll\
+    poll = function()\
+        if not stillCurrent() then\
+            -- Superseded or torn down: kill the workers rather than let them\
+            -- finish into a page nobody is looking at.\
+            --\
+            -- Killing is not collecting. terminateSubProcess sends SIGKILL and\
+            -- says so in its own comment: \"Process will still have to be\
+            -- collected with calls to util.isSubProcessDone()\". Without the\
+            -- collectLater below, every worker abandoned by a page turn stayed\
+            -- a ZOMBIE for the rest of the session - four of them were sitting\
+            -- on the test device, parented to the reader, after an evening's\
+            -- browsing. Each holds a PID slot and a kernel task struct, and\
+            -- nothing ever reaps them because this loop is the last thing that\
+            -- knew the pid.\
+            for _k, e in ipairs(in_flight) do\
+                pcall(ffiutil.terminateSubProcess, e.pid)\
+                if e.fd then pcall(ffiutil.readAllFromFD, e.fd) end\
+                collectLater(e.pid)\
+            end\
+            in_flight = {}\
+            return\
+        end\
+        local still = {}\
+        for _k, e in ipairs(in_flight) do\
+            local done     = ffiutil.isSubProcessDone(e.pid)\
+            local readable = e.fd and ffiutil.getNonBlockingReadSize(e.fd) ~= 0\
+            if done or readable then\
+                local out = e.fd and ffiutil.readAllFromFD(e.fd) or \"\"\
+                local ms = (_gettime() - e.t0) * 1000\
+                state.t_fetch = state.t_fetch + ms\
+                state.n_fetch = state.n_fetch + 1\
+                -- Refused outright: record the back-off the child could not,\
+                -- and stop the run. Narrowing is the wrong answer to a 429 --\
+                -- it keeps going, just more slowly, and every request still\
+                -- lands inside the window the server is waiting to clear.\
+                if out == OpdsFeed.RATE_LIMIT_MARKER then\
+                    -- Refused. SLOW DOWN, do not stop: the queue keeps\
+                    -- draining, so the covers on the page in front of the\
+                    -- reader still arrive, just further apart. Abandoning the\
+                    -- run instead left them stalled until something re-armed\
+                    -- the chain, and the machinery to un-stall it was more\
+                    -- code than the problem (issue 434).\
+                    local refused = e.item.fetch_url or e.item.feed_url\
+                                    or e.item.cover_url\
+                    pcall(function() OpdsFeed.notePaced(refused) end)\
+                    cap = 1\
+                    pcall(function() pace = OpdsFeed.paceFor(refused) or 0 end)\
+                    -- PUT IT BACK. Narrowing and pacing only slow down what\
+                    -- is still queued, and on a full-width pool there is\
+                    -- nothing left: the queue is one screen of covers, the\
+                    -- width is ten, so the whole page goes out at once and a\
+                    -- refused cover is simply lost. Measured on device, three\
+                    -- landed and seven vanished with the queue already empty\
+                    -- -- which is the \"3 covers then stalls\" that survived\
+                    -- two earlier attempts at this (issue 434).\
+                    --\
+                    -- Appending re-opens the loop, because next_i now trails\
+                    -- #queue again, and the item comes round at the paced\
+                    -- rate rather than immediately. Bounded, so a server that\
+                    -- refuses everything ends the run instead of cycling.\
+                    local tries = (e.item.tries or 0) + 1\
+                    if tries <= OPDS_REFUSED_RETRIES then\
+                        e.item.tries = tries\
+                        queue[#queue + 1] = e.item\
+                    else\
+                        logger.dbg(\"[bookshelf perf] opds pool: giving up on an item after \"\
+                                   .. tries .. \" refusals\")\
+                    end\
+                    logger.dbg(string.format(\
+                        \"[bookshelf perf] opds pool: refused, cap=1 pace=%.1fs requeued=%s\",\
+                        pace, tostring(tries <= OPDS_REFUSED_RETRIES)))\
+                    out = \"\"\
+                end\
+                -- A worker that SUCCEEDED has to be recorded by the parent.\
+                -- OpdsFeed.fetch notes it, but that runs in the forked child\
+                -- whose memory is discarded, so the pacing registry never\
+                -- heard about any of the pool's successes and an origin that\
+                -- had been slowed down could never recover -- measured on the\
+                -- rig, the gap stayed at its 8s ceiling across two successful\
+                -- requeued fetches (issue 434).\
+                if out ~= \"\" and pace > 0 then\
+                    local ok_u = e.item.fetch_url or e.item.feed_url\
+                                 or e.item.cover_url\
+                    if ok_u then\
+                        pcall(function() OpdsFeed.noteReachable(ok_u) end)\
+                        pcall(function() pace = OpdsFeed.paceFor(ok_u) or 0 end)\
+                    end\
+                end\
+                -- A worker that came back with nothing is the server saying\
+                -- no: a timeout, a refused connection, an error page. Halve\
+                -- and keep going rather than finishing the queue at a width\
+                -- the server has already rejected.\
+                if out == \"\" and cap > 1 then\
+                    cap = math.max(1, math.floor(cap / 2))\
+                    logger.dbg(\"[bookshelf perf] opds pool: narrowing to\", cap)\
+                end\
+                if e.item.kind == \"page\" then\
+                    -- The next page of the feed on screen. Nothing about the\
+                    -- CURRENT page changes, so this needs no repaint of its\
+                    -- own; it just means the page after this one is already\
+                    -- here when the user turns to it. The tail repaint picks\
+                    -- up the new page count.\
+                    if out ~= \"\" and _storeFeedPage(e.item.server_key,\
+                                                    e.item.feed_url,\
+                                                    e.item.fetch_url, out) then\
+                        state.paged = (state.paged or 0) + 1\
+                        -- Keep walking. The chain is sequential - the next\
+                        -- url only exists in the page that just landed - so\
+                        -- depth is reached one request at a time, each queued\
+                        -- into the pool that is already running. The\
+                        -- lookahead declines as soon as the window is deep\
+                        -- enough, which is what ends this.\
+                        -- Spend no more than this run was budgeted, so a\
+                        -- server with a tiny page size cannot turn one render\
+                        -- into a crawl.\
+                        local budget = e.item.plan or OPDS_LOOKAHEAD_MAX_REQUESTS\
+                        if (state.paged or 0) < budget then\
+                            local more = self:_opdsLookaheadItem()\
+                            if more then\
+                                queue[#queue + 1] = more\
+                                logger.dbg(string.format(\
+                                    \"[bookshelf perf] opds pool: reading further ahead (%d/%d)\",\
+                                    state.paged, budget))\
+                            end\
+                        end\
+                    end\
+                elseif e.item.kind == \"resolve\" then\
+                    if out ~= \"\" and _storeChildFeed(e.item.server_key,\
+                                                     e.item.feed_url, out) then\
+                        state.resolved = state.resolved + 1\
+                        -- Pipeline: this folder is a book now, so its cover\
+                        -- joins the queue this loop is still draining rather\
+                        -- than waiting for the whole chain's re-arm.\
+                        local extra = state.want_covers and _opdsResolvedCoverItem(\
+                            e.item.server_key, e.item.feed_url)\
+                        if extra then\
+                            queue[#queue + 1] = extra\
+                            logger.dbg(\
+                                \"[bookshelf perf] opds pool: queued resolved cover, \"\
+                                .. #queue .. \" item(s) now\")\
+                        end\
+                    end\
+                else\
+                    if out == \"1\" then state.landed = state.landed + 1 end\
+                end\
+                logger.dbg(string.format(\
+                    \"[bookshelf perf] opds pool item: kind=%s %.0fms ok=%s\",\
+                    e.item.kind or \"cover\", ms, tostring(out ~= \"\")))\
+                if not done then collectLater(e.pid) end\
+            else\
+                still[#still + 1] = e\
+            end\
+        end\
+        in_flight = still\
+        fill()\
+        if state.landed - state.painted >= _opdsPaintThreshold(state.painted) then\
+            local first = state.painted < 1\
+            state.painted = state.landed\
+            paint(first and \"first-cover\" or \"cover-batch\")\
+        end\
+        if #in_flight > 0 or (next_i < #queue and not fork_broken) then\
+            UIManager:scheduleIn(OPDS_POOL_POLL, poll)\
+            return\
+        end\
+        if fork_broken then\
+            -- Forking died mid-run: finish what is left the old way rather\
+            -- than dropping it, from the item whose launch failed (it may\
+            -- have been the last).\
+            local rest = {}\
+            local first = fork_failed_i or (next_i + 1)\
+            for i = first, #queue do rest[#rest + 1] = queue[i] end\
+            return self:_opdsCoverStep(rest, 1, token, state)\
+        end\
+        -- Done.\
+        -- Sweep on ANY cover having landed, not just unpainted ones: the cache\
+        -- byte cap is a property of the chain, not of whether its last paint\
+        -- happened to be owed. Gating it on \"unpainted\" meant a chain whose\
+        -- covers were all painted mid-run never enforced the cap at all.\
+        -- Before the paint, so the shelf renders what survives the sweep.\
+        if state.landed > 0 then OpdsCovers.sweepCache() end\
+        if (state.landed > state.painted) or state.resolved > 0\
+                or (state.paged or 0) > 0 then\
+            paint(\"tail\")\
+        end\
+        local total = (_gettime() - state.t_begin) * 1000\
+        local tf, tp, nf = state.t_fetch, state.t_paint, state.n_fetch\
+        logger.dbg(string.format(\
+            \"[bookshelf perf] opds POOL DONE: items=%d fetched=%d landed=%d \"\
+            .. \"resolved=%d cap=%d | fetch=%.0fms (%.0fms avg, OFF-THREAD) \"\
+            .. \"paint=%.0fms | blocking=%.0fms of %.0fms wall (%.0f%%)\",\
+            #queue, nf, state.landed, state.resolved, cap,\
+            tf, (nf > 0) and (tf / nf) or 0, tp, tp, total,\
+            (total > 0) and (tp / total * 100) or 0))\
+        if state.resolved > 0 then self:_opdsEnsureCovers() end\
+    end\
+\
+    fill()\
+    if #in_flight == 0 and fork_broken then\
+        return self:_opdsCoverStep(queue, 1, token, state)\
+    end\
+    UIManager:scheduleIn(OPDS_POOL_POLL, poll)\
+end\
+\
+-- _opdsCoverStep(queue, idx, token, state) - fetch ONE cover, then hand the\
+-- main loop back before taking the next.\
+--\
+-- Replaces a single blocking pass over the whole page. fetchMissing downloads\
+-- serially with a 20-second budget and nothing yields inside it, so on a slow\
+-- catalog the shelf froze in 20-second blocks: on Internet Archive, whose\
+-- cover server has been measured at 8 seconds a request, that is two or three\
+-- covers per freeze and a page turn that does not register until it ends. This\
+-- is opds_plus's ImageLoader shape (one image per tick, re-scheduled), which\
+-- is the model that reads as responsive rather than stuck.\
+--\
+-- What this does NOT fix: one cover is still a blocking download, so a single\
+-- 8-second request still holds the loop for 8 seconds. The per-request\
+-- timeouts (THUMB_BLOCK/THUMB_TOTAL, 5s/10s) are the ceiling on that. Fixing\
+-- it properly needs the download off the UI thread entirely, which the forked\
+-- subprocess pool in b73887b tried and lost to server throttling.\
+--\
+-- Guards are re-tested on EVERY tick, not once at the start. The entire point\
+-- is that the user can act between ticks, and paging is exactly what bumps the\
+-- token -- so an abandoned chain must notice at its next step rather than run\
+-- the queue out against a page nobody is looking at.\
+function BookshelfWidget:_opdsCoverStep(queue, idx, token, state)\
+    local OpdsCovers = require(\"lib/bookshelf_opds_covers\")\
+    if BookshelfWidget.live ~= self then return end\
+    if token ~= self._opds_cover_token then return end\
+    local item = queue[idx]\
+    if not item then\
+        -- Chain complete. Paint whatever landed since the last repaint, and\
+        -- sweep BEFORE that paint so the shelf renders what is on disk after\
+        -- the sweep rather than briefly showing a cover the sweep just dropped\
+        -- (the ordering fetchMissing established).\
+        -- Sweep on ANY cover having landed (see the pool's tail for why).\
+        if state.landed > 0 then OpdsCovers.sweepCache() end\
+        local unpainted = (state.landed > state.painted) or state.resolved > 0\
+            or (state.paged or 0) > 0\
+        if unpainted then\
+            local t0 = _gettime()\
+            self:_rebuild()\
+            UIManager:setDirty(self, \"ui\")\
+            state.t_paint = (state.t_paint or 0) + (_gettime() - t0) * 1000\
+        end\
+        -- The verdict line: where the chain's wall time actually went, and how\
+        -- much of it blocked the UI thread. fetch >> paint means the downloads\
+        -- are the problem and belong off-thread; paint >> fetch means they do\
+        -- not and the repaint strategy is what needs changing.\
+        if (state.n_fetch or 0) > 0 or (state.t_paint or 0) > 0 then\
+            local total = (_gettime() - (state.t_begin or _gettime())) * 1000\
+            local tf, tp, nf = state.t_fetch or 0, state.t_paint or 0, state.n_fetch or 0\
+            logger.dbg(string.format(\
+                \"[bookshelf perf] opds cover chain DONE: items=%d fetched=%d \"\
+                .. \"landed=%d resolved=%d | fetch=%.0fms (%.0fms avg) \"\
+                .. \"paint=%.0fms | blocking=%.0fms of %.0fms wall (%.0f%%)\",\
+                #queue, nf, state.landed, state.resolved, tf,\
+                (nf > 0) and (tf / nf) or 0, tp, tf + tp, total,\
+                (total > 0) and ((tf + tp) / total * 100) or 0))\
+        end\
+        -- Resolution changed the page: folders became books, and those books\
+        -- have covers of their own that this queue never knew about. ONE re-arm\
+        -- recomputes from the new page shape and fetches them.\
+        --\
+        -- Terminates because both kinds of work are self-limiting: a resolved\
+        -- child window persists (fetched_at > 0), so the next pass finds nothing\
+        -- to resolve, and covers that landed are on disk, so needsFetch stops\
+        -- selecting them. Gated on resolved > 0 so a pass that only fetched\
+        -- covers does not re-arm at all.\
+        if state.resolved > 0 then self:_opdsEnsureCovers() end\
+        return\
+    end\
+    -- Per-item timing, split FETCH from REPAINT. The two call for opposite\
+    -- fixes: if the downloads dominate, moving them off the UI thread is the\
+    -- answer; if the repaints do, threading changes nothing and the fix is to\
+    -- stop calling a full _rebuild per batch. Guessing between those is how\
+    -- this loop has already been rewritten twice.\
+    local _t_start = _gettime()\
+    state.t_fetch  = state.t_fetch  or 0\
+    state.t_paint  = state.t_paint  or 0\
+    state.n_fetch  = state.n_fetch  or 0\
+    state.t_begin  = state.t_begin  or _t_start\
+    local function _paint(why)\
+        local t0 = _gettime()\
+        self:_rebuild()\
+        UIManager:setDirty(self, \"ui\")\
+        local ms = (_gettime() - t0) * 1000\
+        state.t_paint = state.t_paint + ms\
+        logger.dbg(string.format(\
+            \"[bookshelf perf] opds cover repaint: %s rebuild+dirty=%.0fms\", why, ms))\
+    end\
+    if item.kind == \"page\" then\
+        local OpdsFeed = require(\"lib/bookshelf_opds_feed\")\
+        local _tf = _gettime()\
+        local body = OpdsFeed.fetch(item.fetch_url or item.feed_url,\
+                                    item.user, item.password, item.timeouts)\
+        local fetch_ms = (_gettime() - _tf) * 1000\
+        state.t_fetch = state.t_fetch + fetch_ms\
+        state.n_fetch = state.n_fetch + 1\
+        logger.dbg(string.format(\
+            \"[bookshelf perf] opds page fetch: %.0fms ok=%s %s\",\
+            fetch_ms, tostring(body ~= nil),\
+            tostring(item.fetch_url or item.feed_url)))\
+        if body and _storeFeedPage(item.server_key, item.feed_url,\
+                                  item.fetch_url, body) then\
+            state.paged = (state.paged or 0) + 1\
+            local budget = item.plan or OPDS_LOOKAHEAD_MAX_REQUESTS\
+            if state.paged < budget then\
+                local more = self:_opdsLookaheadItem()\
+                if more then queue[#queue + 1] = more end\
+            end\
+        end\
+    elseif item.kind == \"resolve\" then\
+        local OpdsFeed = require(\"lib/bookshelf_opds_feed\")\
+        local _tf = _gettime()\
+        local body = OpdsFeed.fetch(item.feed_url, item.user, item.password,\
+                                    item.timeouts)\
+        local fetch_ms = (_gettime() - _tf) * 1000\
+        state.t_fetch = state.t_fetch + fetch_ms\
+        state.n_fetch = state.n_fetch + 1\
+        logger.dbg(string.format(\
+            \"[bookshelf perf] opds resolve fetch: %.0fms ok=%s %s\",\
+            fetch_ms, tostring(body ~= nil), tostring(item.feed_url)))\
+        if body and _storeChildFeed(item.server_key, item.feed_url, body) then\
+            state.resolved = state.resolved + 1\
+            -- Pipeline, as in the pool: the folder is a book now and its cover\
+            -- joins the queue still being walked, instead of waiting for the\
+            -- tail re-arm to discover it.\
+            local extra = state.want_covers and _opdsResolvedCoverItem(\
+                item.server_key, item.feed_url)\
+            if extra then queue[#queue + 1] = extra end\
+            -- Same cadence as covers, counted separately: resolving four\
+            -- folders is four tiles changing shape, worth a repaint, and\
+            -- mixing the two counters would delay whichever is in the minority.\
+            if state.resolved % OPDS_COVER_REBUILD_EVERY == 0 then\
+                _paint(\"resolve-batch\")\
+            end\
+        end\
+    elseif item.kind == \"page\" then\
+        -- The next page of the feed on screen, as the pool reads it ahead\
+        -- (this chain is the pool's fallback, and gets its whole queue).\
+        -- No repaint of its own: the tail picks up the new page count.\
+        local OpdsFeed = require(\"lib/bookshelf_opds_feed\")\
+        local _tf = _gettime()\
+        local body = OpdsFeed.fetch(item.fetch_url or item.feed_url, item.user,\
+                                    item.password, item.timeouts)\
+        state.t_fetch = state.t_fetch + (_gettime() - _tf) * 1000\
+        state.n_fetch = state.n_fetch + 1\
+        if body and _storeFeedPage(item.server_key, item.feed_url,\
+                                   item.fetch_url, body) then\
+            state.paged = (state.paged or 0) + 1\
+            -- Within this run's budget, as in the pool.\
+            local budget = item.plan or OPDS_LOOKAHEAD_MAX_REQUESTS\
+            if state.paged < budget then\
+                local more = self:_opdsLookaheadItem()\
+                if more then queue[#queue + 1] = more end\
+            end\
+        end\
+    else\
+        local rec = item.rec\
+        -- Already on disk: skip it within THIS tick rather than spending a tick\
+        -- to discover it. A page whose covers are all cached would otherwise\
+        -- take a fifth of a second per cell to walk. A Lua tail call, so a long\
+        -- run of cached records costs no stack.\
+        if not OpdsCovers.needsFetch(rec) then\
+            return self:_opdsCoverStep(queue, idx + 1, token, state)\
+        end\
+        local _tf = _gettime()\
+        local got = OpdsCovers.fetchOne(rec, state.creds)\
+        local fetch_ms = (_gettime() - _tf) * 1000\
+        state.t_fetch = state.t_fetch + fetch_ms\
+        state.n_fetch = state.n_fetch + 1\
+        logger.dbg(string.format(\
+            \"[bookshelf perf] opds cover fetch: %.0fms ok=%s %s\",\
+            fetch_ms, tostring(got), tostring(rec.filepath)))\
+        if got then\
+            state.landed = state.landed + 1\
+            -- Repaint every few covers rather than every one: a full _rebuild\
+            -- per cover costs more than it buys, and on e-ink every one of them\
+            -- is a visible flash.\
+            if state.landed - state.painted >= _opdsPaintThreshold(state.painted) then\
+                local _first = state.painted < 1\
+                state.painted = state.landed\
+                _paint(_first and \"first-cover\" or \"cover-batch\")\
+            end\
+        end\
+    end\
+    UIManager:scheduleIn(OPDS_COVER_TICK, function()\
+        self:_opdsCoverStep(queue, idx + 1, token, state)\
+    end)\
+end\
+\
+-- _opdsAfterPage(items) - the one post-render hook for an OPDS chip, called\
+-- from both render paths (_rebuild and the _swapShelvesInPlace page-turn\
+-- fast path) with the page the repo just handed back. Two jobs:\
+--\
+--   * items.opds_needs_fetch: the requested slice ran past the cached window,\
+--     so pull more feed pages. This covers BOTH \"first tap, empty cache\"\
+--     (fetch page 1) and \"paged past the window\" (fetch the next feed page) --\
+--     the repo sets the flag for both.\
+--   * thumbnails for the visible page, off the paint path.\
+--\
+-- Both are gated on the one-shot _markOpdsNav flag, which this consumes: a\
+-- rebuild the user did not ask for renders from the cached window and makes\
+-- no network call of any kind. That gate doubles as the re-entry guard --\
+-- a fetch that fails leaves the window short, so opds_needs_fetch is STILL\
+-- set on the rebuild _opdsFetchMore ends with, and without the gate the hook\
+-- would spin forever against an unreachable server, one toast per turn. The\
+-- user re-arms it by turning the page, re-tapping the chip, or swiping down.\
+--\
+-- Exactly one path puts the flag back instead of spending it: a fetch for\
+-- another feed is in flight, so this one is queued rather than run (see the\
+-- busy branch below). That is a deferral of the user's own navigation, not a\
+-- flag surviving into an unrelated passive rebuild -- the in-flight fetch's\
+-- tail rebuild is what picks it up, moments later.\
+function BookshelfWidget:_opdsAfterPage(items)\
+    -- One-shot: consumed here whether or not it gets used, so it can never\
+    -- leak into a later passive rebuild (bar the one queue case above, which\
+    -- re-arms deliberately and is picked up by the very next rebuild).\
+    local user_nav = self._opds_nav_pending\
+    self._opds_nav_pending = nil\
+    if not user_nav then return end\
+    -- Which feed the page belongs to, resolved the same way _fetchChipItems\
+    -- picked what to render: a drilled navigation entry's subcatalog wins over\
+    -- the chip's own source, and any other drilldown tip (search results, a\
+    -- folder) means the page on screen isn't a feed's at all -- nil, nothing to\
+    -- do. Resolved AFTER the one-shot flag is consumed, never before: the\
+    -- consume must happen on every path through this function or a flag armed\
+    -- for a rebuild that turned out not to be a feed's would leak into the next\
+    -- passive one and spend itself on a fetch the user never asked for.\
+    local tab = self:_opdsEffectiveTab()\
+    if not tab then\
+        -- Not looking at a feed (a local chip, a search, a folder drill), so\
+        -- the next OPDS view is an entry again. Without this, switching to a\
+        -- local chip and back would read as \"still in the same feed\" and skip\
+        -- the age check the user asked for on opening it.\
+        self._opds_age_checked_key = nil\
+        return\
+    end\
+    -- 120s (see _opdsFetchBusy): comfortably longer than a slow feed page over\
+    -- 2G-ish Wi-Fi, short enough that a fetch killed by an error (which never\
+    -- reaches the tail that clears this) unblocks itself well before the user\
+    -- gives up and swipes down. Overlap protection only -- the explicit\
+    -- swipe-down refresh calls _opdsFetchMore directly and is never blocked.\
+    -- A modal download holds the same marker with _opds_fetch_feed left nil,\
+    -- so it reads here as \"another feed is busy\" -> the queue branch below.\
+    local busy = self:_opdsFetchBusy()\
+    -- ...and busy for WHICH feed. _opds_fetch_feed is the in-flight fetch's own\
+    -- sameFeed predicate (see _opdsFetchMore), so this compares on the resolved\
+    -- feed url without re-reading the stock plugin's server list here.\
+    local busy_this = busy and self._opds_fetch_feed ~= nil\
+                      and self._opds_fetch_feed(tab)\
+    -- Age-based refresh: the one automatic refetch the shelf performs, and the\
+    -- fix for a feed that was otherwise cached until the user found the\
+    -- swipe-down gesture (issue #321). Off unless the chip asks for it.\
+    --\
+    -- Scoped to ENTERING a feed rather than to every navigation gesture, which\
+    -- is what the setting's own wording (\"every time I open it\") promises. A\
+    -- page turn is a nav gesture too, and checking there would refetch from\
+    -- the top mid-catalog -- and against a server that is down, on every\
+    -- single turn, which is the retry spin the nav gate exists to stop. Leaving\
+    -- and coming back re-checks, so a failed refresh is retried when the user\
+    -- next asks for the feed and not before.\
+    --\
+    -- Still inside the user_nav gate above: a passive rebuild (file poll, a\
+    -- cover landing, startup restore) must never reach the network, and an\
+    -- expiry rule that fired on those would quietly undo that.\
+    if not busy and type(items) == \"table\" then\
+        local Prefs = require(\"lib/bookshelf_opds_prefs\")\
+        local chip  = self:_opdsPrefsTab()\
+        if Prefs.refreshAge(chip) ~= nil then\
+            local OpdsSource = require(\"lib/bookshelf_opds_source\")\
+            local OpdsWindow = require(\"lib/bookshelf_opds_window\")\
+            local _sk, feed_url = self:_opdsFeedRef(tab)\
+            if feed_url then\
+                local key = tostring(tab.source.id) .. \"|\" .. feed_url\
+                local entering = self._opds_age_checked_key ~= key\
+                self._opds_age_checked_key = key\
+                local win = OpdsWindow.load(tab.source.id, feed_url)\
+                if entering and Prefs.isStale(chip, win.fetched_at, os.time()) then\
+                    -- replace = true, so the refetch REPLACES the stale window\
+                    -- rather than topping it up: the whole point is that what\
+                    -- is cached may be wrong, not merely short. _opdsFetchMore\
+                    -- keeps the old window if the refetch comes back empty, so\
+                    -- an expiry against a dead server does not blank the shelf.\
+                    UIManager:nextTick(function()\
+                        if BookshelfWidget.live ~= self then return end\
+                        self:_opdsFetchMore(tab, self:_opdsBatchSize(), true)\
+                    end)\
+                    return\
+                end\
+            end\
+        end\
+    end\
+    if type(items) == \"table\" and items.opds_needs_fetch then\
+        if busy_this then\
+            -- A fetch for THIS feed is already running and its tail rebuilds\
+            -- this page. Spending the arm is right here: re-arming would let\
+            -- that tail fire a second fetch for a feed that just finished one,\
+            -- which against an unreachable server is exactly the per-turn\
+            -- retry spin the arm exists to prevent.\
+            self:_opdsEnsureCovers()\
+            return\
+        end\
+        if busy then\
+            -- A fetch for a DIFFERENT feed holds the marker. Queue rather than\
+            -- race, so the automatic paths only ever have one feed fetch in\
+            -- flight (the explicit swipe-down refresh stays exempt, as it\
+            -- always has been): Trapper's progress widget is module-level\
+            -- singleton state (Trapper.current_widget, frontend/ui/trapper.lua).\
+            -- A second wrapped coroutine's info() closes the first's\
+            -- InfoMessage and installs its own -- whose dismiss_callback\
+            -- resumes the WRONG coroutine -- and either one's clear() then\
+            -- closes the other's widget. A coroutine left suspended that way\
+            -- never returns from Trapper:wrap's pcalled_func, so its\
+            -- UIManager:preventStandby() is never balanced by allowStandby():\
+            -- a device that will not sleep again this session. Not worth two\
+            -- progress lines.\
+            --\
+            -- Queueing means putting the one-shot arm BACK rather than\
+            -- spending it. The in-flight fetch releases the marker before its\
+            -- tail rebuild, so that rebuild reaches this function with the arm\
+            -- still set and no marker held, and starts the fetch there. Before\
+            -- this, the arm was consumed here and nothing rebuilt afterwards:\
+            -- a nav-tile tap that landed mid-fetch dead-ended on an empty\
+            -- subcatalog until the user paged or swiped.\
+            self._opds_nav_pending = user_nav\
+            self:_opdsEnsureCovers()\
+            return\
+        end\
+        -- LOUD ONLY WHEN THE SHELF WOULD OTHERWISE BE EMPTY.\
+        --\
+        -- _opdsFetchMore is the user-facing fetch: Trapper, a modal progress\
+        -- line that yields for input, and a tail that re-clamps the cursor.\
+        -- That is right when the reader is staring at nothing and waiting for\
+        -- this feed to arrive - a blank shelf with no explanation is worse\
+        -- than a message.\
+        --\
+        -- It is wrong when there are already books on screen. Then the reader\
+        -- has simply outrun the read-ahead, and interrupting a page they can\
+        -- already use, to tell them about one they have not asked for yet, is\
+        -- the \"blocking Fetching message\" complaint. The silent path handles\
+        -- it: _opdsEnsureCovers queues the same page fetch into the forked\
+        -- pool, which repaints when it lands and dies quietly if it does not.\
+        -- What the READER can see, not what the store holds. A window with\
+        -- entries can still render an empty page - the cursor sits past them\
+        -- after a deep restore - and calling that \"usable\" sent it down the\
+        -- silent path to stare at \"no books yet\".\
+        local have_something = false\
+        for _i = 1, #(self._page_items or {}) do\
+            if self._page_items[_i] then have_something = true break end\
+        end\
+        if have_something then\
+            logger.dbg(\"[bookshelf perf] opds top-up: silent (page already usable)\")\
+            self:_opdsEnsureCovers()\
+            return\
+        end\
+        -- Same offset/limit _fetchChipItems asked the repo for, so want_count\
+        -- is exactly \"enough entries to fill the page being rendered\".\
+        local want = math.max(0, (self._cursor or 1) - 1) + self:_opdsBatchSize()\
+        UIManager:nextTick(function()\
+            -- Teardown guard, as in _opdsEnsureCovers: don't open a Wi-Fi\
+            -- prompt / Trapper progress line for a shelf that has gone away.\
+            if BookshelfWidget.live ~= self then return end\
+            self:_opdsFetchMore(tab, want)\
+        end)\
+        -- No cover pass here: the page is about to change under us and\
+        -- _opdsFetchMore runs one against the fuller page. Two passes would\
+        -- fight over _opds_cover_token -- the first batch's downloads land,\
+        -- then find their token superseded and skip the repaint.\
+        return\
+    end\
+    self:_opdsEnsureCovers()\
+end\
+\
+-- ─── OPDS catalog search ─────────────────────────────────────────────────────\
+--\
+-- _opdsOpenSearchDialog(tab, prefill) - the shelf's search entry, pointed at\
+-- a catalog instead of the local library (see the chip strip's search leg\
+-- for the routing rule). `tab` is the tab-LIKE _opdsEffectiveTab hands\
+-- back, so this works from a drilled subcatalog exactly as it does from the\
+-- chip's root. `prefill` carries text the user already typed elsewhere\
+-- (the page-jump dialog's Search… button) so it isn't thrown away --\
+-- parity with `_openSearchDialog`, which already prefills.\
+--\
+-- Discovery happens HERE, before the keyboard opens, not on submit: a catalog\
+-- that cannot be searched should say so while the user's question is still\
+-- \"can I search this?\", rather than after they have typed one. Two places to\
+-- look, in order:\
+--\
+--   * the CURRENT feed's window (win.search, captured by mapEntries and\
+--     persisted by appendPage). A feed that advertises its own search link\
+--     wins -- on a Calibre-style templated href that link is the feed's own.\
+--   * the server ROOT window's, when the current feed carries none. Most\
+--     catalogs advertise the search link on their root document only, so a\
+--     drilled subcatalog would otherwise have nothing to search with even\
+--     though the catalog plainly supports it. Both windows are cache reads\
+--     (OpdsWindow never touches the network), so the fallback costs one\
+--     settings lookup, not a fetch.\
+--\
+-- Neither: say which of the two honest reasons applies. An unseen root window\
+-- (never fetched, or evicted by OpdsWindow's LRU) means we genuinely do not\
+-- know whether this catalog offers search, and the fix is to load it; a root\
+-- we HAVE seen that carries no link is a catalog that really does not offer\
+-- search, and no amount of waiting will change that.\
+function BookshelfWidget:_opdsOpenSearchDialog(tab, prefill)\
+    local OpdsSource   = require(\"lib/bookshelf_opds_source\")\
+    local OpdsWindow   = require(\"lib/bookshelf_opds_window\")\
+    local Notification = require(\"ui/widget/notification\")\
+    local server = OpdsSource.getServer(tab.source.id)\
+    -- A chip pointing at a server the user deleted from the stock OPDS plugin.\
+    -- Silent, exactly as _opdsFetchMore / _opdsRefresh are: the view itself is\
+    -- already empty and a search-specific complaint would name the wrong\
+    -- problem.\
+    if not server then return end\
+    local feed_url = tab.source.feed_url or server.url\
+    local win  = OpdsWindow.load(tab.source.id, feed_url)\
+    local src  = win.search\
+    -- The root IS this window when the view is the chip's own feed; only a\
+    -- drilled subcatalog pays for the second load.\
+    local root = win\
+    if not src and feed_url ~= server.url then\
+        root = OpdsWindow.load(tab.source.id, server.url)\
+        src  = root.search\
+    end\
+    if not src then\
+        -- \"Known\" = we have actually seen this catalog's root document, so its\
+        -- links are a fact rather than an absence. Both signals, not just\
+        -- fetched_at: a window persisted before fetched_at was written would\
+        -- otherwise be misread as never fetched and the user told to load a\
+        -- catalog they are already looking at.\
+        local root_known = (root.fetched_at or 0) > 0\
+                           or (root.count or 0) > 0\
+        UIManager:show(Notification:new{\
+            text = root_known\
+                and _(\"This catalog does not offer search.\")\
+                or  _(\"Load the catalog first, then search it.\"),\
+        })\
+        -- Don't dead-end. The user asked to search; this catalog can't be\
+        -- searched, but their own library always can -- and that is very often\
+        -- what they were after anyway. Same fall-through the split submit button\
+        -- below offers when the catalog CAN be searched.\
+        self:_openSearchDialog(prefill)\
+        return\
+    end\
+    -- Named for the CATALOG, not the drilled feed: the search runs against the\
+    -- whole catalog whenever the link came from its root, and telling the user\
+    -- they are searching \"Science Fiction\" when the results span everything\
+    -- would be the wrong promise. server.title is what the chip itself is\
+    -- labelled with, so the two agree.\
+    local who = server.title or tab.label or \"\"\
+    local InputDialog = require(\"ui/widget/inputdialog\")\
+    local dlg\
+    -- Two submit buttons, because from an OPDS chip there are two reasonable\
+    -- things to search and only one of them used to be reachable. Wanting to\
+    -- check your own shelves while browsing a catalog is entirely normal (\"do I\
+    -- already own this?\"), and it used to mean: notice the dialog only searches\
+    -- the catalog, close it, switch chip, search again.\
+    --\
+    -- The catalog keeps the Enter key, so nothing changes for anyone who doesn't\
+    -- want the new path. The title says only \"Search\": with two scopes on offer,\
+    -- naming one of them in the title would misdescribe the dialog -- each\
+    -- button names its own scope instead.\
+    local function submit(fn)\
+        return function()\
+            -- Trimmed before it becomes a url: a trailing space percent-encodes\
+            -- to %20 and several catalogs answer that with zero results.\
+            local query = (dlg:getInputText() or \"\"):match(\"^%s*(.-)%s*$\")\
+            UIManager:close(dlg)\
+            if query ~= \"\" then fn(query) end\
+        end\
+    end\
+    dlg = InputDialog:new{\
+        title = _(\"Search\"),\
+        input = prefill or \"\",\
+        buttons = {\
+            {\
+                {\
+                    text = _(\"Cancel\"),\
+                    id   = \"close\",\
+                    callback = function() UIManager:close(dlg) end,\
+                },\
+                {\
+                    text = _(\"Search my library\"),\
+                    callback = submit(function(query) self:_searchAndDrill(query) end),\
+                },\
+            },\
+            {\
+                {\
+                    text             = T(_(\"Search %1\"), who),\
+                    is_enter_default = true,\
+                    callback = submit(function(query)\
+                        self:_opdsSearch(tab, server, src, query)\
+                    end),\
+                },\
+            },\
+        },\
+    }\
+    UIManager:show(dlg)\
+    dlg:onShowKeyboard()\
+end\
+\
+-- _opdsSearch(tab, server, src, query) - turn the discovered search source\
+-- into a feed url and drill into it. The RESULTS are an ordinary opds_nav\
+-- frame: back-out, pagination, covers and downloads all already work against\
+-- one, so this function ends where every other OPDS navigation does and adds\
+-- no machinery of its own.\
+--\
+-- Two source shapes, one exit. type \"osd\" needs the network (the link points\
+-- at an OpenSearch description document that holds the actual template);\
+-- type \"template\" is a Calibre-style href that already carries\
+-- {searchTerms} and only needs the substitution. Both run inside ONE Trapper\
+-- wrap so there is a single marker discipline to read rather than two paths\
+-- to keep in step -- the template branch simply never calls Trapper:info, so\
+-- it costs a coroutine and nothing else.\
+--\
+-- The wrap holds the FEED marker pair for its whole life so nothing else can\
+-- start a wrapped coroutine underneath it (the Trapper singleton hazard the\
+-- long note in _opdsAfterPage describes), and clears BOTH on every exit that\
+-- set them. It does NOT fetch the results: it clears the markers and drills,\
+-- and the drill's rebuild schedules _opdsFetchMore on the next tick -- after\
+-- this coroutine has finished, so the two wraps never nest. That ordering is\
+-- the same one _opdsFetchMore's tail uses and for the same reason: with the\
+-- markers still held, the rebuild's fetch would be refused as busy and the\
+-- user would land on an empty results page.\
+function BookshelfWidget:_opdsSearch(tab, server, src, query)\
+    local OpdsFeed     = require(\"lib/bookshelf_opds_feed\")\
+    local CoverFetch   = require(\"lib/bookshelf_cover_fetch\")\
+    local Notification = require(\"ui/widget/notification\")\
+    local Trapper      = require(\"ui/trapper\")\
+    local feed_url = tab.source.feed_url or server.url\
+    -- The identity the marker publishes, built exactly as _opdsFetchMore\
+    -- builds its own (resolved url, server id first) so _opdsAfterPage can\
+    -- read it with no special case: while this runs, the feed the search was\
+    -- launched from is the one that counts as busy.\
+    local function sameFeed(t)\
+        if not (t and t.source and t.source.id == tab.source.id) then return false end\
+        return (t.source.feed_url or server.url) == feed_url\
+    end\
+    local busy_text = _(\"The catalog is busy. Try again in a moment.\")\
+    if self:_opdsFetchBusy() then\
+        UIManager:show(Notification:new{ text = busy_text })\
+        return\
+    end\
+    local function resolve()\
+        Trapper:wrap(function()\
+            -- Re-tested FIRST, inside the wrap, for the reason\
+            -- _opdsRunDownload re-tests: the check above is a snapshot taken\
+            -- before the Wi-Fi prompt, which the user can leave open for as\
+            -- long as they like, and a feed fetch sitting in runWhenOnline\
+            -- holds no marker yet so that snapshot could not have seen it.\
+            -- Bails BEFORE setting anything: the markers belong to whoever is\
+            -- busy right now, and clearing them here would advertise a live\
+            -- coroutine as idle.\
+            if self:_opdsFetchBusy() then\
+                UIManager:show(Notification:new{ text = busy_text })\
+                return\
+            end\
+            self._opds_fetch_started_at = os.time()\
+            self._opds_fetch_feed = sameFeed\
+            local target\
+            if src.type == \"osd\" then\
+                Trapper:info(T(_(\"Searching %1…\"), server.title or tab.label or \"\"))\
+                -- Credentials only ever travel to the catalog's own origin:\
+                -- the osd href came out of the server's XML and could name any\
+                -- host, same gate the feed fetch and the download apply.\
+                local same_origin = OpdsFeed.sameOrigin(server.url, src.href)\
+                local body, err = OpdsFeed.fetch(src.href,\
+                    same_origin and server.username or nil,\
+                    same_origin and server.password or nil)\
+                local template = body and OpdsFeed.parseOsd(body) or nil\
+                Trapper:clear()\
+                if not template then\
+                    self._opds_fetch_started_at = nil\
+                    self._opds_fetch_feed = nil\
+                    -- Same reason as the feed fetch's line: the toast collapses\
+                    -- every cause into one sentence. The third argument tells\
+                    -- the two halves of this branch apart -- a transport\
+                    -- failure carries its status from OpdsFeed.fetch, while a\
+                    -- document that arrived and did not parse has no err at all\
+                    -- and is a very different thing to chase.\
+                    logger.dbg(\"[bookshelf] opds fetch failed:\", src.href,\
+                               err or \"no search template in the response\")\
+                    -- A document that came back but did not parse reports as\
+                    -- unreachable too: from here the two are the same failure\
+                    -- (no template, nothing to search with) and the user's\
+                    -- move is identical, so this reuses the messages the feed\
+                    -- fetch already speaks rather than minting a third.\
+                    UIManager:show(Notification:new{\
+                        text = err == \"auth\"\
+                            and T(_(\"Authentication failed for %1\"), server.title)\
+                            or err == \"format\"\
+                            and T(_(\"%1 refused every format Bookshelf asked for\"), server.title)\
+                            or err == \"ratelimited\"\
+                            and T(_(\"%1 is limiting requests. Wait a minute and try again.\"), server.title)\
+                            or  T(_(\"Couldn't reach %1\"), server.title),\
+                    })\
+                    return\
+                end\
+                -- Resolved against the OSD DOCUMENT's own url before the\
+                -- query goes in, because that is what the template is\
+                -- relative to. Catalogs are free to advertise a relative one\
+                -- and some do: bookorbit's is \"/api/v1/opds/catalog?q=\
+                -- {searchTerms}\", which substitutes into something that is\
+                -- not a url at all, so the drill failed without a single\
+                -- request reaching the server and reported as unreachable\
+                -- (#322). An already-absolute template resolves to itself, so\
+                -- catalogs that were working are untouched.\
+                target = OpdsFeed.substituteQuery(\
+                    OpdsFeed.absolute(src.href, template), query)\
+            else\
+                -- No resolve here: a templated search link is captured by\
+                -- mapEntries, which already made it absolute against the feed\
+                -- it was found in.\
+                target = OpdsFeed.substituteQuery(src.href, query)\
+            end\
+            -- Released BEFORE the drill, never after: see the header.\
+            self._opds_fetch_started_at = nil\
+            self._opds_fetch_feed = nil\
+            -- The drill IS the user navigation that licenses the results\
+            -- fetch, armed like every other nav gesture.\
+            self:_markOpdsNav()\
+            self:_drillInto{\
+                kind    = \"opds_nav\",\
+                label   = T(_(\"Search: \\\"%1\\\"\"), query),\
+                payload = { server_key = tab.source.id, feed_url = target },\
+            }\
+        end)\
+    end\
+    if src.type == \"osd\" then\
+        -- Only the osd branch talks to the network here, so only it needs the\
+        -- Wi-Fi gate. The template branch drills straight in and the results\
+        -- fetch raises the prompt itself (_opdsFetchMore's own runWhenOnline),\
+        -- which keeps it to one prompt either way.\
+        CoverFetch.runWhenOnline(function()\
+            -- The Wi-Fi prompt is modal and can be answered long after the\
+            -- shelf closed or was replaced. Same liveness test every other\
+            -- deferred OPDS path makes.\
+            if BookshelfWidget.live ~= self then return end\
+            -- ...and the shelf can still be showing something else entirely:\
+            -- Wi-Fi off is the resting state on an e-reader, so the FIRST\
+            -- search of a session routinely waits on that prompt, with the\
+            -- shelf fully interactive underneath it. The user can back out of\
+            -- the drill, switch chips, even land on a local one before this\
+            -- runs, and a search drill pushed under THAT context is a results\
+            -- frame the user never asked for in a place it does not belong.\
+            -- Re-resolved rather than assumed, exactly as _opdsFetchMore's\
+            -- tail re-resolves before touching the cursor. Silent: the user\
+            -- navigated away, which is answer enough -- a toast about a search\
+            -- they abandoned would be noise.\
+            if not sameFeed(self:_opdsEffectiveTab()) then return end\
+            resolve()\
+        end)\
+    else\
+        resolve()\
+    end\
+end\
+\
+-- ─── OPDS book detail modal ──────────────────────────────────────────────────\
+--\
+-- What \"open\" means for a remote catalog record. Reached from the tap path\
+-- (_openBook) and the long-press path (_showBookDetail): both bounce here\
+-- because there is no file behind an OPDS:// pseudo-path, so the tabbed\
+-- book-detail popup would be inert at best and destructive at worst (its Edit\
+-- tab offers Delete).\
+--\
+-- The chrome is a plain ButtonDialog: cover + title / author + the first few\
+-- lines of the feed's blurb as one added header widget, then a full-width row\
+-- per downloadable format. NOT the ReviewsModal engine the local book detail\
+-- uses -- its footer is a fixed row (Close / zoom / Open) with nowhere to put a\
+-- variable number of download buttons, so they would have had to live inside a\
+-- native tab: an extra tap to reach the only action the screen exists for, and\
+-- a composition this file has learned to be careful with (widgets that behave\
+-- standalone can misbehave inside a cropped modal -- see the text_chevrons\
+-- note). The blurb still gets the full ReviewsModal treatment (scrollable,\
+-- sanitised HTML, A-/A+ zoom) one tap away behind Description, built from the\
+-- same header builder so the two read as one surface.\
+\
+-- Store key: OPDS pseudo-path -> the on-disk path a completed download landed\
+-- at. Small and flat (two short strings per downloaded book), so it stays in\
+-- the MAIN settings store rather than earning a subStoreFor route of its own:\
+-- it is READ on every OPDS page render (bookshelf_book_repository's opds\
+-- branch, for the downloaded decoration), where an already-open in-memory\
+-- table is exactly what's wanted, and WRITTEN only when a download completes --\
+-- so the main file's re-serialise is paid once per download, never per render.\
+-- The sub-stores exist for values that are large (opds_cache) or rewritten\
+-- constantly (hardcover_links); this is neither.\
+--\
+-- The key itself lives in bookshelf_opds_download (its other reader is the book\
+-- repository, which is nowhere near this file) -- one spelling, two callers.\
+local OPDS_DOWNLOADS_KEY = require(\"lib/bookshelf_opds_download\").STORE_KEY\
+-- Sibling map (path -> catalog description); written here on download, read by\
+-- Repo.buildBookMeta so the downloaded book keeps the catalog's blurb.\
+local OPDS_DESC_KEY = require(\"lib/bookshelf_opds_download\").DESC_STORE_KEY\
+\
+-- Is ANY OPDS network job holding Trapper right now? Trapper's progress widget\
+-- is module-level singleton state, so a second wrapped coroutine started under\
+-- a live one closes the first's InfoMessage and leaves its coroutine suspended\
+-- forever -- preventStandby never balanced, a device that won't sleep again\
+-- this session (the long note in _opdsAfterPage's busy branch has the full\
+-- shape). Downloads are modal-driven and never touch the _markOpdsNav gate,\
+-- but they DO wrap Trapper, so they answer to the same rule.\
+--\
+-- TWO markers, not one. A feed fetch owns _opds_fetch_started_at (paired with\
+-- _opds_fetch_feed, its identity); a modal download owns\
+-- _opds_download_started_at. Each side clears only its own, because they can\
+-- legitimately be set in either order and a shared field means whichever\
+-- finishes first clears the other's claim -- leaving a live coroutine\
+-- advertising itself as idle, which is exactly the state this test exists to\
+-- prevent. A download deliberately publishes NO feed identity, so\
+-- _opdsAfterPage reads it as \"someone else is busy\" and queues the user's\
+-- navigation rather than spending it.\
+--\
+-- 120s, and timestamps rather than booleans, for the reason the feed marker is\
+-- set that way in the first place: a wrapped body can't be pcall'd (Trapper\
+-- yields, and LuaJIT can't yield across a C-call boundary), so an error inside\
+-- it must expire rather than wedge the flag on for the session.\
+local OPDS_BUSY_WINDOW = 120\
+\
+function BookshelfWidget:_opdsFetchBusy()\
+    local now = os.time()\
+    local feed = self._opds_fetch_started_at\
+    if feed and (now - feed) < OPDS_BUSY_WINDOW then return true end\
+    return self:_opdsDownloadBusy()\
+end\
+\
+-- Just the DOWNLOAD half of the test above, for the one caller that has to be\
+-- narrower (_opdsRefresh: a swipe-down during a FEED fetch stays allowed). It\
+-- exists so that caller cannot read the marker as a bare boolean: with a plain\
+-- truthiness test the two readers disagree the moment the marker wedges, and\
+-- swipe-down refresh would stay dead for the life of the widget -- \"the catalog\
+-- is busy\" with nothing actually busy -- while everything else recovered after\
+-- the window. Same expiry, one constant, one rule.\
+function BookshelfWidget:_opdsDownloadBusy()\
+    local dl = self._opds_download_started_at\
+    return (dl ~= nil) and (os.time() - dl) < OPDS_BUSY_WINDOW\
+end\
+\
+-- _opdsDownloadedPath(book) -> path | nil\
+-- The file a previous download of this record left on disk, when it is still\
+-- there. Statted rather than trusted: the user can delete the book in the file\
+-- manager and the mapping has no way to hear about it, so the mapping alone is\
+-- a claim and the stat is the answer. Same rule the repo's `downloaded`\
+-- decoration follows -- one source of truth, two readers.\
+function BookshelfWidget:_opdsDownloadedPath(book)\
+    if not (book and type(book.filepath) == \"string\") then return nil end\
+    local map = BookshelfSettings.read(OPDS_DOWNLOADS_KEY)\
+    local dest = (type(map) == \"table\") and map[book.filepath] or nil\
+    if type(dest) ~= \"string\" or dest == \"\" then return nil end\
+    local ok_lfs, lfs = pcall(require, \"libs/libkoreader-lfs\")\
+    if not ok_lfs then return nil end\
+    local ok_a, mode = pcall(lfs.attributes, dest, \"mode\")\
+    if ok_a and mode == \"file\" then return dest end\
+    return nil\
+end\
+\
+-- Button label for one acquisition link. The feed's own link title wins when it\
+-- gave one (\"EPUB (no images)\" on Gutenberg) -- it is the only thing that tells\
+-- two same-format editions apart after the edition collapse merged them. With\
+-- no title, fall back to the extension the file will actually be saved with,\
+-- uppercased, taken from OpdsDownload.filenameFor rather than a second MIME\
+-- table here so the label can never disagree with the filename produced.\
+local function opdsAcquisitionLabel(book, acq)\
+    if type(acq.title) == \"string\" and acq.title ~= \"\" then\
+        -- Match the stock OPDS browser, which decodes an acquisition link's\
+        -- title before showing it. Some servers put the URL-escaped filename\
+        -- here, which otherwise leaks %E5%... into the Download button.\
+        return require(\"socket.url\").unescape(acq.title)\
+    end\
+    local ok_d, D = pcall(require, \"lib/bookshelf_opds_download\")\
+    local name = ok_d and D.filenameFor(book, acq) or nil\
+    local ext = type(name) == \"string\" and name:match(\"%.([^.]+)$\") or nil\
+    return ext and ext:upper() or nil\
+end\
+\
+-- _buildRemoteBookHeader(book, header_w, opts) -> widget | nil\
+-- Cover + title + author for a remote record, optionally followed by the first\
+-- `opts.summary_lines` lines of the blurb. Shared by the ButtonDialog (as its\
+-- added widget) and the Description modal (as its header_builder), so the two\
+-- screens show the same book the same way.\
+--\
+-- The cover comes from the OPDS cover cache through ImageSource, whose bb is\
+-- CACHE-OWNED: image_disposable stays false and the widget never hands the bb\
+-- back as _owned_cover_bb (which ReviewsModal frees at close) -- freeing a\
+-- shared cache bb is the corruption the OPDS cover path was rebuilt to avoid.\
+function BookshelfWidget:_buildRemoteBookHeader(book, header_w, opts)\
+    opts = opts or {}\
+    if not book or type(header_w) ~= \"number\" or header_w <= 0 then return nil end\
+    local ImageWidget    = require(\"ui/widget/imagewidget\")\
+    local HorizontalSpan = require(\"ui/widget/horizontalspan\")\
+    local VerticalSpan   = require(\"ui/widget/verticalspan\")\
+\
+    -- Cover box, capped so it can't crowd the text column on a narrow screen.\
+    local thumb_w = math.min(Screen:scaleBySize(110), math.floor(header_w * 0.35))\
+    local thumb_h = math.floor(thumb_w * 1.5)\
+    local gap_w   = self:_bookGap(math.min(\
+        math.floor(Space.padding.fullscreen * 2 * 0.8),\
+        math.floor(Screen:getWidth() * 0.03)))\
+\
+    -- Whatever is on disk right now: the repo attaches cover_image_path to the\
+    -- page record, but a re-show after the on-open fetch (below) is handed the\
+    -- same record the repo built BEFORE the file landed, so ask the cache too.\
+    local cover_path = book.cover_image_path\
+    if not cover_path then\
+        local ok_c, OpdsCovers = pcall(require, \"lib/bookshelf_opds_covers\")\
+        if ok_c then\
+            local ok_p, p = pcall(OpdsCovers.cachedPath, book)\
+            cover_path = ok_p and p or nil\
+        end\
+    end\
+    local cover_bb\
+    if cover_path then\
+        local ok_img, ImageSource = pcall(require, \"lib/bookshelf_image_source\")\
+        cover_bb = ok_img and ImageSource.loadImageNative(cover_path) or nil\
+    end\
+\
+    local thumb\
+    if cover_bb then\
+        -- True aspect from the bb itself, so a non-2:3 cover isn't letterboxed\
+        -- or stretched (same derivation as the book menu header).\
+        local bw = cover_bb.w or (cover_bb.getWidth and cover_bb:getWidth())\
+        local bh = cover_bb.h or (cover_bb.getHeight and cover_bb:getHeight())\
+        if bw and bh and bw > 0 then thumb_h = math.floor(thumb_w * (bh / bw)) end\
+        thumb = FrameContainer:new{\
+            bordersize = Size.border.thin, padding = 0, margin = 0,\
+            ImageWidget:new{\
+                image            = cover_bb,\
+                image_disposable = false,   -- ImageSource's cache owns it\
+                width            = thumb_w,\
+                height           = thumb_h,\
+                scale_factor     = 0,\
+            },\
+        }\
+    else\
+        -- Placeholder: an empty bordered box with a centred book glyph, so the\
+        -- header keeps its shape while the cover is still on its way (or the\
+        -- feed never offered one). A Private-Use-Area codepoint from the\
+        -- bundled Nerd Font -- the only range that renders safely here.\
+        thumb = FrameContainer:new{\
+            bordersize = Size.border.thin, padding = 0, margin = 0,\
+            CenterContainer:new{\
+                dimen = Geom:new{ w = thumb_w, h = thumb_h },\
+                TextWidget:new{\
+                    text = \"\\xEF\\x80\\xAD\",   -- U+F02D, nf-fa-book\
+                    face = BFont:getFace(\"symbols\", 28),\
+                },\
+            },\
+        }\
+    end\
+\
+    -- Text column. max_width/width must stay positive (a zero-width TextWidget\
+    -- is a crash, not a clip), so floor it rather than trusting the arithmetic.\
+    local text_w = math.max(Screen:scaleBySize(60),\
+        header_w - thumb_w - 2 * Size.border.thin - gap_w)\
+    local stack = VerticalGroup:new{ align = \"left\" }\
+    local t_face, t_bold = BFont:getFace(\"smalltfont\", 22, { bold = true })\
+    stack[#stack + 1] = TextBoxWidget:new{\
+        text  = book.display_title or book.title or _(\"(no title)\"),\
+        face  = t_face,\
+        bold  = t_bold,\
+        width = text_w,\
+    }\
+    if type(book.author) == \"string\" and book.author ~= \"\" then\
+        local a_face, a_bold = BFont:getFace(\"cfont\", 18)\
+        stack[#stack + 1] = VerticalSpan:new{ width = Space.padding.small }\
+        stack[#stack + 1] = TextBoxWidget:new{\
+            text = book.author, face = a_face, bold = a_bold, width = text_w,\
+        }\
+    end\
+\
+    local group = VerticalGroup:new{ align = \"left\",\
+        HorizontalGroup:new{ align = \"top\",\
+            thumb, HorizontalSpan:new{ width = gap_w }, stack },\
+    }\
+\
+    -- Blurb preview. Plain text via the shared cleanDescription (feed summaries\
+    -- are usually HTML), capped to a fixed line count: the dialog's added\
+    -- widget sits OUTSIDE its scrollable button area, so an uncapped blurb\
+    -- would push the buttons off screen. height + height_adjust +\
+    -- height_overflow_show_ellipsis gives \"at most N lines, shrink to fit,\
+    -- ellipsis when there's more\" in one widget; the rest is behind\
+    -- Description.\
+    local max_lines = tonumber(opts.summary_lines) or 0\
+    local raw = book.opds and book.opds.summary\
+    if max_lines > 0 and type(raw) == \"string\" and raw ~= \"\" then\
+        local ok_tok, Tokens = pcall(require, \"lib/bookshelf_tokens\")\
+        local text = ok_tok and Tokens.cleanDescription(raw) or nil\
+        if type(text) == \"string\" and text ~= \"\" then\
+            local s_face, s_bold = BFont:getFace(\"cfont\", 16)\
+            -- Throwaway probe purely to read the face's line height. Freed\
+            -- straight after: it shapes a real text run, and a book modal gets\
+            -- opened many times over a browsing session.\
+            local probe = TextBoxWidget:new{ text = \"Ag\", face = s_face, width = header_w }\
+            local line_h = probe.line_height_px or Screen:scaleBySize(20)\
+            probe:free()\
+            group[#group + 1] = VerticalSpan:new{ width = Space.px(10) }\
+            group[#group + 1] = TextBoxWidget:new{\
+                text   = text,\
+                face   = s_face,\
+                bold   = s_bold,\
+                width  = header_w,\
+                height = line_h * max_lines,\
+                height_adjust                 = true,\
+                height_overflow_show_ellipsis = true,\
+            }\
+        end\
+    end\
+    -- Nothing in here is interactive, and ButtonDialog puts every added widget\
+    -- into its dpad focus layout unless told otherwise -- without this, arrow\
+    -- navigation gets a dead row above the buttons that swallows a press.\
+    group.not_focusable = true\
+    return group\
+end\
+\
+-- ReviewsModal args for a remote record's blurb, or nil when it has none.\
+-- _descriptionArgs is written against a Book's own description fields; a feed\
+-- record keeps its blurb under opds.summary instead, so hand the helper a\
+-- shallow stand-in rather than duplicating what it does -- sanitised markup for\
+-- an HTML blurb, paragraph-preserving escaping for a plain-text one, which is\
+-- exactly the pair of shapes OPDS summaries arrive in.\
+function BookshelfWidget:_remoteDescriptionArgs(book)\
+    local raw = book and book.opds and book.opds.summary\
+    if type(raw) ~= \"string\" or raw == \"\" then return nil end\
+    return self:_descriptionArgs{\
+        title = book.title, author = book.author, description = raw,\
+    }\
+end\
+\
+-- The stock OPDS plugin's page streamer, or nil when that plugin is not\
+-- there. Its folder is on package.path once KOReader has loaded it; a build\
+-- that has it disabled still ships the file, so that is tried as well.\
+function BookshelfWidget._opdsPse()\
+    local _opds_pse = BookshelfWidget._opds_pse_mod\
+    if _opds_pse == nil then\
+        local ok, m = pcall(require, \"opdspse\")\
+        if not (ok and type(m) == \"table\") then\
+            local f = loadfile(\"plugins/opds.koplugin/opdspse.lua\")\
+            ok, m = pcall(function() return f and f() end)\
+        end\
+        _opds_pse = (ok and type(m) == \"table\" and type(m.streamPages) == \"function\") and m or false\
+        BookshelfWidget._opds_pse_mod = _opds_pse\
+    end\
+    return _opds_pse or nil\
+end\
+\
+-- The catalog a record came from, for registerRecordActions: its title and\
+-- URL, and its login only when every link the record carries is on the\
+-- catalog's own origin, so a feed naming another host never gets it.\
+function BookshelfWidget:_opdsRecordServer(book)\
+    local key = book and type(book.filepath) == \"string\"\
+        and book.filepath:match(\"^OPDS://([^/]+)/\") or nil\
+    local server = key and require(\"lib/bookshelf_opds_source\").getServer(key) or nil\
+    if type(server) ~= \"table\" then return nil end\
+    local OpdsFeed = require(\"lib/bookshelf_opds_feed\")\
+    local hrefs = {}\
+    local o = book.opds or {}\
+    for _i, a in ipairs(type(o.acquisitions) == \"table\" and o.acquisitions or {}) do\
+        hrefs[#hrefs + 1] = a.href\
+    end\
+    if type(o.stream) == \"table\" then hrefs[#hrefs + 1] = o.stream.href end\
+    local same = #hrefs > 0\
+    for _i, h in ipairs(hrefs) do\
+        if not (type(h) == \"string\" and OpdsFeed.sameOrigin(server.url, h)) then same = false end\
+    end\
+    return { title = server.title, url = server.url,\
+             username = same and server.username or nil,\
+             password = same and server.password or nil }\
+end\
+\
+-- Stream a record's pages. mode: \"start\" (page 1, or where Kavita says the\
+-- reader got to), \"ask\" (prompt for a page) or \"resume\" (the feed's lastRead).\
+-- Credentials go only to the catalog's own origin, as a download's do.\
+function BookshelfWidget:_opdsStream(book, mode, dialog)\
+    local stream = book and book.opds and book.opds.stream\
+    local PSE = BookshelfWidget._opdsPse()\
+    if type(stream) ~= \"table\" or not PSE then return end\
+    local OpdsSource = require(\"lib/bookshelf_opds_source\")\
+    local OpdsFeed   = require(\"lib/bookshelf_opds_feed\")\
+    local key = type(book.filepath) == \"string\"\
+        and book.filepath:match(\"^OPDS://([^/]+)/\") or nil\
+    local server = key and OpdsSource.getServer(key) or nil\
+    local same_origin = (server and OpdsFeed.sameOrigin(server.url, stream.href)) or false\
+    local user     = same_origin and server.username or nil\
+    local password = same_origin and server.password or nil\
+    require(\"lib/bookshelf_cover_fetch\").runWhenOnline(function()\
+        if dialog then UIManager:close(dialog) end\
+        PSE:streamPages(stream.href, stream.count, mode == \"ask\", user, password,\
+            mode == \"resume\" and stream.last_read or nil)\
+    end)\
+end\
+\
+-- opts.no_cover_fetch: set on the ONE re-show the on-open cover fetch triggers,\
+-- so the reopened dialog can't start another (and can't loop against a server\
+-- that answers with something undecodable).\
+function BookshelfWidget:_showRemoteBookInfo(book, opts)\
+    opts = opts or {}\
+    if not book then return end\
+    local _perf_t0 = _gettime()\
+    local ButtonDialog = require(\"ui/widget/buttondialog\")\
+    local acquisitions = (book.opds and type(book.opds.acquisitions) == \"table\")\
+        and book.opds.acquisitions or {}\
+\
+    -- Runtime format filter. bookshelf_opds_feed's SUPPORTED_TYPE stays the\
+    -- parse-time filter it already is (what's worth keeping in the window);\
+    -- this is the narrower \"can THIS build actually open it\" question, which\
+    -- only DocumentRegistry can answer -- djvu, for instance, is in the feed\
+    -- map but needs a provider that not every build ships.\
+    local usable = {}\
+    local ok_reg, DocumentRegistry = pcall(require, \"document/documentregistry\")\
+    for _i, acq in ipairs(acquisitions) do\
+        if type(acq) == \"table\" and type(acq.href) == \"string\" and acq.href ~= \"\" then\
+            local ok_p, has = pcall(function()\
+                return ok_reg and DocumentRegistry:hasProvider(nil, acq.type)\
+            end)\
+            if ok_p and has then usable[#usable + 1] = acq end\
+        end\
+    end\
+\
+    local dialog\
+    local buttons = {}\
+\
+    -- Already downloaded (and still on disk): read it instead of fetching it\
+    -- again. The download rows stay below -- a re-download is how the user\
+    -- replaces a truncated or wrong-format copy.\
+    local have = self:_opdsDownloadedPath(book)\
+    if have then\
+        buttons[#buttons + 1] = { {\
+            text = _(\"Open\"),\
+            callback = function()\
+                UIManager:close(dialog)\
+                self:_launchReader(have)\
+            end,\
+        } }\
+    end\
+\
+    -- Ranked order, with the best-for-KOReader format called out. The ranking\
+    -- is pure and lives in OpdsDownload so it can be tested without a UI; here\
+    -- it only decides button order and, when the pick is unambiguous, splits\
+    -- the rows under \"Recommended\" / \"Alternatives\" headings (the download\
+    -- equivalent of the library edit tab's sections) rather than tagging one\
+    -- label.\
+    local ok_rank, OpdsDownload = pcall(require, \"lib/bookshelf_opds_download\")\
+    local ordered, rec_idx = usable, nil\
+    if ok_rank and OpdsDownload.rankAcquisitions then\
+        ordered, rec_idx = OpdsDownload.rankAcquisitions(usable)\
+    end\
+    -- A disabled, centred, bold row reads as a section heading in a\
+    -- ButtonDialog (it can't take focus or a tap).\
+    local function headingRow(label)\
+        return { { text = label, enabled = false,\
+                   align = \"center\", text_font_bold = true } }\
+    end\
+    local function downloadRow(acq)\
+        local label = opdsAcquisitionLabel(book, acq)\
+        local text = label and T(_(\"Download %1\"), label) or _(\"Download\")\
+        return { { text = text,\
+                   callback = function() self:_opdsStartDownload(book, acq, dialog) end } }\
+    end\
+    if rec_idx and ordered[rec_idx] and #ordered >= 2 then\
+        -- Confident pick with at least one other format: headed sections.\
+        buttons[#buttons + 1] = headingRow(_(\"Recommended\"))\
+        buttons[#buttons + 1] = downloadRow(ordered[rec_idx])\
+        buttons[#buttons + 1] = headingRow(_(\"Alternatives\"))\
+        for _i, acq in ipairs(ordered) do\
+            if _i ~= rec_idx then buttons[#buttons + 1] = downloadRow(acq) end\
+        end\
+    else\
+        -- One format, or no confident pick: a plain list, no headings.\
+        for _i, acq in ipairs(ordered) do\
+            buttons[#buttons + 1] = downloadRow(acq)\
+        end\
+    end\
+    -- Page streaming (OPDS-PSE): read a comic or manga a page at a time\
+    -- without downloading it, through the stock OPDS plugin's own viewer, with\
+    -- its buttons and wording (and so its translations).\
+    local stream = book.opds and type(book.opds.stream) == \"table\" and book.opds.stream or nil\
+    if stream and not BookshelfWidget._opdsPse() then stream = nil end\
+    if stream then\
+        buttons[#buttons + 1] = {\
+            { text = \"\\u{23EE} \" .. _(\"Page stream\"),\
+              callback = function() self:_opdsStream(book, \"start\", dialog) end },\
+            { text = _(\"Stream from page\") .. \" \\u{23E9}\",\
+              callback = function() self:_opdsStream(book, \"ask\", dialog) end },\
+        }\
+        if stream.last_read then\
+            buttons[#buttons + 1] = { {\
+                text = \"\\u{25B6} \" .. _(\"Resume stream from page\") .. \" \" .. stream.last_read,\
+                callback = function() self:_opdsStream(book, \"resume\", dialog) end,\
+            } }\
+        end\
+    end\
+    -- Buttons other plugins add for this record (registerRecordActions).\
+    local RecordActions = require(\"lib/bookshelf_record_actions\")\
+    local plugin_buttons = RecordActions.buttonsFor(book, {\
+        server = self:_opdsRecordServer(book),\
+        close = function() if dialog then UIManager:close(dialog) end end,\
+    })\
+    for _i, b in ipairs(plugin_buttons) do buttons[#buttons + 1] = { b } end\
+    if #usable == 0 and not stream and #plugin_buttons == 0 then\
+        -- Note row in the established disabled-button style: the record is real\
+        -- and its blurb is worth reading, there is just nothing here this\
+        -- device can open.\
+        buttons[#buttons + 1] = { {\
+            text = _(\"No formats this device can open\"), enabled = false,\
+        } }\
+    end\
+\
+    local desc_args = self:_remoteDescriptionArgs(book)\
+    local last_row = {}\
+    if desc_args then\
+        last_row[#last_row + 1] = {\
+            text = _(\"Description\"),\
+            callback = function()\
+                UIManager:close(dialog)\
+                desc_args.bw = self\
+                desc_args.header_builder = function(avail_w)\
+                    return self:_buildRemoteBookHeader(book, avail_w, { summary_lines = 0 })\
+                end\
+                UIManager:show(require(\"lib/bookshelf_reviews_modal\"):new(desc_args))\
+            end,\
+        }\
+    end\
+    last_row[#last_row + 1] = {\
+        text = _(\"Close\"),\
+        callback = function() UIManager:close(dialog) end,\
+    }\
+    buttons[#buttons + 1] = last_row\
+\
+    dialog = ButtonDialog:new{ buttons = buttons }\
+    -- addWidget BEFORE show: it reinits the dialog, and reinit on a dialog that\
+    -- is already up rebuilds self.movable with its default drag/hold gestures\
+    -- (which then eat taps and wedge the touch state machine, with no\
+    -- traceback). Built-then-shown, that hazard doesn't exist.\
+    local header = self:_buildRemoteBookHeader(\
+        book, dialog:getAddedWidgetAvailableWidth(), { summary_lines = 5 })\
+    if header then dialog:addWidget(header) end\
+    logger.dbg(string.format(\
+        \"[bookshelf perf] _showRemoteBookInfo: build=%.0fms %s\",\
+        (_gettime() - _perf_t0) * 1000, tostring(book.title or book.filepath)))\
+    require(\"lib/bookshelf_gesture_zones\").passSwipesOn(dialog)\
+    UIManager:show(dialog)\
+\
+    if not opts.no_cover_fetch then\
+        self:_opdsFetchDetailCover(book, dialog)\
+    end\
+end\
+\
+-- Fetch one remote book's cover into the disk cache, off the tap path.\
+-- Shared by the download modal (re-shows itself with the cover) and the hero\
+-- preview (repaints hero + shelf cell). opts.pre: extra liveness the caller\
+-- needs (e.g. \"the dialog is still shown\"), checked after the defer and again\
+-- when the fetch lands. opts.on_cached: runs when the cover file is on disk -\
+-- whether THIS fetch downloaded it or a concurrent pass cached it first.\
+function BookshelfWidget:_opdsFetchCover(book, opts)\
+    opts = opts or {}\
+    if not (book and book.opds) then return end\
+    local ok_c, OpdsCovers = pcall(require, \"lib/bookshelf_opds_covers\")\
+    if not ok_c then return end\
+    -- Match the SHELF's own cover pass exactly: it fetches via image_url OR\
+    -- thumbnail_url (OpdsCovers.cachePath / fetchMissing both key on\
+    -- coverUrl = image_url or thumbnail_url). Gating this modal fetch on\
+    -- image_url alone left a folder-of-one whose child carries only a\
+    -- thumbnail with a loaded cover on the shelf cell but a permanent\
+    -- book-glyph placeholder in the modal: a normal book tap hides the gap\
+    -- because the grid pass had already fetched and attached its cover before\
+    -- the tap, but the lone-child modal opens straight off the feed fetch,\
+    -- before any grid pass has run for that record, so it depends entirely on\
+    -- this fetch -- which then silently bailed. cachePath is non-nil exactly\
+    -- when there is a cover URL to fetch, and nil when there is none.\
+    -- One decision line per call: which guard ended it, or that a fetch is\
+    -- being scheduled. This is the \"why did no toast appear\" diagnostic.\
+    local function _bail(reason)\
+        logger.dbg(\"[bookshelf perf] _opdsFetchCover: skip (\" .. reason .. \")\",\
+            tostring(book.title or book.filepath))\
+    end\
+    if not OpdsCovers.cachePath(book) then _bail(\"no cover url\") return end\
+    if OpdsCovers.cachedPath(book) then _bail(\"already cached\") return end\
+    -- A feed fetch in flight is suspended at a Trapper yield with the main loop\
+    -- free, so a blocking image download scheduled underneath it would stall\
+    -- that fetch for as long as the image takes. Skip; the grid's own cover\
+    -- pass picks this record up on the next render anyway.\
+    if self:_opdsFetchBusy() then _bail(\"feed fetch busy\") return end\
+    -- Never prompts: a passive-looking cover fill must not raise a Wi-Fi\
+    -- dialog (isConnected answers true on platforms with no Wi-Fi toggle, so\
+    -- desktop builds still fill).\
+    local ok_net, NetworkMgr = pcall(require, \"ui/network/manager\")\
+    if ok_net and NetworkMgr and NetworkMgr.isConnected\
+            and not NetworkMgr:isConnected() then\
+        _bail(\"offline\")\
+        return\
+    end\
+    local _perf_t_sched = _gettime()\
+    logger.dbg(\"[bookshelf perf] _opdsFetchCover: scheduling fetch\"\
+        .. (opts.notice and \" (with toast)\" or \"\"),\
+        tostring(book.title or book.filepath))\
+    -- Feedback while the (blocking) download runs. Shown only once every\
+    -- synchronous guard has passed -- i.e. a fetch really is about to start --\
+    -- so a tap on an already-cached cover never flashes it. The 0.1s defer\
+    -- below is what lets it paint before fetchMissing freezes the loop. The\
+    -- timeout is a backstop; every exit below dismisses it explicitly.\
+    local notice\
+    if opts.notice then\
+        notice = require(\"ui/widget/notification\"):new{\
+            text = opts.notice, timeout = 30,\
+        }\
+        UIManager:show(notice)\
+    end\
+    local function dismiss_notice()\
+        if notice then\
+            if UIManager:isWidgetShown(notice) then UIManager:close(notice) end\
+            notice = nil\
+        end\
+    end\
+    UIManager:scheduleIn(0.1, function()\
+        if BookshelfWidget.live ~= self then dismiss_notice() return end\
+        if opts.pre and not opts.pre() then dismiss_notice() return end\
+        -- fetchMissing blocks the main loop (10s worst case); one at a time.\
+        -- Queued schedule callbacks that fire while another fetch is mid-air\
+        -- bail here and rely on their next preview/modal open to retry.\
+        if self._opds_cover_fetch_busy then dismiss_notice() return end\
+        self._opds_cover_fetch_busy = true\
+        -- Paint BEFORE blocking. This callback is usually overdue by the time\
+        -- the tap handler's (heavy) rebuild returns, and UIManager runs due\
+        -- tasks before it repaints -- so without this the toast, the new hero\
+        -- and the selection ring all sat dirty-but-unpainted behind the old\
+        -- frame for the whole download (8s+ against a slow cover server, and\
+        -- the toast was then dismissed on completion without ever being\
+        -- seen). Same primitive Trapper:info uses for exactly this reason.\
+        UIManager:forceRePaint()\
+        local _perf_t_fetch = _gettime()\
+        logger.dbg(string.format(\
+            \"[bookshelf perf] _opdsFetchCover: fetch start, sched_gap=%.0fms\",\
+            (_perf_t_fetch - _perf_t_sched) * 1000))\
+        OpdsCovers.fetchMissing({ book }, function(fetched)\
+            self._opds_cover_fetch_busy = nil\
+            -- The fetch is over either way; the toast must not outlive it.\
+            dismiss_notice()\
+            logger.dbg(string.format(\
+                \"[bookshelf perf] _opdsFetchCover: fetch done in %.0fms\"\
+                .. \" fetched=%s cached_now=%s\",\
+                (_gettime() - _perf_t_fetch) * 1000,\
+                tostring(fetched),\
+                tostring(OpdsCovers.cachedPath(book) ~= nil)))\
+            if BookshelfWidget.live ~= self then return end\
+            if opts.pre and not opts.pre() then return end\
+            -- Cached NOW is the question, not whether THIS fetch downloaded\
+            -- it: a concurrent pass often lands the same cover first.\
+            if not OpdsCovers.cachedPath(book) then return end\
+            if opts.on_cached then opts.on_cached() end\
+        end)\
+    end)\
+end\
+\
+-- The download modal's cover fetch: re-show the dialog once the cover is on\
+-- disk.\
+function BookshelfWidget:_opdsFetchDetailCover(book, dialog)\
+    self:_opdsFetchCover(book, {\
+        pre = function() return UIManager:isWidgetShown(dialog) end,\
+        on_cached = function()\
+            -- Discard the tap backlog before the geometry moves under it.\
+            -- fetchMissing is fully blocking (a synchronous download loop with\
+            -- a 10s total budget), so the main loop can be frozen with the\
+            -- modal on screen for seconds, and every tap the user made in that\
+            -- window is still queued. The re-shown dialog is a DIFFERENT\
+            -- height -- thumb_h switches from the 1.5 placeholder ratio to the\
+            -- cover's true aspect -- so those taps land on rows that have\
+            -- moved, and the rows they can land on include \"Download <format>\":\
+            -- an unrequested network transfer, not just a stray dismissal.\
+            -- Same primitive, and the same reason, as the Read-now ConfirmBox's\
+            -- flush_events_on_show (which is literally this one call).\
+            local Input = Device.input\
+            if Input and Input.inhibitInputUntil then\
+                Input:inhibitInputUntil(true)\
+            end\
+            -- Rebuild rather than patch: the cover is baked into the added\
+            -- header widget, and reinit on a shown ButtonDialog is the movable\
+            -- hazard noted above. Close and re-show with the fetch disarmed.\
+            UIManager:close(dialog)\
+            self:_showRemoteBookInfo(book, { no_cover_fetch = true })\
+        end,\
+    })\
+end\
+\
+-- Pre-flight for one download: refuse politely when we can't do it, confirm an\
+-- overwrite, then hand off. Everything here is local (a settings read and one\
+-- stat); the network half is _opdsRunDownload.\
+function BookshelfWidget:_opdsStartDownload(book, acq, dialog)\
+    local Notification = require(\"ui/widget/notification\")\
+    local D = require(\"lib/bookshelf_opds_download\")\
+    if self:_opdsFetchBusy() then\
+        UIManager:show(Notification:new{\
+            text = _(\"The catalog is busy. Try again in a moment.\"),\
+        })\
+        return\
+    end\
+    -- nil means home_dir is unset: there is no folder the shelf actually scans,\
+    -- so a download would land somewhere the user would never see it. Name the\
+    -- problem rather than inventing a destination.\
+    -- Per-chip download folder (issue #319): read from the chip this book came\
+    -- from, NOT from _opdsEffectiveTab - that synthesises a bare tab while\
+    -- drilled into a nav feed, which carries no user settings. The originating\
+    -- chip is self.chip either way, so resolve the stored record by id and use\
+    -- its folder when it is an OPDS chip.\
+    local chip_dir\
+    do\
+        local ok_tm, TabModel = pcall(require, \"lib/bookshelf_tab_model\")\
+        local tab = ok_tm and TabModel.getById and TabModel.getById(self.chip)\
+        if tab and tab.source and tab.source.kind == \"opds\" then\
+            chip_dir = tab.download_dir\
+        end\
+    end\
+    local dir = D.destinationDir(function(key)\
+        return G_reader_settings:readSetting(key)\
+    end, chip_dir)\
+    if not dir then\
+        UIManager:show(Notification:new{\
+            text = _(\"Set a home folder in KOReader before downloading books.\"),\
+        })\
+        return\
+    end\
+    local util = require(\"util\")\
+    local ok_lfs, lfs = pcall(require, \"libs/libkoreader-lfs\")\
+    local function is_file(p)\
+        if not ok_lfs then return false end\
+        local ok_a, mode = pcall(lfs.attributes, p, \"mode\")\
+        return ok_a and mode == \"file\"\
+    end\
+    local map = BookshelfSettings.read(OPDS_DOWNLOADS_KEY)\
+    -- A record we have downloaded before keeps the name its file already has.\
+    -- filenameFor's output changed when the #336 author prefix landed, so\
+    -- deriving a fresh name here would hand an already-downloaded book a NEW\
+    -- path: no overwrite prompt, and two copies on disk. mappedDest is nil for\
+    -- anything we have no live file for, which is every first download.\
+    local dest = D.mappedDest(map, book.filepath, is_file, dir)\
+    local name\
+    if dest then\
+        name = dest:match(\"([^/]+)$\")\
+    else\
+        local filename = D.filenameFor(book, acq)\
+        local key = type(book.filepath) == \"string\"\
+            and book.filepath:match(\"^OPDS://([^/]+)/\") or nil\
+        local OpdsSource = require(\"lib/bookshelf_opds_source\")\
+        local OpdsFeed = require(\"lib/bookshelf_opds_feed\")\
+        local server = key and OpdsSource.getServer(key) or nil\
+        if server and server.raw_names then\
+            -- This is deliberately the stock browser's pre-download HEAD\
+            -- lookup: server names decide the *target path*, so it has to run\
+            -- before the overwrite prompt and before the GET opens a file.\
+            local same_origin = OpdsFeed.sameOrigin(server.url, acq.href)\
+            local server_name = D.serverFilename(acq.href, acq.type,\
+                same_origin and server.username or nil,\
+                same_origin and server.password or nil)\
+            if type(server_name) == \"string\" and server_name ~= \"\" then\
+                filename = server_name\
+            end\
+        end\
+        name = util.getSafeFilename(filename, dir)\
+        dest = (dir ~= \"/\" and dir or \"\") .. \"/\" .. name\
+        -- Don't offer to overwrite a file that belongs to a DIFFERENT catalog\
+        -- record: filenameFor is author + title + format and getSafeFilename\
+        -- doesn't uniquify, so two records carrying the same book land on one\
+        -- path, and overwriting would leave both opds_downloads keys pointing at\
+        -- it -- one record's Open row then launches the other's book. claimDest\
+        -- hands back a suffixed sibling in that case and the original path in\
+        -- every other, including this record re-downloading its own file (which\
+        -- is what the overwrite prompt below is actually for).\
+        dest = D.claimDest(dest, map, book.filepath, acq)\
+        name = dest:match(\"([^/]+)$\") or name\
+    end\
+    local function go() self:_opdsRunDownload(book, acq, dest, dialog) end\
+\
+    if is_file(dest) then\
+        UIManager:show(require(\"ui/widget/confirmbox\"):new{\
+            text = T(_(\"%1 already exists. Download it again?\"), name),\
+            ok_text = _(\"Overwrite\"),\
+            ok_callback = go,\
+        })\
+        return\
+    end\
+    go()\
+end\
+\
+-- The network half. Wi-Fi is gated by runWhenOnline (a prompt, never a silent\
+-- connect); the transfer itself runs inside Trapper so the progress line is a\
+-- real widget rather than a frozen screen.\
+--\
+-- Credentials only ever travel to the catalog's own origin. The acquisition\
+-- href came out of the server's own XML and could name any host, so the\
+-- same-origin test is this layer's job -- OpdsDownload.download sends whatever\
+-- it is handed, by design (see its header), exactly as the cover fetcher's\
+-- credential gate works.\
+function BookshelfWidget:_opdsRunDownload(book, acq, dest, dialog)\
+    local D            = require(\"lib/bookshelf_opds_download\")\
+    local OpdsSource   = require(\"lib/bookshelf_opds_source\")\
+    local OpdsFeed     = require(\"lib/bookshelf_opds_feed\")\
+    local CoverFetch   = require(\"lib/bookshelf_cover_fetch\")\
+    local Notification = require(\"ui/widget/notification\")\
+    local Trapper      = require(\"ui/trapper\")\
+\
+    local key = type(book.filepath) == \"string\"\
+        and book.filepath:match(\"^OPDS://([^/]+)/\") or nil\
+    local server = key and OpdsSource.getServer(key) or nil\
+    local same_origin = (server and OpdsFeed.sameOrigin(server.url, acq.href)) or false\
+    local user     = same_origin and server.username or nil\
+    local password = same_origin and server.password or nil\
+    local title    = book.display_title or book.title or \"\"\
+    local who      = (server and server.title) or title\
+\
+    CoverFetch.runWhenOnline(function()\
+        -- The Wi-Fi prompt is modal and can be answered long after the shelf\
+        -- closed (or was replaced by a re-open). Same liveness test every other\
+        -- deferred OPDS path makes.\
+        if BookshelfWidget.live ~= self then return end\
+        Trapper:wrap(function()\
+            -- Re-test, FIRST, inside the wrap. The tap-time check in\
+            -- _opdsStartDownload is a snapshot taken before two waits that can\
+            -- run for as long as the user likes: the overwrite ConfirmBox, and\
+            -- runWhenOnline's Wi-Fi prompt. A feed fetch can be armed or can\
+            -- reach its own Trapper:wrap during either -- and while a feed\
+            -- fetch is itself sitting in runWhenOnline it holds NO marker yet,\
+            -- so the earlier check could not have seen it. Bail with the same\
+            -- message the tap-time refusal uses; the user retries in a moment.\
+            if self:_opdsFetchBusy() then\
+                UIManager:show(Notification:new{\
+                    text = _(\"The catalog is busy. Try again in a moment.\"),\
+                })\
+                return\
+            end\
+            -- Our OWN marker for the transfer (never the feed's -- see\
+            -- _opdsFetchBusy): it is what stops a feed fetch (page turn, chip\
+            -- tap) starting a second wrapped coroutine underneath this one,\
+            -- and it carries no feed identity, so _opdsAfterPage reads it as\
+            -- \"someone else is busy\" and QUEUES the user's navigation rather\
+            -- than spending it.\
+            self._opds_download_started_at = os.time()\
+            -- The transfer runs IN A SUBPROCESS (issue #377): in-process it\
+            -- blocked the whole UI behind Trapper:info until the socket gave\
+            -- up -- with a proxy misroute or a dead server that meant a\
+            -- frozen shelf. The fork writes dest itself; dismissing the trap\
+            -- SIGKILLs it, so a half-written file is removed here. Same\
+            -- pattern as the stock OPDS plugin (\"tap to cancel\").\
+            -- Returns packed in a table: the failure shape is (nil, err) and\
+            -- a leading nil through the subprocess serialiser would misalign\
+            -- the values.\
+            local completed, result = Trapper:dismissableRunInSubprocess(\
+                function()\
+                    local p, e, x = D.download(acq.href, dest, user, password)\
+                    return { path = p, err = e, extra = x }\
+                end,\
+                T(_(\"Downloading %1… (tap to cancel)\"), title))\
+            local path  = type(result) == \"table\" and result.path or nil\
+            local err   = type(result) == \"table\" and result.err or nil\
+            local extra = type(result) == \"table\" and result.extra or nil\
+            Trapper:clear()\
+            self._opds_download_started_at = nil\
+            if not completed then\
+                -- The fork downloads into dest .. \".tmp\" and renames on\
+                -- success; a SIGKILL leaves the temp, not dest.\
+                pcall(function() os.remove(dest .. \".tmp\") end)\
+                pcall(function() os.remove(dest) end)\
+                UIManager:show(Notification:new{\
+                    text = _(\"Download cancelled\"),\
+                })\
+                return\
+            end\
+\
+            if not path then\
+                -- Once, before the branching, so every failure shape is\
+                -- represented: the three toasts below name the server but not\
+                -- the cause, and a download that dies on a 504 halfway through\
+                -- a catalog looks identical to one that never resolved. `extra`\
+                -- carries the redirect target on the downgrade branch and is\
+                -- nil elsewhere, so it rides along only when it says something.\
+                logger.dbg(\"[bookshelf] opds fetch failed:\", acq.href, err, extra)\
+                if err == \"downgrade\" then\
+                    -- Warning-style (an InfoMessage with the notice icon, not a\
+                    -- toast): this is the one failure the user should be able\
+                    -- to act on, by telling the catalog's administrator.\
+                    UIManager:show(require(\"ui/widget/infomessage\"):new{\
+                        text = T(_(\"Insecure redirect refused.\\n\\nThe server tried to send this download to a non-HTTPS address:\\n\\n%1\\n\\nMany apps refuse this because it could be a downgrade attack.\"),\
+                            tostring(extra or \"\")),\
+                        icon = \"notice-warning\",\
+                    })\
+                elseif err == \"auth\" then\
+                    UIManager:show(Notification:new{\
+                        text = T(_(\"Authentication failed for %1\"), who),\
+                    })\
+                else\
+                    UIManager:show(Notification:new{\
+                        text = T(_(\"Couldn't reach %1\"), who),\
+                    })\
+                end\
+                return\
+            end\
+\
+            -- Landed. Record it before anything else can fail: the mapping is\
+            -- what the repo's downloaded decoration reads, and a file on disk\
+            -- the shelf doesn't know about is the worse of the two failures.\
+            local map = BookshelfSettings.read(OPDS_DOWNLOADS_KEY)\
+            if type(map) ~= \"table\" then map = {} end\
+            -- Retire entries whose file is gone, at the one moment we are\
+            -- already paying for a write. Nothing else ever removes one: the\
+            -- mapping deliberately gets no bookkeeping pass on move or delete\
+            -- (see the repo's downloaded comment), so without this it grows for\
+            -- the life of the install, and a dead value still counts as \"taken\"\
+            -- in claimDest's scan -- giving an unrelated record a spurious\
+            -- \"(a1b2c3d4)\" in its filename. One stat per entry, at an action\
+            -- boundary, and BEFORE the new entry goes in so this download's own\
+            -- destination is never a candidate.\
+            local ok_lfs2, lfs2 = pcall(require, \"libs/libkoreader-lfs\")\
+            if ok_lfs2 and lfs2 then\
+                D.pruneMap(map, function(p)\
+                    local ok_s, m = pcall(lfs2.attributes, p, \"mode\")\
+                    return ok_s and m == \"file\"\
+                end)\
+            end\
+            map[book.filepath] = path\
+            -- No explicit flush: Store.save already flushes (it ends in\
+            -- s:flush()), and a second call here bought a full re-serialise of\
+            -- the settings file per download for nothing. The action boundary\
+            -- is honoured -- just not twice.\
+            BookshelfSettings.save(OPDS_DOWNLOADS_KEY, map)\
+\
+            -- Carry the catalog's description onto the downloaded file so the\
+            -- local library shows it too. Gutenberg's embedded EPUB\
+            -- description is routinely empty, so without this the book loses\
+            -- the blurb the moment it lands. Keyed by the on-disk path (read\
+            -- back in Repo.buildBookMeta); pruned with the same file-exists\
+            -- predicate as the downloads map so a deleted/replaced file leaves\
+            -- no dangling text. book.opds.summary is already just the Summary\
+            -- section (OpdsFeed.summaryText strips Gutenberg's other headings).\
+            local desc = book.description\
+                         or (book.opds and book.opds.summary) or nil\
+            if type(desc) == \"string\" and desc ~= \"\" then\
+                local dmap = BookshelfSettings.read(OPDS_DESC_KEY)\
+                if type(dmap) ~= \"table\" then dmap = {} end\
+                if ok_lfs2 and lfs2 then\
+                    D.pruneMap(dmap, function(p)\
+                        local ok_s, m = pcall(lfs2.attributes, p, \"mode\")\
+                        return ok_s and m == \"file\"\
+                    end)\
+                end\
+                dmap[path] = desc\
+                BookshelfSettings.save(OPDS_DESC_KEY, dmap)\
+            end\
+            -- The catalog's publication date too, for %published: calibre-web\
+            -- serves the file as it was added, so the date it shows in the\
+            -- catalog is often not inside the file (GitHub issue 566).\
+            if book.published then\
+                pcall(function()\
+                    local Published = require(\"lib/bookshelf_published\")\
+                    local mtime = ok_lfs2 and lfs2 and lfs2.attributes(path, \"modification\")\
+                    Published.remember(path, book.published, mtime)\
+                    require(\"lib/bookshelf_book_facts_db\").flushSoon()\
+                end)\
+            end\
+            -- A new file inside the library the shelf walks -- the local chips\
+            -- have to re-derive or the book simply isn't there.\
+            Repo.invalidateWalkCache()\
+\
+            -- Shown-check first: the user can dismiss the dialog while the\
+            -- transfer runs, and closing an already-closed widget re-sends it\
+            -- CloseWidget (a second repaint of a rect nothing occupies).\
+            if dialog and UIManager:isWidgetShown(dialog) then\
+                UIManager:close(dialog)\
+            end\
+\
+            -- Re-render the shelf HERE, on the transfer landing, rather than\
+            -- from one of the two answers below.\
+            --\
+            -- The page records under this prompt were built by the repo BEFORE\
+            -- the download, so the catalog cell still carries no `downloaded`\
+            -- flag (no tick), and the local chips have never seen the new file.\
+            -- Only a re-fetch fixes that, and it has to happen on EVERY way out\
+            -- of this prompt, not one of them:\
+            --\
+            --   * \"Not now\" used to own the refresh, and looked fine.\
+            --   * \"Read\" parks the shelf and hands the screen to ReaderUI. The\
+            --     way back is main.lua's _raiseInPlace, which reorders the\
+            --     window stack and repaints the widget it finds there -- it\
+            --     never re-fetches. So the shelf the user returns to is the one\
+            --     rendered before the download: the book they just read shows\
+            --     no downloaded tick, for the rest of the visit. It reappears\
+            --     later only by accident, on the next unrelated rebuild (the\
+            --     sideload file poll noticing the new file, a page turn, a chip\
+            --     tap), which reads as a tick that comes and goes.\
+            --\
+            -- Hoisting it also means one rebuild per download instead of one\
+            -- per download plus one per dismissal.\
+            --\
+            -- Same liveness guard the ok_callback below makes: with the shelf\
+            -- closed (or replaced by a re-open) mid-transfer, this would be\
+            -- rebuilding a dead widget.\
+            if BookshelfWidget.live == self then\
+                self:_rebuild()\
+                UIManager:setDirty(self, \"ui\")\
+            end\
+\
+            UIManager:show(require(\"ui/widget/confirmbox\"):new{\
+                text        = T(_(\"%1 downloaded. Read it now?\"), title),\
+                ok_text     = _(\"Read\"),\
+                -- Liveness guard: with the shelf gone (closed, or replaced by a\
+                -- re-open), _launchReader would be stamping pre-read state onto\
+                -- a dead widget.\
+                ok_callback = function()\
+                    if BookshelfWidget.live ~= self then return end\
+                    self:_launchReader(path)\
+                end,\
+                cancel_text = _(\"Not now\"),\
+                -- The transfer blocked the main loop, so every tap the user\
+                -- made while waiting is still queued and would land on this box\
+                -- the moment it appears -- answering a question they have not\
+                -- read yet. confirmbox.lua documents this exact case as what\
+                -- the flag is for (Input:inhibitInputUntil on show).\
+                flush_events_on_show = true,\
+                -- No cancel_callback: the refresh it used to carry now runs\
+                -- above, before this box is shown, so every dismissal (Cancel,\
+                -- Read, or a tap outside the box) already has a current shelf\
+                -- underneath it.\
+            })\
+        end)\
+    end)\
+end\
+\
+-- A previewed OPDS book earns its cover: the tap is the user gesture that\
+-- licenses this one fetch (nothing else prefetches). If the cover is\
+-- already on disk - e.g. a long-press download modal cached it without\
+-- rebuilding the shelf - attach it to the record right here, before the\
+-- caller's rebuild reads it, rather than fetching it again. Otherwise fetch\
+-- it: when it lands, patch the previewed record in place - _hydrateBook\
+-- returns remote records unchanged and Repo.buildBook is nil for\
+-- OPDS:// paths, so a rebuild reuses this same table and would otherwise\
+-- keep the placeholder - then one _refreshCoverFrame repaints hero AND\
+-- shelf cell (its rebuild re-slices, and opdsDecorate attaches the\
+-- cached cover to the cell's record independently).\
+-- Shared by _previewBook (normal-mode tap) and the expanded show_detail tap\
+-- (on_book_tap), both of which stage `book` as self._preview_book just\
+-- before calling this, so the pre/on_cached identity check below matches\
+-- either caller.\
+function BookshelfWidget:_opdsEnsurePreviewCover(book)\
+    if not (book and book.filepath) then return end\
+    if not self:_isRemoteRecord(book) then return end\
+    local ok_c, OpdsCovers = pcall(require, \"lib/bookshelf_opds_covers\")\
+    if not ok_c then return end\
+    local cp = OpdsCovers.cachedPath(book)\
+    if cp then\
+        -- Already on disk, but THIS record can predate the cache\
+        -- entry (sliced before the cover landed, or the download\
+        -- modal fetched it without rebuilding the shelf). Attach in\
+        -- place now - this trigger runs before the preview rebuild\
+        -- below, so the hero renders it with no extra refresh.\
+        logger.dbg(\"[bookshelf perf] _opdsEnsurePreviewCover: cached attach\",\
+            tostring(book.title or book.filepath))\
+        book.cover_image_path = book.cover_image_path or cp\
+        if not book.cover_sizetag then\
+            local ok_is, ImageSource =\
+                pcall(require, \"lib/bookshelf_image_source\")\
+            if ok_is and ImageSource.imageSizeTag then\
+                book.cover_sizetag = ImageSource.imageSizeTag(cp)\
+            end\
+        end\
+    else\
+        self:_opdsFetchCover(book, {\
+            -- The cover download blocks the main loop for up to 10s, and the\
+            -- previewed hero alone (placeholder cover, feed description) can\
+            -- read as \"nothing happened\" on a slow catalog - say what's going\
+            -- on. Shown only when a fetch actually starts.\
+            --\
+            -- Names the cover, because the cover is all this fetches. The\
+            -- title, author and summary are already in the hero by the time\
+            -- this runs - they came with the feed - so \"book information\"\
+            -- described work that had visibly already happened.\
+            notice = _(\"Retrieving book cover\\xE2\\x80\\xA6\"),\
+            -- A later tap can supersede this preview before the fetch even\
+            -- starts (checked here, before fetchMissing) or while it's mid\
+            -- air (checked again below when it lands). Either way, a\
+            -- superseded preview's fetch is simply skipped: the disk cache\
+            -- still serves the cell on its next natural rebuild.\
+            pre = function()\
+                return self._preview_book ~= nil\
+                   and self._preview_book.filepath == book.filepath\
+            end,\
+            on_cached = function()\
+                local ok_c, OpdsCovers = pcall(require, \"lib/bookshelf_opds_covers\")\
+                if not ok_c then return end\
+                local cp = OpdsCovers.cachedPath(book)\
+                if cp and self._preview_book\
+                        and self._preview_book.filepath == book.filepath then\
+                    self._preview_book.cover_image_path = cp\
+                    if not self._preview_book.cover_sizetag then\
+                        local ok_is, ImageSource =\
+                            pcall(require, \"lib/bookshelf_image_source\")\
+                        if ok_is and ImageSource.imageSizeTag then\
+                            self._preview_book.cover_sizetag =\
+                                ImageSource.imageSizeTag(cp)\
+                        end\
+                    end\
+                    -- Same freeze + geometry shift as the modal's re-show:\
+                    -- fetchMissing held the loop, queued taps would land on\
+                    -- covers that moved when the cell takes its true aspect.\
+                    local Input = Device.input\
+                    if Input and Input.inhibitInputUntil then\
+                        Input:inhibitInputUntil(true)\
+                    end\
+                    self:_refreshCoverFrame(book.filepath)\
+                end\
+            end,\
+        })\
+    end\
+end\
+\
+-- _opdsStartFeed(tab) / _setOpdsStartFeed(...) — a catalogue chip's START\
+-- FOLDER: which feed the chip opens on, rather than the server's root.\
+--\
+-- \"add a feature to opds catalog settings that lets you pick the starting\
+-- folder ... on the shelf long press a folder to set as chip root folder\
+-- (would still need a way to go back up to higher levels)\".\
+--\
+-- NO NEW SETTING. tab.source.feed_url already means exactly this and is\
+-- already resolved everywhere -- _opdsEffectiveTab reads\
+-- `tab.source.feed_url or server.url`, and the comment on sameFeed spells out\
+-- that nil means the server's root. A chip has simply never had a way to SET\
+-- it; only a drilled subcatalog's stand-in tab carried one. So this is a\
+-- gesture and a menu over machinery that was already in place, and clearing it\
+-- is the way back up: nil is the root.\
+function BookshelfWidget:_opdsStartFeed(tab)\
+    tab = tab or require(\"lib/bookshelf_tab_model\").getById(self.chip)\
+    if not (tab and tab.source and tab.source.kind == \"opds\") then return nil end\
+    return tab.source.feed_url, tab.source.feed_label\
+end\
+\
+-- Writes through TabModel, the same load / patch / save the chip editor's own\
+-- Save does. feed_url = nil clears it back to the server root.\
+function BookshelfWidget:_setOpdsStartFeed(feed_url, label)\
+    local TabModel = require(\"lib/bookshelf_tab_model\")\
+    local tabs = TabModel.load()\
+    local found\
+    for _i, t in ipairs(tabs) do\
+        if t.id == self.chip and t.source and t.source.kind == \"opds\" then\
+            t.source.feed_url   = feed_url\
+            -- Carried alongside so the chip editor can NAME the start folder\
+            -- rather than showing a url, and so clearing it can say what it is\
+            -- clearing. Dropped with the url, never left behind.\
+            t.source.feed_label = feed_url and label or nil\
+            found = true\
+            break\
+        end\
+    end\
+    if not found then return false end\
+    TabModel.save(tabs)\
+    -- Re-select the chip rather than just rebuilding. Changing where a chip\
+    -- STARTS is the same event as arriving at it: the drilldown has to go\
+    -- (whatever the reader had drilled into was reached from the old root and\
+    -- may sit above the new one), the cursor has to go back to the first item,\
+    -- and the OPDS fetch gate has to be armed because this rebuild is the\
+    -- first render of a feed the chip has never shown. _selectChip is that\
+    -- whole sequence and is already the thing a chip tap runs.\
+    self:_selectChip(self.chip)\
+    return true\
+end\
+\
+-- _openOpdsNavMenu(rec) — long-press on a catalogue subcatalog.\
+--\
+-- Long-press did nothing at all on these rows before: handlersFor answered nil\
+-- for an opds_nav hold and the cover grid's tile swallowed it with a bare\
+-- `return true`. So this is the first thing the gesture has ever done there,\
+-- and what it does is the start folder.\
+--\
+-- Two entries, and the second is the answer to \"would still need a way to go\
+-- back up to higher levels\": with a start folder set, the levels above it are\
+-- not reachable by drilling -- they are above the root -- so the way back is\
+-- to clear it. Offered from any row of the catalogue, which is where a reader\
+-- who wants out of a too-deep start will be standing.\
+function BookshelfWidget:_openOpdsNavMenu(rec)\
+    if rec and rec.source_nav then return end\
+    if not (rec and rec.opds and rec.opds.feed_url) then return end\
+    local tab = require(\"lib/bookshelf_tab_model\").getById(self.chip)\
+    if not (tab and tab.source and tab.source.kind == \"opds\") then return end\
+    local current, current_label = self:_opdsStartFeed(tab)\
+    local label = rec.label or rec.display_title or rec.title or _(\"this folder\")\
+    -- A page (STYLE.md): where the shelf starts now in the strip, then what\
+    -- can change it, each a card saying what it does.\
+    local dialog\
+    local function act(fn) return function() UIManager:close(dialog); fn() end end\
+    local summary, blocks = nil, {}\
+    if current == rec.opds.feed_url then\
+        -- Already the start folder: said in the strip, not as a greyed\
+        -- button (one that cannot change anything makes the reader wonder\
+        -- whether it worked).\
+        summary = T(_(\"This shelf already starts at \\\"%1\\\".\"), label)\
+    else\
+        summary = current_label and T(_(\"This shelf starts at \\\"%1\\\".\"), current_label)\
+            -- \"catalog\", not \"catalogue\": source strings are American and\
+            -- the British forms live in en_GB.po.\
+            or _(\"This shelf starts at the top of the catalog.\")\
+        blocks[#blocks + 1] = { type = \"option\", icon = \"\\u{E9DB}\",   -- home\
+            text = _(\"Start the shelf here\"),\
+            desc = _(\"Opens at this folder instead of the catalog's top.\"),\
+            callback = act(function() self:_setOpdsStartFeed(rec.opds.feed_url, label) end) }\
+    end\
+    if current then\
+        blocks[#blocks + 1] = { type = \"option\", icon = \"\\u{ED22}\",   -- format-vertical-align-top\
+            text = _(\"Back to the top\"),\
+            desc = _(\"Opens at the top of the catalog again.\"),\
+            callback = act(function() self:_setOpdsStartFeed(nil, nil) end) }\
+    end\
+    dialog = require(\"lib/bookshelf_page_dialog\").show{\
+        title = label,\
+        page  = function() return { strip = { { type = \"summary\", text = summary } }, blocks = blocks } end,\
+    }\
+end\
+\
+-- _expandOpdsNav(rec, no_fetch) - tap handler for an OPDS navigation tile (a\
+-- subcatalog link within a remote feed), and the D-pad Enter on the same tile.\
+-- Ordinarily it drills in exactly as a folder does: push a path frame naming\
+-- the feed and let _fetchChipItems scope the shelf to it. The breadcrumb, the\
+-- east-swipe back-out and the page-1 \"go up a level\" all come for free from the\
+-- shared drill machinery.\
+--\
+-- ...but a \"folder\" holding exactly one book is not worth a shelf. Catalogs\
+-- like Project Gutenberg model every WORK as a subcatalog whose feed carries a\
+-- single acquisition entry, so drilling in landed the user on a one-tile shelf\
+-- they had to tap again and then back out of twice. The repo already flattens\
+-- those tiles once their child feed is cached (see the opds branch of\
+-- getBySource); this is the tap side of the SAME predicate --\
+-- Repo.opdsLoneChildBook, single-sourced deliberately, because a tile rendered\
+-- as a book that then drilled in like a folder would be worse than either.\
+--\
+-- So the tap is a decision over the child window, in three states:\
+--\
+--   * cached and it IS a folder of one -> open that book's own modal, and\
+--     nothing else. No _markOpdsNav: the arm is a one-shot licence for the NEXT\
+--     rebuild to reach the network, this path does not rebuild at all, and an\
+--     unspent arm would be picked up by whatever passive rebuild came next (a\
+--     cover landing, the 5s file poll) and spent on a fetch nobody asked for.\
+--   * cached and it is anything else (several books, subfolders, a feed with\
+--     more pages behind it) -> drill, armed, exactly as before.\
+--   * UNCACHED -> neither answer is knowable without asking the server, and the\
+--     tap is precisely the user action that licenses asking. Fetch the child\
+--     feed first, then re-run this decision against what landed.\
+--\
+-- The pre-fetch calls _opdsFetchMore DIRECTLY and arms nothing, the same shape\
+-- (and for the same reason) as _opdsRefresh: with no rebuild of ours to gate,\
+-- the arm would have nothing to gate and its tail rebuild stays passive. The\
+-- busy test is _opdsRefresh's rule widened to both markers -- a second Trapper\
+-- coroutine over a live one is the standby-leak hazard documented at\
+-- _opdsAfterPage's queue branch -- and applies ONLY to this branch: a cached\
+-- tile is pure local work, and refusing to open it during a download would be a\
+-- folder that cannot be opened for no reason.\
+--\
+-- no_fetch marks the re-entry from that fetch's completion callback, and is\
+-- what stops it looping. \"The window is cached now\" is NOT enough on its own:\
+-- a fetch that failed (server down, feed empty, user cancelled, Wi-Fi declined)\
+-- leaves the window exactly as uncached as it found it, having already shown\
+-- its own notification, and an unguarded re-entry would fetch again on every\
+-- round. One fetch per tap, then stay put.\
+--\
+-- The server key rides the synthetic filepath (\"OPDS://<server_key>/nav/...\")\
+-- rather than a field of its own, because that path is the one part of a\
+-- remote record guaranteed to survive a repo round trip (see\
+-- _isRemoteRecord). Both it and the feed_url are required: a frame missing\
+-- either would render an empty shelf with no way to fetch into it.\
+--\
+-- The frame is deliberately NOT persisted (_serializeDrillPath drops it), so\
+-- a relaunch lands the user back on the chip's root feed. Restoring it would\
+-- mean a network fetch at startup that nobody asked for.\
+function BookshelfWidget:_expandOpdsNav(rec, no_fetch)\
+    -- A registered source's folder (lib/bookshelf_sources fetch mode) draws as\
+    -- the same tile; it drills through its source instead.\
+    if rec and rec.source_nav then return self:_expandSourceNav(rec) end\
+    -- THE TWO SILENT RETURNS, now audible. A nav tile that does nothing when\
+    -- tapped is this function's known failure shape -- the cache-test comment\
+    -- below records an earlier one -- and both of these dropped the tap with\
+    -- no trace at all, which is a tap you cannot tell apart from a tap that\
+    -- never arrived. Cost is two string builds on a gesture, and only when the\
+    -- record is already malformed.\
+    if not (rec and rec.opds and rec.opds.feed_url) then\
+        logger.dbg(string.format(\
+            \"[bookshelf perf] _expandOpdsNav: DROPPED, no feed_url (kind=%s \"\
+            .. \"fp=%s opds=%s)\",\
+            tostring(rec and rec.kind), tostring(rec and rec.filepath),\
+            tostring(rec and rec.opds)))\
+        return\
+    end\
+    local server_key = type(rec.filepath) == \"string\"\
+                       and rec.filepath:match(\"^OPDS://([^/]+)/\") or nil\
+    if not server_key then\
+        logger.dbg(string.format(\
+            \"[bookshelf perf] _expandOpdsNav: DROPPED, filepath is not an \"\
+            .. \"OPDS key (fp=%s)\", tostring(rec.filepath)))\
+        return\
+    end\
+    -- Say the tap landed, before doing anything that takes time. Not on the\
+    -- no_fetch re-entry: that one arrives after a fetch the reader already\
+    -- watched, and re-marking the tile there would only cost a second repaint.\
+    if not no_fetch then self:_markTapped(rec.filepath) end\
+    local _perf_t0 = _gettime()\
+    local feed_url = rec.opds.feed_url\
+    local label = rec.label or rec.display_title or rec.title\
+    -- fetched_at is the cache question, not #entries: a feed that legitimately\
+    -- came back empty has a stamp and no entries, and re-fetching that on every\
+    -- tap would be a round trip per tap against a server that already answered.\
+    -- OpdsWindow.load's miss shape stamps 0, so the two are never confusable.\
+    local OpdsWindow = require(\"lib/bookshelf_opds_window\")\
+    local win = OpdsWindow.load(server_key, feed_url)\
+    -- Cached means \"there is something to show\", not \"a timestamp exists\".\
+    --\
+    -- Asking only about fetched_at was a silent dead end: the walk stamps the\
+    -- timestamp and appends the entries as separate steps, so a window can\
+    -- legitimately hold records with no stamp. This tap then dispatched a\
+    -- fetch, re-entered with no_fetch, failed the same test again and hit\
+    -- `return` - a tile that did NOTHING when tapped, over a feed with 26\
+    -- entries already cached. Seen on ManyBooks: Genres worked, Titles and\
+    -- Authors did not, and the only difference was the stamp.\
+    --\
+    -- Entries still win over the stamp for the empty case: a feed that\
+    -- genuinely came back empty has a stamp and no entries, and must not be\
+    -- re-fetched on every tap.\
+    local cached = (win.fetched_at or 0) > 0 or (win.count or 0) > 0\
+    logger.dbg(string.format(\
+        \"[bookshelf perf] _expandOpdsNav: load=%.0fms cached=%s entries=%d %s\",\
+        (_gettime() - _perf_t0) * 1000,\
+        tostring(cached), win.count or 0, tostring(feed_url)))\
+    if not cached then\
+        if no_fetch then return end\
+        if self:_opdsFetchBusy() then\
+            UIManager:show(require(\"ui/widget/notification\"):new{\
+                text = _(\"The catalog is busy. Try again in a moment.\"),\
+            })\
+            return\
+        end\
+        -- want_count is a page's worth, not the one entry the decision needs:\
+        -- the likely outcome is a drill, and fetching less would land the user\
+        -- on a part-filled shelf that immediately fetched again.\
+        logger.dbg(\"[bookshelf perf] _expandOpdsNav: cache miss, dispatching feed fetch\")\
+        self:_opdsFetchMore(\
+            { label = label,\
+              source = { kind = \"opds\", id = server_key, feed_url = feed_url } },\
+            self:_viewSize() or 24, false,\
+            function() self:_expandOpdsNav(rec, true) end)\
+        return\
+    end\
+    local lone = Repo.opdsLoneChildBook(server_key, feed_url)\
+    if lone then\
+        -- Same journey as a plain book tap: the first tap stages the\
+        -- flattened book in the hero (cover and description fetch included),\
+        -- and a second tap on the same tile opens the download modal. The\
+        -- lone child is a DIFFERENT record from the nav tile, so the\
+        -- \"already previewed\" test compares against the child's filepath.\
+        -- Micro-hero mode is excluded for the same reason as the book\
+        -- re-tap branch: the preview state is stale there, and the tap\
+        -- should swap the hero back to the book instead.\
+        if self._hero_mode ~= \"micro\" and self._preview_book\
+                and self._preview_book.filepath == lone.filepath then\
+            logger.dbg(string.format(\
+                \"[bookshelf perf] _expandOpdsNav: lone re-tap -> modal, pre_modal=%.0fms\",\
+                (_gettime() - _perf_t0) * 1000))\
+            self:_showRemoteBookInfo(lone)\
+            return\
+        end\
+        logger.dbg(string.format(\
+            \"[bookshelf perf] _expandOpdsNav: lone flatten -> hero preview, pre_preview=%.0fms\",\
+            (_gettime() - _perf_t0) * 1000))\
+        self:_previewBook(lone)\
+        return\
+    end\
+    -- The tap IS the user navigation that licenses a fetch: a subcatalog whose\
+    -- window is cached but short (a feed with more pages behind it) comes back\
+    -- flagged opds_needs_fetch from the rebuild _drillInto ends with, and\
+    -- _opdsAfterPage has to be allowed to act on it. Armed before the rebuild,\
+    -- like every other nav gesture (chip select, page turn, swipe-down).\
+    self:_markOpdsNav()\
+    self:_drillInto{\
+        kind    = \"opds_nav\",\
+        label   = label,\
+        payload = { server_key = server_key, feed_url = feed_url },\
+    }\
+end\
+\
+end\
 ",
     ["features/sui_menu_hide"] = "-- sui_menu_hide.lua — Simple UI\
 --\

@@ -84,7 +84,7 @@ H.test("shared render/pagination options keep margins and density but use all co
     H.eq(opts.group_gap, 24)
     H.eq(opts.thickness_pct, 120)
     H.eq(opts.cover_size_pct, 130)
-    for _, name in ipairs({ "_buildSpineRows", "_spinePageFirsts" }) do
+    for _, name in ipairs({ "_buildSpineRows", "_spineFirstsOf" }) do
         local _, body = widget_source:match(
             "\nfunction BookshelfWidget:" .. name .. "%((.-)%)\n(.-)\nend\n")
         assert(body and body:find("self:_spinePlanBase(", 1, true),

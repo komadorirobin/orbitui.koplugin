@@ -74,6 +74,17 @@ function M.widget()
     return Widget
 end
 
+-- Read production code from a source checkout or the exact bytes in the runtime ZIP.
+function M.componentSource(root, name)
+    local map = dofile(root .. "/core/orbitui_module_map.lua")
+    local path = root .. "/" .. assert(map[name], name)
+    local file = io.open(path, "rb")
+    if not file then return assert(getmetatable(map).orbitui_embedded[name], path) end
+    local source = file:read("*a")
+    file:close()
+    return source
+end
+
 -- Complete source or sealed API-1 component; only registered helpers may lack a file.
 function M.componentModule(root, name)
     local map = dofile(root .. "/core/orbitui_module_map.lua")

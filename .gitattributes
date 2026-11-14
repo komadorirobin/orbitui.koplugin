@@ -57,3 +57,22 @@
 /components/bookshelf/lib/bookshelf_pubdate_format.lua export-ignore
 /components/bookshelf/lib/bookshelf_scale.lua export-ignore
 /components/bookshelf/lib/bookshelf_slice.lua export-ignore
+# New Bookshelf 6.5 modules use the exact-source registry within the API-1 limit.
+/components/bookshelf/lib/bookshelf_colour_runs.lua export-ignore
+/components/bookshelf/lib/bookshelf_cover_marks.lua export-ignore
+/components/bookshelf/lib/bookshelf_curated.lua export-ignore
+/components/bookshelf/lib/bookshelf_curated_ui.lua export-ignore
+/components/bookshelf/lib/bookshelf_hardcover_autolink.lua export-ignore
+/components/bookshelf/lib/bookshelf_hardcover_client.lua export-ignore
+/components/bookshelf/lib/bookshelf_hardcover_key.lua export-ignore
+/components/bookshelf/lib/bookshelf_hardcover_key_ui.lua export-ignore
+/components/bookshelf/lib/bookshelf_hardcover_picker.lua export-ignore
+/components/bookshelf/lib/bookshelf_hardcover_picker_row.lua export-ignore
+/components/bookshelf/lib/bookshelf_hardcover_thumbs.lua export-ignore
+/components/bookshelf/lib/bookshelf_plugin_button.lua export-ignore
+/components/bookshelf/lib/bookshelf_run_text_box.lua export-ignore
+/components/bookshelf/lib/bookshelf_see_through.lua export-ignore
+/components/bookshelf/lib/bookshelf_star_runs.lua export-ignore
+/components/bookshelf/lib/bookshelf_widget_book_popup.lua export-ignore
+/components/bookshelf/lib/bookshelf_widget_curated.lua export-ignore
+/components/bookshelf/lib/bookshelf_widget_opds.lua export-ignore

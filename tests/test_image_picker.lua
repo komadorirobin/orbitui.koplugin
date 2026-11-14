@@ -100,6 +100,7 @@ local function compile(code, env)
     return assert(load(code, "image picker", "t", env))
 end
 local widget_src = source("components/bookshelf/lib/bookshelf_widget.lua")
+    .. H.componentSource(".", "lib/bookshelf_widget_book_popup")
 local function method(name, env)
     local args, body = widget_src:match("function BookshelfWidget:" .. name .. "%((.-)%)\n(.-)\nend")
     return compile("return function(self," .. args .. ")\n" .. assert(body) .. "\nend", env)()
