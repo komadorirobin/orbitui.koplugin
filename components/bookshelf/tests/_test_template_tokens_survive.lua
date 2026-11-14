@@ -117,7 +117,7 @@ t.test("there are locale files to check, and templates among them", function()
     -- The hero one is marked with N_() rather than _(), so the POT command
     -- has to pass --keyword=N_; without it this is the assertion that fails.
     local pot = io.open("locale/bookshelf.pot"):read("*a")
-    assert(pot:find("page_count pages", 1, true),
+    assert((pot:gsub('"%s*\n%s*"', "")):find("page_count pages", 1, true),
         "the list's progress template is not in the catalogue")
     -- The top panel's templates are deliberately NOT catalogued: they carry
     -- no words, and that module cannot call gettext where its defaults are
