@@ -122,6 +122,7 @@ function M.wrap(name, module)
                 tab_id = "orbitui_settings_tab",
                 default_icon = "material:apps:300",
                 default_ko = "appbar.contrast",
+                use_source = true,
             }
         end
         local safe, register = module.safeIconPath, module.registerTabIconName

@@ -2,10 +2,11 @@
 -- Makes icon files resolvable by bare name: IconWidget:new{ icon = name }.
 --
 -- PUBLIC API
---   Registry.register(name, file) → boolean
+--   Registry.register(name, file, use_source) → boolean
 --       Registers `file` (.svg/.png) under `name`. The file is copied to the
 --       user icons directory; returns false when the copy failed, in which
 --       case the name still resolves to `file` for the current session.
+--       With use_source, keep the source path as the image cache key.
 --   Registry.addDir(dir)
 --       Adds `dir` to the directories searched for icons by name.
 --
@@ -83,17 +84,22 @@ local function serveFromInitWrapper(name, file)
     _wrapped_files[name] = file
 end
 
-function Registry.register(name, file)
+function Registry.register(name, file, use_source)
     if type(name) ~= "string" or type(file) ~= "string" then return false end
 
-    local copy = copyToUserIcons(name, file)
+    local copy
+    if use_source then
+        if require("libs/libkoreader-lfs").attributes(file, "mode") ~= "file" then return false end
+    else
+        copy = copyToUserIcons(name, file)
+    end
     local paths = iconTables()
     if paths then
         paths[name] = copy or file
     else
         serveFromInitWrapper(name, copy or file)
     end
-    return copy ~= nil
+    return use_source or copy ~= nil
 end
 
 function Registry.addDir(dir)

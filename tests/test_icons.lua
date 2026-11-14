@@ -270,19 +270,25 @@ H.test("native tabs register actual SVGs from names and previous OTA slots", fun
 end)
 H.test("OrbitUI tab uses its own icon slot and restores the default apps grid on reset", function()
     local tab = { id = "orbitui_settings_tab", icon = "appbar.contrast" }
-    local path = "/fake/icons/simpleui_orbitui_menu.svg"
+    local IconWidget = require("ui/widget/iconwidget")
+    local function resolvedFile()
+        local widget = { icon = tab.icon }
+        IconWidget.init(widget)
+        return widget.file
+    end
     local slot = Style.SLOTS[#Style.SLOTS]
     H.eq(slot.label(), "Tab: OrbitUI")
     H.eq(slot.group, "sui_tabbar_icons")
     Style.applyTabIcons{ tab }
     H.eq(tab.icon, "simpleui_orbitui_menu")
-    H.eq(copied[path], Icons.imageFile("material:apps:300"))
+    H.eq(resolvedFile(), Icons.imageFile("material:apps:300"))
     Style.setIcon(slot.id, "material:settings")
     Style.applyTabIcons{ tab }
-    H.eq(copied[path], Icons.imageFile("material:settings"))
+    H.eq(resolvedFile(), Icons.imageFile("material:settings"))
     Style.setIcon(slot.id, nil)
     Style.applyTabIcons{ tab }
-    H.eq(copied[path], Icons.imageFile("material:apps:300"))
+    H.eq(resolvedFile(), Icons.imageFile("material:apps:300"))
+    H.eq(copied["/fake/icons/simpleui_orbitui_menu.svg"], nil)
 end)
 H.test("both pickers render every Material weight with SVG and UI-face labels", function()
     for _, weight in ipairs(Icons.weights) do

@@ -833,9 +833,8 @@ end
 -- Assigning a full custom path straight into `tab.icon` therefore always
 -- resolves to icon-not-found.
 --
--- The icon is therefore REGISTERED under a stable bare name through
--- infra/sui_icon_registry.lua, which copies the file to the user icons
--- directory and updates IconWidget's lookup so the change applies at once.
+-- The icon is therefore registered under a stable bare name through
+-- infra/sui_icon_registry.lua, which updates IconWidget's lookup.
 -- Only .svg/.png are supported here because those are the only two
 -- extensions IconWidget's by-name search ever tries.
 local _TAB_ICON_NAME_CACHE = {} -- slot_id -> { src = last-registered source path, name = registered name }
@@ -870,9 +869,9 @@ function M.registerTabIconName(slot_id, path)
         return name -- already registered for this exact source
     end
 
-    -- Always (re)copy: the user may have picked a different source file for
-    -- the same slot since the last time this ran.
-    if not require("infra/sui_icon_registry").register(name, path) then
+    -- A source-backed slot keeps each selection's native image cache key.
+    local slot = _SLOT_BY_ID[slot_id]
+    if not require("infra/sui_icon_registry").register(name, path, slot and slot.use_source) then
         logger.warn("simpleui/style: failed to register tab icon for " .. slot_id)
         return nil
     end
