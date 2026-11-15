@@ -1,5 +1,36 @@
 # Verification and device acceptance
 
+## 2026-11-15 — Aleph 1.2 refinements
+
+Bigme ADB tested private runtime **917547e1a** in disposable EPUB and CBZ
+fixtures. The Swedish reader panel opened the bookmark color picker and
+the filtered list. Bookmark color survived a close and was present in the
+fixture’s annotation sidecar. The book details resolved a locale-tagged
+language and displayed the supplied page total. The dashboard picker saved
+History and the goal card routed its tap through the Home action callback.
+The panel showed 78 percent coverage for a fixture KOAssistant cache and
+opened KOAssistant’s native Mentions view with its reveal control.
+
+On Bigme, 15 updates in the same dashboard context made 30 list lookups
+via the full update and zero via the statistics-only update. The data portion
+took about 14 ms and 1 ms respectively. It excludes drawing and e-ink
+refresh. Android queue tests reduced four successful cover saves to two
+shelf redraws. Direct extraction at a cold fixture path ranged from roughly
+160 to 275 ms across runs. Book opening and return varied across both builds.
+Serializing a synthetic 3,406-row snapshot took 36 ms on Bigme. This
+measures the write being deferred and gives no end-to-end opening estimate.
+
+The final sealed runtime **0c3dd8a9c** has 2,000 files and SHA-256
+`364a9e75db9b7e295dfbf1030548b0a889a319807382e1047c94f437e23afa42`.
+The full LuaJIT suite passed for this runtime. An offline OTA rehearsal
+from 1.3.0 verified native extraction and hashes, activation, restart and
+rollback. The KOReader 2026.07.1 Tolino emulator captured 280 blue pixels
+in the first visible paint of the new bookmark. Bigme ran the earlier reader-test
+runtime before the final color-rendering correction. Its original OrbitUI
+slot, settings, history, collections and statistics were restored. The QA
+patch and temporary device fixtures were removed. Local evidence is in
+`test-results/aleph12-20261115/`.
+
 ## 2026-11-15 — OrbitUI 1.4.0-beta.3
 
 The exact released ZIP from **ad34d9b89** booted in isolated KOReader 2026.07.1
