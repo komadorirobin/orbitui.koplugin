@@ -71,6 +71,10 @@ local function hit(area, x, y)
     return x >= area.x and x < area.x + area.w and y >= area.y and y < area.y + area.h
 end
 
+local function secondsToNextMinute()
+    return 60 - os.time() % 60
+end
+
 function Dashboard:modulesVisible(generation)
     if self._disposed or self._modules_suspended or generation ~= self._module_generation then return false end
     if require("device").screen_saver_mode then return false end
@@ -90,7 +94,7 @@ function Dashboard:onResume()
     if self._module_tick then
         local ui = require("ui/uimanager")
         ui:unschedule(self._module_tick)
-        ui:scheduleIn(60, self._module_tick)
+        ui:scheduleIn(0, self._module_tick)
     end
 end
 
@@ -976,10 +980,10 @@ function M.content(widget, p, ctx, data)
                 end
             end
             if not widget._disposed and not widget._modules_suspended and generation == widget._module_generation then
-                require("ui/uimanager"):scheduleIn(60, widget._module_tick)
+                require("ui/uimanager"):scheduleIn(secondsToNextMinute(), widget._module_tick)
             end
         end
-        require("ui/uimanager"):scheduleIn(60, widget._module_tick)
+        require("ui/uimanager"):scheduleIn(secondsToNextMinute(), widget._module_tick)
     end
     if p.cards and not next(p.cards) then
         text(_(data.config.unsupported and "This dashboard needs a newer OrbitUI version."

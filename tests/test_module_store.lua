@@ -63,7 +63,7 @@ local function pack()
 end
 local function store(p)
     local s = M.new("/plugins", "/settings/store", { "/plugins", "/extra" })
-    local c = M.bundled(); c.revision = 2; c.plugins = {p or pack()}; s:saveCatalog(c)
+    local c = M.bundled(); c.revision = c.revision + 1; c.plugins = {p or pack()}; s:saveCatalog(c)
     return s
 end
 local archive, closed, download = {}, 0, 0
@@ -119,10 +119,20 @@ end)
 H.test("catalog rollback, same-revision edits and reused versions are rejected across removals", function()
     reset(); local s = store(); local c = copy(s:catalog())
     c.plugins[1].description = "changed"; assert(not pcall(s.saveCatalog, s, c))
-    c.revision = 3; c.plugins[1].sha256 = digest("other"); assert(not pcall(s.saveCatalog, s, c))
+    c.revision = c.revision + 1; c.plugins[1].sha256 = digest("other"); assert(not pcall(s.saveCatalog, s, c))
     c.plugins = {}; s:saveCatalog(c)
-    c.revision = 4; c.plugins = {pack()}; c.plugins[1].version = "1.0.0"
-    assert(not pcall(s.saveCatalog, s, c)); H.eq(s:catalog().revision, 3)
+    c.revision = c.revision + 1; c.plugins = {pack()}; c.plugins[1].version = "1.0.0"
+    assert(not pcall(s.saveCatalog, s, c)); H.eq(s:catalog().revision, c.revision - 1)
+end)
+H.test("a cached revision one falls through to the newer bundled catalog", function()
+    reset()
+    local s = M.new("/plugins", "/settings/store", { "/plugins" })
+    local old = M.bundled()
+    old.revision, old.plugins[2] = 1, nil
+    F.save(s.directory .. "/catalog.json", { catalog = old, known = {} })
+    H.eq(s:catalog().plugins[2].id, "literaryclock")
+    H.eq(F.json(s.directory .. "/catalog.json").catalog.revision, 1)
+    assert(not pcall(s.saveCatalog, s, old))
 end)
 H.test("prepare stages only, activate installs atomically without executing metadata or main", function()
     reset(); goodArchive(); local s, p = store(), pack()
@@ -190,7 +200,7 @@ H.test("foreign plans, corrupt registry and changed catalog fail without install
     F.save("/settings/store/installed.json", {schema=2,plugins={}})
     assert(not pcall(s.activate, s, plan)); assert(not F.attr("/plugins/silverfish.koplugin"))
     F.remove("/settings/store/installed.json")
-    local c = s:catalog(); c.revision = 3; c.plugins = {}; s:saveCatalog(c)
+    local c = s:catalog(); c.revision = c.revision + 1; c.plugins = {}; s:saveCatalog(c)
     assert(not pcall(s.activate, s, plan)); assert(not F.attr("/plugins/silverfish.koplugin"))
 end)
 H.test("independent releases choose only the reviewed catalog channel, not plugin latest", function()
@@ -231,13 +241,23 @@ H.test("real bundled catalog builds visible adapter rows and deferred details wi
         settings.language = language
         local tr = require("core/orbitui_i18n")
         local rows = Adapter.items(nil, {})
-        H.eq(#rows, 2)
+        H.eq(#rows, 3)
         H.eq(rows[1].text, tr("Check reviewed catalog"))
         H.eq(rows[2].text, "Silverfish 2.0.0 · " .. tr("Desktop adapter test"))
         local details = rows[2].sub_item_table_func()
         H.eq(details[2].text_func(), tr("Not installed"))
         H.eq(details[3].enabled_func(), true)
         H.eq(settings.plugins_disabled.silverfish, true, "catalog must not enable a disabled plugin")
+        local name = language == "sv" and "Litterär klocka" or "Literary Clock"
+        H.eq(rows[3].text, name .. " 0.1.1 · " .. tr("KOReader emulator test"))
+        local clock = rows[3].sub_item_table_func()
+        clock[1].callback()
+        assert(dialog.text:find(language == "sv" and "på engelska" or "in English", 1, true))
+        local opened
+        package.loaded["lib/bookshelf_link_panel"] = { openLink = function(url) opened = url end }
+        H.eq(clock[4].text, tr("Credits and licence"))
+        clock[4].callback()
+        H.eq(opened, "https://github.com/readinpixels/literary-clock/blob/v0.1.1/NOTICE.md")
     end
     settings.language = nil
 end)
@@ -261,12 +281,12 @@ H.test("catalog closing retires late repaints and reopening performs fresh verif
         local build=nav[1].params.items_func
         local previous_checks = checks
         local items=build(ctx); build(ctx)
-        H.eq(checks,previous_checks+1) -- no repeat hashes on repaint
+        H.eq(checks,previous_checks+2) -- no repeat hashes on repaint
         items[1].callback(); on_close(); built = built + 1; return {}
     end}
     Adapter.show(); H.eq(built, 1, "protected show must not hide a failed builder"); local old=repaint
     task.done({ok=true,value=nil}); H.eq(repaint,old)
-    Adapter.show(); H.eq(built, 2); H.eq(checks,2)
+    Adapter.show(); H.eq(built, 2); H.eq(checks,4)
     task.done({ok=true,value=nil}); Adapter.store=original
 end)
 H.test("owned catalog wording is bilingual and external names/state stay unchanged", function()

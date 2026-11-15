@@ -47,6 +47,7 @@ function M.entry(p)
     assert(type(p) == "table" and id(p.id) and p.folder == p.id .. ".koplugin", "Invalid plugin identity")
     assert(text(p.name, 80) and text(p.description, 1000) and text(p.description_sv, 1000)
         and version(p.version), "Invalid bilingual plugin description")
+    assert(p.name_sv == nil or text(p.name_sv, 80), "Invalid Swedish plugin name")
     assert(text(p.repository, 160) and p.repository:match("^[%w_-]+/[%w_-][%w_.-]*$"), "Invalid source repository")
     assert(text(p.tag, 80) and p.tag:match("^[%w_.-]+$") and p.tag ~= "." and p.tag ~= "..", "Invalid source tag")
     assert(text(p.asset, 120) and p.asset:match("^[%w_.-]+%.zip$"), "Invalid release asset")
@@ -54,7 +55,8 @@ function M.entry(p)
     assert(type(p.commit) == "string" and #p.commit == 40 and p.commit:match("^[0-9a-f]+$"), "Missing reviewed source commit")
     assert(text(p.license, 240) and text(p.license_sv, 240) and text(p.data_note, 1000)
         and text(p.data_note_sv, 1000), "Missing bilingual license/data disclosure")
-    assert(type(p.test) == "table" and p.test.scope == "adapter-desktop"
+    assert(p.notice == nil or text(p.notice, 120) and p.notice:match("^[%w_-][%w_.-]*%.md$"), "Invalid notice filename")
+    assert(type(p.test) == "table" and (p.test.scope == "adapter-desktop" or p.test.scope == "adapter-emulator")
         and text(p.test.koreader, 160) and text(p.test.orbitui, 160)
         and text(p.test.date, 20) and text(p.test.evidence, 240), "Missing scoped test evidence")
     local seen = { [p.id] = true }
@@ -67,9 +69,15 @@ function M.url(p)
     M.entry(p)
     return "https://github.com/" .. p.repository .. "/releases/download/" .. p.tag .. "/" .. p.asset
 end
+function M.noticeUrl(p)
+    M.entry(p)
+    if p.notice then
+        return "https://github.com/" .. p.repository .. "/blob/" .. p.tag .. "/" .. p.notice
+    end
+end
 function M.localized(p, key, language)
     local lang = language or (G_reader_settings and G_reader_settings:readSetting("language")) or "en"
-    return p[key .. (type(lang) == "string" and lang:match("^sv") and "_sv" or "")]
+    return type(lang) == "string" and lang:match("^sv") and p[key .. "_sv"] or p[key]
 end
 function M.catalog(c)
     assert(type(c) == "table" and c.schema == 1 and c.api == 1 and integer(c.revision, 1000000), "Unsupported module catalog")
@@ -80,8 +88,8 @@ function M.catalog(c)
     return c
 end
 function M.bundled()
-    -- Official unchanged release: no Silverfish code/art is bundled in OrbitUI.
-    return { schema = 1, api = 1, revision = 1, plugins = {{
+    -- Both downloads point to unchanged upstream release archives.
+    return { schema = 1, api = 1, revision = 2, plugins = {{
         id = "silverfish", folder = "silverfish.koplugin", name = "Silverfish",
         description = "A reading companion with a dashboard card. Plugin interface: English/Portuguese.",
         description_sv = "En läskompis med kort i läsöversikten. Pluginets gränssnitt: engelska/portugisiska.",
@@ -96,6 +104,21 @@ function M.bundled()
         test = { scope = "adapter-desktop", koreader = "Minimum/current native widget APIs; see test evidence",
             orbitui = "1.1-dev / 7c02737e", date = "2026-11-08",
             evidence = "docs/TESTING.md · dashboard-modules-20261108" },
+    }, {
+        id = "literaryclock", folder = "literaryclock.koplugin", name = "Literary Clock", name_sv = "Litterär klocka",
+        description = "Shows the time in a book quote with its title and author. Works offline. Quotes and plugin settings are in English.",
+        description_sv = "Visar tiden i ett bokcitat med titel och författare. Fungerar offline. Citat och pluginets inställningar är på engelska.",
+        version = "0.1.1", repository = "readinpixels/literary-clock", tag = "v0.1.1",
+        asset = "literaryclock.koplugin-v0.1.1.zip", size = 454183,
+        sha256 = "725b22fd6ed038c5b313a121db1ae820243dc0d6fdce13bc172c6323b4cfed21",
+        commit = "588ef5c2a81299ca27bdd719d52bfe6de52a408f", conflicts = {}, notice = "NOTICE.md",
+        license = "Code under AGPL-3.0. Quote collection under CC BY-NC-SA 2.5. See the upstream credits and terms.",
+        license_sv = "Kod under AGPL-3.0. Citatsamling under CC BY-NC-SA 2.5. Se upphov och villkor hos utvecklaren.",
+        data_note = "After restart, add Literary Clock under Shelf modules in the Reading dashboard. The plugin stores its own display preferences in KOReader settings.",
+        data_note_sv = "Efter omstart lägger du till Literary Clock under Hyllmoduler i Läsöversikten. Pluginet sparar sina egna visningsval i KOReaders inställningar.",
+        test = { scope = "adapter-emulator", koreader = "2026.07.1 (Tolino emulator)",
+            orbitui = "1.4.0 development", date = "2026-11-15",
+            evidence = "docs/TESTING.md · Literary Clock" },
     }} }
 end
 function M.fetchCatalog()
@@ -124,8 +147,13 @@ function M.new(plugin_root, directory, roots)
     return setmetatable({ root = plugin_root, directory = directory, roots = roots }, Store)
 end
 function Store:catalog()
+    local bundled = M.bundled()
     local saved = F.json(self.directory .. "/catalog.json", true)
-    return M.catalog(saved and saved.catalog or M.bundled())
+    if saved then
+        local catalog = M.catalog(saved.catalog)
+        if catalog.revision >= bundled.revision then return catalog end
+    end
+    return M.catalog(bundled)
 end
 function Store:saveCatalog(c)
     M.catalog(c)

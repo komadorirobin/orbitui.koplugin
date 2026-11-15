@@ -30,6 +30,7 @@ and correct this file in the same change.
   share repaints, and cold metadata snapshot writes are deferred.
   Straight cover row keeps four books with percentages by default and offers
   up to five covers, title captions and a link to the ongoing reading history.
+  The module library offers readinpixels’ Literary Clock as a separate download.
 
 - **Top-menu footer, released in 1.4.0-beta.3.** Pagination adjusts to the space
   beside the clock and battery, which can be turned off in Quick controls.

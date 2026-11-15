@@ -249,10 +249,22 @@ function M.check(refresh)
         if refresh then refresh() end
     end)
 end
+local test_scope = {
+    ["adapter-desktop"] = {
+        badge = "Desktop adapter test",
+        details = "Test scope: dashboard adapters on desktop only. Not a safety certificate or a Bigme test.",
+        confirm = "Install this executable plugin? It has KOReader's access to files and the network; it is not sandboxed. Only its dashboard adapters were desktop-tested, not the full plugin on Bigme.",
+    },
+    ["adapter-emulator"] = {
+        badge = "KOReader emulator test",
+        details = "Tested in the KOReader emulator: installation, dashboard card and minute updates.",
+        confirm = "Install this executable plugin? It runs with KOReader's access to files and the network. The dashboard card was tested in the KOReader emulator.",
+    },
+}
 function M.install(p, refresh)
     require("ui/uimanager"):show(require("ui/widget/confirmbox"):new{
-        text = p.name .. " " .. p.version .. "\n" .. Model.url(p) .. "\n\n"
-            .. _("Install this executable plugin? It has KOReader's access to files and the network; it is not sandboxed. Only its dashboard adapters were desktop-tested, not the full plugin on Bigme.")
+        text = Model.localized(p, "name") .. " " .. p.version .. "\n" .. Model.url(p) .. "\n\n"
+            .. _(test_scope[p.test.scope].confirm)
             .. "\n\n" .. _("Existing plugins are never overwritten. After restart, enable it in KOReader's plugin manager if needed, then add its card from the module picker. Plugin-owned startup or screensaver options may also appear.")
             .. "\n\n" .. Model.localized(p, "license") .. "\n" .. Model.localized(p, "data_note"),
         ok_text = _("Install plugin"), ok_callback = function()
@@ -273,14 +285,16 @@ local statuses = {
     ["other-tested"] = "Different catalog version installed; no automatic update",
 }
 function M.details(p, status)
-    return p.name .. " " .. p.version .. "\n\n" .. Model.localized(p, "description")
-        .. "\n\n" .. _("Test scope: dashboard adapters on desktop only. Not a safety certificate or a Bigme test.")
+    local notice = Model.noticeUrl(p)
+    return Model.localized(p, "name") .. " " .. p.version .. "\n\n" .. Model.localized(p, "description")
+        .. "\n\n" .. _(test_scope[p.test.scope].details)
         .. "\nKOReader: " .. _(p.test.koreader) .. "\nOrbitUI: " .. p.test.orbitui .. "\n" .. p.test.date
         .. "\n" .. p.test.evidence .. "\n\n" .. _(statuses[status])
         .. "\n\n" .. _("Source") .. ": " .. p.repository .. " @ " .. p.commit
         .. "\n" .. Model.url(p) .. "\nSHA-256: " .. p.sha256
         .. "\n" .. _("Download size") .. ": " .. string.format("%.2f MiB", p.size / 1048576)
-        .. "\n\n" .. Model.localized(p, "license") .. "\n" .. Model.localized(p, "data_note")
+        .. "\n\n" .. Model.localized(p, "license") .. (notice and "\n" .. notice or "")
+        .. "\n" .. Model.localized(p, "data_note")
         .. "\n\n" .. _("First installations only. Updates, rollback and removal remain manual; back up the plugin's own data before changing versions. The catalog never enables a disabled plugin or takes over its updater.")
 end
 function M.items(refresh, cached)
@@ -288,6 +302,7 @@ function M.items(refresh, cached)
     items[1] = { text = _("Check reviewed catalog"), callback = function() M.check(refresh) end }
     for _i, entry in ipairs(s:catalog().plugins) do
         local p = entry
+        local name, notice = Model.localized(p, "name"), Model.noticeUrl(p)
         -- Verification is explicit, never in Home's paint or startup path.
         local function status()
             local key = p.id .. ":" .. p.sha256
@@ -296,19 +311,25 @@ function M.items(refresh, cached)
             return cached[key]
         end
         status()
-        items[#items + 1] = { text = p.name .. " " .. p.version .. " · " .. _("Desktop adapter test"),
+        items[#items + 1] = { text = name .. " " .. p.version .. " · " .. _(test_scope[p.test.scope].badge),
             value_func = function() return "" end, -- no eager sub-menu build while painting
             sub_item_table_func = function()
-                return {
+                local rows = {
                     { text = _("Information and test scope"), callback = function()
                         require("ui/uimanager"):show(require("ui/widget/textviewer"):new{
-                            title = p.name, text = M.details(p, status()),
+                            title = name, text = M.details(p, status()),
                         })
                     end },
                     { text_func = function() return _(statuses[status()]) end, dim = true },
                     { text = _("Install plugin"), enabled_func = function() return status() == "missing" and not busy end,
                         callback = function() M.install(p, refresh) end },
                 }
+                if notice then
+                    rows[#rows + 1] = { text = _("Credits and licence"), callback = function()
+                        require("lib/bookshelf_link_panel").openLink(notice)
+                    end }
+                end
+                return rows
             end }
     end
     return items

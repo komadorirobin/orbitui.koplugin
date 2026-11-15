@@ -244,7 +244,7 @@ for _, name in ipairs({ "ui/geometry", "ui/widget/widget", "ui/gesturerange",
 local queued, scheduled, top = {}, {}, nil
 package.loaded["ui/uimanager"] = {
     nextTick = function(_, fn) queued[#queued + 1] = fn end,
-    scheduleIn = function(_, seconds, fn) H.eq(seconds, 60); scheduled[fn] = true end,
+    scheduleIn = function(_, seconds, fn) assert(seconds >= 0 and seconds <= 60); scheduled[fn] = seconds end,
     unschedule = function(_, fn) scheduled[fn] = nil end,
     getTopmostVisibleWidget = function() return top end,
     setDirty = function() end,
@@ -389,11 +389,22 @@ H.test("covered, parked, sleeping and disposed views do no module tick or deferr
     top = ctx._screen_widget; ctx._screen_widget._parked = true; tick(); H.eq(ticks, before)
     ctx._screen_widget._parked = false; v:onSuspend(); tick(); H.eq(ticks, before)
     H.eq(scheduled[tick], nil, "a dequeued pre-suspend timer must not rearm itself")
-    v:onResume(); tick(); H.eq(ticks, before + 1)
+    v:onResume(); H.eq(scheduled[tick], 0); tick(); H.eq(ticks, before + 1)
     local fn = queued[#queued]
     local count = refreshes
     v:free(); H.eq(scheduled[tick], nil)
     fn(); H.eq(refreshes, count); tick(); H.eq(ticks, before + 1)
+end)
+H.test("visible module ticks align to the next wall-clock minute", function()
+    local clock = os.time
+    os.time = function() return 1411 end
+    local v = view(only(entry("bookshelf", "pet")))
+    local tick = v._module_tick
+    H.eq(scheduled[tick], 29)
+    os.time = function() return 1440 end
+    tick(); H.eq(scheduled[tick], 60)
+    v:free()
+    os.time = clock
 end)
 H.test("a module closing the view inside its minute hook cannot resurrect the timer", function()
     local v = view(only(entry("bookshelf", "pet")))

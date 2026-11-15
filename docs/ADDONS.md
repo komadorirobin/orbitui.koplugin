@@ -30,6 +30,16 @@ contents themselves stay byte-for-byte unchanged. Code is GPL-3.0, characters,
 art and writing CC BY-NC-SA 4.0, fonts/data have their own included notices.
 Noncommercial artwork terms are not a blanket commercial-use permission.
 
+**Litterär klocka / Literary Clock** is an optional full-width card. Open
+**Get more modules…**, install the upstream 0.1.1 preview, then restart KOReader
+and add **Literary Clock** from the Reading dashboard’s **Shelf modules**.
+The package is from readinpixels, commit `588ef5c2a81299ca27bdd719d52bfe6de52a408f`.
+The 454,183-byte ZIP has SHA-256
+`725b22fd6ed038c5b313a121db1ae820243dc0d6fdce13bc172c6323b4cfed21`.
+Quotes and the plugin’s settings are in English. The card works offline.
+The catalog links to the upstream [credits and licence notice](https://github.com/readinpixels/literary-clock/blob/v0.1.1/NOTICE.md).
+The code is AGPL-3.0 and the quote collection is offered under CC BY-NC-SA 2.5.
+
 Test evidence is scoped to the two existing dashboard adapters at the recorded
 OrbitUI revision/native widget fixtures, not all plugin features, user patches,
 KOReader versions or physical devices. See TESTING. No badge certifies absence
@@ -66,7 +76,7 @@ neither backs up nor resets those. No automatic uninstaller purges save files.
 **Independent catalogs:** Check reviewed catalog explicitly looks for published
 non-prerelease modules-N releases on komadorirobin/orbitui.koplugin, with exact
 module-catalog.json asset URL and matching increasing revision. There is no
-separate catalog published yet; the bundled entry remains available, and the
+separate catalog published yet; the bundled entries remain available, and the
 UI says so. Catalog API/schema is 1, max 32 entries. Same revision changes,
 version reuse with different bytes and per-plugin downgrade (even after an
 entry was removed) are rejected. This channel never selects a plugin's latest

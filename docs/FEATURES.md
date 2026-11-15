@@ -401,8 +401,9 @@ och raderar inte dess data. Äldre OrbitUI-versioner kan inte redigera den nya
 kortlayouten, men ska inte skriva över den.
 
 The **Get more modules… / Hämta fler moduler…** prototype offers a separate
-executable-plugin catalog, initially the official Silverfish 2.0.0 release.
-Its badge means desktop adapter testing, not full-plugin safety/device approval.
+executable-plugin catalog with Silverfish 2.0.0 and Literary Clock 0.1.1.
+Literary Clock is an offline, full-width Shelf module with English quotes.
+The catalog records the verification scope for each pinned release.
 No automatic installation, latest-version chasing, overwrite, enable, downgrade,
 uninstall or save migration. Explicit consent, SHA-256, bounded plain-file ZIP
 extraction, source compilation without execution, isolated staging and one
