@@ -22,12 +22,12 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-15
 
-- **Top-menu footer, local development.** Pagination adjusts to the space
+- **Top-menu footer, released in 1.4.0-beta.3.** Pagination adjusts to the space
   beside the clock and battery, which can be turned off in Quick controls.
   The setting applies to the Quick Settings tab and KOReader's other top-menu
   tabs in the reader and file browser.
 
-- **Customizable text selection menu, local development.** The first page
+- **Customizable text selection menu, released in 1.4.0-beta.3.** The first page
   can show up to six KOReader actions in the reader’s chosen order. The
   editor is available from Reader panel & X-Ray and from More in a book.
   More also keeps the full native action list. Fixed plugin buttons can be
@@ -64,7 +64,7 @@ and correct this file in the same change.
 ### Navigation in 1.3.0
 
 GitHub Latest and the stable updater channel offer **1.3.0** from
-**23714b0e**. The preview channel offers **1.4.0-beta.2**. The OrbitUI tab
+**23714b0e**. The preview channel offers **1.4.0-beta.3**. The OrbitUI tab
 follows Quick Actions in KOReader’s top menu.
 Its settings routes use Home for the dashboard and cards, Library
 for shelves and library appearance, and Dock & interface for shortcuts and

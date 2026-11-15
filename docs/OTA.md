@@ -1,5 +1,18 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.4.0-beta.3
+
+Published **2026-11-15 08:54:53 UTC** as release **445924393** from
+**ad34d9b89 / v1.4.0-beta.3**. The public ZIP matches the verified draft.
+It contains 2,000 installed files and is 10,039,310 bytes. Its SHA-256 is
+`521d7f856d4d6657fb2fac38799feb48678d01fb11d5e1755be9ece2d4363d17`.
+The updater offers 1.4.0-beta.3 in preview and 1.3.0 in stable.
+
+This beta adds customizable text-selection shortcuts and an optional clock
+and battery in the top menu. Both Lua test runs and all 43 translations
+passed. See TESTING for emulator and updater coverage. Local evidence is
+under `test-results/preview14-beta3-20261115/`.
+
 ## OrbitUI 1.4.0-beta.2
 
 Published **2026-11-14 19:25:43 UTC**, release **445533564**, frozen

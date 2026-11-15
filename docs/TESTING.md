@@ -1,5 +1,25 @@
 # Verification and device acceptance
 
+## 2026-11-15 — OrbitUI 1.4.0-beta.3
+
+The exact released ZIP from **ad34d9b89** booted in isolated KOReader 2026.07.1
+profiles on the Tolino Vision Color emulator. The native top menus in the
+reader and file browser kept their page controls usable. A deliberately wide
+status button reproduced the conditions for an overlap. The adapted footer
+first shifted the paginator, then hid status when the row ran out of room.
+The Swedish toggle hid status in Quick Settings and persisted after restart.
+
+The text-selection editor replaced and swapped shortcuts, ran a fixture
+plugin callback, and restored the saved order after restart. More retained
+the full action list and native visibility rules. Physical Bigme coverage
+for these two changes remains open.
+
+Both host Lua test runs and all 43 translations passed. The 1.4.0-beta.2 and
+1.3.0 installers passed package validation, activation, restart and rollback
+both offline and over anonymous GitHub HTTPS. The public assets match the
+verified draft and OrbitUI's selector picks 1.4.0-beta.3 for preview and
+1.3.0 for stable.
+
 ## 2026-11-14 — Bookshelf 6.5.0
 
 The sealed source candidate **cb2f60c01** has the same installed path set
