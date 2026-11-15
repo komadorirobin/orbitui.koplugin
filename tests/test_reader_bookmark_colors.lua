@@ -15,6 +15,7 @@ local function fixture()
     }
     local W = { new = function(_, opts) return opts end }
     package.loaded["ui/widget/menu"], package.loaded["ui/widget/buttondialog"] = W, W
+    package.loaded["ui/geometry"] = W
     package.loaded["ui/uimanager"] = UI
     package.loaded["ui/event"] = { new = function(_, name, data) return { name = name, data = data } end }
     package.loaded.device = { screen = { isColorEnabled = function() return true end } }
@@ -53,9 +54,11 @@ H.test("native uncolored bookmarks stay native and later bookmarks use the last 
     H.eq(first.orbitui_bookmark_color, "red")
     H.eq(events[2].name, "AnnotationsModified")
     local ink = {}
+    ribbon.icon.dimen = nil
     ribbon:paintTo({ paintRect = function(_, x, y, w, h, color) ink[color] = "mono" end,
         paintRectRGB32 = function(_, x, y, w, h, color) ink[color] = "rgb" end }, 0, 0)
     H.eq(ink["#ca4f43"], "rgb"); H.eq(ink.black, "mono")
+    H.eq(ribbon.icon.dimen.x, 380)
     ui.current = 2
     ui.bookmark:onToggleBookmark()
     H.eq(ui.annotation.annotations[2].orbitui_bookmark_color, "red")

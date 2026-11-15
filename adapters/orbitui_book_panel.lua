@@ -1782,10 +1782,13 @@ function M.attachBookmarkColors(ui)
         local item = pageBookmark(ui)
         local color = item and bookmark_palette[item[bookmark_key]]
         local icon, size = self.icon, self.dogear_size
-        if not (color and icon and icon.dimen and self[1] and self[1].dimen and size) then return paint(self, bb, x, y) end
+        if not (color and icon and self[1] and self[1].dimen and size) then return paint(self, bb, x, y) end
         local mirrored = require("ui/bidi").mirroredUILayout()
         x = mirrored and x or x + self[1].dimen.w - size
         y = y + (self.dogear_y_offset or 0)
+        -- KOReader may not have painted the native icon yet, for example
+        -- when adding the first bookmark after opening a book.
+        if not icon.dimen then icon.dimen = require("ui/geometry"):new{ w = size, h = size } end
         icon.dimen.x, icon.dimen.y = x, y
         -- Draw the small ribbon inside KOReader's own refresh rectangle.
         -- Use the same shape in grayscale and keep a dark edge for contrast.
