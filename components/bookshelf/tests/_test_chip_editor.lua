@@ -1004,18 +1004,20 @@ t.test("Just one: plain names, and a folder there instead of a card of its own",
 end)
 
 t.test("_handOrdered: a real collection shown in its own order first", function()
-    local saved = package.loaded["lib/bookshelf_collection_order"]
-    package.loaded["lib/bookshelf_collection_order"] = { exists = function(n) return n == "TBR" end }
+    local saved = package.loaded.readcollection
+    package.loaded.readcollection = { coll = { TBR = {}, favorites = {} }, default_collection_name = "favorites" }
     local function d(kind, id, key)
         return { source = { kind = kind, id = id }, sort_priority = { { key = key }, { key = "title" } } }
     end
     eq(Editor._handOrdered(d("collection", "TBR", "collection_order")), "TBR")
+    eq(Editor._handOrdered(d("favorites", nil, "collection_order")), "favorites")
+    eq(Editor._handOrdered(d("favorites", nil, "title")), nil)
     eq(Editor._handOrdered(d("collection", "TBR", "title")), nil, "sorted another way")
     eq(Editor._handOrdered(d("collection", "sci-fi", "collection_order")), nil, "a pinned tag: nothing to arrange")
     eq(Editor._handOrdered(d("library", nil, "collection_order")), nil)
     eq(Editor._handOrdered({ source = { kind = "collection", id = "TBR" } }), nil)
     eq(Editor._handOrdered(nil), nil)
-    package.loaded["lib/bookshelf_collection_order"] = saved
+    package.loaded.readcollection = saved
 end)
 
 t.test("a hand-ordered shelf has an Arrange button inside its Sort card", function()
