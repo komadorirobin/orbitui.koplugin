@@ -1794,6 +1794,7 @@ function M.attachBookmarkColors(ui)
         if self._orbitui_ribbon_tone ~= tone then
             self._orbitui_ribbon_tone, self._orbitui_ribbon_ink = tone, BB.colorFromString(tone)
         end
+        local paintColor = bb.paintRectRGB32 or bb.paintRect
         local w, h = math.max(2, math.floor(size * .53)), math.max(3, math.floor(size * .84))
         local left = mirrored and x + 1 or x + size - w - 1
         local notch = math.max(1, math.floor(w * .26))
@@ -1802,7 +1803,7 @@ function M.attachBookmarkColors(ui)
             if cut == 0 then
                 bb:paintRect(left, y + row, w, 1, BB.COLOR_BLACK)
                 if row > 0 and row < h - notch - 1 and w > 2 then
-                    bb:paintRect(left + 1, y + row, w - 2, 1, self._orbitui_ribbon_ink)
+                    paintColor(bb, left + 1, y + row, w - 2, 1, self._orbitui_ribbon_ink)
                 end
             else
                 local tip = math.floor(w / 2) - cut

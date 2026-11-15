@@ -79,6 +79,29 @@ H.test("the shared metadata window is bounded at 4096 and installation is idempo
     repo.deriveLightRecord("1", rows.a, rows, build); H.eq(calls(), 4098)
 end)
 
+H.test("cold snapshots save outside the opening call and ignore obsolete rows and the active reader", function()
+    local source = H.componentSource(root, "lib/bookshelf_book_repository")
+    local persist = assert(source:match("(function Repo%._persistColdRows.-\nend)"))
+    local version, pending, writes = "v1", {}, {}
+    local entry = { rows = {} }
+    local reader = {}
+    local env = {
+        Repo = { orbitui_defer_lightmeta_write = true }, _light_meta_rows_cache = entry,
+        _lightmeta_refresh = {}, _bimDbFingerprint = function() return version end,
+        _saveRowSnapshot = function(rows, id) writes[#writes + 1] = { rows, id } end,
+        package = { loaded = { ["ui/uimanager"] = { scheduleIn = function(_, delay, fn)
+            assert(delay > 0); pending[#pending + 1] = fn
+        end }, ["apps/reader/readerui"] = reader } },
+    }
+    local write = compile(persist .. "\nreturn Repo._persistColdRows", env)
+    write(entry); H.eq(#writes, 0)
+    pending[1](); H.eq(#writes, 1); H.eq(writes[1][1], entry.rows); H.eq(writes[1][2], "v1")
+    write(entry); version = "v2"; pending[2](); H.eq(#writes, 1)
+    write(entry); reader.instance = {}; pending[3](); H.eq(#writes, 1)
+    reader.instance = nil
+    write(entry); env._light_meta_rows_cache = {}; pending[4](); H.eq(#writes, 1)
+end)
+
 -- Actual repository, native light-map producer and scope guards; only primitive
 -- filesystem/BIM/persistence services use the existing component fixture.
 local map = dofile(root .. "/core/orbitui_module_map.lua")

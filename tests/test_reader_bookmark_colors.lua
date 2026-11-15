@@ -53,8 +53,9 @@ H.test("native uncolored bookmarks stay native and later bookmarks use the last 
     H.eq(first.orbitui_bookmark_color, "red")
     H.eq(events[2].name, "AnnotationsModified")
     local ink = {}
-    ribbon:paintTo({ paintRect = function(_, x, y, w, h, color) ink[color] = true end }, 0, 0)
-    assert(ink["#ca4f43"] and ink.black)
+    ribbon:paintTo({ paintRect = function(_, x, y, w, h, color) ink[color] = "mono" end,
+        paintRectRGB32 = function(_, x, y, w, h, color) ink[color] = "rgb" end }, 0, 0)
+    H.eq(ink["#ca4f43"], "rgb"); H.eq(ink.black, "mono")
     ui.current = 2
     ui.bookmark:onToggleBookmark()
     H.eq(ui.annotation.annotations[2].orbitui_bookmark_color, "red")
