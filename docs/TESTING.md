@@ -1,5 +1,26 @@
 # Verification and device acceptance
 
+## 2026-11-15 — OrbitUI 1.4.0-beta.4
+
+The sealed **00e5184ab** runtime booted in the KOReader 2026.07.1 Tolino and
+Android emulators. The Tolino verified the four-book default, five title
+captions, opening the sixth book from See all, and the original Literary
+Clock install, minute update and resume. It drew 280 blue pixels on the
+bookmark’s first visible paint. It also exercised Turkish, native Favorites
+ordering, half-star values and live goal alignment in both SimpleUI layouts.
+
+The official Android app booted the exact package, resolved Literary Clock’s
+catalog entry and installable path, opened a fixture EPUB and created a blue
+page bookmark. Earlier physical Bigme checks of the individual changes are
+recorded below. Bigme testing of the combined archive is pending.
+
+Both full host suites and all 44 translation catalogs passed. GitHub
+checks passed for main (**43760853191**) and the frozen tag (**43760853011**).
+The actual beta.3 and 1.3.0 installers passed discovery, installation, restart
+and rollback over anonymous GitHub HTTPS and offline. The public assets
+matched the verified draft. Local evidence is in
+`test-results/preview14-beta4-20261115/`.
+
 ## 2026-11-15 — Bookshelf 6.5.1 and SimpleUI maintenance
 
 The sealed **fe537f314** runtime booted in Turkish on the KOReader 2026.07.1

@@ -1,5 +1,18 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.4.0-beta.4
+
+Published **2026-11-15 21:00:31 UTC** as release **446361163** from
+**00e5184ab / v1.4.0-beta.4**. The public ZIP matched the verified draft.
+It contains 2,000 installed files and is 10,109,074 bytes. Its SHA-256 is
+`ecc782258898837ef7523373f69a95f0cde2def423d94690334d7cc5c358b177`.
+The updater offers 1.4.0-beta.4 in preview and 1.3.0 in stable.
+
+This beta includes the customizable reading row, optional Literary Clock,
+colored bookmarks, saved X-Ray coverage and Mentions, book metadata, and the
+reviewed Bookshelf 6.5.1 and SimpleUI changes. See TESTING for coverage.
+Local evidence is in `test-results/preview14-beta4-20261115/`.
+
 ## OrbitUI 1.4.0-beta.3
 
 Published **2026-11-15 08:54:53 UTC** as release **445924393** from
