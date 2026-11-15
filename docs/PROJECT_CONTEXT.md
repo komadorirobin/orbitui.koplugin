@@ -37,10 +37,10 @@ and correct this file in the same change.
   The setting applies to the Quick Settings tab and KOReader's other top-menu
   tabs in the reader and file browser.
 
-- **Customizable text selection menu.** The first page can show up to six
+- **Customizable text selection menu in 1.4.0-beta.5.** The first page can show up to six
   actions in the reader’s chosen order. The editor is available from Reader
-  panel & X-Ray and from More in a book. The local follow-up to 1.4.0-beta.4
-  shows where to tap to replace an action and lets the editor pick plugin
+  panel & X-Ray and from More in a book. This beta shows where to tap to
+  replace an action and lets the editor pick plugin
   buttons with dynamic labels, including Hardcover quote. KOAssistant
   shortcuts follow the action ID when the plugin reorders its menu and
   appear when the action is offered for the current book.
@@ -80,7 +80,7 @@ and correct this file in the same change.
 ### Navigation in 1.3.0
 
 GitHub Latest and the stable updater channel offer **1.3.0** from
-**23714b0e**. The preview channel offers **1.4.0-beta.4**. The OrbitUI tab
+**23714b0e**. The preview channel offers **1.4.0-beta.5**. The OrbitUI tab
 follows Quick Actions in KOReader’s top menu.
 Its settings routes use Home for the dashboard and cards, Library
 for shelves and library appearance, and Dock & interface for shortcuts and
