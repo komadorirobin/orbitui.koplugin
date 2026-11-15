@@ -339,6 +339,11 @@ replace your existing pages. **Cards and content** controls visible cards,
 their order and book-row sources; **Headings** renames its nine card headings.
 The dark continue-reading card can be disabled separately.
 
+In **Cards and content → Straight cover row**, choose a maximum of one to five
+books and show percentages or titles under the covers. Four with percentages
+is the default. **See all** above the covers opens the ongoing books in local
+reading history, including older entries beyond the Home preview.
+
 Use local To Be Read, New Books, recent history, a KOReader collection, a saved
 shelf, or cached BookOrbit Want to Read for the two book rows. Each row pages
 independently with arrows or a left/right swipe inside the card. Swiping outside

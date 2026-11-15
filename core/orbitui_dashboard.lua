@@ -114,6 +114,7 @@ end
 M.block_order = { "hero", "stats", "ongoing", "goal", "want", "new" }
 M.stat_order = { "pages_today", "reading_today", "streak", "week" }
 M.module_limit = 16
+M.cover_row_max = 5
 
 function M.moduleId(kind, ref)
     if (kind == "simpleui" or kind == "bookshelf" or kind == "action" or kind == "bookorbit")
@@ -156,7 +157,7 @@ function M.config(raw, legacy)
         hidden = {}, modules = {}, tap_actions = {}, sources = {
             want = legacy and { kind = "bookorbit" } or { kind = "native", id = "tbr" },
             new = { kind = "native", id = "new_books" },
-        }, goal = "auto" }
+        }, goal = "auto", cover_row_count = 4, cover_row_caption = "percent" }
     if raw == nil then return result end
     if type(raw) ~= "table" or (raw.version ~= 1 and raw.version ~= 2 and raw.version ~= 3) then
         -- A downgrade must not silently replace a newer configuration.
@@ -208,6 +209,11 @@ function M.config(raw, legacy)
         end
     end
     if raw.goal == "local" or raw.goal == "hardcover" then result.goal = raw.goal end
+    local count = raw.cover_row_count
+    if type(count) == "number" and count >= 1 and count <= M.cover_row_max and count == math.floor(count) then
+        result.cover_row_count = count
+    end
+    if raw.cover_row_caption == "title" then result.cover_row_caption = "title" end
     return result
 end
 
@@ -405,14 +411,19 @@ function M.fraction(value)
     return math.max(0, math.min(1, n))
 end
 
+function M.isOngoing(data)
+    local pct = M.fraction(data.percent)
+    return pct > 0 and pct < 1 and data.status ~= "complete" and data.status ~= "abandoned"
+end
+
 function M.ongoing(current, paths, read, limit)
     local result, seen = {}, { [current or ""] = true }
+    if limit == 0 then return result end
     for _, fp in ipairs(paths or {}) do
         if type(fp) == "string" and not seen[fp] then
             seen[fp] = true
             local data = read(fp)
-            local pct = M.fraction(data.percent)
-            if pct > 0 and pct < 1 and data.status ~= "complete" and data.status ~= "abandoned" then
+            if M.isOngoing(data) then
                 result[#result + 1] = { file = fp, data = data }
                 if #result >= limit then break end
             end

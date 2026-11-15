@@ -284,6 +284,23 @@ H.test("layout restore needs confirmation and retains source choices and labels"
     H.eq(after.goal, "local")
 end)
 
+H.test("straight row count and captions default to four percentages and save per screen", function()
+    local cover = "simpleui_cs_cover_"
+    local config = Model.config({ version = 1, cover_row_count = 2.5, cover_row_caption = "other" })
+    H.eq(config.cover_row_count, 4); H.eq(config.cover_row_caption, "percent")
+    H.eq(Model.config({ version = 1, cover_row_count = 6 }).cover_row_count, 4)
+    local item = Config.items(nil, cover)[3]
+    H.eq(item.text, "Straight cover row")
+    local rows = item.sub_item_table_func()
+    local counts, captions = rows[1].sub_item_table, rows[2].sub_item_table
+    H.eq(#counts, 5); H.eq(counts[4].checked_func(), true); H.eq(captions[1].checked_func(), true)
+    counts[5].callback(); captions[2].callback()
+    H.eq(counts[5].checked_func(), true); H.eq(captions[2].checked_func(), true)
+    H.eq(Dashboard.readConfig(cover).cover_row_count, 5)
+    H.eq(Dashboard.readConfig(home).cover_row_count, 4)
+    H.eq(Dashboard.readConfig(home).cover_row_caption, "percent")
+end)
+
 H.test("new configuration strings switch language without changing saved ids or labels", function()
     G_reader_settings = { readSetting = function() return "sv" end }
     H.eq(Config.items(nil, custom)[1].text, "Ordna kort")

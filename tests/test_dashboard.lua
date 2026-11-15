@@ -111,7 +111,7 @@ local covers, opened, held, settings, dirtied = {}, nil, nil, nil, 0
 local missing_cover
 local SH = {
     getBookData = function(fp, _, opts)
-        H.eq(opts.skip_description, true)
+        H.eq(opts.skip_description or opts.progress_only, true)
         return books[fp] or { title = fp, authors = "", percent = 0 }
     end,
     getBookCover = function(fp, w, h)
@@ -257,6 +257,53 @@ package.loaded["ui/widget/inputdialog"] = Widget:extend{
     onShowKeyboard = function(self) self.keyboard_shown = true end,
 }
 local View = require("adapters/orbitui_dashboard_view")
+
+H.test("See all lazily lists every ongoing history book and opens through Home", function()
+    local ids = { "readhistory", "ui/widget/menu", "infra/sui_virtual_paths", "libs/libkoreader-lfs",
+        "features/library/sui_recent_hidden" }
+    local original = {}
+    for _, id in ipairs(ids) do original[id] = package.loaded[id] end
+    local history = { { file = "/current" }, { file = "/first" }, { file = "/first" },
+        { file = "/second" }, { file = "/third", dim = true }, { file = "/fourth" },
+        { file = "/abandoned" }, { file = "/finished" } }
+    for i = 1, 34 do history[#history + 1] = { file = "/zero" .. i } end
+    history[#history + 1] = { file = "/done" }
+    history[#history + 1] = { file = "/fifth" }
+    books["/fifth"] = { title = "An older book", percent = .41 }
+    package.loaded["readhistory"] = { hist = history }
+    package.loaded["ui/widget/menu"] = Widget:extend{
+        onCloseWidget = function() end,
+        switchItemTable = function(self, _, items) self.item_table = items end,
+    }
+    package.loaded["infra/sui_virtual_paths"] = { isVirtual = function() return false end,
+        toVirtual = function(p) return p end }
+    package.loaded["libs/libkoreader-lfs"] = { attributes = function(p) return p ~= "/fourth" and "file" end }
+    package.loaded["features/library/sui_recent_hidden"] = { snapshot = function() return { ["/second"] = true } end }
+    local UIManager = package.loaded["ui/uimanager"]
+    local queue = {}
+    UIManager.nextTick = function(_, callback) queue[#queue + 1] = callback end
+    UIManager.scheduleIn = function(_, _, callback) queue[#queue + 1] = callback end
+
+    Dashboard.showOngoing(ctx)
+    local menu = shown_dialog
+    H.eq(menu.item_table[1].text, "Loading…")
+    for _, task in ipairs(queue) do task() end
+    H.eq(#menu.item_table, 3)
+    H.eq(menu.item_table[1].file, "/current")
+    H.eq(menu.item_table[2].file, "/first")
+    H.eq(menu.item_table[3].file, "/fifth")
+    H.eq(menu.item_table[3].text, "An older book")
+    H.eq(menu.item_table[3].mandatory, "41 %")
+    menu:onMenuSelect(menu.item_table[3]); H.eq(opened, "/fifth"); H.eq(menu.closed, true)
+    Dashboard.showOngoing(ctx)
+    shown_dialog:onCloseWidget()
+    queue[#queue]()
+    H.eq(shown_dialog.item_table[1].text, "Loading…")
+
+    UIManager.nextTick, UIManager.scheduleIn = nil, nil
+    books["/fifth"] = nil
+    for _, id in ipairs(ids) do package.loaded[id] = original[id] end
+end)
 
 H.test("cover staircase keeps the classic setup and puts reading time beside the goal", function()
     local key = "simpleui_hs_orbitui_dashboard_config"
@@ -463,6 +510,15 @@ H.test("straight cover row keeps the last title below time and frames both cover
         end
         for _, slot in ipairs(current._cover_slots) do covers[slot.file] = slot.area end
         H.eq(percentages, 4)
+        local see_all = assert(labels["See all ›"])
+        local see_x, see_y = see_all.overlap_offset[1], see_all.overlap_offset[2]
+        H.eq(see_x + see_all:getSize().w, p.ladder.x + p.ladder.w - p.pad)
+        assert(see_y + see_all:getSize().h < covers["/current"].y)
+        local show, received = Dashboard.showOngoing, nil
+        Dashboard.showOngoing = function(home_ctx) received = home_ctx end
+        assert(current:onDashboardTap(nil, { pos = { x = see_x + 1, y = see_y + 1 } }))
+        Dashboard.showOngoing = show
+        H.eq(received, local_ctx)
         for _, area in ipairs({ p.ladder, p.want, p.new, p.streak, p.week, p.goal }) do
             H.eq(frames[area.x .. "," .. area.y], area.w)
         end
@@ -561,6 +617,35 @@ H.test("straight cover row keeps the last title below time and frames both cover
     custom:free()
     saved[Fonts.KEY_ENABLED] = custom_font_setting
     Silverfish.snapshot, Silverfish.spriteWidget, Silverfish.openPet = snapshot, spriteWidget, openPet
+end)
+
+H.test("straight row honors one or five books and fits single-line title captions", function()
+    local layout_key, config_key = ctx.pfx .. "orbitui_dashboard_layout", ctx.pfx .. "orbitui_dashboard_config"
+    local layout, config = saved[layout_key], saved[config_key]
+    saved[layout_key], saved[config_key] = "cover_row", Model.config(config)
+    saved[config_key].cover_row_count = 1
+    H.eq(#Dashboard.readData(ctx).ongoing, 0)
+    saved[config_key].cover_row_count, saved[config_key].cover_row_caption = 5, "title"
+    local data = Dashboard.readData(ctx)
+    H.eq(#data.ongoing, 4)
+    H.eq(data.ongoing[4].file, "/fourth")
+    data.ongoing[4].data = { title = "The very long title\nthat has to fit under the fifth cover", percent = .1 }
+    local view = View.build(300, 400, ctx, data)
+    local covers, fifth_label = {}, nil
+    for _, slot in ipairs(view._cover_slots) do
+        if slot.area.y < view._plan.ladder.y + view._plan.ladder.h then covers[#covers + 1] = slot.area end
+    end
+    H.eq(#covers, 5)
+    for _, child in ipairs(view[1]) do
+        assert(not (child.text and child.text:match("^%d+ %%$")))
+        if child.text == "The very long title that has to fit under the fifth cover" then fifth_label = child end
+    end
+    assert(fifth_label)
+    H.eq(fifth_label.max_width, covers[5].w)
+    H.eq(fifth_label.overlap_offset[1], covers[5].x)
+    assert(covers[5].x + covers[5].w <= view._plan.w)
+    view:free()
+    saved[layout_key], saved[config_key] = layout, config
 end)
 
 H.test("closing a dashboard layout change rebuilds the data context", function()

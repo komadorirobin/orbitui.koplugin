@@ -313,9 +313,11 @@ function M.readData(ctx)
         goal = localGoal(ctx)
     end
     local current = (cover_layout or visible("hero")) and fp and { file = fp, data = read(fp) } or nil
+    local ongoing_limit = layout == "cover_row" and config.cover_row_count - (current and 1 or 0) or 3
     return {
         current = current,
-        ongoing = (cover_layout or visible("ongoing")) and Model.ongoing(current and current.file, ctx.recent_fps, read, 3) or {},
+        ongoing = (cover_layout or visible("ongoing"))
+            and Model.ongoing(current and current.file, ctx.recent_fps, read, ongoing_limit) or {},
         time_left = cover_layout and current and require("adapters/orbitui_silverfish").timeLeft(ctx, current.file, current.data) or nil,
         want = want, new = new, want_error = want_error, new_error = new_error,
         config = config, layout = layout,
@@ -326,6 +328,66 @@ function M.readData(ctx)
         colour = M.colourMode(ctx.pfx),
         headings = M.readHeadings(ctx.pfx),
     }
+end
+
+function M.showOngoing(ctx)
+    local UI = require("ui/uimanager")
+    local Menu = require("ui/widget/menu")
+    local SH = require("modules/module_books_shared")
+    local VirtualPaths = require("infra/sui_virtual_paths")
+    local lfs = require("libs/libkoreader-lfs")
+    local hidden = require("features/library/sui_recent_hidden").snapshot()
+    local paths = {}
+    for _, entry in ipairs(require("readhistory").hist or {}) do
+        if type(entry) == "table" and type(entry.file) == "string" and not entry.dim and not hidden[entry.file] then
+            paths[#paths + 1] = entry.file
+        end
+    end
+
+    local closed, index, items, seen = false, 1, {}, {}
+    local menu = Menu:new{
+        title = _("Also reading"),
+        item_table = {{ text = _("Loading…"), select_enabled = false }},
+        onMenuSelect = function(self, item)
+            if item.file and ctx.open_fn then
+                UI:close(self)
+                ctx.open_fn(item.file)
+            end
+            return true
+        end,
+        onCloseWidget = function(self)
+            closed = true
+            Menu.onCloseWidget(self)
+        end,
+    }
+    local function step()
+        if closed then return end
+        local last = math.min(index + 15, #paths)
+        for i = index, last do
+            local path = paths[i]
+            if VirtualPaths.isVirtual(path) or lfs.attributes(path, "mode") == "file" then
+                local file = VirtualPaths.toVirtual(path)
+                if not seen[file] and not hidden[file] then
+                    seen[file] = true
+                    local progress = SH.getBookData(file, nil, { progress_only = true })
+                    if Model.isOngoing(progress) then
+                        local book = SH.getBookData(file, nil, { skip_description = true })
+                        items[#items + 1] = { file = file, text = book.title,
+                            mandatory = string.format("%d %%", math.floor(Model.fraction(progress.percent) * 100 + .5)) }
+                    end
+                end
+            end
+        end
+        index = last + 1
+        if index <= #paths then
+            UI:scheduleIn(.01, step)
+        else
+            if #items == 0 then items[1] = { text = _("No books in progress."), select_enabled = false } end
+            menu:switchItemTable(nil, items)
+        end
+    end
+    UI:show(menu)
+    UI:nextTick(step)
 end
 
 function M.getHeight(ctx)

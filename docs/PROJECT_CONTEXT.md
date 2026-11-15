@@ -28,6 +28,8 @@ and correct this file in the same change.
   with a route to Mentions. Reading dashboard cards can run dock shortcuts.
   Statistics-only updates reuse the current cover lists, Android cover saves
   share repaints, and cold metadata snapshot writes are deferred.
+  Straight cover row keeps four books with percentages by default and offers
+  up to five covers, title captions and a link to the ongoing reading history.
 
 - **Top-menu footer, released in 1.4.0-beta.3.** Pagination adjusts to the space
   beside the clock and battery, which can be turned off in Quick controls.

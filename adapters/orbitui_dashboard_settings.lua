@@ -501,6 +501,28 @@ function M.items(refresh, pfx, ctx_menu)
     }
     local layout = dashboard().layout(pfx)
     local cover_layout = Model.isCoverLayout(layout)
+    if layout == "cover_row" then
+        local function option(key, value, label)
+            return { text = label, radio = true, keep_menu_open = true, checked_func = function()
+                return dashboard().readConfig(pfx)[key] == value
+            end, callback = function()
+                dashboard().editConfig(pfx, function(c) c[key] = value end, refresh)
+            end }
+        end
+        items[#items + 1] = { text = _("Straight cover row"), sub_item_table_func = function()
+            local counts = {}
+            for count = 1, Model.cover_row_max do
+                counts[count] = option("cover_row_count", count, tostring(count))
+            end
+            return {
+                { text = _("Maximum books"), sub_item_table = counts },
+                { text = _("Below each cover"), sub_item_table = {
+                    option("cover_row_caption", "percent", _("Percentage")),
+                    option("cover_row_caption", "title", _("Title")),
+                } },
+            }
+        end }
+    end
     for index, card in ipairs(Model.heading_cards) do
         local key, heading_index = card.key, index
         local placement = Model.statPlacement(layout, key)

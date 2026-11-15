@@ -386,11 +386,19 @@ function M.content(widget, p, ctx, data)
         local left, right = r.x + p.pad, r.x + r.w - p.pad
         local width = right - left
         local top, bottom = r.y + p.pad, r.y + r.h - p.pad
+        local see_all = text(_("See all") .. " ›", left, top, width, 13, true)
+        local see_size = see_all:getSize()
+        see_all.overlap_offset[1] = right - see_size.w
+        local cover_top = top + math.max(px(21), see_size.h + px(5))
+        action(rect(math.max(left, right - see_size.w - px(11)), r.y + px(3),
+            math.min(width, see_size.w + px(11)), cover_top - r.y - px(3)), function()
+            require("adapters/orbitui_dashboard").showOngoing(ctx)
+        end)
         local gap = px(10)
-        local percent_size, time_size, book_size = 14, 14, 18
+        local caption_size, time_size, book_size = 14, 14, 18
         local time_bold = data.time_left and require("ui/font").FORCE_SYNTHETIZED_BOLD
         local pet_name_size, pet_detail_size = 16, 13
-        local percent_h = textBlockHeight(textFace(percent_size, true), 1)
+        local caption_h = textBlockHeight(textFace(caption_size, true), 1)
         local time_h = data.time_left and textBlockHeight(textFace(time_size, time_bold), 1) + px(2) or 0
         local book_h = data.current and textBlockHeight(textFace(book_size, true), 2) or 0
         local name_h = pet and textBlockHeight(textFace(pet_name_size, true), 1) or 0
@@ -398,25 +406,33 @@ function M.content(widget, p, ctx, data)
         local pet_h = pet and name_h + 2 * detail_h + 2 * px(3) or 0
         local footer_h = math.max(time_h + book_h, pet_h)
         local footer_y = footer_h > 0 and bottom - footer_h - gap or bottom
-        local percent_y = footer_y - percent_h - px(5)
-        local cover_base = percent_y - px(5)
-        local cover_w = math.min(math.floor((width - 3 * gap) / 4),
-            math.floor((cover_base - top) * 2 / 3))
+        local caption_y = footer_y - caption_h - px(5)
+        local cover_base = caption_y - px(5)
+        local count = data.config.cover_row_count
+        local cover_w = math.min(math.floor((width - (count - 1) * gap) / count),
+            math.floor((cover_base - cover_top) * 2 / 3))
         local cover_h = math.floor(cover_w * 3 / 2)
-        local free_w = width - 4 * cover_w
+        local free_w = width - count * cover_w
+        local intervals = math.max(1, count - 1)
+        local title_caption = data.config.cover_row_caption == "title"
         local function column(book, index)
-            local x = left + (index - 1) * cover_w + math.floor((index - 1) * free_w / 3)
+            local x = left + (index - 1) * cover_w + math.floor((index - 1) * free_w / intervals)
             cover(book.file, rect(x, cover_base - cover_h, cover_w, cover_h), false, true)
-            local percent = math.floor(Model.fraction(book.data.percent) * 100 + .5)
-            text(string.format("%d %%", percent), x, percent_y, cover_w, percent_size, true, ink, 1, true)
+            if title_caption then
+                text(Model.normalizeHeading(book.data.title), x, caption_y, cover_w, caption_size, true, ink)
+            else
+                local percent = math.floor(Model.fraction(book.data.percent) * 100 + .5)
+                text(string.format("%d %%", percent), x, caption_y, cover_w, caption_size, true, ink, 1, true)
+            end
             bookAction(rect(x, cover_base - cover_h, cover_w, footer_y - cover_base + cover_h), book.file)
         end
         if cover_w >= px(12) then
             if data.current then column(data.current, 1) end
-            for i, book in ipairs(data.ongoing) do column(book, i + 1) end
+            local offset = data.current and 1 or 0
+            for i, book in ipairs(data.ongoing) do column(book, i + offset) end
         end
         if not data.current and #data.ongoing == 0 then
-            text(_("Open a book to start reading."), left, top, width, 15, false, muted, 2)
+            text(_("Open a book to start reading."), left, cover_top, width, 15, false, muted, 2)
         end
         if footer_h > 0 and footer_y >= top then
             add(UI.solidBar(width, px(1.5), BB.COLOR_DARK_GRAY), left, footer_y)

@@ -970,6 +970,11 @@ local sv = {
     ["Classic"] = "Klassisk",
     ["Cover staircase"] = "Omslagstrappa",
     ["Straight cover row"] = "Rak omslagsrad",
+    ["Maximum books"] = "Max antal böcker",
+    ["Below each cover"] = "Under varje omslag",
+    ["Percentage"] = "Procent",
+    ["See all"] = "Visa alla",
+    ["No books in progress."] = "Inga pågående böcker.",
     ["Cover layouts bring the current and ongoing books together. Straight cover row also groups Want to read and Recently added."] =
         "Omslagslayouterna samlar boken du läste senast och dina pågående böcker. Rak omslagsrad samlar också Vill läsa och Nya böcker.",
     ["Accents"] = "Accenter",
