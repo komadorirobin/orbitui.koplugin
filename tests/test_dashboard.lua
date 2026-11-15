@@ -670,6 +670,47 @@ H.test("cover and progress refresh free only the replaced tree and do not change
     widget:free()
 end)
 
+H.test("statistics-only repaint preserves the current file lists and recomputes statistics", function()
+    local Sources = require("adapters/orbitui_dashboard_sources")
+    local previous = Sources.files
+    local owner = View.build(600, 730, ctx, Dashboard.readData(ctx))
+    local list, stats = owner._dashboard_data.new, ctx.stats
+    Sources.files = function() error("statistics-only refresh must not query shelves") end
+    ctx.stats = { books_year = 37 }
+    H.eq(Dashboard.updateStats(owner, ctx, true), true)
+    H.eq(owner._dashboard_data.new, list)
+    H.eq(owner._dashboard_data.stats.books_year, 37)
+    H.eq(owner._dashboard_data.goal.value, 37)
+    ctx.stats, Sources.files = stats, previous
+    owner:free()
+end)
+
+H.test("selected card actions route to Home shortcuts while cover hit areas retain their book", function()
+    local Sources = require("adapters/orbitui_dashboard_sources")
+    local old_resolve, old_tap = Sources.resolveModule, ctx.on_qa_tap
+    local selected
+    Sources.resolveModule = function(entry) if entry.ref == "history" then return {} end end
+    ctx.on_qa_tap = function(id) selected = id end
+    local custom = Dashboard.readData(ctx)
+    custom.config.tap_actions = { goal = "history", hero = false }
+    local owner = View.build(600, 730, ctx, custom)
+    owner.dimen.x, owner.dimen.y = 0, 0
+    local goal = Model.plan(600, 730).goal
+    owner:onDashboardTap(nil, { pos = { x = goal.x + 2, y = goal.y + 2 } })
+    H.eq(selected, "history")
+    for _, child in ipairs(owner[1]) do
+        if child.fp == "/current" then
+            local xy = child.overlap_offset
+            opened = nil
+            owner:onDashboardTap(nil, { pos = { x = xy[1] + 2, y = xy[2] + 2 } })
+            H.eq(opened, "/current")
+            break
+        end
+    end
+    ctx.on_qa_tap, Sources.resolveModule = old_tap, old_resolve
+    owner:free()
+end)
+
 local function shelfItem(current, key, value)
     local area = Model.plan(current.dimen.w, current.dimen.h)[key]
     for _, child in ipairs(current[1]) do

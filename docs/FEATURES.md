@@ -30,11 +30,16 @@ Arrange it with the Home layout editor. Removing the Home module does not delete
 the shelf or books. Shared search offers the entire library, a configured section
 or the current supported local shelf; remote catalogue search remains separate.
 
+**When tapped** in Reading dashboard card settings picks a registered shortcut,
+the card’s default action, or no action. Book covers and pagination keep their
+own tap targets. For example, the weekly statistics card can open the calendar.
+
 ## Airy book information
 
 The new default overview puts a book's cover, author, reading status, star rating and
 available series/language/format facts above its description and offline EPUB
 tags. Tap a tag to find local books/series; hold it to make a saved chip or shelf.
+The overview shows a localized language name and the available page count.
 The overview shows at most two tag rows. **View all tags** opens the
 complete existing Tags view, including explicit EPUB refresh, similarity search
 and optional BookOrbit tag loading. Already indexed EPUB tags appear from the
@@ -228,6 +233,12 @@ already on the first page to swap its position. After selecting text,
 **More…** still shows the full menu and lets you add fixed plugin buttons
 such as KOAssistant's main button from there. KOAssistant's context-dependent
 quick actions remain available under **More…**.
+
+Hold **Bookmarks** in the reader panel to choose a color for the current page
+bookmark. New page bookmarks use the last selected color. **Colored bookmarks**
+filters the list by color and jumps using the native bookmark navigation.
+With a saved KOAssistant X-Ray, the panel can display the installed coverage
+and open KOAssistant’s own **Mentions** view with its spoiler controls.
 Open the right-hand drawer to preview a page or read an excerpt, move between
 references, open their list, expand/zoom, or remove one with confirmation.
 Only **Go to page / Gå till sidan** moves the book; it uses KOReader's normal

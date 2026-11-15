@@ -3457,7 +3457,7 @@ function ScreenWidget:_scheduleDataRefresh(stats_only)
             -- module's fields were re-fetched — skip setDirty entirely in that case.
             for id, slot in pairs(self._stats_mod_slots or {}) do
                 if (pending_stats_only or not slot.mod.is_book_mod)
-                        and self:_updateModuleStats(slot) then
+                        and self:_updateModuleStats(slot, pending_stats_only) then
                     self:_setSlotDirty(id, slot)
                 end
             end
@@ -3654,9 +3654,9 @@ function ScreenWidget:_syncBookModLabel(mod_id)
     end
 end
 
-function ScreenWidget:_updateModuleStats(slot)
+function ScreenWidget:_updateModuleStats(slot, stats_only)
     -- Module updaters own the content, not the new outer chrome containers.
-    return slot.mod.updateStats(slot.content or slot.widget, self._ctx_cache)
+    return slot.mod.updateStats(slot.content or slot.widget, self._ctx_cache, stats_only)
 end
 
 function ScreenWidget:_refreshBookModSlot(mod_id)

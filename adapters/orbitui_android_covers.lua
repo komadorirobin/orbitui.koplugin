@@ -141,6 +141,18 @@ local function ready(self, fp)
     end
 end
 
+local function publishCovers(self, job)
+    if not job.unpainted or job.unpainted == 0 then return end
+    job.unpainted, job.painted = 0, true
+    if self._inner_vgroup and self._shelf_dims then
+        local ok = pcall(function()
+            self:_swapShelvesInPlace()
+            if not self._expanded and self._hero_parent and self._hero_dims then self:_swapHeroInPlace() end
+        end)
+        if not ok then require("logger").warn("OrbitUI: Android cover is saved; repaint deferred") end
+    end
+end
+
 local function queue(self, files, explicit)
     local UI = require("ui/uimanager")
     local job = self._orbitui_cover_job
@@ -187,11 +199,19 @@ local function queue(self, files, explicit)
             job.files = kept
         end
         local file = table.remove(job.files, 1)
-        if not file then cancel(self); return end
+        if not file then
+            publishCovers(self, job)
+            cancel(self)
+            return
+        end
         job.seen[file.filepath] = nil
         local ok_bim, BIM = pcall(require, "bookinfomanager")
         -- Never interrupt somebody else's indexer or race its database writes.
-        if not ok_bim or BIM:isExtractingInBackground() then cancel(self); return end
+        if not ok_bim or BIM:isExtractingInBackground() then
+            publishCovers(self, job)
+            cancel(self)
+            return
+        end
         local success = M.extract(file.filepath, file.cover_specs)
         self._orbitui_cover_attempts = self._orbitui_cover_attempts or {}
         local attempts = self._orbitui_cover_attempts
@@ -208,12 +228,14 @@ local function queue(self, files, explicit)
             local painted = pcall(function()
                 ready(self, file.filepath)
                 if file.explicit then require("lib/bookshelf_book_repository").invalidateBookCache("android-metadata-refresh") end
-                if self._inner_vgroup and self._shelf_dims then
-                    self:_swapShelvesInPlace()
-                    if not self._expanded and self._hero_parent and self._hero_dims then self:_swapHeroInPlace() end
-                end
+                job.unpainted = (job.unpainted or 0) + 1
             end)
             if not painted then require("logger").warn("OrbitUI: Android cover is saved; repaint deferred") end
+        end
+        -- Show the first result promptly, then share a repaint across up to
+        -- three saves. Always publish the last batch, even after a bad book.
+        if not job.painted or (job.unpainted or 0) >= 3 or #job.files == 0 then
+            publishCovers(self, job)
         end
         if self._orbitui_cover_job == job and #job.files > 0 and not job.callback then
             -- A small gap lets input/repaint run between native document loads.

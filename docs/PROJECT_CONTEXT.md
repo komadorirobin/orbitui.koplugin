@@ -22,6 +22,13 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-15
 
+- **Aleph 1.2-inspired work in development.** Book information localizes the
+  book’s language and displays available pages. The reader panel adds colors
+  for native page bookmarks and shows installed KOAssistant X-Ray coverage
+  with a route to Mentions. Reading dashboard cards can run dock shortcuts.
+  Statistics-only updates reuse the current cover lists, Android cover saves
+  share repaints, and cold metadata snapshot writes are deferred.
+
 - **Top-menu footer, released in 1.4.0-beta.3.** Pagination adjusts to the space
   beside the clock and battery, which can be turned off in Quick controls.
   The setting applies to the Quick Settings tab and KOReader's other top-menu

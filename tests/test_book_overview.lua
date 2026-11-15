@@ -1,6 +1,10 @@
 local root = os.getenv("ORBITUI_TEST_ROOT") or "."
 package.path = root .. "/?.lua;" .. package.path
 local T = require("tests/helpers")
+package.loaded["ui/data/isolanguage"] = { getLocalizedLanguage = function(_, id)
+    return id == "eng" and "English" or id == "swe" and "Svenska" or id
+end }
+package.loaded["lib/bookshelf_lang"] = T.componentModule(root, "lib/bookshelf_lang")
 local W, f, M = T.widget()
 function W:_init()
     self.key_events, self.ges_events = {}, {}
@@ -50,7 +54,7 @@ local function fixture(width, height, scale, language, owned)
         isWidgetShown = function(_, p) return f.shown == p end, getTopmostVisibleWidget = function() return f.top or f.shown end }
     package.loaded["ui/uimanager"] = UI
     local book = { filepath = "/books/book.epub", title = "The Long Book Title: A Story", author = "Author Name",
-        description = ("A book description. "):rep(40), series_name = "Hirayasumi", series_num = 1, lang = "Svenska",
+        description = ("A book description. "):rep(40), series_name = "Hirayasumi", series_num = 1, lang = "sv-SE", page_count = 248,
         cover_bb = { getWidth = function() error("shared one-shot cover must not be touched") end } }
     package.loaded["lib/bookshelf_book_repository"] = {
         buildBookMeta = function(file, opts) T.eq(file, book.filepath); T.eq(opts.want_cover, false); f.reads = f.reads + 1; return book end,
@@ -97,6 +101,14 @@ T.test("overview fits narrow, landscape, dense and portrait layouts without shri
             T.eq(f.reads,1); T.eq(f.peeks,1); T.eq(f.writes,0)
         end
     end
+end)
+T.test("the book information localizes the language and displays only known valid page totals", function()
+    fixture()
+    local text = M.information{ language = "en-US", page_count = 248 }
+    assert(text:find("English", 1, true) and text:find("248", 1, true))
+    assert(not text:find("en-US", 1, true))
+    local safe = M.information{ page_count = 0, lang = "unknown-language" }
+    assert(not safe:find("<br/>0", 1, true))
 end)
 T.test("owned covers are freed once, borrowed covers never; rebuild reuses metadata and tags", function()
     for _, owned in ipairs{true,false} do

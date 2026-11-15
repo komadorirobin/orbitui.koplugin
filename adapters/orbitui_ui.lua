@@ -248,6 +248,7 @@ function M.wrap(name, module)
     elseif name == "lib/bookshelf_module_layout" then
         module.preserve_legacy = true
     elseif name == "lib/bookshelf_book_repository" then
+        module.orbitui_defer_lightmeta_write = true
         module.orbitui_cb7_reader = function()
             local registry = require("document/documentregistry")
             return registry.filetype_provider and registry.filetype_provider.cb7

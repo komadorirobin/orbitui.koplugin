@@ -94,4 +94,26 @@ H.test("radio choices write only the namespaced preference on an explicit tap", 
     end
     H.eq(changed, 4); H.eq(#calls, 0)
 end)
+H.test("installed KOAssistant cache reports coverage and opens the existing spoiler-aware mentions view", function()
+    local _, k = fixture(); ui.koassistant = k
+    local entry = { progress_decimal = .78, result = '{"characters":[]}' }
+    package.loaded["koassistant.artifacts.action_cache"] = { getXrayCache = function(file)
+        H.eq(file, ui.document.file); return entry
+    end }
+    k.showCacheViewer = function(_, info)
+        H.eq(info.data, entry)
+        package.loaded["koassistant.xray.xray_browser"] = { ui = ui, menu = {}, showMentions = function()
+            calls[#calls + 1] = "mentions"; return true
+        end }
+    end
+    local selected = M.readerAI(ui)
+    local coverage, mentions = M.readerXrayDetails(ui, selected)
+    H.eq(coverage, 78); assert(mentions)
+    H.eq(#calls, 0)
+    assert(M.openReaderXrayMentions(ui, selected)); H.eq(calls[1], "mentions"); H.eq(#calls, 1)
+    entry.intro = true
+    H.eq(M.readerXrayDetails(ui, selected), nil)
+    H.eq(M.openReaderXrayMentions(ui, selected), nil)
+    package.loaded["koassistant.artifacts.action_cache"], package.loaded["koassistant.xray.xray_browser"] = nil, nil
+end)
 H.finish()

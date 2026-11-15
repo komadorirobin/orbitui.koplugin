@@ -279,6 +279,12 @@ function M.wrapChrome(chrome)
     end
 end
 
+local function localGoal(ctx)
+    return { value = (ctx.stats or {}).books_year or 0,
+        target = require("infra/sui_goals").get("annual"),
+        module = "reading_goals", metric = "book", source = "KOReader" }
+end
+
 function M.readData(ctx)
     local config = M.readConfig(ctx.pfx)
     local layout = not config.unsupported and M.layout(ctx.pfx) or "classic"
@@ -304,9 +310,7 @@ function M.readData(ctx)
         end
         HC.ensureFresh()
     elseif visible("goal") then
-        goal = { value = (ctx.stats or {}).books_year or 0,
-            target = require("infra/sui_goals").get("annual"),
-            module = "reading_goals", metric = "book", source = "KOReader" }
+        goal = localGoal(ctx)
     end
     local current = (cover_layout or visible("hero")) and fp and { file = fp, data = read(fp) } or nil
     return {
@@ -350,8 +354,23 @@ end
 
 -- These callbacks replace only this module's children. Cached cover buffers
 -- remain borrowed by ImageWidget, exactly as in the native Home modules.
-function M.updateStats(widget, ctx)
-    widget:replaceContent(ctx, M.readData(ctx))
+function M.updateStats(widget, ctx, stats_only)
+    local previous = widget._dashboard_data
+    if not stats_only or not previous or widget._dashboard_ctx ~= ctx then
+        widget:replaceContent(ctx, M.readData(ctx))
+        return true
+    end
+    -- The screen sends this flag only when its book context was retained.
+    -- Keep the article lists, metadata and the live cover/card state in that
+    -- context, but recompute values that use the newly fetched statistics.
+    local data = {}
+    for key, value in pairs(previous) do data[key] = value end
+    data.stats = ctx.stats or {}
+    if data.goal and not data.hardcover then data.goal = localGoal(ctx) end
+    if Model.isCoverLayout(data.layout) and data.current then
+        data.time_left = require("adapters/orbitui_silverfish").timeLeft(ctx, data.current.file, data.current.data)
+    end
+    widget:replaceContent(ctx, data)
     return true
 end
 

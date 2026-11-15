@@ -153,7 +153,7 @@ end
 
 function M.config(raw, legacy)
     local result = { version = 1, order = copy(M.block_order), stats_order = copy(M.stat_order),
-        hidden = {}, modules = {}, sources = {
+        hidden = {}, modules = {}, tap_actions = {}, sources = {
             want = legacy and { kind = "bookorbit" } or { kind = "native", id = "tbr" },
             new = { kind = "native", id = "new_books" },
         }, goal = "auto" }
@@ -190,6 +190,14 @@ function M.config(raw, legacy)
     if raw.version == 3 then result.version = 3 end
     result.order = ordered(raw.order, defaults)
     result.stats_order = ordered(raw.stats_order, M.stat_order)
+    if type(raw.tap_actions) == "table" then
+        local function keep(id)
+            local action = raw.tap_actions[id]
+            if action == false or M.moduleId("action", action) then result.tap_actions[id] = action end
+        end
+        for _, card in ipairs(M.heading_cards) do keep(card.key) end
+        for _, entry in ipairs(result.modules) do keep(entry.id) end
+    end
     for _, card in ipairs(M.heading_cards) do
         result.hidden[card.key] = type(raw.hidden) == "table" and raw.hidden[card.key] == true or nil
     end

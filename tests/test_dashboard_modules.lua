@@ -483,7 +483,9 @@ H.test("the native editor defers Home refresh until close and never writes anoth
     local id = Model.moduleId("simpleui", "external_pet")
     mod.getMenuItems = function(ctx) H.eq(ctx.pfx, pfx); return {{ text = "Native plugin settings" }} end
     local items = Settings.moduleItems(id, changed, pfx)
-    items[#items].callback()
+    local native_settings
+    for _, item in ipairs(items) do if item.text == "Module settings…" then native_settings = item end end
+    assert(native_settings).callback()
     H.eq(args.nav[1].id, "nested_menu", "must not enter the layout-saving module_settings screen")
     H.eq(args.nav[1].params.items_func(menu_ctx)[1].text, "Native plugin settings")
     mod.getMenuItems = nil

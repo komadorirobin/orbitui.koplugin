@@ -5,6 +5,19 @@ local function escape(value)
     return tostring(value or ""):gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;")
         :gsub('"', "&quot;")
 end
+
+local function languageLabel(book)
+    local raw = book.lang or book.language
+    if not raw or raw == "" then return end
+    local _, label = require("lib/bookshelf_lang").canonical(raw)
+    return label or raw
+end
+
+local function pageCount(book)
+    local count = tonumber(book.page_count or book.pages)
+    if count and count > 0 and count < math.huge and count % 1 == 0 then return count end
+end
+
 function M.information(book)
     local _ = require("core/orbitui_i18n")
     local rows = {}
@@ -13,8 +26,8 @@ function M.information(book)
             rows[#rows + 1] = "<p><b>" .. escape(_(label)) .. "</b><br/>" .. escape(value) .. "</p>"
         end
     end
-    add("Pages", book.page_count)
-    add("Language", book.lang or book.language)
+    add("Pages", pageCount(book))
+    add("Language", languageLabel(book))
     add("Format", book.format)
     local attrs
     local ok, fs = pcall(require, "libs/libkoreader-lfs")
@@ -575,7 +588,9 @@ function M.bookPage(owner, record, options, classic)
         if clean(book.series_name or book.series) ~= "" and tonumber(book.series_num) then
             fact("In series", string.format(_("Volume %s"), book.series_num))
         else fact("Series", book.series_name or book.series) end
-        fact("Language", book.lang or book.language)
+        fact("Language", languageLabel(book))
+        local pages = pageCount(book)
+        if pages then fact("Pages", tostring(pages)) end
         fact("Format", clean(book.format) ~= "" and book.format:upper() or (book.filepath:match("%.([^./]+)$") or ""):upper())
         if #facts > 0 then
             body[#body + 1] = rule(w); body[#body + 1] = space(14)
@@ -1574,6 +1589,49 @@ function M.readerAI(ui)
     if choice ~= "auto" then return { id = choice, label = reader_ai_labels[choice], unavailable = true } end
 end
 
+local function cachedReaderXray(ui, selected)
+    if not (selected and selected.id == "koassistant" and selected.plugin and ui.document) then return end
+    -- KOAssistant owns lookup and spoiler rules. Do not look at staged
+    -- checkpoints or load a provider that has not registered in this session.
+    local cache = package.loaded["koassistant.artifacts.action_cache"] or package.loaded.koassistant_action_cache
+    if not (cache and readerCallable(cache.getXrayCache)) then return end
+    local ok, entry = pcall(cache.getXrayCache, ui.document.file)
+    if ok and type(entry) == "table" and type(entry.result) == "string" and entry.result ~= "" then
+        return entry
+    end
+end
+
+function M.readerXrayDetails(ui, selected)
+    local entry = cachedReaderXray(ui, selected)
+    if not entry then return end
+    local coverage
+    local percent = tonumber(entry.progress_decimal)
+    if not entry.intro and entry.source_mode ~= "ai_knowledge" then
+        if entry.full_document then coverage = 100
+        elseif percent and percent >= 0 and percent <= 1 then coverage = math.floor(percent * 100 + 0.5) end
+    end
+    return coverage, not entry.intro and readerCallable(selected.plugin.showCacheViewer)
+        and entry.result:match("^%s*{") ~= nil
+end
+
+function M.openReaderXrayMentions(ui, selected)
+    local reader = package.loaded["apps/reader/readerui"]
+    if not (reader and reader.instance == ui) then return end
+    local fresh = M.readerAI(ui)
+    if not (fresh and selected and fresh.plugin == selected.plugin and readerCallable(fresh.plugin.showCacheViewer)) then return end
+    local entry = cachedReaderXray(ui, fresh)
+    if not entry or entry.intro or not entry.result:match("^%s*{") then return end
+    local file = ui.document.file
+    local module = "koassistant.xray.xray_browser"
+    local previous = package.loaded[module] and package.loaded[module].menu
+    -- This opens only the installed cache, leaving the host's reveal prompts,
+    -- chapter selection, excerpts and navigation entirely with KOAssistant.
+    fresh.plugin:showCacheViewer{ name = "X-Ray", key = "_xray_cache", data = entry, file = file }
+    local browser = package.loaded[module]
+    if browser and browser.ui == ui and browser.menu and browser.menu ~= previous
+            and readerCallable(browser.showMentions) then return browser:showMentions() end
+end
+
 local reader_shortcuts = {
     { "reader_hid", "hidpassthrough", "Bluetooth", { "onHIDPassthroughToggle", "toggle" } },
     { "reader_sync", "syncery", "Sync now", { "syncNow" } },
@@ -1679,6 +1737,177 @@ function M.readerAIItems(changed)
             end }
     end
     return rows
+end
+
+local bookmark_colors = {
+    { "red", "Red", "#ca4f43", "#4b4b4b" }, { "orange", "Orange", "#d98a38", "#858585" },
+    { "yellow", "Yellow", "#e9c34d", "#c5c5c5" }, { "green", "Green", "#5e985d", "#666666" },
+    { "blue", "Blue", "#4b78b1", "#505050" }, { "purple", "Purple", "#8d62a7", "#727272" },
+}
+local bookmark_palette = {}
+for _, color in ipairs(bookmark_colors) do bookmark_palette[color[1]] = color end
+local bookmark_key = "orbitui_bookmark_color"
+local last_bookmark_key = "orbitui_last_bookmark_color"
+
+local function pageBookmark(ui, page)
+    local bm = ui.bookmark
+    if not (bm and ui.annotation and ui.annotation.annotations and bm.getDogearBookmarkIndex) then return end
+    local index = bm:getDogearBookmarkIndex(page or bm:getCurrentPageNumber())
+    local item = index and ui.annotation.annotations[index]
+    if item and not item.drawer then return item, index end
+end
+
+function M.attachBookmarkColors(ui)
+    local bm, dogear = ui.bookmark, ui.view and ui.view.dogear
+    if not (bm and dogear and readerCallable(bm.toggleBookmark) and readerCallable(bm.getDogearBookmarkIndex)
+            and ui.annotation) or bm._orbitui_bookmark_colors then return end
+    bm._orbitui_bookmark_colors = true
+    local toggle = bm.toggleBookmark
+    function bm:toggleBookmark(page, ...)
+        local ok, position = pcall(function()
+            if not page then return self:getCurrentPageNumber() end
+            return ui.rolling and ui.document:getPageXPointer(page) or page
+        end)
+        local last = G_reader_settings:readSetting(last_bookmark_key)
+        local result = toggle(self, page, ...)
+        if ok and position and bookmark_palette[last] then
+            local item = pageBookmark(ui, position)
+            if item and item[bookmark_key] == nil then item[bookmark_key] = last end
+        end
+        return result
+    end
+
+    local paint, screen = dogear.paintTo, require("device").screen
+    function dogear:paintTo(bb, x, y)
+        local item = pageBookmark(ui)
+        local color = item and bookmark_palette[item[bookmark_key]]
+        local icon, size = self.icon, self.dogear_size
+        if not (color and icon and icon.dimen and self[1] and self[1].dimen and size) then return paint(self, bb, x, y) end
+        local mirrored = require("ui/bidi").mirroredUILayout()
+        x = mirrored and x or x + self[1].dimen.w - size
+        y = y + (self.dogear_y_offset or 0)
+        icon.dimen.x, icon.dimen.y = x, y
+        -- Draw the small ribbon inside KOReader's own refresh rectangle.
+        -- Use the same shape in grayscale and keep a dark edge for contrast.
+        local BB = require("ffi/blitbuffer")
+        local tone = screen.isColorEnabled and not screen:isColorEnabled() and color[4] or color[3]
+        if self._orbitui_ribbon_tone ~= tone then
+            self._orbitui_ribbon_tone, self._orbitui_ribbon_ink = tone, BB.colorFromString(tone)
+        end
+        local w, h = math.max(2, math.floor(size * .53)), math.max(3, math.floor(size * .84))
+        local left = mirrored and x + 1 or x + size - w - 1
+        local notch = math.max(1, math.floor(w * .26))
+        for row = 0, h - 1 do
+            local cut = math.max(0, row - (h - notch - 1))
+            if cut == 0 then
+                bb:paintRect(left, y + row, w, 1, BB.COLOR_BLACK)
+                if row > 0 and row < h - notch - 1 and w > 2 then
+                    bb:paintRect(left + 1, y + row, w - 2, 1, self._orbitui_ribbon_ink)
+                end
+            else
+                local tip = math.floor(w / 2) - cut
+                if tip > 0 then
+                    bb:paintRect(left, y + row, tip, 1, BB.COLOR_BLACK)
+                    bb:paintRect(left + w - tip, y + row, tip, 1, BB.COLOR_BLACK)
+                end
+            end
+        end
+    end
+end
+
+function M.bookmarkColorPicker(ui, item, done)
+    if not (ui.bookmark and ui.annotation and ui.document and ui.bookmark._orbitui_bookmark_colors) then return end
+    local _ = require("core/orbitui_i18n")
+    local UI = require("ui/uimanager")
+    local dialog, doc = nil, ui.document
+    local function choose(color)
+        UI:close(dialog)
+        if ui.document ~= doc then return end
+        local index
+        if item then
+            for i, entry in ipairs(ui.annotation.annotations) do if item == entry then index = i; break end end
+            if not index then return end
+        else
+            item, index = pageBookmark(ui)
+        end
+        G_reader_settings:saveSetting(last_bookmark_key, color)
+        if not item then
+            ui.bookmark:onToggleBookmark()
+            item, index = pageBookmark(ui)
+        end
+        if item and item[bookmark_key] ~= color then
+            item[bookmark_key] = color
+            ui:handleEvent(require("ui/event"):new("AnnotationsModified", { item, index_modified = index, modify_datetime = true }))
+        end
+        UI:setDirty(ui, "ui")
+        if done then done() end
+    end
+    local rows = {}
+    for i = 1, #bookmark_colors, 2 do
+        local row = {}
+        for j = i, math.min(i + 1, #bookmark_colors) do
+            local spec = bookmark_colors[j]
+            row[#row + 1] = { text = _(spec[2]), callback = function() choose(spec[1]) end }
+        end
+        rows[#rows + 1] = row
+    end
+    rows[#rows + 1] = { { text = _("Default color"), callback = function() choose(nil) end },
+        { text = _("Cancel"), callback = function() UI:close(dialog) end } }
+    dialog = require("ui/widget/buttondialog"):new{ title = _("Bookmark color"), buttons = rows }
+    UI:show(dialog)
+    return dialog
+end
+
+function M.showColoredBookmarks(ui, color)
+    local _ = require("core/orbitui_i18n")
+    local UI = require("ui/uimanager")
+    local bm, doc = ui.bookmark, ui.document
+    local list, items = nil, {}
+    local function filter()
+        local picker
+        local function pick(id)
+            UI:close(picker)
+            UI:close(list)
+            if ui.document == doc then M.showColoredBookmarks(ui, id) end
+        end
+        local rows = {{ text = _("All colors"), callback = function() pick() end }}
+        for _i, spec in ipairs(bookmark_colors) do
+            local id = spec[1]
+            rows[#rows + 1] = { text = _(spec[2]), callback = function() pick(id) end }
+        end
+        picker = require("ui/widget/menu"):new{ title = _("Filter by bookmark color"), item_table = rows, is_popout = true }
+        function picker:onMenuSelect(item) if item.callback then item.callback() end end
+        function picker:onClose() UI:close(self); return true end
+        UI:show(picker)
+    end
+    items[1] = { text = _("Filter by bookmark color") .. " ›", callback = filter }
+    items[2] = { text = _("Color current page bookmark…"), callback = function()
+        if ui.document ~= doc then return end
+        M.bookmarkColorPicker(ui, nil, function() UI:close(list); M.showColoredBookmarks(ui, color) end)
+    end }
+    for _i, entry in ipairs(ui.annotation.annotations or {}) do
+        local spec = not entry.drawer and bookmark_palette[entry[bookmark_key]]
+        if spec and (not color or color == spec[1]) then
+            local item = entry
+            items[#items + 1] = { text = _(spec[2]) .. " · " .. (item.chapter or _("Bookmark")),
+                mandatory = bm:getBookmarkPageString(item.page), callback = function()
+                    if ui.document ~= doc then return end
+                    UI:close(list); ui.link:addCurrentLocationToStack(); bm:gotoBookmark(item.page)
+                end, hold_callback = function()
+                    if ui.document ~= doc then return end
+                    M.bookmarkColorPicker(ui, item, function() UI:close(list); M.showColoredBookmarks(ui, color) end)
+                end }
+        end
+    end
+    if #items == 2 then items[3] = { text = _("No colored bookmarks."), dim = true } end
+    local spec = bookmark_palette[color]
+    list = require("ui/widget/menu"):new{ title = spec and _(spec[2]) or _("Colored bookmarks"),
+        item_table = items, covers_fullscreen = true }
+    function list:onMenuSelect(item) if item.callback then item.callback() end end
+    function list:onMenuHold(item) if item.hold_callback then item.hold_callback(); return true end end
+    function list:onClose() UI:close(self); return true end
+    UI:show(list)
+    return list
 end
 
 local reader_bottom_key = "orbitui_reader_bottom_panel"
@@ -2040,7 +2269,12 @@ function M.readerSheet(options)
                     if self.closed or self.revision ~= revision or not UI:isWidgetShown(self)
                             or readerForeground(UI) ~= self then return end
                     if cb then cb() elseif spec.callback then spec.callback() end
-                end }
+                end,
+                hold_callback = spec.hold_callback and function()
+                    if not self.closed and self.revision == revision and readerForeground(UI) == self then
+                        return spec.hold_callback()
+                    end
+                end or nil }
             if content then
                 b.label_widget:free(); b.label_widget = content; b.label_container[1] = content
             elseif primary then b.label_widget.fgcolor, b.label_widget.bgcolor = BB.COLOR_WHITE, BB.COLOR_BLACK end
@@ -2127,6 +2361,7 @@ function M.readerSheet(options)
             local spec = specs[id] or {}
             local fg = spec.enabled == false and BB.COLOR_DARK_GRAY or BB.COLOR_BLACK
             local labelw = bodyw - art:getSize().w - px(40)
+            if type(detail) == "string" then detail = text(detail, 11, false, labelw, px(25), fg) end
             local label = V:new{ align = "left", text(heading, 14, detail ~= nil, labelw, px(detail and 42 or 24), fg) }
             if detail then label[#label + 1] = space(3); label[#label + 1] = detail end
             local content = H:new{ align = "center", art, gap(12), label, gap(12),
@@ -2147,12 +2382,14 @@ function M.readerSheet(options)
             end
             append(tiles); self.layout[#self.layout + 1] = focus
             local have_row = false
-            for _, row in ipairs{ { "bookinfo", "info" }, { "pins", "collections_bookmark" }, { "gotopage", "auto_stories" },
-                    { "config", "settings" }, { "reader_ai", "manage_search" }, { "reader_footer", "settings" } } do
+            for _, row in ipairs{ { "bookinfo", "info" }, { "pins", "collections_bookmark" }, { "bookmark_colors", "bookmark" },
+                    { "gotopage", "auto_stories" }, { "config", "settings" }, { "reader_ai", "manage_search" },
+                    { "reader_mentions", "manage_search" }, { "reader_footer", "settings" } } do
                 local spec = specs[row[1]]
                 if spec then
                     append(have_row and rule(bodyw) or space(8)); have_row = true
-                    local b = richRow(row[1], spec.text, nil, Center:new{ dimen = Geom:new{ w = px(32), h = px(30) }, icon(row[2]) }, 36)
+                    local b = richRow(row[1], spec.text, spec.subtitle,
+                        Center:new{ dimen = Geom:new{ w = px(32), h = px(30) }, icon(row[2]) }, 36)
                     append(b); self.layout[#self.layout + 1] = { b }
                 end
             end
@@ -2471,14 +2708,26 @@ function M.readerTools()
                 for j = i, math.min(i + 1, #actions) do
                     local entry = actions[j]
                     local target = s.ui[entry[1]]
-                    row[#row + 1] = button(entry[1], _(entry[3]), function() action(s, entry) end,
+                    local spec = button(entry[1], _(entry[3]), function() action(s, entry) end,
                         entry[1] == "pins" or target and callable(target[entry[2]]) or false)
+                    if entry[1] == "bookmark" and target and target._orbitui_bookmark_colors then
+                        spec.hold_callback = button("bookmark_color", "", function()
+                            T.retire(s.ui); M.bookmarkColorPicker(s.ui)
+                        end).callback
+                    end
+                    row[#row + 1] = spec
                 end
                 rows[#rows + 1] = row
             end
+            if s.ui.bookmark and s.ui.bookmark._orbitui_bookmark_colors then
+                rows[#rows + 1] = { button("bookmark_colors", _("Colored bookmarks"), function()
+                    T.retire(s.ui); M.showColoredBookmarks(s.ui)
+                end) }
+            end
             local selected = M.readerAI(s.ui)
             if selected then
-                rows[#rows + 1] = { button("reader_ai", _(selected.label)
+                local coverage, has_mentions = M.readerXrayDetails(s.ui, selected)
+                local xr_row = button("reader_ai", _(selected.label)
                     .. (selected.unavailable and (" · " .. _("Unavailable")) or ""), function()
                     local fresh = M.readerAI(s.ui)
                     if not fresh or fresh.plugin ~= selected.plugin or fresh.id ~= selected.id or fresh.unavailable then
@@ -2487,7 +2736,16 @@ function M.readerTools()
                     T.retire(s.ui)
                     local ok, result = pcall(M.openReaderAI, s.ui, selected)
                     if not ok or not result then failure("reader_ai", "unavailable integration") end
-                end, not selected.unavailable) }
+                end, not selected.unavailable)
+                if coverage then xr_row.subtitle = string.format(_("Covers up to %d%%"), coverage) end
+                rows[#rows + 1] = { xr_row }
+                if has_mentions then
+                    rows[#rows + 1] = { button("reader_mentions", _("X-Ray mentions"), function()
+                        T.retire(s.ui)
+                        local ok, err = pcall(M.openReaderXrayMentions, s.ui, selected)
+                        if not ok then failure("reader_mentions", err) end
+                    end) }
+                end
             end
             local quick = {}
             for _i, spec in ipairs(reader_shortcuts) do

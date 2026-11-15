@@ -292,6 +292,17 @@ function M.content(widget, p, ctx, data)
     local function settings(id)
         return function() if ctx.open_settings_fn then ctx.open_settings_fn(id) end end
     end
+    local function cardTap(id, normal)
+        local map = data.config and data.config.tap_actions
+        local ref = map and map[id]
+        if ref == nil then return normal end
+        return function(...)
+            if ref == false then return end
+            if ctx.on_qa_tap and require("adapters/orbitui_dashboard_sources").resolveModule{ kind = "action", ref = ref } then
+                ctx.on_qa_tap(ref)
+            elseif normal then normal(...) end
+        end
+    end
     local function bookAction(r, fp)
         action(r, function() if ctx.open_fn then ctx.open_fn(fp) end end,
             function() if ctx.hold_fn then ctx.hold_fn(fp, Model.id) end end)
@@ -370,6 +381,8 @@ function M.content(widget, p, ctx, data)
         local Silverfish = require("adapters/orbitui_silverfish")
         local pet = Silverfish.snapshot()
         box(r, paper, nil, "hero")
+        local tap = cardTap("hero")
+        if tap then action(r, tap) end
         local left, right = r.x + p.pad, r.x + r.w - p.pad
         local width = right - left
         local top, bottom = r.y + p.pad, r.y + r.h - p.pad
@@ -434,6 +447,8 @@ function M.content(widget, p, ctx, data)
         local Silverfish = require("adapters/orbitui_silverfish")
         local pet = Silverfish.snapshot()
         box(r, paper, BB.COLOR_LIGHT_GRAY, "hero")
+        local tap = cardTap("hero")
+        if tap then action(r, tap) end
         local left, right = r.x + p.pad, r.x + r.w - p.pad
         local cover_top, bottom = r.y + p.pad, r.y + r.h - p.pad
         local gap = math.max(3, px(10))
@@ -529,6 +544,8 @@ function M.content(widget, p, ctx, data)
     r = p.hero
     if r then
     local hero_frame = box(r, dark and ink or nil, dark and ink or nil, "hero")
+    local hero_tap = cardTap("hero")
+    if hero_tap then action(r, hero_tap) end
     if coloured then
         widget._hero_apply_colour = function(image)
             local palette = colours("hero", M.coverColour(image))
@@ -628,13 +645,15 @@ function M.content(widget, p, ctx, data)
             text(tile[2], r.x + p.pad, r.y + math.floor(r.h * 0.40), r.w - p.pad * 2, 23, true)
             text(_(tile[3]), r.x + p.pad, r.y + r.h - p.pad - px(15), r.w - p.pad * 2, 11, false, muted)
         end
-        action(r, settings("reading_stats"))
+        action(r, cardTap(tile[4], settings("reading_stats")))
         end
     end
 
     r = p.ongoing
     if r then
     box(r, nil, nil, "ongoing")
+    local ongoing_tap = cardTap("ongoing")
+    if ongoing_tap then action(r, ongoing_tap) end
     title(heading("ongoing", _("Also reading")), r)
     if #data.ongoing == 0 then
         text(_("No other books in progress."), r.x + p.pad, r.y + px(46),
@@ -693,7 +712,7 @@ function M.content(widget, p, ctx, data)
             r.y + (p.ladder and p.pad + math.max(17, px(27)) or px(46)),
             r.w - p.pad * 2, 14, false, muted, 3)
     end
-    action(r, settings(goal and goal.module or "hardcover"))
+    action(r, cardTap("goal", settings(goal and goal.module or "hardcover")))
     end
 
     local owner = ctx._screen_widget or widget
@@ -712,6 +731,8 @@ function M.content(widget, p, ctx, data)
         end
         local stacked = p.cover_row and not extra
         box(area, stacked and paper or nil, nil, key)
+        local custom_tap = cardTap(key)
+        if custom_tap and not extra then action(area, custom_tap) end
         local count = extra and extra.view == "carousel" and 1 or 3
         local pages = math.max(1, math.ceil(#files / count))
         local page = math.min(pages, math.max(1, owner._orbitui_dashboard_pages[key] or 1))
@@ -747,7 +768,7 @@ function M.content(widget, p, ctx, data)
             if #files == 0 then
                 text(failed and _("Could not load books.") or _("No books to show yet."),
                     x, area.y + p.pad + px(8), w, 14, false, muted, 2)
-                action(area, settings(data.config and Model.id or module))
+                if not custom_tap then action(area, settings(data.config and Model.id or module)) end
                 return
             end
             local base = footer_y - px(3)
@@ -768,10 +789,9 @@ function M.content(widget, p, ctx, data)
         text(heading(key, label), area.x + p.pad, area.y + p.pad, area.w - 2 * p.pad, 13, true)
         if extra then
             local edit = function() widget:editModules(key) end
+            local tap = cardTap(key, edit)
             local hold = require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false and edit or nil
-            action(area, edit, hold)
-            action(rect(area.x, area.y, area.w, px(65)), function() widget:editModules(key) end,
-                hold)
+            action(area, tap, hold)
             text("[BookOrbit] " .. extra.caption, area.x + p.pad, area.y + p.pad + px(22), area.w - 2 * p.pad, 10, false, muted)
         end
         if pages > 1 then
@@ -798,7 +818,7 @@ function M.content(widget, p, ctx, data)
                     or _("No linked books from this source on this device."))
                     or (failed and _("Could not load books.") or _("No books to show yet.")),
                 area.x + p.pad, area.y + px(extra and 75 or 50), area.w - p.pad * 2, 14, false, muted, 3)
-            action(area, extra and function() widget:editModules(key) end or settings(data.config and Model.id or module))
+            if not extra and not custom_tap then action(area, settings(data.config and Model.id or module)) end
             return
         end
         local slot_w = math.floor((area.w - 2 * p.pad - 2 * p.gap) / count)
@@ -917,13 +937,13 @@ function M.content(widget, p, ctx, data)
             end
             add(clip, area.x + inset, area.y + top)
             index = #root
-            action(area, function(x, y)
+            action(area, cardTap(selected.id, function(x, y)
                 if not def or clip.failed then widget:editModules(selected.id)
                 else
                     Sources.tapModule(selected, def, args, regions,
                         x - inset - (clip._child_dx or 0), y - top - (clip._child_dy or 0))
                 end
-            end, require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false
+            end), require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false
                 and function() widget:editModules(selected.id) end or nil)
             end
         end

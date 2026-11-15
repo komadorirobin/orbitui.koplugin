@@ -86,6 +86,24 @@ function M.bookOrbitSources(refresh, choose, checked)
     return items
 end
 
+local function tapItem(id, refresh, pfx)
+    local function option(value, label)
+        return { text = label, radio = true, checked_func = function()
+            return dashboard().readConfig(pfx).tap_actions[id] == value
+        end, callback = function()
+            dashboard().editConfig(pfx, function(config) config.tap_actions[id] = value end, refresh)
+        end }
+    end
+    return { text = _("When tapped"), help_text = _("Choose what this card opens. Covers and page arrows keep their own actions."),
+        sub_item_table_func = function()
+            local items = { option(nil, _("Default action")), option(false, _("Do nothing")) }
+            for _, action in ipairs(Sources.moduleChoices("action")) do
+                items[#items + 1] = option(action.ref, action.label)
+            end
+            return items
+        end }
+end
+
 function M.moduleItems(id, refresh, pfx, navigation)
     if not Model.module(dashboard().readConfig(pfx), id) then
         return {{ text = _("Card removed."), dim = true }}
@@ -125,6 +143,7 @@ function M.moduleItems(id, refresh, pfx, navigation)
                     for i = #c.modules, 1, -1 do if c.modules[i].id == id then table.remove(c.modules, i) end end
                     for i = #c.order, 1, -1 do if c.order[i] == id then table.remove(c.order, i) end end
                     c.hidden[id] = nil
+                    c.tap_actions[id] = nil
                 end))
                 if ok and removed then
                     did_remove = true
@@ -200,6 +219,7 @@ function M.moduleItems(id, refresh, pfx, navigation)
                 end }
         end
     end
+    items[#items + 1] = tapItem(id, refresh, pfx)
     return items
 end
 
@@ -514,6 +534,7 @@ function M.items(refresh, pfx, ctx_menu)
                     return options
                 end }
             end
+            rows[#rows + 1] = tapItem(key, refresh, pfx)
             return rows
         end }
         if placement and (not cover_layout or (key ~= "hero" and key ~= "ongoing")) then

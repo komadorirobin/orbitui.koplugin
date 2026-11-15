@@ -308,7 +308,9 @@ H.test("the staircase editor hides classic heading controls without changing the
     H.eq(#staircase_items, #items - 2)
     local reading_today = staircase_items[4]
     assert(not reading_today.text_func():find("(Off)", 1, true))
-    H.eq(#reading_today.sub_item_table_func(), 1)
+    local choices = reading_today.sub_item_table_func()
+    H.eq(#choices, 2)
+    H.eq(choices[2].text, "When tapped")
     H.eq(saved[key(custom)], classic)
     Dashboard.setLayout(custom, "classic", function() end)
     local restored = Config.items(function() end, custom)

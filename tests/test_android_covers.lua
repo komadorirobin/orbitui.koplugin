@@ -258,6 +258,16 @@ H.test("close, suspend and reader-open cancellation invalidate already captured 
     local w = fixture(); w:_fireBimExtraction({ { filepath = "/a.epub", cover_specs = specs } })
     local stale = pending[1]; w:_stopStatusTimer(); stale(); H.eq(#calls, 0); H.eq(#pending, 0); assert(calls.stopped)
 end)
+H.test("the first Android cover appears promptly and later covers share a redraw", function()
+    local w = fixture()
+    for _, fp in ipairs{ "/a.epub", "/b.epub", "/c.epub", "/d.epub" } do
+        assert(w:orbitui_refreshMetadata({ fp }))
+    end
+    tick(); H.eq(calls.swaps, 1)
+    tick(); tick(); H.eq(calls.swaps, 1)
+    tick(); H.eq(calls.swaps, 2); H.eq(#pending, 0)
+    for _, fp in ipairs{ "/a.epub", "/b.epub", "/c.epub", "/d.epub" } do assert(rows[fp].has_cover) end
+end)
 H.test("covered or closed shelves and changed safety preferences cannot run stale native loads", function()
     for _, change in ipairs({ "top", "closed", "safe" }) do
         local w = fixture(); w:_fireBimExtraction({ { filepath = "/a.epub", cover_specs = specs } })

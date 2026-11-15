@@ -4490,6 +4490,23 @@ local function _saveRowSnapshot(rows, fingerprint)
     pcall(p.save, p, { fingerprint = fingerprint, rows = rows })
 end
 
+function Repo._persistColdRows(entry)
+    if not Repo.orbitui_defer_lightmeta_write then return _saveRowSnapshot(entry.rows) end
+    local ui = package.loaded["ui/uimanager"]
+    local fingerprint = _bimDbFingerprint()
+    if not (ui and ui.scheduleIn and fingerprint) then return end
+    -- The RAM row map is immediately useful. The compressed cache on disk
+    -- is derived data, so an early exit or a newer snapshot can skip this
+    -- write without losing any reading state.
+    ui:scheduleIn(.5, function()
+        if _light_meta_rows_cache ~= entry or _lightmeta_refresh.invalidated
+                or _bimDbFingerprint() ~= fingerprint then return end
+        local reader = package.loaded["apps/reader/readerui"]
+        if reader and reader.instance then return end
+        _saveRowSnapshot(entry.rows, fingerprint)
+    end)
+end
+
 -- Keep stale first paint cheap, then refresh through cancellable row windows.
 local function _scheduleLightMetaRefresh()
     _lightmeta_refresh.request{
@@ -4580,7 +4597,7 @@ local function _getLightMetaCache(home, depth)
             }
             if not snapshot then
                 _lightmeta_refresh.invalidated = false
-                _saveRowSnapshot(row_map)
+                Repo._persistColdRows(_light_meta_rows_cache)
             end
         else
             _light_meta_rows_cache = nil

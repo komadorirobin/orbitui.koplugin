@@ -65,6 +65,7 @@ function OrbitUI:onReaderReady()
     panel.readerBottomMenu().attach(self.ui)
     panel.attachDictionary(self.ui)
     panel.attachFooter(self.ui)
+    panel.attachBookmarkColors(self.ui)
     local Dispatcher = require("dispatcher")
     local _ = require("core/orbitui_i18n")
     Dispatcher:registerAction("orbitui_reader_pins", { category = "none", event = "OrbitUIReaderPins",
