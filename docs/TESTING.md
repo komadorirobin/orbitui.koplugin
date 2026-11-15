@@ -1,5 +1,22 @@
 # Verification and device acceptance
 
+## 2026-11-15 — Literary Clock
+
+The sealed OrbitUI runtime **12916ae5a** ran on the KOReader 2026.07.1 Tolino
+emulator. The Swedish catalog exposed Literary Clock 0.1.1 and its language
+disclosure. The host downloaded the exact release ZIP from GitHub. The guest
+used those bytes as the HTTP response because its test network was offline.
+Native libarchive, SHA-256 and the regular installer verified all 39 files.
+The plugin loaded after restart and appeared in the dashboard’s Shelf modules.
+
+The test advanced the clock across a minute boundary while the real UI timer
+was scheduled. The quote changed and only the clock’s content rectangle was
+marked dirty. A simulated resume refreshed the quote immediately. Both
+checks kept the neighboring dashboard card instance. The Swedish and English
+catalog navigation tests check the credits link and status. Bigme testing and
+public release remain pending. Local evidence is in
+`test-results/literary-clock-20261115/`.
+
 ## 2026-11-15 — Dashboard cover row options
 
 The sealed **bfbffcc98** runtime booted on an isolated KOReader 2026.07.1
