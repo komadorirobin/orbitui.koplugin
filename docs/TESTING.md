@@ -1,5 +1,19 @@
 # Verification and device acceptance
 
+## 2026-11-15 — Dashboard cover row options
+
+The sealed **bfbffcc98** runtime booted on an isolated KOReader 2026.07.1
+Tolino emulator. The default Home showed four covers with percentages. The
+Swedish settings menu changed it to five books with title captions, and the
+native TextWidget truncated long titles to a line. See all listed six ongoing
+books, excluded the completed and unread fixtures, and opened the sixth
+book. The saved KOReader History filter was preserved. KOReader restarted
+with the selected settings and resolved the English labels. The dashboard
+tests also cover a history item beyond Home’s most recent 30, a missing book,
+hidden entries and closing the list during loading. Device evidence is in
+`test-results/dashboard-cover-row-20261115/`. Bigme was not updated for this
+check.
+
 ## 2026-11-15 — Aleph 1.2 refinements
 
 Bigme ADB tested private runtime **917547e1a** in disposable EPUB and CBZ
