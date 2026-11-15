@@ -895,25 +895,95 @@ function M.collection(name, opts)
     return modal, draft
 end
 
+local function readerCallable(fn)
+    local mt = type(fn) == "table" and getmetatable(fn)
+    return type(fn) == "function" or type(mt) == "table" and type(mt.__call) == "function"
+end
+local function readerPlugin(ui, name)
+    local plugin = rawget(ui, name)
+    local loader = package.loaded.pluginloader
+    if not plugin and loader and readerCallable(loader.getPluginInstance) then
+        local ok, found = pcall(loader.getPluginInstance, loader, name)
+        if ok then plugin = found end
+    end
+    if type(plugin) == "table" and plugin.ui == ui and plugin.disabled ~= true and plugin._disabled ~= true then
+        return plugin
+    end
+end
+
 local highlight_key = "orbitui_highlight_menu_order"
 local highlight_pin = "02_orbitui_pin_reference"
 local highlight_more = "zz_orbitui_highlight_more"
 local highlight_back = "00_orbitui_highlight_back"
 local highlight_edit = "zzz_orbitui_highlight_customize"
+local koa_slot_format = "90_%02d_koassistant_slot"
+local koa_first_slot = koa_slot_format:format(1)
+local koa_action_prefix = "orbitui:koassistant:"
 local highlight_default = { "01_select", "02_highlight", highlight_pin, "03_copy", "04_add_note", "06_dictionary" }
 local highlight_labels = {
     ["01_select"] = "Select", ["02_highlight"] = "Highlight", [highlight_pin] = "Pin reference",
     ["03_copy"] = "Copy", ["04_add_note"] = "Add note", ["05_wikipedia"] = "Wikipedia",
     ["06_dictionary"] = "Dictionary", ["07_translate"] = "Translate", ["12_search"] = "Search",
 }
+local conditional_highlight_labels = {
+    ["08_share_text"] = "Share Text", ["09_view_html"] = "View HTML",
+    ["10_user_dict"] = "Hyphenate", ["11_follow_link"] = "Follow Link",
+}
 local observed_highlight_labels = setmetatable({}, { __mode = "k" })
 
 local function highlightActionId(id)
-    -- KOAssistant's numbered quick-action slots can point to different actions
-    -- when opening another book or editing its quick actions. Keep them in More.
     return type(id) == "string" and #id > 0 and #id <= 128 and not id:find("%c")
         and id ~= highlight_back and id ~= highlight_more and id ~= highlight_edit
         and not id:match("^90_%d+_koassistant_slot$")
+end
+
+local function koaHighlightIds(reader, registered)
+    if not registered[koa_first_slot] then return {} end
+    local plugin = readerPlugin(reader, "koassistant")
+    local service = plugin and plugin.action_service
+    local resolve = type(service) == "table" and service.getHighlightMenuActionObjects
+    if not readerCallable(resolve) then return {} end
+    local ok, actions = pcall(resolve, service, true, reader.document.file)
+    local ids = {}
+    if ok and type(actions) == "table" then
+        for i, action in ipairs(actions) do
+            local slot = koa_slot_format:format(i)
+            if registered[slot] and type(action) == "table" and type(action.id) == "string" and action.id ~= "" then
+                local id = koa_action_prefix .. action.id
+                if highlightActionId(id) then ids[slot] = id end
+            end
+        end
+    end
+    return ids
+end
+
+local function observeHighlightActions(highlight, registered, rendered)
+    local dialog = highlight.highlight_dialog
+    local layout = dialog and dialog.buttontable and dialog.buttontable.buttons_layout
+    local visible_text = {}
+    for i, row in ipairs(dialog and dialog.buttons or {}) do
+        local widgets = layout and layout[i]
+        for j, button in ipairs(row) do
+            -- Some plugins supply text_func instead of text. Use the native button's resolved label.
+            local widget = widgets and widgets[j]
+            visible_text[button] = widget and widget.text or button.text
+        end
+    end
+    local labels, koa_ids = {}, nil
+    for slot, button in pairs(rendered) do
+        local text = visible_text[button]
+        if type(text) == "string" and #text <= 160 and text:find("%S") then
+            local id = slot
+            if slot:match("^90_%d+_koassistant_slot$") then
+                koa_ids = koa_ids or koaHighlightIds(highlight.ui, registered)
+                id = koa_ids[slot]
+            end
+            if id then
+                labels[id] = { text = text:gsub("%s+", " "), slot = slot, factory = registered[slot] }
+            end
+        end
+    end
+    observed_highlight_labels[registered] = labels
 end
 
 local function highlightOrder()
@@ -938,8 +1008,11 @@ function M.highlightMenuItems(changed)
     local observed = registered and observed_highlight_labels[registered]
     local labels, ids = {}, {}
     for id, name in pairs(highlight_labels) do labels[id] = _(name) end
+    for id, name in pairs(conditional_highlight_labels) do
+        if registered and registered[id] then labels[id] = _(name) end
+    end
     for id, entry in pairs(observed or {}) do
-        if entry.factory == registered[id] then labels[id] = entry.text end
+        if entry.factory == registered[entry.slot] then labels[id] = entry.text end
     end
     for id in pairs(labels) do ids[#ids + 1] = id end
     table.sort(ids)
@@ -978,7 +1051,7 @@ function M.highlightMenuItems(changed)
         end
         return rows
     end
-    local rows = {}
+    local rows = { { text = _("Tap a slot to change its action."), enabled = false } }
     for position, id in ipairs(active) do
         local slot = position
         local label = labels[id] or string.format(_("Unavailable action (%s)"), id)
@@ -997,7 +1070,7 @@ function M.highlightMenuItems(changed)
         end }
     rows[#rows + 1] = { text = _("About the text selection menu"), callback = function()
         Context.notify(_("Choose an action for each position. Choosing one already in the menu swaps the two.")
-            .. "\n\n" .. _("To add a plugin button, select text and open More…, then customize the menu from there."))
+            .. "\n\n" .. _("To choose from the actions your plugins offer, select text and open More…, then customize the menu from there."))
     end }
     return rows
 end
@@ -1294,19 +1367,15 @@ function M.readerPins()
                 show = function(this, index, expanded)
                     if not live(s) or not this.selected_text then return native(this, index) end
                     local all = this._highlight_buttons
-                    local subset = {}
+                    local subset, rendered = {}, {}
                     if expanded then
-                        local labels = {}
-                        observed_highlight_labels[all] = labels
                         for id, spec in pairs(all) do
-                            if not highlight_labels[id] and highlightActionId(id) and type(spec) == "function" then
-                                local action, factory = id, spec
+                            if type(id) == "string" and not highlight_labels[id] and type(spec) == "function"
+                                    and (highlightActionId(id) or id:match("^90_%d+_koassistant_slot$")) then
+                                local slot, factory = id, spec
                                 subset[id] = function(...)
                                     local button = factory(...)
-                                    local label = type(button) == "table" and button.text
-                                    if type(label) == "string" and #label <= 160 and label:find("%S") then
-                                        labels[action] = { text = label:gsub("%s+", " "), factory = factory }
-                                    end
+                                    rendered[slot] = button
                                     return button
                                 end
                             elseif id ~= highlight_more and id ~= highlight_back and id ~= highlight_edit then
@@ -1322,11 +1391,29 @@ function M.readerPins()
                         end
                     else
                         local order = highlightOrder()
+                        local koa_slots, koa_first_button
                         for i, id in ipairs(order) do
-                            local spec = all[id]
-                            if spec then
-                                local key = order == highlight_default and id or string.format("%02d_%s", i, id)
-                                subset[key] = spec
+                            local key = order == highlight_default and id or string.format("%02d_%s", i, id)
+                            if id:sub(1, #koa_action_prefix) == koa_action_prefix then
+                                local action = id
+                                subset[key] = function(...)
+                                    if not koa_slots then
+                                        koa_slots = {}
+                                        -- KOAssistant refreshes its action list in the first slot's factory.
+                                        koa_first_button = all[koa_first_slot] and all[koa_first_slot](...)
+                                        if koa_first_button and koa_first_button.text ~= "" then
+                                            for slot, action_id in pairs(koaHighlightIds(ui, all)) do
+                                                koa_slots[action_id] = slot
+                                            end
+                                        end
+                                    end
+                                    local slot = koa_slots[action]
+                                    if slot == koa_first_slot then return koa_first_button end
+                                    if slot then return all[slot](...) end
+                                    return { text = "", show_in_highlight_dialog_func = function() return false end }
+                                end
+                            else
+                                subset[key] = all[id]
                             end
                         end
                     end
@@ -1341,6 +1428,7 @@ function M.readerPins()
                     local ok, value = pcall(native, this, index)
                     this._highlight_buttons = all
                     if not ok then error(value, 0) end
+                    if expanded then observeHighlightActions(this, all, rendered) end
                     return value
                 end
                 s.menu_wrapper = show
@@ -1541,21 +1629,6 @@ end
 -- activate a disabled one, inspect its keys or run an AI action while probing.
 local reader_ai_key = "orbitui_reader_ai"
 local reader_ai_labels = { auto = "Automatic (X-Ray first)", xray = "X-Ray", koassistant = "KOAssistant", off = "Hide" }
-local function readerCallable(fn)
-    local mt = type(fn) == "table" and getmetatable(fn)
-    return type(fn) == "function" or type(mt) == "table" and type(mt.__call) == "function"
-end
-local function readerPlugin(ui, name)
-    local plugin = rawget(ui, name)
-    local loader = package.loaded.pluginloader
-    if not plugin and loader and readerCallable(loader.getPluginInstance) then
-        local ok, found = pcall(loader.getPluginInstance, loader, name)
-        if ok then plugin = found end
-    end
-    if type(plugin) == "table" and plugin.ui == ui and plugin.disabled ~= true and plugin._disabled ~= true then
-        return plugin
-    end
-end
 -- KOReader dispatches touches through toast overlays to the foreground panel.
 local function readerForeground(UI, below)
     if UI.topdown_widgets_iter then

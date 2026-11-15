@@ -228,11 +228,13 @@ In an open book, use **Tools > Pinned references / Verktyg > Fästa referenser**
 **Pin current page / Fäst aktuell sida** saves a reference separately from
 bookmarks. Selected text has a **Pin reference / Fäst referens** action too.
 Choose up to six text selection shortcuts under **OrbitUI → Integrations →
-Reader panel & X-Ray → Customize text selection menu**. Choose an action
-already on the first page to swap its position. After selecting text,
-**More…** still shows the full menu and lets you add fixed plugin buttons
-such as KOAssistant's main button from there. KOAssistant's context-dependent
-quick actions remain available under **More…**.
+Reader panel & X-Ray → Customize text selection menu**. Tap one of the six
+positions to change its action. Choose an action already on the first page to
+swap its position. For actions from installed plugins, select text and open
+**More… → Customize text selection menu**. This includes buttons such as
+**Hardcover quote** and KOAssistant quick actions offered for that book.
+KOAssistant shortcuts follow the chosen action when its menu order changes.
+**More…** continues to show the full menu for the selection.
 
 Hold **Bookmarks** in the reader panel to choose a color for the current page
 bookmark. New page bookmarks use the last selected color. **Colored bookmarks**

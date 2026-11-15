@@ -74,6 +74,7 @@ local function fixture(paging)
     copied, frees, jumps, native_holds = 0, 0, {}, 0
     file_write_failure, save_failure, small_screen, source_image = nil, nil, false, nil
     reader = { document = { file = "/books/book.epub" }, highlight = { _highlight_buttons = {} }, view = {} }
+    reader.highlight.ui = reader
     UI.stack = { reader }
     UI._simpleui_navigation_generation = 1
     package.loaded["apps/reader/readerui"] = { instance = reader }
@@ -186,23 +187,52 @@ H.test("text menu choices preserve callbacks, swap slots and keep the complete n
         native[id] = function() return { text = label } end
     end
     local predicate = function() return true end
+    native["08_share_text"] = function() return { text = "Share" } end
+    native["09_view_html"] = function() return { text = "View HTML" } end
     native["15_fixture_plugin"] = function(this, index)
         H.eq(this, h); H.eq(index, 42)
-        return { text = "Fixture plugin", show_in_highlight_dialog_func = predicate,
+        return { text_func = function() return "Fixture plugin" end, show_in_highlight_dialog_func = predicate,
             callback = function() invoked = invoked + 1 end }
     end
-    native["90_01_koassistant_slot"] = function() return { text = "KOAssistant quick action" } end
+    native["16_hidden"] = function()
+        return { text = "Hidden plugin action", show_in_highlight_dialog_func = function() return false end }
+    end
+    local explain = { id = "explain", text = "Explain (KOA)" }
+    local xray = { id = "xray_lookup", text = "Look up in X-Ray (KOA)" }
+    local actions, memo = { xray, explain }, nil
+    local executed
+    reader.koassistant = { ui = reader, action_service = { getHighlightMenuActionObjects = function(_, has_book, path)
+        assert(has_book); H.eq(path, reader.document.file)
+        return actions
+    end } }
+    for i = 1, 2 do
+        local slot = i
+        native[string.format("90_%02d_koassistant_slot", i)] = function()
+            if slot == 1 then memo = { actions[1], actions[2] } end
+            local action = memo[slot]
+            if action then
+                return { text = action.text, callback = function() executed = action end }
+            end
+            return { text = "", show_in_highlight_dialog_func = function() return false end }
+        end
+    end
     h._highlight_buttons = native
     h.onClose = function(this) this.selected_text = nil end
     h.onShowHighlightMenu = function(this, index)
         order, visible = {}, {}
-        local ids = {}
+        local ids, buttons, widgets = {}, {}, {}
         for id in pairs(this._highlight_buttons) do ids[#ids + 1] = id end
         table.sort(ids)
         for _, id in ipairs(ids) do
             local button = this._highlight_buttons[id](this, index)
-            visible[button.text] = button; order[#order + 1] = button.text
+            if not button.show_in_highlight_dialog_func or button.show_in_highlight_dialog_func() then
+                local text = button.text_func and button.text_func() or button.text
+                buttons[#buttons + 1] = button
+                widgets[#widgets + 1] = { text = text }
+                visible[text] = button; order[#order + 1] = text
+            end
         end
+        this.highlight_dialog = { buttons = { buttons }, buttontable = { buttons_layout = { widgets } } }
     end
     local function show()
         h.selected_text = { text = "passage" }; h:onShowHighlightMenu(42)
@@ -214,18 +244,37 @@ H.test("text menu choices preserve callbacks, swap slots and keep the complete n
         error("Missing row: " .. label)
     end
     local function editor() return Panel.highlightMenuItems(function() refreshed = refreshed + 1 end) end
-    local function choose(slot, label) find(editor()[slot].sub_item_table_func(), label).callback() end
+    local function choices(slot) return editor()[slot + 1].sub_item_table_func() end
+    local function choose(slot, label) find(choices(slot), label).callback() end
     P.attach(reader)
     H.eq(show(), "Select|Highlight|Pin reference|Copy|Add note|Dictionary|More…")
+    H.eq(editor()[1].text, "Tap a slot to change its action.")
+    assert(find(choices(2), "Share Text") and find(choices(2), "View HTML"))
     assert(not find(editor(), "Restore defaults").enabled_func())
     visible["More…"].callback()
-    assert(visible["Fixture plugin"] and visible.Translate and visible.Back and visible["KOAssistant quick action"])
+    assert(visible["Fixture plugin"] and visible.Translate and visible.Back and visible[explain.text])
     H.eq(invoked, 0); H.eq(visible["Fixture plugin"].show_in_highlight_dialog_func, predicate)
     visible["Customize text selection menu"].callback()
     H.eq(opened, 1); H.eq(h.selected_text, nil)
-    for _, row in ipairs(editor()[2].sub_item_table_func()) do
-        assert(row.text ~= "KOAssistant quick action")
+    for _, row in ipairs(choices(2)) do
+        assert(row.text ~= "Hidden plugin action")
     end
+    assert(find(choices(2), "Share"))
+    choose(5, explain.text)
+    H.eq(preference[5], "orbitui:koassistant:explain")
+    H.eq(executed, nil)
+    assert(show():find(explain.text, 1, true))
+    actions = { explain, xray }
+    assert(show():find(explain.text, 1, true))
+    H.eq(visible[xray.text], nil)
+    visible[explain.text].callback()
+    H.eq(executed, explain)
+    actions = { xray }
+    assert(not show():find(explain.text, 1, true))
+    H.eq(visible[xray.text], nil)
+    visible["More…"].callback()
+    assert(visible[xray.text] and visible.Share and visible["View HTML"])
+    choose(5, "Add note")
     choose(4, "Translate")
     choose(2, "Fixture plugin")
     choose(1, "Translate") -- swap with slot 4
@@ -240,7 +289,7 @@ H.test("text menu choices preserve callbacks, swap slots and keep the complete n
     visible["More…"].callback()
     assert(visible.Copy and visible.Highlight)
     H.eq(visible["Fixture plugin"], nil)
-    H.eq(refreshed, 5)
+    H.eq(refreshed, 7)
     find(editor(), "Restore defaults").callback()
     H.eq(preference, nil)
     H.eq(show(), "Select|Highlight|Pin reference|Copy|Add note|Dictionary|More…")

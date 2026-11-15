@@ -37,12 +37,13 @@ and correct this file in the same change.
   The setting applies to the Quick Settings tab and KOReader's other top-menu
   tabs in the reader and file browser.
 
-- **Customizable text selection menu, released in 1.4.0-beta.3.** The first page
-  can show up to six KOReader actions in the reader’s chosen order. The
-  editor is available from Reader panel & X-Ray and from More in a book.
-  More also keeps the full native action list. Fixed plugin buttons can be
-  selected there. KOAssistant’s numbered quick-action slots stay under
-  More because their action can change with the open book.
+- **Customizable text selection menu.** The first page can show up to six
+  actions in the reader’s chosen order. The editor is available from Reader
+  panel & X-Ray and from More in a book. The local follow-up to 1.4.0-beta.4
+  shows where to tap to replace an action and lets the editor pick plugin
+  buttons with dynamic labels, including Hardcover quote. KOAssistant
+  shortcuts follow the action ID when the plugin reorders its menu and
+  appear when the action is offered for the current book.
 
 - **Upstream maintenance after 1.4.0-beta.3.** Bookshelf 6.5.1 at **51f35fba2**
   supports manual Favorites order, Turkish and nearest-half-star Hardcover

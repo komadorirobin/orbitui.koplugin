@@ -1,5 +1,15 @@
 # Verification and device acceptance
 
+## 2026-11-15 — Text selection shortcuts
+
+On KOReader 2026.07.1 in the Tolino emulator, the Swedish editor offered
+View HTML, a Hardcover-style dynamic label and a quick action from
+KOAssistant at `cc1edd61`. Both plugin shortcuts appeared on the first
+page after assignment. Explain stayed bound after reordering KOAssistant
+actions and restarting KOReader. More still included replaced and unpinned
+actions. The Hardcover-style button used a local test callback. Physical
+Bigme coverage remains open.
+
 ## 2026-11-15 — OrbitUI 1.4.0-beta.4
 
 The sealed **00e5184ab** runtime booted in the KOReader 2026.07.1 Tolino and
