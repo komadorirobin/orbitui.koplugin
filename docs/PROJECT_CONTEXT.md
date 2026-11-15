@@ -22,6 +22,11 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-15
 
+- **Top-menu footer, local development.** Pagination adjusts to the space
+  beside the clock and battery, which can be turned off in Quick controls.
+  The setting applies to the Quick Settings tab and KOReader's other top-menu
+  tabs in the reader and file browser.
+
 - **Customizable text selection menu, local development.** The first page
   can show up to six KOReader actions in the reader’s chosen order. The
   editor is available from Reader panel & X-Ray and from More in a book.

@@ -10,6 +10,7 @@
 --   onShowMenu          builds the table when missing, runs the `prepare`
 --                       steps again (the table is cached between openings)
 --                       and lets the `resolve` steps choose the initial tab.
+--                       Runs `mount` once the native widget is available.
 --
 -- A step is a table:
 --   id       unique name; registering an existing id replaces that step
@@ -19,6 +20,7 @@
 --   resolve  function(menu, target, tab_index) — returns the tab to open on;
 --                                                skipped when the menu is built
 --                                                without being shown
+--   mount    function(menu, target)            — may adapt menu.menu_container
 -- `target` is M.TARGET.READER or M.TARGET.FM.
 -- M.refresh(menu, target) runs the `prepare` steps again on a built menu.
 
@@ -97,7 +99,9 @@ local function hook(target)
         if not do_not_show then
             tab_index = orig.runSteps("resolve", self, target, tab_index)
         end
-        return orig.onShowMenu(self, tab_index, do_not_show)
+        local result = orig.onShowMenu(self, tab_index, do_not_show)
+        orig.runSteps("mount", self, target)
+        return result
     end
     orig.update_wrapper, orig.show_wrapper = Menu.setUpdateItemTable, Menu.onShowMenu
     return orig

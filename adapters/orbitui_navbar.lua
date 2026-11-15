@@ -705,6 +705,73 @@ function M.showQuickControls(kind, opts)
     return dialog
 end
 
+local TOP_MENU_STATUS = "simpleui_orbitui_top_menu_status"
+
+local function topMenuStatusEnabled()
+    return require("infra/sui_store"):readSetting(TOP_MENU_STATUS) ~= false
+end
+
+function M.adaptTopMenuFooter(menu)
+    local footer = menu and menu.footer
+    if not (footer and menu.page_info and menu.device_info and footer[1] and footer[1][1]
+            and footer[2] and footer[2][1] == menu.page_info
+            and footer[3] and footer[3][1] == menu.device_info) or footer._orbitui_adapted then return end
+    footer._orbitui_adapted = true
+
+    local BD = require("ui/bidi")
+    local gap = require("ui/size").span.horizontal_default
+    local back, pages, status = footer[1][1], menu.page_info, menu.device_info
+    local page_text = menu.page_info_text
+    local show_pages, show_status
+
+    -- Keep the native footer's dimensions and children. Both of KOReader's
+    -- top menus and the Quick Settings tab reuse this footer as items change.
+    function footer:paintTo(bb, x, y)
+        local size = self:getSize()
+        local back_size = back:getSize()
+        local mirrored = BD.mirroredUILayout()
+        local function paint(widget, left, dimensions)
+            if mirrored then left = size.w - left - dimensions.w end
+            widget:paintTo(bb, x + left, y + math.floor((size.h - dimensions.h) / 2))
+        end
+
+        show_pages = menu.page_num and menu.page_num > 1
+        show_status = topMenuStatusEnabled()
+        local status_size = status:getSize()
+        local status_left = size.w - status_size.w
+        paint(back, 0, back_size)
+        if show_pages then
+            local first = back_size.w + gap
+            local arrows_w = menu.page_info_left_chev:getSize().w + menu.page_info_right_chev:getSize().w
+            local max_text_w = math.max(1, size.w - first - arrows_w)
+            if page_text.max_width ~= max_text_w then
+                page_text:setMaxWidth(max_text_w)
+                pages:resetLayout()
+            end
+            local page_size = pages:getSize()
+            local last = size.w - page_size.w
+            if show_status and first + page_size.w + gap <= status_left then
+                last = status_left - gap - page_size.w
+            else
+                show_status = false
+            end
+            local center = math.floor((size.w - page_size.w) / 2)
+            paint(pages, math.max(first, math.min(center, last)), page_size)
+        elseif status_left < back_size.w + gap then
+            show_status = false
+        end
+        if show_status then paint(status, status_left, status_size) end
+    end
+
+    function footer:propagateEvent(event)
+        -- Stale button rectangles from a previous tab must not open the date
+        -- popup or handle a page tap after those controls have been hidden.
+        return self[1]:handleEvent(event)
+            or (show_pages and self[2]:handleEvent(event))
+            or (show_status and self[3]:handleEvent(event))
+    end
+end
+
 function M.quickControlsItems(close)
     return {
         { text = _("Open quick controls"), callback = function()
@@ -718,6 +785,11 @@ function M.quickControlsItems(close)
                 M.closeQuickControls()
                 -- Status cells stay mounted while disabled and read the flag
                 -- at dispatch time. No chrome/book/provider rebuild is needed.
+            end },
+        { text = _("Show clock and battery in the top menu"),
+            help_text = _("Show device status at the bottom of the top menu when there is room. Page controls stay visible."),
+            checked_func = topMenuStatusEnabled, callback = function()
+                require("infra/sui_store"):saveSetting(TOP_MENU_STATUS, not topMenuStatusEnabled())
             end },
     }
 end

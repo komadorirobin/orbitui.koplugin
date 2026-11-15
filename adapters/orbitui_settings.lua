@@ -426,7 +426,7 @@ local nodes = {
     { "dock", "Edit dock", "navigation", "navigation", "docka genvägar shortcuts add remove replace reorder lägga till ta bort ersätt ordna" },
     { "bookshelf_navigation", "Library shortcut", "navigation", "navigation", "bookshelf navigationsrad mål profile profil prose comics manga" },
     { "bars", "Bars, buttons & start view", "navigation", "screens", "status titelrad title navigation pagination startvy", screen = "bars_settings" },
-    { "quick_controls", "Quick controls", "navigation", "navigation", "snabbkontroller ljus belysning färgtemperatur warmth wifi wi-fi batteri klocka statusfält status light battery clock" },
+    { "quick_controls", "Quick controls", "navigation", "navigation", "snabbkontroller ljus belysning färgtemperatur warmth wifi wi-fi batteri klocka statusfält toppmenyn status light battery clock top menu" },
     { "interface", "Icons, fonts & shared appearance", "navigation", "screens", "ikoner icon font färger colors stil style", screen = "style_settings" },
     { "file_browser", "File browser appearance", "navigation", "file_browser", "filhanteraren mappar mosaik file manager browser mosaic", screen = "library_settings" },
     { "quick_actions", "Custom quick actions", "navigation", "screens", "snabbåtgärder gester gestures shortcuts", screen = "quick_actions_settings" },
@@ -1233,6 +1233,11 @@ function M.registerMenu()
             end
             -- The quick actions panel inserts itself first after menu hiding.
             table.insert(tabs, 1, tab)
+        end,
+        mount = function(menu)
+            if menu.ui and menu.ui.simpleui and menu.ui.simpleui._orbitui_owned then
+                require("adapters/orbitui_navbar").adaptTopMenuFooter(menu.menu_container and menu.menu_container[1])
+            end
         end,
     }
 end

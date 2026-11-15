@@ -12,6 +12,10 @@ Open the **OrbitUI** grid tab beside Quick Actions in KOReader’s top menu.
 library folders, shelves, covers and themes. **Dock & interface** holds dock
 shortcuts and shared appearance. **Search settings** searches across sections.
 
+Use **Dock & interface > Quick controls > Show clock and battery in the top
+menu** to hide device status in the Quick Settings tab and the other top-menu
+tabs. When space is tight, the footer gives the page controls priority.
+
 Long-press a dock icon to add, replace or remove a shortcut. Choose a library
 profile, folder, collection or quick action. **Dock & interface > Edit dock**
 lets you change the order. Fresh setups use Home, Library, History and Power.
