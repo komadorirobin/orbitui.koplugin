@@ -22,7 +22,7 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-15
 
-- **Aleph 1.2-inspired work in development.** Book information localizes the
+- **Aleph 1.2-inspired changes in the 1.4.0-beta.4 candidate.** Book information localizes the
   book’s language and displays available pages. The reader panel adds colors
   for native page bookmarks and shows installed KOAssistant X-Ray coverage
   with a route to Mentions. Reading dashboard cards can run dock shortcuts.
