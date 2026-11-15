@@ -1,5 +1,20 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.4.0-beta.5
+
+Published **2026-11-15 22:04:32 UTC** as release **446397644** from
+**e38b7f2ff / v1.4.0-beta.5**. The 10,110,751-byte public ZIP and checksum
+match the verified draft. The ZIP contains 2,000 installed files and has
+SHA-256 `f6297ffe6299b27f6abb29e317d6d3b0f23ba47e557843f5bee8b8405dda806a`.
+The updater offers 1.4.0-beta.5 in preview and 1.3.0 in stable.
+
+Both Lua test suites, all 44 translation checks, and GitHub Actions runs
+**43766749888** and **43766749389** passed. The installed payload matches the
+tagged CI archive. Native upgrade, restart and rollback from 1.4.0-beta.4 and
+1.3.0 passed offline and over public HTTPS. For the selection-menu changes
+and remaining Bigme check, see TESTING. Evidence is under
+`test-results/preview14-beta5-20261115/`.
+
 ## OrbitUI 1.4.0-beta.4
 
 Published **2026-11-15 21:00:31 UTC** as release **446361163** from
