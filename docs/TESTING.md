@@ -1,5 +1,21 @@
 # Verification and device acceptance
 
+## 2026-11-15 — Bookshelf 6.5.1 and SimpleUI maintenance
+
+The sealed **fe537f314** runtime booted in Turkish on the KOReader 2026.07.1
+Tolino emulator. The hosted Favorites tab offered Collection order, displayed
+the stored order, and moved a book through the shelf's native Arrange action.
+The same boot exercised the Hardcover half-star boundaries, SimpleUI's
+localized formatter and the retained older duration helper. All 44 component
+PO files passed `msgfmt --check`.
+
+The candidate has the exact 2,000 installed paths of public 1.4.0-beta.3,
+including the manifest. The 1.3.0 updater verified the complete archive with
+native libarchive and SHA-256, activated it, and passed restart, rollback and
+truncated-download recovery. The emulator covered the new rendering and
+ordering paths. The older Android APIs and physical Bigme remain untested in
+this merge. Local evidence is in `test-results/upstream-20261115/`.
+
 ## 2026-11-15 — OrbitUI 1.4.0-beta.3
 
 The exact released ZIP from **ad34d9b89** booted in isolated KOReader 2026.07.1
