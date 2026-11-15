@@ -77,7 +77,15 @@ for _, name in ipairs(embedded_names) do
 end
 lines[#lines + 1] = "}"
 -- Metadata lives outside pairs(map), preserving the established path-map API.
-lines[#lines + 1] = "return setmetatable(map, { orbitui_embedded = embedded })"
+local catalog = assert(io.open("components/bookshelf/locale/tr.po", "rb"))
+local turkish = catalog:read("*a"):gsub("[^\n]+\n?", function(line)
+    if line:match("^[ \t]*#:") then return "" end
+    return line
+end)
+catalog:close()
+lines[#lines + 1] = "return setmetatable(map, { orbitui_embedded = embedded, orbitui_bookshelf_locales = {"
+lines[#lines + 1] = string.format("    tr = %q,", turkish)
+lines[#lines + 1] = "} })"
 local text = table.concat(lines, "\n") .. "\n"
 if arg[1] == "--check" then
     local f = assert(io.open("core/orbitui_module_map.lua", "rb"))

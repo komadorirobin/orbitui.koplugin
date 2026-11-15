@@ -3040,14 +3040,15 @@ end
 function Repo.invalidateCollectionCache(name)
     if type(name) ~= "string" then return end
     local prefix = "collection|" .. name .. "|"
-    for k in pairs(_bySource_cache) do
-        if k:sub(1, #prefix) == prefix then _bySource_cache[k] = nil end
-    end
-    -- The favorites collection is also the Favorites shelf, cached under
-    -- its own kind ("favorites|..."): a reorder there has to drop that too.
     local ok_rc, RC = pcall(require, "readcollection")
     local fav_name = ok_rc and type(RC) == "table" and RC.default_collection_name or "favorites"
-    if name == fav_name then Repo.invalidateFavoritesCache() end
+    for k in pairs(_bySource_cache) do
+        -- Ordering Favorites also changes the dedicated Favorites shelf.
+        -- Other shelves sorted by membership retain their existing caches.
+        if k:sub(1, #prefix) == prefix or name == fav_name and k:sub(1, 10) == "favorites|" then
+            _bySource_cache[k] = nil
+        end
+    end
 end
 
 -- invalidateReadStateCache(): drop only the _bySource_cache entries whose
@@ -10124,10 +10125,10 @@ function Repo.getBySource(source, filter, sort_priority, offset, limit, scope_or
             -- collection name.
             local rc = require("readcollection")
             local set, order = {}, {}
-            local fav = rc.coll and rc.coll.favorites
+            local fav = rc.coll and rc.coll[rc.default_collection_name or "favorites"]
             if type(fav) == "table" then
                 for _file, item in pairs(fav) do
-                    local fp = item.file or _file
+                    local fp = type(item) == "table" and item.file or _file
                     if type(fp) == "string" then
                         set[fp] = true
                         order[fp] = type(item) == "table" and item.order or nil

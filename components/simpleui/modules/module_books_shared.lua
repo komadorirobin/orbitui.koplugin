@@ -396,8 +396,21 @@ function SH.applyProgressBadge(cover_widget, bd, cw, ch, opts, ref_w, ref_h, sca
 end
 
 -- ---------------------------------------------------------------------------
--- getBookData
+-- Retained for third-party modules and patches using the older helper.
+-- SimpleUI's own time displays now use the translated formatDuration.
 -- ---------------------------------------------------------------------------
+function SH.formatTimeLeft(pct, pages, avg_time)
+    if not avg_time or avg_time <= 0 or not pct or pct < 0 or not pages then return nil end
+    local remaining = math_floor(pages * (1.0 - pct))
+    if remaining <= 0 then return nil end
+    local secs = math_floor(remaining * avg_time)
+    if secs <= 0 then return nil end
+    local h = math_floor(secs / 3600)
+    local m = math_floor((secs % 3600) / 60)
+    if h > 0 and m > 0 then return string.format("%dh %dm", h, m)
+    elseif h > 0 then return string.format("%dh", h)
+    else return string.format("%dm", m) end
+end
 
 
 -- ---------------------------------------------------------------------------
