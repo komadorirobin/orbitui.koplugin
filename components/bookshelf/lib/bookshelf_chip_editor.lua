@@ -4074,13 +4074,9 @@ end
 -- collection in its own order first (the shelf a reader arranges by hand),
 -- else nil. A pinned tag is kind "collection" too, with nothing to arrange.
 function Editor._handOrdered(draft)
-    local src = type(draft) == "table" and draft.source
-    if type(src) ~= "table" or src.kind ~= "collection" then return nil end
-    local first = type(draft.sort_priority) == "table" and draft.sort_priority[1]
+    local first = type(draft) == "table" and type(draft.sort_priority) == "table" and draft.sort_priority[1]
     if not (first and first.key == "collection_order") then return nil end
-    local ok, CollectionOrder = pcall(require, "lib/bookshelf_collection_order")
-    if not (ok and CollectionOrder and CollectionOrder.exists(src.id)) then return nil end
-    return src.id
+    return require("lib/bookshelf_curated_ui").listOf(draft)
 end
 
 -- Sort directions in words, per key: { reverse = false, reverse = true }.
@@ -4234,11 +4230,17 @@ function Editor:_openSort(draft, on_change, on_arranged, on_back, arrange)
             -- otherwise meant leaving for KOReader's collections view. Only
             -- when a collection is really behind the shelf: a pinned tag is
             -- kind "collection" too, with nothing to arrange (issue 441).
-            if kind == "collection" then
+            -- Favorites is a KOReader collection too (a reader asked for
+            -- it in the order they arranged it).
+            if kind == "collection" or kind == "favorites" then
                 add({ type = "heading", text = _("Collection") })
                 local c = chips({ "collection_order" })
                 local CollectionOrder = require("lib/bookshelf_collection_order")
                 local coll_id = draft.source and draft.source.id
+                if kind == "favorites" then
+                    local ok_rc, RC = pcall(require, "readcollection")
+                    coll_id = ok_rc and RC and RC.default_collection_name or "favorites"
+                end
                 if CollectionOrder.exists(coll_id) then
                     -- From the shelf's editor (arrange): the same place
                     -- the Sort card's own button goes, the shelf itself with

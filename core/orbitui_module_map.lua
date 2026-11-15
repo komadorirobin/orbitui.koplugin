@@ -5463,10 +5463,25 @@ local function TabModel() return require(\"lib/bookshelf_tab_model\") end\
 function UI.listOf(tab)\
     local src = type(tab) == \"table\" and tab.source\
     if type(src) ~= \"table\" then return nil end\
-    -- Not the Favorites shelf: the repository does not sort it by the\
-    -- collection's order, so a move there wrote an order no shelf showed.\
+    -- Favorites is a collection too, and sorts by its own order when the\
+    -- shelf asks for Collection order (_curatedArrangeable checks the sort).\
     local name = src.kind == \"collection\" and src.id or nil\
+    if src.kind == \"favorites\" then\
+        local ok_rc, RC = pcall(require, \"readcollection\")\
+        name = ok_rc and RC and RC.default_collection_name or \"favorites\"\
+    end\
     if name and Curated().exists(name) then return name end\
+    return nil\
+end\
+\
+-- collectionName(tab) -> the shelf's collection as the reader knows it, for\
+-- the Arrange strip: the collection's name, \"Favorites\" for the Favorites\
+-- shelf (its source carries no name), nil for a shelf of no collection.\
+function UI.collectionName(tab)\
+    local src = type(tab) == \"table\" and tab.source\
+    if type(src) ~= \"table\" then return nil end\
+    if src.kind == \"favorites\" then return _(\"Favorites\") end\
+    if src.kind == \"collection\" and type(src.id) == \"string\" then return src.id end\
     return nil\
 end\
 \
@@ -13239,7 +13254,7 @@ function BookshelfWidget:_curatedMoveMenu(book)\
     local function strip()\
         local T = require(\"ffi/util\").template\
         local _l, tab = bw:_curatedList()\
-        local name = (tab and tab.source and tab.source.id) or \"\"\
+        local name = CuratedUI().collectionName(tab) or \"\"\
         return { { type = \"summary\", text = T(_(\"This shelf uses the %1 collection.\"), name),\
             -- Edit shelf, then \"Edit\" with a book at the right, as a pinned\
             -- piece's Arrange menu has \"Edit\" with its cup: the same two\
@@ -18066,7 +18081,9 @@ function PatchCompat.check()\
         return false\
     end\
 \
-    local dir = DataStorage:getPatchesDir()\
+    -- getPatchesDir only exists since KOReader v2026.07.\
+    local dir = DataStorage.getPatchesDir and DataStorage:getPatchesDir()\
+        or DataStorage:getDataDir() .. \"/patches\"\
     local found, reenabled = PatchCompat.detect(dir,\
         SUISettings:get(ALLOWED_KEY) or {}, SUISettings:get(DISABLED_KEY) or {})\
     if #reenabled > 0 then allow(reenabled) end\
@@ -22484,4 +22501,6148 @@ end\
 return CoverWindow\
 ",
 }
-return setmetatable(map, { orbitui_embedded = embedded })
+return setmetatable(map, { orbitui_embedded = embedded, orbitui_bookshelf_locales = {
+    tr = "# Bookshelf — KOReader Plugin\
+# Türkçe translation\
+msgid \"\"\
+msgstr \"\"\
+\"Report-Msgid-Bugs-To: \\n\"\
+\"POT-Creation-Date: 2026-11-14 18:13+0000\\n\"\
+\"Language: tr\\n\"\
+\"MIME-Version: 1.0\\n\"\
+\"Content-Type: text/plain; charset=UTF-8\\n\"\
+\"Content-Transfer-Encoding: 8bit\\n\"\
+\
+msgid \"Bookshelf\"\
+msgstr \"Bookshelf\"\
+\
+msgid \"A nice-looking home screen for KOReader: pick a book from your shelf and read it.\"\
+msgstr \"KOReader için şık bir giriş ekranı: rafınızdan bir kitap seçin ve okuyun.\"\
+\
+msgid \"Plugin…\"\
+msgstr \"Eklenti…\"\
+\
+msgid \"No launchable plugins found\"\
+msgstr \"Başlatılabilir eklenti bulunamadı\"\
+\
+msgid \"Choose a plugin\"\
+msgstr \"Bir eklenti seçin\"\
+\
+msgid \"System action…\"\
+msgstr \"Sistem eylemi…\"\
+\
+msgid \"Menu action…\"\
+msgstr \"Menü eylemi…\"\
+\
+msgid \"Bookshelf action…\"\
+msgstr \"Bookshelf eylemi…\"\
+\
+msgid \"Bookshelf actions\"\
+msgstr \"Bookshelf eylemleri\"\
+\
+msgid \"Close bookshelf\"\
+msgstr \"Bookshelf'i kapat\"\
+\
+msgid \"Bookshelf menu\"\
+msgstr \"Bookshelf menüsü\"\
+\
+msgid \"Choose an action\"\
+msgstr \"Bir eylem seçin\"\
+\
+msgid \"Couldn't reach Open Library or Wikipedia.\"\
+msgstr \"Open Library'ye ya da Wikipedia'ya ulaşılamadı.\"\
+\
+msgid \"There is no image library to save into. Choose one under Settings > Library & search > Image library.\"\
+msgstr \"Kaydedilecek bir görsel kitaplığı yok. Ayarlar > Kitaplık ve arama > Görsel kitaplığı altından birini seçin.\"\
+\
+msgid \"No photo found for %1.\"\
+msgstr \"%1 için fotoğraf bulunamadı.\"\
+\
+msgid \"Looking for a photo of %1…\"\
+msgstr \"%1 için fotoğraf aranıyor…\"\
+\
+msgid \"Another job is running. Try again when it has finished.\"\
+msgstr \"Başka bir iş çalışıyor. Bittiğinde yeniden deneyin.\"\
+\
+msgid \"Finding author images: %1 of %2\"\
+msgstr \"Yazar görselleri bulunuyor: %1 / %2\"\
+\
+msgid \"Found images for %1 of %2 authors.\"\
+msgstr \"%2 yazardan %1 tanesi için görsel bulundu.\"\
+\
+msgid \"Stopped before %1 more.\"\
+msgstr \"%1 tane kalmışken durduruldu.\"\
+\
+msgid \"Every author on your shelves already has an image.\"\
+msgstr \"Raflarınızdaki her yazarın zaten bir görseli var.\"\
+\
+msgid \"Look for a photo of %1, the one author with no image yet?\"\
+msgstr \"Henüz görseli olmayan tek yazar %1 için fotoğraf aransın mı?\"\
+\
+msgid \"Look for photos of the %1 authors with no image yet?\"\
+msgstr \"Henüz görseli olmayan %1 yazar için fotoğraf aransın mı?\"\
+\
+msgid \"Photos come from Open Library, or Wikipedia when it has none, and are saved in your image library. Images you already have are kept. Progress shows in the status line, with Stop.\"\
+msgstr \"Fotoğraflar Open Library'den, orada yoksa Wikipedia'dan alınır ve görsel kitaplığınıza kaydedilir. Var olan görseller korunur. İlerleme, Durdur düğmesiyle birlikte durum satırında görünür.\"\
+\
+msgid \"Find images\"\
+msgstr \"Görsel bul\"\
+\
+msgid \"Hardback\"\
+msgstr \"Ciltli\"\
+\
+msgid \"Paperback\"\
+msgstr \"Karton kapak\"\
+\
+msgid \"Page %1\"\
+msgstr \"Sayfa %1\"\
+\
+msgid \"Bookmark\"\
+msgstr \"Yer imi\"\
+\
+msgid \"Highlight\"\
+msgstr \"Vurgu\"\
+\
+msgid \"View in book\"\
+msgstr \"Kitapta göster\"\
+\
+msgid \"Close\"\
+msgstr \"Kapat\"\
+\
+msgid \"Unknown\"\
+msgstr \"Bilinmiyor\"\
+\
+msgid \"Unrated\"\
+msgstr \"Puansız\"\
+\
+msgid \"Kindle Virtual Library\"\
+msgstr \"Kindle Sanal Kitaplığı\"\
+\
+msgid \"Kobo library\"\
+msgstr \"Kobo kitaplığı\"\
+\
+#, lua-format\
+msgid \"Edit selected (%d)\"\
+msgstr \"Seçilenleri düzenle (%d)\"\
+\
+msgid \"Collections\"\
+msgstr \"Dermeler\"\
+\
+msgid \"Reset book data…\"\
+msgstr \"Kitap verilerini sıfırla…\"\
+\
+#, lua-format\
+msgid \"Reset %d books?\"\
+msgstr \"%d kitap sıfırlansın mı?\"\
+\
+msgid \"Reset\"\
+msgstr \"Sıfırla\"\
+\
+msgid \"Pending changes discarded\"\
+msgstr \"Bekleyen değişiklikler atıldı\"\
+\
+msgid \"Delete\"\
+msgstr \"Sil\"\
+\
+#, lua-format\
+msgid \"… and %d more\"\
+msgstr \"… ve %d tane daha\"\
+\
+#, lua-format\
+msgid \"Delete %d books?\"\
+msgstr \"%d kitap silinsin mi?\"\
+\
+msgid \"Move to folder…\"\
+msgstr \"Klasöre taşı…\"\
+\
+msgid \"Cancel\"\
+msgstr \"İptal\"\
+\
+msgid \"Apply\"\
+msgstr \"Uygula\"\
+\
+#, lua-format\
+msgid \"%d files no longer exist; skipped.\"\
+msgstr \"%d dosya artık yok; atlandı.\"\
+\
+#, lua-format\
+msgid \"Applied to %d of %d books · %d failed\"\
+msgstr \"%d / %d kitaba uygulandı · %d başarısız\"\
+\
+#, lua-format\
+msgid \"Apply changes to %d books?\"\
+msgstr \"Değişiklikler %d kitaba uygulansın mı?\"\
+\
+msgid \"Select all in this shelf\"\
+msgstr \"Bu raftakilerin tümünü seç\"\
+\
+msgid \"Leave as is\"\
+msgstr \"Olduğu gibi bırak\"\
+\
+msgid \"Add to %1 collections\"\
+msgstr \"%1 dermeye ekle\"\
+\
+msgid \"Add to 1 collection\"\
+msgstr \"1 dermeye ekle\"\
+\
+msgid \"Remove from %1 collections\"\
+msgstr \"%1 dermeden çıkar\"\
+\
+msgid \"Remove from 1 collection\"\
+msgstr \"1 dermeden çıkar\"\
+\
+msgid \"Mark as Reading\"\
+msgstr \"Okunuyor olarak işaretle\"\
+\
+msgid \"Mark as Unopened\"\
+msgstr \"Açılmamış olarak işaretle\"\
+\
+msgid \"Mark as Finished\"\
+msgstr \"Tamamlandı olarak işaretle\"\
+\
+msgid \"Mark as On hold\"\
+msgstr \"Bekliyor olarak işaretle\"\
+\
+msgid \"Clear the rating\"\
+msgstr \"Puanı temizle\"\
+\
+msgid \"Rate %1\"\
+msgstr \"Puan ver: %1\"\
+\
+msgid \"Add to Favorites\"\
+msgstr \"Sık Kullanılanlara ekle\"\
+\
+msgid \"Remove from Favorites\"\
+msgstr \"Sık Kullanılanlardan çıkar\"\
+\
+msgid \"Change collections\"\
+msgstr \"Dermeleri değiştir\"\
+\
+msgid \"Refresh metadata\"\
+msgstr \"Üst verileri yenile\"\
+\
+msgid \"Remove from history\"\
+msgstr \"Geçmişten kaldır\"\
+\
+msgid \"Pick what to change, then Apply.\"\
+msgstr \"Neyin değişeceğini seçin, sonra Uygula'ya dokunun.\"\
+\
+msgid \"\"\
+\"Apply will:\\n\"\
+\"%1\"\
+msgstr \"Uygula şunları yapacak:\\n%1\"\
+\
+msgid \"Clear\"\
+msgstr \"Temizle\"\
+\
+msgid \"Reading status\"\
+msgstr \"Okuma durumu\"\
+\
+msgid \"Unopened\"\
+msgstr \"Açılmamış\"\
+\
+msgid \"Reading\"\
+msgstr \"Okunuyor\"\
+\
+msgid \"On hold\"\
+msgstr \"Bekliyor\"\
+\
+msgid \"Finished\"\
+msgstr \"Tamamlandı\"\
+\
+msgid \"Rating\"\
+msgstr \"Puan\"\
+\
+msgid \"Favorite\"\
+msgstr \"Sık kullanılan\"\
+\
+msgid \"Add\"\
+msgstr \"Ekle\"\
+\
+msgid \"Remove\"\
+msgstr \"Kaldır\"\
+\
+msgid \"Also on Apply\"\
+msgstr \"Uygula'da ayrıca\"\
+\
+msgid \"Right away\"\
+msgstr \"Hemen\"\
+\
+msgid \"Add to shelf\"\
+msgstr \"Rafa ekle\"\
+\
+msgid \"Delete…\"\
+msgstr \"Sil…\"\
+\
+msgid \"(no notes for this release)\"\
+msgstr \"(bu sürüm için not yok)\"\
+\
+msgid \"Fetching changelog...\"\
+msgstr \"Değişiklik günlüğü alınıyor...\"\
+\
+msgid \"Older\"\
+msgstr \"Daha eski\"\
+\
+msgid \"Newer\"\
+msgstr \"Daha yeni\"\
+\
+msgid \"Refresh\"\
+msgstr \"Yenile\"\
+\
+msgid \"Changelog (%1 of %2)\"\
+msgstr \"Değişiklik günlüğü (%1 / %2)\"\
+\
+msgid \"Could not fetch the changelog.\"\
+msgstr \"Değişiklik günlüğü alınamadı.\"\
+\
+msgid \"List\"\
+msgstr \"Liste\"\
+\
+msgid \"Covers\"\
+msgstr \"Kapaklar\"\
+\
+msgid \"Auto\"\
+msgstr \"Oto\"\
+\
+msgid \"Spines\"\
+msgstr \"Sırtlar\"\
+\
+msgid \"New shelf\"\
+msgstr \"Yeni raf\"\
+\
+msgid \"Full name\"\
+msgstr \"Tam ad\"\
+\
+msgid \"Name\"\
+msgstr \"Ad\"\
+\
+msgid \"Surname\"\
+msgstr \"Soyadı\"\
+\
+msgid \"Most recently read\"\
+msgstr \"En son okunan\"\
+\
+msgid \"Most recently added\"\
+msgstr \"En son eklenen\"\
+\
+msgid \"Book count\"\
+msgstr \"Kitap sayısı\"\
+\
+msgid \"Decade\"\
+msgstr \"Onyıl\"\
+\
+msgid \"Home (folders)\"\
+msgstr \"Giriş (klasörler)\"\
+\
+msgid \"Home (flattened)\"\
+msgstr \"Giriş (düzleştirilmiş)\"\
+\
+msgid \"Recently read\"\
+msgstr \"Son okunanlar\"\
+\
+msgid \"Latest added\"\
+msgstr \"Son eklenenler\"\
+\
+msgid \"Series\"\
+msgstr \"Diziler\"\
+\
+msgid \"Authors\"\
+msgstr \"Yazarlar\"\
+\
+msgid \"Genres\"\
+msgstr \"Türler\"\
+\
+msgid \"Formats\"\
+msgstr \"Biçimler\"\
+\
+msgid \"Ratings\"\
+msgstr \"Puanlar\"\
+\
+msgid \"Languages\"\
+msgstr \"Diller\"\
+\
+msgid \"Decades\"\
+msgstr \"Onyıllar\"\
+\
+msgid \"Favorites\"\
+msgstr \"Sık Kullanılanlar\"\
+\
+msgid \"Folder\"\
+msgstr \"Klasör\"\
+\
+msgid \"Folder (flattened)\"\
+msgstr \"Klasör (düzleştirilmiş)\"\
+\
+msgid \"Collection\"\
+msgstr \"Derme\"\
+\
+msgid \"Genre\"\
+msgstr \"Tür\"\
+\
+msgid \"Author\"\
+msgstr \"Yazar\"\
+\
+msgid \"Status\"\
+msgstr \"Durum\"\
+\
+msgid \"Format\"\
+msgstr \"Biçim\"\
+\
+msgid \"Language\"\
+msgstr \"Dil\"\
+\
+msgid \"OPDS catalog\"\
+msgstr \"OPDS kataloğu\"\
+\
+msgid \"Shelf of shelves\"\
+msgstr \"Raflar rafı\"\
+\
+msgid \"(none)\"\
+msgstr \"(yok)\"\
+\
+msgid \"OPDS: %1\"\
+msgstr \"OPDS: %1\"\
+\
+msgid \"Back\"\
+msgstr \"Geri\"\
+\
+msgid \"%1 (copy)\"\
+msgstr \"%1 (kopya)\"\
+\
+msgid \"Move to\"\
+msgstr \"Şuraya taşı\"\
+\
+msgid \"Shelf menu\"\
+msgstr \"Raf menüsü\"\
+\
+msgid \"the shelf menu\"\
+msgstr \"raf menüsü\"\
+\
+msgid \"Into a shelf of shelves\"\
+msgstr \"Bir raflar rafının içine\"\
+\
+msgid \"Now in %1. Tap where it should go.\"\
+msgstr \"Artık %1 içinde. Gideceği yere dokunun.\"\
+\
+msgid \"Tap where it should go.\"\
+msgstr \"Gideceği yere dokunun.\"\
+\
+msgid \"Changing this shelf's source deletes the shelves inside it. This cannot be undone.\"\
+msgstr \"Bu rafın kaynağını değiştirmek içindeki rafları siler. Bu işlem geri alınamaz.\"\
+\
+msgid \"Change\"\
+msgstr \"Değiştir\"\
+\
+msgid \"Shelf\"\
+msgstr \"Raf\"\
+\
+msgid \"Insert icon…\"\
+msgstr \"Simge ekle…\"\
+\
+msgid \"OK\"\
+msgstr \"Tamam\"\
+\
+msgid \"Shelf name\"\
+msgstr \"Raf adı\"\
+\
+msgid \"%1 (%2)\"\
+msgstr \"%1 (%2)\"\
+\
+msgid \"Sort: (none)\"\
+msgstr \"Sıralama: (yok)\"\
+\
+msgid \"Sort: %1\"\
+msgstr \"Sıralama: %1\"\
+\
+msgid \"Server order\"\
+msgstr \"Sunucu sırası\"\
+\
+msgid \"Shelves stand in the order you arrange them\"\
+msgstr \"Raflar, sizin yerleştirdiğiniz sırada durur\"\
+\
+msgid \"Source: \"\
+msgstr \"Kaynak: \"\
+\
+msgid \"Source / grouping: \"\
+msgstr \"Kaynak / gruplama: \"\
+\
+msgid \"Add shelf tile: %1\"\
+msgstr \"Raf kutucuğu ekle: %1\"\
+\
+msgid \"Off\"\
+msgstr \"Kapalı\"\
+\
+msgid \"On\"\
+msgstr \"Açık\"\
+\
+msgid \"Filters: %1\"\
+msgstr \"Süzgeçler: %1\"\
+\
+msgid \"Catalog settings\"\
+msgstr \"Katalog ayarları\"\
+\
+msgid \"Spines, face out\"\
+msgstr \"Sırtlar, kapağı önde\"\
+\
+msgid \"View mode: %1\"\
+msgstr \"Görünüm: %1\"\
+\
+msgid \"Theme: %1\"\
+msgstr \"Tema: %1\"\
+\
+msgid \"Theme\"\
+msgstr \"Tema\"\
+\
+msgid \"Off in Settings\"\
+msgstr \"Ayarlarda kapalı\"\
+\
+msgid \"Not in List view\"\
+msgstr \"Liste görünümünde yok\"\
+\
+msgid \"%1 on this shelf\"\
+msgstr \"bu rafta %1\"\
+\
+msgid \"Modules: %1\"\
+msgstr \"Modüller: %1\"\
+\
+msgid \"Modules: Add to this shelf…\"\
+msgstr \"Modüller: Bu rafa ekle…\"\
+\
+msgid \"Modules\"\
+msgstr \"Modüller\"\
+\
+msgid \"Add module…\"\
+msgstr \"Modül ekle…\"\
+\
+msgid \"Modules stand among this shelf's books. Tap one to move, size or remove it.\"\
+msgstr \"Modüller bu rafın kitapları arasında durur. Taşımak, boyutlandırmak ya da kaldırmak için birine dokunun.\"\
+\
+msgid \"Edit shelf name\"\
+msgstr \"Raf adını düzenle\"\
+\
+msgid \"Shelf order…\"\
+msgstr \"Raf sırası…\"\
+\
+msgid \"Delete this shelf and the shelves inside it? This cannot be undone.\"\
+msgstr \"Bu raf ve içindeki raflar silinsin mi? Bu işlem geri alınamaz.\"\
+\
+msgid \"Delete this shelf? This cannot be undone.\"\
+msgstr \"Bu raf silinsin mi? Bu işlem geri alınamaz.\"\
+\
+msgid \"Copy\"\
+msgstr \"Kopyala\"\
+\
+msgid \"Move to…\"\
+msgstr \"Taşı…\"\
+\
+msgid \"There is no shelf of shelves to move this shelf into yet. Make one with New shelf > Shelf of shelves.\"\
+msgstr \"Bu rafı içine taşıyabileceğiniz bir raflar rafı henüz yok. Yeni raf > Raflar rafı ile bir tane oluşturun.\"\
+\
+msgid \"Choose a source to keep this new shelf.\"\
+msgstr \"Bu yeni rafı tutmak için bir kaynak seçin.\"\
+\
+msgid \"Edit shelf\"\
+msgstr \"Rafı düzenle\"\
+\
+msgid \"Editing shelf: %1\"\
+msgstr \"Düzenlenen raf: %1\"\
+\
+msgid \"Shelf order\"\
+msgstr \"Raf sırası\"\
+\
+msgid \"Starts at\"\
+msgstr \"Başlangıç noktası\"\
+\
+msgid \"The top of the catalog\"\
+msgstr \"Kataloğun en üstü\"\
+\
+msgid \"a subcatalog\"\
+msgstr \"bir alt katalog\"\
+\
+msgid \"Long-press a subcatalog on the shelf to start there.\"\
+msgstr \"Oradan başlamak için raftaki bir alt kataloğa uzun basın.\"\
+\
+msgid \"Back to the top\"\
+msgstr \"En üste dön\"\
+\
+msgid \"Saves downloads to\"\
+msgstr \"İndirmelerin kaydedildiği yer\"\
+\
+msgid \"KOReader's download folder\"\
+msgstr \"KOReader'ın indirme klasörü\"\
+\
+msgid \"A folder of your own\"\
+msgstr \"Kendi seçtiğiniz bir klasör\"\
+\
+msgid \"Save downloads to…\"\
+msgstr \"İndirmeleri şuraya kaydet…\"\
+\
+msgid \"Refresh this catalog\"\
+msgstr \"Bu kataloğu yenile\"\
+\
+msgid \"No collections yet. Make one from a book's menu.\"\
+msgstr \"Henüz derme yok. Bir kitabın menüsünden oluşturun.\"\
+\
+msgid \"Books in this collection stand face out.\"\
+msgstr \"Bu dermedeki kitaplar kapağı önde durur.\"\
+\
+msgid \"In a collection\"\
+msgstr \"Bir dermede\"\
+\
+msgid \"Series boxes\"\
+msgstr \"Dizi kutuları\"\
+\
+msgid \"On a shelf of books, and inside an author or other group, a series' books share one tile.\"\
+msgstr \"Bir kitap rafında ve bir yazarın ya da başka bir grubun içinde, bir dizinin kitapları tek bir kutucuğu paylaşır.\"\
+\
+msgid \"Columns\"\
+msgstr \"Sütunlar\"\
+\
+msgid \"Rows\"\
+msgstr \"Satırlar\"\
+\
+msgid \"columns: %1, rows: %2\"\
+msgstr \"sütun: %1, satır: %2\"\
+\
+msgid \"series boxes\"\
+msgstr \"dizi kutuları\"\
+\
+msgid \"Always\"\
+msgstr \"Her zaman\"\
+\
+msgid \"None\"\
+msgstr \"Yok\"\
+\
+msgid \"Often\"\
+msgstr \"Sık sık\"\
+\
+msgid \"Rarely\"\
+msgstr \"Nadiren\"\
+\
+msgid \"Face out\"\
+msgstr \"Kapağı önde\"\
+\
+msgid \"Thickness\"\
+msgstr \"Kalınlık\"\
+\
+msgid \"Book sizes\"\
+msgstr \"Kitap boyutları\"\
+\
+msgid \"Varied\"\
+msgstr \"Çeşitli\"\
+\
+msgid \"Equal height\"\
+msgstr \"Eşit yükseklik\"\
+\
+msgid \"Same\"\
+msgstr \"Aynı\"\
+\
+msgid \"Book binding\"\
+msgstr \"Kitap cildi\"\
+\
+msgid \"Cover\"\
+msgstr \"Kapak\"\
+\
+msgid \"Plain\"\
+msgstr \"Sade\"\
+\
+msgid \"Author on spine\"\
+msgstr \"Sırtta yazar\"\
+\
+msgid \"Ornaments\"\
+msgstr \"Süsler\"\
+\
+msgid \"Plank\"\
+msgstr \"Raf tahtası\"\
+\
+msgid \"face out: %1\"\
+msgstr \"kapağı önde: %1\"\
+\
+msgid \"rows: %1\"\
+msgstr \"satır: %1\"\
+\
+msgid \"%1% thick\"\
+msgstr \"kalınlık %1%\"\
+\
+msgid \"equal height books\"\
+msgstr \"eşit yükseklikte kitaplar\"\
+\
+msgid \"same size books\"\
+msgstr \"aynı boyutta kitaplar\"\
+\
+msgid \"paperbacks\"\
+msgstr \"karton kapaklar\"\
+\
+msgid \"plain series boxes\"\
+msgstr \"sade dizi kutuları\"\
+\
+msgid \"series boxes of spines\"\
+msgstr \"sırtlardan dizi kutuları\"\
+\
+msgid \"no author on spines\"\
+msgstr \"sırtlarda yazar yok\"\
+\
+msgid \"ornaments: %1\"\
+msgstr \"süsler: %1\"\
+\
+msgid \"Folder tiles\"\
+msgstr \"Klasör kutucukları\"\
+\
+msgid \"Cover captions\"\
+msgstr \"Kapak altyazıları\"\
+\
+msgid \"Default\"\
+msgstr \"Varsayılan\"\
+\
+msgid \"folder tiles: %1\"\
+msgstr \"klasör kutucukları: %1\"\
+\
+msgid \"captions: %1\"\
+msgstr \"altyazılar: %1\"\
+\
+msgid \"View mode\"\
+msgstr \"Görünüm\"\
+\
+msgid \"Show as\"\
+msgstr \"Şöyle göster\"\
+\
+msgid \"Inside folders and stacks\"\
+msgstr \"Klasörlerin ve yığınların içinde\"\
+\
+msgid \"Top level\"\
+msgstr \"En üst düzey\"\
+\
+msgid \"Settings\"\
+msgstr \"Ayarlar\"\
+\
+msgid \"%1: %2\"\
+msgstr \"%1: %2\"\
+\
+msgid \"First in series\"\
+msgstr \"Dizideki ilk kitap\"\
+\
+msgid \"First unread in series\"\
+msgstr \"Dizide okunmamış ilk kitap\"\
+\
+msgid \"Unread\"\
+msgstr \"Okunmamış\"\
+\
+msgid \"Unread standalone\"\
+msgstr \"Okunmamış tekil kitaplar\"\
+\
+msgid \"Recently added\"\
+msgstr \"Son eklenenler\"\
+\
+msgid \"All books\"\
+msgstr \"Tüm kitaplar\"\
+\
+msgid \"Choose for each book\"\
+msgstr \"Her kitap için seç\"\
+\
+msgid \"Newest %1\"\
+msgstr \"En yeni %1\"\
+\
+msgid \"%1 + %2 more\"\
+msgstr \"%1 + %2 tane daha\"\
+\
+msgid \"Choose which books show their cover facing out on this shelf. The rest show their spines.\"\
+msgstr \"Bu rafta hangi kitapların kapağının önde duracağını seçin. Diğerleri sırtlarını gösterir.\"\
+\
+msgid \"Other\"\
+msgstr \"Diğer\"\
+\
+msgid \"How many of the newest\"\
+msgstr \"En yenilerden kaç tane\"\
+\
+msgid \"%1 (not found)\"\
+msgstr \"%1 (bulunamadı)\"\
+\
+msgid \"Whole shelf\"\
+msgstr \"Tüm raf\"\
+\
+msgid \"Every book faces out until you turn it. Long-press a book on the shelf, tap 'Arrange', then 'Face out'.\"\
+msgstr \"Siz çevirene kadar her kitap kapağı önde durur. Raftaki bir kitaba uzun basın, önce 'Yerleştir'e, sonra 'Kapağı önde'ye dokunun.\"\
+\
+msgid \"Same as main shelf\"\
+msgstr \"Ana rafla aynı\"\
+\
+msgid \"Plain color\"\
+msgstr \"Düz renk\"\
+\
+msgid \"Oak\"\
+msgstr \"Meşe\"\
+\
+msgid \"%1 (%2 pack)\"\
+msgstr \"%1 (%2 paketi)\"\
+\
+msgid \"The plank this module's shelf stands on.\"\
+msgstr \"Bu modülün rafının üzerinde durduğu raf tahtası.\"\
+\
+msgid \"Cover captions: %1\"\
+msgstr \"Kapak altyazıları: %1\"\
+\
+msgid \"Title\"\
+msgstr \"Başlık\"\
+\
+msgid \"Custom\"\
+msgstr \"Özel\"\
+\
+msgid \"Same as %1\"\
+msgstr \"%1 ile aynı\"\
+\
+msgid \"The text under each cover on this shelf.\"\
+msgstr \"Bu raftaki her kapağın altındaki yazı.\"\
+\
+msgid \"A line of your own\"\
+msgstr \"Kendi satırınız\"\
+\
+msgid \"Choose what it shows, from the book's details.\"\
+msgstr \"Ne göstereceğini kitabın ayrıntılarından seçin.\"\
+\
+msgid \"Search…\"\
+msgstr \"Ara…\"\
+\
+msgid \"Shelf module source\"\
+msgstr \"Raf modülü kaynağı\"\
+\
+msgid \"Source\"\
+msgstr \"Kaynak\"\
+\
+msgid \"Your own collection\"\
+msgstr \"Kendi dermeniz\"\
+\
+msgid \"Choose OPDS catalog\"\
+msgstr \"OPDS kataloğu seçin\"\
+\
+msgid \"Add catalog…\"\
+msgstr \"Katalog ekle…\"\
+\
+msgid \"Edit\"\
+msgstr \"Düzenle\"\
+\
+msgid \"Choose folder within home folder\"\
+msgstr \"Başlangıç klasöründen bir klasör seçin\"\
+\
+msgid \"Browse device…\"\
+msgstr \"Aygıta göz at…\"\
+\
+msgid \"Every book, ungrouped.\"\
+msgstr \"Her kitap, gruplanmadan.\"\
+\
+msgid \"Grouped by folder.\"\
+msgstr \"Klasöre göre gruplanmış.\"\
+\
+msgid \"Every book in one folder and its subfolders.\"\
+msgstr \"Bir klasördeki ve alt klasörlerindeki her kitap.\"\
+\
+msgid \"Pick one\"\
+msgstr \"Birini seçin\"\
+\
+msgid \"Books\"\
+msgstr \"Kitaplar\"\
+\
+msgid \"Home\"\
+msgstr \"Giriş\"\
+\
+msgid \"A folder\"\
+msgstr \"Bir klasör\"\
+\
+msgid \"Books you pick, in the order you place them. Add a book from its long-press menu.\"\
+msgstr \"Seçtiğiniz kitaplar, yerleştirdiğiniz sırayla. Bir kitabı uzun basma menüsünden ekleyin.\"\
+\
+msgid \"Just one\"\
+msgstr \"Yalnızca bir tane\"\
+\
+msgid \"Grouped: a stack for each\"\
+msgstr \"Gruplanmış: her biri için bir yığın\"\
+\
+msgid \"Flattened folder\"\
+msgstr \"Düzleştirilmiş klasör\"\
+\
+msgid \"More\"\
+msgstr \"Daha fazla\"\
+\
+msgid \"Books matching the filters you choose below will show in this shelf.\"\
+msgstr \"Aşağıda seçtiğiniz süzgeçlere uyan kitaplar bu rafta görünür.\"\
+\
+msgid \"Clear all filters\"\
+msgstr \"Tüm süzgeçleri temizle\"\
+\
+msgid \"Filters\"\
+msgstr \"Süzgeçler\"\
+\
+msgid \"Reading status filter\"\
+msgstr \"Okuma durumu süzgeci\"\
+\
+msgid \"Genre filter\"\
+msgstr \"Tür süzgeci\"\
+\
+msgid \"Language filter\"\
+msgstr \"Dil süzgeci\"\
+\
+msgid \"Format filter\"\
+msgstr \"Biçim süzgeci\"\
+\
+msgid \"Rating filter\"\
+msgstr \"Puan süzgeci\"\
+\
+msgid \"Collection filter\"\
+msgstr \"Derme süzgeci\"\
+\
+msgid \"Filter\"\
+msgstr \"Süzgeç\"\
+\
+msgid \"Any of these genres\"\
+msgstr \"Bu türlerden herhangi biri\"\
+\
+msgid \"OR\"\
+msgstr \"VEYA\"\
+\
+msgid \"AND\"\
+msgstr \"VE\"\
+\
+msgid \"All of these genres\"\
+msgstr \"Bu türlerin tümü\"\
+\
+msgid \"Leave out these genres\"\
+msgstr \"Bu türleri dışarıda bırak\"\
+\
+msgid \"NOT\"\
+msgstr \"DEĞİL\"\
+\
+msgid \"Add genres\"\
+msgstr \"Tür ekle\"\
+\
+msgid \"A book needs one genre from the first list, every genre in the second and none from the third. An empty list is ignored.\"\
+msgstr \"Bir kitapta ilk listeden bir tür, ikinci listedeki her tür bulunmalı, üçüncüden hiçbiri bulunmamalı. Boş liste yok sayılır.\"\
+\
+msgid \"In any of these collections\"\
+msgstr \"Bu dermelerden herhangi birinde\"\
+\
+msgid \"Leave out these collections\"\
+msgstr \"Bu dermeleri dışarıda bırak\"\
+\
+msgid \"Add collections\"\
+msgstr \"Derme ekle\"\
+\
+msgid \"A book needs to be in one collection from the first list and in none from the second. An empty list is ignored.\"\
+msgstr \"Bir kitap ilk listedeki dermelerden birinde olmalı, ikinci listedekilerin hiçbirinde olmamalı. Boş liste yok sayılır.\"\
+\
+msgid \"Add a folder\"\
+msgstr \"Klasör ekle\"\
+\
+msgid \"Only books in these folders\"\
+msgstr \"Yalnızca bu klasörlerdeki kitaplar\"\
+\
+msgid \"Add a folder to leave out\"\
+msgstr \"Dışarıda bırakılacak klasör ekle\"\
+\
+msgid \"Leave out these folders\"\
+msgstr \"Bu klasörleri dışarıda bırak\"\
+\
+msgid \"Leave the first list empty to include every folder except those left out.\"\
+msgstr \"Dışarıda bırakılanlar dışındaki tüm klasörleri dahil etmek için ilk listeyi boş bırakın.\"\
+\
+msgid \"Folders\"\
+msgstr \"Klasörler\"\
+\
+msgid \"Newest first\"\
+msgstr \"Önce en yeni\"\
+\
+msgid \"Oldest first\"\
+msgstr \"Önce en eski\"\
+\
+msgid \"Least read first\"\
+msgstr \"Önce en az okunan\"\
+\
+msgid \"Most read first\"\
+msgstr \"Önce en çok okunan\"\
+\
+msgid \"Highest first\"\
+msgstr \"Önce en yüksek\"\
+\
+msgid \"Lowest first\"\
+msgstr \"Önce en düşük\"\
+\
+msgid \"Largest first\"\
+msgstr \"Önce en büyük\"\
+\
+msgid \"Smallest first\"\
+msgstr \"Önce en küçük\"\
+\
+msgid \"Longest first\"\
+msgstr \"Önce en uzun\"\
+\
+msgid \"Shortest first\"\
+msgstr \"Önce en kısa\"\
+\
+msgid \"Fewest first\"\
+msgstr \"Önce en az\"\
+\
+msgid \"Most first\"\
+msgstr \"Önce en çok\"\
+\
+msgid \"Finished first\"\
+msgstr \"Önce tamamlananlar\"\
+\
+msgid \"Unread first\"\
+msgstr \"Önce okunmamışlar\"\
+\
+msgid \"Reading first\"\
+msgstr \"Önce okunmakta olanlar\"\
+\
+msgid \"Favorites first\"\
+msgstr \"Önce sık kullanılanlar\"\
+\
+msgid \"Favorites last\"\
+msgstr \"Sık kullanılanlar sonda\"\
+\
+msgid \"Reversed\"\
+msgstr \"Ters\"\
+\
+msgid \"Your order\"\
+msgstr \"Sizin sıranız\"\
+\
+msgid \"Add a sort\"\
+msgstr \"Sıralama ekle\"\
+\
+msgid \"Sort the books inside each\"\
+msgstr \"Her birinin içindeki kitapları sırala\"\
+\
+msgid \"Add a tie-breaker\"\
+msgstr \"İkincil sıralama ekle\"\
+\
+msgid \"Order the groups by\"\
+msgstr \"Grupları şuna göre sırala\"\
+\
+msgid \"Edit collection order\"\
+msgstr \"Derme sırasını düzenle\"\
+\
+msgid \"Book\"\
+msgstr \"Kitap\"\
+\
+msgid \"Size\"\
+msgstr \"Boyut\"\
+\
+msgid \"Sort\"\
+msgstr \"Sırala\"\
+\
+msgid \"Rename collection\"\
+msgstr \"Dermeyi yeniden adlandır\"\
+\
+msgid \"New name\"\
+msgstr \"Yeni ad\"\
+\
+msgid \"Rename\"\
+msgstr \"Yeniden adlandır\"\
+\
+msgid \"A collection with that name already exists.\"\
+msgstr \"Bu adda bir derme zaten var.\"\
+\
+msgid \"Delete collection \\\"\"\
+msgstr \"\\\"\"\
+\
+msgid \"\\\"? Books are not deleted, only the tag.\"\
+msgstr \"\\\" dermesi silinsin mi? Kitaplar silinmez, yalnızca etiket kaldırılır.\"\
+\
+msgid \"Pin to shelf menu\"\
+msgstr \"Raf menüsüne sabitle\"\
+\
+msgid \"Edit collection: \"\
+msgstr \"Dermeyi düzenle: \"\
+\
+msgid \"New collection\"\
+msgstr \"Yeni derme\"\
+\
+msgid \"Collection name\"\
+msgstr \"Derme adı\"\
+\
+msgid \"Create\"\
+msgstr \"Oluştur\"\
+\
+msgid \"Add to all\"\
+msgstr \"Tümüne ekle\"\
+\
+msgid \"Remove from all\"\
+msgstr \"Tümünden kaldır\"\
+\
+msgid \"In some\"\
+msgstr \"Bazılarında\"\
+\
+msgid \"In all\"\
+msgstr \"Tümünde\"\
+\
+msgid \"Save\"\
+msgstr \"Kaydet\"\
+\
+#, lua-format\
+msgid \"Collections · %d books\"\
+msgstr \"Dermeler · %d kitap\"\
+\
+msgid \"Tap a collection to add the books to it, again to remove them from it, and again to leave it as it is.\"\
+msgstr \"Kitapları eklemek için bir dermeye dokunun; çıkarmak için yeniden, olduğu gibi bırakmak için bir kez daha dokunun.\"\
+\
+msgid \"Edit collections\"\
+msgstr \"Dermeleri düzenle\"\
+\
+msgid \"Choose a collection\"\
+msgstr \"Bir derme seçin\"\
+\
+msgid \"The shelf shows the collection's books, in the order you place them.\"\
+msgstr \"Raf, dermenin kitaplarını sizin yerleştirdiğiniz sırayla gösterir.\"\
+\
+msgid \"Manage collections\"\
+msgstr \"Dermeleri yönet\"\
+\
+msgid \"Tap a custom collection to rename, delete, or pin it to the shelf menu. Long-press a book on the shelf and tap Collections… to add or remove it from collections.\"\
+msgstr \"Yeniden adlandırmak, silmek ya da raf menüsüne sabitlemek için özel bir dermeye dokunun. Bir kitabı dermelere eklemek ya da dermelerden çıkarmak için raftaki kitaba uzun basın ve Dermeler…'e dokunun.\"\
+\
+msgid \"Arrange books in collection\"\
+msgstr \"Dermedeki kitapları yerleştir\"\
+\
+msgid \"or\"\
+msgstr \"veya\"\
+\
+msgid \"White\"\
+msgstr \"Beyaz\"\
+\
+msgid \"Pick a color\"\
+msgstr \"Bir renk seçin\"\
+\
+msgid \"Invalid hex color (use #RGB or #RRGGBB)\"\
+msgstr \"Geçersiz onaltılık renk (#RGB ya da #RRGGBB kullanın)\"\
+\
+msgid \"Embedded\"\
+msgstr \"Gömülü\"\
+\
+msgid \"Current cover — %1\"\
+msgstr \"Geçerli kapak - %1\"\
+\
+msgid \"Custom cover\"\
+msgstr \"Özel kapak\"\
+\
+msgid \"Previous cover\"\
+msgstr \"Önceki kapak\"\
+\
+msgid \"Hardcover\"\
+msgstr \"Hardcover\"\
+\
+msgid \"%1×%2px · %3\"\
+msgstr \"%1×%2px · %3\"\
+\
+msgid \"%1×%2px\"\
+msgstr \"%1×%2px\"\
+\
+msgid \"Google Books\"\
+msgstr \"Google Books\"\
+\
+msgid \"Open Library\"\
+msgstr \"Open Library\"\
+\
+msgid \"Apple Books\"\
+msgstr \"Apple Books\"\
+\
+msgid \"Wikidata\"\
+msgstr \"Wikidata\"\
+\
+msgid \"Searching Apple Books…\"\
+msgstr \"Apple Books'ta aranıyor…\"\
+\
+msgid \"Searching Google Books…\"\
+msgstr \"Google Books'ta aranıyor…\"\
+\
+msgid \"Searching Open Library…\"\
+msgstr \"Open Library'de aranıyor…\"\
+\
+msgid \"Searching Wikidata…\"\
+msgstr \"Wikidata'da aranıyor…\"\
+\
+msgid \"Searching Hardcover…\"\
+msgstr \"Hardcover'da aranıyor…\"\
+\
+msgid \"My shelf\"\
+msgstr \"Rafım\"\
+\
+msgid \"My shelf %1\"\
+msgstr \"Rafım %1\"\
+\
+msgid \"Taken off %1\"\
+msgstr \"Şuradan çıkarıldı: %1\"\
+\
+msgid \"%1 books taken off %2\"\
+msgstr \"%1 kitap şuradan çıkarıldı: %2\"\
+\
+msgid \"Added to %1\"\
+msgstr \"Şuraya eklendi: %1\"\
+\
+msgid \"%1 books added to %2\"\
+msgstr \"%1 kitap şuraya eklendi: %2\"\
+\
+msgid \"This book is on it. Tap to take it off.\"\
+msgstr \"Bu kitap bu rafta. Çıkarmak için dokunun.\"\
+\
+msgid \"These books are on it. Tap to take them off.\"\
+msgstr \"Bu kitaplar bu rafta. Çıkarmak için dokunun.\"\
+\
+msgid \"Some of these books are on it. Tap to add the rest.\"\
+msgstr \"Bu kitapların bazıları bu rafta. Kalanları eklemek için dokunun.\"\
+\
+msgid \"Empty. Tap to add.\"\
+msgstr \"Boş. Eklemek için dokunun.\"\
+\
+msgid \"1 book. Tap to add.\"\
+msgstr \"1 kitap. Eklemek için dokunun.\"\
+\
+msgid \"%1 books. Tap to add.\"\
+msgstr \"%1 kitap. Eklemek için dokunun.\"\
+\
+msgid \"No shelves of your own yet\"\
+msgstr \"Henüz kendi rafınız yok\"\
+\
+msgid \"A shelf of books you pick, in the order you place them: a home shelf, a to-be-read pile. Kept as a KOReader collection.\"\
+msgstr \"Seçtiğiniz kitaplardan, yerleştirdiğiniz sırayla oluşan bir raf: bir ev rafı, bir okunacaklar yığını. KOReader dermesi olarak saklanır.\"\
+\
+msgid \"That name cannot be used for a shelf of your own.\"\
+msgstr \"Bu ad kendi rafınız için kullanılamaz.\"\
+\
+msgid \"Add %1 books to shelf\"\
+msgstr \"%1 kitabı rafa ekle\"\
+\
+msgid \"Standalone and books in series\"\
+msgstr \"Tekil kitaplar ve dizideki kitaplar\"\
+\
+msgid \"Only standalone books\"\
+msgstr \"Yalnızca tekil kitaplar\"\
+\
+msgid \"Only books in series\"\
+msgstr \"Yalnızca dizideki kitaplar\"\
+\
+msgid \"5 stars\"\
+msgstr \"5 yıldız\"\
+\
+msgid \"4 stars\"\
+msgstr \"4 yıldız\"\
+\
+msgid \"3 stars\"\
+msgstr \"3 yıldız\"\
+\
+msgid \"2 stars\"\
+msgstr \"2 yıldız\"\
+\
+msgid \"1 star\"\
+msgstr \"1 yıldız\"\
+\
+msgid \"Any\"\
+msgstr \"Herhangi\"\
+\
+#, lua-format\
+msgid \"%d in, %d out\"\
+msgstr \"%d dahil, %d hariç\"\
+\
+msgid \"all of\"\
+msgstr \"tümü:\"\
+\
+msgid \"not\"\
+msgstr \"hariç\"\
+\
+#, lua-format\
+msgid \"%d active\"\
+msgstr \"%d etkin\"\
+\
+msgid \"Home folder\"\
+msgstr \"Başlangıç klasörü\"\
+\
+msgid \"New folder in home folder\"\
+msgstr \"Başlangıç klasöründe yeni klasör\"\
+\
+msgid \"A folder with that name already exists.\"\
+msgstr \"Bu adda bir klasör zaten var.\"\
+\
+msgid \"Invalid folder name.\"\
+msgstr \"Geçersiz klasör adı.\"\
+\
+msgid \"New folder…\"\
+msgstr \"Yeni klasör…\"\
+\
+msgid \"Pick font\"\
+msgstr \"Yazı tipi seçin\"\
+\
+msgid \"Done\"\
+msgstr \"Bitti\"\
+\
+msgid \"Bold Italic\"\
+msgstr \"Kalın İtalik\"\
+\
+msgid \"Bold\"\
+msgstr \"Kalın\"\
+\
+msgid \"Italic\"\
+msgstr \"İtalik\"\
+\
+msgid \"Swipe up for full screen shelves\"\
+msgstr \"Tam ekran raflar için yukarı kaydırın\"\
+\
+msgid \"Swipe down leaves full screen shelves\"\
+msgstr \"Aşağı kaydırma tam ekran raflardan çıkarır\"\
+\
+msgid \"When enabled, swiping down in full screen shelves brings the top panel back. Turn off to stay in full screen: the swipe then refreshes the library, as it does with the top panel showing, and the top panel comes back when you tap the book icon at the start of the shelf bar, or with a gesture set to Bookshelf: full screen shelves on or off.\"\
+msgstr \"Etkinleştirildiğinde, tam ekran raflarda aşağı kaydırmak üst paneli geri getirir. Tam ekranda kalmak için kapatın: bu durumda kaydırma, üst panel görünürken olduğu gibi kitaplığı yeniler; üst panel ise raf çubuğunun başındaki kitap simgesine dokunduğunuzda ya da Bookshelf: tam ekran raflar açık/kapalı olarak ayarlanmış bir hareketle geri gelir.\"\
+\
+msgid \"Swipe down on the shelf to refresh the library\"\
+msgstr \"Kitaplığı yenilemek için rafta aşağı kaydırın\"\
+\
+msgid \"Pinch or spread to change the shelf's size\"\
+msgstr \"Rafın boyutunu değiştirmek için iki parmakla sıkıştırın ya da açın\"\
+\
+msgid \"Swipe down or up on the top panel for fewer or more rows\"\
+msgstr \"Daha az ya da daha çok satır için üst panelde aşağı ya da yukarı kaydırın\"\
+\
+msgid \"Swipe left or right on the top panel to preview the next book\"\
+msgstr \"Sonraki kitabın önizlemesi için üst panelde sola ya da sağa kaydırın\"\
+\
+msgid \"Long-press the top panel for book details\"\
+msgstr \"Kitap ayrıntıları için üst panele uzun basın\"\
+\
+msgid \"Tap the stars to rate a book\"\
+msgstr \"Bir kitaba puan vermek için yıldızlara dokunun\"\
+\
+msgid \"Tap the description to read all of it\"\
+msgstr \"Açıklamanın tamamını okumak için ona dokunun\"\
+\
+msgid \"Long-press a shelf button to edit the shelf\"\
+msgstr \"Rafı düzenlemek için raf düğmesine uzun basın\"\
+\
+msgid \"Tap the current shelf's button to edit the shelf\"\
+msgstr \"Rafı düzenlemek için geçerli rafın düğmesine dokunun\"\
+\
+msgid \"Swipe the shelf buttons to see more of them\"\
+msgstr \"Daha fazlasını görmek için raf düğmelerini kaydırın\"\
+\
+msgid \"Long-press a book for its details\"\
+msgstr \"Ayrıntıları için bir kitaba uzun basın\"\
+\
+msgid \"Long-press a series, author or folder for its menu\"\
+msgstr \"Menüsü için bir diziye, yazara ya da klasöre uzun basın\"\
+\
+msgid \"Double-tap a book to open it\"\
+msgstr \"Açmak için bir kitaba çift dokunun\"\
+\
+msgid \"Long-press the page number to change the view mode\"\
+msgstr \"Görünümü değiştirmek için sayfa numarasına uzun basın\"\
+\
+msgid \"Tap the page number to go to a page\"\
+msgstr \"Bir sayfaya gitmek için sayfa numarasına dokunun\"\
+\
+msgid \"Long-press the arrows to skip ten pages\"\
+msgstr \"On sayfa atlamak için oklara uzun basın\"\
+\
+msgid \"Long-press a module to edit it\"\
+msgstr \"Düzenlemek için bir modüle uzun basın\"\
+\
+msgid \"Tap a module to use it\"\
+msgstr \"Kullanmak için bir modüle dokunun\"\
+\
+msgid \"Long-press a start menu entry to edit it\"\
+msgstr \"Düzenlemek için bir başlangıç menüsü girdisine uzun basın\"\
+\
+msgid \"Long-press an ornament to adjust it\"\
+msgstr \"Ayarlamak için bir süse uzun basın\"\
+\
+msgid \"Tap an ornament to run its action\"\
+msgstr \"Eylemini çalıştırmak için bir süse dokunun\"\
+\
+msgid \"All gestures\"\
+msgstr \"Tüm hareketler\"\
+\
+msgid \"Linking book %1 of %2\"\
+msgstr \"Kitap bağlanıyor: %1 / %2\"\
+\
+msgid \"Bookshelf's own\"\
+msgstr \"Bookshelf'in kendi anahtarı\"\
+\
+msgid \"from the Hardcover plugin\"\
+msgstr \"Hardcover eklentisinden\"\
+\
+msgid \"from your sync plugin\"\
+msgstr \"eşitleme eklentinizden\"\
+\
+msgid \"not set\"\
+msgstr \"ayarlanmadı\"\
+\
+msgid \"the Hardcover plugin\"\
+msgstr \"Hardcover eklentisi\"\
+\
+msgid \"your sync plugin\"\
+msgstr \"eşitleme eklentiniz\"\
+\
+msgid \"Hardcover API key: %1\"\
+msgstr \"Hardcover API anahtarı: %1\"\
+\
+msgid \"in a plugin that is off\"\
+msgstr \"kapalı bir eklentide\"\
+\
+msgid \"Restart KOReader to see the Hardcover menu.\"\
+msgstr \"Hardcover menüsünü görmek için KOReader'ı yeniden başlatın.\"\
+\
+msgid \"Hardcover API key\"\
+msgstr \"Hardcover API anahtarı\"\
+\
+msgid \"Paste or type the key\"\
+msgstr \"Anahtarı yapıştırın ya da yazın\"\
+\
+msgid \"That does not look like a Hardcover API key.\"\
+msgstr \"Bu bir Hardcover API anahtarına benzemiyor.\"\
+\
+msgid \"Key saved on this device.\"\
+msgstr \"Anahtar bu aygıta kaydedildi.\"\
+\
+msgid \"Hardcover accepts this key (%1).\"\
+msgstr \"Hardcover bu anahtarı kabul ediyor (%1).\"\
+\
+msgid \"Hardcover accepts this key.\"\
+msgstr \"Hardcover bu anahtarı kabul ediyor.\"\
+\
+msgid \"The key was not accepted: %1\"\
+msgstr \"Anahtar kabul edilmedi: %1\"\
+\
+msgid \"no reply\"\
+msgstr \"yanıt yok\"\
+\
+msgid \"Bookshelf has its own Hardcover API key, stored on this device.\"\
+msgstr \"Bookshelf'in bu aygıtta saklanan kendi Hardcover API anahtarı var.\"\
+\
+msgid \"There is a Hardcover API key %1, but that plugin is switched off, and Hardcover with it.\"\
+msgstr \"Bir Hardcover API anahtarı var (%1), ancak o eklenti kapalı, onunla birlikte Hardcover da.\"\
+\
+msgid \"Bookshelf is using the Hardcover API key %1. It is read from there each time and not copied.\"\
+msgstr \"Bookshelf, Hardcover API anahtarını kullanıyor (%1). Anahtar her seferinde oradan okunur, kopyalanmaz.\"\
+\
+msgid \"\"\
+\"No Hardcover API key. Get one at hardcover.app/account/api, then enter it here, or save it in a text file at:\\n\"\
+\"%1\"\
+msgstr \"Hardcover API anahtarı yok. hardcover.app/account/api adresinden bir tane alın, sonra buraya girin ya da şu konumdaki bir metin dosyasına kaydedin:\\n%1\"\
+\
+msgid \"Enter key…\"\
+msgstr \"Anahtarı gir…\"\
+\
+msgid \"Read key from file\"\
+msgstr \"Anahtarı dosyadan oku\"\
+\
+msgid \"Key read and saved on this device. The file was removed.\"\
+msgstr \"Anahtar okundu ve bu aygıta kaydedildi. Dosya kaldırıldı.\"\
+\
+msgid \"\"\
+\"No key found. Save the key in a text file at:\\n\"\
+\"%1\"\
+msgstr \"Anahtar bulunamadı. Anahtarı şu konumdaki bir metin dosyasına kaydedin:\\n%1\"\
+\
+msgid \"Copying the key is only needed to use Hardcover without that plugin.\"\
+msgstr \"Anahtarı kopyalamak yalnızca Hardcover'ı o eklenti olmadan kullanmak için gerekir.\"\
+\
+msgid \"Copy the key from %1\"\
+msgstr \"Anahtarı kopyala (kaynak: %1)\"\
+\
+msgid \"Bookshelf now has its own copy of the key, and keeps working if the plugin is removed.\"\
+msgstr \"Bookshelf'in artık anahtarın kendi kopyası var; eklenti kaldırılsa da çalışmaya devam eder.\"\
+\
+msgid \"Check key\"\
+msgstr \"Anahtarı denetle\"\
+\
+msgid \"Remove Bookshelf's key\"\
+msgstr \"Bookshelf'in anahtarını kaldır\"\
+\
+msgid \"Bookshelf's key was removed.\"\
+msgstr \"Bookshelf'in anahtarı kaldırıldı.\"\
+\
+msgid \"Bookshelf can talk to Hardcover itself with an API key, with or without a sync plugin installed. A key your sync plugin already holds is used as it is. Get a key at hardcover.app/account/api.\"\
+msgstr \"Bookshelf, bir eşitleme eklentisi kurulu olsun ya da olmasın, bir API anahtarıyla Hardcover'a doğrudan bağlanabilir. Eşitleme eklentinizde zaten bulunan bir anahtar olduğu gibi kullanılır. hardcover.app/account/api adresinden bir anahtar alın.\"\
+\
+msgid \"%1, %2 and others\"\
+msgstr \"%1, %2 ve diğerleri\"\
+\
+msgid \"Untitled\"\
+msgstr \"Başlıksız\"\
+\
+msgid \"%1 pages\"\
+msgstr \"%1 sayfa\"\
+\
+msgid \"1 page\"\
+msgstr \"1 sayfa\"\
+\
+msgid \"%1 readers\"\
+msgstr \"%1 okur\"\
+\
+msgid \"1 reader\"\
+msgstr \"1 okur\"\
+\
+msgid \"%1 reads\"\
+msgstr \"%1 okuma\"\
+\
+msgid \"1 read\"\
+msgstr \"1 okuma\"\
+\
+msgid \"Search Hardcover…\"\
+msgstr \"Hardcover'da ara…\"\
+\
+msgid \"Hardcover could not be searched. The list is unchanged.\"\
+msgstr \"Hardcover'da arama yapılamadı. Liste değişmedi.\"\
+\
+msgid \"Nothing on Hardcover matches “%1”.\"\
+msgstr \"Hardcover'da “%1” ile eşleşen bir şey yok.\"\
+\
+msgid \"Asking Hardcover…\"\
+msgstr \"Hardcover'a soruluyor…\"\
+\
+msgid \"Hardcover could not be reached: %1\"\
+msgstr \"Hardcover'a ulaşılamadı: %1\"\
+\
+msgid \"Nothing found on Hardcover.\"\
+msgstr \"Hardcover'da hiçbir şey bulunamadı.\"\
+\
+msgid \"Stop\"\
+msgstr \"Durdur\"\
+\
+msgid \"%1 (error)\"\
+msgstr \"%1 (hata)\"\
+\
+msgid \"Long-press to add modules\"\
+msgstr \"Modül eklemek için uzun basın\"\
+\
+msgid \"No modules available\"\
+msgstr \"Kullanılabilir modül yok\"\
+\
+msgid \"All\"\
+msgstr \"Tümü\"\
+\
+msgid \"Dynamic\"\
+msgstr \"Dinamik\"\
+\
+msgid \"Device\"\
+msgstr \"Aygıt\"\
+\
+msgid \"Time\"\
+msgstr \"Zaman\"\
+\
+msgid \"Symbols\"\
+msgstr \"Semboller\"\
+\
+msgid \"Arrows\"\
+msgstr \"Oklar\"\
+\
+msgid \"Blocks\"\
+msgstr \"Bloklar\"\
+\
+msgid \"Separators\"\
+msgstr \"Ayırıcılar\"\
+\
+msgid \"SVG icon folder\"\
+msgstr \"SVG simge klasörü\"\
+\
+msgid \"Battery\"\
+msgstr \"Pil\"\
+\
+msgid \"Wi-Fi\"\
+msgstr \"Wi-Fi\"\
+\
+msgid \"Frontlight\"\
+msgstr \"Ön aydınlatma\"\
+\
+msgid \"Night mode\"\
+msgstr \"Gece kipi\"\
+\
+msgid \"Sun (outline)\"\
+msgstr \"Güneş (dış hat)\"\
+\
+msgid \"Hot springs / warmth\"\
+msgstr \"Kaplıca / sıcaklık\"\
+\
+msgid \"Spade\"\
+msgstr \"Maça\"\
+\
+msgid \"Club\"\
+msgstr \"Sinek\"\
+\
+msgid \"Heart\"\
+msgstr \"Kalp\"\
+\
+msgid \"Diamond suit\"\
+msgstr \"Karo\"\
+\
+msgid \"Star (filled)\"\
+msgstr \"Yıldız (dolu)\"\
+\
+msgid \"Star (outline)\"\
+msgstr \"Yıldız (dış hat)\"\
+\
+msgid \"Infinity\"\
+msgstr \"Sonsuzluk\"\
+\
+msgid \"Section sign\"\
+msgstr \"Bölüm işareti\"\
+\
+msgid \"Pilcrow / paragraph\"\
+msgstr \"Paragraf işareti\"\
+\
+msgid \"Dagger\"\
+msgstr \"Hançer\"\
+\
+msgid \"Double dagger\"\
+msgstr \"Çift hançer\"\
+\
+msgid \"Numero\"\
+msgstr \"Numara işareti\"\
+\
+msgid \"High voltage\"\
+msgstr \"Yüksek gerilim\"\
+\
+msgid \"Arrow left\"\
+msgstr \"Sol ok\"\
+\
+msgid \"Arrow right\"\
+msgstr \"Sağ ok\"\
+\
+msgid \"Arrow up\"\
+msgstr \"Yukarı ok\"\
+\
+msgid \"Arrow down\"\
+msgstr \"Aşağı ok\"\
+\
+msgid \"Double arrow left\"\
+msgstr \"Çift sol ok\"\
+\
+msgid \"Double arrow right\"\
+msgstr \"Çift sağ ok\"\
+\
+msgid \"Double arrow up\"\
+msgstr \"Çift yukarı ok\"\
+\
+msgid \"Double arrow down\"\
+msgstr \"Çift aşağı ok\"\
+\
+msgid \"Arrows left-right\"\
+msgstr \"Sol-sağ ok\"\
+\
+msgid \"Double arrows right\"\
+msgstr \"Sağa iki ok\"\
+\
+msgid \"Left harpoon with right arrow\"\
+msgstr \"Sağ oklu sol zıpkın\"\
+\
+msgid \"Curved back arrow\"\
+msgstr \"Kıvrık geri ok\"\
+\
+msgid \"Arrow left with tail\"\
+msgstr \"Kuyruklu sol ok\"\
+\
+msgid \"Arrow right with tail\"\
+msgstr \"Kuyruklu sağ ok\"\
+\
+msgid \"Arrow left to bar\"\
+msgstr \"Çubuğa sol ok\"\
+\
+msgid \"Arrow right to bar\"\
+msgstr \"Çubuğa sağ ok\"\
+\
+msgid \"Arrow left hooked\"\
+msgstr \"Kancalı sol ok\"\
+\
+msgid \"Arrow right hooked\"\
+msgstr \"Kancalı sağ ok\"\
+\
+msgid \"Arrow right then up\"\
+msgstr \"Sağa sonra yukarı ok\"\
+\
+msgid \"Arrow right then down\"\
+msgstr \"Sağa sonra aşağı ok\"\
+\
+msgid \"Arrow up then left\"\
+msgstr \"Yukarı sonra sola ok\"\
+\
+msgid \"Arrow up then right\"\
+msgstr \"Yukarı sonra sağa ok\"\
+\
+msgid \"Arrow down then left\"\
+msgstr \"Aşağı sonra sola ok\"\
+\
+msgid \"Arrow down then right\"\
+msgstr \"Aşağı sonra sağa ok\"\
+\
+msgid \"Circle arrow left\"\
+msgstr \"Yuvarlak sol ok\"\
+\
+msgid \"Circle arrow right\"\
+msgstr \"Yuvarlak sağ ok\"\
+\
+msgid \"Heavy arrow right\"\
+msgstr \"Kalın sağ ok\"\
+\
+msgid \"Heavy round arrow right\"\
+msgstr \"Kalın yuvarlak sağ ok\"\
+\
+msgid \"Triangle-head right\"\
+msgstr \"Üçgen uçlu sağ ok\"\
+\
+msgid \"Heavy triangle right\"\
+msgstr \"Kalın üçgen sağ ok\"\
+\
+msgid \"Arrowhead right\"\
+msgstr \"Sağ ok ucu\"\
+\
+msgid \"Long arrow left\"\
+msgstr \"Uzun sol ok\"\
+\
+msgid \"Long arrow right\"\
+msgstr \"Uzun sağ ok\"\
+\
+msgid \"Single angle left\"\
+msgstr \"Tek açılı tırnak sol\"\
+\
+msgid \"Single angle right\"\
+msgstr \"Tek açılı tırnak sağ\"\
+\
+msgid \"Double angle left\"\
+msgstr \"Çift açılı tırnak sol\"\
+\
+msgid \"Double angle right\"\
+msgstr \"Çift açılı tırnak sağ\"\
+\
+msgid \"Block (full)\"\
+msgstr \"Blok (dolu)\"\
+\
+msgid \"Block (dark)\"\
+msgstr \"Blok (koyu)\"\
+\
+msgid \"Block (medium)\"\
+msgstr \"Blok (orta)\"\
+\
+msgid \"Block (light)\"\
+msgstr \"Blok (açık)\"\
+\
+msgid \"Upper half block\"\
+msgstr \"Üst yarım blok\"\
+\
+msgid \"Right half block\"\
+msgstr \"Sağ yarım blok\"\
+\
+msgid \"Lower 1/8 block\"\
+msgstr \"Alt 1/8 blok\"\
+\
+msgid \"Lower 2/8 block\"\
+msgstr \"Alt 2/8 blok\"\
+\
+msgid \"Lower 3/8 block\"\
+msgstr \"Alt 3/8 blok\"\
+\
+msgid \"Lower 4/8 block\"\
+msgstr \"Alt 4/8 blok\"\
+\
+msgid \"Lower 5/8 block\"\
+msgstr \"Alt 5/8 blok\"\
+\
+msgid \"Lower 6/8 block\"\
+msgstr \"Alt 6/8 blok\"\
+\
+msgid \"Lower 7/8 block\"\
+msgstr \"Alt 7/8 blok\"\
+\
+msgid \"Left 1/8 block\"\
+msgstr \"Sol 1/8 blok\"\
+\
+msgid \"Left 2/8 block\"\
+msgstr \"Sol 2/8 blok\"\
+\
+msgid \"Left 3/8 block\"\
+msgstr \"Sol 3/8 blok\"\
+\
+msgid \"Left 4/8 block\"\
+msgstr \"Sol 4/8 blok\"\
+\
+msgid \"Left 5/8 block\"\
+msgstr \"Sol 5/8 blok\"\
+\
+msgid \"Left 6/8 block\"\
+msgstr \"Sol 6/8 blok\"\
+\
+msgid \"Left 7/8 block\"\
+msgstr \"Sol 7/8 blok\"\
+\
+msgid \"Square (filled)\"\
+msgstr \"Kare (dolu)\"\
+\
+msgid \"Square (empty)\"\
+msgstr \"Kare (boş)\"\
+\
+msgid \"Rectangle (filled)\"\
+msgstr \"Dikdörtgen (dolu)\"\
+\
+msgid \"Rectangle (empty)\"\
+msgstr \"Dikdörtgen (boş)\"\
+\
+msgid \"Vertical block\"\
+msgstr \"Dikey blok\"\
+\
+msgid \"Vertical block (empty)\"\
+msgstr \"Dikey blok (boş)\"\
+\
+msgid \"Slant block\"\
+msgstr \"Eğik blok\"\
+\
+msgid \"Slant block (empty)\"\
+msgstr \"Eğik blok (boş)\"\
+\
+msgid \"Circle (filled)\"\
+msgstr \"Daire (dolu)\"\
+\
+msgid \"Circle (empty)\"\
+msgstr \"Daire (boş)\"\
+\
+msgid \"Circle (left half)\"\
+msgstr \"Daire (sol yarı)\"\
+\
+msgid \"Circle (right half)\"\
+msgstr \"Daire (sağ yarı)\"\
+\
+msgid \"Circle (lower half)\"\
+msgstr \"Daire (alt yarı)\"\
+\
+msgid \"Circle (upper half)\"\
+msgstr \"Daire (üst yarı)\"\
+\
+msgid \"Diamond (filled)\"\
+msgstr \"Elmas (dolu)\"\
+\
+msgid \"Diamond (empty)\"\
+msgstr \"Elmas (boş)\"\
+\
+msgid \"Vertical bar\"\
+msgstr \"Dikey çizgi\"\
+\
+msgid \"Bullet\"\
+msgstr \"Madde imi\"\
+\
+msgid \"Middle dot\"\
+msgstr \"Orta nokta\"\
+\
+msgid \"Vertical ellipsis\"\
+msgstr \"Dikey üç nokta\"\
+\
+msgid \"Em dash\"\
+msgstr \"Uzun tire\"\
+\
+msgid \"En dash\"\
+msgstr \"Orta tire\"\
+\
+msgid \"Horizontal ellipsis\"\
+msgstr \"Yatay üç nokta\"\
+\
+msgid \"Slash\"\
+msgstr \"Eğik çizgi\"\
+\
+msgid \"Division slash\"\
+msgstr \"Bölme eğik çizgisi\"\
+\
+msgid \"Fraction slash\"\
+msgstr \"Kesir eğik çizgisi\"\
+\
+msgid \"Double fraction slash\"\
+msgstr \"Çift kesir eğik çizgisi\"\
+\
+msgid \"Tilde\"\
+msgstr \"Tilde\"\
+\
+msgid \"Triangular bullet\"\
+msgstr \"Üçgen madde imi\"\
+\
+msgid \"Icons library\"\
+msgstr \"Simge kitaplığı\"\
+\
+msgid \"Search %1 icons by name…\"\
+msgstr \"%1 simgeyi ada göre ara…\"\
+\
+msgid \"Drop .svg or .png files in koreader/icons/\"\
+msgstr \".svg veya .png dosyalarını koreader/icons/ klasörüne bırakın\"\
+\
+msgid \"Search\"\
+msgstr \"Ara\"\
+\
+msgid \"More…\"\
+msgstr \"Daha fazla…\"\
+\
+msgid \"Bordered\"\
+msgstr \"Kenarlıklı\"\
+\
+msgid \"Rounded\"\
+msgstr \"Yuvarlak\"\
+\
+msgid \"Solid\"\
+msgstr \"Dolu\"\
+\
+msgid \"Metro\"\
+msgstr \"Metro\"\
+\
+msgid \"Pacman\"\
+msgstr \"Pacman\"\
+\
+msgid \"Wave\"\
+msgstr \"Dalga\"\
+\
+msgid \"Font size\"\
+msgstr \"Yazı boyutu\"\
+\
+msgid \"Bold italic\"\
+msgstr \"Koyu yatık\"\
+\
+msgid \"Regular\"\
+msgstr \"Normal\"\
+\
+msgid \"Font ✓\"\
+msgstr \"Yazı tipi ✓\"\
+\
+msgid \"Font…\"\
+msgstr \"Yazı tipi…\"\
+\
+msgid \"Bar style\"\
+msgstr \"Çubuk biçemi\"\
+\
+msgid \"Bar: \"\
+msgstr \"Çubuk: \"\
+\
+msgid \"+ Bar\"\
+msgstr \"+ Çubuk\"\
+\
+msgid \"- Bar\"\
+msgstr \"- Çubuk\"\
+\
+msgid \"Bar height\"\
+msgstr \"Çubuk yüksekliği\"\
+\
+msgid \"Height: \"\
+msgstr \"Yükseklik: \"\
+\
+msgid \"Tokens…\"\
+msgstr \"Belirteçler…\"\
+\
+msgid \"Icons…\"\
+msgstr \"Simgeler…\"\
+\
+msgid \"Link copied to clipboard\"\
+msgstr \"Bağlantı panoya kopyalandı\"\
+\
+msgid \"1 book\"\
+msgstr \"1 kitap\"\
+\
+#, lua-format\
+msgid \"%d books\"\
+msgstr \"%d kitap\"\
+\
+#, lua-format\
+msgid \"%d of %d selected\"\
+msgstr \"%d / %d seçili\"\
+\
+#, lua-format\
+msgid \"%d of %d finished\"\
+msgstr \"%d / %d tamamlandı\"\
+\
+#, lua-format\
+msgid \"Line %d\"\
+msgstr \"Satır %d\"\
+\
+msgid \"%bar{rel}[if:page_count]%spacer[if:book_pct]%book_pct of [/if]%page_count pages[else]%book_pct[/if]\"\
+msgstr \"%bar{rel}[if:page_count]%spacer[if:book_pct]%book_pct / [/if]%page_count sayfa[else]%book_pct[/if]\"\
+\
+msgid \"Menu unavailable\"\
+msgstr \"Menü kullanılamıyor\"\
+\
+msgid \"Add this menu page\"\
+msgstr \"Bu menü sayfasını ekle\"\
+\
+msgid \"Add as shortcut\"\
+msgstr \"Kısayol olarak ekle\"\
+\
+msgid \"That menu item isn't available\"\
+msgstr \"Bu menü öğesi kullanılamıyor\"\
+\
+msgid \"Menu\"\
+msgstr \"Menü\"\
+\
+msgid \"Card background\"\
+msgstr \"Kart arka planı\"\
+\
+msgid \"Card border\"\
+msgstr \"Kart kenarlığı\"\
+\
+msgid \"Card border color\"\
+msgstr \"Kart kenarlık rengi\"\
+\
+msgid \"Card text\"\
+msgstr \"Kart metni\"\
+\
+msgid \"%1 · style for %2\"\
+msgstr \"%1 · %2 için biçem\"\
+\
+msgid \"Dark\"\
+msgstr \"Koyu\"\
+\
+msgid \"Light\"\
+msgstr \"Açık\"\
+\
+msgid \"Width\"\
+msgstr \"Genişlik\"\
+\
+msgid \"Height\"\
+msgstr \"Yükseklik\"\
+\
+msgid \"Style\"\
+msgstr \"Biçem\"\
+\
+msgid \"Page\"\
+msgstr \"Sayfa\"\
+\
+msgid \"New page\"\
+msgstr \"Yeni sayfa\"\
+\
+msgid \"Tap a module to select it\"\
+msgstr \"Seçmek için bir modüle dokunun\"\
+\
+msgid \"No room to move %1\"\
+msgstr \"%1 için taşıyacak yer yok\"\
+\
+msgid \"No room\"\
+msgstr \"Yer yok\"\
+\
+msgid \"%1h %2m\"\
+msgstr \"%1 sa %2 dk\"\
+\
+msgid \"%1h\"\
+msgstr \"%1 sa\"\
+\
+msgid \"%1m\"\
+msgstr \"%1 dk\"\
+\
+msgid \"Network required\"\
+msgstr \"Ağ bağlantısı gerekli\"\
+\
+msgid \"Data provided by:\"\
+msgstr \"Veri sağlayıcı:\"\
+\
+#, lua-format\
+msgid \"%d skipped: a book of that name is already there.\"\
+msgstr \"%d atlandı: orada aynı adda bir kitap zaten var.\"\
+\
+#, lua-format\
+msgid \"%d skipped: currently open.\"\
+msgstr \"%d atlandı: şu anda açık.\"\
+\
+#, lua-format\
+msgid \"%d skipped: no longer on the device.\"\
+msgstr \"%d atlandı: artık aygıtta değil.\"\
+\
+#, lua-format\
+msgid \"%d skipped: already in that folder.\"\
+msgstr \"%d atlandı: zaten o klasörde.\"\
+\
+#, lua-format\
+msgid \"Moving %d of %d…\"\
+msgstr \"%d / %d taşınıyor…\"\
+\
+msgid \"Updating library…\"\
+msgstr \"Kitaplık güncelleniyor…\"\
+\
+#, lua-format\
+msgid \"Not shown on the shelf: this folder is outside your home folder (%s).\"\
+msgstr \"Rafta gösterilmiyor: bu klasör başlangıç klasörünün dışında (%s).\"\
+\
+#, lua-format\
+msgid \"Not shown on the shelf: this folder is %d levels below your home folder, and the shelf scans %d. Raise the folder walk depth in Bookshelf settings to include it.\"\
+msgstr \"Rafta gösterilmiyor: bu klasör başlangıç klasörünün %d düzey altında, raf ise %d düzey tarıyor. Eklemek için Bookshelf ayarlarından klasör tarama derinliğini artırın.\"\
+\
+msgid \"Moved 1 book.\"\
+msgstr \"1 kitap taşındı.\"\
+\
+#, lua-format\
+msgid \"Moved %d books.\"\
+msgstr \"%d kitap taşındı.\"\
+\
+#, lua-format\
+msgid \"%d skipped.\"\
+msgstr \"%d atlandı.\"\
+\
+#, lua-format\
+msgid \"%d failed.\"\
+msgstr \"%d başarısız.\"\
+\
+#, lua-format\
+msgid \"Move %d books to…\"\
+msgstr \"%d kitabı şuraya taşı…\"\
+\
+msgid \"Nothing to move: all selected books were skipped.\"\
+msgstr \"Taşınacak bir şey yok: seçilen tüm kitaplar atlandı.\"\
+\
+#, lua-format\
+msgid \"To: %s\"\
+msgstr \"Hedef: %s\"\
+\
+msgid \"Move 1 book\"\
+msgstr \"1 kitabı taşı\"\
+\
+#, lua-format\
+msgid \"Move %d books\"\
+msgstr \"%d kitabı taşı\"\
+\
+msgid \"Move\"\
+msgstr \"Taşı\"\
+\
+msgid \"Folder no longer exists.\"\
+msgstr \"Klasör artık yok.\"\
+\
+msgid \"A folder with that name already exists there.\"\
+msgstr \"Orada aynı adda bir klasör zaten var.\"\
+\
+msgid \"Cannot move this folder: a book inside it is currently open.\"\
+msgstr \"Bu klasör taşınamaz: içindeki bir kitap şu anda açık.\"\
+\
+msgid \"Cannot move a folder into itself.\"\
+msgstr \"Bir klasör kendi içine taşınamaz.\"\
+\
+msgid \"Failed to move folder.\"\
+msgstr \"Klasör taşınamadı.\"\
+\
+#, lua-format\
+msgid \"Move %s to…\"\
+msgstr \"%s klasörünü şuraya taşı…\"\
+\
+#, lua-format\
+msgid \"Move %s\"\
+msgstr \"%s klasörünü taşı\"\
+\
+#, lua-format\
+msgid \"Moved folder %s.\"\
+msgstr \"%s klasörü taşındı.\"\
+\
+msgid \"Rename folder\"\
+msgstr \"Klasörü yeniden adlandır\"\
+\
+#, lua-format\
+msgid \"Renamed to %s.\"\
+msgstr \"Yeni ad: %s.\"\
+\
+msgid \"Cannot delete the home folder.\"\
+msgstr \"Başlangıç klasörü silinemez.\"\
+\
+msgid \"Cannot delete this folder: a book inside it is currently open.\"\
+msgstr \"Bu klasör silinemez: içindeki bir kitap şu anda açık.\"\
+\
+msgid \"Failed to delete folder.\"\
+msgstr \"Klasör silinemedi.\"\
+\
+msgid \"%1 books\"\
+msgstr \"%1 kitap\"\
+\
+msgid \"Delete folder?\"\
+msgstr \"Klasör silinsin mi?\"\
+\
+msgid \"\"\
+\"%1 and everything in it, including %2.\\n\"\
+\"\\n\"\
+\"This cannot be undone.\"\
+msgstr \"%1 ve içindeki her şey, %2 dahil.\\n\\nBu işlem geri alınamaz.\"\
+\
+msgid \"Deleted %1.\"\
+msgstr \"%1 silindi.\"\
+\
+msgid \"Catalog name is required.\"\
+msgstr \"Katalog adı gerekli.\"\
+\
+msgid \"Catalog URL is required.\"\
+msgstr \"Katalog adresi gerekli.\"\
+\
+msgid \"A catalog with this URL already exists.\"\
+msgstr \"Bu adreste bir katalog zaten var.\"\
+\
+msgid \"That catalog no longer exists.\"\
+msgstr \"Bu katalog artık yok.\"\
+\
+msgid \"Catalog name\"\
+msgstr \"Katalog adı\"\
+\
+msgid \"Catalog URL\"\
+msgstr \"Katalog adresi\"\
+\
+msgid \"Username (optional)\"\
+msgstr \"Kullanıcı adı (isteğe bağlı)\"\
+\
+msgid \"Password (optional)\"\
+msgstr \"Parola (isteğe bağlı)\"\
+\
+msgid \"Add OPDS catalog\"\
+msgstr \"OPDS kataloğu ekle\"\
+\
+msgid \"Edit OPDS catalog\"\
+msgstr \"OPDS kataloğunu düzenle\"\
+\
+msgid \"Could not save catalog.\"\
+msgstr \"Katalog kaydedilemedi.\"\
+\
+msgid \"Use server filenames\"\
+msgstr \"Sunucu dosya adları kullanılsın\"\
+\
+msgid \"Sync catalog\"\
+msgstr \"Kataloğu eşitle\"\
+\
+msgid \"Delete \\\"%1\\\"? %2 shelves use this catalog and will stop working.\"\
+msgstr \"\\\"%1\\\" silinsin mi? %2 raf bu kataloğu kullanıyor ve artık çalışmayacak.\"\
+\
+msgid \"Delete \\\"%1\\\"?\"\
+msgstr \"\\\"%1\\\" silinsin mi?\"\
+\
+msgid \"Only when I swipe down\"\
+msgstr \"Yalnızca aşağı kaydırdığımda\"\
+\
+msgid \"If it's over 5 minutes old\"\
+msgstr \"5 dakikadan eskiyse\"\
+\
+msgid \"If it's over an hour old\"\
+msgstr \"Bir saatten eskiyse\"\
+\
+msgid \"If it's over a day old\"\
+msgstr \"Bir günden eskiyse\"\
+\
+msgid \"If it's over a week old\"\
+msgstr \"Bir haftadan eskiyse\"\
+\
+msgid \"Every time I open it\"\
+msgstr \"Her açtığımda\"\
+\
+msgid \"Pack off\"\
+msgstr \"Paket kapalı\"\
+\
+msgid \"On %1 shelves: none yet. Check a piece to add it.\"\
+msgstr \"%1 raflarında: henüz yok. Eklemek için bir parçayı işaretleyin.\"\
+\
+msgid \"On %1 shelves: %2 of %3. Check a piece to add it, uncheck to take it off.\"\
+msgstr \"%1 raflarında: %2 / %3. Eklemek için bir parçayı işaretleyin, kaldırmak için işaretini kaldırın.\"\
+\
+msgid \"%1 (off)\"\
+msgstr \"%1 (kapalı)\"\
+\
+msgid \"\"\
+\"Delete %1?\\n\"\
+\"\\n\"\
+\"The file is removed from the ornaments folder.\"\
+msgstr \"%1 silinsin mi?\\n\\nDosya süsler klasöründen kaldırılır.\"\
+\
+msgid \"Could not delete the file.\"\
+msgstr \"Dosya silinemedi.\"\
+\
+msgid \"Hide\"\
+msgstr \"Gizle\"\
+\
+msgid \"Show\"\
+msgstr \"Göster\"\
+\
+msgid \"Add ornaments…\"\
+msgstr \"Süs ekle…\"\
+\
+msgid \"Add ornaments\"\
+msgstr \"Süs ekle\"\
+\
+msgid \"\"\
+\"Put PNG or SVG files in\\n\"\
+\"%1\\n\"\
+\"\\n\"\
+\"A folder of them inside it becomes a pack, with its own tab here.\"\
+msgstr \"PNG veya SVG dosyalarını şuraya koyun:\\n%1\\n\\nİçindeki bir klasör, burada kendi sekmesi olan bir paket olur.\"\
+\
+msgid \"Ready-made packs\"\
+msgstr \"Hazır paketler\"\
+\
+msgid \"Select all\"\
+msgstr \"Tümünü seç\"\
+\
+msgid \"Select none\"\
+msgstr \"Hiçbirini seçme\"\
+\
+msgid \"Loading ornaments…\"\
+msgstr \"Süsler yükleniyor…\"\
+\
+msgid \"Ornament collection\"\
+msgstr \"Süs koleksiyonu\"\
+\
+msgid \"Swap for\"\
+msgstr \"Şununla değiştir\"\
+\
+msgid \"\"\
+\"No ornaments here.\\n\"\
+\"\\n\"\
+\"Drop PNG or SVG files into\\n\"\
+\"%1\\n\"\
+\"or a folder of them, which becomes a pack.\"\
+msgstr \"Burada süs yok.\\n\\nPNG veya SVG dosyalarını şuraya bırakın:\\n%1\\nya da bunlardan oluşan bir klasörü; o klasör bir paket olur.\"\
+\
+msgid \"hidden\"\
+msgstr \"gizli\"\
+\
+msgid \"Swap\"\
+msgstr \"Değiştir\"\
+\
+msgid \"Shuffle this shelf\"\
+msgstr \"Bu rafı karıştır\"\
+\
+msgid \"Shuffle this shelf's ornaments into a new order? Its swaps and moves are lost.\"\
+msgstr \"Bu rafın süsleri yeni bir sırayla karıştırılsın mı? Değiştirmeleri ve taşımaları kaybolur.\"\
+\
+msgid \"Shuffle\"\
+msgstr \"Karıştır\"\
+\
+msgid \"Pin to a spot\"\
+msgstr \"Bir yere sabitle\"\
+\
+msgid \"%1 of %2\"\
+msgstr \"%1 / %2\"\
+\
+msgid \"off\"\
+msgstr \"kapalı\"\
+\
+msgid \"Alternate\"\
+msgstr \"Dönüşümlü\"\
+\
+msgid \"Bottom\"\
+msgstr \"Alt\"\
+\
+msgid \"Top\"\
+msgstr \"Üst\"\
+\
+msgid \"Zoom\"\
+msgstr \"Yakınlaştır\"\
+\
+msgid \"set\"\
+msgstr \"ayarlı\"\
+\
+msgid \"Padding\"\
+msgstr \"Dolgu\"\
+\
+msgid \"Mirror\"\
+msgstr \"Ayna\"\
+\
+msgid \"Place\"\
+msgstr \"Sıra\"\
+\
+msgid \"Anchor\"\
+msgstr \"Dayanak\"\
+\
+msgid \"On tap\"\
+msgstr \"Dokununca\"\
+\
+msgid \"Give this ornament a job!\"\
+msgstr \"Bu süse bir görev verin!\"\
+\
+msgid \"No action\"\
+msgstr \"Eylem yok\"\
+\
+msgid \"Tap action\"\
+msgstr \"Dokunma eylemi\"\
+\
+msgid \"Pack editor: %1\"\
+msgstr \"Paket düzenleyici: %1\"\
+\
+msgid \"%1 on, %2 off · page %3 of %4 · swipe for more · tap a piece to adjust it\"\
+msgstr \"%1 açık, %2 kapalı · sayfa %3 / %4 · daha fazlası için kaydırın · ayarlamak için bir parçaya dokunun\"\
+\
+msgid \"Saved the settings of %1 pieces into the %2 pack.\"\
+msgstr \"%1 parçanın ayarları %2 paketine kaydedildi.\"\
+\
+msgid \"There are no ornament packs to edit.\"\
+msgstr \"Düzenlenecek süs paketi yok.\"\
+\
+msgid \"Pack editor\"\
+msgstr \"Paket düzenleyici\"\
+\
+msgid \"There are no scanned page counts to delete.\"\
+msgstr \"Silinecek taranmış sayfa sayısı yok.\"\
+\
+msgid \"\"\
+\"Delete %1 page counts found by earlier scans?\\n\"\
+\"\\n\"\
+\"Counts for books you have opened, and page counts in file names, are kept.\"\
+msgstr \"Önceki taramalarda bulunan %1 sayfa sayısı silinsin mi?\\n\\nAçtığınız kitapların sayıları ve dosya adlarındaki sayfa sayıları korunur.\"\
+\
+msgid \"Deleted %1 page counts.\"\
+msgstr \"%1 sayfa sayısı silindi.\"\
+\
+msgid \"Delete scanned page counts…\"\
+msgstr \"Taranmış sayfa sayılarını sil…\"\
+\
+msgid \"Start\"\
+msgstr \"Başlat\"\
+\
+msgid \"Publisher page numbers (fast)\"\
+msgstr \"Yayıncı sayfa numaraları (hızlı)\"\
+\
+msgid \"Printed page numbers that some books carry.\"\
+msgstr \"Bazı kitaplarda bulunan basılı sayfa numaraları.\"\
+\
+msgid \"Hardcover editions (fast)\"\
+msgstr \"Hardcover baskıları (hızlı)\"\
+\
+msgid \"The page count of the edition each linked book is matched to.\"\
+msgstr \"Bağlı her kitabın eşleştiği baskının sayfa sayısı.\"\
+\
+msgid \"No books are linked to Hardcover.\"\
+msgstr \"Hardcover'a bağlı kitap yok.\"\
+\
+msgid \"The #%1 column in your Calibre metadata, as the Count Pages plugin fills in. Often an estimate.\"\
+msgstr \"Calibre üst verilerindeki #%1 sütunu; Count Pages eklentisinin doldurduğu gibi. Çoğu zaman tahminidir.\"\
+\
+msgid \"Needs Calibre metadata, which is off.\"\
+msgstr \"Kapalı olan Calibre üst verileri gerekir.\"\
+\
+msgid \"No page count column in your Calibre metadata.\"\
+msgstr \"Calibre üst verilerinde sayfa sayısı sütunu yok.\"\
+\
+msgid \"Calibre page column (fast)\"\
+msgstr \"Calibre sayfa sütunu (hızlı)\"\
+\
+msgid \"Page counts in file names (fastest)\"\
+msgstr \"Dosya adlarındaki sayfa sayıları (en hızlı)\"\
+\
+msgid \"A count in the file name, like p(320), as some Calibre setups add. Often an estimate.\"\
+msgstr \"Dosya adındaki bir sayı, örneğin p(320); bazı Calibre kurulumları ekler. Çoğu zaman tahminidir.\"\
+\
+msgid \"Your reading settings (slow)\"\
+msgstr \"Okuma ayarlarınız (yavaş)\"\
+\
+msgid \"Lays out each remaining book in your font and margins, so the count matches what you see when reading.\"\
+msgstr \"Kalan her kitabı yazı tipiniz ve kenar boşluklarınızla dizer; böylece sayı, okurken gördüğünüzle eşleşir.\"\
+\
+msgid \"Only books without a page count\"\
+msgstr \"Yalnızca sayfa sayısı olmayan kitaplar\"\
+\
+msgid \"Every book, replacing earlier counts\"\
+msgstr \"Tüm kitaplar, önceki sayıların yerine\"\
+\
+msgid \"Finds how long each book in %1 is (%2 books), for spine thickness, page count badges, sorting and the page count token.\"\
+msgstr \"%1 içindeki her kitabın uzunluğunu bulur (%2 kitap); sırt kalınlığı, sayfa sayısı rozetleri, sıralama ve sayfa sayısı belirteci için.\"\
+\
+msgid \"Finds how long each book is, for spine thickness, page count badges, sorting and the page count token.\"\
+msgstr \"Her kitabın uzunluğunu bulur; sırt kalınlığı, sayfa sayısı rozetleri, sıralama ve sayfa sayısı belirteci için.\"\
+\
+msgid \"Use page counts from, in this order\"\
+msgstr \"Sayfa sayılarını bu sırayla şuralardan al\"\
+\
+msgid \"Which books\"\
+msgstr \"Hangi kitaplar\"\
+\
+msgid \"Extract page counts\"\
+msgstr \"Sayfa sayılarını çıkar\"\
+\
+msgid \"No books to count here.\"\
+msgstr \"Burada sayılacak kitap yok.\"\
+\
+msgid \"Page %1 of %2+\"\
+msgstr \"Sayfa %1 / %2+\"\
+\
+msgid \"Page %1 of %2\"\
+msgstr \"Sayfa %1 / %2\"\
+\
+msgid \"book\"\
+msgstr \"kitap\"\
+\
+msgid \"books\"\
+msgstr \"kitap\"\
+\
+msgid \"A-Z\"\
+msgstr \"A-Z\"\
+\
+msgid \"Most books\"\
+msgstr \"En çok kitap\"\
+\
+msgid \"More planks come with packs: see Add ornaments in the Ornament collection.\"\
+msgstr \"Paketlerle daha fazla raf tahtası gelir: Süs koleksiyonundaki \\\"Süs ekle\\\" bölümüne bakın.\"\
+\
+msgid \"Built-in\"\
+msgstr \"Yerleşik\"\
+\
+msgid \"Closing book…\"\
+msgstr \"Kitap kapatılıyor…\"\
+\
+msgid \"Open\"\
+msgstr \"Aç\"\
+\
+msgid \"Stopping…\"\
+msgstr \"Durduruluyor…\"\
+\
+msgid \"Progress\"\
+msgstr \"İlerleme\"\
+\
+msgid \"Logic\"\
+msgstr \"Mantık\"\
+\
+msgid \"Insert token\"\
+msgstr \"Belirteç ekle\"\
+\
+msgid \"Bookshelf tokens\"\
+msgstr \"Bookshelf belirteçleri\"\
+\
+msgid \"\"\
+\"Tokens are placeholders that get replaced with live data when the top panel or status line renders.\\n\"\
+\"\\n\"\
+\"  %title — %book_pct\\n\"\
+\"  → Dune — 36%\\n\"\
+\"\\n\"\
+\"Wrap content in [if:foo]…[/if] to show it only when the token has a value. Add [else]…[/if] for a fallback.\\n\"\
+\"\\n\"\
+\"  [if:series]Book %series_num of %series_name[/if]\\n\"\
+\"  [if:batt<20]LOW %batt[/if]\"\
+msgstr \"Belirteçler, üst panel ya da durum satırı çizildiğinde canlı verilerle değiştirilen yer tutuculardır.\\n\\n  %title - %book_pct\\n  → Dune - 36%\\n\\nBir içeriği yalnızca belirtecin bir değeri olduğunda göstermek için [if:foo]…[/if] içine alın. Yedek için [else]…[/if] ekleyin.\\n\\n  [if:series]%series_name, %series_num. kitap[/if]\\n  [if:batt<20]DÜŞÜK %batt[/if]\"\
+\
+msgid \"Search tokens…\"\
+msgstr \"Belirteç ara…\"\
+\
+msgid \"Help\"\
+msgstr \"Yardım\"\
+\
+msgid \"Status line\"\
+msgstr \"Durum satırı\"\
+\
+msgid \"Rating (interactive)\"\
+msgstr \"Puan (etkileşimli)\"\
+\
+msgid \"Metadata\"\
+msgstr \"Üst veri\"\
+\
+msgid \"Description\"\
+msgstr \"Açıklama\"\
+\
+msgid \"Tags (interactive)\"\
+msgstr \"Etiketler (etkileşimli)\"\
+\
+msgid \"Show your stars on all books\"\
+msgstr \"Yıldızlarınızı tüm kitaplarda göster\"\
+\
+msgid \"Show your stars on rated and finished books\"\
+msgstr \"Yıldızlarınızı puanlanmış ve tamamlanmış kitaplarda göster\"\
+\
+msgid \"Show your stars on rated books only\"\
+msgstr \"Yıldızlarınızı yalnızca puanlanmış kitaplarda göster\"\
+\
+msgid \"Show Hardcover rating when a book has one\"\
+msgstr \"Kitabın Hardcover puanı varsa göster\"\
+\
+msgid \"Tap a star to rate\"\
+msgstr \"Puanlamak için bir yıldıza dokunun\"\
+\
+msgid \"Show tags line\"\
+msgstr \"Etiket satırını göster\"\
+\
+msgid \"Tags font size\"\
+msgstr \"Etiket yazı boyutu\"\
+\
+msgid \"Center\"\
+msgstr \"Ortada\"\
+\
+msgid \"Left\"\
+msgstr \"Sol\"\
+\
+msgid \"Right\"\
+msgstr \"Sağ\"\
+\
+msgid \"Alignment\"\
+msgstr \"Hizalama\"\
+\
+msgid \"Maximum tag rows\"\
+msgstr \"En fazla etiket satırı\"\
+\
+msgid \"How many rows of tag pills the top panel shows before the rest collapse into a tappable +N button.\"\
+msgstr \"Üst panelin, geri kalanlar dokunulabilir bir +N düğmesinde toplanmadan önce gösterdiği etiket satırı sayısı.\"\
+\
+msgid \"Set\"\
+msgstr \"Ayarla\"\
+\
+msgid \"Percent read\"\
+msgstr \"Okunan yüzde\"\
+\
+msgid \"Percent read and pages\"\
+msgstr \"Okunan yüzde ve sayfalar\"\
+\
+msgid \"Pages\"\
+msgstr \"Sayfalar\"\
+\
+msgid \"Count: printed pages first\"\
+msgstr \"Sayım: önce basılı sayfalar\"\
+\
+msgid \"Count: your reading settings\"\
+msgstr \"Sayım: okuma ayarlarınız\"\
+\
+msgid \"Publisher page numbers, Hardcover editions, the Calibre page column or a count in the file name, where a book has one. Otherwise the count at your reading settings.\"\
+msgstr \"Kitapta varsa yayıncı sayfa numaraları, Hardcover baskıları, Calibre sayfa sütunu ya da dosya adındaki sayı. Yoksa okuma ayarlarına göre sayım.\"\
+\
+msgid \"The pages you turn at your font and margins: KOReader's count once a book has been opened, and before that whatever Extract page counts found.\"\
+msgstr \"Yazı tipiniz ve kenar boşluklarınızla çevirdiğiniz sayfalar: kitap bir kez açıldıktan sonra KOReader'ın sayımı, öncesinde ise \\\"Sayfa sayılarını çıkar\\\"ın bulduğu sayı.\"\
+\
+msgid \"How far through you are, for books you are reading or have on hold. Other books show no badge.\"\
+msgstr \"Okuduğunuz ya da beklemeye aldığınız kitaplarda ne kadar ilerlediğiniz. Diğer kitaplarda rozet gösterilmez.\"\
+\
+msgid \"Both, for books you are reading or have on hold; the pages alone for the rest.\"\
+msgstr \"Okuduğunuz ya da beklemeye aldığınız kitaplarda ikisi de; diğerlerinde yalnızca sayfalar.\"\
+\
+msgid \"Number only\"\
+msgstr \"Yalnızca sayı\"\
+\
+msgid \"Show \\\"220\\\" rather than \\\"220 p\\\".\"\
+msgstr \"\\\"220 s\\\" yerine \\\"220\\\" gösterin.\"\
+\
+msgid \"Extract page counts…\"\
+msgstr \"Sayfa sayılarını çıkar…\"\
+\
+msgid \"Find page counts for books that do not have one yet.\"\
+msgstr \"Henüz sayfa sayısı olmayan kitaplar için sayfa sayılarını bulur.\"\
+\
+msgid \"Show on covers\"\
+msgstr \"Kapaklarda göster\"\
+\
+msgid \"Show on spine shelves\"\
+msgstr \"Sırt raflarında göster\"\
+\
+msgid \"Covers and spine shelves\"\
+msgstr \"Kapaklar ve sırt rafları\"\
+\
+msgid \"Covers only\"\
+msgstr \"Yalnızca kapaklar\"\
+\
+msgid \"Spine shelves only\"\
+msgstr \"Yalnızca sırt rafları\"\
+\
+msgid \"Custom…\"\
+msgstr \"Özel…\"\
+\
+msgid \"A line of text under each cover, on the regular shelf and full screen shelves alike. Choose what it shows, or None to let covers use the full row. A shelf can choose its own: long-press it, then View mode. Text size follows the Cover captions setting under Text size.\"\
+msgstr \"Her kapağın altında bir metin satırı; normal rafta da tam ekran raflarda da. Ne gösterileceğini seçin ya da kapakların tüm satırı kullanması için Yok'u seçin. Bir raf kendininkini seçebilir: rafa uzun basın, sonra Görünüm. Metin boyutu, Metin boyutu altındaki Kapak altyazıları ayarını izler.\"\
+\
+msgid \"Show author below series\"\
+msgstr \"Yazarı dizinin altında göster\"\
+\
+msgid \"The author's name under each series stack. Folder title styles that print the series name below the tile keep that line for the name.\"\
+msgstr \"Her dizi yığınının altında yazarın adı. Dizi adını kutucuğun altına yazan klasör başlığı biçemleri o satırı ad için ayırır.\"\
+\
+msgid \"True cover aspect ratio\"\
+msgstr \"Gerçek kapak en-boy oranı\"\
+\
+msgid \"Show each cover at its real shape instead of a uniform book rectangle. Covers keep the same width but vary in height: on the shelf they sit along the bottom shelf line, and in the top panel they align to the top. Wide or square covers stop being cropped or stretched. Off by default (uniform grid).\"\
+msgstr \"Her kapağı tek tip bir kitap dikdörtgeni yerine gerçek biçimiyle gösterin. Kapakların genişliği aynı kalır ama yükseklikleri değişir: rafta alt raf çizgisine oturur, üst panelde üste hizalanır. Geniş ya da kare kapaklar artık kırpılmaz veya gerilmez. Varsayılan olarak kapalı (tek tip ızgara).\"\
+\
+msgid \"(default)\"\
+msgstr \"(varsayılan)\"\
+\
+msgid \"Tallest cover shape\"\
+msgstr \"En uzun kapak biçimi\"\
+\
+msgid \"How tall a cover may be, relative to its width, before the extra height is trimmed. Taller values show more of an unusually tall cover; they also make every row taller, so fewer rows fit on the shelf. Only applies with True cover aspect ratio on.\"\
+msgstr \"Bir kapağın, fazla yüksekliği kırpılmadan önce genişliğine göre ne kadar uzun olabileceği. Daha yüksek değerler alışılmadık derecede uzun bir kapağın daha fazlasını gösterir; ama her satırı da uzatır, bu yüzden rafa daha az satır sığar. Yalnızca Gerçek kapak en-boy oranı açıkken geçerlidir.\"\
+\
+msgid \"Square cover corners\"\
+msgstr \"Kare kapak köşeleri\"\
+\
+msgid \"Draw covers with square corners instead of the rounded card shape. Independent of the drop shadow, so a flatter look can keep the shadow or drop it separately. Off by default (rounded).\"\
+msgstr \"Kapakları yuvarlak kart biçimi yerine kare köşelerle çizin. Gölgeden bağımsızdır; daha düz bir görünüm gölgeyi koruyabilir ya da ayrıca kaldırabilir. Varsayılan olarak kapalı (yuvarlak).\"\
+\
+msgid \"No cover drop shadow\"\
+msgstr \"Kapak gölgesi yok\"\
+\
+msgid \"Draw covers flat against the page instead of raised off it. The pixels the shadow reserved go back to the cover, so covers get slightly larger. Off by default (shadow shown).\"\
+msgstr \"Kapakları sayfadan kalkık değil, sayfaya düz çizin. Gölgenin ayırdığı pikseller kapağa geri döner, böylece kapaklar biraz büyür. Varsayılan olarak kapalı (gölge gösterilir).\"\
+\
+msgid \"Default folder style: \"\
+msgstr \"Varsayılan klasör biçemi: \"\
+\
+msgid \"How folders and stacks are drawn on any shelf that has not chosen its own. Long-press a shelf to override it there.\"\
+msgstr \"Kendi biçemini seçmemiş her rafta klasörlerin ve yığınların nasıl çizileceği. Orada değiştirmek için rafa uzun basın.\"\
+\
+msgid \"Progress bars\"\
+msgstr \"İlerleme çubukları\"\
+\
+msgid \"Reading bookmarks\"\
+msgstr \"Okuma yer imleri\"\
+\
+msgid \"Page badge\"\
+msgstr \"Sayfa rozeti\"\
+\
+msgid \"Bookmark style\"\
+msgstr \"Yer imi biçemi\"\
+\
+msgid \"Small tick box\"\
+msgstr \"Küçük onay kutusu\"\
+\
+msgid \"Completed book badge\"\
+msgstr \"Tamamlanmış kitap rozeti\"\
+\
+msgid \"Fade finished books\"\
+msgstr \"Tamamlanan kitapları soldur\"\
+\
+msgid \"Pause badge\"\
+msgstr \"Duraklatma rozeti\"\
+\
+msgid \"Faded cover\"\
+msgstr \"Soluk kapak\"\
+\
+msgid \"Both\"\
+msgstr \"İkisi de\"\
+\
+msgid \"Pause badge + faded cover\"\
+msgstr \"Duraklatma rozeti + soluk kapak\"\
+\
+msgid \"On-hold display\"\
+msgstr \"Bekliyor görünümü\"\
+\
+msgid \"Within series folder\"\
+msgstr \"Dizi klasörü içinde\"\
+\
+msgid \"Never\"\
+msgstr \"Asla\"\
+\
+msgid \"Show series #\"\
+msgstr \"Dizi numarasını göster\"\
+\
+msgid \"Heart (favorite)\"\
+msgstr \"Kalp (sık kullanılan)\"\
+\
+msgid \"Star (favorite)\"\
+msgstr \"Yıldız (sık kullanılan)\"\
+\
+msgid \"Stars (rating)\"\
+msgstr \"Yıldızlar (puan)\"\
+\
+msgid \"Favorite icon or star rating: %1\"\
+msgstr \"Sık kullanılan simgesi ya da yıldız puanı: %1\"\
+\
+msgid \"Folders only\"\
+msgstr \"Yalnızca klasörler\"\
+\
+msgid \"Groups only\"\
+msgstr \"Yalnızca gruplar\"\
+\
+msgid \"All stacks\"\
+msgstr \"Tüm yığınlar\"\
+\
+msgid \"Stack count badge\"\
+msgstr \"Yığın sayısı rozeti\"\
+\
+msgid \"Total\"\
+msgstr \"Toplam\"\
+\
+msgid \"Finished / Total\"\
+msgstr \"Tamamlanan / Toplam\"\
+\
+msgid \"Stack count format\"\
+msgstr \"Yığın sayısı biçimi\"\
+\
+msgid \"Cover opening effect\"\
+msgstr \"Kapak açılma efekti\"\
+\
+msgid \"When you open a book, briefly flex its cover open before the page appears. Purely cosmetic; turn it off for an instant, plain open. On by default.\"\
+msgstr \"Bir kitabı açtığınızda, sayfa görünmeden önce kapağını kısa bir an açılır gibi esnetir. Tamamen görsel; anında, sade bir açılış için kapatın. Varsayılan olarak açık.\"\
+\
+msgid \"Rows, columns and view are set per shelf:\"\
+msgstr \"Satırlar, sütunlar ve görünüm her raf için ayrı ayarlanır:\"\
+\
+msgid \"long-press a shelf, then open View mode.\"\
+msgstr \"rafa uzun basın, sonra Görünüm'ü açın.\"\
+\
+msgid \"Add a line (maximum reached)\"\
+msgstr \"Satır ekle (en fazlaya ulaşıldı)\"\
+\
+msgid \"Add a line\"\
+msgstr \"Satır ekle\"\
+\
+msgid \"Move up\"\
+msgstr \"Yukarı taşı\"\
+\
+msgid \"Move down\"\
+msgstr \"Aşağı taşı\"\
+\
+msgid \"%1 (missing)\"\
+msgstr \"%1 (eksik)\"\
+\
+msgid \"%1 pack\"\
+msgstr \"%1 paketi\"\
+\
+msgid \"Wallpaper: %1\"\
+msgstr \"Duvar kağıdı: %1\"\
+\
+msgid \"Images are loaded from %1 and %2\"\
+msgstr \"Görseller %1 ve %2 konumundan yüklenir\"\
+\
+msgid \"Images are loaded from %1\"\
+msgstr \"Görseller %1 konumundan yüklenir\"\
+\
+msgid \"Full screen wallpaper: %1\"\
+msgstr \"Tam ekran duvar kağıdı: %1\"\
+\
+msgid \"Same as wallpaper\"\
+msgstr \"Duvar kağıdıyla aynı\"\
+\
+msgid \"A different picture for full screen shelves. That view is wall-to-wall covers and spines, where a backdrop that reads well behind the top panel is often too busy.\"\
+msgstr \"Tam ekran raflar için farklı bir görsel. O görünüm baştan başa kapak ve sırtlardan oluşur; üst panelin arkasında iyi duran bir arka plan orada çoğu zaman fazla kalabalık kalır.\"\
+\
+msgid \"Invert wallpaper when dark\"\
+msgstr \"Karanlıkta duvar kağıdını ters çevir\"\
+\
+msgid \"Show the wallpaper as its negative when the shelf is dark, so a light picture turns dark. Off, the picture looks the same dark as light. A theme's own dark wallpaper is always shown as drawn.\"\
+msgstr \"Raf koyuyken duvar kağıdını negatifi olarak gösterin, böylece açık bir görsel koyulaşır. Kapalıyken görsel koyuda da açıkta da aynı görünür. Bir temanın kendi koyu duvar kağıdı her zaman çizildiği gibi gösterilir.\"\
+\
+msgid \"Color behind wallpaper: %1\"\
+msgstr \"Duvar kağıdı arkasındaki renk: %1\"\
+\
+msgid \"Color behind wallpaper\"\
+msgstr \"Duvar kağıdı arkasındaki renk\"\
+\
+msgid \"Covers and ornaments contrast boost\"\
+msgstr \"Kapak ve süs karşıtlık artırma\"\
+\
+msgid \"Wallpaper contrast\"\
+msgstr \"Duvar kağıdı karşıtlığı\"\
+\
+msgid \"Wallpaper brightness\"\
+msgstr \"Duvar kağıdı parlaklığı\"\
+\
+msgid \"%1: %2%\"\
+msgstr \"%1: %2%\"\
+\
+msgid \"Extra wallpaper folder: %1\"\
+msgstr \"Ek duvar kağıdı klasörü: %1\"\
+\
+msgid \"A folder of your own to take wallpapers from, listed along with the ones in %1. Useful when you already keep pictures somewhere else. Nothing in it is changed. Long-press to stop using it.\"\
+msgstr \"Duvar kağıtlarını alacağınız kendi klasörünüz; %1 içindekilerle birlikte listelenir. Görsellerinizi zaten başka bir yerde tutuyorsanız işe yarar. İçindeki hiçbir şey değiştirilmez. Kullanmayı bırakmak için uzun basın.\"\
+\
+msgid \"Choose wallpaper folder\"\
+msgstr \"Duvar kağıdı klasörünü seç\"\
+\
+msgid \"Panel colors and shading: %1\"\
+msgstr \"Panel renkleri ve gölgelendirme: %1\"\
+\
+msgid \"How much to shade the top panel and the footer so the buttons stay legible over a picture. Transparent lets the wallpaper through untouched, which reads well over a plain texture and poorly over a busy photograph. Solid hides the picture behind those strips entirely. Part of the theme, as the wallpaper is.\"\
+msgstr \"Düğmeler bir görselin üstünde okunaklı kalsın diye üst panelin ve alt çubuğun ne kadar gölgeleneceği. Saydam, duvar kağıdını olduğu gibi gösterir; düz bir dokunun üstünde iyi, kalabalık bir fotoğrafın üstünde kötü okunur. Dolu, o şeritlerin arkasındaki görseli tamamen gizler. Duvar kağıdı gibi temanın parçasıdır.\"\
+\
+msgid \"Blur wallpaper behind panels\"\
+msgstr \"Panellerin arkasındaki duvar kağıdını bulanıklaştır\"\
+\
+msgid \"Blurs the wallpaper behind the top panel and the footer before the shading goes over it, like frosted glass, so the picture's detail does not compete with the buttons and text. Worked out once per wallpaper, then reused. Part of the theme.\"\
+msgstr \"Gölgelendirme uygulanmadan önce üst panelin ve alt çubuğun arkasındaki duvar kağıdını buzlu cam gibi bulanıklaştırır; böylece görselin ayrıntıları düğmeler ve metinle yarışmaz. Her duvar kağıdı için bir kez hesaplanır, sonra yeniden kullanılır. Temanın parçasıdır.\"\
+\
+msgid \"Panel behind Covers shelves\"\
+msgstr \"Kapaklar raflarının arkasında panel\"\
+\
+msgid \"Covers shelves get one panel behind the top panel, the covers and the footer, as list shelves have, in place of a plate under each title. Part of the theme.\"\
+msgstr \"Kapaklar rafları, liste raflarındaki gibi üst panelin, kapakların ve alt çubuğun arkasında tek bir panel alır; her başlığın altında ayrı bir plaka olmaz. Temanın parçasıdır.\"\
+\
+msgid \"Transparent\"\
+msgstr \"Saydam\"\
+\
+msgid \"Low\"\
+msgstr \"Düşük\"\
+\
+msgid \"Moderate\"\
+msgstr \"Orta\"\
+\
+msgid \"Heavy\"\
+msgstr \"Yoğun\"\
+\
+msgid \"Auto (follow night mode)\"\
+msgstr \"Oto (gece kipini izle)\"\
+\
+msgid \"Light or dark: %1\"\
+msgstr \"Açık ya da koyu: %1\"\
+\
+msgid \"Light or dark colors for the shelf, independently of KOReader's night mode, so you can keep the rest of KOReader light and still have a dark shelf. Auto follows night mode. Covers and ornaments are pictures and are never inverted; the wallpaper is inverted only when you ask for it.\"\
+msgstr \"KOReader'ın gece kipinden bağımsız olarak raf için açık ya da koyu renkler; böylece KOReader'ın geri kalanını açık tutup koyu bir rafa sahip olabilirsiniz. Oto, gece kipini izler. Kapaklar ve süsler görseldir ve asla ters çevrilmez; duvar kağıdı yalnızca siz istediğinizde ters çevrilir.\"\
+\
+msgid \"Panel color\"\
+msgstr \"Panel rengi\"\
+\
+msgid \"The color of the top and bottom panels, blended over the wallpaper as strongly as the shading says. Text on the panels turns black or white to suit it, unless Panel text is set. Long-press to clear.\"\
+msgstr \"Üst ve alt panellerin rengi; gölgelendirmenin belirttiği ölçüde duvar kağıdının üstüne karıştırılır. Panel metni ayarlanmadıysa paneldeki metin, uyacak şekilde siyah ya da beyaz olur. Temizlemek için uzun basın.\"\
+\
+msgid \"Panel text\"\
+msgstr \"Panel metni\"\
+\
+msgid \"The color of text and icons on the top and bottom panels. Left unset with a panel color, it is black or white, whichever reads on it. Long-press to clear.\"\
+msgstr \"Üst ve alt paneldeki metinlerin ve simgelerin rengi. Panel rengi varken ayarlanmazsa, hangisi okunaklıysa siyah ya da beyaz olur. Temizlemek için uzun basın.\"\
+\
+msgid \"Light gray\"\
+msgstr \"Açık gri\"\
+\
+msgid \"Gray\"\
+msgstr \"Gri\"\
+\
+msgid \"Dark gray\"\
+msgstr \"Koyu gri\"\
+\
+msgid \"Black\"\
+msgstr \"Siyah\"\
+\
+msgid \"Shelf plank color\"\
+msgstr \"Raf tahtası rengi\"\
+\
+msgid \"Plank: %1\"\
+msgstr \"Raf tahtası: %1\"\
+\
+msgid \"color\"\
+msgstr \"renk\"\
+\
+msgid \"The plank the Spines style stands its books on: a plain color, the built-in oak, or a plank from an ornament pack.\"\
+msgstr \"Sırtlar biçeminin kitaplarını üzerine dizdiği raf tahtası: düz bir renk, yerleşik meşe ya da bir süs paketinden bir raf tahtası.\"\
+\
+msgid \"Ornaments: %1 of %2 on\"\
+msgstr \"Süsler: %1 / %2 açık\"\
+\
+msgid \"\"\
+\"Small pieces that stand in the gaps on a spine shelf. Drop PNG or SVG files into %1 and they appear there; a folder of them there is a pack, switched on and off as one.\\n\"\
+\"\\n\"\
+\"Tap to browse them, hide or show them, or delete them. How often they appear is set per shelf: long-press a shelf, then View mode.\"\
+msgstr \"Bir sırt rafındaki boşluklarda duran küçük parçalar. PNG veya SVG dosyalarını %1 içine bırakın, orada görünürler; oradaki bir klasör bir pakettir ve tek parça olarak açılıp kapatılır.\\n\\nGöz atmak, gizlemek, göstermek ya da silmek için dokunun. Ne sıklıkta görünecekleri her raf için ayrı ayarlanır: rafa uzun basın, sonra Görünüm.\"\
+\
+msgid \"New ornaments go: %1\"\
+msgstr \"Yeni süsler: %1\"\
+\
+msgid \"first\"\
+msgstr \"başa\"\
+\
+msgid \"last\"\
+msgstr \"sona\"\
+\
+msgid \"Where ornaments you add join the order they are dealt onto the shelf in. First: you see them straight away, and the pieces already there move along to make room. Last: your shelf stays as it is, and the new ones come round in their turn.\"\
+msgstr \"Eklediğiniz süslerin, rafa dağıtıldıkları sıranın neresine katılacağı. Başa: onları hemen görürsünüz, zaten orada olan parçalar yer açmak için kayar. Sona: rafınız olduğu gibi kalır, yenileri sıraları gelince çıkar.\"\
+\
+msgid \"First, so you see them\"\
+msgstr \"Başa, hemen görmek için\"\
+\
+msgid \"Last, so your shelf stays put\"\
+msgstr \"Sona, raf olduğu gibi kalsın\"\
+\
+msgid \"Reset to default colors\"\
+msgstr \"Varsayılan renklere sıfırla\"\
+\
+msgid \"Colors for: %1\"\
+msgstr \"Renkler: %1\"\
+\
+msgid \"Your colors come in two sets, one for a light shelf and one for a dark shelf. Tap to edit the other set; the shelf and KOReader's night mode are not changed.\"\
+msgstr \"Renkleriniz iki takımdır: biri açık raf, biri koyu raf için. Diğer takımı düzenlemek için dokunun; raf ve KOReader'ın gece kipi değişmez.\"\
+\
+msgid \"Text ink\"\
+msgstr \"Metin mürekkebi\"\
+\
+msgid \"The color of the shelf's own text. Black by default in the light theme and white in the dark one. Covers, wallpaper and ornaments are pictures and are never recolored.\"\
+msgstr \"Rafın kendi metninin rengi. Açık temada varsayılan siyah, koyu temada beyaz. Kapaklar, duvar kağıdı ve süsler görseldir ve asla yeniden renklendirilmez.\"\
+\
+msgid \"Progress bar\"\
+msgstr \"İlerleme çubuğu\"\
+\
+msgid \"Progress bar track\"\
+msgstr \"İlerleme çubuğu izi\"\
+\
+msgid \"Bookmark color\"\
+msgstr \"Yer imi rengi\"\
+\
+msgid \"Finished bookmark color\"\
+msgstr \"Tamamlanmış yer imi rengi\"\
+\
+msgid \"Favorite heart color\"\
+msgstr \"Sık kullanılan kalp rengi\"\
+\
+msgid \"Favorite star color\"\
+msgstr \"Sık kullanılan yıldız rengi\"\
+\
+msgid \"Rating stars\"\
+msgstr \"Puan yıldızları\"\
+\
+msgid \"The rating stars in the top panel and in list rows. Left unset they follow the text color. Long-press to clear.\"\
+msgstr \"Üst paneldeki ve liste satırlarındaki puan yıldızları. Ayarlanmazsa metin rengini izler. Temizlemek için uzun basın.\"\
+\
+msgid \"Badge foreground\"\
+msgstr \"Rozet ön planı\"\
+\
+msgid \"Badge background\"\
+msgstr \"Rozet arka planı\"\
+\
+msgid \"Module background\"\
+msgstr \"Modül arka planı\"\
+\
+msgid \"The card behind each module. Kept solid: the text inside a module draws its own opaque background, so a see-through card shows a box behind every line.\"\
+msgstr \"Her modülün arkasındaki kart. Dolu tutulur: bir modülün içindeki metin kendi opak arka planını çizer, bu yüzden saydam bir kart her satırın arkasında bir kutu gösterir.\"\
+\
+msgid \"Module border\"\
+msgstr \"Modül kenarlığı\"\
+\
+msgid \"The thin line around each module card. Left unset it follows the text color. Long-press to clear.\"\
+msgstr \"Her modül kartının çevresindeki ince çizgi. Ayarlanmazsa metin rengini izler. Temizlemek için uzun basın.\"\
+\
+msgid \"Border color\"\
+msgstr \"Kenarlık rengi\"\
+\
+msgid \"The frame around covers and the border of badges. Default black.\"\
+msgstr \"Kapakların çevresindeki çerçeve ve rozetlerin kenarlığı. Varsayılan siyah.\"\
+\
+msgid \"Selection outline color\"\
+msgstr \"Seçim çerçevesi rengi\"\
+\
+msgid \"Color of the ring drawn around the selected book or the one you are currently reading. Default black.\"\
+msgstr \"Seçili kitabın ya da şu anda okuduğunuz kitabın çevresine çizilen halkanın rengi. Varsayılan siyah.\"\
+\
+msgid \"Cover shadow color\"\
+msgstr \"Kapak gölgesi rengi\"\
+\
+msgid \"Color of the drop shadow behind book covers and folder cards. Has no effect where the shadow is switched off. Default mid gray, and darker in night mode.\"\
+msgstr \"Kitap kapaklarının ve klasör kartlarının arkasındaki gölgenin rengi. Gölgenin kapalı olduğu yerde etkisi yoktur. Varsayılan orta gri, gece kipinde daha koyu.\"\
+\
+msgid \"Folder overlay background\"\
+msgstr \"Klasör kaplaması arka planı\"\
+\
+msgid \"Folder text color\"\
+msgstr \"Klasör metni rengi\"\
+\
+msgid \"Color of the label text inside folder / series / author / genre / tag cards. The cardboard outline around the card itself follows the Border color setting above.\"\
+msgstr \"Klasör / dizi / yazar / tür / etiket kartlarının içindeki etiket metninin rengi. Kartın çevresindeki karton çerçeve yukarıdaki Kenarlık rengi ayarını izler.\"\
+\
+msgid \"Shelf menu background\"\
+msgstr \"Raf menüsü arka planı\"\
+\
+msgid \"The bar behind the shelf menu. White by day and black at night unless you change it; Transparent leaves it out, so the wallpaper shows through (the selected shelf keeps its fill). The panels have their own color.\"\
+msgstr \"Raf menüsünün arkasındaki çubuk. Değiştirmezseniz gündüz beyaz, gece siyah; Saydam onu kaldırır, böylece duvar kağıdı görünür (seçili raf dolgusunu korur). Panellerin kendi rengi vardır.\"\
+\
+msgid \"Selected shelf background\"\
+msgstr \"Seçili raf arka planı\"\
+\
+msgid \"Fill behind the selected shelf in the shelf menu. Left unset, the selected shelf is drawn by inverting it -- the fastest path and identical on every device. Setting a color paints it instead. Long-press to clear.\"\
+msgstr \"Raf menüsünde seçili rafın arkasındaki dolgu. Ayarlanmazsa seçili raf ters çevrilerek çizilir; bu en hızlı yoldur ve her aygıtta aynıdır. Bir renk ayarlarsanız onun yerine o renk boyanır. Temizlemek için uzun basın.\"\
+\
+msgid \"Selected shelf text\"\
+msgstr \"Seçili raf metni\"\
+\
+msgid \"Label color on the selected shelf. Defaults to paper white over the fill. Long-press to clear.\"\
+msgstr \"Seçili raftaki etiket rengi. Varsayılan olarak dolgunun üstünde kağıt beyazı. Temizlemek için uzun basın.\"\
+\
+msgid \"Cover badge size\"\
+msgstr \"Kapak rozeti boyutu\"\
+\
+msgid \"Edit top panel content\"\
+msgstr \"Üst panel içeriğini düzenle\"\
+\
+msgid \"The lines of book information shown in the top panel: title, author, rating, metadata, description, tags and progress. Tap a line to edit its template; hold to toggle it. The status line at the top has its own entry.\"\
+msgstr \"Üst panelde gösterilen kitap bilgisi satırları: başlık, yazar, puan, üst veri, açıklama, etiketler ve ilerleme. Şablonunu düzenlemek için bir satıra dokunun; açıp kapatmak için basılı tutun. Üstteki durum satırının kendi girişi var.\"\
+\
+msgid \"Tap a line for its options, long-press to turn it on or off.\"\
+msgstr \"Seçenekleri için bir satıra dokunun, açıp kapatmak için uzun basın.\"\
+\
+msgid \"Cover display\"\
+msgstr \"Kapak görünümü\"\
+\
+msgid \"List view\"\
+msgstr \"Liste\"\
+\
+msgid \"Text size\"\
+msgstr \"Metin boyutu\"\
+\
+msgid \"Follow KOReader\"\
+msgstr \"KOReader'ı izle\"\
+\
+msgid \"Bookshelf UI font: %1\"\
+msgstr \"Bookshelf arayüz yazı tipi: %1\"\
+\
+msgid \"The font Bookshelf uses for its own UI text (shelf names, labels, metadata). Pick any installed font (same picker as the top panel); '(Default)' follows your KOReader UI font. The title and author have their own fonts in the book detail editor.\"\
+msgstr \"Bookshelf'in kendi arayüz metni (raf adları, etiketler, üst veri) için kullandığı yazı tipi. Yüklü herhangi bir yazı tipini seçin (üst paneldekiyle aynı seçici); '(Varsayılan)' KOReader arayüz yazı tipini izler. Başlık ve yazarın, kitap ayrıntısı düzenleyicisinde kendi yazı tipleri var.\"\
+\
+msgid \"Image contrast\"\
+msgstr \"Görsel karşıtlığı\"\
+\
+msgid \"Covers and ornaments contrast boost deepens the shadows and mid-tones of covers, spines and ornaments, which can help on a screen with few greys. Wallpaper contrast and brightness adjust the wallpaper, quieter or bolder; at 0% each shows the picture as it is.\"\
+msgstr \"Kapak ve süs karşıtlık artırma, kapakların, sırtların ve süslerin gölgelerini ve ara tonlarını koyulaştırır; az gri tonlu ekranlarda yardımcı olabilir. Duvar kağıdı karşıtlığı ve parlaklığı, duvar kağıdını daha sakin ya da daha belirgin yapar; sıfırda her biri görseli olduğu gibi gösterir.\"\
+\
+msgid \"Where modules appear, each on its own. In the start menu: cards in the start menu. In the top panel: a shelf menu entry that swaps the book for modules. Full-screen button: a footer button that opens a full screen of modules. On the shelf: modules among a shelf's books (off, the books take their space back). Turn all four off to hide modules everywhere.\"\
+msgstr \"Modüllerin nerede görüneceği, her biri ayrı. Başlangıç menüsünde: başlangıç menüsündeki kartlar. Üst panelde: kitabı modüllerle değiştiren bir raf menüsü girişi. Tam ekran düğmesi: tam ekran modül açan bir alt çubuk düğmesi. Rafta: bir rafın kitapları arasında modüller (kapalıyken kitaplar yerlerini geri alır). Modülleri her yerde gizlemek için dördünü de kapatın.\"\
+\
+msgid \"In the start menu\"\
+msgstr \"Başlangıç menüsünde\"\
+\
+msgid \"In the top panel\"\
+msgstr \"Üst panelde\"\
+\
+msgid \"Full-screen button\"\
+msgstr \"Tam ekran düğmesi\"\
+\
+msgid \"On the shelf\"\
+msgstr \"Rafta\"\
+\
+msgid \"Start menu\"\
+msgstr \"Başlangıç menüsü\"\
+\
+msgid \"Behavior\"\
+msgstr \"Davranış\"\
+\
+msgid \"Library & search\"\
+msgstr \"Kitaplık ve arama\"\
+\
+msgid \"Advanced\"\
+msgstr \"Gelişmiş\"\
+\
+msgid \"never\"\
+msgstr \"hiçbir zaman\"\
+\
+msgid \"Not connected to Hardcover\"\
+msgstr \"Hardcover'a bağlı değil\"\
+\
+msgid \"No unlinked books to auto-link.\"\
+msgstr \"Otomatik bağlanacak, bağlantısız kitap yok.\"\
+\
+msgid \"Auto-link report\"\
+msgstr \"Otomatik bağlama raporu\"\
+\
+msgid \"Hardcover's request limit for today was reached. Run it again tomorrow to carry on.\"\
+msgstr \"Hardcover'ın bugünkü istek sınırına ulaşıldı. Devam etmek için yarın yeniden çalıştırın.\"\
+\
+msgid \"Stopped after three books in a row could not be looked up. Check the connection and run it again.\"\
+msgstr \"Art arda üç kitap aranamadığı için durduruldu. Bağlantıyı kontrol edip yeniden çalıştırın.\"\
+\
+msgid \"\"\
+\"Auto-link %1 unlinked book(s)?\\n\"\
+\"\\n\"\
+\"Contacts Hardcover (rate-limited), up to ~%2 min. Progress shows in the status line, with Stop, and a report follows.\"\
+msgstr \"Bağlantısız %1 kitap otomatik bağlansın mı?\\n\\nHardcover'a bağlanılır (hız sınırlı), en fazla ~%2 dk sürer. İlerleme durum satırında Durdur seçeneğiyle gösterilir, ardından bir rapor gelir.\"\
+\
+msgid \"Exact match (ISBN / Hardcover id)\"\
+msgstr \"Tam eşleşme (ISBN / Hardcover kimliği)\"\
+\
+msgid \"Best guess (title & author)\"\
+msgstr \"En iyi tahmin (başlık ve yazar)\"\
+\
+msgid \"signed in, no API key\"\
+msgstr \"oturum açık, API anahtarı yok\"\
+\
+msgid \"API key\"\
+msgstr \"API anahtarı\"\
+\
+msgid \"not signed in\"\
+msgstr \"oturum açılmadı\"\
+\
+msgid \"Connected through %1 (%2)\"\
+msgstr \"%1 üzerinden bağlı (%2)\"\
+\
+msgid \"Cached Hardcover ratings: unavailable\"\
+msgstr \"Önbellekteki Hardcover puanları: kullanılamıyor\"\
+\
+#, lua-format\
+msgid \"Cached Hardcover ratings: %d/%d · %s\"\
+msgstr \"Önbellekteki Hardcover puanları: %d/%d · %s\"\
+\
+msgid \"Auto-link all books\"\
+msgstr \"Tüm kitapları otomatik bağla\"\
+\
+msgid \"Scan the library and link books to Hardcover, fetching each match's details (description, cover, rating) in the same pass. Choose Exact match (uses an embedded ISBN / Hardcover id, fast) or Best guess (searches by title and author and picks the most confident match, slower but catches books with no embedded id). A report at the end lists exactly what was linked. Contacts Hardcover (rate-limited) with cancellable progress.\"\
+msgstr \"Kitaplığı tarayıp kitapları Hardcover'a bağlar, her eşleşmenin ayrıntılarını (açıklama, kapak, puan) aynı geçişte getirir. Tam eşleşme (gömülü ISBN / Hardcover kimliğini kullanır, hızlıdır) ya da En iyi tahmin (başlık ve yazara göre arar ve en güvenilir eşleşmeyi seçer; daha yavaştır ama gömülü kimliği olmayan kitapları da yakalar) seçin. Sonundaki rapor tam olarak neyin bağlandığını listeler. Hardcover'a bağlanır (hız sınırlı), ilerleme iptal edilebilir.\"\
+\
+msgid \"Show Hardcover ratings\"\
+msgstr \"Hardcover puanlarını göster\"\
+\
+msgid \"When enabled, the rating row shows the cached public Hardcover rating instead of KOReader's local rating. Enabling this also turns on the rating row. Normal Bookshelf rendering only reads the local cache.\"\
+msgstr \"Açıkken puan satırı, KOReader'ın yerel puanı yerine önbellekteki herkese açık Hardcover puanını gösterir. Bunu açmak puan satırını da açar. Bookshelf normal çizimde yalnızca yerel önbelleği okur.\"\
+\
+msgid \"Use Hardcover rating if no user rating\"\
+msgstr \"Kullanıcı puanı yoksa Hardcover puanını kullan\"\
+\
+msgid \"Books you have not rated yourself use their Hardcover rating instead: in star ratings on covers, the Rating sort and the Ratings shelf. Only for books linked to Hardcover, from ratings already fetched.\"\
+msgstr \"Kendiniz puanlamadığınız kitaplar bunun yerine Hardcover puanlarını kullanır: kapaklardaki yıldız puanlarında, Puan sıralamasında ve Puanlar rafında. Yalnızca Hardcover'a bağlı kitaplar için, daha önce getirilmiş puanlardan.\"\
+\
+msgid \"Use Hardcover metadata\"\
+msgstr \"Hardcover üst verilerini kullan\"\
+\
+msgid \"For books linked to Hardcover, show Hardcover's title, author, series and genres in place of the book's own -- a clean switch, no merging. Covers and descriptions stay under their per-book toggles. This affects sorting, search and series grouping for linked books; non-linked books are unaffected. Metadata is always cached, so this only decides whether it's used.\"\
+msgstr \"Hardcover'a bağlı kitaplarda, kitabın kendi bilgileri yerine Hardcover'ın başlık, yazar, dizi ve türlerini gösterir; birleştirme yapılmaz, doğrudan geçiş yapılır. Kapaklar ve açıklamalar kitap başına kendi anahtarlarıyla yönetilir. Bu, bağlı kitaplarda sıralamayı, aramayı ve dizi gruplamasını etkiler; bağlı olmayan kitaplar etkilenmez. Üst veriler her zaman önbelleğe alınır, bu ayar yalnızca kullanılıp kullanılmayacağını belirler.\"\
+\
+msgid \"Download covers from Hardcover\"\
+msgstr \"Kapakları Hardcover'dan indir\"\
+\
+msgid \"When on, linking a book also downloads its Hardcover cover and stores it as the book's cover. Off by default: most books already have a cover, and downloaded covers use storage and get picked up by the library metadata scan. Descriptions, ratings and metadata are fetched either way; turn this on only if you want Hardcover covers too.\"\
+msgstr \"Açıkken bir kitabı bağlamak, Hardcover kapağını da indirip kitabın kapağı olarak kaydeder. Varsayılan olarak kapalıdır: çoğu kitabın zaten bir kapağı vardır, indirilen kapaklar depolama alanı kullanır ve kitaplık üst veri taramasına dahil olur. Açıklamalar, puanlar ve üst veriler her durumda getirilir; bunu yalnızca Hardcover kapaklarını da istiyorsanız açın.\"\
+\
+msgid \"Hardcover genres used: %1\"\
+msgstr \"Kullanılan Hardcover türleri: %1\"\
+\
+msgid \"How many of a linked book's Hardcover genres to use -- for the tag pills and the genre shelves/stacks -- when Use Hardcover metadata is on. 0 uses none.\"\
+msgstr \"Hardcover üst verilerini kullan açıkken, bağlı bir kitabın Hardcover türlerinden kaçının kullanılacağı (etiket kutucukları ve tür rafları/yığınları için). 0 hiçbirini kullanmaz.\"\
+\
+msgid \"Hardcover genres used\"\
+msgstr \"Kullanılan Hardcover türleri\"\
+\
+msgid \"How many of a book's Hardcover genres to use for tag pills and the genre shelves/stacks.\"\
+msgstr \"Etiket kutucukları ve tür rafları/yığınları için bir kitabın Hardcover türlerinden kaçının kullanılacağı.\"\
+\
+msgid \"Manage Hardcover data\"\
+msgstr \"Hardcover verilerini yönet\"\
+\
+msgid \"Refresh ratings only\"\
+msgstr \"Yalnızca puanları yenile\"\
+\
+msgid \"Fetch up-to-date public ratings and review counts for every linked book in one quick batched request -- seconds, even for a large library. Ratings drift daily; for the rarely-changing details (author, genres, series, description, pages) use Refresh linked book details instead.\"\
+msgstr \"Tüm bağlı kitapların güncel herkese açık puanlarını ve inceleme sayılarını tek, hızlı bir toplu istekle getirir; büyük bir kitaplıkta bile saniyeler sürer. Puanlar her gün değişir; nadiren değişen ayrıntılar (yazar, türler, dizi, açıklama, sayfa) için bunun yerine Bağlı kitap ayrıntılarını yenile'yi kullanın.\"\
+\
+msgid \"Hardcover integration could not be loaded\"\
+msgstr \"Hardcover entegrasyonu yüklenemedi\"\
+\
+msgid \"Fetching Hardcover ratings...\"\
+msgstr \"Hardcover puanları getiriliyor...\"\
+\
+msgid \"Hardcover ratings refresh failed\"\
+msgstr \"Hardcover puanları yenilenemedi\"\
+\
+msgid \"Hardcover ratings refreshed: %1 rated of %2 linked books\"\
+msgstr \"Hardcover puanları yenilendi: %2 bağlı kitaptan %1 tanesi puanlı\"\
+\
+msgid \"Refresh linked book details\"\
+msgstr \"Bağlı kitap ayrıntılarını yenile\"\
+\
+msgid \"Re-fetch the cached details (author, description, series, genres, page count, ratings) for every linked book, one rate-limited request per book -- minutes on a large library, cancellable. Use after an upgrade note asks for it, or when cached data looks stale; for just the ratings, Refresh ratings only is much faster.\"\
+msgstr \"Tüm bağlı kitapların önbellekteki ayrıntılarını (yazar, açıklama, dizi, türler, sayfa sayısı, puanlar) yeniden getirir; kitap başına hız sınırlı bir istek yapılır. Büyük bir kitaplıkta dakikalar sürer, iptal edilebilir. Bir güncelleme notu istediğinde ya da önbellekteki veriler eskimiş göründüğünde kullanın; yalnızca puanlar için Yalnızca puanları yenile çok daha hızlıdır.\"\
+\
+msgid \"Clear cache (keeps links)\"\
+msgstr \"Önbelleği temizle (bağlantılar kalır)\"\
+\
+msgid \"Remove Bookshelf's cached Hardcover descriptions, cover images, ratings, review counts and review text. Existing book links are kept, so you can refresh again later.\"\
+msgstr \"Bookshelf'in önbelleğe aldığı Hardcover açıklamalarını, kapak görsellerini, puanları, inceleme sayılarını ve inceleme metinlerini kaldırır. Mevcut kitap bağlantıları korunur, böylece daha sonra yeniden yenileyebilirsiniz.\"\
+\
+msgid \"Hardcover cache cleared\"\
+msgstr \"Hardcover önbelleği temizlendi\"\
+\
+msgid \"Remove downloaded covers\"\
+msgstr \"İndirilen kapakları kaldır\"\
+\
+msgid \"Delete every downloaded Hardcover cover and restore each book's original cover, keeping links, descriptions and ratings. Frees the storage the covers use and clears them out of the library metadata scan.\"\
+msgstr \"İndirilen tüm Hardcover kapaklarını siler ve her kitabın özgün kapağını geri yükler; bağlantılar, açıklamalar ve puanlar korunur. Kapakların kullandığı depolama alanını boşaltır ve onları kitaplık üst veri taramasından çıkarır.\"\
+\
+msgid \"\"\
+\"Remove all downloaded Hardcover covers?\\n\"\
+\"\\n\"\
+\"Each book's original cover is restored; links, descriptions and ratings are kept.\"\
+msgstr \"İndirilen tüm Hardcover kapakları kaldırılsın mı?\\n\\nHer kitabın özgün kapağı geri yüklenir; bağlantılar, açıklamalar ve puanlar korunur.\"\
+\
+msgid \"Remove covers\"\
+msgstr \"Kapakları kaldır\"\
+\
+msgid \"Removed downloaded covers (%1 book(s)).\"\
+msgstr \"İndirilen kapaklar kaldırıldı (%1 kitap).\"\
+\
+msgid \"Remove all Hardcover data\"\
+msgstr \"Tüm Hardcover verilerini kaldır\"\
+\
+msgid \"Unlink every book and delete all cached Hardcover descriptions, covers, ratings and reviews, resetting the library to how it was before any Hardcover linking. Only covers Hardcover added are removed; a cover you had before is restored. Cannot be undone.\"\
+msgstr \"Tüm kitapların bağlantısını kaldırır ve önbellekteki tüm Hardcover açıklamalarını, kapaklarını, puanlarını ve incelemelerini siler; kitaplığı herhangi bir Hardcover bağlantısından önceki hâline döndürür. Yalnızca Hardcover'ın eklediği kapaklar kaldırılır; önceden var olan kapak geri yüklenir. Geri alınamaz.\"\
+\
+msgid \"\"\
+\"Remove ALL Hardcover data?\\n\"\
+\"\\n\"\
+\"This unlinks every book and deletes all cached Hardcover covers, descriptions, ratings and reviews. Covers Hardcover saved into book folders are removed and any cover you had before is put back.\\n\"\
+\"\\n\"\
+\"This cannot be undone.\"\
+msgstr \"TÜM Hardcover verileri kaldırılsın mı?\\n\\nBu, tüm kitapların bağlantısını kaldırır ve önbellekteki tüm Hardcover kapaklarını, açıklamalarını, puanlarını ve incelemelerini siler. Hardcover'ın kitap klasörlerine kaydettiği kapaklar kaldırılır ve önceden var olan kapak geri konur.\\n\\nBu işlem geri alınamaz.\"\
+\
+msgid \"Remove all\"\
+msgstr \"Tümünü kaldır\"\
+\
+msgid \"All Hardcover data removed (%1 book(s) unlinked).\"\
+msgstr \"Tüm Hardcover verileri kaldırıldı (%1 kitabın bağlantısı kaldırıldı).\"\
+\
+msgid \"Cover captions font scale\"\
+msgstr \"Kapak altyazısı yazı tipi ölçeği\"\
+\
+msgid \"Disable spine mode shadows\"\
+msgstr \"Sırt kipi gölgelerini kapat\"\
+\
+msgid \"Spine shelves paint a recess behind the books and a shadow either side of each spine, which is what makes the shelf look deep. Turn this off if drawing it is slow on your device; the books then sit flat on the shelf.\"\
+msgstr \"Sırt rafları kitapların arkasına bir girinti, her sırtın iki yanına da bir gölge çizer; rafı derin gösteren budur. Aygıtınızda bunu çizmek yavaşsa kapatın; kitaplar o zaman rafta düz durur.\"\
+\
+msgid \"Plank designs: none in use\"\
+msgstr \"Raf tahtası desenleri: kullanılmıyor\"\
+\
+msgid \"Plank designs: %1\"\
+msgstr \"Raf tahtası desenleri: %1\"\
+\
+msgid \"Draw plank designs (Oak, or one from a pack or a theme) on spine shelves. Drawing them is slow on some black and white e-readers; turn this off to use the plain plank color instead. Choosing a plank again, in the Plank picker, turns this back on.\"\
+msgstr \"Sırt raflarında raf tahtası desenlerini (Meşe ya da bir paketten veya temadan biri) çizer. Bazı siyah beyaz e-okuyucularda bunları çizmek yavaştır; düz raf tahtası rengini kullanmak için kapatın. Raf tahtası seçicisinde yeniden bir raf tahtası seçmek bunu tekrar açar.\"\
+\
+msgid \"Close books in the background\"\
+msgstr \"Kitapları arka planda kapat\"\
+\
+msgid \"Show Bookshelf immediately when leaving a book. The book finishes closing at the next quiet moment - opening another book, half a minute of inactivity, or leaving Bookshelf - so browsing never has to wait for it. Until then, going straight back into the same book is instant. Turn this off to close books fully before Bookshelf appears.\"\
+msgstr \"Bir kitaptan çıkınca Bookshelf'i hemen gösterir. Kitap bir sonraki sakin anda kapanmayı bitirir (başka bir kitap açıldığında, yarım dakika hareketsiz kalındığında ya da Bookshelf'ten çıkıldığında); böylece gezinirken hiç beklemezsiniz. O zamana kadar aynı kitaba geri dönmek anında olur. Bookshelf görünmeden önce kitapları tamamen kapatmak için bunu kapatın.\"\
+\
+msgid \"Use E-ink refresh rate for shelf pages\"\
+msgstr \"Raf sayfaları için E-mürekkep yenileme hızını kullan\"\
+\
+msgid \"Flash the shelf clean on page turns as often as KOReader's own Full refresh rate (Screen > E-ink settings) does for book pages, to clear ghosting. A page that flashes skips its animation and takes a little longer. E-ink only.\"\
+msgstr \"Gölgelenmeyi temizlemek için sayfa çevirirken rafı, KOReader'ın kitap sayfalarındaki kendi Tam yenileme hızı (Ekran > E-mürekkep ayarları) kadar sık yanıp sönerek temizler. Yanıp sönen bir sayfa animasyonunu atlar ve biraz daha uzun sürer. Yalnızca E-mürekkep.\"\
+\
+msgid \"Pre-warm shelf cache\"\
+msgstr \"Raf önbelleğini önceden hazırla\"\
+\
+msgid \"Warms each shelf's data in the background shortly after launch so switching shelves is instant. On a large library with many shelves this adds a few seconds of work after startup; turn it off for a quicker, lighter launch (shelves then load on first use).\"\
+msgstr \"Raflar arasında geçiş anında olsun diye, açılıştan kısa süre sonra her rafın verilerini arka planda hazırlar. Çok raflı büyük bir kitaplıkta bu, açılıştan sonra birkaç saniyelik iş ekler; daha hızlı ve hafif bir açılış için kapatın (raflar o zaman ilk kullanımda yüklenir).\"\
+\
+msgid \"\\\"Latest\\\" walk depth\"\
+msgstr \"\\\"En yeni\\\" tarama derinliği\"\
+\
+msgid \"Cover cache\"\
+msgstr \"Kapak önbelleği\"\
+\
+msgid \"How much memory to use for ready-scaled book covers. A bigger cache keeps more covers warm -- smoother paging and preloading -- at the cost of RAM. Default %1 MB on this device. Lower it if memory is tight; raise it on a device with plenty of RAM. (How many covers that holds depends on their size: roughly 200-400 small grayscale covers, fewer large or color ones.)\"\
+msgstr \"Hazır ölçeklenmiş kitap kapakları için ne kadar bellek kullanılacağı. Daha büyük bir önbellek daha çok kapağı hazır tutar (daha akıcı sayfa çevirme ve önyükleme), karşılığında RAM harcar. Bu aygıtta varsayılan %1 MB. Bellek kısıtlıysa düşürün; bol RAM'li bir aygıtta yükseltin. (Bunun kaç kapak tuttuğu boyutlarına bağlıdır: kabaca 200-400 küçük gri tonlamalı kapak, büyük ya da renkli olanlardan daha azı.)\"\
+\
+msgid \"Clear cover cache\"\
+msgstr \"Kapak önbelleğini temizle\"\
+\
+msgid \"Drop all cached scaled covers, in memory and on disk. Use this when a book's cover has been updated outside KOReader (e.g. a metadata-enrichment tool rewrote the EPUB) and the old cover is still showing on the shelf. The next render fetches fresh covers from the EPUBs.\"\
+msgstr \"Bellekte ve diskte önbelleğe alınmış tüm ölçeklenmiş kapakları siler. Bir kitabın kapağı KOReader dışında güncellendiyse (ör. bir üst veri zenginleştirme aracı EPUB'u yeniden yazdıysa) ve rafta hâlâ eski kapak görünüyorsa bunu kullanın. Bir sonraki çizimde kapaklar EPUB'lardan yeniden alınır.\"\
+\
+msgid \"Cover cache cleared\"\
+msgstr \"Kapak önbelleği temizlendi\"\
+\
+msgid \"Color panel dithering\"\
+msgstr \"Renkli panel titreklemesi\"\
+\
+msgid \"Applies the color-dither waveform when redrawing book covers so they keep their full saturation on color e-ink panels. Turn it off to compare; with it off, covers can look washed out until a full-screen refresh. Color panels only.\"\
+msgstr \"Renkli e-mürekkep panellerde kitap kapakları tam doygunluklarını korusun diye, yeniden çizerken renk titrekleme dalga biçimini uygular. Karşılaştırmak için kapatın; kapalıyken kapaklar tam ekran yenilemeye kadar soluk görünebilir. Yalnızca renkli paneller.\"\
+\
+msgid \"Fast\"\
+msgstr \"Hızlı\"\
+\
+msgid \"Normal\"\
+msgstr \"Normal\"\
+\
+msgid \"Slow\"\
+msgstr \"Yavaş\"\
+\
+msgid \"Currently reading\"\
+msgstr \"Şu an okunan\"\
+\
+msgid \"Top panel starts with\"\
+msgstr \"Üst panel şununla başlar\"\
+\
+msgid \"What the top panel above the shelf shows when it opens: the book you're currently reading, or a grid of modules (clock, quote, random book, reading goals…). You can also switch between them from the shelf menu.\"\
+msgstr \"Rafın üstündeki üst panelin açıldığında ne gösterdiği: şu an okuduğunuz kitap ya da modüllerden oluşan bir ızgara (saat, alıntı, rastgele kitap, okuma hedefleri…). Raf menüsünden de ikisi arasında geçiş yapabilirsiniz.\"\
+\
+msgid \"Show the book's details\"\
+msgstr \"Kitabın ayrıntılarını göster\"\
+\
+msgid \"Open with a single tap\"\
+msgstr \"Tek dokunuşla aç\"\
+\
+msgid \"Open with a double tap\"\
+msgstr \"Çift dokunuşla aç\"\
+\
+msgid \"Tap a book in full screen shelves\"\
+msgstr \"Tam ekran raflarda kitaba dokunma\"\
+\
+msgid \"What tapping a book does in full screen shelves: show that book's detail in the top panel, open it with a single tap, or open it with a double tap (first tap selects). The top panel's own double-tap-to-open is the next row.\"\
+msgstr \"Tam ekran raflarda bir kitaba dokunmanın ne yaptığı: kitabın ayrıntısını üst panelde gösterir, tek dokunuşla açar ya da çift dokunuşla açar (ilk dokunuş seçer). Üst panelin kendi çift dokunuşla açma ayarı bir sonraki satırdadır.\"\
+\
+msgid \"Bookshelf gestures\"\
+msgstr \"Bookshelf hareketleri\"\
+\
+msgid \"Switch off any of Bookshelf's own gestures. A gesture switched off does nothing on the shelf. Tapping a book and swiping between pages always work.\"\
+msgstr \"Bookshelf'in kendi hareketlerinden istediğinizi kapatın. Kapatılan bir hareket rafta hiçbir şey yapmaz. Kitaba dokunmak ve sayfalar arasında kaydırmak her zaman çalışır.\"\
+\
+msgid \"Double tap to open books\"\
+msgstr \"Kitapları çift dokunuşla aç\"\
+\
+msgid \"When enabled, opening a book from the top panel card or from a shelf cover in full screen shelves requires two taps -- the first selects the cover (focus ring), the second commits. Useful if you tend to open books accidentally while browsing. Regular shelf covers (with the top panel visible) already work this way -- tap stages the book in the top panel, tapping that opens it -- and are unaffected by this setting.\"\
+msgstr \"Açıkken, üst panel kartından ya da tam ekran raflardaki bir kapaktan kitap açmak iki dokunuş gerektirir: ilki kapağı seçer (odak halkası), ikincisi açar. Gezinirken yanlışlıkla kitap açıyorsanız işe yarar. Normal raf kapakları (üst panel görünürken) zaten böyle çalışır: dokunmak kitabı üst panele alır, oraya dokunmak açar; bu ayardan etkilenmezler.\"\
+\
+msgid \"Invisible buttons\"\
+msgstr \"Görünmez düğmeler\"\
+\
+msgid \"Footer bar\"\
+msgstr \"Alt çubuk\"\
+\
+msgid \"The bar along the bottom of the shelf, with the menu button and the page arrows.\"\
+msgstr \"Rafın altındaki, menü düğmesi ve sayfa oklarının bulunduğu çubuk.\"\
+\
+msgid \"The bar with the menu button and the page arrows.\"\
+msgstr \"Menü düğmesi ve sayfa oklarının bulunduğu çubuk.\"\
+\
+msgid \"No bar: the shelf uses its space. Swipe to turn pages; open the menu from KOReader's menu or a gesture. The bar comes back while you select books.\"\
+msgstr \"Çubuk yok: alanı raf kullanır. Sayfa çevirmek için kaydırın; menüyü KOReader'ın menüsünden ya da bir hareketle açın. Kitap seçerken çubuk geri gelir.\"\
+\
+msgid \"The bar is not drawn, but its buttons still work where they were: the menu in its corner and the arrows to turn pages. Moving into it with the keys shows it.\"\
+msgstr \"Çubuk çizilmez ama düğmeleri yerlerinde çalışmaya devam eder: köşesindeki menü ve sayfa çeviren oklar. Tuşlarla üzerine gelince görünür.\"\
+\
+msgid \"Page turn animation\"\
+msgstr \"Sayfa çevirme animasyonu\"\
+\
+msgid \"Animate shelf page turns and shelf-menu paging with a wipe effect. E-ink only (the effect relies on the panel's refresh, so it does nothing on LCD screens). Fast / Medium / Slow trade snappiness for smoothness. Slow looks smoothest but takes longer on older panels.\"\
+msgstr \"Raf sayfası çevirmeyi ve raf menüsü sayfalamasını silme efektiyle canlandırır. Yalnızca E-mürekkep (efekt panelin yenilemesine dayanır, LCD ekranlarda bir şey yapmaz). Hızlı / Orta / Yavaş, çeviklikle akıcılık arasında denge kurar. Yavaş en akıcı görünür ama eski panellerde daha uzun sürer.\"\
+\
+msgid \"Start menu animation\"\
+msgstr \"Başlangıç menüsü animasyonu\"\
+\
+msgid \"Animate the start menu opening and closing. Separate from the page-turn wipe, so you can keep one and turn off the other - the menu reveal repaints a taller area and can look choppy on some screens, particularly while reading. E-ink only.\"\
+msgstr \"Başlangıç menüsünün açılıp kapanmasını canlandırır. Sayfa çevirme silmesinden ayrıdır, böylece birini tutup diğerini kapatabilirsiniz; menünün açılışı daha uzun bir alanı yeniden çizer ve bazı ekranlarda, özellikle okurken, kesik kesik görünebilir. Yalnızca E-mürekkep.\"\
+\
+msgid \"Closing book notification\"\
+msgstr \"Kitap kapatma bildirimi\"\
+\
+msgid \"Show a 'Closing book…' message in the center of the screen while a book is being closed back to Bookshelf. The book-close work takes a moment, so the message confirms your gesture landed during the wait. Some users on color e-ink panels see a brief flash from the message appearing. Turn it off here if you prefer no message and no flash.\"\
+msgstr \"Bir kitap kapatılıp Bookshelf'e dönülürken ekranın ortasında 'Kitap kapatılıyor…' iletisi gösterir. Kitabı kapatmak biraz zaman alır, bu yüzden ileti beklerken hareketinizin algılandığını doğrular. Renkli e-mürekkep panelli bazı kullanıcılar iletinin belirmesiyle kısa bir yanıp sönme görür. İleti ve yanıp sönme istemiyorsanız buradan kapatın.\"\
+\
+msgid \"Scan all library metadata\"\
+msgstr \"Tüm kitaplık üst verilerini tara\"\
+\
+msgid \"Find page counts for your books, so spines, page count badges and tokens reflect their length. Publisher page numbers and Hardcover editions are used where a book has them; the rest are rendered in the background at your reading settings, which can take a while on a large library.\"\
+msgstr \"Kitaplarınızın sayfa sayılarını bulur; böylece sırtlar, sayfa sayısı rozetleri ve belirteçler uzunluklarını yansıtır. Kitapta varsa yayıncı sayfa numaraları ve Hardcover baskıları kullanılır; geri kalanlar okuma ayarlarınızla arka planda işlenir, bu da büyük bir kitaplıkta biraz zaman alabilir.\"\
+\
+msgid \"Manage collections…\"\
+msgstr \"Dermeleri yönet…\"\
+\
+msgid \"Create, rename, reorder and delete collections. Also reachable from collection shelves and stacks.\"\
+msgstr \"Dermeleri oluşturun, yeniden adlandırın, sıralayın ve silin. Derme raflarından ve yığınlarından da erişilebilir.\"\
+\
+msgid \"Bulk selection mode\"\
+msgstr \"Toplu seçim kipi\"\
+\
+msgid \"Select several books at once to move or delete them or add them to a collection. Also available from a book's Edit tab (Select), the stack menus (Select N), or as a gesture. Not available in remote catalog views.\"\
+msgstr \"Taşımak, silmek ya da bir dermeye eklemek için aynı anda birkaç kitap seçin. Ayrıca bir kitabın Düzenle sekmesinden (Seç), yığın menülerinden (N tane seç) ya da bir hareketle de kullanılabilir. Uzak katalog görünümlerinde kullanılamaz.\"\
+\
+msgid \"First Last\"\
+msgstr \"Ad Soyad\"\
+\
+msgid \"Last, First\"\
+msgstr \"Soyad, Ad\"\
+\
+msgid \"Author name formatting\"\
+msgstr \"Yazar adı biçimi\"\
+\
+msgid \"How author names are displayed on the Authors shelf. Auto keeps whichever form was first found (\\\"Richard Osman\\\" or \\\"Osman, Richard\\\"). First Last and Last, First force every author card into the same shape regardless of how each book stored the name.\"\
+msgstr \"Yazarlar rafında yazar adlarının nasıl gösterileceği. Oto, ilk bulunan biçimi korur (\\\"Richard Osman\\\" ya da \\\"Osman, Richard\\\"). Ad Soyad ve Soyad, Ad, her kitap adı nasıl saklamış olursa olsun tüm yazar kartlarını aynı biçime zorlar.\"\
+\
+msgid \"Spine text direction\"\
+msgstr \"Sırt yazısı yönü\"\
+\
+msgid \"Which way a title runs down a spine. British and American books are printed to read downwards; Continental European printing runs the other way. Spines only.\"\
+msgstr \"Başlığın sırt boyunca hangi yöne aktığı. İngiliz ve Amerikan kitapları yukarıdan aşağı okunacak şekilde basılır; Kıta Avrupası baskıları ters yöndedir. Yalnızca sırtlar.\"\
+\
+msgid \"Top to bottom\"\
+msgstr \"Yukarıdan aşağı\"\
+\
+msgid \"Bottom to top\"\
+msgstr \"Aşağıdan yukarı\"\
+\
+msgid \"Hide single-book series and genres\"\
+msgstr \"Tek kitaplık dizi ve türleri gizle\"\
+\
+msgid \"When a series or genre contains only one book, hide it from the Series and Genres tabs. Useful when a book carries a one-off series name, or its own title as the series. Off by default.\"\
+msgstr \"Bir dizi ya da tür yalnızca bir kitap içeriyorsa onu Diziler ve Türler sekmelerinde gizler. Bir kitap tek seferlik bir dizi adı ya da dizi olarak kendi başlığını taşıyorsa işe yarar. Varsayılan olarak kapalı.\"\
+\
+msgid \"Image library\"\
+msgstr \"Görsel kitaplığı\"\
+\
+msgid \"Where Bookshelf looks for custom cover images. For stacks, place files like authors/author-name.jpg into the matching subfolder (authors, series, genres, collections). For folders, drop a cover.jpg into the folder itself. See the README for more matching options.\"\
+msgstr \"Bookshelf'in özel kapak görsellerini nerede aradığı. Yığınlar için authors/author-name.jpg gibi dosyaları eşleşen alt klasöre (authors, series, genres, collections) koyun. Klasörler için klasörün içine bir cover.jpg bırakın. Diğer eşleştirme seçenekleri için README'ye bakın.\"\
+\
+msgid \"Find author images online…\"\
+msgstr \"Yazar görsellerini çevrimiçi bul…\"\
+\
+msgid \"Looks up a photo of every author on your shelves that has no image yet, from Open Library, or Wikipedia when it has none, and saves it in the image library's authors folder. Images you already have are kept. To replace one author's image, long-press the author and choose Find author image online.\"\
+msgstr \"Raflarınızdaki henüz görseli olmayan her yazarın fotoğrafını Open Library'den, orada yoksa Wikipedia'dan arar ve görsel kitaplığının authors klasörüne kaydeder. Zaten var olan görseller korunur. Bir yazarın görselini değiştirmek için yazara uzun basıp Yazar görselini çevrimiçi bul'u seçin.\"\
+\
+msgid \"Include folder names in search results\"\
+msgstr \"Arama sonuçlarına klasör adlarını dahil et\"\
+\
+msgid \"When searching, also match the names of folders in your library and list them as folder results. Off by default: most libraries file books into author, series or genre folders, so a matching folder just duplicates the author / series / genre result of the same name. Turn on if you navigate by folder and want folders in search.\"\
+msgstr \"Ararken kitaplığınızdaki klasörlerin adlarını da eşleştirir ve bunları klasör sonucu olarak listeler. Varsayılan olarak kapalı: çoğu kitaplık kitapları yazar, dizi ya da tür klasörlerine yerleştirir, bu yüzden eşleşen bir klasör aynı adlı yazar / dizi / tür sonucunu tekrar etmekten öteye geçmez. Klasörlerle geziniyorsanız ve aramada klasör istiyorsanız açın.\"\
+\
+msgid \"Include genres and tags in search results\"\
+msgstr \"Arama sonuçlarına türleri ve etiketleri dahil et\"\
+\
+msgid \"When searching, also match books by their genres and tags, and list matching genres as results. Turn off if you search by title, author or series and the genre matches get in the way.\"\
+msgstr \"Ararken kitapları türlerine ve etiketlerine göre de eşleştirir ve eşleşen türleri sonuç olarak listeler. Başlık, yazar ya da diziye göre arıyorsanız ve tür eşleşmeleri işinizi zorlaştırıyorsa kapatın.\"\
+\
+msgid \"Show each book in one group only\"\
+msgstr \"Her kitabı yalnızca bir grupta göster\"\
+\
+msgid \"On Authors, Genres and Collections shelves, a book with several authors, genres or collections appears under its first one only: the first listed in the book, or the collection highest in KOReader's collection list. Search and filters still find it under all of them.\"\
+msgstr \"Yazarlar, Türler ve Dermeler raflarında, birden çok yazarı, türü ya da dermesi olan bir kitap yalnızca ilkinin altında görünür: kitapta ilk listelenen ya da KOReader'ın derme listesinde en üstteki derme. Arama ve süzgeçler onu yine hepsinin altında bulur.\"\
+\
+msgid \"Ignore The, A, An when sorting\"\
+msgstr \"Sıralarken The, A, An'ı yok say\"\
+\
+msgid \"Sorts titles and series names by the word after a leading The, A or An, and uses Calibre's title sort where a book has one. Turn off to sort them exactly as written.\"\
+msgstr \"Başlıkları ve dizi adlarını baştaki The, A ya da An'dan sonraki sözcüğe göre sıralar ve kitapta varsa Calibre'nin başlık sıralamasını kullanır. Tam yazıldığı gibi sıralamak için kapatın.\"\
+\
+msgid \"Sort Chinese text by pinyin\"\
+msgstr \"Çince metni pinyine göre sırala\"\
+\
+msgid \"Sorts Chinese characters by their Mandarin pinyin reading, so Chinese titles and authors file alphabetically alongside Latin names. When off, Chinese text sorts in Unicode order (roughly by radical and stroke count), after Latin names. Japanese kanji are also affected, so leave this off for Japanese-language libraries.\"\
+msgstr \"Çince karakterleri Mandarin pinyin okunuşlarına göre sıralar, böylece Çince başlıklar ve yazarlar Latin adlarla birlikte alfabetik dizilir. Kapalıyken Çince metin Unicode sırasına göre (kabaca kök ve çizgi sayısına göre), Latin adlardan sonra sıralanır. Japonca kanjiler de etkilenir, bu yüzden Japonca kitaplıklarda bunu kapalı bırakın.\"\
+\
+msgid \"Show status line\"\
+msgstr \"Durum satırını göster\"\
+\
+msgid \"Puts Bookshelf's status line across the top of the reader, drawn by the same code that draws it on the shelf, so it reads the same in both. Edit the line itself under Settings > Status line. If you also use Bookends, its top row and any top-anchored progress bar move down to make space.\"\
+msgstr \"Bookshelf'in durum satırını okuyucunun üstüne yerleştirir; rafta çizen kodla aynı kod çizdiği için ikisinde de aynı görünür. Satırın kendisini Ayarlar > Durum satırı altında düzenleyin. Bookends da kullanıyorsanız onun üst satırı ve üste sabitlenmiş ilerleme çubukları yer açmak için aşağı kayar.\"\
+\
+msgid \"Show menu button\"\
+msgstr \"Menü düğmesini göster\"\
+\
+msgid \"Adds the Bookshelf menu button to the reader. Takes effect the next time you open a book.\"\
+msgstr \"Okuyucuya Bookshelf menü düğmesini ekler. Bir sonraki kitap açışında etkili olur.\"\
+\
+msgid \"Show modules button\"\
+msgstr \"Modüller düğmesini göster\"\
+\
+msgid \"Adds the modules button to the reader, in the corner opposite the menu button. Takes effect the next time you open a book.\"\
+msgstr \"Okuyucuya, menü düğmesinin karşı köşesine modüller düğmesini ekler. Bir sonraki kitap açışında etkili olur.\"\
+\
+msgid \"Launcher button position and size\"\
+msgstr \"Başlatıcı düğmesi konumu ve boyutu\"\
+\
+msgid \"Position, size, side and which edge the in-reader launcher buttons sit on. Opens a blank screen showing just the buttons, so you can see them move as you adjust.\"\
+msgstr \"Okuyucu içi başlatıcı düğmelerinin konumu, boyutu, tarafı ve hangi kenarda durduğu. Yalnızca düğmeleri gösteren boş bir ekran açar, böylece ayarladıkça hareketlerini görürsünüz.\"\
+\
+msgid \"Performance tweaks\"\
+msgstr \"Performans ayarları\"\
+\
+msgid \"While reading\"\
+msgstr \"Okurken\"\
+\
+msgid \"Reset shelf menu to defaults\"\
+msgstr \"Raf menüsünü varsayılana sıfırla\"\
+\
+msgid \"Clears your custom shelf menu (which shelves are shown, their order, their labels and icons, their sources and filters and sorts) and restores the fresh-install set: Home / Recent / Series / Favorites enabled, the rest available to toggle on. Also returns the active shelf to Home and the page indicator to 1. Other settings (top-panel text, fonts, colors) are unaffected.\"\
+msgstr \"Özel raf menünüzü (hangi rafların gösterildiği, sıraları, etiketleri ve simgeleri, kaynakları, süzgeçleri ve sıralamaları) temizler ve ilk kurulumdaki düzeni geri yükler: Giriş / Son okunanlar / Diziler / Sık Kullanılanlar açık, gerisi açılabilir durumda. Ayrıca etkin rafı Giriş'e ve sayfa göstergesini 1'e döndürür. Diğer ayarlar (üst panel metni, yazı tipleri, renkler) etkilenmez.\"\
+\
+msgid \"\"\
+\"Reset the shelf menu to default settings?\\n\"\
+\"\\n\"\
+\"All custom shelves you have created or edited will be lost. Other Bookshelf settings (top panel text, fonts, colors) are unaffected.\"\
+msgstr \"Raf menüsü varsayılan ayarlara sıfırlansın mı?\\n\\nOluşturduğunuz ya da düzenlediğiniz tüm özel raflar kaybolacak. Diğer Bookshelf ayarları (üst panel metni, yazı tipleri, renkler) etkilenmez.\"\
+\
+msgid \"Reset top panel content to defaults\"\
+msgstr \"Üst panel içeriğini varsayılana sıfırla\"\
+\
+msgid \"Clears your top-panel customizations and restores the fresh-install detail layout, including the bundled title (Inter ExtraBold) and author (Caveat) fonts. The Bookshelf UI font and shelf menu are unaffected.\"\
+msgstr \"Üst panel özelleştirmelerinizi temizler ve ilk kurulumdaki ayrıntı düzenini, birlikte gelen başlık (Inter ExtraBold) ve yazar (Caveat) yazı tipleri dahil, geri yükler. Bookshelf arayüz yazı tipi ve raf menüsü etkilenmez.\"\
+\
+msgid \"\"\
+\"Reset the top panel's content to default settings?\\n\"\
+\"\\n\"\
+\"All top-panel text and font customizations will be lost. The Bookshelf UI font and shelf menu are unaffected.\"\
+msgstr \"Üst panelin içeriği varsayılan ayarlara sıfırlansın mı?\\n\\nTüm üst panel metni ve yazı tipi özelleştirmeleri kaybolacak. Bookshelf arayüz yazı tipi ve raf menüsü etkilenmez.\"\
+\
+msgid \"Read calibre metadata.calibre\"\
+msgstr \"Calibre metadata.calibre dosyasını oku\"\
+\
+msgid \"For users with a Calibre-managed library. Reads the metadata.calibre file in your home folder, or the folder above it, to fill in title, authors, series, tags, language and description for every book at once, with no per-book extraction. Calibre's values take priority over the metadata KOReader extracted from the book file itself. Anything you have edited in Book information still wins over both. Covers and page counts always come from KOReader.\"\
+msgstr \"Calibre ile yönetilen kitaplığı olan kullanıcılar için. Başlangıç klasöründeki ya da bir üstündeki metadata.calibre dosyasını okuyarak tüm kitapların başlık, yazar, dizi, etiket, dil ve açıklamasını kitap kitap ayıklamaya gerek kalmadan tek seferde doldurur. Calibre'nin değerleri, KOReader'ın kitap dosyasından ayıkladığı üst verilerin önüne geçer. Kitap bilgileri'nde düzenlediğiniz her şey yine ikisinden de üstündür. Kapaklar ve sayfa sayıları her zaman KOReader'dan gelir.\"\
+\
+msgid \"Genres from calibre only\"\
+msgstr \"Türler yalnızca Calibre'den\"\
+\
+msgid \"For a book that is in your calibre library, use only calibre's tags as its genres, even when calibre has none for it, never the tags stored in the book file. Useful after retagging in calibre, so the file's old tags don't come back as genres of their own. A book set to Embedded in its own Tags section still uses those.\"\
+msgstr \"Calibre kitaplığında bulunan bir kitap için, Calibre'de hiç etiketi olmasa bile, tür olarak yalnızca Calibre'nin etiketlerini kullanır, asla kitap dosyasında saklanan etiketleri kullanmaz. Calibre'de yeniden etiketledikten sonra, dosyanın eski etiketleri ayrı türler olarak geri gelmesin diye işe yarar. Kendi Etiketler bölümünde Gömülü olarak ayarlanmış bir kitap yine onları kullanır.\"\
+\
+msgid \"Rows and columns set how much of the screen the shelf takes; the top panel above fills whatever is left. List and spine shelves use that same space with their own row counts, so covers are shown here while you adjust it.\"\
+msgstr \"Satırlar ve sütunlar rafın ekranın ne kadarını kaplayacağını belirler; üstteki üst panel kalan alanı doldurur. Liste ve sırt rafları aynı alanı kendi satır sayılarıyla kullanır, bu yüzden ayarlarken burada kapaklar gösterilir.\"\
+\
+msgid \"Adjust shelf/top panel size\"\
+msgstr \"Raf/üst panel boyutunu ayarla\"\
+\
+msgid \"Columns: \"\
+msgstr \"Sütunlar: \"\
+\
+msgid \"Rows: \"\
+msgstr \"Satırlar: \"\
+\
+msgid \"Accept\"\
+msgstr \"Kabul et\"\
+\
+msgid \"Top panel font scale\"\
+msgstr \"Üst panel yazı tipi ölçeği\"\
+\
+msgid \"Module font scale\"\
+msgstr \"Modül yazı tipi ölçeği\"\
+\
+msgid \"Shelf menu font scale\"\
+msgstr \"Raf menüsü yazı tipi ölçeği\"\
+\
+msgid \"Stack & folder label scale\"\
+msgstr \"Yığın ve klasör etiketi ölçeği\"\
+\
+msgid \"Spine text size\"\
+msgstr \"Sırt yazısı boyutu\"\
+\
+msgid \"Start menu font scale\"\
+msgstr \"Başlangıç menüsü yazı tipi ölçeği\"\
+\
+msgid \"Where the start-menu button sits in the footer. Right moves the button and its menu to the bottom-right corner; Off hides the button entirely.\"\
+msgstr \"Başlangıç menüsü düğmesinin alt çubukta nerede durduğu. Sağ, düğmeyi ve menüsünü sağ alt köşeye taşır; Kapalı, düğmeyi tamamen gizler.\"\
+\
+msgid \"Minimum start menu width: default\"\
+msgstr \"En küçük başlangıç menüsü genişliği: varsayılan\"\
+\
+msgid \"Minimum start menu width: %1 dp\"\
+msgstr \"En küçük başlangıç menüsü genişliği: %1 dp\"\
+\
+msgid \"The start menu is normally only as wide as its longest label, so short menu text also narrows the module cards. Raise this to widen the panel without lengthening the text.\"\
+msgstr \"Başlangıç menüsü normalde en uzun etiketi kadar geniştir, bu yüzden kısa menü metni modül kartlarını da daraltır. Metni uzatmadan paneli genişletmek için bunu artırın.\"\
+\
+msgid \"Launcher buttons\"\
+msgstr \"Başlatıcı düğmeleri\"\
+\
+msgid \"edge %1 dp\"\
+msgstr \"kenar %1 dp\"\
+\
+msgid \"side %1 dp\"\
+msgstr \"yan %1 dp\"\
+\
+msgid \"size %1%\"\
+msgstr \"boyut %1%\"\
+\
+msgid \"Side: left\"\
+msgstr \"Taraf: sol\"\
+\
+msgid \"Side: right\"\
+msgstr \"Taraf: sağ\"\
+\
+msgid \"Edge: bottom\"\
+msgstr \"Kenar: alt\"\
+\
+msgid \"Edge: top\"\
+msgstr \"Kenar: üst\"\
+\
+msgid \"Minimum start menu width\"\
+msgstr \"En küçük başlangıç menüsü genişliği\"\
+\
+msgid \"Modal tab label font scale\"\
+msgstr \"Pencere sekmesi etiketi yazı tipi ölçeği\"\
+\
+msgid \"Cover badges\"\
+msgstr \"Kapak rozetleri\"\
+\
+msgid \"Stack & folder labels\"\
+msgstr \"Yığın ve klasör etiketleri\"\
+\
+msgid \"Spine text\"\
+msgstr \"Sırt yazısı\"\
+\
+msgid \"List text\"\
+msgstr \"Liste yazısı\"\
+\
+msgid \"Top panel\"\
+msgstr \"Üst panel\"\
+\
+msgid \"Modal tabs\"\
+msgstr \"Pencere sekmeleri\"\
+\
+msgid \"Choose image library folder\"\
+msgstr \"Görsel kitaplığı klasörünü seç\"\
+\
+msgid \"\\\"Latest\\\" folder walk depth\"\
+msgstr \"\\\"En yeni\\\" klasör tarama derinliği\"\
+\
+msgid \"How deep to scan your library folder for newly-added books. Higher values take longer on a cold start.\"\
+msgstr \"Yeni eklenen kitaplar için kitaplık klasörünün ne kadar derin taranacağı. Daha yüksek değerler soğuk başlatmada daha uzun sürer.\"\
+\
+msgid \"MB\"\
+msgstr \"MB\"\
+\
+msgid \"Cover cache budget\"\
+msgstr \"Kapak önbelleği bütçesi\"\
+\
+msgid \"Memory budget for ready-scaled book covers (MB). Higher = smoother paging and preloading, more RAM. Default %1 MB on this device.\"\
+msgstr \"Hazır ölçeklenmiş kitap kapakları için bellek bütçesi (MB). Daha yüksek = daha akıcı sayfa çevirme ve önyükleme, daha çok RAM. Bu aygıtta varsayılan %1 MB.\"\
+\
+msgid \"\"\
+\"Another copy of Bookshelf is installed and is also being loaded:\\n\"\
+\"%1\\n\"\
+\"\\n\"\
+\"Remove it and restart, or updates may appear to do nothing.\"\
+msgstr \"Bookshelf'in başka bir kopyası kurulu ve o da yükleniyor:\\n%1\\n\\nOnu kaldırıp yeniden başlatın, yoksa güncellemeler hiçbir şey yapmıyor gibi görünebilir.\"\
+\
+msgid \"Update available\"\
+msgstr \"Güncelleme var\"\
+\
+msgid \"Check for updates\"\
+msgstr \"Güncellemeleri denetle\"\
+\
+msgid \"Checks GitHub for a newer Bookshelf release and offers to install it, with the release notes shown first. The version in brackets is what's installed.\"\
+msgstr \"Daha yeni bir Bookshelf sürümü için GitHub'ı denetler ve önce sürüm notlarını göstererek kurmayı önerir. Parantez içindeki sürüm kurulu olandır.\"\
+\
+msgid \"View changelog\"\
+msgstr \"Değişiklik günlüğünü görüntüle\"\
+\
+msgid \"Browse this and past releases' notes, newest first. Notes are cached, so anything fetched once stays readable offline; Refresh pulls the latest.\"\
+msgstr \"Bu ve önceki sürümlerin notlarına en yeniden başlayarak göz atın. Notlar önbelleğe alınır, bu yüzden bir kez getirilen her şey çevrimdışı da okunabilir; Yenile en sonuncuları çeker.\"\
+\
+msgid \"Notify on wake when update available\"\
+msgstr \"Güncelleme varsa uyanınca bildir\"\
+\
+msgid \"Developer updates\"\
+msgstr \"Geliştirici güncellemeleri\"\
+\
+msgid \"Development branch\"\
+msgstr \"Geliştirme dalı\"\
+\
+msgid \"Install branch\"\
+msgstr \"Dalı kur\"\
+\
+msgid \"Reset to latest stable release\"\
+msgstr \"En son kararlı sürüme dön\"\
+\
+msgid \"Installed: v\"\
+msgstr \"Kurulu: v\"\
+\
+msgid \"Pack editor…\"\
+msgstr \"Paket düzenleyici…\"\
+\
+msgid \"Flexible shelf widths\"\
+msgstr \"Esnek raf genişlikleri\"\
+\
+msgid \"Off: every shelf gets the same width. On: each shelf is sized to its label, so single-icon shelves stay narrow and longer text labels get more room. Falls back to equal widths when natural sizes don't fit.\"\
+msgstr \"Kapalı: her raf aynı genişliği alır. Açık: her raf etiketine göre boyutlanır, böylece tek simgeli raflar dar kalır, uzun metin etiketleri daha çok yer alır. Doğal boyutlar sığmazsa eşit genişliklere döner.\"\
+\
+msgid \"Uppercase labels\"\
+msgstr \"Büyük harfli etiketler\"\
+\
+msgid \"On: shelf names and the drill breadcrumb are shown in capitals, the default look. Off: each label reads exactly as you typed it, so \\\"Sci-Fi\\\" stays \\\"Sci-Fi\\\".\"\
+msgstr \"Açık: raf adları ve alt düzey gezinme yolu büyük harflerle gösterilir, varsayılan görünüm budur. Kapalı: her etiket tam yazdığınız gibi görünür, yani \\\"Bilim Kurgu\\\" \\\"Bilim Kurgu\\\" olarak kalır.\"\
+\
+msgid \"Tap a shelf to edit it. Long-press to show or hide it.\"\
+msgstr \"Düzenlemek için bir rafa dokunun. Göstermek ya da gizlemek için uzun basın.\"\
+\
+msgid \"+ Add new shelf\"\
+msgstr \"+ Yeni raf ekle\"\
+\
+msgid \"Filename\"\
+msgstr \"Dosya adı\"\
+\
+msgid \"Author (given name)\"\
+msgstr \"Yazar (ad)\"\
+\
+msgid \"Author surname\"\
+msgstr \"Yazar soyadı\"\
+\
+msgid \"Series name\"\
+msgstr \"Dizi adı\"\
+\
+msgid \"Series #\"\
+msgstr \"Dizi #\"\
+\
+msgid \"Series index\"\
+msgstr \"Dizi sırası\"\
+\
+msgid \"Series + #\"\
+msgstr \"Dizi + #\"\
+\
+msgid \"Series + index\"\
+msgstr \"Dizi + sıra\"\
+\
+msgid \"Series or title\"\
+msgstr \"Dizi ya da başlık\"\
+\
+msgid \"Series, else title\"\
+msgstr \"Dizi, yoksa başlık\"\
+\
+msgid \"Last opened\"\
+msgstr \"Son açılan\"\
+\
+msgid \"Opened\"\
+msgstr \"Açılma\"\
+\
+msgid \"Unread/Reading/Finished\"\
+msgstr \"Okunmamış/Okunuyor/Tamamlandı\"\
+\
+msgid \"Unread 1st\"\
+msgstr \"Önce okunmamış\"\
+\
+msgid \"Reading/Unread/Finished\"\
+msgstr \"Okunuyor/Okunmamış/Tamamlandı\"\
+\
+msgid \"Reading 1st\"\
+msgstr \"Önce okunan\"\
+\
+msgid \"Favorite 1st\"\
+msgstr \"Önce sık kullanılan\"\
+\
+msgid \"Added\"\
+msgstr \"Eklenme\"\
+\
+msgid \"Date added\"\
+msgstr \"Eklenme tarihi\"\
+\
+msgid \"Added or opened\"\
+msgstr \"Eklenme ya da açılma\"\
+\
+msgid \"Added/opened\"\
+msgstr \"Eklenme/açılma\"\
+\
+msgid \"File size\"\
+msgstr \"Dosya boyutu\"\
+\
+msgid \"Page count\"\
+msgstr \"Sayfa sayısı\"\
+\
+msgid \"Publication year\"\
+msgstr \"Yayın yılı\"\
+\
+msgid \"Published\"\
+msgstr \"Yayın\"\
+\
+msgid \"Time left\"\
+msgstr \"Kalan süre\"\
+\
+msgid \"Collection order\"\
+msgstr \"Derme sırası\"\
+\
+msgid \"%1 p\"\
+msgstr \"%1 s\"\
+\
+msgid \"Divider card\"\
+msgstr \"Ayırıcı kart\"\
+\
+msgid \"Ribbon\"\
+msgstr \"Şerit\"\
+\
+msgid \"Book stack\"\
+msgstr \"Kitap yığını\"\
+\
+msgid \"Collage\"\
+msgstr \"Kolaj\"\
+\
+msgid \"Text\"\
+msgstr \"Metin\"\
+\
+msgid \"Default setting\"\
+msgstr \"Varsayılan ayar\"\
+\
+msgid \"%1 (disabled - tap to retry)\"\
+msgstr \"%1 (devre dışı, yeniden denemek için dokunun)\"\
+\
+msgid \"Add…\"\
+msgstr \"Ekle…\"\
+\
+msgid \"Divider\"\
+msgstr \"Ayırıcı\"\
+\
+msgid \"Choose an icon first to make this entry icon-only\"\
+msgstr \"Bu girişi yalnızca simge yapmak için önce bir simge seçin\"\
+\
+msgid \"Dynamic icons aren't supported here\"\
+msgstr \"Dinamik simgeler burada desteklenmiyor\"\
+\
+msgid \"This entry is icon-only - add a label before removing the icon\"\
+msgstr \"Bu giriş yalnızca simgeden oluşuyor; simgeyi kaldırmadan önce bir etiket ekleyin\"\
+\
+msgid \"Choose icon…\"\
+msgstr \"Simge seç…\"\
+\
+msgid \"Remove icon\"\
+msgstr \"Simgeyi kaldır\"\
+\
+msgid \"Icon\"\
+msgstr \"Simge\"\
+\
+msgid \"Icon…\"\
+msgstr \"Simge…\"\
+\
+msgid \"Module settings…\"\
+msgstr \"Modül ayarları…\"\
+\
+msgid \"Move out of folder\"\
+msgstr \"Klasörden çıkar\"\
+\
+msgid \"Move to folder\"\
+msgstr \"Klasöre taşı\"\
+\
+msgid \"Library only\"\
+msgstr \"Yalnızca kitaplık\"\
+\
+msgid \"Reader only\"\
+msgstr \"Yalnızca okuyucu\"\
+\
+msgid \"Library and reader\"\
+msgstr \"Kitaplık ve okuyucu\"\
+\
+msgid \"Show in\"\
+msgstr \"Şurada göster\"\
+\
+msgid \"Delete this folder and everything in it?\"\
+msgstr \"Bu klasör ve içindeki her şey silinsin mi?\"\
+\
+msgid \"Bookshelf module…\"\
+msgstr \"Bookshelf modülü…\"\
+\
+msgid \"New folder\"\
+msgstr \"Yeni klasör\"\
+\
+msgid \"Add to menu\"\
+msgstr \"Menüye ekle\"\
+\
+msgid \"Reading calendar\"\
+msgstr \"Okuma takvimi\"\
+\
+msgid \"Bookmark browser\"\
+msgstr \"Yer imi tarayıcısı\"\
+\
+msgid \"Tools\"\
+msgstr \"Araçlar\"\
+\
+msgid \"Screenshot\"\
+msgstr \"Ekran görüntüsü\"\
+\
+msgid \"Full screen refresh\"\
+msgstr \"Tam ekran yenileme\"\
+\
+msgid \"Battery statistics\"\
+msgstr \"Pil istatistikleri\"\
+\
+msgid \"Wi-Fi connection\"\
+msgstr \"Wi-Fi bağlantısı\"\
+\
+msgid \"Close book\"\
+msgstr \"Kitabı kapat\"\
+\
+msgid \"Sleep\"\
+msgstr \"Uyu\"\
+\
+msgid \"Shelf & books\"\
+msgstr \"Raf ve kitaplar\"\
+\
+msgid \"Time & device\"\
+msgstr \"Zaman ve aygıt\"\
+\
+msgid \"Fun & info\"\
+msgstr \"Eğlence ve bilgi\"\
+\
+msgid \"Actions\"\
+msgstr \"Eylemler\"\
+\
+msgid \"My modules\"\
+msgstr \"Modüllerim\"\
+\
+msgid \"Recent\"\
+msgstr \"Son okunanlar\"\
+\
+msgid \"Latest\"\
+msgstr \"En yeni\"\
+\
+msgid \"Tags\"\
+msgstr \"Etiketler\"\
+\
+msgid \"Module shelf\"\
+msgstr \"Modül rafı\"\
+\
+msgid \"%1 (Spines shelves only)\"\
+msgstr \"%1 (yalnızca Sırtlar rafları)\"\
+\
+msgid \"Edited\"\
+msgstr \"Düzenlendi\"\
+\
+msgid \"Uses: %1\"\
+msgstr \"Kullanır: %1\"\
+\
+msgid \"Newest\"\
+msgstr \"En yeni\"\
+\
+msgid \"Last used\"\
+msgstr \"Son kullanılan\"\
+\
+msgid \"%1 has no changes to reset.\"\
+msgstr \"%1 için sıfırlanacak değişiklik yok.\"\
+\
+msgid \"Reset edited theme\"\
+msgstr \"Düzenlenen temayı sıfırla\"\
+\
+msgid \"Colors\"\
+msgstr \"Renkler\"\
+\
+msgid \"Theme (%1)\"\
+msgstr \"Tema (%1)\"\
+\
+msgid \"\"\
+\"A theme can bring a wallpaper, a plank, colors, light or dark, and ornaments. Anything it does not bring is Plain's: no wallpaper, the built-in plank and the default colors. Choosing a theme never changes %1.\\n\"\
+\"\\n\"\
+\"The rows here edit the theme of the shelf on screen. Your changes stay with that theme wherever it shows, and Reset in the Theme library brings back its original.\\n\"\
+\"\\n\"\
+\"Each shelf can have a theme of its own: choose it here, or long-press a shelf, then Theme.\"\
+msgstr \"Bir tema duvar kağıdı, raf tahtası, renkler, açık ya da koyu görünüm ve süsler getirebilir. Getirmediği her şey Sade'ninkidir: duvar kağıdı yok, yerleşik raf tahtası ve varsayılan renkler. Tema seçmek %1 ayarını asla değiştirmez.\\n\\nBuradaki satırlar ekrandaki rafın temasını düzenler. Değişiklikleriniz, tema nerede görünürse görünsün onunla kalır; Tema kitaplığındaki Sıfırla özgün hâlini geri getirir.\\n\\nHer rafın kendi teması olabilir: buradan seçin ya da bir rafa uzun basıp Tema'yı seçin.\"\
+\
+msgid \"This shelf: %1\"\
+msgstr \"Bu raf: %1\"\
+\
+msgid \"Other shelves: all default\"\
+msgstr \"Diğer raflar: tümü varsayılan\"\
+\
+msgid \"Other shelves: 1 with own theme\"\
+msgstr \"Diğer raflar: 1 tanesinin kendi teması var\"\
+\
+msgid \"Other shelves: %1 with own themes\"\
+msgstr \"Diğer raflar: %1 tanesinin kendi teması var\"\
+\
+msgid \"Default theme: %1\"\
+msgstr \"Varsayılan tema: %1\"\
+\
+msgid \"Custom theme\"\
+msgstr \"Özel tema\"\
+\
+msgid \"Add theme pack…\"\
+msgstr \"Tema paketi ekle…\"\
+\
+msgid \"Add theme pack\"\
+msgstr \"Tema paketi ekle\"\
+\
+msgid \"\"\
+\"A theme pack brings a wallpaper, a plank, colors and ornaments together, and is chosen here. To add one, copy its folder into\\n\"\
+\"%1\\n\"\
+\"then open the Theme library again.\\n\"\
+\"\\n\"\
+\"You can edit any theme freely; your changes stay with it, and Reset brings back the original.\"\
+msgstr \"Bir tema paketi duvar kağıdı, raf tahtası, renkler ve süsleri bir araya getirir ve buradan seçilir. Eklemek için klasörünü şuraya kopyalayın:\\n%1\\nardından Tema kitaplığını yeniden açın.\\n\\nHerhangi bir temayı dilediğiniz gibi düzenleyebilirsiniz; değişiklikleriniz onunla kalır, Sıfırla da özgün hâlini geri getirir.\"\
+\
+msgid \"Ready-made theme packs\"\
+msgstr \"Hazır tema paketleri\"\
+\
+msgid \"Default theme\"\
+msgstr \"Varsayılan tema\"\
+\
+msgid \"Reset %1 to its original settings? Your changes to it are lost.\"\
+msgstr \"%1 özgün ayarlarına sıfırlansın mı? Üzerinde yaptığınız değişiklikler kaybolur.\"\
+\
+msgid \"First author\"\
+msgstr \"İlk yazar\"\
+\
+msgid \"Second author\"\
+msgstr \"İkinci yazar\"\
+\
+msgid \"Third author\"\
+msgstr \"Üçüncü yazar\"\
+\
+msgid \"Number of authors (numeric)\"\
+msgstr \"Yazar sayısı (sayısal)\"\
+\
+msgid \"All authors, comma-separated\"\
+msgstr \"Tüm yazarlar, virgülle ayrılmış\"\
+\
+msgid \"First author, or 'A and B', or 'A, B, et al.' for 3+\"\
+msgstr \"İlk yazar ya da 'A ve B' ya da 3+ için 'A, B ve diğerleri'\"\
+\
+msgid \"All genres, comma-separated\"\
+msgstr \"Tüm türler, virgülle ayrılmış\"\
+\
+msgid \"First genre\"\
+msgstr \"İlk tür\"\
+\
+msgid \"Series number\"\
+msgstr \"Dizi numarası\"\
+\
+msgid \"Star rating (★★★☆☆), empty when unrated\"\
+msgstr \"Yıldız puanı (★★★☆☆), puanlanmamışsa boş\"\
+\
+msgid \"Rating as a number 1-5 (empty when unrated)\"\
+msgstr \"1-5 arası sayı olarak puan (puanlanmamışsa boş)\"\
+\
+msgid \"Cached Hardcover rating number\"\
+msgstr \"Önbellekteki Hardcover puanı (sayı)\"\
+\
+msgid \"Cached Hardcover rating as stars\"\
+msgstr \"Önbellekteki Hardcover puanı (yıldız)\"\
+\
+msgid \"Reading status, raw value for conditionals (unread / reading / on_hold / finished)\"\
+msgstr \"Okuma durumu, koşullar için ham değer (unread / reading / on_hold / finished)\"\
+\
+msgid \"Reading status as a readable label (Unread / Reading / On hold / Finished)\"\
+msgstr \"Okunabilir etiket olarak okuma durumu (Okunmamış / Okunuyor / Bekliyor / Tamamlandı)\"\
+\
+msgid \"Favorite icon, empty when not a favorite\"\
+msgstr \"Sık kullanılan simgesi, sık kullanılan değilse boş\"\
+\
+msgid \"File name\"\
+msgstr \"Dosya adı\"\
+\
+msgid \"Format (EPUB/PDF/…)\"\
+msgstr \"Biçim (EPUB/PDF/…)\"\
+\
+#, lua-format\
+msgid \"A calibre column by name, like %calibre{pubdate} or a custom column; dates show the year (needs Read calibre metadata.calibre, except a book's pubdate in an OPDS catalog)\"\
+msgstr \"Adıyla bir Calibre sütunu, ör. %calibre{pubdate} ya da özel bir sütun; tarihler yılı gösterir (Calibre metadata.calibre dosyasını oku gerekir; OPDS kataloğundaki bir kitabın pubdate değeri hariç)\"\
+\
+msgid \"File size on disk\"\
+msgstr \"Diskteki dosya boyutu\"\
+\
+msgid \"Publication year, from calibre, the OPDS catalog or the book file\"\
+msgstr \"Calibre'den, OPDS kataloğundan ya da kitap dosyasından yayın yılı\"\
+\
+msgid \"Publication date in your own layout, like %published{%d %B %Y}; shows less when the book's date has no month or day\"\
+msgstr \"Kendi biçiminde yayın tarihi, ör. %published{%d %B %Y}; kitabın tarihinde ay ya da gün yoksa daha azını gösterir\"\
+\
+msgid \"Date added (the file's own date)\"\
+msgstr \"Eklenme tarihi (dosyanın kendi tarihi)\"\
+\
+msgid \"Book blurb (HTML stripped)\"\
+msgstr \"Kitap tanıtım yazısı (HTML'siz)\"\
+\
+msgid \"A random highlight from this book\"\
+msgstr \"Bu kitaptan rastgele bir vurgu\"\
+\
+#, lua-format\
+msgid \"The book and author for %quote\"\
+msgstr \"%quote için kitap ve yazar\"\
+\
+#, lua-format\
+msgid \"Page the %quote highlight is on\"\
+msgstr \"%quote vurgusunun bulunduğu sayfa\"\
+\
+#, lua-format\
+msgid \"Chapter the %quote highlight is in\"\
+msgstr \"%quote vurgusunun bulunduğu bölüm\"\
+\
+msgid \"Percent left\"\
+msgstr \"Kalan yüzde\"\
+\
+msgid \"Current page\"\
+msgstr \"Geçerli sayfa\"\
+\
+msgid \"Total pages (approximate for EPUB)\"\
+msgstr \"Toplam sayfa (EPUB için yaklaşık)\"\
+\
+msgid \"Pages left (approximate for EPUB)\"\
+msgstr \"Kalan sayfa (EPUB için yaklaşık)\"\
+\
+msgid \"Time left to finish (statistics)\"\
+msgstr \"Bitirmek için kalan süre (istatistikler)\"\
+\
+msgid \"Total time read (statistics)\"\
+msgstr \"Toplam okuma süresi (istatistikler)\"\
+\
+msgid \"Pages read (statistics)\"\
+msgstr \"Okunan sayfa (istatistikler)\"\
+\
+msgid \"Days since first opened (statistics)\"\
+msgstr \"İlk açılıştan bu yana geçen gün (istatistikler)\"\
+\
+msgid \"Pages per day (statistics)\"\
+msgstr \"Günlük sayfa (istatistikler)\"\
+\
+msgid \"Speed in pages/hour (statistics)\"\
+msgstr \"Sayfa/saat cinsinden hız (istatistikler)\"\
+\
+msgid \"Date this book was last opened\"\
+msgstr \"Bu kitabın son açıldığı tarih\"\
+\
+msgid \"How many books in your whole library are marked Finished\"\
+msgstr \"Tüm kitaplığınızda Tamamlandı olarak işaretli kitap sayısı\"\
+\
+msgid \"How many books have any reading time recorded (statistics)\"\
+msgstr \"Okuma süresi kaydedilmiş kitap sayısı (istatistikler)\"\
+\
+msgid \"Time (12-hour)\"\
+msgstr \"Saat (12 saatlik)\"\
+\
+msgid \"Time (24-hour)\"\
+msgstr \"Saat (24 saatlik)\"\
+\
+msgid \"Date (e.g. 4 May)\"\
+msgstr \"Tarih (ör. 4 Mayıs)\"\
+\
+msgid \"Date (e.g. 4 May 2026)\"\
+msgstr \"Tarih (ör. 4 Mayıs 2026)\"\
+\
+msgid \"Date (numeric)\"\
+msgstr \"Tarih (sayısal)\"\
+\
+msgid \"Weekday\"\
+msgstr \"Haftanın günü\"\
+\
+msgid \"Weekday (short)\"\
+msgstr \"Haftanın günü (kısa)\"\
+\
+msgid \"Battery percentage\"\
+msgstr \"Pil yüzdesi\"\
+\
+msgid \"Battery icon (Nerd Font)\"\
+msgstr \"Pil simgesi (Nerd Font)\"\
+\
+msgid \"Wi-Fi icon\"\
+msgstr \"Wi-Fi simgesi\"\
+\
+msgid \"Wi-Fi icon only when online\"\
+msgstr \"Yalnızca çevrimiçiyken Wi-Fi simgesi\"\
+\
+msgid \"Night mode icon (moon/sun)\"\
+msgstr \"Gece kipi simgesi (ay/güneş)\"\
+\
+msgid \"Frontlight intensity (raw)\"\
+msgstr \"Ön aydınlatma yoğunluğu (ham)\"\
+\
+msgid \"Frontlight intensity (0–100%)\"\
+msgstr \"Ön aydınlatma yoğunluğu (0–100%)\"\
+\
+msgid \"Lifetime reading time, all books\"\
+msgstr \"Tüm zamanların okuma süresi, tüm kitaplar\"\
+\
+msgid \"Percent of the book actually read\"\
+msgstr \"Kitabın gerçekten okunan yüzdesi\"\
+\
+msgid \"Books finished (bookends' name for %books_read)\"\
+msgstr \"Tamamlanan kitaplar (bookends'in %books_read için kullandığı ad)\"\
+\
+msgid \"Pages read today, all books\"\
+msgstr \"Bugün okunan sayfa, tüm kitaplar\"\
+\
+msgid \"Time read today, all books\"\
+msgstr \"Bugünkü okuma süresi, tüm kitaplar\"\
+\
+msgid \"Average time per page for this book\"\
+msgstr \"Bu kitap için sayfa başına ortalama süre\"\
+\
+msgid \"Number of highlights\"\
+msgstr \"Vurgu sayısı\"\
+\
+msgid \"Number of notes\"\
+msgstr \"Not sayısı\"\
+\
+msgid \"Number of bookmarks\"\
+msgstr \"Yer imi sayısı\"\
+\
+msgid \"Highlights + notes + bookmarks\"\
+msgstr \"Vurgular + notlar + yer imleri\"\
+\
+msgid \"Frontlight icon\"\
+msgstr \"Ön aydınlatma simgesi\"\
+\
+msgid \"Warmth on the device's own scale, 0-24 on Kindle (natural-light only)\"\
+msgstr \"Aygıtın kendi ölçeğinde sıcaklık, Kindle'da 0-24 (yalnızca doğal ışıklı)\"\
+\
+msgid \"Warmth as a percentage (natural-light only)\"\
+msgstr \"Yüzde olarak sıcaklık (yalnızca doğal ışıklı)\"\
+\
+msgid \"Warmth icon: cool / mid / warm (natural-light only)\"\
+msgstr \"Sıcaklık simgesi: soğuk / orta / sıcak (yalnızca doğal ışıklı)\"\
+\
+msgid \"SSH icon, shown only while the SSH server is running\"\
+msgstr \"SSH simgesi, yalnızca SSH sunucusu çalışırken gösterilir\"\
+\
+msgid \"Same, wrapped so a whole section hides when SSH is off\"\
+msgstr \"Aynısı, SSH kapalıyken bütün bir bölüm gizlenecek şekilde sarılmış\"\
+\
+msgid \"System memory used (%)\"\
+msgstr \"Kullanılan sistem belleği (%)\"\
+\
+msgid \"System memory used (MiB)\"\
+msgstr \"Kullanılan sistem belleği (MiB)\"\
+\
+msgid \"KOReader RSS (MiB)\"\
+msgstr \"KOReader RSS (MiB)\"\
+\
+msgid \"Storage free (GB)\"\
+msgstr \"Boş depolama (GB)\"\
+\
+msgid \"Show … when token foo is set\"\
+msgstr \"foo belirteci ayarlıysa … göster\"\
+\
+msgid \"Show … when foo is empty\"\
+msgstr \"foo boşsa … göster\"\
+\
+msgid \"Numeric comparison\"\
+msgstr \"Sayısal karşılaştırma\"\
+\
+msgid \"If/else\"\
+msgstr \"Eğer/değilse\"\
+\
+msgid \"Per-language font: e.g. a Japanese face for ja books, another otherwise\"\
+msgstr \"Dile göre yazı tipi: ör. ja kitaplar için Japonca bir yazı tipi, diğerleri için başka biri\"\
+\
+msgid \"Show … only in the full-width status line (module + full-screen views), not the cover-view status\"\
+msgstr \"… yalnızca tam genişlikteki durum satırında göster (modül + tam ekran görünümleri), kapak görünümü durumunda değil\"\
+\
+msgid \"Elastic gap: pushes content left/right to the region edges\"\
+msgstr \"Esnek boşluk: içeriği bölge kenarlarına doğru sola/sağa iter\"\
+\
+msgid \"Progress bar, filling the rest of the line\"\
+msgstr \"Satırın kalanını dolduran ilerleme çubuğu\"\
+\
+msgid \"Progress bar whose length reflects how long the book is\"\
+msgstr \"Uzunluğu kitabın ne kadar uzun olduğunu yansıtan ilerleme çubuğu\"\
+\
+msgid \"Bold from here on ([/b] ends it)\"\
+msgstr \"Buradan itibaren kalın ([/b] bitirir)\"\
+\
+msgid \"Italic from here on ([/i] ends it)\"\
+msgstr \"Buradan itibaren italik ([/i] bitirir)\"\
+\
+msgid \"Smaller from here on: 4pt below the line's own size ([/size] ends it)\"\
+msgstr \"Buradan itibaren daha küçük: satırın kendi boyutunun 4pt altı ([/size] bitirir)\"\
+\
+msgid \"Larger from here on; [size=12] sets an exact point size ([/size] ends it)\"\
+msgstr \"Buradan itibaren daha büyük; [size=12] tam bir punto boyutu belirler ([/size] bitirir)\"\
+\
+msgid \"A different font from here on: replace NAME with a font name ([/font] ends it)\"\
+msgstr \"Buradan itibaren farklı bir yazı tipi: NAME yerine bir yazı tipi adı yazın ([/font] bitirir)\"\
+\
+msgid \" and \"\
+msgstr \" ve \"\
+\
+msgid \", et al.\"\
+msgstr \" ve diğerleri\"\
+\
+#, lua-format\
+msgid \"%d likes\"\
+msgstr \"%d beğeni\"\
+\
+msgid \"1 like\"\
+msgstr \"1 beğeni\"\
+\
+#, lua-format\
+msgid \"%dh %02dm\"\
+msgstr \"%d sa %02d dk\"\
+\
+#, lua-format\
+msgid \"%ds\"\
+msgstr \"%d sn\"\
+\
+#, lua-format\
+msgid \"%dm %02ds\"\
+msgstr \"%d dk %02d sn\"\
+\
+msgid \"Open the releases page in a browser?\"\
+msgstr \"Sürümler sayfası tarayıcıda açılsın mı?\"\
+\
+msgid \"Checking for updates...\"\
+msgstr \"Güncellemeler denetleniyor...\"\
+\
+msgid \"Could not check for updates.\"\
+msgstr \"Güncellemeler denetlenemedi.\"\
+\
+msgid \"Bookshelf is up to date.\"\
+msgstr \"Bookshelf güncel.\"\
+\
+msgid \"Version: \"\
+msgstr \"Sürüm: \"\
+\
+msgid \"Update and restart\"\
+msgstr \"Güncelle ve yeniden başlat\"\
+\
+msgid \"No download available for this release.\"\
+msgstr \"Bu sürüm için indirme yok.\"\
+\
+msgid \"Update available!\"\
+msgstr \"Güncelleme var!\"\
+\
+msgid \"Installed: \"\
+msgstr \"Kurulu: \"\
+\
+msgid \"Latest: \"\
+msgstr \"En son: \"\
+\
+msgid \"Downloading update...\"\
+msgstr \"Güncelleme indiriliyor...\"\
+\
+msgid \"the connection failed\"\
+msgstr \"bağlantı başarısız oldu\"\
+\
+msgid \"the connection timed out\"\
+msgstr \"bağlantı zaman aşımına uğradı\"\
+\
+msgid \"the secure connection failed\"\
+msgstr \"güvenli bağlantı başarısız oldu\"\
+\
+msgid \"there was no response\"\
+msgstr \"yanıt gelmedi\"\
+\
+msgid \"the file could not be saved\"\
+msgstr \"dosya kaydedilemedi\"\
+\
+msgid \"Download failed.\"\
+msgstr \"İndirme başarısız oldu.\"\
+\
+msgid \"Installation failed: \"\
+msgstr \"Kurulum başarısız oldu: \"\
+\
+msgid \"Bookshelf updated to v\"\
+msgstr \"Bookshelf şu sürüme güncellendi: v\"\
+\
+msgid \"Restart KOReader now?\"\
+msgstr \"KOReader şimdi yeniden başlatılsın mı?\"\
+\
+msgid \"Restart\"\
+msgstr \"Yeniden başlat\"\
+\
+msgid \"Could not install branch:\"\
+msgstr \"Dal kurulamadı:\"\
+\
+msgid \"Downloading latest release...\"\
+msgstr \"En son sürüm indiriliyor...\"\
+\
+msgid \"Could not fetch latest release.\"\
+msgstr \"En son sürüm alınamadı.\"\
+\
+msgid \"Latest release has no downloadable zip.\"\
+msgstr \"En son sürümde indirilebilir zip yok.\"\
+\
+msgid \"wallpapers\"\
+msgstr \"duvar kağıtları\"\
+\
+msgid \"No wallpaper\"\
+msgstr \"Duvar kağıdı yok\"\
+\
+msgid \"Stretch\"\
+msgstr \"Uzat\"\
+\
+msgid \"Crop to fill\"\
+msgstr \"Dolduracak şekilde kırp\"\
+\
+msgid \"Fit to screen\"\
+msgstr \"Ekrana sığdır\"\
+\
+msgid \"Scaling: %1\"\
+msgstr \"Ölçekleme: %1\"\
+\
+msgid \"Yours\"\
+msgstr \"Sizinkiler\"\
+\
+msgid \"Full screen wallpaper\"\
+msgstr \"Tam ekran duvar kağıdı\"\
+\
+msgid \"Wallpaper\"\
+msgstr \"Duvar kağıdı\"\
+\
+msgid \"No images in %1\"\
+msgstr \"%1 içinde görsel yok\"\
+\
+msgid \"Search results\"\
+msgstr \"Arama sonuçları\"\
+\
+#, lua-format\
+msgid \"No matches for \\\"%s\\\"\"\
+msgstr \"\\\"%s\\\" için eşleşme yok\"\
+\
+msgid \"Nothing in Series yet · Add series metadata to your books and they will appear here\"\
+msgstr \"Diziler'de henüz bir şey yok · Kitaplarınıza dizi üst verisi ekleyin, burada görünürler\"\
+\
+msgid \"No authors yet · Add author metadata to your books and they will appear here\"\
+msgstr \"Henüz yazar yok · Kitaplarınıza yazar üst verisi ekleyin, burada görünürler\"\
+\
+msgid \"No genres yet · Add keywords or subject metadata to your books and they will appear here\"\
+msgstr \"Henüz tür yok · Kitaplarına anahtar sözcük ya da konu üst verisi ekleyin, burada görünürler\"\
+\
+msgid \"No collections yet · Long-press a book and tap 'Collections…' to create one\"\
+msgstr \"Henüz derme yok · Oluşturmak için bir kitaba uzun basıp 'Dermeler…' seçeneğine dokunun\"\
+\
+msgid \"No favorites yet · Long-press a book and tap 'Add to favorites'\"\
+msgstr \"Henüz sık kullanılan yok · Bir kitaba uzun basıp 'Sık kullanılanlara ekle' seçeneğine dokunun\"\
+\
+msgid \"No books found · Set your library folder in Settings then tap Latest\"\
+msgstr \"Kitap bulunamadı · Ayarlar'da kitaplık klasörünü belirleyip En yeni'ye dokunun\"\
+\
+msgid \"No recent reads yet · Open a book and it will appear here\"\
+msgstr \"Henüz son okunan yok · Bir kitap açın, burada görünür\"\
+\
+#, lua-format\
+msgid \"%s is empty · Long-press a book on any shelf and tap 'Add to a shelf' to put it here. Long-press it here to change its place.\"\
+msgstr \"%s boş · Buraya koymak için herhangi bir raftaki kitaba uzun basıp 'Bir rafa ekle' seçeneğine dokunun. Yerini değiştirmek için burada ona uzun basın.\"\
+\
+msgid \"No books here yet · Pick a folder to use as your KOReader library and books in it will appear here.\"\
+msgstr \"Burada henüz kitap yok · KOReader kitaplığı olarak kullanmak için bir klasör seçin, içindeki kitaplar burada görünür.\"\
+\
+#, lua-format\
+msgid \"Couldn't load %s · Pull down to try again\"\
+msgstr \"%s yüklenemedi · Yeniden denemek için aşağı çekin\"\
+\
+#, lua-format\
+msgid \"Nothing in \\\"%s\\\" · Pull down to refresh, or clear the start folder in Catalog settings\"\
+msgstr \"\\\"%s\\\" içinde bir şey yok · Yenilemek için aşağı çekin ya da Katalog ayarları'ndaki başlangıç klasörünü temizleyin\"\
+\
+#, lua-format\
+msgid \"Nothing in %s · Pull down to refresh\"\
+msgstr \"%s içinde bir şey yok · Yenilemek için aşağı çekin\"\
+\
+#, lua-format\
+msgid \"No books in %s yet · Go back and long-press its tile to edit its source or filter\"\
+msgstr \"%s içinde henüz kitap yok · Geri dönüp kaynağını ya da süzgecini düzenlemek için kutucuğuna uzun basın\"\
+\
+#, lua-format\
+msgid \"No books in %s yet · Long-press it in the shelf menu above to edit its source or filter\"\
+msgstr \"%s içinde henüz kitap yok · Kaynağını ya da süzgecini düzenlemek için yukarıdaki raf menüsünde ona uzun basın\"\
+\
+#, lua-format\
+msgid \"No books in %s yet\"\
+msgstr \"%s içinde henüz kitap yok\"\
+\
+#, lua-format\
+msgid \"Nothing in %s yet · Go back and long-press its tile to edit its filter\"\
+msgstr \"%s içinde henüz bir şey yok · Geri dönüp süzgecini düzenlemek için kutucuğuna uzun basın\"\
+\
+#, lua-format\
+msgid \"Nothing in %s yet · Long-press it in the shelf menu above to edit its filter\"\
+msgstr \"%s içinde henüz bir şey yok · Süzgecini düzenlemek için yukarıdaki raf menüsünde ona uzun basın\"\
+\
+msgid \"Set home folder\"\
+msgstr \"Başlangıç klasörünü ayarla\"\
+\
+msgid \"Current home folder:\"\
+msgstr \"Geçerli başlangıç klasörü:\"\
+\
+msgid \"File no longer exists. The bookshelf entry is stale.\"\
+msgstr \"Dosya artık yok. Bu Bookshelf kaydı eskimiş.\"\
+\
+msgid \"Couldn't open this Kobo book.\"\
+msgstr \"Bu Kobo kitabı açılamadı.\"\
+\
+msgid \"\"\
+\"This Kindle book has to be converted before KOReader can read it.\\n\"\
+\"\\n\"\
+\"The Kindle Virtual Library plugin does the conversion. It can take a few minutes, it can't be stopped once started, and the screen won't respond while it works.\\n\"\
+\"\\n\"\
+\"It only happens the first time you open a book.\"\
+msgstr \"KOReader'ın okuyabilmesi için bu Kindle kitabının dönüştürülmesi gerekiyor.\\n\\nDönüştürmeyi Kindle Virtual Library eklentisi yapar. Birkaç dakika sürebilir, başladıktan sonra durdurulamaz ve çalışırken ekran yanıt vermez.\\n\\nBu yalnızca bir kitabı ilk açışınızda olur.\"\
+\
+msgid \"Convert\"\
+msgstr \"Dönüştür\"\
+\
+msgid \"\"\
+\"This is a protected %1 file, which can't be opened.\\n\"\
+\"\\n\"\
+\"The Kindle plugin can only unlock KFX books. Protected MOBI and AZW books can't be converted by any KOReader plugin, so those have to be read in the Kindle app.\\n\"\
+\"\\n\"\
+\"Your KFX books should open normally.\"\
+msgstr \"Bu korumalı bir %1 dosyası, açılamıyor.\\n\\nKindle eklentisi yalnızca KFX kitapların kilidini açabilir. Korumalı MOBI ve AZW kitapları hiçbir KOReader eklentisi dönüştüremez, bu yüzden bunların Kindle uygulamasında okunması gerekir.\\n\\nKFX kitaplarınız normal açılmalı.\"\
+\
+msgid \"\"\
+\"KOReader can't read %1 files.\\n\"\
+\"\\n\"\
+\"It reads KFX books (prepared by the Kindle plugin) and unprotected MOBI and AZW books.\\n\"\
+\"\\n\"\
+\"Your other Kindle books should open normally.\"\
+msgstr \"KOReader %1 dosyalarını okuyamaz.\\n\\nKFX kitapları (Kindle eklentisiyle hazırlanmış) ve korumasız MOBI ve AZW kitapları okur.\\n\\nDiğer Kindle kitaplarınız normal açılmalı.\"\
+\
+msgid \"The Kindle library isn't available right now.\"\
+msgstr \"Kindle kitaplığı şu anda kullanılamıyor.\"\
+\
+msgid \"Preparing this book…\"\
+msgstr \"Bu kitap hazırlanıyor…\"\
+\
+msgid \"This book is still being prepared. Please try again in a moment.\"\
+msgstr \"Bu kitap hâlâ hazırlanıyor. Lütfen birazdan yeniden deneyin.\"\
+\
+msgid \"Results\"\
+msgstr \"Sonuçlar\"\
+\
+msgid \"Catalog books can't be selected.\"\
+msgstr \"Katalog kitapları seçilemez.\"\
+\
+msgid \"Modules can only go on shelves shown as covers or spines\"\
+msgstr \"Modüller yalnızca kapak ya da sırt olarak gösterilen raflara konabilir\"\
+\
+msgid \"Choose an ornament\"\
+msgstr \"Bir süs seç\"\
+\
+msgid \"Swap ornament\"\
+msgstr \"Süsü değiştir\"\
+\
+msgid \"Remove ornament\"\
+msgstr \"Süsü kaldır\"\
+\
+msgid \"Add ornament\"\
+msgstr \"Süs ekle\"\
+\
+msgid \"This shelf uses the %1 collection.\"\
+msgstr \"Bu raf %1 dermesini kullanıyor.\"\
+\
+msgid \"Ornament module, positioned manually\"\
+msgstr \"Süs modülü, elle konumlandırılmış\"\
+\
+msgid \"End\"\
+msgstr \"Son\"\
+\
+msgid \"Long-press a book or another ornament to swap their places.\"\
+msgstr \"Yerlerini değiştirmek için bir kitaba ya da başka bir süse uzun basın.\"\
+\
+msgid \"Long-press another ornament to swap their places.\"\
+msgstr \"Yerlerini değiştirmek için başka bir süse uzun basın.\"\
+\
+msgid \"Arrange: %1\"\
+msgstr \"Yerleştir: %1\"\
+\
+msgid \"%1 - %2 of %3+\"\
+msgstr \"%1 - %2 / %3+\"\
+\
+msgid \"%1 - %2 of %3\"\
+msgstr \"%1 - %2 / %3\"\
+\
+msgid \"Selection cleared\"\
+msgstr \"Seçim temizlendi\"\
+\
+#, lua-format\
+msgid \"No items start with %q\"\
+msgstr \"%q ile başlayan öğe yok\"\
+\
+msgid \"Go to letter\"\
+msgstr \"Harfe git\"\
+\
+msgid \"Enter text, letter or book number\"\
+msgstr \"Metin, harf ya da kitap numarası girin\"\
+\
+msgid \"Enter text, letter or page number\"\
+msgstr \"Metin, harf ya da sayfa numarası girin\"\
+\
+#, lua-format\
+msgid \"(a - z) or (1 - %d)\"\
+msgstr \"(a - z) ya da (1 - %d)\"\
+\
+msgid \"Go to book\"\
+msgstr \"Kitaba git\"\
+\
+msgid \"Go to page\"\
+msgstr \"Sayfaya git\"\
+\
+#, lua-format\
+msgid \"Book must be between 1 and %d\"\
+msgstr \"Kitap 1 ile %d arasında olmalı\"\
+\
+#, lua-format\
+msgid \"Page must be between 1 and %d\"\
+msgstr \"Sayfa 1 ile %d arasında olmalı\"\
+\
+msgid \"Reset to default\"\
+msgstr \"Varsayılana sıfırla\"\
+\
+msgid \"Puts back the modules the top panel starts with.\"\
+msgstr \"Üst panelin başlangıçtaki modüllerini geri koyar.\"\
+\
+msgid \"Remove from the top panel\"\
+msgstr \"Üst panelden kaldır\"\
+\
+msgid \"Settings > Modules > In the top panel brings them back.\"\
+msgstr \"Ayarlar > Modüller > Üst panelde ile geri getirebilirsiniz.\"\
+\
+msgid \"Bulk selection isn't available in remote catalog views.\"\
+msgstr \"Toplu seçim uzak katalog görünümlerinde kullanılamaz.\"\
+\
+msgid \"Refreshing library…\"\
+msgstr \"Kitaplık yenileniyor…\"\
+\
+msgid \"Hardcover metadata refreshed\"\
+msgstr \"Hardcover üst verileri yenilendi\"\
+\
+msgid \"Hardcover refresh failed\"\
+msgstr \"Hardcover yenilemesi başarısız oldu\"\
+\
+msgid \"Linking to Hardcover…\"\
+msgstr \"Hardcover'a bağlanıyor…\"\
+\
+msgid \"Auto link\"\
+msgstr \"Otomatik bağla\"\
+\
+msgid \"Auto link (best guess)\"\
+msgstr \"Otomatik bağla (en iyi tahmin)\"\
+\
+msgid \"No embedded Hardcover identifier found\"\
+msgstr \"Gömülü Hardcover kimliği bulunamadı\"\
+\
+msgid \"Hardcover book linked\"\
+msgstr \"Hardcover kitabı bağlandı\"\
+\
+msgid \"No confident Hardcover match -- try Manual link\"\
+msgstr \"Kesin bir Hardcover eşleşmesi yok -- El ile bağla'yı deneyin\"\
+\
+msgid \"Hardcover search failed\"\
+msgstr \"Hardcover araması başarısız oldu\"\
+\
+msgid \"Hardcover book linked (best guess)\"\
+msgstr \"Hardcover kitabı bağlandı (en iyi tahmin)\"\
+\
+msgid \"Hardcover link failed\"\
+msgstr \"Hardcover bağlantısı başarısız oldu\"\
+\
+msgid \"Manual link\"\
+msgstr \"El ile bağla\"\
+\
+msgid \"Book linked, but metadata refresh failed: %1\"\
+msgstr \"Kitap bağlandı, ancak üst veriler yenilenemedi: %1\"\
+\
+msgid \"Select edition\"\
+msgstr \"Baskı seç\"\
+\
+msgid \"Link a Hardcover book first\"\
+msgstr \"Önce bir Hardcover kitabı bağlayın\"\
+\
+msgid \"Hardcover edition linked\"\
+msgstr \"Hardcover baskısı bağlandı\"\
+\
+msgid \"Edition linked, but metadata refresh failed: %1\"\
+msgstr \"Baskı bağlandı, ancak üst veriler yenilenemedi: %1\"\
+\
+msgid \"Hardcover edition search failed\"\
+msgstr \"Hardcover baskı araması başarısız oldu\"\
+\
+msgid \"Clear link\"\
+msgstr \"Bağlantıyı kaldır\"\
+\
+msgid \"Hardcover link cleared\"\
+msgstr \"Hardcover bağlantısı kaldırıldı\"\
+\
+msgid \"Could not clear Hardcover link\"\
+msgstr \"Hardcover bağlantısı kaldırılamadı\"\
+\
+msgid \"Could not update\"\
+msgstr \"Güncellenemedi\"\
+\
+msgid \"Not connected to Hardcover.\"\
+msgstr \"Hardcover'a bağlı değil.\"\
+\
+msgid \"\"\
+\"Hardcover (hardcover.app) is a free site for tracking what you read. A book linked to it gets Hardcover's ratings, reviews, description and genres.\\n\"\
+\"\\n\"\
+\"To connect, install a Hardcover sync plugin and sign in there, then restart KOReader. Or give Bookshelf a Hardcover API key: get one at hardcover.app/account/api.\"\
+msgstr \"Hardcover (hardcover.app), okuduklarınızı takip etmek için ücretsiz bir sitedir. Ona bağlanan bir kitap, Hardcover'daki puanları, incelemeleri, açıklamayı ve türleri alır.\\n\\nBağlanmak için bir Hardcover eşitleme eklentisi kurup orada oturum açın, ardından KOReader'ı yeniden başlatın. Ya da Bookshelf'e bir Hardcover API anahtarı verin: hardcover.app/account/api adresinden alabilirsiniz.\"\
+\
+msgid \"Use Hardcover's\"\
+msgstr \"Hardcover'dan kullan\"\
+\
+msgid \"No Hardcover cover has been downloaded for this book.\"\
+msgstr \"Bu kitap için Hardcover'dan kapak indirilmedi.\"\
+\
+msgid \"Change link\"\
+msgstr \"Bağlantıyı değiştir\"\
+\
+msgid \"Link to Hardcover\"\
+msgstr \"Hardcover'a bağla\"\
+\
+msgid \"Linked to %1.\"\
+msgstr \"Bağlı olduğu kitap: %1.\"\
+\
+msgid \"Not linked to Hardcover.\"\
+msgstr \"Hardcover'a bağlı değil.\"\
+\
+msgid \"No books to select here.\"\
+msgstr \"Burada seçilecek kitap yok.\"\
+\
+msgid \"Selected the first %1 books (the most one selection holds).\"\
+msgstr \"İlk %1 kitap seçildi (bir seçimin alabileceği en fazla sayı).\"\
+\
+msgid \"Selected %1 books.\"\
+msgstr \"%1 kitap seçildi.\"\
+\
+msgid \"%1, %2 selected\"\
+msgstr \"%1, %2 seçili\"\
+\
+msgid \"Pin to the shelf menu\"\
+msgstr \"Raf menüsüne sabitle\"\
+\
+msgid \"A shelf of its own in the shelf menu, next to this one.\"\
+msgstr \"Raf menüsünde, bunun yanında kendine ait bir raf.\"\
+\
+#, lua-format\
+msgid \"Add %d more\"\
+msgstr \"%d tane daha ekle\"\
+\
+msgid \"Adds the rest of its books to your selection.\"\
+msgstr \"Kalan kitaplarını seçiminize ekler.\"\
+\
+#, lua-format\
+msgid \"Select %d\"\
+msgstr \"%d seç\"\
+\
+msgid \"Selects its books, to change their status, rating or collections together.\"\
+msgstr \"Durumlarını, puanlarını veya dermelerini birlikte değiştirmek için kitaplarını seçer.\"\
+\
+#, lua-format\
+msgid \"Remove %d\"\
+msgstr \"%d çıkar\"\
+\
+msgid \"Takes its books out of your selection.\"\
+msgstr \"Kitaplarını seçiminizden çıkarır.\"\
+\
+msgid \"Finds page counts for just these books.\"\
+msgstr \"Yalnızca bu kitapların sayfa sayılarını bulur.\"\
+\
+msgid \"How this series' books are drawn, on every shelf.\"\
+msgstr \"Bu dizinin kitaplarının her rafta nasıl çizileceği.\"\
+\
+msgid \"Same as shelf\"\
+msgstr \"Rafla aynı\"\
+\
+msgid \"Shown on the stack in place of its covers.\"\
+msgstr \"Yığında kapakları yerine gösterilir.\"\
+\
+msgid \"Set folder image…\"\
+msgstr \"Klasör görseli ayarla…\"\
+\
+msgid \"Clear folder image\"\
+msgstr \"Klasör görselini kaldır\"\
+\
+msgid \"Back to the folder's covers.\"\
+msgstr \"Klasörün kapaklarına geri döner.\"\
+\
+msgid \"Image\"\
+msgstr \"Görsel\"\
+\
+msgid \"Move…\"\
+msgstr \"Taşı…\"\
+\
+msgid \"Rename…\"\
+msgstr \"Yeniden adlandır…\"\
+\
+msgid \"Set author image…\"\
+msgstr \"Yazar görseli ayarla…\"\
+\
+msgid \"Set series image…\"\
+msgstr \"Dizi görseli ayarla…\"\
+\
+msgid \"Set genre image…\"\
+msgstr \"Tür görseli ayarla…\"\
+\
+msgid \"Set collection image…\"\
+msgstr \"Derme görseli ayarla…\"\
+\
+msgid \"Clear author image\"\
+msgstr \"Yazar görselini kaldır\"\
+\
+msgid \"Clear series image\"\
+msgstr \"Dizi görselini kaldır\"\
+\
+msgid \"Clear genre image\"\
+msgstr \"Tür görselini kaldır\"\
+\
+msgid \"Clear collection image\"\
+msgstr \"Derme görselini kaldır\"\
+\
+msgid \"Back to the stack's covers.\"\
+msgstr \"Yığının kapaklarına geri döner.\"\
+\
+msgid \"\"\
+\"Delete this image from the image library?\\n\"\
+\"\\n\"\
+\"%1\"\
+msgstr \"Bu görsel, görsel kitaplığından silinsin mi?\\n\\n%1\"\
+\
+msgid \"Find author image online\"\
+msgstr \"Yazar görselini çevrimiçi bul\"\
+\
+msgid \"Looks for a photo on Open Library and Wikipedia.\"\
+msgstr \"Open Library ve Wikipedia'da fotoğraf arar.\"\
+\
+msgid \"Choose folder image\"\
+msgstr \"Klasör görseli seç\"\
+\
+msgid \"Choose image\"\
+msgstr \"Görsel seç\"\
+\
+msgid \"Starts a shelf inside this one: pick what it shows first.\"\
+msgstr \"Bunun içinde bir raf başlatır: önce ne göstereceğini seçin.\"\
+\
+msgid \"Move a shelf here\"\
+msgstr \"Buraya bir raf taşı\"\
+\
+msgid \"In %1\"\
+msgstr \"%1 içinde\"\
+\
+msgid \"In the shelf menu\"\
+msgstr \"Raf menüsünde\"\
+\
+msgid \"Add shelf\"\
+msgstr \"Raf ekle\"\
+\
+msgid \"Search library\"\
+msgstr \"Kitaplıkta ara\"\
+\
+msgid \"title, author, series, genre…\"\
+msgstr \"başlık, yazar, dizi, tür…\"\
+\
+msgid \"title, author, series…\"\
+msgstr \"başlık, yazar, dizi…\"\
+\
+msgid \"%1 bookmarks\"\
+msgstr \"%1 yer imi\"\
+\
+msgid \"1 bookmark\"\
+msgstr \"1 yer imi\"\
+\
+msgid \"(no title)\"\
+msgstr \"(başlık yok)\"\
+\
+msgid \"Read\"\
+msgstr \"Okundu\"\
+\
+msgid \"%1% read\"\
+msgstr \"%1% okundu\"\
+\
+msgid \"page %1 of %2\"\
+msgstr \"sayfa %1 / %2\"\
+\
+msgid \"Not started\"\
+msgstr \"Başlanmadı\"\
+\
+msgid \"Last read %1\"\
+msgstr \"Son okuma: %1\"\
+\
+msgid \"My review\"\
+msgstr \"İncelemem\"\
+\
+msgid \"(from Hardcover)\"\
+msgstr \"(Hardcover'dan)\"\
+\
+msgid \"Show info\"\
+msgstr \"Bilgileri göster\"\
+\
+msgid \"Removed from history\"\
+msgstr \"Geçmişten kaldırıldı\"\
+\
+msgid \"Delete file permanently?\"\
+msgstr \"Dosya kalıcı olarak silinsin mi?\"\
+\
+msgid \"Failed to delete file.\"\
+msgstr \"Dosya silinemedi.\"\
+\
+msgid \"Metadata refresh queued\"\
+msgstr \"Üst veri yenilemesi sıraya alındı\"\
+\
+msgid \"Use the book's date (%1)\"\
+msgstr \"Kitabın tarihini kullan (%1)\"\
+\
+msgid \"Use the book's date (none)\"\
+msgstr \"Kitabın tarihini kullan (yok)\"\
+\
+msgid \"Publish date\"\
+msgstr \"Yayın tarihi\"\
+\
+msgid \"Set date\"\
+msgstr \"Tarih ayarla\"\
+\
+msgid \"Select\"\
+msgstr \"Seç\"\
+\
+msgid \"Favorite on/off\"\
+msgstr \"Sık kullanılan aç/kapat\"\
+\
+msgid \"Add to a shelf\"\
+msgstr \"Bir rafa ekle\"\
+\
+msgid \"Show book info\"\
+msgstr \"Kitap bilgilerini göster\"\
+\
+msgid \"Reload metadata\"\
+msgstr \"Üst verileri yeniden yükle\"\
+\
+msgid \"Select multiple\"\
+msgstr \"Çoklu seç\"\
+\
+msgid \"Hardcover link\"\
+msgstr \"Hardcover bağlantısı\"\
+\
+msgid \"Move book files…\"\
+msgstr \"Kitap dosyalarını taşı…\"\
+\
+msgid \"Delete book files…\"\
+msgstr \"Kitap dosyalarını sil…\"\
+\
+msgid \"Checking the file…\"\
+msgstr \"Dosya denetleniyor…\"\
+\
+msgid \"None in the file\"\
+msgstr \"Dosyada yok\"\
+\
+msgid \"set by you\"\
+msgstr \"sizin ayarladığınız\"\
+\
+msgid \"from Hardcover\"\
+msgstr \"Hardcover'dan\"\
+\
+msgid \"from calibre\"\
+msgstr \"calibre'den\"\
+\
+msgid \"from the catalog\"\
+msgstr \"katalogdan\"\
+\
+msgid \"from the file\"\
+msgstr \"dosyadan\"\
+\
+msgid \"Your rating\"\
+msgstr \"Puanınız\"\
+\
+msgid \"Clear your rating?\"\
+msgstr \"Puanınız temizlensin mi?\"\
+\
+msgid \"Hardcover linked to: %1\"\
+msgstr \"Hardcover bağlantısı: %1\"\
+\
+#, lua-format\
+msgid \"%d ratings\"\
+msgstr \"%d puan\"\
+\
+msgid \"1 rating\"\
+msgstr \"1 puan\"\
+\
+#, lua-format\
+msgid \"%d reviews\"\
+msgstr \"%d inceleme\"\
+\
+msgid \"1 review\"\
+msgstr \"1 inceleme\"\
+\
+msgid \"Include spoilers\"\
+msgstr \"Sürprizbozanları dahil et\"\
+\
+msgid \"Write a review\"\
+msgstr \"İnceleme yaz\"\
+\
+msgid \"No review yet.\"\
+msgstr \"Henüz inceleme yok.\"\
+\
+msgid \"Choose from device\"\
+msgstr \"Aygıttan seç\"\
+\
+msgid \"Search online…\"\
+msgstr \"Çevrimiçi ara…\"\
+\
+msgid \"No covers stored yet. Use Search online or Choose from device.\"\
+msgstr \"Henüz kayıtlı kapak yok. Çevrimiçi ara ya da Aygıttan seç'i kullanın.\"\
+\
+msgid \"That cover is unavailable\"\
+msgstr \"O kapak kullanılamıyor\"\
+\
+msgid \"Couldn't set the cover\"\
+msgstr \"Kapak ayarlanamadı\"\
+\
+msgid \"Cover updated\"\
+msgstr \"Kapak güncellendi\"\
+\
+msgid \"Reverted to embedded cover\"\
+msgstr \"Gömülü kapağa dönüldü\"\
+\
+msgid \"Choose cover image\"\
+msgstr \"Kapak görseli seç\"\
+\
+msgid \"No cover matches found\"\
+msgstr \"Eşleşen kapak bulunamadı\"\
+\
+msgid \"Cover search failed\"\
+msgstr \"Kapak araması başarısız oldu\"\
+\
+msgid \"Author(s)\"\
+msgstr \"Yazar(lar)\"\
+\
+msgid \"Calibre\"\
+msgstr \"Calibre\"\
+\
+msgid \"New tag\"\
+msgstr \"Yeni etiket\"\
+\
+msgid \"Edit tags\"\
+msgstr \"Etiketleri düzenle\"\
+\
+msgid \"Rename tag\"\
+msgstr \"Etiketi yeniden adlandır\"\
+\
+msgid \"Remove the tag \\\"%1\\\" from this book?\"\
+msgstr \"\\\"%1\\\" etiketi bu kitaptan kaldırılsın mı?\"\
+\
+msgid \"Edit tag: \"\
+msgstr \"Etiketi düzenle: \"\
+\
+msgid \"Not in any collection.\"\
+msgstr \"Hiçbir dermede değil.\"\
+\
+msgid \"Hardcover does not show other readers' reviews to this kind of sign-in. Add a Hardcover API key to see them: Hardcover enrichment > Hardcover API key. You stay signed in.\"\
+msgstr \"Hardcover, bu tür oturum açmada diğer okurların incelemelerini göstermiyor. Görmek için bir Hardcover API anahtarı ekleyin: Hardcover zenginleştirmesi > Hardcover API anahtarı. Oturumunuz açık kalır.\"\
+\
+msgid \"Reviews couldn't be fetched.\"\
+msgstr \"İncelemeler alınamadı.\"\
+\
+msgid \"Tap Refresh to load reviews.\"\
+msgstr \"İncelemeleri yüklemek için Yenile'ye dokunun.\"\
+\
+msgid \"Reviews\"\
+msgstr \"İncelemeler\"\
+\
+msgid \"Highlights\"\
+msgstr \"Vurgular\"\
+\
+msgid \"Removed from the %1 collection\"\
+msgstr \"%1 dermesinden çıkarıldı\"\
+\
+msgid \"Long-press another book or ornament to swap their places.\"\
+msgstr \"Yerlerini değiştirmek için başka bir kitaba veya süse uzun basın.\"\
+\
+msgid \"Remove from collection\"\
+msgstr \"Dermeden çıkar\"\
+\
+msgid \"This shelf boxes each series together, so its books cannot be placed one by one. Turn series boxes off in the shelf editor to move books by hand.\"\
+msgstr \"Bu raf her diziyi bir kutuda topluyor, bu yüzden kitapları tek tek yerleştirilemez. Kitapları elle taşımak için raf düzenleyicide dizi kutularını kapatın.\"\
+\
+msgid \"This collection is not in an order of your own yet: KOReader may be sorting it. Placing books by hand starts from the order on screen, and turns KOReader's own sorting of this collection off.\"\
+msgstr \"Bu derme henüz size ait bir sırada değil: KOReader sıralıyor olabilir. Kitapları elle yerleştirmek ekrandaki sırayla başlar ve KOReader'ın bu dermeyi kendisinin sıralamasını kapatır.\"\
+\
+msgid \"This shelf is sorted another way, so its books cannot be moved by hand.\"\
+msgstr \"Bu raf başka bir şekilde sıralanmış, bu yüzden kitapları elle taşınamaz.\"\
+\
+msgid \"Place by hand\"\
+msgstr \"Elle yerleştir\"\
+\
+msgid \"Sort by collection order\"\
+msgstr \"Derme sırasına göre sırala\"\
+\
+msgid \"\"\
+\"Fetching %1… (%2 books)\\n\"\
+\"(Tap to cancel)\"\
+msgstr \"%1 alınıyor… (%2 kitap)\\n(İptal için dokunun)\"\
+\
+msgid \"\"\
+\"Fetching %1…\\n\"\
+\"(Tap to cancel)\"\
+msgstr \"%1 alınıyor…\\n(İptal için dokunun)\"\
+\
+msgid \"\"\
+\"Stop loading %1?\\n\"\
+\"%2 books so far.\"\
+msgstr \"%1 yüklemesi durdurulsun mu?\\nŞu ana kadar %2 kitap.\"\
+\
+msgid \"Stop loading %1?\"\
+msgstr \"%1 yüklemesi durdurulsun mu?\"\
+\
+msgid \"Keep loading\"\
+msgstr \"Yüklemeye devam et\"\
+\
+msgid \"Authentication failed for %1\"\
+msgstr \"%1 için kimlik doğrulama başarısız oldu\"\
+\
+msgid \"%1 refused every format Bookshelf asked for\"\
+msgstr \"%1, Bookshelf'in istediği tüm biçimleri reddetti\"\
+\
+msgid \"%1 is limiting requests. Wait a minute and try again.\"\
+msgstr \"%1 istekleri sınırlıyor. Bir dakika bekleyip yeniden deneyin.\"\
+\
+msgid \"Couldn't reach %1\"\
+msgstr \"%1 adresine ulaşılamadı\"\
+\
+msgid \"No books found in %1\"\
+msgstr \"%1 içinde kitap bulunamadı\"\
+\
+msgid \"No downloadable titles in this category.\"\
+msgstr \"Bu kategoride indirilebilir başlık yok.\"\
+\
+msgid \"The catalog is busy. Try again in a moment.\"\
+msgstr \"Katalog meşgul. Birazdan yeniden deneyin.\"\
+\
+msgid \"This catalog does not offer search.\"\
+msgstr \"Bu katalog arama sunmuyor.\"\
+\
+msgid \"Load the catalog first, then search it.\"\
+msgstr \"Önce kataloğu yükleyin, sonra içinde arayın.\"\
+\
+msgid \"Search my library\"\
+msgstr \"Kitaplığımda ara\"\
+\
+msgid \"Search %1\"\
+msgstr \"%1 içinde ara\"\
+\
+msgid \"Searching %1…\"\
+msgstr \"%1 içinde aranıyor…\"\
+\
+msgid \"Search: \\\"%1\\\"\"\
+msgstr \"Arama: \\\"%1\\\"\"\
+\
+msgid \"Download\"\
+msgstr \"İndir\"\
+\
+msgid \"Download %1\"\
+msgstr \"%1 indir\"\
+\
+msgid \"Recommended\"\
+msgstr \"Önerilen\"\
+\
+msgid \"Alternatives\"\
+msgstr \"Alternatifler\"\
+\
+msgid \"Page stream\"\
+msgstr \"Sayfa akışı\"\
+\
+msgid \"Stream from page\"\
+msgstr \"Sayfadan akış\"\
+\
+msgid \"Resume stream from page\"\
+msgstr \"Akışı sayfadan sürdür\"\
+\
+msgid \"No formats this device can open\"\
+msgstr \"Bu aygıtın açabileceği biçim yok\"\
+\
+msgid \"Set a home folder in KOReader before downloading books.\"\
+msgstr \"Kitap indirmeden önce KOReader'da bir başlangıç klasörü ayarlayın.\"\
+\
+msgid \"%1 already exists. Download it again?\"\
+msgstr \"%1 zaten var. Yeniden indirilsin mi?\"\
+\
+msgid \"Overwrite\"\
+msgstr \"Üzerine yaz\"\
+\
+msgid \"Downloading %1… (tap to cancel)\"\
+msgstr \"%1 indiriliyor… (iptal için dokunun)\"\
+\
+msgid \"Download cancelled\"\
+msgstr \"İndirme iptal edildi\"\
+\
+msgid \"\"\
+\"Insecure redirect refused.\\n\"\
+\"\\n\"\
+\"The server tried to send this download to a non-HTTPS address:\\n\"\
+\"\\n\"\
+\"%1\\n\"\
+\"\\n\"\
+\"Many apps refuse this because it could be a downgrade attack.\"\
+msgstr \"Güvenli olmayan yönlendirme reddedildi.\\n\\nSunucu bu indirmeyi HTTPS olmayan bir adrese göndermeye çalıştı:\\n\\n%1\\n\\nBu bir sürüm düşürme saldırısı olabileceği için pek çok uygulama bunu reddeder.\"\
+\
+msgid \"%1 downloaded. Read it now?\"\
+msgstr \"%1 indirildi. Şimdi okunsun mu?\"\
+\
+msgid \"Not now\"\
+msgstr \"Şimdi değil\"\
+\
+msgid \"Retrieving book cover…\"\
+msgstr \"Kitap kapağı alınıyor…\"\
+\
+msgid \"this folder\"\
+msgstr \"bu klasör\"\
+\
+msgid \"This shelf already starts at \\\"%1\\\".\"\
+msgstr \"Bu raf zaten \\\"%1\\\" konumunda başlıyor.\"\
+\
+msgid \"This shelf starts at \\\"%1\\\".\"\
+msgstr \"Bu raf \\\"%1\\\" konumunda başlıyor.\"\
+\
+msgid \"This shelf starts at the top of the catalog.\"\
+msgstr \"Bu raf kataloğun en üstünde başlıyor.\"\
+\
+msgid \"Start the shelf here\"\
+msgstr \"Rafı burada başlat\"\
+\
+msgid \"Opens at this folder instead of the catalog's top.\"\
+msgstr \"Kataloğun en üstü yerine bu klasörde açılır.\"\
+\
+msgid \"Opens at the top of the catalog again.\"\
+msgstr \"Yeniden kataloğun en üstünde açılır.\"\
+\
+msgid \"Importing calibre metadata…\"\
+msgstr \"calibre üst verileri içe aktarılıyor…\"\
+\
+msgid \"\"\
+\"Bookshelf update: cached Hardcover book details from earlier versions can list audiobook narrators and translators as authors, which shows extra author cards.\\n\"\
+\"\\n\"\
+\"Refresh the details for your linked books now? (Contacts Hardcover, rate-limited, cancellable. Also available later under Hardcover > Manage Hardcover data.)\"\
+msgstr \"Bookshelf güncellemesi: önceki sürümlerden önbelleğe alınmış Hardcover kitap ayrıntıları, sesli kitap anlatıcılarını ve çevirmenleri yazar olarak listeleyebilir; bu da fazladan yazar kartları gösterir.\\n\\nBağlı kitaplarınızın ayrıntıları şimdi yenilensin mi? (Hardcover'a bağlanır, hız sınırlıdır, iptal edilebilir. Daha sonra Hardcover > Hardcover verilerini yönet altından da yapılabilir.)\"\
+\
+msgid \"Refresh now\"\
+msgstr \"Şimdi yenile\"\
+\
+msgid \"Later\"\
+msgstr \"Daha sonra\"\
+\
+msgid \"Bookshelf requires the CoverBrowser plugin. Enable it under Settings > More plugins.\"\
+msgstr \"Bookshelf için CoverBrowser eklentisi gerekir. Ayarlar > Diğer eklentiler altından etkinleştirin.\"\
+\
+msgid \"bookshelf\"\
+msgstr \"bookshelf\"\
+\
+msgid \"Start with: %1\"\
+msgstr \"Başlangıç: %1\"\
+\
+msgid \"Close Bookshelf\"\
+msgstr \"Bookshelf'i kapat\"\
+\
+msgid \"Open Bookshelf\"\
+msgstr \"Bookshelf'i aç\"\
+\
+msgid \"Open a small overlay that lets you set the number of columns and rows of books on the shelf, with the bookshelf visible behind it. Cover size follows the column count and the top panel fills the space left over. Changes preview in realtime; Accept keeps them, Cancel reverts.\"\
+msgstr \"Raftaki kitapların sütun ve satır sayısını ayarlamanızı sağlayan, arkasında rafın göründüğü küçük bir katman açar. Kapak boyutu sütun sayısına göre değişir ve üst panel kalan alanı doldurur. Değişiklikler anında önizlenir; Kabul et onları korur, İptal geri alır.\"\
+\
+msgid \"Edit shelves…\"\
+msgstr \"Rafları düzenle…\"\
+\
+msgid \"Hardcover enrichment\"\
+msgstr \"Hardcover zenginleştirmesi\"\
+\
+msgid \"Updates\"\
+msgstr \"Güncellemeler\"\
+\
+msgid \"About\"\
+msgstr \"Hakkında\"\
+\
+msgid \"Bookshelf couldn't open. Some of its files may be missing or corrupted after an update. Try reinstalling the plugin.\"\
+msgstr \"Bookshelf açılamadı. Bir güncellemeden sonra bazı dosyaları eksik ya da bozuk olabilir. Eklentiyi yeniden kurmayı deneyin.\"\
+\
+msgid \"Bookshelf: open or close\"\
+msgstr \"Bookshelf: aç veya kapat\"\
+\
+msgid \"Bookshelf: open\"\
+msgstr \"Bookshelf: aç\"\
+\
+msgid \"on\"\
+msgstr \"açık\"\
+\
+msgid \"Bookshelf: next shelf\"\
+msgstr \"Bookshelf: sonraki raf\"\
+\
+msgid \"Bookshelf: previous shelf\"\
+msgstr \"Bookshelf: önceki raf\"\
+\
+msgid \"Bookshelf: next page of shelves\"\
+msgstr \"Bookshelf: rafların sonraki sayfası\"\
+\
+msgid \"Bookshelf: previous page of shelves\"\
+msgstr \"Bookshelf: rafların önceki sayfası\"\
+\
+msgid \"Bookshelf: full screen shelves on or off\"\
+msgstr \"Bookshelf: tam ekran raflar açık/kapalı\"\
+\
+msgid \"Bookshelf: refresh the library\"\
+msgstr \"Bookshelf: kitaplığı yenile\"\
+\
+msgid \"Bookshelf: toggle bulk selection mode\"\
+msgstr \"Bookshelf: toplu seçim kipini aç/kapat\"\
+\
+msgid \"Bookshelf: toggle selection on focused book\"\
+msgstr \"Bookshelf: odaktaki kitabın seçimini aç/kapat\"\
+\
+msgid \"Bookshelf: select all books in this shelf\"\
+msgstr \"Bookshelf: bu raftaki tüm kitapları seç\"\
+\
+msgid \"Bookshelf: add focused stack to selection\"\
+msgstr \"Bookshelf: odaktaki yığını seçime ekle\"\
+\
+msgid \"Bookshelf: open bulk action menu\"\
+msgstr \"Bookshelf: toplu işlem menüsünü aç\"\
+\
+msgid \"Bookshelf: open start menu\"\
+msgstr \"Bookshelf: başlangıç menüsünü aç\"\
+\
+msgid \"Bookshelf: open modules\"\
+msgstr \"Bookshelf: modülleri aç\"\
+\
+msgid \"Bookshelf: shuffle ornaments\"\
+msgstr \"Bookshelf: süsleri karıştır\"\
+\
+msgid \"Bookshelf: go to home screen\"\
+msgstr \"Bookshelf: Giriş ekranına git\"\
+\
+msgid \"Branch name (leave empty for stable)\"\
+msgstr \"Dal adı (kararlı sürüm için boş bırakın)\"\
+\
+msgid \"\"\
+\"Book metadata scanner not available.\\n\"\
+\"Install the CoverBrowser plugin to enable it.\"\
+msgstr \"Kitap üst verisi tarayıcısı yok.\\nEtkinleştirmek için CoverBrowser eklentisini kurun.\"\
+\
+msgid \"Page count report\"\
+msgstr \"Sayfa sayısı raporu\"\
+\
+msgid \"Page counts are already being extracted.\"\
+msgstr \"Sayfa sayıları zaten çıkarılıyor.\"\
+\
+msgid \"Counting pages in book %1 of %2\"\
+msgstr \"Sayfalar sayılıyor: kitap %1 / %2\"\
+\
+msgid \"Looking up page numbers…\"\
+msgstr \"Sayfa numaraları aranıyor…\"\
+\
+msgid \"Every book already has a page count.\"\
+msgstr \"Her kitabın zaten bir sayfa sayısı var.\"\
+\
+msgid \"No linked books to refresh\"\
+msgstr \"Yenilenecek bağlı kitap yok\"\
+\
+msgid \"Refreshing Hardcover details… %1 of %2\"\
+msgstr \"Hardcover ayrıntıları yenileniyor… %1 / %2\"\
+\
+msgid \"Hardcover details refreshed for %1 of %2 linked books.\"\
+msgstr \"%2 bağlı kitaptan %1 tanesinin Hardcover ayrıntıları yenilendi.\"\
+\
+msgid \"This will clear the development branch setting and install the latest stable release of Bookshelf, then restart KOReader. Continue?\"\
+msgstr \"Bu işlem geliştirme dalı ayarını temizleyip Bookshelf'in en son kararlı sürümünü kuracak, ardından KOReader'ı yeniden başlatacak. Devam edilsin mi?\"\
+\
+msgid \"Bookshelf update available: v\"\
+msgstr \"Bookshelf güncellemesi var: v\"\
+\
+msgid \"Action\"\
+msgstr \"Eylem\"\
+\
+msgid \"Launches a plugin or system action. Works offline.\"\
+msgstr \"Bir eklenti veya sistem eylemi başlatır. Çevrimdışı çalışır.\"\
+\
+msgid \"Launch any plugin, menu item or gesture action, and choose your own icon.\"\
+msgstr \"Herhangi bir eklentiyi, menü ögesini veya hareket eylemini başlatın ve kendi simgenizi seçin.\"\
+\
+msgid \"Add action\"\
+msgstr \"Eylem ekle\"\
+\
+msgid \"Change action…\"\
+msgstr \"Eylemi değiştir…\"\
+\
+msgid \"Change action\"\
+msgstr \"Eylemi değiştir\"\
+\
+msgid \"Label…\"\
+msgstr \"Ad…\"\
+\
+msgid \"Card label (empty = icon only)\"\
+msgstr \"Kart adı (boş = yalnızca simge)\"\
+\
+msgid \"Action settings\"\
+msgstr \"Eylem ayarları\"\
+\
+msgid \"Analog clock\"\
+msgstr \"Analog saat\"\
+\
+msgid \"Small\"\
+msgstr \"Küçük\"\
+\
+msgid \"Medium\"\
+msgstr \"Orta\"\
+\
+msgid \"Large\"\
+msgstr \"Büyük\"\
+\
+msgid \"Show date\"\
+msgstr \"Tarihi göster\"\
+\
+msgid \"Device clock. Works offline.\"\
+msgstr \"Aygıt saati. Çevrimdışı çalışır.\"\
+\
+msgid \"charged\"\
+msgstr \"dolu\"\
+\
+msgid \"charging\"\
+msgstr \"şarj oluyor\"\
+\
+msgid \"remaining\"\
+msgstr \"kaldı\"\
+\
+msgid \"Cover: %1% (charging)\"\
+msgstr \"Kılıf: %1% (şarj oluyor)\"\
+\
+msgid \"Cover: %1%\"\
+msgstr \"Kılıf: %1%\"\
+\
+msgid \"From the device. Works offline.\"\
+msgstr \"Aygıttan. Çevrimdışı çalışır.\"\
+\
+msgid \"Battery level unavailable\"\
+msgstr \"Pil düzeyi alınamıyor\"\
+\
+msgid \"Clock\"\
+msgstr \"Saat\"\
+\
+msgid \"12-hour\"\
+msgstr \"12 saat\"\
+\
+msgid \"24-hour\"\
+msgstr \"24 saat\"\
+\
+msgid \"Countdown date\"\
+msgstr \"Geri sayım tarihi\"\
+\
+msgid \"Countdown label\"\
+msgstr \"Geri sayım adı\"\
+\
+msgid \"e.g. Holiday\"\
+msgstr \"örn. Tatil\"\
+\
+msgid \"Countdown\"\
+msgstr \"Geri sayım\"\
+\
+msgid \"From a date you set. Works offline.\"\
+msgstr \"Ayarladığınız bir tarihten. Çevrimdışı çalışır.\"\
+\
+msgid \"days\"\
+msgstr \"gün\"\
+\
+msgid \"until …\"\
+msgstr \"kalan: …\"\
+\
+msgid \"Set a date\"\
+msgstr \"Bir tarih ayarla\"\
+\
+msgid \"Today\"\
+msgstr \"Bugün\"\
+\
+msgid \"day\"\
+msgstr \"gün\"\
+\
+msgid \"until %1\"\
+msgstr \"kalan: %1\"\
+\
+msgid \"since %1\"\
+msgstr \"geçen: %1\"\
+\
+msgid \"Next\"\
+msgstr \"İleri\"\
+\
+msgid \"Change date…\"\
+msgstr \"Tarihi değiştir…\"\
+\
+msgid \"Change label…\"\
+msgstr \"Adı değiştir…\"\
+\
+msgid \"Failed. Retry →\"\
+msgstr \"Başarısız. Yeniden dene →\"\
+\
+msgid \"Useless Facts\"\
+msgstr \"Gereksiz Bilgiler\"\
+\
+msgid \"Jokes\"\
+msgstr \"Şakalar\"\
+\
+msgid \"Riddles\"\
+msgstr \"Bilmeceler\"\
+\
+msgid \"Categories\"\
+msgstr \"Kategoriler\"\
+\
+msgid \"Daily Fun Settings\"\
+msgstr \"Günlük Eğlence Ayarları\"\
+\
+msgid \"Sources: uselessfacts.jsph.pl, jokeapi.dev, riddles-api.vercel.app\"\
+msgstr \"Kaynaklar: uselessfacts.jsph.pl, jokeapi.dev, riddles-api.vercel.app\"\
+\
+msgid \"Choose Categories\"\
+msgstr \"Kategorileri seç\"\
+\
+msgid \"Daily Fun\"\
+msgstr \"Günlük Eğlence\"\
+\
+msgid \"Jokes, facts & riddles. Needs internet.\"\
+msgstr \"Şakalar, bilgiler ve bilmeceler. İnternet gerekir.\"\
+\
+msgid \"Random facts,\"\
+msgstr \"Rastgele bilgiler,\"\
+\
+msgid \"jokes & riddles\"\
+msgstr \"şakalar ve bilmeceler\"\
+\
+msgid \"Useless Fact\"\
+msgstr \"Gereksiz Bilgi\"\
+\
+msgid \"Joke\"\
+msgstr \"Şaka\"\
+\
+msgid \"Riddle\"\
+msgstr \"Bilmece\"\
+\
+msgid \"Fetching fun...\"\
+msgstr \"Eğlence getiriliyor...\"\
+\
+msgid \"Tap to fetch ▶\"\
+msgstr \"Getirmek için dokunun ▶\"\
+\
+msgid \"Tap to reveal answer →\"\
+msgstr \"Cevabı görmek için dokunun →\"\
+\
+msgid \"Tap for next →\"\
+msgstr \"Sonraki için dokunun →\"\
+\
+msgid \"Fit\"\
+msgstr \"Sığdır\"\
+\
+msgid \"Books to show\"\
+msgstr \"Gösterilecek kitaplar\"\
+\
+msgid \"From your reading history. Works offline.\"\
+msgstr \"Okuma geçmişinizden. Çevrimdışı çalışır.\"\
+\
+msgid \"No books read yet\"\
+msgstr \"Henüz okunan kitap yok\"\
+\
+msgid \"On This Day\"\
+msgstr \"Tarihte Bugün\"\
+\
+msgid \"From Wikipedia. Needs internet.\"\
+msgstr \"Wikipedia'dan. İnternet gerekir.\"\
+\
+msgid \"Daily historical events\"\
+msgstr \"Günlük tarihi olaylar\"\
+\
+msgid \"from Wikipedia\"\
+msgstr \"Wikipedia'dan\"\
+\
+msgid \"Fetching...\"\
+msgstr \"Getiriliyor...\"\
+\
+msgid \"Updating format...\"\
+msgstr \"Biçim güncelleniyor...\"\
+\
+msgid \"%1 / %2\"\
+msgstr \"%1 / %2\"\
+\
+msgid \"%1 / %2 • Tap to read more...\"\
+msgstr \"%1 / %2 • Devamı için dokunun...\"\
+\
+msgid \"%1 / %2 • Tap for next event →\"\
+msgstr \"%1 / %2 • Sonraki olay için dokunun →\"\
+\
+msgid \"Ornament\"\
+msgstr \"Süs\"\
+\
+msgid \"Change ornament…\"\
+msgstr \"Süsü değiştir…\"\
+\
+msgid \"Tap action…\"\
+msgstr \"Dokunma eylemi…\"\
+\
+msgid \"A piece from your ornament packs. Works offline.\"\
+msgstr \"Süs paketlerinizden bir parça. Çevrimdışı çalışır.\"\
+\
+msgid \"Quotes from\"\
+msgstr \"Alıntı kaynağı\"\
+\
+msgid \"Your highlights\"\
+msgstr \"Vurgularınız\"\
+\
+msgid \"Quotes files\"\
+msgstr \"Alıntı dosyaları\"\
+\
+msgid \"Quotes files go in %1\"\
+msgstr \"Alıntı dosyaları %1 içine konur\"\
+\
+msgid \"Books left out\"\
+msgstr \"Hariç tutulan kitaplar\"\
+\
+msgid \"Their highlights are never the quote of the day. Untick one to bring it back.\"\
+msgstr \"Bunların vurguları asla günün alıntısı olmaz. Geri getirmek için işaretini kaldırın.\"\
+\
+msgid \"Leave out %1 (today's quote)\"\
+msgstr \"%1 hariç tut (bugünün alıntısı)\"\
+\
+msgid \"Highlight colors\"\
+msgstr \"Vurgu renkleri\"\
+\
+msgid \"Only ticked colors are used.\"\
+msgstr \"Yalnızca işaretli renkler kullanılır.\"\
+\
+msgid \"Looking for highlights: book %1 of %2\"\
+msgstr \"Vurgular aranıyor: kitap %1 / %2\"\
+\
+msgid \"Stopped. So far: %1 highlights in %2 books.\"\
+msgstr \"Durduruldu. Şu ana kadar: %2 kitapta %1 vurgu.\"\
+\
+msgid \"Found %1 highlights in %2 books.\"\
+msgstr \"%2 kitapta %1 vurgu bulundu.\"\
+\
+msgid \"Every menu open\"\
+msgstr \"Her menü açılışında\"\
+\
+msgid \"Once per day\"\
+msgstr \"Günde bir kez\"\
+\
+msgid \"New quote\"\
+msgstr \"Yeni alıntı\"\
+\
+msgid \"Open bookmark list\"\
+msgstr \"Yer imi listesini aç\"\
+\
+msgid \"Open book at quote\"\
+msgstr \"Kitabı alıntıda aç\"\
+\
+msgid \"Quotes from: %1\"\
+msgstr \"Alıntı kaynağı: %1\"\
+\
+msgid \"Refresh: %1\"\
+msgstr \"Yenileme: %1\"\
+\
+msgid \"Tap: %1\"\
+msgstr \"Dokunma: %1\"\
+\
+msgid \"Books left out: %1\"\
+msgstr \"Hariç tutulan kitaplar: %1\"\
+\
+msgid \"Scan library for highlights\"\
+msgstr \"Kitaplığı vurgular için tara\"\
+\
+msgid \"all\"\
+msgstr \"tümü\"\
+\
+msgid \"Highlight colors: %1\"\
+msgstr \"Vurgu renkleri: %1\"\
+\
+msgid \"Quote of the day\"\
+msgstr \"Günün alıntısı\"\
+\
+msgid \"From your highlights. Works offline.\"\
+msgstr \"Vurgularınızdan. Çevrimdışı çalışır.\"\
+\
+msgid \"No highlights yet\"\
+msgstr \"Henüz vurgu yok\"\
+\
+msgid \"No quotes yet\"\
+msgstr \"Henüz alıntı yok\"\
+\
+msgid \"No bookmark list for this book\"\
+msgstr \"Bu kitabın yer imi listesi yok\"\
+\
+msgid \"At least one status must stay selected\"\
+msgstr \"En az bir durum seçili kalmalı\"\
+\
+msgid \"Random book\"\
+msgstr \"Rastgele kitap\"\
+\
+msgid \"Current shelf\"\
+msgstr \"Geçerli raf\"\
+\
+msgid \"In progress\"\
+msgstr \"Devam eden\"\
+\
+msgid \"Show book in top panel\"\
+msgstr \"Kitabı üst panelde göster\"\
+\
+msgid \"Open book directly\"\
+msgstr \"Kitabı doğrudan aç\"\
+\
+msgid \"From your library. Works offline.\"\
+msgstr \"Kitaplığınızdan. Çevrimdışı çalışır.\"\
+\
+msgid \"Picking a book…\"\
+msgstr \"Kitap seçiliyor…\"\
+\
+msgid \"Nothing unread here\"\
+msgstr \"Burada okunmamış bir şey yok\"\
+\
+msgid \"Nothing to pick from here\"\
+msgstr \"Burada seçilecek bir şey yok\"\
+\
+msgid \"Try something new:\"\
+msgstr \"Yeni bir şey deneyin:\"\
+\
+msgid \"Why not this one:\"\
+msgstr \"Neden bu olmasın:\"\
+\
+msgid \"Apr\"\
+msgstr \"Nis\"\
+\
+msgid \"Feb\"\
+msgstr \"Şub\"\
+\
+msgid \"Jan\"\
+msgstr \"Oca\"\
+\
+msgid \"Jun\"\
+msgstr \"Haz\"\
+\
+msgid \"Mar\"\
+msgstr \"Mar\"\
+\
+msgid \"May\"\
+msgstr \"May\"\
+\
+msgid \"Aug\"\
+msgstr \"Ağu\"\
+\
+msgid \"Dec\"\
+msgstr \"Ara\"\
+\
+msgid \"Jul\"\
+msgstr \"Tem\"\
+\
+msgid \"Nov\"\
+msgstr \"Kas\"\
+\
+msgid \"Oct\"\
+msgstr \"Eki\"\
+\
+msgid \"Sep\"\
+msgstr \"Eyl\"\
+\
+msgid \"Custom...\"\
+msgstr \"Özel...\"\
+\
+msgid \"Books read outside KOReader this year: %1\"\
+msgstr \"Bu yıl KOReader dışında okunan kitaplar: %1\"\
+\
+msgid \"Books read outside KOReader this year\"\
+msgstr \"Bu yıl KOReader dışında okunan kitaplar\"\
+\
+msgid \"Paper books, audiobooks or another reader: added to the yearly goal.\"\
+msgstr \"Basılı kitaplar, sesli kitaplar veya başka bir okuyucu: yıllık hedefe eklenir.\"\
+\
+msgid \"Reading goals\"\
+msgstr \"Okuma hedefleri\"\
+\
+msgid \"Active goals\"\
+msgstr \"Etkin hedefler\"\
+\
+msgid \"Daily\"\
+msgstr \"Günlük\"\
+\
+msgid \"Weekly\"\
+msgstr \"Haftalık\"\
+\
+msgid \"Monthly\"\
+msgstr \"Aylık\"\
+\
+msgid \"Yearly\"\
+msgstr \"Yıllık\"\
+\
+msgid \"Daily (minutes)\"\
+msgstr \"Günlük (dakika)\"\
+\
+msgid \"Daily goal\"\
+msgstr \"Günlük hedef\"\
+\
+msgid \"minutes\"\
+msgstr \"dakika\"\
+\
+msgid \"Weekly (hours)\"\
+msgstr \"Haftalık (saat)\"\
+\
+msgid \"Weekly goal\"\
+msgstr \"Haftalık hedef\"\
+\
+msgid \"hours\"\
+msgstr \"saat\"\
+\
+msgid \"Monthly (books)\"\
+msgstr \"Aylık (kitap)\"\
+\
+msgid \"Monthly challenge\"\
+msgstr \"Aylık meydan okuma\"\
+\
+msgid \"Yearly (books)\"\
+msgstr \"Yıllık (kitap)\"\
+\
+msgid \"Yearly challenge\"\
+msgstr \"Yıllık meydan okuma\"\
+\
+msgid \"Last month\"\
+msgstr \"Son ay\"\
+\
+msgid \"%1 month left\"\
+msgstr \"%1 ay kaldı\"\
+\
+msgid \"%1 months left\"\
+msgstr \"%1 ay kaldı\"\
+\
+msgid \"%1 min\"\
+msgstr \"%1 dk\"\
+\
+msgid \"%1 min left\"\
+msgstr \"%1 dk kaldı\"\
+\
+msgid \"Goal met!\"\
+msgstr \"Hedefe ulaşıldı!\"\
+\
+msgid \"%1 left\"\
+msgstr \"%1 kaldı\"\
+\
+msgid \"%1 challenge\"\
+msgstr \"%1 meydan okuması\"\
+\
+msgid \"%1 to go\"\
+msgstr \"%1 kaldı\"\
+\
+msgid \"From your reading stats. Works offline.\"\
+msgstr \"Okuma istatistiklerinizden. Çevrimdışı çalışır.\"\
+\
+msgid \"Stats unavailable\"\
+msgstr \"İstatistikler alınamıyor\"\
+\
+msgid \"Reading stats\"\
+msgstr \"Okuma istatistikleri\"\
+\
+msgid \"From KOReader statistics. Works offline.\"\
+msgstr \"KOReader istatistiklerinden. Çevrimdışı çalışır.\"\
+\
+msgid \"today\"\
+msgstr \"bugün\"\
+\
+msgid \"This week\"\
+msgstr \"Bu hafta\"\
+\
+msgid \"This week: %1\"\
+msgstr \"Bu hafta: %1\"\
+\
+msgid \"Reading streak\"\
+msgstr \"Okuma serisi\"\
+\
+msgid \"Reading insight\"\
+msgstr \"Okuma içgörüsü\"\
+\
+msgid \"%1 day\"\
+msgstr \"%1 gün\"\
+\
+msgid \"%1 days\"\
+msgstr \"%1 gün\"\
+\
+msgid \"%1 week\"\
+msgstr \"%1 hafta\"\
+\
+msgid \"%1 weeks\"\
+msgstr \"%1 hafta\"\
+\
+msgid \"Streak\"\
+msgstr \"Seri\"\
+\
+msgid \"Best streak\"\
+msgstr \"En iyi seri\"\
+\
+msgid \"Best: %1 · %2\"\
+msgstr \"En iyi: %1 · %2\"\
+\
+msgid \"%1 (hidden)\"\
+msgstr \"%1 (gizli)\"\
+\
+msgid \"Create new shelf…\"\
+msgstr \"Yeni raf oluştur…\"\
+\
+msgid \"Choose a shelf\"\
+msgstr \"Bir raf seç\"\
+\
+msgid \"Rows: %1\"\
+msgstr \"Satır: %1\"\
+\
+msgid \"Rows: Auto\"\
+msgstr \"Satır: Oto\"\
+\
+msgid \"Hide heading\"\
+msgstr \"Başlığı gizle\"\
+\
+msgid \"Show heading\"\
+msgstr \"Başlığı göster\"\
+\
+msgid \"Edit this shelf…\"\
+msgstr \"Bu rafı düzenle…\"\
+\
+msgid \"Use existing shelf…\"\
+msgstr \"Var olan rafı kullan…\"\
+\
+msgid \"Heading text…\"\
+msgstr \"Başlık metni…\"\
+\
+msgid \"Heading\"\
+msgstr \"Başlık\"\
+\
+msgid \"One of your shelves, in its own style. Works offline.\"\
+msgstr \"Raflarınızdan biri, kendi tarzında. Çevrimdışı çalışır.\"\
+\
+msgid \"No books on this shelf\"\
+msgstr \"Bu rafta kitap yok\"\
+\
+msgid \"Shelf size\"\
+msgstr \"Raf boyutu\"\
+\
+msgid \"General Knowledge\"\
+msgstr \"Genel Kültür\"\
+\
+msgid \"Film\"\
+msgstr \"Film\"\
+\
+msgid \"Music\"\
+msgstr \"Müzik\"\
+\
+msgid \"Television\"\
+msgstr \"Televizyon\"\
+\
+msgid \"Video Games\"\
+msgstr \"Video Oyunları\"\
+\
+msgid \"Science & Nature\"\
+msgstr \"Bilim ve Doğa\"\
+\
+msgid \"Computers\"\
+msgstr \"Bilgisayarlar\"\
+\
+msgid \"Mathematics\"\
+msgstr \"Matematik\"\
+\
+msgid \"Mythology\"\
+msgstr \"Mitoloji\"\
+\
+msgid \"Sports\"\
+msgstr \"Spor\"\
+\
+msgid \"Geography\"\
+msgstr \"Coğrafya\"\
+\
+msgid \"History\"\
+msgstr \"Tarih\"\
+\
+msgid \"Politics\"\
+msgstr \"Siyaset\"\
+\
+msgid \"Art\"\
+msgstr \"Sanat\"\
+\
+msgid \"Animals\"\
+msgstr \"Hayvanlar\"\
+\
+msgid \"Vehicles\"\
+msgstr \"Taşıtlar\"\
+\
+msgid \"Easy\"\
+msgstr \"Kolay\"\
+\
+msgid \"Average\"\
+msgstr \"Orta\"\
+\
+msgid \"Hard\"\
+msgstr \"Zor\"\
+\
+msgid \"Multiple Choice\"\
+msgstr \"Çoktan Seçmeli\"\
+\
+msgid \"True/False\"\
+msgstr \"Doğru/Yanlış\"\
+\
+msgid \"Rate limit ▶\"\
+msgstr \"Hız sınırı ▶\"\
+\
+msgid \"No questions ▶\"\
+msgstr \"Soru yok ▶\"\
+\
+msgid \"Failed. Retry ▶\"\
+msgstr \"Başarısız. Yeniden dene ▶\"\
+\
+msgid \"Long-press to change filters\"\
+msgstr \"Süzgeçleri değiştirmek için uzun basın\"\
+\
+msgid \"Trivia\"\
+msgstr \"Bilgi Yarışması\"\
+\
+msgid \"Open Trivia DB. Needs internet.\"\
+msgstr \"Open Trivia DB. İnternet gerekir.\"\
+\
+msgid \"Trivia Settings\"\
+msgstr \"Bilgi Yarışması Ayarları\"\
+\
+msgid \"Category\"\
+msgstr \"Kategori\"\
+\
+msgid \"Difficulty\"\
+msgstr \"Zorluk\"\
+\
+msgid \"Type\"\
+msgstr \"Soru tipi\"\
+\
+msgid \"Random trivia questions\"\
+msgstr \"Rastgele bilgi yarışması soruları\"\
+\
+msgid \"Fetching question...\"\
+msgstr \"Soru getiriliyor...\"\
+\
+msgid \"Tap for next question →\"\
+msgstr \"Sonraki soru için dokunun →\"\
+\
+msgid \"Clear sky\"\
+msgstr \"Açık\"\
+\
+msgid \"Mostly clear\"\
+msgstr \"Çoğunlukla açık\"\
+\
+msgid \"Partly cloudy\"\
+msgstr \"Parçalı bulutlu\"\
+\
+msgid \"Overcast\"\
+msgstr \"Kapalı\"\
+\
+msgid \"Fog\"\
+msgstr \"Sis\"\
+\
+msgid \"Rime fog\"\
+msgstr \"Kırağı sisi\"\
+\
+msgid \"Light drizzle\"\
+msgstr \"Hafif çisenti\"\
+\
+msgid \"Drizzle\"\
+msgstr \"Çisenti\"\
+\
+msgid \"Heavy drizzle\"\
+msgstr \"Yoğun çisenti\"\
+\
+msgid \"Freezing drizzle\"\
+msgstr \"Donan çisenti\"\
+\
+msgid \"Light rain\"\
+msgstr \"Hafif yağmur\"\
+\
+msgid \"Rain\"\
+msgstr \"Yağmur\"\
+\
+msgid \"Heavy rain\"\
+msgstr \"Şiddetli yağmur\"\
+\
+msgid \"Freezing rain\"\
+msgstr \"Donan yağmur\"\
+\
+msgid \"Light snow\"\
+msgstr \"Hafif kar\"\
+\
+msgid \"Snow\"\
+msgstr \"Kar\"\
+\
+msgid \"Heavy snow\"\
+msgstr \"Yoğun kar\"\
+\
+msgid \"Snow grains\"\
+msgstr \"Kar taneleri\"\
+\
+msgid \"Rain showers\"\
+msgstr \"Sağanak yağmur\"\
+\
+msgid \"Violent showers\"\
+msgstr \"Şiddetli sağanak\"\
+\
+msgid \"Snow showers\"\
+msgstr \"Kar sağanağı\"\
+\
+msgid \"Thunderstorm\"\
+msgstr \"Gök gürültülü fırtına\"\
+\
+msgid \"Fetching weather...\"\
+msgstr \"Hava durumu getiriliyor...\"\
+\
+msgid \"City not found: %1\"\
+msgstr \"Şehir bulunamadı: %1\"\
+\
+msgid \"Weather API error\"\
+msgstr \"Hava durumu API hatası\"\
+\
+msgid \"Weather settings\"\
+msgstr \"Hava durumu ayarları\"\
+\
+msgid \"City: %1\"\
+msgstr \"Şehir: %1\"\
+\
+msgid \"Set city\"\
+msgstr \"Şehir ayarla\"\
+\
+msgid \"Enter city name\"\
+msgstr \"Şehir adını girin\"\
+\
+msgid \"Units: °F (tap for °C)\"\
+msgstr \"Birim: °F (°C için dokunun)\"\
+\
+msgid \"Units: °C (tap for °F)\"\
+msgstr \"Birim: °C (°F için dokunun)\"\
+\
+msgid \"Force refresh\"\
+msgstr \"Yenilemeye zorla\"\
+\
+msgid \"Please set a city first.\"\
+msgstr \"Lütfen önce bir şehir ayarlayın.\"\
+\
+msgid \"Weather\"\
+msgstr \"Hava durumu\"\
+\
+msgid \"Open-Meteo. Needs internet.\"\
+msgstr \"Open-Meteo. İnternet gerekir.\"\
+\
+msgid \"Tap and hold to set city\"\
+msgstr \"Şehri ayarlamak için basılı tutun\"\
+\
+msgid \"Updated %1m ago\"\
+msgstr \"%1 dk önce güncellendi\"\
+\
+msgid \"Updated %1h ago\"\
+msgstr \"%1 sa önce güncellendi\"\
+",
+} })

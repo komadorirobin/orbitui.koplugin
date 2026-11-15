@@ -62,6 +62,7 @@
 /components/bookshelf/lib/bookshelf_cover_marks.lua export-ignore
 /components/bookshelf/lib/bookshelf_curated.lua export-ignore
 /components/bookshelf/lib/bookshelf_curated_ui.lua export-ignore
+/components/bookshelf/locale/tr.po export-ignore
 /components/bookshelf/lib/bookshelf_hardcover_autolink.lua export-ignore
 /components/bookshelf/lib/bookshelf_hardcover_client.lua export-ignore
 /components/bookshelf/lib/bookshelf_hardcover_key.lua export-ignore

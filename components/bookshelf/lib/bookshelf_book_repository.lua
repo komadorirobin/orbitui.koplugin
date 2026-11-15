@@ -3040,8 +3040,14 @@ end
 function Repo.invalidateCollectionCache(name)
     if type(name) ~= "string" then return end
     local prefix = "collection|" .. name .. "|"
+    local ok_rc, RC = pcall(require, "readcollection")
+    local fav_name = ok_rc and type(RC) == "table" and RC.default_collection_name or "favorites"
     for k in pairs(_bySource_cache) do
-        if k:sub(1, #prefix) == prefix then _bySource_cache[k] = nil end
+        -- Ordering Favorites also changes the dedicated Favorites shelf.
+        -- Other shelves sorted by membership retain their existing caches.
+        if k:sub(1, #prefix) == prefix or name == fav_name and k:sub(1, 10) == "favorites|" then
+            _bySource_cache[k] = nil
+        end
     end
 end
 
@@ -10135,15 +10141,24 @@ function Repo.getBySource(source, filter, sort_priority, offset, limit, scope_or
             -- collection. Same flow as 'collection' but with a fixed
             -- collection name.
             local rc = require("readcollection")
-            local set = {}
-            local fav = rc.coll and rc.coll.favorites
+            local set, order = {}, {}
+            local fav = rc.coll and rc.coll[rc.default_collection_name or "favorites"]
             if type(fav) == "table" then
                 for _file, item in pairs(fav) do
-                    local fp = item.file or _file
-                    if type(fp) == "string" then set[fp] = true end
+                    local fp = type(item) == "table" and item.file or _file
+                    if type(fp) == "string" then
+                        set[fp] = true
+                        order[fp] = type(item) == "table" and item.order or nil
+                    end
                 end
             end
             candidates = loadCandidatesFromPaths(set)
+            -- Favorites is a KOReader collection too: its own order on the
+            -- record, for the Collection order sort, as for a collection
+            -- shelf (a reader asked to see Favorites as they arranged it).
+            for _i, b in ipairs(candidates) do
+                b.collection_order = order[b.filepath]
+            end
         elseif kind == "bookorbit_want" then
             -- SimpleUI has already resolved BookOrbit book IDs to local files.
             -- Treat that persisted cache as a virtual collection and hydrate

@@ -44,7 +44,12 @@ and correct this file in the same change.
   selected there. KOAssistant’s numbered quick-action slots stay under
   More because their action can change with the open book.
 
-- **Bookshelf 6.5.0 released in 1.4.0-beta.2.** The integrated pin is
+- **Upstream maintenance after 1.4.0-beta.3.** Bookshelf 6.5.1 at **51f35fba2**
+  supports manual Favorites order, Turkish and nearest-half-star Hardcover
+  display. SimpleUI **08000cba9** aligns goal rows and handles older KOReader
+  time-left and patch-directory APIs. See MERGE_LOG and TESTING.
+
+- **Bookshelf 6.5.0 released in 1.4.0-beta.2.** That beta’s pin is
   **3020b02c**. Bookshelf accepts its own optional Hardcover API key and can
   still reuse an enabled Hardcover or ShelfSync plugin. Robin’s BookOrbit
   progress policy stays in the personal KOReader patch. The unscoped library

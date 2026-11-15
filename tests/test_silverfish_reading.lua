@@ -257,8 +257,11 @@ end
 H.test("time left shares observed per-book stats, is bounded, and never reads another book or opens the DB",function()
     reset()
     local previous_config, previous_i18n, previous_data = package.loaded["infra/sui_config"], package.loaded["infra/sui_i18n"], SH.getBookData
+    local previous_text, previous_util = package.loaded["infra/sui_text"], package.loaded.util
     package.loaded["infra/sui_config"] = { openStatsDB = function() error("must not query on build or paint") end }
     package.loaded["infra/sui_i18n"] = { translate = function(s) return s end }
+    package.loaded.util = previous_util or {}
+    package.loaded["infra/sui_text"] = H.componentModule(root, "infra/sui_text")
     package.loaded["infra/sui_book_stats"] = H.componentModule(root, "infra/sui_book_stats")
     local data = { title = "Test", authors = "Author", pages = 200, percent = .5, avg_time = 100 }
     SH.getBookData = function() return data end
@@ -286,6 +289,7 @@ H.test("time left shares observed per-book stats, is bounded, and never reads an
     G_reader_settings=nil
     SH.getBookData=previous_data
     package.loaded["infra/sui_config"], package.loaded["infra/sui_i18n"] = previous_config, previous_i18n
+    package.loaded["infra/sui_text"], package.loaded.util = previous_text, previous_util
     package.loaded["infra/sui_book_stats"] = nil
 end)
 local function tap(v,card,x,y)

@@ -4,6 +4,34 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-15 — Bookshelf 6.5.1 and SimpleUI maintenance
+
+Reviewed from the published 1.4.0-beta.3 source receipt **756b7ca22**.
+Unsquashed Bookshelf import **674a7da92** advances **3020b02c** to
+[6.5.1, **51f35fba25fe4c8f7857319e16141921fe04f6d2**](https://github.com/AndyHazz/bookshelf.koplugin/releases/tag/v6.5.1).
+Unsquashed SimpleUI import **5c59ca7c4** advances **e6eb04720** to
+[**08000cba9f3998c50aa748465aff6a2306f2cd32**](https://github.com/doctorhetfield-cmd/simpleui.koplugin/commit/08000cba9f3998c50aa748465aff6a2306f2cd32).
+Both original component fork anchors remain in history.
+
+C04/C07/C10. Favorites can use **Collection order** and move books manually.
+Kept the BookOrbit Want to Read source when resolving the adjacent repository
+branch. Order changes invalidate the Favorites and matching collection keys.
+Unrelated shelves and membership-only sorts retain their caches. The chip
+editor’s Arrange shortcut now recognizes a hand-ordered Favorites shelf.
+The merged ornament test covers closing the menu and returning to Arrange.
+
+C05/C06. The Bookshelf hero and Hardcover star token round to the nearest
+half star. Provider selection, progress ownership and rating writes use the
+existing paths. SimpleUI aligns live goal percentages, translates durations,
+and handles older KOReader time-left and patch-directory APIs. The old
+`formatTimeLeft` helper keeps its output for external callers.
+
+C08/C09. Kept the Turkish source catalog and embedded its runtime text in the
+existing generated registry. Reader-provided locale files remain first. The
+host adaptation **fe537f314** preserves all 2,000 installed API-1 paths and the
+original bootstrap. See TESTING for the emulator and updater evidence. The
+private Aleph and Literary Clock changes are outside the outgoing main range.
+
 ## 2026-11-14 — Bookshelf 6.5.0
 
 The user approved this import and asked to keep the BookOrbit-only progress

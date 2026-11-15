@@ -24,10 +24,7 @@ local _dir = (debug.getinfo(1, "S").source:match("^@(.+/)") or "./")
 local _base = (_dir:gsub("lib/$", ""))
 
 -- Minimal .po parser
-local function parsePO(path)
-    local f = io.open(path, "r")
-    if not f then return nil end
-
+local function parseLines(lines)
     local map = {}
     local msgid, msgstr, in_id, in_str = nil, nil, false, false
 
@@ -42,7 +39,7 @@ local function parsePO(path)
         return s:gsub("\\n", "\n"):gsub("\\t", "\t"):gsub('\\"', '"'):gsub("\\\\", "\\")
     end
 
-    for raw_line in f:lines() do
+    for raw_line in lines do
         local line = raw_line:match("^%s*(.-)%s*$")
         if line:match("^#") or line == "" then
             if line == "" then flush() end
@@ -60,8 +57,25 @@ local function parsePO(path)
         end
     end
     flush()
+    return map
+end
+
+local function parsePO(path)
+    local f = io.open(path, "r")
+    if not f then return nil end
+    local map = parseLines(f:lines())
     f:close()
     return map
+end
+
+local function embeddedPO(name)
+    -- The hosted runtime has a fixed API-1 file budget. Standalone Bookshelf
+    -- and a reader-provided file continue to use the real catalog first.
+    if name ~= "tr" then return nil end
+    local ok, map = pcall(require, "core/orbitui_module_map")
+    local metadata = ok and getmetatable(map)
+    local po = metadata and metadata.orbitui_bookshelf_locales and metadata.orbitui_bookshelf_locales[name]
+    if po then return parseLines((po .. "\n"):gmatch("([^\n]*)\n")) end
 end
 
 local function detectLang()
@@ -84,6 +98,7 @@ if lang ~= "en" and lang ~= "en_US" then
         -- Parsed once, then read back as bytecode (~140 ms a start on a PW3).
         local ok_bc, Bytecode = pcall(require, "lib/bookshelf_bytecode")
         local t = ok_bc and Bytecode.data(path, "po_" .. name, parsePO) or parsePO(path)
+        if not t then t = embeddedPO(name) end
         if t and next(t) then
             local n = 0; for _k in pairs(t) do n = n + 1 end
             logger.dbg("bookshelf i18n: loaded " .. path .. " -- " .. n .. " strings")

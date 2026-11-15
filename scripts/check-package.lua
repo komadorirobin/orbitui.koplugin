@@ -44,6 +44,19 @@ for name, path in pairs(source_map) do
 end
 for name in pairs(embedded) do assert(source_map[name], "Unknown embedded module: " .. name) end
 assert(embedded_count == expected_count, "Sealed embedded module count differs")
+local embedded_locales = assert(getmetatable(sealed_map).orbitui_bookshelf_locales)
+local function verifyLocale(path)
+    if path ~= "components/bookshelf/locale/tr.po" then return false end
+    local f = assert(io.open(path, "rb"))
+    local source = f:read("*a"):gsub("[^\n]+\n?", function(line)
+        if line:match("^[ \t]*#:") then return "" end
+        return line
+    end)
+    f:close()
+    assert(embedded_locales.tr == source, "Sealed Turkish catalog differs")
+    assert(not entries[prefix .. path], "Duplicate separate Turkish catalog")
+    return true
+end
 for _, path in ipairs({
     "main.lua", "_meta.lua", "orbitui_bootstrap.lua", "VERSION", "manifest.json", "LICENSE", "README.md", "sources.json",
     "docs/MIGRATION.md", "docs/TESTING.md", "docs/UPSTREAM.md",
@@ -146,7 +159,7 @@ for path in tracked:lines() do
             or path:match("^components/simpleui/modules/critter/assets/")
             or path:match("^components/simpleui/modules/critter/decor/")
             or path:match("^components/[^/]+/locale/.*%.po$") then
-        if not verifyEmbedded(path) then expect(path) end
+        if not verifyEmbedded(path) and not verifyLocale(path) then expect(path) end
     end
 end
 assert(tracked:close())

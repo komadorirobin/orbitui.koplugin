@@ -164,6 +164,13 @@ and [issue API](https://docs.github.com/en/rest/issues/issues).
 
 ## Reviewed merge procedure
 
+November 15 merge-only: Bookshelf 6.5.1 **51f35fba2** adds manual Favorites
+order, Hardcover half-star rounding and Turkish. SimpleUI **08000cba9** fixes
+goal alignment, localized durations and older KOReader APIs. Keep the original
+`formatTimeLeft` helper available to external consumers. The Turkish catalog
+uses the generated registry to fit the same 2,000 API-1 paths. See MERGE_LOG
+and TESTING for the hosted adaptation and verification.
+
 November 11 post-beta.3 merge-only: SimpleUI **e6eb04720** adds visibility
 copying between native menus, File Manager folder placeholders, Home cover
 cache invalidation on cover reset, and Tiny Critter drawing updates.

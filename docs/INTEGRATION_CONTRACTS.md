@@ -1367,6 +1367,11 @@ Recovery procedure: `MIGRATION.md`.
 
 ## C09: Reviewed imports and explicit releases
 
+November 15 adds a Turkish Bookshelf catalog. The complete message and
+attribution data lives in the existing generated registry, with the usual
+source-location comments omitted. If a reader supplies the native catalog
+file, it takes precedence. Preserve API 1 and the exact 2,000 installed paths.
+
 November 11 post-beta.3 advances SimpleUI to e6eb04720. The five new
 modules use the existing exact-source registry (40 embeds, 419 canonical
 identities), preserving API 1 and all 2,000 installed paths. The audited
