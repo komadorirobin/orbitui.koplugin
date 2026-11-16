@@ -36,7 +36,10 @@ local DS = {
 }
 package.loaded.docsettings = DS
 package.loaded.readhistory = { hist = {} }
-package.loaded["features/library/sui_recent_hidden"] = { isHidden = function(file) return hidden[file] end }
+package.loaded["features/library/sui_recent_hidden"] = { isHidden = function(file) return hidden[file] == true end }
+package.loaded["modules/module_books_shared"] = {
+    isHiddenFile = function(file) return hidden[file] == "history" end,
+}
 package.loaded["device"] = { screen = {
     getWidth = function() return 600 end, getHeight = function() return 800 end,
     scaleBySize = function(_, n) return n end, getSize = function() return { w = 600, h = 800 } end,
@@ -217,12 +220,13 @@ H.test("reader switch uses native showReader once and does not force Home or man
     H.eq(top(), reader); H.eq(reader.document.file, "/books/current.epub")
 end)
 H.test("selection rechecks file identity, status, hidden state and history before switching", function()
-    for _, change in ipairs{ "file", "complete", "history", "hidden", "deleted", "metadata" } do
+    for _, change in ipairs{ "file", "complete", "history", "hidden", "hidden_history", "deleted", "metadata" } do
         fixture(); book("/books/a.epub", .4); Tools.show(reader, "ongoing"); drain()
         if change == "file" then files["/books/a.epub"].size = 10001
         elseif change == "complete" then payloads["/books/a.epub.metadata.lua"].summary.status = "complete"
         elseif change == "history" then package.loaded.readhistory.hist = {}
         elseif change == "hidden" then hidden["/books/a.epub"] = true
+        elseif change == "hidden_history" then hidden["/books/a.epub"] = "history"
         elseif change == "deleted" then files["/books/a.epub"] = nil
         else broken = "/books/a.epub.metadata.lua" end
         find("book:/books/a.epub").callback(); H.eq(#calls, 0); assert(#notices > 0)

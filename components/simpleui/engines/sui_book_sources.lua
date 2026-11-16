@@ -301,7 +301,7 @@ Sources.register{
     getFileList = function(ctx) return ctx.recent_fps or {} end,
 
     filterItem = function(fp, ctx, params)
-        if RecentHidden.isHidden(fp) then return false end
+        if RecentHidden.isHidden(fp) or SH.isHiddenFile(fp) then return false end
         if params.exclude_current ~= false and ctx.current_fp and fp == ctx.current_fp then
             return false
         end

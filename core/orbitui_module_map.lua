@@ -37,12 +37,15 @@ local map = {
     ["features/library/cover_editor/sui_cover_window"] = "components/simpleui/features/library/cover_editor/sui_cover_window.lua",
     ["features/library/sui_bim_stamp"] = "components/simpleui/features/library/sui_bim_stamp.lua",
     ["features/library/sui_book_hold_dialog"] = "components/simpleui/features/library/sui_book_hold_dialog.lua",
+    ["features/library/sui_book_rows"] = "components/simpleui/features/library/sui_book_rows.lua",
+    ["features/library/sui_collection_rows"] = "components/simpleui/features/library/sui_collection_rows.lua",
     ["features/library/sui_cover_finder"] = "components/simpleui/features/library/sui_cover_finder.lua",
     ["features/library/sui_cover_overrides"] = "components/simpleui/features/library/sui_cover_overrides.lua",
     ["features/library/sui_cover_widgets"] = "components/simpleui/features/library/sui_cover_widgets.lua",
     ["features/library/sui_facet_groups"] = "components/simpleui/features/library/sui_facet_groups.lua",
     ["features/library/sui_filter_state"] = "components/simpleui/features/library/sui_filter_state.lua",
     ["features/library/sui_finished_books"] = "components/simpleui/features/library/sui_finished_books.lua",
+    ["features/library/sui_folder_fan"] = "components/simpleui/features/library/sui_folder_fan.lua",
     ["features/library/sui_folder_hold_dialog"] = "components/simpleui/features/library/sui_folder_hold_dialog.lua",
     ["features/library/sui_foldercovers"] = "components/simpleui/features/library/sui_foldercovers.lua",
     ["features/library/sui_group_actions"] = "components/simpleui/features/library/sui_group_actions.lua",
@@ -50,12 +53,14 @@ local map = {
     ["features/library/sui_label_options"] = "components/simpleui/features/library/sui_label_options.lua",
     ["features/library/sui_library_browse"] = "components/simpleui/features/library/sui_library_browse.lua",
     ["features/library/sui_library_search"] = "components/simpleui/features/library/sui_library_search.lua",
+    ["features/library/sui_list_rows"] = "components/simpleui/features/library/sui_list_rows.lua",
     ["features/library/sui_metadata_providers"] = "components/simpleui/features/library/sui_metadata_providers.lua",
     ["features/library/sui_metadata_source"] = "components/simpleui/features/library/sui_metadata_source.lua",
     ["features/library/sui_recent_hidden"] = "components/simpleui/features/library/sui_recent_hidden.lua",
     ["features/library/sui_rule_collections"] = "components/simpleui/features/library/sui_rule_collections.lua",
     ["features/library/sui_series_grouping"] = "components/simpleui/features/library/sui_series_grouping.lua",
     ["features/library/sui_sort_sheet"] = "components/simpleui/features/library/sui_sort_sheet.lua",
+    ["features/library/sui_tab_views"] = "components/simpleui/features/library/sui_tab_views.lua",
     ["features/library/sui_virtual_path"] = "components/simpleui/features/library/sui_virtual_path.lua",
     ["features/sui_accent_picker"] = "components/simpleui/features/sui_accent_picker.lua",
     ["features/sui_arrange"] = "components/simpleui/features/sui_arrange.lua",
@@ -5200,6 +5205,23 @@ function M.set(mark, surface, on)\
         BookshelfSettings.save(m.spines, M.shown(mark, \"spines\"))\
     end\
     BookshelfSettings.save(m.covers, on == true)\
+end\
+\
+-- signature(surface) -> a short string that changes whenever any mark's\
+-- switch for this surface does, for a cache of rendered books to key on.\
+-- Each mark gives two characters: whether it is shown, then what the reader\
+-- chose for this surface (some painters test that rather than shown()).\
+local ORDER = { \"progress_bar\", \"bookmark\", \"finished_fade\", \"favorite\",\
+                \"page_badge\", \"done_badge\", \"on_hold\", \"series_num\" }\
+function M.signature(surface)\
+    local out = {}\
+    for i = 1, #ORDER do\
+        local mark = ORDER[i]\
+        local e = M.explicit(mark, surface)\
+        out[i] = (M.shown(mark, surface) and \"1\" or \"0\")\
+            .. (e == nil and \"-\" or (e and \"y\" or \"n\"))\
+    end\
+    return table.concat(out)\
 end\
 \
 -- \"both\", \"covers\", \"spines\" or \"none\": for a menu row's summary.\
@@ -18912,7 +18934,7 @@ function Book.current(now)\
     local hidden = require(\"features/library/sui_recent_hidden\").snapshot()\
     for i = 1, math.min(30, #hist) do\
         local entry = hist[i]\
-        if entry.file and not hidden[entry.file] and lfs.attributes(entry.file, \"mode\") == \"file\" then\
+        if entry.file and not hidden[entry.file] and not SH.isHiddenEntry(entry) and lfs.attributes(entry.file, \"mode\") == \"file\" then\
             local book = SH.getBookData(entry.file)\
             if book.status == \"complete\" then return nil end\
             return Book.facts(book.title, book.percent, entry.time, now)\
@@ -21122,11 +21144,15 @@ end\
 return RuleCollections\
 ",
     ["features/library/sui_sort_sheet"] = "-- sui_sort_sheet.lua — Simple UI\
--- Sort options of a library tab, shown on a long press of the tab.\
+-- View and sort options of a library tab, shown on a long press of the tab.\
 --\
--- The sheet reads and writes KOReader's own sort settings (collate,\
+-- The Library tab reads and writes KOReader's own settings (collate,\
 -- reverse_collate, collate_mixed) through the file manager's handlers, so the\
--- file browser and every library tab share one sort order.\
+-- file browser and the books of every group share one sort order, and the\
+-- CoverBrowser's display mode. Under the rows the sheet toggles the flat view\
+-- (Library) and the grouping of series books. The Authors / Series / Tags\
+-- tabs keep a view and a sort of their own for their list (see\
+-- sui_tab_views), and, listed as a list, their own items per page.\
 --\
 -- It also registers the \"number of books\" collate in FileChooser.collates:\
 -- metadata folders (Authors/Series/Tags) are sorted by the number of books\
@@ -21135,11 +21161,18 @@ return RuleCollections\
 --   SortSheet.install() / SortSheet.uninstall()  — register / remove the collate\
 --   SortSheet.show(fm, mode)                     — show the sheet for a browse mode\
 --   SortSheet.sortsFacetFolders(id)              — whether a collate orders metadata folders\
+--   SortSheet.viewOptions(fm, mode)              — { { id, text }, … } views a tab offers\
+--   SortSheet.getView / setView(fm, mode, id)    — current view of a tab and its change\
+--   SortSheet.sortGroups(fc, mode)               — groups of { id, label } collates a tab offers\
+--   SortSheet.getSort / setSort(fm, mode, id)    — current collate of a tab and its change\
+--   SortSheet.isReverse / setReverse(fm, mode, on)\
+--   SortSheet.getPerPage / setPerPage(fm, mode, n) — list items per page of a metadata tab and its change\
 \
 local ffiUtil     = require(\"ffi/util\")\
 local T           = ffiUtil.template\
 local _           = require(\"infra/sui_i18n\").translate\
 local ActionSheet = require(\"engines/sui_action_sheet\")\
+local TabViews    = require(\"features/library/sui_tab_views\")\
 \
 local M = {}\
 \
@@ -21219,7 +21252,7 @@ end\
 -- Groups offered for `mode`, keeping only the collates that exist. Collates\
 -- of the file browser that no group names are listed under \"Other\" with their\
 -- own name; the book count only orders metadata folders, so it is left out.\
-local function _groups(fc, mode)\
+function M.sortGroups(fc, mode)\
     local groups, out, named = mode == \"normal\" and _libraryGroups() or _facetGroups(), {}, {}\
     for _i, group in ipairs(groups) do\
         local present = {}\
@@ -21243,21 +21276,249 @@ local function _groups(fc, mode)\
     return out\
 end\
 \
+-- Re-draws the list when `mode` is the tab on screen.\
+local function _refresh(fm, mode)\
+    local fc = fm.file_chooser\
+    if fc and TabViews.rootMode(fc.path) == mode then fc:refreshPath() end\
+end\
+\
+-- ---------------------------------------------------------------------------\
+-- View\
+-- ---------------------------------------------------------------------------\
+\
+local CLASSIC = \"classic\"\
+\
+function M.viewOptions(fm, mode)\
+    local options = {}\
+    local cb = fm.coverbrowser\
+    for _i, entry in ipairs(cb and cb.modes or {}) do\
+        -- The classic view has no id; the tabs leave it out.\
+        if entry[2] or mode == \"normal\" then\
+            options[#options + 1] = { id = entry[2] or CLASSIC, text = entry[1] }\
+        end\
+    end\
+    return options\
+end\
+\
+function M.getView(_fm, mode)\
+    if mode == \"normal\" then return TabViews.libraryMode() or CLASSIC end\
+    return TabViews.getView(mode)\
+end\
+\
+function M.setView(fm, mode, id)\
+    if mode == \"normal\" then\
+        local cb = fm.coverbrowser\
+        if not cb then return end\
+        cb:setDisplayMode(id ~= CLASSIC and id or nil)\
+    else\
+        TabViews.setView(mode, id)\
+        _refresh(fm, mode)\
+    end\
+end\
+\
+local function _viewLabel(fm, mode)\
+    local current = M.getView(fm, mode)\
+    for _i, option in ipairs(M.viewOptions(fm, mode)) do\
+        if option.id == current then return option.text end\
+    end\
+    return \"\"\
+end\
+\
+-- Portrait items per page of a metadata tab listed as a list.\
+function M.getPerPage(_fm, mode)\
+    return TabViews.getPerPage(mode)\
+end\
+\
+function M.setPerPage(fm, mode, n)\
+    TabViews.setPerPage(mode, n)\
+    _refresh(fm, mode)\
+end\
+\
+-- ---------------------------------------------------------------------------\
+-- Library size: the file browser's own settings, shared with its menu\
+-- ---------------------------------------------------------------------------\
+\
+M.GRID_MIN, M.GRID_MAX = 2, 8\
+M.LIST_PAGE_MIN, M.LIST_PAGE_MAX, M.LIST_PAGE_DEFAULT = 4, 20, 10\
+local GRID_DEFAULTS = {\
+    nb_cols_portrait = 3, nb_rows_portrait = 3,\
+    nb_cols_landscape = 4, nb_rows_landscape = 2,\
+}\
+\
+-- \"mosaic\", \"list\", or nil for the classic view, of the Library on screen.\
+function M.libraryLayout(fm)\
+    local view = M.getView(fm, \"normal\")\
+    if view:sub(1, 7) == \"mosaic_\" then return \"mosaic\" end\
+    if TabViews.isListView(view) then return \"list\" end\
+    return nil\
+end\
+\
+-- Stores size settings (key → value), in the file browser and in the settings\
+-- it reads at start, and redraws the list once.\
+local function _setLibrarySize(fc, values)\
+    local changed = false\
+    for key, n in pairs(values) do\
+        if fc[key] ~= n then\
+            changed = true\
+            fc[key] = n\
+            require(\"bookinfomanager\"):saveSetting(key, n)\
+            require(\"ui/widget/filechooser\")[key] = n\
+        end\
+    end\
+    if changed then fc:updateItems() end\
+end\
+\
+local function _portrait()\
+    local Screen = require(\"device\").screen\
+    return Screen:getWidth() <= Screen:getHeight()\
+end\
+\
+-- `what` is \"cols\" or \"rows\"; the mosaic of the orientation on screen.\
+local function _gridKey(what)\
+    return \"nb_\" .. what .. (_portrait() and \"_portrait\" or \"_landscape\")\
+end\
+\
+function M.getGrid(fm, what)\
+    local fc = fm.file_chooser\
+    return fc[_gridKey(what)] or GRID_DEFAULTS[_gridKey(what)]\
+end\
+\
+function M.setGrid(fm, cols, rows)\
+    _setLibrarySize(fm.file_chooser, { [_gridKey(\"cols\")] = cols, [_gridKey(\"rows\")] = rows })\
+end\
+\
+function M.getLibraryPerPage(fm)\
+    return fm.file_chooser.files_per_page or M.LIST_PAGE_DEFAULT\
+end\
+\
+function M.setLibraryPerPage(fm, n)\
+    _setLibrarySize(fm.file_chooser, { files_per_page = n })\
+end\
+\
+-- ---------------------------------------------------------------------------\
+-- Sort\
+-- ---------------------------------------------------------------------------\
+\
+function M.getSort(fm, mode)\
+    if mode == \"normal\" then return (select(2, fm.file_chooser:getCollate())) end\
+    return TabViews.getSort(mode)\
+end\
+\
+function M.setSort(fm, mode, id)\
+    if mode == \"normal\" then\
+        fm:onSetSortBy(id)\
+    else\
+        TabViews.setSort(mode, id)\
+        _refresh(fm, mode)\
+    end\
+end\
+\
+function M.isReverse(_fm, mode)\
+    if mode == \"normal\" then return G_reader_settings:isTrue(\"reverse_collate\") end\
+    return TabViews.isReverse(mode)\
+end\
+\
+function M.setReverse(fm, mode, on)\
+    if mode == \"normal\" then\
+        fm:onSetReverseSorting(on)\
+    else\
+        TabViews.setReverse(mode, on)\
+        _refresh(fm, mode)\
+    end\
+end\
+\
+local function _sortLabel(fm, mode)\
+    local fc = fm.file_chooser\
+    local collate = fc.collates[M.getSort(fm, mode)] or fc.collates.strcoll\
+    return collate.text\
+end\
+\
+-- ---------------------------------------------------------------------------\
+-- Sheet\
+-- ---------------------------------------------------------------------------\
+\
 function M.show(fm, mode)\
     local fc = fm and fm.file_chooser\
     if not fc then return end\
 \
-    local win\
+    local win, rootSections\
 \
-    local function title()\
-        local collate = fc:getCollate()\
-        return T(_(\"Sort by: %1\"), collate.text)\
+    -- Rows of the sheet; their values follow every change made on a page.\
+    local view_row     = { text = _(\"View\"), chevron = true, keep_open = true }\
+    local per_page_row = { text = _(\"Items per page\"), keep_open = true }\
+    local grid_row     = { text = _(\"Items per page\"), keep_open = true }\
+    local sort_row     = { text = _(\"Sort\"), chevron = true, keep_open = true }\
+    local function refreshRows()\
+        view_row.value = _viewLabel(fm, mode)\
+        if mode ~= \"normal\" then\
+            per_page_row.value = tostring(M.getPerPage(fm, mode))\
+        elseif M.libraryLayout(fm) == \"mosaic\" then\
+            grid_row.value = T(_(\"%1 × %2\"), M.getGrid(fm, \"cols\"), M.getGrid(fm, \"rows\"))\
+        elseif M.libraryLayout(fm) == \"list\" then\
+            per_page_row.value = tostring(M.getLibraryPerPage(fm))\
+        end\
+        sort_row.value = _sortLabel(fm, mode)\
     end\
 \
-    local function buildSections()\
-        local collate, current = fc:getCollate()\
+    -- Options of how the list is built, shown under the rows: the flat view\
+    -- (Library only) and the grouping of series books.\
+    local function viewToggles()\
+        local BM = require(\"features/library/sui_library_browse\")\
+        local toggles = {}\
+        if mode == \"normal\" and BM.isEnabled() then\
+            local flat = BM.isFlatEnabled()\
+            toggles[#toggles + 1] = {\
+                text     = _(\"Flat view\"),\
+                toggle   = flat,\
+                callback = function()\
+                    BM.setFlat(fm, not flat)\
+                    win:update{ sections = rootSections() }\
+                end,\
+            }\
+        end\
+        for _i, grouped_mode in ipairs(BM.SERIES_GROUPING_MODES) do\
+            if grouped_mode == mode then\
+                local FolderCovers = require(\"features/library/sui_foldercovers\")\
+                local grouped = FolderCovers.getSeriesGrouping(mode)\
+                toggles[#toggles + 1] = {\
+                    text     = _(\"Group by Series\"),\
+                    toggle   = grouped,\
+                    callback = function()\
+                        FolderCovers.setSeriesGrouping(mode, not grouped)\
+                        FolderCovers.invalidateCache()\
+                        fm._navbar_suppress_path_change = true\
+                        fc:refreshPath()\
+                        fm._navbar_suppress_path_change = nil\
+                        win:update{ sections = rootSections() }\
+                    end,\
+                }\
+            end\
+        end\
+        return toggles\
+    end\
+\
+    -- The page size follows the view: the grid of a mosaic, the items\
+    -- per page of a list, nothing for the classic view.\
+    function rootSections()\
+        local rows = { view_row }\
+        if mode ~= \"normal\" then\
+            if TabViews.isListView(TabViews.getView(mode)) then rows[#rows + 1] = per_page_row end\
+        elseif M.libraryLayout(fm) == \"mosaic\" then\
+            rows[#rows + 1] = grid_row\
+        elseif M.libraryLayout(fm) == \"list\" then\
+            rows[#rows + 1] = per_page_row\
+        end\
+        rows[#rows + 1] = sort_row\
+        local sections = { ActionSheet.list(rows) }\
+        local toggles  = viewToggles()\
+        if #toggles > 0 then sections[#sections + 1] = ActionSheet.list(toggles) end\
+        return sections\
+    end\
+\
+    local function sortSections()\
         local sections = {}\
-        for _i, group in ipairs(_groups(fc, mode)) do\
+        local current = M.getSort(fm, mode)\
+        for _i, group in ipairs(M.sortGroups(fc, mode)) do\
             if group.title then\
                 sections[#sections + 1] = { type = \"note\", text = group.title }\
             end\
@@ -21272,23 +21533,25 @@ function M.show(fm, mode)\
                     text     = c[2],\
                     selected = id == current,\
                     callback = function()\
-                        if id ~= current then fm:onSetSortBy(id) end\
-                        win:update{ title = title(), sections = buildSections() }\
+                        if id ~= current then M.setSort(fm, mode, id) end\
+                        refreshRows()\
+                        win:update{ title = T(_(\"Sort by: %1\"), _sortLabel(fm, mode)), sections = sortSections() }\
                     end,\
                 }\
             end\
         end\
 \
-        local reverse = G_reader_settings:isTrue(\"reverse_collate\")\
+        local reverse = M.isReverse(fm, mode)\
         local toggles = { {\
             text     = _(\"Reverse sorting\"),\
             toggle   = reverse,\
             callback = function()\
-                fm:onSetReverseSorting(not reverse)\
-                win:update{ sections = buildSections() }\
+                M.setReverse(fm, mode, not reverse)\
+                win:update{ sections = sortSections() }\
             end,\
         } }\
         if mode == \"normal\" then\
+            local collate = fc:getCollate()\
             local mixed = G_reader_settings:isTrue(\"collate_mixed\")\
             toggles[#toggles + 1] = {\
                 text     = _(\"Folders and files mixed\"),\
@@ -21296,7 +21559,7 @@ function M.show(fm, mode)\
                 toggle   = collate.can_collate_mixed and mixed or false,\
                 callback = function()\
                     fm:onSetMixedSorting(not mixed)\
-                    win:update{ sections = buildSections() }\
+                    win:update{ sections = sortSections() }\
                 end,\
             }\
         end\
@@ -21305,12 +21568,1084 @@ function M.show(fm, mode)\
         return sections\
     end\
 \
+    view_row.callback = function()\
+        local current, items = M.getView(fm, mode), {}\
+        for _i, option in ipairs(M.viewOptions(fm, mode)) do\
+            items[#items + 1] = {\
+                text     = option.text,\
+                checked  = option.id == current,\
+                callback = function()\
+                    if option.id ~= current then M.setView(fm, mode, option.id) end\
+                    refreshRows()\
+                    win:update{ sections = rootSections() }\
+                end,\
+            }\
+        end\
+        ActionSheet.pick{ parent = win, title = _(\"View\"), icon = \"list\", items = items }\
+    end\
+\
+    local function spin(opts)\
+        opts.on_apply = function(n)\
+            opts.apply(n)\
+            refreshRows()\
+            if win:isOpen() then win:update{} end\
+        end\
+        require(\"features/dialogs/sui_dialogs\").spin(opts)\
+    end\
+\
+    per_page_row.callback = function()\
+        if mode == \"normal\" then\
+            spin{\
+                title   = _(\"Items per page\"),\
+                info    = _(\"Portrait list mode\"),\
+                value   = M.getLibraryPerPage(fm),\
+                min     = M.LIST_PAGE_MIN,\
+                max     = M.LIST_PAGE_MAX,\
+                default = M.LIST_PAGE_DEFAULT,\
+                apply   = function(n) M.setLibraryPerPage(fm, n) end,\
+            }\
+            return\
+        end\
+        spin{\
+            title   = _(\"Items per page\"),\
+            info    = _(\"Portrait list mode\"),\
+            value   = M.getPerPage(fm, mode),\
+            min     = TabViews.PER_PAGE_MIN,\
+            max     = TabViews.PER_PAGE_MAX,\
+            default = TabViews.defaultPerPage(mode),\
+            apply   = function(n) M.setPerPage(fm, mode, n) end,\
+        }\
+    end\
+\
+    grid_row.callback = function()\
+        local portrait = _portrait()\
+        local function axis(text, what, default)\
+            return { text = text, value = M.getGrid(fm, what), min = M.GRID_MIN, max = M.GRID_MAX,\
+                default = default }\
+        end\
+        require(\"features/dialogs/sui_dialogs\").spin2{\
+            title    = portrait and _(\"Portrait mosaic mode\") or _(\"Landscape mosaic mode\"),\
+            left     = axis(_(\"Columns\"), \"cols\", GRID_DEFAULTS[_gridKey(\"cols\")]),\
+            right    = axis(_(\"Rows\"), \"rows\", GRID_DEFAULTS[_gridKey(\"rows\")]),\
+            on_apply = function(cols, rows)\
+                M.setGrid(fm, cols, rows)\
+                refreshRows()\
+                if win:isOpen() then win:update{} end\
+            end,\
+        }\
+    end\
+\
+    sort_row.callback = function()\
+        win:showPage{\
+            title    = T(_(\"Sort by: %1\"), _sortLabel(fm, mode)),\
+            icon     = \"sort\",\
+            sections = sortSections(),\
+        }\
+    end\
+\
+    refreshRows()\
     win = ActionSheet.show{\
         name     = \"sui_win_sort\",\
-        title    = title(),\
+        title    = _(\"View and sort\"),\
         icon     = \"sort\",\
-        sections = buildSections(),\
+        flow     = true,\
+        sections = rootSections(),\
     }\
+end\
+\
+return M\
+",
+    ["features/library/sui_book_rows"] = "-- sui_book_rows.lua — Simple UI\
+-- Book rows of the detailed list views: cover, title over series and authors,\
+-- and the reading progress over the file info on the right.\
+--\
+-- Public API:\
+--   BookRows.progressText(book_info, pages, settings)   -- \"4 %\", \"Finished – 3 pages\", nil\
+--   BookRows.barFraction(book_info)                     -- 0..1 reading fraction\
+--   BookRows.barText(book_info, pages, settings)        -- \"10%\", \"On hold\", \"Finished\", ...\
+--   BookRows.dotsFilled(fraction, count)                -- read dots of a dotted bar\
+--   BookRows.fileInfoText(filetype, size, annotated, no_provider)\
+--   BookRows.seriesLine(series, index)                  -- \"NAME - 2\"\
+--   BookRows.authorsLine(authors)                       -- authors on one line\
+--   BookRows.build(item, dimen, opts)                   -- the row widget, or nil to keep the native row\
+\
+local _ = require(\"infra/sui_i18n\").translate\
+local N_ = require(\"infra/sui_i18n\").ngettext\
+local T = require(\"ffi/util\").template\
+\
+local M = {}\
+\
+local function _round(x) return math.floor(x + 0.5) end\
+\
+-- Dots of a dotted progress bar.\
+M.DOT_COUNT = 16\
+\
+-- Reading fraction of a book, clamped to 0..1: a finished book is full and\
+-- one never opened is empty.\
+function M.barFraction(book_info)\
+    if book_info.status == \"complete\" then return 1 end\
+    return math.max(0, math.min(1, book_info.percent_finished or 0))\
+end\
+\
+-- Short progress text shown next to the bar: \"10%\" (also \"0%\" for a book never\
+-- opened), \"On hold\" or \"Finished\". `settings` ({ pages_read, pages_left },\
+-- optional) follows the file browser: pages read (\"50/503\") replace the\
+-- percentage and follow \"On hold\" (\"On hold · 50/503\"); pages left\
+-- (\", 453 to read\") are appended.\
+function M.barText(book_info, pages, settings)\
+    local status = book_info.status\
+    if status == \"complete\" then return _(\"Finished\") end\
+    settings = settings or {}\
+    local fraction = M.barFraction(book_info)\
+    local read = pages and _round(fraction * pages)\
+    local position = pages and (read .. \"/\" .. pages)\
+    local held = status == \"abandoned\"\
+    local text = held and _(\"On hold\") or string.format(\"%d%%\", math.floor(fraction * 100 + 0.5))\
+    if settings.pages_read and position then\
+        text = held and (text .. \" · \" .. position) or position\
+    end\
+    if pages and settings.pages_left then text = T(_(\"%1, %2 to read\"), text, pages - read) end\
+    return text\
+end\
+\
+-- Number of read dots out of `count` for `fraction`.\
+function M.dotsFilled(fraction, count)\
+    return math.max(0, math.min(count, math.floor(fraction * count)))\
+end\
+\
+-- Same texts as the file browser's detailed list. `settings`:\
+-- { pages_read = bool, pages_left = bool }.\
+function M.progressText(book_info, pages, settings)\
+    local status, percent = book_info.status, book_info.percent_finished\
+    if status == \"complete\" or status == \"abandoned\" then\
+        local done = status == \"complete\"\
+        if not pages then return done and _(\"Finished\") or _(\"On hold\") end\
+        if done then return T(N_(\"Finished – 1 page\", \"Finished – %1 pages\", pages), pages) end\
+        return T(N_(\"On hold – 1 page\", \"On hold – %1 pages\", pages), pages)\
+    end\
+    if percent then\
+        if not pages then return string.format(\"%d %%\", math.floor(100 * percent)) end\
+        local text\
+        if settings.pages_read then\
+            text = T(_(\"Page %1 of %2\"), _round(percent * pages), pages)\
+        else\
+            text = T(N_(\"%1 % of 1 page\", \"%1 % of %2 pages\", pages), math.floor(100 * percent), pages)\
+        end\
+        if settings.pages_left then\
+            text = T(_(\"%1, %2 to read\"), text, _round(pages - percent * pages))\
+        end\
+        return text\
+    end\
+    if pages then return T(N_(\"1 page\", \"%1 pages\", pages), pages) end\
+    return nil\
+end\
+\
+-- Dotted bar: `filled` large dots followed by small ones, `pitch` apart and\
+-- centred on the widget height. Created on first use.\
+local _Dots\
+local function _dotsBar(w, h, filled, big, pitch)\
+    if not _Dots then\
+        local Widget = require(\"ui/widget/widget\")\
+        _Dots = Widget:extend{}\
+        function _Dots:paintTo(bb, x, y)\
+            local AAPaint  = require(\"infra/sui_aa_paint\")\
+            local SUIStyle = require(\"features/sui_style\")\
+            self.dimen.x, self.dimen.y = x, y\
+            local small = math.max(1, math.floor(self.big / 2))\
+            local ink = SUIStyle.COLOR.text_primary\
+            local read, unread = SUIStyle.accent(ink), ink\
+            for i = 1, M.DOT_COUNT do\
+                local d = i <= self.filled and self.big or small\
+                AAPaint.fillPill(bb, x + (i - 1) * self.pitch + math.floor((self.big - d) / 2),\
+                    y + math.floor((self.dimen.h - d) / 2), d, d,\
+                    i <= self.filled and read or unread, 255)\
+            end\
+        end\
+    end\
+    local Geom = require(\"ui/geometry\")\
+    return _Dots:new{ dimen = Geom:new{ w = w, h = h }, filled = filled, big = big, pitch = pitch }\
+end\
+\
+-- \"EPUB  4.5 MB\", with a shade mark for a book that has annotations.\
+function M.fileInfoText(filetype, size, annotated, no_provider)\
+    if no_provider then return size end\
+    local text = (annotated and \"\\u{2592}  \" or \"\") .. filetype\
+    return size and (text .. \"  \" .. size) or text\
+end\
+\
+function M.seriesLine(series, index)\
+    local text = series:upper()\
+    if index then\
+        local n = tonumber(index)\
+        text = text .. \" - \" .. ((n and n == math.floor(n)) and tostring(math.floor(n)) or tostring(index))\
+    end\
+    return text\
+end\
+\
+function M.authorsLine(authors)\
+    if not authors or authors == \"\" then return nil end\
+    return (authors:gsub(\"\\n\", \", \"))\
+end\
+\
+-- Row of a known book. `opts`:\
+--   book_info   the file browser's per-book info (status, percent, annotations)\
+--   bookinfo    the cached metadata (title, authors, series, pages, cover)\
+--   cover_slot  function(bookinfo, dimen) -> widget, slot width; nil without covers\
+--   font_size   function(nominal, max) -> size scaled with the row height\
+--   settings    { hide_page_info, pages_read, pages_left, hide_file_info, series_mode,\
+--                 progress_bar (\"style\" | \"dots\" | nil) }\
+--   fileinfo    file type and size text, already isolated for bidi\
+function M.build(item, dimen, opts)\
+    local Font            = require(\"ui/font\")\
+    local Geom            = require(\"ui/geometry\")\
+    local HorizontalGroup = require(\"ui/widget/horizontalgroup\")\
+    local HorizontalSpan  = require(\"ui/widget/horizontalspan\")\
+    local LeftContainer   = require(\"ui/widget/container/leftcontainer\")\
+    local OverlapGroup    = require(\"ui/widget/overlapgroup\")\
+    local RightContainer  = require(\"ui/widget/container/rightcontainer\")\
+    local Screen          = require(\"device\").screen\
+    local VerticalGroup   = require(\"ui/widget/verticalgroup\")\
+    local VerticalSpan    = require(\"ui/widget/verticalspan\")\
+    local BD              = require(\"ui/bidi\")\
+    local SUIStyle        = require(\"features/sui_style\")\
+    local UI              = require(\"infra/sui_core\")\
+\
+    local bookinfo, book_info, settings = opts.bookinfo, opts.book_info, opts.settings\
+    local pad    = Screen:scaleBySize(10)\
+    local gap    = math.max(1, Screen:scaleBySize(2))\
+    local color  = SUIStyle.COLOR.text\
+    local title_size = math.min(SUIStyle.FS_BODY, opts.font_size(20, 24))\
+    local info_size  = math.max(10, math.min(SUIStyle.FS_DETAIL, title_size - 3))\
+    local function textHeight(size)\
+        local probe = require(\"ui/widget/textwidget\"):new{\
+            text = \"Ag\", face = Font:getFace(SUIStyle.FACE_REGULAR, size) }\
+        local h = probe:getSize().h\
+        probe:free()\
+        return h\
+    end\
+    local function line(text, size, max_width)\
+        return UI.makeColoredText{\
+            text      = text,\
+            face      = Font:getFace(SUIStyle.FACE_REGULAR, size),\
+            fgcolor   = color,\
+            max_width = max_width,\
+        }\
+    end\
+\
+    -- Right column: progress over file info.\
+    local wright, right_w = nil, 0\
+    local pages = book_info.pages or bookinfo.pages\
+    local right = VerticalGroup:new{ align = \"right\" }\
+    local progress = not settings.hide_page_info and M.progressText(book_info, pages, settings)\
+\
+    -- With the progress bar on, the progress goes under the title and author\
+    -- when the row has room for one more line; otherwise it stays on the right.\
+    local bar_line = false\
+    if settings.progress_bar and not settings.hide_page_info then\
+        local heights = {}\
+        if settings.series_mode and bookinfo.series then\
+            heights[#heights + 1] = textHeight(math.max(9, info_size - 2))\
+        end\
+        if M.authorsLine(bookinfo.authors) then heights[#heights + 1] = textHeight(info_size) end\
+        heights[#heights + 1] = textHeight(info_size)\
+        bar_line = require(\"features/library/sui_list_rows\").fitLines(\
+            dimen.h - 2 * Screen:scaleBySize(4), textHeight(title_size), heights, gap) == #heights\
+    end\
+    if progress and not bar_line then right[#right + 1] = line(progress, info_size) end\
+    if not settings.hide_file_info and opts.fileinfo then\
+        if #right > 0 then right[#right + 1] = VerticalSpan:new{ width = gap } end\
+        right[#right + 1] = line(opts.fileinfo, math.max(10, info_size - 1))\
+    end\
+    if #right > 0 then\
+        right_w = right:getSize().w\
+        wright = right\
+    end\
+\
+    local wleft, slot_w = nil, 0\
+    if opts.cover_slot then wleft, slot_w = opts.cover_slot(bookinfo, dimen) end\
+\
+    local text_x = slot_w + pad\
+    local main_w = dimen.w - text_x - pad - (wright and (right_w + pad) or 0)\
+\
+    -- Title on one line, cut with an ellipsis.\
+    local series = settings.series_mode and bookinfo.series\
+        and line(M.seriesLine(bookinfo.series, bookinfo.series_index), math.max(9, info_size - 2), main_w)\
+    local authors = M.authorsLine(bookinfo.authors)\
+    local wauthors = authors and line(BD.auto(authors), info_size, main_w)\
+    local wtitle = UI.makeColoredText{\
+        text      = BD.auto(bookinfo.title or item.text or \"\"),\
+        lang      = bookinfo.language,\
+        face      = Font:getFace(SUIStyle.FACE_REGULAR, title_size),\
+        fgcolor   = color,\
+        max_width = main_w,\
+    }\
+    local wmain = VerticalGroup:new{ align = \"left\", wtitle }\
+    if series then\
+        wmain[#wmain + 1] = VerticalSpan:new{ width = gap }\
+        wmain[#wmain + 1] = series\
+    end\
+    if wauthors then\
+        wmain[#wmain + 1] = VerticalSpan:new{ width = gap }\
+        wmain[#wmain + 1] = wauthors\
+    end\
+\
+    if bar_line then\
+        local fraction = M.barFraction(book_info)\
+        local info_h = textHeight(info_size)\
+        local bar_w = math.floor(main_w / 2)\
+        local bar\
+        if settings.progress_bar == \"dots\" then\
+            local big = math.max(2, math.floor(info_h * 0.4))\
+            local pitch = math.max(1, math.min(math.floor(big * 1.6),\
+                math.floor((bar_w - big) / (M.DOT_COUNT - 1))))\
+            bar_w = (M.DOT_COUNT - 1) * pitch + big\
+            bar = _dotsBar(bar_w, info_h, M.dotsFilled(fraction, M.DOT_COUNT), big, pitch)\
+        else\
+            bar = UI.progressBar(bar_w, fraction, math.max(2, math.floor(info_h / 3)))\
+        end\
+        local progress_row = HorizontalGroup:new{ align = \"center\", bar }\
+        progress_row[2] = HorizontalSpan:new{ width = pad }\
+        progress_row[3] = line(M.barText(book_info, pages, settings), info_size, main_w - bar_w - pad)\
+        wmain[#wmain + 1] = VerticalSpan:new{ width = gap }\
+        wmain[#wmain + 1] = progress_row\
+    end\
+\
+    -- The cover slot stays the first child: the native description hint is\
+    -- drawn on the border of row[1][1].\
+    local row = OverlapGroup:new{ dimen = dimen:copy() }\
+    if wleft then row[#row + 1] = wleft end\
+    row[#row + 1] = LeftContainer:new{\
+        dimen = dimen:copy(),\
+        HorizontalGroup:new{ HorizontalSpan:new{ width = text_x }, wmain },\
+    }\
+    if wright then\
+        row[#row + 1] = RightContainer:new{\
+            dimen = Geom:new{ w = dimen.w, h = dimen.h },\
+            wright,\
+        }\
+    end\
+    return row\
+end\
+\
+return M\
+",
+    ["features/library/sui_collection_rows"] = "-- sui_collection_rows.lua — Simple UI\
+-- Rows of the collections list in the style of the folder rows of the detailed\
+-- list: name over an info line (markers and book count), with a chevron, or a\
+-- checkbox in select mode.\
+--\
+-- Public API:\
+--   CollectionRows.infoText(marker, count)   -- \"★ · 12 books\", \"12 books\"\
+--   CollectionRows.isActive()                -- true while the Library list rows are SimpleUI's\
+--   CollectionRows.getPerPage() / setPerPage(n) -- portrait rows per page of the list; redraws an open list\
+--   CollectionRows.PER_PAGE_DEFAULT          -- portrait rows per page the list starts with\
+--   CollectionRows.perPage(menu)             -- rows per page, as the detailed list gets\
+--   CollectionRows.updateItems(menu, ...)    -- Menu.updateItems, then restyles the rows\
+\
+local _ = require(\"infra/sui_i18n\").translate\
+local T = require(\"ffi/util\").template\
+local ListRows = require(\"features/library/sui_list_rows\")\
+\
+local M = {}\
+\
+function M.infoText(marker, count)\
+    local text = ListRows.countText(count, 0)\
+    return marker and T(_(\"%1 · %2\"), marker, text) or text\
+end\
+\
+function M.isActive()\
+    local FolderCovers = package.loaded[\"features/library/sui_foldercovers\"]\
+    return FolderCovers ~= nil and FolderCovers.isEnabled()\
+end\
+\
+-- Range of the native portrait list setting.\
+M.PER_PAGE_MIN, M.PER_PAGE_MAX = 4, 20\
+M.PER_PAGE_DEFAULT = 7\
+local PER_PAGE_KEY = \"simpleui_lib_per_page_collections\"\
+\
+function M.getPerPage()\
+    local n = tonumber(require(\"infra/sui_store\"):readSetting(PER_PAGE_KEY))\
+    if n and n >= M.PER_PAGE_MIN and n <= M.PER_PAGE_MAX then return math.floor(n) end\
+    return M.PER_PAGE_DEFAULT\
+end\
+\
+-- Redraws the collections list of every open file manager or reader that\
+-- uses these rows.\
+local function _refreshOpen()\
+    for _i, name in ipairs{ \"apps/filemanager/filemanager\", \"apps/reader/readerui\" } do\
+        local app = package.loaded[name]\
+        local manager = app and app.instance and app.instance.collections\
+        local list = manager and manager.coll_list\
+        if list and rawget(list, \"updateItems\") == M.updateItems then list:updateItems(1) end\
+    end\
+end\
+\
+-- The default value is not stored.\
+function M.setPerPage(n)\
+    local SUISettings = require(\"infra/sui_store\")\
+    if n and n ~= M.PER_PAGE_DEFAULT then\
+        SUISettings:saveSetting(PER_PAGE_KEY, n)\
+    else\
+        SUISettings:delSetting(PER_PAGE_KEY)\
+    end\
+    _refreshOpen()\
+end\
+\
+-- The list's items per page in portrait, adjusted in landscape so the rows\
+-- keep the portrait height, as the detailed list does.\
+function M.perPage(menu)\
+    local Math   = require(\"optmath\")\
+    local Screen = require(\"device\").screen\
+    local Size   = require(\"ui/size\")\
+    local avail  = menu.available_height\
+    local per_page = M.getPerPage()\
+    if Screen:getWidth() > Screen:getHeight() then\
+        local others = menu.inner_dimen.h - avail\
+        local portrait_avail = Screen:getWidth() - others - Size.line.thin\
+        local portrait_h = math.floor(portrait_avail / per_page) - Size.line.thin\
+        per_page = Math.round(avail / portrait_h)\
+    end\
+    return math.max(1, per_page)\
+end\
+\
+-- Hides the resting line of a row; a focused row keeps its focus underline.\
+function M.hideLine(item, uc, hidden, focus_color)\
+    item.line_color = hidden\
+    if not (uc.color == focus_color) then uc.color = hidden end\
+end\
+\
+-- Replaces the content of every row of the page with the list folder row.\
+-- A row without the expected layout keeps the native look.\
+local function decorate(menu)\
+    local Blitbuffer  = require(\"ffi/blitbuffer\")\
+    local Geom        = require(\"ui/geometry\")\
+    local Size        = require(\"ui/size\")\
+    local BD          = require(\"ui/bidi\")\
+    local util        = require(\"util\")\
+    local SUIStyle    = require(\"features/sui_style\")\
+    local FMColl      = require(\"apps/filemanager/filemanagercollection\")\
+    local ReadCollection = require(\"readcollection\")\
+\
+    local manager = menu._manager\
+    local selecting = manager and manager.selected_collections ~= nil\
+    local group = menu.item_group\
+    local last = #group\
+    for i, item in ipairs(group) do\
+        local uc, entry = item._underline_container, item.entry\
+        if uc and entry and entry.name then\
+            local info = M.infoText(FMColl.getCollMarker(entry.name),\
+                util.tableSize(ReadCollection.coll[entry.name] or {}))\
+            local glyph = selecting\
+                and SUIStyle.selectionIcon(false, entry.mandatory == manager.checkmark)\
+                or SUIStyle.icon(\"chevron\")\
+            uc.linesize = Size.line.thin\
+            item.underline_h = 0\
+            local dimen = Geom:new{ w = uc.dimen.w, h = item.dimen.h - uc.linesize }\
+            ListRows.setContent(item, ListRows.trailingRow(dimen, glyph, function(main_w)\
+                return ListRows.lines(BD.auto(entry.text), info, dimen, main_w)\
+            end))\
+            -- The line under the last row is hidden: lines only divide rows.\
+            if i == last then\
+                M.hideLine(item, uc, SUIStyle.COLOR.surface, Blitbuffer.COLOR_BLACK)\
+            end\
+        end\
+    end\
+end\
+\
+function M.updateItems(menu, ...)\
+    local Menu = require(\"ui/widget/menu\")\
+    if not menu.available_height then menu:_recalculateDimen() end\
+    menu.items_per_page = M.perPage(menu)\
+    local result = Menu.updateItems(menu, ...)\
+    decorate(menu)\
+    return result\
+end\
+\
+return M\
+",
+    ["features/library/sui_folder_fan"] = "-- sui_folder_fan.lua — Simple UI\
+-- Fan of member covers on a folder row of the list with covers.\
+--\
+-- Public API:\
+--   FolderFan.MAX, FolderFan.STEP, FolderFan.ART_SHARE -- cards in a fan, card offset (fraction of a card), max row share\
+--   FolderFan.getMode() / setMode(v)       -- \"fan\" (default) or \"single\"\
+--   FolderFan.geometry(row_w, row_h, o)    -- card size and offsets, or nil when the row is too short\
+--   FolderFan.width(g, n)                  -- width of a fan of n cards\
+--   FolderFan.build(cards, g)              -- the fan widget; cards[1] is the front card\
+\
+local M = {}\
+\
+M.MAX       = 4\
+M.STEP      = 0.28\
+M.ART_SHARE = 0.5\
+\
+local MODE_KEY = \"simpleui_fc_list_folder_covers\"\
+\
+function M.getMode()\
+    return require(\"infra/sui_config\").readChoice(MODE_KEY, { \"fan\", \"single\" }, \"fan\")\
+end\
+\
+-- The default mode is not stored.\
+function M.setMode(v)\
+    local SUISettings = require(\"infra/sui_store\")\
+    if v == \"fan\" then\
+        SUISettings:delSetting(MODE_KEY)\
+    else\
+        SUISettings:saveSetting(MODE_KEY, v)\
+    end\
+end\
+\
+-- Card geometry for a row of row_w × row_h. `o`: margin (above and below the\
+-- fan), shadow (px a card gives up on its right and bottom), border, min_h\
+-- (smallest card height), uniform (covers fill a 2:3 card). The card is the same for any number of covers; the\
+-- fan of MAX cards takes at most ART_SHARE of the row. Nil below min_h.\
+function M.geometry(row_w, row_h, o)\
+    local box_h  = row_h - 2 * o.margin\
+    local card_h = box_h - o.shadow\
+    local card_w = math.floor(card_h / 1.5)\
+    local span   = 1 + (M.MAX - 1) * M.STEP\
+    local budget = math.floor(row_w * M.ART_SHARE)\
+    if card_w * span + o.shadow > budget then\
+        card_w = math.floor((budget - o.shadow) / span)\
+        card_h = math.floor(card_w * 1.5)\
+    end\
+    if card_h < o.min_h then return nil end\
+    return {\
+        card_w = card_w,\
+        card_h = card_h,\
+        step   = math.max(1, 2 * o.shadow, math.floor(card_w * M.STEP)),\
+        shadow = o.shadow,\
+        border = o.border,\
+        uniform = o.uniform,\
+        top    = o.margin + math.floor((box_h - o.shadow - card_h) / 2),\
+    }\
+end\
+\
+function M.width(g, n)\
+    n = math.max(1, math.min(n, M.MAX))\
+    return g.card_w + (n - 1) * g.step + g.shadow\
+end\
+\
+-- Framed card of one cover: `card.bb` (cover buffer of card.w × card.h;\
+-- `card.shared` marks one that belongs to BookInfoManager and must outlive the\
+-- widget) or the generated cover for `card.title`.\
+local function _card(card, g)\
+    local FrameContainer = require(\"ui/widget/container/framecontainer\")\
+    local max_w, max_h = g.card_w - 2 * g.border, g.card_h - 2 * g.border\
+    local inner, inner_w, inner_h\
+    if card.bb then\
+        inner = require(\"features/library/sui_cover_widgets\").fitCover(\
+            card.bb, card.w, card.h, max_w, max_h, g.uniform, not card.shared)\
+        local size = inner:getSize()\
+        inner_w, inner_h = size.w, size.h\
+    else\
+        local Placeholder = require(\"engines/sui_cover_placeholder\")\
+        inner_w, inner_h = Placeholder.fitSize(max_w, max_h)\
+        inner = Placeholder.build(inner_w, inner_h, card.title)\
+    end\
+    return FrameContainer:new{\
+        width      = inner_w + 2 * g.border,\
+        height     = inner_h + 2 * g.border,\
+        margin     = 0,\
+        padding    = 0,\
+        bordersize = g.border,\
+        inner,\
+    }\
+end\
+\
+-- Outline of the cards together, as columns (see engines/sui_cover_shadow):\
+-- every card stands on the fan's bottom edge.\
+local function _outline(frames, g)\
+    local w = 0\
+    for _i, f in ipairs(frames) do w = math.max(w, f.x + f.w) end\
+    local tops, heights, key = {}, {}, { \"fan\" }\
+    for x = 1, w do tops[x], heights[x] = g.card_h, 0 end\
+    for _i, f in ipairs(frames) do\
+        local top = g.card_h - f.h\
+        for x = f.x + 1, f.x + f.w do\
+            if top < tops[x] then tops[x], heights[x] = top, f.h end\
+        end\
+        key[#key + 1] = f.x .. \",\" .. f.w .. \",\" .. f.h\
+    end\
+    return { key = table.concat(key, \"|\"), w = w, tops = tops, heights = heights }\
+end\
+\
+-- Cards from the back to the front, each a step to the right of the one in\
+-- front, over one shadow cast by the whole fan.\
+function M.build(cards, g)\
+    local Geom         = require(\"ui/geometry\")\
+    local OverlapGroup = require(\"ui/widget/overlapgroup\")\
+    local Shadow       = require(\"engines/sui_cover_shadow\")\
+    local n = math.min(#cards, M.MAX)\
+    local frames = {}\
+    for i = 1, n do\
+        local frame = _card(cards[i], g)\
+        local size = frame:getSize()\
+        frames[i] = { widget = frame, x = (i - 1) * g.step, w = size.w, h = size.h }\
+    end\
+    local group = OverlapGroup:new{\
+        dimen = Geom:new{ w = M.width(g, n), h = g.card_h + g.shadow },\
+        allow_mirroring = false,\
+    }\
+    local outline = _outline(frames, g)\
+    local shadow = Shadow.buildWidget(outline.w, g.card_h, g.shadow, outline)\
+    if shadow then\
+        shadow.overlap_offset = { 0, 0 }\
+        group[1] = shadow\
+    end\
+    for i = n, 1, -1 do\
+        local f = frames[i]\
+        f.widget.overlap_offset = { f.x, g.card_h - f.h }\
+        group[#group + 1] = f.widget\
+    end\
+    return group\
+end\
+\
+return M\
+",
+    ["features/library/sui_list_rows"] = "-- sui_list_rows.lua — Simple UI\
+-- Text rows of the detailed list views: a name over an info line, with an\
+-- optional trailing glyph. Shared by the folder rows and the collection rows.\
+--\
+-- Public API:\
+--   ListRows.fontSize(dimen_h, nominal, max)            -- font size scaled with the row height\
+--   ListRows.fitLines(avail_h, name_h, line_hs, gap)    -- how many secondary lines fit under the name\
+--   ListRows.countText(books, dirs)                     -- \"12 books\", \"3 folders · 12 books\"\
+--   ListRows.lines(name, info, dimen, main_w, opts)     -- name and info line stacked in main_w\
+--   ListRows.glyphWidget(dimen, glyph)                  -- trailing glyph and the width it reserves\
+--   ListRows.trailingRow(dimen, glyph, build)           -- lines from build(main_w) plus a trailing glyph\
+--   ListRows.setContent(item, widget)                   -- swaps the content of a list row\
+\
+local _ = require(\"infra/sui_i18n\").translate\
+local N_ = require(\"infra/sui_i18n\").ngettext\
+local T = require(\"ffi/util\").template\
+\
+local M = {}\
+\
+-- Gap between the lines and side padding of a row, in scaled px.\
+local function _gap() return math.max(1, require(\"device\").screen:scaleBySize(1)) * 2 end\
+local function _pad() return require(\"device\").screen:scaleBySize(10) end\
+\
+-- Same ratio the stock list uses to convert a nominal (64px-reference) font\
+-- size into a scaled one, so row text matches the book rows.\
+function M.fontSize(dimen_h, nominal, max)\
+    local scale = require(\"device\").screen:scaleBySize(1000000) * (1/1000000)\
+    local font_size = math.floor(nominal * dimen_h * (1/64) / scale)\
+    if max and font_size >= max then return max end\
+    return font_size\
+end\
+\
+-- Number of secondary lines (`line_hs`, in display order) that fit under a\
+-- name of height `name_h` in `avail_h`; the last ones are dropped first.\
+function M.fitLines(avail_h, name_h, line_hs, gap)\
+    local used, fit = name_h, 0\
+    for i, h in ipairs(line_hs) do\
+        used = used + gap + h\
+        if used > avail_h then break end\
+        fit = i\
+    end\
+    return fit\
+end\
+\
+function M.countText(books, dirs)\
+    local text = T(N_(\"%1 book\", \"%1 books\", books), books)\
+    if dirs > 0 then\
+        text = T(_(\"%1 · %2\"), T(N_(\"%1 folder\", \"%1 folders\", dirs), dirs), text)\
+    end\
+    return text\
+end\
+\
+-- Name and info line stacked and left aligned in `main_w`, in fixed font\
+-- sizes. The lines that do not fit the row are dropped, the info first and\
+-- then the author; the name takes the room the others leave and is cut with\
+-- an ellipsis. `info` is a string, or nil to show `opts.fallback` in the mono\
+-- face. `opts`: author (line under the name), fallback.\
+function M.lines(name, info, dimen, main_w, opts)\
+    opts = opts or {}\
+    local Font            = require(\"ui/font\")\
+    local Geom            = require(\"ui/geometry\")\
+    local LeftContainer   = require(\"ui/widget/container/leftcontainer\")\
+    local TextBoxWidget   = require(\"ui/widget/textboxwidget\")\
+    local TextWidget      = require(\"ui/widget/textwidget\")\
+    local VerticalGroup   = require(\"ui/widget/verticalgroup\")\
+    local VerticalSpan    = require(\"ui/widget/verticalspan\")\
+    local UI              = require(\"infra/sui_core\")\
+    local SUIStyle        = require(\"features/sui_style\")\
+\
+    local title_face = Font:getFace(SUIStyle.FACE_REGULAR, SUIStyle.FS_BODY)\
+    local info_face  = Font:getFace(SUIStyle.FACE_REGULAR, SUIStyle.FS_DETAIL)\
+    local function infoLine(text)\
+        return UI.makeColoredText{\
+            text      = text,\
+            face      = info_face,\
+            fgcolor   = SUIStyle.COLOR.text,\
+            max_width = main_w,\
+        }\
+    end\
+\
+    local winfo = info and infoLine(info) or TextWidget:new{\
+        text = opts.fallback or \"\",\
+        face = Font:getFace(SUIStyle.FACE_MONO, SUIStyle.FS_DETAIL),\
+    }\
+    local wauthor = opts.author and infoLine(opts.author)\
+\
+    local gap  = _gap()\
+    local probe = TextWidget:new{ text = \"Ag\", face = title_face }\
+    local line_h = probe:getSize().h\
+    probe:free()\
+\
+    -- Secondary lines in display order; the ones past `fit` are dropped.\
+    local extras, heights = {}, {}\
+    if wauthor then extras[#extras + 1] = wauthor end\
+    extras[#extras + 1] = winfo\
+    for i, w in ipairs(extras) do heights[i] = w:getSize().h end\
+    local avail = dimen.h\
+    local fit = M.fitLines(avail, line_h, heights, gap)\
+    local kept_h = 0\
+    for i = #extras, fit + 1, -1 do extras[i]:free() end\
+    for i = 1, fit do kept_h = kept_h + gap + heights[i] end\
+    local show_author = wauthor and fit >= 1\
+    local show_info   = fit == #extras\
+\
+    local wname = TextBoxWidget:new{\
+        text                          = name,\
+        face                          = title_face,\
+        width                         = main_w,\
+        alignment                     = \"left\",\
+        height                        = math.max(line_h, avail - kept_h),\
+        height_adjust                 = true,\
+        height_overflow_show_ellipsis = true,\
+    }\
+\
+    local lines = VerticalGroup:new{ align = \"left\", wname }\
+    if show_author then\
+        lines[#lines + 1] = VerticalSpan:new{ width = gap }\
+        lines[#lines + 1] = wauthor\
+    end\
+    if show_info then\
+        lines[#lines + 1] = VerticalSpan:new{ width = gap }\
+        lines[#lines + 1] = winfo\
+    end\
+    return LeftContainer:new{ dimen = Geom:new{ w = main_w, h = dimen.h }, lines }\
+end\
+\
+-- Trailing glyph of a row of `dimen`, and the width it takes from the text\
+-- (glyph plus the gap before it).\
+function M.glyphWidget(dimen, glyph)\
+    local UI       = require(\"infra/sui_core\")\
+    local SUIStyle = require(\"features/sui_style\")\
+    local wglyph = UI.makeColoredText{\
+        text    = glyph,\
+        face    = SUIStyle.glyphFace(math.floor(dimen.h * 0.3)),\
+        fgcolor = SUIStyle.COLOR.text,\
+    }\
+    return wglyph, wglyph:getSize().w + _pad()\
+end\
+\
+-- Row of `build(main_w)` followed by a trailing `glyph` at the end of the row.\
+function M.trailingRow(dimen, glyph, build)\
+    local HorizontalGroup = require(\"ui/widget/horizontalgroup\")\
+    local HorizontalSpan  = require(\"ui/widget/horizontalspan\")\
+\
+    local wglyph, reserved = M.glyphWidget(dimen, glyph)\
+    return HorizontalGroup:new{\
+        align = \"center\",\
+        build(dimen.w - reserved),\
+        HorizontalSpan:new{ width = _pad() },\
+        wglyph,\
+    }\
+end\
+\
+-- Puts `widget` inside the row's underline container, below its top line.\
+function M.setContent(item, widget)\
+    local VerticalGroup = require(\"ui/widget/verticalgroup\")\
+    local VerticalSpan  = require(\"ui/widget/verticalspan\")\
+    local underline_h = item.underline_h or 1\
+    if item._underline_container[1] then item._underline_container[1]:free() end\
+    item._underline_container[1] = VerticalGroup:new{\
+        VerticalSpan:new{ width = underline_h },\
+        widget,\
+    }\
+end\
+\
+return M\
+",
+    ["features/library/sui_tab_views"] = "-- sui_tab_views.lua — Simple UI\
+-- View and sort of each metadata tab (Authors / Series / Tags) of the library.\
+--\
+-- Every tab keeps its own view and sort for its root list. The books inside a\
+-- group follow the Library tab, i.e. KOReader's own settings.\
+--\
+--   TabViews.getView(mode) / setView(mode, view)      a CoverBrowser display mode id of VIEWS\
+--   TabViews.getSort(mode) / setSort(mode, id)        a collate id of SORTS\
+--   TabViews.isReverse(mode) / setReverse(mode, on)\
+--   TabViews.getPerPage(mode) / setPerPage(mode, n)   portrait items per page of a tab listed as a list\
+--   TabViews.defaultPerPage(mode)                     items per page a tab starts with\
+--   TabViews.isListView(view)                         whether a view is a list\
+--   TabViews.pagePerPage(path)                        items per page a tab root forces, else nil\
+--   TabViews.cbMode(view)                             CoverBrowser display mode of a view (the view itself)\
+--   TabViews.rootMode(path)                           tab whose root list `path` is, else nil\
+--   TabViews.isCoverRoot(path)                        whether `path` is a tab root listed with covers\
+--   TabViews.dirSorter(fc, mode)                      sort function of a tab's root list\
+--   TabViews.libraryMode()                            display mode the Library tab uses\
+--   TabViews.effectiveMode(path)                      display mode `path` is shown in\
+--   TabViews.apply(fc, path)                          switch the file browser to that mode\
+--   TabViews.install() / uninstall()                  apply it before every refresh of the list\
+\
+local Config      = require(\"infra/sui_config\")\
+local SUISettings = require(\"infra/sui_store\")\
+\
+local M = {}\
+\
+M.META_MODES = { \"author\", \"series\", \"tags\" }\
+M.VIEWS      = { \"mosaic_image\", \"mosaic_text\", \"list_image_meta\", \"list_only_meta\", \"list_image_filename\" }\
+M.SORTS      = { \"strcoll\", \"natural\", \"sui_count\" }\
+\
+local DEFAULT_VIEW = { author = \"list_only_meta\", series = \"list_image_meta\", tags = \"list_only_meta\" }\
+\
+-- Views saved when they were named after their look.\
+local LEGACY_VIEW = { mosaic = \"mosaic_image\", list = \"list_only_meta\", list_covers = \"list_image_meta\" }\
+\
+local function _key(kind, mode) return \"simpleui_lib_\" .. kind .. \"_\" .. mode end\
+\
+function M.getView(mode)\
+    local stored = SUISettings:readSetting(_key(\"view\", mode))\
+    return Config.resolveChoice(LEGACY_VIEW[stored] or stored, M.VIEWS, DEFAULT_VIEW[mode] or \"list_only_meta\")\
+end\
+\
+function M.setView(mode, view)\
+    SUISettings:saveSetting(_key(\"view\", mode), view)\
+end\
+\
+-- Without a saved choice a tab starts from the file browser's collate, when it\
+-- can order metadata folders.\
+function M.getSort(mode)\
+    local SortSheet = require(\"features/library/sui_sort_sheet\")\
+    local global    = G_reader_settings:readSetting(\"collate\")\
+    local default   = SortSheet.sortsFacetFolders(global) and global or \"strcoll\"\
+    return Config.readChoice(_key(\"sort\", mode), M.SORTS, default)\
+end\
+\
+function M.setSort(mode, id)\
+    SUISettings:saveSetting(_key(\"sort\", mode), id)\
+end\
+\
+function M.isReverse(mode)\
+    local stored = SUISettings:readSetting(_key(\"reverse\", mode))\
+    if stored == nil then return G_reader_settings:isTrue(\"reverse_collate\") end\
+    return stored == true\
+end\
+\
+function M.setReverse(mode, on)\
+    SUISettings:saveSetting(_key(\"reverse\", mode), on and true or false)\
+end\
+\
+-- Range of items per page of a tab listed as a list; a stored value above it is capped.\
+M.PER_PAGE_MIN, M.PER_PAGE_MAX = 4, 12\
+local PER_PAGE_DEFAULTS = { author = 6, series = 6, tags = 6 }\
+\
+function M.isListView(view)\
+    return view:sub(1, 5) == \"list_\"\
+end\
+\
+function M.defaultPerPage(mode)\
+    return PER_PAGE_DEFAULTS[mode]\
+end\
+\
+function M.getPerPage(mode)\
+    local n = tonumber(SUISettings:readSetting(_key(\"per_page\", mode)))\
+    if n and n >= M.PER_PAGE_MIN then return math.min(math.floor(n), M.PER_PAGE_MAX) end\
+    return PER_PAGE_DEFAULTS[mode]\
+end\
+\
+-- The default value is not stored.\
+function M.setPerPage(mode, n)\
+    if n and n ~= PER_PAGE_DEFAULTS[mode] then\
+        SUISettings:saveSetting(_key(\"per_page\", mode), n)\
+    else\
+        SUISettings:delSetting(_key(\"per_page\", mode))\
+    end\
+end\
+\
+function M.cbMode(view)\
+    return view\
+end\
+\
+-- The tab (`author`/`series`/`tags`) whose top-level list `path` is. A list\
+-- narrowed by an earlier filter is not a tab root.\
+function M.rootMode(path)\
+    local _base, state, dimension, level = require(\"features/library/sui_virtual_path\").parse(path)\
+    if level ~= \"dim_list\" or not (state and #state.trail == 0) then return nil end\
+    for _i, mode in ipairs(M.META_MODES) do\
+        if mode == dimension then return mode end\
+    end\
+    return nil\
+end\
+\
+function M.isCoverRoot(path)\
+    local mode = M.rootMode(path)\
+    return mode ~= nil and M.getView(mode) == \"list_image_meta\"\
+end\
+\
+function M.pagePerPage(path)\
+    local mode = M.rootMode(path)\
+    if mode and M.isListView(M.getView(mode)) then return M.getPerPage(mode) end\
+    return nil\
+end\
+\
+function M.dirSorter(fc, mode)\
+    return fc:getSortingFunction(fc.collates[M.getSort(mode)] or fc.collates.strcoll, M.isReverse(mode))\
+end\
+\
+-- ---------------------------------------------------------------------------\
+-- Display mode per path\
+-- ---------------------------------------------------------------------------\
+\
+-- The file browser has one display mode at a time, set on the CoverBrowser. A\
+-- tab root switches it without saving it, so the saved mode stays the\
+-- Library's and every other path shows that one.\
+local _applied            -- mode the CoverBrowser is in\
+local _seen_library = false -- saved mode at the last apply; false before the first\
+\
+local function _bookInfo()\
+    local ok, bim = pcall(require, \"bookinfomanager\")\
+    return ok and bim or nil\
+end\
+\
+-- The CoverBrowser of the chooser's file manager, which exists before\
+-- FileManager.instance does when a new file manager lists its first folder.\
+local function _coverBrowser(fc)\
+    local FM = package.loaded[\"apps/filemanager/filemanager\"]\
+    local fm = FM and FM.instance\
+    local cb = fc and fc.ui and fc.ui.coverbrowser or fm and fm.coverbrowser\
+    return cb, fm\
+end\
+\
+function M.libraryMode()\
+    local bim = _bookInfo()\
+    return bim and bim:getSetting(\"filemanager_display_mode\") or nil\
+end\
+\
+function M.effectiveMode(path)\
+    local mode = M.rootMode(path)\
+    if mode then return M.cbMode(M.getView(mode)) end\
+    return M.libraryMode()\
+end\
+\
+-- Sets the CoverBrowser's mode without saving it and without its own refresh.\
+local function _switch(cb, mode)\
+    local bim = _bookInfo()\
+    if not (cb and bim) then return false end\
+    local orig_save    = bim.saveSetting\
+    local own_refresh  = rawget(cb, \"refreshFileManagerInstance\")\
+    bim.saveSetting = function(self, key, value)\
+        if key == \"filemanager_display_mode\" then return end\
+        return orig_save(self, key, value)\
+    end\
+    cb.refreshFileManagerInstance = function() end\
+    local ok = pcall(cb.setupFileManagerDisplayMode, cb, mode)\
+    bim.saveSetting = orig_save\
+    cb.refreshFileManagerInstance = own_refresh\
+    return ok\
+end\
+\
+-- A mode saved since the last call was chosen in the native menu, which puts\
+-- the CoverBrowser in it.\
+local function _sync()\
+    local library = M.libraryMode()\
+    if library ~= _seen_library then\
+        _seen_library = library\
+        _applied = library\
+    end\
+    return library\
+end\
+\
+-- The display mode chosen in the CoverBrowser's menu is the Library's. The\
+-- CoverBrowser ignores a choice equal to the mode it is in, which at a tab root\
+-- is the tab's; so it is put back in the Library's mode first. At a tab root\
+-- the list is then redrawn once, in the tab's view.\
+local _wrapped_cb\
+\
+local function _wrapSetDisplayMode(cb)\
+    if rawget(cb, \"setDisplayMode\") then return end\
+    local orig = cb.setDisplayMode\
+    cb.setDisplayMode = function(self, mode)\
+        local fc = self.ui and self.ui.file_chooser\
+        local library = _sync()\
+        if _applied ~= library and _switch(self, library) then _applied = library end\
+        if not (fc and M.rootMode(fc.path)) then return orig(self, mode) end\
+        local own_refresh = rawget(self, \"refreshFileManagerInstance\")\
+        self.refreshFileManagerInstance = function() end\
+        local ok, err = pcall(orig, self, mode)\
+        self.refreshFileManagerInstance = own_refresh\
+        if not ok then error(err, 0) end\
+        fc:refreshPath()\
+    end\
+    _wrapped_cb = cb\
+end\
+\
+-- A tab root with items per page of its own lends them to the chooser only\
+-- while its dimensions are computed, so every setting keeps reading the\
+-- Library's.\
+local function _recalcWithPerPage(self, ...)\
+    local own = rawget(self, \"files_per_page\")\
+    self.files_per_page = self._sui_tv_per_page\
+    local FileChooser = require(\"ui/widget/filechooser\")\
+    local ok, err = pcall(FileChooser._recalculateDimen, self, ...)\
+    self.files_per_page = own\
+    if not ok then error(err, 0) end\
+end\
+\
+-- Returns true when the items per page of `fc` changed.\
+local function _setPerPage(fc, n)\
+    if fc._sui_tv_per_page == n then return false end\
+    fc._sui_tv_per_page = n\
+    fc._recalculateDimen = n and _recalcWithPerPage or nil\
+    return true\
+end\
+\
+function M.apply(fc, path)\
+    _sync()\
+    local cb = _coverBrowser(fc)\
+    if cb then _wrapSetDisplayMode(cb) end\
+    local resized = fc and _setPerPage(fc, M.pagePerPage(path))\
+    local want = M.effectiveMode(path)\
+    local switched = want ~= _applied and _switch(cb, want)\
+    if switched then _applied = want end\
+    if (switched or resized) and fc and fc._recalculateDimen then fc:_recalculateDimen() end\
+end\
+\
+function M.install()\
+    local FileChooser = require(\"ui/widget/filechooser\")\
+    if FileChooser._sui_tv_orig_refreshPath then return end\
+    local orig = FileChooser.refreshPath\
+    FileChooser._sui_tv_orig_refreshPath = orig\
+    FileChooser.refreshPath = function(fc, ...)\
+        if fc.name == \"filemanager\" then M.apply(fc, fc.path) end\
+        return orig(fc, ...)\
+    end\
+end\
+\
+function M.uninstall()\
+    local FileChooser = require(\"ui/widget/filechooser\")\
+    local orig = FileChooser._sui_tv_orig_refreshPath\
+    if orig then\
+        FileChooser.refreshPath = orig\
+        FileChooser._sui_tv_orig_refreshPath = nil\
+    end\
+    local known = _wrapped_cb\
+    if known then\
+        known.setDisplayMode = nil\
+        _wrapped_cb = nil\
+    end\
+    local live, fm = _coverBrowser()\
+    local cb = known or live\
+    local library = _sync()\
+    local fc = fm and fm.file_chooser\
+    local resized = fc and _setPerPage(fc, nil)\
+    local switched = _applied ~= library and _switch(cb, library)\
+    if (switched or resized) and fc and fc._recalculateDimen then fc:_recalculateDimen() end\
+    _applied, _seen_library = nil, false\
 end\
 \
 return M\

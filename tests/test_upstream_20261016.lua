@@ -143,6 +143,7 @@ local home, revision, walks, invalidations = "/books", 1, 0, 0
 local files = {}
 for i = 1, 200 do files[i] = { fp = string.format("/books/%03d", i), mtime = i } end
 local SH = { isFinished = function(fp) return fp == "done" end,
+    isHiddenFile = function(fp) return fp == "hidden-in-history" end,
     isCurrentExcluded = function(pfx) return settings[pfx .. "exclude"] ~= false end }
 local deps = {
     ["infra/sui_i18n"] = { translate = identity },
@@ -155,7 +156,10 @@ local deps = {
         getRaw = function() walks = walks + 1; return files end,
         invalidate = function() invalidations = invalidations + 1 end,
     },
-    ["features/sui_source_menu"] = { excludeCurrentItems = function() return {} end },
+    ["features/sui_source_menu"] = {
+        excludeCurrentItems = function() return {} end,
+        hiddenHistoryItems = function() return {} end,
+    },
 }
 local Sources = run(read("engines/sui_book_sources.lua"), { require = function(name)
     return deps[name] or require(name)
@@ -179,6 +183,7 @@ H.test("recent tabs respect hidden books and per-screen current/finished choices
     local ctx = { pfx = "custom_", current_fp = "current", recent_fps = { "hidden", "done" } }
     H.eq(recent.getFileList(ctx), ctx.recent_fps)
     H.eq(recent.filterItem("hidden", ctx), false)
+    H.eq(recent.filterItem("hidden-in-history", ctx), false)
     H.eq(recent.filterItem("done", ctx), true)
     H.eq(recent.filterItem("current", ctx), false)
     settings.custom_exclude = false; H.eq(recent.filterItem("current", ctx), true)
@@ -186,6 +191,7 @@ H.test("recent tabs respect hidden books and per-screen current/finished choices
     local refreshed = 0
     Sources.get("recent").menu_items{ _ = identity, refresh = function() refreshed = refreshed + 1 end }[1].callback()
     H.eq(refreshed, 1); H.eq(recent.filterItem("hidden", ctx), true)
+    H.eq(recent.filterItem("hidden-in-history", ctx), false)
 end)
 
 local tab_src = read("modules/module_tab_grid.lua")

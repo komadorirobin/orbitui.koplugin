@@ -126,7 +126,7 @@ end)
 
 local patches = read("infra/sui_patches.lua")
 local acquire, add, release, inset = run(
-    section(patches, "local function _acquireHooks", "-- Ensure the goal-tap") ..
+    section(patches, "local function _acquireHooks", "local function _makeQaTap") ..
     'local MENU_WIDTH_FIELDS = { "width", "screen_w" }\n' ..
     method(patches, "local function _withInsetWidth(") ..
     "\nreturn _acquireHooks, _addHook, _releaseHooks, _withInsetWidth")

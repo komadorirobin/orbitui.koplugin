@@ -409,6 +409,13 @@ local function buildScreens(st)
             end
         end
 
+        local function hasOtherVisiblePage(page)
+            for _, other in ipairs(st.layout.pages) do
+                if other ~= page and not other.hidden then return true end
+            end
+            return false
+        end
+
         for p_idx, page in ipairs(st.layout.pages) do
             local title  = p_idx == 1
                 and _("Page 1 (Home)")
@@ -425,6 +432,10 @@ local function buildScreens(st)
                             if p == page then actual_idx = i; break end
                         end
                         if actual_idx then
+                            if not page.hidden and not hasOtherVisiblePage(page) then
+                                UI.Notify.toast(_("At least one page must stay visible."), 2)
+                                return
+                            end
                             table.remove(st.layout.pages, actual_idx)
                             saveAndRepaint(ctx)
                         end
@@ -459,15 +470,9 @@ local function buildScreens(st)
             Config.applyVisibilityToggle(item, {
                 is_visible  = function() return not page.hidden end,
                 set_visible = function(visible)
-                    if not visible then
-                        local others = 0
-                        for _, p in ipairs(st.layout.pages) do
-                            if p ~= page and not p.hidden then others = others + 1 end
-                        end
-                        if others == 0 then
-                            UI.Notify.toast(_("At least one page must stay visible."), 2)
-                            return false
-                        end
+                    if not visible and not hasOtherVisiblePage(page) then
+                        UI.Notify.toast(_("At least one page must stay visible."), 2)
+                        return false
                     end
                     page.hidden = not visible or nil
                 end,

@@ -4,6 +4,35 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-16 — Bookshelf 6.5.2 and SimpleUI 3.1.0
+
+Reviewed from the beta.5 source receipt **5125e94c4**. Unsquashed imports
+**4ea39149f** and **e016127ea** advance the tracked branches to
+[Bookshelf **58d776725604d93c7ffabdb6b0a6b843a5bc66ae**](https://github.com/AndyHazz/bookshelf.koplugin/releases/tag/v6.5.2)
+and [SimpleUI **44df9c876d36707bd8db6db40b2c757b2a596014**](https://github.com/doctorhetfield-cmd/simpleui.koplugin/releases/tag/3.1.0).
+
+C04/C07. Bookshelf now keys cached spines on their visible marks and uses
+the Kindle catalogue's read flag and custom metadata where available.
+Its preloaded-page badge paint order is corrected. Hosted page-ahead stays
+disabled under the existing cache policy. SimpleUI's file-browser flat view
+reuses the bounded scan and its file index, preserving the Bookshelf bridge,
+sidecar exclusions and incomplete-scan handling. Retained deferred registry
+warmup and added the upstream lazy module descriptors.
+
+C01/C02/C05/C06/C10. The new SimpleUI menu builders run behind the shared
+OrbitUI settings and File browser appearance route. Local module IDs, Bento
+width and gap keys, wallpaper and dock hooks remain active. Hidden history
+records are also excluded from OrbitUI's ongoing lists. The new reversible
+setting preserves KOReader history and old Recent-only exclusions. Hidden
+pages retain their module configuration. The editor and dashboard toggle
+leave a visible page. Bookshelf provider precedence, external sync ownership,
+and reader menu actions have no source changes from this import.
+
+C08/C09. Five new SimpleUI helpers use the existing exact-source registry.
+The original fork anchors, artwork, API-1 bootstrap and published release
+assets remain on their original revisions. This request advances source pins
+on main. See TESTING for verification.
+
 ## 2026-11-15 — Bookshelf 6.5.1 and SimpleUI maintenance
 
 Reviewed from the published 1.4.0-beta.3 source receipt **756b7ca22**.

@@ -292,11 +292,6 @@ function M.wrap(name, module)
             plugin.orbitui_wallpaper_softening = require("adapters/orbitui_appearance").wallpaperSofteningItem
             plugin.orbitui_dock_menu_item = require("adapters/orbitui_navbar").menuItem
             module(plugin)
-            local build = plugin.addToMainMenu
-            function plugin:addToMainMenu(items)
-                build(self, items)
-                items.simpleui = nil
-            end
         end
     end
     return module
@@ -318,6 +313,7 @@ function M.classes(bookshelf, simpleui)
     Host.timeMethod(bookshelf, "_showAfterReaderReturn", "return_shelf")
     function bookshelf:_extendMenuOrder() end
     function bookshelf:addToMainMenu() end
+    function simpleui:addToMainMenu() end
     function simpleui:onSimpleUISettingsWindow()
         require("adapters/orbitui_settings").show()
         return true

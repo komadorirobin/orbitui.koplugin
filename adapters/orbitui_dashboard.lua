@@ -339,7 +339,8 @@ function M.showOngoing(ctx)
     local hidden = require("features/library/sui_recent_hidden").snapshot()
     local paths = {}
     for _, entry in ipairs(require("readhistory").hist or {}) do
-        if type(entry) == "table" and type(entry.file) == "string" and not entry.dim and not hidden[entry.file] then
+        if type(entry) == "table" and type(entry.file) == "string" and not entry.dim
+                and not hidden[entry.file] and not SH.isHiddenEntry(entry) then
             paths[#paths + 1] = entry.file
         end
     end
@@ -349,7 +350,7 @@ function M.showOngoing(ctx)
         title = _("Also reading"),
         item_table = {{ text = _("Loading…"), select_enabled = false }},
         onMenuSelect = function(self, item)
-            if item.file and ctx.open_fn then
+            if item.file and ctx.open_fn and not SH.isHiddenFile(item.file) then
                 UI:close(self)
                 ctx.open_fn(item.file)
             end

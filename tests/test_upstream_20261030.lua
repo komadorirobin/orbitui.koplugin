@@ -30,9 +30,9 @@ H.test("all reviewed embedded sources are valid Lua and retain the path-map API"
         count = count + 1; assert(map[name]); assert((loadstring or load)(source))
         H.eq(source, read(name))
     end
-    H.eq(count, 58)
+    H.eq(count, 63)
     local n = 0; for _, path in pairs(map) do H.eq(type(path), "string"); n = n + 1 end
-    H.eq(n, 437)
+    H.eq(n, 442)
 end)
 H.test("Critter defaults copy only and per-screen picks topics and decorations survive", function()
     local data = { simpleui_hs_critter_pick = "hazel", custom_critter_pick = "suey",
@@ -166,11 +166,11 @@ H.test("Critter current book respects hidden recent entries and a thirty-item bo
     for i = 1, 31 do hist[i] = { file = "/" .. i, time = 0 } end
     local deps = { ["libs/libkoreader-lfs"] = { attributes = function(path)
         probes = probes + 1; return path == "/31" and "file" or nil end },
-        ["modules/module_books_shared"] = {},
+        ["modules/module_books_shared"] = { isHiddenEntry = function(entry) return entry.file == "/2" end },
         ["features/library/sui_recent_hidden"] = { snapshot = function() return { ["/1"] = true } end } }
     local book = run(read("modules/critter/book"), { require = function(n) return assert(deps[n], n) end,
         package = { loaded = { readhistory = { hist = hist } } } })
-    H.eq(book.current(100), nil); H.eq(probes, 29)
+    H.eq(book.current(100), nil); H.eq(probes, 28)
     H.eq(book.facts("Title", 0.5, nil, 100), nil)
     H.eq(book.facts("Title", 0.5, 0, 100).percent, 50)
 end)

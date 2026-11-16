@@ -197,7 +197,7 @@ local patches = read("simpleui/infra/sui_patches.lua")
 H.test("shared BookList hooks release dropped owners and do not stack across reader instances", function()
     local BookList = { new = function(_, attrs) return attrs end }
     local original, M = BookList.new, {}
-    local helpers = section(patches, "local function _acquireHooks(", "-- Ensure the goal-tap")
+    local helpers = section(patches, "local function _acquireHooks(", "local function _makeQaTap")
     local code = 'local BOOKLIST_STATE = "_simpleui_booklist"\n' ..
         section(patches, "function M.patchBookList(", 'local COLLECTIONS_STATE =')
     local release = run(helpers .. "\n" .. code .. "\nreturn _releaseHooks", {

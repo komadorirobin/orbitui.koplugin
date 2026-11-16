@@ -23,6 +23,10 @@ package.loaded["infra/sui_config"] = {
             callback = function() saved[key] = saved[key] ~= true and true or nil; refresh() end }
     end,
 }
+local current_fixture = {
+    id = "currently", name = "Currently Reading", enabled_key = "currently_enabled", default_on = true,
+}
+package.loaded["modules/module_currently"] = current_fixture
 local registry = H.componentModule(root, "modules/moduleregistry")
 package.loaded["modules/moduleregistry"] = registry
 local W = H.widget()
@@ -191,9 +195,10 @@ end)
 H.test("standalone-disabled Currently Reading gets its own hosted recent demand and matching book", function()
     local selected = entry("simpleui", "currently")
     local enabled, args = true, nil
-    registry.register({ id = "currently", name = "Currently Reading", default_on = false,
-        wantsCurrentBookStats = function(prefix) H.eq(prefix, pfx); return enabled end,
-        build = function(_, ctx) args = ctx; return W:new{} end })
+    saved[pfx .. current_fixture.enabled_key] = false
+    current_fixture.wantsCurrentBookStats = function(prefix) H.eq(prefix, pfx); return enabled end
+    current_fixture.build = function(_, ctx) args = ctx; return W:new{} end
+    H.eq(registry.isEnabled(registry.get("currently"), pfx), false)
     local config = only(selected)
     H.eq(Sources.moduleNeed(config, pfx, "recent"), 1)
     H.eq(Sources.moduleNeed(config, pfx, "current_book_stats"), true)
@@ -207,7 +212,8 @@ H.test("standalone-disabled Currently Reading gets its own hosted recent demand 
     ctx.current_fp = "/native-current.epub"
     w = assert(Sources.buildModule(selected, 250, 100, ctx))
     H.eq(args.current_fp, ctx.current_fp); w:free()
-    registry.unregister("currently")
+    saved[pfx .. current_fixture.enabled_key] = nil
+    current_fixture.wantsCurrentBookStats, current_fixture.build = nil, nil
 end)
 H.test("native actions retain Home navigation and Bookshelf tap regions", function()
     local routed

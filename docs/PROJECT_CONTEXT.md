@@ -20,7 +20,14 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-15
+## Snapshot: 2026-11-16
+
+- **Reviewed upstream maintenance after beta.5.** Bookshelf 6.5.2
+  (**58d776725**) redraws changed spine marks and fixes Kindle read flags
+  and custom metadata. SimpleUI 3.1.0 (**44df9c876**) adds hideable pages,
+  reversible history exclusions and new file browser views. OrbitUI keeps the
+  shared settings entry and the existing Home-only Recent exclusions. See
+  MERGE_LOG for the hosted changes.
 
 - **Aleph 1.2-inspired changes released in 1.4.0-beta.4.** Book information
   localizes the book’s language and displays available pages. The reader panel adds colors

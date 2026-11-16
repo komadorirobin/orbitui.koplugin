@@ -149,7 +149,7 @@ H.test("new native-widget scope supports Lua 5.1 and preserves nil return values
 end)
 H.test("night-mode hook keeps later wrappers and disables stale owners on teardown", function()
     local source = read("infra/sui_patches.lua")
-    local helpers = part(source, "local function _acquireHooks", "-- Ensure the goal-tap")
+    local helpers = part(source, "local function _acquireHooks", "local function _makeQaTap")
     local code = part(source, 'local NIGHT_MODE_STATE =', '-- installAll / teardownAll')
     local ui, M, changes, native_calls = {}, {}, 0, 0
     function ui:ToggleNightMode() native_calls = native_calls + 1; return "native", nil, 3 end

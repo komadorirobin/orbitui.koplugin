@@ -73,16 +73,21 @@ H.test("native component menus are absent and legacy events open the shared sett
         items.bookshelf_settings = { text = "Bookshelf settings" }
         items.bookshelf_action = { callback = function() end }
     end }
-    local sui = {}
+    local sui = { addToMainMenu = function(_, items)
+        items.simpleui = { text = "Simple UI" }
+    end }
     Integration.classes(bs, sui)
-    local installer = Integration.wrap("screens/sui_menu", function(class)
-        function class:addToMainMenu(items) items.simpleui = { text = "Simple UI" } end
-    end)
-    installer(sui)
     local items = {}
     bs:addToMainMenu(items); sui:addToMainMenu(items)
     H.eq(items.bookshelf_settings, nil); H.eq(items.simpleui, nil)
     H.eq(items.bookshelf_action, nil)
+    local installer = Integration.wrap("screens/sui_menu", function(class)
+        function class:_buildMenus() return self.orbitui_dock_menu_item end
+    end)
+    installer(sui)
+    H.eq(sui:_buildMenus(), require("adapters/orbitui_navbar").menuItem)
+    sui:addToMainMenu(items)
+    H.eq(items.simpleui, nil)
     Settings.menuEntry().callback(); H.eq(shown.title, "OrbitUI settings")
     sui:onSimpleUISettingsWindow(); H.eq(shown.title, "OrbitUI settings")
 end)

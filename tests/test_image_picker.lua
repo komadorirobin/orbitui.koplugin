@@ -140,7 +140,7 @@ H.test("SimpleUI does not turn image picker choices into virtual book series", f
     local probes = 0
     local process = compile("return function(item_table, file_chooser)\n" .. body .. "\nend", {
         SeriesGrouping = {isEnabled = function() return true end},
-        VirtualPath = {isVirtual = function() return false end},
+        VirtualPath = {isVirtual = function() return false end, isFlat = function() return false end},
         _sg_items_cache = {},
         require = function() probes = probes + 1; error("no book metadata in picker") end,
     })()

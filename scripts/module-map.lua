@@ -36,6 +36,8 @@ local embedded_names = {
     "modules/critter/state", "modules/critter/voice_lines", "modules/critter/voice_phrases",
     "screens/sui_bluetooth",
     "features/library/sui_rule_collections", "features/library/sui_sort_sheet",
+    "features/library/sui_book_rows", "features/library/sui_collection_rows",
+    "features/library/sui_folder_fan", "features/library/sui_list_rows", "features/library/sui_tab_views",
     "features/library/cover_editor/sui_cover_net",
     "features/library/cover_editor/sui_cover_search",
     "features/library/cover_editor/sui_cover_sources",

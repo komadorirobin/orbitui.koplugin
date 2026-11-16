@@ -963,9 +963,13 @@ local function _readHistory()
     return ok and ReadHistory and ReadHistory.hist or {}
 end
 
+function SH.isHiddenFile(file)
+    return file ~= nil and _hiddenSet()[file] ~= nil
+end
+
 --- Whether a ReadHistory entry is hidden.
 function SH.isHiddenEntry(entry)
-    return entry ~= nil and entry.file ~= nil and _hiddenSet()[entry.file] ~= nil
+    return entry ~= nil and SH.isHiddenFile(entry.file)
 end
 
 --- The ReadHistory entry of fp (real or virtual path), or nil.

@@ -245,12 +245,12 @@ end
 function M.withPage(layout, enabled)
     local result = copy(layout)
     result.pages = result.pages or {}
+    local max_id = 0
+    for _, page in ipairs(result.pages) do
+        max_id = math.max(max_id, tonumber(page.id) or 0)
+    end
     if enabled then
         if M.contains(result) then return result end
-        local max_id = 0
-        for _, page in ipairs(result.pages) do
-            max_id = math.max(max_id, tonumber(page.id) or 0)
-        end
         table.insert(result.pages, 1, {
             id = max_id + 1, modules = { M.id }, orbitui_dashboard_page = true,
         })
@@ -264,7 +264,10 @@ function M.withPage(layout, enabled)
                 table.remove(result.pages, pi)
             end
         end
-        if #result.pages == 0 then result.pages[1] = { id = 1, modules = {} } end
+        for _, page in ipairs(result.pages) do
+            if not page.hidden then return result end
+        end
+        table.insert(result.pages, 1, { id = max_id + 1, modules = {} })
     end
     return result
 end

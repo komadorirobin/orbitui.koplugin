@@ -221,6 +221,7 @@ local sort_facets = compile("local M = {}; local COUNT_ID = 'sui_count'; "
     .. "\nreturn M", {})
 compile(gen, { FileChooser = FC, orig = function() return { { text = "native" } } end,
     SortSheet = sort_facets,
+    TabViews = { rootMode = function() return nil end },
     VirtualPath = { isVirtual = function(p) return p == "meta" end,
         parse = function() return nil, { trail = { { dimension = leaf } } }, nil, level end, parentOf = function() return "parent" end },
     BD = { mirroredUILayout = function() return false end }, _is_windows = false,

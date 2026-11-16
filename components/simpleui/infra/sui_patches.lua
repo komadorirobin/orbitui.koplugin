@@ -3919,34 +3919,35 @@ local HISTORY_MODULE       = "apps/filemanager/filemanagerhistory"
 local HIDE_HISTORY_ROW     = "sui_hide_history"
 
 -- Long-press row of the History list: hides the book and updates the list.
-local function _hideHistoryRow(FMH, SH)
-    return function(file, is_file)
-        if not is_file or SH.isHiddenEntry({ file = file }) then return nil end
-        return {{
-            text     = _("Hide from history"),
-            sui_icon = "hide",
-            callback = function()
-                SH.setHidden({ file = file }, true)
-                local menu = FMH.getMenuInstance()
-                if not menu then return end
-                if menu.file_dialog then UIManager:close(menu.file_dialog) end
-                if menu._manager then menu._manager:updateItemTable() end
-            end,
-        }}
-    end
+local function _hideHistoryRow(FMH, file, is_file)
+    if not is_file then return end
+    local SH = require("modules/module_books_shared")
+    if SH.isHiddenFile(file) then return end
+    return {{
+        text     = _("Hide from history"),
+        sui_icon = "hide",
+        callback = function()
+            SH.setHidden({ file = file }, true)
+            local menu = FMH.getMenuInstance()
+            if not menu then return end
+            if menu.file_dialog then UIManager:close(menu.file_dialog) end
+            if menu._manager then menu._manager:updateItemTable() end
+        end,
+    }}
 end
 
 function M.patchHiddenHistory(plugin)
     local ok, FMH = pcall(require, HISTORY_MODULE)
-    local state = ok and FMH and _acquireHooks(FMH, HIDDEN_HISTORY_STATE, plugin)
+    local state = ok and FMH and type(FMH.isItemMatch) == "function"
+        and _acquireHooks(FMH, HIDDEN_HISTORY_STATE, plugin)
     if not state then return end
-    local SH = require("modules/module_books_shared")
 
     -- updateItemTable (also the one display modes install) resets self.count,
     -- then per entry calls isItemMatch and adds the entry to its status count.
     -- A hidden entry is left out and taken off "all" and its status count.
     local orig_match
     orig_match = _addHook(state, FMH, "isItemMatch", function(self, item)
+        local SH = require("modules/module_books_shared")
         if not SH.isHiddenEntry(item) then return orig_match(self, item) end
         local count = self.count
         if count then
@@ -3959,8 +3960,10 @@ function M.patchHiddenHistory(plugin)
     end)
 
     local ok_fm, FileManager = pcall(require, "apps/filemanager/filemanager")
-    if ok_fm and FileManager then
-        FileManager.addFileDialogButtons(FMH, HIDE_HISTORY_ROW, _hideHistoryRow(FMH, SH))
+    if ok_fm and FileManager and FileManager.addFileDialogButtons and FMH.getMenuInstance then
+        FileManager.addFileDialogButtons(FMH, HIDE_HISTORY_ROW, function(...)
+            return _hideHistoryRow(FMH, ...)
+        end)
     end
 end
 
@@ -3968,7 +3971,9 @@ function M.unpatchHiddenHistory(plugin)
     local FMH = package.loaded[HISTORY_MODULE]
     if not (FMH and _releaseHooks(FMH, HIDDEN_HISTORY_STATE, plugin)) then return end
     local FileManager = package.loaded["apps/filemanager/filemanager"]
-    if FileManager then FileManager.removeFileDialogButtons(FMH, HIDE_HISTORY_ROW) end
+    if FileManager and FileManager.removeFileDialogButtons then
+        FileManager.removeFileDialogButtons(FMH, HIDE_HISTORY_ROW)
+    end
 end
 
 -- ---------------------------------------------------------------------------

@@ -110,6 +110,8 @@ end
 local covers, opened, held, settings, dirtied = {}, nil, nil, nil, 0
 local missing_cover
 local SH = {
+    isHiddenFile = function(file) return file == "/hidden history" end,
+    isHiddenEntry = function(entry) return entry.file == "/hidden history" end,
     getBookData = function(fp, _, opts)
         H.eq(opts.skip_description or opts.progress_only, true)
         return books[fp] or { title = fp, authors = "", percent = 0 }
@@ -265,7 +267,8 @@ H.test("See all lazily lists every ongoing history book and opens through Home",
     for _, id in ipairs(ids) do original[id] = package.loaded[id] end
     local history = { { file = "/current" }, { file = "/first" }, { file = "/first" },
         { file = "/second" }, { file = "/third", dim = true }, { file = "/fourth" },
-        { file = "/abandoned" }, { file = "/finished" } }
+        { file = "/abandoned" }, { file = "/finished" }, { file = "/hidden history" } }
+    books["/hidden history"] = { title = "Hidden from History", percent = .4 }
     for i = 1, 34 do history[#history + 1] = { file = "/zero" .. i } end
     history[#history + 1] = { file = "/done" }
     history[#history + 1] = { file = "/fifth" }
@@ -302,6 +305,7 @@ H.test("See all lazily lists every ongoing history book and opens through Home",
 
     UIManager.nextTick, UIManager.scheduleIn = nil, nil
     books["/fifth"] = nil
+    books["/hidden history"] = nil
     for _, id in ipairs(ids) do package.loaded[id] = original[id] end
 end)
 

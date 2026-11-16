@@ -2692,7 +2692,7 @@ function M.readerTools()
     local function historyRecord(file, time)
         local hist = require("readhistory").hist or {}
         local Hidden = require("features/library/sui_recent_hidden")
-        if Hidden.isHidden(file) then return false end
+        if Hidden.isHidden(file) or require("modules/module_books_shared").isHiddenFile(file) then return false end
         for i = 1, math.min(#hist, 200) do
             local entry = hist[i]
             if type(entry) == "table" and entry.file == file and entry.time == time and not entry.dim then return true end
@@ -2921,6 +2921,7 @@ function M.readerTools()
                 assert(hist == job.history, "reading history replaced")
                 local start, count = clock.now(), 0
                 local Hidden = require("features/library/sui_recent_hidden")
+                local SH = require("modules/module_books_shared")
                 while job.index <= #job.records and #s.books < 12 do
                     local record, current = job.records[job.index], hist[job.index]
                     job.index = job.index + 1; count = count + 1
@@ -2928,7 +2929,8 @@ function M.readerTools()
                         assert(type(current) == "table" and current.file == record.file
                             and current.time == record.time and current.dim == record.dim, "reading history changed")
                         local file = record.file
-                        if localFile(file) and not job.seen[file] and not record.dim and not Hidden.isHidden(file) then
+                        if localFile(file) and not job.seen[file] and not record.dim
+                                and not Hidden.isHidden(file) and not SH.isHiddenFile(file) then
                             job.seen[file] = true
                             local read, book = pcall(readBook, file)
                             if read and book then book.time = record.time; s.books[#s.books + 1] = book
