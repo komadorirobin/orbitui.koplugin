@@ -12,6 +12,8 @@
 -- Public API
 -- ----------
 --   LibraryScan.getFileList(home_dir) -> { fp, ... }              (cached)
+--   LibraryScan.getDocumentList(dir)  -> { fp, ... }              (cached; every
+--                                         document KOReader opens, not only BOOK_EXTS)
 --   LibraryScan.getRaw(home_dir)      -> { {fp,mtime,size}, ... } (cached)
 --   LibraryScan.cachedContains(home_dir, fp) -> bool|nil          (no I/O)
 --   LibraryScan.invalidate(home_dir?) -- forces a re-walk; no arg = all
@@ -61,8 +63,28 @@ local SYSTEM_DIR_NAMES = {
     ["lost+found"] = true,
 }
 
--- _cache[home_dir] = { list = {{fp,mtime,size},...}, dirs = {[path]=mtime}, checked_at = os.time() }
+-- Keep the most recent walks by root. The document view uses the same raw
+-- file index as the fixed-extension lists and the Bookshelf bridge.
 local _cache = {}
+local MAX_CACHED = 6
+local _use_counter = 0
+
+local function touch(entry)
+    _use_counter = _use_counter + 1
+    entry.used = _use_counter
+end
+
+local function evictOldest(keep)
+    local count, oldest_key, oldest_used = 0, nil, nil
+    for key, entry in pairs(_cache) do
+        count = count + 1
+        if key ~= keep and (not oldest_used or entry.used < oldest_used) then
+            oldest_key, oldest_used = key, entry.used
+        end
+    end
+    if count > MAX_CACHED and oldest_key then _cache[oldest_key] = nil end
+end
+
 local _revision = 0
 
 local function normalizeRoot(path)
@@ -158,7 +180,9 @@ local function rescan(home_dir)
     for _, mtime in pairs(dirs) do
         if mtime == 0 then entry.reliable_mtimes = false end
     end
+    touch(entry)
     _cache[home_dir] = entry
+    evictOldest(home_dir)
     logger.dbg("simpleui: sui_library_scan: rescanned", home_dir, "->", #out, "books")
     return entry
 end
@@ -168,6 +192,7 @@ local function getEntry(home_dir)
     home_dir = normalizeRoot(home_dir)
     local entry = _cache[home_dir]
     if not entry then return rescan(home_dir) end
+    touch(entry)
     local now = os.time()
     if entry.validated_at == now then return entry end
     if not entry.reliable_mtimes and now - entry.checked_at >= SAFETY_TTL then
@@ -218,6 +243,25 @@ function LibraryScan.getFileList(home_dir)
     local raw = LibraryScan.getRaw(home_dir)
     local fps = {}
     for i = 1, #raw do fps[i] = raw[i].fp end
+    return fps
+end
+
+--- Filepaths of every document KOReader opens under `dir`, the way the file
+--- browser tells them (unlike getFileList's fixed extensions). Same order and
+--- caching as getRaw().
+function LibraryScan.getDocumentList(dir)
+    if not dir or dir == "" then return {} end
+    local entry = getEntry(dir)
+    if not entry.documents then
+        local registry = require("document/documentregistry")
+        local documents = {}
+        for _, record in ipairs(entry.files) do
+            if registry:hasProvider(record.fp) then documents[#documents + 1] = record.fp end
+        end
+        entry.documents = documents
+    end
+    local fps = {}
+    for i, file in ipairs(entry.documents) do fps[i] = file end
     return fps
 end
 

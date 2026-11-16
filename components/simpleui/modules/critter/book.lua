@@ -31,7 +31,7 @@ function Book.current(now)
     local hidden = require("features/library/sui_recent_hidden").snapshot()
     for i = 1, math.min(30, #hist) do
         local entry = hist[i]
-        if entry.file and not hidden[entry.file] and lfs.attributes(entry.file, "mode") == "file" then
+        if entry.file and not hidden[entry.file] and not SH.isHiddenEntry(entry) and lfs.attributes(entry.file, "mode") == "file" then
             local book = SH.getBookData(entry.file)
             if book.status == "complete" then return nil end
             return Book.facts(book.title, book.percent, entry.time, now)

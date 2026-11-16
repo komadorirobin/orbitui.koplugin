@@ -207,20 +207,6 @@ local function _releaseHooks(target, state_key, owner)
     return true
 end
 
--- Ensure the goal-tap callback is initialised. Called before any HS.show()
--- that may need it. Idempotent: addToMainMenu is a no-op once
--- _goalTapCallback has been set.
---
--- Delegates to UI.makeGoalTap()'s own lazy-init logic (infra/sui_core.lua) —
--- kept as a thin wrapper here (rather than replacing every call site) since
--- some callers below need the boolean side effect (plugin._goalTapCallback
--- now set) without necessarily wanting a fresh closure back.
-local function _ensureGoalCallback(plugin_ref)
-    if not plugin_ref._goalTapCallback then
-        plugin_ref:addToMainMenu({})
-    end
-end
-
 -- Build the standard QA-tap callback closure. Delegates to the shared,
 -- generic implementation in infra/sui_core.lua (UI.makeQaTap) — the exact
 -- same one engines/sui_screen_engine.lua's ScreenEngine.showCustomScreen
@@ -262,7 +248,6 @@ local function _showHSCold(plugin_ref, HS_ref, prev_action)
     Perf.mark("showHSCold start")
     local tabs = Config.loadTabConfig()
     Bottombar.setActiveAndRefreshFM(plugin_ref, "homescreen", tabs)
-    _ensureGoalCallback(plugin_ref)
     HS_ref.show(_makeQaTap(plugin_ref), plugin_ref._goalTapCallback)
     local inst = HS_ref._instance
     if inst then inst._navbar_prev_action = prev_action end
@@ -519,7 +504,6 @@ function M.patchFileManagerClass(plugin)
             -- reopened screen is later closed normally.
             local fm2 = liveFM()
             if fm2 then fm2.invisible = nil end
-            _ensureGoalCallback(plugin)
             local qa_tap   = pending.on_qa_tap   or _makeQaTap(plugin)
             local goal_tap = pending.on_goal_tap or plugin._goalTapCallback
             if ScreenEngine then
@@ -816,7 +800,6 @@ function M.patchFileManagerClass(plugin)
                     local HS = liveHS() or require("infra/sui_screen_nav").loadHome()
                     _openScreenOrList(HS, function()
                         if not HS then return end
-                        _ensureGoalCallback(plugin)
                         local qa_tap   = rot_qa_tap   or _makeQaTap(plugin)
                         local goal_tap = rot_goal_tap or plugin._goalTapCallback
                         HS._force_full_repaint_once = true
@@ -860,6 +843,7 @@ function M.patchFileManagerClass(plugin)
                 if not return_to_folder then
                     plugin.active_action = "home"
                     local home = G_reader_settings:readSetting("home_dir")
+                    local landed_flat = false
                     if home and this.file_chooser then
                         -- Suppress onPathChanged: replaceBar below handles the bar.
                         this._navbar_suppress_path_change = true
@@ -868,11 +852,18 @@ function M.patchFileManagerClass(plugin)
                             this.file_chooser.path = require("ffi/util").realpath(home) or home
                             this.file_chooser.focused_path = nil
                         else
-                            this.file_chooser:changeToPath(home)
+                            -- The flat view is the Library tab's home.
+                            local BM = package.loaded["features/library/sui_library_browse"]
+                            if BM and BM.isFlatEnabled() then
+                                landed_flat = true
+                                BM.activateMode(this, "normal", false)
+                            else
+                                this.file_chooser:changeToPath(home)
+                            end
                         end
                         this._navbar_suppress_path_change = nil
                         -- Explicitly clear the subtitle since onPathChanged was skipped.
-                        if this.updateTitleBarPath then
+                        if this.updateTitleBarPath and not landed_flat then
                             this:updateTitleBarPath(home, true)
                         end
                     end
@@ -1215,6 +1206,8 @@ function M.patchCollections(plugin)
                 and not attrs.height and not attrs._navbar_height_reduced then
             UI.fitToContentArea(attrs)
             attrs.name = attrs.name or "coll_list"
+            local CollectionRows = require("features/library/sui_collection_rows")
+            if CollectionRows.isActive() then attrs.updateItems = CollectionRows.updateItems end
         end
         return orig_menu_new(class, attrs, ...)
     end)
@@ -2917,16 +2910,41 @@ end
 
 -- Display modes hooked for the side margin, with the margin each one already
 -- applies at the item area edge. A mode without `native_margin` is hooked but
--- never inset: the mosaic grid keeps its own margins.
+-- never inset: the mosaic grid keeps its own margins. `item_lines` marks the
+-- list, whose separator lines are drawn between the rows only.
 local SIDE_MARGIN_MODES = {
     { module = "mosaicmenu" },
-    { module = "listmenu",   native_margin = function() return 0 end },
+    { module = "listmenu",   native_margin = function() return 0 end, item_lines = true },
 }
+
+-- The list draws a separator line above its first row and below every row.
+-- Drops the first and the last, so the lines only divide rows. On a library
+-- page the lines also run between the side margins, the span of the title bar
+-- tabs, whatever the width the rows are given.
+local function _styleItemLines(menu)
+    local group = menu.item_group
+    local first = group and group[1]
+    if not (first and first.dimen and first.background) then return end
+    if #group > 1 and group[#group] == first then table.remove(group) end
+    table.remove(group, 1)
+    if not (LIBRARY_PAGE_NAMES[menu.name] and menu.covers_fullscreen) then return end
+    local line = require("ui/widget/linewidget"):new{
+        dimen      = require("ui/geometry"):new{ w = first.dimen.w, h = first.dimen.h },
+        background = first.background,
+    }
+    function line:paintTo(bb, _x, y)
+        local side = UI.SIDE_M()
+        bb:paintRect(side, y, Screen:getWidth() - 2 * side, self.dimen.h, self.background)
+    end
+    for i, widget in ipairs(group) do
+        if widget == first then group[i] = line end
+    end
+end
 
 local SIDE_MARGIN_STATE = "_simpleui_side_margin"
 
 -- Installs the side margin hooks on `DisplayMode` unless already present.
-local function _installSideMargin(DisplayMode, native_margin, owner)
+local function _installSideMargin(DisplayMode, native_margin, item_lines, owner)
     local function inset_of(menu)
         return native_margin and _sideInset(menu, native_margin(menu)) or 0
     end
@@ -2949,6 +2967,7 @@ local function _installSideMargin(DisplayMode, native_margin, owner)
         local inset  = menu._sui_side_inset or 0
         local result = _withInsetWidth(menu, inset, orig_build, ...)
         _setBodyInset(menu, inset)
+        if item_lines then _styleItemLines(menu) end
         return result
     end
 
@@ -2978,7 +2997,7 @@ function M.patchCoverMenuSideMargin(plugin)
     for _, mode in ipairs(SIDE_MARGIN_MODES) do
         local ok, DisplayMode = pcall(require, mode.module)
         if ok and DisplayMode then
-            _installSideMargin(DisplayMode, mode.native_margin, plugin)
+            _installSideMargin(DisplayMode, mode.native_margin, mode.item_lines, plugin)
         end
     end
 end
@@ -3436,7 +3455,6 @@ function M.showHSAfterResume(plugin, force)
         local t           = Config.loadTabConfig()
         local prev_action = plugin.active_action
         Bottombar.setActiveAndRefreshFM(plugin, "homescreen", t)
-        _ensureGoalCallback(plugin)
         -- Always start at page 1 after resume; restoring the last page
         -- would be disorienting after waking from standby.
         HS2._current_page = 1
@@ -3891,6 +3909,69 @@ function M.unpatchChoiceDialogs(plugin)
 end
 
 -- ---------------------------------------------------------------------------
+-- Hidden history books
+-- KOReader's History leaves out the books hidden from the history
+-- (modules/module_books_shared.lua), and its filter counts do not count them.
+-- ---------------------------------------------------------------------------
+local HIDDEN_HISTORY_STATE = "_simpleui_hidden_history"
+local HISTORY_MODULE       = "apps/filemanager/filemanagerhistory"
+
+local HIDE_HISTORY_ROW     = "sui_hide_history"
+
+-- Long-press row of the History list: hides the book and updates the list.
+local function _hideHistoryRow(FMH, SH)
+    return function(file, is_file)
+        if not is_file or SH.isHiddenEntry({ file = file }) then return nil end
+        return {{
+            text     = _("Hide from history"),
+            sui_icon = "hide",
+            callback = function()
+                SH.setHidden({ file = file }, true)
+                local menu = FMH.getMenuInstance()
+                if not menu then return end
+                if menu.file_dialog then UIManager:close(menu.file_dialog) end
+                if menu._manager then menu._manager:updateItemTable() end
+            end,
+        }}
+    end
+end
+
+function M.patchHiddenHistory(plugin)
+    local ok, FMH = pcall(require, HISTORY_MODULE)
+    local state = ok and FMH and _acquireHooks(FMH, HIDDEN_HISTORY_STATE, plugin)
+    if not state then return end
+    local SH = require("modules/module_books_shared")
+
+    -- updateItemTable (also the one display modes install) resets self.count,
+    -- then per entry calls isItemMatch and adds the entry to its status count.
+    -- A hidden entry is left out and taken off "all" and its status count.
+    local orig_match
+    orig_match = _addHook(state, FMH, "isItemMatch", function(self, item)
+        if not SH.isHiddenEntry(item) then return orig_match(self, item) end
+        local count = self.count
+        if count then
+            count.all = count.all - 1
+            if self.statuses_fetched and count[item.status] then
+                count[item.status] = count[item.status] - 1
+            end
+        end
+        return false
+    end)
+
+    local ok_fm, FileManager = pcall(require, "apps/filemanager/filemanager")
+    if ok_fm and FileManager then
+        FileManager.addFileDialogButtons(FMH, HIDE_HISTORY_ROW, _hideHistoryRow(FMH, SH))
+    end
+end
+
+function M.unpatchHiddenHistory(plugin)
+    local FMH = package.loaded[HISTORY_MODULE]
+    if not (FMH and _releaseHooks(FMH, HIDDEN_HISTORY_STATE, plugin)) then return end
+    local FileManager = package.loaded["apps/filemanager/filemanager"]
+    if FileManager then FileManager.removeFileDialogButtons(FMH, HIDE_HISTORY_ROW) end
+end
+
+-- ---------------------------------------------------------------------------
 -- Text input dialogs of the file manager, the history and the collections
 -- Their inputs (file search and rename, history search, collection name,
 -- collection search and file type filter) are shown through the dialog facade
@@ -4333,7 +4414,6 @@ _raiseParkedScreen = function(plugin, screen_module, prev_action)
 
     inst._parked = nil
     _injectHomescreenBar(plugin, inst, prev_action)
-    _ensureGoalCallback(plugin)
     inst._on_qa_tap   = _makeQaTap(plugin)
     inst._on_goal_tap = plugin._goalTapCallback
 
@@ -5444,6 +5524,7 @@ function M.installAll(plugin)
     M.patchResetSettingsButton(plugin)
     M.patchFileDialogSheets(plugin)
     M.patchChoiceDialogs(plugin)
+    M.patchHiddenHistory(plugin)
     M.patchInputDialogs(plugin)
     M.patchFontGetFace(plugin)
     M.patchIconNightColors(plugin)
@@ -5613,6 +5694,7 @@ function M.teardownAll(plugin)
     M.unpatchFileDialogSheets(plugin)
     M.unpatchInputDialogs(plugin)
     M.unpatchChoiceDialogs(plugin)
+    M.unpatchHiddenHistory(plugin)
     M.unpatchFontGetFace(plugin)
     M.unpatchNightMode(plugin)
     M.unpatchIconNightColors(plugin)

@@ -292,6 +292,9 @@ Sources.register{
                 end,
             }
         end
+        for _i, item in ipairs(sourceMenu().hiddenHistoryItems(ctx_menu)) do
+            items[#items + 1] = item
+        end
         return items
     end,
 
