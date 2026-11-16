@@ -1,5 +1,14 @@
 # Verification and device acceptance
 
+## 2026-11-16 — OrbitUI 1.4.0-beta.6
+
+The tagged build **fc32062f3** repeated the November 16 Tolino checks with
+the exact release ZIP. File browser appearance opened through OrbitUI.
+The flat view listed a nested EPUB and returned to its real directory.
+History and Home respected a hidden book and restored its entry. Home
+skipped and restored a configured page, and the native spine render key
+changed with the favorite mark. Bigme and Kindle hardware checks are pending.
+
 ## 2026-11-16 — Bookshelf 6.5.2 and SimpleUI 3.1.0 merge
 
 The sealed private runtime **814b9f7fc** booted in KOReader 2026.07.1 on

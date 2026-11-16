@@ -1,5 +1,20 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.4.0-beta.6
+
+Published **2026-11-16 20:08:18 UTC** as release **447542743** from
+**fc32062f3 / v1.4.0-beta.6**. The 10,143,103-byte public ZIP and checksum
+match the verified draft. The ZIP contains 2,000 installed files and has
+SHA-256 `3209590941f50311b8af29a0aee13aab5bc06b7dd0071fc6d207c6e48074eee4`.
+The updater offers 1.4.0-beta.6 in preview and 1.3.0 in stable.
+
+Both Lua runs, all 44 catalogs, and GitHub Actions runs **43945721490** and
+**43945721693** passed. The tagged CI package contains the same payload.
+The actual 1.4.0-beta.5 and 1.3.0 installers passed validation, activation,
+restart and rollback offline and over public HTTPS. See TESTING for the
+Tolino run and pending hardware checks. Evidence is under
+`test-results/preview14-beta6-20261116/`.
+
 ## OrbitUI 1.4.0-beta.5
 
 Published **2026-11-15 22:04:32 UTC** as release **446397644** from
