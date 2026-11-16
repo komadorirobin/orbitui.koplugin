@@ -22,7 +22,7 @@ and correct this file in the same change.
 
 ## Snapshot: 2026-11-16
 
-- **Reviewed upstream maintenance after beta.5.** Bookshelf 6.5.2
+- **Upstream maintenance in 1.4.0-beta.6.** Bookshelf 6.5.2
   (**58d776725**) redraws changed spine marks and fixes Kindle read flags
   and custom metadata. SimpleUI 3.1.0 (**44df9c876**) adds hideable pages,
   reversible history exclusions and new file browser views. OrbitUI keeps the
@@ -87,7 +87,7 @@ and correct this file in the same change.
 ### Navigation in 1.3.0
 
 GitHub Latest and the stable updater channel offer **1.3.0** from
-**23714b0e**. The preview channel offers **1.4.0-beta.5**. The OrbitUI tab
+**23714b0e**. The preview channel offers **1.4.0-beta.6**. The OrbitUI tab
 follows Quick Actions in KOReader’s top menu.
 Its settings routes use Home for the dashboard and cards, Library
 for shelves and library appearance, and Dock & interface for shortcuts and
