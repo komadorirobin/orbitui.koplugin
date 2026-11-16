@@ -1,5 +1,23 @@
 # Verification and device acceptance
 
+## 2026-11-16 — Bookshelf 6.5.2 and SimpleUI 3.1.0 merge
+
+The sealed private runtime **814b9f7fc** booted in KOReader 2026.07.1 on
+the Tolino emulator. The File browser appearance route opened through
+OrbitUI's settings. The flat view listed a nested EPUB and returned to the
+real directory. The History view and Home prefetch omitted a hidden book,
+and the restore control recovered its entry. Home skipped a hidden page
+and showed it again with the same configured module. Changing the favorite
+mark invalidated the native spine render key.
+
+Both complete interpreter runs passed, each with the usual three
+SQLite-only Bookshelf skips. All 44 translation catalogs passed. The sealed
+private ZIP **38306b86** retained the 2,000 installed API-1 paths. The
+actual 1.4.0-beta.4 and 1.3.0 installers passed validation, activation,
+restart and rollback in isolated tests of that ZIP. Hardware testing for
+Bigme and Kindle remains open. Evidence is under
+`test-results/upstream-20261116/`.
+
 ## 2026-11-15 — OrbitUI 1.4.0-beta.5
 
 The sealed **e38b7f2ff** runtime booted on KOReader 2026.07.1 in the Tolino
