@@ -1,5 +1,22 @@
 # Verification and device acceptance
 
+## 2026-11-18 — SimpleUI maintenance merge
+
+KOReader 2026.07.1 on the emulated Tolino Vision Color ran the package
+from **126a905e4** (SHA-256 starting with `6b0bef54`). The first candidate
+failed when Home probed a newly populated book module backed by a KOReader
+HorizontalSpan. The corrected runtime accepted that widget and removed
+only the probe's queued cover. Host regression coverage also checks that a
+disposable widget is freed and existing cover requests survive.
+
+The file-browser menu toggled list shadows independently of mosaic and Home.
+The rolling odometer painted at the edges of an 80 × 45 buffer and fully
+outside it. Calling the book-close handler for a fixture file refreshed
+statistics with Home closed and already marked stale. Other emulator checks
+covered history exclusion and restore, nested files in flat view, spine mark
+invalidation and hide/show of Home pages. Physical HiBreak display and timing
+checks remain outstanding. The 44 translation catalogues passed validation.
+
 ## 2026-11-16 — OrbitUI 1.4.0-beta.6
 
 The tagged build **fc32062f3** repeated the November 16 Tolino checks with
