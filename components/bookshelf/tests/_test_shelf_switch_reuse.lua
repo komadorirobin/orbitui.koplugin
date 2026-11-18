@@ -190,4 +190,37 @@ t.test("a grouped shelf compiles its filter once per pass, not once per group", 
     assert(f:find("if memo and memo.filter == filter and now - memo.at <= 1 then", 1, true))
 end)
 
+t.test("Next cover preparation yields with the active shelf intact and discards stale results", function()
+    local clock, generation, steps = 0, 1, 0
+    local methods, repo = {}, { dataGeneration = function() return generation end }
+    function repo.getNextUnreadInSeries(limit, offset, scope, opts)
+        eq(limit, 2); eq(offset, 0); eq(scope.roots[1], "/comics"); assert(opts.light_only)
+        for _ = 1, 4 do steps = steps + 1; clock = clock + .009; opts.checkpoint() end
+        return { {filepath="a"}, {filepath="b"} }, 2
+    end
+    local env = setmetatable({BookshelfWidget=methods, Repo=repo,
+        _gettime=function() return clock end}, {__index=_G})
+    for _, name in ipairs({"_startNextCoverJob", "_stepNextCoverJob"}) do
+        compile(assert(W:match("(function BookshelfWidget:" .. name .. ".-\nend)")), env)()
+    end
+    local shelf = setmetatable({ chip="manga", _cursor=8, profile={}, _chip_preload_queue={},
+        _chip_preload_seen={a=true}, _profileScope=function() return {roots={"/comics"}} end,
+        _viewSize=function() return 2 end }, {__index=methods})
+    shelf:_startNextCoverJob("next", 80, 120)
+    shelf:_stepNextCoverJob()
+    eq(steps, 1); eq(#shelf._chip_preload_queue, 0); eq(shelf.chip, "manga"); eq(shelf._cursor, 8)
+    generation = 2
+    shelf:_stepNextCoverJob()
+    eq(shelf._next_cover_job, nil); eq(steps, 1)
+    shelf:_startNextCoverJob("next", 80, 120)
+    for _ = 1, 5 do shelf:_stepNextCoverJob() end
+    eq(#shelf._chip_preload_queue, 1); eq(shelf._chip_preload_queue[1].fp, "b")
+    eq(shelf._next_cover_job, nil)
+    shelf:_startNextCoverJob("next", 80, 120)
+    shelf.chip = "next"
+    shelf:_stepNextCoverJob()
+    eq(steps, 5); eq(shelf._next_cover_job, nil)
+    assert(body("_cancelChipPreload"):find("self._next_cover_job = nil", 1, true))
+end)
+
 t.done()

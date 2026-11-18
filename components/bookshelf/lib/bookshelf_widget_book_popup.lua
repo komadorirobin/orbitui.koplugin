@@ -2308,7 +2308,7 @@ function BookshelfWidget:_buildBookEditTab(book, modal, avail_w, avail_h)
                 shelfSoon()
             end
             local star = buildStar(glyph, function()
-                setRating((i == cur) and nil or i)   -- tap current rating clears it
+                if i == cur then setRating(nil) else setRating(i) end
             end, cur > 0 and function()
                 -- Long-press: clear the rating, after asking (a tap on the
                 -- star of the rating set does too, but nothing says so).

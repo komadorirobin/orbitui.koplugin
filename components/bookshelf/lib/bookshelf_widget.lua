@@ -652,7 +652,8 @@ function BookshelfWidget:_wrapWithSimpleUIBottomBar(content_widget)
 
     local sep_line = LineWidget:new{
         dimen = Geom:new{ w = self.width - ctx.side_m * 2, h = ctx.sep_h },
-        background = ctx.navbar_transparent and nil or ctx.bottombar.sepColor(),
+        style = ctx.navbar_transparent and "none" or "solid",
+        background = ctx.bottombar.sepColor(),
         -- In Bookshelf the page label sits just above the dock, so drawing the
         -- separator one pixel above the bar reads as a second horizontal rule.
         -- Place it on the bar's top edge instead, where SimpleUI's active tab
@@ -6084,10 +6085,12 @@ function BookshelfWidget:_openKindleBook(book, after_open_callback)
         -- been misdetected -- would be stuck with a message nothing clears.
         -- Fall back to a long timeout there rather than a short one: still
         -- readable, still self-clearing.
-        local can_dismiss = Device:isTouchDevice() or Device:hasKeys()
+        local timeout
+        if brief then timeout = 4
+        elseif not (Device:isTouchDevice() or Device:hasKeys()) then timeout = 20 end
         UIManager:show(require("ui/widget/infomessage"):new{
             text    = text,
-            timeout = brief and 4 or (can_dismiss and nil or 20),
+            timeout = timeout,
         })
         return true
     end
@@ -18885,6 +18888,7 @@ function BookshelfWidget:_cancelChipPreload()
         UIManager:unschedule(self._chip_preload_fn)
         self._chip_preload_fn = nil
     end
+    self._next_cover_job = nil
     self._chip_preload_queue = nil
     self._chip_preload_seen  = nil
     self._chip_preload_keys  = nil
@@ -19205,6 +19209,47 @@ end
 -- completed -- so a drill-out re-trigger naturally retries). NOT cancelled
 -- by page turns: only by _cancelChipPreload (widget teardown). Yields to
 -- next-page preload to avoid stealing main-thread time mid page-turn.
+-- The Next shelf reads progress for each series member. Warm its cover paths
+-- in short slices without borrowing self.chip or the foreground cursor.
+function BookshelfWidget:_startNextCoverJob(key, w, h)
+    local scope, limit = self:_profileScope(), self:_viewSize()
+    local job = { key = key, profile = self.profile, queue = self._chip_preload_queue,
+        generation = Repo.dataGeneration(), w = w, h = h }
+    job.worker = coroutine.create(function()
+        return Repo.getNextUnreadInSeries(limit, 0, scope, {
+            light_only = true,
+            checkpoint = function()
+                if _gettime() >= job.deadline then coroutine.yield() end
+            end,
+        })
+    end)
+    self._next_cover_job = job
+end
+
+function BookshelfWidget:_stepNextCoverJob()
+    local job = self._next_cover_job
+    if job.profile ~= self.profile or job.queue ~= self._chip_preload_queue
+            or job.key == self.chip or job.generation ~= Repo.dataGeneration() then
+        self._next_cover_job = nil
+        return
+    end
+    job.deadline = _gettime() + 0.008
+    local ok, items = coroutine.resume(job.worker)
+    if ok and coroutine.status(job.worker) ~= "dead" then return end
+    self._next_cover_job = nil
+    if not ok then
+        logger.warn("[bookshelf] Next cover preload:", items)
+        return
+    end
+    for _, item in ipairs(items or {}) do
+        local fp = item.filepath
+        if fp and not self._chip_preload_seen[fp] then
+            self._chip_preload_seen[fp] = true
+            job.queue[#job.queue + 1] = { fp = fp, w = job.w, h = job.h }
+        end
+    end
+end
+
 function BookshelfWidget:_chipPreloadStep()
     if not self._chip_preload_fn then return end
     -- Each step can be a whole shelf's fetch (a cold Genres: 0.4-0.7 s on a
@@ -19230,7 +19275,9 @@ function BookshelfWidget:_chipPreloadStep()
     self._chip_preload_queue    = q
     self._chip_preload_seen     = self._chip_preload_seen or {}
     self._chip_preload_counters = self._chip_preload_counters or { decoded = 0, already = 0, failed = 0 }
-    if #q == 0 and #keys > 0 then
+    if self._next_cover_job then
+        self:_stepNextCoverJob()
+    elseif #q == 0 and #keys > 0 then
         local key = table.remove(keys, 1)
         local w, h = self:_currentSlotDims()
         local sub = type(key) == "string" and key:match("^sub:(.+)$")
@@ -19249,7 +19296,10 @@ function BookshelfWidget:_chipPreloadStep()
             end
             w = nil
         end
-        if w then
+        local chip = w and self.profile and self:_profileChip(key)
+        if chip and chip.kind == "next" then
+            self:_startNextCoverJob(key, w, h)
+        elseif w then
             local _qb_t0 = _gettime()
             pcall(self._collectPageCovers, self, q, self._chip_preload_seen, key, 1, w, h)
             logger.dbg(string.format(
@@ -19259,14 +19309,17 @@ function BookshelfWidget:_chipPreloadStep()
     elseif #q > 0 then
         _warmChunk(q, PRELOAD_CHUNK, self._chip_preload_counters)
     end
-    if #q == 0 and #keys == 0 then
+    if #q == 0 and #keys == 0 and not self._next_cover_job then
         -- Idle. NOT permanently done: a page change re-arms the loop via
         -- _queueWarmForVisible, which only queues chips not already warmed.
         self._chip_preload_fn = nil
         return
     end
     if self._chip_preload_fn then
-        UIManager:scheduleIn(PRELOAD_TICK_S, self._chip_preload_fn)
+        -- Progress reads already yield every 8 ms. Give input a turn between
+        -- slices without stretching the scan across the next shelf switch.
+        local delay = self._next_cover_job and 0.005 or PRELOAD_TICK_S
+        UIManager:scheduleIn(delay, self._chip_preload_fn)
     end
 end
 

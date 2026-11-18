@@ -1183,6 +1183,7 @@ function SimpleUIPlugin:init()
                         end,
                         callback = function()
                             local wanted = not BookOrbitWant.isWantToRead(file)
+                            local InfoMessage = require("ui/widget/infomessage")
                             UIManager:show(InfoMessage:new{
                                 text = _("Updating BookOrbit…"),
                                 timeout = 1,

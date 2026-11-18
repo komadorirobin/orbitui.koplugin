@@ -66,6 +66,17 @@ shelf preset before applying them. Existing installations start with Keep existi
 Changing folder references does not move book files. Custom library buttons can
 be selected in the guide or **Dock & interface**.
 
+## Reading log
+
+Tap **Reading streak / Lässvit** in the dashboard. **Log** shows seven days of
+reading time and pages, current and best streaks, and recently read books.
+Tap a day in the chart or the twelve-week **Calendar** to see its books, pages
+and reading time. **Goal** displays the existing KOReader or cached Hardcover
+goal configured for that dashboard. The log uses the same local KOReader
+reading statistics as the dashboard. A configured card shortcut takes precedence
+over the default tap. Hold the card to open reading-statistics settings when
+hold-to-open settings is enabled.
+
 ## Optional BookOrbit integrations
 
 Open **Integrations > BookOrbit / Integrationer > BookOrbit** for the master
@@ -75,6 +86,21 @@ profiles, module/source IDs, custom headings, layout and local TBR membership.
 It never turns off the external BookOrbit plugin's own reading-progress sync.
 Queued requests retire; an already-sent server write cannot be unsent, but its
 late response cannot overwrite OrbitUI's cache after a policy change.
+
+**BookOrbit achievements / Prestationer i BookOrbit** is an optional Home
+module under Statistics. It uses the account already connected in the BookOrbit
+plugin. The card shows the newest earned badges. Tap it to browse All, Earned,
+or Remaining and open a badge's description, award date, or available progress.
+The module fetches in the background while visible and uses saved results
+offline. Use **Refresh** in the browser to update the list.
+
+The connected BookOrbit plugin provides the summary with counts, the latest
+earned badge and the next goal. For the full catalogue on BookOrbit 3.8.0 or
+later, create a read-only key under **Settings > You > API keys** in BookOrbit.
+Use the same BookOrbit account as the KOReader plugin. Paste the key via
+**API key…** in the achievements browser or **Integrations > BookOrbit**.
+OrbitUI reads the full list through BookOrbit's standard API and stores the
+key in a separate file on this device for that plugin connection.
 
 **Want to read [Local] / Vill läsa [Lokalt]** is the existing local To Be Read
 module, backed by KOReader's `To Be Read` collection. **Want to read [BookOrbit]

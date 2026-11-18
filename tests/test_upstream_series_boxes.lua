@@ -161,6 +161,7 @@ H.test("Oneshots directory matching is component-based scoped and local-only", f
         H.eq(Adapter.oneshotsPath(fp, "/Manga/"), "/Manga/Oneshots")
     end
     H.eq(Adapter.oneshotsPath("/Manga/Author/oneshots/A.cbz", "/Manga"), "/Manga/Author/oneshots")
+    H.eq(Adapter.oneshotsPath("//Manga//OneOff/OneOff/A.cbz", "/", "oneoff"), "/Manga/OneOff")
     for _, fp in ipairs({"/Manga/Oneshots.cbz", "/Manga/Oneshots Extra/A.cbz", "/Manga2/Oneshots/A.cbz",
             "/Manga/../Fiction/Oneshots/A.epub", "https://example.org/Manga/Oneshots/A.cbz"}) do
         H.eq(Adapter.oneshotsPath(fp, "/Manga"), nil)

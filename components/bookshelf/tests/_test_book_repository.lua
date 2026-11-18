@@ -7331,6 +7331,58 @@ test("no custom metadata leaves the chain alone", function()
     assert(b.author == "Extracted Author", "author: " .. tostring(b.author))
 end)
 
+test("bulk metadata keeps sibling edits and resumes the native resolver when the mirror appears", function()
+    local old_store = package.loaded["datastorage"]
+    local old_settings = _G._test_settings
+    _G._test_settings = { home_dir = "/lib", document_metadata_folder = "doc" }
+    bim_row({ title = "Extracted title" })
+    local ok, err = pcall(function()
+        with_custom_props(CFP, { title = "Sibling edit" }, function()
+            local root = "/central"
+            package.loaded["datastorage"] = setmetatable({
+                getDocSettingsDir = function() return root end,
+            }, { __index = old_store })
+            local lfs = package.loaded["libs/libkoreader-lfs"]
+            local native_stat = lfs.attributes
+            local present = false
+            lfs.attributes = function(path, key)
+                if path == root then return "directory" end
+                if path == root .. "/lib" then
+                    if present then return "directory" end
+                    return nil, "missing", 2
+                end
+                return native_stat(path, key)
+            end
+            local ds = package.loaded["docsettings"]
+            local exact = 0
+            ds.isHashLocationEnabled = function() return false end
+            ds.findCustomMetadataFile = function(_, fp)
+                assert(fp == CFP)
+                exact = exact + 1
+                return root .. "/lib/comic.sdr/custom_metadata.lua"
+            end
+            local read = ds.openSettingsFile
+            ds.openSettingsFile = function(path)
+                if path:sub(1, #root) == root then
+                    return { readSetting = function() return { title = "Central edit" } end }
+                end
+                return read(path)
+            end
+            Repo.invalidateLightMeta()
+            local books = Repo.getFolderSections(10, 0)
+            assert(#books == 1 and books[1].title == "Sibling edit" and exact == 0)
+            present = true
+            Repo.invalidateLightMeta()
+            books = Repo.getFolderSections(10, 0)
+            assert(#books == 1 and books[1].title == "Central edit" and exact == 1)
+        end)
+    end)
+    package.loaded["datastorage"] = old_store
+    _G._test_settings = old_settings
+    Repo.invalidateWalkCache()
+    if not ok then error(err, 0) end
+end)
+
 test("the author chip uses the custom author too", function()
     -- buildBookMeta feeds the shelf; the light builder feeds the author,
     -- series and genre chips. Each carried its own copy of the resolution

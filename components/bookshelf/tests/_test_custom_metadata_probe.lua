@@ -20,7 +20,7 @@ local helpers = dofile("tests/_helpers.lua")
 local t = helpers.runner()
 
 local src  = io.open("lib/bookshelf_book_repository.lua"):read("*a")
-local ck   = src:match("\nlocal function _customPropsFor%(filepath%)\n(.-)\nend\n")
+local ck   = src:match("\nlocal function _customPropsFor%(filepath, bulk%)\n(.-)\nend\n")
 local only = src:match("\nlocal function _sidecarIsOnlyLocation%(%)\n(.-)\nend\n")
 
 t.test("the pieces are still there under those names", function()
@@ -108,6 +108,35 @@ t.test("the memo is dropped with the rest of the gate state", function()
     assert(inv and inv:match("_only_location"),
         "_only_location must be cleared alongside the directory listings, or a "
         .. "settings change is ignored until restart")
+end)
+
+t.test("bulk probe skips only a proven missing mirror for that parent directory", function()
+    local repo, modes, reads = { _customMirror = { root = "/meta", absent = {} } }, {}, 0
+    local srcfn = assert(src:match("(function Repo%._absentCustomMirror.-\nend)"))
+    local env = setmetatable({ Repo = repo, require = function()
+        return { attributes = function(path)
+            reads = reads + 1
+            if modes[path] == true then return "directory" end
+            return nil, "stat failed", modes[path] or 2
+        end }
+    end }, { __index = _G })
+    if setfenv then
+        setfenv(assert(loadstring(srcfn)), env)()
+    else
+        assert(load(srcfn, "mirror", "t", env))()
+    end
+    assert(repo._absentCustomMirror("/missing/a.epub"))
+    assert(repo._absentCustomMirror("/missing/b.epub"))
+    assert(reads == 1)
+    modes["/meta/present"] = true
+    assert(not repo._absentCustomMirror("/present/a.epub"))
+    modes["/meta/locked"] = 13
+    assert(not repo._absentCustomMirror("/locked/a.epub"))
+    modes["/meta/locked"] = 2
+    assert(repo._absentCustomMirror("/locked/b.epub"))
+    repo._customMirror = nil
+    assert(not repo._absentCustomMirror("/missing/a.epub"))
+    assert(ck:find("bulk and Repo._absentCustomMirror", 1, true))
 end)
 
 t.done()

@@ -2949,8 +2949,8 @@ function Editor:_openFaceOut(draft, on_change)
     local function spec() return SS.faceOutSpec(draft.spine_face_out) end
     -- Written back in the SIMPLEST shape that carries the set, so a shelf
     -- using one reason still stores the string it always did and an
-    -- untouched setting never grows a table: nil = favourites (the default),
-    -- false = none.
+    -- untouched setting never grows a table. Keep an explicitly selected reason
+    -- even when it is Favorites: nil inherits the global shelf setting.
     local function save(sp)
         if sp.all then draft.spine_face_out = "all"; return end
         local n, only = 0, nil
@@ -2959,7 +2959,7 @@ function Editor:_openFaceOut(draft, on_change)
         end
         if n == 0 then draft.spine_face_out = false
         elseif n == 1 and only ~= "recent" and only ~= "collection" then
-            draft.spine_face_out = (only == "favorites") and nil or only
+            draft.spine_face_out = only
         else
             draft.spine_face_out = sp
         end

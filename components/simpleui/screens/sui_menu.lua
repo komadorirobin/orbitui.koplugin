@@ -4411,7 +4411,7 @@ SimpleUIPlugin._buildMenus = function(self)
                     end,
                     callback = function()
                         local dialog
-                        dialog = InputDialog():new{
+                        dialog = require("ui/widget/inputdialog"):new{
                             title = _("Custom update branch"),
                             input = Updater.selectedBranch(),
                             input_hint = _("Branch name"),
@@ -4428,7 +4428,7 @@ SimpleUIPlugin._buildMenus = function(self)
                                         local branch = dialog:getInputText() or ""
                                         branch = branch:match("^%s*(.-)%s*$") or ""
                                         if branch == "" then
-                                            UIManager:show(InfoMessage():new{
+                                            UIManager:show(require("ui/widget/infomessage"):new{
                                                 text = _("Enter a branch name, or select Stable release."),
                                                 timeout = 3,
                                             })

@@ -1178,7 +1178,7 @@ H.test("heading changes are screen-scoped and never rewrite ordinary module or g
     saved[headingSetting("new")], saved[headingSetting("want")] = nil, nil
 end)
 
-H.test("all nine cards render custom headings with unchanged geometry in light and dark modes", function()
+H.test("all nine cards render custom headings without overflowing their cards in light and dark modes", function()
     for _, card in ipairs(Model.heading_cards) do
         saved[headingSetting(card.key)] = card.key .. " " .. string.rep("Lång rubrik 日本語 ", 20)
     end
@@ -1193,7 +1193,8 @@ H.test("all nine cards render custom headings with unchanged geometry in light a
         for _, card in ipairs(Model.heading_cards) do
             local label, area = headingWidget(current, card.key)
             H.eq(label.text, Model.normalizeHeading(saved[headingSetting(card.key)]))
-            H.eq(label.max_width, math.floor(area.w - 2 * plan.pad))
+            local reserve = card.key == "streak" and math.max(1, math.floor(16 * plan.scale)) or 0
+            H.eq(label.max_width, math.floor(area.w - 2 * plan.pad - reserve))
             H.eq(label.max_lines, nil)
             assert(label.overlap_offset[1] + label:getSize().w <= area.x + area.w - plan.pad)
             assert(label.overlap_offset[2] + label:getSize().h <= area.y + area.h)
@@ -1205,6 +1206,30 @@ H.test("all nine cards render custom headings with unchanged geometry in light a
     end
     dpi = 1
     for _, card in ipairs(Model.heading_cards) do saved[headingSetting(card.key)] = nil end
+end)
+
+H.test("the streak card opens the log by default and preserves its configured shortcut and hold", function()
+    local original = package.loaded["adapters/orbitui_reading_log"]
+    local opened, held = 0, nil
+    local c = {}; for k, v in pairs(ctx) do c[k] = v end
+    c.open_settings_fn = function(id) held = id end
+    local d = Dashboard.readData(c)
+    package.loaded["adapters/orbitui_reading_log"] = { open = function(opts)
+        opened = opened + 1
+        H.eq(opts.get_goal(), d.goal)
+    end }
+    local dashboard = View.build(600, 730, c, d)
+    local area = assert(dashboard._plan.cards.streak)
+    dashboard.dimen.x, dashboard.dimen.y = 0, 0
+    local ges = { pos = { x = dashboard.dimen.x + area.x + 1, y = dashboard.dimen.y + area.y + 1 } }
+    assert(dashboard:onDashboardTap(nil, ges)); H.eq(opened, 1)
+    assert(dashboard:onDashboardHold(nil, ges))
+    assert(dashboard:onDashboardHoldRelease()); H.eq(held, "reading_stats")
+    d.config.tap_actions.streak = false
+    dashboard:replaceContent(c, d)
+    assert(dashboard:onDashboardTap(nil, ges)); H.eq(opened, 1)
+    dashboard:free()
+    package.loaded["adapters/orbitui_reading_log"] = original
 end)
 
 H.test("stats and cover-row refreshes retain titles and native paging and book actions", function()

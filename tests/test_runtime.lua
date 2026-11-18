@@ -8,12 +8,14 @@ package.loaded.logger = { dbg = function() end, info = function() end, warn = fu
 package.loaded.gettext = function(value) return value end
 G_reader_settings = { readSetting = function(_, key) if key == "language" then return "sv" end end }
 
-H.test("module map references existing component source only", function()
+H.test("module map references existing component and explicitly embedded adapter sources", function()
     local n = 0
     for key, path in pairs(map) do
-        assert(path:match("^components/[^/]+/"))
-        assert(not key:match("tests/") and key ~= "main" and key ~= "_meta")
         local source = (getmetatable(map) or {}).orbitui_embedded
+        local adapter = (key == "adapters/orbitui_bookorbit_achievements" or key == "adapters/orbitui_reading_log")
+            and source[key] and path == key .. ".lua"
+        assert(path:match("^components/[^/]+/") or adapter)
+        assert(not key:match("tests/") and key ~= "main" and key ~= "_meta")
         assert(loadfile(path) or (source and source[key] and (loadstring or load)(source[key])))
         n = n + 1
     end

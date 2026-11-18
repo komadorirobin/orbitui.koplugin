@@ -230,6 +230,8 @@ function M.tapModule(entry, def, ctx, regions, x, y)
         if entry.kind == "action" then
             -- Native Home owns the close/restore/navigation dance for actions.
             if ctx.on_qa_tap then ctx.on_qa_tap(entry.ref) end
+        elseif entry.kind == "simpleui" and type(def.on_tap) == "function" then
+            def.on_tap(ctx)
         elseif entry.kind == "bookshelf" and type(def.on_tap) == "function" then
             local kit = require("lib/bookshelf_module_kit")
             local args = { entry = { id = entry.id, module = entry.ref }, surface = "orbitui_dashboard",

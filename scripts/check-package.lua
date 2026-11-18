@@ -28,7 +28,7 @@ local map_bytes = map_pipe:read("*a"); assert(map_pipe:close())
 local sealed_map = assert((loadstring or load)(map_bytes))()
 local embedded = assert(getmetatable(sealed_map)).orbitui_embedded
 local source_embedded = assert(getmetatable(source_map)).orbitui_embedded
-local embedded_count = 0
+local embedded_count, embedded_paths = 0, {}
 local expected_count = 0
 for _ in pairs(source_embedded) do expected_count = expected_count + 1 end
 for name, path in pairs(source_map) do
@@ -40,6 +40,7 @@ for name, path in pairs(source_map) do
         assert((loadstring or load)(source, "@" .. path))
         assert(not entries[prefix .. path], "Duplicate embedded source: " .. path)
         embedded_count = embedded_count + 1
+        embedded_paths[path] = true
     else expect(path) end
 end
 for name in pairs(embedded) do assert(source_map[name], "Unknown embedded module: " .. name) end
@@ -159,7 +160,7 @@ for path in tracked:lines() do
             or path:match("^components/simpleui/modules/critter/assets/")
             or path:match("^components/simpleui/modules/critter/decor/")
             or path:match("^components/[^/]+/locale/.*%.po$") then
-        if not verifyEmbedded(path) and not verifyLocale(path) then expect(path) end
+        if not embedded_paths[path] and not verifyEmbedded(path) and not verifyLocale(path) then expect(path) end
     end
 end
 assert(tracked:close())

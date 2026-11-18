@@ -20,6 +20,11 @@ local KEY_DAY        = "micromodule_otd_day"
 
 -- ─── Fetch ──────────────────────────────────────────────────────────────────
 
+local _view_index = 1
+local _total_pages = 1
+local _pages_cache = nil
+local _last_mw, _last_scale
+
 local function fetchOTD(force, callback)
     local Store = require("lib/bookshelf_settings_store")
     local cached = Store.read(KEY_DATA)
@@ -99,11 +104,6 @@ local function maybeScheduleImplicitFetch()
 end
 
 -- ─── View state ─────────────────────────────────────────────────────────────
-local _view_index = 1
-local _total_pages = 1
-local _pages_cache = nil
-local _last_mw = nil
-
 local function cycleView()
     _view_index = _view_index + 1
     if _view_index > _total_pages then _view_index = 1 end
@@ -220,9 +220,9 @@ return {
         end
 
         -- Rebuild pages cache if needed
-        if not _pages_cache or _last_mw ~= mw then
+        if not _pages_cache or _last_mw ~= mw or _last_scale ~= scale_pct then
             _pages_cache = {}
-            _last_mw = mw
+            _last_mw, _last_scale = mw, scale_pct
             local face = Fonts:getFace("cfont", sc(14))
             local RenderText = require("ui/rendertext")
             local lines_per_page = 3

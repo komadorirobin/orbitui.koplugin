@@ -36,6 +36,20 @@ H.test("suggestions preserve accents and rank repeated local names first", funct
     H.eq(Search.wordSuggestions(vocabulary, "ram", 4)[1], "Ramqvist")
     H.eq(#Search.wordSuggestions(vocabulary, "hirayasumi", 11), 0)
 end)
+H.test("later suggestions can displace all three early matches", function()
+    local v = Search.wordVocabulary()
+    for index, title in ipairs{
+        "Storyteller Storybook Storyboard Storytime Storyline",
+        "Storytime Storyline Storm Stork Stony",
+        "Storm Stork Stony Storytime Storyline",
+        "Storm",
+    } do
+        v:add{ filepath = "/" .. index, title = title }
+    end
+    v:finish()
+    H.eq(table.concat(Search.wordSuggestions(v, "sto", 4), ","), "Storm,Storyline,Storytime")
+    H.eq(table.concat(Search.wordSuggestions(v, "stor", 5), ","), "Storm,Storyline,Storytime")
+end)
 H.test("completing a word preserves the preceding query and never replaces mid-text", function()
     H.eq(Search.completeWord("Nina ång", cursor("Nina ång"), "Ångström"), "Nina Ångström ")
     H.eq(Search.completeWord("Nina ång", 3, "Ångström"), nil)

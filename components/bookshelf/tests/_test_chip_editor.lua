@@ -605,6 +605,13 @@ t.test("face out: a tap toggles a reason, saves it and lays the page out in plac
     eq(draft.spine_face_out, "reading", "one reason is stored as the plain string")
 end)
 
+t.test("face out: choosing Favorites alone keeps the explicit shelf setting", function()
+    local draft = { spine_face_out = "none" }
+    local p = openFaceOut(draft)
+    p.chip("Favorites").callback()
+    eq(draft.spine_face_out, "favorites", "nil would inherit a different global mode")
+end)
+
 t.test("face out: All and None are the whole-shelf answers", function()
     local draft = { spine_face_out = "reading" }
     local p = openFaceOut(draft)

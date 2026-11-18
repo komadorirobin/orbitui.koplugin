@@ -77,6 +77,10 @@ local function _UI()
     return package.loaded["infra/sui_core"] or require("infra/sui_core")
 end
 
+local function showUnavailable(msg)
+    _UI().Notify.toast(msg)
+end
+
 -- Lazy reference to sui_browsemeta — avoids loading the module at startup when
 -- the Browse by Authors/Series feature may not be in use.
 local function _BM()
@@ -1365,10 +1369,6 @@ end
 -- ---------------------------------------------------------------------------
 -- Navigation
 -- ---------------------------------------------------------------------------
-
-local function showUnavailable(msg)
-    _UI().Notify.toast(msg)
-end
 
 local function setActiveAndRefreshFM(plugin, action_id, tabs)
     -- Never mark an action-only tab (bookmark_browser, wifi, etc.) as the

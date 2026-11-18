@@ -279,10 +279,26 @@ function M.wrapChrome(chrome)
     end
 end
 
-local function localGoal(ctx)
-    return { value = (ctx.stats or {}).books_year or 0,
-        target = require("infra/sui_goals").get("annual"),
+local function localGoal(ctx, reading_log)
+    local year_count = (ctx.stats or {}).books_year
+    if year_count == nil and reading_log then
+        local Stats = require("modules/module_stats_provider")
+        year_count = Stats.countFinished(Stats.getFinishedBooks(tonumber(os.date("%Y"))))
+    end
+    return { value = year_count or 0, target = require("infra/sui_goals").get("annual"),
         module = "reading_goals", metric = "book", source = "KOReader" }
+end
+
+function M.readGoal(ctx, config, reading_log)
+    if not hardcoverGoal(config, ctx.pfx) then return localGoal(ctx, reading_log) end
+    local HC = require("modules/module_hardcover")
+    local cached = HC._getCached()
+    if not reading_log then HC.ensureFresh() end
+    if cached then
+        return { title = cached.description, value = tonumber(cached.progress) or 0,
+            target = tonumber(cached.goal) or 0, source = "Hardcover",
+            module = "hardcover", metric = cached.metric or "book" }
+    end
 end
 
 function M.readData(ctx)
@@ -298,20 +314,8 @@ function M.readData(ctx)
     local want, want_error, new, new_error = {}, nil, {}, nil
     if visible("want") then want, want_error = Sources.files(config.sources.want, ctx) end
     if visible("new") then new, new_error = Sources.files(config.sources.new, ctx) end
-    local goal
     local hc_enabled = hardcoverGoal(config, ctx.pfx)
-    if visible("goal") and hc_enabled then
-        local HC = require("modules/module_hardcover")
-        local cached = HC._getCached()
-        if cached then
-            goal = { title = cached.description, value = tonumber(cached.progress) or 0,
-                target = tonumber(cached.goal) or 0, source = "Hardcover",
-                module = "hardcover", metric = cached.metric or "book" }
-        end
-        HC.ensureFresh()
-    elseif visible("goal") then
-        goal = localGoal(ctx)
-    end
+    local goal = visible("goal") and M.readGoal(ctx, config) or nil
     local current = (cover_layout or visible("hero")) and fp and { file = fp, data = read(fp) } or nil
     local ongoing_limit = layout == "cover_row" and config.cover_row_count - (current and 1 or 0) or 3
     return {

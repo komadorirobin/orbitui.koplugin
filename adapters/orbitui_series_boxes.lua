@@ -59,17 +59,26 @@ local function localPath(path)
     return path ~= "" and path or "/"
 end
 
-function M.oneshotsPath(filepath, root, folder_name)
-    filepath, root = localPath(filepath), localPath(root)
-    if not filepath or not root then return end
-    local prefix = root == "/" and root or root .. "/"
-    if filepath:sub(1, #prefix) ~= prefix then return end
-    local parent = root == "/" and "" or root
-    -- Only directory components count, never a book named Oneshots.epub.
-    for part in filepath:sub(#prefix + 1):gmatch("([^/]+)/") do
-        parent = parent .. "/" .. part
-        if part:lower() == (folder_name or "Oneshots"):lower() then return parent end
+local function rootPrefix(root)
+    root = localPath(root)
+    return root and (root == "/" and root or root .. "/")
+end
+
+local function matchingFolder(filepath, prefix, name)
+    filepath = localPath(filepath)
+    if not filepath or not prefix or filepath:sub(1, #prefix) ~= prefix then return end
+    -- Only directory components count. Return the original spelling of the folder.
+    local start = #prefix + 1
+    local slash = filepath:find("/", start, true)
+    while slash do
+        if filepath:sub(start, slash - 1):lower() == name then return filepath:sub(1, slash - 1) end
+        start = slash + 1
+        slash = filepath:find("/", start, true)
     end
+end
+
+function M.oneshotsPath(filepath, root, folder_name)
+    return matchingFolder(filepath, rootPrefix(root), (folder_name or "Oneshots"):lower())
 end
 
 local function folderRoot(self)
@@ -85,8 +94,9 @@ end
 function M.folderBoxes(items, root, light_meta, folder_name)
     local Boxes = require("lib/bookshelf_series_boxes")
     local out, groups = {}, {}
+    local prefix, name = rootPrefix(root), (folder_name or "Oneshots"):lower()
     for _, item in ipairs(items) do
-        local folder = not item.is_remote and not item.books and M.oneshotsPath(item.filepath, root, folder_name)
+        local folder = not item.is_remote and not item.books and matchingFolder(item.filepath, prefix, name)
         if folder then
             local group = groups[folder]
             if not group then
@@ -100,12 +110,7 @@ function M.folderBoxes(items, root, light_meta, folder_name)
     end
     for path, group in pairs(groups) do
         local label = path:match("([^/]+)$")
-        local box = Boxes.box(group.books, label, group.original, light_meta)
-        -- Retain folder order, rather than sorting unrelated books by series index.
-        local order = {}
-        for i, book in ipairs(group.books) do order[book.filepath] = order[book.filepath] or i end
-        table.sort(box.books, function(a, b) return order[a.filepath] < order[b.filepath] end)
-        box.first_book = box.books[1]
+        local box = Boxes.box(group.books, label, group.original, light_meta, { preserve_order = true })
         box.kind, box.path = "folder", path
         box._spine_single = false
         box.author, box.authors = nil, nil

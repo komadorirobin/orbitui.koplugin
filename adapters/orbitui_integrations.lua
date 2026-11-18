@@ -137,6 +137,13 @@ function M.bookOrbitItems(close)
         { text = _("BookOrbit extras: installation & compatibility"), callback = function()
             info("Optional device and server patches are documented at github.com/komadorirobin/bookorbit-extras. Online tag matching requires its server API addition; embedded EPUB tags do not. Undo opening requires both the device patch and a compatible server extension. The reviewed BookOrbit 3.6.0 source package supports tags and undo together; never use the old 3.2.0 overlay on a newer server. The Hardcover single-writer device patch leaves BookOrbit as the automatic writer. OrbitUI does not install, disable or deploy these patches. Do not remove undo support while a protected opening is pending; resolve it with the patch first.") end },
     }
+    rows[#rows + 1] = {
+        text = _("BookOrbit achievements API key"),
+        help_text = _("Add an optional read-only API key for the full BookOrbit achievements catalogue."),
+        enabled_func = function() return M.bookOrbitEnabled() end,
+        keep_menu_open = true,
+        callback = function() require("adapters/orbitui_bookorbit_achievements").openKey() end,
+    }
     rows[#rows + 1] = { text = _("Import reading status from BookOrbit…"), callback = function()
         if close then close() end
         M.statusImport.showSettings()

@@ -18,9 +18,13 @@ function M.path(path)
     return path ~= "" and path or "/"
 end
 
+local function containsPath(file, root)
+    return root == "/" or file == root or file:sub(1, #root + 1) == root .. "/"
+end
+
 function M.contains(file, root)
     file, root = M.path(file), M.path(root)
-    return file and root and (root == "/" or file == root or file:sub(1, #root + 1) == root .. "/") or false
+    return file and root and containsPath(file, root) or false
 end
 
 local function validId(value)
@@ -106,8 +110,8 @@ function M.new(store, legacy, home, migrate_legacy)
         return out
     end
     function api.get(key, include_disabled)
-        for _, section in ipairs(api.list(include_disabled)) do
-            if section.key == key then return section end
+        for _, section in ipairs(api.config().sections) do
+            if section.key == key and (include_disabled or section.enabled ~= false) then return section end
         end
     end
     function api.save(config)
@@ -157,11 +161,17 @@ function M.new(store, legacy, home, migrate_legacy)
         end)
     end
     function api.matchFile(file)
-        local best, length
-        for _, section in ipairs(api.list()) do
-            for _, root in ipairs(section.roots) do
-                if M.contains(file, root) and (not length or #root > length) then
-                    best, length = section.key, #root
+        local sections = api.config().sections
+        file = M.path(file)
+        if not file then return nil end
+        local best, length = nil, 0
+        for _, section in ipairs(sections) do
+            if section.enabled ~= false then
+                for _, root in ipairs(section.roots) do
+                    -- Saved roots are already canonical. The first equal-length match wins.
+                    if #root > length and containsPath(file, root) then
+                        best, length = section.key, #root
+                    end
                 end
             end
         end

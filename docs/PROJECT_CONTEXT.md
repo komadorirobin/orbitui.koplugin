@@ -29,6 +29,31 @@ and correct this file in the same change.
   paint buffer. SimpleUI remains 3.1.0 at **5946a21e5**. Bookshelf remains
   6.5.2 at **58d776725**. See MERGE_LOG for verification and scope.
 
+- **Runtime fixes in 1.4.0-beta.7.** Typo-tolerant search uses bounded edit-distance
+  rows. The Reading log reuses its per-book daily grouping for the weekly
+  page total. Book details can clear the selected rating, the BookOrbit
+  Want to Read action loads its feedback dialog, and reopening achievements
+  can retry an incomplete refresh immediately. See TESTING for HiBreak
+  timings, emulator coverage and the private package receipt.
+
+- **Library navigation in 1.4.0-beta.7.** The metadata pass checks once per
+  book directory whether a central sidecar directory is missing. Existing
+  mirrors and hash storage keep KOReader's lookup. The Next shelf preloads its
+  cover paths in short, cancellable steps. See TESTING for the matched HiBreak
+  navigation measurements.
+
+- **Reading log in 1.4.0-beta.7.** Tap the dashboard's streak card to
+  see the seven-day reading log, a tappable twelve-week calendar and the
+  dashboard's configured goal. Statistics reuse the local reading ledger and
+  date-bounded queries on short-lived read-only database handles. The card
+  honours saved tap shortcuts.
+
+- **BookOrbit achievements in 1.4.0-beta.7.** The optional Home card uses
+  the installed BookOrbit plugin session and keeps an account-scoped offline
+  snapshot. The plugin session supplies the latest earned badge and next goal.
+  An optional read-only BookOrbit 3.8.0 API key enables the full catalogue with
+  All, Earned and Remaining filters on a standard BookOrbit installation.
+
 - **Upstream maintenance in 1.4.0-beta.6.** Bookshelf 6.5.2
   (**58d776725**) redraws changed spine marks and fixes Kindle read flags
   and custom metadata. SimpleUI 3.1.0 (**44df9c876**) adds hideable pages,
@@ -94,7 +119,7 @@ and correct this file in the same change.
 ### Navigation in 1.3.0
 
 GitHub Latest and the stable updater channel offer **1.3.0** from
-**23714b0e**. The preview channel offers **1.4.0-beta.6**. The OrbitUI tab
+**23714b0e**. The preview channel offers **1.4.0-beta.7**. The OrbitUI tab
 follows Quick Actions in KOReader’s top menu.
 Its settings routes use Home for the dashboard and cards, Library
 for shelves and library appearance, and Dock & interface for shortcuts and

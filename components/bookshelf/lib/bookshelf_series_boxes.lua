@@ -33,7 +33,7 @@ function M.isBox(item)
     return type(item) == "table" and item._series_box == true
 end
 
-function M.box(books, title, original, light_meta)
+function M.box(books, title, original, light_meta, opts)
     local members, seen = {}, {}
     for _, book in ipairs(books) do
         if book.filepath and not seen[book.filepath] then
@@ -42,12 +42,14 @@ function M.box(books, title, original, light_meta)
         end
     end
     if #members == 0 then return original end
-    local cmp = require("lib/bookshelf_sort_engine").chainedComparator{
-        -- Unnumbered books (manga chapters, 587) follow by title; the
-        -- file name only breaks a tie between equal titles.
-        {key="series_index"}, {key="title"}, {key="filename"},
-    }
-    table.sort(members, cmp)
+    if not (opts and opts.preserve_order) then
+        local cmp = require("lib/bookshelf_sort_engine").chainedComparator{
+            -- Unnumbered books (manga chapters, 587) follow by title; the
+            -- file name only breaks a tie between equal titles.
+            {key="series_index"}, {key="title"}, {key="filename"},
+        }
+        table.sort(members, cmp)
+    end
     local box = copy(original)
     box.filepath, box.path, box.shelf_section, box.shelf_section_path = nil, nil, nil, nil
     box.kind, box.series_name, box.label, box.name = "series", title, title, title

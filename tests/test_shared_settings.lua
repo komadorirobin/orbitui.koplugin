@@ -138,10 +138,12 @@ H.test("library seams retain the book-opening path and only invalidate after the
     H.eq(commits, 1); H.eq(refreshes, 1)
 end)
 H.test("saved Home modules register via the component loader seam", function()
-    local registry = {}
+    local module_id
+    local registry = { register = function(mod) module_id = mod.id end }
     H.eq(Integration.wrap("modules/moduleregistry", registry), registry)
     H.eq(installed, registry)
     H.eq(dashboard_installed, registry)
+    H.eq(module_id, "orbitui_bookorbit_achievements")
 end)
 H.test("owned labels follow Swedish locale without replacing component translators", function()
     G_reader_settings = { readSetting = function() return "sv_SE" end }

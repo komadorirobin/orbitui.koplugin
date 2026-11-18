@@ -644,8 +644,18 @@ function M.content(widget, p, ctx, data)
     for i, tile in ipairs(tiles) do
         r = p.stats[i] or p.cards and p.cards[tile[4]]
         if r then
-        box(r, nil, nil, tile[4])
-        title(heading(tile[4], _(tile[1])), r)
+        local key = tile[4]
+        box(r, nil, nil, key)
+        local label = heading(key, _(tile[1]))
+        local opens_log = key == "streak"
+        local has_override = data.config and data.config.tap_actions and data.config.tap_actions[key] ~= nil
+        if opens_log and not has_override then
+            local arrow_w = px(16)
+            text(label, r.x + p.pad, r.y + p.pad, r.w - 2 * p.pad - arrow_w, 13, true)
+            text("›", r.x + r.w - p.pad - arrow_w, r.y + p.pad, arrow_w, 16, true)
+        else
+            title(label, r)
+        end
         if p.ladder then
             local x, y, w = r.x + p.pad, r.y + p.pad + math.max(17, px(27)), r.w - p.pad * 2
             local amount = text(tile[2], x, y, w, 25, true)
@@ -665,7 +675,17 @@ function M.content(widget, p, ctx, data)
             text(tile[2], r.x + p.pad, r.y + math.floor(r.h * 0.40), r.w - p.pad * 2, 23, true)
             text(_(tile[3]), r.x + p.pad, r.y + r.h - p.pad - px(15), r.w - p.pad * 2, 11, false, muted)
         end
-        action(r, cardTap(tile[4], settings("reading_stats")))
+        local edit_stats = settings("reading_stats")
+        local open = opens_log and function()
+            local palette = colours("streak")
+            require("adapters/orbitui_reading_log").open{
+                accent = palette and palette.accent,
+                get_goal = function() return data.goal or require("adapters/orbitui_dashboard").readGoal(ctx, data.config, true) end,
+            }
+        end or edit_stats
+        local hold = opens_log and require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false
+            and edit_stats or nil
+        action(r, cardTap(key, open), hold)
         end
     end
 

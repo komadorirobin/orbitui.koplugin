@@ -865,9 +865,11 @@ local function _buildWidget(w, d, ctx)
             }
         end
 
+        local fallback_background
+        if not icon_path then fallback_background = _CLR_FRAME_BG end
         local icon_frame = FrameContainer:new{
             bordersize = 0,
-            background = icon_path and nil or _CLR_FRAME_BG,
+            background = fallback_background,
             radius     = d.corner_r,
             padding    = icon_path and 0 or d.frame_pad,
             inner_widget,

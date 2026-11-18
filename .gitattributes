@@ -19,6 +19,8 @@
 # keep upstream originals in Git without exceeding old API-1 OTA file limits.
 /components/simpleui/modules/critter/assets/hazel/*.png export-ignore
 # Exact lazy Lua sources in the existing generated module registry (API 1).
+/adapters/orbitui_bookorbit_achievements.lua export-ignore
+/adapters/orbitui_reading_log.lua export-ignore
 /components/simpleui/features/sui_menu_hide.lua export-ignore
 /components/simpleui/features/sui_patch_compat.lua export-ignore
 /components/simpleui/infra/sui_migrations.lua export-ignore

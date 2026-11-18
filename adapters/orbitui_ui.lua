@@ -269,6 +269,7 @@ function M.wrap(name, module)
         require("adapters/orbitui_home_shelves").install(module)
         require("adapters/orbitui_dashboard").install(module)
         require("adapters/orbitui_silverfish").install(module)
+        require("adapters/orbitui_bookorbit_achievements").install(module)
         require("adapters/orbitui_module_store").registry(module)
     elseif name == "infra/sui_layout" then
         require("adapters/orbitui_module_store").layout(module)

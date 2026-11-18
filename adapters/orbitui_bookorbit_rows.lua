@@ -31,8 +31,8 @@ local function plugin()
     local ok, p = pcall(require("core/orbitui_context").plugin, "bookorbit")
     return ok and p or nil
 end
-function M.account()
-    if not integration().bookOrbitEnabled("rows") then return nil, "disabled" end
+function M.account(feature)
+    if not integration().bookOrbitEnabled(feature or "rows") then return nil, "disabled" end
     local p = plugin()
     local s = p and p.settings
     if not p or type(p.newClient) ~= "function" or type(s) ~= "table"

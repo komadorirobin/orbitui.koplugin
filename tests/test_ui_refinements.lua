@@ -39,6 +39,19 @@ H.test("matching is read-only and keeps excluded genres out", function()
     H.eq(original[1].filepath, "/a")
 end)
 
+H.test("edit-distance bands retain boundary transpositions, prefixes and score ordering", function()
+    local match = Search.matcher("abcdefgh", true)
+    for _, case in ipairs{
+        { "bacdefghijkl", 201 }, { "badcefgh", 202 }, { "bacdegfh", 202 },
+        { "abcedf", false }, { "abcdef", 202 }, { "abxyefgh", 202 },
+        { "xabcdefgxrest", 202 }, { "xyabzzefgh", false },
+        { "abxdefgh bacdefgh", 201 }, { "bacdefgh abcdefgh", 0 },
+    } do H.eq(match({ title = case[1] }) or false, case[2], case[1]) end
+    local a, b = { title = "Book", filepath = "/a" }, { title = "Book extras", filepath = "/b" }
+    local sorted = Search.sortBooks({ b, a }, "relevance", "Book", { [b] = 0 })
+    H.eq(sorted[1], a)
+end)
+
 local function compile(code, env)
     setmetatable(env, { __index = _G })
     if setfenv then return setfenv(assert(loadstring(code)), env)() end

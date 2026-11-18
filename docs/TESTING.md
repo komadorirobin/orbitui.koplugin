@@ -17,6 +17,138 @@ covered history exclusion and restore, nested files in flat view, spine mark
 invalidation and hide/show of Home pages. Physical HiBreak display and timing
 checks remain outstanding. The 44 translation catalogues passed validation.
 
+## 2026-11-18 — Library routing, Manga folders and word suggestions
+
+Host LuaJIT CPU times use a synthetic 3,341-book library. The comparison
+used the working sources immediately before and after the changes, warmed
+both versions, alternated their order and took the median of ten batches.
+Fixture construction and vocabulary indexing were outside the timed region.
+
+| Operation | Before | After |
+| --- | ---: | ---: |
+| Assign all file paths to two library sections with five roots | 59.3 ms | 7.4 ms |
+| Group a Manga shelf containing 668 books under Oneshots | 14.4 ms | 6.1 ms |
+| Choose the three word suggestions for one broad prefix | 0.069 ms | 0.004 ms |
+
+The comparisons covered the library assignment of each file, the displayed
+shelf order and box members, and the suggestions for 3,351 prefix queries.
+In a separate replay, 2,905 ebook paths from the HiBreak backup took
+60.9 ms to route before and 8.4 ms after. Grouping its 2,220 Manga paths
+(28 Oneshots) fell from 46.4 ms to 5.4 ms. This replay used filenames as
+titles, KOReader's natural sort and the same ten-batch procedure. All 2,193
+display entries and their member order matched the control.
+
+The measurements cover in-memory operations on the Mac. End-to-end view
+opening times on the HiBreak have not been measured for this change.
+The full host suites passed under Lua and LuaJIT. Both Bookshelf runs
+reported 616 suites with zero failures. The three SQLite suites that the
+runner skips were also run against macOS SQLite through KOReader's Lua
+bindings (20, 100 and 9 checks passed, respectively).
+The local baseline, comparison scripts and measurements are in
+`test-results/efficiency-20261118-sthwy6m4/`.
+
+## 2026-11-17 — Local runtime audit
+
+The audit covered the host and both embedded components on top of
+`fda80ade6`, including the development Reading log and BookOrbit
+achievements. Static analysis covered 530 runtime and recovery Lua
+files. The existing interpreter suites, package checks and native OTA
+smoke from stable 1.3.0 were also exercised. The private candidate commit,
+package digest and test logs are recorded under `test-results/audit-20261117/`.
+
+On the physical HiBreak, the same four synthetic metadata queries ran ten
+times per library size, in three runs of each build using KOReader's
+installed ARM64 LuaJIT. With 5,000 books and typo matching enabled, the
+median of the three run medians fell from 33.4 to 13.5 ms. These figures
+measure matcher CPU time. A separate 30,000-case differential check covered
+prefixes, transpositions and multibyte text. Weekly reading totals matched
+an independent SQL aggregation on a device-local copy of the HiBreak's
+statistics. The list of recent books matched the prior build.
+
+The Tolino emulator reproduced a missing BookOrbit feedback dialog and a
+rating tap that reapplied the current star on the previous development
+build. The corrected file-menu callback handles an offline completion.
+Tapping the current star clears the fixture sidecar rating, and tapping a
+different star persists it. The streak card, Reading log tabs and day
+details also ran against the packaged candidate. BookOrbit replies in
+the UI regression are fixtures. The Bigme tests ran outside the installed
+KOReader UI, and physical Kindle and Kobo UI acceptance remains open.
+
+### Physical HiBreak library navigation, installed 1.4.0-beta.5
+
+Four fresh KOReader processes used the reader's existing library, profiles and
+disk caches. Runs alternated which dock shortcut opened first. Each timing
+starts immediately before Android's injected tap and ends at the first recorded
+Android frame displaying the destination's active tab and shelf. Frame times
+come from the recording's clock metadata. Covers can continue filling in, and
+the e-ink panel can take longer to settle. These measurements apply to the
+installed build (`f6297ffe`).
+
+| From Home to | First visit per process, median (range, count) | Repeat visit, median (range, count) |
+| --- | --- | --- |
+| Library, Fiction tab | 1,733 ms (683–2,605, n=4) | 287 ms (217–836, n=6) |
+| Manga, Manga tab | 4,864 ms (4,832–6,486, n=3) | 617 ms (383–7,585, n=4) |
+| Manga, Series tab | 244 ms (n=1) | 175 ms (159–191, n=2) |
+
+Within a shelf, opening Nonfiction took 402 ms, returning to Fiction 227 ms,
+and switching from Manga to Series 565 ms (one observation each). Twenty
+successful returns to Home had a median of 463 ms. Two further input attempts
+timed out: Home after the first Manga shelf appeared, and Manga after switching
+to Series. In each case Android logged a five-second input timeout and the
+recording confirmed that the requested tab or screen never appeared before the
+next action. The 7,585 ms repeat Manga visit did complete and is included in
+the table. Cause remains unconfirmed. Raw observations, including failed taps,
+are in `test-results/audit-20261117/view-times/timings.csv`.
+
+### Physical HiBreak library navigation with the local changes
+
+Four fresh KOReader processes per build used the existing library and disk
+caches. In two processes Manga opened first, and in the other two Library
+opened first. An extended route supplied extra repeat measurements. The
+development ZIPs differed in two runtime files, the bookshelf repository and
+widget. Timings run from the Home dock tap to the first Android frame showing
+the shelf. Panel refresh and later cover decoding can take longer.
+
+| Destination from Home | Control median (range, count) | Optimized median (range, count) |
+| --- | --- | --- |
+| Manga, first visit | 4.00 s (3.56–4.91, n=4) | 3.17 s (2.06–4.56, n=4) |
+| Manga, repeat | 0.43 s (0.37–0.48, n=4) | 0.39 s (0.38–0.40, n=4) |
+| Library, first visit | 1.28 s (0.56–1.95, n=4) | 0.90 s (0.54–1.36, n=4) |
+| Library, repeat | 0.23 s (0.21–0.24, n=6) | 0.23 s (0.21–0.81, n=6) |
+
+Repeat Library taps had effectively the same median. Two of six candidate
+visits took 794 and 809 ms, while the slowest control visit took 238 ms.
+
+A separate instrumented launch per build counted 5,156 filesystem attribute
+calls while preparing the Manga labels on the control and 3,150 on the
+candidate. That pass took 3.10 s and 2.14 s respectively. Both produced the
+same ordered fingerprint of the 233 display items and their 2,564 member
+records. A host fixture also verified a sibling metadata edit and a central
+edit after the library metadata was refreshed.
+
+The control prepared covers for the Next shelf in one 1,374 ms callback.
+The final candidate split the work across 148 callbacks, the longest
+measuring 10.9 ms. The first and last callbacks were 2.2 s apart.
+An earlier trial spaced these steps 50 ms apart. Its repeat Library visits
+took a median of 424 ms across six attempts. The final build allows input
+between slices with a 5 ms delay.
+
+Including a faster sequence of Manga, Series and Home taps, the requested
+destination appeared on 44 of 44 taps with the final candidate and
+48 of 48 with the control. Android logged no KOReader input timeouts
+during those routes. The intermittent timeouts observed on the installed
+beta.5 remain unconfirmed on both development builds.
+
+Both full host runs (Lua and LuaJIT) passed, including the 299 repository
+checks. The Bookshelf runner reported 616 suites, zero failures and three
+environment-dependent SQLite skips on each interpreter.
+
+The development control ZIP starts with SHA-256 `61757f48`. The final ZIP is
+`57f49ff55b0ac6ef1f17569474fc2324d2bd18597664e29e0b1bd78f45bf5f8a`.
+Recordings, tap timestamps and profiling logs are in the local
+`test-results/navigation-20261117/` directory. The original beta.5 was
+restored after the tests.
+
 ## 2026-11-16 — OrbitUI 1.4.0-beta.6
 
 The tagged build **fc32062f3** repeated the November 16 Tolino checks with

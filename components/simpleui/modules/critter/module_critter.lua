@@ -227,7 +227,6 @@ end
 
 -- Id of the critter chosen.
 local function critterId(settings)
-    local settings = CritterSettings.forScreen(pfx)
     local critter = Assets.get(settings.pick())
     return critter and critter.id
 end

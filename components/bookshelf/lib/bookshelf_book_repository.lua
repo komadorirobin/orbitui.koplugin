@@ -228,6 +228,7 @@ local _only_location
 local function _invalidateCustomMetaGate()
     _dir_entry_cache = {}
     _only_location   = nil
+    Repo._customMirror = nil
 end
 -- Fill the per-directory cache from listings a walk already produced. The walk
 -- reads every one of these directories anyway, so the gate re-reading them was
@@ -300,12 +301,29 @@ local function _sidecarIsOnlyLocation()
                 and DataStorage.getDocSettingsDir then
             local root = DataStorage:getDocSettingsDir()
             if root and lfs.attributes(root, "mode") == "directory" then
-                only = false   -- a mirrored sidecar tree exists; it must be probed too
+                if only then Repo._customMirror = { root = root, absent = {} } end
+                only = false   -- some book directories may have mirrored sidecars
             end
         end
     end
     _only_location = only
     return only
+end
+
+-- A central metadata tree can belong entirely to another storage volume.
+-- A missing mirrored parent rules it out for every sibling in that directory.
+-- Keep the native probe for existing mirrors and errors such as EACCES.
+function Repo._absentCustomMirror(filepath)
+    local mirror = Repo._customMirror
+    local parent = mirror and filepath:match("^(.*)/[^/]+$")
+    if not parent then return false end
+    local absent = mirror.absent[parent]
+    if absent == nil then
+        local mode, _, errno = require("libs/libkoreader-lfs").attributes(mirror.root .. parent, "mode")
+        absent = not mode and (errno == 2 or errno == 20)
+        if mode or absent then mirror.absent[parent] = absent end
+    end
+    return absent
 end
 
 local function _customMetaPossible(filepath)
@@ -355,7 +373,7 @@ end
 -- removes the key instead. `keywords` is the exception -- our own genre
 -- editor writes "" to mean "cleared" -- so that field keeps nil-vs-empty
 -- semantics and the others test for a non-empty string.
-local function _customPropsFor(filepath)
+local function _customPropsFor(filepath, bulk)
     if not filepath then return nil end
     local ok, DocSettings = pcall(require, "docsettings")
     if not (ok and DocSettings and DocSettings.findCustomMetadataFile) then return nil end
@@ -374,7 +392,7 @@ local function _customPropsFor(filepath)
     -- Anything the sibling cannot answer for -- a hash-located sidecar, a
     -- mirrored sidecar tree, a path with no parent -- still goes the long way.
     local cmf
-    local only_sibling = _sidecarIsOnlyLocation()
+    local only_sibling = _sidecarIsOnlyLocation() or (bulk and Repo._absentCustomMirror(filepath))
     local sdr = only_sibling and _siblingSidecarDir(filepath) or nil
     if only_sibling then
         if not sdr then return nil end
@@ -1833,7 +1851,7 @@ local function _buildLightMetaFromInfo(fp, info)
     info = info or {}
     if Repo.orbitui_comic_metadata then info = Repo.orbitui_comic_metadata(fp, info) end
     local cb = _calibreMetadataFor(fp)
-    local cp = _customPropsFor(fp)
+    local cp = _customPropsFor(fp, true)
 
     -- Same resolution as buildBookMeta, from the same function: the chips are
     -- built from these records and the shelf from those, so a book that is

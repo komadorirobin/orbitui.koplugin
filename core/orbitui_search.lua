@@ -37,12 +37,12 @@ function M.sortBooks(books, sort, query, matches)
         keys[book] = { title = title, author = name, series = series,
             relevance = score(title, 100) + score(name, 20) + score(series, 10) }
     end
+    local field = (sort == "author" or sort == "series" or sort == "title") and sort or "relevance"
     table.sort(books, function(a, b)
         local ak, bk = keys[a], keys[b]
-        local field = sort == "author" and "author" or sort == "series" and "series"
-            or sort == "title" and "title" or "relevance"
-        if field == "relevance" and matches and matches[a] ~= matches[b] then
-            return (matches[a] or 0) < (matches[b] or 0)
+        if field == "relevance" and matches then
+            local a_match, b_match = matches[a] or 0, matches[b] or 0
+            if a_match ~= b_match then return a_match < b_match end
         end
         if ak[field] ~= bk[field] then
             if field == "relevance" then return ak[field] > bk[field] end
@@ -147,6 +147,13 @@ function M.completionPrefix(text, cursor, selection)
     return M.normalize(word), before, word
 end
 
+local function ranksBefore(a, b)
+    if not b then return true end
+    if a.count ~= b.count then return a.count > b.count end
+    if a.length ~= b.length then return a.length < b.length end
+    return a.text < b.text
+end
+
 function M.wordSuggestions(vocabulary, text, cursor, selection)
     local prefix = M.completionPrefix(text, cursor, selection)
     if not prefix or not vocabulary or not vocabulary.ready then return {} end
@@ -156,19 +163,25 @@ function M.wordSuggestions(vocabulary, text, cursor, selection)
         local mid = math.floor((lo + hi) / 2)
         if keys[mid] < prefix then lo = mid + 1 else hi = mid end
     end
-    local out = {}
+    local first, second, third
     -- A broad two-letter prefix must not scan the entire vocabulary per key.
     for i = lo, math.min(#keys, lo + 255) do
         local key = keys[i]
         if key:sub(1, #prefix) ~= prefix then break end
-        if key ~= prefix then out[#out + 1] = entries[key] end
+        if key ~= prefix then
+            local candidate = entries[key]
+            if ranksBefore(candidate, third) then
+                if ranksBefore(candidate, first) then
+                    first, second, third = candidate, first, second
+                elseif ranksBefore(candidate, second) then
+                    second, third = candidate, second
+                else
+                    third = candidate
+                end
+            end
+        end
     end
-    table.sort(out, function(a, b)
-        if a.count ~= b.count then return a.count > b.count end
-        if a.length ~= b.length then return a.length < b.length end
-        return a.text < b.text
-    end)
-    return { out[1] and out[1].text, out[2] and out[2].text, out[3] and out[3].text }
+    return { first and first.text, second and second.text, third and third.text }
 end
 
 function M.completeWord(text, cursor, word, selection)
@@ -319,24 +332,32 @@ function M.attachWordSuggestions(dialog, opts)
         if valid() then step() else retire() end
     end)
 end
-local function distance(query, target, cap)
-    local n = #query
-    if #target < n - cap then return end
-    local previous, older = {}, nil
-    for j = 0, math.min(#target, n + cap) do previous[j] = j end
+-- Prefix edit distance with adjacent transpositions. Values outside the
+-- cap-wide diagonal cannot qualify. The caller reuses three rows per query.
+local function distance(query, target, cap, older, previous, row)
+    local n, width = #query, #target
+    if width < n - cap then return end
+    local outside = cap + 1
+    for j = 0, math.min(width, cap) do previous[j] = j end
+    previous[cap + 1] = outside
     for i = 1, n do
-        local row = { [0] = i }
-        for j = 1, math.min(#target, n + cap) do
+        local lo, hi = math.max(1, i - cap), math.min(width, i + cap)
+        row[lo - 1] = lo == 1 and i or outside
+        local minimum = row[lo - 1]
+        for j = lo, hi do
             local cost = query[i] == target[j] and 0 or 1
-            row[j] = math.min(previous[j] + 1, row[j - 1] + 1, previous[j - 1] + cost)
-            if older and j > 1 and query[i] == target[j - 1] and query[i - 1] == target[j] then
-                row[j] = math.min(row[j], older[j - 2] + 1)
+            local v = math.min(previous[j] + 1, row[j - 1] + 1, previous[j - 1] + cost)
+            if i > 1 and j > 1 and query[i] == target[j - 1] and query[i - 1] == target[j] then
+                v = math.min(v, older[j - 2] + 1)
             end
+            row[j], minimum = v, math.min(minimum, v)
         end
-        older, previous = previous, row
+        if minimum > cap then return end
+        row[hi + 1] = outside
+        older, previous, row = previous, row, older
     end
-    local best = cap + 1
-    for j = math.max(1, n - cap), math.min(#target, n + cap) do best = math.min(best, previous[j]) end
+    local best = outside
+    for j = math.max(1, n - cap), width do best = math.min(best, previous[j]) end
     return best <= cap and best or nil
 end
 function M.typosEnabled()
@@ -374,8 +395,13 @@ end
 function M.matcher(query, forgiving)
     local raw_words, words = {}, {}
     for word in M.lower(query):gmatch("%S+") do raw_words[#raw_words + 1] = word end
-    for word in M.normalize(query):gmatch("%S+") do words[#words + 1] = { text = word, chars = characters(word, 65) } end
-    local memo, memo_size = {}, 0
+    if forgiving then
+        for word in M.normalize(query):gmatch("%S+") do
+            words[#words + 1] = { text = word, chars = characters(word, 65), memo = {}, size = 0 }
+        end
+    end
+    local memo_limit = math.floor(2048 / math.max(1, #words))
+    local older, previous, row = {}, {}, {}
     return function(book, _native_words, skip_genres)
         local entry = searchable(book, skip_genres)
         local raw = entry.raw
@@ -384,27 +410,27 @@ function M.matcher(query, forgiving)
         if exact then return 0 end
         if not forgiving or #words == 0 then return end
         entry.normalized = entry.normalized or M.normalize(raw)
-        local normalized, tokens = entry.normalized, nil
+        local normalized = entry.normalized
         local edits = 0
         for _, word in ipairs(words) do
             if not normalized:find(word.text, 1, true) then
                 local length = #word.chars
                 local cap = length >= 8 and 2 or length >= 4 and 1 or 0
                 if cap == 0 or length > 64 or #words > 16 then return end
-                if not tokens then
-                    tokens = {}
-                    for token in normalized:gmatch("%S+") do tokens[#tokens + 1] = token end
-                end
                 local best
-                for _, token in ipairs(tokens) do
-                    local key = word.text .. "\0" .. token:sub(1, 264)
-                    local value = memo[key]
+                for token in normalized:gmatch("%S+") do
+                    local key = #token > 264 and token:sub(1, 264) or token
+                    local value = word.memo[key]
                     if value == nil then
-                        value = distance(word.chars, characters(token, 66), cap) or false
-                        if memo_size >= 2048 then memo, memo_size = {}, 0 end
-                        memo[key], memo_size = value, memo_size + 1
+                        local prefix = characters(token, length + cap)
+                        value = distance(word.chars, prefix, cap, older, previous, row) or false
+                        if word.size >= memo_limit then word.memo, word.size = {}, 0 end
+                        word.memo[key], word.size = value, word.size + 1
                     end
-                    if value and (not best or value < best) then best = value end
+                    if value and (not best or value < best) then
+                        best = value
+                        if best == 1 then break end -- the exact spelling was checked above
+                    end
                 end
                 if not best then return end
                 edits = edits + best
@@ -490,6 +516,7 @@ function M.search(text, scope_id, ref, sort, forgiving)
     if forgiving == nil then forgiving = M.typosEnabled() end
     local match, scores = M.matcher(text, forgiving), {}
     local match_opts = { book_limit = math.huge, match_book = function(book, words, skip_genres)
+        if allowed and not allowed[book.filepath] then return false end
         local score = match(book, words, skip_genres)
         scores[book] = score
         return score ~= nil

@@ -709,18 +709,7 @@ function M.ensureFresh()
     end)
 end
 
-function M.build(w, ctx)
-    local ok_build, result = pcall(_doBuild, w, ctx)
-    if ok_build then
-        return result
-    else
-        logger.warn("simpleui hardcover: M.build crashed: " .. tostring(result))
-        local face = Font:getFace("cfont", _BASE_BODY_FS)
-        return TextWidget:new{ text = "Hardcover: " .. tostring(result):sub(1, 80), face = face }
-    end
-end
-
-function _doBuild(w, ctx)
+local function build(w, ctx)
     local api_key = _getApiKey()
 
     if api_key == "" then
@@ -758,6 +747,17 @@ function _doBuild(w, ctx)
     M.ensureFresh()
 
     return widget
+end
+
+function M.build(w, ctx)
+    local ok_build, result = pcall(build, w, ctx)
+    if ok_build then
+        return result
+    else
+        logger.warn("simpleui hardcover: M.build crashed: " .. tostring(result))
+        local face = Font:getFace("cfont", _BASE_BODY_FS)
+        return TextWidget:new{ text = "Hardcover: " .. tostring(result):sub(1, 80), face = face }
+    end
 end
 
 function M.getHeight(ctx)

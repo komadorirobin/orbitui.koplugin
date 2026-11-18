@@ -55,7 +55,7 @@ local function drain() while #queue > 0 do table.remove(queue, 1)() end end
 H.test("unset flags preserve existing behaviour and settings inspection stays passive", function()
     reset()
     local rows = Integration.bookOrbitItems()
-    H.eq(#rows, 12); H.eq(#queue, 0); H.eq(client_calls, 0); H.eq(writes, 0)
+    H.eq(#rows, 13); H.eq(#queue, 0); H.eq(client_calls, 0); H.eq(writes, 0)
     H.eq(Integration.bookOrbitEnabled("status"), false)
     assert(Integration.bookOrbitEnabled("want") and Integration.bookOrbitEnabled("actions") and Integration.bookOrbitEnabled("tags"))
     H.eq(rows[1].text, "BookOrbit: Detected (not connection-tested)")

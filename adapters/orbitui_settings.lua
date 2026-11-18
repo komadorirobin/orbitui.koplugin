@@ -435,7 +435,7 @@ local nodes = {
     { "integrations", "Integrations", nil, "integrations", "bookorbit hardcover myanimelist mal synk sync kopplingar" },
     { "reader_panel", "Reader panel & X-Ray", "integrations", "integrations", "läsarpanel bottenpanel bottenmeny läsinställningar marginaler bottom menu reading settings margins xray x-ray koassistant ai automatiskt automatic plugin" },
     { "highlight_menu", "Customize text selection menu", "reader_panel", "system", "markera markeringsmeny textmarkering ordval ordbok dictionary highlight translate översätt fler copy" },
-    { "bookorbit", "BookOrbit", "integrations", "integrations", "vill läsa want to read lokalt local taggar tags ångra öppning undo opening hardcover server api patch sync synk" },
+    { "bookorbit", "BookOrbit", "integrations", "integrations", "vill läsa want to read lokalt local taggar tags ångra öppning undo opening hardcover server api patch sync synk achievements prestationer API-nyckel" },
     { "connections", "Connections & help", "integrations", "integrations", "bookorbit myanimelist mal anslutningar credentials" },
     { "hardcover", "Hardcover book information", "integrations", "bookshelf", "hardcover enrichment berikning api betyg rating omslag" },
     { "addons", "Ornament add-ons", "integrations", "bookshelf", "ornament tillägg packs paket download hämta" },
