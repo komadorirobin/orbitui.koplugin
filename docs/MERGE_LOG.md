@@ -4,6 +4,32 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-18 — SimpleUI 3.1.0 maintenance
+
+Starting from the beta.6 publication receipt **fda80ade6**, unsquashed subtree
+merge **aff213af7** imports SimpleUI
+[**5946a21e5cb8649a1b862cdb60109e3e9722f428**](https://github.com/doctorhetfield-cmd/simpleui.koplugin/commit/5946a21e5cb8649a1b862cdb60109e3e9722f428).
+Bookshelf master and its integrated pin both resolve to **58d776725**.
+The fork anchors are retained. The hosted registry is refreshed at **4ab03927e**.
+
+C02/C04/C07/C10. Closing a book refreshes enabled statistics even if the only
+known screen is Home and a rebuild is already pending. A still-empty book
+module can skip a full-page rebuild after the background book query.
+The first emulator run exposed a crash when a newly populated module
+returned a lightweight KOReader widget without a `free` method. Hosted fix
+**ef90a6dcb** discards trial cover requests in either case and frees widgets
+that own resources. Rolling statistics digits are clipped at the drawing buffer edge. In the
+file browser, list covers support folder stacks and independent shadow
+settings for list, mosaic and Home. The OrbitUI shadow defaults stay opt-in.
+The list progress bar uses the width left by its caption.
+
+C08/C09. Reviewed the Polish and Portuguese updates and the Indonesian
+catalogue's rename from `id_ID.po` to `id.po`. The language loader falls
+back from a region to its base language. The package still installs 2,000
+files including its manifest. The diff contains no changes to BookOrbit,
+Hardcover, MAL, series boxes, ornaments or the OTA bootstrap. The private
+development work was tested in a separate checkout. See TESTING for coverage.
+
 ## 2026-11-16 — Bookshelf 6.5.2 and SimpleUI 3.1.0
 
 Reviewed from the beta.5 source receipt **5125e94c4**. Unsquashed imports
