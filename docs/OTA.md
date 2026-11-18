@@ -1,5 +1,19 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.4.0-beta.7
+
+GitHub published release **449590446** on **2026-11-18 at 06:15:08 UTC**
+from **719828dce / v1.4.0-beta.7**. The draft and public ZIPs matched byte
+for byte, as did their checksum files. The ZIP is 10,172,539 bytes and its
+SHA-256 is `3174b501c715ddbdb8f36f7c98eb4220870c8a6cd505bcb409206ad29cb815b8`.
+The public updater offers 1.4.0-beta.7 on preview and 1.3.0 on stable.
+
+Both matrix jobs passed on main (run **44249225396**) and the tag (run
+**44249224997**). All four CI archives matched the contents and file modes
+of the 2,000 files in the public ZIP. The 1.4.0-beta.6 and 1.3.0 updaters
+passed upgrade, restart and rollback checks offline and over public HTTPS.
+Local evidence is in `test-results/preview14-beta7-20261118/`.
+
 ## OrbitUI 1.4.0-beta.6
 
 Published **2026-11-16 20:08:18 UTC** as release **447542743** from

@@ -1,5 +1,24 @@
 # Verification and device acceptance
 
+## 2026-11-18 — OrbitUI 1.4.0-beta.7
+
+KOReader 2026.07.1 on an emulated Tolino Vision Color ran the packaged
+release. Tapping the Home streak card opened the Reading log. Daily book
+lists and reading totals matched a SQLite fixture, and closing the log
+returned to Home. The BookOrbit plugin used a local test server. Its Home
+card showed the badge summary, accepted a read-only key to open the full
+catalogue and returned to the summary when the key was removed. The same
+build passed the Home, history and file-browser checks described below.
+Testing of the tagged package on physical readers and against a live
+BookOrbit account remains open.
+
+Both host interpreter runs and all 44 translation checks passed. Three
+Bookshelf suites skipped by the host runner passed separately with native
+SQLite bindings (20, 100 and 9 checks). The published 1.3.0 and beta.6
+installers each exercised preview discovery, activation, restart, rollback
+and interrupted-update recovery in isolated installations. Public asset
+checks and CI run IDs are recorded in [the release log](OTA.md).
+
 ## 2026-11-18 — SimpleUI maintenance merge
 
 KOReader 2026.07.1 on the emulated Tolino Vision Color ran the package
