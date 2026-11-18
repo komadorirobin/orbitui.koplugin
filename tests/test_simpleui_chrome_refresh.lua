@@ -44,6 +44,7 @@ local function method(name)
         ScreenWidget, UIManager, Config, applyModuleBackground, function() return "Reading" end, noop, noop)
 end
 method("_buildModWidget")
+method("_bookModHasItems")
 method("_updateModuleStats")
 method("_refreshBookModSlot")
 local updates, builds = 0, 0
@@ -108,5 +109,32 @@ H.test("failed rebuild leaves mounted content and update targets untouched", fun
     H.eq(s._wrapper_pool.currently[1], mounted)
     H.eq(s._stats_mod_slots.currently.content, last_content)
     H.eq(dirty, 1)
+end)
+H.test("empty modules probe lightweight and disposable widgets without losing pending covers", function()
+    local freed = 0
+    local result
+    local probe = setmetatable({ _buildModWidget = function()
+        table.insert(Config._cover_extract_queue, "trial")
+        Config._cover_extract_pending.trial = true
+        Config._cover_extract_specs.trial = {}
+        return result
+    end }, { __index = ScreenWidget })
+    Config._cover_extract_queue = { "existing" }
+    Config._cover_extract_pending = { existing = true }
+    Config._cover_extract_specs = { existing = {} }
+    local function check(expected)
+        H.eq(probe:_bookModHasItems(mod, 200), expected)
+        H.eq(#Config._cover_extract_queue, 1)
+        H.eq(Config._cover_extract_queue[1], "existing")
+        H.eq(Config._cover_extract_pending.trial, nil)
+        H.eq(Config._cover_extract_specs.trial, nil)
+        assert(Config._cover_extract_pending.existing and Config._cover_extract_specs.existing)
+    end
+    check(false)
+    result = {}
+    check(true)
+    result = { free = function() freed = freed + 1 end }
+    check(true)
+    H.eq(freed, 1)
 end)
 H.finish()

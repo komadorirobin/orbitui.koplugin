@@ -2483,7 +2483,8 @@ function ScreenWidget:_bookModHasItems(mod, col_w)
         Config._cover_extract_specs[fp] = nil
     end
     if not widget then return false end
-    widget:free()
+    -- Lightweight KOReader widgets such as HorizontalSpan have no resources to free.
+    if widget.free then widget:free() end
     return true
 end
 
