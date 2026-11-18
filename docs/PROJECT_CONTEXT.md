@@ -20,7 +20,14 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-16
+## Snapshot: 2026-11-18
+
+- **Reviewed SimpleUI maintenance.** File browser list covers support stacks and
+  independent list and mosaic shadow settings. Closing a book refreshes enabled
+  reading statistics even when Home was already waiting to rebuild. Empty Home
+  book modules can skip a full page rebuild, and odometer digits clip to the
+  paint buffer. SimpleUI remains 3.1.0 at **5946a21e5**. Bookshelf remains
+  6.5.2 at **58d776725**. See MERGE_LOG for verification and scope.
 
 - **Upstream maintenance in 1.4.0-beta.6.** Bookshelf 6.5.2
   (**58d776725**) redraws changed spine marks and fixes Kindle read flags
