@@ -20,7 +20,13 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-18
+## Snapshot: 2026-11-19
+
+**OrbitUI 1.4.0** promotes the runtime from 1.4.0-beta.7 to stable. It
+includes the Reading log, optional BookOrbit achievements, customizable text
+selection actions and the Library and Manga improvements described below.
+SimpleUI is at 3.1.0 and Bookshelf at 6.5.2. See OTA for published assets
+and TESTING for device coverage.
 
 - **Reviewed SimpleUI maintenance.** File browser list covers support stacks and
   independent list and mosaic shadow settings. Closing a book refreshes enabled
@@ -118,8 +124,7 @@ and correct this file in the same change.
 
 ### Navigation in 1.3.0
 
-GitHub Latest and the stable updater channel offer **1.3.0** from
-**23714b0e**. The preview channel offers **1.4.0-beta.7**. The OrbitUI tab
+Stable **1.3.0** shipped from **23714b0e**. The OrbitUI tab
 follows Quick Actions in KOReader’s top menu.
 Its settings routes use Home for the dashboard and cards, Library
 for shelves and library appearance, and Dock & interface for shortcuts and
@@ -127,8 +132,8 @@ shared chrome. The file browser has its own appearance route. A long press on
 a dock item opens shortcut actions. The dock editor also reorders items and
 offers shortcuts to profiles, folders, collections and registered actions.
 Fresh setup uses Home, Library, History and Power. Saved docks are preserved.
-The stable runtime code matches beta.1 and the USB-tested candidate
-`62086fa9d` in private slot `7a7ee33d`. The Bigme was last verified on that
+The 1.3.0 runtime code matches its beta.1 and the USB-tested candidate
+`62086fa9d` in private slot `7a7ee33d`. At that release the Bigme ran that
 private build, with `aa1a078a` retained for rollback and its original Swedish
 dock restored. See TESTING for device checks and OTA for publication details.
 

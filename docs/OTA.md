@@ -1,5 +1,11 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.4.0
+
+Stable 1.4.0 promotes the runtime from 1.4.0-beta.7. Install the release
+ZIP or use **OrbitUI → System & maintenance → Updates**, then restart KOReader.
+Users on 1.3.0 and on a 1.4 beta can update directly.
+
 ## OrbitUI 1.4.0-beta.7
 
 GitHub published release **449590446** on **2026-11-18 at 06:15:08 UTC**
