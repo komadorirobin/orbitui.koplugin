@@ -2,6 +2,17 @@
 
 ## OrbitUI 1.4.0
 
+GitHub published release **451649559** on **2026-11-19 at 17:04:34 UTC** from
+**afa6be266 / v1.4.0**. GitHub Latest and both updater channels offer
+1.4.0. The public ZIP and checksum matched the verified draft byte for
+byte. The ZIP contains 2,000 files, is 10,173,456 bytes and has SHA-256
+`b2bf938588601b25d454a0d31cee6076c13aa2f364a528c47e7a94e46c74a8ce`.
+
+Both jobs passed on main (run **44572159896**) and the tag (run
+**44572159925**). All four CI archives matched the installed files and
+permissions in the public ZIP. Upgrades from 1.3.0 on stable and beta.7 on
+preview passed over anonymous HTTPS, including restart and code rollback.
+
 Stable 1.4.0 promotes the runtime from 1.4.0-beta.7. Install the release
 ZIP or use **OrbitUI → System & maintenance → Updates**, then restart KOReader.
 Users on 1.3.0 and on a 1.4 beta can update directly.

@@ -1,5 +1,29 @@
 # Verification and device acceptance
 
+## 2026-11-19 — Stable 1.4.0
+
+The published ZIP contains the same executable code and artwork as
+1.4.0-beta.7. Both local interpreter runs and all 44 translation checks
+passed. The three Bookshelf SQLite suites skipped by the standard runner
+passed separately with native bindings (20, 100 and 9 checks).
+
+KOReader 2026.07.1 on the emulated Tolino Vision Color ran the stable ZIP.
+The streak card opened the Reading log, individual dates opened their book
+lists and all three tabs worked. The BookOrbit plugin opened the summary,
+the full catalogue after adding a read-only key, and the summary again
+after removing it. Tests used a local BookOrbit server fixture. Home,
+history exclusion and restore, nested file browsing and statistics refresh
+also passed. The history fixture uses distinct timestamps and verifies the
+resulting entries so a duplicate insertion during setup cannot mask success.
+Physical e-ink and live BookOrbit account checks were outside this run.
+
+Isolated copies of the published 1.3.0 and 1.4.0-beta.7 installers discovered
+and installed 1.4.0 on their respective channels. The checks covered archive
+validation, activation, restart, rollback and interrupted-update recovery,
+both offline and over public HTTPS. Package and CI details are in the
+[release log](OTA.md#orbitui-140). Local evidence is under
+`test-results/stable14-20261119/`.
+
 ## 2026-11-18 — OrbitUI 1.4.0-beta.7
 
 KOReader 2026.07.1 on an emulated Tolino Vision Color ran the packaged
