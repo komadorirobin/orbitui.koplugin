@@ -195,6 +195,13 @@ H.test("only a matching shelf paint completes a trace; no paths or custom names 
     Host.measure("library", function() return true end, {}, nil)
     Host.shelfPainted({ profile_key = "comics" })
     H.eq(#traces, 2); H.eq(traces[2].destination, "Manga")
+    local ui, shelf = package.loaded["ui/uimanager"], package.loaded["lib/bookshelf_widget"]
+    local prior = shelf.live
+    shelf.live = widget
+    ui.getTopmostVisibleWidget = function() return widget end
+    Host.measure("library", function() return true end, {}, nil)
+    Host.shelfPainted(widget); H.eq(#traces, 2)
+    ui.getTopmostVisibleWidget, shelf.live = nil, prior
     Host.measure("library", function() return false end, {}, "comics")
     Host.shelfPainted({ profile_key = "comics" }); H.eq(#traces, 2)
     Host.measure("library", function() end, {}, "comics"); Host.setMeasuring(false)

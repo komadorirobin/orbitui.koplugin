@@ -345,18 +345,27 @@ local function processMiB()
 end
 
 local function startShelfOpen(profile, time)
+    local widget = currentShelf()
+    local ui = package.loaded["ui/uimanager"]
+    -- Selecting the shelf already on screen can be a native no-op. A later
+    -- clock or cover repaint must not be counted as the end of that request.
+    if widget and (not profile or profile == widget.profile_key)
+            and ui and ui.getTopmostVisibleWidget and ui:getTopmostVisibleWidget() == widget then return end
     local sample = { profile = profile, jobs = {}, rss_before = processMiB() }
     local free = memory()
     sample.free_before = free and math.floor(free / MiB + .5)
-    shelfJobs(currentShelf(), sample.jobs)
+    shelfJobs(widget, sample.jobs)
     sample.start = time.now()
     shelf_open = sample
 end
 
-function M.shelfPainted(widget)
+function M.shelfPainted(widget, stack_top)
     local sample = shelf_open
     if not sample then return end
     if sample.profile and widget.profile_key ~= sample.profile then return end
+    local ui = package.loaded["ui/uimanager"]
+    local visible = ui and ui.getTopmostVisibleWidget and ui:getTopmostVisibleWidget() or stack_top
+    if visible and visible ~= widget then return end
     shelf_open = nil
     local time = package.loaded["ui/time"]
     local ms = time.to_us(time.since(sample.start)) / 1000
