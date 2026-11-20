@@ -390,21 +390,25 @@ function M.content(widget, p, ctx, data)
     if ctx.has_wallpaper then
         local wp = require("features/sui_wallpaper")
         if wp.orbituiWallpaperInk then
+            local surface = ctx.module_surface
             for i = header_start, #target do
                 local child = target[i]
+                local is_search = child == search_icon
                 local paint = child.paintTo
                 local original = child._fg or child.color
                 function child:paintTo(bb, x, y)
-                    local fg, dim, outline = wp:orbituiWallpaperInk(y + self:getSize().h / 2, ctx.module_surface)
+                    local fg, dim, outline = wp:orbituiWallpaperInk(y + self:getSize().h / 2, surface)
                     if not fg then return paint(self, bb, x, y) end
                     if self._inner then
                         if outline then
                             self._fg = outline
-                            paint(self, bb, x - 1, y); paint(self, bb, x + 1, y)
-                            paint(self, bb, x, y - 1); paint(self, bb, x, y + 1)
+                            paint(self, bb, x - 1, y)
+                            paint(self, bb, x + 1, y)
+                            paint(self, bb, x, y - 1)
+                            paint(self, bb, x, y + 1)
                         end
                         self._fg = original == muted and dim or fg
-                    elseif self == search_icon then
+                    elseif is_search then
                         if fg ~= ink then return UI.paintInkIcon(self, bb, x, y, fg, paint) end
                     else
                         self.color = fg

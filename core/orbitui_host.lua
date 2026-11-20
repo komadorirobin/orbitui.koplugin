@@ -362,7 +362,8 @@ function M.shelfPainted(widget)
     local ms = time.to_us(time.since(sample.start)) / 1000
     if ms < 0 or ms > 60000 then return end
     shelfJobs(widget, sample.jobs)
-    sample.destination = sample.profile == "comics" and "Manga" or "Library"
+    -- A generic Library shortcut may reopen the last active Manga shelf.
+    sample.destination = widget.profile_key == "comics" and "Manga" or "Library"
     sample.profile, sample.start = nil, nil
     sample.ms, sample.rss_after = ms, processMiB()
     local free = memory()
