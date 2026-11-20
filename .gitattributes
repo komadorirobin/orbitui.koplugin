@@ -77,6 +77,7 @@
 /components/bookshelf/lib/bookshelf_hardcover_picker.lua export-ignore
 /components/bookshelf/lib/bookshelf_hardcover_picker_row.lua export-ignore
 /components/bookshelf/lib/bookshelf_hardcover_thumbs.lua export-ignore
+/components/bookshelf/lib/bookshelf_input_guard.lua export-ignore
 /components/bookshelf/lib/bookshelf_plugin_button.lua export-ignore
 /components/bookshelf/lib/bookshelf_run_text_box.lua export-ignore
 /components/bookshelf/lib/bookshelf_see_through.lua export-ignore

@@ -9079,3 +9079,6 @@ msgstr ""
 #: lib/bookshelf_widget.lua:25230
 msgid "Link…"
 msgstr ""
+
+msgid "Read now"
+msgstr ""

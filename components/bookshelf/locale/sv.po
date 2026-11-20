@@ -33,3 +33,6 @@ msgstr "Böcker som du inte har betygsatt själv använder sitt Hardcover-betyg:
 
 msgid "Bookshelf: refresh the library"
 msgstr "Bookshelf: uppdatera biblioteket"
+
+msgid "Read now"
+msgstr "Läs nu"

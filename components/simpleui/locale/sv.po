@@ -9790,3 +9790,21 @@ msgstr "Öppnar %s…"
 
 msgid "Could not open %s. The app may be unavailable."
 msgstr "Kunde inte öppna %s. Appen kanske inte är tillgänglig."
+
+msgid "Edit Card"
+msgstr "Redigera kort"
+
+msgid "Date Format"
+msgstr "Datumformat"
+
+msgid "{weekday}, {day} {month}"
+msgstr "{weekday} {day} {month}"
+
+msgid "{weekday}, {day} {month} {year}"
+msgstr "{weekday} {day} {month} {year}"
+
+msgid "{weekday_short}, {day} {month_short}"
+msgstr "{weekday_short} {day} {month_short}"
+
+msgid "{day}/{month_num}/{year}"
+msgstr "{day}/{month_num} {year}"

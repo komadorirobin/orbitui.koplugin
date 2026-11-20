@@ -24,6 +24,7 @@ local embedded_names = {
     "lib/bookshelf_hardcover_picker",
     "lib/bookshelf_hardcover_picker_row",
     "lib/bookshelf_hardcover_thumbs",
+    "lib/bookshelf_input_guard",
     "lib/bookshelf_plugin_button",
     "lib/bookshelf_run_text_box",
     "lib/bookshelf_see_through",
