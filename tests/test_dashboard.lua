@@ -730,7 +730,7 @@ H.test("native dashboard tree stays bounded and uses real cover widgets", functi
     dpi = 1
 end)
 
-H.test("taps and long-presses use native book handlers and goal settings", function()
+H.test("book gestures remain native; goal tap opens its log tab and hold opens settings", function()
     widget.dimen.x, widget.dimen.y = 17, 30
     local function tapAt(x, y, hold)
         local ges = { pos = { x = x + 17, y = y + 30 } }
@@ -743,7 +743,12 @@ H.test("taps and long-presses use native book handlers and goal settings", funct
     tapAt(xy[1] + 2, xy[2] + 2); H.eq(opened, "/current")
     tapAt(xy[1] + 2, xy[2] + 2, true); H.eq(held, "/current")
     local r = Model.plan(600, 730).goal
-    tapAt(r.x + 2, r.y + 2); H.eq(settings, "reading_goals")
+    local log = require("adapters/orbitui_reading_log")
+    local open, tab = log.open
+    log.open = function(opts) tab = opts.tab; H.eq(opts.get_goal().module, "reading_goals") end
+    tapAt(r.x + 2, r.y + 2); H.eq(tab, "goal")
+    log.open = open
+    tapAt(r.x + 2, r.y + 2, true); H.eq(settings, "reading_goals")
 end)
 
 H.test("cover and progress refresh free only the replaced tree and do not change layout", function()

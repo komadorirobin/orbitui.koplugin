@@ -123,8 +123,8 @@ end
 function M.open(opts)
     opts = opts or {}
     local today = os.time()
-    local snapshot, failure = M.read(today)
-    local active_tab, calendar_back = "log", 0
+    local snapshot, failure
+    local active_tab, calendar_back = opts.tab == "goal" and "goal" or "log", 0
     local day_cache = {}
 
     local Device = require("device")
@@ -332,12 +332,24 @@ function M.open(opts)
         }
     end
 
-    local goal_data
+    local goal_data, year_activity
     local function goal(ctx)
         if goal_data == nil then goal_data = opts.get_goal and opts.get_goal() or false end
         local current = goal_data
+        local year = tonumber(os.date("%Y", today))
+        if year_activity == nil then
+            year_activity = withStats(function(conn)
+                return require("modules/module_stats_provider").getYearActivity(conn, year)
+            end) or false
+        end
+        local inner_w = Frames.contentWidth(ctx.inner_w, ctx.SZ)
+        local chart = require("screens/insights/sui_insights_charts").yearActivity{
+            inner_w = inner_w, avail_h = ctx.page_h, SZ = ctx.SZ, activity = year_activity,
+        }
+        local monthly = Frames.card{ w = ctx.inner_w, SZ = ctx.SZ, icon = chart.icon,
+            title = _("Books and pages") .. " · " .. year, content = chart.content }
         if not current then
-            return { Window.ListRow{ inner_w = ctx.inner_w, title = _("No reading goal is available yet.") } }
+            return { Window.ListRow{ inner_w = ctx.inner_w, title = _("No reading goal is available yet.") }, monthly }
         end
         local value, target = tonumber(current.value) or 0, tonumber(current.target) or 0
         local unit = ({ book = "books", books = "books", page = "pages", pages = "pages",
@@ -351,10 +363,15 @@ function M.open(opts)
         if target > 0 then
             local w = Frames.contentWidth(ctx.inner_w, ctx.SZ)
             content[#content + 1] = VGap:new{ width = px(ctx, 10) }
-            content[#content + 1] = UI.progressBar(w, math.max(0, value / target), px(ctx, 8), accent)
+            content[#content + 1] = UI.progressBar(w, math.min(1, math.max(0, value / target)), px(ctx, 8), accent)
+            local pace = require("core/orbitui_dashboard").goalPaceCaption(current, dayKey(today))
+            if pace then
+                content[#content + 1] = VGap:new{ width = px(ctx, 6) }
+                content[#content + 1] = text(ctx, pace, w, 15, false)
+            end
         end
         return { Frames.card{ w = ctx.inner_w, SZ = ctx.SZ, content = content, icon = "book",
-            title = current.title and current.title ~= "" and current.title or _("Reading goal") } }
+            title = current.title and current.title ~= "" and current.title or _("Reading goal") }, monthly }
     end
 
     local builders = { log = log, calendar = calendar, goal = goal }
@@ -379,7 +396,10 @@ function M.open(opts)
         navpager_mode = require("infra/sui_config").isNavpagerEnabled(),
         screen_titles = { __root__ = _("Reading log"), day = function(ctx) return dateLabel(ctx.current().params.stamp, true) end },
         screen_headers = { __root__ = tabs },
-        screens = { __root__ = function(ctx) return builders[active_tab](ctx) end, day = dayDetail },
+        screens = { __root__ = function(ctx)
+            if active_tab ~= "goal" and not snapshot and not failure then snapshot, failure = M.read(today) end
+            return builders[active_tab](ctx)
+        end, day = dayDetail },
     }
     window:show()
     return window

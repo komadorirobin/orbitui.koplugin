@@ -133,6 +133,7 @@ local MiB = 1024 * 1024
 local mode, measuring, suspended = "existing", false, false
 local owners = setmetatable({}, { __mode = "k" })
 local caches = setmetatable({}, { __mode = "k" })
+local shelf_open, shelf_samples = nil, {}
 local observations, policy = {}, { pressure = "unknown", factor = 1 }
 local pending, generation = nil, 0
 local MODE_KEY, MEASURE_KEY = "simpleui_orbitui_performance_mode", "simpleui_orbitui_measure_performance"
@@ -153,7 +154,7 @@ local function readOptions()
 end
 function M.performanceMode() return mode end
 function M.isMeasuring() return measuring end
-function M.resetMeasurements() observations = {} end
+function M.resetMeasurements() observations, shelf_samples, shelf_open = {}, {}, nil end
 
 -- One batch of BIM rows can back several independently scoped light maps.
 -- Keep the expensive, immutable text derivation once, not its render/status
@@ -320,6 +321,56 @@ local function currentShelf()
     return Widget and Widget.live and not Widget.live._closed and Widget.live or nil
 end
 
+-- Snapshot only work already scheduled or running. Never wake a provider to
+-- collect a measurement, or retain books, paths or custom profile names.
+local function shelfJobs(widget, jobs)
+    local bim = package.loaded.bookinfomanager
+    if type(bim) == "table" and bim.isExtractingInBackground then
+        local ok, busy = pcall(bim.isExtractingInBackground, bim)
+        if ok and busy then jobs.metadata = true end
+    end
+    if not widget then return end
+    if widget._orbitui_cover_job then jobs.covers = true end
+    if widget._next_cover_job or widget._preload_pending then jobs.preload = true end
+    if widget._page_ahead_job then jobs.page = true end
+end
+
+local function processMiB()
+    local f = io.open("/proc/self/status", "r")
+    if not f then return end
+    local data = f:read(8192)
+    f:close()
+    local kb = data and tonumber(data:match("VmRSS:%s*(%d+)%s+kB"))
+    return kb and math.floor(kb / 1024 + .5)
+end
+
+local function startShelfOpen(profile, time)
+    local sample = { profile = profile, jobs = {}, rss_before = processMiB() }
+    local free = memory()
+    sample.free_before = free and math.floor(free / MiB + .5)
+    shelfJobs(currentShelf(), sample.jobs)
+    sample.start = time.now()
+    shelf_open = sample
+end
+
+function M.shelfPainted(widget)
+    local sample = shelf_open
+    if not sample then return end
+    if sample.profile and widget.profile_key ~= sample.profile then return end
+    shelf_open = nil
+    local time = package.loaded["ui/time"]
+    local ms = time.to_us(time.since(sample.start)) / 1000
+    if ms < 0 or ms > 60000 then return end
+    shelfJobs(widget, sample.jobs)
+    sample.destination = sample.profile == "comics" and "Manga" or "Library"
+    sample.profile, sample.start = nil, nil
+    sample.ms, sample.rss_after = ms, processMiB()
+    local free = memory()
+    sample.free_after = free and math.floor(free / MiB + .5)
+    if #shelf_samples == 8 then table.remove(shelf_samples, 1) end
+    shelf_samples[#shelf_samples + 1] = sample
+end
+
 function M.allowSpeculation()
     return not suspended and mode ~= "responsive" and (mode == "existing" or policy.pressure ~= "critical")
 end
@@ -398,6 +449,7 @@ end
 function M.setMeasuring(value)
     assert(settings(), "Settings are not ready"):saveSetting(MEASURE_KEY, value == true)
     measuring = value == true
+    if not measuring then shelf_open = nil end
 end
 
 function M.performanceStarted(owner)
@@ -412,12 +464,13 @@ function M.performanceStopped(owner)
         cancelPolicy()
         -- Captured hooks may still be reachable by a later external wrapper.
         -- Leave them inert and restore only runtime caps, never preferences.
-        mode, measuring = "existing", false
+        mode, measuring, shelf_open = "existing", false, nil
         policy = { pressure = "unknown", factor = 1 }
         for cache, entry in pairs(caches) do entry.setter(cache, entry.base) end
     end
 end
 function M.performanceEvent(handler)
+    if handler == "onSuspend" or handler == "onReaderReady" then shelf_open = nil end
     if handler == "onSuspend" then suspended = true; cancelPolicy()
     elseif handler == "onResume" then suspended = false; schedulePolicy()
     elseif handler == "onReaderReady" or handler == "onCloseDocument" then schedulePolicy() end
@@ -429,9 +482,11 @@ function M.measure(label, fn, ...)
     if not measuring or not labels[label] then return fn(...) end
     local time = package.loaded["ui/time"]
     local native = time and time.now and time.since and time.to_us
+    if label == "library" and native then startShelfOpen(select(2, ...), time) end
     local start = native and time.now() or os.clock()
     local result = pack(pcall(fn, ...))
     local elapsed = native and time.to_us(time.since(start)) / 1000 or (os.clock() - start) * 1000
+    if label == "library" and (not result[1] or result[2] == false) then shelf_open = nil end
     local entry = observations[label]
     local clock_kind = native and "elapsed" or "CPU"
     -- Do not mix CPU fallback and monotonic elapsed samples in one series.
@@ -469,6 +524,7 @@ end
 function M.performanceSnapshot()
     local result = { mode = mode, measuring = measuring, pressure = policy.pressure,
         lua_kib = collectgarbage("count"), caches = {}, timings = {} }
+    result.shelf_opens = shelf_samples
     result.available, result.total = memory()
     for cache, entry in pairs(caches) do
         local module = package.loaded[entry.kind == "home" and "infra/sui_cover_cache" or "lib/bookshelf_scaled_cover_cache"] or {}
@@ -495,7 +551,7 @@ function M.performanceReport()
     local _ = require("core/orbitui_i18n")
     local data = M.performanceSnapshot()
     local lines = { _("OrbitUI performance report"),
-        _("Synchronous call timings only; not screen latency. Lua memory excludes native image buffers. At most 60 recent samples per operation. This report does not force garbage collection."),
+        _("Call timings include up to 60 samples per operation. Shelf opening times end at the first paint of the selected view. The e-ink panel refresh follows separately."),
         _("Performance profile") .. ": " .. _(({ existing = "Keep existing behaviour",
             adaptive = "Adaptive memory", responsive = "Responsive" })[data.mode]),
         _("Lua memory (KiB)") .. ": " .. string.format("%.0f", data.lua_kib),
@@ -517,6 +573,26 @@ function M.performanceReport()
             ": n=%d (%d); p50=%.2f; p90=%.2f ms [%s]; %s=%d",
             timing.count, timing.samples, timing.median, timing.p90,
             timing.clock == "CPU" and "CPU" or _("Elapsed"), _("Errors"), timing.errors) end
+    end
+    if #data.shelf_opens > 0 then
+        lines[#lines + 1] = _("Shelf opens to first paint (before panel refresh)")
+        local jobs = { {"metadata", "Metadata extraction"}, {"covers", "Local covers"},
+            {"preload", "Cover preload"}, {"page", "Page preload"} }
+        for i = #data.shelf_opens, 1, -1 do
+            local sample, seen = data.shelf_opens[i], {}
+            for _i, job in ipairs(jobs) do
+                if sample.jobs[job[1]] then seen[#seen + 1] = _(job[2]) end
+            end
+            local details = { string.format("%s · %.0f ms", _(sample.destination), sample.ms),
+                #seen > 0 and table.concat(seen, ", ") or _("No observed jobs") }
+            if sample.free_before and sample.free_after then
+                details[#details + 1] = string.format(_("Free memory %d → %d MiB"), sample.free_before, sample.free_after)
+            end
+            if sample.rss_before and sample.rss_after then
+                details[#details + 1] = string.format("RSS %d → %d MiB", sample.rss_before, sample.rss_after)
+            end
+            lines[#lines + 1] = table.concat(details, " · ")
+        end
     end
     lines[#lines + 1] = _("No book paths, titles, accounts or raw errors are included. Nothing is uploaded.")
     return table.concat(lines, "\n\n")

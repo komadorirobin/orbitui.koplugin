@@ -802,7 +802,7 @@ function M.performanceItems()
             return rows
         end },
         { text = _("Measure performance"), checked_func = Host.isMeasuring, keep_menu_open = true,
-            help_text = _("Optional local timing of synchronous calls. No book names, paths, accounts or raw errors are recorded. Nothing is uploaded; measurements stay in memory until reset or restart."),
+            help_text = _("Measure local calls and the last eight library opens through their first paint. The report includes observed jobs and memory use. Samples stay on this device until reset or restart."),
             callback = function() Host.setMeasuring(not Host.isMeasuring()) end },
         { text = _("View performance report"), callback = function()
             require("ui/uimanager"):show(require("ui/widget/textviewer"):new{

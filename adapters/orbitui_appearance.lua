@@ -47,6 +47,56 @@ function M.wallpaperSofteningItem(refresh)
     }
 end
 
+local function frameNight()
+    return require("device").screen.night_mode == true
+end
+
+local WP_INK = "simpleui_orbitui_wallpaper_ink"
+local WP_OUTLINE = "simpleui_orbitui_wallpaper_outline"
+function M.wallpaperTextMenu(refresh)
+    local update = refresh or refreshWallpapers
+    local store = require("infra/sui_store")
+    local rows = {}
+    for _i, option in ipairs{ { "auto", "Automatic" }, { "dark", "Dark text" }, { "light", "Light text" } } do
+        local id = option[1]
+        rows[#rows + 1] = { text = _(option[2]), radio = true,
+            checked_func = function() return (store:readSetting(WP_INK) or "auto") == id end,
+            callback = function(menu) store:saveSetting(WP_INK, id); update(menu) end }
+    end
+    rows[#rows + 1] = { text = _("Outline dashboard text"),
+        checked_func = function() return store:readSetting(WP_OUTLINE) == true end,
+        callback = function(menu)
+            store:saveSetting(WP_OUTLINE, store:readSetting(WP_OUTLINE) ~= true)
+            update(menu)
+        end }
+    return { text = _("Text over Home wallpaper"), sub_item_table = rows }
+end
+
+-- Work in the same logical colours as KOReader's painter. A custom opaque
+-- or explicitly tinted surface owns its own ink.
+function M.wallpaperInk(wp, y, surface)
+    if surface and (surface.foreground or surface.strength >= 100) then return end
+    local lum = wp.wallpaperBandLuma(y)
+    if lum == nil then return end
+    local store = require("infra/sui_store")
+    local choice = store:readSetting(WP_INK)
+    local night = frameNight()
+    local light, dark = M.wallpaperLighten(), wp.styleGetWallpaperDarken()
+    if night then light, dark = dark, light end
+    lum = (lum + (255 - lum) * light / 100) * (1 - dark / 100)
+    if night then lum = lum + (255 - lum) * Model.NIGHT_BACKDROP end
+    if surface and surface.strength > 0 then
+        lum = lum + (surface.color:getColor8().a - lum) * surface.strength / 100
+    end
+    local white = lum < 128
+    -- Manual choices describe the visible text colour after screen inversion.
+    if choice == "dark" or choice == "light" then white = (choice == "light") ~= night end
+    local BB = require("ffi/blitbuffer")
+    return white and BB.COLOR_WHITE or BB.COLOR_BLACK,
+        white and BB.COLOR_LIGHT_GRAY or BB.COLOR_DARK_GRAY,
+        store:readSetting(WP_OUTLINE) == true and (white and BB.COLOR_BLACK or BB.COLOR_WHITE) or nil
+end
+
 function M.wallpaperSettings(settings)
     local native = settings._wallpaperMenu
     if not native then return end
@@ -55,10 +105,6 @@ function M.wallpaperSettings(settings)
         table.insert(rows, 3, M.wallpaperSofteningItem())
         return rows
     end
-end
-
-local function frameNight()
-    return require("device").screen.night_mode == true
 end
 
 -- Android's C blitter ignores the inverse flag for rectangles, but its Lua
@@ -90,6 +136,7 @@ function M.paintNightBackdrop(bb, x, y, w, h, dark)
 end
 
 function M.wallpaper(module, shelf)
+    if not shelf then module.orbituiWallpaperInk = M.wallpaperInk end
     module.orbituiWallpaperLighten = M.wallpaperLighten
     module.orbituiWallpaperLightenDefault = DEFAULT_LIGHTEN
     -- The dock follows KOReader, not a shelf's independently pinned Light

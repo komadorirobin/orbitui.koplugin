@@ -164,6 +164,7 @@ end
 -- never points at freed memory. The raster is rebuilt when the screen size or
 -- night mode changes; a failed decode is remembered for the same key, so it
 -- is not retried on every call.
+local band_luma = {}
 local function _styleGetBgWidget()
     if not SUISettings:isTrue("simpleui_style_wallpaper_enabled") then return nil end
     local path = SUISettings:readSetting("simpleui_style_wallpaper")
@@ -172,6 +173,7 @@ local function _styleGetBgWidget()
     local sw, sh = Screen:getWidth(), Screen:getHeight()
     local key = path .. ":" .. sw .. "x" .. sh .. (Screen.night_mode and "n" or "d")
     if _raster_key ~= key or (not _raster and os.time() >= _retry_at) then
+        band_luma = {}
         if _raster then _raster:free(); _raster = nil end
         local ok, canvas = pcall(_buildRaster, path, sw, sh)
         if ok then _raster = canvas end
@@ -189,7 +191,28 @@ local function _styleFreeBgCache()
     if _raster then _raster:free() end
     _raster     = nil
     _raster_key = nil
+    band_luma = {}
     _retry_at = 0
+end
+
+-- Sample the decoded in-memory wallpaper, before tint. Sixteen cached
+-- horizontal bands cover arbitrary Home layouts without reading the screen.
+function M.wallpaperBandLuma(y)
+    if not _raster or not M.isWallpaperActive() then return end
+    local w, h = _raster:getWidth(), _raster:getHeight()
+    local band = math.max(0, math.min(15, math.floor(16 * y / h)))
+    if band_luma[band] == nil then
+        local sum = 0
+        for j = 0, 2 do
+            local sy = math.min(h - 1, math.floor((band + (j + .5) / 3) * h / 16))
+            for i = 0, 15 do
+                local sx = math.floor((i + .5) * w / 16)
+                sum = sum + _raster:getPixel(sx, sy):getColor8().a
+            end
+        end
+        band_luma[band] = sum / 48
+    end
+    return band_luma[band]
 end
 
 -- Legacy callers receive a stable facade, never a freed cached ImageWidget.

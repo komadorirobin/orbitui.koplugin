@@ -166,6 +166,10 @@ function DotWidget:paintTo(bb, x, y)
     self:_paintPill(bb, x, y, surface)
     local active, inactive = Backdrop.contentColors(surface, _getDotInactive())
     active = Backdrop.accentOn(surface) or active
+    if SUIWallpaper.orbituiWallpaperInk then
+        local fg, dim = SUIWallpaper:orbituiWallpaperInk(y + self.bar_h / 2, surface)
+        if fg then active, inactive = fg, dim end
+    end
     local dot_r = math.floor(self.dot_size / 2)
     local cy    = y + math.floor(self.bar_h / 2)
     local tw    = self.touch_w
@@ -621,6 +625,12 @@ local ChevronBar = InputContainer:extend{}
 
 function ChevronBar:paintTo(bb, x, y)
     SUIWallpaper.paintPaginationBar(bb, y, self.dimen.h)
+    if SUIWallpaper.orbituiWallpaperInk then
+        local fg, dim = SUIWallpaper:orbituiWallpaperInk(y + self.dimen.h / 2, SUIWallpaper.resolveBar("pagination"))
+        if fg and fg ~= Blitbuffer.COLOR_BLACK then
+            return UI.paintInk(fg, dim, {}, self.ink_buttons, InputContainer.paintTo, self, bb, x, y)
+        end
+    end
     InputContainer.paintTo(self, bb, x, y)
 end
 
@@ -669,6 +679,7 @@ local function buildChevronFooter(goto_fn)
     local chev_w    = Screen:getWidth()
     local chev_h    = Bottombar.getPaginationIconSize() + Screen:scaleBySize(8)
     local chev_input = ChevronBar:new{
+        ink_buttons = { btn_first, btn_prev, btn_text, btn_next, btn_last },
         dimen = Geom:new{ w = chev_w, h = chev_h },
         CenterContainer:new{
             dimen = Geom:new{ w = chev_w, h = chev_h },
@@ -2446,6 +2457,7 @@ function ScreenWidget:_buildModWidget(mod, col_w, ctx, min_h)
     if ctx then
         ctx.col_w      = col_w
         ctx.grow_h     = self._grow_h and self._grow_h[mod.id]
+        ctx.module_surface = chrome
         ctx.text_alpha = ctx.has_wallpaper or (chrome ~= nil and ModuleChrome.hasFill(chrome))
         ctx.ink        = chrome and ModuleChrome.ink(chrome) or nil
         ctx.palette    = ModuleChrome.palette(chrome)

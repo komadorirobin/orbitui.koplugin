@@ -180,6 +180,23 @@ H.test("real adapter animation/cache/screen seams retain original actions when o
     UI.wrap("engines/sui_screen_engine", engine)
     local a, b = engine._open(false, "screen"); H.eq(a, false); H.eq(b, "screen")
 end)
+H.test("only a matching shelf paint completes a trace; no paths or custom names enter reports", function()
+    Host.resetMeasurements(); Host.setMeasuring(true)
+    local widget = { profile_key = "secret profile", _page_ahead_job = {} }
+    Host.measure("library", function() return true end, {}, "secret profile")
+    Host.shelfPainted({ profile_key = "comics" })
+    H.eq(#Host.performanceSnapshot().shelf_opens, 0)
+    clock = clock + .25
+    Host.shelfPainted(widget)
+    local traces = Host.performanceSnapshot().shelf_opens
+    H.eq(#traces, 1); H.eq(traces[1].destination, "Library"); H.eq(math.floor(traces[1].ms + .5), 250)
+    H.eq(traces[1].jobs.page, true); H.eq(traces[1].profile, nil)
+    assert(not Host.performanceReport():find("secret profile", 1, true))
+    Host.measure("library", function() return false end, {}, "comics")
+    Host.shelfPainted({ profile_key = "comics" }); H.eq(#traces, 1)
+    Host.measure("library", function() end, {}, "comics"); Host.setMeasuring(false)
+    Host.shelfPainted({ profile_key = "comics" }); H.eq(#traces, 1)
+end)
 H.test("CPU fallback is labelled separately and a newly available elapsed clock starts a fresh series", function()
     Host.resetMeasurements(); Host.setMeasuring(true)
     local native = package.loaded["ui/time"]

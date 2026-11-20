@@ -297,7 +297,8 @@ function M.readGoal(ctx, config, reading_log)
     if cached then
         return { title = cached.description, value = tonumber(cached.progress) or 0,
             target = tonumber(cached.goal) or 0, source = "Hardcover",
-            module = "hardcover", metric = cached.metric or "book" }
+            module = "hardcover", metric = cached.metric or "book",
+            start_date = cached.start_date, end_date = cached.end_date }
     end
 end
 

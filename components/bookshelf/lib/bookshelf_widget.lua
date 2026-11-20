@@ -17243,6 +17243,7 @@ function BookshelfWidget:paintTo(bb, x, y)
         local _diag_paint_t0 = _gettime()
         self:_paintWhole(bb, x, y)
         self:_clearHeroMarker()
+        if self.orbituiShelfPainted and bb == Screen.bb and top == self then self:orbituiShelfPainted() end
         do
             local FG = require("lib/bookshelf_footer_geom")
             if self._burger_dimen and self._burger_dimen.x then FG.rememberButtonRect(self._burger_dimen) end
@@ -17271,6 +17272,7 @@ function BookshelfWidget:paintTo(bb, x, y)
         self:_paintWhole(bb, x, y)
     end
     self:_clearHeroMarker()
+    if self.orbituiShelfPainted and bb == Screen.bb and top == self then self:orbituiShelfPainted() end
     -- Remember the footer buttons' real painted rects so the in-reader launcher
     -- matches them exactly (single Lua state; see bookshelf_footer_geom).
     do

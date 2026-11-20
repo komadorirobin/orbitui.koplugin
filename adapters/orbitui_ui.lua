@@ -182,6 +182,7 @@ function M.wrap(name, module)
         require("adapters/orbitui_android_covers").widget(module)
         require("adapters/orbitui_shelf_sort").alphabet(module)
         local Host = require("core/orbitui_host")
+        module.orbituiShelfPainted = Host.shelfPainted
         for key, label in pairs({ _rebuild = "shelf", _paginateNext = "next", _paginatePrev = "previous",
                 _launchReader = "open" }) do Host.timeMethod(module, key, label) end
         for _, key in ipairs({ "_schedulePreload", "_queueWarmForVisible", "_pageAheadArm" }) do
@@ -290,6 +291,7 @@ function M.wrap(name, module)
         require("adapters/orbitui_navbar").hero(module)
     elseif name == "screens/sui_menu" then
         return function(plugin)
+            plugin.orbitui_wallpaper_text = require("adapters/orbitui_appearance").wallpaperTextMenu
             plugin.orbitui_wallpaper_softening = require("adapters/orbitui_appearance").wallpaperSofteningItem
             plugin.orbitui_dock_menu_item = require("adapters/orbitui_navbar").menuItem
             module(plugin)

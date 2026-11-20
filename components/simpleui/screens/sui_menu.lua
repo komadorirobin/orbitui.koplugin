@@ -2245,6 +2245,9 @@ SimpleUIPlugin._buildMenus = function(self)
                     set   = SUIWallpaper.styleSetWallpaperDarken,
                 }),
             }
+            if plugin.orbitui_wallpaper_text then
+                items[#items + 1] = plugin.orbitui_wallpaper_text(makeBarRefresh(ctx_menu))
+            end
             if plugin.orbitui_wallpaper_softening then
                 table.insert(items, 4, plugin.orbitui_wallpaper_softening(makeBarRefresh(ctx_menu)))
             end

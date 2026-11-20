@@ -1,6 +1,40 @@
 -- Geometry and layout edits are independent of KOReader's widget/cache owners.
 local M = { id = "orbitui_dashboard" }
 
+-- Use local calendar days. Noon and rounded day differences also cover DST.
+local function dateNoon(iso)
+    if type(iso) ~= "string" then return end
+    local y, m, d = iso:match("^(%d%d%d%d)%-(%d%d)%-(%d%d)$")
+    if not y then return end
+    local stamp = os.time{ year = tonumber(y), month = tonumber(m), day = tonumber(d), hour = 12 }
+    if stamp and os.date("%Y-%m-%d", stamp) == iso then return stamp end
+end
+
+function M.goalPace(goal, today)
+    local target, value = tonumber(goal.target), tonumber(goal.value)
+    if not target or not value or target <= 0 or value < 0 or value >= target then return end
+    today = today or os.date("%Y-%m-%d")
+    local first, last = goal.start_date, goal.end_date
+    if goal.source == "KOReader" then
+        local year = today:sub(1, 4)
+        first, last = year .. "-01-01", year .. "-12-31"
+    end
+    local start, finish, now = dateNoon(first), dateNoon(last), dateNoon(today)
+    if not start or not finish or not now or now < start or now > finish then return end
+    local function daysThrough(t) return math.floor(os.difftime(t, start) / 86400 + .5) + 1 end
+    local expected = math.floor(target * daysThrough(now) / daysThrough(finish))
+    return math.ceil(target - value), math.floor(value) - expected
+end
+
+function M.goalPaceCaption(goal, today)
+    local left, delta = M.goalPace(goal, today)
+    if not left then return end
+    local _ = require("core/orbitui_i18n")
+    local pace = delta == 0 and _("on pace")
+        or string.format(_(delta > 0 and "%d ahead" or "%d behind"), math.abs(delta))
+    return string.format(_("%d to go · %s"), left, pace)
+end
+
 function M.isCoverLayout(layout)
     return layout == "cover_stairs" or layout == "cover_row"
 end

@@ -84,4 +84,19 @@ H.test("sync and missing databases stay passive and an error closes the handle",
     data, why = Log.readDay(day(2026, 11, 17))
     H.eq(data, nil); H.eq(why, "error"); H.eq(calls, 3); H.eq(closed, 3)
 end)
+H.test("goal pace uses inclusive calendar days, including leap day and custom Hardcover periods", function()
+    local model = require("core/orbitui_dashboard")
+    local g = { source = "KOReader", value = 61, target = 366 }
+    local left, delta = model.goalPace(g, "2024-02-29")
+    H.eq(left, 305); H.eq(delta, 1)
+    g.source, g.start_date, g.end_date = "Hardcover", "2026-03-27", "2026-03-31"
+    g.value, g.target = 2, 10
+    H.eq(model.goalPaceCaption(g, "2026-03-29"), "8 to go · 4 behind")
+    H.eq(model.goalPace(g, "2026-03-26"), nil)
+    H.eq(model.goalPace(g, "2026-04-01"), nil)
+    g.start_date = "2026-02-31"
+    H.eq(model.goalPace(g, "2026-03-29"), nil)
+    g.source, g.target = "KOReader", 2
+    H.eq(model.goalPace(g, "2026-03-29"), nil)
+end)
 H.finish()

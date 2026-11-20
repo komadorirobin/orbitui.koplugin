@@ -212,4 +212,27 @@ H.test("Swedish labels and descriptions translate, other languages use English w
     G_reader_settings = { readSetting = function() return "fr_FR" end }
     H.eq(A.label("native"), "Shelf settings"); H.eq(Model.value("native").preset, "native")
 end)
+H.test("Home ink follows local brightness and tint, respects explicit fills and manual night colours", function()
+    local prefs, refreshed = {}, 0
+    local old_device, old_store, old_bb = package.loaded.device, package.loaded["infra/sui_store"], package.loaded["ffi/blitbuffer"]
+    package.loaded["infra/sui_store"] = {
+        readSetting = function(_, k) return prefs[k] end,
+        saveSetting = function(_, k, v) prefs[k] = v end,
+        nilOrTrue = function(_, k) return prefs[k] ~= false end,
+    }
+    package.loaded.device = { screen = {} }
+    package.loaded["ffi/blitbuffer"] = { COLOR_WHITE = "white", COLOR_BLACK = "black", COLOR_LIGHT_GRAY = "light", COLOR_DARK_GRAY = "dark" }
+    local wp = { wallpaperBandLuma = function(y) return y == 1 and 0 or 255 end, styleGetWallpaperDarken = function() return 0 end }
+    prefs.simpleui_orbitui_soften_wallpaper = false
+    H.eq(A.wallpaperInk(wp, 1), "white"); H.eq(A.wallpaperInk(wp, 2), "black")
+    H.eq(A.wallpaperInk(wp, 1, { strength = 100 }), nil)
+    prefs.simpleui_orbitui_soften_wallpaper, prefs.simpleui_style_wallpaper_opacity = true, 80
+    H.eq(A.wallpaperInk(wp, 1), "black")
+    local rows = A.wallpaperTextMenu(function() refreshed = refreshed + 1 end).sub_item_table
+    rows[3].callback(); rows[4].callback(); H.eq(refreshed, 2); assert(rows[3].checked_func())
+    local fg, _, outline = A.wallpaperInk(wp, 2); H.eq(fg, "white"); H.eq(outline, "black")
+    package.loaded.device.screen.night_mode = true
+    H.eq(A.wallpaperInk(wp, 2), "black")
+    package.loaded.device, package.loaded["infra/sui_store"], package.loaded["ffi/blitbuffer"] = old_device, old_store, old_bb
+end)
 H.finish()

@@ -307,6 +307,13 @@ function M.content(widget, p, ctx, data)
             elseif normal then normal(...) end
         end
     end
+    local function openLog(tab, card)
+        local palette = colours(card)
+        return require("adapters/orbitui_reading_log").open{
+            tab = tab, accent = palette and palette.accent,
+            get_goal = function() return data.goal or require("adapters/orbitui_dashboard").readGoal(ctx, data.config, true) end,
+        }
+    end
     local function bookAction(r, fp)
         action(r, function() if ctx.open_fn then ctx.open_fn(fp) end end,
             function() if ctx.hold_fn then ctx.hold_fn(fp, Model.id) end end)
@@ -334,6 +341,7 @@ function M.content(widget, p, ctx, data)
         return Model.heading(data.headings, key, fallback)
     end
 
+    local header_start = #target + 1
     local date = os.date("*t")
     local header_left = p.cover_row and p.pad or 0
     local header_width = p.w - px(112) - header_left
@@ -378,6 +386,34 @@ function M.content(widget, p, ctx, data)
         text(">", p.w - px(42), y, px(42), 21, true, p.page < p.pages and ink or muted)
         action(rect(0, y, px(54), row), function() turn(-1) end)
         action(rect(p.w - px(54), y, px(54), row), function() turn(1) end)
+    end
+    if ctx.has_wallpaper then
+        local wp = require("features/sui_wallpaper")
+        if wp.orbituiWallpaperInk then
+            for i = header_start, #target do
+                local child = target[i]
+                local paint = child.paintTo
+                local original = child._fg or child.color
+                function child:paintTo(bb, x, y)
+                    local fg, dim, outline = wp:orbituiWallpaperInk(y + self:getSize().h / 2, ctx.module_surface)
+                    if not fg then return paint(self, bb, x, y) end
+                    if self._inner then
+                        if outline then
+                            self._fg = outline
+                            paint(self, bb, x - 1, y); paint(self, bb, x + 1, y)
+                            paint(self, bb, x, y - 1); paint(self, bb, x, y + 1)
+                        end
+                        self._fg = original == muted and dim or fg
+                    elseif self == search_icon then
+                        if fg ~= ink then return UI.paintInkIcon(self, bb, x, y, fg, paint) end
+                    else
+                        self.color = fg
+                    end
+                    paint(self, bb, x, y)
+                    if self._inner then self._fg = original else self.color = original end
+                end
+            end
+        end
     end
 
     local r = p.ladder
@@ -676,13 +712,7 @@ function M.content(widget, p, ctx, data)
             text(_(tile[3]), r.x + p.pad, r.y + r.h - p.pad - px(15), r.w - p.pad * 2, 11, false, muted)
         end
         local edit_stats = settings("reading_stats")
-        local open = opens_log and function()
-            local palette = colours("streak")
-            require("adapters/orbitui_reading_log").open{
-                accent = palette and palette.accent,
-                get_goal = function() return data.goal or require("adapters/orbitui_dashboard").readGoal(ctx, data.config, true) end,
-            }
-        end or edit_stats
+        local open = opens_log and function() return openLog("log", "streak") end or edit_stats
         local hold = opens_log and require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false
             and edit_stats or nil
         action(r, cardTap(key, open), hold)
@@ -726,7 +756,7 @@ function M.content(widget, p, ctx, data)
             hour = "hours", minute = "minutes" })[goal.metric] or "completed"
         local value, target = tonumber(goal.value) or 0, tonumber(goal.target) or 0
         local x, w = r.x + p.pad, r.w - p.pad * 2
-        local caption = target <= 0 and _("Set a reading goal") or (value >= target and _("Goal reached") or goal.source)
+        local caption = target <= 0 and _("Set a reading goal") or (value >= target and _("Goal reached") or Model.goalPaceCaption(goal) or goal.source)
         local progress = target > 0 and value / target or 0
         local count = string.format("%s / %s", value, target > 0 and tostring(target) or "-")
         if p.ladder then
@@ -752,7 +782,10 @@ function M.content(widget, p, ctx, data)
             r.y + (p.ladder and p.pad + math.max(17, px(27)) or px(46)),
             r.w - p.pad * 2, 14, false, muted, 3)
     end
-    action(r, cardTap("goal", settings(goal and goal.module or "hardcover")))
+    local configure = settings(goal and goal.module or "hardcover")
+    local has_target = goal and (tonumber(goal.target) or 0) > 0
+    action(r, cardTap("goal", has_target and function() openLog("goal", "goal") end or configure),
+        has_target and require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false and configure or nil)
     end
 
     local owner = ctx._screen_widget or widget
