@@ -28,6 +28,11 @@ selection actions and the Library and Manga improvements described below.
 The published release includes SimpleUI 3.1.0 and Bookshelf 6.5.2. See OTA
 for published assets and TESTING for device coverage.
 
+- The local `feature/aleph-1.3-refinements` branch adds goal pace and a
+  monthly books/pages chart to the Reading log, adaptive ink over the Home
+  wallpaper, and optional first-paint measurements for Library and Manga.
+  See TESTING for the emulator exercise and the KOAssistant index probe.
+
 - **Development on main.** Bookshelf 6.5.3 (**d380620a5**) discards taps queued
   during book opening and parked-reader returns. SimpleUI 3.1.0 maintenance
   (**51b7721ce**) adds direct actions on statistics cards, clock date formats

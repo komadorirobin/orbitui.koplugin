@@ -1,5 +1,38 @@
 # Verification and device acceptance
 
+## 2026-11-20 — Goal pace, Home contrast and shelf opening diagnostics
+
+A local development build ran in KOReader 2026.07.1 on an emulated Tolino
+Vision Color with Swedish menus, an isolated statistics database and a
+wallpaper with a dark upper half and a light lower half. Automatic ink
+selected white at the top and black at the bottom. An opaque card kept
+its configured ink. Tapping the goal opened the Goal tab. The fixture showed
+42 books to go and the monthly series of completed books and pages read.
+The Calendar tab and returning to Home also worked. The pace tests include
+leap day and a custom Hardcover period crossing a daylight-saving change.
+
+The performance report records up to eight shelf openings in memory. Its
+elapsed time ends when the foreground shelf finishes painting into KOReader's
+screen buffer. The physical panel refresh happens later. Memory readings and
+observed background work provide context for comparisons on the same device.
+On runtime `e2208867d` one synthetic run recorded 2650 ms for a cold Library
+open, 1617 ms to switch to Manga, and 137 ms to return from Home to that
+Manga shelf. Selecting Manga again while it was already visible added no
+sample, even when the test then requested a repaint. Physical Bigme latency
+remains unmeasured for this build. The native KOReader SQLite suites also
+passed in the guest (20, 100 and 9 checks). Local logs and screenshots are
+under `test-results/aleph13-20261120.aS6zZd/`.
+
+A separate feasibility probe loaded the KOAssistant 0.24.1 index and parser
+from an archived installation. Three synthetic names exercised first, last
+and shared pages up to a specified page. Moving the limit backwards hid later
+occurrences. A name beyond the limit had zero hits and an unindexed name
+returned an unavailable result. A future OrbitUI view can use those results
+without another book scan or AI request when the index is available. It must
+cap results at the current reading position as KOAssistant's own browser can
+reveal up to the installed X-Ray coverage. The packaged build adds no X-Ray
+screen or dependency.
+
 ## 2026-11-20 — Bookshelf 6.5.3 and SimpleUI maintenance merge
 
 KOReader 2026.07.1 ran the merged runtime on an emulated Tolino Vision
