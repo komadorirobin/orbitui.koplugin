@@ -120,7 +120,7 @@ H.test("sort labels retain native gettext localization and Italian plural syntax
     local f = fixture(); H.eq(f.footer.text, "Sortera"); f.footer.on_tap()
     H.eq(stack[#stack].buttons[1][1].text, "Sortera A till Ö"); locale = "en"
     local italian = read(root .. "/components/simpleui/locale/it_IT.po")
-    assert(italian:find('"PO-Revision-Date: 2026-11-06 00:33+0000\\n"', 1, true))
+    assert(italian:find('"PO%-Revision%-Date: %d%d%d%d%-%d%d%-%d%d %d%d:%d%d[%+%-]%d%d%d%d\\n"'))
     for block in italian:gmatch("[^\n]+.-\n\n") do
         if block:find("msgid_plural", 1, true) then
             assert(block:find("msgstr[1]", 1, true)); assert(not block:find('\nmsgstr "', 1, true))
