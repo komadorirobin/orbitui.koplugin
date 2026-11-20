@@ -2314,7 +2314,9 @@ end
 -- — it's a deliberate tap, not a hold) can share the exact same settings
 -- screen.
 -- ---------------------------------------------------------------------------
-function ScreenWidget:_openModuleSettingsFor(mod)
+-- `hold_action`, if given, is what the module's takeHoldAction returned for
+-- the long-press that opened the window: a button beside the layout one.
+function ScreenWidget:_openModuleSettingsFor(mod, hold_action)
     local screen = self
     if not mod then return end
 
@@ -2352,6 +2354,16 @@ function ScreenWidget:_openModuleSettingsFor(mod)
                 end,
                 on_tap = function(ctx)
                     screen:_openBentoSheet(mod, function() win:close() end, ctx.repaint)
+                end,
+            } or nil,
+            left_aux_btn   = hold_action and {
+                glyph  = SUIStyle.icon(hold_action.icon),
+                label  = hold_action.label,
+                on_tap = function(ctx)
+                    hold_action.on_tap(function()
+                        screen:_refreshLiveData()
+                        ctx.repaint()
+                    end)
                 end,
             } or nil,
         }
@@ -2392,13 +2404,15 @@ end
 -- single function knows which module was held (no per-module closure needed).
 -- ---------------------------------------------------------------------------
 function ScreenWidget:_onHoldModRelease(wrapper)
+    local mod    = wrapper._sui_mod
+    -- Taken on every hold so an action never outlives the hold that set it.
+    local hold_action = mod and mod.takeHoldAction and mod.takeHoldAction(self._pfx)
     if not SUISettings:nilOrTrue(self._pfx .. "settings_on_hold") then
         return true
     end
-    local mod    = wrapper._sui_mod
     local screen = wrapper._sui_screen
     if not mod or not screen then return true end
-    screen:_openModuleSettingsFor(mod)
+    screen:_openModuleSettingsFor(mod, hold_action)
     return true
 end
 
