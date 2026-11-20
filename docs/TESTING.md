@@ -1,5 +1,31 @@
 # Verification and device acceptance
 
+## 2026-11-20 — Bookshelf 6.5.3 and SimpleUI maintenance merge
+
+KOReader 2026.07.1 ran the merged runtime on an emulated Tolino Vision
+Color. During a fresh EPUB open, four emulated panel taps on the page-turn
+zone stayed in the input queue until the guard drained them. The book
+remained on its opening page. One tap at the same location after the guard
+lifted advanced the page. Repeating this on a parked book gave the same
+result. The immediate reopen attempt was ignored, and a later reopen from
+the native shelf restored the same ReaderUI instance. Each transition
+drained 52 raw absolute-axis events. Physical Bigme input and display timing
+were outside this run.
+
+In Swedish, the clock offered five date formats and saved the ISO selection.
+The statistics card dispatched its streak detail action on tap and returned a
+single “Redigera kort” action on hold. An OPDS fixture with a MIME-only
+content field showed the book description from its summary, and the read
+action resolved to “Läs nu”. The checks used disposable books and settings.
+
+The full Lua and LuaJIT runs passed. Each Bookshelf run reported 617 suites,
+zero failures and three skips. The three skipped suites passed with native
+SQLite bindings (20, 100 and 9 checks). All 44 translation catalogues passed.
+An isolated beta.7 installation exercised the merged ZIP's inventory,
+activation, restart, rollback and interrupted-update recovery. The two
+follow-up changes to test expectations leave the packaged runtime unchanged.
+Local logs are under `test-results/upstream-20261120.NPefxl/`.
+
 ## 2026-11-19 — Stable 1.4.0
 
 The published ZIP contains the same executable code and artwork as

@@ -4,6 +4,36 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-20 — Bookshelf 6.5.3 and SimpleUI 3.1.0 maintenance
+
+Starting at the stable 1.4.0 receipt **7b5a36cc5**, unsquashed merges
+**266718a8d** (Bookshelf) and **7a9b89ec8** (SimpleUI) import the reviewed
+heads of both tracked branches. The fork anchors are preserved and the
+source pins are recorded in **de4b08cf8**.
+[Bookshelf revision](https://github.com/AndyHazz/bookshelf.koplugin/commit/d380620a5c4b9f310f45a545eda415b343c98e89) ·
+[SimpleUI revision](https://github.com/doctorhetfield-cmd/simpleui.koplugin/commit/51b7721ce66d90e6d9eacb44de949091c4fd9c92)
+
+C02/C03/C04. Bookshelf drains touch input queued during fresh book opens
+and parked-reader returns. The park conflict retained OrbitUI's one-second
+accidental-reopen guard and its recovery when the live reader is missing
+from the window stack. An intentional reopen arms the upstream input guard
+after the reader is located. The API-1 registry embeds the new helper.
+
+C02/C07/C10. SimpleUI's statistics cards open their detail screen with a
+tap and offer an edit action on hold. Its clock has five date formats.
+Back at the root of the native History or Collections subview now closes it
+in the Classic and Tabs layouts. Exiting also cleans up open navbar subviews.
+OrbitUI's dashboard streak card retains its separate Reading log route.
+Bookshelf reserves the analogue clock date's measured height and displays
+an OPDS summary when the content field contains only a MIME type.
+
+C07/C08/C09. The Chinese catalogue retains the hosted entries alongside
+upstream translations. The Italian catalogue carries upstream's updated
+header and plural rules. The Swedish catalogues include the clock choices,
+card edit action and Bookshelf's distinct “Läs nu” OPDS action. The ZIP
+retains the stable installer's 2,000 paths. This is a source merge on main.
+See [device and host verification](TESTING.md).
+
 ## 2026-11-18 — SimpleUI 3.1.0 maintenance
 
 Starting from the beta.6 publication receipt **fda80ade6**, unsquashed subtree

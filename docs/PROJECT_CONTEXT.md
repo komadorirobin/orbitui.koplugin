@@ -20,20 +20,25 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-19
+## Snapshot: 2026-11-20
 
 **OrbitUI 1.4.0** promotes the runtime from 1.4.0-beta.7 to stable. It
 includes the Reading log, optional BookOrbit achievements, customizable text
 selection actions and the Library and Manga improvements described below.
-SimpleUI is at 3.1.0 and Bookshelf at 6.5.2. See OTA for published assets
-and TESTING for device coverage.
+The published release includes SimpleUI 3.1.0 and Bookshelf 6.5.2. See OTA
+for published assets and TESTING for device coverage.
 
-- **Reviewed SimpleUI maintenance.** File browser list covers support stacks and
+- **Development on main.** Bookshelf 6.5.3 (**d380620a5**) discards taps queued
+  during book opening and parked-reader returns. SimpleUI 3.1.0 maintenance
+  (**51b7721ce**) adds direct actions on statistics cards, clock date formats
+  and fixes to subview navigation. See MERGE_LOG for the integrated revisions.
+
+- **SimpleUI maintenance included in stable 1.4.0.** File browser list covers support stacks and
   independent list and mosaic shadow settings. Closing a book refreshes enabled
   reading statistics even when Home was already waiting to rebuild. Empty Home
   book modules can skip a full page rebuild, and odometer digits clip to the
-  paint buffer. SimpleUI remains 3.1.0 at **5946a21e5**. Bookshelf remains
-  6.5.2 at **58d776725**. See MERGE_LOG for verification and scope.
+  paint buffer. The corresponding stable pins are **5946a21e5** for SimpleUI and
+  **58d776725** for Bookshelf.
 
 - **Runtime fixes in 1.4.0-beta.7.** Typo-tolerant search uses bounded edit-distance
   rows. The Reading log reuses its per-book daily grouping for the weekly
