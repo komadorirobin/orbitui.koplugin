@@ -1,3 +1,4 @@
+-- Adapted from David Friedman's FingerTips v0.1.0 for OrbitUI on 2026-11-21.
 --[[
 FingerTips: the action bar shown after you lift your finger.
 

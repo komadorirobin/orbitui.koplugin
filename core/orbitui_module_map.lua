@@ -505,7 +505,8 @@ end\
 \
 return M\
 ",
-    ["orbitui/fingertips/main"] = "--[[\
+    ["orbitui/fingertips/main"] = "-- Adapted from David Friedman's FingerTips v0.1.0 for OrbitUI on 2026-11-21.\
+--[[\
 FingerTips\
 \
 While you hold and drag to select text, your fingertip covers the words you\
@@ -1062,7 +1063,8 @@ end\
 \
 return FingerTips\
 ",
-    ["orbitui/fingertips/actions"] = "--[[\
+    ["orbitui/fingertips/actions"] = "-- Adapted from David Friedman's FingerTips v0.1.0 for OrbitUI on 2026-11-21.\
+--[[\
 FingerTips: the actions offered in the action bar.\
 \
 They are exactly the buttons of KOReader's own highlight popup, including the\
@@ -1205,7 +1207,8 @@ Actions.MORE = _(\"More\")\
 \
 return Actions\
 ",
-    ["orbitui/fingertips/arrange"] = "--[[\
+    ["orbitui/fingertips/arrange"] = "-- Adapted from David Friedman's FingerTips v0.1.0 for OrbitUI on 2026-11-21.\
+--[[\
 FingerTips: the \"Action bar\" settings screen.\
 \
 Tap a box to toggle an action. Select a row and use the arrows to change\
@@ -1485,7 +1488,8 @@ end\
 \
 return Arrange\
 ",
-    ["orbitui/fingertips/bar"] = "--[[\
+    ["orbitui/fingertips/bar"] = "-- Adapted from David Friedman's FingerTips v0.1.0 for OrbitUI on 2026-11-21.\
+--[[\
 FingerTips: the action bar shown after you lift your finger.\
 \
 It sits above the selection (below it when there's no room), never over it.\

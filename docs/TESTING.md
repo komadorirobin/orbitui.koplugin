@@ -1,5 +1,25 @@
 # Verification and device acceptance
 
+## 2026-11-21 — Bundled FingerTips on touchscreens
+
+KOReader 2026.07.1 ran the sealed OrbitUI ZIP in three isolated installations on
+an emulated Tolino Vision Color. With only the bundled FingerTips available,
+long-press and drag on an EPUB showed the line preview. After release, dragging
+the end handle changed the selected words. The action bar showed the six saved
+OrbitUI shortcuts and the Swedish **Fler…** button. Translate received the
+edited selection and the X-Ray shortcut opened a matching cached KOAssistant
+entry. A single-word hold still opened Dictionary.
+
+The same checks passed with standalone FingerTips 0.1.0 active. Only the
+standalone instance owned the view and the gestures in that installation. In
+a third installation, the bundled version respected a saved off switch and
+kept the hidden-action preference. The Swedish OrbitUI settings could enable
+and disable the feature in the open book and open the action-visibility editor.
+
+Host regressions also cover key-only devices and both plugin load orders.
+Physical touchscreen tracking and PDF selection have not been tested.
+Local logs and screenshots are in `test-results/fingertips-bundle-20261121.adJldt/`.
+
 ## 2026-11-21 — Optional FingerTips selection bar
 
 An emulated Tolino Vision Color ran KOReader 2026.07.1 in Swedish with
