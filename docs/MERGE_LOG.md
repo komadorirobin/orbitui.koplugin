@@ -4,6 +4,23 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-21 — Bookshelf vocabulary card
+
+The unsquashed import **16919ce1c** advances Bookshelf from **d380620a5**
+to [**7b81a1bf7**](https://github.com/AndyHazz/bookshelf.koplugin/commit/7b81a1bf788089da5759c448a49c24352f84f68e).
+SimpleUI main matches the existing pin **51b7721ce**. Both original fork
+anchors remain in history.
+
+C04/C07/C08. The optional Bookshelf start-menu card reads KOReader’s Vocabulary
+Builder database and caches definitions from installed dictionaries. OrbitUI
+uses KOReader’s native dictionary lookup in batches, including its Android
+launcher and configured dictionary directory. The picker preview skips
+dictionary lookup. Marking the last word as known empties the review deck.
+Swedish labels are included. The module remains a discoverable Lua file in the
+ZIP. SimpleUI’s private updater source moves into the existing lazy module
+registry so the package still fits API 1. The hosted updater routes through
+OrbitUI as before. The import contains no changes to reading progress sync.
+
 ## 2026-11-20 — Bookshelf 6.5.3 and SimpleUI 3.1.0 maintenance
 
 Starting at the stable 1.4.0 receipt **7b5a36cc5**, unsquashed merges

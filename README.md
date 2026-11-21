@@ -23,12 +23,16 @@ Add the optional **BookOrbit achievements** card for your latest badge and
 next goal. You can also choose the first six actions in the text selection
 menu. Library and Manga do less work when opening large shelves.
 
-**In the development build**, FingerTips is included on touchscreens. While you
+**[Try 1.5.0-beta.1](https://github.com/komadorirobin/orbitui.koplugin/releases/tag/v1.5.0-beta.1)** · FingerTips is included on touchscreens. While you
 select text, you can see the line above your finger. Lift your finger and drag
 either handle to adjust the selection. The floating menu uses your six OrbitUI
 shortcuts. To turn it off, open **OrbitUI settings → Integrations → Reader
 panel & X-Ray → FingerTips text selection**. An active standalone FingerTips
 installation takes priority. Both versions use your existing FingerTips settings.
+
+The beta also adds a monthly chart and goal pace to the Reading log.
+Bookshelf’s optional **Vocab Word** start-menu card revisits saved Vocabulary
+Builder words with definitions from your installed dictionaries.
 
 > **OrbitUI replaces the standalone SimpleUI and Bookshelf plugins.**
 > Neither is required separately. If either is installed, disable it and restart

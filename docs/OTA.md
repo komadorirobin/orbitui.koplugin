@@ -1,5 +1,13 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.5.0-beta.1
+
+Preview build with bundled FingerTips on touchscreens, the optional Bookshelf
+Vocab Word card, monthly reading statistics, goal pace and adaptive Home
+wallpaper contrast. Stable receives 1.4.0. To try the beta, select the preview
+channel under **OrbitUI → System & maintenance → Updates** and restart after
+installing the update.
+
 ## OrbitUI 1.4.0
 
 GitHub published release **451649559** on **2026-11-19 at 17:04:34 UTC** from

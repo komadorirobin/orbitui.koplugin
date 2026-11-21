@@ -262,7 +262,7 @@ swap its position. For actions from installed plugins, select text and open
 KOAssistant shortcuts follow the chosen action when its menu order changes.
 **More…** opens the other actions for the selection.
 
-In the development build, **FingerTips text selection** in the same settings
+In 1.5.0-beta.1, **FingerTips text selection** in the same settings
 menu is on by default on touchscreens. It shows the line above your finger
 while you drag. After you lift your finger, drag either handle to refine the
 selection. Your six shortcuts are on the first page. With a book open, choose
