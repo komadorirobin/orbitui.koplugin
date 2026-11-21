@@ -141,6 +141,36 @@ H.test("text selection stores xpointer/excerpt without creating a highlight", fu
     H.eq(saved[key].entries[1].kind, "text"); H.eq(saved[key].entries[1].location, "xp:42")
     local w = P.show(reader); H.eq(w.preview[1].text, "a selected passage"); H.eq(#pending, 0); H.eq(#jumps, 0)
 end)
+H.test("FingerTips keeps both hook orders, full-registry actions and native fallback", function()
+    local Bar = { makeSets = function() return "original" end, nextSet = function() end }
+    package.loaded.fingertips_bar = Bar
+    for _, wrapped_first in ipairs{ true, false } do
+        fixture()
+        local h = reader.highlight
+        h._fingertips_wrapped = wrapped_first
+        local all = h._highlight_buttons
+        all["02_highlight"] = function() return { text = "Highlight" } end
+        all["07_translate"] = function() return { text = "Translate" } end
+        reader.fingertips = { ui = reader, enabled = true, getLineBoxes = function() return {} end }
+        local seen
+        h.onShowHighlightMenu = function(this) seen = this._highlight_buttons end
+        P.attach(reader)
+        h.selected_text, h.hold_pos = { text = "Some words" }, {}
+        h:onShowHighlightMenu()
+        H.eq(seen == all, wrapped_first)
+        local primary, extra = all["02_highlight"](), all["07_translate"]()
+        local bar = { hl = h, actions = { { id = "07_translate", button = extra }, { id = "02_highlight", button = primary } } }
+        Bar.makeSets(bar); H.eq(bar.rows, 2); H.eq(#bar.sets, 2)
+        H.eq(bar.sets[1][1], primary); H.eq(bar.sets[1][2].text, "More…")
+        H.eq(bar.sets[2][1], extra)
+        bar.actions = { { id = "07_translate", button = extra } }
+        Bar.makeSets(bar); H.eq(#bar.sets, 1); H.eq(bar.sets[1][1], extra)
+        reader.fingertips.enabled = false
+        h:onShowHighlightMenu(); assert(seen ~= all and seen.zz_orbitui_highlight_more)
+        P.retire(reader, true); H.eq(Bar.makeSets(bar), "original")
+    end
+    package.loaded.fingertips_bar = nil
+end)
 H.test("native highlight menu can expand and go back without replacing registered actions", function()
     fixture()
     local h = reader.highlight

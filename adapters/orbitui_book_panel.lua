@@ -957,6 +957,12 @@ local function koaHighlightIds(reader, registered)
     return ids
 end
 
+local function rememberHighlightLabel(labels, id, slot, text, registered)
+    if id and type(text) == "string" and #text <= 160 and text:find("%S") then
+        labels[id] = { text = text:gsub("%s+", " "), slot = slot, factory = registered[slot] }
+    end
+end
+
 local function observeHighlightActions(highlight, registered, rendered)
     local dialog = highlight.highlight_dialog
     local layout = dialog and dialog.buttontable and dialog.buttontable.buttons_layout
@@ -978,9 +984,7 @@ local function observeHighlightActions(highlight, registered, rendered)
                 koa_ids = koa_ids or koaHighlightIds(highlight.ui, registered)
                 id = koa_ids[slot]
             end
-            if id then
-                labels[id] = { text = text:gsub("%s+", " "), slot = slot, factory = registered[slot] }
-            end
+            rememberHighlightLabel(labels, id, slot, text, registered)
         end
     end
     observed_highlight_labels[registered] = labels
@@ -998,6 +1002,70 @@ local function highlightOrder()
     end
     for i = 1, count do if not saved[i] then return highlight_default end end
     return saved
+end
+
+-- FingerTips 0.1 uses the same bar builder on release and after a handle
+-- drag. Let it resolve applicable buttons and own the widget and gestures.
+-- Only a highlight instance attached to OrbitUI supplies a page layout.
+local function attachFingerTips(highlight, edit)
+    local Bar = package.loaded.fingertips_bar
+    if type(Bar) ~= "table" or not readerCallable(Bar.makeSets) or not readerCallable(Bar.nextSet) then return end
+    if not Bar._orbitui_make_sets then
+        local original = Bar.makeSets
+        function Bar:makeSets(...)
+            local layout = self.hl and self.hl._orbitui_fingertips_layout
+            if layout and type(self.actions) == "table" then return layout(self) end
+            return original(self, ...)
+        end
+        Bar._orbitui_make_sets = true
+    end
+    local function layout(bar)
+        local registered = highlight._highlight_buttons
+        local koa_ids = koaHighlightIds(highlight.ui, registered)
+        local buttons, labels = {}, {}
+        for _, entry in ipairs(bar.actions) do
+            local id = koa_ids[entry.id] or entry.id
+            buttons[id] = entry.button
+            if highlightActionId(id) and not highlight_labels[id] then
+                local label = entry.button.text
+                if not label and entry.button.text_func then
+                    local ok, value = pcall(entry.button.text_func)
+                    if ok then label = value end
+                end
+                rememberHighlightLabel(labels, id, entry.id, label, registered)
+            end
+        end
+        observed_highlight_labels[registered] = labels
+        local first, rest = {}, {}
+        for _, id in ipairs(highlightOrder()) do
+            if buttons[id] then
+                first[#first + 1] = buttons[id]
+                buttons[id] = nil
+            end
+        end
+        for _, entry in ipairs(bar.actions) do
+            if buttons[koa_ids[entry.id] or entry.id] then rest[#rest + 1] = entry.button end
+        end
+        local _ = require("core/orbitui_i18n")
+        rest[#rest + 1] = { text = _("Customize text selection menu"), callback = edit }
+        local sets = #first > 0 and { first } or {}
+        for i = 1, #rest, 7 do
+            local page = {}
+            for j = i, math.min(i + 6, #rest) do page[#page + 1] = rest[j] end
+            sets[#sets + 1] = page
+        end
+        bar.sets, bar.rows, bar.cols = sets, 2, 4
+        if #sets > 1 then
+            local more = { text = _("More…"), callback = function()
+                require("ui/uimanager"):nextTick(function()
+                    if highlight.highlight_dialog == bar then bar:nextSet() end
+                end)
+            end }
+            for _, page in ipairs(sets) do page[#page + 1] = more end
+        end
+    end
+    highlight._orbitui_fingertips_layout = layout
+    return layout
 end
 
 function M.highlightMenuItems(changed)
@@ -1217,6 +1285,7 @@ function M.readerPins()
             if h and s.menu_wrapper and h.onShowHighlightMenu == s.menu_wrapper then
                 h.onShowHighlightMenu = s.menu_original
             end
+            if h and h._orbitui_fingertips_layout == s.fingertips_layout then h._orbitui_fingertips_layout = nil end
             states[ui] = nil
         end
     end
@@ -1363,9 +1432,23 @@ function M.readerPins()
                     and not h._highlight_buttons[highlight_more] then
                 local native = h.onShowHighlightMenu
                 s.menu_original = rawget(h, "onShowHighlightMenu")
+                local function edit()
+                    if not live(s) or not h.selected_text then return end
+                    h:onClose()
+                    require("adapters/orbitui_settings").open("highlight_menu")
+                end
+                s.fingertips_layout = attachFingerTips(h, edit)
+                local fingertips_inside = s.fingertips_layout and h._fingertips_wrapped
                 local show
                 show = function(this, index, expanded)
                     if not live(s) or not this.selected_text then return native(this, index) end
+                    if fingertips_inside and index == nil and not expanded and this.hold_pos then
+                        local ft = readerPlugin(ui, "fingertips")
+                        if ft and ft.enabled and readerCallable(ft.getLineBoxes) then
+                            local ok, boxes = pcall(ft.getLineBoxes, ft)
+                            if ok and boxes then return native(this, index) end
+                        end
+                    end
                     local all = this._highlight_buttons
                     local subset, rendered = {}, {}
                     if expanded then
@@ -1383,11 +1466,7 @@ function M.readerPins()
                             end
                         end
                         subset[highlight_edit] = function()
-                            return { text = _("Customize text selection menu"), callback = function()
-                                if not live(s) or not this.selected_text then return end
-                                this:onClose()
-                                require("adapters/orbitui_settings").open("highlight_menu")
-                            end }
+                            return { text = _("Customize text selection menu"), callback = edit }
                         end
                     else
                         local order = highlightOrder()
