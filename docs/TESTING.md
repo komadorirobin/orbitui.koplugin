@@ -1,5 +1,23 @@
 # Verification and device acceptance
 
+## 2026-11-21 — OrbitUI 1.5.0-beta.1
+
+KOReader 2026.07.1 on an emulated Tolino Vision Color loaded the sealed build
+with Swedish menus. The optional Bookshelf vocabulary card showed a saved
+word containing an accent and an apostrophe from an isolated Vocabulary
+Builder database. The picker preview left the cache untouched. The active
+card fetched the matching definition from a local StarDict dictionary.
+Marking the word as known emptied the review deck. The same build exercised
+bundled FingerTips, dragging a handle, the six saved actions, translation
+dispatch, cached KOAssistant X-Ray and closing and reopening the book.
+
+Both host interpreter runs and all 44 translation catalogues passed. The
+three Bookshelf suites requiring KOReader SQLite passed separately in the
+guest (20, 100 and 9 checks). The outgoing history and archived files cleared
+the held-artwork and secret scans. Physical Bigme and Kobo testing and PDF
+selection remain open. See [OTA](OTA.md) for the public-byte checks.
+Local evidence is under `test-results/preview15-beta1-20261121/`.
+
 ## 2026-11-21 — Bundled FingerTips on touchscreens
 
 KOReader 2026.07.1 ran the sealed OrbitUI ZIP in three isolated installations on

@@ -2,6 +2,17 @@
 
 ## OrbitUI 1.5.0-beta.1
 
+Published on 2026-11-21T13:17:51Z as GitHub prerelease 453701186
+from **f87facdb3**. The 10,239,603-byte ZIP and its checksum
+matched the draft and local build. SHA-256 is
+`a75647e5a5f6713ae47a37777ed48071f0a11833bc7f0d83a0428fd636dfe823`. GitHub Latest and the stable updater both offer 1.4.0.
+
+Both interpreter jobs passed on [main](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/44907782708)
+and the [release tag](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/44907782697).
+All four CI archives matched the 2,000 installed files and executable bits.
+KOReader’s preview updater on 1.4.0 and 1.4.0-beta.7 discovered the release
+over anonymous HTTPS, installed the public bytes, restarted and rolled back.
+
 Preview build with bundled FingerTips on touchscreens, the optional Bookshelf
 Vocab Word card, monthly reading statistics, goal pace and adaptive Home
 wallpaper contrast. Stable receives 1.4.0. To try the beta, select the preview
