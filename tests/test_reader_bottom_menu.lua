@@ -157,8 +157,13 @@ H.test("duplicate close restores native hinting at most once", function()
 end)
 H.test("only the new bottom-menu preference is written by its explicit switch", function()
     fixture(); local changed = 0
+    local touch = false
+    package.loaded.device = { isTouchDevice = function() return touch end }
+    H.eq(#M.readerPanelItems(), 8)
+    touch = true
     local rows = M.readerPanelItems(function() changed = changed + 1 end)
-    H.eq(#rows, 8); assert(rows[1].checked_func()); H.eq(#f.writes, 0)
+    H.eq(rows[3].text, "Textmarkering med FingerTips")
+    H.eq(#rows, 10); assert(rows[1].checked_func()); H.eq(#f.writes, 0)
     rows[1].callback(); H.eq(f.preference, false); assert(not rows[1].checked_func())
     H.eq(f.writes[1], "orbitui_reader_bottom_panel"); H.eq(changed, 1)
 end)
