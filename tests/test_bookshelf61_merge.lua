@@ -19,7 +19,12 @@ H.test("all lazy helpers preserve canonical source bytes and API-1 module identi
         local f=io.open(root.."/"..assert(map[name]),"rb")
         if f then H.eq(f:read("*a"),source,name); f:close() end
     end
-    H.eq(count,66)
+    H.eq(count,73)
+    for _,name in ipairs({"adapters/orbitui_fingertips","orbitui/fingertips/main",
+            "orbitui/fingertips/actions","orbitui/fingertips/arrange","orbitui/fingertips/bar",
+            "orbitui/fingertips/panel","infra/sui_compat_check"}) do
+        assert(embedded[name],name)
+    end
     for _,name in ipairs({"book_actions_layout","editor_page","link_panel","page_dialog",
             "picker_sort","popup_kit","slider","image_contrast","menu_close_refresh","input_guard"}) do
         assert(embedded["lib/bookshelf_"..name],name)

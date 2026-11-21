@@ -260,7 +260,15 @@ swap its position. For actions from installed plugins, select text and open
 **More… → Customize text selection menu**. This includes buttons such as
 **Hardcover quote** and KOAssistant quick actions offered for that book.
 KOAssistant shortcuts follow the chosen action when its menu order changes.
-**More…** continues to show the full menu for the selection.
+**More…** opens the other actions for the selection.
+
+In the development build, **FingerTips text selection** in the same settings
+menu is on by default on touchscreens. It shows the line above your finger
+while you drag. After you lift your finger, drag either handle to refine the
+selection. Your six shortcuts are on the first page. With a book open, choose
+**Show or hide selection actions** to hide buttons or change their order under
+**More…**. OrbitUI also recognizes an enabled standalone copy of FingerTips
+and uses the same saved preferences.
 
 Hold **Bookmarks** in the reader panel to choose a color for the current page
 bookmark. New page bookmarks use the last selected color. **Colored bookmarks**
