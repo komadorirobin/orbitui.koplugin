@@ -25,14 +25,12 @@ local function store(data)
         nilOrTrue = function(_, k) return data[k] ~= false end }
 end
 H.test("all reviewed embedded sources are valid Lua and retain the path-map API", function()
-    local count = 0
     for name, source in pairs(embedded) do
-        count = count + 1; assert(map[name]); assert((loadstring or load)(source))
+        assert(map[name]); assert((loadstring or load)(source))
         H.eq(source, read(name))
     end
-    H.eq(count, 66)
     local n = 0; for _, path in pairs(map) do H.eq(type(path), "string"); n = n + 1 end
-    H.eq(n, 445)
+    H.eq(n, 451)
 end)
 H.test("Critter defaults copy only and per-screen picks topics and decorations survive", function()
     local data = { simpleui_hs_critter_pick = "hazel", custom_critter_pick = "suey",

@@ -433,7 +433,7 @@ local nodes = {
     { "reader", "Opening books & returning", "navigation", "bookshelf", "läsare reader bokstängning close return återgång hot park" },
     { "reader_menu", "Reader menu: fast return to Library", "reader", "navigation", "arkivskåp arkivknapp snabbstängning stäng boken file browser cabinet close button reader menu fast return" },
     { "integrations", "Integrations", nil, "integrations", "bookorbit hardcover myanimelist mal synk sync kopplingar" },
-    { "reader_panel", "Reader panel & X-Ray", "integrations", "integrations", "läsarpanel bottenpanel bottenmeny läsinställningar marginaler bottom menu reading settings margins xray x-ray koassistant ai automatiskt automatic plugin" },
+    { "reader_panel", "Reader panel & X-Ray", "integrations", "integrations", "läsarpanel bottenpanel bottenmeny läsinställningar marginaler bottom menu reading settings margins xray x-ray koassistant ai automatiskt automatic plugin fingertips textmarkering handtag handles selection" },
     { "highlight_menu", "Customize text selection menu", "reader_panel", "system", "markera markeringsmeny textmarkering ordval ordbok dictionary highlight translate översätt fler copy" },
     { "bookorbit", "BookOrbit", "integrations", "integrations", "vill läsa want to read lokalt local taggar tags ångra öppning undo opening hardcover server api patch sync synk achievements prestationer API-nyckel" },
     { "connections", "Connections & help", "integrations", "integrations", "bookorbit myanimelist mal anslutningar credentials" },
