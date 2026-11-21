@@ -1,5 +1,32 @@
 # Verification and device acceptance
 
+## 2026-11-21 — Optional FingerTips selection bar
+
+An emulated Tolino Vision Color ran KOReader 2026.07.1 in Swedish with
+FingerTips 0.1.0, KOAssistant and a disposable EPUB. Before the change the
+favorites spanned two pages, with both “Fler…” and “More” on the second.
+The new bar fits six OrbitUI favorites on the first page, keeps FingerTips'
+handles and placement, and uses one paging button. FingerTips still decides
+which buttons apply to the current selection. Its hidden actions stay hidden
+and its order is used for the remaining actions.
+
+KOReader's hold and pan handlers selected words on a rendered EPUB line.
+Dragging the end handle changed the selection. The bar stayed clear of the
+selected words. Translation received the edited text at the translation
+handler (offline test). The X-Ray shortcut kept its position after KOAssistant
+reordered its action slots and opened a cached entry for the selected phrase.
+The overflow opened OrbitUI's shortcut editor with the X-Ray slot selected
+in the saved order. A single-word hold still dispatched to Dictionary.
+Turning off FingerTips restored the OrbitUI popup. The host regression also
+exercises both hook orders and detaching the reader. Both full interpreter
+runs and all 44 translation catalogues passed. The three native SQLite
+suites passed separately in the guest. Physical touchscreen tracking and
+PDF selection remain unverified for this build.
+
+FingerTips is independently distributed by its author. The tests used commit
+`61617b649`. Local logs and screenshots are under
+`test-results/fingertips-20261121.pcVPf9/`.
+
 ## 2026-11-20 — Goal pace, Home contrast and shelf opening diagnostics
 
 A local development build ran in KOReader 2026.07.1 on an emulated Tolino

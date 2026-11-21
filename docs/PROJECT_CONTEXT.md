@@ -31,7 +31,8 @@ for published assets and TESTING for device coverage.
 - The local `feature/aleph-1.3-refinements` branch adds goal pace and a
   monthly books/pages chart to the Reading log, adaptive ink over the Home
   wallpaper, and optional first-paint measurements for Library and Manga.
-  See TESTING for the emulator exercise and the KOAssistant index probe.
+  When FingerTips 0.1.0 is installed, its floating action bar displays the
+  reader's OrbitUI text-selection shortcuts. See TESTING for emulator coverage.
 
 - **Development on main.** Bookshelf 6.5.3 (**d380620a5**) discards taps queued
   during book opening and parked-reader returns. SimpleUI 3.1.0 maintenance
