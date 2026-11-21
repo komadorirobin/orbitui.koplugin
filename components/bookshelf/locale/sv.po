@@ -36,3 +36,45 @@ msgstr "Bookshelf: uppdatera biblioteket"
 
 msgid "Read now"
 msgstr "Läs nu"
+
+msgid "Vocab Word"
+msgstr "Ord från ordbyggaren"
+
+msgid "From Vocabulary Builder + dictionary. Works offline."
+msgstr "Visar sparade ord med förklaringar från dina ordböcker. Fungerar offline."
+
+msgid "Reset known words"
+msgstr "Återställ ord jag kan"
+
+msgid "Senses shown"
+msgstr "Antal betydelser"
+
+msgid "Show word type"
+msgstr "Visa ordklass"
+
+msgid "Font scale"
+msgstr "Textstorlek"
+
+msgid "Show book context"
+msgstr "Visa meningen ur boken"
+
+msgid "Review-due words first"
+msgstr "Visa ord som ska repeteras först"
+
+msgid "Known words"
+msgstr "Ord jag kan"
+
+msgid "Dictionary"
+msgstr "Ordbok"
+
+msgid "All dictionaries"
+msgstr "Alla ordböcker"
+
+msgid "No vocab words yet"
+msgstr "Inga sparade ord ännu"
+
+msgid "No words left to review"
+msgstr "Inga ord kvar att repetera"
+
+msgid "✓ I know it"
+msgstr "✓ Jag kan ordet"

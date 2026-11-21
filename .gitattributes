@@ -22,6 +22,7 @@
 /components/fingertips/*.lua export-ignore
 /adapters/orbitui_fingertips.lua export-ignore
 /components/simpleui/infra/sui_compat_check.lua export-ignore
+/components/simpleui/infra/sui_updater.lua export-ignore
 /adapters/orbitui_bookorbit_achievements.lua export-ignore
 /adapters/orbitui_reading_log.lua export-ignore
 /components/simpleui/features/sui_menu_hide.lua export-ignore

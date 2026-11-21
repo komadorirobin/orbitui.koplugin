@@ -12,19 +12,9 @@ shown; with "Review-due words first" on (default), words whose Vocabulary
 Builder SRS due_time has passed come first. "✓ I know it" removes a word from
 the deck (persistent, resettable from the module settings).
 
-Key design: sdcv is called exactly ONCE per session, with ALL uncached words
-in a single batch (--utf8-input/output: a locale-less Kobo cannot convert
-non-ASCII queries without --utf8-input, so every accented word would fail to
-cache and never enter the rotation), over the same dict folders KOReader's
-own dictionary searches (data/dict + data/dict_ext). Definitions — and the
-misses: a word no dictionary knows is cached empty, so the batch never
-re-runs for it (until the installed dictionary set changes, when cached
-misses are dropped for a re-check) — live persistently in
-vocab_word_cache.json; after the batch every tap serves from cache — zero
-forks, zero OOM. The heavy init (sqlite reads + that one sdcv batch) runs
-lazily on the FIRST render, never at module load: this file must load in
-standalone Lua (the headless contract test dofiles every micromodules/*.lua
-with only logger/i18n stubbed), and a blocking load would freeze the menu.
+The first real render asks KOReader's dictionary for uncached words in
+bounded batches and saves the definitions for future sessions. The picker
+preview does not touch the vocabulary database or run a dictionary lookup.
 
 Taps: the word line hands off to the file browser's own dictionary
 (filemanager.instance.dictionary:onLookupWord), which opens the full
@@ -53,7 +43,7 @@ local function store() return require("lib/bookshelf_settings_store") end
 local lazyInit  -- forward-declared; defined near the end of the file
 
 local function readAcepciones()
-    local v = store().read(KEY_SENSES, "3")
+    local v = store().read(KEY_SENSES, 3)
     if v == "all" then return "all" end
     v = tonumber(v)
     if v and v >= 1 and v <= 3 then return v end
@@ -129,13 +119,19 @@ end
 -- Scan the dict folders KOReader's own dictionary searches (data/dict +
 -- data/dict_ext) for all available StarDict dictionaries.
 -- Returns array of { name = "bookname", path = "/full/path/to/file.ifo" }
+local function dictionaryDir()
+    return G_defaults:readSetting("STARDICT_DATA_DIR") or os.getenv("STARDICT_DATA_DIR")
+        or DataStorage:getDataDir() .. "/data/dict"
+end
+
 local function findAvailableDictionaries()
     if _available_dicts then return _available_dicts end
     ensureDeps()
-    local data_dir = DataStorage:getDataDir()
-    local dict_dirs = { data_dir .. "/data/dict" }
-    if lfs.attributes(data_dir .. "/data/dict_ext", "mode") == "directory" then
-        dict_dirs[#dict_dirs + 1] = data_dir .. "/data/dict_ext"
+    local base = dictionaryDir()
+    local dirs = { base, base .. "_ext" }
+    local dict_dirs = {}
+    for _, dir in ipairs(dirs) do
+        if lfs.attributes(dir, "mode") == "directory" then dict_dirs[#dict_dirs + 1] = dir end
     end
 
     local ok, result = pcall(function()
@@ -426,76 +422,11 @@ local function pickResult(word_data, dict_name)
     return word_data.results[1]
 end
 
--- ── Batch cache build (ONE sdcv call for all uncached words) ───
--- This is the KEY design decision: instead of calling sdcv per word
--- (which causes OOM from multiple forks), we call it ONCE with all
--- uncached words at module init. After that, everything is from cache.
-
--- sdcv, where KOReader's own dictionary finds it: the binary bundled in
--- the install folder (the process runs with its cwd there), or the Android
--- native library. Mirrors readerdictionary.lua.
-local function findSdcv()
-    if android and android.nativeLibraryDir then
-        return android.nativeLibraryDir .. "/libsdcv.so"
-    end
-    return "./sdcv"
-end
-
--- Parse sdcv concatenated JSON output, respecting bracket depth
--- sdcv outputs separate arrays per word: [{...}][{...}]...
-local function parseSDCVChunks(output)
-    local results = {}
-    local i = 1
-    local len = #output
-
-    while i <= len do
-        local start = output:find("%[", i)
-        if not start then break end
-
-        -- Bracket-counting parser: find matching top-level ]
-        local depth = 1
-        local in_str = false
-        local esc = false
-        local j = start + 1
-
-        while j <= len and depth > 0 do
-            local ch = output:byte(j)
-            if esc then
-                esc = false
-            elseif ch == 92 then -- backslash
-                esc = true
-            elseif ch == 34 then -- double quote
-                in_str = not in_str
-            elseif not in_str then
-                if ch == 91 then -- [
-                    depth = depth + 1
-                elseif ch == 93 then -- ]
-                    depth = depth - 1
-                end
-            end
-            j = j + 1
-        end
-
-        if depth == 0 then
-            local chunk = output:sub(start, j - 1)
-            local ok, data = pcall(JSON.decode, chunk)
-            if ok and type(data) == "table" then
-                for _, item in ipairs(data) do
-                    results[#results + 1] = item
-                end
-            end
-        end
-        i = j
-    end
-    return results
-end
-
--- Build cache for all uncached words in ONE sdcv call.
--- Called once at module init.
 local function batchBuildCache()
     ensureDeps()
     local db_path = DataStorage:getSettingsDir() .. "/vocabulary_builder.sqlite3"
     if lfs.attributes(db_path, "mode") ~= "file" then
+        _def_cache = {}
         logger.dbg("[vocab_word] no vocab DB yet")
         return
     end
@@ -515,6 +446,7 @@ local function batchBuildCache()
     conn:close()
 
     if #all_words == 0 then
+        _def_cache = {}
         logger.dbg("[vocab_word] empty vocab DB")
         return
     end
@@ -563,82 +495,37 @@ local function batchBuildCache()
         end
     end
 
+    for w in pairs(_def_cache) do
+        if not word_set[w] then _def_cache[w] = nil end
+    end
+
     if #uncached == 0 then
         logger.dbg("[vocab_word] all words already cached (", #all_words, ")")
         return
     end
 
-    logger.dbg("[vocab_word] caching", #uncached, "uncached words:", table.concat(uncached, ", "))
-
-    -- 3. Build the batch: same binary and folders KOReader's own
-    -- dictionary uses (data/dict + data/dict_ext when the latter exists).
-    local sdcv = findSdcv()
-    if not sdcv then
-        logger.warn("[vocab_word] sdcv not found")
-        return
-    end
-
-    local data_dir = DataStorage:getDataDir()
-    local dict_dirs = { data_dir .. "/data/dict" }
-    if lfs.attributes(data_dir .. "/data/dict_ext", "mode") == "directory" then
-        dict_dirs[#dict_dirs + 1] = data_dir .. "/data/dict_ext"
-    end
-
-    -- Query every installed dictionary. The user's selected dictionary
-    -- only affects which result is shown on the card.
-    local any_success = false
-    local word_results = {}
-    for _, dict_dir in ipairs(dict_dirs) do
-        local parts = {
-            "'" .. sdcv .. "'",
-            "-2", "'" .. dict_dir .. "'",
-            "--json",
-        }
-        parts[#parts + 1] = "--exact-search"
-        parts[#parts + 1] = "--non-interactive"
-        parts[#parts + 1] = "--utf8-output"
-        -- Without --utf8-input, sdcv on a locale-less device (Kobo) cannot
-        -- convert non-ASCII queries ("Can not convert … to utf8"), so every
-        -- accented word fails to cache and never enters the random rotation.
-        parts[#parts + 1] = "--utf8-input"
-        parts[#parts + 1] = "--"
-        for _, w in ipairs(uncached) do
-            parts[#parts + 1] = "'" .. w:gsub("'", "'\''") .. "'"
-        end
-        local cmd = table.concat(parts, " ") .. " 2>/dev/null ; echo"
-
-        local ok_popen, output = pcall(function()
-            local handle = io.popen(cmd, "r")
-            if not handle then return nil end
-            local out = handle:read("*a")
-            handle:close()
-            return out
-        end)
-
-        -- The trailing "; echo" in cmd makes the output non-empty even
-        -- when sdcv itself produced nothing, so the success test is a
-        -- literal "[": a healthy sdcv answers in JSON arrays, a crashed
-        -- one leaves only the echo's newline.
-        if ok_popen and output and output:find("[", 1, true) then
-            any_success = true
-            logger.dbg("[vocab_word] batch sdcv output length:", #output)
-            -- Group results by word (sdcv may return multiple dicts per word).
-            -- Even with --exact-search some dictionaries return related words
-            -- (e.g. "novela" also returns "novelar"); keep only exact matches.
-            for _, item in ipairs(parseSDCVChunks(output)) do
-                local word = item.word
-                local def_html = item.definition
-                if word and def_html and word_set[word] then
-                    local list = word_results[word]
-                    if not list then
-                        list = {}
+    local dictionary = require("apps/reader/modules/readerdictionary")
+    local lookup = { data_dir = dictionaryDir() }
+    local answered, word_results = {}, {}
+    -- Use KOReader's dictionary launcher for platform paths, UTF-8 arguments
+    -- and Android shared libraries. Keep each command under the OS size limit.
+    for start = 1, #uncached, 64 do
+        local batch = {}
+        for i = start, math.min(start + 63, #uncached) do batch[#batch + 1] = uncached[i] end
+        local cancelled, groups = dictionary.rawSdcv(lookup, batch, nil, false)
+        if cancelled then break end
+        if groups and #groups == #batch then
+            for i, entries in ipairs(groups) do
+                local word = batch[i]
+                answered[word] = true
+                for _, entry in ipairs(entries) do
+                    if entry.word == word and entry.definition then
+                        local list = word_results[word] or {}
+                        list[#list + 1] = { dict = entry.dict or "", definition_raw = entry.definition }
                         word_results[word] = list
                     end
-                    list[#list + 1] = { dict = item.dict or "", definition_raw = def_html }
                 end
             end
-        else
-            logger.warn("[vocab_word] batch sdcv failed for", dict_dir)
         end
     end
 
@@ -678,12 +565,10 @@ local function batchBuildCache()
     -- later sessions. Only when sdcv actually answered: a failed run
     -- must not poison the cache. The deck skips entries with no results.
     local miss_count = 0
-    if any_success then
-        for _, w in ipairs(uncached) do
-            if not _def_cache[w] then
-                _def_cache[w] = { word = w, results = {} }
-                miss_count = miss_count + 1
-            end
+    for w in pairs(answered) do
+        if not _def_cache[w] then
+            _def_cache[w] = { word = w, results = {} }
+            miss_count = miss_count + 1
         end
     end
 
@@ -846,16 +731,7 @@ end
 -- other word left.
 local function drawNextWord(current)
     if #_deck == 0 then rebuildDeck() end
-    if #_deck == 0 then
-        -- Everything marked known: fall back to any cached word so the
-        -- card never goes blank.
-        local keys = {}
-        for k, entry in pairs(_def_cache) do
-            if entry.results and #entry.results > 0 then keys[#keys + 1] = k end
-        end
-        if #keys == 0 then return nil end
-        return _def_cache[keys[math.random(1, #keys)]]
-    end
+    if #_deck == 0 then return nil end
     if #_deck > 1 and _deck[1] == current then
         _deck[1], _deck[2] = _deck[2], _deck[1]
     end
@@ -1020,10 +896,10 @@ local function showSettings(ctx)
 
     local buttons = {
         { { text = _("Senses shown"), enabled = false } },
-        { radioBtn(KEY_SENSES, _("1"), 1, "3") },
-        { radioBtn(KEY_SENSES, _("2"), 2, "3") },
-        { radioBtn(KEY_SENSES, _("3"), 3, "3") },
-        { radioBtn(KEY_SENSES, _("All"), "all", "3") },
+        { radioBtn(KEY_SENSES, _("1"), 1, 3) },
+        { radioBtn(KEY_SENSES, _("2"), 2, 3) },
+        { radioBtn(KEY_SENSES, _("3"), 3, 3) },
+        { radioBtn(KEY_SENSES, _("All"), "all", 3) },
         { { text = _("Show word type"), enabled = false } },
         { radioBtn(KEY_SHOW_TYPE, _("Yes"), true, true) },
         { radioBtn(KEY_SHOW_TYPE, _("No"), false, true) },
@@ -1063,7 +939,7 @@ end
 -- Runs once, on the first render/tap/settings-open — never at module load
 -- (this file must load in standalone Lua, and the sqlite reads plus the one
 -- sdcv batch would block the menu open). Loads the persistent definition
--- cache, batch-builds any missing definitions (ONE sdcv call total), the
+-- cache, batch-builds any missing definitions, the
 -- "known words" store and the DB metadata (context, book, due_time).
 local _inited = false
 lazyInit = function()
@@ -1100,12 +976,13 @@ return {
         local show_type = readShowType()
         local max_acepciones = readAcepciones()
 
-        local word_data = fetchRandomWord()
+        local word_data = _last_word_data
+        if not ctx.preview then word_data = fetchRandomWord() end
 
         if not word_data then
             local TextWidget = require("lib/bookshelf_colour_text")
             return TextWidget:new{
-                text = _("No vocab words yet"),
+                text = knownCount() > 0 and _("No words left to review") or _("No vocab words yet"),
                 face = Kit.face(14, scale_pct, {italic = true}),
                 width = width,
                 fgcolor = Kit.COLOR_MUTED,

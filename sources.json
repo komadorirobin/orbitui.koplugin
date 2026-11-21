@@ -16,7 +16,7 @@
       "upstream": "https://github.com/AndyHazz/bookshelf.koplugin.git",
       "path": "components/bookshelf",
       "upstream_branch": "master",
-      "upstream_commit": "d380620a5c4b9f310f45a545eda415b343c98e89",
+      "upstream_commit": "7b81a1bf788089da5759c448a49c24352f84f68e",
       "tag": "v5.2.2.3",
       "commit": "2d46b259028ddbebc0159effe6171abb14520868",
       "license": "AGPL-3.0"
