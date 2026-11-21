@@ -34,6 +34,9 @@ function OrbitUI:init()
         Host.attach(self, Runtime.classes(root), require("pluginloader"), root)
         require("adapters/orbitui_settings").registerMenu()
         require("adapters/orbitui_setup").started(self)
+        if self.ui.document then
+            require("adapters/orbitui_fingertips").attach(self.ui, require("pluginloader"))
+        end
         UIManager:nextTick(function() Updates.started() end)
     end)
     if not ready then
@@ -56,6 +59,10 @@ end
 function OrbitUI:onTeardown()
     require("adapters/orbitui_setup").stopped(self)
     Host.detach(self, require("pluginloader"))
+end
+
+function OrbitUI:onCloseDocument()
+    if self.ui._orbitui_fingertips then require("adapters/orbitui_fingertips").detach(self.ui) end
 end
 
 function OrbitUI:onReaderReady()

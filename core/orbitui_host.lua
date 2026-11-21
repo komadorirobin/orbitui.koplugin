@@ -62,6 +62,8 @@ function M.detach(owner, loader)
     end
     local refresh = package.loaded["lib/bookshelf_menu_close_refresh"]
     if refresh and refresh.release then refresh.release(owner) end
+    local fingertips = package.loaded["adapters/orbitui_fingertips"]
+    if fingertips then fingertips.detach(owner.ui) end
     local navbar = package.loaded["adapters/orbitui_navbar"]
     if navbar then navbar.quickControlsEvent("teardown", owner.ui) end
     M.performanceStopped(owner)

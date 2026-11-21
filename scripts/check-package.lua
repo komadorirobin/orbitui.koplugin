@@ -63,6 +63,7 @@ for _, path in ipairs({
     "docs/MIGRATION.md", "docs/TESTING.md", "docs/UPSTREAM.md",
     "docs/INTEGRATION_CONTRACTS.md", "docs/MERGE_LOG.md",
     "docs/OTA.md", "docs/ADDONS.md",
+    "components/fingertips/LICENSE",
     "assets/ca-bundle.crt", "assets/CA-LICENSE", "assets/CA-NOTICE.txt",
     "assets/material-symbols/MaterialSymbolsRounded.ttf",
     "assets/material-symbols/LICENSE", "assets/material-symbols/NOTICE.txt",

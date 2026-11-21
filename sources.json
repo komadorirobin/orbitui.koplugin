@@ -1,5 +1,15 @@
 {
   "schema": 1,
+  "bundled_plugins": {
+    "fingertips": {
+      "repository": "https://github.com/ironicsans/fingertips.koplugin.git",
+      "path": "components/fingertips",
+      "tag": "v0.1.0",
+      "commit": "61617b649318bc5f597bcf61b4ae4d3a0c5b5236",
+      "author": "David Friedman",
+      "license": "AGPL-3.0"
+    }
+  },
   "components": {
     "bookshelf": {
       "repository": "https://github.com/komadorirobin/bookshelf.koplugin.git",

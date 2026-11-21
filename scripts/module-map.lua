@@ -2,6 +2,9 @@
 -- already at 2,000 files. Keep exact source in this existing registry, compiled
 -- lazily by the canonical loader. This explicit list also controls export-ignore.
 local embedded_names = {
+    "adapters/orbitui_fingertips", "orbitui/fingertips/main", "orbitui/fingertips/actions",
+    "orbitui/fingertips/arrange", "orbitui/fingertips/bar", "orbitui/fingertips/panel",
+    "infra/sui_compat_check",
     "adapters/orbitui_bookorbit_achievements", "adapters/orbitui_reading_log",
     "lib/bookshelf_book_actions_layout", "lib/bookshelf_editor_page",
     "lib/bookshelf_link_panel", "lib/bookshelf_page_dialog", "lib/bookshelf_picker_sort",
@@ -47,6 +50,12 @@ local embedded_names = {
     "features/library/cover_editor/sui_cover_window",
 }
 local map = {
+    ["adapters/orbitui_fingertips"] = "adapters/orbitui_fingertips.lua",
+    ["orbitui/fingertips/main"] = "components/fingertips/main.lua",
+    ["orbitui/fingertips/actions"] = "components/fingertips/fingertips_actions.lua",
+    ["orbitui/fingertips/arrange"] = "components/fingertips/fingertips_arrange.lua",
+    ["orbitui/fingertips/bar"] = "components/fingertips/fingertips_bar.lua",
+    ["orbitui/fingertips/panel"] = "components/fingertips/fingertips_panel.lua",
     ["adapters/orbitui_bookorbit_achievements"] = "adapters/orbitui_bookorbit_achievements.lua",
     ["adapters/orbitui_reading_log"] = "adapters/orbitui_reading_log.lua",
 }

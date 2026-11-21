@@ -1008,7 +1008,8 @@ end
 -- drag. Let it resolve applicable buttons and own the widget and gestures.
 -- Only a highlight instance attached to OrbitUI supplies a page layout.
 local function attachFingerTips(highlight, edit)
-    local Bar = package.loaded.fingertips_bar
+    local bundled = highlight.ui and highlight.ui._orbitui_fingertips
+    local Bar = bundled and package.loaded["orbitui/fingertips/bar"] or package.loaded.fingertips_bar
     if type(Bar) ~= "table" or not readerCallable(Bar.makeSets) or not readerCallable(Bar.nextSet) then return end
     if not Bar._orbitui_make_sets then
         local original = Bar.makeSets
@@ -1443,7 +1444,7 @@ function M.readerPins()
                 show = function(this, index, expanded)
                     if not live(s) or not this.selected_text then return native(this, index) end
                     if fingertips_inside and index == nil and not expanded and this.hold_pos then
-                        local ft = readerPlugin(ui, "fingertips")
+                        local ft = ui._orbitui_fingertips or readerPlugin(ui, "fingertips")
                         if ft and ft.enabled and readerCallable(ft.getLineBoxes) then
                             local ok, boxes = pcall(ft.getLineBoxes, ft)
                             if ok and boxes then return native(this, index) end
@@ -2188,6 +2189,10 @@ function M.readerPanelItems(changed)
             if changed then changed() end
         end }, { text = _("Reading settings… opens KOReader's original bottom menu. Turn this switch off to keep the original bottom gestures."),
         enabled = false }}
+    local device = require("device")
+    if device.isTouchDevice and device:isTouchDevice() then
+        for _, row in ipairs(require("adapters/orbitui_fingertips").menuItems()) do rows[#rows + 1] = row end
+    end
     for _i, row in ipairs(M.readerAIItems(changed)) do rows[#rows + 1] = row end
     return rows
 end
