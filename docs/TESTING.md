@@ -1,5 +1,22 @@
 # Verification and device acceptance
 
+## 2026-11-22 — Bookshelf 6.6.0 and SimpleUI maintenance on main
+
+The series-box regression covers two series and a loose book under one author,
+separate author groups, boxes divided across folders and shelves, and the
+hosted switch for section labels. Metadata fixtures check sibling/mirror/hash
+precedence, a newly created mirror, unreadable directories and the number of
+filesystem probes. Startup recovery tests cover interrupted and clean starts,
+symlinked cache entries and the host's exclusive module loader.
+
+In the Tolino Vision Color emulator, KOReader 2026.07.1 loaded the packaged
+plugin in Swedish, including the embedded startup guard and distinct labels
+for one series and the series list. The clock, statistics card, library and
+parked reader opened. Four emulated panel taps queued during reopening left
+the page in place. A subsequent tap after input resumed turned the page.
+The three Bookshelf SQLite suites passed in the guest (20, 100 and 9 checks).
+No physical-device latency measurement was taken for this import.
+
 ## 2026-11-21 — OrbitUI 1.5.0-beta.1
 
 KOReader 2026.07.1 on an emulated Tolino Vision Color loaded the sealed build
