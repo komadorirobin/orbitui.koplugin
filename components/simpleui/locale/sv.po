@@ -9829,3 +9829,12 @@ msgstr "Ta bort boken från utlästa böcker? Bokfilen finns inte längre på en
 
 msgid "Remove this book from the finished books? Its status will be set to reading."
 msgstr "Ta bort boken från utlästa böcker? Boken markeras som pågående."
+
+msgid "{day2} {month_short} '{year2}"
+msgstr "{day2} {month_short} {year2}"
+
+msgid "{month} {year}"
+msgstr "{month} {year}"
+
+msgid "{start_day2} {start_month_short} – {end_day2} {end_month_short} {end_year}"
+msgstr "{start_day2} {start_month_short}–{end_day2} {end_month_short} {end_year}"

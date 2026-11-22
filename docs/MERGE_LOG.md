@@ -6,8 +6,10 @@ does not imply a public release or successful device testing.
 
 ## 2026-11-22 — Bookshelf 6.6.0 and SimpleUI maintenance
 
-Unsquashed imports **092a62bfe** and **cf554169d** advance Bookshelf from
-**7b81a1bf7** to **5281b3eb1** and SimpleUI from **51b7721ce** to **b79ddb069**.
+Unsquashed imports **092a62bfe**, **cf554169d** and **14b3841ea** advance Bookshelf from
+**7b81a1bf7** to **5281b3eb1** and SimpleUI from **51b7721ce** through
+**b79ddb069** to **a9ae9c5f0**. The final SimpleUI import updates date formats
+and Czech and Chinese translations.
 The original forks and bundled FingerTips revision are retained.
 
 Bookshelf keeps series boxes inside author/section groups, preserves cover

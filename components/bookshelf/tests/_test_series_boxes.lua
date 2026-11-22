@@ -717,6 +717,7 @@ H.test("a box inside an author's run sits under the author's label; a box of its
     local box=Boxes.box(members(3,"Saga"),"Saga")
     local shape=Boxes.geometry(box,{w=160,face_h=240,depth=8,h=248},{content_w=800})
     local shelf={bookLook=function() return {r=90,g=120,b=80} end, shownLook=function() return {r=90,g=120,b=80} end,
+        recessColumns=native_recess,
         plankUnit=function() return 10 end,plankFace=function() return 20 end,
         plankInset=function() return 5 end,plankSurface=function() return 10 end,
         plankDesignWidget=function() end,endMargin=function() return 10 end,
@@ -735,12 +736,14 @@ H.test("a box inside an author's run sits under the author's label; a box of its
         end,
     })()
     local author={kind="author",label="Moberg",books=box.books}
-    local function badges(item, section)
+    local function badges(item, section, show_badges)
         local entry={book=box,item=item,run_idx=1,w=shape.w,h=shape.h,series_box=shape,face_out=true,
             section_label=section}
-        local out=row{plan={entries={entry}},row={first=1,last=1},width=800,height=320,gap=10,callbacks={}}
+        local out=row{plan={entries={entry}},row={first=1,last=1},width=800,height=320,gap=10,
+            show_section_badges=show_badges,callbacks={}}
         return out._shelf_badges
     end
+    H.eq(badges(author,nil,false),nil,"honor the hosted section-label switch")
     local b=badges(author)
     assert(b and b.spans and #b.spans==1, "an author whose books are all in a box lost its label")
     H.eq(b.spans[1].w,shape.w)
