@@ -3306,6 +3306,16 @@ function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
 
 end
 
+-- Queues a repaint of this screen (`refresh`: a refresh type or function)
+-- unless a fullscreen window covers it: a covered screen is not painted and
+-- shows its updated widgets once uncovered.
+function ScreenWidget:_repaintIfShown(refresh)
+    if UI.isUncovered(self) then
+        UIManager:setDirty(self, refresh)
+        return true
+    end
+end
+
 -- Repaints the screen region occupied by a module slot. The pooled wrapper
 -- carries the module's absolute region; without one (not laid out yet) the
 -- whole screen is repainted.
@@ -3313,9 +3323,9 @@ function ScreenWidget:_setSlotDirty(mod_id, slot)
     local wrapper = self._wrapper_pool and self._wrapper_pool[mod_id]
     local dimen   = (wrapper and wrapper.dimen) or (slot.content and slot.content.dimen)
     if dimen then
-        UIManager:setDirty(self, function() return "ui", dimen end)
+        self:_repaintIfShown(function() return "ui", dimen end)
     else
-        UIManager:setDirty(self, "ui")
+        self:_repaintIfShown("ui")
     end
 end
 
@@ -3432,7 +3442,7 @@ function ScreenWidget:_scheduleDataRefresh(stats_only)
                 if missing_slot then
                     Perf.mark("screen data refresh: full rebuild, no slot for " .. missing_slot)
                     self:_updatePage(false)
-                    UIManager:setDirty(self, "ui")
+                    self:_repaintIfShown("ui")
                 end
             end
 
@@ -3557,8 +3567,7 @@ function ScreenWidget:_refresh(keep_cache, books_only, stats_only, page_turn)
         local flash = page_turn and (_flashAllPages()
             or ((had_covers or self._page_has_covers) and _flashCoverImages()))
         local dirty_mode = self._force_full_repaint_once and "full" or (flash and "flashui" or "ui")
-        self._force_full_repaint_once = nil
-        UIManager:setDirty(self, dirty_mode)
+        if self:_repaintIfShown(dirty_mode) then self._force_full_repaint_once = nil end
 
         if defer_async then self:_scheduleDataRefresh(stats_only) end
         return
@@ -3580,7 +3589,7 @@ function ScreenWidget:_refresh(keep_cache, books_only, stats_only, page_turn)
         self._refresh_scheduled = false
         if not self._navbar_container then return end
         self:_updatePage(false)
-        UIManager:setDirty(self, "ui")
+        self:_repaintIfShown("ui")
     end)
 end
 
@@ -3712,9 +3721,9 @@ function ScreenWidget:_syncBookModLabel(mod_id)
     slot.parent[slot.index] = new_label
     if old_label and type(old_label.free) == "function" then pcall(old_label.free, old_label) end
     if new_label.dimen then
-        UIManager:setDirty(self, function() return "ui", new_label.dimen, true end)
+        self:_repaintIfShown(function() return "ui", new_label.dimen, true end)
     else
-        UIManager:setDirty(self, "ui")
+        self:_repaintIfShown("ui")
     end
 end
 
@@ -3751,22 +3760,21 @@ function ScreenWidget:_refreshBookModSlot(mod_id)
         local wrapper = self:_makeModWrapper(slot.mod, display_widget, slot.col_w)
         slot.widget = new_widget
         local rtype = self:_bookModRefreshType(mod_id)
-        UIManager:setDirty(self, function() return rtype, wrapper.dimen, true end)
+        self:_repaintIfShown(function() return rtype, wrapper.dimen, true end)
     else
         if not slot.parent then return false end
         slot.parent[slot.index] = display_widget
         slot.widget = new_widget
         local rtype = self:_bookModRefreshType(mod_id)
-        UIManager:setDirty(self, function() return rtype, display_widget.dimen, true end)
+        self:_repaintIfShown(function() return rtype, display_widget.dimen, true end)
     end
     slot.content = new_content
-    if self._stats_mod_slots and self._stats_mod_slots[mod_id] then
-        self._stats_mod_slots[mod_id].widget = new_widget
-        self._stats_mod_slots[mod_id].content = new_content
-    end
     -- The stats updater patches the widget now mounted, not the replaced one.
     local stats_slot = self._stats_mod_slots and self._stats_mod_slots[mod_id]
-    if stats_slot then stats_slot.content = new_content end
+    if stats_slot then
+        stats_slot.widget = new_widget
+        stats_slot.content = new_content
+    end
     -- Point the cover-poll slot at the currently visible widget, so covers
     -- still pending extraction get swapped into it rather than into the old,
     -- now-orphaned widget. The poll drops a slot once its module is resolved,
@@ -3910,7 +3918,7 @@ function ScreenWidget:_scheduleCoverPoll()
                     -- new native contract for an unchanged poll.
                     if dimen and changed ~= false then
                         self_ref.dithered = true
-                        UIManager:setDirty(self_ref, function()
+                        self_ref:_repaintIfShown(function()
                             return "ui", dimen, true
                         end)
                     end
@@ -4083,8 +4091,7 @@ function ScreenWidget:onShow()
         self._sui_initial_show_done = true
         local force_full = first_show or (self._force_full_repaint_once and true or false)
         local dirty_mode = force_full and "full" or "ui"
-        self._force_full_repaint_once = nil
-        UIManager:setDirty(self, dirty_mode)
+        if self:_repaintIfShown(dirty_mode) then self._force_full_repaint_once = nil end
 
         if force_full then
             local self_ref = self
@@ -4200,12 +4207,17 @@ end
 
 function ScreenWidget:onSuspend()
     self._suspended = true
+    self._resume_pending = nil
     self:_pauseBackgroundWork()
 end
 
 function ScreenWidget:onResume()
     self._suspended = false
-    if Device.screen_saver_mode then return end
+    if Device.screen_saver_mode then
+        -- A screensaver kept on screen after wakeup: catch up once it closes.
+        self._resume_pending = UI.isScreensaverShown() or nil
+        return
+    end
     -- Parked: the reader owns the screen right now, and nothing here is
     -- visible. Skip the refresh/timer work entirely — _raiseParkedScreen
     -- (infra/sui_patches.lua) already refreshes this same state when the
@@ -4231,6 +4243,16 @@ function ScreenWidget:onResume()
     if ClockMod and Registry.isEnabled(ClockMod, self._pfx) and ClockMod.scheduleRefresh then
         ClockMod.scheduleRefresh(self)
     end
+end
+
+-- Sent while the screensaver is still on the stack: run the deferred wakeup
+-- work on the next tick, once it is gone.
+function ScreenWidget:onOutOfScreenSaver()
+    if not self._resume_pending then return end
+    self._resume_pending = nil
+    UIManager:nextTick(function()
+        if _sget(self._id, "_instance") == self and not self._suspended then self:onResume() end
+    end)
 end
 
 function ScreenWidget:onSetRotationMode(mode)
