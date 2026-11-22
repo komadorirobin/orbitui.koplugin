@@ -846,6 +846,7 @@ end
 --   calibre   {{name=,pages=},...} -- from a Calibre custom column
 --   publisher {{name=,pages=},...}
 --   hardcover {{name=,pages=},...}
+--   stable    {{name=,pages=},...} -- KOReader's Characters per page default
 --   rendered  {{name=,pages=},...}
 --   failed    {name,...}
 --   remaining number       -- unprocessed (cancelled / render skipped)
@@ -860,6 +861,7 @@ function Tokens.pageCountReportHtml(data)
     local calibre   = list(data.calibre)
     local publisher = list(data.publisher)
     local hardcover = list(data.hardcover)
+    local stable    = list(data.stable)
     local rendered  = list(data.rendered)
     local failed    = list(data.failed)
     local out = {}
@@ -884,6 +886,9 @@ function Tokens.pageCountReportHtml(data)
     summary[#summary + 1] = string.format("Filename %d", #filename)
     summary[#summary + 1] = string.format("Publisher %d", #publisher)
     summary[#summary + 1] = string.format("Hardcover %d", #hardcover)
+    if #stable > 0 then
+        summary[#summary + 1] = string.format("Characters per page %d", #stable)
+    end
     summary[#summary + 1] = string.format("Paginated %d", #rendered)
     if #calibre > 0 then
         summary[#summary + 1] = string.format("Calibre %d", #calibre)
@@ -920,6 +925,7 @@ function Tokens.pageCountReportHtml(data)
     end
     section("Publisher page numbers", publisher, true)
     section("Hardcover editions", hardcover, true)
+    section("Counted at KOReader's characters per page", stable, true)
     section("Paginated at your reading settings", rendered, true)
     section("From your Calibre column", calibre, true)
     section("Counted from the filename", filename, false)
