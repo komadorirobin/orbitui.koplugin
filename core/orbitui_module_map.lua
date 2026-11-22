@@ -8495,13 +8495,15 @@ function M.setBytecode(on, sdir, dir)\
     sdir = sdir or M.settingsDir()\
     dir = dir or M.cacheDir()\
     local L = lfs()\
-    if not (sdir and L) then return end\
+    if not (sdir and L and M.managesBytecode()) then return end\
     if on then\
         os.remove(sdir .. \"/\" .. M.OFF_NAME)\
         os.remove(sdir .. \"/\" .. M.TRIP_NAME)\
     else\
         writeFile(L, sdir .. \"/\" .. M.OFF_NAME, \"user\")\
-        if dir then pcall(removeTree, L, dir .. \"/bytecode\") end\
+        if dir and L.symlinkattributes and L.symlinkattributes(dir, \"mode\") == \"directory\" then\
+            pcall(removeTree, L, dir .. \"/bytecode\")\
+        end\
     end\
 end\
 \

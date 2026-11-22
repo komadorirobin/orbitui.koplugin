@@ -7331,27 +7331,36 @@ test("no custom metadata leaves the chain alone", function()
     assert(b.author == "Extracted Author", "author: " .. tostring(b.author))
 end)
 
-test("bulk metadata keeps sibling edits and resumes the native resolver when the mirror appears", function()
+test("bulk metadata keeps sibling edits and picks up a newly created preferred mirror", function()
     local old_store = package.loaded["datastorage"]
     local old_settings = _G._test_settings
-    _G._test_settings = { home_dir = "/lib", document_metadata_folder = "doc" }
+    _G._test_settings = { home_dir = "/lib", document_metadata_folder = "dir" }
     bim_row({ title = "Extracted title" })
     local ok, err = pcall(function()
         with_custom_props(CFP, { title = "Sibling edit" }, function()
             local root = "/central"
             package.loaded["datastorage"] = setmetatable({
                 getDocSettingsDir = function() return root end,
+                getDocSettingsHashDir = function() return "/hash" end,
             }, { __index = old_store })
             local lfs = package.loaded["libs/libkoreader-lfs"]
             local native_stat = lfs.attributes
             local present = false
             lfs.attributes = function(path, key)
                 if path == root then return "directory" end
-                if path == root .. "/lib" then
+                if path == root .. "/lib/comic.sdr/custom_metadata.lua" and present then return "file" end
+                if path:gsub("/$", "") == root .. "/lib" then
                     if present then return "directory" end
                     return nil, "missing", 2
                 end
                 return native_stat(path, key)
+            end
+            local native_dir = lfs.dir
+            lfs.dir = function(path)
+                if present and path:gsub("/$", "") == root .. "/lib" then
+                    return (". .. comic.sdr"):gmatch("%S+")
+                end
+                return native_dir(path)
             end
             local ds = package.loaded["docsettings"]
             local exact = 0
@@ -7374,7 +7383,7 @@ test("bulk metadata keeps sibling edits and resumes the native resolver when the
             present = true
             Repo.invalidateLightMeta()
             books = Repo.getFolderSections(10, 0)
-            assert(#books == 1 and books[1].title == "Central edit" and exact == 1)
+            assert(#books == 1 and books[1].title == "Central edit" and exact == 0)
         end)
     end)
     package.loaded["datastorage"] = old_store

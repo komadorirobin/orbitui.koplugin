@@ -175,6 +175,19 @@ t.test("the switch: off removes the copies, on forgets the trips", function()
     eq(read(sdir .. "/start_trip"), nil)
 end)
 
+t.test("the hosted loader owns its policy across repeated failed starts", function()
+    local saved = package.loaded["lib/bookshelf_paths"]
+    package.loaded["lib/bookshelf_paths"] = { deferBytecodeCache = true }
+    local dir, sdir = fresh(), freshSettings()
+    start(dir, sdir, true)
+    local G = start(dir, sdir, true)
+    eq(G.bytecodeOn(sdir), false)
+    eq(G.takeNotice(sdir), false)
+    eq(read(sdir .. "/start_trip"), nil)
+    eq(read(sdir .. "/bytecode_off"), nil)
+    package.loaded["lib/bookshelf_paths"] = saved
+end)
+
 t.test("emptying the cache folder does not switch them back on", function()
     local dir, sdir = fresh(), freshSettings()
     start(dir, sdir, true); start(dir, sdir, true)

@@ -135,6 +135,7 @@ H.test("topbar fallback builds isolated widget trees and the next tick reuses th
     local changed, built, dirty = false, 0, {}
     local ui={
         getWindowStack=function() return {{widget=a},{widget=b}} end,
+        isUncovered=function() return true end,
         replaceTopbar=function(w, bar) w._navbar_topbar=bar end,
         refreshBoxes=function() end,
     }
@@ -170,7 +171,7 @@ H.test("clock rebuild retains module background and hold wrapper", function()
             boxInset=function() return 0 end, contentWidth=function(w) return w end,
             ink=function() return {} end, palette=function() return {} end,
             wrap=function(w) return w end },
-        UI={}, UIManager={setDirty=function() end},
+        UI={isUncovered=function() return true end}, UIManager={setDirty=function() end},
         build=function(_,_,_,_,_,live) live.texts={}; return {clock=true} end,
         require=function() return nil end,
     })

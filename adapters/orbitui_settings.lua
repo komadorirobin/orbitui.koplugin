@@ -325,7 +325,6 @@ local native_terms = {
         "Clear cover cache",
         "Close books in the background",
         "Color panel dithering",
-        "Compiled code cache",
         "Cover cache",
         "Cover cache budget",
         "Cover cache cleared",

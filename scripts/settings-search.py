@@ -46,6 +46,7 @@ def terms():
         source = (ROOT / "components/bookshelf/lib" / filename).read_text()
         owner = "bookshelf_advanced"
         functions = list(re.finditer(r"^function Settings[:.]([^\s(]+)", source, re.M))
+        name = ""
         for match in re.finditer(r'_\(\s*((?:"(?:\\.|[^"\\])*"\s*(?:\.\.\s*)?)+)\)', source):
             if filename == "bookshelf_theme_menu.lua":
                 owner = "themes"
@@ -64,6 +65,9 @@ def terms():
                 else: owner = "bookshelf_advanced"
             pieces = re.findall(r'"(?:\\.|[^"\\])*"', match.group(1))
             text = "".join(literal(piece) for piece in pieces)
+            # The hosted loader disables the standalone bytecode switch.
+            if name == "_performancesubitems" and text == "Compiled code cache":
+                continue
             if 2 <= len(text) <= 140 and "%" not in text and text.strip() == text:
                 result.setdefault(owner, set()).add(text)
     return {key: sorted(values) for key, values in sorted(result.items())}

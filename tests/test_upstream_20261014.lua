@@ -144,6 +144,7 @@ local function statsFixture()
     end }
     f.deps = {
         logger = logger, ["infra/sui_store"] = store, ["infra/sui_streak"] = {},
+        ["infra/sui_stats_ledger"] = { get = function() return nil end },
         ["infra/sui_perf"] = { mark = noop },
         ["infra/sui_config"] = { getStatsDbStamp = function() return "db:1" end,
             isFatalDbError = function() return false end },
