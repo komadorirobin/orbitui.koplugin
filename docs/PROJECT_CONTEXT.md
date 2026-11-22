@@ -20,13 +20,18 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Snapshot: 2026-11-21
+## Snapshot: 2026-11-22
 
 **OrbitUI 1.4.0** promotes the runtime from 1.4.0-beta.7 to stable. It
 includes the Reading log, optional BookOrbit achievements, customizable text
 selection actions and the Library and Manga improvements described below.
 The published release includes SimpleUI 3.1.0 and Bookshelf 6.5.2. See OTA
 for published assets and TESTING for device coverage.
+
+- **Main after 1.5.0-beta.1** integrates Bookshelf 6.6.0 and SimpleUI 3.1.0
+  maintenance. Main improves grouped series boxes, library metadata lookups,
+  covered-screen repainting and reading-day statistics. See MERGE_LOG for
+  the exact revisions and the history of the series-box contribution.
 
 - **1.5.0-beta.1** adds goal pace and a
   monthly books/pages chart to the Reading log, adaptive ink over the Home

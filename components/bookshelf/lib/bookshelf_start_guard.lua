@@ -85,7 +85,7 @@ end
 -- Removes a file, or a folder and everything in it. os.remove takes an
 -- empty folder as well as a file.
 local function removeTree(L, path)
-    local a = L.attributes(path)
+    local a = L.symlinkattributes(path)
     if not a then return end
     if a.mode == "directory" then
         local names = {}
@@ -119,6 +119,11 @@ local function countTrip(L, sdir, stuck)
     return false
 end
 
+function M.managesBytecode()
+    local ok, paths = pcall(require, "lib/bookshelf_paths")
+    return not (ok and paths.deferBytecodeCache)
+end
+
 -- arm([dir, sdir]) -> true when the previous start left its sentinel (and the
 -- caches were cleared). Makes the sentinel for this start either way.
 -- dir is cache/bookshelf, sdir settings/bookshelf.
@@ -128,6 +133,9 @@ function M.arm(dir, sdir)
     sdir = sdir or M.settingsDir()
     local L = lfs()
     if not (dir and L) then return false end
+    if not L.symlinkattributes then return false end
+    if not L.attributes(dir) then pcall(L.mkdir, dir) end
+    if L.symlinkattributes(dir, "mode") ~= "directory" then return false end
     M._armed = true
     local sentinel = dir .. "/" .. M.NAME
     local stuck = L.attributes(sentinel) ~= nil
@@ -137,13 +145,13 @@ function M.arm(dir, sdir)
             require("logger").warn("[bookshelf] the last start did not settle: start-up caches cleared")
         end)
     end
-    local ok, switched = pcall(countTrip, L, sdir, stuck)
+    local ok, switched
+    if M.managesBytecode() then ok, switched = pcall(countTrip, L, sdir, stuck) end
     if ok and switched then
         pcall(function()
             require("logger").warn("[bookshelf] two starts did not settle: compiled module cache switched off")
         end)
     end
-    if not L.attributes(dir) then pcall(L.mkdir, dir) end
     local f = io.open(sentinel, "w")
     if f then f:close() end
     M._sentinel = sentinel
@@ -160,6 +168,7 @@ end
 
 -- bytecodeOn([sdir]) -> whether our modules load from compiled copies.
 function M.bytecodeOn(sdir)
+    if not M.managesBytecode() then return false end
     sdir = sdir or M.settingsDir()
     if not sdir then return true end
     return readFile(sdir .. "/" .. M.OFF_NAME) == nil
@@ -185,6 +194,7 @@ end
 -- takeNotice([sdir]) -> true once, after the guard switched the copies off,
 -- so the reader is told why (and where to turn them back on).
 function M.takeNotice(sdir)
+    if not M.managesBytecode() then return false end
     sdir = sdir or M.settingsDir()
     if not sdir then return false end
     local path = sdir .. "/" .. M.OFF_NAME

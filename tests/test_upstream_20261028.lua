@@ -137,6 +137,7 @@ H.test("whole Sprite renders embedded PNGs through minimum-reader data API and r
 end)
 
 local engine = read("simpleui/engines/sui_screen_engine.lua")
+local repaint = section(engine, "function ScreenWidget:_repaintIfShown(", "\nend") .. "\nend\n"
 H.test("whole cover poll repaints legacy one-result providers but skips explicitly unchanged native providers", function()
     for _, flag in ipairs({ "legacy", false, true }) do
         local ScreenWidget, timer, dirty = {}, nil, 0
@@ -146,8 +147,8 @@ H.test("whole cover poll repaints legacy one-result providers but skips explicit
             } },
         } }
         local Config = { getBookInfoManager = function() end, flushCoverQueue = function() end }
-        run(section(engine, "function ScreenWidget:_scheduleCoverPoll()", "function ScreenWidget:onShow()"), {
-            ScreenWidget = ScreenWidget, Config = Config,
+        run(repaint .. section(engine, "function ScreenWidget:_scheduleCoverPoll()", "function ScreenWidget:onShow()"), {
+            ScreenWidget = ScreenWidget, Config = Config, UI = { isUncovered = function() return true end },
             _sget = function() return widget end,
             logger = { dbg = function() end, warn = function() error("poll failed") end },
             UIManager = { scheduleIn = function(_, _, fn) timer = fn end,
@@ -155,6 +156,7 @@ H.test("whole cover poll repaints legacy one-result providers but skips explicit
                     H.eq(mode, "ui"); H.eq(rect.w, 10); H.eq(dith, true); dirty = dirty + 1
                 end },
         })
+        setmetatable(widget, { __index = ScreenWidget })
         ScreenWidget._scheduleCoverPoll(widget); assert(timer)()
         H.eq(dirty, flag == false and 0 or 1)
         H.eq(next(widget._cover_mod_slots), nil); H.eq(Config.cover_extraction_pending, false)
@@ -227,14 +229,17 @@ H.test("new page flash setting is opt-in and translated without changing the sav
 end)
 H.test("page turns respect the saved flash options while OrbitUI's one-shot full repaint keeps precedence", function()
     local ScreenWidget, mode, all_pages, covers = {}, nil, false, false
-    run(section(engine, "function ScreenWidget:_refresh(", "function ScreenWidget:_setCoverdeckIdx("), {
+    local visible = true
+    run(repaint .. section(engine, "function ScreenWidget:_refresh(", "function ScreenWidget:_setCoverdeckIdx("), {
         ScreenWidget = ScreenWidget,
+        UI = { isUncovered = function() return visible end },
         _flashAllPages = function() return all_pages end,
         _flashCoverImages = function() return covers end,
         UIManager = { setDirty = function(_, _, m) mode = m end },
     })
     local widget = { _body = {}, _ctx_cache = {}, _page_has_covers = true,
         _updatePage = function(self) self._page_has_covers = false end }
+    setmetatable(widget, { __index = ScreenWidget })
     ScreenWidget._refresh(widget, true, nil, nil, true); H.eq(mode, "ui")
     all_pages = true
     ScreenWidget._refresh(widget, true, nil, nil, true); H.eq(mode, "flashui")
@@ -242,6 +247,10 @@ H.test("page turns respect the saved flash options while OrbitUI's one-shot full
     all_pages, covers = false, true; widget._page_has_covers = true
     ScreenWidget._refresh(widget, true, nil, nil, true); H.eq(mode, "flashui", "covers on previous page")
     widget._force_full_repaint_once = true
+    visible, mode = false, nil
+    ScreenWidget._refresh(widget, true, nil, nil, true)
+    H.eq(mode, nil); H.eq(widget._force_full_repaint_once, true)
+    visible = true
     ScreenWidget._refresh(widget, true, nil, nil, true)
     H.eq(mode, "full"); H.eq(widget._force_full_repaint_once, nil)
 end)

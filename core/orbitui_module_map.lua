@@ -333,6 +333,7 @@ local map = {
     ["lib/bookshelf_stack_display"] = "components/bookshelf/lib/bookshelf_stack_display.lua",
     ["lib/bookshelf_stale_sweep"] = "components/bookshelf/lib/bookshelf_stale_sweep.lua",
     ["lib/bookshelf_star_runs"] = "components/bookshelf/lib/bookshelf_star_runs.lua",
+    ["lib/bookshelf_start_guard"] = "components/bookshelf/lib/bookshelf_start_guard.lua",
     ["lib/bookshelf_start_menu"] = "components/bookshelf/lib/bookshelf_start_menu.lua",
     ["lib/bookshelf_start_menu_edit"] = "components/bookshelf/lib/bookshelf_start_menu_edit.lua",
     ["lib/bookshelf_start_menu_model"] = "components/bookshelf/lib/bookshelf_start_menu_model.lua",
@@ -8311,6 +8312,213 @@ end\
 \
 return Rekey\
 ",
+    ["lib/bookshelf_start_guard"] = "-- lib/bookshelf_start_guard.lua\
+-- A start that never settles clears the caches that are read at start-up.\
+--\
+-- Issue 621: after an upgrade, a Kobo and a Kindle both froze hard right\
+-- after the shelf first painted (touch and the power button dead, nothing in\
+-- crash.log) on every start, until cache/bookshelf/ was emptied by hand.\
+-- Everything in that folder rebuilds itself, so a start that never got far\
+-- enough to clear the sentinel below gets those caches dropped on the next\
+-- one, before any of them is read.\
+--\
+-- The sentinel is a 0-byte file, as for the hero's crash marker\
+-- (lib/bookshelf_module_breaker): arm() makes it before our modules load,\
+-- settle() removes it once the shelf has been on screen for a while (the\
+-- freeze in 621 came after the first paint, not during it). A start that\
+-- freezes, crashes or loses power in between leaves it behind.\
+--\
+-- What goes is what a start reads: the compiled copies of our modules\
+-- (lib/bookshelf_bytecode; LuaJIT does not check bytecode, so a damaged copy\
+-- can hang rather than fail), the scaled covers and ornament renders, and the\
+-- library walk snapshots. Not the OPDS feed cache, downloads or fetched\
+-- covers: nothing reads those at start, and some need the network again.\
+--\
+-- The compiled copies save ~0.3-0.5 s of a PW5 start, and can be switched off\
+-- (Performance tweaks). A device that fails to settle twice within a few\
+-- starts gets them switched off for it: the guard cannot tell what hung, and\
+-- a second time suggests something about that device rather than bad luck,\
+-- so it costs that start time instead of risking a third. Both live in\
+-- settings/bookshelf/, so emptying the cache folder does not undo them:\
+--   bytecode_off  present = the copies are off; \"auto\" until the reader has\
+--                 been told why, then \"auto-told\"; \"user\" when switched off\
+--                 in the menu.\
+--   start_trip    after a start that did not settle: how many starts since.\
+local M = {}\
+\
+M.NAME  = \"start_inflight\"\
+M.CLEAR = { \"bytecode\", \"scaled_covers\", \"bookshelf.walk\", \"bookshelf.lightmeta\",\
+            \"bookshelf.finishedcount\" }\
+M.OFF_NAME  = \"bytecode_off\"\
+M.TRIP_NAME = \"start_trip\"\
+-- A second start that does not settle on one of the this-many starts after\
+-- the first switches the compiled copies off.\
+M.TRIP_WINDOW = 10\
+\
+local function lfs()\
+    local ok, l = pcall(require, \"libs/libkoreader-lfs\")\
+    return ok and l or nil\
+end\
+\
+-- cacheDir() -> cache/bookshelf, or nil off a device.\
+function M.cacheDir()\
+    local ok, DataStorage = pcall(require, \"datastorage\")\
+    if not (ok and DataStorage and DataStorage.getDataDir) then return nil end\
+    local ok_dir, d = pcall(function() return DataStorage:getDataDir() end)\
+    if not (ok_dir and type(d) == \"string\") then return nil end\
+    return d .. \"/cache/bookshelf\"\
+end\
+\
+-- settingsDir() -> settings/bookshelf, or nil off a device.\
+function M.settingsDir()\
+    local ok, DataStorage = pcall(require, \"datastorage\")\
+    if not (ok and DataStorage and DataStorage.getSettingsDir) then return nil end\
+    local ok_dir, d = pcall(function() return DataStorage:getSettingsDir() end)\
+    if not (ok_dir and type(d) == \"string\") then return nil end\
+    return d .. \"/bookshelf\"\
+end\
+\
+local function readFile(path)\
+    local f = path and io.open(path, \"r\")\
+    if not f then return nil end\
+    local s = f:read(\"*a\")\
+    f:close()\
+    return s\
+end\
+\
+local function writeFile(L, path, s)\
+    local dir = path:match(\"^(.*)/[^/]*$\")\
+    if dir and L and not L.attributes(dir) then pcall(L.mkdir, dir) end\
+    local f = io.open(path, \"w\")\
+    if not f then return false end\
+    f:write(s)\
+    f:close()\
+    return true\
+end\
+\
+-- Removes a file, or a folder and everything in it. os.remove takes an\
+-- empty folder as well as a file.\
+local function removeTree(L, path)\
+    local a = L.symlinkattributes(path)\
+    if not a then return end\
+    if a.mode == \"directory\" then\
+        local names = {}\
+        pcall(function()\
+            for name in L.dir(path) do\
+                if name ~= \".\" and name ~= \"..\" then names[#names + 1] = name end\
+            end\
+        end)\
+        for i = 1, #names do removeTree(L, path .. \"/\" .. names[i]) end\
+    end\
+    os.remove(path)\
+end\
+\
+-- Counts this start against the last one that did not settle: a second\
+-- within TRIP_WINDOW switches the compiled copies off. Returns true then.\
+local function countTrip(L, sdir, stuck)\
+    if not sdir then return false end\
+    local trip = sdir .. \"/\" .. M.TRIP_NAME\
+    local since = tonumber((readFile(trip) or \"\"):match(\"%d+\"))\
+    if stuck then\
+        if since and since < M.TRIP_WINDOW and M.bytecodeOn(sdir) then\
+            writeFile(L, sdir .. \"/\" .. M.OFF_NAME, \"auto\")\
+            os.remove(trip)\
+            return true\
+        end\
+        writeFile(L, trip, \"0\")\
+    elseif since then\
+        if since + 1 >= M.TRIP_WINDOW then os.remove(trip)\
+        else writeFile(L, trip, tostring(since + 1)) end\
+    end\
+    return false\
+end\
+\
+function M.managesBytecode()\
+    local ok, paths = pcall(require, \"lib/bookshelf_paths\")\
+    return not (ok and paths.deferBytecodeCache)\
+end\
+\
+-- arm([dir, sdir]) -> true when the previous start left its sentinel (and the\
+-- caches were cleared). Makes the sentinel for this start either way.\
+-- dir is cache/bookshelf, sdir settings/bookshelf.\
+function M.arm(dir, sdir)\
+    if M._armed then return false end\
+    dir = dir or M.cacheDir()\
+    sdir = sdir or M.settingsDir()\
+    local L = lfs()\
+    if not (dir and L) then return false end\
+    if not L.symlinkattributes then return false end\
+    if not L.attributes(dir) then pcall(L.mkdir, dir) end\
+    if L.symlinkattributes(dir, \"mode\") ~= \"directory\" then return false end\
+    M._armed = true\
+    local sentinel = dir .. \"/\" .. M.NAME\
+    local stuck = L.attributes(sentinel) ~= nil\
+    if stuck then\
+        for i = 1, #M.CLEAR do pcall(removeTree, L, dir .. \"/\" .. M.CLEAR[i]) end\
+        pcall(function()\
+            require(\"logger\").warn(\"[bookshelf] the last start did not settle: start-up caches cleared\")\
+        end)\
+    end\
+    local ok, switched\
+    if M.managesBytecode() then ok, switched = pcall(countTrip, L, sdir, stuck) end\
+    if ok and switched then\
+        pcall(function()\
+            require(\"logger\").warn(\"[bookshelf] two starts did not settle: compiled module cache switched off\")\
+        end)\
+    end\
+    local f = io.open(sentinel, \"w\")\
+    if f then f:close() end\
+    M._sentinel = sentinel\
+    return stuck\
+end\
+\
+-- settle(): this start got through; the next one keeps its caches.\
+function M.settle()\
+    if M._sentinel then\
+        os.remove(M._sentinel)\
+        M._sentinel = nil\
+    end\
+end\
+\
+-- bytecodeOn([sdir]) -> whether our modules load from compiled copies.\
+function M.bytecodeOn(sdir)\
+    if not M.managesBytecode() then return false end\
+    sdir = sdir or M.settingsDir()\
+    if not sdir then return true end\
+    return readFile(sdir .. \"/\" .. M.OFF_NAME) == nil\
+end\
+\
+-- setBytecode(on, [sdir, dir]): the Performance tweaks switch. Off removes\
+-- the copies there are; on lets the next start compile them again, and\
+-- forgets any start that did not settle.\
+function M.setBytecode(on, sdir, dir)\
+    sdir = sdir or M.settingsDir()\
+    dir = dir or M.cacheDir()\
+    local L = lfs()\
+    if not (sdir and L) then return end\
+    if on then\
+        os.remove(sdir .. \"/\" .. M.OFF_NAME)\
+        os.remove(sdir .. \"/\" .. M.TRIP_NAME)\
+    else\
+        writeFile(L, sdir .. \"/\" .. M.OFF_NAME, \"user\")\
+        if dir then pcall(removeTree, L, dir .. \"/bytecode\") end\
+    end\
+end\
+\
+-- takeNotice([sdir]) -> true once, after the guard switched the copies off,\
+-- so the reader is told why (and where to turn them back on).\
+function M.takeNotice(sdir)\
+    if not M.managesBytecode() then return false end\
+    sdir = sdir or M.settingsDir()\
+    if not sdir then return false end\
+    local path = sdir .. \"/\" .. M.OFF_NAME\
+    if readFile(path) ~= \"auto\" then return false end\
+    writeFile(lfs(), path, \"auto-told\")\
+    return true\
+end\
+\
+return M\
+",
     ["lib/bookshelf_bytecode"] = "-- lib/bookshelf_bytecode.lua\
 -- Our modules load from compiled bytecode kept on the device.\
 --\
@@ -8376,15 +8584,51 @@ local function mkdirs(L, path)\
     return L.attributes(path) ~= nil\
 end\
 \
+-- C stdio and fsync through the ffi, or nil off LuaJIT.\
+local _cio\
+local function cio()\
+    if _cio ~= nil then return _cio or nil end\
+    _cio = false\
+    local ok_ffi, ffi = pcall(require, \"ffi\")\
+    if not ok_ffi then return nil end\
+    pcall(require, \"ffi/posix_h\")\
+    for _i, decl in ipairs({ \"typedef struct _IO_FILE FILE;\", \"FILE *fopen(const char *, const char *);\",\
+            \"size_t fwrite(const void *, size_t, size_t, FILE *);\", \"int fflush(FILE *);\",\
+            \"int fileno(FILE *);\", \"int fsync(int);\", \"int fclose(FILE *);\" }) do\
+        pcall(ffi.cdef, decl)\
+    end\
+    if pcall(function() local C = ffi.C; assert(C.fopen and C.fwrite and C.fflush and C.fileno and C.fsync and C.fclose) end) then\
+        _cio = ffi\
+    end\
+    return _cio or nil\
+end\
+\
+-- writeFile(path, code) -> true when all of code is in the file. On a device\
+-- it reaches the disk before this returns: renamed into place unsynced, a\
+-- forced reboot can leave a copy whose name is there but whose contents are\
+-- not, and LuaJIT runs bytecode unchecked (issue 621).\
+M._writeFile = function(path, code)\
+    local ffi = cio()\
+    if ffi then\
+        local C = ffi.C\
+        local fp = C.fopen(path, \"wb\")\
+        if fp == nil then return false end\
+        local ok = tonumber(C.fwrite(code, 1, #code, fp)) == #code and C.fflush(fp) == 0\
+        if ok then C.fsync(C.fileno(fp)) end\
+        return (C.fclose(fp) == 0) and ok\
+    end\
+    local f = io.open(path, \"wb\")\
+    if not f then return false end\
+    local wrote = f:write(code)\
+    return (f:close() and wrote) and true or false\
+end\
+\
 local function store(L, dir, base, file, fn)\
     if not mkdirs(L, dir) or not freeOk(dir) then return end\
     local ok, code = pcall(string.dump, fn)\
     if not ok or not code then return end\
     local tmp = dir .. \"/.\" .. file .. \".tmp\"\
-    local f = io.open(tmp, \"wb\")\
-    if not f then return end\
-    local wrote = f:write(code)\
-    f:close()\
+    local wrote = M._writeFile(tmp, code)\
     if not wrote or not os.rename(tmp, dir .. \"/\" .. file) then os.remove(tmp); return end\
     -- The copies of earlier versions of this module.\
     pcall(function()\
@@ -10834,12 +11078,14 @@ function M.describe(rec)\
     local label = type(rec.title) == \"string\" and rec.title ~= \"\" and rec.title or _(\"Untitled\")\
     if rec.release_year then label = label .. \" (\" .. tostring(rec.release_year) .. \")\" end\
     local parts = {}\
-    local function add(v) if v and v ~= \"\" then parts[#parts + 1] = v end end\
+    -- Strings only: records can come from another plugin's Hardcover API,\
+    -- whose shapes differ from our client's (issue 624).\
+    local function add(v) if type(v) == \"string\" and v ~= \"\" then parts[#parts + 1] = v end end\
     if rec.edition_id then\
         -- Editions of one book share its author: what differs is the format,\
         -- the publisher and the language.\
         add(rec.edition_format)\
-        add(rec.publisher)\
+        add(type(rec.publisher) == \"table\" and rec.publisher.name or rec.publisher)\
         add(type(rec.language) == \"table\" and rec.language.language or nil)\
     else\
         add(authors(rec))\
@@ -11718,8 +11964,46 @@ return RunTextBox\
 -- One buffer the book's size in the target's own type and two blits a faded\
 -- book; nothing for a book that is not faded. Every step is guarded: a\
 -- target that cannot be read just leaves the book solid.\
+--\
+-- Over a wallpaper the same share washed a busy print straight through the\
+-- cover (\"too faint over any wallpaper\", maintainer on the PW5), so a book\
+-- there lets less of it through (OVER_PICTURE), and with Blur wallpaper behind\
+-- panels on, what shows through is blurred the way a panel's backdrop is.\
 \
 local M = {}\
+\
+-- The most of what is behind that shows through a book over a wallpaper.\
+M.OVER_PICTURE = 0.5\
+\
+-- The wallpaper module when it is loaded and a picture is on screen, else nil.\
+-- Read from package.loaded: a shelf with no wallpaper never loads it for this.\
+local function picture()\
+    local W = package.loaded[\"lib/bookshelf_wallpaper\"]\
+    if type(W) ~= \"table\" or type(W.isShowing) ~= \"function\" then return nil end\
+    local ok, on = pcall(W.isShowing)\
+    return (ok and on) and W or nil\
+end\
+\
+-- blurred(copy) -> a blurred copy of the patch (the panel blur's own\
+-- arithmetic, lib/bookshelf_frost), or nil when the type is not one it knows.\
+-- The patch is its own region: no margin outside the book to read.\
+function M._blur(copy)\
+    local Blitbuffer = require(\"ffi/blitbuffer\")\
+    local typ = copy:getType()\
+    local grey = typ == Blitbuffer.TYPE_BB8\
+    if not (grey or typ == Blitbuffer.TYPE_BBRGB32) then return nil end\
+    local ffi = require(\"ffi\")\
+    local Frost = require(\"lib/bookshelf_frost\")\
+    local w, h = copy:getWidth(), copy:getHeight()\
+    local out = Blitbuffer.new(w, h, typ)\
+    local ok = pcall(Frost.blur,\
+        ffi.cast(\"uint8_t *\", copy.data), tonumber(copy.stride), grey and 1 or 4, grey and 1 or 3,\
+        w, h, 0, 0, w, h, ffi.cast(\"uint8_t *\", out.data), tonumber(out.stride),\
+        (not grey) and 255 or nil,\
+        function(n) return ffi.new(\"double[?]\", math.max(1, n)) end)\
+    if not ok then out:free(); return nil end\
+    return out\
+end\
 \
 -- take(bb, x, y, w, h) -> keep | nil. The rect is cut to the target.\
 function M.take(bb, x, y, w, h)\
@@ -11737,6 +12021,14 @@ function M.take(bb, x, y, w, h)\
         local copy = Blitbuffer.new(cw, ch, bb:getType())\
         copy:blitFrom(require(\"lib/bookshelf_clip_bb\").real(bb), 0, 0, x0, y0, cw, ch)\
         keep = { bb = copy, x = x0, y = y0, w = cw, h = ch }\
+        local W = picture()\
+        if W then\
+            keep.over_picture = true\
+            if type(W.blurOn) == \"function\" and W.blurOn() then\
+                local ok_b, soft = pcall(M._blur, copy)\
+                if ok_b and soft then copy:free(); keep.bb = soft end\
+            end\
+        end\
     end)\
     if not ok then\
         if keep and keep.bb and keep.bb.free then pcall(keep.bb.free, keep.bb) end\
@@ -11750,6 +12042,7 @@ end\
 function M.put(keep, bb, strength)\
     if not keep then return false end\
     local done = false\
+    if strength and keep.over_picture then strength = math.min(strength, M.OVER_PICTURE) end\
     if strength and strength > 0 then\
         done = pcall(function()\
             bb:addblitFrom(keep.bb, keep.x, keep.y, 0, 0, keep.w, keep.h, math.min(1, strength))\
@@ -26264,9 +26557,12 @@ return M\
 --   TabViews.effectiveMode(path)                      display mode `path` is shown in\
 --   TabViews.apply(fc, path)                          switch the file browser to that mode\
 --   TabViews.install() / uninstall()                  apply it before every refresh of the list\
+--\
+-- The CoverBrowser's \"Display mode\" menu also lists the view of each tab.\
 \
 local Config      = require(\"infra/sui_config\")\
 local SUISettings = require(\"infra/sui_store\")\
+local _           = require(\"infra/sui_i18n\").translate\
 \
 local M = {}\
 \
@@ -26433,10 +26729,18 @@ local function _sync()\
     return library\
 end\
 \
--- The display mode chosen in the CoverBrowser's menu is the Library's. The\
+local function _isView(mode)\
+    for _i, view in ipairs(M.VIEWS) do\
+        if view == mode then return true end\
+    end\
+    return false\
+end\
+\
+-- The display mode chosen in the CoverBrowser's menu at a tab root is the\
+-- tab's view; anywhere else, or the classic mode, it is the Library's. The\
 -- CoverBrowser ignores a choice equal to the mode it is in, which at a tab root\
--- is the tab's; so it is put back in the Library's mode first. At a tab root\
--- the list is then redrawn once, in the tab's view.\
+-- is the tab's; so it is put back in the Library's mode first. A classic mode\
+-- chosen at a tab root then redraws the list once, in the tab's view.\
 local _wrapped_cb\
 \
 local function _wrapSetDisplayMode(cb)\
@@ -26444,9 +26748,14 @@ local function _wrapSetDisplayMode(cb)\
     local orig = cb.setDisplayMode\
     cb.setDisplayMode = function(self, mode)\
         local fc = self.ui and self.ui.file_chooser\
+        local root = fc and M.rootMode(fc.path)\
+        if root and _isView(mode) then\
+            M.setView(root, mode)\
+            return fc:refreshPath()\
+        end\
         local library = _sync()\
         if _applied ~= library and _switch(self, library) then _applied = library end\
-        if not (fc and M.rootMode(fc.path)) then return orig(self, mode) end\
+        if not root then return orig(self, mode) end\
         local own_refresh = rawget(self, \"refreshFileManagerInstance\")\
         self.refreshFileManagerInstance = function() end\
         local ok, err = pcall(orig, self, mode)\
@@ -26457,30 +26766,114 @@ local function _wrapSetDisplayMode(cb)\
     _wrapped_cb = cb\
 end\
 \
+-- Items added to the file manager's \"Display mode\" menu, and its relabelled\
+-- \"Use this mode everywhere\" item, kept to be taken out on uninstall.\
+local _menu_patch\
+\
+local TAB_MENU_LABELS = {\
+    author = _(\"Authors display mode\"),\
+    series = _(\"Series display mode\"),\
+    tags   = _(\"Tags display mode\"),\
+}\
+\
+local function _tabMenuItem(fm, mode)\
+    local SortSheet = require(\"features/library/sui_sort_sheet\")\
+    local sub = {}\
+    for i, option in ipairs(SortSheet.viewOptions(fm, mode)) do\
+        sub[i] = {\
+            text         = option.text,\
+            radio        = true,\
+            checked_func = function() return SortSheet.getView(fm, mode) == option.id end,\
+            callback     = function() SortSheet.setView(fm, mode, option.id) end,\
+        }\
+    end\
+    return { text = TAB_MENU_LABELS[mode], sub_item_table = sub }\
+end\
+\
+local function _unpatchMenu()\
+    local patch = _menu_patch\
+    if not patch then return end\
+    _menu_patch = nil\
+    local sub = patch.sub\
+    for i = #sub, 1, -1 do\
+        for _j, item in ipairs(patch.items) do\
+            if sub[i] == item then table.remove(sub, i); break end\
+        end\
+    end\
+    if patch.label_item then patch.label_item.text = patch.label_text end\
+end\
+\
+-- Extends the \"Display mode\" menu of the file manager's own menu only, not of\
+-- the copies other menus build to read its items.\
+local function _patchMenu(cb, menu_items)\
+    local fm = cb.ui\
+    local entry = menu_items.filemanager_display_mode\
+    if not (fm and fm.menu and fm.menu.menu_items == menu_items\
+            and type(entry) == \"table\" and type(entry.sub_item_table) == \"table\") then\
+        return\
+    end\
+    _unpatchMenu()\
+    local sub = entry.sub_item_table\
+    local patch = { sub = sub, items = {} }\
+    local everywhere = require(\"gettext\")(\"Use this mode everywhere\")\
+    for _i, item in ipairs(sub) do\
+        if item.text == everywhere then\
+            patch.label_item, patch.label_text = item, item.text\
+            item.text = _(\"Also use this mode in History and Collections\")\
+            break\
+        end\
+    end\
+    for _i, mode in ipairs(M.META_MODES) do\
+        local item = _tabMenuItem(fm, mode)\
+        sub[#sub + 1] = item\
+        patch.items[#patch.items + 1] = item\
+    end\
+    _menu_patch = patch\
+end\
+\
+local function _wrapAddToMainMenu(cb)\
+    if rawget(cb, \"addToMainMenu\") then return end\
+    local orig = cb.addToMainMenu\
+    cb.addToMainMenu = function(self, menu_items)\
+        orig(self, menu_items)\
+        _patchMenu(self, menu_items)\
+    end\
+end\
+\
 -- A tab root with items per page of its own lends them to the chooser only\
 -- while its dimensions are computed, so every setting keeps reading the\
--- Library's.\
+-- Library's. The chooser's own instance layout, if any, still runs.\
 local function _recalcWithPerPage(self, ...)\
     local own = rawget(self, \"files_per_page\")\
     self.files_per_page = self._sui_tv_per_page\
-    local FileChooser = require(\"ui/widget/filechooser\")\
-    local ok, err = pcall(FileChooser._recalculateDimen, self, ...)\
+    local layout = self._sui_tv_own_recalc or require(\"ui/widget/filechooser\")._recalculateDimen\
+    local ok, err = pcall(layout, self, ...)\
     self.files_per_page = own\
     if not ok then error(err, 0) end\
 end\
 \
--- Returns true when the items per page of `fc` changed.\
+-- Returns true when the items per page of `fc` changed. The instance layout\
+-- the chooser had is kept aside while lent and put back after.\
 local function _setPerPage(fc, n)\
     if fc._sui_tv_per_page == n then return false end\
+    if n and not fc._sui_tv_per_page then\
+        fc._sui_tv_own_recalc = rawget(fc, \"_recalculateDimen\")\
+        fc._recalculateDimen = _recalcWithPerPage\
+    elseif not n then\
+        fc._recalculateDimen = fc._sui_tv_own_recalc\
+        fc._sui_tv_own_recalc = nil\
+    end\
     fc._sui_tv_per_page = n\
-    fc._recalculateDimen = n and _recalcWithPerPage or nil\
     return true\
 end\
 \
 function M.apply(fc, path)\
     _sync()\
     local cb = _coverBrowser(fc)\
-    if cb then _wrapSetDisplayMode(cb) end\
+    if cb then\
+        _wrapSetDisplayMode(cb)\
+        _wrapAddToMainMenu(cb)\
+    end\
     local resized = fc and _setPerPage(fc, M.pagePerPage(path))\
     local want = M.effectiveMode(path)\
     local switched = want ~= _applied and _switch(cb, want)\
@@ -26509,8 +26902,10 @@ function M.uninstall()\
     local known = _wrapped_cb\
     if known then\
         known.setDisplayMode = nil\
+        known.addToMainMenu = nil\
         _wrapped_cb = nil\
     end\
+    _unpatchMenu()\
     local live, fm = _coverBrowser()\
     local cb = known or live\
     local library = _sync()\
@@ -27715,7 +28110,7 @@ return setmetatable(map, { orbitui_embedded = embedded, orbitui_bookshelf_locale
 msgid \"\"\
 msgstr \"\"\
 \"Report-Msgid-Bugs-To: \\n\"\
-\"POT-Creation-Date: 2026-11-14 18:13+0000\\n\"\
+\"POT-Creation-Date: 2026-11-22 12:34+0000\\n\"\
 \"Language: tr\\n\"\
 \"MIME-Version: 1.0\\n\"\
 \"Content-Type: text/plain; charset=UTF-8\\n\"\
@@ -27938,7 +28333,9 @@ msgstr \"Neyin değişeceğini seçin, sonra Uygula'ya dokunun.\"\
 msgid \"\"\
 \"Apply will:\\n\"\
 \"%1\"\
-msgstr \"Uygula şunları yapacak:\\n%1\"\
+msgstr \"\"\
+\"Uygula şunları yapacak:\\n\"\
+\"%1\"\
 \
 msgid \"Clear\"\
 msgstr \"Temizle\"\
@@ -28089,6 +28486,10 @@ msgstr \"Tür\"\
 \
 msgid \"Author\"\
 msgstr \"Yazar\"\
+\
+msgctxt \"one series\"\
+msgid \"Series\"\
+msgstr \"Dizi\"\
 \
 msgid \"Status\"\
 msgstr \"Durum\"\
@@ -28468,8 +28869,8 @@ msgstr \"%1 (bulunamadı)\"\
 msgid \"Whole shelf\"\
 msgstr \"Tüm raf\"\
 \
-msgid \"Every book faces out until you turn it. Long-press a book on the shelf, tap 'Arrange', then 'Face out'.\"\
-msgstr \"Siz çevirene kadar her kitap kapağı önde durur. Raftaki bir kitaba uzun basın, önce 'Yerleştir'e, sonra 'Kapağı önde'ye dokunun.\"\
+msgid \"Every book faces out until you turn it. Long-press a book on the shelf, then tap 'Face out'.\"\
+msgstr \"Siz çevirene kadar her kitap kapağı önde durur. Raftaki bir kitaba uzun basın, ardından 'Kapağı önde' seçeneğine dokunun.\"\
 \
 msgid \"Same as main shelf\"\
 msgstr \"Ana rafla aynı\"\
@@ -29128,7 +29529,9 @@ msgstr \"Bookshelf, Hardcover API anahtarını kullanıyor (%1). Anahtar her sef
 msgid \"\"\
 \"No Hardcover API key. Get one at hardcover.app/account/api, then enter it here, or save it in a text file at:\\n\"\
 \"%1\"\
-msgstr \"Hardcover API anahtarı yok. hardcover.app/account/api adresinden bir tane alın, sonra buraya girin ya da şu konumdaki bir metin dosyasına kaydedin:\\n%1\"\
+msgstr \"\"\
+\"Hardcover API anahtarı yok. hardcover.app/account/api adresinden bir tane alın, sonra buraya girin ya da şu konumdaki bir metin dosyasına kaydedin:\\n\"\
+\"%1\"\
 \
 msgid \"Enter key…\"\
 msgstr \"Anahtarı gir…\"\
@@ -29142,7 +29545,9 @@ msgstr \"Anahtar okundu ve bu aygıta kaydedildi. Dosya kaldırıldı.\"\
 msgid \"\"\
 \"No key found. Save the key in a text file at:\\n\"\
 \"%1\"\
-msgstr \"Anahtar bulunamadı. Anahtarı şu konumdaki bir metin dosyasına kaydedin:\\n%1\"\
+msgstr \"\"\
+\"Anahtar bulunamadı. Anahtarı şu konumdaki bir metin dosyasına kaydedin:\\n\"\
+\"%1\"\
 \
 msgid \"Copying the key is only needed to use Hardcover without that plugin.\"\
 msgstr \"Anahtarı kopyalamak yalnızca Hardcover'ı o eklenti olmadan kullanmak için gerekir.\"\
@@ -29853,7 +30258,10 @@ msgid \"\"\
 \"%1 and everything in it, including %2.\\n\"\
 \"\\n\"\
 \"This cannot be undone.\"\
-msgstr \"%1 ve içindeki her şey, %2 dahil.\\n\\nBu işlem geri alınamaz.\"\
+msgstr \"\"\
+\"%1 ve içindeki her şey, %2 dahil.\\n\"\
+\"\\n\"\
+\"Bu işlem geri alınamaz.\"\
 \
 msgid \"Deleted %1.\"\
 msgstr \"%1 silindi.\"\
@@ -29937,7 +30345,10 @@ msgid \"\"\
 \"Delete %1?\\n\"\
 \"\\n\"\
 \"The file is removed from the ornaments folder.\"\
-msgstr \"%1 silinsin mi?\\n\\nDosya süsler klasöründen kaldırılır.\"\
+msgstr \"\"\
+\"%1 silinsin mi?\\n\"\
+\"\\n\"\
+\"Dosya süsler klasöründen kaldırılır.\"\
 \
 msgid \"Could not delete the file.\"\
 msgstr \"Dosya silinemedi.\"\
@@ -29959,7 +30370,11 @@ msgid \"\"\
 \"%1\\n\"\
 \"\\n\"\
 \"A folder of them inside it becomes a pack, with its own tab here.\"\
-msgstr \"PNG veya SVG dosyalarını şuraya koyun:\\n%1\\n\\nİçindeki bir klasör, burada kendi sekmesi olan bir paket olur.\"\
+msgstr \"\"\
+\"PNG veya SVG dosyalarını şuraya koyun:\\n\"\
+\"%1\\n\"\
+\"\\n\"\
+\"İçindeki bir klasör, burada kendi sekmesi olan bir paket olur.\"\
 \
 msgid \"Ready-made packs\"\
 msgstr \"Hazır paketler\"\
@@ -29985,7 +30400,12 @@ msgid \"\"\
 \"Drop PNG or SVG files into\\n\"\
 \"%1\\n\"\
 \"or a folder of them, which becomes a pack.\"\
-msgstr \"Burada süs yok.\\n\\nPNG veya SVG dosyalarını şuraya bırakın:\\n%1\\nya da bunlardan oluşan bir klasörü; o klasör bir paket olur.\"\
+msgstr \"\"\
+\"Burada süs yok.\\n\"\
+\"\\n\"\
+\"PNG veya SVG dosyalarını şuraya bırakın:\\n\"\
+\"%1\\n\"\
+\"ya da bunlardan oluşan bir klasörü; o klasör bir paket olur.\"\
 \
 msgid \"hidden\"\
 msgstr \"gizli\"\
@@ -30072,7 +30492,10 @@ msgid \"\"\
 \"Delete %1 page counts found by earlier scans?\\n\"\
 \"\\n\"\
 \"Counts for books you have opened, and page counts in file names, are kept.\"\
-msgstr \"Önceki taramalarda bulunan %1 sayfa sayısı silinsin mi?\\n\\nAçtığınız kitapların sayıları ve dosya adlarındaki sayfa sayıları korunur.\"\
+msgstr \"\"\
+\"Önceki taramalarda bulunan %1 sayfa sayısı silinsin mi?\\n\"\
+\"\\n\"\
+\"Açtığınız kitapların sayıları ve dosya adlarındaki sayfa sayıları korunur.\"\
 \
 msgid \"Deleted %1 page counts.\"\
 msgstr \"%1 sayfa sayısı silindi.\"\
@@ -30083,11 +30506,20 @@ msgstr \"Taranmış sayfa sayılarını sil…\"\
 msgid \"Start\"\
 msgstr \"Başlat\"\
 \
-msgid \"Publisher page numbers (fast)\"\
-msgstr \"Yayıncı sayfa numaraları (hızlı)\"\
+msgid \"Lays out each remaining book and counts it at %1 characters per page, your stable page numbers default, so the count matches what you see when reading.\"\
+msgstr \"Kalan her kitabı sayfalar ve varsayılan sabit sayfa numaralarınız olan sayfa başına %1 karakterle sayar; böylece sayı, okurken gördüğünüzle eşleşir.\"\
+\
+msgid \"Lays out each remaining book in your font and margins, so the count matches what you see when reading.\"\
+msgstr \"Kalan her kitabı yazı tipiniz ve kenar boşluklarınızla dizer; böylece sayı, okurken gördüğünüzle eşleşir.\"\
+\
+msgid \"Printed page numbers that some books carry. Not used while your stable page numbers default overrides them.\"\
+msgstr \"Bazı kitaplarda bulunan basılı sayfa numaraları. Varsayılan sabit sayfa numaralarınız bunları geçersiz kıldığı sürece kullanılmaz.\"\
 \
 msgid \"Printed page numbers that some books carry.\"\
 msgstr \"Bazı kitaplarda bulunan basılı sayfa numaraları.\"\
+\
+msgid \"Publisher page numbers (fast)\"\
+msgstr \"Yayıncı sayfa numaraları (hızlı)\"\
 \
 msgid \"Hardcover editions (fast)\"\
 msgstr \"Hardcover baskıları (hızlı)\"\
@@ -30118,9 +30550,6 @@ msgstr \"Dosya adındaki bir sayı, örneğin p(320); bazı Calibre kurulumları
 \
 msgid \"Your reading settings (slow)\"\
 msgstr \"Okuma ayarlarınız (yavaş)\"\
-\
-msgid \"Lays out each remaining book in your font and margins, so the count matches what you see when reading.\"\
-msgstr \"Kalan her kitabı yazı tipiniz ve kenar boşluklarınızla dizer; böylece sayı, okurken gördüğünüzle eşleşir.\"\
 \
 msgid \"Only books without a page count\"\
 msgstr \"Yalnızca sayfa sayısı olmayan kitaplar\"\
@@ -30201,7 +30630,16 @@ msgid \"\"\
 \"\\n\"\
 \"  [if:series]Book %series_num of %series_name[/if]\\n\"\
 \"  [if:batt<20]LOW %batt[/if]\"\
-msgstr \"Belirteçler, üst panel ya da durum satırı çizildiğinde canlı verilerle değiştirilen yer tutuculardır.\\n\\n  %title - %book_pct\\n  → Dune - 36%\\n\\nBir içeriği yalnızca belirtecin bir değeri olduğunda göstermek için [if:foo]…[/if] içine alın. Yedek için [else]…[/if] ekleyin.\\n\\n  [if:series]%series_name, %series_num. kitap[/if]\\n  [if:batt<20]DÜŞÜK %batt[/if]\"\
+msgstr \"\"\
+\"Belirteçler, üst panel ya da durum satırı çizildiğinde canlı verilerle değiştirilen yer tutuculardır.\\n\"\
+\"\\n\"\
+\"  %title - %book_pct\\n\"\
+\"  → Dune - 36%\\n\"\
+\"\\n\"\
+\"Bir içeriği yalnızca belirtecin bir değeri olduğunda göstermek için [if:foo]…[/if] içine alın. Yedek için [else]…[/if] ekleyin.\\n\"\
+\"\\n\"\
+\"  [if:series]%series_name, %series_num. kitap[/if]\\n\"\
+\"  [if:batt<20]DÜŞÜK %batt[/if]\"\
 \
 msgid \"Search tokens…\"\
 msgstr \"Belirteç ara…\"\
@@ -30606,7 +31044,10 @@ msgid \"\"\
 \"Small pieces that stand in the gaps on a spine shelf. Drop PNG or SVG files into %1 and they appear there; a folder of them there is a pack, switched on and off as one.\\n\"\
 \"\\n\"\
 \"Tap to browse them, hide or show them, or delete them. How often they appear is set per shelf: long-press a shelf, then View mode.\"\
-msgstr \"Bir sırt rafındaki boşluklarda duran küçük parçalar. PNG veya SVG dosyalarını %1 içine bırakın, orada görünürler; oradaki bir klasör bir pakettir ve tek parça olarak açılıp kapatılır.\\n\\nGöz atmak, gizlemek, göstermek ya da silmek için dokunun. Ne sıklıkta görünecekleri her raf için ayrı ayarlanır: rafa uzun basın, sonra Görünüm.\"\
+msgstr \"\"\
+\"Bir sırt rafındaki boşluklarda duran küçük parçalar. PNG veya SVG dosyalarını %1 içine bırakın, orada görünürler; oradaki bir klasör bir pakettir ve tek parça olarak açılıp kapatılır.\\n\"\
+\"\\n\"\
+\"Göz atmak, gizlemek, göstermek ya da silmek için dokunun. Ne sıklıkta görünecekleri her raf için ayrı ayarlanır: rafa uzun basın, sonra Görünüm.\"\
 \
 msgid \"New ornaments go: %1\"\
 msgstr \"Yeni süsler: %1\"\
@@ -30813,7 +31254,10 @@ msgid \"\"\
 \"Auto-link %1 unlinked book(s)?\\n\"\
 \"\\n\"\
 \"Contacts Hardcover (rate-limited), up to ~%2 min. Progress shows in the status line, with Stop, and a report follows.\"\
-msgstr \"Bağlantısız %1 kitap otomatik bağlansın mı?\\n\\nHardcover'a bağlanılır (hız sınırlı), en fazla ~%2 dk sürer. İlerleme durum satırında Durdur seçeneğiyle gösterilir, ardından bir rapor gelir.\"\
+msgstr \"\"\
+\"Bağlantısız %1 kitap otomatik bağlansın mı?\\n\"\
+\"\\n\"\
+\"Hardcover'a bağlanılır (hız sınırlı), en fazla ~%2 dk sürer. İlerleme durum satırında Durdur seçeneğiyle gösterilir, ardından bir rapor gelir.\"\
 \
 msgid \"Exact match (ISBN / Hardcover id)\"\
 msgstr \"Tam eşleşme (ISBN / Hardcover kimliği)\"\
@@ -30928,7 +31372,10 @@ msgid \"\"\
 \"Remove all downloaded Hardcover covers?\\n\"\
 \"\\n\"\
 \"Each book's original cover is restored; links, descriptions and ratings are kept.\"\
-msgstr \"İndirilen tüm Hardcover kapakları kaldırılsın mı?\\n\\nHer kitabın özgün kapağı geri yüklenir; bağlantılar, açıklamalar ve puanlar korunur.\"\
+msgstr \"\"\
+\"İndirilen tüm Hardcover kapakları kaldırılsın mı?\\n\"\
+\"\\n\"\
+\"Her kitabın özgün kapağı geri yüklenir; bağlantılar, açıklamalar ve puanlar korunur.\"\
 \
 msgid \"Remove covers\"\
 msgstr \"Kapakları kaldır\"\
@@ -30948,7 +31395,12 @@ msgid \"\"\
 \"This unlinks every book and deletes all cached Hardcover covers, descriptions, ratings and reviews. Covers Hardcover saved into book folders are removed and any cover you had before is put back.\\n\"\
 \"\\n\"\
 \"This cannot be undone.\"\
-msgstr \"TÜM Hardcover verileri kaldırılsın mı?\\n\\nBu, tüm kitapların bağlantısını kaldırır ve önbellekteki tüm Hardcover kapaklarını, açıklamalarını, puanlarını ve incelemelerini siler. Hardcover'ın kitap klasörlerine kaydettiği kapaklar kaldırılır ve önceden var olan kapak geri konur.\\n\\nBu işlem geri alınamaz.\"\
+msgstr \"\"\
+\"TÜM Hardcover verileri kaldırılsın mı?\\n\"\
+\"\\n\"\
+\"Bu, tüm kitapların bağlantısını kaldırır ve önbellekteki tüm Hardcover kapaklarını, açıklamalarını, puanlarını ve incelemelerini siler. Hardcover'ın kitap klasörlerine kaydettiği kapaklar kaldırılır ve önceden var olan kapak geri konur.\\n\"\
+\"\\n\"\
+\"Bu işlem geri alınamaz.\"\
 \
 msgid \"Remove all\"\
 msgstr \"Tümünü kaldır\"\
@@ -30985,6 +31437,12 @@ msgstr \"Raf sayfaları için E-mürekkep yenileme hızını kullan\"\
 \
 msgid \"Flash the shelf clean on page turns as often as KOReader's own Full refresh rate (Screen > E-ink settings) does for book pages, to clear ghosting. A page that flashes skips its animation and takes a little longer. E-ink only.\"\
 msgstr \"Gölgelenmeyi temizlemek için sayfa çevirirken rafı, KOReader'ın kitap sayfalarındaki kendi Tam yenileme hızı (Ekran > E-mürekkep ayarları) kadar sık yanıp sönerek temizler. Yanıp sönen bir sayfa animasyonunu atlar ve biraz daha uzun sürer. Yalnızca E-mürekkep.\"\
+\
+msgid \"Compiled code cache\"\
+msgstr \"Derlenmiş kod önbelleği\"\
+\
+msgid \"Keep a compiled copy of Bookshelf's code, so KOReader starts faster (about half a second on a Kindle Paperwhite). Turn it off if Bookshelf has trouble starting on your device. Bookshelf also turns it off by itself if it fails to start twice in a short time. Takes effect when KOReader restarts.\"\
+msgstr \"KOReader'ın daha hızlı açılması için Bookshelf kodunun derlenmiş bir kopyasını saklar (Kindle Paperwhite'ta yaklaşık yarım saniye). Bookshelf cihazınızda açılırken sorun yaşıyorsa kapatın. Bookshelf kısa sürede iki kez açılamazsa bunu kendisi de kapatır. KOReader yeniden başlatıldığında etkili olur.\"\
 \
 msgid \"Pre-warm shelf cache\"\
 msgstr \"Raf önbelleğini önceden hazırla\"\
@@ -31227,7 +31685,10 @@ msgid \"\"\
 \"Reset the shelf menu to default settings?\\n\"\
 \"\\n\"\
 \"All custom shelves you have created or edited will be lost. Other Bookshelf settings (top panel text, fonts, colors) are unaffected.\"\
-msgstr \"Raf menüsü varsayılan ayarlara sıfırlansın mı?\\n\\nOluşturduğunuz ya da düzenlediğiniz tüm özel raflar kaybolacak. Diğer Bookshelf ayarları (üst panel metni, yazı tipleri, renkler) etkilenmez.\"\
+msgstr \"\"\
+\"Raf menüsü varsayılan ayarlara sıfırlansın mı?\\n\"\
+\"\\n\"\
+\"Oluşturduğunuz ya da düzenlediğiniz tüm özel raflar kaybolacak. Diğer Bookshelf ayarları (üst panel metni, yazı tipleri, renkler) etkilenmez.\"\
 \
 msgid \"Reset top panel content to defaults\"\
 msgstr \"Üst panel içeriğini varsayılana sıfırla\"\
@@ -31239,7 +31700,10 @@ msgid \"\"\
 \"Reset the top panel's content to default settings?\\n\"\
 \"\\n\"\
 \"All top-panel text and font customizations will be lost. The Bookshelf UI font and shelf menu are unaffected.\"\
-msgstr \"Üst panelin içeriği varsayılan ayarlara sıfırlansın mı?\\n\\nTüm üst panel metni ve yazı tipi özelleştirmeleri kaybolacak. Bookshelf arayüz yazı tipi ve raf menüsü etkilenmez.\"\
+msgstr \"\"\
+\"Üst panelin içeriği varsayılan ayarlara sıfırlansın mı?\\n\"\
+\"\\n\"\
+\"Tüm üst panel metni ve yazı tipi özelleştirmeleri kaybolacak. Bookshelf arayüz yazı tipi ve raf menüsü etkilenmez.\"\
 \
 msgid \"Read calibre metadata.calibre\"\
 msgstr \"Calibre metadata.calibre dosyasını oku\"\
@@ -31369,7 +31833,11 @@ msgid \"\"\
 \"%1\\n\"\
 \"\\n\"\
 \"Remove it and restart, or updates may appear to do nothing.\"\
-msgstr \"Bookshelf'in başka bir kopyası kurulu ve o da yükleniyor:\\n%1\\n\\nOnu kaldırıp yeniden başlatın, yoksa güncellemeler hiçbir şey yapmıyor gibi görünebilir.\"\
+msgstr \"\"\
+\"Bookshelf'in başka bir kopyası kurulu ve o da yükleniyor:\\n\"\
+\"%1\\n\"\
+\"\\n\"\
+\"Onu kaldırıp yeniden başlatın, yoksa güncellemeler hiçbir şey yapmıyor gibi görünebilir.\"\
 \
 msgid \"Update available\"\
 msgstr \"Güncelleme var\"\
@@ -31677,7 +32145,12 @@ msgid \"\"\
 \"The rows here edit the theme of the shelf on screen. Your changes stay with that theme wherever it shows, and Reset in the Theme library brings back its original.\\n\"\
 \"\\n\"\
 \"Each shelf can have a theme of its own: choose it here, or long-press a shelf, then Theme.\"\
-msgstr \"Bir tema duvar kağıdı, raf tahtası, renkler, açık ya da koyu görünüm ve süsler getirebilir. Getirmediği her şey Sade'ninkidir: duvar kağıdı yok, yerleşik raf tahtası ve varsayılan renkler. Tema seçmek %1 ayarını asla değiştirmez.\\n\\nBuradaki satırlar ekrandaki rafın temasını düzenler. Değişiklikleriniz, tema nerede görünürse görünsün onunla kalır; Tema kitaplığındaki Sıfırla özgün hâlini geri getirir.\\n\\nHer rafın kendi teması olabilir: buradan seçin ya da bir rafa uzun basıp Tema'yı seçin.\"\
+msgstr \"\"\
+\"Bir tema duvar kağıdı, raf tahtası, renkler, açık ya da koyu görünüm ve süsler getirebilir. Getirmediği her şey Sade'ninkidir: duvar kağıdı yok, yerleşik raf tahtası ve varsayılan renkler. Tema seçmek %1 ayarını asla değiştirmez.\\n\"\
+\"\\n\"\
+\"Buradaki satırlar ekrandaki rafın temasını düzenler. Değişiklikleriniz, tema nerede görünürse görünsün onunla kalır; Tema kitaplığındaki Sıfırla özgün hâlini geri getirir.\\n\"\
+\"\\n\"\
+\"Her rafın kendi teması olabilir: buradan seçin ya da bir rafa uzun basıp Tema'yı seçin.\"\
 \
 msgid \"This shelf: %1\"\
 msgstr \"Bu raf: %1\"\
@@ -31709,7 +32182,12 @@ msgid \"\"\
 \"then open the Theme library again.\\n\"\
 \"\\n\"\
 \"You can edit any theme freely; your changes stay with it, and Reset brings back the original.\"\
-msgstr \"Bir tema paketi duvar kağıdı, raf tahtası, renkler ve süsleri bir araya getirir ve buradan seçilir. Eklemek için klasörünü şuraya kopyalayın:\\n%1\\nardından Tema kitaplığını yeniden açın.\\n\\nHerhangi bir temayı dilediğiniz gibi düzenleyebilirsiniz; değişiklikleriniz onunla kalır, Sıfırla da özgün hâlini geri getirir.\"\
+msgstr \"\"\
+\"Bir tema paketi duvar kağıdı, raf tahtası, renkler ve süsleri bir araya getirir ve buradan seçilir. Eklemek için klasörünü şuraya kopyalayın:\\n\"\
+\"%1\\n\"\
+\"ardından Tema kitaplığını yeniden açın.\\n\"\
+\"\\n\"\
+\"Herhangi bir temayı dilediğiniz gibi düzenleyebilirsiniz; değişiklikleriniz onunla kalır, Sıfırla da özgün hâlini geri getirir.\"\
 \
 msgid \"Ready-made theme packs\"\
 msgstr \"Hazır tema paketleri\"\
@@ -32076,6 +32554,9 @@ msgstr \"Bookshelf şu sürüme güncellendi: v\"\
 msgid \"Restart KOReader now?\"\
 msgstr \"KOReader şimdi yeniden başlatılsın mı?\"\
 \
+msgid \"Close KOReader now? Open it again to finish the update.\"\
+msgstr \"KOReader şimdi kapatılsın mı? Güncellemeyi tamamlamak için yeniden açın.\"\
+\
 msgid \"Restart\"\
 msgstr \"Yeniden başlat\"\
 \
@@ -32206,7 +32687,12 @@ msgid \"\"\
 \"The Kindle Virtual Library plugin does the conversion. It can take a few minutes, it can't be stopped once started, and the screen won't respond while it works.\\n\"\
 \"\\n\"\
 \"It only happens the first time you open a book.\"\
-msgstr \"KOReader'ın okuyabilmesi için bu Kindle kitabının dönüştürülmesi gerekiyor.\\n\\nDönüştürmeyi Kindle Virtual Library eklentisi yapar. Birkaç dakika sürebilir, başladıktan sonra durdurulamaz ve çalışırken ekran yanıt vermez.\\n\\nBu yalnızca bir kitabı ilk açışınızda olur.\"\
+msgstr \"\"\
+\"KOReader'ın okuyabilmesi için bu Kindle kitabının dönüştürülmesi gerekiyor.\\n\"\
+\"\\n\"\
+\"Dönüştürmeyi Kindle Virtual Library eklentisi yapar. Birkaç dakika sürebilir, başladıktan sonra durdurulamaz ve çalışırken ekran yanıt vermez.\\n\"\
+\"\\n\"\
+\"Bu yalnızca bir kitabı ilk açışınızda olur.\"\
 \
 msgid \"Convert\"\
 msgstr \"Dönüştür\"\
@@ -32217,7 +32703,12 @@ msgid \"\"\
 \"The Kindle plugin can only unlock KFX books. Protected MOBI and AZW books can't be converted by any KOReader plugin, so those have to be read in the Kindle app.\\n\"\
 \"\\n\"\
 \"Your KFX books should open normally.\"\
-msgstr \"Bu korumalı bir %1 dosyası, açılamıyor.\\n\\nKindle eklentisi yalnızca KFX kitapların kilidini açabilir. Korumalı MOBI ve AZW kitapları hiçbir KOReader eklentisi dönüştüremez, bu yüzden bunların Kindle uygulamasında okunması gerekir.\\n\\nKFX kitaplarınız normal açılmalı.\"\
+msgstr \"\"\
+\"Bu korumalı bir %1 dosyası, açılamıyor.\\n\"\
+\"\\n\"\
+\"Kindle eklentisi yalnızca KFX kitapların kilidini açabilir. Korumalı MOBI ve AZW kitapları hiçbir KOReader eklentisi dönüştüremez, bu yüzden bunların Kindle uygulamasında okunması gerekir.\\n\"\
+\"\\n\"\
+\"KFX kitaplarınız normal açılmalı.\"\
 \
 msgid \"\"\
 \"KOReader can't read %1 files.\\n\"\
@@ -32225,7 +32716,12 @@ msgid \"\"\
 \"It reads KFX books (prepared by the Kindle plugin) and unprotected MOBI and AZW books.\\n\"\
 \"\\n\"\
 \"Your other Kindle books should open normally.\"\
-msgstr \"KOReader %1 dosyalarını okuyamaz.\\n\\nKFX kitapları (Kindle eklentisiyle hazırlanmış) ve korumasız MOBI ve AZW kitapları okur.\\n\\nDiğer Kindle kitaplarınız normal açılmalı.\"\
+msgstr \"\"\
+\"KOReader %1 dosyalarını okuyamaz.\\n\"\
+\"\\n\"\
+\"KFX kitapları (Kindle eklentisiyle hazırlanmış) ve korumasız MOBI ve AZW kitapları okur.\\n\"\
+\"\\n\"\
+\"Diğer Kindle kitaplarınız normal açılmalı.\"\
 \
 msgid \"The Kindle library isn't available right now.\"\
 msgstr \"Kindle kitaplığı şu anda kullanılamıyor.\"\
@@ -32406,7 +32902,10 @@ msgid \"\"\
 \"Hardcover (hardcover.app) is a free site for tracking what you read. A book linked to it gets Hardcover's ratings, reviews, description and genres.\\n\"\
 \"\\n\"\
 \"To connect, install a Hardcover sync plugin and sign in there, then restart KOReader. Or give Bookshelf a Hardcover API key: get one at hardcover.app/account/api.\"\
-msgstr \"Hardcover (hardcover.app), okuduklarınızı takip etmek için ücretsiz bir sitedir. Ona bağlanan bir kitap, Hardcover'daki puanları, incelemeleri, açıklamayı ve türleri alır.\\n\\nBağlanmak için bir Hardcover eşitleme eklentisi kurup orada oturum açın, ardından KOReader'ı yeniden başlatın. Ya da Bookshelf'e bir Hardcover API anahtarı verin: hardcover.app/account/api adresinden alabilirsiniz.\"\
+msgstr \"\"\
+\"Hardcover (hardcover.app), okuduklarınızı takip etmek için ücretsiz bir sitedir. Ona bağlanan bir kitap, Hardcover'daki puanları, incelemeleri, açıklamayı ve türleri alır.\\n\"\
+\"\\n\"\
+\"Bağlanmak için bir Hardcover eşitleme eklentisi kurup orada oturum açın, ardından KOReader'ı yeniden başlatın. Ya da Bookshelf'e bir Hardcover API anahtarı verin: hardcover.app/account/api adresinden alabilirsiniz.\"\
 \
 msgid \"Use Hardcover's\"\
 msgstr \"Hardcover'dan kullan\"\
@@ -32526,7 +33025,10 @@ msgid \"\"\
 \"Delete this image from the image library?\\n\"\
 \"\\n\"\
 \"%1\"\
-msgstr \"Bu görsel, görsel kitaplığından silinsin mi?\\n\\n%1\"\
+msgstr \"\"\
+\"Bu görsel, görsel kitaplığından silinsin mi?\\n\"\
+\"\\n\"\
+\"%1\"\
 \
 msgid \"Find author image online\"\
 msgstr \"Yazar görselini çevrimiçi bul\"\
@@ -32797,17 +33299,23 @@ msgstr \"Derme sırasına göre sırala\"\
 msgid \"\"\
 \"Fetching %1… (%2 books)\\n\"\
 \"(Tap to cancel)\"\
-msgstr \"%1 alınıyor… (%2 kitap)\\n(İptal için dokunun)\"\
+msgstr \"\"\
+\"%1 alınıyor… (%2 kitap)\\n\"\
+\"(İptal için dokunun)\"\
 \
 msgid \"\"\
 \"Fetching %1…\\n\"\
 \"(Tap to cancel)\"\
-msgstr \"%1 alınıyor…\\n(İptal için dokunun)\"\
+msgstr \"\"\
+\"%1 alınıyor…\\n\"\
+\"(İptal için dokunun)\"\
 \
 msgid \"\"\
 \"Stop loading %1?\\n\"\
 \"%2 books so far.\"\
-msgstr \"%1 yüklemesi durdurulsun mu?\\nŞu ana kadar %2 kitap.\"\
+msgstr \"\"\
+\"%1 yüklemesi durdurulsun mu?\\n\"\
+\"Şu ana kadar %2 kitap.\"\
 \
 msgid \"Stop loading %1?\"\
 msgstr \"%1 yüklemesi durdurulsun mu?\"\
@@ -32901,10 +33409,20 @@ msgid \"\"\
 \"%1\\n\"\
 \"\\n\"\
 \"Many apps refuse this because it could be a downgrade attack.\"\
-msgstr \"Güvenli olmayan yönlendirme reddedildi.\\n\\nSunucu bu indirmeyi HTTPS olmayan bir adrese göndermeye çalıştı:\\n\\n%1\\n\\nBu bir sürüm düşürme saldırısı olabileceği için pek çok uygulama bunu reddeder.\"\
+msgstr \"\"\
+\"Güvenli olmayan yönlendirme reddedildi.\\n\"\
+\"\\n\"\
+\"Sunucu bu indirmeyi HTTPS olmayan bir adrese göndermeye çalıştı:\\n\"\
+\"\\n\"\
+\"%1\\n\"\
+\"\\n\"\
+\"Bu bir sürüm düşürme saldırısı olabileceği için pek çok uygulama bunu reddeder.\"\
 \
 msgid \"%1 downloaded. Read it now?\"\
 msgstr \"%1 indirildi. Şimdi okunsun mu?\"\
+\
+msgid \"Read now\"\
+msgstr \"Şimdi oku\"\
 \
 msgid \"Not now\"\
 msgstr \"Şimdi değil\"\
@@ -32940,13 +33458,19 @@ msgid \"\"\
 \"Bookshelf update: cached Hardcover book details from earlier versions can list audiobook narrators and translators as authors, which shows extra author cards.\\n\"\
 \"\\n\"\
 \"Refresh the details for your linked books now? (Contacts Hardcover, rate-limited, cancellable. Also available later under Hardcover > Manage Hardcover data.)\"\
-msgstr \"Bookshelf güncellemesi: önceki sürümlerden önbelleğe alınmış Hardcover kitap ayrıntıları, sesli kitap anlatıcılarını ve çevirmenleri yazar olarak listeleyebilir; bu da fazladan yazar kartları gösterir.\\n\\nBağlı kitaplarınızın ayrıntıları şimdi yenilensin mi? (Hardcover'a bağlanır, hız sınırlıdır, iptal edilebilir. Daha sonra Hardcover > Hardcover verilerini yönet altından da yapılabilir.)\"\
+msgstr \"\"\
+\"Bookshelf güncellemesi: önceki sürümlerden önbelleğe alınmış Hardcover kitap ayrıntıları, sesli kitap anlatıcılarını ve çevirmenleri yazar olarak listeleyebilir; bu da fazladan yazar kartları gösterir.\\n\"\
+\"\\n\"\
+\"Bağlı kitaplarınızın ayrıntıları şimdi yenilensin mi? (Hardcover'a bağlanır, hız sınırlıdır, iptal edilebilir. Daha sonra Hardcover > Hardcover verilerini yönet altından da yapılabilir.)\"\
 \
 msgid \"Refresh now\"\
 msgstr \"Şimdi yenile\"\
 \
 msgid \"Later\"\
 msgstr \"Daha sonra\"\
+\
+msgid \"Bookshelf had trouble starting twice in a short time, so it no longer keeps a compiled copy of its code. Starting may take a little longer. To turn it back on: Settings > Advanced > Performance tweaks > Compiled code cache.\"\
+msgstr \"Bookshelf kısa sürede iki kez açılırken sorun yaşadı, bu yüzden artık kodunun derlenmiş bir kopyasını saklamıyor. Açılış biraz daha uzun sürebilir. Yeniden açmak için: Ayarlar > Gelişmiş > Performans ayarları > Derlenmiş kod önbelleği.\"\
 \
 msgid \"Bookshelf requires the CoverBrowser plugin. Enable it under Settings > More plugins.\"\
 msgstr \"Bookshelf için CoverBrowser eklentisi gerekir. Ayarlar > Diğer eklentiler altından etkinleştirin.\"\
@@ -33041,7 +33565,9 @@ msgstr \"Dal adı (kararlı sürüm için boş bırakın)\"\
 msgid \"\"\
 \"Book metadata scanner not available.\\n\"\
 \"Install the CoverBrowser plugin to enable it.\"\
-msgstr \"Kitap üst verisi tarayıcısı yok.\\nEtkinleştirmek için CoverBrowser eklentisini kurun.\"\
+msgstr \"\"\
+\"Kitap üst verisi tarayıcısı yok.\\n\"\
+\"Etkinleştirmek için CoverBrowser eklentisini kurun.\"\
 \
 msgid \"Page count report\"\
 msgstr \"Sayfa sayısı raporu\"\
@@ -33739,6 +34265,51 @@ msgstr \"Soru getiriliyor...\"\
 msgid \"Tap for next question →\"\
 msgstr \"Sonraki soru için dokunun →\"\
 \
+msgid \"Turn on Vocabulary builder in Tools > More tools > Plugin management, then words you look up while reading appear here.\"\
+msgstr \"Araçlar > Diğer araçlar > Eklenti yönetimi bölümünden Sözcük dağarcığı oluşturucu'yu açın; okurken baktığınız sözcükler burada görünür.\"\
+\
+msgid \"To save every word you look up, turn on Auto add new words in Vocabulary builder's menu (search menu > Vocabulary builder).\"\
+msgstr \"Baktığınız her sözcüğü kaydetmek için Sözcük dağarcığı oluşturucu menüsünde (arama menüsü > Sözcük dağarcığı oluşturucu) Yeni sözcükler otomatik olarak eklensin seçeneğini açın.\"\
+\
+msgid \"Look up words while reading to fill this card.\"\
+msgstr \"Bu kartı doldurmak için okurken sözcüklere bakın.\"\
+\
+msgid \"Only one word saved so far.\"\
+msgstr \"Şimdiye kadar yalnızca bir sözcük kaydedildi.\"\
+\
+msgid \"Reset known words (%1)\"\
+msgstr \"Bilinen sözcükleri sıfırla (%1)\"\
+\
+msgid \"Senses shown\"\
+msgstr \"Gösterilen anlamlar\"\
+\
+msgid \"Book context\"\
+msgstr \"Kitaptaki bağlam\"\
+\
+msgid \"Word type\"\
+msgstr \"Sözcük türü\"\
+\
+msgid \"Review-due words first\"\
+msgstr \"Tekrar zamanı gelenler önce\"\
+\
+msgid \"Dictionary\"\
+msgstr \"Sözlük\"\
+\
+msgid \"All dictionaries\"\
+msgstr \"Tüm sözlükler\"\
+\
+msgid \"Vocab Word\"\
+msgstr \"Sözcük Kartı\"\
+\
+msgid \"From Vocabulary Builder + dictionary. Works offline.\"\
+msgstr \"Sözcük dağarcığı oluşturucu + sözlükten. Çevrimdışı çalışır.\"\
+\
+msgid \"No vocab words yet\"\
+msgstr \"Henüz sözcük yok\"\
+\
+msgid \"✓ I know it\"\
+msgstr \"✓ Biliyorum\"\
+\
 msgid \"Clear sky\"\
 msgstr \"Açık\"\
 \
@@ -33853,7 +34424,7 @@ msgstr \"%1 dk önce güncellendi\"\
 msgid \"Updated %1h ago\"\
 msgstr \"%1 sa önce güncellendi\"\
 \
-msgid \"Read now\"\
-msgstr \"Şimdi oku\"\
+#~ msgid \"Every book faces out until you turn it. Long-press a book on the shelf, tap 'Arrange', then 'Face out'.\"\
+#~ msgstr \"Siz çevirene kadar her kitap kapağı önde durur. Raftaki bir kitaba uzun basın, önce 'Yerleştir'e, sonra 'Kapağı önde'ye dokunun.\"\
 ",
 } })

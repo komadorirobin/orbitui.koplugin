@@ -50,6 +50,7 @@ local function world(opts)
     for _i, d in ipairs(opts.dirs or {}) do W.dirs[d] = true end
     local lfs = {}
     function lfs.attributes(path, what)
+        if path == opts.denied then return nil, "Permission denied", 13 end
         W.stats = W.stats + 1
         path = path:gsub("/$", "")
         if W.files[path] then return "file" end
@@ -136,6 +137,17 @@ t.test("a hash listing that fails keeps the exact probe", function()
     assert(W.CM.hashMayHoldCustom() == true)
 end)
 
+t.test("an unreadable listing still finds a known, accessible sidecar", function()
+    local W = world{ files = { SIB } }
+    W.list_error["/books/Fantasy"] = true
+    assert(W.CM.namedFile(BOOK) == SIB)
+end)
+
+t.test("an inaccessible hash location keeps the native lookup", function()
+    local W = world{ pref = "hash", denied = "/ko/hashdocsettings" }
+    assert(W.CM.hashMayHoldCustom())
+end)
+
 t.test("doc preference: the sibling wins over the mirror, as in KOReader", function()
     local W = world{ pref = "doc", files = { SIB, MIR } }
     assert(W.CM.namedFile(BOOK) == SIB)
@@ -195,9 +207,9 @@ local seed = src:match("\nlocal function _seedDirEntryCache%(listings%)\n(.-)\ne
 
 t.test("the walk hands its directory listings to the gate", function()
     assert(seed, "_seedDirEntryCache is gone or was renamed")
-    assert(src:match("local function walkBooks%(root, depth, out, current_depth, dirs, listings%)"),
+    assert(src:match("local function walkBooks%(root, depth, out, current_depth, dirs, listings, work%)"),
         "walkBooks no longer collects listings")
-    assert(src:match("walkBooks%(home, depth, fresh, 0, dirs, listings%)"),
+    assert(src:match("walkBooks%(home, depth, fresh, 0, dirs, listings, work%)"),
         "the cached walk no longer passes a listings table")
     assert(src:match("_seedDirEntryCache%(listings%)"),
         "the listings are collected but never handed over")

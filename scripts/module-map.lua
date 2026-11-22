@@ -14,7 +14,7 @@ local embedded_names = {
     "lib/bookshelf_module_breaker", "lib/bookshelf_module_layout",
     "lib/bookshelf_folder_label",
     "lib/bookshelf_drill_rekey",
-    "lib/bookshelf_bytecode", "lib/bookshelf_page_cache",
+    "lib/bookshelf_start_guard", "lib/bookshelf_bytecode", "lib/bookshelf_page_cache",
     "lib/bookshelf_pubdate_format", "lib/bookshelf_scale", "lib/bookshelf_slice",
     "lib/bookshelf_colour_runs",
     "lib/bookshelf_cover_marks",

@@ -40,9 +40,10 @@ local function method(name)
     local finish = assert(source:find("\nfunction ScreenWidget:", start + 1, true))
     local body = source:sub(start, finish - 1)
     local load_fn = loadstring or load
-    assert(load_fn("local ScreenWidget, UIManager, Config, applyModuleBackground, labelTextFor, pageIndicatorFor, pageNavFor = ...\n" .. body))(
-        ScreenWidget, UIManager, Config, applyModuleBackground, function() return "Reading" end, noop, noop)
+    assert(load_fn("local ScreenWidget, UIManager, Config, applyModuleBackground, labelTextFor, pageIndicatorFor, pageNavFor, UI = ...\n" .. body))(
+        ScreenWidget, UIManager, Config, applyModuleBackground, function() return "Reading" end, noop, noop, { isUncovered = function() return true end })
 end
+method("_repaintIfShown")
 method("_buildModWidget")
 method("_bookModHasItems")
 method("_updateModuleStats")

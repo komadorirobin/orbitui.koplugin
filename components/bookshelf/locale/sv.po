@@ -78,3 +78,46 @@ msgstr "Inga ord kvar att repetera"
 
 msgid "✓ I know it"
 msgstr "✓ Jag kan ordet"
+
+msgid "Turn on Vocabulary builder in Tools > More tools > Plugin management, then words you look up while reading appear here."
+msgstr "Aktivera Ordbyggaren under Verktyg → Fler verktyg → Hantera tillägg så visas orden du slår upp här."
+
+msgid "To save every word you look up, turn on Auto add new words in Vocabulary builder's menu (search menu > Vocabulary builder)."
+msgstr "Öppna Ordbyggaren från sökmenyn och slå på automatiskt tillägg av nya ord för att spara varje ord du slår upp."
+
+msgid "Only one word saved so far."
+msgstr "Du har sparat ett ord hittills."
+
+msgid "Look up words while reading to fill this card."
+msgstr "Slå upp ord medan du läser så visas de här."
+
+msgid "Book context"
+msgstr "Meningen ur boken"
+
+msgid "Word type"
+msgstr "Ordklass"
+
+msgid "Reset known words (%1)"
+msgstr "Återställ ord jag kan (%1)"
+
+msgid "Publisher page numbers (fast)"
+msgstr "Förlagets sidnummer (snabbt)"
+
+msgid "Printed page numbers that some books carry. Not used while your stable page numbers default overrides them."
+msgstr "Sidnumren från den tryckta utgåvan finns i vissa böcker. Din inställning för fasta sidnummer har företräde."
+
+msgid "Lays out each remaining book and counts it at %1 characters per page, your stable page numbers default, so the count matches what you see when reading."
+msgstr "Beräknar sidantalet för återstående böcker med din inställning på %1 tecken per sida så att det stämmer med läsvyn."
+
+msgid "Lays out each remaining book in your font and margins, so the count matches what you see when reading."
+msgstr "Beräknar sidantalet för återstående böcker med ditt typsnitt och dina marginaler så att det stämmer med läsvyn."
+
+msgid "Every book faces out until you turn it. Long-press a book on the shelf, then tap 'Face out'."
+msgstr "Varje bok visar framsidan tills du vänder den. Håll fingret på en bok i hyllan och tryck på ”Visa framsidan”."
+
+msgid "Series"
+msgstr "Serier"
+
+msgctxt "one series"
+msgid "Series"
+msgstr "Serie"

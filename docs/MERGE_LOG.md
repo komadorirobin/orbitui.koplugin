@@ -4,6 +4,34 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-22 — Bookshelf 6.6.0 and SimpleUI maintenance
+
+Unsquashed imports **092a62bfe** and **cf554169d** advance Bookshelf from
+**7b81a1bf7** to **5281b3eb1** and SimpleUI from **51b7721ce** to **b79ddb069**.
+The original forks and bundled FingerTips revision are retained.
+
+Bookshelf keeps series boxes inside author/section groups, preserves cover
+contrast over wallpaper, respects stable page-number settings for unopened
+books and handles more Hardcover edition publisher responses. Its metadata
+lookup avoids per-book hashing when the hash sidecar tree has no custom
+metadata. The host retains its shared walk and exact lookup on uncertainty.
+Startup recovery is restricted to derived files and respects symlinks. The
+host's module loader still owns compiled code (C01/C08). The vocabulary card
+keeps native dictionary batching and known-word exclusion.
+
+SimpleUI skips redraws under a fullscreen window and after a postponed
+screensaver. OrbitUI retains its pending full repaint, wrapped card bounds
+and live stats/cover targets. Local calendar days survive UTC offset changes,
+and finished-book actions can exclude a book from goals or correct its status.
+The public versions and device update channels stay at their previous pins.
+
+Series boxes have a documented OrbitUI origin. Robin's October port into
+Bookshelf preceded the November PocketBook report that prompted the grouped
+layout fix. The evidence attributes the feature and the later fix separately.
+[Original port](https://github.com/AndyHazz/bookshelf.koplugin/pull/508) ·
+[PocketBook report](https://github.com/AndyHazz/bookshelf.koplugin/issues/620) ·
+[Grouping fix](https://github.com/AndyHazz/bookshelf.koplugin/commit/097acbed4).
+
 ## 2026-11-21 — Bookshelf vocabulary card
 
 The unsquashed import **16919ce1c** advances Bookshelf from **d380620a5**

@@ -30,7 +30,7 @@ H.test("all reviewed embedded sources are valid Lua and retain the path-map API"
         H.eq(source, read(name))
     end
     local n = 0; for _, path in pairs(map) do H.eq(type(path), "string"); n = n + 1 end
-    H.eq(n, 452)
+    H.eq(n, 453)
 end)
 H.test("Critter defaults copy only and per-screen picks topics and decorations survive", function()
     local data = { simpleui_hs_critter_pick = "hazel", custom_critter_pick = "suey",

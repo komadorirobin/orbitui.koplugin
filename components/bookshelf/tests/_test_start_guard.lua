@@ -24,11 +24,20 @@ local function write(path, s) local f = assert(io.open(path, "w")); f:write(s or
 -- A tiny lfs for the module when the real one is not installed.
 local lfs_ok, lfs = pcall(require, "lfs")
 package.loaded["libs/libkoreader-lfs"] = lfs_ok and lfs or {
-    attributes = function(path)
-        local p = io.popen('stat -c "%F" "' .. path .. '" 2>/dev/null')
-        local l = p:read("*l"); p:close()
-        if not l then return nil end
-        return { mode = l:find("directory") and "directory" or "file" }
+    attributes = function(path, field)
+        local mode = exists(path) and "file" or nil
+        local ok = os.execute('test -d "' .. path .. '"')
+        if ok == true or ok == 0 then mode = "directory" end
+        if field then return mode end
+        return mode and { mode = mode }
+    end,
+    symlinkattributes = function(path, field)
+        local ok = os.execute('test -L "' .. path .. '"')
+        if ok == true or ok == 0 then
+            if field then return "link" end
+            return { mode = "link" }
+        end
+        return package.loaded["libs/libkoreader-lfs"].attributes(path, field)
     end,
     mkdir = function(path) return os.execute('mkdir "' .. path .. '" 2>/dev/null') end,
     dir = function(path)
@@ -76,6 +85,14 @@ t.test("after a start that never settled, the start-up caches go", function()
     eq(G.arm(dir), true)
     eq(ls(dir), { "hero_inflight", "online", "opds.sqlite3", "start_inflight" })
     eq(ls(dir .. "/online"), { "cover.jpg" })
+end)
+
+t.test("recovery leaves the target of a linked cache entry alone", function()
+    local dir, G = fresh()
+    assert(os.execute('ln -s "' .. dir .. '/online" "' .. dir .. '/scaled_covers/linked"'))
+    write(dir .. "/start_inflight", "")
+    eq(G.arm(dir), true)
+    assert(exists(dir .. "/online/cover.jpg"))
 end)
 
 t.test("it is armed once a process", function()

@@ -249,15 +249,26 @@ local function _seedDirEntryCache(listings)
     end
 end
 
+-- Missing paths are routine. Other stat failures leave room for readable
+-- children (for example a searchable directory we cannot enumerate).
+function CM.mode(lfs, path)
+    local mode, message, errno = lfs.attributes(path, "mode")
+    return mode, not mode and message ~= nil and errno ~= 2 and errno ~= 20
+end
+
 local function _dirHasEntry(dir, name)
     local set = _dir_entry_cache[dir]
     if not set then
         set = {}
         local ok_lfs, lfs = pcall(require, "libs/libkoreader-lfs")
-        if ok_lfs and lfs and lfs.attributes(dir, "mode") == "directory" then
-            pcall(function()
+        if not (ok_lfs and lfs) then return true end
+        local mode, uncertain = CM.mode(lfs, dir)
+        if uncertain then return true end
+        if mode == "directory" then
+            local listed = pcall(function()
                 for entry in lfs.dir(dir) do set[entry] = true end
             end)
+            if not listed then return true end
         end
         _dir_entry_cache[dir] = set
     end
@@ -277,7 +288,10 @@ function CM.mirrorRoot()
     local ok_lfs, lfs = pcall(require, "libs/libkoreader-lfs")
     if ok_dst and ok_lfs and DataStorage and lfs and DataStorage.getDocSettingsDir then
         local r = DataStorage:getDocSettingsDir()
-        if r and lfs.attributes(r, "mode") == "directory" then root = r end
+        if r then
+            local mode, uncertain = CM.mode(lfs, r)
+            if mode == "directory" or uncertain then root = r end
+        end
     end
     CM.mirror_root = root
     return root
@@ -318,19 +332,23 @@ function CM.hashMayHoldCustom()
     end
     local root = DataStorage:getDocSettingsHashDir()
     local found = false
-    if root and lfs.attributes(root, "mode") == "directory" then
+    if not root then return true end
+    local mode, uncertain = CM.mode(lfs, root)
+    if uncertain then return true end
+    if mode == "directory" then
         -- <hashdir>/<first two hex digits>/<md5>.sdr/custom_metadata.lua
         local ok = pcall(function()
             for sub in lfs.dir(root) do
                 if sub ~= "." and sub ~= ".." then
                     local d = root .. "/" .. sub
-                    if lfs.attributes(d, "mode") == "directory" then
+                    local submode, unknown = CM.mode(lfs, d)
+                    if unknown then found = true; return end
+                    if submode == "directory" then
                         for e in lfs.dir(d) do
                             local cmf = d .. "/" .. e .. "/custom_metadata.lua"
-                            if e:match("%.sdr$")
-                                    and lfs.attributes(cmf, "mode") == "file" then
-                                found = true
-                                return
+                            if e:match("%.sdr$") then
+                                local fmode, unknown_file = CM.mode(lfs, cmf)
+                                if fmode == "file" or unknown_file then found = true; return end
                             end
                         end
                     end

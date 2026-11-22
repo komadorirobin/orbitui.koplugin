@@ -9808,3 +9808,24 @@ msgstr "{weekday_short} {day} {month_short}"
 
 msgid "{day}/{month_num}/{year}"
 msgstr "{day}/{month_num} {year}"
+
+msgid "Also use this mode in History and Collections"
+msgstr "Använd även den här vyn i Historik och Samlingar"
+
+msgid "Authors display mode"
+msgstr "Visningsläge för författare"
+
+msgid "Series display mode"
+msgstr "Visningsläge för serier"
+
+msgid "Tags display mode"
+msgstr "Visningsläge för taggar"
+
+msgid "Remove from finished books"
+msgstr "Ta bort från utlästa böcker"
+
+msgid "Remove this book from the finished books? Its file is no longer on the device."
+msgstr "Ta bort boken från utlästa böcker? Bokfilen finns inte längre på enheten."
+
+msgid "Remove this book from the finished books? Its status will be set to reading."
+msgstr "Ta bort boken från utlästa böcker? Boken markeras som pågående."

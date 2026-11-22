@@ -18,6 +18,11 @@ Include a Swedish summary ordered by likely impact on the user's setup (see
 `AGENTS.md`). This is not authorization for scheduled merges, version bumps,
 tags, releases or OTA publication; a new release still needs a separate request.
 
+During each review, check whether an incoming change originated in OrbitUI.
+Look for a linked PR, credit or an earlier matching implementation. Tell Robin
+in the Swedish merge summary when there is a likely round trip, cite the
+evidence and distinguish a documented port from a similar independent fix.
+
 ## Separate inspiration references (October 30)
 
 `scripts/inspiration_watch.py` and `.github/workflows/inspiration-watch.yml`
