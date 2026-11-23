@@ -263,6 +263,58 @@ H.test("key input never prefills a saved key and caches retire on key or account
     H.eq(requests[3], "dashboard"); H.eq(Achievements.snapshot().full, false)
 end)
 
+local function cardRows(owner, height)
+    local descriptor
+    Achievements.install({ register = function(d) descriptor = d end })
+    local clip = descriptor.build(260, { _screen_widget = owner, orbitui_dashboard_hosted = true, height = height })
+    return clip[1][1][1]
+end
+
+H.test("the Home card shows the server's next milestone beside the latest award using just the plugin", function()
+    reset()
+    local owner = {}
+    client.catalogDashboard = function()
+        requests[#requests + 1] = "dashboard"
+        return { achievements = { earned = 1, total = 4, latest = { name = "First chapter" },
+            next = { name = "Bookworm", groupKey = "books_finished", currentProgress = 8, threshold = 10 } } }
+    end
+    assert(Achievements.refresh(observe(owner))); drain()
+    local rows = cardRows(owner, 142)
+    H.eq(#rows, 4); H.eq(rows[2].text, "★  First chapter")
+    H.eq(rows[3].text, "Nästa milstolpe · Bookworm"); H.eq(rows[4].text, "2 böcker kvar")
+    local compact = cardRows(owner, 84)
+    H.eq(#compact, 3); H.eq(compact[3].text, "2 böcker kvar · Bookworm")
+    H.eq(#requests, 1)
+end)
+
+H.test("catalogue milestones use the closest eligible ratio, stable ties, real units and safe older caches", function()
+    reset()
+    local owner = {}
+    configure(token)
+    client.request = function()
+        return { totalEarned = 0, totalAvailable = 8, categories = { { achievements = {
+            { name = "Low", earned = false, currentProgress = 1, threshold = 10 },
+            { name = "Secret", hidden = true, earned = false, currentProgress = 99, threshold = 100 },
+            { name = "Already due", earned = false, currentProgress = 100, threshold = 100 },
+            { name = "No target", earned = false, currentProgress = 0, threshold = 0 },
+            { name = "Missing data", earned = false, threshold = 5 },
+            { name = "Last page", groupKey = "pages_read", earned = false, currentProgress = 9, threshold = 10 },
+            { name = "Tie", earned = false, currentProgress = 90, threshold = 100 },
+            { name = "New reader", earned = false, currentProgress = 0, threshold = 1 },
+        } } } }
+    end
+    assert(Achievements.refresh(observe(owner))); drain()
+    local rows = cardRows(owner, 142)
+    H.eq(#rows, 3); H.eq(rows[2].text, "Nästa milstolpe · Last page"); H.eq(rows[3].text, "1 sida kvar")
+    local data = Achievements.snapshot()
+    data.items[6].group = nil -- v2 snapshots written before units were recorded
+    H.eq(cardRows(owner, 142)[3].text, "9 / 10")
+    data.items = { data.items[8] }
+    H.eq(cardRows(owner, 142)[3].text, "0 / 1")
+    data.items = {}
+    H.eq(cardRows(owner, 142)[2].text, "Inga intjänade prestationer att visa.")
+end)
+
 H.test("picker and hidden Home widgets stay passive; native and Dashboard taps reach the browser", function()
     reset()
     local descriptor

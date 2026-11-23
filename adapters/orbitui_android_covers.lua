@@ -10,12 +10,15 @@ local function enabled()
         and require("lib/bookshelf_settings_store").nilOrTrue("android_safe_mode")
 end
 
-local function localFile(fp)
+local function localPath(fp)
     local Repo = require("lib/bookshelf_book_repository")
     return type(fp) == "string" and fp:sub(1, 1) == "/"
         and not fp:find("://", 1, true)
         and not (Repo.isPluginFormatFile and Repo.isPluginFormatFile(fp))
-        and require("libs/libkoreader-lfs").attributes(fp, "mode") == "file"
+end
+
+local function localFile(fp)
+    return localPath(fp) and require("libs/libkoreader-lfs").attributes(fp, "mode") == "file"
 end
 
 -- Prepare everything before touching the existing row. UPDATE only our derived
@@ -35,7 +38,7 @@ function M.extract(fp, specs)
         specs = { max_cover_w = math.max(specs.max_cover_w, tonumber(old and old.cover_w) or 0),
             max_cover_h = math.max(specs.max_cover_h, tonumber(old and old.cover_h) or 0) }
     end
-    local document, bb, stmt, db, saving, compressed
+    local document, bb, stmt, db, saving, compressed, coverless
     local borrowed = live_document ~= nil
     local ok, err = pcall(function()
         document = live_document or assert(Registry:openDocument(fp), "document unavailable")
@@ -56,6 +59,7 @@ function M.extract(fp, specs)
         if specs then
             bb = BookInfo:getCoverImage(document, fp) -- honors the user's custom cover
             values.cover_fetched = "Y"
+            coverless = not bb and not (old and old.has_cover == "Y")
             if bb then
                 local w, h = bb:getWidth(), bb:getHeight()
                 values.cover_sizetag = w .. "x" .. h
@@ -108,7 +112,7 @@ function M.extract(fp, specs)
     if bb then pcall(bb.free, bb) end
     if compressed then require("ffi").C.free(compressed) end
     if not ok then require("logger").warn("OrbitUI: local Android cover extraction failed; previous cache retained") end
-    return ok, err
+    return ok, err, ok and coverless
 end
 
 local function cancel(self)
@@ -156,6 +160,7 @@ end
 local function queue(self, files, explicit)
     local UI = require("ui/uimanager")
     local job = self._orbitui_cover_job
+    if not job and (not files or #files == 0) then return false end
     if not job then job = { files = {}, seen = {} }; self._orbitui_cover_job = job end
     if not explicit then
         -- Replace obsolete visible-page work, retaining explicitly requested
@@ -176,7 +181,7 @@ local function queue(self, files, explicit)
                 old.explicit = old.explicit or explicit
                 if file.cover_specs then old.cover_specs = file.cover_specs end
             else
-                local entry = { filepath = fp, cover_specs = file.cover_specs, explicit = explicit }
+                local entry = { filepath = fp, cover_specs = file.cover_specs, explicit = explicit, retry_cover = file.retry_cover }
                 job.files[#job.files + 1] = entry; job.seen[fp] = entry
             end
         end
@@ -212,18 +217,25 @@ local function queue(self, files, explicit)
             cancel(self)
             return
         end
-        local success = M.extract(file.filepath, file.cover_specs)
+        local success, _, coverless = M.extract(file.filepath, file.cover_specs)
         self._orbitui_cover_attempts = self._orbitui_cover_attempts or {}
         local attempts = self._orbitui_cover_attempts
-        if not attempts[file.filepath] and (self._orbitui_cover_attempt_count or 0) >= LIMIT then
-            attempts = {}; self._orbitui_cover_attempts = attempts; self._orbitui_cover_attempt_count = 0
+        if coverless and not file.retry_cover then
+            -- The on-disk row carries this result across shelf instances. Recheck
+            -- custom covers on the next visit, even if the EPUB never changed.
+            if attempts[file.filepath] then
+                attempts[file.filepath] = nil
+                self._orbitui_cover_attempt_count = self._orbitui_cover_attempt_count - 1
+            end
+        else
+            if not attempts[file.filepath] and (self._orbitui_cover_attempt_count or 0) >= LIMIT then
+                attempts = {}; self._orbitui_cover_attempts = attempts; self._orbitui_cover_attempt_count = 0
+            end
+            if not attempts[file.filepath] then self._orbitui_cover_attempt_count = (self._orbitui_cover_attempt_count or 0) + 1 end
+            local attr = require("libs/libkoreader-lfs").attributes(file.filepath) or {}
+            attempts[file.filepath] = { until_time = success and not coverless and math.huge or os.time() + 60,
+                specs = file.cover_specs, mtime = attr.modification, size = attr.size }
         end
-        if not attempts[file.filepath] then self._orbitui_cover_attempt_count = (self._orbitui_cover_attempt_count or 0) + 1 end
-        -- Failures retry after a minute; a successful coverless result settles
-        -- until the file changes, a larger spec is needed, or explicit refresh.
-        -- No permanent failure marker is written.
-        attempts[file.filepath] = { until_time = success and math.huge or os.time() + 60,
-            specs = file.cover_specs, mtime = require("libs/libkoreader-lfs").attributes(file.filepath, "modification") }
         if success then
             local painted = pcall(function()
                 ready(self, file.filepath)
@@ -288,18 +300,29 @@ function M.widget(Widget)
         local Repo, BIM = require("lib/bookshelf_book_repository"), require("bookinfomanager")
         local files, seen = {}, {}
         local function add(fp, w, h)
-            if not fp or seen[fp] or not localFile(fp) or self:_isRemoteRecord(fp) then return end
+            if not fp or seen[fp] or not localPath(fp) or self:_isRemoteRecord(fp) then return end
             seen[fp] = true
+            local attr = require("libs/libkoreader-lfs").attributes(fp)
+            if not attr or attr.mode ~= "file" then return end
             local specs = { max_cover_w = w, max_cover_h = h }
             local attempt = self._orbitui_cover_attempts and self._orbitui_cover_attempts[fp]
-            if attempt and attempt.until_time > os.time() and attempt.specs
-                    and attempt.mtime == require("libs/libkoreader-lfs").attributes(fp, "modification")
+            if attempt and attempt.size == attr.size and attempt.until_time > os.time() and attempt.specs
+                    and attempt.mtime == attr.modification
                     and attempt.specs.max_cover_w >= w and attempt.specs.max_cover_h >= h then return end
             local info, err = Repo.bimGetBookInfo(BIM, fp, false)
             if err or (info and info.ignore_cover == "Y") then return end
             if info and (info.unsupported or (tonumber(info.in_progress) or 0) >= (BIM.max_extract_tries or 3)) then return end
+            local retry_cover
+            if info and info.has_meta == "Y" and info.cover_fetched == "Y" and not info.has_cover
+                    and tonumber(info.in_progress) == 0 and attr.size and attr.modification
+                    and tonumber(info.filesize) == attr.size and tonumber(info.filemtime) == attr.modification then
+                local settings = require("docsettings")
+                local ok, custom = pcall(settings.findCustomCoverFile, settings, fp)
+                if ok and not custom then return end
+                retry_cover = true -- a broken custom image must not loop on every repaint
+            end
             if not info or info.has_meta ~= "Y" or info.has_cover ~= "Y" or Widget._coverNeedsResize(info, specs) then
-                files[#files + 1] = { filepath = fp, cover_specs = specs }
+                files[#files + 1] = { filepath = fp, cover_specs = specs, retry_cover = retry_cover }
             end
         end
         local hero = self._preview_book and self._preview_book.filepath or (Repo.currentFilepath and Repo.currentFilepath())

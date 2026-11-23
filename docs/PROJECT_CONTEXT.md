@@ -20,6 +20,14 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
+## Local development, 2026-11-23
+
+The Android shelf reuses completed cover misses for unchanged local files and
+checks KOReader’s custom cover location before skipping extraction. The
+BookOrbit Home card shows the closest visible milestone and remaining progress
+from the existing dashboard or catalogue response. Both changes are local to
+OrbitUI. See the November 23 device comparison in TESTING.md.
+
 ## Snapshot: 2026-11-22
 
 **OrbitUI 1.4.0** promotes the runtime from 1.4.0-beta.7 to stable. It

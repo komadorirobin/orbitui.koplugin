@@ -6,6 +6,7 @@ local root = os.getenv("ORBITUI_TEST_ROOT") or "."
 local M = assert(loadfile(root .. "/adapters/orbitui_android_covers.lua"))() -- cold load, no native globals
 local android, safe, calls, pending, top, rows, failure, cover, in_use, busy, clock
 local dropped, closed, freed, statements, original_kick, original_fire, notifications
+local sizes, mtimes, custom_covers
 local old_time = os.time
 os.time = function() return clock end
 local function copy(row) local new = {}; for k, v in pairs(row or {}) do new[k] = v end; return new end
@@ -48,9 +49,10 @@ package.loaded["lib/bookshelf_settings_store"] = { nilOrTrue = function() return
 package.loaded["libs/libkoreader-lfs"] = { attributes = function(fp, field)
     if fp == "/gone.epub" then return nil end
     if field == "mode" then return "file" end
-    if field == "modification" then return 456 end
-    return { size = 123, modification = 456 }
+    if field == "modification" then return mtimes[fp] or 456 end
+    return { mode = "file", size = sizes[fp] or 123, modification = mtimes[fp] or 456 }
 end }
+package.loaded.docsettings = { findCustomCoverFile = function(_, fp) return custom_covers[fp] end }
 package.loaded.util = { splitFilePathName = function(fp) return fp:match("^(.-)([^/]+)$") end }
 package.loaded.logger = { warn = function() calls.warnings = (calls.warnings or 0) + 1 end }
 package.loaded["lib/bookshelf_file_ops"] = { inUsePaths = function() return in_use end }
@@ -70,6 +72,7 @@ package.loaded["apps/filemanager/filemanagerbookinfo"] = {
     getCoverImage = function(_, document, fp, force_orig)
         H.eq(document.file, fp); H.eq(force_orig, nil) -- keep custom cover, do not revert
         if failure == "decode" then error("decode failed") end
+        if custom_covers[fp] == "cover.png" then return bitmap(200, 300) end
         if cover then return bitmap(cover[1], cover[2]) end
     end,
 }
@@ -121,6 +124,7 @@ M.widget(Widget)
 local function fixture()
     package.loaded["apps/reader/readerui"] = nil
     android, safe, busy, failure, cover, clock = true, true, false, nil, { 1200, 1800 }, 100
+    sizes, mtimes, custom_covers = {}, {}, {}
     calls, pending, rows, dropped, in_use, notifications = {}, {}, {}, {}, {}, {}
     closed, freed, statements, original_kick, original_fire = 0, 0, 0, 0, 0
     local w = setmetatable({ _inner_vgroup = {}, _shelf_dims = {}, _hero_parent = {}, _hero_dims = {} }, { __index = Widget })
@@ -196,12 +200,42 @@ H.test("visible-page work is hero-first, deduplicated and one document per UI tu
     tick(); tick(); H.eq(#calls, 4); H.eq(#pending, 0); H.eq(w._orbitui_cover_job, nil)
     assert(dropped["/hero.epub"]); H.eq(original_fire, 0)
 end)
-H.test("known missing covers are retried but ready covers and ignored covers are left alone", function()
+H.test("old missing-cover rows without file stamps are retried but ready covers and ignored covers are left alone", function()
     local w = fixture(); rows["/hero.epub"] = { has_meta = "Y", cover_fetched = "Y" }
     rows["/good.epub"] = { has_meta = "Y", has_cover = "Y", cover_w = 800 }
     rows["/ignored.epub"] = { ignore_cover = "Y" }
     w:_kickOffMissingMetaExtractionNow({ { filepath = "/good.epub" }, { filepath = "/ignored.epub" } }, 100, 150, 400, 600)
     tick(); H.eq(#calls, 1); H.eq(calls[1], "/hero.epub")
+end)
+H.test("completed cover misses survive a fresh shelf and a larger layout; changed inputs still extract", function()
+    local w = fixture(); cover = nil
+    local page = {}
+    for i = 1, 7 do page[i] = { filepath = "/book" .. i .. ".epub" } end
+    w:_kickOffMissingMetaExtractionNow(page, 150, 225)
+    while #pending > 0 do tick() end
+    H.eq(#calls, 8)
+    local reopened = setmetatable({}, { __index = w })
+    reopened._orbitui_cover_attempts = {}; top = reopened
+    reopened:_kickOffMissingMetaExtractionNow(page, 200, 300)
+    H.eq(#pending, 0); H.eq(#calls, 8)
+    sizes["/book1.epub"] = 124
+    mtimes["/book2.epub"] = 457
+    custom_covers["/book3.epub"] = "cover.png"
+    reopened:_kickOffMissingMetaExtractionNow(page, 200, 300)
+    while #pending > 0 do tick() end
+    H.eq(#calls, 11); H.eq(rows["/book3.epub"].has_cover, "Y")
+    custom_covers["/book4.epub"] = "cover.png"
+    reopened:_kickOffMissingMetaExtractionNow(page, 200, 300)
+    tick(); H.eq(#calls, 12); H.eq(rows["/book4.epub"].has_cover, "Y")
+    assert(reopened:orbitui_refreshMetadata({ "/book5.epub" }))
+    tick(); H.eq(#calls, 13); H.eq(calls[13], "/book5.epub")
+end)
+H.test("unfinished and metadata-only rows continue to seek covers", function()
+    local w = fixture()
+    rows["/hero.epub"] = { has_meta = "Y", cover_fetched = "Y", in_progress = 1, filemtime = 456, filesize = 123 }
+    rows["/meta.epub"] = { has_meta = "Y", filemtime = 456, filesize = 123 }
+    w:_kickOffMissingMetaExtractionNow({ { filepath = "/meta.epub" } }, 100, 150)
+    tick(); tick(); H.eq(#calls, 2)
 end)
 H.test("old small thumbnails are replaced at the requested native size and stale scaled pixels dropped", function()
     local w = fixture(); rows["/hero.epub"] = { has_meta = "Y", has_cover = "Y", cover_w = 30 }
@@ -210,13 +244,13 @@ H.test("old small thumbnails are replaced at the requested native size and stale
 end)
 H.test("SQL read failure does not enqueue an entire page as apparently missing", function()
     local w = fixture(); failure = "read"; w:_kickOffMissingMetaExtractionNow({ { filepath = "/a.epub" } }, 100, 150)
-    tick(); H.eq(#calls, 0)
+    H.eq(#pending, 0); H.eq(#calls, 0)
 end)
 H.test("automatic extraction respects existing native bad-document quarantine and retry limits", function()
     local w = fixture(); rows["/hero.epub"] = { unsupported = "too many interruptions or crashes" }
     rows["/bad.epub"] = { in_progress = 3 }
     w:_kickOffMissingMetaExtractionNow({ { filepath = "/bad.epub" } }, 100, 150, 400, 600)
-    tick(); H.eq(#calls, 0)
+    H.eq(#pending, 0); H.eq(#calls, 0)
 end)
 H.test("explicit Android refresh preserves covers with safe mode off, including bulk requests", function()
     local w = fixture(); safe = false
@@ -283,7 +317,7 @@ end)
 H.test("failure does not discard a scaled cover and is cooldown-limited, not permanent", function()
     local w = fixture(); failure = "decode"
     w:_kickOffMissingMetaExtractionNow({}, 100, 150, 400, 600); tick(); H.eq(dropped["/hero.epub"], nil)
-    failure = nil; w:_kickOffMissingMetaExtractionNow({}, 100, 150, 400, 600); tick(); H.eq(#calls, 1)
+    failure = nil; w:_kickOffMissingMetaExtractionNow({}, 100, 150, 400, 600); H.eq(#pending, 0); H.eq(#calls, 1)
     clock = 161; w:_kickOffMissingMetaExtractionNow({}, 100, 150, 400, 600); tick(); H.eq(#calls, 2)
 end)
 H.test("explicit refresh bypasses the cooldown, preserves rows until commit and survives page changes", function()

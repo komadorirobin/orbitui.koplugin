@@ -3453,6 +3453,7 @@ local function badge(item, earned)\
     local day = stamp and stamp:match(\"^(%d%d%d%d%-%d%d%-%d%d)T\")\
     return { title = title, description = clean(item.description, 2000), earned = earned,\
         awarded_at = day and stamp or nil, day = day,\
+        group = not earned and clean(item.groupKey, 80) or nil,\
         goal = not earned and count(item.threshold) or nil,\
         progress = not earned and count(item.currentProgress) or nil }\
 end\
@@ -3637,6 +3638,33 @@ local function progress(item)\
     return _(\"Remaining\")\
 end\
 \
+-- The dashboard returns its chosen next badge. The full catalogue uses the\
+-- same rule as BookOrbit: highest unfinished fraction, first match on a tie.\
+local function nextMilestone(data)\
+    local best, fraction = nil, -1\
+    for _, item in ipairs(data.items) do\
+        if not item.earned and not item.secret and item.goal and item.progress and item.progress < item.goal then\
+            local ratio = item.progress / item.goal\
+            if ratio > fraction then best, fraction = item, ratio end\
+        end\
+    end\
+    return best\
+end\
+\
+local remaining_units = {\
+    books_finished = { \"1 book left\", \"%g books left\" },\
+    pages_read = { \"1 page left\", \"%g pages left\" },\
+    hours_read = { \"1 hour left\", \"%g hours left\" },\
+    streak = { \"1 day left\", \"%g days left\" },\
+}\
+local function remaining(item)\
+    local units = remaining_units[item.group]\
+    if not units then return progress(item) end\
+    local left = item.goal - item.progress\
+    if left == 1 then return _(units[1]) end\
+    return string.format(_(units[2]), left)\
+end\
+\
 local function textWidget(text, w, h, size, bold)\
     return require(\"ui/widget/textboxwidget\"):new{ text = text, width = w, height = h, height_adjust = false,\
         height_overflow_show_ellipsis = true, face = require(\"ui/font\"):getFace(\"cfont\", size), bold = bold }\
@@ -3778,15 +3806,24 @@ local function build(w, ctx)\
     local inner, usable = math.max(1, w - pad * 2), math.max(1, h - pad * 2)\
     local header = data and data.items and countLine(data) or _(\"Latest achievements\")\
     local group = require(\"ui/widget/verticalgroup\"):new{ align = \"left\" }\
-    local row_h = math.max(1, math.min(Screen:scaleBySize(36), math.floor(usable / 3)))\
+    local milestone = data and data.items and nextMilestone(data)\
+    local roomy = milestone and usable >= Screen:scaleBySize(96)\
+    local row_h = math.max(1, math.min(Screen:scaleBySize(36), math.floor(usable / (roomy and 4 or 3))))\
     group[#group + 1] = textWidget(header .. \"  ›\", inner, row_h, 17, true)\
     local shown = 0\
     for _, item in ipairs(data and data.items or {}) do\
-        if shown == 2 or not item.earned then break end\
+        if shown == (milestone and 1 or 2) or not item.earned then break end\
         shown = shown + 1\
         group[#group + 1] = textWidget(\"★  \" .. title(item), inner, row_h, 15, true)\
     end\
-    if shown == 0 and not preview then\
+    if milestone then\
+        if roomy then\
+            group[#group + 1] = textWidget(_(\"Next milestone\") .. \" · \" .. title(milestone), inner, row_h, 15, true)\
+            group[#group + 1] = textWidget(remaining(milestone), inner, row_h, 14, false)\
+        else\
+            group[#group + 1] = textWidget(remaining(milestone) .. \" · \" .. title(milestone), inner, row_h, 14, false)\
+        end\
+    elseif shown == 0 and not preview then\
         local copy = data and data.items and _(\"No recent achievements to show.\") or label(failure or \"loading\")\
         group[#group + 1] = textWidget(copy, inner, math.max(1, math.min(2 * row_h, usable - row_h)), 14, false)\
     end\
