@@ -230,6 +230,18 @@ H.test("completed cover misses survive a fresh shelf and a larger layout; change
     assert(reopened:orbitui_refreshMetadata({ "/book5.epub" }))
     tick(); H.eq(#calls, 13); H.eq(calls[13], "/book5.epub")
 end)
+H.test("an unreadable custom cover cannot loop on every repaint and can be retried", function()
+    local w = fixture(); cover = nil
+    rows["/hero.epub"] = { has_meta = "Y", cover_fetched = "Y", filemtime = 456, filesize = 123, in_progress = 0 }
+    custom_covers["/hero.epub"] = "broken.png"
+    w:_kickOffMissingMetaExtractionNow({}, 150, 225); tick()
+    H.eq(#calls, 1); H.eq(rows["/hero.epub"].has_cover, nil)
+    w:_kickOffMissingMetaExtractionNow({}, 150, 225); H.eq(#pending, 0)
+    clock = clock + 61
+    custom_covers["/hero.epub"] = "cover.png"
+    w:_kickOffMissingMetaExtractionNow({}, 150, 225); tick()
+    H.eq(#calls, 2); H.eq(rows["/hero.epub"].has_cover, "Y")
+end)
 H.test("unfinished and metadata-only rows continue to seek covers", function()
     local w = fixture()
     rows["/hero.epub"] = { has_meta = "Y", cover_fetched = "Y", in_progress = 1, filemtime = 456, filesize = 123 }

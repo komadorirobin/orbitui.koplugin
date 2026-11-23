@@ -1,5 +1,51 @@
 # Verification and device acceptance
 
+## 2026-11-23 — Android cover misses and the BookOrbit milestone
+
+The HiBreak ran the ZIP from main `9f7238c4b` and the local candidate
+`c48983d33` against the same user library. Each build started in four fresh
+KOReader processes with the existing disk caches. Manga opened first in two
+processes and Library opened first in the other two. Each route returned to
+Home between visits and repeated both destinations. Times run from Android's
+dock tap to the first recorded frame showing the destination’s shelf tabs.
+They exclude subsequent cover work and physical e-ink refresh.
+
+| Home destination | Control median in ms (range) | Candidate median in ms (range) |
+| --- | ---: | ---: |
+| Library, first visit | 1,184 (575–1,369) | 876 (577–1,230) |
+| Library, repeat | 235 (212–666) | 506 (220–807) |
+| Manga, first visit | 2,758 (2,346–4,912) | 2,829 (2,391–3,953) |
+| Manga, repeat | 313 (300–330) | 305 (285–319) |
+
+All 64 requested transitions presented the intended view. A second route
+repeated Library seven times per build after the initial visit. Its median
+was 216 ms on main (199–257 ms) and 208 ms on the candidate (184–709 ms).
+All 32 transitions in that check succeeded. The Android
+screen recorder reports the first application frame. The tap clock also
+includes Android input delivery. Safe mode was off in the reader’s saved
+configuration for all navigation runs, so these timings describe the current
+profile and cannot establish a navigation gain from the cover change.
+
+A LuaJIT fixture drove eight local books through an initial shelf, another
+pass on that shelf and a newly created shelf. Document opens were 8/0/8 on
+main and 8/0/0 on the candidate. Regression cases cover legacy rows, file
+size or timestamp changes, custom covers, cooldown for unreadable images
+and manual refresh. The native SQLite supplement exercised the transactional
+write and rollback paths. The milestone tests exercise both BookOrbit routes,
+hidden badges, stable ties and compact rendering. The standard host suites
+passed under Lua and LuaJIT.
+
+The physical cover test used a temporary EPUB on the reader. Safe mode was
+enabled in memory only while the test widget was in front. The initial visit
+opened the book once, a fresh shelf skipped it, and adding a sidecar cover
+opened it once and produced a cached image. The test removed its own database
+row. The native Home card rendered the latest award, named the next milestone
+and showed the remaining pages using the signed-in plugin's dashboard response.
+
+The exact candidate archive, ADB tap timestamps, first-frame measurements and
+device probe results are in `test-results/milestones-20261123/` in the local
+checkout.
+
 ## 2026-11-22 — Bookshelf 6.6.0 and SimpleUI maintenance on main
 
 The series-box regression covers two series and a loose book under one author,
