@@ -1,5 +1,12 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.5.0-beta.2
+
+The preview adds the next BookOrbit milestone to Home, reuses completed
+cover checks on Android in safe mode, and incorporates Bookshelf 6.6.0 and
+SimpleUI maintenance. Enable **Include preview releases** under
+**OrbitUI → System & maintenance → Updates** to receive the beta.
+
 ## OrbitUI 1.5.0-beta.1
 
 Published on 2026-11-21T13:17:51Z as GitHub prerelease 453701186

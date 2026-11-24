@@ -89,7 +89,10 @@ late response cannot overwrite OrbitUI's cache after a policy change.
 
 **BookOrbit achievements / Prestationer i BookOrbit** is an optional Home
 module under Statistics. It uses the account already connected in the BookOrbit
-plugin. The card shows the newest earned badges. Tap it to browse All, Earned,
+plugin. The card shows recent awards. In 1.5.0-beta.2 it also shows the
+closest visible milestone with measurable progress and how much is left.
+For goals with an unknown unit, the card shows the current count and target.
+Tap it to browse All, Earned,
 or Remaining and open a badge's description, award date, or available progress.
 The module fetches in the background while visible and uses saved results
 offline. Use **Refresh** in the browser to update the list.
