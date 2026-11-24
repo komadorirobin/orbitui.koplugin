@@ -59,6 +59,17 @@ t.test("only taps pass: long-press and swipes stay the grid's", function()
     assert(clip:handleEvent(ev) == true, "double tap")
 end)
 
+t.test("opted-in book cards forward the hold and release in their local frame", function()
+    local c = child()
+    local clip = CC:new{ w = 100, h = 80, pass_gestures = true, pass_holds = true, c }
+    clip.dimen = { x = 300, y = 500, w = 100, h = 80 }
+    for _, kind in ipairs({ "hold", "hold_release" }) do
+        local ev = gesture(330, 560); ev.args[1].ges = kind
+        assert(clip:handleEvent(ev) == true)
+        assert(c.got.args[1].ges == kind and c.got.args[1].pos.x == 30)
+    end
+end)
+
 t.test("without pass_gestures the child gets no gestures; other events pass", function()
     local c = child()
     local clip = CC:new{ w = 100, h = 80, c }

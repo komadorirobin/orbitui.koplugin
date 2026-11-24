@@ -35,7 +35,7 @@ coords, so its own tappable widgets know their places relative to this
 container, not the screen. With pass_gestures, a gesture inside the container
 reaches the child moved into that frame, so a module's own buttons work in a
 card as they do in a bare module (painted in place). Taps and double taps
-only: long-press and swipes stay the host's. Without it the child gets
+by default. A dashboard book card can also forward holds. Without it the child gets
 no gestures at all (a picker preview: the tap picks the module), rather than
 screen positions it would compare against the wrong frame.
 ]]
@@ -66,9 +66,10 @@ function ClipContainer:handleEvent(event)
         local ges = event.args and event.args[1]
         local d = self.dimen
         if not (self.pass_gestures and ges and ges.pos and d and d.x and self[1]) then return false end
-        -- Taps only: long-press is the grid's (the layout editor) and swipes
-        -- turn its pages, whatever a module's widget would make of them.
-        if ges.ges ~= "tap" and ges.ges ~= "double_tap" then return false end
+        -- Normal shelf grids reserve holds for their layout editor. Book cards
+        -- can opt in so their native cover menu receives both gesture events.
+        local book_hold = self.pass_holds and (ges.ges == "hold" or ges.ges == "hold_release")
+        if ges.ges ~= "tap" and ges.ges ~= "double_tap" and not book_hold then return false end
         local px, py = ges.pos.x - d.x, ges.pos.y - d.y
         if px < 0 or py < 0 or px >= self.w or py >= self.h then return false end
         if self._to_native_x then

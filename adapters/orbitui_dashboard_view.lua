@@ -1041,6 +1041,7 @@ function M.content(widget, p, ctx, data)
                     face = Style.getStyledFace(nil, 14 / (Screen:scaleBySize(1000) / 1000), "regular"),
                     width = w, max_lines = 3, height_adjust = true }
                 local guarded = Sources.moduleContainer(child, fallback, w, h, paper, true)
+                guarded.pass_holds = selected.kind == "simpleui" and def and def.is_book_mod
                 cover_slot.child, cover_slot.clip, cover_slot.def, cover_slot.args = child, guarded, def, child_args
                 cover_slot.done = nil
                 return guarded
