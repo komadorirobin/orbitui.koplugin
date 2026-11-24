@@ -2988,6 +2988,10 @@ provides canonical module names and legacy aliases while preserving
   migration of existing layouts.
 - Cards, statistics, headings, goals and both book-row sources are independently
   configurable. Each row has independent arrows and swipe paging.
+- Long-pressing a card opens its replacement picker. Replacing a built-in
+  card records its slot in dashboard config v4 and retains the original
+  card settings for restoration. Replacing a freely placed module reuses
+  its existing order and dimensions.
 - Sources may be local TBR, New Books, recent history, collections, saved
   shelves or cached BookOrbit Want to Read.
 - Hidden/unavailable sources fail closed. Rendering does not start network

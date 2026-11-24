@@ -1,5 +1,15 @@
 # Verification and device acceptance
 
+## 2026-11-24 — Replacing a dashboard card by long press
+
+The local runtime at `215976598` ran in KOReader on the emulated Tolino
+Vision Color with a fresh Swedish profile. From the straight cover row layout,
+a long press on **Denna vecka** opened the picker. Selecting the Home clock
+returned to the dashboard and rendered it at the original card coordinates
+and dimensions. A second long press and **Återställ Denna vecka** restored
+the original card. The probe sent gesture events through KOReader’s UI manager.
+Physical touch and e-ink refresh on the HiBreak remain untested for this change.
+
 ## 2026-11-23 — Android cover misses and the BookOrbit milestone
 
 The HiBreak ran the ZIP from main `9f7238c4b` and the local candidate
