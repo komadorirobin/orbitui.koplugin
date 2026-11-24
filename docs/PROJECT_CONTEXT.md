@@ -24,7 +24,9 @@ and correct this file in the same change.
 
 The BookOrbit achievements card and catalogue draw medals from the icon name
 and rarity in the existing BookOrbit response. The glyphs and medal artwork
-ship with OrbitUI. See FEATURES.md for how earned, in-progress and hidden
+ship with OrbitUI. The Home card chooses a list or medal grid from its allocated
+width and height when it replaces another dashboard card. See FEATURES.md
+for how earned, in-progress and hidden
 achievements appear and TESTING.md for the Tolino emulator check.
 
 ## OrbitUI 1.5.0-beta.2, 2026-11-24

@@ -4055,7 +4055,8 @@ local function medalTile(item, w, h)\
         return Text:new{ text = value, face = Font:getFace(\"cfont\", size), bold = bold,\
             padding = 0, max_width = math.max(1, w - screen:scaleBySize(4)) }\
     end\
-    local name = caption(title(item), 12, true)\
+    local narrow = w < screen:scaleBySize(68)\
+    local name = caption(title(item), narrow and 11 or 12, not narrow)\
     local detail\
     if h >= screen:scaleBySize(76) then\
         local value = item.earned and item.day\

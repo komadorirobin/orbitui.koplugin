@@ -307,6 +307,7 @@ H.test("allocated width and height select rows or a medal grid without extra rea
     local owner = {}
     configure(token)
     client.request = function()
+        requests[#requests + 1] = "catalogue"
         local entries = {
             { name = "Next", iconName = "hourglass", earned = false, threshold = 10, currentProgress = 8 },
             { name = "Hidden", earned = false, hidden = true, threshold = 10, currentProgress = 9 },
@@ -345,7 +346,7 @@ H.test("allocated width and height select rows or a medal grid without extra rea
     local summary = cardRows(owner, 125, 270)
     H.eq(#summary, 3); H.eq(summary[2][3][1].text, "Latest")
     H.eq(summary[3][3][1].text, "Nästa milstolpe · Next")
-    H.eq(#requests, 1); H.eq(#tasks, 0)
+    H.eq(#requests, 2); H.eq(requests[1], "catalogue"); H.eq(requests[2], "dashboard"); H.eq(#tasks, 0)
 end)
 
 H.test("catalogue milestones use the closest eligible ratio, stable ties, real units and safe older caches", function()

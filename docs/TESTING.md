@@ -1,5 +1,14 @@
 # Verification and device acceptance
 
+## 2026-11-24 — BookOrbit medals in replacement cards
+
+With seven fixture achievements in the Swedish Tolino Vision Color emulator,
+the cover-row dashboard displayed three medals across in the **Denna vecka**
+slot (399 × 173 pixels) and six in two rows in the **Vill läsa** slot
+(606 × 335 pixels). Both retained their outer bounds. Tapping the larger card opened
+the seven-item catalogue. Unit tests also cover the narrow vertical
+list, a nine-medal card and the plugin-only two-item summary.
+
 ## 2026-11-24 — BookOrbit achievement medals
 
 KOReader on the emulated Tolino Vision Color rendered the Home card and
