@@ -20,6 +20,13 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
+## Local changes since 1.5.0-beta.2
+
+The BookOrbit achievements card and catalogue draw medals from the icon name
+and rarity in the existing BookOrbit response. The glyphs and medal artwork
+ship with OrbitUI. See FEATURES.md for how earned, in-progress and hidden
+achievements appear and TESTING.md for the Tolino emulator check.
+
 ## OrbitUI 1.5.0-beta.2, 2026-11-24
 
 The Android shelf reuses completed cover misses for unchanged local files and

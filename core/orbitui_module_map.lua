@@ -3363,7 +3363,7 @@ end\
 \
 return M\
 ",
-    ["adapters/orbitui_achievement_medal"] = "-- Static numeral-free medal artwork for KOReader. The server selects the Lucide glyph\
+    ["adapters/orbitui_achievement_medal"] = "-- Static achievement medal artwork for KOReader. The server selects the Lucide glyph\
 -- and rarity; titles may be translated independently. Glyphs from @lucide/vue 1.75.0.\
 --[[\
 ISC License\

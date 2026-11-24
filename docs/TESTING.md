@@ -1,5 +1,16 @@
 # Verification and device acceptance
 
+## 2026-11-24 — BookOrbit achievement medals
+
+KOReader on the emulated Tolino Vision Color rendered the Home card and
+catalogue with an isolated Swedish profile and five fixture achievements.
+The KOReader image decoder displayed the orbit, timer, bookmark, moon and
+hourglass glyphs. The Home card showed the gold Full Orbit medal and a grey
+Slow Burn medal with a blue progress arc at 8/10. The catalogue displayed
+all four earned rarity styles and the unfinished medal. Captures use the
+native KOReader widgets before display dithering. Physical e-ink appearance
+on the HiBreak remains unverified.
+
 ## 2026-11-24 — Replacing a dashboard card by long press
 
 The local runtime at `215976598` ran in KOReader on the emulated Tolino
