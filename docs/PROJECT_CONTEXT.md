@@ -20,14 +20,14 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Local changes since 1.5.0-beta.2
+## OrbitUI 1.5.0-beta.3, 2026-11-24
 
-The BookOrbit achievements card and catalogue draw medals from the icon name
-and rarity in the existing BookOrbit response. The glyphs and medal artwork
-ship with OrbitUI. The Home card chooses a list or medal grid from its allocated
-width and height when it replaces another dashboard card. See FEATURES.md
-for how earned, in-progress and hidden
-achievements appear and TESTING.md for the Tolino emulator check.
+The Reading dashboard lets readers replace a card by long-pressing its heading
+or background. Book grids, shortcuts and other modules adapt to the available
+space. BookOrbit achievement medals use the icon and rarity supplied by
+BookOrbit in both the Home card and the catalogue. TESTING.md records the
+Tolino emulator checks at three card sizes. Physical HiBreak verification for
+these dashboard changes remains open.
 
 ## OrbitUI 1.5.0-beta.2, 2026-11-24
 

@@ -1,5 +1,12 @@
 # OrbitUI releases and OTA
 
+## OrbitUI 1.5.0-beta.3
+
+Long-press a Reading dashboard card’s heading or background to replace it in
+place. Modules adapt to the space available. The BookOrbit achievements card
+shows medals and opens the catalogue on tap. Enable **Include preview releases**
+under **OrbitUI → System & maintenance → Updates** to receive this beta.
+
 ## OrbitUI 1.5.0-beta.2
 
 Published on 2026-11-24T14:37:17Z as GitHub prerelease 456885157
