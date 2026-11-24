@@ -282,9 +282,16 @@ local function appName(text)
     return text ~= "" and text or nil
 end
 
-local function getApps()
+local function hasLegacySelection()
+    for key, value in pairs(G_reader_settings.data or {}) do
+        if type(key) == "string" and key:match("app_launcher_enabled$") and value == true then return true end
+    end
+    return false
+end
+
+local function getApps(hosted)
     local saved = SUISettings:readSetting(APPS_KEY)
-    if saved == nil then saved = LEGACY_APPS end
+    if saved == nil and (not hosted or hasLegacySelection()) then saved = LEGACY_APPS end
     local apps, seen = {}, {}
     for _, app in ipairs(type(saved) == "table" and saved or {}) do
         if type(app) == "table" and validPackage(app.package) and not seen[app.package] then
@@ -804,7 +811,7 @@ end
 -- ---------------------------------------------------------------------------
 
 local function _buildWidget(w, d, ctx)
-    local apps = getApps()
+    local apps = getApps(ctx.orbitui_card_layout)
     local capacity
     capacity, d = layout(w, d)
     local total = math.max(1, math.ceil(#apps / capacity))
@@ -970,20 +977,21 @@ function M.setEnabled(pfx, on)
     if on and SUISettings:readSetting(APPS_KEY) == nil then
         -- Do not introduce Robin's personal defaults on a new installation.
         -- Already-enabled legacy modules (including custom pages) keep them.
-        local legacy = false
-        for key, value in pairs(G_reader_settings.data or {}) do
-            if type(key) == "string" and key:match("app_launcher_enabled$") and value == true then
-                legacy = true; break
-            end
-        end
-        if not legacy then saveApps({}) end
+        if not hasLegacySelection() then saveApps({}) end
     end
     G_reader_settings:saveSetting(pfx .. "app_launcher_enabled", on)
 end
 
 function M.build(w, ctx)
-    if not M.isEnabled(ctx.pfx) then return nil end
-    local d = _getDims(Config.getModuleScale(M.id, ctx.pfx))
+    if ctx.orbitui_card_layout and not Device:isAndroid() then
+        return TextWidget:new{
+            text = require("core/orbitui_i18n")("This module requires Android."),
+            face = Font:getFace("cfont", 14), max_width = w,
+        }
+    end
+    if not ctx.orbitui_card_layout and not M.isEnabled(ctx.pfx) then return nil end
+    local factor = ctx.orbitui_card_layout and ctx.orbitui_card_layout.factor or 1
+    local d = _getDims(Config.getModuleScale(M.id, ctx.pfx) * factor)
     return _buildWidget(w, d, ctx)
 end
 

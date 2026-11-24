@@ -1,5 +1,16 @@
 # Verification and device acceptance
 
+## 2026-11-24 — Adaptive Reading dashboard cards
+
+KOReader on the emulated Tolino Vision Color exercised 21 Home modules, 16
+Bookshelf modules and 29 action shortcuts in three card bodies. The recent-book
+grid displayed three, four and seven of the same seven fixture books. Native
+taps reached the expected book at each size. Empty TBR and BookOrbit shelves
+were exercised without a connected account. The Android launcher showed its
+platform requirement. Regression tests cover scaled tap regions, taps in the
+margin, dashboard holds, nested clipped widgets and independent shelf paging.
+Physical HiBreak rendering and Android app launching still need a device check.
+
 ## 2026-11-24 — BookOrbit medals in replacement cards
 
 With seven fixture achievements in the Swedish Tolino Vision Color emulator,

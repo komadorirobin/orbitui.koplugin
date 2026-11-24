@@ -915,9 +915,11 @@ end
 
 local function buildWidget(inner_w, text_str, attr_str, fonts, vspan_gap, text_alpha, clr_quote, clr_attr, alignment)
 
-    local function makeTBW(text, face, fgcolor, bold)
+    local function makeTBW(text, face, fgcolor, bold, height)
         return UI.makeTextBox({
             text      = controlLineBreaks(text, face, inner_w),
+            height = height, height_adjust = height ~= nil,
+            height_overflow_show_ellipsis = height ~= nil,
             face      = face,
             bold      = bold,
             width     = inner_w,
@@ -927,10 +929,18 @@ local function buildWidget(inner_w, text_str, attr_str, fonts, vspan_gap, text_a
     end
 
     local vg = VerticalGroup:new{ align = "center" }
-    vg[#vg+1] = makeTBW(text_str, fonts.quote_face, clr_quote or SUIStyle.COLOR.text_primary, fonts.quote_bold)
+    local height, author = fonts.max_height
     if attr_str and attr_str ~= "" then
+        local line = height and SUIStyle.faceHeight(fonts.attr_face)
+        if not height or height >= line + vspan_gap.width + SUIStyle.faceHeight(fonts.quote_face) then
+            author = makeTBW(attr_str, fonts.attr_face, clr_attr or CLR_TEXT_SUB, fonts.attr_bold, height and line)
+            if height then height = math.max(1, height - author:getSize().h - vspan_gap.width) end
+        end
+    end
+    vg[#vg+1] = makeTBW(text_str, fonts.quote_face, clr_quote or SUIStyle.COLOR.text_primary, fonts.quote_bold, height)
+    if author then
         vg[#vg+1] = vspan_gap
-        vg[#vg+1] = makeTBW(attr_str, fonts.attr_face, clr_attr or CLR_TEXT_SUB, fonts.attr_bold)
+        vg[#vg+1] = author
     end
     return vg
 
@@ -1198,6 +1208,7 @@ function M.build(w, ctx)
     -- Faces of the quote text and its attribution, with the emboldening flag
     -- each still needs.
     local fonts = {}
+    if ctx and ctx.orbitui_card_layout then fonts.max_height = math.max(1, ctx.height - PAD - PAD2) end
     fonts.quote_face, fonts.quote_bold = SUIStyle.getTextFace(styles.quote,  quote_fs)
     fonts.attr_face,  fonts.attr_bold  = SUIStyle.getTextFace(styles.author, attr_fs)
 
@@ -1254,7 +1265,7 @@ function M.build(w, ctx)
     if fixed then
         local Geom2 = require("ui/geometry")
         frame = CenterContainer:new{
-            dimen = Geom2:new{ w = w, h = M.getHeight(ctx) },
+            dimen = Geom2:new{ w = w, h = ctx and ctx.orbitui_card_layout and ctx.height or M.getHeight(ctx) },
             frame,
         }
     end

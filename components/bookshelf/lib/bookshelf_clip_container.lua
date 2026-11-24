@@ -26,7 +26,9 @@ go via an offscreen buffer rather than `bb:viewport`:
 
 Placement: a child that fits is centred; a child taller/wider than the cell is
 top-/left-aligned (offset clamped to >= 0) so its START is visible and the
-overflow is clipped off the bottom/right.
+overflow is clipped off the bottom/right. The Reading dashboard opts into
+fit_content for fixed-size widgets, scaling their paint and hit coordinates
+together when they exceed the available space.
 
 Gestures: the child is painted into the offscreen buffer at buffer-local
 coords, so its own tappable widgets know their places relative to this
@@ -52,6 +54,13 @@ local ClipContainer = WidgetContainer:extend{
     pass_gestures = nil,
 }
 
+-- Position in the native child's coordinate system, used by declarative
+-- tap regions as well as interactive widgets drawn at a reduced scale.
+function ClipContainer:childPoint(x, y)
+    return math.floor((x - (self._child_dx or 0)) * (self._to_native_x or 1)),
+        math.floor((y - (self._child_dy or 0)) * (self._to_native_y or 1))
+end
+
 function ClipContainer:handleEvent(event)
     if event and event.handler == "onGesture" then
         local ges = event.args and event.args[1]
@@ -62,6 +71,11 @@ function ClipContainer:handleEvent(event)
         if ges.ges ~= "tap" and ges.ges ~= "double_tap" then return false end
         local px, py = ges.pos.x - d.x, ges.pos.y - d.y
         if px < 0 or py < 0 or px >= self.w or py >= self.h then return false end
+        if self._to_native_x then
+            px, py = self:childPoint(px, py)
+            local cs = self[1]:getSize()
+            if px < 0 or py < 0 or px >= cs.w or py >= cs.h then return false end
+        end
         local g = {}
         for k, v in pairs(ges) do g[k] = v end
         g.pos = Geom:new{ x = px, y = py, w = 0, h = 0 }
@@ -77,29 +91,47 @@ function ClipContainer:getSize()
     return Geom:new{ w = self.w, h = self.h }
 end
 
--- Offscreen scratch buffers, reused across paints. Paint is single-threaded
--- and the buffer's contents never outlive one paintTo (filled, painted into,
--- blitted out), so sharing per size+type is safe. Without this every repaint
--- of every cell allocated and freed a fresh buffer - the minute clock tick
--- repainting a micro grid churned one allocation per cell per minute. Keyed
--- by w:h:type because a grid mixes a few cell sizes (wide/normal); the set is
--- tiny, but cap it and start over if a pathological layout ever grows it.
-local _scratch, _scratch_n = {}, 0
-local function scratchFor(w, h, bbtype)
+-- Only idle buffers are cached. A nested module can render another clipped
+-- widget of the same size without overwriting or evicting its parent's buffer.
+local idle, idle_count = {}, 0
+local function takeScratch(w, h, bbtype)
     local key = w .. ":" .. h .. ":" .. tostring(bbtype)
-    local off = _scratch[key]
-    if off then return off end
-    if _scratch_n >= 8 then
-        for k, b in pairs(_scratch) do
-            if b.free then pcall(b.free, b) end
-            _scratch[k] = nil
-        end
-        _scratch_n = 0
+    local off = idle[key]
+    if not off then return Blitbuffer.new(w, h, bbtype), key end
+    idle[key], idle_count = nil, idle_count - 1
+    return off, key
+end
+
+local function putScratch(off, key)
+    if idle[key] then
+        off:free()
+        return
     end
-    off = Blitbuffer.new(w, h, bbtype)
-    _scratch[key] = off
-    _scratch_n = _scratch_n + 1
-    return off
+    if idle_count >= 8 then
+        local evicted, buffer = next(idle)
+        buffer:free()
+        idle[evicted], idle_count = nil, idle_count - 1
+    end
+    idle[key], idle_count = off, idle_count + 1
+end
+
+local function fillBuffer(off, w, h, bg)
+    -- fill() collapses a colour to its grey (getColor8), so a coloured card
+    -- on a colour screen goes through paintRectRGB32, which keeps it.
+    -- Asked of Blitbuffer, never by probing `bg.r`: a grey is a Color8
+    -- cdata, which RAISES on a field it lacks -- that crashed the start menu
+    -- on a greyscale PW5.
+    -- Every colour buffer, not only RGB32: a PocketBook colour screen is
+    -- RGB24, where the fill() below made every module card its grey (565).
+    local t = off:getType()
+    local colour_bb = t == Blitbuffer.TYPE_BBRGB32 or t == Blitbuffer.TYPE_BBRGB24
+        or t == Blitbuffer.TYPE_BBRGB16
+    if colour_bb and off.paintRectRGB32
+            and Blitbuffer.isColor8 and not Blitbuffer.isColor8(bg) then
+        off:paintRectRGB32(0, 0, w, h, bg:getColorRGB32())
+    else
+        off:fill(bg)
+    end
 end
 
 function ClipContainer:paintTo(bb, x, y)
@@ -109,6 +141,33 @@ function ClipContainer:paintTo(bb, x, y)
     local cs = child:getSize()
     local cw = (cs and cs.w) or 0
     local ch = (cs and cs.h) or 0
+    self._to_native_x, self._to_native_y = nil, nil
+    if self.fit_content and (cw > self.w or ch > self.h) then
+        -- Bound memory even if an external module reports a corrupt size.
+        assert(cw * ch <= math.max(4 * 1024 * 1024, self.w * self.h * 2), "Oversized dashboard widget")
+        local factor = math.min(self.w / cw, self.h / ch)
+        local dw, dh = math.max(1, math.floor(cw * factor)), math.max(1, math.floor(ch * factor))
+        local dx, dy = math.floor((self.w - dw) / 2), math.floor((self.h - dh) / 2)
+        local bg = self.bg or Blitbuffer.COLOR_WHITE
+        local source = Blitbuffer.new(cw, ch, bb:getType())
+        local scaled, off, key
+        local ok, err = pcall(function()
+            fillBuffer(source, cw, ch, bg)
+            child:paintTo(source, 0, 0)
+            scaled = require("ui/renderimage"):scaleBlitBuffer(source, dw, dh, false)
+            off, key = takeScratch(self.w, self.h, bb:getType())
+            fillBuffer(off, self.w, self.h, bg)
+            off:blitFrom(scaled, dx, dy, 0, 0, dw, dh)
+            bb:blitFrom(off, x, y, 0, 0, self.w, self.h)
+        end)
+        if off then putScratch(off, key) end
+        if scaled and scaled ~= source then scaled:free() end
+        source:free()
+        if not ok then error(err) end
+        self._child_dx, self._child_dy = dx, dy
+        self._to_native_x, self._to_native_y = cw / dw, ch / dh
+        return
+    end
     local dx = math.max(0, math.floor((self.w - cw) / 2))
     local dy = math.max(0, math.floor((self.h - ch) / 2))
     -- Recorded so a host can translate a screen tap into CHILD-local
@@ -119,26 +178,14 @@ function ClipContainer:paintTo(bb, x, y)
     -- Render into a real w×h buffer (pixel_stride == w), so any raw paint the
     -- child does is bounded to the cell and the full-width-paintRect fast path
     -- stays correct. Then blit the result onto the screen at this position.
-    local off = scratchFor(self.w, self.h, bb:getType())
-    -- fill() collapses a colour to its grey (getColor8), so a coloured card
-    -- on a colour screen goes through paintRectRGB32, which keeps it.
-    -- Asked of Blitbuffer, never by probing `bg.r`: a grey is a Color8
-    -- cdata, which RAISES on a field it lacks -- that crashed the start menu
-    -- on a greyscale PW5.
-    -- Every colour buffer, not only RGB32: a PocketBook colour screen is
-    -- RGB24, where the fill() below made every module card its grey (565).
-    local bg = self.bg or Blitbuffer.COLOR_WHITE
-    local t = off:getType()
-    local colour_bb = t == Blitbuffer.TYPE_BBRGB32 or t == Blitbuffer.TYPE_BBRGB24
-        or t == Blitbuffer.TYPE_BBRGB16
-    if colour_bb and off.paintRectRGB32
-            and Blitbuffer.isColor8 and not Blitbuffer.isColor8(bg) then
-        off:paintRectRGB32(0, 0, self.w, self.h, bg:getColorRGB32())
-    else
-        off:fill(bg)
-    end
-    child:paintTo(off, dx, dy)
-    bb:blitFrom(off, x, y, 0, 0, self.w, self.h)
+    local off, key = takeScratch(self.w, self.h, bb:getType())
+    local ok, err = pcall(function()
+        fillBuffer(off, self.w, self.h, self.bg or Blitbuffer.COLOR_WHITE)
+        child:paintTo(off, dx, dy)
+        bb:blitFrom(off, x, y, 0, 0, self.w, self.h)
+    end)
+    putScratch(off, key)
+    if not ok then error(err) end
 end
 
 return ClipContainer

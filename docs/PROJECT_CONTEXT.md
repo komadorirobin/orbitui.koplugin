@@ -2993,6 +2993,10 @@ provides canonical module names and legacy aliases while preserving
 
 ### Optional Reading dashboard
 
+- Hosted Home modules, Bookshelf modules and action shortcuts receive the
+  card body dimensions. Book grids derive capacity from physical size and
+  screen density. The dashboard fits fixed-size third-party widgets and
+  translates taps back into their original coordinate system.
 - The dashboard is an additive, configurable Home/Custom Screen module, not a
   migration of existing layouts.
 - Cards, statistics, headings, goals and both book-row sources are independently

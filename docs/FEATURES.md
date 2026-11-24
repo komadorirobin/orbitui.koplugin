@@ -421,6 +421,11 @@ Long-press a card’s heading or background, choose a category, then select a
 module to replace that card on the same page and in the same space. This works
 for built-in cards such as **This week** and for added modules. Long-press the
 replacement and choose **Restore This week** to bring the original back.
+The replacement uses the space of the card you picked. Book grids show more
+covers as the card grows. A compact clock shows its first visible item, short
+quotes keep their attribution when space permits, and shortcuts use their action
+icons. Modules with a fixed layout fit proportionally into the card. Their
+buttons and book covers remain tappable.
 Long-press an added card and choose **Card settings** to change its visibility
 or remove it. Freely placed cards also offer half-width, full-width, tall and
 whole-page sizes. **Arrange cards** moves it among the built-in blocks;

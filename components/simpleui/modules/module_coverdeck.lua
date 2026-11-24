@@ -1000,12 +1000,12 @@ function M.build(w, ctx)
     local fps = getFps(source, ctx)
     if not fps or #fps == 0 then
         logger.dbg(string.format("coverdeck: no books found (source=%s)", tostring(source)))
-        return _emptyPlaceholder(w, M.getHeight(ctx), ctx.text_alpha, ctx.ink)
+        return _emptyPlaceholder(w, ctx.orbitui_card_layout and ctx.height or M.getHeight(ctx), ctx.text_alpha, ctx.ink)
     end
 
     local SH = getSH()
     if not SH then
-        return _emptyPlaceholder(w, M.getHeight(ctx), ctx.text_alpha, ctx.ink)
+        return _emptyPlaceholder(w, ctx.orbitui_card_layout and ctx.height or M.getHeight(ctx), ctx.text_alpha, ctx.ink)
     end
 
     -- Content colours over the module fill.
@@ -1046,6 +1046,14 @@ function M.build(w, ctx)
     local style    = getStyle(pfx, c)
     local inner_w  = w - PAD * 2
     local center_w = centerWidth(inner_w, cs)
+    if ctx.orbitui_card_layout then
+        local card = ctx.orbitui_card_layout
+        local room = card.height / card.unit
+        if room < 155 then show_stats, show_author = false, false end
+        if room < 85 then show_title, show_progress = false, false end
+        local fraction = (show_title or show_author or show_stats or show_progress) and 0.60 or 0.95
+        center_w = math.min(center_w, math.max(1, math.floor((card.height - 2) * fraction / COVER_ASPECT)))
+    end
     local center_h = math.floor(center_w * COVER_ASPECT)
 
     local centerX = math.floor(inner_w / 2)

@@ -76,7 +76,7 @@ end
 -- ---------------------------------------------------------------------------
 -- `on_stops(stops)`, when given, receives the rows as { id, widget } D-pad
 -- focus stops, top to bottom (each one is a focus row of its own).
-local function buildListWidget(w, action_ids, show_icons, align, on_tap_fn, d, ink, on_stops)
+local function buildListWidget(w, action_ids, show_icons, align, on_tap_fn, d, ink, on_stops, card)
     -- Placeholder: no actions configured at all
     if not action_ids or #action_ids == 0 then
         local ph_fs   = math.max(8, math.floor(_BASE_PH_FS * (d.row_h / _BASE_ROW_H)))
@@ -89,7 +89,7 @@ local function buildListWidget(w, action_ids, show_icons, align, on_tap_fn, d, i
                 text    = ph_text,
                 face    = Font:getFace(SUIStyle.FACE_REGULAR, ph_fs),
                 fgcolor = ink.sub,
-                width   = w - PAD * 2,
+                max_width = math.max(1, w - PAD * 2),
             },
         }
     end
@@ -108,7 +108,7 @@ local function buildListWidget(w, action_ids, show_icons, align, on_tap_fn, d, i
                 text    = ph_text,
                 face    = Font:getFace(SUIStyle.FACE_REGULAR, ph_fs),
                 fgcolor = ink.sub,
-                width   = w - PAD * 2,
+                max_width = math.max(1, w - PAD * 2),
             },
         }
     end
@@ -130,11 +130,18 @@ local function buildListWidget(w, action_ids, show_icons, align, on_tap_fn, d, i
         tint                    = ink ~= Chrome.PLAIN_INK or nil,
     }
 
+    local columns = 1
+    if card then
+        local fitting_rows = math.max(1, math.floor((card.height + d.row_gap) / (d.row_h + d.row_gap)))
+        columns = math.max(1, math.min(3, math.floor(w / (130 * card.unit)), math.ceil(n / fitting_rows)))
+    end
+    local cell_w = math.floor((w - (columns - 1) * PAD) / columns)
+    local row
     local stops = {}
     for i = 1, n do
         local aid = valid_ids[i]
         local row_content = QARenderer.buildListRow(aid, {
-            inner_w        = w,
+            inner_w        = cell_w,
             row_h          = d.row_h,
             show_icon      = show_icons,
             icon_sz        = d.icon_sz,
@@ -149,10 +156,20 @@ local function buildListWidget(w, action_ids, show_icons, align, on_tap_fn, d, i
         })
         stops[i] = { id = i, widget = row_content }
 
-        if i > 1 and d.row_gap > 0 then
-            vg[#vg + 1] = VerticalSpan:new{ width = d.row_gap }
+        if (i - 1) % columns == 0 then
+            if i > 1 and d.row_gap > 0 then vg[#vg + 1] = VerticalSpan:new{ width = d.row_gap } end
+            if columns > 1 then
+                row = require("ui/widget/horizontalgroup"):new{}
+                vg[#vg + 1] = row
+            end
+        elseif row then
+            row[#row + 1] = require("ui/widget/horizontalspan"):new{ width = PAD }
         end
-        vg[#vg + 1] = row_content
+        if row then
+            row[#row + 1] = CenterContainer:new{ dimen = Geom:new{ w = cell_w, h = d.row_h }, row_content }
+        else
+            vg[#vg + 1] = row_content
+        end
     end
     if on_stops then on_stops(stops) end
 
@@ -259,7 +276,7 @@ local function _migrateLabelScale(mod_id, pfx)
 end
 
 function M.build(w, ctx)
-    if not M.isEnabled(ctx.pfx) then return nil end
+    if not ctx.orbitui_card_layout and not M.isEnabled(ctx.pfx) then return nil end
     local qa_ids    = SUISettings:readSetting(ctx.pfx .. ITEMS_KEY) or {}
     local show_icons = not isIconHidden(ctx.pfx, MOD_SUFFIX)
     local align     = getAlignment(ctx.pfx, MOD_SUFFIX)
@@ -272,7 +289,7 @@ function M.build(w, ctx)
     return buildListWidget(w, qa_ids, show_icons, align, ctx.on_qa_tap, d, ctx.ink or Chrome.PLAIN_INK,
         ctx.kbStops and function(stops)
             for i, stop in ipairs(stops) do ctx.kbStops(MOD_ID .. ":" .. i, { stop }) end
-        end)
+        end, ctx.orbitui_card_layout)
 end
 
 function M.getHeight(ctx)

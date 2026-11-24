@@ -689,10 +689,30 @@ local function _resolveCurrentPage(fps, ctx, id, max_items, want_paged, persist)
     return page, npages, page_fps
 end
 
+local function gridDimensions(ctx, opts)
+    local layout = ctx and ctx.orbitui_card_layout
+    if layout then return layout.rows, layout.columns end
+    return opts.grid_rows or 1, opts.grid_cols or opts.max_items or 5
+end
+
+local function gridCell(w, cols, cs, ctx, dims, draw_bar, draw_text, label_h, overlay)
+    local cw, gap = GridRenderer.computeAutoFitCell(w, cols, cs)
+    local layout = ctx and ctx.orbitui_card_layout
+    if layout then
+        local row_h = (layout.height - (layout.rows - 1) * math.floor(PAD / 2)) / layout.rows
+        local extra = overlay and 0 or cellExtraHeight(draw_bar, draw_text,
+            dims.RB_GAP1, dims.RB_BAR_H, dims.RB_GAP2, label_h)
+        local aspect = dims.RECENT_H / dims.RECENT_W + (overlay and 0.28 or 0)
+        cw = math.max(1, math.min(cw, math.floor((row_h - extra) / aspect),
+            math.floor((w - (cols - 1) * PAD) / cols)))
+        gap = cols > 1 and math.max(PAD, math.floor((w - cols * cw) / (cols - 1))) or 0
+    end
+    return cw, gap
+end
+
 function GridRenderer.build(w, ctx, opts)
     local id          = opts.id
-    local grid_rows   = opts.grid_rows or 1
-    local grid_cols   = opts.grid_cols or opts.max_items or 5
+    local grid_rows, grid_cols = gridDimensions(ctx, opts)
     -- `max_items` is the number of items per page throughout the rest of
     -- this function (pagination, swipe, eraser): a "page" holds up to
     -- rows*cols books, not just cols, so grid mode reuses the same logic.
@@ -742,13 +762,6 @@ function GridRenderer.build(w, ctx, opts)
     local raw_scale       = Config.getModuleScaleRaw(id, pfx)
     local raw_thumb_scale = Config.getThumbScaleRaw(id, pfx)
     local cs = raw_scale * raw_thumb_scale
-    local cw, gap = GridRenderer.computeAutoFitCell(w, grid_cols, cs)
-    local ch = math.max(1, math.floor(cw * (D.RECENT_H / D.RECENT_W)))
-    -- Vertical spacing between grid rows (grid_rows>1): half the
-    -- horizontal `gap`. The full horizontal gap has to accommodate the
-    -- visual frame of each cover on both sides; between rows, that full
-    -- distance reads as too loose, making the two rows look like one block.
-    local row_gap = math.max(0, math.floor(gap / 2))
     local pct_face, pct_bold = SUIStyle.getTextFace(styles.label, pct_fs)
 
     local progress_style     = GridRenderer.getProgressStyle(pfx, id, progress_style_cfg)
@@ -761,6 +774,13 @@ function GridRenderer.build(w, ctx, opts)
     -- always reserves at least as much height as the label needs.
     local label_h = SUIStyle.faceHeight(pct_face)
 
+    local cw, gap = gridCell(w, grid_cols, cs, ctx, D, draw_progress, draw_text, label_h, use_overlay)
+    local ch = math.max(1, math.floor(cw * (D.RECENT_H / D.RECENT_W)))
+    -- Vertical spacing between grid rows (grid_rows>1): half the
+    -- horizontal `gap`. The full horizontal gap has to accommodate the
+    -- visual frame of each cover on both sides; between rows, that full
+    -- distance reads as too loose, making the two rows look like one block.
+    local row_gap = math.max(0, math.floor((ctx.orbitui_card_layout and PAD or gap) / 2))
     local badge_r = math.floor(cw * 0.28)
     -- draw_progress/draw_text (computed above, once, same for the whole
     -- row/grid) decide how much extra height is reserved — see
@@ -1207,8 +1227,7 @@ function GridRenderer.updateStats(widget, ctx, opts)
     -- does at its own call site, keeping the section-label's "x/y"
     -- indicator and chevrons (derived from PageState) accurate even when
     -- this fast path succeeds instead of falling back to a full build().
-    local grid_rows = opts.grid_rows or 1
-    local grid_cols = opts.grid_cols or opts.max_items or 5
+    local grid_rows, grid_cols = gridDimensions(ctx, opts)
     local max_items = grid_rows * grid_cols
     local _, npages, page_fps = _resolveCurrentPage(fps, ctx, id, max_items, opts.paged, false)
     PageState.setCount(ctx, id, npages)
@@ -1283,18 +1302,12 @@ function GridRenderer.getGridHeight(_ctx, opts)
 
     -- Mirrors build(): grid_cols decides the cell width, not
     -- grid_rows*grid_cols.
-    local grid_rows = opts.grid_rows or 1
-    local grid_cols = opts.grid_cols or opts.max_items or 5
+    local grid_rows, grid_cols = gridDimensions(_ctx, opts)
     local w = (_ctx and (_ctx.col_w or _ctx.inner_w))
               or UI.getInnerW()
 
     -- cs uses the raw getters — mirrors build()'s cs above.
     local cs = Config.getModuleScaleRaw(id, pfx) * Config.getThumbScaleRaw(id, pfx)
-    local cw, gap_for_row = GridRenderer.computeAutoFitCell(w, grid_cols, cs)
-    local rh = math.max(1, math.floor(cw * (D.RECENT_H / D.RECENT_W)))
-    -- Same vertical gap used in build() — half the horizontal gap.
-    local row_gap = math.max(0, math.floor(gap_for_row / 2))
-
     -- Must exactly mirror GridRenderer.build's `cell_h` — same reading of
     -- progress_style, and the same cellExtraHeight() — or the reserved
     -- height diverges from the real content. progress_style is a
@@ -1312,6 +1325,11 @@ function GridRenderer.getGridHeight(_ctx, opts)
     local use_overlay    = progress_style == "overlay"
     local pct_fs   = math.max(8, math.floor(_BASE_RB_PCT_FS * scale * (styles.label.scale or 1)))
     local label_h  = SUIStyle.faceHeight((SUIStyle.getTextFace(styles.label, pct_fs)))
+    local cw, gap_for_row = gridCell(w, grid_cols, cs, _ctx, D, draw_progress, draw_text, label_h, use_overlay)
+    local rh = math.max(1, math.floor(cw * (D.RECENT_H / D.RECENT_W)))
+    -- Same vertical gap used in build() — half the horizontal gap.
+    local row_gap = math.max(0, math.floor((_ctx and _ctx.orbitui_card_layout and PAD or gap_for_row) / 2))
+
     -- Height of the default book cell.
     local function bookCellHeight()
         if use_overlay then return rh + math.floor(cw * 0.28) end

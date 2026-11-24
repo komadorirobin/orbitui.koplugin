@@ -1781,6 +1781,7 @@ local sv = {
     ["Remove card"] = "Ta bort kort",
     ["Unavailable"] = "Inte tillgänglig",
     ["Tap to open"] = "Tryck för att öppna",
+    ["This module requires Android."] = "Den här modulen kräver Android.",
     ["Module unavailable. Long-press to configure."] = "Modulen är inte tillgänglig. Håll inne för att ställa in.",
     ["Removes only this dashboard card, not the plugin or its data."] = "Tar bara bort det här kortet i Läsöversikt, inte pluginet eller dess data.",
     ["Choose a card supplied by an installed plugin, a Home module, or an action shortcut. Plugins stay separate. More cards use extra dashboard pages."] = "Välj ett kort från ett installerat plugin, en Hem-modul eller en åtgärdsgenväg. Pluginen förblir separata. Fler kort får plats på extra sidor i Läsöversikt.",

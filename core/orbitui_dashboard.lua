@@ -1,6 +1,19 @@
 -- Geometry and layout edits are independent of KOReader's widget/cache owners.
 local M = { id = "orbitui_dashboard" }
 
+-- Card dimensions are physical pixels. Express density thresholds in the
+-- same logical units on a low-DPI Kindle and a high-DPI Android reader.
+function M.cardLayout(w, h, unit)
+    unit = math.max(0.1, unit or 1)
+    local width, height = w / unit, h / unit
+    return {
+        width = w, height = h, unit = unit,
+        columns = math.max(1, math.min(6, math.floor((width + 5) / 57))),
+        rows = math.max(1, math.min(3, math.floor((height + 8) / 95))),
+        factor = math.max(0.75, math.min(1.25, math.min(width / 210, height / 100))),
+    }
+end
+
 -- Use local calendar days. Noon and rounded day differences also cover DST.
 local function dateNoon(iso)
     if type(iso) ~= "string" then return end

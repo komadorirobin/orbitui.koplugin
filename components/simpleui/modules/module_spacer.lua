@@ -69,6 +69,11 @@ local function makeInstance(inst_id)
     end
 
     function S.build(w, ctx)
+        if ctx.orbitui_card_layout then
+            return require("ui/widget/container/widgetcontainer"):new{
+                dimen = require("ui/geometry"):new{ w = w, h = ctx.height },
+            }
+        end
         if not S.isEnabled(ctx.pfx) then return nil end
         local h = math.max(2, math.floor(_BASE_SPACER_H * _getScale(S.id, ctx.pfx)))
         -- VerticalSpan uses the `width` field as height — this is KOReader's convention.

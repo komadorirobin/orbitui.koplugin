@@ -104,7 +104,10 @@ function M.resolveModule(entry)
             if not valid then
                 valid = qa.getCustomQAValid()[entry.ref] == true
             end
-            if valid then return { title = qa.getEntry(entry.ref).label } end
+            if valid then
+                local action = qa.getEntry(entry.ref)
+                return { title = action.label, action = action }
+            end
         end
     end)
     return ok and result or nil
@@ -187,7 +190,6 @@ end
 function M.buildModule(entry, w, h, ctx)
     local def = M.resolveModule(entry)
     if not def then return nil end
-    if entry.kind == "action" then return nil, def end
     local child, regions, args
     local ok, err = pcall(function()
         -- A shallow child context prevents module-local caches/geometry from
@@ -197,17 +199,32 @@ function M.buildModule(entry, w, h, ctx)
         -- Native Clock writes its mounted-widget bookkeeping here. Keep that
         -- private to the card, never replace another Home clock's live slots.
         if ctx._screen_widget then args._screen_widget = setmetatable({}, { __index = ctx._screen_widget }) end
-        args.col_w, args.grow_h, args.width, args.height = w, h, w, h
+        args.col_w, args.inner_w, args.grow_h, args.width, args.height = w, w, h, w, h
+        local unit = require("device").screen:scaleBySize(100) / 100
+        local layout = require("core/orbitui_dashboard").cardLayout(w, h, unit)
+        args.orbitui_card_layout = layout
         if entry.kind == "simpleui" then
             args.orbitui_dashboard_hosted = true
+            args.landscape_factor = (ctx.landscape_factor or 1) * layout.factor
+            -- Home uses grow_h as *additional* space for row-filling modules.
+            if def.fills_row_height then args.grow_h = nil end
             if entry.ref == "currently" and not args.current_fp then
                 args.current_fp = args.recent_fps and args.recent_fps[1]
             end
             child = def.build(w, args)
+            if not child and def.is_book_mod then return end
+        elseif entry.kind == "action" then
+            local size = math.max(1, math.floor(math.min(w, h, unit * 68) * 0.8))
+            child = require("engines/sui_quickactions_render").buildIcon(def.action, size,
+                require("features/sui_style").COLOR.text_primary)
         else
             args.entry = { id = entry.id, module = entry.ref }
-            args.config = require("lib/bookshelf_module_kit").entryConfig(args.entry)
+            local kit = require("lib/bookshelf_module_kit")
+            args.config = kit.entryConfig(args.entry)
             args.preview, args.surface, args.scale, args.max_height = false, "orbitui_dashboard", 100, h
+            args.shape = kit.shape(w, h)
+            args.clamp = true
+            if not def.self_sized then args.scale = math.floor(100 * layout.factor + 0.5) end
             args.refresh = ctx.refresh_fn
             args.set_tap_regions = function(value) regions = value end
             child = def.render(args)
@@ -220,6 +237,7 @@ function M.buildModule(entry, w, h, ctx)
     if not ok then
         if child and type(child.free) == "function" then pcall(child.free, child) end
         require("logger").warn("OrbitUI dashboard: module build failed", entry.id, err)
+        if entry.kind == "action" then return nil, def end
         return nil
     end
     return child, def, regions, args
@@ -234,9 +252,11 @@ function M.tapModule(entry, def, ctx, regions, x, y)
             def.on_tap(ctx)
         elseif entry.kind == "bookshelf" and type(def.on_tap) == "function" then
             local kit = require("lib/bookshelf_module_kit")
-            local args = { entry = { id = entry.id, module = entry.ref }, surface = "orbitui_dashboard",
-                refresh = ctx.refresh_fn, menu = { close = function() end, _reload = ctx.refresh_fn } }
-            args.config = kit.entryConfig(args.entry)
+            local args = setmetatable({
+                entry = ctx.entry or { id = entry.id, module = entry.ref }, surface = "orbitui_dashboard",
+                refresh = ctx.refresh_fn, menu = { close = function() end, _reload = ctx.refresh_fn },
+            }, { __index = ctx })
+            args.config = ctx.config or kit.entryConfig(args.entry)
             args.tapped_region = kit.hitRegion(regions, x, y)
             def.on_tap(args)
             local keep = def.keep_open
@@ -261,7 +281,7 @@ function M.tickModule(entry, def, refresh)
 end
 
 local Guard
-function M.moduleContainer(child, fallback, w, h, bg)
+function M.moduleContainer(child, fallback, w, h, bg, fit_content)
     if not Guard then
         local Clip = require("lib/bookshelf_clip_container")
         Guard = Clip:extend{}
@@ -296,7 +316,7 @@ function M.moduleContainer(child, fallback, w, h, bg)
             if self.fallback ~= self[1] and self.fallback.free then pcall(self.fallback.free, self.fallback, full) end
         end
     end
-    return Guard:new{ w = w, h = h, bg = bg, pass_gestures = true, fallback = fallback, child or fallback }
+    return Guard:new{ w = w, h = h, bg = bg, pass_gestures = true, fit_content = fit_content, fallback = fallback, child or fallback }
 end
 
 return M

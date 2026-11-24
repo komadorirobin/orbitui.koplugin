@@ -44,6 +44,9 @@ function W:paintTo(bb, x, y)
         child:paintTo(bb, x + offset[1], y + offset[2])
     end
 end
+package.loaded.device = { hasKeys = function() return false end,
+    screen = { night_mode = false, scaleBySize = function(_, n) return n end,
+        getWidth = function() return 600 end, getHeight = function() return 800 end } }
 local built, taps, ticks, child_args = 0, 0, 0
 local mod = { id = "external_pet", name = "Pet", default_on = false,
     needs = { stats = true, recent = function(prefix) H.eq(prefix, pfx); return 17 end, charts = true, current_book_stats = true },
@@ -68,6 +71,7 @@ package.loaded["lib/bookshelf_start_menu_modules"] = {
     get = function(id, force) micro_gets = micro_gets + 1; H.eq(force, true); return id == "pet" and micro end,
 }
 package.loaded["lib/bookshelf_module_kit"] = {
+    shape = function(w, h) return w >= h * 1.6 and "wide" or "square" end,
     entryConfig = function(entry) return { entry = entry } end,
     hitRegion = function() return "eye" end,
 }
@@ -227,6 +231,8 @@ H.test("native module builders receive a private context and Bookshelf's table r
     local child = Sources.buildModule(entry("simpleui", "external_pet"), 200, 80, ctx)
     assert(child); H.eq(child_args.grow_h, 80); H.eq(ctx.foreign_cache, nil)
     H.eq(ctx._screen_widget._clock_live, original); assert(child_args._screen_widget ~= ctx._screen_widget)
+    H.eq(child_args.inner_w, 200); H.eq(child_args.orbitui_card_layout.height, 80)
+    H.eq(ctx.orbitui_card_layout, nil)
     child:free()
     child = Sources.buildModule(entry("bookshelf", "pet"), 200, 80, ctx)
     H.eq(child:getSize().h, 80); child:free()
@@ -307,9 +313,6 @@ package.loaded["ui/uimanager"] = {
     setDirty = function() end,
     show = function(_, value) shown = value end,
 }
-package.loaded.device = { hasKeys = function() return false end,
-    screen = { night_mode = false, scaleBySize = function(_, n) return n end,
-        getWidth = function() return 600 end, getHeight = function() return 800 end } }
 local Event = { new = function(_, name, ...)
     return { handler = "on" .. name, args = { n = select("#", ...), ... } }
 end }
@@ -384,6 +387,30 @@ H.test("guard catches paint/input failures, preserves the fallback and frees eve
     guard = Sources.moduleContainer(child, fallback, 100, 80)
     H.eq(guard:handleEvent({ handler = "onSomething" }), false)
     H.eq(guard.failed, true); guard:free()
+end)
+H.test("fitted dashboard cards preserve aspect, translate taps, and reserve holds for the host", function()
+    local old = package.loaded["ui/renderimage"]
+    package.loaded["ui/renderimage"] = { scaleBlitBuffer = function(_, bb, w, h)
+        H.eq(w, 40); H.eq(h, 80); return BB.new(w, h, bb:getType())
+    end }
+    local child = W:new{ width = 100, height = 200 }
+    local hit
+    child.handleEvent = function(_, e) hit = e.args[1].pos; return true end
+    local guard = Sources.moduleContainer(child, W:new{}, 100, 80, BB.COLOR_WHITE, true)
+    local bb = BB.new(300, 300, native_bb and BB.TYPE_BB8 or 1)
+    guard:paintTo(bb, 10, 20)
+    assert(not guard.failed)
+    local function gesture(kind, x, y)
+        return guard:handleEvent{ handler = "onGesture", args = {{ ges = kind, pos = {x=x, y=y} }} }
+    end
+    assert(gesture("tap", 60, 60)); H.eq(hit.x, 50); H.eq(hit.y, 100)
+    H.eq(gesture("tap", 15, 60), false); H.eq(gesture("hold", 60, 60), false)
+    H.eq(gesture("swipe", 60, 60), false)
+    local x, y = guard:childPoint(50, 40); H.eq(x, 50); H.eq(y, 100)
+    assert(Model.cardLayout(200, 80, 1).columns < Model.cardLayout(400, 200, 1).columns)
+    H.eq(Model.cardLayout(400, 160, 2).columns, Model.cardLayout(200, 80, 1).columns)
+    guard:free(); bb:free()
+    package.loaded["ui/renderimage"] = old
 end)
 H.test("native cover polling reaches only mounted visible plugin cards and survives a failed provider", function()
     local updates,ready=0,false
@@ -589,7 +616,8 @@ end)
 H.test("BookOrbit rows refresh and page only their own subtree, retaining native book tap and hold", function()
     queued = {}
     local previous = package.loaded["adapters/orbitui_bookorbit_rows"]
-    local requests, files = {}, { "/a", "/b", "/c", "/d" }
+    local requests, files = {}, { "/a" }
+    for i = 2, 25 do files[i] = "/book" .. i end
     package.loaded["adapters/orbitui_bookorbit_rows"] = {
         snapshot = function() return { files = files, at = 1234 } end,
         caption = function() return "4 on device · cached" end,
@@ -603,13 +631,15 @@ H.test("BookOrbit rows refresh and page only their own subtree, retaining native
     local c = only(e, entry("simpleui", "external_pet", "normal", 1))
     local v, ctx = view(c)
     local count, generation = built, v._module_generation
-    H.eq(#requests, 0); H.eq(#v._cover_slots, 3)
+    local per_page = #v._cover_slots
+    assert(per_page > 3 and per_page < #files, "capacity: " .. per_page)
+    H.eq(#requests, 0)
     local queue = queued; queued = {}; for _, fn in ipairs(queue) do fn() end
     H.eq(#requests, 1)
     local group = v._cover_slots[1].parent
     requests[1].on_done{ ok = true }
     H.eq(v._module_generation, generation); H.eq(built, count); H.eq(group.freed, true)
-    H.eq(#v._cover_slots, 3)
+    H.eq(#v._cover_slots, per_page)
     local fp, held
     ctx.open_fn = function(file) fp = file end
     ctx.hold_fn = function(file, module) held = file; H.eq(module, Model.id) end
@@ -631,7 +661,7 @@ H.test("BookOrbit rows refresh and page only their own subtree, retaining native
     saved.simpleui_hs_settings_on_hold = true
     v:onSwipe(nil, { pos = { x = area.x+2, y = area.y+100 }, direction = "west" })
     H.eq(ctx._screen_widget._orbitui_dashboard_pages[e.id], 2)
-    H.eq(#v._cover_slots, 1); H.eq(v._cover_slots[1].file, "/d")
+    H.eq(#v._cover_slots, math.min(per_page, #files - per_page)); H.eq(v._cover_slots[1].file, files[per_page+1])
     H.eq(built, count); H.eq(v._module_generation, generation)
     assert(v:refreshCovers()); H.eq(v._cover_slots[1].parent.freed, nil)
     top = {}; local before = #requests; v._module_tick(); H.eq(#requests, before)

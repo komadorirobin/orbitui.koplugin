@@ -174,6 +174,8 @@ local function computeLayout(w, ctx)
     -- Only sized in when the legend is actually shown (see
     -- SETTING_SHOW_LEGEND) — hidden, it contributes neither height nor gap.
     local show_legend   = getShowLegend(pfx)
+    local card = ctx and ctx.orbitui_card_layout
+    if card and card.height < 90 * card.unit then show_legend = false end
     local legend_cell   = Screen:scaleBySize(11)
     local legend_h, gap_v = 0, 0
     if show_legend then
@@ -184,6 +186,10 @@ local function computeLayout(w, ctx)
         gap_v = math.floor(Screen:scaleBySize(4) * scale)
     end
 
+    if card then
+        local overhead = label_h + Screen:scaleBySize(6) + 6 * gap + gap_v + legend_h
+        cell_size = math.max(1, math.min(cell_size, math.floor((card.height - overhead) / 7)))
+    end
     local body_h = label_h + Screen:scaleBySize(6)
                  + 7 * cell_size + 6 * Screen:scaleBySize(2)
                  + gap_v + legend_h

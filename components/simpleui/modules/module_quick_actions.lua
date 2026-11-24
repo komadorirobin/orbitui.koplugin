@@ -448,7 +448,7 @@ local function makeInstance(inst_id)
     end
 
     function S.build(w, ctx)
-        if not S.isEnabled(ctx.pfx) then return nil end
+        if not ctx.orbitui_card_layout and not S.isEnabled(ctx.pfx) then return nil end
         -- Items and labels are stored under pfx_qa (the short QA prefix) so
         -- that the menu writers (makeQAMenu / makeQAMenuFallback) and the widget
         -- builder read/write the same settings key.
@@ -466,6 +466,10 @@ local function makeInstance(inst_id)
         -- the same reason).
         -- `w` is already chrome contentWidth (label-aligned).
         local grid        = _readGrid(inst_id, ctx.pfx)
+        if ctx.orbitui_card_layout then
+            local cols = ctx.orbitui_card_layout.columns
+            grid = { cols = cols, rows = math.max(1, math.ceil(#qa_ids / cols)) }
+        end
         local d           = _getQADims(Config.getModuleScaleRaw(S.id, ctx.pfx), w, grid and grid.cols)
         _migrateLabelScale(S.id, ctx.pfx)
         local styles = Config.resolveTextStyles(ctx, S.id, S.text_elems)

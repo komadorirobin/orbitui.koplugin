@@ -824,11 +824,27 @@ function M.content(widget, p, ctx, data)
         box(area, stacked and paper or nil, nil, key)
         local custom_tap = cardTap(key)
         if custom_tap and not extra then action(area, custom_tap) end
-        local count = extra and extra.view == "carousel" and 1 or 3
+        local compact = extra and area.h < px(160)
+        local cover_top = px(compact and 22 or extra and 65 or 34)
+        local cols, rows = 3, 1
+        if extra then
+            local unit = Screen:scaleBySize(100) / 100
+            local body_h = area.h - 2 * p.pad - cover_top
+            local layout = Model.cardLayout(area.w - p.pad * 2, body_h, unit)
+            if extra.view == "carousel" then
+                cols = 1
+            else
+                cols = layout.columns
+                if #files > cols * layout.rows then
+                    layout = Model.cardLayout(area.w - p.pad * 2, body_h - px(compact and 27 or 48), unit)
+                end
+                rows = math.min(layout.rows, math.max(1, math.ceil(#files / cols)))
+            end
+        end
+        local count = rows * cols
         local pages = math.max(1, math.ceil(#files / count))
         local page = math.min(pages, math.max(1, owner._orbitui_dashboard_pages[key] or 1))
         owner._orbitui_dashboard_pages[key] = page
-        local compact = extra and area.h < px(160)
         local nav_h = pages > 1 and px(compact and 27 or 48) or 0
         local bottom_pad = pages > 1 and px(4) or p.pad
         local nav_y = area.y + area.h - bottom_pad - nav_h
@@ -915,9 +931,8 @@ function M.content(widget, p, ctx, data)
             if not extra and not custom_tap then action(area, settings(data.config and Model.id or module)) end
             return
         end
-        local slot_w = math.floor((area.w - 2 * p.pad - 2 * p.gap) / count)
-        local cover_top = px(compact and 22 or extra and 65 or 34)
-        local max_h = math.max(3, nav_y - area.y - p.pad - cover_top)
+        local slot_w = math.max(1, math.floor((area.w - 2 * p.pad - (cols - 1) * p.gap) / cols))
+        local max_h = math.max(3, math.floor((nav_y - area.y - p.pad - cover_top - (rows - 1) * p.gap) / rows))
         local cw = math.floor(math.min(slot_w, max_h * 2 / 3))
         local ch = math.floor(cw * 3 / 2)
         for i = 1, count do
@@ -925,8 +940,9 @@ function M.content(widget, p, ctx, data)
             if fp and (not extra or require("adapters/orbitui_bookorbit_rows").fileExists(fp)) then
                 local width = p.cover_front and not extra and math.max(1, math.floor(cw * (1 - (i - 1) * .06))) or cw
                 local height = math.floor(width * 3 / 2)
-                cover(fp, rect(area.x + p.pad + (i - 1) * (slot_w + p.gap) + math.floor((slot_w - width) / 2),
-                    area.y + cover_top + p.pad + math.floor((max_h - ch) / 2) + ch - height, width, height))
+                local col, row = (i - 1) % cols, math.floor((i - 1) / cols)
+                cover(fp, rect(area.x + p.pad + col * (slot_w + p.gap) + math.floor((slot_w - width) / 2),
+                    area.y + cover_top + p.pad + row * (max_h + p.gap) + math.floor((max_h - ch) / 2) + ch - height, width, height))
             end
         end
     end
@@ -1000,10 +1016,11 @@ function M.content(widget, p, ctx, data)
                 child, def, regions, child_args = Sources.buildModule(selected, w, h, args)
                 building = false
                 local fallback = UI.makeTextBox{ text = selected.kind == "action" and def and _("Tap to open")
+                        or (def and def.is_book_mod and _("No books to show yet."))
                         or _("Module unavailable. Long-press to configure."),
                     face = Style.getStyledFace(nil, 14 / (Screen:scaleBySize(1000) / 1000), "regular"),
                     width = w, max_lines = 3, height_adjust = true }
-                local guarded = Sources.moduleContainer(child, fallback, w, h, paper)
+                local guarded = Sources.moduleContainer(child, fallback, w, h, paper, true)
                 cover_slot.child, cover_slot.clip, cover_slot.def, cover_slot.args = child, guarded, def, child_args
                 cover_slot.done = nil
                 return guarded
@@ -1034,8 +1051,8 @@ function M.content(widget, p, ctx, data)
             action(area, cardTap(selected.id, function(x, y)
                 if not def or clip.failed then widget:editModules(selected.id)
                 else
-                    Sources.tapModule(selected, def, args, regions,
-                        x - inset - (clip._child_dx or 0), y - top - (clip._child_dy or 0))
+                    Sources.tapModule(selected, def, cover_slot.args or args, regions,
+                        clip:childPoint(x - inset, y - top))
                 end
             end))
             end

@@ -646,7 +646,7 @@ end
 --   texts — { widget, text } per text widget, `text` returning its current string
 --           (nil for the word style, whose lines change size almost every minute)
 --   face  — the analogue face widget, if any
-local function build(w, pfx, vspan_pool, landscape_factor, styles, live, ink, palette)
+local function build(w, pfx, vspan_pool, landscape_factor, styles, live, ink, palette, card)
     local lf    = landscape_factor or 1
     _migrateLegacyElemScales(pfx)
     styles = styles or Config.readTextStyles("clock", TEXT_ELEMS, pfx)
@@ -658,6 +658,10 @@ local function build(w, pfx, vspan_pool, landscape_factor, styles, live, ink, pa
     local batt_elem  = styles.battery.scale or 1
 
     local clock_span, clock_fs = _clockMetrics(w, pfx, raw_scale, clock_elem)
+    if card then
+        clock_span = math.min(clock_span, card.height)
+        clock_fs = math.min(clock_fs, card.height)
+    end
     local clock_w  = clock_fs
     local word_fs  = math.max(_CLOCK_SIZE_MIN, math.floor(clock_fs * _WORD_FS_RATIO))
 
@@ -668,6 +672,10 @@ local function build(w, pfx, vspan_pool, landscape_factor, styles, live, ink, pa
     local item_gap = math.max(0, math.floor(_BASE_ITEM_GAP * scale * getItemGapPct(pfx) / 100))
 
     local visible     = getVisibleItems(pfx)
+    if card then
+        if #visible == 0 then visible = { "clock" } end
+        if #visible > 1 and card.height < card.unit * 90 then visible = { visible[1] } end
+    end
     local clock_style = getClockStyle(pfx)
 
     ink = ink or Chrome.PLAIN_INK
@@ -1041,7 +1049,7 @@ function M.build(w, ctx)
     local live = {}
     if ctx._screen_widget then ctx._screen_widget._clock_live = live end
     return build(w, ctx.pfx, ctx.vspan_pool, ctx.landscape_factor,
-        Config.resolveTextStyles(ctx, M.id, TEXT_ELEMS), live, ctx.ink, ctx.palette)
+        Config.resolveTextStyles(ctx, M.id, TEXT_ELEMS), live, ctx.ink, ctx.palette, ctx.orbitui_card_layout)
 end
 
 function M.getHeight(ctx)

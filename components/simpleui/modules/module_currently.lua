@@ -508,12 +508,12 @@ function M.build(w, ctx)
     -- Drops the stop of a previous build; the book's own is registered below.
     if ctx.kbStops then ctx.kbStops(M.id, {}) end
     if not ctx.current_fp then
-        return _emptyPlaceholder(w, M.getHeight(ctx), ctx.text_alpha, ctx.ink)
+        return _emptyPlaceholder(w, ctx.orbitui_card_layout and ctx.height or M.getHeight(ctx), ctx.text_alpha, ctx.ink)
     end
 
     local SH = getSH()
     if not SH then
-        return _emptyPlaceholder(w, M.getHeight(ctx), ctx.text_alpha, ctx.ink)
+        return _emptyPlaceholder(w, ctx.orbitui_card_layout and ctx.height or M.getHeight(ctx), ctx.text_alpha, ctx.ink)
     end
 
     -- Use pre-read settings bundle from ctx when available (normal HS path).
@@ -548,6 +548,20 @@ function M.build(w, ctx)
     local _cover_ratio = SH.getDims(1.0, 1.0).COVER_H / SH.getDims(1.0, 1.0).COVER_W
     local D = {}
     D.COVER_W, D.COVER_H = _computeCoverDims(w, raw_thumb_scale * raw_scale, _cover_ratio)
+
+    if ctx.orbitui_card_layout then
+        local card = ctx.orbitui_card_layout
+        D.COVER_H = math.min(D.COVER_H, math.max(1, card.height - PAD))
+        D.COVER_W = math.max(1, math.floor(D.COVER_H / _cover_ratio))
+        if card.height < card.unit * 110 then
+            -- Keep the user's element order and visibility on a small card.
+            show = { title = show.title, progress = show.progress, author = show.author and card.height >= card.unit * 85 }
+            layout = "default"
+        elseif card.height < card.unit * 170 then
+            show = setmetatable({ description = false }, { __index = show })
+            stats_style = "compact"
+        end
+    end
 
     -- Scale gaps and font sizes (layout scale × text scale where applicable).
     -- See _scaledLayoutDims for the shared formulas (also used by getHeight()).
@@ -969,7 +983,7 @@ function M.build(w, ctx)
     -- identity), the geometry below and the book texts. A plan found in the
     -- cache comes without a column; the caller builds it.
     local function resolvePlan()
-        local plan_key = c and _layoutPlanKey({
+        local plan_key = c and not ctx.orbitui_card_layout and _layoutPlanKey({
             w, lf, raw_scale, raw_thumb_scale, layout, cover_gap,
             _cover_ratio, ctx.has_wallpaper and 1 or 0, series_text, D.COVER_W,
         }, bd)

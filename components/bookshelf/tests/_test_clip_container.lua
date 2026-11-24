@@ -122,6 +122,18 @@ t.test("scratch buffer is reused across paints of the same size", function()
     assert(off.freed == 0, "reused scratch is never freed mid-life")
 end)
 
+t.test("nested equal-size clips never paint into their parent's active buffer", function()
+    local leaf = child(8, 8)
+    local inner = Clip:new{ w = 20, h = 20, leaf }
+    local parent = child(20, 20)
+    function parent:paintTo(bb, x, y)
+        inner:paintTo(bb, x, y)
+        assert(leaf.painted[1].bb ~= bb)
+        assert(bb.freed == 0)
+    end
+    Clip:new{ w = 20, h = 20, parent }:paintTo(screen(), 0, 0)
+end)
+
 t.test("cells of the same size share one scratch; sizes get their own", function()
     local a, b, cwide = child(5, 5), child(5, 5), child(5, 5)
     local ca = Clip:new{ w = 20, h = 20, a }
@@ -158,7 +170,7 @@ t.test("child centring offsets are recorded for tap-region translation", functio
     assert(c2._child_dx == 0 and c2._child_dy == 0, "clamped offsets recorded")
 end)
 
-t.test("scratch map caps at 8 sizes, then frees and starts over", function()
+t.test("the scratch cache evicts unused buffers after eight sizes", function()
     -- Paint 8 distinct sizes, hold on to their buffers...
     local firsts = {}
     for i = 1, 8 do
@@ -166,13 +178,13 @@ t.test("scratch map caps at 8 sizes, then frees and starts over", function()
         Clip:new{ w = 100 + i, h = 50, kid }:paintTo(screen(), 0, 0)
         firsts[i] = kid.painted[1].bb
     end
-    -- ...the 9th size trips the cap: all cached scratches are freed.
+    -- ...the ninth size forces eviction.
     local kid9 = child(1, 1)
     Clip:new{ w = 200, h = 50, kid9 }:paintTo(screen(), 0, 0)
     local freed = 0
     for _i, bb in ipairs(firsts) do freed = freed + bb.freed end
-    assert(freed > 0, "overflow frees the stale scratch set")
-    -- The map restarts cleanly: the new size is cached and reused.
+    assert(freed > 0, "overflow frees an idle scratch")
+    -- The new size is cached and reused.
     local kid9b = child(1, 1)
     Clip:new{ w = 200, h = 50, kid9b }:paintTo(screen(), 0, 0)
     assert(kid9b.painted[1].bb == kid9.painted[1].bb, "fresh map reuses again")

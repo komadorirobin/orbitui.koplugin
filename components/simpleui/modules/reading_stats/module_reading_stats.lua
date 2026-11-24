@@ -1227,7 +1227,7 @@ local function isEnabled(id, pfx)
 end
 
 local function build(id, w, ctx)
-    if not isEnabled(id, ctx.pfx) then return nil end
+    if not ctx.orbitui_card_layout and not isEnabled(id, ctx.pfx) then return nil end
     local styles = Config.resolveTextStyles(ctx, id, TEXT_ELEMS)
 
     -- Compute all scaled dims once for this render pass.

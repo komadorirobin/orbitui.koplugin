@@ -207,6 +207,10 @@ function M.build(w, ctx)
     local width_pct = math.max(10, math.min(100, getWidthPct(pfx)))
     local inner_w = math.floor((w - PAD * 2) * width_pct / 100)
     local h = math.max(Screen:scaleBySize(24), math.floor(getHeightPx(pfx) * scale))
+    if ctx.orbitui_card_layout then
+        inner_w = math.max(1, inner_w)
+        h = math.max(1, ctx.height)
+    end
     local folder = getFolder(pfx)
     local files = scanImages(folder)
     local rotation = getRotation(pfx)
