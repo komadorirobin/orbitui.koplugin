@@ -95,6 +95,11 @@ The Home card and catalogue use the Lucide symbol selected by BookOrbit and
 the medal shape and colour for its rarity. Unearned medals are grey. A ring
 shows progress toward the next goal. Hidden achievements use a question mark.
 The artwork is included in OrbitUI and works with cached results offline.
+When the module replaces another dashboard card, the available width and
+height determine how many medals fit. Narrow cards use a list. A wider card
+can show three medals across and up to three rows. Recent awards appear first,
+with a place reserved for the next milestone when both fit. A connection
+that supplies only the two-item summary uses the available space for those items.
 For goals with an unknown unit, the card shows the current count and target.
 Tap it to browse All, Earned,
 or Remaining and open a badge's description, award date, or available progress.

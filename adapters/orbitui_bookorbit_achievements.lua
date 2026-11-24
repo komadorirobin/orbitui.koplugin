@@ -443,6 +443,104 @@ function M.open(ctx)
     return modal
 end
 
+-- Earned items are already sorted newest first. Reserve the last visible
+-- place for the next milestone when the card can show both.
+local function cardItems(data, milestone, capacity)
+    local items = {}
+    local earned_limit = math.max(1, capacity - (milestone and 1 or 0))
+    for _, item in ipairs(data and data.items or {}) do
+        if not item.earned or #items == earned_limit then break end
+        items[#items + 1] = item
+    end
+    if milestone and #items < capacity then items[#items + 1] = milestone end
+    return items
+end
+
+local function listRow(item, w, h)
+    local screen = require("device").screen
+    local heading, detail = title(item), nil
+    if h >= screen:scaleBySize(44) then
+        if item.earned then detail = item.day
+        else heading, detail = _("Next milestone") .. " · " .. heading, remaining(item) end
+    elseif not item.earned then
+        heading = remaining(item) .. " · " .. heading
+    end
+    return medalRow(item, w, h, 48, function(width)
+        if not detail then
+            local size = h < screen:scaleBySize(25) and 13 or 15
+            return textWidget(heading, width, math.min(h, screen:scaleBySize(30)), size, true)
+        end
+        local half = math.floor(h / 2)
+        return require("ui/widget/verticalgroup"):new{ align = "left",
+            textWidget(heading, width, half, 15, true), textWidget(detail, width, h - half, 14, false) }
+    end)
+end
+
+local function medalTile(item, w, h)
+    local screen = require("device").screen
+    local Text = require("ui/widget/textwidget")
+    local Font = require("ui/font")
+    local function caption(value, size, bold)
+        return Text:new{ text = value, face = Font:getFace("cfont", size), bold = bold,
+            padding = 0, max_width = math.max(1, w - screen:scaleBySize(4)) }
+    end
+    local name = caption(title(item), 12, true)
+    local detail
+    if h >= screen:scaleBySize(76) then
+        local value = item.earned and item.day
+        if not item.earned then value = remaining(item) end
+        if value then detail = caption(value, 12, false) end
+    end
+    local space = h - name:getSize().h - (detail and detail:getSize().h or 0)
+    local image = require("adapters/orbitui_achievement_medal").widget(item, math.min(space, w, screen:scaleBySize(54)))
+    local tile = require("ui/widget/verticalgroup"):new{}
+    if image then tile[#tile + 1] = image end
+    tile[#tile + 1] = name
+    if detail then tile[#tile + 1] = detail end
+    return require("ui/widget/container/centercontainer"):new{
+        dimen = require("ui/geometry"):new{ w = w, h = h }, tile }
+end
+
+local function cardContent(data, failure, preview, w, h)
+    local screen = require("device").screen
+    local group = require("ui/widget/verticalgroup"):new{ align = "left" }
+    local body_h = h
+    if preview or h >= screen:scaleBySize(68) then
+        local header = data and data.items and countLine(data) or _("Latest achievements")
+        local header_h = math.min(h, screen:scaleBySize(24))
+        group[#group + 1] = textWidget(header .. "  ›", w, header_h, 16, true)
+        body_h = math.max(1, h - header_h)
+    end
+    if preview then return group end
+
+    local grid = w >= screen:scaleBySize(150)
+    local rows = math.max(1, math.min(3, math.floor(body_h / screen:scaleBySize(42))))
+    local list_capacity = math.max(1, math.min(6, math.floor(body_h / screen:scaleBySize(21))))
+    local milestone = data and data.items and nextMilestone(data)
+    local items = cardItems(data, milestone, grid and rows * 3 or list_capacity)
+    if #items == 0 then
+        local copy = data and data.items and _("No recent achievements to show.") or label(failure or "loading")
+        local message = textWidget(copy, w, body_h, 14, false)
+        group[#group + 1] = message
+        return group, message
+    end
+    if grid and (#items >= 3 or #items == 2 and list_capacity == 1) then
+        local columns = (#items == 4 or #items == 2) and 2 or 3
+        local row_h = math.floor(body_h / math.ceil(#items / columns))
+        for first = 1, #items, columns do
+            local row = require("ui/widget/horizontalgroup"):new{}
+            for i = first, math.min(first + columns - 1, #items) do
+                row[#row + 1] = medalTile(items[i], math.floor(w / columns), row_h)
+            end
+            group[#group + 1] = row
+        end
+    else
+        local row_h = math.floor(body_h / #items)
+        for _, item in ipairs(items) do group[#group + 1] = listRow(item, w, row_h) end
+    end
+    return group
+end
+
 local function getHeight()
     return require("device").screen:scaleBySize(142)
 end
@@ -454,39 +552,9 @@ local function build(w, ctx)
     local data, failure
     if not preview then data, failure = snapshot() end
     local h = ctx.orbitui_dashboard_hosted and ctx.height or getHeight()
-    local pad = math.max(0, math.min(Screen:scaleBySize(8), math.floor(w / 10), math.floor(h / 10)))
+    local pad = math.min(Screen:scaleBySize(6), math.floor(w / 20), math.floor(h / 18))
     local inner, usable = math.max(1, w - pad * 2), math.max(1, h - pad * 2)
-    local header = data and data.items and countLine(data) or _("Latest achievements")
-    local group = require("ui/widget/verticalgroup"):new{ align = "left" }
-    local milestone = data and data.items and nextMilestone(data)
-    local roomy = milestone and usable >= Screen:scaleBySize(96)
-    local header_h = math.max(1, math.min(Screen:scaleBySize(30), math.floor(usable / 3)))
-    group[#group + 1] = textWidget(header .. "  ›", inner, header_h, 17, true)
-    local first = data and data.items and data.items[1]
-    local second = data and data.items and data.items[2]
-    local two = first and first.earned and (milestone or second and second.earned)
-    local row_h = math.max(1, math.floor((usable - header_h) / (two and 2 or 1)))
-    local function addRow(item, heading, detail)
-        group[#group + 1] = medalRow(item, inner, row_h, 48, function(width)
-            if not detail then
-                return textWidget(heading, width, math.min(row_h, Screen:scaleBySize(30)), 15, true)
-            end
-            local half = math.max(1, math.floor(row_h / 2))
-            return require("ui/widget/verticalgroup"):new{ align = "left",
-                textWidget(heading, width, half, 15, true),
-                textWidget(detail, width, math.max(1, row_h - half), 14, false) }
-        end)
-    end
-    if first and first.earned then addRow(first, title(first), roomy and first.day or nil) end
-    if milestone then
-        if roomy then addRow(milestone, _("Next milestone") .. " · " .. title(milestone), remaining(milestone))
-        else addRow(milestone, remaining(milestone) .. " · " .. title(milestone)) end
-    elseif second and second.earned then
-        addRow(second, title(second))
-    elseif not (first and first.earned) and not preview then
-        local copy = data and data.items and _("No recent achievements to show.") or label(failure or "loading")
-        group[#group + 1] = textWidget(copy, inner, row_h, 14, false)
-    end
+    local group, message = cardContent(data, failure, preview, inner, usable)
     local clip = require("lib/bookshelf_clip_container"):new{ w = w, h = h,
         require("ui/widget/container/framecontainer"):new{ padding = pad, bordersize = 0,
             require("ui/widget/container/topcontainer"):new{
@@ -511,7 +579,7 @@ local function build(w, ctx)
         if not started and err == "offline" and not data and not failure then
             UI:nextTick(function()
                 if current() then
-                    group[2]:setText(label("offline"))
+                    message:setText(label("offline"))
                     UI:setDirty(owner, "ui", self.dimen)
                 end
             end)

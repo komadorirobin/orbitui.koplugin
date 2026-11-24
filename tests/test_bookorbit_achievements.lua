@@ -23,7 +23,8 @@ package.loaded["ui/renderimage"] = { renderImageData = function(_, svg, bytes, f
     assert(#svg == bytes and not frames and width == height and width > 0)
     return { svg = svg, size = width }
 end }
-for _, path in ipairs({ "ui/widget/horizontalgroup", "ui/widget/horizontalspan", "ui/widget/imagewidget" }) do
+for _, path in ipairs({ "ui/widget/horizontalgroup", "ui/widget/horizontalspan", "ui/widget/imagewidget",
+        "ui/widget/textwidget", "ui/widget/container/centercontainer" }) do
     package.loaded[path] = native
 end
 package.loaded["ui/font"] = { getFace = function() return {} end }
@@ -275,10 +276,10 @@ H.test("key input never prefills a saved key and caches retire on key or account
     H.eq(requests[3], "dashboard"); H.eq(Achievements.snapshot().full, false)
 end)
 
-local function cardRows(owner, height)
+local function cardRows(owner, height, width)
     local descriptor
     Achievements.install({ register = function(d) descriptor = d end })
-    local clip = descriptor.build(260, { _screen_widget = owner, orbitui_dashboard_hosted = true, height = height })
+    local clip = descriptor.build(width or 260, { _screen_widget = owner, orbitui_dashboard_hosted = true, height = height })
     return clip[1][1][1]
 end
 
@@ -299,6 +300,52 @@ H.test("the Home card shows the server's next milestone beside the latest award 
     local compact = cardRows(owner, 84)
     H.eq(#compact, 3); H.eq(compact[3][3].text, "2 böcker kvar · Bookworm")
     H.eq(#requests, 1)
+end)
+
+H.test("allocated width and height select rows or a medal grid without extra reads", function()
+    reset()
+    local owner = {}
+    configure(token)
+    client.request = function()
+        local entries = {
+            { name = "Next", iconName = "hourglass", earned = false, threshold = 10, currentProgress = 8 },
+            { name = "Hidden", earned = false, hidden = true, threshold = 10, currentProgress = 9 },
+        }
+        for day = 1, 9 do
+            entries[#entries + 1] = { name = "Day " .. day, earned = true, iconName = "moon",
+                awardedAt = string.format("2026-11-%02dT12:00:00Z", day) }
+        end
+        return { totalEarned = 9, totalAvailable = #entries, categories = {{ achievements = entries }} }
+    end
+    assert(Achievements.refresh(observe(owner))); drain()
+    local function badgeNames(rows)
+        local names = {}
+        local function collect(widget)
+            if widget.max_width then names[#names + 1] = widget.text end
+            for _, child in ipairs(widget) do collect(child) end
+        end
+        collect(rows)
+        return table.concat(names, ", ")
+    end
+    -- The body sizes correspond to This week and Want to read in the Tolino cover-row layout.
+    local week = cardRows(owner, 48, 171)
+    H.eq(#week, 1); H.eq(#week[1], 3)
+    H.eq(badgeNames(week), "Day 9, Day 8, Next")
+    local shelf = cardRows(owner, 125, 270)
+    H.eq(#shelf, 3); H.eq(#shelf[2], 3); H.eq(#shelf[3], 3)
+    H.eq(badgeNames(shelf), "Day 9, Day 8, Day 7, Day 6, Day 5, Next")
+    local hero = cardRows(owner, 207, 565)
+    H.eq(#hero, 4); H.eq(#hero[4], 3)
+    H.eq(badgeNames(hero), "Day 9, Day 8, Day 7, Day 6, Day 5, Day 4, Day 3, Day 2, Next")
+    local narrow = cardRows(owner, 54, 118)
+    H.eq(#narrow, 2); H.eq(narrow[1][3].text, "Day 9"); H.eq(narrow[2][3].text, "8 / 10 · Next")
+    H.eq(#tasks, 0)
+    configure(nil)
+    assert(Achievements.refresh(observe(owner))); drain()
+    local summary = cardRows(owner, 125, 270)
+    H.eq(#summary, 3); H.eq(summary[2][3][1].text, "Latest")
+    H.eq(summary[3][3][1].text, "Nästa milstolpe · Next")
+    H.eq(#requests, 1); H.eq(#tasks, 0)
 end)
 
 H.test("catalogue milestones use the closest eligible ratio, stable ties, real units and safe older caches", function()
