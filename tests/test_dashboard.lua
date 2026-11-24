@@ -148,9 +148,10 @@ end
 UI.makeTextBox, UI.makeColoredText = makeText, makeText
 package.loaded["infra/sui_core"] = UI
 local Dashboard = require("adapters/orbitui_dashboard")
+local ctx_hold_item
 local ctx = { current_fp = "/current", recent_fps = recent, stats = { books_year = 79, today_pages = 65 },
     pfx = "simpleui_hs_", prefetched = {}, _screen_widget = { _layout_content_h = 800 },
-    open_fn = function(fp) opened = fp end, hold_fn = function(fp) held = fp end,
+    open_fn = function(fp) opened = fp end, hold_fn = function(fp, _, item) held = fp; ctx_hold_item = item end,
     open_settings_fn = function(id) settings = id end }
 
 H.test("uses existing filtered sources and cached Hardcover goal without replacing settings", function()
@@ -730,7 +731,7 @@ H.test("native dashboard tree stays bounded and uses real cover widgets", functi
     dpi = 1
 end)
 
-H.test("book gestures remain native; goal tap opens its log tab and the replacement picker retains goal settings", function()
+H.test("book gestures remain native; goal tap opens its log tab and holding it preserves native settings", function()
     widget.dimen.x, widget.dimen.y = 17, 30
     local function tapAt(x, y, hold)
         local ges = { pos = { x = x + 17, y = y + 30 } }
@@ -742,16 +743,22 @@ H.test("book gestures remain native; goal tap opens its log tab and the replacem
     local xy = current_cover.overlap_offset
     tapAt(xy[1] + 2, xy[2] + 2); H.eq(opened, "/current")
     tapAt(xy[1] + 2, xy[2] + 2, true); H.eq(held, "/current")
+    H.eq(ctx_hold_item.text, "Replace module…")
+    local editor = require("adapters/orbitui_dashboard_settings")
+    local picker, selected = editor.showReplacement
+    local close_book_menu = function() end
+    editor.showReplacement = function(_, _, id, close) selected = id; H.eq(close, close_book_menu) end
+    ctx_hold_item.callback(close_book_menu); H.eq(selected, "hero")
+    editor.showReplacement = picker
     local r = Model.plan(600, 730).goal
     local log = require("adapters/orbitui_reading_log")
     local open, tab = log.open
     log.open = function(opts) tab = opts.tab; H.eq(opts.get_goal().module, "reading_goals") end
     tapAt(r.x + 2, r.y + 2); H.eq(tab, "goal")
     log.open = open
-    local editor = require("adapters/orbitui_dashboard_settings")
     local show = editor.show
     editor.show = function(_, menu, id, replace)
-        H.eq(id, "goal"); H.eq(replace, true); menu.native_settings()
+        H.eq(id, "goal"); H.eq(replace, nil); menu.native_settings({ text = "Replace module…" })
     end
     tapAt(r.x + 2, r.y + 2, true); H.eq(settings, "reading_goals")
     editor.show = show
@@ -1237,7 +1244,7 @@ H.test("the streak card opens the log by default and preserves its configured sh
     local editor = require("adapters/orbitui_dashboard_settings")
     local show = editor.show
     editor.show = function(_, menu, id, replace)
-        H.eq(id, "streak"); H.eq(replace, true); menu.native_settings()
+        H.eq(id, "streak"); H.eq(replace, nil); menu.native_settings({ text = "Replace module…" })
     end
     assert(dashboard:onDashboardHold(nil, ges))
     assert(dashboard:onDashboardHoldRelease()); H.eq(held, "reading_stats")

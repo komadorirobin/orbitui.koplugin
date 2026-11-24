@@ -2118,12 +2118,12 @@ function ScreenWidget:_buildCtx()
         pfx_qa                 = self._pfx_qa,
         close_fn               = function() self_ref:onClose() end,
         open_fn                = function(fp, pos0, page) openBook(fp, pos0, page) end,
-        hold_fn                = function(fp, mod_id) self_ref:_showBookHoldDialog(fp, mod_id) end,
+        hold_fn                = function(fp, mod_id, item) self_ref:_showBookHoldDialog(fp, mod_id, item) end,
         refresh_fn             = function() self_ref:_refreshImmediate(true) end,
         dirty_region_fn        = function(dimen) UIManager:setDirty(self_ref, function() return "ui", dimen end) end,
-        open_settings_fn       = function(mod_id)
+        open_settings_fn       = function(mod_id, context_item)
             local m = mod_id and Registry.get(mod_id)
-            if m then self_ref:_openModuleSettingsFor(m) end
+            if m then return self_ref:_openModuleSettingsFor(m, nil, context_item) end
         end,
         on_qa_tap              = function(aid) if self_ref._on_qa_tap then self_ref._on_qa_tap(aid) end end,
         on_goal_tap            = function() if self_ref._on_goal_tap then self_ref._on_goal_tap() end end,
@@ -2232,7 +2232,7 @@ end
 -- Module Settings" button; the dialog itself works fine without it (that
 -- button is simply omitted).
 -- ---------------------------------------------------------------------------
-function ScreenWidget:_showBookHoldDialog(fp, mod_id)
+function ScreenWidget:_showBookHoldDialog(fp, mod_id, context_item)
     if not fp then return end
     local ok, BookHoldDialog = pcall(require, "features/library/sui_book_hold_dialog")
     if not ok or not BookHoldDialog then return end
@@ -2272,21 +2272,20 @@ function ScreenWidget:_showBookHoldDialog(fp, mod_id)
         -- older module_recent instance until the next full process restart;
         -- gating this row on mod.hideFile then made the action disappear even
         -- though the hold originated in Recent Books.
-        extra_rows = recent_hidden and
-            function(file, close_and_refresh)
-                return {
-                    {
-                        {
-                            text = _("Remove from Recent Books"),
-                            callback = function()
-                                if recent_hidden.hide(file) then
-                                    close_and_refresh()
-                                end
-                            end,
-                        },
-                    },
-                }
-            end or nil,
+        extra_rows = (recent_hidden or context_item) and function(file, close_and_refresh)
+            local rows = {}
+            if recent_hidden then
+                rows[#rows + 1] = {{ text = _("Remove from Recent Books"), callback = function()
+                    if recent_hidden.hide(file) then close_and_refresh() end
+                end }}
+            end
+            if context_item then
+                rows[#rows + 1] = { _bs_id = "orbitui_dashboard_replace", {
+                    text = context_item.text, callback = function() context_item.callback(close_and_refresh) end,
+                } }
+            end
+            return rows
+        end or nil,
         -- "Collections…" and "Book information" open a native FM/ReaderUI
         -- sub-screen on top of us; closing that sub-screen should reveal us
         -- again on its own, but can instead resurface FileManager's native
@@ -2327,7 +2326,7 @@ end
 -- ---------------------------------------------------------------------------
 -- `hold_action`, if given, is what the module's takeHoldAction returned for
 -- the long-press that opened the window: a button beside the layout one.
-function ScreenWidget:_openModuleSettingsFor(mod, hold_action)
+function ScreenWidget:_openModuleSettingsFor(mod, hold_action, context_item)
     local screen = self
     if not mod then return end
 
@@ -2338,6 +2337,7 @@ function ScreenWidget:_openModuleSettingsFor(mod, hold_action)
                 pfx           = self._pfx,
                 pfx_qa        = self._pfx_qa,
                 extra_refresh = function() screen:_refreshLiveData() end,
+                context_item  = context_item,
                 on_change     = function() screen._enabled_mods_cache = nil end,
             })
         end
@@ -2379,6 +2379,7 @@ function ScreenWidget:_openModuleSettingsFor(mod, hold_action)
             } or nil,
         }
         win:show()
+        return win
 end
 
 -- ---------------------------------------------------------------------------

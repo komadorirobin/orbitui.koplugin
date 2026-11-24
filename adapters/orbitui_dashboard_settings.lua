@@ -218,35 +218,50 @@ function M.pickerItems(refresh, pfx, return_to_parent, replace)
             if not ok or not saved then notify(_("Could not replace this module. Reopen the picker and try again.")) end
         end
     end
+    local function moduleItem(entry)
+        local id = Model.moduleId(entry.kind, entry.ref)
+        return { text = entry.label,
+            checked_func = function() return Model.module(dashboard().readConfig(pfx), id) ~= nil end,
+            enabled_func = function()
+                local c = dashboard().readConfig(pfx)
+                if target and id == "module:simpleui:orbitui_reading_silverfish" and Model.isCoverLayout(dashboard().layout(pfx)) then
+                    local old = Model.module(c, target)
+                    if old and not old.slot then return false end
+                end
+                return Model.canPlace(c, target) and (not Model.module(c, id)
+                    or (target ~= nil and id ~= target))
+            end,
+            callback = function()
+                if target and Model.module(dashboard().readConfig(pfx), id) then
+                    if id == target or not replace.current() then return end
+                    require("ui/uimanager"):show(require("ui/widget/confirmbox"):new{
+                        text = string.format(_("Move %s here from its current position?"), entry.label),
+                        ok_text = _("Move here"), ok_callback = function()
+                            if replace.current() then
+                                dashboard().editConfig(pfx, function(c) return Model.moveModule(c, id, target) end, replace.finish)
+                            end
+                        end,
+                    })
+                elseif entry.network then
+                    require("ui/uimanager"):show(require("ui/widget/confirmbox"):new{
+                        text = _(replace and "This module uses the network. Use it here?" or "This module uses the network. Add it to the dashboard?")
+                            .. "\n" .. table.concat(entry.network, "\n"),
+                        ok_callback = function() choose(entry) end,
+                    })
+                else choose(entry) end
+            end }
+    end
     local items = {}
+    if replace then
+        items[1] = moduleItem({ kind = "simpleui", ref = "orbitui_bookorbit_achievements",
+            label = _("BookOrbit achievements") })
+    end
     for _i, spec in ipairs({ { "simpleui", "Home modules (SimpleUI)" },
         { "bookshelf", "Shelf modules (Bookshelf)" }, { "action", "Action shortcuts" } }) do
         local kind, title = spec[1], spec[2]
         items[#items + 1] = { text = _(title), sub_item_table_func = function()
             local rows = {}
-            for _j, choice in ipairs(Sources.moduleChoices(kind)) do
-                local entry = choice
-                local id = Model.moduleId(kind, entry.ref)
-                rows[#rows + 1] = { text = entry.label,
-                    checked_func = function() return Model.module(dashboard().readConfig(pfx), id) ~= nil end,
-                    enabled_func = function()
-                        local c = dashboard().readConfig(pfx)
-                        if target and id == "module:simpleui:orbitui_reading_silverfish" and Model.isCoverLayout(dashboard().layout(pfx)) then
-                            local old = Model.module(c, target)
-                            if old and not old.slot then return false end
-                        end
-                        return not Model.module(c, id) and Model.canPlace(c, target)
-                    end,
-                    callback = function()
-                        if entry.network then
-                            require("ui/uimanager"):show(require("ui/widget/confirmbox"):new{
-                                text = _(replace and "This module uses the network. Use it here?" or "This module uses the network. Add it to the dashboard?")
-                                    .. "\n" .. table.concat(entry.network, "\n"),
-                                ok_callback = function() choose(entry) end,
-                            })
-                        else choose(entry) end
-                    end }
-            end
+            for _, choice in ipairs(Sources.moduleChoices(kind)) do rows[#rows + 1] = moduleItem(choice) end
             if #rows == 0 then rows[1] = { text = _("No compatible modules available. Enable the plugin and restart KOReader."),
                 enabled_func = function() return false end } end
             if kind == "action" then
@@ -335,6 +350,12 @@ local function pickerSheet(pfx, ctx)
     return panel
 end
 
+local function replacementItem(pfx, ctx, id, on_replaced)
+    return { text = _("Replace module…"), callback = function()
+        return M.showReplacement(pfx, ctx, id, on_replaced)
+    end }
+end
+
 local function cardSheet(pfx, ctx, id, parent_open)
     local UI = require("ui/uimanager")
     local Sheets = require("lib/bookshelf_library_modal")
@@ -367,6 +388,8 @@ local function cardSheet(pfx, ctx, id, parent_open)
         local out = {{ title = items[1].text, group = _("Display"),
             subtitle = _("Show this card in the reading dashboard."),
             get_checked = items[1].checked_func, action = items[1].callback }}
+        local replace = replacementItem(pfx, ctx, id, function() changed = false; close() end)
+        out[#out + 1] = { title = replace.text, action = replace.callback }
         local first = 4
         if entry.kind == "simpleui" and items[first] and items[first]._sui_section_label_toggle then
             local heading = items[first]
@@ -410,15 +433,16 @@ local function cardSheet(pfx, ctx, id, parent_open)
     return panel
 end
 
--- Open the replacement choices directly over the dashboard. Only the final
+-- Open the replacement choices over the current menu. Only the final
 -- selection writes settings; delayed network/shortcut callbacks die on close.
-local function replaceWindow(pfx, ctx, id)
+function M.showReplacement(pfx, ctx, id, on_replaced)
     local config = dashboard().readConfig(pfx)
-    if config.unsupported then return end
+    if not Model.canPlace(config, id) then return end
     local entry = Model.module(config, id)
     local alive, win = true, nil
     local function finish()
         win:close()
+        if on_replaced then on_replaced() end
         if ctx.refresh_fn then ctx.refresh_fn(true) end
     end
     local replace = { id = id, current = function() return alive end, finish = finish }
@@ -428,23 +452,14 @@ local function replaceWindow(pfx, ctx, id)
     win = require("screens/sui_settings_window"):show(function() alive = false end, {{
         id = "nested_menu", params = { title = string.format(_("Replace %s"), cardName(id)), items_func = function(menu)
             local items = M.pickerItems(function() if alive then menu.repaint() end end, pfx, true, replace)
-            for _, category in ipairs(items) do category.value_func = function() end end
+            for _, category in ipairs(items) do
+                if category.sub_item_table_func then category.value_func = function() end end
+            end
             if entry and entry.slot then
                 table.insert(items, 1, { text = string.format(_("Restore %s"), cardName(entry.slot)),
                     callback = function()
                         if alive then dashboard().editConfig(pfx, function(c) return Model.removeModule(c, id) end, finish) end
                     end })
-            end
-            if entry then
-                items[#items + 1] = { text = _("Card settings"), callback = function()
-                    win:close()
-                    if Model.module(dashboard().readConfig(pfx), id) then cardSheet(pfx, ctx, id) end
-                end }
-            elseif ctx.native_settings then
-                items[#items + 1] = { text = _("Card settings"), callback = function()
-                    win:close()
-                    ctx.native_settings()
-                end }
             end
             return items
         end },
@@ -454,23 +469,35 @@ end
 
 -- The card overview keeps its paginated settings shell.
 -- Defer Home rebuilding until the editor closes; never rebuild a buried view.
-function M.show(pfx, ctx, id, replace)
-    if replace then return replaceWindow(pfx, ctx, id) end
+function M.show(pfx, ctx, id)
     if id == "add" then return pickerSheet(pfx, ctx) end
     if id and id ~= "add" and Model.module(dashboard().readConfig(pfx), id) then
         return cardSheet(pfx, ctx, id)
     end
     local initial_layout = dashboard().layout(pfx)
-    local changed, alive = false, true
-    return require("screens/sui_settings_window"):show(function()
+    local changed, alive, win = false, true, nil
+    local replace
+    if id and Model.canPlace(dashboard().readConfig(pfx), id) then
+        replace = replacementItem(pfx, ctx, id, function()
+            changed = false
+            if win then win:close() end
+        end)
+        if ctx.native_settings then
+            win = ctx.native_settings(replace)
+            if win then return win end
+        end
+    end
+    win = require("screens/sui_settings_window"):show(function()
         alive = false
         if changed and ctx.refresh_fn then ctx.refresh_fn(dashboard().layout(pfx) ~= initial_layout) end
     end, {{ id = "nested_menu", params = { title = _("Reading dashboard"), items_func = function(menu_ctx)
         local refresh = function() changed = true; if alive then menu_ctx.repaint() end end
         local items = M.items(refresh, pfx, require("engines/sui_window").makeCtxMenu(menu_ctx))
         if not dashboard().readConfig(pfx).unsupported then table.insert(items, 1, dashboard().layoutItem(refresh, pfx)) end
+        if replace then table.insert(items, 1, replace) end
         return items
     end } }}, { pfx = pfx or "simpleui_hs_", pfx_qa = (pfx or "simpleui_hs_") .. "qa_" })
+    return win
 end
 
 function M.sourceItems(key, refresh, pfx)

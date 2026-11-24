@@ -1,5 +1,23 @@
 # Verification and device acceptance
 
+## 2026-11-24 — Dashboard long-press menus and BookOrbit achievements
+
+A Swedish KOReader session on the emulated Tolino Vision Color verified that
+holding **Denna vecka** opens its usual settings. **Byt modul…** leads to
+**BookOrbit-prestationer** on the first screen. Back returned to the same
+settings without changing the card. Selecting the achievements replaced the
+weekly card. Holding its replacement preserved **Visa kort** and **Vid tryck**,
+and the original weekly card could be restored. Holding **Lässvit** opened its
+native settings with the new action.
+
+A fixture book cover opened the normal book overview. Its **•••** action grid
+offered the picker, returned to the grid on cancellation, and returned to Home
+after a successful replacement. Moving the achievements to **Vill läsa**
+required confirmation, restored the source slot, and left one placement.
+Host regression tests also exercise the English menus, a hosted Home book
+module, disabled hold-to-edit, and a confirmation delivered after dismissal.
+The physical HiBreak was unavailable for this check.
+
 ## 2026-11-24 — Adaptive Reading dashboard cards
 
 KOReader on the emulated Tolino Vision Color exercised 21 Home modules, 16

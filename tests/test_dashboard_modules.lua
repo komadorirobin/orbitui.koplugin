@@ -357,6 +357,25 @@ local function view(c)
     v.dimen.x, v.dimen.y = 0, 0
     return v, ctx, data
 end
+H.test("hosted book menus keep their native module and receive the correct optional replacement", function()
+    local e = entry("simpleui", "external_pet")
+    local v, ctx, data = view(only(e))
+    local menu, held
+    ctx.hold_fn = function(file, module, item)
+        H.eq(file, "/a"); H.eq(module, e.ref); menu = item
+    end
+    v.editModules = function(_, id, close) held = id; close() end
+    v:replaceContent(ctx, data)
+    local hold = v._module_cover_slots[1].args.hold_fn
+    hold("/a", e.ref)
+    local closed
+    menu.callback(function() closed = true end)
+    H.eq(held, e.id); assert(closed)
+    saved.simpleui_hs_settings_on_hold = false
+    hold("/a", e.ref); H.eq(menu, nil)
+    saved.simpleui_hs_settings_on_hold = nil
+    v:free()
+end)
 H.test("clock-style refreshes rebuild only their own card and retire old child callbacks", function()
     registry.register({ id = "clock_fixture", name = "Clock", build = mod.build,
         scheduleRefresh = function() error("must not steal the native Home timer") end })

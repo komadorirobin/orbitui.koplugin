@@ -144,15 +144,31 @@ for _, lang in ipairs{ "en", "sv" } do
         catalog = { source }
         local pfx, refreshed = "simpleui_hs_", 0
         local ctx = { refresh_fn = function(full) assert(full); refreshed = refreshed + 1 end }
-        local function open(id) return Settings.show(pfx, ctx, id, true) end
+        local parent
+        local function open(id)
+            parent = Settings.show(pfx, ctx, id)
+            if parent.config then
+                local original, replacement
+                for _, item in ipairs(parent.config.sheet.rows) do
+                    if item.title == tr("When tapped") then original = item end
+                    if item.title == tr("Replace module…") then replacement = item end
+                end
+                assert(original and original.action)
+                assert(replacement).action()
+            else
+                row(parent, tr("Arrange cards"))
+                tap(parent, tr("Replace module…"))
+            end
+            return windows[#windows]
+        end
         local win = open("week")
         tap(win, tr("BookOrbit shelves and smartscopes"))
         local choose = row(win, tr("Shelf") .. ": " .. source.title)[1].onTap
-        win:close(); choose()
+        win:close(); assert(not parent._closed); choose()
         H.eq(#Dashboard.readConfig(pfx).modules, 0); H.eq(refreshed, 0)
         win = open("week"); tap(win, tr("BookOrbit shelves and smartscopes"))
         tap(win, tr("Shelf") .. ": " .. source.title)
-        assert(win._closed); H.eq(refreshed, 1)
+        assert(win._closed and parent._closed); H.eq(refreshed, 1)
         local id = Dashboard.readConfig(pfx).modules[1].id
         H.eq(Dashboard.readConfig(pfx).modules[1].slot, "week")
 
@@ -166,12 +182,38 @@ for _, lang in ipairs{ "en", "sv" } do
         win:close(); accept(); H.eq(Dashboard.readConfig(pfx).modules[1].id, id)
         win = open(id); tap(win, tr("Shelf modules (Bookshelf)")); tap(win, "Online")
         confirmation.ok_callback()
-        assert(win._closed); H.eq(refreshed, 2)
+        assert(win._closed and parent.closed); H.eq(refreshed, 2)
         local placed = Dashboard.readConfig(pfx).modules[1]; H.eq(placed.slot, "week")
         win = open(placed.id); tap(win, string.format(tr("Restore %s"), tr("This week")))
         assert(win._closed); H.eq(refreshed, 3)
         H.eq(#Dashboard.readConfig(pfx).modules, 0); H.eq(#warnings, 0)
         registry.keys, registry.get = keys, get
+    end)
+    H.test(lang .. ": achievements are a direct choice, and moving them requires confirmation", function()
+        reset(lang)
+        local pfx, refreshed = "simpleui_hs_", 0
+        local ctx = { refresh_fn = function() refreshed = refreshed + 1 end }
+        local function pick(target)
+            local parent = Settings.show(pfx, ctx, target)
+            tap(parent, tr("Replace module…"))
+            local picker = windows[#windows]
+            tap(picker, tr("BookOrbit achievements"))
+            return picker
+        end
+        local picker = pick("week")
+        local entry = Dashboard.readConfig(pfx).modules[1]
+        H.eq(entry.id, "module:simpleui:orbitui_bookorbit_achievements")
+        H.eq(entry.slot, "week"); H.eq(requests, 0); assert(picker._closed)
+        Dashboard.editConfig(pfx, function(c) c.tap_actions[entry.id] = false end, function() end)
+        picker = pick("want"); H.eq(confirmation.ok_text, tr("Move here"))
+        H.eq(Dashboard.readConfig(pfx).modules[1].slot, "week")
+        picker:close(); confirmation.ok_callback()
+        H.eq(refreshed, 1); H.eq(Dashboard.readConfig(pfx).modules[1].slot, "week")
+        picker = pick("want"); confirmation.ok_callback()
+        local config = Dashboard.readConfig(pfx)
+        H.eq(#config.modules, 1); H.eq(config.modules[1].slot, "want")
+        H.eq(config.tap_actions[entry.id], false); H.eq(refreshed, 2)
+        assert(picker._closed)
     end)
     H.test(lang .. ": native add shows feedback and a checked source; retained repeated taps never duplicate it", function()
         reset(lang);catalog = { source }

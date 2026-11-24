@@ -87,7 +87,7 @@ It never turns off the external BookOrbit plugin's own reading-progress sync.
 Queued requests retire; an already-sent server write cannot be unsent, but its
 late response cannot overwrite OrbitUI's cache after a policy change.
 
-**BookOrbit achievements / Prestationer i BookOrbit** is an optional Home
+**BookOrbit achievements / BookOrbit-prestationer** is an optional Home
 module under Statistics. It uses the account already connected in the BookOrbit
 plugin. The card shows recent awards. In 1.5.0-beta.2 it also shows the
 closest visible milestone with measurable progress and how much is left.
@@ -417,21 +417,25 @@ copies its creature engine/assets nor changes its save or screensaver settings.
 Desktop checks use Silverfish 2.0.0 source d3da0797; Android acceptance is pending.
 Its own language support remains the plugin's, not an OrbitUI translation.
 
-Long-press a card’s heading or background, choose a category, then select a
-module to replace that card on the same page and in the same space. This works
+Long-press a card’s heading or background to open its usual settings. Choose
+**Replace module…** to pick another module for that space. **BookOrbit
+achievements** is on the first screen of the picker. If it already appears
+elsewhere on the dashboard, you can confirm a move to the selected card. This works
 for built-in cards such as **This week** and for added modules. Long-press the
-replacement and choose **Restore This week** to bring the original back.
+replacement and choose **Replace module… → Restore This week** to bring the original back.
 The replacement uses the space of the card you picked. Book grids show more
 covers as the card grows. A compact clock shows its first visible item, short
 quotes keep their attribution when space permits, and shortcuts use their action
 icons. Modules with a fixed layout fit proportionally into the card. Their
 buttons and book covers remain tappable.
-Long-press an added card and choose **Card settings** to change its visibility
+Long-press an added card to change its visibility
 or remove it. Freely placed cards also offer half-width, full-width, tall and
 whole-page sizes. **Arrange cards** moves it among the built-in blocks;
 statistics remain one group. Up to 16 added cards use at most three rows per
 dashboard page. Dashboard page arrows are separate from Home and book-row arrows.
-Book-cover long-press actions in the original dashboard cards are unchanged.
+Holding a book cover that offers book actions opens its usual book details. The
+**•••** actions menu also offers **Replace module…** when settings on
+long-press are enabled.
 Missing/broken modules retain a configurable placeholder. Removal deletes only
 the placement, never the plugin, its data or the ordinary Home module settings.
 SimpleUI module settings are explicitly shared with that screen's ordinary

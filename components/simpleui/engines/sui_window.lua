@@ -4758,6 +4758,12 @@ function SUIWindow.buildModuleSettingsScreen(ctx, mod, opts)
         layout_sheet = opts.layout_sheet,
     })
 
+    if opts.context_item then
+        local contextual = { opts.context_item }
+        for _, item in ipairs(items) do contextual[#contextual + 1] = item end
+        items = contextual
+    end
+
     return SUIWindow.MenuTable{
         items          = items,
         inner_w        = ctx.inner_w,

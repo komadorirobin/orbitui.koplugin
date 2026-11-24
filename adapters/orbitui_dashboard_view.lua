@@ -120,19 +120,25 @@ function Dashboard:onDashboardHold(_, ges)
     self._held = nil
     if not ges or not ges.pos then return end
     local x, y = ges.pos.x - self.dimen.x, ges.pos.y - self.dimen.y
+    local edit_enabled = require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false
+    local card
+    if edit_enabled then
+        for id, area in pairs(self._plan.cards or {}) do
+            if hit(area, x, y) then
+                card = id == "ladder" and "hero" or id
+                break
+            end
+        end
+    end
     for i = #self._actions, 1, -1 do
         local action = self._actions[i]
-        if action.hold and hit(action, x, y) then self._held = action.hold; return true end
-    end
-    if require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") == false then return end
-    for id, area in pairs(self._plan.cards or {}) do
-        if hit(area, x, y) then
-            local card = id == "ladder" and "hero" or id
-            self._held = function() self:editModules(card, true) end
+        if action.hold and hit(action, x, y) then
+            self._held = function() action.hold(card) end
             return true
         end
     end
-    self._held = function() self:editModules() end
+    if not edit_enabled then return end
+    self._held = function() self:editModules(card) end
     return true
 end
 
@@ -144,25 +150,27 @@ function Dashboard:onDashboardHoldRelease()
     return true
 end
 
-function Dashboard:editModules(id, replace)
+function Dashboard:editModules(id, close_book_menu)
     if self._disposed then return end
     local generation = self._module_generation
     local ctx = self._dashboard_ctx
     local native_settings
-    if id == "streak" or id == "goal" then
-        local goal = self._dashboard_data.goal
-        native_settings = function()
-            if ctx.open_settings_fn then ctx.open_settings_fn(id == "streak" and "reading_stats" or goal and goal.module or "hardcover") end
+    local goal = self._dashboard_data.goal
+    if ctx.open_settings_fn and (id == "streak" or id == "goal" and goal and (tonumber(goal.target) or 0) > 0) then
+        native_settings = function(item)
+            return ctx.open_settings_fn(id == "streak" and "reading_stats" or goal.module or "hardcover", item)
         end
     end
-    require("adapters/orbitui_dashboard_settings").show(ctx.pfx, { native_settings = native_settings, refresh_fn = function(layout_changed)
+    local editor = require("adapters/orbitui_dashboard_settings")
+    local show = close_book_menu and editor.showReplacement or editor.show
+    show(ctx.pfx, { native_settings = native_settings, refresh_fn = function(layout_changed)
         if self._disposed or generation ~= self._module_generation then return end
         local owner = ctx._screen_widget
         -- The new layout can ask for statistics or recent books that were
         -- hidden in the classic layout's cached context.
         if layout_changed and owner and owner._refreshImmediate then owner:_refreshImmediate(false)
         elseif ctx.refresh_fn then ctx.refresh_fn() end
-    end }, id, replace)
+    end }, id, close_book_menu)
 end
 
 function Dashboard:free(full)
@@ -328,9 +336,15 @@ function M.content(widget, p, ctx, data)
             get_goal = function() return data.goal or require("adapters/orbitui_dashboard").readGoal(ctx, data.config, true) end,
         }
     end
+    local function bookHold(fp, module, card)
+        if not ctx.hold_fn then return end
+        local replace = card and { text = _("Replace module…"),
+            callback = function(close) widget:editModules(card, close) end }
+        return ctx.hold_fn(fp, module, replace)
+    end
     local function bookAction(r, fp)
         action(r, function() if ctx.open_fn then ctx.open_fn(fp) end end,
-            function() if ctx.hold_fn then ctx.hold_fn(fp, Model.id) end end)
+            function(card) bookHold(fp, Model.id, card) end)
     end
     local function bar(x, y, w, value, dark, key)
         local palette = colours(key)
@@ -1010,6 +1024,12 @@ function M.content(widget, p, ctx, data)
                 local born = revision
                 args = {}
                 for k, v in pairs(ctx) do args[k] = v end
+                if selected.kind == "simpleui" and ctx.hold_fn then
+                    args.hold_fn = function(fp, module)
+                        local enabled = require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false
+                        return bookHold(fp, module, enabled and selected.id or nil)
+                    end
+                end
                 args.refresh_fn = function() if born == revision then refreshModule() end end
                 building = true
                 local child, child_args

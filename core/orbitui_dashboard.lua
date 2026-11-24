@@ -255,6 +255,19 @@ function M.removeModule(config, id)
     return false
 end
 
+-- Reuse a card that is already on this dashboard after the reader confirms
+-- the move. Keep its tap action and let its former built-in slot reappear.
+function M.moveModule(config, id, target)
+    local existing = M.module(config, id)
+    if not existing or not target or id == target or existing.kind == "bookorbit"
+            or not M.canPlace(config, target) then return false end
+    local tap = config.tap_actions[id]
+    M.removeModule(config, id)
+    if not M.placeModule(config, existing, target) then return false end
+    config.tap_actions[id] = tap
+    return true
+end
+
 local function ordered(value, defaults)
     local result, allowed = {}, {}
     for _, id in ipairs(defaults) do allowed[id] = true end
