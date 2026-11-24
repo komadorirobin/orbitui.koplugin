@@ -695,6 +695,20 @@ local function gridDimensions(ctx, opts)
     return opts.grid_rows or 1, opts.grid_cols or opts.max_items or 5
 end
 
+local function gridProgressStyle(pfx, id, cfg, ctx)
+    local style = GridRenderer.getProgressStyle(pfx, id, cfg)
+    local card = ctx and ctx.orbitui_card_layout
+    if card and style == "bar_text" and card.height / card.rows < card.unit * 90 then return "text" end
+    return style
+end
+
+local function gridLabelSize(scale, style, ctx)
+    local size = math.max(8, math.floor(_BASE_RB_PCT_FS * scale * (style.scale or 1)))
+    local card = ctx and ctx.orbitui_card_layout
+    if card then size = math.min(size, math.max(8, math.floor(card.height / (card.rows * card.unit * 6)))) end
+    return size
+end
+
 local function gridCell(w, cols, cs, ctx, dims, draw_bar, draw_text, label_h, overlay)
     local cw, gap = GridRenderer.computeAutoFitCell(w, cols, cs)
     local layout = ctx and ctx.orbitui_card_layout
@@ -747,7 +761,7 @@ function GridRenderer.build(w, ctx, opts)
     _migrateLabelTextScale(id, pfx)
     local styles      = Config.resolveTextStyles(ctx, id, { "label" })
     local D           = SH.getDims(scale, thumb_scale)
-    local pct_fs      = math.max(8, math.floor(_BASE_RB_PCT_FS * scale * (styles.label.scale or 1)))
+    local pct_fs      = gridLabelSize(scale, styles.label, ctx)
 
 
     -- Cover size: base is the auto-fit size (grid_cols covers + gaps filling
@@ -764,7 +778,7 @@ function GridRenderer.build(w, ctx, opts)
     local cs = raw_scale * raw_thumb_scale
     local pct_face, pct_bold = SUIStyle.getTextFace(styles.label, pct_fs)
 
-    local progress_style     = GridRenderer.getProgressStyle(pfx, id, progress_style_cfg)
+    local progress_style     = gridProgressStyle(pfx, id, progress_style_cfg, ctx)
     local draw_progress      = progress_style == "bar"  or progress_style == "bar_text"
     local draw_text          = GridRenderer.progressDrawsText(progress_style)
     local use_overlay        = progress_style == "overlay"
@@ -781,6 +795,12 @@ function GridRenderer.build(w, ctx, opts)
     -- visual frame of each cover on both sides; between rows, that full
     -- distance reads as too loose, making the two rows look like one block.
     local row_gap = math.max(0, math.floor((ctx.orbitui_card_layout and PAD or gap) / 2))
+    local function progressLabel(book)
+        local label = opts.labelForItem and opts.labelForItem(book)
+        if label then return label end
+        local pct = math.floor((book and book.percent or 0) * 100 + 0.5)
+        return string.format(ctx.orbitui_card_layout and "%d%%" or _("%d%% Read"), pct)
+    end
     local badge_r = math.floor(cw * 0.28)
     -- draw_progress/draw_text (computed above, once, same for the whole
     -- row/grid) decide how much extra height is reserved — see
@@ -934,8 +954,7 @@ function GridRenderer.build(w, ctx, opts)
             cell[#cell+1] = SH.vspan(draw_progress and D.RB_GAP2 or D.RB_GAP1, ctx.vspan_pool)
             local _pct_fg = ink.sub
             local pct_w = UI.makeColoredText{
-                text      = opts.labelForItem and opts.labelForItem(bd)
-                            or string.format(_("%d%% Read"), math.floor((bd.percent or 0) * 100 + 0.5)),
+                text      = progressLabel(bd),
                 face      = pct_face,
                 bold      = pct_bold,
                 fgcolor   = _pct_fg,
@@ -949,8 +968,7 @@ function GridRenderer.build(w, ctx, opts)
             }
             _update_text = function(nd)
                 UI.updateColoredText(pct_w,
-                    opts.labelForItem and opts.labelForItem(nd)
-                    or string.format(_("%d%% Read"), math.floor((nd and nd.percent or 0) * 100 + 0.5)),
+                    progressLabel(nd),
                     _pct_fg)
             end
         end
@@ -1195,7 +1213,7 @@ function GridRenderer.updateStats(widget, ctx, opts)
     -- Style must be both patchable and unchanged since this widget was
     -- built (mirrors build()'s draw_progress/draw_text/use_overlay/
     -- use_progress_badge derivation).
-    local progress_style = GridRenderer.getProgressStyle(pfx, id, opts.progress_style or {})
+    local progress_style = gridProgressStyle(pfx, id, opts.progress_style or {}, ctx)
     if progress_style ~= widget._row_progress_style then return false end
     if progress_style == "overlay" or progress_style == "badge" then return false end
 
@@ -1319,11 +1337,11 @@ function GridRenderer.getGridHeight(_ctx, opts)
     -- label_h: measured via the same face used in build()
     -- (face.ftsize:getHeightAndAscender(), the real freetype/KOReader API)
     -- so it always matches the actual glyph height, not a fixed constant.
-    local progress_style = GridRenderer.getProgressStyle(pfx, id, progress_style_cfg)
+    local progress_style = gridProgressStyle(pfx, id, progress_style_cfg, _ctx)
     local draw_progress  = progress_style == "bar"  or progress_style == "bar_text"
     local draw_text      = GridRenderer.progressDrawsText(progress_style)
     local use_overlay    = progress_style == "overlay"
-    local pct_fs   = math.max(8, math.floor(_BASE_RB_PCT_FS * scale * (styles.label.scale or 1)))
+    local pct_fs   = gridLabelSize(scale, styles.label, _ctx)
     local label_h  = SUIStyle.faceHeight((SUIStyle.getTextFace(styles.label, pct_fs)))
     local cw, gap_for_row = gridCell(w, grid_cols, cs, _ctx, D, draw_progress, draw_text, label_h, use_overlay)
     local rh = math.max(1, math.floor(cw * (D.RECENT_H / D.RECENT_W)))
