@@ -2,6 +2,17 @@
 
 ## OrbitUI 1.5.0-beta.2
 
+Published on 2026-11-24T14:37:17Z as GitHub prerelease 456885157
+from **aad711e4b**. The 10,289,117-byte ZIP and its checksum
+matched the draft and local build. SHA-256 is
+`ac235c1e6888ab8198d7ae8e59320b622e45cbb7b3c91429ac1353c20e65c5f6`. GitHub Latest and the stable updater both offer 1.4.0.
+
+Both interpreter jobs passed on [main](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/45415180260)
+and the [release tag](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/45415404430).
+All four CI archives matched the 2,000 installed files and executable bits.
+KOReader’s preview updater on 1.4.0 and 1.5.0-beta.1 discovered the release
+over anonymous HTTPS, installed the public bytes, restarted and rolled back.
+
 The preview adds the next BookOrbit milestone to Home, reuses completed
 cover checks on Android in safe mode, and incorporates Bookshelf 6.6.0 and
 SimpleUI maintenance. Enable **Include preview releases** under
