@@ -730,7 +730,7 @@ H.test("native dashboard tree stays bounded and uses real cover widgets", functi
     dpi = 1
 end)
 
-H.test("book gestures remain native; goal tap opens its log tab and hold opens settings", function()
+H.test("book gestures remain native; goal tap opens its log tab and the replacement picker retains goal settings", function()
     widget.dimen.x, widget.dimen.y = 17, 30
     local function tapAt(x, y, hold)
         local ges = { pos = { x = x + 17, y = y + 30 } }
@@ -748,7 +748,13 @@ H.test("book gestures remain native; goal tap opens its log tab and hold opens s
     log.open = function(opts) tab = opts.tab; H.eq(opts.get_goal().module, "reading_goals") end
     tapAt(r.x + 2, r.y + 2); H.eq(tab, "goal")
     log.open = open
+    local editor = require("adapters/orbitui_dashboard_settings")
+    local show = editor.show
+    editor.show = function(_, menu, id, replace)
+        H.eq(id, "goal"); H.eq(replace, true); menu.native_settings()
+    end
     tapAt(r.x + 2, r.y + 2, true); H.eq(settings, "reading_goals")
+    editor.show = show
 end)
 
 H.test("cover and progress refresh free only the replaced tree and do not change layout", function()
@@ -1228,8 +1234,14 @@ H.test("the streak card opens the log by default and preserves its configured sh
     dashboard.dimen.x, dashboard.dimen.y = 0, 0
     local ges = { pos = { x = dashboard.dimen.x + area.x + 1, y = dashboard.dimen.y + area.y + 1 } }
     assert(dashboard:onDashboardTap(nil, ges)); H.eq(opened, 1)
+    local editor = require("adapters/orbitui_dashboard_settings")
+    local show = editor.show
+    editor.show = function(_, menu, id, replace)
+        H.eq(id, "streak"); H.eq(replace, true); menu.native_settings()
+    end
     assert(dashboard:onDashboardHold(nil, ges))
     assert(dashboard:onDashboardHoldRelease()); H.eq(held, "reading_stats")
+    editor.show = show
     d.config.tap_actions.streak = false
     dashboard:replaceContent(c, d)
     assert(dashboard:onDashboardTap(nil, ges)); H.eq(opened, 1)

@@ -408,8 +408,13 @@ copies its creature engine/assets nor changes its save or screensaver settings.
 Desktop checks use Silverfish 2.0.0 source d3da0797; Android acceptance is pending.
 Its own language support remains the plugin's, not an OrbitUI translation.
 
-Long-press an added card for half-width, full-width, tall or whole-page sizing,
-visibility or removal. **Arrange cards** moves it among the built-in blocks;
+Long-press a card’s heading or background, choose a category, then select a
+module to replace that card on the same page and in the same space. This works
+for built-in cards such as **This week** and for added modules. Long-press the
+replacement and choose **Restore This week** to bring the original back.
+Long-press an added card and choose **Card settings** to change its visibility
+or remove it. Freely placed cards also offer half-width, full-width, tall and
+whole-page sizes. **Arrange cards** moves it among the built-in blocks;
 statistics remain one group. Up to 16 added cards use at most three rows per
 dashboard page. Dashboard page arrows are separate from Home and book-row arrows.
 Book-cover long-press actions in the original dashboard cards are unchanged.
@@ -428,13 +433,18 @@ page changes/close. Lua errors are contained, but arbitrary third-party code is
 not sandboxed or protected against native crashes/infinite loops. Oversized
 content is clipped rather than painted over other cards; choose a larger size.
 Existing layouts need no migration. Adding a card opts that screen into config
-v2, which older OrbitUI builds show as unsupported without overwriting it.
+v2, or v3 for BookOrbit sources. Replacing a built-in card uses v4. Older builds
+that do not understand the layout leave its saved settings intact.
 
 **Svenska:** Tryck på **+**, håll inne en yta utan bokomslag eller gå till
 **Hem (SimpleUI) → Läsöversikt → Kort och innehåll → Lägg till modul…**. Välj
 **Hem-moduler (SimpleUI)**, **Hyllmoduler (Bookshelf)** eller **Åtgärdsgenvägar**.
-Installera Silverfish separat eller via **Hämta fler moduler…** och starta om KOReader. Håll inne pluginkortet för
-storlek, synlighet och borttagning; placera det via **Ordna kort**. Välj **Hel
+Håll inne rubriken eller bakgrunden på ett kort, välj kategori och tryck på
+modulen du vill ha där. Den får samma plats och storlek. Om du bytt ut
+**Denna vecka** kan du hålla inne ersättaren och välja **Återställ Denna vecka**.
+Ett långtryck på själva bokomslaget öppnar bokmenyn.
+Installera Silverfish separat eller via **Hämta fler moduler…** och starta om KOReader.
+Håll inne ett tillagt kort och välj **Kortinställningar** för att anpassa det. Välj **Hel
 sida** om innehållet beskärs. Borttagning av ett kort avinstallerar inte pluginet
 och raderar inte dess data. Äldre OrbitUI-versioner kan inte redigera den nya
 kortlayouten, men ska inte skriva över den.

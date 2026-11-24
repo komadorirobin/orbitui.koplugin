@@ -174,6 +174,74 @@ function M.module(config, id)
     for _, entry in ipairs(config.modules or {}) do if entry.id == id then return entry end end
 end
 
+local native_slots = {}
+for _, card in ipairs(M.heading_cards) do native_slots[card.key] = true end
+
+function M.slotModule(config, slot)
+    if native_slots[slot] then
+        for _, entry in ipairs(config.modules or {}) do
+            if entry.slot == slot then return entry end
+        end
+    end
+end
+
+function M.canPlace(config, target)
+    if config.unsupported then return false end
+    if target then
+        return M.module(config, target) ~= nil or native_slots[target] and not M.slotModule(config, target)
+    end
+    local count = 0
+    for _, entry in ipairs(config.modules) do if not entry.slot then count = count + 1 end end
+    return count < M.module_limit
+end
+
+-- Replace a placement in one edit. Built-in cards keep their original geometry,
+-- including the small statistics cells and the first page of the cover layouts.
+function M.placeModule(config, entry, target)
+    if not M.canPlace(config, target) then return false end
+    local ref = entry.ref
+    if entry.kind == "bookorbit" then
+        if not M.bookOrbitSource(entry.source) then return false end
+        local serial = 1
+        while M.module(config, M.moduleId("bookorbit", "row-" .. serial)) do serial = serial + 1 end
+        ref = "row-" .. serial
+    end
+    local id = M.moduleId(entry.kind, ref)
+    if not id or M.module(config, id) then return false end
+    local placed = { id = id, kind = entry.kind, ref = ref, label = entry.label,
+        width = 2, size = "normal", source = entry.source, view = entry.view }
+    for i, old in ipairs(config.modules) do
+        if target == old.id then
+            placed.width, placed.size, placed.slot = old.width, old.size, old.slot
+            config.modules[i] = placed
+            for j, key in ipairs(config.order) do
+                if key == target then config.order[j] = id end
+            end
+            config.hidden[id], config.hidden[target] = config.hidden[target], nil
+            config.tap_actions[target] = nil
+            return true
+        end
+    end
+    placed.slot = target
+    config.modules[#config.modules + 1] = placed
+    if not target then config.order[#config.order + 1] = id end
+    return true
+end
+
+function M.removeModule(config, id)
+    for i, entry in ipairs(config.modules) do
+        if entry.id == id then
+            table.remove(config.modules, i)
+            for j, key in ipairs(config.order) do
+                if key == id then table.remove(config.order, j); break end
+            end
+            config.hidden[id], config.tap_actions[id] = nil, nil
+            return true
+        end
+    end
+    return false
+end
+
 local function ordered(value, defaults)
     local result, allowed = {}, {}
     for _, id in ipairs(defaults) do allowed[id] = true end
@@ -193,16 +261,18 @@ function M.config(raw, legacy)
             new = { kind = "native", id = "new_books" },
         }, goal = "auto", cover_row_count = 4, cover_row_caption = "percent" }
     if raw == nil then return result end
-    if type(raw) ~= "table" or (raw.version ~= 1 and raw.version ~= 2 and raw.version ~= 3) then
+    if type(raw) ~= "table" or (raw.version ~= 1 and raw.version ~= 2 and raw.version ~= 3 and raw.version ~= 4) then
         -- A downgrade must not silently replace a newer configuration.
         result.unsupported = true
         for _, card in ipairs(M.heading_cards) do result.hidden[card.key] = true end
         return result
     end
-    local defaults, seen = copy(M.block_order), {}
+    local defaults, seen, slots = copy(M.block_order), {}, {}
+    local extra_count = 0
     for _, entry in ipairs(type(raw.modules) == "table" and raw.modules or {}) do
         local id = type(entry) == "table" and M.moduleId(entry.kind, entry.ref)
-        if id and not seen[id] and #result.modules < M.module_limit then
+        local slot = id and native_slots[entry.slot] and not slots[entry.slot] and entry.slot
+        if id and not seen[id] and (slot or extra_count < M.module_limit) then
             seen[id] = true
             result.modules[#result.modules + 1] = { id = id, kind = entry.kind, ref = entry.ref,
                 label = type(entry.label) == "string" and #entry.label <= 512 and M.normalizeHeading(entry.label) or nil,
@@ -213,7 +283,13 @@ function M.config(raw, legacy)
                 added.source = M.bookOrbitSource(entry.source)
                 added.view = entry.view == "carousel" and "carousel" or "row"
             end
-            defaults[#defaults + 1] = id
+            if slot then
+                result.modules[#result.modules].slot = slot
+                slots[slot] = true
+            else
+                extra_count = extra_count + 1
+                defaults[#defaults + 1] = id
+            end
             result.hidden[id] = type(raw.hidden) == "table" and raw.hidden[id] == true or nil
         end
     end
@@ -223,6 +299,7 @@ function M.config(raw, legacy)
         if entry.kind == "bookorbit" then result.version = 3 end
     end
     if raw.version == 3 then result.version = 3 end
+    if next(slots) or raw.version == 4 then result.version = 4 end
     result.order = ordered(raw.order, defaults)
     result.stats_order = ordered(raw.stats_order, M.stat_order)
     if type(raw.tap_actions) == "table" then
@@ -252,7 +329,12 @@ function M.config(raw, legacy)
 end
 
 function M.visible(config, key)
-    return not config or not config.hidden[key]
+    local entry = config and M.slotModule(config, key)
+    return not config or not config.hidden[entry and entry.id or key]
+end
+
+function M.nativeVisible(config, key)
+    return not config.hidden[key] and not M.slotModule(config, key)
 end
 
 function M.sourceKey(source)
@@ -380,17 +462,21 @@ function M.plan(w, h, config, page, layout)
         local want, new = M.visible(config, "want"), M.visible(config, "new")
         local reading = { weight = 17 }
         for _, id in ipairs(config.stats_order) do
-            if M.statPlacement(layout, id) == "front" then reading[#reading + 1] = id end
+            if M.statPlacement(layout, id) == "front" and (not M.slotModule(config, id) or M.visible(config, id)) then
+                reading[#reading + 1] = id
+            end
         end
         if M.visible(config, "goal") then reading[#reading + 1] = "goal" end
-        local first = { { "ladder", weight = cover_row and 50 or 54 } }
-        if not cover_row then first[#first + 1] = reading end
+        local first = {}
+        local hero = M.slotModule(config, "hero")
+        if not hero or M.visible(config, "hero") then first[1] = { "ladder", weight = cover_row and 50 or 54 } end
+        if not cover_row and #reading > 0 then first[#first + 1] = reading end
         if want or new then
             first[#first + 1] = { want and "want" or "new", want and new and "new" or nil,
                 weight = cover_row and 33 or 29 }
         end
-        if cover_row then first[#first + 1] = reading end
-        pages[1] = first
+        if cover_row and #reading > 0 then first[#first + 1] = reading end
+        if #first > 0 then pages[1] = first; plan.cover_front = true end
     end
     for _, row in ipairs(rows) do
         if #current == 3 or row.own_page and #current > 0 then
@@ -437,6 +523,20 @@ function M.plan(w, h, config, page, layout)
         -- Reordered tall cards must not inherit a short row's font geometry.
         plan.scale = math.min(plan.scale, rh / (row.weight * 6))
         y = y + rh + gap
+    end
+    plan.cover_front = plan.cover_front and plan.page == 1
+    for _, entry in ipairs(config.modules or {}) do
+        local slot = entry.slot
+        if slot then
+            local key = slot == "hero" and plan.ladder and "ladder" or slot
+            local area = plan.cards[key]
+            if area then
+                plan.cards[entry.id], plan.cards[key], plan[key] = area, nil, nil
+                for i, stat in ipairs(M.stat_order) do
+                    if stat == slot then plan.stats[i] = nil end
+                end
+            end
+        end
     end
     plan.pad = math.max(3, math.floor(12 * plan.scale))
     return plan

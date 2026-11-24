@@ -63,25 +63,27 @@ M.needs = {
     recent = function(pfx)
         local config = M.readConfig(pfx)
         local demand = Sources.moduleNeed(config, pfx, "recent")
-        if Model.visible(config, "ongoing") or Model.isCoverLayout(M.layout(pfx)) then return math.max(30, demand) end
+        local cover = Model.isCoverLayout(M.layout(pfx))
+        if Model.nativeVisible(config, "ongoing") and not cover
+                or cover and not Model.slotModule(config, "hero") then return math.max(30, demand) end
         for _, id in ipairs({ "want", "new" }) do
             local source = config.sources[id]
-            if Model.visible(config, id) and source.kind == "native" and source.id == "recent" then return math.max(30, demand) end
+            if Model.nativeVisible(config, id) and source.kind == "native" and source.id == "recent" then return math.max(30, demand) end
         end
-        return math.max(demand, Model.visible(config, "hero") and 1 or 0)
+        return math.max(demand, Model.nativeVisible(config, "hero") and 1 or 0)
     end,
     stats = function(pfx)
         local config = M.readConfig(pfx)
         if Model.isCoverLayout(M.layout(pfx)) or Sources.moduleNeed(config, pfx, "stats") then return true end
         for _, id in ipairs(Model.stat_order) do
-            if Model.visible(config, id) then return true end
+            if Model.nativeVisible(config, id) then return true end
         end
-        return Model.visible(config, "goal") and not hardcoverGoal(config, pfx)
+        return Model.nativeVisible(config, "goal") and not hardcoverGoal(config, pfx)
     end,
     books = function(pfx)
         local config = M.readConfig(pfx)
         return Sources.moduleNeed(config, pfx, "books")
-            or Model.visible(config, "goal") and not hardcoverGoal(config, pfx)
+            or Model.nativeVisible(config, "goal") and not hardcoverGoal(config, pfx)
     end,
 }
 for _, kind in ipairs({ "status", "records", "year", "charts", "current_book_stats" }) do
@@ -95,7 +97,7 @@ end
 function M.editConfig(pfx, edit, refresh)
     local config = M.readConfig(pfx)
     if config.unsupported then return false end
-    edit(config)
+    if edit(config) == false then return false end
     store():saveSetting((pfx or "simpleui_hs_") .. "orbitui_dashboard_config", Model.config(config))
     if refresh then refresh() else
         require("screens/sui_homescreen").rebuildLayout({ keep_wallpaper = true })
@@ -264,7 +266,7 @@ function M.wrapWantProvider(provider)
         if not M.isEnabled(pfx) or store():readSetting("simpleui_bookorbit_want_auto_refresh") == false then return false end
         local config = M.readConfig(pfx)
         for _, card in ipairs({ "want", "new" }) do
-            if Model.visible(config, card) and Sources.usesBookOrbit(config.sources[card]) then return true end
+            if Model.nativeVisible(config, card) and Sources.usesBookOrbit(config.sources[card]) then return true end
         end
         return false
     end
@@ -306,7 +308,7 @@ function M.readData(ctx)
     local config = M.readConfig(ctx.pfx)
     local layout = not config.unsupported and M.layout(ctx.pfx) or "classic"
     local cover_layout = Model.isCoverLayout(layout)
-    local function visible(id) return Model.visible(config, id) end
+    local function visible(id) return Model.nativeVisible(config, id) end
     local function read(fp)
         return require("modules/module_books_shared").getBookData(fp,
             ctx.prefetched and ctx.prefetched[fp], { skip_description = true })
@@ -317,11 +319,12 @@ function M.readData(ctx)
     if visible("new") then new, new_error = Sources.files(config.sources.new, ctx) end
     local hc_enabled = hardcoverGoal(config, ctx.pfx)
     local goal = visible("goal") and M.readGoal(ctx, config) or nil
-    local current = (cover_layout or visible("hero")) and fp and { file = fp, data = read(fp) } or nil
+    local combined = cover_layout and not Model.slotModule(config, "hero")
+    local current = (combined or not cover_layout and visible("hero")) and fp and { file = fp, data = read(fp) } or nil
     local ongoing_limit = layout == "cover_row" and config.cover_row_count - (current and 1 or 0) or 3
     return {
         current = current,
-        ongoing = (cover_layout or visible("ongoing"))
+        ongoing = (combined or not cover_layout and visible("ongoing"))
             and Model.ongoing(current and current.file, ctx.recent_fps, read, ongoing_limit) or {},
         time_left = cover_layout and current and require("adapters/orbitui_silverfish").timeLeft(ctx, current.file, current.data) or nil,
         want = want, new = new, want_error = want_error, new_error = new_error,

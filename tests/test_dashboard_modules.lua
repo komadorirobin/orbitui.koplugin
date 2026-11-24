@@ -106,6 +106,57 @@ H.test("add is explicit, bounded, screen-scoped and keeps ordinary layouts and p
     H.eq(Settings.add(entry("simpleui", "external_pet"), changed, pfx), false)
     H.eq(writes, count); H.eq(built, 0); H.eq(micro_keys, 0)
 end)
+H.test("replacements retain built-in geometry across layouts and restore the original settings", function()
+    for _, layout in ipairs({ "classic", "cover_row", "cover_stairs" }) do
+        for _, slot in ipairs({ "hero", "week", "want", "goal" }) do
+            local c = Model.config()
+            local page = layout == "cover_stairs" and slot == "week" and 2 or 1
+            local key = slot == "hero" and layout ~= "classic" and "ladder" or slot
+            local before = Model.plan(600, 730, c, page, layout)
+            local area = assert(before.cards[key], slot)
+            c.tap_actions[slot] = "old_tap"
+            local e = entry("simpleui", "external_pet")
+            assert(Model.placeModule(c, e, slot))
+            c = Model.config(c)
+            H.eq(c.version, 4); H.eq(#c.order, #Model.block_order)
+            local after = Model.plan(600, 730, c, page, layout)
+            H.eq(after.pages, before.pages); H.eq(after.cards[key], nil)
+            for name, value in pairs(area) do H.eq(after.cards[e.id][name], value) end
+            H.eq(c.tap_actions[e.id], nil); H.eq(Model.nativeVisible(c, slot), false)
+            H.eq(Model.placeModule(c, entry("action", "other"), slot), false)
+            assert(Model.removeModule(c, e.id)); c = Model.config(c)
+            assert(Model.plan(600, 730, c, page, layout).cards[key])
+            H.eq(c.tap_actions[slot], "old_tap")
+        end
+    end
+end)
+
+H.test("a full dashboard replaces one card on the same page and keeps its neighbours", function()
+    local c = Model.config()
+    for i = 1, Model.module_limit do assert(Model.placeModule(c, entry("action", "old" .. i))) end
+    local old, new = c.modules[8], entry("simpleui", "external_pet")
+    old.width, old.size = 2, "page"
+    c.tap_actions[old.id] = "old"
+    local before = Model.plan(600, 730, c, 1, "classic")
+    local page, area
+    for n = 1, before.pages do
+        area = Model.plan(600, 730, c, n, "classic").cards[old.id]
+        if area then page = n; break end
+    end
+    assert(page and area); assert(Model.placeModule(c, new, old.id))
+    assert(Model.placeModule(c, entry("action", "anchored"), "week"))
+    c = Model.config(c)
+    H.eq(#c.modules, Model.module_limit + 1); H.eq(c.modules[8].size, "page")
+    H.eq(c.tap_actions[old.id], nil); H.eq(c.tap_actions[new.id], nil)
+    local after = Model.plan(600, 730, c, page, "classic")
+    H.eq(before.pages, after.pages)
+    for k, v in pairs(area) do H.eq(after.cards[new.id][k], v) end
+    H.eq(c.order[8 + #Model.block_order], new.id)
+    H.eq(Model.placeModule(c, entry("action", "old1"), new.id), false)
+    H.eq(Model.placeModule(c, entry("action", "overflow")), false)
+    H.eq(Model.placeModule(c, entry("action", "stale"), old.id), false)
+end)
+
 H.test("normalization deduplicates stable ids, bounds entries and retains missing plugins", function()
     local raw = { version = 1, modules = { entry("simpleui", "missing"), entry("simpleui", "missing"),
         { kind = "file", ref = "/tmp/inject.lua" }, { kind = "action", ref = "bad\nref" } },

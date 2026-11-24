@@ -139,6 +139,40 @@ local function openSources()
     } }})
 end
 for _, lang in ipairs{ "en", "sv" } do
+    H.test(lang .. ": replace a built-in card, cancel, restore and reject delayed confirmations", function()
+        reset(lang)
+        catalog = { source }
+        local pfx, refreshed = "simpleui_hs_", 0
+        local ctx = { refresh_fn = function(full) assert(full); refreshed = refreshed + 1 end }
+        local function open(id) return Settings.show(pfx, ctx, id, true) end
+        local win = open("week")
+        tap(win, tr("BookOrbit shelves and smartscopes"))
+        local choose = row(win, tr("Shelf") .. ": " .. source.title)[1].onTap
+        win:close(); choose()
+        H.eq(#Dashboard.readConfig(pfx).modules, 0); H.eq(refreshed, 0)
+        win = open("week"); tap(win, tr("BookOrbit shelves and smartscopes"))
+        tap(win, tr("Shelf") .. ": " .. source.title)
+        assert(win._closed); H.eq(refreshed, 1)
+        local id = Dashboard.readConfig(pfx).modules[1].id
+        H.eq(Dashboard.readConfig(pfx).modules[1].slot, "week")
+
+        local registry = package.loaded["lib/bookshelf_start_menu_modules"]
+        local keys, get = registry.keys, registry.get
+        registry.keys = function() return { "online" } end
+        registry.get = function() return { title = "Online", render = function() end, network = { "example.invalid" } } end
+        win = open(id); tap(win, tr("Shelf modules (Bookshelf)")); tap(win, "Online")
+        H.eq(confirmation.text, tr("This module uses the network. Use it here?") .. "\nexample.invalid")
+        local accept = confirmation.ok_callback
+        win:close(); accept(); H.eq(Dashboard.readConfig(pfx).modules[1].id, id)
+        win = open(id); tap(win, tr("Shelf modules (Bookshelf)")); tap(win, "Online")
+        confirmation.ok_callback()
+        assert(win._closed); H.eq(refreshed, 2)
+        local placed = Dashboard.readConfig(pfx).modules[1]; H.eq(placed.slot, "week")
+        win = open(placed.id); tap(win, string.format(tr("Restore %s"), tr("This week")))
+        assert(win._closed); H.eq(refreshed, 3)
+        H.eq(#Dashboard.readConfig(pfx).modules, 0); H.eq(#warnings, 0)
+        registry.keys, registry.get = keys, get
+    end)
     H.test(lang .. ": native add shows feedback and a checked source; retained repeated taps never duplicate it", function()
         reset(lang);catalog = { source }
         local pfx, refreshed = "simpleui_hs_", 0

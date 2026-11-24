@@ -125,6 +125,13 @@ function Dashboard:onDashboardHold(_, ges)
         if action.hold and hit(action, x, y) then self._held = action.hold; return true end
     end
     if require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") == false then return end
+    for id, area in pairs(self._plan.cards or {}) do
+        if hit(area, x, y) then
+            local card = id == "ladder" and "hero" or id
+            self._held = function() self:editModules(card, true) end
+            return true
+        end
+    end
     self._held = function() self:editModules() end
     return true
 end
@@ -137,18 +144,25 @@ function Dashboard:onDashboardHoldRelease()
     return true
 end
 
-function Dashboard:editModules(id)
+function Dashboard:editModules(id, replace)
     if self._disposed then return end
     local generation = self._module_generation
     local ctx = self._dashboard_ctx
-    require("adapters/orbitui_dashboard_settings").show(ctx.pfx, { refresh_fn = function(layout_changed)
+    local native_settings
+    if id == "streak" or id == "goal" then
+        local goal = self._dashboard_data.goal
+        native_settings = function()
+            if ctx.open_settings_fn then ctx.open_settings_fn(id == "streak" and "reading_stats" or goal and goal.module or "hardcover") end
+        end
+    end
+    require("adapters/orbitui_dashboard_settings").show(ctx.pfx, { native_settings = native_settings, refresh_fn = function(layout_changed)
         if self._disposed or generation ~= self._module_generation then return end
         local owner = ctx._screen_widget
         -- The new layout can ask for statistics or recent books that were
         -- hidden in the classic layout's cached context.
         if layout_changed and owner and owner._refreshImmediate then owner:_refreshImmediate(false)
         elseif ctx.refresh_fn then ctx.refresh_fn() end
-    end }, id)
+    end }, id, replace)
 end
 
 function Dashboard:free(full)
@@ -640,7 +654,7 @@ function M.content(widget, p, ctx, data)
     end
 
     local stats = data.stats
-    local cover_summary = p.cover_row and p.ladder ~= nil
+    local cover_summary = p.cover_row and p.cover_front
     local function summaryChart(key, x, y, w, bottom)
         local available = bottom - y
         if available < 6 then return end
@@ -674,8 +688,8 @@ function M.content(widget, p, ctx, data)
     end
     local tiles = {
         { "Pages today", tostring(stats.today_pages or 0), "pages", "pages_today" },
-        { "Reading today", p.ladder and stats.today_secs == nil and "—"
-            or Model.duration(stats.today_secs, p.ladder ~= nil), "reading time", "reading_today" },
+        { "Reading today", p.cover_front and stats.today_secs == nil and "—"
+            or Model.duration(stats.today_secs, p.cover_front), "reading time", "reading_today" },
         { "Reading streak", cover_summary and stats.streak == nil and "—" or tostring(stats.streak or 0),
             stats.streak == 1 and "day in a row" or "days in a row", "streak" },
         { "This week", cover_summary and stats.week_secs == nil and "—"
@@ -696,7 +710,7 @@ function M.content(widget, p, ctx, data)
         else
             title(label, r)
         end
-        if p.ladder then
+        if p.cover_front then
             local x, y, w = r.x + p.pad, r.y + p.pad + math.max(17, px(27)), r.w - p.pad * 2
             local amount = text(tile[2], x, y, w, 25, true)
             if cover_summary and amount then
@@ -717,7 +731,7 @@ function M.content(widget, p, ctx, data)
         end
         local edit_stats = settings("reading_stats")
         local open = opens_log and function() return openLog("log", "streak") end or edit_stats
-        local hold = opens_log and require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false
+        local hold = not data.config and opens_log and require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false
             and edit_stats or nil
         action(r, cardTap(key, open), hold)
         end
@@ -763,7 +777,7 @@ function M.content(widget, p, ctx, data)
         local caption = target <= 0 and _("Set a reading goal") or (value >= target and _("Goal reached") or Model.goalPaceCaption(goal) or goal.source)
         local progress = target > 0 and value / target or 0
         local count = string.format("%s / %s", value, target > 0 and tostring(target) or "-")
-        if p.ladder then
+        if p.cover_front then
             local y = r.y + p.pad + math.max(17, px(27))
             local amount = text(count, x, y, w, 25, true)
             local offset = amount and amount:getSize().w + px(7) or 0
@@ -783,13 +797,13 @@ function M.content(widget, p, ctx, data)
         end
     else
         text(_("No cached goal yet. Tap to configure."), r.x + p.pad,
-            r.y + (p.ladder and p.pad + math.max(17, px(27)) or px(46)),
+            r.y + (p.cover_front and p.pad + math.max(17, px(27)) or px(46)),
             r.w - p.pad * 2, 14, false, muted, 3)
     end
     local configure = settings(goal and goal.module or "hardcover")
     local has_target = goal and (tonumber(goal.target) or 0) > 0
     action(r, cardTap("goal", has_target and function() openLog("goal", "goal") end or configure),
-        has_target and require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false and configure or nil)
+        not data.config and has_target and require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false and configure or nil)
     end
 
     local owner = ctx._screen_widget or widget
@@ -814,7 +828,8 @@ function M.content(widget, p, ctx, data)
         local pages = math.max(1, math.ceil(#files / count))
         local page = math.min(pages, math.max(1, owner._orbitui_dashboard_pages[key] or 1))
         owner._orbitui_dashboard_pages[key] = page
-        local nav_h = pages > 1 and px(48) or 0
+        local compact = extra and area.h < px(160)
+        local nav_h = pages > 1 and px(compact and 27 or 48) or 0
         local bottom_pad = pages > 1 and px(4) or p.pad
         local nav_y = area.y + area.h - bottom_pad - nav_h
         local function turn(delta)
@@ -867,13 +882,15 @@ function M.content(widget, p, ctx, data)
         if extra then
             local edit = function() widget:editModules(key) end
             local tap = cardTap(key, edit)
-            local hold = require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false and edit or nil
-            action(area, tap, hold)
-            text("[BookOrbit] " .. extra.caption, area.x + p.pad, area.y + p.pad + px(22), area.w - 2 * p.pad, 10, false, muted)
+            action(area, tap)
+            if not compact then
+                text("[BookOrbit] " .. extra.caption, area.x + p.pad, area.y + p.pad + px(22), area.w - 2 * p.pad, 10, false, muted)
+            end
         end
         if pages > 1 then
-            local button_w = px(52)
-            local indicator_w = math.min(px(76), area.w - 2 * p.pad - 2 * button_w)
+            local inner_w = area.w - 2 * p.pad
+            local button_w = math.min(px(52), math.floor(inner_w / 3))
+            local indicator_w = math.min(px(76), inner_w - 2 * button_w)
             local nav_x = area.x + math.floor((area.w - 2 * button_w - indicator_w) / 2)
             local function centered(value, x, width, size, color)
                 local label_widget = text(value, x, nav_y, width, size, false, color)
@@ -883,9 +900,9 @@ function M.content(widget, p, ctx, data)
                     nav_y + math.floor((nav_h - label_size.h) / 2),
                 }
             end
-            centered("<", nav_x, button_w, 28, page > 1 and ink or BB.COLOR_LIGHT_GRAY)
+            centered("<", nav_x, button_w, compact and 19 or 28, page > 1 and ink or BB.COLOR_LIGHT_GRAY)
             centered(string.format("%d/%d", page, pages), nav_x + button_w, indicator_w, 16, ink)
-            centered(">", nav_x + button_w + indicator_w, button_w, 28,
+            centered(">", nav_x + button_w + indicator_w, button_w, compact and 19 or 28,
                 page < pages and ink or BB.COLOR_LIGHT_GRAY)
             action(rect(nav_x, nav_y, button_w, nav_h), function() turn(-1) end)
             action(rect(nav_x + button_w + indicator_w, nav_y, button_w, nav_h), function() turn(1) end)
@@ -894,19 +911,19 @@ function M.content(widget, p, ctx, data)
             text(extra and (extra.error and require("adapters/orbitui_bookorbit_rows").message(extra.error)
                     or _("No linked books from this source on this device."))
                     or (failed and _("Could not load books.") or _("No books to show yet.")),
-                area.x + p.pad, area.y + px(extra and 75 or 50), area.w - p.pad * 2, 14, false, muted, 3)
+                area.x + p.pad, area.y + px(compact and 32 or extra and 75 or 50), area.w - p.pad * 2, 14, false, muted, compact and 2 or 3)
             if not extra and not custom_tap then action(area, settings(data.config and Model.id or module)) end
             return
         end
         local slot_w = math.floor((area.w - 2 * p.pad - 2 * p.gap) / count)
-        local cover_top = px(extra and 65 or 34)
+        local cover_top = px(compact and 22 or extra and 65 or 34)
         local max_h = math.max(3, nav_y - area.y - p.pad - cover_top)
         local cw = math.floor(math.min(slot_w, max_h * 2 / 3))
         local ch = math.floor(cw * 3 / 2)
         for i = 1, count do
             local fp = files[(page - 1) * count + i]
             if fp and (not extra or require("adapters/orbitui_bookorbit_rows").fileExists(fp)) then
-                local width = p.ladder and not extra and math.max(1, math.floor(cw * (1 - (i - 1) * .06))) or cw
+                local width = p.cover_front and not extra and math.max(1, math.floor(cw * (1 - (i - 1) * .06))) or cw
                 local height = math.floor(width * 3 / 2)
                 cover(fp, rect(area.x + p.pad + (i - 1) * (slot_w + p.gap) + math.floor((slot_w - width) / 2),
                     area.y + cover_top + p.pad + math.floor((max_h - ch) / 2) + ch - height, width, height))
@@ -922,7 +939,7 @@ function M.content(widget, p, ctx, data)
         local area = p.cards[entry.id]
         if area then
             local selected = entry
-            if entry.kind == "bookorbit" then
+            if entry.kind == "bookorbit" and entry.source then
                 local Rows = require("adapters/orbitui_bookorbit_rows")
                 local index, group, redraw
                 local function draw()
@@ -1020,8 +1037,7 @@ function M.content(widget, p, ctx, data)
                     Sources.tapModule(selected, def, args, regions,
                         x - inset - (clip._child_dx or 0), y - top - (clip._child_dy or 0))
                 end
-            end), require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false
-                and function() widget:editModules(selected.id) end or nil)
+            end))
             end
         end
     end

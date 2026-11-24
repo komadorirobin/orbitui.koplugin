@@ -38,25 +38,8 @@ local function label(key, config)
     for _i, card in ipairs(Model.heading_cards) do if card.key == key then return _(card.label) end end
 end
 
-function M.add(entry, refresh, pfx)
-    if entry.kind == "bookorbit" then
-        if not Model.bookOrbitSource(entry.source) then return false end
-        -- Placements are independent, even when they share a remote source.
-        local c, serial = dashboard().readConfig(pfx), 1
-        while Model.module(c, Model.moduleId("bookorbit", "row-" .. serial)) do serial = serial + 1 end
-        entry = { kind = "bookorbit", ref = "row-" .. serial, source = entry.source,
-            label = entry.label, view = entry.view }
-    end
-    local id = Model.moduleId(entry.kind, entry.ref)
-    if not id then return false end
-    local current = dashboard().readConfig(pfx)
-    if current.unsupported or Model.module(current, id) or #current.modules >= Model.module_limit then return false end
-    return dashboard().editConfig(pfx, function(c)
-        if Model.module(c, id) or #c.modules >= Model.module_limit then return end
-        c.modules[#c.modules + 1] = { id = id, kind = entry.kind, ref = entry.ref,
-            label = entry.label, width = 2, size = "normal", source = entry.source, view = entry.view }
-        c.order[#c.order + 1] = id
-    end, refresh)
+function M.add(entry, refresh, pfx, target)
+    return dashboard().editConfig(pfx, function(c) return Model.placeModule(c, entry, target) end, refresh)
 end
 
 function M.bookOrbitSources(refresh, choose, checked)
@@ -140,10 +123,7 @@ function M.moduleItems(id, refresh, pfx, navigation)
                 if stop and navigation.current() ~= stop then return end
                 if not Model.module(dashboard().readConfig(pfx), id) then return end
                 local ok, removed = pcall(edit(function(_, c)
-                    for i = #c.modules, 1, -1 do if c.modules[i].id == id then table.remove(c.modules, i) end end
-                    for i = #c.order, 1, -1 do if c.order[i] == id then table.remove(c.order, i) end end
-                    c.hidden[id] = nil
-                    c.tap_actions[id] = nil
+                    Model.removeModule(c, id)
                 end))
                 if ok and removed then
                     did_remove = true
@@ -223,9 +203,20 @@ function M.moduleItems(id, refresh, pfx, navigation)
     return items
 end
 
-function M.pickerItems(refresh, pfx, return_to_parent)
+function M.pickerItems(refresh, pfx, return_to_parent, replace)
     if dashboard().readConfig(pfx).unsupported then
         return {{ text = _("This dashboard needs a newer OrbitUI version."), enabled_func = function() return false end }}
+    end
+    local target = replace and replace.id
+    local function choose(entry)
+        if not replace then return addFromPicker(entry, refresh, pfx) end
+        if not replace.current() then return end
+        if entry.kind == "bookorbit" and sourceCard(entry.source, pfx) then
+            notify(_("This source already has a card. Manage it in Cards and content."))
+        else
+            local ok, saved = pcall(M.add, entry, replace.finish, pfx, target)
+            if not ok or not saved then notify(_("Could not replace this module. Reopen the picker and try again.")) end
+        end
     end
     local items = {}
     for _i, spec in ipairs({ { "simpleui", "Home modules (SimpleUI)" },
@@ -240,23 +231,27 @@ function M.pickerItems(refresh, pfx, return_to_parent)
                     checked_func = function() return Model.module(dashboard().readConfig(pfx), id) ~= nil end,
                     enabled_func = function()
                         local c = dashboard().readConfig(pfx)
-                        return not Model.module(c, id) and #c.modules < Model.module_limit
+                        if target and id == "module:simpleui:orbitui_reading_silverfish" and Model.isCoverLayout(dashboard().layout(pfx)) then
+                            local old = Model.module(c, target)
+                            if old and not old.slot then return false end
+                        end
+                        return not Model.module(c, id) and Model.canPlace(c, target)
                     end,
                     callback = function()
                         if entry.network then
                             require("ui/uimanager"):show(require("ui/widget/confirmbox"):new{
-                                text = _("This module uses the network. Add it to the dashboard?")
+                                text = _(replace and "This module uses the network. Use it here?" or "This module uses the network. Add it to the dashboard?")
                                     .. "\n" .. table.concat(entry.network, "\n"),
-                                ok_callback = function() addFromPicker(entry, refresh, pfx) end,
+                                ok_callback = function() choose(entry) end,
                             })
-                        else addFromPicker(entry, refresh, pfx) end
+                        else choose(entry) end
                     end }
             end
             if #rows == 0 then rows[1] = { text = _("No compatible modules available. Enable the plugin and restart KOReader."),
                 enabled_func = function() return false end } end
             if kind == "action" then
                 rows[#rows + 1] = { text = _("Create shortcut…"), enabled_func = function()
-                    return Sources.shortcutPlugin() ~= nil and #dashboard().readConfig(pfx).modules < Model.module_limit
+                    return Sources.shortcutPlugin() ~= nil and Model.canPlace(dashboard().readConfig(pfx), target)
                 end, callback = function()
                     local plugin = Sources.shortcutPlugin()
                     if not plugin then return end
@@ -266,7 +261,7 @@ function M.pickerItems(refresh, pfx, return_to_parent)
                     qa.showQuickActionDialog(plugin, nil, function()
                         for _, ref in ipairs(qa.getCustomQAList()) do
                             if not before[ref] then
-                                addFromPicker({ kind = "action", ref = ref, label = qa.getEntry(ref).label }, refresh, pfx)
+                                choose({ kind = "action", ref = ref, label = qa.getEntry(ref).label })
                                 return
                             end
                         end
@@ -277,12 +272,13 @@ function M.pickerItems(refresh, pfx, return_to_parent)
         end }
     end
     items[#items + 1] = { text = _("BookOrbit shelves and smartscopes"), enabled_func = function()
-        return #dashboard().readConfig(pfx).modules < Model.module_limit
+        return Model.canPlace(dashboard().readConfig(pfx), target)
     end, sub_item_table_func = function()
         return M.bookOrbitSources(refresh, function(source)
-            addFromPicker({ kind = "bookorbit", source = source }, refresh, pfx)
+            choose({ kind = "bookorbit", source = source })
         end, function(source) return sourceCard(source, pfx) ~= nil end)
     end }
+    if replace then return items end
     items[#items + 1] = { text = _("Get more modules…"), callback = function()
         require("adapters/orbitui_module_store").show(pfx, return_to_parent)
     end }
@@ -379,9 +375,11 @@ local function cardSheet(pfx, ctx, id, parent_open)
             first = first + 1
         end
         local size = items[2]
-        out[#out + 1] = { title = size.text, action = function() choices(size) end, get_subtitle = function()
-            for _, option in ipairs(size.sub_item_table_func()) do if option.checked_func() then return option.text end end
-        end }
+        if not entry.slot then
+            out[#out + 1] = { title = size.text, action = function() choices(size) end, get_subtitle = function()
+                for _, option in ipairs(size.sub_item_table_func()) do if option.checked_func() then return option.text end end
+            end }
+        end
         for i = first, #items do
             local item = items[i]
             out[#out + 1] = { title = item.text, group = i == first and _("Module") or nil,
@@ -412,9 +410,52 @@ local function cardSheet(pfx, ctx, id, parent_open)
     return panel
 end
 
+-- Open the replacement choices directly over the dashboard. Only the final
+-- selection writes settings; delayed network/shortcut callbacks die on close.
+local function replaceWindow(pfx, ctx, id)
+    local config = dashboard().readConfig(pfx)
+    if config.unsupported then return end
+    local entry = Model.module(config, id)
+    local alive, win = true, nil
+    local function finish()
+        win:close()
+        if ctx.refresh_fn then ctx.refresh_fn(true) end
+    end
+    local replace = { id = id, current = function() return alive end, finish = finish }
+    local function cardName(key)
+        return Model.heading(dashboard().readHeadings(pfx), key, label(key, config) or key)
+    end
+    win = require("screens/sui_settings_window"):show(function() alive = false end, {{
+        id = "nested_menu", params = { title = string.format(_("Replace %s"), cardName(id)), items_func = function(menu)
+            local items = M.pickerItems(function() if alive then menu.repaint() end end, pfx, true, replace)
+            for _, category in ipairs(items) do category.value_func = function() end end
+            if entry and entry.slot then
+                table.insert(items, 1, { text = string.format(_("Restore %s"), cardName(entry.slot)),
+                    callback = function()
+                        if alive then dashboard().editConfig(pfx, function(c) return Model.removeModule(c, id) end, finish) end
+                    end })
+            end
+            if entry then
+                items[#items + 1] = { text = _("Card settings"), callback = function()
+                    win:close()
+                    if Model.module(dashboard().readConfig(pfx), id) then cardSheet(pfx, ctx, id) end
+                end }
+            elseif ctx.native_settings then
+                items[#items + 1] = { text = _("Card settings"), callback = function()
+                    win:close()
+                    ctx.native_settings()
+                end }
+            end
+            return items
+        end },
+    }}, { pfx = pfx or "simpleui_hs_", orbitui_back_to_parent = true })
+    return win
+end
+
 -- The card overview keeps its paginated settings shell.
 -- Defer Home rebuilding until the editor closes; never rebuild a buried view.
-function M.show(pfx, ctx, id)
+function M.show(pfx, ctx, id, replace)
+    if replace then return replaceWindow(pfx, ctx, id) end
     if id == "add" then return pickerSheet(pfx, ctx) end
     if id and id ~= "add" and Model.module(dashboard().readConfig(pfx), id) then
         return cardSheet(pfx, ctx, id)
@@ -467,7 +508,8 @@ local function arrange(field, title, refresh, pfx, ctx_menu)
     local layout, positions = dashboard().layout(pfx), {}
     for index, key in ipairs(config[field]) do
         if field ~= "stats_order" or Model.statPlacement(layout, key) then
-            items[#items + 1] = { text = label(key, config), orig_item = key }
+            local placed = Model.slotModule(config, key)
+            items[#items + 1] = { text = label(placed and placed.id or key, config), orig_item = key }
             positions[#positions + 1] = index
         end
     end
@@ -559,7 +601,7 @@ function M.items(refresh, pfx, ctx_menu)
             rows[#rows + 1] = tapItem(key, refresh, pfx)
             return rows
         end }
-        if placement and (not cover_layout or (key ~= "hero" and key ~= "ongoing")) then
+        if not Model.slotModule(config, key) and placement and (not cover_layout or (key ~= "hero" and key ~= "ongoing")) then
             items[#items + 1] = item
         end
     end
@@ -593,6 +635,10 @@ function M.items(refresh, pfx, ctx_menu)
                 dashboard().editConfig(pfx, function(c)
                     local defaults = Model.config()
                     c.order, c.stats_order, c.hidden = defaults.order, defaults.stats_order, {}
+                    for i = #c.modules, 1, -1 do
+                        local entry = c.modules[i]
+                        if entry.slot then Model.removeModule(c, entry.id) end
+                    end
                 end, refresh)
             end,
         })
