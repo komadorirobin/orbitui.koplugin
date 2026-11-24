@@ -2,6 +2,17 @@
 
 ## OrbitUI 1.5.0-beta.3
 
+Published on 2026-11-24T21:20:29Z as GitHub prerelease 457345358
+from **ff8d0a084**. The 10,304,036-byte ZIP and its checksum
+matched the draft and local build. SHA-256 is
+`9fb64a5864321f8ded88c2bb61a54963323d226d78da74c4f86bf1c92f8fc828`. GitHub Latest and the stable updater both offer 1.4.0.
+
+Both interpreter jobs passed on [main](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/45489400298)
+and the [release tag](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/45489434724).
+All four CI archives matched the 2,000 installed files and executable bits.
+KOReader’s preview updater on 1.4.0 and 1.5.0-beta.2 discovered the release
+over anonymous HTTPS, installed the public bytes, restarted and rolled back.
+
 Long-press a Reading dashboard card’s heading or background to replace it in
 place. Modules adapt to the space available. The BookOrbit achievements card
 shows medals and opens the catalogue on tap. Enable **Include preview releases**
