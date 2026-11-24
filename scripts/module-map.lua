@@ -5,7 +5,7 @@ local embedded_names = {
     "adapters/orbitui_fingertips", "orbitui/fingertips/main", "orbitui/fingertips/actions",
     "orbitui/fingertips/arrange", "orbitui/fingertips/bar", "orbitui/fingertips/panel",
     "infra/sui_compat_check", "infra/sui_updater",
-    "adapters/orbitui_bookorbit_achievements", "adapters/orbitui_reading_log",
+    "adapters/orbitui_achievement_medal", "adapters/orbitui_bookorbit_achievements", "adapters/orbitui_reading_log",
     "lib/bookshelf_book_actions_layout", "lib/bookshelf_editor_page",
     "lib/bookshelf_link_panel", "lib/bookshelf_page_dialog", "lib/bookshelf_picker_sort",
     "lib/bookshelf_popup_kit", "lib/bookshelf_slider",
@@ -56,6 +56,7 @@ local map = {
     ["orbitui/fingertips/arrange"] = "components/fingertips/fingertips_arrange.lua",
     ["orbitui/fingertips/bar"] = "components/fingertips/fingertips_bar.lua",
     ["orbitui/fingertips/panel"] = "components/fingertips/fingertips_panel.lua",
+    ["adapters/orbitui_achievement_medal"] = "adapters/orbitui_achievement_medal.lua",
     ["adapters/orbitui_bookorbit_achievements"] = "adapters/orbitui_bookorbit_achievements.lua",
     ["adapters/orbitui_reading_log"] = "adapters/orbitui_reading_log.lua",
 }

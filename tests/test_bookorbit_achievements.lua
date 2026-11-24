@@ -19,6 +19,13 @@ for _, path in ipairs({ "ui/widget/verticalgroup", "ui/widget/textboxwidget", "u
         "ui/widget/container/framecontainer", "ui/widget/container/topcontainer", "lib/bookshelf_clip_container",
         "ui/geometry", "ui/gesturerange",
         "ui/widget/infomessage", "ui/widget/inputdialog" }) do package.loaded[path] = native end
+package.loaded["ui/renderimage"] = { renderImageData = function(_, svg, bytes, frames, width, height)
+    assert(#svg == bytes and not frames and width == height and width > 0)
+    return { svg = svg, size = width }
+end }
+for _, path in ipairs({ "ui/widget/horizontalgroup", "ui/widget/horizontalspan", "ui/widget/imagewidget" }) do
+    package.loaded[path] = native
+end
 package.loaded["ui/font"] = { getFace = function() return {} end }
 package.loaded["ui/uimanager"] = {
     scheduleIn = function(_, _, fn) tasks[#tasks + 1] = fn end,
@@ -62,16 +69,19 @@ package.loaded["lib/bookshelf_library_modal"] = {
     end,
 }
 G_reader_settings = { readSetting = function(_, key) if key == "language" then return "sv_SE" end end }
+package.loaded["lib/bookshelf_library_modal"].sheetRow = function(row, dimen)
+    return native:new{ text = row.title, subtitle = row.subtitle, dimen = dimen }
+end
 local function catalogue()
     return { enabled = true, totalEarned = 3, totalAvailable = 5, categories = {
         { achievements = {
             { name = "Old", earned = true, awardedAt = "2026-10-12T12:30:00.000Z" },
             { name = "Progress", earned = false, currentProgress = 4, threshold = 12 },
-            { name = "Newest", earned = true, awardedAt = "2026-11-17T12:30:00.000Z", description = "Read 40 books" },
+            { name = "Newest", iconName = "orbit", rarity = "legendary", earned = true, awardedAt = "2026-11-17T12:30:00.000Z", description = "Read 40 books" },
         } },
         { achievements = {
             { name = "Middle", earned = true, awardedAt = "2026-11-16T12:30:00.000Z" },
-            { name = "Secret name", description = "Secret detail", earned = false, hidden = true },
+            { name = "Secret name", iconName = "moon", rarity = "epic", description = "Secret detail", earned = false, hidden = true },
         } },
     } }
 end
@@ -135,6 +145,8 @@ H.test("normalises the full catalogue, sorts earned badges and shields locked se
     H.eq(data.full, true); H.eq(data.earned, 3); H.eq(data.total, 5)
     H.eq(data.items[1].title, "Newest"); H.eq(data.items[2].title, "Middle"); H.eq(data.items[3].title, "Old")
     H.eq(data.items[4].progress, 4); H.eq(data.items[4].goal, 12)
+    H.eq(data.items[1].icon, "orbit"); H.eq(data.items[1].rarity, "legendary")
+    H.eq(data.items[5].icon, nil); H.eq(data.items[5].rarity, nil)
     H.eq(data.items[5].secret, true); H.eq(data.items[5].title, nil); H.eq(data.items[5].description, nil)
     H.eq(#requests, 1)
 end)
@@ -275,15 +287,17 @@ H.test("the Home card shows the server's next milestone beside the latest award 
     local owner = {}
     client.catalogDashboard = function()
         requests[#requests + 1] = "dashboard"
-        return { achievements = { earned = 1, total = 4, latest = { name = "First chapter" },
-            next = { name = "Bookworm", groupKey = "books_finished", currentProgress = 8, threshold = 10 } } }
+        return { achievements = { earned = 1, total = 4, latest = { name = "First chapter", iconName = "book-open", rarity = "rare" },
+            next = { name = "Bookworm", iconName = "book-open", rarity = "epic", groupKey = "books_finished", currentProgress = 8, threshold = 10 } } }
     end
     assert(Achievements.refresh(observe(owner))); drain()
     local rows = cardRows(owner, 142)
-    H.eq(#rows, 4); H.eq(rows[2].text, "★  First chapter")
-    H.eq(rows[3].text, "Nästa milstolpe · Bookworm"); H.eq(rows[4].text, "2 böcker kvar")
+    H.eq(#rows, 3); H.eq(rows[2][3].text, "First chapter")
+    H.eq(Achievements.snapshot().items[1].icon, "book-open")
+    assert(rows[2][1].image.svg:find('id="face"',1,true) and rows[3][1].image.svg:find('id="blank"',1,true))
+    H.eq(rows[3][3][1].text, "Nästa milstolpe · Bookworm"); H.eq(rows[3][3][2].text, "2 böcker kvar")
     local compact = cardRows(owner, 84)
-    H.eq(#compact, 3); H.eq(compact[3].text, "2 böcker kvar · Bookworm")
+    H.eq(#compact, 3); H.eq(compact[3][3].text, "2 böcker kvar · Bookworm")
     H.eq(#requests, 1)
 end)
 
@@ -305,12 +319,12 @@ H.test("catalogue milestones use the closest eligible ratio, stable ties, real u
     end
     assert(Achievements.refresh(observe(owner))); drain()
     local rows = cardRows(owner, 142)
-    H.eq(#rows, 3); H.eq(rows[2].text, "Nästa milstolpe · Last page"); H.eq(rows[3].text, "1 sida kvar")
+    H.eq(#rows, 2); H.eq(rows[2][3][1].text, "Nästa milstolpe · Last page"); H.eq(rows[2][3][2].text, "1 sida kvar")
     local data = Achievements.snapshot()
     data.items[6].group = nil -- v2 snapshots written before units were recorded
-    H.eq(cardRows(owner, 142)[3].text, "9 / 10")
+    H.eq(cardRows(owner, 142)[2][3][2].text, "9 / 10")
     data.items = { data.items[8] }
-    H.eq(cardRows(owner, 142)[3].text, "0 / 1")
+    H.eq(cardRows(owner, 142)[2][3][2].text, "0 / 1")
     data.items = {}
     H.eq(cardRows(owner, 142)[2].text, "Inga intjänade prestationer att visa.")
 end)
@@ -339,6 +353,9 @@ H.test("picker and hidden Home widgets stay passive; native and Dashboard taps r
     drain()
     H.eq(modal.config.item_count(), 5)
     H.eq(modal.config.item_at(1).title, "Newest")
+    local cell = modal.config.cell_renderer(modal.config.item_at(1), { w = 260, h = 90 })
+    H.eq(cell[1].image.size, 56); H.eq(cell[3].text, "Newest")
+    H.eq(cell[1].image.svg, require("adapters/orbitui_achievement_medal").svg{ earned=true, icon="orbit", rarity="legendary" })
     modal.config.on_tab_change("earned"); H.eq(modal.config.item_count(), 3)
     modal.config.on_tab_change("remaining"); H.eq(modal.config.item_count(), 2)
     H.eq(modal.config.item_at(1).progress, 4)
@@ -346,5 +363,22 @@ H.test("picker and hidden Home widgets stay passive; native and Dashboard taps r
     H.eq(shown.text:find("Secret name", 1, true), nil)
     require("adapters/orbitui_dashboard_sources").tapModule({ kind = "simpleui" }, descriptor, {})
     H.eq(shown.config.item_count(), 5)
+end)
+H.test("old offline text migrates on the first eligible refresh and unknown artwork stays local", function()
+    reset()
+    local owner = {}
+    assert(Achievements.refresh(observe(owner))); drain()
+    saved[cache_key].version = 2
+    package.loaded["adapters/orbitui_bookorbit_achievements"] = nil
+    Achievements = require("adapters/orbitui_bookorbit_achievements")
+    local data, _, at = Achievements.snapshot()
+    assert(data and data.items[1].title); H.eq(at, nil)
+    assert(Achievements.refresh(observe(owner))); drain()
+    H.eq(saved[cache_key].version, 3); H.eq(#requests, 2)
+    local medal = require("adapters/orbitui_achievement_medal")
+    local fallback = medal.svg{ icon="help-circle", rarity="common", earned=true }
+    H.eq(medal.svg{ icon="<image href='https://bad.invalid'/>", rarity="future", earned=true }, fallback)
+    H.eq(medal.svg{ secret=true, icon="moon", rarity="rare", goal=5, progress=4 }, medal.svg{ secret=true })
+    assert(medal.svg{ earned=true, icon="mountain", rarity="legendary" } ~= medal.svg{ earned=true, icon="orbit", rarity="legendary" })
 end)
 H.finish()

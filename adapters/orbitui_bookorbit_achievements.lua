@@ -87,7 +87,9 @@ local function badge(item, earned)
     if not title then return nil end
     local stamp = earned and clean(item.awardedAt, 40) or nil
     local day = stamp and stamp:match("^(%d%d%d%d%-%d%d%-%d%d)T")
-    return { title = title, description = clean(item.description, 2000), earned = earned,
+    local icon = clean(item.iconName, 64)
+    return { icon = icon and icon:match("^[a-z0-9][a-z0-9%-]*$"), rarity = clean(item.rarity, 32),
+        title = title, description = clean(item.description, 2000), earned = earned,
         awarded_at = day and stamp or nil, day = day,
         group = not earned and clean(item.groupKey, 80) or nil,
         goal = not earned and count(item.threshold) or nil,
@@ -169,9 +171,10 @@ local function snapshot()
     if not owner then return nil, err end
     local key = cacheScope(owner, savedKey(owner))
     local cache = store():readSetting(CACHE)
-    if type(cache) == "table" and cache.version == 2 and cache.account == key and cache.language == language()
+    if type(cache) == "table" and (cache.version == 2 or cache.version == 3) and cache.account == key and cache.language == language()
             and type(cache.data) == "table" and type(cache.at) == "number" then
-        return cache.data, cache.data.status or cache.data.issue, cache.at
+        -- Older snapshots still supply offline text. Refresh their missing artwork metadata on the next visible visit.
+        return cache.data, cache.data.status or cache.data.issue, cache.version == 3 and cache.at or nil
     end
     if last_attempt and last_attempt.account == key and last_attempt.language == language() then
         return nil, last_attempt.error
@@ -248,7 +251,7 @@ function M.refresh(observer, force)
             local saved_at = os.time()
             last_attempt = { account = key, language = locale, at = saved_at, error = failure }
             if data then
-                store():saveSetting(CACHE, { version = 2, account = key, language = locale, at = saved_at, data = data })
+                store():saveSetting(CACHE, { version = 3, account = key, language = locale, at = saved_at, data = data })
             end
             for _, entry in ipairs(job.observers) do if visible(entry) then entry.done(failure) end end
         end)
@@ -304,6 +307,18 @@ end
 local function textWidget(text, w, h, size, bold)
     return require("ui/widget/textboxwidget"):new{ text = text, width = w, height = h, height_adjust = false,
         height_overflow_show_ellipsis = true, face = require("ui/font"):getFace("cfont", size), bold = bold }
+end
+
+-- Rendering is limited to the displayed badges. Both views reserve the
+-- same column for the medal; narrow cards keep the text area usable.
+local function medalRow(item, width, height, max_size, content)
+    local screen = require("device").screen
+    local size = math.min(height, screen:scaleBySize(max_size), math.floor(width * .28))
+    local image = require("adapters/orbitui_achievement_medal").widget(item, size)
+    if not image then return content(width) end
+    local gap = math.min(screen:scaleBySize(7), math.floor(width / 12))
+    return require("ui/widget/horizontalgroup"):new{ align = "center", image,
+        require("ui/widget/horizontalspan"):new{ width = gap }, content(width - size - gap) }
 end
 
 function M.openKey(on_change)
@@ -392,8 +407,9 @@ function M.open(ctx)
             return textWidget(value, w, h, 16, false)
         end,
         cell_renderer = function(item, dimen)
-            return Modal.sheetRow({ title = title(item), subtitle = progress(item),
-                cover = true, cover_mark = item.earned and "★" or "○" }, dimen)
+            return medalRow(item, dimen.w, dimen.h, 56, function(width)
+                return Modal.sheetRow({ title = title(item), subtitle = progress(item) }, { w = width, h = dimen.h })
+            end)
         end,
         on_cell_tap = function(item)
             local copy = title(item) .. "\n" .. progress(item)
@@ -444,24 +460,32 @@ local function build(w, ctx)
     local group = require("ui/widget/verticalgroup"):new{ align = "left" }
     local milestone = data and data.items and nextMilestone(data)
     local roomy = milestone and usable >= Screen:scaleBySize(96)
-    local row_h = math.max(1, math.min(Screen:scaleBySize(36), math.floor(usable / (roomy and 4 or 3))))
-    group[#group + 1] = textWidget(header .. "  ›", inner, row_h, 17, true)
-    local shown = 0
-    for _, item in ipairs(data and data.items or {}) do
-        if shown == (milestone and 1 or 2) or not item.earned then break end
-        shown = shown + 1
-        group[#group + 1] = textWidget("★  " .. title(item), inner, row_h, 15, true)
+    local header_h = math.max(1, math.min(Screen:scaleBySize(30), math.floor(usable / 3)))
+    group[#group + 1] = textWidget(header .. "  ›", inner, header_h, 17, true)
+    local first = data and data.items and data.items[1]
+    local second = data and data.items and data.items[2]
+    local two = first and first.earned and (milestone or second and second.earned)
+    local row_h = math.max(1, math.floor((usable - header_h) / (two and 2 or 1)))
+    local function addRow(item, heading, detail)
+        group[#group + 1] = medalRow(item, inner, row_h, 48, function(width)
+            if not detail then
+                return textWidget(heading, width, math.min(row_h, Screen:scaleBySize(30)), 15, true)
+            end
+            local half = math.max(1, math.floor(row_h / 2))
+            return require("ui/widget/verticalgroup"):new{ align = "left",
+                textWidget(heading, width, half, 15, true),
+                textWidget(detail, width, math.max(1, row_h - half), 14, false) }
+        end)
     end
+    if first and first.earned then addRow(first, title(first), roomy and first.day or nil) end
     if milestone then
-        if roomy then
-            group[#group + 1] = textWidget(_("Next milestone") .. " · " .. title(milestone), inner, row_h, 15, true)
-            group[#group + 1] = textWidget(remaining(milestone), inner, row_h, 14, false)
-        else
-            group[#group + 1] = textWidget(remaining(milestone) .. " · " .. title(milestone), inner, row_h, 14, false)
-        end
-    elseif shown == 0 and not preview then
+        if roomy then addRow(milestone, _("Next milestone") .. " · " .. title(milestone), remaining(milestone))
+        else addRow(milestone, remaining(milestone) .. " · " .. title(milestone)) end
+    elseif second and second.earned then
+        addRow(second, title(second))
+    elseif not (first and first.earned) and not preview then
         local copy = data and data.items and _("No recent achievements to show.") or label(failure or "loading")
-        group[#group + 1] = textWidget(copy, inner, math.max(1, math.min(2 * row_h, usable - row_h)), 14, false)
+        group[#group + 1] = textWidget(copy, inner, row_h, 14, false)
     end
     local clip = require("lib/bookshelf_clip_container"):new{ w = w, h = h,
         require("ui/widget/container/framecontainer"):new{ padding = pad, bordersize = 0,

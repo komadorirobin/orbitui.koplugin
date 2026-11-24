@@ -91,6 +91,10 @@ late response cannot overwrite OrbitUI's cache after a policy change.
 module under Statistics. It uses the account already connected in the BookOrbit
 plugin. The card shows recent awards. In 1.5.0-beta.2 it also shows the
 closest visible milestone with measurable progress and how much is left.
+The Home card and catalogue use the Lucide symbol selected by BookOrbit and
+the medal shape and colour for its rarity. Unearned medals are grey. A ring
+shows progress toward the next goal. Hidden achievements use a question mark.
+The artwork is included in OrbitUI and works with cached results offline.
 For goals with an unknown unit, the card shows the current count and target.
 Tap it to browse All, Earned,
 or Remaining and open a badge's description, award date, or available progress.
