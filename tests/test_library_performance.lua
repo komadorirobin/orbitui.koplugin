@@ -156,6 +156,26 @@ H.test("real scoped shelf and global series-box lookup reuse derivation without 
     assert(repo.lightMetaFor(f.books[1])); H.eq(f.derivations(), before + 1)
 end)
 
+H.test("a refreshed scoped map derives edits and later first-lookups from the new batch", function()
+    local refresh = require("lib/bookshelf_lightmeta_refresh")
+    local a, b, c = f.books[1], f.books[2], f.books[3]
+    local one, two = repo.lightMetaFor(a), repo.lightMetaFor(b)
+    local entry = repo._lm_memo.entry
+    rawset(entry.map, c, nil)
+    local rows = {}
+    for path, row in pairs(entry.rows) do rows[path] = row end
+    rows[b] = { title = "Edited volume" }; rows[c] = { title = "Newly indexed" }
+    local before = f.derivations()
+    refresh.replaceRows({ scope = entry }, rows)
+    H.eq(f.derivations(), before)
+    H.eq(repo.lightMetaFor(a), one)
+    H.eq(repo.lightMetaFor(b).title, "Edited volume")
+    assert(repo.lightMetaFor(b) ~= two)
+    H.eq(repo.lightMetaFor(c).title, "Newly indexed")
+    H.eq(f.derivations() - before, 2)
+    repo.invalidateLightMeta()
+end)
+
 H.test("full native flat producer sorts once cold and not again on warm browse pages", function()
     local Query = require("core/orbitui_shelf_query")
     local Adapter = require("adapters/orbitui_shelf_sort")
