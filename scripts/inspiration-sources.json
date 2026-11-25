@@ -10,7 +10,7 @@
     },
     {
       "id": "kobold", "repository": "unitreign/kobold", "branch": "main",
-      "reviewed_commit": "556dad48145dea61b4451746223b3879808d0d22",
+      "reviewed_commit": "89b2d71c967cc41592fcb96de132ecfb6009de0e",
       "ideas": [
         {"idea": "Search history and relevance", "relationship": "design-reference", "orbitui": "core/orbitui_search.lua", "paths": ["Kobold.koplugin/kobold/ui/search.lua", "Kobold.koplugin/kobold/ui/search_prompt.lua"]},
         {"idea": "Collection content workflow", "relationship": "design-reference", "orbitui": "adapters/orbitui_book_panel.lua", "paths": ["Kobold.koplugin/kobold/ui/collection_manage.lua", "Kobold.koplugin/kobold/ui/collection_pick.lua", "Kobold.koplugin/kobold/data/mybooks.lua"]}
