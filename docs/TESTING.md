@@ -1,5 +1,22 @@
 # Verification and device acceptance
 
+## 2026-11-25 — Focus and fan layout on the HiBreak
+
+The USB HiBreak (1264 × 1680, Swedish) ran source `f896339cb` from archive
+`301a09308eae069fd6303ba9482f2d31178691612159288b76fbb7111b3cf8fc`.
+With four books and the pet footer, the focus card showed the selected jacket
+at left, reading details in the middle and three individually selectable
+jackets at right. Selecting the first companion changed the title, jacket and
+progress together. The fan's two outer bottom corners cleared the footer.
+Tapping an exposed outer jacket selected its book and swiping returned to
+Underjordisk. The device finished in its original fan style. Before and after
+screenshots are in `test-results/ongoing-card-balance-20261125/`.
+
+The dashboard regression checks the right edge of the focus gallery and the
+visible fan outline with three, four and five books and different selections.
+The full suite passed. Four optional comparisons with original artwork were
+skipped because the source photos were unavailable.
+
 ## 2026-11-25 — Ongoing book displays on the HiBreak
 
 The USB HiBreak ran local source `5b0390764` from verified runtime archive
