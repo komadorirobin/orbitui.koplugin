@@ -2,6 +2,19 @@
 
 ## OrbitUI 1.5.0-beta.5
 
+Published on 2026-11-25T17:32:23Z as GitHub prerelease 458423631
+from **a3a0a5e78**. The 10,541,551-byte ZIP and its checksum
+matched the draft and local build. SHA-256 is
+`dd30dc499423a163e26337b4ce949210eaff8fee18c18994a4e0887305f159dd`. GitHub Latest and the stable updater both offer 1.4.0.
+
+Both interpreter jobs passed on [main](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/45664905899)
+and the [release tag](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/45664911909).
+All four CI archives matched the 1,998 installed files and executable bits.
+KOReader’s preview updater on 1.4.0 and 1.5.0-beta.4 discovered the release
+over anonymous HTTPS, installed the public bytes, restarted and rolled back.
+The release ZIP also passed all six dashboard invitation and startup checks
+in the Tolino Vision Color emulator, including a 600 × 800 screen.
+
 The Reading dashboard offers three ongoing-book displays. New installations
 start with Cover fan. Upgrades with the dashboard off can enable it from a
 one-time invitation with a screenshot. Hold a dock shortcut to set the
