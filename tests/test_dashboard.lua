@@ -739,6 +739,7 @@ H.test("wide focus cards use the right edge and fan jackets stay gently tilted a
     local display = require("adapters/orbitui_ongoing_display")
     local card = { x = 10, y = 20, w = 640, h = 280 }
     local covers, layers, art, rules
+    local cover_widths = {}
     local function ignore() end
     local v = {
         pad = 10, px = math.floor, line = function(size) return math.ceil(size * 1.3) end,
@@ -746,7 +747,8 @@ H.test("wide focus cards use the right edge and fan jackets stay gently tilted a
         text = function()
             return { overlap_offset = {}, getSize = function() return { w = 50 } end }
         end,
-        cover = function(file, _, bounds)
+        cover = function(file, raw, bounds)
+            cover_widths[file] = raw.w
             covers[file] = bounds
             layers[#layers + 1] = file
         end,
@@ -781,10 +783,19 @@ H.test("wide focus cards use the right edge and fan jackets stay gently tilted a
                 H.eq(#layers, i)
                 H.eq(layers[i], selected)
                 local front = covers[selected]
+                local last_w, tiers = 0, 0
+                for _, name in ipairs(layers) do
+                    local w = cover_widths[name]
+                    assert(w >= last_w, "paint smaller covers behind larger ones")
+                    if w > last_w then tiers = tiers + 1 end
+                    if name ~= selected then assert(w < front.w, "selected jacket must be largest") end
+                    last_w = w
+                end
+                H.eq(tiers, math.floor(i / 2) + 1)
                 local left, right = math.huge, -math.huge
-                for _, b in pairs(covers) do
+                for name, b in pairs(covers) do
                     assert(b.y > rules[1] and b.y + b.h < rules[2], "allow clearance at header and footer")
-                    assert(b.w <= front.w * 1.4 + 2, "limit the lean of the outer jackets")
+                    assert(b.w <= cover_widths[name] * 1.4 + 2, "limit the lean of the outer jackets")
                     left, right = math.min(left, b.x), math.max(right, b.x + b.w)
                 end
                 assert(math.abs((left + right) - (2*art.x + art.w)) <= 4)
@@ -810,7 +821,8 @@ H.test("wide focus cards use the right edge and fan jackets stay gently tilted a
                 for _, file in ipairs(layers) do
                     assert((visible[file] or 0) >= front.w / 3, "leave a tappable strip of every jacket")
                 end
-                assert(visibleAt(.30) > visibleAt(.94) + front.w * .1,
+                -- Compare rows that cross the shorter side jackets.
+                assert(visibleAt(.45) > visibleAt(.94) + front.w * .1,
                     "jackets still spread near the top and converge at the base")
             end
         end

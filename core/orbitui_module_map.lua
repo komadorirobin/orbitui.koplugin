@@ -527,29 +527,36 @@ local function drawFan(art, count, index, gap, draw)\
     local layers = {}\
     local xmin, xmax, ymin, ymax = math.huge, -math.huge, math.huge, -math.huge\
     local pivot_distance = 3.1\
+    local depth_steps = floor(count / 2)\
     local outer_angle = count >= 4 and 16 or 10\
     for i = 1, count do\
         local offset = (i - index) % count\
         if offset > count / 2 then offset = offset - count end\
-        local side_count = offset < 0 and floor((count - 1) / 2) or floor(count / 2)\
-        local angle = offset == 0 and 0 or outer_angle * offset / side_count\
+        local side_count = offset < 0 and floor((count - 1) / 2) or depth_steps\
+        local spread = offset == 0 and 0 or offset / side_count\
+        local angle = outer_angle * spread\
+        local scale = 1 - .14 * depth_steps * math.abs(spread)\
         local radians = math.rad(angle)\
         local c, s = math.cos(radians), math.sin(radians)\
-        local x, y = pivot_distance * s, pivot_distance * (1 - c)\
-        local dx, dy = .5 * c + .75 * math.abs(s), .5 * math.abs(s) + .75 * c\
+        local x = pivot_distance * s\
+        -- Lower the smaller jackets slightly to keep their feet on the arc.\
+        local y = pivot_distance * (1 - c) + .35 * (1 - scale)\
+        local dx = scale * (.5 * c + .75 * math.abs(s))\
+        local dy = scale * (.5 * math.abs(s) + .75 * c)\
         xmin, xmax, ymin, ymax = min(xmin, x - dx), max(xmax, x + dx), min(ymin, y - dy), max(ymax, y + dy)\
-        layers[i] = { i = i, x = x, y = y, angle = angle }\
+        layers[i] = { i = i, x = x, y = y, angle = angle, scale = scale }\
     end\
     table.sort(layers, function(a, b)\
         if math.abs(a.angle) == math.abs(b.angle) then return a.angle < b.angle end\
         return math.abs(a.angle) > math.abs(b.angle)\
     end)\
     local w = max(1, floor(min((art.w - 2*gap) / (xmax - xmin), (art.h - 2*gap) / (ymax - ymin))))\
-    local h = floor(1.5 * w)\
     local cx = art.x + (art.w - (xmin + xmax) * w) / 2\
     local cy = art.y + (art.h - (ymin + ymax) * w) / 2\
     for _, layer in ipairs(layers) do\
-        draw(layer.i, rect(cx + layer.x*w - w/2, cy + layer.y*w - h/2, w, h), layer.angle)\
+        local cover_w = max(1, floor(w * layer.scale))\
+        local cover_h = floor(1.5 * cover_w)\
+        draw(layer.i, rect(cx + layer.x*w - cover_w/2, cy + layer.y*w - cover_h/2, cover_w, cover_h), layer.angle)\
     end\
 end\
 \
