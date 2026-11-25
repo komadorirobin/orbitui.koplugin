@@ -202,7 +202,7 @@ H.test("unweighted selections use 300 while each explicit weight round trips ind
     H.eq(Icons.forWeight("material:manga", 999), nil)
 end)
 H.test("Material never uses font rendering and Nerd codepoints remain unchanged", function()
-    H.eq(Adapter.modules["infra/sui_config"], nil)
+    H.eq(Config.iconGlyph(Config.ICON.day), nil)
     H.eq(Config.iconGlyph("material:manga"), nil)
     H.eq(Config.isNerdIcon("material:manga"), false)
     H.eq(Config.isFontIcon("material:manga"), false)
@@ -857,11 +857,12 @@ H.test("colour and mono icons use original SVGs in all live quick-action and doc
     local old_wallpaper = package.loaded["features/sui_wallpaper"]
     package.loaded["features/sui_wallpaper"] = { clampBackdropStrength=function(n) return n end }
     local old_icon, before, rendered = store.simpleui_action_night_mode_icon, writes, 0
+    local expected_icon
     local build = Renderer.buildIcon
     Renderer.buildFramedIcon = function() error("The live dock must not tint the SVG as a mask") end
     Renderer.buildIcon = function(entry, ...)
         local image = build(entry, ...)
-        H.eq(image.file, Icons.imageFile(entry.icon))
+        H.eq(image.file, Icons.imageFile(expected_icon))
         H.eq(image.alpha, true); H.eq(image.dim, false)
         H.eq(image._inner, nil); H.eq(image._fg, nil)
         rendered = rendered + 1
@@ -871,6 +872,7 @@ H.test("colour and mono icons use original SVGs in all live quick-action and doc
         store.simpleui_action_night_mode_icon = key .. ":pack-night-mode"
         for _, night in ipairs({ false, true }) do
             screen.night_mode = night
+            expected_icon = night and "solar-colour:extra-brightness" or store.simpleui_action_night_mode_icon
             Renderer.buildCell("night_mode", {icon_sz=48, shape="bare", show_label=true})
             Renderer.buildListRow("night_mode", {icon_sz=48, show_icon=true, inner_w=240,
                 row_h=64, icon_gap=8})
@@ -916,18 +918,28 @@ H.test("day and night use distinct defaults and icon slots with a stable picker 
     local QA = require("features/sui_quickactions")
     local night, day = store.simpleui_action_night_mode_icon, store.simpleui_action_night_mode_day_icon
     local label = store.simpleui_action_night_mode_label
+    local sun = "solar-colour:extra-brightness"
+    local before = writes
     store.simpleui_action_night_mode_label = nil
     store.simpleui_action_night_mode_icon, store.simpleui_action_night_mode_day_icon = nil, nil
     for _, on in ipairs({ false, true }) do
         screen.night_mode = on
         local displayed = QA.getEntry("night_mode")
         H.eq(displayed.label, on and "Day Mode" or "Night Mode")
-        H.eq(displayed.icon, on and Config.ICON.day or Config.ICON.night)
+        H.eq(displayed.icon, on and sun or Config.ICON.night)
         H.eq(QA.getMenuLabel("night_mode"), "Night Mode")
     end
+    H.eq(writes, before)
+    local slots = {}
+    for _, slot in ipairs(QA.defaultIconSlots()) do slots[slot.id] = slot end
+    H.eq(slots.night_mode_day.icon, sun)
+    H.eq(Style.safeIconPath(sun), VectorIcons.entry(sun).file)
     store.simpleui_action_night_mode_icon = "solar-colour:pack-night-mode"
-    store.simpleui_action_night_mode_day_icon = "nerd:E7DD"
+    H.eq(QA.getEntry("night_mode").icon, sun)
+    QA.setDefaultActionIcon("night_mode_day", "nerd:E7DD")
     H.eq(QA.getEntry("night_mode").icon, "nerd:E7DD")
+    QA.setDefaultActionIcon("night_mode_day", nil)
+    H.eq(QA.getEntry("night_mode").icon, sun)
     screen.night_mode = false
     H.eq(QA.getEntry("night_mode").icon, "solar-colour:pack-night-mode")
     store.simpleui_action_night_mode_icon, store.simpleui_action_night_mode_day_icon = night, day

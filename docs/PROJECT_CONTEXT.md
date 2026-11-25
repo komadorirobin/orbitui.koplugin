@@ -28,8 +28,8 @@ asks before moving an existing module.
 
 The November 25 import brings Unicode matching to Bookshelf's built-in book and
 group search, separate day/night action icons, and distinct completion records
-for files that share a partial checksum. Existing custom night-mode icons
-apply in both modes until the reader chooses a separate day icon.
+for files that share a partial checksum. Day Mode defaults to the bundled Solar
+Colour sun. Day Mode and Night Mode each use their own icon override.
 
 ## OrbitUI 1.5.0-beta.3, 2026-11-24
 

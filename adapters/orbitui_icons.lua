@@ -13,6 +13,7 @@ local dock_icons = {
 }
 
 M.modules = {
+    ["infra/sui_config"] = true,
     ["features/sui_style"] = true,
     ["features/sui_quickactions"] = true,
     ["lib/bookshelf_icons_library"] = true,
@@ -113,7 +114,9 @@ function M.show(on_select, on_cancel, current, source_key)
 end
 
 function M.wrap(name, module)
-    if name == "features/sui_style" then
+    if name == "infra/sui_config" then
+        module.ICON.day = "solar-colour:extra-brightness"
+    elseif name == "features/sui_style" then
         if module.addTabIconSlot then
             module.addTabIconSlot{
                 id = "orbitui_menu",

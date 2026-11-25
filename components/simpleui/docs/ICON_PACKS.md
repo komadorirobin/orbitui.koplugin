@@ -84,7 +84,7 @@ Every file in the pack root must be an `.svg` or `.png`. The filename (without e
 | `sui_action_browse_series.svg` | Browse by Series |
 | `sui_action_browse_tags.svg` | Browse by Tags |
 
-> **Night Mode has two icons.** The button always shows the mode a tap switches to: by day it reads **Night Mode** with a moon, at night it reads **Day Mode** with a sun. Each state has its own slot — `sui_action_night_mode` for the day state and `sui_action_night_mode_day` for the night state — so a pack can replace either one or both. In OrbitUI, an existing custom Night Mode icon is also used at night until a Day Mode icon is assigned. A custom action label applies in both states. The same two slots appear in **Style → Icons → Quick Actions Icons** as **Night Mode** and **Day Mode**; settings menus that list actions (tabs, slots, modules) always name the action **Night Mode**.
+> **Night Mode has two icons.** The button always shows the mode a tap switches to: by day it reads **Night Mode** with a moon, at night it reads **Day Mode** with a sun. Each state has its own slot — `sui_action_night_mode` for the day state and `sui_action_night_mode_day` for the night state — so a pack can replace either one or both. OrbitUI uses the Solar Colour sun by default for Day Mode. A pack or individual selection can override that slot independently of Night Mode. A custom action label applies in both states. The same two slots appear in **Style → Icons → Quick Actions Icons** as **Night Mode** and **Day Mode**; settings menus that list actions (tabs, slots, modules) always name the action **Night Mode**.
 
 **Quick Actions Defaults**
 

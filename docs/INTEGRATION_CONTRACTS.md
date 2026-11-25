@@ -1208,8 +1208,9 @@ Instapaper/Z-Library without renaming existing identities or rewriting choices.
 
 The built-in SimpleUI `night_mode` quick action retains full icon contrast in
 both day and night mode. The default icon and caption indicate the target mode.
-The settings label stays stable. An explicit icon or label still wins in both
-modes, with a separate day icon taking precedence when configured. Its off-state must not look unavailable, regardless of
+The settings label stays stable. Day Mode defaults to the bundled Solar Colour
+sun. Each mode takes its own icon override, and clearing it restores that
+mode’s default. A custom action label applies in both modes. Full contrast applies regardless of
 the chosen SVG, bitmap or font glyph. `adapters/orbitui_icons.lua` wraps the
 canonical `getEntry` and copies the shared dynamic entry before clearing only
 its `dim` flag. Keep native toggle execution, real screen state, labels, icon
