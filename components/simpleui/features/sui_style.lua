@@ -2572,7 +2572,8 @@ end
 local function _actionKey(action_id)
     if not action_id then return nil end
     action_id = _ICON_ID_ALIAS[action_id] or action_id
-    if require("infra/sui_config").ACTION_BY_ID[action_id] then
+    if require("infra/sui_config").ACTION_BY_ID[action_id]
+            or require("features/sui_quickactions").isIconVariant(action_id) then
         return "simpleui_action_" .. action_id .. "_icon", "action"
     end
     return nil, nil

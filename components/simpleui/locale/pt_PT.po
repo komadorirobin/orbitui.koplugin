@@ -2444,6 +2444,10 @@ msgstr "Maré da aurora. Bom dia."
 msgid "Day %d, here we come!"
 msgstr "Dia %d, aí vamos nós!"
 
+#: features/sui_quickactions.lua:969
+msgid "Day Mode"
+msgstr "Modo Diurno"
+
 #: modules/critter/dialog.lua:486
 msgid "Day one with you. My favourite."
 msgstr "Dia um contigo. O meu preferido."
@@ -8503,6 +8507,10 @@ msgstr ""
 #: features/sui_manual_books.lua:110
 msgid "Started"
 msgstr "Iniciado"
+
+#: screens/sui_stats_windows.lua:369
+msgid "Started %s"
+msgstr "Iniciado em %s"
 
 #: modules/module_coverdeck.lua:142 modules/module_coverdeck.lua:1618
 #: modules/module_coverdeck.lua:1638 modules/module_coverdeck.lua:1645
