@@ -63,12 +63,14 @@ H.test("actual native repository matcher runs before its cap and leaves standalo
     local body = assert(source:match("function Repo.searchBooks%(query, limit, scope, opts%)\n(.-)\nend\n"))
     local books = { ["/a"] = { filepath = "/a", title = "Other" },
         ["/b"] = { filepath = "/b", title = "Charlotte", author = "Charlotte Brontë" } }
-    local env = { HomeDir = { get = function() return "/" end },
+    local env = { Repo = {}, HomeDir = { get = function() return "/" end },
         BookshelfSettings = { read = function() return 3 end },
         candidatesForScope = function(_, _, scope) H.eq(scope, "restricted"); return { { fp = "/a" }, { fp = "/b" } } end,
         _searchIncludesGenres = function() return false end,
         _getLightMetaCache = function() return books end, _lightMetaForFp = function(cache, path) return cache[path] end,
         _searchMatches = function(book, words) return book.title:lower():find(words[1], 1, true) end }
+    local folding = assert(source:match("(function Repo%._resolveLowerFold%(%).-)%s*local function _searchMatches"))
+    compile(folding, env)
     local native = compile("return function(query, limit, scope, opts)\n" .. body .. "\nend", env)
     local match = Search.matcher("charlote bronte", true)
     local result = native("charlote bronte", 1, "restricted", {
