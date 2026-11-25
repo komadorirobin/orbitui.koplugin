@@ -3,7 +3,7 @@
 -- background refresh replaces it -- so the one launch cost we have seen reach
 -- 15s (the batch SELECT over a blob-heavy bookinfo table, issue 262) leaves
 -- the launch path. Pins: fresh vs stale vs older-format handling, and that the
--- refresh saves fresh rows and drops the derived map, once at a time.
+-- refresh saves fresh rows and updates derived metadata.
 --
 -- Bodies are extracted by name; their upvalues become stubbable globals.
 -- Run from the plugin root: lua tests/_test_lightmeta_stale_snapshot.lua
@@ -23,6 +23,7 @@ local function compile(code, env)
 end
 
 local load_body = bodyOf("\nlocal function _loadRowSnapshot%(%)\n(.-)\nend\n", "_loadRowSnapshot")
+local refresh = dofile("lib/bookshelf_lightmeta_refresh.lua")
 local sched_body = bodyOf("\nlocal function _scheduleLightMetaRefresh%(%)\n(.-)\nend\n", "_scheduleLightMetaRefresh")
 
 local function loader(stored, live_fp)
@@ -97,8 +98,9 @@ t.test("refresh completion saves rows and invalidates derived metadata only", fu
     local requested, saved, invalidated, gate = nil, nil, 0, 0
     local env = {
         pcall = pcall,
-        _light_meta_cache = { old = true }, _light_meta_rows_cache = { old = true },
-        _lightmeta_refresh = { request = function(opts) requested = opts end },
+        _light_meta_cache = { fallback = { map = {} } }, _light_meta_rows_cache = { old = true },
+        _lightmeta_refresh = { request = function(opts) requested = opts end, replaceRows = refresh.replaceRows },
+        _bumpDataGeneration = function() end,
         _bimDbFingerprint = function() return "v2:100:5" end,
         _saveRowSnapshot = function(rows, fingerprint)
             assert(fingerprint == "v2:100:5"); saved = rows
@@ -119,7 +121,9 @@ t.test("a failed snapshot save does not block derived-cache invalidation", funct
     local requested, invalidated = nil, false
     local env = {
         pcall = pcall,
-        _lightmeta_refresh = { request = function(opts) requested = opts end },
+        _lightmeta_refresh = { request = function(opts) requested = opts end, replaceRows = refresh.replaceRows },
+        _bumpDataGeneration = function() end,
+        _light_meta_cache = {},
         _saveRowSnapshot = function() error("disk full") end,
         _invalidateCustomMetaGate = function() end,
         Repo = { invalidateBookCache = function() invalidated = true end,

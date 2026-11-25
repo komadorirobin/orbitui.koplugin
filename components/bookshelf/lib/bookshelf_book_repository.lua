@@ -4058,7 +4058,7 @@ end
 -- Returns a shallow copy of the cached candidate list for (home, depth).
 -- Walks fresh on miss/expiry/dir-mtime-change. The copy is so callers
 -- (e.g. getLatest) can sort in place without mutating the cached order.
-cachedWalk = function(home, depth, work)
+cachedWalk = function(home, depth, work, read_only)
     local key = (home or "/") .. ":" .. tostring(depth or 0)
     local now = os.time()
     local formats = _pluginFormatsFingerprint()
@@ -4216,6 +4216,8 @@ cachedWalk = function(home, depth, work)
             from_snapshot and "snapshot" or "memory",
             #entry.list, entry.expires_at - now))
     end
+    -- The read-only folder grouper keys its order on the validated list identity.
+    if read_only then return entry.list end
     local copy = {}
     for i = 1, #entry.list do copy[i] = entry.list[i] end
     return copy
@@ -4626,13 +4628,11 @@ local function _scheduleLightMetaRefresh()
         fingerprint = _bimDbFingerprint,
         done = function(rows, fingerprint)
             pcall(_saveRowSnapshot, rows, fingerprint)
-            _light_meta_cache, _light_meta_rows_cache = {}, nil
-            -- A newly extracted book must join Series/Authors/etc. now (581),
-            -- retaining OrbitUI's cancellable read windows rather than a new
-            -- synchronous, blob-heavy whole-table read.
-            Repo.invalidateSeriesCache()
-            Repo.invalidateBookCache("metadata-refresh")
+            _lightmeta_refresh.replaceRows(_light_meta_cache, rows)
+            _light_meta_rows_cache = nil
             _invalidateCustomMetaGate()
+            Repo.invalidateBookCache("metadata-refresh")
+            _bumpDataGeneration()
         end,
     }
 end
@@ -4663,8 +4663,7 @@ local function _getLightMetaCache(home, depth)
     local now = os.time()
     local entry = _light_meta_cache[key]
     if entry and entry.expires_at > now then
-        logger.dbg(string.format("[bookshelf perf] light_meta: HIT entries=%d ttl_left=%ds",
-            entry.count or 0, entry.expires_at - now))
+        logger.dbg(string.format("[bookshelf perf] light_meta: HIT ttl_left=%ds", entry.expires_at - now))
         return entry.map
     end
     if entry then _light_meta_cache[key] = nil end
@@ -4718,6 +4717,7 @@ local function _getLightMetaCache(home, depth)
     end
     local _t_load = _gettime()
     local stale = row_map ~= nil and fresh == false
+    entry = { rows = row_map, expires_at = now + WALK_CACHE_TTL }
     local meta_map
     local count = 0
     local skipped = 0
@@ -4783,9 +4783,10 @@ local function _getLightMetaCache(home, depth)
                 -- walks the library on a PW5 with 1,150 unindexed books, every
                 -- session. When the book's extraction completes, the
                 -- extraction poll swaps in its row (Repo.lightMetaReady).
-                local info = row_map[fp] or Repo._NO_ROW
+                local rows = entry.rows
+                local info = rows[fp] or Repo._NO_ROW
                 local rec = (Repo.deriveLightRecord or _buildLightMetaFromInfo)(
-                    fp, info, row_map, _buildLightMetaFromInfo)
+                    fp, info, rows, _buildLightMetaFromInfo)
                 -- Memoise, so the second consumer of a book pays nothing and
                 -- the map behaves like the eager one it replaced.
                 rawset(t, fp, rec)
@@ -4801,15 +4802,8 @@ local function _getLightMetaCache(home, depth)
     -- Cache even an empty/partial map: callers fall back to per-book on miss,
     -- so an incomplete cache doesn't break correctness — and we avoid hammering
     -- BIM for the same failed query on every chip switch.
-    _light_meta_cache[key] = {
-        map = meta_map,
-        -- RAW batched rows, unscoped by home prefix: buildBookMeta's batch
-        -- fast path serves any book BIM knows from here (same data a live
-        -- getBookInfo would return, minus the cover blob).
-        rows = row_map,
-        count = count,
-        expires_at = now + WALK_CACHE_TTL,
-    }
+    entry.map = meta_map
+    _light_meta_cache[key] = entry
     logger.dbg(string.format(
         "[bookshelf perf] light_meta: MISS build=%.0fms (read=%.0f map=%.0f) cached=%d source=%s",
         (_gettime() - _t0) * 1000, (_t_load - _t0) * 1000,
@@ -8005,7 +7999,7 @@ function Repo.getFolderSections(limit, offset, sort_priority_override, scope_or_
         for _, ancestor in ipairs(scope_roots or (lib_root and { lib_root } or {})) do
             if within(section_root, ancestor) then walk_root = ancestor; break end
         end
-        sources[i] = { root = section_root, walk = cachedWalk(walk_root, depth),
+        sources[i] = { root = section_root, walk = cachedWalk(walk_root, depth, nil, true),
             metadata = _getLightMetaCache(walk_root, depth) }
     end
     local mixed = G_reader_settings

@@ -119,6 +119,28 @@ local f = compile(prefix .. "\nreturn { books = BOOKS, derivations = function() 
 G_reader_settings.readSetting = function(_, key) if key == "home_dir" then return "/" end end
 local repo = H.componentModule(root, "lib/bookshelf_book_repository")
 Host.shareLightMetadata(repo)
+H.test("validated folder walks reuse sorted pages until the repository changes", function()
+    local native, builds = repo._orderFolderSections, 0
+    repo._orderFolderSections = function(...)
+        builds = builds + 1
+        return native(...)
+    end
+    local function page(offset)
+        return repo.getFolderSections(5, offset, { { key = "title" } },
+            { roots = { "/home" } }, nil, { light_only = true })
+    end
+    local first = page(0)
+    local other = page(5)
+    H.eq(builds, 1); H.eq(#first, 5); H.eq(#other, 5)
+    assert(first[1].filepath ~= other[1].filepath)
+    first[1].title = "changed on screen"
+    assert(page(0)[1].title ~= first[1].title)
+    repo.invalidateWalkCache()
+    page(0)
+    H.eq(builds, 2)
+    repo._orderFolderSections = native
+end)
+
 H.test("real scoped shelf and global series-box lookup reuse derivation without widening scope", function()
     local out, total = repo.getFolderSections(100, 0, { { key = "title" } },
         { roots = { "/home" } }, nil, { light_only = true })

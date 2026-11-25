@@ -3,9 +3,38 @@
 local M = { active = false, invalidated = false }
 local job, request
 local columns = "directory, filename, title, authors, series, series_index, keywords, language, "
-    .. "pages, description, has_meta, has_cover, ignore_cover, ignore_meta, cover_sizetag"
+    .. "pages, description, has_meta, has_cover, ignore_cover, ignore_meta, cover_sizetag, cover_fetched, cover_w, cover_h"
 local fields = { "title", "authors", "series", "series_index", "keywords", "language",
-    "pages", "description", "has_meta", "has_cover", "ignore_cover", "ignore_meta", "cover_sizetag" }
+    "pages", "description", "has_meta", "has_cover", "ignore_cover", "ignore_meta", "cover_sizetag", "cover_fetched", "cover_w", "cover_h" }
+
+-- Cover dimensions and extraction flags belong to the raw row. A new cover
+-- does not change the already resolved title, authors or series of a volume.
+local function sameMetadata(a, b)
+    if a == b then return true end
+    if not a or not b then return false end
+    return a.title == b.title and a.authors == b.authors and a.series == b.series
+        and a.series_index == b.series_index and a.keywords == b.keywords
+        and a.language == b.language and a.pages == b.pages and a.description == b.description
+        and a.has_meta == b.has_meta and a.ignore_meta == b.ignore_meta
+end
+
+function M.replaceRows(scopes, rows)
+    for key, entry in pairs(scopes) do
+        if entry.rows then
+            -- Iterate only materialized records. A keyed lookup on the lazy
+            -- map would derive metadata for books nobody has asked about.
+            for path in pairs(entry.map) do
+                if not sameMetadata(entry.rows[path], rows[path]) then
+                    rawset(entry.map, path, nil)
+                end
+            end
+            entry.rows = rows
+        else
+            -- No batch on the previous read: rebuild a proper lazy map.
+            scopes[key] = nil
+        end
+    end
+end
 
 local function cancel()
     local old = job
@@ -47,6 +76,8 @@ local function start()
                     end
                     info.pages = tonumber(info.pages)
                     info.series_index = tonumber(info.series_index)
+                    info.cover_w = tonumber(info.cover_w)
+                    info.cover_h = tonumber(info.cover_h)
                     current.rows[fp] = info
                 end
             end
