@@ -62,21 +62,21 @@ local function tilted(r, radians)
     return area, wrap
 end
 
--- Express the fan in units of one cover width. Each jacket rotates around
--- the same point just below its lower edge. Fit the union of all four
--- corners before converting to pixels, including the lower outside corners.
+-- A distant pivot keeps the arc shallow and leaves neighbouring jackets
+-- exposed even at a small angle. Distances are in units of one cover width.
 local function drawFan(art, count, index, gap, draw)
     local layers = {}
     local xmin, xmax, ymin, ymax = math.huge, -math.huge, math.huge, -math.huge
-    local pivot_distance = .92 -- centre to pivot for a 1 × 1.5 jacket
+    local pivot_distance = 3.1
+    local outer_angle = count >= 4 and 16 or 10
     for i = 1, count do
         local offset = (i - index) % count
         if offset > count / 2 then offset = offset - count end
         local side_count = offset < 0 and floor((count - 1) / 2) or floor(count / 2)
-        local angle = offset == 0 and 0 or (count >= 4 and 41 or 34) * offset / side_count
+        local angle = offset == 0 and 0 or outer_angle * offset / side_count
         local radians = math.rad(angle)
         local c, s = math.cos(radians), math.sin(radians)
-        local x, y = pivot_distance * s, -pivot_distance * c
+        local x, y = pivot_distance * s, pivot_distance * (1 - c)
         local dx, dy = .5 * c + .75 * math.abs(s), .5 * math.abs(s) + .75 * c
         xmin, xmax, ymin, ymax = min(xmin, x - dx), max(xmax, x + dx), min(ymin, y - dy), max(ymax, y + dy)
         layers[i] = { i = i, x = x, y = y, angle = angle }

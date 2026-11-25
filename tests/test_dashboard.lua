@@ -735,7 +735,7 @@ H.test("both card styles fit empty and populated dashboards without changing oth
     package.loaded["ui/widget/widget"] = old
 end)
 
-H.test("wide focus cards use the right edge and fan jackets splay from a shared base", function()
+H.test("wide focus cards use the right edge and fan jackets stay gently tilted and selectable", function()
     local display = require("adapters/orbitui_ongoing_display")
     local card = { x = 10, y = 20, w = 640, h = 280 }
     local covers, layers, art, rules
@@ -759,7 +759,7 @@ H.test("wide focus cards use the right edge and fan jackets splay from a shared 
     for i = 1, 5 do
         local file = tostring(i)
         data.featured[i] = { file = file, data = { title = file, percent = .1 } }
-        if i >= 3 then
+        if i >= 2 then
             for _, selected in ipairs({ "1", file }) do
                 covers, layers, rules = {}, {}, {}
                 data.config.ongoing_style = "focus"
@@ -784,25 +784,34 @@ H.test("wide focus cards use the right edge and fan jackets splay from a shared 
                 local left, right = math.huge, -math.huge
                 for _, b in pairs(covers) do
                     assert(b.y > rules[1] and b.y + b.h < rules[2], "allow clearance at header and footer")
+                    assert(b.w <= front.w * 1.4 + 2, "limit the lean of the outer jackets")
                     left, right = math.min(left, b.x), math.max(right, b.x + b.w)
                 end
                 assert(math.abs((left + right) - (2*art.x + art.w)) <= 4)
-                local function span(y)
-                    local lo, hi = math.huge, -math.huge
+                local function visibleAt(fraction)
+                    local y = front.y + math.floor(front.h * fraction)
+                    local lo, hi, widths = math.huge, -math.huge, {}
                     for x = left, right - 1 do
-                        for _, b in pairs(covers) do
+                        for layer = #layers, 1, -1 do
+                            local file = layers[layer]
+                            local b = covers[file]
                             local dx, dy = x - b.x, y - b.y
                             if dx >= 0 and dy >= 0 and dx < b.w and dy < b.h
                                     and (not b.contains or b.contains(dx, dy)) then
+                                widths[file] = (widths[file] or 0) + 1
                                 lo, hi = math.min(lo, x), math.max(hi, x)
+                                break
                             end
                         end
                     end
-                    return hi - lo
+                    return hi - lo, widths
                 end
-                assert(span(front.y + math.floor(front.h * .55)) >
-                    span(front.y + math.floor(front.h * .94)) + front.w / 2,
-                    "jackets spread near the top and converge at the base")
+                local _, visible = visibleAt(.5)
+                for _, file in ipairs(layers) do
+                    assert((visible[file] or 0) >= front.w / 3, "leave a tappable strip of every jacket")
+                end
+                assert(visibleAt(.30) > visibleAt(.94) + front.w * .1,
+                    "jackets still spread near the top and converge at the base")
             end
         end
     end
