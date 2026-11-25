@@ -276,11 +276,12 @@ H.test("key input never prefills a saved key and caches retire on key or account
     H.eq(requests[3], "dashboard"); H.eq(Achievements.snapshot().full, false)
 end)
 
-local function cardRows(owner, height, width)
+local function cardRows(owner, height, width, background)
     local descriptor
     Achievements.install({ register = function(d) descriptor = d end })
-    local clip = descriptor.build(width or 260, { _screen_widget = owner, orbitui_dashboard_hosted = true, height = height })
-    return clip[1][1][1]
+    local clip = descriptor.build(width or 260, { _screen_widget = owner, orbitui_dashboard_hosted = true,
+        height = height, orbitui_card_background = background })
+    return clip[1][1][1], clip
 end
 
 H.test("the Home card shows the server's next milestone beside the latest award using just the plugin", function()
@@ -292,7 +293,12 @@ H.test("the Home card shows the server's next milestone beside the latest award 
             next = { name = "Bookworm", iconName = "book-open", rarity = "epic", groupKey = "books_finished", currentProgress = 8, threshold = 10 } } }
     end
     assert(Achievements.refresh(observe(owner))); drain()
-    local rows = cardRows(owner, 142)
+    local fill = { r = 228, g = 234, b = 240 }
+    local rows, clip = cardRows(owner, 142, 260, fill)
+    H.eq(clip.bg, fill)
+    H.eq(rows[1].bgcolor, fill)
+    H.eq(rows[2][3].bgcolor, fill)
+    H.eq(rows[3][3][2].bgcolor, fill)
     H.eq(#rows, 3); H.eq(rows[2][3].text, "First chapter")
     H.eq(Achievements.snapshot().items[1].icon, "book-open")
     assert(rows[2][1].image.svg:find('id="face"',1,true) and rows[3][1].image.svg:find('id="blank"',1,true))

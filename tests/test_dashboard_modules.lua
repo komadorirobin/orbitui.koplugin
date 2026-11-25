@@ -377,6 +377,30 @@ H.test("hosted book menus keep their native module and receive the correct optio
     saved.simpleui_hs_settings_on_hold = nil
     v:free()
 end)
+H.test("hosted modules and their clipping buffers share the dashboard card fill", function()
+    local e = entry("simpleui", "external_pet")
+    local v, ctx, data = view(only(e))
+    local supported, accent = View.colourSupported, package.loaded["infra/sui_accent"]
+    View.colourSupported = function() return true end
+    package.loaded["infra/sui_accent"] = { toColor = function(hex) return hex end }
+    local screen = require("device").screen
+    for _, night in ipairs({false, true}) do
+        screen.night_mode = night
+        for _, mode in ipairs({"tinted", "accents", "off"}) do
+            data.colour = mode
+            v:replaceContent(ctx, data)
+            local slot = v._module_cover_slots[1]
+            local palette = Model.cardColours(e.id, mode, night)
+            local fill = palette and palette.fill or BB.COLOR_WHITE
+            H.eq(slot.clip.bg, fill)
+            H.eq(slot.args.orbitui_card_background, fill)
+            H.eq(ctx.orbitui_card_background, nil)
+        end
+    end
+    screen.night_mode = false
+    View.colourSupported, package.loaded["infra/sui_accent"] = supported, accent
+    v:free()
+end)
 H.test("clock-style refreshes rebuild only their own card and retire old child callbacks", function()
     registry.register({ id = "clock_fixture", name = "Clock", build = mod.build,
         scheduleRefresh = function() error("must not steal the native Home timer") end })

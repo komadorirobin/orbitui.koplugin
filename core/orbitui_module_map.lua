@@ -3875,8 +3875,8 @@ local function remaining(item)\
     return string.format(_(units[2]), left)\
 end\
 \
-local function textWidget(text, w, h, size, bold)\
-    return require(\"ui/widget/textboxwidget\"):new{ text = text, width = w, height = h, height_adjust = false,\
+local function textWidget(text, w, h, size, bold, background)\
+    return require(\"ui/widget/textboxwidget\"):new{ text = text, width = w, height = h, bgcolor = background, height_adjust = false,\
         height_overflow_show_ellipsis = true, face = require(\"ui/font\"):getFace(\"cfont\", size), bold = bold }\
 end\
 \
@@ -4027,7 +4027,7 @@ local function cardItems(data, milestone, capacity)\
     return items\
 end\
 \
-local function listRow(item, w, h)\
+local function listRow(item, w, h, background)\
     local screen = require(\"device\").screen\
     local heading, detail = title(item), nil\
     if h >= screen:scaleBySize(44) then\
@@ -4039,11 +4039,12 @@ local function listRow(item, w, h)\
     return medalRow(item, w, h, 48, function(width)\
         if not detail then\
             local size = h < screen:scaleBySize(25) and 13 or 15\
-            return textWidget(heading, width, math.min(h, screen:scaleBySize(30)), size, true)\
+            return textWidget(heading, width, math.min(h, screen:scaleBySize(30)), size, true, background)\
         end\
         local half = math.floor(h / 2)\
         return require(\"ui/widget/verticalgroup\"):new{ align = \"left\",\
-            textWidget(heading, width, half, 15, true), textWidget(detail, width, h - half, 14, false) }\
+            textWidget(heading, width, half, 15, true, background),\
+            textWidget(detail, width, h - half, 14, false, background) }\
     end)\
 end\
 \
@@ -4073,14 +4074,14 @@ local function medalTile(item, w, h)\
         dimen = require(\"ui/geometry\"):new{ w = w, h = h }, tile }\
 end\
 \
-local function cardContent(data, failure, preview, w, h)\
+local function cardContent(data, failure, preview, w, h, background)\
     local screen = require(\"device\").screen\
     local group = require(\"ui/widget/verticalgroup\"):new{ align = \"left\" }\
     local body_h = h\
     if preview or h >= screen:scaleBySize(68) then\
         local header = data and data.items and countLine(data) or _(\"Latest achievements\")\
         local header_h = math.min(h, screen:scaleBySize(24))\
-        group[#group + 1] = textWidget(header .. \"  ›\", w, header_h, 16, true)\
+        group[#group + 1] = textWidget(header .. \"  ›\", w, header_h, 16, true, background)\
         body_h = math.max(1, h - header_h)\
     end\
     if preview then return group end\
@@ -4092,7 +4093,7 @@ local function cardContent(data, failure, preview, w, h)\
     local items = cardItems(data, milestone, grid and rows * 3 or list_capacity)\
     if #items == 0 then\
         local copy = data and data.items and _(\"No recent achievements to show.\") or label(failure or \"loading\")\
-        local message = textWidget(copy, w, body_h, 14, false)\
+        local message = textWidget(copy, w, body_h, 14, false, background)\
         group[#group + 1] = message\
         return group, message\
     end\
@@ -4108,7 +4109,7 @@ local function cardContent(data, failure, preview, w, h)\
         end\
     else\
         local row_h = math.floor(body_h / #items)\
-        for _, item in ipairs(items) do group[#group + 1] = listRow(item, w, row_h) end\
+        for _, item in ipairs(items) do group[#group + 1] = listRow(item, w, row_h, background) end\
     end\
     return group\
 end\
@@ -4126,8 +4127,9 @@ local function build(w, ctx)\
     local h = ctx.orbitui_dashboard_hosted and ctx.height or getHeight()\
     local pad = math.min(Screen:scaleBySize(6), math.floor(w / 20), math.floor(h / 18))\
     local inner, usable = math.max(1, w - pad * 2), math.max(1, h - pad * 2)\
-    local group, message = cardContent(data, failure, preview, inner, usable)\
-    local clip = require(\"lib/bookshelf_clip_container\"):new{ w = w, h = h,\
+    local background = ctx.orbitui_card_background\
+    local group, message = cardContent(data, failure, preview, inner, usable, background)\
+    local clip = require(\"lib/bookshelf_clip_container\"):new{ w = w, h = h, bg = background,\
         require(\"ui/widget/container/framecontainer\"):new{ padding = pad, bordersize = 0,\
             require(\"ui/widget/container/topcontainer\"):new{\
                 dimen = require(\"ui/geometry\"):new{ w = inner, h = usable }, group } } }\
