@@ -1,5 +1,21 @@
 # Verification and device acceptance
 
+## 2026-11-25 — Dashboard preview in the upgrade invitation
+
+The Tolino Vision Color emulator ran source `bcc6cd67c` from ZIP
+`b2a6ce8291c37b6ed22d5f5d06830d0e998cd70788faebef77c9e6bd7435dc98`.
+The Swedish invitation at 1264 × 1680 and the English invitation at 600 × 800
+each displayed the matching dashboard screenshot and both buttons. The
+screenshots use five example books with public-domain cover art.
+Accepting enabled the dashboard with Cover fan. Declining kept it off.
+Both decisions persisted after restarting KOReader. Clean profiles and
+profiles with the dashboard already enabled followed their usual startup.
+
+The full test command passed with its optional skips. All 21 setup UI checks
+also passed under LuaJIT. Screenshots and logs are in
+`test-results/fan-invitation-preview-20261125/`. The physical HiBreak was
+disconnected during these checks.
+
 ## 2026-11-25 — Cover fan default and dashboard invitation
 
 A Swedish Tolino Vision Color emulator ran source `d5fee893f` from ZIP
