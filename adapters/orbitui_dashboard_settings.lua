@@ -374,7 +374,9 @@ function M.presentationItem(pfx, applied)
                     end)
                 end }}
         end
-        dialog = require("ui/widget/buttondialog"):new{ title = title, buttons = buttons, modal = true,
+        -- A dashboard hold can originate in the full-screen modal book page.
+        -- Keep the picker modal there even when native-dialog theming is enabled.
+        dialog = require("ui/widget/buttondialog"):new{ title = title, buttons = buttons, modal = true, sui_native = true,
             _sui_keep_homescreen = true }
         ui:show(dialog)
     end }

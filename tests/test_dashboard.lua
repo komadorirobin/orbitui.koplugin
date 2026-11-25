@@ -663,6 +663,7 @@ H.test("ongoing display picker, selection and opening stay local to the book car
     local picker = require("adapters/orbitui_dashboard_settings").presentationItem(ctx.pfx, function() end)
     for i, style in ipairs({ "focus", "fan" }) do
         picker.callback()
+        assert(shown_dialog.modal and shown_dialog.sui_native)
         shown_dialog.buttons[i + 1][1].callback()
         H.eq(saved[config_key].ongoing_style, style)
         H.eq(saved[layout_key], "cover_row")
@@ -703,6 +704,35 @@ H.test("ongoing display picker, selection and opening stay local to the book car
     H.eq(saved[config_key].ongoing_style, nil); H.eq(saved[config_key].cover_row_count, 5)
     saved[config_key], saved[layout_key] = original, layout
     package.loaded["ui/widget/widget"], package.loaded["ui/widget/buttondialog"] = old_widget, old_dialog
+end)
+
+H.test("both card styles fit empty and populated dashboards without changing other card positions", function()
+    local old = package.loaded["ui/widget/widget"]
+    package.loaded["ui/widget/widget"] = Widget
+    for _, layout in ipairs({ "classic", "cover_stairs", "cover_row" }) do
+        for _, style in ipairs({ "focus", "fan" }) do
+            local data = Dashboard.readData(ctx)
+            data.layout, data.config.ongoing_style = layout, style
+            for _, count in ipairs({ 0, 1, 3, 5 }) do
+                data.featured = {}
+                for i = 1, count do
+                    data.featured[i] = { file = "/" .. i, data = { title = "Book " .. i, percent = .32 } }
+                end
+                for _, size in ipairs({ { 300, 400 }, { 600, 730 }, { 800, 480 } }) do
+                    local view = View.build(size[1], size[2], ctx, data)
+                    local card = view._plan.ladder or view._plan.hero
+                    for _, a in ipairs(view._actions) do
+                        if a.row_card == "featured_books" then
+                            assert(a.x >= card.x and a.y >= card.y and a.x + a.w <= card.x + card.w
+                                and a.y + a.h <= card.y + card.h, layout .. " " .. style)
+                        end
+                    end
+                    view:free()
+                end
+            end
+        end
+    end
+    package.loaded["ui/widget/widget"] = old
 end)
 
 H.test("closing a dashboard layout change rebuilds the data context", function()
