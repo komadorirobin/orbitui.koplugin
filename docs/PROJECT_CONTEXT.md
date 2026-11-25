@@ -22,8 +22,10 @@ and correct this file in the same change.
 
 ## Local library and dock candidate, 2026-11-25
 
-The native dashboard book card has two optional presentations, Book in focus
-and Cover fan. The `ongoing_style` setting belongs to the screen's dashboard
+New installations default to Cover fan for the Home dashboard book card.
+Upgrades with the dashboard turned off get a one-time invitation in FileManager
+to enable it with Cover fan. Existing dashboard users keep their display.
+The card also offers its original layout and Book in focus. The `ongoing_style` setting belongs to the screen's dashboard
 configuration. A long press on the card or its covers offers the picker.
 Selection within the card is temporary. Cover loading, opening, and native
 book actions use Home's existing providers.
@@ -262,7 +264,7 @@ dock restored. See TESTING for device checks and OTA for publication details.
   the capture set, restored preferences and observed limitations.
 
 - **Fresh-install dashboard default.** The setup guide preselects Reading
-  dashboard with Straight cover row and saves the layout when the user applies
+  dashboard with Cover fan and saves the page layout when the user applies
   the reviewed setup. Pending setup can be resumed from settings with the
   same defaults. Completed, skipped and existing installations keep their
   saved preferences. See TESTING for the fresh and upgrade cases.

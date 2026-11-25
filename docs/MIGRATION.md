@@ -136,8 +136,8 @@ folder or label changes. Newly selected folders must exist; temporarily absent
 old roots (for example on removable storage) may remain unchanged.
 
 The guide appears automatically only on a fresh installation, in FileManager,
-not while a book is opening. It preselects Reading dashboard with Straight cover
-row and a small Home/library/power bar. Review and apply to add the dashboard as
+not while a book is opening. It preselects Reading dashboard with Cover fan
+and a small Home/library/power bar. Review and apply to add the dashboard as
 the first Home page. Existing Home pages and File browser are alternative launch
 targets. Bar buttons appear in selection order and obey
 the native bar limit (including navigation-pager mode); two buttons are required
@@ -148,14 +148,21 @@ bar: select it in the guide's Bottom bar step.
 Before components create defaults, `settings/orbitui/setup.lua` records version 1
 and a `pending` or `kept` status. Existing Bookshelf/SimpleUI files (including
 native Bookshelf's `settings/bookshelf/settings.lua`, `.old` backups, or legacy
-global preferences) select `kept`: upgrades are not prompted
-and their choices are left alone. For these users, the manual guide starts
+global preferences) select `kept` and skip the automatic setup guide. For these users, the manual guide starts
 with Keep existing. On a fresh install, Cancel leaves
 setup pending for the next launch; Skip automatic setup stops automatic prompts
 but does not prevent opening the guide from settings. A reader-first launch
 defers the prompt until FileManager is available. Unknown setup schemas block
 initialization rather than being overwritten. Normal component defaults and
 additive stage 1/2 migrations still run independently of the guide.
+
+On a new OrbitUI installation the native ongoing-books card in Home starts with
+Cover fan, even if setup is skipped and the dashboard is enabled later. On
+upgrade, FileManager offers a one-time invitation when the Home dashboard is
+off. Accepting adds the dashboard with Cover fan, preserving the launch target,
+dock and existing Home pages. Declining or dismissing the invitation keeps Home
+as configured. Readers who already use the dashboard keep their chosen display.
+The invitation waits while a book is open.
 
 OrbitUI suppresses the embedded SimpleUI onboarding and its pre-guide startup
 override. Standalone SimpleUI behavior is unchanged. Draft callbacks stop after

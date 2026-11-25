@@ -2,7 +2,8 @@ local Model = require("core/orbitui_setup")
 local Libraries = require("core/orbitui_libraries")
 local _ = require("core/orbitui_i18n")
 local M = {}
-local state, active, offered, current_owner
+local state, active, offered, current_owner, invitation
+local invitation_key = "dashboard_fan_invitation_v1"
 local function ui() return require("ui/uimanager") end
 local function profiles() return require("lib/bookshelf_profiles") end
 local function sui() return require("infra/sui_store") end
@@ -30,11 +31,20 @@ function M.prepare(existing_host)
         end
         -- Persist detection before components create their default settings files.
         opened:saveSetting("setup", { version = 1, status = existing and "kept" or "pending" })
-        assert(opened:flush() ~= false, "Could not save OrbitUI setup state")
     else
         assert(type(saved) == "table" and saved.version == 1
             and ({ pending = true, kept = true, complete = true, skipped = true })[saved.status],
             "Unsupported OrbitUI setup state; saved settings were not changed")
+    end
+    local previous_invitation = opened:readSetting(invitation_key)
+    if previous_invitation == nil then
+        local pending = opened:readSetting("setup").status == "pending"
+        local fresh = saved == nil and (existing_host == false or existing_host == nil and pending)
+        -- Record the install cohort before registration creates Home's config.
+        opened:saveSetting(invitation_key, fresh and "new" or pending and "done" or "eligible")
+    end
+    if saved == nil or previous_invitation == nil then
+        assert(opened:flush() ~= false, "Could not save OrbitUI setup state")
     end
     -- Existing standalone components are not evidence of OrbitUI's forced
     -- shelf policy. The pre-first-run snapshot distinguishes a host upgrade.
@@ -43,7 +53,11 @@ function M.prepare(existing_host)
     state = opened
 end
 
-local function snapshot()
+function M.initialHomeStyle()
+    if state and state:readSetting(invitation_key) == "new" then return "fan" end
+end
+
+local function homeSnapshot()
     local Registry = require("modules/moduleregistry")
     local order = Registry.loadOrder("simpleui_hs_")
     local layout = Libraries.copy(sui():readSetting("simpleui_layout"))
@@ -61,12 +75,19 @@ local function snapshot()
             end
         end
     end
-    return { libraries = Libraries.copy(profiles().config()), layout = layout, order = Libraries.copy(order),
-        tabs = Libraries.copy(require("infra/sui_config").loadTabConfig()),
-        start = G_reader_settings:readSetting("start_with"),
+    return { layout = layout, order = Libraries.copy(order),
         dashboard = sui():readSetting("simpleui_hs_orbitui_dashboard_enabled"),
-        dashboard_layout = sui():readSetting("simpleui_hs_orbitui_dashboard_layout"),
-        appearance = require("adapters/orbitui_appearance").current() }
+        dashboard_layout = sui():readSetting("simpleui_hs_orbitui_dashboard_layout") }
+end
+
+local function snapshot()
+    local result = homeSnapshot()
+    result.ongoing_style = require("adapters/orbitui_dashboard").readConfig().ongoing_style
+    result.libraries = Libraries.copy(profiles().config())
+    result.tabs = Libraries.copy(require("infra/sui_config").loadTabConfig())
+    result.start = G_reader_settings:readSetting("start_with")
+    result.appearance = require("adapters/orbitui_appearance").current()
+    return result
 end
 
 local function actionChoices(draft)
@@ -201,7 +222,8 @@ local home_names = { keep = "Keep existing", dashboard = "Reading dashboard", ho
 local function homeLabel(draft, choice)
     local label = _(home_names[choice])
     if choice == "dashboard" and draft.dashboard_layout == "cover_row" then
-        label = label .. " · " .. _("Straight cover row")
+        local names = { fan = "Cover fan", focus = "Book in focus" }
+        label = label .. " · " .. _(names[draft.original.ongoing_style] or "Straight cover row")
     end
     return label
 end
@@ -321,9 +343,18 @@ local function review(session)
     })
 end
 
+local function closeInvitation()
+    if invitation then
+        local dialog = invitation
+        invitation = nil
+        ui():close(dialog)
+    end
+end
+
 function M.show(owner)
     M.prepare()
     if active then return active.host end
+    closeInvitation()
     local pending = state:readSetting("setup").status == "pending"
     local session = { owner = owner or current_owner, draft = Model.draft(snapshot(), pending), children = {}, watched = {} }
     active = session
@@ -364,15 +395,74 @@ function M.show(owner)
     return session.host
 end
 
+local function finishInvitation(enable)
+    local writes = {}
+    local function set(store, key, value)
+        writes[#writes + 1] = { store = store, key = key, value = value }
+    end
+    local dashboard = require("adapters/orbitui_dashboard")
+    local activate = enable and not dashboard.isEnabled()
+    if activate then
+        local key = "simpleui_hs_orbitui_dashboard_config"
+        local config = dashboard.readConfig()
+        if config.unsupported then return end
+        local raw = Libraries.copy(sui():readSetting(key))
+        raw.ongoing_style = "fan"
+        set("simpleui", key, raw)
+        Model.addDashboardPage(homeSnapshot(), "cover_row", set)
+    end
+    set("setup", invitation_key, "done")
+    local ok, err, restored = Model.commit(writes, stores())
+    if not ok then
+        require("logger").warn("OrbitUI dashboard invitation save failed", err)
+        ui():show(require("ui/widget/infomessage"):new{ text = _(restored
+            and "Could not save setup. Previous settings were restored."
+            or "Could not save setup completely. Check your settings before retrying.") })
+    elseif activate then
+        local HS = package.loaded["screens/sui_homescreen"]
+        local screen = HS and HS.getInstance and HS.getInstance("hs")
+        if screen then screen._current_page = 1 end
+        if HS and HS.rebuildLayout then HS.rebuildLayout({ keep_wallpaper = true }) end
+    end
+end
+
+local function offerDashboard(owner)
+    local dialog
+    local function choose(enable)
+        if invitation ~= dialog or current_owner ~= owner then return end
+        invitation = nil
+        finishInvitation(enable)
+    end
+    dialog = require("ui/widget/confirmbox"):new{
+        text = _("Add the Reading dashboard to Home?") .. "\n\n"
+            .. _("Browse your current books in a cover fan on a new Home page. Your other pages stay in place."),
+        ok_text = _("Enable Reading dashboard"), ok_callback = function() choose(true) end,
+        cancel_text = _("No thanks"), cancel_callback = function() choose(false) end,
+        sui_native = true, _sui_keep_homescreen = true,
+    }
+    invitation = dialog
+    ui():show(dialog)
+end
+
 function M.started(owner)
+    if current_owner ~= owner then closeInvitation() end
     current_owner = owner
     owner._orbitui_setup_alive = true
     if owner.ui.document then return end
     ui():nextTick(function()
-        if not owner._orbitui_setup_alive or current_owner ~= owner or offered
-            or state:readSetting("setup").status ~= "pending" then return end
+        if not owner._orbitui_setup_alive or current_owner ~= owner or offered or active then return end
+        local show = M.show
+        if state:readSetting("setup").status ~= "pending" then
+            if state:readSetting(invitation_key) ~= "eligible" then return end
+            local dashboard = require("adapters/orbitui_dashboard")
+            if dashboard.isEnabled() or dashboard.readConfig().unsupported then
+                finishInvitation(false)
+                return
+            end
+            show = offerDashboard
+        end
         offered = true
-        local ok, err = pcall(M.show, owner)
+        local ok, err = pcall(show, owner)
         if not ok then
             require("logger").warn("OrbitUI setup could not open", err)
             ui():show(require("ui/widget/infomessage"):new{
@@ -384,7 +474,7 @@ end
 
 function M.stopped(owner)
     owner._orbitui_setup_alive = nil
-    if current_owner == owner then current_owner = nil end
+    if current_owner == owner then closeInvitation(); current_owner = nil end
     if active and active.owner == owner then require("lib/bookshelf_menu_host").close(active.host) end
 end
 

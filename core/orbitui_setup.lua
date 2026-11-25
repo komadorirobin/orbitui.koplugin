@@ -54,6 +54,27 @@ function M.relocate(section, old, path)
     end
 end
 
+function M.addDashboardPage(current, default_layout, set)
+    local layout = Dashboard.withPage(current.layout, true)
+    set("simpleui", "simpleui_layout", layout)
+    set("simpleui", "simpleui_hs_orbitui_dashboard_enabled", true)
+    if default_layout and current.dashboard_layout == nil then
+        set("simpleui", "simpleui_hs_orbitui_dashboard_layout", default_layout)
+    end
+    -- Keep the native module-order setting in sync without resetting modules.
+    local order, seen = {}, {}
+    for _, page in ipairs(layout.pages) do
+        for _, entry in ipairs(page.modules) do
+            local id = type(entry) == "table" and entry.id or entry
+            if id then order[#order + 1], seen[id] = id, true end
+        end
+    end
+    for _, id in ipairs(current.order or {}) do
+        if id ~= "__page_break__" and not seen[id] then order[#order + 1], seen[id] = id, true end
+    end
+    set("simpleui", "simpleui_hs_module_order", order)
+end
+
 function M.plan(draft, current, options)
     options = options or {}
     Libraries.validate(draft.libraries)
@@ -77,24 +98,7 @@ function M.plan(draft, current, options)
         set("reader", "start_with", draft.home == "files" and "filemanager" or "homescreen_simpleui")
     end
     if draft.home == "dashboard" then
-        local layout = Dashboard.withPage(current.layout, true)
-        set("simpleui", "simpleui_layout", layout)
-        set("simpleui", "simpleui_hs_orbitui_dashboard_enabled", true)
-        if draft.dashboard_layout and current.dashboard_layout == nil then
-            set("simpleui", "simpleui_hs_orbitui_dashboard_layout", draft.dashboard_layout)
-        end
-        -- Keep the native module-order setting in sync without resetting modules.
-        local order, seen = {}, {}
-        for _, page in ipairs(layout.pages) do
-            for _, entry in ipairs(page.modules) do
-                local id = type(entry) == "table" and entry.id or entry
-                if id then order[#order + 1], seen[id] = id, true end
-            end
-        end
-        for _, id in ipairs(current.order or {}) do
-            if id ~= "__page_break__" and not seen[id] then order[#order + 1], seen[id] = id, true end
-        end
-        set("simpleui", "simpleui_hs_module_order", order)
+        M.addDashboardPage(current, draft.dashboard_layout, set)
     end
     assert(draft.bar == "keep" or draft.bar == "custom", "Invalid bottom bar")
     if draft.bar == "custom" then

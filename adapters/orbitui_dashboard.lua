@@ -46,7 +46,12 @@ function M.readConfig(pfx)
     local legacy = store():readSetting("simpleui_orbitui_dashboard_config_ready") ~= true
         and store():readSetting(pfx .. M.enabled_key) ~= nil
     local config = Model.config(raw, legacy)
-    if raw == nil then store():saveSetting(key, config) end
+    if raw == nil then
+        if pfx == "simpleui_hs_" then
+            config.ongoing_style = require("adapters/orbitui_setup").initialHomeStyle()
+        end
+        store():saveSetting(key, config)
+    end
     return config
 end
 
