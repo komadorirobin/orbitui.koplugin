@@ -150,14 +150,15 @@ end)
 -- the newest root book stood ahead of everything and the first folder paged
 -- later, while cover and list mode showed folders first from the same
 -- settings (reported on a Home shelf).
+local function folderPartition()
+    local f = assert(io.open("lib/bookshelf_book_repository.lua"))
+    local source = f:read("*a"); f:close()
+    local producer = assert(source:match("function Repo%._orderFolderSections(.-)\nend"))
+    local block = assert(producer:match("(if not mixed then.-\n    end\n)"))
+    return assert(load("local sections, mixed = ...\n" .. block .. "\nreturn sections", "partition", "t", {}))
+end
 t.test("mixed off: the root's loose books go last, folders keep tree order", function()
-    local rsrc = io.open("lib/bookshelf_book_repository.lua"):read("*a")
-    local block = rsrc:match("(local mixed = G_reader_settings.-\n    end\n)")
-    assert(block, "the partition moved or was renamed")
-    local env = { G_reader_settings = { isTrue = function(_s, k)
-                      return k == "collate_mixed" and false end } }
-    local fn = assert(load("local sections = ...\n" .. block
-                           .. "\nreturn sections", "partition", "t", env))
+    local fn = folderPartition()
     local out = fn({ { label = nil, path = "/r" },
                      { label = "Culture", path = "/r/Culture" },
                      { label = "Discworld", path = "/r/Discworld" } })
@@ -168,25 +169,13 @@ t.test("mixed off: the root's loose books go last, folders keep tree order", fun
 end)
 
 t.test("mixed on: tree order stands, which is what it always did", function()
-    local rsrc = io.open("lib/bookshelf_book_repository.lua"):read("*a")
-    local block = rsrc:match("(local mixed = G_reader_settings.-\n    end\n)")
-    local env = { G_reader_settings = { isTrue = function(_s, k)
-                      return k == "collate_mixed" and true end } }
-    local fn = assert(load("local sections = ...\n" .. block
-                           .. "\nreturn sections", "partition", "t", env))
+    local fn = function(list) return folderPartition()(list, true) end
     local out = fn({ { label = nil, path = "/r" }, { label = "Culture" } })
     eq(out[1].label or "<root>", "<root>", "mixed must leave the order alone")
 end)
 
 t.test("a library with no loose books, or no folders, is left alone", function()
-    local rsrc = io.open("lib/bookshelf_book_repository.lua"):read("*a")
-    local block = rsrc:match("(local mixed = G_reader_settings.-\n    end\n)")
-    local env = { G_reader_settings = { isTrue = function() return false end } }
-    local function run(list)
-        local fn = assert(load("local sections = ...\n" .. block
-                               .. "\nreturn sections", "partition", "t", env))
-        return fn(list)
-    end
+    local run = folderPartition()
     eq(#run({ { label = "A" }, { label = "B" } }), 2, "folders only")
     eq((run({ { label = nil } }))[1].label, nil, "root only")
     eq(#run({}), 0, "an empty library must not error")

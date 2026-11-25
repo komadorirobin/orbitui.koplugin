@@ -36,7 +36,7 @@ t.test("getFolderSections walks a folder under the library once, via the library
     local body = repo:match("\nfunction Repo%.getFolderSections%(.-%)\n(.-)\nend\n")
     assert(body)
     assert(body:find("local root = (opts and opts.root) or lib_root", 1, true))
-    assert(body:find("local walk = cachedWalk(walk_root, depth)", 1, true),
+    assert(select(2, body:gsub("cachedWalk%(walk_root, depth%)", "")) == 1,
         "a drill re-walks the disk instead of reusing the library walk")
     assert(body:find("_getLightMetaCache(walk_root, depth)", 1, true))
 end)

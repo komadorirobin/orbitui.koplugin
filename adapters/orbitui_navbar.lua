@@ -14,6 +14,15 @@ function M.config(Config)
     Config.NON_HOME_DEFAULTS = M.default_tabs
     Config.homeLabel = function() return _("File browser") end
     Config.ACTION_BY_ID.home.label = _("File browser")
+    Config.startupDockItem = function()
+        local value = G_reader_settings:readSetting("start_with")
+        local id = type(value) == "string" and value:match("^orbitui_dock:(.+)$")
+        if not id then return end
+        local label = M.hasAction(id) and require("features/sui_quickactions").getMenuLabel(id) or _("Dock")
+        return { text = label, radio = true,
+            checked_func = function() return G_reader_settings:readSetting("start_with") == value end,
+            callback = function() G_reader_settings:saveSetting("start_with", value) end }
+    end
 end
 
 function M.changed()

@@ -294,6 +294,9 @@ H.test("choosing a startup view keeps dock order and excludes device actions", f
     H.eq(choice("power", "Use as startup view"), nil)
     choice("history", "Use as startup view").callback(); H.eq(value, "history")
     choice("orbitui_bookshelf", "Use as startup view").callback(); H.eq(value, "orbitui_dock:orbitui_bookshelf")
+    local item = Config.startupDockItem()
+    H.eq(item.text, QA.getMenuLabel("orbitui_bookshelf")); H.eq(item.checked_func(), true)
+    value = "history"; H.eq(item.checked_func(), false); H.eq(Config.startupDockItem(), nil)
     H.eq(table.concat(Config.loadTabConfig(), ","), "homescreen,orbitui_bookshelf,history,power")
     G_reader_settings = native
 end)
