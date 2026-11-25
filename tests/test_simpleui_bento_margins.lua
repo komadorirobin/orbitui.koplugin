@@ -373,4 +373,51 @@ H.test("explicit free-width rows render unsnapped percentages with independent s
     H.eq(p.labels.new_books.x, p.labels.coverdeck.x)
     H.eq(p.labels.new_books.y, p.contents.coverdeck.y + mods.coverdeck.height + 25)
 end)
+H.test("a refresh requested while building a module cannot append a second Home page", function()
+    local s = screen({ { "recent" } })
+    s:_updatePage(false)
+    local rows, height = #s._body, s._body:getSize().h
+    local build, calls = s._buildModWidget, 0
+    function s:_buildModWidget(...)
+        calls = calls + 1
+        if calls == 1 then self:_updatePage(true) end
+        return build(self, ...)
+    end
+    s:_updatePage(false)
+    H.eq(calls, 2)
+    H.eq(#s._body, rows)
+    H.eq(s._body:getSize().h, height)
+end)
+
+H.test("nested refreshes share one replay and fresh data wins", function()
+    local s = screen({ { "recent" } })
+    local build, passes = s._buildPage, {}
+    function s:_buildPage(keep_cache, ...)
+        passes[#passes + 1] = keep_cache
+        self:_updatePage(true)
+        self:_updatePage(false)
+        self:_updatePage(true)
+        return build(self, keep_cache, ...)
+    end
+    s:_updatePage(true)
+    H.eq(#passes, 2)
+    H.eq(passes[1], true)
+    H.eq(passes[2], false)
+    H.eq(#s._body, 1)
+end)
+
+H.test("a failed page build releases the guard for the next refresh", function()
+    local s = screen({ { "recent" } })
+    local build = s._buildPage
+    function s:_buildPage()
+        self:_updatePage(true)
+        error("test page error")
+    end
+    local ok, err = pcall(s._updatePage, s, false)
+    assert(not ok and tostring(err):find("test page error", 1, true))
+    s._buildPage = build
+    s:_updatePage(false)
+    H.eq(#s._body, 1)
+end)
+
 H.finish()
