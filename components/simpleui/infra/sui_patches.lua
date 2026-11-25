@@ -1132,12 +1132,16 @@ function M.patchStartWithMenu()
             radio        = true,
         })
 
-        -- Update the parent item label when Home Screen is the active choice.
+        local dock_item = Config.startupDockItem and Config.startupDockItem()
+        if dock_item then table.insert(sub, math.max(1, #sub), dock_item) end
+
+        -- Keep the selected startup destination visible on the parent row.
         local orig_text_func = result.text_func
         result.text_func = function()
             if Config.isStartWithHomescreen() then
                 return _("Start with") .. ": " .. _("Home Screen")
             end
+            if dock_item and dock_item.checked_func() then return _("Start with") .. ": " .. dock_item.text end
             return orig_text_func and orig_text_func() or _("Start with")
         end
         return result

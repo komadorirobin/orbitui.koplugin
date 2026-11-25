@@ -473,6 +473,7 @@ function BookshelfWidget:_dispatchSimpleUIBarAction(action_id)
     local profile_key = ok_bridge and type(Bridge) == "table" and Bridge.profileForNavigation
         and Bridge.profileForNavigation(action_id)
     if profile_key then
+        if self.orbituiShelfSwitch then self:orbituiShelfSwitch(profile_key) end
         local function switch(live_fm)
             if BookshelfWidget.live ~= self then return end
             if live_fm and live_fm._simpleui_plugin then

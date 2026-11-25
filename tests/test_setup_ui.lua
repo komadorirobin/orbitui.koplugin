@@ -58,19 +58,22 @@ package.loaded["infra/sui_config"] = {
 package.loaded["adapters/orbitui_libraries"] = {
     actionId = function(key) return "orbitui_library_" .. key end, changed = function() redraws = redraws + 1 end,
 }
-local function reset(existing, saved, existing_host)
+local function reset(existing, saved, existing_host, previous_settings)
     files, data, queue, windows, hosts, redraws = { ["/Books"] = "directory" }, saved or {}, {}, {}, {}, 0
     if existing then
         files[type(existing) == "string" and existing or "/settings/simpleui/sui_settings.lua"] = "file"
     end
-    settings = { simpleui_bar_tabs = { "home", "homescreen", "power" }, simpleui_hs_book_close_target = "book_folder",
+    settings = previous_settings or { simpleui_bar_tabs = { "home", "homescreen", "power" }, simpleui_hs_book_close_target = "book_folder",
         secret = "kept", simpleui_layout = { pages = { { id = 3, modules = { "currently" } } } } }
     books = { orbitui_libraries = { version = 1, sections = {} }, bookshelf_private = "kept" }
     G_reader_settings = store({ home_dir = "/Books", start_with = "last", secret = "kept" })
     package.loaded["infra/sui_store"] = store(settings)
     package.loaded["infra/sui_store"].setNoFlush = function(_, k, v) settings[k] = v end
     package.loaded["adapters/orbitui_setup"] = nil
-    local Setup = require("adapters/orbitui_setup"); Setup.prepare(existing_host); return Setup
+    local Setup = require("adapters/orbitui_setup")
+    Setup.prepare(existing_host)
+    require("adapters/orbitui_dashboard").install({ register = function() end })
+    return Setup
 end
 local function drain()
     local pending = queue; queue = {}
@@ -84,16 +87,17 @@ end
 H.test("fresh startup is pending before default files exist, and auto-shows once only on FileManager", function()
     local Setup = reset()
     H.eq(data.setup.status, "pending")
+    H.eq(settings.simpleui_hs_orbitui_dashboard_config.ongoing_style, "fan")
     H.eq(data.appearance.preset, "native")
     Setup.started({ ui = { document = {} } }); drain(); H.eq(#hosts, 0)
     local owner = { ui = {} }; Setup.started(owner); drain(); H.eq(#hosts, 1)
-    assert(row(hosts[1].item_table, "Start screen: Reading dashboard · Straight cover row"))
+    assert(row(hosts[1].item_table, "Start screen: Reading dashboard · Cover fan"))
     Setup.started(owner); drain(); H.eq(#hosts, 1)
     H.eq(G_reader_settings.data.start_with, "last")
     H.eq(settings.simpleui_hs_orbitui_dashboard_layout, nil)
     Setup.stopped(owner); H.eq(hosts[1]._closed, true)
 end)
-H.test("upgrades do not auto-show or replace preferences, manual guide defaults to keep", function()
+H.test("upgrades keep preferences and the manual setup guide defaults to keep", function()
     local Setup = reset(true)
     local before = Copy(settings)
     H.eq(data.setup.status, "kept")
@@ -160,7 +164,7 @@ H.test("review does not write, confirmation saves scoped settings and leaves pri
     H.eq(#books.orbitui_libraries.sections, 0); H.eq(data.setup.status, "pending")
     H.eq(settings.simpleui_hs_orbitui_dashboard_layout, nil)
     local confirm = windows[#windows]; assert(confirm.text:find("My books: /Books", 1, true))
-    assert(confirm.text:find("Reading dashboard · Straight cover row", 1, true))
+    assert(confirm.text:find("Reading dashboard · Cover fan", 1, true))
     confirm.ok_callback(); UI:close(confirm); drain()
     H.eq(data.setup.status, "complete"); H.eq(redraws, 1)
     H.eq(books.orbitui_libraries.sections[1].label, "My books")
@@ -185,7 +189,7 @@ H.test("pending setup respects a saved layout and leaves the dashboard off for a
 
     Setup = reset()
     host = Setup.show()
-    local choices = row(host.item_table, "Start screen: Reading dashboard · Straight cover row").sub_item_table_func()
+    local choices = row(host.item_table, "Start screen: Reading dashboard · Cover fan").sub_item_table_func()
     row(choices, "File browser").callback()
     row(host.item_table, "Review and apply").callback()
     windows[#windows].ok_callback(); drain()
@@ -201,6 +205,123 @@ H.test("teardown cancels pending startup; skip survives restart; pending survive
     assert(row(Setup.show().item_table, "Start screen: Keep existing"))
     Setup = reset(true, { setup = { version = 1, status = "pending" } })
     Setup.started({ ui = {} }); drain(); H.eq(#hosts, 1)
+end)
+local function upgraded(config, enabled)
+    local Setup = reset(true, { setup = { version = 1, status = "complete" } }, true)
+    settings.simpleui_hs_orbitui_dashboard_enabled = enabled
+    settings.simpleui_hs_orbitui_dashboard_config = config
+    return Setup
+end
+local function openHome(Setup)
+    local owner = { ui = {} }
+    Setup.started(owner); drain()
+    return owner
+end
+
+H.test("fresh Home defaults to the fan even after skipping setup and remembers a later straight-row choice", function()
+    local Setup = reset(nil, nil, false)
+    local dashboard = require("adapters/orbitui_dashboard")
+    H.eq(dashboard.readConfig().ongoing_style, "fan")
+    H.eq(dashboard.readConfig("custom_").ongoing_style, nil)
+    row(Setup.show().item_table, "Skip automatic setup").callback()
+    Setup = reset(true, Copy(data), true, Copy(settings))
+    openHome(Setup); H.eq(#windows, 0); H.eq(#hosts, 0)
+    H.eq(dashboard.isEnabled(), false); H.eq(dashboard.readConfig().ongoing_style, "fan")
+    dashboard.editConfig(nil, function(config) config.ongoing_style = nil end, function() end)
+    reset(true, Copy(data), true, Copy(settings))
+    H.eq(dashboard.readConfig().ongoing_style, nil)
+end)
+H.test("accepting the Swedish upgrade invitation adds the dashboard and fan once, preserving other settings", function()
+    local Setup = upgraded({ version = 1, ongoing_style = "focus", cover_row_count = 5, future_field = 37 }, false)
+    local original = Copy(settings)
+    G_reader_settings.data.language = "sv"
+    Setup.started({ ui = { document = {} } }); drain(); H.eq(#windows, 0)
+    local owner = openHome(Setup); Setup.started(owner); drain(); H.eq(#windows, 1)
+    local dialog = windows[1]
+    H.eq(dialog.ok_text, "Aktivera Läsöversikt"); H.eq(dialog.cancel_text, "Nej tack")
+    assert(Model.equal(settings, original))
+    dialog.ok_callback(); UI:close(dialog)
+    H.eq(settings.simpleui_hs_orbitui_dashboard_config.ongoing_style, "fan")
+    H.eq(settings.simpleui_hs_orbitui_dashboard_config.cover_row_count, 5)
+    H.eq(settings.simpleui_hs_orbitui_dashboard_config.future_field, 37)
+    H.eq(settings.simpleui_hs_orbitui_dashboard_enabled, true)
+    H.eq(settings.simpleui_hs_orbitui_dashboard_layout, "cover_row")
+    H.eq(settings.simpleui_layout.pages[1].modules[1], "orbitui_dashboard")
+    H.eq(settings.simpleui_hs_module_order[1], "orbitui_dashboard")
+    assert(Model.equal(settings.simpleui_layout.pages[2], original.simpleui_layout.pages[1]))
+    assert(Model.equal(settings.simpleui_bar_tabs, original.simpleui_bar_tabs))
+    H.eq(G_reader_settings.data.start_with, "last"); H.eq(data.setup.status, "complete")
+    dialog.ok_callback(); H.eq(#settings.simpleui_layout.pages, 2)
+    settings.simpleui_hs_orbitui_dashboard_enabled = false
+    Setup = reset(true, Copy(data), true, Copy(settings))
+    openHome(Setup); H.eq(#windows, 0)
+end)
+H.test("declining is durable and makes no changes to Home", function()
+    local Setup = upgraded({ version = 1, ongoing_style = "focus" }, false)
+    local before = Copy(settings)
+    openHome(Setup); windows[1].cancel_callback(); UI:close(windows[1])
+    assert(Model.equal(before, settings))
+    Setup = reset(true, Copy(data), true, Copy(settings))
+    openHome(Setup); H.eq(#windows, 0); assert(Model.equal(before, settings))
+end)
+H.test("the invitation uses a local image in the UI language and leaves room for both choices", function()
+    local confirm = package.loaded["ui/widget/confirmbox"]
+    local original = confirm.new
+    local screen_h, text_h
+    package.loaded.device = { screen = { getHeight = function() return screen_h end,
+        scaleBySize = function(_, px) return px end } }
+    package.loaded["ui/size"] = { padding = { large = 10 } }
+    package.loaded["ui/widget/imagewidget"] = { new = function(_, o) return o end }
+    confirm.new = function(self, opts)
+        local dialog = original(self, opts)
+        dialog.movable = { getSize = function() return { h = text_h } end }
+        dialog.getAddedWidgetAvailableWidth = function() return 400 end
+        dialog.addWidget = function(self, w) self.preview = w end
+        return dialog
+    end
+    local function preview(language, asset, height, base, missing)
+        local Setup = upgraded({ version = 1 }, false)
+        screen_h, text_h = height, base
+        G_reader_settings.data.language = language
+        local path = "./assets/setup/dashboard-" .. asset .. ".png"
+        if not missing then files[path] = "file" end
+        openHome(Setup)
+        local dialog = windows[1]
+        assert(dialog.ok_callback and dialog.cancel_callback)
+        if dialog.preview then
+            H.eq(dialog.preview.file, path); H.eq(dialog.preview.scale_factor, 0)
+            H.eq(dialog.preview.width, 400)
+            assert(dialog.preview.height + text_h + 10 < screen_h)
+        end
+        return dialog.preview
+    end
+    assert(preview("sv_SE", "sv", 800, 260))
+    assert(preview("de", "en", 480, 300))
+    H.eq(preview("sv", "sv", 480, 425), nil)
+    H.eq(preview("en", "en", 800, 260, true), nil)
+    confirm.new = original
+end)
+H.test("enabled dashboards and future dashboard schemas keep their presentation and skip the offer", function()
+    for _, cfg in ipairs({ { version = 1 }, { version = 1, ongoing_style = "focus" },
+            { version = 1, ongoing_style = "fan" }, { version = 99 } }) do
+        local Setup = upgraded(cfg, cfg.version == 1)
+        local before = Copy(settings)
+        openHome(Setup); H.eq(#windows, 0); assert(Model.equal(settings, before))
+        settings.simpleui_hs_orbitui_dashboard_enabled = false
+        Setup = reset(true, Copy(data), true, Copy(settings))
+        openHome(Setup); H.eq(#windows, 0)
+    end
+end)
+H.test("the offer ignores stale callbacks and a dashboard enabled while it was open", function()
+    local Setup = upgraded({ version = 1, ongoing_style = "focus" }, false)
+    local owner = openHome(Setup)
+    Setup.stopped(owner); assert(windows[1].closed); windows[1].ok_callback()
+    H.eq(settings.simpleui_hs_orbitui_dashboard_enabled, false)
+    Setup = reset(true, Copy(data), true, Copy(settings))
+    openHome(Setup); H.eq(#windows, 1)
+    settings.simpleui_hs_orbitui_dashboard_enabled = true
+    windows[1].ok_callback()
+    H.eq(settings.simpleui_hs_orbitui_dashboard_config.ongoing_style, "focus")
 end)
 H.test("future setup schemas remain untouched and cannot be bypassed by retrying", function()
     local ok = pcall(reset, true, { setup = { version = 99, status = "pending" } })

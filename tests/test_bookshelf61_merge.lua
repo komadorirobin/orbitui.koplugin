@@ -19,8 +19,8 @@ H.test("all lazy helpers preserve canonical source bytes and API-1 module identi
         local f=io.open(root.."/"..assert(map[name]),"rb")
         if f then H.eq(f:read("*a"),source,name); f:close() end
     end
-    H.eq(count,76)
-    for _,name in ipairs({"adapters/orbitui_achievement_medal","adapters/orbitui_fingertips","orbitui/fingertips/main",
+    H.eq(count,77)
+    for _,name in ipairs({"adapters/orbitui_ongoing_display","adapters/orbitui_achievement_medal","adapters/orbitui_fingertips","orbitui/fingertips/main",
             "orbitui/fingertips/actions","orbitui/fingertips/arrange","orbitui/fingertips/bar",
             "orbitui/fingertips/panel","infra/sui_compat_check"}) do
         assert(embedded[name],name)

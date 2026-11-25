@@ -2272,12 +2272,17 @@ function ScreenWidget:_showBookHoldDialog(fp, mod_id, context_item)
         -- older module_recent instance until the next full process restart;
         -- gating this row on mod.hideFile then made the action disappear even
         -- though the hold originated in Recent Books.
+        dashboard_context = context_item,
         extra_rows = (recent_hidden or context_item) and function(file, close_and_refresh)
             local rows = {}
             if recent_hidden then
                 rows[#rows + 1] = {{ text = _("Remove from Recent Books"), callback = function()
                     if recent_hidden.hide(file) then close_and_refresh() end
                 end }}
+            end
+            if context_item and context_item.presentation then
+                rows[#rows + 1] = { _bs_id = "orbitui_dashboard_display", { text = context_item.presentation_label,
+                    callback = function() context_item.presentation(close_and_refresh) end } }
             end
             if context_item then
                 rows[#rows + 1] = { _bs_id = "orbitui_dashboard_replace", {

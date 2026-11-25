@@ -1329,6 +1329,16 @@ function M.onTabTap(plugin, action_id, fm_self)
     -- Track whether this tab was already active before the tap.
     local already_active = (plugin.active_action == action_id)
 
+    if already_active and action_id == "homescreen" then
+        local home = package.loaded["screens/sui_homescreen"]
+        local widget = home and home._instance
+        if widget and widget._current_page == 1 and not widget._parked and not widget._suspended
+                and not widget._refresh_scheduled and not widget._force_full_repaint_once
+                and UIManager.getTopmostVisibleWidget and UIManager:getTopmostVisibleWidget() == widget then
+            return
+        end
+    end
+
     -- For browse actions (authors/series/tags), the indicator tab may differ
     -- from the action_id itself (own tab if present, else Library).
     local indicator_tab = _resolveActiveTab(action_id, tabs)

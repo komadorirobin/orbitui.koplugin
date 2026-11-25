@@ -30,7 +30,7 @@ package.loaded["lua-ljsqlite3/init"] = { open = function(path, mode)
             last, limit = assert(tonumber(last)), assert(tonumber(limit))
             assert(limit <= 8, "each tick must have bounded SQL work")
             local rows = {}
-            for c = 1, 17 do rows[c] = {} end
+            for c = 1, 20 do rows[c] = {} end
             for id = last + 1, math.min(total, last + limit) do
                 local i = #rows[1] + 1
                 rows[1][i], rows[2][i] = id, id == 2 and 1 or 0
@@ -39,6 +39,7 @@ package.loaded["lua-ljsqlite3/init"] = { open = function(path, mode)
                 rows[7][i], rows[8][i] = "Series", tostring(id)
                 rows[11][i], rows[12][i] = "120", "Description"
                 rows[13][i], rows[14][i] = 1, 1
+                rows[18][i], rows[19][i], rows[20][i] = "Y", "240", "360"
             end
             return rows
         end,
@@ -71,6 +72,24 @@ local function fresh()
     return dofile("lib/bookshelf_lightmeta_refresh.lua")
 end
 
+t.test("refresh keeps unchanged light records in each scope and drops only changed paths", function()
+    local r = fresh()
+    local unchanged, missing, other = {}, {}, {}
+    local old = { a = { title = "A" }, b = { authors = "One" }, c = { series = "Removed" } }
+    local rows = { a = { title = "A", cover_w = 120 }, b = { authors = "Two" }, d = {} }
+    local scopes = {
+        manga = { rows = old, map = { a = unchanged, b = {}, c = {}, d = {}, e = missing } },
+        all = { rows = old, map = { a = other, b = {} } },
+        fallback = { map = {} },
+    }
+    r.replaceRows(scopes, rows)
+    assert(scopes.manga.rows == rows and scopes.all.rows == rows)
+    assert(scopes.manga.map.a == unchanged and scopes.all.map.a == other)
+    assert(scopes.manga.map.e == missing)
+    assert(not scopes.manga.map.b and not scopes.all.map.b)
+    assert(not scopes.manga.map.c and not scopes.manga.map.d and not scopes.fallback)
+end)
+
 t.test("hidden shelf does no work; visible refresh publishes complete batches only", function()
     local r = fresh()
     request(r)
@@ -87,6 +106,8 @@ t.test("hidden shelf does no work; visible refresh publishes complete batches on
     assert(r.rows["/books/19.epub"].pages == 120)
     assert(r.rows["/books/19.epub"].series_index == 19)
     assert(r.rows["/books/19.epub"].description == "Description")
+    assert(r.rows["/books/19.epub"].cover_fetched == "Y")
+    assert(r.rows["/books/19.epub"].cover_w == 240 and r.rows["/books/19.epub"].cover_h == 360)
     assert(not r.rows["/books/2.epub"], "in-progress BIM rows must be excluded")
     request(r)
     assert(#queue == 0, "fresh in-memory rows satisfy further requests")

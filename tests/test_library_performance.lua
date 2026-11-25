@@ -119,6 +119,28 @@ local f = compile(prefix .. "\nreturn { books = BOOKS, derivations = function() 
 G_reader_settings.readSetting = function(_, key) if key == "home_dir" then return "/" end end
 local repo = H.componentModule(root, "lib/bookshelf_book_repository")
 Host.shareLightMetadata(repo)
+H.test("validated folder walks reuse sorted pages until the repository changes", function()
+    local native, builds = repo._orderFolderSections, 0
+    repo._orderFolderSections = function(...)
+        builds = builds + 1
+        return native(...)
+    end
+    local function page(offset)
+        return repo.getFolderSections(5, offset, { { key = "title" } },
+            { roots = { "/home" } }, nil, { light_only = true })
+    end
+    local first = page(0)
+    local other = page(5)
+    H.eq(builds, 1); H.eq(#first, 5); H.eq(#other, 5)
+    assert(first[1].filepath ~= other[1].filepath)
+    first[1].title = "changed on screen"
+    assert(page(0)[1].title ~= first[1].title)
+    repo.invalidateWalkCache()
+    page(0)
+    H.eq(builds, 2)
+    repo._orderFolderSections = native
+end)
+
 H.test("real scoped shelf and global series-box lookup reuse derivation without widening scope", function()
     local out, total = repo.getFolderSections(100, 0, { { key = "title" } },
         { roots = { "/home" } }, nil, { light_only = true })
@@ -132,6 +154,26 @@ H.test("real scoped shelf and global series-box lookup reuse derivation without 
     H.eq(total, 40)
     repo.invalidateLightMeta()
     assert(repo.lightMetaFor(f.books[1])); H.eq(f.derivations(), before + 1)
+end)
+
+H.test("a refreshed scoped map derives edits and later first-lookups from the new batch", function()
+    local refresh = require("lib/bookshelf_lightmeta_refresh")
+    local a, b, c = f.books[1], f.books[2], f.books[3]
+    local one, two = repo.lightMetaFor(a), repo.lightMetaFor(b)
+    local entry = repo._lm_memo.entry
+    rawset(entry.map, c, nil)
+    local rows = {}
+    for path, row in pairs(entry.rows) do rows[path] = row end
+    rows[b] = { title = "Edited volume" }; rows[c] = { title = "Newly indexed" }
+    local before = f.derivations()
+    refresh.replaceRows({ scope = entry }, rows)
+    H.eq(f.derivations(), before)
+    H.eq(repo.lightMetaFor(a), one)
+    H.eq(repo.lightMetaFor(b).title, "Edited volume")
+    assert(repo.lightMetaFor(b) ~= two)
+    H.eq(repo.lightMetaFor(c).title, "Newly indexed")
+    H.eq(f.derivations() - before, 2)
+    repo.invalidateLightMeta()
 end)
 
 H.test("full native flat producer sorts once cold and not again on warm browse pages", function()
@@ -258,5 +300,20 @@ H.test("device-reviewed Bookshelf menu labels support Swedish and unchanged Engl
             ["Edit shelves…"] = "Redigera hyllor…", ["Hardcover enrichment"] = "Metadata från Hardcover" }) do
         H.eq(translate(english, "sv"), swedish); H.eq(translate(english, "en"), english)
     end
+end)
+H.test("detailed list rows measure a shared font face once and remeasure a new face", function()
+    local deps = { "infra/sui_i18n", "ffi/util", "ui/widget/textwidget" }
+    local prior, measurements, frees = {}, 0, 0
+    for _, key in ipairs(deps) do prior[key] = package.loaded[key] end
+    package.loaded[deps[1]], package.loaded[deps[2]] = {}, {}
+    package.loaded[deps[3]] = { new = function(_, args)
+        measurements = measurements + 1
+        return { getSize = function() return { h = args.face.height } end, free = function() frees = frees + 1 end }
+    end }
+    local rows = dofile(root .. "/components/simpleui/features/library/sui_list_rows.lua")
+    local regular, large = { height = 23 }, { height = 38 }
+    for _i = 1, 100 do H.eq(rows.lineHeight(regular), 23); H.eq(rows.lineHeight(large), 38) end
+    H.eq(measurements, 2); H.eq(frees, 2)
+    for _, key in ipairs(deps) do package.loaded[key] = prior[key] end
 end)
 H.finish()

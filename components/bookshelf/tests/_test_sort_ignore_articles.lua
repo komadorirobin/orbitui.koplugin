@@ -70,10 +70,10 @@ t.test("the key signature changes with the setting", function()
     assert(SortEngine.keySignature() ~= on)
 end)
 
-t.test("both repository sort caches carry the signature", function()
+t.test("the series, folder and source sort caches carry the signature", function()
     local repo = io.open("lib/bookshelf_book_repository.lua"):read("*a")
     local n = select(2, repo:gsub("SortEngine%.keySignature%(%)", ""))
-    eq(n, 2, "a sorted cache ignores how its keys are derived")
+    eq(n, 3, "a sorted cache ignores how its keys are derived")
 end)
 
 t.done()

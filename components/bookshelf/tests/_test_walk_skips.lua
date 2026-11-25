@@ -142,7 +142,7 @@ t.test("a .sdr and a plainly non-book file cost no stat; a folder with a dot in 
 end)
 
 t.test("a home folder that IS KOReader's folder: its mtime is not tracked, its books are found", function()
-    local cw = assert(src:match("\ncachedWalk = function%(home, depth, work%)\n(.-)\nend\n"), "cachedWalk moved")
+    local cw = assert(src:match("\ncachedWalk = function%(home, depth, work, read_only%)\n(.-)\nend\n"), "cachedWalk moved")
     assert(cw:find("if root_m and not (ko_dir and home:gsub(\"/+$\", \"\") == ko_dir) then", 1, true),
         "home = KOReader's folder records its mtime, so every settings save re-walks")
     local tree = {

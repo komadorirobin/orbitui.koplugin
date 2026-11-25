@@ -77,6 +77,11 @@ function M.snapshot(now)
     return nil, _("Silverfish is not ready. Open Silverfish, then reopen this page.")
 end
 
+function M.formatStats(pet)
+    return string.format(_("Days: %s · Books: %s · Gen: %s"),
+        pet.days or "—", pet.finished or "—", pet.generation)
+end
+
 function M.current(s)
     local ok, result = pcall(function()
         return s and livePet() == s.pet and s.pet.estado == s.state
@@ -319,8 +324,7 @@ function M.build(w, ctx)
         label(_("No books to show yet."), p.empty, 15, false, 2)
     end
     if pet then
-        label(string.format(_("Days: %s · Books: %s · Gen: %s"), pet.days or "—", pet.finished or "—", pet.generation),
-            p.metrics, 12)
+        label(M.formatStats(pet), p.metrics, 12)
     end
     card.ges_events = { ReadingPetTap = { require("ui/gesturerange"):new{ ges = "tap", range = function() return card.dimen end } } }
     if ctx.orbitui_dashboard_hosted then return card end

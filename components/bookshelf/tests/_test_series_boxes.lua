@@ -779,6 +779,23 @@ H.test("a box keeps its books' section and never spans two sections (620)", func
     H.eq(runs[2].section_label,"Adventure")
 end)
 
+H.test("slipcase and spine artwork share eviction and cleanup", function()
+    local cache = assert(source("bookshelf_series_box_widget"):match("(local _stickers, _sticker_order.-function Box%.clearStickerCache%(%)%s+.-\nend)"))
+    local box = {}
+    local remember, entries = compile(cache .. "\nreturn keepSticker, _stickers", { Box = box })()
+    local freed = {}
+    for i = 1, 14 do
+        local key = (i % 2 == 0 and "spines" or "slipcase") .. i
+        local bb = { free = function() assert(not freed[key]); freed[key] = true end }
+        remember(key, bb, 0, 0, i % 3 == 0)
+        H.eq(entries[key].bb, bb); H.eq(entries[key].picture, i % 3 == 0)
+    end
+    assert(freed.slipcase1 and freed.spines2 and not freed.slipcase3)
+    box.clearStickerCache()
+    H.eq(freed.slipcase3, true); H.eq(freed.spines14, true)
+    box.clearStickerCache()
+end)
+
 H.test("a box's sticker is kept between page turns, scaled in C", function()
     local w = io.open("lib/bookshelf_series_box_widget.lua"):read("*a")
     assert(w:find("local kept = cacheable and _stickers[skey]", 1, true), "the sticker is built on every paint")

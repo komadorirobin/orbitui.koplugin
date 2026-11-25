@@ -1,5 +1,115 @@
 # Verification and device acceptance
 
+## 2026-11-25 — Dashboard preview in the upgrade invitation
+
+The Tolino Vision Color emulator ran source `bcc6cd67c` from ZIP
+`b2a6ce8291c37b6ed22d5f5d06830d0e998cd70788faebef77c9e6bd7435dc98`.
+The Swedish invitation at 1264 × 1680 and the English invitation at 600 × 800
+each displayed the matching dashboard screenshot and both buttons. The
+screenshots use five example books with public-domain cover art.
+Accepting enabled the dashboard with Cover fan. Declining kept it off.
+Both decisions persisted after restarting KOReader. Clean profiles and
+profiles with the dashboard already enabled followed their usual startup.
+
+The full test command passed with its optional skips. All 21 setup UI checks
+also passed under LuaJIT. Screenshots and logs are in
+`test-results/fan-invitation-preview-20261125/`. The physical HiBreak was
+disconnected during these checks.
+
+## 2026-11-25 — Cover fan default and dashboard invitation
+
+A Swedish Tolino Vision Color emulator ran source `d5fee893f` from ZIP
+`dca552f94d6324b72fd7eca6c0891a9a109ba1ef6abe238eee8299f75b7b1ac2`.
+A clean profile opened the guide with Cover fan preselected. An upgraded
+profile with its dashboard disabled displayed the invitation over Home.
+Accepting enabled the fan and preserved the old Home page and the five-book
+setting. Dismissing kept the dashboard off. Both decisions survived a full
+restart. An already-enabled dashboard kept Book in focus without a prompt.
+
+The full test command passed with its optional environment-dependent skips.
+The 31 setup checks also passed under LuaJIT, including reader-first startup,
+skipping the guide, returning to the straight row and stale dialog callbacks.
+Local logs and the Swedish invitation screenshot are in
+`test-results/fan-onboarding-20261125/`. The physical HiBreak was disconnected.
+
+## 2026-11-25 — Silverfish footer on the HiBreak
+
+The Swedish USB HiBreak ran source `7bdd05ff7` from archive
+`9692f2945141d18e2255f196a983d7680f1d06bfd3a32fcda05b3a00d5ace742`.
+Straight row, Book in focus and Cover fan all showed 17 days, 2 books and
+generation 1 for Franz. The numbers fit on the existing footer line in both
+alternate views. Tapping the numbers in the fan opened Franz's Silverfish
+screen. The final Home view was the fan with Underjordisk selected. Device
+screenshots are in `test-results/ongoing-silverfish-footer-20261125/`.
+Dashboard regression coverage includes a long pet name requiring two lines,
+zero finished books and opening the pet from either layout. The full test
+command passed with its optional fixture and runtime skips.
+
+## 2026-11-25 — Fan depth and all four cover edges on the HiBreak
+
+The USB HiBreak ran source `fdc89ba3f` from archive
+`71a569935a9bb926d9c0076e04059b90603f07662b6e27bd56c43fe611d47fc2`.
+With four books, the front cover measured 239 pixels wide compared with 203
+before the depth change. Adjacent jackets use 86% of the front cover's size
+and the rear layer uses 72%. Tapping the rearmost cover brought its book
+forward. Swiping returned to Underjordisk at 44%.
+
+Screenshots of the same four books confirmed that an undersized image inset
+had clipped the bottom and right edges of the tilted covers. Before the fix,
+none of 96 sampled right-edge rows or 45 bottom-edge columns had the black
+border. The final build showed two black edge pixels at all those points, as
+well as at all matching left and top samples. Screenshots are in the local
+`test-results/ongoing-fan-depth-20261125/` folder. Regression checks cover
+one-, two- and three-pixel frames, depth ordering and exposed touch targets.
+The full suite passed with four optional original-artwork checks skipped.
+
+## 2026-11-25 — Shallow cover fan on the HiBreak
+
+On the USB HiBreak, source `c00d1bef9` ran from archive
+`03141f657a2d54ee7f58a792bc63c20e8ec9e32ca8e3bb58e729dcedce6a462f`.
+With four books, each of the three exposed side jackets could be tapped to
+select its book. Swiping returned to Underjordisk at 44%. The before and after
+screenshots in `test-results/ongoing-shallow-fan-20261125/` show the same books
+and card dimensions. A geometry test checks the tilt and exposed touch areas
+for two through five books and catches the steeper previous layout. The full
+test command passed with four optional original-artwork comparisons skipped.
+
+## 2026-11-25 — Focus and fan layout on the HiBreak
+
+The USB HiBreak (1264 × 1680, Swedish) ran source `f896339cb` from archive
+`301a09308eae069fd6303ba9482f2d31178691612159288b76fbb7111b3cf8fc`.
+With four books and the pet footer, the focus card showed the selected jacket
+at left, reading details in the middle and three individually selectable
+jackets at right. Selecting the first companion changed the title, jacket and
+progress together. The fan's two outer bottom corners cleared the footer.
+Tapping an exposed outer jacket selected its book and swiping returned to
+Underjordisk. The device finished in its original fan style. Before and after
+screenshots are in `test-results/ongoing-card-balance-20261125/`.
+
+The dashboard regression checks the right edge of the focus gallery and the
+visible fan outline with three, four and five books and different selections.
+The full suite passed. Four optional comparisons with original artwork were
+skipped because the source photos were unavailable.
+
+## 2026-11-25 — Ongoing book displays on the HiBreak
+
+The USB HiBreak ran local source `5b0390764` from verified runtime archive
+`efb5eb149af055d9cf5154ce849da1f2edca4a0dbbba8b56f51dfefccdbdad3e`.
+The four-book Home card was tested in Swedish. Holding the card header kept
+the existing settings and exposed the display picker as its first item.
+Holding a cover opened the native book page with the same picker in its
+header. The picker appeared above that page with native-dialog styling
+enabled and selecting the fan returned directly to Home. Tapping an exposed
+jacket and swiping the fan selected another book. The focus layout's Read on
+button reopened Underjordisk at its existing 44% position. The original
+straight row was reselected at the end. Device screenshots are in the local
+`test-results/home-reading-layouts-20261125/` folder.
+
+The complete test command passed. Four optional artwork source checks were
+skipped without their original-photo caches. Dashboard tests cover empty,
+single, three- and five-book cases, portrait and landscape geometry, picker
+persistence and opening the selected secondary book.
+
 ## 2026-11-25 — BookOrbit achievement card colours on the HiBreak
 
 The USB HiBreak ran local runtime `9e2fd8881` from archive SHA-256
@@ -22,7 +132,7 @@ the second greeting and cover row appeared behind the page dots and dock.
 This reproduces the reported appearance. The original callback sequence
 at the time of the user's photo was not recorded.
 
-The tested local runtime is `98552d26e`, archive SHA-256
+The tested runtime is `98552d26e`, archive SHA-256
 `8e13e37f753704583d073301aeeacb1fb27f130c23681d675ce4a3cc43a2b6a6`.
 The same probe produced one 1,329 px dashboard. A refresh triggered during
 the actual long-press swap and two further unmodified swap cycles also left
@@ -31,6 +141,94 @@ pixel for pixel after these swaps, after paging away and back, and after an
 ordinary restart with the probe removed and the original dashboard settings
 restored. Targeted Lua and LuaJIT tests exercise nested and repeated updates,
 cache invalidation priority, and recovery from a build error.
+
+## 2026-11-25 — Repeated Library to Manga switches on the USB HiBreak
+
+The previous local build (`372ece9d7`) sometimes discarded the derived
+metadata for the entire Manga shelf between two dock taps. In one trace,
+ordering the folders took 5.66 s of a 6.46 s switch. Sorting a second
+window of the same folder also missed its cache because the caller received
+a new copy of the file list on every request.
+
+The tested runtime is `ec9b43183`. Its archive SHA-256 is
+`2a39d86e23365fe7379d65136124f2ac29d71c4c6396051c96218663f2061110`.
+Both diagnostic runs saw a background index refresh between the return to
+Library and the next tap on Manga. They retained all 6,584 previously
+derived records across overlapping scopes. The tested Manga folder held
+2,564 files. Regression tests cover edited, added and removed rows, cover-only
+changes, previously unindexed books, scoped lookups and invalidating an
+existing folder order.
+
+Elapsed time is from the device tap to the first recorded Android frame
+showing the destination tabs and populated shelves. Panel refresh is extra.
+The three restarts on the installed fix gave the following times.
+
+| Dock gesture | Run 1 | Run 2 | Run 3 (ordinary startup) |
+| --- | ---: | ---: | ---: |
+| Library to Manga, first visit | 2.39 s | 2.24 s | 2.16 s |
+| Manga back to Library | 0.17 s | 0.15 s | 0.23 s |
+| Library to Manga, second direct switch | 0.36 s | 0.37 s | 0.36 s |
+| Home to Manga, subsequent visit | 0.29 s | 0.29 s | 0.29 s |
+
+On the previous local build the second direct switch measured 6.46, 7.37
+and 0.36 s. Its shortest run completed the background refresh *after* the
+measured switch. The 7.37 s run included stack sampling. Two unrelated
+early transitions in the third control recording could not be classified.
+The third candidate run had no KOReader instrumentation. After 36 seconds
+in Library, returning to Manga took 0.28 s. Two more Library to Manga
+switches took 0.27 and 0.36 s. KOReader was left on the Swedish Home screen
+with the candidate active and the previous local build in the rollback slot.
+The full suites passed on Lua and LuaJIT. Each Bookshelf run reported 621
+suites with three platform skips. Python ran 135 tests with four skips.
+Local recordings and frame times are in `test-results/manga-switch-20261125/`.
+
+## 2026-11-25 — Folder shelves, Home, dock startup and timing on a HiBreak
+
+The local runtime at `372ece9d7` was installed over USB. The tested archive
+SHA-256 is `80e11dd0803363f683f2d55f8a11985d126ab93e1f6585c54078433afcaa28c0`.
+The comparison build was the published 1.5.0-beta.4. Both used the same Swedish
+configuration, existing library, open tabs and display settings.
+
+| Dock gesture | Published beta, median | Candidate, median |
+| --- | ---: | ---: |
+| Home to Library, first visit after launch | 1.79 s | 1.22 s |
+| Library to Manga, first visit | 3.57 s | 2.30 s |
+| Manga back to Library | 0.18 s | 0.20 s |
+| Library to Manga, second direct switch | 6.12 s | 6.53 s |
+| Home to Manga, subsequent visit | 0.35 s | 0.31 s |
+
+Each column uses three launches. The candidate rounds cover the initial
+implementation and the final series-art correction. Device-side tap timestamps
+were matched to Android screen-record frames showing the destination tabs and
+populated shelves. The physical e-ink refresh adds its own delay. Device and
+metadata caches stayed in place. The second direct Manga switch varied from
+0.36 to 6.86 seconds on the published beta. These trials establish the remaining
+delay but do not establish a general percentage speedup. Two unrelated control
+transitions without an unambiguous source and destination were excluded.
+
+On the final build the six sampled shelf entries all recorded visible content,
+a real cover and a usable touch target. On first entry the internal view-open
+to cover/input timings were 1.25/1.27 s for Library and 2.26/2.29 s for Manga.
+Input readiness is the next event-loop turn with the painted target still in
+the foreground. Holding a Manga box separately opened its menu. These checks
+also caught a missing cover measurement for series boxes and inconsistent
+ownership records when the two styles evicted each other's cached images.
+
+In a separate LuaJIT benchmark, three consecutive 20-book windows of a
+2,000-book library in 20 folders took a median of 85 ms before and 31 ms after
+(nine runs per build). The grouping ran three times before and once after.
+The same 60 books appeared in the same order. The font test made two native
+height measurements for 200 requests across two faces. The Japanese title
+suite covered Latin runs, invisible characters and vertical punctuation.
+
+Physical gesture checks confirmed that the existing Manga shortcut offered
+**Använd som startvy** alongside its edit and library-menu actions. Restarting
+opened Manga. A second tap on Home page one kept the same Home instance.
+Swiping to page two and tapping Home returned to page one. The original Home
+startup selection was restored. The Lua and LuaJIT suites passed, including
+621 Bookshelf suites with three runtime-specific skips. The Python checks
+reported 135 tests with four optional skips. Local evidence is under
+`test-results/cyberui-kobold-zen-20261125/`.
 
 ## 2026-11-25 — Bookshelf and SimpleUI upstream merge
 

@@ -20,6 +20,38 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
+## Local library and dock candidate, 2026-11-25
+
+New installations default to Cover fan for the Home dashboard book card.
+Upgrades with the dashboard turned off get a one-time invitation in FileManager
+to enable it with Cover fan. The invitation shows a localized sample dashboard
+captured in KOReader with five demo art books. The cover art comes from the
+public-domain prints in the Ukiyo-e Gallery pack. Existing dashboard users keep
+their display.
+The card also offers its original layout and Book in focus. The `ongoing_style` setting belongs to the screen's dashboard
+configuration. A long press on the card or its covers offers the picker.
+Selection within the card is temporary. Cover loading, opening, and native
+book actions use Home's existing providers.
+
+
+Holding a dock destination can make it the startup view. Native Home, file
+browser, history and favorites use KOReader's own startup choices. A shelf,
+collection, configured folder or custom screen uses its existing dock action.
+An explicit book launch takes precedence. A missing custom dock target falls
+back to Home on the next normal launch. The existing dock order and the default
+startup choice are preserved.
+
+Folder shelves reuse the last two eligible metadata-based orderings across
+pages of the same validated file list. When KOReader refreshes its book
+index in the background, each shelf keeps the metadata already derived for
+unchanged books. New and edited entries read from the refreshed index.
+Reading-dependent orders and active filters remain live. A tap on the visible
+first Home page skips its navigation rebuild. Detailed lists share
+font-face line measurements and upright spine titles reuse decoded characters.
+The opt-in performance report times visible shelf content, cover artwork and
+the next input tick, including switches directly between shelves. See the
+physical HiBreak results in [Testing](TESTING.md).
+
 ## OrbitUI 1.5.0-beta.4, 2026-11-25
 
 Holding a Reading dashboard card opens its usual menu with a **Replace module…**
@@ -235,7 +267,7 @@ dock restored. See TESTING for device checks and OTA for publication details.
   the capture set, restored preferences and observed limitations.
 
 - **Fresh-install dashboard default.** The setup guide preselects Reading
-  dashboard with Straight cover row and saves the layout when the user applies
+  dashboard with Cover fan and saves the page layout when the user applies
   the reviewed setup. Pending setup can be resumed from settings with the
   same defaults. Completed, skipped and existing installations keep their
   saved preferences. See TESTING for the fresh and upgrade cases.

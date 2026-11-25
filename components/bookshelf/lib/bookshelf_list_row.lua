@@ -2451,6 +2451,7 @@ function ListRow.new(opts)
     local row_dimen = Geom:new{ w = width, h = row_h }
     local row = InputContainer:new{
         dimen = row_dimen,
+        _bookshelf_tappable_row = tap_cb ~= nil,
         positioned,
     }
     row.ges_events = {

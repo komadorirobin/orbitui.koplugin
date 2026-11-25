@@ -247,6 +247,7 @@ function M.controller(file, opts)
     }
     controller.profile = Profiles.get(controller.profile_key)
     controller.chip = Profiles.defaultChip(controller.profile) or "all"
+    controller.dashboard_context = opts.dashboard_context
     local initial_chip = controller.chip
     local function refresh()
         Context.refresh(file)
@@ -518,12 +519,23 @@ function M.bookPage(owner, record, options, classic)
         end
         local label = owner.profile and clean(owner.profile.label) or ""
         if label == "" then label = _("Library") end
-        local close = button("close", "‹  " .. label, inner - px(44), function() self:onClose() end, false, nil, nil,
+        local context = owner.dashboard_context
+        local display_w = context and context.presentation and math.floor(inner * .54) or 0
+        local close = button("close", "‹  " .. label, inner - px(44) - display_w, function() self:onClose() end, false, nil, nil,
             { size = 14, plain = true, align = "left", pad_v = 0, height = 30 })
         local actions = button("actions", "•••", px(44), function() self:openTab("edit") end, false, nil, nil,
             { plain = true, size = 18, pad_v = 0, height = 30 })
-        local top = V:new{ align = "left", H:new{ align = "center", close, actions } }
-        self.layout[#self.layout + 1] = { close, actions }
+        local controls = { close }
+        if display_w > 0 then
+            controls[#controls + 1] = button("ongoing_display", context.presentation_label .. " ›", display_w,
+                function() context.presentation(function() self:onClose() end) end, false, nil, nil,
+                { size = 13, plain = true, pad_v = 0, height = 30 })
+        end
+        controls[#controls + 1] = actions
+        local top_row = H:new{ align = "center" }
+        for _, control in ipairs(controls) do top_row[#top_row + 1] = control end
+        local top = V:new{ align = "left", top_row }
+        self.layout[#self.layout + 1] = controls
         local body = V:new{ align = "left" }
         local fixed_hero = sh >= px(600)
         local coverw = math.min(px(132), math.floor(w * .29))

@@ -46,7 +46,12 @@ function M.readConfig(pfx)
     local legacy = store():readSetting("simpleui_orbitui_dashboard_config_ready") ~= true
         and store():readSetting(pfx .. M.enabled_key) ~= nil
     local config = Model.config(raw, legacy)
-    if raw == nil then store():saveSetting(key, config) end
+    if raw == nil then
+        if pfx == "simpleui_hs_" then
+            config.ongoing_style = require("adapters/orbitui_setup").initialHomeStyle()
+        end
+        store():saveSetting(key, config)
+    end
     return config
 end
 
@@ -65,6 +70,7 @@ M.needs = {
         local demand = Sources.moduleNeed(config, pfx, "recent")
         local cover = Model.isCoverLayout(M.layout(pfx))
         if Model.nativeVisible(config, "ongoing") and not cover
+                or config.ongoing_style and Model.nativeVisible(config, "hero")
                 or cover and not Model.slotModule(config, "hero") then return math.max(30, demand) end
         for _, id in ipairs({ "want", "new" }) do
             local source = config.sources[id]
@@ -89,8 +95,10 @@ M.needs = {
 for _, kind in ipairs({ "status", "records", "year", "charts", "current_book_stats" }) do
     local need = kind
     M.needs[need] = function(pfx)
-        return need == "current_book_stats" and Model.isCoverLayout(M.layout(pfx))
-            or Sources.moduleNeed(M.readConfig(pfx), pfx, need)
+        local config = M.readConfig(pfx)
+        return need == "current_book_stats" and (Model.isCoverLayout(M.layout(pfx))
+                or config.ongoing_style and Model.nativeVisible(config, "hero"))
+            or Sources.moduleNeed(config, pfx, need)
     end
 end
 
@@ -248,6 +256,9 @@ function M.menuItems(refresh, pfx, ctx_menu)
         end },
         M.colourItem(refresh, pfx),
         M.layoutItem(refresh, pfx),
+        require("adapters/orbitui_dashboard_settings").presentationItem(pfx, refresh or function()
+            require("screens/sui_homescreen").rebuildLayout({ keep_wallpaper = true })
+        end),
     }
 end
 
@@ -322,11 +333,20 @@ function M.readData(ctx)
     local combined = cover_layout and not Model.slotModule(config, "hero")
     local current = (combined or not cover_layout and visible("hero")) and fp and { file = fp, data = read(fp) } or nil
     local ongoing_limit = layout == "cover_row" and config.cover_row_count - (current and 1 or 0) or 3
+    local show_ongoing = combined or not cover_layout and visible("ongoing")
+    local featured = config.ongoing_style and (combined or not cover_layout and visible("hero")) and {} or nil
+    local featured_limit = featured and config.cover_row_count - (current and 1 or 0) or 0
+    local candidates = Model.ongoing(current and current.file, ctx.recent_fps, read,
+        math.max(show_ongoing and ongoing_limit or 0, featured_limit))
+    local ongoing = {}
+    if featured and current then featured[1] = current end
+    for i, book in ipairs(candidates) do
+        if show_ongoing and i <= ongoing_limit then ongoing[#ongoing + 1] = book end
+        if featured and i <= featured_limit then featured[#featured + 1] = book end
+    end
     return {
-        current = current,
-        ongoing = (combined or not cover_layout and visible("ongoing"))
-            and Model.ongoing(current and current.file, ctx.recent_fps, read, ongoing_limit) or {},
-        time_left = cover_layout and current and require("adapters/orbitui_silverfish").timeLeft(ctx, current.file, current.data) or nil,
+        current = current, ongoing = ongoing, featured = featured,
+        time_left = (cover_layout or featured) and current and require("adapters/orbitui_silverfish").timeLeft(ctx, current.file, current.data) or nil,
         want = want, new = new, want_error = want_error, new_error = new_error,
         config = config, layout = layout,
         source_labels = { want = visible("want") and Sources.label(config.sources.want) or nil,
@@ -438,7 +458,7 @@ function M.updateStats(widget, ctx, stats_only)
     for key, value in pairs(previous) do data[key] = value end
     data.stats = ctx.stats or {}
     if data.goal and not data.hardcover then data.goal = localGoal(ctx) end
-    if Model.isCoverLayout(data.layout) and data.current then
+    if (Model.isCoverLayout(data.layout) or data.featured) and data.current then
         data.time_left = require("adapters/orbitui_silverfish").timeLeft(ctx, data.current.file, data.current.data)
     end
     widget:replaceContent(ctx, data)

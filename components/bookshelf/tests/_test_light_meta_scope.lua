@@ -53,7 +53,8 @@ t.test("a book with no BIM row is built once from the batch's answer, not asked 
     -- The batch holds every row BIM has; a book missing from it has none.
     -- Returning nil sent every lookup back to a per-book SELECT, every
     -- session: ~1 s of a first visit to a library-wide shelf on the PW5.
-    assert(fn:find("local info = row_map[fp] or Repo._NO_ROW", 1, true),
+    assert(fn:find("local rows = entry.rows", 1, true)
+        and fn:find("local info = rows[fp] or Repo._NO_ROW", 1, true),
         "a book with no row falls back to a per-book BIM read again")
     assert(fn:find("rawset(t, fp, rec)", 1, true), "the record isn't memoised")
     -- ...and the record moves on when its extraction completes.

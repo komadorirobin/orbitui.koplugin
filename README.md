@@ -158,7 +158,14 @@ Library roots and configured scan depth determine coverage.
 ## Make Home useful to you
 
 On a fresh install, the setup guide preselects **Reading dashboard** with
-**Straight cover row**. Review and apply to add it as the first Home page.
+**Cover fan**. Review and apply to add it as the first Home page.
+After an update, a one-time invitation offers the same view if your Home
+dashboard is off. Choose **Enable Reading dashboard** or **No thanks**.
+If you already use the dashboard, OrbitUI keeps your chosen book display.
+Hold the ongoing-books card and choose **Ongoing book display** to switch between
+its original layout, **Book in focus** and **Cover fan**. Tap a smaller cover to
+preview that book, then tap **Read on** or the featured cover to open it. Swipe
+across the fan to browse. The choice is saved for this Home screen.
 Choose its cards, headings, colours, order and row sources:
 local To Be Read, new books, history, collections, saved shelves or BookOrbit.
 Each book row has its own paging arrows and swipe navigation.

@@ -140,9 +140,9 @@ local function folderRepository()
         metadata[rec.filepath] = rec
         walk[i] = { fp = rec.filepath, mtime = i, size = i * 10 }
     end
-    local repo = { getSortPriority = function() return alpha end }
+    local repo = { getSortPriority = function() return alpha end, cacheEpoch = function() return 1 end }
     local env = {
-        Repo = repo, _resolveScopeFilterOpts = function(sp, scope, filter, opts)
+        Repo = repo, SortEngine = Engine, _resolveScopeFilterOpts = function(sp, scope, filter, opts)
             return sp, scope, filter, opts or {}
         end,
         _normalizePath = function(v) return v end, _resolveLibraryRoot = function() return "/lib" end,
@@ -163,7 +163,7 @@ local function folderRepository()
             return math.min(offset + limit, total)
         end, logger = package.loaded.logger,
     }
-    local method = assert(source():match("(function Repo%.getFolderSections.-)\nfunction Repo%.getGenres"))
+    local method = assert(source():match("(function Repo%._orderFolderSections.-)\nfunction Repo%.getGenres"))
     local prefetch = assert(source():match("(local function _prefetchSortProgress.-)\nend")) .. "\nend"
     compile(prefetch .. "\n" .. method .. "\nreturn Repo", env)
     Integration.wrap("lib/bookshelf_book_repository", repo)
@@ -192,6 +192,25 @@ H.test("real folder producer reorders before pagination and preserves labels, me
     local scoped, scoped_total = repo.getFolderSections(100, 0, alpha,
         { roots = { "/lib/Folder Z" } }, nil, { root = "/lib", light_only = true })
     H.eq(scoped_total, 4); H.eq(ids(scoped), "u1,u2,u3,u4")
+end)
+
+H.test("folder pages reuse grouping and sorting until their input changes", function()
+    local repo = folderRepository()
+    local old, count, epoch = repo._orderFolderSections, 0, 0
+    repo.cacheEpoch = function() return epoch end
+    repo._orderFolderSections = function(...)
+        count = count + 1
+        return old(...)
+    end
+    local function page(offset, priority, filter)
+        return repo.getFolderSections(2, offset, priority, nil, filter, { light_only = true })
+    end
+    page(0, alpha); page(2, alpha); page(4, alpha)
+    H.eq(count, 1)
+    page(0, { { key = "title", reverse = true } }); H.eq(count, 2)
+    page(0, alpha); H.eq(count, 2)
+    epoch = 1; page(0, alpha); H.eq(count, 3)
+    page(0, alpha, { exclude = "r" }); page(2, alpha, { exclude = "z" }); H.eq(count, 5)
 end)
 
 local function shapes()

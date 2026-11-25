@@ -13,7 +13,8 @@ H.test("module map references existing component and explicitly embedded adapter
     for key, path in pairs(map) do
         local source = (getmetatable(map) or {}).orbitui_embedded
         local adapter = (key == "adapters/orbitui_bookorbit_achievements" or key == "adapters/orbitui_reading_log"
-            or key == "adapters/orbitui_achievement_medal" or key == "adapters/orbitui_fingertips")
+            or key == "adapters/orbitui_achievement_medal" or key == "adapters/orbitui_fingertips"
+            or key == "adapters/orbitui_ongoing_display")
             and source[key] and path == key .. ".lua"
         assert(path:match("^components/[^/]+/") or adapter)
         assert(not key:match("tests/") and key ~= "main" and key ~= "_meta")

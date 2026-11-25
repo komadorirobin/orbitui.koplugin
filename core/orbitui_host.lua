@@ -347,6 +347,7 @@ local function processMiB()
 end
 
 local function startShelfOpen(profile, time)
+    shelf_open = nil
     local widget = currentShelf()
     local ui = package.loaded["ui/uimanager"]
     -- Selecting the shelf already on screen can be a native no-op. A later
@@ -361,26 +362,71 @@ local function startShelfOpen(profile, time)
     shelf_open = sample
 end
 
+function M.shelfSwitch(widget, profile)
+    if not measuring or profile == widget.profile_key then return end
+    local time = package.loaded["ui/time"]
+    if time and time.now and time.since and time.to_us then startShelfOpen(profile, time) end
+end
+
+-- Inspect only painted shelf rows while a local timing sample is active.
+-- A hero, decorative image or pagination button cannot satisfy a milestone.
+local function shelfMilestones(widget)
+    local dims, rows = widget._shelf_dims, widget._inner_vgroup
+    if not (dims and dims.shelf_top_idx and rows) then return end
+    local content, tappable, cover
+    local function visit(node, depth)
+        if type(node) ~= "table" or depth > 16 or (tappable and cover) then return end
+        local d = node.dimen
+        local painted = d and d.x and d.y and d.w and d.h and d.w > 0 and d.h > 0
+        local item = node.book or node.folder or node.series or node._bookshelf_tappable_row
+        if painted and item then
+            content = true
+            if node.onTap and node.ges_events and node.ges_events.Tap then tappable = true end
+        end
+        if painted and node._has_cover_picture then cover = true end
+        for i = 1, #node do visit(node[i], depth + 1) end
+    end
+    for i = 1, dims.n_shelves or 1 do
+        visit(rows[dims.shelf_top_idx + 2 * (i - 1)], 0)
+        if tappable and cover then break end
+    end
+    return content, tappable, cover
+end
+
 function M.shelfPainted(widget, stack_top)
-    local sample = shelf_open
-    if not sample then return end
-    if sample.profile and widget.profile_key ~= sample.profile then return end
+    local pending = shelf_open
+    if not pending then return end
+    if pending.profile and widget.profile_key ~= pending.profile then return end
     local ui = package.loaded["ui/uimanager"]
     local visible = ui and ui.getTopmostVisibleWidget and ui:getTopmostVisibleWidget() or stack_top
     if visible and visible ~= widget then return end
-    shelf_open = nil
     local time = package.loaded["ui/time"]
-    local ms = time.to_us(time.since(sample.start)) / 1000
-    if ms < 0 or ms > 60000 then return end
-    shelfJobs(widget, sample.jobs)
-    -- A generic Library shortcut may reopen the last active Manga shelf.
-    sample.destination = widget.profile_key == "comics" and "Manga" or "Library"
-    sample.profile, sample.start = nil, nil
-    sample.ms, sample.rss_after = ms, processMiB()
-    local free = memory()
-    sample.free_after = free and math.floor(free / MiB + .5)
-    if #shelf_samples == 8 then table.remove(shelf_samples, 1) end
-    shelf_samples[#shelf_samples + 1] = sample
+    local ms = time.to_us(time.since(pending.start)) / 1000
+    if ms < 0 or ms > 60000 then shelf_open = nil; return end
+    local sample = pending.result
+    if not sample then
+        shelfJobs(widget, pending.jobs)
+        local free = memory()
+        sample = { destination = widget.profile_key == "comics" and "Manga" or "Library",
+            ms = ms, jobs = pending.jobs, rss_before = pending.rss_before, rss_after = processMiB(),
+            free_before = pending.free_before, free_after = free and math.floor(free / MiB + .5) }
+        if #shelf_samples == 8 then table.remove(shelf_samples, 1) end
+        shelf_samples[#shelf_samples + 1] = sample
+        pending.result, pending.profile = sample, widget.profile_key
+    end
+    local content, tappable, cover = shelfMilestones(widget)
+    if content and not sample.content_ms then sample.content_ms = ms end
+    if cover and not sample.cover_ms then sample.cover_ms = ms end
+    if tappable and not pending.queued and not sample.ready_ms and ui and ui.nextTick and ui.getTopmostVisibleWidget then
+        pending.queued = true
+        ui:nextTick(function()
+            pending.queued = nil
+            if shelf_open ~= pending or widget._closed or widget.profile_key ~= pending.profile
+                    or ui:getTopmostVisibleWidget() ~= widget then return end
+            sample.ready_ms = time.to_us(time.since(pending.start)) / 1000
+            if sample.cover_ms then shelf_open = nil end
+        end)
+    elseif sample.cover_ms and sample.ready_ms then shelf_open = nil end
 end
 
 function M.allowSpeculation()
@@ -597,6 +643,9 @@ function M.performanceReport()
             end
             local details = { string.format("%s · %.0f ms", _(sample.destination), sample.ms),
                 #seen > 0 and table.concat(seen, ", ") or _("No observed jobs") }
+            for _, field in ipairs({ {"content_ms", "Shelf content"}, {"cover_ms", "First cover"}, {"ready_ms", "Ready for input"} }) do
+                if sample[field[1]] then details[#details + 1] = string.format("%s %.0f ms", _(field[2]), sample[field[1]]) end
+            end
             if sample.free_before and sample.free_after then
                 details[#details + 1] = string.format(_("Free memory %d → %d MiB"), sample.free_before, sample.free_after)
             end

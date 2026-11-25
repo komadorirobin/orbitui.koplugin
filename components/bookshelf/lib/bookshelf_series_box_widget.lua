@@ -133,6 +133,15 @@ local CONTACT_SHADOW = 0.35   -- the shadow's strength at the rim
 -- The ink printed on a slipcase: its name and count.
 -- Finished sticker images by what they show (see paintTo), oldest out.
 local _stickers, _sticker_order, STICKERS_MAX = {}, {}, 12
+local function keepSticker(key, bb, x, y, picture)
+    _stickers[key] = { bb = bb, x = x or 0, y = y or 0, picture = picture }
+    _sticker_order[#_sticker_order + 1] = key
+    if #_sticker_order > STICKERS_MAX then
+        local old = table.remove(_sticker_order, 1)
+        _stickers[old].bb:free()
+        _stickers[old] = nil
+    end
+end
 function Box.clearStickerCache()
     for _, kept in pairs(_stickers) do kept.bb:free() end
     _stickers, _sticker_order = {}, {}
@@ -493,18 +502,13 @@ function Box:_paintSlipcase(bb, x, y)
         local kept = cacheable and _stickers[skey]
         if kept then
             bb:blitFrom(kept.bb, sx + E, sy + E, kept.x, kept.y, iw, ih)
+            self._has_cover_picture = kept.picture
             return
         end
         local function keep(buffer, cx, cy)
+            self._has_cover_picture = (custom and true) or self.art_cover._has_cover_picture
             if not cacheable then return false end
-            _stickers[skey] = { bb = buffer, x = cx or 0, y = cy or 0 }
-            _sticker_order[#_sticker_order + 1] = skey
-            if #_sticker_order > STICKERS_MAX then
-                local old = table.remove(_sticker_order, 1)
-                local ob = _stickers[old]
-                _stickers[old] = nil
-                if ob then ob.bb:free() end
-            end
+            keepSticker(skey, buffer, cx, cy, self._has_cover_picture)
             return true
         end
         -- The series' own image: no tile frame to crop. Cache-owned, so it is
@@ -735,7 +739,10 @@ function Box:_spinesArt(bb, night)
         tostring(first and first.cover_sizetag), a.w, a.h, self.run_w, p.inner_h, boost,
         ART_CONTRAST, ART_DARKEN, tostring(bb:getType()), night and "n" or "d" }, "|")
     local kept = _stickers[key]
-    if kept then return kept end
+    if kept then
+        self._has_cover_picture = kept.picture
+        return kept.bb
+    end
     local tmp = BB.new(a.w, a.h, bb:getType())
     tmp:paintRectRGB32(0, 0, a.w, a.h, BB.ColorRGB32(255,255,255,255))
     local custom = self.custom_path
@@ -764,14 +771,8 @@ function Box:_spinesArt(bb, night)
             C.applyLUT(crop, C.wallpaperLUT(med, night and -ART_DARKEN or ART_DARKEN, ART_CONTRAST))
         end
     end)
-    _stickers[key] = crop
-    _sticker_order[#_sticker_order + 1] = key
-    if #_sticker_order > STICKERS_MAX then
-        local old = table.remove(_sticker_order, 1)
-        local ob = _stickers[old]
-        _stickers[old] = nil
-        if ob then ob:free() end
-    end
+    self._has_cover_picture = (custom and true) or self.art_cover._has_cover_picture
+    keepSticker(key, crop, 0, 0, self._has_cover_picture)
     return crop
 end
 
@@ -901,6 +902,7 @@ function Box:onHold()
 end
 
 function Box:paintTo(bb, x, y)
+    self._has_cover_picture = nil
     self.dimen.x, self.dimen.y = x, y
     if self.shape.style == "spines" then return self:_paintSpines(bb, x, y) end
     return self:_paintSlipcase(bb, x, y)

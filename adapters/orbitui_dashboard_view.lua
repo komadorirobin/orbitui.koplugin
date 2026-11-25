@@ -69,6 +69,7 @@ local function rect(x, y, w, h) return { x = x, y = y, w = w, h = h } end
 
 local function hit(area, x, y)
     return x >= area.x and x < area.x + area.w and y >= area.y and y < area.y + area.h
+        and (not area.contains or area.contains(x - area.x, y - area.y))
 end
 
 local function secondsToNextMinute()
@@ -197,6 +198,9 @@ end
 function Dashboard:replaceContent(ctx, data)
     local old = self[1]
     if self._module_tick then require("ui/uimanager"):unschedule(self._module_tick); self._module_tick = nil end
+    local current_file = data.current and data.current.file
+    if self._focus_source ~= current_file then self._focus_file = nil end
+    self._focus_source = current_file
     self._dashboard_ctx, self._dashboard_data = ctx, data
     self._actions, self._cover_slots, self._held = {}, {}, nil
     self._module_cover_slots = {}
@@ -217,7 +221,9 @@ function Dashboard:refreshCovers()
     for _, slot in ipairs(self._cover_slots) do
         local image = SH.getBookCover(slot.file, slot.area.w, slot.area.h, false)
         if image then
-            image.overlap_offset = { slot.area.x, slot.area.y }
+            if slot.wrap then image = slot.wrap(image) end
+            local bounds = slot.bounds or slot.area
+            image.overlap_offset = { bounds.x, bounds.y }
             local parent = slot.parent or self[1]
             local old = parent[slot.index]
             parent[slot.index] = image
@@ -311,7 +317,7 @@ function M.content(widget, p, ctx, data)
     end
     local function action(r, tap, hold)
         local item = rect(r.x, r.y, r.w, r.h)
-        item.tap, item.hold = tap, hold
+        item.tap, item.hold, item.contains = tap, hold, r.contains
         item.row_card = card_scope
         widget._actions[#widget._actions + 1] = item
     end
@@ -340,6 +346,12 @@ function M.content(widget, p, ctx, data)
         if not ctx.hold_fn then return end
         local replace = card and { text = _("Replace module…"),
             callback = function(close) widget:editModules(card, close) end }
+        if card == "hero" then
+            replace.presentation = function(close)
+                require("adapters/orbitui_dashboard_settings").presentationItem(ctx.pfx, close).callback()
+            end
+            replace.presentation_label = _("Ongoing book display")
+        end
         return ctx.hold_fn(fp, module, replace)
     end
     local function bookAction(r, fp)
@@ -449,7 +461,83 @@ function M.content(widget, p, ctx, data)
     end
 
     local r = p.ladder
-    if r and p.cover_row then
+    local featured = data.featured and (r or p.hero)
+    if featured then
+        local Display = require("adapters/orbitui_ongoing_display")
+        local Silverfish = require("adapters/orbitui_silverfish")
+        local pet = p.ladder and Silverfish.snapshot()
+        local area = featured
+        local surface = box(area, nil, nil, "hero").background
+        local tap = cardTap("hero")
+        if tap then action(area, tap) end
+        local group_index = #root + 1
+        local function draw()
+            for _, entries in ipairs({ widget._actions, widget._cover_slots, widget._swipe_areas }) do
+                for i = #entries, 1, -1 do
+                    if entries[i].row_card == "featured_books" then table.remove(entries, i) end
+                end
+            end
+            local previous, scope = target, card_scope
+            local group = Overlap:new{ dimen = Geom:new{ w = p.w, h = p.h }, allow_mirroring = false }
+            target, card_scope = group, "featured_books"
+            Display.draw({
+                px = px, text = text, action = action, bar = bar, pad = p.pad, muted = muted, pet = pet,
+                line = function(size, bold) return textBlockHeight(textFace(size, bold), 1) end,
+                textWidth = function(value, size, bold)
+                    local face, weight = textFace(size, bold)
+                    local probe = UI.makeColoredText{ text = value, face = face, bold = weight, width = p.w }
+                    local width = probe:getSize().w
+                    probe:free()
+                    return width
+                end,
+                seeAll = function() require("adapters/orbitui_dashboard").showOngoing(ctx) end,
+                rule = function(x, y, w) add(UI.solidBar(w, px(1), BB.COLOR_LIGHT_GRAY), x, y) end,
+                sprite = function(value, size, x, y) add(Silverfish.spriteWidget(value, size, size, surface), x, y) end,
+                openPet = Silverfish.openPet,
+                bookAction = bookAction,
+                open = function(file) if ctx.open_fn then ctx.open_fn(file) end end,
+                hold = function(file, card) bookHold(file, Model.id, card) end,
+                swipe = function(bounds, turn)
+                    local swipe = rect(bounds.x, bounds.y, bounds.w, bounds.h)
+                    swipe.turn, swipe.row_card = turn, card_scope
+                    widget._swipe_areas[#widget._swipe_areas + 1] = swipe
+                end,
+                button = function(b, size)
+                    local frame = box(b, surface, ink)
+                    frame.radius = px(5)
+                    text(_("Read on") .. "  →", b.x, b.y + math.floor((b.h - textBlockHeight(textFace(size, true), 1)) / 2),
+                        b.w, size, true, ink, 1, true, "center")
+                end,
+                cover = function(file, raw, bounds, wrap)
+                    local image = SH.getBookCover(file, raw.w, raw.h, false)
+                    local missing = not image
+                    if missing then
+                        local meta = SH.getBookData(file, ctx.prefetched and ctx.prefetched[file], { skip_description = true })
+                        image = SH.coverPlaceholder(meta.title, meta.authors, raw.w, raw.h, false)
+                    end
+                    if image then
+                        add(wrap and wrap(image) or image, bounds.x, bounds.y)
+                        if missing then
+                            widget._cover_slots[#widget._cover_slots + 1] = { file = file, area = raw,
+                                bounds = bounds, wrap = wrap, index = #target, parent = group, row_card = card_scope }
+                        end
+                    end
+                end,
+            }, area, data, widget._focus_file, function(file)
+                if widget._disposed or root ~= widget[1] then return end
+                widget._focus_file = file
+                local old = root[group_index]
+                root[group_index] = draw()
+                old:free()
+                require("ui/uimanager"):setDirty(ctx._screen_widget or widget, "ui", Geom:new{
+                    x = widget.dimen.x + area.x, y = widget.dimen.y + area.y, w = area.w, h = area.h })
+            end)
+            target, card_scope = previous, scope
+            group.overlap_offset = { 0, 0 }
+            return group
+        end
+        root[group_index] = draw()
+    elseif r and p.cover_row then
         local Silverfish = require("adapters/orbitui_silverfish")
         local pet = Silverfish.snapshot()
         box(r, paper, nil, "hero")
@@ -525,8 +613,7 @@ function M.content(widget, p, ctx, data)
                 end
                 rightLabel(pet.name, y, pet_name_size, true)
                 rightLabel(pet.stage, y + name_h + line_gap, pet_detail_size)
-                rightLabel(string.format(_("Days: %s · Books: %s · Gen: %s"),
-                    pet.days or "—", pet.finished or "—", pet.generation), bottom - detail_h, pet_detail_size)
+                rightLabel(Silverfish.formatStats(pet), bottom - detail_h, pet_detail_size)
                 add(Silverfish.spriteWidget(pet, sprite_w, footer_h, paper), right - sprite_w, y)
                 action(rect(pet_x, footer_y, right - pet_x, bottom - footer_y), function() Silverfish.openPet(pet) end)
             end
@@ -617,8 +704,7 @@ function M.content(widget, p, ctx, data)
                     if label then label.overlap_offset[1] = tx - math.min(tx - other_x, label:getSize().w) end
                 end
                 rightLabel(pet.name .. "  " .. pet.stage, foot_y + px(6), 13, true)
-                rightLabel(string.format(_("Days: %s · Books: %s · Gen: %s"),
-                    pet.days or "—", pet.finished or "—", pet.generation), foot_y + px(25), 14)
+                rightLabel(Silverfish.formatStats(pet), foot_y + px(25), 14)
                 add(Silverfish.spriteWidget(pet, sprite_w, foot_h - px(5), paper), right - sprite_w, foot_y + px(5))
                 action(rect(other_x, foot_y, right - other_x, foot_h), function() Silverfish.openPet(pet) end)
             end
@@ -630,7 +716,7 @@ function M.content(widget, p, ctx, data)
     -- emphasis must not become a bright white hole when the frame inverts.
     local dark = data.dark and not Screen.night_mode
     r = p.hero
-    if r then
+    if r and not featured then
     local hero_frame = box(r, dark and ink or nil, dark and ink or nil, "hero")
     local hero_tap = cardTap("hero")
     if hero_tap then action(r, hero_tap) end

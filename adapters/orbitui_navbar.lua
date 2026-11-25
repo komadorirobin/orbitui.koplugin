@@ -14,6 +14,15 @@ function M.config(Config)
     Config.NON_HOME_DEFAULTS = M.default_tabs
     Config.homeLabel = function() return _("File browser") end
     Config.ACTION_BY_ID.home.label = _("File browser")
+    Config.startupDockItem = function()
+        local value = G_reader_settings:readSetting("start_with")
+        local id = type(value) == "string" and value:match("^orbitui_dock:(.+)$")
+        if not id then return end
+        local label = M.hasAction(id) and require("features/sui_quickactions").getMenuLabel(id) or _("Dock")
+        return { text = label, radio = true,
+            checked_func = function() return G_reader_settings:readSetting("start_with") == value end,
+            callback = function() G_reader_settings:saveSetting("start_with", value) end }
+    end
 end
 
 function M.changed()
@@ -251,6 +260,52 @@ local function dockPicker(replace, back, done)
     return panel
 end
 
+local native_start = { homescreen = "homescreen_simpleui", home = "filemanager",
+    history = "history", favorites = "favorites" }
+local start_prefix = "orbitui_dock:"
+local function startValue(id)
+    if native_start[id] then return native_start[id] end
+    local libraries = require("adapters/orbitui_libraries")
+    local profile
+    if id == M.bookshelf_action then profile = libraries.bookshelfTarget()
+    elseif id == "bookshelf_prose" then profile = "prose"
+    elseif id == "bookshelf_comics" then profile = "comics"
+    elseif id:match("^orbitui_library_") then profile = libraries.navigationProfile(id) or false
+    elseif id:match("^open_custom_screen:.+") then
+        return require("features/sui_quickactions").isRegistered(id) and start_prefix .. id or nil
+    elseif id:match("^custom_qa_%d+$") then
+        local cfg = require("features/sui_quickactions").getCustomQAConfig(id)
+        if cfg.qa_folder then return end
+        if cfg.dispatcher_action and cfg.dispatcher_action ~= "" then
+            if cfg.dispatcher_action == "open_bookshelf_prose" then profile = "prose"
+            elseif cfg.dispatcher_action == "open_bookshelf_comics" then profile = "comics"
+            elseif cfg.dispatcher_action ~= "open_bookshelf_auto" then return end
+        elseif cfg.plugin_key and cfg.plugin_key ~= "" then return
+        elseif (cfg.collection or "") ~= "" then return start_prefix .. id
+        elseif type(cfg.path) ~= "string" or require("libs/libkoreader-lfs").attributes(cfg.path, "mode") ~= "directory" then return end
+    elseif id ~= "collections" then return end
+    if profile == false or (profile and not require("lib/bookshelf_profiles").get(profile)) then return end
+    return start_prefix .. id
+end
+
+function M.startDockView(owner, value)
+    local id = value:sub(#start_prefix + 1)
+    local UI = require("ui/uimanager")
+    UI:nextTick(function()
+        local fm = package.loaded["apps/filemanager/filemanager"]
+        local reader = package.loaded["apps/reader/readerui"]
+        if not fm or fm.instance ~= owner.ui or (reader and reader.instance)
+                or G_reader_settings:readSetting("start_with") ~= value then return end
+        local plugin = require("core/orbitui_context").plugin("simpleui")
+        if not plugin then return end
+        if not M.hasAction(id) or startValue(id) ~= value then
+            id = "homescreen"
+            G_reader_settings:saveSetting("start_with", native_start[id])
+        end
+        require("screens/sui_bottombar").navigate(plugin, id, owner.ui)
+    end)
+end
+
 function M.shortcutMenu(id, back)
     local UI, Config = require("ui/uimanager"), require("infra/sui_config")
     local QA = require("features/sui_quickactions")
@@ -272,6 +327,14 @@ function M.shortcutMenu(id, back)
         end, #Config.loadTabConfig() > (Config.isNavpagerEnabled() and 1 or 2)),
         button("Edit dock", edit),
     }
+    local start = startValue(id)
+    if start then
+        local current = G_reader_settings:readSetting("start_with") == start
+        buttons[#buttons + 1] = button(current and "Current startup view" or "Use as startup view", function()
+            G_reader_settings:saveSetting("start_with", start)
+            done()
+        end, not current)
+    end
     if id == M.bookshelf_action then
         buttons[#buttons + 1] = button("Library shortcut", function()
             require("adapters/orbitui_settings").open("bookshelf_navigation", {

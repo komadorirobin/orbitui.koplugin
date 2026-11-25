@@ -109,4 +109,48 @@ function FolderSections.group(entries, root)
     return sections
 end
 
+-- Only metadata-backed comparisons are stable for the lifetime of a folder
+-- walk. Reading status, collections and third-party sort keys can change live.
+local static_keys = { title = true, filename = true, author_name = true, author_surname = true,
+    series_name = true, series_or_title = true, series_combined = true, series_index = true,
+    date_added = true, size = true }
+function FolderSections.orderKey(priority, signature, mixed)
+    local parts = { signature, mixed and "mixed" or "folders" }
+    for _, v in ipairs(priority or {}) do
+        if not static_keys[v.key] then return end
+        parts[#parts + 1] = v.key .. (v.reverse and "-" or "+")
+    end
+    return table.concat(parts, ":")
+end
+
+local recent = {}
+local function sameSources(a, b)
+    if #a ~= #b then return false end
+    for i, source in ipairs(a) do
+        local other = b[i]
+        if source.root ~= other.root or source.walk ~= other.walk
+                or source.metadata ~= other.metadata then return false end
+    end
+    return true
+end
+
+function FolderSections.ordered(sources, key, epoch, policy, build)
+    if recent[1] and recent[1].epoch ~= epoch then recent = {} end
+    if not key then return build() end
+    for i, entry in ipairs(recent) do
+        if entry.key == key and entry.epoch == epoch and entry.policy == policy and sameSources(sources, entry.sources) then
+            if i == 2 then recent[1], recent[2] = entry, recent[1] end
+            return entry.rows
+        end
+    end
+    local rows = build()
+    local source_size = 0
+    for _, source in ipairs(sources) do source_size = source_size + #source.walk end
+    if #rows <= 6000 and source_size <= 6000 then
+        recent[2] = recent[1]
+        recent[1] = { sources = sources, key = key, epoch = epoch, policy = policy, rows = rows }
+    end
+    return rows
+end
+
 return FolderSections

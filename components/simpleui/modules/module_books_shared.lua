@@ -231,9 +231,10 @@ end
 -- getBookCover
 -- ---------------------------------------------------------------------------
 local function buildBookCover(w, h, filepath)
-    -- Reserve 1px on each side for the border: request a bb that is 2px smaller.
-    local inner_w = math_max(1, w - 2)
-    local inner_h = math_max(1, h - 2)
+    -- The whole frame must fit even when KOReader scales its thin border.
+    local border = SUIStyle.BADGE_BORDER_SZ
+    local inner_w = math_max(1, w - 2 * border)
+    local inner_h = math_max(1, h - 2 * border)
     local bb = Config.getStretchedCoverBB(filepath, inner_w, inner_h)
     if not bb then return nil end
     local ok, img = pcall(function()
@@ -254,9 +255,8 @@ local function buildBookCover(w, h, filepath)
         }
     end)
     if not (ok and img) then return nil end
-    -- padding=0 + bordersize=1: the FrameContainer outer size is inner_w+2 × inner_h+2 = w×h.
     return FrameContainer:new{
-        bordersize = SUIStyle.BADGE_BORDER_SZ, color = SUIStyle.COLOR.text_primary,
+        bordersize = border, color = SUIStyle.COLOR.text_primary,
         padding    = 0, margin = 0,
         dimen      = Geom:new{ w = w, h = h },
         img,

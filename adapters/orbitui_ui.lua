@@ -183,6 +183,7 @@ function M.wrap(name, module)
         require("adapters/orbitui_shelf_sort").alphabet(module)
         local Host = require("core/orbitui_host")
         module.orbituiShelfPainted = Host.shelfPainted
+        module.orbituiShelfSwitch = Host.shelfSwitch
         for key, label in pairs({ _rebuild = "shelf", _paginateNext = "next", _paginatePrev = "previous",
                 _launchReader = "open" }) do Host.timeMethod(module, key, label) end
         for _, key in ipairs({ "_schedulePreload", "_queueWarmForVisible", "_pageAheadArm" }) do

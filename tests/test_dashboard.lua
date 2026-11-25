@@ -653,6 +653,227 @@ H.test("straight row honors one or five books and fits single-line title caption
     saved[layout_key], saved[config_key] = layout, config
 end)
 
+H.test("ongoing display picker, selection and opening stay local to the book card", function()
+    local config_key, layout_key = ctx.pfx .. "orbitui_dashboard_config", ctx.pfx .. "orbitui_dashboard_layout"
+    local original, layout = saved[config_key], saved[layout_key]
+    saved[config_key], saved[layout_key] = Model.config(original), "cover_row"
+    saved[config_key].cover_row_count = 5
+    local old_widget, old_dialog = package.loaded["ui/widget/widget"], package.loaded["ui/widget/buttondialog"]
+    package.loaded["ui/widget/widget"], package.loaded["ui/widget/buttondialog"] = Widget, Widget
+    local picker = require("adapters/orbitui_dashboard_settings").presentationItem(ctx.pfx, function() end)
+    for i, style in ipairs({ "focus", "fan" }) do
+        picker.callback()
+        assert(shown_dialog.modal and shown_dialog.sui_native)
+        shown_dialog.buttons[i + 1][1].callback()
+        H.eq(saved[config_key].ongoing_style, style)
+        H.eq(saved[layout_key], "cover_row")
+        local data = Dashboard.readData(ctx)
+        H.eq(#data.featured, 5)
+        local view = View.build(600, 730, ctx, data)
+        view.dimen.x, view.dimen.y = 0, 0
+        local area = view._plan.ladder
+        local function tap(target)
+            view:onDashboardTap(nil, { pos = { x = target.x + math.floor(target.w / 2),
+                y = target.y + math.floor(target.h / 2) } })
+        end
+        local prior_open = opened
+        if style == "focus" then
+            local thumb
+            for _, target in ipairs(view._actions) do
+                if target.row_card == "featured_books" and target.hold and target.h > target.w
+                        and target.w < area.w / 6 then thumb = target; break end
+            end
+            assert(thumb, "thumbnail"); tap(thumb)
+        else
+            local art = view._swipe_areas[1]
+            H.eq(view:onSwipe(nil, { direction = "west", pos = { x = art.x + art.w / 2, y = art.y + art.h / 2 } }), true)
+        end
+        H.eq(view._focus_file, "/first")
+        H.eq(opened, prior_open)
+        local read
+        for _, target in ipairs(view._actions) do
+            if target.row_card == "featured_books" and target.hold and target.w > target.h * 2 then
+                if target.w > area.w / 10 then read = target; break end
+            end
+        end
+        assert(read, "read button"); tap(read); H.eq(opened, "/first")
+        view:replaceContent(ctx, data); H.eq(view._focus_file, "/first")
+        view:free()
+    end
+    picker.callback(); shown_dialog.buttons[1][1].callback()
+    H.eq(saved[config_key].ongoing_style, nil); H.eq(saved[config_key].cover_row_count, 5)
+    saved[config_key], saved[layout_key] = original, layout
+    package.loaded["ui/widget/widget"], package.loaded["ui/widget/buttondialog"] = old_widget, old_dialog
+end)
+
+H.test("focus and fan show the straight row's pet stats and open Silverfish from the numbers", function()
+    local Silverfish = require("adapters/orbitui_silverfish")
+    local snapshot, sprite, open = Silverfish.snapshot, Silverfish.spriteWidget, Silverfish.openPet
+    local pet = { name = "Franz", stage = "Ash Cat · Kitten", days = 28, finished = 0, generation = 2 }
+    local opened_pet
+    Silverfish.snapshot = function() return pet end
+    Silverfish.spriteWidget = function(_, w, h) return Widget:new{ dimen = { w = w, h = h } } end
+    Silverfish.openPet = function(value) opened_pet = value end
+    local data = Dashboard.readData(ctx)
+    data.layout, data.featured = "cover_row", { data.current }
+    for _, style in ipairs({ "focus", "fan" }) do
+        data.config.ongoing_style = style
+        for _, name in ipairs({ "Franz", string.rep("Long name ", 24) }) do
+            pet.name = name
+            local view = View.build(600, 730, ctx, data)
+            view.dimen.x, view.dimen.y = 0, 0
+            local label, stats
+            for _, group in ipairs(view[1]) do
+                for _, child in ipairs(group) do
+                    if child.text == name .. "   " .. pet.stage then label = child end
+                    if child.text == "Days: 28 · Books: 0 · Gen: 2" then stats = child end
+                end
+            end
+            assert(label and stats)
+            local x, y = stats.overlap_offset[1], stats.overlap_offset[2]
+            if name == "Franz" then
+                assert(label.overlap_offset[1] + label:getSize().w < x)
+                H.eq(x + stats:getSize().w, view._plan.ladder.x + view._plan.ladder.w - view._plan.pad)
+            else
+                assert(label.overlap_offset[2] + label:getSize().h <= y)
+                H.eq(x, label.overlap_offset[1])
+            end
+            assert(y + stats:getSize().h <= view._plan.ladder.y + view._plan.ladder.h - view._plan.pad)
+            opened_pet = nil
+            assert(view:onDashboardTap(nil, { pos = { x = x + 1, y = y + 1 } }))
+            H.eq(opened_pet, pet)
+            view:free()
+        end
+    end
+    Silverfish.snapshot, Silverfish.spriteWidget, Silverfish.openPet = snapshot, sprite, open
+end)
+
+H.test("both card styles fit empty and populated dashboards without changing other card positions", function()
+    local old = package.loaded["ui/widget/widget"]
+    package.loaded["ui/widget/widget"] = Widget
+    for _, layout in ipairs({ "classic", "cover_stairs", "cover_row" }) do
+        for _, style in ipairs({ "focus", "fan" }) do
+            local data = Dashboard.readData(ctx)
+            data.layout, data.config.ongoing_style = layout, style
+            for _, count in ipairs({ 0, 1, 3, 5 }) do
+                data.featured = {}
+                for i = 1, count do
+                    data.featured[i] = { file = "/" .. i, data = { title = "Book " .. i, percent = .32 } }
+                end
+                for _, size in ipairs({ { 300, 400 }, { 600, 730 }, { 800, 480 } }) do
+                    local view = View.build(size[1], size[2], ctx, data)
+                    local card = view._plan.ladder or view._plan.hero
+                    for _, a in ipairs(view._actions) do
+                        if a.row_card == "featured_books" then
+                            assert(a.x >= card.x and a.y >= card.y and a.x + a.w <= card.x + card.w
+                                and a.y + a.h <= card.y + card.h, layout .. " " .. style)
+                        end
+                    end
+                    view:free()
+                end
+            end
+        end
+    end
+    package.loaded["ui/widget/widget"] = old
+end)
+
+H.test("wide focus cards use the right edge and fan jackets stay gently tilted and selectable", function()
+    local display = require("adapters/orbitui_ongoing_display")
+    local card = { x = 10, y = 20, w = 640, h = 280 }
+    local covers, layers, art, rules
+    local cover_widths = {}
+    local function ignore() end
+    local v = {
+        pad = 10, px = math.floor, line = function(size) return math.ceil(size * 1.3) end,
+        textWidth = function(value, size) return #value * size / 2 end,
+        text = function()
+            return { overlap_offset = {}, getSize = function() return { w = 50 } end }
+        end,
+        cover = function(file, raw, bounds)
+            cover_widths[file] = raw.w
+            covers[file] = bounds
+            layers[#layers + 1] = file
+        end,
+        swipe = function(area) art = area end,
+        rule = function(_, y) rules[#rules + 1] = y end,
+        pet = { name = "Pet", stage = "Kitten", generation = 1 }, sprite = ignore, openPet = ignore,
+        bar = ignore, action = ignore, bookAction = ignore, button = ignore,
+    }
+    local data = { featured = {}, config = {} }
+    for i = 1, 5 do
+        local file = tostring(i)
+        data.featured[i] = { file = file, data = { title = file, percent = .1 } }
+        if i >= 2 then
+            for _, selected in ipairs({ "1", file }) do
+                covers, layers, rules = {}, {}, {}
+                data.config.ongoing_style = "focus"
+                display.draw(v, card, data, selected, ignore)
+                local main = covers[selected]
+                local rightmost = 0
+                for name, cover in pairs(covers) do
+                    if name ~= selected then
+                        assert(cover.x > card.x + card.w / 2)
+                        assert(cover.w > main.w * .35)
+                        rightmost = math.max(rightmost, cover.x + cover.w)
+                    end
+                end
+                assert(rightmost >= card.x + card.w - 2*v.pad)
+
+                covers, layers, rules = {}, {}, {}
+                data.config.ongoing_style = "fan"
+                display.draw(v, card, data, selected, ignore)
+                H.eq(#layers, i)
+                H.eq(layers[i], selected)
+                local front = covers[selected]
+                local last_w, tiers = 0, 0
+                for _, name in ipairs(layers) do
+                    local w = cover_widths[name]
+                    assert(w >= last_w, "paint smaller covers behind larger ones")
+                    if w > last_w then tiers = tiers + 1 end
+                    if name ~= selected then assert(w < front.w, "selected jacket must be largest") end
+                    last_w = w
+                end
+                H.eq(tiers, math.floor(i / 2) + 1)
+                local left, right = math.huge, -math.huge
+                for name, b in pairs(covers) do
+                    assert(b.y > rules[1] and b.y + b.h < rules[2], "allow clearance at header and footer")
+                    assert(b.w <= cover_widths[name] * 1.4 + 2, "limit the lean of the outer jackets")
+                    left, right = math.min(left, b.x), math.max(right, b.x + b.w)
+                end
+                assert(math.abs((left + right) - (2*art.x + art.w)) <= 4)
+                local function visibleAt(fraction)
+                    local y = front.y + math.floor(front.h * fraction)
+                    local lo, hi, widths = math.huge, -math.huge, {}
+                    for x = left, right - 1 do
+                        for layer = #layers, 1, -1 do
+                            local file = layers[layer]
+                            local b = covers[file]
+                            local dx, dy = x - b.x, y - b.y
+                            if dx >= 0 and dy >= 0 and dx < b.w and dy < b.h
+                                    and (not b.contains or b.contains(dx, dy)) then
+                                widths[file] = (widths[file] or 0) + 1
+                                lo, hi = math.min(lo, x), math.max(hi, x)
+                                break
+                            end
+                        end
+                    end
+                    return hi - lo, widths
+                end
+                local midspan, visible = visibleAt(.5)
+                local painted = 0
+                for _, file in ipairs(layers) do
+                    assert((visible[file] or 0) >= front.w / 3, "leave a tappable strip of every jacket")
+                    painted = painted + visible[file]
+                end
+                H.eq(painted, midspan + 1, "keep all jackets overlapping across the middle")
+                -- Compare rows that cross the shorter side jackets.
+                assert(visibleAt(.45) > visibleAt(.94) + front.w * .1,
+                    "jackets still spread near the top and converge at the base")
+            end
+        end
+    end
+end)
+
 H.test("closing a dashboard layout change rebuilds the data context", function()
     local window = package.loaded["screens/sui_settings_window"]
     local old_window_show, old_engine = window.show, package.loaded["engines/sui_window"]

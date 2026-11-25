@@ -207,6 +207,24 @@ H.test("only a matching shelf paint completes a trace; no paths or custom names 
     Host.measure("library", function() end, {}, "comics"); Host.setMeasuring(false)
     Host.shelfPainted({ profile_key = "comics" }); H.eq(#traces, 2)
 end)
+H.test("dock switches measure real shelf rows, covers and the following input tick separately", function()
+    Host.resetMeasurements(); Host.setMeasuring(true)
+    local ui = package.loaded["ui/uimanager"]
+    local w = { profile_key = "old", _inner_vgroup = {}, _shelf_dims = { shelf_top_idx = 1, n_shelves = 1 } }
+    local tick
+    ui.getTopmostVisibleWidget = function() return w end
+    ui.nextTick = function(_, fn) tick = fn end
+    Host.shelfSwitch(w, "comics"); w.profile_key = "comics"; Host.shelfPainted(w)
+    local sample = Host.performanceSnapshot().shelf_opens[1]
+    H.eq(sample.content_ms, nil); H.eq(sample.ready_ms, nil)
+    w._inner_vgroup[1] = { book = {}, dimen = { x = 10, y = 20, w = 20, h = 25 }, onTap = function() end, ges_events = { Tap = {} } }
+    clock = clock + .1; Host.shelfPainted(w); H.eq(math.floor(sample.content_ms + .5), 100)
+    H.eq(sample.cover_ms, nil); H.eq(sample.ready_ms, nil)
+    clock = clock + .1; tick(); H.eq(math.floor(sample.ready_ms + .5), 200)
+    w._inner_vgroup[1]._has_cover_picture = true; clock = clock + .1; Host.shelfPainted(w)
+    H.eq(math.floor(sample.cover_ms + .5), 300)
+    ui.nextTick, ui.getTopmostVisibleWidget = nil, nil
+end)
 H.test("CPU fallback is labelled separately and a newly available elapsed clock starts a fresh series", function()
     Host.resetMeasurements(); Host.setMeasuring(true)
     local native = package.loaded["ui/time"]
