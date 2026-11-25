@@ -1,5 +1,23 @@
 # Verification and device acceptance
 
+## 2026-11-25 — Fan depth and all four cover edges on the HiBreak
+
+The USB HiBreak ran source `fdc89ba3f` from archive
+`71a569935a9bb926d9c0076e04059b90603f07662b6e27bd56c43fe611d47fc2`.
+With four books, the front cover measured 239 pixels wide compared with 203
+before the depth change. Adjacent jackets use 86% of the front cover's size
+and the rear layer uses 72%. Tapping the rearmost cover brought its book
+forward. Swiping returned to Underjordisk at 44%.
+
+Screenshots of the same four books confirmed that an undersized image inset
+had clipped the bottom and right edges of the tilted covers. Before the fix,
+none of 96 sampled right-edge rows or 45 bottom-edge columns had the black
+border. The final build showed two black edge pixels at all those points, as
+well as at all matching left and top samples. Screenshots are in the local
+`test-results/ongoing-fan-depth-20261125/` folder. Regression checks cover
+one-, two- and three-pixel frames, depth ordering and exposed touch targets.
+The full suite passed with four optional original-artwork checks skipped.
+
 ## 2026-11-25 — Shallow cover fan on the HiBreak
 
 On the USB HiBreak, source `c00d1bef9` ran from archive
