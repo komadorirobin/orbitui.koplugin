@@ -1,5 +1,16 @@
 # Verification and device acceptance
 
+## 2026-11-25 — BookOrbit achievement card colours on the HiBreak
+
+The USB HiBreak ran local runtime `9e2fd8881` from archive SHA-256
+`73e5a9999587cf2f2ff6d1b78fc09da10b283dd2588dea61533e421dd22d8a63`.
+Android screenshots of the compact three-medal card showed the same fill
+under the heading, between medals and at the corners of the medal images.
+The sampled fill was RGB (230, 235, 247) in day mode and (8, 24, 33) in
+night mode. The card matched its day screenshot pixel for pixel after
+switching back. Regression tests also cover the list layout's text boxes,
+card buffers and the uncoloured and accent-only settings.
+
 ## 2026-11-25 — Duplicate Home dashboard below the dock
 
 On the USB HiBreak, the first ordinary swap from This week to BookOrbit
