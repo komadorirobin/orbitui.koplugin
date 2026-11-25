@@ -151,12 +151,12 @@ def render(report):
         for idea in r["ideas"]:
             lines += ["- " + safe_text(idea["idea"]) + " → " + safe_text(idea["orbitui"])
                       + " (" + idea["relationship"] + ")"]
-        for match in r["matches"][:10]:
+        for match in reversed(r["matches"][-10:]):
             lines += ["- [" + match["sha"][:10] + "](" + base + "/commit/" + match["sha"] + ") "
                       + safe_text(match["subject"]) + " — " + safe_text(", ".join(match["ideas"]))
                       + (" **Rename/deletion: review paths.**" if match["path_review"] else "")]
         if len(r["matches"]) > 10:
-            lines += ["More matches in the JSON artifact; dashboard displays the first 10 per reference."]
+            lines += ["The dashboard shows the 10 most recent matches. The JSON artifact includes all matches."]
         for warning in r["warnings"]:
             lines += ["- Manual review: " + safe_text(warning)]
         for error in r["errors"]:

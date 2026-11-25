@@ -39,7 +39,8 @@ first baseline deliberately starts at the October 30 reviewed tree and does
 not notify about all earlier history. Update it only after explicitly reviewing
 the pending matches; do not automatically advance it or any `sources.json` pin.
 
-References: Kobold (search/collections), CyberUI (demand-driven stats/diagnostics), ProjectTitle (metadata/
+References: Kobold (search/collections), CyberUI (statistics, timing, library browsing and sorting,
+cover caching, page turns and text rendering), ProjectTitle (metadata/
 cover efficiency), Zen-OS (cache budgets/metadata snapshots). VOS is explicitly
 **review-only**, not a claim of borrowed implementation. All five are design
 references; no third-party plugin/assets or executable dependency is imported.
@@ -67,7 +68,7 @@ review instead of a partial/up-to-date claim. Missing watched paths are warnings
 Path filters can miss new/extracted helpers or dependency changes outside the
 list: periodically review mappings and never infer semantic compatibility from
 no matching commits. The complete matching list/paths is in the JSON artifact;
-the dashboard shows ten matches per repository to stay within issue-size limits.
+the dashboard shows the ten most recent matches per repository, newest first.
 
 Once activated, the workflow runs daily at 06:47 UTC, on relevant main changes
 or manually. It has contents-read/issues-write permissions only and owns a

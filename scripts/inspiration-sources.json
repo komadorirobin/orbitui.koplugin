@@ -19,7 +19,28 @@
     {
       "id": "cyberui", "repository": "EmirErtorer/CyberUI.koplugin", "branch": "main",
       "reviewed_commit": "78ba21caec0ad42b41427544a85ffb44a6bd85e7",
-      "ideas": [{"idea": "Demand-driven statistics and timing diagnostics", "relationship": "design-reference", "orbitui": "core/orbitui_host.lua", "paths": ["cyberui/data/stats.lua", "cyberui/data/statsdb.lua", "cyberui/data/statsscope.lua", "cyberui/perf.lua"]}]
+      "ideas": [
+        {"idea": "Demand-driven statistics and timing diagnostics", "relationship": "design-reference", "orbitui": "core/orbitui_host.lua", "paths": ["cyberui/data/stats.lua", "cyberui/data/statsdb.lua", "cyberui/data/statsscope.lua", "cyberui/perf.lua"]},
+        {
+          "idea": "Library browsing, sorting and cover caching",
+          "relationship": "design-reference",
+          "orbitui": "components/bookshelf/lib/bookshelf_book_repository.lua; components/bookshelf/lib/bookshelf_scaled_cover_cache.lua",
+          "paths": [
+            "cyberui/screens/lib*.lua", "cyberui/data/lib*.lua", "cyberui/data/books.lua",
+            "cyberui/data/history.lua", "cyberui/data/metadata.lua", "cyberui/data/cover*.lua", "cyberui/lazyfm.lua"
+          ]
+        },
+        {
+          "idea": "Page turns, partial repaints and text rendering",
+          "relationship": "design-reference",
+          "orbitui": "components/bookshelf/lib/bookshelf_widget.lua; components/simpleui/features/library/sui_book_rows.lua",
+          "paths": [
+            "cyberui/gfx/*.lua", "cyberui/host.lua", "cyberui/same.lua", "cyberui/screens/frame.lua",
+            "cyberui/screens/screen.lua", "cyberui/ui/grid.lua", "cyberui/ui/booktile.lua", "cyberui/ui/cover*.lua",
+            "cyberui/ui/listrow.lua", "cyberui/ui/pagedcolumn.lua", "cyberui/ui/progress.lua"
+          ]
+        }
+      ]
     },
     {
       "id": "vos", "repository": "SeriousHornet/vos.koplugin", "branch": "main",

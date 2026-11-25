@@ -1,6 +1,7 @@
 import copy
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tempfile
@@ -89,6 +90,15 @@ class InspirationTests(unittest.TestCase):
         self.assertEqual(w.matched_ideas(source, ["data/cache-v2.lua"]), ["Search"])
         self.assertEqual(w.matched_ideas(source, ["unrelated/main.lua"]), [])
 
+    def test_cyberui_watch_catches_library_and_render_changes(self):
+        sources = w.load_sources(ROOT / "scripts/inspiration-sources.json")
+        cyberui = next(s for s in sources if s["id"] == "cyberui")
+        for path in ("cyberui/data/library.lua", "cyberui/screens/library.lua", "cyberui/data/covers.lua",
+                     "cyberui/gfx/text.lua", "cyberui/same.lua", "cyberui/host.lua", "cyberui/data/stats.lua"):
+            with self.subTest(path=path):
+                self.assertTrue(w.matched_ideas(cyberui, [path]))
+        self.assertEqual(w.matched_ideas(cyberui, ["CHANGELOG.md", "cyberui/version.lua", "cyberui/screens/shop.lua"]), [])
+
     def test_configuration_exact_files_and_local_destinations_exist(self):
         sources = w.load_sources(ROOT / "scripts/inspiration-sources.json")
         self.assertEqual({s["id"] for s in sources}, {"kobold", "cyberui", "vos", "projecttitle", "zen-os", "silverfish"})
@@ -139,12 +149,14 @@ class InspirationTests(unittest.TestCase):
 
     def test_matching_list_is_complete_but_dashboard_is_bounded(self):
         r = report(); item = r["references"][0]
-        item["matches"] = [copy.deepcopy(item["matches"][0]) for _ in range(75)]
+        matches = [dict(item["matches"][0], sha=f"{n:040x}") for n in range(75)]
+        item["matches"] = list(matches)
         rendered = w.render(r)
-        self.assertEqual(rendered.count("/commit/"), 10)
+        self.assertEqual(re.findall(r"/commit/([0-9a-f]{40})\)", rendered),
+                         [m["sha"] for m in reversed(matches[-10:])])
         self.assertIn("75 matching commits", rendered)
-        self.assertIn("first 10 per reference", rendered)
-        self.assertEqual(len(item["matches"]), 75)
+        self.assertIn("10 most recent matches", rendered)
+        self.assertEqual(item["matches"], matches)
 
     def test_merge_resolution_is_checked_against_each_parent(self):
         with tempfile.TemporaryDirectory() as tmp:
