@@ -1,5 +1,18 @@
 # Verification and device acceptance
 
+## 2026-11-25 — Silverfish footer on the HiBreak
+
+The Swedish USB HiBreak ran source `7bdd05ff7` from archive
+`9692f2945141d18e2255f196a983d7680f1d06bfd3a32fcda05b3a00d5ace742`.
+Straight row, Book in focus and Cover fan all showed 17 days, 2 books and
+generation 1 for Franz. The numbers fit on the existing footer line in both
+alternate views. Tapping the numbers in the fan opened Franz's Silverfish
+screen. The final Home view was the fan with Underjordisk selected. Device
+screenshots are in `test-results/ongoing-silverfish-footer-20261125/`.
+Dashboard regression coverage includes a long pet name requiring two lines,
+zero finished books and opening the pet from either layout. The full test
+command passed with its optional fixture and runtime skips.
+
 ## 2026-11-25 — Fan depth and all four cover edges on the HiBreak
 
 The USB HiBreak ran source `fdc89ba3f` from archive
