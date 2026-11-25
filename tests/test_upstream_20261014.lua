@@ -181,6 +181,7 @@ H.test("colliding finished books keep distinct entries across moves, status chan
             summary = { status = status or "complete", date_finished = "2026-11-20" } }
         assert(f.sp.syncBook(path))
     end
+    f.ledger.books.shared = { title = "First", authors = "One author", gone = true, finished = "2025" }
     record("/one", "First")
     record("/two", "Second")
     H.eq(f.ledger.books["shared#2"].path, "/two")

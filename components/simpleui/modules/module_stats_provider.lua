@@ -398,6 +398,12 @@ local function _isFullDate(stamp)
     return stamp ~= nil and stamp:match("^%d%d%d%d%-%d%d%-%d%d$") ~= nil
 end
 
+local function _sourceMissing(entry)
+    if not entry.path then return entry.gone end -- migrated records have no path
+    local mode, _, errno = lfs.attributes(entry.path, "mode")
+    return mode == nil and (errno == 2 or errno == 20)
+end
+
 -- A partial checksum may belong to several books. A path identifies the book
 -- even after a restore. For a move, require one matching, missing source.
 local function _findEntry(books, fp, view, md5)
@@ -409,14 +415,13 @@ local function _findEntry(books, fp, view, md5)
     local title = view.title or fp:match("[^/]+$") or fp
     for key, entry in pairs(books) do
         if entry.path == fp then return key, entry end
-        if prefix and entry.path and (key == md5 or key:sub(1, #prefix) == prefix)
-            and entry.title == title and (not view.authors or view.authors == ""
-                or not entry.authors or entry.authors == "" or entry.authors == view.authors) then
-            local mode, _, errno = lfs.attributes(entry.path, "mode")
-            if mode == nil and (errno == 2 or errno == 20) then
-                if moved_key then ambiguous = true end
-                moved_key = key
-            end
+        if prefix and (key == md5 or key:sub(1, #prefix) == prefix)
+            and (entry.title == title or (not entry.path and (entry.title or "") == ""))
+            and (not view.authors or view.authors == "" or not entry.authors
+                or entry.authors == "" or entry.authors == view.authors)
+            and _sourceMissing(entry) then
+            if moved_key then ambiguous = true end
+            moved_key = key
         end
     end
     if moved_key and not ambiguous then return moved_key, books[moved_key] end
