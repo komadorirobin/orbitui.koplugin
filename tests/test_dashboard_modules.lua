@@ -82,6 +82,7 @@ package.loaded["features/sui_quickactions"] = {
     getCustomQAValid = function() return { custom_qa_1 = true } end,
     getCustomQAList = function() return custom end,
     getEntry = function(id) return { label = "Action " .. id } end,
+    getMenuLabel = function(id) return "Action " .. id end,
 }
 local function entry(kind, ref, size, width)
     return { id = Model.moduleId(kind, ref), kind = kind, ref = ref,

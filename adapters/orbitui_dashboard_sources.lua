@@ -146,7 +146,7 @@ function M.moduleChoices(kind)
             local qa, seen = require("features/sui_quickactions"), {}
             for _, list in ipairs({ qa.allIds(), qa.getCustomQAList() }) do
                 for _, id in ipairs(list) do
-                    if not seen[id] then seen[id] = true; add(id, qa.getEntry(id).label) end
+                    if not seen[id] then seen[id] = true; add(id, qa.getMenuLabel(id)) end
                 end
             end
         end

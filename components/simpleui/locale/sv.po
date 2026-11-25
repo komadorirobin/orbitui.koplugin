@@ -9838,3 +9838,10 @@ msgstr "{month} {year}"
 
 msgid "{start_day2} {start_month_short} – {end_day2} {end_month_short} {end_year}"
 msgstr "{start_day2} {start_month_short}–{end_day2} {end_month_short} {end_year}"
+
+msgid "Day Mode"
+msgstr "Dagläge"
+
+#, lua-format
+msgid "Started %s"
+msgstr "Påbörjad %s"

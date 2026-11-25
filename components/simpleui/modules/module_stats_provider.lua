@@ -398,40 +398,32 @@ local function _isFullDate(stamp)
     return stamp ~= nil and stamp:match("^%d%d%d%d%-%d%d%-%d%d$") ~= nil
 end
 
-local function _findByPath(books, fp)
-    for key, entry in pairs(books) do
-        if entry.path == fp and not entry.gone then return key, entry end
-    end
-end
-
--- Whether `entry`, found under the partial md5 of the book at `fp` (sidecar
--- fields in `view`), stands for a different book: another file still on the
--- device, or a file no longer there whose title and authors both differ. An
--- entry whose file is gone and that shares either is the same book, moved.
-local function _isOtherBook(entry, fp, view)
-    if entry.path == fp then return false end
-    if not entry.gone and entry.path and lfs.attributes(entry.path, "mode") == "file" then
-        return true
-    end
+-- A partial checksum may belong to several books. A path identifies the book
+-- even after a restore. For a move, require one matching, missing source.
+local function _findEntry(books, fp, view, md5)
+    md5 = md5 or view.partial_md5_checksum
+    local base = md5 and books[md5]
+    if base and base.path == fp then return md5, base end
+    local prefix = md5 and (md5 .. "#")
+    local moved_key, ambiguous
     local title = view.title or fp:match("[^/]+$") or fp
-    return entry.title ~= nil and entry.title ~= "" and entry.title ~= title
-        and entry.authors ~= (view.authors or "")
+    for key, entry in pairs(books) do
+        if entry.path == fp then return key, entry end
+        if prefix and entry.path and (key == md5 or key:sub(1, #prefix) == prefix)
+            and entry.title == title and (not view.authors or view.authors == ""
+                or not entry.authors or entry.authors == "" or entry.authors == view.authors) then
+            local mode, _, errno = lfs.attributes(entry.path, "mode")
+            if mode == nil and (errno == 2 or errno == 20) then
+                if moved_key then ambiguous = true end
+                moved_key = key
+            end
+        end
+    end
+    if moved_key and not ambiguous then return moved_key, books[moved_key] end
 end
 
--- The ledger entry of the book at `fp`: by its file path, else by its md5
--- unless that entry stands for a different book.
-local function _findEntry(books, fp, view)
-    local key, entry = _findByPath(books, fp)
-    if key then return key, entry end
-    local md5 = view.partial_md5_checksum
-    entry = md5 and books[md5]
-    if entry and not _isOtherBook(entry, fp, view) then return md5, entry end
-end
-
--- Ledger key for a book not yet recorded under its path: its md5, or
--- "<md5>#<n>" when a different book already holds that md5.
-local function _newKey(books, fp, md5, view)
-    if not (books[md5] and _isOtherBook(books[md5], fp, view)) then return md5 end
+local function _newKey(books, md5)
+    if not books[md5] then return md5 end
     local n = 2
     while books[md5 .. "#" .. n] do n = n + 1 end
     return md5 .. "#" .. n
@@ -479,25 +471,23 @@ end
 local function _applyBook(ledger, fp, view)
     local books = ledger.books
     local entry = _finishedEntry(fp, view)
+    local md5 = view.partial_md5_checksum
+    local key, previous = _findEntry(books, fp, view, md5)
     if entry then
-        local key = _findByPath(books, fp)
         if not key then
-            local md5 = view.partial_md5_checksum or require("util").partialMD5(fp)
-            key = md5 and _newKey(books, fp, md5, view)
+            if not md5 then
+                md5 = require("util").partialMD5(fp)
+                if md5 then key, previous = _findEntry(books, fp, view, md5) end
+            end
+            key = key or (md5 and _newKey(books, md5))
         end
-        if not key or _sameEntry(books[key], entry) then return false end
+        if not key or _sameEntry(previous, entry) then return false end
         books[key] = entry
         return true
     end
-
-    local changed = false
-    local key = _findEntry(books, fp, view)
-    while key do
-        books[key] = nil
-        changed    = true
-        key        = _findEntry(books, fp, view)
-    end
-    return changed
+    if not key then return false end
+    books[key] = nil
+    return true
 end
 
 --- Brings the ledger in line with the sidecars of the books in the reading

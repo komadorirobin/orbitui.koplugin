@@ -153,7 +153,10 @@ H.test("night-mode hook keeps later wrappers and disables stale owners on teardo
     local code = part(source, 'local NIGHT_MODE_STATE =', '-- installAll / teardownAll')
     local ui, M, changes, native_calls = {}, {}, 0, 0
     function ui:ToggleNightMode() native_calls = native_calls + 1; return "native", nil, 3 end
-    local env = { M = M, UIManager = ui, _live_plugin = {},
+    local rebuilds = 0
+    local env = { M = M, UIManager = ui, _live_plugin = {
+        _rebuildAllNavbars = function() rebuilds = rebuilds + 1 end },
+        Config = { loadTabConfig = function() return { "home", "night_mode" } end },
         SUISettings = { invalidateDerived = function() changes = changes + 1 end },
         SUIWallpaper = { onNightModeChanged = noop },
         _pack = function(...) return { n = select("#", ...), ... } end,
@@ -170,7 +173,7 @@ H.test("night-mode hook keeps later wrappers and disables stale owners on teardo
     local a, b, c = ui:ToggleNightMode()
     H.eq(a, "native"); H.eq(b, nil); H.eq(c, 3); H.eq(changes, 1)
     M.patchNightMode(owner); ui:ToggleNightMode(); H.eq(changes, 2)
-    M.unpatchNightMode(owner); H.eq(native_calls, 3)
+    M.unpatchNightMode(owner); H.eq(native_calls, 3); H.eq(rebuilds, 2)
 end)
 H.test("3.0 section labels stay fresh, scoped and restorable after hiding", function()
     local W = H.widget()

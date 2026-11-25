@@ -4,6 +4,31 @@ This log is the durable handoff between development conversations. It records
 approved imports, not merely upstream commits seen by the monitor. An entry
 does not imply a public release or successful device testing.
 
+## 2026-11-25 — Bookshelf search and SimpleUI reading history
+
+The user requested a reviewed upstream merge. Unsquashed import
+`fd825f0b9` advances Bookshelf from `5281b3eb1` to `1a10baba7`.
+Import `e3a46f147` advances SimpleUI from `a9ae9c5f0` to `ab12b1831`.
+Full pins are in sources.json. Component release labels remain 6.6.0 and 3.1.0.
+
+Bookshelf folds Unicode in its built-in searches and takes an ASCII fast path.
+The conflict resolution preserves OrbitUI's scoped matching and lightweight
+group metadata. OrbitUI's existing Unicode-aware search also bypasses the
+Unicode library for plain ASCII. Bookshelf PR #627 credits a Cyrillic search
+report and its own text utility. OrbitUI had similar functionality earlier,
+but the available evidence does not identify a port.
+[Bookshelf search PR](https://github.com/AndyHazz/bookshelf.koplugin/pull/627)
+
+SimpleUI distinguishes finished files with a shared partial checksum, shows
+which mode the night toggle selects, reclaims hidden menu pagination space
+on layout, and labels the start date explicitly. OrbitUI preserves cover and
+card hold actions, pack icon aliases, custom action names and the existing icon
+in both modes unless a day icon is selected. The action's settings name stays
+stable. Completion lookup also follows an unambiguous moved collision entry
+and preserves neighbouring records during status changes and I/O errors.
+The bundled FingerTips pin, shelves, boxes, ornaments and external sync
+ownership carry forward. Verification is recorded in TESTING.md.
+
 ## 2026-11-22 — Bookshelf 6.6.0 and SimpleUI maintenance
 
 Unsquashed imports **092a62bfe**, **cf554169d** and **14b3841ea** advance Bookshelf from

@@ -898,7 +898,7 @@ H.test("night-mode contrast preserves the selected icon without changing the sha
             store.simpleui_action_night_mode_label = "My night toggle"
             local raw = native("night_mode")
             local resolved = QA.getEntry("night_mode")
-            H.eq(raw.dim, not on)
+            H.eq(raw.dim, false)
             H.eq(resolved.dim, false)
             H.eq(resolved.icon, raw.icon)
             H.eq(resolved.label, "My night toggle")
@@ -911,6 +911,27 @@ H.test("night-mode contrast preserves the selected icon without changing the sha
     H.eq(QA.getEntry("night_mode").dim, false)
     H.eq(writes, before)
     store.simpleui_action_night_mode_icon, store.simpleui_action_night_mode_label = old_icon, old_label
+end)
+H.test("day and night use distinct defaults and icon slots with a stable picker name", function()
+    local QA = require("features/sui_quickactions")
+    local night, day = store.simpleui_action_night_mode_icon, store.simpleui_action_night_mode_day_icon
+    local label = store.simpleui_action_night_mode_label
+    store.simpleui_action_night_mode_label = nil
+    store.simpleui_action_night_mode_icon, store.simpleui_action_night_mode_day_icon = nil, nil
+    for _, on in ipairs({ false, true }) do
+        screen.night_mode = on
+        local displayed = QA.getEntry("night_mode")
+        H.eq(displayed.label, on and "Day Mode" or "Night Mode")
+        H.eq(displayed.icon, on and Config.ICON.day or Config.ICON.night)
+        H.eq(QA.getMenuLabel("night_mode"), "Night Mode")
+    end
+    store.simpleui_action_night_mode_icon = "solar-colour:pack-night-mode"
+    store.simpleui_action_night_mode_day_icon = "nerd:E7DD"
+    H.eq(QA.getEntry("night_mode").icon, "nerd:E7DD")
+    screen.night_mode = false
+    H.eq(QA.getEntry("night_mode").icon, "solar-colour:pack-night-mode")
+    store.simpleui_action_night_mode_icon, store.simpleui_action_night_mode_day_icon = night, day
+    store.simpleui_action_night_mode_label, screen.night_mode = label, nil
 end)
 H.test("Wi-Fi and external toggle dimming and the native night-mode event remain intact", function()
     local QA = require("features/sui_quickactions")

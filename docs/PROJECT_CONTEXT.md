@@ -20,11 +20,16 @@ device checklist linked below.
 If this summary conflicts with one of those sources, follow the specific source
 and correct this file in the same change.
 
-## Local changes since 1.5.0-beta.3
+## Main since 1.5.0-beta.3
 
 Holding a Reading dashboard card opens its usual menu with a **Replace module…**
 action. The picker offers **BookOrbit achievements** on its first screen and
 asks before moving an existing module.
+
+The November 25 import brings Unicode matching to Bookshelf's built-in book and
+group search, separate day/night action icons, and distinct completion records
+for files that share a partial checksum. Existing custom night-mode icons
+apply in both modes until the reader chooses a separate day icon.
 
 ## OrbitUI 1.5.0-beta.3, 2026-11-24
 

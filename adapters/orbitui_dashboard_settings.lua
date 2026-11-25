@@ -276,7 +276,7 @@ function M.pickerItems(refresh, pfx, return_to_parent, replace)
                     qa.showQuickActionDialog(plugin, nil, function()
                         for _, ref in ipairs(qa.getCustomQAList()) do
                             if not before[ref] then
-                                choose({ kind = "action", ref = ref, label = qa.getEntry(ref).label })
+                                choose({ kind = "action", ref = ref, label = qa.getMenuLabel(ref) })
                                 return
                             end
                         end

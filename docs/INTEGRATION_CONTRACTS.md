@@ -1207,7 +1207,9 @@ The v1.1.0 artwork update adds 60 supplementary icons per style and refreshes
 Instapaper/Z-Library without renaming existing identities or rewriting choices.
 
 The built-in SimpleUI `night_mode` quick action retains full icon contrast in
-both day and night mode. Its off-state must not look unavailable, regardless of
+both day and night mode. The default icon and caption indicate the target mode.
+The settings label stays stable. An explicit icon or label still wins in both
+modes, with a separate day icon taking precedence when configured. Its off-state must not look unavailable, regardless of
 the chosen SVG, bitmap or font glyph. `adapters/orbitui_icons.lua` wraps the
 canonical `getEntry` and copies the shared dynamic entry before clearing only
 its `dim` flag. Keep native toggle execution, real screen state, labels, icon

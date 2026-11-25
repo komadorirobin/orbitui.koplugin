@@ -11,11 +11,13 @@ M.sorts = { { id = "relevance", text = "Relevance" }, { id = "title", text = "Ti
 
 local text_lower
 function M.lower(value)
+    value = value or ""
+    if not value:find("[\128-\255]") then return value:lower() end
     if not text_lower then
         local ok, Text = pcall(require, "infra/sui_text")
         text_lower = ok and type(Text) == "table" and Text.lower or string.lower
     end
-    return text_lower(value or "")
+    return text_lower(value)
 end
 
 local function author(book)

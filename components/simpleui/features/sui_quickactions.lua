@@ -2225,8 +2225,10 @@ function QA.getEntry(id)
     -- The state variant, while shown, replaces the action's icon and label.
     local v = desc.variant
     if v and v.is_shown(id) then
-        _dyn_entry.icon  = QA.getDefaultActionIcon(v.id) or v.icon
-        _dyn_entry.label = v.label
+        -- A saved icon or label can predate variants. Keep that choice until
+        -- the reader or their pack sets a separate icon for the second state.
+        _dyn_entry.icon  = QA.getDefaultActionIcon(v.id) or icon_ov or v.icon
+        _dyn_entry.label = label_ov or v.label
     else
         _dyn_entry.icon  = icon_ov or (desc.get_icon and desc.get_icon(id)) or desc.icon
         _dyn_entry.label = label_ov or (desc.get_label and desc.get_label(id)) or desc.label

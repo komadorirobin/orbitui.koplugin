@@ -104,7 +104,7 @@ local function dockNotice(reason)
 end
 
 local function dockLabel(id)
-    return require("features/sui_quickactions").getEntry(id).label
+    return require("features/sui_quickactions").getMenuLabel(id)
 end
 
 local function dockSlotPicker(title, choose, back)

@@ -168,6 +168,35 @@ local function statsFixture()
     end }
     return f
 end
+H.test("colliding finished books keep distinct entries across moves, status changes and I/O errors", function()
+    local f = statsFixture()
+    local views, errors = {}, {}
+    f.deps["modules/module_books_shared"].sidecarData = function(path) return views[path] end
+    f.deps["libs/libkoreader-lfs"].attributes = function(path)
+        if errors[path] then return nil, "stat failed", errors[path] end
+        return "file"
+    end
+    local function record(path, title, status)
+        views[path] = { title = title, authors = "One author", partial_md5_checksum = "shared",
+            summary = { status = status or "complete", date_finished = "2026-11-20" } }
+        assert(f.sp.syncBook(path))
+    end
+    record("/one", "First")
+    record("/two", "Second")
+    H.eq(f.ledger.books["shared#2"].path, "/two")
+    errors["/two"] = 2
+    record("/moved", "Second")
+    H.eq(f.ledger.books["shared#2"].path, "/moved")
+    H.eq(f.ledger.books["shared#3"], nil)
+    errors["/one"] = 2
+    record("/moved", "Second", "reading")
+    H.eq(f.ledger.books["shared#2"], nil)
+    H.eq(f.ledger.books.shared.path, "/one")
+    errors["/one"] = 5
+    record("/third", "First")
+    H.eq(f.ledger.books.shared.path, "/one")
+    H.eq(f.ledger.books["shared#2"].path, "/third")
+end)
 H.test("incomplete ledger reconciliation cannot commit removals or persist partial counts", function()
     local f = statsFixture()
     local first = f.sp.get(f.conn, nil, true)
