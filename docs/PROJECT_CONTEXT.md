@@ -30,8 +30,11 @@ back to Home on the next normal launch. The existing dock order and the default
 startup choice are preserved.
 
 Folder shelves reuse the last two eligible metadata-based orderings across
-pages. Reading-dependent orders and active filters remain live. A tap on the
-visible first Home page skips its navigation rebuild. Detailed lists share
+pages of the same validated file list. When KOReader refreshes its book
+index in the background, each shelf keeps the metadata already derived for
+unchanged books. New and edited entries read from the refreshed index.
+Reading-dependent orders and active filters remain live. A tap on the visible
+first Home page skips its navigation rebuild. Detailed lists share
 font-face line measurements and upright spine titles reuse decoded characters.
 The opt-in performance report times visible shelf content, cover artwork and
 the next input tick, including switches directly between shelves. See the

@@ -1,5 +1,45 @@
 # Verification and device acceptance
 
+## 2026-11-25 — Repeated Library to Manga switches on the USB HiBreak
+
+The previous local build (`372ece9d7`) sometimes discarded the derived
+metadata for the entire Manga shelf between two dock taps. In one trace,
+ordering the folders took 5.66 s of a 6.46 s switch. Sorting a second
+window of the same folder also missed its cache because the caller received
+a new copy of the file list on every request.
+
+The tested runtime is `ec9b43183`. Its archive SHA-256 is
+`2a39d86e23365fe7379d65136124f2ac29d71c4c6396051c96218663f2061110`.
+Both diagnostic runs saw a background index refresh between the return to
+Library and the next tap on Manga. They retained all 6,584 previously
+derived records across overlapping scopes. The tested Manga folder held
+2,564 files. Regression tests cover edited, added and removed rows, cover-only
+changes, previously unindexed books, scoped lookups and invalidating an
+existing folder order.
+
+Elapsed time is from the device tap to the first recorded Android frame
+showing the destination tabs and populated shelves. Panel refresh is extra.
+The three restarts on the installed fix gave the following times.
+
+| Dock gesture | Run 1 | Run 2 | Run 3 (ordinary startup) |
+| --- | ---: | ---: | ---: |
+| Library to Manga, first visit | 2.39 s | 2.24 s | 2.16 s |
+| Manga back to Library | 0.17 s | 0.15 s | 0.23 s |
+| Library to Manga, second direct switch | 0.36 s | 0.37 s | 0.36 s |
+| Home to Manga, subsequent visit | 0.29 s | 0.29 s | 0.29 s |
+
+On the previous local build the second direct switch measured 6.46, 7.37
+and 0.36 s. Its shortest run completed the background refresh *after* the
+measured switch. The 7.37 s run included stack sampling. Two unrelated
+early transitions in the third control recording could not be classified.
+The third candidate run had no KOReader instrumentation. After 36 seconds
+in Library, returning to Manga took 0.28 s. Two more Library to Manga
+switches took 0.27 and 0.36 s. KOReader was left on the Swedish Home screen
+with the candidate active and the previous local build in the rollback slot.
+The full suites passed on Lua and LuaJIT. Each Bookshelf run reported 621
+suites with three platform skips. Python ran 135 tests with four skips.
+Local recordings and frame times are in `test-results/manga-switch-20261125/`.
+
 ## 2026-11-25 — Folder shelves, Home, dock startup and timing on a HiBreak
 
 The local runtime at `372ece9d7` was installed over USB. The tested archive
