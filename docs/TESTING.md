@@ -1,5 +1,16 @@
 # Verification and device acceptance
 
+## 2026-11-25 — Shallow cover fan on the HiBreak
+
+On the USB HiBreak, source `c00d1bef9` ran from archive
+`03141f657a2d54ee7f58a792bc63c20e8ec9e32ca8e3bb58e729dcedce6a462f`.
+With four books, each of the three exposed side jackets could be tapped to
+select its book. Swiping returned to Underjordisk at 44%. The before and after
+screenshots in `test-results/ongoing-shallow-fan-20261125/` show the same books
+and card dimensions. A geometry test checks the tilt and exposed touch areas
+for two through five books and catches the steeper previous layout. The full
+test command passed with four optional original-artwork comparisons skipped.
+
 ## 2026-11-25 — Focus and fan layout on the HiBreak
 
 The USB HiBreak (1264 × 1680, Swedish) ran source `f896339cb` from archive
