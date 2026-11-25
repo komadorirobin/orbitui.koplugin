@@ -9,6 +9,7 @@ local Updates = require("adapters/orbitui_updates")
 
 local OrbitUI = WidgetContainer:extend{ name = "orbitui", is_doc_only = false }
 local startup_error
+local first_host = true
 
 -- Install the resolver during discovery: plugins such as MyAnimeList may
 -- require Bookshelf helpers before OrbitUI's instance is initialized.
@@ -26,6 +27,8 @@ function OrbitUI:notify(message)
 end
 
 function OrbitUI:init()
+    local at_launch = first_host
+    first_host = false
     self.ui.menu:registerToMainMenu(self)
     local ready, failure = pcall(function()
         assert(not startup_error, startup_error)
@@ -34,6 +37,12 @@ function OrbitUI:init()
         Host.attach(self, Runtime.classes(root), require("pluginloader"), root)
         require("adapters/orbitui_settings").registerMenu()
         require("adapters/orbitui_setup").started(self)
+        if at_launch and not self.ui.document then
+            local start = G_reader_settings and G_reader_settings:readSetting("start_with")
+            if type(start) == "string" and start:match("^orbitui_dock:") then
+                require("adapters/orbitui_navbar").startDockView(self, start)
+            end
+        end
         if self.ui.document then
             require("adapters/orbitui_fingertips").attach(self.ui, require("pluginloader"))
         end

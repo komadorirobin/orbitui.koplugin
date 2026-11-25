@@ -263,8 +263,9 @@ H.test("saved dispatcher shortcuts still offer the matching library start menu",
     local broadcast = UI.broadcastEvent
     UI.broadcastEvent = function(_, value) event = value.name end
     local dialog = Nav.shortcutMenu("custom_qa_1")
-    H.eq(dialog.buttons[5][1].text, "Open library start menu")
-    dialog.buttons[5][1].callback()
+    local by_label = {}
+    for _, row in ipairs(dialog.buttons) do by_label[row[1].text] = row[1] end
+    by_label["Open library start menu"].callback()
     UI.broadcastEvent = broadcast
     H.eq(event, "OpenBookshelfComicsStartMenu")
     H.eq(values.simpleui_qa_custom_qa_1.label, "My Manga")
@@ -279,4 +280,21 @@ H.test("legacy start-menu labels render as library actions without changing save
     H.eq(model.displayLabel(entry), "My shelves")
 end)
 
+H.test("choosing a startup view keeps dock order and excludes device actions", function()
+    reset({ "homescreen", "orbitui_bookshelf", "history", "power" })
+    local native, value = G_reader_settings, "homescreen_simpleui"
+    G_reader_settings = { readSetting = function(_, key) if key == "start_with" then return value end end,
+        saveSetting = function(_, key, setting) H.eq(key, "start_with"); value = setting end }
+    local function choice(id, label)
+        for _, row in ipairs(Nav.shortcutMenu(id).buttons) do
+            if row[1].text == label then return row[1] end
+        end
+    end
+    H.eq(choice("homescreen", "Current startup view").enabled, false)
+    H.eq(choice("power", "Use as startup view"), nil)
+    choice("history", "Use as startup view").callback(); H.eq(value, "history")
+    choice("orbitui_bookshelf", "Use as startup view").callback(); H.eq(value, "orbitui_dock:orbitui_bookshelf")
+    H.eq(table.concat(Config.loadTabConfig(), ","), "homescreen,orbitui_bookshelf,history,power")
+    G_reader_settings = native
+end)
 H.finish()

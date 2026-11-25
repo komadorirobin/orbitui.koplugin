@@ -259,4 +259,19 @@ H.test("device-reviewed Bookshelf menu labels support Swedish and unchanged Engl
         H.eq(translate(english, "sv"), swedish); H.eq(translate(english, "en"), english)
     end
 end)
+H.test("detailed list rows measure a shared font face once and remeasure a new face", function()
+    local deps = { "infra/sui_i18n", "ffi/util", "ui/widget/textwidget" }
+    local prior, measurements, frees = {}, 0, 0
+    for _, key in ipairs(deps) do prior[key] = package.loaded[key] end
+    package.loaded[deps[1]], package.loaded[deps[2]] = {}, {}
+    package.loaded[deps[3]] = { new = function(_, args)
+        measurements = measurements + 1
+        return { getSize = function() return { h = args.face.height } end, free = function() frees = frees + 1 end }
+    end }
+    local rows = dofile(root .. "/components/simpleui/features/library/sui_list_rows.lua")
+    local regular, large = { height = 23 }, { height = 38 }
+    for _i = 1, 100 do H.eq(rows.lineHeight(regular), 23); H.eq(rows.lineHeight(large), 38) end
+    H.eq(measurements, 2); H.eq(frees, 2)
+    for _, key in ipairs(deps) do package.loaded[key] = prior[key] end
+end)
 H.finish()

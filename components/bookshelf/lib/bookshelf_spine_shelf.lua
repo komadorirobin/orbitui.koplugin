@@ -1571,15 +1571,11 @@ end
 -- True when the text is CJK-dominant. Zero-width characters (U+200B/C/D,
 -- U+FEFF) are invisible but count as a character, so a name like
 -- "Legado​书目" (a zero-width space sneaked in by Calibre/Legado exports)
--- would otherwise drop below the CJK threshold and get rotated. Strip them
--- first. We also use a weighted width ratio (fullwidth CJK = 2, halfwidth
+-- would otherwise drop below the CJK threshold and get rotated. Ignore them
+-- when weighing the text. We also use a weighted width ratio (fullwidth CJK = 2, halfwidth
 -- Latin = 1) instead of a raw character count: "漫威Marvel" is only 25% CJK
 -- by count but ~40% by visual width, and a reader sees it as a Chinese title.
 local function _isCJKText(text)
-    text = text:gsub("\xE2\x80\x8B", "")
-               :gsub("\xE2\x80\x8C", "")
-               :gsub("\xE2\x80\x8D", "")
-               :gsub("\xEF\xBB\xBF", "")
     local chars = _splitChars(text)
     if #chars == 0 then return false end
     local cjk_w, total_w = 0, 0
@@ -1587,11 +1583,11 @@ local function _isCJKText(text)
         if _isCJKChar(c) then
             cjk_w = cjk_w + 2
             total_w = total_w + 2
-        else
+        elseif c ~= "\xE2\x80\x8B" and c ~= "\xE2\x80\x8C" and c ~= "\xE2\x80\x8D" and c ~= "\xEF\xBB\xBF" then
             total_w = total_w + 1
         end
     end
-    return total_w > 0 and (cjk_w / total_w >= 0.25)
+    return total_w > 0 and (cjk_w / total_w >= 0.25), chars
 end
 
 -- ── Vertical layout tuning ─────────────────────────────────────────────────
@@ -1726,8 +1722,8 @@ end
 
 -- Paint a CJK title vertically: glyphs upright, top to bottom, the whole run
 -- centred in run_len (matching the Latin path). Returns the height used.
-local function _paintVerticalCJK(bb, x, y, run_len, band_w, text, face_size, look, night)
-    local chars = SpineShelf.verticalForms(_splitChars(text))
+local function _paintVerticalCJK(bb, x, y, run_len, band_w, text, face_size, look, night, decoded)
+    local chars = SpineShelf.verticalForms(decoded)
     if #chars == 0 then return 0 end
 
     -- Inset: leave a 1pt-scaled gap on each side, both to clear the hairline
@@ -1745,7 +1741,8 @@ local function _paintVerticalCJK(bb, x, y, run_len, band_w, text, face_size, loo
     -- Still truncated at the minimum size: retry with just the main title,
     -- preferring to keep the actual book name whole.
     if sol.cut then
-        local short = SpineShelf.verticalForms(_splitChars(_mainTitle(text)))
+        local main = _mainTitle(text)
+        local short = main == text and chars or SpineShelf.verticalForms(_splitChars(main))
         if #short > 0 and #short < #chars then
             local sruns = _groupRuns(short)
             local s2 = _verticalSolve(#sruns, run_len, band_w, night)
@@ -1763,7 +1760,8 @@ local function _paintVerticalCJK(bb, x, y, run_len, band_w, text, face_size, loo
     local cy    = y + math.max(0, math.floor((run_len - total) / 2))
 
     local function _glyph(s)
-        local cnt  = #_splitChars(s)
+        -- A run is either printable ASCII or a single non-ASCII codepoint.
+        local cnt = s:byte() < 128 and #s or 1
         local face = base_face
         -- A Latin group (tate-chu-yoko) lies across one cell; if its estimated
         -- width exceeds the net width, shrink just that group's size rather
@@ -1842,17 +1840,21 @@ local function _paintRotatedTitle(bb, x, y, run_len, band_w, text, face_size, lo
 
     -- CJK-dominant titles: paint upright in a vertical column instead of
     -- rotating the whole string, which is unreadable when held normally.
-    if _isCJKText(text) then
+    local vertical, decoded = _isCJKText(text)
+    if vertical then
         local ok_cjk, err_cjk = pcall(function()
             local used = _paintVerticalCJK(bb, x, y, run_len, band_w,
-                                           text, face_size, look, night)
+                                           text, face_size, look, night, decoded)
             if author and author ~= "" and used > 0 then
                 local gap = Space.px(10)
                 local rem = run_len - used - gap
-                if rem >= Screen:scaleBySize(20) and _isCJKText(author) then
-                    local asize = math.max(6, face_size - 3)
-                    _paintVerticalCJK(bb, x, y + used + gap, rem,
-                                      band_w, author, asize, look, night)
+                if rem >= Screen:scaleBySize(20) then
+                    local upright, author_chars = _isCJKText(author)
+                    if upright then
+                        local asize = math.max(6, face_size - 3)
+                        _paintVerticalCJK(bb, x, y + used + gap, rem,
+                                          band_w, author, asize, look, night, author_chars)
+                    end
                 end
             end
         end)

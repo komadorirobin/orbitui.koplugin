@@ -26320,11 +26320,7 @@ function M.build(item, dimen, opts)\
     local title_size = math.min(SUIStyle.FS_BODY, opts.font_size(20, 24))\
     local info_size  = math.max(10, math.min(SUIStyle.FS_DETAIL, title_size - 3))\
     local function textHeight(size)\
-        local probe = require(\"ui/widget/textwidget\"):new{\
-            text = \"Ag\", face = Font:getFace(SUIStyle.FACE_REGULAR, size) }\
-        local h = probe:getSize().h\
-        probe:free()\
-        return h\
+        return require(\"features/library/sui_list_rows\").lineHeight(Font:getFace(SUIStyle.FACE_REGULAR, size))\
     end\
     local function line(text, size, max_width)\
         return UI.makeColoredText{\
@@ -26727,6 +26723,19 @@ local T = require(\"ffi/util\").template\
 \
 local M = {}\
 \
+local line_heights = setmetatable({}, { __mode = \"k\" })\
+\
+function M.lineHeight(face)\
+    local height = line_heights[face]\
+    if not height then\
+        local probe = require(\"ui/widget/textwidget\"):new{ text = \"Ag\", face = face }\
+        height = probe:getSize().h\
+        probe:free()\
+        line_heights[face] = height\
+    end\
+    return height\
+end\
+\
 -- Gap between the lines and side padding of a row, in scaled px.\
 local function _gap() return math.max(1, require(\"device\").screen:scaleBySize(1)) * 2 end\
 local function _pad() return require(\"device\").screen:scaleBySize(10) end\
@@ -26795,9 +26804,7 @@ function M.lines(name, info, dimen, main_w, opts)\
     local wauthor = opts.author and infoLine(opts.author)\
 \
     local gap  = _gap()\
-    local probe = TextWidget:new{ text = \"Ag\", face = title_face }\
-    local line_h = probe:getSize().h\
-    probe:free()\
+    local line_h = M.lineHeight(title_face)\
 \
     -- Secondary lines in display order; the ones past `fit` are dropped.\
     local extras, heights = {}, {}\

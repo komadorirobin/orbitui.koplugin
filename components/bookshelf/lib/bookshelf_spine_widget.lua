@@ -2922,6 +2922,7 @@ function SpineWidget:isFaded()
 end
 
 function SpineWidget:_wrapCoverInCard(cover_inner, card_w, card_h, border)
+    self._has_cover_picture = true
     -- Faded on-hold books are fully recessed: faded toward the page
     -- background, no border, and no drop shadow (the shadow is skipped in
     -- the same condition in _renderShadowedCard). Gated on on_hold_fade,
@@ -3018,6 +3019,7 @@ function SpineWidget:_wrapCoverInCard(cover_inner, card_w, card_h, border)
 end
 
 function SpineWidget:_renderFallback()
+    self._has_cover_picture = nil
     local TextBoxWidget   = require("ui/widget/textboxwidget")
     local TextWidget      = require("lib/bookshelf_colour_text")
     local VerticalGroup   = require("ui/widget/verticalgroup")

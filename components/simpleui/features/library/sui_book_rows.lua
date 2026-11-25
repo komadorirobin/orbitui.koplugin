@@ -160,11 +160,7 @@ function M.build(item, dimen, opts)
     local title_size = math.min(SUIStyle.FS_BODY, opts.font_size(20, 24))
     local info_size  = math.max(10, math.min(SUIStyle.FS_DETAIL, title_size - 3))
     local function textHeight(size)
-        local probe = require("ui/widget/textwidget"):new{
-            text = "Ag", face = Font:getFace(SUIStyle.FACE_REGULAR, size) }
-        local h = probe:getSize().h
-        probe:free()
-        return h
+        return require("features/library/sui_list_rows").lineHeight(Font:getFace(SUIStyle.FACE_REGULAR, size))
     end
     local function line(text, size, max_width)
         return UI.makeColoredText{

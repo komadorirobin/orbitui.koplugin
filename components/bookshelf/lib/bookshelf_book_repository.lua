@@ -7847,50 +7847,12 @@ end
 -- books"). Under the library root it reuses the library's own walk and
 -- light-meta cache, so opening a folder costs no second pass over the disk;
 -- a folder outside it is walked on its own.
-function Repo.getFolderSections(limit, offset, sort_priority_override, scope_or_filter, maybe_filter, maybe_opts)
-    local scope, filter, opts
-    sort_priority_override, scope, filter, opts =
-        _resolveScopeFilterOpts(sort_priority_override, scope_or_filter, maybe_filter, maybe_opts)
-    local _t0 = _gettime()
-    local lib_root = _normalizePath(_resolveLibraryRoot())
-    local root = (opts and opts.root) or lib_root
-    if not root then
-        logger.warn("[bookshelf] getFolderSections: home_dir not configured; refusing to walk")
-        return {}, 0
-    end
-    while #root > 1 and root:sub(-1) == "/" do root = root:sub(1, -2) end
-    local depth = BookshelfSettings.read("latest_walk_depth") or 3
-    local scope_roots = _scopeRoots(scope)
-    local roots = scope_roots or { root }
-    local function within(path, parent)
-        local prefix = _joinPath(parent, "")
-        return path == parent or path:sub(1, #prefix) == prefix
-    end
-    -- A drilled/pinned folder narrows the profile, never replaces it. In
-    -- particular, a parent folder must not mix manga into the library view.
-    if opts and opts.root and scope_roots then
-        roots = {}
-        local seen = {}
-        for _, scoped in ipairs(scope_roots) do
-            local intersect = within(root, scoped) and root
-                or (within(scoped, root) and scoped or nil)
-            if intersect and not seen[intersect] then
-                roots[#roots + 1] = intersect
-                seen[intersect] = true
-            end
-        end
-    end
+function Repo._orderFolderSections(sources, mixed, sp, filter, within)
     local FolderSections = require("lib/bookshelf_folder_sections")
     local sections, walks, light_caches, seen_files = {}, {}, {}, {}
-    for i = 1, #roots do
-        local section_root = roots[i]
-        local walk_root = section_root
-        -- Prefer a profile walk over a library-wide one so a manga-only
-        -- view does not need a second scan of the prose library.
-        for _, ancestor in ipairs(scope_roots or (lib_root and { lib_root } or {})) do
-            if within(section_root, ancestor) then walk_root = ancestor; break end
-        end
-        local walk = cachedWalk(walk_root, depth)
+    for i = 1, #sources do
+        local source = sources[i]
+        local walk, section_root = source.walk, source.root
         local inside = {}
         for _, c in ipairs(walk) do
             local fp = type(c) == "table" and c.fp or c
@@ -7901,7 +7863,7 @@ function Repo.getFolderSections(limit, offset, sort_priority_override, scope_or_
         end
         walk = inside
         walks[#walks + 1] = walk
-        local light_cache = _getLightMetaCache(walk_root, depth)
+        local light_cache = source.metadata
         local grouped = FolderSections.group(walk, section_root)
         for j = 1, #grouped do
             local section = grouped[j]
@@ -7922,8 +7884,6 @@ function Repo.getFolderSections(limit, offset, sort_priority_override, scope_or_
     -- The sections ARE the folders here and the label-less one is the root's
     -- loose files, so the partition is a single move: everything else keeps
     -- its tree order, and a folder still stands with its own books.
-    local mixed = G_reader_settings
-                  and G_reader_settings:isTrue("collate_mixed") or false
     if not mixed then
         local folders, loose = {}, {}
         for i = 1, #sections do
@@ -7951,8 +7911,6 @@ function Repo.getFolderSections(limit, offset, sort_priority_override, scope_or_
     -- does not reorder the sections themselves: those stand in tree order so
     -- a folder and everything under it stay together on the shelf, which is
     -- the point of showing the structure at all.
-    local sp = sort_priority_override
-    if not sp or #sp == 0 then sp = Repo.getSortPriority("all") end
     -- History times for "Opened" / "Added or opened", the same enrichment
     -- the predicate path gives its light records. Built only when asked.
     local read_time
@@ -8001,6 +7959,65 @@ function Repo.getFolderSections(limit, offset, sort_priority_override, scope_or_
     -- Optional integration policy; native Bookshelf keeps tree order.
     -- Run before slicing so page boundaries and full-library scans agree.
     if Repo.orderShelfSections then ordered = Repo.orderShelfSections(ordered, sp) end
+    return ordered
+end
+
+function Repo.getFolderSections(limit, offset, sort_priority_override, scope_or_filter, maybe_filter, maybe_opts)
+    local scope, filter, opts
+    sort_priority_override, scope, filter, opts =
+        _resolveScopeFilterOpts(sort_priority_override, scope_or_filter, maybe_filter, maybe_opts)
+    local _t0 = _gettime()
+    local lib_root = _normalizePath(_resolveLibraryRoot())
+    local root = (opts and opts.root) or lib_root
+    if not root then
+        logger.warn("[bookshelf] getFolderSections: home_dir not configured; refusing to walk")
+        return {}, 0
+    end
+    while #root > 1 and root:sub(-1) == "/" do root = root:sub(1, -2) end
+    local depth = BookshelfSettings.read("latest_walk_depth") or 3
+    local scope_roots = _scopeRoots(scope)
+    local roots = scope_roots or { root }
+    local function within(path, parent)
+        local prefix = _joinPath(parent, "")
+        return path == parent or path:sub(1, #prefix) == prefix
+    end
+    -- A drilled/pinned folder narrows the profile, never replaces it. In
+    -- particular, a parent folder must not mix manga into the library view.
+    if opts and opts.root and scope_roots then
+        roots = {}
+        local seen = {}
+        for _, scoped in ipairs(scope_roots) do
+            local intersect = within(root, scoped) and root
+                or (within(scoped, root) and scoped or nil)
+            if intersect and not seen[intersect] then
+                roots[#roots + 1] = intersect
+                seen[intersect] = true
+            end
+        end
+    end
+    local FolderSections = require("lib/bookshelf_folder_sections")
+    local sources = {}
+    for i = 1, #roots do
+        local section_root = roots[i]
+        local walk_root = section_root
+        -- Prefer a profile walk over a library-wide one so a manga-only
+        -- view does not need a second scan of the prose library.
+        for _, ancestor in ipairs(scope_roots or (lib_root and { lib_root } or {})) do
+            if within(section_root, ancestor) then walk_root = ancestor; break end
+        end
+        sources[i] = { root = section_root, walk = cachedWalk(walk_root, depth),
+            metadata = _getLightMetaCache(walk_root, depth) }
+    end
+    local mixed = G_reader_settings
+                  and G_reader_settings:isTrue("collate_mixed") or false
+    local sp = sort_priority_override
+    if not sp or #sp == 0 then sp = Repo.getSortPriority("all") end
+    local key
+    if not _filterIsActive(filter) then
+        key = FolderSections.orderKey(sp, SortEngine.keySignature(), mixed)
+    end
+    local ordered = FolderSections.ordered(sources, key, Repo.cacheEpoch(), Repo.orderShelfSections,
+        function() return Repo._orderFolderSections(sources, mixed, sp, filter, within) end)
     local total = #ordered
     offset = offset or 0
     local stop = _hydrationStop(offset, limit, total, 8, "getFolderSections",
@@ -8016,12 +8033,15 @@ function Repo.getFolderSections(limit, offset, sort_priority_override, scope_or_
         for k, v in pairs(e.rec) do b[k] = v end
         b.shelf_section      = e.section.label
         b.shelf_section_path = e.section.path
-        b._orbitui_shelf_sort = e.sort_record
+        if e.sort_record then
+            b._orbitui_shelf_sort = {}
+            for k, v in pairs(e.sort_record) do b._orbitui_shelf_sort[k] = v end
+        end
         out[#out + 1] = b
     end
     logger.dbg(string.format(
-        "[bookshelf perf] getFolderSections: %.0fms books=%d/%d sections=%d",
-        (_gettime() - _t0) * 1000, #out, total, #sections))
+        "[bookshelf perf] getFolderSections: %.0fms books=%d/%d",
+        (_gettime() - _t0) * 1000, #out, total))
     return out, total
 end
 
