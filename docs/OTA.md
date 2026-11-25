@@ -2,6 +2,17 @@
 
 ## OrbitUI 1.5.0-beta.4
 
+Published on 2026-11-25T06:20:17Z as GitHub prerelease 457721451
+from **3df790381**. The 10,309,287-byte ZIP and its checksum
+matched the draft and local build. SHA-256 is
+`0c9e95e5b57978fcbe5fdc8e0a8e44a23a1d9a4d912a7142f4b84d76d2fb8579`. GitHub Latest and the stable updater both offer 1.4.0.
+
+Both interpreter jobs passed on [main](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/45558809622)
+and the [release tag](https://github.com/komadorirobin/orbitui.koplugin/actions/runs/45559228853).
+All four CI archives matched the 2,000 installed files and executable bits.
+KOReader’s preview updater on 1.4.0 and 1.5.0-beta.3 discovered the release
+over anonymous HTTPS, installed the public bytes, restarted and rolled back.
+
 Long-press a Reading dashboard card to open its usual menu and choose
 **Replace module…**. BookOrbit achievements appear on the first picker screen.
 The Day Mode action defaults to the Solar Colour sun and has its own icon
