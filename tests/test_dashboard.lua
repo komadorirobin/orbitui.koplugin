@@ -817,10 +817,13 @@ H.test("wide focus cards use the right edge and fan jackets stay gently tilted a
                     end
                     return hi - lo, widths
                 end
-                local _, visible = visibleAt(.5)
+                local midspan, visible = visibleAt(.5)
+                local painted = 0
                 for _, file in ipairs(layers) do
                     assert((visible[file] or 0) >= front.w / 3, "leave a tappable strip of every jacket")
+                    painted = painted + visible[file]
                 end
+                H.eq(painted, midspan + 1, "keep all jackets overlapping across the middle")
                 -- Compare rows that cross the shorter side jackets.
                 assert(visibleAt(.45) > visibleAt(.94) + front.w * .1,
                     "jackets still spread near the top and converge at the base")

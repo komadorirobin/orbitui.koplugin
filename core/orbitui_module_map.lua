@@ -527,15 +527,13 @@ local function drawFan(art, count, index, gap, draw)\
     local layers = {}\
     local xmin, xmax, ymin, ymax = math.huge, -math.huge, math.huge, -math.huge\
     local pivot_distance = 3.1\
-    local depth_steps = floor(count / 2)\
     local outer_angle = count >= 4 and 16 or 10\
+    local angle_step = outer_angle / max(1, floor(count / 2))\
     for i = 1, count do\
         local offset = (i - index) % count\
         if offset > count / 2 then offset = offset - count end\
-        local side_count = offset < 0 and floor((count - 1) / 2) or depth_steps\
-        local spread = offset == 0 and 0 or offset / side_count\
-        local angle = outer_angle * spread\
-        local scale = 1 - .14 * depth_steps * math.abs(spread)\
+        local angle = angle_step * offset\
+        local scale = 1 - .14 * math.abs(offset)\
         local radians = math.rad(angle)\
         local c, s = math.cos(radians), math.sin(radians)\
         local x = pivot_distance * s\
