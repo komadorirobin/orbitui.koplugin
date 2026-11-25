@@ -3514,11 +3514,18 @@ end\
 \
 -- Compose from packaged shapes only. An API value can select a glyph but\
 -- cannot supply SVG markup, a path on the device or an external resource.\
-function M.svg(item)\
+function M.svg(item, background)\
     local rarity = not item.secret and metal[item.rarity] and item.rarity or \"common\"\
     local c = metal[rarity]\
     local glyph = glyphs[item.icon] or glyphs[\"help-circle\"]\
     local parts = { '<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"108\" height=\"108\" viewBox=\"-4 -4 108 108\">' }\
+    if background then\
+        -- Some in-memory SVG renderers flatten transparent pixels to white.\
+        -- ImageWidget preserves original image colours at night, so use the\
+        -- visible card colour here, before KOReader's display inversion.\
+        local fill = require(\"infra/sui_accent\").toHex(background)\
+        parts[#parts + 1] = string.format('<rect x=\"-4\" y=\"-4\" width=\"108\" height=\"108\" fill=\"%s\"/>', fill)\
+    end\
     if item.earned and not item.secret then\
         parts[#parts + 1] = string.format([[<defs>\
 <linearGradient id=\"rim\" x1=\"0\" y1=\"0\" x2=\".92\" y2=\"1\">\
@@ -3559,9 +3566,9 @@ function M.svg(item)\
     return table.concat(parts)\
 end\
 \
-function M.widget(item, size)\
+function M.widget(item, size, background)\
     if size < 1 then return end\
-    local svg = M.svg(item)\
+    local svg = M.svg(item, background)\
     local renderer = require(\"ui/renderimage\")\
     local ok, image = pcall(renderer.renderImageData, renderer, svg, #svg, false, size, size)\
     if not ok or not image then return end\
@@ -3875,17 +3882,17 @@ local function remaining(item)\
     return string.format(_(units[2]), left)\
 end\
 \
-local function textWidget(text, w, h, size, bold)\
-    return require(\"ui/widget/textboxwidget\"):new{ text = text, width = w, height = h, height_adjust = false,\
+local function textWidget(text, w, h, size, bold, background)\
+    return require(\"ui/widget/textboxwidget\"):new{ text = text, width = w, height = h, bgcolor = background, height_adjust = false,\
         height_overflow_show_ellipsis = true, face = require(\"ui/font\"):getFace(\"cfont\", size), bold = bold }\
 end\
 \
 -- Rendering is limited to the displayed badges. Both views reserve the\
 -- same column for the medal; narrow cards keep the text area usable.\
-local function medalRow(item, width, height, max_size, content)\
+local function medalRow(item, width, height, max_size, background, content)\
     local screen = require(\"device\").screen\
     local size = math.min(height, screen:scaleBySize(max_size), math.floor(width * .28))\
-    local image = require(\"adapters/orbitui_achievement_medal\").widget(item, size)\
+    local image = require(\"adapters/orbitui_achievement_medal\").widget(item, size, background)\
     if not image then return content(width) end\
     local gap = math.min(screen:scaleBySize(7), math.floor(width / 12))\
     return require(\"ui/widget/horizontalgroup\"):new{ align = \"center\", image,\
@@ -3978,7 +3985,7 @@ function M.open(ctx)\
             return textWidget(value, w, h, 16, false)\
         end,\
         cell_renderer = function(item, dimen)\
-            return medalRow(item, dimen.w, dimen.h, 56, function(width)\
+            return medalRow(item, dimen.w, dimen.h, 56, nil, function(width)\
                 return Modal.sheetRow({ title = title(item), subtitle = progress(item) }, { w = width, h = dimen.h })\
             end)\
         end,\
@@ -4027,7 +4034,7 @@ local function cardItems(data, milestone, capacity)\
     return items\
 end\
 \
-local function listRow(item, w, h)\
+local function listRow(item, w, h, background)\
     local screen = require(\"device\").screen\
     local heading, detail = title(item), nil\
     if h >= screen:scaleBySize(44) then\
@@ -4036,18 +4043,19 @@ local function listRow(item, w, h)\
     elseif not item.earned then\
         heading = remaining(item) .. \" · \" .. heading\
     end\
-    return medalRow(item, w, h, 48, function(width)\
+    return medalRow(item, w, h, 48, background, function(width)\
         if not detail then\
             local size = h < screen:scaleBySize(25) and 13 or 15\
-            return textWidget(heading, width, math.min(h, screen:scaleBySize(30)), size, true)\
+            return textWidget(heading, width, math.min(h, screen:scaleBySize(30)), size, true, background)\
         end\
         local half = math.floor(h / 2)\
         return require(\"ui/widget/verticalgroup\"):new{ align = \"left\",\
-            textWidget(heading, width, half, 15, true), textWidget(detail, width, h - half, 14, false) }\
+            textWidget(heading, width, half, 15, true, background),\
+            textWidget(detail, width, h - half, 14, false, background) }\
     end)\
 end\
 \
-local function medalTile(item, w, h)\
+local function medalTile(item, w, h, background)\
     local screen = require(\"device\").screen\
     local Text = require(\"ui/widget/textwidget\")\
     local Font = require(\"ui/font\")\
@@ -4064,7 +4072,8 @@ local function medalTile(item, w, h)\
         if value then detail = caption(value, 12, false) end\
     end\
     local space = h - name:getSize().h - (detail and detail:getSize().h or 0)\
-    local image = require(\"adapters/orbitui_achievement_medal\").widget(item, math.min(space, w, screen:scaleBySize(54)))\
+    local image = require(\"adapters/orbitui_achievement_medal\").widget(item,\
+        math.min(space, w, screen:scaleBySize(54)), background)\
     local tile = require(\"ui/widget/verticalgroup\"):new{}\
     if image then tile[#tile + 1] = image end\
     tile[#tile + 1] = name\
@@ -4073,14 +4082,14 @@ local function medalTile(item, w, h)\
         dimen = require(\"ui/geometry\"):new{ w = w, h = h }, tile }\
 end\
 \
-local function cardContent(data, failure, preview, w, h)\
+local function cardContent(data, failure, preview, w, h, background)\
     local screen = require(\"device\").screen\
     local group = require(\"ui/widget/verticalgroup\"):new{ align = \"left\" }\
     local body_h = h\
     if preview or h >= screen:scaleBySize(68) then\
         local header = data and data.items and countLine(data) or _(\"Latest achievements\")\
         local header_h = math.min(h, screen:scaleBySize(24))\
-        group[#group + 1] = textWidget(header .. \"  ›\", w, header_h, 16, true)\
+        group[#group + 1] = textWidget(header .. \"  ›\", w, header_h, 16, true, background)\
         body_h = math.max(1, h - header_h)\
     end\
     if preview then return group end\
@@ -4092,7 +4101,7 @@ local function cardContent(data, failure, preview, w, h)\
     local items = cardItems(data, milestone, grid and rows * 3 or list_capacity)\
     if #items == 0 then\
         local copy = data and data.items and _(\"No recent achievements to show.\") or label(failure or \"loading\")\
-        local message = textWidget(copy, w, body_h, 14, false)\
+        local message = textWidget(copy, w, body_h, 14, false, background)\
         group[#group + 1] = message\
         return group, message\
     end\
@@ -4102,13 +4111,13 @@ local function cardContent(data, failure, preview, w, h)\
         for first = 1, #items, columns do\
             local row = require(\"ui/widget/horizontalgroup\"):new{}\
             for i = first, math.min(first + columns - 1, #items) do\
-                row[#row + 1] = medalTile(items[i], math.floor(w / columns), row_h)\
+                row[#row + 1] = medalTile(items[i], math.floor(w / columns), row_h, background)\
             end\
             group[#group + 1] = row\
         end\
     else\
         local row_h = math.floor(body_h / #items)\
-        for _, item in ipairs(items) do group[#group + 1] = listRow(item, w, row_h) end\
+        for _, item in ipairs(items) do group[#group + 1] = listRow(item, w, row_h, background) end\
     end\
     return group\
 end\
@@ -4126,8 +4135,9 @@ local function build(w, ctx)\
     local h = ctx.orbitui_dashboard_hosted and ctx.height or getHeight()\
     local pad = math.min(Screen:scaleBySize(6), math.floor(w / 20), math.floor(h / 18))\
     local inner, usable = math.max(1, w - pad * 2), math.max(1, h - pad * 2)\
-    local group, message = cardContent(data, failure, preview, inner, usable)\
-    local clip = require(\"lib/bookshelf_clip_container\"):new{ w = w, h = h,\
+    local background = ctx.orbitui_card_background\
+    local group, message = cardContent(data, failure, preview, inner, usable, background)\
+    local clip = require(\"lib/bookshelf_clip_container\"):new{ w = w, h = h, bg = background,\
         require(\"ui/widget/container/framecontainer\"):new{ padding = pad, bordersize = 0,\
             require(\"ui/widget/container/topcontainer\"):new{\
                 dimen = require(\"ui/geometry\"):new{ w = inner, h = usable }, group } } }\

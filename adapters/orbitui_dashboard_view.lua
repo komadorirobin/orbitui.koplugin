@@ -1010,7 +1010,7 @@ function M.content(widget, p, ctx, data)
                 ticks[#ticks + 1] = refreshRow
                 require("ui/uimanager"):nextTick(refreshRow)
             else
-            box(area, nil, nil, entry.id)
+            local card_background = box(area, nil, nil, entry.id).background
             local show_heading = Sources.moduleHeadingVisible(entry)
             if show_heading then title(entry.label or entry.ref, area) end
             local inset, top = p.pad, show_heading and math.max(px(32), p.pad * 2) or p.pad
@@ -1024,6 +1024,7 @@ function M.content(widget, p, ctx, data)
                 local born = revision
                 args = {}
                 for k, v in pairs(ctx) do args[k] = v end
+                args.orbitui_card_background = card_background
                 if selected.kind == "simpleui" and ctx.hold_fn then
                     args.hold_fn = function(fp, module)
                         local enabled = require("infra/sui_store"):readSetting("simpleui_hs_settings_on_hold") ~= false
@@ -1039,8 +1040,8 @@ function M.content(widget, p, ctx, data)
                         or (def and def.is_book_mod and _("No books to show yet."))
                         or _("Module unavailable. Long-press to configure."),
                     face = Style.getStyledFace(nil, 14 / (Screen:scaleBySize(1000) / 1000), "regular"),
-                    width = w, max_lines = 3, height_adjust = true }
-                local guarded = Sources.moduleContainer(child, fallback, w, h, paper, true)
+                    width = w, max_lines = 3, height_adjust = true, bgcolor = card_background }
+                local guarded = Sources.moduleContainer(child, fallback, w, h, card_background, true)
                 guarded.pass_holds = selected.kind == "simpleui" and def and def.is_book_mod
                 cover_slot.child, cover_slot.clip, cover_slot.def, cover_slot.args = child, guarded, def, child_args
                 cover_slot.done = nil
