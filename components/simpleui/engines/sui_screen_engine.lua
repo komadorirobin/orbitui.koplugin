@@ -2563,6 +2563,27 @@ end
 -- Called on every page turn (keep_cache=true) and on full refreshes (false).
 -- ---------------------------------------------------------------------------
 function ScreenWidget:_updatePage(keep_cache, books_only, stats_only)
+    if self._building_page then
+        -- One pending pass is enough. A request for fresh data takes
+        -- precedence over any requests to reuse the current context.
+        self._pending_page_keep_cache = self._pending_page_keep_cache ~= false and keep_cache == true
+        return
+    end
+    -- A module may call its refresh callback synchronously while its row is
+    -- being built. Both passes would then append to the same cleared body.
+    self._building_page = true
+    local ok, err = pcall(self._buildPage, self, keep_cache, books_only, stats_only)
+    if ok and self._pending_page_keep_cache ~= nil and self._body then
+        -- Consume refreshes from this batch once, even if a module requests
+        -- another refresh every time it builds.
+        ok, err = pcall(self._buildPage, self, self._pending_page_keep_cache)
+    end
+    self._pending_page_keep_cache = nil
+    self._building_page = nil
+    if not ok then error(err, 0) end
+end
+
+function ScreenWidget:_buildPage(keep_cache, books_only, stats_only)
     if not keep_cache then
         if stats_only then
             self._ctx_cache = nil
